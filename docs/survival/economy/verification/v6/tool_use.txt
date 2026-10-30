@@ -1,0 +1,27 @@
+Godot Engine v4.7.stable.custom_build - https://godotengine.org
+
+  ok    fresh authoritative save
+  ok    adapter configured
+  ok    fixture owns a unique stone pick
+  ok    read-only tool plan allowed
+  ok    condition cost exact; no yield multiplier
+  ok    planning alone changes no save
+  ok    stone pick cannot salvage scrap pile
+  ok    unknown node kind rejected
+  ok    stale tool revision rejected
+  ok    foreign tool token rejected
+  ok    tool wear commits only with fixture node yield
+  ok    condition/revision advanced once
+  ok    fixture yield exact
+  ok    same transaction key cannot wear tool twice
+  ok    old plan cannot be applied after revision advance
+  ok    fixture broken iron pick
+  ok    broken tool cannot authorize a swing
+  ok    fixture fills bag
+  ok    broken pick still rejected before capacity check
+  ok    full bag refuses new unique tool grant
+A3 TOOL USE CALLABLE PASSED - 20 checks
+WARNING: 5 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2535)
+ERROR: 2 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

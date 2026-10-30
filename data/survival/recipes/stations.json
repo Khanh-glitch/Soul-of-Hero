@@ -1,0 +1,138 @@
+{
+  "schema": "soh.economy.stations.v1",
+  "stations": {
+    "hand": {
+      "label": "Hand crafting",
+      "kind": "hand",
+      "tier": 0,
+      "capabilities": [
+        "hand"
+      ],
+      "queue_capacity": 1,
+      "footprint": [
+        0,
+        0
+      ],
+      "tile_size": 16,
+      "placement_owner": "A0",
+      "powered": false
+    },
+    "furnace": {
+      "label": "Furnace",
+      "kind": "furnace",
+      "tier": 1,
+      "capabilities": [
+        "smelt",
+        "burn"
+      ],
+      "queue_capacity": 3,
+      "footprint": [
+        2,
+        2
+      ],
+      "tile_size": 16,
+      "placement_owner": "A0",
+      "kit": "furnace_kit",
+      "powered": false
+    },
+    "advanced_furnace": {
+      "label": "Advanced Furnace",
+      "kind": "furnace",
+      "tier": 2,
+      "capabilities": [
+        "smelt",
+        "burn",
+        "alloy"
+      ],
+      "queue_capacity": 4,
+      "footprint": [
+        2,
+        2
+      ],
+      "tile_size": 16,
+      "placement_owner": "A0",
+      "kit": "advanced_furnace_kit",
+      "powered": false
+    },
+    "workbench": {
+      "label": "Workbench",
+      "kind": "workbench",
+      "tier": 1,
+      "capabilities": [
+        "assemble",
+        "repair",
+        "salvage"
+      ],
+      "queue_capacity": 3,
+      "footprint": [
+        2,
+        1
+      ],
+      "tile_size": 16,
+      "placement_owner": "A0",
+      "kit": "workbench_kit",
+      "powered": false
+    },
+    "advanced_workbench": {
+      "label": "Precision Workbench",
+      "kind": "workbench",
+      "tier": 2,
+      "capabilities": [
+        "assemble",
+        "repair",
+        "salvage",
+        "core_bind"
+      ],
+      "queue_capacity": 4,
+      "footprint": [
+        2,
+        2
+      ],
+      "tile_size": 16,
+      "placement_owner": "A0",
+      "kit": "workbench_kit",
+      "upgrade_cost": {
+        "iron_parts": 6,
+        "knowledge_spares": 8
+      },
+      "powered": false
+    },
+    "research": {
+      "label": "Research Bench",
+      "kind": "research",
+      "tier": 1,
+      "capabilities": [
+        "research",
+        "decode",
+        "salvage"
+      ],
+      "queue_capacity": 2,
+      "footprint": [
+        2,
+        2
+      ],
+      "tile_size": 16,
+      "placement_owner": "A0",
+      "kit": "research_kit",
+      "powered": false
+    },
+    "garden": {
+      "label": "Garden Plot",
+      "kind": "garden",
+      "tier": 1,
+      "capabilities": [
+        "grow"
+      ],
+      "queue_capacity": 2,
+      "footprint": [
+        2,
+        2
+      ],
+      "tile_size": 16,
+      "placement_owner": "A0",
+      "kit": "garden_kit",
+      "powered": false
+    }
+  },
+  "status": "CONTRACT_ONLY_A0_PLACEMENT_REQUIRED"
+}

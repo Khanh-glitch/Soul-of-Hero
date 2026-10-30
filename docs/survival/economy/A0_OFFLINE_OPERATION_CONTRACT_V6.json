@@ -1,0 +1,302 @@
+{
+  "schema": "soh.economy.a0_offline_operation_contract.v6",
+  "status": "UNWIRED_A0_PRODUCTION_MOUNT_REQUIRED",
+  "a3_scope": "Additive opt-in prepared-operation planner + D059 read-only food forecast. A3 never writes disk, never owns a second clock/inventory, and never auto-collects or auto-chains.",
+  "owner_pins": {
+    "a3_pr": 19,
+    "a3_base_commit": "4bfba38d87bb2b6529745bf4a3caf2ba0ca07947",
+    "integration_base": "86831332324428c7623ad431a577d101b7af5c9c",
+    "ct": "f12469f397e132d1c810e832db28fa304222df4a",
+    "a0_pr": 21,
+    "a0": "f599a62231f030f0e12cf77e5b821451c7259745",
+    "a1_pr": 20,
+    "a1": "dabf7bf516a80b112821b51d07e4dfe5fcb9a765",
+    "a6_pr": 24,
+    "a6": "63d3fae54b1e204a84fced6a285bc969ed5bfdfe",
+    "a7_pr": 25,
+    "a7": "479618a3dc6cd8425ff59cc99c30d8fcbbc1c19d",
+    "a8_pr": 26,
+    "a8": "0e22d5f00532cf5e079b540e30a54281606fc757",
+    "a4_branch": "feature/surv-a4-core-gold-040a",
+    "a4": "3ee4c5ad8061b0c0d075fa090262fae7d40f7f22"
+  },
+  "time_domains": {
+    "run_real_utc": {
+      "decision": "D055",
+      "seconds": 1209600,
+      "authority": "A0",
+      "rule": "run_expires_at_unix == run_started_at_unix + 1209600; offline settlement clamps to expiry; expiry is non-destructive and A0 owns the run-end UI."
+    },
+    "world_calendar": {
+      "decision": "D060",
+      "authority": "A0",
+      "rule": "A3 echoes the authenticated continuous world-calendar projection and reports elapsed_world_us, but never converts it into work, loot, cooldown, crop, or weather effects. Rate/year length is NOT_USER_LOCKED."
+    },
+    "operation_clock": {
+      "authority": "A0 projection + A3 armed-job custody",
+      "tick_microseconds": 1000000,
+      "rule": "Only explicitly armed, already-paid, allowlisted jobs may consume real elapsed seconds. V5 ACTIVE source cooldowns remain ACTIVE-only."
+    }
+  },
+  "mount_order": [
+    "1. A0 SaveService loads/pins the A3 adapter and preserves survival_economy.offline (optional; absent => empty, no retroactive credit).",
+    "2. economy_service.configure(save_port, station_resolver).",
+    "3. economy_service.load_catalog() if called separately; this clears the offline host by design.",
+    "4. economy_service.configure_offline_time_host(a0_authenticated_projection_callable) AFTER configure/load_catalog.",
+    "5. Player pays for a job through existing enqueue/research APIs, then explicitly arms it with arm_offline_operation(job_id,event_id).",
+    "6. On return, A0 reads one authenticated projection, calls plan_offline_operations(request), and commits only through SaveService.transact_once using proposal_id as the idempotency key.",
+    "7. Inside that mutator A0 calls apply_offline_operation_plan(candidate, proposal, request). A3 re-plans from the candidate and ignores proposal-supplied deltas.",
+    "8. Player collects ready output through existing collect(); full bag keeps output in job escrow."
+  ],
+  "api": {
+    "configure_offline_time_host": "(host: Callable) -> bool; host() must return the exact authenticated projection dictionary. Absent/invalid host fails closed.",
+    "arm_offline_operation": "(job_id: String, event_id: String) -> Dictionary; existing SaveService transaction; records custody only, no progress.",
+    "plan_offline_operations": "(request: Variant) -> Dictionary; READ-ONLY proposal.",
+    "apply_offline_operation_plan": "(candidate: Dictionary, proposal: Dictionary, request: Variant) -> Dictionary; pure candidate transform for A0's SaveService mutator.",
+    "forecast_offline_food": "(request: Variant, needs: Variant) -> Dictionary; READ-ONLY D059 item-debit forecast.",
+    "offline_operation_state": "() -> Dictionary; read-only arm/high-water projection.",
+    "plan_tool_use": "(request: Variant) -> Dictionary; V5 A0 handoff callable now implemented, read-only.",
+    "apply_tool_use_plan": "(candidate: Dictionary, plan: Dictionary) -> Dictionary; pure candidate transform for A0's atomic harvest transaction."
+  },
+  "offline_time_projection": {
+    "contract": "soh.economy.offline_time.v1",
+    "required_exact_fields": [
+      "contract",
+      "run_id",
+      "run_started_at_unix",
+      "run_expires_at_unix",
+      "interval_start_unix",
+      "interval_end_unix",
+      "last_authenticated_unix",
+      "projection_sequence",
+      "projection_id",
+      "world_calendar",
+      "stations"
+    ],
+    "integer_rule": "All Unix timestamps, sequence, and world microseconds must be Godot int, not JSON-parsed float. A0 must cast/validate at the producer boundary.",
+    "fields": {
+      "run_id": "non-empty string <=96; must match armed records and needs projection",
+      "run_started_at_unix": "int >=0",
+      "run_expires_at_unix": "int == run_started_at_unix + 1209600",
+      "interval_start_unix": "int >= run_started_at_unix and >= durable offline high-water",
+      "interval_end_unix": "int >= interval_start_unix",
+      "last_authenticated_unix": "int; for an initialized run must equal durable offline.last_authenticated_unix; must be <= interval_start_unix",
+      "projection_sequence": "monotonic int >= durable offline.last_projection_sequence",
+      "projection_id": "non-empty string <=128; A0 producer identity",
+      "world_calendar": {
+        "required_exact_fields": [
+          "run_id",
+          "calendar_id",
+          "rate_policy_id",
+          "start_world_us",
+          "end_world_us",
+          "rate_approval"
+        ],
+        "rate_approval": "NOT_USER_LOCKED",
+        "rule": "end_world_us >= start_world_us; A3 reports delta only"
+      },
+      "stations": {
+        "key": "station_id",
+        "value_exact_fields": [
+          "owner_run_id",
+          "station_revision",
+          "operational",
+          "condition"
+        ],
+        "rule": "owner_run_id must match; revision must equal armed record and live placed-station resolver; operational true and condition >0 for progress"
+      }
+    },
+    "rejections": [
+      "offline_time_host_unavailable",
+      "offline_time_receipt_mismatch",
+      "offline_projection_unknown_fields",
+      "offline_timestamp_not_integer",
+      "run_expiry_not_14_real_days",
+      "invalid_offline_interval",
+      "world_calendar_rate_not_provisional",
+      "world_calendar_regressed",
+      "station_run_mismatch",
+      "station_revision_mismatch",
+      "clock_rollback",
+      "projection_high_water_mismatch",
+      "stale_projection_sequence",
+      "run_id_mismatch"
+    ]
+  },
+  "plan_output": {
+    "contract": "soh.economy.offline_plan.v1",
+    "key_fields": [
+      "proposal_id",
+      "policy_sha256",
+      "base_economy_sha256",
+      "run_id",
+      "run_expires_at_unix",
+      "run_expired",
+      "interval_start_unix",
+      "interval_end_unix",
+      "effective_end_unix",
+      "elapsed_real_seconds",
+      "world_calendar",
+      "operations",
+      "blocked",
+      "active_source_cooldowns_changed",
+      "world_action_claims",
+      "auto_collect",
+      "auto_start_next_queue"
+    ],
+    "proposal_id": "sha256(canonical(request) + policy_sha256 + canonical(survival_economy)); A0 idempotency key",
+    "operation_fields": [
+      "job_id",
+      "run_id",
+      "station_id",
+      "station_revision",
+      "kind",
+      "target",
+      "operation_clock",
+      "from_unix",
+      "to_unix",
+      "applied_ticks",
+      "elapsed_before",
+      "elapsed_after",
+      "duration_ticks",
+      "completes",
+      "stop_reason",
+      "reserved_inputs",
+      "reserved_fuel",
+      "outputs_if_complete",
+      "output_custody",
+      "escrow_sha256",
+      "policy_sha256"
+    ],
+    "guarantees": {
+      "active_source_cooldowns_changed": false,
+      "world_action_claims": 0,
+      "auto_collect": false,
+      "auto_start_next_queue": false,
+      "output_custody": "EXISTING_JOB_ESCROW_UNTIL_PLAYER_COLLECT"
+    },
+    "queue_rule": "Per station, jobs are processed in sorted job-id order and share the interval sequentially, matching V5 advance. An unarmed or blocked predecessor blocks later jobs; no parallel station throughput is invented.",
+    "expiry_rule": "effective_end_unix = min(interval_end_unix, run_expires_at_unix). Post-expiry intervals propose zero work."
+  },
+  "apply_rule": "A0 must first check SaveService.is_transaction_applied(proposal_id). Inside transact_once, call apply_offline_operation_plan. It re-plans from the candidate, rejects stale_offline_proposal on drift, verifies escrow/policy/station/run, advances only remaining paid ticks, completes into existing job escrow, prunes completed arm records, and advances the durable high-water. It never reads proposal deltas as authority and never writes disk.",
+  "policy": {
+    "file": "data/survival/recipes/offline_operations.v1.json",
+    "schema": "data/survival/recipes/offline_operations.schema.json",
+    "policy_id": "a3_prepared_operations_v1",
+    "eligible_craft_recipes": [
+      "burn_charcoal",
+      "smelt_iron"
+    ],
+    "eligible_research_recipes": [
+      "iron_pick"
+    ],
+    "eligible_technologies": [
+      "tech_smelting",
+      "tech_precision"
+    ],
+    "disabled": [
+      "cultivation",
+      "collectors",
+      "core",
+      "reconstruction",
+      "POI loot",
+      "source cooldown reduction",
+      "new queues",
+      "free materials",
+      "HP/hunger mutation by A3"
+    ],
+    "rate_approval": "NOT_USER_LOCKED"
+  },
+  "d059_food_forecast": {
+    "needs_contract": "soh.economy.offline_needs.v1",
+    "forecast_contract": "soh.economy.offline_food_forecast.v1",
+    "needs_exact_fields": [
+      "contract",
+      "run_id",
+      "satiety",
+      "max_satiety",
+      "drain_per_hour",
+      "shelter",
+      "food",
+      "custody_projection_id"
+    ],
+    "food_record_fields": [
+      "item_id",
+      "quantity",
+      "satiety_per_unit",
+      "container_id"
+    ],
+    "authority": "A0 owns satiety, HP, shelter validity, death, and the actual item debit. A3 only forecasts bounded debits against real SaveService bag/home-storage/container stock and approved food items.",
+    "output_fields": [
+      "forecast_id",
+      "elapsed_real_seconds",
+      "run_expired",
+      "satiety_required",
+      "satiety_provided_by_food",
+      "proposed_item_debits",
+      "proposed_container_debits",
+      "custody_projection_id",
+      "food_custody_sha256",
+      "satiety_before",
+      "satiety_after",
+      "food_exhausted",
+      "shelter_valid",
+      "shelter_hp_floor_applies",
+      "wilderness_starvation_risk",
+      "hp_delta",
+      "a3_mutates_hp_or_hunger",
+      "rate_approval"
+    ],
+    "invariants": {
+      "hp_delta": 0,
+      "a3_mutates_hp_or_hunger": false,
+      "rate_approval": "A0_PROVISIONAL_NOT_USER_LOCKED"
+    },
+    "commit_rule": "A0 must use forecast_id as its own idempotency key and re-check food_custody_sha256 before debiting. A3 does not commit food."
+  },
+  "tool_use_callable": {
+    "contract": "soh.economy.tool_use.v1",
+    "status": "IMPLEMENTED_A3_READ_ONLY_PLAN_AND_CANDIDATE_TRANSFORM_UNWIRED_A0",
+    "request_exact_fields": [
+      "contract",
+      "node_id",
+      "resource_kind",
+      "tool_instance_id",
+      "expected_tool_revision",
+      "world_revision",
+      "active_seconds"
+    ],
+    "plan_fields": [
+      "plan_id",
+      "request",
+      "tool_item_id",
+      "allowed",
+      "condition_cost",
+      "next_tool_revision",
+      "yield_multiplier",
+      "active_seconds_authority",
+      "receipt_metadata"
+    ],
+    "rule": "A0 must apply_tool_use_plan inside the SAME SaveService transaction as node hit, depletion, and inventory grant. Full bag or failed save rejects the whole swing. yield_multiplier is always 1. active_seconds is an A0 echo, not an A3-verified clock."
+  },
+  "player_value": "A player who pays for two forge batches and arms them before an 18h absence returns to two iron ingots in job escrow. Those ingots plus saved oak/spares make a research kit affordable, turning the next expedition from repeated scrap grinding into a targeted learning choice. No loot table, Core, POI refresh, or free material is added.",
+  "evidence_level": {
+    "authored": true,
+    "native_fixture_tested": "PASS_NATIVE_FIXTURE_ONLY: adapter 556/26; offline 220/18; offline restart 12+19; world restart 7+14; tool_use 20; Python 53; validator PASS",
+    "world_integrated": false,
+    "human_reviewed": false,
+    "a0_production_mount": false,
+    "a4_gold_parity": false,
+    "visual_capture": false
+  },
+  "non_claims": [
+    "No approved offline rate or fictional year length",
+    "No A8 Quarry authorization",
+    "No A0 production/SaveService/Hero/overworld edits",
+    "No A1 world data edits",
+    "No A6 UI authorization",
+    "No A4 Gold/VFX edits",
+    "No human playtest PASS",
+    "No B0 product PASS"
+  ]
+}

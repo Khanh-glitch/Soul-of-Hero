@@ -1,0 +1,12 @@
+{
+  "code_sha": "e7ef01e4",
+  "status": "LOCAL_PYTHON_VALIDATOR_MODEL_SYNTAX_PASS_NATIVE_PENDING",
+  "python_tests": "python_tests.txt (41 OK)",
+  "validator": "validation.json / validation_stdout.txt (PASS; 56 items/36 recipes/5 techs/36 sources/7 stations/3 bindings/3 actions)",
+  "progression_model": "progression_report.json (SIMULATION_ONLY, 15 scenarios PASS; not human playtest)",
+  "syntax": "gdscript_parse.txt (tree-sitter 0 ERROR nodes; NOT Godot runtime)",
+  "hashes": "a3_sha256.txt",
+  "native": "GitHub Actions native jobs pending at final local verification; no native PASS claimed. Two-OS-process restart step authored, execution pending.",
+  "os_restart": "economy_world_restart_test.gd phases 1/2 in workflow; execution pending native CI",
+  "immutable_balance_fixture": "simulate_economy conservation fixture rerun; report SHA 45bceb2d\u2026 unchanged"
+}

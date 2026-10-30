@@ -1,0 +1,602 @@
+Godot Engine v4.7.stable.custom_build - https://godotengine.org
+
+[case 01] hand -> furnace -> reserved smelt -> collect
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    fixture grant oak_wood
+  ok    fixture grant iron_scrap
+  ok    charcoal enqueued
+  ok    inputs reserved atomically
+  ok    smelting refuses without committed fuel
+  ok    partial trusted tick
+  ok    no early output
+  ok    collect output
+  ok    charcoal output exact
+  ok    smelting queued once fuel exists
+  ok    fuel reserved atomically
+  ok    collect output
+  ok    furnace outputs exact
+[case 02] station, knowledge, event identity
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    fixture grant oak_wood
+  ok    fixture grant iron_scrap
+  ok    phantom station refused
+  ok    unknown Core recipe refused
+  ok    first command accepted
+  ok    same event is idempotent
+  ok    same event different payload refused
+  ok    replays leave save byte-equivalent
+[case 03] cancel / full output inventory / reload
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    fixture grant oak_wood
+  ok    fixture grant iron_scrap
+  ok    cancel reserved job
+  ok    refund remains in escrow, not duplicated in bag
+  ok    full bag refuses collection
+  ok    reload from disk
+  ok    reconfigure adapter after reload
+  ok    full bag still refuses after reload
+  ok    free slot 0
+  ok    free slot 1
+  ok    escrow survives reload
+  ok    collection replay safe
+  ok    exact refund once
+[case 04] Core specimen sacrifice / permanent recipe / duplicate research
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    fixture grant knowledge_spares
+  ok    fixture grant iron_scrap
+  ok    fixture grant iron_ingot
+  ok    fixture grant research_notes
+  ok    fixture grant soul_ember
+  ok    fixture grant crypt_bone_shard
+  ok    earn prerequisite tech_smelting
+  ok    collect output
+  ok    earn prerequisite tech_precision
+  ok    collect output
+  ok    earn prerequisite tech_core_binding
+  ok    collect output
+  ok    damaged finite Core owned
+  ok    owning Core does not learn recipe
+  ok    specimen reserved for research
+  ok    specimen cannot also be cast
+  ok    collect output
+  ok    knowledge permanent in A0 map
+  ok    research does not consume cast charges
+  ok    duplicate research refused without payment
+  ok    no duplicate research cost
+[case 05] physical blueprint research
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    fixture grant knowledge_spares
+  ok    fixture grant iron_scrap
+  ok    fixture grant iron_ingot
+  ok    fixture grant research_notes
+  ok    fixture grant soul_ember
+  ok    fixture grant crypt_bone_shard
+  ok    earn prerequisite tech_smelting
+  ok    collect output
+  ok    earn prerequisite tech_precision
+  ok    collect output
+  ok    earn prerequisite tech_core_binding
+  ok    collect output
+  ok    fixture grant plan_frost_core
+  ok    blueprint consumed into escrow
+  ok    collect output
+  ok    knowledge is not a free Core
+[case 06] technology prerequisites
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    fixture grant knowledge_spares
+  ok    fixture grant iron_scrap
+  ok    fixture grant iron_ingot
+  ok    prerequisite enforced
+  ok    collect output
+  ok    technology learned
+  ok    collect output
+  ok    dependent technology learned
+[case 07] A4 attestation / atomic finite-use debit (NATIVE FIXTURE ONLY)
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    production catalog Core remains blocked without A4 binding
+  ok    attestation rejected: missing
+  ok    no charge debit for missing
+  ok    attestation rejected: synthetic_ready
+  ok    no charge debit for synthetic_ready
+  ok    attestation rejected: unverified
+  ok    no charge debit for unverified
+  ok    attestation rejected: wrong_version
+  ok    no charge debit for wrong_version
+  ok    attestation rejected: wrong_original_id
+  ok    no charge debit for wrong_original_id
+  ok    attestation rejected: wrong_abstract_id
+  ok    no charge debit for wrong_abstract_id
+  ok    attestation rejected: wrong_source
+  ok    no charge debit for wrong_source
+  ok    attestation rejected: wrong_boundary
+  ok    no charge debit for wrong_boundary
+  ok    attestation rejected: wrong_context
+  ok    no charge debit for wrong_context
+  ok    attestation rejected: wrong_instance
+  ok    no charge debit for wrong_instance
+  ok    attestation rejected: wrong_revision
+  ok    no charge debit for wrong_revision
+  ok    attestation rejected: empty_token
+  ok    no charge debit for empty_token
+  ok    verified fixture gate debits once
+  ok    stale revision refused
+  ok    same cast id different context refused
+  ok    cast replay does not debit
+  ok    exactly one charge consumed
+  ok    last charge
+  ok    depleted Core refuses
+[case 08] repair / reconstruction conservation
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    fixture grant iron_parts
+  ok    fixture grant binding_cloth
+  ok    fixture grant core_blank
+  ok    fixture grant venom_extract
+  ok    fixture grant knowledge_spares
+  ok    equipment repaired with materials
+  ok    condition restored
+  ok    Core charge repair forbidden
+  ok    fixture grant knowledge_spares
+  ok    fixture grant research_notes
+  ok    fixture grant soul_ember
+  ok    fixture grant crypt_bone_shard
+  ok    fixture grant iron_scrap
+  ok    fixture grant iron_ingot
+  ok    earn tech_smelting
+  ok    collect output
+  ok    earn tech_precision
+  ok    collect output
+  ok    earn tech_core_binding
+  ok    collect output
+  ok    targeted reconstruction research
+  ok    collect output
+  ok    reconstruction queued
+  ok    old shell reserved, not usable
+  ok    collect output
+  ok    new Core identity, old shell consumed
+  ok    reconstruction creates a new token
+  ok    reconstruction is manufacture, not free repair
+[case 09] lossy recycling / no repair-recycle profit
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    fixture grant iron_ingot
+  ok    ingot dismantled
+  ok    3-scrap ingot returns only 2 scrap
+  ok    unique equipment dismantled
+  ok    unique token removed
+  ok    cannot dismantle twice
+[case 10] legacy first/overflow stacks
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    60 legacy-compatible units
+  ok    first stack key is item id
+  ok    overflow stack explicit id
+  ok    adapter counts both canonical shapes
+[case 11] cultivation closed seed loop
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    fixture grant moonleaf_seed
+  ok    fixture grant compost
+  ok    collect output
+  ok    seed returned once, compost consumed
+  ok    farm cannot create exploration catalyst
+[case 12] station interruption / active ticks only
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    fixture grant oak_wood
+  ok    disabled station receipt accepted without progress
+  ok    job paused without output
+  ok    reload from disk
+  ok    reconfigure adapter after reload
+  ok    collect output
+  ok    paused job resumes exactly once after reload
+[case 13] unique token quantity/kind corruption
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    fixture corrupts token quantity through SaveService
+  ok    quantity=2 token audit fails
+  ok    quantity=2 token not reported owned
+  ok    quantity=2 token excluded from totals
+  ok    cast refuses quantity=2 token
+  ok    repair refuses quantity=2 token
+  ok    dismantle refuses quantity=2 token
+  ok    wear refuses quantity=2 token
+  ok    reload from disk
+  ok    reconfigure adapter after reload
+  ok    quantity corruption persists after reload
+  ok    fixture corrupts token kind
+  ok    wrong-kind token audit fails
+  ok    cast refuses wrong-kind token
+[case 14] orphan record/token / generic drop is A0 blocker
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    generic SaveService drop currently succeeds (A0 must guard)
+  ok    A3 detects orphan attribute record after generic drop
+  ok    cast refuses orphan record
+  ok    reload from disk
+  ok    reconfigure adapter after reload
+  ok    orphan record persists after reload
+  ok    generic orphan token grant
+  ok    A3 detects orphan physical token
+  ok    orphan token not reported owned
+[case 15] generic transfer/merge is A0 blocker
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    generic home transfer currently succeeds (A0 must guard)
+  ok    A3 detects unique token outside bag
+  ok    cast refuses transferred token
+  ok    generic transfer back restores physical token
+  ok    restored token passes audit
+  ok    restored token usable again
+  ok    generic candidate merge currently succeeds (A0 must guard)
+  ok    A3 detects merged quantity=2 token
+  ok    cast refuses merged token
+  ok    reload from disk
+  ok    reconfigure adapter after reload
+  ok    merged token persists after reload
+  ok    fixture candidate removal sanity
+  ok    fixture removes one merged copy
+  ok    quantity restored to one by fixture, not by A3 normalization
+[case 16] escrow token duplication fails closed
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    fixture grant knowledge_spares
+  ok    fixture grant iron_scrap
+  ok    fixture grant iron_ingot
+  ok    fixture grant research_notes
+  ok    fixture grant soul_ember
+  ok    fixture grant crypt_bone_shard
+  ok    earn prerequisite tech_smelting
+  ok    collect output
+  ok    earn prerequisite tech_precision
+  ok    collect output
+  ok    earn prerequisite tech_core_binding
+  ok    collect output
+  ok    specimen escrowed
+  ok    generic duplicate escrow token grant
+  ok    A3 detects escrow record with physical token
+  ok    A3 refuses operation while escrow duplicated
+  ok    fixture removes duplicate token
+  ok    escrow invariant restored
+  ok    escrowed specimen cancellable
+  ok    specimen refund collected once
+  ok    exactly one specimen returned
+[case 17] trusted time host / no caller ticks / no free progress
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    fixture grant oak_wood
+  ok    time job queued
+  ok    old caller-supplied integer ticks rejected
+  ok    extra ticks field rejected
+  ok    forged active_ticks rejected against host
+  ok    missing time host fails closed
+  ok    new event id with no elapsed clock rejected
+  ok    trusted partial tick accepted
+  ok    duplicate tick event idempotent
+  ok    same clock new event id rejected
+  ok    oversized tick quantum rejected
+  ok    regressed host sequence rejected
+  ok    same session index different id rejected
+  ok    collect output
+  ok    trusted time eventually completes job
+  ok    fixture grant oak_wood
+  ok    reload from disk
+  ok    reconfigure adapter after reload
+  ok    new session establishes baseline without offline catch-up
+  ok    no instant finish after reload
+  ok    collect output
+  ok    post-reload active time only
+[case 18] station lifecycle / queue fairness / escrow recovery
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    fixture grant oak_wood
+  ok    fixture grant iron_scrap
+  ok    fixture grant charcoal
+  ok    station partial progress
+  ok    power-off receipt accepted
+  ok    power-off pauses job
+  ok    disabled time not accrued
+  ok    power-on receipt accepted
+  ok    only new active tick accrued
+  ok    removed station receipt accepted without progress
+  ok    removed station pauses job
+  ok    removed station job cancellable
+  ok    removed station escrow recoverable
+  ok    removed station refund exact
+  ok    revision job partial
+  ok    station revision change accepted
+  ok    revision change pauses old job
+  ok    revision baseline resumes
+  ok    revision job collectible
+  ok    wrong station kind cannot enqueue furnace recipe
+  ok    first queue slot used
+  ok    queue capacity enforced
+  ok    second queue slot used
+  ok    bounded queue tick accepted
+  ok    first job finishes before second
+  ok    remaining time advances second job fairly
+  ok    collect output
+  ok    collect output
+[case 19] instance output qty=1 / malformed legacy state
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    instance output quantity=2 rejected
+  ok    fixture writes unsupported economy schema
+  ok    unsupported schema document fails closed
+  ok    mutations refuse unsupported schema
+  ok    reload from disk
+  ok    reconfigure adapter after reload
+  ok    unsupported schema persists after reload
+  ok    fixture writes valid v1 legacy namespace
+  ok    reload from disk
+  ok    reconfigure adapter after reload
+  ok    valid v1 namespace migrates on successful mutation
+  ok    namespace migrated to schema 2
+  ok    migration adds bounded time namespace
+  ok    fixture writes malformed instance record
+  ok    malformed instance record fails closed
+[case 20] save growth compaction / native micro-measure
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    growth wear 0
+  ok    growth wear 1
+  ok    growth wear 2
+  ok    growth wear 3
+  ok    growth wear 4
+  ok    growth wear 5
+  ok    growth wear 6
+  ok    growth wear 7
+  ok    growth wear 8
+  ok    growth wear 9
+  ok    growth wear 10
+  ok    growth wear 11
+  ok    growth wear 12
+  ok    growth wear 13
+  ok    growth wear 14
+  ok    growth wear 15
+  ok    growth wear 16
+  ok    growth wear 17
+  ok    growth wear 18
+  ok    growth wear 19
+  ok    growth wear 20
+  ok    growth wear 21
+  ok    growth wear 22
+  ok    growth wear 23
+  ok    growth wear 24
+  ok    growth wear 25
+  ok    growth wear 26
+  ok    growth wear 27
+  ok    growth wear 28
+  ok    growth wear 29
+  ok    new operations do not grow duplicate commands map
+  ok    one SaveService receipt per transaction
+  ok    save growth measurable
+A3_NATIVE_SAVE_GROWTH bytes_before=4920 bytes_after=13311 delta=8391 transactions=30
+  ok    fixture grant oak_wood
+  ok    fixture grant iron_scrap
+  ok    collect output
+  ok    collected job escrow compacted out of namespace
+[case 21] canonical A1 locker / ledger / cache / deadfall / relay
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    locker succeeds
+  ok    locker grants ZERO physical items
+  ok    locker grants cap_salvage
+  ok    locker does not mint materials
+  ok    capability projection
+  ok    same-event locker replay is idempotent
+  ok    one-time locker cannot be re-granted
+  ok    ledger grants capability only
+  ok    ledger grants cap_seal_1
+  ok    fixture grant iron_scrap
+  ok    relay rejects missing timber
+  ok    missing-cost relay is atomic
+  ok    cache claim 1 by canonical si:* world instance
+  ok    cache grants canonical 3 scrap
+  ok    cache grants canonical 2 spares
+  ok    canonical A1 transaction key
+  ok    cache cooldown projected read-only
+  ok    projection exposes pinned node alias
+  ok    node_* alias resolves to the same physical cache, not a second source
+  ok    cache rejects before active-time cooldown
+  ok    cooldown uses cumulative ACTIVE seconds
+  ok    cache generation 2 after 1800 active seconds via node alias
+  ok    same event_id replay stays idempotent after generation advances
+  ok    replay returns the original canonical key, not the current generation
+  ok    new session does not skip cooldown
+  ok    cooldown persists across sessions and completes with active time
+  ok    deadfall grants 2 oak
+  ok    source identity is class+region+poi+instance, not action name alone
+  ok    relay grants cap_power_1
+  ok    relay consumes 2 scrap + 1 oak
+  ok    relay writes A1 site state
+  ok    reload from disk
+  ok    reconfigure adapter after reload
+  ok    capabilities survive reload
+  ok    canonical receipt survives reload
+[case 22] world claim capacity / failed-save atomicity
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    locker capability before capacity test
+  ok    fixture fills bag capacity
+  ok    full bag rejects whole claim
+  ok    capacity failure changes no inventory, cooldown or receipt
+  ok    fixture clears bag
+  ok    fixture creates .tmp write obstruction
+ERROR: SaveService: Could not write the temporary save file.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _push_failure (res://game/autoload/save_service.gd:4797)
+       [1] _commit_snapshot (res://game/autoload/save_service.gd:2238)
+       [2] _commit_candidate (res://game/autoload/save_service.gd:2217)
+       [3] transact_once (res://game/autoload/save_service.gd:1260)
+       [4] _transact (res://game/survival/economy/economy_service.gd:1028)
+       [5] world_action (res://game/survival/economy/economy_service.gd:744)
+       [6] _world_act (res://tests/survival/catalog/economy_adapter_test.gd:597)
+       [7] _case_22_world_atomicity_and_failed_save (res://tests/survival/catalog/economy_adapter_test.gd:768)
+       [8] _run (res://tests/survival/catalog/economy_adapter_test.gd:562)
+  ok    failed authoritative save rejects claim
+  ok    failed save leaves inventory/world/receipt unchanged
+  ok    retry after I/O repair grants exactly once
+  ok    retry receipt is idempotent
+[case 23] no-Core multi-source -> paid stations -> basic-tool research -> iron_pick -> reload
+  ok    live authoritative save
+  ok    live survival catalog
+  ok    live catalog + SaveService adapter
+  ok    chain locker
+  ok    chain ledger
+  ok    roadside crate 01 grants 1 research note
+  ok    one-time crate 02 grants 3 scrap + 2 spares
+  ok    one-time crate 03 grants 2 oak + 1 note
+  ok    chain cache claim 0
+  ok    chain cache claim 1
+  ok    chain cache claim 2
+  ok    chain cache claim 3
+  ok    crate02 + 4 cache claims = 15 scrap / 10 spares
+  ok    crate01 + crate03 = 2 real notes, no legacy ember
+  ok    no legacy catalyst grant in the no-Core chain
+  ok    chain deadfall
+  ok    live harvest a3_oak_1 0: 
+  ok    live harvest a3_oak_1 1: 
+  ok    live harvest a3_oak_1 2: 
+  ok    live harvest a3_oak_2 0: 
+  ok    live harvest a3_oak_2 1: 
+  ok    live harvest a3_oak_2 2: 
+  ok    live harvest a3_oak_3 0: 
+  ok    live harvest a3_oak_3 1: 
+  ok    live harvest a3_oak_3 2: 
+  ok    live harvest a3_stone_1 0: 
+  ok    live harvest a3_stone_1 1: 
+  ok    live harvest a3_stone_1 2: 
+  ok    live harvest a3_stone_2 0: 
+  ok    live harvest a3_stone_2 1: 
+  ok    live harvest a3_stone_2 2: 
+  ok    live harvest a3_reed_1 0: 
+  ok    live harvest a3_reed_1 1: 
+  ok    live harvest a3_reed_2 0: 
+  ok    live harvest a3_reed_2 1: 
+  ok    live harvest a3_iron_0 0: 
+  ok    live harvest a3_iron_0 1: 
+  ok    live harvest a3_iron_1 0: 
+  ok    live harvest a3_iron_1 1: 
+  ok    live harvest a3_scrap_0 0: 
+  ok    live harvest a3_scrap_0 1: 
+  ok    live harvest a3_scrap_1 0: 
+  ok    live harvest a3_scrap_1 1: 
+  ok    live node totals are scrap, not invented ore
+  ok    store oak in home storage
+  ok    oak physically leaves bag
+  ok    withdraw oak from home storage
+  ok    storage round trip conserves oak
+  ok    chain relay consumes 2 scrap + 1 oak
+  ok    enqueue workbench_kit: rejected
+  ok    collect output
+  ok    enqueue furnace_kit: rejected
+  ok    collect output
+  ok    enqueue burn_charcoal: rejected
+  ok    collect output
+  ok    enqueue burn_charcoal: rejected
+  ok    collect output
+  ok    enqueue smelt_iron: rejected
+  ok    collect output
+  ok    enqueue smelt_iron: rejected
+  ok    collect output
+  ok    enqueue smelt_iron: rejected
+  ok    collect output
+  ok    enqueue smelt_iron: rejected
+  ok    collect output
+  ok    scrap + charcoal bootstrap 4 ingots without a Core
+  ok    enqueue research_kit: rejected
+  ok    collect output
+  ok    enqueue weave_cloth: rejected
+  ok    collect output
+  ok    basic-tool targeted research enqueued: rejected
+  ok    collect output
+  ok    iron_pick recipe permanently learned
+  ok    learned knowledge is not consumed/repeated
+  ok    enqueue iron_pick: rejected
+  ok    collect output
+  ok    one physical iron_pick output
+  ok    exact leftover inventory after paid chain
+  ok    no Skill Core was required or granted
+  ok    reload from disk
+  ok    reconfigure adapter after reload
+  ok    recipe knowledge survives reload
+  ok    world capabilities/state survive reload
+  ok    physical output survives reload without duplication
+  ok    cumulative active world clock survives reload
+[case 24] adversarial world clock / session / identity / conservation
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    Vector2i host cell accepted
+  ok    integer array host cell accepted
+  ok    float cell rejected
+  ok    bool cell rejected
+  ok    string cell rejected
+  ok    Vector2i matches authored stand
+  ok    adjacent cell is out of range
+  ok    locker before adversarial cache
+  ok    first cache claim
+  ok    UI flags/rewards cannot authorize a claim
+  ok    UI spoof changes no state
+  ok    event id cannot be reused for a different source
+  ok    host time quantum spoof rejected
+  ok    quantum spoof leaves save unchanged
+  ok    stale host sequence rejected
+  ok    host clock regression rejected
+  ok    clock attacks conserve the committed snapshot
+  ok    new session baselines host counter
+  ok    spoofed session counter does not skip cooldown
+  ok    fixture grant iron_scrap
+  ok    relay rejects partial cost
+  ok    partial cost consumes nothing and grants no capability
+  ok    fixture grant knowledge_spares
+  ok    fixture grant research_notes
+  ok    research enqueued for conservation check
+  ok    collect output
+  ok    knowledge learned
+  ok    craft without inputs fails
+  ok    failed craft does not erase permanent recipe knowledge
+[case 25] A8 Quarry fail-closed + undiscovered projection privacy
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    undiscovered POI hides private source/reward metadata
+  ok    unauthorized Quarry POI is rejected
+  ok    caller cannot price/authorize Quarry through request fields
+  ok    Quarry has no read-only economy projection until authorized
+  ok    locker discovers Waystation
+  ok    discovered POI exposes actionable read-only sources
+[case 26] one-time A1 crates, exhausted projection, and basic-tool research override
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    one-time crate 02 first claim succeeds
+  ok    new event cannot reclaim one-time crate 02
+  ok    exhausted one-time claim changes no inventory/cooldown/receipt
+  ok    same-event one-time replay remains idempotent
+  ok    discover Waystation for projection
+  ok    A6 projection marks one-time crate exhausted, not cooling down
+  ok    fixture clears crate loot before research cost test
+  ok    fixture grant knowledge_spares
+  ok    fixture grant research_notes
+  ok    basic-tool research rejects 2 spares + 1 note
+  ok    fixture grant knowledge_spares
+  ok    basic-tool research accepts exactly 3 spares + 1 note
+  ok    collect output
+  ok    basic-tool research consumes the override cost exactly
+  ok    fixture grant knowledge_spares
+  ok    fixture grant research_notes
+  ok    advanced targeted research still rejects 5 spares + 2 notes
+  ok    fixture grant knowledge_spares
+  ok    advanced targeted research still requires 6 spares + 2 notes
+A3 ECONOMY ADAPTER PASSED - 556 checks / 26 cases
+WARNING: 112 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2535)
+ERROR: 3 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

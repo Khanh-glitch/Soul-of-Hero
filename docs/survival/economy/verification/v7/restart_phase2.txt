@@ -1,0 +1,21 @@
+Godot Engine v4.7.stable.custom_build - https://godotengine.org
+
+  ok    configure shared save phase 2
+  ok    configure economy phase 2
+  ok    phase2 reads expected marker
+  ok    phase2 reload conserves inventory exactly
+  ok    phase2 same event id is idempotent across OS restart
+  ok    phase2 replay returns original canonical key
+  ok    phase2 baselines fresh session without offline credit
+  ok    phase2 node alias cannot reclaim before cooldown
+  ok    phase2 no offline credit: full 1800 active seconds remain
+  ok    phase2 advances 1799 active seconds
+  ok    phase2 one active second remains
+  ok    phase2 advances final active second
+  ok    phase2 generation 2 after real active time
+  ok    phase2 exactly one additional canonical reward
+A3 WORLD RESTART PHASE 2 PASSED - 14 checks
+WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2535)
+ERROR: 3 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

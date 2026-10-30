@@ -1,0 +1,1094 @@
+{
+  "status": "SIMULATION_ONLY_SOH_DESIGN_PROPOSAL",
+  "gameplay_design_status": "NOT_HUMAN_PLAYTESTED",
+  "comparison": [
+    {
+      "scenario": "baseline",
+      "technical_status": "PASS",
+      "home_built": true,
+      "specimens_found": {
+        "core_ember": 1,
+        "core_frost": 1
+      },
+      "cores_manufactured": {
+        "core_ember": 1,
+        "core_frost": 0,
+        "core_venom": 0
+      },
+      "first_ember_discovery": 3,
+      "first_frost_discovery": 6,
+      "first_ember_manufacture": 8,
+      "catalyst_successes": 1,
+      "deaths": 1,
+      "remaining_late_goals": 5,
+      "time_accounting_status": "SPARSE_SCENARIO_MODEL",
+      "active_modeled_seconds": 24695,
+      "unused_budget_seconds": 13105
+    },
+    {
+      "scenario": "poor_loot",
+      "technical_status": "PASS",
+      "home_built": true,
+      "specimens_found": {
+        "core_ember": 1,
+        "core_frost": 1
+      },
+      "cores_manufactured": {
+        "core_ember": 0,
+        "core_frost": 0,
+        "core_venom": 0
+      },
+      "first_ember_discovery": 5,
+      "first_frost_discovery": 8,
+      "first_ember_manufacture": null,
+      "catalyst_successes": 1,
+      "deaths": 0,
+      "remaining_late_goals": 5,
+      "time_accounting_status": "SPARSE_SCENARIO_MODEL",
+      "active_modeled_seconds": 35216,
+      "unused_budget_seconds": 2584
+    },
+    {
+      "scenario": "lost_specimen",
+      "technical_status": "PASS",
+      "home_built": true,
+      "specimens_found": {
+        "core_ember": 1,
+        "core_frost": 1
+      },
+      "cores_manufactured": {
+        "core_ember": 1,
+        "core_frost": 0,
+        "core_venom": 0
+      },
+      "first_ember_discovery": 3,
+      "first_frost_discovery": 7,
+      "first_ember_manufacture": 9,
+      "catalyst_successes": 1,
+      "deaths": 2,
+      "remaining_late_goals": 5,
+      "time_accounting_status": "SPARSE_SCENARIO_MODEL",
+      "active_modeled_seconds": 26137,
+      "unused_budget_seconds": 11663
+    },
+    {
+      "scenario": "material_shortage",
+      "technical_status": "PASS",
+      "home_built": true,
+      "specimens_found": {
+        "core_ember": 1
+      },
+      "cores_manufactured": {
+        "core_ember": 0,
+        "core_frost": 0,
+        "core_venom": 0
+      },
+      "first_ember_discovery": 6,
+      "first_frost_discovery": null,
+      "first_ember_manufacture": null,
+      "catalyst_successes": 0,
+      "deaths": 1,
+      "remaining_late_goals": 5,
+      "time_accounting_status": "SPARSE_SCENARIO_MODEL",
+      "active_modeled_seconds": 24909,
+      "unused_budget_seconds": 12891
+    },
+    {
+      "scenario": "failed_expeditions",
+      "technical_status": "PASS",
+      "home_built": true,
+      "specimens_found": {
+        "core_ember": 1,
+        "core_frost": 1
+      },
+      "cores_manufactured": {
+        "core_ember": 0,
+        "core_frost": 0,
+        "core_venom": 0
+      },
+      "first_ember_discovery": 3,
+      "first_frost_discovery": 7,
+      "first_ember_manufacture": null,
+      "catalyst_successes": 1,
+      "deaths": 2,
+      "remaining_late_goals": 5,
+      "time_accounting_status": "SPARSE_SCENARIO_MODEL",
+      "active_modeled_seconds": 27471,
+      "unused_budget_seconds": 10329
+    },
+    {
+      "scenario": "limited_playtime",
+      "technical_status": "PASS",
+      "home_built": true,
+      "specimens_found": {
+        "core_ember": 1
+      },
+      "cores_manufactured": {
+        "core_ember": 0,
+        "core_frost": 0,
+        "core_venom": 0
+      },
+      "first_ember_discovery": 12,
+      "first_frost_discovery": null,
+      "first_ember_manufacture": null,
+      "catalyst_successes": 0,
+      "deaths": 0,
+      "remaining_late_goals": 5,
+      "time_accounting_status": "SPARSE_SCENARIO_MODEL",
+      "active_modeled_seconds": 16748,
+      "unused_budget_seconds": 52
+    },
+    {
+      "scenario": "use_now",
+      "technical_status": "PASS",
+      "home_built": true,
+      "specimens_found": {
+        "core_ember": 1,
+        "core_frost": 1
+      },
+      "cores_manufactured": {
+        "core_ember": 0,
+        "core_frost": 0,
+        "core_venom": 0
+      },
+      "first_ember_discovery": 3,
+      "first_frost_discovery": 6,
+      "first_ember_manufacture": null,
+      "catalyst_successes": 1,
+      "deaths": 1,
+      "remaining_late_goals": 5,
+      "time_accounting_status": "SPARSE_SCENARIO_MODEL",
+      "active_modeled_seconds": 24936,
+      "unused_budget_seconds": 12864
+    },
+    {
+      "scenario": "research_first",
+      "technical_status": "PASS",
+      "home_built": true,
+      "specimens_found": {
+        "core_ember": 1,
+        "core_frost": 1
+      },
+      "cores_manufactured": {
+        "core_ember": 1,
+        "core_frost": 0,
+        "core_venom": 0
+      },
+      "first_ember_discovery": 3,
+      "first_frost_discovery": 6,
+      "first_ember_manufacture": 7,
+      "catalyst_successes": 1,
+      "deaths": 1,
+      "remaining_late_goals": 5,
+      "time_accounting_status": "SPARSE_SCENARIO_MODEL",
+      "active_modeled_seconds": 24719,
+      "unused_budget_seconds": 13081
+    },
+    {
+      "scenario": "store_all",
+      "technical_status": "PASS",
+      "home_built": true,
+      "specimens_found": {
+        "core_ember": 1,
+        "core_frost": 1
+      },
+      "cores_manufactured": {
+        "core_ember": 0,
+        "core_frost": 0,
+        "core_venom": 0
+      },
+      "first_ember_discovery": 3,
+      "first_frost_discovery": 6,
+      "first_ember_manufacture": null,
+      "catalyst_successes": 1,
+      "deaths": 1,
+      "remaining_late_goals": 5,
+      "time_accounting_status": "SPARSE_SCENARIO_MODEL",
+      "active_modeled_seconds": 24936,
+      "unused_budget_seconds": 12864
+    },
+    {
+      "scenario": "rush_east_unprepared",
+      "technical_status": "PASS",
+      "home_built": true,
+      "specimens_found": {
+        "core_ember": 1
+      },
+      "cores_manufactured": {
+        "core_ember": 0,
+        "core_frost": 0,
+        "core_venom": 0
+      },
+      "first_ember_discovery": 3,
+      "first_frost_discovery": null,
+      "first_ember_manufacture": null,
+      "catalyst_successes": 0,
+      "deaths": 2,
+      "remaining_late_goals": 5,
+      "time_accounting_status": "SPARSE_SCENARIO_MODEL",
+      "active_modeled_seconds": 10712,
+      "unused_budget_seconds": 88
+    },
+    {
+      "scenario": "early_loss_no_fallback",
+      "technical_status": "PASS",
+      "home_built": true,
+      "specimens_found": {
+        "core_ember": 1,
+        "core_frost": 1
+      },
+      "cores_manufactured": {
+        "core_ember": 0,
+        "core_frost": 0,
+        "core_venom": 0
+      },
+      "first_ember_discovery": 3,
+      "first_frost_discovery": 6,
+      "first_ember_manufacture": null,
+      "catalyst_successes": 1,
+      "deaths": 1,
+      "remaining_late_goals": 5,
+      "time_accounting_status": "SPARSE_SCENARIO_MODEL",
+      "active_modeled_seconds": 24626,
+      "unused_budget_seconds": 13174
+    },
+    {
+      "scenario": "early_loss_targeted_fallback",
+      "technical_status": "PASS",
+      "home_built": true,
+      "specimens_found": {
+        "core_ember": 1,
+        "core_frost": 1
+      },
+      "cores_manufactured": {
+        "core_ember": 1,
+        "core_frost": 0,
+        "core_venom": 0
+      },
+      "first_ember_discovery": 3,
+      "first_frost_discovery": 6,
+      "first_ember_manufacture": 7,
+      "catalyst_successes": 1,
+      "deaths": 1,
+      "remaining_late_goals": 5,
+      "time_accounting_status": "SPARSE_SCENARIO_MODEL",
+      "active_modeled_seconds": 24695,
+      "unused_budget_seconds": 13105
+    },
+    {
+      "scenario": "safe_route_blocked",
+      "technical_status": "PASS",
+      "home_built": true,
+      "specimens_found": {
+        "core_ember": 1,
+        "core_frost": 1
+      },
+      "cores_manufactured": {
+        "core_ember": 1,
+        "core_frost": 0,
+        "core_venom": 0
+      },
+      "first_ember_discovery": 3,
+      "first_frost_discovery": 6,
+      "first_ember_manufacture": 8,
+      "catalyst_successes": 1,
+      "deaths": 2,
+      "remaining_late_goals": 5,
+      "time_accounting_status": "SPARSE_SCENARIO_MODEL",
+      "active_modeled_seconds": 26631,
+      "unused_budget_seconds": 11169
+    },
+    {
+      "scenario": "catalyst_drought",
+      "technical_status": "PASS",
+      "home_built": true,
+      "specimens_found": {
+        "core_ember": 1,
+        "core_frost": 1
+      },
+      "cores_manufactured": {
+        "core_ember": 0,
+        "core_frost": 0,
+        "core_venom": 0
+      },
+      "first_ember_discovery": 3,
+      "first_frost_discovery": 6,
+      "first_ember_manufacture": null,
+      "catalyst_successes": 0,
+      "deaths": 1,
+      "remaining_late_goals": 5,
+      "time_accounting_status": "SPARSE_SCENARIO_MODEL",
+      "active_modeled_seconds": 28520,
+      "unused_budget_seconds": 9280
+    },
+    {
+      "scenario": "queue_interruption",
+      "technical_status": "PASS",
+      "home_built": true,
+      "specimens_found": {
+        "core_ember": 1,
+        "core_frost": 1
+      },
+      "cores_manufactured": {
+        "core_ember": 0,
+        "core_frost": 0,
+        "core_venom": 0
+      },
+      "first_ember_discovery": 3,
+      "first_frost_discovery": 5,
+      "first_ember_manufacture": null,
+      "catalyst_successes": 1,
+      "deaths": 3,
+      "remaining_late_goals": 5,
+      "time_accounting_status": "SPARSE_SCENARIO_MODEL",
+      "active_modeled_seconds": 28665,
+      "unused_budget_seconds": 9135
+    }
+  ],
+  "baseline_technical_status": "PASS",
+  "product_findings": [
+    {
+      "id": "P-01",
+      "status": "OBSERVED_IN_MODEL",
+      "finding": "Rare Core specimens are one-time POI discoveries, not flat timer loot.",
+      "evidence": {
+        "specimen_discoveries": [
+          {
+            "session": 3,
+            "item_id": "core_ember",
+            "source_id": "specimen_ember",
+            "poi_id": "poi_crown_barrow_field"
+          },
+          {
+            "session": 6,
+            "item_id": "core_frost",
+            "source_id": "specimen_frost",
+            "poi_id": "poi_frost_ice_cave"
+          }
+        ],
+        "session1_flood": false
+      }
+    },
+    {
+      "id": "P-02",
+      "status": "OBSERVED_IN_MODEL",
+      "finding": "USE/STORE/SACRIFICE changes permanent knowledge and physical Core availability; no Gold cast is executed.",
+      "evidence": {
+        "decisions": [
+          {
+            "session": 7,
+            "decision": "SACRIFICE",
+            "instance": "soh_model_000015",
+            "item_id": "core_ember",
+            "recipe": "craft_core_ember",
+            "knowledge_permanent": true,
+            "native_casts_executed": 0
+          }
+        ],
+        "native_casts_executed": 0
+      }
+    },
+    {
+      "id": "P-03",
+      "status": "BOTTLENECK",
+      "finding": "Core manufacture is gated by knowledge_spares, ancient_catalyst, advanced workbench and family reagents.",
+      "evidence": {
+        "bottlenecks": {
+          "session_time:expedition": 26,
+          "capability_material_unresolved:cap_boat": 8,
+          "home_required_for_stations": 6,
+          "inventory_full:home": 6,
+          "station_missing:workbench:t1": 2,
+          "station_missing:furnace:t1": 2,
+          "input_missing:iron_ingot": 2,
+          "research_input:charge_blank": 2,
+          "home_cost_missing": 1,
+          "input_missing:iron_scrap": 1,
+          "input_missing:crypt_bone_shard": 1,
+          "tech_input:tech_smelting": 1,
+          "tech_prereq:tech_precision": 1,
+          "tech_prereq:tech_core_binding": 1,
+          "research_input:core_blank": 1
+        },
+        "cores_manufactured": {
+          "core_ember": 1,
+          "core_frost": 0,
+          "core_venom": 0
+        }
+      }
+    },
+    {
+      "id": "P-04",
+      "status": "UNRESOLVED_A1",
+      "finding": "frost_resin, venom_sac and peat remain unapproved; Frost/Venom manufacture must not silently consume A1 world keys as A3 items.",
+      "evidence": {
+        "aliases": [
+          "bog_iron",
+          "fibre",
+          "frost_resin",
+          "glacial_iron",
+          "hardwood",
+          "peat",
+          "rare_herb",
+          "venom_sac"
+        ]
+      }
+    },
+    {
+      "id": "P-05",
+      "status": "REMAINING_FRONTIER",
+      "finding": "At least three late goals remain after the modeled journey; they are destinations, not proven engagement.",
+      "evidence": {
+        "remaining_late_goal_count": 5,
+        "goals": [
+          {
+            "goal_id": "goal_tide_customs",
+            "poi_id": "poi_pearl_customs",
+            "systems": [
+              "exploration",
+              "research"
+            ],
+            "required_capabilities": [
+              "cap_boat",
+              "cap_seal_2",
+              "cap_tide_ward"
+            ],
+            "capabilities_owned": [
+              "cap_seal_2"
+            ],
+            "missing_or_unresolved_materials": [
+              "abyssal_pearl",
+              "pearl",
+              "rubber_sap",
+              "hardwood"
+            ],
+            "status": "REMAINING_GOAL"
+          },
+          {
+            "goal_id": "goal_karst_dive",
+            "poi_id": "poi_sunken_cenote",
+            "systems": [
+              "exploration",
+              "building"
+            ],
+            "required_capabilities": [
+              "cap_deepward"
+            ],
+            "capabilities_owned": [],
+            "missing_or_unresolved_materials": [
+              "aether_crystal",
+              "rubber_sap",
+              "glacial_iron"
+            ],
+            "status": "REMAINING_GOAL"
+          },
+          {
+            "goal_id": "goal_fen_purification",
+            "poi_id": "poi_ashwater_pump",
+            "systems": [
+              "building",
+              "economy",
+              "exploration"
+            ],
+            "required_capabilities": [
+              "cap_filter",
+              "cap_power_1",
+              "cap_seal_2"
+            ],
+            "capabilities_owned": [
+              "cap_filter",
+              "cap_power_1",
+              "cap_seal_2"
+            ],
+            "missing_or_unresolved_materials": [
+              "copper",
+              "bog_iron",
+              "peat"
+            ],
+            "status": "REMAINING_GOAL"
+          },
+          {
+            "goal_id": "goal_storm_signal",
+            "poi_id": "poi_glasswind_light",
+            "systems": [
+              "exploration",
+              "research"
+            ],
+            "required_capabilities": [
+              "cap_seal_2",
+              "cap_stormward"
+            ],
+            "capabilities_owned": [
+              "cap_seal_2"
+            ],
+            "missing_or_unresolved_materials": [
+              "storm_glass",
+              "silica_sand",
+              "copper"
+            ],
+            "status": "REMAINING_GOAL"
+          },
+          {
+            "goal_id": "goal_canopy_lift",
+            "poi_id": "poi_verdant_root_lift",
+            "systems": [
+              "exploration",
+              "combat",
+              "research"
+            ],
+            "required_capabilities": [
+              "cap_climb",
+              "cap_filter",
+              "cap_thermal"
+            ],
+            "capabilities_owned": [
+              "cap_climb",
+              "cap_filter",
+              "cap_thermal"
+            ],
+            "missing_or_unresolved_materials": [
+              "venom_sac",
+              "aether_crystal",
+              "hardwood",
+              "rubber_sap"
+            ],
+            "status": "REMAINING_GOAL"
+          }
+        ]
+      }
+    },
+    {
+      "id": "P-06",
+      "status": "SENSITIVITY",
+      "finding": "Poor loot, lost specimens, shortages, failed expeditions and limited playtime delay or block milestones rather than being averaged away.",
+      "evidence": {
+        "comparison": [
+          {
+            "scenario": "baseline",
+            "firsts": {
+              "capability:cap_salvage": 1,
+              "capability:cap_seal_1": 1,
+              "capability:cap_power_1": 1,
+              "capability:cap_filter": 1,
+              "craft:stone_pick": 1,
+              "craft:furnace_kit": 1,
+              "home_built": 2,
+              "craft:workbench_kit": 2,
+              "station:furnace": 2,
+              "station:workbench": 2,
+              "craft:burn_charcoal": 3,
+              "craft:smelt_iron": 3,
+              "craft:research_kit": 3,
+              "station:research": 3,
+              "craft:weave_cloth": 3,
+              "discovery:core_ember": 3,
+              "craft:make_spares": 3,
+              "craft:make_notes": 3,
+              "craft:make_parts": 3,
+              "capability:cap_seal_2": 4,
+              "tech:tech_smelting": 4,
+              "tech:tech_precision": 4,
+              "tech:tech_core_binding": 4,
+              "capability:cap_climb": 5,
+              "capability:cap_thermal": 5,
+              "research:core_blank": 5,
+              "discovery:core_frost": 6,
+              "research:charge_blank": 6,
+              "station:advanced_workbench": 7,
+              "research:craft_core_ember": 7,
+              "craft:core_blank": 8,
+              "craft:charge_blank": 8,
+              "craft:craft_core_ember": 8,
+              "manufacture:core_ember": 8
+            },
+            "deaths": 1
+          },
+          {
+            "scenario": "poor_loot",
+            "firsts": {
+              "capability:cap_salvage": 1,
+              "capability:cap_seal_1": 1,
+              "capability:cap_power_1": 1,
+              "capability:cap_filter": 1,
+              "craft:stone_pick": 1,
+              "craft:workbench_kit": 1,
+              "craft:furnace_kit": 3,
+              "home_built": 4,
+              "station:furnace": 4,
+              "station:workbench": 4,
+              "craft:burn_charcoal": 4,
+              "craft:smelt_iron": 4,
+              "craft:make_parts": 4,
+              "discovery:core_ember": 5,
+              "capability:cap_seal_2": 6,
+              "craft:research_kit": 7,
+              "station:research": 7,
+              "craft:make_spares": 7,
+              "craft:weave_cloth": 7,
+              "station:advanced_workbench": 7,
+              "capability:cap_climb": 7,
+              "capability:cap_thermal": 7,
+              "craft:make_notes": 7,
+              "discovery:core_frost": 8,
+              "tech:tech_smelting": 10,
+              "tech:tech_precision": 10
+            },
+            "deaths": 0
+          },
+          {
+            "scenario": "lost_specimen",
+            "firsts": {
+              "capability:cap_salvage": 1,
+              "capability:cap_seal_1": 1,
+              "capability:cap_power_1": 1,
+              "capability:cap_filter": 1,
+              "craft:stone_pick": 1,
+              "craft:furnace_kit": 1,
+              "home_built": 2,
+              "craft:workbench_kit": 2,
+              "station:furnace": 2,
+              "station:workbench": 2,
+              "craft:burn_charcoal": 3,
+              "craft:smelt_iron": 3,
+              "craft:research_kit": 3,
+              "station:research": 3,
+              "craft:weave_cloth": 3,
+              "discovery:core_ember": 3,
+              "craft:make_spares": 3,
+              "craft:make_notes": 3,
+              "craft:make_parts": 3,
+              "capability:cap_seal_2": 4,
+              "tech:tech_smelting": 4,
+              "tech:tech_precision": 4,
+              "tech:tech_core_binding": 4,
+              "capability:cap_climb": 5,
+              "capability:cap_thermal": 5,
+              "research:core_blank": 5,
+              "station:advanced_workbench": 7,
+              "discovery:core_frost": 7,
+              "research:charge_blank": 7,
+              "research:craft_core_ember": 8,
+              "craft:core_blank": 9,
+              "craft:charge_blank": 9,
+              "craft:craft_core_ember": 9,
+              "manufacture:core_ember": 9
+            },
+            "deaths": 2
+          },
+          {
+            "scenario": "material_shortage",
+            "firsts": {
+              "capability:cap_salvage": 1,
+              "capability:cap_seal_1": 1,
+              "capability:cap_power_1": 1,
+              "craft:stone_pick": 1,
+              "craft:workbench_kit": 1,
+              "home_built": 2,
+              "station:workbench": 2,
+              "craft:furnace_kit": 3,
+              "station:furnace": 3,
+              "craft:burn_charcoal": 4,
+              "craft:smelt_iron": 4,
+              "craft:research_kit": 4,
+              "station:research": 4,
+              "craft:weave_cloth": 4,
+              "craft:make_parts": 4,
+              "discovery:core_ember": 6,
+              "tech:tech_smelting": 8,
+              "tech:tech_precision": 12
+            },
+            "deaths": 1
+          },
+          {
+            "scenario": "failed_expeditions",
+            "firsts": {
+              "capability:cap_salvage": 1,
+              "capability:cap_seal_1": 1,
+              "capability:cap_power_1": 1,
+              "capability:cap_filter": 1,
+              "craft:stone_pick": 1,
+              "craft:furnace_kit": 1,
+              "home_built": 2,
+              "craft:workbench_kit": 2,
+              "station:furnace": 2,
+              "station:workbench": 2,
+              "craft:burn_charcoal": 3,
+              "craft:smelt_iron": 3,
+              "craft:research_kit": 3,
+              "station:research": 3,
+              "craft:weave_cloth": 3,
+              "discovery:core_ember": 3,
+              "craft:make_spares": 3,
+              "craft:make_notes": 3,
+              "craft:make_parts": 3,
+              "capability:cap_seal_2": 4,
+              "tech:tech_smelting": 4,
+              "tech:tech_precision": 4,
+              "tech:tech_core_binding": 4,
+              "capability:cap_climb": 5,
+              "capability:cap_thermal": 5,
+              "station:advanced_workbench": 7,
+              "discovery:core_frost": 7,
+              "research:core_blank": 7,
+              "research:charge_blank": 8
+            },
+            "deaths": 2
+          },
+          {
+            "scenario": "limited_playtime",
+            "firsts": {
+              "capability:cap_salvage": 1,
+              "capability:cap_seal_1": 1,
+              "capability:cap_power_1": 1,
+              "capability:cap_filter": 1,
+              "craft:stone_pick": 2,
+              "craft:workbench_kit": 2,
+              "craft:furnace_kit": 3,
+              "home_built": 4,
+              "station:furnace": 4,
+              "station:workbench": 4,
+              "craft:burn_charcoal": 5,
+              "craft:smelt_iron": 9,
+              "craft:research_kit": 10,
+              "station:research": 10,
+              "craft:weave_cloth": 10,
+              "craft:make_spares": 10,
+              "craft:make_notes": 10,
+              "tech:tech_smelting": 10,
+              "tech:tech_precision": 11,
+              "tech:tech_core_binding": 12,
+              "discovery:core_ember": 12,
+              "capability:cap_seal_2": 12,
+              "research:core_blank": 13,
+              "craft:make_parts": 13,
+              "station:advanced_workbench": 13,
+              "research:charge_blank": 14
+            },
+            "deaths": 0
+          },
+          {
+            "scenario": "use_now",
+            "firsts": {
+              "capability:cap_salvage": 1,
+              "capability:cap_seal_1": 1,
+              "capability:cap_power_1": 1,
+              "capability:cap_filter": 1,
+              "craft:stone_pick": 1,
+              "craft:furnace_kit": 1,
+              "home_built": 2,
+              "craft:workbench_kit": 2,
+              "station:furnace": 2,
+              "station:workbench": 2,
+              "craft:burn_charcoal": 3,
+              "craft:smelt_iron": 3,
+              "craft:research_kit": 3,
+              "station:research": 3,
+              "craft:weave_cloth": 3,
+              "discovery:core_ember": 3,
+              "craft:make_spares": 3,
+              "craft:make_notes": 3,
+              "craft:make_parts": 3,
+              "capability:cap_seal_2": 4,
+              "tech:tech_smelting": 4,
+              "tech:tech_precision": 4,
+              "tech:tech_core_binding": 4,
+              "capability:cap_climb": 5,
+              "capability:cap_thermal": 5,
+              "research:core_blank": 5,
+              "discovery:core_frost": 6,
+              "research:charge_blank": 6,
+              "station:advanced_workbench": 7
+            },
+            "deaths": 1
+          },
+          {
+            "scenario": "research_first",
+            "firsts": {
+              "capability:cap_salvage": 1,
+              "capability:cap_seal_1": 1,
+              "capability:cap_power_1": 1,
+              "capability:cap_filter": 1,
+              "craft:stone_pick": 1,
+              "craft:furnace_kit": 1,
+              "home_built": 2,
+              "craft:workbench_kit": 2,
+              "station:furnace": 2,
+              "station:workbench": 2,
+              "craft:burn_charcoal": 3,
+              "craft:smelt_iron": 3,
+              "craft:research_kit": 3,
+              "station:research": 3,
+              "craft:weave_cloth": 3,
+              "discovery:core_ember": 3,
+              "craft:make_spares": 3,
+              "craft:make_notes": 3,
+              "craft:make_parts": 3,
+              "capability:cap_seal_2": 4,
+              "tech:tech_smelting": 4,
+              "tech:tech_precision": 4,
+              "tech:tech_core_binding": 4,
+              "capability:cap_climb": 5,
+              "capability:cap_thermal": 5,
+              "research:core_blank": 5,
+              "discovery:core_frost": 6,
+              "research:charge_blank": 6,
+              "research:craft_core_ember": 6,
+              "station:advanced_workbench": 7,
+              "research:craft_core_frost": 7,
+              "craft:core_blank": 7,
+              "craft:charge_blank": 7,
+              "craft:craft_core_ember": 7,
+              "manufacture:core_ember": 7
+            },
+            "deaths": 1
+          },
+          {
+            "scenario": "store_all",
+            "firsts": {
+              "capability:cap_salvage": 1,
+              "capability:cap_seal_1": 1,
+              "capability:cap_power_1": 1,
+              "capability:cap_filter": 1,
+              "craft:stone_pick": 1,
+              "craft:furnace_kit": 1,
+              "home_built": 2,
+              "craft:workbench_kit": 2,
+              "station:furnace": 2,
+              "station:workbench": 2,
+              "craft:burn_charcoal": 3,
+              "craft:smelt_iron": 3,
+              "craft:research_kit": 3,
+              "station:research": 3,
+              "craft:weave_cloth": 3,
+              "discovery:core_ember": 3,
+              "craft:make_spares": 3,
+              "craft:make_notes": 3,
+              "craft:make_parts": 3,
+              "capability:cap_seal_2": 4,
+              "tech:tech_smelting": 4,
+              "tech:tech_precision": 4,
+              "tech:tech_core_binding": 4,
+              "capability:cap_climb": 5,
+              "capability:cap_thermal": 5,
+              "research:core_blank": 5,
+              "discovery:core_frost": 6,
+              "research:charge_blank": 6,
+              "station:advanced_workbench": 7
+            },
+            "deaths": 1
+          },
+          {
+            "scenario": "rush_east_unprepared",
+            "firsts": {
+              "capability:cap_salvage": 1,
+              "capability:cap_seal_1": 1,
+              "capability:cap_power_1": 1,
+              "capability:cap_filter": 1,
+              "craft:stone_pick": 1,
+              "craft:furnace_kit": 1,
+              "home_built": 2,
+              "craft:workbench_kit": 2,
+              "station:furnace": 2,
+              "station:workbench": 2,
+              "craft:burn_charcoal": 3,
+              "craft:smelt_iron": 3,
+              "craft:research_kit": 3,
+              "station:research": 3,
+              "craft:weave_cloth": 3,
+              "discovery:core_ember": 3,
+              "craft:make_spares": 4,
+              "craft:make_notes": 4,
+              "craft:make_parts": 4
+            },
+            "deaths": 2
+          },
+          {
+            "scenario": "early_loss_no_fallback",
+            "firsts": {
+              "capability:cap_salvage": 1,
+              "capability:cap_seal_1": 1,
+              "capability:cap_power_1": 1,
+              "capability:cap_filter": 1,
+              "craft:stone_pick": 1,
+              "craft:furnace_kit": 1,
+              "home_built": 2,
+              "craft:workbench_kit": 2,
+              "station:furnace": 2,
+              "station:workbench": 2,
+              "craft:burn_charcoal": 3,
+              "craft:smelt_iron": 3,
+              "craft:research_kit": 3,
+              "station:research": 3,
+              "craft:weave_cloth": 3,
+              "discovery:core_ember": 3,
+              "craft:make_spares": 3,
+              "craft:make_notes": 3,
+              "craft:make_parts": 3,
+              "capability:cap_seal_2": 4,
+              "tech:tech_smelting": 4,
+              "tech:tech_precision": 4,
+              "tech:tech_core_binding": 4,
+              "capability:cap_climb": 5,
+              "capability:cap_thermal": 5,
+              "research:core_blank": 5,
+              "discovery:core_frost": 6,
+              "research:charge_blank": 6,
+              "station:advanced_workbench": 7
+            },
+            "deaths": 1
+          },
+          {
+            "scenario": "early_loss_targeted_fallback",
+            "firsts": {
+              "capability:cap_salvage": 1,
+              "capability:cap_seal_1": 1,
+              "capability:cap_power_1": 1,
+              "capability:cap_filter": 1,
+              "craft:stone_pick": 1,
+              "craft:furnace_kit": 1,
+              "home_built": 2,
+              "craft:workbench_kit": 2,
+              "station:furnace": 2,
+              "station:workbench": 2,
+              "craft:burn_charcoal": 3,
+              "craft:smelt_iron": 3,
+              "craft:research_kit": 3,
+              "station:research": 3,
+              "craft:weave_cloth": 3,
+              "discovery:core_ember": 3,
+              "craft:make_spares": 3,
+              "craft:make_notes": 3,
+              "craft:make_parts": 3,
+              "capability:cap_seal_2": 4,
+              "tech:tech_smelting": 4,
+              "tech:tech_precision": 4,
+              "tech:tech_core_binding": 4,
+              "capability:cap_climb": 5,
+              "capability:cap_thermal": 5,
+              "research:core_blank": 5,
+              "discovery:core_frost": 6,
+              "research:charge_blank": 6,
+              "research:craft_core_ember": 6,
+              "station:advanced_workbench": 7,
+              "craft:core_blank": 7,
+              "craft:charge_blank": 7,
+              "craft:craft_core_ember": 7,
+              "manufacture:core_ember": 7
+            },
+            "deaths": 1
+          },
+          {
+            "scenario": "safe_route_blocked",
+            "firsts": {
+              "capability:cap_salvage": 1,
+              "capability:cap_seal_1": 1,
+              "capability:cap_power_1": 1,
+              "capability:cap_filter": 1,
+              "craft:stone_pick": 1,
+              "craft:workbench_kit": 1,
+              "home_built": 3,
+              "station:workbench": 3,
+              "discovery:core_ember": 3,
+              "craft:furnace_kit": 3,
+              "station:furnace": 3,
+              "craft:burn_charcoal": 4,
+              "craft:smelt_iron": 4,
+              "craft:research_kit": 4,
+              "station:research": 4,
+              "craft:make_spares": 4,
+              "craft:weave_cloth": 4,
+              "capability:cap_seal_2": 4,
+              "craft:make_notes": 4,
+              "tech:tech_smelting": 4,
+              "craft:make_parts": 4,
+              "capability:cap_climb": 5,
+              "capability:cap_thermal": 5,
+              "tech:tech_precision": 5,
+              "tech:tech_core_binding": 5,
+              "research:core_blank": 5,
+              "discovery:core_frost": 6,
+              "research:charge_blank": 6,
+              "station:advanced_workbench": 7,
+              "research:craft_core_ember": 7,
+              "craft:core_blank": 8,
+              "craft:charge_blank": 8,
+              "craft:craft_core_ember": 8,
+              "manufacture:core_ember": 8
+            },
+            "deaths": 2
+          },
+          {
+            "scenario": "catalyst_drought",
+            "firsts": {
+              "capability:cap_salvage": 1,
+              "capability:cap_seal_1": 1,
+              "capability:cap_power_1": 1,
+              "capability:cap_filter": 1,
+              "craft:stone_pick": 1,
+              "craft:furnace_kit": 1,
+              "home_built": 2,
+              "craft:workbench_kit": 2,
+              "station:furnace": 2,
+              "station:workbench": 2,
+              "craft:burn_charcoal": 3,
+              "craft:smelt_iron": 3,
+              "craft:research_kit": 3,
+              "station:research": 3,
+              "craft:weave_cloth": 3,
+              "discovery:core_ember": 3,
+              "craft:make_spares": 3,
+              "craft:make_notes": 3,
+              "craft:make_parts": 3,
+              "capability:cap_seal_2": 4,
+              "tech:tech_smelting": 4,
+              "tech:tech_precision": 4,
+              "tech:tech_core_binding": 4,
+              "capability:cap_climb": 5,
+              "capability:cap_thermal": 5,
+              "discovery:core_frost": 6,
+              "research:core_blank": 6,
+              "station:advanced_workbench": 7,
+              "research:charge_blank": 7
+            },
+            "deaths": 1
+          },
+          {
+            "scenario": "queue_interruption",
+            "firsts": {
+              "capability:cap_salvage": 1,
+              "capability:cap_seal_1": 1,
+              "capability:cap_power_1": 1,
+              "capability:cap_filter": 1,
+              "craft:stone_pick": 1,
+              "craft:furnace_kit": 1,
+              "home_built": 2,
+              "craft:workbench_kit": 2,
+              "station:furnace": 2,
+              "station:workbench": 2,
+              "craft:burn_charcoal": 3,
+              "craft:smelt_iron": 3,
+              "discovery:core_ember": 3,
+              "capability:cap_seal_2": 3,
+              "capability:cap_climb": 5,
+              "capability:cap_thermal": 5,
+              "discovery:core_frost": 5,
+              "craft:research_kit": 6,
+              "craft:make_parts": 6,
+              "station:research": 6,
+              "craft:make_spares": 6,
+              "craft:weave_cloth": 6,
+              "craft:make_notes": 6,
+              "tech:tech_smelting": 6,
+              "tech:tech_precision": 6,
+              "tech:tech_core_binding": 6,
+              "research:core_blank": 7,
+              "research:charge_blank": 8,
+              "station:advanced_workbench": 9
+            },
+            "deaths": 3
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,815 @@
+{
+  "schema": "soh.economy.index.v1",
+  "items": {
+    "advanced_furnace_kit": {
+      "sources": [],
+      "used_in": [],
+      "produced_by": [
+        "advanced_furnace_kit"
+      ],
+      "sinks": [
+        "runtime_use:station_kit"
+      ]
+    },
+    "ancient_catalyst": {
+      "sources": [
+        "vault_catalyst"
+      ],
+      "used_in": [
+        "charge_blank"
+      ],
+      "produced_by": [],
+      "sinks": [
+        "charge_blank"
+      ]
+    },
+    "binding_cloth": {
+      "sources": [],
+      "used_in": [
+        "craft_core_ember",
+        "craft_core_frost",
+        "craft_core_venom",
+        "frost_cloak",
+        "iron_pick",
+        "minor_salve",
+        "salvage_hammer",
+        "toxin_mask"
+      ],
+      "produced_by": [
+        "salvage:frost_cloak",
+        "salvage:iron_pick",
+        "salvage:salvage_hammer",
+        "salvage:stone_pick",
+        "salvage:toxin_mask",
+        "weave_cloth"
+      ],
+      "sinks": [
+        "craft_core_ember",
+        "craft_core_frost",
+        "craft_core_venom",
+        "frost_cloak",
+        "iron_pick",
+        "minor_salve",
+        "salvage_hammer",
+        "toxin_mask"
+      ]
+    },
+    "blood_crucible_blueprint": {
+      "sources": [
+        "legacy_blood_crucible_blueprint"
+      ],
+      "used_in": [],
+      "produced_by": [],
+      "sinks": []
+    },
+    "blue_seal": {
+      "sources": [
+        "seal_blue_seal"
+      ],
+      "used_in": [],
+      "produced_by": [],
+      "sinks": [
+        "runtime_use:access"
+      ]
+    },
+    "charcoal": {
+      "sources": [],
+      "used_in": [
+        "alloy_steel",
+        "charge_blank",
+        "smelt_iron",
+        "smelt_ore"
+      ],
+      "produced_by": [
+        "burn_charcoal"
+      ],
+      "sinks": [
+        "alloy_steel",
+        "charge_blank",
+        "smelt_iron",
+        "smelt_ore"
+      ]
+    },
+    "charged_blank": {
+      "sources": [],
+      "used_in": [
+        "craft_core_ember",
+        "craft_core_frost",
+        "craft_core_venom"
+      ],
+      "produced_by": [
+        "charge_blank"
+      ],
+      "sinks": [
+        "craft_core_ember",
+        "craft_core_frost",
+        "craft_core_venom"
+      ]
+    },
+    "clay": {
+      "sources": [
+        "node_clay"
+      ],
+      "used_in": [
+        "garden_kit"
+      ],
+      "produced_by": [],
+      "sinks": [
+        "garden_kit"
+      ]
+    },
+    "coal": {
+      "sources": [
+        "node_coal"
+      ],
+      "used_in": [
+        "alloy_steel"
+      ],
+      "produced_by": [
+        "salvage:steel_ingot"
+      ],
+      "sinks": [
+        "alloy_steel"
+      ]
+    },
+    "compost": {
+      "sources": [],
+      "used_in": [
+        "grow_grain",
+        "grow_moonleaf"
+      ],
+      "produced_by": [
+        "make_compost"
+      ],
+      "sinks": [
+        "grow_grain",
+        "grow_moonleaf"
+      ]
+    },
+    "core_blank": {
+      "sources": [],
+      "used_in": [
+        "charge_blank",
+        "rebuild_core_ember",
+        "rebuild_core_frost",
+        "rebuild_core_venom"
+      ],
+      "produced_by": [
+        "core_blank"
+      ],
+      "sinks": [
+        "charge_blank",
+        "rebuild_core_ember",
+        "rebuild_core_frost",
+        "rebuild_core_venom"
+      ]
+    },
+    "core_ember": {
+      "sources": [
+        "specimen_ember"
+      ],
+      "used_in": [
+        "rebuild_core_ember"
+      ],
+      "produced_by": [
+        "craft_core_ember",
+        "rebuild_core_ember"
+      ],
+      "sinks": [
+        "rebuild_core_ember",
+        "runtime_use:skill_core"
+      ]
+    },
+    "core_frost": {
+      "sources": [
+        "specimen_frost"
+      ],
+      "used_in": [
+        "rebuild_core_frost"
+      ],
+      "produced_by": [
+        "craft_core_frost",
+        "rebuild_core_frost"
+      ],
+      "sinks": [
+        "rebuild_core_frost",
+        "runtime_use:skill_core"
+      ]
+    },
+    "core_venom": {
+      "sources": [
+        "specimen_venom"
+      ],
+      "used_in": [
+        "rebuild_core_venom"
+      ],
+      "produced_by": [
+        "craft_core_venom",
+        "rebuild_core_venom"
+      ],
+      "sinks": [
+        "rebuild_core_venom",
+        "runtime_use:skill_core"
+      ]
+    },
+    "crypt_bone_shard": {
+      "sources": [
+        "legacy_crypt_bone_shard"
+      ],
+      "used_in": [
+        "core_blank",
+        "make_spares"
+      ],
+      "produced_by": [],
+      "sinks": [
+        "core_blank",
+        "make_spares",
+        "technology:tech_core_binding"
+      ]
+    },
+    "field_meal": {
+      "sources": [],
+      "used_in": [],
+      "produced_by": [
+        "field_meal"
+      ],
+      "sinks": [
+        "runtime_use:consumable"
+      ]
+    },
+    "fractured_axe_insignia": {
+      "sources": [
+        "legacy_fractured_axe_insignia"
+      ],
+      "used_in": [
+        "study_axe_insignia"
+      ],
+      "produced_by": [],
+      "sinks": [
+        "study_axe_insignia"
+      ]
+    },
+    "frost_cloak": {
+      "sources": [],
+      "used_in": [],
+      "produced_by": [
+        "frost_cloak"
+      ],
+      "sinks": [
+        "runtime_use:equipment"
+      ]
+    },
+    "frost_extract": {
+      "sources": [],
+      "used_in": [
+        "craft_core_frost",
+        "frost_cloak",
+        "rebuild_core_frost"
+      ],
+      "produced_by": [
+        "extract_frost"
+      ],
+      "sinks": [
+        "craft_core_frost",
+        "frost_cloak",
+        "rebuild_core_frost"
+      ]
+    },
+    "frost_shard": {
+      "sources": [
+        "node_frost_shard"
+      ],
+      "used_in": [
+        "craft_core_frost",
+        "extract_frost"
+      ],
+      "produced_by": [],
+      "sinks": [
+        "craft_core_frost",
+        "extract_frost",
+        "technology:tech_frost"
+      ]
+    },
+    "furnace_kit": {
+      "sources": [],
+      "used_in": [],
+      "produced_by": [
+        "furnace_kit"
+      ],
+      "sinks": [
+        "runtime_use:station_kit"
+      ]
+    },
+    "garden_kit": {
+      "sources": [],
+      "used_in": [],
+      "produced_by": [
+        "garden_kit"
+      ],
+      "sinks": [
+        "runtime_use:station_kit"
+      ]
+    },
+    "grain": {
+      "sources": [
+        "node_grain"
+      ],
+      "used_in": [
+        "field_meal"
+      ],
+      "produced_by": [
+        "grow_grain"
+      ],
+      "sinks": [
+        "field_meal"
+      ]
+    },
+    "grain_seed": {
+      "sources": [
+        "road_grain_seed"
+      ],
+      "used_in": [
+        "grow_grain"
+      ],
+      "produced_by": [
+        "grow_grain"
+      ],
+      "sinks": [
+        "grow_grain"
+      ]
+    },
+    "green_seal": {
+      "sources": [
+        "seal_green_seal"
+      ],
+      "used_in": [],
+      "produced_by": [],
+      "sinks": [
+        "runtime_use:access"
+      ]
+    },
+    "iron_ingot": {
+      "sources": [],
+      "used_in": [
+        "alloy_steel",
+        "core_blank",
+        "iron_pick",
+        "make_parts",
+        "make_spring",
+        "research_kit",
+        "salvage_hammer"
+      ],
+      "produced_by": [
+        "smelt_iron",
+        "smelt_ore"
+      ],
+      "sinks": [
+        "alloy_steel",
+        "core_blank",
+        "iron_pick",
+        "make_parts",
+        "make_spring",
+        "research_kit",
+        "salvage_hammer",
+        "technology:tech_precision"
+      ]
+    },
+    "iron_ore": {
+      "sources": [
+        "node_iron_ore"
+      ],
+      "used_in": [
+        "smelt_ore"
+      ],
+      "produced_by": [],
+      "sinks": [
+        "smelt_ore"
+      ]
+    },
+    "iron_parts": {
+      "sources": [],
+      "used_in": [
+        "advanced_furnace_kit",
+        "toxin_mask"
+      ],
+      "produced_by": [
+        "make_parts"
+      ],
+      "sinks": [
+        "advanced_furnace_kit",
+        "toxin_mask"
+      ]
+    },
+    "iron_pick": {
+      "sources": [],
+      "used_in": [],
+      "produced_by": [
+        "iron_pick"
+      ],
+      "sinks": [
+        "runtime_use:equipment"
+      ]
+    },
+    "iron_scrap": {
+      "sources": [
+        "live_iron_scrap",
+        "road_scrap"
+      ],
+      "used_in": [
+        "furnace_kit",
+        "make_spares",
+        "smelt_iron",
+        "workbench_kit"
+      ],
+      "produced_by": [
+        "salvage:charged_blank",
+        "salvage:core_blank",
+        "salvage:core_ember",
+        "salvage:core_frost",
+        "salvage:core_venom",
+        "salvage:iron_ingot",
+        "salvage:iron_parts",
+        "salvage:spring",
+        "salvage:steel_ingot"
+      ],
+      "sinks": [
+        "furnace_kit",
+        "make_spares",
+        "smelt_iron",
+        "technology:tech_smelting",
+        "workbench_kit"
+      ]
+    },
+    "knowledge_spares": {
+      "sources": [
+        "road_supplies"
+      ],
+      "used_in": [
+        "core_blank",
+        "make_notes",
+        "rebuild_core_ember",
+        "rebuild_core_frost",
+        "rebuild_core_venom",
+        "research_kit"
+      ],
+      "produced_by": [
+        "make_spares",
+        "salvage:fractured_axe_insignia",
+        "salvage:predator_jaw",
+        "study_axe_insignia",
+        "study_predator_jaw"
+      ],
+      "sinks": [
+        "core_blank",
+        "make_notes",
+        "rebuild_core_ember",
+        "rebuild_core_frost",
+        "rebuild_core_venom",
+        "research_kit",
+        "technology:tech_precision",
+        "technology:tech_smelting"
+      ]
+    },
+    "minor_salve": {
+      "sources": [],
+      "used_in": [],
+      "produced_by": [
+        "minor_salve"
+      ],
+      "sinks": [
+        "runtime_use:consumable"
+      ]
+    },
+    "moonleaf": {
+      "sources": [
+        "node_moonleaf"
+      ],
+      "used_in": [
+        "extract_frost",
+        "extract_venom",
+        "minor_salve"
+      ],
+      "produced_by": [
+        "grow_moonleaf",
+        "salvage:frost_extract",
+        "salvage:venom_extract"
+      ],
+      "sinks": [
+        "extract_frost",
+        "extract_venom",
+        "minor_salve"
+      ]
+    },
+    "moonleaf_seed": {
+      "sources": [
+        "node_moonleaf_seed",
+        "road_seed"
+      ],
+      "used_in": [
+        "grow_moonleaf"
+      ],
+      "produced_by": [
+        "grow_moonleaf"
+      ],
+      "sinks": [
+        "grow_moonleaf"
+      ]
+    },
+    "oak_wood": {
+      "sources": [
+        "live_oak_wood"
+      ],
+      "used_in": [
+        "burn_charcoal",
+        "garden_kit",
+        "iron_pick",
+        "research_kit",
+        "salvage_hammer",
+        "stone_pick",
+        "workbench_kit"
+      ],
+      "produced_by": [],
+      "sinks": [
+        "burn_charcoal",
+        "garden_kit",
+        "iron_pick",
+        "research_kit",
+        "salvage_hammer",
+        "stone_pick",
+        "workbench_kit"
+      ]
+    },
+    "plan_ember_core": {
+      "sources": [
+        "plan_drop_ember"
+      ],
+      "used_in": [],
+      "produced_by": [],
+      "sinks": [
+        "blueprint:craft_core_ember"
+      ]
+    },
+    "plan_frost_core": {
+      "sources": [
+        "plan_drop_frost"
+      ],
+      "used_in": [],
+      "produced_by": [],
+      "sinks": [
+        "blueprint:craft_core_frost"
+      ]
+    },
+    "plan_venom_core": {
+      "sources": [
+        "plan_drop_venom"
+      ],
+      "used_in": [],
+      "produced_by": [],
+      "sinks": [
+        "blueprint:craft_core_venom"
+      ]
+    },
+    "predator_jaw": {
+      "sources": [
+        "legacy_predator_jaw"
+      ],
+      "used_in": [
+        "study_predator_jaw"
+      ],
+      "produced_by": [],
+      "sinks": [
+        "study_predator_jaw"
+      ]
+    },
+    "purple_seal": {
+      "sources": [
+        "seal_purple_seal"
+      ],
+      "used_in": [],
+      "produced_by": [],
+      "sinks": [
+        "runtime_use:access"
+      ]
+    },
+    "reaper_essence": {
+      "sources": [
+        "legacy_reaper_essence"
+      ],
+      "used_in": [
+        "craft_core_ember"
+      ],
+      "produced_by": [],
+      "sinks": [
+        "craft_core_ember"
+      ]
+    },
+    "reed_fibre": {
+      "sources": [
+        "live_reed_fibre"
+      ],
+      "used_in": [
+        "garden_kit",
+        "make_compost",
+        "weave_cloth"
+      ],
+      "produced_by": [],
+      "sinks": [
+        "garden_kit",
+        "make_compost",
+        "weave_cloth"
+      ]
+    },
+    "research_kit": {
+      "sources": [],
+      "used_in": [],
+      "produced_by": [
+        "research_kit"
+      ],
+      "sinks": [
+        "runtime_use:station_kit"
+      ]
+    },
+    "research_notes": {
+      "sources": [
+        "road_notes"
+      ],
+      "used_in": [],
+      "produced_by": [
+        "make_notes",
+        "salvage:plan_ember_core",
+        "salvage:plan_frost_core",
+        "salvage:plan_venom_core"
+      ],
+      "sinks": [
+        "technology:tech_core_binding",
+        "technology:tech_frost",
+        "technology:tech_toxin"
+      ]
+    },
+    "salvage_hammer": {
+      "sources": [],
+      "used_in": [],
+      "produced_by": [
+        "salvage_hammer"
+      ],
+      "sinks": [
+        "runtime_use:equipment"
+      ]
+    },
+    "soul_ember": {
+      "sources": [
+        "legacy_soul_ember"
+      ],
+      "used_in": [
+        "charge_blank",
+        "craft_core_ember",
+        "make_notes",
+        "rebuild_core_ember"
+      ],
+      "produced_by": [
+        "salvage:charged_blank",
+        "salvage:core_ember",
+        "salvage:core_frost",
+        "salvage:core_venom"
+      ],
+      "sinks": [
+        "charge_blank",
+        "craft_core_ember",
+        "make_notes",
+        "rebuild_core_ember",
+        "technology:tech_core_binding"
+      ]
+    },
+    "spring": {
+      "sources": [],
+      "used_in": [
+        "frost_cloak"
+      ],
+      "produced_by": [
+        "make_spring"
+      ],
+      "sinks": [
+        "frost_cloak"
+      ]
+    },
+    "steel_ingot": {
+      "sources": [],
+      "used_in": [
+        "advanced_furnace_kit"
+      ],
+      "produced_by": [
+        "alloy_steel"
+      ],
+      "sinks": [
+        "advanced_furnace_kit"
+      ]
+    },
+    "stone_chunk": {
+      "sources": [
+        "live_stone_chunk"
+      ],
+      "used_in": [
+        "advanced_furnace_kit",
+        "furnace_kit",
+        "stone_pick"
+      ],
+      "produced_by": [],
+      "sinks": [
+        "advanced_furnace_kit",
+        "furnace_kit",
+        "stone_pick"
+      ]
+    },
+    "stone_pick": {
+      "sources": [],
+      "used_in": [],
+      "produced_by": [
+        "stone_pick"
+      ],
+      "sinks": [
+        "runtime_use:equipment",
+        "source_requirement:node_coal",
+        "source_requirement:node_frost_shard",
+        "source_requirement:node_iron_ore"
+      ]
+    },
+    "sulfur": {
+      "sources": [
+        "node_sulfur"
+      ],
+      "used_in": [
+        "extract_venom"
+      ],
+      "produced_by": [],
+      "sinks": [
+        "extract_venom"
+      ]
+    },
+    "toxin_mask": {
+      "sources": [],
+      "used_in": [],
+      "produced_by": [
+        "toxin_mask"
+      ],
+      "sinks": [
+        "runtime_use:equipment"
+      ]
+    },
+    "venom_extract": {
+      "sources": [],
+      "used_in": [
+        "craft_core_venom",
+        "rebuild_core_venom",
+        "toxin_mask"
+      ],
+      "produced_by": [
+        "extract_venom"
+      ],
+      "sinks": [
+        "craft_core_venom",
+        "rebuild_core_venom",
+        "toxin_mask"
+      ]
+    },
+    "venom_spine": {
+      "sources": [
+        "legacy_venom_spine",
+        "venom_cache"
+      ],
+      "used_in": [
+        "craft_core_venom",
+        "extract_venom"
+      ],
+      "produced_by": [],
+      "sinks": [
+        "craft_core_venom",
+        "extract_venom",
+        "technology:tech_toxin"
+      ]
+    },
+    "wild_berries": {
+      "sources": [
+        "node_wild_berries"
+      ],
+      "used_in": [
+        "field_meal",
+        "make_compost"
+      ],
+      "produced_by": [],
+      "sinks": [
+        "field_meal",
+        "make_compost"
+      ]
+    },
+    "workbench_kit": {
+      "sources": [],
+      "used_in": [],
+      "produced_by": [
+        "workbench_kit"
+      ],
+      "sinks": [
+        "runtime_use:station_kit"
+      ]
+    }
+  }
+}

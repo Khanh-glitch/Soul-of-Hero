@@ -1,0 +1,90 @@
+{
+  "schema": "soh.economy.a0_tool_host_contract.v5",
+  "status": "UNWIRED_A0",
+  "a3_scope": "catalog policy and read-only plan only; no second inventory/save authority",
+  "a0_pin": {
+    "pr": 21,
+    "commit": "69070a1138730536050053c5aa47334b7b2c3836",
+    "evidence": [
+      "game/survival/survival_service.gd harvest(node_id: String, kind: String, now_unix: int = -1) has no tool parameter",
+      "game/survival/survival_resource_node.gd interact(player) calls harvest(node_id, resource_kind) with no tool instance",
+      "stone_pick/iron_pick/salvage_hammer appear in A3 catalog and unique-ownership guard, but no A0 harvest/obstacle/action consumes or checks them",
+      "current PR #21 head 69070a11 re-checked: harvest signature still has no tool parameter"
+    ],
+    "previous_reviewed_commit": "9269739ebd35ed8ab83987b6bf53f560a59954af"
+  },
+  "tools": {
+    "stone_pick": {
+      "current_a0_effect": "NONE",
+      "intended_resource_kinds": [
+        "stone_outcrop",
+        "iron_vein"
+      ],
+      "intended_effect": "access gate only; no yield multiplier until A0/A1 balance evidence",
+      "condition_cost_per_swing": 1,
+      "max_condition": 100
+    },
+    "iron_pick": {
+      "current_a0_effect": "NONE",
+      "intended_resource_kinds": [
+        "iron_vein",
+        "scrap_pile"
+      ],
+      "intended_effect": "access gate only; no yield multiplier until A0/A1 balance evidence",
+      "condition_cost_per_swing": 1,
+      "max_condition": 100
+    },
+    "salvage_hammer": {
+      "current_a0_effect": "NONE",
+      "intended_resource_kinds": [
+        "scrap_pile"
+      ],
+      "intended_effect": "access gate only; no yield multiplier until A0/A1 balance evidence",
+      "condition_cost_per_swing": 1,
+      "max_condition": 100
+    }
+  },
+  "minimal_host_contract": {
+    "request_from_a0_to_a3": {
+      "contract": "soh.economy.tool_use.v1",
+      "node_id": "durable A0 resource node id",
+      "resource_kind": "A0 survival_catalog resource kind",
+      "tool_instance_id": "soh_i_* token owned by the same SaveService bag",
+      "expected_tool_revision": "int revision read from survival_economy.instances",
+      "world_revision": "A0 physical world revision",
+      "active_seconds": "A0 pausable active-session seconds; never wall-clock/offline"
+    },
+    "read_only_plan_from_a3": {
+      "ok": "bool",
+      "reason": "empty on success; otherwise TOOL_NOT_OWNED | TOOL_REVISION_STALE | TOOL_BROKEN | TOOL_KIND_MISMATCH | NODE_KIND_UNKNOWN",
+      "tool_item_id": "stone_pick | iron_pick | salvage_hammer",
+      "allowed": "bool",
+      "condition_cost": "int",
+      "next_tool_revision": "expected_tool_revision + 1",
+      "yield_multiplier": 1,
+      "receipt_metadata": {
+        "a3_tool_use": true,
+        "tool_instance_id": "echo",
+        "node_id": "echo",
+        "resource_kind": "echo"
+      }
+    },
+    "atomic_commit_rule": "A0 must apply the A3 plan to survival_economy.instances[tool_instance_id] inside the SAME SaveService.transact_once candidate that records the harvest hit, inventory grant and node depletion. If atomic tool-use + harvest is unavailable, A0 must reject the swing. No separate tool journal, no UI authorization, no offline condition repair.",
+    "failure_rule": "Any plan rejection, stale revision, full bag, failed save or missing atomic capability leaves inventory, node state, tool condition and receipts byte-identical.",
+    "a3_candidate_transform": "apply_tool_use_plan(candidate, plan) re-plans from the candidate, rejects stale_tool_use_plan, and decrements condition / increments revision only. A0 must call it inside the same SaveService.transact_once as node hit + yield grant."
+  },
+  "acceptance_for_wiring": [
+    "native A0 test: bare-hand harvest of gated node fails; owned stone_pick succeeds and condition decrements once",
+    "native A0 test: broken/stale/foreign tool instance fails without node depletion",
+    "native A0 test: full bag rejects swing and does not wear tool",
+    "native A0 test: reload preserves tool revision/condition and node depletion",
+    "two OS processes cannot double-spend the same tool revision",
+    "A6 projection shows tool condition but cannot authorize harvest"
+  ],
+  "a3_callable_status": "IMPLEMENTED_A3_READ_ONLY_PLAN_AND_CANDIDATE_TRANSFORM_UNWIRED_A0",
+  "a3_callables": [
+    "plan_tool_use",
+    "plan_tool_use_candidate",
+    "apply_tool_use_plan"
+  ]
+}

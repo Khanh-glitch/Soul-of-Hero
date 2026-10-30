@@ -1,0 +1,63 @@
+Godot Engine v4.7.stable.custom_build - https://godotengine.org
+
+[meta case 01] premature claim rejected; last-72 legitimate claim mints physical tokens only
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    owner-contract candidate profile port
+  ok    day-1 chest cannot mint late currency
+  ok    last-72 source claim commits
+  ok    opening/claiming never credits profile
+  ok    physical unique tokens equal claimed units
+  ok    fixture has enough physical currency tokens for custody/deposit/reset tests
+[meta case 02] source identity and generation forgery rejected
+  ok    wrong generation rejected
+  ok    unauthorized source rejected
+[meta case 03] unbanked currency in death bag is not depositable and never profile credit
+  ok    owner-contract death bag moves physical token
+  ok    death-bag token cannot be deposited remotely
+  ok    death does not bank currency
+[meta case 04] legitimate deposit atomically removes tokens and credits profile once
+  ok    deposit commits
+  ok    profile balance increases by exact physical amount
+  ok    exact tokens removed from bag
+  ok    same proposal replay cannot mint
+  ok    replay leaves balance unchanged
+[meta case 05] duplicate token and double-spend rejected
+[meta case 06] home chest currency is lost on run reset; secured currency survives
+  ok    secured currency survives voluntary restart
+  ok    unbanked home-chest currency lost on reset
+  ok    run-local economy namespace cleared
+  ok    no ordinary item leaks across run boundary
+[meta case 07] new-run fixed machine visit and paid purchase; insufficient money and stale stock
+  ok    paid purchase commits at fixed machine
+  ok    exact price debited
+  ok    run-local item granted
+  ok    stale stock revision rejected
+  ok    cannot afford high price without enough banking
+[meta case 08] refund restores profile and stock; old-run receipt rejected
+  ok    refundable purchase committed
+  ok    refund credits original receipt price
+  ok    receipt cannot refund twice
+  ok    old-run receipt rejected
+[meta case 09] recycler returns run-local salvage only; currency/Core conversion forbidden
+  ok    fixture run-local salvage input
+  ok    recycle emits zero profile currency
+  ok    legitimate run-local salvage output
+  ok    physical currency cannot be recycled into secured money
+[meta case 10] elder stones are distinct achievements, not currency
+  ok    owner-contract stone achievement commits in same SaveService
+  ok    elder stone does not credit currency
+  ok    A6 projection is read-only and policy-versioned
+  ok    projection shows distinct achievement stone
+[meta case 11] full inventory blocks vendor purchase without partial debit
+  ok    full bag rejects purchase
+  ok    no partial profile debit on full inventory
+[meta case 12] absent A0 profile port fails closed
+  ok    bare adapter
+  ok    no second wallet without A0 boundary
+
+A3 META ECONOMY PASSED - 43 checks / 12 cases
+WARNING: 12 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2535)
+ERROR: 4 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

@@ -1,0 +1,24 @@
+{
+  "schema": "soh.economy.a6_meta_projection.v7",
+  "callable": "project_meta_economy",
+  "read_only": true,
+  "fields": [
+    "secured_ragnarok_currency",
+    "physical_unbanked_tokens",
+    "elder_stones",
+    "vending_machines[].machine_id/region_id/stock_revision/items",
+    "policy_revision",
+    "rate_approval",
+    "display_registry"
+  ],
+  "ux_rules": [
+    "Show physical unbanked vs secured separately.",
+    "Never label carried/chest/death-bag tokens as account balance.",
+    "Show fixed machine visit requirement and finite stock.",
+    "Display names come from meta_display_names.v1.json; renaming never migrates saves.",
+    "Hide undiscovered source rewards; no UI flag authorizes a transaction.",
+    "No release-mode debug/ID text (D052)."
+  ],
+  "working_title": "T\u00e0n \u1ea4n",
+  "working_title_status": "WORKING_TITLE_NOT_CREATOR_CANON"
+}

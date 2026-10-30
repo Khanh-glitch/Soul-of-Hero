@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "sources",
+    "world_contract_status",
+    "live_harvest_authority",
+    "note"
+  ],
+  "properties": {
+    "schema": {
+      "const": "soh.economy.sources.v1"
+    },
+    "sources": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]{0,63}$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "item_id",
+          "acquisition",
+          "region_id",
+          "yield_per_claim",
+          "replenishment_seconds",
+          "risk",
+          "requirements",
+          "integration_status",
+          "provenance",
+          "balance_status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{0,63}$"
+          },
+          "item_id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{0,63}$"
+          },
+          "acquisition": {
+            "enum": [
+              "harvest",
+              "loot",
+              "existing_reward"
+            ]
+          },
+          "region_id": {
+            "type": "string"
+          },
+          "poi_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "source_class": {
+            "type": "string"
+          },
+          "instance_id": {
+            "type": "string"
+          },
+          "world_binding_id": {
+            "type": "string"
+          },
+          "yield_per_claim": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "replenishment_seconds": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 86400
+          },
+          "risk": {
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "combat"
+            ]
+          },
+          "requirements": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "value"
+              ],
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "tool_item",
+                    "tool_tag",
+                    "access_tier",
+                    "power",
+                    "resistance"
+                  ]
+                },
+                "value": {
+                  "type": [
+                    "string",
+                    "integer",
+                    "boolean"
+                  ]
+                }
+              }
+            }
+          },
+          "integration_status": {
+            "enum": [
+              "LIVE_SURV_010",
+              "LIVE_EXISTING_REWARDS",
+              "PROPOSED_A1",
+              "A1_PINNED_A3_BOUND"
+            ]
+          },
+          "provenance": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "pattern": "^(SYS|DEP|JOURNEY|POI)-[0-9]{2}$"
+            }
+          },
+          "balance_status": {
+            "const": "SOH_PROPOSAL"
+          },
+          "max_claims": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          }
+        }
+      }
+    },
+    "world_contract_status": {
+      "type": "string"
+    },
+    "live_harvest_authority": {
+      "type": "string"
+    },
+    "note": {
+      "type": "string"
+    }
+  }
+}

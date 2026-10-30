@@ -1,0 +1,26 @@
+Godot Engine v4.7.stable.custom_build - https://godotengine.org
+
+  ok    real SaveService storage
+  ok    fresh process reloads durable save
+  ok    both arm records survived process boundary
+  ok    research not completed by load alone
+  ok    18h plan covers only armed paid operations
+  ok    read-only plan repeats deterministically
+  ok    read-only plan changed no save
+  ok    A0-style SaveService applies proposal once
+  ok    paid research completed across process boundary
+  ok    forge output ready across process boundary
+  ok    replayed proposal is idempotent
+  ok    replay changed no save
+  ok    older timestamp projection rejected
+  ok    both ready jobs collected once
+  ok    exactly one ingot after 18h restart
+  ok    no automatic queue continuation
+  ok    later absence cannot farm completed operations
+  ok    empty later settlement commits idempotently
+  ok    no second ingot after later settlement
+A3 OFFLINE RESTART PHASE 2 PASSED - 19 checks
+WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2535)
+ERROR: 3 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)
