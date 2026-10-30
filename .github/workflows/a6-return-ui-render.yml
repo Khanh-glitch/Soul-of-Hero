@@ -157,13 +157,22 @@ jobs:
             mkdir -p ".artifacts/captures-${res}"
             export SOUL_OF_HERO_SAVE_PATH="user://a6_render_${res}.json"
             log=".artifacts/render-${res}.log"
+            # Run the capture scene directly, the way the probe did when it produced
+            # frames. Booting the project's main scene and relying on it to hand over
+            # wedges the windowed engine before it draws a single frame.
+            #
+            # 720p also asks for no --resolution: the project's own window override is
+            # exactly 1280x720 and that is the path proven to draw. 1440p/2160p ask for
+            # their size explicitly, and --capture-size asserts what we actually got.
+            #
             # The capture script has its own 120 s watchdog and exits with a verdict,
             # so this outer limit only exists for a wedged X server.
             started=$(date +%s)
             timeout --foreground --signal=TERM --kill-after=20s 420s xvfb-run --auto-servernum \
               -s "-screen 0 ${res}x24" \
               env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
-              godot --path . --rendering-driver opengl3 --audio-driver Dummy -- \
+              godot --path . --rendering-driver opengl3 --audio-driver Dummy \
+              res://tests/survival/ui/a6_return_ui_capture.tscn -- \
               --a6-ui-capture --capture-size="${res}" \
               --capture-dir="$PWD/.artifacts/captures-${res}" \
               --capture-tag="${A6_CAPTURE_TAG}" > "${log}" 2>&1
