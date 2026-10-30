@@ -56,6 +56,7 @@ func _finish() -> void:
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(save_path))
 	if not _blocked.is_empty():
 		print("B0 ROUTE PROBE BLOCKED - %s" % _blocked)
+		print("A7 ROUTE BLOCKED %s: 0 checks" % _blocked)
 		print(
 			"B0 ROUTE PROBE A0 ACTION: add `%s=true` to project.godot and mount the Waystation host from "
 			% GUARD
@@ -68,6 +69,7 @@ func _finish() -> void:
 	if _forced:
 		verdict += "_UNDER_FORCED_FLAG (evidence class: SOURCE_PRESENT_BEHIND_GUARD, not acceptance)"
 	print("B0 ROUTE PROBE %s - %d checks" % [verdict, checks])
+	print("A7 ROUTE %s - first-hour route: %d checks, %d failed" % ["PASS" if failures.is_empty() else "FAIL", checks, failures.size()])
 	quit(0 if failures.is_empty() else 1)
 
 

@@ -35,11 +35,13 @@ func _finish() -> void:
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(save_path))
 	if not _blocked_reason.is_empty():
 		print("B0 DEATH PROBE BLOCKED - %s" % _blocked_reason)
+		print("A7 BED_DEATH BLOCKED %s: 0 checks" % _blocked_reason)
 		print("B0 DEATH PROBE A5/A0 ACTION: mount one authored hazard or hostile in the production "
 			+ "overworld with contact damage that calls begin_overworld_death(), then re-run unchanged")
 		quit(2)
 		return
 	print("B0 DEATH PROBE %s - %d checks" % ["PASSED" if failures.is_empty() else "FAILED", checks])
+	print("A7 BED_DEATH %s - death/bag journey: %d checks, %d failed" % ["PASS" if failures.is_empty() else "FAIL", checks, failures.size()])
 	quit(0 if failures.is_empty() else 1)
 
 

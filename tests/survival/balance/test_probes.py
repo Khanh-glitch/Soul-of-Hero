@@ -166,6 +166,141 @@ class RuleLivenessTests(unittest.TestCase):
         self.assertTrue(audit["sound"])
 
 
+class DecisionProbeTests(unittest.TestCase):
+    """The D055-D061 contract family: same standards, plus the staging bans.
+
+    These probes exist to answer "does the product implement this rule at all".
+    They are therefore *expected* to be RED today, and the gate must make that
+    expectation explicit and checkable — a D probe that quietly reported PASS
+    against a missing feature is the failure mode this class prevents.
+    """
+
+    def setUp(self) -> None:
+        self.texts, _manifest = _texts()
+        self.payload = probes.run(self.texts, support.REPO_ROOT)
+        self.rows = self.payload["decision_probes"]
+
+    def test_the_family_is_audited_not_ignored(self) -> None:
+        # A second directory that no rule looked at would be worse than no probes.
+        self.assertEqual(self.payload["decision_probe_count"], 6)
+        self.assertEqual(self.payload["decision_undeclared"], [])
+        self.assertEqual(self.payload["decision_defects"], [])
+        self.assertTrue(self.payload["decision_harness"]["sound"])
+
+    def test_every_contract_probe_extends_the_contract_harness(self) -> None:
+        for row in self.rows:
+            with self.subTest(probe=row["file"]):
+                self.assertEqual(row["extends"], probes.DECISION_CHAIN)
+                self.assertTrue(row["extends_shipped_chain"])
+
+    def test_every_contract_probe_is_sound_and_declares_its_expectation(self) -> None:
+        for row in self.rows:
+            with self.subTest(probe=row["file"]):
+                self.assertTrue(row["sound"], row["forbidden"])
+                self.assertTrue(row["claim"])
+                self.assertTrue(row["question"])
+                self.assertTrue(row["expected_today"])
+                self.assertTrue(row["a0_action"])
+                self.assertTrue(row["closes"])
+                self.assertEqual(row["requires_missing"], [])
+
+    def test_every_contract_probe_names_a_red_expectation_where_the_rule_is_absent(self) -> None:
+        for row in self.rows:
+            with self.subTest(probe=row["file"]):
+                # Either it has measured an absent rule (and expects RED/BLOCKED),
+                # or it asserts something that exists and expects a real verdict.
+                if row["absent_confirmed"]:
+                    self.assertTrue(
+                        row["expected_today"].startswith(("RED_NOT_IMPLEMENTED", "BLOCKED")),
+                        row["expected_today"],
+                    )
+                self.assertEqual(row["absent_unexpected"], [], "stale expectation: " + row["file"])
+
+    def test_the_family_confirms_the_absent_symbols_rather_than_assuming_them(self) -> None:
+        confirmed = sum(len(row["absent_confirmed"]) for row in self.rows)
+        self.assertGreaterEqual(confirmed, 20)
+
+    def test_the_contract_harness_is_the_only_door_to_a_real_world(self) -> None:
+        harness = self.payload["decision_harness"]
+        self.assertEqual(harness["add_child_count"], 1)
+        self.assertEqual(harness["mount_door"], "_mount_world")
+        self.assertTrue(harness["world_scene"].startswith("res://game/"))
+        self.assertEqual(harness["reasons"], [])
+
+
+class ContractForbiddenTests(unittest.TestCase):
+    """Each staging ban must fire, or it guards nothing."""
+
+    EXAMPLES = [
+        "\tvar scene := load(\"res://game/overworld/chapter1_overworld.tscn\") as PackedScene\n\tadd_child(scene.instantiate())\n",
+        "\nclass StubSave:\n\tvar bags := {}\n",
+        "\tvar fake := load(\"res://tests/fixtures/a0_save_diff.gd\")\n",
+    ]
+
+    def _audit(self, body: str) -> dict:
+        header = 'extends "%s"\n\nfunc _body() -> void:\n' % probes.DECISION_CHAIN
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "d999_contract_probe.gd"
+            path.write_text(header + body, encoding="utf-8")
+            return probes.audit_probe(
+                path,
+                "\n".join(_texts()[0].values()),
+                chain=probes.DECISION_CHAIN,
+                forbidden=list(probes.FORBIDDEN) + list(probes.FORBIDDEN_CONTRACT),
+                metadata=probes.D_PROBES,
+            )
+
+    def test_there_is_one_example_per_contract_rule(self) -> None:
+        self.assertEqual(len(self.EXAMPLES), len(probes.FORBIDDEN_CONTRACT))
+
+    def test_every_contract_rule_fires_on_its_example(self) -> None:
+        for rule, example in zip(probes.FORBIDDEN_CONTRACT, self.EXAMPLES):
+            with self.subTest(rule=rule["pattern"]):
+                haystack = probes._strip_comments(example, blank_strings=not rule["literals"])
+                self.assertTrue(re.search(rule["pattern"], haystack), "dead rule: " + rule["pattern"])
+
+    def test_a_contract_probe_that_stages_a_scene_is_rejected(self) -> None:
+        audit = self._audit(self.EXAMPLES[0])
+        self.assertFalse(audit["sound"])
+        self.assertTrue(any("audited door" in row["why"] for row in audit["forbidden"]))
+
+    def test_a_contract_probe_that_defines_a_double_is_rejected(self) -> None:
+        audit = self._audit(self.EXAMPLES[1])
+        self.assertFalse(audit["sound"])
+        self.assertTrue(any("test double" in row["why"] for row in audit["forbidden"]))
+
+    def test_a_contract_probe_that_loads_a_fixture_is_rejected(self) -> None:
+        audit = self._audit(self.EXAMPLES[2])
+        self.assertFalse(audit["sound"])
+        self.assertTrue(any("production scripts" in row["why"] for row in audit["forbidden"]))
+
+    def test_a_harness_with_a_second_mount_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "d_harness.gd"
+            path.write_text(
+                'extends SceneTree\n\nconst WORLD_SCENE := "res://game/overworld/chapter1_overworld.tscn"\n\n'
+                "func _mount_world() -> Node:\n\troot.add_child(Node.new())\n"
+                "func _extra() -> void:\n\troot.add_child(Node.new())\n",
+                encoding="utf-8",
+            )
+            audit = probes.audit_decision_harness(path)
+        self.assertFalse(audit["sound"])
+        self.assertEqual(audit["add_child_count"], 2)
+        self.assertTrue(any("exactly one add_child" in reason for reason in audit["reasons"]))
+
+    def test_a_harness_mounting_a_non_game_scene_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "d_harness.gd"
+            path.write_text(
+                'extends SceneTree\n\nconst WORLD_SCENE := "res://tests/fixtures/stub_world.tscn"\n\n'
+                "func _mount_world() -> Node:\n\troot.add_child(Node.new())\n",
+                encoding="utf-8",
+            )
+            audit = probes.audit_decision_harness(path)
+        self.assertFalse(audit["sound"])
+        self.assertTrue(any("res://game/" in reason for reason in audit["reasons"]))
+
+
 class ProbeArtifactTests(unittest.TestCase):
     def test_the_committed_artifact_matches_a_fresh_run(self) -> None:
         committed = json.loads((support.RESULTS_DIR / "native_probes.json").read_text(encoding="utf-8"))

@@ -37,11 +37,13 @@ func _finish() -> void:
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(save_path))
 	if not _blocked_reason.is_empty():
 		print("B0 AVATAR PROBE BLOCKED - %s" % _blocked_reason)
+		print("A7 AVATAR BLOCKED %s: 0 checks" % _blocked_reason)
 		print("B0 AVATAR PROBE A0 ACTION: add a male/female choice to the profile step, reference A6's "
 			+ "avatar_appearance_adapter from that screen, and mount the returned scene instead of knight.tscn")
 		quit(2)
 		return
 	print("B0 AVATAR PROBE %s - %d checks" % ["PASSED" if failures.is_empty() else "FAILED", checks])
+	print("A7 AVATAR %s - avatar contract: %d checks, %d failed" % ["PASS" if failures.is_empty() else "FAIL", checks, failures.size()])
 	quit(0 if failures.is_empty() else 1)
 
 

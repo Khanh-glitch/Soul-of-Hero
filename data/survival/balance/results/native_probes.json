@@ -1,4 +1,229 @@
 {
+  "decision_defects": [],
+  "decision_harness": {
+    "add_child_count": 1,
+    "extends": "SceneTree",
+    "file": "/home/user/Soul-of-Hero/tests/survival/balance_native_decisions/d_harness.gd",
+    "mount_door": "_mount_world",
+    "present": true,
+    "reasons": [],
+    "sound": true,
+    "world_scene": "res://game/overworld/chapter1_overworld.tscn"
+  },
+  "decision_probe_count": 6,
+  "decision_probes": [
+    {
+      "a0_action": "A0: persist run_started_at/run_expires_at in the run record (14 x 24 x 3600 = 1209600 s), close the season once, keep only account achievements plus an immutable run history, and namespace quest receipts per run.",
+      "absent_confirmed": [
+        "run_started_at",
+        "run_expires_at",
+        "run_history",
+        "achievements"
+      ],
+      "absent_unexpected": [],
+      "board": "D_SERIES_NOT_MET",
+      "claim": "D055_D056_D057_season_closure",
+      "closes": [
+        "D055",
+        "D056",
+        "D057"
+      ],
+      "expected_today": "RED_NOT_IMPLEMENTED (no run_started_at, no expiry, no achievements/run_history, no quest state)",
+      "expects_absent": [
+        "run_started_at",
+        "run_expires_at",
+        "run_history",
+        "achievements"
+      ],
+      "extends": "res://tests/survival/balance_native_decisions/d_harness.gd",
+      "extends_shipped_chain": true,
+      "file": "/home/user/Soul-of-Hero/tests/survival/balance_native_decisions/d055_d057_season_probe.gd",
+      "forbidden": [],
+      "question": "do 14 real calendar days close one season, reset gameplay, keep only achievements and history, and pay quests once per run?",
+      "requires_found": [
+        "configure_storage",
+        "get_snapshot"
+      ],
+      "requires_missing": [],
+      "sound": true,
+      "stale_expectations": []
+    },
+    {
+      "a0_action": "A1: publish an eligible-start cell set (walkable, 3x3 clearance, hazard-free, reachable basic survival source) per authored region. A0: pick one per run from it, persist it with the run, never reuse the death/bed respawn cell.",
+      "absent_confirmed": [
+        "random_start",
+        "choose_start",
+        "pick_start",
+        "select_start",
+        "eligible_start"
+      ],
+      "absent_unexpected": [],
+      "board": "D_SERIES_NOT_MET",
+      "claim": "D058_broad_safe_random_starts",
+      "closes": [
+        "D058"
+      ],
+      "expected_today": "RED_NOT_IMPLEMENTED (no start selector, no eligible-cell set)",
+      "expects_absent": [
+        "random_start",
+        "choose_start",
+        "pick_start",
+        "select_start",
+        "eligible_start"
+      ],
+      "extends": "res://tests/survival/balance_native_decisions/d_harness.gd",
+      "extends_shipped_chain": true,
+      "file": "/home/user/Soul-of-Hero/tests/survival/balance_native_decisions/d058_random_spawn_probe.gd",
+      "forbidden": [],
+      "question": "is a run start chosen from a broad, safe, reachable set of real A1 cells rather than one authored spawn?",
+      "requires_found": [
+        "is_free",
+        "reachable_from",
+        "world_bounds"
+      ],
+      "requires_missing": [],
+      "sound": true,
+      "stale_expectations": []
+    },
+    {
+      "a0_action": "A0: persist satiety/HP with a last_seen_at UTC stamp and settle elapsed offline time once; clamp HP at 1 inside a valid owned shelter, apply real starvation outside it. A6: warn on logout and report on return.",
+      "absent_confirmed": [
+        "satiety",
+        "hunger",
+        "starvation",
+        "hp_floor",
+        "last_seen_at",
+        "settle_offline"
+      ],
+      "absent_unexpected": [],
+      "board": "D_SERIES_NOT_MET",
+      "claim": "D059_shelter_floor_and_one_bag",
+      "closes": [
+        "D059"
+      ],
+      "expected_today": "RED_NOT_IMPLEMENTED (no satiety/HP field, no last_seen_at, no offline settlement)",
+      "expects_absent": [
+        "satiety",
+        "hunger",
+        "starvation",
+        "hp_floor",
+        "last_seen_at",
+        "settle_offline"
+      ],
+      "extends": "res://tests/survival/balance_native_decisions/d_harness.gd",
+      "extends_shipped_chain": true,
+      "file": "/home/user/Soul-of-Hero/tests/survival/balance_native_decisions/d059_offline_hunger_probe.gd",
+      "forbidden": [],
+      "question": "does offline hunger alone stop at 1 HP inside a shelter while wilderness absence is a warned death with one durable bag?",
+      "requires_found": [],
+      "requires_missing": [],
+      "sound": true,
+      "stale_expectations": []
+    },
+    {
+      "a0_action": "A3: add a durable UTC anchor next to the world clock and settle the elapsed interval atomically through the existing transact_once barrier, bounding prepared jobs and committed fuel at each interval.",
+      "absent_confirmed": [
+        "last_seen_at",
+        "apply_elapsed",
+        "advance_offline"
+      ],
+      "absent_unexpected": [],
+      "board": "D_SERIES_NOT_MET",
+      "claim": "D060_one_world_clock_no_double_settlement",
+      "closes": [
+        "D060"
+      ],
+      "expected_today": "RED_NOT_IMPLEMENTED (clock_seconds persisted, but no absolute anchor to settle offline intervals)",
+      "expects_absent": [
+        "last_seen_at",
+        "apply_elapsed",
+        "advance_offline"
+      ],
+      "extends": "res://tests/survival/balance_native_decisions/d_harness.gd",
+      "extends_shipped_chain": true,
+      "file": "/home/user/Soul-of-Hero/tests/survival/balance_native_decisions/d060_world_time_probe.gd",
+      "forbidden": [],
+      "question": "does one persisted world clock settle 2 h, 18 h and 48 h of absence once, with bounded jobs and fuel?",
+      "requires_found": [
+        "clock_seconds",
+        "is_transaction_applied",
+        "transact_once"
+      ],
+      "requires_missing": [],
+      "sound": true,
+      "stale_expectations": []
+    },
+    {
+      "a0_action": "A0/A5: write durable timestamped trail segments from real actor movement, decay them by weather and age chronologically, let pursuit consume one sensed segment, and never persist a home coordinate on a monster.",
+      "absent_confirmed": [
+        "footprint_trail",
+        "trail_segments",
+        "scent_decay",
+        "last_known_position"
+      ],
+      "absent_unexpected": [],
+      "board": "D_SERIES_NOT_MET",
+      "claim": "D061_footprint_only_home_discovery",
+      "closes": [
+        "D061"
+      ],
+      "expected_today": "RED_NOT_IMPLEMENTED (no footprint/trail state, no decay, no detection memory)",
+      "expects_absent": [
+        "footprint_trail",
+        "trail_segments",
+        "scent_decay",
+        "last_known_position"
+      ],
+      "extends": "res://tests/survival/balance_native_decisions/d_harness.gd",
+      "extends_shipped_chain": true,
+      "file": "/home/user/Soul-of-Hero/tests/survival/balance_native_decisions/d061_trail_probe.gd",
+      "forbidden": [],
+      "question": "can a monster reach home only through a trail it really detected, and never retroactively?",
+      "requires_found": [
+        "is_world_ready"
+      ],
+      "requires_missing": [],
+      "sound": true,
+      "stale_expectations": []
+    },
+    {
+      "a0_action": "owners: every new durable record in D055\u2013D061 must land behind an existing validating gate (transact_once receipt identity, schema/instance validation, monotonic time) so a corrupted record is refused rather than paid.",
+      "absent_confirmed": [
+        "run_history",
+        "last_known_position"
+      ],
+      "absent_unexpected": [],
+      "board": "D_SERIES_NOT_MET",
+      "claim": "ORACLE_non_vacuity_under_corruption",
+      "closes": [
+        "D055",
+        "D056",
+        "D057",
+        "D059",
+        "D060",
+        "D061"
+      ],
+      "expected_today": "RED_NOT_IMPLEMENTED (C5 run scope and C6 monster knowledge have no gate to attack)",
+      "expects_absent": [
+        "run_history",
+        "last_known_position"
+      ],
+      "extends": "res://tests/survival/balance_native_decisions/d_harness.gd",
+      "extends_shipped_chain": true,
+      "file": "/home/user/Soul-of-Hero/tests/survival/balance_native_decisions/oracle_corruption_probe.gd",
+      "forbidden": [],
+      "question": "does each product gate actually reject a corrupted receipt, identity, timestamp, stored stack, run scope or monster knowledge?",
+      "requires_found": [
+        "get_snapshot",
+        "is_transaction_applied",
+        "transact_once"
+      ],
+      "requires_missing": [],
+      "sound": true,
+      "stale_expectations": []
+    }
+  ],
+  "decision_undeclared": [],
   "defects": [],
   "evidence_class": "NATIVE_UNEXECUTED",
   "executed": false,
@@ -7,16 +232,41 @@
     "1": "a real check failed",
     "2": "blocked before the first player action; never a pass"
   },
+  "families": [
+    {
+      "chain": "res://tests/survival_normal_entry_home_restart_test.gd",
+      "claims_native": false,
+      "defects": [],
+      "directory": "tests/survival/balance_native",
+      "id": "A_JOURNEY",
+      "probe_count": 3,
+      "question": "can a player, through the normal entry, do the thing?"
+    },
+    {
+      "chain": "res://tests/survival/balance_native_decisions/d_harness.gd",
+      "claims_native": false,
+      "defects": [],
+      "directory": "tests/survival/balance_native_decisions",
+      "harness_sound": true,
+      "id": "D_CONTRACT",
+      "mount_door": "d_harness._mount_world()",
+      "probe_count": 6,
+      "question": "does the composition implement the rule at all, and does it reject corruption?"
+    }
+  ],
   "probe_count": 3,
   "probes": [
     {
       "a0_action": "A0/A6: add a male/female choice to the profile step, reference A6's avatar_appearance_adapter from it, and mount the returned scene instead of knight.tscn. A6 must import one grade-0 sheet first; until then the adapter can only answer SOURCE_BLOCKED.",
+      "absent_confirmed": [],
+      "absent_unexpected": [],
       "board": "B0_NOT_MET",
       "claim": "D_useful_reward_claimable",
       "closes": [
         "BLK-5"
       ],
       "expected_today": "FAIL_NO_SELECTION_NO_MOUNTED_ADAPTER",
+      "expects_absent": [],
       "extends": "res://tests/survival_normal_entry_home_restart_test.gd",
       "extends_shipped_chain": true,
       "file": "/home/user/Soul-of-Hero/tests/survival/balance_native/avatar_body_probe.gd",
@@ -30,16 +280,20 @@
         "pending_death"
       ],
       "requires_missing": [],
-      "sound": true
+      "sound": true,
+      "stale_expectations": []
     },
     {
       "a0_action": "A0/A5: mount one authored hazard or hostile with contact damage that calls begin_overworld_death(). SurvivalService has no environmental damage path at this pin, so death is fixture-only today.",
+      "absent_confirmed": [],
+      "absent_unexpected": [],
       "board": "B0_NOT_MET",
       "claim": "B_route_runs_in_native_godot",
       "closes": [
         "BLK-4"
       ],
       "expected_today": "BLOCKED_NO_MOUNTED_THREAT",
+      "expects_absent": [],
       "extends": "res://tests/survival_normal_entry_home_restart_test.gd",
       "extends_shipped_chain": true,
       "file": "/home/user/Soul-of-Hero/tests/survival/balance_native/bed_death_bag_probe.gd",
@@ -54,10 +308,13 @@
         "structures"
       ],
       "requires_missing": [],
-      "sound": true
+      "sound": true,
+      "stale_expectations": []
     },
     {
       "a0_action": "A0 only: declare survival/a0_waystation_candidate=true in project.godot and re-vendor A3's world_source_bindings.v3.json so the host's si: instance resolves. No A7 edit is needed.",
+      "absent_confirmed": [],
+      "absent_unexpected": [],
       "board": "B0_NOT_MET",
       "claim": "D_useful_reward_claimable",
       "closes": [
@@ -65,6 +322,7 @@
         "BLK-2"
       ],
       "expected_today": "BLOCKED_L2_MOUNT",
+      "expects_absent": [],
       "extends": "res://tests/survival_normal_entry_home_restart_test.gd",
       "extends_shipped_chain": true,
       "file": "/home/user/Soul-of-Hero/tests/survival/balance_native/first_hour_route_probe.gd",
@@ -86,7 +344,8 @@
         "world_slice"
       ],
       "requires_missing": [],
-      "sound": true
+      "sound": true,
+      "stale_expectations": []
     }
   ],
   "proves": "that each probe extends the shipped chain, contains none of the constructs that would fabricate its own result, and names only symbols that exist in the pinned owner bytes. It does NOT prove the probes pass: A7 has no Godot binary, so they are NATIVE_UNEXECUTED until an owner CI run or an A7 runner with Godot 4.7 executes them.",
