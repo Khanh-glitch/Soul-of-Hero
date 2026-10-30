@@ -21,3 +21,9 @@ Original ZIPs:
 6. Keep SOURCE_PARITY_VERIFIED, HOST_CASTABLE_VERIFIED, GOLD_VISUAL_COMPARISON_READY, OWNER_VISUAL_APPROVED and PRODUCTION_INTEGRATED independent. Never promote visual status from hashes alone.
 
 IMPORTANT: Do not change the private vault visibility, print credentials, upload originals as public CI artifacts, or merge source into the public game tree.
+
+## Sandbox access attempt log (2026-10-30, round directive)
+
+- `git clone --single-branch --branch handoff/gold93-original-sources-20261030 https://github.com/Khanh-glitch/APEX-CHAOS-ASSET-VAULT.git` → `remote: Write access to repository not granted.` / `HTTP 403`.
+- `gh api repos/Khanh-glitch/APEX-CHAOS-ASSET-VAULT` → `403 Resource not accessible by integration`. The `gh` identity is `Khanh-glitch` (GH_TOKEN), but it has no read permission on this private repository.
+- Result: permission blocker for the Arena GitHub identity. Not a missing key. Needed: read access for that identity (or reconnect GitHub in Arena). No ZIP, hash or plaintext was fetched, stored or committed.

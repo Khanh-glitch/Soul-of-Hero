@@ -28,6 +28,13 @@ class Layer extends RefCounted:
 	var a: int = 255
 	var dl: int = 16
 	var add: bool = false
+	## Coverage mode (host overlay only). When true the alpha byte carries
+	## per-pixel coverage: opaque draws set 255, partial draws accumulate
+	## `a + A*(1-a)`, additive light leaves coverage untouched. The RGB math is
+	## unchanged, so with a transparent start the buffer is PREMULTIPLIED: it can
+	## be composited with `src + dst*(1-A)` and unpainted pixels show the map.
+	## Default false keeps the GOLD raster and its oracle hashes bit-identical.
+	var cov: bool = false
 
 	func _init(w: int = 600, h: int = 340, k_: float = 1.0) -> void:
 		W = w
@@ -46,17 +53,20 @@ class Layer extends RefCounted:
 		var r: int = c & 255
 		var g: int = (c >> 8) & 255
 		var b: int = (c >> 16) & 255
-		var i: int = 0
-		var n: int = W * H
-		# Writing four bytes per pixel keeps the layout identical to the
-		# original Uint32Array view.
-		while i < n:
-			var o: int = i * 4
-			bytes[o] = r
-			bytes[o + 1] = g
-			bytes[o + 2] = b
-			bytes[o + 3] = 255
-			i += 1
+		var total: int = W * H * 4
+		if total <= 0:
+			return
+		# Same bytes as writing [r, g, b, 255] per pixel (the original Uint32Array
+		# layout), produced by doubling a native block instead of a GDScript
+		# per-pixel loop. Clearing ran for every layer on every tick.
+		var block := PackedByteArray([r, g, b, 255])
+		while block.size() < total:
+			block.append_array(block.slice(0, mini(block.size(), total - block.size())))
+		bytes = block
+
+	## Premultiplied transparent start for coverage mode: RGB 0, coverage 0.
+	func clear_transparent() -> void:
+		bytes.fill(0)
 
 	func copy_from(other: Layer) -> void:
 		bytes = other.bytes.duplicate()
@@ -83,7 +93,8 @@ class Layer extends RefCounted:
 			bytes[i] = r
 			bytes[i + 1] = g
 			bytes[i + 2] = b
-			bytes[i + 3] = 255
+			if not cov:
+				bytes[i + 3] = 255
 		elif a == 255:
 			bytes[i] = c & 255
 			bytes[i + 1] = (c >> 8) & 255
@@ -97,7 +108,10 @@ class Layer extends RefCounted:
 			bytes[i] = int(float(cr2 * a + int(bytes[i]) * ia) / 255.0)
 			bytes[i + 1] = int(float(cg2 * a + int(bytes[i + 1]) * ia) / 255.0)
 			bytes[i + 2] = int(float(cb2 * a + int(bytes[i + 2]) * ia) / 255.0)
-			bytes[i + 3] = 255
+			if cov:
+				bytes[i + 3] = int(float(a * 255 + int(bytes[i + 3]) * ia) / 255.0)
+			else:
+				bytes[i + 3] = 255
 
 	func px(x: float, y: float, c: int) -> void:
 		var gx: int = M.js_round(x * k)

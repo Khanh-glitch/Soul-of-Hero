@@ -53,8 +53,6 @@ var _cast_fired: bool = false
 var _frames: int = 0
 var _damage_intents: int = 0
 var _status_intents: int = 0
-var _ink_peak: int = 0
-var _last_ink: int = 0
 var _host_targets: Array = []
 var _aim_source: Vector2 = Vector2.ZERO
 var _has_aim: bool = false
@@ -196,8 +194,6 @@ func begin(cast_id: StringName, bus, params: Gold93SkillParameters) -> void:
 	_started = false
 	_cast_fired = false
 	_frames = 0
-	_ink_peak = 0
-	_last_ink = 0
 
 
 ## Reproduces the oracle's world construction, but with the HOST's caster,
@@ -325,9 +321,8 @@ func _render() -> void:
 	_gfx["t"] = _world.time
 	_world.draw(_gfx)
 	_frames += 1
-	_last_ink = _count_ink(_gfx["s"])
-	if _last_ink > _ink_peak:
-		_ink_peak = _last_ink
+	# The ink presence metric is computed on request (frame_payload) and never
+	# per tick: a per-tick scan cost more than the raster it describes.
 
 
 func _count_ink(L) -> int:
@@ -455,8 +450,7 @@ func source_native_frame() -> Dictionary:
 func frame_payload() -> Dictionary:
 	var f := source_native_frame()
 	f["frames"] = _frames
-	f["ink_peak"] = _ink_peak
-	f["ink"] = _last_ink
+	f["ink"] = _count_ink(_gfx["s"]) if _gfx.has("s") else 0
 	return f
 
 
@@ -507,6 +501,5 @@ func stats() -> Dictionary:
 	s["frames_rendered"] = _frames
 	s["damage_intents"] = _damage_intents
 	s["status_intents"] = _status_intents
-	s["ink_peak"] = _ink_peak
 	s["skill_id"] = original_skill_id
 	return s

@@ -346,3 +346,54 @@ Open, not started this session:
 - 013, 015, 016 and 007, 008 differentials: unchanged.
 - ARCANA III: still blocked on the original archive.
 - Manifest evidence pointers: `source_numeric_oracle` is now the per-skill `docs/vfx/skill_readiness/oracle/venomwright_NNN.json` for each host-castable entry (all 15 files exist). The earlier generic `prototypes/gold_pair/tests` pointer is removed. `per_skill_harness` and `render_surface` point at CI artifacts under `.artifacts/`, which are not committed.
+
+## Session checkpoint: round directive 2026-10-30 (006/010 compositing, 021 timing, vault access)
+
+### Private source vault: BLOCKED (permission, not key)
+- `git clone` of `Khanh-glitch/APEX-CHAOS-ASSET-VAULT` (branch `handoff/gold93-original-sources-20261030`) returned `HTTP 403`, "Write access to repository not granted".
+- `gh api repos/Khanh-glitch/APEX-CHAOS-ASSET-VAULT` returned `403 Resource not accessible by integration`. The sandbox `gh` token authenticates as `Khanh-glitch` but has no read permission on the vault.
+- No GitHub connector is available in this conversation (`list_connector_tools github` → unsupported).
+- Consequence: the original TypeScript/PixiJS sources (Venomwright and ARCANA III) are not available. Nothing below claims parity against them. No ZIP, hash or plaintext was fetched, stored or committed.
+- Needed to unblock: read access for the Arena GitHub identity to the vault, or the owner reconnecting GitHub in Arena. Then the SHA-256 check in `GOLD93_PRIVATE_SOURCE_ACCESS.md` step 2 comes first.
+
+### 006 / 010 real-map compositing: cause and fix (presentation overlay only)
+Root cause, from the native code (not from a visual guess):
+1. The overlay cleared the scene raster to OPAQUE BLACK and composited it with `BLEND_MODE_ADD`. Black adds nothing, so the scene only ever contributed light. Solid and translucent effect pixels (dark bodies, smoke, acid) could not occlude the map. That is the washed-out look.
+2. The raster has no coverage. Partial-coverage draws use Bayer dithering (`dl < 16`), so an effect is a pattern of unpainted pixels. In GOLD those holes show the ground. In the overlay they showed black, so the map was lost in holes.
+3. Scene and glow were both additive, so the map was never occluded by the effect body.
+
+Fix (`venom_pixel.gd`, `venom_pilot_stage.gd`, `venom_pilot_real_map_test.gd`):
+- `Layer.cov` (default false). When true, the alpha byte carries coverage: opaque writes 255, partial writes `a + A*(1-a)`, additive light leaves coverage unchanged. RGB math is unchanged, so the buffer is premultiplied.
+- The overlay scene clears to transparent and is composited with `BLEND_MODE_PREMULT_ALPHA`. Unpainted pixels show the real map. Solid and translucent effects occlude it. Additive light stays additive. The glow layer stays `ADD`.
+- The GOLD path (`cov = false`, `copy_from(ground)`) is untouched, so the oracle raster hashes cannot change.
+- `legacy_additive` keeps the previous composite, only as the A/B baseline.
+
+Map darkening (`venom_map_darkening.gd`, host presentation only):
+- Changes only the `modulate` of `Level.backdrop`, `Level.geometry` and `Level.decor`. Knight, enemies, HUD, text, VFX, glow, particles and hit flashes are not attached, so they are never touched.
+- Default strength 0.12 (RGB ×0.88), clamped 0.0–0.25. Fade in 0.12 s, fade out 0.20 s, sim-time. One shared level and an owner set, so overlapping casts do not flicker. OFF (`enabled = false`) and `restore()` return the exact original modulate.
+- It is NOT in the source-native renderer, and the darkening is not a fix for the compositing error.
+- Lab UI control is not implemented. The parameters exist on the controller only.
+
+A/B capture plan (`real_map/venom_pilot_real_map_test.gd`), same seed, cast tick and ticks per mode:
+- B `gold_isolated`: native GOLD-mode render, isolated 1200×680 viewport.
+- C `legacy_additive`: previous real-map composite (baseline).
+- D `coverage`: corrected composite, darkening OFF.
+- E `coverage_darkened`: corrected composite, darkening ON.
+- A original GOLD: NOT rendered. An `s0NN_gold_original_UNAVAILABLE.txt` record states the vault 403. Nothing is substituted.
+- Checkpoints from the oracle timeline (tick = 1 + round(t×60)): 006 anticipation 7, wind-up 16, impact 25, peak 335, finisher 354, aftermath 385. 010 anticipation 7, wind-up 31, impact 54, peak 715, finisher 821, aftermath 840.
+- `ab_index.json` lists every frame with uncovered-pixel fraction and darkening level.
+- NOT done: a rendered interactive demo with toggles (the capture is headless), and the common desktop scaling review (150%).
+
+Unit gates (`tests/venom_presentation_unit_test.gd`): coverage raster semantics, GOLD alpha stays 255, darkening OFF is exact, fade times, overlap monotonicity, exact restore, strength clamp, non-map items untouched. Wired into the pilot-headless job.
+
+### 021 host adapter runtime: profile and bounds
+Profile, from the code paths (not measured here; no local Godot):
+- Every `venom_world.draw()` runs per tick and is not pure: `venom_fx.gd` calls `w.rng.next()` and `w.parts.add(...)` from the draw path. So rendering cannot be deferred or skipped without changing RNG and parity. This is kept.
+- Found and removed: `VenomwrightSourceModule._render()` ran `_count_ink()`, a GDScript scan of the scene raster, on every tick, purely for an informational stat. It now runs only when `frame_payload()` is requested. `ink_peak` tracking is removed.
+- Found and fixed: `VenomLayer.clear()` wrote every pixel in a GDScript loop, on every tick, for the glow layer. It now doubles a native block to produce the same bytes.
+- Measured wall-clock acceptance (`gold93_host_adapter_skill_test.gd`): cancel ≤ 20 s, dispose after cancel ≤ 20 s, dispose after a finished cast ≤ 20 s, lab release ≤ 20 s, full cast / replay / Lab run ≤ 180 s each. Exceeding a bound FAILS. Timings print as `GOLD93_HOST_ADAPTER_TIMING`.
+- Not done: thread-handoff measurement, overlapping-cast wall-clock test, leak counting. Those need CI timing evidence first.
+
+### Not started this round (blocked by the vault)
+- 007, 008, 013, 015, 016, 020 original-TypeScript divergence capture. Stays as before.
+- ARCANA III skill 001 original PixiJS reference.

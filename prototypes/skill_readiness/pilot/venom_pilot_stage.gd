@@ -33,15 +33,25 @@ var tick: int = 0
 var cast_started: bool = false
 var cast_obj = null
 var overlay: bool = false
+## Overlay scene compositing (host presentation only; GOLD mode ignores it).
+## MODE_COVERAGE: premultiplied scene with per-pixel coverage, composited over the
+## map. MODE_LEGACY_ADDITIVE: the previous opaque-black scene added onto the map,
+## kept only as the A/B baseline that exposed the washed-out look.
+const MODE_COVERAGE: String = "coverage"
+const MODE_LEGACY_ADDITIVE: String = "legacy_additive"
+var scene_mode: String = MODE_COVERAGE
 
 
 ## Build a fresh world exactly as the oracle driver does. Returns false when the
 ## skill is not a pilot skill or has no native generator.
-func start(sid: int, as_overlay: bool = false) -> bool:
+func start(sid: int, as_overlay: bool = false, mode: String = MODE_COVERAGE) -> bool:
 	if not PILOT_SKILLS.has(sid) or not SKILLS.has_generator(sid):
+		return false
+	if mode != MODE_COVERAGE and mode != MODE_LEGACY_ADDITIVE:
 		return false
 	skill_id = sid
 	overlay = as_overlay
+	scene_mode = mode
 	def = SKILLS.defs()[sid]
 	world = RECORDER.new(ENGINE.WW, ENGINE.WH)
 	world.cfg["density"] = DENSITY
@@ -114,6 +124,12 @@ func scene_image() -> Image:
 	return _to_image(layers["s"])
 
 
+## True when the scene buffer is premultiplied with coverage (overlay coverage
+## mode). The composite must then use premultiplied-alpha blending, not ADD.
+func scene_premultiplied() -> bool:
+	return overlay and scene_mode == MODE_COVERAGE
+
+
 func glow_image() -> Image:
 	return _to_image(layers["l"])
 
@@ -126,9 +142,14 @@ func _to_image(L) -> Image:
 ## (identical to the differential test). Overlay mode: the scene starts black
 ## instead of the venom ground, so the effects can be added onto a real map.
 func _render() -> void:
-	if overlay:
+	if overlay and scene_mode == MODE_COVERAGE:
+		layers["s"].cov = true
+		layers["s"].clear_transparent()
+	elif overlay:
+		layers["s"].cov = false
 		layers["s"].clear(0xFF000000)
 	else:
+		layers["s"].cov = false
 		layers["s"].copy_from(ground)
 	layers["l"].clear(0xFF000000)
 	layers["s"].reset()

@@ -29,6 +29,14 @@ const LAB_SCENE = preload("res://prototypes/skill_readiness/lab/skill_readiness_
 
 const CAST_SEED: int = 20261028
 const MAX_TICKS: int = 4096
+## Wall-clock acceptance bounds (milliseconds, measured with Time.get_ticks_usec).
+## They are not weakened to make a slow adapter pass: an adapter that exceeds one
+## of them FAILS, with its measured time in the verdict. Simulated-world bounds
+## (DRAIN_SETTLE_SECONDS) do not limit wall-clock time, so these bound it directly.
+const CANCEL_MAX_MS: int = 20000
+const DISPOSE_MAX_MS: int = 20000
+const CAST_MAX_MS: int = 180000
+var _timing: Dictionary = {}
 
 var _failures: Array[String] = []
 var _skill: int = 0
@@ -62,6 +70,10 @@ func _make_context(source_seed: int) -> Gold93CastContext:
 	])
 	ctx.set_ports(bundle)
 	return ctx
+
+
+func _ms_since(start_usec: int) -> int:
+	return int((Time.get_ticks_usec() - start_usec) / 1000)
 
 
 func _emitted(handle) -> int:
@@ -118,7 +130,11 @@ func _run() -> void:
 	if tasks_before >= 0:
 		_check(tasks_before > 0, "the authored generator must be live before cancel")
 	var emitted_before_cancel: int = _emitted(hb)
+	var t_cancel: int = Time.get_ticks_usec()
 	_check(hb.cancel(), "cancel() must succeed while RUNNING")
+	_timing["cancel_ms"] = _ms_since(t_cancel)
+	_check(int(_timing["cancel_ms"]) <= CANCEL_MAX_MS,
+			"cancel must finish within %d ms wall-clock, took %d ms" % [CANCEL_MAX_MS, int(_timing["cancel_ms"])])
 	_check(hb.status == Gold93SkillHandle.Status.CANCELLED, "cancel must reach CANCELLED")
 	if tasks_before >= 0:
 		_check(_generator_tasks(world_b) == 0,
@@ -127,7 +143,11 @@ func _run() -> void:
 	hb.tick_source(10)
 	_check(_emitted(hb) == emitted_before_cancel, "no intent may be emitted after cancellation")
 	_phase("cancel-stepped")
+	var t_dispose: int = Time.get_ticks_usec()
 	hb.dispose()
+	_timing["dispose_after_cancel_ms"] = _ms_since(t_dispose)
+	_check(int(_timing["dispose_after_cancel_ms"]) <= DISPOSE_MAX_MS,
+			"dispose after cancel must finish within %d ms wall-clock, took %d ms" % [DISPOSE_MAX_MS, int(_timing["dispose_after_cancel_ms"])])
 	_phase("disposed")
 	_check(hb.status == Gold93SkillHandle.Status.DISPOSED, "dispose must reach DISPOSED")
 
@@ -136,7 +156,11 @@ func _run() -> void:
 	var hc = runtime.cast(StringName(_id), _make_context(CAST_SEED), PARAMS.diagnostic("venomwright"))
 	var mc = hc.module
 	_check(hc.start(), "start() must succeed for the full cast")
+	var t_cast: int = Time.get_ticks_usec()
 	var ticks_c: int = hc.run_to_completion(MAX_TICKS)
+	_timing["full_cast_ms"] = _ms_since(t_cast)
+	_check(int(_timing["full_cast_ms"]) <= CAST_MAX_MS,
+			"full cast must finish within %d ms wall-clock, took %d ms" % [CAST_MAX_MS, int(_timing["full_cast_ms"])])
 	_check(hc.status == Gold93SkillHandle.Status.FINISHED,
 			"full cast must reach FINISHED, got %s after %d ticks" % [hc.status_name(), ticks_c])
 	_check(ticks_c >= 60, "full cast must run at least one second of authored time, got %d ticks" % ticks_c)
@@ -163,11 +187,19 @@ func _run() -> void:
 	_phase("replay")
 	var hd = runtime.cast(StringName(_id), _make_context(CAST_SEED), PARAMS.diagnostic("venomwright"))
 	_check(hd.start(), "replay start() must succeed")
+	var t_replay: int = Time.get_ticks_usec()
 	var ticks_d: int = hd.run_to_completion(MAX_TICKS)
+	_timing["replay_ms"] = _ms_since(t_replay)
+	_check(int(_timing["replay_ms"]) <= CAST_MAX_MS,
+			"replay must finish within %d ms wall-clock, took %d ms" % [CAST_MAX_MS, int(_timing["replay_ms"])])
 	_check(ticks_d == ticks_c, "replay must finish on the same tick: %d vs %d" % [ticks_d, ticks_c])
 	_check(hd.trace_digest() == digest_c, "same seed must replay with an identical trace digest")
 	hd.dispose()
+	var t_cleanup: int = Time.get_ticks_usec()
 	hc.dispose()
+	_timing["dispose_after_finish_ms"] = _ms_since(t_cleanup)
+	_check(int(_timing["dispose_after_finish_ms"]) <= DISPOSE_MAX_MS,
+			"dispose after a finished cast must finish within %d ms wall-clock, took %d ms" % [DISPOSE_MAX_MS, int(_timing["dispose_after_finish_ms"])])
 	_check(hc.status == Gold93SkillHandle.Status.DISPOSED, "full cast must dispose cleanly")
 
 	# --- 5. the Lab drives the same id through its real selector -------------
@@ -177,6 +209,7 @@ func _run() -> void:
 	_phase("done")
 	print("GOLD93_HOST_ADAPTER: %s stats ticks=%d emitted=%d damage=%d status=%d digest=%s" % [
 		_id, ticks_c, emitted_c, damage_c, status_c, digest_c.substr(0, 16)])
+	print("GOLD93_HOST_ADAPTER_TIMING: %s %s" % [_id, JSON.stringify(_timing)])
 	_finish()
 
 
@@ -203,10 +236,18 @@ func _run_lab() -> void:
 			"the Lab cancel must reach CANCELLED")
 	lab.cast_selected()
 	lab_h = lab.current_handle()
+	var t_lab: int = Time.get_ticks_usec()
 	lab.run_to_end()
+	_timing["lab_run_ms"] = _ms_since(t_lab)
+	_check(int(_timing["lab_run_ms"]) <= CAST_MAX_MS,
+			"the Lab run must finish within %d ms wall-clock, took %d ms" % [CAST_MAX_MS, int(_timing["lab_run_ms"])])
 	_check(lab_h != null and lab_h.status == Gold93SkillHandle.Status.FINISHED,
 			"the Lab run_to_end must reach FINISHED")
+	var t_release: int = Time.get_ticks_usec()
 	lab.release_all()
+	_timing["lab_release_ms"] = _ms_since(t_release)
+	_check(int(_timing["lab_release_ms"]) <= DISPOSE_MAX_MS,
+			"the Lab release must finish within %d ms wall-clock, took %d ms" % [DISPOSE_MAX_MS, int(_timing["lab_release_ms"])])
 	_check(lab.current_handle() == null, "release_all must release the Lab's handle")
 	# Let the root finish its current child update before removing the Lab.
 	await process_frame

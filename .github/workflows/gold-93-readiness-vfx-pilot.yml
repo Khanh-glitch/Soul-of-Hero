@@ -50,6 +50,19 @@ jobs:
           STATUS=$(cat /tmp/pilot-run.status)
           echo "godot exit status $STATUS; log lines $(wc -l < /tmp/pilot-run.log)"
           test "$STATUS" = "0" && grep -q 'GOLD93_VENOM_PILOT: PASS' /tmp/pilot-run.log && ! grep -qE 'SCRIPT ERROR:|Parse Error:' /tmp/pilot-run.log
+      - name: Presentation unit gates (coverage raster and map darkening)
+        if: matrix.skill == 6
+        shell: bash
+        run: |
+          set +e
+          timeout 300s godot --headless --path . --script res://prototypes/skill_readiness/pilot/tests/venom_presentation_unit_test.gd > /tmp/pilot-unit.log 2>&1
+          STATUS=$?
+          set -e
+          grep -E 'GOLD93_VENOM_PRESENTATION_UNIT' /tmp/pilot-unit.log | head -20 | sed -e 's/%/%25/g' | while IFS= read -r line; do echo "::notice title=vfx-pilot unit::$line"; done
+          if [ "$STATUS" != "0" ] || ! grep -q 'GOLD93_VENOM_PRESENTATION_UNIT: PASS' /tmp/pilot-unit.log || grep -qE 'SCRIPT ERROR:|Parse Error:' /tmp/pilot-unit.log; then
+            python3 prototypes/skill_readiness/pilot/tools/pilot_log_digest.py /tmp/pilot-unit.log "vfx-pilot unit status=$STATUS"
+            exit 1
+          fi
       - name: Demo scene smoke (venom_pilot_demo.tscn, 240 frames, headless)
         if: matrix.skill == 6
         shell: bash
@@ -83,7 +96,7 @@ jobs:
           retention-days: 14
   pilot-real-map:
     runs-on: ubuntu-24.04
-    timeout-minutes: 45
+    timeout-minutes: 90
     steps:
       - name: Checkout immutable Chapter 1 Level 2 (no mutation)
         uses: actions/checkout@v4
@@ -127,7 +140,7 @@ jobs:
           set -uo pipefail
           mkdir -p real-map/.artifacts/venom_real_map
           set +e
-          timeout 1200s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --audio-driver Dummy --path real-map --rendering-method gl_compatibility --resolution 1280x720 res://prototypes/skill_readiness/pilot/real_map/venom_pilot_real_map.tscn 2>&1 | tee /tmp/pilot-real-map.log
+          timeout 4800s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --audio-driver Dummy --path real-map --rendering-method gl_compatibility --resolution 1280x720 res://prototypes/skill_readiness/pilot/real_map/venom_pilot_real_map.tscn 2>&1 | tee /tmp/pilot-real-map.log
           STATUS=${PIPESTATUS[0]}
           set -e
           echo "::notice title=vfx-pilot-map status::godot exit status $STATUS"
@@ -137,8 +150,11 @@ jobs:
             exit 1
           fi
           test -s real-map/.artifacts/venom_real_map/l2_baseline_no_vfx.png
-          test -s real-map/.artifacts/venom_real_map/l2_venom_006_t0070.png
-          test -s real-map/.artifacts/venom_real_map/l2_venom_010_t0300.png
+          for f in s006_gold_isolated_impact_t0025 s006_legacy_additive_impact_t0025 s006_coverage_impact_t0025 s006_coverage_darkened_impact_t0025 s010_coverage_darkened_peak_t0715 s010_coverage_darkened_aftermath_t0840; do
+            test -s "real-map/.artifacts/venom_real_map/$f.png"
+          done
+          test -s real-map/.artifacts/venom_real_map/ab_index.json
+          test -s real-map/.artifacts/venom_real_map/s006_gold_original_UNAVAILABLE.txt
           if ! git -C real-map diff --quiet HEAD -- game/ data/ assets/ project.godot; then echo "Tracked map altered"; exit 1; fi
       - name: Upload real-map pilot frames
         if: always()
@@ -147,6 +163,8 @@ jobs:
           name: venom-pilot-real-map-frames
           path: |
             real-map/.artifacts/venom_real_map/*.png
+            real-map/.artifacts/venom_real_map/*.json
+            real-map/.artifacts/venom_real_map/*.txt
             /tmp/pilot-real-map.log
           if-no-files-found: warn
           retention-days: 14
