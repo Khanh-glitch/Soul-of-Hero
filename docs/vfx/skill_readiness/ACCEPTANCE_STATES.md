@@ -20,7 +20,7 @@ Only the project owner can set OWNER_VISUAL_APPROVED.
 | Skill | SOURCE_NATIVE_EXECUTABLE | SOURCE_PARITY_VERIFIED | HOST_ADAPTER_VERIFIED | GOLD_VISUAL_COMPARISON_READY | GAMEPLAY_MOTION_VERIFIED | ENVIRONMENT_INTEGRATION_VERIFIED | OWNER_VISUAL_APPROVED | PRODUCTION_INTEGRATED |
 |---|---|---|---|---|---|---|---|---|
 | 006 Graft Caravan | yes (CI PASS, run 40861447433) | yes (seeds 7 and 21, run 40826230558) | no: no host-integration adapter in production (library-level HOST_CASTABLE_VERIFIED is yes, see table below) | no: 006 captures are native renders only; original GOLD renderer needs source archive re-provisioned | no | no | no | no |
-| 010 The Walking Crucible | yes (CI PASS, run 40861447433) | yes (seed 7, run 40832336038) | no: no host-integration adapter in production (library-level HOST_CASTABLE_VERIFIED is yes, see table below) | no | no | no | no | no |
+| 010 The Walking Crucible | yes (CI PASS, run 40861447433) | yes (seed 7, run 40832336038) | no: no host-integration adapter in production (library-level HOST_CASTABLE_VERIFIED is yes, see table below) | partial: original-GOLD view A composites exist locally (`/home/user/gold93_evidence/venomwright_010/A_original_gold_composite/`); synchronized A/B vs native + Level2 (views B–E) not yet assembled; GOLD_VISUAL_COMPARISON_READY not claimed | no | no | no | no |
 
 ## Venomwright library status (CI, branch head bec65d1)
 
