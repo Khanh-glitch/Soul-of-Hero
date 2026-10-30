@@ -28,7 +28,7 @@ jobs:
           timeout --signal=TERM --kill-after=15s 1800s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_threat --resolution 960x540 --windowed --script res://tests/survival_optional_threat_journey_test.gd > artifacts/threat.log 2>&1
           rc=$?
           cat artifacts/threat.log
-          echo "::notice::threat exit=$rc $(grep -E 'OPTIONAL_THREAT_|OPTIONAL THREAT|  FAIL  |SCRIPT ERROR|Parse Error' artifacts/threat.log | tail -20 | tr '\n' '~')"
+          echo "::notice::threat exit=$rc $(grep -E 'OPTIONAL_THREAT_|OPTIONAL THREAT|FARM_PROBE|  FAIL  |SCRIPT ERROR|Parse Error' artifacts/threat.log | tail -20 | tr '\n' '~')"
           bash tools/ci/gate_log.sh artifacts/threat.log 'A0 optional threat' 'OPTIONAL THREAT JOURNEY PASSED'
           gate=$?
           [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]

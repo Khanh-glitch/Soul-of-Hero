@@ -1,6 +1,7 @@
 extends Node2D
 ## Experimental opt-in encounter seam, NOT mounted by the production world.
-## One existing SkeletonEnemy, zero score, no dungeon changes and no new loot.
+## One existing SkeletonEnemy, no kill bonus, no dungeon changes or new loot.
+## Normal Hero damage score still applies; this seam is not production-ready.
 ## Caller must choose a shape/nav-validated site; configure fails closed if the
 ## area is near protected places, roads, existing structures or the current Hero.
 ## World reconstruction must explicitly reconfigure the same site and reserve it
@@ -11,6 +12,11 @@ const MAX_LEASH := 160.0
 const REARM_SECONDS := 60.0
 const SAFE_SPAWN_DISTANCE := 320.0
 const ENEMY_SCENE := "res://game/characters/enemies/skeleton_enemy.tscn"
+## A hit can award the Hero's existing combat score even when score_reward is
+## zero. A durable first-hit receipt limits rearming after a successful save
+## without changing shared combat or dungeon AI. Save-fault/reload farming is
+## still unproven: the current Hero can award score even if that write fails.
+const CONSUMED_RECEIPT := "survival.encounter.optional_skeleton.first_hit.v1"
 
 var _hero: CharacterBody2D
 var _build: SurvivalBuildSystem
@@ -18,6 +24,8 @@ var _world: OverworldWorld
 var _site := Vector2i(-1, -1)
 var _reservation := Rect2i()
 var _enemy: CharacterBody2D
+var _save: Node
+var _spent := false
 var _cooldown := 0.0
 var _configured := false
 
@@ -25,6 +33,9 @@ func configure(hero: CharacterBody2D, build: SurvivalBuildSystem, nav: Overworld
 	if _configured or not is_inside_tree() or hero == null or build == null or nav == null or build.world == null:
 		return false
 	if get_parent().get_node_or_null("OptionalSkeletonEncounter") != self:
+		return false
+	var save := get_node_or_null("/root/SaveService")
+	if save == null or not save.has_method(&"is_transaction_applied") or not save.has_method(&"transact_once"):
 		return false
 	var world := build.world
 	var center := Vector2(site.x * 16 + 8, site.y * 16 + 15)
@@ -72,6 +83,8 @@ func configure(hero: CharacterBody2D, build: SurvivalBuildSystem, nav: Overworld
 	_hero = hero
 	_build = build
 	_world = world
+	_save = save
+	_spent = bool(_save.call(&"is_transaction_applied", CONSUMED_RECEIPT))
 	_site = site
 	_reservation = area
 	_build.encounter_exclusions.append(area)
@@ -84,7 +97,7 @@ func configure(hero: CharacterBody2D, build: SurvivalBuildSystem, nav: Overworld
 	position = center
 	var warning := Label.new()
 	warning.name = "OptionalEncounterWarning"
-	warning.text = "DANGER: skeleton nearby — optional"
+	warning.text = "Encounter cleared" if _spent else "DANGER: skeleton nearby — optional"
 	warning.position = Vector2(-110, -58)
 	warning.size = Vector2(220, 20)
 	warning.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -96,7 +109,7 @@ func configure(hero: CharacterBody2D, build: SurvivalBuildSystem, nav: Overworld
 	return true
 
 func _spawn() -> void:
-	if not _configured or is_instance_valid(_enemy) or not is_instance_valid(_hero) \
+	if not _configured or _spent or is_instance_valid(_enemy) or not is_instance_valid(_hero) \
 			or _hero.global_position.distance_to(global_position) <= SAFE_SPAWN_DISTANCE:
 		return
 	var packed := load(ENEMY_SCENE) as PackedScene
@@ -109,7 +122,27 @@ func _spawn() -> void:
 	_enemy.set("score_reward", 0)
 	add_child(_enemy)
 	_enemy.set("global_position", global_position)
+	_enemy.connect("health_changed", _on_enemy_health_changed)
 	_enemy.connect("died", _on_enemy_died)
+
+func _on_enemy_health_changed(current: int, maximum: int) -> void:
+	if _spent or current >= maximum or not _configured:
+		return
+	# SaveService owns the sole durable receipt. On a write fault, remove the
+	# encounter and keep this live session fail-closed rather than respawning it.
+	var committed := bool(_save.call(&"transact_once", CONSUMED_RECEIPT,
+		func(_candidate: Dictionary) -> bool: return true,
+		{"kind": "survival_encounter_first_hit", "encounter_id": "optional_skeleton_v1"}))
+	_spent = committed or bool(_save.call(&"is_transaction_applied", CONSUMED_RECEIPT))
+	if not _spent:
+		_spent = true
+		push_warning("Optional encounter receipt failed; rearming is disabled for this session.")
+		if is_instance_valid(_enemy):
+			_enemy.queue_free()
+			_enemy = null
+	var warning := get_node_or_null("OptionalEncounterWarning") as Label
+	if warning != null:
+		warning.text = "Encounter engaged — no respawn"
 
 func _on_enemy_died(_which: Node) -> void:
 	_cooldown = REARM_SECONDS

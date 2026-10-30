@@ -1,7 +1,12 @@
 extends "res://tests/survival_normal_home_journey_test.gd"
 ## Experimental end-to-end probe, NOT a production-enabled threat. Inherits the
 ## fresh ordinary-input home build and uses the real Hero, existing enemy AI,
-## paused GUI and real SaveService. It never teleports, grants or inflicts damage.
+## paused GUI and real SaveService. It never teleports, grants or injects damage.
+
+var _observed_input_kill := false
+
+func _on_probe_enemy_died(_enemy: Node) -> void:
+	_observed_input_kill = true
 
 func _finish() -> void:
 	paused = false
@@ -215,8 +220,13 @@ func _body() -> void:
 		return
 	var repeated := await _repeat_real_death(ow, encounter, site, goal, start, home_room, bag_id, before)
 	_expect(repeated, "second real death and distinct bag recovery return to the original home without duplication")
-	_expect(int(session.get("score")) == score_before, "damage, death and cleanup grant no encounter score")
+	_expect(int(session.get("score")) == score_before, "incoming damage, death and cleanup grant no encounter score")
 	if not repeated:
+		_body_complete = true
+		return
+	var consumed := await _consume_encounter_by_real_attack(ow, encounter, goal, start, home_room, before)
+	_expect(consumed, "real-input kill consumes the encounter and prevents repeat-score rearm")
+	if not consumed:
 		_body_complete = true
 		return
 	(ow.get(&"state") as OverworldState).save_now()
@@ -237,6 +247,14 @@ func _body() -> void:
 			if not fresh_records.has(id) or fresh_build.structure_node(String(id)) == null:
 				same_structures = false
 		_expect(same_structures and String(fresh_doc.get("spawn_anchor", "")) == home_bed and (fresh_doc.get("containers", {}) as Dictionary) == home_containers, "fresh overworld reconstructs all original home identities, active bed and exact stored contents")
+		var restored_encounter := Node2D.new()
+		restored_encounter.name = "OptionalSkeletonEncounter"
+		restored_encounter.set_script(encounter_script)
+		fresh.add_child(restored_encounter)
+		var fresh_hero := fresh.get(&"player") as CharacterBody2D
+		var fresh_nav := fresh.get(&"traversability") as OverworldTraversability
+		var restored := bool(restored_encounter.call(&"configure", fresh_hero, fresh_build, fresh_nav, site))
+		_expect(restored and restored_encounter.get_node_or_null("BoundedSkeleton") == null and bool(_save().call(&"is_transaction_applied", "survival.encounter.optional_skeleton.first_hit.v1")), "same consumed encounter stays non-spawning after disk and world reconstruction")
 	_body_complete = true
 
 # Use real movement to re-engage after knockback. A leashed enemy may despawn;
@@ -257,6 +275,64 @@ func _engage_until_death(hero: CharacterBody2D, encounter: Node2D, home_cell: Ve
 		await physics_frame
 	_set_direction(Vector2.ZERO)
 
+# Supplemental anti-farming gate in the same continuous journey. No direct
+# damage, synthetic death, teleport, inventory grants or attack callbacks.
+# The Hero may award its ordinary per-hit score once; the durable receipt must
+# prevent this experimental site from being repeatedly rearmed.
+func _consume_encounter_by_real_attack(ow: Node, encounter: Node2D, goal: Vector2i, base: Vector2i, home_room: String, expected: Dictionary) -> bool:
+	var hero := ow.get(&"player") as CharacterBody2D
+	var nav := ow.get(&"traversability") as OverworldTraversability
+	var session := root.get_node("GameSession")
+	var key := "survival.encounter.optional_skeleton.first_hit.v1"
+	var score_before_hit := int(session.get("score"))
+	var progression_before: Dictionary = (_save().call(&"get_snapshot") as Dictionary).get("progression", {}).duplicate(true)
+	await create_timer(62.0).timeout
+	var approach := _route(nav.cell_of(hero.global_position), goal, nav, hero)
+	if encounter.get_node_or_null("BoundedSkeleton") == null or approach.is_empty() or not await _walk_path(hero, approach):
+		print("FARM_PROBE_FAIL no rearmed enemy or physical approach")
+		return false
+	var probe_enemy := encounter.get_node_or_null("BoundedSkeleton") as CharacterBody2D
+	if not is_instance_valid(probe_enemy):
+		return false
+	_observed_input_kill = false
+	probe_enemy.connect(&"died", _on_probe_enemy_died)
+	var clock := 0.0
+	while clock < 35.0 and not _observed_input_kill and not bool(hero.get("dead")):
+		var enemy := encounter.get_node_or_null("BoundedSkeleton") as CharacterBody2D
+		if not is_instance_valid(enemy):
+			break
+		var offset := enemy.global_position - hero.global_position
+		if offset.length() > 30.0:
+			_set_direction(offset)
+			await create_timer(0.25).timeout
+			_set_direction(Vector2.ZERO)
+		else:
+			# A brief directional movement supplies the same facing a player uses;
+			# the subsequent action is processed by the real Hero/controller.
+			_set_direction(offset)
+			await create_timer(0.04).timeout
+			_set_direction(Vector2.ZERO)
+			await _tap_action(&"attack")
+			await create_timer(0.55).timeout
+		clock += 0.6
+	_set_direction(Vector2.ZERO)
+	var applied := bool(_save().call(&"is_transaction_applied", key))
+	print("FARM_PROBE attack_receipt=%s real_kill=%s score_before=%d score_after=%d hp=%d pos=%s" % [applied, _observed_input_kill, score_before_hit, int(session.get("score")), int(hero.get("health")), str(hero.global_position)])
+	if not applied or not _observed_input_kill or bool(hero.get("dead")):
+		return false
+	var home_path := _route(nav.cell_of(hero.global_position), base, nav, hero)
+	if not home_path.is_empty():
+		await _walk_path(hero, home_path)
+	var build := ow.get(&"survival_build") as SurvivalBuildSystem
+	if bool(hero.get("dead")) or build.room_topology.room_at(nav.cell_of(hero.global_position)) != home_room:
+		return false
+	var score_after_attack := int(session.get("score"))
+	await create_timer(62.0).timeout
+	return encounter.get_node_or_null("BoundedSkeleton") == null \
+		and int(session.get("score")) == score_after_attack \
+		and (_save().call(&"inventory_totals") as Dictionary) == expected \
+		and (_save().call(&"get_snapshot") as Dictionary).get("progression", {}) == progression_before
+
 func _repeat_real_death(ow: Node, encounter: Node2D, site: Vector2i, goal: Vector2i,
 		home_cell: Vector2i, home_room: String, previous_bag: String, before: Dictionary) -> bool:
 	var hero := ow.get(&"player") as CharacterBody2D
@@ -265,7 +341,7 @@ func _repeat_real_death(ow: Node, encounter: Node2D, site: Vector2i, goal: Vecto
 	# Real active time, not a manipulated timer. The Hero remains at the home.
 	await create_timer(62.0).timeout
 	var enemy := encounter.get_node_or_null("BoundedSkeleton") as CharacterBody2D
-	_expect(enemy != null and int(enemy.get("score_reward")) == 0, "one no-score skeleton re-arms after active cooldown")
+	_expect(enemy != null and int(enemy.get("score_reward")) == 0, "one skeleton without a kill bonus re-arms after active cooldown")
 	var enemy_count := 0
 	for child: Node in encounter.get_children():
 		if child is CharacterBody2D:
