@@ -117,10 +117,15 @@ func _capture(state: String, overrides: Dictionary, open_record := false) -> voi
 	var layer := LAYER_SCENE.instantiate()
 	add_child(layer)
 	layer.configure(get_tree(), overrides, func() -> int: return NOW)
+	print("A6 UI CAPTURE: rendering ", state)
 	await _settle(3)
 	if open_record:
 		layer.open_record()
 	await _settle(6)
+	# Reading the viewport texture before the renderer has finished a frame can
+	# block forever on a software GL driver (the first hosted attempt sat on the
+	# job timeout here). Wait for the draw, not just the process tick.
+	await RenderingServer.frame_post_draw
 	var viewport_size := get_viewport().get_visible_rect().size
 	var frame := get_viewport().get_texture().get_image()
 	# `canvas_items` stretch means the layout is authored in 640x360 units while the

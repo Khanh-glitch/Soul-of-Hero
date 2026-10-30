@@ -164,6 +164,9 @@ jobs:
                 echo '```'
               } >> "$GITHUB_STEP_SUMMARY"
               echo "::error::return UI render failed at ${res} (exit ${status})"
+              # Annotations are readable through the API even when the job log
+              # host is unreachable, so the tail is published here too.
+              tail -8 "${log}" | sed 's/^/::error::/' || true
               exit "${status}"
             fi
           done
