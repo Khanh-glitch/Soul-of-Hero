@@ -94,6 +94,74 @@ def probe_hashes() -> Dict[str, str]:
     return hashes
 
 
+def classify(output: str, code: int, timed_out: bool, timeout: int) -> tuple:
+    """Turn one probe process into a verdict that cannot flatter itself.
+
+    The verdict line is a *claim by the probe*; the exit code is what the process
+    actually did. They must agree. A probe that prints `PASS` and exits 2 was
+    blocked, and a probe that prints `PASS` while also printing a MISSING or FAIL
+    line did not pass either — either mismatch is recorded as the weaker outcome.
+    """
+    claimed = ""
+    checks = 0
+    missing: List[str] = []
+    failed: List[str] = []
+    blocker = ""
+    for line in output.splitlines():
+        if line.startswith("A7 ") and " MISSING " in line:
+            missing.append(line.split(" MISSING ", 1)[1].strip())
+        if line.startswith("A7 ") and " FAIL " in line:
+            failed.append(line.split(" FAIL ", 1)[1].strip())
+        if line.startswith("A7 ") and " BLOCKED " in line:
+            blocker = line.split(" BLOCKED ", 1)[1].strip()
+        parts = line.split()
+        if len(parts) >= 4 and parts[0] == "A7" and parts[2] in VERDICTS:
+            if not claimed:
+                claimed = parts[2]
+                for token in parts:
+                    if token.isdigit() and checks == 0:
+                        checks = int(token)
+    details = {
+        "checks": checks,
+        "missing": missing,
+        "failed": failed,
+        "blocked_reason": blocker,
+        "claimed": claimed,
+        "exit_code_expected": EXIT_FOR.get(claimed),
+    }
+
+    if timed_out:
+        details["blocked_reason"] = f"probe exceeded {timeout}s"
+        details["mismatch"] = "timeout"
+        return "BLOCKED", details
+
+    if not claimed:
+        details["mismatch"] = "no verdict line"
+        if not details["blocked_reason"]:
+            lowered = output.lower()
+            details["blocked_reason"] = (
+                "the probe could not load in this composition (missing harness or owner symbol)"
+                if "failed to load script" in lowered or "parse error" in lowered
+                else "the probe exited without printing its verdict line"
+            )
+        return "BLOCKED", details
+
+    # Agreement is required in both directions, and the weaker claim wins.
+    reasons: List[str] = []
+    if code != EXIT_FOR[claimed]:
+        reasons.append(f"claimed {claimed} but exited {code}")
+    if claimed == "PASS" and (missing or failed or blocker):
+        reasons.append("claimed PASS while reporting a missing symbol, a failure or a blocker")
+    if reasons:
+        details["mismatch"] = "; ".join(reasons)
+        if blocker or code == EXIT_FOR["BLOCKED"]:
+            return "BLOCKED", details
+        if missing:
+            return "RED_NOT_IMPLEMENTED", details
+        return "FAIL", details
+    return claimed, details
+
+
 def run_probe(
     godot: Path, work: Path, family: str, probe: str, extra: List[str], log_path: Path, timeout: int
 ) -> Dict[str, object]:
@@ -121,34 +189,11 @@ def run_probe(
         timed_out = True
     log_path.write_text(output, encoding="utf-8")
 
-    verdict = ""
-    checks = 0
-    missing: List[str] = []
-    failed: List[str] = []
-    blocker = ""
-    for line in output.splitlines():
-        if line.startswith("A7 ") and " MISSING " in line:
-            missing.append(line.split(" MISSING ", 1)[1].strip())
-        if line.startswith("A7 ") and " FAIL " in line:
-            failed.append(line.split(" FAIL ", 1)[1].strip())
-        if line.startswith("A7 ") and " BLOCKED " in line:
-            blocker = line.split(" BLOCKED ", 1)[1].strip()
-        parts = line.split()
-        if len(parts) >= 4 and parts[0] == "A7" and parts[2] in VERDICTS:
-            verdict = parts[2]
-            for token in parts:
-                if token.isdigit() and checks == 0:
-                    checks = int(token)
-            break
-
-    if timed_out:
-        verdict, blocker = "BLOCKED", f"probe exceeded {timeout}s"
-    elif not verdict:
-        lowered = output.lower()
-        if "failed to load script" in lowered or "parse error" in lowered:
-            verdict, blocker = "BLOCKED", "the probe could not load in this composition (missing harness or owner symbol)"
-        else:
-            verdict, blocker = "BLOCKED", "the probe exited without printing its verdict line"
+    verdict, details = classify(output, code, timed_out, timeout)
+    checks = details["checks"]
+    missing = details["missing"]
+    failed = details["failed"]
+    blocker = details["blocked_reason"]
 
     return {
         "probe": probe,
