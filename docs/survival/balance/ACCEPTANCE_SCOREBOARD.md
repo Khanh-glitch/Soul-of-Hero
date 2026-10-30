@@ -1,3 +1,48 @@
+# A7 acceptance scoreboard — round 9 (the seam, the clock, the mover, the click)
+
+_2026-10-31. Supersedes round 8 for status questions; round 9 ran a real Godot
+`4.7.stable.custom_build` against compositions `ef2ad0f09310` (`r9_full`: A0
+`4b4b63f5` + A1 `7d2b017c` + A3 `35214ed8` + A6 `63d3fae5` + A8 `02ad8b72`) and
+`b5e787dbed49` (`r9_core`, without A6/A8). Both gave identical verdicts. Full report:
+[`ROUND9_SYSTEM_ACCEPTANCE.md`](ROUND9_SYSTEM_ACCEPTANCE.md). Ledger:
+`data/survival/balance/results/native_runs.v1.json` (holds the latest run; earlier
+runs are recorded in their own round reports)._
+
+| verdict | count |
+|---|---|
+| PASS | 3 |
+| FAIL | 1 |
+| BLOCKED | 2 |
+| RED_NOT_IMPLEMENTED | 1 |
+
+* **One stale hash disables the survival economy.** A0's fence
+  `a0_v5_source_pins.gd` pins `data/survival/items/items.json` at `cc3c1165…`; the
+  composed file (byte-identical to A3's own) is `cd1a27c4…`. The other nine pins
+  match. Result: `economy_session == null` on a shipped build (no crafting, no meta
+  economy), and with `survival/a0_waystation_candidate=true` the overworld refuses to
+  build at all. This is the round's headline and its first owner fix.
+* **Round 8's ClickBlocker claim is retracted.** There is no placement ray; the
+  blocker is deliberately exempted, hover is `<none>`, a build-mode click queues no
+  attack, and `try_place` commits exactly one structure for exactly 2 oak wood.
+  Round 8 §8 item 1 (filter HUD controls out of the ray) is withdrawn.
+* **There is no run clock anywhere in A0.** No run id, start time, expiry or season
+  in the save or in any of the three files that could hold it; A3's planner refuses
+  `run_expired` one second past `1209600` *when a caller supplies the time*. Every
+  meta-economy number is therefore `MODEL_ORACLE`.
+* **A8's harness walk is not a player's walk.** Same wall, sixty frames: the
+  production Hero slides `dy=-95.7` px and clears the edge; A8's mover keeps `dy=-9.8`
+  and discards the rest of its step. Route claims transfer as geometry, not as
+  movement, and cannot carry pacing.
+* **A committed action survives a genuine second OS process** (`receipts 2`, `placed 1`,
+  `oak_wood 38` read back by PID 15509). The replayed Waystation click could not be
+  measured because the host cannot mount.
+* **A3's V7 custody rules are real** and enforced through A7's port double: premature
+  claims, run expiry, forged generations, five deposit forgeries, custody-before-
+  revision ordering, zero-value stones and a recycler with `profile_currency_delta 0`.
+  A0's runtime cannot reach any of it (3 named missing symbols).
+
+---
+
 # A7 acceptance scoreboard — round 8 (system acceptance on a real engine)
 
 _2026-10-30. Supersedes round 6/7 for status questions; round 8 ran a real Godot

@@ -48,7 +48,7 @@ SCHEMA = "soh.balance.composition.v1"
 #: owner is the source of truth for this subtree".
 OWNER_PREFIXES: Dict[str, List[str]] = {
     "a1": ["data/survival/world/"],
-    "a3": ["data/survival/items/", "data/survival/recipes/", "game/survival/economy/"],
+    "a3": ["data/survival/items/", "data/survival/recipes/", "data/survival/economy/", "game/survival/economy/"],
     "a6": ["game/survival/ui/"],
     "a8": ["game/survival/world_content/", "data/survival/world_content/"],
 }
@@ -67,6 +67,7 @@ PREFIX_MODES: Dict[Tuple[str, str], str] = {
     ("a1", "data/survival/world/"): "replace",
     ("a3", "data/survival/items/"): "replace",
     ("a3", "data/survival/recipes/"): "replace",
+    ("a3", "data/survival/economy/"): "replace",
     ("a3", "game/survival/economy/"): "merge",
     ("a6", "game/survival/ui/"): "replace",
     ("a8", "game/survival/world_content/"): "replace",
@@ -100,6 +101,20 @@ PROFILES: Dict[str, Dict[str, object]] = {
         "overlays": ["a1", "a3", "a6", "a8"],
         "question": "the integrated product an owner would actually ship",
     },
+    # Round 9's question is narrower than `full`: A0's current runtime plus the
+    # two owners whose work it now claims to mount (A1 geography, A3 V7 economy).
+    # A6/A8 are added separately so a failure can be attributed to the layer that
+    # introduced it instead of to "the composition".
+    "r9_core": {
+        "base": "a0",
+        "overlays": ["a1", "a3"],
+        "question": "can the current runtime mount its own Waystation against live A1 and A3 V7?",
+    },
+    "r9_full": {
+        "base": "a0",
+        "overlays": ["a1", "a3", "a6", "a8"],
+        "question": "the same question with the UI and POI layers on top",
+    },
 }
 
 #: Owners whose work is pinned for provenance but cannot be overlaid without
@@ -114,11 +129,11 @@ REFERENCE_ONLY: Dict[str, str] = {
 
 DEFAULT_REFS: Dict[str, str] = {
     "a0": "refs/live/arena-dea2428e",
-    "a1": "refs/live/e385312a",
+    "a1": "refs/live/arena-e385312a",
     "a3": "refs/live/arena-7a12b27e",
     "a6": "refs/live/arena-443f004f",
     "a8": "refs/live/arena-2d7e6d7a",
-    "avfx": "refs/live/avfx",
+    "avfx": "refs/live/arena-c7b0c4e8",
     "ct": "refs/live/docs-ct-loot-discovery-gate-20261030",
 }
 

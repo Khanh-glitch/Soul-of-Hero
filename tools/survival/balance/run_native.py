@@ -59,6 +59,10 @@ PROBE_FAMILIES = (
     # into the D055-D061 family would make the older ledger look like it covered
     # rules it never touched.
     ("balance_native_ragnarok", REPO / "tests" / "survival" / "balance_native_ragnarok"),
+    # Round 9. Production Hero traversal, physical interaction and the two-layer
+    # economy. Separate from round 8 because these probes drive the *player* input
+    # pipeline rather than calling product methods.
+    ("balance_native_r9", REPO / "tests" / "survival" / "balance_native_r9"),
 )
 #: A7-owned data the round-8 probes read. These are test configuration, not game
 #: data: the game never loads them. They are copied into the worktree next to the
@@ -139,11 +143,19 @@ def classify(output: str, code: int, timed_out: bool, timeout: int) -> tuple:
     failed: List[str] = []
     blocker = ""
     for line in output.splitlines():
-        if line.startswith("A7 ") and " MISSING " in line:
+        # The closing verdict line also contains " FAIL " when the verdict is FAIL
+        # ("A7 R009 FAIL - title: 12 checks, 1 failed"). Counting it as a failed
+        # check inflated every failing probe by one and made the ledger disagree
+        # with the probe's own check count, so verdict lines are skipped here.
+        # The count is the reliable marker: check labels are free text and could
+        # themselves contain " - ", so shape-matching the verdict line is safer
+        # than looking for a dash.
+        is_verdict_line = bool(re.search(r"\d+ checks, \d+ failed", line))
+        if not is_verdict_line and line.startswith("A7 ") and " MISSING " in line:
             missing.append(line.split(" MISSING ", 1)[1].strip())
-        if line.startswith("A7 ") and " FAIL " in line:
+        if not is_verdict_line and line.startswith("A7 ") and " FAIL " in line:
             failed.append(line.split(" FAIL ", 1)[1].strip())
-        if line.startswith("A7 ") and " BLOCKED " in line:
+        if not is_verdict_line and line.startswith("A7 ") and " BLOCKED " in line:
             blocker = line.split(" BLOCKED ", 1)[1].strip()
         parts = line.split()
         # The *last* verdict line wins. A probe may report an individual failure

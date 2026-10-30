@@ -173,6 +173,166 @@
       "base": {
         "owner": "a0",
         "ref": "refs/live/arena-dea2428e",
+        "sha": "4b4b63f56b92c2f7b50d770554afd96d5d0a098b"
+      },
+      "commit": "b5e787dbed495ad34caefba52bc8a0f214f9a1a4",
+      "control_tower": {
+        "ref": "refs/live/docs-ct-loot-discovery-gate-20261030",
+        "sha": "971e0b95e1ea1c5f579f57f53fb35f3a6c3845e8"
+      },
+      "files": 5425,
+      "overlays": [
+        {
+          "file_count": 261,
+          "owner": "a1",
+          "prefixes": [
+            {
+              "mode": "replace",
+              "path": "data/survival/world/"
+            }
+          ],
+          "ref": "refs/live/arena-e385312a",
+          "sha": "7d2b017c8a90b7d5e24ff85f065ff1b18548cd29"
+        },
+        {
+          "file_count": 26,
+          "owner": "a3",
+          "prefixes": [
+            {
+              "mode": "replace",
+              "path": "data/survival/items/"
+            },
+            {
+              "mode": "replace",
+              "path": "data/survival/recipes/"
+            },
+            {
+              "mode": "replace",
+              "path": "data/survival/economy/"
+            },
+            {
+              "mode": "merge",
+              "path": "game/survival/economy/"
+            }
+          ],
+          "ref": "refs/live/arena-7a12b27e",
+          "sha": "35214ed8f555350b83bd8985e9bec7512f3181e8"
+        }
+      ],
+      "profile": "r9_core",
+      "provenance_digest": "2cf881903bc3402b1624644297ab2280c93217299b9b0c77e9c72d0c09ffd3ce",
+      "question": "can the current runtime mount its own Waystation against live A1 and A3 V7?",
+      "reference_only": [
+        {
+          "owner": "avfx",
+          "sha": "0d4fd0bce241e94845859adc014339a43510f717",
+          "why": "pinned for provenance only: its unique paths are .github/workflows and docs/vfx, and every VFX asset it shares with A0 is identical or older, so overlaying it would downgrade the base"
+        }
+      ],
+      "removed_from_base": [],
+      "reproduce": "python3 tools/survival/balance/compose.py --profile r9_core --pin  # then: git worktree add --detach /tmp/comp b5e787dbed495ad34caefba52bc8a0f214f9a1a4",
+      "rule": "A composition is not an owner branch and no owner file is edited to build it. Every path names the commit its bytes came from; a path an overlay owns is either that overlay's blob or absent, never the base's stale copy.",
+      "schema": "soh.balance.composition.v1",
+      "tree": "13c2418bd24835c4cd8b9b3dfa639252ad7eff10"
+    },
+    {
+      "base": {
+        "owner": "a0",
+        "ref": "refs/live/arena-dea2428e",
+        "sha": "4b4b63f56b92c2f7b50d770554afd96d5d0a098b"
+      },
+      "commit": "ef2ad0f09310760b594a01ec834fa0d0fd8d5592",
+      "control_tower": {
+        "ref": "refs/live/docs-ct-loot-discovery-gate-20261030",
+        "sha": "971e0b95e1ea1c5f579f57f53fb35f3a6c3845e8"
+      },
+      "files": 5492,
+      "overlays": [
+        {
+          "file_count": 261,
+          "owner": "a1",
+          "prefixes": [
+            {
+              "mode": "replace",
+              "path": "data/survival/world/"
+            }
+          ],
+          "ref": "refs/live/arena-e385312a",
+          "sha": "7d2b017c8a90b7d5e24ff85f065ff1b18548cd29"
+        },
+        {
+          "file_count": 26,
+          "owner": "a3",
+          "prefixes": [
+            {
+              "mode": "replace",
+              "path": "data/survival/items/"
+            },
+            {
+              "mode": "replace",
+              "path": "data/survival/recipes/"
+            },
+            {
+              "mode": "replace",
+              "path": "data/survival/economy/"
+            },
+            {
+              "mode": "merge",
+              "path": "game/survival/economy/"
+            }
+          ],
+          "ref": "refs/live/arena-7a12b27e",
+          "sha": "35214ed8f555350b83bd8985e9bec7512f3181e8"
+        },
+        {
+          "file_count": 19,
+          "owner": "a6",
+          "prefixes": [
+            {
+              "mode": "replace",
+              "path": "game/survival/ui/"
+            }
+          ],
+          "ref": "refs/live/arena-443f004f",
+          "sha": "63d3fae54b1e204a84fced6a285bc969ed5bfdfe"
+        },
+        {
+          "file_count": 48,
+          "owner": "a8",
+          "prefixes": [
+            {
+              "mode": "replace",
+              "path": "game/survival/world_content/"
+            },
+            {
+              "mode": "replace",
+              "path": "data/survival/world_content/"
+            }
+          ],
+          "ref": "refs/live/arena-2d7e6d7a",
+          "sha": "02ad8b727298284c16ea7f469d43310021b40f20"
+        }
+      ],
+      "profile": "r9_full",
+      "provenance_digest": "5cc71f27a9ac50e5e011fe60a48a0a0479f22ea69887183a02247e17f4ba05ab",
+      "question": "the same question with the UI and POI layers on top",
+      "reference_only": [
+        {
+          "owner": "avfx",
+          "sha": "0d4fd0bce241e94845859adc014339a43510f717",
+          "why": "pinned for provenance only: its unique paths are .github/workflows and docs/vfx, and every VFX asset it shares with A0 is identical or older, so overlaying it would downgrade the base"
+        }
+      ],
+      "removed_from_base": [],
+      "reproduce": "python3 tools/survival/balance/compose.py --profile r9_full --pin  # then: git worktree add --detach /tmp/comp ef2ad0f09310760b594a01ec834fa0d0fd8d5592",
+      "rule": "A composition is not an owner branch and no owner file is edited to build it. Every path names the commit its bytes came from; a path an overlay owns is either that overlay's blob or absent, never the base's stale copy.",
+      "schema": "soh.balance.composition.v1",
+      "tree": "ac4b9770edf488487865ba901c9f1f25e3617bd0"
+    },
+    {
+      "base": {
+        "owner": "a0",
+        "ref": "refs/live/arena-dea2428e",
         "sha": "8750fd8a48a552b0d58834ec519dfc97528ee194"
       },
       "commit": "f617cc20436a1af380ce1f6d9bcb470718aa6cd9",
