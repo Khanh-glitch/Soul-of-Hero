@@ -234,84 +234,9 @@
       "verified": true
     }
   ],
-  "upstream_drift_check": [
-    {
-      "available": true,
-      "checked": [
-        {
-          "key": "a3.loot_tables",
-          "status": "MATCH"
-        },
-        {
-          "key": "a3.items",
-          "status": "MATCH"
-        },
-        {
-          "key": "a3.sources",
-          "status": "MATCH"
-        },
-        {
-          "key": "a3.recipes",
-          "status": "MATCH"
-        },
-        {
-          "key": "a3.research",
-          "status": "MATCH"
-        },
-        {
-          "key": "a3.stations",
-          "status": "MATCH"
-        },
-        {
-          "key": "a3.progression_model",
-          "status": "MATCH"
-        },
-        {
-          "key": "a3.a1_source_adoption_v2",
-          "status": "MATCH"
-        }
-      ],
-      "commit": "18e7afcbd576bbd9bfbcc509b2ee13216186a522",
-      "ref": "arena_7a12b27e-soul-of-hero"
-    },
-    {
-      "available": true,
-      "checked": [
-        {
-          "key": "a1.world_plan",
-          "status": "MATCH"
-        },
-        {
-          "key": "a1.poi_route_graph",
-          "status": "MATCH"
-        },
-        {
-          "key": "a1.material_source_contracts",
-          "status": "MATCH"
-        },
-        {
-          "key": "a1.pacing_analysis",
-          "status": "MATCH"
-        },
-        {
-          "key": "a1.novice_bootstrap_contract",
-          "status": "MATCH"
-        },
-        {
-          "key": "a1.a1_a3_material_decisions",
-          "status": "MATCH"
-        },
-        {
-          "key": "a1.waystation_spec",
-          "status": "MATCH"
-        },
-        {
-          "key": "a1.relay_spec",
-          "status": "MATCH"
-        }
-      ],
-      "commit": "2951bf8559b2e289ce99fd4d394d44c46fdd91b1",
-      "ref": "arena_e385312a-soul-of-hero"
-    }
-  ]
+  "upstream_drift_check": {
+    "command": "python3 tools/survival/balance/run_analysis.py --check-upstream",
+    "status": "ENVIRONMENT_DEPENDENT_NOT_IN_ARTIFACT",
+    "why": "the upstream commits may or may not be fetched in a given checkout; snapshot SHA-256 verification above is the reproducible check"
+  }
 }

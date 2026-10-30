@@ -36,6 +36,9 @@ python3 -m unittest discover -s tests/survival/balance -p "test_*.py"
 
 # 4. Print the headline numbers
 python3 tools/survival/balance/run_analysis.py --print-summary
+
+# 5. Live upstream drift check (needs the A1/A3 commits fetched; exits 1 on drift)
+python3 tools/survival/balance/run_analysis.py --check-upstream
 ```
 
 Python 3.11+, standard library only. `pytest` also collects the test files if it is installed; it is not

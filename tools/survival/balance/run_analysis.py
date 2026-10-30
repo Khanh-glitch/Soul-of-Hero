@@ -28,11 +28,37 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true", help="verify committed artifacts are current")
     parser.add_argument("--print-summary", action="store_true", help="print headline results")
+    parser.add_argument(
+        "--check-upstream",
+        action="store_true",
+        help="also compare snapshots with the pinned upstream commits (needs those refs fetched); "
+        "exits 1 on drift, 0 on match or not-fetched",
+    )
     parser.add_argument("--results-dir", default=str(report.RESULTS_DIR))
     args = parser.parse_args(argv)
 
-    artifacts = report.build()
+    artifacts = report.build(include_upstream=args.check_upstream)
     results_dir = Path(args.results_dir)
+
+    if args.check_upstream:
+        from sohbalance.provenance import verify_snapshots, verify_upstream
+
+        snapshots, _ = verify_snapshots(Path(report.DEFAULT_DATA_DIR))
+        upstream = verify_upstream(snapshots)
+        drift = 0
+        for ref in upstream["refs"]:
+            for row in ref["checked"]:
+                print(f"  {row['status']:34s} {row['key']}")
+                if row["status"] == "DRIFT":
+                    drift += 1
+        for finding in upstream["findings"]:
+            print("  DRIFT DETAIL:", finding.detail)
+        if drift:
+            print(f"UPSTREAM DRIFT on {drift} file(s)")
+            return 1
+        matched = sum(1 for ref in upstream["refs"] for row in ref["checked"] if row["status"] == "MATCH")
+        print(f"upstream drift check: {matched} file(s) matched, 0 drifted")
+        return 0
 
     if args.check:
         stale = []

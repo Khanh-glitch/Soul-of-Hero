@@ -64,17 +64,16 @@ class ArtifactBuildTests(unittest.TestCase):
         for pattern in payload["patterns"]:
             self.assertIn("unmodelled_time", pattern)
 
-    def test_provenance_marks_skipped_checks(self) -> None:
+    def test_provenance_is_reproducible_from_committed_bytes(self) -> None:
         payload = self.artifacts["provenance.json"]
         self.assertEqual(len(payload["snapshots"]), 16)
         for snapshot in payload["snapshots"]:
             self.assertTrue(snapshot["verified"], snapshot["key"])
-        for ref in payload["upstream_drift_check"]:
-            for row in ref["checked"]:
-                if row["status"] != "MATCH":
-                    self.assertIn(
-                        row["status"], {"SKIPPED_REF_NOT_FETCHED", "SKIPPED_PATH_ABSENT_AT_COMMIT"}
-                    )
+        # The live upstream comparison is environment-dependent, so the artifact
+        # records that fact instead of baking this checkout's ref state into git.
+        drift_check = payload["upstream_drift_check"]
+        self.assertEqual(drift_check["status"], "ENVIRONMENT_DEPENDENT_NOT_IN_ARTIFACT")
+        self.assertIn("--check-upstream", drift_check["command"])
 
     def test_adversarial_artifact_matches_case_count(self) -> None:
         payload = self.artifacts["adversarial.json"]

@@ -45,7 +45,16 @@ def _dump(path: Path, payload: Dict[str, Any]) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
-def build(data_dir: Path = DEFAULT_DATA_DIR) -> Dict[str, Any]:
+def build(data_dir: Path = DEFAULT_DATA_DIR, include_upstream: bool = False) -> Dict[str, Any]:
+    """Build every artifact.
+
+    ``include_upstream`` is False by default on purpose: whether the upstream A1/A3
+    commits happen to be fetched in this checkout is an environment fact, not a
+    property of the repository. Artifacts must be reproducible from committed
+    bytes alone, so the live drift check is reported by the CLI
+    (``run_analysis.py --check-upstream``) and recorded here only as "not part of
+    this artifact".
+    """
     model = Model.load(data_dir)
     network = RouteNetwork(model.graph_doc)
     hypotheses = load_hypotheses(data_dir / "hypotheses.v1.json")
@@ -54,7 +63,15 @@ def build(data_dir: Path = DEFAULT_DATA_DIR) -> Dict[str, Any]:
 
     # ------------------------------------------------------------ provenance
     snapshots, snapshot_findings = verify_snapshots(data_dir)
-    upstream = verify_upstream(snapshots)
+    if include_upstream:
+        upstream = verify_upstream(snapshots)
+    else:
+        upstream = {
+            "refs": [],
+            "findings": [],
+            "status": "ENVIRONMENT_DEPENDENT_NOT_IN_ARTIFACT",
+            "command": "python3 tools/survival/balance/run_analysis.py --check-upstream",
+        }
     owner_pins, pin_findings = verify_owner_pins(snapshots, model.adoption)
     manifest = load_manifest(data_dir)
     provenance_findings = sort_findings(snapshot_findings + upstream["findings"] + pin_findings)
@@ -76,7 +93,16 @@ def build(data_dir: Path = DEFAULT_DATA_DIR) -> Dict[str, Any]:
             }
             for snap in snapshots
         ],
-        "upstream_drift_check": upstream["refs"],
+        "upstream_drift_check": upstream["refs"]
+        if upstream["refs"]
+        else {
+            "status": upstream.get("status", "ENVIRONMENT_DEPENDENT_NOT_IN_ARTIFACT"),
+            "command": upstream.get("command"),
+            "why": (
+                "the upstream commits may or may not be fetched in a given checkout; snapshot SHA-256 "
+                "verification above is the reproducible check"
+            ),
+        },
         "owner_pin_comparison": owner_pins,
         "findings": [finding.as_dict() for finding in provenance_findings],
         "interpretation": (

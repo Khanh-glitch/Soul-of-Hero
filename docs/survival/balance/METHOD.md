@@ -11,7 +11,11 @@ branch/commit, size and SHA-256.
 - `verify_snapshots` re-hashes the local copy. Mismatch = `SNAPSHOT_HASH_MISMATCH` (BLOCKER).
 - `verify_upstream` compares the pinned commit's blob **in binary mode** (text mode would translate newlines
   and silently change the hash). If the commit is not fetched locally the check reports
-  `SKIPPED_REF_NOT_FETCHED`; skipped is never treated as a pass.
+  `SKIPPED_REF_NOT_FETCHED`; skipped is never treated as a pass. Because "are those commits fetched here?" is an
+  environment fact rather than a repository fact, its result is **not** written into the committed artifact:
+  `provenance.json` records `upstream_drift_check.status = ENVIRONMENT_DEPENDENT_NOT_IN_ARTIFACT`, and
+  `python3 tools/survival/balance/run_analysis.py --check-upstream` performs the comparison live (exit 1 on
+  drift). A shallow clone therefore reproduces every artifact byte-for-byte.
 - `verify_owner_pins` compares A3's own pinned A1 hashes (`a1_source_adoption.v2.json → a1_source.file_sha256`)
   with the pinned A1 snapshots, so an owner disagreement is visible.
 
