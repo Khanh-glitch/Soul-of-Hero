@@ -2,7 +2,7 @@ name: A0 save precision and two-process recovery
 on:
   push:
     branches: [arena/dea2428e-soul-of-hero]
-    paths: ['game/autoload/save_service.gd', 'game/survival/economy/**', 'tests/survival_save_precision_test.gd', '.github/workflows/a0-save-precision.yml']
+    paths: ['game/autoload/save_service.gd', 'game/survival/economy/**', 'tests/survival_save_precision_test.gd', 'tests/survival_save_crash_process_test.gd', '.github/workflows/a0-save-precision.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -36,6 +36,26 @@ jobs:
             echo "::notice::precision $mode exit=$rc $(grep -E 'A0 SAVE PRECISION|  FAIL  |SCRIPT ERROR|Parse Error' "artifacts/precision-${mode}.log" | tr '\n' '~')"
             bash tools/ci/gate_log.sh "artifacts/precision-${mode}.log" "A0 precision $mode" 'A0 SAVE PRECISION PASSED'
             [ "$rc" -eq 0 ]
+          done
+      - name: SIGKILL at both fault boundaries and independent-process retry
+        shell: bash
+        run: |
+          set -euo pipefail
+          for boundary in after_temporary after_primary_renamed; do
+            flags=(--survival-save-fault-test)
+            if [ "$boundary" = after_primary_renamed ]; then flags+=(--after-rename); fi
+            set +e
+            timeout 180s godot --headless --path . --user-data-dir artifacts/ud_precision --script res://tests/survival_save_crash_process_test.gd -- "${flags[@]}" > "artifacts/precision-crash-${boundary}.log" 2>&1
+            rc=$?
+            set -e
+            cat "artifacts/precision-crash-${boundary}.log"
+            echo "::notice::SIGKILL $boundary exit=$rc"
+            [ "$rc" -eq 137 ]
+            grep -Fx "$boundary" "artifacts/ud_precision/tests/ready_${boundary}.txt"
+            timeout 180s godot --headless --path . --user-data-dir artifacts/ud_precision --script res://tests/survival_save_crash_process_test.gd -- "${flags[@]}" --restart > "artifacts/precision-recovery-${boundary}.log" 2>&1
+            cat "artifacts/precision-recovery-${boundary}.log"
+            echo "::notice::SIGKILL recovery $boundary $(grep -E 'A0 SAVE CRASH|  FAIL  |SCRIPT ERROR|Parse Error' "artifacts/precision-recovery-${boundary}.log" | tr '\n' '~')"
+            bash tools/ci/gate_log.sh "artifacts/precision-recovery-${boundary}.log" "A0 crash recovery $boundary" 'A0 SAVE CRASH PASSED'
           done
       - uses: actions/upload-artifact@v4
         if: always()
