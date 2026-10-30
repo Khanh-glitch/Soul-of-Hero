@@ -39,6 +39,8 @@ jobs:
           fi
           exit "$status"
       - name: Run native physics and interaction contracts
+        id: native_contract
+        continue-on-error: true
         run: |
           set +e
           godot --headless --path . --script tests/survival/world_content/native_poi_contract_test.gd > .artifacts/a8-world-content/native-contract.log 2>&1
@@ -50,6 +52,9 @@ jobs:
           fi
           exit "$status"
       - name: Run exterior entry, return and revisit physics
+        id: native_transition
+        if: always()
+        continue-on-error: true
         run: |
           set +e
           godot --headless --path . --script tests/survival/world_content/native_poi_transition_test.gd > .artifacts/a8-world-content/native-transition.log 2>&1
@@ -61,6 +66,9 @@ jobs:
           fi
           exit "$status"
       - name: Run native surface and owner-only reset contract
+        id: native_surface
+        if: always()
+        continue-on-error: true
         run: |
           set +e
           godot --headless --path . --script tests/survival/world_content/native_poi_surface_contract_test.gd > .artifacts/a8-world-content/native-surface.log 2>&1
@@ -69,6 +77,9 @@ jobs:
           cat .artifacts/a8-world-content/native-surface.log
           exit "$status"
       - name: Capture native scenes at 720p, 2K and 4K
+        id: native_capture
+        if: always()
+        continue-on-error: true
         run: |
           mkdir -p .artifacts/a8-world-content
           for size in 1280x720 2560x1440 3840x2160; do
@@ -80,6 +91,19 @@ jobs:
               --width="$width" --height="$height" \
               --output=".artifacts/a8-world-content/pilot-${size}.png"
           done
+      - name: Require all native evidence steps to pass
+        if: always()
+        env:
+          NATIVE_CONTRACT_OUTCOME: ${{ steps.native_contract.outcome }}
+          NATIVE_TRANSITION_OUTCOME: ${{ steps.native_transition.outcome }}
+          NATIVE_SURFACE_OUTCOME: ${{ steps.native_surface.outcome }}
+          NATIVE_CAPTURE_OUTCOME: ${{ steps.native_capture.outcome }}
+        run: |
+          echo "contract=$NATIVE_CONTRACT_OUTCOME transition=$NATIVE_TRANSITION_OUTCOME surface=$NATIVE_SURFACE_OUTCOME capture=$NATIVE_CAPTURE_OUTCOME"
+          test "$NATIVE_CONTRACT_OUTCOME" = success
+          test "$NATIVE_TRANSITION_OUTCOME" = success
+          test "$NATIVE_SURFACE_OUTCOME" = success
+          test "$NATIVE_CAPTURE_OUTCOME" = success
       - uses: actions/upload-artifact@v4
         if: always()
         with:
