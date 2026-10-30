@@ -60,7 +60,7 @@ jobs:
           LOG=/tmp/gold93-candidate-diff-${{ matrix.skill }}.log
           timeout 2400s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_venom_differential_test.gd -- --skill=${{ matrix.skill }} --candidates 2>&1 | tee "$LOG"
           STATUS=${PIPESTATUS[0]}
-          PAT='R17|GOLD93_OBJ|GOLD93_VENOM_DIFFERENTIAL|GOLD93_OBJ|GOLD93_BLK|GOLD93_FLOW|GOLD93_COCOON|GOLD93_HATCH|GOLD93_EN|GOLD93_HTR|GOLD93_E12|GOLD93_FXL|GOLD93_EN12|GOLD93_EN12SUM|GOLD93_PL|GOLD93_STATE|"canonical"|"parity"|first_divergent_tick|first_mismatch|hits_|cues_|FAIL|SCRIPT ERROR|Parse Error|Compile Error|ERROR:|original=|native  ='
+          PAT='R17|GOLD93_OBJ|GOLD93_VENOM_DIFFERENTIAL|GOLD93_OBJ|GOLD93_BLK|GOLD93_FLOW|GOLD93_COCOON|GOLD93_HATCH|GOLD93_EN|GOLD93_HTR|GOLD93_E12|GOLD93_FXL|GOLD93_PXD|GOLD93_EN12|GOLD93_EN12SUM|GOLD93_PL|GOLD93_STATE|"canonical"|"parity"|first_divergent_tick|first_mismatch|hits_|cues_|FAIL|SCRIPT ERROR|Parse Error|Compile Error|ERROR:|original=|native  ='
           if [ "$STATUS" != "0" ] || grep -q 'GOLD93_VENOM_DIFFERENTIAL: FAIL' "$LOG" || ! grep -q 'GOLD93_VENOM_DIFFERENTIAL: PASS' "$LOG"; then
             python3 prototypes/skill_readiness/tools/ci/annotate_log.py --level error --title "candidate ${{ matrix.skill }} exit=$STATUS" --log "$LOG" --tail 60 --pattern "$PAT"
             exit 1
