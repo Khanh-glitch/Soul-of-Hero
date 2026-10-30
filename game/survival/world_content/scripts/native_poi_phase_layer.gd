@@ -67,7 +67,10 @@ func apply_projection(projection: Dictionary) -> bool:
 		return false
 	var phase_id := _context.get_phase_id()
 	_current_profile = _site_profile.get("phase_profiles", {}).get(phase_id, {})
-	var profile_effect := str(_current_profile.get("effect_id", ""))
+	var profile_effect_value: Variant = _current_profile.get("effect_id", "")
+	var profile_effect := (
+		str(profile_effect_value) if typeof(profile_effect_value) == TYPE_STRING else ""
+	)
 	_site_effect_active = not profile_effect.is_empty() and _context.has_effect(profile_effect)
 	var disabled_choice_blockers: Array = []
 	var temporary_blockers: Array = []

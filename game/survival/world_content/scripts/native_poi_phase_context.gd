@@ -81,7 +81,10 @@ func apply_projection(candidate: Dictionary) -> bool:
 	var phase_entry := _phase_entry(phase_id)
 	if phase_entry.is_empty():
 		return false
-	var global_effect_id := str(phase_entry.get("phase_effect_id", ""))
+	var global_effect_value: Variant = phase_entry.get("phase_effect_id", "")
+	var global_effect_id := (
+		str(global_effect_value) if typeof(global_effect_value) == TYPE_STRING else ""
+	)
 	if not global_effect_id.is_empty() and not seen_effects.has(global_effect_id):
 		return false
 

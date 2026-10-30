@@ -23,14 +23,20 @@ static func project(
 	if parsed is Dictionary:
 		for phase_value: Variant in parsed.get("phase_schedule", []):
 			if phase_value is Dictionary and str(phase_value.get("phase_id", "")) == phase_id:
-				var global_effect := str(phase_value.get("phase_effect_id", ""))
+				var global_effect_value: Variant = phase_value.get("phase_effect_id", "")
+				var global_effect := (
+					str(global_effect_value) if typeof(global_effect_value) == TYPE_STRING else ""
+				)
 				if not global_effect.is_empty():
 					effects.append(global_effect)
 		for site_value: Variant in parsed.get("physical_site_profiles", []):
 			if not site_value is Dictionary or str(site_value.get("poi_id", "")) != poi_id:
 				continue
 			var profile: Dictionary = site_value.get("phase_profiles", {}).get(phase_id, {})
-			var site_effect := str(profile.get("effect_id", ""))
+			var site_effect_value: Variant = profile.get("effect_id", "")
+			var site_effect := (
+				str(site_effect_value) if typeof(site_effect_value) == TYPE_STRING else ""
+			)
 			if include_site_effect and not site_effect.is_empty():
 				effects.append(site_effect)
 			break
