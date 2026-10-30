@@ -168,11 +168,19 @@ func _run() -> void:
 	_expect(int(durable.get("iron_scrap", 0)) == 56 and int(durable.get("knowledge_spares", 0)) == 54, "post-rename disk contains exactly one committed reward")
 	r = adapter.call(&"world_action", cache, "fixture.renamed")
 	_expect((save.call(&"inventory_totals") as Dictionary) == durable, "post-rename retry cannot grant the same reward twice")
-	await _audit_rebuild(durable)
+	await _audit_rebuild(durable, path)
 	_finish()
 
-func _audit_rebuild(before_totals: Dictionary) -> void:
+func _audit_rebuild(before_totals: Dictionary, path: String) -> void:
+	# One and the same committed generation, independently re-read before the
+	# real controller is constructed. Retain every path in the forensic log.
+	var memory: Dictionary = save.call(&"get_snapshot")
+	var disk: Variant = SaveDiff.read_json(path)
+	SaveDiff.report_all("waystation-rebuild-generation-memory-vs-disk", memory, disk)
+	_expect(bool(save.call(&"reload_save")), "rebuild generation independently reloads from disk")
 	var before: Dictionary = save.call(&"get_snapshot")
+	SaveDiff.report_all("waystation-rebuild-generation-memory-vs-reloaded", memory, before)
+	SaveDiff.report_all("waystation-rebuild-generation-disk-vs-reloaded", disk, before)
 	var packed := load("res://game/overworld/chapter1_overworld.tscn") as PackedScene
 	_expect(packed != null, "actual overworld scene available for reconstruction")
 	if packed == null: return
@@ -188,6 +196,7 @@ func _audit_rebuild(before_totals: Dictionary) -> void:
 	var after: Dictionary = save.call(&"get_snapshot")
 	_trace_fields("rebuild-before", before)
 	_trace_fields("rebuild-after", after)
+	SaveDiff.report_all("waystation-rebuild-entire-snapshot", before, after)
 	for key: String in ["inventory", "world_slice", "applied_transactions"]:
 		SaveDiff.report_all("waystation-rebuild-" + key, before.get(key), after.get(key))
 	_expect((save.call(&"inventory_totals") as Dictionary) == before_totals, "rebuild preserves exact material totals")

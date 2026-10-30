@@ -210,7 +210,7 @@
     "docs_sync": "Tab04 checkpoint 4c0418e5 readback 291014; tab12 readback 156165. Follow-up read-only V3 identity preflight probe posted to A3; exact native run log in session evidence bundle.",
     "mergeability": "PR21 pushed 4c0418e5; DRAFT/MERGEABLE/UNSTABLE; last checks queued, no merge.",
     "a6_latest": "PR24 63d3fae5 avatar private staging/driver/revision fix; native, licensing, production composition unverified; previous 8bc0af5a failed composition; A6 remains UI-only owner.",
-    "persistence_diagnosis": "Strict fixture still fails 2/48; full diffs 0 VALUE, numeric TYPE 69/16/53/146/0/68/78, rebuild inventory/world/receipts 0/0. Partial negative-tested diagnostic does not replace original strict assertions.",
+    "persistence_diagnosis": "Strict fixture FAIL 2/49; initial full diffs 0 VALUE, numeric TYPE 69/16/53/146/0/68/78. Same revision-38 generation memory→disk 0/78, memory→reload 0/0, disk→reload 0/78, reload→actual overworld build entire snapshot 0/0. Partial diagnostic does not replace original strict assertions.",
     "threat": "Prior 41022975254 proved score 0→200→400 after failed first-hit save. New unmounted candidate reserves before enemy exposure; real-input 3-process test pending; pre-hit restart can consume encounter, fairness HOLD."
   },
   "blockers": [
