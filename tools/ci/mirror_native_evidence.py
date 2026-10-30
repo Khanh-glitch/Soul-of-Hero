@@ -13,6 +13,7 @@ import base64
 import json
 import os
 import sys
+import time
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -37,8 +38,17 @@ def request(method: str, path: str, token: str, payload: dict | None = None) -> 
             "Content-Type": "application/json",
         },
     )
-    with urllib.request.urlopen(req, timeout=60) as resp:
-        return json.loads(resp.read().decode())
+    last: Exception | None = None
+    for attempt in range(4):
+        try:
+            with urllib.request.urlopen(req, timeout=60) as resp:
+                return json.loads(resp.read().decode())
+        except urllib.error.HTTPError as exc:
+            last = exc
+            if exc.code not in (500, 502, 503, 504) or attempt == 3:
+                raise
+            time.sleep(2 ** attempt)
+    raise last if last else RuntimeError("request failed")
 
 
 def main() -> int:
@@ -54,7 +64,7 @@ def main() -> int:
     for root in args.root:
         p = Path(root)
         if p.is_dir():
-            files.extend(sorted(x for x in p.rglob("*") if x.is_file() and (x.suffix in ALLOWED or x.name.endswith("exit-code"))))
+            files.extend(sorted(x for x in p.rglob("*") if x.is_file() and not x.name.startswith("bad_") and (x.suffix in ALLOWED or x.name.endswith("exit-code"))))
     manifest: dict[str, dict] = {}
     total = 0
     for path in files:
