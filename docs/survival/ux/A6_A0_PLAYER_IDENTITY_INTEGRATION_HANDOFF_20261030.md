@@ -1,6 +1,6 @@
 # A6 → A0 player identity integration handoff (2026-10-30)
 
-Status: **IMPLEMENTED IN ISOLATED A0-BASED CANDIDATE, AWAITING A0 REVIEW AND NATIVE EVIDENCE CLOSURE.**
+Status: **NATIVE HEADLESS EVIDENCE OBTAINED ON A REAL GODOT 4.7 BINARY. VISUAL ACCEPTANCE STILL OPEN (NO DISPLAY IN THE WORK SANDBOX; CI RUNS ARE QUEUED).**
 Base: A0 PR #21 branch `arena/dea2428e-soul-of-hero`, live HEAD `51225718`
 (re-verified 2026-10-30; the work order's `7f3ca17` is an older ancestor).
 Candidate branch: `arena/05e0328d-soul-of-hero`.
@@ -20,6 +20,56 @@ Candidate branch: `arena/05e0328d-soul-of-hero`.
    as a stand-in, a diagnostic label identifies the missing private staging, the
    identity is still saved, and no item, currency or reward is granted.
 
+## Native evidence (Godot 4.7, headless)
+
+Engine used for the local run: ``4.7.stable.custom_build``, built from source
+commit ``5b4e0cb0fd279832bbdd69fed5354d4e5ad26f88`` (the pinned ``4.7-stable``
+tag) with ``scons platform=linuxbsd target=editor -j2 x11=no wayland=no
+vulkan=no opengl3=no``. Binary ``sha256
+a4c7d6b4441fd81161dc28ff61e0bf5ada4c2255139ccdb42501cf0969379361``. This build
+is headless-only, so it proves logic and scene wiring, not pixels. The CI
+workflow installs the **official** ``Godot_v4.7-stable_linux.x86_64.zip``
+(``sha256 0b1a6c54c2c619c12e169fe9241edda4b81080b519451cec2984bf0d2c6cb73c``)
+and re-runs the same gates plus real renders; those runs are still queued.
+
+Observed with **synthetic placeholder sheets** (not CraftPix art, never cited as
+visual acceptance), both identities, two independent processes each
+(``tools/run_a6_native_gates.sh``; exit 0):
+
+| Phase | Male | Female |
+| --- | --- | --- |
+| full journey | PASS, 73 checks | PASS, 73 checks |
+| second process | PASS, 33 checks | PASS, 33 checks |
+
+Fail-closed re-run with ``private_art/`` moved away: ``SOURCE_BLOCKED``,
+reason "Identity-specific runtime action sheets are not installed.", Knight
+hidden, identity kept, no items (full 33 checks, verify 24 checks).
+
+Four defects only native execution could expose, all fixed here:
+
+1. ``JSON.parse_string`` returns floats, so the pipeline's strict ``is int``
+   grid check rejected **every real manifest** with "Directional sprite frame
+   bounds are invalid". Now whole numbers (12 and 12.0) are accepted, fractional
+   values and out-of-bounds rows/frames are still rejected.
+2. A0 authors sword swings as ``sword_combo_N``; matching only the literal word
+   "attack" made a real attack present the idle clip. The whole authored combat
+   family is now mapped.
+3. The hidden host loops its own death strip, which restarted the avatar's
+   one-shot death clip; a death now plays once and holds the final pose.
+4. Both A0 signals carry a payload, so connecting them straight to a
+   zero-argument ``refresh()`` failed silently and a live identity/equipment
+   change never re-presented. Dedicated handlers fix that, and a revision guard
+   keeps an unrelated commit (gold, quests) from rebuilding the avatar.
+
+Pre-existing A0 reds, reproduced on the untouched base ``51225718`` and **not
+caused by this workstream** (reported, not patched here):
+
+- ``tests/startup_profile_choice_test.gd``: "fresh profile has Sword only"
+  fails because the fresh document carries one reserve soul slot while the test
+  expects two (``SOUL_TEAM_RESERVE_CAPACITY`` is 1, ``app_flow`` writes two).
+- ``tests/already_playable_qa_test.gd``: 2 of 40 checks fail (registry
+  completeness, Soul Relay soak) on base as well.
+
 ## Ownership boundary
 
 | Concern | Owner | Notes |
@@ -38,7 +88,9 @@ Added:
   Knight art when an identity is presented, restarts a clip only on a real host
   re-trigger (no per-frame reset), listens to `player_avatar_changed`/`save_loaded`.
 - `game/survival/ui/avatar_sprite_pipeline.gd`, `avatar_appearance_adapter.gd`,
-  `avatar_art_manifest.json` — A6's reviewed, SHA-locked pipeline reused verbatim.
+  `avatar_art_manifest.json` — A6's reviewed, SHA-locked pipeline. Two native
+  fixes on top of the verbatim copy: float-friendly whole-number grid parsing
+  and a held one-shot clip (see "Native evidence").
 - `game/ui/screens/avatar_choice/*` — authored identity screen (authored nodes
   only; no code-drawn UI, no code-created controls).
 - `tests/survival/ui/avatar_identity_native_test.gd`,
@@ -80,7 +132,10 @@ which is exactly what A6's `avatar_appearance_adapter` demands.
 ## Equipment grade 1/2 (honest gate)
 
 `get_player_equipment_grade_request()` maps the equipped Vessel/Boots/Trace
-loadout to grade 1 (any) or 2 (all three). No licensed grade-1/2 source art has
+loadout to grade 1 (any) or 2 (all three). The commit path emits
+`player_avatar_changed` whenever a commit changes the character *or* the
+requested grade, so equipping and unequipping re-present immediately without a
+screen reload, and commits that cannot change appearance stay silent. No licensed grade-1/2 source art has
 been selected or verified, so:
 - the presenter attempts the requested grade first;
 - if that grade has no verified record it draws the **same chosen character** at
@@ -116,4 +171,6 @@ xvfb-run -s "-screen 0 1280x720x24" godot --path . --resolution 1280x720 \
    "no identity"), which is what makes New Game ask again.
 4. Do not publish `private_art/**`; keep the staging step in local tooling and
    the CI runner only.
-5. Re-run the two native gates before claiming completion.
+5. Re-run `tools/run_a6_native_gates.sh <godot-binary> ready` and the CI
+   `visual-captures` job before claiming completion; visual acceptance is still
+   open until those renders are inspected.
