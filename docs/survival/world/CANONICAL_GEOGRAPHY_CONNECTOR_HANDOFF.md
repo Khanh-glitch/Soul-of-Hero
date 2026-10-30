@@ -77,10 +77,10 @@ A0 PR21 compatibility pins are recorded in the contract. PR21 diff does not touc
 |---|---|---|
 | CN-01 | Exact 46 collision / 48 dressed / 14 prop delta; source pins; inverse rollback restores legacy grids/props. | **PASS source** (`validate_connector.py`, pytest). |
 | CN-02 | Unmodified legacy blocker reproduced: Hero stops before x369. | **PASS A0 native negative** run 40931599594. |
-| CN-03 | Composed live-shape route Refuge → border → Waystation anchor/approach `(408,200)` without teleport; exact locker-stand `(408,199)` micro-clearance against the slice obstacle is A0 POI-mount acceptance. | **PENDING CI native fixture**. |
-| CN-04 | Waystation → Relay crank stand `(442,234)` around static slice obstacles. | **PENDING CI native fixture**. |
-| CN-05 | Relay → Refuge return; camera right limit 7168; Hero visible. | **PENDING CI native fixture**. |
-| CN-06 | Ten dungeon thresholds, camps, discoveries remain reachable in composed nav. | **PENDING CI native fixture**. |
+| CN-03 | Composed live-shape route Refuge → border → Waystation anchor/approach `(408,200)` without teleport; exact locker-stand `(408,199)` micro-clearance against the slice obstacle is A0 POI-mount acceptance. | **PASS CI native fixture** (isolated composed world; production repetition A0-owned). |
+| CN-04 | Waystation → Relay crank stand `(442,234)` around static slice obstacles. | **PASS CI native fixture** (isolated composed world; production repetition A0-owned). |
+| CN-05 | Relay → Refuge return; camera right limit 7168; Hero visible. | **PASS CI native fixture** (isolated composed world; production repetition A0-owned). |
+| CN-06 | Ten dungeon thresholds, camps, discoveries remain reachable in composed nav. | **PASS CI native fixture** (isolated composed world; production repetition A0-owned). |
 | CN-07 | A0 production controller with source overrides repeats CN-03..06 on fresh save/reload; SaveService global pixels round-trip. | **PENDING A0**. |
 | CN-08 | Build rejected on connector road and disabled annex; legacy home/build tests unchanged. | **SOURCE contract**; native A0 pending. |
 | CN-09 | Canonical rewards byte-locked; no A3 hypothetical locker/cache rewards; one receipt per entitlement. | **PASS source**; production A0/A3 pending. |
@@ -108,7 +108,7 @@ Canonical reward lock: locker `cap_salvage` / 0 items; ledger `cap_seal_1` / 0; 
 xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --resolution 960x540 --windowed --script res://tests/survival/world/connector_native_test.gd -- --connector-root=artifacts/a1-connector
 ```
 
-Local source gate: connector validation 0 errors; pytest **82 passed**; world/slice validators pass; determinism **232 artifacts**, tree `e74cd6853be2d3df6fe4cb12f05b2552515770f5a84bf60910571d236002c485`. Local sandbox has no Godot/Xvfb; native fixture result is CI-pending until the workflow run is read back.
+Local source gate: connector validation 0 errors; pytest **82 passed**; world/slice validators pass; determinism **232 artifacts**, tree `e74cd6853be2d3df6fe4cb12f05b2552515770f5a84bf60910571d236002c485`. CI native fixture at `90c1d8bf`: push [40993737087](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40993737087) and PR [40993742640](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40993742640) **SUCCESS**, including the connector anti-vacuity gate. Native iteration evidence: headless boot omitted autoloads; a leftover `(368,201)` corner caught the returning 12×16 body; final full three-row mouth + fine ordinary-input deadzone passes the complete round trip.
 
 ## 9. Research / reuse note
 
