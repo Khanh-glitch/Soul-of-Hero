@@ -165,8 +165,10 @@ jobs:
               echo "**$f**"
               echo '```'
               grep -E '^  FAIL  |^A0_STAND|^HOME_DOOR|^ROADSIDE_STAND|^HOME_EXIT|^HOME_ROUTE|^A0_STARTER|SCRIPT ERROR|Parse Error|^ERROR: |PASSED|FAILED' "$f" | tail -40
-              echo '--- tail ---'
-              tail -15 "$f"
+              echo '--- field differences ---'
+              grep -E 'A0_SAVE_DIFF .*(values=[1-9]|types=[1-9])' "$f" | head -12 || true
+              echo '--- trace ---'
+              grep -E '^A0_|^HOME_|^NORMAL_|^ENTRY_|^ROADSIDE_' "$f" | tail -12 || true
               echo '```'
             done
           } > "$note"

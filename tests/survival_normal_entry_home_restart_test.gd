@@ -5,6 +5,10 @@ extends "res://tests/survival_normal_home_journey_test.gd"
 ## No actor position assignment, inventory grants, direct interactions or mocked
 ## time. UI/physics inputs are injected; this is not a human playtest.
 const SaveDiff = preload("res://tests/fixtures/a0_save_diff.gd")
+## The audit is JSON, so every integer comes back as a float. Restore the
+## declared integer slots with the exact decoder SaveService uses before any
+## strict comparison; comparing raw JSON would report type noise, not custody.
+const Integers = preload("res://game/survival/economy/a0_world_slice_v5_migration.gd")
 const ENTRY_SAVE := "user://tests/entry_home_restart.json"
 const ENTRY_AUDIT := "user://tests/entry_home_restart_audit.json"
 var _app: Node
@@ -166,6 +170,8 @@ func _verify_restart() -> void:
 	_expect(baseline is Dictionary, "restart baseline is valid JSON")
 	if not baseline is Dictionary:
 		return
+	var restore: String = Integers.normalize_numbers(baseline)
+	_expect(restore.is_empty(), "restart baseline restores exact integer types (%s)" % restore)
 	var snapshot: Dictionary = _save().call(&"get_snapshot")
 	var document: Dictionary = _survival().call(&"document")
 	var disk: Variant = SaveDiff.read_json(ENTRY_SAVE)
@@ -175,9 +181,41 @@ func _verify_restart() -> void:
 	SaveDiff.report("entry-restart-disk-vs-reloaded.receipts", disk.get("applied_transactions", {}) if disk is Dictionary else disk, snapshot.get("applied_transactions", {}))
 	_expect((snapshot.get("inventory", {}) as Dictionary) == (baseline.get("inventory", {}) as Dictionary), "separate process restores exact ordinary and unique inventory")
 	_expect(document == (baseline.get("survival", {}) as Dictionary), "separate process restores exact structures, chests and permanent knowledge")
-	_expect((snapshot.get("applied_transactions", {}) as Dictionary) == (baseline.get("transactions", {}) as Dictionary), "separate process preserves all durable receipts without duplicates")
-	SaveDiff.report("entry-restart-baseline-vs-reloaded.world_slice", baseline.get("world_slice", {}), snapshot.get("world_slice", {}))
-	_expect((snapshot.get("world_slice", {}) as Dictionary) == (baseline.get("world_slice", {}) as Dictionary), "separate process preserves POI state, clocks and capabilities")
+	# A relaunched process legitimately advances the pausable world clock and
+	# records that as world_time receipts. Custody must be untouchable: every
+	# baseline receipt survives byte-identical, and a receipt that did not exist
+	# may only be a clock advance -- never a source, craft, transfer or deposit.
+	var base_receipts: Dictionary = baseline.get("transactions", {})
+	var live_receipts: Dictionary = snapshot.get("applied_transactions", {})
+	var missing: Array[String] = []
+	var rewritten: Array[String] = []
+	var forged: Array[String] = []
+	for key: Variant in base_receipts.keys():
+		if not live_receipts.has(key):
+			missing.append(String(key))
+		elif live_receipts[key] != base_receipts[key]:
+			rewritten.append(String(key))
+	for key: Variant in live_receipts.keys():
+		if base_receipts.has(key):
+			continue
+		var metadata: Dictionary = ((live_receipts[key] as Dictionary).get("metadata", {}) as Dictionary)
+		if String(metadata.get("operation", "")) != "world_time":
+			forged.append("%s:%s" % [String(key), String(metadata.get("operation", "?"))])
+	SaveDiff.report("entry-restart-baseline-vs-reloaded.receipts", base_receipts, live_receipts)
+	_expect(missing.is_empty(), "no baseline receipt is lost on restart (%s)" % str(missing.slice(0, 3)))
+	_expect(rewritten.is_empty(), "no baseline receipt is rewritten on restart (%s)" % str(rewritten.slice(0, 3)))
+	_expect(forged.is_empty(), "restart adds no receipt except clock advances (%s)" % str(forged.slice(0, 3)))
+	# Same rule for the world slice: the only field allowed to move is the
+	# pausable clock, and it may only move forward.
+	var base_world: Dictionary = (baseline.get("world_slice", {}) as Dictionary).duplicate(true)
+	var live_world: Dictionary = (snapshot.get("world_slice", {}) as Dictionary).duplicate(true)
+	SaveDiff.report("entry-restart-baseline-vs-reloaded.world_slice", base_world, live_world)
+	var base_clock: Dictionary = (base_world.get("clock", {}) as Dictionary)
+	var live_clock: Dictionary = (live_world.get("clock", {}) as Dictionary)
+	base_world.erase("clock")
+	live_world.erase("clock")
+	_expect(int(live_clock.get("active_seconds", -1)) >= int(base_clock.get("active_seconds", 0)), "restart clock never runs backwards")
+	_expect(live_world == base_world, "separate process preserves exact POI state and capabilities")
 	var world := await _boot()
 	_expect(world != null, "separate process reconstructs the actual production overworld")
 	if world == null:

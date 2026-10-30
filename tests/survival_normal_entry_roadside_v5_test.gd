@@ -64,7 +64,7 @@ func _verify_restart() -> void:
 	_expect(host != null and hero != null and nav != null, "restart world owns the candidate host and Hero")
 	if host == null or hero == null or nav == null:
 		return
-	var point := host.get_node_or_null("Roadside01") as Node2D
+	var point := host.get_node_or_null("Roadside 01") as Node2D
 	_expect(point != null, "claimed roadside object reconstructs in the second process")
 	if point == null:
 		return
