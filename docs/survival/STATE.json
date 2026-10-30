@@ -203,10 +203,10 @@
     "first_test": "Run exact A1 90c1d8 46/48/14 isolated A0 controller pilot, required locker stand, actual input and reload; diagnose CI, then develop authorized bounded optional skeleton encounter with actual combat/death/bed/bag journey. Same-SHA regression gates; B0 NOT ACCEPTED PR21 HOLD.",
     "parallel_start": "A1 owns world planning, A3 economy data; A6 works on isolated UI paths only and must not modify the A0 construction build strip. A7 is a distributed QA workstream; S6 is optional and nonblocking.",
     "design_gate": "Every SURV-020 claim needs a green native run recorded here, exactly as SURV-010 now has.",
-    "description": "NEXT_ATOMIC_ACTION: inspect threat 40997860492 and connector inverse/legacy downgrade 40997860384 at d63852fa. Threat 2926650c proved real autonomous damage 1100→1086 but retreat failed; diagnose physical movement and continue real home→danger→death/bag→GUI bed→recovery→home/reload, repeated death, avoidance and no farming without fabrication. Connector exact locker shape collision reported to A1 via PR20 comment 6514108933; do not move POI/shrink Hero. Revalidate all same SHA, investigate +120% performance failure without weakening +45% gate. SURV-020/B0 NOT ACCEPTED, draft PR HOLD.",
-    "last_verified_code": "71f359c7dda4b3efec73cbd96c87f38d468577be: home92, foundation and A6 passed; overworld perf FAILED +120%; threat not passed.",
-    "working_code": "d63852fa17053cc7084ed96cda592041f0a663d7; threat 40997860492 and connector 40997860384 pending; A1 965a0b03830fb5866d08c0d5a877135bf2f8c83f.",
-    "docs_sync": "tab04 readback index 129617 covers d63852fa and actual threat/downgrade findings; sync future results."
+    "description": "NEXT_ATOMIC_ACTION: inspect GitHub jobs 41003071125 (A0 exact-stand 24px + inverse/downgrade, A1 2951bf85) and 41003071162 (two real deaths/cooldown/bag recovery) at 2b209b0c; both queued since 04:28 UTC, as are foundation/A6/overworld/general. Fix any native failures without replacing exact stand or fabricating damage. If all positive and negative CT gates actually pass, prepare disabled-by-default candidate for independent review and exact canonical actions/receipts; no production mount or POI rewards yet. Continue no-farming, repeated entry/reload, safe avoidance, user/human/Web and unchanged +45% performance gates. SURV-020/B0 NOT ACCEPTED, PR21 DRAFT/HOLD.",
+    "last_verified_code": "b2c37d35f47ef870fcbafafbc7f49e3d2730cd17: experimental test-only real single-death/bag/home/save journey 112, foundation/A6/overworld (+7%) pass; 71f359c7 same-sha +120% perf fail remains unexplained. 8628ad96 A6 mixed A3 bed116/workspace35 pass.",
+    "working_code": "2b209b0c0b4f0b82f0a56a7b8903e2832a197eac; exact A1 2951bf8559b2e289ce99fd4d394d44c46fdd91b1; CI jobs 41003071125 and 41003071162 queued.",
+    "docs_sync": "tab04 readback 140210 covers A1 correction and 2b queued native gates; sync later results."
   },
   "blockers": [
     {
