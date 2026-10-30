@@ -76,6 +76,11 @@ func configure(hero: CharacterBody2D, build: SurvivalBuildSystem, nav: Overworld
 	_reservation = area
 	_build.encounter_exclusions.append(area)
 	_configured = true
+	# The overworld pauses immediately on death, before this node gets another
+	# physics tick. Observe the real death signal to clean up synchronously.
+	var events := get_node_or_null("/root/GameEvents")
+	if events != null and events.has_signal(&"player_died") and not events.is_connected(&"player_died", _on_player_died):
+		events.connect(&"player_died", _on_player_died)
 	position = center
 	var warning := Label.new()
 	warning.name = "OptionalEncounterWarning"
@@ -109,6 +114,14 @@ func _spawn() -> void:
 func _on_enemy_died(_which: Node) -> void:
 	_cooldown = REARM_SECONDS
 
+func _on_player_died() -> void:
+	if not _configured or not is_instance_valid(_hero) or not bool(_hero.get("dead")):
+		return
+	if is_instance_valid(_enemy):
+		_enemy.queue_free()
+		_enemy = null
+	_cooldown = REARM_SECONDS
+
 func _physics_process(delta: float) -> void:
 	if not _configured or not is_instance_valid(_hero):
 		return
@@ -124,5 +137,8 @@ func _physics_process(delta: float) -> void:
 		_spawn()
 
 func _exit_tree() -> void:
+	var events := get_node_or_null("/root/GameEvents")
+	if events != null and events.is_connected(&"player_died", _on_player_died):
+		events.disconnect(&"player_died", _on_player_died)
 	if _configured and is_instance_valid(_build):
 		_build.encounter_exclusions.erase(_reservation)

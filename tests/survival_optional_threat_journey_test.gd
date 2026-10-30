@@ -165,17 +165,25 @@ func _body() -> void:
 	if bag == null:
 		_body_complete = true
 		return
+	await physics_frame
+	_expect(encounter.get_node_or_null("BoundedSkeleton") == null, "real death synchronously cleans the one encounter enemy before recovery")
 	var bag_cell := nav.cell_of(bag.global_position)
 	var approach: Array[Vector2i] = []
 	var current := nav.cell_of(hero.global_position)
-	for offset: Vector2i in [Vector2i.ZERO, Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
+	var bag_goal := Vector2i(-1, -1)
+	for offset: Vector2i in [Vector2i.ZERO, Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN, Vector2i(-1, -1), Vector2i(1, -1), Vector2i(-1, 1), Vector2i(1, 1), Vector2i(-2, 0), Vector2i(2, 0), Vector2i(0, -2), Vector2i(0, 2)]:
 		var candidate := bag_cell + offset
+		var point := Vector2(candidate.x * 16 + 8, candidate.y * 16 + 15)
+		if point.distance_to(bag.global_position) > 44.0:
+			continue
 		var trial := _route(current, candidate, nav, hero)
 		if current == candidate or not trial.is_empty():
 			approach = trial
+			bag_goal = candidate
 			break
-	var physically_revisited := (approach.is_empty() and current == bag_cell) or (not approach.is_empty() and await _walk_path(hero, approach))
-	_expect(physically_revisited, "ordinary movement physically returns to the same death bag")
+	var physically_revisited := (approach.is_empty() and current == bag_goal) or (not approach.is_empty() and await _walk_path(hero, approach))
+	print("OPTIONAL_THREAT_TRACE bag=%s start=%s goal=%s path=%d actual=%s hp=%s dead=%s reached=%s" % [str(bag.global_position), str(current), str(bag_goal), approach.size(), str(hero.global_position), str(hero.get("health")), str(hero.get("dead")), str(physically_revisited)])
+	_expect(physically_revisited and hero.global_position.distance_to(bag.global_position) <= 44.0, "ordinary movement physically returns to the same death bag")
 	if not physically_revisited:
 		_body_complete = true
 		return
