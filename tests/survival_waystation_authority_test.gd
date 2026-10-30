@@ -1,6 +1,7 @@
 extends SceneTree
 ## Adversarial FIXTURE test of pinned A3 V3 + actual A0 SaveService. This does
 ## not prove player input, physical reach, production mount or OS restart.
+const SaveDiff = preload("res://tests/fixtures/a0_save_diff.gd")
 const Adapter = preload("res://game/survival/economy/a0_economy_adapter.gd")
 var save: Node
 var adapter: RefCounted
@@ -71,8 +72,12 @@ func _run() -> void:
 	_expect((save.call(&"inventory_totals") as Dictionary) == totals, "replayed original event grants nothing")
 	r = adapter.call(&"world_action", cache, "fixture.cache.new")
 	_expect(not bool(r.get("ok", false)) and String(r.get("reason", "")) == "COOLDOWN" and (save.call(&"inventory_totals") as Dictionary) == totals, "new event cannot bypass cooldown")
+	var disk: Variant = SaveDiff.read_json(path)
+	SaveDiff.report("waystation-commit-memory-vs-disk", committed, disk)
 	_expect(bool(save.call(&"reload_save")), "disk reload succeeds")
 	var loaded: Dictionary = save.call(&"get_snapshot")
+	SaveDiff.report("waystation-commit-memory-vs-reloaded", committed, loaded)
+	SaveDiff.report("waystation-commit-disk-vs-reloaded", disk, loaded)
 	_expect(loaded.get("world_slice", {}) == committed.get("world_slice", {}) and loaded.get("inventory", {}) == committed.get("inventory", {}) and loaded.get("applied_transactions", {}) == committed.get("applied_transactions", {}), "same-process disk reload preserves custody and rights")
 	fixture_index += 1
 	fixture_session = "fixture-world-after-reload"
@@ -100,10 +105,18 @@ func _run() -> void:
 	_expect(not bool(r.get("ok", false)) and String(r.get("reason", "")) == "inventory_full" and (save.call(&"get_snapshot") as Dictionary) == full, "full bag refuses entire reward without cooldown or receipt")
 	_expect(bool(save.call(&"consume_inventory_item", "stone_chunk", 100, "fixture.free.two")), "fixture frees two complete stack slots")
 	var before_fault: Dictionary = save.call(&"get_snapshot")
+	var before_fault_disk: Variant = SaveDiff.read_json(path)
+	SaveDiff.report("waystation-pre-fault-memory-vs-disk", before_fault, before_fault_disk)
 	_expect(bool(save.call(&"configure_test_save_interruption", "after_temporary")), "debug-only temporary-write interruption armed")
 	r = adapter.call(&"world_action", cache, "fixture.interrupted")
 	_expect(not bool(r.get("ok", false)) and (save.call(&"get_snapshot") as Dictionary) == before_fault, "interrupted candidate leaves memory unchanged")
-	_expect(bool(save.call(&"reload_save")) and (save.call(&"get_snapshot") as Dictionary) == before_fault, "interrupted candidate leaves disk unchanged")
+	var after_fault_disk: Variant = SaveDiff.read_json(path)
+	SaveDiff.report("waystation-fault-disk-before-vs-after", before_fault_disk, after_fault_disk)
+	var fault_reload := bool(save.call(&"reload_save"))
+	var fault_reloaded: Dictionary = save.call(&"get_snapshot")
+	SaveDiff.report("waystation-fault-memory-vs-reloaded", before_fault, fault_reloaded)
+	SaveDiff.report("waystation-fault-disk-vs-reloaded", after_fault_disk, fault_reloaded)
+	_expect(fault_reload and fault_reloaded == before_fault, "interrupted candidate leaves disk unchanged")
 	r = adapter.call(&"world_action", cache, "fixture.interrupted")
 	_expect(bool(r.get("ok", false)), "same event safely succeeds after interrupted write")
 	var after_retry: Dictionary = save.call(&"inventory_totals")

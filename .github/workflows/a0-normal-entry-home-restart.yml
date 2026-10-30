@@ -29,6 +29,7 @@ jobs:
           rc=$?
           cat artifacts/entry-first.log
           echo "::notice::entry process 1 exit=$rc $(grep -E '^ENTRY_HOME_|^NORMAL ENTRY|  FAIL  |SCRIPT ERROR|Parse Error' artifacts/entry-first.log | tail -16 | tr '\n' '~')"
+          grep "^A0_SAVE_DIFF " artifacts/entry-first.log | while IFS= read -r line; do echo "::notice::$line"; done
           bash tools/ci/gate_log.sh artifacts/entry-first.log 'A0 entry home' 'NORMAL ENTRY HOME RESTART PASSED'
           gate=$?
           [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
@@ -40,6 +41,7 @@ jobs:
           rc=$?
           cat artifacts/entry-second.log
           echo "::notice::entry process 2 exit=$rc $(grep -E '^ENTRY_HOME_|^NORMAL ENTRY|  FAIL  |SCRIPT ERROR|Parse Error' artifacts/entry-second.log | tail -16 | tr '\n' '~')"
+          grep "^A0_SAVE_DIFF " artifacts/entry-second.log | while IFS= read -r line; do echo "::notice::$line"; done
           bash tools/ci/gate_log.sh artifacts/entry-second.log 'A0 independent restart' 'NORMAL ENTRY HOME RESTART PASSED'
           gate=$?
           [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]

@@ -4,6 +4,7 @@ extends "res://tests/survival_normal_home_journey_test.gd"
 ## profile and compares complete custody, structures, receipts and knowledge.
 ## No actor position assignment, inventory grants, direct interactions or mocked
 ## time. UI/physics inputs are injected; this is not a human playtest.
+const SaveDiff = preload("res://tests/fixtures/a0_save_diff.gd")
 const ENTRY_SAVE := "user://tests/entry_home_restart.json"
 const ENTRY_AUDIT := "user://tests/entry_home_restart_audit.json"
 var _app: Node
@@ -134,6 +135,10 @@ func _run_from_menu() -> void:
 		return
 	var snapshot: Dictionary = _save().call(&"get_snapshot")
 	var document: Dictionary = _survival().call(&"document")
+	var disk: Variant = SaveDiff.read_json(ENTRY_SAVE)
+	SaveDiff.report("entry-first-memory-vs-disk.inventory", snapshot.get("inventory", {}), disk.get("inventory", {}) if disk is Dictionary else disk)
+	SaveDiff.report("entry-first-memory-vs-disk.survival", snapshot.get("survival", {}), disk.get("survival", {}) if disk is Dictionary else disk)
+	SaveDiff.report("entry-first-memory-vs-disk.receipts", snapshot.get("applied_transactions", {}), disk.get("applied_transactions", {}) if disk is Dictionary else disk)
 	var audit := {"inventory": snapshot.get("inventory", {}).duplicate(true), "survival": document.duplicate(true), "transactions": snapshot.get("applied_transactions", {}).duplicate(true)}
 	var file := FileAccess.open(ENTRY_AUDIT, FileAccess.WRITE)
 	_expect(file != null, "independent restart baseline can be written")
@@ -154,6 +159,11 @@ func _verify_restart() -> void:
 		return
 	var snapshot: Dictionary = _save().call(&"get_snapshot")
 	var document: Dictionary = _survival().call(&"document")
+	var disk: Variant = SaveDiff.read_json(ENTRY_SAVE)
+	SaveDiff.report("entry-restart-baseline-vs-reloaded.inventory", baseline.get("inventory", {}), snapshot.get("inventory", {}))
+	SaveDiff.report("entry-restart-baseline-vs-reloaded.survival", baseline.get("survival", {}), document)
+	SaveDiff.report("entry-restart-disk-vs-reloaded.inventory", disk.get("inventory", {}) if disk is Dictionary else disk, snapshot.get("inventory", {}))
+	SaveDiff.report("entry-restart-disk-vs-reloaded.receipts", disk.get("applied_transactions", {}) if disk is Dictionary else disk, snapshot.get("applied_transactions", {}))
 	_expect((snapshot.get("inventory", {}) as Dictionary) == (baseline.get("inventory", {}) as Dictionary), "separate process restores exact ordinary and unique inventory")
 	_expect(document == (baseline.get("survival", {}) as Dictionary), "separate process restores exact structures, chests and permanent knowledge")
 	_expect((snapshot.get("applied_transactions", {}) as Dictionary) == (baseline.get("transactions", {}) as Dictionary), "separate process preserves all durable receipts without duplicates")
@@ -168,5 +178,9 @@ func _verify_restart() -> void:
 		if build.structure_node(String(id)) == null:
 			all_present = false
 	_expect(all_present, "all paid structure identities reconstruct after a genuine process restart")
-	_expect((_save().call(&"get_snapshot") as Dictionary).get("inventory", {}) == baseline.get("inventory", {}), "world reconstruction does not duplicate carried items")
+	var rebuilt: Dictionary = _save().call(&"get_snapshot")
+	SaveDiff.report("entry-restart-reloaded-vs-rebuild.inventory", snapshot.get("inventory", {}), rebuilt.get("inventory", {}))
+	SaveDiff.report("entry-restart-reloaded-vs-rebuild.survival", document, _survival().call(&"document"))
+	SaveDiff.report("entry-restart-reloaded-vs-rebuild.receipts", snapshot.get("applied_transactions", {}), rebuilt.get("applied_transactions", {}))
+	_expect(rebuilt.get("inventory", {}) == baseline.get("inventory", {}), "world reconstruction does not duplicate carried items")
 	print("ENTRY_HOME_SECOND_PROCESS inventory=%s receipts=%d structures=%d" % [str(_save().call(&"inventory_totals")), (snapshot.get("applied_transactions", {}) as Dictionary).size(), structures.size()])

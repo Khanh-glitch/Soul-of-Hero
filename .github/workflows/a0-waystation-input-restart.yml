@@ -67,6 +67,7 @@ jobs:
           set -e
           cat artifacts/waystation-authority.log
           echo "::notice::Waystation authority exit=$rc $(grep -E 'A0 WAYSTATION|  FAIL  |SCRIPT ERROR|Parse Error' artifacts/waystation-authority.log | tail -20 | tr '\n' '~')"
+          grep "^A0_SAVE_DIFF " artifacts/waystation-authority.log | while IFS= read -r line; do echo "::notice::$line"; done
           bash tools/ci/gate_log.sh artifacts/waystation-authority.log 'Waystation authority fixture' 'A0 WAYSTATION AUTHORITY PASSED'
           [ "$rc" -eq 0 ]
       - name: Real Hero input, canonical receipt, and separate process replay
