@@ -36,6 +36,23 @@
 - **AVFX** (`0d4fd0b`): continue independently preserving original full Gold. Latest three workflows queued; do not interrupt for B0 unless A0 specifically needs stable Gold skill interface.
 - **S6** (`9332e31`): PAUSE/optional noncritical, 2068 PASS / 44 FAIL in design-state reachability, none production-native; never block B0 or make deep-POI fallback into free rewards.
 
+## IIIa. R5 mandatory binary gate register — NO vague PASS_SCOPED
+These gates are assessed **for the named submitted deliverable**, not the entire game's completion. A checked isolated native test may PASS `CODE_RUNTIME` **for that fixture only** while `INTEGRATION` is NOT_TESTED; full B0 and E2 never inherit a fixture PASS. `NOT_TESTED` means no sufficient independent proof, not halfway pass.
+
+| Required gate | A0 rendered B0 8ce3add8 | A1 native art 7d2b017c | A3 V7 contract 35214ed8 | A7 Round8 QA 56b48850 |
+|---|---|---|---|---|
+| RESEARCH_PROVENANCE | PASS (canonical reviewed) | PASS (Atlas+canon) | PASS (Atlas+canon) | FAIL (old D062–D067 IDs must be re-anchored before **current** product claim) |
+| ARCHITECTURE | PASS (existing one-SaveService input path under review; not full run lifecycle) | PASS (isolated visual data boundary unchanged) | PASS (candidate port, not 2nd wallet) | PASS (immutable owner provenance) |
+| CODE_RUNTIME | FAIL (2/4 actual rendered journey jobs fail) | PASS (world-art native fixture only) | PASS (V7 native candidate fixtures only) | PASS (QA processes/ledger only; NOT product) |
+| TEST_ORACLE | NOT_TESTED (CT independent wedge counterfactual not run) | NOT_TESTED (no CT blind native rerun) | NOT_TESTED (all A3 profile/endpoint producer tests candidate) | PASS (15 real process outcomes, negative/model separation; old composition) |
+| VISUAL_UX | NOT_TESTED (CT has not inspected native screenshot / 2K+4K) | NOT_TESTED (CT could not retrieve native image, even though agent did) | NOT_TESTED (no world kiosk UI) | NOT_TESTED (headless only) |
+| SYSTEM_VALUE | NOT_TESTED (closed return loop / felt choice absent) | NOT_TESTED (full geography exploration not playable) | NOT_TESTED (real last72 chest-banking agency absent) | NOT_TESTED (counterfactual weights only) |
+| SAVE_MIGRATION | NOT_TESTED (new run/profile reset + all owners) | NOT_APPLICABLE (test/CI-only A1 increment) | NOT_TESTED (A0 production profile/run boundary absent) | NOT_TESTED (one narrow restart not migration/reset) |
+| INTEGRATION | FAIL (B0 chain never finishes) | NOT_TESTED (A0 full art/world adoption) | NOT_TESTED (A0 profile port/physical endpoints absent) | FAIL (on **old** frozen composition; current heads NOT_TESTED) |
+| BALANCE_REPLAY | NOT_TESTED (no 336h lived simulation) | NOT_TESTED (regional route choice) | NOT_TESTED (model is deterministic, not gameplay) | NOT_TESTED (unaligned competing models) |
+
+Decision-level acceptances may still be `ACCEPTED_SCOPED` for A1/A3/A7 **without** changing any `NOT_TESTED` production gate. Every renewed acceptance must cite the exact test, SHA, scene/input, save after restart, negatives, visual and player-facing consequence, and name independent reviewer. A0 is `CONTINUE_WITH_CORRECTION / HOLD_INTEGRATION`; A1/A3 are complete for this submitted candidate scope and must be given bounded new owner work only if available; A7's round8 QA is complete, new composition required.
+
 ## IV. Operational dispatch / pause logic — not the three UI buttons
 **DO NOT INTERRUPT** agents currently working based only on GitHub status. The Control Tower cannot infer live Arena run state from PR and does not itself deliver prompt to Arena by editing GitHub. Creator pastes prompts into the appropriate EXISTING sessions.
 - **A0 P0 CONTINUE NOW** on current task: inspect actual contacts/sweep on wedges (343,223→342,222) and (407,203→406,202), physical waypoint fix, rerun EXACT new SHA four Xvfb jobs, finish home-return+fresh process restart+no dupe, then death bag; NO teleport/no collision disable/no production HUD change merely because headless pointer failed. Only AFTER a real closed B0 leg start single SaveService run/profile boundary adopting A3 V7 APIs (which already include Tool Use and offline operations). **If A0 is idle, send a short continuation prompt; if it is already implementing the same patch, do not reset it.**
