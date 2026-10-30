@@ -65,7 +65,7 @@ static func resolve(w, def: Dictionary, mx: float, my: float) -> Dictionary:
 	var ai: Dictionary = def["aim"]
 	var dx: float = mx - p.x
 	var dy: float = my - p.y
-	var d: float = sqrt(dx * dx + dy * dy)
+	var d: float = M.hypot(dx, dy)
 	if d == 0.0:
 		d = 1.0
 	var ang: float = V8M.v8_atan2(dy, dx)
@@ -85,11 +85,11 @@ static func resolve(w, def: Dictionary, mx: float, my: float) -> Dictionary:
 		var best = null
 		var bd: float = 1e9
 		for e in al:
-			var dm: float = sqrt(V8M.v8_pow(e.x - mx, 2.0) + V8M.v8_pow(e.y - my, 2.0)) - e.r
+			var dm: float = M.hypot(e.x - mx, e.y - my) - e.r
 			if dm < bd and dm < 26:
 				bd = dm
 				best = e
-		if best != null and sqrt(V8M.v8_pow(best.x - p.x, 2.0) + V8M.v8_pow(best.y - p.y, 2.0)) \
+		if best != null and M.hypot(best.x - p.x, best.y - p.y) \
 				- best.r > float(ai["range"]) + 4:
 			best = null
 		r["target"] = best
@@ -97,11 +97,11 @@ static func resolve(w, def: Dictionary, mx: float, my: float) -> Dictionary:
 	elif kind == "multi":
 		var cand: Array = []
 		for e in al:
-			if sqrt(V8M.v8_pow(e.x - p.x, 2.0) + V8M.v8_pow(e.y - p.y, 2.0)) - e.r < float(ai["range"]):
+			if M.hypot(e.x - p.x, e.y - p.y) - e.r < float(ai["range"]):
 				cand.append(e)
 		M.stable_sort(cand, func(a, b):
-			return (sqrt(V8M.v8_pow(a.x - mx, 2.0) + V8M.v8_pow(a.y - my, 2.0))
-					- sqrt(V8M.v8_pow(b.x - mx, 2.0) + V8M.v8_pow(b.y - my, 2.0))))
+			return (M.hypot(a.x - mx, a.y - my)
+					- M.hypot(b.x - mx, b.y - my)))
 		var n: int = int(ai.get("n", 3))
 		r["targets"] = cand.slice(0, mini(n, cand.size()))
 		r["ok"] = r["targets"].size() > 0
@@ -133,7 +133,7 @@ static func auto_aim(w, def: Dictionary) -> Dictionary:
 			var e = al[i]
 			var n: int = 0
 			for o in al:
-				if sqrt(V8M.v8_pow(o.x - e.x, 2.0) + V8M.v8_pow(o.y - e.y, 2.0)) < 55:
+				if M.hypot(o.x - e.x, o.y - e.y) < 55:
 					n += 1
 			if n > bn:
 				bn = n
@@ -143,13 +143,13 @@ static func auto_aim(w, def: Dictionary) -> Dictionary:
 		var sy: float = 0.0
 		var cnt: int = 0
 		for o in al:
-			if sqrt(V8M.v8_pow(o.x - c0.x, 2.0) + V8M.v8_pow(o.y - c0.y, 2.0)) < 55:
+			if M.hypot(o.x - c0.x, o.y - c0.y) < 55:
 				sx += o.x
 				sy += o.y
 				cnt += 1
 		cx = sx / float(cnt)
 		cy = sy / float(cnt)
-	var dist: float = sqrt(V8M.v8_pow(cx - p.x, 2.0) + V8M.v8_pow(cy - p.y, 2.0))
+	var dist: float = M.hypot(cx - p.x, cy - p.y)
 	var ai: Dictionary = def["aim"]
 	if String(ai["kind"]) == "ground" and dist > float(ai["range"]):
 		var k: float = float(ai["range"]) / dist
