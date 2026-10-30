@@ -36,6 +36,7 @@ class CF extends RefCounted:
 	# death compositing. The original wraps/overwrites the tint closure per death
 	# kind, so these three modes reproduce that exact order.
 	var poison_fade: float = -1.0   # >=0: after base filters, mix toward P.e1
+	var crystal_fade: float = -1.0  # >=0: after base filters, mix toward P.y1 (crystal death wraps tintFn)
 	var death_white: bool = false   # normal death: mix(c, P.i0, 0.8), base discarded
 	var pre_mix: int = 0            # imp head: pre-mix input by pre_k first
 	var pre_k: float = 0.0
@@ -57,6 +58,8 @@ class CF extends RefCounted:
 			c = M.mix(c, int(M.P["w"]), minf(1.0, fl * 1.2))
 		if poison_fade >= 0.0:
 			c = M.mix(c, int(M.P["e1"]), 0.4 + poison_fade * 0.5)
+		if crystal_fade >= 0.0:
+			c = M.mix(c, int(M.P["y1"]), crystal_fade)
 		return c
 
 
@@ -125,7 +128,9 @@ static func draw_enemy(g, e, w) -> void:
 			# original wraps the existing filter: c => mix(base(c), P.e1, 0.4+m*0.5)
 			C.poison_fade = m
 		elif e.dyKind == "crystal":
-			C.ck = 0.75
+			# original: C = c => mix(b(c), P.y1, 0.75) — wraps the WHOLE base
+			# filter (flash included), so it must apply last, not via ck.
+			C.crystal_fade = 0.75
 			if k > 0.3:
 				return
 		else:
