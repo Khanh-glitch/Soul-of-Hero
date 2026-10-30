@@ -1,0 +1,12 @@
+# A0 → A1: exact Waystation locker stand is blocked (native counterexample)
+
+**Owner: A1 geometry/POI authority. A0 does not move the POI or shrink the Hero.** SURV-020/B0 and PR #21 remain HOLD. Request the smallest A1-owned correction consistent with CT's authorized 46/48/14 connector and unchanged original anchor/obstacle contract, or an explicit CT decision if those constraints cannot all be met.
+
+- A1 source pin `965a0b03830fb5866d08c0d5a877135bf2f8c83f`; source and geometry unchanged vs `90c1d8bf37b65009686532a29e166329150f2367` (only six docs/evidence files changed). Exact CT-approved one chunk 6:3 at `(384,192)`; counts 46/48/14 independently derived and validated in the workflow. Both original A1 obstacle sets mounted unchanged, 12 bodies total, before A0 nav build.
+- A0 code `daa058120d8c2f779f353bbdb975dd860c8e4c87`; Godot 4.7 native Xvfb [40996028162](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40996028162) **FAILED 1/19**. Actual A0 production Knight/BodyShape at specified locker stand `(408,199)`, foot world position `(6536,3199)` (tile center x, bottom y), independent `PhysicsDirectSpaceState2D.intersect_shape` with the real Hero shape/offset/mask reported exactly:
+
+  `/root/@Node2D@2/Chapter1Overworld/World/PropBlockers/obs_waystation_locker_bank_408_198`
+
+  This is the authored 16×16 obstacle at tile `(408,198)`; the Hero's 12×16 body with offset `(0,-8)` overlaps the obstacle by 12×1 pixels at that stand. The combined nav/shape positive stand assertion failed. The independent live query establishes collision even though the combined predicate can short-circuit on nav. No marker substitution or expected-failure pass.
+- Diagnostic (not a substitute for the stand): actual input walked Refuge `(56,218)` → Waystation approach `(408,200)` → actual Relay crank stand `(442,234)` → Refuge, including saved-position disk reload/fresh controller reconstruction. Prior A1 `f1f3a2f1` return failure was not reproduced with 46/48/14 and A0 shape-aware routing. Marker interaction is a no-reward fixture, not canonical POI collection.
+- Please supply source SHA, derivation validation, engine shape result for the **exact stand**, and route return evidence. Preserve the original Waystation anchor `(408,200)`, no unapproved carve, and CT authority; any changed original obstacle/stand needs A1 ownership and CT approval rather than silent A0 edits. Inverse route, downgrade, protected endpoints, genuine rewards and B0 still require A0 validation after any correction.

@@ -3,6 +3,7 @@ extends "res://tests/survival_normal_home_journey_test.gd"
 ## A1-derived inputs are staged by CI from an exact source SHA. Ordinary input
 ## walks the real A0 controller; the locker assertion remains an actual gate.
 const REACH_PROBE = preload("res://tests/fixtures/a0_connector_reach_probe.gd")
+var _legacy_mode := false
 
 func _boot() -> Node:
 	var scene := load(OW_SCENE_PATH) as PackedScene
@@ -14,11 +15,12 @@ func _boot() -> Node:
 	var ow := scene.instantiate()
 	# Load after autoload initialization: preloading the derived controller from
 	# a SceneTree script can compile Knight before GameEvents is registered.
-	var pilot_script := load("res://tests/fixtures/a0_connector_pilot_world.gd") as Script
-	if pilot_script == null:
-		_expect(false, "pilot controller script loads after autoload boot")
-		return null
-	ow.set_script(pilot_script)
+	if not _legacy_mode:
+		var pilot_script := load("res://tests/fixtures/a0_connector_pilot_world.gd") as Script
+		if pilot_script == null:
+			_expect(false, "pilot controller script loads after autoload boot")
+			return null
+		ow.set_script(pilot_script)
 	_host.add_child(ow)
 	ow.configure({})
 	var deadline := Time.get_ticks_msec() + BUILD_TIMEOUT_MS
@@ -131,5 +133,33 @@ func _body() -> void:
 			hero = ow.get(&"player") as CharacterBody2D
 			nav = ow.get(&"traversability") as OverworldTraversability
 			_expect(hero.global_position.distance_to(saved_position) < 2.0, "fresh production controller restores global Relay coordinates")
-			await _leg(hero, nav, refuge, "Relay to original Refuge")
+			var returned := await _leg(hero, nav, refuge, "Relay to original Refuge")
+			if returned:
+				var inverse_relay := await _leg(hero, nav, Vector2i(442, 234), "inverse Refuge to Relay crank stand")
+				if inverse_relay:
+					# Downgrade the exact real annex position to the unchanged legacy
+					# controller; no fabricated save position or teleport.
+					(ow.get(&"state") as OverworldState).set_world_position(hero.global_position, true)
+					var custody: Dictionary = _save().call(&"inventory_totals")
+					var survival_before: Dictionary = _survival().call(&"document")
+					_legacy_mode = true
+					ow = await _reload_world(ow)
+					if ow != null:
+						hero = ow.get(&"player") as CharacterBody2D
+						world = ow.get(&"world") as OverworldWorld
+						nav = ow.get(&"traversability") as OverworldTraversability
+						var legacy_cell := nav.cell_of(hero.global_position)
+						var downgrade_safe := world.width == 384 and nav.in_bounds(legacy_cell) and _shape_clear(legacy_cell, nav, hero, {})
+						print("A0_CONNECTOR_DOWNGRADE position=%s cell=%s safe=%s" % [str(hero.global_position), str(legacy_cell), str(downgrade_safe)])
+						_expect(downgrade_safe, "annex-save downgrade respawns safely inside unmodified legacy geometry")
+						_expect(world.is_solid_cell(369, 200) and (_save().call(&"inventory_totals") as Dictionary) == custody and (_survival().call(&"document") as Dictionary) == survival_before, "legacy rollback restores seam and preserves custody and survival state")
+						_legacy_mode = false
+						ow = await _reload_world(ow)
+						if ow != null:
+							hero = ow.get(&"player") as CharacterBody2D
+							nav = ow.get(&"traversability") as OverworldTraversability
+							_expect(nav.cell_of(hero.global_position) == Vector2i(442, 234), "re-enabling pilot restores the saved Relay crank position")
+							var inverse_station := await _leg(hero, nav, Vector2i(408, 200), "inverse Relay to Waystation approach")
+							if inverse_station:
+								await _leg(hero, nav, refuge, "inverse Waystation to Refuge")
 	_body_complete = true
