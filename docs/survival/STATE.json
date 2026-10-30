@@ -200,7 +200,7 @@
       "docs/survival/CONTRACTS.md",
       "tests/survival_foundation_test.gd"
     ],
-    "first_test": "Native d775348 bed failed one combined post-reconstruction assertion. Verify chest custody, death-bag inventory and fresh production A3 adapter audit separately after correcting stale fixture port hypothesis; re-run foundation, A6, home and overworld at corrected SHA. No gate weakened. B0 NOT ACCEPTED, PR21 HOLD.",
+    "first_test": "At 03a39f3f same-SHA native suite, A6 composition and home journey pass. Await bounded A1 seam and CT threat contracts; continue independent player-agency/authorized selective storage work with existing save/A3 authority, then real input death/return/reload and human/visual/Web gates. Preserve +45%. B0 NOT ACCEPTED, PR21 HOLD.",
     "parallel_start": "A1 owns world planning, A3 economy data; A6 works on isolated UI paths only and must not modify the A0 construction build strip. A7 is a distributed QA workstream; S6 is optional and nonblocking.",
     "design_gate": "Every SURV-020 claim needs a green native run recorded here, exactly as SURV-010 now has."
   },
@@ -239,7 +239,7 @@
     "web_gameplay": "survival_specific_fixture_boot_and_input_pass_40927588129_at_2a60d11_not_full_journey",
     "gold_visual_parity": "not_run",
     "historical_mechanic_research": "source_audited_doc_05_and_git_atlas_2019_2020_not_runtime",
-    "docs_sync": "tab04 d775348 pending checkpoint appended and read back at index 108558; failed follow-up pending sync",
+    "docs_sync": "tab04 d775 failure and 03a39f3f pending checkpoint appended and read back at index 111413; final pass pending sync",
     "historical_source_audit_ci": "success_40830754794_at_bb86778666012081cdf411b6d791b8798c374281; handoff validator only",
     "source_archive_integrity": "PASS SHA256 b958de0fc413cc200b35b0938760228c2ebd3a8ef4aa2f52c1051c52cca59157",
     "atlas_ci": "PASS run_40838554299 sha_d64c299866e3220ff97f43226eed63932d67b596; docs validator only",
@@ -295,6 +295,16 @@
       "overworld": "PASS +23% 40990189872",
       "web": "PASS limited fixture 40990189891",
       "general": "FAIL original-main baseline"
+    },
+    "surv020_03a39f3f": {
+      "commit": "03a39f3f747d9216e638e98eac3e48bf98574997",
+      "native": "PASS 40990690188: exit32 topology95 bed113 A3authority124 interruption154 station32 capacity28 normal28 session116",
+      "a6": "PASS 40990690168 workspace35 composed bed113, original probe and isolated suites; no diagnostic annotations in this run but historic leaks remain unexplained",
+      "home": "PASS 40990690211 fresh ordinary-input 81, not threat/death or human",
+      "overworld": "PASS 40990690174 unchanged +45% gate, +15%; historical variability unresolved",
+      "general": "FAIL 40990690225 original-main baseline; rendered job in progress at checkpoint",
+      "product_review": "docs/survival/reviews/A0_SURV020_PLAYER_EXPERIENCE_REVIEW_20261030.md",
+      "status": "PARTIAL_AUTOMATED_PASS_SURV020_B0_NOT_ACCEPTED"
     }
   },
   "design_authority": {
