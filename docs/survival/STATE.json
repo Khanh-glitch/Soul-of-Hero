@@ -8,7 +8,7 @@
   "audited_gold_branch": "feature/gold-93-skill-readiness-20261028",
   "audited_gold_sha": "6c58ecf6f7c2350ee49f3a82e3cef42bf80afaf7",
   "updated_date": "2026-10-30",
-  "phase": "SURV_010_MERGED_SURV_020_IN_PROGRESS",
+  "phase": "SURV_020_WAYSTATION_ROUTE_VERIFIED_HEADLESS_PLAYER_GATES_OPEN",
   "scope": "Offline open-world survival RPG; preserve dungeon/Gold; full-world plan upfront, 10 Chapter 1 dungeons in opening quarter",
   "code_claims": {
     "survival_system_integrated": false,
@@ -210,21 +210,25 @@
     "docs_sync": "Tab04 checkpoint 4c0418e5 readback 291014; tab12 readback 156165. Follow-up read-only V3 identity preflight probe posted to A3; exact native run log in session evidence bundle.",
     "mergeability": "PR21 pushed 4c0418e5; DRAFT/MERGEABLE/UNSTABLE; last checks queued, no merge.",
     "a6_latest": "PR24 63d3fae5 avatar private staging/driver/revision fix; native, licensing, production composition unverified; previous 8bc0af5a failed composition; A6 remains UI-only owner.",
-    "persistence_diagnosis": "Strict fixture FAIL 2/49; initial full diffs 0 VALUE, numeric TYPE 69/16/53/146/0/68/78. Same revision-38 generation memory→disk 0/78, memory→reload 0/0, disk→reload 0/78, reload→actual overworld build entire snapshot 0/0. Partial diagnostic does not replace original strict assertions.",
-    "threat": "Prior 41022975254 proved score 0→200→400 after failed first-hit save. New unmounted candidate reserves before enemy exposure; real-input 3-process test pending; pre-hit restart can consume encounter, fairness HOLD."
+    "persistence_diagnosis": "Reload now returns the entire committed document exactly (0 VALUE / 0 TYPE) after integer-slot restoration; raw disk still encodes whole numbers as JSON floats, which is the correct serialization.",
+    "threat": "Prior 41022975254 proved score 0→200→400 after failed first-hit save. New unmounted candidate reserves before enemy exposure; real-input 3-process test pending; pre-hit restart can consume encounter, fairness HOLD.",
+    "head": "291511195dc6c7c5b501b28687f9f164a3457607",
+    "next_atomic_action": "Rendered Xvfb run of survival_normal_entry_roadside_v5_test (Home->Campaign->Overworld->roadside->home->2nd process) on exact HEAD, and answer A3 PR19 comment 6522130262 for the soh.economy.tool_use.v1 plan; then wire the atomic harvest+wear commit. Do not invent tool multipliers or prices.",
+    "verified_headless": "A3 V5 pin+migration; Waystation authority 50; migration 54; roadside authority 11; identity 9; art 18; controller route 33 + restart 19 exact; roadside route 30 + restart 29 exact; real V3->V5 restart 17; foundation 144; station 32; capacity 34; hero exit 32; interruption 154; precision 14; diff 6; A3 authority 124.",
+    "not_verified": "Rendered/visual acceptance, Home menu chain (headless blocked by GUI starter-kit check present at base), A6 avatars, Gold, death/same-bag recovery, human pacing, tool use (A3 plan absent), hosted CI (all queued)."
   },
   "blockers": [
     {
-      "id": "GOLD-ZIP",
-      "scope": "Gold full-fidelity port only",
-      "status": "not_in_audited_git_tree",
-      "details": "Two SHA-locked archives must be supplied/verified at native port stage; general gameplay work not blocked"
+      "id": "A3_TOOL_PLAN",
+      "owner": "A3",
+      "state": "UNWIRED_A0",
+      "detail": "No soh.economy.tool_use.v1 implementation in 4bfba38d; asked in PR19 comment 6522130262."
     },
     {
-      "id": "BUILD-ART",
-      "scope": "final production building art only",
-      "status": "needs_asset_selection_and_license",
-      "details": "Cainos and existing packs need 2D modular fit review; use clearly labeled placeholders for mechanics"
+      "id": "RENDERED_RUN",
+      "owner": "A0/environment",
+      "state": "OPEN",
+      "detail": "No display/GL in this sandbox; normal menu chain and all visuals need an Xvfb run."
     }
   ],
   "cross_agent_rules": {

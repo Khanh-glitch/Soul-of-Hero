@@ -44,3 +44,45 @@ Four binary-safe patches from `7f3ca17e..51225718` were internally SHA-256 verif
 
 ### Same-generation full rebuild follow-up
 The earlier rebuild reported individual critical sections. A further read-only audit now captures **the same revision-38 generation** in memory and raw disk, calls `reload_save`, then builds the real production overworld and compares the **entire snapshot**. Result: memory→disk 0 VALUE / 78 TYPE; memory→reloaded 0/0; disk→reloaded 0/78; reloaded→after-build whole snapshot 0/0 (and inventory/world/receipts each 0/0). The original strict failing assertions remain unchanged: current authority fixture **FAIL 2/49**; all added checks pass. Full per-field output is in `authority-complete2.log`; the parse error from the preceding test edit is retained separately, not reported as a successful run. This is still fixture-funded, not evidence of a continuous player route.
+
+## 2026-10-30 — A3 V5 adopted: the physical Waystation and roadside route now runs, end to end, in two processes
+
+**What a new player can actually do (guarded candidate, synthetic input, headless).** In the composed production controller with `survival/a0_waystation_candidate` enabled, ordinary movement and pointer input walk the real Hero from the Refuge to the locker (capability, zero items), to the physical cache (3 iron scrap + 2 knowledge spares, canonical receipt `a1slice:poi_crown_waystation:cache_restock:1`), to the ledger (seal capability, zero items), to the deadfall (2 oak), to the Relay (consumes 2 scrap + 1 oak, grants `cap_power_1`, `bus_powered`), and back. After the process exits, a **second, independent Godot process** reads the same profile: all four sections compare **0 VALUE / 0 TYPE**. The same holds for the three A1 roadside crates at their authored stands: notes 01 → 1 research note (1800 active s), supply 02 → 3 scrap + 2 spares (one-time), timber 03 → 2 oak + 1 note (one-time), each with its canonical receipt and no second grant.
+
+**What this is not.** The candidate is still default-OFF, the input is injected rather than human, no frame was rendered (this sandbox has no display/GL), and the normal **Home → Campaign → Overworld** menu chain stops at a GUI-dependent starter-kit assertion that also fails at the base commit in headless. Death/same-bag recovery, A6 avatars, Gold and difficulty balance remain untouched. B0 stays HOLD.
+
+### Owner composition (Phase 1)
+- Ten A3 files are byte-identical to `4bfba38d`: service `acbe03b0…`, world adapter `8bab2441…`, items `cc3c1165…`, sources `bc88143e…`, bindings `7b9670f4…`, recipes `4dbf48da…`, research `6cca178a…`, stations `aa054872…`, both schemas. The A0 shim (`a0_economy_adapter.gd` `2261047e…`) is re-pinned in SaveService and in all three workflows.
+- `a0_v5_source_pins.gd` verifies those hashes at composition time; `EconomySession.configure` refuses to start on any mismatch.
+- The A0 host now attests the authored identity for the mounted physical node only (`si:r_ashen_crown:waystation_cache:01` + `node_waystation_cache` + `sc_waystation_timed_cache_v1` + region), so A3's `host_identity_error` fails closed on a forged or foreign identity. No alias was invented: V5 declares both ids for one source.
+- The three roadside crates are mounted at A1's unchanged cells/stands (`395,219`/`395,220`, `400,216`/`400,217`, `402,220`/`402,221`) with the exact A1 atlas frames and treatment pins, no added collision, and only while the guarded host is mounted.
+
+### Save migration (A0-owned, fail-closed)
+`a0_world_slice_v5_migration.gd` adds the six new V5 claim/cooldown fields as `0` only after validating the entire legacy world slice, its counters/cooldowns, capabilities, receipts, `last_transaction_key`, and every `soh.a3.world_action.*` receipt against the legacy binding **and its signed payload** (both the real V3 shape and the V5 preflight shape are accepted). Foreign claims, duplicated or missing receipts, wrong right ids, stale counters, partial V5 namespaces, non-integer/out-of-range numbers, and a failed backup or commit all quarantine the profile without writing.
+
+### Decoder fix (Phase 4, the old 2/49 failures)
+Godot JSON reparses every number as a float. SaveService now restores the declared integer slots of `world_slice`, `survival_economy` (including escrow copies of instance records, which otherwise broke the ownership audit), the ledger's `applied_at_unix`/`quantity`, and the inventory/progression sections, and **fails closed** on fractional or >2^53 values. With that, the two long-standing strict assertions pass unchanged and were tightened to compare the **entire committed document** after reload.
+
+### Exact native results at `291511195dc6c7c5b501b28687f9f164a3457607`
+Commands use the local source-built `4.7.stable.custom_build`; each profile is an isolated `XDG_DATA_HOME` under `/home/user/a0-v5-native/`.
+
+| Test | Result |
+| --- | --- |
+| `survival_waystation_authority_test.gd -- --survival-save-fault-test` | **PASSED 50** (was FAIL 2/49) |
+| `survival_a3_v5_migration_test.gd -- --survival-save-fault-test` | **PASSED 54** |
+| `survival_a3_v5_roadside_authority_test.gd` | **PASSED 11** |
+| `survival_waystation_identity_probe.gd` | **PASSED 9** |
+| `survival_production_waystation_candidate_test.gd` / `-- --restart` | **PASSED 33** / **PASSED 19**, 0 VALUE / 0 TYPE |
+| `survival_roadside_v5_input_test.gd` / `-- --restart` | **PASSED 30** / **PASSED 29**, 0 VALUE / 0 TYPE |
+| real V3 producer (`fa0c119c` tree) then `survival_a3_v5_real_legacy_restart_test.gd` | **PASSED** / **PASSED 17** |
+| `survival_a1_world_art_candidate_test.gd` | **PASSED 18** |
+| `survival_foundation_test`, `survival_station_placement_test`, `survival_full_capacity_test`, `survival_hero_exit_test` | PASSED 144 / 32 / 34 / 32 |
+| `survival_save_interruption_test`, `survival_save_precision_test`, `survival_save_diff_test` | PASSED 154 / 14 / 6 |
+| `survival_a3_authority_test.gd` | **PASSED 124** (after the escrow-type fix) |
+| `survival_economy_session_test` (38/115), `survival_save_ambiguous_write_test` (9) | **FAIL — identical counts at base `fa0c119c`**, GUI/frame dependent; not a regression |
+| `survival_normal_entry_roadside_v5_test` | FAIL 1: GUI starter-kit reservation; the same check fails headless at base, so the Home→menu chain is unproven locally |
+
+### Still missing (owner or environment)
+1. **A3 tool plan.** `A0_TOOL_HOST_CONTRACT_V5.json` specifies a read-only `soh.economy.tool_use.v1` plan, but no implementation exists in `4bfba38d`; asked in PR19 comment `6522130262`. A0 will not invent a multiplier or price.
+2. **Normal-entry chain** needs a rendered run (hosted Xvfb) — local sandbox has no display/GL.
+3. **A6 avatars / Gold / human pacing**, death→same-bag recovery, and the voluntary home-first route remain B0 HOLD.
