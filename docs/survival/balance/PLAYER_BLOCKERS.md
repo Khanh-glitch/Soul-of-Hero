@@ -21,7 +21,17 @@ _Generated from `data/survival/balance/results/blockers.json` by `tools/survival
 **Verified by.** gate claim C over production paths only (tests/.github/tools excluded and reported separately), plus A1's own corridor status SOURCE_AND_ISOLATED_NATIVE_FIXTURE_SCOPE_NOT_PRODUCTION and production_native_playable=false, plus oracle.knowledge_gate  
 **Native run required to close.** False
 
-**Reproduce.**
+**Run it natively (owner-side, exact command).**
+
+```bash
+# A0, on the host with the Godot 4.7 binary and a display (xvfb is fine):
+godot --headless --path . --user-data-dir artifacts/ud_entry --import
+xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --user-data-dir artifacts/ud_entry \
+  --script res://tests/survival_normal_entry_home_restart_test.gd
+# expected once mounted: the log names node_waystation_cache as present in the world
+```
+
+**Reproduce the static finding.**
 
 ```bash
 python3 -c "import json;d=json.load(open('data/survival/balance/results/gate.json'));print(d['entry_content']['a1_instance_references_in_a0_surface'], d['entry_content']['mounted'])"
@@ -71,7 +81,16 @@ git show refs/a1:data/survival/world/corridor/crown_roadside.corridor.v1.json | 
 **Verified by.** oracle.engine_api against the engine's own class documentation, plus A8 run 41019689728 at 2d7f10d3: import succeeded, 'Run native physics, intent and persistence contracts' failed, no artifacts produced  
 **Native run required to close.** True
 
-**Reproduce.**
+**Run it natively (owner-side, exact command).**
+
+```bash
+# A8, same engine: the audit is the oracle, the native step is the proof
+godot --headless --path . --script tests/survival/world_content/native_poi_contract_test.gd
+godot --headless --path . --script tests/survival/world_content/native_poi_transition_test.gd
+# both must exit 0 and upload .artifacts/a8-world-content/ on the pinned sha
+```
+
+**Reproduce the static finding.**
 
 ```bash
 python3 -c "import json;d=json.load(open('data/survival/balance/results/oracle.json'));print(d['engine_api']['unknown_call_count']);[print(r['file'],r['line'],r['call']) for r in d['engine_api']['unknown_calls'][:5]]"
@@ -103,7 +122,19 @@ python3 -c "import json;d=json.load(open('data/survival/balance/engine_api.v1.js
 **Verified by.** oracle.save_fidelity over the pinned writer (ROUND_TRIP_EXACT, one authoritative writer) plus the failure labels recorded verbatim from 41018366655 and 41022547962  
 **Native run required to close.** True
 
-**Reproduce.**
+**Run it natively (owner-side, exact command).**
+
+```bash
+# A0: the workflow only triggers on A0's branch, so dispatch or push it there
+godot --headless --path . --user-data-dir artifacts/ud_precision --import
+godot --headless --path . --user-data-dir artifacts/ud_precision \
+  --script res://tests/survival_save_precision_test.gd -- --survival-save-fault-test
+godot --headless --path . --user-data-dir artifacts/ud_precision \
+  --script res://tests/survival_save_precision_test.gd -- --survival-save-fault-test --restart
+# both logs must print 'A0 SAVE PRECISION PASSED'
+```
+
+**Reproduce the static finding.**
 
 ```bash
 python3 -c "import json;d=json.load(open('data/survival/balance/results/oracle.json'));f=d['save_fidelity'];print(f['verdict'], f['authoritative_writer_count']);[print(w['file'],w['line'],w['full_precision']) for w in f['writers'] if w['authoritative']]"
@@ -136,7 +167,20 @@ python3 -c "import json;d=json.load(open('data/survival/balance/results/gate.jso
 **Verified by.** evidence.s4_clauses (exact sha + normal entry + independent process + authorized commit + negative replay) and the skipped step in run 41022547962  
 **Native run required to close.** True
 
-**Reproduce.**
+**Run it natively (owner-side, exact command).**
+
+```bash
+# A0: the fixture half is the only thing that has ever produced a receipt
+godot --headless --path . --user-data-dir artifacts/ud_authority \
+  --script res://tests/survival_waystation_authority_test.gd -- --survival-save-fault-test
+# the player-input half has never run; this is the command that would prove it
+xvfb-run -a godot --path . --user-data-dir artifacts/ud_waystation --resolution 960x540 \
+  --script res://tests/survival_waystation_input_restart_test.gd
+xvfb-run -a godot --path . --user-data-dir artifacts/ud_waystation --resolution 960x540 \
+  --script res://tests/survival_waystation_input_restart_test.gd -- --restart
+```
+
+**Reproduce the static finding.**
 
 ```bash
 python3 -c "import json;d=json.load(open('data/survival/balance/results/gate.json'));print(d['s4']['s4_granted']);[print(k,v['state']) for k,v in d['s4']['clauses'].items()]"
@@ -179,7 +223,16 @@ python3 -c "import json;d=json.load(open('data/survival/balance/results/gate.jso
 **Verified by.** quality Q-04 over the pinned tree (mounted scene identity, claimed sheets, adapter fallback)  
 **Native run required to close.** False
 
-**Reproduce.**
+**Run it natively (owner-side, exact command).**
+
+```bash
+# A6 + A0: import the authorised grade-0 sheet, then mount the body and look at it
+godot --headless --path . --import
+godot --path . --resolution 1280x720   # open the overworld and inspect the avatar
+# rendered-frame inspection is S5 work: it cannot be closed from this repository
+```
+
+**Reproduce the static finding.**
 
 ```bash
 python3 -c "import json;d=json.load(open('data/survival/balance/results/quality.json'));print([c for c in d['checks'] if c['check_id']=='Q-04'][0]['static_verdict'])"

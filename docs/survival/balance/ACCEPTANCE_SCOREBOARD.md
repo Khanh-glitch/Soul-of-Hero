@@ -127,8 +127,10 @@ is verified** (`OPEN_CONDITIONS`); an unrelated red check cannot open or close i
 | `BLK-4` | The only A3-authorised reward proof is a fixture, and its own reload checks fail | A0 + A3 | fixture-only success | all five `S4` clauses hold on the pinned sha |
 | `BLK-5` | The mounted body is still the Knight; the locked avatar art is not imported | A6 + A0 | player-facing visual defect | `Q-04` `REFERENCE_CONSISTENT` for the canonical body |
 
-Full detail — reproduction commands, minimal correction, and what stays unproven after
-closure — is generated into [`PLAYER_BLOCKERS.md`](PLAYER_BLOCKERS.md).
+Full detail — **exact owner-side native commands**, the static reproduction, the minimal
+correction, and what stays unproven after closure — is generated into
+[`PLAYER_BLOCKERS.md`](PLAYER_BLOCKERS.md). A7 runs none of those commands; they are written so
+the owner can, on the pinned sha, without reading CI YAML.
 
 ### Closed this round, and why it is honest
 

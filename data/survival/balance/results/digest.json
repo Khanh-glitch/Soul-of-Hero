@@ -2,7 +2,7 @@
   "artifacts": {
     "access.json": "a53fe9d27c05b5de6ee06042c9035109369d69bc8d21baf119e7e1280386e5c2",
     "adversarial.json": "a3f2985f0d2055533b8da01627abf899de4623aebd20f0f5e14c3ee20a3b7628",
-    "blockers.json": "3f30795a670151fc3f1dc9a6e3486e6a83192ccdf7df7422a2e8fb91e98f68e8",
+    "blockers.json": "0bc238044768365c9463d699f28ae3315acfd6a4c8a5c97a02afb935abbc3ddd",
     "findings.json": "8f782aa47482bda09b4e6888f9a4fca45ee1c9c48410733011440a6e2c05afe2",
     "gate.json": "113460fc545f3610fa5f97f5aa48c021a2c42145e667c019e787727a7492bbe9",
     "opportunity.json": "e189d633e99212e8a331b6ad64c1cba71dfd27cc1004ea6587759fcc27a58a31",
@@ -13,7 +13,7 @@
     "sensitivity.json": "23f12f7f3ac31affb7b0b077fbf262cf10165cfe4e44b2a54cd058dd846650a0",
     "summary.json": "34f915fbf3a5b6311acb0225e6f76eb1bcf6836a02e6d722110558fd433fb35a"
   },
-  "combined_sha256": "de7df10217eb11b1e86f6a80ad5934fed3ca06ac67216ae9c1f985feb1307ec4",
+  "combined_sha256": "e32005f73a41c2ebfbfc6639f6ef6d24ffe08fcefb26370ec8ea50384014f8e9",
   "determinism": "same inputs -> same bytes; sorted keys, no timestamps",
   "schema": "soh.balance.digest.v1"
 }

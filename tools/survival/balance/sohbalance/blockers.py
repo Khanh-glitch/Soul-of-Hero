@@ -113,6 +113,13 @@ BLOCKERS: Sequence[Dict[str, object]] = (
             "plus A1's own corridor status SOURCE_AND_ISOLATED_NATIVE_FIXTURE_SCOPE_NOT_PRODUCTION and "
             "production_native_playable=false, plus oracle.knowledge_gate"
         ),
+        "owner_commands": [
+            '# A0, on the host with the Godot 4.7 binary and a display (xvfb is fine):',
+            'godot --headless --path . --user-data-dir artifacts/ud_entry --import',
+            'xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --user-data-dir artifacts/ud_entry \\',
+            '  --script res://tests/survival_normal_entry_home_restart_test.gd',
+            '# expected once mounted: the log names node_waystation_cache as present in the world',
+        ],
         "reproduce": [
             "python3 -c \"import json;d=json.load(open('data/survival/balance/results/gate.json'));"
             "print(d['entry_content']['a1_instance_references_in_a0_surface'], d['entry_content']['mounted'])\"",
@@ -152,6 +159,12 @@ BLOCKERS: Sequence[Dict[str, object]] = (
             "2d7f10d3: import succeeded, 'Run native physics, intent and persistence contracts' failed, no "
             "artifacts produced"
         ),
+        "owner_commands": [
+            '# A8, same engine: the audit is the oracle, the native step is the proof',
+            'godot --headless --path . --script tests/survival/world_content/native_poi_contract_test.gd',
+            'godot --headless --path . --script tests/survival/world_content/native_poi_transition_test.gd',
+            '# both must exit 0 and upload .artifacts/a8-world-content/ on the pinned sha',
+        ],
         "reproduce": [
             "python3 -c \"import json;d=json.load(open('data/survival/balance/results/oracle.json'));"
             "print(d['engine_api']['unknown_call_count']);[print(r['file'],r['line'],r['call']) "
@@ -185,6 +198,15 @@ BLOCKERS: Sequence[Dict[str, object]] = (
             "oracle.save_fidelity over the pinned writer (ROUND_TRIP_EXACT, one authoritative writer) plus the "
             "failure labels recorded verbatim from 41018366655 and 41022547962"
         ),
+        "owner_commands": [
+            "# A0: the workflow only triggers on A0's branch, so dispatch or push it there",
+            'godot --headless --path . --user-data-dir artifacts/ud_precision --import',
+            'godot --headless --path . --user-data-dir artifacts/ud_precision \\',
+            '  --script res://tests/survival_save_precision_test.gd -- --survival-save-fault-test',
+            'godot --headless --path . --user-data-dir artifacts/ud_precision \\',
+            '  --script res://tests/survival_save_precision_test.gd -- --survival-save-fault-test --restart',
+            "# both logs must print 'A0 SAVE PRECISION PASSED'",
+        ],
         "reproduce": [
             "python3 -c \"import json;d=json.load(open('data/survival/balance/results/oracle.json'));"
             "f=d['save_fidelity'];print(f['verdict'], f['authoritative_writer_count']);"
@@ -219,6 +241,16 @@ BLOCKERS: Sequence[Dict[str, object]] = (
             "evidence.s4_clauses (exact sha + normal entry + independent process + authorized commit + negative "
             "replay) and the skipped step in run 41022547962"
         ),
+        "owner_commands": [
+            '# A0: the fixture half is the only thing that has ever produced a receipt',
+            'godot --headless --path . --user-data-dir artifacts/ud_authority \\',
+            '  --script res://tests/survival_waystation_authority_test.gd -- --survival-save-fault-test',
+            '# the player-input half has never run; this is the command that would prove it',
+            'xvfb-run -a godot --path . --user-data-dir artifacts/ud_waystation --resolution 960x540 \\',
+            '  --script res://tests/survival_waystation_input_restart_test.gd',
+            'xvfb-run -a godot --path . --user-data-dir artifacts/ud_waystation --resolution 960x540 \\',
+            '  --script res://tests/survival_waystation_input_restart_test.gd -- --restart',
+        ],
         "reproduce": [
             "python3 -c \"import json;d=json.load(open('data/survival/balance/results/gate.json'));"
             "print(d['s4']['s4_granted']);[print(k,v['state']) for k,v in d['s4']['clauses'].items()]\"",
@@ -246,6 +278,12 @@ BLOCKERS: Sequence[Dict[str, object]] = (
             "instead of substituting another character. So nothing is faked - and nothing is visible either."
         ),
         "verified_by": "quality Q-04 over the pinned tree (mounted scene identity, claimed sheets, adapter fallback)",
+        "owner_commands": [
+            '# A6 + A0: import the authorised grade-0 sheet, then mount the body and look at it',
+            'godot --headless --path . --import',
+            'godot --path . --resolution 1280x720   # open the overworld and inspect the avatar',
+            '# rendered-frame inspection is S5 work: it cannot be closed from this repository',
+        ],
         "reproduce": [
             "python3 -c \"import json;d=json.load(open('data/survival/balance/results/quality.json'));"
             "print([c for c in d['checks'] if c['check_id']=='Q-04'][0]['static_verdict'])\"",
@@ -570,7 +608,11 @@ def as_markdown(payload: Dict[str, object]) -> str:
             f"**Verified by.** {row['verified_by']}  \n"
             f"**Native run required to close.** {row['native_required_for_closure']}\n"
         )
-        lines.append("**Reproduce.**\n")
+        owner_commands = row.get("owner_commands") or []
+        if owner_commands:
+            lines.append("**Run it natively (owner-side, exact command).**\n")
+            lines.append("```bash\n" + "\n".join(owner_commands) + "\n```\n")
+        lines.append("**Reproduce the static finding.**\n")
         for command in row["reproduce"]:
             lines.append(f"```bash\n{command}\n```")
         lines.append("")
