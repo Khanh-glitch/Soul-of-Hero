@@ -208,6 +208,17 @@ class QualityClosureTests(unittest.TestCase):
         # The world is 448x256; y=280 is not a corner of it, it is outside it.
         self.assertEqual(check["world_bounds"], {"w": 448, "h": 256})
 
+    def test_q08_shows_a1_meeting_the_geometry_standard_a8_misses(self) -> None:
+        check = _by_id(quality.run_all(self.model, self.texts, self.facts, self.manifest), "Q-08")
+        corridor = check["a1_corridor"]
+        self.assertEqual(corridor["status"], "INSIDE_MOUNTED_WORLD")
+        self.assertGreater(corridor["cells"], 0)
+        self.assertEqual(corridor["inside_world"], corridor["cells"])
+        # Geometrically sound and still not a playable build: the corridor is not
+        # mounted either, which is why Q-08 reports geometry and not reachability.
+        self.assertFalse(corridor["production_native_playable"])
+        self.assertIn("A1's roadside corridor", check["player_impact"])
+
     def test_q08_warns_when_anchors_are_inside_but_still_rejected_for_footprint(self) -> None:
         texts = self._transforms_with([[30, 200], [140, 200], [120, 200]])
         check = _by_id(quality.run_all(self.model, texts, self.facts, self.manifest), "Q-08")

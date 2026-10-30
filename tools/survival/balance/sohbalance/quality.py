@@ -444,6 +444,49 @@ def fixture_claim_check(texts: Dict[str, str]) -> Dict[str, object]:
     )
 
 
+def _corridor_reach(
+    texts: Dict[str, str], width: int, height: int, annex_rect
+) -> Dict[str, object]:
+    """A1's roadside corridor, measured against the same world A0 mounts.
+
+    The point of the contrast is that A1 already proves the pattern A8 has not: a
+    corridor whose every authored cell is inside the mounted world. It is reported
+    here rather than asserted separately so the two cannot diverge.
+    """
+    try:
+        corridor = json.loads(texts.get("a1.crown_roadside.corridor.v1.json", "{}") or "{}")
+    except Exception:
+        corridor = {}
+    cells: List[List[int]] = []
+    route = corridor.get("route") or {}
+    for key in ("outbound_cells", "container_body_cells", "approach_cells", "return_cells"):
+        for cell in route.get(key) or []:
+            if isinstance(cell, (list, tuple)) and len(cell) == 2:
+                cells.append([int(cell[0]), int(cell[1])])
+    for instance in corridor.get("instances") or []:
+        cell = instance.get("cell") if isinstance(instance, dict) else None
+        if isinstance(cell, (list, tuple)) and len(cell) == 2:
+            cells.append([int(cell[0]), int(cell[1])])
+    if not cells:
+        return {"status": "NO_CORRIDOR_PINNED", "cells": 0}
+    inside = [
+        cell for cell in cells if width and height and 0 <= cell[0] < width and 0 <= cell[1] < height
+    ]
+    in_annex = [
+        cell
+        for cell in inside
+        if annex_rect and annex_rect[0] <= cell[0] < annex_rect[2] and annex_rect[1] <= cell[1] < annex_rect[3]
+    ]
+    return {
+        "status": "INSIDE_MOUNTED_WORLD" if len(inside) == len(cells) else "OUTSIDE_MOUNTED_WORLD",
+        "cells": len(cells),
+        "inside_world": len(inside),
+        "inside_annex": len(in_annex),
+        "required_nav_cells": (corridor.get("counts") or {}).get("required_nav_cells"),
+        "production_native_playable": corridor.get("production_native_playable"),
+    }
+
+
 def site_mount_check(texts: Dict[str, str], facts: Dict[str, object]) -> Dict[str, object]:
     """Q-08: is every A8 site anchor inside the world A0 actually mounts?
 
@@ -489,6 +532,7 @@ def site_mount_check(texts: Dict[str, str], facts: Dict[str, object]) -> Dict[st
                 "site_root_position_px": (site.get("transform") or {}).get("site_root_position_px"),
             }
         )
+    corridor = _corridor_reach(texts, width, height, annex_rect)
     off_world = [row for row in rows if not row["inside_mounted_world"]]
     rejected = [row for row in rows if str(row["decision"]).startswith("REJECT")]
     if not rows:
@@ -502,16 +546,27 @@ def site_mount_check(texts: Dict[str, str], facts: Dict[str, object]) -> Dict[st
             "a pinned a8_site_transforms review covering every site",
         )
     status = FAIL if off_world else (WARN if rejected else PASS)
+    corridor_note = (
+        f" By contrast A1's roadside corridor keeps all {corridor.get('cells')} authored cells inside "
+        f"the mounted world and the annex ({corridor.get('status')}), so the geometry standard is met "
+        "one owner down the line."
+        if corridor.get("status") == "INSIDE_MOUNTED_WORLD"
+        else ""
+    )
     impact = (
-        f"{len(off_world)} of {len(rows)} A8 site anchors sit outside the mounted world "
-        f"({width}x{height} tiles, annex {annex_rect}): "
-        + ", ".join(f"{row['site_id']} at {row['canonical_cell']}" for row in off_world)
-        + ". A player cannot walk to an anchor past the world edge, so the site's local scene "
-        "quality cannot reach them until A0 mounts a contiguous extension or an explicit interior "
-        "transition."
-    ) if off_world else (
-        "Every anchor is inside the mounted world; "
-        f"{len(rejected)} site(s) still carry an explicit REJECT decision on 1:1 mounting."
+        (
+            f"{len(off_world)} of {len(rows)} A8 site anchors sit outside the mounted world "
+            f"({width}x{height} tiles, annex {annex_rect}): "
+            + ", ".join(f"{row['site_id']} at {row['canonical_cell']}" for row in off_world)
+            + ". A player cannot walk to an anchor past the world edge, so the site's local scene "
+            "quality cannot reach them until A1 re-anchors it or A0 mounts a contiguous extension "
+            "or an explicit interior transition." + corridor_note
+        )
+        if off_world
+        else (
+            "Every anchor is inside the mounted world; "
+            f"{len(rejected)} site(s) still carry an explicit REJECT decision on 1:1 mounting."
+        )
     )
     return _check(
         "Q-08",
@@ -521,7 +576,11 @@ def site_mount_check(texts: Dict[str, str], facts: Dict[str, object]) -> Dict[st
         rows,
         "A1 (anchors) + A0 (mount mode) + A8 (shell footprint)",
         "every site anchor satisfies 0 <= cell < world_bounds and its mount decision is not REJECT",
-        extra={"world_bounds": {"w": width, "h": height}, "annex": annex_rect},
+        extra={
+            "world_bounds": {"w": width, "h": height},
+            "annex": annex_rect,
+            "a1_corridor": corridor,
+        },
     )
 
 

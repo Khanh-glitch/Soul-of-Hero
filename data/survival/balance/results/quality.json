@@ -271,6 +271,14 @@
       "title": "Save/loot claims are honest about fixture authority"
     },
     {
+      "a1_corridor": {
+        "cells": 103,
+        "inside_annex": 103,
+        "inside_world": 103,
+        "production_native_playable": false,
+        "required_nav_cells": 77,
+        "status": "INSIDE_MOUNTED_WORLD"
+      },
       "annex": [
         384,
         192,
@@ -327,7 +335,7 @@
         }
       ],
       "owner": "A1 (anchors) + A0 (mount mode) + A8 (shell footprint)",
-      "player_impact": "3 of 3 A8 site anchors sit outside the mounted world (448x256 tiles, annex (384, 192, 448, 256)): crown_south_quarry at [30, 280], crown_south_orchard at [140, 360], crown_south_mill at [120, 300]. A player cannot walk to an anchor past the world edge, so the site's local scene quality cannot reach them until A0 mounts a contiguous extension or an explicit interior transition.",
+      "player_impact": "3 of 3 A8 site anchors sit outside the mounted world (448x256 tiles, annex (384, 192, 448, 256)): crown_south_quarry at [30, 280], crown_south_orchard at [140, 360], crown_south_mill at [120, 300]. A player cannot walk to an anchor past the world edge, so the site's local scene quality cannot reach them until A1 re-anchors it or A0 mounts a contiguous extension or an explicit interior transition. By contrast A1's roadside corridor keeps all 103 authored cells inside the mounted world and the annex (INSIDE_MOUNTED_WORLD), so the geometry standard is met one owner down the line.",
       "scope": "STATIC_READ_OF_PINNED_BYTES",
       "status": "FAIL",
       "title": "Every A8 site anchor is inside the world A0 mounts",
@@ -481,6 +489,14 @@
       "visual_state": "NOT_TESTED"
     },
     {
+      "a1_corridor": {
+        "cells": 103,
+        "inside_annex": 103,
+        "inside_world": 103,
+        "production_native_playable": false,
+        "required_nav_cells": 77,
+        "status": "INSIDE_MOUNTED_WORLD"
+      },
       "annex": [
         384,
         192,
@@ -537,7 +553,7 @@
         }
       ],
       "owner": "A1 (anchors) + A0 (mount mode) + A8 (shell footprint)",
-      "player_impact": "3 of 3 A8 site anchors sit outside the mounted world (448x256 tiles, annex (384, 192, 448, 256)): crown_south_quarry at [30, 280], crown_south_orchard at [140, 360], crown_south_mill at [120, 300]. A player cannot walk to an anchor past the world edge, so the site's local scene quality cannot reach them until A0 mounts a contiguous extension or an explicit interior transition.",
+      "player_impact": "3 of 3 A8 site anchors sit outside the mounted world (448x256 tiles, annex (384, 192, 448, 256)): crown_south_quarry at [30, 280], crown_south_orchard at [140, 360], crown_south_mill at [120, 300]. A player cannot walk to an anchor past the world edge, so the site's local scene quality cannot reach them until A1 re-anchors it or A0 mounts a contiguous extension or an explicit interior transition. By contrast A1's roadside corridor keeps all 103 authored cells inside the mounted world and the annex (INSIDE_MOUNTED_WORLD), so the geometry standard is met one owner down the line.",
       "scope": "STATIC_READ_OF_PINNED_BYTES",
       "status": "FAIL",
       "title": "Every A8 site anchor is inside the world A0 mounts",

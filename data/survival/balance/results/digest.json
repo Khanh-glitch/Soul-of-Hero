@@ -12,11 +12,11 @@
     "oracle.json": "98e5a2903aeefa6349d1edf01f62e940ec374a71f09fdf93d43d56b7741b1603",
     "product.json": "fc148349021c5d5dbf7bfd288823841feb7f09546da3d33b921666ebdb08c405",
     "provenance.json": "33ee9e624b9f204566997cc3662c86c4d066cc0c9688df7aa30fb413346b2674",
-    "quality.json": "4f7c4d12df09fcaf3f970323f283ec167adf8896bb7bf01c2d9cfaca756583ff",
+    "quality.json": "64149fe150d729a9d7e3a34081663f72c782fb31d5b8fab13fbdbe4342524c8a",
     "sensitivity.json": "23f12f7f3ac31affb7b0b077fbf262cf10165cfe4e44b2a54cd058dd846650a0",
     "summary.json": "18bec486fa8722e5750515a39d07fe32f66c6359b999e9734708ef340a22e514"
   },
-  "combined_sha256": "2aa41bbac5eaa5fd31d71d0c5c93d9d4af2f1a292ed167648adc50e41485f7c4",
+  "combined_sha256": "cc05ea9ea5d35d804a69317274d7bafa434bb9da52c9285e50af903f08dbfe8f",
   "determinism": "same inputs -> same bytes; sorted keys, no timestamps",
   "schema": "soh.balance.digest.v1"
 }

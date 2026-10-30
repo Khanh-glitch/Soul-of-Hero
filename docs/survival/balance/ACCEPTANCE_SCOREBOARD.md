@@ -124,6 +124,11 @@ requires every one to be rejected. Verdict: **`NO_KNOWN_SPOOF_SURVIVES`, 15/15.*
 | `mocked_reach` | a UI calling the interaction with a fabricated point |
 | `respelled_catalog_key` | a snapshot key respelled so a catalog loads empty — **the bug A7 shipped and caught this round** |
 
+The two player-facing checks added after this table was first written are `Q-08` (every A8 site
+anchor sits outside the mounted world; A1's corridor, by contrast, keeps all 103 authored cells
+inside it) and `Q-09` (the avatar seam A0/A6 are being asked to accept does not exist: no
+production reference to A6's adapter, no male/female chooser, `knight.tscn` still mounted).
+
 ## 9. The living matrix
 
 `data/survival/balance/results/matrix.json` and
@@ -147,7 +152,7 @@ Three Godot 4.7 probes ship in `tests/survival/balance_native/` and subclass A0'
   normal entry, see the D051 body with four facings and grade 0, keep it after a respawn, never fall
   back to the Knight. It fails at the first check because no production screen offers the choice.
 
-**A7 has no Godot binary, so neither has been executed.** `sohbalance/probes.py` audits them
+**A7 has no Godot binary, so none has been executed.** `sohbalance/probes.py` audits them
 instead: each must extend the shipped chain, contain none of the constructs that would fabricate
 its own result (teleport, injected node, forced death, granted item, direct inventory write), and
 name only symbols that exist in the pinned bytes. Artifact verdict:
@@ -157,7 +162,7 @@ Commands and the exact owner action per rung: `docs/survival/balance/NATIVE_ROUT
 ## 11. Assurances
 
 * 34 assertions (`A01`–`A34`), all holding, in `data/survival/balance/results/summary.json`.
-* 269 unit tests green (`python3 tools/survival/balance/run_tests.py`).
+* 270 unit tests green (`python3 tools/survival/balance/run_tests.py`).
 * 15/15 adversarial probes rejected; 3/3 native probes statically sound and unexecuted.
 * Two genuine holes found by the adversary **in this round's own tooling** and closed with tests:
   `P08` (a fixture-only evidence file was being credited toward S4's C4) and `P09` (the Q-07
