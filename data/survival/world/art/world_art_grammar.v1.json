@@ -162,41 +162,72 @@
       "frames": [
         "awning",
         "boardwalk_post",
+        "bog_iron",
         "bog_pool",
         "bush",
         "cairn",
+        "canopy_tree",
         "causeway_stone",
         "cenote_pool",
+        "cenote_steps",
         "chimney_stack",
         "cinder_cone",
+        "clay_lens",
+        "cooling_trough",
+        "copper_vein",
+        "dock_small",
         "driftwood",
+        "driftwood_pile",
         "drying_rack",
         "fen_snag",
         "fence_h",
         "fence_v",
         "fern",
+        "ferry_boat",
+        "fish_trap",
+        "forge_slag_heap",
         "handcart",
         "jungle_canopy",
+        "karst_boulder",
+        "karst_herb",
         "karst_pinnacle",
+        "keeper_shed",
         "liana",
+        "liana_curtain",
+        "limestone_chunk",
         "log_pile",
         "mangrove_root",
+        "mangrove_tree",
         "mooring_post",
         "net_rack",
+        "orchard_wall",
         "palm",
+        "pearl_bed",
+        "peat_cut",
+        "pier_rail",
+        "pipe_run",
         "pump_pipe",
+        "pump_tank",
+        "reed_bed",
+        "reed_bundle",
         "reed_clump",
         "reeds",
         "rock_a",
         "rock_c",
+        "root_arch",
         "rope_bridge",
+        "salt_crust_prop",
+        "salt_heap",
         "salt_rake",
         "salt_windbreak",
+        "shade_sail",
         "shell_bar",
         "sluice_gate",
         "snow_drift",
         "split_rail",
         "stilt_walk",
+        "storm_glass_cluster",
+        "sulfur_vent",
         "tarp_shelter",
         "tidal_wrack",
         "tree_amber",
@@ -204,9 +235,11 @@
         "tree_frost",
         "tree_frost_small",
         "tree_orchard",
-        "tree_pine"
+        "tree_pine",
+        "understory_fern",
+        "vent_stack"
       ],
-      "read": "lower contrast, smaller silhouettes, no latch / lamp / counter",
+      "read": "Non-interactive scenery/outcrop unless a canonical node_id is bound; never a reward authority.",
       "glow": false,
       "collision": "source collision only"
     },
@@ -220,10 +253,14 @@
         "heat_shimmer",
         "rock_e",
         "spore_cluster",
+        "spore_mushroom",
         "sulfur_crust",
         "tide_gauge",
+        "tide_gauge_large",
         "toxic_pool_edge",
-        "wall_stub"
+        "vent_stack",
+        "wall_stub",
+        "warning_stakes"
       ],
       "read": "broken stone + rust warning cap + impassable mass beside the route; no arbitrary red border",
       "glow": false,
@@ -243,14 +280,21 @@
       "frames": [
         "banner",
         "boardwalk",
+        "cenote_steps",
+        "dock_small",
+        "ferry_boat",
         "handcart",
         "lamp",
+        "lantern_post",
         "mooring_post",
+        "pier_rail",
         "rope_bridge",
         "signpost",
         "stilt_walk",
         "stone_causeway",
-        "tide_gauge"
+        "tide_gauge",
+        "tide_gauge_large",
+        "warning_stakes"
       ],
       "read": "maintained road, repeated warm markers and shelter silhouette leading back to the postern",
       "glow": "warm light only",
@@ -357,15 +401,21 @@
       ],
       "road": "boardwalk",
       "vegetation": [
-        "reed_clump",
+        "fen_snag",
+        "mangrove_tree",
+        "reed_bed",
         "reed_bundle",
-        "fen_snag"
+        "reed_clump"
       ],
       "structures": [
+        "dock_small",
+        "ferry_boat",
+        "fish_trap",
+        "lantern_post",
         "lm_mere_boathouse",
         "lm_mere_causeway",
-        "sluice_gate",
-        "net_rack"
+        "net_rack",
+        "sluice_gate"
       ],
       "lighting": "mere_mist",
       "transition": "lake -> reed peat -> silt; boardwalk and causeway mark maintained crossings"
@@ -380,12 +430,17 @@
       ],
       "road": "stone_road",
       "vegetation": [
+        "driftwood",
         "tree_frost_small",
-        "driftwood"
+        "understory_fern"
       ],
       "structures": [
+        "driftwood_pile",
+        "keeper_shed",
+        "lantern_post",
         "lm_glasswind_light",
-        "salt_windbreak"
+        "salt_windbreak",
+        "storm_glass_cluster"
       ],
       "lighting": "glasswind_storm",
       "transition": "wave-cut shell bench -> dune -> basalt cliff; storm glass and silica placer"
@@ -404,9 +459,14 @@
         "cinder_cone"
       ],
       "structures": [
-        "lm_ember_forge",
         "chimney_stack",
-        "pump_pipe"
+        "cooling_trough",
+        "forge_slag_heap",
+        "lantern_post",
+        "lm_ember_forge",
+        "pipe_run",
+        "pump_pipe",
+        "vent_stack"
       ],
       "lighting": "ember_haze",
       "transition": "cooled lava -> cinder -> sulfur crust; gas vents and dead scrub telegraph acid"
@@ -425,9 +485,12 @@
         "salt_windbreak"
       ],
       "structures": [
-        "lm_saffron_salt_works",
         "awning",
-        "salt_rake"
+        "lantern_post",
+        "lm_saffron_salt_works",
+        "salt_heap",
+        "salt_rake",
+        "shade_sail"
       ],
       "lighting": "saffron_glare",
       "transition": "salt pan -> dune -> shell bench; shade and well mark survivable route"
@@ -441,9 +504,15 @@
       ],
       "road": "stone_road",
       "vegetation": [
+        "canopy_tree",
         "jungle_canopy",
+        "karst_boulder",
+        "karst_pinnacle",
         "liana",
-        "karst_pinnacle"
+        "liana_curtain",
+        "root_arch",
+        "spore_mushroom",
+        "understory_fern"
       ],
       "structures": [
         "lm_verdant_temple",
@@ -463,13 +532,20 @@
       "road": "boardwalk",
       "vegetation": [
         "mangrove_root",
+        "mangrove_tree",
+        "reed_bed",
         "reed_clump"
       ],
       "structures": [
+        "dock_small",
+        "ferry_boat",
+        "lantern_post",
         "lm_pearl_customs",
-        "stilt_walk",
         "mooring_post",
-        "tide_gauge"
+        "pier_rail",
+        "stilt_walk",
+        "tide_gauge",
+        "tide_gauge_large"
       ],
       "lighting": "pearl_dusk",
       "transition": "tidal channel -> mudflat -> mangrove peat; wrack lines and barnacles telegraph tide"
@@ -483,13 +559,19 @@
       ],
       "road": "stone_road",
       "vegetation": [
-        "karst_pinnacle",
+        "canopy_tree",
         "jungle_canopy",
-        "tree_orchard"
+        "karst_boulder",
+        "karst_pinnacle",
+        "tree_orchard",
+        "understory_fern"
       ],
       "structures": [
+        "causeway_stone",
+        "cenote_steps",
+        "lantern_post",
         "lm_sunken_cenote",
-        "causeway_stone"
+        "orchard_wall"
       ],
       "lighting": "sunken_clear",
       "transition": "karst terrace -> orchard soil -> cenote rim; sinkhole hints underground conduit"
@@ -509,9 +591,15 @@
         "reed_clump"
       ],
       "structures": [
+        "lantern_post",
         "lm_ashwater_pump",
+        "pier_rail",
+        "pipe_run",
         "pump_pipe",
-        "stilt_walk"
+        "pump_tank",
+        "stilt_walk",
+        "vent_stack",
+        "warning_stakes"
       ],
       "lighting": "ashwater_miasma",
       "transition": "fen peat -> toxic pool -> silt; bleached reeds and gas bubbles telegraph miasma"
@@ -574,9 +662,9 @@
         1
       ],
       "ambient_night": [
-        0.3,
-        0.38,
-        0.42,
+        0.36,
+        0.44,
+        0.48,
         1
       ],
       "warm_lamp_energy": 0.7
@@ -589,9 +677,9 @@
         1
       ],
       "ambient_night": [
-        0.24,
-        0.3,
-        0.4,
+        0.32,
+        0.38,
+        0.48,
         1
       ],
       "warm_lamp_energy": 0.9
@@ -604,9 +692,9 @@
         1
       ],
       "ambient_night": [
+        0.42,
         0.34,
-        0.26,
-        0.24,
+        0.3,
         1
       ],
       "warm_lamp_energy": 1.0
@@ -619,9 +707,9 @@
         1
       ],
       "ambient_night": [
-        0.32,
-        0.34,
-        0.44,
+        0.38,
+        0.4,
+        0.5,
         1
       ],
       "warm_lamp_energy": 0.7
@@ -634,9 +722,9 @@
         1
       ],
       "ambient_night": [
-        0.22,
-        0.32,
-        0.28,
+        0.3,
+        0.4,
+        0.34,
         1
       ],
       "warm_lamp_energy": 0.8
@@ -649,9 +737,9 @@
         1
       ],
       "ambient_night": [
-        0.24,
         0.32,
         0.4,
+        0.46,
         1
       ],
       "warm_lamp_energy": 0.9
@@ -664,9 +752,9 @@
         1
       ],
       "ambient_night": [
-        0.26,
         0.34,
-        0.4,
+        0.42,
+        0.46,
         1
       ],
       "warm_lamp_energy": 0.7
@@ -679,9 +767,9 @@
         1
       ],
       "ambient_night": [
-        0.24,
-        0.3,
-        0.26,
+        0.34,
+        0.4,
+        0.36,
         1
       ],
       "warm_lamp_energy": 0.8
@@ -696,6 +784,10 @@
     "Macro-terrain boundaries are authored causal landforms (geology/drainage/terrace/court/exposure), not random noise. Tile variant hash only selects texture inside an already-authored material.",
     "A1 world lights use a private CanvasItem cull mask; inherited Gold/Hero VFX remain on the default mask and are never ambient-tinted by A1.",
     "all 11 planned regions have a dedicated visual profile; 8 new regional windows are authored, not 192 chunk fills",
-    "visual water only where source surface==water and walk==0; roads over water become explicit bridge/boardwalk overlays, never invisible walls"
+    "visual water only where source surface==water and walk==0; roads over water become explicit bridge/boardwalk overlays, never invisible walls",
+    "Regional maintained crossings are narrow purposeful piers/causeways on authored spines; broad source road cells receive transparent wear decals, not opaque plank carpets.",
+    "Impassable source water remains visually water/brine; only explicit source bridge/road cells may carry pier or causeway decks.",
+    "Night readability uses A1-private lantern pools and raised ambient floors for hazard/destination silhouettes; original AVFX Gold remains untouched.",
+    "Ecological detail clusters are authored landforms/decals, not random material confetti; frame totals are not a quality metric."
   ]
 }

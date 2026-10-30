@@ -6,9 +6,9 @@
     1
   ],
   "ambient_night": [
-    0.24,
-    0.3,
-    0.4,
+    0.32,
+    0.38,
+    0.48,
     1
   ],
   "authority": "VISUAL_ONLY_NO_COLLISION_STAND_ECONOMY_CHANGE",
@@ -20,12 +20,12 @@
         112
       ],
       "id": "glass_light_day",
-      "time_of_day": 0.35
+      "time_of_day": 0.3
     },
     {
       "center_cell": [
-        912,
-        92
+        924,
+        112
       ],
       "id": "glass_storm_night",
       "time_of_day": 0.85
@@ -34,12 +34,16 @@
   "collision_change": false,
   "counts": {
     "bank_overlays": 0,
+    "causeway_cells": 0,
+    "detail_overlays": 198,
     "ground_cells": 5120,
-    "lights": 1,
-    "overlays": 172,
-    "props": 28,
+    "lights": 8,
+    "overlays": 370,
+    "pier_cells": 0,
+    "props": 140,
     "road_cells": 172,
-    "road_overlays": 172
+    "road_overlays": 172,
+    "track_cells": 172
   },
   "economy_change": false,
   "ground": {
@@ -3903,9 +3907,9 @@
         "shell_1"
       ],
       [
-        "gravel_3",
-        "gravel_2",
-        "gravel_1",
+        "forest_3",
+        "shell_2",
+        "shell_1",
         "mix_dune_shell_12",
         "dune_0",
         "dune_0",
@@ -3985,15 +3989,15 @@
         "shell_2"
       ],
       [
-        "gravel_1",
-        "gravel_2",
-        "gravel_1",
-        "gravel_2",
-        "gravel_0",
-        "gravel_3",
-        "gravel_3",
-        "gravel_0",
-        "gravel_0",
+        "forest_1",
+        "shell_2",
+        "shell_1",
+        "shell_2",
+        "dune_0",
+        "dune_3",
+        "dune_3",
+        "dune_0",
+        "dune_0",
         "dune_1",
         "dune_0",
         "dune_1",
@@ -4067,22 +4071,22 @@
         "shell_3"
       ],
       [
-        "gravel_3",
-        "gravel_2",
-        "gravel_3",
-        "gravel_2",
-        "gravel_2",
-        "gravel_2",
-        "gravel_2",
-        "gravel_1",
-        "gravel_2",
-        "gravel_1",
-        "gravel_0",
-        "gravel_1",
-        "gravel_0",
-        "gravel_1",
-        "gravel_0",
-        "gravel_1",
+        "forest_3",
+        "shell_2",
+        "shell_3",
+        "shell_2",
+        "shell_2",
+        "dune_2",
+        "dune_2",
+        "dune_1",
+        "dune_2",
+        "dune_1",
+        "dune_0",
+        "dune_1",
+        "dune_0",
+        "dune_1",
+        "dune_0",
+        "dune_1",
         "dune_0",
         "dune_2",
         "dune_3",
@@ -4150,27 +4154,27 @@
       ],
       [
         "forest_0",
-        "gravel_1",
-        "gravel_1",
-        "gravel_1",
-        "gravel_0",
-        "gravel_0",
-        "gravel_1",
-        "gravel_0",
-        "gravel_3",
-        "gravel_3",
-        "gravel_2",
-        "gravel_3",
-        "gravel_3",
-        "gravel_0",
-        "gravel_2",
-        "gravel_3",
-        "gravel_3",
-        "gravel_2",
-        "gravel_3",
-        "gravel_2",
-        "gravel_2",
-        "gravel_1",
+        "shell_1",
+        "shell_1",
+        "shell_1",
+        "shell_0",
+        "shell_0",
+        "shell_1",
+        "dune_0",
+        "dune_3",
+        "dune_3",
+        "dune_2",
+        "dune_3",
+        "dune_3",
+        "dune_0",
+        "dune_2",
+        "dune_3",
+        "dune_3",
+        "dune_2",
+        "dune_3",
+        "dune_2",
+        "dune_2",
+        "shell_1",
         "mix_shell_dune_1",
         "shell_1",
         "shell_3",
@@ -4238,28 +4242,28 @@
         "shell_1",
         "shell_0",
         "shell_2",
-        "gravel_2",
-        "gravel_3",
-        "gravel_0",
-        "gravel_0",
-        "gravel_0",
-        "gravel_0",
-        "gravel_3",
-        "gravel_1",
-        "gravel_1",
-        "gravel_1",
-        "gravel_2",
-        "gravel_1",
-        "gravel_0",
-        "gravel_2",
-        "gravel_3",
-        "gravel_1",
-        "gravel_3",
-        "gravel_3",
-        "gravel_3",
-        "gravel_0",
-        "gravel_0",
-        "gravel_3",
+        "shell_2",
+        "shell_3",
+        "shell_0",
+        "dune_0",
+        "dune_0",
+        "dune_0",
+        "dune_3",
+        "dune_1",
+        "dune_1",
+        "dune_1",
+        "dune_2",
+        "shell_1",
+        "shell_0",
+        "shell_2",
+        "shell_3",
+        "shell_1",
+        "shell_3",
+        "shell_3",
+        "shell_3",
+        "shell_0",
+        "shell_0",
+        "shell_3",
         "shell_2",
         "shell_3",
         "shell_3",
@@ -4327,27 +4331,27 @@
         "mix_shell_dune_1",
         "mix_shell_dune_1",
         "mix_shell_dune_1",
-        "gravel_1",
-        "gravel_2",
-        "gravel_2",
-        "gravel_2",
-        "gravel_0",
-        "gravel_0",
-        "gravel_3",
-        "gravel_2",
-        "gravel_2",
-        "gravel_2",
-        "gravel_3",
-        "gravel_2",
-        "gravel_1",
-        "gravel_3",
-        "gravel_2",
-        "gravel_3",
-        "gravel_2",
-        "gravel_2",
-        "gravel_1",
-        "gravel_2",
-        "gravel_0",
+        "shell_1",
+        "shell_2",
+        "shell_2",
+        "shell_2",
+        "shell_0",
+        "shell_0",
+        "shell_3",
+        "shell_2",
+        "shell_2",
+        "shell_2",
+        "shell_3",
+        "shell_2",
+        "shell_1",
+        "shell_3",
+        "shell_2",
+        "shell_3",
+        "shell_2",
+        "shell_2",
+        "shell_1",
+        "shell_2",
+        "shell_0",
         "shell_3",
         "shell_2",
         "shell_2",
@@ -4415,28 +4419,28 @@
         "shell_3",
         "shell_1",
         "shell_3",
-        "gravel_3",
-        "gravel_1",
-        "gravel_0",
-        "gravel_1",
-        "gravel_0",
-        "gravel_2",
-        "gravel_1",
-        "gravel_1",
-        "gravel_3",
-        "gravel_2",
-        "gravel_1",
-        "gravel_3",
-        "gravel_2",
-        "gravel_1",
-        "gravel_1",
-        "gravel_3",
-        "gravel_1",
-        "gravel_3",
-        "gravel_0",
-        "gravel_0",
-        "gravel_2",
-        "gravel_1",
+        "shell_3",
+        "shell_1",
+        "shell_0",
+        "shell_1",
+        "shell_0",
+        "shell_2",
+        "shell_1",
+        "shell_1",
+        "shell_3",
+        "shell_2",
+        "shell_1",
+        "shell_3",
+        "shell_2",
+        "shell_1",
+        "shell_1",
+        "shell_3",
+        "shell_1",
+        "shell_3",
+        "shell_0",
+        "shell_0",
+        "shell_2",
+        "shell_1",
         "shell_3",
         "shell_1",
         "shell_2",
@@ -4504,27 +4508,27 @@
         "shell_2",
         "shell_0",
         "shell_1",
-        "gravel_3",
-        "gravel_3",
-        "gravel_1",
-        "gravel_2",
-        "gravel_1",
-        "gravel_0",
-        "gravel_1",
-        "gravel_1",
-        "gravel_2",
-        "gravel_1",
-        "gravel_1",
-        "gravel_0",
-        "gravel_2",
-        "gravel_3",
-        "gravel_1",
-        "gravel_1",
-        "gravel_1",
-        "gravel_1",
-        "gravel_0",
-        "gravel_3",
-        "gravel_3",
+        "shell_3",
+        "shell_3",
+        "shell_1",
+        "shell_2",
+        "shell_1",
+        "shell_0",
+        "shell_1",
+        "shell_1",
+        "shell_2",
+        "shell_1",
+        "shell_1",
+        "shell_0",
+        "shell_2",
+        "shell_3",
+        "shell_1",
+        "shell_1",
+        "shell_1",
+        "shell_1",
+        "shell_0",
+        "shell_3",
+        "shell_3",
         "shell_2",
         "shell_1",
         "shell_1",
@@ -4592,25 +4596,25 @@
         "shell_3",
         "shell_1",
         "shell_3",
-        "gravel_1",
-        "gravel_1",
-        "gravel_3",
-        "gravel_1",
-        "gravel_1",
-        "gravel_1",
-        "gravel_1",
-        "gravel_0",
-        "gravel_2",
-        "gravel_2",
-        "gravel_2",
-        "gravel_3",
-        "gravel_0",
-        "gravel_0",
-        "gravel_3",
-        "gravel_1",
-        "gravel_3",
-        "gravel_2",
-        "gravel_2",
+        "shell_1",
+        "shell_1",
+        "shell_3",
+        "shell_1",
+        "shell_1",
+        "shell_1",
+        "shell_1",
+        "shell_0",
+        "shell_2",
+        "shell_2",
+        "shell_2",
+        "shell_3",
+        "shell_0",
+        "shell_0",
+        "shell_3",
+        "shell_1",
+        "shell_3",
+        "shell_2",
+        "shell_2",
         "shell_0",
         "shell_2",
         "shell_1",
@@ -4681,18 +4685,18 @@
         "shell_1",
         "shell_3",
         "shell_2",
-        "gravel_2",
-        "gravel_2",
-        "gravel_3",
-        "gravel_1",
-        "gravel_2",
-        "gravel_3",
-        "gravel_1",
-        "gravel_1",
-        "gravel_3",
-        "gravel_1",
-        "gravel_0",
-        "gravel_1",
+        "shell_2",
+        "shell_2",
+        "shell_3",
+        "shell_1",
+        "shell_2",
+        "shell_3",
+        "shell_1",
+        "shell_1",
+        "shell_3",
+        "shell_1",
+        "shell_0",
+        "shell_1",
         "shell_0",
         "shell_1",
         "shell_1",
@@ -4769,12 +4773,12 @@
         "shell_2",
         "shell_2",
         "shell_2",
-        "gravel_1",
-        "gravel_1",
-        "gravel_3",
-        "gravel_2",
-        "gravel_3",
-        "gravel_3",
+        "shell_1",
+        "shell_1",
+        "shell_3",
+        "shell_2",
+        "shell_3",
+        "shell_3",
         "shell_3",
         "shell_3",
         "shell_0",
@@ -5337,16 +5341,1882 @@
         14888,
         1924
       ]
+    },
+    {
+      "cell": [
+        908,
+        116
+      ],
+      "energy": 0.9,
+      "kind": "warm",
+      "world_px": [
+        14536,
+        1860
+      ]
+    },
+    {
+      "cell": [
+        914,
+        116
+      ],
+      "energy": 0.9,
+      "kind": "warm",
+      "world_px": [
+        14632,
+        1860
+      ]
+    },
+    {
+      "cell": [
+        917,
+        117
+      ],
+      "energy": 0.9,
+      "kind": "warm",
+      "world_px": [
+        14680,
+        1876
+      ]
+    },
+    {
+      "cell": [
+        922,
+        117
+      ],
+      "energy": 0.9,
+      "kind": "warm",
+      "world_px": [
+        14760,
+        1876
+      ]
+    },
+    {
+      "cell": [
+        925,
+        118
+      ],
+      "energy": 0.9,
+      "kind": "warm",
+      "world_px": [
+        14808,
+        1892
+      ]
+    },
+    {
+      "cell": [
+        929,
+        119
+      ],
+      "energy": 0.9,
+      "kind": "warm",
+      "world_px": [
+        14872,
+        1908
+      ]
+    },
+    {
+      "cell": [
+        932,
+        120
+      ],
+      "energy": 0.9,
+      "kind": "warm",
+      "world_px": [
+        14920,
+        1924
+      ]
     }
   ],
   "new_poi_count": 0,
   "overlays": [
     {
       "cell": [
+        905,
+        80
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        908,
+        80
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        910,
+        80
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        900,
+        82
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        901,
+        82
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        907,
+        82
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        912,
+        82
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        915,
+        82
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        897,
+        83
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        905,
+        83
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        906,
+        83
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        909,
+        83
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        910,
+        83
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        901,
+        84
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        903,
+        84
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        906,
+        84
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        899,
+        85
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        900,
+        85
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        912,
+        85
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        896,
+        86
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        900,
+        86
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        902,
+        86
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        904,
+        86
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        908,
+        86
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        918,
+        86
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        892,
+        87
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        895,
+        87
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        902,
+        87
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        905,
+        87
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        909,
+        87
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        914,
+        87
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        915,
+        87
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        917,
+        87
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        892,
+        88
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        893,
+        88
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        895,
+        88
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        896,
+        88
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        898,
+        88
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        906,
+        88
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        913,
+        88
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        914,
+        88
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        920,
+        88
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        890,
+        89
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        893,
+        89
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        899,
+        89
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        900,
+        89
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        901,
+        89
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        902,
+        89
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        904,
+        89
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        906,
+        89
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        907,
+        89
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        908,
+        89
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        914,
+        89
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        917,
+        89
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        899,
+        90
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        900,
+        90
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        906,
+        90
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        907,
+        90
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        908,
+        90
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        912,
+        90
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        915,
+        90
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        917,
+        90
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        919,
+        90
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        920,
+        90
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        891,
+        91
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        892,
+        91
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        903,
+        91
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        904,
+        91
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        909,
+        91
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        913,
+        91
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        917,
+        91
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        918,
+        91
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        892,
+        92
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        893,
+        92
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        894,
+        92
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        896,
+        92
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        903,
+        92
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        905,
+        92
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        912,
+        92
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        913,
+        92
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        919,
+        92
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        921,
+        92
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        892,
+        93
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        897,
+        93
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        920,
+        93
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        891,
+        94
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        893,
+        94
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        897,
+        94
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        912,
+        94
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        913,
+        94
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        917,
+        94
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        893,
+        95
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        902,
+        95
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        905,
+        95
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        913,
+        95
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        920,
+        95
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        894,
+        96
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        899,
+        96
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        901,
+        96
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        903,
+        96
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        905,
+        96
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        911,
+        96
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        913,
+        96
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        914,
+        96
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        915,
+        96
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        918,
+        96
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        895,
+        97
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        901,
+        97
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        907,
+        97
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        915,
+        97
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        917,
+        97
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        898,
+        98
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        900,
+        98
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        904,
+        98
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        910,
+        98
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        911,
+        98
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        915,
+        98
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        901,
+        99
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        902,
+        99
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        907,
+        99
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        909,
+        99
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        910,
+        99
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        911,
+        99
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        913,
+        99
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        898,
+        100
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        916,
+        100
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        905,
+        101
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        910,
+        101
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        911,
+        101
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        905,
+        102
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        906,
+        102
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        911,
+        102
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        909,
+        103
+      ],
+      "cluster": "glass_shell_bench",
+      "frame": "detail_shell_hash_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        890,
+        100
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        893,
+        100
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        887,
+        101
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        888,
+        101
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        897,
+        101
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        886,
+        102
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        889,
+        102
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        896,
+        102
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        897,
+        102
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        899,
+        102
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        884,
+        103
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        897,
+        103
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        900,
+        103
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        887,
+        104
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        890,
+        104
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        893,
+        104
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        895,
+        104
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        896,
+        104
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        896,
+        105
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        898,
+        105
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        904,
+        105
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        891,
+        106
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        896,
+        106
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        898,
+        106
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        902,
+        106
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        882,
+        107
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        889,
+        107
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        892,
+        107
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        897,
+        107
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        903,
+        107
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        904,
+        107
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        883,
+        108
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        897,
+        108
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        900,
+        108
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        902,
+        108
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        904,
+        108
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        905,
+        108
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        887,
+        109
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        888,
+        109
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        889,
+        109
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        893,
+        109
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        896,
+        109
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        897,
+        109
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        900,
+        109
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        902,
+        109
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        887,
+        110
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        888,
+        110
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        892,
+        110
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        903,
+        110
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        884,
+        111
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        886,
+        111
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        890,
+        111
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        898,
+        111
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        902,
+        111
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        904,
+        111
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        892,
+        112
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        894,
+        112
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        902,
+        112
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        892,
+        113
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        896,
+        113
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        891,
+        114
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        893,
+        114
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        898,
+        114
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        894,
+        115
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        897,
+        115
+      ],
+      "cluster": "glass_dune_ridges",
+      "frame": "detail_dune_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
         880,
         111
       ],
-      "frame": "road_stone_6",
+      "frame": "track_stone_6",
       "layer": "road"
     },
     {
@@ -5354,7 +7224,7 @@
         881,
         111
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -5362,7 +7232,7 @@
         882,
         111
       ],
-      "frame": "road_stone_12",
+      "frame": "track_stone_12",
       "layer": "road"
     },
     {
@@ -5370,7 +7240,7 @@
         880,
         112
       ],
-      "frame": "road_stone_7",
+      "frame": "track_stone_7",
       "layer": "road"
     },
     {
@@ -5378,7 +7248,7 @@
         881,
         112
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5386,7 +7256,7 @@
         882,
         112
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5394,7 +7264,7 @@
         883,
         112
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -5402,7 +7272,7 @@
         884,
         112
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -5410,7 +7280,7 @@
         885,
         112
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -5418,7 +7288,7 @@
         886,
         112
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -5426,7 +7296,7 @@
         887,
         112
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -5434,7 +7304,7 @@
         888,
         112
       ],
-      "frame": "road_stone_12",
+      "frame": "track_stone_12",
       "layer": "road"
     },
     {
@@ -5442,7 +7312,7 @@
         880,
         113
       ],
-      "frame": "road_stone_3",
+      "frame": "track_stone_3",
       "layer": "road"
     },
     {
@@ -5450,7 +7320,7 @@
         881,
         113
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5458,7 +7328,7 @@
         882,
         113
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5466,7 +7336,7 @@
         883,
         113
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5474,7 +7344,7 @@
         884,
         113
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5482,7 +7352,7 @@
         885,
         113
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5490,7 +7360,7 @@
         886,
         113
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5498,7 +7368,7 @@
         887,
         113
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5506,7 +7376,7 @@
         888,
         113
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5514,7 +7384,7 @@
         889,
         113
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -5522,7 +7392,7 @@
         890,
         113
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -5530,7 +7400,7 @@
         891,
         113
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -5538,7 +7408,7 @@
         892,
         113
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -5546,7 +7416,7 @@
         893,
         113
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -5554,7 +7424,7 @@
         894,
         113
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -5562,7 +7432,7 @@
         895,
         113
       ],
-      "frame": "road_stone_12",
+      "frame": "track_stone_12",
       "layer": "road"
     },
     {
@@ -5570,7 +7440,7 @@
         881,
         114
       ],
-      "frame": "road_stone_3",
+      "frame": "track_stone_3",
       "layer": "road"
     },
     {
@@ -5578,7 +7448,7 @@
         882,
         114
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -5586,7 +7456,7 @@
         883,
         114
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -5594,7 +7464,7 @@
         884,
         114
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -5602,7 +7472,7 @@
         885,
         114
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -5610,7 +7480,7 @@
         886,
         114
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -5618,7 +7488,7 @@
         887,
         114
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5626,7 +7496,7 @@
         888,
         114
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5634,7 +7504,7 @@
         889,
         114
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5642,7 +7512,7 @@
         890,
         114
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5650,7 +7520,7 @@
         891,
         114
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5658,7 +7528,7 @@
         892,
         114
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5666,7 +7536,7 @@
         893,
         114
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5674,7 +7544,7 @@
         894,
         114
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5682,7 +7552,7 @@
         895,
         114
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5690,7 +7560,7 @@
         896,
         114
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -5698,7 +7568,7 @@
         897,
         114
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -5706,7 +7576,7 @@
         898,
         114
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -5714,7 +7584,7 @@
         899,
         114
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -5722,7 +7592,7 @@
         900,
         114
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -5730,7 +7600,7 @@
         901,
         114
       ],
-      "frame": "road_stone_12",
+      "frame": "track_stone_12",
       "layer": "road"
     },
     {
@@ -5738,7 +7608,7 @@
         887,
         115
       ],
-      "frame": "road_stone_3",
+      "frame": "track_stone_3",
       "layer": "road"
     },
     {
@@ -5746,7 +7616,7 @@
         888,
         115
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -5754,7 +7624,7 @@
         889,
         115
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -5762,7 +7632,7 @@
         890,
         115
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -5770,7 +7640,7 @@
         891,
         115
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -5778,7 +7648,7 @@
         892,
         115
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -5786,7 +7656,7 @@
         893,
         115
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -5794,7 +7664,7 @@
         894,
         115
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5802,7 +7672,7 @@
         895,
         115
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5810,7 +7680,7 @@
         896,
         115
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5818,7 +7688,7 @@
         897,
         115
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5826,7 +7696,7 @@
         898,
         115
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5834,7 +7704,7 @@
         899,
         115
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5842,7 +7712,7 @@
         900,
         115
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5850,7 +7720,7 @@
         901,
         115
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5858,7 +7728,7 @@
         902,
         115
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -5866,7 +7736,7 @@
         903,
         115
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -5874,7 +7744,7 @@
         904,
         115
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -5882,7 +7752,7 @@
         905,
         115
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -5890,7 +7760,7 @@
         906,
         115
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -5898,7 +7768,7 @@
         907,
         115
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -5906,7 +7776,7 @@
         908,
         115
       ],
-      "frame": "road_stone_12",
+      "frame": "track_stone_12",
       "layer": "road"
     },
     {
@@ -5914,7 +7784,7 @@
         894,
         116
       ],
-      "frame": "road_stone_3",
+      "frame": "track_stone_3",
       "layer": "road"
     },
     {
@@ -5922,7 +7792,7 @@
         895,
         116
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -5930,7 +7800,7 @@
         896,
         116
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -5938,7 +7808,7 @@
         897,
         116
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -5946,7 +7816,7 @@
         898,
         116
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -5954,7 +7824,7 @@
         899,
         116
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -5962,7 +7832,7 @@
         900,
         116
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5970,7 +7840,7 @@
         901,
         116
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5978,7 +7848,7 @@
         902,
         116
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5986,7 +7856,7 @@
         903,
         116
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -5994,7 +7864,7 @@
         904,
         116
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6002,7 +7872,7 @@
         905,
         116
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6010,7 +7880,7 @@
         906,
         116
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6018,7 +7888,7 @@
         907,
         116
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6026,7 +7896,7 @@
         908,
         116
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6034,7 +7904,7 @@
         909,
         116
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -6042,7 +7912,7 @@
         910,
         116
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -6050,7 +7920,7 @@
         911,
         116
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -6058,7 +7928,7 @@
         912,
         116
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -6066,7 +7936,7 @@
         913,
         116
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -6074,7 +7944,7 @@
         914,
         116
       ],
-      "frame": "road_stone_12",
+      "frame": "track_stone_12",
       "layer": "road"
     },
     {
@@ -6082,7 +7952,7 @@
         900,
         117
       ],
-      "frame": "road_stone_3",
+      "frame": "track_stone_3",
       "layer": "road"
     },
     {
@@ -6090,7 +7960,7 @@
         901,
         117
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -6098,7 +7968,7 @@
         902,
         117
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -6106,7 +7976,7 @@
         903,
         117
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -6114,7 +7984,7 @@
         904,
         117
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -6122,7 +7992,7 @@
         905,
         117
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -6130,7 +8000,7 @@
         906,
         117
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -6138,7 +8008,7 @@
         907,
         117
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6146,7 +8016,7 @@
         908,
         117
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6154,7 +8024,7 @@
         909,
         117
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6162,7 +8032,7 @@
         910,
         117
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6170,7 +8040,7 @@
         911,
         117
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6178,7 +8048,7 @@
         912,
         117
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6186,7 +8056,7 @@
         913,
         117
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6194,7 +8064,7 @@
         914,
         117
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6202,7 +8072,7 @@
         915,
         117
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -6210,7 +8080,7 @@
         916,
         117
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -6218,7 +8088,7 @@
         917,
         117
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -6226,7 +8096,7 @@
         918,
         117
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -6234,7 +8104,7 @@
         919,
         117
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -6242,7 +8112,7 @@
         920,
         117
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -6250,7 +8120,7 @@
         921,
         117
       ],
-      "frame": "road_stone_12",
+      "frame": "track_stone_12",
       "layer": "road"
     },
     {
@@ -6258,7 +8128,7 @@
         907,
         118
       ],
-      "frame": "road_stone_3",
+      "frame": "track_stone_3",
       "layer": "road"
     },
     {
@@ -6266,7 +8136,7 @@
         908,
         118
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -6274,7 +8144,7 @@
         909,
         118
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -6282,7 +8152,7 @@
         910,
         118
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -6290,7 +8160,7 @@
         911,
         118
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -6298,7 +8168,7 @@
         912,
         118
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -6306,7 +8176,7 @@
         913,
         118
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6314,7 +8184,7 @@
         914,
         118
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6322,7 +8192,7 @@
         915,
         118
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6330,7 +8200,7 @@
         916,
         118
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6338,7 +8208,7 @@
         917,
         118
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6346,7 +8216,7 @@
         918,
         118
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6354,7 +8224,7 @@
         919,
         118
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6362,7 +8232,7 @@
         920,
         118
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6370,7 +8240,7 @@
         921,
         118
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6378,7 +8248,7 @@
         922,
         118
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -6386,7 +8256,7 @@
         923,
         118
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -6394,7 +8264,7 @@
         924,
         118
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -6402,7 +8272,7 @@
         925,
         118
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -6410,7 +8280,7 @@
         926,
         118
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -6418,7 +8288,7 @@
         927,
         118
       ],
-      "frame": "road_stone_12",
+      "frame": "track_stone_12",
       "layer": "road"
     },
     {
@@ -6426,7 +8296,7 @@
         913,
         119
       ],
-      "frame": "road_stone_3",
+      "frame": "track_stone_3",
       "layer": "road"
     },
     {
@@ -6434,7 +8304,7 @@
         914,
         119
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -6442,7 +8312,7 @@
         915,
         119
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -6450,7 +8320,7 @@
         916,
         119
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -6458,7 +8328,7 @@
         917,
         119
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -6466,7 +8336,7 @@
         918,
         119
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -6474,7 +8344,7 @@
         919,
         119
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -6482,7 +8352,7 @@
         920,
         119
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6490,7 +8360,7 @@
         921,
         119
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6498,7 +8368,7 @@
         922,
         119
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6506,7 +8376,7 @@
         923,
         119
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6514,7 +8384,7 @@
         924,
         119
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6522,7 +8392,7 @@
         925,
         119
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6530,7 +8400,7 @@
         926,
         119
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6538,7 +8408,7 @@
         927,
         119
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6546,7 +8416,7 @@
         928,
         119
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -6554,7 +8424,7 @@
         929,
         119
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -6562,7 +8432,7 @@
         930,
         119
       ],
-      "frame": "road_stone_14",
+      "frame": "track_stone_14",
       "layer": "road"
     },
     {
@@ -6570,7 +8440,7 @@
         931,
         119
       ],
-      "frame": "road_stone_12",
+      "frame": "track_stone_12",
       "layer": "road"
     },
     {
@@ -6578,7 +8448,7 @@
         920,
         120
       ],
-      "frame": "road_stone_3",
+      "frame": "track_stone_3",
       "layer": "road"
     },
     {
@@ -6586,7 +8456,7 @@
         921,
         120
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -6594,7 +8464,7 @@
         922,
         120
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -6602,7 +8472,7 @@
         923,
         120
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -6610,7 +8480,7 @@
         924,
         120
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -6618,7 +8488,7 @@
         925,
         120
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -6626,7 +8496,7 @@
         926,
         120
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6634,7 +8504,7 @@
         927,
         120
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6642,7 +8512,7 @@
         928,
         120
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6650,7 +8520,7 @@
         929,
         120
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6658,7 +8528,7 @@
         930,
         120
       ],
-      "frame": "road_stone_15",
+      "frame": "track_stone_15",
       "layer": "road"
     },
     {
@@ -6666,7 +8536,7 @@
         931,
         120
       ],
-      "frame": "road_stone_13",
+      "frame": "track_stone_13",
       "layer": "road"
     },
     {
@@ -6674,7 +8544,7 @@
         926,
         121
       ],
-      "frame": "road_stone_3",
+      "frame": "track_stone_3",
       "layer": "road"
     },
     {
@@ -6682,7 +8552,7 @@
         927,
         121
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -6690,7 +8560,7 @@
         928,
         121
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -6698,7 +8568,7 @@
         929,
         121
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -6706,7 +8576,7 @@
         930,
         121
       ],
-      "frame": "road_stone_11",
+      "frame": "track_stone_11",
       "layer": "road"
     },
     {
@@ -6714,15 +8584,15 @@
         931,
         121
       ],
-      "frame": "road_stone_9",
+      "frame": "track_stone_9",
       "layer": "road"
     }
   ],
   "owner": "A1",
   "pins": {
-    "atlas_sha256": "a2b7d35da814438957fdf8433aeff633e71f392bb6696faa3ef07c894536ea9c",
-    "grammar_sha256": "5112e317f523c52426974e04dba203ac1b3ea89eb55918cced4e7ed896b44eb1",
-    "source_sha256": "45e8f7036943d1432cb07a3597fa833eed5b0ee5066a8fd7dfa6d082acb1a487"
+    "atlas_sha256": "83d69373ca6c1258e8727800d0aa0c288851c34d25539c69c21ec9f5fc9d769a",
+    "grammar_sha256": "a5cecea7d749b56d7e8b6508bd9e880b3a70a92a97f0a06ab11fe81de965b53a",
+    "source_sha256": "085c40112eaddc336be76b23fb273f77f36dd460bfc79bfeca1be8f6a3409ae2"
   },
   "production_native_playable": false,
   "props": [
@@ -6796,6 +8666,508 @@
     },
     {
       "cell": [
+        908,
+        116
+      ],
+      "collision_change": false,
+      "frame": "lantern_post",
+      "id": "study:908,116:lantern_post",
+      "light": "warm",
+      "role": "return_route",
+      "source": "biome_study",
+      "world_px": [
+        14536,
+        1872
+      ]
+    },
+    {
+      "cell": [
+        914,
+        116
+      ],
+      "collision_change": false,
+      "frame": "lantern_post",
+      "id": "study:914,116:lantern_post",
+      "light": "warm",
+      "role": "return_route",
+      "source": "biome_study",
+      "world_px": [
+        14632,
+        1872
+      ]
+    },
+    {
+      "cell": [
+        917,
+        117
+      ],
+      "collision_change": false,
+      "frame": "lantern_post",
+      "id": "study:917,117:lantern_post",
+      "light": "warm",
+      "role": "return_route",
+      "source": "biome_study",
+      "world_px": [
+        14680,
+        1888
+      ]
+    },
+    {
+      "cell": [
+        922,
+        117
+      ],
+      "collision_change": false,
+      "frame": "lantern_post",
+      "id": "study:922,117:lantern_post",
+      "light": "warm",
+      "role": "return_route",
+      "source": "biome_study",
+      "world_px": [
+        14760,
+        1888
+      ]
+    },
+    {
+      "cell": [
+        925,
+        118
+      ],
+      "collision_change": false,
+      "frame": "lantern_post",
+      "id": "study:925,118:lantern_post",
+      "light": "warm",
+      "role": "return_route",
+      "source": "biome_study",
+      "world_px": [
+        14808,
+        1904
+      ]
+    },
+    {
+      "cell": [
+        929,
+        119
+      ],
+      "collision_change": false,
+      "frame": "lantern_post",
+      "id": "study:929,119:lantern_post",
+      "light": "warm",
+      "role": "return_route",
+      "source": "biome_study",
+      "world_px": [
+        14872,
+        1920
+      ]
+    },
+    {
+      "cell": [
+        932,
+        120
+      ],
+      "collision_change": false,
+      "frame": "lantern_post",
+      "id": "study:932,120:lantern_post",
+      "light": "warm",
+      "role": "return_route",
+      "source": "biome_study",
+      "world_px": [
+        14920,
+        1936
+      ]
+    },
+    {
+      "cell": [
+        926,
+        116
+      ],
+      "collision_change": false,
+      "frame": "keeper_shed",
+      "id": "study:926,116:keeper_shed",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14824,
+        1872
+      ]
+    },
+    {
+      "cell": [
+        930,
+        117
+      ],
+      "collision_change": false,
+      "frame": "keeper_shed",
+      "id": "study:930,117:keeper_shed",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14888,
+        1888
+      ]
+    },
+    {
+      "cell": [
+        928,
+        92
+      ],
+      "collision_change": false,
+      "frame": "driftwood_pile",
+      "id": "study:928,92:driftwood_pile",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14856,
+        1488
+      ]
+    },
+    {
+      "cell": [
+        931,
+        93
+      ],
+      "collision_change": false,
+      "frame": "driftwood_pile",
+      "id": "study:931,93:driftwood_pile",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14904,
+        1504
+      ]
+    },
+    {
+      "cell": [
+        925,
+        94
+      ],
+      "collision_change": false,
+      "frame": "driftwood_pile",
+      "id": "study:925,94:driftwood_pile",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14808,
+        1520
+      ]
+    },
+    {
+      "cell": [
+        929,
+        89
+      ],
+      "collision_change": false,
+      "frame": "driftwood_pile",
+      "id": "study:929,89:driftwood_pile",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14872,
+        1440
+      ]
+    },
+    {
+      "cell": [
+        926,
+        90
+      ],
+      "collision_change": false,
+      "frame": "driftwood_pile",
+      "id": "study:926,90:driftwood_pile",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14824,
+        1456
+      ]
+    },
+    {
+      "cell": [
+        932,
+        91
+      ],
+      "collision_change": false,
+      "frame": "driftwood_pile",
+      "id": "study:932,91:driftwood_pile",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14920,
+        1472
+      ]
+    },
+    {
+      "cell": [
+        924,
+        95
+      ],
+      "collision_change": false,
+      "frame": "driftwood_pile",
+      "id": "study:924,95:driftwood_pile",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14792,
+        1536
+      ]
+    },
+    {
+      "cell": [
+        930,
+        96
+      ],
+      "collision_change": false,
+      "frame": "driftwood_pile",
+      "id": "study:930,96:driftwood_pile",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14888,
+        1552
+      ]
+    },
+    {
+      "cell": [
+        938,
+        78
+      ],
+      "collision_change": false,
+      "frame": "driftwood_pile",
+      "id": "study:938,78:driftwood_pile",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        15016,
+        1264
+      ]
+    },
+    {
+      "cell": [
+        941,
+        79
+      ],
+      "collision_change": false,
+      "frame": "driftwood_pile",
+      "id": "study:941,79:driftwood_pile",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        15064,
+        1280
+      ]
+    },
+    {
+      "cell": [
+        935,
+        80
+      ],
+      "collision_change": false,
+      "frame": "driftwood_pile",
+      "id": "study:935,80:driftwood_pile",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14968,
+        1296
+      ]
+    },
+    {
+      "cell": [
+        939,
+        75
+      ],
+      "collision_change": false,
+      "frame": "driftwood_pile",
+      "id": "study:939,75:driftwood_pile",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        15032,
+        1216
+      ]
+    },
+    {
+      "cell": [
+        936,
+        76
+      ],
+      "collision_change": false,
+      "frame": "driftwood_pile",
+      "id": "study:936,76:driftwood_pile",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14984,
+        1232
+      ]
+    },
+    {
+      "cell": [
+        942,
+        77
+      ],
+      "collision_change": false,
+      "frame": "driftwood_pile",
+      "id": "study:942,77:driftwood_pile",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        15080,
+        1248
+      ]
+    },
+    {
+      "cell": [
+        934,
+        81
+      ],
+      "collision_change": false,
+      "frame": "driftwood_pile",
+      "id": "study:934,81:driftwood_pile",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14952,
+        1312
+      ]
+    },
+    {
+      "cell": [
+        940,
+        82
+      ],
+      "collision_change": false,
+      "frame": "driftwood_pile",
+      "id": "study:940,82:driftwood_pile",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        15048,
+        1328
+      ]
+    },
+    {
+      "cell": [
+        912,
+        108
+      ],
+      "collision_change": false,
+      "frame": "driftwood_pile",
+      "id": "study:912,108:driftwood_pile",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14600,
+        1744
+      ]
+    },
+    {
+      "cell": [
+        915,
+        109
+      ],
+      "collision_change": false,
+      "frame": "driftwood_pile",
+      "id": "study:915,109:driftwood_pile",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14648,
+        1760
+      ]
+    },
+    {
+      "cell": [
+        909,
+        110
+      ],
+      "collision_change": false,
+      "frame": "driftwood_pile",
+      "id": "study:909,110:driftwood_pile",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14552,
+        1776
+      ]
+    },
+    {
+      "cell": [
+        913,
+        105
+      ],
+      "collision_change": false,
+      "frame": "driftwood_pile",
+      "id": "study:913,105:driftwood_pile",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14616,
+        1696
+      ]
+    },
+    {
+      "cell": [
+        910,
+        106
+      ],
+      "collision_change": false,
+      "frame": "driftwood_pile",
+      "id": "study:910,106:driftwood_pile",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14568,
+        1712
+      ]
+    },
+    {
+      "cell": [
+        916,
+        107
+      ],
+      "collision_change": false,
+      "frame": "driftwood_pile",
+      "id": "study:916,107:driftwood_pile",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14664,
+        1728
+      ]
+    },
+    {
+      "cell": [
+        908,
+        111
+      ],
+      "collision_change": false,
+      "frame": "driftwood_pile",
+      "id": "study:908,111:driftwood_pile",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14536,
+        1792
+      ]
+    },
+    {
+      "cell": [
+        914,
+        112
+      ],
+      "collision_change": false,
+      "frame": "driftwood_pile",
+      "id": "study:914,112:driftwood_pile",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14632,
+        1808
+      ]
+    },
+    {
+      "cell": [
         926,
         96
       ],
@@ -6811,17 +9183,572 @@
     },
     {
       "cell": [
+        928,
+        97
+      ],
+      "collision_change": false,
+      "frame": "driftwood",
+      "id": "study:928,97:driftwood",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14856,
+        1568
+      ]
+    },
+    {
+      "cell": [
+        924,
+        98
+      ],
+      "collision_change": false,
+      "frame": "driftwood",
+      "id": "study:924,98:driftwood",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14792,
+        1584
+      ]
+    },
+    {
+      "cell": [
+        927,
+        94
+      ],
+      "collision_change": false,
+      "frame": "driftwood",
+      "id": "study:927,94:driftwood",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14840,
+        1520
+      ]
+    },
+    {
+      "cell": [
+        925,
+        95
+      ],
+      "collision_change": false,
+      "frame": "driftwood",
+      "id": "study:925,95:driftwood",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14808,
+        1536
+      ]
+    },
+    {
+      "cell": [
         934,
         84
       ],
       "collision_change": false,
-      "frame": "shell_bar",
-      "id": "study:934,84:shell_bar",
+      "frame": "driftwood",
+      "id": "study:934,84:driftwood",
       "role": "background_scenery",
       "source": "biome_study",
       "world_px": [
         14952,
         1360
+      ]
+    },
+    {
+      "cell": [
+        936,
+        85
+      ],
+      "collision_change": false,
+      "frame": "driftwood",
+      "id": "study:936,85:driftwood",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14984,
+        1376
+      ]
+    },
+    {
+      "cell": [
+        932,
+        86
+      ],
+      "collision_change": false,
+      "frame": "driftwood",
+      "id": "study:932,86:driftwood",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14920,
+        1392
+      ]
+    },
+    {
+      "cell": [
+        935,
+        82
+      ],
+      "collision_change": false,
+      "frame": "driftwood",
+      "id": "study:935,82:driftwood",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14968,
+        1328
+      ]
+    },
+    {
+      "cell": [
+        933,
+        83
+      ],
+      "collision_change": false,
+      "frame": "driftwood",
+      "id": "study:933,83:driftwood",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14936,
+        1344
+      ]
+    },
+    {
+      "cell": [
+        906,
+        92
+      ],
+      "collision_change": false,
+      "frame": "storm_glass_cluster",
+      "id": "study:906,92:storm_glass_cluster",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14504,
+        1488
+      ]
+    },
+    {
+      "cell": [
+        909,
+        93
+      ],
+      "collision_change": false,
+      "frame": "storm_glass_cluster",
+      "id": "study:909,93:storm_glass_cluster",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14552,
+        1504
+      ]
+    },
+    {
+      "cell": [
+        903,
+        94
+      ],
+      "collision_change": false,
+      "frame": "storm_glass_cluster",
+      "id": "study:903,94:storm_glass_cluster",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14456,
+        1520
+      ]
+    },
+    {
+      "cell": [
+        907,
+        89
+      ],
+      "collision_change": false,
+      "frame": "storm_glass_cluster",
+      "id": "study:907,89:storm_glass_cluster",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14520,
+        1440
+      ]
+    },
+    {
+      "cell": [
+        904,
+        90
+      ],
+      "collision_change": false,
+      "frame": "storm_glass_cluster",
+      "id": "study:904,90:storm_glass_cluster",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14472,
+        1456
+      ]
+    },
+    {
+      "cell": [
+        910,
+        91
+      ],
+      "collision_change": false,
+      "frame": "storm_glass_cluster",
+      "id": "study:910,91:storm_glass_cluster",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14568,
+        1472
+      ]
+    },
+    {
+      "cell": [
+        902,
+        95
+      ],
+      "collision_change": false,
+      "frame": "storm_glass_cluster",
+      "id": "study:902,95:storm_glass_cluster",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14440,
+        1536
+      ]
+    },
+    {
+      "cell": [
+        908,
+        96
+      ],
+      "collision_change": false,
+      "frame": "storm_glass_cluster",
+      "id": "study:908,96:storm_glass_cluster",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14536,
+        1552
+      ]
+    },
+    {
+      "cell": [
+        918,
+        100
+      ],
+      "collision_change": false,
+      "frame": "storm_glass_cluster",
+      "id": "study:918,100:storm_glass_cluster",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14696,
+        1616
+      ]
+    },
+    {
+      "cell": [
+        921,
+        101
+      ],
+      "collision_change": false,
+      "frame": "storm_glass_cluster",
+      "id": "study:921,101:storm_glass_cluster",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14744,
+        1632
+      ]
+    },
+    {
+      "cell": [
+        915,
+        102
+      ],
+      "collision_change": false,
+      "frame": "storm_glass_cluster",
+      "id": "study:915,102:storm_glass_cluster",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14648,
+        1648
+      ]
+    },
+    {
+      "cell": [
+        919,
+        97
+      ],
+      "collision_change": false,
+      "frame": "storm_glass_cluster",
+      "id": "study:919,97:storm_glass_cluster",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14712,
+        1568
+      ]
+    },
+    {
+      "cell": [
+        916,
+        98
+      ],
+      "collision_change": false,
+      "frame": "storm_glass_cluster",
+      "id": "study:916,98:storm_glass_cluster",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14664,
+        1584
+      ]
+    },
+    {
+      "cell": [
+        922,
+        99
+      ],
+      "collision_change": false,
+      "frame": "storm_glass_cluster",
+      "id": "study:922,99:storm_glass_cluster",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14760,
+        1600
+      ]
+    },
+    {
+      "cell": [
+        914,
+        103
+      ],
+      "collision_change": false,
+      "frame": "storm_glass_cluster",
+      "id": "study:914,103:storm_glass_cluster",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14632,
+        1664
+      ]
+    },
+    {
+      "cell": [
+        920,
+        104
+      ],
+      "collision_change": false,
+      "frame": "storm_glass_cluster",
+      "id": "study:920,104:storm_glass_cluster",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14728,
+        1680
+      ]
+    },
+    {
+      "cell": [
+        937,
+        85
+      ],
+      "collision_change": false,
+      "frame": "shell_bar",
+      "id": "study:937,85:shell_bar",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        15000,
+        1376
+      ]
+    },
+    {
+      "cell": [
+        931,
+        86
+      ],
+      "collision_change": false,
+      "frame": "shell_bar",
+      "id": "study:931,86:shell_bar",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14904,
+        1392
+      ]
+    },
+    {
+      "cell": [
+        935,
+        81
+      ],
+      "collision_change": false,
+      "frame": "shell_bar",
+      "id": "study:935,81:shell_bar",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14968,
+        1312
+      ]
+    },
+    {
+      "cell": [
+        932,
+        82
+      ],
+      "collision_change": false,
+      "frame": "shell_bar",
+      "id": "study:932,82:shell_bar",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14920,
+        1328
+      ]
+    },
+    {
+      "cell": [
+        938,
+        83
+      ],
+      "collision_change": false,
+      "frame": "shell_bar",
+      "id": "study:938,83:shell_bar",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        15016,
+        1344
+      ]
+    },
+    {
+      "cell": [
+        930,
+        87
+      ],
+      "collision_change": false,
+      "frame": "shell_bar",
+      "id": "study:930,87:shell_bar",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14888,
+        1408
+      ]
+    },
+    {
+      "cell": [
+        936,
+        88
+      ],
+      "collision_change": false,
+      "frame": "shell_bar",
+      "id": "study:936,88:shell_bar",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14984,
+        1424
+      ]
+    },
+    {
+      "cell": [
+        911,
+        97
+      ],
+      "collision_change": false,
+      "frame": "shell_bar",
+      "id": "study:911,97:shell_bar",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14584,
+        1568
+      ]
+    },
+    {
+      "cell": [
+        905,
+        98
+      ],
+      "collision_change": false,
+      "frame": "shell_bar",
+      "id": "study:905,98:shell_bar",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14488,
+        1584
+      ]
+    },
+    {
+      "cell": [
+        906,
+        94
+      ],
+      "collision_change": false,
+      "frame": "shell_bar",
+      "id": "study:906,94:shell_bar",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14504,
+        1520
+      ]
+    },
+    {
+      "cell": [
+        912,
+        95
+      ],
+      "collision_change": false,
+      "frame": "shell_bar",
+      "id": "study:912,95:shell_bar",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14600,
+        1536
+      ]
+    },
+    {
+      "cell": [
+        904,
+        99
+      ],
+      "collision_change": false,
+      "frame": "shell_bar",
+      "id": "study:904,99:shell_bar",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14472,
+        1600
+      ]
+    },
+    {
+      "cell": [
+        910,
+        100
+      ],
+      "collision_change": false,
+      "frame": "shell_bar",
+      "id": "study:910,100:shell_bar",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14568,
+        1616
       ]
     },
     {
@@ -6841,17 +9768,137 @@
     },
     {
       "cell": [
-        902,
-        76
+        914,
+        113
       ],
       "collision_change": false,
-      "frame": "tree_frost_small",
-      "id": "study:902,76:tree_frost_small",
+      "frame": "salt_windbreak",
+      "id": "study:914,113:salt_windbreak",
       "role": "background_scenery",
       "source": "biome_study",
       "world_px": [
-        14440,
-        1232
+        14632,
+        1824
+      ]
+    },
+    {
+      "cell": [
+        910,
+        114
+      ],
+      "collision_change": false,
+      "frame": "salt_windbreak",
+      "id": "study:910,114:salt_windbreak",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14568,
+        1840
+      ]
+    },
+    {
+      "cell": [
+        913,
+        110
+      ],
+      "collision_change": false,
+      "frame": "salt_windbreak",
+      "id": "study:913,110:salt_windbreak",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14616,
+        1776
+      ]
+    },
+    {
+      "cell": [
+        911,
+        111
+      ],
+      "collision_change": false,
+      "frame": "salt_windbreak",
+      "id": "study:911,111:salt_windbreak",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14584,
+        1792
+      ]
+    },
+    {
+      "cell": [
+        896,
+        104
+      ],
+      "collision_change": false,
+      "frame": "salt_windbreak",
+      "id": "study:896,104:salt_windbreak",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14344,
+        1680
+      ]
+    },
+    {
+      "cell": [
+        898,
+        105
+      ],
+      "collision_change": false,
+      "frame": "salt_windbreak",
+      "id": "study:898,105:salt_windbreak",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14376,
+        1696
+      ]
+    },
+    {
+      "cell": [
+        894,
+        106
+      ],
+      "collision_change": false,
+      "frame": "salt_windbreak",
+      "id": "study:894,106:salt_windbreak",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14312,
+        1712
+      ]
+    },
+    {
+      "cell": [
+        897,
+        102
+      ],
+      "collision_change": false,
+      "frame": "salt_windbreak",
+      "id": "study:897,102:salt_windbreak",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14360,
+        1648
+      ]
+    },
+    {
+      "cell": [
+        895,
+        103
+      ],
+      "collision_change": false,
+      "frame": "salt_windbreak",
+      "id": "study:895,103:salt_windbreak",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14328,
+        1664
       ]
     },
     {
@@ -6871,47 +9918,107 @@
     },
     {
       "cell": [
-        892,
+        893,
         77
       ],
       "collision_change": false,
       "frame": "tree_frost_small",
-      "id": "study:892,77:tree_frost_small",
+      "id": "study:893,77:tree_frost_small",
       "role": "background_scenery",
       "source": "biome_study",
       "world_px": [
-        14280,
+        14296,
         1248
       ]
     },
     {
       "cell": [
-        888,
+        887,
         78
       ],
       "collision_change": false,
       "frame": "tree_frost_small",
-      "id": "study:888,78:tree_frost_small",
+      "id": "study:887,78:tree_frost_small",
       "role": "background_scenery",
       "source": "biome_study",
       "world_px": [
-        14216,
+        14200,
         1264
       ]
     },
     {
       "cell": [
         891,
-        74
+        73
       ],
       "collision_change": false,
       "frame": "tree_frost_small",
-      "id": "study:891,74:tree_frost_small",
+      "id": "study:891,73:tree_frost_small",
       "role": "background_scenery",
       "source": "biome_study",
       "world_px": [
         14264,
+        1184
+      ]
+    },
+    {
+      "cell": [
+        888,
+        74
+      ],
+      "collision_change": false,
+      "frame": "tree_frost_small",
+      "id": "study:888,74:tree_frost_small",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14216,
         1200
+      ]
+    },
+    {
+      "cell": [
+        894,
+        75
+      ],
+      "collision_change": false,
+      "frame": "tree_frost_small",
+      "id": "study:894,75:tree_frost_small",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14312,
+        1216
+      ]
+    },
+    {
+      "cell": [
+        886,
+        79
+      ],
+      "collision_change": false,
+      "frame": "tree_frost_small",
+      "id": "study:886,79:tree_frost_small",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14184,
+        1280
+      ]
+    },
+    {
+      "cell": [
+        892,
+        80
+      ],
+      "collision_change": false,
+      "frame": "tree_frost_small",
+      "id": "study:892,80:tree_frost_small",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14280,
+        1296
       ]
     },
     {
@@ -6931,47 +10038,107 @@
     },
     {
       "cell": [
-        904,
+        905,
         101
       ],
       "collision_change": false,
       "frame": "tree_frost_small",
-      "id": "study:904,101:tree_frost_small",
+      "id": "study:905,101:tree_frost_small",
       "role": "background_scenery",
       "source": "biome_study",
       "world_px": [
-        14472,
+        14488,
         1632
       ]
     },
     {
       "cell": [
-        900,
+        899,
         102
       ],
       "collision_change": false,
       "frame": "tree_frost_small",
-      "id": "study:900,102:tree_frost_small",
+      "id": "study:899,102:tree_frost_small",
       "role": "background_scenery",
       "source": "biome_study",
       "world_px": [
-        14408,
+        14392,
         1648
       ]
     },
     {
       "cell": [
         903,
-        98
+        97
       ],
       "collision_change": false,
       "frame": "tree_frost_small",
-      "id": "study:903,98:tree_frost_small",
+      "id": "study:903,97:tree_frost_small",
       "role": "background_scenery",
       "source": "biome_study",
       "world_px": [
         14456,
+        1568
+      ]
+    },
+    {
+      "cell": [
+        900,
+        98
+      ],
+      "collision_change": false,
+      "frame": "tree_frost_small",
+      "id": "study:900,98:tree_frost_small",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14408,
         1584
+      ]
+    },
+    {
+      "cell": [
+        906,
+        99
+      ],
+      "collision_change": false,
+      "frame": "tree_frost_small",
+      "id": "study:906,99:tree_frost_small",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14504,
+        1600
+      ]
+    },
+    {
+      "cell": [
+        898,
+        103
+      ],
+      "collision_change": false,
+      "frame": "tree_frost_small",
+      "id": "study:898,103:tree_frost_small",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14376,
+        1664
+      ]
+    },
+    {
+      "cell": [
+        904,
+        104
+      ],
+      "collision_change": false,
+      "frame": "tree_frost_small",
+      "id": "study:904,104:tree_frost_small",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14472,
+        1680
       ]
     },
     {
@@ -6991,167 +10158,557 @@
     },
     {
       "cell": [
-        916,
+        917,
         71
       ],
       "collision_change": false,
       "frame": "tree_frost_small",
-      "id": "study:916,71:tree_frost_small",
+      "id": "study:917,71:tree_frost_small",
       "role": "background_scenery",
       "source": "biome_study",
       "world_px": [
-        14664,
+        14680,
         1152
       ]
     },
     {
       "cell": [
-        912,
+        911,
         72
       ],
       "collision_change": false,
       "frame": "tree_frost_small",
-      "id": "study:912,72:tree_frost_small",
+      "id": "study:911,72:tree_frost_small",
       "role": "background_scenery",
       "source": "biome_study",
       "world_px": [
-        14600,
+        14584,
         1168
       ]
     },
     {
       "cell": [
         915,
-        68
+        67
       ],
       "collision_change": false,
       "frame": "tree_frost_small",
-      "id": "study:915,68:tree_frost_small",
+      "id": "study:915,67:tree_frost_small",
       "role": "background_scenery",
       "source": "biome_study",
       "world_px": [
         14648,
+        1088
+      ]
+    },
+    {
+      "cell": [
+        912,
+        68
+      ],
+      "collision_change": false,
+      "frame": "tree_frost_small",
+      "id": "study:912,68:tree_frost_small",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14600,
         1104
       ]
     },
     {
       "cell": [
-        928,
-        92
+        918,
+        69
       ],
       "collision_change": false,
-      "frame": "driftwood",
-      "id": "study:928,92:driftwood",
+      "frame": "tree_frost_small",
+      "id": "study:918,69:tree_frost_small",
       "role": "background_scenery",
       "source": "biome_study",
       "world_px": [
-        14856,
-        1488
+        14696,
+        1120
       ]
     },
     {
       "cell": [
-        930,
-        93
+        910,
+        73
       ],
       "collision_change": false,
-      "frame": "driftwood",
-      "id": "study:930,93:driftwood",
+      "frame": "tree_frost_small",
+      "id": "study:910,73:tree_frost_small",
       "role": "background_scenery",
       "source": "biome_study",
       "world_px": [
-        14888,
+        14568,
+        1184
+      ]
+    },
+    {
+      "cell": [
+        916,
+        74
+      ],
+      "collision_change": false,
+      "frame": "tree_frost_small",
+      "id": "study:916,74:tree_frost_small",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14664,
+        1200
+      ]
+    },
+    {
+      "cell": [
+        896,
+        96
+      ],
+      "collision_change": false,
+      "frame": "understory_fern",
+      "id": "study:896,96:understory_fern",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14344,
+        1552
+      ]
+    },
+    {
+      "cell": [
+        899,
+        97
+      ],
+      "collision_change": false,
+      "frame": "understory_fern",
+      "id": "study:899,97:understory_fern",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14392,
+        1568
+      ]
+    },
+    {
+      "cell": [
+        893,
+        98
+      ],
+      "collision_change": false,
+      "frame": "understory_fern",
+      "id": "study:893,98:understory_fern",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14296,
+        1584
+      ]
+    },
+    {
+      "cell": [
+        897,
+        93
+      ],
+      "collision_change": false,
+      "frame": "understory_fern",
+      "id": "study:897,93:understory_fern",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14360,
         1504
       ]
     },
     {
       "cell": [
-        926,
+        894,
         94
       ],
       "collision_change": false,
-      "frame": "driftwood",
-      "id": "study:926,94:driftwood",
+      "frame": "understory_fern",
+      "id": "study:894,94:understory_fern",
       "role": "background_scenery",
       "source": "biome_study",
       "world_px": [
-        14824,
+        14312,
         1520
       ]
     },
     {
       "cell": [
-        929,
-        90
+        900,
+        95
       ],
       "collision_change": false,
-      "frame": "driftwood",
-      "id": "study:929,90:driftwood",
+      "frame": "understory_fern",
+      "id": "study:900,95:understory_fern",
       "role": "background_scenery",
       "source": "biome_study",
       "world_px": [
-        14872,
-        1456
+        14408,
+        1536
       ]
     },
     {
       "cell": [
-        938,
-        78
+        892,
+        99
       ],
       "collision_change": false,
-      "frame": "driftwood",
-      "id": "study:938,78:driftwood",
+      "frame": "understory_fern",
+      "id": "study:892,99:understory_fern",
       "role": "background_scenery",
       "source": "biome_study",
       "world_px": [
-        15016,
-        1264
+        14280,
+        1600
       ]
     },
     {
       "cell": [
-        940,
-        79
+        898,
+        100
       ],
       "collision_change": false,
-      "frame": "driftwood",
-      "id": "study:940,79:driftwood",
+      "frame": "understory_fern",
+      "id": "study:898,100:understory_fern",
       "role": "background_scenery",
       "source": "biome_study",
       "world_px": [
-        15048,
-        1280
+        14376,
+        1616
+      ]
+    },
+    {
+      "cell": [
+        908,
+        108
+      ],
+      "collision_change": false,
+      "frame": "understory_fern",
+      "id": "study:908,108:understory_fern",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14536,
+        1744
+      ]
+    },
+    {
+      "cell": [
+        911,
+        109
+      ],
+      "collision_change": false,
+      "frame": "understory_fern",
+      "id": "study:911,109:understory_fern",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14584,
+        1760
+      ]
+    },
+    {
+      "cell": [
+        905,
+        110
+      ],
+      "collision_change": false,
+      "frame": "understory_fern",
+      "id": "study:905,110:understory_fern",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14488,
+        1776
+      ]
+    },
+    {
+      "cell": [
+        909,
+        105
+      ],
+      "collision_change": false,
+      "frame": "understory_fern",
+      "id": "study:909,105:understory_fern",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14552,
+        1696
+      ]
+    },
+    {
+      "cell": [
+        906,
+        106
+      ],
+      "collision_change": false,
+      "frame": "understory_fern",
+      "id": "study:906,106:understory_fern",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14504,
+        1712
+      ]
+    },
+    {
+      "cell": [
+        912,
+        107
+      ],
+      "collision_change": false,
+      "frame": "understory_fern",
+      "id": "study:912,107:understory_fern",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14600,
+        1728
+      ]
+    },
+    {
+      "cell": [
+        904,
+        111
+      ],
+      "collision_change": false,
+      "frame": "understory_fern",
+      "id": "study:904,111:understory_fern",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14472,
+        1792
+      ]
+    },
+    {
+      "cell": [
+        910,
+        112
+      ],
+      "collision_change": false,
+      "frame": "understory_fern",
+      "id": "study:910,112:understory_fern",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14568,
+        1808
       ]
     },
     {
       "cell": [
         936,
-        80
+        108
       ],
       "collision_change": false,
-      "frame": "driftwood",
-      "id": "study:936,80:driftwood",
+      "frame": "karst_boulder",
+      "id": "study:936,108:karst_boulder",
       "role": "background_scenery",
       "source": "biome_study",
       "world_px": [
         14984,
-        1296
+        1744
       ]
     },
     {
       "cell": [
-        939,
-        76
+        938,
+        109
       ],
       "collision_change": false,
-      "frame": "driftwood",
-      "id": "study:939,76:driftwood",
+      "frame": "karst_boulder",
+      "id": "study:938,109:karst_boulder",
       "role": "background_scenery",
       "source": "biome_study",
       "world_px": [
-        15032,
-        1232
+        15016,
+        1760
+      ]
+    },
+    {
+      "cell": [
+        934,
+        110
+      ],
+      "collision_change": false,
+      "frame": "karst_boulder",
+      "id": "study:934,110:karst_boulder",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14952,
+        1776
+      ]
+    },
+    {
+      "cell": [
+        937,
+        106
+      ],
+      "collision_change": false,
+      "frame": "karst_boulder",
+      "id": "study:937,106:karst_boulder",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        15000,
+        1712
+      ]
+    },
+    {
+      "cell": [
+        935,
+        107
+      ],
+      "collision_change": false,
+      "frame": "karst_boulder",
+      "id": "study:935,107:karst_boulder",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14968,
+        1728
+      ]
+    },
+    {
+      "cell": [
+        920,
+        124
+      ],
+      "collision_change": false,
+      "frame": "karst_boulder",
+      "id": "study:920,124:karst_boulder",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14728,
+        2000
+      ]
+    },
+    {
+      "cell": [
+        922,
+        125
+      ],
+      "collision_change": false,
+      "frame": "karst_boulder",
+      "id": "study:922,125:karst_boulder",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14760,
+        2016
+      ]
+    },
+    {
+      "cell": [
+        918,
+        126
+      ],
+      "collision_change": false,
+      "frame": "karst_boulder",
+      "id": "study:918,126:karst_boulder",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14696,
+        2032
+      ]
+    },
+    {
+      "cell": [
+        921,
+        122
+      ],
+      "collision_change": false,
+      "frame": "karst_boulder",
+      "id": "study:921,122:karst_boulder",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14744,
+        1968
+      ]
+    },
+    {
+      "cell": [
+        919,
+        123
+      ],
+      "collision_change": false,
+      "frame": "karst_boulder",
+      "id": "study:919,123:karst_boulder",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14712,
+        1984
+      ]
+    },
+    {
+      "cell": [
+        916,
+        114
+      ],
+      "collision_change": false,
+      "frame": "warning_stakes",
+      "id": "study:916,114:warning_stakes",
+      "role": "physical_danger",
+      "source": "biome_study",
+      "world_px": [
+        14664,
+        1840
+      ]
+    },
+    {
+      "cell": [
+        918,
+        115
+      ],
+      "collision_change": false,
+      "frame": "warning_stakes",
+      "id": "study:918,115:warning_stakes",
+      "role": "physical_danger",
+      "source": "biome_study",
+      "world_px": [
+        14696,
+        1856
+      ]
+    },
+    {
+      "cell": [
+        917,
+        112
+      ],
+      "collision_change": false,
+      "frame": "warning_stakes",
+      "id": "study:917,112:warning_stakes",
+      "role": "physical_danger",
+      "source": "biome_study",
+      "world_px": [
+        14680,
+        1808
+      ]
+    },
+    {
+      "cell": [
+        915,
+        113
+      ],
+      "collision_change": false,
+      "frame": "warning_stakes",
+      "id": "study:915,113:warning_stakes",
+      "role": "physical_danger",
+      "source": "biome_study",
+      "world_px": [
+        14648,
+        1824
       ]
     }
   ],

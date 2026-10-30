@@ -50,12 +50,16 @@
   "collision_change": false,
   "counts": {
     "bank_overlays": 0,
+    "causeway_cells": 0,
+    "detail_overlays": 0,
     "ground_cells": 2688,
     "lights": 2,
     "overlays": 33,
+    "pier_cells": 0,
     "props": 35,
     "road_cells": 33,
-    "road_overlays": 33
+    "road_overlays": 33,
+    "track_cells": 0
   },
   "economy_change": false,
   "ground": {
@@ -3196,9 +3200,9 @@
   ],
   "owner": "A1",
   "pins": {
-    "atlas_sha256": "a2b7d35da814438957fdf8433aeff633e71f392bb6696faa3ef07c894536ea9c",
+    "atlas_sha256": "83d69373ca6c1258e8727800d0aa0c288851c34d25539c69c21ec9f5fc9d769a",
     "corridor_sha256": "9d3909b0625bdf6239a760fdf2ac982d0ede0314491cab315d7268d42ddc232f",
-    "grammar_sha256": "5112e317f523c52426974e04dba203ac1b3ea89eb55918cced4e7ed896b44eb1",
+    "grammar_sha256": "a5cecea7d749b56d7e8b6508bd9e880b3a70a92a97f0a06ab11fe81de965b53a",
     "source_sha256": "2306757d860abbe63022baead2494417f9b53c1a3ed2dc5567afd7c74c83db73"
   },
   "production_native_playable": false,

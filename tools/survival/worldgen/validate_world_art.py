@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from compile_world_art import Layers, load_plan
+
 ROOT = Path(__file__).resolve().parents[3]
 ART = ROOT / "data/survival/world/art"
 WORLD = ROOT / "data/survival/world"
@@ -42,6 +44,7 @@ def validate() -> dict:
     if index["atlas_sha256"] != sha(ART / "atlas.v1.json") or index["grammar_sha256"] != sha(ART / "world_art_grammar.v1.json"):
         errors.append("presentation index pins stale atlas/grammar")
     plan = load(WORLD / "world_plan.v1.json")
+    layers = Layers(plan)
     nodes = {n["node_id"]: n for n in plan["resource_nodes"]}
     corridor = load(WORLD / "corridor/crown_roadside.corridor.v1.json")
     required = {tuple(c) for c in corridor["route"]["required_nav_cells"]}
@@ -102,10 +105,24 @@ def validate() -> dict:
             if not lf.get("reason") or lf.get("cells", 0) <= 0:
                 errors.append(f"landform lacks causal reason/cells: {lf.get('id')}")
         for o in doc.get("overlays", []):
-            if o.get("layer") not in ("road", "bank", "boardwalk", "bridge", "causeway") or o["frame"] not in atlas["terrain"]:
+            if o.get("layer") not in ("road", "bank", "boardwalk", "bridge", "causeway", "detail") or o["frame"] not in atlas["terrain"]:
                 errors.append(f"overlay invalid: {o}")
         if doc["counts"].get("road_overlays", 0) != doc["counts"].get("road_cells", 0):
             errors.append(f"road overlay count mismatch: {doc['treatment_id']}")
+        if doc["treatment_id"].endswith("_region_window"):
+            water_tokens = {"lake", "river", "tidal", "cenote", "brine", "water", "ocean"}
+            ox, oy = doc["window"]["origin_cell"]
+            for y, row in enumerate(doc["ground"]["rows"]):
+                for x, frame in enumerate(row):
+                    c = [ox + x, oy + y]
+                    if layers.surface_name(c) == "water" and layers.value(c, "walk") == 0:
+                        if not (set(frame.split("_")) & water_tokens):
+                            errors.append(f"impassable water visually covered by {frame} at {c}: {doc['treatment_id']}")
+            for o in doc.get("overlays", []):
+                if o.get("layer") in ("road", "boardwalk", "causeway", "bridge"):
+                    c = o["cell"]
+                    if layers.value(c, "road") == 0 and layers.surface_name(c) != "bridge":
+                        errors.append(f"maintained overlay outside source road/bridge at {c}: {doc['treatment_id']}")
     runtime = (ROOT / "game/world_art/world_art_presentation.gd").read_text(encoding="utf-8")
     for token in ("func bind_focus", "func _process", "occlusion.step(delta)", 'set_meta("frame_name"', "WORLD_LIGHT_MASK", "_count_collisions", "return _fail"):
         if token not in runtime:

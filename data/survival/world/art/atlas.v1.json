@@ -1,7 +1,7 @@
 {
   "file_sha256": {
-    "props": "633a82a6b6c71ab50ed8b076aed40cb778dbfab93c18b3d0e9717066f31c1a27",
-    "terrain": "e222e9778d44cfe1f31d67684abd59b0db53e2e869e8f489299efeb550ba02a1"
+    "props": "8d4acf4028e0e065b901e78c59c65e5a68677fb75d46c04c7e5a029a76d27324",
+    "terrain": "6128d8f41abe6962fe705431db20e762e0cca613ffc3eca29065727422737d1c"
   },
   "inherited_frames": {
     "bush": {
@@ -108,14 +108,14 @@
   "perspective": "top-down three-quarter, feet anchor bottom-center, integer scale only",
   "props": {
     "abyssal_pearl": [
-      938,
-      186,
+      364,
+      336,
       22,
       18
     ],
     "awning": [
-      554,
-      284,
+      988,
+      336,
       24,
       24
     ],
@@ -126,8 +126,8 @@
       42
     ],
     "basalt_chunk": [
-      170,
-      284,
+      604,
+      336,
       22,
       18
     ],
@@ -138,38 +138,38 @@
       24
     ],
     "bleached_reeds": [
-      218,
-      284,
+      652,
+      336,
       24,
       20
     ],
     "boardwalk": [
-      866,
-      284,
+      288,
+      450,
       24,
       24
     ],
     "boardwalk_post": [
-      398,
-      284,
+      832,
+      336,
       24,
       24
     ],
     "bog_iron": [
-      26,
-      284,
+      460,
+      336,
       22,
       18
     ],
     "bog_pool": [
-      632,
-      284,
+      54,
+      450,
       24,
       24
     ],
     "bush": [
-      2,
-      344,
+      524,
+      512,
       26,
       22
     ],
@@ -215,51 +215,69 @@
       24,
       30
     ],
+    "canopy_tree": [
+      746,
+      450,
+      64,
+      60
+    ],
     "causeway_stone": [
-      814,
-      284,
+      236,
+      450,
       24,
       24
     ],
     "cenote_pool": [
-      658,
-      284,
+      80,
+      450,
       24,
       24
     ],
     "cenote_rim": [
-      294,
-      284,
+      728,
+      336,
       24,
       20
     ],
+    "cenote_steps": [
+      186,
+      512,
+      48,
+      32
+    ],
     "chimney_stack": [
-      528,
-      284,
+      962,
+      336,
       24,
       24
     ],
     "cinder_cone": [
-      710,
-      284,
+      132,
+      450,
       24,
       24
     ],
     "clay_lens": [
-      98,
-      284,
+      532,
+      336,
       22,
       18
     ],
     "column_broken": [
-      188,
-      344,
+      710,
+      512,
       20,
       22
     ],
+    "cooling_trough": [
+      700,
+      450,
+      44,
+      26
+    ],
     "copper_vein": [
-      794,
-      186,
+      220,
+      336,
       22,
       18
     ],
@@ -269,11 +287,23 @@
       34,
       22
     ],
+    "dock_small": [
+      454,
+      450,
+      48,
+      30
+    ],
     "driftwood": [
       836,
       108,
       30,
       12
+    ],
+    "driftwood_pile": [
+      148,
+      512,
+      36,
+      20
     ],
     "drying_rack": [
       290,
@@ -282,14 +312,14 @@
       30
     ],
     "fen_snag": [
-      736,
-      284,
+      158,
+      450,
       24,
       24
     ],
     "fen_venom": [
-      50,
-      284,
+      484,
+      336,
       22,
       18
     ],
@@ -311,15 +341,33 @@
       20,
       14
     ],
+    "ferry_boat": [
+      504,
+      450,
+      56,
+      28
+    ],
+    "fish_trap": [
+      562,
+      450,
+      24,
+      20
+    ],
+    "forge_slag_heap": [
+      588,
+      450,
+      36,
+      26
+    ],
     "freshwater_pearl": [
-      122,
-      284,
+      556,
+      336,
       22,
       18
     ],
     "gas_vent": [
-      194,
-      284,
+      628,
+      336,
       22,
       18
     ],
@@ -330,14 +378,14 @@
       30
     ],
     "hardwood_log": [
-      842,
-      186,
+      268,
+      336,
       22,
       18
     ],
     "heat_shimmer": [
-      892,
-      284,
+      314,
+      450,
       24,
       24
     ],
@@ -353,9 +401,15 @@
       44,
       40
     ],
+    "karst_boulder": [
+      930,
+      450,
+      40,
+      34
+    ],
     "karst_herb": [
-      986,
-      186,
+      412,
+      336,
       22,
       18
     ],
@@ -365,17 +419,35 @@
       26,
       40
     ],
+    "keeper_shed": [
+      52,
+      512,
+      64,
+      48
+    ],
     "lamp": [
       714,
       2,
       16,
       34
     ],
+    "lantern_post": [
+      286,
+      512,
+      16,
+      32
+    ],
     "liana": [
-      762,
-      284,
+      184,
+      450,
       24,
       24
+    ],
+    "liana_curtain": [
+      896,
+      450,
+      32,
+      50
     ],
     "light_pool": [
       224,
@@ -384,8 +456,8 @@
       40
     ],
     "limestone_chunk": [
-      962,
-      186,
+      388,
+      336,
       22,
       18
     ],
@@ -402,16 +474,16 @@
       84
     ],
     "lm_ashwater_pump": [
-      632,
-      186,
-      88,
-      72
+      2,
+      336,
+      144,
+      112
     ],
     "lm_ember_forge": [
-      134,
-      186,
-      112,
-      88
+      198,
+      206,
+      160,
+      120
     ],
     "lm_frost_shrine": [
       84,
@@ -420,22 +492,22 @@
       68
     ],
     "lm_glasswind_light": [
-      76,
-      186,
-      56,
-      96
+      116,
+      206,
+      80,
+      128
     ],
     "lm_mere_boathouse": [
       868,
       108,
-      88,
-      72
+      128,
+      96
     ],
     "lm_mere_causeway": [
       2,
-      186,
-      72,
-      48
+      206,
+      112,
+      72
     ],
     "lm_mill_house": [
       582,
@@ -450,10 +522,10 @@
       60
     ],
     "lm_pearl_customs": [
-      452,
-      186,
-      96,
-      76
+      652,
+      206,
+      144,
+      112
     ],
     "lm_quarry_workface": [
       418,
@@ -462,22 +534,22 @@
       64
     ],
     "lm_saffron_salt_works": [
-      248,
-      186,
-      96,
-      64
+      360,
+      206,
+      144,
+      96
     ],
     "lm_sunken_cenote": [
-      550,
-      186,
-      80,
-      64
+      798,
+      206,
+      128,
+      96
     ],
     "lm_verdant_temple": [
-      346,
-      186,
-      104,
-      88
+      506,
+      206,
+      144,
+      120
     ],
     "lm_waystation": [
       532,
@@ -497,6 +569,12 @@
       30,
       26
     ],
+    "mangrove_tree": [
+      366,
+      450,
+      48,
+      56
+    ],
     "mill_wheel": [
       142,
       108,
@@ -504,22 +582,28 @@
       56
     ],
     "mooring_post": [
-      372,
-      284,
+      806,
+      336,
       24,
       24
     ],
     "net_rack": [
-      424,
-      284,
+      858,
+      336,
       24,
       24
     ],
     "obsidian_shard": [
-      146,
-      284,
+      580,
+      336,
       22,
       18
+    ],
+    "orchard_wall": [
+      236,
+      512,
+      48,
+      24
     ],
     "ore_skarn": [
       842,
@@ -534,26 +618,50 @@
       40
     ],
     "pearl_bed": [
-      914,
-      186,
+      340,
+      336,
       22,
       18
     ],
     "peat_cut": [
-      2,
-      284,
+      436,
+      336,
       22,
       18
     ],
+    "pier_rail": [
+      304,
+      512,
+      24,
+      16
+    ],
+    "pipe_run": [
+      626,
+      450,
+      44,
+      22
+    ],
     "pump_pipe": [
-      502,
-      284,
+      936,
+      336,
       24,
       24
     ],
+    "pump_tank": [
+      378,
+      512,
+      40,
+      48
+    ],
+    "reed_bed": [
+      416,
+      450,
+      36,
+      26
+    ],
     "reed_bundle": [
-      74,
-      284,
+      508,
+      336,
       22,
       18
     ],
@@ -570,74 +678,92 @@
       24
     ],
     "rock_a": [
-      30,
-      344,
+      552,
+      512,
       26,
       20
     ],
     "rock_c": [
-      58,
-      344,
+      580,
+      512,
       20,
       15
     ],
     "rock_e": [
-      80,
-      344,
+      602,
+      512,
       40,
       30
     ],
+    "root_arch": [
+      846,
+      450,
+      48,
+      42
+    ],
     "rope_bridge": [
-      840,
-      284,
+      262,
+      450,
       24,
       24
     ],
     "rubber_tap": [
-      866,
-      186,
+      292,
+      336,
       22,
       18
     ],
     "salt_crust_prop": [
-      818,
-      186,
+      244,
+      336,
       22,
       18
     ],
-    "salt_rake": [
+    "salt_heap": [
+      972,
       450,
-      284,
+      32,
+      24
+    ],
+    "salt_rake": [
+      884,
+      336,
       24,
       24
     ],
     "salt_windbreak": [
-      580,
-      284,
+      2,
+      450,
       24,
       24
     ],
+    "shade_sail": [
+      2,
+      512,
+      48,
+      34
+    ],
     "shell_bar": [
-      684,
-      284,
+      106,
+      450,
       24,
       24
     ],
     "signpost": [
-      122,
-      344,
+      644,
+      512,
       26,
       26
     ],
     "silica_placer": [
-      722,
-      186,
+      148,
+      336,
       22,
       18
     ],
     "sluice_gate": [
-      476,
-      284,
+      910,
+      336,
       24,
       24
     ],
@@ -654,28 +780,40 @@
       18
     ],
     "spore_cluster": [
-      244,
-      284,
+      678,
+      336,
       22,
       18
     ],
+    "spore_mushroom": [
+      420,
+      512,
+      24,
+      22
+    ],
     "stilt_walk": [
-      788,
-      284,
+      210,
+      450,
       24,
       24
     ],
     "stone_causeway": [
-      918,
-      284,
+      340,
+      450,
       24,
       24
     ],
     "storm_glass": [
-      746,
-      186,
+      172,
+      336,
       22,
       18
+    ],
+    "storm_glass_cluster": [
+      118,
+      512,
+      28,
+      24
     ],
     "stump": [
       396,
@@ -684,14 +822,14 @@
       18
     ],
     "sulfur_crust": [
-      346,
-      284,
+      780,
+      336,
       24,
       20
     ],
     "sulfur_vent": [
-      770,
-      186,
+      196,
+      336,
       22,
       18
     ],
@@ -702,20 +840,26 @@
       46
     ],
     "tidal_wrack": [
-      606,
-      284,
+      28,
+      450,
       24,
       24
     ],
     "tide_gauge": [
-      268,
-      284,
+      702,
+      336,
       24,
       20
     ],
+    "tide_gauge_large": [
+      356,
+      512,
+      20,
+      40
+    ],
     "toxic_pool_edge": [
-      320,
-      284,
+      754,
+      336,
       24,
       20
     ],
@@ -726,8 +870,8 @@
       64
     ],
     "tree_dead": [
-      944,
-      284,
+      446,
+      512,
       40,
       58
     ],
@@ -750,22 +894,40 @@
       64
     ],
     "tree_pine": [
-      986,
-      284,
+      488,
+      512,
       34,
       58
     ],
+    "understory_fern": [
+      812,
+      450,
+      32,
+      28
+    ],
     "venom_sac": [
-      890,
-      186,
+      316,
+      336,
       22,
       18
     ],
+    "vent_stack": [
+      672,
+      450,
+      26,
+      44
+    ],
     "wall_stub": [
-      150,
-      344,
+      672,
+      512,
       36,
       22
+    ],
+    "warning_stakes": [
+      330,
+      512,
+      24,
+      20
     ],
     "whetstone": [
       200,
@@ -776,8 +938,8 @@
   },
   "schema": "soh.world.art_atlas.v1",
   "sha256": {
-    "props": "bc2cfd84c5e7cdd7f84ef4b63f84618f9b6c890ee64712e593d4f85be3c1cb1d",
-    "terrain": "3aabbd597507ed2e4c2caa3c6b891193cc8094bd277a32e76457b8490010e5dd"
+    "props": "2754d0a3d6db0cf83f8464c259af64fd499a0d042cb9d5e60b3f1f12898e3f59",
+    "terrain": "272bb4ab2e49532307155313a1b8e78b4afee8c717296ef3f29f2c738ecd2cdc"
   },
   "terrain": {
     "ash_0": [
@@ -1789,32 +1951,104 @@
       16
     ],
     "boardwalk_ew": [
-      48,
-      704,
+      368,
+      816,
       16,
       16
     ],
     "boardwalk_junction": [
-      64,
-      704,
+      384,
+      816,
       16,
       16
     ],
     "boardwalk_ns": [
-      32,
-      704,
+      352,
+      816,
+      16,
+      16
+    ],
+    "brine_0": [
+      96,
+      192,
+      16,
+      16
+    ],
+    "brine_1": [
+      112,
+      192,
+      16,
+      16
+    ],
+    "brine_2": [
+      128,
+      192,
+      16,
+      16
+    ],
+    "brine_3": [
+      144,
+      192,
       16,
       16
     ],
     "causeway_ew": [
-      96,
-      704,
+      416,
+      816,
+      16,
+      16
+    ],
+    "causeway_ew_0": [
+      320,
+      848,
+      16,
+      16
+    ],
+    "causeway_ew_1": [
+      336,
+      848,
+      16,
+      16
+    ],
+    "causeway_ew_2": [
+      352,
+      848,
+      16,
+      16
+    ],
+    "causeway_ew_3": [
+      368,
+      848,
       16,
       16
     ],
     "causeway_ns": [
-      80,
-      704,
+      400,
+      816,
+      16,
+      16
+    ],
+    "causeway_ns_0": [
+      256,
+      848,
+      16,
+      16
+    ],
+    "causeway_ns_1": [
+      272,
+      848,
+      16,
+      16
+    ],
+    "causeway_ns_2": [
+      288,
+      848,
+      16,
+      16
+    ],
+    "causeway_ns_3": [
+      304,
+      848,
       16,
       16
     ],
@@ -1866,2523 +2100,3603 @@
       16,
       16
     ],
+    "coast_dune_brine_1": [
+      448,
+      768,
+      16,
+      16
+    ],
+    "coast_dune_brine_10": [
+      80,
+      784,
+      16,
+      16
+    ],
+    "coast_dune_brine_11": [
+      96,
+      784,
+      16,
+      16
+    ],
+    "coast_dune_brine_12": [
+      112,
+      784,
+      16,
+      16
+    ],
+    "coast_dune_brine_13": [
+      128,
+      784,
+      16,
+      16
+    ],
+    "coast_dune_brine_14": [
+      144,
+      784,
+      16,
+      16
+    ],
+    "coast_dune_brine_15": [
+      160,
+      784,
+      16,
+      16
+    ],
+    "coast_dune_brine_2": [
+      464,
+      768,
+      16,
+      16
+    ],
+    "coast_dune_brine_3": [
+      480,
+      768,
+      16,
+      16
+    ],
+    "coast_dune_brine_4": [
+      496,
+      768,
+      16,
+      16
+    ],
+    "coast_dune_brine_5": [
+      0,
+      784,
+      16,
+      16
+    ],
+    "coast_dune_brine_6": [
+      16,
+      784,
+      16,
+      16
+    ],
+    "coast_dune_brine_7": [
+      32,
+      784,
+      16,
+      16
+    ],
+    "coast_dune_brine_8": [
+      48,
+      784,
+      16,
+      16
+    ],
+    "coast_dune_brine_9": [
+      64,
+      784,
+      16,
+      16
+    ],
     "coast_dune_cenote_1": [
-      304,
-      688,
+      208,
+      768,
       16,
       16
     ],
     "coast_dune_cenote_10": [
-      448,
-      688,
+      352,
+      768,
       16,
       16
     ],
     "coast_dune_cenote_11": [
-      464,
-      688,
+      368,
+      768,
       16,
       16
     ],
     "coast_dune_cenote_12": [
-      480,
-      688,
+      384,
+      768,
       16,
       16
     ],
     "coast_dune_cenote_13": [
-      496,
-      688,
+      400,
+      768,
       16,
       16
     ],
     "coast_dune_cenote_14": [
-      0,
-      704,
+      416,
+      768,
       16,
       16
     ],
     "coast_dune_cenote_15": [
+      432,
+      768,
+      16,
+      16
+    ],
+    "coast_dune_cenote_2": [
+      224,
+      768,
+      16,
+      16
+    ],
+    "coast_dune_cenote_3": [
+      240,
+      768,
+      16,
+      16
+    ],
+    "coast_dune_cenote_4": [
+      256,
+      768,
+      16,
+      16
+    ],
+    "coast_dune_cenote_5": [
+      272,
+      768,
+      16,
+      16
+    ],
+    "coast_dune_cenote_6": [
+      288,
+      768,
+      16,
+      16
+    ],
+    "coast_dune_cenote_7": [
+      304,
+      768,
+      16,
+      16
+    ],
+    "coast_dune_cenote_8": [
+      320,
+      768,
+      16,
+      16
+    ],
+    "coast_dune_cenote_9": [
+      336,
+      768,
+      16,
+      16
+    ],
+    "coast_dune_lake_1": [
+      0,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_lake_10": [
+      144,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_lake_11": [
+      160,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_lake_12": [
+      176,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_lake_13": [
+      192,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_lake_14": [
+      208,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_lake_15": [
+      224,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_lake_2": [
+      16,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_lake_3": [
+      32,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_lake_4": [
+      48,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_lake_5": [
+      64,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_lake_6": [
+      80,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_lake_7": [
+      96,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_lake_8": [
+      112,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_lake_9": [
+      128,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_river_1": [
+      240,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_river_10": [
+      384,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_river_11": [
+      400,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_river_12": [
+      416,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_river_13": [
+      432,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_river_14": [
+      448,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_river_15": [
+      464,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_river_2": [
+      256,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_river_3": [
+      272,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_river_4": [
+      288,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_river_5": [
+      304,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_river_6": [
+      320,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_river_7": [
+      336,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_river_8": [
+      352,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_river_9": [
+      368,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_tidal_1": [
+      480,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_tidal_10": [
+      112,
+      768,
+      16,
+      16
+    ],
+    "coast_dune_tidal_11": [
+      128,
+      768,
+      16,
+      16
+    ],
+    "coast_dune_tidal_12": [
+      144,
+      768,
+      16,
+      16
+    ],
+    "coast_dune_tidal_13": [
+      160,
+      768,
+      16,
+      16
+    ],
+    "coast_dune_tidal_14": [
+      176,
+      768,
+      16,
+      16
+    ],
+    "coast_dune_tidal_15": [
+      192,
+      768,
+      16,
+      16
+    ],
+    "coast_dune_tidal_2": [
+      496,
+      752,
+      16,
+      16
+    ],
+    "coast_dune_tidal_3": [
+      0,
+      768,
+      16,
+      16
+    ],
+    "coast_dune_tidal_4": [
+      16,
+      768,
+      16,
+      16
+    ],
+    "coast_dune_tidal_5": [
+      32,
+      768,
+      16,
+      16
+    ],
+    "coast_dune_tidal_6": [
+      48,
+      768,
+      16,
+      16
+    ],
+    "coast_dune_tidal_7": [
+      64,
+      768,
+      16,
+      16
+    ],
+    "coast_dune_tidal_8": [
+      80,
+      768,
+      16,
+      16
+    ],
+    "coast_dune_tidal_9": [
+      96,
+      768,
+      16,
+      16
+    ],
+    "coast_fen_brine_1": [
+      96,
+      704,
+      16,
+      16
+    ],
+    "coast_fen_brine_10": [
+      240,
+      704,
+      16,
+      16
+    ],
+    "coast_fen_brine_11": [
+      256,
+      704,
+      16,
+      16
+    ],
+    "coast_fen_brine_12": [
+      272,
+      704,
+      16,
+      16
+    ],
+    "coast_fen_brine_13": [
+      288,
+      704,
+      16,
+      16
+    ],
+    "coast_fen_brine_14": [
+      304,
+      704,
+      16,
+      16
+    ],
+    "coast_fen_brine_15": [
+      320,
+      704,
+      16,
+      16
+    ],
+    "coast_fen_brine_2": [
+      112,
+      704,
+      16,
+      16
+    ],
+    "coast_fen_brine_3": [
+      128,
+      704,
+      16,
+      16
+    ],
+    "coast_fen_brine_4": [
+      144,
+      704,
+      16,
+      16
+    ],
+    "coast_fen_brine_5": [
+      160,
+      704,
+      16,
+      16
+    ],
+    "coast_fen_brine_6": [
+      176,
+      704,
+      16,
+      16
+    ],
+    "coast_fen_brine_7": [
+      192,
+      704,
+      16,
+      16
+    ],
+    "coast_fen_brine_8": [
+      208,
+      704,
+      16,
+      16
+    ],
+    "coast_fen_brine_9": [
+      224,
+      704,
+      16,
+      16
+    ],
+    "coast_fen_cenote_1": [
+      368,
+      688,
+      16,
+      16
+    ],
+    "coast_fen_cenote_10": [
+      0,
+      704,
+      16,
+      16
+    ],
+    "coast_fen_cenote_11": [
       16,
       704,
       16,
       16
     ],
-    "coast_dune_cenote_2": [
-      320,
-      688,
-      16,
-      16
-    ],
-    "coast_dune_cenote_3": [
-      336,
-      688,
-      16,
-      16
-    ],
-    "coast_dune_cenote_4": [
-      352,
-      688,
-      16,
-      16
-    ],
-    "coast_dune_cenote_5": [
-      368,
-      688,
-      16,
-      16
-    ],
-    "coast_dune_cenote_6": [
-      384,
-      688,
-      16,
-      16
-    ],
-    "coast_dune_cenote_7": [
-      400,
-      688,
-      16,
-      16
-    ],
-    "coast_dune_cenote_8": [
-      416,
-      688,
-      16,
-      16
-    ],
-    "coast_dune_cenote_9": [
-      432,
-      688,
-      16,
-      16
-    ],
-    "coast_dune_lake_1": [
-      96,
-      672,
-      16,
-      16
-    ],
-    "coast_dune_lake_10": [
-      240,
-      672,
-      16,
-      16
-    ],
-    "coast_dune_lake_11": [
-      256,
-      672,
-      16,
-      16
-    ],
-    "coast_dune_lake_12": [
-      272,
-      672,
-      16,
-      16
-    ],
-    "coast_dune_lake_13": [
-      288,
-      672,
-      16,
-      16
-    ],
-    "coast_dune_lake_14": [
-      304,
-      672,
-      16,
-      16
-    ],
-    "coast_dune_lake_15": [
-      320,
-      672,
-      16,
-      16
-    ],
-    "coast_dune_lake_2": [
-      112,
-      672,
-      16,
-      16
-    ],
-    "coast_dune_lake_3": [
-      128,
-      672,
-      16,
-      16
-    ],
-    "coast_dune_lake_4": [
-      144,
-      672,
-      16,
-      16
-    ],
-    "coast_dune_lake_5": [
-      160,
-      672,
-      16,
-      16
-    ],
-    "coast_dune_lake_6": [
-      176,
-      672,
-      16,
-      16
-    ],
-    "coast_dune_lake_7": [
-      192,
-      672,
-      16,
-      16
-    ],
-    "coast_dune_lake_8": [
-      208,
-      672,
-      16,
-      16
-    ],
-    "coast_dune_lake_9": [
-      224,
-      672,
-      16,
-      16
-    ],
-    "coast_dune_river_1": [
-      336,
-      672,
-      16,
-      16
-    ],
-    "coast_dune_river_10": [
-      480,
-      672,
-      16,
-      16
-    ],
-    "coast_dune_river_11": [
-      496,
-      672,
-      16,
-      16
-    ],
-    "coast_dune_river_12": [
-      0,
-      688,
-      16,
-      16
-    ],
-    "coast_dune_river_13": [
-      16,
-      688,
-      16,
-      16
-    ],
-    "coast_dune_river_14": [
-      32,
-      688,
-      16,
-      16
-    ],
-    "coast_dune_river_15": [
-      48,
-      688,
-      16,
-      16
-    ],
-    "coast_dune_river_2": [
-      352,
-      672,
-      16,
-      16
-    ],
-    "coast_dune_river_3": [
-      368,
-      672,
-      16,
-      16
-    ],
-    "coast_dune_river_4": [
-      384,
-      672,
-      16,
-      16
-    ],
-    "coast_dune_river_5": [
-      400,
-      672,
-      16,
-      16
-    ],
-    "coast_dune_river_6": [
-      416,
-      672,
-      16,
-      16
-    ],
-    "coast_dune_river_7": [
-      432,
-      672,
-      16,
-      16
-    ],
-    "coast_dune_river_8": [
-      448,
-      672,
-      16,
-      16
-    ],
-    "coast_dune_river_9": [
-      464,
-      672,
-      16,
-      16
-    ],
-    "coast_dune_tidal_1": [
-      64,
-      688,
-      16,
-      16
-    ],
-    "coast_dune_tidal_10": [
-      208,
-      688,
-      16,
-      16
-    ],
-    "coast_dune_tidal_11": [
-      224,
-      688,
-      16,
-      16
-    ],
-    "coast_dune_tidal_12": [
-      240,
-      688,
-      16,
-      16
-    ],
-    "coast_dune_tidal_13": [
-      256,
-      688,
-      16,
-      16
-    ],
-    "coast_dune_tidal_14": [
-      272,
-      688,
-      16,
-      16
-    ],
-    "coast_dune_tidal_15": [
-      288,
-      688,
-      16,
-      16
-    ],
-    "coast_dune_tidal_2": [
-      80,
-      688,
-      16,
-      16
-    ],
-    "coast_dune_tidal_3": [
-      96,
-      688,
-      16,
-      16
-    ],
-    "coast_dune_tidal_4": [
-      112,
-      688,
-      16,
-      16
-    ],
-    "coast_dune_tidal_5": [
-      128,
-      688,
-      16,
-      16
-    ],
-    "coast_dune_tidal_6": [
-      144,
-      688,
-      16,
-      16
-    ],
-    "coast_dune_tidal_7": [
-      160,
-      688,
-      16,
-      16
-    ],
-    "coast_dune_tidal_8": [
-      176,
-      688,
-      16,
-      16
-    ],
-    "coast_dune_tidal_9": [
-      192,
-      688,
-      16,
-      16
-    ],
-    "coast_fen_cenote_1": [
-      432,
-      624,
-      16,
-      16
-    ],
-    "coast_fen_cenote_10": [
-      64,
-      640,
-      16,
-      16
-    ],
-    "coast_fen_cenote_11": [
-      80,
-      640,
-      16,
-      16
-    ],
     "coast_fen_cenote_12": [
-      96,
-      640,
+      32,
+      704,
       16,
       16
     ],
     "coast_fen_cenote_13": [
-      112,
-      640,
+      48,
+      704,
       16,
       16
     ],
     "coast_fen_cenote_14": [
-      128,
-      640,
+      64,
+      704,
       16,
       16
     ],
     "coast_fen_cenote_15": [
-      144,
-      640,
+      80,
+      704,
       16,
       16
     ],
     "coast_fen_cenote_2": [
-      448,
-      624,
+      384,
+      688,
       16,
       16
     ],
     "coast_fen_cenote_3": [
-      464,
-      624,
+      400,
+      688,
       16,
       16
     ],
     "coast_fen_cenote_4": [
-      480,
-      624,
+      416,
+      688,
       16,
       16
     ],
     "coast_fen_cenote_5": [
-      496,
-      624,
+      432,
+      688,
       16,
       16
     ],
     "coast_fen_cenote_6": [
-      0,
-      640,
+      448,
+      688,
       16,
       16
     ],
     "coast_fen_cenote_7": [
-      16,
-      640,
+      464,
+      688,
       16,
       16
     ],
     "coast_fen_cenote_8": [
-      32,
-      640,
+      480,
+      688,
       16,
       16
     ],
     "coast_fen_cenote_9": [
-      48,
-      640,
+      496,
+      688,
       16,
       16
     ],
     "coast_fen_lake_1": [
-      224,
-      608,
+      160,
+      672,
       16,
       16
     ],
     "coast_fen_lake_10": [
-      368,
-      608,
+      304,
+      672,
       16,
       16
     ],
     "coast_fen_lake_11": [
-      384,
-      608,
+      320,
+      672,
       16,
       16
     ],
     "coast_fen_lake_12": [
-      400,
-      608,
+      336,
+      672,
       16,
       16
     ],
     "coast_fen_lake_13": [
-      416,
-      608,
+      352,
+      672,
       16,
       16
     ],
     "coast_fen_lake_14": [
-      432,
-      608,
+      368,
+      672,
       16,
       16
     ],
     "coast_fen_lake_15": [
-      448,
-      608,
+      384,
+      672,
       16,
       16
     ],
     "coast_fen_lake_2": [
-      240,
-      608,
+      176,
+      672,
       16,
       16
     ],
     "coast_fen_lake_3": [
-      256,
-      608,
+      192,
+      672,
       16,
       16
     ],
     "coast_fen_lake_4": [
-      272,
-      608,
+      208,
+      672,
       16,
       16
     ],
     "coast_fen_lake_5": [
-      288,
-      608,
+      224,
+      672,
       16,
       16
     ],
     "coast_fen_lake_6": [
-      304,
-      608,
+      240,
+      672,
       16,
       16
     ],
     "coast_fen_lake_7": [
-      320,
-      608,
+      256,
+      672,
       16,
       16
     ],
     "coast_fen_lake_8": [
-      336,
-      608,
+      272,
+      672,
       16,
       16
     ],
     "coast_fen_lake_9": [
-      352,
-      608,
+      288,
+      672,
       16,
       16
     ],
     "coast_fen_river_1": [
-      464,
-      608,
+      400,
+      672,
       16,
       16
     ],
     "coast_fen_river_10": [
-      96,
-      624,
+      32,
+      688,
       16,
       16
     ],
     "coast_fen_river_11": [
-      112,
-      624,
+      48,
+      688,
       16,
       16
     ],
     "coast_fen_river_12": [
-      128,
-      624,
+      64,
+      688,
       16,
       16
     ],
     "coast_fen_river_13": [
-      144,
-      624,
+      80,
+      688,
       16,
       16
     ],
     "coast_fen_river_14": [
-      160,
-      624,
+      96,
+      688,
       16,
       16
     ],
     "coast_fen_river_15": [
-      176,
-      624,
+      112,
+      688,
       16,
       16
     ],
     "coast_fen_river_2": [
-      480,
-      608,
+      416,
+      672,
       16,
       16
     ],
     "coast_fen_river_3": [
-      496,
-      608,
+      432,
+      672,
       16,
       16
     ],
     "coast_fen_river_4": [
-      0,
-      624,
+      448,
+      672,
       16,
       16
     ],
     "coast_fen_river_5": [
-      16,
-      624,
+      464,
+      672,
       16,
       16
     ],
     "coast_fen_river_6": [
-      32,
-      624,
+      480,
+      672,
       16,
       16
     ],
     "coast_fen_river_7": [
-      48,
-      624,
+      496,
+      672,
       16,
       16
     ],
     "coast_fen_river_8": [
-      64,
-      624,
+      0,
+      688,
       16,
       16
     ],
     "coast_fen_river_9": [
-      80,
-      624,
+      16,
+      688,
       16,
       16
     ],
     "coast_fen_tidal_1": [
-      192,
-      624,
+      128,
+      688,
       16,
       16
     ],
     "coast_fen_tidal_10": [
-      336,
-      624,
+      272,
+      688,
       16,
       16
     ],
     "coast_fen_tidal_11": [
-      352,
-      624,
+      288,
+      688,
       16,
       16
     ],
     "coast_fen_tidal_12": [
-      368,
-      624,
+      304,
+      688,
       16,
       16
     ],
     "coast_fen_tidal_13": [
-      384,
-      624,
+      320,
+      688,
       16,
       16
     ],
     "coast_fen_tidal_14": [
-      400,
-      624,
+      336,
+      688,
       16,
       16
     ],
     "coast_fen_tidal_15": [
-      416,
-      624,
+      352,
+      688,
       16,
       16
     ],
     "coast_fen_tidal_2": [
-      208,
-      624,
+      144,
+      688,
       16,
       16
     ],
     "coast_fen_tidal_3": [
-      224,
-      624,
+      160,
+      688,
       16,
       16
     ],
     "coast_fen_tidal_4": [
-      240,
-      624,
+      176,
+      688,
       16,
       16
     ],
     "coast_fen_tidal_5": [
-      256,
-      624,
+      192,
+      688,
       16,
       16
     ],
     "coast_fen_tidal_6": [
-      272,
-      624,
+      208,
+      688,
       16,
       16
     ],
     "coast_fen_tidal_7": [
-      288,
-      624,
+      224,
+      688,
       16,
       16
     ],
     "coast_fen_tidal_8": [
-      304,
-      624,
+      240,
+      688,
       16,
       16
     ],
     "coast_fen_tidal_9": [
+      256,
+      688,
+      16,
+      16
+    ],
+    "coast_karst_brine_1": [
+      432,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_brine_10": [
+      64,
+      672,
+      16,
+      16
+    ],
+    "coast_karst_brine_11": [
+      80,
+      672,
+      16,
+      16
+    ],
+    "coast_karst_brine_12": [
+      96,
+      672,
+      16,
+      16
+    ],
+    "coast_karst_brine_13": [
+      112,
+      672,
+      16,
+      16
+    ],
+    "coast_karst_brine_14": [
+      128,
+      672,
+      16,
+      16
+    ],
+    "coast_karst_brine_15": [
+      144,
+      672,
+      16,
+      16
+    ],
+    "coast_karst_brine_2": [
+      448,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_brine_3": [
+      464,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_brine_4": [
+      480,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_brine_5": [
+      496,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_brine_6": [
+      0,
+      672,
+      16,
+      16
+    ],
+    "coast_karst_brine_7": [
+      16,
+      672,
+      16,
+      16
+    ],
+    "coast_karst_brine_8": [
+      32,
+      672,
+      16,
+      16
+    ],
+    "coast_karst_brine_9": [
+      48,
+      672,
+      16,
+      16
+    ],
+    "coast_karst_cenote_1": [
+      192,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_cenote_10": [
+      336,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_cenote_11": [
+      352,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_cenote_12": [
+      368,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_cenote_13": [
+      384,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_cenote_14": [
+      400,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_cenote_15": [
+      416,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_cenote_2": [
+      208,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_cenote_3": [
+      224,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_cenote_4": [
+      240,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_cenote_5": [
+      256,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_cenote_6": [
+      272,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_cenote_7": [
+      288,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_cenote_8": [
+      304,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_cenote_9": [
+      320,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_lake_1": [
+      496,
+      624,
+      16,
+      16
+    ],
+    "coast_karst_lake_10": [
+      128,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_lake_11": [
+      144,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_lake_12": [
+      160,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_lake_13": [
+      176,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_lake_14": [
+      192,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_lake_15": [
+      208,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_lake_2": [
+      0,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_lake_3": [
+      16,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_lake_4": [
+      32,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_lake_5": [
+      48,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_lake_6": [
+      64,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_lake_7": [
+      80,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_lake_8": [
+      96,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_lake_9": [
+      112,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_river_1": [
+      224,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_river_10": [
+      368,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_river_11": [
+      384,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_river_12": [
+      400,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_river_13": [
+      416,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_river_14": [
+      432,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_river_15": [
+      448,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_river_2": [
+      240,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_river_3": [
+      256,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_river_4": [
+      272,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_river_5": [
+      288,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_river_6": [
+      304,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_river_7": [
+      320,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_river_8": [
+      336,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_river_9": [
+      352,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_tidal_1": [
+      464,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_tidal_10": [
+      96,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_tidal_11": [
+      112,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_tidal_12": [
+      128,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_tidal_13": [
+      144,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_tidal_14": [
+      160,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_tidal_15": [
+      176,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_tidal_2": [
+      480,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_tidal_3": [
+      496,
+      640,
+      16,
+      16
+    ],
+    "coast_karst_tidal_4": [
+      0,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_tidal_5": [
+      16,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_tidal_6": [
+      32,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_tidal_7": [
+      48,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_tidal_8": [
+      64,
+      656,
+      16,
+      16
+    ],
+    "coast_karst_tidal_9": [
+      80,
+      656,
+      16,
+      16
+    ],
+    "coast_mud_brine_1": [
+      256,
+      624,
+      16,
+      16
+    ],
+    "coast_mud_brine_10": [
+      400,
+      624,
+      16,
+      16
+    ],
+    "coast_mud_brine_11": [
+      416,
+      624,
+      16,
+      16
+    ],
+    "coast_mud_brine_12": [
+      432,
+      624,
+      16,
+      16
+    ],
+    "coast_mud_brine_13": [
+      448,
+      624,
+      16,
+      16
+    ],
+    "coast_mud_brine_14": [
+      464,
+      624,
+      16,
+      16
+    ],
+    "coast_mud_brine_15": [
+      480,
+      624,
+      16,
+      16
+    ],
+    "coast_mud_brine_2": [
+      272,
+      624,
+      16,
+      16
+    ],
+    "coast_mud_brine_3": [
+      288,
+      624,
+      16,
+      16
+    ],
+    "coast_mud_brine_4": [
+      304,
+      624,
+      16,
+      16
+    ],
+    "coast_mud_brine_5": [
       320,
       624,
       16,
       16
     ],
-    "coast_karst_cenote_1": [
-      496,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_cenote_10": [
-      128,
-      608,
-      16,
-      16
-    ],
-    "coast_karst_cenote_11": [
-      144,
-      608,
-      16,
-      16
-    ],
-    "coast_karst_cenote_12": [
-      160,
-      608,
-      16,
-      16
-    ],
-    "coast_karst_cenote_13": [
-      176,
-      608,
-      16,
-      16
-    ],
-    "coast_karst_cenote_14": [
-      192,
-      608,
-      16,
-      16
-    ],
-    "coast_karst_cenote_15": [
-      208,
-      608,
-      16,
-      16
-    ],
-    "coast_karst_cenote_2": [
-      0,
-      608,
-      16,
-      16
-    ],
-    "coast_karst_cenote_3": [
-      16,
-      608,
-      16,
-      16
-    ],
-    "coast_karst_cenote_4": [
-      32,
-      608,
-      16,
-      16
-    ],
-    "coast_karst_cenote_5": [
-      48,
-      608,
-      16,
-      16
-    ],
-    "coast_karst_cenote_6": [
-      64,
-      608,
-      16,
-      16
-    ],
-    "coast_karst_cenote_7": [
-      80,
-      608,
-      16,
-      16
-    ],
-    "coast_karst_cenote_8": [
-      96,
-      608,
-      16,
-      16
-    ],
-    "coast_karst_cenote_9": [
-      112,
-      608,
-      16,
-      16
-    ],
-    "coast_karst_lake_1": [
-      288,
-      576,
-      16,
-      16
-    ],
-    "coast_karst_lake_10": [
-      432,
-      576,
-      16,
-      16
-    ],
-    "coast_karst_lake_11": [
-      448,
-      576,
-      16,
-      16
-    ],
-    "coast_karst_lake_12": [
-      464,
-      576,
-      16,
-      16
-    ],
-    "coast_karst_lake_13": [
-      480,
-      576,
-      16,
-      16
-    ],
-    "coast_karst_lake_14": [
-      496,
-      576,
-      16,
-      16
-    ],
-    "coast_karst_lake_15": [
-      0,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_lake_2": [
-      304,
-      576,
-      16,
-      16
-    ],
-    "coast_karst_lake_3": [
-      320,
-      576,
-      16,
-      16
-    ],
-    "coast_karst_lake_4": [
+    "coast_mud_brine_6": [
       336,
-      576,
+      624,
       16,
       16
     ],
-    "coast_karst_lake_5": [
+    "coast_mud_brine_7": [
       352,
-      576,
+      624,
       16,
       16
     ],
-    "coast_karst_lake_6": [
+    "coast_mud_brine_8": [
       368,
-      576,
+      624,
       16,
       16
     ],
-    "coast_karst_lake_7": [
+    "coast_mud_brine_9": [
       384,
-      576,
-      16,
-      16
-    ],
-    "coast_karst_lake_8": [
-      400,
-      576,
-      16,
-      16
-    ],
-    "coast_karst_lake_9": [
-      416,
-      576,
-      16,
-      16
-    ],
-    "coast_karst_river_1": [
-      16,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_river_10": [
-      160,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_river_11": [
-      176,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_river_12": [
-      192,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_river_13": [
-      208,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_river_14": [
-      224,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_river_15": [
-      240,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_river_2": [
-      32,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_river_3": [
-      48,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_river_4": [
-      64,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_river_5": [
-      80,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_river_6": [
-      96,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_river_7": [
-      112,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_river_8": [
-      128,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_river_9": [
-      144,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_tidal_1": [
-      256,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_tidal_10": [
-      400,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_tidal_11": [
-      416,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_tidal_12": [
-      432,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_tidal_13": [
-      448,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_tidal_14": [
-      464,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_tidal_15": [
-      480,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_tidal_2": [
-      272,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_tidal_3": [
-      288,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_tidal_4": [
-      304,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_tidal_5": [
-      320,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_tidal_6": [
-      336,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_tidal_7": [
-      352,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_tidal_8": [
-      368,
-      592,
-      16,
-      16
-    ],
-    "coast_karst_tidal_9": [
-      384,
-      592,
+      624,
       16,
       16
     ],
     "coast_mud_cenote_1": [
-      48,
-      576,
+      16,
+      624,
       16,
       16
     ],
     "coast_mud_cenote_10": [
-      192,
-      576,
+      160,
+      624,
       16,
       16
     ],
     "coast_mud_cenote_11": [
-      208,
-      576,
+      176,
+      624,
       16,
       16
     ],
     "coast_mud_cenote_12": [
-      224,
-      576,
+      192,
+      624,
       16,
       16
     ],
     "coast_mud_cenote_13": [
-      240,
-      576,
+      208,
+      624,
       16,
       16
     ],
     "coast_mud_cenote_14": [
-      256,
-      576,
+      224,
+      624,
       16,
       16
     ],
     "coast_mud_cenote_15": [
-      272,
-      576,
+      240,
+      624,
       16,
       16
     ],
     "coast_mud_cenote_2": [
-      64,
-      576,
+      32,
+      624,
       16,
       16
     ],
     "coast_mud_cenote_3": [
-      80,
-      576,
+      48,
+      624,
       16,
       16
     ],
     "coast_mud_cenote_4": [
-      96,
-      576,
+      64,
+      624,
       16,
       16
     ],
     "coast_mud_cenote_5": [
-      112,
-      576,
+      80,
+      624,
       16,
       16
     ],
     "coast_mud_cenote_6": [
-      128,
-      576,
+      96,
+      624,
       16,
       16
     ],
     "coast_mud_cenote_7": [
-      144,
-      576,
+      112,
+      624,
       16,
       16
     ],
     "coast_mud_cenote_8": [
-      160,
-      576,
+      128,
+      624,
       16,
       16
     ],
     "coast_mud_cenote_9": [
-      176,
-      576,
+      144,
+      624,
       16,
       16
     ],
     "coast_mud_lake_1": [
-      352,
-      544,
+      320,
+      592,
       16,
       16
     ],
     "coast_mud_lake_10": [
-      496,
-      544,
+      464,
+      592,
       16,
       16
     ],
     "coast_mud_lake_11": [
-      0,
-      560,
+      480,
+      592,
       16,
       16
     ],
     "coast_mud_lake_12": [
-      16,
-      560,
+      496,
+      592,
       16,
       16
     ],
     "coast_mud_lake_13": [
-      32,
-      560,
+      0,
+      608,
       16,
       16
     ],
     "coast_mud_lake_14": [
-      48,
-      560,
+      16,
+      608,
       16,
       16
     ],
     "coast_mud_lake_15": [
-      64,
-      560,
+      32,
+      608,
       16,
       16
     ],
     "coast_mud_lake_2": [
-      368,
-      544,
+      336,
+      592,
       16,
       16
     ],
     "coast_mud_lake_3": [
-      384,
-      544,
+      352,
+      592,
       16,
       16
     ],
     "coast_mud_lake_4": [
-      400,
-      544,
+      368,
+      592,
       16,
       16
     ],
     "coast_mud_lake_5": [
-      416,
-      544,
+      384,
+      592,
       16,
       16
     ],
     "coast_mud_lake_6": [
-      432,
-      544,
+      400,
+      592,
       16,
       16
     ],
     "coast_mud_lake_7": [
-      448,
-      544,
+      416,
+      592,
       16,
       16
     ],
     "coast_mud_lake_8": [
-      464,
-      544,
+      432,
+      592,
       16,
       16
     ],
     "coast_mud_lake_9": [
-      480,
-      544,
+      448,
+      592,
       16,
       16
     ],
     "coast_mud_river_1": [
-      80,
-      560,
+      48,
+      608,
       16,
       16
     ],
     "coast_mud_river_10": [
-      224,
-      560,
+      192,
+      608,
       16,
       16
     ],
     "coast_mud_river_11": [
-      240,
-      560,
+      208,
+      608,
       16,
       16
     ],
     "coast_mud_river_12": [
-      256,
-      560,
+      224,
+      608,
       16,
       16
     ],
     "coast_mud_river_13": [
-      272,
-      560,
+      240,
+      608,
       16,
       16
     ],
     "coast_mud_river_14": [
-      288,
-      560,
+      256,
+      608,
       16,
       16
     ],
     "coast_mud_river_15": [
-      304,
-      560,
+      272,
+      608,
       16,
       16
     ],
     "coast_mud_river_2": [
-      96,
-      560,
+      64,
+      608,
       16,
       16
     ],
     "coast_mud_river_3": [
-      112,
-      560,
+      80,
+      608,
       16,
       16
     ],
     "coast_mud_river_4": [
-      128,
-      560,
+      96,
+      608,
       16,
       16
     ],
     "coast_mud_river_5": [
-      144,
-      560,
+      112,
+      608,
       16,
       16
     ],
     "coast_mud_river_6": [
-      160,
-      560,
+      128,
+      608,
       16,
       16
     ],
     "coast_mud_river_7": [
-      176,
-      560,
+      144,
+      608,
       16,
       16
     ],
     "coast_mud_river_8": [
-      192,
-      560,
+      160,
+      608,
       16,
       16
     ],
     "coast_mud_river_9": [
-      208,
-      560,
+      176,
+      608,
       16,
       16
     ],
     "coast_mud_tidal_1": [
-      320,
-      560,
+      288,
+      608,
       16,
       16
     ],
     "coast_mud_tidal_10": [
-      464,
-      560,
+      432,
+      608,
       16,
       16
     ],
     "coast_mud_tidal_11": [
-      480,
-      560,
+      448,
+      608,
       16,
       16
     ],
     "coast_mud_tidal_12": [
-      496,
-      560,
+      464,
+      608,
       16,
       16
     ],
     "coast_mud_tidal_13": [
-      0,
-      576,
+      480,
+      608,
       16,
       16
     ],
     "coast_mud_tidal_14": [
-      16,
-      576,
+      496,
+      608,
       16,
       16
     ],
     "coast_mud_tidal_15": [
+      0,
+      624,
+      16,
+      16
+    ],
+    "coast_mud_tidal_2": [
+      304,
+      608,
+      16,
+      16
+    ],
+    "coast_mud_tidal_3": [
+      320,
+      608,
+      16,
+      16
+    ],
+    "coast_mud_tidal_4": [
+      336,
+      608,
+      16,
+      16
+    ],
+    "coast_mud_tidal_5": [
+      352,
+      608,
+      16,
+      16
+    ],
+    "coast_mud_tidal_6": [
+      368,
+      608,
+      16,
+      16
+    ],
+    "coast_mud_tidal_7": [
+      384,
+      608,
+      16,
+      16
+    ],
+    "coast_mud_tidal_8": [
+      400,
+      608,
+      16,
+      16
+    ],
+    "coast_mud_tidal_9": [
+      416,
+      608,
+      16,
+      16
+    ],
+    "coast_reedpeat_brine_1": [
+      272,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_brine_10": [
+      416,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_brine_11": [
+      432,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_brine_12": [
+      448,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_brine_13": [
+      464,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_brine_14": [
+      480,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_brine_15": [
+      496,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_brine_2": [
+      288,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_brine_3": [
+      304,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_brine_4": [
+      320,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_brine_5": [
+      336,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_brine_6": [
+      352,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_brine_7": [
+      368,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_brine_8": [
+      384,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_brine_9": [
+      400,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_cenote_1": [
+      32,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_cenote_10": [
+      176,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_cenote_11": [
+      192,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_cenote_12": [
+      208,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_cenote_13": [
+      224,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_cenote_14": [
+      240,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_cenote_15": [
+      256,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_cenote_2": [
+      48,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_cenote_3": [
+      64,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_cenote_4": [
+      80,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_cenote_5": [
+      96,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_cenote_6": [
+      112,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_cenote_7": [
+      128,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_cenote_8": [
+      144,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_cenote_9": [
+      160,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_lake_1": [
+      336,
+      704,
+      16,
+      16
+    ],
+    "coast_reedpeat_lake_10": [
+      480,
+      704,
+      16,
+      16
+    ],
+    "coast_reedpeat_lake_11": [
+      496,
+      704,
+      16,
+      16
+    ],
+    "coast_reedpeat_lake_12": [
+      0,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_lake_13": [
+      16,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_lake_14": [
+      32,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_lake_15": [
+      48,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_lake_2": [
+      352,
+      704,
+      16,
+      16
+    ],
+    "coast_reedpeat_lake_3": [
+      368,
+      704,
+      16,
+      16
+    ],
+    "coast_reedpeat_lake_4": [
+      384,
+      704,
+      16,
+      16
+    ],
+    "coast_reedpeat_lake_5": [
+      400,
+      704,
+      16,
+      16
+    ],
+    "coast_reedpeat_lake_6": [
+      416,
+      704,
+      16,
+      16
+    ],
+    "coast_reedpeat_lake_7": [
+      432,
+      704,
+      16,
+      16
+    ],
+    "coast_reedpeat_lake_8": [
+      448,
+      704,
+      16,
+      16
+    ],
+    "coast_reedpeat_lake_9": [
+      464,
+      704,
+      16,
+      16
+    ],
+    "coast_reedpeat_river_1": [
+      64,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_river_10": [
+      208,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_river_11": [
+      224,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_river_12": [
+      240,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_river_13": [
+      256,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_river_14": [
+      272,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_river_15": [
+      288,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_river_2": [
+      80,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_river_3": [
+      96,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_river_4": [
+      112,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_river_5": [
+      128,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_river_6": [
+      144,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_river_7": [
+      160,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_river_8": [
+      176,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_river_9": [
+      192,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_tidal_1": [
+      304,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_tidal_10": [
+      448,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_tidal_11": [
+      464,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_tidal_12": [
+      480,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_tidal_13": [
+      496,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_tidal_14": [
+      0,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_tidal_15": [
+      16,
+      736,
+      16,
+      16
+    ],
+    "coast_reedpeat_tidal_2": [
+      320,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_tidal_3": [
+      336,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_tidal_4": [
+      352,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_tidal_5": [
+      368,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_tidal_6": [
+      384,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_tidal_7": [
+      400,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_tidal_8": [
+      416,
+      720,
+      16,
+      16
+    ],
+    "coast_reedpeat_tidal_9": [
+      432,
+      720,
+      16,
+      16
+    ],
+    "coast_salt_brine_1": [
+      112,
+      816,
+      16,
+      16
+    ],
+    "coast_salt_brine_10": [
+      256,
+      816,
+      16,
+      16
+    ],
+    "coast_salt_brine_11": [
+      272,
+      816,
+      16,
+      16
+    ],
+    "coast_salt_brine_12": [
+      288,
+      816,
+      16,
+      16
+    ],
+    "coast_salt_brine_13": [
+      304,
+      816,
+      16,
+      16
+    ],
+    "coast_salt_brine_14": [
+      320,
+      816,
+      16,
+      16
+    ],
+    "coast_salt_brine_15": [
+      336,
+      816,
+      16,
+      16
+    ],
+    "coast_salt_brine_2": [
+      128,
+      816,
+      16,
+      16
+    ],
+    "coast_salt_brine_3": [
+      144,
+      816,
+      16,
+      16
+    ],
+    "coast_salt_brine_4": [
+      160,
+      816,
+      16,
+      16
+    ],
+    "coast_salt_brine_5": [
+      176,
+      816,
+      16,
+      16
+    ],
+    "coast_salt_brine_6": [
+      192,
+      816,
+      16,
+      16
+    ],
+    "coast_salt_brine_7": [
+      208,
+      816,
+      16,
+      16
+    ],
+    "coast_salt_brine_8": [
+      224,
+      816,
+      16,
+      16
+    ],
+    "coast_salt_brine_9": [
+      240,
+      816,
+      16,
+      16
+    ],
+    "coast_salt_cenote_1": [
+      384,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_cenote_10": [
+      16,
+      816,
+      16,
+      16
+    ],
+    "coast_salt_cenote_11": [
+      32,
+      816,
+      16,
+      16
+    ],
+    "coast_salt_cenote_12": [
+      48,
+      816,
+      16,
+      16
+    ],
+    "coast_salt_cenote_13": [
+      64,
+      816,
+      16,
+      16
+    ],
+    "coast_salt_cenote_14": [
+      80,
+      816,
+      16,
+      16
+    ],
+    "coast_salt_cenote_15": [
+      96,
+      816,
+      16,
+      16
+    ],
+    "coast_salt_cenote_2": [
+      400,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_cenote_3": [
+      416,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_cenote_4": [
+      432,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_cenote_5": [
+      448,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_cenote_6": [
+      464,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_cenote_7": [
+      480,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_cenote_8": [
+      496,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_cenote_9": [
+      0,
+      816,
+      16,
+      16
+    ],
+    "coast_salt_lake_1": [
+      176,
+      784,
+      16,
+      16
+    ],
+    "coast_salt_lake_10": [
+      320,
+      784,
+      16,
+      16
+    ],
+    "coast_salt_lake_11": [
+      336,
+      784,
+      16,
+      16
+    ],
+    "coast_salt_lake_12": [
+      352,
+      784,
+      16,
+      16
+    ],
+    "coast_salt_lake_13": [
+      368,
+      784,
+      16,
+      16
+    ],
+    "coast_salt_lake_14": [
+      384,
+      784,
+      16,
+      16
+    ],
+    "coast_salt_lake_15": [
+      400,
+      784,
+      16,
+      16
+    ],
+    "coast_salt_lake_2": [
+      192,
+      784,
+      16,
+      16
+    ],
+    "coast_salt_lake_3": [
+      208,
+      784,
+      16,
+      16
+    ],
+    "coast_salt_lake_4": [
+      224,
+      784,
+      16,
+      16
+    ],
+    "coast_salt_lake_5": [
+      240,
+      784,
+      16,
+      16
+    ],
+    "coast_salt_lake_6": [
+      256,
+      784,
+      16,
+      16
+    ],
+    "coast_salt_lake_7": [
+      272,
+      784,
+      16,
+      16
+    ],
+    "coast_salt_lake_8": [
+      288,
+      784,
+      16,
+      16
+    ],
+    "coast_salt_lake_9": [
+      304,
+      784,
+      16,
+      16
+    ],
+    "coast_salt_river_1": [
+      416,
+      784,
+      16,
+      16
+    ],
+    "coast_salt_river_10": [
+      48,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_river_11": [
+      64,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_river_12": [
+      80,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_river_13": [
+      96,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_river_14": [
+      112,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_river_15": [
+      128,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_river_2": [
+      432,
+      784,
+      16,
+      16
+    ],
+    "coast_salt_river_3": [
+      448,
+      784,
+      16,
+      16
+    ],
+    "coast_salt_river_4": [
+      464,
+      784,
+      16,
+      16
+    ],
+    "coast_salt_river_5": [
+      480,
+      784,
+      16,
+      16
+    ],
+    "coast_salt_river_6": [
+      496,
+      784,
+      16,
+      16
+    ],
+    "coast_salt_river_7": [
+      0,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_river_8": [
+      16,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_river_9": [
+      32,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_tidal_1": [
+      144,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_tidal_10": [
+      288,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_tidal_11": [
+      304,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_tidal_12": [
+      320,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_tidal_13": [
+      336,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_tidal_14": [
+      352,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_tidal_15": [
+      368,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_tidal_2": [
+      160,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_tidal_3": [
+      176,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_tidal_4": [
+      192,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_tidal_5": [
+      208,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_tidal_6": [
+      224,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_tidal_7": [
+      240,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_tidal_8": [
+      256,
+      800,
+      16,
+      16
+    ],
+    "coast_salt_tidal_9": [
+      272,
+      800,
+      16,
+      16
+    ],
+    "coast_shell_brine_1": [
+      80,
+      592,
+      16,
+      16
+    ],
+    "coast_shell_brine_10": [
+      224,
+      592,
+      16,
+      16
+    ],
+    "coast_shell_brine_11": [
+      240,
+      592,
+      16,
+      16
+    ],
+    "coast_shell_brine_12": [
+      256,
+      592,
+      16,
+      16
+    ],
+    "coast_shell_brine_13": [
+      272,
+      592,
+      16,
+      16
+    ],
+    "coast_shell_brine_14": [
+      288,
+      592,
+      16,
+      16
+    ],
+    "coast_shell_brine_15": [
+      304,
+      592,
+      16,
+      16
+    ],
+    "coast_shell_brine_2": [
+      96,
+      592,
+      16,
+      16
+    ],
+    "coast_shell_brine_3": [
+      112,
+      592,
+      16,
+      16
+    ],
+    "coast_shell_brine_4": [
+      128,
+      592,
+      16,
+      16
+    ],
+    "coast_shell_brine_5": [
+      144,
+      592,
+      16,
+      16
+    ],
+    "coast_shell_brine_6": [
+      160,
+      592,
+      16,
+      16
+    ],
+    "coast_shell_brine_7": [
+      176,
+      592,
+      16,
+      16
+    ],
+    "coast_shell_brine_8": [
+      192,
+      592,
+      16,
+      16
+    ],
+    "coast_shell_brine_9": [
+      208,
+      592,
+      16,
+      16
+    ],
+    "coast_shell_cenote_1": [
+      352,
+      576,
+      16,
+      16
+    ],
+    "coast_shell_cenote_10": [
+      496,
+      576,
+      16,
+      16
+    ],
+    "coast_shell_cenote_11": [
+      0,
+      592,
+      16,
+      16
+    ],
+    "coast_shell_cenote_12": [
+      16,
+      592,
+      16,
+      16
+    ],
+    "coast_shell_cenote_13": [
+      32,
+      592,
+      16,
+      16
+    ],
+    "coast_shell_cenote_14": [
+      48,
+      592,
+      16,
+      16
+    ],
+    "coast_shell_cenote_15": [
+      64,
+      592,
+      16,
+      16
+    ],
+    "coast_shell_cenote_2": [
+      368,
+      576,
+      16,
+      16
+    ],
+    "coast_shell_cenote_3": [
+      384,
+      576,
+      16,
+      16
+    ],
+    "coast_shell_cenote_4": [
+      400,
+      576,
+      16,
+      16
+    ],
+    "coast_shell_cenote_5": [
+      416,
+      576,
+      16,
+      16
+    ],
+    "coast_shell_cenote_6": [
+      432,
+      576,
+      16,
+      16
+    ],
+    "coast_shell_cenote_7": [
+      448,
+      576,
+      16,
+      16
+    ],
+    "coast_shell_cenote_8": [
+      464,
+      576,
+      16,
+      16
+    ],
+    "coast_shell_cenote_9": [
+      480,
+      576,
+      16,
+      16
+    ],
+    "coast_shell_lake_1": [
+      144,
+      560,
+      16,
+      16
+    ],
+    "coast_shell_lake_10": [
+      288,
+      560,
+      16,
+      16
+    ],
+    "coast_shell_lake_11": [
+      304,
+      560,
+      16,
+      16
+    ],
+    "coast_shell_lake_12": [
+      320,
+      560,
+      16,
+      16
+    ],
+    "coast_shell_lake_13": [
+      336,
+      560,
+      16,
+      16
+    ],
+    "coast_shell_lake_14": [
+      352,
+      560,
+      16,
+      16
+    ],
+    "coast_shell_lake_15": [
+      368,
+      560,
+      16,
+      16
+    ],
+    "coast_shell_lake_2": [
+      160,
+      560,
+      16,
+      16
+    ],
+    "coast_shell_lake_3": [
+      176,
+      560,
+      16,
+      16
+    ],
+    "coast_shell_lake_4": [
+      192,
+      560,
+      16,
+      16
+    ],
+    "coast_shell_lake_5": [
+      208,
+      560,
+      16,
+      16
+    ],
+    "coast_shell_lake_6": [
+      224,
+      560,
+      16,
+      16
+    ],
+    "coast_shell_lake_7": [
+      240,
+      560,
+      16,
+      16
+    ],
+    "coast_shell_lake_8": [
+      256,
+      560,
+      16,
+      16
+    ],
+    "coast_shell_lake_9": [
+      272,
+      560,
+      16,
+      16
+    ],
+    "coast_shell_river_1": [
+      384,
+      560,
+      16,
+      16
+    ],
+    "coast_shell_river_10": [
+      16,
+      576,
+      16,
+      16
+    ],
+    "coast_shell_river_11": [
       32,
       576,
       16,
       16
     ],
-    "coast_mud_tidal_2": [
-      336,
-      560,
-      16,
-      16
-    ],
-    "coast_mud_tidal_3": [
-      352,
-      560,
-      16,
-      16
-    ],
-    "coast_mud_tidal_4": [
-      368,
-      560,
-      16,
-      16
-    ],
-    "coast_mud_tidal_5": [
-      384,
-      560,
-      16,
-      16
-    ],
-    "coast_mud_tidal_6": [
-      400,
-      560,
-      16,
-      16
-    ],
-    "coast_mud_tidal_7": [
-      416,
-      560,
-      16,
-      16
-    ],
-    "coast_mud_tidal_8": [
-      432,
-      560,
-      16,
-      16
-    ],
-    "coast_mud_tidal_9": [
-      448,
-      560,
-      16,
-      16
-    ],
-    "coast_reedpeat_cenote_1": [
-      368,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_cenote_10": [
-      0,
-      672,
-      16,
-      16
-    ],
-    "coast_reedpeat_cenote_11": [
-      16,
-      672,
-      16,
-      16
-    ],
-    "coast_reedpeat_cenote_12": [
-      32,
-      672,
-      16,
-      16
-    ],
-    "coast_reedpeat_cenote_13": [
-      48,
-      672,
-      16,
-      16
-    ],
-    "coast_reedpeat_cenote_14": [
-      64,
-      672,
-      16,
-      16
-    ],
-    "coast_reedpeat_cenote_15": [
-      80,
-      672,
-      16,
-      16
-    ],
-    "coast_reedpeat_cenote_2": [
-      384,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_cenote_3": [
-      400,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_cenote_4": [
-      416,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_cenote_5": [
-      432,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_cenote_6": [
-      448,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_cenote_7": [
-      464,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_cenote_8": [
-      480,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_cenote_9": [
-      496,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_lake_1": [
-      160,
-      640,
-      16,
-      16
-    ],
-    "coast_reedpeat_lake_10": [
-      304,
-      640,
-      16,
-      16
-    ],
-    "coast_reedpeat_lake_11": [
-      320,
-      640,
-      16,
-      16
-    ],
-    "coast_reedpeat_lake_12": [
-      336,
-      640,
-      16,
-      16
-    ],
-    "coast_reedpeat_lake_13": [
-      352,
-      640,
-      16,
-      16
-    ],
-    "coast_reedpeat_lake_14": [
-      368,
-      640,
-      16,
-      16
-    ],
-    "coast_reedpeat_lake_15": [
-      384,
-      640,
-      16,
-      16
-    ],
-    "coast_reedpeat_lake_2": [
-      176,
-      640,
-      16,
-      16
-    ],
-    "coast_reedpeat_lake_3": [
-      192,
-      640,
-      16,
-      16
-    ],
-    "coast_reedpeat_lake_4": [
-      208,
-      640,
-      16,
-      16
-    ],
-    "coast_reedpeat_lake_5": [
-      224,
-      640,
-      16,
-      16
-    ],
-    "coast_reedpeat_lake_6": [
-      240,
-      640,
-      16,
-      16
-    ],
-    "coast_reedpeat_lake_7": [
-      256,
-      640,
-      16,
-      16
-    ],
-    "coast_reedpeat_lake_8": [
-      272,
-      640,
-      16,
-      16
-    ],
-    "coast_reedpeat_lake_9": [
-      288,
-      640,
-      16,
-      16
-    ],
-    "coast_reedpeat_river_1": [
-      400,
-      640,
-      16,
-      16
-    ],
-    "coast_reedpeat_river_10": [
-      32,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_river_11": [
-      48,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_river_12": [
-      64,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_river_13": [
-      80,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_river_14": [
-      96,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_river_15": [
-      112,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_river_2": [
-      416,
-      640,
-      16,
-      16
-    ],
-    "coast_reedpeat_river_3": [
-      432,
-      640,
-      16,
-      16
-    ],
-    "coast_reedpeat_river_4": [
-      448,
-      640,
-      16,
-      16
-    ],
-    "coast_reedpeat_river_5": [
-      464,
-      640,
-      16,
-      16
-    ],
-    "coast_reedpeat_river_6": [
-      480,
-      640,
-      16,
-      16
-    ],
-    "coast_reedpeat_river_7": [
-      496,
-      640,
-      16,
-      16
-    ],
-    "coast_reedpeat_river_8": [
-      0,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_river_9": [
-      16,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_tidal_1": [
-      128,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_tidal_10": [
-      272,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_tidal_11": [
-      288,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_tidal_12": [
-      304,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_tidal_13": [
-      320,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_tidal_14": [
-      336,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_tidal_15": [
-      352,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_tidal_2": [
-      144,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_tidal_3": [
-      160,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_tidal_4": [
-      176,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_tidal_5": [
-      192,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_tidal_6": [
-      208,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_tidal_7": [
-      224,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_tidal_8": [
-      240,
-      656,
-      16,
-      16
-    ],
-    "coast_reedpeat_tidal_9": [
-      256,
-      656,
-      16,
-      16
-    ],
-    "coast_shell_cenote_1": [
-      112,
-      544,
-      16,
-      16
-    ],
-    "coast_shell_cenote_10": [
-      256,
-      544,
-      16,
-      16
-    ],
-    "coast_shell_cenote_11": [
-      272,
-      544,
-      16,
-      16
-    ],
-    "coast_shell_cenote_12": [
-      288,
-      544,
-      16,
-      16
-    ],
-    "coast_shell_cenote_13": [
-      304,
-      544,
-      16,
-      16
-    ],
-    "coast_shell_cenote_14": [
-      320,
-      544,
-      16,
-      16
-    ],
-    "coast_shell_cenote_15": [
-      336,
-      544,
-      16,
-      16
-    ],
-    "coast_shell_cenote_2": [
-      128,
-      544,
-      16,
-      16
-    ],
-    "coast_shell_cenote_3": [
-      144,
-      544,
-      16,
-      16
-    ],
-    "coast_shell_cenote_4": [
-      160,
-      544,
-      16,
-      16
-    ],
-    "coast_shell_cenote_5": [
-      176,
-      544,
-      16,
-      16
-    ],
-    "coast_shell_cenote_6": [
-      192,
-      544,
-      16,
-      16
-    ],
-    "coast_shell_cenote_7": [
-      208,
-      544,
-      16,
-      16
-    ],
-    "coast_shell_cenote_8": [
-      224,
-      544,
-      16,
-      16
-    ],
-    "coast_shell_cenote_9": [
-      240,
-      544,
-      16,
-      16
-    ],
-    "coast_shell_lake_1": [
-      416,
-      512,
-      16,
-      16
-    ],
-    "coast_shell_lake_10": [
-      48,
-      528,
-      16,
-      16
-    ],
-    "coast_shell_lake_11": [
-      64,
-      528,
-      16,
-      16
-    ],
-    "coast_shell_lake_12": [
-      80,
-      528,
-      16,
-      16
-    ],
-    "coast_shell_lake_13": [
-      96,
-      528,
-      16,
-      16
-    ],
-    "coast_shell_lake_14": [
-      112,
-      528,
-      16,
-      16
-    ],
-    "coast_shell_lake_15": [
-      128,
-      528,
-      16,
-      16
-    ],
-    "coast_shell_lake_2": [
-      432,
-      512,
-      16,
-      16
-    ],
-    "coast_shell_lake_3": [
-      448,
-      512,
-      16,
-      16
-    ],
-    "coast_shell_lake_4": [
-      464,
-      512,
-      16,
-      16
-    ],
-    "coast_shell_lake_5": [
-      480,
-      512,
-      16,
-      16
-    ],
-    "coast_shell_lake_6": [
-      496,
-      512,
-      16,
-      16
-    ],
-    "coast_shell_lake_7": [
-      0,
-      528,
-      16,
-      16
-    ],
-    "coast_shell_lake_8": [
-      16,
-      528,
-      16,
-      16
-    ],
-    "coast_shell_lake_9": [
-      32,
-      528,
-      16,
-      16
-    ],
-    "coast_shell_river_1": [
-      144,
-      528,
-      16,
-      16
-    ],
-    "coast_shell_river_10": [
-      288,
-      528,
-      16,
-      16
-    ],
-    "coast_shell_river_11": [
-      304,
-      528,
-      16,
-      16
-    ],
     "coast_shell_river_12": [
-      320,
-      528,
+      48,
+      576,
       16,
       16
     ],
     "coast_shell_river_13": [
-      336,
-      528,
+      64,
+      576,
       16,
       16
     ],
     "coast_shell_river_14": [
-      352,
-      528,
+      80,
+      576,
       16,
       16
     ],
     "coast_shell_river_15": [
-      368,
-      528,
+      96,
+      576,
       16,
       16
     ],
     "coast_shell_river_2": [
-      160,
-      528,
+      400,
+      560,
       16,
       16
     ],
     "coast_shell_river_3": [
-      176,
-      528,
+      416,
+      560,
       16,
       16
     ],
     "coast_shell_river_4": [
-      192,
-      528,
+      432,
+      560,
       16,
       16
     ],
     "coast_shell_river_5": [
-      208,
-      528,
+      448,
+      560,
       16,
       16
     ],
     "coast_shell_river_6": [
-      224,
-      528,
+      464,
+      560,
       16,
       16
     ],
     "coast_shell_river_7": [
-      240,
-      528,
+      480,
+      560,
       16,
       16
     ],
     "coast_shell_river_8": [
-      256,
-      528,
+      496,
+      560,
       16,
       16
     ],
     "coast_shell_river_9": [
-      272,
-      528,
+      0,
+      576,
       16,
       16
     ],
     "coast_shell_tidal_1": [
-      384,
-      528,
+      112,
+      576,
       16,
       16
     ],
     "coast_shell_tidal_10": [
-      16,
-      544,
+      256,
+      576,
       16,
       16
     ],
     "coast_shell_tidal_11": [
-      32,
-      544,
+      272,
+      576,
       16,
       16
     ],
     "coast_shell_tidal_12": [
-      48,
-      544,
+      288,
+      576,
       16,
       16
     ],
     "coast_shell_tidal_13": [
-      64,
-      544,
+      304,
+      576,
       16,
       16
     ],
     "coast_shell_tidal_14": [
-      80,
-      544,
+      320,
+      576,
       16,
       16
     ],
     "coast_shell_tidal_15": [
-      96,
-      544,
+      336,
+      576,
       16,
       16
     ],
     "coast_shell_tidal_2": [
-      400,
-      528,
+      128,
+      576,
       16,
       16
     ],
     "coast_shell_tidal_3": [
-      416,
-      528,
+      144,
+      576,
       16,
       16
     ],
     "coast_shell_tidal_4": [
-      432,
-      528,
+      160,
+      576,
       16,
       16
     ],
     "coast_shell_tidal_5": [
-      448,
-      528,
+      176,
+      576,
       16,
       16
     ],
     "coast_shell_tidal_6": [
-      464,
-      528,
+      192,
+      576,
       16,
       16
     ],
     "coast_shell_tidal_7": [
-      480,
-      528,
+      208,
+      576,
       16,
       16
     ],
     "coast_shell_tidal_8": [
-      496,
-      528,
+      224,
+      576,
       16,
       16
     ],
     "coast_shell_tidal_9": [
-      0,
+      240,
+      576,
+      16,
+      16
+    ],
+    "coast_silt_brine_1": [
+      416,
       544,
+      16,
+      16
+    ],
+    "coast_silt_brine_10": [
+      48,
+      560,
+      16,
+      16
+    ],
+    "coast_silt_brine_11": [
+      64,
+      560,
+      16,
+      16
+    ],
+    "coast_silt_brine_12": [
+      80,
+      560,
+      16,
+      16
+    ],
+    "coast_silt_brine_13": [
+      96,
+      560,
+      16,
+      16
+    ],
+    "coast_silt_brine_14": [
+      112,
+      560,
+      16,
+      16
+    ],
+    "coast_silt_brine_15": [
+      128,
+      560,
+      16,
+      16
+    ],
+    "coast_silt_brine_2": [
+      432,
+      544,
+      16,
+      16
+    ],
+    "coast_silt_brine_3": [
+      448,
+      544,
+      16,
+      16
+    ],
+    "coast_silt_brine_4": [
+      464,
+      544,
+      16,
+      16
+    ],
+    "coast_silt_brine_5": [
+      480,
+      544,
+      16,
+      16
+    ],
+    "coast_silt_brine_6": [
+      496,
+      544,
+      16,
+      16
+    ],
+    "coast_silt_brine_7": [
+      0,
+      560,
+      16,
+      16
+    ],
+    "coast_silt_brine_8": [
+      16,
+      560,
+      16,
+      16
+    ],
+    "coast_silt_brine_9": [
+      32,
+      560,
       16,
       16
     ],
     "coast_silt_cenote_1": [
       176,
-      512,
+      544,
       16,
       16
     ],
     "coast_silt_cenote_10": [
       320,
-      512,
+      544,
       16,
       16
     ],
     "coast_silt_cenote_11": [
       336,
-      512,
+      544,
       16,
       16
     ],
     "coast_silt_cenote_12": [
       352,
-      512,
+      544,
       16,
       16
     ],
     "coast_silt_cenote_13": [
       368,
-      512,
+      544,
       16,
       16
     ],
     "coast_silt_cenote_14": [
       384,
-      512,
+      544,
       16,
       16
     ],
     "coast_silt_cenote_15": [
       400,
-      512,
+      544,
       16,
       16
     ],
     "coast_silt_cenote_2": [
       192,
-      512,
+      544,
       16,
       16
     ],
     "coast_silt_cenote_3": [
       208,
-      512,
+      544,
       16,
       16
     ],
     "coast_silt_cenote_4": [
       224,
-      512,
+      544,
       16,
       16
     ],
     "coast_silt_cenote_5": [
       240,
-      512,
+      544,
       16,
       16
     ],
     "coast_silt_cenote_6": [
       256,
-      512,
+      544,
       16,
       16
     ],
     "coast_silt_cenote_7": [
       272,
-      512,
+      544,
       16,
       16
     ],
     "coast_silt_cenote_8": [
       288,
-      512,
+      544,
       16,
       16
     ],
     "coast_silt_cenote_9": [
       304,
-      512,
+      544,
       16,
       16
     ],
     "coast_silt_lake_1": [
       480,
-      480,
+      512,
       16,
       16
     ],
     "coast_silt_lake_10": [
       112,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_lake_11": [
       128,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_lake_12": [
       144,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_lake_13": [
       160,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_lake_14": [
       176,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_lake_15": [
       192,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_lake_2": [
       496,
-      480,
+      512,
       16,
       16
     ],
     "coast_silt_lake_3": [
       0,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_lake_4": [
       16,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_lake_5": [
       32,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_lake_6": [
       48,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_lake_7": [
       64,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_lake_8": [
       80,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_lake_9": [
       96,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_river_1": [
       208,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_river_10": [
       352,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_river_11": [
       368,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_river_12": [
       384,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_river_13": [
       400,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_river_14": [
       416,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_river_15": [
       432,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_river_2": [
       224,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_river_3": [
       240,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_river_4": [
       256,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_river_5": [
       272,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_river_6": [
       288,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_river_7": [
       304,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_river_8": [
       320,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_river_9": [
       336,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_tidal_1": [
       448,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_tidal_10": [
       80,
-      512,
+      544,
       16,
       16
     ],
     "coast_silt_tidal_11": [
       96,
-      512,
+      544,
       16,
       16
     ],
     "coast_silt_tidal_12": [
       112,
-      512,
+      544,
       16,
       16
     ],
     "coast_silt_tidal_13": [
       128,
-      512,
+      544,
       16,
       16
     ],
     "coast_silt_tidal_14": [
       144,
-      512,
+      544,
       16,
       16
     ],
     "coast_silt_tidal_15": [
       160,
-      512,
+      544,
       16,
       16
     ],
     "coast_silt_tidal_2": [
       464,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_tidal_3": [
       480,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_tidal_4": [
       496,
-      496,
+      528,
       16,
       16
     ],
     "coast_silt_tidal_5": [
       0,
-      512,
+      544,
       16,
       16
     ],
     "coast_silt_tidal_6": [
       16,
-      512,
+      544,
       16,
       16
     ],
     "coast_silt_tidal_7": [
       32,
-      512,
+      544,
       16,
       16
     ],
     "coast_silt_tidal_8": [
       48,
-      512,
+      544,
       16,
       16
     ],
     "coast_silt_tidal_9": [
       64,
-      512,
+      544,
       16,
       16
     ],
@@ -4407,6 +5721,240 @@
     "court_3": [
       464,
       144,
+      16,
+      16
+    ],
+    "detail_cinder_scoria_0": [
+      16,
+      864,
+      16,
+      16
+    ],
+    "detail_cinder_scoria_1": [
+      32,
+      864,
+      16,
+      16
+    ],
+    "detail_cinder_scoria_2": [
+      48,
+      864,
+      16,
+      16
+    ],
+    "detail_dune_ripple_0": [
+      352,
+      864,
+      16,
+      16
+    ],
+    "detail_dune_ripple_1": [
+      368,
+      864,
+      16,
+      16
+    ],
+    "detail_dune_ripple_2": [
+      384,
+      864,
+      16,
+      16
+    ],
+    "detail_forge_slag_0": [
+      400,
+      864,
+      16,
+      16
+    ],
+    "detail_forge_slag_1": [
+      416,
+      864,
+      16,
+      16
+    ],
+    "detail_forge_slag_2": [
+      432,
+      864,
+      16,
+      16
+    ],
+    "detail_jungle_litter_0": [
+      64,
+      864,
+      16,
+      16
+    ],
+    "detail_jungle_litter_1": [
+      80,
+      864,
+      16,
+      16
+    ],
+    "detail_jungle_litter_2": [
+      96,
+      864,
+      16,
+      16
+    ],
+    "detail_karst_fissure_0": [
+      112,
+      864,
+      16,
+      16
+    ],
+    "detail_karst_fissure_1": [
+      128,
+      864,
+      16,
+      16
+    ],
+    "detail_karst_fissure_2": [
+      144,
+      864,
+      16,
+      16
+    ],
+    "detail_mud_crack_0": [
+      432,
+      848,
+      16,
+      16
+    ],
+    "detail_mud_crack_1": [
+      448,
+      848,
+      16,
+      16
+    ],
+    "detail_mud_crack_2": [
+      464,
+      848,
+      16,
+      16
+    ],
+    "detail_orchard_grass_0": [
+      448,
+      864,
+      16,
+      16
+    ],
+    "detail_orchard_grass_1": [
+      464,
+      864,
+      16,
+      16
+    ],
+    "detail_orchard_grass_2": [
+      480,
+      864,
+      16,
+      16
+    ],
+    "detail_peat_cut_0": [
+      256,
+      864,
+      16,
+      16
+    ],
+    "detail_peat_cut_1": [
+      272,
+      864,
+      16,
+      16
+    ],
+    "detail_peat_cut_2": [
+      288,
+      864,
+      16,
+      16
+    ],
+    "detail_reed_tuft_0": [
+      384,
+      848,
+      16,
+      16
+    ],
+    "detail_reed_tuft_1": [
+      400,
+      848,
+      16,
+      16
+    ],
+    "detail_reed_tuft_2": [
+      416,
+      848,
+      16,
+      16
+    ],
+    "detail_salt_crust_0": [
+      480,
+      848,
+      16,
+      16
+    ],
+    "detail_salt_crust_1": [
+      496,
+      848,
+      16,
+      16
+    ],
+    "detail_salt_crust_2": [
+      0,
+      864,
+      16,
+      16
+    ],
+    "detail_shell_hash_0": [
+      160,
+      864,
+      16,
+      16
+    ],
+    "detail_shell_hash_1": [
+      176,
+      864,
+      16,
+      16
+    ],
+    "detail_shell_hash_2": [
+      192,
+      864,
+      16,
+      16
+    ],
+    "detail_toxic_film_0": [
+      304,
+      864,
+      16,
+      16
+    ],
+    "detail_toxic_film_1": [
+      320,
+      864,
+      16,
+      16
+    ],
+    "detail_toxic_film_2": [
+      336,
+      864,
+      16,
+      16
+    ],
+    "detail_water_ripple_0": [
+      208,
+      864,
+      16,
+      16
+    ],
+    "detail_water_ripple_1": [
+      224,
+      864,
+      16,
+      16
+    ],
+    "detail_water_ripple_2": [
+      240,
+      864,
       16,
       16
     ],
@@ -4669,3601 +6217,3961 @@
       16
     ],
     "mix_ash_cinder_1": [
-      16,
+      80,
       480,
       16,
       16
     ],
     "mix_ash_cinder_10": [
-      304,
+      368,
       480,
       16,
       16
     ],
     "mix_ash_cinder_11": [
-      336,
+      400,
       480,
       16,
       16
     ],
     "mix_ash_cinder_12": [
-      368,
+      432,
       480,
       16,
       16
     ],
     "mix_ash_cinder_13": [
-      400,
+      464,
       480,
       16,
       16
     ],
     "mix_ash_cinder_14": [
-      432,
+      496,
       480,
       16,
       16
     ],
     "mix_ash_cinder_15": [
-      464,
-      480,
+      16,
+      496,
       16,
       16
     ],
     "mix_ash_cinder_2": [
-      48,
+      112,
       480,
       16,
       16
     ],
     "mix_ash_cinder_3": [
-      80,
+      144,
       480,
       16,
       16
     ],
     "mix_ash_cinder_4": [
-      112,
+      176,
       480,
       16,
       16
     ],
     "mix_ash_cinder_5": [
-      144,
+      208,
       480,
       16,
       16
     ],
     "mix_ash_cinder_6": [
-      176,
+      240,
       480,
       16,
       16
     ],
     "mix_ash_cinder_7": [
-      208,
+      272,
       480,
       16,
       16
     ],
     "mix_ash_cinder_8": [
-      240,
+      304,
       480,
       16,
       16
     ],
     "mix_ash_cinder_9": [
-      272,
+      336,
       480,
       16,
       16
     ],
-    "mix_cenote_karst_1": [
+    "mix_brine_dune_1": [
+      16,
+      512,
+      16,
+      16
+    ],
+    "mix_brine_dune_10": [
+      304,
+      512,
+      16,
+      16
+    ],
+    "mix_brine_dune_11": [
+      336,
+      512,
+      16,
+      16
+    ],
+    "mix_brine_dune_12": [
+      368,
+      512,
+      16,
+      16
+    ],
+    "mix_brine_dune_13": [
+      400,
+      512,
+      16,
+      16
+    ],
+    "mix_brine_dune_14": [
+      432,
+      512,
+      16,
+      16
+    ],
+    "mix_brine_dune_15": [
+      464,
+      512,
+      16,
+      16
+    ],
+    "mix_brine_dune_2": [
+      48,
+      512,
+      16,
+      16
+    ],
+    "mix_brine_dune_3": [
+      80,
+      512,
+      16,
+      16
+    ],
+    "mix_brine_dune_4": [
+      112,
+      512,
+      16,
+      16
+    ],
+    "mix_brine_dune_5": [
+      144,
+      512,
+      16,
+      16
+    ],
+    "mix_brine_dune_6": [
+      176,
+      512,
+      16,
+      16
+    ],
+    "mix_brine_dune_7": [
+      208,
+      512,
+      16,
+      16
+    ],
+    "mix_brine_dune_8": [
       240,
+      512,
+      16,
+      16
+    ],
+    "mix_brine_dune_9": [
+      272,
+      512,
+      16,
+      16
+    ],
+    "mix_brine_salt_1": [
+      48,
+      496,
+      16,
+      16
+    ],
+    "mix_brine_salt_10": [
+      336,
+      496,
+      16,
+      16
+    ],
+    "mix_brine_salt_11": [
+      368,
+      496,
+      16,
+      16
+    ],
+    "mix_brine_salt_12": [
+      400,
+      496,
+      16,
+      16
+    ],
+    "mix_brine_salt_13": [
+      432,
+      496,
+      16,
+      16
+    ],
+    "mix_brine_salt_14": [
+      464,
+      496,
+      16,
+      16
+    ],
+    "mix_brine_salt_15": [
+      496,
+      496,
+      16,
+      16
+    ],
+    "mix_brine_salt_2": [
+      80,
+      496,
+      16,
+      16
+    ],
+    "mix_brine_salt_3": [
+      112,
+      496,
+      16,
+      16
+    ],
+    "mix_brine_salt_4": [
+      144,
+      496,
+      16,
+      16
+    ],
+    "mix_brine_salt_5": [
+      176,
+      496,
+      16,
+      16
+    ],
+    "mix_brine_salt_6": [
+      208,
+      496,
+      16,
+      16
+    ],
+    "mix_brine_salt_7": [
+      240,
+      496,
+      16,
+      16
+    ],
+    "mix_brine_salt_8": [
+      272,
+      496,
+      16,
+      16
+    ],
+    "mix_brine_salt_9": [
+      304,
+      496,
+      16,
+      16
+    ],
+    "mix_cenote_karst_1": [
+      304,
       368,
       16,
       16
     ],
     "mix_cenote_karst_10": [
-      16,
+      80,
       384,
       16,
       16
     ],
     "mix_cenote_karst_11": [
-      48,
+      112,
       384,
       16,
       16
     ],
     "mix_cenote_karst_12": [
-      80,
+      144,
       384,
       16,
       16
     ],
     "mix_cenote_karst_13": [
-      112,
+      176,
       384,
       16,
       16
     ],
     "mix_cenote_karst_14": [
-      144,
+      208,
       384,
       16,
       16
     ],
     "mix_cenote_karst_15": [
-      176,
+      240,
       384,
       16,
       16
     ],
     "mix_cenote_karst_2": [
-      272,
+      336,
       368,
       16,
       16
     ],
     "mix_cenote_karst_3": [
-      304,
+      368,
       368,
       16,
       16
     ],
     "mix_cenote_karst_4": [
-      336,
+      400,
       368,
       16,
       16
     ],
     "mix_cenote_karst_5": [
-      368,
+      432,
       368,
       16,
       16
     ],
     "mix_cenote_karst_6": [
-      400,
+      464,
       368,
       16,
       16
     ],
     "mix_cenote_karst_7": [
-      432,
+      496,
       368,
       16,
       16
     ],
     "mix_cenote_karst_8": [
-      464,
-      368,
+      16,
+      384,
       16,
       16
     ],
     "mix_cenote_karst_9": [
-      496,
-      368,
+      48,
+      384,
       16,
       16
     ],
     "mix_cinder_ash_1": [
-      0,
+      64,
       480,
       16,
       16
     ],
     "mix_cinder_ash_10": [
-      288,
+      352,
       480,
       16,
       16
     ],
     "mix_cinder_ash_11": [
-      320,
+      384,
       480,
       16,
       16
     ],
     "mix_cinder_ash_12": [
-      352,
+      416,
       480,
       16,
       16
     ],
     "mix_cinder_ash_13": [
-      384,
+      448,
       480,
       16,
       16
     ],
     "mix_cinder_ash_14": [
-      416,
+      480,
       480,
       16,
       16
     ],
     "mix_cinder_ash_15": [
-      448,
-      480,
+      0,
+      496,
       16,
       16
     ],
     "mix_cinder_ash_2": [
-      32,
+      96,
       480,
       16,
       16
     ],
     "mix_cinder_ash_3": [
-      64,
+      128,
       480,
       16,
       16
     ],
     "mix_cinder_ash_4": [
-      96,
+      160,
       480,
       16,
       16
     ],
     "mix_cinder_ash_5": [
-      128,
+      192,
       480,
       16,
       16
     ],
     "mix_cinder_ash_6": [
-      160,
+      224,
       480,
       16,
       16
     ],
     "mix_cinder_ash_7": [
-      192,
+      256,
       480,
       16,
       16
     ],
     "mix_cinder_ash_8": [
-      224,
+      288,
       480,
       16,
       16
     ],
     "mix_cinder_ash_9": [
-      256,
+      320,
       480,
       16,
       16
     ],
     "mix_cinder_lava_1": [
-      416,
+      480,
       272,
       16,
       16
     ],
     "mix_cinder_lava_10": [
-      192,
+      256,
       288,
       16,
       16
     ],
     "mix_cinder_lava_11": [
-      224,
+      288,
       288,
       16,
       16
     ],
     "mix_cinder_lava_12": [
-      256,
+      320,
       288,
       16,
       16
     ],
     "mix_cinder_lava_13": [
-      288,
+      352,
       288,
       16,
       16
     ],
     "mix_cinder_lava_14": [
-      320,
+      384,
       288,
       16,
       16
     ],
     "mix_cinder_lava_15": [
-      352,
+      416,
       288,
       16,
       16
     ],
     "mix_cinder_lava_2": [
-      448,
-      272,
+      0,
+      288,
       16,
       16
     ],
     "mix_cinder_lava_3": [
-      480,
-      272,
+      32,
+      288,
       16,
       16
     ],
     "mix_cinder_lava_4": [
-      0,
+      64,
       288,
       16,
       16
     ],
     "mix_cinder_lava_5": [
-      32,
+      96,
       288,
       16,
       16
     ],
     "mix_cinder_lava_6": [
-      64,
+      128,
       288,
       16,
       16
     ],
     "mix_cinder_lava_7": [
-      96,
+      160,
       288,
       16,
       16
     ],
     "mix_cinder_lava_8": [
-      128,
+      192,
       288,
       16,
       16
     ],
     "mix_cinder_lava_9": [
-      160,
+      224,
       288,
       16,
       16
     ],
+    "mix_dune_brine_1": [
+      0,
+      512,
+      16,
+      16
+    ],
+    "mix_dune_brine_10": [
+      288,
+      512,
+      16,
+      16
+    ],
+    "mix_dune_brine_11": [
+      320,
+      512,
+      16,
+      16
+    ],
+    "mix_dune_brine_12": [
+      352,
+      512,
+      16,
+      16
+    ],
+    "mix_dune_brine_13": [
+      384,
+      512,
+      16,
+      16
+    ],
+    "mix_dune_brine_14": [
+      416,
+      512,
+      16,
+      16
+    ],
+    "mix_dune_brine_15": [
+      448,
+      512,
+      16,
+      16
+    ],
+    "mix_dune_brine_2": [
+      32,
+      512,
+      16,
+      16
+    ],
+    "mix_dune_brine_3": [
+      64,
+      512,
+      16,
+      16
+    ],
+    "mix_dune_brine_4": [
+      96,
+      512,
+      16,
+      16
+    ],
+    "mix_dune_brine_5": [
+      128,
+      512,
+      16,
+      16
+    ],
+    "mix_dune_brine_6": [
+      160,
+      512,
+      16,
+      16
+    ],
+    "mix_dune_brine_7": [
+      192,
+      512,
+      16,
+      16
+    ],
+    "mix_dune_brine_8": [
+      224,
+      512,
+      16,
+      16
+    ],
+    "mix_dune_brine_9": [
+      256,
+      512,
+      16,
+      16
+    ],
     "mix_dune_salt_1": [
-      480,
-      240,
+      32,
+      256,
       16,
       16
     ],
     "mix_dune_salt_10": [
-      256,
+      320,
       256,
       16,
       16
     ],
     "mix_dune_salt_11": [
-      288,
+      352,
       256,
       16,
       16
     ],
     "mix_dune_salt_12": [
-      320,
+      384,
       256,
       16,
       16
     ],
     "mix_dune_salt_13": [
-      352,
+      416,
       256,
       16,
       16
     ],
     "mix_dune_salt_14": [
-      384,
+      448,
       256,
       16,
       16
     ],
     "mix_dune_salt_15": [
-      416,
+      480,
       256,
       16,
       16
     ],
     "mix_dune_salt_2": [
-      0,
+      64,
       256,
       16,
       16
     ],
     "mix_dune_salt_3": [
-      32,
+      96,
       256,
       16,
       16
     ],
     "mix_dune_salt_4": [
-      64,
+      128,
       256,
       16,
       16
     ],
     "mix_dune_salt_5": [
-      96,
+      160,
       256,
       16,
       16
     ],
     "mix_dune_salt_6": [
-      128,
+      192,
       256,
       16,
       16
     ],
     "mix_dune_salt_7": [
-      160,
+      224,
       256,
       16,
       16
     ],
     "mix_dune_salt_8": [
-      192,
+      256,
       256,
       16,
       16
     ],
     "mix_dune_salt_9": [
-      224,
+      288,
       256,
       16,
       16
     ],
     "mix_dune_shell_1": [
-      16,
+      80,
       240,
       16,
       16
     ],
     "mix_dune_shell_10": [
-      304,
+      368,
       240,
       16,
       16
     ],
     "mix_dune_shell_11": [
-      336,
+      400,
       240,
       16,
       16
     ],
     "mix_dune_shell_12": [
-      368,
+      432,
       240,
       16,
       16
     ],
     "mix_dune_shell_13": [
-      400,
+      464,
       240,
       16,
       16
     ],
     "mix_dune_shell_14": [
-      432,
+      496,
       240,
       16,
       16
     ],
     "mix_dune_shell_15": [
-      464,
-      240,
+      16,
+      256,
       16,
       16
     ],
     "mix_dune_shell_2": [
-      48,
+      112,
       240,
       16,
       16
     ],
     "mix_dune_shell_3": [
-      80,
+      144,
       240,
       16,
       16
     ],
     "mix_dune_shell_4": [
-      112,
+      176,
       240,
       16,
       16
     ],
     "mix_dune_shell_5": [
-      144,
+      208,
       240,
       16,
       16
     ],
     "mix_dune_shell_6": [
-      176,
+      240,
       240,
       16,
       16
     ],
     "mix_dune_shell_7": [
-      208,
+      272,
       240,
       16,
       16
     ],
     "mix_dune_shell_8": [
-      240,
+      304,
       240,
       16,
       16
     ],
     "mix_dune_shell_9": [
-      272,
+      336,
       240,
       16,
       16
     ],
     "mix_fen_silt_1": [
-      160,
+      224,
       400,
       16,
       16
     ],
     "mix_fen_silt_10": [
-      448,
-      400,
+      0,
+      416,
       16,
       16
     ],
     "mix_fen_silt_11": [
-      480,
-      400,
+      32,
+      416,
       16,
       16
     ],
     "mix_fen_silt_12": [
-      0,
+      64,
       416,
       16,
       16
     ],
     "mix_fen_silt_13": [
-      32,
+      96,
       416,
       16,
       16
     ],
     "mix_fen_silt_14": [
-      64,
+      128,
       416,
       16,
       16
     ],
     "mix_fen_silt_15": [
-      96,
+      160,
       416,
       16,
       16
     ],
     "mix_fen_silt_2": [
-      192,
+      256,
       400,
       16,
       16
     ],
     "mix_fen_silt_3": [
-      224,
+      288,
       400,
       16,
       16
     ],
     "mix_fen_silt_4": [
-      256,
+      320,
       400,
       16,
       16
     ],
     "mix_fen_silt_5": [
-      288,
+      352,
       400,
       16,
       16
     ],
     "mix_fen_silt_6": [
-      320,
+      384,
       400,
       16,
       16
     ],
     "mix_fen_silt_7": [
-      352,
+      416,
       400,
       16,
       16
     ],
     "mix_fen_silt_8": [
-      384,
+      448,
       400,
       16,
       16
     ],
     "mix_fen_silt_9": [
-      416,
+      480,
       400,
       16,
       16
     ],
     "mix_fen_toxic_1": [
-      192,
+      256,
       384,
       16,
       16
     ],
     "mix_fen_toxic_10": [
-      480,
-      384,
+      32,
+      400,
       16,
       16
     ],
     "mix_fen_toxic_11": [
-      0,
+      64,
       400,
       16,
       16
     ],
     "mix_fen_toxic_12": [
-      32,
+      96,
       400,
       16,
       16
     ],
     "mix_fen_toxic_13": [
-      64,
+      128,
       400,
       16,
       16
     ],
     "mix_fen_toxic_14": [
-      96,
+      160,
       400,
       16,
       16
     ],
     "mix_fen_toxic_15": [
-      128,
+      192,
       400,
       16,
       16
     ],
     "mix_fen_toxic_2": [
-      224,
+      288,
       384,
       16,
       16
     ],
     "mix_fen_toxic_3": [
-      256,
+      320,
       384,
       16,
       16
     ],
     "mix_fen_toxic_4": [
-      288,
+      352,
       384,
       16,
       16
     ],
     "mix_fen_toxic_5": [
-      320,
+      384,
       384,
       16,
       16
     ],
     "mix_fen_toxic_6": [
-      352,
+      416,
       384,
       16,
       16
     ],
     "mix_fen_toxic_7": [
-      384,
+      448,
       384,
       16,
       16
     ],
     "mix_fen_toxic_8": [
-      416,
+      480,
       384,
       16,
       16
     ],
     "mix_fen_toxic_9": [
-      448,
-      384,
+      0,
+      400,
       16,
       16
     ],
     "mix_grass_silt_1": [
-      96,
+      160,
       432,
       16,
       16
     ],
     "mix_grass_silt_10": [
-      384,
+      448,
       432,
       16,
       16
     ],
     "mix_grass_silt_11": [
-      416,
+      480,
       432,
       16,
       16
     ],
     "mix_grass_silt_12": [
+      0,
       448,
-      432,
       16,
       16
     ],
     "mix_grass_silt_13": [
-      480,
-      432,
+      32,
+      448,
       16,
       16
     ],
     "mix_grass_silt_14": [
-      0,
+      64,
       448,
       16,
       16
     ],
     "mix_grass_silt_15": [
-      32,
+      96,
       448,
       16,
       16
     ],
     "mix_grass_silt_2": [
-      128,
+      192,
       432,
       16,
       16
     ],
     "mix_grass_silt_3": [
-      160,
+      224,
       432,
       16,
       16
     ],
     "mix_grass_silt_4": [
-      192,
+      256,
       432,
       16,
       16
     ],
     "mix_grass_silt_5": [
-      224,
+      288,
       432,
       16,
       16
     ],
     "mix_grass_silt_6": [
-      256,
+      320,
       432,
       16,
       16
     ],
     "mix_grass_silt_7": [
-      288,
+      352,
       432,
       16,
       16
     ],
     "mix_grass_silt_8": [
-      320,
+      384,
       432,
       16,
       16
     ],
     "mix_grass_silt_9": [
-      352,
+      416,
       432,
       16,
       16
     ],
     "mix_jungle_karst_1": [
-      352,
+      416,
       304,
       16,
       16
     ],
     "mix_jungle_karst_10": [
-      128,
+      192,
       320,
       16,
       16
     ],
     "mix_jungle_karst_11": [
-      160,
+      224,
       320,
       16,
       16
     ],
     "mix_jungle_karst_12": [
-      192,
+      256,
       320,
       16,
       16
     ],
     "mix_jungle_karst_13": [
-      224,
+      288,
       320,
       16,
       16
     ],
     "mix_jungle_karst_14": [
-      256,
+      320,
       320,
       16,
       16
     ],
     "mix_jungle_karst_15": [
-      288,
+      352,
       320,
       16,
       16
     ],
     "mix_jungle_karst_2": [
-      384,
+      448,
       304,
       16,
       16
     ],
     "mix_jungle_karst_3": [
-      416,
+      480,
       304,
       16,
       16
     ],
     "mix_jungle_karst_4": [
-      448,
-      304,
+      0,
+      320,
       16,
       16
     ],
     "mix_jungle_karst_5": [
-      480,
-      304,
+      32,
+      320,
       16,
       16
     ],
     "mix_jungle_karst_6": [
-      0,
+      64,
       320,
       16,
       16
     ],
     "mix_jungle_karst_7": [
-      32,
+      96,
       320,
       16,
       16
     ],
     "mix_jungle_karst_8": [
-      64,
+      128,
       320,
       16,
       16
     ],
     "mix_jungle_karst_9": [
-      96,
+      160,
       320,
       16,
       16
     ],
     "mix_jungle_soil_1": [
-      64,
+      128,
       448,
       16,
       16
     ],
     "mix_jungle_soil_10": [
-      352,
+      416,
       448,
       16,
       16
     ],
     "mix_jungle_soil_11": [
-      384,
+      448,
       448,
       16,
       16
     ],
     "mix_jungle_soil_12": [
-      416,
+      480,
       448,
       16,
       16
     ],
     "mix_jungle_soil_13": [
-      448,
-      448,
+      0,
+      464,
       16,
       16
     ],
     "mix_jungle_soil_14": [
-      480,
-      448,
+      32,
+      464,
       16,
       16
     ],
     "mix_jungle_soil_15": [
-      0,
+      64,
       464,
       16,
       16
     ],
     "mix_jungle_soil_2": [
-      96,
+      160,
       448,
       16,
       16
     ],
     "mix_jungle_soil_3": [
-      128,
+      192,
       448,
       16,
       16
     ],
     "mix_jungle_soil_4": [
-      160,
+      224,
       448,
       16,
       16
     ],
     "mix_jungle_soil_5": [
-      192,
+      256,
       448,
       16,
       16
     ],
     "mix_jungle_soil_6": [
-      224,
+      288,
       448,
       16,
       16
     ],
     "mix_jungle_soil_7": [
-      256,
+      320,
       448,
       16,
       16
     ],
     "mix_jungle_soil_8": [
-      288,
+      352,
       448,
       16,
       16
     ],
     "mix_jungle_soil_9": [
-      320,
+      384,
       448,
       16,
       16
     ],
     "mix_karst_cenote_1": [
-      224,
+      288,
       368,
       16,
       16
     ],
     "mix_karst_cenote_10": [
-      0,
+      64,
       384,
       16,
       16
     ],
     "mix_karst_cenote_11": [
-      32,
+      96,
       384,
       16,
       16
     ],
     "mix_karst_cenote_12": [
-      64,
+      128,
       384,
       16,
       16
     ],
     "mix_karst_cenote_13": [
-      96,
+      160,
       384,
       16,
       16
     ],
     "mix_karst_cenote_14": [
-      128,
+      192,
       384,
       16,
       16
     ],
     "mix_karst_cenote_15": [
-      160,
+      224,
       384,
       16,
       16
     ],
     "mix_karst_cenote_2": [
-      256,
+      320,
       368,
       16,
       16
     ],
     "mix_karst_cenote_3": [
-      288,
+      352,
       368,
       16,
       16
     ],
     "mix_karst_cenote_4": [
-      320,
+      384,
       368,
       16,
       16
     ],
     "mix_karst_cenote_5": [
-      352,
+      416,
       368,
       16,
       16
     ],
     "mix_karst_cenote_6": [
-      384,
+      448,
       368,
       16,
       16
     ],
     "mix_karst_cenote_7": [
-      416,
+      480,
       368,
       16,
       16
     ],
     "mix_karst_cenote_8": [
-      448,
-      368,
+      0,
+      384,
       16,
       16
     ],
     "mix_karst_cenote_9": [
-      480,
-      368,
+      32,
+      384,
       16,
       16
     ],
     "mix_karst_jungle_1": [
-      368,
+      432,
       304,
       16,
       16
     ],
     "mix_karst_jungle_10": [
-      144,
+      208,
       320,
       16,
       16
     ],
     "mix_karst_jungle_11": [
-      176,
+      240,
       320,
       16,
       16
     ],
     "mix_karst_jungle_12": [
-      208,
+      272,
       320,
       16,
       16
     ],
     "mix_karst_jungle_13": [
-      240,
+      304,
       320,
       16,
       16
     ],
     "mix_karst_jungle_14": [
-      272,
+      336,
       320,
       16,
       16
     ],
     "mix_karst_jungle_15": [
-      304,
+      368,
       320,
       16,
       16
     ],
     "mix_karst_jungle_2": [
-      400,
+      464,
       304,
       16,
       16
     ],
     "mix_karst_jungle_3": [
-      432,
+      496,
       304,
       16,
       16
     ],
     "mix_karst_jungle_4": [
-      464,
-      304,
+      16,
+      320,
       16,
       16
     ],
     "mix_karst_jungle_5": [
-      496,
-      304,
+      48,
+      320,
       16,
       16
     ],
     "mix_karst_jungle_6": [
-      16,
+      80,
       320,
       16,
       16
     ],
     "mix_karst_jungle_7": [
-      48,
+      112,
       320,
       16,
       16
     ],
     "mix_karst_jungle_8": [
-      80,
+      144,
       320,
       16,
       16
     ],
     "mix_karst_jungle_9": [
-      112,
+      176,
       320,
       16,
       16
     ],
     "mix_karst_soil_1": [
-      320,
+      384,
       320,
       16,
       16
     ],
     "mix_karst_soil_10": [
-      96,
+      160,
       336,
       16,
       16
     ],
     "mix_karst_soil_11": [
-      128,
+      192,
       336,
       16,
       16
     ],
     "mix_karst_soil_12": [
-      160,
+      224,
       336,
       16,
       16
     ],
     "mix_karst_soil_13": [
-      192,
+      256,
       336,
       16,
       16
     ],
     "mix_karst_soil_14": [
-      224,
+      288,
       336,
       16,
       16
     ],
     "mix_karst_soil_15": [
-      256,
+      320,
       336,
       16,
       16
     ],
     "mix_karst_soil_2": [
-      352,
+      416,
       320,
       16,
       16
     ],
     "mix_karst_soil_3": [
-      384,
+      448,
       320,
       16,
       16
     ],
     "mix_karst_soil_4": [
-      416,
+      480,
       320,
       16,
       16
     ],
     "mix_karst_soil_5": [
-      448,
-      320,
+      0,
+      336,
       16,
       16
     ],
     "mix_karst_soil_6": [
-      480,
-      320,
+      32,
+      336,
       16,
       16
     ],
     "mix_karst_soil_7": [
-      0,
+      64,
       336,
       16,
       16
     ],
     "mix_karst_soil_8": [
-      32,
+      96,
       336,
       16,
       16
     ],
     "mix_karst_soil_9": [
-      64,
+      128,
       336,
       16,
       16
     ],
     "mix_lake_reedpeat_1": [
-      80,
+      144,
       208,
       16,
       16
     ],
     "mix_lake_reedpeat_10": [
-      368,
+      432,
       208,
       16,
       16
     ],
     "mix_lake_reedpeat_11": [
-      400,
+      464,
       208,
       16,
       16
     ],
     "mix_lake_reedpeat_12": [
-      432,
+      496,
       208,
       16,
       16
     ],
     "mix_lake_reedpeat_13": [
-      464,
-      208,
+      16,
+      224,
       16,
       16
     ],
     "mix_lake_reedpeat_14": [
-      496,
-      208,
+      48,
+      224,
       16,
       16
     ],
     "mix_lake_reedpeat_15": [
-      16,
+      80,
       224,
       16,
       16
     ],
     "mix_lake_reedpeat_2": [
-      112,
+      176,
       208,
       16,
       16
     ],
     "mix_lake_reedpeat_3": [
-      144,
+      208,
       208,
       16,
       16
     ],
     "mix_lake_reedpeat_4": [
-      176,
+      240,
       208,
       16,
       16
     ],
     "mix_lake_reedpeat_5": [
-      208,
+      272,
       208,
       16,
       16
     ],
     "mix_lake_reedpeat_6": [
-      240,
+      304,
       208,
       16,
       16
     ],
     "mix_lake_reedpeat_7": [
-      272,
+      336,
       208,
       16,
       16
     ],
     "mix_lake_reedpeat_8": [
-      304,
+      368,
       208,
       16,
       16
     ],
     "mix_lake_reedpeat_9": [
-      336,
+      400,
       208,
       16,
       16
     ],
     "mix_lake_silt_1": [
-      48,
+      112,
       224,
       16,
       16
     ],
     "mix_lake_silt_10": [
-      336,
+      400,
       224,
       16,
       16
     ],
     "mix_lake_silt_11": [
-      368,
+      432,
       224,
       16,
       16
     ],
     "mix_lake_silt_12": [
-      400,
+      464,
       224,
       16,
       16
     ],
     "mix_lake_silt_13": [
-      432,
+      496,
       224,
       16,
       16
     ],
     "mix_lake_silt_14": [
-      464,
-      224,
+      16,
+      240,
       16,
       16
     ],
     "mix_lake_silt_15": [
-      496,
-      224,
+      48,
+      240,
       16,
       16
     ],
     "mix_lake_silt_2": [
-      80,
+      144,
       224,
       16,
       16
     ],
     "mix_lake_silt_3": [
-      112,
+      176,
       224,
       16,
       16
     ],
     "mix_lake_silt_4": [
-      144,
+      208,
       224,
       16,
       16
     ],
     "mix_lake_silt_5": [
-      176,
+      240,
       224,
       16,
       16
     ],
     "mix_lake_silt_6": [
-      208,
+      272,
       224,
       16,
       16
     ],
     "mix_lake_silt_7": [
-      240,
+      304,
       224,
       16,
       16
     ],
     "mix_lake_silt_8": [
-      272,
+      336,
       224,
       16,
       16
     ],
     "mix_lake_silt_9": [
-      304,
+      368,
       224,
       16,
       16
     ],
     "mix_lava_cinder_1": [
-      432,
+      496,
       272,
       16,
       16
     ],
     "mix_lava_cinder_10": [
-      208,
+      272,
       288,
       16,
       16
     ],
     "mix_lava_cinder_11": [
-      240,
+      304,
       288,
       16,
       16
     ],
     "mix_lava_cinder_12": [
-      272,
+      336,
       288,
       16,
       16
     ],
     "mix_lava_cinder_13": [
-      304,
+      368,
       288,
       16,
       16
     ],
     "mix_lava_cinder_14": [
-      336,
+      400,
       288,
       16,
       16
     ],
     "mix_lava_cinder_15": [
-      368,
+      432,
       288,
       16,
       16
     ],
     "mix_lava_cinder_2": [
-      464,
-      272,
+      16,
+      288,
       16,
       16
     ],
     "mix_lava_cinder_3": [
-      496,
-      272,
+      48,
+      288,
       16,
       16
     ],
     "mix_lava_cinder_4": [
-      16,
+      80,
       288,
       16,
       16
     ],
     "mix_lava_cinder_5": [
-      48,
+      112,
       288,
       16,
       16
     ],
     "mix_lava_cinder_6": [
-      80,
+      144,
       288,
       16,
       16
     ],
     "mix_lava_cinder_7": [
-      112,
+      176,
       288,
       16,
       16
     ],
     "mix_lava_cinder_8": [
-      144,
+      208,
       288,
       16,
       16
     ],
     "mix_lava_cinder_9": [
-      176,
+      240,
       288,
       16,
       16
     ],
     "mix_lava_sulfur_1": [
-      384,
+      448,
       288,
       16,
       16
     ],
     "mix_lava_sulfur_10": [
-      160,
+      224,
       304,
       16,
       16
     ],
     "mix_lava_sulfur_11": [
-      192,
+      256,
       304,
       16,
       16
     ],
     "mix_lava_sulfur_12": [
-      224,
+      288,
       304,
       16,
       16
     ],
     "mix_lava_sulfur_13": [
-      256,
+      320,
       304,
       16,
       16
     ],
     "mix_lava_sulfur_14": [
-      288,
+      352,
       304,
       16,
       16
     ],
     "mix_lava_sulfur_15": [
-      320,
+      384,
       304,
       16,
       16
     ],
     "mix_lava_sulfur_2": [
-      416,
+      480,
       288,
       16,
       16
     ],
     "mix_lava_sulfur_3": [
-      448,
-      288,
+      0,
+      304,
       16,
       16
     ],
     "mix_lava_sulfur_4": [
-      480,
-      288,
+      32,
+      304,
       16,
       16
     ],
     "mix_lava_sulfur_5": [
-      0,
+      64,
       304,
       16,
       16
     ],
     "mix_lava_sulfur_6": [
-      32,
+      96,
       304,
       16,
       16
     ],
     "mix_lava_sulfur_7": [
-      64,
+      128,
       304,
       16,
       16
     ],
     "mix_lava_sulfur_8": [
-      96,
+      160,
       304,
       16,
       16
     ],
     "mix_lava_sulfur_9": [
-      128,
+      192,
       304,
       16,
       16
     ],
     "mix_mangrove_mud_1": [
-      288,
+      352,
       336,
       16,
       16
     ],
     "mix_mangrove_mud_10": [
-      64,
+      128,
       352,
       16,
       16
     ],
     "mix_mangrove_mud_11": [
-      96,
+      160,
       352,
       16,
       16
     ],
     "mix_mangrove_mud_12": [
-      128,
+      192,
       352,
       16,
       16
     ],
     "mix_mangrove_mud_13": [
-      160,
+      224,
       352,
       16,
       16
     ],
     "mix_mangrove_mud_14": [
-      192,
+      256,
       352,
       16,
       16
     ],
     "mix_mangrove_mud_15": [
-      224,
+      288,
       352,
       16,
       16
     ],
     "mix_mangrove_mud_2": [
-      320,
+      384,
       336,
       16,
       16
     ],
     "mix_mangrove_mud_3": [
-      352,
+      416,
       336,
       16,
       16
     ],
     "mix_mangrove_mud_4": [
-      384,
+      448,
       336,
       16,
       16
     ],
     "mix_mangrove_mud_5": [
-      416,
+      480,
       336,
       16,
       16
     ],
     "mix_mangrove_mud_6": [
-      448,
-      336,
+      0,
+      352,
       16,
       16
     ],
     "mix_mangrove_mud_7": [
-      480,
-      336,
+      32,
+      352,
       16,
       16
     ],
     "mix_mangrove_mud_8": [
-      0,
+      64,
       352,
       16,
       16
     ],
     "mix_mangrove_mud_9": [
-      32,
+      96,
       352,
       16,
       16
     ],
     "mix_mangrove_shell_1": [
-      32,
+      96,
       464,
       16,
       16
     ],
     "mix_mangrove_shell_10": [
-      320,
+      384,
       464,
       16,
       16
     ],
     "mix_mangrove_shell_11": [
-      352,
+      416,
       464,
       16,
       16
     ],
     "mix_mangrove_shell_12": [
-      384,
+      448,
       464,
       16,
       16
     ],
     "mix_mangrove_shell_13": [
-      416,
+      480,
       464,
       16,
       16
     ],
     "mix_mangrove_shell_14": [
-      448,
-      464,
+      0,
+      480,
       16,
       16
     ],
     "mix_mangrove_shell_15": [
+      32,
       480,
-      464,
       16,
       16
     ],
     "mix_mangrove_shell_2": [
-      64,
+      128,
       464,
       16,
       16
     ],
     "mix_mangrove_shell_3": [
-      96,
+      160,
       464,
       16,
       16
     ],
     "mix_mangrove_shell_4": [
-      128,
+      192,
       464,
       16,
       16
     ],
     "mix_mangrove_shell_5": [
-      160,
+      224,
       464,
       16,
       16
     ],
     "mix_mangrove_shell_6": [
-      192,
+      256,
       464,
       16,
       16
     ],
     "mix_mangrove_shell_7": [
-      224,
+      288,
       464,
       16,
       16
     ],
     "mix_mangrove_shell_8": [
-      256,
+      320,
       464,
       16,
       16
     ],
     "mix_mangrove_shell_9": [
-      288,
+      352,
       464,
       16,
       16
     ],
     "mix_mud_mangrove_1": [
-      304,
+      368,
       336,
       16,
       16
     ],
     "mix_mud_mangrove_10": [
-      80,
+      144,
       352,
       16,
       16
     ],
     "mix_mud_mangrove_11": [
-      112,
+      176,
       352,
       16,
       16
     ],
     "mix_mud_mangrove_12": [
-      144,
+      208,
       352,
       16,
       16
     ],
     "mix_mud_mangrove_13": [
-      176,
+      240,
       352,
       16,
       16
     ],
     "mix_mud_mangrove_14": [
-      208,
+      272,
       352,
       16,
       16
     ],
     "mix_mud_mangrove_15": [
-      240,
+      304,
       352,
       16,
       16
     ],
     "mix_mud_mangrove_2": [
-      336,
+      400,
       336,
       16,
       16
     ],
     "mix_mud_mangrove_3": [
-      368,
+      432,
       336,
       16,
       16
     ],
     "mix_mud_mangrove_4": [
-      400,
+      464,
       336,
       16,
       16
     ],
     "mix_mud_mangrove_5": [
-      432,
+      496,
       336,
       16,
       16
     ],
     "mix_mud_mangrove_6": [
-      464,
-      336,
+      16,
+      352,
       16,
       16
     ],
     "mix_mud_mangrove_7": [
-      496,
-      336,
+      48,
+      352,
       16,
       16
     ],
     "mix_mud_mangrove_8": [
-      16,
+      80,
       352,
       16,
       16
     ],
     "mix_mud_mangrove_9": [
-      48,
+      112,
       352,
       16,
       16
     ],
     "mix_mud_tidal_1": [
-      256,
+      320,
       352,
       16,
       16
     ],
     "mix_mud_tidal_10": [
-      32,
+      96,
       368,
       16,
       16
     ],
     "mix_mud_tidal_11": [
-      64,
+      128,
       368,
       16,
       16
     ],
     "mix_mud_tidal_12": [
-      96,
+      160,
       368,
       16,
       16
     ],
     "mix_mud_tidal_13": [
-      128,
+      192,
       368,
       16,
       16
     ],
     "mix_mud_tidal_14": [
-      160,
+      224,
       368,
       16,
       16
     ],
     "mix_mud_tidal_15": [
-      192,
+      256,
       368,
       16,
       16
     ],
     "mix_mud_tidal_2": [
-      288,
+      352,
       352,
       16,
       16
     ],
     "mix_mud_tidal_3": [
-      320,
+      384,
       352,
       16,
       16
     ],
     "mix_mud_tidal_4": [
-      352,
+      416,
       352,
       16,
       16
     ],
     "mix_mud_tidal_5": [
-      384,
+      448,
       352,
       16,
       16
     ],
     "mix_mud_tidal_6": [
-      416,
+      480,
       352,
       16,
       16
     ],
     "mix_mud_tidal_7": [
-      448,
-      352,
+      0,
+      368,
       16,
       16
     ],
     "mix_mud_tidal_8": [
-      480,
-      352,
+      32,
+      368,
       16,
       16
     ],
     "mix_mud_tidal_9": [
-      0,
+      64,
       368,
       16,
       16
     ],
     "mix_mud_toxic_1": [
-      144,
+      208,
       416,
       16,
       16
     ],
     "mix_mud_toxic_10": [
-      432,
+      496,
       416,
       16,
       16
     ],
     "mix_mud_toxic_11": [
-      464,
-      416,
+      16,
+      432,
       16,
       16
     ],
     "mix_mud_toxic_12": [
-      496,
-      416,
+      48,
+      432,
       16,
       16
     ],
     "mix_mud_toxic_13": [
-      16,
+      80,
       432,
       16,
       16
     ],
     "mix_mud_toxic_14": [
-      48,
+      112,
       432,
       16,
       16
     ],
     "mix_mud_toxic_15": [
-      80,
+      144,
       432,
       16,
       16
     ],
     "mix_mud_toxic_2": [
-      176,
+      240,
       416,
       16,
       16
     ],
     "mix_mud_toxic_3": [
-      208,
+      272,
       416,
       16,
       16
     ],
     "mix_mud_toxic_4": [
-      240,
+      304,
       416,
       16,
       16
     ],
     "mix_mud_toxic_5": [
-      272,
+      336,
       416,
       16,
       16
     ],
     "mix_mud_toxic_6": [
-      304,
+      368,
       416,
       16,
       16
     ],
     "mix_mud_toxic_7": [
-      336,
+      400,
       416,
       16,
       16
     ],
     "mix_mud_toxic_8": [
-      368,
+      432,
       416,
       16,
       16
     ],
     "mix_mud_toxic_9": [
-      400,
+      464,
       416,
       16,
       16
     ],
     "mix_reedpeat_lake_1": [
-      64,
+      128,
       208,
       16,
       16
     ],
     "mix_reedpeat_lake_10": [
-      352,
+      416,
       208,
       16,
       16
     ],
     "mix_reedpeat_lake_11": [
-      384,
+      448,
       208,
       16,
       16
     ],
     "mix_reedpeat_lake_12": [
-      416,
+      480,
       208,
       16,
       16
     ],
     "mix_reedpeat_lake_13": [
-      448,
-      208,
+      0,
+      224,
       16,
       16
     ],
     "mix_reedpeat_lake_14": [
-      480,
-      208,
+      32,
+      224,
       16,
       16
     ],
     "mix_reedpeat_lake_15": [
-      0,
+      64,
       224,
       16,
       16
     ],
     "mix_reedpeat_lake_2": [
-      96,
+      160,
       208,
       16,
       16
     ],
     "mix_reedpeat_lake_3": [
-      128,
+      192,
       208,
       16,
       16
     ],
     "mix_reedpeat_lake_4": [
-      160,
+      224,
       208,
       16,
       16
     ],
     "mix_reedpeat_lake_5": [
-      192,
+      256,
       208,
       16,
       16
     ],
     "mix_reedpeat_lake_6": [
-      224,
+      288,
       208,
       16,
       16
     ],
     "mix_reedpeat_lake_7": [
-      256,
+      320,
       208,
       16,
       16
     ],
     "mix_reedpeat_lake_8": [
-      288,
+      352,
       208,
       16,
       16
     ],
     "mix_reedpeat_lake_9": [
-      320,
+      384,
       208,
       16,
       16
     ],
     "mix_reedpeat_silt_1": [
-      112,
+      176,
       192,
       16,
       16
     ],
     "mix_reedpeat_silt_10": [
-      400,
+      464,
       192,
       16,
       16
     ],
     "mix_reedpeat_silt_11": [
-      432,
+      496,
       192,
       16,
       16
     ],
     "mix_reedpeat_silt_12": [
-      464,
-      192,
+      16,
+      208,
       16,
       16
     ],
     "mix_reedpeat_silt_13": [
-      496,
-      192,
+      48,
+      208,
       16,
       16
     ],
     "mix_reedpeat_silt_14": [
-      16,
+      80,
       208,
       16,
       16
     ],
     "mix_reedpeat_silt_15": [
-      48,
+      112,
       208,
       16,
       16
     ],
     "mix_reedpeat_silt_2": [
-      144,
+      208,
       192,
       16,
       16
     ],
     "mix_reedpeat_silt_3": [
-      176,
+      240,
       192,
       16,
       16
     ],
     "mix_reedpeat_silt_4": [
-      208,
+      272,
       192,
       16,
       16
     ],
     "mix_reedpeat_silt_5": [
-      240,
+      304,
       192,
       16,
       16
     ],
     "mix_reedpeat_silt_6": [
-      272,
+      336,
       192,
       16,
       16
     ],
     "mix_reedpeat_silt_7": [
-      304,
+      368,
       192,
       16,
       16
     ],
     "mix_reedpeat_silt_8": [
-      336,
+      400,
       192,
       16,
       16
     ],
     "mix_reedpeat_silt_9": [
-      368,
+      432,
       192,
       16,
       16
     ],
-    "mix_salt_dune_1": [
+    "mix_salt_brine_1": [
+      32,
       496,
-      240,
+      16,
+      16
+    ],
+    "mix_salt_brine_10": [
+      320,
+      496,
+      16,
+      16
+    ],
+    "mix_salt_brine_11": [
+      352,
+      496,
+      16,
+      16
+    ],
+    "mix_salt_brine_12": [
+      384,
+      496,
+      16,
+      16
+    ],
+    "mix_salt_brine_13": [
+      416,
+      496,
+      16,
+      16
+    ],
+    "mix_salt_brine_14": [
+      448,
+      496,
+      16,
+      16
+    ],
+    "mix_salt_brine_15": [
+      480,
+      496,
+      16,
+      16
+    ],
+    "mix_salt_brine_2": [
+      64,
+      496,
+      16,
+      16
+    ],
+    "mix_salt_brine_3": [
+      96,
+      496,
+      16,
+      16
+    ],
+    "mix_salt_brine_4": [
+      128,
+      496,
+      16,
+      16
+    ],
+    "mix_salt_brine_5": [
+      160,
+      496,
+      16,
+      16
+    ],
+    "mix_salt_brine_6": [
+      192,
+      496,
+      16,
+      16
+    ],
+    "mix_salt_brine_7": [
+      224,
+      496,
+      16,
+      16
+    ],
+    "mix_salt_brine_8": [
+      256,
+      496,
+      16,
+      16
+    ],
+    "mix_salt_brine_9": [
+      288,
+      496,
+      16,
+      16
+    ],
+    "mix_salt_dune_1": [
+      48,
+      256,
       16,
       16
     ],
     "mix_salt_dune_10": [
-      272,
+      336,
       256,
       16,
       16
     ],
     "mix_salt_dune_11": [
-      304,
+      368,
       256,
       16,
       16
     ],
     "mix_salt_dune_12": [
-      336,
+      400,
       256,
       16,
       16
     ],
     "mix_salt_dune_13": [
-      368,
+      432,
       256,
       16,
       16
     ],
     "mix_salt_dune_14": [
-      400,
+      464,
       256,
       16,
       16
     ],
     "mix_salt_dune_15": [
-      432,
+      496,
       256,
       16,
       16
     ],
     "mix_salt_dune_2": [
-      16,
+      80,
       256,
       16,
       16
     ],
     "mix_salt_dune_3": [
-      48,
+      112,
       256,
       16,
       16
     ],
     "mix_salt_dune_4": [
-      80,
+      144,
       256,
       16,
       16
     ],
     "mix_salt_dune_5": [
-      112,
+      176,
       256,
       16,
       16
     ],
     "mix_salt_dune_6": [
-      144,
+      208,
       256,
       16,
       16
     ],
     "mix_salt_dune_7": [
-      176,
+      240,
       256,
       16,
       16
     ],
     "mix_salt_dune_8": [
-      208,
+      272,
       256,
       16,
       16
     ],
     "mix_salt_dune_9": [
-      240,
+      304,
       256,
       16,
       16
     ],
     "mix_salt_sulfur_1": [
-      448,
-      256,
+      0,
+      272,
       16,
       16
     ],
     "mix_salt_sulfur_10": [
-      224,
+      288,
       272,
       16,
       16
     ],
     "mix_salt_sulfur_11": [
-      256,
+      320,
       272,
       16,
       16
     ],
     "mix_salt_sulfur_12": [
-      288,
+      352,
       272,
       16,
       16
     ],
     "mix_salt_sulfur_13": [
-      320,
+      384,
       272,
       16,
       16
     ],
     "mix_salt_sulfur_14": [
-      352,
+      416,
       272,
       16,
       16
     ],
     "mix_salt_sulfur_15": [
-      384,
+      448,
       272,
       16,
       16
     ],
     "mix_salt_sulfur_2": [
-      480,
-      256,
+      32,
+      272,
       16,
       16
     ],
     "mix_salt_sulfur_3": [
-      0,
+      64,
       272,
       16,
       16
     ],
     "mix_salt_sulfur_4": [
-      32,
+      96,
       272,
       16,
       16
     ],
     "mix_salt_sulfur_5": [
-      64,
+      128,
       272,
       16,
       16
     ],
     "mix_salt_sulfur_6": [
-      96,
+      160,
       272,
       16,
       16
     ],
     "mix_salt_sulfur_7": [
-      128,
+      192,
       272,
       16,
       16
     ],
     "mix_salt_sulfur_8": [
-      160,
+      224,
       272,
       16,
       16
     ],
     "mix_salt_sulfur_9": [
-      192,
+      256,
       272,
       16,
       16
     ],
     "mix_shell_dune_1": [
-      0,
+      64,
       240,
       16,
       16
     ],
     "mix_shell_dune_10": [
-      288,
+      352,
       240,
       16,
       16
     ],
     "mix_shell_dune_11": [
-      320,
+      384,
       240,
       16,
       16
     ],
     "mix_shell_dune_12": [
-      352,
+      416,
       240,
       16,
       16
     ],
     "mix_shell_dune_13": [
-      384,
+      448,
       240,
       16,
       16
     ],
     "mix_shell_dune_14": [
-      416,
+      480,
       240,
       16,
       16
     ],
     "mix_shell_dune_15": [
-      448,
-      240,
+      0,
+      256,
       16,
       16
     ],
     "mix_shell_dune_2": [
-      32,
+      96,
       240,
       16,
       16
     ],
     "mix_shell_dune_3": [
-      64,
+      128,
       240,
       16,
       16
     ],
     "mix_shell_dune_4": [
-      96,
+      160,
       240,
       16,
       16
     ],
     "mix_shell_dune_5": [
-      128,
+      192,
       240,
       16,
       16
     ],
     "mix_shell_dune_6": [
-      160,
+      224,
       240,
       16,
       16
     ],
     "mix_shell_dune_7": [
-      192,
+      256,
       240,
       16,
       16
     ],
     "mix_shell_dune_8": [
-      224,
+      288,
       240,
       16,
       16
     ],
     "mix_shell_dune_9": [
-      256,
+      320,
       240,
       16,
       16
     ],
     "mix_shell_mangrove_1": [
-      48,
+      112,
       464,
       16,
       16
     ],
     "mix_shell_mangrove_10": [
-      336,
+      400,
       464,
       16,
       16
     ],
     "mix_shell_mangrove_11": [
-      368,
+      432,
       464,
       16,
       16
     ],
     "mix_shell_mangrove_12": [
-      400,
+      464,
       464,
       16,
       16
     ],
     "mix_shell_mangrove_13": [
-      432,
+      496,
       464,
       16,
       16
     ],
     "mix_shell_mangrove_14": [
-      464,
-      464,
+      16,
+      480,
       16,
       16
     ],
     "mix_shell_mangrove_15": [
-      496,
-      464,
+      48,
+      480,
       16,
       16
     ],
     "mix_shell_mangrove_2": [
-      80,
+      144,
       464,
       16,
       16
     ],
     "mix_shell_mangrove_3": [
-      112,
+      176,
       464,
       16,
       16
     ],
     "mix_shell_mangrove_4": [
-      144,
+      208,
       464,
       16,
       16
     ],
     "mix_shell_mangrove_5": [
-      176,
+      240,
       464,
       16,
       16
     ],
     "mix_shell_mangrove_6": [
-      208,
+      272,
       464,
       16,
       16
     ],
     "mix_shell_mangrove_7": [
-      240,
+      304,
       464,
       16,
       16
     ],
     "mix_shell_mangrove_8": [
-      272,
+      336,
       464,
       16,
       16
     ],
     "mix_shell_mangrove_9": [
-      304,
+      368,
       464,
       16,
       16
     ],
     "mix_silt_fen_1": [
-      176,
+      240,
       400,
       16,
       16
     ],
     "mix_silt_fen_10": [
-      464,
-      400,
+      16,
+      416,
       16,
       16
     ],
     "mix_silt_fen_11": [
-      496,
-      400,
+      48,
+      416,
       16,
       16
     ],
     "mix_silt_fen_12": [
-      16,
+      80,
       416,
       16,
       16
     ],
     "mix_silt_fen_13": [
-      48,
+      112,
       416,
       16,
       16
     ],
     "mix_silt_fen_14": [
-      80,
+      144,
       416,
       16,
       16
     ],
     "mix_silt_fen_15": [
-      112,
+      176,
       416,
       16,
       16
     ],
     "mix_silt_fen_2": [
-      208,
+      272,
       400,
       16,
       16
     ],
     "mix_silt_fen_3": [
-      240,
+      304,
       400,
       16,
       16
     ],
     "mix_silt_fen_4": [
-      272,
+      336,
       400,
       16,
       16
     ],
     "mix_silt_fen_5": [
-      304,
+      368,
       400,
       16,
       16
     ],
     "mix_silt_fen_6": [
-      336,
+      400,
       400,
       16,
       16
     ],
     "mix_silt_fen_7": [
-      368,
+      432,
       400,
       16,
       16
     ],
     "mix_silt_fen_8": [
-      400,
+      464,
       400,
       16,
       16
     ],
     "mix_silt_fen_9": [
-      432,
+      496,
       400,
       16,
       16
     ],
     "mix_silt_grass_1": [
-      112,
+      176,
       432,
       16,
       16
     ],
     "mix_silt_grass_10": [
-      400,
+      464,
       432,
       16,
       16
     ],
     "mix_silt_grass_11": [
-      432,
+      496,
       432,
       16,
       16
     ],
     "mix_silt_grass_12": [
-      464,
-      432,
+      16,
+      448,
       16,
       16
     ],
     "mix_silt_grass_13": [
-      496,
-      432,
+      48,
+      448,
       16,
       16
     ],
     "mix_silt_grass_14": [
-      16,
+      80,
       448,
       16,
       16
     ],
     "mix_silt_grass_15": [
-      48,
+      112,
       448,
       16,
       16
     ],
     "mix_silt_grass_2": [
-      144,
+      208,
       432,
       16,
       16
     ],
     "mix_silt_grass_3": [
-      176,
+      240,
       432,
       16,
       16
     ],
     "mix_silt_grass_4": [
-      208,
+      272,
       432,
       16,
       16
     ],
     "mix_silt_grass_5": [
-      240,
+      304,
       432,
       16,
       16
     ],
     "mix_silt_grass_6": [
-      272,
+      336,
       432,
       16,
       16
     ],
     "mix_silt_grass_7": [
-      304,
+      368,
       432,
       16,
       16
     ],
     "mix_silt_grass_8": [
-      336,
+      400,
       432,
       16,
       16
     ],
     "mix_silt_grass_9": [
-      368,
+      432,
       432,
       16,
       16
     ],
     "mix_silt_lake_1": [
-      32,
+      96,
       224,
       16,
       16
     ],
     "mix_silt_lake_10": [
-      320,
+      384,
       224,
       16,
       16
     ],
     "mix_silt_lake_11": [
-      352,
+      416,
       224,
       16,
       16
     ],
     "mix_silt_lake_12": [
-      384,
+      448,
       224,
       16,
       16
     ],
     "mix_silt_lake_13": [
-      416,
+      480,
       224,
       16,
       16
     ],
     "mix_silt_lake_14": [
-      448,
-      224,
+      0,
+      240,
       16,
       16
     ],
     "mix_silt_lake_15": [
-      480,
-      224,
+      32,
+      240,
       16,
       16
     ],
     "mix_silt_lake_2": [
-      64,
+      128,
       224,
       16,
       16
     ],
     "mix_silt_lake_3": [
-      96,
+      160,
       224,
       16,
       16
     ],
     "mix_silt_lake_4": [
-      128,
+      192,
       224,
       16,
       16
     ],
     "mix_silt_lake_5": [
-      160,
+      224,
       224,
       16,
       16
     ],
     "mix_silt_lake_6": [
-      192,
+      256,
       224,
       16,
       16
     ],
     "mix_silt_lake_7": [
-      224,
+      288,
       224,
       16,
       16
     ],
     "mix_silt_lake_8": [
-      256,
+      320,
       224,
       16,
       16
     ],
     "mix_silt_lake_9": [
-      288,
+      352,
       224,
       16,
       16
     ],
     "mix_silt_reedpeat_1": [
-      96,
+      160,
       192,
       16,
       16
     ],
     "mix_silt_reedpeat_10": [
-      384,
+      448,
       192,
       16,
       16
     ],
     "mix_silt_reedpeat_11": [
-      416,
+      480,
       192,
       16,
       16
     ],
     "mix_silt_reedpeat_12": [
-      448,
-      192,
+      0,
+      208,
       16,
       16
     ],
     "mix_silt_reedpeat_13": [
-      480,
-      192,
+      32,
+      208,
       16,
       16
     ],
     "mix_silt_reedpeat_14": [
-      0,
+      64,
       208,
       16,
       16
     ],
     "mix_silt_reedpeat_15": [
-      32,
+      96,
       208,
       16,
       16
     ],
     "mix_silt_reedpeat_2": [
-      128,
+      192,
       192,
       16,
       16
     ],
     "mix_silt_reedpeat_3": [
-      160,
+      224,
       192,
       16,
       16
     ],
     "mix_silt_reedpeat_4": [
-      192,
+      256,
       192,
       16,
       16
     ],
     "mix_silt_reedpeat_5": [
-      224,
+      288,
       192,
       16,
       16
     ],
     "mix_silt_reedpeat_6": [
-      256,
+      320,
       192,
       16,
       16
     ],
     "mix_silt_reedpeat_7": [
-      288,
+      352,
       192,
       16,
       16
     ],
     "mix_silt_reedpeat_8": [
-      320,
+      384,
       192,
       16,
       16
     ],
     "mix_silt_reedpeat_9": [
-      352,
+      416,
       192,
       16,
       16
     ],
     "mix_soil_jungle_1": [
-      80,
+      144,
       448,
       16,
       16
     ],
     "mix_soil_jungle_10": [
-      368,
+      432,
       448,
       16,
       16
     ],
     "mix_soil_jungle_11": [
-      400,
+      464,
       448,
       16,
       16
     ],
     "mix_soil_jungle_12": [
-      432,
+      496,
       448,
       16,
       16
     ],
     "mix_soil_jungle_13": [
+      16,
       464,
-      448,
       16,
       16
     ],
     "mix_soil_jungle_14": [
-      496,
-      448,
+      48,
+      464,
       16,
       16
     ],
     "mix_soil_jungle_15": [
-      16,
+      80,
       464,
       16,
       16
     ],
     "mix_soil_jungle_2": [
-      112,
+      176,
       448,
       16,
       16
     ],
     "mix_soil_jungle_3": [
-      144,
+      208,
       448,
       16,
       16
     ],
     "mix_soil_jungle_4": [
-      176,
+      240,
       448,
       16,
       16
     ],
     "mix_soil_jungle_5": [
-      208,
+      272,
       448,
       16,
       16
     ],
     "mix_soil_jungle_6": [
-      240,
+      304,
       448,
       16,
       16
     ],
     "mix_soil_jungle_7": [
-      272,
+      336,
       448,
       16,
       16
     ],
     "mix_soil_jungle_8": [
-      304,
+      368,
       448,
       16,
       16
     ],
     "mix_soil_jungle_9": [
-      336,
+      400,
       448,
       16,
       16
     ],
     "mix_soil_karst_1": [
-      336,
+      400,
       320,
       16,
       16
     ],
     "mix_soil_karst_10": [
-      112,
+      176,
       336,
       16,
       16
     ],
     "mix_soil_karst_11": [
-      144,
+      208,
       336,
       16,
       16
     ],
     "mix_soil_karst_12": [
-      176,
+      240,
       336,
       16,
       16
     ],
     "mix_soil_karst_13": [
-      208,
+      272,
       336,
       16,
       16
     ],
     "mix_soil_karst_14": [
-      240,
+      304,
       336,
       16,
       16
     ],
     "mix_soil_karst_15": [
-      272,
+      336,
       336,
       16,
       16
     ],
     "mix_soil_karst_2": [
-      368,
+      432,
       320,
       16,
       16
     ],
     "mix_soil_karst_3": [
-      400,
+      464,
       320,
       16,
       16
     ],
     "mix_soil_karst_4": [
-      432,
+      496,
       320,
       16,
       16
     ],
     "mix_soil_karst_5": [
-      464,
-      320,
+      16,
+      336,
       16,
       16
     ],
     "mix_soil_karst_6": [
-      496,
-      320,
+      48,
+      336,
       16,
       16
     ],
     "mix_soil_karst_7": [
-      16,
+      80,
       336,
       16,
       16
     ],
     "mix_soil_karst_8": [
-      48,
+      112,
       336,
       16,
       16
     ],
     "mix_soil_karst_9": [
-      80,
+      144,
       336,
       16,
       16
     ],
     "mix_sulfur_lava_1": [
-      400,
+      464,
       288,
       16,
       16
     ],
     "mix_sulfur_lava_10": [
-      176,
+      240,
       304,
       16,
       16
     ],
     "mix_sulfur_lava_11": [
-      208,
+      272,
       304,
       16,
       16
     ],
     "mix_sulfur_lava_12": [
-      240,
+      304,
       304,
       16,
       16
     ],
     "mix_sulfur_lava_13": [
-      272,
+      336,
       304,
       16,
       16
     ],
     "mix_sulfur_lava_14": [
-      304,
+      368,
       304,
       16,
       16
     ],
     "mix_sulfur_lava_15": [
-      336,
+      400,
       304,
       16,
       16
     ],
     "mix_sulfur_lava_2": [
-      432,
+      496,
       288,
       16,
       16
     ],
     "mix_sulfur_lava_3": [
-      464,
-      288,
+      16,
+      304,
       16,
       16
     ],
     "mix_sulfur_lava_4": [
-      496,
-      288,
+      48,
+      304,
       16,
       16
     ],
     "mix_sulfur_lava_5": [
-      16,
+      80,
       304,
       16,
       16
     ],
     "mix_sulfur_lava_6": [
-      48,
+      112,
       304,
       16,
       16
     ],
     "mix_sulfur_lava_7": [
-      80,
+      144,
       304,
       16,
       16
     ],
     "mix_sulfur_lava_8": [
-      112,
+      176,
       304,
       16,
       16
     ],
     "mix_sulfur_lava_9": [
-      144,
+      208,
       304,
       16,
       16
     ],
     "mix_sulfur_salt_1": [
-      464,
-      256,
+      16,
+      272,
       16,
       16
     ],
     "mix_sulfur_salt_10": [
-      240,
+      304,
       272,
       16,
       16
     ],
     "mix_sulfur_salt_11": [
-      272,
+      336,
       272,
       16,
       16
     ],
     "mix_sulfur_salt_12": [
-      304,
+      368,
       272,
       16,
       16
     ],
     "mix_sulfur_salt_13": [
-      336,
+      400,
       272,
       16,
       16
     ],
     "mix_sulfur_salt_14": [
-      368,
+      432,
       272,
       16,
       16
     ],
     "mix_sulfur_salt_15": [
-      400,
+      464,
       272,
       16,
       16
     ],
     "mix_sulfur_salt_2": [
-      496,
-      256,
+      48,
+      272,
       16,
       16
     ],
     "mix_sulfur_salt_3": [
-      16,
+      80,
       272,
       16,
       16
     ],
     "mix_sulfur_salt_4": [
-      48,
+      112,
       272,
       16,
       16
     ],
     "mix_sulfur_salt_5": [
-      80,
+      144,
       272,
       16,
       16
     ],
     "mix_sulfur_salt_6": [
-      112,
+      176,
       272,
       16,
       16
     ],
     "mix_sulfur_salt_7": [
-      144,
+      208,
       272,
       16,
       16
     ],
     "mix_sulfur_salt_8": [
-      176,
+      240,
       272,
       16,
       16
     ],
     "mix_sulfur_salt_9": [
-      208,
+      272,
       272,
       16,
       16
     ],
     "mix_tidal_mud_1": [
-      272,
+      336,
       352,
       16,
       16
     ],
     "mix_tidal_mud_10": [
-      48,
+      112,
       368,
       16,
       16
     ],
     "mix_tidal_mud_11": [
-      80,
+      144,
       368,
       16,
       16
     ],
     "mix_tidal_mud_12": [
-      112,
-      368,
-      16,
-      16
-    ],
-    "mix_tidal_mud_13": [
-      144,
-      368,
-      16,
-      16
-    ],
-    "mix_tidal_mud_14": [
       176,
       368,
       16,
       16
     ],
-    "mix_tidal_mud_15": [
+    "mix_tidal_mud_13": [
       208,
+      368,
+      16,
+      16
+    ],
+    "mix_tidal_mud_14": [
+      240,
+      368,
+      16,
+      16
+    ],
+    "mix_tidal_mud_15": [
+      272,
       368,
       16,
       16
     ],
     "mix_tidal_mud_2": [
-      304,
+      368,
       352,
       16,
       16
     ],
     "mix_tidal_mud_3": [
-      336,
+      400,
       352,
       16,
       16
     ],
     "mix_tidal_mud_4": [
-      368,
+      432,
       352,
       16,
       16
     ],
     "mix_tidal_mud_5": [
-      400,
+      464,
       352,
       16,
       16
     ],
     "mix_tidal_mud_6": [
-      432,
+      496,
       352,
       16,
       16
     ],
     "mix_tidal_mud_7": [
-      464,
-      352,
+      16,
+      368,
       16,
       16
     ],
     "mix_tidal_mud_8": [
-      496,
-      352,
+      48,
+      368,
       16,
       16
     ],
     "mix_tidal_mud_9": [
-      16,
+      80,
       368,
       16,
       16
     ],
     "mix_toxic_fen_1": [
-      208,
-      384,
-      16,
-      16
-    ],
-    "mix_toxic_fen_10": [
-      496,
-      384,
-      16,
-      16
-    ],
-    "mix_toxic_fen_11": [
-      16,
-      400,
-      16,
-      16
-    ],
-    "mix_toxic_fen_12": [
-      48,
-      400,
-      16,
-      16
-    ],
-    "mix_toxic_fen_13": [
-      80,
-      400,
-      16,
-      16
-    ],
-    "mix_toxic_fen_14": [
-      112,
-      400,
-      16,
-      16
-    ],
-    "mix_toxic_fen_15": [
-      144,
-      400,
-      16,
-      16
-    ],
-    "mix_toxic_fen_2": [
-      240,
-      384,
-      16,
-      16
-    ],
-    "mix_toxic_fen_3": [
       272,
       384,
       16,
       16
     ],
-    "mix_toxic_fen_4": [
+    "mix_toxic_fen_10": [
+      48,
+      400,
+      16,
+      16
+    ],
+    "mix_toxic_fen_11": [
+      80,
+      400,
+      16,
+      16
+    ],
+    "mix_toxic_fen_12": [
+      112,
+      400,
+      16,
+      16
+    ],
+    "mix_toxic_fen_13": [
+      144,
+      400,
+      16,
+      16
+    ],
+    "mix_toxic_fen_14": [
+      176,
+      400,
+      16,
+      16
+    ],
+    "mix_toxic_fen_15": [
+      208,
+      400,
+      16,
+      16
+    ],
+    "mix_toxic_fen_2": [
       304,
       384,
       16,
       16
     ],
-    "mix_toxic_fen_5": [
+    "mix_toxic_fen_3": [
       336,
       384,
       16,
       16
     ],
-    "mix_toxic_fen_6": [
+    "mix_toxic_fen_4": [
       368,
       384,
       16,
       16
     ],
-    "mix_toxic_fen_7": [
+    "mix_toxic_fen_5": [
       400,
       384,
       16,
       16
     ],
-    "mix_toxic_fen_8": [
+    "mix_toxic_fen_6": [
       432,
       384,
       16,
       16
     ],
-    "mix_toxic_fen_9": [
+    "mix_toxic_fen_7": [
       464,
       384,
       16,
       16
     ],
+    "mix_toxic_fen_8": [
+      496,
+      384,
+      16,
+      16
+    ],
+    "mix_toxic_fen_9": [
+      16,
+      400,
+      16,
+      16
+    ],
     "mix_toxic_mud_1": [
-      128,
-      416,
-      16,
-      16
-    ],
-    "mix_toxic_mud_10": [
-      416,
-      416,
-      16,
-      16
-    ],
-    "mix_toxic_mud_11": [
-      448,
-      416,
-      16,
-      16
-    ],
-    "mix_toxic_mud_12": [
-      480,
-      416,
-      16,
-      16
-    ],
-    "mix_toxic_mud_13": [
-      0,
-      432,
-      16,
-      16
-    ],
-    "mix_toxic_mud_14": [
-      32,
-      432,
-      16,
-      16
-    ],
-    "mix_toxic_mud_15": [
-      64,
-      432,
-      16,
-      16
-    ],
-    "mix_toxic_mud_2": [
-      160,
-      416,
-      16,
-      16
-    ],
-    "mix_toxic_mud_3": [
       192,
       416,
       16,
       16
     ],
-    "mix_toxic_mud_4": [
+    "mix_toxic_mud_10": [
+      480,
+      416,
+      16,
+      16
+    ],
+    "mix_toxic_mud_11": [
+      0,
+      432,
+      16,
+      16
+    ],
+    "mix_toxic_mud_12": [
+      32,
+      432,
+      16,
+      16
+    ],
+    "mix_toxic_mud_13": [
+      64,
+      432,
+      16,
+      16
+    ],
+    "mix_toxic_mud_14": [
+      96,
+      432,
+      16,
+      16
+    ],
+    "mix_toxic_mud_15": [
+      128,
+      432,
+      16,
+      16
+    ],
+    "mix_toxic_mud_2": [
       224,
       416,
       16,
       16
     ],
-    "mix_toxic_mud_5": [
+    "mix_toxic_mud_3": [
       256,
       416,
       16,
       16
     ],
-    "mix_toxic_mud_6": [
+    "mix_toxic_mud_4": [
       288,
       416,
       16,
       16
     ],
-    "mix_toxic_mud_7": [
+    "mix_toxic_mud_5": [
       320,
       416,
       16,
       16
     ],
-    "mix_toxic_mud_8": [
+    "mix_toxic_mud_6": [
       352,
       416,
       16,
       16
     ],
-    "mix_toxic_mud_9": [
+    "mix_toxic_mud_7": [
       384,
+      416,
+      16,
+      16
+    ],
+    "mix_toxic_mud_8": [
+      416,
+      416,
+      16,
+      16
+    ],
+    "mix_toxic_mud_9": [
+      448,
       416,
       16,
       16
@@ -8313,6 +10221,132 @@
     "mud_3": [
       336,
       160,
+      16,
+      16
+    ],
+    "pier_end_e_0": [
+      160,
+      848,
+      16,
+      16
+    ],
+    "pier_end_e_1": [
+      176,
+      848,
+      16,
+      16
+    ],
+    "pier_end_e_2": [
+      192,
+      848,
+      16,
+      16
+    ],
+    "pier_end_n_0": [
+      64,
+      848,
+      16,
+      16
+    ],
+    "pier_end_n_1": [
+      80,
+      848,
+      16,
+      16
+    ],
+    "pier_end_n_2": [
+      96,
+      848,
+      16,
+      16
+    ],
+    "pier_end_s_0": [
+      112,
+      848,
+      16,
+      16
+    ],
+    "pier_end_s_1": [
+      128,
+      848,
+      16,
+      16
+    ],
+    "pier_end_s_2": [
+      144,
+      848,
+      16,
+      16
+    ],
+    "pier_end_w_0": [
+      208,
+      848,
+      16,
+      16
+    ],
+    "pier_end_w_1": [
+      224,
+      848,
+      16,
+      16
+    ],
+    "pier_end_w_2": [
+      240,
+      848,
+      16,
+      16
+    ],
+    "pier_ew_0": [
+      480,
+      832,
+      16,
+      16
+    ],
+    "pier_ew_1": [
+      496,
+      832,
+      16,
+      16
+    ],
+    "pier_ew_2": [
+      0,
+      848,
+      16,
+      16
+    ],
+    "pier_junction_0": [
+      16,
+      848,
+      16,
+      16
+    ],
+    "pier_junction_1": [
+      32,
+      848,
+      16,
+      16
+    ],
+    "pier_junction_2": [
+      48,
+      848,
+      16,
+      16
+    ],
+    "pier_ns_0": [
+      432,
+      832,
+      16,
+      16
+    ],
+    "pier_ns_1": [
+      448,
+      832,
+      16,
+      16
+    ],
+    "pier_ns_2": [
+      464,
+      832,
       16,
       16
     ],
@@ -9225,6 +11259,198 @@
     "toxic_3": [
       80,
       192,
+      16,
+      16
+    ],
+    "track_dirt_0": [
+      432,
+      816,
+      16,
+      16
+    ],
+    "track_dirt_1": [
+      464,
+      816,
+      16,
+      16
+    ],
+    "track_dirt_10": [
+      240,
+      832,
+      16,
+      16
+    ],
+    "track_dirt_11": [
+      272,
+      832,
+      16,
+      16
+    ],
+    "track_dirt_12": [
+      304,
+      832,
+      16,
+      16
+    ],
+    "track_dirt_13": [
+      336,
+      832,
+      16,
+      16
+    ],
+    "track_dirt_14": [
+      368,
+      832,
+      16,
+      16
+    ],
+    "track_dirt_15": [
+      400,
+      832,
+      16,
+      16
+    ],
+    "track_dirt_2": [
+      496,
+      816,
+      16,
+      16
+    ],
+    "track_dirt_3": [
+      16,
+      832,
+      16,
+      16
+    ],
+    "track_dirt_4": [
+      48,
+      832,
+      16,
+      16
+    ],
+    "track_dirt_5": [
+      80,
+      832,
+      16,
+      16
+    ],
+    "track_dirt_6": [
+      112,
+      832,
+      16,
+      16
+    ],
+    "track_dirt_7": [
+      144,
+      832,
+      16,
+      16
+    ],
+    "track_dirt_8": [
+      176,
+      832,
+      16,
+      16
+    ],
+    "track_dirt_9": [
+      208,
+      832,
+      16,
+      16
+    ],
+    "track_stone_0": [
+      448,
+      816,
+      16,
+      16
+    ],
+    "track_stone_1": [
+      480,
+      816,
+      16,
+      16
+    ],
+    "track_stone_10": [
+      256,
+      832,
+      16,
+      16
+    ],
+    "track_stone_11": [
+      288,
+      832,
+      16,
+      16
+    ],
+    "track_stone_12": [
+      320,
+      832,
+      16,
+      16
+    ],
+    "track_stone_13": [
+      352,
+      832,
+      16,
+      16
+    ],
+    "track_stone_14": [
+      384,
+      832,
+      16,
+      16
+    ],
+    "track_stone_15": [
+      416,
+      832,
+      16,
+      16
+    ],
+    "track_stone_2": [
+      0,
+      832,
+      16,
+      16
+    ],
+    "track_stone_3": [
+      32,
+      832,
+      16,
+      16
+    ],
+    "track_stone_4": [
+      64,
+      832,
+      16,
+      16
+    ],
+    "track_stone_5": [
+      96,
+      832,
+      16,
+      16
+    ],
+    "track_stone_6": [
+      128,
+      832,
+      16,
+      16
+    ],
+    "track_stone_7": [
+      160,
+      832,
+      16,
+      16
+    ],
+    "track_stone_8": [
+      192,
+      832,
+      16,
+      16
+    ],
+    "track_stone_9": [
+      224,
+      832,
       16,
       16
     ],

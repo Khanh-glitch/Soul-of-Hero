@@ -179,136 +179,136 @@
       "profile": "overcast_frontier",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.2533,
+      "ground_lum": 0.2592,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 3.131
+      "contrast_ratio": 3.071
     },
     {
       "profile": "overcast_frontier",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.2533,
+      "ground_lum": 0.2592,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 2.747
+      "contrast_ratio": 2.694
     },
     {
       "profile": "overcast_frontier",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.2533,
+      "ground_lum": 0.2592,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 2.981
+      "contrast_ratio": 2.924
     },
     {
       "profile": "overcast_frontier",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.0292,
+      "ground_lum": 0.0305,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 11.99
+      "contrast_ratio": 11.803
     },
     {
       "profile": "overcast_frontier",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.0292,
+      "ground_lum": 0.0305,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 10.518
+      "contrast_ratio": 10.354
     },
     {
       "profile": "overcast_frontier",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.0292,
+      "ground_lum": 0.0305,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 11.417
+      "contrast_ratio": 11.239
     },
     {
       "profile": "overcast_frontier",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.0729,
+      "ground_lum": 0.0758,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 7.729
+      "contrast_ratio": 7.549
     },
     {
       "profile": "overcast_frontier",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.0729,
+      "ground_lum": 0.0758,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 6.78
+      "contrast_ratio": 6.622
     },
     {
       "profile": "overcast_frontier",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.0729,
+      "ground_lum": 0.0758,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 7.36
+      "contrast_ratio": 7.188
     },
     {
       "profile": "overcast_frontier",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.049,
+      "ground_lum": 0.051,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 9.591
+      "contrast_ratio": 9.399
     },
     {
       "profile": "overcast_frontier",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.049,
+      "ground_lum": 0.051,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 8.414
+      "contrast_ratio": 8.245
     },
     {
       "profile": "overcast_frontier",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.049,
+      "ground_lum": 0.051,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 9.133
+      "contrast_ratio": 8.95
     },
     {
       "profile": "overcast_frontier",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.075,
+      "ground_lum": 0.0712,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 7.6
+      "contrast_ratio": 7.833
     },
     {
       "profile": "overcast_frontier",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.075,
+      "ground_lum": 0.0712,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 6.667
+      "contrast_ratio": 6.872
     },
     {
       "profile": "overcast_frontier",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.075,
+      "ground_lum": 0.0712,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 7.237
+      "contrast_ratio": 7.459
     },
     {
       "profile": "overcast_frontier",
@@ -476,136 +476,136 @@
       "profile": "overcast_frontier",
       "phase": "night",
       "ground": "salt_0",
-      "ground_lum": 0.0259,
+      "ground_lum": 0.0264,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 12.512
+      "contrast_ratio": 12.43
     },
     {
       "profile": "overcast_frontier",
       "phase": "night",
       "ground": "salt_0",
-      "ground_lum": 0.0259,
+      "ground_lum": 0.0264,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 10.976
+      "contrast_ratio": 10.904
     },
     {
       "profile": "overcast_frontier",
       "phase": "night",
       "ground": "salt_0",
-      "ground_lum": 0.0259,
+      "ground_lum": 0.0264,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 11.915
+      "contrast_ratio": 11.837
     },
     {
       "profile": "overcast_frontier",
       "phase": "night",
       "ground": "lava_0",
-      "ground_lum": 0.005,
+      "ground_lum": 0.0051,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 17.275
+      "contrast_ratio": 17.233
     },
     {
       "profile": "overcast_frontier",
       "phase": "night",
       "ground": "lava_0",
-      "ground_lum": 0.005,
+      "ground_lum": 0.0051,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 15.154
+      "contrast_ratio": 15.117
     },
     {
       "profile": "overcast_frontier",
       "phase": "night",
       "ground": "lava_0",
-      "ground_lum": 0.005,
+      "ground_lum": 0.0051,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 16.45
+      "contrast_ratio": 16.41
     },
     {
       "profile": "overcast_frontier",
       "phase": "night",
       "ground": "jungle_0",
-      "ground_lum": 0.0094,
+      "ground_lum": 0.0097,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.99
+      "contrast_ratio": 15.917
     },
     {
       "profile": "overcast_frontier",
       "phase": "night",
       "ground": "jungle_0",
-      "ground_lum": 0.0094,
+      "ground_lum": 0.0097,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 14.026
+      "contrast_ratio": 13.963
     },
     {
       "profile": "overcast_frontier",
       "phase": "night",
       "ground": "jungle_0",
-      "ground_lum": 0.0094,
+      "ground_lum": 0.0097,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 15.226
+      "contrast_ratio": 15.157
     },
     {
       "profile": "overcast_frontier",
       "phase": "night",
       "ground": "fen_0",
-      "ground_lum": 0.0071,
+      "ground_lum": 0.0073,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 16.632
+      "contrast_ratio": 16.574
     },
     {
       "profile": "overcast_frontier",
       "phase": "night",
       "ground": "fen_0",
-      "ground_lum": 0.0071,
+      "ground_lum": 0.0073,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 14.59
+      "contrast_ratio": 14.539
     },
     {
       "profile": "overcast_frontier",
       "phase": "night",
       "ground": "fen_0",
-      "ground_lum": 0.0071,
+      "ground_lum": 0.0073,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 15.838
+      "contrast_ratio": 15.783
     },
     {
       "profile": "overcast_frontier",
       "phase": "night",
       "ground": "tidal_0",
-      "ground_lum": 0.0099,
+      "ground_lum": 0.0096,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.844
+      "contrast_ratio": 15.941
     },
     {
       "profile": "overcast_frontier",
       "phase": "night",
       "ground": "tidal_0",
-      "ground_lum": 0.0099,
+      "ground_lum": 0.0096,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.898
+      "contrast_ratio": 13.983
     },
     {
       "profile": "overcast_frontier",
       "phase": "night",
       "ground": "tidal_0",
-      "ground_lum": 0.0099,
+      "ground_lum": 0.0096,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 15.087
+      "contrast_ratio": 15.179
     },
     {
       "profile": "amber_morning",
@@ -773,136 +773,136 @@
       "profile": "amber_morning",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.3145,
+      "ground_lum": 0.3219,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 2.606
+      "contrast_ratio": 2.554
     },
     {
       "profile": "amber_morning",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.3145,
+      "ground_lum": 0.3219,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 2.286
+      "contrast_ratio": 2.24
     },
     {
       "profile": "amber_morning",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.3145,
+      "ground_lum": 0.3219,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 2.481
+      "contrast_ratio": 2.432
     },
     {
       "profile": "amber_morning",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.035,
+      "ground_lum": 0.0366,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 11.167
+      "contrast_ratio": 10.966
     },
     {
       "profile": "amber_morning",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.035,
+      "ground_lum": 0.0366,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 9.796
+      "contrast_ratio": 9.62
     },
     {
       "profile": "amber_morning",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.035,
+      "ground_lum": 0.0366,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 10.634
+      "contrast_ratio": 10.443
     },
     {
       "profile": "amber_morning",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.0891,
+      "ground_lum": 0.0927,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 6.829
+      "contrast_ratio": 6.654
     },
     {
       "profile": "amber_morning",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.0891,
+      "ground_lum": 0.0927,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 5.991
+      "contrast_ratio": 5.837
     },
     {
       "profile": "amber_morning",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.0891,
+      "ground_lum": 0.0927,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 6.503
+      "contrast_ratio": 6.336
     },
     {
       "profile": "amber_morning",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.0594,
+      "ground_lum": 0.062,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 8.677
+      "contrast_ratio": 8.482
     },
     {
       "profile": "amber_morning",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.0594,
+      "ground_lum": 0.062,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 7.612
+      "contrast_ratio": 7.44
     },
     {
       "profile": "amber_morning",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.0594,
+      "ground_lum": 0.062,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 8.263
+      "contrast_ratio": 8.077
     },
     {
       "profile": "amber_morning",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.0891,
+      "ground_lum": 0.0846,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 6.826
+      "contrast_ratio": 7.056
     },
     {
       "profile": "amber_morning",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.0891,
+      "ground_lum": 0.0846,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 5.988
+      "contrast_ratio": 6.19
     },
     {
       "profile": "amber_morning",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.0891,
+      "ground_lum": 0.0846,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 6.5
+      "contrast_ratio": 6.719
     },
     {
       "profile": "amber_morning",
@@ -1070,136 +1070,136 @@
       "profile": "amber_morning",
       "phase": "night",
       "ground": "salt_0",
-      "ground_lum": 0.0273,
+      "ground_lum": 0.0279,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 12.279
+      "contrast_ratio": 12.195
     },
     {
       "profile": "amber_morning",
       "phase": "night",
       "ground": "salt_0",
-      "ground_lum": 0.0273,
+      "ground_lum": 0.0279,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 10.772
+      "contrast_ratio": 10.698
     },
     {
       "profile": "amber_morning",
       "phase": "night",
       "ground": "salt_0",
-      "ground_lum": 0.0273,
+      "ground_lum": 0.0279,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 11.693
+      "contrast_ratio": 11.613
     },
     {
       "profile": "amber_morning",
       "phase": "night",
       "ground": "lava_0",
-      "ground_lum": 0.0051,
+      "ground_lum": 0.0052,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 17.236
+      "contrast_ratio": 17.192
     },
     {
       "profile": "amber_morning",
       "phase": "night",
       "ground": "lava_0",
-      "ground_lum": 0.0051,
+      "ground_lum": 0.0052,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 15.12
+      "contrast_ratio": 15.082
     },
     {
       "profile": "amber_morning",
       "phase": "night",
       "ground": "lava_0",
-      "ground_lum": 0.0051,
+      "ground_lum": 0.0052,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 16.412
+      "contrast_ratio": 16.371
     },
     {
       "profile": "amber_morning",
       "phase": "night",
       "ground": "jungle_0",
-      "ground_lum": 0.0102,
+      "ground_lum": 0.0105,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.767
+      "contrast_ratio": 15.689
     },
     {
       "profile": "amber_morning",
       "phase": "night",
       "ground": "jungle_0",
-      "ground_lum": 0.0102,
+      "ground_lum": 0.0105,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.831
+      "contrast_ratio": 13.763
     },
     {
       "profile": "amber_morning",
       "phase": "night",
       "ground": "jungle_0",
+      "ground_lum": 0.0105,
+      "effect": "blade_impact_f0",
+      "effect_lum": 0.8543,
+      "contrast_ratio": 14.94
+    },
+    {
+      "profile": "amber_morning",
+      "phase": "night",
+      "ground": "fen_0",
+      "ground_lum": 0.0077,
+      "effect": "sword_crescent_wave",
+      "effect_lum": 0.8997,
+      "contrast_ratio": 16.448
+    },
+    {
+      "profile": "amber_morning",
+      "phase": "night",
+      "ground": "fen_0",
+      "ground_lum": 0.0077,
+      "effect": "world_sparkle_f0",
+      "effect_lum": 0.7831,
+      "contrast_ratio": 14.428
+    },
+    {
+      "profile": "amber_morning",
+      "phase": "night",
+      "ground": "fen_0",
+      "ground_lum": 0.0077,
+      "effect": "blade_impact_f0",
+      "effect_lum": 0.8543,
+      "contrast_ratio": 15.662
+    },
+    {
+      "profile": "amber_morning",
+      "phase": "night",
+      "ground": "tidal_0",
+      "ground_lum": 0.0102,
+      "effect": "sword_crescent_wave",
+      "effect_lum": 0.8997,
+      "contrast_ratio": 15.785
+    },
+    {
+      "profile": "amber_morning",
+      "phase": "night",
+      "ground": "tidal_0",
+      "ground_lum": 0.0102,
+      "effect": "world_sparkle_f0",
+      "effect_lum": 0.7831,
+      "contrast_ratio": 13.847
+    },
+    {
+      "profile": "amber_morning",
+      "phase": "night",
+      "ground": "tidal_0",
       "ground_lum": 0.0102,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 15.014
-    },
-    {
-      "profile": "amber_morning",
-      "phase": "night",
-      "ground": "fen_0",
-      "ground_lum": 0.0075,
-      "effect": "sword_crescent_wave",
-      "effect_lum": 0.8997,
-      "contrast_ratio": 16.51
-    },
-    {
-      "profile": "amber_morning",
-      "phase": "night",
-      "ground": "fen_0",
-      "ground_lum": 0.0075,
-      "effect": "world_sparkle_f0",
-      "effect_lum": 0.7831,
-      "contrast_ratio": 14.483
-    },
-    {
-      "profile": "amber_morning",
-      "phase": "night",
-      "ground": "fen_0",
-      "ground_lum": 0.0075,
-      "effect": "blade_impact_f0",
-      "effect_lum": 0.8543,
-      "contrast_ratio": 15.721
-    },
-    {
-      "profile": "amber_morning",
-      "phase": "night",
-      "ground": "tidal_0",
-      "ground_lum": 0.0106,
-      "effect": "sword_crescent_wave",
-      "effect_lum": 0.8997,
-      "contrast_ratio": 15.683
-    },
-    {
-      "profile": "amber_morning",
-      "phase": "night",
-      "ground": "tidal_0",
-      "ground_lum": 0.0106,
-      "effect": "world_sparkle_f0",
-      "effect_lum": 0.7831,
-      "contrast_ratio": 13.758
-    },
-    {
-      "profile": "amber_morning",
-      "phase": "night",
-      "ground": "tidal_0",
-      "ground_lum": 0.0106,
-      "effect": "blade_impact_f0",
-      "effect_lum": 0.8543,
-      "contrast_ratio": 14.934
+      "contrast_ratio": 15.031
     },
     {
       "profile": "frost_blue_hour",
@@ -1367,136 +1367,136 @@
       "profile": "frost_blue_hour",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.2882,
+      "ground_lum": 0.295,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 2.808
+      "contrast_ratio": 2.753
     },
     {
       "profile": "frost_blue_hour",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.2882,
+      "ground_lum": 0.295,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 2.463
+      "contrast_ratio": 2.415
     },
     {
       "profile": "frost_blue_hour",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.2882,
+      "ground_lum": 0.295,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 2.674
+      "contrast_ratio": 2.621
     },
     {
       "profile": "frost_blue_hour",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.0325,
+      "ground_lum": 0.0339,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 11.512
+      "contrast_ratio": 11.319
     },
     {
       "profile": "frost_blue_hour",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.0325,
+      "ground_lum": 0.0339,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 10.099
+      "contrast_ratio": 9.929
     },
     {
       "profile": "frost_blue_hour",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.0325,
+      "ground_lum": 0.0339,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 10.962
+      "contrast_ratio": 10.778
     },
     {
       "profile": "frost_blue_hour",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.0838,
+      "ground_lum": 0.0872,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 7.098
+      "contrast_ratio": 6.924
     },
     {
       "profile": "frost_blue_hour",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.0838,
+      "ground_lum": 0.0872,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 6.227
+      "contrast_ratio": 6.074
     },
     {
       "profile": "frost_blue_hour",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.0838,
+      "ground_lum": 0.0872,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 6.759
+      "contrast_ratio": 6.593
     },
     {
       "profile": "frost_blue_hour",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.0556,
+      "ground_lum": 0.0579,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 8.992
+      "contrast_ratio": 8.799
     },
     {
       "profile": "frost_blue_hour",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.0556,
+      "ground_lum": 0.0579,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 7.888
+      "contrast_ratio": 7.718
     },
     {
       "profile": "frost_blue_hour",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.0556,
+      "ground_lum": 0.0579,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 8.562
+      "contrast_ratio": 8.378
     },
     {
       "profile": "frost_blue_hour",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.0877,
+      "ground_lum": 0.0834,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 6.896
+      "contrast_ratio": 7.121
     },
     {
       "profile": "frost_blue_hour",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.0877,
+      "ground_lum": 0.0834,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 6.049
+      "contrast_ratio": 6.247
     },
     {
       "profile": "frost_blue_hour",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.0877,
+      "ground_lum": 0.0834,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 6.566
+      "contrast_ratio": 6.781
     },
     {
       "profile": "frost_blue_hour",
@@ -1664,136 +1664,136 @@
       "profile": "frost_blue_hour",
       "phase": "night",
       "ground": "salt_0",
-      "ground_lum": 0.0394,
+      "ground_lum": 0.0402,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 10.622
+      "contrast_ratio": 10.527
     },
     {
       "profile": "frost_blue_hour",
       "phase": "night",
       "ground": "salt_0",
-      "ground_lum": 0.0394,
+      "ground_lum": 0.0402,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 9.318
+      "contrast_ratio": 9.234
     },
     {
       "profile": "frost_blue_hour",
       "phase": "night",
       "ground": "salt_0",
-      "ground_lum": 0.0394,
+      "ground_lum": 0.0402,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 10.115
+      "contrast_ratio": 10.024
     },
     {
       "profile": "frost_blue_hour",
       "phase": "night",
       "ground": "lava_0",
-      "ground_lum": 0.0067,
+      "ground_lum": 0.0069,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 16.76
+      "contrast_ratio": 16.701
     },
     {
       "profile": "frost_blue_hour",
       "phase": "night",
       "ground": "lava_0",
-      "ground_lum": 0.0067,
+      "ground_lum": 0.0069,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 14.702
+      "contrast_ratio": 14.65
     },
     {
       "profile": "frost_blue_hour",
       "phase": "night",
       "ground": "lava_0",
-      "ground_lum": 0.0067,
+      "ground_lum": 0.0069,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 15.959
+      "contrast_ratio": 15.903
     },
     {
       "profile": "frost_blue_hour",
       "phase": "night",
       "ground": "jungle_0",
-      "ground_lum": 0.0137,
+      "ground_lum": 0.0141,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 14.908
+      "contrast_ratio": 14.808
     },
     {
       "profile": "frost_blue_hour",
       "phase": "night",
       "ground": "jungle_0",
-      "ground_lum": 0.0137,
+      "ground_lum": 0.0141,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.077
+      "contrast_ratio": 12.99
     },
     {
       "profile": "frost_blue_hour",
       "phase": "night",
       "ground": "jungle_0",
-      "ground_lum": 0.0137,
+      "ground_lum": 0.0141,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 14.195
+      "contrast_ratio": 14.101
     },
     {
       "profile": "frost_blue_hour",
       "phase": "night",
       "ground": "fen_0",
-      "ground_lum": 0.01,
+      "ground_lum": 0.0103,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.832
+      "contrast_ratio": 15.751
     },
     {
       "profile": "frost_blue_hour",
       "phase": "night",
       "ground": "fen_0",
-      "ground_lum": 0.01,
+      "ground_lum": 0.0103,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.888
+      "contrast_ratio": 13.817
     },
     {
       "profile": "frost_blue_hour",
       "phase": "night",
       "ground": "fen_0",
-      "ground_lum": 0.01,
+      "ground_lum": 0.0103,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 15.076
+      "contrast_ratio": 14.998
     },
     {
       "profile": "frost_blue_hour",
       "phase": "night",
       "ground": "tidal_0",
-      "ground_lum": 0.0148,
+      "ground_lum": 0.0142,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 14.651
+      "contrast_ratio": 14.784
     },
     {
       "profile": "frost_blue_hour",
       "phase": "night",
       "ground": "tidal_0",
-      "ground_lum": 0.0148,
+      "ground_lum": 0.0142,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 12.852
+      "contrast_ratio": 12.969
     },
     {
       "profile": "frost_blue_hour",
       "phase": "night",
       "ground": "tidal_0",
-      "ground_lum": 0.0148,
+      "ground_lum": 0.0142,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 13.951
+      "contrast_ratio": 14.078
     },
     {
       "profile": "mere_mist",
@@ -1961,433 +1961,433 @@
       "profile": "mere_mist",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.3881,
+      "ground_lum": 0.3974,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 2.167
+      "contrast_ratio": 2.123
     },
     {
       "profile": "mere_mist",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.3881,
+      "ground_lum": 0.3974,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 1.901
+      "contrast_ratio": 1.862
     },
     {
       "profile": "mere_mist",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.3881,
+      "ground_lum": 0.3974,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 2.064
+      "contrast_ratio": 2.021
     },
     {
       "profile": "mere_mist",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.0419,
+      "ground_lum": 0.0438,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 10.328
+      "contrast_ratio": 10.12
     },
     {
       "profile": "mere_mist",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.0419,
+      "ground_lum": 0.0438,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 9.06
+      "contrast_ratio": 8.878
     },
     {
       "profile": "mere_mist",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.0419,
+      "ground_lum": 0.0438,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 9.835
+      "contrast_ratio": 9.637
     },
     {
       "profile": "mere_mist",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.1107,
+      "ground_lum": 0.1153,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 5.911
+      "contrast_ratio": 5.746
     },
     {
       "profile": "mere_mist",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.1107,
+      "ground_lum": 0.1153,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 5.185
+      "contrast_ratio": 5.041
     },
     {
       "profile": "mere_mist",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.1107,
+      "ground_lum": 0.1153,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 5.628
+      "contrast_ratio": 5.472
     },
     {
       "profile": "mere_mist",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.0728,
+      "ground_lum": 0.0759,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 7.735
+      "contrast_ratio": 7.542
     },
     {
       "profile": "mere_mist",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.0728,
+      "ground_lum": 0.0759,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 6.785
+      "contrast_ratio": 6.616
     },
     {
       "profile": "mere_mist",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.0728,
+      "ground_lum": 0.0759,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 7.365
+      "contrast_ratio": 7.182
     },
     {
       "profile": "mere_mist",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.1128,
+      "ground_lum": 0.1071,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 5.833
+      "contrast_ratio": 6.047
     },
     {
       "profile": "mere_mist",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.1128,
+      "ground_lum": 0.1071,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 5.117
+      "contrast_ratio": 5.304
     },
     {
       "profile": "mere_mist",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.1128,
+      "ground_lum": 0.1071,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 5.554
+      "contrast_ratio": 5.758
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "snow_0",
-      "ground_lum": 0.0582,
+      "ground_lum": 0.0786,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 8.779
+      "contrast_ratio": 7.382
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "snow_0",
-      "ground_lum": 0.0582,
+      "ground_lum": 0.0786,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 7.701
+      "contrast_ratio": 6.476
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "snow_0",
-      "ground_lum": 0.0582,
+      "ground_lum": 0.0786,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 8.36
+      "contrast_ratio": 7.03
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "basalt_0",
-      "ground_lum": 0.0158,
+      "ground_lum": 0.0205,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 14.423
+      "contrast_ratio": 13.462
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "basalt_0",
-      "ground_lum": 0.0158,
+      "ground_lum": 0.0205,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 12.653
+      "contrast_ratio": 11.809
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "basalt_0",
-      "ground_lum": 0.0158,
+      "ground_lum": 0.0205,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 13.734
+      "contrast_ratio": 12.819
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "ash_0",
-      "ground_lum": 0.0154,
+      "ground_lum": 0.02,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 14.519
+      "contrast_ratio": 13.564
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "ash_0",
-      "ground_lum": 0.0154,
+      "ground_lum": 0.02,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 12.736
+      "contrast_ratio": 11.898
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "ash_0",
-      "ground_lum": 0.0154,
+      "ground_lum": 0.02,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 13.825
+      "contrast_ratio": 12.916
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "grass_0",
-      "ground_lum": 0.0217,
+      "ground_lum": 0.0286,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 13.238
+      "contrast_ratio": 12.087
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "grass_0",
-      "ground_lum": 0.0217,
+      "ground_lum": 0.0286,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 11.613
+      "contrast_ratio": 10.603
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "grass_0",
-      "ground_lum": 0.0217,
+      "ground_lum": 0.0286,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 12.606
+      "contrast_ratio": 11.51
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "soil_0",
-      "ground_lum": 0.0154,
+      "ground_lum": 0.0201,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 14.525
+      "contrast_ratio": 13.555
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "soil_0",
-      "ground_lum": 0.0154,
+      "ground_lum": 0.0201,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 12.742
+      "contrast_ratio": 11.891
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "soil_0",
-      "ground_lum": 0.0154,
+      "ground_lum": 0.0201,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 13.831
+      "contrast_ratio": 12.908
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "gravel_0",
-      "ground_lum": 0.0212,
+      "ground_lum": 0.0279,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 13.336
+      "contrast_ratio": 12.195
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "gravel_0",
-      "ground_lum": 0.0212,
+      "ground_lum": 0.0279,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 11.698
+      "contrast_ratio": 10.698
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "gravel_0",
-      "ground_lum": 0.0212,
+      "ground_lum": 0.0279,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 12.699
+      "contrast_ratio": 11.612
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "salt_0",
-      "ground_lum": 0.052,
+      "ground_lum": 0.0718,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 9.313
+      "contrast_ratio": 7.796
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "salt_0",
-      "ground_lum": 0.052,
+      "ground_lum": 0.0718,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 8.17
+      "contrast_ratio": 6.839
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "salt_0",
-      "ground_lum": 0.052,
+      "ground_lum": 0.0718,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 8.868
+      "contrast_ratio": 7.424
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "lava_0",
-      "ground_lum": 0.0081,
+      "ground_lum": 0.0105,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 16.351
+      "contrast_ratio": 15.69
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "lava_0",
-      "ground_lum": 0.0081,
+      "ground_lum": 0.0105,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 14.343
+      "contrast_ratio": 13.764
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "lava_0",
-      "ground_lum": 0.0081,
+      "ground_lum": 0.0105,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 15.569
+      "contrast_ratio": 14.941
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "jungle_0",
-      "ground_lum": 0.018,
+      "ground_lum": 0.0242,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 13.97
+      "contrast_ratio": 12.792
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "jungle_0",
-      "ground_lum": 0.018,
+      "ground_lum": 0.0242,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 12.255
+      "contrast_ratio": 11.221
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "jungle_0",
-      "ground_lum": 0.018,
+      "ground_lum": 0.0242,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 13.303
+      "contrast_ratio": 12.181
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "fen_0",
-      "ground_lum": 0.0127,
+      "ground_lum": 0.0168,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.155
+      "contrast_ratio": 14.208
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "fen_0",
-      "ground_lum": 0.0127,
+      "ground_lum": 0.0168,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.294
+      "contrast_ratio": 12.463
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "fen_0",
-      "ground_lum": 0.0127,
+      "ground_lum": 0.0168,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 14.431
+      "contrast_ratio": 13.529
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "tidal_0",
-      "ground_lum": 0.0186,
+      "ground_lum": 0.0232,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 13.84
+      "contrast_ratio": 12.974
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "tidal_0",
-      "ground_lum": 0.0186,
+      "ground_lum": 0.0232,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 12.141
+      "contrast_ratio": 11.382
     },
     {
       "profile": "mere_mist",
       "phase": "night",
       "ground": "tidal_0",
-      "ground_lum": 0.0186,
+      "ground_lum": 0.0232,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 13.179
+      "contrast_ratio": 12.355
     },
     {
       "profile": "glasswind_storm",
@@ -2555,433 +2555,433 @@
       "profile": "glasswind_storm",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.3198,
+      "ground_lum": 0.3274,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 2.568
+      "contrast_ratio": 2.516
     },
     {
       "profile": "glasswind_storm",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.3198,
+      "ground_lum": 0.3274,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 2.253
+      "contrast_ratio": 2.207
     },
     {
       "profile": "glasswind_storm",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.3198,
+      "ground_lum": 0.3274,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 2.445
+      "contrast_ratio": 2.396
     },
     {
       "profile": "glasswind_storm",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.0355,
+      "ground_lum": 0.0371,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 11.106
+      "contrast_ratio": 10.907
     },
     {
       "profile": "glasswind_storm",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.0355,
+      "ground_lum": 0.0371,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 9.743
+      "contrast_ratio": 9.568
     },
     {
       "profile": "glasswind_storm",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.0355,
+      "ground_lum": 0.0371,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 10.576
+      "contrast_ratio": 10.386
     },
     {
       "profile": "glasswind_storm",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.0923,
+      "ground_lum": 0.0961,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 6.674
+      "contrast_ratio": 6.502
     },
     {
       "profile": "glasswind_storm",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.0923,
+      "ground_lum": 0.0961,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 5.855
+      "contrast_ratio": 5.704
     },
     {
       "profile": "glasswind_storm",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.0923,
+      "ground_lum": 0.0961,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 6.355
+      "contrast_ratio": 6.192
     },
     {
       "profile": "glasswind_storm",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.0611,
+      "ground_lum": 0.0636,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 8.551
+      "contrast_ratio": 8.357
     },
     {
       "profile": "glasswind_storm",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.0611,
+      "ground_lum": 0.0636,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 7.501
+      "contrast_ratio": 7.331
     },
     {
       "profile": "glasswind_storm",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.0611,
+      "ground_lum": 0.0636,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 8.142
+      "contrast_ratio": 7.958
     },
     {
       "profile": "glasswind_storm",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.0954,
+      "ground_lum": 0.0906,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 6.531
+      "contrast_ratio": 6.753
     },
     {
       "profile": "glasswind_storm",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.0954,
+      "ground_lum": 0.0906,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 5.729
+      "contrast_ratio": 5.924
     },
     {
       "profile": "glasswind_storm",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.0954,
+      "ground_lum": 0.0906,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 6.219
+      "contrast_ratio": 6.431
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "snow_0",
-      "ground_lum": 0.0385,
+      "ground_lum": 0.061,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 10.727
+      "contrast_ratio": 8.552
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "snow_0",
-      "ground_lum": 0.0385,
+      "ground_lum": 0.061,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 9.41
+      "contrast_ratio": 7.502
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "snow_0",
-      "ground_lum": 0.0385,
+      "ground_lum": 0.061,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 10.214
+      "contrast_ratio": 8.143
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "basalt_0",
-      "ground_lum": 0.0112,
+      "ground_lum": 0.0166,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.507
+      "contrast_ratio": 14.264
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "basalt_0",
-      "ground_lum": 0.0112,
+      "ground_lum": 0.0166,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.603
+      "contrast_ratio": 12.513
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "basalt_0",
-      "ground_lum": 0.0112,
+      "ground_lum": 0.0166,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 14.766
+      "contrast_ratio": 13.583
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "ash_0",
-      "ground_lum": 0.0108,
+      "ground_lum": 0.016,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.612
+      "contrast_ratio": 14.382
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "ash_0",
-      "ground_lum": 0.0108,
+      "ground_lum": 0.016,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
+      "contrast_ratio": 12.616
+    },
+    {
+      "profile": "glasswind_storm",
+      "phase": "night",
+      "ground": "ash_0",
+      "ground_lum": 0.016,
+      "effect": "blade_impact_f0",
+      "effect_lum": 0.8543,
       "contrast_ratio": 13.695
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
-      "ground": "ash_0",
-      "ground_lum": 0.0108,
-      "effect": "blade_impact_f0",
-      "effect_lum": 0.8543,
-      "contrast_ratio": 14.866
+      "ground": "grass_0",
+      "ground_lum": 0.0222,
+      "effect": "sword_crescent_wave",
+      "effect_lum": 0.8997,
+      "contrast_ratio": 13.151
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "grass_0",
-      "ground_lum": 0.0147,
-      "effect": "sword_crescent_wave",
-      "effect_lum": 0.8997,
-      "contrast_ratio": 14.688
+      "ground_lum": 0.0222,
+      "effect": "world_sparkle_f0",
+      "effect_lum": 0.7831,
+      "contrast_ratio": 11.536
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "grass_0",
-      "ground_lum": 0.0147,
-      "effect": "world_sparkle_f0",
-      "effect_lum": 0.7831,
-      "contrast_ratio": 12.884
-    },
-    {
-      "profile": "glasswind_storm",
-      "phase": "night",
-      "ground": "grass_0",
-      "ground_lum": 0.0147,
+      "ground_lum": 0.0222,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 13.986
+      "contrast_ratio": 12.523
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "soil_0",
-      "ground_lum": 0.0107,
+      "ground_lum": 0.016,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.647
+      "contrast_ratio": 14.399
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "soil_0",
-      "ground_lum": 0.0107,
+      "ground_lum": 0.016,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.726
+      "contrast_ratio": 12.632
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "soil_0",
-      "ground_lum": 0.0107,
+      "ground_lum": 0.016,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 14.899
+      "contrast_ratio": 13.712
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "gravel_0",
-      "ground_lum": 0.0148,
+      "ground_lum": 0.0223,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 14.657
+      "contrast_ratio": 13.136
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "gravel_0",
-      "ground_lum": 0.0148,
+      "ground_lum": 0.0223,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 12.857
+      "contrast_ratio": 11.523
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "gravel_0",
-      "ground_lum": 0.0148,
+      "ground_lum": 0.0223,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 13.957
+      "contrast_ratio": 12.508
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "salt_0",
-      "ground_lum": 0.0341,
+      "ground_lum": 0.0554,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 11.289
+      "contrast_ratio": 9.014
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "salt_0",
-      "ground_lum": 0.0341,
+      "ground_lum": 0.0554,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 9.903
+      "contrast_ratio": 7.907
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "salt_0",
-      "ground_lum": 0.0341,
+      "ground_lum": 0.0554,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 10.749
+      "contrast_ratio": 8.583
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "lava_0",
-      "ground_lum": 0.006,
+      "ground_lum": 0.0087,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 16.962
+      "contrast_ratio": 16.183
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "lava_0",
-      "ground_lum": 0.006,
+      "ground_lum": 0.0087,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 14.88
+      "contrast_ratio": 14.196
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "lava_0",
-      "ground_lum": 0.006,
+      "ground_lum": 0.0087,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 16.152
+      "contrast_ratio": 15.41
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "jungle_0",
-      "ground_lum": 0.0122,
+      "ground_lum": 0.0189,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.262
+      "contrast_ratio": 13.788
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "jungle_0",
-      "ground_lum": 0.0122,
+      "ground_lum": 0.0189,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.388
+      "contrast_ratio": 12.095
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "jungle_0",
-      "ground_lum": 0.0122,
+      "ground_lum": 0.0189,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 14.533
+      "contrast_ratio": 13.129
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "fen_0",
-      "ground_lum": 0.0089,
+      "ground_lum": 0.0134,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 16.115
+      "contrast_ratio": 14.97
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "fen_0",
-      "ground_lum": 0.0089,
+      "ground_lum": 0.0134,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 14.137
+      "contrast_ratio": 13.132
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "fen_0",
-      "ground_lum": 0.0089,
+      "ground_lum": 0.0134,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 15.346
+      "contrast_ratio": 14.255
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "tidal_0",
-      "ground_lum": 0.013,
+      "ground_lum": 0.0185,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.074
+      "contrast_ratio": 13.86
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "tidal_0",
-      "ground_lum": 0.013,
+      "ground_lum": 0.0185,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.223
+      "contrast_ratio": 12.158
     },
     {
       "profile": "glasswind_storm",
       "phase": "night",
       "ground": "tidal_0",
-      "ground_lum": 0.013,
+      "ground_lum": 0.0185,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 14.354
+      "contrast_ratio": 13.198
     },
     {
       "profile": "ember_haze",
@@ -3149,433 +3149,433 @@
       "profile": "ember_haze",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.3253,
+      "ground_lum": 0.3329,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 2.531
+      "contrast_ratio": 2.48
     },
     {
       "profile": "ember_haze",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.3253,
+      "ground_lum": 0.3329,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 2.22
+      "contrast_ratio": 2.176
     },
     {
       "profile": "ember_haze",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.3253,
+      "ground_lum": 0.3329,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 2.41
+      "contrast_ratio": 2.362
     },
     {
       "profile": "ember_haze",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.0363,
+      "ground_lum": 0.0379,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 11.008
+      "contrast_ratio": 10.804
     },
     {
       "profile": "ember_haze",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.0363,
+      "ground_lum": 0.0379,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 9.656
+      "contrast_ratio": 9.478
     },
     {
       "profile": "ember_haze",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.0363,
+      "ground_lum": 0.0379,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 10.482
+      "contrast_ratio": 10.288
     },
     {
       "profile": "ember_haze",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.0902,
+      "ground_lum": 0.0939,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 6.774
+      "contrast_ratio": 6.598
     },
     {
       "profile": "ember_haze",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.0902,
+      "ground_lum": 0.0939,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 5.943
+      "contrast_ratio": 5.788
     },
     {
       "profile": "ember_haze",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.0902,
+      "ground_lum": 0.0939,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 6.451
+      "contrast_ratio": 6.283
     },
     {
       "profile": "ember_haze",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.0607,
+      "ground_lum": 0.0633,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 8.576
+      "contrast_ratio": 8.379
     },
     {
       "profile": "ember_haze",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.0607,
+      "ground_lum": 0.0633,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 7.523
+      "contrast_ratio": 7.351
     },
     {
       "profile": "ember_haze",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.0607,
+      "ground_lum": 0.0633,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 8.166
+      "contrast_ratio": 7.979
     },
     {
       "profile": "ember_haze",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.0904,
+      "ground_lum": 0.0858,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 6.764
+      "contrast_ratio": 6.995
     },
     {
       "profile": "ember_haze",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.0904,
+      "ground_lum": 0.0858,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 5.934
+      "contrast_ratio": 6.136
     },
     {
       "profile": "ember_haze",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.0904,
+      "ground_lum": 0.0858,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 6.441
+      "contrast_ratio": 6.661
     },
     {
       "profile": "ember_haze",
       "phase": "night",
       "ground": "snow_0",
-      "ground_lum": 0.0325,
+      "ground_lum": 0.0526,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 11.512
+      "contrast_ratio": 9.252
     },
     {
       "profile": "ember_haze",
       "phase": "night",
       "ground": "snow_0",
-      "ground_lum": 0.0325,
+      "ground_lum": 0.0526,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 10.098
+      "contrast_ratio": 8.116
     },
     {
       "profile": "ember_haze",
       "phase": "night",
       "ground": "snow_0",
-      "ground_lum": 0.0325,
+      "ground_lum": 0.0526,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 10.962
+      "contrast_ratio": 8.81
     },
     {
       "profile": "ember_haze",
       "phase": "night",
       "ground": "basalt_0",
-      "ground_lum": 0.0098,
+      "ground_lum": 0.0146,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.888
+      "contrast_ratio": 14.701
     },
     {
       "profile": "ember_haze",
       "phase": "night",
       "ground": "basalt_0",
-      "ground_lum": 0.0098,
+      "ground_lum": 0.0146,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.938
+      "contrast_ratio": 12.896
     },
     {
       "profile": "ember_haze",
       "phase": "night",
       "ground": "basalt_0",
-      "ground_lum": 0.0098,
+      "ground_lum": 0.0146,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 15.129
+      "contrast_ratio": 13.999
     },
     {
       "profile": "ember_haze",
       "phase": "night",
       "ground": "ash_0",
-      "ground_lum": 0.01,
+      "ground_lum": 0.0149,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.822
+      "contrast_ratio": 14.622
     },
     {
       "profile": "ember_haze",
       "phase": "night",
       "ground": "ash_0",
-      "ground_lum": 0.01,
+      "ground_lum": 0.0149,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.88
+      "contrast_ratio": 12.827
     },
     {
       "profile": "ember_haze",
       "phase": "night",
       "ground": "ash_0",
-      "ground_lum": 0.01,
+      "ground_lum": 0.0149,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 15.067
+      "contrast_ratio": 13.923
     },
     {
       "profile": "ember_haze",
       "phase": "night",
       "ground": "grass_0",
-      "ground_lum": 0.0129,
+      "ground_lum": 0.0198,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.106
+      "contrast_ratio": 13.597
     },
     {
       "profile": "ember_haze",
       "phase": "night",
       "ground": "grass_0",
-      "ground_lum": 0.0129,
+      "ground_lum": 0.0198,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.251
+      "contrast_ratio": 11.928
     },
     {
       "profile": "ember_haze",
       "phase": "night",
       "ground": "grass_0",
-      "ground_lum": 0.0129,
+      "ground_lum": 0.0198,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 14.384
+      "contrast_ratio": 12.947
     },
     {
       "profile": "ember_haze",
       "phase": "night",
       "ground": "soil_0",
-      "ground_lum": 0.0106,
+      "ground_lum": 0.0158,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.673
+      "contrast_ratio": 14.428
     },
     {
       "profile": "ember_haze",
       "phase": "night",
       "ground": "soil_0",
-      "ground_lum": 0.0106,
+      "ground_lum": 0.0158,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.748
+      "contrast_ratio": 12.656
     },
     {
       "profile": "ember_haze",
       "phase": "night",
       "ground": "soil_0",
-      "ground_lum": 0.0106,
+      "ground_lum": 0.0158,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 14.924
+      "contrast_ratio": 13.739
     },
     {
       "profile": "ember_haze",
       "phase": "night",
       "ground": "gravel_0",
-      "ground_lum": 0.0132,
+      "ground_lum": 0.0201,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.026
+      "contrast_ratio": 13.544
     },
     {
       "profile": "ember_haze",
       "phase": "night",
       "ground": "gravel_0",
-      "ground_lum": 0.0132,
+      "ground_lum": 0.0201,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.181
+      "contrast_ratio": 11.881
     },
     {
       "profile": "ember_haze",
       "phase": "night",
       "ground": "gravel_0",
-      "ground_lum": 0.0132,
+      "ground_lum": 0.0201,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
+      "contrast_ratio": 12.897
+    },
+    {
+      "profile": "ember_haze",
+      "phase": "night",
+      "ground": "salt_0",
+      "ground_lum": 0.0509,
+      "effect": "sword_crescent_wave",
+      "effect_lum": 0.8997,
+      "contrast_ratio": 9.416
+    },
+    {
+      "profile": "ember_haze",
+      "phase": "night",
+      "ground": "salt_0",
+      "ground_lum": 0.0509,
+      "effect": "world_sparkle_f0",
+      "effect_lum": 0.7831,
+      "contrast_ratio": 8.26
+    },
+    {
+      "profile": "ember_haze",
+      "phase": "night",
+      "ground": "salt_0",
+      "ground_lum": 0.0509,
+      "effect": "blade_impact_f0",
+      "effect_lum": 0.8543,
+      "contrast_ratio": 8.966
+    },
+    {
+      "profile": "ember_haze",
+      "phase": "night",
+      "ground": "lava_0",
+      "ground_lum": 0.0082,
+      "effect": "sword_crescent_wave",
+      "effect_lum": 0.8997,
+      "contrast_ratio": 16.31
+    },
+    {
+      "profile": "ember_haze",
+      "phase": "night",
+      "ground": "lava_0",
+      "ground_lum": 0.0082,
+      "effect": "world_sparkle_f0",
+      "effect_lum": 0.7831,
       "contrast_ratio": 14.308
     },
     {
       "profile": "ember_haze",
       "phase": "night",
-      "ground": "salt_0",
-      "ground_lum": 0.031,
-      "effect": "sword_crescent_wave",
-      "effect_lum": 0.8997,
-      "contrast_ratio": 11.729
-    },
-    {
-      "profile": "ember_haze",
-      "phase": "night",
-      "ground": "salt_0",
-      "ground_lum": 0.031,
-      "effect": "world_sparkle_f0",
-      "effect_lum": 0.7831,
-      "contrast_ratio": 10.289
-    },
-    {
-      "profile": "ember_haze",
-      "phase": "night",
-      "ground": "salt_0",
-      "ground_lum": 0.031,
+      "ground": "lava_0",
+      "ground_lum": 0.0082,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 11.168
-    },
-    {
-      "profile": "ember_haze",
-      "phase": "night",
-      "ground": "lava_0",
-      "ground_lum": 0.0056,
-      "effect": "sword_crescent_wave",
-      "effect_lum": 0.8997,
-      "contrast_ratio": 17.066
-    },
-    {
-      "profile": "ember_haze",
-      "phase": "night",
-      "ground": "lava_0",
-      "ground_lum": 0.0056,
-      "effect": "world_sparkle_f0",
-      "effect_lum": 0.7831,
-      "contrast_ratio": 14.971
-    },
-    {
-      "profile": "ember_haze",
-      "phase": "night",
-      "ground": "lava_0",
-      "ground_lum": 0.0056,
-      "effect": "blade_impact_f0",
-      "effect_lum": 0.8543,
-      "contrast_ratio": 16.251
+      "contrast_ratio": 15.531
     },
     {
       "profile": "ember_haze",
       "phase": "night",
       "ground": "jungle_0",
-      "ground_lum": 0.0104,
+      "ground_lum": 0.0164,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.726
+      "contrast_ratio": 14.302
     },
     {
       "profile": "ember_haze",
       "phase": "night",
       "ground": "jungle_0",
-      "ground_lum": 0.0104,
+      "ground_lum": 0.0164,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.795
+      "contrast_ratio": 12.546
     },
     {
       "profile": "ember_haze",
       "phase": "night",
       "ground": "jungle_0",
-      "ground_lum": 0.0104,
+      "ground_lum": 0.0164,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 14.975
+      "contrast_ratio": 13.619
     },
     {
       "profile": "ember_haze",
       "phase": "night",
       "ground": "fen_0",
-      "ground_lum": 0.0079,
+      "ground_lum": 0.0121,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 16.388
+      "contrast_ratio": 15.289
     },
     {
       "profile": "ember_haze",
       "phase": "night",
       "ground": "fen_0",
-      "ground_lum": 0.0079,
+      "ground_lum": 0.0121,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 14.376
+      "contrast_ratio": 13.412
     },
     {
       "profile": "ember_haze",
       "phase": "night",
       "ground": "fen_0",
-      "ground_lum": 0.0079,
+      "ground_lum": 0.0121,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 15.605
+      "contrast_ratio": 14.559
     },
     {
       "profile": "ember_haze",
       "phase": "night",
       "ground": "tidal_0",
-      "ground_lum": 0.0104,
+      "ground_lum": 0.0152,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.721
+      "contrast_ratio": 14.567
     },
     {
       "profile": "ember_haze",
       "phase": "night",
       "ground": "tidal_0",
-      "ground_lum": 0.0104,
+      "ground_lum": 0.0152,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.79
+      "contrast_ratio": 12.779
     },
     {
       "profile": "ember_haze",
       "phase": "night",
       "ground": "tidal_0",
-      "ground_lum": 0.0104,
+      "ground_lum": 0.0152,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 14.97
+      "contrast_ratio": 13.871
     },
     {
       "profile": "saffron_glare",
@@ -3743,433 +3743,433 @@
       "profile": "saffron_glare",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.3503,
+      "ground_lum": 0.3585,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 2.373
+      "contrast_ratio": 2.325
     },
     {
       "profile": "saffron_glare",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.3503,
+      "ground_lum": 0.3585,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 2.081
+      "contrast_ratio": 2.039
     },
     {
       "profile": "saffron_glare",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.3503,
+      "ground_lum": 0.3585,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 2.259
+      "contrast_ratio": 2.214
     },
     {
       "profile": "saffron_glare",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.0385,
+      "ground_lum": 0.0403,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 10.726
+      "contrast_ratio": 10.52
     },
     {
       "profile": "saffron_glare",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.0385,
+      "ground_lum": 0.0403,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 9.409
+      "contrast_ratio": 9.228
     },
     {
       "profile": "saffron_glare",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.0385,
+      "ground_lum": 0.0403,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 10.214
+      "contrast_ratio": 10.017
     },
     {
       "profile": "saffron_glare",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.0981,
+      "ground_lum": 0.1022,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 6.411
+      "contrast_ratio": 6.239
     },
     {
       "profile": "saffron_glare",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.0981,
+      "ground_lum": 0.1022,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 5.624
+      "contrast_ratio": 5.473
     },
     {
       "profile": "saffron_glare",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.0981,
+      "ground_lum": 0.1022,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 6.104
+      "contrast_ratio": 5.941
     },
     {
       "profile": "saffron_glare",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.0655,
+      "ground_lum": 0.0683,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 8.226
+      "contrast_ratio": 8.03
     },
     {
       "profile": "saffron_glare",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.0655,
+      "ground_lum": 0.0683,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 7.216
+      "contrast_ratio": 7.044
     },
     {
       "profile": "saffron_glare",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.0655,
+      "ground_lum": 0.0683,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 7.833
+      "contrast_ratio": 7.647
     },
     {
       "profile": "saffron_glare",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.0985,
+      "ground_lum": 0.0935,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 6.393
+      "contrast_ratio": 6.618
     },
     {
       "profile": "saffron_glare",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.0985,
+      "ground_lum": 0.0935,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 5.608
+      "contrast_ratio": 5.805
     },
     {
       "profile": "saffron_glare",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.0985,
+      "ground_lum": 0.0935,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 6.088
+      "contrast_ratio": 6.302
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "snow_0",
-      "ground_lum": 0.0508,
+      "ground_lum": 0.0698,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 9.424
+      "contrast_ratio": 7.928
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "snow_0",
-      "ground_lum": 0.0508,
+      "ground_lum": 0.0698,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 8.267
+      "contrast_ratio": 6.955
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "snow_0",
-      "ground_lum": 0.0508,
+      "ground_lum": 0.0698,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 8.973
+      "contrast_ratio": 7.55
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "basalt_0",
-      "ground_lum": 0.0142,
+      "ground_lum": 0.0186,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 14.791
+      "contrast_ratio": 13.837
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "basalt_0",
-      "ground_lum": 0.0142,
+      "ground_lum": 0.0186,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 12.975
+      "contrast_ratio": 12.138
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "basalt_0",
-      "ground_lum": 0.0142,
+      "ground_lum": 0.0186,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 14.085
+      "contrast_ratio": 13.176
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "ash_0",
-      "ground_lum": 0.0138,
+      "ground_lum": 0.0182,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 14.874
+      "contrast_ratio": 13.925
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "ash_0",
-      "ground_lum": 0.0138,
+      "ground_lum": 0.0182,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.048
+      "contrast_ratio": 12.215
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "ash_0",
-      "ground_lum": 0.0138,
+      "ground_lum": 0.0182,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 14.164
+      "contrast_ratio": 13.26
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "grass_0",
-      "ground_lum": 0.0187,
+      "ground_lum": 0.025,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 13.821
+      "contrast_ratio": 12.663
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "grass_0",
-      "ground_lum": 0.0187,
+      "ground_lum": 0.025,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 12.124
+      "contrast_ratio": 11.108
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "grass_0",
-      "ground_lum": 0.0187,
+      "ground_lum": 0.025,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 13.161
+      "contrast_ratio": 12.058
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "soil_0",
-      "ground_lum": 0.0139,
+      "ground_lum": 0.0183,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 14.86
+      "contrast_ratio": 13.894
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "soil_0",
-      "ground_lum": 0.0139,
+      "ground_lum": 0.0183,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.036
+      "contrast_ratio": 12.188
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "soil_0",
-      "ground_lum": 0.0139,
+      "ground_lum": 0.0183,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 14.15
+      "contrast_ratio": 13.231
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "gravel_0",
-      "ground_lum": 0.0191,
+      "ground_lum": 0.0254,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 13.748
+      "contrast_ratio": 12.6
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "gravel_0",
-      "ground_lum": 0.0191,
+      "ground_lum": 0.0254,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 12.06
+      "contrast_ratio": 11.053
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "gravel_0",
-      "ground_lum": 0.0191,
+      "ground_lum": 0.0254,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 13.091
+      "contrast_ratio": 11.998
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "salt_0",
-      "ground_lum": 0.0455,
+      "ground_lum": 0.064,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 9.941
+      "contrast_ratio": 8.334
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "salt_0",
-      "ground_lum": 0.0455,
+      "ground_lum": 0.064,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 8.72
+      "contrast_ratio": 7.311
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "salt_0",
-      "ground_lum": 0.0455,
+      "ground_lum": 0.064,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 9.466
+      "contrast_ratio": 7.936
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "lava_0",
-      "ground_lum": 0.0074,
+      "ground_lum": 0.0098,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 16.536
+      "contrast_ratio": 15.893
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "lava_0",
-      "ground_lum": 0.0074,
+      "ground_lum": 0.0098,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 14.506
+      "contrast_ratio": 13.942
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "lava_0",
-      "ground_lum": 0.0074,
+      "ground_lum": 0.0098,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 15.746
+      "contrast_ratio": 15.134
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "jungle_0",
-      "ground_lum": 0.0153,
+      "ground_lum": 0.021,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 14.533
+      "contrast_ratio": 13.371
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "jungle_0",
-      "ground_lum": 0.0153,
+      "ground_lum": 0.021,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 12.749
+      "contrast_ratio": 11.73
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "jungle_0",
-      "ground_lum": 0.0153,
+      "ground_lum": 0.021,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 13.839
+      "contrast_ratio": 12.733
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "fen_0",
-      "ground_lum": 0.0112,
+      "ground_lum": 0.015,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.527
+      "contrast_ratio": 14.605
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "fen_0",
-      "ground_lum": 0.0112,
+      "ground_lum": 0.015,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.621
+      "contrast_ratio": 12.812
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "fen_0",
-      "ground_lum": 0.0112,
+      "ground_lum": 0.015,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 14.785
+      "contrast_ratio": 13.908
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "tidal_0",
-      "ground_lum": 0.0162,
+      "ground_lum": 0.0205,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 14.34
+      "contrast_ratio": 13.469
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "tidal_0",
-      "ground_lum": 0.0162,
+      "ground_lum": 0.0205,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 12.58
+      "contrast_ratio": 11.815
     },
     {
       "profile": "saffron_glare",
       "phase": "night",
       "ground": "tidal_0",
-      "ground_lum": 0.0162,
+      "ground_lum": 0.0205,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 13.655
+      "contrast_ratio": 12.825
     },
     {
       "profile": "verdant_canopy",
@@ -4337,433 +4337,433 @@
       "profile": "verdant_canopy",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.3337,
+      "ground_lum": 0.3416,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 2.475
+      "contrast_ratio": 2.425
     },
     {
       "profile": "verdant_canopy",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.3337,
+      "ground_lum": 0.3416,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 2.171
+      "contrast_ratio": 2.128
     },
     {
       "profile": "verdant_canopy",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.3337,
+      "ground_lum": 0.3416,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 2.357
+      "contrast_ratio": 2.309
     },
     {
       "profile": "verdant_canopy",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.0363,
+      "ground_lum": 0.0379,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 11.003
+      "contrast_ratio": 10.802
     },
     {
       "profile": "verdant_canopy",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.0363,
+      "ground_lum": 0.0379,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 9.652
+      "contrast_ratio": 9.476
     },
     {
       "profile": "verdant_canopy",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.0363,
+      "ground_lum": 0.0379,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 10.477
+      "contrast_ratio": 10.286
     },
     {
       "profile": "verdant_canopy",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.0991,
+      "ground_lum": 0.1032,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 6.367
+      "contrast_ratio": 6.199
     },
     {
       "profile": "verdant_canopy",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.0991,
+      "ground_lum": 0.1032,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 5.586
+      "contrast_ratio": 5.438
     },
     {
       "profile": "verdant_canopy",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.0991,
+      "ground_lum": 0.1032,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 6.063
+      "contrast_ratio": 5.903
     },
     {
       "profile": "verdant_canopy",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.0643,
+      "ground_lum": 0.067,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 8.308
+      "contrast_ratio": 8.113
     },
     {
       "profile": "verdant_canopy",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.0643,
+      "ground_lum": 0.067,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 7.288
+      "contrast_ratio": 7.117
     },
     {
       "profile": "verdant_canopy",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.0643,
+      "ground_lum": 0.067,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 7.911
+      "contrast_ratio": 7.726
     },
     {
       "profile": "verdant_canopy",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.0994,
+      "ground_lum": 0.0944,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 6.355
+      "contrast_ratio": 6.575
     },
     {
       "profile": "verdant_canopy",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.0994,
+      "ground_lum": 0.0944,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 5.575
+      "contrast_ratio": 5.768
     },
     {
       "profile": "verdant_canopy",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.0994,
+      "ground_lum": 0.0944,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 6.052
+      "contrast_ratio": 6.261
     },
     {
       "profile": "verdant_canopy",
       "phase": "night",
       "ground": "snow_0",
-      "ground_lum": 0.0388,
+      "ground_lum": 0.0609,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 10.694
+      "contrast_ratio": 8.561
     },
     {
       "profile": "verdant_canopy",
       "phase": "night",
       "ground": "snow_0",
-      "ground_lum": 0.0388,
+      "ground_lum": 0.0609,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 9.381
+      "contrast_ratio": 7.51
     },
     {
       "profile": "verdant_canopy",
       "phase": "night",
       "ground": "snow_0",
-      "ground_lum": 0.0388,
+      "ground_lum": 0.0609,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 10.183
+      "contrast_ratio": 8.152
     },
     {
       "profile": "verdant_canopy",
       "phase": "night",
       "ground": "basalt_0",
-      "ground_lum": 0.0112,
+      "ground_lum": 0.0164,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.521
-    },
-    {
-      "profile": "verdant_canopy",
-      "phase": "night",
-      "ground": "basalt_0",
-      "ground_lum": 0.0112,
-      "effect": "world_sparkle_f0",
-      "effect_lum": 0.7831,
-      "contrast_ratio": 13.615
-    },
-    {
-      "profile": "verdant_canopy",
-      "phase": "night",
-      "ground": "basalt_0",
-      "ground_lum": 0.0112,
-      "effect": "blade_impact_f0",
-      "effect_lum": 0.8543,
-      "contrast_ratio": 14.779
-    },
-    {
-      "profile": "verdant_canopy",
-      "phase": "night",
-      "ground": "ash_0",
-      "ground_lum": 0.011,
-      "effect": "sword_crescent_wave",
-      "effect_lum": 0.8997,
-      "contrast_ratio": 15.58
-    },
-    {
-      "profile": "verdant_canopy",
-      "phase": "night",
-      "ground": "ash_0",
-      "ground_lum": 0.011,
-      "effect": "world_sparkle_f0",
-      "effect_lum": 0.7831,
-      "contrast_ratio": 13.667
-    },
-    {
-      "profile": "verdant_canopy",
-      "phase": "night",
-      "ground": "ash_0",
-      "ground_lum": 0.011,
-      "effect": "blade_impact_f0",
-      "effect_lum": 0.8543,
-      "contrast_ratio": 14.836
-    },
-    {
-      "profile": "verdant_canopy",
-      "phase": "night",
-      "ground": "grass_0",
-      "ground_lum": 0.0156,
-      "effect": "sword_crescent_wave",
-      "effect_lum": 0.8997,
-      "contrast_ratio": 14.485
-    },
-    {
-      "profile": "verdant_canopy",
-      "phase": "night",
-      "ground": "grass_0",
-      "ground_lum": 0.0156,
-      "effect": "world_sparkle_f0",
-      "effect_lum": 0.7831,
-      "contrast_ratio": 12.706
-    },
-    {
-      "profile": "verdant_canopy",
-      "phase": "night",
-      "ground": "grass_0",
-      "ground_lum": 0.0156,
-      "effect": "blade_impact_f0",
-      "effect_lum": 0.8543,
-      "contrast_ratio": 13.793
-    },
-    {
-      "profile": "verdant_canopy",
-      "phase": "night",
-      "ground": "soil_0",
-      "ground_lum": 0.0109,
-      "effect": "sword_crescent_wave",
-      "effect_lum": 0.8997,
-      "contrast_ratio": 15.582
-    },
-    {
-      "profile": "verdant_canopy",
-      "phase": "night",
-      "ground": "soil_0",
-      "ground_lum": 0.0109,
-      "effect": "world_sparkle_f0",
-      "effect_lum": 0.7831,
-      "contrast_ratio": 13.669
-    },
-    {
-      "profile": "verdant_canopy",
-      "phase": "night",
-      "ground": "soil_0",
-      "ground_lum": 0.0109,
-      "effect": "blade_impact_f0",
-      "effect_lum": 0.8543,
-      "contrast_ratio": 14.838
-    },
-    {
-      "profile": "verdant_canopy",
-      "phase": "night",
-      "ground": "gravel_0",
-      "ground_lum": 0.0147,
-      "effect": "sword_crescent_wave",
-      "effect_lum": 0.8997,
-      "contrast_ratio": 14.688
-    },
-    {
-      "profile": "verdant_canopy",
-      "phase": "night",
-      "ground": "gravel_0",
-      "ground_lum": 0.0147,
-      "effect": "world_sparkle_f0",
-      "effect_lum": 0.7831,
-      "contrast_ratio": 12.885
-    },
-    {
-      "profile": "verdant_canopy",
-      "phase": "night",
-      "ground": "gravel_0",
-      "ground_lum": 0.0147,
-      "effect": "blade_impact_f0",
-      "effect_lum": 0.8543,
-      "contrast_ratio": 13.987
-    },
-    {
-      "profile": "verdant_canopy",
-      "phase": "night",
-      "ground": "salt_0",
-      "ground_lum": 0.035,
-      "effect": "sword_crescent_wave",
-      "effect_lum": 0.8997,
-      "contrast_ratio": 11.177
-    },
-    {
-      "profile": "verdant_canopy",
-      "phase": "night",
-      "ground": "salt_0",
-      "ground_lum": 0.035,
-      "effect": "world_sparkle_f0",
-      "effect_lum": 0.7831,
-      "contrast_ratio": 9.805
-    },
-    {
-      "profile": "verdant_canopy",
-      "phase": "night",
-      "ground": "salt_0",
-      "ground_lum": 0.035,
-      "effect": "blade_impact_f0",
-      "effect_lum": 0.8543,
-      "contrast_ratio": 10.643
-    },
-    {
-      "profile": "verdant_canopy",
-      "phase": "night",
-      "ground": "lava_0",
-      "ground_lum": 0.006,
-      "effect": "sword_crescent_wave",
-      "effect_lum": 0.8997,
-      "contrast_ratio": 16.967
-    },
-    {
-      "profile": "verdant_canopy",
-      "phase": "night",
-      "ground": "lava_0",
-      "ground_lum": 0.006,
-      "effect": "world_sparkle_f0",
-      "effect_lum": 0.7831,
-      "contrast_ratio": 14.884
-    },
-    {
-      "profile": "verdant_canopy",
-      "phase": "night",
-      "ground": "lava_0",
-      "ground_lum": 0.006,
-      "effect": "blade_impact_f0",
-      "effect_lum": 0.8543,
-      "contrast_ratio": 16.156
-    },
-    {
-      "profile": "verdant_canopy",
-      "phase": "night",
-      "ground": "jungle_0",
-      "ground_lum": 0.0131,
-      "effect": "sword_crescent_wave",
-      "effect_lum": 0.8997,
-      "contrast_ratio": 15.053
-    },
-    {
-      "profile": "verdant_canopy",
-      "phase": "night",
-      "ground": "jungle_0",
-      "ground_lum": 0.0131,
-      "effect": "world_sparkle_f0",
-      "effect_lum": 0.7831,
-      "contrast_ratio": 13.205
-    },
-    {
-      "profile": "verdant_canopy",
-      "phase": "night",
-      "ground": "jungle_0",
-      "ground_lum": 0.0131,
-      "effect": "blade_impact_f0",
-      "effect_lum": 0.8543,
-      "contrast_ratio": 14.334
-    },
-    {
-      "profile": "verdant_canopy",
-      "phase": "night",
-      "ground": "fen_0",
-      "ground_lum": 0.0093,
-      "effect": "sword_crescent_wave",
-      "effect_lum": 0.8997,
-      "contrast_ratio": 16.024
-    },
-    {
-      "profile": "verdant_canopy",
-      "phase": "night",
-      "ground": "fen_0",
-      "ground_lum": 0.0093,
-      "effect": "world_sparkle_f0",
-      "effect_lum": 0.7831,
-      "contrast_ratio": 14.057
-    },
-    {
-      "profile": "verdant_canopy",
-      "phase": "night",
-      "ground": "fen_0",
-      "ground_lum": 0.0093,
-      "effect": "blade_impact_f0",
-      "effect_lum": 0.8543,
-      "contrast_ratio": 15.258
-    },
-    {
-      "profile": "verdant_canopy",
-      "phase": "night",
-      "ground": "tidal_0",
-      "ground_lum": 0.0132,
-      "effect": "sword_crescent_wave",
-      "effect_lum": 0.8997,
-      "contrast_ratio": 15.026
-    },
-    {
-      "profile": "verdant_canopy",
-      "phase": "night",
-      "ground": "tidal_0",
-      "ground_lum": 0.0132,
-      "effect": "world_sparkle_f0",
-      "effect_lum": 0.7831,
-      "contrast_ratio": 13.181
-    },
-    {
-      "profile": "verdant_canopy",
-      "phase": "night",
-      "ground": "tidal_0",
-      "ground_lum": 0.0132,
-      "effect": "blade_impact_f0",
-      "effect_lum": 0.8543,
       "contrast_ratio": 14.308
+    },
+    {
+      "profile": "verdant_canopy",
+      "phase": "night",
+      "ground": "basalt_0",
+      "ground_lum": 0.0164,
+      "effect": "world_sparkle_f0",
+      "effect_lum": 0.7831,
+      "contrast_ratio": 12.551
+    },
+    {
+      "profile": "verdant_canopy",
+      "phase": "night",
+      "ground": "basalt_0",
+      "ground_lum": 0.0164,
+      "effect": "blade_impact_f0",
+      "effect_lum": 0.8543,
+      "contrast_ratio": 13.624
+    },
+    {
+      "profile": "verdant_canopy",
+      "phase": "night",
+      "ground": "ash_0",
+      "ground_lum": 0.0161,
+      "effect": "sword_crescent_wave",
+      "effect_lum": 0.8997,
+      "contrast_ratio": 14.368
+    },
+    {
+      "profile": "verdant_canopy",
+      "phase": "night",
+      "ground": "ash_0",
+      "ground_lum": 0.0161,
+      "effect": "world_sparkle_f0",
+      "effect_lum": 0.7831,
+      "contrast_ratio": 12.604
+    },
+    {
+      "profile": "verdant_canopy",
+      "phase": "night",
+      "ground": "ash_0",
+      "ground_lum": 0.0161,
+      "effect": "blade_impact_f0",
+      "effect_lum": 0.8543,
+      "contrast_ratio": 13.681
+    },
+    {
+      "profile": "verdant_canopy",
+      "phase": "night",
+      "ground": "grass_0",
+      "ground_lum": 0.0233,
+      "effect": "sword_crescent_wave",
+      "effect_lum": 0.8997,
+      "contrast_ratio": 12.952
+    },
+    {
+      "profile": "verdant_canopy",
+      "phase": "night",
+      "ground": "grass_0",
+      "ground_lum": 0.0233,
+      "effect": "world_sparkle_f0",
+      "effect_lum": 0.7831,
+      "contrast_ratio": 11.362
+    },
+    {
+      "profile": "verdant_canopy",
+      "phase": "night",
+      "ground": "grass_0",
+      "ground_lum": 0.0233,
+      "effect": "blade_impact_f0",
+      "effect_lum": 0.8543,
+      "contrast_ratio": 12.333
+    },
+    {
+      "profile": "verdant_canopy",
+      "phase": "night",
+      "ground": "soil_0",
+      "ground_lum": 0.0162,
+      "effect": "sword_crescent_wave",
+      "effect_lum": 0.8997,
+      "contrast_ratio": 14.345
+    },
+    {
+      "profile": "verdant_canopy",
+      "phase": "night",
+      "ground": "soil_0",
+      "ground_lum": 0.0162,
+      "effect": "world_sparkle_f0",
+      "effect_lum": 0.7831,
+      "contrast_ratio": 12.583
+    },
+    {
+      "profile": "verdant_canopy",
+      "phase": "night",
+      "ground": "soil_0",
+      "ground_lum": 0.0162,
+      "effect": "blade_impact_f0",
+      "effect_lum": 0.8543,
+      "contrast_ratio": 13.659
+    },
+    {
+      "profile": "verdant_canopy",
+      "phase": "night",
+      "ground": "gravel_0",
+      "ground_lum": 0.0219,
+      "effect": "sword_crescent_wave",
+      "effect_lum": 0.8997,
+      "contrast_ratio": 13.202
+    },
+    {
+      "profile": "verdant_canopy",
+      "phase": "night",
+      "ground": "gravel_0",
+      "ground_lum": 0.0219,
+      "effect": "world_sparkle_f0",
+      "effect_lum": 0.7831,
+      "contrast_ratio": 11.581
+    },
+    {
+      "profile": "verdant_canopy",
+      "phase": "night",
+      "ground": "gravel_0",
+      "ground_lum": 0.0219,
+      "effect": "blade_impact_f0",
+      "effect_lum": 0.8543,
+      "contrast_ratio": 12.571
+    },
+    {
+      "profile": "verdant_canopy",
+      "phase": "night",
+      "ground": "salt_0",
+      "ground_lum": 0.0561,
+      "effect": "sword_crescent_wave",
+      "effect_lum": 0.8997,
+      "contrast_ratio": 8.947
+    },
+    {
+      "profile": "verdant_canopy",
+      "phase": "night",
+      "ground": "salt_0",
+      "ground_lum": 0.0561,
+      "effect": "world_sparkle_f0",
+      "effect_lum": 0.7831,
+      "contrast_ratio": 7.848
+    },
+    {
+      "profile": "verdant_canopy",
+      "phase": "night",
+      "ground": "salt_0",
+      "ground_lum": 0.0561,
+      "effect": "blade_impact_f0",
+      "effect_lum": 0.8543,
+      "contrast_ratio": 8.519
+    },
+    {
+      "profile": "verdant_canopy",
+      "phase": "night",
+      "ground": "lava_0",
+      "ground_lum": 0.0086,
+      "effect": "sword_crescent_wave",
+      "effect_lum": 0.8997,
+      "contrast_ratio": 16.203
+    },
+    {
+      "profile": "verdant_canopy",
+      "phase": "night",
+      "ground": "lava_0",
+      "ground_lum": 0.0086,
+      "effect": "world_sparkle_f0",
+      "effect_lum": 0.7831,
+      "contrast_ratio": 14.214
+    },
+    {
+      "profile": "verdant_canopy",
+      "phase": "night",
+      "ground": "lava_0",
+      "ground_lum": 0.0086,
+      "effect": "blade_impact_f0",
+      "effect_lum": 0.8543,
+      "contrast_ratio": 15.429
+    },
+    {
+      "profile": "verdant_canopy",
+      "phase": "night",
+      "ground": "jungle_0",
+      "ground_lum": 0.02,
+      "effect": "sword_crescent_wave",
+      "effect_lum": 0.8997,
+      "contrast_ratio": 13.569
+    },
+    {
+      "profile": "verdant_canopy",
+      "phase": "night",
+      "ground": "jungle_0",
+      "ground_lum": 0.02,
+      "effect": "world_sparkle_f0",
+      "effect_lum": 0.7831,
+      "contrast_ratio": 11.903
+    },
+    {
+      "profile": "verdant_canopy",
+      "phase": "night",
+      "ground": "jungle_0",
+      "ground_lum": 0.02,
+      "effect": "blade_impact_f0",
+      "effect_lum": 0.8543,
+      "contrast_ratio": 12.921
+    },
+    {
+      "profile": "verdant_canopy",
+      "phase": "night",
+      "ground": "fen_0",
+      "ground_lum": 0.0138,
+      "effect": "sword_crescent_wave",
+      "effect_lum": 0.8997,
+      "contrast_ratio": 14.877
+    },
+    {
+      "profile": "verdant_canopy",
+      "phase": "night",
+      "ground": "fen_0",
+      "ground_lum": 0.0138,
+      "effect": "world_sparkle_f0",
+      "effect_lum": 0.7831,
+      "contrast_ratio": 13.051
+    },
+    {
+      "profile": "verdant_canopy",
+      "phase": "night",
+      "ground": "fen_0",
+      "ground_lum": 0.0138,
+      "effect": "blade_impact_f0",
+      "effect_lum": 0.8543,
+      "contrast_ratio": 14.167
+    },
+    {
+      "profile": "verdant_canopy",
+      "phase": "night",
+      "ground": "tidal_0",
+      "ground_lum": 0.0186,
+      "effect": "sword_crescent_wave",
+      "effect_lum": 0.8997,
+      "contrast_ratio": 13.837
+    },
+    {
+      "profile": "verdant_canopy",
+      "phase": "night",
+      "ground": "tidal_0",
+      "ground_lum": 0.0186,
+      "effect": "world_sparkle_f0",
+      "effect_lum": 0.7831,
+      "contrast_ratio": 12.138
+    },
+    {
+      "profile": "verdant_canopy",
+      "phase": "night",
+      "ground": "tidal_0",
+      "ground_lum": 0.0186,
+      "effect": "blade_impact_f0",
+      "effect_lum": 0.8543,
+      "contrast_ratio": 13.176
     },
     {
       "profile": "pearl_dusk",
@@ -4931,433 +4931,433 @@
       "profile": "pearl_dusk",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.3416,
+      "ground_lum": 0.3497,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 2.425
+      "contrast_ratio": 2.376
     },
     {
       "profile": "pearl_dusk",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.3416,
+      "ground_lum": 0.3497,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 2.127
+      "contrast_ratio": 2.084
     },
     {
       "profile": "pearl_dusk",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.3416,
+      "ground_lum": 0.3497,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 2.309
+      "contrast_ratio": 2.263
     },
     {
       "profile": "pearl_dusk",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.0377,
+      "ground_lum": 0.0393,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 10.833
+      "contrast_ratio": 10.63
     },
     {
       "profile": "pearl_dusk",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.0377,
+      "ground_lum": 0.0393,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 9.503
+      "contrast_ratio": 9.325
     },
     {
       "profile": "pearl_dusk",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.0377,
+      "ground_lum": 0.0393,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 10.316
+      "contrast_ratio": 10.122
     },
     {
       "profile": "pearl_dusk",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.0973,
+      "ground_lum": 0.1013,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 6.448
+      "contrast_ratio": 6.278
     },
     {
       "profile": "pearl_dusk",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.0973,
+      "ground_lum": 0.1013,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 5.657
+      "contrast_ratio": 5.507
     },
     {
       "profile": "pearl_dusk",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.0973,
+      "ground_lum": 0.1013,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 6.14
+      "contrast_ratio": 5.978
     },
     {
       "profile": "pearl_dusk",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.0645,
+      "ground_lum": 0.0673,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 8.293
+      "contrast_ratio": 8.099
     },
     {
       "profile": "pearl_dusk",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.0645,
+      "ground_lum": 0.0673,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 7.275
+      "contrast_ratio": 7.104
     },
     {
       "profile": "pearl_dusk",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.0645,
+      "ground_lum": 0.0673,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 7.897
+      "contrast_ratio": 7.712
     },
     {
       "profile": "pearl_dusk",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.0997,
+      "ground_lum": 0.0947,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 6.343
+      "contrast_ratio": 6.564
     },
     {
       "profile": "pearl_dusk",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.0997,
+      "ground_lum": 0.0947,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 5.564
+      "contrast_ratio": 5.758
     },
     {
       "profile": "pearl_dusk",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.0997,
+      "ground_lum": 0.0947,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 6.04
+      "contrast_ratio": 6.25
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "snow_0",
-      "ground_lum": 0.0423,
+      "ground_lum": 0.0653,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 10.29
+      "contrast_ratio": 8.24
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "snow_0",
-      "ground_lum": 0.0423,
+      "ground_lum": 0.0653,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 9.026
+      "contrast_ratio": 7.228
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "snow_0",
-      "ground_lum": 0.0423,
+      "ground_lum": 0.0653,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 9.798
+      "contrast_ratio": 7.846
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "basalt_0",
-      "ground_lum": 0.0121,
+      "ground_lum": 0.0175,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.287
+      "contrast_ratio": 14.069
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "basalt_0",
-      "ground_lum": 0.0121,
+      "ground_lum": 0.0175,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.41
+      "contrast_ratio": 12.342
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "basalt_0",
-      "ground_lum": 0.0121,
+      "ground_lum": 0.0175,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 14.557
+      "contrast_ratio": 13.397
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "ash_0",
-      "ground_lum": 0.0117,
+      "ground_lum": 0.017,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.397
+      "contrast_ratio": 14.179
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "ash_0",
-      "ground_lum": 0.0117,
+      "ground_lum": 0.017,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.507
+      "contrast_ratio": 12.438
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "ash_0",
-      "ground_lum": 0.0117,
+      "ground_lum": 0.017,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 14.661
+      "contrast_ratio": 13.502
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "grass_0",
-      "ground_lum": 0.0161,
+      "ground_lum": 0.024,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 14.368
+      "contrast_ratio": 12.839
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "grass_0",
-      "ground_lum": 0.0161,
+      "ground_lum": 0.024,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 12.604
+      "contrast_ratio": 11.263
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "grass_0",
-      "ground_lum": 0.0161,
+      "ground_lum": 0.024,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 13.682
+      "contrast_ratio": 12.226
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "soil_0",
-      "ground_lum": 0.0115,
+      "ground_lum": 0.0169,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.435
+      "contrast_ratio": 14.19
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "soil_0",
-      "ground_lum": 0.0115,
+      "ground_lum": 0.0169,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.54
+      "contrast_ratio": 12.448
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "soil_0",
-      "ground_lum": 0.0115,
+      "ground_lum": 0.0169,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 14.698
+      "contrast_ratio": 13.513
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "gravel_0",
-      "ground_lum": 0.016,
+      "ground_lum": 0.0235,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 14.394
+      "contrast_ratio": 12.913
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "gravel_0",
-      "ground_lum": 0.016,
+      "ground_lum": 0.0235,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 12.627
+      "contrast_ratio": 11.327
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "gravel_0",
-      "ground_lum": 0.016,
+      "ground_lum": 0.0235,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 13.707
+      "contrast_ratio": 12.296
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "salt_0",
-      "ground_lum": 0.0374,
+      "ground_lum": 0.0593,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 10.86
+      "contrast_ratio": 8.685
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "salt_0",
-      "ground_lum": 0.0374,
+      "ground_lum": 0.0593,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 9.526
+      "contrast_ratio": 7.619
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "salt_0",
-      "ground_lum": 0.0374,
+      "ground_lum": 0.0593,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 10.341
+      "contrast_ratio": 8.27
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "lava_0",
-      "ground_lum": 0.0064,
+      "ground_lum": 0.0091,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 16.848
+      "contrast_ratio": 16.069
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "lava_0",
-      "ground_lum": 0.0064,
+      "ground_lum": 0.0091,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 14.779
+      "contrast_ratio": 14.096
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "lava_0",
-      "ground_lum": 0.0064,
+      "ground_lum": 0.0091,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 16.043
+      "contrast_ratio": 15.302
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "jungle_0",
-      "ground_lum": 0.0134,
+      "ground_lum": 0.0204,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 14.97
+      "contrast_ratio": 13.487
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "jungle_0",
-      "ground_lum": 0.0134,
+      "ground_lum": 0.0204,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.132
+      "contrast_ratio": 11.831
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "jungle_0",
-      "ground_lum": 0.0134,
+      "ground_lum": 0.0204,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 14.255
+      "contrast_ratio": 12.842
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "fen_0",
-      "ground_lum": 0.0097,
+      "ground_lum": 0.0143,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.914
+      "contrast_ratio": 14.761
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "fen_0",
-      "ground_lum": 0.0097,
+      "ground_lum": 0.0143,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.96
+      "contrast_ratio": 12.948
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "fen_0",
-      "ground_lum": 0.0097,
+      "ground_lum": 0.0143,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 15.154
+      "contrast_ratio": 14.056
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "tidal_0",
-      "ground_lum": 0.0142,
+      "ground_lum": 0.0197,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 14.801
+      "contrast_ratio": 13.62
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "tidal_0",
-      "ground_lum": 0.0142,
+      "ground_lum": 0.0197,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 12.984
+      "contrast_ratio": 11.948
     },
     {
       "profile": "pearl_dusk",
       "phase": "night",
       "ground": "tidal_0",
-      "ground_lum": 0.0142,
+      "ground_lum": 0.0197,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 14.094
+      "contrast_ratio": 12.969
     },
     {
       "profile": "sunken_clear",
@@ -5525,433 +5525,433 @@
       "profile": "sunken_clear",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.3903,
+      "ground_lum": 0.3996,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 2.157
+      "contrast_ratio": 2.112
     },
     {
       "profile": "sunken_clear",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.3903,
+      "ground_lum": 0.3996,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 1.892
+      "contrast_ratio": 1.853
     },
     {
       "profile": "sunken_clear",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.3903,
+      "ground_lum": 0.3996,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 2.054
+      "contrast_ratio": 2.011
     },
     {
       "profile": "sunken_clear",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.0422,
+      "ground_lum": 0.0441,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 10.305
+      "contrast_ratio": 10.096
     },
     {
       "profile": "sunken_clear",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.0422,
+      "ground_lum": 0.0441,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 9.04
+      "contrast_ratio": 8.856
     },
     {
       "profile": "sunken_clear",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.0422,
+      "ground_lum": 0.0441,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 9.813
+      "contrast_ratio": 9.614
     },
     {
       "profile": "sunken_clear",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.1109,
+      "ground_lum": 0.1155,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 5.903
+      "contrast_ratio": 5.738
     },
     {
       "profile": "sunken_clear",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.1109,
+      "ground_lum": 0.1155,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 5.178
+      "contrast_ratio": 5.034
     },
     {
       "profile": "sunken_clear",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.1109,
+      "ground_lum": 0.1155,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 5.621
+      "contrast_ratio": 5.464
     },
     {
       "profile": "sunken_clear",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.073,
+      "ground_lum": 0.0762,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 7.721
+      "contrast_ratio": 7.528
     },
     {
       "profile": "sunken_clear",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.073,
+      "ground_lum": 0.0762,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 6.773
+      "contrast_ratio": 6.604
     },
     {
       "profile": "sunken_clear",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.073,
+      "ground_lum": 0.0762,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 7.352
+      "contrast_ratio": 7.168
     },
     {
       "profile": "sunken_clear",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.1123,
+      "ground_lum": 0.1065,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 5.852
+      "contrast_ratio": 6.066
     },
     {
       "profile": "sunken_clear",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.1123,
+      "ground_lum": 0.1065,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 5.133
+      "contrast_ratio": 5.322
     },
     {
       "profile": "sunken_clear",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.1123,
+      "ground_lum": 0.1065,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 5.572
+      "contrast_ratio": 5.777
     },
     {
       "profile": "sunken_clear",
       "phase": "night",
       "ground": "snow_0",
-      "ground_lum": 0.047,
+      "ground_lum": 0.0714,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 9.786
+      "contrast_ratio": 7.822
     },
     {
       "profile": "sunken_clear",
       "phase": "night",
       "ground": "snow_0",
-      "ground_lum": 0.047,
+      "ground_lum": 0.0714,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 8.584
+      "contrast_ratio": 6.861
     },
     {
       "profile": "sunken_clear",
       "phase": "night",
       "ground": "snow_0",
-      "ground_lum": 0.047,
+      "ground_lum": 0.0714,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 9.318
+      "contrast_ratio": 7.448
     },
     {
       "profile": "sunken_clear",
       "phase": "night",
       "ground": "basalt_0",
-      "ground_lum": 0.0132,
+      "ground_lum": 0.0189,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.016
+      "contrast_ratio": 13.784
     },
     {
       "profile": "sunken_clear",
       "phase": "night",
       "ground": "basalt_0",
-      "ground_lum": 0.0132,
+      "ground_lum": 0.0189,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.173
+      "contrast_ratio": 12.092
     },
     {
       "profile": "sunken_clear",
       "phase": "night",
       "ground": "basalt_0",
-      "ground_lum": 0.0132,
+      "ground_lum": 0.0189,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 14.299
+      "contrast_ratio": 13.125
     },
     {
       "profile": "sunken_clear",
       "phase": "night",
       "ground": "ash_0",
-      "ground_lum": 0.0128,
+      "ground_lum": 0.0184,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.118
+      "contrast_ratio": 13.884
     },
     {
       "profile": "sunken_clear",
       "phase": "night",
       "ground": "ash_0",
-      "ground_lum": 0.0128,
+      "ground_lum": 0.0184,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.261
+      "contrast_ratio": 12.179
     },
     {
       "profile": "sunken_clear",
       "phase": "night",
       "ground": "ash_0",
-      "ground_lum": 0.0128,
+      "ground_lum": 0.0184,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 14.395
+      "contrast_ratio": 13.22
     },
     {
       "profile": "sunken_clear",
       "phase": "night",
       "ground": "grass_0",
-      "ground_lum": 0.0178,
+      "ground_lum": 0.0262,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 13.998
+      "contrast_ratio": 12.468
     },
     {
       "profile": "sunken_clear",
       "phase": "night",
       "ground": "grass_0",
-      "ground_lum": 0.0178,
+      "ground_lum": 0.0262,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 12.279
+      "contrast_ratio": 10.937
     },
     {
       "profile": "sunken_clear",
       "phase": "night",
       "ground": "grass_0",
-      "ground_lum": 0.0178,
+      "ground_lum": 0.0262,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 13.329
+      "contrast_ratio": 11.872
     },
     {
       "profile": "sunken_clear",
       "phase": "night",
       "ground": "soil_0",
-      "ground_lum": 0.0127,
+      "ground_lum": 0.0184,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.142
+      "contrast_ratio": 13.88
     },
     {
       "profile": "sunken_clear",
       "phase": "night",
       "ground": "soil_0",
-      "ground_lum": 0.0127,
+      "ground_lum": 0.0184,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.283
+      "contrast_ratio": 12.176
     },
     {
       "profile": "sunken_clear",
       "phase": "night",
       "ground": "soil_0",
-      "ground_lum": 0.0127,
+      "ground_lum": 0.0184,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 14.419
+      "contrast_ratio": 13.217
     },
     {
       "profile": "sunken_clear",
       "phase": "night",
       "ground": "gravel_0",
-      "ground_lum": 0.0175,
+      "ground_lum": 0.0255,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 14.059
+      "contrast_ratio": 12.573
     },
     {
       "profile": "sunken_clear",
       "phase": "night",
       "ground": "gravel_0",
-      "ground_lum": 0.0175,
+      "ground_lum": 0.0255,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 12.333
+      "contrast_ratio": 11.029
     },
     {
       "profile": "sunken_clear",
       "phase": "night",
       "ground": "gravel_0",
-      "ground_lum": 0.0175,
+      "ground_lum": 0.0255,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 13.387
+      "contrast_ratio": 11.972
     },
     {
       "profile": "sunken_clear",
       "phase": "night",
       "ground": "salt_0",
-      "ground_lum": 0.0419,
+      "ground_lum": 0.0652,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 10.339
+      "contrast_ratio": 8.244
     },
     {
       "profile": "sunken_clear",
       "phase": "night",
       "ground": "salt_0",
-      "ground_lum": 0.0419,
+      "ground_lum": 0.0652,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 9.07
+      "contrast_ratio": 7.232
     },
     {
       "profile": "sunken_clear",
       "phase": "night",
       "ground": "salt_0",
-      "ground_lum": 0.0419,
+      "ground_lum": 0.0652,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 9.845
+      "contrast_ratio": 7.85
     },
     {
       "profile": "sunken_clear",
       "phase": "night",
       "ground": "lava_0",
-      "ground_lum": 0.0069,
+      "ground_lum": 0.0098,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 16.692
+      "contrast_ratio": 15.89
     },
     {
       "profile": "sunken_clear",
       "phase": "night",
       "ground": "lava_0",
-      "ground_lum": 0.0069,
+      "ground_lum": 0.0098,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 14.643
+      "contrast_ratio": 13.939
     },
     {
       "profile": "sunken_clear",
       "phase": "night",
       "ground": "lava_0",
-      "ground_lum": 0.0069,
+      "ground_lum": 0.0098,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 15.895
+      "contrast_ratio": 15.131
     },
     {
       "profile": "sunken_clear",
       "phase": "night",
       "ground": "jungle_0",
-      "ground_lum": 0.0148,
+      "ground_lum": 0.0223,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 14.644
+      "contrast_ratio": 13.144
     },
     {
       "profile": "sunken_clear",
       "phase": "night",
       "ground": "jungle_0",
-      "ground_lum": 0.0148,
+      "ground_lum": 0.0223,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 12.846
+      "contrast_ratio": 11.53
     },
     {
       "profile": "sunken_clear",
       "phase": "night",
       "ground": "jungle_0",
-      "ground_lum": 0.0148,
+      "ground_lum": 0.0223,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 13.945
+      "contrast_ratio": 12.516
     },
     {
       "profile": "sunken_clear",
       "phase": "night",
       "ground": "fen_0",
-      "ground_lum": 0.0106,
-      "effect": "sword_crescent_wave",
-      "effect_lum": 0.8997,
-      "contrast_ratio": 15.671
-    },
-    {
-      "profile": "sunken_clear",
-      "phase": "night",
-      "ground": "fen_0",
-      "ground_lum": 0.0106,
-      "effect": "world_sparkle_f0",
-      "effect_lum": 0.7831,
-      "contrast_ratio": 13.747
-    },
-    {
-      "profile": "sunken_clear",
-      "phase": "night",
-      "ground": "fen_0",
-      "ground_lum": 0.0106,
-      "effect": "blade_impact_f0",
-      "effect_lum": 0.8543,
-      "contrast_ratio": 14.923
-    },
-    {
-      "profile": "sunken_clear",
-      "phase": "night",
-      "ground": "tidal_0",
       "ground_lum": 0.0155,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 14.497
+      "contrast_ratio": 14.493
     },
     {
       "profile": "sunken_clear",
       "phase": "night",
-      "ground": "tidal_0",
+      "ground": "fen_0",
       "ground_lum": 0.0155,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 12.717
+      "contrast_ratio": 12.713
+    },
+    {
+      "profile": "sunken_clear",
+      "phase": "night",
+      "ground": "fen_0",
+      "ground_lum": 0.0155,
+      "effect": "blade_impact_f0",
+      "effect_lum": 0.8543,
+      "contrast_ratio": 13.8
     },
     {
       "profile": "sunken_clear",
       "phase": "night",
       "ground": "tidal_0",
-      "ground_lum": 0.0155,
+      "ground_lum": 0.0213,
+      "effect": "sword_crescent_wave",
+      "effect_lum": 0.8997,
+      "contrast_ratio": 13.315
+    },
+    {
+      "profile": "sunken_clear",
+      "phase": "night",
+      "ground": "tidal_0",
+      "ground_lum": 0.0213,
+      "effect": "world_sparkle_f0",
+      "effect_lum": 0.7831,
+      "contrast_ratio": 11.68
+    },
+    {
+      "profile": "sunken_clear",
+      "phase": "night",
+      "ground": "tidal_0",
+      "ground_lum": 0.0213,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 13.804
+      "contrast_ratio": 12.679
     },
     {
       "profile": "ashwater_miasma",
@@ -6119,433 +6119,433 @@
       "profile": "ashwater_miasma",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.3291,
+      "ground_lum": 0.3368,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 2.505
+      "contrast_ratio": 2.455
     },
     {
       "profile": "ashwater_miasma",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.3291,
+      "ground_lum": 0.3368,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 2.198
+      "contrast_ratio": 2.153
     },
     {
       "profile": "ashwater_miasma",
       "phase": "day",
       "ground": "salt_0",
-      "ground_lum": 0.3291,
+      "ground_lum": 0.3368,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 2.385
+      "contrast_ratio": 2.338
     },
     {
       "profile": "ashwater_miasma",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.0361,
+      "ground_lum": 0.0377,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 11.025
+      "contrast_ratio": 10.824
     },
     {
       "profile": "ashwater_miasma",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.0361,
+      "ground_lum": 0.0377,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 9.671
+      "contrast_ratio": 9.495
     },
     {
       "profile": "ashwater_miasma",
       "phase": "day",
       "ground": "lava_0",
-      "ground_lum": 0.0361,
+      "ground_lum": 0.0377,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 10.498
+      "contrast_ratio": 10.307
     },
     {
       "profile": "ashwater_miasma",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.0959,
+      "ground_lum": 0.0998,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 6.508
+      "contrast_ratio": 6.338
     },
     {
       "profile": "ashwater_miasma",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.0959,
+      "ground_lum": 0.0998,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 5.709
+      "contrast_ratio": 5.559
     },
     {
       "profile": "ashwater_miasma",
       "phase": "day",
       "ground": "jungle_0",
-      "ground_lum": 0.0959,
+      "ground_lum": 0.0998,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 6.197
+      "contrast_ratio": 6.035
     },
     {
       "profile": "ashwater_miasma",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.0629,
+      "ground_lum": 0.0656,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 8.41
+      "contrast_ratio": 8.216
     },
     {
       "profile": "ashwater_miasma",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.0629,
+      "ground_lum": 0.0656,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 7.378
+      "contrast_ratio": 7.207
     },
     {
       "profile": "ashwater_miasma",
       "phase": "day",
       "ground": "fen_0",
-      "ground_lum": 0.0629,
+      "ground_lum": 0.0656,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 8.009
+      "contrast_ratio": 7.823
     },
     {
       "profile": "ashwater_miasma",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.0966,
+      "ground_lum": 0.0917,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 6.479
+      "contrast_ratio": 6.701
     },
     {
       "profile": "ashwater_miasma",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.0966,
+      "ground_lum": 0.0917,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 5.683
+      "contrast_ratio": 5.879
     },
     {
       "profile": "ashwater_miasma",
       "phase": "day",
       "ground": "tidal_0",
-      "ground_lum": 0.0966,
+      "ground_lum": 0.0917,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 6.169
+      "contrast_ratio": 6.381
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "snow_0",
-      "ground_lum": 0.0353,
+      "ground_lum": 0.0633,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 11.128
+      "contrast_ratio": 8.383
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "snow_0",
-      "ground_lum": 0.0353,
+      "ground_lum": 0.0633,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 9.762
+      "contrast_ratio": 7.354
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "snow_0",
-      "ground_lum": 0.0353,
+      "ground_lum": 0.0633,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 10.597
+      "contrast_ratio": 7.983
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "basalt_0",
-      "ground_lum": 0.0104,
+      "ground_lum": 0.017,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.727
+      "contrast_ratio": 14.179
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "basalt_0",
-      "ground_lum": 0.0104,
+      "ground_lum": 0.017,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.796
+      "contrast_ratio": 12.438
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "basalt_0",
-      "ground_lum": 0.0104,
+      "ground_lum": 0.017,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 14.976
+      "contrast_ratio": 13.502
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "ash_0",
-      "ground_lum": 0.0103,
+      "ground_lum": 0.0168,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.76
+      "contrast_ratio": 14.22
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "ash_0",
-      "ground_lum": 0.0103,
+      "ground_lum": 0.0168,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.825
+      "contrast_ratio": 12.474
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "ash_0",
-      "ground_lum": 0.0103,
+      "ground_lum": 0.0168,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 15.007
+      "contrast_ratio": 13.541
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "grass_0",
-      "ground_lum": 0.0143,
+      "ground_lum": 0.0239,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 14.774
+      "contrast_ratio": 12.848
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "grass_0",
-      "ground_lum": 0.0143,
+      "ground_lum": 0.0239,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 12.96
+      "contrast_ratio": 11.271
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "grass_0",
-      "ground_lum": 0.0143,
+      "ground_lum": 0.0239,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 14.068
+      "contrast_ratio": 12.234
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "soil_0",
-      "ground_lum": 0.0104,
+      "ground_lum": 0.017,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.733
+      "contrast_ratio": 14.166
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "soil_0",
-      "ground_lum": 0.0104,
+      "ground_lum": 0.017,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.801
+      "contrast_ratio": 12.426
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "soil_0",
-      "ground_lum": 0.0104,
+      "ground_lum": 0.017,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 14.982
+      "contrast_ratio": 13.489
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "gravel_0",
-      "ground_lum": 0.0136,
+      "ground_lum": 0.0229,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 14.924
+      "contrast_ratio": 13.024
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "gravel_0",
-      "ground_lum": 0.0136,
+      "ground_lum": 0.0229,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.092
+      "contrast_ratio": 11.425
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "gravel_0",
-      "ground_lum": 0.0136,
+      "ground_lum": 0.0229,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 14.211
+      "contrast_ratio": 12.401
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "salt_0",
-      "ground_lum": 0.0322,
+      "ground_lum": 0.0587,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 11.555
+      "contrast_ratio": 8.737
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "salt_0",
-      "ground_lum": 0.0322,
+      "ground_lum": 0.0587,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 10.136
+      "contrast_ratio": 7.664
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "salt_0",
-      "ground_lum": 0.0322,
+      "ground_lum": 0.0587,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 11.003
+      "contrast_ratio": 8.319
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "lava_0",
-      "ground_lum": 0.0057,
+      "ground_lum": 0.009,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 17.058
+      "contrast_ratio": 16.101
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "lava_0",
-      "ground_lum": 0.0057,
+      "ground_lum": 0.009,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 14.964
+      "contrast_ratio": 14.124
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "lava_0",
-      "ground_lum": 0.0057,
+      "ground_lum": 0.009,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 16.243
+      "contrast_ratio": 15.332
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "jungle_0",
-      "ground_lum": 0.012,
+      "ground_lum": 0.0203,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.329
+      "contrast_ratio": 13.502
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "jungle_0",
-      "ground_lum": 0.012,
+      "ground_lum": 0.0203,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.447
+      "contrast_ratio": 11.845
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "jungle_0",
-      "ground_lum": 0.012,
+      "ground_lum": 0.0203,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 14.597
+      "contrast_ratio": 12.857
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "fen_0",
-      "ground_lum": 0.0086,
+      "ground_lum": 0.0142,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 16.205
+      "contrast_ratio": 14.787
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "fen_0",
-      "ground_lum": 0.0086,
+      "ground_lum": 0.0142,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 14.215
+      "contrast_ratio": 12.972
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "fen_0",
-      "ground_lum": 0.0086,
+      "ground_lum": 0.0142,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 15.431
+      "contrast_ratio": 14.081
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "tidal_0",
-      "ground_lum": 0.012,
+      "ground_lum": 0.019,
       "effect": "sword_crescent_wave",
       "effect_lum": 0.8997,
-      "contrast_ratio": 15.311
+      "contrast_ratio": 13.761
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "tidal_0",
-      "ground_lum": 0.012,
+      "ground_lum": 0.019,
       "effect": "world_sparkle_f0",
       "effect_lum": 0.7831,
-      "contrast_ratio": 13.431
+      "contrast_ratio": 12.071
     },
     {
       "profile": "ashwater_miasma",
       "phase": "night",
       "ground": "tidal_0",
-      "ground_lum": 0.012,
+      "ground_lum": 0.019,
       "effect": "blade_impact_f0",
       "effect_lum": 0.8543,
-      "contrast_ratio": 14.58
+      "contrast_ratio": 13.103
     }
   ],
   "worst_case": {

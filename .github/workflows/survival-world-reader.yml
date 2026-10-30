@@ -68,6 +68,8 @@ jobs:
         run: python tools/survival/worldgen/compile_corridor.py | tee "$ARTIFACT_DIR/corridor_compile.json"
       - name: Validate corridor source identity, route, collision, art and A8 transform
         run: python tools/survival/worldgen/validate_corridor.py | tee "$ARTIFACT_DIR/corridor_validation.json"
+      - name: Author regional scene studies (narrow piers, causal detail clusters, night framing)
+        run: python tools/survival/worldgen/author_region_scenes.py | tee "$ARTIFACT_DIR/region_scene_authoring.json"
       - name: Bake A1 survival world art atlas (original + pinned inherited frames)
         run: python tools/survival/worldgen/build_region_art.py | tee "$ARTIFACT_DIR/world_art_bake.json"
       - name: Compile visual-only world art treatments
@@ -104,6 +106,7 @@ jobs:
             artifacts/a1-world/
             artifacts/a1-connector/
             docs/survival/world/evidence/world_art_*.png
+            docs/survival/world/evidence/quality_uplift/*.png
           if-no-files-found: warn
           retention-days: 14
 

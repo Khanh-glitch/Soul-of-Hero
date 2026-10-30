@@ -12,6 +12,7 @@ import compile_slice
 import compile_corridor
 import build_world_art
 import build_region_art
+import author_region_scenes
 import compile_world_art
 import compile_a8_shell_visuals
 import compile_first_hour_route
@@ -37,6 +38,7 @@ def run():
         compile_plan.compile_all()
         compile_slice.compile_all()
         compile_corridor.compile_all()
+        author_region_scenes.main()
         build_region_art.build()
         compile_world_art.compile_all()
         compile_a8_shell_visuals.compile_all()

@@ -137,7 +137,7 @@ def test_causal_landforms_and_road_overlays(art):
         assert doc["counts"]["road_overlays"] == doc["counts"]["road_cells"]
         assert not any(frame.startswith("road_") for row in doc["ground"]["rows"] for frame in row)
         for overlay in doc["overlays"]:
-            assert overlay["layer"] in {"road", "bank", "boardwalk", "bridge", "causeway"}
+            assert overlay["layer"] in {"road", "bank", "boardwalk", "bridge", "causeway", "detail"}
             assert overlay["frame"] in art["atlas"]["terrain"]
     compiler = (cwa.ROOT / "tools/survival/worldgen/compile_world_art.py").read_text()
     assert "h01(x // 6" not in compiler and "h01(x // 5" not in compiler
@@ -279,3 +279,72 @@ def test_legacy_first_hour_pixel_payload_preserved(art):
         new = art["docs"][tid]
         for key in ("ground", "overlays", "props", "lights", "capture_views", "ambient_day", "ambient_night"):
             assert old[key] == new[key], f"{tid} pixel payload drifted: {key}"
+
+
+def test_first_hour_visual_payloads_and_used_crops_are_frozen(art):
+    from PIL import Image
+    lock = cwa.load(cwa.ART / "first_hour_visual_payload_lock.v1.json")
+    keys = ["ground", "overlays", "props", "lights", "capture_views", "ambient_day", "ambient_night"]
+    for tid, expected in lock["payload_hashes"].items():
+        doc = art["docs"][tid]
+        payload = {k: doc[k] for k in keys}
+        actual = hashlib.sha256(json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+        assert actual == expected, f"first-hour payload changed: {tid}"
+    atlas = art["atlas"]
+    for kind in ("terrain", "props"):
+        sheet = Image.open(cwa.ROOT / "assets/environment/survival_world" / f"{kind}.png").convert("RGBA")
+        for frame, expected in lock["used_crop_hashes"][kind].items():
+            r = atlas[kind][frame]
+            crop = sheet.crop((r[0], r[1], r[0] + r[2], r[1] + r[3]))
+            assert hashlib.sha256(crop.tobytes()).hexdigest() == expected, f"first-hour crop changed: {kind}/{frame}"
+
+
+def test_a8_used_crops_do_not_require_wholesale_reimport(art):
+    from PIL import Image
+    lock = cwa.load(cwa.ART / "a8_used_crop_lock.v1.json")
+    atlas = art["atlas"]
+    for kind in ("terrain", "props"):
+        sheet = Image.open(cwa.ROOT / "assets/environment/survival_world" / f"{kind}.png").convert("RGBA")
+        assert len(lock["crops"][kind]) == lock["matched_frame_counts"][kind]
+        for frame, expected in lock["crops"][kind].items():
+            r = atlas[kind][frame]
+            crop = sheet.crop((r[0], r[1], r[0] + r[2], r[1] + r[3]))
+            assert hashlib.sha256(crop.tobytes()).hexdigest() == expected, f"A8 used crop changed: {kind}/{frame}"
+
+
+def test_region_piers_are_narrow_and_water_is_not_visually_filled(art):
+    plan = cwa.load_plan()
+    layers = cwa.Layers(plan)
+    for tid in ("pearl_mangroves_region_window", "ashwater_fen_region_window"):
+        doc = art["docs"][tid]
+        c = doc["counts"]
+        assert c["pier_cells"] < c["road_cells"] * 0.20
+        assert c["track_cells"] > c["road_cells"] * 0.50
+        assert not any(o["frame"] in ("boardwalk_junction", "road_dirt_15") for o in doc["overlays"])
+    water_tokens = {"lake", "river", "tidal", "cenote", "brine", "water", "ocean"}
+    for doc in art["docs"].values():
+        if not doc["treatment_id"].endswith("_region_window"):
+            continue
+        ox, oy = doc["window"]["origin_cell"]
+        for y, row in enumerate(doc["ground"]["rows"]):
+            for x, frame in enumerate(row):
+                cell = [ox + x, oy + y]
+                if layers.surface_name(cell) == "water" and layers.value(cell, "walk") == 0:
+                    assert set(frame.split("_")) & water_tokens, (doc["treatment_id"], cell, frame)
+
+
+def test_region_night_keeps_destination_and_hazard_cues(art):
+    for doc in art["docs"].values():
+        if not doc["treatment_id"].endswith("_region_window"):
+            continue
+        assert min(doc["ambient_night"][:3]) >= 0.30
+        assert doc["counts"]["lights"] >= 5
+        assert any(v.get("time_of_day", 0) > 0.6 for v in doc["capture_views"])
+        assert any(p.get("poi_id") for p in doc["props"])
+
+
+def test_ember_track_has_no_full_crosshatch_carpet(art):
+    doc = art["docs"]["ember_steppe_region_window"]
+    assert doc["counts"]["track_cells"] == doc["counts"]["road_cells"]
+    assert not any(o["frame"].startswith("road_dirt_") for o in doc["overlays"])
+    assert all(o["frame"].startswith("track_") for o in doc["overlays"] if o["layer"] == "road")

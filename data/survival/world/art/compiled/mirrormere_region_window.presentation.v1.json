@@ -6,9 +6,9 @@
     1
   ],
   "ambient_night": [
-    0.3,
-    0.38,
-    0.42,
+    0.36,
+    0.44,
+    0.48,
     1
   ],
   "authority": "VISUAL_ONLY_NO_COLLISION_STAND_ECONOMY_CHANGE",
@@ -34,12 +34,16 @@
   "collision_change": false,
   "counts": {
     "bank_overlays": 0,
+    "causeway_cells": 86,
+    "detail_overlays": 171,
     "ground_cells": 4480,
-    "lights": 2,
-    "overlays": 303,
-    "props": 9,
+    "lights": 11,
+    "overlays": 474,
+    "pier_cells": 0,
+    "props": 83,
     "road_cells": 303,
-    "road_overlays": 303
+    "road_overlays": 303,
+    "track_cells": 217
   },
   "economy_change": false,
   "ground": {
@@ -72,9 +76,9 @@
         "lake_1",
         "lake_3",
         "lake_1",
-        "gravel_2",
-        "gravel_0",
-        "gravel_3",
+        "lake_2",
+        "lake_0",
+        "lake_3",
         "lake_2",
         "lake_2",
         "lake_0",
@@ -89,10 +93,10 @@
         "lake_1",
         "lake_2",
         "lake_3",
-        "lake_0",
         "gravel_0",
-        "gravel_3",
-        "gravel_2",
+        "lake_0",
+        "lake_3",
+        "lake_2",
         "lake_3",
         "lake_2",
         "lake_0",
@@ -154,28 +158,28 @@
         "lake_2",
         "lake_2",
         "lake_3",
-        "gravel_1",
-        "gravel_3",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_1",
         "gravel_0",
-        "lake_3",
-        "lake_3",
-        "lake_2",
-        "lake_0",
-        "lake_0",
-        "lake_2",
-        "lake_3",
-        "lake_3",
-        "lake_2",
-        "lake_3",
-        "lake_2",
-        "lake_0",
-        "lake_1",
-        "lake_1",
-        "lake_1",
-        "gravel_0",
-        "gravel_3",
-        "gravel_1",
-        "lake_0",
         "lake_0",
         "lake_1",
         "lake_0",
@@ -236,9 +240,9 @@
         "lake_3",
         "lake_2",
         "lake_0",
-        "gravel_1",
-        "gravel_0",
-        "gravel_0",
+        "lake_1",
+        "lake_0",
+        "lake_0",
         "lake_0",
         "lake_3",
         "lake_2",
@@ -254,11 +258,11 @@
         "lake_1",
         "lake_0",
         "lake_2",
-        "lake_0",
-        "gravel_3",
         "gravel_0",
-        "gravel_0",
+        "lake_3",
         "lake_0",
+        "lake_0",
+        "gravel_0",
         "lake_1",
         "lake_3",
         "lake_0",
@@ -318,30 +322,30 @@
         "lake_3",
         "lake_3",
         "lake_3",
-        "gravel_3",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_0",
         "gravel_0",
+        "lake_3",
+        "lake_1",
+        "lake_1",
         "gravel_3",
-        "lake_3",
-        "lake_1",
-        "lake_0",
-        "lake_1",
-        "lake_3",
-        "lake_0",
-        "lake_1",
-        "lake_1",
-        "lake_2",
-        "lake_2",
-        "lake_0",
-        "lake_3",
-        "lake_3",
-        "lake_3",
-        "lake_1",
-        "lake_0",
-        "lake_0",
-        "gravel_3",
-        "gravel_1",
-        "gravel_1",
-        "lake_3",
         "lake_2",
         "lake_2",
         "lake_2",
@@ -400,31 +404,31 @@
         "lake_3",
         "lake_3",
         "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_1",
         "gravel_2",
-        "gravel_3",
+        "lake_2",
+        "lake_1",
+        "lake_0",
         "gravel_1",
-        "lake_2",
-        "lake_2",
-        "lake_2",
-        "lake_3",
-        "lake_3",
-        "lake_0",
-        "lake_3",
-        "lake_1",
-        "lake_1",
-        "lake_2",
-        "lake_2",
-        "lake_2",
-        "lake_3",
-        "lake_0",
-        "lake_0",
-        "lake_0",
-        "lake_1",
-        "lake_2",
-        "gravel_2",
-        "gravel_1",
-        "gravel_0",
-        "lake_1",
         "lake_2",
         "lake_0",
         "lake_2",
@@ -482,9 +486,9 @@
         "lake_3",
         "lake_3",
         "lake_1",
-        "gravel_0",
-        "gravel_1",
-        "gravel_2",
+        "lake_0",
+        "lake_1",
+        "lake_2",
         "lake_3",
         "lake_1",
         "lake_2",
@@ -503,10 +507,10 @@
         "lake_0",
         "lake_2",
         "lake_0",
-        "lake_3",
-        "gravel_1",
-        "gravel_1",
-        "gravel_0",
+        "gravel_3",
+        "lake_1",
+        "lake_1",
+        "lake_0",
         "lake_1",
         "lake_1",
         "lake_3",
@@ -564,9 +568,9 @@
         "lake_3",
         "lake_0",
         "lake_2",
-        "gravel_2",
-        "gravel_3",
-        "gravel_1",
+        "lake_2",
+        "lake_3",
+        "lake_1",
         "lake_3",
         "lake_2",
         "lake_0",
@@ -586,10 +590,10 @@
         "lake_3",
         "lake_2",
         "lake_2",
-        "gravel_1",
-        "gravel_1",
-        "gravel_2",
         "lake_1",
+        "lake_1",
+        "lake_2",
+        "gravel_1",
         "lake_2",
         "lake_2",
         "lake_3",
@@ -646,9 +650,9 @@
         "lake_2",
         "lake_0",
         "lake_2",
-        "gravel_0",
-        "gravel_3",
-        "gravel_0",
+        "lake_0",
+        "lake_3",
+        "lake_0",
         "lake_2",
         "lake_0",
         "lake_2",
@@ -666,13 +670,13 @@
         "lake_1",
         "lake_1",
         "lake_3",
-        "lake_2",
         "lake_2",
         "lake_2",
         "gravel_2",
-        "gravel_3",
-        "gravel_2",
         "lake_2",
+        "lake_3",
+        "lake_2",
+        "gravel_2",
         "lake_1",
         "lake_3",
         "lake_3",
@@ -728,34 +732,34 @@
         "lake_1",
         "lake_3",
         "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_1",
         "gravel_3",
-        "gravel_0",
+        "lake_1",
+        "lake_1",
+        "lake_0",
         "gravel_3",
-        "lake_3",
-        "lake_1",
-        "lake_1",
-        "lake_3",
-        "lake_1",
-        "lake_1",
-        "lake_2",
-        "lake_3",
-        "lake_0",
-        "lake_0",
-        "lake_1",
-        "lake_2",
-        "lake_0",
-        "lake_0",
-        "lake_0",
-        "lake_2",
-        "lake_3",
-        "lake_1",
-        "lake_3",
-        "lake_1",
-        "lake_3",
-        "gravel_1",
-        "gravel_1",
-        "gravel_0",
-        "lake_3",
         "lake_1",
         "lake_1",
         "lake_0",
@@ -810,9 +814,9 @@
         "lake_3",
         "lake_3",
         "lake_2",
-        "gravel_2",
-        "gravel_0",
-        "gravel_0",
+        "lake_2",
+        "lake_0",
+        "lake_0",
         "lake_1",
         "lake_3",
         "lake_1",
@@ -834,11 +838,11 @@
         "lake_2",
         "lake_2",
         "lake_2",
-        "lake_1",
-        "gravel_2",
-        "gravel_2",
         "gravel_1",
         "lake_2",
+        "lake_2",
+        "lake_1",
+        "gravel_2",
         "lake_3",
         "lake_1",
         "lake_0",
@@ -892,35 +896,35 @@
         "lake_3",
         "lake_2",
         "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_2",
         "gravel_3",
-        "gravel_1",
-        "gravel_3",
         "lake_0",
-        "lake_0",
-        "lake_2",
-        "lake_1",
-        "lake_2",
-        "lake_2",
-        "lake_1",
-        "lake_3",
-        "lake_3",
-        "lake_2",
-        "lake_2",
-        "lake_0",
-        "lake_2",
-        "lake_1",
-        "lake_3",
-        "lake_1",
-        "lake_0",
-        "lake_0",
-        "lake_2",
-        "lake_2",
-        "lake_1",
         "lake_2",
         "lake_3",
-        "gravel_0",
-        "gravel_2",
-        "gravel_3",
         "lake_1",
         "lake_3",
         "lake_0",
@@ -974,9 +978,9 @@
         "lake_1",
         "lake_2",
         "lake_1",
-        "gravel_2",
-        "gravel_0",
-        "gravel_2",
+        "lake_2",
+        "lake_0",
+        "lake_2",
         "lake_0",
         "lake_3",
         "lake_3",
@@ -998,12 +1002,12 @@
         "lake_1",
         "lake_2",
         "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_3",
         "lake_3",
         "lake_0",
         "gravel_3",
-        "gravel_3",
-        "gravel_0",
-        "lake_3",
         "lake_2",
         "lake_3",
         "lake_3",
@@ -1056,37 +1060,37 @@
         "lake_1",
         "lake_1",
         "lake_0",
-        "gravel_2",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_2",
         "gravel_1",
-        "gravel_3",
-        "lake_1",
-        "lake_2",
-        "lake_3",
-        "lake_1",
-        "lake_2",
-        "lake_1",
         "lake_3",
         "lake_0",
         "lake_2",
-        "lake_3",
-        "lake_3",
-        "lake_0",
-        "lake_2",
-        "lake_2",
-        "lake_1",
-        "lake_1",
-        "lake_2",
-        "lake_2",
-        "lake_0",
-        "lake_1",
-        "lake_0",
-        "lake_1",
-        "lake_2",
-        "lake_1",
-        "gravel_3",
-        "gravel_0",
         "gravel_2",
-        "lake_2",
         "lake_1",
         "lake_1",
         "lake_3",
@@ -1138,9 +1142,9 @@
         "lake_1",
         "lake_1",
         "lake_3",
-        "gravel_3",
-        "gravel_1",
-        "gravel_3",
+        "lake_3",
+        "lake_1",
+        "lake_3",
         "lake_3",
         "lake_2",
         "lake_1",
@@ -1165,11 +1169,11 @@
         "lake_0",
         "lake_2",
         "lake_0",
-        "lake_3",
-        "gravel_2",
         "gravel_3",
-        "gravel_3",
+        "lake_2",
         "lake_3",
+        "lake_3",
+        "gravel_3",
         "lake_1",
         "lake_0",
         "lake_0",
@@ -1220,39 +1224,39 @@
         "lake_3",
         "lake_2",
         "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_3",
         "gravel_2",
+        "lake_1",
+        "lake_1",
+        "lake_0",
         "gravel_3",
-        "gravel_3",
-        "lake_0",
-        "lake_1",
-        "lake_0",
-        "lake_1",
-        "lake_0",
-        "lake_1",
-        "lake_0",
-        "lake_0",
-        "lake_0",
-        "lake_2",
-        "lake_0",
-        "lake_2",
-        "lake_0",
-        "lake_2",
-        "lake_2",
-        "lake_0",
-        "lake_2",
-        "lake_3",
-        "lake_3",
-        "lake_1",
-        "lake_1",
-        "lake_0",
-        "lake_0",
-        "lake_2",
-        "lake_3",
-        "lake_2",
-        "gravel_1",
-        "gravel_1",
-        "gravel_0",
-        "lake_3",
         "lake_1",
         "lake_3",
         "lake_2",
@@ -1302,9 +1306,9 @@
         "lake_0",
         "lake_3",
         "lake_3",
-        "gravel_2",
-        "gravel_3",
-        "gravel_3",
+        "lake_2",
+        "lake_3",
+        "lake_3",
         "lake_2",
         "lake_2",
         "lake_2",
@@ -1331,10 +1335,10 @@
         "lake_2",
         "lake_2",
         "lake_3",
-        "lake_0",
-        "gravel_2",
-        "gravel_2",
         "gravel_0",
+        "lake_2",
+        "lake_2",
+        "lake_0",
         "lake_0",
         "lake_0",
         "lake_2",
@@ -1384,9 +1388,9 @@
         "lake_2",
         "lake_0",
         "lake_0",
-        "gravel_0",
-        "gravel_3",
-        "gravel_0",
+        "lake_0",
+        "lake_3",
+        "lake_0",
         "lake_3",
         "lake_1",
         "lake_0",
@@ -1414,10 +1418,10 @@
         "lake_1",
         "lake_0",
         "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_3",
         "gravel_1",
-        "gravel_1",
-        "gravel_3",
-        "lake_1",
         "lake_1",
         "lake_3",
         "lake_1",
@@ -1466,41 +1470,41 @@
         "lake_2",
         "lake_1",
         "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_3",
         "gravel_3",
-        "gravel_3",
+        "lake_1",
+        "lake_0",
+        "lake_3",
         "gravel_0",
-        "lake_3",
-        "lake_2",
-        "lake_3",
-        "lake_1",
-        "lake_2",
-        "lake_3",
-        "lake_3",
-        "lake_2",
-        "lake_0",
-        "lake_1",
-        "lake_0",
-        "lake_2",
-        "lake_0",
-        "lake_1",
-        "lake_1",
-        "lake_3",
-        "lake_3",
-        "lake_1",
-        "lake_1",
-        "lake_3",
-        "lake_2",
-        "lake_2",
-        "lake_1",
-        "lake_2",
-        "lake_1",
-        "lake_1",
-        "lake_3",
-        "lake_3",
-        "gravel_1",
-        "gravel_0",
-        "gravel_3",
-        "lake_0",
         "lake_3",
         "lake_0",
         "lake_0",
@@ -1548,42 +1552,42 @@
         "lake_0",
         "lake_1",
         "lake_2",
-        "gravel_0",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_2",
         "gravel_2",
+        "lake_3",
+        "lake_2",
+        "lake_1",
         "gravel_0",
-        "lake_3",
-        "lake_1",
-        "lake_0",
-        "lake_3",
-        "lake_1",
-        "lake_2",
-        "lake_1",
-        "lake_1",
-        "lake_2",
-        "lake_1",
-        "lake_1",
-        "lake_2",
-        "lake_0",
-        "lake_1",
-        "lake_2",
-        "lake_1",
-        "lake_2",
-        "lake_3",
-        "lake_0",
-        "lake_2",
-        "lake_0",
-        "lake_1",
-        "lake_0",
-        "lake_3",
-        "lake_0",
-        "lake_2",
-        "lake_0",
-        "lake_2",
-        "lake_2",
-        "gravel_3",
-        "gravel_2",
-        "gravel_1",
-        "lake_0",
         "lake_2",
         "lake_1",
         "lake_0",
@@ -1630,43 +1634,43 @@
         "lake_0",
         "lake_3",
         "lake_0",
-        "gravel_3",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_0",
         "gravel_2",
-        "gravel_3",
-        "lake_1",
-        "lake_1",
-        "lake_3",
-        "lake_2",
-        "lake_0",
-        "lake_0",
-        "lake_0",
-        "lake_1",
-        "lake_1",
-        "lake_3",
-        "lake_2",
-        "lake_1",
-        "lake_2",
-        "lake_2",
-        "lake_0",
-        "lake_1",
-        "lake_3",
-        "lake_2",
-        "lake_2",
         "lake_3",
         "lake_1",
-        "lake_2",
-        "lake_1",
         "lake_0",
-        "lake_0",
-        "lake_2",
-        "lake_2",
-        "lake_1",
-        "lake_0",
-        "lake_2",
-        "gravel_3",
-        "gravel_1",
         "gravel_0",
-        "lake_0",
         "lake_3",
         "lake_3",
         "lake_2",
@@ -1712,43 +1716,43 @@
         "lake_1",
         "lake_0",
         "lake_0",
-        "gravel_0",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_0",
         "gravel_1",
-        "gravel_3",
-        "lake_3",
-        "lake_0",
-        "lake_1",
-        "lake_3",
         "lake_2",
         "lake_0",
-        "lake_0",
         "lake_3",
-        "lake_2",
-        "lake_2",
-        "lake_1",
-        "lake_3",
-        "lake_0",
-        "lake_3",
-        "lake_1",
-        "lake_3",
-        "lake_1",
-        "lake_3",
-        "lake_3",
-        "lake_0",
-        "lake_3",
-        "lake_1",
-        "lake_1",
-        "lake_0",
-        "lake_2",
-        "lake_3",
-        "lake_2",
-        "lake_3",
-        "lake_1",
-        "lake_0",
-        "lake_1",
-        "gravel_2",
-        "gravel_0",
-        "gravel_3",
         "lake_2",
         "lake_2",
         "lake_1",
@@ -1794,9 +1798,9 @@
         "lake_3",
         "lake_0",
         "lake_3",
-        "gravel_2",
-        "gravel_2",
-        "gravel_2",
+        "lake_2",
+        "lake_2",
+        "lake_2",
         "lake_2",
         "lake_0",
         "lake_2",
@@ -1828,10 +1832,10 @@
         "lake_0",
         "lake_1",
         "lake_1",
-        "gravel_2",
+        "lake_2",
+        "lake_1",
+        "lake_2",
         "gravel_1",
-        "gravel_2",
-        "lake_1",
         "lake_2",
         "lake_0",
         "lake_0",
@@ -1876,9 +1880,9 @@
         "lake_0",
         "lake_3",
         "lake_1",
-        "gravel_2",
-        "gravel_2",
-        "gravel_0",
+        "lake_2",
+        "lake_2",
+        "lake_0",
         "lake_3",
         "lake_1",
         "lake_3",
@@ -1910,11 +1914,11 @@
         "lake_0",
         "lake_1",
         "lake_1",
-        "lake_3",
         "gravel_3",
-        "gravel_1",
-        "gravel_0",
+        "lake_3",
         "lake_1",
+        "lake_0",
+        "gravel_1",
         "lake_0",
         "lake_2",
         "lake_3",
@@ -1958,9 +1962,9 @@
         "lake_2",
         "lake_1",
         "lake_0",
-        "gravel_0",
-        "gravel_2",
-        "gravel_0",
+        "lake_0",
+        "lake_2",
+        "lake_0",
         "lake_2",
         "lake_1",
         "lake_1",
@@ -1993,11 +1997,11 @@
         "lake_2",
         "lake_1",
         "lake_2",
-        "lake_3",
+        "gravel_3",
+        "lake_1",
+        "lake_2",
+        "lake_0",
         "gravel_1",
-        "gravel_2",
-        "gravel_0",
-        "lake_1",
         "lake_0",
         "lake_3",
         "lake_2",
@@ -2040,9 +2044,9 @@
         "lake_0",
         "lake_0",
         "lake_0",
-        "gravel_2",
-        "gravel_2",
-        "gravel_0",
+        "lake_2",
+        "lake_2",
+        "lake_0",
         "lake_2",
         "lake_2",
         "lake_3",
@@ -2076,11 +2080,11 @@
         "lake_0",
         "lake_0",
         "lake_3",
-        "lake_3",
-        "gravel_2",
         "gravel_3",
-        "gravel_3",
-        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "gravel_1",
         "lake_1",
         "lake_2",
         "lake_3",
@@ -2122,9 +2126,9 @@
         "lake_0",
         "lake_0",
         "lake_0",
-        "gravel_3",
-        "gravel_0",
-        "gravel_2",
+        "lake_3",
+        "lake_0",
+        "lake_2",
         "lake_1",
         "lake_2",
         "lake_3",
@@ -2159,10 +2163,10 @@
         "lake_2",
         "lake_0",
         "lake_2",
-        "lake_1",
-        "gravel_3",
-        "gravel_2",
-        "gravel_2",
+        "gravel_1",
+        "lake_3",
+        "lake_2",
+        "lake_2",
         "lake_3",
         "lake_3",
         "lake_2",
@@ -2204,9 +2208,9 @@
         "lake_3",
         "lake_3",
         "lake_3",
-        "gravel_0",
-        "gravel_1",
-        "gravel_1",
+        "lake_0",
+        "lake_1",
+        "lake_1",
         "lake_1",
         "lake_0",
         "lake_3",
@@ -2242,10 +2246,10 @@
         "lake_0",
         "lake_0",
         "lake_1",
-        "gravel_1",
+        "lake_1",
+        "lake_2",
+        "lake_1",
         "gravel_2",
-        "gravel_1",
-        "lake_2",
         "lake_0",
         "lake_3",
         "lake_2",
@@ -2286,49 +2290,49 @@
         "lake_0",
         "lake_2",
         "lake_1",
-        "gravel_0",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_3",
         "gravel_1",
-        "gravel_1",
-        "lake_3",
-        "lake_0",
-        "lake_0",
-        "lake_0",
-        "lake_3",
-        "lake_2",
-        "lake_0",
-        "lake_1",
-        "lake_0",
-        "lake_3",
-        "lake_3",
         "lake_2",
         "lake_1",
         "lake_2",
-        "lake_0",
-        "lake_1",
-        "lake_2",
-        "lake_0",
-        "lake_1",
-        "lake_0",
-        "lake_3",
-        "lake_3",
-        "lake_1",
-        "lake_0",
-        "lake_1",
-        "lake_3",
-        "lake_3",
-        "lake_2",
-        "lake_1",
-        "lake_2",
-        "lake_1",
-        "lake_3",
-        "lake_2",
-        "lake_0",
-        "lake_3",
-        "lake_1",
         "gravel_2",
-        "gravel_1",
-        "gravel_2",
-        "lake_2",
         "lake_1",
         "lake_0",
         "lake_1",
@@ -2368,9 +2372,9 @@
         "lake_1",
         "lake_3",
         "lake_0",
-        "gravel_3",
-        "gravel_0",
-        "gravel_3",
+        "lake_3",
+        "lake_0",
+        "lake_3",
         "lake_1",
         "lake_0",
         "lake_0",
@@ -2407,10 +2411,10 @@
         "lake_1",
         "lake_3",
         "lake_0",
-        "lake_2",
+        "gravel_2",
+        "lake_1",
+        "lake_0",
         "gravel_1",
-        "gravel_0",
-        "lake_1",
         "lake_0",
         "lake_3",
         "lake_2",
@@ -2450,49 +2454,49 @@
         "lake_2",
         "lake_1",
         "lake_2",
-        "gravel_3",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "gravel_1",
+        "gravel_0",
         "gravel_2",
-        "gravel_0",
-        "lake_2",
-        "lake_0",
-        "lake_1",
-        "lake_2",
-        "lake_2",
-        "lake_0",
-        "lake_1",
-        "lake_0",
-        "lake_0",
-        "lake_1",
-        "lake_3",
-        "lake_1",
-        "lake_0",
-        "lake_0",
-        "lake_2",
-        "lake_0",
-        "lake_3",
-        "lake_0",
-        "lake_0",
-        "lake_2",
-        "lake_0",
-        "lake_0",
-        "lake_3",
-        "lake_1",
-        "lake_3",
-        "lake_3",
-        "lake_1",
-        "lake_1",
-        "lake_2",
-        "lake_2",
-        "lake_3",
-        "lake_2",
-        "lake_3",
-        "lake_1",
-        "lake_3",
-        "lake_2",
-        "lake_1",
-        "lake_1",
-        "lake_0",
-        "lake_2",
         "lake_2",
         "lake_1",
         "lake_2",
@@ -2532,9 +2536,9 @@
         "lake_0",
         "lake_2",
         "lake_3",
-        "gravel_1",
-        "gravel_1",
-        "gravel_3",
+        "lake_1",
+        "lake_1",
+        "lake_3",
         "lake_1",
         "lake_2",
         "lake_3",
@@ -2614,9 +2618,9 @@
         "lake_3",
         "lake_1",
         "lake_1",
-        "gravel_3",
-        "gravel_0",
-        "gravel_1",
+        "lake_3",
+        "lake_0",
+        "lake_1",
         "lake_2",
         "lake_3",
         "lake_0",
@@ -2696,9 +2700,9 @@
         "lake_1",
         "lake_1",
         "coast_reedpeat_lake_2",
-        "gravel_0",
-        "gravel_2",
-        "gravel_2",
+        "reedpeat_0",
+        "reedpeat_2",
+        "reedpeat_2",
         "coast_reedpeat_lake_8",
         "lake_2",
         "lake_1",
@@ -2778,9 +2782,9 @@
         "lake_0",
         "lake_1",
         "coast_reedpeat_lake_2",
-        "gravel_3",
-        "gravel_0",
-        "gravel_2",
+        "reedpeat_3",
+        "reedpeat_0",
+        "reedpeat_2",
         "coast_reedpeat_lake_8",
         "lake_0",
         "lake_3",
@@ -2860,9 +2864,9 @@
         "lake_1",
         "lake_2",
         "coast_reedpeat_lake_2",
-        "gravel_0",
-        "gravel_3",
-        "gravel_2",
+        "reedpeat_0",
+        "reedpeat_3",
+        "reedpeat_2",
         "coast_reedpeat_lake_8",
         "lake_1",
         "lake_3",
@@ -2942,9 +2946,9 @@
         "lake_2",
         "lake_3",
         "coast_reedpeat_lake_2",
-        "gravel_2",
-        "gravel_2",
-        "gravel_0",
+        "reedpeat_2",
+        "reedpeat_2",
+        "reedpeat_0",
         "coast_reedpeat_lake_8",
         "lake_3",
         "lake_1",
@@ -3024,9 +3028,9 @@
         "lake_2",
         "lake_0",
         "coast_reedpeat_lake_2",
-        "gravel_2",
-        "gravel_3",
-        "gravel_2",
+        "reedpeat_2",
+        "reedpeat_3",
+        "reedpeat_2",
         "coast_reedpeat_lake_8",
         "lake_0",
         "lake_2",
@@ -3106,9 +3110,9 @@
         "lake_0",
         "lake_3",
         "coast_reedpeat_lake_2",
-        "gravel_3",
-        "gravel_0",
-        "gravel_3",
+        "reedpeat_3",
+        "reedpeat_0",
+        "reedpeat_3",
         "coast_reedpeat_lake_8",
         "lake_3",
         "lake_0",
@@ -3188,9 +3192,9 @@
         "lake_3",
         "lake_1",
         "coast_reedpeat_lake_2",
-        "gravel_1",
-        "gravel_2",
-        "gravel_1",
+        "reedpeat_1",
+        "reedpeat_2",
+        "reedpeat_1",
         "coast_reedpeat_lake_8",
         "lake_2",
         "lake_3",
@@ -3270,9 +3274,9 @@
         "lake_0",
         "lake_2",
         "coast_reedpeat_lake_2",
-        "gravel_2",
-        "gravel_2",
-        "gravel_1",
+        "reedpeat_2",
+        "reedpeat_2",
+        "reedpeat_1",
         "coast_reedpeat_lake_8",
         "lake_0",
         "lake_3",
@@ -3352,9 +3356,9 @@
         "lake_0",
         "lake_1",
         "coast_reedpeat_lake_2",
-        "gravel_0",
-        "gravel_2",
-        "gravel_2",
+        "reedpeat_0",
+        "reedpeat_2",
+        "reedpeat_2",
         "coast_reedpeat_lake_8",
         "lake_0",
         "lake_2",
@@ -3434,9 +3438,9 @@
         "lake_1",
         "lake_2",
         "coast_reedpeat_lake_2",
-        "gravel_0",
-        "gravel_3",
-        "gravel_0",
+        "reedpeat_0",
+        "reedpeat_3",
+        "reedpeat_0",
         "coast_reedpeat_lake_8",
         "lake_1",
         "lake_1",
@@ -3516,9 +3520,9 @@
         "lake_2",
         "lake_1",
         "coast_reedpeat_lake_2",
-        "gravel_1",
-        "gravel_2",
-        "gravel_0",
+        "reedpeat_1",
+        "reedpeat_2",
+        "reedpeat_0",
         "coast_reedpeat_lake_8",
         "lake_1",
         "lake_3",
@@ -3598,9 +3602,9 @@
         "coast_reedpeat_lake_4",
         "coast_reedpeat_lake_4",
         "coast_reedpeat_lake_6",
-        "gravel_2",
-        "gravel_0",
-        "gravel_1",
+        "reedpeat_2",
+        "reedpeat_0",
+        "reedpeat_1",
         "coast_reedpeat_lake_12",
         "coast_reedpeat_lake_4",
         "coast_reedpeat_lake_4",
@@ -3680,9 +3684,9 @@
         "mix_reedpeat_lake_13",
         "mix_reedpeat_lake_1",
         "mix_reedpeat_lake_1",
-        "gravel_2",
-        "gravel_1",
-        "gravel_1",
+        "reedpeat_2",
+        "reedpeat_1",
+        "reedpeat_1",
         "mix_reedpeat_lake_1",
         "mix_reedpeat_lake_1",
         "mix_reedpeat_lake_3",
@@ -3762,9 +3766,9 @@
         "coast_reedpeat_lake_3",
         "mix_reedpeat_lake_12",
         "reedpeat_1",
-        "gravel_1",
-        "gravel_1",
-        "gravel_3",
+        "reedpeat_1",
+        "reedpeat_1",
+        "reedpeat_3",
         "reedpeat_2",
         "reedpeat_2",
         "mix_reedpeat_lake_2",
@@ -3844,9 +3848,9 @@
         "lake_1",
         "coast_reedpeat_lake_3",
         "mix_reedpeat_lake_12",
-        "gravel_0",
-        "gravel_0",
-        "gravel_3",
+        "reedpeat_0",
+        "reedpeat_0",
+        "reedpeat_3",
         "reedpeat_3",
         "reedpeat_3",
         "mix_reedpeat_lake_2",
@@ -3926,9 +3930,9 @@
         "lake_0",
         "lake_2",
         "coast_reedpeat_lake_3",
-        "gravel_0",
-        "gravel_2",
-        "gravel_0",
+        "reedpeat_0",
+        "reedpeat_2",
+        "reedpeat_0",
         "reedpeat_1",
         "reedpeat_3",
         "mix_reedpeat_lake_2",
@@ -4008,9 +4012,9 @@
         "lake_3",
         "lake_1",
         "lake_0",
-        "gravel_0",
-        "gravel_3",
-        "gravel_1",
+        "lake_0",
+        "lake_3",
+        "lake_1",
         "mix_reedpeat_lake_12",
         "mix_reedpeat_lake_4",
         "mix_reedpeat_lake_6",
@@ -4090,9 +4094,9 @@
         "lake_0",
         "lake_0",
         "lake_3",
-        "gravel_0",
-        "gravel_2",
-        "gravel_1",
+        "lake_0",
+        "lake_2",
+        "lake_1",
         "coast_reedpeat_lake_1",
         "coast_reedpeat_lake_1",
         "coast_reedpeat_lake_1",
@@ -4172,9 +4176,9 @@
         "lake_0",
         "lake_1",
         "lake_0",
-        "gravel_0",
-        "gravel_2",
-        "gravel_0",
+        "lake_0",
+        "lake_2",
+        "lake_0",
         "lake_3",
         "lake_2",
         "lake_3",
@@ -4254,9 +4258,9 @@
         "lake_1",
         "lake_1",
         "lake_1",
-        "gravel_1",
-        "gravel_2",
-        "gravel_2",
+        "lake_1",
+        "lake_2",
+        "lake_2",
         "lake_3",
         "lake_1",
         "lake_3",
@@ -4336,9 +4340,9 @@
         "lake_0",
         "lake_0",
         "lake_1",
-        "gravel_2",
-        "gravel_2",
-        "gravel_3",
+        "lake_2",
+        "lake_2",
+        "lake_3",
         "lake_2",
         "lake_3",
         "lake_0",
@@ -4418,9 +4422,9 @@
         "lake_1",
         "lake_0",
         "lake_0",
-        "gravel_3",
-        "gravel_0",
-        "gravel_0",
+        "lake_3",
+        "lake_0",
+        "lake_0",
         "lake_1",
         "lake_2",
         "lake_0",
@@ -4500,9 +4504,9 @@
         "lake_2",
         "lake_0",
         "lake_2",
-        "gravel_0",
-        "gravel_2",
-        "gravel_2",
+        "lake_0",
+        "lake_2",
+        "lake_2",
         "lake_2",
         "lake_3",
         "lake_3",
@@ -4582,9 +4586,9 @@
         "lake_3",
         "lake_0",
         "lake_0",
-        "gravel_2",
-        "gravel_2",
-        "gravel_0",
+        "lake_2",
+        "lake_2",
+        "lake_0",
         "lake_3",
         "lake_1",
         "lake_3",
@@ -4693,6 +4697,114 @@
         6408,
         7684
       ]
+    },
+    {
+      "cell": [
+        361,
+        488
+      ],
+      "energy": 0.7,
+      "kind": "warm",
+      "world_px": [
+        5784,
+        7812
+      ]
+    },
+    {
+      "cell": [
+        361,
+        496
+      ],
+      "energy": 0.7,
+      "kind": "warm",
+      "world_px": [
+        5784,
+        7940
+      ]
+    },
+    {
+      "cell": [
+        361,
+        504
+      ],
+      "energy": 0.7,
+      "kind": "warm",
+      "world_px": [
+        5784,
+        8068
+      ]
+    },
+    {
+      "cell": [
+        392,
+        469
+      ],
+      "energy": 0.7,
+      "kind": "warm",
+      "world_px": [
+        6280,
+        7508
+      ]
+    },
+    {
+      "cell": [
+        393,
+        471
+      ],
+      "energy": 0.7,
+      "kind": "warm",
+      "world_px": [
+        6296,
+        7540
+      ]
+    },
+    {
+      "cell": [
+        394,
+        473
+      ],
+      "energy": 0.7,
+      "kind": "warm",
+      "world_px": [
+        6312,
+        7572
+      ]
+    },
+    {
+      "cell": [
+        396,
+        474
+      ],
+      "energy": 0.7,
+      "kind": "warm",
+      "world_px": [
+        6344,
+        7588
+      ]
+    },
+    {
+      "cell": [
+        397,
+        476
+      ],
+      "energy": 0.7,
+      "kind": "warm",
+      "world_px": [
+        6360,
+        7620
+      ]
+    },
+    {
+      "cell": [
+        399,
+        478
+      ],
+      "energy": 0.7,
+      "kind": "warm",
+      "world_px": [
+        6392,
+        7652
+      ]
     }
   ],
   "new_poi_count": 0,
@@ -4700,1065 +4812,2604 @@
     {
       "cell": [
         359,
+        490
+      ],
+      "cluster": "mere_reed_shelf_detail",
+      "frame": "detail_reed_tuft_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        359,
+        491
+      ],
+      "cluster": "mere_reed_shelf_detail",
+      "frame": "detail_reed_tuft_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        361,
+        491
+      ],
+      "cluster": "mere_reed_shelf_detail",
+      "frame": "detail_reed_tuft_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        360,
+        493
+      ],
+      "cluster": "mere_reed_shelf_detail",
+      "frame": "detail_reed_tuft_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        359,
+        494
+      ],
+      "cluster": "mere_reed_shelf_detail",
+      "frame": "detail_reed_tuft_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        361,
+        494
+      ],
+      "cluster": "mere_reed_shelf_detail",
+      "frame": "detail_reed_tuft_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        356,
+        496
+      ],
+      "cluster": "mere_reed_shelf_detail",
+      "frame": "detail_reed_tuft_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        362,
+        496
+      ],
+      "cluster": "mere_reed_shelf_detail",
+      "frame": "detail_reed_tuft_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        363,
+        496
+      ],
+      "cluster": "mere_reed_shelf_detail",
+      "frame": "detail_reed_tuft_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        357,
+        497
+      ],
+      "cluster": "mere_reed_shelf_detail",
+      "frame": "detail_reed_tuft_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        364,
+        497
+      ],
+      "cluster": "mere_reed_shelf_detail",
+      "frame": "detail_reed_tuft_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        358,
+        498
+      ],
+      "cluster": "mere_reed_shelf_detail",
+      "frame": "detail_reed_tuft_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        359,
+        499
+      ],
+      "cluster": "mere_reed_shelf_detail",
+      "frame": "detail_reed_tuft_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        360,
+        499
+      ],
+      "cluster": "mere_reed_shelf_detail",
+      "frame": "detail_reed_tuft_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        361,
+        499
+      ],
+      "cluster": "mere_reed_shelf_detail",
+      "frame": "detail_reed_tuft_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        362,
+        500
+      ],
+      "cluster": "mere_reed_shelf_detail",
+      "frame": "detail_reed_tuft_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        363,
+        500
+      ],
+      "cluster": "mere_reed_shelf_detail",
+      "frame": "detail_reed_tuft_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        364,
+        500
+      ],
+      "cluster": "mere_reed_shelf_detail",
+      "frame": "detail_reed_tuft_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        374,
+        470
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        373,
+        471
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        377,
+        471
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        384,
+        471
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        363,
+        472
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        371,
+        472
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        380,
+        472
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        385,
+        472
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        386,
+        472
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        364,
+        473
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        365,
+        473
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        371,
+        473
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        377,
+        473
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        360,
+        474
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        361,
+        474
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        379,
+        474
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        371,
+        475
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        374,
+        475
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        388,
+        475
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        356,
+        476
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        365,
+        476
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        376,
+        476
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        394,
+        476
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        363,
+        477
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        376,
+        477
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        378,
+        477
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        386,
+        477
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        391,
+        477
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        354,
+        478
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        375,
+        478
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        389,
+        478
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        356,
+        479
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        361,
+        479
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        367,
+        479
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        372,
+        479
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        383,
+        479
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        367,
+        480
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        377,
+        480
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        386,
+        480
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        357,
+        481
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        369,
+        481
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        370,
+        481
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        385,
+        481
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        396,
+        481
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        366,
+        482
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        371,
+        482
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        385,
+        482
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        355,
+        483
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        356,
+        483
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        358,
+        483
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        384,
+        483
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        389,
+        483
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        391,
+        483
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        396,
+        483
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        398,
+        483
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        350,
+        484
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        351,
+        484
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        365,
+        484
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        351,
+        485
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        365,
+        485
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        375,
+        485
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        378,
+        485
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        387,
+        485
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        398,
+        485
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        350,
+        486
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        364,
+        486
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        372,
+        486
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        379,
+        486
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        393,
+        486
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        394,
+        486
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        395,
+        486
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        350,
+        487
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        352,
+        487
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        369,
+        487
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        370,
+        487
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        401,
+        487
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        351,
+        488
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        373,
+        488
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        374,
+        488
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        389,
+        488
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        353,
+        489
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        366,
+        489
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        371,
+        489
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        378,
+        489
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        385,
+        489
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        398,
+        489
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        357,
+        490
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        372,
+        490
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        379,
+        490
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        389,
+        490
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        394,
+        490
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        376,
+        491
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        379,
+        491
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        382,
+        491
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        398,
+        491
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        375,
+        492
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        379,
+        492
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        382,
+        492
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        390,
+        492
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        395,
+        492
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        397,
+        492
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        353,
+        493
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        354,
+        493
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        356,
+        493
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        362,
+        493
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        366,
+        493
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        356,
+        494
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        367,
+        494
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        371,
+        494
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        355,
+        495
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        363,
+        495
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        367,
+        495
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        368,
+        495
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        377,
+        495
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        380,
+        495
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        398,
+        495
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        399,
+        495
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        371,
+        496
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        376,
+        496
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        378,
+        496
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        385,
+        496
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        396,
+        496
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        354,
+        497
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        371,
+        497
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        372,
+        497
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        378,
+        497
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        383,
+        497
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        387,
+        497
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        365,
+        498
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        372,
+        498
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        378,
+        498
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        385,
+        498
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        392,
+        498
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        376,
+        499
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        395,
+        499
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        370,
+        500
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        371,
+        500
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        373,
+        500
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        389,
+        500
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        360,
+        501
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        361,
+        501
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        370,
+        501
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        381,
+        501
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        387,
+        501
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        378,
+        502
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        382,
+        502
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        374,
+        503
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        375,
+        503
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        377,
+        503
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_2",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        382,
+        503
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        379,
+        505
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        381,
+        505
+      ],
+      "cluster": "mere_open_water",
+      "frame": "detail_water_ripple_0",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        363,
+        500
+      ],
+      "cluster": "mere_peat_cuts",
+      "frame": "detail_peat_cut_1",
+      "layer": "detail"
+    },
+    {
+      "cell": [
+        359,
         452
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_6",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         452
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_14",
+      "layer": "road"
     },
     {
       "cell": [
         361,
         452
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_12",
+      "layer": "road"
     },
     {
       "cell": [
         376,
         452
       ],
-      "frame": "boardwalk_ew",
-      "layer": "boardwalk"
+      "frame": "causeway_ew_3",
+      "layer": "causeway"
     },
     {
       "cell": [
         377,
         452
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_14",
+      "layer": "road"
     },
     {
       "cell": [
         378,
         452
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_14",
+      "layer": "road"
     },
     {
       "cell": [
         379,
         452
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_12",
+      "layer": "road"
     },
     {
       "cell": [
         359,
         453
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         453
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         361,
         453
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         377,
         453
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         378,
         453
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         379,
         453
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         380,
         453
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_2",
+      "layer": "causeway"
     },
     {
       "cell": [
         359,
         454
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         454
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         361,
         454
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         377,
         454
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
-    },
-    {
-      "cell": [
-        378,
-        454
-      ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
-    },
-    {
-      "cell": [
-        379,
-        454
-      ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
-    },
-    {
-      "cell": [
-        380,
-        454
-      ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
-    },
-    {
-      "cell": [
-        381,
-        454
-      ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
-    },
-    {
-      "cell": [
-        359,
-        455
-      ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
-    },
-    {
-      "cell": [
-        360,
-        455
-      ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
-    },
-    {
-      "cell": [
-        361,
-        455
-      ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_2",
       "layer": "causeway"
     },
     {
       "cell": [
         378,
+        454
+      ],
+      "frame": "track_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        379,
+        454
+      ],
+      "frame": "track_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        380,
+        454
+      ],
+      "frame": "track_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        381,
+        454
+      ],
+      "frame": "causeway_ns_0",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        359,
         455
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "track_stone_7",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        360,
+        455
+      ],
+      "frame": "track_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        361,
+        455
+      ],
+      "frame": "track_stone_13",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        378,
+        455
+      ],
+      "frame": "causeway_ns_3",
+      "layer": "causeway"
     },
     {
       "cell": [
         379,
         455
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         380,
         455
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         381,
         455
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         382,
         455
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_0",
+      "layer": "causeway"
     },
     {
       "cell": [
         359,
         456
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         456
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         361,
         456
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         379,
         456
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
-    },
-    {
-      "cell": [
-        380,
-        456
-      ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
-    },
-    {
-      "cell": [
-        381,
-        456
-      ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
-    },
-    {
-      "cell": [
-        382,
-        456
-      ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
-    },
-    {
-      "cell": [
-        383,
-        456
-      ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
-    },
-    {
-      "cell": [
-        359,
-        457
-      ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
-    },
-    {
-      "cell": [
-        360,
-        457
-      ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
-    },
-    {
-      "cell": [
-        361,
-        457
-      ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_2",
       "layer": "causeway"
     },
     {
       "cell": [
         380,
+        456
+      ],
+      "frame": "track_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        381,
+        456
+      ],
+      "frame": "track_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        382,
+        456
+      ],
+      "frame": "track_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        383,
+        456
+      ],
+      "frame": "causeway_ns_3",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        359,
         457
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "track_stone_7",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        360,
+        457
+      ],
+      "frame": "track_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        361,
+        457
+      ],
+      "frame": "track_stone_13",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        380,
+        457
+      ],
+      "frame": "causeway_ns_3",
+      "layer": "causeway"
     },
     {
       "cell": [
         381,
         457
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         382,
         457
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         383,
         457
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         359,
         458
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         458
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         361,
         458
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         381,
         458
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         382,
         458
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         383,
         458
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         384,
         458
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_3",
+      "layer": "causeway"
     },
     {
       "cell": [
         359,
         459
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         459
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         361,
         459
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         381,
         459
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
-    },
-    {
-      "cell": [
-        382,
-        459
-      ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
-    },
-    {
-      "cell": [
-        383,
-        459
-      ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
-    },
-    {
-      "cell": [
-        384,
-        459
-      ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
-    },
-    {
-      "cell": [
-        385,
-        459
-      ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
-    },
-    {
-      "cell": [
-        359,
-        460
-      ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
-    },
-    {
-      "cell": [
-        360,
-        460
-      ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
-    },
-    {
-      "cell": [
-        361,
-        460
-      ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_2",
       "layer": "causeway"
     },
     {
       "cell": [
         382,
+        459
+      ],
+      "frame": "track_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        383,
+        459
+      ],
+      "frame": "track_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        384,
+        459
+      ],
+      "frame": "track_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        385,
+        459
+      ],
+      "frame": "causeway_ns_2",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        359,
         460
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "track_stone_7",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        360,
+        460
+      ],
+      "frame": "track_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        361,
+        460
+      ],
+      "frame": "track_stone_13",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        382,
+        460
+      ],
+      "frame": "causeway_ns_0",
+      "layer": "causeway"
     },
     {
       "cell": [
         383,
         460
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         384,
         460
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         385,
         460
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         386,
         460
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_3",
+      "layer": "causeway"
     },
     {
       "cell": [
         359,
         461
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         461
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         361,
         461
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         383,
         461
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
-    },
-    {
-      "cell": [
-        384,
-        461
-      ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
-    },
-    {
-      "cell": [
-        385,
-        461
-      ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
-    },
-    {
-      "cell": [
-        386,
-        461
-      ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
-    },
-    {
-      "cell": [
-        387,
-        461
-      ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
-    },
-    {
-      "cell": [
-        359,
-        462
-      ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
-    },
-    {
-      "cell": [
-        360,
-        462
-      ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
-    },
-    {
-      "cell": [
-        361,
-        462
-      ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_2",
       "layer": "causeway"
     },
     {
       "cell": [
         384,
+        461
+      ],
+      "frame": "track_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        385,
+        461
+      ],
+      "frame": "track_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        386,
+        461
+      ],
+      "frame": "track_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        387,
+        461
+      ],
+      "frame": "causeway_ns_1",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        359,
         462
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "track_stone_7",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        360,
+        462
+      ],
+      "frame": "track_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        361,
+        462
+      ],
+      "frame": "track_stone_13",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        384,
+        462
+      ],
+      "frame": "causeway_ns_0",
+      "layer": "causeway"
     },
     {
       "cell": [
         385,
         462
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         386,
         462
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         387,
         462
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         359,
         463
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         463
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         361,
         463
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         385,
         463
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         386,
         463
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         387,
         463
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         388,
         463
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_3",
+      "layer": "causeway"
     },
     {
       "cell": [
         359,
         464
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         464
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         361,
         464
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         385,
         464
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
-    },
-    {
-      "cell": [
-        386,
-        464
-      ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
-    },
-    {
-      "cell": [
-        387,
-        464
-      ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
-    },
-    {
-      "cell": [
-        388,
-        464
-      ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
-    },
-    {
-      "cell": [
-        389,
-        464
-      ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
-    },
-    {
-      "cell": [
-        359,
-        465
-      ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
-    },
-    {
-      "cell": [
-        360,
-        465
-      ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
-    },
-    {
-      "cell": [
-        361,
-        465
-      ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_3",
       "layer": "causeway"
     },
     {
       "cell": [
         386,
+        464
+      ],
+      "frame": "track_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        387,
+        464
+      ],
+      "frame": "track_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        388,
+        464
+      ],
+      "frame": "track_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        389,
+        464
+      ],
+      "frame": "causeway_ns_2",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        359,
         465
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "track_stone_7",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        360,
+        465
+      ],
+      "frame": "track_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        361,
+        465
+      ],
+      "frame": "track_stone_13",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        386,
+        465
+      ],
+      "frame": "causeway_ns_3",
+      "layer": "causeway"
     },
     {
       "cell": [
         387,
         465
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         388,
         465
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         389,
         465
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         390,
         465
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_1",
+      "layer": "causeway"
     },
     {
       "cell": [
         359,
         466
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         466
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         361,
         466
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         387,
         466
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_1",
+      "layer": "causeway"
     },
     {
       "cell": [
         388,
         466
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         389,
         466
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         390,
         466
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         391,
         466
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_2",
+      "layer": "causeway"
     },
     {
       "cell": [
         359,
         467
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         467
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         361,
         467
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         388,
         467
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_3",
+      "layer": "causeway"
     },
     {
       "cell": [
         389,
         467
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         390,
         467
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         391,
         467
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         359,
         468
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         468
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         361,
         468
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         389,
         468
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         390,
         468
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         391,
         468
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         392,
         468
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_1",
+      "layer": "causeway"
     },
     {
       "cell": [
         359,
         469
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         469
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         361,
         469
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         389,
         469
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_3",
+      "layer": "causeway"
     },
     {
       "cell": [
         390,
         469
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_2",
       "layer": "causeway"
     },
     {
@@ -5766,7 +7417,7 @@
         391,
         469
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_0",
       "layer": "causeway"
     },
     {
@@ -5774,7 +7425,7 @@
         392,
         469
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_2",
       "layer": "causeway"
     },
     {
@@ -5782,63 +7433,63 @@
         393,
         469
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_2",
+      "layer": "causeway"
     },
     {
       "cell": [
         359,
         470
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         470
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         361,
         470
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         390,
         470
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_3",
+      "layer": "causeway"
     },
     {
       "cell": [
         391,
         470
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         392,
         470
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         393,
         470
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_2",
       "layer": "causeway"
     },
     {
@@ -5846,63 +7497,63 @@
         394,
         470
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_0",
+      "layer": "causeway"
     },
     {
       "cell": [
         359,
         471
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         471
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         361,
         471
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         391,
         471
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_1",
+      "layer": "causeway"
     },
     {
       "cell": [
         392,
         471
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         393,
         471
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         394,
         471
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_2",
       "layer": "causeway"
     },
     {
@@ -5910,63 +7561,63 @@
         395,
         471
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_1",
+      "layer": "causeway"
     },
     {
       "cell": [
         359,
         472
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         472
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         361,
         472
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         392,
         472
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_3",
+      "layer": "causeway"
     },
     {
       "cell": [
         393,
         472
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         394,
         472
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         395,
         472
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_0",
       "layer": "causeway"
     },
     {
@@ -5974,47 +7625,47 @@
         359,
         473
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         473
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         361,
         473
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         393,
         473
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         394,
         473
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         395,
         473
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_1",
       "layer": "causeway"
     },
     {
@@ -6022,63 +7673,63 @@
         396,
         473
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_0",
+      "layer": "causeway"
     },
     {
       "cell": [
         359,
         474
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         474
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         361,
         474
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         393,
         474
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_2",
+      "layer": "causeway"
     },
     {
       "cell": [
         394,
         474
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         395,
         474
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         396,
         474
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_3",
       "layer": "causeway"
     },
     {
@@ -6086,63 +7737,63 @@
         397,
         474
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_3",
+      "layer": "causeway"
     },
     {
       "cell": [
         359,
         475
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         475
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         361,
         475
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         394,
         475
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_2",
+      "layer": "causeway"
     },
     {
       "cell": [
         395,
         475
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         396,
         475
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         397,
         475
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_3",
       "layer": "causeway"
     },
     {
@@ -6150,63 +7801,63 @@
         398,
         475
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_2",
+      "layer": "causeway"
     },
     {
       "cell": [
         359,
         476
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         476
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         361,
         476
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         395,
         476
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_2",
+      "layer": "causeway"
     },
     {
       "cell": [
         396,
         476
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         397,
         476
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         398,
         476
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_3",
       "layer": "causeway"
     },
     {
@@ -6214,63 +7865,63 @@
         399,
         476
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_2",
+      "layer": "causeway"
     },
     {
       "cell": [
         359,
         477
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         477
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         361,
         477
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         396,
         477
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_0",
+      "layer": "causeway"
     },
     {
       "cell": [
         397,
         477
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         398,
         477
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         399,
         477
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_0",
       "layer": "causeway"
     },
     {
@@ -6278,47 +7929,47 @@
         359,
         478
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         478
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         361,
         478
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         397,
         478
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         398,
         478
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         399,
         478
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_3",
       "layer": "causeway"
     },
     {
@@ -6326,63 +7977,63 @@
         400,
         478
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_2",
+      "layer": "causeway"
     },
     {
       "cell": [
         359,
         479
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         479
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         361,
         479
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         397,
         479
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_3",
+      "layer": "causeway"
     },
     {
       "cell": [
         398,
         479
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         399,
         479
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         400,
         479
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_2",
       "layer": "causeway"
     },
     {
@@ -6390,55 +8041,55 @@
         401,
         479
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_1",
+      "layer": "causeway"
     },
     {
       "cell": [
         359,
         480
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         480
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         361,
         480
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         398,
         480
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_0",
+      "layer": "causeway"
     },
     {
       "cell": [
         399,
         480
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         400,
         480
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_1",
       "layer": "causeway"
     },
     {
@@ -6446,143 +8097,143 @@
         401,
         480
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_2",
+      "layer": "causeway"
     },
     {
       "cell": [
         359,
         481
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         481
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         361,
         481
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         399,
         481
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_1",
+      "layer": "causeway"
     },
     {
       "cell": [
         400,
         481
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_1",
+      "layer": "causeway"
     },
     {
       "cell": [
         401,
         481
       ],
-      "frame": "boardwalk_junction",
-      "layer": "boardwalk"
+      "frame": "causeway_ns_3",
+      "layer": "causeway"
     },
     {
       "cell": [
         359,
         482
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         482
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         361,
         482
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         359,
         483
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         483
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         361,
         483
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         359,
         484
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         484
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_15",
+      "layer": "road"
     },
     {
       "cell": [
         361,
         484
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         359,
         485
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         485
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_2",
       "layer": "causeway"
     },
     {
@@ -6590,23 +8241,23 @@
         361,
         485
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         359,
         486
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         486
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_2",
       "layer": "causeway"
     },
     {
@@ -6614,23 +8265,23 @@
         361,
         486
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         359,
         487
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         487
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_3",
       "layer": "causeway"
     },
     {
@@ -6638,23 +8289,23 @@
         361,
         487
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         359,
         488
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         488
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_3",
       "layer": "causeway"
     },
     {
@@ -6662,23 +8313,23 @@
         361,
         488
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         359,
         489
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         489
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_1",
       "layer": "causeway"
     },
     {
@@ -6686,23 +8337,23 @@
         361,
         489
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         359,
         490
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         490
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_1",
       "layer": "causeway"
     },
     {
@@ -6710,23 +8361,23 @@
         361,
         490
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         359,
         491
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         491
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_1",
       "layer": "causeway"
     },
     {
@@ -6734,23 +8385,23 @@
         361,
         491
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         359,
         492
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         492
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_3",
       "layer": "causeway"
     },
     {
@@ -6758,23 +8409,23 @@
         361,
         492
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         359,
         493
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         493
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_0",
       "layer": "causeway"
     },
     {
@@ -6782,23 +8433,23 @@
         361,
         493
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         359,
         494
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         494
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_3",
       "layer": "causeway"
     },
     {
@@ -6806,23 +8457,23 @@
         361,
         494
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         359,
         495
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         495
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_1",
       "layer": "causeway"
     },
     {
@@ -6830,23 +8481,23 @@
         361,
         495
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         359,
         496
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         496
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_2",
       "layer": "causeway"
     },
     {
@@ -6854,23 +8505,23 @@
         361,
         496
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         359,
         497
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         497
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_1",
       "layer": "causeway"
     },
     {
@@ -6878,23 +8529,23 @@
         361,
         497
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         359,
         498
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         498
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_3",
       "layer": "causeway"
     },
     {
@@ -6902,23 +8553,23 @@
         361,
         498
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         359,
         499
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         499
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_3",
       "layer": "causeway"
     },
     {
@@ -6926,23 +8577,23 @@
         361,
         499
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         359,
         500
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         500
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_2",
       "layer": "causeway"
     },
     {
@@ -6950,23 +8601,23 @@
         361,
         500
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         359,
         501
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         501
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_2",
       "layer": "causeway"
     },
     {
@@ -6974,23 +8625,23 @@
         361,
         501
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         359,
         502
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         502
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_0",
       "layer": "causeway"
     },
     {
@@ -6998,23 +8649,23 @@
         361,
         502
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         359,
         503
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         503
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_0",
       "layer": "causeway"
     },
     {
@@ -7022,23 +8673,23 @@
         361,
         503
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         359,
         504
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         504
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_2",
       "layer": "causeway"
     },
     {
@@ -7046,23 +8697,23 @@
         361,
         504
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         359,
         505
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         505
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_2",
       "layer": "causeway"
     },
     {
@@ -7070,23 +8721,23 @@
         361,
         505
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         359,
         506
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_7",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         506
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_1",
       "layer": "causeway"
     },
     {
@@ -7094,23 +8745,23 @@
         361,
         506
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_13",
+      "layer": "road"
     },
     {
       "cell": [
         359,
         507
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_3",
+      "layer": "road"
     },
     {
       "cell": [
         360,
         507
       ],
-      "frame": "causeway_ns",
+      "frame": "causeway_ns_0",
       "layer": "causeway"
     },
     {
@@ -7118,15 +8769,15 @@
         361,
         507
       ],
-      "frame": "causeway_ns",
-      "layer": "causeway"
+      "frame": "track_stone_9",
+      "layer": "road"
     }
   ],
   "owner": "A1",
   "pins": {
-    "atlas_sha256": "a2b7d35da814438957fdf8433aeff633e71f392bb6696faa3ef07c894536ea9c",
-    "grammar_sha256": "5112e317f523c52426974e04dba203ac1b3ea89eb55918cced4e7ed896b44eb1",
-    "source_sha256": "45e8f7036943d1432cb07a3597fa833eed5b0ee5066a8fd7dfa6d082acb1a487"
+    "atlas_sha256": "83d69373ca6c1258e8727800d0aa0c288851c34d25539c69c21ec9f5fc9d769a",
+    "grammar_sha256": "a5cecea7d749b56d7e8b6508bd9e880b3a70a92a97f0a06ab11fe81de965b53a",
+    "source_sha256": "085c40112eaddc336be76b23fb273f77f36dd460bfc79bfeca1be8f6a3409ae2"
   },
   "production_native_playable": false,
   "props": [
@@ -7166,62 +8817,821 @@
     },
     {
       "cell": [
-        366,
+        361,
         488
       ],
       "collision_change": false,
-      "frame": "reed_clump",
-      "id": "study:366,488:reed_clump",
-      "role": "background_scenery",
+      "frame": "lantern_post",
+      "id": "study:361,488:lantern_post",
+      "light": "warm",
+      "role": "return_route",
       "source": "biome_study",
       "world_px": [
-        5864,
+        5784,
         7824
       ]
     },
     {
       "cell": [
-        374,
+        361,
         496
       ],
       "collision_change": false,
-      "frame": "reed_clump",
-      "id": "study:374,496:reed_clump",
-      "role": "background_scenery",
+      "frame": "lantern_post",
+      "id": "study:361,496:lantern_post",
+      "light": "warm",
+      "role": "return_route",
       "source": "biome_study",
       "world_px": [
-        5992,
+        5784,
         7952
       ]
     },
     {
       "cell": [
-        398,
+        361,
+        504
+      ],
+      "collision_change": false,
+      "frame": "lantern_post",
+      "id": "study:361,504:lantern_post",
+      "light": "warm",
+      "role": "return_route",
+      "source": "biome_study",
+      "world_px": [
+        5784,
+        8080
+      ]
+    },
+    {
+      "cell": [
+        392,
+        469
+      ],
+      "collision_change": false,
+      "frame": "lantern_post",
+      "id": "study:392,469:lantern_post",
+      "light": "warm",
+      "role": "return_route",
+      "source": "biome_study",
+      "world_px": [
+        6280,
+        7520
+      ]
+    },
+    {
+      "cell": [
+        393,
+        471
+      ],
+      "collision_change": false,
+      "frame": "lantern_post",
+      "id": "study:393,471:lantern_post",
+      "light": "warm",
+      "role": "return_route",
+      "source": "biome_study",
+      "world_px": [
+        6296,
+        7552
+      ]
+    },
+    {
+      "cell": [
+        394,
+        473
+      ],
+      "collision_change": false,
+      "frame": "lantern_post",
+      "id": "study:394,473:lantern_post",
+      "light": "warm",
+      "role": "return_route",
+      "source": "biome_study",
+      "world_px": [
+        6312,
+        7584
+      ]
+    },
+    {
+      "cell": [
+        396,
+        474
+      ],
+      "collision_change": false,
+      "frame": "lantern_post",
+      "id": "study:396,474:lantern_post",
+      "light": "warm",
+      "role": "return_route",
+      "source": "biome_study",
+      "world_px": [
+        6344,
+        7600
+      ]
+    },
+    {
+      "cell": [
+        397,
+        476
+      ],
+      "collision_change": false,
+      "frame": "lantern_post",
+      "id": "study:397,476:lantern_post",
+      "light": "warm",
+      "role": "return_route",
+      "source": "biome_study",
+      "world_px": [
+        6360,
+        7632
+      ]
+    },
+    {
+      "cell": [
+        399,
         478
       ],
       "collision_change": false,
-      "frame": "net_rack",
-      "id": "study:398,478:net_rack",
+      "frame": "lantern_post",
+      "id": "study:399,478:lantern_post",
+      "light": "warm",
+      "role": "return_route",
+      "source": "biome_study",
+      "world_px": [
+        6392,
+        7664
+      ]
+    },
+    {
+      "cell": [
+        356,
+        494
+      ],
+      "collision_change": false,
+      "frame": "reed_bed",
+      "id": "study:356,494:reed_bed",
       "role": "background_scenery",
       "source": "biome_study",
       "world_px": [
-        6376,
+        5704,
+        7920
+      ]
+    },
+    {
+      "cell": [
+        353,
+        496
+      ],
+      "collision_change": false,
+      "frame": "reed_bed",
+      "id": "study:353,496:reed_bed",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5656,
+        7952
+      ]
+    },
+    {
+      "cell": [
+        357,
+        491
+      ],
+      "collision_change": false,
+      "frame": "reed_bed",
+      "id": "study:357,491:reed_bed",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5720,
+        7872
+      ]
+    },
+    {
+      "cell": [
+        354,
+        492
+      ],
+      "collision_change": false,
+      "frame": "reed_bed",
+      "id": "study:354,492:reed_bed",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5672,
+        7888
+      ]
+    },
+    {
+      "cell": [
+        352,
+        497
+      ],
+      "collision_change": false,
+      "frame": "reed_bed",
+      "id": "study:352,497:reed_bed",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5640,
+        7968
+      ]
+    },
+    {
+      "cell": [
+        358,
+        498
+      ],
+      "collision_change": false,
+      "frame": "reed_bed",
+      "id": "study:358,498:reed_bed",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5736,
+        7984
+      ]
+    },
+    {
+      "cell": [
+        368,
+        502
+      ],
+      "collision_change": false,
+      "frame": "reed_bed",
+      "id": "study:368,502:reed_bed",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5896,
+        8048
+      ]
+    },
+    {
+      "cell": [
+        371,
+        503
+      ],
+      "collision_change": false,
+      "frame": "reed_bed",
+      "id": "study:371,503:reed_bed",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5944,
+        8064
+      ]
+    },
+    {
+      "cell": [
+        365,
+        504
+      ],
+      "collision_change": false,
+      "frame": "reed_bed",
+      "id": "study:365,504:reed_bed",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5848,
+        8080
+      ]
+    },
+    {
+      "cell": [
+        369,
+        499
+      ],
+      "collision_change": false,
+      "frame": "reed_bed",
+      "id": "study:369,499:reed_bed",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5912,
+        8000
+      ]
+    },
+    {
+      "cell": [
+        366,
+        500
+      ],
+      "collision_change": false,
+      "frame": "reed_bed",
+      "id": "study:366,500:reed_bed",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5864,
+        8016
+      ]
+    },
+    {
+      "cell": [
+        372,
+        501
+      ],
+      "collision_change": false,
+      "frame": "reed_bed",
+      "id": "study:372,501:reed_bed",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5960,
+        8032
+      ]
+    },
+    {
+      "cell": [
+        364,
+        505
+      ],
+      "collision_change": false,
+      "frame": "reed_bed",
+      "id": "study:364,505:reed_bed",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5832,
+        8096
+      ]
+    },
+    {
+      "cell": [
+        370,
+        506
+      ],
+      "collision_change": false,
+      "frame": "reed_bed",
+      "id": "study:370,506:reed_bed",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5928,
+        8112
+      ]
+    },
+    {
+      "cell": [
+        392,
+        478
+      ],
+      "collision_change": false,
+      "frame": "reed_bed",
+      "id": "study:392,478:reed_bed",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        6280,
+        7664
+      ]
+    },
+    {
+      "cell": [
+        395,
+        479
+      ],
+      "collision_change": false,
+      "frame": "reed_bed",
+      "id": "study:395,479:reed_bed",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        6328,
+        7680
+      ]
+    },
+    {
+      "cell": [
+        389,
+        480
+      ],
+      "collision_change": false,
+      "frame": "reed_bed",
+      "id": "study:389,480:reed_bed",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        6232,
+        7696
+      ]
+    },
+    {
+      "cell": [
+        393,
+        475
+      ],
+      "collision_change": false,
+      "frame": "reed_bed",
+      "id": "study:393,475:reed_bed",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        6296,
+        7616
+      ]
+    },
+    {
+      "cell": [
+        390,
+        476
+      ],
+      "collision_change": false,
+      "frame": "reed_bed",
+      "id": "study:390,476:reed_bed",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        6248,
+        7632
+      ]
+    },
+    {
+      "cell": [
+        388,
+        481
+      ],
+      "collision_change": false,
+      "frame": "reed_bed",
+      "id": "study:388,481:reed_bed",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        6216,
+        7712
+      ]
+    },
+    {
+      "cell": [
+        394,
+        482
+      ],
+      "collision_change": false,
+      "frame": "reed_bed",
+      "id": "study:394,482:reed_bed",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        6312,
+        7728
+      ]
+    },
+    {
+      "cell": [
+        404,
+        482
+      ],
+      "collision_change": false,
+      "frame": "reed_bed",
+      "id": "study:404,482:reed_bed",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        6472,
+        7728
+      ]
+    },
+    {
+      "cell": [
+        407,
+        483
+      ],
+      "collision_change": false,
+      "frame": "reed_bed",
+      "id": "study:407,483:reed_bed",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        6520,
+        7744
+      ]
+    },
+    {
+      "cell": [
+        401,
+        484
+      ],
+      "collision_change": false,
+      "frame": "reed_bed",
+      "id": "study:401,484:reed_bed",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        6424,
+        7760
+      ]
+    },
+    {
+      "cell": [
+        405,
+        479
+      ],
+      "collision_change": false,
+      "frame": "reed_bed",
+      "id": "study:405,479:reed_bed",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        6488,
+        7680
+      ]
+    },
+    {
+      "cell": [
+        402,
+        480
+      ],
+      "collision_change": false,
+      "frame": "reed_bed",
+      "id": "study:402,480:reed_bed",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        6440,
+        7696
+      ]
+    },
+    {
+      "cell": [
+        408,
+        481
+      ],
+      "collision_change": false,
+      "frame": "reed_bed",
+      "id": "study:408,481:reed_bed",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        6536,
+        7712
+      ]
+    },
+    {
+      "cell": [
+        400,
+        485
+      ],
+      "collision_change": false,
+      "frame": "reed_bed",
+      "id": "study:400,485:reed_bed",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        6408,
+        7776
+      ]
+    },
+    {
+      "cell": [
+        406,
+        486
+      ],
+      "collision_change": false,
+      "frame": "reed_bed",
+      "id": "study:406,486:reed_bed",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        6504,
+        7792
+      ]
+    },
+    {
+      "cell": [
+        354,
+        498
+      ],
+      "collision_change": false,
+      "frame": "reed_clump",
+      "id": "study:354,498:reed_clump",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5672,
+        7984
+      ]
+    },
+    {
+      "cell": [
+        356,
+        499
+      ],
+      "collision_change": false,
+      "frame": "reed_clump",
+      "id": "study:356,499:reed_clump",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5704,
+        8000
+      ]
+    },
+    {
+      "cell": [
+        352,
+        500
+      ],
+      "collision_change": false,
+      "frame": "reed_clump",
+      "id": "study:352,500:reed_clump",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5640,
+        8016
+      ]
+    },
+    {
+      "cell": [
+        355,
+        496
+      ],
+      "collision_change": false,
+      "frame": "reed_clump",
+      "id": "study:355,496:reed_clump",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5688,
+        7952
+      ]
+    },
+    {
+      "cell": [
+        353,
+        497
+      ],
+      "collision_change": false,
+      "frame": "reed_clump",
+      "id": "study:353,497:reed_clump",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5656,
+        7968
+      ]
+    },
+    {
+      "cell": [
+        370,
+        496
+      ],
+      "collision_change": false,
+      "frame": "reed_clump",
+      "id": "study:370,496:reed_clump",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5928,
+        7952
+      ]
+    },
+    {
+      "cell": [
+        372,
+        497
+      ],
+      "collision_change": false,
+      "frame": "reed_clump",
+      "id": "study:372,497:reed_clump",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5960,
+        7968
+      ]
+    },
+    {
+      "cell": [
+        368,
+        498
+      ],
+      "collision_change": false,
+      "frame": "reed_clump",
+      "id": "study:368,498:reed_clump",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5896,
+        7984
+      ]
+    },
+    {
+      "cell": [
+        371,
+        494
+      ],
+      "collision_change": false,
+      "frame": "reed_clump",
+      "id": "study:371,494:reed_clump",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5944,
+        7920
+      ]
+    },
+    {
+      "cell": [
+        369,
+        495
+      ],
+      "collision_change": false,
+      "frame": "reed_clump",
+      "id": "study:369,495:reed_clump",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5912,
+        7936
+      ]
+    },
+    {
+      "cell": [
+        394,
+        478
+      ],
+      "collision_change": false,
+      "frame": "reed_clump",
+      "id": "study:394,478:reed_clump",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        6312,
         7664
       ]
     },
     {
       "cell": [
         402,
-        482
+        484
       ],
       "collision_change": false,
-      "frame": "mooring_post",
-      "id": "study:402,482:mooring_post",
-      "role": "return_route",
+      "frame": "reed_clump",
+      "id": "study:402,484:reed_clump",
+      "role": "background_scenery",
       "source": "biome_study",
       "world_px": [
         6440,
+        7760
+      ]
+    },
+    {
+      "cell": [
+        404,
+        485
+      ],
+      "collision_change": false,
+      "frame": "reed_clump",
+      "id": "study:404,485:reed_clump",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        6472,
+        7776
+      ]
+    },
+    {
+      "cell": [
+        400,
+        486
+      ],
+      "collision_change": false,
+      "frame": "reed_clump",
+      "id": "study:400,486:reed_clump",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        6408,
+        7792
+      ]
+    },
+    {
+      "cell": [
+        403,
+        482
+      ],
+      "collision_change": false,
+      "frame": "reed_clump",
+      "id": "study:403,482:reed_clump",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        6456,
         7728
+      ]
+    },
+    {
+      "cell": [
+        401,
+        483
+      ],
+      "collision_change": false,
+      "frame": "reed_clump",
+      "id": "study:401,483:reed_clump",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        6424,
+        7744
       ]
     },
     {
@@ -7230,9 +9640,9 @@
         498
       ],
       "collision_change": false,
-      "frame": "sluice_gate",
-      "id": "study:362,498:sluice_gate",
-      "role": "background_scenery",
+      "frame": "dock_small",
+      "id": "study:362,498:dock_small",
+      "role": "return_route",
       "source": "biome_study",
       "world_px": [
         5800,
@@ -7241,32 +9651,392 @@
     },
     {
       "cell": [
-        380,
-        470
+        365,
+        499
       ],
       "collision_change": false,
-      "frame": "fen_snag",
-      "id": "study:380,470:fen_snag",
-      "role": "background_scenery",
+      "frame": "dock_small",
+      "id": "study:365,499:dock_small",
+      "role": "return_route",
       "source": "biome_study",
       "world_px": [
-        6088,
-        7536
+        5848,
+        8000
       ]
     },
     {
       "cell": [
-        372,
+        398,
+        482
+      ],
+      "collision_change": false,
+      "frame": "dock_small",
+      "id": "study:398,482:dock_small",
+      "role": "return_route",
+      "source": "biome_study",
+      "world_px": [
+        6376,
+        7728
+      ]
+    },
+    {
+      "cell": [
+        402,
+        483
+      ],
+      "collision_change": false,
+      "frame": "ferry_boat",
+      "id": "study:402,483:ferry_boat",
+      "role": "return_route",
+      "source": "biome_study",
+      "world_px": [
+        6440,
+        7744
+      ]
+    },
+    {
+      "cell": [
+        364,
+        502
+      ],
+      "collision_change": false,
+      "frame": "fish_trap",
+      "id": "study:364,502:fish_trap",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5832,
+        8048
+      ]
+    },
+    {
+      "cell": [
+        366,
+        503
+      ],
+      "collision_change": false,
+      "frame": "fish_trap",
+      "id": "study:366,503:fish_trap",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5864,
+        8064
+      ]
+    },
+    {
+      "cell": [
+        362,
+        504
+      ],
+      "collision_change": false,
+      "frame": "fish_trap",
+      "id": "study:362,504:fish_trap",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5800,
+        8080
+      ]
+    },
+    {
+      "cell": [
+        365,
+        500
+      ],
+      "collision_change": false,
+      "frame": "fish_trap",
+      "id": "study:365,500:fish_trap",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5848,
+        8016
+      ]
+    },
+    {
+      "cell": [
+        363,
+        501
+      ],
+      "collision_change": false,
+      "frame": "fish_trap",
+      "id": "study:363,501:fish_trap",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5816,
+        8032
+      ]
+    },
+    {
+      "cell": [
+        396,
+        484
+      ],
+      "collision_change": false,
+      "frame": "fish_trap",
+      "id": "study:396,484:fish_trap",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        6344,
+        7760
+      ]
+    },
+    {
+      "cell": [
+        398,
+        485
+      ],
+      "collision_change": false,
+      "frame": "fish_trap",
+      "id": "study:398,485:fish_trap",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        6376,
+        7776
+      ]
+    },
+    {
+      "cell": [
+        394,
+        486
+      ],
+      "collision_change": false,
+      "frame": "fish_trap",
+      "id": "study:394,486:fish_trap",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        6312,
+        7792
+      ]
+    },
+    {
+      "cell": [
+        397,
+        482
+      ],
+      "collision_change": false,
+      "frame": "fish_trap",
+      "id": "study:397,482:fish_trap",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        6360,
+        7728
+      ]
+    },
+    {
+      "cell": [
+        395,
+        483
+      ],
+      "collision_change": false,
+      "frame": "fish_trap",
+      "id": "study:395,483:fish_trap",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        6328,
+        7744
+      ]
+    },
+    {
+      "cell": [
+        362,
+        500
+      ],
+      "collision_change": false,
+      "frame": "mooring_post",
+      "id": "study:362,500:mooring_post",
+      "role": "return_route",
+      "source": "biome_study",
+      "world_px": [
+        5800,
+        8016
+      ]
+    },
+    {
+      "cell": [
+        364,
+        501
+      ],
+      "collision_change": false,
+      "frame": "mooring_post",
+      "id": "study:364,501:mooring_post",
+      "role": "return_route",
+      "source": "biome_study",
+      "world_px": [
+        5832,
+        8032
+      ]
+    },
+    {
+      "cell": [
+        360,
+        502
+      ],
+      "collision_change": false,
+      "frame": "mooring_post",
+      "id": "study:360,502:mooring_post",
+      "role": "return_route",
+      "source": "biome_study",
+      "world_px": [
+        5768,
+        8048
+      ]
+    },
+    {
+      "cell": [
+        363,
+        498
+      ],
+      "collision_change": false,
+      "frame": "mooring_post",
+      "id": "study:363,498:mooring_post",
+      "role": "return_route",
+      "source": "biome_study",
+      "world_px": [
+        5816,
+        7984
+      ]
+    },
+    {
+      "cell": [
+        361,
+        499
+      ],
+      "collision_change": false,
+      "frame": "mooring_post",
+      "id": "study:361,499:mooring_post",
+      "role": "return_route",
+      "source": "biome_study",
+      "world_px": [
+        5784,
+        8000
+      ]
+    },
+    {
+      "cell": [
+        402,
+        481
+      ],
+      "collision_change": false,
+      "frame": "mooring_post",
+      "id": "study:402,481:mooring_post",
+      "role": "return_route",
+      "source": "biome_study",
+      "world_px": [
+        6440,
+        7712
+      ]
+    },
+    {
+      "cell": [
+        401,
+        478
+      ],
+      "collision_change": false,
+      "frame": "mooring_post",
+      "id": "study:401,478:mooring_post",
+      "role": "return_route",
+      "source": "biome_study",
+      "world_px": [
+        6424,
+        7664
+      ]
+    },
+    {
+      "cell": [
+        399,
+        479
+      ],
+      "collision_change": false,
+      "frame": "mooring_post",
+      "id": "study:399,479:mooring_post",
+      "role": "return_route",
+      "source": "biome_study",
+      "world_px": [
+        6392,
+        7680
+      ]
+    },
+    {
+      "cell": [
+        368,
         500
       ],
       "collision_change": false,
       "frame": "bleached_reeds",
-      "id": "study:372,500:bleached_reeds",
+      "id": "study:368,500:bleached_reeds",
       "role": "physical_danger",
       "source": "biome_study",
       "world_px": [
-        5960,
+        5896,
         8016
+      ]
+    },
+    {
+      "cell": [
+        370,
+        501
+      ],
+      "collision_change": false,
+      "frame": "bleached_reeds",
+      "id": "study:370,501:bleached_reeds",
+      "role": "physical_danger",
+      "source": "biome_study",
+      "world_px": [
+        5928,
+        8032
+      ]
+    },
+    {
+      "cell": [
+        366,
+        502
+      ],
+      "collision_change": false,
+      "frame": "bleached_reeds",
+      "id": "study:366,502:bleached_reeds",
+      "role": "physical_danger",
+      "source": "biome_study",
+      "world_px": [
+        5864,
+        8048
+      ]
+    },
+    {
+      "cell": [
+        369,
+        498
+      ],
+      "collision_change": false,
+      "frame": "bleached_reeds",
+      "id": "study:369,498:bleached_reeds",
+      "role": "physical_danger",
+      "source": "biome_study",
+      "world_px": [
+        5912,
+        7984
+      ]
+    },
+    {
+      "cell": [
+        367,
+        499
+      ],
+      "collision_change": false,
+      "frame": "bleached_reeds",
+      "id": "study:367,499:bleached_reeds",
+      "role": "physical_danger",
+      "source": "biome_study",
+      "world_px": [
+        5880,
+        8000
       ]
     }
   ],

@@ -1,160 +1,204 @@
 {
-  "atlas_sha256": "a2b7d35da814438957fdf8433aeff633e71f392bb6696faa3ef07c894536ea9c",
-  "grammar_sha256": "5112e317f523c52426974e04dba203ac1b3ea89eb55918cced4e7ed896b44eb1",
+  "atlas_sha256": "83d69373ca6c1258e8727800d0aa0c288851c34d25539c69c21ec9f5fc9d769a",
+  "grammar_sha256": "a5cecea7d749b56d7e8b6508bd9e880b3a70a92a97f0a06ab11fe81de965b53a",
   "owner": "A1",
   "presentations": [
     {
       "counts": {
         "bank_overlays": 0,
+        "causeway_cells": 0,
+        "detail_overlays": 0,
         "ground_cells": 2688,
         "lights": 2,
         "overlays": 33,
+        "pier_cells": 0,
         "props": 35,
         "road_cells": 33,
-        "road_overlays": 33
+        "road_overlays": 33,
+        "track_cells": 0
       },
       "path": "data/survival/world/art/compiled/crown_roadside_visual_treatment.presentation.v1.json",
-      "sha256": "cb8fff7ded7acd3123de31e3b1c0d3a370e43fed890a21d65149b91cf7146baf",
+      "sha256": "39f1a9a91614430c573aedf5bfd148808cd630422f7be3d04024d57de9b7b4c1",
       "treatment_id": "crown_roadside_visual_treatment"
     },
     {
       "counts": {
         "bank_overlays": 0,
+        "causeway_cells": 0,
+        "detail_overlays": 0,
         "ground_cells": 2688,
         "lights": 1,
         "overlays": 45,
+        "pier_cells": 0,
         "props": 27,
         "road_cells": 45,
-        "road_overlays": 45
+        "road_overlays": 45,
+        "track_cells": 0
       },
       "path": "data/survival/world/art/compiled/amberwood_apothecary_herb_margin.presentation.v1.json",
-      "sha256": "76864d9ece3f7f1ddb85985c615370a5ab54725a64df8db7df79788e7df61449",
+      "sha256": "3857836c5bf389b59bed4f6b6448545e73e4b86839d22bb9cacf1c319a377cdf",
       "treatment_id": "amberwood_apothecary_herb_margin"
     },
     {
       "counts": {
         "bank_overlays": 0,
+        "causeway_cells": 0,
+        "detail_overlays": 0,
         "ground_cells": 3840,
         "lights": 0,
         "overlays": 431,
+        "pier_cells": 0,
         "props": 22,
         "road_cells": 431,
-        "road_overlays": 431
+        "road_overlays": 431,
+        "track_cells": 0
       },
       "path": "data/survival/world/art/compiled/frost_crown_shrine_skarn.presentation.v1.json",
-      "sha256": "23852ba7cfe97a910db47c71b4df50b6afc2acdb0b4019e47b7dc3fcbda9e9bb",
+      "sha256": "28d602242b7c9deb40c77f985334771ab425233687b45d09befb361bb74e7792",
       "treatment_id": "frost_crown_shrine_skarn"
     },
     {
       "counts": {
         "bank_overlays": 0,
+        "causeway_cells": 86,
+        "detail_overlays": 171,
         "ground_cells": 4480,
-        "lights": 2,
-        "overlays": 303,
-        "props": 9,
+        "lights": 11,
+        "overlays": 474,
+        "pier_cells": 0,
+        "props": 83,
         "road_cells": 303,
-        "road_overlays": 303
+        "road_overlays": 303,
+        "track_cells": 217
       },
       "path": "data/survival/world/art/compiled/mirrormere_region_window.presentation.v1.json",
-      "sha256": "fe6ef357b69e631fc1951fb0104bf2f8ddbd51bb8b17a24b390005b4b3d22437",
+      "sha256": "026fffbbea6f9f3a0858e155345e6e46c5a00595708a6848e340a7eb36d6d603",
       "treatment_id": "mirrormere_region_window"
     },
     {
       "counts": {
         "bank_overlays": 0,
+        "causeway_cells": 0,
+        "detail_overlays": 198,
         "ground_cells": 5120,
-        "lights": 1,
-        "overlays": 172,
-        "props": 28,
+        "lights": 8,
+        "overlays": 370,
+        "pier_cells": 0,
+        "props": 140,
         "road_cells": 172,
-        "road_overlays": 172
+        "road_overlays": 172,
+        "track_cells": 172
       },
       "path": "data/survival/world/art/compiled/glasswind_coast_region_window.presentation.v1.json",
-      "sha256": "e0c4fbc8f8a1a57eb7043ad0d4bfcf03014eb58f380783e36b510845f082c432",
+      "sha256": "311c2205d8856c368430e4300c1889aa67ba497ac0eb0fbeb8d0e66653d3b42e",
       "treatment_id": "glasswind_coast_region_window"
     },
     {
       "counts": {
         "bank_overlays": 0,
+        "causeway_cells": 0,
+        "detail_overlays": 672,
         "ground_cells": 9152,
-        "lights": 1,
-        "overlays": 1373,
-        "props": 36,
+        "lights": 30,
+        "overlays": 2045,
+        "pier_cells": 0,
+        "props": 115,
         "road_cells": 1373,
-        "road_overlays": 1373
+        "road_overlays": 1373,
+        "track_cells": 1373
       },
       "path": "data/survival/world/art/compiled/ember_steppe_region_window.presentation.v1.json",
-      "sha256": "3b1124ca327acb64441c410abc67c13ae4b1830376970e0b2c413a6a555ca1e4",
+      "sha256": "b2cc4aae5e43925e78f4e5c6b95ec7d1a32302f703f3655598024296127052b5",
       "treatment_id": "ember_steppe_region_window"
     },
     {
       "counts": {
         "bank_overlays": 0,
+        "causeway_cells": 57,
+        "detail_overlays": 413,
         "ground_cells": 3584,
-        "lights": 1,
-        "overlays": 315,
-        "props": 15,
+        "lights": 6,
+        "overlays": 728,
+        "pier_cells": 0,
+        "props": 31,
         "road_cells": 315,
-        "road_overlays": 315
+        "road_overlays": 315,
+        "track_cells": 258
       },
       "path": "data/survival/world/art/compiled/saffron_coast_region_window.presentation.v1.json",
-      "sha256": "7c5579459ce182dff433c08a01eaa395e2043f383d6e90a6e9828ea09240efac",
+      "sha256": "7a9e0ef1beb4f0f0b8a374b5a5dd41811be50c7062b04a80fa418c16986aa070",
       "treatment_id": "saffron_coast_region_window"
     },
     {
       "counts": {
         "bank_overlays": 0,
+        "causeway_cells": 0,
+        "detail_overlays": 239,
         "ground_cells": 7040,
-        "lights": 1,
-        "overlays": 694,
-        "props": 42,
+        "lights": 30,
+        "overlays": 933,
+        "pier_cells": 0,
+        "props": 240,
         "road_cells": 694,
-        "road_overlays": 694
+        "road_overlays": 694,
+        "track_cells": 694
       },
       "path": "data/survival/world/art/compiled/verdant_fold_region_window.presentation.v1.json",
-      "sha256": "59cfbde84adc0cb17eedacfff9937bb807c6d5f272b08576db9025b40addbb22",
+      "sha256": "884cd1f3886da92cc745668a8cc0c1fc3b1582fe50eda0b16a6846858f758371",
       "treatment_id": "verdant_fold_region_window"
     },
     {
       "counts": {
         "bank_overlays": 0,
+        "causeway_cells": 0,
+        "detail_overlays": 245,
         "ground_cells": 5760,
-        "lights": 1,
-        "overlays": 1173,
-        "props": 29,
+        "lights": 20,
+        "overlays": 1418,
+        "pier_cells": 90,
+        "props": 126,
         "road_cells": 1173,
-        "road_overlays": 1173
+        "road_overlays": 1173,
+        "track_cells": 1083
       },
       "path": "data/survival/world/art/compiled/pearl_mangroves_region_window.presentation.v1.json",
-      "sha256": "7cbaa2d631a644b796fca3bc808528ea628e517836c04aea19f8fb7878df0193",
+      "sha256": "ea46810ca0c7def66121fc76da128d3fc7c97fef91b48245706f3262402c42bd",
       "treatment_id": "pearl_mangroves_region_window"
     },
     {
       "counts": {
         "bank_overlays": 0,
+        "causeway_cells": 0,
+        "detail_overlays": 372,
         "ground_cells": 7488,
-        "lights": 1,
-        "overlays": 1330,
-        "props": 38,
+        "lights": 13,
+        "overlays": 1702,
+        "pier_cells": 0,
+        "props": 172,
         "road_cells": 1330,
-        "road_overlays": 1330
+        "road_overlays": 1330,
+        "track_cells": 1330
       },
       "path": "data/survival/world/art/compiled/sunken_orchard_region_window.presentation.v1.json",
-      "sha256": "1bf04b4b304059b43fe6423dda1bc39232a9282faec45f18cfeb3b834f79916c",
+      "sha256": "6364a235aedc15f2027b4f49cc813cbb47e7a5feceac0ddb17a6697bff4abeeb",
       "treatment_id": "sunken_orchard_region_window"
     },
     {
       "counts": {
         "bank_overlays": 0,
+        "causeway_cells": 0,
+        "detail_overlays": 441,
         "ground_cells": 9152,
-        "lights": 1,
-        "overlays": 1691,
-        "props": 55,
+        "lights": 33,
+        "overlays": 2132,
+        "pier_cells": 141,
+        "props": 186,
         "road_cells": 1691,
-        "road_overlays": 1691
+        "road_overlays": 1691,
+        "track_cells": 1550
       },
       "path": "data/survival/world/art/compiled/ashwater_fen_region_window.presentation.v1.json",
-      "sha256": "cdc20ddbe186297e9f00465e31cd29cc94cad9ade97f12a91d289cdac14f7568",
+      "sha256": "ba06dd3c24a58e56f620794a03319631eaabd803c24e3bca4e2cee984fbbf37f",
       "treatment_id": "ashwater_fen_region_window"
     }
   ],

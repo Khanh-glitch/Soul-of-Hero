@@ -42,6 +42,15 @@ FRAME_ROLE = {
     "lm_quarry_workface": "authored_landmark", "lm_orchard_shed": "authored_landmark", "lm_mill_house": "authored_landmark",
     "drying_rack": "background_scenery", "beehive": "ordinary_harvestable", "snow_drift": "background_scenery",
     "split_rail": "background_scenery",
+    "mangrove_tree": "background_scenery", "reed_bed": "background_scenery", "dock_small": "return_route",
+    "ferry_boat": "return_route", "fish_trap": "background_scenery", "forge_slag_heap": "background_scenery",
+    "pipe_run": "background_scenery", "vent_stack": "physical_danger", "cooling_trough": "background_scenery",
+    "canopy_tree": "background_scenery", "understory_fern": "background_scenery", "root_arch": "background_scenery",
+    "liana_curtain": "background_scenery", "karst_boulder": "background_scenery", "salt_heap": "background_scenery",
+    "shade_sail": "background_scenery", "keeper_shed": "background_scenery", "storm_glass_cluster": "background_scenery",
+    "driftwood_pile": "background_scenery", "cenote_steps": "return_route", "orchard_wall": "background_scenery",
+    "lantern_post": "return_route", "pier_rail": "return_route", "warning_stakes": "physical_danger",
+    "tide_gauge_large": "physical_danger", "pump_tank": "background_scenery", "spore_mushroom": "physical_danger",
 }
 
 
@@ -108,6 +117,31 @@ def road_mask(cells: set[tuple[int, int]], cell: tuple[int, int]) -> int:
     return m
 
 
+def spine_cells(rules: dict, road_cells: set[tuple[int, int]]) -> set[tuple[int, int]]:
+    """Rasterize authored orthogonal pier/causeway spines inside source roads."""
+    cells: set[tuple[int, int]] = set()
+    for path in rules.get("pier_spines", []):
+        pts = path.get("points", [])
+        if len(pts) < 2:
+            raise ValueError(f"pier spine {path.get('id')} needs at least two points")
+        for a, b in zip(pts, pts[1:]):
+            x, y = a
+            x2, y2 = b
+            if x != x2 and y != y2:
+                raise ValueError(f"pier spine {path.get('id')} must be orthogonal: {a}->{b}")
+            dx = (x2 > x) - (x2 < x)
+            dy = (y2 > y) - (y2 < y)
+            while True:
+                c = (x, y)
+                if c not in road_cells:
+                    raise ValueError(f"pier spine {path.get('id')} leaves source road at {c}")
+                cells.add(c)
+                if (x, y) == (x2, y2):
+                    break
+                x += dx; y += dy
+    return cells
+
+
 def in_rect(cell: list[int], r: list[int]) -> bool:
     return r[0] <= cell[0] < r[0] + r[2] and r[1] <= cell[1] < r[1] + r[3]
 
@@ -172,6 +206,7 @@ def compile_ground(src: dict, layers: Layers, atlas: dict, corridor: dict | None
             for x in range(ox, ox + w):
                 if layers.value([x, y], "road") != 0:
                     road_cells.add((x, y))
+    maintained = spine_cells(rules, road_cells)
     mats: dict[tuple[int, int], str] = {}
     bio_names = sorted(layers.plan["biomes"])
     biome_mat = rules.get("biome_materials", {})
@@ -182,7 +217,7 @@ def compile_ground(src: dict, layers: Layers, atlas: dict, corridor: dict | None
                 sname = layers.surface_name([x, y])
                 mat = {"grass": "grass", "moor": "moor", "gravel": "gravel", "floor": "silt",
                        "snow": "snow", "forest": "forest", "tundra": "tundra", "sand": "dune",
-                       "water": "lake", "ash": "ash", "badland": "cinder", "salt": "salt",
+                       "water": rules.get("water_material", "lake"), "ash": "ash", "badland": "cinder", "salt": "salt",
                        "jungle": "jungle", "karst": "karst", "marsh": "reedpeat", "mangrove": "mangrove",
                        "mud": "mud", "orchard": "soil", "bog": "fen", "road": "soil",
                        "bridge": "gravel", "legacy": "gravel"}.get(sname, "gravel")
@@ -252,24 +287,40 @@ def compile_ground(src: dict, layers: Layers, atlas: dict, corridor: dict | None
             mat = mats[c]
             v = int(h01(x, y, 7) * 4) % 4
             if c in road_cells:
-                # Roads are transparent overlays on an opaque base, not black-cornered replacements.
+                # Source road/walk cells stay authoritative. New regional scenes
+                # draw narrow maintained spines; the remaining broad road cells
+                # get transparent wear, never an opaque plank/crosshatch carpet.
                 if rules.get("use_source_legend"):
                     road_style = rules.get("road_style", "dirt")
-                    over_water = layers.surface_name([x, y]) in ("water", "bridge")
+                    sname = layers.surface_name([x, y])
+                    over_water = sname in ("water", "bridge")
                     rm = road_mask(road_cells, c)
-                    wet_ground = mats.get(c) in ("lake", "river", "tidal", "toxic", "mud", "reedpeat")
-                    if over_water or (road_style == "boardwalk" and wet_ground):
-                        frame = f"lake_{v}" if over_water else f"{mats.get(c, 'soil')}_{v}"
-                        bf = "boardwalk_ns" if rm in (1, 4, 5) else "boardwalk_ew" if rm in (2, 8, 10) else "boardwalk_junction"
-                        overlays.append({"frame": bf, "cell": [x, y], "layer": "boardwalk"})
-                    elif road_style == "causeway":
-                        frame = f"gravel_{v}"
-                        cf = "causeway_ns" if rm in (1, 4, 5) else "causeway_ew" if rm in (2, 8, 10) else "causeway_ns"
-                        overlays.append({"frame": cf, "cell": [x, y], "layer": "causeway"})
+                    on_spine = c in maintained
+                    base_mat = mats.get(c, "soil")
+                    if over_water:
+                        frame = f"{rules.get('water_material', 'lake')}_{v}" if sname == "water" else f"gravel_{v}"
                     else:
-                        base = "gravel" if road_style in ("stone", "causeway") else "soil"
-                        frame = f"{base}_{v}"
-                        overlays.append({"frame": f"road_{'stone' if road_style in ('stone', 'causeway') else 'dirt'}_{rm}",
+                        frame = f"{base_mat}_{v}"
+                    if road_style in ("boardwalk", "pier"):
+                        if over_water or on_spine:
+                            orient = "ns" if rm in (1, 4, 5) else "ew" if rm in (2, 8, 10) else "junction"
+                            if rm == 1: orient = "end_s"
+                            elif rm == 4: orient = "end_n"
+                            elif rm == 2: orient = "end_w"
+                            elif rm == 8: orient = "end_e"
+                            bf = f"pier_{orient}_{int(h01(x, y, 31) * 3) % 3}"
+                            overlays.append({"frame": bf, "cell": [x, y], "layer": "boardwalk"})
+                        else:
+                            overlays.append({"frame": f"track_dirt_{rm}", "cell": [x, y], "layer": "road"})
+                    elif road_style == "causeway":
+                        if over_water or on_spine:
+                            orient = "ns" if rm in (1, 4, 5) else "ew" if rm in (2, 8, 10) else "ns"
+                            cf = f"causeway_{orient}_{int(h01(x, y, 37) * 4) % 4}"
+                            overlays.append({"frame": cf, "cell": [x, y], "layer": "causeway"})
+                        else:
+                            overlays.append({"frame": f"track_stone_{rm}", "cell": [x, y], "layer": "road"})
+                    else:
+                        overlays.append({"frame": f"track_{'stone' if road_style == 'stone' else 'dirt'}_{rm}",
                                          "cell": [x, y], "layer": "road"})
                 else:
                     base = "gravel" if stone else "soil"
@@ -335,7 +386,28 @@ def compile_ground(src: dict, layers: Layers, atlas: dict, corridor: dict | None
                 raise ValueError(f"missing terrain frame {frame}")
             row.append(frame)
         rows.append(row)
-    return {"origin_cell": [ox, oy], "size_cells": [w, h], "rows": rows}, overlays, road_cells, report
+    # Authored ecological micro-detail clusters: transparent decals inside causal
+    # material patches, not noise-driven biome boundaries or reward objects.
+    detail: list[dict] = []
+    for cluster in rules.get("detail_clusters", []):
+        kind = cluster["kind"]
+        allowed = set(cluster.get("materials", []))
+        density = float(cluster.get("density", 0.18))
+        seed = int(cluster.get("seed", 101))
+        for y in range(oy, oy + h):
+            for x in range(ox, ox + w):
+                c = (x, y)
+                if not in_shape(c, cluster["shape"]):
+                    continue
+                if allowed and mats.get(c) not in allowed:
+                    continue
+                if h01(x, y, seed) >= density:
+                    continue
+                frame = f"detail_{kind}_{int(h01(x, y, seed + 1) * 3) % 3}"
+                if frame not in atlas["terrain"]:
+                    raise ValueError(f"missing detail frame {frame}")
+                detail.append({"frame": frame, "cell": [x, y], "layer": "detail", "cluster": cluster["id"]})
+    return {"origin_cell": [ox, oy], "size_cells": [w, h], "rows": rows}, detail + overlays, road_cells, report
 
 
 def frame_role(frame: str, grammar: dict) -> str:
@@ -457,7 +529,11 @@ def compile_one(src: dict, kind: str, plan: dict, layers: Layers, atlas: dict, g
         "counts": {"ground_cells": ground["size_cells"][0] * ground["size_cells"][1], "props": len(props),
                    "lights": len(lights), "overlays": len(overlays), "road_cells": len(road_cells),
                    "road_overlays": sum(1 for o in overlays if o.get("layer") in ("road", "boardwalk", "causeway")),
-                   "bank_overlays": sum(1 for o in overlays if o.get("layer") == "bank")},
+                   "bank_overlays": sum(1 for o in overlays if o.get("layer") == "bank"),
+                   "detail_overlays": sum(1 for o in overlays if o.get("layer") == "detail"),
+                   "pier_cells": sum(1 for o in overlays if o.get("layer") == "boardwalk"),
+                   "causeway_cells": sum(1 for o in overlays if o.get("layer") == "causeway"),
+                   "track_cells": sum(1 for o in overlays if o.get("layer") == "road" and o["frame"].startswith("track_"))},
         "collision_change": False, "stand_change": False, "economy_change": False, "new_poi_count": 0,
     }
 
