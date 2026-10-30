@@ -2,6 +2,8 @@
 
 **DRAFT NOT USER-RATIFIED | 2026-10-30 | NO AGENT DISPATCH | NOT PRODUCTION ACCEPTANCE**
 
+**ADDITIONAL LOCK D059 (same date):** User selected **offline hunger shelter-protected Option 2**: valid house + honest rations means offline satiety can deplete and HP falls to 1 but no hunger-only offline death inside valid shelter; wilderness starvation still dangerous. No in-run hunger rate, thirst offline rule or season/climate timeline is user-approved. New follow-up design review: positive re-login results from paid orchard crops/furnace/research, region-responsive day-night/weather/heat/cold/radiation and natural disasters; first compare 14 real days and 2 world years / 3 world days per 2 real hours math (cannot all fit if 365-day years and a single calendar). Proposal and clock test: `CT_OFFLINE_RETURN_JOY_WORLD_TIME_ECOLOGY_WEATHER_V01_20261030.md`.
+
 **ADDITIONAL LOCK D058 (same date):** Every run begins with an independently randomized, geographically broad SAFE valid spawn; user specifically rejected a fixed start and choice among small set of areas. Old aggregated `Điểm hành trình` example is RETRACTED as ungrounded; FB59 remains a distinct research/feel decision. Source review: `CT_2019_2020_BATTLE_SETTLEMENT_SCORE_AND_RANDOM_SPAWN_RESEARCH_20261030.md`.
 
 **ADDITIONAL LOCK D056/D057 (same date):** Next 14-day season is a clean gameplay restart (all in-run world/home/inventory/Core/recipes/progression/quests cleared), keeping account-wide achievements and per-run historical result/stat records only; repeatable starter-guide quests are optional on later runs and give once-per-run authorized rewards. Exact Last Island end-score metric remains unverified and must not be invented.
@@ -65,7 +67,7 @@
 | FB22 | Loot dọc đường; vật liệu, Spares, rare clues | USER_WANTS | Mỗi chuyến có giá trị khác nhau |
 | FB23 | Mất đồ, túi chết, giường, thu hồi đúng đồ | USER_WANTS | Độ khó và timer còn phải cân |
 | FB24 | Thời tiết có hậu quả, có phương án ứng phó | USER_WANTS | Được user muốn rõ ràng |
-| FB25 | Mức đói, khát, rét, bệnh và phạt sinh tồn | ASK_USER | Cảm giác khắc nghiệt chưa chốt |
+| FB25 | Mức đói, khát, rét, bệnh và phạt sinh tồn | ASK_USER **(PARTIAL LOCK D059)** | **D059 đã chốt:** offline đói thật; trong căn nhà hợp lệ nếu hết khẩu phần chỉ kiệt sức tối đa 1 HP, không chết vì đói offline; ngoài hoang dã vẫn có thể chết nếu cảnh báo và túi thu hồi hợp lệ. Mức độ đói, khát, khí hậu, nhiệt và offline sản xuất **còn đang thiết kế**, không tự quyết định. |
 
 ### Kinh tế
 | ID | Nội dung | Trạng thái | Lý do/hàng rào |
