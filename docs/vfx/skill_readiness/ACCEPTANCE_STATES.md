@@ -34,7 +34,7 @@ Evidence: native runtime run `40930552334` at `bec65d1`. Verdicts were read from
 | 004 | yes | yes (seed 7) | yes (host PASS) | none recorded |
 | 005 | yes | yes (seed 7) | yes (host PASS) | none recorded |
 | 006 Graft Caravan | yes | yes (seeds 7, 21) | yes (host PASS) | pilot headless and real map PASS, not GOLD visual |
-| 007 | no | no | no | candidate tick-90 raster mismatch (candidate job failed); unresolved queue |
+| 007 | yes (candidate PASS run 41110354328 job 124250865627 @2d2855c) | yes (seed 7, first_divergent_tick -1) | registered (host matrix; lifecycle verdict pending in run 41112546494) | root cause: sqrt-vs-Math.hypot in engine resolve() (1-ulp cast-target) + mix() clamp; see RESTART_CHECKPOINT |
 | 008 | no | no | no | candidate tick-125 raster mismatch (candidate job failed); unresolved queue |
 | 009 | yes | yes (seed 7) | yes (host PASS) | none recorded |
 | 010 The Walking Crucible | yes | yes (seed 7) | yes (host PASS) | pilot headless and real map PASS, not GOLD visual |
@@ -50,12 +50,12 @@ Evidence: native runtime run `40930552334` at `bec65d1`. Verdicts were read from
 | 020 | no (not registered) | no | no | tick-180 raster blocked on original TypeScript; see VENOMWRIGHT_020_TICK180_BLOCKER.md |
 | 021 | yes | yes (seed 7) | yes (host PASS) | none recorded |
 
-All HOST_CASTABLE entries are library-level (15 verified at `bec65d1`; 008 host job added at `4bf0769`, verdict pending). None of them is HOST_ADAPTER_VERIFIED, GOLD_VISUAL_COMPARISON_READY, OWNER_VISUAL_APPROVED or PRODUCTION_INTEGRATED. The 21/21 target is not met: 007, 013, 015, 016 and 020 remain open. ARCANA III: original source available; foundation (util RNG/easing/noise) ported and Node-verified, renderer port not started (see `arcana/ARCANA_001_SOURCE_AUDIT.md`).
+All HOST_CASTABLE entries are library-level (19 registered: all but 013/016; host-lifecycle verdicts for 007/008/015/020 pending in run 41112546494). None of them is HOST_ADAPTER_VERIFIED, GOLD_VISUAL_COMPARISON_READY, OWNER_VISUAL_APPROVED or PRODUCTION_INTEGRATED. The 21/21 target is not met: 013 and 016 remain open. ARCANA III: original source available; foundation (util RNG/easing/noise) ported and Node-verified, renderer port not started (see `arcana/ARCANA_001_SOURCE_AUDIT.md`).
 
 ## Gaps recorded from the repo (not yet closed)
 
 1. RESOLVED 2026-10-30: both original ZIPs are committed in-branch at `prototypes/skill_readiness/original_sources/` and SHA-256 verified (`8402633c…677d`, `ab0dba56…d716`). The earlier private-vault 403 and `GOLD93_ARCHIVE_KEY` gaps are superseded for this branch. Original Node reference renders view A locally; extracted sources stay in `/tmp`, never committed.
 2. `docs/vfx/skill_readiness/captures/venomwright_006/` contains frames produced by the native port (manifest `engine`). They are not GOLD reference frames.
 3. The generic `integration/external_adapter_sample.gd` is not wired to any venomwright skill id.
-4. 013, 015 and 016 are not verified (see RESTART_CHECKPOINT.md). They are not registered as host-castable.
+4. 013 and 016 are not verified (see RESTART_CHECKPOINT.md). They are not registered as host-castable.
 5. 020 is unregistered. Its tick-180 raster mismatch needs the original per-object state (see VENOMWRIGHT_020_TICK180_BLOCKER.md).
