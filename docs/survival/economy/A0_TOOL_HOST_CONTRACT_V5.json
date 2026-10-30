@@ -70,7 +70,8 @@
       }
     },
     "atomic_commit_rule": "A0 must apply the A3 plan to survival_economy.instances[tool_instance_id] inside the SAME SaveService.transact_once candidate that records the harvest hit, inventory grant and node depletion. If atomic tool-use + harvest is unavailable, A0 must reject the swing. No separate tool journal, no UI authorization, no offline condition repair.",
-    "failure_rule": "Any plan rejection, stale revision, full bag, failed save or missing atomic capability leaves inventory, node state, tool condition and receipts byte-identical."
+    "failure_rule": "Any plan rejection, stale revision, full bag, failed save or missing atomic capability leaves inventory, node state, tool condition and receipts byte-identical.",
+    "a3_candidate_transform": "apply_tool_use_plan(candidate, plan) re-plans from the candidate, rejects stale_tool_use_plan, and decrements condition / increments revision only. A0 must call it inside the same SaveService.transact_once as node hit + yield grant."
   },
   "acceptance_for_wiring": [
     "native A0 test: bare-hand harvest of gated node fails; owned stone_pick succeeds and condition decrements once",
@@ -79,5 +80,11 @@
     "native A0 test: reload preserves tool revision/condition and node depletion",
     "two OS processes cannot double-spend the same tool revision",
     "A6 projection shows tool condition but cannot authorize harvest"
+  ],
+  "a3_callable_status": "IMPLEMENTED_A3_READ_ONLY_PLAN_AND_CANDIDATE_TRANSFORM_UNWIRED_A0",
+  "a3_callables": [
+    "plan_tool_use",
+    "plan_tool_use_candidate",
+    "apply_tool_use_plan"
   ]
 }

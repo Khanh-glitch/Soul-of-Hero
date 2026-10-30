@@ -168,9 +168,25 @@ def main():
     bindings_doc=load(DATA/'items/world_source_bindings.v3.json')
     bindings=bindings_doc.get('bindings',[]); world_actions=bindings_doc.get('world_actions',[])
     errors.extend(validate_world_bindings(bindings_doc, items, sources))
+    # V6 prepared-offline policy: opt-in allowlist, no crop/collector/Core automation.
+    offline_doc=load(DATA/'recipes/offline_operations.v1.json')
+    offline_schema=load(DATA/'recipes/offline_operations.schema.json')
+    offline_validator=jsonschema.Draft202012Validator(offline_schema)
+    for e in offline_validator.iter_errors(offline_doc): errors.append(f'offline_operations.v1.json: {list(e.absolute_path)}: {e.message}')
+    offline_policy=offline_doc.get('policy',{})
+    for rid in offline_policy.get('eligible_craft_recipes',[]):
+        if rid not in recipes: errors.append(f'offline policy unknown craft recipe {rid}')
+        elif recipes[rid]['category'] in offline_policy.get('ineligible_categories',[]): errors.append(f'offline policy eligible recipe in forbidden category {rid}')
+    for rid in offline_policy.get('eligible_research_recipes',[]):
+        if rid not in recipes: errors.append(f'offline policy unknown research recipe {rid}')
+    for tid in offline_policy.get('eligible_technologies',[]):
+        if tid not in techs: errors.append(f'offline policy unknown technology {tid}')
+    binding_ids={b['binding_id'] for b in bindings}
+    for bid in offline_policy.get('active_only_sources_unchanged',[]):
+        if bid not in binding_ids: errors.append(f'offline policy unknown ACTIVE-only world binding {bid}')
     index={'schema':'soh.economy.index.v1','items':{i:{'sources':items[i]['source_ids'],'used_in':sorted(used_in[i]),'produced_by':sorted(produced_by[i]),'sinks':sorted(sink_ids[i])} for i in sorted(items)}}
     report={'schema':'soh.economy.validation.v1','technical_status':'FAIL' if errors else 'PASS','scope':'catalog contract feasibility; not production-world integration','errors':errors,
-        'counts':{'items':len(items),'recipes':len(recipes),'technologies':len(techs),'sources':len(sources),'stations':len(stations),'world_source_bindings':len(bindings),'world_actions':len(world_actions)},
+        'counts':{'items':len(items),'recipes':len(recipes),'technologies':len(techs),'sources':len(sources),'stations':len(stations),'world_source_bindings':len(bindings),'world_actions':len(world_actions),'offline_eligible_craft_recipes':len(offline_policy.get('eligible_craft_recipes',[])),'offline_eligible_research_recipes':len(offline_policy.get('eligible_research_recipes',[])),'offline_eligible_technologies':len(offline_policy.get('eligible_technologies',[]))},
         'contract_reachable_items':len(reachable),'live_source_items':sorted(live),'production_cycles':cycles,
         'atlas_sha256':digest,'gameplay_design_status':'NOT_HUMAN_PLAYTESTED','integration_status':'A0_A1_A4_PENDING'}
     if args.index: args.index.write_text(json.dumps(index,indent=2)+'\n')

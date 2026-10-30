@@ -1,0 +1,58 @@
+{
+  "schema": "soh.economy.save_growth.v1",
+  "status": "SERIALIZATION_MODEL_NOT_NATIVE_DISK_BENCHMARK",
+  "gameplay_design_status": "NOT_HUMAN_PLAYTESTED",
+  "source_model": {
+    "seed": 30,
+    "sessions": 14,
+    "minutes_per_session": 45,
+    "claims": 1729,
+    "crafted": 520,
+    "recipes_researched": 15,
+    "technologies_learned": 5,
+    "loot_instances": 156,
+    "instance_crafted": 13
+  },
+  "scenarios": [
+    {
+      "name": "a3_14_session_model",
+      "transactions": 3518,
+      "terminal_instance_records": 169,
+      "schema2_compacted_bytes": 1048191,
+      "legacy_duplicate_commands_bytes": 1561818,
+      "bytes_saved_by_compaction": 513627,
+      "average_bytes_per_transaction": 297.95
+    },
+    {
+      "name": "sensitivity_10x_actions",
+      "transactions": 35180,
+      "terminal_instance_records": 1690,
+      "schema2_compacted_bytes": 10475890,
+      "legacy_duplicate_commands_bytes": 15612169,
+      "bytes_saved_by_compaction": 5136279,
+      "average_bytes_per_transaction": 297.78
+    },
+    {
+      "name": "receipt_pressure_100k",
+      "transactions": 100000,
+      "terminal_instance_records": 169,
+      "schema2_compacted_bytes": 28738525,
+      "legacy_duplicate_commands_bytes": 43338524,
+      "bytes_saved_by_compaction": 14599999,
+      "average_bytes_per_transaction": 287.39
+    }
+  ],
+  "findings": [
+    "Schema 2 stops growing survival_economy.commands; payload signatures live in SaveService receipt metadata.",
+    "Collected jobs are erased from survival_economy.jobs; SaveService receipts remain the replay authority.",
+    "Terminal instance records still grow with loot/manufacture history and need an A0 retention/archival policy if significant.",
+    "applied_transactions is still unbounded in SaveService; A0 must define receipt retention/compaction without breaking replay safety.",
+    "Time baselines are bounded to current session plus unresolved stations, capped at 256 station entries."
+  ],
+  "unresolved": [
+    "A0 receipt retention policy",
+    "A0 terminal-instance archival policy",
+    "native long-session disk/IO benchmark",
+    "human action frequency"
+  ]
+}

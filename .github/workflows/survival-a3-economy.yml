@@ -109,7 +109,11 @@ jobs:
           rc=$?
           set -e
           cat "$ARTIFACT_DIR/adapter.log"
-          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/adapter.log" "A3 adapter" "A3 ECONOMY ADAPTER PASSED"
+          # The V5 failed-save oracle intentionally obstructs the temporary write.
+          # Keep the full negative log in the artifact; gate the expected I/O line
+          # by name so it cannot mask unrelated script/engine errors.
+          grep -vE '^ERROR: SaveService: Could not write the temporary save file\.$' "$ARTIFACT_DIR/adapter.log" > "$ARTIFACT_DIR/adapter.gate.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/adapter.gate.log" "A3 adapter" "A3 ECONOMY ADAPTER PASSED"
           if [ "$rc" -eq 0 ]; then
             summary="$(grep 'A3 ECONOMY ADAPTER PASSED' "$ARTIFACT_DIR/adapter.log" | tail -1)"
             echo "::notice title=A3 native adapter::$summary"
@@ -136,6 +140,57 @@ jobs:
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/restart_phase2.log" "A3 restart phase2" "A3 WORLD RESTART PHASE 2 PASSED"
           if [ "$rc1" -ne 0 ] || [ "$rc2" -ne 0 ]; then exit 1; fi
           echo "A3 two-process world restart PASSED" >> "$GITHUB_STEP_SUMMARY"
+      - name: V6 prepared offline operations against real SaveService
+        run: |
+          set +e
+          timeout --signal=TERM --kill-after=10s 300s godot --headless --path . \
+            --user-data-dir artifacts/a3-runtime \
+            --script res://tests/survival/catalog/economy_offline_test.gd \
+            >"$ARTIFACT_DIR/offline.log" 2>&1
+          rc=$?
+          set -e
+          cat "$ARTIFACT_DIR/offline.log"
+          # The crash/replay case intentionally obstructs the temporary write.
+          grep -vE '^ERROR: SaveService: Could not write the temporary save file\.$' "$ARTIFACT_DIR/offline.log" > "$ARTIFACT_DIR/offline.gate.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/offline.gate.log" "A3 offline" "A3 OFFLINE OPERATIONS PASSED"
+          if [ "$rc" -eq 0 ]; then
+            grep 'A3 OFFLINE OPERATIONS PASSED' "$ARTIFACT_DIR/offline.log" | tail -1 >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit $rc
+      - name: V6 prepared offline settlement across two OS processes
+        run: |
+          set +e
+          A3_OFFLINE_RESTART_PHASE=1 timeout --signal=TERM --kill-after=10s 120s godot --headless --path . \
+            --user-data-dir artifacts/a3-runtime \
+            --script res://tests/survival/catalog/economy_offline_restart_test.gd \
+            >"$ARTIFACT_DIR/offline_restart_phase1.log" 2>&1
+          rc1=$?
+          A3_OFFLINE_RESTART_PHASE=2 timeout --signal=TERM --kill-after=10s 120s godot --headless --path . \
+            --user-data-dir artifacts/a3-runtime \
+            --script res://tests/survival/catalog/economy_offline_restart_test.gd \
+            >"$ARTIFACT_DIR/offline_restart_phase2.log" 2>&1
+          rc2=$?
+          set -e
+          cat "$ARTIFACT_DIR/offline_restart_phase1.log" "$ARTIFACT_DIR/offline_restart_phase2.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/offline_restart_phase1.log" "A3 offline restart phase1" "A3 OFFLINE RESTART PHASE 1 PASSED"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/offline_restart_phase2.log" "A3 offline restart phase2" "A3 OFFLINE RESTART PHASE 2 PASSED"
+          if [ "$rc1" -ne 0 ] || [ "$rc2" -ne 0 ]; then exit 1; fi
+          echo "A3 two-process offline restart PASSED" >> "$GITHUB_STEP_SUMMARY"
+      - name: V5 tool-use callable read-only plan / atomic candidate transform
+        run: |
+          set +e
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . \
+            --user-data-dir artifacts/a3-runtime \
+            --script res://tests/survival/catalog/economy_tool_use_test.gd \
+            >"$ARTIFACT_DIR/tool_use.log" 2>&1
+          rc=$?
+          set -e
+          cat "$ARTIFACT_DIR/tool_use.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/tool_use.log" "A3 tool use" "A3 TOOL USE CALLABLE PASSED"
+          if [ "$rc" -eq 0 ]; then
+            grep 'A3 TOOL USE CALLABLE PASSED' "$ARTIFACT_DIR/tool_use.log" | tail -1 >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit $rc
       - uses: actions/upload-artifact@v4
         if: always()
         with:

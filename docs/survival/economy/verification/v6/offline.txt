@@ -1,0 +1,254 @@
+Godot Engine v4.7.stable.custom_build - https://godotengine.org
+
+[offline case 01] 2h offline prepared forge
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    opt-in offline time host
+  ok    fixture grant oak_wood
+  ok    fixture grant iron_scrap
+  ok    fixture grant charcoal
+  ok    forge paid before absence
+  ok    forge explicitly armed
+  ok    read-only offline plan
+  ok    planning alone changes no save
+  ok    only remaining paid forge ticks are proposed
+  ok    A0-style SaveService commit
+  ok    forge ready after 2h
+  ok    player collects forge output
+  ok    offline output/fuel exact
+[offline case 02] 2h equivalent online forge
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    opt-in offline time host
+  ok    fixture grant oak_wood
+  ok    fixture grant iron_scrap
+  ok    fixture grant charcoal
+  ok    online forge paid
+  ok    online forge ready after same elapsed interval
+  ok    online collect
+  ok    online/offline final inventory parity
+[offline case 03] 18h offline prepared forge
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    opt-in offline time host
+  ok    fixture grant oak_wood
+  ok    fixture grant iron_scrap
+  ok    fixture grant charcoal
+  ok    forge paid before absence
+  ok    forge explicitly armed
+  ok    read-only offline plan
+  ok    planning alone changes no save
+  ok    only remaining paid forge ticks are proposed
+  ok    A0-style SaveService commit
+  ok    forge ready after 18h
+  ok    player collects forge output
+  ok    offline output/fuel exact
+[offline case 04] 18h equivalent online forge
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    opt-in offline time host
+  ok    fixture grant oak_wood
+  ok    fixture grant iron_scrap
+  ok    fixture grant charcoal
+  ok    online forge paid
+  ok    online forge ready after same elapsed interval
+  ok    online collect
+  ok    online/offline final inventory parity
+[offline case 05] 48h offline prepared forge
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    opt-in offline time host
+  ok    fixture grant oak_wood
+  ok    fixture grant iron_scrap
+  ok    fixture grant charcoal
+  ok    forge paid before absence
+  ok    forge explicitly armed
+  ok    read-only offline plan
+  ok    planning alone changes no save
+  ok    only remaining paid forge ticks are proposed
+  ok    A0-style SaveService commit
+  ok    forge ready after 48h
+  ok    player collects forge output
+  ok    offline output/fuel exact
+[offline case 06] 48h equivalent online forge
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    opt-in offline time host
+  ok    fixture grant oak_wood
+  ok    fixture grant iron_scrap
+  ok    fixture grant charcoal
+  ok    online forge paid
+  ok    online forge ready after same elapsed interval
+  ok    online collect
+  ok    online/offline final inventory parity
+[offline case 07] opt-in required; legacy active-only behavior unchanged
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    opt-in offline time host
+  ok    fixture grant oak_wood
+  ok    legacy enqueue still works
+  ok    unarmed job receives no offline progress
+  ok    unarmed job unchanged
+  ok    explicit arm succeeds
+  ok    armed job settles
+  ok    armed job completes
+[offline case 08] missing fuel and tampered fuel escrow fail closed
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    opt-in offline time host
+  ok    fixture grant iron_scrap
+  ok    smelt refuses without paid fuel
+  ok    fixture grant charcoal
+  ok    fuel-backed job armed
+  ok    fixture tampers fuel escrow
+  ok    tampered fuel produces no operation
+  ok    fuel mismatch reason exact
+  ok    tampered job did not advance
+[offline case 09] full storage keeps output in escrow; collect is atomic
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    opt-in offline time host
+  ok    fixture grant iron_scrap
+  ok    fixture grant charcoal
+  ok    full-bag job armed
+  ok    fixture fills bag
+  ok    settlement completes into job escrow
+  ok    output waits ready, not lost
+  ok    full bag refuses collect
+  ok    failed collect changes no inventory/job/receipt
+  ok    fixture clears bag
+  ok    collect succeeds after space
+  ok    exactly one ingot after full-bag recovery
+[offline case 10] repeated settlement, replay and out-of-order rollback
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    opt-in offline time host
+  ok    fixture grant iron_scrap
+  ok    fixture grant charcoal
+  ok    repeat job armed
+  ok    first 18h settlement
+  ok    same proposal replay is receipt-idempotent
+  ok    replay changes no save
+  ok    older interval rejected
+  ok    collect once
+  ok    later absence cannot duplicate completed output
+[offline case 11] crash before durable commit leaves no partial settlement
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    opt-in offline time host
+  ok    fixture grant iron_scrap
+  ok    fixture grant charcoal
+  ok    crash job armed
+  ok    fixture obstructs temporary save write
+ERROR: SaveService: Could not write the temporary save file.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _push_failure (res://game/autoload/save_service.gd:4797)
+       [1] _commit_snapshot (res://game/autoload/save_service.gd:2238)
+       [2] _commit_candidate (res://game/autoload/save_service.gd:2217)
+       [3] transact_once (res://game/autoload/save_service.gd:1260)
+       [4] _commit (res://tests/survival/catalog/economy_offline_test.gd:122)
+       [5] _run (res://tests/survival/catalog/economy_offline_test.gd:291)
+  ok    obstructed commit fails
+  ok    failed commit leaves inventory/job/arm unchanged
+  ok    retry after I/O repair commits once
+  ok    retry completes job
+  ok    retry yields exactly one ingot
+[offline case 12] station revision change blocks offline progress
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    opt-in offline time host
+  ok    fixture grant iron_scrap
+  ok    fixture grant charcoal
+  ok    revision job armed
+  ok    changed station produces no delta
+  ok    station revision reason exact
+  ok    changed station job unchanged
+[offline case 13] 14-real-day expiry clamps production and forbids post-expiry progress
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    opt-in offline time host
+  ok    fixture grant iron_scrap
+  ok    fixture grant charcoal
+  ok    job armed five seconds before expiry
+  ok    expiry detected
+  ok    settlement clamped to deadline
+  ok    only five pre-expiry ticks proposed
+  ok    clamped settlement commits
+  ok    unfinished job does not complete after expiry
+  ok    post-expiry interval grants no work
+[offline case 14] expiry-adjacent completed job is claimable once
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    opt-in offline time host
+  ok    fixture grant iron_scrap
+  ok    fixture grant charcoal
+  ok    near-expiry job armed
+  ok    near-expiry settlement
+  ok    job completed before deadline
+  ok    pre-expiry output exact
+[offline case 15] already-paid research completes offline without a new queue
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    opt-in offline time host
+  ok    fixture grant knowledge_spares
+  ok    fixture grant research_notes
+  ok    research paid before absence
+  ok    research explicitly armed
+  ok    research settles offline
+  ok    paid research knowledge unlocked
+  ok    research creates no free item
+  ok    research receipt collected
+  ok    no automatic next research queue
+[offline case 16] cultivation/Core/POI farming remain forbidden
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    opt-in offline time host
+  ok    fixture grant moonleaf_seed
+  ok    fixture grant compost
+  ok    legacy active-only cultivation can be paid
+  ok    no approved offline crop yield
+  ok    Core/reconstruction excluded from offline policy
+  ok    collectors disabled pending source authorization
+  ok    fixture grant oak_wood
+  ok    forge armed for source-cooldown isolation
+  ok    locker capability
+  ok    canonical cache claimed once actively
+  ok    48h prepared forge settlement
+  ok    offline time minted no POI/cache loot
+  ok    1800 ACTIVE source cooldown unchanged by offline interval
+[offline case 17] D059 food forecast is read-only and bounded by real stock
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    opt-in offline time host
+  ok    fixture grant field_meal
+  ok    food forecast accepted
+  ok    18h food math exact
+  ok    only real food stock proposed for debit
+  ok    stock exhaustion reported
+  ok    A0 owns sheltered 1HP floor; A3 forecasts only
+  ok    forecast changes no save
+  ok    forecast cannot debit more food than the save owns
+  ok    unprotected risk is distinct
+  ok    no free food when pantry empty
+[offline case 18] prepared forge enables a concrete next home production choice
+  ok    fresh authoritative save
+  ok    catalog + real SaveService adapter
+  ok    opt-in offline time host
+  ok    fixture grant iron_scrap
+  ok    fixture grant charcoal
+  ok    fixture grant oak_wood
+  ok    fixture grant knowledge_spares
+  ok    two finite forge batches paid
+  ok    research kit unaffordable before ingots exist
+  ok    both batches armed
+  ok    18h return settlement
+  ok    two ingots collected
+  ok    exact prepared output
+  ok    returned ingots unlock paid research-kit construction
+  ok    next choice consumes real saved resources
+A3 OFFLINE OPERATIONS PASSED - 220 checks / 18 cases
+WARNING: 39 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2535)
+ERROR: 2 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

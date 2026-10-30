@@ -79,6 +79,106 @@
           }
         }
       }
+    },
+    "offline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "run_id",
+        "last_authenticated_unix",
+        "last_projection_sequence",
+        "armed"
+      ],
+      "properties": {
+        "schema": {
+          "const": 1
+        },
+        "run_id": {
+          "type": "string",
+          "maxLength": 96
+        },
+        "last_authenticated_unix": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4102444800
+        },
+        "last_projection_sequence": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000000000
+        },
+        "armed": {
+          "type": "object",
+          "maxProperties": 256,
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "job_id",
+              "run_id",
+              "station_id",
+              "station_revision",
+              "armed_at_unix",
+              "last_settled_unix",
+              "tick_microseconds",
+              "duration_ticks",
+              "elapsed_at_arm",
+              "policy_sha256",
+              "escrow_sha256"
+            ],
+            "properties": {
+              "job_id": {
+                "type": "string",
+                "maxLength": 64
+              },
+              "run_id": {
+                "type": "string",
+                "maxLength": 96
+              },
+              "station_id": {
+                "type": "string",
+                "maxLength": 64
+              },
+              "station_revision": {
+                "type": "string",
+                "maxLength": 128
+              },
+              "armed_at_unix": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 4102444800
+              },
+              "last_settled_unix": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 4102444800
+              },
+              "tick_microseconds": {
+                "const": 1000000
+              },
+              "duration_ticks": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1000000
+              },
+              "elapsed_at_arm": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1000000
+              },
+              "policy_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "escrow_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          }
+        }
+      }
     }
   },
   "$defs": {

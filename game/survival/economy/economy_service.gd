@@ -8,11 +8,14 @@ extends RefCounted
 ## Safety contracts (see docs/survival/economy/):
 ## - soH unique tokens: exactly one qty-1 key_item bag stack XOR escrow/terminal.
 ## - Time: only an injected A0 host may grant active-session ticks; UI-supplied
-##   tick counts are rejected. No offline catch-up.
+##   tick counts are rejected. V5 station/source advance remains ACTIVE-only.
+##   V6 adds a separate opt-in read-only planner for already-paid prepared jobs;
+##   A0 alone commits its proposals through the existing SaveService boundary.
 ## - Cast: only an injected A4 attestor bound to a verified catalog skill binding
 ##   may authorize charge debit at the gameplay commit boundary.
 
 const WorldSources = preload("res://game/survival/economy/world_source_adapter.gd")
+const OfflineOperations = preload("res://game/survival/economy/offline_operation_planner.gd")
 const ROOT := "survival_economy"
 const WORLD_ROOT := "world_slice"
 const SCHEMA := 2
@@ -21,6 +24,12 @@ const MAX_EVENT_LENGTH := 96
 const TOKEN_PREFIX := "soh_i_"
 const TIME_CONTRACT := "soh.economy.active_tick.v1"
 const SKILL_CONTRACT := "soh.economy.skill_attestation.v1"
+const TOOL_USE_CONTRACT := "soh.economy.tool_use.v1"
+const TOOL_USE_RESOURCE_KINDS := {
+	"stone_pick": ["stone_outcrop", "iron_vein"],
+	"iron_pick": ["iron_vein", "scrap_pile"],
+	"salvage_hammer": ["scrap_pile"]
+}
 const MAX_TICK_QUANTUM := 600
 const MAX_TIME_STATIONS := 256
 const UNRESOLVED_JOB_STATES := ["queued", "running", "paused", "ready", "cancelled"]
@@ -30,6 +39,7 @@ var _station_resolver: Callable
 var _time_host: Callable
 var _skill_attestor: Callable
 var _world_host: Callable
+var _offline: RefCounted
 var catalog: Dictionary = {}
 var last_error := ""
 
@@ -45,6 +55,7 @@ func configure(save_service: Node, station_resolver: Callable = Callable()) -> b
 	_time_host = Callable()
 	_skill_attestor = Callable()
 	_world_host = Callable()
+	_offline = OfflineOperations.new()
 	return load_catalog()
 
 ## A0 composition root only. The host must be a pure read of authoritative
@@ -66,6 +77,132 @@ func configure_skill_attestor(attestor: Callable) -> bool:
 func configure_world_host(host: Callable) -> bool:
 	_world_host = host if host.is_valid() else Callable()
 	return true
+
+## A0 composition root only. Opt-in D055/D060 real-UTC projection for prepared
+## operations. Absent host => V5 behavior unchanged and offline planning fails closed.
+func configure_offline_time_host(host: Callable) -> bool:
+	if _offline == null:
+		_offline = OfflineOperations.new()
+	_offline.set_host(host)
+	return true
+
+## V6 opt-in: record that an already-paid job may use future real elapsed time.
+## This is a player preparation action through the existing SaveService boundary;
+## it does not advance the job, create a queue, or touch ACTIVE source cooldowns.
+func arm_offline_operation(job_id: String, event_id: String) -> Dictionary:
+	if _offline == null:
+		return _fail("offline_planner_unavailable")
+	return _transact("arm_offline", event_id, {"job": job_id},
+		func(candidate: Dictionary, state: Dictionary, result: Dictionary) -> bool:
+			return _offline.arm(candidate, state, job_id, result))
+
+## Read-only D060 proposal. A0 must commit it via SaveService.transact_once using
+## proposal_id as the idempotency key and apply_offline_operation_plan() inside the
+## mutator. Calling this function never changes inventory, jobs, cooldowns or disk.
+func plan_offline_operations(request: Variant) -> Dictionary:
+	if _offline == null:
+		return _fail("offline_planner_unavailable")
+	return _offline.plan(request)
+
+## Pure candidate transform for A0's existing single SaveService transaction.
+## It re-plans from the candidate and rejects stale/tampered proposals.
+func apply_offline_operation_plan(candidate: Dictionary, proposal: Dictionary, request: Variant) -> Dictionary:
+	if _offline == null:
+		return _fail("offline_planner_unavailable")
+	return _offline.apply_to_candidate(candidate, proposal, request)
+
+## D059 forecast/interface only; A0 owns shelter, satiety, HP, death and debits.
+func forecast_offline_food(request: Variant, needs: Variant) -> Dictionary:
+	if _offline == null or _save == null:
+		return _fail("offline_planner_unavailable")
+	var candidate: Dictionary = _save.call(&"get_snapshot")
+	return _offline.forecast_food(candidate, request, needs)
+
+func offline_operation_state() -> Dictionary:
+	return document().get("offline", OfflineOperations.empty_state())
+
+## V5 A0 handoff callable, now implemented. READ-ONLY tool-use plan. A0 must
+## apply it inside the SAME SaveService transaction as the harvest hit, node
+## depletion and inventory grant. A3 does not authorize a harvest by itself and
+## never multiplies yield. active_seconds is an A0 echo for receipt binding, not
+## an A3-verified clock; offline/wall-clock condition repair is forbidden.
+func plan_tool_use(request: Variant) -> Dictionary:
+	if _save == null:
+		return _fail("not_configured")
+	var candidate: Dictionary = _save.call(&"get_snapshot")
+	return plan_tool_use_candidate(candidate, request)
+
+func plan_tool_use_candidate(candidate: Dictionary, request: Variant) -> Dictionary:
+	if not request is Dictionary:
+		return {"ok": false, "reason": "INVALID_TOOL_USE_REQUEST", "allowed": false}
+	var req: Dictionary = request
+	var expected := ["contract", "node_id", "resource_kind", "tool_instance_id", "expected_tool_revision", "world_revision", "active_seconds"]
+	if req.size() != expected.size():
+		return {"ok": false, "reason": "INVALID_TOOL_USE_REQUEST", "allowed": false}
+	for field in expected:
+		if not req.has(field):
+			return {"ok": false, "reason": "INVALID_TOOL_USE_REQUEST", "allowed": false}
+	if str(req.contract) != TOOL_USE_CONTRACT:
+		return {"ok": false, "reason": "INVALID_TOOL_USE_REQUEST", "allowed": false}
+	for field in ["node_id", "resource_kind", "tool_instance_id", "world_revision"]:
+		if not req[field] is String or str(req[field]).is_empty() or str(req[field]).length() > 128:
+			return {"ok": false, "reason": "INVALID_TOOL_USE_REQUEST", "allowed": false}
+	if not req.expected_tool_revision is int or int(req.expected_tool_revision) < 0 or int(req.expected_tool_revision) > 1000000:
+		return {"ok": false, "reason": "INVALID_TOOL_USE_REQUEST", "allowed": false}
+	if not req.active_seconds is int or int(req.active_seconds) < 0 or int(req.active_seconds) > 1000000000:
+		return {"ok": false, "reason": "INVALID_TOOL_USE_REQUEST", "allowed": false}
+	var state_error := _candidate_state_error(candidate)
+	if not state_error.is_empty():
+		return {"ok": false, "reason": "INVALID_TOOL_USE_REQUEST", "allowed": false, "detail": state_error}
+	var state := _state(candidate)
+	var tool_id := str(req.tool_instance_id)
+	var token_error := _token_error(candidate, state, tool_id)
+	if not token_error.is_empty():
+		return {"ok": false, "reason": "TOOL_NOT_OWNED", "allowed": false, "detail": token_error}
+	var record: Dictionary = state["instances"][tool_id]
+	var tool_item := str(record.get("item_id", ""))
+	if not TOOL_USE_RESOURCE_KINDS.has(tool_item):
+		return {"ok": false, "reason": "TOOL_KIND_MISMATCH", "allowed": false, "tool_item_id": tool_item}
+	if int(record.get("revision", -1)) != int(req.expected_tool_revision):
+		return {"ok": false, "reason": "TOOL_REVISION_STALE", "allowed": false, "tool_item_id": tool_item}
+	if int(record.get("condition", 0)) <= 0:
+		return {"ok": false, "reason": "TOOL_BROKEN", "allowed": false, "tool_item_id": tool_item}
+	var kind := str(req.resource_kind)
+	var known_kinds := ["stone_outcrop", "iron_vein", "scrap_pile"]
+	if not kind in known_kinds:
+		return {"ok": false, "reason": "NODE_KIND_UNKNOWN", "allowed": false, "tool_item_id": tool_item}
+	if not (TOOL_USE_RESOURCE_KINDS[tool_item] as Array).has(kind):
+		return {"ok": false, "reason": "TOOL_KIND_MISMATCH", "allowed": false, "tool_item_id": tool_item}
+	var condition_cost := 1
+	var plan_id := JSON.stringify({"request": req, "tool_item_id": tool_item, "condition_before": int(record.condition),
+		"condition_cost": condition_cost, "next_tool_revision": int(req.expected_tool_revision) + 1}, "", true, true).sha256_text()
+	return {"ok": true, "reason": "", "contract": TOOL_USE_CONTRACT, "plan_id": plan_id,
+		"request": req.duplicate(true),
+		"tool_item_id": tool_item, "allowed": true, "condition_cost": condition_cost,
+		"next_tool_revision": int(req.expected_tool_revision) + 1, "yield_multiplier": 1,
+		"active_seconds_authority": "A0_REQUEST_ECHO_NOT_VERIFIED_BY_A3",
+		"receipt_metadata": {"a3_tool_use": true, "tool_instance_id": tool_id, "node_id": str(req.node_id), "resource_kind": kind}}
+
+## Pure candidate transform for A0's atomic harvest transaction. It re-plans from
+## the candidate and ignores caller-supplied condition/revision deltas. A0 must
+## reject the whole harvest if the bag cannot receive the node yield; this helper
+## does not grant inventory and must not be committed separately from the harvest.
+func apply_tool_use_plan(candidate: Dictionary, plan: Dictionary) -> Dictionary:
+	if not plan is Dictionary or str(plan.get("contract", "")) != TOOL_USE_CONTRACT or not plan.get("request") is Dictionary:
+		return _fail("invalid_tool_use_plan")
+	var fresh := plan_tool_use_candidate(candidate, plan.request)
+	if not bool(fresh.get("ok", false)) or not bool(fresh.get("allowed", false)):
+		return fresh
+	if str(plan.get("plan_id", "")) != str(fresh.plan_id):
+		return _fail("stale_tool_use_plan")
+	var state := _state(candidate)
+	var tool_id := str((plan.request as Dictionary).tool_instance_id)
+	var record: Dictionary = state["instances"][tool_id]
+	record["condition"] = maxi(0, int(record.condition) - int(fresh.condition_cost))
+	record["revision"] = int(fresh.next_tool_revision)
+	candidate[ROOT] = state
+	return _ok({"tool_instance_id": tool_id, "condition": int(record.condition), "revision": int(record.revision),
+		"yield_multiplier": 1, "receipt_metadata": fresh.receipt_metadata})
 
 func load_catalog() -> bool:
 	catalog = {}
@@ -96,6 +233,21 @@ func load_catalog() -> bool:
 		last_error = "invalid_world_bindings:" + ",".join(binding_errors)
 		return false
 	catalog["world_bindings"] = world_parsed
+	var offline_file := FileAccess.open(CATALOG_ROOT + "recipes/offline_operations.v1.json", FileAccess.READ)
+	if offline_file == null:
+		last_error = "missing_catalog:recipes/offline_operations.v1.json"
+		return false
+	var offline_parsed: Variant = JSON.parse_string(offline_file.get_as_text())
+	offline_file.close()
+	if not offline_parsed is Dictionary or not (offline_parsed as Dictionary).get("policy") is Dictionary:
+		last_error = "invalid_catalog:recipes/offline_operations.v1.json"
+		return false
+	catalog["offline_policy"] = (offline_parsed as Dictionary)["policy"]
+	if _offline == null:
+		_offline = OfflineOperations.new()
+	if not _offline.configure(self, catalog["offline_policy"]):
+		last_error = "invalid_offline_policy"
+		return false
 	last_error = ""
 	return true
 
@@ -130,6 +282,7 @@ func _state(candidate: Dictionary) -> Dictionary:
 		"commands": state.get("commands", {}),
 		"counter": int(state.get("counter", 0)),
 		"time": state.get("time", _empty_time()),
+		"offline": state.get("offline", OfflineOperations.empty_state()),
 	}
 	return result
 
@@ -213,6 +366,10 @@ func _state_error(raw: Variant) -> String:
 		var time_error := _time_state_error(state.get("time", {}))
 		if not time_error.is_empty():
 			return time_error
+	if state.has("offline"):
+		var offline_error := OfflineOperations.state_error(state["offline"])
+		if not offline_error.is_empty():
+			return offline_error
 	return ""
 
 func _time_state_error(raw: Variant) -> String:
@@ -790,6 +947,18 @@ func _transact(operation: String, event_id: String, payload: Dictionary, mutator
 		if result_metadata is Dictionary:
 			receipt_metadata.merge(result_metadata, true)
 			result.erase("receipt_metadata")
+		# V6: an arm record is custody of a future offline interval, not a reward.
+		# Once the job is ready/collected/cancelled/missing, prune the arm so it
+		# cannot occupy a slot or be replayed. V5 saves without offline are untouched.
+		if state.has("offline") and state["offline"] is Dictionary:
+			var offline_state: Dictionary = state["offline"]
+			var armed_records: Dictionary = offline_state.get("armed", {})
+			for armed_id: Variant in armed_records.keys():
+				var armed_job: Dictionary = (state.get("jobs", {}) as Dictionary).get(str(armed_id), {})
+				if armed_job.is_empty() or str(armed_job.get("status", "")) not in ["queued", "running", "paused"]:
+					armed_records.erase(str(armed_id))
+			offline_state["armed"] = armed_records
+			state["offline"] = offline_state
 		# Compact only terminal legacy jobs with no remaining escrow. Active,
 		# ready-refund, and output-bearing jobs are never silently discarded.
 		for job_id: Variant in (state.get("jobs", {}) as Dictionary).keys():

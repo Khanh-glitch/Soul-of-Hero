@@ -1,0 +1,57 @@
+{
+  "technical_status": "PASS",
+  "gameplay_design_status": "NOT_HUMAN_PLAYTESTED",
+  "baseline": {
+    "active_production_ticks": 22516,
+    "cores_built": 0,
+    "finite_cast_uses_created": 0,
+    "ancient_catalyst_consumed": 0,
+    "technologies_learned": [
+      "tech_core_binding",
+      "tech_frost",
+      "tech_precision",
+      "tech_smelting",
+      "tech_toxin"
+    ],
+    "invariants": {
+      "no_negative_inventory": true,
+      "catalyst_conservation": true,
+      "farm_never_creates_catalyst": true
+    }
+  },
+  "scenarios": [
+    {
+      "yield_scale": 1.0,
+      "demand_scale": 1.0,
+      "cores_built": 0,
+      "ancient_catalyst_consumed": 0,
+      "invariants": {
+        "no_negative_inventory": true,
+        "catalyst_conservation": true,
+        "farm_never_creates_catalyst": true
+      }
+    },
+    {
+      "yield_scale": 0.75,
+      "demand_scale": 1.25,
+      "cores_built": 0,
+      "ancient_catalyst_consumed": 0,
+      "invariants": {
+        "no_negative_inventory": true,
+        "catalyst_conservation": true,
+        "farm_never_creates_catalyst": true
+      }
+    },
+    {
+      "yield_scale": 1.25,
+      "demand_scale": 0.75,
+      "cores_built": 0,
+      "ancient_catalyst_consumed": 0,
+      "invariants": {
+        "no_negative_inventory": true,
+        "catalyst_conservation": true,
+        "farm_never_creates_catalyst": true
+      }
+    }
+  ]
+}
