@@ -203,10 +203,10 @@
     "first_test": "Run exact A1 90c1d8 46/48/14 isolated A0 controller pilot, required locker stand, actual input and reload; diagnose CI, then develop authorized bounded optional skeleton encounter with actual combat/death/bed/bag journey. Same-SHA regression gates; B0 NOT ACCEPTED PR21 HOLD.",
     "parallel_start": "A1 owns world planning, A3 economy data; A6 works on isolated UI paths only and must not modify the A0 construction build strip. A7 is a distributed QA workstream; S6 is optional and nonblocking.",
     "design_gate": "Every SURV-020 claim needs a green native run recorded here, exactly as SURV-010 now has.",
-    "description": "Inspect native CI at daa058120d8c2f779f353bbdb975dd860c8e4c87, including independent locker collider trace and home/modal/optional threat. Fix semantic/runtime failures without weakening gates. Complete inverse/rollback/downgrade and real repeated-death/safety/no-farming journey; latest A1 pin 965a0b03830fb5866d08c0d5a877135bf2f8c83f. SURV-020/B0 NOT ACCEPTED; draft PR HOLD.",
-    "last_verified_code": "b79d3679e388369dd8863973055a2a2be20a7af6 (native foundation + home passed; connector 18/19 blocked combined nav/shape; not full acceptance)",
-    "working_code": "daa058120d8c2f779f353bbdb975dd860c8e4c87 (native CI pending)",
-    "docs_sync": "tab04 readback index 122472 covers current experimental daa code and corrected b79 counterexample; sync future CI results"
+    "description": "NEXT_ATOMIC_ACTION: inspect threat 40997515288 at 2926650c (real initial health), and connector inverse/legacy downgrade 40996661054 at 0c1a33de. Diagnose failures without fabricated combat or weakening checks. Request A1 correction to exact locker collision using PR20 comment 6514108933. Continue real continuous home→threat→death/bag→GUI bed→recovery→home/reload, repeated death, avoidance, no-farming, then same-SHA native/A6/perf regressions. Investigate +120% performance failure without changing +45% gate. SURV-020/B0 NOT ACCEPTED; PR21 draft HOLD.",
+    "last_verified_code": "71f359c7dda4b3efec73cbd96c87f38d468577be: home92, foundation and A6 passed; overworld perf FAILED +120%; threat not passed.",
+    "working_code": "2926650ca62e79f0b107b2cd36a13c536db06409; threat 40997515288 pending; latest A1 965a0b03830fb5866d08c0d5a877135bf2f8c83f.",
+    "docs_sync": "tab04 readback index 126901 documents this checkpoint; sync subsequent CI results"
   },
   "blockers": [
     {
