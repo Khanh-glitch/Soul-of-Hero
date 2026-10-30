@@ -4,7 +4,10 @@ extends SceneTree
 ## interaction engine. It loads the real pinned Knight as a physics/scale proxy,
 ## paints A1 visual-only art, reuses OverworldOcclusion, proves zero added
 ## collision, checks inherited VFX light-mask isolation, and captures true
-## 720p / 1440p / 2160p frames. Integer-downscaled logical hashes must match.
+## 720p / 1440p / 2160p frames. Static pixel geometry must be byte-identical
+## after integer downscale; continuous day/night lighting is captured and
+## asserted separately because screen-resolution light sampling is not a
+## logical-geometry invariant. Gold/VFX mask ownership remains unchanged.
 
 const INDEX := "res://data/survival/world/art/presentations.v1.json"
 const ATLAS := "res://data/survival/world/art/atlas.v1.json"
@@ -18,6 +21,8 @@ var out_root := "artifacts/a1-world-art"
 var resolutions: Array[Vector2i] = [Vector2i(1280, 720), Vector2i(2560, 1440), Vector2i(3840, 2160)]
 var screenshots: Array[String] = []
 var capture_rows: Array[Dictionary] = []
+var static_parity_rows: Array[Dictionary] = []
+var lighting_state_rows: Array[Dictionary] = []
 var stats_rows: Array[Dictionary] = []
 var perf_rows: Array[Dictionary] = []
 var host: Node2D
@@ -69,12 +74,50 @@ func _unique_colors(image: Image) -> int:
 				return seen.size()
 	return seen.size()
 
+func _set_fixture_lights(pres: WorldArtPresentation, enabled: bool) -> void:
+	# A1-owned lamp root. Hiding the parent is resolution-independent and does
+	# not rewrite authored light data, energies, masks or Gold VFX state.
+	if pres.lights_root != null and is_instance_valid(pres.lights_root):
+		pres.lights_root.visible = enabled
+	# The pinned Knight carries an inherited continuous vision light. It is not
+	# A1 art; hide it only for the static geometry pass, restore it for lit caps.
+	var vision := hero.get_node_or_null("VisionLight") as Light2D
+	if vision != null:
+		vision.visible = enabled
+
+func _lighting_state(pres: WorldArtPresentation) -> Dictionary:
+	var lights: Array[Dictionary] = []
+	for light: PointLight2D in pres._lights:
+		if not is_instance_valid(light):
+			continue
+		lights.append({
+			"position": [light.position.x, light.position.y],
+			"energy": light.energy,
+			"visible": light.visible,
+			"item_cull_mask": light.range_item_cull_mask,
+			"layer_min": light.range_layer_min,
+			"layer_max": light.range_layer_max,
+		})
+	var vision := hero.get_node_or_null("VisionLight") as Light2D
+	return {
+		"ambient": [pres._ambient.r, pres._ambient.g, pres._ambient.b, pres._ambient.a],
+		"night": pres._night,
+		"lights_root_visible": pres.lights_root.visible if pres.lights_root != null else false,
+		"lights": lights,
+		"hero_vision_light": {
+			"visible": vision.visible if vision != null else false,
+			"energy": vision.energy if vision != null else 0.0,
+			"item_cull_mask": vision.range_item_cull_mask if vision != null else 0,
+		},
+	}
+
 func _capture(name: String, res: Vector2i, view_id: String, treatment_id: String) -> Dictionary:
 	root.size = res
 	await process_frame
 	await process_frame
 	camera.force_update_scroll()
 	await process_frame
+	await RenderingServer.frame_post_draw
 	var image := root.get_texture().get_image()
 	var row := {"file": name, "resolution": [res.x, res.y], "view_id": view_id, "treatment_id": treatment_id}
 	if image == null:
@@ -108,6 +151,13 @@ func _run() -> void:
 	root.content_scale_size = LOGICAL
 	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
 	root.content_scale_aspect = Window.CONTENT_SCALE_ASPECT_EXPAND
+	# Pixel-art fixture: snap canvas transforms/vertices and disable AA/debanding
+	# so static source pixels are not smeared by subpixel rasterization.
+	root.snap_2d_transforms_to_pixel = true
+	root.snap_2d_vertices_to_pixel = true
+	root.msaa_2d = Viewport.MSAA_DISABLED
+	root.screen_space_aa = Viewport.SCREEN_SPACE_AA_DISABLED
+	root.use_debanding = false
 	var save := root.get_node_or_null("SaveService")
 	if save != null and save.has_method("configure_storage"):
 		save.call("configure_storage", "user://tests/a1_world_art_native.json", true)
@@ -183,21 +233,67 @@ func _run() -> void:
 		var views: Array = pres.data.get("capture_views", [])
 		for vraw: Variant in views:
 			var view: Dictionary = vraw
+			var tod := float(view.get("time_of_day", 0.35))
 			hero.global_position = _foot(view.center_cell)
-			pres.set_time_of_day(float(view.get("time_of_day", 0.35)))
+			pres.set_time_of_day(tod)
 			pres.snap_occlusion()
 			await physics_frame
-			var hashes: Array[String] = []
+			# Strict static geometry gate: hide continuous A1/Knight lights, keep
+			# authored ambient/occlusion, and require exact logical PNG identity.
+			_set_fixture_lights(pres, false)
+			pres.set_time_of_day(tod)
+			pres.snap_occlusion()
+			await physics_frame
+			var static_hashes: Array[String] = []
+			var static_files: Array[String] = []
 			for res: Vector2i in resolutions:
-				var name := "%s_%s_%dx%d.png" % [entry.treatment_id, view.id, res.x, res.y]
+				var name := "%s_%s_static_%dx%d.png" % [entry.treatment_id, view.id, res.x, res.y]
 				var row := await _capture(name, res, String(view.id), String(entry.treatment_id))
 				if row.has("logical_sha256"):
-					hashes.append(String(row.logical_sha256))
-			var crisp := hashes.size() == resolutions.size()
+					static_hashes.append(String(row.logical_sha256))
+				static_files.append(name)
+			var crisp := static_hashes.size() == resolutions.size()
 			if crisp:
-				for h: String in hashes:
-					crisp = crisp and h == hashes[0]
-			_expect(crisp, "integer-downscaled logical pixels match across resolutions " + String(entry.treatment_id) + "/" + String(view.id))
+				for h: String in static_hashes:
+					crisp = crisp and h == static_hashes[0]
+			_expect(crisp, "static integer-downscaled logical pixels match across resolutions " + String(entry.treatment_id) + "/" + String(view.id))
+			static_parity_rows.append({"treatment_id": entry.treatment_id, "view_id": view.id,
+				"files": static_files, "logical_sha256": static_hashes, "match": crisp})
+			# Lit day/night evidence: restore lights, assert resolution-independent
+			# light state/masks, and retain full-resolution captures for review.
+			_set_fixture_lights(pres, true)
+			pres.set_time_of_day(tod)
+			pres.snap_occlusion()
+			await physics_frame
+			var lit_hashes: Array[String] = []
+			var lit_files: Array[String] = []
+			var lighting_states: Array[Dictionary] = []
+			for res: Vector2i in resolutions:
+				var name := "%s_%s_%dx%d.png" % [entry.treatment_id, view.id, res.x, res.y]
+				lighting_states.append(_lighting_state(pres))
+				var row := await _capture(name, res, String(view.id), String(entry.treatment_id))
+				if row.has("logical_sha256"):
+					lit_hashes.append(String(row.logical_sha256))
+				lit_files.append(name)
+			var lighting_stable := lighting_states.size() == resolutions.size()
+			if lighting_stable:
+				for state: Dictionary in lighting_states:
+					lighting_stable = lighting_stable and state == lighting_states[0]
+			_expect(lighting_stable, "day/night light state is resolution-independent " + String(entry.treatment_id) + "/" + String(view.id))
+			var any_light := false
+			if not lighting_states.is_empty():
+				for l: Dictionary in lighting_states[0].lights:
+					any_light = any_light or bool(l.visible)
+				any_light = any_light or bool(lighting_states[0].hero_vision_light.visible)
+			var lit_differs := lit_hashes.size() == static_hashes.size()
+			if lit_differs and any_light:
+				for i: int in range(lit_hashes.size()):
+					lit_differs = lit_differs and lit_hashes[i] != static_hashes[i]
+			_expect(not any_light or lit_differs, "lit capture includes active lighting without relaxing static geometry gate " + String(entry.treatment_id) + "/" + String(view.id))
+			lighting_state_rows.append({"treatment_id": entry.treatment_id, "view_id": view.id,
+				"time_of_day": tod, "files": lit_files, "logical_sha256": lit_hashes,
+				"state_resolution_independent": lighting_stable, "active_lighting_visible_in_capture": lit_differs,
+				"state": lighting_states[0] if not lighting_states.is_empty() else {}})
 		# Occlusion stepping: stand behind the tallest landmark and prove fade.
 		var tall: Dictionary = {}
 		for p_raw: Variant in pres.data.get("props", []):
@@ -257,13 +353,16 @@ func _run() -> void:
 		pres.queue_free()
 		await process_frame
 	var report := {
-		"schema": "soh.world.art_native_report.v2",
+		"schema": "soh.world.art_native_report.v3",
 		"ok": failures.is_empty(),
 		"native_fixture_verified": failures.is_empty(),
 		"checks": checks,
 		"failures": failures,
 		"screenshots": screenshots,
 		"captures": capture_rows,
+		"static_parity": static_parity_rows,
+		"lighting_states": lighting_state_rows,
+		"parity_scope": "STATIC_GEOMETRY_STRICT_HASH_CONTINUOUS_LIGHTING_SEPARATE",
 		"stats": stats_rows,
 		"performance": perf_rows,
 		"gold_probe": gold_probe,

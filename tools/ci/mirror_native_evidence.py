@@ -82,12 +82,26 @@ def main() -> int:
         "scope": "GIT_BLOB_FALLBACK_NOT_A_BRANCH_OR_PRODUCTION_CLAIM",
     }
     text = json.dumps(payload, sort_keys=True, separators=(",", ":"))
-    # GitHub annotation messages are limited; keep one compact notice.
-    if len(text.encode()) > 60000:
-        print("::warning::native evidence manifest too large; emitting partial manifest")
-        payload["files"] = dict(list(manifest.items())[:40])
-        text = json.dumps(payload, sort_keys=True, separators=(",", ":"))
-    print("::notice::A1_NATIVE_EVIDENCE_BLOBS " + text)
+    # Individual GitHub annotation messages are truncated well below the full
+    # manifest size. Store the manifest itself as a Git blob and announce only
+    # its SHA; reviewers can fetch every file through api.github.com.
+    try:
+        manifest_blob = request("POST", f"/repos/{repo}/git/blobs", token, {
+            "content": base64.b64encode(text.encode()).decode("ascii"),
+            "encoding": "base64",
+        })
+    except (urllib.error.URLError, TimeoutError, OSError) as exc:
+        print(f"::warning::native evidence manifest blob failed: {exc}")
+        return 0
+    notice = {
+        "schema": "soh.a1.native_evidence_manifest_pointer.v1",
+        "manifest_sha": manifest_blob["sha"],
+        "files": len(manifest),
+        "bytes": total,
+        "run_id": payload["run_id"],
+        "head_sha": payload["head_sha"],
+    }
+    print("::notice::A1_NATIVE_EVIDENCE_MANIFEST_BLOB " + json.dumps(notice, sort_keys=True, separators=(",", ":")))
     print(f"native evidence mirrored: {len(manifest)} files, {total} bytes")
     return 0
 

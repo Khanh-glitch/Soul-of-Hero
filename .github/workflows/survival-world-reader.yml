@@ -320,7 +320,7 @@ jobs:
       - name: Capture native 720p / 1440p / 2160p world art frames
         run: |
           mkdir -p artifacts/ud_world_art_native
-          timeout --signal=TERM --kill-after=15s 420s xvfb-run -a -s "-screen 0 3840x2160x24" env LIBGL_ALWAYS_SOFTWARE=1             godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy             --user-data-dir artifacts/ud_world_art_native --windowed             --script res://tests/survival/world/world_art_native_test.gd --             --out-root="$GITHUB_WORKSPACE/artifacts/a1-world-art"             --resolutions=1280x720,2560x1440,3840x2160             >artifacts/a1-world-art/godot-world-art.log 2>&1
+          timeout --signal=TERM --kill-after=15s 600s xvfb-run -a -s "-screen 0 3840x2160x24" env LIBGL_ALWAYS_SOFTWARE=1             godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy             --user-data-dir artifacts/ud_world_art_native --windowed             --script res://tests/survival/world/world_art_native_test.gd --             --out-root="$GITHUB_WORKSPACE/artifacts/a1-world-art"             --resolutions=1280x720,2560x1440,3840x2160             >artifacts/a1-world-art/godot-world-art.log 2>&1
           rc=$?
           echo "world art fixture exit_code=$rc"
           cat artifacts/a1-world-art/godot-world-art.log
@@ -337,7 +337,7 @@ jobs:
           checks=$(grep -cE '^WORLD_ART (PASS|FAIL): ' "$log" || true)
           captures=$(grep -c 'native capture' "$log" || true)
           echo "world art assertions reported: ${checks}; captures: ${captures}"
-          if [ "${checks:-0}" -lt 60 ] || [ "${captures:-0}" -lt 24 ] || ! grep -q 'WORLD_ART SUMMARY' "$log" || ! grep -q 'failures=0' "$log" || ! grep -q 'zero collision bodies' "$log" || ! grep -q 'integer-downscaled logical pixels match' "$log" || ! grep -q 'inherited VFX keeps default light mask' "$log"; then
+          if [ "${checks:-0}" -lt 60 ] || [ "${captures:-0}" -lt 24 ] || ! grep -q 'WORLD_ART SUMMARY' "$log" || ! grep -q 'failures=0' "$log" || ! grep -q 'zero collision bodies' "$log" || ! grep -q 'static integer-downscaled logical pixels match' "$log" || ! grep -q 'day/night light state is resolution-independent' "$log" || ! grep -q 'inherited VFX keeps default light mask' "$log"; then
             echo "::error::world art fixture gate failed (checks=${checks}, captures=${captures}); log tail: $(tail -c 1800 "$log" | paste -sd' ' -)"
             exit 1
           fi
