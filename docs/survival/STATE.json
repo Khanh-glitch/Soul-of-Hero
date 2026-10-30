@@ -202,7 +202,11 @@
     ],
     "first_test": "Run exact A1 90c1d8 46/48/14 isolated A0 controller pilot, required locker stand, actual input and reload; diagnose CI, then develop authorized bounded optional skeleton encounter with actual combat/death/bed/bag journey. Same-SHA regression gates; B0 NOT ACCEPTED PR21 HOLD.",
     "parallel_start": "A1 owns world planning, A3 economy data; A6 works on isolated UI paths only and must not modify the A0 construction build strip. A7 is a distributed QA workstream; S6 is optional and nonblocking.",
-    "design_gate": "Every SURV-020 claim needs a green native run recorded here, exactly as SURV-010 now has."
+    "design_gate": "Every SURV-020 claim needs a green native run recorded here, exactly as SURV-010 now has.",
+    "description": "Inspect native CI at daa058120d8c2f779f353bbdb975dd860c8e4c87, including independent locker collider trace and home/modal/optional threat. Fix semantic/runtime failures without weakening gates. Complete inverse/rollback/downgrade and real repeated-death/safety/no-farming journey; latest A1 pin 965a0b03830fb5866d08c0d5a877135bf2f8c83f. SURV-020/B0 NOT ACCEPTED; draft PR HOLD.",
+    "last_verified_code": "b79d3679e388369dd8863973055a2a2be20a7af6 (native foundation + home passed; connector 18/19 blocked combined nav/shape; not full acceptance)",
+    "working_code": "daa058120d8c2f779f353bbdb975dd860c8e4c87 (native CI pending)",
+    "docs_sync": "tab04 readback index 122472 covers current experimental daa code and corrected b79 counterexample; sync future CI results"
   },
   "blockers": [
     {
