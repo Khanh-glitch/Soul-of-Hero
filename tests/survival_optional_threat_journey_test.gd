@@ -32,24 +32,29 @@ func _body() -> void:
 	ow.add_child(encounter)
 	var site := Vector2i(-1, -1)
 	# Find a bounded off-road clearing rather than inventing or moving a POI.
-	for y in range(15, nav.height - 15):
+	for radius in range(45, 111):
 		if site.x >= 0:
 			break
-		for x in range(15, nav.width - 15):
-			var candidate := Vector2i(x, y)
-			if maxi(absi(x - start.x), absi(y - start.y)) < 45 or not nav.is_free(candidate) or reach[y * nav.width + x] < 0:
-				continue
-			var protected := false
-			for endpoint: Dictionary in endpoint_data:
-				var cell: Vector2i = endpoint["cell"]
-				if maxi(absi(x - cell.x), absi(y - cell.y)) <= 24:
-					protected = true
-					break
-			if protected or build._near_shortcut(candidate, 24):
-				continue
-			if bool(encounter.call(&"configure", hero, build, nav, candidate)):
-				site = candidate
+		for dy in range(-radius, radius + 1):
+			if site.x >= 0:
 				break
+			for dx in range(-radius, radius + 1):
+				if maxi(absi(dx), absi(dy)) != radius:
+					continue
+				var candidate := start + Vector2i(dx, dy)
+				if candidate.x < 15 or candidate.y < 15 or candidate.x >= nav.width - 15 or candidate.y >= nav.height - 15 or not nav.is_free(candidate) or reach[candidate.y * nav.width + candidate.x] < 0:
+					continue
+				var protected := false
+				for endpoint: Dictionary in endpoint_data:
+					var cell: Vector2i = endpoint["cell"]
+					if maxi(absi(candidate.x - cell.x), absi(candidate.y - cell.y)) <= 24:
+						protected = true
+						break
+				if protected or build._near_shortcut(candidate, 24):
+					continue
+				if bool(encounter.call(&"configure", hero, build, nav, candidate)):
+					site = candidate
+					break
 	print("OPTIONAL_THREAT_SITE %s" % str(site))
 	_expect(site.x >= 0, "a bounded optional encounter validates against nav, live enemy shape, roads, protected endpoints and existing home")
 	if site.x < 0:
@@ -78,9 +83,20 @@ func _body() -> void:
 	if not approached:
 		_body_complete = true
 		return
+	# If detection is occluded at the first warned approach, voluntarily walk
+	# closer using the real controller; do not command the enemy or fabricate a
+	# hit. Record its state/position to diagnose line of sight or leash issues.
+	if int(hero.get("health")) == 100:
+		for offset: Vector2i in [Vector2i(-3, 0), Vector2i(3, 0), Vector2i(0, -3), Vector2i(0, 3)]:
+			var closer := _route(nav.cell_of(hero.global_position), site + offset, nav, hero)
+			if not closer.is_empty():
+				await _walk_path(hero, closer)
+				break
 	var until := Time.get_ticks_msec() + 30000
 	while int(hero.get("health")) == 100 and not bool(hero.get("dead")) and Time.get_ticks_msec() < until:
 		await physics_frame
+	var current_enemy := encounter.get_node_or_null("BoundedSkeleton") as CharacterBody2D
+	print("OPTIONAL_THREAT_TRACE hero=%s hp=%s enemy=%s enemy_pos=%s state=%s distance=%s" % [str(hero.global_position), str(hero.get("health")), str(current_enemy), str(current_enemy.global_position if current_enemy != null else Vector2.ZERO), str(current_enemy.get("_state") if current_enemy != null else "missing"), str(hero.global_position.distance_to(current_enemy.global_position) if current_enemy != null else -1)])
 	var damaged := int(hero.get("health")) < 100 and not bool(hero.get("dead"))
 	_expect(damaged, "existing autonomous skeleton inflicts actual survivable damage")
 	if not damaged:
