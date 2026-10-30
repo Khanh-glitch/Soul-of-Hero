@@ -436,7 +436,11 @@
       "provenance": [
         "SYS-15",
         "SYS-19"
-      ]
+      ],
+      "research_cost": {
+        "knowledge_spares": 3,
+        "research_notes": 1
+      }
     },
     "salvage_hammer": {
       "id": "salvage_hammer",

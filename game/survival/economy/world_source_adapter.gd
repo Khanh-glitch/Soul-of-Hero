@@ -36,6 +36,11 @@ static func validate_catalog(bindings: Dictionary, items: Dictionary, sources: D
 		var cooldown := int(b.get("cooldown_active_seconds", -1))
 		if cooldown < 0 or cooldown > 86400:
 			errors.append("binding_invalid_cooldown:" + id)
+		var max_claims := int(b.get("max_claims", 0))
+		if max_claims < 0 or max_claims > 1000000:
+			errors.append("binding_invalid_max_claims:" + id)
+		if max_claims > 0 and cooldown != 0:
+			errors.append("binding_one_time_must_not_replenish:" + id)
 		var rewards: Variant = b.get("rewards", [])
 		if not rewards is Array or (rewards as Array).is_empty():
 			errors.append("binding_empty_rewards:" + id)

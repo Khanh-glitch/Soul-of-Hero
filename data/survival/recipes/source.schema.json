@@ -134,6 +134,11 @@
           },
           "balance_status": {
             "const": "SOH_PROPOSAL"
+          },
+          "max_claims": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
           }
         }
       }

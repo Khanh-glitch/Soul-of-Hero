@@ -19,7 +19,8 @@
         "SYS-15"
       ],
       "source_ids": [
-        "live_oak_wood"
+        "live_oak_wood",
+        "roadside_oak_03"
       ],
       "acquisition_status": "LIVE"
     },
@@ -62,7 +63,8 @@
       ],
       "source_ids": [
         "live_iron_scrap",
-        "road_scrap"
+        "road_scrap",
+        "roadside_scrap_02"
       ],
       "acquisition_status": "LIVE"
     },
@@ -709,7 +711,8 @@
         "SYS-15"
       ],
       "source_ids": [
-        "road_supplies"
+        "road_supplies",
+        "roadside_supplies_02"
       ],
       "acquisition_status": "PROPOSED_WORLD"
     },
@@ -729,7 +732,8 @@
         "SYS-15"
       ],
       "source_ids": [
-        "road_notes"
+        "road_notes",
+        "roadside_notes_03"
       ],
       "acquisition_status": "PROPOSED_WORLD"
     },

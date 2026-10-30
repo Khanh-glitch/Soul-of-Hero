@@ -562,6 +562,7 @@ func _run() -> void:
 	_case_23_source_to_research_to_output_chain()
 	_case_24_world_adversarial_clock_identity_and_conservation()
 	_case_25_quarry_fail_closed_and_hidden_projection()
+	_case_26_one_time_crates_and_basic_tool_research_policy()
 	# End-to-end report.
 	if failures.is_empty():
 		print("A3 ECONOMY ADAPTER PASSED - %d checks / %d cases" % [checks, case_id])
@@ -771,75 +772,75 @@ func _case_22_world_atomicity_and_failed_save() -> void:
 	_expect(bool(retry_dup.ok) and String(retry_dup.result) == "ALREADY_APPLIED", "retry receipt is idempotent")
 
 func _case_23_source_to_research_to_output_chain() -> void:
-	_begin_live("no-Core source -> loot -> research -> processing -> iron_pick -> reload")
-	# This chain deliberately uses NO legacy bone/ember grant and NO Skill Core.
-	# Ordinary tool research is funded by the canonical Waystation cache plus
-	# exactly one A3-authorized A1 roadside notes crate. It is a native fixture,
-	# not a human playtest and not a production A0 mount.
+	_begin_live("no-Core multi-source -> paid stations -> basic-tool research -> iron_pick -> reload")
+	# Native fixture, NOT a player journey: _move/_world_tick/_harvest are direct
+	# fixture seams. It proves the A3 transaction chain can be funded without a
+	# Core, without 7 forced cache claims, and without inventing iron_ore from an
+	# A0 iron_vein (that live node yields iron_scrap). Physical pacing is modeled
+	# separately in progression_v5.py and still requires A0 mount + human review.
 	_move("poi_crown_waystation", Vector2i(408, 199))
 	_expect(bool(_world_act("pry_locker", "", "w23.locker").ok), "chain locker")
 	_move("poi_crown_waystation", Vector2i(410, 202))
 	_expect(bool(_world_act("seal_ledger", "", "w23.ledger").ok), "chain ledger")
-	# One early roadside crate supplies the first research note without a Core.
+	# Renewable notes crate 01 keeps its exact 1 note / 1800 active-second rate.
 	_move("poi_crown_waystation", Vector2i(395, 220))
 	var note1: Dictionary = _world_act("salvage_roadside_notes", "si:r_ashen_crown:roadside_supply:01", "w23.notes.0")
-	_expect(bool(note1.ok) and int((note1.granted_items as Dictionary).get("research_notes", 0)) == 1, "roadside crate grants 1 research note")
-	# Seven canonical cache claims fund scrap/spares. Each is 3 scrap + 2 spares
-	# and waits 1800 ACTIVE seconds; the notes crate cools down on the same clock.
+	_expect(bool(note1.ok) and int((note1.granted_items as Dictionary).get("research_notes", 0)) == 1, "roadside crate 01 grants 1 research note")
+	# One-time A1 crates 02/03 provide an early, non-renewable alternative route.
+	_move("poi_crown_waystation", Vector2i(400, 217))
+	var crate02: Dictionary = _world_act("salvage_roadside_supplies_02", "si:r_ashen_crown:roadside_supply:02", "w23.crate02")
+	_expect(bool(crate02.ok) and int((crate02.granted_items as Dictionary).get("iron_scrap", 0)) == 3 and int((crate02.granted_items as Dictionary).get("knowledge_spares", 0)) == 2, "one-time crate 02 grants 3 scrap + 2 spares")
+	_move("poi_crown_waystation", Vector2i(402, 221))
+	var crate03: Dictionary = _world_act("salvage_roadside_timber_03", "si:r_ashen_crown:roadside_supply:03", "w23.crate03")
+	_expect(bool(crate03.ok) and int((crate03.granted_items as Dictionary).get("oak_wood", 0)) == 2 and int((crate03.granted_items as Dictionary).get("research_notes", 0)) == 1, "one-time crate 03 grants 2 oak + 1 note")
+	# Four canonical cache claims (three 1800s active waits) replace seven claims.
 	_move("poi_crown_waystation", Vector2i(406, 202))
-	for i in range(7):
+	for i in range(4):
 		if i > 0:
 			_world_tick(1800, "w23.cache.wait.%d" % i)
 		var claim: Dictionary = _world_act("cache_restock", "si:r_ashen_crown:waystation_cache:01", "w23.cache.%d" % i)
 		_expect(bool(claim.ok), "chain cache claim %d" % i)
-		if i == 1:
-			_move("poi_crown_waystation", Vector2i(395, 220))
-			var note2: Dictionary = _world_act("salvage_roadside_notes", "si:r_ashen_crown:roadside_supply:01", "w23.notes.1")
-			_expect(bool(note2.ok), "second roadside note after active cooldown")
-			_move("poi_crown_waystation", Vector2i(406, 202))
-	_expect(_count("iron_scrap") == 21 and _count("knowledge_spares") == 14, "canonical cache totals 21 scrap / 14 spares")
-	_expect(_count("research_notes") == 2, "two real roadside notes, no legacy ember")
+	_expect(_count("iron_scrap") == 15 and _count("knowledge_spares") == 10, "crate02 + 4 cache claims = 15 scrap / 10 spares")
+	_expect(_count("research_notes") == 2, "crate01 + crate03 = 2 real notes, no legacy ember")
 	_expect(_count("soul_ember") == 0 and _count("crypt_bone_shard") == 0, "no legacy catalyst grant in the no-Core chain")
-	# Deadfall + relay: real materials buy permanent power.
 	_move("poi_crown_waystation", Vector2i(398, 201))
 	_expect(bool(_world_act("gather_deadfall", "node_waystation_approach_deadfall", "w23.deadfall").ok), "chain deadfall")
-	_move("poi_crown_relay_shed", Vector2i(442, 234))
-	_expect(bool(_world_act("hand_crank_bypass", "", "w23.relay").ok), "chain relay")
-	# Live SurvivalService harvests supply bulk materials through existing nodes.
+	# Live A0 SurvivalService nodes supply bulk oak/stone/reed/scrap. iron_vein and
+	# scrap_pile both yield iron_scrap in the pinned catalog; neither yields ore.
 	var stamp := 1700000000
-	_harvest("a3_oak_1", "oak_tree", 3, stamp); _harvest("a3_oak_2", "oak_tree", 3, stamp + 10)
-	_harvest("a3_oak_3", "oak_tree", 3, stamp + 20)
+	_harvest("a3_oak_1", "oak_tree", 3, stamp); _harvest("a3_oak_2", "oak_tree", 3, stamp + 10); _harvest("a3_oak_3", "oak_tree", 3, stamp + 20)
 	_harvest("a3_stone_1", "stone_outcrop", 3, stamp + 30); _harvest("a3_stone_2", "stone_outcrop", 3, stamp + 40)
 	_harvest("a3_reed_1", "reed_clump", 2, stamp + 50); _harvest("a3_reed_2", "reed_clump", 2, stamp + 60)
 	_harvest("a3_iron_0", "iron_vein", 2, stamp + 70); _harvest("a3_iron_1", "iron_vein", 2, stamp + 80)
+	_harvest("a3_scrap_0", "scrap_pile", 2, stamp + 90); _harvest("a3_scrap_1", "scrap_pile", 2, stamp + 100)
+	_expect(_count("iron_scrap") == 23 and _count("oak_wood") == 22 and _count("stone_chunk") == 12 and _count("reed_fibre") == 4, "live node totals are scrap, not invented ore")
 	# Physical home storage round trip through the real SaveService API.
 	var oak_before_storage := _count("oak_wood")
 	_expect(bool(save.call(&"home_transfer_to_storage", &"item_stack", "oak_wood", "w23.store.oak")), "store oak in home storage")
 	_expect(_count("oak_wood") == 0, "oak physically leaves bag")
 	_expect(bool(save.call(&"home_transfer_to_bag", &"item_stack", "oak_wood", "w23.withdraw.oak")), "withdraw oak from home storage")
 	_expect(_count("oak_wood") == oak_before_storage, "storage round trip conserves oak")
-	# Hand-craft stations, bootstrap ingots from scrap, then research smelting.
+	# Relay is a real material sink, not a free capability.
+	_move("poi_crown_relay_shed", Vector2i(442, 234))
+	_expect(bool(_world_act("hand_crank_bypass", "", "w23.relay").ok), "chain relay consumes 2 scrap + 1 oak")
+	# Paid hand/workbench/furnace/research chain. Scrap smelting is the bootstrap;
+	# no tech_smelting or iron_ore is required for the basic iron_pick.
 	_craft("workbench_kit", "hand", "w23.workbench_kit")
 	_station("bench", "workbench")
 	_craft("furnace_kit", "hand", "w23.furnace_kit")
 	_station("furnace", "furnace")
 	for i in range(2):
 		_craft("burn_charcoal", "furnace", "w23.charcoal.%d" % i)
-	for i in range(2):
-		_craft("smelt_iron", "furnace", "w23.ingot.bootstrap.%d" % i)
-	_expect(_count("iron_ingot") == 2, "scrap smelting bootstraps 2 ingots without a Core")
+	for i in range(4):
+		_craft("smelt_iron", "furnace", "w23.ingot.%d" % i)
+	_expect(_count("iron_ingot") == 4 and _count("charcoal") == 0, "scrap + charcoal bootstrap 4 ingots without a Core")
 	_craft("research_kit", "bench", "w23.research_kit")
 	_station("lab", "research")
-	var tech: Dictionary = eco.research_technology("tech_smelting", "lab", "w23.tech.smelting")
-	_expect(bool(tech.ok), "smelting technology researched with canonical spares/scrap")
-	if bool(tech.ok):
-		_finish_job(String(tech.job_id), "lab")
-	_craft("smelt_ore", "furnace", "w23.ingot.ore")
-	_expect(_count("iron_ingot") == 2, "ore smelting produces the tool ingots")
 	_craft("weave_cloth", "bench", "w23.cloth")
-	# Targeted research pays real spares + roadside notes and permanently learns.
+	# Basic-tool targeted research uses the explicit A3 recipe override (3 spares
+	# + 1 note). Advanced targeted research still defaults to 6 spares + 2 notes.
 	var research: Dictionary = eco.research_recipe("iron_pick", "lab", "targeted", "w23.research.pick")
-	_expect(bool(research.ok), "targeted research enqueued: " + String(research.get("reason", "")))
+	_expect(bool(research.ok), "basic-tool targeted research enqueued: " + String(research.get("reason", "")))
 	if bool(research.ok):
 		_finish_job(String(research.job_id), "lab")
 	_expect(eco.known("iron_pick"), "iron_pick recipe permanently learned")
@@ -851,6 +852,7 @@ func _case_23_source_to_research_to_output_chain() -> void:
 		if String((raw as Dictionary).get("item_id", "")) == "iron_pick":
 			picks += 1
 	_expect(picks == 1, "one physical iron_pick output")
+	_expect(_count("iron_scrap") == 4 and _count("knowledge_spares") == 4 and _count("research_notes") == 1 and _count("oak_wood") == 5 and _count("stone_chunk") == 4 and _count("reed_fibre") == 1 and _count("binding_cloth") == 1 and _count("iron_ingot") == 0, "exact leftover inventory after paid chain")
 	_expect(_count("core_ember") == 0 and _count("core_frost") == 0 and _count("core_venom") == 0, "no Skill Core was required or granted")
 	var learned_before := eco.known("iron_pick")
 	var world_before: Dictionary = eco.world_document()
@@ -952,3 +954,42 @@ func _case_25_quarry_fail_closed_and_hidden_projection() -> void:
 	_expect(bool(_world_act("pry_locker", "", "w25.locker").ok), "locker discovers Waystation")
 	var discovered: Dictionary = eco.world_projection("poi_crown_waystation")
 	_expect(String(discovered.get("visibility", "")) == "DISCOVERED" and not (discovered.get("sources", []) as Array).is_empty(), "discovered POI exposes actionable read-only sources")
+
+func _case_26_one_time_crates_and_basic_tool_research_policy() -> void:
+	_begin("one-time A1 crates, exhausted projection, and basic-tool research override")
+	_move("poi_crown_waystation", Vector2i(400, 217))
+	var first: Dictionary = _world_act("salvage_roadside_supplies_02", "si:r_ashen_crown:roadside_supply:02", "w26.crate02.first")
+	_expect(bool(first.ok), "one-time crate 02 first claim succeeds")
+	var before := JSON.stringify(_snapshot())
+	var again: Dictionary = _world_act("salvage_roadside_supplies_02", "si:r_ashen_crown:roadside_supply:02", "w26.crate02.again")
+	_expect(bool(again.ok) and String(again.result) == "ALREADY_APPLIED", "new event cannot reclaim one-time crate 02")
+	_expect(JSON.stringify(_snapshot()) == before, "exhausted one-time claim changes no inventory/cooldown/receipt")
+	var replay: Dictionary = _world_act("salvage_roadside_supplies_02", "si:r_ashen_crown:roadside_supply:02", "w26.crate02.first")
+	_expect(bool(replay.ok) and String(replay.result) == "ALREADY_APPLIED", "same-event one-time replay remains idempotent")
+	_move("poi_crown_waystation", Vector2i(408, 199))
+	_expect(bool(_world_act("pry_locker", "", "w26.locker").ok), "discover Waystation for projection")
+	var projection: Dictionary = eco.world_projection("poi_crown_waystation")
+	var crate_entry := {}
+	for raw: Variant in (projection.get("sources", []) as Array):
+		if String((raw as Dictionary).get("binding_id", "")) == "a1_roadside_salvage_02_v5":
+			crate_entry = raw
+	_expect(int(crate_entry.get("max_claims", 0)) == 1 and bool(crate_entry.get("exhausted", false)) and not bool(crate_entry.get("ready", true)), "A6 projection marks one-time crate exhausted, not cooling down")
+	# Basic iron_pick research is cheaper than advanced targeted research, but it
+	# still pays real spares/notes and still requires a physical research station.
+	_station("lab", "research")
+	_give("knowledge_spares", 2); _give("research_notes", 1)
+	var poor: Dictionary = eco.research_recipe("iron_pick", "lab", "targeted", "w26.research.poor")
+	_expect(not bool(poor.ok) and String(poor.reason) == "insufficient_inputs", "basic-tool research rejects 2 spares + 1 note")
+	_give("knowledge_spares", 1)
+	var paid: Dictionary = eco.research_recipe("iron_pick", "lab", "targeted", "w26.research.paid")
+	_expect(bool(paid.ok), "basic-tool research accepts exactly 3 spares + 1 note")
+	if bool(paid.ok):
+		_finish_job(String(paid.job_id), "lab")
+	_expect(_count("knowledge_spares") == 0 and _count("research_notes") == 0, "basic-tool research consumes the override cost exactly")
+	# A recipe without an override keeps the advanced default 6 spares + 2 notes.
+	_give("knowledge_spares", 5); _give("research_notes", 2)
+	var advanced_poor: Dictionary = eco.research_recipe("salvage_hammer", "lab", "targeted", "w26.research.advanced.poor")
+	_expect(not bool(advanced_poor.ok) and String(advanced_poor.reason) == "insufficient_inputs", "advanced targeted research still rejects 5 spares + 2 notes")
+	_give("knowledge_spares", 1)
+	var advanced: Dictionary = eco.research_recipe("salvage_hammer", "lab", "targeted", "w26.research.advanced")
+	_expect(bool(advanced.ok), "advanced targeted research still requires 6 spares + 2 notes")

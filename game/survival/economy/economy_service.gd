@@ -314,14 +314,19 @@ func world_projection(poi_id: String) -> Dictionary:
 		if String(b.get("poi_id", "")) != poi_id:
 			continue
 		var next_ready := int(poi.get(String(b.get("next_ready_field", "")), 0))
+		var claim_count := int(poi.get(String(b.get("claim_index_field", "")), 0))
+		var max_claims := int(b.get("max_claims", 0))
+		var exhausted := max_claims > 0 and claim_count >= max_claims
 		var entry := WorldSources.source_identity(b)
 		entry.merge({
 			"binding_id": String(b.get("binding_id", "")),
 			"identity": String(b.get("identity", "")),
 			"action_id": String(b.get("action_id", "")),
-			"claim_count": int(poi.get(String(b.get("claim_index_field", "")), 0)),
-			"ready": active >= next_ready,
-			"remaining_active_seconds": maxi(0, next_ready - active),
+			"claim_count": claim_count,
+			"max_claims": max_claims,
+			"exhausted": exhausted,
+			"ready": not exhausted and active >= next_ready,
+			"remaining_active_seconds": 0 if exhausted else maxi(0, next_ready - active),
 			"cooldown_active_seconds": int(b.get("cooldown_active_seconds", 0)),
 			"requires_capabilities": (b.get("requires_capabilities", []) as Array).duplicate(true),
 			"rewards": (b.get("rewards", []) as Array).duplicate(true),
@@ -513,6 +518,10 @@ func world_action(request: Dictionary, event_id: String) -> Dictionary:
 			var grants: Array = []
 			var state_writes: Dictionary = {}
 			if String(plan.kind) == "source":
+				var max_claims := int(definition.get("max_claims", 0))
+				var claimed := int(poi.get(String(definition.claim_index_field), 0))
+				if max_claims > 0 and claimed >= max_claims:
+					result["reason"] = "ALREADY_APPLIED"; result["already_applied"] = true; return false
 				var next_ready := int(poi.get(String(definition.next_ready_field), 0))
 				if active < next_ready:
 					result["reason"] = "COOLDOWN"; result["remaining_active_seconds"] = next_ready - active; return false
@@ -1298,7 +1307,9 @@ func research_recipe(recipe_id: String, station_id: String, method: String, even
 				reserved_instances[specimen_id] = specimen
 				costs["knowledge_spares"] = 5
 			elif method == "targeted":
-				costs = {"knowledge_spares": 6, "research_notes": 2}
+				# A3 may explicitly price basic tool learning below advanced
+				# targeted research. The override is catalog data, not a UI flag.
+				costs = (r.get("research_cost", {"knowledge_spares": 6, "research_notes": 2}) as Dictionary).duplicate(true)
 			else:
 				result["reason"] = "unknown_research_method"; return false
 			if not _prerequisites(candidate, state, r.get("required_technologies", [])):

@@ -38,6 +38,7 @@ def main():
             if type(n) is not int or n<=0: errors.append(f'{where}: invalid quantity {i}')
     for rid,r in recipes.items():
         refs(r['inputs'],rid); refs(r['outputs'],rid); refs(r['fuel'],rid+' fuel')
+        if 'research_cost' in r: refs(r['research_cost'],rid+' research_cost')
         if r['station'] not in stations: errors.append(f'{rid}: unknown station')
         for t in r['required_technologies']:
             if t not in techs: errors.append(f'{rid}: unknown technology {t}')
@@ -54,6 +55,7 @@ def main():
     for sid,s in sources.items():
         if s['item_id'] not in items: errors.append(f'{sid}: unknown item')
         if s['yield_per_claim']>50: errors.append(f'{sid}: yield exceeds SaveService stack')
+        if s.get('max_claims',0) and s.get('replenishment_seconds',0)!=0: errors.append(f'{sid}: one-time source must not replenish')
     for iid,i in items.items():
         if (i['storage']=='instance') != (i['stack_limit']==1): errors.append(f'{iid}: instance/stack mismatch')
         for sid in i['source_ids']:

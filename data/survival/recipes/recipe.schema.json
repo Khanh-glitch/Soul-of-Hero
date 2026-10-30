@@ -135,6 +135,18 @@
           "consumes_specimen": {
             "type": "string",
             "pattern": "^[a-z][a-z0-9_]{0,63}$"
+          },
+          "research_cost": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10000
+            },
+            "propertyNames": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_]{0,63}$"
+            }
           }
         }
       }

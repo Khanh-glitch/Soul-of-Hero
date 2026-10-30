@@ -40,6 +40,11 @@ def validate(bindings_doc: dict, items: dict, sources: dict) -> list[str]:
             errors.append(f"world binding {bid} must not use a random loot table")
         if not isinstance(b.get("cooldown_active_seconds"), int) or b["cooldown_active_seconds"] < 0:
             errors.append(f"world binding {bid} invalid cooldown")
+        max_claims = b.get("max_claims", 0)
+        if not isinstance(max_claims, int) or max_claims < 0 or max_claims > 1000000:
+            errors.append(f"world binding {bid} invalid max_claims")
+        if max_claims > 0 and b.get("cooldown_active_seconds") != 0:
+            errors.append(f"world binding {bid} one-time source must not replenish")
         for r in b.get("rewards", []):
             sid = r.get("source_id")
             iid = r.get("item_id")
@@ -61,6 +66,8 @@ def validate(bindings_doc: dict, items: dict, sources: dict) -> list[str]:
                     errors.append(f"world binding {bid}: proposed source is neither bound nor live {sid}")
                 if s.get("yield_per_claim") != qty or s.get("replenishment_seconds") != b.get("cooldown_active_seconds"):
                     errors.append(f"world binding {bid}: canonical yield/cooldown drift {sid}")
+                if s.get("max_claims", 0) != max_claims:
+                    errors.append(f"world binding {bid}: source max_claims drift {sid}")
             if iid not in items:
                 errors.append(f"world binding {bid}: unknown item {iid}")
             elif items[iid]["kind"] == "skill_core":
@@ -92,6 +99,14 @@ def validate(bindings_doc: dict, items: dict, sources: dict) -> list[str]:
         errors.append("roadside notes crate must be exactly 1 research_notes / 1800 active seconds")
     if notes.get("instance_id") != "si:r_ashen_crown:roadside_supply:01" or notes.get("canonical_poi_id") is not None:
         errors.append("roadside notes crate must bind the A1 non-POI si:* instance, not a new POI")
+    salvage02 = next((b for b in bindings if b.get("binding_id") == "a1_roadside_salvage_02_v5"), {})
+    timber03 = next((b for b in bindings if b.get("binding_id") == "a1_roadside_timber_03_v5"), {})
+    if {r["item_id"]: r["quantity"] for r in salvage02.get("rewards", [])} != {"iron_scrap": 3, "knowledge_spares": 2} or salvage02.get("max_claims") != 1 or salvage02.get("cooldown_active_seconds") != 0:
+        errors.append("roadside crate 02 must be one-time 3 scrap + 2 spares")
+    if {r["item_id"]: r["quantity"] for r in timber03.get("rewards", [])} != {"oak_wood": 2, "research_notes": 1} or timber03.get("max_claims") != 1 or timber03.get("cooldown_active_seconds") != 0:
+        errors.append("roadside crate 03 must be one-time 2 oak + 1 note")
+    if salvage02.get("instance_id") != "si:r_ashen_crown:roadside_supply:02" or timber03.get("instance_id") != "si:r_ashen_crown:roadside_supply:03":
+        errors.append("roadside one-time crates must bind exact A1 si:* instances")
     # A8 Quarry must remain fail-closed until A3 issues a real authorization.
     for b in bindings:
         if "quarry" in str(b.get("poi_id", "")) or "quarry" in str(b.get("instance_id", "")):

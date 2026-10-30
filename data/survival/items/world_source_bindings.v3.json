@@ -1,6 +1,6 @@
 {
   "schema": "soh.economy.world_source_bindings.v3",
-  "status": "A3_V4_IMPLEMENTED_NATIVE_FIXTURE_PENDING_A0_MOUNT",
+  "status": "A3_V5_IMPLEMENTED_NATIVE_FIXTURE_PENDING_A0_MOUNT",
   "authority": {
     "item_and_reward_owner": "A3",
     "world_geometry_and_instance_owner": "A1",
@@ -49,10 +49,11 @@
   "reward_policy": {
     "roadside_cache": "DETERMINISTIC_CANONICAL_A1_QUANTITIES",
     "core_probability": "NONE; no Core is added to this binding and no first-Core probability is invented",
-    "abundance": "canonical cache unchanged: 3 iron_scrap + 2 knowledge_spares per 1800 active seconds. One notes crate adds only the already-proposed road_notes record; no extra scrap/spares crate is bound.",
+    "abundance": "Canonical cache unchanged: 3 iron_scrap + 2 knowledge_spares per 1800 active seconds. Notes crate 01 unchanged: 1 research_notes per 1800 active seconds. A1 crates 02/03 are ONE-TIME early salvage (3 scrap + 2 spares; 2 oak + 1 note) and never replenish; no Core/Gold and no renewable abundance inflation.",
     "partial_failure": "REJECT_WHOLE_CLAIM; if the bag cannot hold every reward, no item, cooldown, generation or receipt is committed",
     "no_gold_value": "iron_scrap feeds relay/furnace/tools; knowledge_spares feed research_kit/make_spares/research; oak_wood feeds relay/charcoal/station kits. A no-Core, no-Gold trip still advances power, production and knowledge.",
-    "roadside_notes": "A3 gate approval of existing road_notes proposal (1 research_notes / 1800 active seconds) on exactly one A1 physical crate si:r_ashen_crown:roadside_supply:01. It replaces the legacy soul_ember->make_notes bootstrap for ordinary tool research; it does not add scrap/spares abundance or any Core."
+    "roadside_notes": "A3 gate approval of existing road_notes proposal (1 research_notes / 1800 active seconds) on exactly one A1 physical crate si:r_ashen_crown:roadside_supply:01. It replaces the legacy soul_ember->make_notes bootstrap for ordinary tool research; it does not add scrap/spares abundance or any Core.",
+    "basic_tool_research": "iron_pick targeted research is explicitly priced at 3 knowledge_spares + 1 research_notes (recipe.research_cost). Default targeted research remains 6 spares + 2 notes. This separates basic tool learning from advanced/Core research without changing canonical source rates."
   },
   "bindings": [
     {
@@ -205,6 +206,146 @@
           "native OS-restart evidence at final SHA"
         ]
       }
+    },
+    {
+      "binding_id": "a1_roadside_salvage_02_v5",
+      "identity": "roadside_supply_cache|r_ashen_crown|poi_crown_waystation|si:r_ashen_crown:roadside_supply:02",
+      "source_class": "roadside_supply_cache",
+      "region_id": "r_ashen_crown",
+      "poi_id": "poi_crown_waystation",
+      "instance_id": "si:r_ashen_crown:roadside_supply:02",
+      "world_instance_id": "si:r_ashen_crown:roadside_supply:02",
+      "interaction_node_id": null,
+      "a1_source_instance_id": "si:r_ashen_crown:roadside_supply:02",
+      "a1_source_class_id": "sc_roadside_supply_cache_v1",
+      "canonical_poi_id": null,
+      "context_poi_id": "poi_crown_waystation",
+      "action_id": "salvage_roadside_supplies_02",
+      "reward_right_id": "rr_roadside_salvage_02",
+      "transaction_key_template": "a3src:r_ashen_crown:roadside_supply:02:claim:{claim_index}",
+      "claim_index_field": "roadside_salvage_02_claim_count",
+      "next_ready_field": "roadside_salvage_02_next_ready_active_tick",
+      "cooldown_active_seconds": 0,
+      "max_claims": 1,
+      "requires_capabilities": [],
+      "stand_cells": [
+        [
+          400,
+          217
+        ]
+      ],
+      "rewards": [
+        {
+          "source_id": "roadside_scrap_02",
+          "item_id": "iron_scrap",
+          "quantity": 3,
+          "provenance": [
+            "SYS-04",
+            "POI-14",
+            "A1_CORRIDOR_INSTANCE",
+            "A3_GATE_V5"
+          ]
+        },
+        {
+          "source_id": "roadside_supplies_02",
+          "item_id": "knowledge_spares",
+          "quantity": 2,
+          "provenance": [
+            "SYS-04",
+            "SYS-12",
+            "POI-14",
+            "A1_CORRIDOR_INSTANCE",
+            "A3_GATE_V5"
+          ]
+        }
+      ],
+      "supersedes": null,
+      "loot_table": null,
+      "authorization": {
+        "status": "APPROVED_BY_A3_GATE_NOT_HUMAN_PLAYTESTED",
+        "evidence": [
+          "A1 corridor physical instance and stand cell pinned at 2f6edd3f",
+          "one-time max_claims=1; cooldown 0; no renewable rate change",
+          "existing catalog items only; no Core/Gold",
+          "reduces forced canonical-cache waiting for basic tool research"
+        ],
+        "missing": [
+          "A0 production mount",
+          "human pacing/playtest",
+          "native OS-restart evidence at final SHA"
+        ]
+      },
+      "identity_note": "A1 roadside supply crate; one-time early salvage. Not a renewable cache and not a new POI."
+    },
+    {
+      "binding_id": "a1_roadside_timber_03_v5",
+      "identity": "roadside_supply_cache|r_ashen_crown|poi_crown_waystation|si:r_ashen_crown:roadside_supply:03",
+      "source_class": "roadside_supply_cache",
+      "region_id": "r_ashen_crown",
+      "poi_id": "poi_crown_waystation",
+      "instance_id": "si:r_ashen_crown:roadside_supply:03",
+      "world_instance_id": "si:r_ashen_crown:roadside_supply:03",
+      "interaction_node_id": null,
+      "a1_source_instance_id": "si:r_ashen_crown:roadside_supply:03",
+      "a1_source_class_id": "sc_roadside_supply_cache_v1",
+      "canonical_poi_id": null,
+      "context_poi_id": "poi_crown_waystation",
+      "action_id": "salvage_roadside_timber_03",
+      "reward_right_id": "rr_roadside_timber_03",
+      "transaction_key_template": "a3src:r_ashen_crown:roadside_supply:03:claim:{claim_index}",
+      "claim_index_field": "roadside_timber_03_claim_count",
+      "next_ready_field": "roadside_timber_03_next_ready_active_tick",
+      "cooldown_active_seconds": 0,
+      "max_claims": 1,
+      "requires_capabilities": [],
+      "stand_cells": [
+        [
+          402,
+          221
+        ]
+      ],
+      "rewards": [
+        {
+          "source_id": "roadside_oak_03",
+          "item_id": "oak_wood",
+          "quantity": 2,
+          "provenance": [
+            "SYS-04",
+            "POI-14",
+            "A1_CORRIDOR_INSTANCE",
+            "A3_GATE_V5"
+          ]
+        },
+        {
+          "source_id": "roadside_notes_03",
+          "item_id": "research_notes",
+          "quantity": 1,
+          "provenance": [
+            "SYS-04",
+            "SYS-13",
+            "POI-14",
+            "A1_CORRIDOR_INSTANCE",
+            "A3_GATE_V5"
+          ]
+        }
+      ],
+      "supersedes": null,
+      "loot_table": null,
+      "authorization": {
+        "status": "APPROVED_BY_A3_GATE_NOT_HUMAN_PLAYTESTED",
+        "evidence": [
+          "A1 corridor physical instance and stand cell pinned at 2f6edd3f",
+          "one-time max_claims=1; cooldown 0; no renewable rate change",
+          "existing catalog items only; no Core/Gold",
+          "reduces forced canonical-cache waiting for basic tool research"
+        ],
+        "missing": [
+          "A0 production mount",
+          "human pacing/playtest",
+          "native OS-restart evidence at final SHA"
+        ]
+      },
+      "identity_note": "A1 roadside supply crate; one-time early salvage. Not a renewable cache and not a new POI."
     }
   ],
   "world_actions": [
@@ -312,7 +453,11 @@
         "last_transaction_key": "",
         "reward_receipts": {},
         "roadside_notes_01_claim_count": 0,
-        "roadside_notes_01_next_ready_active_tick": 0
+        "roadside_notes_01_next_ready_active_tick": 0,
+        "roadside_salvage_02_claim_count": 0,
+        "roadside_salvage_02_next_ready_active_tick": 0,
+        "roadside_timber_03_claim_count": 0,
+        "roadside_timber_03_next_ready_active_tick": 0
       }
     },
     {
@@ -333,7 +478,7 @@
     "commit": "2f6edd3f1c45916fb1fd85b167c3f635bf11cc3b",
     "file": "data/survival/world/authoring/corridor/crown_roadside_sources.v1.json",
     "sha256": "6a87f4734227a68f279bb2eb45b06059c8fc07ab023f1abd46cd36d5f2be6f0a",
-    "note": "A1 supplies physical si:* instances and stand cells but no rates/yields/timers for the three roadside crates. A3 authorizes exactly one early notes crate below; the other two remain PENDING_A3_INSTANCE_BINDING."
+    "note": "A1 supplies physical si:* instances and stand cells but no rates/yields/timers. A3 binds crate 01 as renewable notes (1/1800) and crates 02/03 as ONE-TIME early salvage (max_claims=1). No A1 file is edited."
   },
   "quarry_authorization_ref": "docs/survival/economy/A8_QUARRY_AUTHORIZATION_V4.json"
 }

@@ -73,7 +73,7 @@ class WorldSourceBindingContracts(unittest.TestCase):
         self.assertEqual(self.sources["road_scrap"]["yield_per_claim"], 3)
         self.assertEqual(self.sources["road_supplies"]["yield_per_claim"], 2)
 
-    def test_roadside_notes_crate_is_bound_without_abundance_inflation(self):
+    def test_roadside_crates_preserve_rates_and_only_add_one_time_salvage(self):
         notes = next(b for b in self.bindings["bindings"] if b["binding_id"] == "a1_roadside_notes_01_v4")
         self.assertEqual(notes["instance_id"], "si:r_ashen_crown:roadside_supply:01")
         self.assertIsNone(notes["canonical_poi_id"])
@@ -81,14 +81,24 @@ class WorldSourceBindingContracts(unittest.TestCase):
         self.assertEqual(notes["stand_cells"], [[395, 220]])
         self.assertEqual({r["item_id"]: r["quantity"] for r in notes["rewards"]}, {"research_notes": 1})
         self.assertEqual(notes["cooldown_active_seconds"], 1800)
+        self.assertEqual(notes.get("max_claims", 0), 0)
         src = self.sources["road_notes"]
         self.assertEqual(src["world_binding_id"], "a1_roadside_notes_01_v4")
         self.assertEqual(src["yield_per_claim"], 1)
         self.assertEqual(src["replenishment_seconds"], 1800)
-        # Only one of the three A1 roadside crates is bound; no extra scrap/spares.
-        bound_instances = {b["instance_id"] for b in self.bindings["bindings"]}
-        self.assertNotIn("si:r_ashen_crown:roadside_supply:02", bound_instances)
-        self.assertNotIn("si:r_ashen_crown:roadside_supply:03", bound_instances)
+        salvage02 = next(b for b in self.bindings["bindings"] if b["binding_id"] == "a1_roadside_salvage_02_v5")
+        timber03 = next(b for b in self.bindings["bindings"] if b["binding_id"] == "a1_roadside_timber_03_v5")
+        self.assertEqual(salvage02["stand_cells"], [[400, 217]])
+        self.assertEqual(timber03["stand_cells"], [[402, 221]])
+        self.assertEqual(salvage02["max_claims"], 1)
+        self.assertEqual(timber03["max_claims"], 1)
+        self.assertEqual(salvage02["cooldown_active_seconds"], 0)
+        self.assertEqual(timber03["cooldown_active_seconds"], 0)
+        self.assertEqual({r["item_id"]: r["quantity"] for r in salvage02["rewards"]}, {"iron_scrap": 3, "knowledge_spares": 2})
+        self.assertEqual({r["item_id"]: r["quantity"] for r in timber03["rewards"]}, {"oak_wood": 2, "research_notes": 1})
+        for sid in ("roadside_scrap_02", "roadside_supplies_02", "roadside_oak_03", "roadside_notes_03"):
+            self.assertEqual(self.sources[sid]["max_claims"], 1)
+            self.assertEqual(self.sources[sid]["replenishment_seconds"], 0)
 
     def test_a8_quarry_is_fail_closed_not_guess_priced(self):
         self.assertEqual(self.quarry["status"], "REJECTED_PENDING_EVIDENCE_FAIL_CLOSED")

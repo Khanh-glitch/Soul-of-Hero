@@ -62,6 +62,17 @@ jobs:
           print(f"Time accounting: {t['status']}; active {t['active_modeled_seconds']}s / budget {t['scheduled_budget_seconds']}s; unused {t['unused_budget_seconds']}s; station work {t['station_work_seconds']}s (overlaps active).")
           print(f"Scenarios: {len(r['scenarios'])}; A1 source adoption: {', '.join(b['source_adoption']['adopted'])}; rejected global aliases remain blocked.")
           PY
+      - name: V5 first-hour pacing lower-bound model (not a playtest)
+        run: |
+          python tools/survival/economy/progression_v5.py --json "$ARTIFACT_DIR/progression_v5.json"
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json, os
+          r = json.load(open(os.environ['ARTIFACT_DIR'] + '/progression_v5.json'))
+          print('### A3 V5 pacing model (MODEL_ONLY, not human playtest)')
+          for name, s in r['scenarios'].items():
+              m = s['milestones']
+              print(f"- {name}: 20m lower bound {m['20_min']['lower_bound_seconds']}s; 90m lower bound {m['90_min']['lower_bound_seconds']}s; cache wait {s['cache_active_wait_seconds']}s; tool effect {s['tool_effect_status']}.")
+          PY
       - uses: actions/upload-artifact@v4
         if: always()
         with:
