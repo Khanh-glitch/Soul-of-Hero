@@ -5847,7 +5847,7 @@
       "source_target_class": "ground",
       "skill_gold_candidate_unreviewed": false,
       "native_status": "NOT_PORT_READY",
-      "native_module_path": null,
+      "native_module_path": "prototypes/skill_readiness/skills/venomwright/v013_source_native.gd",
       "native_port_ready": false,
       "gold_visual_approved": false,
       "gameplay_configured": false,
@@ -5866,7 +5866,7 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "AUDITED_FROM_REGISTRY",
+        "source_deps": "SOURCE_LOCKED_GENERATOR",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
         "ground_environment": "BASELINE_RECORDED",
@@ -5874,7 +5874,7 @@
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
-        "native_gpu": "NOT_AUDITED"
+        "native_gpu": "CPU_SOURCE_RASTER_VERIFIED_HEADLESS_GPU_COMPOSITE_UNAVAILABLE"
       },
       "evidence": {
         "gold_original_video": null,
@@ -5886,9 +5886,14 @@
         "webgl_test_run": null,
         "performance_2k_4k": null
       },
-      "native_executable": false,
-      "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "native_executable": true,
+      "native_executable_evidence": {
+        "native_test_run": "prototypes/skill_readiness/tests",
+        "source_numeric_oracle": "docs/vfx/skill_readiness/oracle/venomwright_013.json",
+        "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
+        "render_surface": "res://.artifacts/gold93/render_surface.json"
+      },
+      "source_material_blocker": "",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -6546,8 +6551,8 @@
     }
   ],
   "execution_totals": {
-    "native_executable": 19,
-    "catalogued_only": 74
+    "native_executable": 20,
+    "catalogued_only": 73
   },
   "source_material_status": {
     "archives_present_in_repository": false,

@@ -34,6 +34,7 @@ const MODULE_PATHS: Dictionary = {
 	"venomwright:010": "res://prototypes/skill_readiness/skills/venomwright/v010_source_native.gd",
 	"venomwright:011": "res://prototypes/skill_readiness/skills/venomwright/v011_source_native.gd",
 	"venomwright:012": "res://prototypes/skill_readiness/skills/venomwright/v012_source_native.gd",
+	"venomwright:013": "res://prototypes/skill_readiness/skills/venomwright/v013_source_native.gd",
 	"venomwright:014": "res://prototypes/skill_readiness/skills/venomwright/v014_source_native.gd",
 	"venomwright:015": "res://prototypes/skill_readiness/skills/venomwright/v015_source_native.gd",
 	"venomwright:007": "res://prototypes/skill_readiness/skills/venomwright/v007_source_native.gd",

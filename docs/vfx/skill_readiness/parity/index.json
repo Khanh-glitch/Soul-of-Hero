@@ -495,5 +495,22 @@
    "status": "PASS",
    "ticks": 245
   }
+ },
+ "venomwright:013": {
+  "compared_ticks": 80,
+  "cue_mismatch": "",
+  "cues_native": 5,
+  "cues_original": 5,
+  "evidence": "CI runtime run 41112546494 job 124265302143 (runtime differential lane) at commit 3dcf03a: Venomwright 13 vs original TypeScript SUCCESS (GOLD93_VENOM_DIFFERENTIAL PASS, first_divergent_tick -1). Earlier tick-320 raster failure no longer reproduces after the scheduler yield-0 fix (1eb6a10: garden spawns 12 steam sub-generators with `yield i*0.22`, i=0 is yield-0) and the resolve() Math.hypot fix (2d2855c); no 013-specific change was made, so this is recorded as observed PASS evidence, not a root-cause claim.",
+  "first_divergent_tick": -1,
+  "first_mismatch": "",
+  "hit_mismatch": "",
+  "hits_native": 7,
+  "hits_original": 7,
+  "recorded_utc": "2026-10-31",
+  "seed": 7,
+  "skill": 13,
+  "status": "PASS",
+  "ticks": 320
  }
 }
