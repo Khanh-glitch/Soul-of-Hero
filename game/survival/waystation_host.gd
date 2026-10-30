@@ -4,9 +4,13 @@ extends Node2D
 ## Knight and EconomySession. It does not own inventory, time or reward data.
 const POINT = preload("res://game/survival/waystation_interactable.gd")
 const POI := "poi_crown_waystation"
+const RELAY_POI := "poi_crown_relay_shed"
 const POINTS := {
 	"locker": {"cell": Vector2i(408, 198), "stand": Vector2i(408, 199), "action": "pry_locker", "instance": ""},
-	"cache": {"cell": Vector2i(406, 203), "stand": Vector2i(406, 202), "action": "cache_restock", "instance": "node_waystation_cache"},
+	"cache": {"cell": Vector2i(406, 203), "stand": Vector2i(406, 202), "action": "cache_restock", "instance": "si:r_ashen_crown:waystation_cache:01"},
+	"ledger": {"cell": Vector2i(411, 202), "stand": Vector2i(410, 202), "action": "seal_ledger", "instance": ""},
+	"deadfall": {"cell": Vector2i(398, 202), "stand": Vector2i(398, 201), "action": "gather_deadfall", "instance": "node_waystation_approach_deadfall"},
+	"crank": {"cell": Vector2i(443, 234), "stand": Vector2i(442, 234), "poi": RELAY_POI, "action": "hand_crank_bypass", "instance": ""},
 }
 var _world: Node
 var _hero: Node2D
@@ -23,7 +27,7 @@ func configure(world: Node, hero: Node2D, session: Node) -> bool:
 		return false
 	# The source and its cache body must already exist in the same live physics
 	# projection; a caller-provided position or UI label is not authority.
-	for name: String in ["obs_waystation_locker_bank_408_198", "obs_waystation_cache_crate_406_203"]:
+	for name: String in ["obs_waystation_locker_bank_408_198", "obs_waystation_cache_crate_406_203", "obs_waystation_ledger_desk_411_202", "obs_waystation_deadfall_398_202", "obs_relay_crank_cabinet_443_234"]:
 		var body := mounted_world.blocker_root.get_node_or_null(name) as StaticBody2D
 		if body == null or body.collision_layer != 1 or body.is_queued_for_deletion():
 			return false
@@ -42,7 +46,8 @@ func configure(world: Node, hero: Node2D, session: Node) -> bool:
 		# Existing SOH original prop atlas; not a generic collision or reward box.
 		var physical_world := world.get(&"world") as OverworldWorld
 		if physical_world != null:
-			var sprite := physical_world.call(&"_make_sprite", "camp_crate") as Sprite2D
+			var frames := {"locker": "camp_rack", "cache": "camp_crate", "ledger": "camp_table", "deadfall": "tree_dead", "crank": "short_valve_closed"}
+			var sprite := physical_world.call(&"_make_sprite", String(frames[id])) as Sprite2D
 			if sprite != null:
 				point.add_child(sprite)
 	return true
@@ -74,7 +79,7 @@ func request_for(point: Node) -> Dictionary:
 	for id: String in _points:
 		if _points[id] == point:
 			var data: Dictionary = POINTS[id]
-			var request := {"poi_id": POI, "action_id": String(data.action)}
+			var request := {"poi_id": String(data.get("poi", POI)), "action_id": String(data.action)}
 			if not String(data.instance).is_empty():
 				request["instance_id"] = String(data.instance)
 			return request
@@ -91,12 +96,17 @@ func interact_point(point: Node, actor: Node) -> void:
 		elif String(request_for(point).get("action_id", "")) == "pry_locker":
 			message = "Salvage access unlocked. The locker held no items."
 		else:
-			message = "Cache: 3 iron scrap and 2 knowledge spares."
+			match String(request_for(point).get("action_id", "")):
+				"cache_restock": message = "Cache: 3 iron scrap and 2 knowledge spares."
+				"gather_deadfall": message = "Gathered 2 oak wood."
+				"seal_ledger": message = "Waystation seal recorded."
+				"hand_crank_bypass": message = "Relay powered: used 2 scrap and 1 oak."
 	else:
 		var reason := String(result.get("reason", ""))
 		if reason == "OUT_OF_RANGE": message = "Stand next to the Waystation object."
 		elif reason.begins_with("MISSING_CAPABILITY"): message = "Open the Waystation locker first."
-		elif reason == "COOLDOWN": message = "Cache not restocked yet; active travel replenishes it."
+		elif reason == "COOLDOWN": message = "Not replenished yet; active travel restores this source."
+		elif reason.begins_with("MISSING_ITEM:"): message = "Relay needs 2 iron scrap and 1 oak wood."
 		elif reason == "inventory_full": message = "Not enough bag space; nothing was taken."
 		elif reason == "ALREADY_APPLIED": message = "Already opened."
 	if is_instance_valid(_world) and _world.has_method(&"show_prompt"):

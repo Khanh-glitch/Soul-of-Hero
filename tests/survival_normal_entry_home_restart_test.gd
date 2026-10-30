@@ -45,6 +45,11 @@ func _wait_route(app: Node, route: StringName, timeout_ms: int) -> bool:
 		await process_frame
 	return false
 
+# Specialized production journey extensions run after the paid home, before
+# taking the independent-process baseline. Default test has no extension.
+func _after_home_continuation() -> void:
+	pass
+
 func _run_from_menu() -> void:
 	var packed := load("res://game/app/app_root.tscn") as PackedScene
 	_expect(packed != null, "production application shell loads")
@@ -133,17 +138,21 @@ func _run_from_menu() -> void:
 	if not failures.is_empty() or not _body_complete:
 		_expect(_body_complete, "normal-entry home continuation completed")
 		return
+	await _after_home_continuation()
+	if not failures.is_empty():
+		return
 	var snapshot: Dictionary = _save().call(&"get_snapshot")
 	var document: Dictionary = _survival().call(&"document")
 	var disk: Variant = SaveDiff.read_json(ENTRY_SAVE)
 	SaveDiff.report("entry-first-memory-vs-disk.inventory", snapshot.get("inventory", {}), disk.get("inventory", {}) if disk is Dictionary else disk)
 	SaveDiff.report("entry-first-memory-vs-disk.survival", snapshot.get("survival", {}), disk.get("survival", {}) if disk is Dictionary else disk)
 	SaveDiff.report("entry-first-memory-vs-disk.receipts", snapshot.get("applied_transactions", {}), disk.get("applied_transactions", {}) if disk is Dictionary else disk)
-	var audit := {"inventory": snapshot.get("inventory", {}).duplicate(true), "survival": document.duplicate(true), "transactions": snapshot.get("applied_transactions", {}).duplicate(true)}
+	var audit := {"inventory": snapshot.get("inventory", {}).duplicate(true), "survival": document.duplicate(true), "transactions": snapshot.get("applied_transactions", {}).duplicate(true), "world_slice": snapshot.get("world_slice", {}).duplicate(true)}
 	var file := FileAccess.open(ENTRY_AUDIT, FileAccess.WRITE)
 	_expect(file != null, "independent restart baseline can be written")
 	if file != null:
-		file.store_string(JSON.stringify(audit))
+		# Independent baseline must not truncate the doubles it later compares.
+		file.store_string(JSON.stringify(audit, "\t", true, true))
 		file.close()
 	print("ENTRY_HOME_FIRST_PROCESS inventory=%s receipts=%d structures=%d" % [str(_save().call(&"inventory_totals")), (audit.transactions as Dictionary).size(), (document.get("structures", {}) as Dictionary).size()])
 
@@ -167,6 +176,8 @@ func _verify_restart() -> void:
 	_expect((snapshot.get("inventory", {}) as Dictionary) == (baseline.get("inventory", {}) as Dictionary), "separate process restores exact ordinary and unique inventory")
 	_expect(document == (baseline.get("survival", {}) as Dictionary), "separate process restores exact structures, chests and permanent knowledge")
 	_expect((snapshot.get("applied_transactions", {}) as Dictionary) == (baseline.get("transactions", {}) as Dictionary), "separate process preserves all durable receipts without duplicates")
+	SaveDiff.report("entry-restart-baseline-vs-reloaded.world_slice", baseline.get("world_slice", {}), snapshot.get("world_slice", {}))
+	_expect((snapshot.get("world_slice", {}) as Dictionary) == (baseline.get("world_slice", {}) as Dictionary), "separate process preserves POI state, clocks and capabilities")
 	var world := await _boot()
 	_expect(world != null, "separate process reconstructs the actual production overworld")
 	if world == null:

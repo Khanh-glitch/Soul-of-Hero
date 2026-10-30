@@ -1,0 +1,79 @@
+name: A0 guarded production Waystation candidate
+on:
+  push:
+    branches: [arena/dea2428e-soul-of-hero]
+    paths: ['game/overworld/**', 'game/survival/**', 'game/characters/knight/**', 'game/autoload/save_service.gd', 'data/survival/**', 'tests/survival_*', 'tests/fixtures/a0_save_diff.gd', '.github/workflows/a0-production-waystation-candidate.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    strategy:
+      fail-fast: false
+      matrix:
+        route: [controller, normal-entry]
+    env:
+      LIBGL_ALWAYS_SOFTWARE: 1
+      GODOT_SILENCE_ROOT_WARNING: 1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify A1-produced candidate bytes, source pins, and HOLD
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib, json, pathlib
+          d = pathlib.Path('data/survival/connector/a0_candidate')
+          m = json.loads((d/'pilot_manifest.json').read_text())
+          assert m['connector_id'] == 'a1_crown_canonical_seam_v1' and m['native_playable'] is False
+          assert m['contract_sha256'] == '1516e23bda93ba3fd6bb3b729699c08527e1addf2fac0706300940e566df620c'
+          assert m['delta_sha256'] == '03acafe2f679c104312e7e4b66f911636e182b0cf42ce0b6743d1fae07b27eb3'
+          for name, info in m['files'].items():
+              assert hashlib.sha256((d/name).read_bytes()).hexdigest() == info['sha256'], name
+          for name, pin in {'poi_crown_waystation.slice.json':'3a4981fd3e24580e2e7c2ee5d0929f76c432d785e142b67a222c6480af01e16f', 'poi_crown_relay_shed.slice.json':'5ab0042980a43e64f05aa73870b0d99f906fb95f70492daf2a6b6f7b585b77ad'}.items():
+              assert hashlib.sha256((d/'slices'/name).read_bytes()).hexdigest() == pin, name
+          print('A1 exact connector candidate bytes verified; native_playable remains false')
+          PY
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import exact production project
+        run: |
+          mkdir -p artifacts/ud_candidate artifacts/ud_import
+          timeout 180s godot --headless --path . --user-data-dir artifacts/ud_import --import > artifacts/candidate-import.log 2>&1
+          bash tools/ci/gate_log.sh artifacts/candidate-import.log 'candidate import' 'Godot Engine'
+      - name: Ordinary physical journey and independent process
+        shell: bash
+        run: |
+          set -uo pipefail
+          if [ '${{ matrix.route }}' = controller ]; then
+            script=res://tests/survival_production_waystation_candidate_test.gd
+            marker='A0 WAYSTATION INPUT RESTART PASSED'
+            restart=--restart
+          else
+            script=res://tests/survival_normal_entry_waystation_candidate_test.gd
+            marker='NORMAL ENTRY HOME RESTART PASSED'
+            restart=--verify-separate-process
+          fi
+          failed=0
+          for mode in first restart; do
+            args=()
+            if [ "$mode" = restart ]; then args=(-- "$restart"); fi
+            timeout --signal=TERM --kill-after=15s 1800s xvfb-run -a godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_candidate --resolution 960x540 --windowed --script "$script" "${args[@]}" > "artifacts/candidate-$mode.log" 2>&1
+            rc=$?
+            cat "artifacts/candidate-$mode.log"
+            echo "::notice::Candidate ${{ matrix.route }} $mode exit=$rc $(grep -E 'PASSED|FAILED|  FAIL  |SCRIPT ERROR|Parse Error' "artifacts/candidate-$mode.log" | tail -15 | tr '\n' '~')"
+            while IFS= read -r line; do echo "::notice::$line"; done < <(grep '^A0_SAVE_DIFF ' "artifacts/candidate-$mode.log" || true)
+            bash tools/ci/gate_log.sh "artifacts/candidate-$mode.log" "candidate $mode" "$marker" || failed=1
+            [ "$rc" -eq 0 ] || failed=1
+          done
+          exit "$failed"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a0-candidate-${{ matrix.route }}-logs
+          path: artifacts/candidate-*.log
+          if-no-files-found: warn

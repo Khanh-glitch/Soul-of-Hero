@@ -13,9 +13,10 @@ const REARM_SECONDS := 60.0
 const SAFE_SPAWN_DISTANCE := 320.0
 const ENEMY_SCENE := "res://game/characters/enemies/skeleton_enemy.tscn"
 ## A hit can award the Hero's existing combat score even when score_reward is
-## zero. A durable first-hit receipt limits rearming after a successful save
-## without changing shared combat or dungeon AI. Save-fault/reload farming is
-## still unproven: the current Hero can award score even if that write fails.
+## zero. Reserve the existing one-use receipt durably BEFORE exposing an enemy.
+## This prevents hit/score effects on failed saves; it is deliberately
+## conservative: a crash before the first hit can consume the encounter.
+## Unmounted until fault, gameplay and fairness gates validate this tradeoff.
 const CONSUMED_RECEIPT := "survival.encounter.optional_skeleton.first_hit.v1"
 
 var _hero: CharacterBody2D
@@ -26,6 +27,9 @@ var _reservation := Rect2i()
 var _enemy: CharacterBody2D
 var _save: Node
 var _spent := false
+# In this live session a reserved but not-yet-hit enemy may reappear after a
+# retreat. On reload the durable receipt is spent, including pre-hit crashes.
+var _reservation_active := false
 var _cooldown := 0.0
 var _configured := false
 
@@ -115,9 +119,26 @@ func _spawn() -> void:
 	var packed := load(ENEMY_SCENE) as PackedScene
 	if packed == null:
 		return
-	_enemy = packed.instantiate() as CharacterBody2D
-	if _enemy == null:
+	var candidate := packed.instantiate() as CharacterBody2D
+	if candidate == null:
 		return
+	if not _reservation_active:
+		var committed := bool(_save.call(&"transact_once", CONSUMED_RECEIPT,
+			func(_candidate: Dictionary) -> bool: return true,
+			{"kind": "survival_encounter_pre_spawn_reservation", "encounter_id": "optional_skeleton_v1"}))
+		if not committed:
+			# A post-rename failure may already have reached disk. Subsequent
+			# ordinary saves may still use the old memory snapshot. Either way,
+			# never expose an enemy in this session after an ambiguous failure.
+			candidate.free()
+			_spent = true
+			var warning := get_node_or_null("OptionalEncounterWarning") as Label
+			if warning != null:
+				warning.text = "Encounter unavailable: save could not be confirmed"
+			push_warning("Optional encounter reservation failed; no enemy was exposed.")
+			return
+		_reservation_active = true
+	_enemy = candidate
 	_enemy.name = "BoundedSkeleton"
 	_enemy.set("score_reward", 0)
 	# The global LootDirector observes every node in the enemies group. Mark
@@ -134,18 +155,9 @@ func _spawn() -> void:
 func _on_enemy_health_changed(current: int, maximum: int) -> void:
 	if _spent or current >= maximum or not _configured:
 		return
-	# SaveService owns the sole durable receipt. On a write fault, remove the
-	# encounter and keep this live session fail-closed rather than respawning it.
-	var committed := bool(_save.call(&"transact_once", CONSUMED_RECEIPT,
-		func(_candidate: Dictionary) -> bool: return true,
-		{"kind": "survival_encounter_first_hit", "encounter_id": "optional_skeleton_v1"}))
-	_spent = committed or bool(_save.call(&"is_transaction_applied", CONSUMED_RECEIPT))
-	if not _spent:
-		_spent = true
-		push_warning("Optional encounter receipt failed; rearming is disabled for this session.")
-		if is_instance_valid(_enemy):
-			_enemy.queue_free()
-			_enemy = null
+	# The receipt was already committed before the enemy entered the tree; no
+	# save is attempted after damage or Hero score has become observable.
+	_spent = true
 	var warning := get_node_or_null("OptionalEncounterWarning") as Label
 	if warning != null:
 		warning.text = "Encounter engaged — no respawn"

@@ -2,10 +2,17 @@ extends "res://tests/survival_connector_pilot_test.gd"
 ## Separate-process pilot of the real A0 host and A3 source against the actual
 ## Hero, controller and A1 connector. Synthetic ordinary inputs; NOT production
 ## mount, human validation or the complete home/danger journey.
+const SaveDiff = preload("res://tests/fixtures/a0_save_diff.gd")
 const HOST = preload("res://game/survival/waystation_host.gd")
 const GEOMETRY = preload("res://game/survival/waystation_geometry.gd")
 const PATH := "user://tests/waystation_input_restart.json"
 const AUDIT := "user://tests/waystation_input_restart_audit.json"
+
+func _geometry_directory() -> String:
+	return "res://artifacts/a0-connector/slices/"
+
+func _test_label() -> String:
+	return "ISOLATED CONNECTOR"
 
 func _console() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("user://tests"))
@@ -23,20 +30,25 @@ func _console() -> void:
 			_finish(); return
 		var actual: Dictionary = _save().call(&"get_snapshot")
 		for section: String in ["inventory", "survival", "world_slice", "applied_transactions"]:
+			SaveDiff.report("waystation-restart-baseline-vs-reloaded." + section, expected.get(section, {}), actual.get(section, {}))
 			_expect(actual.get(section, {}) == expected.get(section, {}), "independent process preserves exact " + section)
 	var ow := await _boot()
 	if ow == null:
 		_finish(); return
 	var physical_world := ow.get(&"world") as OverworldWorld
 	var body_count := physical_world.blocker_root.get_child_count()
-	var duplicate_mount: Dictionary = GEOMETRY.mount(physical_world, "res://artifacts/a0-connector/slices/")
+	var duplicate_mount: Dictionary = GEOMETRY.mount(physical_world, _geometry_directory())
 	_expect(not bool(duplicate_mount.get("ok", true)) and physical_world.blocker_root.get_child_count() == body_count, "duplicate source mount fails without adding any collider")
-	var host := HOST.new()
-	host.name = "WaystationRuntime"
-	ow.add_child(host)
 	var hero := ow.get(&"player") as CharacterBody2D
 	var session := ow.get(&"economy_session") as Node
-	_expect(session != null and host.configure(ow, hero, session), "real A0 host binds to the actual pilot Hero and EconomySession")
+	var host := ow.get_node_or_null("WaystationRuntime")
+	if host == null:
+		host = HOST.new()
+		host.name = "WaystationRuntime"
+		ow.add_child(host)
+		_expect(session != null and bool(host.call(&"configure", ow, hero, session)), "real A0 host binds to the actual pilot Hero and EconomySession")
+	else:
+		_expect(session != null and host.get_script() == HOST and host.get_parent() == ow, "production controller itself mounted its one A0 host")
 	if session != null:
 		var before_clock := int(session.get("_world_seconds"))
 		await create_timer(1.5).timeout
@@ -62,7 +74,7 @@ func _console() -> void:
 		var file := FileAccess.open(AUDIT, FileAccess.WRITE)
 		_expect(file != null, "first process creates separate audit after scene exit")
 		if file != null:
-			file.store_string(JSON.stringify(record)); file.close()
+			file.store_string(JSON.stringify(record, "\t", true, true)); file.close()
 	_finish()
 
 func _click_point(ow: Node, hero: CharacterBody2D, point: Node2D) -> void:
@@ -111,6 +123,28 @@ func _journey(ow: Node, hero: CharacterBody2D, host: Node, second: bool) -> void
 		_expect(found, "same SaveService commit records canonical A1 receipt metadata")
 		await _click_point(ow, hero, cache)
 		_expect((_save().call(&"inventory_totals") as Dictionary) == after, "second physical activation cannot duplicate the source")
+		if not await _leg(hero, nav, Vector2i(410, 202), "ordinary input to ledger stand"):
+			return
+		await _click_point(ow, hero, host.get_node("Ledger") as Node2D)
+		var sealed: Dictionary = _save().call(&"get_snapshot")
+		_expect((_save().call(&"inventory_totals") as Dictionary) == after, "ledger grants zero physical items")
+		_expect(((sealed.get("world_slice", {}) as Dictionary).get("capabilities", []) as Array).has("cap_seal_1"), "ledger grants canonical seal capability")
+		if not await _leg(hero, nav, Vector2i(398, 201), "ordinary input to deadfall stand"):
+			return
+		await _click_point(ow, hero, host.get_node("Deadfall") as Node2D)
+		var gathered: Dictionary = _save().call(&"inventory_totals")
+		_expect(int(gathered.get("oak_wood", 0)) == int(after.get("oak_wood", 0)) + 2, "deadfall grants exactly two oak")
+		if not await _leg(hero, nav, Vector2i(442, 234), "ordinary input from Waystation to Relay stand"):
+			return
+		await _click_point(ow, hero, host.get_node("Crank") as Node2D)
+		var powered: Dictionary = _save().call(&"get_snapshot")
+		var remaining: Dictionary = _save().call(&"inventory_totals")
+		_expect(int(remaining.get("iron_scrap", 0)) == int(gathered.get("iron_scrap", 0)) - 2 and int(remaining.get("oak_wood", 0)) == int(gathered.get("oak_wood", 0)) - 1, "Relay consumes exactly two scrap and one oak")
+		_expect(((powered.get("world_slice", {}) as Dictionary).get("capabilities", []) as Array).has("cap_power_1"), "Relay grants canonical power capability")
+		var relay: Dictionary = ((powered.get("world_slice", {}) as Dictionary).get("pois", {}) as Dictionary).get("poi_crown_relay_shed", {})
+		_expect(bool(relay.get("bus_powered", false)), "Relay bus powered in durable state")
+		await _click_point(ow, hero, host.get_node("Crank") as Node2D)
+		_expect((_save().call(&"inventory_totals") as Dictionary) == remaining, "repeat Relay activation cannot double-consume or reward")
 	if not await _leg(hero, nav, refuge, "return to Refuge"):
 		return
 	if not second:
@@ -120,5 +154,5 @@ func _journey(ow: Node, hero: CharacterBody2D, host: Node, second: bool) -> void
 func _finish() -> void:
 	for action: String in ["move_left", "move_right", "move_up", "move_down"]:
 		Input.action_release(action)
-	print("A0 WAYSTATION INPUT RESTART %s - %d checks (ISOLATED CONNECTOR)" % ["PASSED" if failures.is_empty() else "FAILED", checks])
+	print("A0 WAYSTATION INPUT RESTART %s - %d checks (%s)" % ["PASSED" if failures.is_empty() else "FAILED", checks, _test_label()])
 	quit(0 if failures.is_empty() else 1)

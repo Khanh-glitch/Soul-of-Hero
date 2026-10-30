@@ -51,6 +51,17 @@ const CHEST_PANEL_SCRIPT := preload("res://game/survival/chest_inventory_panel.g
 const SURVIVAL_NODE_SCRIPT := preload("res://game/survival/survival_resource_node.gd")
 const DEATH_BAG_SCRIPT := preload("res://game/survival/survival_death_bag.gd")
 const SURVIVAL_RESOURCE_PLAN_PATH := "res://data/survival/hollow_marches_resources.json"
+# Reversible candidate only. The default production route remains unchanged
+# until native input/restart and owner gates are independently reviewed.
+const WAYSTATION_CANDIDATE_SETTING := "survival/a0_waystation_candidate"
+const WAYSTATION_ROOT := "res://data/survival/connector/a0_candidate/"
+const A0_WAYSTATION_GEOMETRY := preload("res://game/survival/waystation_geometry.gd")
+const A0_WAYSTATION_HOST := preload("res://game/survival/waystation_host.gd")
+const WAYSTATION_ASSET_PINS := {
+	"annex_world.v1.json": "8883a224f05372f7ad3afa5317da82268e624acfc76f9891ba9fc24a22f6e1c6",
+	"annex_layers.v1.json": "674643e862168ab52b00fe7f8038fcf6be8c6aa66cb6666c28ca752394ca2d00",
+	"annex_props.v1.json": "dc80877a0425ceac546fbed2dcc352c14fb6548e67c346d9f1226ef914440cd2",
+}
 
 const CAMERA_ZOOM := Vector2.ONE
 const WEARY_SPEED_SCALE := 0.82
@@ -113,15 +124,29 @@ func is_world_ready() -> bool:
 	return build_stage == BuildStage.READY
 
 
-# The ordinary scene always uses the pinned legacy sources. A derived scene may
-# override these hooks for an isolated, explicitly opted-in composition test;
-# payloads and saves cannot select alternate world files.
+# The scene defaults to pinned legacy sources. A project-level candidate may
+# explicitly select the bounded source; payloads and saves cannot select files.
+func _waystation_candidate_enabled() -> bool:
+	return bool(ProjectSettings.get_setting(WAYSTATION_CANDIDATE_SETTING, false))
+
+
 func _world_source_paths() -> Dictionary:
+	if _waystation_candidate_enabled():
+		for name: String in WAYSTATION_ASSET_PINS:
+			var path := WAYSTATION_ROOT + name
+			if not FileAccess.file_exists(path) or FileAccess.get_sha256(path) != String(WAYSTATION_ASSET_PINS[name]):
+				_fail("Waystation candidate source mismatch: " + name)
+				return {}
+		return {"world": WAYSTATION_ROOT + "annex_world.v1.json", "layers": WAYSTATION_ROOT + "annex_layers.v1.json", "props": WAYSTATION_ROOT + "annex_props.v1.json"}
 	return {"world": WORLD_DATA_PATH, "layers": LAYERS_PATH, "props": PROPS_PATH}
 
 
 func _mount_world_extensions() -> void:
-	pass
+	if not _waystation_candidate_enabled():
+		return
+	var result: Dictionary = A0_WAYSTATION_GEOMETRY.mount(world, WAYSTATION_ROOT + "slices/")
+	if not bool(result.get("ok", false)):
+		_fail("Waystation candidate geometry refused: " + String(result.get("reason", "unknown")))
 
 
 func _build_world() -> void:
@@ -129,6 +154,8 @@ func _build_world() -> void:
 		return
 	build_stage = BuildStage.LOADING_DATA
 	var sources := _world_source_paths()
+	if build_stage == BuildStage.FAILED:
+		return
 	var world_path := String(sources.get("world", ""))
 	var layers_path := String(sources.get("layers", ""))
 	var props_path := String(sources.get("props", ""))
@@ -150,6 +177,8 @@ func _build_world() -> void:
 		_fail("world layers failed to paint")
 		return
 	_mount_world_extensions()
+	if build_stage == BuildStage.FAILED:
+		return
 
 	build_stage = BuildStage.SPAWNING_PLAYER
 	state = OverworldState.new()
@@ -179,9 +208,22 @@ func _build_world() -> void:
 	# nodes and built structures carry collision, and the occlusion system has to
 	# see them when it buckets occluders.
 	_build_survival()
+	if _waystation_candidate_enabled() and survival_build != null:
+		survival_build.annex_disabled_from_x = 384
 	_build_economy_session()
 	_build_occlusion()
 	_build_hud()
+	if _waystation_candidate_enabled():
+		if economy_session == null:
+			_fail("Waystation candidate requires the A3 economy session")
+			return
+		var candidate_host := A0_WAYSTATION_HOST.new()
+		candidate_host.name = "WaystationRuntime"
+		add_child(candidate_host)
+		if not bool(candidate_host.call(&"configure", self, player, economy_session)):
+			candidate_host.queue_free()
+			_fail("Waystation candidate physical host refused")
+			return
 	_build_economy_panel()
 	chest_panel = CHEST_PANEL_SCRIPT.new()
 	chest_panel.name = "ChestInventoryPanel"

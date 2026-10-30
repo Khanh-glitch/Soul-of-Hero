@@ -260,7 +260,7 @@ func _waystation_host() -> Node:
 
 
 func _world_snapshot(poi_id: String) -> Dictionary:
-	if not _gameplay_active() or poi_id != "poi_crown_waystation" or _waystation_host() == null:
+	if not _gameplay_active() or poi_id not in ["poi_crown_waystation", "poi_crown_relay_shed"] or _waystation_host() == null:
 		return {}
 	var nav := _world.get(&"traversability") as OverworldTraversability
 	if nav == null:
@@ -268,6 +268,9 @@ func _world_snapshot(poi_id: String) -> Dictionary:
 	var cell := nav.cell_of(_hero.global_position)
 	var host := _waystation_host()
 	var discovered := is_instance_valid(_world_active_point) and bool(host.call(&"matches_interaction", _world_active_point, _hero))
+	if discovered:
+		var current_request: Dictionary = host.call(&"request_for", _world_active_point)
+		discovered = String(current_request.get("poi_id", "")) == poi_id
 	return {"contract": "soh.economy.world_host.v1", "poi_id": poi_id,
 		"discovered": discovered, "hero_cell": [cell.x, cell.y],
 		"session_id": _session_id, "session_index": _session_index,
