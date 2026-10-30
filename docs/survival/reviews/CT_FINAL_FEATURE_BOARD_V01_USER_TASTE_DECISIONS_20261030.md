@@ -2,6 +2,8 @@
 
 **DRAFT NOT USER-RATIFIED | 2026-10-30 | NO AGENT DISPATCH | NOT PRODUCTION ACCEPTANCE**
 
+**ADDITIONAL LOCK D058 (same date):** Every run begins with an independently randomized, geographically broad SAFE valid spawn; user specifically rejected a fixed start and choice among small set of areas. Old aggregated `Điểm hành trình` example is RETRACTED as ungrounded; FB59 remains a distinct research/feel decision. Source review: `CT_2019_2020_BATTLE_SETTLEMENT_SCORE_AND_RANDOM_SPAWN_RESEARCH_20261030.md`.
+
 **ADDITIONAL LOCK D056/D057 (same date):** Next 14-day season is a clean gameplay restart (all in-run world/home/inventory/Core/recipes/progression/quests cleared), keeping account-wide achievements and per-run historical result/stat records only; repeatable starter-guide quests are optional on later runs and give once-per-run authorized rewards. Exact Last Island end-score metric remains unverified and must not be invented.
 
 **PARTIAL LOCK — D055 user-voted at 2026-10-30**: 14 real calendar days including offline for each SOH survival run. Only this rule is LOCKED; all other DRAFT and ASK_USER remain open. Old docs claiming no timed world run or '14-day-equivalent only' are superseded on this point. Exact reset/persistence scopes NOT YET CHOSEN.
@@ -15,7 +17,7 @@
 - PARKED_NOT_LOVED: chưa thấy hấp dẫn / không hợp hướng vào lúc này, giữ lưu hồ sơ để có thể xem lại; đúng nghĩa 'hàng chờ' theo user.
 - REJECTED: user không muốn hoặc mâu thuẫn pháp lý/logic; không mặc định hồi sinh.
 
-**58 nhóm đầu mục biên tập** (không phải 54 D quyết định hay 44 SYS/26 package): USER_WANTS 39; CT_PROPOSES 5; ASK_USER 2; TASTE_REVIEW 2; ASK_USER_LATER 1; PARKED_NOT_LOVED 3; REJECTED 6. Số nhóm có thể thay đổi khi tách/gộp tính năng, tuyệt đối không coi là số lượng feature code/gameplay pass.
+**59 nhóm đầu mục biên tập** (không phải 54 D quyết định hay 44 SYS/26 package): USER_WANTS 40; CT_PROPOSES 5; ASK_USER 1; TASTE_REVIEW 3; ASK_USER_LATER 1; PARKED_NOT_LOVED 3; REJECTED 6. Số nhóm có thể thay đổi khi tách/gộp tính năng, tuyệt đối không coi là số lượng feature code/gameplay pass.
 
 ## Insight trung tâm mới nhất
 **Một map có thể học thuộc, một run có điểm kết thúc, nhiều chiến lược không thể làm hết trong ~14 ngày trải nghiệm.** Nhà ở đâu quyết định đường tài nguyên/đánh quái/POI/Skill Core; vật liệu và thời gian là cơ hội phải hy sinh. Người chơi nhớ một cửa phòng chưa mở/Skill Core vừa thấy/biome chưa thăm và chủ động chọn mở đầu khác khi chơi lại trên cùng map. Map không cần procedural đảo hết địa lý; sáng tạo đến từ mục tiêu cạnh tranh, sinh vật/mùa thời tiết/loot động có lý và player knowledge/agency. Không khóa “≥3 mục tiêu” như một mục tiêu độ sâu; đó chỉ là một tầng gate test trước đây.
@@ -41,7 +43,7 @@
 | FB10 | Các vị trí nhà khác dẫn đến chiến lược riêng | USER_WANTS | Thời gian/tài nguyên tạo chi phí cơ hội |
 | FB11 | Cùng map, học địa điểm/Core qua mỗi lần chơi lại | USER_WANTS | Tri thức người chơi có giá trị |
 | FB12 | Nguồn loot/địch/thời tiết biến thiên vừa đủ qua ván | CT_PROPOSES | Không xáo trộn lục địa vô cớ |
-| FB13 | Khởi đầu cố định, ngẫu nhiên hay lựa chọn vị trí | ASK_USER | Chi phối replay và độ khó |
+| FB13 | **Đầu mỗi ván sinh tồn được spawn NGẪU NHIÊN trên nhiều vị trí HỢP LỆ trải rộng bản đồ** | USER_WANTS | **D058 LOCKED**; tuyệt đối không toxic/hazard/hostile instant death, kẹt địa hình/thiếu vật liệu sống cơ bản; tự chọn vị trí xây nhà |
 | FB58 | **Chuỗi nhiệm vụ hướng dẫn người mới, nhưng mỗi ván reset; ván sau tự do làm nhiệm vụ ngoài thứ tự để nhận thưởng** | USER_WANTS | **LOCKED D057**; nhận hành động thật đã làm trước quest, thưởng mỗi quest tối đa một lần/mùa; không khóa đường chơi |
 
 ### Nhà & xưởng
@@ -111,6 +113,8 @@
 | FB47 | Single SaveService, receipts, migration, typed domain interfaces | CT_PROPOSES | Chọn chuẩn cập nhật dài hạn |
 | FB48 | Repository-first và giấy phép nguồn đúng | USER_WANTS | Công khai không luôn có quyền redistrib |
 
+| FB59 | **Điểm/cấp độ/tổng kết chiến cuộc chính xác** | TASTE_REVIEW | **CHƯA CHỐT công thức**: CT rút lại 8.420 Điểm hành trình giả và 4 chỉ số cộng điểm; tài liệu 2019 phân biệt huy hiệu/cuối chiến cuộc, xếp hạng công trình chế độ riêng, battle level; 2020 miner/challenge/scavenger weekly, 2025 S2 rank không phải 2019. Thành tựu chung + run history vẫn LOCKED D056 |
+
 ### Kho ý tưởng
 | ID | Nội dung | Trạng thái | Lý do/hàng rào |
 |---|---|---|---|
@@ -131,7 +135,7 @@
 ## Chốt đầu tiên cần hỏi user (không hỏi 57 ý một lượt)
 1. **CHỐT D055:** một SOH run kết thúc sau 14 ngày lịch thực (336 giờ) kể cả thời gian offline. **KHÔNG hỏi lại lựa chọn này**. Thời điểm kích hoạt clock đầu ván, UX đếm ngược và tính chính xác offline thuộc phương án kỹ thuật CT đề xuất, chưa chốt là thông số user.
 2. **CHỐT D056–D057:** reset toàn bộ gameplay kể cả quest/tutorial; chỉ `profile.achievements` toàn game và `profile.run_history` (thành tích/kết quả của từng ván) tồn tại xuyên mùa. Guide có thể làm lại tự do để nhận thưởng hợp lệ từng mùa. **KHÔNG hỏi lại reset này.** Điểm kết quả dùng công thức nào là chi tiết để CT đề xuất/test, không tự bịa con số của game gốc.
-3. Một map ổn định nên có spawn tự chọn/gần vùng ngẫu nhiên, loot/hazard thay đổi thế nào mỗi run? Tôi nghiêng về stable geography, reset điểm xây nhà, nguồn loot và sinh vật đổi có nguyên nhân, nhiều đường chơi; không nên ngẫu nhiên hóa vị trí các di tích trọng yếu.
+3. **CHỐT D058:** spawn đầu mỗi run là ngẫu nhiên trên tập rộng địa điểm hợp lệ, có loại trừ độc/địch/chết tức thời; không hỏi lại fixed/random/menu. Vẫn mở tùy biến loot/hazard giữa ván nhưng địa lý landmark ổn định.
 4. Lựa chọn muộn: mức phạt đói/khát/death, hiếm của Core và số lượng loại/slot, sau khi engine/audio/gameplay Gold có bằng chứng.
 
 ## Nguồn & tránh false lock
