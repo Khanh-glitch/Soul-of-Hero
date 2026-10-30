@@ -45,13 +45,14 @@ func _finish() -> void:
 func _set_direction(delta: Vector2) -> void:
 	for action: String in ["move_left", "move_right", "move_up", "move_down"]:
 		Input.action_release(action)
-	if delta.x < -0.5:
+	# Same player-faithful input rule as the normal-entry chain: no deadband.
+	if delta.x < -0.05:
 		Input.action_press("move_left")
-	elif delta.x > 0.5:
+	elif delta.x > 0.05:
 		Input.action_press("move_right")
-	if delta.y < -0.5:
+	if delta.y < -0.05:
 		Input.action_press("move_up")
-	elif delta.y > 0.5:
+	elif delta.y > 0.05:
 		Input.action_press("move_down")
 
 func _leg(hero: CharacterBody2D, nav: OverworldTraversability, destination: Vector2i, label: String) -> bool:

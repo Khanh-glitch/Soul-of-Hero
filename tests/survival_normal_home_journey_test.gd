@@ -96,23 +96,51 @@ func _site_clear(build: SurvivalBuildSystem, center: Vector2i) -> bool:
 				return false
 	return true
 
+## The Hero is a 12x16 rectangle whose origin sits at its feet, so a stand cell
+## places the body one pixel into the row above. A cell-centre query alone is
+## therefore not proof that the body can *travel* between two cells: the planner
+## also casts the same shape along each candidate segment.
+func _shape_placement(cell: Vector2i, hero: CharacterBody2D) -> Transform2D:
+	var shape := hero.get_node("BodyShape") as CollisionShape2D
+	return Transform2D(0.0, Vector2(cell.x * 16 + 8, cell.y * 16 + 15) + shape.position)
+
+func _shape_query(hero: CharacterBody2D) -> PhysicsShapeQueryParameters2D:
+	var shape := hero.get_node("BodyShape") as CollisionShape2D
+	var query := PhysicsShapeQueryParameters2D.new()
+	query.shape = shape.shape
+	query.collision_mask = hero.collision_mask
+	query.exclude = [hero.get_rid()]
+	query.collide_with_bodies = true
+	query.collide_with_areas = false
+	return query
+
 func _shape_clear(cell: Vector2i, nav: OverworldTraversability, hero: CharacterBody2D, cache: Dictionary) -> bool:
 	if cache.has(cell):
 		return bool(cache[cell])
 	if not nav.in_bounds(cell) or not nav.is_free(cell):
 		cache[cell] = false
 		return false
-	var shape := hero.get_node("BodyShape") as CollisionShape2D
-	var query := PhysicsShapeQueryParameters2D.new()
-	query.shape = shape.shape
-	query.transform = Transform2D(0.0, Vector2(cell.x * 16 + 8, cell.y * 16 + 15) + shape.position)
-	query.collision_mask = hero.collision_mask
-	query.exclude = [hero.get_rid()]
-	query.collide_with_bodies = true
-	query.collide_with_areas = false
+	var query := _shape_query(hero)
+	query.transform = _shape_placement(cell, hero)
 	var clear := hero.get_world_2d().direct_space_state.intersect_shape(query, 1).is_empty()
 	cache[cell] = clear
 	return clear
+
+## Swept clearance for one 16px step. Both endpoints may be clear while the
+## straight segment clips a corner, which is exactly how a walker wedges.
+##
+## If the Hero already overlaps something it cannot be judged from here; the
+## step is allowed and the walker's own contact handling deals with it. That
+## keeps a body that is momentarily inside a doorway from losing its whole path.
+func _sweep_clear(from: Vector2i, to: Vector2i, hero: CharacterBody2D) -> bool:
+	var space := hero.get_world_2d().direct_space_state
+	var query := _shape_query(hero)
+	query.transform = _shape_placement(from, hero)
+	if not space.intersect_shape(query, 1).is_empty():
+		return true
+	query.motion = _shape_placement(to, hero).origin - query.transform.origin
+	var fractions := space.cast_motion(query)
+	return fractions.size() >= 2 and fractions[0] >= 0.999
 
 func _route(start: Vector2i, goal: Vector2i, nav: OverworldTraversability, hero: CharacterBody2D) -> Array[Vector2i]:
 	var queue: Array[Vector2i] = [start]
@@ -126,6 +154,13 @@ func _route(start: Vector2i, goal: Vector2i, nav: OverworldTraversability, hero:
 			var next := cell + step
 			if previous.has(next) or not _shape_clear(next, nav, hero, cache):
 				continue
+			if cache.has("edge:" + str(cell) + ">" + str(next)):
+				if not bool(cache["edge:" + str(cell) + ">" + str(next)]):
+					continue
+			elif not _sweep_clear(cell, next, hero):
+				cache["edge:" + str(cell) + ">" + str(next)] = false
+				continue
+			cache["edge:" + str(cell) + ">" + str(next)] = true
 			previous[next] = cell
 			queue.append(next)
 	var path: Array[Vector2i] = []
@@ -136,19 +171,81 @@ func _route(start: Vector2i, goal: Vector2i, nav: OverworldTraversability, hero:
 		goal = previous[goal]
 	return path
 
+## Ordinary continuous walking, one planned cell at a time.
+##
+## A player holds a direction and, when the body stops moving, tries another
+## direction until the corner is cleared; that is reproduced here. When the body
+## makes no progress the slide contacts are printed with their colliders and
+## normals so a wedge is diagnosable instead of merely failing.
 func _walk_path(hero: CharacterBody2D, path: Array[Vector2i]) -> bool:
 	for cell: Vector2i in path:
 		var point := Vector2(cell.x * 16 + 8, cell.y * 16 + 15)
 		var deadline := Time.get_ticks_msec() + 3500
+		var stalled := 0
+		var escapes := 0
+		var escape_frames := 0
+		var escape_direction := Vector2.ZERO
 		while hero.global_position.distance_to(point) > 4.5 and Time.get_ticks_msec() < deadline and not bool(hero.get(&"dead")):
-			_set_direction(point - hero.global_position)
+			if escape_frames > 0:
+				escape_frames -= 1
+				_set_direction(escape_direction)
+				await physics_frame
+				continue
+			var before := hero.global_position
+			_set_direction(point - before)
 			await physics_frame
+			stalled = stalled + 1 if hero.global_position.distance_to(before) < 0.25 else 0
+			if stalled < 5:
+				continue
+			escapes += 1
+			if escapes > 6:
+				break
+			_report_wedge(hero, cell, before, escapes)
+			escape_direction = _escape_direction(hero, before, point, escapes)
+			escape_frames = 10
+			stalled = 0
 		if hero.global_position.distance_to(point) > 4.5:
 			_set_direction(Vector2.ZERO)
 			print("HOME_ROUTE_FAIL actor=%s target=%s" % [str(hero.global_position), str(cell)])
 			return false
 	_set_direction(Vector2.ZERO)
 	return true
+
+## Slide contacts prove whether a stall is a real physical contact and against
+## what; the normals say which directions the body can still slide.
+func _report_wedge(hero: CharacterBody2D, cell: Vector2i, at: Vector2, attempt: int) -> void:
+	var contacts: Array[String] = []
+	for index: int in hero.get_slide_collision_count():
+		var collision := hero.get_slide_collision(index)
+		var other := collision.get_collider()
+		contacts.append("%s normal=%s position=%s" % [
+			other.name if other is Node else str(other),
+			str(collision.get_normal()), str(collision.get_position())])
+	print("A0_WALK_STALL cell=%s at=%s velocity=%s motion=%s attempt=%d contacts=%d [%s]" % [
+		str(cell), str(at), str(hero.velocity), str(hero.get_last_motion()), attempt,
+		contacts.size(), "; ".join(contacts)])
+
+## A player wiggles: try the four cardinal directions in a rotating order that
+## starts with the one most likely to slide along the contact.
+func _escape_direction(hero: CharacterBody2D, at: Vector2, point: Vector2, attempt: int) -> Vector2:
+	var to_target := (point - at).normalized()
+	var order: Array[Vector2] = []
+	if absf(to_target.x) >= absf(to_target.y):
+		order = [Vector2(0, -signf(to_target.x)), Vector2(0, signf(to_target.x)),
+			Vector2(to_target.x, 0), Vector2(-to_target.x, 0)]
+	else:
+		order = [Vector2(-signf(to_target.y), 0), Vector2(signf(to_target.y), 0),
+			Vector2(0, to_target.y), Vector2(0, -to_target.y)]
+	for candidate: Vector2 in order:
+		if candidate.length() < 0.5:
+			continue
+		var query := _shape_query(hero)
+		query.transform = Transform2D(0.0, hero.global_position + (hero.get_node("BodyShape") as CollisionShape2D).position)
+		query.motion = candidate * 6.0
+		var fractions := hero.get_world_2d().direct_space_state.cast_motion(query)
+		if fractions.size() >= 2 and fractions[0] > 0.5:
+			return candidate
+	return order[(attempt - 1) % order.size()] if not order.is_empty() else Vector2.ZERO
 
 func _body() -> void:
 	await super._body()

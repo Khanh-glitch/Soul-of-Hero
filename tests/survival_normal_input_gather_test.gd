@@ -36,13 +36,16 @@ func _finish() -> void:
 func _set_direction(delta: Vector2) -> void:
 	for action: String in ["move_left", "move_right", "move_up", "move_down"]:
 		Input.action_release(action)
-	if delta.x < -3.0:
+	# A held key has no deadband: a one-pixel correction is still a real press.
+	# A 3px threshold here silently refused every sub-3px correction, which pinned
+	# the Hero against a wall corner while it was 1.02px below the next waypoint.
+	if delta.x < -0.05:
 		Input.action_press("move_left")
-	elif delta.x > 3.0:
+	elif delta.x > 0.05:
 		Input.action_press("move_right")
-	if delta.y < -3.0:
+	if delta.y < -0.05:
 		Input.action_press("move_up")
-	elif delta.y > 3.0:
+	elif delta.y > 0.05:
 		Input.action_press("move_down")
 
 func _walk_to_kind(ow: Node, hero: CharacterBody2D, navigation: OverworldTraversability, kind: String) -> SurvivalResourceNode:
