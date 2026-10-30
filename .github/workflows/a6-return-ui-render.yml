@@ -133,6 +133,19 @@ jobs:
           xvfb-run --auto-servernum -s "-screen 0 1280x720x24" glxinfo -B 2>&1 | head -14 \
             | tee -a "$GITHUB_STEP_SUMMARY" || true
 
+      # The first windowed boot of a job is the fragile one: it compiles shaders and
+      # creates the X client with a cold cache, and it hung here three times. A plain
+      # boot-and-quit runs first, exactly the shape that has always worked.
+      - name: Warm up the windowed engine
+        run: |
+          set +e
+          timeout --foreground 180s xvfb-run --auto-servernum -s "-screen 0 1280x720x24" \
+            env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
+            godot --path . --quit-after 30 --rendering-driver opengl3 --audio-driver Dummy \
+            > .artifacts/warmup.log 2>&1
+          echo "warm-up exit: $?"
+          tail -5 .artifacts/warmup.log
+
       - name: Render the four return cards at three resolutions
         run: |
           # The runner's default `run` shell is `bash -e`, so a non-zero exit from

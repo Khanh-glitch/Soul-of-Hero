@@ -153,10 +153,10 @@ func _capture(state: String, overrides: Dictionary, open_record := false) -> voi
 	if open_record:
 		layer.open_record()
 	await _settle(6)
-	# Reading the viewport texture before the renderer has finished a frame can
-	# block, so ask the renderer to draw now instead of waiting for a vsync that a
-	# virtual display may never deliver.
-	RenderingServer.force_draw(true)
+	# Wait for a frame the renderer actually finished before touching its texture.
+	# `force_draw(true)` was tried here and blocked the main thread inside the buffer
+	# swap on a virtual display, which also stopped the watchdog from ever firing.
+	await RenderingServer.frame_post_draw
 	var viewport_size := get_viewport().get_visible_rect().size
 	var frame := get_viewport().get_texture().get_image()
 	# `canvas_items` stretch means the layout is authored in 640x360 units while the
