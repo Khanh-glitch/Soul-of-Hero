@@ -152,9 +152,7 @@ func _body() -> void:
 		if not engage.is_empty():
 			await _walk_path(hero, engage)
 			break
-	until = Time.get_ticks_msec() + 300000
-	while not bool(hero.get("dead")) and Time.get_ticks_msec() < until:
-		await physics_frame
+	await _engage_until_death(hero, encounter, start, 300000)
 	var last_enemy := encounter.get_node_or_null("BoundedSkeleton") as CharacterBody2D
 	print("OPTIONAL_THREAT_TRACE lethal_wait_end hp=%s dead=%s hero=%s enemy=%s enemy_pos=%s state=%s distance=%s" % [str(hero.get("health")), str(hero.get("dead")), str(hero.global_position), str(last_enemy), str(last_enemy.global_position if last_enemy != null else Vector2.ZERO), str(last_enemy.get("_state") if last_enemy != null else "missing"), str(hero.global_position.distance_to(last_enemy.global_position) if last_enemy != null else -1)])
 	var doc: Dictionary = _survival().call(&"document")
@@ -241,6 +239,24 @@ func _body() -> void:
 		_expect(same_structures and String(fresh_doc.get("spawn_anchor", "")) == home_bed and (fresh_doc.get("containers", {}) as Dictionary) == home_containers, "fresh overworld reconstructs all original home identities, active bed and exact stored contents")
 	_body_complete = true
 
+# Use real movement to re-engage after knockback. A leashed enemy may despawn;
+# in that case physically retreat beyond its safe spawn radius and wait for the
+# real cooldown rather than teleporting, changing the enemy or inflicting hits.
+func _engage_until_death(hero: CharacterBody2D, encounter: Node2D, home_cell: Vector2i, max_msec: int) -> void:
+	var deadline := Time.get_ticks_msec() + max_msec
+	var home_point := Vector2(home_cell.x * 16 + 8, home_cell.y * 16 + 15)
+	while not bool(hero.get("dead")) and Time.get_ticks_msec() < deadline:
+		var live := encounter.get_node_or_null("BoundedSkeleton") as CharacterBody2D
+		if is_instance_valid(live) and not live.is_queued_for_deletion():
+			var delta := live.global_position - hero.global_position
+			_set_direction(delta if delta.length() > 28.0 else Vector2.ZERO)
+		elif hero.global_position.distance_to(encounter.global_position) < 350.0:
+			_set_direction(home_point - hero.global_position)
+		else:
+			_set_direction(Vector2.ZERO)
+		await physics_frame
+	_set_direction(Vector2.ZERO)
+
 func _repeat_real_death(ow: Node, encounter: Node2D, site: Vector2i, goal: Vector2i,
 		home_cell: Vector2i, home_room: String, previous_bag: String, before: Dictionary) -> bool:
 	var hero := ow.get(&"player") as CharacterBody2D
@@ -265,9 +281,7 @@ func _repeat_real_death(ow: Node, encounter: Node2D, site: Vector2i, goal: Vecto
 		if not engage.is_empty():
 			await _walk_path(hero, engage)
 			break
-	var deadline := Time.get_ticks_msec() + 300000
-	while not bool(hero.get("dead")) and Time.get_ticks_msec() < deadline:
-		await physics_frame
+	await _engage_until_death(hero, encounter, home_cell, 300000)
 	var doc: Dictionary = _survival().call(&"document")
 	var second_id := String(doc.get("pending_death", ""))
 	var second_created := bool(hero.get("dead")) and not second_id.is_empty() and second_id != previous_bag and (doc.get("death_bags", {}) as Dictionary).has(second_id) and not (doc.get("death_bags", {}) as Dictionary).has(previous_bag)

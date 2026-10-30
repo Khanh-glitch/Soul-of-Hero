@@ -61,7 +61,16 @@ func _leg(hero: CharacterBody2D, nav: OverworldTraversability, destination: Vect
 	if start != destination and path.is_empty():
 		return false
 	var walked := await _walk_path(hero, path)
-	print("A0_CONNECTOR_TRACE %s start=%s target=%s actual=%s walked=%s" % [label, str(start), str(destination), str(hero.global_position), str(walked)])
+	# The general journey helper accepts 4.5px of error. At a tile's bottom
+	# edge that can be in the next cell, which is not an exact stand. Continue
+	# with real movement until the Hero actually enters the requested cell.
+	var refine_deadline := Time.get_ticks_msec() + 2500
+	var target := Vector2(destination.x * 16 + 8, destination.y * 16 + 15)
+	while walked and nav.cell_of(hero.global_position) != destination and Time.get_ticks_msec() < refine_deadline:
+		_set_direction(target - hero.global_position)
+		await physics_frame
+	_set_direction(Vector2.ZERO)
+	print("A0_CONNECTOR_TRACE %s start=%s target=%s actual=%s actual_cell=%s walked=%s" % [label, str(start), str(destination), str(hero.global_position), str(nav.cell_of(hero.global_position)), str(walked)])
 	_expect(walked and nav.cell_of(hero.global_position) == destination, label + " ordinary movement reaches intended cell")
 	return walked and nav.cell_of(hero.global_position) == destination
 
