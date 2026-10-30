@@ -1,61 +1,68 @@
-# A3 V3 — Source-authoritative world loot / production handoff
+# A3 world-source handoff — V4 checkpoint
 
-Status: **A3-scoped implementation; native-fixture CI queued (GitHub hosted-runner backlog); production world mount pending A0.**
-This is not a documentation-only completion and not a claim of S3+ world integration.
+Code SHA: `9f617946` on `arena/7a12b27e-soul-of-hero` / PR #19. Status: **A3-owned adapter + native fixtures authored; local Python/validator/model/syntax PASS; native Godot and two-OS-process restart evidence PENDING CI**. This is not an A0 production mount, not A1 geometry acceptance, not A4 Gold parity, and not human playtest approval.
 
-Verification at the V3 code SHA: Python 39 tests OK; catalog validator PASS; independent tree-sitter-gdscript syntax oracle reports 0 errors for `economy_service.gd`, `world_source_adapter.gd` and `economy_adapter_test.gd` (syntax only, not runtime). Godot 4.7 native cases 21–23 are authored and wired into `.github/workflows/survival-a3-economy.yml`; the native run must be confirmed green when runners recover. Logs: `docs/survival/economy/verification/v3/`.
+## What changed in V4
 
-## Canonical A1/A3 contracts (pinned A1 PR #20 @ 2951bf85)
+1. **Host cell type fixed.** `world_source_adapter.gd` accepts native `Vector2i` and JSON `[int, int]` cells, rejects float/bool/string spoofing, and compares exact stand cells. The previous Array-only check would have rejected the documented native host.
+2. **Replay idempotency fixed.** `world_action` signs the request only. The generation-derived canonical key is written into mutable SaveService receipt metadata inside the mutator. Replaying the same `event_id` after the claim generation advances returns `ALREADY_APPLIED` with the original key; a different request under the same event id returns `event_id_conflict`.
+3. **A1 identity reconciled without geography edits.** The physical Waystation cache is canonically `si:r_ashen_crown:waystation_cache:01`; `node_waystation_cache` is its pinned interaction-node alias. `binding_for` resolves only exact pinned aliases and fails closed on collision. Projection exposes both. Deadfall remains the A1 slice node `node_waystation_approach_deadfall`.
+4. **One no-Core notes crate bound.** A3 authorizes the existing `road_notes` proposal (1 `research_notes` / 1800 active s) on exactly one A1 physical crate `si:r_ashen_crown:roadside_supply:01`, stand `(395,220)`. The other two A1 roadside crates remain unbound. This replaces the legacy `soul_ember -> make_notes` bootstrap for ordinary tool research; it adds no scrap/spares abundance and no Core.
+5. **A8 Quarry fail-closed.** `A8_QUARRY_AUTHORIZATION_V4.json` rejects `brace_east_shelf`, `chock_west_ramp`, and `extract_outcrop` pending evidence. No cost/yield/cooldown is guessed. The adapter has no Quarry binding; caller-supplied prices/flags are rejected. A7 BLK-5 remains open by design.
+6. **Native negatives extended.** Cases 21–25 cover canonical zero-item locker/ledger, si/node aliasing, replay after generation advance, cooldown boundaries, new-session no offline credit, spoofed time quantum/sequence/regression, UI flag injection, partial relay cost, full bag, failed `.tmp` save, no-Core source→research→processing→iron_pick chain, inventory/knowledge conservation, hidden projection privacy, and Quarry rejection. Exact check counts will be reported only from a green native run.
+7. **Two-OS-process restart proof added.** `economy_world_restart_test.gd` phase 1 writes a canonical claim; phase 2 runs in a separate Godot process, reloads the same save, verifies exact inventory, idempotent replay, full remaining cooldown with no offline credit, and generation 2 only after 1800 active seconds. Workflow runs both phases.
 
-| Site | Action / instance | Cost | Reward | Policy |
-|---|---|---|---|---|
-| Waystation locker | `pry_locker` | — | `cap_salvage`, **0 items** | one-time |
-| Waystation ledger | `seal_ledger` | — | `cap_seal_1`, **0 items** | one-time, requires `cap_salvage` |
-| Waystation outside cache | `cache_restock` / `node_waystation_cache` | — | `iron_scrap 3 + knowledge_spares 2` | 1800 **active** s, generation receipt |
-| Waystation approach deadfall | `gather_deadfall` / `node_waystation_approach_deadfall` | — | `oak_wood 2` | 300 **active** s |
-| Relay shed | `hand_crank_bypass` | `iron_scrap 2 + oak_wood 1` | `cap_power_1`, `bus_powered/bypass_installed` | one-time, requires `cap_salvage` |
+## Canonical authority unchanged
 
-Binding data: `data/survival/items/world_source_bindings.v3.json` (schema `soh.economy.world_source_bindings.v3`).
-Identity is `source_class | region_id | poi_id | instance_id`; rewards are deterministic, no Core, no Gold-valued grant, no random first-Core table. The superseded A3 locker reward (2 scrap + 2 spares) is removed from `sources` adoption and the progression model.
+| Source/action | Reward/cost | Cooldown | Key |
+|---|---:|---:|---|
+| Waystation locker | `cap_salvage`, **0 items** | one-time | `a1slice:poi_crown_waystation:pry_locker:1` |
+| Waystation ledger | `cap_seal_1`, **0 items** | one-time | `a1slice:poi_crown_waystation:seal_ledger:1` |
+| Waystation cache | 3 `iron_scrap` + 2 `knowledge_spares` | 1800 active s | `a1slice:poi_crown_waystation:cache_restock:{claim_index}` |
+| Approach deadfall | 2 `oak_wood` | 300 active s | `a1slice:poi_crown_waystation:gather_deadfall:{claim_index}` |
+| Relay hand-crank | costs 2 `iron_scrap` + 1 `oak_wood`; grants `cap_power_1` | one-time | `a1slice:poi_crown_relay_shed:hand_crank_bypass:1` |
+| Roadside notes crate 01 | 1 `research_notes` | 1800 active s | `a3src:r_ashen_crown:roadside_supply:01:claim:{claim_index}` |
 
-## A0 integration API (SaveService remains the sole authority)
+The old extra locker reward must never return. No Core probability, free Core, Gold value, or new Spares grant is introduced.
 
-```gdscript
-eco.configure_world_host(host_callable)          # A0 composition root only
-eco.advance_world_time(poi_id, event_id)         # call from the pausable active clock
-eco.world_action({"poi_id":…, "action_id":…, "instance_id":…}, event_id)
-eco.world_projection(poi_id)                     # read-only A6/A0 projection
-eco.has_capability(capability_id)
-```
+## A0-ready atomic adapter boundary
 
-`world_action` accepts **only** `poi_id`, `action_id`, optional `instance_id`. Costs, rewards, cooldown, generation, capability and receipt are derived from the pinned binding + host, never from the caller or UI.
+A0 owns runtime/production mounts, SaveService, the pausable active-session clock, discovery, hero position, and physical interaction nodes. A3 owns item/source/research truth and the pure adapter. A0 must:
 
-Host receipt (`soh.economy.world_host.v1`) must be produced by A0 from authoritative state:
-`contract, poi_id, discovered, hero_cell:Vector2i, active_seconds, session_id, session_index, sequence, world_revision`.
-`active_seconds` is cumulative **active** gameplay time (max quantum 3600 per receipt). A new session rebaselines the host counter; offline time is never credited. Cooldowns compare the stored cumulative counter, so remaining cooldown survives reload/new session.
+1. Refresh vendored `a3_economy_service.gd` and pins from `verification/v4/a3_sha256.txt`.
+2. Mount `data/survival/items/world_source_bindings.v3.json` unchanged.
+3. Provide `configure_world_host(Callable)` returning `soh.economy.world_host.v1` with `poi_id`, `discovered`, `hero_cell` (`Vector2i` or `[int,int]`), `active_seconds`, `session_id`, `session_index`, `sequence`, `world_revision`. Optional identity fields (`world_instance_id`, `interaction_node_id`, `source_class_id`, `region_id`, `canonical_poi_id`) are checked against the pinned binding when present.
+4. Route one physical A1/A8 intent to `world_action({poi_id, action_id, instance_id?}, event_id)`. The request may contain **only** those fields. Costs, rewards, cooldown, generation, capability, and receipt are derived from the binding and host, never from UI flags.
+5. Call `advance_world_time(poi_id, event_id)` from the pausable world clock. Max quantum 3600 active seconds; new sessions baseline the host and preserve remaining cooldown. No offline catch-up.
 
-All world state is written inside the existing four-argument `_transact` → `SaveService.transact_once` candidate under `world_slice` (`soh.world.slice_state.v1`): `capabilities[]`, `pois.<poi_id>`, `clock`. Canonical A1 keys (`a1slice:<poi>:<action>:<claim_index>`) live in `pois.*.reward_receipts` and receipt metadata `a1_transaction_key`. There is no side journal and no second inventory/save authority. Capacity is prechecked on a duplicate candidate before any cost/state mutation; full bag rejects the whole claim (`inventory_full`). Missing costs reject without partial consumption. Failed authoritative save leaves inventory, world state and receipts unchanged.
+Save namespace remains `world_slice` inside the same SaveService candidate as inventory. There is no second save authority, side journal, or A3 inventory service. `SaveService.transact_once` remains the commit boundary; A0's pinned facade continues to reject mutators not authored by the adapter.
 
-## Complete source → research → output example (native case 23)
+## A6 read-only state contract
 
-`pry_locker` → `seal_ledger` → 4× canonical cache (1800 active s apart; 12 scrap / 8 spares) → deadfall → relay (−2 scrap −1 oak, `cap_power_1`) → live `SurvivalService.harvest` oak/stone/reed/iron → SaveService home-storage round trip → hand-craft workbench/furnace kits → charcoal + 4× smelt_iron → weave_cloth → research_kit (−3 spares) → 2× make_notes + 3× make_spares → targeted `research_recipe(iron_pick)` (−6 spares −2 notes) → craft physical `iron_pick` → reload preserves capability, learned recipe, instance and cumulative active clock.
+`world_projection(poi_id)` returns:
 
-Progression-model consequence: with the canonical zero-item locker, the 45-minute sparse model now reaches `research_kit` in session 3 and first manufacture in session 8 (V2 had free locker Spares). This is the honest cost of the corrected A1 contract, not an arbitrary rebalance; the renewable outside cache funds the loop without a new grant.
+- undiscovered: `{poi_id, visibility:"HIDDEN", sources:[], actions:[]}`;
+- discovered: `{poi_id, visibility:"DISCOVERED", state, capabilities, active_seconds, sources[], actions[]}`.
 
-Catalyst honesty: `crypt_bone_shard` and `soul_ember` have **no live renewable world node** in the current catalog. Case 23 obtains them only through explicit `legacy_chapter1_2` reward fixture setup, labelled as existing rewards, not a new A3 free grant. The canonical cache alone can bootstrap Spares over repeated active-time claims; production binding of bone/ember catalysts remains A1-pending.
+Each source exposes canonical `instance_id`, pinned `world_instance_id`/`interaction_node_id`, class/region/POI identity, `claim_count`, `ready`, `remaining_active_seconds`, `cooldown_active_seconds`, `requires_capabilities`, and deterministic rewards. Each action exposes one-time state, costs, rewards, and capability grants. A6 sends intents only; it never receives the mutator, host receipt, or authority to set `ready`.
 
-## Minimum A0 mounting step (A3 cannot self-certify production)
+## No-Core loop evidence scope
 
-1. Refresh `game/survival/economy/vendor/a3_economy_service.gd` and the pinned A3 source SHA in `create_pinned_economy_port`. Current A3 service SHA256: `4f9165468cf98b557984c63168b84ace4dae264ef56e659ca7fe42c06802e82c`; adapter helper SHA256: `689a9b89dba4d756387b6b5c5f09b54d90ff0a787395f5e2fb523da496836efe`; binding data SHA256: `b1d291d035c9e543e69281da268b378c8e1bb498be561b2f15e67c840792b353`.
-2. Keep `EconomySession` as the active-time host; add a world-host callable that reads the same pausable clock plus A1 discovery/stand-cell authority and returns the receipt above.
-3. Route one reachable A1 container/A8 intent (`soh.native_poi.intent.v1`) to `world_action`; A0 re-checks actor/access/capability/identity/capacity/costs/idempotency and commits items + ledger + cooldown + site state in the one SaveService transaction.
-4. Ensure `data/survival/items/world_source_bindings.v3.json` is present in the production data mount.
+Native case 23 now completes: locker/ledger → roadside notes crate → canonical cache claims → deadfall/relay → live harvest → home storage round trip → workbench/furnace → scrap-smelt bootstrap ingots → research kit → smelting technology → ore smelting → weave cloth → targeted iron_pick research → craft one iron_pick → reload. It uses **no** legacy bone/ember grant and **no** Skill Core. The modeled active-time cost is dominated by seven 1800-second cache claims; this is a conservation/obtainability fixture, **not** evidence that the pacing is enjoyable. Human playtest remains `NOT_HUMAN_PLAYTESTED`.
 
-Until A0 does this, the broader Godot runtime validation may report a vendored-hash mismatch; that is the expected handoff boundary, not an A3 catalog failure.
+## A8 Quarry ruling
 
-## External reuse (pinned, license-checked)
+**REJECTED_PENDING_EVIDENCE_FAIL_CLOSED.** A8's 2-oak / 2-stone / 2-stone-yield / 45-second values are explicitly S2 fixture inputs, not prices. Missing evidence: durable A1/A0 physical instance, native two-route collision/reload proof, A3 net-yield model against existing stone/oak sinks, site-bound active-time replenishment authority, and human pacing evidence. A3 will not stamp a guessed 1-item price to satisfy A7's static checker. See `A8_QUARRY_AUTHORIZATION_V4.json`.
 
-- The FOG `9c5cb03a9d9f895cd9194bcfa1b3c4821da7c4e7` (MIT source; art excluded): discovered-vs-learned research gating referenced. Its consume-then-refund crafting was **rejected**.
-- GLoot `6b09b87ac07a8536779ef1ab0fafc7e99830f948` (MIT): capacity precheck / split-merge ordering ideas referenced; no second inventory service ported.
-- Survival Core Lite `df0c9c03…` and Nouf `c481ba60…`: partial-loss / naive inventory crafting **rejected**.
-- A1 `slice_state_machine.gd` is a test-only contract model; A3 reimplements the reducer shape in the production SaveService adapter rather than porting a second authority.
+## Verification
+
+Local at code SHA `9f617946`: 41 Python tests OK; validator PASS (56 items / 36 recipes / 5 techs / 37 sources / 7 stations / 3 bindings / 3 actions, 0 cycles); progression model 15 scenarios PASS (`SIMULATION_ONLY`); tree-sitter 0 ERROR nodes in 4 GDScript files (syntax only). Immutable conservation fixture `balance_report.json` unchanged. Logs: `verification/v4/`.
+
+Native Godot: prior `100b3406` catalog jobs succeeded, native jobs remained queued. New runs for `9f617946` are pending at this checkpoint. **No native PASS is claimed until the exact SHA runs green.** The two-process restart step is authored but not yet executed.
+
+## Unresolved authority
+
+- Gold / Skill Core casts remain `BLOCKED_PENDING_A4`; no synthetic `ready` dict is parity.
+- A0 production mount, A1 physical world integration, A6 UI, and human playtest are not accepted by this handoff.
+- A8 Quarry remains fail-closed.
+- Long-session disk benchmark and browser normal-input journey remain untested.
