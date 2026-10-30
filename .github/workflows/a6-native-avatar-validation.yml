@@ -108,6 +108,7 @@ jobs:
         with:
           name: a6-fail-closed-logs
           path: .artifacts/*.log
+          include-hidden-files: true
 
   private-staged-art:
     name: Private staged art drives both identities natively
@@ -458,6 +459,7 @@ jobs:
         with:
           name: a6-native-captures
           path: .artifacts/captures-*/**
+          include-hidden-files: true
           if-no-files-found: warn
 
       - uses: actions/upload-artifact@v4
@@ -465,6 +467,7 @@ jobs:
         with:
           name: a6-capture-logs
           path: .artifacts/capture-*.log
+          include-hidden-files: true
 
   survival-return-ui:
     name: Survival return UI (season, guidance, digest, record)
@@ -512,3 +515,4 @@ jobs:
         with:
           name: a6-return-ui-logs
           path: .artifacts/*.log
+          include-hidden-files: true

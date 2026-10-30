@@ -162,6 +162,7 @@ func _capture(state: String, overrides: Dictionary, open_record := false) -> voi
 		"layout_units": "%dx%d" % [int(viewport_size.x), int(viewport_size.y)],
 		"non_blank": _is_non_blank(frame) if frame != null and not frame.is_empty() else false,
 		"texts": _audit_texts(layer, state),
+		"cards": _card_boxes(layer),
 		"state_ok": state_errors.is_empty(),
 	})
 	layer.queue_free()
@@ -179,6 +180,27 @@ func _is_non_blank(frame: Image) -> bool:
 			if seen.size() > 8:
 				return true
 	return seen.size() > 3
+
+
+## Where each card actually sits. A card whose text falls outside its own rect is a
+## layout bug the screenshot shows but a per-string check cannot name.
+func _card_boxes(layer: Node) -> Dictionary:
+	var boxes := {}
+	for pair: Array in [
+		["run_card", "run_card"], ["guidance", "guidance_panel"], ["digest", "return_digest"],
+		["record", "record_panel"], ["site_cue", "site_cue_chip"],
+	]:
+		var control := layer.get(String(pair[1])) as Control
+		if control == null:
+			continue
+		var rect := control.get_global_rect()
+		var extra := control.get_combined_minimum_size()
+		boxes[String(pair[0])] = {
+			"visible": control.visible,
+			"rect": [rect.position.x, rect.position.y, rect.size.x, rect.size.y],
+			"min": [extra.x, extra.y],
+		}
+	return boxes
 
 
 ## A frame is only evidence of the state it names. A refused projection renders an

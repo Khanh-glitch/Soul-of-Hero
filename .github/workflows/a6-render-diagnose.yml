@@ -119,9 +119,11 @@ jobs:
               print(f.get("state"), f.get("width"), f.get("height"), "saved", f.get("saved"),
                     "blank?", not f.get("non_blank"), "state_ok", f.get("state_ok"),
                     "texts", len(f.get("texts", [])))
+              for name, box in (f.get("cards") or {}).items():
+                  print("   card", name, "vis", box.get("visible"), "rect", box.get("rect"), "min", box.get("min"))
               for t in f.get("texts", []):
                   if t.get("overflow") or not t.get("inside_screen"):
-                      print("   OVERFLOW", repr(t.get("text"))[:60], t.get("rect"))
+                      print("   OVERFLOW", repr(t.get("text"))[:44], "parent", t.get("parent"), t.get("rect"))
           PY
 
       - name: Q6 1440p capture
