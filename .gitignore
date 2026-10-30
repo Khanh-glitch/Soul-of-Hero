@@ -40,3 +40,8 @@ VFX Free Pack/
 Waterfalls/
 vuvvu_lyric_video/
 __pycache__/
+
+# Private CraftPix avatar staging (selected base sheets + private runtime
+# metadata). Never committed: the license allows embedded game use, not public
+# redistribution of raw source art. tools/stage_a6_avatar_art.py writes here.
+private_art/

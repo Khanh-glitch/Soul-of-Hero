@@ -1,0 +1,151 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Theme" path="res://game/ui/theme/living_arsenal_theme.tres" id="1_theme"]
+[ext_resource type="Script" path="res://game/ui/screens/avatar_choice/avatar_choice_screen.gd" id="2_script"]
+[ext_resource type="PackedScene" path="res://game/ui/theme/dungeon_backdrop.tscn" id="3_backdrop"]
+[ext_resource type="Texture2D" path="res://assets/branding/soul_hero_emblem_imagen.png" id="4_emblem"]
+
+[node name="AvatarChoiceScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_theme")
+script = ExtResource("2_script")
+
+[node name="DungeonBackdrop" parent="." instance=ExtResource("3_backdrop")]
+layout_mode = 1
+
+[node name="SafeMargin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = 16.0
+offset_right = -24.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Column" type="VBoxContainer" parent="SafeMargin"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Header" type="HBoxContainer" parent="SafeMargin/Column"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Emblem" type="TextureRect" parent="SafeMargin/Column/Header"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+texture = ExtResource("4_emblem")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Kicker" type="Label" parent="SafeMargin/Column"]
+layout_mode = 2
+theme_type_variation = &"KickerLabel"
+theme_override_colors/font_color = Color(0.88, 0.71, 0.39, 1)
+text = "CHƠI MỚI • BƯỚC 2: CHỌN NHÂN VẬT"
+
+[node name="Headline" type="Label" parent="SafeMargin/Column"]
+layout_mode = 2
+theme_type_variation = &"DisplayLabel"
+theme_override_colors/font_color = Color(1, 0.82, 0.42, 1)
+theme_override_font_sizes/font_size = 22
+text = "BẠN LÀ AI?"
+
+[node name="Cards" type="HBoxContainer" parent="SafeMargin/Column"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 14
+
+[node name="MaleCard" type="VBoxContainer" parent="SafeMargin/Column/Cards"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="MalePreview" type="TextureRect" parent="SafeMargin/Column/Cards/MaleCard"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 132)
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+texture_filter = 1
+expand_mode = 1
+stretch_mode = 5
+
+[node name="MaleButton" type="Button" parent="SafeMargin/Column/Cards/MaleCard"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 34)
+layout_mode = 2
+text = "NAM • 555940"
+
+[node name="MaleCaption" type="Label" parent="SafeMargin/Column/Cards/MaleCard"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+theme_override_font_sizes/font_size = 9
+horizontal_alignment = 1
+text = "NAM • 555940"
+
+[node name="FemaleCard" type="VBoxContainer" parent="SafeMargin/Column/Cards"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="FemalePreview" type="TextureRect" parent="SafeMargin/Column/Cards/FemaleCard"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 132)
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+texture_filter = 1
+expand_mode = 1
+stretch_mode = 5
+
+[node name="FemaleButton" type="Button" parent="SafeMargin/Column/Cards/FemaleCard"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 34)
+layout_mode = 2
+text = "NỮ • 419402"
+
+[node name="FemaleCaption" type="Label" parent="SafeMargin/Column/Cards/FemaleCard"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+theme_override_font_sizes/font_size = 9
+horizontal_alignment = 1
+text = "NỮ • 419402"
+
+[node name="StatusLabel" type="Label" parent="SafeMargin/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+theme_override_colors/font_color = Color(1, 0.62, 0.42, 1)
+theme_override_font_sizes/font_size = 9
+text = ""
+
+[node name="Footer" type="HBoxContainer" parent="SafeMargin/Column"]
+layout_mode = 2
+alignment = 2
+theme_override_constants/separation = 10
+
+[node name="Note" type="Label" parent="SafeMargin/Column/Footer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"MutedLabel"
+theme_override_colors/font_color = Color(0.66, 0.62, 0.7, 1)
+theme_override_font_sizes/font_size = 9
+text = "Danh tính được lưu trong hồ sơ A0 và khôi phục ở lần chơi sau."
+
+[node name="BackButton" type="Button" parent="SafeMargin/Column/Footer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 30)
+layout_mode = 2
+text = "QUAY LẠI"

@@ -32,7 +32,9 @@ func _start_new_game() -> void:
 	if not reset_ok:
 		_show_reset_error("Không thể tạo hồ sơ mới. Dữ liệu cũ vẫn được giữ nguyên.")
 		return
-	AppFlow.open_home()
+	# A new profile has no identity yet, so the player chooses the authored
+	# CraftPix base character before entering Home.
+	AppFlow.open_avatar_choice()
 
 
 func _set_actions_enabled(enabled: bool) -> void:

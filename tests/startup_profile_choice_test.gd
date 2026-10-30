@@ -79,7 +79,26 @@ func _run() -> void:
 		_finish()
 		return
 	new_game_button.pressed.emit()
-	_expect(await _wait_for_route(&"home"), "New Game resets safely, then enters Home")
+	_expect(await _wait_for_route(&"avatar_choice"), "New Game asks for the player identity before Home")
+	var choice := _current_screen() as Control
+	_expect(choice != null and choice.name == &"AvatarChoiceScreen", "the authored identity step is mounted")
+	var male_button := choice.find_child("MaleButton", true, false) as Button if choice != null else null
+	var female_button := choice.find_child("FemaleButton", true, false) as Button if choice != null else null
+	_expect(male_button != null and female_button != null, "both authored identities are offered")
+	_expect(
+		not _save.has_player_avatar(),
+		"no identity is recorded before the player chooses"
+	)
+	if male_button == null:
+		_finish()
+		return
+	male_button.pressed.emit()
+	_expect(await _wait_for_route(&"home"), "choosing an identity enters Home")
+	_expect(_save.has_player_avatar(), "the chosen identity is stored in A0 save state")
+	_expect(
+		String(_save.get_player_avatar().get("gender", "")) == "male",
+		"the stored identity matches the player's choice"
+	)
 	_expect(int(_save.get_player_progression_snapshot().get("player_level", 0)) == 1, "New Game resets Player Level")
 	_expect(int(_save.get_player_progression_snapshot().get("xp", -1)) == 0, "New Game resets Player XP")
 	_expect(

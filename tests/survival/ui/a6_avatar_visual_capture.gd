@@ -1,0 +1,186 @@
+extends Node
+
+## Native visual-capture driver for the A6 avatar integration.
+##
+## Drives the real product routes (title -> New Game -> identity choice -> Home ->
+## overworld) with the production Knight and saves full-frame renders so a human
+## can inspect sprite sharpness, animation continuity, HUD visibility and VFX
+## contrast at a given resolution. Nothing is mocked and no sprite sheet is
+## exported; only whole rendered frames are written.
+##
+## Usage (after `--`):
+##   --avatar-visual-capture --avatar-gender=male|female
+##   --capture-dir=<absolute directory> [--capture-tag=male_720p]
+
+const OVERWORLD_ROUTE := &"overworld"
+const HOME_ROUTE := &"home"
+const DEATH_HOLD_SECONDS := 1.6
+
+var _app_root: Node
+var _gender := "male"
+var _capture_dir := ""
+var _tag := "capture"
+var _index := 0
+var _failures: Array[String] = []
+var _knight: Node = null
+
+
+func start(app_root: Node) -> void:
+	_app_root = app_root
+	_run.call_deferred()
+
+
+func _run() -> void:
+	var args := OS.get_cmdline_user_args()
+	_gender = _argument_value(args, "--avatar-gender", "male")
+	_capture_dir = _argument_value(args, "--capture-dir", "user://captures")
+	_tag = _argument_value(args, "--capture-tag", "%s" % _gender)
+	var absolute_dir := _capture_dir if _capture_dir.is_absolute_path() else ProjectSettings.globalize_path(_capture_dir)
+	DirAccess.make_dir_recursive_absolute(absolute_dir)
+	print("A6 CAPTURE: dir=%s tag=%s gender=%s viewport=%s" % [
+		absolute_dir, _tag, _gender, str(get_viewport().get_visible_rect().size),
+	])
+	await _capture("01_title")
+	if not await _wait_for_route(&"title", 15000):
+		_fail("title route")
+	var title := _current_screen()
+	var new_game_button := title.find_child("NewGameButton", true, false) as Button if title != null else null
+	if new_game_button == null:
+		_fail("NewGameButton")
+		return _finish()
+	new_game_button.pressed.emit()
+	if not await _wait_for_route(&"avatar_choice", 8000):
+		_fail("avatar_choice route")
+		return _finish()
+	await _wait_frames(8)
+	await _capture("02_identity_choice")
+	var choice := _current_screen()
+	var button_name := "MaleButton" if _gender == "male" else "FemaleButton"
+	var identity_button := choice.find_child(button_name, true, false) as Button if choice != null else null
+	if identity_button == null:
+		_fail("identity button")
+		return _finish()
+	identity_button.pressed.emit()
+	if not await _wait_for_route(HOME_ROUTE, 8000):
+		_fail("home route")
+		return _finish()
+	await _wait_frames(20)
+	await _capture("03_home_avatar_idle")
+	Input.action_press(&"move_left")
+	await _wait_frames(14)
+	await _capture("04_home_avatar_walk")
+	Input.action_release(&"move_left")
+	await _wait_frames(6)
+
+	AppFlow.open_overworld()
+	if not await _wait_for_route(OVERWORLD_ROUTE, 15000):
+		_fail("overworld route")
+		return _finish()
+	await _wait_frames(30)
+	_knight = _find_player()
+	if _knight == null:
+		_fail("player actor")
+		return _finish()
+	await _capture("05_overworld_avatar_idle")
+	Input.action_press(&"move_right")
+	for index in range(3):
+		await _wait_frames(7)
+		await _capture("06_overworld_walk_%d" % (index + 1))
+	Input.action_release(&"move_right")
+	await _wait_frames(6)
+	Input.action_press(&"attack")
+	await _wait_frames(3)
+	Input.action_release(&"attack")
+	await _wait_frames(3)
+	await _capture("07_overworld_attack_1")
+	await _wait_frames(5)
+	await _capture("07_overworld_attack_2")
+	await _wait_frames(24)
+	_take_damage(6)
+	await _wait_frames(4)
+	await _capture("08_overworld_hurt")
+	await _wait_frames(20)
+	_take_damage(999999)
+	await _wait_frames(10)
+	await _capture("09_overworld_death")
+	await get_tree().create_timer(DEATH_HOLD_SECONDS).timeout
+	await _capture("09_overworld_death_hold")
+	if _knight != null and _knight.has_method(&"respawn"):
+		_knight.call(&"respawn")
+	await _wait_frames(10)
+	await _capture("10_overworld_respawn")
+	_finish()
+
+
+func _take_damage(amount: int) -> void:
+	if _knight == null:
+		return
+	_knight.set(&"invulnerability_remaining", 0.0)
+	_knight.call(&"take_damage", amount, _knight.get(&"global_position") + Vector2(16, 0))
+
+
+func _find_player() -> Node:
+	var players := get_tree().get_nodes_in_group(&"player")
+	for candidate: Node in players:
+		if candidate.has_method(&"take_damage"):
+			return candidate
+	return null
+
+
+func _capture(label: String) -> void:
+	await _wait_frames(2)
+	await RenderingServer.frame_post_draw
+	var image := get_viewport().get_texture().get_image()
+	_index += 1
+	var file_name := "%s_%02d_%s.png" % [_tag, _index, label]
+	var path := _capture_dir.path_join(file_name)
+	if not _capture_dir.is_absolute_path():
+		path = ProjectSettings.globalize_path(path)
+	var error := image.save_png(path)
+	if error != OK:
+		_fail("saved %s (%d)" % [file_name, error])
+		return
+	print("A6 CAPTURE: wrote %s (%dx%d)" % [path, image.get_width(), image.get_height()])
+
+
+func _wait_for_route(route_id: StringName, timeout_msec := 6000) -> bool:
+	var deadline := Time.get_ticks_msec() + timeout_msec
+	while Time.get_ticks_msec() < deadline:
+		if is_instance_valid(_app_root) and StringName(_app_root.call(&"get_current_route")) == route_id:
+			await get_tree().process_frame
+			return true
+		await get_tree().create_timer(0.02).timeout
+	return false
+
+
+func _wait_frames(count: int) -> void:
+	for _index_frame in range(count):
+		await get_tree().process_frame
+
+
+func _current_screen() -> Node:
+	if not is_instance_valid(_app_root):
+		return null
+	var host := _app_root.get_node_or_null(^"RouteHost")
+	return host.get_child(0) if host != null and host.get_child_count() == 1 else null
+
+
+func _argument_value(args: PackedStringArray, key: String, fallback: String) -> String:
+	for argument: String in args:
+		if argument.begins_with(key + "="):
+			return argument.substr((key + "=").length()).strip_edges()
+	return fallback
+
+
+func _fail(label: String) -> void:
+	_failures.append(label)
+	push_error("A6 CAPTURE FAIL: %s" % label)
+
+
+func _finish() -> void:
+	if _failures.is_empty():
+		print("A6 VISUAL CAPTURE COMPLETE — %d frames" % _index)
+		get_tree().quit(0)
+	else:
+		print("A6 VISUAL CAPTURE INCOMPLETE — %d failures" % _failures.size())
+		get_tree().quit(1)

@@ -16,6 +16,8 @@ const GAMEPLAY_CLICK_AUTO_PICKUP_TEST_ARGUMENT := "--gameplay-click-auto-pickup-
 const OVERWORLD_ACCEPTANCE_TEST_ARGUMENT := "--overworld-acceptance-test"
 const OVERWORLD_ROUNDTRIP_TEST_ARGUMENT := "--overworld-roundtrip-test"
 const STARTUP_PROFILE_CHOICE_TEST_ARGUMENT := "--startup-profile-choice-test"
+const AVATAR_IDENTITY_TEST_ARGUMENT := "--avatar-identity-test"
+const AVATAR_VISUAL_CAPTURE_ARGUMENT := "--avatar-visual-capture"
 const DIRECT_GAME_ARGUMENTS := [
 	"--smoke-test",
 	"--living-arsenal-test",
@@ -57,6 +59,20 @@ func _ready() -> void:
 	AppFlow.attach_app_root(self)
 	if _web_local_gameplay_smoke_requested():
 		show_route(DIRECT_GAME_SCENE, {}, &"game")
+		return
+	if OS.get_cmdline_user_args().has(AVATAR_VISUAL_CAPTURE_ARGUMENT):
+		var visual_capture: Node = (load("res://tests/survival/ui/a6_avatar_visual_capture.gd") as GDScript).new()
+		add_child(visual_capture)
+		visual_capture.start(self)
+		AppFlow.open_boot()
+		_finish_boot.call_deferred()
+		return
+	if OS.get_cmdline_user_args().has(AVATAR_IDENTITY_TEST_ARGUMENT):
+		var avatar_identity_test: Node = (load("res://tests/survival/ui/avatar_identity_native_test.gd") as GDScript).new()
+		add_child(avatar_identity_test)
+		avatar_identity_test.start(self)
+		AppFlow.open_boot()
+		_finish_boot.call_deferred()
 		return
 	if OS.get_cmdline_user_args().has(STARTUP_PROFILE_CHOICE_TEST_ARGUMENT):
 		var startup_choice_test: Node = (load("res://tests/startup_profile_choice_test.gd") as GDScript).new()

@@ -18,6 +18,9 @@ signal settings_changed(settings: Dictionary)
 signal hero_progression_changed(hero_id: StringName, snapshot: Dictionary)
 signal hero_shards_changed(hero_id: StringName, amount: int)
 signal hero_identity_unlocked(hero_id: StringName)
+## A0 remains the single authority for the player's visible identity. Presentation
+## code may only read this projection; it never writes identity itself.
+signal player_avatar_changed(snapshot: Dictionary)
 
 const UNIQUE_OWNERSHIP_GUARD := preload("res://game/survival/economy/unique_ownership_guard.gd")
 const ECONOMY_SAVE_FACADE := preload("res://game/survival/economy/economy_save_facade.gd")
@@ -80,6 +83,16 @@ const RESET_PROGRESSION_KEEP_SETTINGS_TOKEN := "RESET_SOUL_OF_HERO_PROGRESSION_K
 const LEGACY_RESET_PROGRESSION_KEEP_SETTINGS_TOKEN := "RESET_LIVING_ARSENAL_PROGRESSION_KEEP_SETTINGS"
 const RESET_ALL_TOKEN := "RESET_SOUL_OF_HERO_SAVE"
 const LEGACY_RESET_ALL_TOKEN := "RESET_LIVING_ARSENAL_SAVE"
+## Player identity (CraftPix base male 555940 / female 419402). The saved record
+## is deliberately tiny: it stores which authored identity the player chose, the
+## equipment appearance grade their gear maps to, and a monotonic revision that
+## presentation adapters must echo back before they may draw anything.
+const PLAYER_AVATAR_SCHEMA := "soh.player_avatar.v1"
+const PLAYER_AVATAR_APPEARANCE_SCHEMA := "soh.ui.avatar_appearance.v1"
+const PLAYER_AVATAR_GENDERS := ["male", "female"]
+const PLAYER_AVATAR_SOURCE_IDS := {"male": "555940", "female": "419402"}
+const PLAYER_AVATAR_GRADE_ZERO := 0
+const PLAYER_AVATAR_MAX_GRADE := 2
 const SETTINGS_NUMERIC_RANGES := {
 	"master_volume": [0.0, 1.0],
 	"music_volume": [0.0, 1.0],
@@ -312,6 +325,61 @@ func get_value(path: Array[String], fallback: Variant = null) -> Variant:
 	if cursor is Dictionary or cursor is Array:
 		return cursor.duplicate(true)
 	return cursor
+
+
+## A0-owned identity projection. Presentation adapters receive exactly this
+## dictionary; they may not invent, default or persist identity themselves.
+func get_player_appearance_projection() -> Dictionary:
+	var avatar := get_player_avatar()
+	var gender := String(avatar.get("gender", ""))
+	var grade := int(avatar.get("equipment_grade", PLAYER_AVATAR_GRADE_ZERO))
+	var revision := String(avatar.get("revision", 0))
+	return {
+		"schema": PLAYER_AVATAR_APPEARANCE_SCHEMA,
+		"provenance": "A0_OWNER_PROJECTION",
+		"gender": gender,
+		"armor_grade": grade,
+		"craftpix_id": String(PLAYER_AVATAR_SOURCE_IDS.get(gender, "")),
+		"source_revision": revision,
+		"revision": "player_avatar:%s:g%d:r%s" % [gender, grade, revision],
+	}
+
+
+func get_player_avatar() -> Dictionary:
+	_ensure_loaded()
+	var raw: Variant = _data.get("player_avatar", {})
+	if not raw is Dictionary:
+		return _default_player_avatar()
+	return (raw as Dictionary).duplicate(true)
+
+
+func has_player_avatar() -> bool:
+	return PLAYER_AVATAR_GENDERS.has(String(get_player_avatar().get("gender", "")))
+
+
+## Records the player's chosen authored identity. Identity is written through the
+## same crash-resistant commit path as every other authoritative field, so a
+## failed write leaves the previous character intact rather than a half state.
+func set_player_avatar(gender: String, source: String = "menu") -> bool:
+	_ensure_loaded()
+	var normalized := gender.strip_edges().to_lower()
+	if not PLAYER_AVATAR_GENDERS.has(normalized):
+		_push_failure("Unsupported player identity: %s" % gender)
+		return false
+	var candidate := _data.duplicate(true)
+	var current: Dictionary = candidate.get("player_avatar", _default_player_avatar())
+	candidate["player_avatar"] = {
+		"schema": PLAYER_AVATAR_SCHEMA,
+		"gender": normalized,
+		"equipment_grade": PLAYER_AVATAR_GRADE_ZERO,
+		"revision": maxi(0, int(current.get("revision", 0))) + 1,
+		"selected_at_unix": int(Time.get_unix_time_from_system()),
+		"selection_source": source.strip_edges().to_lower(),
+	}
+	if not _commit_candidate(candidate):
+		return false
+	player_avatar_changed.emit(get_player_avatar())
+	return true
 
 
 ## Returns derived point totals, stat values and per-Identity skill ranks without
@@ -2703,6 +2771,9 @@ func _sanitize_and_validate(document: Dictionary) -> String:
 		return soul_selection_error
 	_sanitize_legacy_audit(document["legacy_audit"])
 	_sanitize_settings(document["settings"])
+	var avatar_error := _sanitize_player_avatar(document)
+	if not avatar_error.is_empty():
+		return avatar_error
 	return ""
 
 
@@ -4420,6 +4491,7 @@ func _default_data() -> Dictionary:
 		"mode_progress": {"hunt": {}, "challenge": {}, "depth": {}},
 		"bestiary": {"discovered": []},
 		"settings": _default_settings(),
+		"player_avatar": _default_player_avatar(),
 		"applied_transactions": {},
 		"legacy_audit": _default_legacy_audit(),
 	}
@@ -4485,6 +4557,55 @@ func _default_auxiliary_loadout() -> Dictionary:
 		"soul_boots": "",
 		"soul_trace": "",
 	}
+
+
+func _default_player_avatar() -> Dictionary:
+	return {
+		"schema": PLAYER_AVATAR_SCHEMA,
+		"gender": "",
+		"equipment_grade": PLAYER_AVATAR_GRADE_ZERO,
+		"revision": 0,
+		"selected_at_unix": 0,
+		"selection_source": "",
+	}
+
+
+## Identity is player-facing truth, so an unreadable or hostile record degrades
+## to "no identity chosen" instead of silently asserting a character.
+func _sanitize_player_avatar(document: Dictionary) -> String:
+	var raw: Variant = document.get("player_avatar", {})
+	if not raw is Dictionary:
+		return "Player avatar section must be a Dictionary."
+	var avatar: Dictionary = raw
+	var gender := String(avatar.get("gender", "")).strip_edges().to_lower()
+	if not PLAYER_AVATAR_GENDERS.has(gender):
+		gender = ""
+	var grade_value: Variant = avatar.get("equipment_grade", PLAYER_AVATAR_GRADE_ZERO)
+	var grade := PLAYER_AVATAR_GRADE_ZERO
+	if grade_value is int or grade_value is float:
+		grade = int(grade_value)
+	if grade < PLAYER_AVATAR_GRADE_ZERO or grade > PLAYER_AVATAR_MAX_GRADE:
+		grade = PLAYER_AVATAR_GRADE_ZERO
+	var revision_value: Variant = avatar.get("revision", 0)
+	var revision := 0
+	if revision_value is int or revision_value is float:
+		revision = maxi(0, int(revision_value))
+	var selected_at_value: Variant = avatar.get("selected_at_unix", 0)
+	var selected_at := 0
+	if selected_at_value is int or selected_at_value is float:
+		selected_at = maxi(0, int(selected_at_value))
+	var source := String(avatar.get("selection_source", "")).strip_edges().to_lower()
+	if not source.is_empty() and not _is_valid_identifier(source):
+		source = ""
+	document["player_avatar"] = {
+		"schema": PLAYER_AVATAR_SCHEMA,
+		"gender": gender,
+		"equipment_grade": grade,
+		"revision": revision,
+		"selected_at_unix": selected_at,
+		"selection_source": source,
+	}
+	return ""
 
 
 func _default_settings() -> Dictionary:

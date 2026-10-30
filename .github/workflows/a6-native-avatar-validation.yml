@@ -1,0 +1,321 @@
+name: A6 native avatar validation
+
+## Native Godot 4.7 execution for the A6 player-avatar integration.
+##
+## Two independent gates:
+##   * `public-clone-fail-closed` proves a clean clone (no private art) fails
+##     closed: the Knight is not substituted, identity still saves, no items.
+##   * `private-staged-art` stages the SHA-256-locked CraftPix base sheets on the
+##     runner only (never committed), then proves both identities through the
+##     real menu -> New Game -> identity choice -> Home -> overworld journey,
+##     including death/respawn and a second-process reload.
+##   * `visual-captures` renders real 720p/1440p/2160p frames under Xvfb with a
+##     software GL driver and uploads them for human inspection.
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - arena/05e0328d-soul-of-hero
+
+permissions:
+  contents: read
+
+env:
+  GODOT_VERSION: "4.7.0"
+  MALE_ARCHIVE_ID: "1CuSQ3pr75U1l1Ep8FIDexQlMr8fO3qGb"
+  FEMALE_ARCHIVE_ID: "1o5hRVbPZjZxcPGwP5coPDHZARbAej75o"
+  MALE_ARCHIVE_SHA256: "b5579a3cc6006ef8c9d55c9ca0388575d75c987382b6cb504e2c7519e6c1e795"
+  FEMALE_ARCHIVE_SHA256: "f704e7852273d5f0111435ae86975fa981354d699dff1f594934f6a32d9821ad"
+
+jobs:
+  public-clone-fail-closed:
+    name: Public clone fails closed (no private art)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Godot 4.7 stable
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: ${{ env.GODOT_VERSION }}
+          use-dotnet: false
+          include-templates: false
+
+      - name: Record engine version
+        run: |
+          mkdir -p .artifacts
+          godot --version | tee .artifacts/godot-version.txt
+          echo "Engine: $(cat .artifacts/godot-version.txt)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Confirm no private art is present in the checkout
+        run: |
+          test ! -e private_art/a6_avatar/avatar_art_private_runtime.json
+          echo "private_art staging absent, as expected for a public clone"
+
+      - name: Import project
+        run: |
+          set -uo pipefail
+          godot --headless --editor --path . --import --quit 2>&1 | tail -40
+          echo "import done"
+
+      - name: Identity saves but art gate is honest (no Knight substitute)
+        run: |
+          set -euo pipefail
+          export SOUL_OF_HERO_SAVE_PATH="user://a6_public_clone.json"
+          rm -f "$HOME/.local/share/godot/app_userdata/SOUL OF HERO/a6_public_clone.json" || true
+          timeout --signal=TERM --kill-after=15s 300s godot --headless --path . -- \
+            --avatar-identity-test --avatar-phase=full --avatar-gender=male --avatar-expectation=blocked \
+            2>&1 | tee .artifacts/fail-closed-full.log
+          timeout --signal=TERM --kill-after=15s 300s godot --headless --path . -- \
+            --avatar-identity-test --avatar-phase=verify --avatar-gender=male --avatar-expectation=blocked \
+            2>&1 | tee .artifacts/fail-closed-verify.log
+          test -z "$(git ls-files private_art)"
+          grep -q "A6 AVATAR IDENTITY NATIVE TEST PASSED" .artifacts/fail-closed-full.log
+          grep -q "A6 AVATAR IDENTITY NATIVE TEST PASSED" .artifacts/fail-closed-verify.log
+          echo "FAIL-CLOSED GATE PASSED" >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a6-fail-closed-logs
+          path: .artifacts/*.log
+
+  private-staged-art:
+    name: Private staged art drives both identities natively
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Godot 4.7 stable
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: ${{ env.GODOT_VERSION }}
+          use-dotnet: false
+          include-templates: false
+
+      - name: Stage licensed base sheets privately (runner-only, never committed)
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/a6_source"
+          curl -L --fail --retry 3 --max-time 300 \
+            -o "$RUNNER_TEMP/a6_source/male.zip" \
+            "https://drive.google.com/uc?export=download&id=${MALE_ARCHIVE_ID}"
+          curl -L --fail --retry 3 --max-time 300 \
+            -o "$RUNNER_TEMP/a6_source/female.zip" \
+            "https://drive.google.com/uc?export=download&id=${FEMALE_ARCHIVE_ID}"
+          python3 - <<'PY'
+          import hashlib, os, pathlib, sys
+          root = pathlib.Path(os.environ["RUNNER_TEMP"]) / "a6_source"
+          expected = {
+              "male.zip": os.environ["MALE_ARCHIVE_SHA256"],
+              "female.zip": os.environ["FEMALE_ARCHIVE_SHA256"],
+          }
+          for name, want in expected.items():
+              data = (root / name).read_bytes()
+              if not data.startswith(b"PK\x03\x04"):
+                  sys.exit(f"{name}: download is not a ZIP archive (blocked or HTML page)")
+              got = hashlib.sha256(data).hexdigest()
+              print(f"{name}: {len(data)} bytes sha256={got}")
+              if got != want:
+                  sys.exit(f"{name}: SHA-256 mismatch")
+          PY
+          python3 tools/stage_a6_avatar_art.py \
+            --male-zip "$RUNNER_TEMP/a6_source/male.zip" \
+            --female-zip "$RUNNER_TEMP/a6_source/female.zip"
+          git status --porcelain --ignored private_art | head -5
+          test -f private_art/a6_avatar/avatar_art_private_runtime.json
+          test -z "$(git status --porcelain | grep -v '^?? private_art/' || true)"
+          echo "art staged privately; nothing added to Git"
+          rm -f "$RUNNER_TEMP/a6_source"/*.zip
+
+      - name: Import project with the staged sheets
+        run: |
+          set -uo pipefail
+          godot --headless --editor --path . --import --quit 2>&1 | tail -40
+          echo "import done"
+
+      - name: Male journey, death/respawn and separate-process reload
+        run: |
+          set -euo pipefail
+          mkdir -p .artifacts
+          export SOUL_OF_HERO_SAVE_PATH="user://a6_male.json"
+          timeout --signal=TERM --kill-after=15s 420s godot --headless --path . -- \
+            --avatar-identity-test --avatar-phase=full --avatar-gender=male --avatar-expectation=ready \
+            2>&1 | tee .artifacts/male-full.log
+          timeout --signal=TERM --kill-after=15s 420s godot --headless --path . -- \
+            --avatar-identity-test --avatar-phase=verify --avatar-gender=male --avatar-expectation=ready \
+            2>&1 | tee .artifacts/male-verify.log
+          grep -q "NATIVE TEST PASSED" .artifacts/male-full.log
+          grep -q "NATIVE TEST PASSED" .artifacts/male-verify.log
+
+      - name: Female journey, death/respawn and separate-process reload
+        run: |
+          set -euo pipefail
+          export SOUL_OF_HERO_SAVE_PATH="user://a6_female.json"
+          timeout --signal=TERM --kill-after=15s 420s godot --headless --path . -- \
+            --avatar-identity-test --avatar-phase=full --avatar-gender=female --avatar-expectation=ready \
+            2>&1 | tee .artifacts/female-full.log
+          timeout --signal=TERM --kill-after=15s 420s godot --headless --path . -- \
+            --avatar-identity-test --avatar-phase=verify --avatar-gender=female --avatar-expectation=ready \
+            2>&1 | tee .artifacts/female-verify.log
+          grep -q "NATIVE TEST PASSED" .artifacts/female-full.log
+          grep -q "NATIVE TEST PASSED" .artifacts/female-verify.log
+
+      - name: A0 menu regression (New Game now asks for identity)
+        run: |
+          set -uo pipefail
+          export SOUL_OF_HERO_SAVE_PATH="user://a6_menu_regression.json"
+          set +e
+          timeout --signal=TERM --kill-after=15s 300s godot --headless --path . -- \
+            --startup-profile-choice-test 2>&1 | tee .artifacts/startup-profile-choice.log
+          result=${PIPESTATUS[0]}
+          set -e
+          echo "startup profile choice exit: ${result}"
+          exit "${result}"
+
+      - name: Report avatar evidence summary
+        if: always()
+        run: |
+          {
+            echo "### A6 native avatar evidence"
+            echo "- engine: $(git rev-parse --short HEAD) / $(cat .artifacts/*.log 2>/dev/null | grep -m1 -i 'Godot Engine v' || echo unknown)"
+            for log in .artifacts/*.log; do
+              echo "- ${log}: $(grep -c 'PASSED' "$log" || true) pass marker(s)"
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a6-native-logs
+          path: .artifacts/*.log
+
+  visual-captures:
+    name: Real renders at 720p / 1440p / 2160p
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Godot 4.7 stable
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: ${{ env.GODOT_VERSION }}
+          use-dotnet: false
+          include-templates: false
+
+      - name: Install a display server and software GL
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends xvfb libgl1-mesa-dri libglx-mesa0 mesa-utils
+
+      - name: Stage licensed base sheets privately (runner-only, never committed)
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/a6_source"
+          curl -L --fail --retry 3 --max-time 300 -o "$RUNNER_TEMP/a6_source/male.zip" \
+            "https://drive.google.com/uc?export=download&id=${MALE_ARCHIVE_ID}"
+          curl -L --fail --retry 3 --max-time 300 -o "$RUNNER_TEMP/a6_source/female.zip" \
+            "https://drive.google.com/uc?export=download&id=${FEMALE_ARCHIVE_ID}"
+          python3 - <<'PY'
+          import hashlib, os, pathlib, sys
+          root = pathlib.Path(os.environ["RUNNER_TEMP"]) / "a6_source"
+          expected = {
+              "male.zip": os.environ["MALE_ARCHIVE_SHA256"],
+              "female.zip": os.environ["FEMALE_ARCHIVE_SHA256"],
+          }
+          for name, want in expected.items():
+              data = (root / name).read_bytes()
+              if not data.startswith(b"PK\x03\x04"):
+                  sys.exit(f"{name}: download is not a ZIP archive")
+              if hashlib.sha256(data).hexdigest() != want:
+                  sys.exit(f"{name}: SHA-256 mismatch")
+              print(f"{name}: verified {len(data)} bytes")
+          PY
+          python3 tools/stage_a6_avatar_art.py \
+            --male-zip "$RUNNER_TEMP/a6_source/male.zip" \
+            --female-zip "$RUNNER_TEMP/a6_source/female.zip"
+          rm -f "$RUNNER_TEMP/a6_source"/*.zip
+
+      - name: Import project with the staged sheets
+        run: |
+          godot --headless --editor --path . --import --quit 2>&1 | tail -20
+
+      - name: Render 1280x720 captures
+        run: |
+          set -uo pipefail
+          mkdir -p .artifacts/captures-1280x720
+          export SOUL_OF_HERO_SAVE_PATH="user://a6_capture_720.json"
+          set +e
+          timeout --signal=TERM --kill-after=20s 420s xvfb-run --auto-servernum -s "-screen 0 1280x720x24" \
+            env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
+            godot --path . --resolution 1280x720 --rendering-driver opengl3 -- \
+            --avatar-visual-capture --avatar-gender=male \
+            --capture-dir="$PWD/.artifacts/captures-1280x720" --capture-tag=male_720p \
+            2>&1 | tee .artifacts/capture-720p.log
+          result=${PIPESTATUS[0]}
+          set -e
+          echo "720p capture exit: ${result}"
+          exit "${result}"
+
+      - name: Render 2560x1440 captures
+        run: |
+          set -uo pipefail
+          mkdir -p .artifacts/captures-2560x1440
+          export SOUL_OF_HERO_SAVE_PATH="user://a6_capture_1440.json"
+          set +e
+          timeout --signal=TERM --kill-after=20s 420s xvfb-run --auto-servernum -s "-screen 0 2560x1440x24" \
+            env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
+            godot --path . --resolution 2560x1440 --rendering-driver opengl3 -- \
+            --avatar-visual-capture --avatar-gender=female \
+            --capture-dir="$PWD/.artifacts/captures-2560x1440" --capture-tag=female_1440p \
+            2>&1 | tee .artifacts/capture-1440p.log
+          result=${PIPESTATUS[0]}
+          set -e
+          echo "1440p capture exit: ${result}"
+          exit "${result}"
+
+      - name: Render 3840x2160 captures
+        run: |
+          set -uo pipefail
+          mkdir -p .artifacts/captures-3840x2160
+          export SOUL_OF_HERO_SAVE_PATH="user://a6_capture_2160.json"
+          set +e
+          timeout --signal=TERM --kill-after=20s 420s xvfb-run --auto-servernum -s "-screen 0 3840x2160x24" \
+            env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
+            godot --path . --resolution 3840x2160 --rendering-driver opengl3 -- \
+            --avatar-visual-capture --avatar-gender=male \
+            --capture-dir="$PWD/.artifacts/captures-3840x2160" --capture-tag=male_2160p \
+            2>&1 | tee .artifacts/capture-2160p.log
+          result=${PIPESTATUS[0]}
+          set -e
+          echo "2160p capture exit: ${result}"
+          exit "${result}"
+
+      - name: Summarise captures
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import pathlib, struct
+          root = pathlib.Path(".artifacts")
+          for png in sorted(root.glob("captures-*/**.png")):
+              data = png.read_bytes()[:24]
+              w, h = struct.unpack(">II", data[16:24]) if data[:8] == b"\x89PNG\r\n\x1a\n" else (0, 0)
+              print(f"{png} {w}x{h} {png.stat().st_size} bytes")
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a6-native-captures
+          path: .artifacts/captures-*/**
+          if-no-files-found: warn
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a6-capture-logs
+          path: .artifacts/capture-*.log

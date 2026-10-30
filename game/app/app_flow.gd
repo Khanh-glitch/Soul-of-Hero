@@ -5,6 +5,9 @@ extends Node
 
 const BOOT_SCENE := "res://game/ui/screens/boot/boot_screen.tscn"
 const TITLE_SCENE := "res://game/ui/screens/title/title_screen.tscn"
+## New Game identity step. The chosen CraftPix base character is persisted by
+## SaveService and read back by every screen afterwards.
+const AVATAR_CHOICE_SCENE := "res://game/ui/screens/avatar_choice/avatar_choice_screen.tscn"
 const HOME_SCENE := "res://game/ui/screens/home/home_map_screen.tscn"
 # Compatibility constant for old tools/bookmarks. Product navigation now calls
 # this place Home and enters it without opening a menu panel by default.
@@ -79,6 +82,10 @@ func open_boot() -> void:
 
 func open_title() -> void:
 	_show(TITLE_SCENE, {}, &"title")
+
+
+func open_avatar_choice() -> void:
+	_show(AVATAR_CHOICE_SCENE, {}, &"avatar_choice")
 
 
 func open_home(function_id: StringName = &"") -> void:
