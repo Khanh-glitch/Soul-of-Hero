@@ -799,6 +799,25 @@ func inventory_totals() -> Dictionary:
 	return (save.call(&"inventory_totals") as Dictionary).duplicate(true)
 
 
+## Whether generic chest sweeps can move this item without breaking an A3
+## instance/attribute pair. Coupled instances require a dedicated A3 operation.
+func is_sweepable_item(item_id: String) -> bool:
+	var normalized := item_id.strip_edges().to_lower()
+	return not normalized.is_empty() and not normalized.begins_with("soh_i_")
+
+
+## Only items the one-press generic chest sweep is allowed to stash. In
+## particular, carrying a protected A3 instance must not prevent taking ordinary
+## materials out of a chest.
+func sweepable_inventory_totals() -> Dictionary:
+	var result := {}
+	var totals := inventory_totals()
+	for item_id: Variant in totals.keys():
+		if is_sweepable_item(String(item_id)) and int(totals[item_id]) > 0:
+			result[item_id] = int(totals[item_id])
+	return result
+
+
 ## Moves *everything* that fits from the bag into a container, as one commit.
 ##
 ## This is the one-press stash verb. It is deliberately all-or-nothing per item:
@@ -833,7 +852,7 @@ func _transfer_all(container_id: String, into_container: bool) -> Dictionary:
 	for item_id: Variant in source.keys():
 		# Leave coupled unique instances where the A3 ownership audit supports
 		# them; ordinary materials can still be deposited in the same sweep.
-		if String(item_id).begins_with("soh_i_"):
+		if not is_sweepable_item(String(item_id)):
 			continue
 		var quantity := int(source[item_id])
 		if quantity <= 0:

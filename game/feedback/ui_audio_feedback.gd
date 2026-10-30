@@ -98,9 +98,10 @@ func _is_cancel_action(button: BaseButton) -> bool:
 
 
 func _play(player: AudioStreamPlayer, stream: AudioStream, volume_db: float) -> void:
-	# Dummy/headless audio cannot be heard and can retain playback resources when
-	# an automated route test exits immediately after focusing a button.
-	if DisplayServer.get_name() == "headless" or not is_instance_valid(player) or stream == null:
+	# Dummy audio cannot be heard, even with a visible display (for example
+	# Xvfb). Starting a voice there can retain playback resources at shutdown.
+	# Real audio drivers still receive the same cues on desktop and Web.
+	if AudioServer.get_driver_name() == "Dummy" or not is_instance_valid(player) or stream == null:
 		return
 	player.stop()
 	player.stream = stream

@@ -200,7 +200,7 @@
       "docs/survival/CONTRACTS.md",
       "tests/survival_foundation_test.gd"
     ],
-    "first_test": "At corrected fixture SHA inspect native topology/bed/exit/unique/A3/station plus A6 and 81-check normal home all at same SHA. Distinguish d13f960 unsafe overlapping bed and sole-door obstructing-chest fixture setups from legitimate production regression; retain anti-softlock. Investigate true threat/death and A1 seam without fabricating either; B0 NOT ACCEPTED, PR21 HOLD.",
+    "first_test": "Inspect same-SHA native foundation, topology, Hero-exit, A3 custody, bed/death, station, A6 composition and 81-check journey for unique-only chest usability and Dummy audio follow-up. Continue independent product work while awaiting A1 seam and CT threat contracts; B0 NOT ACCEPTED and PR21 HOLD.",
     "parallel_start": "A1 owns world planning, A3 economy data; A6 works on isolated UI paths only and must not modify the A0 construction build strip. A7 is a distributed QA workstream; S6 is optional and nonblocking.",
     "design_gate": "Every SURV-020 claim needs a green native run recorded here, exactly as SURV-010 now has."
   },
@@ -239,7 +239,7 @@
     "web_gameplay": "survival_specific_fixture_boot_and_input_pass_40927588129_at_2a60d11_not_full_journey",
     "gold_visual_parity": "not_run",
     "historical_mechanic_research": "source_audited_doc_05_and_git_atlas_2019_2020_not_runtime",
-    "docs_sync": "DOCS_SYNC_PENDING: google_docs connector disconnected on 2026-10-30",
+    "docs_sync": "tab04 54aacfa hypothesis appended and verified at index 107588; latest follow-up pending sync",
     "historical_source_audit_ci": "success_40830754794_at_bb86778666012081cdf411b6d791b8798c374281; handoff validator only",
     "source_archive_integrity": "PASS SHA256 b958de0fc413cc200b35b0938760228c2ebd3a8ef4aa2f52c1051c52cca59157",
     "atlas_ci": "PASS run_40838554299 sha_d64c299866e3220ff97f43226eed63932d67b596; docs validator only",
@@ -278,6 +278,14 @@
       "run": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40863794097",
       "result": "Godot 4.7 Xvfb foundation 132 and topology/door/storage 62 checks; collision tested with Hero CharacterBody2D.test_move, not input-driven walk",
       "limitations": "roof, bed, respawn, non-player actor clearance, dynamic navigation, screenshots, Web shelter and full scenario unverified"
+    },
+    "surv020_cohesive_54aacfa": {
+      "commit": "54aacfa41d65fb3d4535e82443616a4c96eb7171",
+      "native": "40989573125 topology95 exit32 bed104 A3authority124 interruption154 station32 capacity28 normal28 session116; 40989573050 A6 workspace32 bed104; 40989573115 home81",
+      "overworld": "40989573138 unchanged +45% gate passed +6%",
+      "general": "40989573078 failed original-main baseline comparison",
+      "status": "PARTIAL_AUTOMATED_PASS_SURV020_B0_NOT_ACCEPTED",
+      "next_increment": "unique-only chest interaction and Dummy UI audio source changes committed with native result pending"
     }
   },
   "design_authority": {

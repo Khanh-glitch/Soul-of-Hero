@@ -199,6 +199,18 @@ func _body() -> void:
 	_expect(bool(_give(STONE, 1)), "ordinary material granted for mixed chest sweep")
 	var sweep: Dictionary = svc.call(&"deposit_all", chest_id)
 	_expect(bool(sweep.get("ok", false)) and _count(STONE) == 0 and _count(token) == 1, "mixed sweep stores ordinary item while retaining unique token")
+	# This is a fixture-funded A3 instance, not an ordinary fresh-save journey.
+	# A protected item alone must not make the physical chest offer only stash:
+	# that sweep would refuse the token forever and make stored materials unusable.
+	var chest_node := build.structure_node(chest_id) as SurvivalStructure
+	_expect(chest_node != null, "real paid chest projects an interactable node")
+	if chest_node != null:
+		hero.global_position = chest_node.global_position + Vector2(0, 12)
+		_expect(chest_node.interaction_verb() == "take" and chest_node.can_interact(hero), "unique-only bag offers take rather than an impossible stash")
+		_expect(chest_node.interact(hero) and _count(STONE) == 1 and _count(token) == 1 and (svc.call(&"container_contents", chest_id) as Dictionary).is_empty(), "physical chest returns ordinary material without moving the A3 token")
+		_expect(bool(economy_adapter.ownership_audit().get("ok", false)), "A3 custody audit survives chest retrieval")
+		_expect(chest_node.interaction_verb() == "stash" and chest_node.interact(hero) and _count(STONE) == 0 and _count(token) == 1, "ordinary materials can be stashed again without touching the instance")
+		_expect(chest_node.interaction_verb() == "take" and int((svc.call(&"container_contents", chest_id) as Dictionary).get(STONE, 0)) == 1, "stored material remains recoverable with the token retained")
 
 	_expect(bool(svc.call(&"learn_recipe", "bed_test_recipe", "test", "survival.test.recipe")), "learned knowledge committed")
 	_expect(_give(STONE, 3), "carried materials granted before death")
@@ -224,6 +236,7 @@ func _body() -> void:
 	_expect(bool(hero.get(&"dead")) and String((svc.call(&"document") as Dictionary).get("pending_death", "")) == bag_id,
 		"restart restores death and does not create a duplicate bag")
 	_expect(_count(token) == 1, "protected A3 token survives death and reload exactly once")
+	_expect(int((svc.call(&"container_contents", chest_id) as Dictionary).get(STONE, 0)) == 1 and _count(STONE) == 0 and bool(economy_adapter.ownership_audit().get("ok", false)), "re-stashed material and coupled instance persist independently across death reload")
 	var economy: Dictionary = (_save().call(&"get_snapshot") as Dictionary).get("survival_economy", {})
 	var attributes: Dictionary = (economy.get("instances", {}) as Dictionary).get(token, {})
 	_expect(int(attributes.get("condition", 0)) == 70 and String(attributes.get("location", "")) == "bag", "A3 token attributes remain coupled through death and reload")

@@ -33,6 +33,18 @@ func _joy(button: JoyButton, down: bool) -> void:
 
 func _body() -> void:
 	var world := _host.get_child(0)
+	# Xvfb is a visible display but CI deliberately uses the Dummy audio driver.
+	# Exercise the real UI-audio dispatcher rather than silencing a warning in
+	# the log gate; an inaudible voice must not allocate a live playback there.
+	var ui_audio := root.get_node_or_null("UiAudioFeedback")
+	_expect(ui_audio != null and AudioServer.get_driver_name() == "Dummy", "composition uses actual UI feedback with the Dummy audio driver")
+	if ui_audio != null:
+		var hover_player := ui_audio.get("_hover_player") as AudioStreamPlayer
+		var hover_stream := load("res://assets/audio/sfx/rpg_essentials/ui_hover.wav") as AudioStream
+		_expect(hover_player != null and hover_stream != null, "real UI hover voice and asset exist")
+		if hover_player != null and hover_stream != null:
+			ui_audio.call("_play", hover_player, hover_stream, -22.0)
+			_expect(not hover_player.playing and hover_player.stream == null, "visible Dummy-driver composition does not allocate an inaudible playback")
 	var hero := world.get(&"player") as CharacterBody2D
 	var workspace_scene := load("res://game/survival/ui/expedition_workspace.tscn") as PackedScene
 	_expect(hero != null and workspace_scene != null, "production Knight and pinned A6 workspace load")

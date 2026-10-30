@@ -75,11 +75,11 @@ func chest_contents() -> Dictionary:
 	return svc.call(&"container_contents", entity_id)
 
 
-func _bag_is_empty() -> bool:
+func _bag_has_sweepable_items() -> bool:
 	var svc := service()
 	if svc == null:
-		return true
-	return (svc.call(&"inventory_totals") as Dictionary).is_empty()
+		return false
+	return not (svc.call(&"sweepable_inventory_totals") as Dictionary).is_empty()
 
 
 ## Which way the next press will move items. Shown in the prompt so the player is
@@ -87,7 +87,7 @@ func _bag_is_empty() -> bool:
 func interaction_verb() -> String:
 	if piece_id != PIECE_CHEST:
 		return ""
-	if not _bag_is_empty():
+	if _bag_has_sweepable_items():
 		return "stash"
 	if not chest_contents().is_empty():
 		return "take"
