@@ -1,10 +1,15 @@
 {
-  "artifact_count": 260,
+  "artifact_count": 264,
   "artifacts": [
     {
       "bytes": 9443,
       "path": "data/survival/world/a1_a3_material_decisions.json",
       "sha256": "28b94d48a2fb9eade4b9aca29478bac3d6212f4862441fe83cc61c82de5a15a0"
+    },
+    {
+      "bytes": 11961,
+      "path": "data/survival/world/a1_world_placement_contract.v1.json",
+      "sha256": "ed5263e37dbbc40e8e9d3a293f9bf6a0420bca400314e46493c8455eae89b543"
     },
     {
       "bytes": 14155,
@@ -95,6 +100,11 @@
       "bytes": 7225,
       "path": "data/survival/world/art/crown_roadside.treatment.v1.json",
       "sha256": "2306757d860abbe63022baead2494417f9b53c1a3ed2dc5567afd7c74c83db73"
+    },
+    {
+      "bytes": 210418,
+      "path": "data/survival/world/art/first_hour_asset_provenance.v1.json",
+      "sha256": "892c60903b6434288964a0017d57e7db5fd453e9dddff64cdbd32d58f2b62618"
     },
     {
       "bytes": 17067,
@@ -1177,6 +1187,16 @@
       "sha256": "57f87c6c88ccf0c1ff0f47fc68bf4268dde82a27622fe223b5b2ee38ccbb871f"
     },
     {
+      "bytes": 6177,
+      "path": "data/survival/world/references/a8_02ad8b72/physical_ragnarok_endpoints.v1.json",
+      "sha256": "15746f9f0151b65e64df7e4aab44d346accef9087698382889395248c9cea47b"
+    },
+    {
+      "bytes": 12398,
+      "path": "data/survival/world/references/a8_02ad8b72/ragnarok_six_territories.v1.json",
+      "sha256": "32856a7751ce395bdf9e70b4b0fe99b0224b1335207782e498839d4269f87797"
+    },
+    {
       "bytes": 691,
       "path": "data/survival/world/schemas/biome.schema.json",
       "sha256": "8f93ac7ddbede3e9efcdee37c74870e5ea4c22b0d7395af44a665526c0b95516"
@@ -1302,8 +1322,8 @@
       "sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4"
     }
   ],
-  "compile_1_tree_sha256": "cfd88ee5c50acf1db42e7f8607dbcc9a7f1b601c3941312f106c85869319f12b",
-  "compile_2_tree_sha256": "cfd88ee5c50acf1db42e7f8607dbcc9a7f1b601c3941312f106c85869319f12b",
+  "compile_1_tree_sha256": "b6887ccee38877f12bf37996a4f197c5d6fad7e01f275028c49dd864918b71a5",
+  "compile_2_tree_sha256": "b6887ccee38877f12bf37996a4f197c5d6fad7e01f275028c49dd864918b71a5",
   "ok": true,
   "plan_sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4",
   "schema": "soh.world.determinism.v1",
