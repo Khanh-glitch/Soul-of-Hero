@@ -18,12 +18,15 @@ class A0MountTransitionPackageTests(unittest.TestCase):
     def test_current_owner_pins_and_contract_versions_are_explicit(self) -> None:
         package = self.package
         self.assertEqual(package["package_status"], "A8_OWNER_CONTRACT_REFRESH_READY_FOR_A0_REVIEW_NOT_MOUNTED")
-        self.assertEqual(package["source_pins"]["a0_pr21_head"], "5b932fd4bc6ae5966cd9662f262f70aa384c2f99")
-        self.assertEqual(package["source_pins"]["a1_pr20_head"], "61cd8d3730cef91fe061ac9cd7cfee9f6e013193")
+        self.assertEqual(package["source_pins"]["a0_pr21_head"], "4b4b63f56b92c2f7b50d770554afd96d5d0a098b")
+        self.assertEqual(package["source_pins"]["a1_pr20_head"], "7d2b017c8a90b7d5e24ff85f065ff1b18548cd29")
         self.assertEqual(package["contracts"]["physical_interaction"], "data/survival/world_content/interaction_contract.v3.json")
         self.assertEqual(package["contracts"]["shell_transition"], "data/survival/world_content/transition_contract.v2.json")
         self.assertEqual(package["contracts"]["run_phase_projection"], "soh.a0.run_phase_projection.v1")
         self.assertEqual(package["a1_authored_world_extent_cells"], [1024, 768])
+        self.assertEqual(package["verified_source_bytes"]["a0_pr21"]["data/survival/connector/a0_candidate/slices/poi_crown_waystation.slice.json"], "3a4981fd3e24580e2e7c2ee5d0929f76c432d785e142b67a222c6480af01e16f")
+        self.assertEqual(package["verified_source_bytes"]["a1_pr20"]["data/survival/world/vertical_slice/poi_crown_waystation.slice.json"], "3a4981fd3e24580e2e7c2ee5d0929f76c432d785e142b67a222c6480af01e16f")
+        self.assertEqual(package["verified_source_bytes"]["a3_pr19"]["data/survival/recipes/meta_economy.v1.json"], "bbe1095ca589a767742bf0a54ffd4f012d2135410713baa274bafee97cbf91bf")
         self.assertEqual(package["production_world_extent_mount_status"], "A0_REVIEW_REQUIRED_NOT_ASSERTED_BY_A8")
         self.assertFalse(package["owner_seam"]["a8_has_save_or_currency_authority"])
         self.assertEqual(len(package["existing_a8_sites"]), 3)

@@ -4,11 +4,11 @@
   "document_status": "A8_AUTHORED_OWNER_PROJECTION_REQUIRED_NOT_PRODUCTION_MOUNTED",
   "source_pins": {
     "a0_pr": 21,
-    "a0_head": "5b932fd4bc6ae5966cd9662f262f70aa384c2f99",
+    "a0_head": "4b4b63f56b92c2f7b50d770554afd96d5d0a098b",
     "a0_role": "clock_run_phase_and_save_authority_ONLY",
     "a1_pr": 20,
-    "a1_head": "61cd8d3730cef91fe061ac9cd7cfee9f6e013193",
-    "a1_world_plan_sha256": "fc5412822a12b4bed7be0954d9bc64e0abbca890e6a0e6ec0891610d7a198001",
+    "a1_head": "7d2b017c8a90b7d5e24ff85f065ff1b18548cd29",
+    "a1_world_plan_sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4",
     "a1_route_graph_sha256": "8e49506889149cde043ed69cf5007b219c9ba9464cb7d3eeb25f0eef108d24a9",
     "a1_site_transform_contract_sha256": "3db1350b05b1657826caea7ab625e6a2b4513ef6f59072bbc53dbc728c72f66e",
     "a1_art_manifest_sha256": "83d69373ca6c1258e8727800d0aa0c288851c34d25539c69c21ec9f5fc9d769a",
@@ -16,7 +16,7 @@
     "a1_props_sha256": "8d4acf4028e0e065b901e78c59c65e5a68677fb75d46c04c7e5a029a76d27324",
     "a1_status": "AUTHORED_PLAN_NOT_NATIVE_INTEGRATED",
     "a3_pr": 19,
-    "a3_head": "a5d11141b12be16cc8d63957d0409169dbb79213",
+    "a3_head": "35214ed8f555350b83bd8985e9bec7512f3181e8",
     "a3_quarry_authorization": "REJECTED_PENDING_EVIDENCE_FAIL_CLOSED",
     "avfx_gold_authority": "UNCHANGED_AVFX_OWNS_EXACT_GOLD",
     "a8_base_commit": "54c66b89b839d773f93c023afb13f0f9295ec9a"

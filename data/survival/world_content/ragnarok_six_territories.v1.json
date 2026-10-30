@@ -4,9 +4,18 @@
   "status": "A8_SOURCE_GROUNDED_AUTHORING_MODEL_NOT_SIX_PLAYABLE_BOSSES",
   "source_pins": {
     "a1_pr": 20,
-    "a1_head": "61cd8d3730cef91fe061ac9cd7cfee9f6e013193",
-    "world_plan_sha256": "fc5412822a12b4bed7be0954d9bc64e0abbca890e6a0e6ec0891610d7a198001",
+    "a1_head": "7d2b017c8a90b7d5e24ff85f065ff1b18548cd29",
+    "world_plan_sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4",
     "route_graph_sha256": "8e49506889149cde043ed69cf5007b219c9ba9464cb7d3eeb25f0eef108d24a9",
+    "a3_pr": 19,
+    "a3_head": "35214ed8f555350b83bd8985e9bec7512f3181e8",
+    "a3_bindings_sha256": "7b9670f4971d2f161138e0754cbbe66dfe2a239bf0d15d3079a766d729dd230b",
+    "a3_economy_policy_path": "data/survival/recipes/meta_economy.v1.json",
+    "a3_economy_policy_sha256": "bbe1095ca589a767742bf0a54ffd4f012d2135410713baa274bafee97cbf91bf",
+    "a3_meta_integration_contract_path": "docs/survival/economy/A0_META_ECONOMY_CONTRACT_V7.json",
+    "a3_meta_integration_contract_sha256": "69f52eac22cd15d66464a6b07fe2af2c157032f273b8e42a502715be0882b50b",
+    "a3_display_registry_path": "data/survival/items/meta_display_names.v1.json",
+    "a3_display_registry_sha256": "bc5dc5173a13ffcea691289c860baa5532c79b246ad4685ecc2572f75c707c59",
     "a0_run_phase_owner": "A0.RunLifecycle",
     "a3_reward_and_currency_owner": "A3 plus A0 transaction/save seam",
     "a5_combat_owner": "A5/AVFX; no A8 boss implementation"
@@ -24,15 +33,15 @@
   },
   "two_economies": {
     "run_local": {
-      "technical_slot_candidate": "wallet.ragnarok.unbanked",
-      "display_name_key": "currency.ragnarok.unbanked.display_name",
+      "technical_slot_candidate": "ragnarok_unbanked",
+      "display_name_key": "currency.ragnarok_unbanked",
       "lifecycle_owner": "A0_ONLY",
       "earn_spend_and_reset_authority": "A3_TRANSACTION_PLUS_A0_SAVE; NOT_IMPLEMENTED_HERE",
       "a8_balance_or_item_grant": false
     },
     "profile_secured": {
-      "technical_slot_candidate": "profile.ragnarok.secured",
-      "display_name_key": "currency.ragnarok.secured.display_name",
+      "technical_slot_candidate": "profile.secured_ragnarok_currency",
+      "display_name_key": "profile.secured_ragnarok_currency",
       "lifecycle_owner": "A0_ONLY",
       "deposit_and_vendor_spend_authority": "A3_VALIDATION_PLUS_A0_ATOMIC_SAVE; NOT_IMPLEMENTED_HERE",
       "a8_balance_or_item_grant": false
