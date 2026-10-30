@@ -9,8 +9,8 @@ Production native playable: **false**. A0 alone mounts production scenes.
 
 This is a reusable visual-only world art system, not a moodboard: baked atlas, causal macro-terrain treatments, hardened Godot presentation node, driven-corridor overlay proof, A8 compact-shell visual skins, validators/tests, and native capture fixtures.
 
-- `assets/environment/survival_world/terrain.png` — **238** 16×16 terrain frames: ash, moor, soil, grass, forest, snow, tundra, basalt, gravel, water, ice; stepped 2 px blends; dirt/stone road overlays; shore banks; maintained court. Ground marks are low-contrast material clusters, not per-pixel static.
-- `assets/environment/survival_world/props.png` — **45** unscaled prop/structure frames: supply caches, deadfall/stump, handcart, tarp shelter, open Ashen Waystation awning, banners/lamps, fences, cairns, skarn ore, moonleaf herb, log pile, Amber watch/apothecary, Frost shrine, mill wheel/house, quarry workface, orchard shed, drying rack, beehive, snow drift, split rail, whetstone, light pool, plus **9 pinned inherited original SOH frames** reused without scaling.
+- `assets/environment/survival_world/terrain.png` — **318** 16×16 terrain frames: ash, moor, soil, grass, forest, snow, tundra, basalt, gravel, water, ice; stepped 2 px blends; dirt/stone road overlays; shore banks; maintained court. Ground marks are low-contrast material clusters, not per-pixel static.
+- `assets/environment/survival_world/props.png` — **47** unscaled prop/structure frames: supply caches, deadfall/stump, handcart, tarp shelter, open Ashen Waystation awning, banners/lamps, fences, cairns, skarn ore, moonleaf herb, log pile, Amber watch/apothecary, Frost shrine, mill wheel/house, quarry workface, orchard shed, drying rack, beehive, snow drift, split rail, whetstone, light pool, plus **9 pinned inherited original SOH frames** reused without scaling.
 - `data/survival/world/art/atlas.v1.json` — grid-aligned terrain atlas, prop rects, inherited-frame provenance, pixel/file SHA-256.
 - `data/survival/world/art/world_art_grammar.v1.json` — shared material culture, semantic roles, biome profiles, lighting profiles, production rules. Macro-terrain boundaries are authored causal landforms; tile hash only selects a texture variant inside an already-authored material.
 - `data/survival/world/art/crown_roadside.treatment.v1.json` — visual-only overlay pinned to the accepted corridor (`9d3909b0…`). It replaces corridor decor visuals, dresses the three canonical roadside caches and Waystation forecourt, and adds warm return-route markers, deadfall/stump/reeds/rail scenery. **No collision, stand, cache identity, reward or save change.**
@@ -104,3 +104,17 @@ Native CI: `.github/workflows/survival-world-reader.yml` → `godot-world-art-na
 - **A8:** adopt/reject `a8_shell_visuals.v1.json` for compact shells; keep interaction engine and creative control; local worksite art remains A8-owned.
 - **A6:** hazard/capability labels remain authored data; no HUD/UX change here.
 - **CT:** accept/reject the visual quality bar after native captures; Drive candidate was byte/license verified and rejected for style, not silently imported.
+
+## Sustained delivery (2026-10-30, native hard-blocked → owner work exhausted)
+
+Native was demonstrated to be a hard external dependency (no linux-x64 Godot on any allowed host; no GL/EGL/X11/mesa/Xvfb; apt permission-denied + blocked; CI World Reader 41032153753/41032145662 queued). Instead of stopping at QUEUED, the full owner-independent bundle shipped:
+
+- **Notes vs reward readability:** `cache_notes` (pale paper + leather strap + wax seal, no latch / no glow) on `si:r_ashen_crown:roadside_supply:01`; scrap caches keep the iron latch. A3 owns the grant; A1 owns pickup readability.
+- **Unmistakable Waystation:** chimney + smoke, ridge pennant, warm service window, side crate stack on top of the awning/counter/banners/court.
+- **Material transitions:** cardinal shore feather blends (`shore_*`) soften macro landform edges; 318 terrain frames.
+- **Renderer correctness:** `bind_focus()` lifts the focus out of `props_root` before the occlusion deep-scan so the Hero never fades itself.
+- **AVFX lighting contract + contrast study:** `avfx_lighting_contract.v1.json` + `study_avfx_contrast.py` (real effect textures vs real ground, day/night; worst 2.13:1 ≥ 1.6 floor). NOT full Gold parity / NOT A6 body.
+- **Objective first-hour route:** `compile_first_hour_route.py` BFS proof (contiguous, walkable, 2px body margin, no one-tile trap, ten thresholds preserved) + home-first/explore-first/return camera-landmark states.
+- **Consumable A0/A8 bundle:** `compile_mount_bundle.py` + `validate_mount_bundle.py` (exact paths/SHA/placement origin/light mask/zero-collision/baseline/commands) and `compile_a8_shell_visuals.py` (derived atlas pin). A0 alone mounts; A8 keeps shell collision/entry.
+
+Gates: 119 pytest; all validators 0 errors; determinism 249 artifacts tree `26ace820…`; gdparse + YAML clean. Pillow previews inspected. **Native / exact-Gold / A6-body / A0-mount remain PENDING.** PR20 open/unmerged.

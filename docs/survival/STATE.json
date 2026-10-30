@@ -178,7 +178,7 @@
       "id": "SURV-050A-WORLD-ART",
       "name": "A1 reusable survival world art system, first-hour visual treatment, two contrasting biome studies, and executable A8 visual contract",
       "status": "implemented_unverified",
-      "verification_scope": "source_and_pillow_preview_validated_local_113_tests_pending_ci_native_720p_1440p_2160p_and_a0_mount",
+      "verification_scope": "source_pillow_and_consumer_bundle_validated_local_119_tests_native_hard_blocked_pending_ci_and_a0_mount",
       "evidence": [
         "assets/environment/survival_world/terrain.png",
         "assets/environment/survival_world/props.png",
@@ -200,9 +200,13 @@
         "data/survival/world/art/a8_shell_visuals.v1.json",
         "tools/survival/worldgen/preview_a8_shells.py",
         "docs/survival/world/evidence/a8_shells_contact.png",
-        "docs/survival/world/ci_evidence.json#world_art_checkpoint"
+        "docs/survival/world/ci_evidence.json#world_art_checkpoint",
+        "data/survival/world/art/mount_bundle.v1.json",
+        "data/survival/world/art/avfx_lighting_contract.v1.json",
+        "data/survival/world/corridor/first_hour_route.v1.json",
+        "tools/survival/worldgen/validate_mount_bundle.py"
       ],
-      "next": "Run hardened world-art + driven-corridor art native CI at 720p/1440p/2160p and personally inspect captures; A0 alone mounts production; A8 adopts/rejects compact-shell visual skins; A3 binds cache economics; Drive 574220 byte/license verified but rejected for style; native_playable=false"
+      "next": "Native runner/GL unavailable (demonstrated); CI queued. A0 mount via mount_bundle.v1.json + validate_mount_bundle; A8 adopt shells; A3 bind notes crate; native inspection + Gold parity + A6 body pending; native_playable=false"
     }
   ],
   "next_action": {

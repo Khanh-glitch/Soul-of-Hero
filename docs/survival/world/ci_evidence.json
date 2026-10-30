@@ -1705,14 +1705,15 @@
       "state_at_authoring": "queued"
     },
     "local": {
-      "pytest_passed": 113,
+      "pytest_passed": 119,
       "art_presentations": 3,
-      "terrain_frames": 238,
-      "prop_frames": 45,
+      "terrain_frames": 318,
+      "prop_frames": 47,
       "inherited_frames": 9,
-      "determinism_artifacts": 246,
-      "determinism_tree_sha256": "a833e5f93e88667ce8521d6afb5b29a8cf96dd0beb6693122139961e6d7997cd",
+      "determinism_artifacts": 249,
+      "determinism_tree_sha256": "26ace820b6201f203d590551e4c5a4e020f9d577f5d8fe92bb76fd22d764776c",
       "validators": "0 errors",
+      "mount_bundle_consumer_validation": "ok",
       "gdparse": "clean",
       "pillow_previews": "inspected_not_native",
       "a8_shell_visuals": 3
@@ -1741,6 +1742,21 @@
       "native_jobs": "queued",
       "artifacts": "python evidence only at refresh",
       "drive_candidate_verified": "574220 REJECT_IMPORT_STYLE_MISMATCH"
+    },
+    "sustained_delivery": {
+      "notes_crate": "cache_notes on si:...:roadside_supply:01 (paper+strap, no latch/glow)",
+      "waystation": "chimney+pennant+warm window+crate stack silhouette",
+      "transitions": "cardinal shore feather blends",
+      "renderer_fix": "bind_focus lifts focus out of props_root before occlusion scan (no self-fade)",
+      "avfx": "lighting contract + measured contrast study worst 2.13:1 (floor 1.6)",
+      "first_hour_route": "objective BFS proof: contiguous, walkable, no one-tile trap, ten thresholds preserved",
+      "mount_bundle": "compile_mount_bundle + validate_mount_bundle consumer gate"
+    },
+    "native_blocker_demonstration": {
+      "no_linux_engine": "npm @ringozz/godot has only wasm32/macos/windows; no linux-x64; GitHub release assets redirect to blocked host",
+      "no_gl_stack": "no libEGL/GLX/X11/mesa/Xvfb; apt-get permission denied + blocked egress",
+      "ci": "World Reader 41032153753/41032145662 queued on external Actions backlog",
+      "conclusion": "HARD_EXTERNAL_DEPENDENCY; all owner-independent art/logic/bundle work completed"
     }
   }
 }

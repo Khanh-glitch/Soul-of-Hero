@@ -1,5 +1,5 @@
 {
-  "artifact_count": 246,
+  "artifact_count": 249,
   "artifacts": [
     {
       "bytes": 9443,
@@ -7,9 +7,9 @@
       "sha256": "28b94d48a2fb9eade4b9aca29478bac3d6212f4862441fe83cc61c82de5a15a0"
     },
     {
-      "bytes": 14708,
+      "bytes": 14155,
       "path": "data/survival/world/art/a8_shell_visuals.v1.json",
-      "sha256": "96ef8ada5eb78a7b025f6018ddaf0a2a8464639a0b7574cae58b956eff01dfd8"
+      "sha256": "0465e092875f33945003570ccf7913d8bd9a7b09fccff75f9fd1e7df2ea1b194"
     },
     {
       "bytes": 4234,
@@ -17,9 +17,14 @@
       "sha256": "8290c7cb0ee64305ff810d07340ecc302a301fd2eba9f50b8e38bb8a14270fe7"
     },
     {
-      "bytes": 22888,
+      "bytes": 29117,
       "path": "data/survival/world/art/atlas.v1.json",
-      "sha256": "0de810de2aa04a645a7ec82991da48542559f3336eff804cf21baa99dd959b74"
+      "sha256": "617fc36d866653d67eb1b890ddcf5501b8660d87031ae04fefdb73941393326e"
+    },
+    {
+      "bytes": 25154,
+      "path": "data/survival/world/art/avfx_lighting_contract.v1.json",
+      "sha256": "57b06825fa8a6c2c30e631a6d80abaa9862ed1a3a10eb36f977d6e88730ed2b6"
     },
     {
       "bytes": 14868,
@@ -27,34 +32,39 @@
       "sha256": "5dca6f1ed5f3a426543de3e749dceed94c49cc250beeca8d71f5bc89b0767c76"
     },
     {
-      "bytes": 70000,
+      "bytes": 70870,
       "path": "data/survival/world/art/compiled/amberwood_apothecary_herb_margin.presentation.v1.json",
-      "sha256": "a7356188798114a1ba707fe2c2320cf8e5f2459d9b8edd6a532f7c375a22f1f1"
+      "sha256": "9c2fb7492887acb7aaa9bc7df6324d5053d2edff54992f44e3479e8a9004b056"
     },
     {
-      "bytes": 68436,
+      "bytes": 70322,
       "path": "data/survival/world/art/compiled/crown_roadside_visual_treatment.presentation.v1.json",
-      "sha256": "139395bd2646a85674fb658a86a159683713eed4fc99ed47d5f5e4b958f182cd"
+      "sha256": "3ad267e47a4d1d47980887fbf9b8d1547323c0b695b3696e499d2a246d2f387f"
     },
     {
-      "bytes": 134851,
+      "bytes": 135769,
       "path": "data/survival/world/art/compiled/frost_crown_shrine_skarn.presentation.v1.json",
-      "sha256": "bdc5267c05da2407c4662bc70a6888ce65d99bdf7f2432ba89b9a044348c4d84"
+      "sha256": "a6787f1da852c2f4440da6101ab7414e42a53701485068c269c6679bd8d932f5"
     },
     {
-      "bytes": 7226,
+      "bytes": 7225,
       "path": "data/survival/world/art/crown_roadside.treatment.v1.json",
-      "sha256": "82b10201007531d129c62f5f7c48c599ca8bf27d937130b56f9f1898d59e7472"
+      "sha256": "2306757d860abbe63022baead2494417f9b53c1a3ed2dc5567afd7c74c83db73"
+    },
+    {
+      "bytes": 5366,
+      "path": "data/survival/world/art/mount_bundle.v1.json",
+      "sha256": "74588f13b1c7903fe335e4e5a8e7ba819a82348adf778ce74ae8a93a5d4acbd0"
     },
     {
       "bytes": 1645,
       "path": "data/survival/world/art/presentations.v1.json",
-      "sha256": "a220f6637e73cd8d3d02991c81d43b8f408596eec06f67d15dd9fdbff0ccbe4c"
+      "sha256": "25c459c4524e752e418f337b3df96ed817c5fe63a5a138a7d6106c35475673be"
     },
     {
-      "bytes": 7627,
+      "bytes": 7813,
       "path": "data/survival/world/art/world_art_grammar.v1.json",
-      "sha256": "d54b1c9885bcf75b401f6b6f5a3158839cd9b357162961a5ec713aba4252e506"
+      "sha256": "170d9992bb15ab24ff4628d99ece61b8efebed29bb5c3f629a878304d7b81583"
     },
     {
       "bytes": 3901,
@@ -1057,6 +1067,11 @@
       "sha256": "9d3909b0625bdf6239a760fdf2ac982d0ede0314491cab315d7268d42ddc232f"
     },
     {
+      "bytes": 5407,
+      "path": "data/survival/world/corridor/first_hour_route.v1.json",
+      "sha256": "4e4c4eb9864dfc28aca4fcb4168cd856fc3f6be466b95e3ff6b7fb5b3784722c"
+    },
+    {
       "bytes": 6053,
       "path": "data/survival/world/hazard_capability_contracts.json",
       "sha256": "88ffbc7cbfd3573b34f32f27af527b7a33c4b6b08b1bddacd064ba9988c8edf2"
@@ -1232,8 +1247,8 @@
       "sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4"
     }
   ],
-  "compile_1_tree_sha256": "a833e5f93e88667ce8521d6afb5b29a8cf96dd0beb6693122139961e6d7997cd",
-  "compile_2_tree_sha256": "a833e5f93e88667ce8521d6afb5b29a8cf96dd0beb6693122139961e6d7997cd",
+  "compile_1_tree_sha256": "26ace820b6201f203d590551e4c5a4e020f9d577f5d8fe92bb76fd22d764776c",
+  "compile_2_tree_sha256": "26ace820b6201f203d590551e4c5a4e020f9d577f5d8fe92bb76fd22d764776c",
   "ok": true,
   "plan_sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4",
   "schema": "soh.world.determinism.v1",

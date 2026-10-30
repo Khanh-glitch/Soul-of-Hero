@@ -13,7 +13,7 @@
       "south_crown_mill.json"
     ]
   },
-  "atlas_sha256": "0de810de2aa04a645a7ec82991da48542559f3336eff804cf21baa99dd959b74",
+  "atlas_sha256": "617fc36d866653d67eb1b890ddcf5501b8660d87031ae04fefdb73941393326e",
   "requirements": {
     "tile_px": 16,
     "texture_filter": "nearest",
@@ -27,8 +27,6 @@
       "poi_id": "poi_crown_south_quarry",
       "a8_site_id": "crown_south_quarry",
       "profile": "quarry",
-      "a8_definition_path": "data/survival/world_content/sites/south_quarry.json",
-      "a8_definition_sha256": "12bf351b8e6ca092bfa7ba0559ab7e18e9625b5efe1b7a444ba77688b57bf232",
       "bounds_px": [
         128,
         128
@@ -260,8 +258,6 @@
       "poi_id": "poi_crown_south_orchard",
       "a8_site_id": "crown_south_orchard",
       "profile": "orchard",
-      "a8_definition_path": "data/survival/world_content/sites/south_orchard_ruin.json",
-      "a8_definition_sha256": "7d892b8a3862b14eaa9c06bdc7c565569dc5052f447fa19a02a9234b92d7cbe5",
       "bounds_px": [
         128,
         128
@@ -502,8 +498,6 @@
       "poi_id": "poi_crown_south_mill",
       "a8_site_id": "crown_south_mill",
       "profile": "mill",
-      "a8_definition_path": "data/survival/world_content/sites/south_crown_mill.json",
-      "a8_definition_sha256": "a151289d91a393ade6b3f3b17d4970b29d4037a852df736e99f346fce3ce208b",
       "bounds_px": [
         128,
         128

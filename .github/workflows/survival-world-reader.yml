@@ -72,10 +72,23 @@ jobs:
         run: python tools/survival/worldgen/build_world_art.py | tee "$ARTIFACT_DIR/world_art_bake.json"
       - name: Compile visual-only world art treatments
         run: python tools/survival/worldgen/compile_world_art.py | tee "$ARTIFACT_DIR/world_art_compile.json"
+      - name: Compile A8 compact-shell visual skins (derived atlas pin)
+        run: python tools/survival/worldgen/compile_a8_shell_visuals.py | tee "$ARTIFACT_DIR/a8_shell_compile.json"
+      - name: Compile objective first-hour walkability proof
+        run: python tools/survival/worldgen/compile_first_hour_route.py | tee "$ARTIFACT_DIR/first_hour_route.json"
+      - name: AVFX lighting contract + measured effect/ground contrast study
+        run: python tools/survival/worldgen/study_avfx_contrast.py | tee "$ARTIFACT_DIR/avfx_contrast.json"
+      - name: Compile consumable A0/A8 mount bundle
+        run: python tools/survival/worldgen/compile_mount_bundle.py | tee "$ARTIFACT_DIR/mount_bundle_compile.json"
       - name: Validate world art grammar, atlas, presentations and A8 visual contract
         run: python tools/survival/worldgen/validate_world_art.py | tee "$ARTIFACT_DIR/world_art_validation.json"
+      - name: A0/A8 consumer validation of mount bundle
+        run: python tools/survival/worldgen/validate_mount_bundle.py | tee "$ARTIFACT_DIR/mount_bundle_validation.json"
       - name: Render Pillow/atlas composition previews (not native evidence)
         run: python tools/survival/worldgen/preview_world_art.py | tee "$ARTIFACT_DIR/world_art_preview.json"
+      - name: Render A8 shell + AVFX contrast previews (not native evidence)
+        run: |
+          python tools/survival/worldgen/preview_a8_shells.py | tee "$ARTIFACT_DIR/a8_shell_preview.json"
       - name: Negative / acceptance tests
         run: python -m pytest tests/survival/world -q | tee "$ARTIFACT_DIR/pytest.txt"
       - name: Double-compile determinism

@@ -197,6 +197,32 @@ def bank(mask: int) -> Image.Image:
     return im
 
 
+
+def shore(a: Image.Image, b: Image.Image, direction: int) -> Image.Image:
+    """Feathered 3px band of material b on one cardinal edge of material a."""
+    im = a.copy()
+    if direction & 1:  # N
+        for x in range(16):
+            im.putpixel((x, 0), b.getpixel((x, 0)))
+            im.putpixel((x, 1), b.getpixel((x, 1)))
+            if (x // 2) % 2 == 0: im.putpixel((x, 2), b.getpixel((x, 2)))
+    if direction & 4:  # S
+        for x in range(16):
+            im.putpixel((x, 15), b.getpixel((x, 15)))
+            im.putpixel((x, 14), b.getpixel((x, 14)))
+            if (x // 2) % 2 == 1: im.putpixel((x, 13), b.getpixel((x, 13)))
+    if direction & 8:  # W
+        for y in range(16):
+            im.putpixel((0, y), b.getpixel((0, y)))
+            im.putpixel((1, y), b.getpixel((1, y)))
+            if (y // 2) % 2 == 0: im.putpixel((2, y), b.getpixel((2, y)))
+    if direction & 2:  # E
+        for y in range(16):
+            im.putpixel((15, y), b.getpixel((15, y)))
+            im.putpixel((14, y), b.getpixel((14, y)))
+            if (y // 2) % 2 == 1: im.putpixel((13, y), b.getpixel((13, y)))
+    return im
+
 # ---- props ---------------------------------------------------------------
 
 def shadow(im, w, h=None):
@@ -269,6 +295,25 @@ def cache(state: str) -> Image.Image:
     return im
 
 
+
+def cache_notes(state: str) -> Image.Image:
+    """Research-notes crate: pale paper stack + leather strap + wax seal.
+    Deliberately no iron latch / no rarity glow so a newcomer reads 'notes',
+    not 'loot chest'. Reward authority stays A3; this is pickup readability only."""
+    im = new(26, 24); shadow(im, 22, 5)
+    rect(im, 3, 10, 20, 11, C("wood_d")); rect(im, 4, 11, 18, 9, C("canvas_d"))
+    # paper stack lifting out of the box
+    for i, y in enumerate((6, 8, 10)):
+        rect(im, 6 + i, y, 14 - i, 3, C("canvas_l") if i % 2 == 0 else C("canvas"))
+        line(im, [(8 + i, y + 1), (17 - i, y + 1)], C("stone_l"))
+    # leather strap + wax seal (not an iron latch)
+    rect(im, 11, 6, 3, 15, C("cloth_d")); px(im, 12, 13, C("cloth"))
+    ell(im, 10, 12, 5, 4, C("cloth")); px(im, 11, 13, C("cloth_l"))
+    if state == "open":
+        poly(im, [(3, 10), (6, 3), (23, 3), (23, 9)], C("canvas_d"))
+        rect(im, 7, 11, 12, 3, C("ink_soft"))
+    return im
+
 def deadfall() -> Image.Image:
     im = new(34, 22); shadow(im, 30, 5)
     for x, y, l in [(2, 12, 22), (8, 8, 24), (4, 16, 18)]:
@@ -333,6 +378,21 @@ def waystation() -> Image.Image:
     line(im, [(72, 64), (78, 58)], C("wood_l"), 2)
     # lamp on right post
     rect(im, 132, 48, 8, 10, C("iron_d")); rect(im, 134, 50, 4, 6, C("fire")); px(im, 135, 51, C("fire_l"))
+    # chimney + thin smoke: a worked hearth, unmistakably a building not a crate
+    rect(im, 112, 2, 10, 16, C("stone_d")); rect(im, 113, 2, 8, 3, C("stone_l"))
+    for sx, sy, sa in [(116, 0, 90), (119, -0, 60)]:
+        px(im, sx, sy, (200, 200, 205, sa))
+    # roof ridge banner pole + pennant
+    rect(im, 79, 2, 2, 12, C("wood_d"))
+    poly(im, [(81, 3), (95, 6), (81, 9)], C("cloth")); px(im, 83, 6, C("canvas_l"))
+    # warm service window on the back wall (shelter, not loot glow)
+    rect(im, 26, 52, 14, 12, C("wood_d")); rect(im, 28, 54, 10, 8, C("fire_d"))
+    rect(im, 29, 55, 8, 6, C("fire")); px(im, 31, 56, C("fire_l"))
+    line(im, [(33, 54), (33, 62)], C("wood_d"))
+    # stacked supply crates at left shoulder: supply hub silhouette
+    rect(im, 2, 66, 16, 12, C("wood_d")); rect(im, 3, 67, 14, 10, C("wood"))
+    rect(im, 4, 56, 12, 10, C("wood_d")); rect(im, 5, 57, 10, 8, C("wood_l"))
+    line(im, [(4, 71), (17, 71)], C("iron_d"))
     return im
 
 
@@ -547,6 +607,13 @@ def build() -> dict:
                  ("grass", "forest"), ("snow", "tundra"), ("ash", "gravel"), ("forest", "soil")]:
         for m in range(16):
             terrain[f"blend_{a}_{b}_{m}"] = transition(terrain[f"{a}_0"], terrain[f"{b}_0"], m)
+    for a, b in [("grass", "soil"), ("soil", "grass"), ("moor", "ash"), ("ash", "moor"),
+                 ("snow", "basalt"), ("basalt", "snow"), ("grass", "forest"), ("forest", "grass"),
+                 ("soil", "gravel"), ("gravel", "soil"), ("snow", "tundra"), ("tundra", "snow"),
+                 ("ash", "gravel"), ("gravel", "ash"), ("forest", "soil"), ("soil", "forest"),
+                 ("ash", "basalt"), ("basalt", "ash"), ("moor", "soil"), ("soil", "moor")]:
+        for d in (1, 2, 4, 8):
+            terrain[f"shore_{a}_{b}_{d}"] = shore(terrain[f"{a}_0"], terrain[f"{b}_0"], d)
     for m in range(16):
         terrain[f"road_dirt_{m}"] = road(m, False)
         terrain[f"road_stone_{m}"] = road(m, True)
@@ -558,6 +625,7 @@ def build() -> dict:
         "tree_frost": tree_frost(), "tree_frost_small": tree_frost(True),
         "fern": fern(), "reeds": reeds(),
         "cache_closed": cache("closed"), "cache_open": cache("open"), "cache_spent": cache("spent"),
+        "cache_notes": cache_notes("closed"), "cache_notes_open": cache_notes("open"),
         "deadfall": deadfall(), "stump": stump(), "handcart": handcart(), "tarp_shelter": tarp_shelter(),
         "lm_waystation": waystation(), "banner": banner(), "lamp": lamp(),
         "fence_h": fence(True), "fence_v": fence(False), "cairn": cairn(), "cairn_warning": cairn(True),

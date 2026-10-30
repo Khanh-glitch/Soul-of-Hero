@@ -161,8 +161,19 @@ func bind_focus(focus: Node2D) -> bool:
 	if not _built or focus == null or not is_instance_valid(focus):
 		return _fail("bind_focus requires a built presentation and live focus")
 	_focus = focus
-	if occlusion != null:
+	if occlusion != null and is_instance_valid(occlusion):
+		# The focus may already be reparented into props_root for foot sorting.
+		# OverworldOcclusion.configure_sprites deep-scans its root, so temporarily
+		# lift the focus out; otherwise the Hero's own weapon/body sprites would be
+		# registered as occluders and fade themselves. Art sprites are direct
+		# children of props_root, so they remain the only occluders.
+		var held := false
+		if props_root != null and focus.get_parent() == props_root:
+			props_root.remove_child(focus)
+			held = true
 		occlusion.configure_sprites(props_root, _focus)
+		if held:
+			props_root.add_child(focus)
 		snap_occlusion()
 	return true
 

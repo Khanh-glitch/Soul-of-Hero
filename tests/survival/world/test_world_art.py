@@ -190,3 +190,54 @@ def test_art_compile_does_not_touch_navigation_chunks_or_ten_entrances(art):
     assert corridor["route"]["required_nav_cells"]
     for doc in art["docs"].values():
         assert doc["collision_change"] is False and doc["stand_change"] is False and doc["new_poi_count"] == 0
+
+
+def test_notes_crate_distinct_from_scrap_cache(art):
+    assert "cache_notes" in art["atlas"]["props"]
+    assert "cache_notes" in art["grammar"]["semantic_roles"]["supply_cache"]["frames"]
+    doc = art["docs"]["crown_roadside_visual_treatment"]
+    by_inst = {p["instance_id"]: p["frame"] for p in doc["props"] if "instance_id" in p}
+    assert by_inst["si:r_ashen_crown:roadside_supply:01"] == "cache_notes"
+    assert by_inst["si:r_ashen_crown:roadside_supply:02"] == "cache_closed"
+    assert by_inst["si:r_ashen_crown:roadside_supply:03"] == "cache_closed"
+    assert cwa.FRAME_ROLE["cache_notes"] == "supply_cache"
+
+
+def test_cardinal_shore_transitions_present(art):
+    assert any(k.startswith("shore_") for k in art["atlas"]["terrain"])
+    used = set()
+    for doc in art["docs"].values():
+        for row in doc["ground"]["rows"]:
+            used.update(f for f in row if f.startswith("shore_"))
+    assert used, "no cardinal shore transition used in any treatment"
+
+
+def test_bind_focus_excludes_focus_subtree(art):
+    runtime = (cwa.ROOT / "game/world_art/world_art_presentation.gd").read_text()
+    assert "props_root.remove_child(focus)" in runtime
+    assert "props_root.add_child(focus)" in runtime
+
+
+def test_first_hour_route_walkability_proof(art):
+    route = cwa.load(cwa.WORLD / "corridor/first_hour_route.v1.json")
+    p = route["proof"]
+    assert p["base_path_exists"] and p["outbound_contiguous"] and p["all_route_cells_walkable"]
+    assert p["no_one_tile_trap"] and p["single_cell_cut_vertices"] == []
+    assert p["ten_thresholds_preserved"] and p["body_clearance_margin_px"] >= 2
+    assert route["notes_crate_instance"] == "si:r_ashen_crown:roadside_supply:01"
+    assert route["waystation_cache_interaction_alias"] == "node_waystation_cache"
+    assert {s["id"] for s in route["camera_landmark_states"]} == {"home_first", "explore_first", "return"}
+
+
+def test_mount_bundle_consumer_validation(art):
+    import validate_mount_bundle as vmb
+    result = vmb.validate()
+    assert result["ok"], result["errors"]
+    assert result["treatments"] == 3
+
+
+def test_avfx_lighting_contract_and_contrast_floor(art):
+    contract = cwa.load(cwa.ART / "avfx_lighting_contract.v1.json")
+    assert contract["world_light_cull_mask"] == 2 and contract["inherited_vfx_light_mask"] == 1
+    assert contract["worst_case"]["contrast_ratio"] >= 1.6
+    assert contract["measurements"] and any("Gold" in p or "gold" in p for p in contract["pending"])

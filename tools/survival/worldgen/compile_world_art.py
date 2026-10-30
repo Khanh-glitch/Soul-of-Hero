@@ -31,6 +31,7 @@ FRAME_ROLE = {
     "tree_dead": "background_scenery", "tree_pine": "background_scenery", "bush": "background_scenery",
     "rock_a": "background_scenery", "rock_c": "background_scenery", "rock_e": "physical_danger",
     "cache_closed": "supply_cache", "cache_open": "supply_cache", "cache_spent": "supply_cache",
+    "cache_notes": "supply_cache", "cache_notes_open": "supply_cache",
     "lm_waystation": "major_waystation", "whetstone": "major_waystation", "log_pile": "major_waystation",
     "tarp_shelter": "background_scenery", "fence_h": "background_scenery", "fence_v": "background_scenery",
     "tree_amber": "background_scenery", "tree_orchard": "ordinary_harvestable", "tree_frost": "background_scenery",
@@ -235,12 +236,27 @@ def compile_ground(src: dict, layers: Layers, atlas: dict, corridor: dict | None
                 frame = f"court_{v}"
             else:
                 frame = f"{mat}_{v if mat not in ('water', 'ice') else v % 3}"
+                # Cardinal feathered shore first: a single differing cardinal
+                # neighbour gets a clean 3px edge band instead of a blocky step.
+                cardinal = [((0, -1), 1), ((1, 0), 2), ((0, 1), 4), ((-1, 0), 8)]
+                diffs = []
+                for (dx, dy), bit in cardinal:
+                    n = mats.get((x + dx, y + dy), mat)
+                    if n != mat and n != "court":
+                        diffs.append((bit, n))
+                applied_shore = False
+                if len(diffs) == 1:
+                    bit, other = diffs[0]
+                    sf = f"shore_{mat}_{other}_{bit}"
+                    if sf in atlas["terrain"]:
+                        frame = sf
+                        applied_shore = True
                 neighbours = [mats.get((x + dx, y + dy), mat) for dx, dy in ((-1, -1), (1, -1), (1, 1), (-1, 1))]
                 counts: dict[str, int] = {}
                 for n in neighbours:
                     if n != mat and n not in ("court",):
                         counts[n] = counts.get(n, 0) + 1
-                if counts:
+                if counts and not applied_shore:
                     other = max(counts, key=lambda k: counts[k])
                     if (mat, other) in blends:
                         mask = sum(1 << i for i, n in enumerate(neighbours) if n == other)

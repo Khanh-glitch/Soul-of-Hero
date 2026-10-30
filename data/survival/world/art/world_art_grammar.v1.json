@@ -35,10 +35,12 @@
     "supply_cache": {
       "frames": [
         "cache_closed",
+        "cache_notes",
+        "cache_notes_open",
         "cache_open",
         "cache_spent"
       ],
-      "read": "worked iron + cloth latch + plank body; state changes are art-only until A3 binds reward authority",
+      "read": "worked iron + cloth latch + plank body for scrap caches; research-notes crate uses pale paper + leather strap + wax seal (no latch, no glow) so notes read as notes, not loot; state changes are art-only until A3 binds reward authority",
       "glow": false,
       "collision": "unchanged from authored instance"
     },
