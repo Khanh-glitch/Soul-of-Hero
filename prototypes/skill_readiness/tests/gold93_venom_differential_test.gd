@@ -392,8 +392,13 @@ func _run_seed(sid: int, oracle: Dictionary, canonical: String) -> bool:
 			w.objhash_log.clear()
 		w.draw(g)
 		if w.objhash_on:
-			for i in range(w.objhash_log.size()):
-				print("GOLD93_OBJ t=%d i=%d %s" % [n, i, String(w.objhash_log[i])])
+			# ONE line per tick: the CI annotation feed truncates long logs, so
+			# each entry is `label:hash6` and the whole tick fits one line.
+			var compact: Array = []
+			for entry in w.objhash_log:
+				var sp: PackedStringArray = String(entry).split(" ")
+				compact.append("%s:%s" % [sp[0], sp[1].substr(0, 6)])
+			print("GOLD93_OBJ t=%d n=%d %s" % [n, compact.size(), " ".join(compact)])
 			w.objhash_on = false
 		if _dump_tick == n:
 			_dump_rasters(g, sid, n)
