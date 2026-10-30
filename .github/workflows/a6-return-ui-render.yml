@@ -133,6 +133,23 @@ jobs:
           xvfb-run --auto-servernum -s "-screen 0 1280x720x24" glxinfo -B 2>&1 | head -14 \
             | tee -a "$GITHUB_STEP_SUMMARY" || true
 
+      # Cheap rehearsal of the four fixtures before the expensive part: the same
+      # states the renderer is about to draw, checked for card identity and text
+      # boxes with no framebuffer at all.
+      - name: Audit the four preview fixtures
+        run: |
+          set -uo pipefail
+          export SOUL_OF_HERO_SAVE_PATH="user://a6_fixture_audit.json"
+          status=0
+          timeout --foreground 180s godot --headless --path . \
+            res://tests/survival/ui/a6_return_ui_capture.tscn -- --a6-ui-fixture-audit \
+            2>&1 | tee .artifacts/fixture-audit.log || status=$?
+          if [ "${status}" -ne 0 ] || ! grep -q "A6 UI FIXTURE AUDIT OK" .artifacts/fixture-audit.log; then
+            tail -6 .artifacts/fixture-audit.log | sed 's/^/::error::/'
+            echo "::error::the preview fixtures no longer show the cards they are named after"
+            exit 1
+          fi
+
       # The first windowed boot of a job is the fragile one: it compiles shaders and
       # creates the X client with a cold cache, and it hung here three times. A plain
       # boot-and-quit runs first, exactly the shape that has always worked.

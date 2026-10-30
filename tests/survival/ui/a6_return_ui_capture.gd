@@ -25,6 +25,11 @@ extends Node
 ##
 ## In a headless binary this script prints `RENDERER REQUIRED` and exits 2, so an
 ## automated run can never mistake "no pixels" for "captures produced".
+##
+## `--a6-ui-fixture-audit` is the other headless mode: it builds the same four
+## fixtures, needs no framebuffer, and fails if a fixture stops showing the card it
+## is named after or if a string no longer fits its box. A forty-minute hosted run is
+## an expensive way to learn that a preview fixture drifted.
 
 const LAYER_SCENE: PackedScene = preload("res://game/survival/ui/return/a6_survival_return_layer.tscn")
 const NOW := 1793318400
@@ -34,6 +39,7 @@ const REQUIRED_STATES := ["digest", "guidance", "history", "empty"]
 const WATCHDOG_SECONDS := 120.0
 
 var _capture_dir := "user://a6_ui_captures"
+var _fixture_audit := false
 var _requested_size := Vector2i.ZERO
 var _tag := "return_preview"
 var _saved: Array[String] = []
@@ -48,6 +54,10 @@ func _ready() -> void:
 
 
 func _run() -> void:
+	_parse_arguments()
+	if _fixture_audit:
+		await _audit_fixtures()
+		return
 	if DisplayServer.get_name() == "headless":
 		printerr("A6 UI CAPTURE: RENDERER REQUIRED — this binary has no display server, nothing was rendered.")
 		get_tree().quit(2)
@@ -57,29 +67,8 @@ func _run() -> void:
 	_start_watchdog()
 	_resize_window()
 	await _settle(6)
-	await _capture("digest", {
-		"season_clock": _clock(2),
-		"return_digest": _digest(2),
-		"current": _current(2, 1),
-		"run_facts": _facts(2),
-		"site_cues": _cues(),
-	})
-	await _capture("guidance", {
-		"season_clock": _clock(1),
-		"current": _current(7, 1),
-		"run_facts": _facts(1),
-	})
-	await _capture("history", {
-		"season_clock": _clock(2),
-		"run_history": _history(),
-		"current": _current(40, 3),
-		"run_facts": _facts(2),
-	}, true)
-	await _capture("empty", {
-		"season_clock": _clock(3),
-		"run_facts": _complete_facts(3),
-		"current": {"available": true, "materials": 40, "structures": 3, "bed": true, "storage": true, "recipes": 2},
-	})
+	for fixture: Array in _fixtures():
+		await _capture(String(fixture[0]), fixture[1], bool(fixture[2]))
 	_write_manifest()
 	var size := get_viewport().get_visible_rect().size
 	if _saved.size() < REQUIRED_STATES.size():
@@ -130,6 +119,8 @@ func _parse_arguments() -> void:
 			_capture_dir = argument.trim_prefix("--capture-dir=")
 		elif argument.begins_with("--capture-tag="):
 			_tag = argument.trim_prefix("--capture-tag=")
+		elif argument == "--a6-ui-fixture-audit":
+			_fixture_audit = true
 		elif argument.begins_with("--capture-size="):
 			var parts := argument.trim_prefix("--capture-size=").split("x")
 			if parts.size() == 2:
@@ -142,6 +133,75 @@ func _ensure_directory() -> void:
 	if _capture_dir.is_relative_path():
 		_capture_dir = ProjectSettings.globalize_path(_capture_dir)
 	DirAccess.make_dir_recursive_absolute(_capture_dir)
+
+
+## The four states the gate requires, in one place, so the renderer and the
+## framebuffer-free audit can never drift apart.
+func _fixtures() -> Array:
+	return [
+		["digest", {
+			"season_clock": _clock(2),
+			"return_digest": _digest(2),
+			"current": _current(2, 1),
+			"run_facts": _facts(2),
+			"site_cues": _cues(),
+		}, false],
+		["guidance", {
+			"season_clock": _clock(1),
+			"current": _current(7, 1),
+			"run_facts": _facts(1),
+		}, false],
+		["history", {
+			"season_clock": _clock(2),
+			"run_history": _history(),
+			"current": _current(40, 3),
+			"run_facts": _facts(2),
+		}, true],
+		["empty", {
+			"season_clock": _clock(3),
+			"run_facts": _complete_facts(3),
+			"current": {"available": true, "materials": 40, "structures": 3, "bed": true, "storage": true, "recipes": 2},
+		}, false],
+	]
+
+
+## Builds every fixture and checks the card and the strings, without a framebuffer.
+## It cannot see pixels; it answers "does this state still show the card it is named
+## after, with text that fits", which is the cheap half of the render gate.
+func _audit_fixtures() -> void:
+	var failures: Array[String] = []
+	for fixture: Array in _fixtures():
+		var state := String(fixture[0])
+		var layer := LAYER_SCENE.instantiate()
+		add_child(layer)
+		layer.configure(get_tree(), fixture[1], func() -> int: return NOW)
+		await _settle(3)
+		if bool(fixture[2]):
+			layer.open_record()
+			await _settle(3)
+		var errors := _audit_state(layer, state)
+		var texts := _audit_texts(layer, state)
+		var clipped := texts.filter(func(entry: Dictionary) -> bool: return bool(entry.get("overflow", false)))
+		if errors.is_empty() and clipped.is_empty():
+			print("A6 UI FIXTURE: %s ok (%d strings, all inside their boxes)" % [state, texts.size()])
+		else:
+			for message: String in errors:
+				failures.append(message)
+			for entry: Dictionary in clipped:
+				failures.append("%s: '%s' does not fit" % [state, String(entry.get("text", ""))])
+		layer.queue_free()
+		await _settle(2)
+	# The audit shares the capture's overflow log, so an audit run must not inherit a
+	# verdict from it; this mode is judged on the two lists above only.
+	_overflows.clear()
+	_state_errors.clear()
+	if not failures.is_empty():
+		for message: String in failures:
+			printerr("A6 UI FIXTURE: FAILED — ", message)
+		get_tree().quit(1)
+		return
+	print("A6 UI FIXTURE AUDIT OK (%d states, no framebuffer needed)" % _fixtures().size())
+	get_tree().quit(0)
 
 
 func _capture(state: String, overrides: Dictionary, open_record := false) -> void:

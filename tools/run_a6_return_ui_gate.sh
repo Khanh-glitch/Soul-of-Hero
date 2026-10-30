@@ -61,6 +61,24 @@ if grep -q "SCRIPT ERROR" "$LOG"; then
 	failures=$((failures + 1))
 fi
 
+echo "== preview fixtures (no framebuffer needed) =="
+# The render job builds these same four fixtures under Xvfb. Checking the card and
+# the text boxes headlessly here means a drifted fixture fails in two seconds instead
+# of after a hosted render run.
+export SOUL_OF_HERO_SAVE_PATH="${SAVE_DIR}.json"
+FIXTURE_LOG="${TMPDIR:-/tmp}/a6_return_ui_fixtures.log"
+timeout --signal=TERM --kill-after=15s 180s "$ENGINE" --headless --path . \
+	res://tests/survival/ui/a6_return_ui_capture.tscn -- --a6-ui-fixture-audit 2>&1 | tee "$FIXTURE_LOG"
+fixture_status=${PIPESTATUS[0]}
+if [ "$fixture_status" -ne 0 ]; then
+	echo "FAILED: the preview fixture audit exited ${fixture_status}" >&2
+	failures=$((failures + 1))
+fi
+if ! grep -q "A6 UI FIXTURE AUDIT OK" "$FIXTURE_LOG"; then
+	echo "FAILED: the preview fixture audit did not print its pass line" >&2
+	failures=$((failures + 1))
+fi
+
 if [ "$failures" -ne 0 ]; then
 	echo "A6 RETURN UI GATE FAILED (${failures})" >&2
 	exit 1
