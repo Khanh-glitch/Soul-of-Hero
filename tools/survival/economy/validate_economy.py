@@ -133,7 +133,8 @@ def main():
             for rid,r in recipes.items():
                 if set(r['required_technologies']) <= learned_tech: known.add(rid)
         if before==(len(reachable),len(known),len(learned_tech),len(available_stations)): break
-    missing=sorted(set(items)-reachable)
+    meta_candidate_items={i for i,d in items.items() if 'meta_currency' in d.get('tags',[]) and d.get('acquisition_status')=='PROPOSED_WORLD'}
+    missing=sorted(set(items)-reachable-meta_candidate_items)
     if missing: errors.append(f'unobtainable contract items: {missing}')
     unknown_recipes=sorted(set(recipes)-known)
     if unknown_recipes: errors.append(f'no knowledge acquisition route: {unknown_recipes}')
@@ -184,9 +185,30 @@ def main():
     binding_ids={b['binding_id'] for b in bindings}
     for bid in offline_policy.get('active_only_sources_unchanged',[]):
         if bid not in binding_ids: errors.append(f'offline policy unknown ACTIVE-only world binding {bid}')
+    # V7 two-layer meta-economy policy: physical currency, secured profile port,
+    # fixed vending/recycling, six distinct stones, no Core vendor or cash alchemy.
+    meta_doc=load(DATA/'recipes/meta_economy.v1.json')
+    meta_schema=load(DATA/'recipes/meta_economy.schema.json')
+    for e in jsonschema.Draft202012Validator(meta_schema).iter_errors(meta_doc): errors.append(f'meta_economy.v1.json: {list(e.absolute_path)}: {e.message}')
+    mp=meta_doc.get('policy',{})
+    currency_id=mp.get('technical_ids',{}).get('physical_currency_item','')
+    if currency_id not in items: errors.append('meta currency item missing')
+    elif items[currency_id].get('storage')!='instance' or items[currency_id].get('kind')!='key_item': errors.append('meta currency must be unique physical token')
+    if len(mp.get('elder_stones',[]))!=6: errors.append('meta policy must define six distinct elder stones')
+    for m in mp.get('vending_machines',[]):
+        for iid in m.get('stock',{}):
+            if iid not in items: errors.append(f'vendor unknown item {iid}')
+            elif items[iid].get('kind') in ['skill_core','key_item'] or items[iid].get('tier',0)>2: errors.append(f'vendor forbidden high-tier/Core item {iid}')
+    for iid,entry in mp.get('recycler_salvage',{}).items():
+        if entry.get('profile_currency_delta',0)!=0: errors.append(f'recycler emits profile currency {iid}')
+        for out in entry.get('outputs',{}):
+            if out not in items: errors.append(f'recycler unknown output {out}')
+    display_doc=load(DATA/'items/meta_display_names.v1.json')
+    if display_doc.get('working_title_status')!='WORKING_TITLE_NOT_CREATOR_CANON': errors.append('display name must remain working title')
+    meta_counts={'currency_sources':len(mp.get('currency_sources',[])),'elder_stones':len(mp.get('elder_stones',[])),'deposit_endpoints':len(mp.get('deposit_endpoints',[])),'vending_machines':len(mp.get('vending_machines',[])),'recycler_machines':len(mp.get('recycler_machines',[]))}
     index={'schema':'soh.economy.index.v1','items':{i:{'sources':items[i]['source_ids'],'used_in':sorted(used_in[i]),'produced_by':sorted(produced_by[i]),'sinks':sorted(sink_ids[i])} for i in sorted(items)}}
     report={'schema':'soh.economy.validation.v1','technical_status':'FAIL' if errors else 'PASS','scope':'catalog contract feasibility; not production-world integration','errors':errors,
-        'counts':{'items':len(items),'recipes':len(recipes),'technologies':len(techs),'sources':len(sources),'stations':len(stations),'world_source_bindings':len(bindings),'world_actions':len(world_actions),'offline_eligible_craft_recipes':len(offline_policy.get('eligible_craft_recipes',[])),'offline_eligible_research_recipes':len(offline_policy.get('eligible_research_recipes',[])),'offline_eligible_technologies':len(offline_policy.get('eligible_technologies',[]))},
+        'counts':{'items':len(items),'recipes':len(recipes),'technologies':len(techs),'sources':len(sources),'stations':len(stations),'world_source_bindings':len(bindings),'world_actions':len(world_actions),'offline_eligible_craft_recipes':len(offline_policy.get('eligible_craft_recipes',[])),'offline_eligible_research_recipes':len(offline_policy.get('eligible_research_recipes',[])),'offline_eligible_technologies':len(offline_policy.get('eligible_technologies',[])),'meta_economy':meta_counts},
         'contract_reachable_items':len(reachable),'live_source_items':sorted(live),'production_cycles':cycles,
         'atlas_sha256':digest,'gameplay_design_status':'NOT_HUMAN_PLAYTESTED','integration_status':'A0_A1_A4_PENDING'}
     if args.index: args.index.write_text(json.dumps(index,indent=2)+'\n')

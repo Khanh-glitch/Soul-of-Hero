@@ -80,6 +80,21 @@
         }
       }
     },
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "run_id", "policy_sha256", "source_claims", "deposits", "vendor_stock", "purchases", "recycles"],
+      "properties": {
+        "schema": {"const": 1},
+        "run_id": {"type": "string", "maxLength": 96},
+        "policy_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "source_claims": {"type": "object", "maxProperties": 512},
+        "deposits": {"type": "object", "maxProperties": 4096},
+        "vendor_stock": {"type": "object", "maxProperties": 64},
+        "purchases": {"type": "object", "maxProperties": 4096},
+        "recycles": {"type": "object", "maxProperties": 4096}
+      }
+    },
     "offline": {
       "type": "object",
       "additionalProperties": false,

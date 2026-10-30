@@ -16,6 +16,7 @@ extends RefCounted
 
 const WorldSources = preload("res://game/survival/economy/world_source_adapter.gd")
 const OfflineOperations = preload("res://game/survival/economy/offline_operation_planner.gd")
+const MetaEconomy = preload("res://game/survival/economy/meta_economy_planner.gd")
 const ROOT := "survival_economy"
 const WORLD_ROOT := "world_slice"
 const SCHEMA := 2
@@ -40,6 +41,8 @@ var _time_host: Callable
 var _skill_attestor: Callable
 var _world_host: Callable
 var _offline: RefCounted
+var _meta_economy: RefCounted
+var _meta_profile_port: RefCounted
 var catalog: Dictionary = {}
 var last_error := ""
 
@@ -120,6 +123,82 @@ func forecast_offline_food(request: Variant, needs: Variant) -> Dictionary:
 
 func offline_operation_state() -> Dictionary:
 	return document().get("offline", OfflineOperations.empty_state())
+
+## V7 A0 composition root only. The profile port must read/write the SAME
+## SaveService candidate inside one A0 transaction. Absent port => fail closed.
+func configure_meta_profile_port(port: RefCounted) -> bool:
+	_meta_profile_port = port
+	if _meta_economy == null:
+		_meta_economy = MetaEconomy.new()
+		if not _meta_economy.configure(self, catalog.get("meta_policy", {}), port):
+			last_error = "invalid_meta_policy"
+			return false
+	else:
+		_meta_economy.set_profile_port(port)
+	return true
+
+func meta_economy_state() -> Dictionary:
+	return document().get("meta", MetaEconomy.empty_state())
+
+func plan_meta_source_claim(request: Variant) -> Dictionary:
+	if _meta_economy == null:
+		return _fail("A0_PROFILE_BOUNDARY_ABSENT")
+	return _meta_economy.plan_source_claim(request)
+
+func apply_meta_source_claim(candidate: Dictionary, proposal: Dictionary, request: Variant) -> Dictionary:
+	if _meta_economy == null:
+		return _fail("A0_PROFILE_BOUNDARY_ABSENT")
+	return _meta_economy.apply_source_claim(candidate, proposal, request)
+
+func plan_meta_deposit(request: Variant) -> Dictionary:
+	if _meta_economy == null:
+		return _fail("A0_PROFILE_BOUNDARY_ABSENT")
+	return _meta_economy.plan_deposit(request)
+
+func apply_meta_deposit(candidate: Dictionary, proposal: Dictionary, request: Variant) -> Dictionary:
+	if _meta_economy == null:
+		return _fail("A0_PROFILE_BOUNDARY_ABSENT")
+	return _meta_economy.apply_deposit(candidate, proposal, request)
+
+func plan_meta_purchase(request: Variant) -> Dictionary:
+	if _meta_economy == null:
+		return _fail("A0_PROFILE_BOUNDARY_ABSENT")
+	return _meta_economy.plan_purchase(request)
+
+func apply_meta_purchase(candidate: Dictionary, proposal: Dictionary, request: Variant) -> Dictionary:
+	if _meta_economy == null:
+		return _fail("A0_PROFILE_BOUNDARY_ABSENT")
+	return _meta_economy.apply_purchase(candidate, proposal, request)
+
+func plan_meta_refund(request: Variant) -> Dictionary:
+	if _meta_economy == null:
+		return _fail("A0_PROFILE_BOUNDARY_ABSENT")
+	return _meta_economy.plan_refund(request)
+
+func apply_meta_refund(candidate: Dictionary, proposal: Dictionary, request: Variant) -> Dictionary:
+	if _meta_economy == null:
+		return _fail("A0_PROFILE_BOUNDARY_ABSENT")
+	return _meta_economy.apply_refund(candidate, proposal, request)
+
+func plan_meta_recycle(request: Variant) -> Dictionary:
+	if _meta_economy == null:
+		return _fail("A0_PROFILE_BOUNDARY_ABSENT")
+	return _meta_economy.plan_recycle(request)
+
+func apply_meta_recycle(candidate: Dictionary, proposal: Dictionary, request: Variant) -> Dictionary:
+	if _meta_economy == null:
+		return _fail("A0_PROFILE_BOUNDARY_ABSENT")
+	return _meta_economy.apply_recycle(candidate, proposal, request)
+
+func project_meta_economy() -> Dictionary:
+	if _meta_economy == null or _save == null:
+		return {"contract": "soh.economy.meta_projection.v1", "read_only": true, "status": "A0_PROFILE_BOUNDARY_ABSENT"}
+	var candidate: Dictionary = _save.call(&"get_snapshot")
+	return _meta_economy.project(candidate)
+
+## Internal candidate re-normalization after a pure meta transform.
+func _candidate_reset_state(candidate: Dictionary) -> void:
+	candidate[ROOT] = _state(candidate)
 
 ## V5 A0 handoff callable, now implemented. READ-ONLY tool-use plan. A0 must
 ## apply it inside the SAME SaveService transaction as the harvest hit, node
@@ -248,6 +327,20 @@ func load_catalog() -> bool:
 	if not _offline.configure(self, catalog["offline_policy"]):
 		last_error = "invalid_offline_policy"
 		return false
+	var meta_file := FileAccess.open(CATALOG_ROOT + "recipes/meta_economy.v1.json", FileAccess.READ)
+	if meta_file == null:
+		last_error = "missing_catalog:recipes/meta_economy.v1.json"
+		return false
+	var meta_parsed: Variant = JSON.parse_string(meta_file.get_as_text())
+	meta_file.close()
+	if not meta_parsed is Dictionary or not (meta_parsed as Dictionary).get("policy") is Dictionary:
+		last_error = "invalid_catalog:recipes/meta_economy.v1.json"
+		return false
+	catalog["meta_policy"] = (meta_parsed as Dictionary)["policy"]
+	_meta_economy = MetaEconomy.new()
+	if not _meta_economy.configure(self, catalog["meta_policy"], _meta_profile_port):
+		last_error = "invalid_meta_policy"
+		return false
 	last_error = ""
 	return true
 
@@ -283,6 +376,7 @@ func _state(candidate: Dictionary) -> Dictionary:
 		"counter": int(state.get("counter", 0)),
 		"time": state.get("time", _empty_time()),
 		"offline": state.get("offline", OfflineOperations.empty_state()),
+		"meta": state.get("meta", MetaEconomy.empty_state()),
 	}
 	return result
 
@@ -370,6 +464,10 @@ func _state_error(raw: Variant) -> String:
 		var offline_error := OfflineOperations.state_error(state["offline"])
 		if not offline_error.is_empty():
 			return offline_error
+	if state.has("meta"):
+		var meta_error := MetaEconomy.state_error(state["meta"])
+		if not meta_error.is_empty():
+			return meta_error
 	return ""
 
 func _time_state_error(raw: Variant) -> String:

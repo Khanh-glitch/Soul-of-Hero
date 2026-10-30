@@ -73,6 +73,17 @@ jobs:
               m = s['milestones']
               print(f"- {name}: 20m lower bound {m['20_min']['lower_bound_seconds']}s; 90m lower bound {m['90_min']['lower_bound_seconds']}s; cache wait {s['cache_active_wait_seconds']}s; tool effect {s['tool_effect_status']}.")
           PY
+      - name: V7 deterministic 336h two-layer economy model (not a playtest)
+        run: |
+          python tools/survival/economy/model_meta_economy.py --json "$ARTIFACT_DIR/meta_balance_report.json"
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json, os
+          r = json.load(open(os.environ['ARTIFACT_DIR'] + '/meta_balance_report.json'))
+          print('### A3 V7 meta-economy model (AI_TUNABLE, NOT_HUMAN_PLAYTEST)')
+          for s in r['baseline']:
+              print(f"- {s['strategy']}: banked {s['expected_banked_currency']}, meals {s['meals_affordable_next_run']}, power {s['run_local_power_proxy']}, core proxy {s['rare_core_discovery_probability_proxy']}.")
+          print(f"Universal dominance: {r['universally_dominant_strategies']}.")
+          PY
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -191,6 +202,42 @@ jobs:
             grep 'A3 TOOL USE CALLABLE PASSED' "$ARTIFACT_DIR/tool_use.log" | tail -1 >> "$GITHUB_STEP_SUMMARY"
           fi
           exit $rc
+      - name: V7 two-layer meta-economy owner-contract candidate tests
+        run: |
+          set +e
+          timeout --signal=TERM --kill-after=10s 300s godot --headless --path . \
+            --user-data-dir artifacts/a3-runtime \
+            --script res://tests/survival/catalog/economy_meta_test.gd \
+            >"$ARTIFACT_DIR/meta.log" 2>&1
+          rc=$?
+          set -e
+          cat "$ARTIFACT_DIR/meta.log"
+          grep -vE '^ERROR: SaveService: Could not write the temporary save file\.$' "$ARTIFACT_DIR/meta.log" > "$ARTIFACT_DIR/meta.gate.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/meta.gate.log" "A3 meta" "A3 META ECONOMY PASSED"
+          if [ "$rc" -eq 0 ]; then
+            grep 'A3 META ECONOMY PASSED' "$ARTIFACT_DIR/meta.log" | tail -1 >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit $rc
+      - name: V7 meta deposit/purchase across two OS processes
+        run: |
+          set +e
+          A3_META_RESTART_PHASE=1 timeout --signal=TERM --kill-after=10s 120s godot --headless --path . \
+            --user-data-dir artifacts/a3-runtime \
+            --script res://tests/survival/catalog/economy_meta_restart_test.gd \
+            >"$ARTIFACT_DIR/meta_restart_phase1.log" 2>&1
+          rc1=$?
+          A3_META_RESTART_PHASE=2 timeout --signal=TERM --kill-after=10s 120s godot --headless --path . \
+            --user-data-dir artifacts/a3-runtime \
+            --script res://tests/survival/catalog/economy_meta_restart_test.gd \
+            >"$ARTIFACT_DIR/meta_restart_phase2.log" 2>&1
+          rc2=$?
+          set -e
+          cat "$ARTIFACT_DIR/meta_restart_phase1.log" "$ARTIFACT_DIR/meta_restart_phase2.log"
+          grep -vE '^ERROR: SaveService: Could not write the temporary save file\.$' "$ARTIFACT_DIR/meta_restart_phase2.log" > "$ARTIFACT_DIR/meta_restart_phase2.gate.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/meta_restart_phase1.log" "A3 meta restart phase1" "A3 META RESTART PHASE 1 PASSED"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/meta_restart_phase2.gate.log" "A3 meta restart phase2" "A3 META RESTART PHASE 2 PASSED"
+          if [ "$rc1" -ne 0 ] || [ "$rc2" -ne 0 ]; then exit 1; fi
+          echo "A3 two-process meta restart PASSED" >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
         if: always()
         with:

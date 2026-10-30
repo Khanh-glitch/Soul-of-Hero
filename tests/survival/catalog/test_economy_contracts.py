@@ -12,7 +12,9 @@ class EconomyContracts(unittest.TestCase):
         r=subprocess.run([sys.executable,str(ROOT/'tools/survival/economy/validate_economy.py')],capture_output=True,text=True)
         self.assertEqual(r.returncode,0,r.stdout+r.stderr)
         report=json.loads(r.stdout); self.assertEqual(report['technical_status'],'PASS')
-        self.assertEqual(report['contract_reachable_items'],report['counts']['items'])
+        items=json.loads((ROOT/'data/survival/items/items.json').read_text())['items']
+        meta_candidate={i for i,d in items.items() if 'meta_currency' in d.get('tags',[]) and d.get('acquisition_status')=='PROPOSED_WORLD'}
+        self.assertEqual(report['contract_reachable_items'],report['counts']['items']-len(meta_candidate))
         self.assertEqual(report['production_cycles'],[])
         self.assertEqual(report['gameplay_design_status'],'NOT_HUMAN_PLAYTESTED')
     def test_reference_and_cycle_rules_are_executable(self):

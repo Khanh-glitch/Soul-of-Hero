@@ -1,0 +1,61 @@
+{
+  "schema": "soh.economy.a0_meta_integration.v7",
+  "status": "OWNER_CONTRACT_CANDIDATE_A0_ABSENT_FAIL_CLOSED",
+  "creator_locked": [
+    "D062 last72 Ragnarok",
+    "D063 physical deposit required",
+    "D064 fixed vending/recycler",
+    "D065 distinct endings",
+    "D066 voluntary early restart",
+    "D067 deep solo world"
+  ],
+  "a3_callable_status": "IMPLEMENTED_A3_CANDIDATE_ONLY",
+  "a3_callables": [
+    "configure_meta_profile_port",
+    "plan_meta_source_claim",
+    "apply_meta_source_claim",
+    "plan_meta_deposit",
+    "apply_meta_deposit",
+    "plan_meta_purchase",
+    "apply_meta_purchase",
+    "plan_meta_refund",
+    "apply_meta_refund",
+    "plan_meta_recycle",
+    "apply_meta_recycle",
+    "project_meta_economy"
+  ],
+  "profile_port_contract": "soh.economy.a0_profile_port.v1",
+  "required_port_methods": {
+    "run_context": "Returns {contract,run_id,run_epoch,run_started_at_unix,now_unix,expires_at_unix,status}. A0 owns RunLifecycle; A3 never invents run expiry.",
+    "endpoint_authority": "(endpoint_id)->{contract,endpoint_id,kind,run_id,endpoint_revision,visited,operational,hero_cell}. A1/A8 physical placement + A0 interaction authority.",
+    "source_authority": "(source_id,source_instance_id)->{contract,source_id,source_instance_id,run_id,generation,opened,depleted,phase}. A8/A0 source identity; no A3 POI logic.",
+    "read_profile": "(candidate)->{secured_ragnarok_currency,achievements:{elder_stones},run_history}. Reads SAME SaveService candidate.",
+    "apply_profile_delta": "(candidate,delta,receipt)->bool. Mutates profile.secured_ragnarok_currency inside the SAME A0 SaveService.transact_once mutator. Rejects negative balance."
+  },
+  "atomic_deposit_rule": [
+    "A0 calls plan_meta_deposit(request) read-only.",
+    "A0 opens ONE SaveService.transact_once with key soh.a3.meta_deposit.<proposal_id>.",
+    "Inside that mutator A0 calls apply_meta_deposit(candidate,proposal,request).",
+    "A3 re-plans from candidate, removes exact physical tokens, marks them deposited, then calls port.apply_profile_delta(+amount).",
+    "A0 commits candidate once. Replayed key returns duplicate; interrupted write leaves old candidate intact.",
+    "No chest open, boss kill, home storage, death, expiry or reset may call apply_profile_delta without physical token custody at an authorized endpoint."
+  ],
+  "run_reset_rule": "A0 RunLifecycle clears survival/survival_economy/world_slice/inventory/storage and other run-local namespaces while preserving only profile.achievements, profile.run_history and profile.secured_ragnarok_currency. A3 candidate port fixture demonstrates this; production A0 must own it.",
+  "forbidden": [
+    "second wallet",
+    "A3 profile autoload",
+    "A8 direct profile writes",
+    "generic scrap/score conversion",
+    "vendor Core/high-tier spawn kit",
+    "recycler profile currency output",
+    "stone-to-currency conversion",
+    "cross-run item/recipe/Core/station/house leak"
+  ],
+  "evidence_level": {
+    "native_fixture_tested": "PASS_OWNER_CONTRACT_CANDIDATE: meta 43/12; meta restart 9+16; adapter 556/26; offline 220/18; offline restart 12+19; world restart 7+14; tool_use 20; Python 65; validator PASS",
+    "world_integrated": false,
+    "human_reviewed": false
+  },
+  "policy": "data/survival/recipes/meta_economy.v1.json",
+  "display_registry": "data/survival/items/meta_display_names.v1.json"
+}

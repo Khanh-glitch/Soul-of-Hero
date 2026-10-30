@@ -1,0 +1,120 @@
+{
+  "schema": "soh.economy.progression_v5.v1",
+  "scope": "A3 pacing lower-bound model; not a player journey, not human approval",
+  "scenarios": {
+    "explore_first": {
+      "scenario": "explore_first",
+      "order": "locker -> crate01/02/03 -> cache1 -> home harvest -> stations -> cache2 -> research -> iron_pick",
+      "technical_status": "MODEL_ONLY",
+      "pacing_semantics": "ORDER_INVARIANT_LOWER_BOUND_NOT_PLAYTEST",
+      "route_order_changes_total_lower_bound": false,
+      "route_order_note": "Both orders use the same physical source set, costs and one cache cooldown; this model sums lower bounds and therefore reports identical totals. It proves order-invariant feasibility floors, not distinct measured pacing.",
+      "human_playtest": false,
+      "production_a0_mount": false,
+      "tool_effect_status": "UNWIRED_A0",
+      "cache_claims": 2,
+      "cache_active_wait_seconds": 1800,
+      "one_time_crates": [
+        "si:r_ashen_crown:roadside_supply:02",
+        "si:r_ashen_crown:roadside_supply:03"
+      ],
+      "canonical_rates_unchanged": true,
+      "no_core": true,
+      "no_gold": true,
+      "travel_model": "Manhattan lower bound at 96 px/s; not collision-verified BFS",
+      "harvest_model": "fresh A0 nodes; no offline respawn credit",
+      "milestones": {
+        "20_min": {
+          "goal": "stone_pick + paid workbench + first scrap/oak/stone loop",
+          "requires_cache_wait": false,
+          "lower_bound_seconds": 36.65,
+          "status": "MODEL_LOWER_BOUND_NOT_PLAYTEST"
+        },
+        "45_min": {
+          "goal": "paid furnace + research_kit + first targeted research note",
+          "requires_cache_wait": false,
+          "lower_bound_seconds": 273.01,
+          "status": "MODEL_LOWER_BOUND_NOT_PLAYTEST"
+        },
+        "90_min": {
+          "goal": "iron_pick recipe learned and one physical iron_pick crafted",
+          "requires_cache_wait": true,
+          "cache_active_wait_seconds": 1800,
+          "lower_bound_seconds": 2201.58,
+          "status": "MODEL_LOWER_BOUND_NOT_PLAYTEST"
+        },
+        "180_min": {
+          "goal": "repeat cache/deadfall, relay power, surplus ingots/spares, safe return and storage",
+          "requires_cache_wait": true,
+          "lower_bound_seconds": 4017.25,
+          "status": "MODEL_LOWER_BOUND_NOT_PLAYTEST"
+        }
+      },
+      "bottlenecks": [
+        "knowledge_spares still gate research_kit + basic-tool research",
+        "A0 must mount crate 02/03 interaction points and one-time receipts",
+        "stone_pick/iron_pick do not yet change A0 harvest; tool host contract required",
+        "real navigation/collision can increase travel lower bound"
+      ]
+    },
+    "home_first": {
+      "scenario": "home_first",
+      "order": "home harvest -> stone_pick/workbench/furnace -> corridor crates/cache -> research_kit -> cache2 -> research -> iron_pick",
+      "technical_status": "MODEL_ONLY",
+      "pacing_semantics": "ORDER_INVARIANT_LOWER_BOUND_NOT_PLAYTEST",
+      "route_order_changes_total_lower_bound": false,
+      "route_order_note": "Both orders use the same physical source set, costs and one cache cooldown; this model sums lower bounds and therefore reports identical totals. It proves order-invariant feasibility floors, not distinct measured pacing.",
+      "human_playtest": false,
+      "production_a0_mount": false,
+      "tool_effect_status": "UNWIRED_A0",
+      "cache_claims": 2,
+      "cache_active_wait_seconds": 1800,
+      "one_time_crates": [
+        "si:r_ashen_crown:roadside_supply:02",
+        "si:r_ashen_crown:roadside_supply:03"
+      ],
+      "canonical_rates_unchanged": true,
+      "no_core": true,
+      "no_gold": true,
+      "travel_model": "Manhattan lower bound at 96 px/s; not collision-verified BFS",
+      "harvest_model": "fresh A0 nodes; no offline respawn credit",
+      "milestones": {
+        "20_min": {
+          "goal": "stone_pick + paid workbench + first scrap/oak/stone loop",
+          "requires_cache_wait": false,
+          "lower_bound_seconds": 36.65,
+          "status": "MODEL_LOWER_BOUND_NOT_PLAYTEST"
+        },
+        "45_min": {
+          "goal": "paid furnace + research_kit + first targeted research note",
+          "requires_cache_wait": false,
+          "lower_bound_seconds": 273.01,
+          "status": "MODEL_LOWER_BOUND_NOT_PLAYTEST"
+        },
+        "90_min": {
+          "goal": "iron_pick recipe learned and one physical iron_pick crafted",
+          "requires_cache_wait": true,
+          "cache_active_wait_seconds": 1800,
+          "lower_bound_seconds": 2201.58,
+          "status": "MODEL_LOWER_BOUND_NOT_PLAYTEST"
+        },
+        "180_min": {
+          "goal": "repeat cache/deadfall, relay power, surplus ingots/spares, safe return and storage",
+          "requires_cache_wait": true,
+          "lower_bound_seconds": 4017.25,
+          "status": "MODEL_LOWER_BOUND_NOT_PLAYTEST"
+        }
+      },
+      "bottlenecks": [
+        "knowledge_spares still gate research_kit + basic-tool research",
+        "A0 must mount crate 02/03 interaction points and one-time receipts",
+        "stone_pick/iron_pick do not yet change A0 harvest; tool host contract required",
+        "real navigation/collision can increase travel lower bound"
+      ]
+    }
+  },
+  "safe_retreat": {
+    "route": "A1 corridor return waypoints to authored start; no Core/Gold required",
+    "status": "MODEL_ONLY_PENDING_A0_NAV"
+  }
+}

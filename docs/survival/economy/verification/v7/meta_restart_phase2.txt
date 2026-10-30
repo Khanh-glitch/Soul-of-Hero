@@ -1,0 +1,32 @@
+Godot Engine v4.7.stable.custom_build - https://godotengine.org
+
+  ok    real SaveService storage
+  ok    adapter
+  ok    phase two profile port after OS restart
+  ok    secured deposit survived separate OS process
+  ok    unbanked physical remainder survived restart
+ERROR: SaveService: Could not write the temporary save file.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _push_failure (res://game/autoload/save_service.gd:4797)
+       [1] _commit_snapshot (res://game/autoload/save_service.gd:2238)
+       [2] _commit_candidate (res://game/autoload/save_service.gd:2217)
+       [3] transact_once (res://game/autoload/save_service.gd:1260)
+       [4] _commit (res://tests/survival/catalog/economy_meta_restart_test.gd:48)
+       [5] _run (res://tests/survival/catalog/economy_meta_restart_test.gd:118)
+  ok    interrupted write fails closed
+  ok    no partial profile credit on interrupted write
+  ok    retry after interrupted write commits exactly once
+  ok    exact-once credit after retry
+  ok    receipt replay cannot mint
+  ok    new-run profile port
+  ok    secured currency survives 14-day expiration/reset
+  ok    no unbanked currency leaks across run boundary
+  ok    no ordinary item/Core/station/recipe leak
+  ok    new-run physical machine paid purchase
+  ok    purchase debits secured balance exactly
+A3 META RESTART PHASE 2 PASSED - 16 checks
+WARNING: 9 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2535)
+ERROR: 4 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

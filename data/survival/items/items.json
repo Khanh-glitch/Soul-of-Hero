@@ -1302,6 +1302,28 @@
         "seal_purple_seal"
       ],
       "acquisition_status": "PROPOSED_WORLD"
+    },
+    "ragnarok_unbanked": {
+      "id": "ragnarok_unbanked",
+      "label": "Ragnarok Unbanked Currency",
+      "kind": "key_item",
+      "tier": 5,
+      "tags": [
+        "meta_currency",
+        "physical",
+        "losable",
+        "last72"
+      ],
+      "storage": "instance",
+      "stack_limit": 1,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-25",
+        "SYS-30"
+      ],
+      "source_ids": [],
+      "acquisition_status": "PROPOSED_WORLD",
+      "purpose": "Physical late-Ragnarok cross-season currency token. One token equals one secured unit only after legitimate A0 deposit. Never profile money while carried, chest-stored, death-bagged or expired."
     }
   }
 }

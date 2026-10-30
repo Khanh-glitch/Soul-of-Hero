@@ -1,0 +1,43 @@
+{
+  "schema": "soh.economy.validation.v1",
+  "technical_status": "PASS",
+  "scope": "catalog contract feasibility; not production-world integration",
+  "errors": [],
+  "counts": {
+    "items": 57,
+    "recipes": 36,
+    "technologies": 5,
+    "sources": 40,
+    "stations": 7,
+    "world_source_bindings": 5,
+    "world_actions": 3,
+    "offline_eligible_craft_recipes": 2,
+    "offline_eligible_research_recipes": 1,
+    "offline_eligible_technologies": 2,
+    "meta_economy": {
+      "currency_sources": 7,
+      "elder_stones": 6,
+      "deposit_endpoints": 3,
+      "vending_machines": 3,
+      "recycler_machines": 2
+    }
+  },
+  "contract_reachable_items": 56,
+  "live_source_items": [
+    "blood_crucible_blueprint",
+    "crypt_bone_shard",
+    "fractured_axe_insignia",
+    "iron_scrap",
+    "oak_wood",
+    "predator_jaw",
+    "reaper_essence",
+    "reed_fibre",
+    "soul_ember",
+    "stone_chunk",
+    "venom_spine"
+  ],
+  "production_cycles": [],
+  "atlas_sha256": "b958de0fc413cc200b35b0938760228c2ebd3a8ef4aa2f52c1051c52cca59157",
+  "gameplay_design_status": "NOT_HUMAN_PLAYTESTED",
+  "integration_status": "A0_A1_A4_PENDING"
+}
