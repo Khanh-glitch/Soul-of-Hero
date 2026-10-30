@@ -145,8 +145,9 @@ jobs:
             timeout --foreground --signal=TERM --kill-after=20s 300s xvfb-run --auto-servernum \
               -s "-screen 0 ${res}x24" \
               env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
-              godot --path . --resolution "${res}" --rendering-driver opengl3 --audio-driver Dummy -- \
-              --a6-ui-capture --capture-dir="$PWD/.artifacts/captures-${res}" \
+              godot --path . --rendering-driver opengl3 --audio-driver Dummy -- \
+              --a6-ui-capture --capture-size="${res}" \
+              --capture-dir="$PWD/.artifacts/captures-${res}" \
               --capture-tag="${A6_CAPTURE_TAG}" > "${log}" 2>&1
             status=$?
             echo "return UI render ${res} exit: ${status}" | tee -a "$GITHUB_STEP_SUMMARY"

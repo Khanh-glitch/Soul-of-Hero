@@ -6,8 +6,9 @@ extends Node
 ## `xvfb-run` with a software GL driver:
 ##
 ##   xvfb-run -s "-screen 0 1280x720x24" \
-##     godot --path . --resolution 1280x720 --rendering-driver opengl3 -- \
-##     --a6-ui-capture --capture-dir="$PWD/.artifacts/captures-1280x720" --capture-tag=return_preview
+##     godot --path . --rendering-driver opengl3 -- \
+##     --a6-ui-capture --capture-size=1280x720 \
+##     --capture-dir="$PWD/.artifacts/captures-1280x720" --capture-tag=return_preview
 ##
 ## Four states are required at every resolution: `digest`, `guidance`, `history`,
 ## `empty`. The driver writes a manifest next to the PNGs with each frame's
@@ -33,6 +34,7 @@ const REQUIRED_STATES := ["digest", "guidance", "history", "empty"]
 const WATCHDOG_SECONDS := 120.0
 
 var _capture_dir := "user://a6_ui_captures"
+var _requested_size := Vector2i.ZERO
 var _tag := "return_preview"
 var _saved: Array[String] = []
 var _entries: Array[Dictionary] = []
@@ -53,7 +55,8 @@ func _run() -> void:
 	_parse_arguments()
 	_ensure_directory()
 	_start_watchdog()
-	await _settle(4)
+	_resize_window()
+	await _settle(6)
 	await _capture("digest", {
 		"season_clock": _clock(2),
 		"return_digest": _digest(2),
@@ -101,6 +104,18 @@ func _run() -> void:
 	get_tree().quit(0)
 
 
+## The project ships a 1280x720 window override, and asking the command line for
+## that same size made the windowed run wedge before a frame was drawn. The size is
+## therefore set from inside the scene once the engine is up, which also keeps the
+## Xvfb screen and the window in one place.
+func _resize_window() -> void:
+	if _requested_size == Vector2i.ZERO:
+		return
+	DisplayServer.window_set_position(Vector2i(0, 0))
+	DisplayServer.window_set_size(_requested_size)
+	print("A6 UI CAPTURE: requested window ", _requested_size, " (was ", DisplayServer.window_get_size(), ")")
+
+
 func _start_watchdog() -> void:
 	var timer := get_tree().create_timer(WATCHDOG_SECONDS, true)
 	timer.timeout.connect(func() -> void:
@@ -115,6 +130,10 @@ func _parse_arguments() -> void:
 			_capture_dir = argument.trim_prefix("--capture-dir=")
 		elif argument.begins_with("--capture-tag="):
 			_tag = argument.trim_prefix("--capture-tag=")
+		elif argument.begins_with("--capture-size="):
+			var parts := argument.trim_prefix("--capture-size=").split("x")
+			if parts.size() == 2:
+				_requested_size = Vector2i(int(parts[0]), int(parts[1]))
 	if _capture_dir.is_empty():
 		_capture_dir = "user://a6_ui_captures"
 

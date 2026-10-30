@@ -317,7 +317,10 @@ never drawn anywhere.
 
 `tests/survival/ui/a6_return_ui_capture.tscn` renders four states — `digest`,
 `guidance`, `history`, `empty` — at 1280x720, 2560x1440 and 3840x2160 under
-`xvfb-run` with `LIBGL_ALWAYS_SOFTWARE=1` and llvmpipe. It:
+`xvfb-run` with `LIBGL_ALWAYS_SOFTWARE=1` and llvmpipe. The window is resized from
+inside the scene (`--capture-size=WxH`) rather than with `--resolution`: asking the
+command line for the same 1280x720 the project already overrides wedged the windowed
+run before the first frame. It:
 
 * refuses to run on a headless binary (`RENDERER REQUIRED`, exit 2);
 * writes a per-resolution manifest with the renderer, the window size, each
