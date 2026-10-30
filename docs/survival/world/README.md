@@ -68,3 +68,11 @@ See `VERTICAL_SLICE_HANDOFF.md`. The slice makes only `poi_crown_waystation` and
 ## Canonical geography connector blocker
 
 See `CANONICAL_GEOGRAPHY_CONNECTOR_HANDOFF.md`. A1 selected a bounded static one-chunk annex: exact 46-cell legacy ridge cut in a 16×3 mouth `x368..383,y199..201`, 48 dressed road cells, 14 flat cliff decal suppressions, and unchanged chunk `6:3` composed at canonical `(384,192)` into `448×256`. It preserves global coordinates, ten dungeon entrances, canonical POI identities and exact rewards; it does not import all 192 chunks or spawn the 106 unmounted POIs. A0 owns the production world-source seam, annex build guard, slice obstacle mount and production Hero/save acceptance. Local source gate and prior isolated connector CI native fixture pass (push 40993737087 / PR 40993742640). A0 then proved the exact locker stand `(408,199)` collided with the full-tile locker bank; A1 correction `a1_locker_stand_toe_clearance_v1` refines only that local collision footprint to 16×14 offset (0,-1), keeping stand/anchor/rewards/ridge unchanged. Locker-correction CI PASS at `bc71b536` (push 40999023888 / PR 40999029445); production `native_playable=false`. A1 state: `PAUSED_AWAITING_NATIVE_INTEGRATION`.
+
+## 2026-10-30 first-hour corridor checkpoint
+
+- `FIRST_HOUR_CORRIDOR_HANDOFF.md`: durable `source_class_id -> region_id -> instance_id -> canonical POI/null` chain, three physical roadside crates plus the canonical Waystation cache, A3 binding boundary, A0 mount steps.
+- `A8_SITE_TRANSFORM_CONTRACT.md`: exact cell-to-native transform review for Quarry/Orchard/Mill; direct 1:1 mount rejected for footprint mismatch.
+- `STREAMING_EVALUATION.md`: bounded static annex retained; true 2D TileMapLayer streaming deferred until measured need.
+- `data/survival/world/corridor/`: compiled corridor and A8 transform review. `tools/survival/worldgen/compile_corridor.py`, `validate_corridor.py`, `preview_corridor.py`; `tests/survival/world/test_corridor.py`, `corridor_native_test.gd`.
+- Local source gate: 101 pytest cases, corridor validator 0 errors, determinism 236 artifacts. Production `native_playable=false`; A3 economics and A0 production mounting remain pending.

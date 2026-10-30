@@ -7,7 +7,7 @@
   "immutable_fork_sha": "c1925d8d17a78da22c64b2c0fc249711eed536ac",
   "audited_gold_branch": "feature/gold-93-skill-readiness-20261028",
   "audited_gold_sha": "6c58ecf6f7c2350ee49f3a82e3cef42bf80afaf7",
-  "updated_date": "2026-10-29",
+  "updated_date": "2026-10-30",
   "phase": "SURV_010_MERGED_SURV_020_USER_REPORTED_IN_PROGRESS",
   "scope": "Offline open-world survival RPG; preserve dungeon/Gold; full-world plan upfront, 10 Chapter 1 dungeons in opening quarter",
   "code_claims": {
@@ -120,7 +120,7 @@
     {
       "id": "SURV-050A-CONNECTOR",
       "name": "A1 canonical geography connector blocker: exact legacy carve + bounded one-chunk annex contract for PR21",
-      "status": "source_and_isolated_native_fixture_pass_pending_a0_production",
+      "status": "implemented_unverified",
       "evidence": [
         "docs/survival/world/CANONICAL_GEOGRAPHY_CONNECTOR_HANDOFF.md",
         "data/survival/world/connector/canonical_connector.v1.json",
@@ -135,12 +135,13 @@
         "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40993742640",
         "docs/survival/world/ci_evidence.json#connector_checkpoint"
       ],
-      "next": "A0 apply owned world-source seam/delta/annex build guard and run production CN-07..10; CT accept/reject exact 46-solid-cell / 48-dressed-cell ridge-mouth tradeoff; A1 PAUSED_AWAITING_NATIVE_INTEGRATION; native_playable=false"
+      "next": "A0 apply owned world-source seam/delta/annex build guard and run production CN-07..10; CT accept/reject exact 46-solid-cell / 48-dressed-cell ridge-mouth tradeoff; A1 PAUSED_AWAITING_NATIVE_INTEGRATION; native_playable=false",
+      "verification_scope": "source_and_isolated_native_fixture_pass_pending_a0_production"
     },
     {
       "id": "SURV-050A-LOCKER-STAND",
       "name": "A1 exact Waystation locker stand native collision owner correction",
-      "status": "source_and_isolated_native_fixture_pass_pending_a0_production",
+      "status": "implemented_unverified",
       "evidence": [
         "docs/survival/world/A1_TO_A0_LOCKER_STAND_COLLISION_CORRECTION_20261030.md",
         "data/survival/world/vertical_slice/poi_crown_waystation.slice.json",
@@ -152,7 +153,26 @@
         "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40999029445",
         "docs/survival/world/ci_evidence.json#locker_stand_checkpoint"
       ],
-      "next": "A0 PR21 mount collision_size_px/collision_offset_px and run production exact-stand/genuine-reward/save vectors; A1 PAUSED_AWAITING_A0_NATIVE; native_playable=false"
+      "next": "A0 PR21 mount collision_size_px/collision_offset_px and run production exact-stand/genuine-reward/save vectors; A1 PAUSED_AWAITING_A0_NATIVE; native_playable=false",
+      "verification_scope": "source_and_isolated_native_fixture_pass_pending_a0_production"
+    },
+    {
+      "id": "SURV-050A-CORRIDOR",
+      "name": "A1 first-hour roadside supply corridor, durable source-instance identity, art-backed native fixture, and A8 cell-to-native transform review",
+      "status": "in_progress",
+      "verification_scope": "source_validated_local_101_tests_pending_ci_native_and_a0_a3_binding",
+      "evidence": [
+        "data/survival/world/authoring/corridor/crown_roadside_sources.v1.json",
+        "data/survival/world/corridor/crown_roadside.corridor.v1.json",
+        "data/survival/world/corridor/a8_site_transforms.v1.json",
+        "tools/survival/worldgen/compile_corridor.py",
+        "tools/survival/worldgen/validate_corridor.py",
+        "tests/survival/world/test_corridor.py",
+        "tests/survival/world/corridor_native_test.gd",
+        "docs/survival/world/FIRST_HOUR_CORRIDOR_HANDOFF.md",
+        "https://github.com/Khanh-glitch/Soul-of-Hero/pull/20"
+      ],
+      "next": "Run corridor native CI; A3 bind si:* economics without A1 rates; A0 mount corridor overlay/containers in production seam; A8/A0 decide compact shell vs interior transform for southern POIs; native_playable=false"
     }
   ],
   "next_action": {

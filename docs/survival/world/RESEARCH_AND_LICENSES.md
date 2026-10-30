@@ -48,3 +48,25 @@ No third-party source code, textures, audio, or generated art from the researche
 - PyPI probes (`godot-binary`, `godot-engine`, `godot_bin`, `godot`) found no Godot engine binary; `godot` is an unrelated Python DOT-language package. It was rejected as an engine source.
 - The A1-owned CI fixture uses the repository's existing `chickensoft-games/setup-godot@v2` action at version `4.7.0`, matching the existing survival/overworld workflows. The fixture project and reader/test scripts are original A1 work, not third-party code.
 - The isolated reader fixture is read-only and does not import Godot procedural-generation demo assets, Azgaar code, Eden code, or any unlicensed source. Existing research reuse/reject decisions remain unchanged.
+
+## 2026-10-30 — first-hour corridor art and streaming decisions
+
+**Internal sources read:** CT seven-agent reactivation packet, D001–D054, Atlas POI-14/DEP-01/JOURNEY-01/02/SYS-50, A3 PR19 `sources.json` (`7c2cddcd…`), A8 PR26 site JSONs (`dcc7bbf6…`, `7bf9bd45…`, `9c9af244…`), inherited SOH art manifests, `OverworldWorld`/`OverworldTiles`, and the existing connector/slice contracts.
+
+**Art decision for this checkpoint: REUSE inherited original SOH frames.** The corridor admits only frames whose `data/overworld/art_manifest.json` license is `original`: `camp_crate`, `signpost`, `cart`, `wall_stub`, `column_broken`, `tree_dead`, `bush`, `rock_a`, `rock_c`, plus the existing terrain/road/detail atlas. This avoids random style mixing, generic colored boxes, and unverified third-party license claims. Native compatibility is through the production `OverworldTiles`/`OverworldWorld` atlas path, not a parallel renderer.
+
+**43 Craftpix packs: DEFERRED, not rejected.** CT D050 admitted 22 P0 / 18 P1 / 3 SOURCE_HOLD candidates, but the ZIP bytes are not in this Arena checkout and the Craftpix free license forbids raw-art redistribution. No new general-purpose inventory was opened. Minimal future admissions for this corridor, pending local bytes + license proof + native scale/palette review:
+
+| Need | CT pack candidate | Decision now |
+|---|---:|---|
+| road/path edges | 574220 | PENDING_LOCAL_BYTES; inherited SOH road/detail used now |
+| trees | 385863 | PENDING_LOCAL_BYTES; inherited `tree_dead` used now |
+| bushes/forest objects | 141354 / 505052 | PENDING_LOCAL_BYTES; inherited `bush` used now |
+| ruins | 934618 | PENDING_LOCAL_BYTES; inherited `wall_stub`/`column_broken` used now |
+| rocks/rocky area | 974061 / 639143 | PENDING_LOCAL_BYTES; inherited `rock_a`/`rock_c` used now |
+| containers | 218281 | PENDING_LOCAL_BYTES; inherited `camp_crate` used now |
+| village/buildings | 504452 / 812442 | PENDING_LOCAL_BYTES; not needed for the crate spur |
+
+SOURCE_HOLD packs 351300/654184/749505 remain unusable until individually confirmed. Inherited `treasure_chests_1_2a` was not admitted because its bundled readme does not contain a standalone license grant; Cainos demo art was not imported because the archive lacked a standalone license document and the official terms need re-check before shipping.
+
+**Streaming OSS reference:** `gdquest-demos/godot-procedural-generation` @ `19c98cee16ed18e642b3ce178f4c649d56b334b2`. Actual `LICENSE` read: source MIT ©2020 GDQuest; art/audio CC-BY 4.0. `godot4/infinite_space/persistent_world_generator.gd` inspected for separate modification dictionary + sector regeneration. Decision: **REFERENCE** the static-truth/mutation/active-window separation; **REJECT** importing GDQuest art or rewriting SOH into infinite procedural generation. See `STREAMING_EVALUATION.md`.

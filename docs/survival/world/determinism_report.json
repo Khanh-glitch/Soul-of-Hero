@@ -1,10 +1,20 @@
 {
-  "artifact_count": 232,
+  "artifact_count": 236,
   "artifacts": [
     {
       "bytes": 9443,
       "path": "data/survival/world/a1_a3_material_decisions.json",
       "sha256": "28b94d48a2fb9eade4b9aca29478bac3d6212f4862441fe83cc61c82de5a15a0"
+    },
+    {
+      "bytes": 3901,
+      "path": "data/survival/world/authoring/corridor/a8_site_transform_authoring.v1.json",
+      "sha256": "86f0234b7f5cab7d78a94d392ce2320342365e1703addd52dc160f3d3e9b1ff7"
+    },
+    {
+      "bytes": 8609,
+      "path": "data/survival/world/authoring/corridor/crown_roadside_sources.v1.json",
+      "sha256": "6a87f4734227a68f279bb2eb45b06059c8fc07ab023f1abd46cd36d5f2be6f0a"
     },
     {
       "bytes": 80690,
@@ -987,6 +997,16 @@
       "sha256": "03acafe2f679c104312e7e4b66f911636e182b0cf42ce0b6743d1fae07b27eb3"
     },
     {
+      "bytes": 8168,
+      "path": "data/survival/world/corridor/a8_site_transforms.v1.json",
+      "sha256": "3db1350b05b1657826caea7ab625e6a2b4513ef6f59072bbc53dbc728c72f66e"
+    },
+    {
+      "bytes": 27545,
+      "path": "data/survival/world/corridor/crown_roadside.corridor.v1.json",
+      "sha256": "9d3909b0625bdf6239a760fdf2ac982d0ede0314491cab315d7268d42ddc232f"
+    },
+    {
       "bytes": 6053,
       "path": "data/survival/world/hazard_capability_contracts.json",
       "sha256": "88ffbc7cbfd3573b34f32f27af527b7a33c4b6b08b1bddacd064ba9988c8edf2"
@@ -1162,8 +1182,8 @@
       "sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4"
     }
   ],
-  "compile_1_tree_sha256": "39b9f2535519f0080cf5809d073eb159f33ccdc3126603906fee6456192225c2",
-  "compile_2_tree_sha256": "39b9f2535519f0080cf5809d073eb159f33ccdc3126603906fee6456192225c2",
+  "compile_1_tree_sha256": "54cc776b9ca22ec6b98987231b5e400610ccb325fe1caa8a0251d4262566715b",
+  "compile_2_tree_sha256": "54cc776b9ca22ec6b98987231b5e400610ccb325fe1caa8a0251d4262566715b",
   "ok": true,
   "plan_sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4",
   "schema": "soh.world.determinism.v1",

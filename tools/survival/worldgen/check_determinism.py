@@ -9,6 +9,7 @@ import contextlib, hashlib, io, json
 from pathlib import Path
 import compile_plan
 import compile_slice
+import compile_corridor
 from baseline import ROOT
 
 OUT = ROOT / "data" / "survival" / "world"
@@ -27,6 +28,7 @@ def run():
     with contextlib.redirect_stdout(io.StringIO()):
         compile_plan.compile_all()
         compile_slice.compile_all()
+        compile_corridor.compile_all()
     return tree_hash()
 
 

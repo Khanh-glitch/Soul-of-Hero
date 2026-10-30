@@ -109,3 +109,18 @@ Native playable integration remains `false`.
 - `validate_slice.py` now checks every action stand against the real 12×16 Hero body and authored obstacle collision footprints, plus interaction radius. It fails closed on the original full-tile locker overlap and passes the repaired 16×14 offset (0,-1) footprint.
 - `validate_connector.py` locks the locker correction, stand `(408,199)`, anchor `(408,200)`, radius 24 and canonical rewards.
 - Native fixture adds adverse original full-tile `intersect_shape` proof, repaired exact-stand clearance, interaction range, and ordinary-input Refuge → exact locker stand → Relay → Refuge. Result: **PASS** at `bc71b536` — push [40999023888](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40999023888) / PR [40999029445](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40999029445), including ≥20-assertion anti-vacuity, exact stand and adverse original proof. Production remains A0-owned; `native_playable=false`.
+
+## First-hour corridor / A8 transform gate
+
+Run:
+
+```bash
+python tools/survival/worldgen/compile_corridor.py
+python tools/survival/worldgen/validate_corridor.py
+python -m pytest tests/survival/world -q
+python tools/survival/worldgen/check_determinism.py
+```
+
+The corridor gate checks durable class/region/instance/POI identity, multi-instance class semantics, zero new POIs, exact existing resource-node cells, walk/hazard/water clearance, live-shape stand clearance, adverse full-tile container overlap, return/revisit cells, A1 economy-field absence, inherited original art, valid detail masks, decor collision clearance, deferred-node preservation, and exact A8 transform/footprint/capability review. Negative tests mutate identity, cells, stands, economy fields, art, decor placement and A8 root transforms.
+
+Native fixture: `corridor_native_test.gd` under Xvfb with the real Knight and ordinary input. It is isolated engineering evidence, not A3 loot integration, not SaveService production acceptance, and not human playtest. CI anti-vacuity requires at least 25 corridor assertions plus adverse-container and three-instance markers.

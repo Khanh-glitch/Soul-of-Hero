@@ -1,0 +1,66 @@
+{
+  "schema": "soh.world.a8_transform_authoring.v1",
+  "status": "A1_REVIEW_CONTRACT_NOT_A_MOUNT",
+  "a8_pr": 26,
+  "a8_head": "f9ed82b91e8d1eed52f109247ae511c4f862ffd1",
+  "a8_base": "feature/survival-rpg-foundation-20261029",
+  "authority_rule": "A1 world_plan.v1.json owns canonical cell/region/route/capability geography. A8 owns the isolated site interaction engine and local scene geometry. A8 local pixels are not overworld geography until A0 mounts an explicitly approved transform.",
+  "transform_rule": {
+    "tile_px": 16,
+    "canonical_anchor_px": "cell * 16 + (8, 8)",
+    "local_focus": "action_socket",
+    "rotation_degrees": 0,
+    "scale": [1, 1],
+    "site_root_position_px": "canonical_anchor_px - local_focus_px",
+    "note": "This is the exact 1:1 transform implied by aligning the A8 action socket to the canonical A1 POI anchor. It is a review calculation, not permission to mount an oversized isolated scene over the continent."
+  },
+  "sites": [
+    {
+      "poi_id": "poi_crown_south_quarry",
+      "a8_site_id": "crown_south_quarry",
+      "a8_path": "data/survival/world_content/sites/south_quarry.json",
+      "a8_sha256": "dcc7bbf61675707d89acedfbaa0dcc80c1f61e65e120c5d455317db13c4875e1",
+      "canonical_cell": [30, 280],
+      "local_world_bounds": [960, 600],
+      "local_spawn": [88, 510],
+      "local_action_socket": [506, 302],
+      "local_approach_stand": [506, 378],
+      "a8_outer_requires": [],
+      "a8_inner_requires": [],
+      "review": "Correct canonical identity and no-capability outer access. The 960x600 isolated work face is far larger than the authored 4-tile radius and lies outside the current one-chunk annex. Do not mount it 1:1 over the overworld."
+    },
+    {
+      "poi_id": "poi_crown_south_orchard",
+      "a8_site_id": "crown_south_orchard",
+      "a8_path": "data/survival/world_content/sites/south_orchard_ruin.json",
+      "a8_sha256": "7bf9bd4552bf36649452add049ed6f865e57473cc05016345877d91241a03808",
+      "canonical_cell": [140, 360],
+      "local_world_bounds": [960, 600],
+      "local_spawn": [90, 510],
+      "local_action_socket": [510, 292],
+      "local_approach_stand": [510, 370],
+      "a8_outer_requires": [],
+      "a8_inner_requires": [],
+      "review": "Correct canonical identity and open outer access. A8 explicitly blocks honey/rare_herb grants; A1 material_keys remain geographic potential, not loot authority. The isolated garden exceeds the authored footprint and is outside the current annex."
+    },
+    {
+      "poi_id": "poi_crown_south_mill",
+      "a8_site_id": "crown_south_mill",
+      "a8_path": "data/survival/world_content/sites/south_crown_mill.json",
+      "a8_sha256": "9c9af244ad79d13cf443235a5ed2141b867f05ed3d9e9cf3e8a1c90a10197c5f",
+      "canonical_cell": [120, 300],
+      "local_world_bounds": [960, 600],
+      "local_spawn": [90, 548],
+      "local_action_socket": [528, 294],
+      "local_approach_stand": [528, 260],
+      "a8_outer_requires": ["cap_salvage"],
+      "a8_inner_requires": ["cap_salvage"],
+      "review": "A8 cap_salvage gate matches the A1 plan. The mill race/maintenance walk must remain observable from the outer route before commitment. The isolated 960x600 scene exceeds the authored footprint and is outside the current annex."
+    }
+  ],
+  "required_owner_decisions": [
+    "A8: supply a compact overworld shell whose collision/visual footprint fits the canonical radius, or explicitly mark the 960x600 scene as an interior/local expedition instance entered from the canonical anchor.",
+    "A0: choose mount mode (overworld shell vs interior transition), add the world-source injection seam, and preserve global-pixel SaveService coordinates. Do not silently scale A8 pixels or treat local spawn as a world spawn.",
+    "A1/CT: approve any footprint/route change before production. This contract does not move the canonical POIs or add markers."
+  ]
+}
