@@ -1,7 +1,7 @@
 test_alias_review_is_explicit_and_unapproved (test_economy_contracts.A1MaterialMapping.test_alias_review_is_explicit_and_unapproved) ... ok
 test_mapping_covers_27_contracts_and_references_real_a3_items (test_economy_contracts.A1MaterialMapping.test_mapping_covers_27_contracts_and_references_real_a3_items) ... ok
 test_balance_model_conservation_and_sensitivity (test_economy_contracts.EconomyContracts.test_balance_model_conservation_and_sensitivity) ... ok
-test_current_catalog_passes (test_economy_contracts.EconomyContracts.test_current_catalog_passes) ... FAIL
+test_current_catalog_passes (test_economy_contracts.EconomyContracts.test_current_catalog_passes) ... ok
 test_existing_ids_preserved (test_economy_contracts.EconomyContracts.test_existing_ids_preserved) ... ok
 test_knowledge_and_physical_objects_are_distinct (test_economy_contracts.EconomyContracts.test_knowledge_and_physical_objects_are_distinct) ... ok
 test_reference_and_cycle_rules_are_executable (test_economy_contracts.EconomyContracts.test_reference_and_cycle_rules_are_executable) ... ok
@@ -40,57 +40,7 @@ test_source_records_backlink_canonical_cache (test_world_source_bindings.WorldSo
 test_all_scenarios_still_run_without_free_locker_materials (test_world_source_bindings.WorldSourceProgressionRegression.test_all_scenarios_still_run_without_free_locker_materials) ... ok
 test_model_locker_grants_zero_items_and_cache_owns_spares (test_world_source_bindings.WorldSourceProgressionRegression.test_model_locker_grants_zero_items_and_cache_owns_spares) ... ok
 
-======================================================================
-FAIL: test_current_catalog_passes (test_economy_contracts.EconomyContracts.test_current_catalog_passes)
 ----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/user/Soul-of-Hero/tests/survival/catalog/test_economy_contracts.py", line 13, in test_current_catalog_passes
-    self.assertEqual(r.returncode,0,r.stdout+r.stderr)
-AssertionError: 1 != 0 : {
-  "schema": "soh.economy.validation.v1",
-  "technical_status": "FAIL",
-  "scope": "catalog contract feasibility; not production-world integration",
-  "errors": [
-    "items/sources.json: []: 'schema' is a required property",
-    "items/sources.json: []: 'world_contract_status' is a required property",
-    "items/sources.json: []: 'live_harvest_authority' is a required property",
-    "items/sources.json: []: 'note' is a required property",
-    "items/sources.json: ['sources', 'road_scrap']: Additional properties are not allowed ('interaction_node_id', 'source_class_id', 'world_instance_id' were unexpected)",
-    "items/sources.json: ['sources', 'road_notes']: Additional properties are not allowed ('canonical_poi_id', 'context_poi_id', 'interaction_node_id', 'source_class_id', 'world_instance_id' were unexpected)",
-    "items/sources.json: ['sources', 'road_notes', 'balance_status']: 'SOH_PROPOSAL' was expected",
-    "items/sources.json: ['sources', 'road_supplies']: Additional properties are not allowed ('interaction_node_id', 'source_class_id', 'world_instance_id' were unexpected)"
-  ],
-  "counts": {
-    "items": 56,
-    "recipes": 36,
-    "technologies": 5,
-    "sources": 36,
-    "stations": 7,
-    "world_source_bindings": 3,
-    "world_actions": 3
-  },
-  "contract_reachable_items": 56,
-  "live_source_items": [
-    "blood_crucible_blueprint",
-    "crypt_bone_shard",
-    "fractured_axe_insignia",
-    "iron_scrap",
-    "oak_wood",
-    "predator_jaw",
-    "reaper_essence",
-    "reed_fibre",
-    "soul_ember",
-    "stone_chunk",
-    "venom_spine"
-  ],
-  "production_cycles": [],
-  "atlas_sha256": "b958de0fc413cc200b35b0938760228c2ebd3a8ef4aa2f52c1051c52cca59157",
-  "gameplay_design_status": "NOT_HUMAN_PLAYTESTED",
-  "integration_status": "A0_A1_A4_PENDING"
-}
+Ran 41 tests in 4.568s
 
-
-----------------------------------------------------------------------
-Ran 41 tests in 4.577s
-
-FAILED (failures=1)
+OK

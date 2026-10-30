@@ -56,7 +56,7 @@ Native case 23 now completes: locker/ledger → roadside notes crate → canonic
 
 ## Verification
 
-Local at code SHA `9f617946`: 41 Python tests OK; validator PASS (56 items / 36 recipes / 5 techs / 37 sources / 7 stations / 3 bindings / 3 actions, 0 cycles); progression model 15 scenarios PASS (`SIMULATION_ONLY`); tree-sitter 0 ERROR nodes in 4 GDScript files (syntax only). Immutable conservation fixture `balance_report.json` unchanged. Logs: `verification/v4/`.
+Local at code SHA `9f617946`: 41 Python tests OK; validator PASS (56 items / 36 recipes / 5 techs / 36 sources / 7 stations / 3 bindings / 3 actions, 0 cycles); progression model 15 scenarios PASS (`SIMULATION_ONLY`); tree-sitter 0 ERROR nodes in 4 GDScript files (syntax only). Immutable conservation fixture `balance_report.json` unchanged. Logs: `verification/v4/`.
 
 Native Godot: prior `100b3406` catalog jobs succeeded, native jobs remained queued. New runs for `9f617946` are pending at this checkpoint. **No native PASS is claimed until the exact SHA runs green.** The two-process restart step is authored but not yet executed.
 

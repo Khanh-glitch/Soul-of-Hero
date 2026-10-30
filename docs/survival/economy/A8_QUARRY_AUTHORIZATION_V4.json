@@ -1,7 +1,7 @@
 {
   "schema": "soh.economy.a8_quarry_authorization.v4",
   "status": "REJECTED_PENDING_EVIDENCE_FAIL_CLOSED",
-  "a3_head": "3e674caf",
+  "a3_head": "e7ef01e4",
   "a8_pin": {
     "pr": 26,
     "commit": "5ccf7b3f9824daa138b5d98106b74a2899c7592b"
