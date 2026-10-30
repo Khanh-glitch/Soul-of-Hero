@@ -264,11 +264,11 @@ func place(e, formation: bool, edge: bool = false) -> void:
 			e.y = r.range(16.0, H - 16.0)
 		e.x = M.clampf(e.x, 12.0, W - 12.0)
 		e.y = M.clampf(e.y, 12.0, H - 12.0)
-		if sqrt(V8M.v8_pow(e.x - p.x, 2.0) + V8M.v8_pow(e.y - p.y, 2.0)) < 55:
+		if M.hypot(e.x - p.x, e.y - p.y) < 55:
 			continue
 		var ok: bool = true
 		for o in enemies:
-			if sqrt(V8M.v8_pow(o.x - e.x, 2.0) + V8M.v8_pow(o.y - e.y, 2.0)) < o.r + e.r + 1:
+			if M.hypot(o.x - e.x, o.y - e.y) < o.r + e.r + 1:
 				ok = false
 				break
 		if ok:
@@ -342,7 +342,7 @@ func alive() -> Array:
 func near(x: float, y: float, r: float) -> Array:
 	var out: Array = []
 	for e in enemies:
-		if e.dying <= 0 and sqrt(V8M.v8_pow(e.x - x, 2.0) + V8M.v8_pow(e.y - y, 2.0)) < r + e.r:
+		if e.dying <= 0 and M.hypot(e.x - x, e.y - y) < r + e.r:
 			out.append(e)
 	return out
 
@@ -353,7 +353,7 @@ func nearest(x: float, y: float, maxD: float = 1e9, ex: Array = []) -> Enemy:
 	for e in enemies:
 		if e.dying > 0 or ex.has(e.id):
 			continue
-		var d: float = sqrt(V8M.v8_pow(e.x - x, 2.0) + V8M.v8_pow(e.y - y, 2.0)) - e.r
+		var d: float = M.hypot(e.x - x, e.y - y) - e.r
 		if d < bd:
 			bd = d
 			b = e
@@ -367,7 +367,7 @@ func in_cone(x: float, y: float, ang: float, range_: float, half: float) -> Arra
 			continue
 		var dx: float = e.x - x
 		var dy: float = e.y - y
-		var d: float = sqrt(dx * dx + dy * dy)
+		var d: float = M.hypot(dx, dy)
 		if d - e.r > range_:
 			continue
 		if d < e.r + 3:
@@ -388,7 +388,7 @@ func seg_dist(px: float, py: float, ax: float, ay: float, bx: float,
 	if l2 == 0.0:
 		l2 = 1.0
 	var t: float = M.clampf(((px - ax) * vx + (py - ay) * vy) / l2, 0.0, 1.0)
-	return sqrt(V8M.v8_pow(px - (ax + vx * t), 2.0) + V8M.v8_pow(py - (ay + vy * t), 2.0))
+	return M.hypot(px - (ax + vx * t), py - (ay + vy * t))
 
 
 func shake(m: float, d: float = 0.25) -> void:
@@ -426,7 +426,7 @@ func stk(e, key: String):
 
 
 func push(e, x: float, y: float, v: float) -> void:
-	var d: float = sqrt(V8M.v8_pow(e.x - x, 2.0) + V8M.v8_pow(e.y - y, 2.0))
+	var d: float = M.hypot(e.x - x, e.y - y)
 	if d == 0.0:
 		d = 1.0
 	var w: float = 0.12 if e.kind == "boss" else (0.5 if e.kind == "elite" else 1.0)
@@ -712,7 +712,7 @@ func update_player(dt: float) -> void:
 		var ny: float = float(a["y"]) + (float(b["y"]) - float(a["y"])) * u
 		var dx: float = nx - p.x
 		var dy: float = ny - p.y
-		if sqrt(dx * dx + dy * dy) > 0.2:
+		if M.hypot(dx, dy) > 0.2:
 			p.face = V8M.v8_atan2(dy, dx)
 		p.vx = dx / dt
 		p.vy = dy / dt
@@ -728,7 +728,7 @@ func update_player(dt: float) -> void:
 		if mx == 0.0 and my == 0.0 and p.mt != null:
 			var dx: float = float(p.mt["x"]) - p.x
 			var dy: float = float(p.mt["y"]) - p.y
-			var d: float = sqrt(dx * dx + dy * dy)
+			var d: float = M.hypot(dx, dy)
 			if d < 3:
 				p.mt = null
 			else:
@@ -736,7 +736,7 @@ func update_player(dt: float) -> void:
 				my = dy / d
 		elif mx != 0.0 or my != 0.0:
 			p.mt = null
-		var l: float = sqrt(mx * mx + my * my)
+		var l: float = M.hypot(mx, my)
 		if l == 0.0:
 			l = 1.0
 		var sp: float = p.speed * (1.1 if p.form == "venom" else 1.0)
@@ -745,8 +745,8 @@ func update_player(dt: float) -> void:
 		p.vy += ((my / l) * tgt - p.vy) * minf(1.0, dt * 14)
 		p.x = M.clampf(p.x + p.vx * dt, 8.0, W - 8.0)
 		p.y = M.clampf(p.y + p.vy * dt, 10.0, H - 8.0)
-		if sqrt(p.vx * p.vx + p.vy * p.vy) > 6:
-			p.walk += dt * sqrt(p.vx * p.vx + p.vy * p.vy) * 0.14
+		if M.hypot(p.vx, p.vy) > 6:
+			p.walk += dt * M.hypot(p.vx, p.vy) * 0.14
 			if p.cast <= 0:
 				p.face = V8M.v8_atan2(p.vy, p.vx)
 		p.trail = maxf(0.0, p.trail - dt * 4)
@@ -754,7 +754,7 @@ func update_player(dt: float) -> void:
 		if f.push:
 			var dx: float = p.x - f.x
 			var dy: float = p.y - f.y
-			var d: float = sqrt(dx * dx + dy * dy)
+			var d: float = M.hypot(dx, dy)
 			var m: float = f.r + 5
 			if d < m and d > 0.1:
 				p.x += (dx / d) * (m - d)
@@ -777,8 +777,8 @@ func glide(pts: Array, dur: float) -> void:
 	for i in range(1, all.size()):
 		var a: Dictionary = all[i - 1]
 		var b: Dictionary = all[i]
-		len.append(float(len[i - 1]) + sqrt(V8M.v8_pow(float(b["x"]) - float(a["x"]), 2.0)
-				+ V8M.v8_pow(float(b["y"]) - float(a["y"]), 2.0)))
+		len.append(float(len[i - 1]) + M.hypot(float(b["x"]) - float(a["x"]),
+				float(b["y"]) - float(a["y"])))
 	p.path = {"pts": all, "len": len,
 			"total": maxf(1.0, float(len[len.size() - 1])), "t": 0.0, "dur": dur}
 	p.mt = null
@@ -856,7 +856,7 @@ func update_enemies(dt: float) -> void:
 			var tank = null
 			var td: float = 1e9
 			for t in tanks:
-				var d: float = sqrt(V8M.v8_pow(t.x - e.x, 2.0) + V8M.v8_pow(t.y - e.y, 2.0)) - t.r
+				var d: float = M.hypot(t.x - e.x, t.y - e.y) - t.r
 				if d < 70 and d < td:
 					td = d
 					tank = t
@@ -865,7 +865,7 @@ func update_enemies(dt: float) -> void:
 				ty = tank.y
 			var dx: float = tx - e.x
 			var dy: float = ty - e.y
-			var d: float = sqrt(dx * dx + dy * dy)
+			var d: float = M.hypot(dx, dy)
 			if d == 0.0:
 				d = 1.0
 			var reach: float = ((tank.r if tank != null else 5.0)) + e.r + 3.0
@@ -908,7 +908,7 @@ func update_enemies(dt: float) -> void:
 			if f.push:
 				var dx: float = e.x - f.x
 				var dy: float = e.y - f.y
-				var d: float = sqrt(dx * dx + dy * dy)
+				var d: float = M.hypot(dx, dy)
 				var m: float = f.r + e.r
 				if d < m and d > 0.1:
 					e.x += (dx / d) * (m - d)
@@ -929,7 +929,7 @@ func update_enemies(dt: float) -> void:
 			var m: float = (a.r + b.r) * 0.95
 			if absf(dx) > m or absf(dy) > m:
 				continue
-			var d: float = sqrt(dx * dx + dy * dy)
+			var d: float = M.hypot(dx, dy)
 			if d < m and d > 0.01:
 				var k: float = (m - d) * 0.5
 				var wa: float = b.r / (a.r + b.r)
