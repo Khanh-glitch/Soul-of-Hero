@@ -2,7 +2,7 @@ name: A0 guarded production Waystation candidate
 on:
   push:
     branches: [arena/dea2428e-soul-of-hero]
-    paths: ['tools/ci/godot_isolated.sh', 'game/overworld/**', 'game/survival/**', 'game/characters/knight/**', 'game/autoload/save_service.gd', 'data/survival/**', 'tests/survival_*', 'tests/fixtures/a0_save_diff.gd', '.github/workflows/a0-production-waystation-candidate.yml']
+    paths: ['tools/ci/godot_isolated.sh', 'game/overworld/**', 'game/survival/**', 'game/world_art/**', 'assets/environment/survival_world/**', 'game/characters/knight/**', 'game/autoload/save_service.gd', 'data/survival/**', 'tests/survival_*', 'tests/fixtures/a0_save_diff.gd', '.github/workflows/a0-production-waystation-candidate.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -45,6 +45,13 @@ jobs:
           mkdir -p artifacts/ud_candidate artifacts/ud_import
           timeout 180s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_import --import > artifacts/candidate-import.log 2>&1
           bash tools/ci/gate_log.sh artifacts/candidate-import.log 'candidate import' 'Godot Engine'
+      - name: Headless A1 visual-candidate ownership and physics invariants
+        if: matrix.route == 'controller'
+        run: |
+          mkdir -p artifacts/ud_art_candidate
+          timeout 180s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_art_candidate --script res://tests/survival_a1_world_art_candidate_test.gd > artifacts/candidate-art.log 2>&1
+          cat artifacts/candidate-art.log
+          bash tools/ci/gate_log.sh artifacts/candidate-art.log 'A1 visual candidate' 'A0 A1 WORLD ART CANDIDATE PASSED'
       - name: Ordinary physical journey and independent process
         shell: bash
         run: |

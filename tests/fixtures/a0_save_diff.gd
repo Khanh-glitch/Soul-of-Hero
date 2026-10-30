@@ -23,6 +23,18 @@ static func report(label: String, before: Variant, after: Variant) -> void:
 				print("A0_SAVE_DIFF %s %s" % [label, item])
 				emitted += 1
 
+static func report_all(label: String, before: Variant, after: Variant) -> void:
+	## Unbounded forensic log for the small fixture save; report() stays bounded.
+	var differences := collect(before, after)
+	var value_count := 0
+	var type_count := 0
+	for item: String in differences:
+		if item.begins_with("TYPE "): type_count += 1
+		else: value_count += 1
+	print("A0_SAVE_DIFF %s values=%d types=%d" % [label, value_count, type_count])
+	for item: String in differences:
+		print("A0_SAVE_DIFF %s %s" % [label, item])
+
 static func collect(before: Variant, after: Variant) -> Array[String]:
 	var differences: Array[String] = []
 	_walk("$", before, after, differences)

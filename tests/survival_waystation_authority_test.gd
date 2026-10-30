@@ -2,6 +2,7 @@ extends SceneTree
 ## Adversarial FIXTURE test of pinned A3 V3 + actual A0 SaveService. This does
 ## not prove player input, physical reach, production mount or OS restart.
 const SaveDiff = preload("res://tests/fixtures/a0_save_diff.gd")
+const SchemaOracle = preload("res://tests/fixtures/a0_waystation_schema_oracle.gd")
 const Adapter = preload("res://game/survival/economy/a0_economy_adapter.gd")
 var save: Node
 var adapter: RefCounted
@@ -73,11 +74,42 @@ func _run() -> void:
 	r = adapter.call(&"world_action", cache, "fixture.cache.new")
 	_expect(not bool(r.get("ok", false)) and String(r.get("reason", "")) == "COOLDOWN" and (save.call(&"inventory_totals") as Dictionary) == totals, "new event cannot bypass cooldown")
 	var disk: Variant = SaveDiff.read_json(path)
-	SaveDiff.report("waystation-commit-memory-vs-disk", committed, disk)
+	SaveDiff.report_all("waystation-commit-memory-vs-disk", committed, disk)
 	_expect(bool(save.call(&"reload_save")), "disk reload succeeds")
 	var loaded: Dictionary = save.call(&"get_snapshot")
-	SaveDiff.report("waystation-commit-memory-vs-reloaded", committed, loaded)
-	SaveDiff.report("waystation-commit-disk-vs-reloaded", disk, loaded)
+	var bindings: Dictionary = adapter.call(&"world_bindings")
+	_trace_fields("commit-memory", committed)
+	_trace_fields("commit-disk", disk)
+	_trace_fields("commit-reloaded", loaded)
+	_expect(SchemaOracle.equivalent(committed, disk, bindings, true), "partial schema diagnostic: exact values and valid raw-disk types")
+	_expect(SchemaOracle.equivalent(committed, loaded, bindings), "partial schema diagnostic: exact values and valid prepared types")
+	var changed_qty := loaded.duplicate(true)
+	changed_qty.inventory.item_stacks.iron_scrap.quantity = 4
+	_expect(not SchemaOracle.equivalent(committed, changed_qty, bindings), "partial schema diagnostic rejects changed item quantity")
+	var changed_claim := loaded.duplicate(true)
+	var changed_receipts: Dictionary = changed_claim.world_slice.pois.poi_crown_waystation.reward_receipts
+	changed_receipts.erase("a1slice:poi_crown_waystation:cache_restock:1")
+	changed_receipts["a1slice:poi_crown_waystation:cache_restock:2"] = "rr_waystation_cache_claim"
+	_expect(not SchemaOracle.equivalent(committed, changed_claim, bindings), "partial schema diagnostic rejects changed canonical claim id")
+	var bad_native_type := loaded.duplicate(true)
+	bad_native_type.inventory.item_stacks.iron_scrap.quantity = 3.0
+	_expect(not SchemaOracle.equivalent(committed, bad_native_type, bindings), "prepared inventory quantity must remain an int")
+	var too_large := loaded.duplicate(true)
+	too_large.revision = 9007199254740993
+	_expect(not SchemaOracle.equivalent(committed, too_large, bindings), "partial schema diagnostic rejects integers outside JSON exact range")
+	var missing := loaded.duplicate(true)
+	missing.world_slice.pois.poi_crown_waystation.erase("cache_claim_count")
+	_expect(not SchemaOracle.equivalent(committed, missing, bindings), "partial schema diagnostic rejects missing field")
+	var ordered := loaded.duplicate(true)
+	ordered.world_slice.capabilities = ["cap_salvage", "cap_seal_1"]
+	var reordered := ordered.duplicate(true)
+	reordered.world_slice.capabilities = ["cap_seal_1", "cap_salvage"]
+	_expect(not SchemaOracle.equivalent(ordered, reordered, bindings), "partial schema diagnostic rejects reordered capability array")
+	var not_finite := loaded.duplicate(true)
+	not_finite["settings"]["master_volume"] = INF
+	_expect(not SchemaOracle.equivalent(committed, not_finite, bindings), "partial schema diagnostic rejects non-finite numbers")
+	SaveDiff.report_all("waystation-commit-memory-vs-reloaded", committed, loaded)
+	SaveDiff.report_all("waystation-commit-disk-vs-reloaded", disk, loaded)
 	_expect(loaded.get("world_slice", {}) == committed.get("world_slice", {}) and loaded.get("inventory", {}) == committed.get("inventory", {}) and loaded.get("applied_transactions", {}) == committed.get("applied_transactions", {}), "same-process disk reload preserves custody and rights")
 	fixture_index += 1
 	fixture_session = "fixture-world-after-reload"
@@ -106,16 +138,16 @@ func _run() -> void:
 	_expect(bool(save.call(&"consume_inventory_item", "stone_chunk", 100, "fixture.free.two")), "fixture frees two complete stack slots")
 	var before_fault: Dictionary = save.call(&"get_snapshot")
 	var before_fault_disk: Variant = SaveDiff.read_json(path)
-	SaveDiff.report("waystation-pre-fault-memory-vs-disk", before_fault, before_fault_disk)
+	SaveDiff.report_all("waystation-pre-fault-memory-vs-disk", before_fault, before_fault_disk)
 	_expect(bool(save.call(&"configure_test_save_interruption", "after_temporary")), "debug-only temporary-write interruption armed")
 	r = adapter.call(&"world_action", cache, "fixture.interrupted")
 	_expect(not bool(r.get("ok", false)) and (save.call(&"get_snapshot") as Dictionary) == before_fault, "interrupted candidate leaves memory unchanged")
 	var after_fault_disk: Variant = SaveDiff.read_json(path)
-	SaveDiff.report("waystation-fault-disk-before-vs-after", before_fault_disk, after_fault_disk)
+	SaveDiff.report_all("waystation-fault-disk-before-vs-after", before_fault_disk, after_fault_disk)
 	var fault_reload := bool(save.call(&"reload_save"))
 	var fault_reloaded: Dictionary = save.call(&"get_snapshot")
-	SaveDiff.report("waystation-fault-memory-vs-reloaded", before_fault, fault_reloaded)
-	SaveDiff.report("waystation-fault-disk-vs-reloaded", after_fault_disk, fault_reloaded)
+	SaveDiff.report_all("waystation-fault-memory-vs-reloaded", before_fault, fault_reloaded)
+	SaveDiff.report_all("waystation-fault-disk-vs-reloaded", after_fault_disk, fault_reloaded)
 	_expect(fault_reload and fault_reloaded == before_fault, "interrupted candidate leaves disk unchanged")
 	r = adapter.call(&"world_action", cache, "fixture.interrupted")
 	_expect(bool(r.get("ok", false)), "same event safely succeeds after interrupted write")
@@ -136,7 +168,48 @@ func _run() -> void:
 	_expect(int(durable.get("iron_scrap", 0)) == 56 and int(durable.get("knowledge_spares", 0)) == 54, "post-rename disk contains exactly one committed reward")
 	r = adapter.call(&"world_action", cache, "fixture.renamed")
 	_expect((save.call(&"inventory_totals") as Dictionary) == durable, "post-rename retry cannot grant the same reward twice")
+	await _audit_rebuild(durable)
 	_finish()
+
+func _audit_rebuild(before_totals: Dictionary) -> void:
+	var before: Dictionary = save.call(&"get_snapshot")
+	var packed := load("res://game/overworld/chapter1_overworld.tscn") as PackedScene
+	_expect(packed != null, "actual overworld scene available for reconstruction")
+	if packed == null: return
+	var host := Node2D.new()
+	root.add_child(host)
+	var world := packed.instantiate()
+	host.add_child(world)
+	world.call(&"configure", {})
+	var deadline := Time.get_ticks_msec() + 90000
+	while Time.get_ticks_msec() < deadline and not bool(world.call(&"is_world_ready")) and String(world.get(&"build_error")).is_empty():
+		await process_frame
+	_expect(bool(world.call(&"is_world_ready")), "actual overworld rebuild completes after disk reload")
+	var after: Dictionary = save.call(&"get_snapshot")
+	_trace_fields("rebuild-before", before)
+	_trace_fields("rebuild-after", after)
+	for key: String in ["inventory", "world_slice", "applied_transactions"]:
+		SaveDiff.report_all("waystation-rebuild-" + key, before.get(key), after.get(key))
+	_expect((save.call(&"inventory_totals") as Dictionary) == before_totals, "rebuild preserves exact material totals")
+	_expect(Diff_values_same(before.get("world_slice"), after.get("world_slice")) and Diff_values_same(before.get("applied_transactions"), after.get("applied_transactions")), "rebuild retains source rights and receipt values")
+	host.queue_free()
+	await process_frame
+
+func Diff_values_same(a: Variant, b: Variant) -> bool:
+	for entry: String in SaveDiff.collect(a, b):
+		if not entry.begins_with("TYPE "): return false
+	return true
+
+func _trace_fields(label: String, raw: Variant) -> void:
+	if not raw is Dictionary: return
+	var d: Dictionary = raw
+	var world: Dictionary = d.get("world_slice", {})
+	var clock: Dictionary = world.get("clock", {})
+	var poi: Dictionary = (world.get("pois", {}) as Dictionary).get("poi_crown_waystation", {})
+	var stacks: Dictionary = (d.get("inventory", {}) as Dictionary).get("item_stacks", {})
+	for pair: Array in [["revision", d.get("revision")], ["clock.active_seconds", clock.get("active_seconds")], ["clock.host_active_seconds", clock.get("host_active_seconds")], ["clock.sequence", clock.get("sequence")], ["clock.latest_session_index", clock.get("latest_session_index")], ["clock.session_id", clock.get("session_id")], ["capabilities", world.get("capabilities")], ["cache_claim_count", poi.get("cache_claim_count")], ["cache_next_ready_active_tick", poi.get("cache_next_ready_active_tick")], ["last_transaction_key", poi.get("last_transaction_key")], ["reward_receipts", poi.get("reward_receipts")], ["iron_scrap", stacks.get("iron_scrap")], ["knowledge_spares", stacks.get("knowledge_spares")]]:
+		print("A0_FIELD %s %s %s %s" % [label, pair[0], type_string(typeof(pair[1])), var_to_str(pair[1])])
+	print("A0_FIELD %s applied_transaction_keys %s" % [label, str((d.get("applied_transactions", {}) as Dictionary).keys())])
 
 func _finish() -> void:
 	print("A0 WAYSTATION AUTHORITY %s - %d checks (FIXTURE)" % ["PASSED" if failures.is_empty() else "FAILED", checks])

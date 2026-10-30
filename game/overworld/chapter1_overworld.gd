@@ -53,6 +53,8 @@ const DEATH_BAG_SCRIPT := preload("res://game/survival/survival_death_bag.gd")
 const SURVIVAL_RESOURCE_PLAN_PATH := "res://data/survival/hollow_marches_resources.json"
 # Reversible candidate only. The default production route remains unchanged
 # until native input/restart and owner gates are independently reviewed.
+const WORLD_ART_CANDIDATE_SETTING := "survival/a0_world_art_candidate"
+const A0_WORLD_ART_CANDIDATE := preload("res://game/survival/a0_world_art_candidate.gd")
 const WAYSTATION_CANDIDATE_SETTING := "survival/a0_waystation_candidate"
 const WAYSTATION_ROOT := "res://data/survival/connector/a0_candidate/"
 const A0_WAYSTATION_GEOMETRY := preload("res://game/survival/waystation_geometry.gd")
@@ -223,6 +225,16 @@ func _build_world() -> void:
 		if not bool(candidate_host.call(&"configure", self, player, economy_session)):
 			candidate_host.queue_free()
 			_fail("Waystation candidate physical host refused")
+			return
+	# Separate opt-in A1 visual candidate: never silently reparent the Hero or
+	# activate unrelated region art. Default remains OFF pending visual review.
+	if bool(ProjectSettings.get_setting(WORLD_ART_CANDIDATE_SETTING, false)):
+		if not _waystation_candidate_enabled():
+			_fail("A1 roadside art candidate requires the guarded connector")
+			return
+		var art_result: Dictionary = A0_WORLD_ART_CANDIDATE.mount(self, player)
+		if not bool(art_result.get("ok", false)):
+			_fail("A1 roadside art candidate refused: " + String(art_result.get("reason", "unknown")))
 			return
 	_build_economy_panel()
 	chest_panel = CHEST_PANEL_SCRIPT.new()

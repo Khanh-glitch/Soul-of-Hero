@@ -1,0 +1,138 @@
+{
+  "schema": "soh.world.art_mount_bundle.v1",
+  "owner": "A1",
+  "status": "MOUNT_READY_DATA_A0_ALONE_MOUNTS_PRODUCTION",
+  "renderer": {
+    "script": "res://game/world_art/world_art_presentation.gd",
+    "shader": "res://game/world_art/world_art_ambient.gdshader",
+    "class": "WorldArtPresentation"
+  },
+  "atlas": {
+    "manifest": "data/survival/world/art/atlas.v1.json",
+    "manifest_sha256": "617fc36d866653d67eb1b890ddcf5501b8660d87031ae04fefdb73941393326e",
+    "terrain": "res://assets/environment/survival_world/terrain.png",
+    "props": "res://assets/environment/survival_world/props.png",
+    "terrain_sha256": "fa8fb59c82ba7958d19aabeac66c04403b78bd1e9e9fb84fef312c657ad53c8f",
+    "props_sha256": "ff88e06852af61c50019f85c3de2c54409a953624b952c1e11f538e8ccdd1279"
+  },
+  "presentations_index": {
+    "path": "data/survival/world/art/presentations.v1.json",
+    "sha256": "25c459c4524e752e418f337b3df96ed817c5fe63a5a138a7d6106c35475673be"
+  },
+  "treatments": [
+    {
+      "treatment_id": "crown_roadside_visual_treatment",
+      "path": "data/survival/world/art/compiled/crown_roadside_visual_treatment.presentation.v1.json",
+      "sha256": "3ad267e47a4d1d47980887fbf9b8d1547323c0b695b3696e499d2a246d2f387f",
+      "biome_profile": "ashen_crown",
+      "window_origin_cell": [
+        374,
+        186
+      ],
+      "window_size_cells": [
+        56,
+        48
+      ],
+      "placement_origin_px": [
+        0,
+        0
+      ],
+      "note": "Cells are absolute overworld cells; add the node at global (0,0)."
+    },
+    {
+      "treatment_id": "amberwood_apothecary_herb_margin",
+      "path": "data/survival/world/art/compiled/amberwood_apothecary_herb_margin.presentation.v1.json",
+      "sha256": "9c2fb7492887acb7aaa9bc7df6324d5053d2edff54992f44e3479e8a9004b056",
+      "biome_profile": "amberwood",
+      "window_origin_cell": [
+        64,
+        468
+      ],
+      "window_size_cells": [
+        56,
+        48
+      ],
+      "placement_origin_px": [
+        0,
+        0
+      ],
+      "note": "Cells are absolute overworld cells; add the node at global (0,0)."
+    },
+    {
+      "treatment_id": "frost_crown_shrine_skarn",
+      "path": "data/survival/world/art/compiled/frost_crown_shrine_skarn.presentation.v1.json",
+      "sha256": "a6787f1da852c2f4440da6101ab7414e42a53701485068c269c6679bd8d932f5",
+      "biome_profile": "frost_crown",
+      "window_origin_cell": [
+        580,
+        112
+      ],
+      "window_size_cells": [
+        64,
+        60
+      ],
+      "placement_origin_px": [
+        0,
+        0
+      ],
+      "note": "Cells are absolute overworld cells; add the node at global (0,0)."
+    }
+  ],
+  "a8_shells": {
+    "path": "data/survival/world/art/a8_shell_visuals.v1.json",
+    "sha256": "0465e092875f33945003570ccf7913d8bd9a7b09fccff75f9fd1e7df2ea1b194"
+  },
+  "avfx_lighting_contract": {
+    "path": "data/survival/world/art/avfx_lighting_contract.v1.json",
+    "sha256": "57b06825fa8a6c2c30e631a6d80abaa9862ed1a3a10eb36f977d6e88730ed2b6"
+  },
+  "first_hour_route": {
+    "path": "data/survival/world/corridor/first_hour_route.v1.json",
+    "sha256": "4e4c4eb9864dfc28aca4fcb4168cd856fc3f6be466b95e3ff6b7fb5b3784722c"
+  },
+  "grammar": {
+    "path": "data/survival/world/art/world_art_grammar.v1.json",
+    "sha256": "170d9992bb15ab24ff4628d99ece61b8efebed29bb5c3f629a878304d7b81583"
+  },
+  "lighting": {
+    "world_light_mask": 2,
+    "inherited_vfx_mask": 1,
+    "rule": "A1 lamps range_item_cull_mask=2; Gold/Hero VFX remain mask 1, never tinted by A1."
+  },
+  "zero_collision_contract": {
+    "collision_change": false,
+    "stand_change": false,
+    "economy_change": false,
+    "new_poi_count": 0,
+    "tile_physics_layers": 0,
+    "focus_binding": "build(hero) then reparent hero into props_root and bind_focus(hero); occlusion excludes the focus subtree."
+  },
+  "baseline_compatibility": {
+    "world_plan_sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4",
+    "baseline_lock_sha256": "4974ef579881c156683f554e6de57506ff8f381c1b4187de48f992101dd6d4a6",
+    "corridor_sha256": "9d3909b0625bdf6239a760fdf2ac982d0ede0314491cab315d7268d42ddc232f",
+    "ten_thresholds_preserved": true
+  },
+  "a0_mount_instructions": [
+    "1. Add WorldArtPresentation as a child of the overworld at global_position Vector2.ZERO.",
+    "2. load_presentation(<treatment path>, res://data/survival/world/art/atlas.v1.json); abort if false.",
+    "3. build(hero); then hero.reparent(pres.props_root); pres.bind_focus(hero).",
+    "4. Drive set_time_of_day(t) from the A0 world clock; occlusion steps automatically.",
+    "5. Do NOT add collision/stands/rewards from art; A3 binds si:* grants; A0 SaveService unchanged.",
+    "6. For A8 shells, adopt a8_shell_visuals.v1.json as the shell skin; A8 keeps collision/entry; A0 approves mount transform."
+  ],
+  "import_check_commands": [
+    "godot --headless --path . --import",
+    ".venv/bin/python tools/survival/worldgen/validate_mount_bundle.py",
+    ".venv/bin/python tools/survival/worldgen/validate_world_art.py",
+    ".venv/bin/python tools/survival/worldgen/check_determinism.py"
+  ],
+  "consumer_validator": "tools/survival/worldgen/validate_mount_bundle.py",
+  "pending": [
+    "native on-screen inspection",
+    "A0 production mount",
+    "A8 shell adoption",
+    "A6 D051 human-body composition",
+    "exact Gold parity"
+  ]
+}
