@@ -43,6 +43,7 @@ var _failures: Array = []
 var _rows_out: Array = []
 var _verbose: bool = false
 var _dump_tick: int = -1
+var _en12_log: Array = []
 ## CI shards this suite one skill per job. A shard for a skill whose generator
 ## is not ported yet is "not yet applicable", not "broken": without this flag
 ## every unported shard would fail and the matrix could not be declared once.
@@ -91,6 +92,8 @@ func _init() -> void:
 	for sid in ids:
 		if not _run(int(sid)):
 			ok = false
+	for line in _en12_log:
+		print("GOLD93_EN12SUM " + String(line))
 	print("GOLD93_VENOM_DIFFERENTIAL: " + ("PASS" if ok else "FAIL"))
 	for f in _failures:
 		print("  FAIL " + str(f))
@@ -436,6 +439,7 @@ func _run_seed(sid: int, oracle: Dictionary, canonical: String) -> bool:
 			print("GOLD93_PL t=%d px=%.12f py=%.12f" % [n, float(w.player.x), float(w.player.y)])
 			var ee2 = w.enemies[12]
 			print("GOLD93_EN12 t=%d e%d x=%.12f y=%.12f kx=%.12f ky=%.12f face=%.12f" % [n, 12, float(ee2.x), float(ee2.y), float(ee2.kx), float(ee2.ky), float(ee2.face)])
+			_en12_log.append("t=%d x=%.12f y=%.12f kx=%.12f ky=%.12f face=%.12f" % [n, float(ee2.x), float(ee2.y), float(ee2.kx), float(ee2.ky), float(ee2.face)])
 		if sid == 7 and n in [185, 190, 195, 200, 205, 210]:
 			var es: Array = []
 			for ei in range(w.enemies.size()):
