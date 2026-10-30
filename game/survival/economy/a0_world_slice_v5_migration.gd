@@ -168,6 +168,12 @@ static func _int_slot(target: Dictionary, key: String) -> String:
 	target[key] = int(value)
 	return ""
 
+static func _int_slot_lenient(target: Dictionary, key: String) -> void:
+	if not target.has(key): return
+	var value: Variant = target[key]
+	if value is float and is_finite(value) and value == floor(value) and absf(value) <= 9007199254740992.0:
+		target[key] = int(value)
+
 static func _int_map(target: Dictionary) -> String:
 	for key: Variant in target.keys():
 		var error := _int_slot(target, str(key))
@@ -187,8 +193,9 @@ static func normalize_numbers(document: Dictionary) -> String:
 			# The ledger's only numeric metadata field is the granted/consumed
 			# item quantity, which SaveService writes as an int.
 			if record.get("metadata") is Dictionary:
-				var err_3 := _int_slot(record.metadata, "quantity")
-				if not err_3.is_empty(): return "applied_transactions.metadata." + err_3
+				# Metadata is an opaque historical record: only a whole float is
+				# restored to int, anything else is left to the owning validator.
+				_int_slot_lenient(record.metadata, "quantity")
 	var inventory: Dictionary = document.get("inventory", {}) if document.get("inventory", {}) is Dictionary else {}
 	for key: String in ["hero_soul_rules_version", "auxiliary_equipment_version"]:
 		var err_3 := _int_slot(inventory, key)
@@ -317,4 +324,14 @@ static func _normalize_economy(document: Dictionary) -> String:
 				if job.get(key) is Dictionary:
 					var err_24 := _int_map(job[key])
 					if not err_24.is_empty(): return "survival_economy.job." + key + "." + err_24
+			# Escrow holds a full copy of each instance record. The ownership
+			# guard compares it with the canonical copy exactly, so both copies
+			# must be restored to the same numeric types.
+			for key: String in ["reserved_instances", "output_instances"]:
+				if not job.get(key) is Dictionary: continue
+				for held: Variant in (job[key] as Dictionary).values():
+					if not held is Dictionary: continue
+					for field: String in ["condition", "max_condition", "uses", "max_uses", "revision"]:
+						var err_escrow := _int_slot(held, field)
+						if not err_escrow.is_empty(): return "survival_economy.escrow." + err_escrow
 	return ""
