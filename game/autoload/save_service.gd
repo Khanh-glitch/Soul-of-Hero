@@ -2453,7 +2453,10 @@ func _commit_snapshot(snapshot: Dictionary, rotate_primary_to_backup: bool, capa
 		_commit_in_progress = false
 		return false
 
-	var payload := JSON.stringify(snapshot, "\t") + "\n"
+	# JSON's default truncates floats to ~14 significant digits. Player position,
+	# settings and item attributes are save data too; request round-trip precision
+	# while retaining the existing JSON schema and sorted keys.
+	var payload := JSON.stringify(snapshot, "\t", true, true) + "\n"
 	if not _write_text(_temporary_path, payload):
 		_push_failure("Could not write the temporary save file.")
 		_commit_in_progress = false

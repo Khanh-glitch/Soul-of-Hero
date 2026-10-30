@@ -1,0 +1,44 @@
+name: A0 save precision and two-process recovery
+on:
+  push:
+    branches: [arena/dea2428e-soul-of-hero]
+    paths: ['game/autoload/save_service.gd', 'game/survival/economy/**', 'tests/survival_save_precision_test.gd', '.github/workflows/a0-save-precision.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-save:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import
+        run: |
+          mkdir -p artifacts/ud_precision
+          timeout 180s godot --headless --path . --user-data-dir artifacts/ud_precision --import > artifacts/precision-import.log 2>&1
+      - name: Pre- and post-rename faults and independent process
+        shell: bash
+        run: |
+          set -euo pipefail
+          for mode in first restart; do
+            args=(--survival-save-fault-test)
+            if [ "$mode" = restart ]; then args+=(--restart); fi
+            set +e
+            timeout 180s godot --headless --path . --user-data-dir artifacts/ud_precision --script res://tests/survival_save_precision_test.gd -- "${args[@]}" > "artifacts/precision-${mode}.log" 2>&1
+            rc=$?
+            set -e
+            cat "artifacts/precision-${mode}.log"
+            echo "::notice::precision $mode exit=$rc $(grep -E 'A0 SAVE PRECISION|  FAIL  |SCRIPT ERROR|Parse Error' "artifacts/precision-${mode}.log" | tr '\n' '~')"
+            bash tools/ci/gate_log.sh "artifacts/precision-${mode}.log" "A0 precision $mode" 'A0 SAVE PRECISION PASSED'
+            [ "$rc" -eq 0 ]
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a0-save-precision-logs
+          path: artifacts/precision-*.log
