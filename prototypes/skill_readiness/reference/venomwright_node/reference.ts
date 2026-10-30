@@ -233,6 +233,13 @@ if (mode === 'hashes') {
     const co: any = w.fx[0];
     console.log(`GOLD93_COCOON t=${t} x=${co.x.toFixed(9)} y=${co.y.toFixed(9)} z=${co.z.toFixed(9)} open=${co.open.toFixed(9)} pulseY=${co.pulseY.toFixed(9)} glow=${co.glowAdd.toFixed(9)} age=${co.age.toFixed(9)} trans=${co.trans.toFixed(9)} shake=${co.shake.toFixed(9)} grow=${co.grow.toFixed(9)} vis=${co.vis.toFixed(9)} rup=${JSON.stringify(co.ruptured)}`);
   });
+} else if (mode === 'en12state') {
+  const id = Number(a1), castTick = Number(a2), maxTick = Number(a3);
+  run(id, castTick, maxTick, (t, _g, w) => {
+    if (![150, 180, 195].includes(t)) return;
+    console.log(`GOLD93_PL t=${t} px=${w.player.x.toFixed(12)} py=${w.player.y.toFixed(12)}`);
+    w.enemies.forEach((e: any, ei: number) => console.log(`GOLD93_EN12 t=${t} e${ei} x=${e.x.toFixed(12)} y=${e.y.toFixed(12)} kx=${e.kx.toFixed(12)} ky=${e.ky.toFixed(12)}`));
+  });
 } else if (mode === 'enstate') {
   const id = Number(a1), castTick = Number(a2), maxTick = Number(a3);
   run(id, castTick, maxTick, (t, _g, w) => {
