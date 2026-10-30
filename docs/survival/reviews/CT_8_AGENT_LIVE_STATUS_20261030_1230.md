@@ -1,5 +1,23 @@
 # SOH Control Tower — Eight-agent live status
 
+## Dispatch revision — user reports seven idle, AVFX only active
+2026-10-30. User's firsthand Arena seat status is controlling: AVFX is the ONLY currently running session; A0, A1, A3, A6, S6, A7 and A8 are WAITING FOR USER PROMPT, despite recent GitHub commits showing completed work. Do not confuse pushed code with a running Arena worker. Activation choices are seven bounded same-session follow-ons, no auto dispatch/merges.
+
+Latest verified HEAD: A0 PR21 7330e68d, A1 PR20 2951bf85, A3 PR19 18e7afcb, A6 PR24 bed3fc81, A7 PR25 e6ee4783, A8 PR26 17d0692c base main WRONG for this migration, S6 9332e31c; AVFX branch a1c90b79. At check A0 native 41010283998/41012438725/41012744202 queued, A6 native 41013721888/41013721795 queued, A7 native 41013606571 queued, A8 native 41013849680 queued. Treat "queued" as NOT VERIFIED, not reason to idle all sessions. Do source-compatible productive parallel work without guessing CI outcome.
+
+Dispatch tasks:
+- A0 highest-priority owner: consume queued native failures without weakening gates, prioritize real-input B0 and single survival destination/mount with actual A1 POI & A3-source receipts, single SaveService; same-process fail isn't process restart. No merge until native.
+- A1: prepare narrowly scoped A1 instance/region/source-class placement contract with `source_class_id`, `region_id`, `instance_id` and authored reachable roadside_cache at one grounded site, plus A8 Quarry A1 transform review; no economy tuning or giant world redesign. Resolve PR20 mergeability independently, not by dropping work.
+- A3: independently reconcile wrong one-time Waystation locker physical grant and candidate timed external cache; A3 author only source/loot/recipe adapter to matching A1 class/region/instance refs, atomic SaveService request without modifying A0, missing bootstrap and no arbitrary Core rate. A1 geometry read-only.
+- A6: consume queued V3/V4 and fix only true errors, present clean compact player UI with debug opt-in and canonical bald male 555940/female 419402, grade1/grade2 source-conditional; actual assets not in Arena source, never fabricate; owner DTO and A0 mount handoff.
+- A7: checkpoint2 math fixed via exact Fraction; run independent oracles and snapshot refresh including A8 PR26 and latest A0/A6; close/reclassify top five product blockers and advise action, don't create more findings or edit owners.
+- A8: first fix PR26 wrong base main & diverged ancestry via clean cherry-pick/controlled new branch, not force-push; read native CI, make genuine collision/intent test 720p/2K/4K evidence, align 1 Quarry instance with A1/A3 and A0 owner transaction; no fake loot or production mounting.
+- S6: execute approved D047 Whitewater Unit3B finite safe-side paid resource reconstruction and original-bag rescue with 2 real escape paths in design/validator, preserve expected 44 failing states until proven fixed; do not expand to native/full content without owner/availability proof.
+- AVFX stay on source-exact Gold, no new prompt or altered effect.
+
+All use D051/D052/D053, date of current game 2026-10-29, repo-first narrow legally sourced optimization, E2 full user release only, no premature player feedback. Reporting: short change + runnable proof + unresolved blocker; no docs/test spam.
+
+
 ## 2026-10-30 13:35 ICT — latest eight-agent decision
 
 **Last Island 2019–20 pivot = SOH current game's starting date 2026-10-29. D051–D053 locked in CT DECISIONS; older assets/code only inherited baseline. Release E2 is the first user full-experience trial; all partial native/testing S2/S3 remains internal. No AI UI/text/empty-content garbage. Reuse source-inspected/license-cleared repo components only when they reduce *native integrated* effort, never second SaveService or randomized new rewards. Do not send all agents sweeping new prompts.**
