@@ -447,10 +447,10 @@ func _run_seed(sid: int, oracle: Dictionary, canonical: String) -> bool:
 				es.append("e%d:%.9f,%.9f" % [ei, float(ee.x), float(ee.y)])
 			for i0 in range(0, es.size(), 6):
 				print("GOLD93_EN t=%d %s" % [n, " ".join(es.slice(i0, mini(i0 + 6, es.size())))])
-		if sid == 7 and n in [120, 150, 180, 210, 240, 263, 264]:
+		if sid == 7 and n in [120, 150, 180, 210, 215, 220, 225, 230, 235, 240, 263, 264]:
 			for f in w.fx:
 				if f.get("idx") != null and (int(f.idx) == 0 or int(f.idx) == 2):
-					print("GOLD93_HATCH t=%d h%d x=%.9f y=%.9f hd=%.9f vx=%.9f vy=%.9f" % [n, int(f.idx), float(f.x), float(f.y), float(f.hd), float(f.vx), float(f.vy)])
+					print("GOLD93_HATCH t=%d h%d x=%.9f y=%.9f hd=%.9f vx=%.9f vy=%.9f cd=%.4f rec=%.4f" % [n, int(f.idx), float(f.x), float(f.y), float(f.hd), float(f.vx), float(f.vy), float(f.cd), float(f.recoil)])
 		if sid == 7 and (n == 89 or n == 90):
 			var co = w.fx[0]
 			print("GOLD93_COCOON t=%d x=%.9f y=%.9f z=%.9f open=%.9f pulseY=%.9f glow=%.9f age=%.9f trans=%.9f shake=%.9f grow=%.9f vis=%.9f rup=%s" % [n, float(co.x), float(co.y), float(co.z), float(co.open), float(co.pulseY), float(co.glowAdd), float(co.age), float(co.trans), float(co.shake), float(co.grow), float(co.vis), str(co.ruptured)])
