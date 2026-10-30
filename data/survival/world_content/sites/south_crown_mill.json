@@ -1,0 +1,242 @@
+{
+  "schema_version": 1,
+  "source": {
+    "authority": "A1 POI anchor supplied in CT_A8_NATIVE_WORLD_CONTENT_FACTORY_PROPOSED_20261030.md",
+    "poi_id": "poi_crown_south_mill",
+    "canonical_cell": [
+      120,
+      300
+    ],
+    "work_order_commit": "b19b5ef305229b7b3ee8477f15ca2ac9f679e2b2",
+    "avatar_policy_commit": "9332cb9ba25da3026ede0cad578a90f0e4b5a2b6"
+  },
+  "site_id": "crown_south_mill",
+  "display_name": "South Crown Mill",
+  "template_id": "salvage_mill",
+  "visual_profile": "mill",
+  "world_bounds": [
+    960,
+    600
+  ],
+  "spawn": [
+    90,
+    548
+  ],
+  "action_socket": [
+    528,
+    294
+  ],
+  "approach_stand": [
+    528,
+    260
+  ],
+  "interaction_radius": 86,
+  "access": {
+    "outer_requires": [
+      "cap_salvage"
+    ],
+    "inner_requires": [
+      "cap_salvage"
+    ]
+  },
+  "palette": {
+    "ground": "#394545",
+    "ground_alt": "#485251",
+    "stone": "#9e9a83",
+    "accent": "#d6ad66",
+    "water": "#69bbca",
+    "ink": "#20292a"
+  },
+  "walls": [
+    [
+      0,
+      0,
+      960,
+      22
+    ],
+    [
+      0,
+      578,
+      960,
+      22
+    ],
+    [
+      0,
+      22,
+      22,
+      556
+    ],
+    [
+      938,
+      22,
+      22,
+      556
+    ],
+    [
+      246,
+      150,
+      34,
+      94
+    ],
+    [
+      774,
+      150,
+      34,
+      94
+    ],
+    [
+      246,
+      354,
+      34,
+      94
+    ],
+    [
+      774,
+      354,
+      34,
+      94
+    ],
+    [
+      384,
+      132,
+      22,
+      66
+    ],
+    [
+      640,
+      400,
+      22,
+      66
+    ],
+    [
+      22,
+      314,
+      466,
+      16
+    ],
+    [
+      564,
+      314,
+      374,
+      16
+    ],
+    [
+      22,
+      472,
+      466,
+      16
+    ],
+    [
+      564,
+      472,
+      374,
+      16
+    ]
+  ],
+  "choice_blockers": {},
+  "choices": [
+    {
+      "action_id": "repair_waterwheel",
+      "option_id": "repair",
+      "label": "Re-seat the wheel \u00b7 1 Oak Wood + 1 Iron Scrap",
+      "requires_capabilities": [
+        "cap_salvage"
+      ],
+      "requires_state": [],
+      "costs": {
+        "oak_wood": 1,
+        "iron_scrap": 1
+      },
+      "rewards": {},
+      "set_state": {
+        "mill_wheel": "turning",
+        "mill_route": "open"
+      },
+      "claim_policy": "once",
+      "catalog_source": "data/survival/survival_catalog.json#items.oak_wood (candidate item ID only; A3 cost authorization absent)",
+      "choice_group": "mill_wheel"
+    },
+    {
+      "action_id": "leave_wheel",
+      "option_id": "leave",
+      "label": "Leave the wheel seized",
+      "requires_capabilities": [],
+      "requires_state": [],
+      "costs": {},
+      "rewards": {},
+      "set_state": {
+        "mill_wheel": "seized"
+      },
+      "claim_policy": "once",
+      "catalog_source": "world-state-only; no item transaction",
+      "choice_group": "mill_wheel"
+    }
+  ],
+  "actions": [
+    {
+      "action_id": "observe_race",
+      "object_id": "mill_race_marks",
+      "label": "Read the stopped race marks from outside",
+      "stand_position": [
+        528,
+        536
+      ],
+      "requires_capabilities": [],
+      "requires_state": [],
+      "costs": {},
+      "rewards": {},
+      "set_state": {
+        "mill_race_observed": true
+      },
+      "claim_policy": "once",
+      "catalog_source": "world-state-only; no item transaction",
+      "socket_position": [
+        528,
+        452
+      ]
+    },
+    {
+      "action_id": "recover_fastener",
+      "object_id": "mill_scrap_pile",
+      "label": "Recover a sound fastener \u00b7 1 Iron Scrap",
+      "requires_capabilities": [
+        "cap_salvage"
+      ],
+      "requires_state": [
+        "mill_wheel"
+      ],
+      "costs": {},
+      "rewards": {
+        "iron_scrap": 1
+      },
+      "set_state": {},
+      "claim_policy": "replenishable",
+      "cooldown_seconds": 90,
+      "catalog_source": "data/survival/survival_catalog.json#resources.scrap_pile"
+    }
+  ],
+  "return_hook": "Once admitted, restoring the wheel opens the maintenance walk; the fastener pile is finite per cycle and returns on its real timer.",
+  "visual_notes": "Mill race, square timber housing, raised wheel and a physically gated maintenance walk. Outer race can be observed without the salvage capability.",
+  "gates": [
+    {
+      "rect": [
+        488,
+        472,
+        76,
+        16
+      ],
+      "requires": "cap_salvage",
+      "zone": "outer_access"
+    },
+    {
+      "rect": [
+        488,
+        314,
+        76,
+        14
+      ],
+      "requires": "cap_salvage",
+      "zone": "maintenance_walk"
+    }
+  ]
+}

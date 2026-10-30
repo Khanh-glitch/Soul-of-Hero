@@ -1,0 +1,177 @@
+{
+  "schema_version": 1,
+  "source": {
+    "authority": "A1 POI anchor supplied in CT_A8_NATIVE_WORLD_CONTENT_FACTORY_PROPOSED_20261030.md",
+    "poi_id": "poi_crown_south_quarry",
+    "canonical_cell": [
+      30,
+      280
+    ],
+    "work_order_commit": "b19b5ef305229b7b3ee8477f15ca2ac9f679e2b2",
+    "avatar_policy_commit": "9332cb9ba25da3026ede0cad578a90f0e4b5a2b6"
+  },
+  "site_id": "crown_south_quarry",
+  "display_name": "South Quarry",
+  "template_id": "worksite",
+  "visual_profile": "quarry",
+  "world_bounds": [
+    960,
+    600
+  ],
+  "spawn": [
+    88,
+    510
+  ],
+  "action_socket": [
+    506,
+    302
+  ],
+  "approach_stand": [
+    506,
+    378
+  ],
+  "interaction_radius": 86,
+  "access": {
+    "outer_requires": [],
+    "inner_requires": []
+  },
+  "palette": {
+    "ground": "#403d39",
+    "ground_alt": "#514b43",
+    "stone": "#a99a82",
+    "accent": "#e7a84e",
+    "water": "#62bcc3",
+    "ink": "#211f20"
+  },
+  "walls": [
+    [
+      0,
+      0,
+      960,
+      22
+    ],
+    [
+      0,
+      578,
+      960,
+      22
+    ],
+    [
+      0,
+      22,
+      22,
+      556
+    ],
+    [
+      938,
+      22,
+      22,
+      556
+    ],
+    [
+      258,
+      182,
+      118,
+      28
+    ],
+    [
+      618,
+      178,
+      130,
+      30
+    ]
+  ],
+  "choice_blockers": {
+    "brace_oak": [
+      [
+        448,
+        232,
+        20,
+        116
+      ]
+    ],
+    "chock_stone": [
+      [
+        544,
+        232,
+        20,
+        116
+      ]
+    ]
+  },
+  "choices": [
+    {
+      "action_id": "brace_east_shelf",
+      "option_id": "brace_oak",
+      "label": "Brace east shelf \u00b7 2 Oak Wood",
+      "requires_state": [],
+      "costs": {
+        "oak_wood": 2
+      },
+      "rewards": {},
+      "set_state": {
+        "quarry_route": "east_braced"
+      },
+      "claim_policy": "once",
+      "catalog_source": "data/survival/survival_catalog.json#items.oak_wood (candidate item ID only; A3 cost authorization absent)",
+      "choice_group": "quarry_route"
+    },
+    {
+      "action_id": "chock_west_ramp",
+      "option_id": "chock_stone",
+      "label": "Chock west ramp \u00b7 2 Stone Chunk",
+      "requires_state": [],
+      "costs": {
+        "stone_chunk": 2
+      },
+      "rewards": {},
+      "set_state": {
+        "quarry_route": "west_chocked"
+      },
+      "claim_policy": "once",
+      "catalog_source": "data/survival/survival_catalog.json#items.stone_chunk (candidate item ID only; A3 cost authorization absent)",
+      "choice_group": "quarry_route"
+    },
+    {
+      "action_id": "leave_seam_unworked",
+      "option_id": "leave",
+      "object_id": "south_seam",
+      "choice_group": "quarry_route",
+      "label": "Leave the unstable seam untouched",
+      "requires_state": [],
+      "costs": {},
+      "rewards": {},
+      "set_state": {
+        "quarry_route": "left_unworked"
+      },
+      "claim_policy": "once",
+      "catalog_source": "world-state-only; safe retreat, no material transaction"
+    }
+  ],
+  "actions": [
+    {
+      "action_id": "extract_outcrop",
+      "object_id": "south_seam_outcrop",
+      "label": "Work the seam \u00b7 2 Stone Chunk",
+      "requires_state": [
+        "quarry_route"
+      ],
+      "costs": {},
+      "rewards": {
+        "stone_chunk": 2
+      },
+      "set_state": {},
+      "claim_policy": "replenishable",
+      "cooldown_seconds": 45,
+      "catalog_source": "data/survival/survival_catalog.json#resources.stone_outcrop",
+      "requires_state_values": {
+        "quarry_route": [
+          "east_braced",
+          "west_chocked"
+        ]
+      }
+    }
+  ],
+  "return_hook": "The split shelf exposes a finite seam; its work face visibly resets after the replenishment window.",
+  "visual_notes": "Split limestone benches, timber brace line, two distinct approach ramps; no generic ruin dressing."
+}

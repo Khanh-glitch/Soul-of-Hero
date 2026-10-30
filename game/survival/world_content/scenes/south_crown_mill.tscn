@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://game/survival/world_content/scenes/native_poi_template.tscn" id="1_template"]
+
+[node name="POI_CrownSouthMill" instance=ExtResource("1_template")]
+definition_path = "res://data/survival/world_content/sites/crown_south_mill.json"

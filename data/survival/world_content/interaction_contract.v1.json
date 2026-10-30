@@ -1,0 +1,65 @@
+{
+  "contract_id": "soh.native_poi.intent.v1",
+  "contract_version": 1,
+  "status": "A8 proposed owner-adapter seam; A0 approval required before production",
+  "authority": {
+    "intent_sender": "NativePoiSite (no direct state mutation)",
+    "commit_owner": "A0 transaction boundary using A3 item catalog and existing SaveService",
+    "save_owner": "A0 SaveService; A8 scene keeps no durable state"
+  },
+  "intent_required_fields": [
+    "contract_id",
+    "contract_version",
+    "intent_id",
+    "source_id",
+    "object_id",
+    "action_id",
+    "claim_id",
+    "claim_policy",
+    "cooldown_seconds",
+    "requires_capabilities",
+    "required_state",
+    "required_state_values",
+    "costs",
+    "rewards",
+    "state_delta",
+    "unlock_actions",
+    "choice_group",
+    "catalog_source",
+    "provisional_test_only"
+  ],
+  "identity": "intent_id = source_id + '|' + object_id + '|' + action_id + '|' + claim_id; claim_id is owner-stable and is suffixed by owner-projected generation for replenishable candidates.",
+  "request_rules": [
+    "The sender proposes action/cost/reward data only; it cannot spend, grant, persist, or render a receipt.",
+    "The owner independently checks current actor, collision/access, action eligibility, capabilities, A3 item identity, inventory capacity, costs, exclusive site choice, claim idempotency and persistence.",
+    "One atomic owner transaction couples item debit/credit, claim ledger, cooldown/generation, site state and delayed action unlock timestamps.",
+    "Fixture authorities accept provisional_test_only=true only; production authorities must explicitly reject fixture intents and derive production costs/rewards from approved A3 data.",
+    "World state and visible results change only after an authoritative committed result; interrupted/rejected operations leave the unchanged projection available for safe retry.",
+    "The authority validates all requested state prerequisites and enumerated state-value branches against its own saved projection; the scene check is only early UX.",
+    "The owner projection carries resource_ready_at by stable object_id and its durable clock_seconds; the scene uses these only to render/deny early, while the authority is always final."
+  ],
+  "projection_required_fields": [
+    "schema_version",
+    "site_state",
+    "claim_generation",
+    "capabilities",
+    "ready_actions",
+    "resource_ready_at",
+    "clock_seconds"
+  ],
+  "projection_schema_version": 1,
+  "result_required_fields": [
+    "intent_id",
+    "status"
+  ],
+  "result_status": [
+    "committed",
+    "rejected",
+    "interrupted"
+  ],
+  "result_optional_fields": [
+    "feedback",
+    "reason"
+  ],
+  "integration_note": "This is a scoped S2 contract proposal, not a substitute A0 SaveService API. Version changes require a new contract file and an A0 migration/compatibility decision."
+}

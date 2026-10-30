@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "source": {
+    "authority": "A8 fourth-type authoring fixture; non-canonical, not an A1 anchor",
+    "poi_id": "test_salt_lookout",
+    "canonical_cell": null
+  },
+  "test_only": true,
+  "site_id": "fourth_salt_lookout_test",
+  "display_name": "Saltwind Lookout \u00b7 authoring fixture",
+  "template_id": "worksite",
+  "visual_profile": "salt_lookout",
+  "world_bounds": [
+    960,
+    600
+  ],
+  "spawn": [
+    90,
+    510
+  ],
+  "action_socket": [
+    500,
+    328
+  ],
+  "approach_stand": [
+    500,
+    404
+  ],
+  "interaction_radius": 86,
+  "access": {
+    "outer_requires": [],
+    "inner_requires": []
+  },
+  "palette": {
+    "ground": "#455149",
+    "ground_alt": "#536157",
+    "stone": "#b2a184",
+    "accent": "#e5bd79",
+    "water": "#75c6d1",
+    "ink": "#252e2a"
+  },
+  "walls": [
+    [
+      0,
+      0,
+      960,
+      22
+    ],
+    [
+      0,
+      578,
+      960,
+      22
+    ],
+    [
+      0,
+      22,
+      22,
+      556
+    ],
+    [
+      938,
+      22,
+      22,
+      556
+    ],
+    [
+      284,
+      204,
+      112,
+      22
+    ],
+    [
+      644,
+      204,
+      112,
+      22
+    ]
+  ],
+  "choice_blockers": {},
+  "choices": [
+    {
+      "action_id": "secure_ridge_step",
+      "object_id": "ridge_stones",
+      "option_id": "secure",
+      "choice_group": "lookout_access",
+      "label": "Set the loose ridge stones \u00b7 1 Stone Chunk",
+      "requires_state": [],
+      "costs": {
+        "stone_chunk": 1
+      },
+      "rewards": {},
+      "set_state": {
+        "lookout_access": "stable"
+      },
+      "claim_policy": "once",
+      "catalog_source": "candidate id only; fixture catalog, not A3 authorization"
+    },
+    {
+      "action_id": "leave_ridge_loose",
+      "object_id": "ridge_stones",
+      "option_id": "leave",
+      "choice_group": "lookout_access",
+      "label": "Leave the ridge loose",
+      "requires_state": [],
+      "costs": {},
+      "rewards": {},
+      "set_state": {
+        "lookout_access": "loose"
+      },
+      "claim_policy": "once",
+      "catalog_source": "world-state-only; no item transaction"
+    }
+  ],
+  "actions": [
+    {
+      "action_id": "collect_salt_stone",
+      "object_id": "salt_stone",
+      "label": "Take one salt stone \u00b7 1 Stone Chunk",
+      "requires_state": [],
+      "costs": {},
+      "rewards": {
+        "stone_chunk": 1
+      },
+      "set_state": {},
+      "claim_policy": "replenishable",
+      "cooldown_seconds": 45,
+      "catalog_source": "candidate ID only; fixture catalog, not A3 authorization"
+    }
+  ],
+  "return_hook": "A fourth visual/content type authored entirely from data on the same interaction engine; this fixture is not a canonical world addition.",
+  "visual_notes": "Wind-scoured salt ledge, an exposed ridge line and shallow mineral pool; a clearly different silhouette from quarry, orchard and mill."
+}
