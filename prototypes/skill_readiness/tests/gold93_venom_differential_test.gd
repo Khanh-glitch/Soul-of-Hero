@@ -509,15 +509,17 @@ func _fx(o, key: String, fallback):
 	return o.get(key) if key in o else fallback
 
 
-## Diagnostic (read-only): hatchling positions per tick, one line per tick, in
-## the exact format the Node reference prints as `GOLD93_STATE`. Used to find
-## the first tick and hatchling where native state leaves the original.
+## Diagnostic (read-only): enemy positions per tick, two lines per tick (8 each),
+## same text format as the Node reference `GOLD93_EN`. Used to find the first
+## tick and enemy where native world state leaves the original (skill 7).
 func _dump_summon_state(w, tick: int) -> void:
-	var parts: Array = []
-	for f in w.fx:
-		if "idx" in f and String(_fx(f, "kind", "")) == "summon":
-			parts.append("h%d=%.9f,%.9f" % [int(_fx(f, "idx", -1)), float(_fx(f, "x", 0.0)), float(_fx(f, "y", 0.0))])
-	print("GOLD93_STATE t=%d %s" % [tick, " ".join(parts)])
+	for g in range(2):
+		var parts: Array = []
+		for i in range(g * 8, mini(g * 8 + 8, w.enemies.size())):
+			var e = w.enemies[i]
+			parts.append("%.8f,%.8f" % [float(e.x), float(e.y)])
+		var head: String = ("fx=%d pt=%d n=%d |" % [w.fx.size(), w.parts.list.size(), w.enemies.size()]) if g == 0 else "|"
+		print("GOLD93_EN t=%d g=%d %s %s" % [tick, g, head, " ".join(parts)])
 
 
 func _mismatch(exp: Dictionary, got: Dictionary) -> String:

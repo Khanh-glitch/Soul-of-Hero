@@ -187,15 +187,17 @@ if (mode === 'hashes') {
   writeFileSync(join(outDir, 'manifest.json'), JSON.stringify(manifest, null, 2));
   console.log(JSON.stringify(manifest.rules));
 } else if (mode === 'state') {
-  // Per-tick hatchling (kind 'summon') positions, in the exact text format the
-  // native differential prints as GOLD93_STATE, so the two logs can be diffed.
+  // Per-tick enemy positions, in the exact text format the native differential
+  // prints as GOLD93_EN (two lines per tick), so the two logs can be diffed.
   const id = Number(a1), castTick = Number(a2), maxTick = Number(a3);
   run(id, castTick, maxTick, (t, _g, w) => {
-    const parts: string[] = [];
-    for (const f of w.fx as any[]) {
-      if (f.kind === 'summon' && f.idx !== undefined) parts.push(`h${f.idx}=${f.x.toFixed(9)},${f.y.toFixed(9)}`);
+    const en = w.enemies as any[];
+    for (let g = 0; g < 2; g++) {
+      const parts: string[] = [];
+      for (let i = g * 8; i < Math.min(g * 8 + 8, en.length); i++) parts.push(`${en[i].x.toFixed(8)},${en[i].y.toFixed(8)}`);
+      const head = g === 0 ? `fx=${w.fx.length} pt=${w.parts.list.length} n=${en.length} |` : '|';
+      console.log(`GOLD93_EN t=${t} g=${g} ${head} ${parts.join(' ')}`);
     }
-    console.log(`GOLD93_STATE t=${t} ${parts.join(' ')}`);
   });
 } else {
   console.error('usage: reference.ts hashes|render ...'); process.exit(2);
