@@ -13,7 +13,7 @@ on:
 jobs:
   godot-native:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - name: Prepare A8 evidence directory
@@ -65,6 +65,32 @@ jobs:
             { echo '### A8 transition failure'; echo '```text'; tail -n 100 .artifacts/a8-world-content/native-transition.log; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
           fi
           exit "$status"
+      - name: Run frame-driven journeys and capture the three current POIs
+        id: native_input_journey
+        if: always()
+        continue-on-error: true
+        run: |
+          set +e
+          status=0
+          : > .artifacts/a8-world-content/native-input-journeys.log
+          for size in 1280x720 2560x1440 3840x2160; do
+            SOH_A8_CAPTURE_SUBDIR="$size" xvfb-run -a godot --path . --resolution "$size" \
+              --rendering-method gl_compatibility \
+              --script tests/survival/world_content/native_poi_input_journey_test.gd \
+              > ".artifacts/a8-world-content/native-input-journeys-${size}.log" 2>&1
+            run_status=$?
+            cat ".artifacts/a8-world-content/native-input-journeys-${size}.log"
+            cat ".artifacts/a8-world-content/native-input-journeys-${size}.log" >> .artifacts/a8-world-content/native-input-journeys.log
+            if [ "$run_status" -ne 0 ]; then
+              status=$run_status
+              tail -n 140 ".artifacts/a8-world-content/native-input-journeys-${size}.log" >> .artifacts/a8-world-content/input-journey-failures.log
+            fi
+          done
+          set -e
+          if [ "$status" -ne 0 ]; then
+            { echo '### A8 input-journey failure'; echo '```text'; tail -n 140 .artifacts/a8-world-content/input-journey-failures.log; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit "$status"
       - name: Run native surface and owner-only reset contract
         id: native_surface
         if: always()
@@ -111,6 +137,7 @@ jobs:
         env:
           NATIVE_CONTRACT_OUTCOME: ${{ steps.native_contract.outcome }}
           NATIVE_TRANSITION_OUTCOME: ${{ steps.native_transition.outcome }}
+          NATIVE_INPUT_JOURNEY_OUTCOME: ${{ steps.native_input_journey.outcome }}
           NATIVE_SURFACE_OUTCOME: ${{ steps.native_surface.outcome }}
           NATIVE_RAGNAROK_OUTCOME: ${{ steps.native_ragnarok.outcome }}
         run: |
@@ -125,6 +152,7 @@ jobs:
           }
           publish_excerpt "$NATIVE_CONTRACT_OUTCOME" "contract" .artifacts/a8-world-content/native-contract.log
           publish_excerpt "$NATIVE_TRANSITION_OUTCOME" "transition" .artifacts/a8-world-content/native-transition.log
+          publish_excerpt "$NATIVE_INPUT_JOURNEY_OUTCOME" "input-journey" .artifacts/a8-world-content/native-input-journeys.log
           publish_excerpt "$NATIVE_SURFACE_OUTCOME" "surface" .artifacts/a8-world-content/native-surface.log
           publish_excerpt "$NATIVE_RAGNAROK_OUTCOME" "ragnarok" .artifacts/a8-world-content/native-ragnarok.log
       - name: Require all native evidence steps to pass
@@ -132,11 +160,12 @@ jobs:
         env:
           NATIVE_CONTRACT_OUTCOME: ${{ steps.native_contract.outcome }}
           NATIVE_TRANSITION_OUTCOME: ${{ steps.native_transition.outcome }}
+          NATIVE_INPUT_JOURNEY_OUTCOME: ${{ steps.native_input_journey.outcome }}
           NATIVE_SURFACE_OUTCOME: ${{ steps.native_surface.outcome }}
           NATIVE_RAGNAROK_OUTCOME: ${{ steps.native_ragnarok.outcome }}
           NATIVE_CAPTURE_OUTCOME: ${{ steps.native_capture.outcome }}
         run: |
-          outcome_report="contract=$NATIVE_CONTRACT_OUTCOME transition=$NATIVE_TRANSITION_OUTCOME surface=$NATIVE_SURFACE_OUTCOME ragnarok=$NATIVE_RAGNAROK_OUTCOME capture=$NATIVE_CAPTURE_OUTCOME"
+          outcome_report="contract=$NATIVE_CONTRACT_OUTCOME transition=$NATIVE_TRANSITION_OUTCOME input_journey=$NATIVE_INPUT_JOURNEY_OUTCOME surface=$NATIVE_SURFACE_OUTCOME ragnarok=$NATIVE_RAGNAROK_OUTCOME capture=$NATIVE_CAPTURE_OUTCOME"
           printf '%s\n' "$outcome_report" | tee .artifacts/a8-world-content/outcomes.txt
           {
             echo '### A8 native evidence outcomes'
@@ -147,6 +176,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
           if [ "$NATIVE_CONTRACT_OUTCOME" != success ] || \
             [ "$NATIVE_TRANSITION_OUTCOME" != success ] || \
+            [ "$NATIVE_INPUT_JOURNEY_OUTCOME" != success ] || \
             [ "$NATIVE_SURFACE_OUTCOME" != success ] || \
             [ "$NATIVE_RAGNAROK_OUTCOME" != success ] || \
             [ "$NATIVE_CAPTURE_OUTCOME" != success ]; then
@@ -154,6 +184,7 @@ jobs:
           fi
           test "$NATIVE_CONTRACT_OUTCOME" = success
           test "$NATIVE_TRANSITION_OUTCOME" = success
+          test "$NATIVE_INPUT_JOURNEY_OUTCOME" = success
           test "$NATIVE_SURFACE_OUTCOME" = success
           test "$NATIVE_RAGNAROK_OUTCOME" = success
           test "$NATIVE_CAPTURE_OUTCOME" = success

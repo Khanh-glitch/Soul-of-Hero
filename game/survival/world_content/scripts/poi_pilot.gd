@@ -14,6 +14,11 @@ const SITE_SCENES := [
 	"res://game/survival/world_content/scenes/south_crown_mill.tscn",
 	"res://game/survival/world_content/scenes/fourth_salt_lookout_test.tscn"
 ]
+const JOURNEY_DEFINITION_PATHS := [
+	"res://data/survival/world_content/sites/south_quarry.json",
+	"res://data/survival/world_content/sites/south_orchard_ruin.json",
+	"res://data/survival/world_content/sites/south_crown_mill.json",
+]
 const SHELL_SCENES := [
 	"res://game/survival/world_content/scenes/south_quarry_overworld.tscn",
 	"res://game/survival/world_content/scenes/south_orchard_ruin_overworld.tscn",
@@ -22,9 +27,19 @@ const SHELL_SCENES := [
 const FIXTURE_SCRIPT := preload(
 	"res://game/survival/world_content/scripts/poi_authority_fixture.gd"
 )
+const JOURNEY_FIXTURE_SCRIPT := preload(
+	"res://game/survival/world_content/scripts/poi_journey_authority_fixture.gd"
+)
 const PROBE_SCRIPT := preload("res://game/survival/world_content/scripts/player_probe.gd")
 
+## Enabled only by the frame-driven A8 native journey test. Its owner seed is
+## test-only and never writes to SaveService or the production economy.
+@export var journey_test_mode := false
+@export var journey_owner_projection_seed: Dictionary = {}
+
 var _authority: PoiAuthorityFixture
+var _journey_authority: PoiJourneyAuthorityFixture
+var _journey_trace: Array[Dictionary] = []
 var _site: NativePoiSite
 var _shell: NativePoiShell
 var _active_scene: Node2D
@@ -38,10 +53,14 @@ var _details: Label
 
 func _ready() -> void:
 	_install_fixture_inputs()
-	_authority = FIXTURE_SCRIPT.new() as PoiAuthorityFixture
-	_authority.name = "S2TestAuthorityFixture"
-	_authority.configure()
-	add_child(_authority)
+	if journey_test_mode:
+		_journey_authority = JOURNEY_FIXTURE_SCRIPT.new() as PoiJourneyAuthorityFixture
+		_journey_authority.configure(_load_site_definitions(), journey_owner_projection_seed)
+	else:
+		_authority = FIXTURE_SCRIPT.new() as PoiAuthorityFixture
+		_authority.name = "S2TestAuthorityFixture"
+		_authority.configure()
+		add_child(_authority)
 	_build_ui()
 	_probe = CharacterBody2D.new()
 	_probe.name = "InvisibleHarnessNavigationProbe"
@@ -95,11 +114,15 @@ func _unhandled_input(event: InputEvent) -> void:
 		_site.cycle_choice(1)
 		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("poi_fixture_capability") and is_instance_valid(_site):
+		if journey_test_mode:
+			_feedback.text = "Owner projection is read-only in frame journeys."
+			get_viewport().set_input_as_handled()
+			return
 		var granted: Array[String] = []
 		if not _authority.has_capability("cap_salvage"):
 			granted.append("cap_salvage")
 		_authority.set_capabilities(granted)
-		_site.set_projection(_authority.project_state(_site.get_source_id()))
+		_site.set_projection(_project_state(_site.get_source_id()))
 		_feedback.text = (
 			"TEST FIXTURE ONLY: cap_salvage %s."
 			% ("enabled" if not granted.is_empty() else "removed")
@@ -154,7 +177,7 @@ func _mount_worksite(scene_path: String, spawn_override: Vector2) -> void:
 	_site.intent_requested.connect(_on_intent_requested)
 	_site.player_feedback.connect(_on_player_feedback)
 	_site.transition_requested.connect(_on_transition_requested)
-	_site.set_projection(_authority.project_state(_site.get_source_id()))
+	_site.set_projection(_project_state(_site.get_source_id()))
 	_site.apply_run_phase_projection(PHASE_FIXTURE.project(_site.definition))
 	_probe.global_position = (
 		spawn_override if spawn_override != Vector2.ZERO else _site.get_spawn_position()
@@ -223,6 +246,24 @@ func _on_transition_requested(request: Dictionary) -> void:
 			_feedback.text = "The exterior return point was rejected."
 			return
 		var interior_spawn: Variant = request.get("interior_spawn", Vector2.ZERO)
+		if journey_test_mode:
+			_record_journey_event(
+				{
+					"kind": "transition",
+					"direction": "enter",
+					"poi_id": _shell.get_source_id(),
+					"from_scene": str(request.get("from_scene", "")),
+					"to_scene": destination,
+					"actor_local_position": request.get("actor_local_position", Vector2.ZERO),
+					"actor_facing": request.get("actor_facing", Vector2.ZERO),
+					"run_id": str(request.get("run_id", "")),
+					"run_epoch": int(request.get("run_epoch", -1)),
+					"phase_id": str(request.get("phase_id", "")),
+					"observed_phase_projection_revision":
+					int(request.get("observed_phase_projection_revision", -1)),
+					"site_instance_id": str(request.get("site_instance_id", "")),
+				}
+			)
 		_mount_worksite(destination, interior_spawn if interior_spawn is Vector2 else Vector2.ZERO)
 		return
 	if str(request.get("direction", "")) == "exit" and is_instance_valid(_site):
@@ -239,6 +280,24 @@ func _on_transition_requested(request: Dictionary) -> void:
 		):
 			_feedback.text = "The canonical exterior return point could not be restored."
 			return
+		if journey_test_mode:
+			_record_journey_event(
+				{
+					"kind": "transition",
+					"direction": "exit",
+					"poi_id": _site.get_source_id(),
+					"from_scene": str(request.get("from_scene", "")),
+					"to_scene": destination,
+					"actor_local_position": request.get("actor_local_position", Vector2.ZERO),
+					"actor_facing": request.get("actor_facing", Vector2.ZERO),
+					"run_id": str(request.get("run_id", "")),
+					"run_epoch": int(request.get("run_epoch", -1)),
+					"phase_id": str(request.get("phase_id", "")),
+					"observed_phase_projection_revision":
+					int(request.get("observed_phase_projection_revision", -1)),
+					"site_instance_id": str(request.get("site_instance_id", "")),
+				}
+			)
 		_clear_active_scene()
 		_shell = packed_shell.instantiate() as NativePoiShell
 		_active_scene = _shell
@@ -256,10 +315,79 @@ func _on_transition_requested(request: Dictionary) -> void:
 
 
 func _on_intent_requested(intent: Dictionary) -> void:
-	var result: Dictionary = _authority.submit_intent(intent)
-	var next_projection := _authority.project_state(str(intent.get("source_id", "")))
+	var source_id := str(intent.get("source_id", ""))
+	var result: Dictionary = {}
+	var next_projection: Dictionary = {}
+	if journey_test_mode:
+		result = _journey_authority.submit_intent(intent)
+		next_projection = _journey_authority.project_state(source_id)
+	else:
+		result = _authority.submit_intent(intent)
+		next_projection = _authority.project_state(source_id)
 	_site.receive_authoritative_result(str(intent.get("intent_id", "")), result, next_projection)
-	print("S2 fixture authority: ", JSON.stringify({"intent": intent, "result": result}))
+	if journey_test_mode:
+		_record_journey_event(
+			{
+				"kind": "intent",
+				"source_id": source_id,
+				"action_id": str(intent.get("action_id", "")),
+				"result": str(result.get("status", "")),
+				"position": _probe.global_position,
+				"phase_id": str(intent.get("phase_id", "")),
+				"run_id": str(intent.get("run_id", "")),
+				"run_epoch": int(intent.get("run_epoch", -1)),
+				"observed_projection_revision": int(intent.get("observed_projection_revision", -1)),
+			}
+		)
+	else:
+		print("S2 fixture authority: ", JSON.stringify({"intent": intent, "result": result}))
+
+
+func _record_journey_event(event: Dictionary) -> void:
+	_journey_trace.append(event.duplicate(true))
+
+
+func _project_state(source_id: String) -> Dictionary:
+	if journey_test_mode:
+		return _journey_authority.project_state(source_id)
+	return _authority.project_state(source_id)
+
+
+func _load_site_definitions() -> Dictionary:
+	var definitions: Dictionary = {}
+	for definition_path: String in JOURNEY_DEFINITION_PATHS:
+		var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(definition_path))
+		if parsed is Dictionary:
+			var source_id := str(parsed.get("source", {}).get("poi_id", ""))
+			if not source_id.is_empty():
+				definitions[source_id] = parsed
+	return definitions
+
+
+func get_journey_snapshot() -> Dictionary:
+	var active_kind := "none"
+	var source_id := ""
+	var projection: Dictionary = {}
+	if is_instance_valid(_shell):
+		active_kind = "shell"
+		source_id = _shell.get_source_id()
+	elif is_instance_valid(_site):
+		active_kind = "site"
+		source_id = _site.get_source_id()
+		projection = _site.projection.duplicate(true)
+	return {
+		"journey_mode": journey_test_mode,
+		"active_kind": active_kind,
+		"source_id": source_id,
+		"position": _probe.global_position if is_instance_valid(_probe) else Vector2.ZERO,
+		"velocity": _probe.velocity if is_instance_valid(_probe) else Vector2.ZERO,
+		"slide_collision_count":
+		_probe.get_slide_collision_count() if is_instance_valid(_probe) else 0,
+		"site_state": projection.get("site_state", {}).duplicate(true),
+		"projection_revision": int(projection.get("projection_revision", -1)),
+		"fixture_state": _journey_authority.snapshot() if journey_test_mode else {},
+		"trace": _journey_trace.duplicate(true),
+	}
 
 
 func _on_player_feedback(message: String) -> void:
@@ -278,12 +406,12 @@ func _build_ui() -> void:
 	layer.add_child(panel)
 	_site_title = _label("", Vector2(20, 10), 18, Color("#f1d79a"))
 	layer.add_child(_site_title)
-	var harness_label := _label(
-		"S2 TEST HARNESS · fixture transactions only · no live inventory/save",
-		Vector2(20, 34),
-		11,
-		Color("#c5d4c6")
+	var harness_text := (
+		"A8 INPUT JOURNEY · projection fixture only · no live economy/save"
+		if journey_test_mode
+		else "S2 TEST HARNESS · fixture transactions only · no live inventory/save"
 	)
+	var harness_label := _label(harness_text, Vector2(20, 34), 11, Color("#c5d4c6"))
 	layer.add_child(harness_label)
 	var bottom := ColorRect.new()
 	bottom.position = Vector2(10, 308)
@@ -293,12 +421,12 @@ func _build_ui() -> void:
 	layer.add_child(bottom)
 	_feedback = _label("", Vector2(20, 312), 12, Color("#fff0c6"))
 	layer.add_child(_feedback)
-	var controls := _label(
-		"WASD move · face mark + G work · [ / ] choose · H / Y other action · F1-F4 sites · C test cap",
-		Vector2(20, 332),
-		10,
-		Color("#bdc8bc")
+	var controls_text := (
+		"WASD move · G work · [ / ] choose · H / Y action · F1-F4 sites · owner seed read-only"
+		if journey_test_mode
+		else "Move · face + G work · [ / ] choose · H/Y action · F1-F4 sites · C test cap"
 	)
+	var controls := _label(controls_text, Vector2(20, 332), 10, Color("#bdc8bc"))
 	layer.add_child(controls)
 	_details = _label("", Vector2(12, 80), 10, Color("#e0e6db"))
 	_details.size = Vector2(616, 34)

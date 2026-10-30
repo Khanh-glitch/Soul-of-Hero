@@ -1,0 +1,722 @@
+extends SceneTree
+
+## Frame-driven input journeys through the existing A8 pilot. The invisible
+## probe starts only at authored scene spawns; all approaches, choices,
+## collision checks, exits, and revisits use keyboard events and physics frames.
+## The injected authority is projection-only test state, never production play.
+
+const PILOT_SCENE := "res://game/survival/world_content/scenes/poi_pilot.tscn"
+const CAPTURE_DIR := "res://.artifacts/a8-world-content/input-journeys"
+const QUARRY_ID := "poi_crown_south_quarry"
+const ORCHARD_ID := "poi_crown_south_orchard"
+const MILL_ID := "poi_crown_south_mill"
+const EXPECTED_CAPTURE_COUNT := 23
+
+var _pilot: Node
+var _failures: Array[String] = []
+var _assertions := 0
+var _last_axis_collided := false
+var _capture_index := 0
+
+
+func _initialize() -> void:
+	call_deferred("_run")
+
+
+func _run() -> void:
+	await _journey_quarry("brace_oak", "east_braced", 554.0, 458.0)
+	await _journey_quarry("chock_stone", "west_chocked", 458.0, 554.0)
+	await _journey_orchard("leave_for_safety", "untouched", false)
+	await _journey_orchard("clear_irrigation", "flowing", true)
+	await _journey_mill_without_capability()
+	await _journey_mill_revocation_race()
+	await _journey_mill_owner_projected_repair()
+	_check(
+		_capture_index == EXPECTED_CAPTURE_COUNT,
+		(
+			"all %d exterior/interior baseline and changed-state captures were requested"
+			% EXPECTED_CAPTURE_COUNT
+		)
+	)
+	if _failures.is_empty():
+		print("A8_NATIVE_POI_INPUT_JOURNEY_PASS assertions=%d" % _assertions)
+		quit(0)
+	else:
+		for failure: String in _failures:
+			push_error(failure)
+		print(
+			(
+				"A8_NATIVE_POI_INPUT_JOURNEY_FAIL failures=%d assertions=%d"
+				% [_failures.size(), _assertions]
+			)
+		)
+		quit(1)
+
+
+func _journey_quarry(
+	choice_option: String, expected_route: String, open_x: float, blocked_x: float
+) -> void:
+	await _start_pilot({})
+	if choice_option == "brace_oak":
+		await _capture("quarry-shell-baseline")
+	if not await _enter_worksite(QUARRY_ID):
+		await _stop_pilot()
+		return
+	if choice_option == "brace_oak":
+		await _capture("quarry-interior-baseline")
+	var start: Vector2 = _snapshot().get("position", Vector2.ZERO)
+	var stand_ok := await _walk_to(Vector2(506.0, 378.0))
+	_check(stand_ok, "quarry choice approach uses live movement from the interior entry")
+	if choice_option == "chock_stone":
+		await _press_key(KEY_BRACKETRIGHT)
+		_check(
+			str(_pilot.get("_feedback").text).contains("Chock the west ramp"),
+			"quarry keyboard choice cycle selects the distinct west route"
+		)
+	await _press_key(KEY_G)
+	await _settle()
+	var after_choice: Dictionary = _snapshot()
+	_check(
+		str(after_choice.get("site_state", {}).get("quarry_route", "")) == expected_route,
+		"quarry owner projection records %s" % expected_route
+	)
+	_check(
+		start.distance_to(after_choice.get("position", start)) > 100.0,
+		"quarry choice was reached by continuous physical movement"
+	)
+	_check(
+		_has_visual_prop("east_shelf_brace") == (expected_route == "east_braced"),
+		"quarry selected route presents only its source-authored brace"
+	)
+	_check(
+		_has_visual_prop("west_ramp_chock") == (expected_route == "west_chocked"),
+		"quarry selected route presents only its source-authored chock"
+	)
+	await _capture("quarry-%s-choice" % expected_route)
+
+	var traversed_open_route := await _walk_to(Vector2(open_x, 378.0))
+	_check(traversed_open_route, "quarry selected route remains physically traversable")
+	var open_reached := await _walk_axis_to("move_up", KEY_W, 220.0)
+	_check(
+		open_reached and not _last_axis_collided, "quarry owner-selected route is physically open"
+	)
+	await _walk_axis_to("move_down", KEY_S, 378.0)
+	var blocked_route_reached := await _walk_axis_to(
+		"move_left" if blocked_x < 500.0 else "move_right",
+		KEY_A if blocked_x < 500.0 else KEY_D,
+		blocked_x
+	)
+	_check(blocked_route_reached, "quarry alternate blocker is approached from the south")
+	var blocked_reached := await _walk_axis_to("move_up", KEY_W, 220.0)
+	var blocked_position: Vector2 = _snapshot().get("position", Vector2.ZERO)
+	_check(
+		not blocked_reached and _last_axis_collided and blocked_position.y > 345.0,
+		"quarry unselected route remains a live collision blocker"
+	)
+	await _walk_axis_to("move_down", KEY_S, 378.0)
+	await _walk_axis_to(
+		"move_left" if open_x > 500.0 else "move_right", KEY_A if open_x > 500.0 else KEY_D, 506.0
+	)
+	await _exit_and_revisit(QUARRY_ID, "quarry_route", expected_route)
+	await _stop_pilot()
+
+
+func _journey_orchard(choice_action: String, expected_channel: String, cross_open: bool) -> void:
+	var seed := {"ready_actions": ["read_water_marks"]} if cross_open else {}
+	await _start_pilot(seed)
+	if cross_open:
+		await _capture("orchard-shell-baseline")
+	if not await _enter_worksite(ORCHARD_ID):
+		await _stop_pilot()
+		return
+	if cross_open:
+		await _capture("orchard-interior-baseline")
+	_check(
+		await _walk_to(Vector2(510.0, 370.0)),
+		"orchard choice reached from the doorway by frame-based movement"
+	)
+	if choice_action == "leave_for_safety":
+		await _press_key(KEY_BRACKETRIGHT)
+	await _press_key(KEY_G)
+	await _settle()
+	var after_choice: Dictionary = _snapshot()
+	_check(
+		str(after_choice.get("site_state", {}).get("orchard_channel", "")) == expected_channel,
+		"orchard choice records %s in owner projection" % expected_channel
+	)
+	_check(
+		_has_visual_prop("flowing_channel_reeds") == cross_open,
+		"orchard water route presentation matches owner-projected state"
+	)
+	if cross_open:
+		_check(
+			_has_visual_prop("sluice_blocking_deadfall") == false,
+			"cleared orchard channel removes the authored deadfall prop"
+		)
+		await _capture("orchard-flowing-channel")
+	else:
+		await _walk_axis_to("move_left", KEY_A, 496.0)
+		var reached_north_bank := await _walk_axis_to("move_up", KEY_W, 250.0)
+		var blocked_position: Vector2 = _snapshot().get("position", Vector2.ZERO)
+		_check(
+			not reached_north_bank and _last_axis_collided and blocked_position.y > 304.0,
+			"untouched orchard channel physically blocks the crossing"
+		)
+		await _walk_axis_to("move_down", KEY_S, 370.0)
+		await _capture("orchard-blocked-channel")
+	if cross_open:
+		await _walk_axis_to("move_left", KEY_A, 496.0)
+		_check(
+			await _walk_axis_to("move_up", KEY_W, 250.0),
+			"owner-opened orchard boardwalk is traversable under live collision"
+		)
+		_check(
+			await _walk_axis_to("move_down", KEY_S, 370.0),
+			"orchard boardwalk returns to the graft-mark work side"
+		)
+		await _press_key(KEY_W)
+		await _press_key(KEY_Y)
+		await _settle()
+		_check(
+			bool(_snapshot().get("site_state", {}).get("graft_marks_read", false)),
+			"owner-ready graft-mark action commits through the physical action socket"
+		)
+		_check(
+			_has_visual_prop("graft_mark_herb"),
+			"orchard graft-mark reading reveals the source-authored visual cue"
+		)
+		await _capture("orchard-graft-marks-read")
+	await _exit_and_revisit(ORCHARD_ID, "orchard_channel", expected_channel)
+	await _stop_pilot()
+
+
+func _journey_mill_without_capability() -> void:
+	await _start_pilot({})
+	await _capture("mill-shell-without-capability")
+	if not await _enter_worksite(MILL_ID):
+		await _stop_pilot()
+		return
+	await _capture("mill-interior-without-capability")
+	var reached_maintenance := await _walk_axis_to("move_up", KEY_W, 420.0)
+	var blocked_position: Vector2 = _snapshot().get("position", Vector2.ZERO)
+	_check(
+		not reached_maintenance and _last_axis_collided and blocked_position.y > 480.0,
+		"mill owner capability gate blocks physical entry without salvage capability"
+	)
+	_check(
+		not _snapshot().get("site_state", {}).has("mill_wheel"),
+		"missing capability produces no wheel repair or world-state change"
+	)
+	var site: NativePoiSite = _pilot.get("_site") as NativePoiSite
+	var gate_bodies: Array = site.get("_gate_bodies") if site != null else []
+	var outer_gate := gate_bodies[0] as StaticBody2D if not gate_bodies.is_empty() else null
+	var outer_shape := (
+		outer_gate.get_child(0) as CollisionShape2D if is_instance_valid(outer_gate) else null
+	)
+	_check(
+		(
+			outer_shape != null
+			and outer_shape.one_way_collision
+			and outer_shape.one_way_collision_direction == Vector2.UP
+		),
+		"locked Mill gate blocks entry from south while preserving outward retreat"
+	)
+	await _walk_axis_to("move_down", KEY_S, 560.0)
+	await _press_key(KEY_G)
+	await _settle()
+	_check(
+		str(_snapshot().get("active_kind", "")) == "shell",
+		"mill doorway remains a physical retreat when the salvage gate is closed"
+	)
+
+	var shell: NativePoiShell = _pilot.get("_shell") as NativePoiShell
+	if shell == null:
+		_check(false, "Mill exterior is available for the gate falsification probe")
+		await _stop_pilot()
+		return
+	await _walk_axis_to("move_up", KEY_W, shell.get_entry_position().y - 3.0)
+	await _press_key(KEY_G)
+	await _settle()
+	site = _pilot.get("_site") as NativePoiSite
+	gate_bodies = site.get("_gate_bodies") if site != null else []
+	outer_gate = gate_bodies[0] as StaticBody2D if not gate_bodies.is_empty() else null
+	outer_shape = (
+		outer_gate.get_child(0) as CollisionShape2D if is_instance_valid(outer_gate) else null
+	)
+	if outer_shape == null:
+		_check(false, "Mill outer gate collider is available for isolated mutation")
+		await _stop_pilot()
+		return
+	var safe_direction := outer_shape.one_way_collision_direction
+	outer_shape.one_way_collision_direction = Vector2.DOWN
+	await _settle()
+	var mutant_reached := await _walk_axis_to("move_up", KEY_W, 420.0)
+	if mutant_reached and _snapshot().get("position", Vector2.ZERO).y < 480.0:
+		print(
+			(
+				"A8_MUTATION_PROBE_DETECTED mutation=outer_gate_direction_down "
+				+ "observation=unauthorized_entry_without_capability"
+			)
+		)
+	else:
+		_check(false, "reversed one-way gate mutant was not observed crossing into Mill")
+	outer_shape.one_way_collision_direction = safe_direction
+	await _settle()
+	_check(
+		await _walk_axis_to("move_down", KEY_S, 560.0),
+		"restored outward-only Mill gate remains retreatable after capability loss"
+	)
+	await _press_key(KEY_G)
+	await _settle()
+	_check(
+		str(_snapshot().get("active_kind", "")) == "shell",
+		"owner-projected capability loss does not trap the pilot behind the Mill gate"
+	)
+	await _stop_pilot()
+
+
+func _journey_mill_revocation_race() -> void:
+	# The physical input creates a pending neutral request. The fixture owner
+	# revokes its projection before validation, so the old revision must reject.
+	await _start_pilot(
+		{
+			"capabilities": ["cap_salvage"],
+			"ready_actions": ["repair_waterwheel"],
+		}
+	)
+	await _capture("mill-shell-pending-revocation")
+	if not await _enter_worksite(MILL_ID):
+		await _stop_pilot()
+		return
+	await _capture("mill-interior-pending-revocation")
+	_check(
+		await _walk_to(Vector2(528.0, 410.0)),
+		"revocation-race action is approached with physical input"
+	)
+	var authority := _pilot.get("_journey_authority") as PoiJourneyAuthorityFixture
+	var site := _pilot.get("_site") as NativePoiSite
+	_check(authority != null and site != null, "owner and neutral site are mounted for race")
+	if authority == null or site == null:
+		await _stop_pilot()
+		return
+	var owner_callback := Callable(_pilot, "_on_intent_requested")
+	_check(
+		site.intent_requested.is_connected(owner_callback),
+		"neutral request is connected to the test owner before race isolation"
+	)
+	if site.intent_requested.is_connected(owner_callback):
+		site.intent_requested.disconnect(owner_callback)
+	await _press_key(KEY_G)
+	_check(site.has_pending_intent(), "physical Mill input leaves a neutral request pending")
+	var pending_value: Variant = site.get("_pending")
+	var pending: Dictionary = pending_value.duplicate(true) if pending_value is Dictionary else {}
+	_check(
+		str(pending.get("action_id", "")) == "repair_waterwheel",
+		"pending request retains exact authored repair identity"
+	)
+	var intent_id := str(pending.get("intent_id", ""))
+	authority.replace_capabilities([])
+	var revoked_projection := authority.project_state(MILL_ID)
+	_check(
+		site.set_projection(revoked_projection),
+		"capability revocation advances the owner projection before validation"
+	)
+	var rejected := authority.submit_intent(pending)
+	_check(
+		str(rejected.get("status", "")) == "rejected",
+		"owner rejects the stale pending request after permission revocation"
+	)
+	_check(
+		str(rejected.get("reason", "")).contains("stale owner-projected journey context"),
+		"revocation race is rejected by the changed projection revision"
+	)
+	_check(
+		site.receive_authoritative_result(intent_id, rejected, revoked_projection),
+		"neutral pending request accepts the owner's explicit rejection"
+	)
+	_check(not site.has_pending_intent(), "rejected request clears without a local commit")
+	_check(
+		not _snapshot().get("site_state", {}).has("mill_wheel"),
+		"revocation race cannot manufacture a Mill repair consequence"
+	)
+	await _capture("mill-pending-request-revoked")
+	var exit_position := site.get_exit_position()
+	_check(
+		await _walk_to(exit_position), "revoked request still permits a continuous physical retreat"
+	)
+	await _press_key(KEY_G)
+	await _settle()
+	_check(
+		str(_snapshot().get("active_kind", "")) == "shell",
+		"revoked pending request leaves the physical doorway open for exit"
+	)
+	await _stop_pilot()
+
+
+func _journey_mill_owner_projected_repair() -> void:
+	# This seed is an explicit A8 test projection, not an A3 binding or live grant.
+	await _start_pilot(
+		{
+			"capabilities": ["cap_salvage"],
+			"ready_actions": ["repair_waterwheel"],
+		}
+	)
+	await _capture("mill-shell-owner-projection-seed")
+	if not await _enter_worksite(MILL_ID):
+		await _stop_pilot()
+		return
+	await _capture("mill-interior-owner-projection-seed")
+	_check(
+		await _walk_to(Vector2(528.0, 526.0)),
+		"mill exterior observation stand is approached with live input"
+	)
+	await _press_key(KEY_H)
+	await _settle()
+	_check(
+		bool(_snapshot().get("site_state", {}).get("mill_race_observed", false)),
+		"mill race marks can be read without granting an item or completing the site"
+	)
+	_check(
+		await _walk_to(Vector2(528.0, 410.0)),
+		"owner-projected salvage gate admits the pilot to the repair approach"
+	)
+	await _press_key(KEY_G)
+	await _settle()
+	_check(
+		str(_snapshot().get("site_state", {}).get("mill_wheel", "")) == "turning",
+		"test-only ready owner projection exposes the authored repair consequence"
+	)
+	var fixture_state: Dictionary = _snapshot().get("fixture_state", {})
+	_check(
+		(
+			not fixture_state.has("inventory")
+			and not fixture_state.has("currency")
+			and not fixture_state.has("save_data")
+		),
+		"journey authority has no item, currency, or save mutation surface"
+	)
+	_check(
+		(
+			_has_visual_prop("repaired_race_bearing")
+			and _has_visual_prop("lit_race_lamp")
+			and not _has_visual_prop("seized_race_warning")
+		),
+		"mill repair updates its source-authored presentation"
+	)
+	await _capture("mill-owner-projected-wheel-repair")
+	await _walk_axis_to("move_up", KEY_W, 278.0)
+	await _walk_axis_to("move_right", KEY_D, 678.0)
+	_check(
+		_probe().global_position.distance_to(Vector2(678.0, 278.0)) <= 14.0,
+		"repaired mill route physically reaches the fastener source"
+	)
+	var intent_count_before := _intent_count()
+	await _press_key(KEY_Y)
+	await _settle()
+	_check(
+		_intent_count() == intent_count_before,
+		"fastener interaction emits no intent without trusted source readiness"
+	)
+	_check(
+		str(_snapshot().get("site_state", {}).get("mill_wheel", "")) == "turning",
+		"unbound fastener source causes no additional owner state change"
+	)
+	var authority := _pilot.get("_journey_authority") as PoiJourneyAuthorityFixture
+	var site := _pilot.get("_site") as NativePoiSite
+	_check(
+		authority != null and site != null, "Mill owner projection can be refreshed in the fixture"
+	)
+	if authority != null and site != null:
+		authority.replace_capabilities([])
+		_check(
+			site.set_projection(authority.project_state(MILL_ID)),
+			"revoked owner capability projection is accepted with a newer revision"
+		)
+		await _settle()
+		await _capture("mill-fastener-capability-revoked")
+		var revoked_intent_count := _intent_count()
+		await _press_key(KEY_Y)
+		await _settle()
+		_check(
+			_intent_count() == revoked_intent_count,
+			"permission revoked at the fastener prevents a new physical intent"
+		)
+		_check(
+			str(_snapshot().get("site_state", {}).get("mill_wheel", "")) == "turning",
+			"capability revocation does not change owner-projected site state"
+		)
+	await _exit_and_revisit(MILL_ID, "mill_wheel", "turning")
+	await _stop_pilot()
+
+
+func _start_pilot(owner_seed: Dictionary) -> void:
+	await _stop_pilot()
+	var packed := load(PILOT_SCENE) as PackedScene
+	if packed == null:
+		_check(false, "existing A8 pilot scene loads")
+		return
+	_pilot = packed.instantiate()
+	_pilot.set("journey_test_mode", true)
+	_pilot.set("journey_owner_projection_seed", owner_seed)
+	root.add_child(_pilot)
+	await _settle()
+	_check(
+		bool(_snapshot().get("journey_mode", false)), "pilot uses projection-only journey authority"
+	)
+	_check(
+		str(_snapshot().get("active_kind", "")) == "shell",
+		"journey begins at the authored exterior spawn"
+	)
+
+
+func _enter_worksite(expected_source: String) -> bool:
+	var probe: CharacterBody2D = _probe()
+	if probe == null:
+		_check(false, "pilot contains the existing CharacterBody2D probe")
+		return false
+	var shell: NativePoiShell = _pilot.get("_shell") as NativePoiShell
+	if shell == null:
+		_check(false, "pilot starts in the source-backed exterior shell")
+		return false
+	var entry := shell.get_entry_position()
+	var before := probe.global_position
+	var reached := await _walk_axis_to("move_up", KEY_W, entry.y)
+	_check(reached, "exterior doorway is physically approached using keyboard input")
+	_check(
+		before.distance_to(probe.global_position) > 20.0,
+		"exterior approach moves the live actor rather than setting its position"
+	)
+	await _press_key(KEY_G)
+	await _settle()
+	var snapshot: Dictionary = _snapshot()
+	_check(
+		(
+			str(snapshot.get("active_kind", "")) == "site"
+			and str(snapshot.get("source_id", "")) == expected_source
+		),
+		"physical doorway signal mounts the exact existing local worksite"
+	)
+	var trace: Array = snapshot.get("trace", [])
+	var entry_event: Dictionary = trace.back() if not trace.is_empty() else {}
+	_check(
+		str(entry_event.get("direction", "")) == "enter",
+		"entry transition signal is recorded from the live doorway request"
+	)
+	_check(
+		(
+			str(entry_event.get("run_id", "")) == "fixture-run-1"
+			and int(entry_event.get("run_epoch", -1)) == 1
+			and str(entry_event.get("phase_id", "")) == "ordinary"
+			and int(entry_event.get("observed_phase_projection_revision", -1)) >= 0
+			and not str(entry_event.get("site_instance_id", "")).is_empty()
+		),
+		"doorway transition preserves the owner-projected run and phase boundary"
+	)
+	return str(snapshot.get("active_kind", "")) == "site"
+
+
+func _exit_and_revisit(expected_source: String, state_key: String, expected_value: String) -> void:
+	var site: NativePoiSite = _pilot.get("_site") as NativePoiSite
+	if site == null:
+		_check(false, "worksite remains mounted before retreat")
+		return
+	var exit_position := site.get_exit_position()
+	_check(
+		await _walk_to(exit_position),
+		"player retreats through the interior route to the authored doorway"
+	)
+	await _press_key(KEY_G)
+	await _settle()
+	_check(
+		str(_snapshot().get("active_kind", "")) == "shell",
+		"physical exit restores the canonical exterior return shell"
+	)
+	var shell: NativePoiShell = _pilot.get("_shell") as NativePoiShell
+	if shell == null:
+		_check(false, "exterior return shell remains available for revisit")
+		return
+	var entry := shell.get_entry_position()
+	await _walk_axis_to("move_up", KEY_W, entry.y - 3.0)
+	await _press_key(KEY_G)
+	await _settle()
+	var snapshot: Dictionary = _snapshot()
+	_check(
+		(
+			str(snapshot.get("active_kind", "")) == "site"
+			and str(snapshot.get("source_id", "")) == expected_source
+		),
+		"same exterior doorway can be physically revisited"
+	)
+	_check(
+		str(snapshot.get("site_state", {}).get(state_key, "")) == expected_value,
+		"owner-projected site state persists across retreat and revisit"
+	)
+	var trace: Array = snapshot.get("trace", [])
+	var enters := 0
+	var exits := 0
+	for item: Dictionary in trace:
+		if str(item.get("direction", "")) == "enter":
+			enters += 1
+		elif str(item.get("direction", "")) == "exit":
+			exits += 1
+	_check(enters >= 2 and exits >= 1, "journey trace records entry, exit, and revisit signals")
+	await _capture("%s-return-revisit" % expected_source.get_slice("_", -1))
+
+
+func _walk_to(target: Vector2) -> bool:
+	var horizontal_action := "move_right" if target.x > _probe().global_position.x else "move_left"
+	var horizontal_key := KEY_D if target.x > _probe().global_position.x else KEY_A
+	await _walk_axis_to(horizontal_action, horizontal_key, target.x)
+	var vertical_action := "move_down" if target.y > _probe().global_position.y else "move_up"
+	var vertical_key := KEY_S if target.y > _probe().global_position.y else KEY_W
+	await _walk_axis_to(vertical_action, vertical_key, target.y)
+	return _probe().global_position.distance_to(target) <= 14.0
+
+
+func _walk_axis_to(action: String, keycode: Key, coordinate: float) -> bool:
+	var probe := _probe()
+	if probe == null:
+		_last_axis_collided = false
+		return false
+	var starting_position := probe.global_position
+	var starting_value := (
+		probe.global_position.x
+		if action in ["move_left", "move_right"]
+		else probe.global_position.y
+	)
+	var reached := absf(starting_value - coordinate) <= 5.0
+	_last_axis_collided = false
+	if reached:
+		return true
+	await _send_key(keycode, true)
+	var best_distance := absf(starting_value - coordinate)
+	var stalled_frames := 0
+	for _frame: int in range(240):
+		await physics_frame
+		await process_frame
+		var current := probe.global_position
+		var current_value := current.x if action in ["move_left", "move_right"] else current.y
+		var distance := absf(current_value - coordinate)
+		if distance <= 5.0:
+			reached = true
+			break
+		if distance < best_distance - 0.15:
+			best_distance = distance
+			stalled_frames = 0
+		else:
+			stalled_frames += 1
+		if probe.get_slide_collision_count() > 0:
+			_last_axis_collided = true
+		if stalled_frames >= 10:
+			break
+	await _send_key(keycode, false)
+	await _settle()
+	var ending_value := (
+		probe.global_position.x
+		if action in ["move_left", "move_right"]
+		else probe.global_position.y
+	)
+	_check(
+		probe.global_position.distance_to(starting_position) > 0.5 or _last_axis_collided,
+		"keyboard movement or collision is observed on %s" % action
+	)
+	return reached or absf(ending_value - coordinate) <= 5.0
+
+
+func _press_key(keycode: Key) -> void:
+	await _send_key(keycode, true)
+	await process_frame
+	await physics_frame
+	await _send_key(keycode, false)
+	await _settle()
+
+
+func _send_key(keycode: Key, is_pressed: bool) -> void:
+	var event := InputEventKey.new()
+	event.physical_keycode = keycode
+	event.keycode = keycode
+	event.pressed = is_pressed
+	Input.parse_input_event(event)
+
+
+func _settle() -> void:
+	await process_frame
+	await physics_frame
+	await process_frame
+
+
+func _probe() -> CharacterBody2D:
+	return _pilot.get("_probe") as CharacterBody2D if is_instance_valid(_pilot) else null
+
+
+func _snapshot() -> Dictionary:
+	return _pilot.call("get_journey_snapshot") if is_instance_valid(_pilot) else {}
+
+
+func _has_visual_prop(prop_id: String) -> bool:
+	if not is_instance_valid(_pilot):
+		return false
+	var site: NativePoiSite = _pilot.get("_site") as NativePoiSite
+	if site == null:
+		return false
+	var art: Node2D = site.get("_art") as Node2D
+	if art == null:
+		return false
+	var props := art.get_node_or_null("A8_SourceSized_Props") as Node2D
+	return props != null and props.has_node(prop_id)
+
+
+func _intent_count() -> int:
+	var count := 0
+	for item: Dictionary in _snapshot().get("trace", []):
+		if str(item.get("kind", "")) == "intent":
+			count += 1
+	return count
+
+
+func _capture(label: String) -> void:
+	if not is_instance_valid(_pilot):
+		return
+	var absolute_dir := ProjectSettings.globalize_path(CAPTURE_DIR)
+	var capture_suffix := OS.get_environment("SOH_A8_CAPTURE_SUBDIR")
+	var expected_size := Vector2i.ZERO
+	var dimensions := capture_suffix.split("x", false)
+	if dimensions.size() == 2:
+		expected_size = Vector2i(int(dimensions[0]), int(dimensions[1]))
+		if expected_size.x > 0 and expected_size.y > 0:
+			root.size = expected_size
+		else:
+			expected_size = Vector2i.ZERO
+	if not capture_suffix.is_empty():
+		absolute_dir = absolute_dir.path_join(capture_suffix)
+	await process_frame
+	await process_frame
+	_capture_index += 1
+	DirAccess.make_dir_recursive_absolute(absolute_dir)
+	var image := root.get_texture().get_image()
+	if expected_size != Vector2i.ZERO:
+		_check(
+			image.get_size() == expected_size,
+			(
+				"native screenshot uses the requested %dx%d back buffer"
+				% [expected_size.x, expected_size.y]
+			)
+		)
+	var output_path := "%s/%02d-%s.png" % [absolute_dir, _capture_index, label]
+	var result := image.save_png(output_path)
+	_check(result == OK, "journey visual capture saved: %s" % output_path.get_file())
+
+
+func _stop_pilot() -> void:
+	if is_instance_valid(_pilot):
+		root.remove_child(_pilot)
+		_pilot.queue_free()
+		_pilot = null
+	await _settle()
+
+
+func _check(condition: bool, message: String) -> void:
+	_assertions += 1
+	if not condition:
+		_failures.append("ASSERTION FAILED: " + message)
+		push_error("Assertion failed: " + message)

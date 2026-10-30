@@ -156,7 +156,8 @@
         "mill_route": "open"
       },
       "choice_group": "mill_wheel",
-      "object_id": "repair_waterwheel"
+      "object_id": "repair_waterwheel",
+      "owner_ready_required": true
     },
     {
       "action_id": "leave_wheel",
@@ -213,7 +214,8 @@
         "mill_wheel": [
           "turning"
         ]
-      }
+      },
+      "owner_ready_required": true
     }
   ],
   "return_hook": "Once admitted, restoring the wheel opens the maintenance walk; the fastener pile is finite per cycle and returns on its real timer.",
@@ -227,7 +229,8 @@
         16
       ],
       "requires": "cap_salvage",
-      "zone": "outer_access"
+      "zone": "outer_access",
+      "retreat_one_way": true
     },
     {
       "rect": [
@@ -242,7 +245,8 @@
         "mill_wheel": [
           "turning"
         ]
-      }
+      },
+      "retreat_one_way": true
     }
   ],
   "scene_role": "local_worksite",

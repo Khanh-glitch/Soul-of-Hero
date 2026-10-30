@@ -1,6 +1,10 @@
 # A8 Integration Package — 2026-10-31
 
-**Decision:** `ACCEPTED_SCOPED` for the A8-owned native pilot only; `HOLD_PRODUCTION`; PR #26 stays open and unmerged. This package does not accept production gameplay, economy, human play, or visuals.
+**Historical Round 9 decision:** `ACCEPTED_SCOPED` for the A8-owned native pilot only; `HOLD_PRODUCTION`; PR #26 stays open and unmerged. This did not accept production gameplay, economy, human play, or visuals.
+
+## Round 10 current-status overlay (2026-10-31)
+
+The current continuation verdict is **`PARTIAL_WITH_BLOCKERS`**, not Round 10 complete. New frame-driven Quarry/Orchard/Mill input journeys, owner-readiness gates, and a three-resolution Xvfb capture run are implemented, but their exact pushed-SHA Godot execution/CI and actual visual inspection are still required. Mill repair/fastener remain `WAITING_FOR_A3_A0`; no production mount or human play is accepted. See [`A8_ROUND10_WORKLOG_20261031.md`](A8_ROUND10_WORKLOG_20261031.md) and [`A8_ROUND10_PR_HANDOFF_20261031.md`](A8_ROUND10_PR_HANDOFF_20261031.md) for WP0–WP6, missions A–F, nine strict gates, current blockers, and owner requests. The historical statuses/tables below describe the earlier checkpoint and are superseded where this overlay differs.
 
 ## Exact review identities and CI
 

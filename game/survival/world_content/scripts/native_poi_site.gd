@@ -520,7 +520,7 @@ func _action_is_available(action: Dictionary) -> bool:
 		bool(action.get("owner_ready_required", false))
 		and not projection.get("ready_actions", []).has(action_id)
 	):
-		player_feedback.emit("The water is moving; come back after the grafts have taken root.")
+		player_feedback.emit("The owner has not projected this action as ready.")
 		return false
 	var cooldown_remaining := _cooldown_remaining(action)
 	if cooldown_remaining > 0.0:
@@ -634,6 +634,9 @@ func _build_physics() -> void:
 		gate_shape.size = Vector2(float(rect[2]), float(rect[3]))
 		var gate_collision := CollisionShape2D.new()
 		gate_collision.shape = gate_shape
+		if bool(gate.get("retreat_one_way", false)):
+			gate_collision.one_way_collision = true
+			gate_collision.one_way_collision_direction = Vector2.UP
 		gate_body.add_child(gate_collision)
 		gate_body.position = Vector2(
 			float(rect[0]) + float(rect[2]) * 0.5, float(rect[1]) + float(rect[3]) * 0.5
