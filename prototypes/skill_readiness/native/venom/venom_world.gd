@@ -883,8 +883,6 @@ func update_enemies(dt: float) -> void:
 				my = (dx / d) * e.orb * 0.35 + (dy / d) * 0.1
 			e.x += mx * sp * dt
 			e.y += my * sp * dt
-			if i == 12 and frame >= 28 and frame <= 30:
-				print("GOLD93_E12S t=%d dx=%0.17f dy=%0.17f d=%0.17f mx=%0.17f my=%0.17f sp=%0.17f des=%0.17f reach=%0.17f x=%0.17f y=%0.17f" % [frame, dx, dy, d, mx, my, sp, e.des, reach, e.x, e.y])
 			if mx != 0.0 or my != 0.0:
 				e.walk += dt * sp * 0.22
 			var fa: float = V8M.v8_atan2(dy, dx)
@@ -915,8 +913,6 @@ func update_enemies(dt: float) -> void:
 				if d < m and d > 0.1:
 					e.x += (dx / d) * (m - d)
 					e.y += (dy / d) * (m - d)
-					if i == 12 and frame >= 28 and frame <= 30:
-						print("GOLD93_E12P t=%d fx=%0.17f fy=%0.17f dx=%0.17f dy=%0.17f d=%0.17f m=%0.17f x=%0.17f y=%0.17f" % [frame, f.x, f.y, dx, dy, d, m, e.x, e.y])
 		e.x = M.clampf(e.x, e.r, W - e.r)
 		e.y = M.clampf(e.y, e.r + 3, H - e.r)
 	# soft separation
