@@ -63,13 +63,13 @@ func _foot(cell: Vector2i) -> Vector2:
 func _set_direction(delta: Vector2) -> void:
 	for action: String in MOVE_ACTIONS:
 		Input.action_release(action)
-	if delta.x < -2.0:
+	if delta.x < -0.5:
 		Input.action_press("move_left")
-	elif delta.x > 2.0:
+	elif delta.x > 0.5:
 		Input.action_press("move_right")
-	if delta.y < -2.0:
+	if delta.y < -0.5:
 		Input.action_press("move_up")
-	elif delta.y > 2.0:
+	elif delta.y > 0.5:
 		Input.action_press("move_down")
 
 
@@ -169,25 +169,7 @@ func _drive(label: String, goal: Vector2i) -> bool:
 		var target := _foot(cell)
 		var deadline := Time.get_ticks_msec() + 4000
 		while hero.global_position.distance_to(target) > 1.5 and Time.get_ticks_msec() < deadline:
-			# Axis-priority steering: a 12x16 body can catch on a solid corner if a
-			# diagonal approach lets its foot drift across the row boundary. Align
-			# the perpendicular axis first, then advance along the route edge.
-			var cur := nav.cell_of(hero.global_position)
-			var diff := target - hero.global_position
-			var dir := Vector2.ZERO
-			if cell.x != cur.x:
-				if absf(diff.y) > 0.5:
-					dir.y = signf(diff.y)
-				else:
-					dir.x = signf(diff.x)
-			elif cell.y != cur.y:
-				if absf(diff.x) > 0.5:
-					dir.x = signf(diff.x)
-				else:
-					dir.y = signf(diff.y)
-			else:
-				dir = diff.normalized()
-			_set_direction(dir * 10.0)
+			_set_direction(target - hero.global_position)
 			await physics_frame
 		_set_direction(Vector2.ZERO)
 		if hero.global_position.distance_to(target) > 5.0:
