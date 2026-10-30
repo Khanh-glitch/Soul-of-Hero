@@ -237,7 +237,8 @@ static func core_instance(instance: Dictionary, item_label: String, equipped: Va
 		"location": String(instance.get("location", "Unknown")),
 		"revision": int(instance.get("revision", 0)),
 		"origin": String(instance.get("origin", "Unknown")),
-		"readiness": readiness,
+		"ownership_state": core_ownership_state(instance, equipped),
+		"readiness": readiness if not readiness.strip_edges().is_empty() else "Not verified",
 		"presentation_only": true,
 	}
 	if equipped is bool: result["equipped"] = equipped
@@ -245,20 +246,42 @@ static func core_instance(instance: Dictionary, item_label: String, equipped: Va
 	if can_equip is bool: result["can_equip"] = can_equip
 	return result
 
+## Physical custody, loadout, finite charges and A4 readiness are separate facts.
+## An equipped Core is never inferred to be cast-ready.
+static func core_ownership_state(instance: Dictionary, equipped: Variant = null) -> String:
+	var location := String(instance.get("location", "")).to_lower()
+	var uses := int(instance.get("uses", -1))
+	var maximum := int(instance.get("max_uses", -1))
+	if equipped is bool and equipped:
+		if uses == 0 and maximum >= 0: return "Equipped · exhausted"
+		if uses >= 0 and uses == maximum: return "Equipped · unused so far"
+		if uses > 0: return "Equipped · charges remain"
+		return "Equipped · charge state unknown"
+	if location in ["bag", "satchel"]:
+		return "In satchel · unequipped" if equipped is bool else "In satchel · equipment state unknown"
+	if location in ["storage", "container", "chest"]: return "Stored · not equipped"
+	if location in ["death_bag", "recovery_bag", "ground"]: return "In recovery custody · owner state required"
+	return "Custody / equipment status unknown"
+
 ## A0's current transfer API takes an item ID, not a SaveService stack key.
 ## Totals are authoritative read accessors; this view neither authorizes nor
 ## performs transfers, checks capacity, nor asserts a chest is interactable.
-static func storage(save: Object, survival: Object, container_id: String) -> Dictionary:
-	var result := {"container_id": container_id, "transfer_enabled": false, "bag": [], "chest": []}
+## Read-only A0 projection. `a3_instances` is keyed by exact A3 instance_id;
+## `a3_items` is the A3 catalog's items dictionary. Unique identity stays protected.
+static func storage(save: Object, survival: Object, container_id: String, a3_instances: Dictionary = {}, a3_items: Dictionary = {}) -> Dictionary:
+	var result := {"container_id": container_id, "transfer_enabled": false, "context_validation": "A0 host required", "bag": [], "chest": []}
 	if save == null or survival == null or container_id.is_empty():
+		return result
+	if not save.has_method(&"inventory_totals") or not survival.has_method(&"container_contents"):
 		return result
 	var bag_totals: Dictionary = _dict(save.call(&"inventory_totals"))
 	var chest_totals: Dictionary = _dict(survival.call(&"container_contents", container_id))
-	result.bag = _totals_as_rows(bag_totals, survival)
-	result.chest = _totals_as_rows(chest_totals, survival)
+	var bag_stacks: Dictionary = _dict(save.call(&"get_inventory_stacks")) if save.has_method(&"get_inventory_stacks") else {}
+	result.bag = _totals_as_rows(bag_totals, survival, "satchel", a3_instances, a3_items, bag_stacks)
+	result.chest = _totals_as_rows(chest_totals, survival, "chest", a3_instances, a3_items, {})
 	return result
 
-static func _totals_as_rows(totals: Dictionary, survival: Object) -> Array[Dictionary]:
+static func _totals_as_rows(totals: Dictionary, survival: Object, location: String, a3_instances: Dictionary, a3_items: Dictionary, bag_stacks: Dictionary) -> Array[Dictionary]:
 	var rows: Array[Dictionary] = []
 	var keys := totals.keys()
 	keys.sort()
@@ -266,8 +289,42 @@ static func _totals_as_rows(totals: Dictionary, survival: Object) -> Array[Dicti
 		var id := String(raw_key)
 		var count := int(totals[raw_key])
 		if id.is_empty() or count <= 0: continue
-		var definition: Dictionary = _dict(survival.call(&"item_definition", id))
-		rows.append({"id": id, "name": String(definition.get("label", id)), "count": count})
+		var is_instance := id.begins_with("soh_i_")
+		var instance: Dictionary = _dict(a3_instances.get(id, {})) if is_instance else {}
+		var physical_item_id := String(instance.get("item_id", ""))
+		var catalog_item_id := physical_item_id if not physical_item_id.is_empty() else id
+		var catalog: Dictionary = _dict(a3_items.get(catalog_item_id, {}))
+		var definition: Dictionary = _dict(survival.call(&"item_definition", catalog_item_id)) if survival.has_method(&"item_definition") else {}
+		var stack_keys: Array[String] = []
+		if location == "satchel":
+			for raw_stack_key: Variant in bag_stacks.keys():
+				var stack_key := String(raw_stack_key)
+				var stack_record := _dict(bag_stacks[raw_stack_key])
+				var stack_item_id := String(stack_record.get("item_id", stack_key)).strip_edges().to_lower()
+				if stack_item_id == id: stack_keys.append(stack_key)
+			stack_keys.sort()
+		var protected := is_instance or String(catalog.get("storage", "")) == "instance" or String(catalog.get("kind", "")) == "skill_core"
+		var transferable := false
+		if not protected and survival.has_method(&"is_sweepable_item"):
+			transferable = bool(survival.call(&"is_sweepable_item", id))
+		var label := String(catalog.get("label", definition.get("label", "")))
+		if protected and label.is_empty(): label = "Unique physical item · details unavailable"
+		if label.is_empty(): label = id.replace("_", " ").capitalize()
+		rows.append({
+			"id": id,
+			"name": label,
+			"count": count,
+			"location": location,
+			"kind": String(catalog.get("kind", definition.get("kind", "unique" if protected else "item"))),
+			"instance_id": id if is_instance else "",
+			"physical_item_id": physical_item_id,
+			"protected": protected,
+			"transferable": transferable,
+			"storage_status": "protected_unique_instance" if protected else "A0_sweepable" if transferable else "transfer_not_confirmed",
+			"a3_revision": int(instance.get("revision", -1)),
+			"stack_keys": stack_keys,
+			"stack_record_present": not stack_keys.is_empty() if location == "satchel" else true,
+		})
 	return rows
 
 static func _dict(value: Variant) -> Dictionary:

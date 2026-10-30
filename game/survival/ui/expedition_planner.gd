@@ -368,7 +368,9 @@ func _populate_storage(query: String) -> void:
 	for raw: Variant in _records(key):
 		if not raw is Dictionary or int(raw.get("count", 0)) <= 0: continue
 		if not query.is_empty() and not String(raw.get("name", "")).to_lower().contains(query.to_lower()): continue
-		var b := _button("%s   ×%d" % [raw.get("name", "Unknown"), int(raw.get("count", 0))])
+		var protected := bool(raw.get("protected", false)) or String(raw.get("id", "")).begins_with("soh_i_")
+		var suffix := "   ·  UNIQUE / PROTECTED" if protected else ""
+		var b := _button("%s   ×%d%s" % [raw.get("name", "Unknown"), int(raw.get("count", 0)), suffix])
 		b.icon = PIXEL_UI.icon_texture(raw)
 		b.icon_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		b.pressed.connect(_select.bind(String(raw.get("id", ""))))
@@ -496,6 +498,13 @@ func _storage_detail() -> void:
 	var count := maxi(0, int(record.get("count", 0)))
 	_details.add_child(_label(String(record.get("name", "Item")), 14))
 	_details.add_child(_label("Available: %d" % count, 10, MUTED))
+	var protected := bool(record.get("protected", false)) or String(record.get("id", "")).begins_with("soh_i_")
+	if protected:
+		_details.add_child(_label("Unique A3 instance · generic chest transfer is not supported. Identity remains protected.", 9, CORAL))
+		return
+	if record.has("transferable") and not bool(record.get("transferable", false)):
+		_details.add_child(_label("Owner has not confirmed this item is safe to transfer.", 9, CORAL))
+		return
 	if _snapshot.has("capacity_status"): _details.add_child(_label("Capacity: %s" % _snapshot.capacity_status, 10, MUTED))
 	_amount = SpinBox.new()
 	_amount.min_value = 1
@@ -520,8 +529,11 @@ func _request_transfer() -> void:
 	var item := _find("bag" if _direction == "deposit" else "chest", _selection)
 	var count := int(item.get("count", 0))
 	var amount := int(_amount.value) if is_instance_valid(_amount) else 0
+	var item_id := String(item.get("item_id", item.get("base_item_id", item.get("id", "")))).strip_edges().to_lower()
+	if item_id.contains("#"):
+		return # A stack key is not an A0 item ID; the projection must carry item_id explicitly.
 	if not bool(_snapshot.get("transfer_enabled", false)) or String(_snapshot.get("container_id", "")).is_empty() or count <= 0 or amount < 1 or amount > count: return
-	_request("transfer", _selection, {"direction": _direction, "container_id": String(_snapshot.get("container_id", "")), "amount": amount})
+	_request("transfer", item_id, {"direction": _direction, "container_id": String(_snapshot.get("container_id", "")), "item_id": item_id, "stack_key": String(item.get("stack_key", item.get("id", _selection))), "amount": amount})
 
 func _request(action: String, id: String, payload: Dictionary) -> void:
 	if _pending or id.is_empty(): return

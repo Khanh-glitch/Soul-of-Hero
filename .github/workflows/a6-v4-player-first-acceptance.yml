@@ -1,0 +1,225 @@
+name: A6 V4 Player-First UX Acceptance
+
+on:
+  push:
+    branches:
+      - arena/443f004f-soul-of-hero
+    paths:
+      - game/survival/ui/**
+      - tests/survival/ui/**
+      - docs/survival/ux/**
+      - .github/workflows/a6-v4-player-first-acceptance.yml
+  pull_request:
+    branches:
+      - feature/survival-rpg-foundation-20261029
+    paths:
+      - game/survival/ui/**
+      - tests/survival/ui/**
+      - docs/survival/ux/**
+      - .github/workflows/a6-v4-player-first-acceptance.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  player-first-composition:
+    name: Pinned current A0 world + A6 V4 · native UX, storage and source audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      A0_SHA: b2c37d35f47ef870fcbafafbc7f49e3d2730cd17
+      A1_SHA: 2951bf8559b2e289ce99fd4d394d44c46fdd91b1
+      A3_SHA: 18e7afcbd576bbd9bfbcc509b2ee13216186a522
+      EVIDENCE_SHA: 1ee7e43da22adb4b9ce1647efbcb1b07988ceaf7
+      GODOT_SILENCE_ROOT_WARNING: 1
+      LIBGL_ALWAYS_SOFTWARE: 1
+    steps:
+      - name: Check out A6 V4 UI and tests
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Check out exact current A0 owner source
+        uses: actions/checkout@v4
+        with:
+          repository: Khanh-glitch/Soul-of-Hero
+          ref: b2c37d35f47ef870fcbafafbc7f49e3d2730cd17
+          path: a0-source
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Check out exact A1 authored records
+        uses: actions/checkout@v4
+        with:
+          repository: Khanh-glitch/Soul-of-Hero
+          ref: 2951bf8559b2e289ce99fd4d394d44c46fdd91b1
+          path: a1-source
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Check out exact A3 item and recipe authority
+        uses: actions/checkout@v4
+        with:
+          repository: Khanh-glitch/Soul-of-Hero
+          ref: 18e7afcbd576bbd9bfbcc509b2ee13216186a522
+          path: a3-source
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Check out immutable Atlas and coverage-trace evidence
+        uses: actions/checkout@v4
+        with:
+          repository: Khanh-glitch/Soul-of-Hero
+          ref: 1ee7e43da22adb4b9ce1647efbcb1b07988ceaf7
+          path: a6-evidence
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Compose a temporary A0 + A6 project; preserve source ownership
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C a0-source rev-parse HEAD)" = "$A0_SHA"
+          test "$(git -C a1-source rev-parse HEAD)" = "$A1_SHA"
+          test "$(git -C a3-source rev-parse HEAD)" = "$A3_SHA"
+          test "$(git -C a6-evidence rev-parse HEAD)" = "$EVIDENCE_SHA"
+          mkdir -p a0-source/game/survival/ui a0-source/tests/survival/ui a0-source/docs/survival/ux a0-source/docs/survival/source_archive
+          cp a6-evidence/docs/survival/SOURCE_COVERAGE_TRACE.json a0-source/docs/survival/
+          cp a6-evidence/docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md a0-source/docs/survival/source_archive/
+          cp -a "$GITHUB_WORKSPACE/game/survival/ui/." a0-source/game/survival/ui/
+          cp -a "$GITHUB_WORKSPACE/tests/survival/ui/." a0-source/tests/survival/ui/
+          cp -a "$GITHUB_WORKSPACE/docs/survival/ux/." a0-source/docs/survival/ux/
+          python3 - <<'PY'
+          import subprocess
+          allowed = ("game/survival/ui/", "tests/survival/ui/", "docs/survival/ux/", "docs/survival/SOURCE_COVERAGE_TRACE.json", "docs/survival/source_archive/")
+          paths = subprocess.check_output(["git", "-C", "a0-source", "status", "--porcelain", "--untracked-files=all"], text=True).splitlines()
+          unexpected = [line for line in paths if not line[3:].startswith(allowed)]
+          if unexpected:
+              raise SystemExit("Temporary overlay changed a non-A6 path:\n" + "\n".join(unexpected))
+          print("Temporary composition modifies A6-owned UI/tests/docs only; owner sources are pinned and unchanged.")
+          PY
+          {
+            echo "### V4 temporary composition"
+            echo "- Current A0 owner project: \`$A0_SHA\`"
+            echo "- A1 authored records: \`$A1_SHA\`"
+            echo "- A3 item/recipe authority: \`$A3_SHA\`"
+            echo "- Immutable Atlas/trace checkout: \`$EVIDENCE_SHA\`"
+            echo "- UI mount: **temporary test composition only; no production mount**"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Install Godot 4.7 stable and Xvfb
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+
+      - name: Import composed project and record runtime version
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y xvfb imagemagick
+          godot --version | tee a0-source/godot-version.txt
+          timeout --signal=TERM --kill-after=10s 180s godot --headless --editor --path a0-source --import --quit 2>&1 | tee a0-source/.artifacts-v4-import.log
+
+      - name: Audit exact owner contracts, Atlas and Acceptance
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tests/survival/ui/v4_owner_source_audit.py --a0-root a0-source --a1-root a1-source --a3-root a3-source --evidence-root a6-evidence | tee a0-source/v4-owner-source-audit.log
+          python3 a0-source/tests/survival/ui/source_trace_audit.py | tee a0-source/v4-atlas-trace-audit.log
+
+      - name: Run A6 V4 native suites against current A0 autoloads
+        shell: bash
+        run: |
+          set -uo pipefail
+          mkdir -p a0-source/.artifacts/a6-v4
+          tests=(
+            tests/survival/ui/ui_test.gd
+            tests/survival/ui/planner_test.gd
+            tests/survival/ui/workspace_v1_test.gd
+            tests/survival/ui/modal_lifecycle_test.gd
+            tests/survival/ui/journey_test.gd
+            tests/survival/ui/player_first_hud_test.gd
+            tests/survival/ui/v4_storage_owner_integration_test.gd
+          )
+          failures=0
+          for test_path in "${tests[@]}"; do
+            name=${test_path##*/}; name=${name%.gd}
+            echo "Running $test_path"
+            export SOUL_OF_HERO_SAVE_PATH="user://a6_v4_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}_${name}.json"
+            export LIVING_ARSENAL_SAVE_PATH="$SOUL_OF_HERO_SAVE_PATH"
+            set +e
+            timeout --signal=TERM --kill-after=10s 240s godot --headless --path a0-source --script "res://$test_path" 2>&1 | tee "a0-source/.artifacts/a6-v4/${name}.log"
+            result=${PIPESTATUS[0]}
+            set -e
+            echo "$test_path exit code: $result"
+            if [[ $result -ne 0 ]]; then failures=$((failures + 1)); fi
+          done
+          echo "A6 V4 native suites: $(( ${#tests[@]} - failures ))/${#tests[@]} passed" >> "$GITHUB_STEP_SUMMARY"
+          grep -E 'A6 PLAYER-FIRST HUD|A6 V4 A0 STORAGE OWNER INTEGRATION|A6 JOURNEYS:|A6 MODAL LIFECYCLE:|SURVIVAL UI:|EXPEDITION PLANNER:|WORKSPACE V1:' a0-source/.artifacts/a6-v4/*.log >> "$GITHUB_STEP_SUMMARY" || true
+          exit "$failures"
+
+      - name: Re-run A0 native modal/input gate with the current A6 workspace
+        shell: bash
+        run: |
+          set -uo pipefail
+          export SOUL_OF_HERO_SAVE_PATH="user://a6_v4_a0_modal_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}.json"
+          export LIVING_ARSENAL_SAVE_PATH="$SOUL_OF_HERO_SAVE_PATH"
+          set +e
+          timeout --signal=TERM --kill-after=10s 360s xvfb-run -a -s "-screen 0 1280x720x24" godot --path a0-source --windowed --resolution 1280x720 --script res://tests/survival_a6_modal_composition_test.gd 2>&1 | tee a0-source/.artifacts/a6-v4/a0-modal-composition.log
+          result=${PIPESTATUS[0]}
+          set -e
+          if [[ $result -ne 0 ]]; then
+            grep -E 'FAIL|ERROR|SCRIPT ERROR|Parse Error|A0 A6 COMPOSITION' a0-source/.artifacts/a6-v4/a0-modal-composition.log || true
+            exit "$result"
+          fi
+          echo "A0 combined native input gate composition passed; this is test evidence, not a human input test." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Capture current A0 world with the passive fixture-labeled A6 HUD at 720p, 2K and 4K
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd a0-source
+          for spec in "1280 1280x720" "2560 2560x1440" "3840 3840x2160"; do
+            read -r tag resolution <<< "$spec"
+            timeout --signal=TERM --kill-after=10s 240s xvfb-run -a -s "-screen 0 3840x2160x24" godot --path . --windowed --resolution "$resolution" --script res://tests/survival/ui/v4_hud_native_capture.gd -- "$tag" 2>&1 | tee ".artifacts/a6-v4/capture-${tag}.log"
+          done
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess
+          root = Path(".artifacts/a6-v4")
+          frames = sorted(root.glob("v4_hud_*.png"))
+          expected = {"v4_hud_1280.png":"1280x720", "v4_hud_2560.png":"2560x1440", "v4_hud_3840.png":"3840x2160"}
+          if {frame.name for frame in frames} != set(expected):
+              raise SystemExit("V4 frame set mismatch: " + repr([frame.name for frame in frames]))
+          total = sum(frame.stat().st_size for frame in frames)
+          if total > 80 * 1024 * 1024:
+              raise SystemExit(f"V4 capture bound exceeded: {total} bytes")
+          for frame in frames:
+              dimensions = subprocess.check_output(["identify", "-format", "%wx%h", str(frame)], text=True)
+              if dimensions != expected[frame.name]:
+                  raise SystemExit(f"{frame}: expected {expected[frame.name]}, got {dimensions}")
+              print(f"{frame}: {dimensions}, {frame.stat().st_size} bytes")
+          print(f"Bounded V4 captures: {len(frames)} frames, {total} bytes")
+          PY
+          identify -format '- %f — %wx%h — %b\n' .artifacts/a6-v4/v4_hud_*.png >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload bounded V4 captures and native logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a6-v4-player-first-native-acceptance
+          path: |
+            a0-source/.artifacts/a6-v4/*.png
+            a0-source/.artifacts/a6-v4/*.log
+            a0-source/.artifacts/a6-v4/*.json
+            a0-source/.artifacts-v4-import.log
+            a0-source/v4-owner-source-audit.log
+            a0-source/v4-atlas-trace-audit.log
+            a0-source/godot-version.txt
+          if-no-files-found: warn
+          retention-days: 7
+          include-hidden-files: true

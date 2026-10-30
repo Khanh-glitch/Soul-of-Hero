@@ -1,6 +1,8 @@
 # SURV-UX-010A — A6 acceptance record
 
-> **Current V3 status (2026-10-29):** See [V3_SUSTAINED_PRODUCT_ACCEPTANCE.md](V3_SUSTAINED_PRODUCT_ACCEPTANCE.md). A6 now adds three source-grounded, fixture-labeled presentation journeys and a dedicated pinned A0+A6 Godot 4.7 CI workflow. Production mounting remains **HOLD**: A0 Knight movement/combat polling is still ungated. The legacy text below is preserved as historical V0/V1/V2 evidence and must not be read as current V3 CI, screenshot, or integration evidence.
+> **V4 active (2026-10-30):** See [V4_PLAYER_FIRST_HUD_HANDOFF_20261030.md](V4_PLAYER_FIRST_HUD_HANDOFF_20261030.md). V4 extends the existing A6 V3 UI on this branch; it compares against the exact current A0/A1/A3 refs and is not production-mounted. The V3 body below is a historical checkpoint. A0 PR #21 has since added the gameplay input gate, but checks on its latest head `b2c37d35f47ef870fcbafafbc7f49e3d2730cd17` were pending at the last query; the earlier passing `composed-native` check belongs to a previous head. This does not imply that A6 V4 is mounted, human-tested, or approved.
+
+> **Historical V3 status (2026-10-29):** See [V3_SUSTAINED_PRODUCT_ACCEPTANCE.md](V3_SUSTAINED_PRODUCT_ACCEPTANCE.md). A6 added three source-grounded, fixture-labeled presentation journeys and a dedicated pinned A0+A6 Godot 4.7 CI workflow. Production mounting was on hold at that checkpoint. The legacy text below is preserved as historical V0/V1/V2/V3 evidence and must not be read as current V4 CI, screenshot, or integration evidence.
 
 > **Historical continuation note:** `V2_VISUAL_SYSTEM.md` records the recovered-source V2 visual system, canonical A1/A3 read-only projections, testing boundary and unresolved A0 input gate. Its bespoke folio skin and pixel emblems supersede the older “flat/default-font” visual critique below for source state, but **do not** supersede the production hold or make prior native screenshot evidence current.
 

@@ -8,7 +8,7 @@ static func snapshot() -> Dictionary:
 			{"id":"bandage", "name":"Field Bandage [fixture]", "revealed":true, "knowledge":"starter", "formula_learned":true, "station":"Worktable", "can_craft":true, "ingredients":[{"name":"Reed Fibre", "have":4, "need":2}]},
 			{"id":"secret", "name":"SECRET FORMULA", "revealed":false, "knowledge":"starter", "formula_learned":true, "can_craft":true},
 		],
-		"bag": [{"id":"oak_wood#1", "name":"Oak Wood", "count":8}],
+		"bag": [{"id":"oak_wood#1", "stack_key":"oak_wood#1", "item_id":"oak_wood", "name":"Oak Wood", "count":8}],
 		"chest": [{"id":"iron_scrap", "name":"Iron Scrap", "count":2}],
 		"places": [
 			{"id":"poi_crown_waystation", "poi_id":"poi_crown_waystation", "name":"Ashen Waystation [fixture]", "revealed":true, "position":Vector2(408.0 / 1024.0, 200.0 / 768.0), "route":"Illustrative route status only", "hazard_id":"", "activity":"Teach salvage → spares → seal grammar", "region_id":"r_ashen_crown", "material_keys":["salvage", "iron"], "required_capabilities":[], "content_readiness":"INTERACTION_SPEC_AUTHORED_NOT_NATIVE", "status":"AUTHORED_PLAN_NOT_NATIVE_INTEGRATED"},

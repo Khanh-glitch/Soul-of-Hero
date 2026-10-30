@@ -79,7 +79,7 @@ func _run() -> void:
 	planner._select("oak_wood#1")
 	planner._amount.value = 3
 	planner._request_transfer()
-	check(requests.size() == 2 and requests[1].action == "transfer" and requests[1].payload.amount == 3 and requests[1].payload.direction == "deposit", "transfer emits exact amount, direction and stack key")
+	check(requests.size() == 2 and requests[1].action == "transfer" and requests[1].id == "oak_wood" and requests[1].payload.item_id == "oak_wood" and requests[1].payload.stack_key == "oak_wood#1" and requests[1].payload.amount == 3 and requests[1].payload.direction == "deposit", "transfer carries canonical A0 item_id separately from UI stack identity and exact amount")
 	planner._request_transfer()
 	check(requests.size() == 2, "duplicate transfer blocked while pending")
 	planner.set_snapshot(FIXTURE.snapshot())
@@ -89,6 +89,16 @@ func _run() -> void:
 	planner._set_direction("withdraw")
 	planner._select("iron_scrap")
 	check(planner._amount.max_value == 2, "withdraw amount bounded by shown quantity")
+	var protected_snapshot := FIXTURE.snapshot()
+	protected_snapshot.bag.append({"id":"soh_i_000000000011_a1c0ffee","instance_id":"soh_i_000000000011_a1c0ffee","name":"Ember Core [fixture]","count":1,"kind":"skill_core","protected":true,"transferable":false})
+	planner.set_snapshot(protected_snapshot)
+	planner._set_direction("deposit")
+	planner._select("soh_i_000000000011_a1c0ffee")
+	var has_quantity_control := false
+	for child: Node in planner._details.get_children():
+		if child is SpinBox or (child is Button and child.text == "REQUEST TRANSFER"): has_quantity_control = true
+	check(not has_quantity_control and (planner._details.get_child(2) as Label).text.contains("Unique A3 instance"), "protected Core row has no generic quantity-transfer affordance")
+	planner.set_snapshot(FIXTURE.snapshot())
 	planner.select_tab(2)
 	var map: Variant = planner._list.get_child(1)
 	check(map._points.size() == 1 and map._points[0].id == "poi_crown_waystation", "map excludes undiscovered marker")
