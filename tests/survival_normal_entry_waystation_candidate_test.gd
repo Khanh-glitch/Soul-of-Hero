@@ -87,7 +87,7 @@ func _walk_with_unstick(hero: CharacterBody2D, path: Array[Vector2i]) -> bool:
 				nudge = Vector2(signf(delta.y), -signf(delta.x)) if absf(delta.x) >= absf(delta.y) else Vector2(-signf(delta.y), signf(delta.x))
 				nudge_frames = 18
 				stuck = 0
-				print("A0_UNSTICK %s actor=%s target=%s nudge=%d" % [str(cell), str(hero.global_position), str(point), nudges])
+				print("A0_UNSTICK %s actor=%s target=%s nudge=%d vel=%s motion=%s paused=%s physics=%s right=%s down=%s" % [str(cell), str(hero.global_position), str(point), nudges, str(hero.velocity), str(hero.get_last_motion()), str(hero.get_tree().paused), str(hero.is_physics_processing()), str(Input.is_action_pressed("move_right")), str(Input.is_action_pressed("move_down"))])
 		if hero.global_position.distance_to(point) > 4.5:
 			_set_direction(Vector2.ZERO)
 			print("A0_UNSTICK_FAIL actor=%s target=%s" % [str(hero.global_position), str(cell)])
