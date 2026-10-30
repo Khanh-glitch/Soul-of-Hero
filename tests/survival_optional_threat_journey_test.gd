@@ -131,6 +131,23 @@ func _body() -> void:
 	_set_direction(Vector2.ZERO)
 	var retreat_start := hero.global_position
 	var back := _route(nav.cell_of(hero.global_position), start, nav, hero)
+	# A live pursuer can occupy the only currently queryable neighbour, or a
+	# knockback can leave the actor against a prop. Search for a real escape
+	# using ordinary directional input; re-query the unchanged collision world
+	# after each short movement. Never remove/disable the pursuer or blockers.
+	if back.is_empty():
+		var away := hero.global_position - current_enemy.global_position if is_instance_valid(current_enemy) else home_point - hero.global_position
+		var directions: Array[Vector2] = [home_point - hero.global_position, away, Vector2.RIGHT, Vector2.DOWN, Vector2.LEFT, Vector2.UP, Vector2(1, 1), Vector2(-1, 1), Vector2(-1, -1), Vector2(1, -1)]
+		for direction: Vector2 in directions:
+			if bool(hero.get("dead")):
+				break
+			_set_direction(direction)
+			await create_timer(0.65).timeout
+			_set_direction(Vector2.ZERO)
+			back = _route(nav.cell_of(hero.global_position), start, nav, hero)
+			print("OPTIONAL_THREAT_ESCAPE input=%s pos=%s hp=%s path=%d" % [str(direction), str(hero.global_position), str(hero.get("health")), back.size()])
+			if not back.is_empty():
+				break
 	var walked_back := not back.is_empty() and await _walk_path(hero, back)
 	# Home is a room, not a single exact foot pixel. The path helper's last-cell
 	# tolerance can stop against furniture even after the Hero has entered it.
