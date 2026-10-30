@@ -493,22 +493,32 @@ func _body() -> void:
 	if deposit_wood == null:
 		_body_complete = true
 		return
-	await _click_window(root.get_final_transform() * deposit_wood.get_global_rect().get_center())
+	var storage_scroll := _owning_scroll(deposit_wood)
+	var wood_visible := storage_scroll != null and await _scroll_to(storage_scroll, deposit_wood)
+	_expect(wood_visible, "ordinary wheel input reveals the oak deposit button")
+	if wood_visible:
+		await _click_window(root.get_final_transform() * deposit_wood.get_global_rect().get_center())
 	_expect(_count(WOOD) == 1 and _count("binding_cloth") == 2 and int(fresh_chest.chest_contents().get(WOOD, 0)) == 1, "pointer deposits one oak without sweeping cloth")
 	var quantity := panel.find_child("Quantity", true, false) as SpinBox
 	if quantity != null:
 		await _click_window(root.get_final_transform() * (quantity.get_global_rect().position + Vector2(quantity.size.x - 8.0, quantity.size.y * 0.25)))
 	_expect(quantity != null and int(quantity.value) == 2, "pointer increases selective transfer quantity to two")
 	var deposit_cloth := panel.find_child("Deposit_binding_cloth", true, false) as Button
-	if deposit_cloth != null:
+	var cloth_visible := deposit_cloth != null and storage_scroll != null and await _scroll_to(storage_scroll, deposit_cloth)
+	_expect(cloth_visible, "ordinary wheel input reveals the cloth deposit button")
+	if cloth_visible:
 		await _click_window(root.get_final_transform() * deposit_cloth.get_global_rect().get_center())
+	print("HOME_STORAGE_TRACE after_cloth button=%s rect=%s qty=%s bag=%s chest=%s" % [str(deposit_cloth), str(deposit_cloth.get_global_rect() if deposit_cloth != null else Rect2()), str(quantity.value if quantity != null else -1), str(_save().call(&"inventory_totals")), str(fresh_chest.chest_contents())])
 	_expect(deposit_cloth != null and _count("binding_cloth") == 0 and int(fresh_chest.chest_contents().get("binding_cloth", 0)) == 2, "pointer deposits exactly two cloth")
 	# Reset to one with the corresponding lower SpinBox arrow.
 	if quantity != null:
 		await _click_window(root.get_final_transform() * (quantity.get_global_rect().position + Vector2(quantity.size.x - 8.0, quantity.size.y * 0.75)))
 	var take_wood := panel.find_child("Take_oak_wood", true, false) as Button
-	if take_wood != null:
+	var take_visible := take_wood != null and storage_scroll != null and await _scroll_to(storage_scroll, take_wood)
+	_expect(take_visible, "ordinary wheel input reveals the stored oak take button")
+	if take_visible:
 		await _click_window(root.get_final_transform() * take_wood.get_global_rect().get_center())
+	print("HOME_STORAGE_TRACE after_take button=%s rect=%s qty=%s bag=%s chest=%s" % [str(take_wood), str(take_wood.get_global_rect() if take_wood != null else Rect2()), str(quantity.value if quantity != null else -1), str(_save().call(&"inventory_totals")), str(fresh_chest.chest_contents())])
 	_expect(take_wood != null and _count(WOOD) == 2 and not fresh_chest.chest_contents().has(WOOD) and int(fresh_chest.chest_contents().get("binding_cloth", 0)) == 2, "pointer takes only the selected oak while cloth remains stored")
 	var close := panel.find_child("CloseChest", true, false) as Button
 	if close != null:
