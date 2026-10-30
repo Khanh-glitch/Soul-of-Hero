@@ -1,12 +1,18 @@
 class_name A6GuidancePanel
 extends PanelContainer
 
-## The starter checklist (D057), rendered from real committed progress.
+## The starter checklist (D057), rendered from the owner's durable run facts.
 ##
 ## Two shapes, both small:
 ##   * first run — the whole five-step chain, one line each, current step hinted;
 ##   * later runs — only the first unfinished step, because a returning player does
 ##     not need the tour again and D052 forbids clutter.
+##
+## Steps are tri-state. `✓` means the owner recorded the action as performed this
+## run, `•` means it is known to still be open, and `?` means nobody has published
+## that fact yet — which is not the same as "not done". A card full of unknowns
+## prints its progress as "—/5" with a muted "Chưa ghi nhận: N bước" instead of
+## claiming 0/5.
 ##
 ## The panel never blocks: it is a corner card with no scrim, the world keeps
 ## running underneath, and it can be dismissed for the session.
@@ -15,6 +21,7 @@ signal dismissed
 
 const DONE_COLOR := Color(0.46, 0.9, 0.66, 1)
 const OPEN_COLOR := Color(0.94, 0.9, 0.82, 1)
+const UNKNOWN_COLOR := Color(0.62, 0.58, 0.66, 1)
 const CLOSED_COLOR := Color(0.49, 0.46, 0.52, 1)
 
 @onready var kicker_label: Label = %Kicker
@@ -38,6 +45,7 @@ static func build_view(model: Dictionary, dismissed: bool) -> Dictionary:
 		return {"visible": false, "reason": "dismissed" if dismissed else String(model.get("reason", ""))}
 	var steps: Array = model.get("steps", [])
 	var completed := int(model.get("completed", 0))
+	var unknown := int(model.get("unknown", 0))
 	var total := int(model.get("total", steps.size()))
 	var mode := String(model.get("mode", "first_run"))
 	var current := -1
@@ -53,25 +61,35 @@ static func build_view(model: Dictionary, dismissed: bool) -> Dictionary:
 	var shown: Array = steps if mode == "first_run" else [steps[current]]
 	for step_value: Variant in shown:
 		var step: Dictionary = step_value
-		var is_done := bool(step.get("done", false))
+		var state := String(step.get("state", "unknown"))
 		rows.append({
-			"marker": "✓" if is_done else "•",
+			"marker": "✓" if state == "done" else ("?" if state == "unknown" else "•"),
 			"title": String(step.get("title", "")),
-			"hint": "" if is_done else String(step.get("hint", "")),
+			"hint": "" if state == "done" else String(step.get("hint", "")),
 			"evidence": String(step.get("evidence", "")),
-			"done": is_done,
+			"state": state,
+			"done": state == "done",
+			"unknown": state == "unknown",
 			"is_current": String(step.get("id", "")) == String((steps[current] as Dictionary).get("id", "")),
 		})
 	var kicker := "BẮT ĐẦU" if mode == "first_run" else "GỢI Ý"
-	var footnote := "Mẹo: mọi bước đều tự đánh dấu khi bạn đã làm" if mode == "first_run" else ""
+	# "0/5" would be a claim: with unknown steps we simply do not know how many are
+	# done, so the progress reads "—/5" and the footnote says why.
+	var progress := "—/%d" % total if unknown > 0 else "%d/%d" % [completed, total]
+	var footnote := ""
+	if unknown > 0:
+		footnote = "Chưa ghi nhận: %d bước" % unknown
+	elif mode == "first_run":
+		footnote = "Mẹo: mọi bước đều tự đánh dấu khi bạn đã làm"
 	return {
 		"visible": true,
 		"reason": "",
 		"kicker": kicker,
-		"progress": "%d/%d" % [completed, total],
+		"progress": progress,
 		"rows": rows,
 		"footnote": footnote,
 		"mode": mode,
+		"provisional": unknown > 0,
 	}
 
 
@@ -116,7 +134,7 @@ func _row_control(row: Dictionary) -> Control:
 	marker.text = String(row.get("marker", "•"))
 	marker.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	marker.custom_minimum_size = Vector2(12, 0)
-	marker.add_theme_color_override("font_color", DONE_COLOR if bool(row.get("done", false)) else OPEN_COLOR)
+	marker.add_theme_color_override("font_color", _state_color(String(row.get("state", "unknown"))))
 	line.add_child(marker)
 	var column := VBoxContainer.new()
 	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -143,6 +161,16 @@ func _row_control(row: Dictionary) -> Control:
 		column.add_child(evidence_label)
 	line.add_child(column)
 	return line
+
+
+func _state_color(state: String) -> Color:
+	match state:
+		"done":
+			return DONE_COLOR
+		"unknown":
+			return UNKNOWN_COLOR
+		_:
+			return OPEN_COLOR
 
 
 func _on_dismiss_pressed() -> void:

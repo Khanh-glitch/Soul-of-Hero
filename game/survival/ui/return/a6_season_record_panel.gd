@@ -24,6 +24,7 @@ const REASON_LABELS := {
 	"abandoned": "Bạn khép sớm",
 }
 
+@onready var notice_label: Label = %Notice
 @onready var now_label: Label = %NowLine
 @onready var run_list: VBoxContainer = %RunList
 @onready var runs_empty: Label = %RunsEmpty
@@ -43,7 +44,7 @@ static func build_view(history: Dictionary, clock: Dictionary, now_unix: int) ->
 	var history_available := bool(history.get("available", false))
 	var clock_available := bool(clock.get("available", false))
 	var now_line := ""
-	if bool(clock.get("available", false)):
+	if clock_available:
 		if A6ProjectionContract.is_run_over(clock, now_unix):
 			now_line = "Mùa %02d đã khép" % maxi(1, int(clock.get("run_number", 1)))
 		else:
@@ -80,13 +81,21 @@ static func build_view(history: Dictionary, clock: Dictionary, now_unix: int) ->
 			"detail": String(achievement.get("detail", "")),
 			"note": A6TimeFormat.day_month(earned) if earned > 0 else "",
 		})
+	# The one case that must never fall back to the scene's placeholder text: the
+	# owner published neither a season nor a history, so A6 knows nothing at all.
+	# Saying "you have never finished a season" would be a fabricated claim.
+	var notice := ""
+	if not history_available and not clock_available:
+		notice = "Chưa có dữ liệu mùa"
 	return {
-		"available": clock_available or history_available,
-		"reason": "" if (clock_available or history_available) else "record_unpublished",
+		"available": true,
+		"reason": "" if (history_available or clock_available) else "record_unpublished",
+		"notice": notice,
 		"now_line": now_line,
 		"runs": runs,
 		"achievements": achievements,
 		"history_available": history_available,
+		"clock_available": clock_available,
 		"runs_empty": EMPTY_RUNS if history_available else UNPUBLISHED_RUNS,
 		"achievements_empty": EMPTY_ACHIEVEMENTS if history_available else UNPUBLISHED_ACHIEVEMENTS,
 	}
@@ -95,9 +104,8 @@ static func build_view(history: Dictionary, clock: Dictionary, now_unix: int) ->
 func present(history: Dictionary, clock: Dictionary, now_unix: int) -> Dictionary:
 	var view := build_view(history, clock, now_unix)
 	_last_view = view
-	if not bool(view.get("available", false)):
-		clear()
-		return view
+	notice_label.text = String(view["notice"])
+	notice_label.visible = not notice_label.text.is_empty()
 	now_label.text = String(view["now_line"])
 	now_label.visible = not now_label.text.is_empty()
 	_fill(run_list, view["runs"], "run")

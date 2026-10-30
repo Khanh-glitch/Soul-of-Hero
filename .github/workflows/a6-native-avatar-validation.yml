@@ -420,7 +420,7 @@ jobs:
             timeout --signal=TERM --kill-after=20s 300s xvfb-run --auto-servernum -s "-screen 0 ${res}x24" \
               env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
               godot --path . --resolution "${res}" --rendering-driver opengl3 -- \
-              --a6-ui-capture --capture-dir="$PWD/.artifacts/captures-${res}" --capture-tag=return_${res} \
+              --a6-ui-capture --capture-dir="$PWD/.artifacts/captures-${res}" --capture-tag=return_preview \
               2>&1 | tee ".artifacts/capture-return-${res}.log"
             status=${PIPESTATUS[0]}
             echo "return UI capture ${res} exit: ${status}"
@@ -429,6 +429,11 @@ jobs:
               exit "${status}"
             fi
           done
+
+      - name: Verify each required return UI frame individually
+        run: |
+          set -euo pipefail
+          python3 tools/verify_a6_return_ui_captures.py .artifacts | tee .artifacts/return-ui-capture-verification.log
 
       - name: Assert every capture has the resolution it claims
         run: |

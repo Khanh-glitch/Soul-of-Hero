@@ -1,28 +1,38 @@
 extends Node
 
-## Renders the survival return cards so a human can look at them.
+## Renders the four survival return cards so a human can look at them.
 ##
 ## Run it on a machine that actually has a display server — the CI workflow uses
 ## `xvfb-run` with a software GL driver:
 ##
 ##   xvfb-run -s "-screen 0 1280x720x24" \
 ##     godot --path . --resolution 1280x720 --rendering-driver opengl3 -- \
-##     --a6-ui-capture --capture-dir="$PWD/.artifacts/captures-1280x720" --capture-tag=return_720p
+##     --a6-ui-capture --capture-dir="$PWD/.artifacts/captures-1280x720" --capture-tag=return_preview
 ##
-## The projections below are **preview fixtures**: they exist so the layout can be
-## inspected, and they must never be quoted as evidence that farming, forging or
-## research actually settled offline. The native gate
-## (`a6_survival_return_native_test.tscn`) is what proves behaviour.
+## Four states are required at every resolution: `digest`, `guidance`, `history`,
+## `empty`. The driver writes a manifest next to the PNGs with each frame's
+## dimensions, non-blank check and every visible string with its measured
+## rectangle and overflow verdict. It **fails** (exit 1) if fewer than four frames
+## were saved or if any text overflows its box, so a silent `save_png` failure can
+## never be reported as a capture.
+##
+## The projections below are **preview fixtures**. They exist so layout, clipping
+## and Vietnamese wrapping can be inspected, and they must never be quoted as
+## evidence that farming, forging or research actually settled offline. The native
+## gate (`a6_survival_return_native_test.tscn`) is what proves behaviour.
 ##
 ## In a headless binary this script prints `RENDERER REQUIRED` and exits 2, so an
 ## automated run can never mistake "no pixels" for "captures produced".
 
 const LAYER_SCENE: PackedScene = preload("res://game/survival/ui/return/a6_survival_return_layer.tscn")
 const NOW := 1793318400
+const REQUIRED_STATES := ["digest", "guidance", "history", "empty"]
 
 var _capture_dir := "user://a6_ui_captures"
-var _tag := "return"
+var _tag := "return_preview"
 var _saved: Array[String] = []
+var _entries: Array[Dictionary] = []
+var _overflows: Array[String] = []
 
 
 func _ready() -> void:
@@ -40,22 +50,38 @@ func _run() -> void:
 	await _capture("digest", {
 		"season_clock": _clock(2),
 		"return_digest": _digest(),
-		"guidance_facts": _facts(2, 0),
+		"current": _current(2, 1),
+		"run_facts": _facts(1),
 		"site_cues": _cues(),
 	})
 	await _capture("guidance", {
 		"season_clock": _clock(1),
-		"guidance_facts": _facts(7, 1),
+		"current": _current(7, 1),
 	})
-	await _capture("record", {
+	await _capture("history", {
 		"season_clock": _clock(2),
 		"run_history": _history(),
-		"guidance_facts": _facts(40, 3),
+		"current": _current(40, 3),
+		"run_facts": _facts(3),
 	}, true)
 	await _capture("empty", {})
+	_write_manifest()
+	var size := get_viewport().get_visible_rect().size
+	if _saved.size() < REQUIRED_STATES.size():
+		printerr("A6 UI CAPTURE: FAILED — saved %d of %d required frames at %dx%d" % [
+			_saved.size(), REQUIRED_STATES.size(), int(size.x), int(size.y),
+		])
+		get_tree().quit(1)
+		return
+	if not _overflows.is_empty():
+		printerr("A6 UI CAPTURE: FAILED — text overflow: " + ", ".join(_overflows))
+		get_tree().quit(1)
+		return
 	for path: String in _saved:
 		print("A6 UI CAPTURE: ", path)
-	print("A6 UI CAPTURE OK (%d files, %s)" % [_saved.size(), DisplayServer.get_name()])
+	print("A6 UI CAPTURE OK (%d frames, %s, %dx%d, preview data)" % [
+		_saved.size(), DisplayServer.get_name(), int(size.x), int(size.y),
+	])
 	get_tree().quit(0)
 
 
@@ -84,15 +110,105 @@ func _capture(state: String, overrides: Dictionary, open_record := false) -> voi
 		layer.open_record()
 	await _settle(6)
 	var viewport_size := get_viewport().get_visible_rect().size
-	var image := get_viewport().get_texture().get_image()
+	var frame := get_viewport().get_texture().get_image()
 	var file := "%s/%s_%s_%dx%d.png" % [_capture_dir, _tag, state, int(viewport_size.x), int(viewport_size.y)]
-	var error := image.save_png(file)
-	if error != OK:
-		printerr("A6 UI CAPTURE: failed to save %s (error %d)" % [file, error])
+	var saved := false
+	if frame == null or frame.is_empty():
+		printerr("A6 UI CAPTURE: %s produced no image" % state)
 	else:
-		_saved.append(file)
+		var error := frame.save_png(file)
+		if error != OK:
+			printerr("A6 UI CAPTURE: failed to save %s (error %d)" % [file, error])
+		else:
+			saved = true
+			_saved.append(file)
+	_entries.append({
+		"state": state,
+		"file": file,
+		"saved": saved,
+		"width": int(viewport_size.x),
+		"height": int(viewport_size.y),
+		"non_blank": _is_non_blank(frame) if frame != null and not frame.is_empty() else false,
+		"texts": _audit_texts(layer, state),
+	})
 	layer.queue_free()
 	await _settle(2)
+
+
+## A frame that is one flat colour is a failed render, not a passed capture.
+func _is_non_blank(frame: Image) -> bool:
+	if frame.get_width() < 8 or frame.get_height() < 8:
+		return false
+	var seen := {}
+	for y in range(0, frame.get_height(), maxi(1, frame.get_height() / 24)):
+		for x in range(0, frame.get_width(), maxi(1, frame.get_width() / 24)):
+			seen[frame.get_pixel(x, y).to_rgba32()] = true
+			if seen.size() > 8:
+				return true
+	return seen.size() > 3
+
+
+## Every visible string with the box it was drawn into. Clipping is a layout bug a
+## headless geometry test cannot see, so the renderer run reports it explicitly.
+func _audit_texts(layer: Node, state: String) -> Array[Dictionary]:
+	var texts: Array[Dictionary] = []
+	var screen := Rect2(Vector2.ZERO, get_viewport().get_visible_rect().size)
+	for node: Node in layer.find_children("*", "Control", true, false):
+		var control := node as Control
+		if control == null or not control.is_visible_in_tree():
+			continue
+		var text := ""
+		var autowrap := false
+		if control is Label:
+			text = (control as Label).text
+			autowrap = (control as Label).autowrap_mode != TextServer.AUTOWRAP_OFF
+		elif control is Button:
+			text = (control as Button).text
+		if text.strip_edges().is_empty():
+			continue
+		var rect := control.get_global_rect()
+		var entry := {
+			"state": state,
+			"text": text,
+			"rect": [rect.position.x, rect.position.y, rect.size.x, rect.size.y],
+			"inside_screen": screen.encloses(rect),
+			"overflow": false,
+		}
+		if not bool(entry["inside_screen"]):
+			_overflows.append("%s: '%s' leaves the viewport" % [state, text])
+		if not autowrap:
+			var font := control.get_theme_font("font")
+			var font_size := control.get_theme_font_size("font_size")
+			if font != null:
+				var width := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
+				if width > rect.size.x + 1.0:
+					entry["overflow"] = true
+					_overflows.append("%s: '%s' needs %.0f px, has %.0f px" % [state, text, width, rect.size.x])
+		texts.append(entry)
+	return texts
+
+
+func _write_manifest() -> void:
+	var viewport_size := get_viewport().get_visible_rect().size
+	var manifest := {
+		"renderer": DisplayServer.get_name(),
+		"resolution": "%dx%d" % [int(viewport_size.x), int(viewport_size.y)],
+		"data": "preview_fixture",
+		"note": "Synthetic projections for layout review; not evidence of offline settlement.",
+		"backdrop": "layer_only",
+		"required_states": REQUIRED_STATES,
+		"saved_count": _saved.size(),
+		"overflows": _overflows,
+		"frames": _entries,
+	}
+	var file := "%s/%s_manifest_%dx%d.json" % [_capture_dir, _tag, int(viewport_size.x), int(viewport_size.y)]
+	var handle := FileAccess.open(file, FileAccess.WRITE)
+	if handle == null:
+		printerr("A6 UI CAPTURE: cannot write %s" % file)
+		return
+	handle.store_string(JSON.stringify(manifest, "  "))
+	handle.close()
+	print("A6 UI CAPTURE manifest: ", file)
 
 
 func _settle(frames: int) -> void:
@@ -126,28 +242,40 @@ func _digest() -> Dictionary:
 			{"kind": "forge", "completed_units": 6, "unit_label": "thỏi sắt", "stop_reason": "fuel_empty"},
 			{"kind": "crop", "completed_units": 4, "unit_label": "củ cải", "stop_reason": "output_full"},
 		],
-		"provisions": {"consumed": 3, "shelter": "home", "hp_floor": true},
+		"provisions": {"consumed": 3, "shelter": "home", "shelter_validated": true, "hp_floor": true},
 		"world_changes": ["Cây cầu gần nhà đã sập"],
 	}
 
 
-func _facts(materials: int, structures: int) -> Dictionary:
+func _current(materials: int, structures: int) -> Dictionary:
 	return {
 		"available": true,
 		"materials": materials,
 		"structures": structures,
-		"bed": structures >= 1,
-		"storage": structures >= 2,
-		"recipes": 0 if structures < 2 else 1,
+		"bed": structures >= 2,
+		"storage": structures >= 3,
+		"recipes": 0 if structures < 3 else 1,
+	}
+
+
+func _facts(run_number: int) -> Dictionary:
+	return {
+		"contract": "soh.a6.run_facts.v1",
+		"run_number": run_number,
+		"performed": {"gather_materials": true},
+		"holds": {"materials": 2},
+		"shelter": {"validated": true},
 	}
 
 
 func _cues() -> Dictionary:
 	return {
-		"contract": "soh.a6.site_cues.v1",
+		"contract": "soh.a6.site_cues.v2",
 		"observed_at_unix": NOW,
-		"trail": {"present": true, "age_seconds": 5400},
-		"threats": [{"distance_m": 42.0, "label": "Tiếng bước chân"}],
+		"cues": [
+			{"channel": "trace", "age_seconds": 5400, "ttl_seconds": 10800},
+			{"channel": "sound", "direction": "left", "age_seconds": 120, "ttl_seconds": 900},
+		],
 	}
 
 

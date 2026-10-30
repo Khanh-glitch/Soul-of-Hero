@@ -1,12 +1,17 @@
 class_name A6OwnerProjectionSource
 extends RefCounted
 
-## Reads A0/A1/A3 projections and nothing else.
+## Reads A0/A1/A3 projections and the *current* survival state, and nothing else.
 ##
-## The return UI must be mountable without those owners having shipped a season
-## clock yet, so every accessor degrades to an "unavailable" contract value that
-## the components render as *nothing*. There is no default, no guess and no local
-## substitute: a missing projection can never become a visible countdown, a
+## The distinction matters for D057. Current state (what is in the bag, which
+## structures stand right now) is readable today and is shown as current state.
+## Durable history (did the player ever gather six materials this run?) is owned by
+## A0 and only arrives as `soh.a6.run_facts.v1`; A6 will not guess it from the bag,
+## because spending materials is not un-gathering them.
+##
+## Every accessor degrades to an "unavailable" contract value when the owner has
+## published nothing. There is no default, no guess and no local substitute: a
+## missing projection can never become a visible countdown, a completed quest, a
 ## fabricated output or a safety verdict.
 ##
 ## Tests inject callables through `configure()`; in the game the source resolves
@@ -19,7 +24,9 @@ const SURVIVAL_SERVICE_PATH := "/root/SurvivalService"
 ## Owner method names A6 will call when they exist. Any one of them is enough;
 ## the contract string inside the returned dictionary decides whether it is used.
 const SEASON_CLOCK_METHODS := ["get_season_projection", "get_run_season_projection", "get_run_projection"]
+const RUN_FACTS_METHODS := ["get_run_guidance_facts", "get_run_facts_projection", "get_guidance_projection"]
 const RETURN_DIGEST_METHODS := ["get_offline_return_digest", "get_return_digest"]
+const DIGEST_ACK_METHODS := ["get_return_digest_acknowledgements", "get_return_digest_ack_projection"]
 const RUN_HISTORY_METHODS := ["get_profile_history_projection", "get_run_history_projection"]
 const SITE_CUE_METHODS := ["get_site_cue_projection", "get_signs_projection"]
 
@@ -40,9 +47,19 @@ func season_clock() -> Dictionary:
 	return A6ProjectionContract.sanitize_season_clock(raw)
 
 
+func run_facts() -> Dictionary:
+	var raw: Variant = _read_override_or_owner("run_facts", SAVE_SERVICE_PATH, RUN_FACTS_METHODS)
+	return A6ProjectionContract.sanitize_run_facts(raw)
+
+
 func return_digest() -> Dictionary:
 	var raw: Variant = _read_override_or_owner("return_digest", SAVE_SERVICE_PATH, RETURN_DIGEST_METHODS)
 	return A6ProjectionContract.sanitize_return_digest(raw)
+
+
+func digest_ack() -> Dictionary:
+	var raw: Variant = _read_override_or_owner("digest_ack", SAVE_SERVICE_PATH, DIGEST_ACK_METHODS)
+	return A6ProjectionContract.sanitize_digest_ack(raw)
 
 
 func run_history() -> Dictionary:
@@ -57,55 +74,49 @@ func site_cues() -> Dictionary:
 	return A6ProjectionContract.sanitize_site_cues(raw)
 
 
-# --- guidance facts ---------------------------------------------------------
+# --- guidance inputs --------------------------------------------------------
 #
-# D057 requires the starter guidance to accept actions the player legitimately
-# already performed, in any order. These facts are therefore read from committed
-# A0 state every time the panel refreshes instead of from a step counter.
+# Two separate things, never merged:
+#   * `run_facts`  — the owner's durable ledger (may be absent);
+#   * `current`    — what A6 can literally read right now (bag, structures,
+#                    learned recipes). Shown as "đang có", never as "đã xong".
 
-## Real, already-committed player activity. Every field is either a count A0 owns
-## or zero; `available` says whether the survival block could be read at all.
-func guidance_facts() -> Dictionary:
-	var facts := {
+func guidance_inputs() -> Dictionary:
+	return {"run_facts": run_facts(), "current": current_survival_state()}
+
+
+func current_survival_state() -> Dictionary:
+	var state := {
 		"available": false,
 		"reason": "survival_state_missing",
-		"materials": 0,
+		"materials": -1,
 		"structures": 0,
 		"bed": false,
 		"storage": false,
 		"recipes": 0,
-		"player_level": 1,
-		"deaths": 0,
 	}
-	var override: Variant = _overrides.get("guidance_facts", null)
+	var override: Variant = _overrides.get("current", null)
 	if override != null:
 		var injected: Variant = _call_override(override)
 		if injected is Dictionary:
-			return _merge_facts(facts, injected as Dictionary)
+			return _merge_current(state, injected as Dictionary)
 	var survival := _node(SURVIVAL_SERVICE_PATH)
 	if survival == null:
-		return facts
-	facts["available"] = true
-	facts["reason"] = ""
-	facts["materials"] = _survival_material_total(survival)
-	facts["structures"] = int(survival.call(&"structure_count")) if survival.has_method(&"structure_count") else 0
+		return state
+	state["available"] = true
+	state["reason"] = ""
+	state["materials"] = _survival_material_total(survival)
+	state["structures"] = int(survival.call(&"structure_count")) if survival.has_method(&"structure_count") else 0
 	var pieces := _structure_pieces(survival)
-	facts["bed"] = pieces.has("bed_wood")
-	facts["storage"] = pieces.has("chest_wood")
+	state["bed"] = pieces.has("bed_wood")
+	state["storage"] = pieces.has("chest_wood")
 	var document := _call_dict(survival, &"document")
 	var knowledge: Variant = document.get("knowledge", {})
 	if knowledge is Dictionary:
 		var recipes: Variant = (knowledge as Dictionary).get("recipes", {})
 		if recipes is Dictionary:
-			facts["recipes"] = (recipes as Dictionary).size()
-	var counters: Variant = document.get("counters", {})
-	if counters is Dictionary:
-		facts["deaths"] = int((counters as Dictionary).get("deaths", 0))
-	var save := _node(SAVE_SERVICE_PATH)
-	if save != null and save.has_method(&"get_player_progression_snapshot"):
-		var progression: Dictionary = save.call(&"get_player_progression_snapshot")
-		facts["player_level"] = maxi(1, int(progression.get("player_level", 1)))
-	return facts
+			state["recipes"] = (recipes as Dictionary).size()
+	return state
 
 
 func _survival_material_total(survival: Node) -> int:
@@ -134,14 +145,14 @@ func _structure_pieces(survival: Node) -> Dictionary:
 	return pieces
 
 
-func _merge_facts(facts: Dictionary, injected: Dictionary) -> Dictionary:
-	var merged := facts.duplicate(true)
+func _merge_current(state: Dictionary, injected: Dictionary) -> Dictionary:
+	var merged := state.duplicate(true)
 	merged["available"] = bool(injected.get("available", true))
 	merged["reason"] = String(injected.get("reason", ""))
-	for key: String in ["materials", "structures", "recipes", "player_level", "deaths"]:
+	for key: String in ["materials", "structures", "recipes"]:
 		if injected.has(key) and (injected[key] is int or injected[key] is float):
-			merged[key] = maxi(0, int(injected[key]))
-	merged["player_level"] = maxi(1, int(merged["player_level"]))
+			merged[key] = int(injected[key])
+	merged["materials"] = maxi(-1, int(merged["materials"]))
 	for key: String in ["bed", "storage"]:
 		if injected.has(key):
 			merged[key] = bool(injected[key])

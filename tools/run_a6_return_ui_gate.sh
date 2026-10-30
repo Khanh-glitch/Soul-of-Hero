@@ -11,6 +11,9 @@ set -uo pipefail
 ENGINE="${1:-godot}"
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SAVE_DIR="${A6_RETURN_SAVE_DIR:-user://a6_return_gate}"
+# Overridable so the harness itself can be proven fail-closed (see the negative
+# check in the hand-off report); production runs use the default.
+SCENE="${A6_RETURN_SCENE:-res://tests/survival/ui/a6_survival_return_native_test.tscn}"
 
 if [ ! -x "$ENGINE" ] && ! command -v "$ENGINE" >/dev/null 2>&1; then
 	echo "engine not found: $ENGINE" >&2
@@ -43,8 +46,7 @@ fi
 echo "== native scene run =="
 export SOUL_OF_HERO_SAVE_PATH="${SAVE_DIR}.json"
 LOG="${TMPDIR:-/tmp}/a6_return_ui_gate.log"
-timeout --signal=TERM --kill-after=15s 300s "$ENGINE" --headless --path . \
-	res://tests/survival/ui/a6_survival_return_native_test.tscn 2>&1 | tee "$LOG"
+timeout --signal=TERM --kill-after=15s 300s "$ENGINE" --headless --path . "$SCENE" 2>&1 | tee "$LOG"
 run_status=${PIPESTATUS[0]}
 if [ "$run_status" -ne 0 ]; then
 	echo "FAILED: the return UI gate exited ${run_status}" >&2

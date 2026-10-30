@@ -42,6 +42,8 @@ var _seen_digests: Dictionary = {}
 var _active_digest_id := ""
 var _tick := 0.0
 var _configured := false
+var _last_clock: Dictionary = {}
+var _last_cues: Dictionary = {}
 
 
 func _ready() -> void:
@@ -70,13 +72,17 @@ func configure(tree: SceneTree, overrides: Dictionary = {}, now_provider: Callab
 func refresh() -> void:
 	var now := now_seconds()
 	var clock := _source.season_clock()
+	_last_clock = clock
 	run_card.present(clock, now)
-	guidance_panel.present(A6GuidanceModel.build(_source.guidance_facts(), clock), _guidance_dismissed)
-	site_cue_chip.present(_source.site_cues())
+	var inputs := _source.guidance_inputs()
+	guidance_panel.present(A6GuidanceModel.build(inputs, clock), _guidance_dismissed)
+	_last_cues = _source.site_cues()
+	site_cue_chip.present(_last_cues, now)
 	var digest := _source.return_digest()
 	if bool(digest.get("available", false)):
 		var digest_id := String(digest.get("digest_id", ""))
-		if not _seen_digests.has(digest_id):
+		var acknowledged := _is_digest_acknowledged(digest_id)
+		if not _seen_digests.has(digest_id) and not acknowledged:
 			_active_digest_id = digest_id
 			return_digest.present(digest)
 		else:
@@ -87,6 +93,16 @@ func refresh() -> void:
 	if record_panel.visible:
 		record_panel.present(_source.run_history(), clock, now)
 	_place_cards()
+
+
+## Owner-side memory of an already-shown digest. A6 only reads it, which is how a
+## "Continue" survives a process restart without A6 owning a second save file.
+func _is_digest_acknowledged(digest_id: String) -> bool:
+	if digest_id.is_empty():
+		return false
+	var ack := _source.digest_ack()
+	var list: Variant = ack.get("acknowledged", [])
+	return list is Array and (list as Array).has(digest_id)
 
 
 func now_seconds() -> int:
@@ -119,6 +135,7 @@ func dismiss_guidance() -> void:
 	_on_guidance_dismissed()
 
 
+
 func _on_guidance_dismissed() -> void:
 	_guidance_dismissed = true
 	guidance_panel.clear()
@@ -145,13 +162,19 @@ func _on_digest_dismissed() -> void:
 
 
 func _process(delta: float) -> void:
-	if not run_card.visible:
+	# Re-evaluate the cached projections once a second so a countdown really ticks
+	# and a D061 cue really expires. No owner method is called from here.
+	if not run_card.visible and not site_cue_chip.visible:
 		return
 	_tick += delta
 	if _tick < 1.0:
 		return
 	_tick = 0.0
-	run_card.present(_source.season_clock(), now_seconds())
+	var now := now_seconds()
+	if run_card.visible and not _last_clock.is_empty():
+		run_card.present(_last_clock, now)
+	if site_cue_chip.visible and not _last_cues.is_empty():
+		site_cue_chip.present(_last_cues, now)
 
 
 func _place_cards() -> void:
