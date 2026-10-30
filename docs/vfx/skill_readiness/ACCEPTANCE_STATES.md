@@ -43,19 +43,19 @@ Evidence: native runtime run `40930552334` at `bec65d1`. Verdicts were read from
 | 013 | yes (runtime differential PASS run 41112546494 job 124265302143 @3dcf03a) | yes (seed 7, first_divergent_tick -1) | registered (host matrix; lifecycle verdict pending) | earlier tick-320 failure cured by scheduler yield-0 + resolve hypot fixes (observed PASS, no 013-specific change) |
 | 014 | yes | yes (seed 7) | yes (host PASS) | none recorded |
 | 015 | runs (probe) | no: event-32 knockback | no adapter | differential FAIL at `40930552334`; unresolved queue |
-| 016 | runs (probe) | no: tick-195 raster | no adapter | differential FAIL at `40930552334`; unresolved queue |
+| 016 | yes (candidate PASS run 41141994780 @f8512b8) | yes (seed 7, first_divergent_tick -1) | registered (host matrix; lifecycle verdict pending) | root cause: crystal-death tint wrap order in draw_enemy (fixed f8512b8) |
 | 017 | yes | yes (seed 7) | yes (host PASS) | none recorded |
 | 018 | yes | yes (seed 7) | yes (host PASS) | none recorded |
 | 019 | yes | yes (seed 7) | yes (host PASS) | none recorded |
 | 020 | no (not registered) | no | no | tick-180 raster blocked on original TypeScript; see VENOMWRIGHT_020_TICK180_BLOCKER.md |
 | 021 | yes | yes (seed 7) | yes (host PASS) | none recorded |
 
-All HOST_CASTABLE entries are library-level (20 registered: all but 016; run 41112546494 host-lifecycle SUCCESS for skills 1,2,3,4,5,6,8,9,10,11,12,14,15,17,18,19; 007/013 verdicts pending, 020 adapter fixed at 25dd773, 021 wall-clock FAIL 537s>180s). None of them is HOST_ADAPTER_VERIFIED, GOLD_VISUAL_COMPARISON_READY, OWNER_VISUAL_APPROVED or PRODUCTION_INTEGRATED. The 21/21 target is not met: 016 parity and 021 wall-clock remain open. ARCANA III: original source available; foundation (util RNG/easing/noise) ported and Node-verified, renderer port not started (see `arcana/ARCANA_001_SOURCE_AUDIT.md`).
+All HOST_CASTABLE entries are library-level (21 registered (all Venomwright); run 41112546494 host-lifecycle SUCCESS for skills 1,2,3,4,5,6,8,9,10,11,12,14,15,17,18,19; 007/013 verdicts pending, 020 adapter fixed at 25dd773, 021 wall-clock FAIL 537s>180s). None of them is HOST_ADAPTER_VERIFIED, GOLD_VISUAL_COMPARISON_READY, OWNER_VISUAL_APPROVED or PRODUCTION_INTEGRATED. Parity + registration now cover 21/21 (016 registered at this commit; host-lifecycle verdict pending). Remaining open items: 021 wall-clock (404.6s vs 180s after perf round 1; rounds 2-3 in flight), native runtime contract (ARCANA RNG step failures under investigation), and all visual/production states. ARCANA III: original source available; foundation (util RNG/easing/noise) ported and Node-verified, renderer port not started (see `arcana/ARCANA_001_SOURCE_AUDIT.md`).
 
 ## Gaps recorded from the repo (not yet closed)
 
 1. RESOLVED 2026-10-30: both original ZIPs are committed in-branch at `prototypes/skill_readiness/original_sources/` and SHA-256 verified (`8402633c…677d`, `ab0dba56…d716`). The earlier private-vault 403 and `GOLD93_ARCHIVE_KEY` gaps are superseded for this branch. Original Node reference renders view A locally; extracted sources stay in `/tmp`, never committed.
 2. `docs/vfx/skill_readiness/captures/venomwright_006/` contains frames produced by the native port (manifest `engine`). They are not GOLD reference frames.
 3. The generic `integration/external_adapter_sample.gd` is not wired to any venomwright skill id.
-4. 016 is not verified (see RESTART_CHECKPOINT.md). It is not registered as host-castable.
+4. All 21 Venomwright skills are parity-verified and registered; 016 was the last (see RESTART_CHECKPOINT.md).
 5. 020 is unregistered. Its tick-180 raster mismatch needs the original per-object state (see VENOMWRIGHT_020_TICK180_BLOCKER.md).

@@ -394,11 +394,6 @@ func _run_seed(sid: int, oracle: Dictionary, canonical: String) -> bool:
 		# unresolved raster skills (compact GOLD93_OBJ lines; identical format
 		# from the Node reference `objhash` mode, tick list passed as argv 6).
 		w.objhash_on = OBJ_TICKS.has(sid) and n in OBJ_TICKS[sid]
-		if sid == 16 and (n == 191 or n == 192):
-			var fi: int = 0
-			for f in w.fx:
-				print("GOLD93_FXL t=%d %d kind=%s age=%0.17f x=%0.17f y=%0.17f sz=%0.17f life=%0.17f dead=%s litC=%d dark=%d edge=%d" % [n, fi, String(f.get("kind")), float(f.get("age")), float(f.get("x")), float(f.get("y")), float(f.get("sz")) if f.get("sz") != null else -1.0, float(f.get("life")) if f.get("life") != null else -1.0, str(bool(f.get("dead"))), int(f.get("litC")) if f.get("litC") != null else -1, int(f.get("dark")) if f.get("dark") != null else -1, int(f.get("edge")) if f.get("edge") != null else -1])
-				fi += 1
 		if sid == 7:
 			w.hatch_trace = n >= 110 and n <= 210
 		if w.objhash_on:
@@ -419,16 +414,6 @@ func _run_seed(sid: int, oracle: Dictionary, canonical: String) -> bool:
 				part += 1
 				i0 += 10
 			w.objhash_on = false
-		if sid == 16 and n == 192:
-			for e in w.enemies:
-				if int(e.get("id")) == 7 or int(e.get("id")) == 13:
-					print("GOLD93_ENY id=%d x=%0.17f y=%0.17f kx=%0.17f ky=%0.17f hp=%0.17f dying=%0.17f dyT=%0.17f dyKind=%s stag=%0.17f squash=%0.17f walk=%0.17f face=%0.17f lunge=%0.17f spawn=%0.17f poison=%d kind=%s variant=%d flash=%0.17f" % [int(e.get("id")), float(e.get("x")), float(e.get("y")), float(e.get("kx")), float(e.get("ky")), float(e.get("hp")), float(e.get("dying")), float(e.get("dyT")), String(e.get("dyKind")), float(e.get("stagger")), float(e.get("squash")), float(e.get("walk")), float(e.get("face")), float(e.get("lunge")), float(e.get("spawn")), (e.get("poison") as Array).size(), String(e.get("kind")), int(e.get("variant")), float(e.get("flash"))])
-			var sb: PackedByteArray = g["s"].bytes
-			for gy in range(536, 568):
-				var ctx := HashingContext.new()
-				ctx.start(HashingContext.HASH_SHA256)
-				ctx.update(sb.slice((gy * 1200 + 688) * 4, (gy * 1200 + 716) * 4))
-				print("GOLD93_PXD %d %s" % [gy, ctx.finish().hex_encode().substr(0, 12)])
 		if sid == 7 and (n == 89 or n == 90 or n == 264 or n == 265):
 			# 12x10 block grid (100x68 px each) scene hashes, chunked per line.
 			var blks: Array = []

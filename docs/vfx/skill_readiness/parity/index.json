@@ -512,5 +512,22 @@
   "skill": 13,
   "status": "PASS",
   "ticks": 320
+ },
+ "venomwright:016": {
+  "compared_ticks": 99,
+  "cue_mismatch": "",
+  "cues_native": 173,
+  "cues_original": 173,
+  "evidence": "CI candidate run 41141994780 (candidate differential lane) at commit f8512b8: GOLD93_VENOM_DIFFERENTIAL PASS, first_divergent_tick -1, seed 7. Root cause of the earlier tick-195 failure: crystal-death tint composition order in draw_enemy \u2014 the original wraps the whole tint filter (C = c => mix(b(c), P.y1, 0.75), flash included), native applied ck=0.75 before flash; first visible at tick 192 when enemy 13 died by crystal with flash=1 (bisected via GOLD93_OBJ cumulative hashes: first divergent draw up.fx#9 attribution resolved to enemy 13's draw between up.fx#8 and up.fx#9).",
+  "first_divergent_tick": -1,
+  "first_mismatch": "",
+  "hit_mismatch": "",
+  "hits_native": 15,
+  "hits_original": 15,
+  "recorded_utc": "2026-10-31",
+  "seed": 7,
+  "skill": 16,
+  "status": "PASS",
+  "ticks": 415
  }
 }
