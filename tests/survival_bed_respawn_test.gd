@@ -211,6 +211,18 @@ func _body() -> void:
 		_expect(bool(economy_adapter.ownership_audit().get("ok", false)), "A3 custody audit survives chest retrieval")
 		_expect(chest_node.interaction_verb() == "stash" and chest_node.interact(hero) and _count(STONE) == 0 and _count(token) == 1, "ordinary materials can be stashed again without touching the instance")
 		_expect(chest_node.interaction_verb() == "take" and int((svc.call(&"container_contents", chest_id) as Dictionary).get(STONE, 0)) == 1, "stored material remains recoverable with the token retained")
+		# Fixture-funded A3 token: inspect the real selective modal, without
+		# claiming this is an ordinary-input or human unique-item journey.
+		var chest_panel := ow.get(&"chest_panel") as CanvasLayer
+		var modal_opened := chest_panel != null and bool(chest_panel.call(&"open_chest", chest_node, hero, svc))
+		_expect(modal_opened, "selective modal opens against the real mixed A3 custody")
+		if modal_opened:
+			await process_frame
+			var unique_button := chest_panel.find_child("Deposit_" + token, true, false) as Button
+			var stone_button := chest_panel.find_child("Take_" + STONE, true, false) as Button
+			_expect(unique_button != null and unique_button.disabled and stone_button != null and not stone_button.disabled, "protected unique stays visible but disabled while ordinary stored stone is selectable")
+			_expect(_count(token) == 1 and bool(economy_adapter.ownership_audit().get("ok", false)), "opening mixed modal leaves unique A3 identity and audit unchanged")
+			chest_panel.call(&"close_panel")
 
 	_expect(bool(svc.call(&"learn_recipe", "bed_test_recipe", "test", "survival.test.recipe")), "learned knowledge committed")
 	_expect(_give(STONE, 3), "carried materials granted before death")
