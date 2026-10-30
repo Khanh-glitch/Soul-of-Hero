@@ -109,6 +109,12 @@ jobs:
         run: |
           bash prototypes/skill_readiness/tools/ci/run_gate.sh render 600 'GOLD93_RENDER: PASS' res://prototypes/skill_readiness/tests/gold93_render_surface_test.gd
 
+      - name: ARCANA III foundation (original util.ts RNG/easing/noise vectors)
+        if: always()
+        shell: bash
+        run: |
+          bash prototypes/skill_readiness/tools/ci/run_gate.sh arcana-ref 600 'GOLD93_ARCANA_REFERENCE: PASS' res://prototypes/skill_readiness/tests/gold93_arcana_reference_test.gd
+
       - name: Venomwright raster core is bit-exact against the original source
         if: always()
         shell: bash

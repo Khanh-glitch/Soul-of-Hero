@@ -104,7 +104,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -171,7 +171,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -238,7 +238,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -305,7 +305,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -372,7 +372,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -439,7 +439,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -506,7 +506,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -573,7 +573,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -640,7 +640,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -707,7 +707,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -774,7 +774,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -841,7 +841,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -908,7 +908,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -975,7 +975,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -1042,7 +1042,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -1109,7 +1109,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -1176,7 +1176,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -1243,7 +1243,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -1310,7 +1310,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -1377,7 +1377,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -1444,7 +1444,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -1511,7 +1511,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -1578,7 +1578,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -1645,7 +1645,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -1712,7 +1712,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -1779,7 +1779,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -1846,7 +1846,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -1913,7 +1913,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -1980,7 +1980,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -2047,7 +2047,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -2114,7 +2114,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -2181,7 +2181,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -2248,7 +2248,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -2315,7 +2315,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -2382,7 +2382,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -2449,7 +2449,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -2516,7 +2516,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -2583,7 +2583,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -2650,7 +2650,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -2717,7 +2717,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -2784,7 +2784,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -2851,7 +2851,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -2918,7 +2918,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -2985,7 +2985,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -3052,7 +3052,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -3119,7 +3119,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -3186,7 +3186,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -3253,7 +3253,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -3320,7 +3320,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -3387,7 +3387,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -3454,7 +3454,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -3521,7 +3521,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -3588,7 +3588,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -3655,7 +3655,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -3722,7 +3722,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -3789,7 +3789,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -3856,7 +3856,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -3923,7 +3923,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -3990,7 +3990,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -4057,7 +4057,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -4124,7 +4124,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -4191,7 +4191,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -4258,7 +4258,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -4325,7 +4325,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -4392,7 +4392,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -4459,7 +4459,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -4526,7 +4526,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -4593,7 +4593,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -4660,7 +4660,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -4727,7 +4727,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -4794,7 +4794,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -4861,7 +4861,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -5408,7 +5408,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -5442,7 +5442,7 @@
       "source_target_class": "multi",
       "skill_gold_candidate_unreviewed": false,
       "native_status": "NOT_PORT_READY",
-      "native_module_path": null,
+      "native_module_path": "prototypes/skill_readiness/skills/venomwright/v008_source_native.gd",
       "native_port_ready": false,
       "gold_visual_approved": false,
       "gameplay_configured": false,
@@ -5481,9 +5481,9 @@
         "webgl_test_run": null,
         "performance_2k_4k": null
       },
-      "native_executable": false,
-      "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "native_executable": true,
+      "native_executable_evidence": "Candidate differential PASS at 5023485, run 41000928886 job 123884876907: GOLD93_VENOM_DIFFERENTIAL PASS, first_divergent_tick -1, cues 121/121, hits 32/32, ticks 330. Registered in gold93_runtime MODULE_PATHS/SOURCE_NATIVE_IDS at 5bd8967. Host lifecycle: pending CI (host matrix includes 8 from 4bf0769). SOURCE_PARITY_VERIFIED yes (seed 7); HOST_CASTABLE_VERIFIED pending; NATIVE_PORT_READY/OWNER_VISUAL_APPROVED not promoted.",
+      "source_material_blocker": null,
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -5878,7 +5878,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -6033,7 +6033,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -6108,7 +6108,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -6423,7 +6423,7 @@
       },
       "native_executable": false,
       "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "source_material_blocker": "Original source archive IS available in-branch (prototypes/skill_readiness/original_sources/, SHA-256 verified). Remaining gap is per-skill porting/verification, not source access.",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",

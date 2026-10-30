@@ -152,6 +152,7 @@ func _test_darkening() -> void:
 	d.step(0.11)  # total 0.21 s > 0.20 s
 	_check(a.modulate == base_a and b.modulate == base_b, "fade-out returns exactly to the original modulate")
 
+	# (adaptive Gate 8 checks live in _test_adaptive_darkening below.)
 	# Strength clamps and the Lab-adjustable value.
 	d.set_strength(0.9)
 	_check(absf(d.strength - DARKEN.MAX_STRENGTH) < 0.0001, "strength clamps to max")
@@ -170,3 +171,34 @@ func _test_darkening() -> void:
 	_check(a.modulate == base_a, "restore is exact and immediate")
 	a.free()
 	other.free()
+
+
+func _test_adaptive_darkening() -> void:
+	# Gate 8 policy (pure): dark baseline -> 0, bright baseline -> capped.
+	_check(DARKEN.adaptive_attenuation(0.10) == 0.0, "adaptive: dark map (0.10) gets no darkening")
+	_check(DARKEN.adaptive_attenuation(0.23) == 0.0, "adaptive: at threshold gets no darkening")
+	var bright: float = DARKEN.adaptive_attenuation(0.44)
+	_check(absf(bright - DARKEN.ADAPTIVE_MAX_ATTENUATION) < 0.0001, "adaptive: bright map (0.44) caps at max attenuation (got %f)" % bright)
+	var mid: float = DARKEN.adaptive_attenuation(0.27)
+	_check(mid > 0.39 and mid < 0.42, "adaptive: 0.27 luminance -> ~0.407 attenuation (got %f)" % mid)
+
+	# Adaptive controller: unsampled baseline darkens nothing; after sampling a
+	# bright baseline it reaches the policy strength and restores exactly.
+	var a := Node2D.new()
+	a.modulate = Color(0.74, 0.78, 0.86, 1.0)
+	var base: Color = a.modulate
+	var d = DARKEN.new()
+	d.attach([a])
+	d.adaptive = true
+	_check(d.effective_strength() == 0.0, "adaptive: no baseline sampled -> no darkening")
+	d.baseline_luminance = 0.44
+	d.request("cast_a", true)
+	for _i in range(30):
+		d.step(1.0 / 60.0)
+	var want: float = base.r * (1.0 - DARKEN.ADAPTIVE_MAX_ATTENUATION)
+	_check(absf(a.modulate.r - want) < 0.0001, "adaptive: full level applies policy strength (got %f want %f)" % [a.modulate.r, want])
+	d.request("cast_a", false)
+	for _i in range(40):
+		d.step(1.0 / 60.0)
+	_check(a.modulate == base, "adaptive: fade-out restores exactly")
+	a.free()

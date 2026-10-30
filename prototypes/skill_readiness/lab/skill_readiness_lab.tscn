@@ -63,3 +63,5 @@ scroll_active = false
 [connection signal="pressed" from="Panel/VBox/Buttons/Cancel" to="." method="cancel_cast"]
 [connection signal="pressed" from="Panel/VBox/Buttons/Release" to="." method="release_all"]
 [connection signal="item_selected" from="Panel/VBox/SkillSelector" to="." method="_on_skill_selected"]
+[connection signal="item_selected" from="Panel/VBox/DarkeningMode" to="." method="_on_darkening_mode_selected"]
+[connection signal="value_changed" from="Panel/VBox/DarkeningStrength" to="." method="_on_darkening_strength_changed"]

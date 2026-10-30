@@ -24,6 +24,37 @@ const SOURCE_SEED: int = 20261028
 @onready var _selector: OptionButton = $Panel/VBox/SkillSelector
 @onready var _status: RichTextLabel = $Panel/VBox/StatusLabel
 @onready var _stage: Node2D = $Stage
+@onready var _darkening_mode: OptionButton = $Panel/VBox/DarkeningMode
+@onready var _darkening_strength: HSlider = $Panel/VBox/DarkeningStrength
+
+## Host-presentation map darkening settings (Lab control). These configure the
+## pilot's `venom_map_darkening.gd` policy for real-map A/B; they never enter
+## the source-native renderer, the source clock or RNG.
+var darkening_enabled: bool = true
+var darkening_adaptive: bool = false
+var darkening_strength: float = 0.12
+
+
+## Lab presentation control API (also driven by the UI widgets above).
+func set_darkening(mode: String, strength_value: float) -> void:
+	darkening_enabled = mode != "off"
+	darkening_adaptive = mode == "adaptive"
+	darkening_strength = clampf(strength_value, 0.0, 0.42)
+	_refresh_status()
+
+
+func darkening_config() -> Dictionary:
+	return {"enabled": darkening_enabled, "adaptive": darkening_adaptive,
+		"strength": darkening_strength}
+
+
+func _on_darkening_mode_selected(index: int) -> void:
+	set_darkening(["off", "fixed", "adaptive"][clampi(index, 0, 2)], darkening_strength)
+
+
+func _on_darkening_strength_changed(value: float) -> void:
+	darkening_strength = clampf(value, 0.0, 0.42)
+	_refresh_status()
 
 var runtime
 var _handle = null

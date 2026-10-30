@@ -75,6 +75,7 @@ func _capture_campaign_state(game: Node2D) -> void:
 	var folder := ProjectSettings.globalize_path(OUT_DIR)
 	_verify(DirAccess.make_dir_recursive_absolute(folder) == OK, "evidence folder can be created")
 	var baseline: Image = get_viewport().get_texture().get_image()
+	_baseline_frame = baseline
 	_verify(baseline != null and baseline.save_png(folder.path_join("l2_baseline_no_vfx.png")) == OK,
 		"baseline frame of the untouched real map")
 
@@ -157,20 +158,20 @@ func _run_pass(game: Node2D, knight: CharacterBody2D, level: DungeonLevel, folde
 	glow_sprite.material = additive
 	holder.add_child(glow_sprite)
 
-	# Map darkening: only the backdrop, geometry and decor layers of the real level.
+	# Map darkening (Gate 8): authored scenery only — Backdrop/Geometry/Decor
+	# TileMapLayers plus CrucibleArt facade and parallax when the map has them.
+	# Level/Entities (Knight, enemies) and HUD are never attached.
 	var dk = null
-	var base_colors: Array = []
-	var map_layers: Array = []
 	if darkened:
-		for prop in ["backdrop", "geometry", "decor"]:
-			var layer = level.get(prop)
-			if layer is CanvasItem:
-				map_layers.append(layer)
-				base_colors.append((layer as CanvasItem).modulate)
-		_verify(map_layers.size() == 3, "map darkening targets the real backdrop, geometry and decor layers")
 		dk = DARKEN.new()
-		dk.attach(map_layers)
-		dk.set_strength(DARKEN.DEFAULT_STRENGTH)
+		var bound: int = dk.attach_by_names(level)
+		_verify(bound >= 3, "map darkening binds authored scenery layers (bound %d)" % bound)
+		# Baseline-aware adaptive policy: luminance from the untouched map
+		# baseline frame captured before any pass ran, never from a live FX frame.
+		dk.adaptive = true
+		if _baseline_frame != null:
+			dk.sample_baseline(_baseline_frame)
+		_verify(dk.effective_strength() > 0.0, "adaptive darkening engages on the bright Level2 baseline (lum %.4f)" % dk.baseline_luminance)
 	var dark_key: String = "skill_%03d" % sid
 
 	var shots_by_tick: Dictionary = {}

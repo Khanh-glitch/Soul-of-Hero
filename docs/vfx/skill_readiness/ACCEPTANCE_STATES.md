@@ -50,11 +50,11 @@ Evidence: native runtime run `40930552334` at `bec65d1`. Verdicts were read from
 | 020 | no (not registered) | no | no | tick-180 raster blocked on original TypeScript; see VENOMWRIGHT_020_TICK180_BLOCKER.md |
 | 021 | yes | yes (seed 7) | yes (host PASS) | none recorded |
 
-All 15 HOST_CASTABLE entries are library-level. None of them is HOST_ADAPTER_VERIFIED, GOLD_VISUAL_COMPARISON_READY, OWNER_VISUAL_APPROVED or PRODUCTION_INTEGRATED. The 21/21 target is not met: 007, 008, 013, 015, 016 and 020 remain open, and 007/008/013/015/016 stay in the unresolved queue. ARCANA III (72 skills) is blocked on the original archive.
+All HOST_CASTABLE entries are library-level (15 verified at `bec65d1`; 008 host job added at `4bf0769`, verdict pending). None of them is HOST_ADAPTER_VERIFIED, GOLD_VISUAL_COMPARISON_READY, OWNER_VISUAL_APPROVED or PRODUCTION_INTEGRATED. The 21/21 target is not met: 007, 013, 015, 016 and 020 remain open. ARCANA III: original source available; foundation (util RNG/easing/noise) ported and Node-verified, renderer port not started (see `arcana/ARCANA_001_SOURCE_AUDIT.md`).
 
 ## Gaps recorded from the repo (not yet closed)
 
-1. The original TypeScript sources are not present in this session (`/tmp/gold93-src` is gone). The archive key `GOLD93_ARCHIVE_KEY` is not set in the environment, so the decrypt script cannot run. Without the original sources there is no GOLD renderer and no reference frames.
+1. RESOLVED 2026-10-30: both original ZIPs are committed in-branch at `prototypes/skill_readiness/original_sources/` and SHA-256 verified (`8402633c…677d`, `ab0dba56…d716`). The earlier private-vault 403 and `GOLD93_ARCHIVE_KEY` gaps are superseded for this branch. Original Node reference renders view A locally; extracted sources stay in `/tmp`, never committed.
 2. `docs/vfx/skill_readiness/captures/venomwright_006/` contains frames produced by the native port (manifest `engine`). They are not GOLD reference frames.
 3. The generic `integration/external_adapter_sample.gd` is not wired to any venomwright skill id.
 4. 013, 015 and 016 are not verified (see RESTART_CHECKPOINT.md). They are not registered as host-castable.
