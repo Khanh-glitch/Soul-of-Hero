@@ -28,6 +28,9 @@ extends Node
 const LAYER_SCENE: PackedScene = preload("res://game/survival/ui/return/a6_survival_return_layer.tscn")
 const NOW := 1793318400
 const REQUIRED_STATES := ["digest", "guidance", "history", "empty"]
+## A renderer can wedge (no frame, no error). The script ends itself rather than
+## letting an external timeout kill the job with no verdict at all.
+const WATCHDOG_SECONDS := 120.0
 
 var _capture_dir := "user://a6_ui_captures"
 var _tag := "return_preview"
@@ -49,6 +52,7 @@ func _run() -> void:
 		return
 	_parse_arguments()
 	_ensure_directory()
+	_start_watchdog()
 	await _settle(4)
 	await _capture("digest", {
 		"season_clock": _clock(2),
@@ -97,6 +101,14 @@ func _run() -> void:
 	get_tree().quit(0)
 
 
+func _start_watchdog() -> void:
+	var timer := get_tree().create_timer(WATCHDOG_SECONDS, true)
+	timer.timeout.connect(func() -> void:
+		printerr("A6 UI CAPTURE: TIMEOUT — the capture did not finish in %d seconds" % int(WATCHDOG_SECONDS))
+		get_tree().quit(3)
+	)
+
+
 func _parse_arguments() -> void:
 	for argument: String in OS.get_cmdline_user_args():
 		if argument.begins_with("--capture-dir="):
@@ -123,9 +135,9 @@ func _capture(state: String, overrides: Dictionary, open_record := false) -> voi
 		layer.open_record()
 	await _settle(6)
 	# Reading the viewport texture before the renderer has finished a frame can
-	# block forever on a software GL driver (the first hosted attempt sat on the
-	# job timeout here). Wait for the draw, not just the process tick.
-	await RenderingServer.frame_post_draw
+	# block, so ask the renderer to draw now instead of waiting for a vsync that a
+	# virtual display may never deliver.
+	RenderingServer.force_draw(true)
 	var viewport_size := get_viewport().get_visible_rect().size
 	var frame := get_viewport().get_texture().get_image()
 	# `canvas_items` stretch means the layout is authored in 640x360 units while the

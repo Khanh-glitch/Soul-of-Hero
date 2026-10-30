@@ -140,28 +140,26 @@ jobs:
             mkdir -p ".artifacts/captures-${res}"
             export SOUL_OF_HERO_SAVE_PATH="user://a6_render_${res}.json"
             log=".artifacts/render-${res}.log"
-            # 240 s per resolution: the whole capture is a handful of frames, so a
-            # longer wait means something is stuck, not slow. The previous attempt
-            # sat on the job-level 600 s timeout and told us nothing.
-            timeout --signal=TERM --kill-after=20s 300s xvfb-run --auto-servernum -s "-screen 0 ${res}x24" \
+            # The capture script has its own 120 s watchdog and exits with a verdict,
+            # so this outer limit only exists for a wedged X server.
+            timeout --foreground --signal=TERM --kill-after=20s 300s xvfb-run --auto-servernum \
+              -s "-screen 0 ${res}x24" \
               env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
               godot --path . --resolution "${res}" --rendering-driver opengl3 --audio-driver Dummy -- \
               --a6-ui-capture --capture-dir="$PWD/.artifacts/captures-${res}" \
-              --capture-tag="${A6_CAPTURE_TAG}" \
-              2>&1 | tee "${log}"
-            status=${PIPESTATUS[0]}
+              --capture-tag="${A6_CAPTURE_TAG}" > "${log}" 2>&1
+            status=$?
             echo "return UI render ${res} exit: ${status}" | tee -a "$GITHUB_STEP_SUMMARY"
+            tail -12 "${log}"
             if [ "${status}" -ne 0 ]; then
               {
                 echo "### render ${res} failed (exit ${status})"
                 echo '```'
-                tail -60 "${log}"
+                tail -40 "${log}"
                 echo '```'
               } >> "$GITHUB_STEP_SUMMARY"
+              tail -10 "${log}" | sed 's/^/::error::/' || true
               echo "::error::return UI render failed at ${res} (exit ${status})"
-              # Annotations are readable through the API even when the job log
-              # host is unreachable, so the tail is published here too.
-              tail -8 "${log}" | sed 's/^/::error::/' || true
               exit "${status}"
             fi
           done
