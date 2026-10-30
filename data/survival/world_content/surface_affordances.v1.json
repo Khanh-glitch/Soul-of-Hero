@@ -2,8 +2,8 @@
   "schema": "soh.a8.local_surface_affordance.v1",
   "owner": "A8 local, source-backed presentation and local walkability metadata; no world simulation",
   "source_pins": {
-    "a1_pr20_current_head": "dabf7bf516a80b112821b51d07e4dfe5fcb9a765",
-    "a0_pr21_current_head": "28f2d578a71e0ce48df8ec267485d35500fab14e",
+    "a1_pr20_current_head": "5aed8e8647c896e9a79ea812735ec237342462c4",
+    "a0_pr21_current_head": "32bced6d612958838cdf337b437685316c6d9009",
     "a3_pr19_current_head": "4bfba38d87bb2b6529745bf4a3caf2ba0ca07947"
   },
   "coordinate_system": {
@@ -24,8 +24,8 @@
     "owner_site_state_uses_existing_projection_contract": true,
     "missing_or_null_value": "UNKNOWN",
     "current_a0_source_support": {
-      "world_time": "UNKNOWN; no approved A0 environment projection in A0 PR #21 head 28f2d578.",
-      "weather": "UNKNOWN; no approved A0 weather source/schema in A0 PR #21 head 28f2d578.",
+      "world_time": "UNKNOWN; the current A0 head keeps an active_seconds field in a legacy world binding, but does not publish an approved per-site presentation projection to A8.",
+      "weather": "UNKNOWN; current A0 head has no approved weather source/schema or per-site presentation projection for these sites.",
       "tide": "UNKNOWN; A1 has other-region tide evidence, not an authorized value for these three sites.",
       "site_state": "Only a separately validated A0 owner projection may change persistent site presentation."
     },

@@ -6,11 +6,11 @@
   "source_pins": {
     "a8_source_review_base": "0e22d5f00532cf5e079b540e30a54281606fc757",
     "a1_pr": 20,
-    "a1_current_head": "dabf7bf516a80b112821b51d07e4dfe5fcb9a765",
+    "a1_current_head": "5aed8e8647c896e9a79ea812735ec237342462c4",
     "a3_pr": 19,
     "a3_current_head": "4bfba38d87bb2b6529745bf4a3caf2ba0ca07947",
     "a0_pr": 21,
-    "a0_current_head_at_source_review": "28f2d578a71e0ce48df8ec267485d35500fab14e",
+    "a0_current_head_at_source_review": "32bced6d612958838cdf337b437685316c6d9009",
     "a3_authorization_file": "docs/survival/economy/A8_QUARRY_AUTHORIZATION_V4.json",
     "a3_authorization_status": "REJECTED_PENDING_EVIDENCE_FAIL_CLOSED",
     "world_id": "world:soh_continent_v1",

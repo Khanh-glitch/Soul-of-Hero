@@ -7,9 +7,9 @@
   "a1_head": "939720d50a0b822ff9042d4104dc69ba78ffe0f8",
   "source_atlas": "data/survival/world/art/atlas.v1.json",
   "surface_derivative_source": {
-    "a1_head": "dabf7bf516a80b112821b51d07e4dfe5fcb9a765",
-    "atlas_sha256": "a2b7d35da814438957fdf8433aeff633e71f392bb6696faa3ef07c894536ea9c",
-    "terrain_sha256": "e222e9778d44cfe1f31d67684abd59b0db53e2e869e8f489299efeb550ba02a1",
+    "a1_head": "5aed8e8647c896e9a79ea812735ec237342462c4",
+    "atlas_sha256": "83d69373ca6c1258e8727800d0aa0c288851c34d25539c69c21ec9f5fc9d769a",
+    "terrain_sha256": "6128d8f41abe6962fe705431db20e762e0cca613ffc3eca29065727422737d1c",
     "frames": ["mud_0", "mud_1", "mud_2", "mud_3", "boardwalk_ns"],
     "policy": "A8-local 80x16 derivative strip; only source frames needed by authored Orchard bank/bridge surfaces are cropped. Full A1 atlas pin is not copied or repinned."
   },
@@ -30,7 +30,7 @@
     },
     "surface": {
       "path": "res://game/survival/world_content/art/surface_affordances.png",
-      "sha256": "01c9a855d8da4d331333909fb4fd52b4a0da1c25c5f4f7c28b5fbf76c7eb202a",
+      "sha256": "280342586563b2df63e325ea0e926f06027497dbd2f5fc86e6cd3d729a88068f",
       "dimensions": [80, 16],
       "license": "original SOH art; exact A1 PR #20 current-head crop derivative"
     }
@@ -1854,13 +1854,13 @@
         "reason": "The 76px-tall landmark otherwise clips 12px beyond the shell; keep the full source frame visible above the doorway-clear zone."
       }
     ],
-    "rejected_inherited_art": "A8 retains its complete source-correct atlas pin at A1 PR #20 939720d5. Current A1 PR #20 head dabf7bf5 has 1,415 terrain and 111 prop frames, including 80 shore transition masks and two notes-crate props. Compatibility evidence compares every frame used by these three sites against exact current A1 source pixels: all crops match, while 23 used prop rectangles have moved. A8 keeps its own base atlas coordinates and does not compose the neighbor-aware masks; notes crates remain unrelated. For the authored Orchard mud-bank and boardwalk, A8 adds only an 80x16 derivative strip of four mud variants and one north-south boardwalk tile, each pixel-verified against current A1. Do not wholesale-repin this consumer."
+    "rejected_inherited_art": "A8 retains its complete source-correct atlas pin at A1 PR #20 939720d5. Current A1 PR #20 head 5aed8e86 has 1,759 terrain and 138 prop frames, including 80 shore transition masks and two notes-crate props. Compatibility evidence compares every frame used by these three sites against exact current A1 source pixels: all crops match, while 23 used prop rectangles have moved. A8 keeps its own base atlas coordinates and does not compose the neighbor-aware masks; notes crates remain unrelated. For the authored Orchard mud-bank and boardwalk, A8 keeps only an 80x16 derivative strip of four mud variants and one north-south boardwalk tile; the mud crops were refreshed from exact A1 5aed8e86 source pixels after the current A1 head changed them. Do not wholesale-repin this consumer."
   },
   "current_a1_compatibility": {
     "source_pr": 20,
-    "current_head": "dabf7bf516a80b112821b51d07e4dfe5fcb9a765",
+    "current_head": "5aed8e8647c896e9a79ea812735ec237342462c4",
     "decision": "KEEP_COMPLETE_BASE_PIN_AND_ADOPT_FIVE_TARGETED_SURFACE_CROPS",
     "evidence": "data/survival/world_content/a1_atlas_compatibility.v1.json",
-    "summary": "All 23 terrain frames and 25 prop frames used by the three site interiors and shells have source-pixel-identical crops at current A1 coordinates. The current atlas contains 1,415 terrain and 111 prop frames; 23 used prop rectangles moved while pixels remain exact. A8 keeps its complete pinned base atlas/coordinates, confirms its existing four snow frames match current A1, adds only five current-A1 surface crops for Orchard mud and planks, and does not adopt 80 transition masks or two unrelated notes-crate props."
+    "summary": "All 23 terrain frames and 25 prop frames used by the three site interiors and shells have source-pixel-identical crops at current A1 coordinates. The current atlas contains 1,759 terrain and 138 prop frames; 23 used prop rectangles moved while pixels remain exact. A8 keeps its complete pinned base atlas/coordinates, confirms its existing four snow frames match current A1, refreshes four mud crops and retains one plank crop in its five-frame local strip, and does not adopt 80 transition masks or two unrelated notes-crate props."
   }
 }

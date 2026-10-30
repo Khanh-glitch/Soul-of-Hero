@@ -5,9 +5,11 @@ Status: **READY FOR A0 REVIEW; NOT A PRODUCTION MOUNT OR SAVE PROOF**
 ## Exact source pins reviewed
 
 - A8 PR #26 working source before this package: `0e22d5f00532cf5e079b540e30a54281606fc757` (the handoff must be refreshed to the eventual commit SHA).
-- A1 PR #20 current: `dabf7bf516a80b112821b51d07e4dfe5fcb9a765`.
-- A0 PR #21 current: `28f2d578a71e0ce48df8ec267485d35500fab14e`.
+- A1 PR #20 current: `5aed8e8647c896e9a79ea812735ec237342462c4`.
+- A0 PR #21 current: `32bced6d612958838cdf337b437685316c6d9009`.
 - A3 PR #19 current: `4bfba38d87bb2b6529745bf4a3caf2ba0ca07947`.
+
+A0 advanced from reviewed head `eedf933e910eaf28568a63c03e51d0b864a18d5c` during this verification. The exact-head diff changes only `.github/workflows/a0-production-waystation-candidate.yml`; the current connector still disables the annex build and marks it non-playable, while `SaveService` and the legacy A0-owned `active_seconds` binding are unchanged.
 
 A0 remains the sole production mount, transition, SaveService, durable-reload, and owner-receipt authority. A3 remains the sole Quarry authorization/economics authority. A8 supplies local scene assets, local collision, neutral intent v2, and transition request identities only.
 
@@ -44,7 +46,7 @@ A0 PR #21's current `Chapter1Overworld._on_gate_interacted` captures `state.last
 
 A8's local contract is `data/survival/world_content/surface_affordances.v1.json`. It records the Orchard boardwalk/mud overlays, fixed local water collision, Mill race crossing, material classes, and authored local retreat routes. A8 creates no global footprints, trace persistence/discovery, pursuit, home targeting, raids, or second clock. Mud/snow classes do not create traces or movement modifiers. `shallow_water`/`deep_water` are unsupported for these sites; water depth stays null/`UNKNOWN`, and generic water art does not prove depth. Weather/time/tide inputs are appearance-only and may never close an authored retreat route.
 
-A0 PR #21 currently supplies no approved per-site weather/time/tide projection. A8 therefore defaults all three to `UNKNOWN`; no weather, tide, hunger, shelter, or elapsed-time consequences are asserted. If A0 later publishes an owner projection, A8 may only apply an explicit site-scoped visual mapping. Collision/access remains fixed except the existing A0-projected Orchard sluice and Mill power conditions.
+A0 PR #21 current head `32bced6d` has an A0-owned `active_seconds` field in a legacy world binding, but no approved per-site presentation projection is enabled for these A8 sites. A8 therefore keeps world time, weather, and tide `UNKNOWN` until A0 explicitly supplies scoped values; no weather, tide, hunger, shelter, or elapsed-time consequences are asserted. If A0 later publishes an owner projection, A8 may only apply an explicit site-scoped visual mapping. Collision/access remains fixed except the existing A0-projected Orchard sluice and Mill power conditions.
 
 ## Acceptance boundary
 

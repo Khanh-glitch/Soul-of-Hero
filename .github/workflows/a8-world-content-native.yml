@@ -99,7 +99,21 @@ jobs:
           NATIVE_SURFACE_OUTCOME: ${{ steps.native_surface.outcome }}
           NATIVE_CAPTURE_OUTCOME: ${{ steps.native_capture.outcome }}
         run: |
-          echo "contract=$NATIVE_CONTRACT_OUTCOME transition=$NATIVE_TRANSITION_OUTCOME surface=$NATIVE_SURFACE_OUTCOME capture=$NATIVE_CAPTURE_OUTCOME"
+          outcome_report="contract=$NATIVE_CONTRACT_OUTCOME transition=$NATIVE_TRANSITION_OUTCOME surface=$NATIVE_SURFACE_OUTCOME capture=$NATIVE_CAPTURE_OUTCOME"
+          printf '%s\n' "$outcome_report" | tee .artifacts/a8-world-content/outcomes.txt
+          {
+            echo '### A8 native evidence outcomes'
+            echo
+            echo "\`\`\`text"
+            echo "$outcome_report"
+            echo "\`\`\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [ "$NATIVE_CONTRACT_OUTCOME" != success ] || \
+            [ "$NATIVE_TRANSITION_OUTCOME" != success ] || \
+            [ "$NATIVE_SURFACE_OUTCOME" != success ] || \
+            [ "$NATIVE_CAPTURE_OUTCOME" != success ]; then
+            echo "::error title=A8 native evidence outcomes::$outcome_report"
+          fi
           test "$NATIVE_CONTRACT_OUTCOME" = success
           test "$NATIVE_TRANSITION_OUTCOME" = success
           test "$NATIVE_SURFACE_OUTCOME" = success

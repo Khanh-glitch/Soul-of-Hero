@@ -4,7 +4,7 @@
 
 ## Canonical identity and exact transform
 
-Current source comparison was performed against A1 PR #20 head `dabf7bf516a80b112821b51d07e4dfe5fcb9a765`; A8's geometry remains an A1 read-only consumer. A1's current transform review still classifies these 960 px worksites as interior/local and does not grant an overworld mount; A8 preserves its explicit 960×608 interior. Canonical site:
+Current source comparison was performed against A1 PR #20 head `5aed8e8647c896e9a79ea812735ec237342462c4`; A8's geometry remains an A1 read-only consumer. A1's current transform review still classifies these 960 px worksites as interior/local and does not grant an overworld mount; A8 preserves its explicit 960×608 interior. Canonical site:
 
 - `world_id`: `world:soh_continent_v1`
 - `poi_id`: `poi_crown_south_quarry`

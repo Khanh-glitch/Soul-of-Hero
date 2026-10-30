@@ -93,12 +93,12 @@ class A1AtlasCompatibilityTests(unittest.TestCase):
     def test_pinned_site_frames_match_current_a1_source_pixels(self) -> None:
         evidence = self.evidence
         current = evidence["a1_current"]
-        self.assertEqual(current["head"], "dabf7bf516a80b112821b51d07e4dfe5fcb9a765")
-        self.assertEqual(current["atlas_sha256"], "a2b7d35da814438957fdf8433aeff633e71f392bb6696faa3ef07c894536ea9c")
-        self.assertEqual(current["terrain_sha256"], "e222e9778d44cfe1f31d67684abd59b0db53e2e869e8f489299efeb550ba02a1")
-        self.assertEqual(current["props_sha256"], "633a82a6b6c71ab50ed8b076aed40cb778dbfab93c18b3d0e9717066f31c1a27")
-        self.assertEqual(current["texture_dimensions"], {"terrain": [512, 720], "props": [1024, 376]})
-        self.assertEqual(current["frame_counts"], {"terrain": 1415, "props": 111})
+        self.assertEqual(current["head"], "5aed8e8647c896e9a79ea812735ec237342462c4")
+        self.assertEqual(current["atlas_sha256"], "83d69373ca6c1258e8727800d0aa0c288851c34d25539c69c21ec9f5fc9d769a")
+        self.assertEqual(current["terrain_sha256"], "6128d8f41abe6962fe705431db20e762e0cca613ffc3eca29065727422737d1c")
+        self.assertEqual(current["props_sha256"], "8d4acf4028e0e065b901e78c59c65e5a68677fb75d46c04c7e5a029a76d27324")
+        self.assertEqual(current["texture_dimensions"], {"terrain": [512, 880], "props": [1024, 572]})
+        self.assertEqual(current["frame_counts"], {"terrain": 1759, "props": 138})
         for kind, file_name in (("terrain", "terrain.png"), ("props", "props.png")):
             a8_record = self.a8_manifest["textures"][kind]
             a8_path = ROOT / a8_record["path"].removeprefix("res://")
@@ -133,6 +133,10 @@ class A1AtlasCompatibilityTests(unittest.TestCase):
     def test_targeted_surface_derivative_matches_current_a1_source_pixels(self) -> None:
         evidence = self.evidence["adopted_surface_frames"]
         source = self.a8_manifest["surface_derivative_source"]
+        current_a1 = self.evidence["a1_current"]
+        self.assertEqual(source["a1_head"], current_a1["head"])
+        self.assertEqual(source["atlas_sha256"], current_a1["atlas_sha256"])
+        self.assertEqual(source["terrain_sha256"], current_a1["terrain_sha256"])
         self.assertEqual(source["a1_head"], evidence["source_a1_head"])
         self.assertEqual(source["terrain_sha256"], evidence["source_texture_sha256"])
         self.assertEqual(set(source["frames"]), set(evidence["frames"]))

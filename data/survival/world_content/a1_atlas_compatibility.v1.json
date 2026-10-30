@@ -19,27 +19,27 @@
   },
   "a1_current": {
     "pr": 20,
-    "head": "dabf7bf516a80b112821b51d07e4dfe5fcb9a765",
+    "head": "5aed8e8647c896e9a79ea812735ec237342462c4",
     "atlas_path": "data/survival/world/art/atlas.v1.json",
-    "terrain_sha256": "e222e9778d44cfe1f31d67684abd59b0db53e2e869e8f489299efeb550ba02a1",
-    "props_sha256": "633a82a6b6c71ab50ed8b076aed40cb778dbfab93c18b3d0e9717066f31c1a27",
+    "terrain_sha256": "6128d8f41abe6962fe705431db20e762e0cca613ffc3eca29065727422737d1c",
+    "props_sha256": "8d4acf4028e0e065b901e78c59c65e5a68677fb75d46c04c7e5a029a76d27324",
     "texture_dimensions": {
       "terrain": [
         512,
-        720
+        880
       ],
       "props": [
         1024,
-        376
+        572
       ]
     },
     "frame_counts": {
-      "terrain": 1415,
-      "props": 111
+      "terrain": 1759,
+      "props": 138
     },
-    "atlas_sha256": "a2b7d35da814438957fdf8433aeff633e71f392bb6696faa3ef07c894536ea9c"
+    "atlas_sha256": "83d69373ca6c1258e8727800d0aa0c288851c34d25539c69c21ec9f5fc9d769a"
   },
-  "compatibility_test_method": "For every terrain/prop frame actually used by the three A8 sites and shells, decode the pinned A8 PNG and compare the RGBA crop digest with the exact current A1 dabf7bf5 atlas frame at its current coordinate. The five adopted Orchard surface frames are separately cropped into A8's 80x16 derivative strip and checked against current-A1 source-derived RGBA digests. The source atlas/texture hashes, dimensions, coordinates, and per-crop digests are recorded here; the stdlib test verifies non-vacuous site coverage and both retained/adopted crops.",
+  "compatibility_test_method": "For every terrain/prop frame actually used by the three A8 sites and shells, decode the pinned A8 PNG and compare the RGBA crop digest with the exact current A1 5aed8e86 atlas frame at its current coordinate. The five adopted Orchard surface frames are separately cropped into A8's 80x16 derivative strip and checked against current-A1 source-derived RGBA digests. The source atlas/texture hashes, dimensions, coordinates, and per-crop digests are recorded here; the stdlib test verifies non-vacuous site coverage and both retained/adopted crops.",
   "matched_frame_counts": {
     "terrain": 23,
     "props": 25
@@ -438,8 +438,8 @@
           22
         ],
         "a1_current_rect": [
-          2,
-          344,
+          524,
+          512,
           26,
           22
         ],
@@ -678,8 +678,8 @@
           20
         ],
         "a1_current_rect": [
-          30,
-          344,
+          552,
+          512,
           26,
           20
         ],
@@ -693,8 +693,8 @@
           15
         ],
         "a1_current_rect": [
-          58,
-          344,
+          580,
+          512,
           20,
           15
         ],
@@ -708,8 +708,8 @@
           26
         ],
         "a1_current_rect": [
-          122,
-          344,
+          644,
+          512,
           26,
           26
         ],
@@ -753,8 +753,8 @@
           58
         ],
         "a1_current_rect": [
-          986,
-          284,
+          488,
+          512,
           34,
           58
         ],
@@ -768,8 +768,8 @@
           22
         ],
         "a1_current_rect": [
-          150,
-          344,
+          672,
+          512,
           36,
           22
         ],
@@ -1344,30 +1344,159 @@
   },
   "existing_surface_frames": {
     "purpose": "A8 already-pinned snow frames available to the local surface contract; not currently applied to these three interiors because no A0 weather projection exists.",
-    "a1_head": "dabf7bf516a80b112821b51d07e4dfe5fcb9a765",
+    "a1_head": "5aed8e8647c896e9a79ea812735ec237342462c4",
     "frames": {
-      "snow_0": {"a8_rect": [320, 0, 16, 16], "a1_rect": [320, 0, 16, 16], "rgba_crop_sha256": "019e34ab6ea0c0ae27518058e4fc35e85fa2bd10bb92dee2ef93e2589e8882bb"},
-      "snow_1": {"a8_rect": [336, 0, 16, 16], "a1_rect": [336, 0, 16, 16], "rgba_crop_sha256": "126efb02f9211763677c14550b311b0bac3c65af81cd0522d1b073cf8fbc388b"},
-      "snow_2": {"a8_rect": [352, 0, 16, 16], "a1_rect": [352, 0, 16, 16], "rgba_crop_sha256": "96e571c367f8b4168e204a87c8348a06ea12a7c2eae24f77f289cacfd323f07d"},
-      "snow_3": {"a8_rect": [368, 0, 16, 16], "a1_rect": [368, 0, 16, 16], "rgba_crop_sha256": "b0f2b4656c885e689da3ea25e3915d619d1afc6b52b689867673da14d9c52ffd"}
+      "snow_0": {
+        "a8_rect": [
+          320,
+          0,
+          16,
+          16
+        ],
+        "a1_rect": [
+          320,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "019e34ab6ea0c0ae27518058e4fc35e85fa2bd10bb92dee2ef93e2589e8882bb"
+      },
+      "snow_1": {
+        "a8_rect": [
+          336,
+          0,
+          16,
+          16
+        ],
+        "a1_rect": [
+          336,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "126efb02f9211763677c14550b311b0bac3c65af81cd0522d1b073cf8fbc388b"
+      },
+      "snow_2": {
+        "a8_rect": [
+          352,
+          0,
+          16,
+          16
+        ],
+        "a1_rect": [
+          352,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "96e571c367f8b4168e204a87c8348a06ea12a7c2eae24f77f289cacfd323f07d"
+      },
+      "snow_3": {
+        "a8_rect": [
+          368,
+          0,
+          16,
+          16
+        ],
+        "a1_rect": [
+          368,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "b0f2b4656c885e689da3ea25e3915d619d1afc6b52b689867673da14d9c52ffd"
+      }
     }
   },
   "adopted_surface_frames": {
-    "source_a1_head": "dabf7bf516a80b112821b51d07e4dfe5fcb9a765",
-    "source_texture_sha256": "e222e9778d44cfe1f31d67684abd59b0db53e2e869e8f489299efeb550ba02a1",
-    "a8_surface_texture_sha256": "01c9a855d8da4d331333909fb4fd52b4a0da1c25c5f4f7c28b5fbf76c7eb202a",
-    "a8_surface_dimensions": [80, 16],
+    "source_a1_head": "5aed8e8647c896e9a79ea812735ec237342462c4",
+    "source_texture_sha256": "6128d8f41abe6962fe705431db20e762e0cca613ffc3eca29065727422737d1c",
+    "a8_surface_texture_sha256": "280342586563b2df63e325ea0e926f06027497dbd2f5fc86e6cd3d729a88068f",
+    "a8_surface_dimensions": [
+      80,
+      16
+    ],
     "frames": {
-      "mud_0": {"a1_rect": [288, 160, 16, 16], "a8_rect": [0, 0, 16, 16], "rgba_crop_sha256": "bb1321663acf6537d38988fff6a31c6dc6fa1d06a1e32cf8d657c95e9b38827c"},
-      "mud_1": {"a1_rect": [304, 160, 16, 16], "a8_rect": [16, 0, 16, 16], "rgba_crop_sha256": "b562e4a0c8781ceeefe49510940c1e47925096d21035c825c688b0ed32956087"},
-      "mud_2": {"a1_rect": [320, 160, 16, 16], "a8_rect": [32, 0, 16, 16], "rgba_crop_sha256": "bf83dfe960c06b2a5e67c016f2bd920fbed6fe5fd51282ba5d1d2c61a8209790"},
-      "mud_3": {"a1_rect": [336, 160, 16, 16], "a8_rect": [48, 0, 16, 16], "rgba_crop_sha256": "bf83dfe960c06b2a5e67c016f2bd920fbed6fe5fd51282ba5d1d2c61a8209790"},
-      "boardwalk_ns": {"a1_rect": [32, 704, 16, 16], "a8_rect": [64, 0, 16, 16], "rgba_crop_sha256": "7891e3313e16d560f0005c972365cdb0619b2f02390adc5bb8a522873c533c06"}
+      "mud_0": {
+        "a1_rect": [
+          288,
+          160,
+          16,
+          16
+        ],
+        "a8_rect": [
+          0,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "acbb3bec70324ad3f533ba7c206cd9d400385d5432b6085beeff7519b8a6238b"
+      },
+      "mud_1": {
+        "a1_rect": [
+          304,
+          160,
+          16,
+          16
+        ],
+        "a8_rect": [
+          16,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "b7576829463e886d5b43e77d706053a568872df6157a8ab569b36d806787c267"
+      },
+      "mud_2": {
+        "a1_rect": [
+          320,
+          160,
+          16,
+          16
+        ],
+        "a8_rect": [
+          32,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "958d140c3feb896d4ca2ed5007ced18ddbeb38fce4fcfbea5c9972d136450e16"
+      },
+      "mud_3": {
+        "a1_rect": [
+          336,
+          160,
+          16,
+          16
+        ],
+        "a8_rect": [
+          48,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "2e3c4f575cb0ee156db6d8b6137fd1b819d6adecdd213f44727afed16a74d423"
+      },
+      "boardwalk_ns": {
+        "a1_rect": [
+          352,
+          816,
+          16,
+          16
+        ],
+        "a8_rect": [
+          64,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "7891e3313e16d560f0005c972365cdb0619b2f02390adc5bb8a522873c533c06"
+      }
     }
   },
   "decision_rationale": [
     "All frames actually referenced by the three site shells/interiors remain pixel-identical at A1 current coordinates; the old A8 texture pin is internally compatible for those consumers.",
-    "The new land-to-land shore masks may improve ellipse/path transitions: ash\u2194gravel/moor and gravel/soil for Quarry/Mill; forest\u2194soil/moor and gravel\u2194soil for Orchard. No current A8 renderer composes neighbor-aware edge masks, so changing only atlas bytes/coords would not make these visible.",
+    "The new land-to-land shore masks may improve ellipse/path transitions: ash↔gravel/moor and gravel/soil for Quarry/Mill; forest↔soil/moor and gravel↔soil for Orchard. No current A8 renderer composes neighbor-aware edge masks, so changing only atlas bytes/coords would not make these visible.",
     "Adopting shore masks safely requires a neighbor-aware edge compositor plus native-size visual review; that is outside this local surface task. Do not perform a blind atlas repin or claim visual acceptance.",
     "The two notes-crate prop frames do not serve the three site identities and would imply unrelated research-note rewards; do not add them."
   ],
@@ -1378,9 +1507,9 @@
   },
   "native_visual_acceptance": "HOLD; this is a source-pixel compatibility check, not native render acceptance.",
   "potential_new_transitions_source": {
-    "a1_head": "dabf7bf516a80b112821b51d07e4dfe5fcb9a765",
-    "atlas_sha256": "a2b7d35da814438957fdf8433aeff633e71f392bb6696faa3ef07c894536ea9c",
-    "terrain_png_sha256": "e222e9778d44cfe1f31d67684abd59b0db53e2e869e8f489299efeb550ba02a1",
+    "a1_head": "5aed8e8647c896e9a79ea812735ec237342462c4",
+    "atlas_sha256": "83d69373ca6c1258e8727800d0aa0c288851c34d25539c69c21ec9f5fc9d769a",
+    "terrain_png_sha256": "6128d8f41abe6962fe705431db20e762e0cca613ffc3eca29065727422737d1c",
     "frame_count": 80,
     "unique_candidate_count": 40,
     "decision": "NOT_ADOPTED; A8 has no neighbor-aware edge compositor; source frames remain candidates only."

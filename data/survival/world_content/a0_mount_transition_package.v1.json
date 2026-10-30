@@ -3,8 +3,8 @@
   "package_status": "READY_FOR_A0_REVIEW_NOT_MOUNTED",
   "source_pins_reviewed": {
     "a8_pr26_pre_package_head": "0e22d5f00532cf5e079b540e30a54281606fc757",
-    "a1_pr20_current_head": "dabf7bf516a80b112821b51d07e4dfe5fcb9a765",
-    "a0_pr21_current_head": "28f2d578a71e0ce48df8ec267485d35500fab14e",
+    "a1_pr20_current_head": "5aed8e8647c896e9a79ea812735ec237342462c4",
+    "a0_pr21_current_head": "32bced6d612958838cdf337b437685316c6d9009",
     "a3_pr19_current_head": "4bfba38d87bb2b6529745bf4a3caf2ba0ca07947"
   },
   "world_id": "world:soh_continent_v1",
