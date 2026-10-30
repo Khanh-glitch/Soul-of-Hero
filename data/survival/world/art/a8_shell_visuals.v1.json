@@ -13,7 +13,7 @@
       "south_crown_mill.json"
     ]
   },
-  "atlas_sha256": "617fc36d866653d67eb1b890ddcf5501b8660d87031ae04fefdb73941393326e",
+  "atlas_sha256": "355f33687fb20b202ece0aacc61445e5ecd603397a0f5413efdb9fb7e7202e85",
   "requirements": {
     "tile_px": 16,
     "texture_filter": "nearest",

@@ -29,7 +29,73 @@
       "moss_green": "living growth / safe herb"
     },
     "outline": "one pixel dark shared outline; no black sticker borders",
-    "minimum_readable_feature_px": 4
+    "minimum_readable_feature_px": 4,
+    "silt_d": "#4a4a3c",
+    "silt": "#6b6a52",
+    "silt_l": "#8c8a6a",
+    "reedpeat_d": "#3c4636",
+    "reedpeat": "#55624a",
+    "reedpeat_l": "#758463",
+    "lake_d": "#234a56",
+    "lake": "#336273",
+    "lake_l": "#5b8fa0",
+    "lake_h": "#9fc6cf",
+    "river_d": "#2b515c",
+    "river": "#3d7180",
+    "river_l": "#6fa0ac",
+    "tidal_d": "#274a50",
+    "tidal": "#3a666c",
+    "tidal_l": "#679296",
+    "mud_d": "#4c4234",
+    "mud": "#6d5f48",
+    "mud_l": "#91805f",
+    "shell_d": "#8d8268",
+    "shell": "#b3a684",
+    "shell_l": "#d8cba4",
+    "dune_d": "#9a7c4e",
+    "dune": "#c0a066",
+    "dune_l": "#ddc28a",
+    "salt_d": "#9a9484",
+    "salt": "#c9c3ae",
+    "salt_l": "#ece6d2",
+    "sulfur_d": "#8a7a2e",
+    "sulfur": "#c2ad45",
+    "sulfur_l": "#e6d67a",
+    "cinder_d": "#3a2f2c",
+    "cinder": "#5a463f",
+    "cinder_l": "#7d6052",
+    "lava_d": "#2c2729",
+    "lava": "#453c40",
+    "lava_l": "#655459",
+    "jungle_d": "#2c4a2e",
+    "jungle": "#416b39",
+    "jungle_l": "#659248",
+    "jungle_h": "#8fb85e",
+    "karst_d": "#6a6a58",
+    "karst": "#93927a",
+    "karst_l": "#bcbaa0",
+    "mangrove_d": "#33453a",
+    "mangrove": "#4b6350",
+    "mangrove_l": "#6d8a68",
+    "cenote_d": "#173a46",
+    "cenote": "#24586a",
+    "cenote_l": "#3f8296",
+    "cenote_h": "#7fc0cf",
+    "fen_d": "#2f3a30",
+    "fen": "#46543f",
+    "fen_l": "#657554",
+    "toxic_d": "#3a4a36",
+    "toxic": "#5a6b41",
+    "toxic_l": "#8a9a58",
+    "rust_d": "#5a3226",
+    "rust": "#8a4d33",
+    "rust_l": "#b9744a",
+    "plaster_d": "#9c8a66",
+    "plaster": "#c9b78d",
+    "plaster_l": "#e8d8ae",
+    "tile_blue_d": "#2e4a5c",
+    "tile_blue": "#41687e",
+    "tile_blue_l": "#6d94a8"
   },
   "semantic_roles": {
     "supply_cache": {
@@ -46,15 +112,35 @@
     },
     "ordinary_harvestable": {
       "frames": [
+        "abyssal_pearl",
+        "basalt_chunk",
         "beehive",
+        "bog_iron",
+        "clay_lens",
+        "copper_vein",
         "deadfall",
+        "fen_venom",
         "fern",
+        "freshwater_pearl",
+        "hardwood_log",
         "herb_moonleaf",
+        "karst_herb",
+        "limestone_chunk",
+        "obsidian_shard",
         "ore_skarn",
+        "pearl_bed",
+        "peat_cut",
+        "reed_bundle",
+        "rubber_tap",
+        "salt_crust_prop",
+        "silica_placer",
+        "storm_glass",
         "stump",
+        "sulfur_vent",
         "tree_amber",
         "tree_frost",
-        "tree_orchard"
+        "tree_orchard",
+        "venom_sac"
       ],
       "read": "natural material, repeated clusters, no container latch and no shelter roof",
       "glow": "only exceptional mineral may use reserved soul accent",
@@ -74,24 +160,50 @@
     },
     "background_scenery": {
       "frames": [
+        "awning",
+        "boardwalk_post",
+        "bog_pool",
         "bush",
         "cairn",
+        "causeway_stone",
+        "cenote_pool",
+        "chimney_stack",
+        "cinder_cone",
+        "driftwood",
         "drying_rack",
+        "fen_snag",
         "fence_h",
         "fence_v",
         "fern",
         "handcart",
+        "jungle_canopy",
+        "karst_pinnacle",
+        "liana",
         "log_pile",
+        "mangrove_root",
+        "mooring_post",
+        "net_rack",
+        "palm",
+        "pump_pipe",
+        "reed_clump",
         "reeds",
         "rock_a",
         "rock_c",
+        "rope_bridge",
+        "salt_rake",
+        "salt_windbreak",
+        "shell_bar",
+        "sluice_gate",
         "snow_drift",
         "split_rail",
+        "stilt_walk",
         "tarp_shelter",
+        "tidal_wrack",
         "tree_amber",
         "tree_dead",
         "tree_frost",
         "tree_frost_small",
+        "tree_orchard",
         "tree_pine"
       ],
       "read": "lower contrast, smaller silhouettes, no latch / lamp / counter",
@@ -100,10 +212,18 @@
     },
     "physical_danger": {
       "frames": [
+        "bleached_reeds",
         "cairn_warning",
+        "cenote_rim",
+        "column_broken",
+        "gas_vent",
+        "heat_shimmer",
         "rock_e",
-        "wall_stub",
-        "column_broken"
+        "spore_cluster",
+        "sulfur_crust",
+        "tide_gauge",
+        "toxic_pool_edge",
+        "wall_stub"
       ],
       "read": "broken stone + rust warning cap + impassable mass beside the route; no arbitrary red border",
       "glow": false,
@@ -121,11 +241,16 @@
     },
     "return_route": {
       "frames": [
-        "signpost",
         "banner",
-        "lamp",
+        "boardwalk",
         "handcart",
-        "handcart"
+        "lamp",
+        "mooring_post",
+        "rope_bridge",
+        "signpost",
+        "stilt_walk",
+        "stone_causeway",
+        "tide_gauge"
       ],
       "read": "maintained road, repeated warm markers and shelter silhouette leading back to the postern",
       "glow": "warm light only",
@@ -135,10 +260,19 @@
       "frames": [
         "lm_amber_apothecary",
         "lm_amber_watch",
+        "lm_ashwater_pump",
+        "lm_ember_forge",
         "lm_frost_shrine",
+        "lm_glasswind_light",
+        "lm_mere_boathouse",
+        "lm_mere_causeway",
         "lm_mill_house",
         "lm_orchard_shed",
+        "lm_pearl_customs",
         "lm_quarry_workface",
+        "lm_saffron_salt_works",
+        "lm_sunken_cenote",
+        "lm_verdant_temple",
         "mill_wheel"
       ],
       "read": "canonical POI silhouette with worked material and local culture; not a new POI and not a loot container",
@@ -212,6 +346,175 @@
       ],
       "lighting": "frost_blue_hour",
       "transition": "snow -> tundra -> basalt; wind-packed snow edges and exposed ore mark the cold frontier"
+    },
+    "mirrormere": {
+      "ground": [
+        "silt",
+        "reedpeat",
+        "lake",
+        "river",
+        "grass"
+      ],
+      "road": "boardwalk",
+      "vegetation": [
+        "reed_clump",
+        "reed_bundle",
+        "fen_snag"
+      ],
+      "structures": [
+        "lm_mere_boathouse",
+        "lm_mere_causeway",
+        "sluice_gate",
+        "net_rack"
+      ],
+      "lighting": "mere_mist",
+      "transition": "lake -> reed peat -> silt; boardwalk and causeway mark maintained crossings"
+    },
+    "glasswind_coast": {
+      "ground": [
+        "shell",
+        "dune",
+        "basalt",
+        "river",
+        "ocean"
+      ],
+      "road": "stone_road",
+      "vegetation": [
+        "tree_frost_small",
+        "driftwood"
+      ],
+      "structures": [
+        "lm_glasswind_light",
+        "salt_windbreak"
+      ],
+      "lighting": "glasswind_storm",
+      "transition": "wave-cut shell bench -> dune -> basalt cliff; storm glass and silica placer"
+    },
+    "ember_steppe": {
+      "ground": [
+        "cinder",
+        "lava",
+        "sulfur",
+        "ash",
+        "gravel"
+      ],
+      "road": "dirt_road",
+      "vegetation": [
+        "tree_dead",
+        "cinder_cone"
+      ],
+      "structures": [
+        "lm_ember_forge",
+        "chimney_stack",
+        "pump_pipe"
+      ],
+      "lighting": "ember_haze",
+      "transition": "cooled lava -> cinder -> sulfur crust; gas vents and dead scrub telegraph acid"
+    },
+    "saffron_coast": {
+      "ground": [
+        "salt",
+        "dune",
+        "shell",
+        "arid",
+        "oasis"
+      ],
+      "road": "dirt_road",
+      "vegetation": [
+        "palm",
+        "salt_windbreak"
+      ],
+      "structures": [
+        "lm_saffron_salt_works",
+        "awning",
+        "salt_rake"
+      ],
+      "lighting": "saffron_glare",
+      "transition": "salt pan -> dune -> shell bench; shade and well mark survivable route"
+    },
+    "verdant_fold": {
+      "ground": [
+        "jungle",
+        "karst",
+        "soil",
+        "river"
+      ],
+      "road": "stone_road",
+      "vegetation": [
+        "jungle_canopy",
+        "liana",
+        "karst_pinnacle"
+      ],
+      "structures": [
+        "lm_verdant_temple",
+        "stilt_walk"
+      ],
+      "lighting": "verdant_canopy",
+      "transition": "jungle litter -> karst limestone -> terrace; spore hollows discolour leaves"
+    },
+    "pearl_mangroves": {
+      "ground": [
+        "mangrove",
+        "mud",
+        "tidal",
+        "shell",
+        "river"
+      ],
+      "road": "boardwalk",
+      "vegetation": [
+        "mangrove_root",
+        "reed_clump"
+      ],
+      "structures": [
+        "lm_pearl_customs",
+        "stilt_walk",
+        "mooring_post",
+        "tide_gauge"
+      ],
+      "lighting": "pearl_dusk",
+      "transition": "tidal channel -> mudflat -> mangrove peat; wrack lines and barnacles telegraph tide"
+    },
+    "sunken_orchard": {
+      "ground": [
+        "karst",
+        "jungle",
+        "cenote",
+        "soil"
+      ],
+      "road": "stone_road",
+      "vegetation": [
+        "karst_pinnacle",
+        "jungle_canopy",
+        "tree_orchard"
+      ],
+      "structures": [
+        "lm_sunken_cenote",
+        "causeway_stone"
+      ],
+      "lighting": "sunken_clear",
+      "transition": "karst terrace -> orchard soil -> cenote rim; sinkhole hints underground conduit"
+    },
+    "ashwater_fen": {
+      "ground": [
+        "fen",
+        "toxic",
+        "silt",
+        "river",
+        "mud"
+      ],
+      "road": "boardwalk",
+      "vegetation": [
+        "bleached_reeds",
+        "fen_snag",
+        "reed_clump"
+      ],
+      "structures": [
+        "lm_ashwater_pump",
+        "pump_pipe",
+        "stilt_walk"
+      ],
+      "lighting": "ashwater_miasma",
+      "transition": "fen peat -> toxic pool -> silt; bleached reeds and gas bubbles telegraph miasma"
     }
   },
   "lighting_profiles": {
@@ -262,6 +565,126 @@
       ],
       "warm_lamp_energy": 0.95,
       "notes": "cold snow/basalt; soul-cyan shrine accent and rare warm refuge"
+    },
+    "mere_mist": {
+      "ambient_day": [
+        0.92,
+        0.96,
+        0.94,
+        1
+      ],
+      "ambient_night": [
+        0.3,
+        0.38,
+        0.42,
+        1
+      ],
+      "warm_lamp_energy": 0.7
+    },
+    "glasswind_storm": {
+      "ambient_day": [
+        0.82,
+        0.88,
+        0.94,
+        1
+      ],
+      "ambient_night": [
+        0.24,
+        0.3,
+        0.4,
+        1
+      ],
+      "warm_lamp_energy": 0.9
+    },
+    "ember_haze": {
+      "ambient_day": [
+        0.95,
+        0.86,
+        0.76,
+        1
+      ],
+      "ambient_night": [
+        0.34,
+        0.26,
+        0.24,
+        1
+      ],
+      "warm_lamp_energy": 1.0
+    },
+    "saffron_glare": {
+      "ambient_day": [
+        1.0,
+        0.95,
+        0.82,
+        1
+      ],
+      "ambient_night": [
+        0.32,
+        0.34,
+        0.44,
+        1
+      ],
+      "warm_lamp_energy": 0.7
+    },
+    "verdant_canopy": {
+      "ambient_day": [
+        0.8,
+        0.92,
+        0.78,
+        1
+      ],
+      "ambient_night": [
+        0.22,
+        0.32,
+        0.28,
+        1
+      ],
+      "warm_lamp_energy": 0.8
+    },
+    "pearl_dusk": {
+      "ambient_day": [
+        0.88,
+        0.9,
+        0.92,
+        1
+      ],
+      "ambient_night": [
+        0.24,
+        0.32,
+        0.4,
+        1
+      ],
+      "warm_lamp_energy": 0.9
+    },
+    "sunken_clear": {
+      "ambient_day": [
+        0.94,
+        0.96,
+        0.9,
+        1
+      ],
+      "ambient_night": [
+        0.26,
+        0.34,
+        0.4,
+        1
+      ],
+      "warm_lamp_energy": 0.7
+    },
+    "ashwater_miasma": {
+      "ambient_day": [
+        0.84,
+        0.9,
+        0.8,
+        1
+      ],
+      "ambient_night": [
+        0.24,
+        0.3,
+        0.26,
+        1
+      ],
+      "warm_lamp_energy": 0.8
     }
   },
   "production_rules": [
@@ -271,6 +694,8 @@
     "Lighting uses only A1-owned CanvasItemMaterials / Light2D nodes in isolated presentation; AVFX original Gold and A0 production lighting remain untouched.",
     "A0 alone mounts production scenes. A8 keeps local interaction art/engine; this grammar is a conformance target, not a takeover.",
     "Macro-terrain boundaries are authored causal landforms (geology/drainage/terrace/court/exposure), not random noise. Tile variant hash only selects texture inside an already-authored material.",
-    "A1 world lights use a private CanvasItem cull mask; inherited Gold/Hero VFX remain on the default mask and are never ambient-tinted by A1."
+    "A1 world lights use a private CanvasItem cull mask; inherited Gold/Hero VFX remain on the default mask and are never ambient-tinted by A1.",
+    "all 11 planned regions have a dedicated visual profile; 8 new regional windows are authored, not 192 chunk fills",
+    "visual water only where source surface==water and walk==0; roads over water become explicit bridge/boardwalk overlays, never invisible walls"
   ]
 }

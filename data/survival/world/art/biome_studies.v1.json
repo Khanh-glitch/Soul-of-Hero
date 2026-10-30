@@ -1,7 +1,7 @@
 {
   "schema": "SOH_WORLD_ART_BIOME_STUDIES_V1",
   "owner": "A1",
-  "authority": "VISUAL_ONLY_EXISTING_REGION_WINDOWS_NO_NEW_POI",
+  "authority": "A1_VISUAL_ONLY_CANONICAL_ANCHORS_NO_REWARD_AUTHORITY",
   "studies": [
     {
       "study_id": "amberwood_apothecary_herb_margin",
@@ -651,6 +651,2909 @@
           "center_cell": [
             602,
             160
+          ],
+          "time_of_day": 0.85
+        }
+      ]
+    },
+    {
+      "study_id": "mirrormere_region_window",
+      "region_id": "r_mirrormere",
+      "biome_profile": "mirrormere",
+      "lighting_profile": "mere_mist",
+      "window": {
+        "origin_cell": [
+          352,
+          452
+        ],
+        "size_cells": [
+          64,
+          56
+        ]
+      },
+      "canonical_anchors": {
+        "poi_id": "poi_mirrormere_causeway",
+        "resource_site_id": "src_mere_clay"
+      },
+      "ground_rules": {
+        "base_from_source_surface": true,
+        "road_from_source_road": true,
+        "biome_materials": {
+          "freshwater_marsh": "reedpeat",
+          "riverine": "silt",
+          "temperate_mixed": "grass",
+          "lake": "lake",
+          "moorland": "silt"
+        },
+        "preserve_source_water": true,
+        "use_source_legend": true,
+        "use_region_mix": true,
+        "road_style": "boardwalk",
+        "blend_radius_cells": 0,
+        "landforms": [
+          {
+            "id": "mere_reed_shelf",
+            "material": "reedpeat",
+            "shape": {
+              "type": "ellipse",
+              "center": [
+                370,
+                492
+              ],
+              "radii": [
+                16,
+                10
+              ]
+            },
+            "reason": "Lake-margin reed peat accumulates in shallow sheltered water beside the causeway.",
+            "source_refs": [
+              "world_plan:lake_mirrormere",
+              "world_plan:src_mere_reed"
+            ]
+          },
+          {
+            "id": "mere_silt_flat",
+            "material": "silt",
+            "shape": {
+              "type": "ellipse",
+              "center": [
+                388,
+                506
+              ],
+              "radii": [
+                14,
+                8
+              ]
+            },
+            "reason": "Lacustrine silt lens exposed near the clay source and ferry approach.",
+            "source_refs": [
+              "world_plan:src_mere_clay"
+            ]
+          }
+        ]
+      },
+      "add_props": [
+        {
+          "frame": "lm_mere_causeway",
+          "cell": [
+            360,
+            500
+          ],
+          "role": "authored_landmark",
+          "poi_id": "poi_mirrormere_causeway",
+          "light": "warm"
+        },
+        {
+          "frame": "lm_mere_boathouse",
+          "cell": [
+            400,
+            480
+          ],
+          "role": "authored_landmark",
+          "poi_id": "poi_mirrormere_ferry",
+          "light": "warm"
+        },
+        {
+          "frame": "reed_clump",
+          "cell": [
+            366,
+            488
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "reed_clump",
+          "cell": [
+            374,
+            496
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "net_rack",
+          "cell": [
+            398,
+            478
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "mooring_post",
+          "cell": [
+            402,
+            482
+          ],
+          "role": "return_route"
+        },
+        {
+          "frame": "sluice_gate",
+          "cell": [
+            362,
+            498
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "fen_snag",
+          "cell": [
+            380,
+            470
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "bleached_reeds",
+          "cell": [
+            372,
+            500
+          ],
+          "role": "physical_danger"
+        }
+      ],
+      "capture_views": [
+        {
+          "id": "mere_causeway_day",
+          "center_cell": [
+            372,
+            496
+          ],
+          "time_of_day": 0.3
+        },
+        {
+          "id": "mere_ferry_night",
+          "center_cell": [
+            396,
+            480
+          ],
+          "time_of_day": 0.85
+        }
+      ]
+    },
+    {
+      "study_id": "glasswind_coast_region_window",
+      "region_id": "r_glasswind_coast",
+      "biome_profile": "glasswind_coast",
+      "lighting_profile": "glasswind_storm",
+      "window": {
+        "origin_cell": [
+          880,
+          64
+        ],
+        "size_cells": [
+          80,
+          64
+        ]
+      },
+      "canonical_anchors": {
+        "poi_id": "poi_glasswind_light",
+        "resource_site_id": "src_glass_silica"
+      },
+      "ground_rules": {
+        "base_from_source_surface": true,
+        "road_from_source_road": true,
+        "biome_materials": {
+          "coastal_scrub": "shell",
+          "boreal_forest": "forest",
+          "riverine": "river",
+          "ocean": "lake"
+        },
+        "preserve_source_water": true,
+        "use_source_legend": true,
+        "use_region_mix": true,
+        "road_style": "stone",
+        "blend_radius_cells": 0,
+        "landforms": [
+          {
+            "id": "glass_shell_bench",
+            "material": "shell",
+            "shape": {
+              "type": "ellipse",
+              "center": [
+                906,
+                92
+              ],
+              "radii": [
+                16,
+                12
+              ]
+            },
+            "reason": "Wave-cut shell bench below the lighthouse; silica placer sorts along the storm strand.",
+            "source_refs": [
+              "world_plan:r_glasswind_coast.geology",
+              "world_plan:src_glass_silica"
+            ]
+          },
+          {
+            "id": "glass_dune_ridge",
+            "material": "dune",
+            "shape": {
+              "type": "ellipse",
+              "center": [
+                894,
+                108
+              ],
+              "radii": [
+                12,
+                8
+              ]
+            },
+            "reason": "Wind-blown dune ridge shelters the approach from the exposed cliff.",
+            "source_refs": [
+              "world_plan:r_glasswind_coast.soils"
+            ]
+          }
+        ]
+      },
+      "add_props": [
+        {
+          "frame": "lm_glasswind_light",
+          "cell": [
+            930,
+            120
+          ],
+          "role": "authored_landmark",
+          "poi_id": "poi_glasswind_light",
+          "light": "warm"
+        },
+        {
+          "frame": "silica_placer",
+          "cell": [
+            922,
+            80
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_glass_silica:01",
+          "site_id": "src_glass_silica"
+        },
+        {
+          "frame": "silica_placer",
+          "cell": [
+            917,
+            82
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_glass_silica:02",
+          "site_id": "src_glass_silica"
+        },
+        {
+          "frame": "silica_placer",
+          "cell": [
+            920,
+            76
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_glass_silica:03",
+          "site_id": "src_glass_silica"
+        },
+        {
+          "frame": "driftwood",
+          "cell": [
+            926,
+            96
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "shell_bar",
+          "cell": [
+            934,
+            84
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "salt_windbreak",
+          "cell": [
+            912,
+            112
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_frost_small",
+          "cell": [
+            902,
+            76
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_frost_small",
+          "cell": [
+            890,
+            76
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_frost_small",
+          "cell": [
+            892,
+            77
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_frost_small",
+          "cell": [
+            888,
+            78
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_frost_small",
+          "cell": [
+            891,
+            74
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_frost_small",
+          "cell": [
+            902,
+            100
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_frost_small",
+          "cell": [
+            904,
+            101
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_frost_small",
+          "cell": [
+            900,
+            102
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_frost_small",
+          "cell": [
+            903,
+            98
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_frost_small",
+          "cell": [
+            914,
+            70
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_frost_small",
+          "cell": [
+            916,
+            71
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_frost_small",
+          "cell": [
+            912,
+            72
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_frost_small",
+          "cell": [
+            915,
+            68
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "driftwood",
+          "cell": [
+            928,
+            92
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "driftwood",
+          "cell": [
+            930,
+            93
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "driftwood",
+          "cell": [
+            926,
+            94
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "driftwood",
+          "cell": [
+            929,
+            90
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "driftwood",
+          "cell": [
+            938,
+            78
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "driftwood",
+          "cell": [
+            940,
+            79
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "driftwood",
+          "cell": [
+            936,
+            80
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "driftwood",
+          "cell": [
+            939,
+            76
+          ],
+          "role": "background_scenery"
+        }
+      ],
+      "capture_views": [
+        {
+          "id": "glass_light_day",
+          "center_cell": [
+            924,
+            112
+          ],
+          "time_of_day": 0.35
+        },
+        {
+          "id": "glass_storm_night",
+          "center_cell": [
+            912,
+            92
+          ],
+          "time_of_day": 0.85
+        }
+      ]
+    },
+    {
+      "study_id": "ember_steppe_region_window",
+      "region_id": "r_ember_steppe",
+      "biome_profile": "ember_steppe",
+      "lighting_profile": "ember_haze",
+      "window": {
+        "origin_cell": [
+          560,
+          304
+        ],
+        "size_cells": [
+          104,
+          88
+        ]
+      },
+      "canonical_anchors": {
+        "poi_id": "poi_ember_old_forge",
+        "resource_site_id": "src_ember_sulfur"
+      },
+      "ground_rules": {
+        "base_from_source_surface": true,
+        "road_from_source_road": true,
+        "biome_materials": {
+          "volcanic_steppe": "cinder",
+          "ash_badland": "lava",
+          "riverine": "silt",
+          "oasis": "grass"
+        },
+        "preserve_source_water": true,
+        "use_source_legend": true,
+        "use_region_mix": true,
+        "road_style": "dirt",
+        "blend_radius_cells": 0,
+        "landforms": [
+          {
+            "id": "ember_lava_flow",
+            "material": "lava",
+            "shape": {
+              "type": "polygon",
+              "points": [
+                [
+                  600,
+                  340
+                ],
+                [
+                  640,
+                  330
+                ],
+                [
+                  660,
+                  360
+                ],
+                [
+                  620,
+                  380
+                ]
+              ]
+            },
+            "reason": "Cooled basalt flow from the cinder cones; copper veins follow the flow margin.",
+            "source_refs": [
+              "world_plan:r_ember_steppe.geology",
+              "world_plan:src_ember_copper"
+            ]
+          },
+          {
+            "id": "ember_sulfur_flat",
+            "material": "sulfur",
+            "shape": {
+              "type": "ellipse",
+              "center": [
+                610,
+                380
+              ],
+              "radii": [
+                14,
+                10
+              ]
+            },
+            "reason": "Fumarole sublimation deposits sulfur crust around the vent field.",
+            "source_refs": [
+              "world_plan:src_ember_sulfur",
+              "world_plan:hz_ember_gas"
+            ]
+          }
+        ]
+      },
+      "add_props": [
+        {
+          "frame": "lm_ember_forge",
+          "cell": [
+            580,
+            320
+          ],
+          "role": "authored_landmark",
+          "poi_id": "poi_ember_old_forge",
+          "light": "warm"
+        },
+        {
+          "frame": "sulfur_vent",
+          "cell": [
+            612,
+            380
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_ember_sulfur:01",
+          "site_id": "src_ember_sulfur"
+        },
+        {
+          "frame": "sulfur_vent",
+          "cell": [
+            607,
+            382
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_ember_sulfur:02",
+          "site_id": "src_ember_sulfur"
+        },
+        {
+          "frame": "sulfur_vent",
+          "cell": [
+            610,
+            376
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_ember_sulfur:03",
+          "site_id": "src_ember_sulfur"
+        },
+        {
+          "frame": "copper_vein",
+          "cell": [
+            652,
+            340
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_ember_copper:01",
+          "site_id": "src_ember_copper"
+        },
+        {
+          "frame": "copper_vein",
+          "cell": [
+            647,
+            342
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_ember_copper:02",
+          "site_id": "src_ember_copper"
+        },
+        {
+          "frame": "copper_vein",
+          "cell": [
+            650,
+            336
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_ember_copper:03",
+          "site_id": "src_ember_copper"
+        },
+        {
+          "frame": "chimney_stack",
+          "cell": [
+            588,
+            312
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "pump_pipe",
+          "cell": [
+            572,
+            328
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "cinder_cone",
+          "cell": [
+            632,
+            318
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_dead",
+          "cell": [
+            566,
+            352
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "gas_vent",
+          "cell": [
+            600,
+            368
+          ],
+          "role": "physical_danger"
+        },
+        {
+          "frame": "sulfur_crust",
+          "cell": [
+            616,
+            388
+          ],
+          "role": "physical_danger"
+        },
+        {
+          "frame": "tree_dead",
+          "cell": [
+            566,
+            316
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_dead",
+          "cell": [
+            568,
+            317
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_dead",
+          "cell": [
+            564,
+            318
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_dead",
+          "cell": [
+            567,
+            314
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_dead",
+          "cell": [
+            600,
+            308
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_dead",
+          "cell": [
+            602,
+            309
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_dead",
+          "cell": [
+            598,
+            310
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_dead",
+          "cell": [
+            601,
+            306
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_dead",
+          "cell": [
+            648,
+            312
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_dead",
+          "cell": [
+            650,
+            313
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_dead",
+          "cell": [
+            646,
+            314
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_dead",
+          "cell": [
+            572,
+            372
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_dead",
+          "cell": [
+            574,
+            373
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_dead",
+          "cell": [
+            570,
+            374
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_dead",
+          "cell": [
+            573,
+            370
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "cinder_cone",
+          "cell": [
+            628,
+            308
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "cinder_cone",
+          "cell": [
+            630,
+            309
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "cinder_cone",
+          "cell": [
+            626,
+            310
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "cinder_cone",
+          "cell": [
+            629,
+            306
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "cinder_cone",
+          "cell": [
+            652,
+            368
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "cinder_cone",
+          "cell": [
+            654,
+            369
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "cinder_cone",
+          "cell": [
+            650,
+            370
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "cinder_cone",
+          "cell": [
+            653,
+            366
+          ],
+          "role": "background_scenery"
+        }
+      ],
+      "capture_views": [
+        {
+          "id": "ember_forge_day",
+          "center_cell": [
+            582,
+            324
+          ],
+          "time_of_day": 0.35
+        },
+        {
+          "id": "ember_gas_night",
+          "center_cell": [
+            608,
+            376
+          ],
+          "time_of_day": 0.85
+        }
+      ]
+    },
+    {
+      "study_id": "saffron_coast_region_window",
+      "region_id": "r_saffron_coast",
+      "biome_profile": "saffron_coast",
+      "lighting_profile": "saffron_glare",
+      "window": {
+        "origin_cell": [
+          848,
+          320
+        ],
+        "size_cells": [
+          64,
+          56
+        ]
+      },
+      "canonical_anchors": {
+        "poi_id": "poi_saffron_salt_pan",
+        "resource_site_id": "src_saffron_salt"
+      },
+      "ground_rules": {
+        "base_from_source_surface": true,
+        "road_from_source_road": true,
+        "biome_materials": {
+          "arid_coast": "dune",
+          "salt_flat": "salt",
+          "oasis": "grass",
+          "riverine": "river",
+          "ocean": "lake",
+          "lake": "salt"
+        },
+        "preserve_source_water": false,
+        "use_source_legend": true,
+        "use_region_mix": true,
+        "road_style": "causeway",
+        "blend_radius_cells": 0,
+        "landforms": [
+          {
+            "id": "saffron_salt_pan",
+            "material": "salt",
+            "shape": {
+              "type": "ellipse",
+              "center": [
+                880,
+                352
+              ],
+              "radii": [
+                22,
+                16
+              ]
+            },
+            "reason": "Terminal evaporite pan crusts over after dry wind; rakes and shade mark worked salt.",
+            "source_refs": [
+              "world_plan:lake_salt_pan",
+              "world_plan:src_saffron_salt"
+            ]
+          },
+          {
+            "id": "saffron_dune_margin",
+            "material": "dune",
+            "shape": {
+              "type": "ellipse",
+              "center": [
+                862,
+                336
+              ],
+              "radii": [
+                12,
+                8
+              ]
+            },
+            "reason": "Calcareous dune margin shelters the caravan approach from glare.",
+            "source_refs": [
+              "world_plan:r_saffron_coast.soils"
+            ]
+          }
+        ]
+      },
+      "add_props": [
+        {
+          "frame": "lm_saffron_salt_works",
+          "cell": [
+            880,
+            360
+          ],
+          "role": "authored_landmark",
+          "poi_id": "poi_saffron_salt_pan",
+          "light": "warm"
+        },
+        {
+          "frame": "salt_crust_prop",
+          "cell": [
+            880,
+            336
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_saffron_salt:01",
+          "site_id": "src_saffron_salt"
+        },
+        {
+          "frame": "salt_crust_prop",
+          "cell": [
+            885,
+            337
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_saffron_salt:02",
+          "site_id": "src_saffron_salt"
+        },
+        {
+          "frame": "salt_crust_prop",
+          "cell": [
+            877,
+            334
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_saffron_salt:03",
+          "site_id": "src_saffron_salt"
+        },
+        {
+          "frame": "palm",
+          "cell": [
+            858,
+            344
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "awning",
+          "cell": [
+            872,
+            368
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "salt_rake",
+          "cell": [
+            888,
+            344
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "salt_windbreak",
+          "cell": [
+            896,
+            360
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "heat_shimmer",
+          "cell": [
+            884,
+            332
+          ],
+          "role": "physical_danger"
+        },
+        {
+          "frame": "palm",
+          "cell": [
+            856,
+            332
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "palm",
+          "cell": [
+            858,
+            333
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "palm",
+          "cell": [
+            854,
+            334
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "palm",
+          "cell": [
+            857,
+            330
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "palm",
+          "cell": [
+            902,
+            333
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "palm",
+          "cell": [
+            898,
+            334
+          ],
+          "role": "background_scenery"
+        }
+      ],
+      "capture_views": [
+        {
+          "id": "saffron_pan_day",
+          "center_cell": [
+            880,
+            352
+          ],
+          "time_of_day": 0.3
+        },
+        {
+          "id": "saffron_shade_night",
+          "center_cell": [
+            872,
+            364
+          ],
+          "time_of_day": 0.85
+        }
+      ]
+    },
+    {
+      "study_id": "verdant_fold_region_window",
+      "region_id": "r_verdant_fold",
+      "biome_profile": "verdant_fold",
+      "lighting_profile": "verdant_canopy",
+      "window": {
+        "origin_cell": [
+          584,
+          560
+        ],
+        "size_cells": [
+          80,
+          88
+        ]
+      },
+      "canonical_anchors": {
+        "poi_id": "poi_verdant_canopy_temple",
+        "resource_site_id": "src_verdant_hardwood"
+      },
+      "ground_rules": {
+        "base_from_source_surface": true,
+        "road_from_source_road": true,
+        "biome_materials": {
+          "tropical_forest": "jungle",
+          "karst_orchard": "karst",
+          "riverine": "river",
+          "freshwater_marsh": "reedpeat",
+          "ocean": "lake"
+        },
+        "preserve_source_water": true,
+        "use_source_legend": true,
+        "use_region_mix": true,
+        "road_style": "stone",
+        "blend_radius_cells": 0,
+        "landforms": [
+          {
+            "id": "verdant_karst_ridge",
+            "material": "karst",
+            "shape": {
+              "type": "ellipse",
+              "center": [
+                640,
+                584
+              ],
+              "radii": [
+                20,
+                14
+              ]
+            },
+            "reason": "Folded limestone ridge supports the canopy temple terraces.",
+            "source_refs": [
+              "world_plan:r_verdant_fold.geology"
+            ]
+          },
+          {
+            "id": "verdant_spore_hollow",
+            "material": "toxic",
+            "shape": {
+              "type": "ellipse",
+              "center": [
+                620,
+                640
+              ],
+              "radii": [
+                14,
+                10
+              ]
+            },
+            "reason": "Spore hollow discolours leaf litter; filter gear matters more than armour.",
+            "source_refs": [
+              "world_plan:hz_verdant_spore",
+              "world_plan:src_verdant_venom"
+            ]
+          }
+        ]
+      },
+      "add_props": [
+        {
+          "frame": "lm_verdant_temple",
+          "cell": [
+            640,
+            600
+          ],
+          "role": "authored_landmark",
+          "poi_id": "poi_verdant_canopy_temple",
+          "light": "warm"
+        },
+        {
+          "frame": "hardwood_log",
+          "cell": [
+            602,
+            580
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_verdant_hardwood:01",
+          "site_id": "src_verdant_hardwood"
+        },
+        {
+          "frame": "hardwood_log",
+          "cell": [
+            597,
+            582
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_verdant_hardwood:02",
+          "site_id": "src_verdant_hardwood"
+        },
+        {
+          "frame": "hardwood_log",
+          "cell": [
+            600,
+            576
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_verdant_hardwood:03",
+          "site_id": "src_verdant_hardwood"
+        },
+        {
+          "frame": "venom_sac",
+          "cell": [
+            622,
+            640
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_verdant_venom:01",
+          "site_id": "src_verdant_venom"
+        },
+        {
+          "frame": "venom_sac",
+          "cell": [
+            617,
+            642
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_verdant_venom:02",
+          "site_id": "src_verdant_venom"
+        },
+        {
+          "frame": "venom_sac",
+          "cell": [
+            620,
+            636
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_verdant_venom:03",
+          "site_id": "src_verdant_venom"
+        },
+        {
+          "frame": "jungle_canopy",
+          "cell": [
+            600,
+            568
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "jungle_canopy",
+          "cell": [
+            656,
+            588
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "liana",
+          "cell": [
+            632,
+            592
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "karst_pinnacle",
+          "cell": [
+            660,
+            572
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "stilt_walk",
+          "cell": [
+            636,
+            608
+          ],
+          "role": "return_route"
+        },
+        {
+          "frame": "spore_cluster",
+          "cell": [
+            616,
+            636
+          ],
+          "role": "physical_danger"
+        },
+        {
+          "frame": "spore_cluster",
+          "cell": [
+            626,
+            646
+          ],
+          "role": "physical_danger"
+        },
+        {
+          "frame": "jungle_canopy",
+          "cell": [
+            592,
+            568
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "jungle_canopy",
+          "cell": [
+            594,
+            569
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "jungle_canopy",
+          "cell": [
+            590,
+            570
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "jungle_canopy",
+          "cell": [
+            593,
+            566
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "jungle_canopy",
+          "cell": [
+            612,
+            588
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "jungle_canopy",
+          "cell": [
+            610,
+            590
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "jungle_canopy",
+          "cell": [
+            652,
+            568
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "jungle_canopy",
+          "cell": [
+            654,
+            569
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "jungle_canopy",
+          "cell": [
+            650,
+            570
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "jungle_canopy",
+          "cell": [
+            653,
+            566
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "jungle_canopy",
+          "cell": [
+            598,
+            618
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "jungle_canopy",
+          "cell": [
+            601,
+            614
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "jungle_canopy",
+          "cell": [
+            648,
+            624
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "jungle_canopy",
+          "cell": [
+            650,
+            625
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "jungle_canopy",
+          "cell": [
+            646,
+            626
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "karst_pinnacle",
+          "cell": [
+            660,
+            588
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "karst_pinnacle",
+          "cell": [
+            662,
+            589
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "karst_pinnacle",
+          "cell": [
+            658,
+            590
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "karst_pinnacle",
+          "cell": [
+            661,
+            586
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "karst_pinnacle",
+          "cell": [
+            586,
+            634
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "liana",
+          "cell": [
+            620,
+            580
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "liana",
+          "cell": [
+            622,
+            581
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "liana",
+          "cell": [
+            618,
+            582
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "liana",
+          "cell": [
+            621,
+            578
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "liana",
+          "cell": [
+            636,
+            616
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "liana",
+          "cell": [
+            638,
+            617
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "liana",
+          "cell": [
+            634,
+            618
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "liana",
+          "cell": [
+            637,
+            614
+          ],
+          "role": "background_scenery"
+        }
+      ],
+      "capture_views": [
+        {
+          "id": "verdant_temple_day",
+          "center_cell": [
+            640,
+            600
+          ],
+          "time_of_day": 0.35
+        },
+        {
+          "id": "verdant_spore_night",
+          "center_cell": [
+            620,
+            636
+          ],
+          "time_of_day": 0.85
+        }
+      ]
+    },
+    {
+      "study_id": "pearl_mangroves_region_window",
+      "region_id": "r_pearl_mangroves",
+      "biome_profile": "pearl_mangroves",
+      "lighting_profile": "pearl_dusk",
+      "window": {
+        "origin_cell": [
+          800,
+          560
+        ],
+        "size_cells": [
+          72,
+          80
+        ]
+      },
+      "canonical_anchors": {
+        "poi_id": "poi_pearl_customs",
+        "resource_site_id": "src_pearl_bed"
+      },
+      "ground_rules": {
+        "base_from_source_surface": true,
+        "road_from_source_road": true,
+        "biome_materials": {
+          "mangrove": "mangrove",
+          "tidal_flat": "mud",
+          "ocean": "tidal",
+          "riverine": "river",
+          "freshwater_marsh": "reedpeat"
+        },
+        "preserve_source_water": true,
+        "use_source_legend": true,
+        "use_region_mix": true,
+        "road_style": "boardwalk",
+        "blend_radius_cells": 0,
+        "landforms": [
+          {
+            "id": "pearl_tidal_channel",
+            "material": "tidal",
+            "shape": {
+              "type": "polygon",
+              "points": [
+                [
+                  820,
+                  580
+                ],
+                [
+                  850,
+                  590
+                ],
+                [
+                  840,
+                  620
+                ],
+                [
+                  810,
+                  610
+                ]
+              ]
+            },
+            "reason": "Distributary tidal channel scours mudflat beside the customs house; tide changes safe approach.",
+            "source_refs": [
+              "world_plan:riv_pearl_west",
+              "world_plan:hz_pearl_tide"
+            ]
+          },
+          {
+            "id": "pearl_shell_bar",
+            "material": "shell",
+            "shape": {
+              "type": "ellipse",
+              "center": [
+                816,
+                624
+              ],
+              "radii": [
+                12,
+                8
+              ]
+            },
+            "reason": "Shell hash bar marks the mollusc nursery and pearl bed.",
+            "source_refs": [
+              "world_plan:src_pearl_bed"
+            ]
+          }
+        ]
+      },
+      "add_props": [
+        {
+          "frame": "lm_pearl_customs",
+          "cell": [
+            840,
+            600
+          ],
+          "role": "authored_landmark",
+          "poi_id": "poi_pearl_customs",
+          "light": "warm"
+        },
+        {
+          "frame": "pearl_bed",
+          "cell": [
+            822,
+            620
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_pearl_bed:01",
+          "site_id": "src_pearl_bed"
+        },
+        {
+          "frame": "pearl_bed",
+          "cell": [
+            817,
+            622
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_pearl_bed:02",
+          "site_id": "src_pearl_bed"
+        },
+        {
+          "frame": "pearl_bed",
+          "cell": [
+            820,
+            616
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_pearl_bed:03",
+          "site_id": "src_pearl_bed"
+        },
+        {
+          "frame": "mangrove_root",
+          "cell": [
+            808,
+            588
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "mangrove_root",
+          "cell": [
+            852,
+            612
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "mooring_post",
+          "cell": [
+            836,
+            608
+          ],
+          "role": "return_route"
+        },
+        {
+          "frame": "stilt_walk",
+          "cell": [
+            840,
+            604
+          ],
+          "role": "return_route"
+        },
+        {
+          "frame": "tidal_wrack",
+          "cell": [
+            824,
+            616
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tide_gauge",
+          "cell": [
+            832,
+            596
+          ],
+          "role": "physical_danger"
+        },
+        {
+          "frame": "mangrove_root",
+          "cell": [
+            808,
+            573
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "mangrove_root",
+          "cell": [
+            804,
+            574
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "mangrove_root",
+          "cell": [
+            807,
+            570
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "mangrove_root",
+          "cell": [
+            820,
+            588
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "mangrove_root",
+          "cell": [
+            822,
+            589
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "mangrove_root",
+          "cell": [
+            818,
+            590
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "mangrove_root",
+          "cell": [
+            821,
+            586
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "mangrove_root",
+          "cell": [
+            850,
+            582
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "mangrove_root",
+          "cell": [
+            853,
+            578
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "mangrove_root",
+          "cell": [
+            858,
+            622
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "mangrove_root",
+          "cell": [
+            861,
+            618
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "mangrove_root",
+          "cell": [
+            812,
+            632
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "mangrove_root",
+          "cell": [
+            814,
+            633
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "mangrove_root",
+          "cell": [
+            810,
+            634
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "mangrove_root",
+          "cell": [
+            813,
+            630
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "reed_clump",
+          "cell": [
+            828,
+            568
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "reed_clump",
+          "cell": [
+            830,
+            569
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "reed_clump",
+          "cell": [
+            829,
+            566
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "reed_clump",
+          "cell": [
+            846,
+            633
+          ],
+          "role": "background_scenery"
+        }
+      ],
+      "capture_views": [
+        {
+          "id": "pearl_customs_day",
+          "center_cell": [
+            840,
+            600
+          ],
+          "time_of_day": 0.35
+        },
+        {
+          "id": "pearl_tide_night",
+          "center_cell": [
+            828,
+            612
+          ],
+          "time_of_day": 0.85
+        }
+      ]
+    },
+    {
+      "study_id": "sunken_orchard_region_window",
+      "region_id": "r_sunken_orchard",
+      "biome_profile": "sunken_orchard",
+      "lighting_profile": "sunken_clear",
+      "window": {
+        "origin_cell": [
+          72,
+          600
+        ],
+        "size_cells": [
+          104,
+          72
+        ]
+      },
+      "canonical_anchors": {
+        "poi_id": "poi_sunken_cenote",
+        "resource_site_id": "src_sunken_lime"
+      },
+      "ground_rules": {
+        "base_from_source_surface": true,
+        "road_from_source_road": true,
+        "biome_materials": {
+          "karst_orchard": "karst",
+          "tropical_forest": "jungle",
+          "coastal_scrub": "shell",
+          "riverine": "river",
+          "ocean": "lake"
+        },
+        "preserve_source_water": true,
+        "use_source_legend": true,
+        "use_region_mix": true,
+        "road_style": "stone",
+        "blend_radius_cells": 0,
+        "landforms": [
+          {
+            "id": "sunken_cenote_basin",
+            "material": "cenote",
+            "shape": {
+              "type": "ellipse",
+              "center": [
+                120,
+                640
+              ],
+              "radii": [
+                14,
+                10
+              ]
+            },
+            "reason": "Tower-karst sinkhole pools surface water before it disappears to the Ashwater resurgence.",
+            "source_refs": [
+              "world_plan:hyd_karst_conduit",
+              "world_plan:hz_sunken_pressure"
+            ]
+          },
+          {
+            "id": "sunken_orchard_terrace",
+            "material": "soil",
+            "shape": {
+              "type": "ellipse",
+              "center": [
+                150,
+                624
+              ],
+              "radii": [
+                16,
+                10
+              ]
+            },
+            "reason": "Ruined orchard terraces hold rendzina soil and limestone quarry blocks.",
+            "source_refs": [
+              "world_plan:src_sunken_lime"
+            ]
+          }
+        ]
+      },
+      "add_props": [
+        {
+          "frame": "lm_sunken_cenote",
+          "cell": [
+            120,
+            640
+          ],
+          "role": "authored_landmark",
+          "poi_id": "poi_sunken_cenote",
+          "light": "warm"
+        },
+        {
+          "frame": "limestone_chunk",
+          "cell": [
+            162,
+            620
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_sunken_lime:01",
+          "site_id": "src_sunken_lime"
+        },
+        {
+          "frame": "limestone_chunk",
+          "cell": [
+            157,
+            622
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_sunken_lime:02",
+          "site_id": "src_sunken_lime"
+        },
+        {
+          "frame": "limestone_chunk",
+          "cell": [
+            160,
+            616
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_sunken_lime:03",
+          "site_id": "src_sunken_lime"
+        },
+        {
+          "frame": "karst_herb",
+          "cell": [
+            82,
+            620
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_sunken_herb:01",
+          "site_id": "src_sunken_herb"
+        },
+        {
+          "frame": "karst_herb",
+          "cell": [
+            77,
+            622
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_sunken_herb:02",
+          "site_id": "src_sunken_herb"
+        },
+        {
+          "frame": "karst_herb",
+          "cell": [
+            80,
+            616
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_sunken_herb:03",
+          "site_id": "src_sunken_herb"
+        },
+        {
+          "frame": "karst_pinnacle",
+          "cell": [
+            100,
+            616
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "karst_pinnacle",
+          "cell": [
+            140,
+            656
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_orchard",
+          "cell": [
+            152,
+            620
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "jungle_canopy",
+          "cell": [
+            88,
+            652
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "stone_causeway",
+          "cell": [
+            128,
+            632
+          ],
+          "role": "return_route"
+        },
+        {
+          "frame": "cenote_rim",
+          "cell": [
+            112,
+            648
+          ],
+          "role": "physical_danger"
+        },
+        {
+          "frame": "jungle_canopy",
+          "cell": [
+            84,
+            612
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "jungle_canopy",
+          "cell": [
+            86,
+            613
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "jungle_canopy",
+          "cell": [
+            85,
+            610
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "jungle_canopy",
+          "cell": [
+            104,
+            660
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "jungle_canopy",
+          "cell": [
+            106,
+            661
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "jungle_canopy",
+          "cell": [
+            102,
+            662
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "jungle_canopy",
+          "cell": [
+            105,
+            658
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "jungle_canopy",
+          "cell": [
+            160,
+            660
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "jungle_canopy",
+          "cell": [
+            162,
+            661
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "jungle_canopy",
+          "cell": [
+            158,
+            662
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "jungle_canopy",
+          "cell": [
+            161,
+            658
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "karst_pinnacle",
+          "cell": [
+            94,
+            642
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "karst_pinnacle",
+          "cell": [
+            97,
+            638
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "karst_pinnacle",
+          "cell": [
+            148,
+            608
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "karst_pinnacle",
+          "cell": [
+            150,
+            609
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "karst_pinnacle",
+          "cell": [
+            146,
+            610
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "karst_pinnacle",
+          "cell": [
+            149,
+            606
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_orchard",
+          "cell": [
+            156,
+            632
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_orchard",
+          "cell": [
+            158,
+            633
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_orchard",
+          "cell": [
+            154,
+            634
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_orchard",
+          "cell": [
+            157,
+            630
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_orchard",
+          "cell": [
+            144,
+            616
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_orchard",
+          "cell": [
+            146,
+            617
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_orchard",
+          "cell": [
+            142,
+            618
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_orchard",
+          "cell": [
+            145,
+            614
+          ],
+          "role": "background_scenery"
+        }
+      ],
+      "capture_views": [
+        {
+          "id": "sunken_cenote_day",
+          "center_cell": [
+            120,
+            640
+          ],
+          "time_of_day": 0.3
+        },
+        {
+          "id": "sunken_terrace_night",
+          "center_cell": [
+            148,
+            624
+          ],
+          "time_of_day": 0.85
+        }
+      ]
+    },
+    {
+      "study_id": "ashwater_fen_region_window",
+      "region_id": "r_ashwater_fen",
+      "biome_profile": "ashwater_fen",
+      "lighting_profile": "ashwater_miasma",
+      "window": {
+        "origin_cell": [
+          304,
+          592
+        ],
+        "size_cells": [
+          104,
+          88
+        ]
+      },
+      "canonical_anchors": {
+        "poi_id": "poi_ashwater_pump",
+        "resource_site_id": "src_fen_bogiron"
+      },
+      "ground_rules": {
+        "base_from_source_surface": true,
+        "road_from_source_road": true,
+        "biome_materials": {
+          "peat_bog": "fen",
+          "freshwater_marsh": "reedpeat",
+          "riverine": "river",
+          "ruin_field": "silt",
+          "ocean": "tidal"
+        },
+        "preserve_source_water": true,
+        "use_source_legend": true,
+        "use_region_mix": true,
+        "road_style": "boardwalk",
+        "blend_radius_cells": 0,
+        "landforms": [
+          {
+            "id": "ashwater_toxic_pool",
+            "material": "toxic",
+            "shape": {
+              "type": "ellipse",
+              "center": [
+                360,
+                640
+              ],
+              "radii": [
+                18,
+                12
+              ]
+            },
+            "reason": "Still toxic pools accumulate miasma; bleached reeds and gas bubbles telegraph the filter requirement.",
+            "source_refs": [
+              "world_plan:hz_ashwater_miasma",
+              "world_plan:src_fen_venom"
+            ]
+          },
+          {
+            "id": "ashwater_peat_cut",
+            "material": "fen",
+            "shape": {
+              "type": "ellipse",
+              "center": [
+                360,
+                660
+              ],
+              "radii": [
+                16,
+                10
+              ]
+            },
+            "reason": "Acid peat accumulation beside the pump station; bog iron precipitates at the redox margin.",
+            "source_refs": [
+              "world_plan:src_fen_peat",
+              "world_plan:src_fen_bogiron"
+            ]
+          }
+        ]
+      },
+      "add_props": [
+        {
+          "frame": "lm_ashwater_pump",
+          "cell": [
+            340,
+            620
+          ],
+          "role": "authored_landmark",
+          "poi_id": "poi_ashwater_pump",
+          "light": "warm"
+        },
+        {
+          "frame": "bog_iron",
+          "cell": [
+            317,
+            622
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_fen_bogiron:01",
+          "site_id": "src_fen_bogiron"
+        },
+        {
+          "frame": "bog_iron",
+          "cell": [
+            320,
+            616
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_fen_bogiron:02",
+          "site_id": "src_fen_bogiron"
+        },
+        {
+          "frame": "bog_iron",
+          "cell": [
+            315,
+            619
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_fen_bogiron:03",
+          "site_id": "src_fen_bogiron"
+        },
+        {
+          "frame": "venom_sac",
+          "cell": [
+            402,
+            640
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_fen_venom:01",
+          "site_id": "src_fen_venom"
+        },
+        {
+          "frame": "venom_sac",
+          "cell": [
+            397,
+            642
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_fen_venom:02",
+          "site_id": "src_fen_venom"
+        },
+        {
+          "frame": "venom_sac",
+          "cell": [
+            400,
+            636
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_fen_venom:03",
+          "site_id": "src_fen_venom"
+        },
+        {
+          "frame": "peat_cut",
+          "cell": [
+            362,
+            660
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_fen_peat:01",
+          "site_id": "src_fen_peat"
+        },
+        {
+          "frame": "peat_cut",
+          "cell": [
+            357,
+            662
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_fen_peat:02",
+          "site_id": "src_fen_peat"
+        },
+        {
+          "frame": "peat_cut",
+          "cell": [
+            360,
+            656
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_fen_peat:03",
+          "site_id": "src_fen_peat"
+        },
+        {
+          "frame": "pump_pipe",
+          "cell": [
+            348,
+            612
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "stilt_walk",
+          "cell": [
+            340,
+            628
+          ],
+          "role": "return_route"
+        },
+        {
+          "frame": "fen_snag",
+          "cell": [
+            328,
+            648
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "reed_clump",
+          "cell": [
+            380,
+            600
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "bog_pool",
+          "cell": [
+            372,
+            652
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "bleached_reeds",
+          "cell": [
+            352,
+            636
+          ],
+          "role": "physical_danger"
+        },
+        {
+          "frame": "toxic_pool_edge",
+          "cell": [
+            368,
+            644
+          ],
+          "role": "physical_danger"
+        },
+        {
+          "frame": "gas_vent",
+          "cell": [
+            344,
+            652
+          ],
+          "role": "physical_danger"
+        },
+        {
+          "frame": "fen_snag",
+          "cell": [
+            316,
+            608
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "fen_snag",
+          "cell": [
+            318,
+            609
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "fen_snag",
+          "cell": [
+            314,
+            610
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "fen_snag",
+          "cell": [
+            317,
+            606
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "fen_snag",
+          "cell": [
+            384,
+            616
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "fen_snag",
+          "cell": [
+            386,
+            617
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "fen_snag",
+          "cell": [
+            382,
+            618
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "fen_snag",
+          "cell": [
+            385,
+            614
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "fen_snag",
+          "cell": [
+            332,
+            664
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "fen_snag",
+          "cell": [
+            334,
+            665
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "fen_snag",
+          "cell": [
+            330,
+            666
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "fen_snag",
+          "cell": [
+            333,
+            662
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "fen_snag",
+          "cell": [
+            392,
+            668
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "fen_snag",
+          "cell": [
+            394,
+            669
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "fen_snag",
+          "cell": [
+            390,
+            670
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "fen_snag",
+          "cell": [
+            393,
+            666
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "reed_clump",
+          "cell": [
+            352,
+            600
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "reed_clump",
+          "cell": [
+            354,
+            601
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "reed_clump",
+          "cell": [
+            350,
+            602
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "reed_clump",
+          "cell": [
+            353,
+            598
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "reed_clump",
+          "cell": [
+            372,
+            624
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "reed_clump",
+          "cell": [
+            374,
+            625
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "reed_clump",
+          "cell": [
+            370,
+            626
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "reed_clump",
+          "cell": [
+            373,
+            622
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "reed_clump",
+          "cell": [
+            312,
+            640
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "reed_clump",
+          "cell": [
+            314,
+            641
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "reed_clump",
+          "cell": [
+            310,
+            642
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "reed_clump",
+          "cell": [
+            313,
+            638
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "reed_clump",
+          "cell": [
+            388,
+            648
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "reed_clump",
+          "cell": [
+            390,
+            649
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "reed_clump",
+          "cell": [
+            386,
+            650
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "reed_clump",
+          "cell": [
+            389,
+            646
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "bleached_reeds",
+          "cell": [
+            354,
+            650
+          ],
+          "role": "physical_danger"
+        },
+        {
+          "frame": "bleached_reeds",
+          "cell": [
+            340,
+            636
+          ],
+          "role": "physical_danger"
+        },
+        {
+          "frame": "bleached_reeds",
+          "cell": [
+            342,
+            637
+          ],
+          "role": "physical_danger"
+        },
+        {
+          "frame": "bleached_reeds",
+          "cell": [
+            338,
+            638
+          ],
+          "role": "physical_danger"
+        },
+        {
+          "frame": "bleached_reeds",
+          "cell": [
+            341,
+            634
+          ],
+          "role": "physical_danger"
+        }
+      ],
+      "capture_views": [
+        {
+          "id": "ashwater_pump_day",
+          "center_cell": [
+            340,
+            624
+          ],
+          "time_of_day": 0.35
+        },
+        {
+          "id": "ashwater_miasma_night",
+          "center_cell": [
+            360,
+            644
           ],
           "time_of_day": 0.85
         }

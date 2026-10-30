@@ -1,0 +1,6394 @@
+{
+  "ambient_day": [
+    0.92,
+    0.96,
+    0.94,
+    1
+  ],
+  "ambient_night": [
+    0.3,
+    0.38,
+    0.42,
+    1
+  ],
+  "authority": "VISUAL_ONLY_NO_COLLISION_STAND_ECONOMY_CHANGE",
+  "biome_profile": "mirrormere",
+  "capture_views": [
+    {
+      "center_cell": [
+        372,
+        496
+      ],
+      "id": "mere_causeway_day",
+      "time_of_day": 0.3
+    },
+    {
+      "center_cell": [
+        396,
+        480
+      ],
+      "id": "mere_ferry_night",
+      "time_of_day": 0.85
+    }
+  ],
+  "collision_change": false,
+  "counts": {
+    "bank_overlays": 0,
+    "ground_cells": 3584,
+    "lights": 2,
+    "overlays": 303,
+    "props": 9,
+    "road_cells": 303,
+    "road_overlays": 303
+  },
+  "economy_change": false,
+  "ground": {
+    "origin_cell": [
+      352,
+      452
+    ],
+    "rows": [
+      [
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_0"
+      ],
+      [
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_2"
+      ],
+      [
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_2"
+      ],
+      [
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_1"
+      ],
+      [
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_1"
+      ],
+      [
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_3"
+      ],
+      [
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_0"
+      ],
+      [
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_0"
+      ],
+      [
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_2"
+      ],
+      [
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_0"
+      ],
+      [
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_1"
+      ],
+      [
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_2"
+      ],
+      [
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_0"
+      ],
+      [
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_1"
+      ],
+      [
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_2"
+      ],
+      [
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_3"
+      ],
+      [
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_3"
+      ],
+      [
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_3"
+      ],
+      [
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_1"
+      ],
+      [
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_3"
+      ],
+      [
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_3"
+      ],
+      [
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_0"
+      ],
+      [
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_1"
+      ],
+      [
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_0"
+      ],
+      [
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_2"
+      ],
+      [
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_0"
+      ],
+      [
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_0"
+      ],
+      [
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_3"
+      ],
+      [
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_3"
+      ],
+      [
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_0"
+      ],
+      [
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_0"
+      ],
+      [
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_2"
+      ],
+      [
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "coast_reedpeat_lake_2",
+        "reedpeat_0",
+        "reedpeat_2",
+        "reedpeat_2",
+        "coast_reedpeat_lake_8",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_2"
+      ],
+      [
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "coast_reedpeat_lake_2",
+        "reedpeat_3",
+        "reedpeat_0",
+        "reedpeat_2",
+        "coast_reedpeat_lake_8",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_2"
+      ],
+      [
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "coast_reedpeat_lake_2",
+        "reedpeat_0",
+        "reedpeat_3",
+        "reedpeat_2",
+        "coast_reedpeat_lake_8",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_1"
+      ],
+      [
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "coast_reedpeat_lake_2",
+        "reedpeat_2",
+        "reedpeat_2",
+        "reedpeat_0",
+        "coast_reedpeat_lake_8",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_1"
+      ],
+      [
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "coast_reedpeat_lake_2",
+        "reedpeat_2",
+        "reedpeat_3",
+        "reedpeat_2",
+        "coast_reedpeat_lake_8",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_3"
+      ],
+      [
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "coast_reedpeat_lake_2",
+        "reedpeat_3",
+        "reedpeat_0",
+        "reedpeat_3",
+        "coast_reedpeat_lake_8",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_0"
+      ],
+      [
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "coast_reedpeat_lake_2",
+        "reedpeat_1",
+        "reedpeat_2",
+        "reedpeat_1",
+        "coast_reedpeat_lake_8",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_1"
+      ],
+      [
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "coast_reedpeat_lake_2",
+        "reedpeat_2",
+        "reedpeat_2",
+        "reedpeat_1",
+        "coast_reedpeat_lake_8",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_0"
+      ],
+      [
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "coast_reedpeat_lake_2",
+        "reedpeat_0",
+        "reedpeat_2",
+        "reedpeat_2",
+        "coast_reedpeat_lake_8",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_1"
+      ],
+      [
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "coast_reedpeat_lake_2",
+        "reedpeat_0",
+        "reedpeat_3",
+        "reedpeat_0",
+        "coast_reedpeat_lake_8",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_3"
+      ],
+      [
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "coast_reedpeat_lake_2",
+        "reedpeat_1",
+        "reedpeat_2",
+        "reedpeat_0",
+        "coast_reedpeat_lake_8",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_2"
+      ],
+      [
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "coast_reedpeat_lake_4",
+        "coast_reedpeat_lake_4",
+        "coast_reedpeat_lake_6",
+        "reedpeat_2",
+        "reedpeat_0",
+        "reedpeat_1",
+        "coast_reedpeat_lake_12",
+        "coast_reedpeat_lake_4",
+        "coast_reedpeat_lake_4",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_2"
+      ],
+      [
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "coast_reedpeat_lake_2",
+        "mix_reedpeat_lake_13",
+        "mix_reedpeat_lake_1",
+        "mix_reedpeat_lake_1",
+        "reedpeat_2",
+        "reedpeat_1",
+        "reedpeat_1",
+        "mix_reedpeat_lake_1",
+        "mix_reedpeat_lake_1",
+        "mix_reedpeat_lake_3",
+        "coast_reedpeat_lake_8",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_3"
+      ],
+      [
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "coast_reedpeat_lake_3",
+        "mix_reedpeat_lake_12",
+        "reedpeat_1",
+        "reedpeat_1",
+        "reedpeat_1",
+        "reedpeat_3",
+        "reedpeat_2",
+        "reedpeat_2",
+        "mix_reedpeat_lake_2",
+        "coast_reedpeat_lake_8",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "coast_reedpeat_lake_4"
+      ],
+      [
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "coast_reedpeat_lake_3",
+        "mix_reedpeat_lake_12",
+        "reedpeat_0",
+        "reedpeat_0",
+        "reedpeat_3",
+        "reedpeat_3",
+        "reedpeat_3",
+        "mix_reedpeat_lake_2",
+        "coast_reedpeat_lake_8",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "coast_reedpeat_lake_6",
+        "mix_reedpeat_lake_9"
+      ],
+      [
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "coast_reedpeat_lake_3",
+        "reedpeat_0",
+        "reedpeat_2",
+        "reedpeat_0",
+        "reedpeat_1",
+        "reedpeat_3",
+        "mix_reedpeat_lake_2",
+        "coast_reedpeat_lake_8",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "coast_reedpeat_lake_6",
+        "mix_reedpeat_lake_9",
+        "reedpeat_3"
+      ],
+      [
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "mix_reedpeat_lake_12",
+        "mix_reedpeat_lake_4",
+        "mix_reedpeat_lake_6",
+        "coast_reedpeat_lake_8",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "coast_reedpeat_lake_4",
+        "coast_reedpeat_lake_6",
+        "mix_reedpeat_lake_9",
+        "reedpeat_1",
+        "reedpeat_2"
+      ],
+      [
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "coast_reedpeat_lake_1",
+        "coast_reedpeat_lake_1",
+        "coast_reedpeat_lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "coast_reedpeat_lake_6",
+        "mix_reedpeat_lake_9",
+        "mix_reedpeat_lake_1",
+        "reedpeat_3",
+        "reedpeat_1",
+        "reedpeat_3"
+      ],
+      [
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "coast_reedpeat_lake_4",
+        "coast_reedpeat_lake_6",
+        "mix_reedpeat_lake_9",
+        "reedpeat_3",
+        "reedpeat_2",
+        "reedpeat_1",
+        "reedpeat_1",
+        "reedpeat_2"
+      ],
+      [
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "coast_reedpeat_lake_4",
+        "coast_reedpeat_lake_6",
+        "mix_reedpeat_lake_9",
+        "mix_reedpeat_lake_1",
+        "reedpeat_1",
+        "reedpeat_3",
+        "reedpeat_1",
+        "reedpeat_0",
+        "reedpeat_3",
+        "reedpeat_0"
+      ],
+      [
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "coast_reedpeat_lake_4",
+        "coast_reedpeat_lake_6",
+        "mix_reedpeat_lake_9",
+        "mix_reedpeat_lake_1",
+        "reedpeat_2",
+        "reedpeat_2",
+        "reedpeat_1",
+        "reedpeat_2",
+        "reedpeat_2",
+        "reedpeat_1",
+        "reedpeat_3",
+        "reedpeat_0"
+      ],
+      [
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "coast_reedpeat_lake_6",
+        "mix_reedpeat_lake_9",
+        "mix_reedpeat_lake_1",
+        "reedpeat_2",
+        "reedpeat_3",
+        "reedpeat_0",
+        "reedpeat_0",
+        "reedpeat_0",
+        "reedpeat_3",
+        "reedpeat_2",
+        "reedpeat_0",
+        "reedpeat_3",
+        "reedpeat_1"
+      ],
+      [
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "coast_silt_lake_4",
+        "coast_silt_lake_4",
+        "coast_reedpeat_lake_6",
+        "mix_reedpeat_lake_9",
+        "reedpeat_1",
+        "reedpeat_3",
+        "reedpeat_2",
+        "reedpeat_2",
+        "reedpeat_1",
+        "reedpeat_1",
+        "reedpeat_3",
+        "reedpeat_3",
+        "reedpeat_2",
+        "reedpeat_3",
+        "reedpeat_2",
+        "reedpeat_2"
+      ],
+      [
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "coast_silt_lake_2",
+        "mix_silt_lake_9",
+        "mix_silt_lake_3",
+        "mix_reedpeat_lake_9",
+        "reedpeat_2",
+        "reedpeat_3",
+        "reedpeat_3",
+        "reedpeat_0",
+        "reedpeat_2",
+        "reedpeat_3",
+        "reedpeat_1",
+        "reedpeat_1",
+        "reedpeat_3",
+        "reedpeat_2",
+        "reedpeat_2",
+        "reedpeat_3",
+        "reedpeat_3"
+      ]
+    ],
+    "size_cells": [
+      64,
+      56
+    ]
+  },
+  "kind": "biome_study",
+  "landforms": [
+    {
+      "cells": 69,
+      "id": "mere_reed_shelf",
+      "material": "reedpeat",
+      "reason": "Lake-margin reed peat accumulates in shallow sheltered water beside the causeway.",
+      "source_refs": [
+        "world_plan:lake_mirrormere",
+        "world_plan:src_mere_reed"
+      ]
+    },
+    {
+      "cells": 2,
+      "id": "mere_silt_flat",
+      "material": "silt",
+      "reason": "Lacustrine silt lens exposed near the clay source and ferry approach.",
+      "source_refs": [
+        "world_plan:src_mere_clay"
+      ]
+    }
+  ],
+  "lighting_profile": "mere_mist",
+  "lights": [
+    {
+      "cell": [
+        360,
+        500
+      ],
+      "energy": 0.7,
+      "kind": "warm",
+      "world_px": [
+        5768,
+        8004
+      ]
+    },
+    {
+      "cell": [
+        400,
+        480
+      ],
+      "energy": 0.7,
+      "kind": "warm",
+      "world_px": [
+        6408,
+        7684
+      ]
+    }
+  ],
+  "new_poi_count": 0,
+  "overlays": [
+    {
+      "cell": [
+        359,
+        452
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        452
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        452
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        376,
+        452
+      ],
+      "frame": "boardwalk_ew",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        377,
+        452
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        378,
+        452
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        379,
+        452
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        453
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        453
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        453
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        377,
+        453
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        378,
+        453
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        379,
+        453
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        380,
+        453
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        454
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        454
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        454
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        377,
+        454
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        378,
+        454
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        379,
+        454
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        380,
+        454
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        381,
+        454
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        455
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        455
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        455
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        378,
+        455
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        379,
+        455
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        380,
+        455
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        381,
+        455
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        382,
+        455
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        456
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        456
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        456
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        379,
+        456
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        380,
+        456
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        381,
+        456
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        382,
+        456
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        383,
+        456
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        457
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        457
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        457
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        380,
+        457
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        381,
+        457
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        382,
+        457
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        383,
+        457
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        458
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        458
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        458
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        381,
+        458
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        382,
+        458
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        383,
+        458
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        384,
+        458
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        459
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        459
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        459
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        381,
+        459
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        382,
+        459
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        383,
+        459
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        384,
+        459
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        385,
+        459
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        460
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        460
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        460
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        382,
+        460
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        383,
+        460
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        384,
+        460
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        385,
+        460
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        386,
+        460
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        461
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        461
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        461
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        383,
+        461
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        384,
+        461
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        385,
+        461
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        386,
+        461
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        387,
+        461
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        462
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        462
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        462
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        384,
+        462
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        385,
+        462
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        386,
+        462
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        387,
+        462
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        463
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        463
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        463
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        385,
+        463
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        386,
+        463
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        387,
+        463
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        388,
+        463
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        464
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        464
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        464
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        385,
+        464
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        386,
+        464
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        387,
+        464
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        388,
+        464
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        389,
+        464
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        465
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        465
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        465
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        386,
+        465
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        387,
+        465
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        388,
+        465
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        389,
+        465
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        390,
+        465
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        466
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        466
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        466
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        387,
+        466
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        388,
+        466
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        389,
+        466
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        390,
+        466
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        391,
+        466
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        467
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        467
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        467
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        388,
+        467
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        389,
+        467
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        390,
+        467
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        391,
+        467
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        468
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        468
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        468
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        389,
+        468
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        390,
+        468
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        391,
+        468
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        392,
+        468
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        469
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        469
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        469
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        389,
+        469
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        390,
+        469
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        391,
+        469
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        392,
+        469
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        393,
+        469
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        470
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        470
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        470
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        390,
+        470
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        391,
+        470
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        392,
+        470
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        393,
+        470
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        394,
+        470
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        471
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        471
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        471
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        391,
+        471
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        392,
+        471
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        393,
+        471
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        394,
+        471
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        395,
+        471
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        472
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        472
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        472
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        392,
+        472
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        393,
+        472
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        394,
+        472
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        395,
+        472
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        473
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        473
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        473
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        393,
+        473
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        394,
+        473
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        395,
+        473
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        396,
+        473
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        474
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        474
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        474
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        393,
+        474
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        394,
+        474
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        395,
+        474
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        396,
+        474
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        397,
+        474
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        475
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        475
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        475
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        394,
+        475
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        395,
+        475
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        396,
+        475
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        397,
+        475
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        398,
+        475
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        476
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        476
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        476
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        395,
+        476
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        396,
+        476
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        397,
+        476
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        398,
+        476
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        399,
+        476
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        477
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        477
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        477
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        396,
+        477
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        397,
+        477
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        398,
+        477
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        399,
+        477
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        478
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        478
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        478
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        397,
+        478
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        398,
+        478
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        399,
+        478
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        400,
+        478
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        479
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        479
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        479
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        397,
+        479
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        398,
+        479
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        399,
+        479
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        400,
+        479
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        401,
+        479
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        480
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        480
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        480
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        398,
+        480
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        399,
+        480
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        400,
+        480
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        401,
+        480
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        481
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        481
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        481
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        399,
+        481
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        400,
+        481
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        401,
+        481
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        482
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        482
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        482
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        483
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        483
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        483
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        484
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        484
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        484
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        485
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        485
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        485
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        486
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        486
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        486
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        487
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        487
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        487
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        488
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        488
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        488
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        489
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        489
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        489
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        490
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        490
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        490
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        491
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        491
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        491
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        492
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        492
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        492
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        493
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        493
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        493
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        494
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        494
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        494
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        495
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        495
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        495
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        496
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        496
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        496
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        497
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        497
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        497
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        498
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        498
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        498
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        499
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        499
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        499
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        500
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        500
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        500
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        501
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        501
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        501
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        502
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        502
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        502
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        503
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        503
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        503
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        504
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        504
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        504
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        505
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        505
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        505
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        506
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        506
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        506
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        359,
+        507
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        360,
+        507
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        361,
+        507
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    }
+  ],
+  "owner": "A1",
+  "pins": {
+    "atlas_sha256": "355f33687fb20b202ece0aacc61445e5ecd603397a0f5413efdb9fb7e7202e85",
+    "grammar_sha256": "f9118a9bfe669a2d11a6373cd31a27eb655976d52665ef26454fc667cbff711a",
+    "source_sha256": "2c27acf6bec02e1da945ab2b0d45471d21024c73a462c2ec0757d6c53a44df4d"
+  },
+  "production_native_playable": false,
+  "props": [
+    {
+      "cell": [
+        360,
+        500
+      ],
+      "collision_change": false,
+      "frame": "lm_mere_causeway",
+      "id": "study:360,500:lm_mere_causeway",
+      "light": "warm",
+      "poi_id": "poi_mirrormere_causeway",
+      "role": "authored_landmark",
+      "source": "biome_study",
+      "world_px": [
+        5768,
+        8016
+      ]
+    },
+    {
+      "cell": [
+        400,
+        480
+      ],
+      "collision_change": false,
+      "frame": "lm_mere_boathouse",
+      "id": "study:400,480:lm_mere_boathouse",
+      "light": "warm",
+      "poi_id": "poi_mirrormere_ferry",
+      "role": "authored_landmark",
+      "source": "biome_study",
+      "world_px": [
+        6408,
+        7696
+      ]
+    },
+    {
+      "cell": [
+        366,
+        488
+      ],
+      "collision_change": false,
+      "frame": "reed_clump",
+      "id": "study:366,488:reed_clump",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5864,
+        7824
+      ]
+    },
+    {
+      "cell": [
+        374,
+        496
+      ],
+      "collision_change": false,
+      "frame": "reed_clump",
+      "id": "study:374,496:reed_clump",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5992,
+        7952
+      ]
+    },
+    {
+      "cell": [
+        398,
+        478
+      ],
+      "collision_change": false,
+      "frame": "net_rack",
+      "id": "study:398,478:net_rack",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        6376,
+        7664
+      ]
+    },
+    {
+      "cell": [
+        402,
+        482
+      ],
+      "collision_change": false,
+      "frame": "mooring_post",
+      "id": "study:402,482:mooring_post",
+      "role": "return_route",
+      "source": "biome_study",
+      "world_px": [
+        6440,
+        7728
+      ]
+    },
+    {
+      "cell": [
+        362,
+        498
+      ],
+      "collision_change": false,
+      "frame": "sluice_gate",
+      "id": "study:362,498:sluice_gate",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        5800,
+        7984
+      ]
+    },
+    {
+      "cell": [
+        380,
+        470
+      ],
+      "collision_change": false,
+      "frame": "fen_snag",
+      "id": "study:380,470:fen_snag",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        6088,
+        7536
+      ]
+    },
+    {
+      "cell": [
+        372,
+        500
+      ],
+      "collision_change": false,
+      "frame": "bleached_reeds",
+      "id": "study:372,500:bleached_reeds",
+      "role": "physical_danger",
+      "source": "biome_study",
+      "world_px": [
+        5960,
+        8016
+      ]
+    }
+  ],
+  "region_id": "r_mirrormere",
+  "schema": "soh.world.art_presentation.v1",
+  "stand_change": false,
+  "status": "VISUAL_ONLY_ISOLATED_PRESENTATION_NOT_PRODUCTION_MOUNT",
+  "terrain_method": "AUTHORED_LANDFORMS_ON_SOURCE_SURFACES_NO_NOISE_BOUNDARIES",
+  "tile_px": 16,
+  "treatment_id": "mirrormere_region_window",
+  "window": {
+    "origin_cell": [
+      352,
+      452
+    ],
+    "size_cells": [
+      64,
+      56
+    ]
+  }
+}

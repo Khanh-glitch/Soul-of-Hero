@@ -268,7 +268,10 @@ func _build_overlays() -> void:
 	for raw: Variant in data.get("overlays", []):
 		var o: Dictionary = raw
 		var layer := String(o.get("layer", "bank"))
-		var s := _sprite(String(o.frame), atlas["terrain"], terrain_tex, o.cell, 1 if layer == "road" else 0)
+		var z := 0
+		if layer == "road": z = 1
+		elif layer in ["boardwalk", "bridge", "causeway"]: z = 2
+		var s := _sprite(String(o.frame), atlas["terrain"], terrain_tex, o.cell, z)
 		s.name = "Overlay_" + layer + "_" + String(o.frame)
 		overlay_root.add_child(s)
 		_overlay_sprites.append(s)

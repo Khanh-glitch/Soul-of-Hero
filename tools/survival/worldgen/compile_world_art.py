@@ -83,6 +83,12 @@ class Layers:
             self.cache[cid] = c
         return self.cache[cid]
 
+    def surface_name(self, cell: list[int]) -> str:
+        c = self.chunk(cell)
+        v = self.value(cell, "surface")
+        legend = c.get("legend", {}).get("surface", [])
+        return legend[v - 1] if 1 <= v <= len(legend) else "legacy"
+
     def value(self, cell: list[int], layer: str) -> int:
         c = self.chunk(cell)
         ox, oy = c["origin"]
@@ -167,9 +173,26 @@ def compile_ground(src: dict, layers: Layers, atlas: dict, corridor: dict | None
                 if layers.value([x, y], "road") != 0:
                     road_cells.add((x, y))
     mats: dict[tuple[int, int], str] = {}
+    bio_names = sorted(layers.plan["biomes"])
+    biome_mat = rules.get("biome_materials", {})
     for y in range(oy, oy + h):
         for x in range(ox, ox + w):
-            mats[(x, y)] = base_material(profile, layers.value([x, y], "surface"))
+            surf = layers.value([x, y], "surface")
+            if rules.get("use_source_legend"):
+                sname = layers.surface_name([x, y])
+                mat = {"grass": "grass", "moor": "moor", "gravel": "gravel", "floor": "silt",
+                       "snow": "snow", "forest": "forest", "tundra": "tundra", "sand": "dune",
+                       "water": "lake", "ash": "ash", "badland": "cinder", "salt": "salt",
+                       "jungle": "jungle", "karst": "karst", "marsh": "reedpeat", "mangrove": "mangrove",
+                       "mud": "mud", "orchard": "soil", "bog": "fen", "road": "soil",
+                       "bridge": "gravel", "legacy": "gravel"}.get(sname, "gravel")
+            else:
+                mat = base_material(profile, surf)
+            if biome_mat and not (rules.get("use_source_legend") and layers.surface_name([x, y]) == "water"):
+                bi = layers.value([x, y], "biome")
+                if 1 <= bi <= len(bio_names):
+                    mat = biome_mat.get(bio_names[bi - 1], mat)
+            mats[(x, y)] = mat
     # Causal macro-terrain: each patch is an authored landform with a reason and
     # source reference (caldera fan, drainage, terrace, cirque, skarn, court...).
     report: list[dict] = []
@@ -179,6 +202,8 @@ def compile_ground(src: dict, layers: Layers, atlas: dict, corridor: dict | None
         for y in range(oy, oy + h):
             for x in range(ox, ox + w):
                 if in_shape((x, y), lf["shape"]):
+                    if rules.get("preserve_source_water") and layers.surface_name([x, y]) == "water":
+                        continue
                     mats[(x, y)] = mat
                     count += 1
         if count == 0:
@@ -228,14 +253,51 @@ def compile_ground(src: dict, layers: Layers, atlas: dict, corridor: dict | None
             v = int(h01(x, y, 7) * 4) % 4
             if c in road_cells:
                 # Roads are transparent overlays on an opaque base, not black-cornered replacements.
-                base = "gravel" if stone else "soil"
-                frame = f"{base}_{v}"
-                overlays.append({"frame": f"road_{'stone' if stone else 'dirt'}_{road_mask(road_cells, c)}",
-                                 "cell": [x, y], "layer": "road"})
+                if rules.get("use_source_legend"):
+                    road_style = rules.get("road_style", "dirt")
+                    over_water = layers.surface_name([x, y]) in ("water", "bridge")
+                    rm = road_mask(road_cells, c)
+                    wet_ground = mats.get(c) in ("lake", "river", "tidal", "toxic", "mud", "reedpeat")
+                    if over_water or (road_style == "boardwalk" and wet_ground):
+                        frame = f"lake_{v}" if over_water else f"{mats.get(c, 'soil')}_{v}"
+                        bf = "boardwalk_ns" if rm in (1, 4, 5) else "boardwalk_ew" if rm in (2, 8, 10) else "boardwalk_junction"
+                        overlays.append({"frame": bf, "cell": [x, y], "layer": "boardwalk"})
+                    elif road_style == "causeway":
+                        frame = f"gravel_{v}"
+                        cf = "causeway_ns" if rm in (1, 4, 5) else "causeway_ew" if rm in (2, 8, 10) else "causeway_ns"
+                        overlays.append({"frame": cf, "cell": [x, y], "layer": "causeway"})
+                    else:
+                        base = "gravel" if road_style in ("stone", "causeway") else "soil"
+                        frame = f"{base}_{v}"
+                        overlays.append({"frame": f"road_{'stone' if road_style in ('stone', 'causeway') else 'dirt'}_{rm}",
+                                         "cell": [x, y], "layer": "road"})
+                else:
+                    base = "gravel" if stone else "soil"
+                    frame = f"{base}_{v}"
+                    overlays.append({"frame": f"road_{'stone' if stone else 'dirt'}_{road_mask(road_cells, c)}",
+                                     "cell": [x, y], "layer": "road"})
             elif mat == "court":
                 frame = f"court_{v}"
             else:
                 frame = f"{mat}_{v if mat not in ('water', 'ice') else v % 3}"
+                if rules.get("use_region_mix"):
+                    cmask = 0
+                    others: dict[str, int] = {}
+                    for (dx, dy), bit in (((0, -1), 1), ((1, 0), 2), ((0, 1), 4), ((-1, 0), 8)):
+                        n = mats.get((x + dx, y + dy), mat)
+                        if n != mat:
+                            cmask |= bit
+                            others[n] = others.get(n, 0) + 1
+                    if cmask and others:
+                        other = max(others, key=lambda k: others[k])
+                        if mat in ("lake", "river", "tidal", "cenote", "water") and other not in ("lake", "river", "tidal", "cenote", "water"):
+                            cf = f"coast_{other}_{mat}_{cmask}"
+                            if cf in atlas["terrain"]:
+                                frame = cf
+                        else:
+                            mf = f"mix_{mat}_{other}_{cmask}"
+                            if mf in atlas["terrain"]:
+                                frame = mf
                 # Cardinal feathered shore first: a single differing cardinal
                 # neighbour gets a clean 3px edge band instead of a blocky step.
                 cardinal = [((0, -1), 1), ((1, 0), 2), ((0, 1), 4), ((-1, 0), 8)]
@@ -341,15 +403,19 @@ def compile_props(src: dict, atlas: dict, grammar: dict, layers: Layers, corrido
             check_cell(raw["cell"])
             if "node_id" in raw:
                 n = nodes[raw["node_id"]]
-                if n["cell"] != raw["cell"] or n["site_id"] != anchor.get("resource_site_id") or n["region_id"] != src["region_id"]:
+                site = raw.get("site_id") or anchor.get("resource_site_id")
+                if n["cell"] != raw["cell"] or n["site_id"] != site or n["region_id"] != src["region_id"]:
                     raise ValueError(f"harvestable visual does not match canonical node: {raw['node_id']}")
-            if frame.startswith("lm_") and anchor.get("poi_id"):
-                p = pois[anchor["poi_id"]]
+            poi_id = raw.get("poi_id") or (anchor.get("poi_id") if frame.startswith("lm_") else None)
+            if poi_id:
+                p = pois[poi_id]
                 if p["cell"] != raw["cell"] or p["region_id"] != src["region_id"]:
                     raise ValueError(f"landmark visual does not match canonical POI anchor: {frame}")
             props.append({"id": f"study:{raw['cell'][0]},{raw['cell'][1]}:{frame}", "frame": frame, "cell": raw["cell"],
                           "role": role, "source": "biome_study", "collision_change": False,
                           **({"node_id": raw["node_id"]} if "node_id" in raw else {}),
+                          **({"poi_id": raw["poi_id"]} if "poi_id" in raw else {}),
+                          **({"site_id": raw["site_id"]} if "site_id" in raw else {}),
                           **({"light": raw["light"]} if "light" in raw else {})})
     for p in props:
         p["world_px"] = [p["cell"][0] * TILE + 8, p["cell"][1] * TILE + 16]
@@ -390,7 +456,7 @@ def compile_one(src: dict, kind: str, plan: dict, layers: Layers, atlas: dict, g
         "ambient_day": profile["ambient_day"], "ambient_night": profile["ambient_night"],
         "counts": {"ground_cells": ground["size_cells"][0] * ground["size_cells"][1], "props": len(props),
                    "lights": len(lights), "overlays": len(overlays), "road_cells": len(road_cells),
-                   "road_overlays": sum(1 for o in overlays if o.get("layer") == "road"),
+                   "road_overlays": sum(1 for o in overlays if o.get("layer") in ("road", "boardwalk", "causeway")),
                    "bank_overlays": sum(1 for o in overlays if o.get("layer") == "bank")},
         "collision_change": False, "stand_change": False, "economy_change": False, "new_poi_count": 0,
     }

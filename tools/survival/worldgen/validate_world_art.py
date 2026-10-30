@@ -90,8 +90,8 @@ def validate() -> dict:
                 errors.append(f"capture view outside window: {view['id']}")
         if doc["kind"] == "corridor" and doc["pins"]["corridor_sha256"] != sha(WORLD / "corridor/crown_roadside.corridor.v1.json"):
             errors.append("corridor visual pin stale")
-    if len(profiles) < 3:
-        errors.append("expected ashen + amberwood + frost presentation profiles")
+    if len(profiles) < 11:
+        errors.append("expected all 11 planned region visual profiles")
     for entry in index["presentations"]:
         doc = load(ROOT / entry["path"])
         if doc.get("terrain_method") != "AUTHORED_LANDFORMS_ON_SOURCE_SURFACES_NO_NOISE_BOUNDARIES":
@@ -102,7 +102,7 @@ def validate() -> dict:
             if not lf.get("reason") or lf.get("cells", 0) <= 0:
                 errors.append(f"landform lacks causal reason/cells: {lf.get('id')}")
         for o in doc.get("overlays", []):
-            if o.get("layer") not in ("road", "bank") or o["frame"] not in atlas["terrain"]:
+            if o.get("layer") not in ("road", "bank", "boardwalk", "bridge", "causeway") or o["frame"] not in atlas["terrain"]:
                 errors.append(f"overlay invalid: {o}")
         if doc["counts"].get("road_overlays", 0) != doc["counts"].get("road_cells", 0):
             errors.append(f"road overlay count mismatch: {doc['treatment_id']}")

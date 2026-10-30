@@ -1,6 +1,6 @@
 {
-  "atlas_sha256": "617fc36d866653d67eb1b890ddcf5501b8660d87031ae04fefdb73941393326e",
-  "grammar_sha256": "170d9992bb15ab24ff4628d99ece61b8efebed29bb5c3f629a878304d7b81583",
+  "atlas_sha256": "355f33687fb20b202ece0aacc61445e5ecd603397a0f5413efdb9fb7e7202e85",
+  "grammar_sha256": "f9118a9bfe669a2d11a6373cd31a27eb655976d52665ef26454fc667cbff711a",
   "owner": "A1",
   "presentations": [
     {
@@ -14,7 +14,7 @@
         "road_overlays": 33
       },
       "path": "data/survival/world/art/compiled/crown_roadside_visual_treatment.presentation.v1.json",
-      "sha256": "3ad267e47a4d1d47980887fbf9b8d1547323c0b695b3696e499d2a246d2f387f",
+      "sha256": "75d74c11f14e9ab35f3bd5ef1038eaaae2fb174a1de04ecaf64d3f279b18d653",
       "treatment_id": "crown_roadside_visual_treatment"
     },
     {
@@ -28,7 +28,7 @@
         "road_overlays": 45
       },
       "path": "data/survival/world/art/compiled/amberwood_apothecary_herb_margin.presentation.v1.json",
-      "sha256": "9c2fb7492887acb7aaa9bc7df6324d5053d2edff54992f44e3479e8a9004b056",
+      "sha256": "a3c8b3b8aedc371edb19cff45e56c2612cc56fff62d29313f5bac7fc778e6a2c",
       "treatment_id": "amberwood_apothecary_herb_margin"
     },
     {
@@ -42,8 +42,120 @@
         "road_overlays": 431
       },
       "path": "data/survival/world/art/compiled/frost_crown_shrine_skarn.presentation.v1.json",
-      "sha256": "a6787f1da852c2f4440da6101ab7414e42a53701485068c269c6679bd8d932f5",
+      "sha256": "0d330f2a3fa2e63b6ea18db1d41550b4392b364b88f1719263fcc012da1b78b4",
       "treatment_id": "frost_crown_shrine_skarn"
+    },
+    {
+      "counts": {
+        "bank_overlays": 0,
+        "ground_cells": 3584,
+        "lights": 2,
+        "overlays": 303,
+        "props": 9,
+        "road_cells": 303,
+        "road_overlays": 303
+      },
+      "path": "data/survival/world/art/compiled/mirrormere_region_window.presentation.v1.json",
+      "sha256": "fa640ef37a2a8d9ee74ac743cad0faf31550c76aff677ed63857cd6ac919aeec",
+      "treatment_id": "mirrormere_region_window"
+    },
+    {
+      "counts": {
+        "bank_overlays": 0,
+        "ground_cells": 5120,
+        "lights": 1,
+        "overlays": 172,
+        "props": 28,
+        "road_cells": 172,
+        "road_overlays": 172
+      },
+      "path": "data/survival/world/art/compiled/glasswind_coast_region_window.presentation.v1.json",
+      "sha256": "86f399d86c6e79e1d331dffbb4073221c35df7aa6846e69eb2cc68e2f763869c",
+      "treatment_id": "glasswind_coast_region_window"
+    },
+    {
+      "counts": {
+        "bank_overlays": 0,
+        "ground_cells": 9152,
+        "lights": 1,
+        "overlays": 1373,
+        "props": 36,
+        "road_cells": 1373,
+        "road_overlays": 1373
+      },
+      "path": "data/survival/world/art/compiled/ember_steppe_region_window.presentation.v1.json",
+      "sha256": "f78f1a66a78959929c371a66af31a1fd9c512d4772fd260ec2a1bcbe512b7fba",
+      "treatment_id": "ember_steppe_region_window"
+    },
+    {
+      "counts": {
+        "bank_overlays": 0,
+        "ground_cells": 3584,
+        "lights": 1,
+        "overlays": 315,
+        "props": 15,
+        "road_cells": 315,
+        "road_overlays": 315
+      },
+      "path": "data/survival/world/art/compiled/saffron_coast_region_window.presentation.v1.json",
+      "sha256": "072f7a49a17b08392faccd86300c8a095b7f8cdbc741e69d6f07121fe762778a",
+      "treatment_id": "saffron_coast_region_window"
+    },
+    {
+      "counts": {
+        "bank_overlays": 0,
+        "ground_cells": 7040,
+        "lights": 1,
+        "overlays": 694,
+        "props": 42,
+        "road_cells": 694,
+        "road_overlays": 694
+      },
+      "path": "data/survival/world/art/compiled/verdant_fold_region_window.presentation.v1.json",
+      "sha256": "7c0d664e1be4d2bc55ac10a263a0294e82481609d5d110555cedaf4726145fa6",
+      "treatment_id": "verdant_fold_region_window"
+    },
+    {
+      "counts": {
+        "bank_overlays": 0,
+        "ground_cells": 5760,
+        "lights": 1,
+        "overlays": 1173,
+        "props": 29,
+        "road_cells": 1173,
+        "road_overlays": 1173
+      },
+      "path": "data/survival/world/art/compiled/pearl_mangroves_region_window.presentation.v1.json",
+      "sha256": "64232e5dca6e19015f85021596b26f238563578f565517ab5cd1a3bb569c34d3",
+      "treatment_id": "pearl_mangroves_region_window"
+    },
+    {
+      "counts": {
+        "bank_overlays": 0,
+        "ground_cells": 7488,
+        "lights": 1,
+        "overlays": 1330,
+        "props": 38,
+        "road_cells": 1330,
+        "road_overlays": 1330
+      },
+      "path": "data/survival/world/art/compiled/sunken_orchard_region_window.presentation.v1.json",
+      "sha256": "10dd3f1b75b4e045ef4b17bffad4ba0d27b0ff19d0e97d760c01975e49aee0ea",
+      "treatment_id": "sunken_orchard_region_window"
+    },
+    {
+      "counts": {
+        "bank_overlays": 0,
+        "ground_cells": 9152,
+        "lights": 1,
+        "overlays": 1691,
+        "props": 55,
+        "road_cells": 1691,
+        "road_overlays": 1691
+      },
+      "path": "data/survival/world/art/compiled/ashwater_fen_region_window.presentation.v1.json",
+      "sha256": "01712d93e60dfff5d01519789a40209e30d9d8e7ef6933ce1afa7070db3ec88a",
+      "treatment_id": "ashwater_fen_region_window"
     }
   ],
   "schema": "soh.world.art_presentations_index.v1"

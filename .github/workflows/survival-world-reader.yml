@@ -69,7 +69,7 @@ jobs:
       - name: Validate corridor source identity, route, collision, art and A8 transform
         run: python tools/survival/worldgen/validate_corridor.py | tee "$ARTIFACT_DIR/corridor_validation.json"
       - name: Bake A1 survival world art atlas (original + pinned inherited frames)
-        run: python tools/survival/worldgen/build_world_art.py | tee "$ARTIFACT_DIR/world_art_bake.json"
+        run: python tools/survival/worldgen/build_region_art.py | tee "$ARTIFACT_DIR/world_art_bake.json"
       - name: Compile visual-only world art treatments
         run: python tools/survival/worldgen/compile_world_art.py | tee "$ARTIFACT_DIR/world_art_compile.json"
       - name: Compile A8 compact-shell visual skins (derived atlas pin)

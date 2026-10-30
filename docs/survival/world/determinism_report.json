@@ -1,5 +1,5 @@
 {
-  "artifact_count": 249,
+  "artifact_count": 257,
   "artifacts": [
     {
       "bytes": 9443,
@@ -9,7 +9,7 @@
     {
       "bytes": 14155,
       "path": "data/survival/world/art/a8_shell_visuals.v1.json",
-      "sha256": "0465e092875f33945003570ccf7913d8bd9a7b09fccff75f9fd1e7df2ea1b194"
+      "sha256": "bdd587902361394a28c6fbdbcbb3912e538ab99518adacb3425203157442e6a6"
     },
     {
       "bytes": 4234,
@@ -17,9 +17,9 @@
       "sha256": "8290c7cb0ee64305ff810d07340ecc302a301fd2eba9f50b8e38bb8a14270fe7"
     },
     {
-      "bytes": 29117,
+      "bytes": 115684,
       "path": "data/survival/world/art/atlas.v1.json",
-      "sha256": "617fc36d866653d67eb1b890ddcf5501b8660d87031ae04fefdb73941393326e"
+      "sha256": "355f33687fb20b202ece0aacc61445e5ecd603397a0f5413efdb9fb7e7202e85"
     },
     {
       "bytes": 25154,
@@ -27,24 +27,64 @@
       "sha256": "57b06825fa8a6c2c30e631a6d80abaa9862ed1a3a10eb36f977d6e88730ed2b6"
     },
     {
-      "bytes": 14868,
+      "bytes": 79066,
       "path": "data/survival/world/art/biome_studies.v1.json",
-      "sha256": "5dca6f1ed5f3a426543de3e749dceed94c49cc250beeca8d71f5bc89b0767c76"
+      "sha256": "2c27acf6bec02e1da945ab2b0d45471d21024c73a462c2ec0757d6c53a44df4d"
     },
     {
       "bytes": 70870,
       "path": "data/survival/world/art/compiled/amberwood_apothecary_herb_margin.presentation.v1.json",
-      "sha256": "9c2fb7492887acb7aaa9bc7df6324d5053d2edff54992f44e3479e8a9004b056"
+      "sha256": "a3c8b3b8aedc371edb19cff45e56c2612cc56fff62d29313f5bac7fc778e6a2c"
+    },
+    {
+      "bytes": 394075,
+      "path": "data/survival/world/art/compiled/ashwater_fen_region_window.presentation.v1.json",
+      "sha256": "01712d93e60dfff5d01519789a40209e30d9d8e7ef6933ce1afa7070db3ec88a"
     },
     {
       "bytes": 70322,
       "path": "data/survival/world/art/compiled/crown_roadside_visual_treatment.presentation.v1.json",
-      "sha256": "3ad267e47a4d1d47980887fbf9b8d1547323c0b695b3696e499d2a246d2f387f"
+      "sha256": "75d74c11f14e9ab35f3bd5ef1038eaaae2fb174a1de04ecaf64d3f279b18d653"
+    },
+    {
+      "bytes": 349527,
+      "path": "data/survival/world/art/compiled/ember_steppe_region_window.presentation.v1.json",
+      "sha256": "f78f1a66a78959929c371a66af31a1fd9c512d4772fd260ec2a1bcbe512b7fba"
     },
     {
       "bytes": 135769,
       "path": "data/survival/world/art/compiled/frost_crown_shrine_skarn.presentation.v1.json",
-      "sha256": "a6787f1da852c2f4440da6101ab7414e42a53701485068c269c6679bd8d932f5"
+      "sha256": "0d330f2a3fa2e63b6ea18db1d41550b4392b364b88f1719263fcc012da1b78b4"
+    },
+    {
+      "bytes": 130223,
+      "path": "data/survival/world/art/compiled/glasswind_coast_region_window.presentation.v1.json",
+      "sha256": "86f399d86c6e79e1d331dffbb4073221c35df7aa6846e69eb2cc68e2f763869c"
+    },
+    {
+      "bytes": 110955,
+      "path": "data/survival/world/art/compiled/mirrormere_region_window.presentation.v1.json",
+      "sha256": "fa640ef37a2a8d9ee74ac743cad0faf31550c76aff677ed63857cd6ac919aeec"
+    },
+    {
+      "bytes": 265237,
+      "path": "data/survival/world/art/compiled/pearl_mangroves_region_window.presentation.v1.json",
+      "sha256": "64232e5dca6e19015f85021596b26f238563578f565517ab5cd1a3bb569c34d3"
+    },
+    {
+      "bytes": 112107,
+      "path": "data/survival/world/art/compiled/saffron_coast_region_window.presentation.v1.json",
+      "sha256": "072f7a49a17b08392faccd86300c8a095b7f8cdbc741e69d6f07121fe762778a"
+    },
+    {
+      "bytes": 317030,
+      "path": "data/survival/world/art/compiled/sunken_orchard_region_window.presentation.v1.json",
+      "sha256": "10dd3f1b75b4e045ef4b17bffad4ba0d27b0ff19d0e97d760c01975e49aee0ea"
+    },
+    {
+      "bytes": 235944,
+      "path": "data/survival/world/art/compiled/verdant_fold_region_window.presentation.v1.json",
+      "sha256": "7c0d664e1be4d2bc55ac10a263a0294e82481609d5d110555cedaf4726145fa6"
     },
     {
       "bytes": 7225,
@@ -52,19 +92,19 @@
       "sha256": "2306757d860abbe63022baead2494417f9b53c1a3ed2dc5567afd7c74c83db73"
     },
     {
-      "bytes": 5366,
+      "bytes": 9820,
       "path": "data/survival/world/art/mount_bundle.v1.json",
-      "sha256": "74588f13b1c7903fe335e4e5a8e7ba819a82348adf778ce74ae8a93a5d4acbd0"
+      "sha256": "3d380c895e84c5f708c05589c2fbd3b3b7d9e01ddeb29840fd3f45d055ea04db"
     },
     {
-      "bytes": 1645,
+      "bytes": 5302,
       "path": "data/survival/world/art/presentations.v1.json",
-      "sha256": "25c459c4524e752e418f337b3df96ed817c5fe63a5a138a7d6106c35475673be"
+      "sha256": "ad7d8727dc13cc00aae03fdd21ef952237d1d20e9ddfa000ec8298447a595185"
     },
     {
-      "bytes": 7813,
+      "bytes": 17098,
       "path": "data/survival/world/art/world_art_grammar.v1.json",
-      "sha256": "170d9992bb15ab24ff4628d99ece61b8efebed29bb5c3f629a878304d7b81583"
+      "sha256": "f9118a9bfe669a2d11a6373cd31a27eb655976d52665ef26454fc667cbff711a"
     },
     {
       "bytes": 3901,
@@ -1247,8 +1287,8 @@
       "sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4"
     }
   ],
-  "compile_1_tree_sha256": "26ace820b6201f203d590551e4c5a4e020f9d577f5d8fe92bb76fd22d764776c",
-  "compile_2_tree_sha256": "26ace820b6201f203d590551e4c5a4e020f9d577f5d8fe92bb76fd22d764776c",
+  "compile_1_tree_sha256": "6ea24309b9e063548a9f2497325b9b344d14db8f6e5e98760b49f66d9395e870",
+  "compile_2_tree_sha256": "6ea24309b9e063548a9f2497325b9b344d14db8f6e5e98760b49f66d9395e870",
   "ok": true,
   "plan_sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4",
   "schema": "soh.world.determinism.v1",

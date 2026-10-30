@@ -48,11 +48,11 @@ def test_grammar_separates_supply_harvestable_waystation_scenery_danger(art):
             assert frame in art["atlas"]["props"]
 
 
-def test_validator_and_three_presentations(art):
+def test_validator_and_all_region_presentations(art):
     result = vwa.validate()
     assert result["ok"], result["errors"]
-    assert result["presentations"] == 3
-    assert set(result["profiles"]) == {"ashen_crown", "amberwood", "frost_crown"}
+    assert result["presentations"] == 11
+    assert set(result["profiles"]) == {"ashen_crown", "amberwood", "frost_crown", "mirrormere", "glasswind_coast", "ember_steppe", "saffron_coast", "verdant_fold", "pearl_mangroves", "sunken_orchard", "ashwater_fen"}
     for doc in art["docs"].values():
         assert doc["production_native_playable"] is False
         assert doc["collision_change"] is False and doc["stand_change"] is False and doc["economy_change"] is False
@@ -137,7 +137,7 @@ def test_causal_landforms_and_road_overlays(art):
         assert doc["counts"]["road_overlays"] == doc["counts"]["road_cells"]
         assert not any(frame.startswith("road_") for row in doc["ground"]["rows"] for frame in row)
         for overlay in doc["overlays"]:
-            assert overlay["layer"] in {"road", "bank"}
+            assert overlay["layer"] in {"road", "bank", "boardwalk", "bridge", "causeway"}
             assert overlay["frame"] in art["atlas"]["terrain"]
     compiler = (cwa.ROOT / "tools/survival/worldgen/compile_world_art.py").read_text()
     assert "h01(x // 6" not in compiler and "h01(x // 5" not in compiler
@@ -233,7 +233,7 @@ def test_mount_bundle_consumer_validation(art):
     import validate_mount_bundle as vmb
     result = vmb.validate()
     assert result["ok"], result["errors"]
-    assert result["treatments"] == 3
+    assert result["treatments"] == 11
 
 
 def test_avfx_lighting_contract_and_contrast_floor(art):
@@ -241,3 +241,41 @@ def test_avfx_lighting_contract_and_contrast_floor(art):
     assert contract["world_light_cull_mask"] == 2 and contract["inherited_vfx_light_mask"] == 1
     assert contract["worst_case"]["contrast_ratio"] >= 1.6
     assert contract["measurements"] and any("Gold" in p or "gold" in p for p in contract["pending"])
+
+
+def test_region_windows_are_distinct_canonical_and_water_safe(art):
+    plan = cwa.load_plan()
+    regions = {r["region_id"] for r in plan["regions"]}
+    docs = [d for d in art["docs"].values() if d["treatment_id"].endswith("_region_window")]
+    assert len(docs) == 8
+    assert {d["region_id"] for d in docs} <= regions
+    nodes = {n["node_id"]: n for n in plan["resource_nodes"]}
+    pois = {p["poi_id"]: p for p in plan["pois"]}
+    frame_sets = []
+    for d in docs:
+        assert d["kind"] == "biome_study"
+        assert d["ground_rules"] if "ground_rules" in d else True
+        for p in d["props"]:
+            if "node_id" in p:
+                assert nodes[p["node_id"]]["cell"] == p["cell"]
+                assert nodes[p["node_id"]]["region_id"] == d["region_id"]
+            if "poi_id" in p:
+                assert pois[p["poi_id"]]["cell"] == p["cell"]
+        # day and night views exist
+        times = [v.get("time_of_day", 0.35) for v in d["capture_views"]]
+        assert min(times) < 0.5 and max(times) > 0.7
+        frame_sets.append({p["frame"] for p in d["props"]})
+    # no two regional windows share the exact prop vocabulary
+    for i in range(len(frame_sets)):
+        for j in range(i + 1, len(frame_sets)):
+            assert frame_sets[i] != frame_sets[j]
+
+
+def test_legacy_first_hour_pixel_payload_preserved(art):
+    import subprocess
+    for tid in ("crown_roadside_visual_treatment", "amberwood_apothecary_herb_margin", "frost_crown_shrine_skarn"):
+        path = f"data/survival/world/art/compiled/{tid}.presentation.v1.json"
+        old = json.loads(subprocess.check_output(["git", "show", f"ad39bde6:{path}"]))
+        new = art["docs"][tid]
+        for key in ("ground", "overlays", "props", "lights", "capture_views", "ambient_day", "ambient_night"):
+            assert old[key] == new[key], f"{tid} pixel payload drifted: {key}"

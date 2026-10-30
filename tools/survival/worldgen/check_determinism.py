@@ -11,6 +11,7 @@ import compile_plan
 import compile_slice
 import compile_corridor
 import build_world_art
+import build_region_art
 import compile_world_art
 from baseline import ROOT
 
@@ -31,7 +32,7 @@ def run():
         compile_plan.compile_all()
         compile_slice.compile_all()
         compile_corridor.compile_all()
-        build_world_art.build()
+        build_region_art.build()
         compile_world_art.compile_all()
     return tree_hash()
 

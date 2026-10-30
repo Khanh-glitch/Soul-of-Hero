@@ -1,0 +1,6572 @@
+{
+  "ambient_day": [
+    1.0,
+    0.95,
+    0.82,
+    1
+  ],
+  "ambient_night": [
+    0.32,
+    0.34,
+    0.44,
+    1
+  ],
+  "authority": "VISUAL_ONLY_NO_COLLISION_STAND_ECONOMY_CHANGE",
+  "biome_profile": "saffron_coast",
+  "capture_views": [
+    {
+      "center_cell": [
+        880,
+        352
+      ],
+      "id": "saffron_pan_day",
+      "time_of_day": 0.3
+    },
+    {
+      "center_cell": [
+        872,
+        364
+      ],
+      "id": "saffron_shade_night",
+      "time_of_day": 0.85
+    }
+  ],
+  "collision_change": false,
+  "counts": {
+    "bank_overlays": 0,
+    "ground_cells": 3584,
+    "lights": 1,
+    "overlays": 315,
+    "props": 15,
+    "road_cells": 315,
+    "road_overlays": 315
+  },
+  "economy_change": false,
+  "ground": {
+    "origin_cell": [
+      848,
+      320
+    ],
+    "rows": [
+      [
+        "coast_dune_lake_2",
+        "dune_2",
+        "dune_2",
+        "dune_3",
+        "dune_3",
+        "mix_dune_salt_6",
+        "mix_salt_dune_8",
+        "salt_2",
+        "salt_2",
+        "salt_1",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_2",
+        "salt_2",
+        "salt_3",
+        "salt_0",
+        "salt_0",
+        "salt_2",
+        "salt_3",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "salt_2",
+        "salt_1",
+        "salt_2",
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_3",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "salt_3",
+        "salt_2",
+        "salt_1",
+        "salt_2",
+        "salt_2",
+        "salt_2",
+        "salt_3",
+        "gravel_2",
+        "gravel_2",
+        "gravel_2",
+        "salt_2",
+        "salt_1",
+        "salt_0",
+        "salt_3",
+        "mix_salt_dune_2",
+        "mix_dune_salt_12",
+        "dune_1",
+        "dune_0",
+        "dune_1",
+        "dune_2"
+      ],
+      [
+        "coast_dune_lake_2",
+        "dune_1",
+        "dune_0",
+        "mix_dune_salt_4",
+        "mix_dune_salt_6",
+        "mix_salt_dune_9",
+        "salt_2",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "salt_1",
+        "salt_0",
+        "salt_0",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_1",
+        "salt_2",
+        "salt_1",
+        "salt_0",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_0",
+        "salt_1",
+        "salt_1",
+        "salt_3",
+        "salt_3",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "salt_2",
+        "salt_3",
+        "salt_1",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "salt_3",
+        "salt_2",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "salt_2",
+        "gravel_1",
+        "gravel_2",
+        "gravel_0",
+        "salt_3",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "salt_3",
+        "mix_salt_dune_3",
+        "mix_dune_salt_12",
+        "mix_dune_salt_4",
+        "dune_2",
+        "dune_3"
+      ],
+      [
+        "coast_dune_lake_2",
+        "dune_1",
+        "mix_dune_salt_6",
+        "mix_salt_dune_9",
+        "mix_salt_dune_1",
+        "salt_1",
+        "salt_3",
+        "salt_1",
+        "salt_1",
+        "salt_3",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_0",
+        "salt_2",
+        "salt_1",
+        "salt_0",
+        "salt_2",
+        "salt_3",
+        "salt_3",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_2",
+        "salt_3",
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "salt_2",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "salt_0",
+        "salt_3",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_0",
+        "gravel_3",
+        "gravel_0",
+        "gravel_3",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "salt_2",
+        "salt_2",
+        "mix_salt_dune_1",
+        "mix_salt_dune_3",
+        "mix_dune_salt_12",
+        "dune_2"
+      ],
+      [
+        "coast_dune_lake_2",
+        "mix_dune_salt_14",
+        "mix_salt_dune_9",
+        "salt_2",
+        "salt_2",
+        "salt_2",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_2",
+        "salt_2",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "salt_3",
+        "salt_3",
+        "salt_1",
+        "salt_0",
+        "salt_3",
+        "salt_2",
+        "salt_0",
+        "salt_2",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_2",
+        "salt_3",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_0",
+        "salt_1",
+        "salt_2",
+        "salt_1",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "salt_2",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_1",
+        "salt_3",
+        "salt_1",
+        "salt_2",
+        "salt_3",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_3",
+        "gravel_1",
+        "gravel_1",
+        "gravel_1",
+        "salt_3",
+        "salt_3",
+        "salt_1",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_2",
+        "mix_salt_dune_3",
+        "mix_dune_salt_12"
+      ],
+      [
+        "lake_3",
+        "mix_salt_dune_9",
+        "salt_3",
+        "salt_2",
+        "salt_2",
+        "salt_3",
+        "salt_3",
+        "salt_0",
+        "salt_2",
+        "salt_3",
+        "salt_3",
+        "salt_1",
+        "salt_0",
+        "salt_2",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_3",
+        "salt_1",
+        "salt_3",
+        "salt_1",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_0",
+        "salt_3",
+        "salt_3",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "salt_2",
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_1",
+        "salt_2",
+        "salt_1",
+        "salt_2",
+        "salt_2",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_3",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_3",
+        "gravel_3",
+        "gravel_3",
+        "gravel_1",
+        "salt_1",
+        "salt_1",
+        "salt_0",
+        "salt_1",
+        "salt_1",
+        "salt_0",
+        "salt_1",
+        "salt_0",
+        "salt_0",
+        "mix_salt_dune_1"
+      ],
+      [
+        "lake_3",
+        "salt_2",
+        "salt_3",
+        "salt_1",
+        "salt_2",
+        "salt_3",
+        "salt_0",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_0",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_1",
+        "salt_2",
+        "salt_1",
+        "salt_2",
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_2",
+        "salt_1",
+        "salt_2",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_0",
+        "salt_2",
+        "salt_1",
+        "salt_2",
+        "salt_2",
+        "salt_1",
+        "salt_1",
+        "salt_3",
+        "salt_1",
+        "salt_1",
+        "gravel_2",
+        "gravel_1",
+        "gravel_2",
+        "salt_1",
+        "salt_2",
+        "salt_3",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_0",
+        "salt_0",
+        "salt_1",
+        "salt_2"
+      ],
+      [
+        "lake_1",
+        "salt_2",
+        "salt_0",
+        "salt_2",
+        "salt_0",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_1",
+        "salt_0",
+        "salt_3",
+        "salt_2",
+        "salt_0",
+        "salt_3",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_0",
+        "salt_1",
+        "salt_2",
+        "salt_2",
+        "salt_1",
+        "salt_0",
+        "salt_2",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_3",
+        "salt_3",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "gravel_3",
+        "gravel_1",
+        "gravel_2",
+        "salt_3",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_3",
+        "salt_2",
+        "salt_1"
+      ],
+      [
+        "lake_0",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_1",
+        "salt_2",
+        "mix_salt_dune_4",
+        "mix_salt_dune_4",
+        "mix_salt_dune_4",
+        "mix_salt_dune_4",
+        "mix_salt_dune_4",
+        "mix_salt_dune_4",
+        "mix_salt_dune_4",
+        "mix_salt_dune_4",
+        "salt_1",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "salt_0",
+        "salt_1",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_3",
+        "salt_1",
+        "salt_3",
+        "salt_2",
+        "salt_2",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_1",
+        "salt_2",
+        "salt_1",
+        "salt_3",
+        "salt_3",
+        "salt_2",
+        "salt_1",
+        "salt_0",
+        "gravel_1",
+        "gravel_1",
+        "gravel_0",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_2",
+        "salt_2",
+        "salt_1"
+      ],
+      [
+        "lake_2",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_2",
+        "mix_salt_dune_4",
+        "mix_salt_dune_4",
+        "mix_salt_dune_6",
+        "mix_dune_salt_9",
+        "mix_dune_salt_1",
+        "mix_dune_salt_1",
+        "mix_dune_salt_1",
+        "mix_dune_salt_1",
+        "mix_dune_salt_1",
+        "mix_dune_salt_1",
+        "mix_dune_salt_3",
+        "mix_salt_dune_12",
+        "mix_salt_dune_4",
+        "mix_salt_dune_4",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "salt_1",
+        "salt_0",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "salt_2",
+        "salt_2",
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_2",
+        "salt_3",
+        "salt_2",
+        "salt_2",
+        "salt_0",
+        "salt_1",
+        "salt_0",
+        "salt_1",
+        "salt_2",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "gravel_2",
+        "gravel_0",
+        "gravel_2",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_0",
+        "salt_0",
+        "salt_0",
+        "salt_1",
+        "salt_2",
+        "salt_2",
+        "salt_1"
+      ],
+      [
+        "lake_2",
+        "salt_2",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "mix_salt_dune_4",
+        "mix_salt_dune_6",
+        "mix_dune_salt_9",
+        "mix_dune_salt_1",
+        "mix_dune_salt_1",
+        "dune_3",
+        "dune_1",
+        "dune_1",
+        "dune_1",
+        "dune_1",
+        "dune_1",
+        "dune_2",
+        "dune_1",
+        "mix_dune_salt_1",
+        "mix_dune_salt_1",
+        "mix_dune_salt_3",
+        "mix_salt_dune_12",
+        "mix_salt_dune_4",
+        "salt_3",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_0",
+        "salt_0",
+        "salt_1",
+        "salt_2",
+        "salt_1",
+        "salt_0",
+        "salt_1",
+        "salt_0",
+        "salt_2",
+        "salt_1",
+        "salt_3",
+        "salt_2",
+        "salt_2",
+        "salt_3",
+        "gravel_2",
+        "gravel_3",
+        "gravel_3",
+        "salt_3",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_3",
+        "salt_1",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "salt_1"
+      ],
+      [
+        "lake_1",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "mix_salt_dune_6",
+        "mix_dune_salt_9",
+        "mix_dune_salt_1",
+        "dune_3",
+        "dune_3",
+        "dune_3",
+        "dune_2",
+        "dune_3",
+        "dune_2",
+        "dune_3",
+        "dune_0",
+        "dune_1",
+        "dune_0",
+        "dune_0",
+        "dune_1",
+        "dune_0",
+        "dune_2",
+        "mix_dune_salt_1",
+        "mix_dune_salt_3",
+        "mix_salt_dune_12",
+        "salt_2",
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_0",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_1",
+        "salt_0",
+        "salt_3",
+        "salt_3",
+        "salt_1",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_3",
+        "salt_2",
+        "salt_2",
+        "salt_2",
+        "salt_1",
+        "salt_2",
+        "salt_2",
+        "salt_2",
+        "gravel_2",
+        "gravel_0",
+        "gravel_2",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_0"
+      ],
+      [
+        "lake_2",
+        "lake_1",
+        "salt_1",
+        "mix_salt_dune_6",
+        "mix_dune_salt_9",
+        "dune_3",
+        "dune_3",
+        "dune_1",
+        "dune_1",
+        "dune_0",
+        "dune_0",
+        "dune_3",
+        "dune_2",
+        "dune_3",
+        "dune_3",
+        "dune_0",
+        "dune_0",
+        "dune_3",
+        "dune_1",
+        "dune_2",
+        "dune_1",
+        "dune_3",
+        "dune_2",
+        "mix_dune_salt_3",
+        "mix_salt_dune_12",
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_2",
+        "salt_3",
+        "salt_2",
+        "salt_1",
+        "salt_3",
+        "salt_2",
+        "salt_1",
+        "salt_3",
+        "salt_1",
+        "salt_1",
+        "salt_3",
+        "salt_1",
+        "salt_3",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_1",
+        "salt_2",
+        "salt_1",
+        "gravel_3",
+        "gravel_1",
+        "gravel_2",
+        "salt_2",
+        "salt_2",
+        "salt_3",
+        "salt_2",
+        "salt_1",
+        "salt_0",
+        "salt_2",
+        "salt_3",
+        "salt_3",
+        "salt_2"
+      ],
+      [
+        "lake_0",
+        "lake_1",
+        "mix_salt_dune_10",
+        "mix_dune_salt_9",
+        "dune_0",
+        "dune_3",
+        "dune_0",
+        "dune_2",
+        "dune_1",
+        "dune_1",
+        "dune_0",
+        "dune_3",
+        "dune_2",
+        "dune_0",
+        "dune_3",
+        "dune_2",
+        "dune_2",
+        "dune_2",
+        "dune_2",
+        "dune_1",
+        "dune_3",
+        "dune_1",
+        "dune_1",
+        "dune_1",
+        "mix_dune_salt_3",
+        "mix_salt_dune_8",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_0",
+        "salt_2",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_1",
+        "salt_2",
+        "salt_2",
+        "salt_1",
+        "salt_2",
+        "salt_2",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_0",
+        "salt_2",
+        "salt_3",
+        "salt_0",
+        "salt_0",
+        "salt_2",
+        "gravel_3",
+        "gravel_0",
+        "gravel_3",
+        "salt_1",
+        "salt_3",
+        "salt_1",
+        "salt_0",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_2"
+      ],
+      [
+        "lake_3",
+        "lake_3",
+        "mix_salt_dune_14",
+        "mix_dune_salt_8",
+        "dune_3",
+        "dune_2",
+        "dune_0",
+        "dune_2",
+        "dune_2",
+        "dune_0",
+        "dune_1",
+        "dune_3",
+        "dune_1",
+        "dune_2",
+        "dune_1",
+        "dune_3",
+        "dune_1",
+        "dune_1",
+        "dune_3",
+        "dune_2",
+        "dune_0",
+        "dune_2",
+        "dune_0",
+        "dune_0",
+        "mix_dune_salt_2",
+        "mix_salt_dune_12",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_1",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "salt_3",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_1",
+        "salt_2",
+        "salt_1",
+        "salt_0",
+        "salt_0",
+        "gravel_3",
+        "gravel_3",
+        "gravel_1",
+        "salt_0",
+        "salt_1",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_0",
+        "salt_0",
+        "salt_2",
+        "salt_1",
+        "salt_2"
+      ],
+      [
+        "lake_0",
+        "coast_dune_lake_2",
+        "mix_dune_salt_9",
+        "dune_0",
+        "dune_3",
+        "dune_1",
+        "dune_3",
+        "dune_3",
+        "dune_2",
+        "dune_1",
+        "dune_3",
+        "dune_3",
+        "dune_2",
+        "dune_0",
+        "dune_0",
+        "dune_3",
+        "dune_3",
+        "dune_0",
+        "dune_1",
+        "dune_0",
+        "dune_2",
+        "dune_0",
+        "dune_0",
+        "dune_2",
+        "dune_2",
+        "mix_dune_salt_3",
+        "mix_salt_dune_8",
+        "salt_0",
+        "salt_3",
+        "salt_3",
+        "salt_0",
+        "salt_2",
+        "salt_3",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_2",
+        "salt_0",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_1",
+        "salt_1",
+        "salt_3",
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_2",
+        "salt_2",
+        "salt_3",
+        "salt_0",
+        "gravel_0",
+        "gravel_0",
+        "gravel_0",
+        "salt_3",
+        "salt_1",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_2"
+      ],
+      [
+        "lake_1",
+        "coast_dune_lake_2",
+        "dune_3",
+        "dune_1",
+        "dune_2",
+        "dune_1",
+        "dune_0",
+        "dune_2",
+        "dune_0",
+        "dune_0",
+        "dune_3",
+        "dune_1",
+        "dune_1",
+        "dune_1",
+        "dune_2",
+        "dune_1",
+        "dune_0",
+        "dune_2",
+        "dune_1",
+        "dune_0",
+        "dune_0",
+        "dune_3",
+        "dune_0",
+        "dune_1",
+        "dune_2",
+        "mix_dune_salt_2",
+        "mix_salt_dune_8",
+        "salt_0",
+        "salt_0",
+        "salt_2",
+        "salt_0",
+        "salt_3",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "salt_2",
+        "salt_2",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "salt_2",
+        "salt_0",
+        "salt_2",
+        "salt_3",
+        "salt_2",
+        "salt_2",
+        "gravel_1",
+        "gravel_2",
+        "gravel_0",
+        "salt_1",
+        "salt_2",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_0",
+        "salt_3"
+      ],
+      [
+        "lake_3",
+        "coast_dune_lake_2",
+        "dune_3",
+        "dune_2",
+        "dune_1",
+        "dune_0",
+        "dune_3",
+        "dune_1",
+        "dune_2",
+        "dune_0",
+        "dune_2",
+        "dune_2",
+        "dune_0",
+        "dune_0",
+        "dune_3",
+        "dune_1",
+        "dune_0",
+        "dune_3",
+        "dune_3",
+        "dune_2",
+        "dune_1",
+        "dune_2",
+        "dune_2",
+        "dune_3",
+        "dune_1",
+        "mix_dune_salt_2",
+        "mix_salt_dune_8",
+        "salt_3",
+        "salt_2",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_2",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "salt_3",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_2",
+        "salt_0",
+        "salt_2",
+        "gravel_2",
+        "gravel_1",
+        "gravel_3",
+        "salt_0",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_2",
+        "salt_0",
+        "salt_3",
+        "salt_2",
+        "salt_2",
+        "salt_2"
+      ],
+      [
+        "lake_3",
+        "coast_dune_lake_2",
+        "dune_3",
+        "dune_2",
+        "dune_3",
+        "dune_2",
+        "dune_0",
+        "dune_0",
+        "dune_2",
+        "dune_3",
+        "dune_3",
+        "dune_2",
+        "dune_0",
+        "dune_3",
+        "dune_3",
+        "dune_3",
+        "dune_1",
+        "dune_0",
+        "dune_1",
+        "dune_1",
+        "dune_2",
+        "dune_3",
+        "dune_1",
+        "dune_0",
+        "dune_0",
+        "mix_dune_salt_6",
+        "mix_salt_dune_8",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "salt_2",
+        "salt_2",
+        "salt_3",
+        "salt_1",
+        "salt_1",
+        "salt_0",
+        "salt_0",
+        "salt_1",
+        "salt_0",
+        "salt_2",
+        "salt_3",
+        "salt_1",
+        "salt_0",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_3",
+        "salt_0",
+        "salt_0",
+        "gravel_0",
+        "gravel_2",
+        "gravel_0",
+        "salt_3",
+        "salt_1",
+        "salt_0",
+        "salt_2",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_1"
+      ],
+      [
+        "lake_2",
+        "lake_3",
+        "coast_dune_lake_3",
+        "dune_1",
+        "dune_3",
+        "dune_3",
+        "dune_3",
+        "dune_1",
+        "dune_0",
+        "dune_0",
+        "dune_1",
+        "dune_0",
+        "dune_3",
+        "dune_2",
+        "dune_2",
+        "dune_3",
+        "dune_2",
+        "dune_3",
+        "dune_3",
+        "dune_1",
+        "dune_3",
+        "dune_0",
+        "dune_1",
+        "dune_1",
+        "mix_dune_salt_2",
+        "mix_salt_dune_9",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_2",
+        "salt_3",
+        "salt_1",
+        "salt_2",
+        "salt_2",
+        "salt_3",
+        "salt_1",
+        "salt_0",
+        "salt_3",
+        "salt_2",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "salt_2",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_2",
+        "salt_1",
+        "gravel_2",
+        "gravel_0",
+        "gravel_3",
+        "salt_3",
+        "salt_3",
+        "salt_2",
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_3",
+        "salt_0",
+        "salt_3",
+        "salt_0"
+      ],
+      [
+        "lake_2",
+        "lake_3",
+        "coast_dune_lake_2",
+        "dune_3",
+        "dune_0",
+        "dune_2",
+        "dune_2",
+        "dune_1",
+        "dune_3",
+        "dune_1",
+        "dune_2",
+        "dune_0",
+        "dune_2",
+        "dune_3",
+        "dune_3",
+        "dune_2",
+        "dune_0",
+        "dune_1",
+        "dune_3",
+        "dune_3",
+        "dune_2",
+        "dune_3",
+        "dune_3",
+        "dune_1",
+        "mix_dune_salt_6",
+        "mix_salt_dune_8",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_0",
+        "salt_0",
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_1",
+        "salt_1",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_2",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_0",
+        "salt_0",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_3",
+        "gravel_2",
+        "gravel_0",
+        "gravel_1",
+        "salt_3",
+        "salt_2",
+        "salt_2",
+        "salt_1",
+        "salt_0",
+        "salt_0",
+        "salt_0",
+        "salt_1",
+        "salt_0",
+        "salt_3"
+      ],
+      [
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "coast_dune_lake_3",
+        "dune_3",
+        "dune_0",
+        "dune_2",
+        "dune_3",
+        "dune_0",
+        "dune_1",
+        "dune_2",
+        "dune_0",
+        "dune_1",
+        "dune_2",
+        "dune_1",
+        "dune_0",
+        "dune_2",
+        "dune_1",
+        "dune_0",
+        "dune_3",
+        "dune_2",
+        "dune_3",
+        "dune_0",
+        "mix_dune_salt_6",
+        "mix_salt_dune_9",
+        "salt_3",
+        "salt_0",
+        "salt_0",
+        "salt_0",
+        "salt_1",
+        "salt_2",
+        "salt_1",
+        "salt_2",
+        "salt_3",
+        "salt_1",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_3",
+        "salt_3",
+        "salt_2",
+        "salt_2",
+        "salt_1",
+        "salt_0",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_2",
+        "gravel_3",
+        "gravel_2",
+        "gravel_0",
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_2",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_2",
+        "salt_1"
+      ],
+      [
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "coast_dune_lake_3",
+        "dune_2",
+        "mix_dune_salt_4",
+        "dune_1",
+        "dune_0",
+        "dune_2",
+        "dune_3",
+        "dune_2",
+        "dune_0",
+        "dune_3",
+        "dune_2",
+        "dune_3",
+        "dune_3",
+        "dune_3",
+        "dune_1",
+        "dune_0",
+        "dune_1",
+        "mix_dune_salt_4",
+        "mix_dune_salt_6",
+        "mix_salt_dune_9",
+        "salt_3",
+        "salt_2",
+        "salt_1",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_3",
+        "salt_3",
+        "salt_1",
+        "salt_2",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "lake_0",
+        "salt_3",
+        "gravel_3",
+        "gravel_2",
+        "gravel_2",
+        "salt_2",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_3",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_1",
+        "salt_2"
+      ],
+      [
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "coast_dune_lake_3",
+        "mix_salt_dune_11",
+        "mix_dune_salt_12",
+        "mix_dune_salt_4",
+        "mix_dune_salt_4",
+        "dune_0",
+        "dune_0",
+        "dune_2",
+        "dune_2",
+        "dune_2",
+        "dune_3",
+        "dune_0",
+        "dune_1",
+        "mix_dune_salt_4",
+        "mix_dune_salt_4",
+        "mix_dune_salt_6",
+        "mix_salt_dune_9",
+        "mix_salt_dune_1",
+        "salt_3",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_0",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "salt_2",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "salt_2",
+        "lake_2",
+        "gravel_1",
+        "gravel_2",
+        "gravel_3",
+        "salt_2",
+        "salt_3",
+        "salt_1",
+        "salt_0",
+        "salt_2",
+        "salt_1",
+        "salt_0",
+        "salt_3",
+        "salt_3",
+        "salt_2"
+      ],
+      [
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "salt_0",
+        "mix_salt_dune_1",
+        "mix_salt_dune_5",
+        "mix_salt_dune_7",
+        "dune_1",
+        "dune_1",
+        "dune_3",
+        "mix_dune_salt_4",
+        "mix_dune_salt_4",
+        "mix_dune_salt_4",
+        "mix_dune_salt_4",
+        "mix_dune_salt_6",
+        "mix_salt_dune_9",
+        "mix_salt_dune_1",
+        "mix_salt_dune_1",
+        "salt_1",
+        "salt_1",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_3",
+        "salt_1",
+        "salt_0",
+        "salt_1",
+        "salt_2",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_3",
+        "salt_2",
+        "salt_0",
+        "salt_1",
+        "salt_1",
+        "salt_3",
+        "salt_3",
+        "salt_2",
+        "salt_2",
+        "salt_2",
+        "salt_1",
+        "salt_0",
+        "salt_2",
+        "salt_3",
+        "salt_3",
+        "salt_1",
+        "gravel_0",
+        "gravel_1",
+        "gravel_0",
+        "lake_2",
+        "salt_2",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_2"
+      ],
+      [
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "salt_2",
+        "salt_0",
+        "lake_2",
+        "lake_1",
+        "coast_dune_lake_1",
+        "coast_dune_lake_1",
+        "lake_3",
+        "mix_salt_dune_9",
+        "mix_salt_dune_1",
+        "mix_salt_dune_1",
+        "mix_salt_dune_1",
+        "mix_salt_dune_1",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_2",
+        "salt_2",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_2",
+        "salt_0",
+        "salt_2",
+        "salt_1",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_3",
+        "salt_0",
+        "salt_2",
+        "salt_0",
+        "salt_2",
+        "gravel_3",
+        "gravel_3",
+        "gravel_2",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "salt_0",
+        "salt_0",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "salt_2",
+        "salt_1"
+      ],
+      [
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "salt_0",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "salt_1",
+        "salt_3",
+        "salt_2",
+        "salt_1",
+        "salt_3",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_1",
+        "salt_2",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_1",
+        "salt_0",
+        "salt_1",
+        "salt_2",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_0",
+        "salt_0",
+        "salt_1",
+        "salt_0",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_0",
+        "salt_2",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_0",
+        "salt_0",
+        "gravel_1",
+        "gravel_2",
+        "gravel_3",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_1",
+        "salt_3",
+        "salt_0"
+      ],
+      [
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "salt_2",
+        "salt_0",
+        "salt_3",
+        "salt_3",
+        "salt_2",
+        "salt_2",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_2",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_1",
+        "salt_2",
+        "salt_3",
+        "salt_1",
+        "salt_2",
+        "salt_3",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "salt_0",
+        "salt_1",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "salt_3",
+        "salt_1",
+        "salt_2",
+        "salt_2",
+        "salt_2",
+        "salt_0",
+        "salt_3",
+        "gravel_3",
+        "gravel_0",
+        "gravel_1",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "salt_0",
+        "salt_1",
+        "salt_2",
+        "salt_1",
+        "salt_1"
+      ],
+      [
+        "salt_3",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_2",
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_2",
+        "salt_1",
+        "salt_3",
+        "salt_2",
+        "salt_2",
+        "salt_2",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "salt_2",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_3",
+        "salt_2",
+        "salt_1",
+        "salt_2",
+        "salt_1",
+        "salt_2",
+        "salt_2",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "gravel_1",
+        "gravel_0",
+        "gravel_1",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "salt_2",
+        "salt_2",
+        "salt_1"
+      ],
+      [
+        "salt_2",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "salt_1",
+        "salt_3",
+        "salt_2",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "salt_0",
+        "salt_3",
+        "salt_2",
+        "salt_0",
+        "salt_1",
+        "salt_2",
+        "salt_1",
+        "salt_0",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "salt_3",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_2",
+        "salt_3",
+        "salt_0",
+        "salt_2",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_3",
+        "salt_3",
+        "salt_0",
+        "gravel_0",
+        "gravel_0",
+        "gravel_1",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "salt_2",
+        "salt_2"
+      ],
+      [
+        "salt_1",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "salt_2",
+        "salt_1",
+        "salt_0",
+        "salt_2",
+        "salt_1",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_1",
+        "salt_3",
+        "salt_1",
+        "salt_3",
+        "salt_3",
+        "salt_1",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_2",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "gravel_1",
+        "gravel_2",
+        "gravel_0",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "salt_1"
+      ],
+      [
+        "salt_2",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "salt_0",
+        "salt_2",
+        "salt_0",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_2",
+        "salt_1",
+        "salt_2",
+        "salt_2",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "salt_0",
+        "salt_2",
+        "salt_1",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_3",
+        "salt_2",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "gravel_3",
+        "gravel_0",
+        "gravel_0",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_0"
+      ],
+      [
+        "salt_0",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "salt_3",
+        "salt_3",
+        "salt_0",
+        "salt_3",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_2",
+        "salt_2",
+        "salt_2",
+        "salt_3",
+        "salt_0",
+        "salt_2",
+        "salt_3",
+        "salt_0",
+        "salt_0",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "salt_0",
+        "salt_3",
+        "salt_2",
+        "salt_2",
+        "salt_0",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "salt_1",
+        "salt_0",
+        "salt_1",
+        "salt_1",
+        "salt_0",
+        "salt_1",
+        "salt_0",
+        "salt_0",
+        "gravel_3",
+        "gravel_1",
+        "gravel_3",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_3"
+      ],
+      [
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "salt_1",
+        "salt_2",
+        "salt_2",
+        "salt_2",
+        "salt_3",
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_2",
+        "salt_1",
+        "salt_2",
+        "salt_3",
+        "salt_2",
+        "salt_1",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_0",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_2",
+        "salt_2",
+        "salt_2",
+        "salt_3",
+        "salt_1",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_2",
+        "gravel_3",
+        "gravel_2",
+        "gravel_3",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_1"
+      ],
+      [
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_0",
+        "salt_2",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_0",
+        "salt_3",
+        "salt_3",
+        "salt_1",
+        "salt_2",
+        "salt_2",
+        "salt_2",
+        "salt_1",
+        "salt_2",
+        "salt_3",
+        "salt_2",
+        "salt_2",
+        "salt_3",
+        "salt_2",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_2",
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_2",
+        "salt_1",
+        "salt_1",
+        "gravel_2",
+        "gravel_0",
+        "gravel_1",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_0"
+      ],
+      [
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "salt_0",
+        "salt_1",
+        "salt_1",
+        "salt_0",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_3",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_0",
+        "salt_2",
+        "salt_0",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "salt_3",
+        "salt_2",
+        "salt_1",
+        "salt_0",
+        "salt_3",
+        "salt_3",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "salt_3",
+        "salt_1",
+        "salt_3",
+        "salt_1",
+        "salt_3",
+        "salt_1",
+        "salt_3",
+        "gravel_3",
+        "gravel_0",
+        "gravel_1",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_3"
+      ],
+      [
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "salt_2",
+        "salt_0",
+        "salt_1",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_2",
+        "salt_1",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "salt_2",
+        "salt_2",
+        "salt_1",
+        "salt_3",
+        "salt_3",
+        "salt_1",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_2",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_1",
+        "salt_0",
+        "salt_0",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "gravel_3",
+        "gravel_0",
+        "gravel_1",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_3"
+      ],
+      [
+        "gravel_1",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_3",
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_1",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_3",
+        "salt_1",
+        "gravel_3",
+        "gravel_1",
+        "gravel_1",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_1"
+      ],
+      [
+        "gravel_1",
+        "gravel_0",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "salt_0",
+        "salt_0",
+        "salt_1",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_1",
+        "salt_0",
+        "salt_3",
+        "salt_2",
+        "salt_1",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_1",
+        "salt_3",
+        "salt_2",
+        "salt_2",
+        "salt_2",
+        "salt_1",
+        "salt_0",
+        "salt_0",
+        "salt_0",
+        "salt_0",
+        "salt_0",
+        "salt_2",
+        "salt_3",
+        "salt_1",
+        "salt_2",
+        "salt_2",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_1",
+        "salt_1",
+        "salt_0",
+        "gravel_3",
+        "gravel_3",
+        "gravel_1",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_2"
+      ],
+      [
+        "gravel_1",
+        "gravel_2",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "salt_0",
+        "salt_0",
+        "salt_0",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "salt_1",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_1",
+        "gravel_2",
+        "gravel_2",
+        "gravel_1",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_1"
+      ],
+      [
+        "gravel_2",
+        "gravel_3",
+        "gravel_3",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "salt_3",
+        "salt_3",
+        "salt_1",
+        "salt_2",
+        "salt_1",
+        "salt_0",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_2",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_0",
+        "salt_1",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "salt_2",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "salt_2",
+        "salt_3",
+        "salt_1",
+        "salt_0",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "gravel_2",
+        "gravel_0",
+        "gravel_2",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_2"
+      ],
+      [
+        "lake_1",
+        "gravel_3",
+        "gravel_2",
+        "gravel_0",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "salt_0",
+        "salt_1",
+        "salt_0",
+        "salt_0",
+        "salt_1",
+        "salt_1",
+        "salt_3",
+        "salt_1",
+        "salt_2",
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_1",
+        "salt_2",
+        "salt_2",
+        "salt_2",
+        "salt_3",
+        "salt_1",
+        "gravel_0",
+        "gravel_3",
+        "gravel_2",
+        "salt_3",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_1",
+        "salt_0",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_1",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_0",
+        "salt_1",
+        "gravel_3",
+        "gravel_2",
+        "gravel_2",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_1"
+      ],
+      [
+        "lake_1",
+        "lake_1",
+        "gravel_0",
+        "gravel_3",
+        "gravel_0",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "salt_3",
+        "salt_2",
+        "salt_1",
+        "salt_3",
+        "salt_3",
+        "salt_2",
+        "salt_2",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_2",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_2",
+        "gravel_0",
+        "gravel_2",
+        "gravel_1",
+        "lake_1",
+        "salt_0",
+        "salt_1",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_2",
+        "salt_2",
+        "salt_0",
+        "salt_2",
+        "salt_3",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "lake_3",
+        "gravel_3",
+        "gravel_0",
+        "gravel_1",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_2"
+      ],
+      [
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "gravel_3",
+        "gravel_3",
+        "gravel_2",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "salt_1",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "salt_0",
+        "salt_2",
+        "salt_0",
+        "salt_3",
+        "salt_1",
+        "salt_3",
+        "salt_1",
+        "salt_2",
+        "salt_0",
+        "salt_3",
+        "salt_2",
+        "salt_1",
+        "lake_0",
+        "gravel_1",
+        "gravel_0",
+        "gravel_1",
+        "salt_2",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_0",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_2",
+        "salt_1",
+        "salt_1",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "lake_0",
+        "lake_2",
+        "gravel_1",
+        "gravel_0",
+        "gravel_1",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_1"
+      ],
+      [
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "gravel_1",
+        "gravel_1",
+        "gravel_3",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "salt_2",
+        "salt_0",
+        "salt_2",
+        "salt_0",
+        "salt_2",
+        "salt_1",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_3",
+        "salt_3",
+        "salt_3",
+        "salt_2",
+        "salt_1",
+        "salt_1",
+        "gravel_2",
+        "gravel_1",
+        "gravel_2",
+        "salt_3",
+        "salt_3",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_0",
+        "salt_0",
+        "salt_1",
+        "salt_1",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "gravel_1",
+        "gravel_3",
+        "gravel_1",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_0"
+      ],
+      [
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "gravel_3",
+        "gravel_2",
+        "gravel_0",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "salt_3",
+        "salt_0",
+        "salt_0",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "salt_1",
+        "salt_0",
+        "salt_3",
+        "salt_3",
+        "salt_0",
+        "salt_0",
+        "salt_0",
+        "salt_3",
+        "gravel_2",
+        "gravel_0",
+        "gravel_0",
+        "lake_0",
+        "salt_1",
+        "salt_0",
+        "salt_3",
+        "salt_3",
+        "salt_1",
+        "salt_3",
+        "salt_2",
+        "salt_0",
+        "salt_3",
+        "salt_3",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "gravel_3",
+        "gravel_3",
+        "gravel_2",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_2"
+      ],
+      [
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "gravel_2",
+        "gravel_3",
+        "gravel_1",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "salt_3",
+        "salt_2",
+        "salt_0",
+        "salt_3",
+        "salt_2",
+        "salt_3",
+        "salt_1",
+        "salt_0",
+        "salt_3",
+        "salt_0",
+        "salt_2",
+        "salt_0",
+        "lake_3",
+        "gravel_3",
+        "gravel_3",
+        "gravel_1",
+        "salt_1",
+        "salt_0",
+        "salt_2",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "salt_0",
+        "salt_1",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "gravel_2",
+        "gravel_1",
+        "gravel_3",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_3"
+      ],
+      [
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "gravel_2",
+        "gravel_1",
+        "gravel_3",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_3",
+        "salt_3",
+        "salt_0",
+        "salt_3",
+        "gravel_1",
+        "gravel_0",
+        "gravel_1",
+        "salt_3",
+        "salt_1",
+        "salt_0",
+        "salt_2",
+        "salt_0",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "gravel_3",
+        "gravel_0",
+        "gravel_2",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_0"
+      ],
+      [
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "gravel_3",
+        "gravel_3",
+        "gravel_3",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "salt_1",
+        "salt_3",
+        "salt_2",
+        "salt_2",
+        "salt_0",
+        "salt_0",
+        "gravel_3",
+        "gravel_2",
+        "gravel_0",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "gravel_0",
+        "gravel_0",
+        "gravel_0",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_3"
+      ],
+      [
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "gravel_3",
+        "gravel_3",
+        "gravel_2",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "gravel_1",
+        "gravel_1",
+        "gravel_3",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "gravel_1",
+        "gravel_2",
+        "gravel_1",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_3"
+      ],
+      [
+        "salt_3",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "gravel_3",
+        "gravel_0",
+        "gravel_1",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "gravel_3",
+        "gravel_3",
+        "gravel_2",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "gravel_0",
+        "gravel_0",
+        "gravel_3",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_1"
+      ],
+      [
+        "salt_1",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "gravel_1",
+        "gravel_1",
+        "gravel_3",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "gravel_2",
+        "gravel_0",
+        "gravel_2",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "gravel_2",
+        "gravel_2",
+        "gravel_2",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_1"
+      ],
+      [
+        "salt_1",
+        "salt_1",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "gravel_0",
+        "gravel_3",
+        "gravel_3",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "gravel_1",
+        "gravel_1",
+        "gravel_2",
+        "lake_2",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "gravel_1",
+        "gravel_1",
+        "gravel_1",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "salt_2"
+      ],
+      [
+        "salt_1",
+        "salt_0",
+        "salt_1",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "gravel_1",
+        "gravel_3",
+        "gravel_1",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "gravel_0",
+        "gravel_1",
+        "gravel_3",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "gravel_3",
+        "gravel_2",
+        "gravel_0",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "salt_2",
+        "salt_0"
+      ],
+      [
+        "salt_1",
+        "salt_1",
+        "salt_1",
+        "salt_3",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_1",
+        "gravel_1",
+        "gravel_1",
+        "gravel_1",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_2",
+        "lake_1",
+        "gravel_2",
+        "gravel_0",
+        "gravel_0",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "gravel_1",
+        "gravel_1",
+        "gravel_3",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "salt_3",
+        "salt_3",
+        "salt_1"
+      ],
+      [
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_1",
+        "salt_0",
+        "salt_2",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "gravel_0",
+        "gravel_1",
+        "gravel_0",
+        "lake_3",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "lake_0",
+        "lake_3",
+        "lake_1",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "gravel_3",
+        "gravel_2",
+        "gravel_2",
+        "lake_2",
+        "lake_3",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_2",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "gravel_2",
+        "gravel_1",
+        "gravel_1",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_1",
+        "lake_0",
+        "salt_2",
+        "salt_0",
+        "salt_1",
+        "salt_0",
+        "salt_0"
+      ],
+      [
+        "salt_1",
+        "salt_1",
+        "salt_2",
+        "salt_2",
+        "salt_3",
+        "salt_1",
+        "salt_3",
+        "lake_3",
+        "lake_2",
+        "lake_2",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "gravel_1",
+        "gravel_3",
+        "gravel_3",
+        "lake_3",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_1",
+        "lake_3",
+        "lake_0",
+        "lake_0",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_3",
+        "lake_0",
+        "lake_2",
+        "lake_1",
+        "lake_2",
+        "lake_3",
+        "lake_1",
+        "gravel_0",
+        "gravel_2",
+        "gravel_2",
+        "lake_0",
+        "lake_0",
+        "lake_1",
+        "lake_1",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_0",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "lake_2",
+        "gravel_3",
+        "gravel_2",
+        "gravel_3",
+        "lake_3",
+        "lake_3",
+        "lake_2",
+        "lake_0",
+        "salt_3",
+        "salt_1",
+        "salt_3",
+        "salt_0",
+        "salt_1",
+        "salt_2"
+      ]
+    ],
+    "size_cells": [
+      64,
+      56
+    ]
+  },
+  "kind": "biome_study",
+  "landforms": [
+    {
+      "cells": 1108,
+      "id": "saffron_salt_pan",
+      "material": "salt",
+      "reason": "Terminal evaporite pan crusts over after dry wind; rakes and shade mark worked salt.",
+      "source_refs": [
+        "world_plan:lake_salt_pan",
+        "world_plan:src_saffron_salt"
+      ]
+    },
+    {
+      "cells": 304,
+      "id": "saffron_dune_margin",
+      "material": "dune",
+      "reason": "Calcareous dune margin shelters the caravan approach from glare.",
+      "source_refs": [
+        "world_plan:r_saffron_coast.soils"
+      ]
+    }
+  ],
+  "lighting_profile": "saffron_glare",
+  "lights": [
+    {
+      "cell": [
+        880,
+        360
+      ],
+      "energy": 0.7,
+      "kind": "warm",
+      "world_px": [
+        14088,
+        5764
+      ]
+    }
+  ],
+  "new_poi_count": 0,
+  "overlays": [
+    {
+      "cell": [
+        899,
+        320
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        320
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        320
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        321
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        321
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        321
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        322
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        322
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        322
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        323
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        323
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        323
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        324
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        324
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        324
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        325
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        325
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        325
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        326
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        326
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        326
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        327
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        327
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        327
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        328
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        328
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        328
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        329
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        329
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        329
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        330
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        330
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        330
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        331
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        331
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        331
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        332
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        332
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        332
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        333
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        333
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        333
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        334
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        334
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        334
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        335
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        335
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        335
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        336
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        336
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        336
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        337
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        337
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        337
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        338
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        338
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        338
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        339
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        339
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        339
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        340
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        340
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        340
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        341
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        341
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        341
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        342
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        342
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        342
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        343
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        343
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        343
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        344
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        344
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        344
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        345
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        345
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        345
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        346
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        346
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        346
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        347
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        347
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        347
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        348
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        348
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        348
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        349
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        349
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        349
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        350
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        350
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        350
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        351
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        351
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        351
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        352
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        352
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        352
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        353
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        353
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        353
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        354
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        354
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        354
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        848,
+        355
+      ],
+      "frame": "boardwalk_ns",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        899,
+        355
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        355
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        355
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        848,
+        356
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        849,
+        356
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        899,
+        356
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        356
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        356
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        848,
+        357
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        849,
+        357
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        357
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        357
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        357
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        848,
+        358
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        849,
+        358
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        850,
+        358
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        899,
+        358
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        358
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        358
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        848,
+        359
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        849,
+        359
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        850,
+        359
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        851,
+        359
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        879,
+        359
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        880,
+        359
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        881,
+        359
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        899,
+        359
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        359
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        359
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        848,
+        360
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        849,
+        360
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        850,
+        360
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        851,
+        360
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        852,
+        360
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        879,
+        360
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        880,
+        360
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        881,
+        360
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        360
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        360
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        360
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        849,
+        361
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        850,
+        361
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        851,
+        361
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        852,
+        361
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        853,
+        361
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        879,
+        361
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        880,
+        361
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        881,
+        361
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        882,
+        361
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        899,
+        361
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        361
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        361
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        850,
+        362
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        851,
+        362
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        852,
+        362
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        853,
+        362
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        879,
+        362
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        880,
+        362
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        881,
+        362
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        882,
+        362
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        362
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        362
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        362
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        851,
+        363
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        852,
+        363
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        853,
+        363
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        854,
+        363
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        880,
+        363
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        881,
+        363
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        882,
+        363
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        363
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        363
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        363
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        851,
+        364
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        852,
+        364
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        853,
+        364
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        854,
+        364
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        855,
+        364
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        880,
+        364
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        881,
+        364
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        882,
+        364
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        883,
+        364
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        899,
+        364
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        364
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        364
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        852,
+        365
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        853,
+        365
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        854,
+        365
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        855,
+        365
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        856,
+        365
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        880,
+        365
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        881,
+        365
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        882,
+        365
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        883,
+        365
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        365
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        365
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        365
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        853,
+        366
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        854,
+        366
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        855,
+        366
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        856,
+        366
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        857,
+        366
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        881,
+        366
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        882,
+        366
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        883,
+        366
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        366
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        366
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        366
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        854,
+        367
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        855,
+        367
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        856,
+        367
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        857,
+        367
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        858,
+        367
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        881,
+        367
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        882,
+        367
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        883,
+        367
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        884,
+        367
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        899,
+        367
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        367
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        367
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        855,
+        368
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        856,
+        368
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        857,
+        368
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        858,
+        368
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        859,
+        368
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        881,
+        368
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        882,
+        368
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        883,
+        368
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        884,
+        368
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        368
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        368
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        368
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        856,
+        369
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        857,
+        369
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        858,
+        369
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        859,
+        369
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        882,
+        369
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        883,
+        369
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        884,
+        369
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        369
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        369
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        369
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        857,
+        370
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        858,
+        370
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        859,
+        370
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        860,
+        370
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        882,
+        370
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        883,
+        370
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        884,
+        370
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        885,
+        370
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        899,
+        370
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        370
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        370
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        857,
+        371
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        858,
+        371
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        859,
+        371
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        860,
+        371
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        861,
+        371
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        882,
+        371
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        883,
+        371
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        884,
+        371
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        885,
+        371
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        371
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        371
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        371
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        858,
+        372
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        859,
+        372
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        860,
+        372
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        861,
+        372
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        862,
+        372
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        883,
+        372
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        884,
+        372
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        885,
+        372
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        372
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        372
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        372
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        859,
+        373
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        860,
+        373
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        861,
+        373
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        862,
+        373
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        863,
+        373
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        883,
+        373
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        884,
+        373
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        885,
+        373
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        886,
+        373
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        899,
+        373
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        373
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        373
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        860,
+        374
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        861,
+        374
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        862,
+        374
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        863,
+        374
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        883,
+        374
+      ],
+      "frame": "boardwalk_junction",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        884,
+        374
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        885,
+        374
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        886,
+        374
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        374
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        374
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        374
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        861,
+        375
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        862,
+        375
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        863,
+        375
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        864,
+        375
+      ],
+      "frame": "boardwalk_ew",
+      "layer": "boardwalk"
+    },
+    {
+      "cell": [
+        884,
+        375
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        885,
+        375
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        886,
+        375
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        899,
+        375
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        900,
+        375
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    },
+    {
+      "cell": [
+        901,
+        375
+      ],
+      "frame": "causeway_ns",
+      "layer": "causeway"
+    }
+  ],
+  "owner": "A1",
+  "pins": {
+    "atlas_sha256": "355f33687fb20b202ece0aacc61445e5ecd603397a0f5413efdb9fb7e7202e85",
+    "grammar_sha256": "f9118a9bfe669a2d11a6373cd31a27eb655976d52665ef26454fc667cbff711a",
+    "source_sha256": "2c27acf6bec02e1da945ab2b0d45471d21024c73a462c2ec0757d6c53a44df4d"
+  },
+  "production_native_playable": false,
+  "props": [
+    {
+      "cell": [
+        880,
+        360
+      ],
+      "collision_change": false,
+      "frame": "lm_saffron_salt_works",
+      "id": "study:880,360:lm_saffron_salt_works",
+      "light": "warm",
+      "poi_id": "poi_saffron_salt_pan",
+      "role": "authored_landmark",
+      "source": "biome_study",
+      "world_px": [
+        14088,
+        5776
+      ]
+    },
+    {
+      "cell": [
+        880,
+        336
+      ],
+      "collision_change": false,
+      "frame": "salt_crust_prop",
+      "id": "study:880,336:salt_crust_prop",
+      "node_id": "res:src_saffron_salt:01",
+      "role": "ordinary_harvestable",
+      "site_id": "src_saffron_salt",
+      "source": "biome_study",
+      "world_px": [
+        14088,
+        5392
+      ]
+    },
+    {
+      "cell": [
+        885,
+        337
+      ],
+      "collision_change": false,
+      "frame": "salt_crust_prop",
+      "id": "study:885,337:salt_crust_prop",
+      "node_id": "res:src_saffron_salt:02",
+      "role": "ordinary_harvestable",
+      "site_id": "src_saffron_salt",
+      "source": "biome_study",
+      "world_px": [
+        14168,
+        5408
+      ]
+    },
+    {
+      "cell": [
+        877,
+        334
+      ],
+      "collision_change": false,
+      "frame": "salt_crust_prop",
+      "id": "study:877,334:salt_crust_prop",
+      "node_id": "res:src_saffron_salt:03",
+      "role": "ordinary_harvestable",
+      "site_id": "src_saffron_salt",
+      "source": "biome_study",
+      "world_px": [
+        14040,
+        5360
+      ]
+    },
+    {
+      "cell": [
+        858,
+        344
+      ],
+      "collision_change": false,
+      "frame": "palm",
+      "id": "study:858,344:palm",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        13736,
+        5520
+      ]
+    },
+    {
+      "cell": [
+        872,
+        368
+      ],
+      "collision_change": false,
+      "frame": "awning",
+      "id": "study:872,368:awning",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        13960,
+        5904
+      ]
+    },
+    {
+      "cell": [
+        888,
+        344
+      ],
+      "collision_change": false,
+      "frame": "salt_rake",
+      "id": "study:888,344:salt_rake",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14216,
+        5520
+      ]
+    },
+    {
+      "cell": [
+        896,
+        360
+      ],
+      "collision_change": false,
+      "frame": "salt_windbreak",
+      "id": "study:896,360:salt_windbreak",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14344,
+        5776
+      ]
+    },
+    {
+      "cell": [
+        884,
+        332
+      ],
+      "collision_change": false,
+      "frame": "heat_shimmer",
+      "id": "study:884,332:heat_shimmer",
+      "role": "physical_danger",
+      "source": "biome_study",
+      "world_px": [
+        14152,
+        5328
+      ]
+    },
+    {
+      "cell": [
+        856,
+        332
+      ],
+      "collision_change": false,
+      "frame": "palm",
+      "id": "study:856,332:palm",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        13704,
+        5328
+      ]
+    },
+    {
+      "cell": [
+        858,
+        333
+      ],
+      "collision_change": false,
+      "frame": "palm",
+      "id": "study:858,333:palm",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        13736,
+        5344
+      ]
+    },
+    {
+      "cell": [
+        854,
+        334
+      ],
+      "collision_change": false,
+      "frame": "palm",
+      "id": "study:854,334:palm",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        13672,
+        5360
+      ]
+    },
+    {
+      "cell": [
+        857,
+        330
+      ],
+      "collision_change": false,
+      "frame": "palm",
+      "id": "study:857,330:palm",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        13720,
+        5296
+      ]
+    },
+    {
+      "cell": [
+        902,
+        333
+      ],
+      "collision_change": false,
+      "frame": "palm",
+      "id": "study:902,333:palm",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14440,
+        5344
+      ]
+    },
+    {
+      "cell": [
+        898,
+        334
+      ],
+      "collision_change": false,
+      "frame": "palm",
+      "id": "study:898,334:palm",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        14376,
+        5360
+      ]
+    }
+  ],
+  "region_id": "r_saffron_coast",
+  "schema": "soh.world.art_presentation.v1",
+  "stand_change": false,
+  "status": "VISUAL_ONLY_ISOLATED_PRESENTATION_NOT_PRODUCTION_MOUNT",
+  "terrain_method": "AUTHORED_LANDFORMS_ON_SOURCE_SURFACES_NO_NOISE_BOUNDARIES",
+  "tile_px": 16,
+  "treatment_id": "saffron_coast_region_window",
+  "window": {
+    "origin_cell": [
+      848,
+      320
+    ],
+    "size_cells": [
+      64,
+      56
+    ]
+  }
+}

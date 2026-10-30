@@ -597,7 +597,7 @@ def mill_house() -> Image.Image:
     return im
 
 
-def build() -> dict:
+def build(include_regions: bool = False) -> dict:
     OUT.mkdir(parents=True, exist_ok=True); DATA.mkdir(parents=True, exist_ok=True)
     terrain: dict[str, Image.Image] = {}
     for style in ("ash", "moor", "soil", "grass", "forest", "snow", "tundra", "basalt", "gravel", "water", "ice"):
@@ -635,6 +635,11 @@ def build() -> dict:
         "drying_rack": drying_rack(), "beehive": beehive(), "snow_drift": snow_drift(), "split_rail": split_rail(),
         "lm_quarry_workface": quarry_workface(), "lm_orchard_shed": orchard_shed(), "lm_mill_house": mill_house(),
     }
+    if include_regions:
+        from build_region_art import region_frames
+        rt, rp = region_frames()
+        terrain.update(rt)
+        props.update(rp)
     # Pinned inherited original frames, reused without perspective/scale changes.
     legacy = Image.open(ROOT / "assets/environment/overworld/overworld_props.png").convert("RGBA")
     lmeta = json.loads((ROOT / "data/overworld/overworld_props.json").read_text())["frames"]
