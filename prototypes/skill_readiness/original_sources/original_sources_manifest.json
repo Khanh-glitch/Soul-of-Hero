@@ -1,0 +1,20 @@
+{
+  "format": "GOLD93/original-source-direct-branch/1",
+  "warning": "OWNER-AUTHORIZED PUBLIC POSTING 2026-10-30; uploaded to public Soul-of-Hero branch by explicit owner instruction; making repo private later cannot retract previously downloaded copies",
+  "files": [
+    {
+      "path": "prototypes/skill_readiness/original_sources/ARCANA_III_V2_72_SKILLS_FULLFX_2X.zip",
+      "size": 185751,
+      "sha256": "8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d",
+      "git_blob": "6ea8aeb75e38487495db41096e1bce12514611f9",
+      "skills": 72
+    },
+    {
+      "path": "prototypes/skill_readiness/original_sources/venomwright-combat-vfx-design (4).zip",
+      "size": 489345,
+      "sha256": "ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716",
+      "git_blob": "22b3e911881923386332a897a4d0c6d3a6fbd72f",
+      "skills": 21
+    }
+  ]
+}
