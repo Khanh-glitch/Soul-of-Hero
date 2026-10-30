@@ -1,4 +1,5 @@
 {
+  "schema": "soh.economy.sources.v1",
   "sources": {
     "live_oak_wood": {
       "id": "live_oak_wood",
@@ -373,10 +374,7 @@
         "SYS-03",
         "SYS-04"
       ],
-      "balance_status": "SOH_PROPOSAL",
-      "world_instance_id": "si:r_ashen_crown:waystation_cache:01",
-      "interaction_node_id": "node_waystation_cache",
-      "source_class_id": "sc_waystation_timed_cache_v1"
+      "balance_status": "SOH_PROPOSAL"
     },
     "road_notes": {
       "id": "road_notes",
@@ -393,13 +391,8 @@
         "SYS-03",
         "SYS-04"
       ],
-      "balance_status": "APPROVED_BY_A3_GATE_NOT_HUMAN_PLAYTESTED",
+      "balance_status": "SOH_PROPOSAL",
       "instance_id": "si:r_ashen_crown:roadside_supply:01",
-      "world_instance_id": "si:r_ashen_crown:roadside_supply:01",
-      "interaction_node_id": null,
-      "source_class_id": "sc_roadside_supply_cache_v1",
-      "canonical_poi_id": null,
-      "context_poi_id": "poi_crown_waystation",
       "world_binding_id": "a1_roadside_notes_01_v4"
     },
     "road_scrap": {
@@ -420,10 +413,7 @@
         "SYS-03",
         "SYS-04"
       ],
-      "balance_status": "SOH_PROPOSAL",
-      "world_instance_id": "si:r_ashen_crown:waystation_cache:01",
-      "interaction_node_id": "node_waystation_cache",
-      "source_class_id": "sc_waystation_timed_cache_v1"
+      "balance_status": "SOH_PROPOSAL"
     },
     "road_seed": {
       "id": "road_seed",
@@ -716,5 +706,8 @@
       ],
       "balance_status": "SOH_PROPOSAL"
     }
-  }
+  },
+  "world_contract_status": "A1_TWO_POI_SLICE_AND_ONE_ROADSIDE_NOTES_CRATE_PINNED_A3_BOUND_PENDING_A0_MOUNT",
+  "live_harvest_authority": "res://game/survival/survival_service.gd",
+  "note": "road_scrap/road_supplies are bound to the canonical A1 Waystation outside cache (3 scrap + 2 spares / 1800 active seconds); the locker is capability-only. road_notes is bound to exactly one A1 roadside crate si:r_ashen_crown:roadside_supply:01 (1 note / 1800 active seconds) as an A3 gate approval recorded in world_source_bindings.v3.json; source balance_status remains SOH_PROPOSAL until human playtest. Other PROPOSED_A1 sources remain requirements, not spawned loot. Existing reward sources do not imply renewable world nodes."
 }

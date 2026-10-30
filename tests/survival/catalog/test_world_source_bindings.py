@@ -69,7 +69,6 @@ class WorldSourceBindingContracts(unittest.TestCase):
             self.assertEqual(src["region_id"], "r_ashen_crown")
             self.assertEqual(src["poi_id"], "poi_crown_waystation")
             self.assertEqual(src["instance_id"], "si:r_ashen_crown:waystation_cache:01")
-            self.assertEqual(src["interaction_node_id"], "node_waystation_cache")
             self.assertEqual(src["world_binding_id"], "a1_waystation_roadside_cache_v3")
         self.assertEqual(self.sources["road_scrap"]["yield_per_claim"], 3)
         self.assertEqual(self.sources["road_supplies"]["yield_per_claim"], 2)
