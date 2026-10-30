@@ -116,3 +116,11 @@ A green native fixture may justify `ACCEPTED_SCOPED_ENGINEERING`. **It cannot by
 - Agent output, docs sync, design approval and successful GitHub CI **do not constitute game acceptance**. An authorized pilot or a new prompt is not evidence that a running game has that feature. Mark `NOT_TESTED`, `BLOCKED` or `FAIL` specifically; never promote any automatically.
 
 **Control Tower product question for every milestone:** *What does the player actually choose, do, feel, gain, lose, learn, and want to do next?* Trace those answers through the original Atlas and current running Godot implementation, not through checkboxes.
+
+
+## D060 — Continuous world chronology (USER LOCKED, 2026-10-30)
+- [ ] Given the same starting world state, elapsed time and real prepared materials, world date, day/night, region weather and eligible processes reach consistent states whether time passed online or offline. No pause upon app closure.
+- [ ] Valid offline processes (crop, smelting, queued research, collectors, provisions) respect soil/weather, fuel, water, queues, inventory and output capacity. Never create unlimited crops/ore, auto-quest completions or rare Core drops.
+- [ ] Time is derived from ONE A0 source; opening a save twice never produces duplicate output or takes duplicate food. 14-day end clamp D055, full run reset D056 and sheltered hunger D059 must take precedence. Existing A3 ACTIVE-only source clocks cannot be relabeled as wall-time without an owner-reviewed economic rule.
+- [ ] World changes are real in rendering/physics, not just a login report; nighttime/fog/Gold visibility and safe spawn remain valid. Offline monster raid/destructive weather are NOT implied or accepted solely by D060.
+- [ ] Calendar length, fictional year and seasonal durations are design variables; two years / three fictional days per two hours are reference examples, NOT locked numerical acceptance requirements. Test comparative schedule before stabilizing rates.
