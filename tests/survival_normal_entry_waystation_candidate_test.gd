@@ -101,6 +101,8 @@ func _use(ow: Node, hero: CharacterBody2D, point: Node2D) -> void:
 		_set_direction(point.global_position - hero.global_position)
 		await physics_frame
 	_set_direction(Vector2.ZERO)
+	for _settle: int in range(3):
+		await physics_frame
 	var camera := ow.get(&"camera") as Camera2D
 	camera.reset_smoothing()
 	camera.force_update_scroll()

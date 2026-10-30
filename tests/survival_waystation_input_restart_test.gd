@@ -91,12 +91,22 @@ func _click_point(ow: Node, hero: CharacterBody2D, point: Node2D) -> void:
 		_set_direction(point.global_position - hero.global_position)
 		await physics_frame
 	_set_direction(Vector2.ZERO)
+	# Let the released key actually stop the body before the pointer resolves
+	# reach, otherwise a click can be judged against a still-sliding position.
+	for _settle: int in range(3):
+		await physics_frame
 	var camera := ow.get(&"camera") as Camera2D
 	camera.reset_smoothing()
 	camera.force_update_scroll()
 	await process_frame
-	await _click_window(root.get_final_transform() * (camera.get_canvas_transform() * point.global_position))
+	var window_point: Vector2 = root.get_final_transform() * (camera.get_canvas_transform() * point.global_position)
+	print("A0_CLICK_TRACE node=%s hero=%s node_pos=%s distance=%.2f window=%s hovered=%s" % [
+		point.name, str(hero.global_position), str(point.global_position),
+		hero.global_position.distance_to(point.global_position), str(window_point), str(root.gui_get_hovered_control())])
+	await _click_window(window_point)
 	await process_frame
+	if point.has_method("last_interaction"):
+		print("A0_CLICK_RESULT node=%s last=%s" % [point.name, str(point.call("last_interaction"))])
 
 func _journey(ow: Node, hero: CharacterBody2D, host: Node, second: bool) -> void:
 	var nav := ow.get(&"traversability") as OverworldTraversability
