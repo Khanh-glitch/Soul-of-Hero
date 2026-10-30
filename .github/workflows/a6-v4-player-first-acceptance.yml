@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
-      A0_SHA: b2c37d35f47ef870fcbafafbc7f49e3d2730cd17
+      A0_SHA: 2b209b0c0b4f0b82f0a56a7b8903e2832a197eac
       A1_SHA: 2951bf8559b2e289ce99fd4d394d44c46fdd91b1
       A3_SHA: 18e7afcbd576bbd9bfbcc509b2ee13216186a522
       EVIDENCE_SHA: 1ee7e43da22adb4b9ce1647efbcb1b07988ceaf7
@@ -44,7 +44,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Khanh-glitch/Soul-of-Hero
-          ref: b2c37d35f47ef870fcbafafbc7f49e3d2730cd17
+          ref: 2b209b0c0b4f0b82f0a56a7b8903e2832a197eac
           path: a0-source
           fetch-depth: 1
           persist-credentials: false
@@ -96,6 +96,10 @@ jobs:
           cp a1-source/data/survival/world/material_source_contracts.json a0-source/.a6-contract-inputs/a1/world/
           cp a1-source/data/survival/world/poi_authoring/poi_crown_waystation.v1.json a0-source/.a6-contract-inputs/a1/world/poi_authoring/
           cp a1-source/data/survival/world/poi_authoring/poi_crown_relay_shed.v1.json a0-source/.a6-contract-inputs/a1/world/poi_authoring/
+          mkdir -p a0-source/.a6-contract-inputs/a1/world/vertical_slice
+          cp a1-source/data/survival/world/vertical_slice/poi_crown_waystation.slice.json a0-source/.a6-contract-inputs/a1/world/vertical_slice/
+          cp a1-source/data/survival/world/vertical_slice/poi_crown_relay_shed.slice.json a0-source/.a6-contract-inputs/a1/world/vertical_slice/
+          cp a1-source/data/survival/world/vertical_slice/handoff_contracts.json a0-source/.a6-contract-inputs/a1/world/vertical_slice/
           mkdir -p a0-source/.a6-contract-inputs/a3/items a0-source/.a6-contract-inputs/a3/recipes a0-source/.a6-contract-inputs/a3/source
           cp a3-source/game/survival/economy/economy_service.gd a0-source/.a6-contract-inputs/a3/source/
           cp a3-source/data/survival/items/items.json a0-source/.a6-contract-inputs/a3/items/

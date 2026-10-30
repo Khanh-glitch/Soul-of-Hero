@@ -56,7 +56,17 @@ func _run() -> void:
 	var projection := {
 		"schema": "soh.ui.player_hud.v1",
 		"provenance": "FIXTURE_PROJECTION",
+		"revision": "a6-v4-capture-1",
+		"sequence": 1,
 		"mode": "looting",
+		"focus": {
+			"kind": "poi",
+			"discovered": true,
+			"discovery_source": "FIXTURE_PROJECTION",
+			"label": "Crown Waystation",
+			"clue": "Broken signal mast points into the ash trail.",
+			"content_readiness": "AUTHORED_PLAN_NOT_NATIVE_INTEGRATED"
+		},
 		"needs":
 		[
 			{"label": "Health", "current": 84, "maximum": 100},
@@ -67,19 +77,24 @@ func _run() -> void:
 		"core":
 		{
 			"name": "Ember Core",
+			"item_id": "core_ember",
 			"instance_id": "soh_i_000000000011_a1c0ffee",
+			"instance_source": "FIXTURE_PROJECTION",
 			"ownership_state": "In satchel · unequipped",
+			"custody_source": "FIXTURE_PROJECTION",
 			"uses": 3,
 			"max_uses": 8,
 			"condition": 76,
 			"max_condition": 100,
-			"readiness": "BLOCKED_PENDING_A4"
+			"readiness": "BLOCKED_PENDING_A4",
+			"readiness_source": "FIXTURE_PROJECTION"
 		},
 		"feedback":
 		{
 			"status": "committed",
 			"kind": "core_acquired",
 			"provenance": "FIXTURE_PROJECTION",
+			"receipt_id": "fixture-capture-receipt-1",
 			"title": "Physical instance recorded",
 			"item_name": "Ember Core"
 		}

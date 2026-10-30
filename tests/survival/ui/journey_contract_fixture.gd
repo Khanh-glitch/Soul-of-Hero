@@ -11,11 +11,22 @@ static func snapshot() -> Dictionary:
 	var a1_route := _json(A1_ROOT + "poi_route_graph.json")
 	var a1_hazards := _json(A1_ROOT + "hazard_capability_contracts.json")
 	var a1_materials := _json(A1_ROOT + "material_source_contracts.json")
+	var a1_waystation_slice := _json(A1_ROOT + "vertical_slice/poi_crown_waystation.slice.json")
+	var a1_relay_slice := _json(A1_ROOT + "vertical_slice/poi_crown_relay_shed.slice.json")
+	var a1_slice_handoff := _json(A1_ROOT + "vertical_slice/handoff_contracts.json")
 	var a3_items := _json(A3_ROOT + "items/items.json")
 	var a3_recipes := _json(A3_ROOT + "recipes/recipes.json")
 	var a3_research := _json(A3_ROOT + "recipes/research.json")
 	var a3_stations := _json(A3_ROOT + "recipes/stations.json")
-	if a0.is_empty() or a1_route.is_empty() or a1_hazards.is_empty() or a1_materials.is_empty():
+	if (
+		a0.is_empty()
+		or a1_route.is_empty()
+		or a1_hazards.is_empty()
+		or a1_materials.is_empty()
+		or a1_waystation_slice.is_empty()
+		or a1_relay_slice.is_empty()
+		or a1_slice_handoff.is_empty()
+	):
 		return {}
 	if (
 		a3_items.is_empty()
@@ -109,6 +120,9 @@ static func snapshot() -> Dictionary:
 			"safe_route": safe_route.duplicate(true),
 			"shortcut": shortcut.duplicate(true),
 			"salvage_material_contract": salvage_material,
+			"waystation_slice": a1_waystation_slice,
+			"relay_slice": a1_relay_slice,
+			"slice_handoff": a1_slice_handoff,
 			"hazard_contract_count": hazard_records.size(),
 			"discovery_fixture": {"waystation": true, "relay": true, "known_hazard_ids": []},
 		},
@@ -136,8 +150,24 @@ static func hidden_relay_snapshot(source: Dictionary) -> Dictionary:
 		return result
 	var a1: Dictionary = result.get("a1", {})
 	var discovery: Dictionary = a1.get("discovery_fixture", {})
-	discovery["relay"] = false
+	discovery.erase("relay")
 	a1["discovery_fixture"] = discovery
+	# Model the A0 disclosure boundary: strip the identity, route, authored actions,
+	# hidden examples, and private handoff payload before constructing A6's DTO.
+	a1.erase("relay")
+	a1.erase("relay_slice")
+	a1.erase("shortcut")
+	a1.erase("hazard_contract_count")
+	var full_handoff: Dictionary = a1.get("slice_handoff", {})
+	var a6_contract: Dictionary = full_handoff.get("a6", {})
+	a1["slice_handoff"] = {
+		"schema": String(full_handoff.get("schema", "soh.world.slice_handoff.v1")),
+		"native_playable": false,
+		"a6": {
+			"projection_schema": String(a6_contract.get("projection_schema", "soh.world.slice.a6_projection.v1")),
+			"rules": a6_contract.get("rules", []).duplicate(true),
+		}
+	}
 	result["a1"] = a1
 	return result
 

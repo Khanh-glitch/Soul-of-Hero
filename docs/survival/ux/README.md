@@ -1,6 +1,6 @@
 # SURV-UX-010A — A6 acceptance record
 
-> **V4 active (2026-10-30):** See [V4_PLAYER_FIRST_HUD_HANDOFF_20261030.md](V4_PLAYER_FIRST_HUD_HANDOFF_20261030.md). V4 extends the existing A6 V3 UI on this branch; it compares against the exact current A0/A1/A3 refs and is not production-mounted. The V3 body below is a historical checkpoint. A0 PR #21 has since added the gameplay input gate, but checks on its latest head `b2c37d35f47ef870fcbafafbc7f49e3d2730cd17` were pending at the last query; the earlier passing `composed-native` check belongs to a previous head. This does not imply that A6 V4 is mounted, human-tested, or approved.
+> **V4 active (2026-10-30):** See [V4_PLAYER_FIRST_HUD_HANDOFF_20261030.md](V4_PLAYER_FIRST_HUD_HANDOFF_20261030.md). V4 extends the existing A6 V3 UI on this branch; it compares against exact A0/A1/A3 refs and is not production-mounted. At the latest sampled query A0 PR #21 (`2b209b0c0b4f0b82f0a56a7b8903e2832a197eac`) checks were still pending; prior-head passes are not current evidence. This does not imply that A6 V4 is mounted, human-tested, or approved.
 
 > **Historical V3 status (2026-10-29):** See [V3_SUSTAINED_PRODUCT_ACCEPTANCE.md](V3_SUSTAINED_PRODUCT_ACCEPTANCE.md). A6 added three source-grounded, fixture-labeled presentation journeys and a dedicated pinned A0+A6 Godot 4.7 CI workflow. Production mounting was on hold at that checkpoint. The legacy text below is preserved as historical V0/V1/V2/V3 evidence and must not be read as current V4 CI, screenshot, or integration evidence.
 

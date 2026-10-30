@@ -218,21 +218,85 @@ func _run() -> void:
 		),
 		"shortcut remains an authored risk label, not fabricated damage"
 	)
+	view.select_step(3)
+	var reward_preview := view._detail_text()
+	check(
+		reward_preview.contains("native_playable=false")
+			and reward_preview.contains("rr_waystation_cache_claim")
+			and reward_preview.contains("cache_restock")
+			and reward_preview.contains("iron_scrap × 3")
+			and reward_preview.contains("knowledge_spares × 2")
+			and reward_preview.contains("1800 active-sec cooldown")
+			and reward_preview.contains("gather_deadfall")
+			and reward_preview.contains("oak_wood × 2")
+			and reward_preview.contains("300 active-sec cooldown")
+			and reward_preview.contains("rr_waystation_salvage_tool")
+			and reward_preview.contains("cap_salvage")
+			and reward_preview.contains("rr_waystation_seal_ledger")
+			and reward_preview.contains("cap_seal_1")
+			and reward_preview.contains("rr_relay_power_bypass")
+			and reward_preview.contains("iron_scrap × 2")
+			and reward_preview.contains("oak_wood × 1")
+			and reward_preview.contains("cap_power_1")
+			and reward_preview.contains("copper_upgrade")
+			and reward_preview.contains("enabled=false")
+			and reward_preview.contains("copper × 2")
+			and reward_preview.contains("ITEM_NOT_IN_A3_CATALOG:copper"),
+		"A1 canonical action, reward, cost, capability and deferred-status vectors remain authored-only"
+	)
 	var hidden: Dictionary = FIXTURE.hidden_relay_snapshot(fixture)
-	var hidden_view: Dictionary = ADAPTER.poi_presentation(hidden.a1.relay, false)
-	check(hidden_view.is_empty(), "undiscovered A1 record produces no UI projection")
+	var hidden_a1: Dictionary = hidden.get("a1", {})
+	var hidden_view: Dictionary = ADAPTER.poi_presentation(hidden_a1.get("relay", {}), false)
+	var hidden_projection_text := JSON.stringify(hidden_a1)
+	check(
+		hidden_view.is_empty()
+			and not hidden_a1.has("relay")
+			and not hidden_a1.has("relay_slice")
+			and not hidden_a1.has("shortcut")
+			and not hidden_a1.discovery_fixture.has("relay")
+			and hidden_a1.slice_handoff.keys().size() == 3
+			and not hidden_projection_text.contains("poi_crown_relay_shed")
+			and not hidden_projection_text.contains("rr_relay_power_bypass")
+			and not hidden_projection_text.contains("cap_power_1")
+			and not hidden_projection_text.contains("cap_filter")
+			and not hidden_projection_text.contains("copper_upgrade")
+			and not hidden_projection_text.contains("ITEM_NOT_IN_A3_CATALOG:copper")
+			and not hidden_projection_text.contains("rt_east_seam")
+			and not hidden_projection_text.contains("hz_crown"),
+		"undiscovered identity, route, hazard, reward, action, and handoff-private metadata are omitted before A6 projection"
+	)
 	check(
 		view.set_fixture(hidden), "same pinned fixture can represent a separate A0 discovery state"
 	)
 	view.select_step(1)
 	check(
 		not view._detail_text().contains("dead lamp") and view._detail_text().contains("withheld"),
-		"hidden Relay clue is not projected when discovery is false"
+		"hidden Relay clue is not projected when its identity is absent from discovery data"
+	)
+	view.select_step(0)
+	check(
+		view._choice_labels().size() == 1 and not view._detail_text().contains("rt_east_seam"),
+		"undiscovered alternative route identity is absent from the consumer and choice list"
 	)
 	view.select_route("shortcut")
 	check(
+		view._detail_text().contains("Alternative route withheld") and not view._detail_text().contains("cap_filter"),
+		"a direct route-preview request still cannot reveal an undiscovered route or requirement"
+	)
+	view.select_step(2)
+	check(
+		view._detail_text().contains("identity, authored hazard, materials and capability requirements are withheld"),
+		"risk comparison explicitly withholds all undiscovered route metadata"
+	)
+	view.select_step(3)
+	check(
+		not view._detail_text().contains("rr_relay_power_bypass")
+			and not view._detail_text().contains("ITEM_NOT_IN_A3_CATALOG:copper"),
+		"undiscovered Relay reward and upgrade metadata remain stripped from the A6 consumer"
+	)
+	check(
 		view.current_projection().route_choice == "shortcut",
-		"shortcut choice is a local route-preview selection only"
+		"shortcut selection is only a local route-preview choice"
 	)
 	check(emitted_actions == 0, "all three journeys remain read-only and emit no gameplay mutation")
 

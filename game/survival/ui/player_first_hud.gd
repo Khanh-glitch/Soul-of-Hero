@@ -14,17 +14,20 @@ const GOLD := Color("f4c778")
 const CORAL := Color("ff9278")
 
 var _snapshot: Dictionary = {}
+var _last_sequence := -1
 var _status_panel: PanelContainer
 var _needs: VBoxContainer
 var _phase: Label
+var _provenance: Label
+var _context: Label
 var _risk: Label
 var _bag: Label
 var _feedback: Label
-var _provenance: Label
 var _core_title: Label
 var _core_state: Label
 var _core_details: Label
 var _core_readiness: Label
+var _core_icon: TextureRect
 var _core_panel: PanelContainer
 
 
@@ -40,6 +43,8 @@ func set_projection(snapshot: Dictionary) -> bool:
 	if String(snapshot.get("schema", "")) != "soh.ui.player_hud.v1":
 		return false
 	var provenance := String(snapshot.get("provenance", ""))
+	var revision := String(snapshot.get("revision", "")).strip_edges()
+	var sequence: Variant = snapshot.get("sequence", null)
 	if (
 		provenance
 		not in [
@@ -49,9 +54,18 @@ func set_projection(snapshot: Dictionary) -> bool:
 			"A1_DISCOVERED_PROJECTION",
 			"FIXTURE_PROJECTION"
 		]
+		or revision.is_empty()
+		or not sequence is int
+		or int(sequence) < 0
 	):
 		return false
+	if not _snapshot.is_empty():
+		if int(sequence) < _last_sequence:
+			return false
+		if int(sequence) == _last_sequence and (revision != String(_snapshot.get("revision", "")) or snapshot != _snapshot):
+			return false
 	_snapshot = snapshot.duplicate(true)
+	_last_sequence = int(sequence)
 	if is_inside_tree():
 		_refresh()
 	return true
@@ -66,7 +80,7 @@ func _build() -> void:
 	_status_panel.offset_left = -266
 	_status_panel.offset_right = -12
 	_status_panel.offset_top = 12
-	_status_panel.offset_bottom = 108
+	_status_panel.offset_bottom = 124
 	add_child(_status_panel)
 	var status_column := VBoxContainer.new()
 	status_column.add_theme_constant_override("separation", 0)
@@ -75,6 +89,9 @@ func _build() -> void:
 	status_column.add_child(_phase)
 	_provenance = _label("NO OWNER SNAPSHOT", 8, MUTED)
 	status_column.add_child(_provenance)
+	_context = _label("", 8, PAPER)
+	_context.visible = false
+	status_column.add_child(_context)
 	_needs = VBoxContainer.new()
 	_needs.add_theme_constant_override("separation", 0)
 	status_column.add_child(_needs)
@@ -92,20 +109,34 @@ func _build() -> void:
 	_core_panel.anchor_bottom = 0.0
 	_core_panel.offset_left = -260
 	_core_panel.offset_right = -12
-	_core_panel.offset_top = 116
-	_core_panel.offset_bottom = 198
+	_core_panel.offset_top = 132
+	_core_panel.offset_bottom = 224
 	_core_panel.name = "PhysicalCoreStatus"
 	add_child(_core_panel)
+	var core_row := HBoxContainer.new()
+	core_row.add_theme_constant_override("separation", 4)
+	_core_panel.add_child(core_row)
+	_core_icon = TextureRect.new()
+	_core_icon.custom_minimum_size = Vector2(26, 26)
+	_core_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_core_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_core_icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_core_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	core_row.add_child(_core_icon)
 	var core_column := VBoxContainer.new()
+	core_column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	core_column.add_theme_constant_override("separation", 0)
-	_core_panel.add_child(core_column)
-	_core_title = _label("CORE  /  NOT IN SNAPSHOT", 10, GOLD, true)
+	core_row.add_child(core_column)
+	_core_title = _label("PHYSICAL CORE", 10, GOLD, true)
 	core_column.add_child(_core_title)
 	_core_state = _label("Ownership status unavailable.", 9, PAPER)
+	_core_state.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	core_column.add_child(_core_state)
 	_core_details = _label("Condition and finite charges are owner supplied.", 9, MUTED)
+	_core_details.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	core_column.add_child(_core_details)
 	_core_readiness = _label("CAST READINESS  /  UNKNOWN", 8, MUTED)
+	_core_readiness.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	core_column.add_child(_core_readiness)
 
 
@@ -132,6 +163,9 @@ func _refresh() -> void:
 	_provenance.add_theme_color_override(
 		"font_color", CORAL if source == "FIXTURE PROJECTION" else MUTED
 	)
+	var focus_text := _focus_text(_snapshot.get("focus", {}))
+	_context.text = focus_text
+	_context.visible = not focus_text.is_empty()
 	var needs: Variant = _snapshot.get("needs", [])
 	var shown_needs := 0
 	var valid_needs := 0
@@ -141,7 +175,13 @@ func _refresh() -> void:
 				continue
 			var current: Variant = raw.get("current", null)
 			var maximum: Variant = raw.get("maximum", null)
-			if not _is_number(current) or not _is_number(maximum) or float(maximum) <= 0.0:
+			if (
+				not _is_number(current)
+				or not _is_number(maximum)
+				or float(maximum) <= 0.0
+				or float(current) < 0.0
+				or float(current) > float(maximum)
+			):
 				continue
 			valid_needs += 1
 			if shown_needs < 2:
@@ -170,6 +210,8 @@ func _refresh() -> void:
 		bag is Dictionary
 		and _is_number(bag.get("used", null))
 		and _is_number(bag.get("capacity", null))
+		and float(bag.get("used", -1)) >= 0.0
+		and float(bag.get("capacity", 0)) > 0.0
 	)
 	if _bag.visible:
 		var full := float(bag.get("used", 0)) >= float(bag.get("capacity", 0))
@@ -180,15 +222,54 @@ func _refresh() -> void:
 		)
 		_bag.add_theme_color_override("font_color", CORAL if full else MUTED)
 	var event: Variant = _snapshot.get("feedback", {})
+	var event_status := String(event.get("status", "")) if event is Dictionary else ""
+	var event_source := String(event.get("provenance", "")) if event is Dictionary else ""
+	var event_kind := String(event.get("kind", "")) if event is Dictionary else ""
+	var valid_event_source := event_source in ["A0_OWNER_PROJECTION", "A3_OWNER_PROJECTION", "A4_OWNER_PROJECTION", "FIXTURE_PROJECTION"]
+	var feedback_core: Variant = _snapshot.get("core", {})
+	var feedback_core_is_physical := (
+		feedback_core is Dictionary
+		and String(feedback_core.get("instance_id", "")).begins_with("soh_i_")
+		and not String(feedback_core.get("item_id", "")).is_empty()
+		and String(feedback_core.get("instance_source", "")) in ["A3_OWNER_PROJECTION", "FIXTURE_PROJECTION"]
+	)
+	var committed_has_receipt := (
+		event is Dictionary
+		and valid_event_source
+		and event_status == "committed"
+		and not String(event.get("receipt_id", "")).strip_edges().is_empty()
+		and (event_kind != "core_acquired" or feedback_core_is_physical)
+	)
 	_feedback.visible = (
-		event is Dictionary and String(event.get("status", "")) in ["committed", "owner_rejected"]
+		committed_has_receipt
+		or (event is Dictionary and valid_event_source and event_status == "owner_rejected")
 	)
 	_feedback.text = _feedback_text(event) if _feedback.visible else ""
 	var core: Variant = _snapshot.get("core", {})
-	_core_panel.visible = core is Dictionary and not core.is_empty()
+	var core_id := String(core.get("instance_id", "")) if core is Dictionary else ""
+	var item_id := String(core.get("item_id", "")) if core is Dictionary else ""
+	_core_panel.visible = (
+		core is Dictionary
+		and core_id.begins_with("soh_i_")
+		and not item_id.is_empty()
+		and String(core.get("instance_source", "")) in ["A3_OWNER_PROJECTION", "FIXTURE_PROJECTION"]
+	)
 	if _core_panel.visible:
-		_core_title.text = "PHYSICAL CORE  /  %s" % String(core.get("name", "Core")).to_upper()
-		_core_state.text = String(core.get("ownership_state", "Ownership status unknown."))
+		var custody_source := String(core.get("custody_source", ""))
+		_core_title.text = "PHYSICAL CORE  /  %s" % String(core.get("name", item_id)).to_upper()
+		var icon_record := core.duplicate(true)
+		icon_record["id"] = item_id
+		icon_record["kind"] = "core"
+		icon_record["equipped"] = (
+			custody_source in ["A0_OWNER_PROJECTION", "FIXTURE_PROJECTION"]
+			and String(core.get("ownership_state", "")).begins_with("Equipped")
+		)
+		_core_icon.texture = PIXEL_UI.icon_texture(icon_record)
+		_core_state.text = (
+			String(core.get("ownership_state", "Ownership status unknown."))
+			if custody_source in ["A0_OWNER_PROJECTION", "FIXTURE_PROJECTION"]
+			else "Custody / equipment status unavailable from A0."
+		)
 		var uses: Variant = core.get("uses", null)
 		var max_uses: Variant = core.get("max_uses", null)
 		var condition: Variant = core.get("condition", null)
@@ -218,10 +299,54 @@ func _refresh() -> void:
 		if not instance_id.is_empty():
 			details.append("ID %s" % instance_id)
 		_core_details.text = "  ·  ".join(details)
-		_core_readiness.text = "CAST READINESS  /  %s" % String(core.get("readiness", "UNKNOWN"))
-		_core_readiness.add_theme_color_override(
-			"font_color", CORAL if String(core.get("readiness", "")).contains("BLOCKED") else MUTED
+		var readiness_source := String(core.get("readiness_source", ""))
+		var readiness := (
+			String(core.get("readiness", "UNKNOWN"))
+			if readiness_source in ["A4_OWNER_PROJECTION", "FIXTURE_PROJECTION"]
+			else "UNKNOWN"
 		)
+		_core_readiness.text = "CAST READINESS  /  %s" % readiness
+		_core_readiness.add_theme_color_override(
+			"font_color", CORAL if readiness.contains("BLOCKED") else MUTED
+		)
+
+
+func _focus_text(value: Variant) -> String:
+	if not value is Dictionary:
+		return ""
+	var kind := String(value.get("kind", ""))
+	if kind == "poi":
+		if not bool(value.get("discovered", false)):
+			return "POI clue withheld until discovery."
+		if String(value.get("discovery_source", "")) not in ["A0_OWNER_PROJECTION", "FIXTURE_PROJECTION"]:
+			return ""
+		var label := String(value.get("label", "Discovered place"))
+		var clue := String(value.get("clue", ""))
+		var readiness := String(value.get("content_readiness", ""))
+		var text := "NEXT  ·  %s" % label
+		if not clue.is_empty():
+			text += "  ·  " + clue
+		if not readiness.is_empty():
+			text += "  ·  " + readiness.replace("_", " ")
+		return text
+	if kind == "workshop":
+		var fixture := String(value.get("station_source", "")) == "FIXTURE_PROJECTION" and String(value.get("queue_source", "")) == "FIXTURE_PROJECTION"
+		var owned := String(value.get("station_source", "")) == "A0_OWNER_PROJECTION" and String(value.get("queue_source", "")) == "A3_OWNER_PROJECTION"
+		var used: Variant = value.get("queue_used", null)
+		var capacity: Variant = value.get("queue_capacity", null)
+		if (not fixture and not owned) or not used is int or not capacity is int or int(capacity) < 1 or int(used) < 0 or int(used) > int(capacity):
+			return ""
+		return "WORKSHOP  ·  %s T%d  ·  QUEUE %d / %d  ·  %s" % [String(value.get("station", "Station")), int(value.get("station_tier", 0)), int(used), int(capacity), String(value.get("job_status", "QUEUE STATUS UNKNOWN"))]
+	if kind == "recovery":
+		var owner_source := String(value.get("source", ""))
+		if owner_source not in ["A0_OWNER_PROJECTION", "FIXTURE_PROJECTION"]:
+			return ""
+		var status := String(value.get("status", "unknown"))
+		if status not in ["bag_dropped", "respawn_pending", "recovery_available", "recovered", "capacity_rejected", "unknown"]:
+			return ""
+		var recovery_label := String(value.get("label", "Death bag"))
+		return "%s  ·  %s" % [recovery_label.to_upper(), status.replace("_", " ").to_upper()]
+	return ""
 
 
 func _feedback_text(event: Variant) -> String:

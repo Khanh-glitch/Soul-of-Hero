@@ -73,9 +73,9 @@ func set_fixture(snapshot: Dictionary) -> bool:
 	var refs: Variant = snapshot.get("source_refs", null)
 	if (
 		not refs is Dictionary
-		or String(refs.get("a0", "")) != "aaee29339aca7e953af1b96d5bcc06b0fb7527bc"
-		or String(refs.get("a1", "")) != "2cb1a3c5f093724eb9fecbdf45909ccb611f7b32"
-		or String(refs.get("a3", "")) != "18e7afcbd576bbd9bfbcc509b2ee13216186a522"
+		or String(refs.get("a0", "")) != _source_pin("A0")
+		or String(refs.get("a1", "")) != _source_pin("A1")
+		or String(refs.get("a3", "")) != _source_pin("A3")
 	):
 		return false
 	if (
@@ -89,6 +89,16 @@ func set_fixture(snapshot: Dictionary) -> bool:
 	if is_inside_tree():
 		_render()
 	return true
+
+
+func _source_pin(owner: String) -> String:
+	var pins_path := "res://.a6-contract-inputs/source-pins.txt"
+	if not FileAccess.file_exists(pins_path):
+		return ""
+	for line in FileAccess.get_file_as_string(pins_path).split("\n"):
+		if line.begins_with(owner + "="):
+			return line.substr(owner.length() + 1).strip_edges()
+	return ""
 
 
 func open_journeys() -> void:
@@ -512,12 +522,17 @@ func _expedition_detail() -> String:
 		return "A1 source input missing."
 	var a1: Dictionary = _fixture.a1
 	var discovery: Dictionary = a1.discovery_fixture
-	var way: Dictionary = a1.waystation
-	var relay: Dictionary = a1.relay
-	var safe: Dictionary = a1.safe_route
-	var shortcut: Dictionary = a1.shortcut
+	var way: Dictionary = a1.get("waystation", {})
+	var relay: Dictionary = a1.get("relay", {})
+	var waystation_slice: Dictionary = a1.get("waystation_slice", {})
+	var relay_slice: Dictionary = a1.get("relay_slice", {})
+	var slice_handoff: Dictionary = a1.get("slice_handoff", {})
+	var safe: Dictionary = a1.get("safe_route", {})
+	var shortcut: Dictionary = a1.get("shortcut", {})
 	if _step == 0:
 		var selected: Dictionary = safe if _route_choice == "safe" else shortcut
+		if selected.is_empty():
+			return "Alternative route withheld until A0 reports discovery; identity, risk, and capability requirements remain hidden."
 		return (
 			"Selected route: %s · risk %s\nRequired capabilities: %s\nMode: %s · kind: %s\n\nA1 route records are authored, not native movement. Safe approach is low-risk with no capability requirement. The alternative is labeled high-risk by A1; no damage probability is invented."
 			% [
@@ -566,19 +581,91 @@ func _expedition_detail() -> String:
 			]
 		)
 	if _step == 2:
+		if shortcut.is_empty():
+			return "Safe route: %s · risk %s. Alternative route identity, authored hazard, materials and capability requirements are withheld until A0 reports discovery." % [String(safe.get("route_id", "")), String(safe.get("risk", ""))]
 		return (
-			"SAFE: %s · risk %s · capability gate: none\nSHORTCUT: %s · risk %s · requires %s\n\nThe shortcut's danger is an A1 risk label, not measured damage. If %s is absent, choose preparation/retreat; no invisible-wall or forced encounter is asserted. Undiscovered hazard records remain hidden (%d authored hazard contracts exist)."
+			"SAFE: %s · risk %s · capability gate: none\nSHORTCUT: %s · risk %s · requires %s\n\nThe shortcut's danger is an A1 risk label, not measured damage. If %s is absent, choose preparation/retreat; no invisible-wall or forced encounter is asserted. Undiscovered hazard identities and clues are not included in this projection."
 			% [
 				String(safe.get("route_id", "")),
 				String(safe.get("risk", "")),
 				String(shortcut.get("route_id", "")),
 				String(shortcut.get("risk", "")),
 				", ".join(shortcut.get("required_capabilities", [])),
-				", ".join(shortcut.get("required_capabilities", [])),
-				int(a1.get("hazard_contract_count", 0))
+				", ".join(shortcut.get("required_capabilities", []))
 			]
 		)
-	return "Return route and progression are not simulated. A1 authored a road, POIs and static clues; A0 must report runtime discovery/return state. No loot, POI interaction, capability grant or progression flag is produced by this presentation."
+	var contract_lines: Array[String] = []
+	if bool(discovery.get("waystation", false)):
+		var cache := _slice_action(waystation_slice, "cache_restock")
+		var deadfall := _slice_action(waystation_slice, "gather_deadfall")
+		var locker := _slice_action(waystation_slice, "pry_locker")
+		var ledger := _slice_action(waystation_slice, "seal_ledger")
+		contract_lines.append(
+			"Cache %s · %s · enabled=%s · one_time=%s: %s; requires %s; %d active-sec cooldown."
+			% [
+				String(cache.get("reward_right_id", "")), String(cache.get("action_id", "")),
+				str(cache.get("enabled", "unknown")), str(cache.get("one_time", "unknown")),
+				_item_amounts(cache.get("reward_items", [])), ", ".join(cache.get("requires_capabilities", [])),
+				int(cache.get("cooldown_active_seconds", 0))
+			]
+		)
+		contract_lines.append(
+			"Approach deadfall %s: %s · %d active-sec cooldown."
+			% [String(deadfall.get("action_id", "")), _item_amounts(deadfall.get("reward_items", [])), int(deadfall.get("cooldown_active_seconds", 0))]
+		)
+		contract_lines.append(
+			"Locker/ledger: %s → %s; %s → %s; enabled one-time actions, no item reward."
+			% [
+				String(locker.get("reward_right_id", "")), ", ".join(locker.get("grants_capabilities", [])),
+				String(ledger.get("reward_right_id", "")), ", ".join(ledger.get("grants_capabilities", []))
+			]
+		)
+	if bool(discovery.get("relay", false)):
+		var bypass := _slice_action(relay_slice, "hand_crank_bypass")
+		var copper_upgrade := _slice_action(relay_slice, "copper_upgrade")
+		contract_lines.append(
+			"Relay bypass %s · enabled=%s · one_time=%s: consumes %s; needs %s → grants %s; no item loot."
+			% [
+				String(bypass.get("reward_right_id", "")), str(bypass.get("enabled", "unknown")),
+				str(bypass.get("one_time", "unknown")), _item_amounts(bypass.get("consumes_items", [])),
+				", ".join(bypass.get("requires_capabilities", [])), ", ".join(bypass.get("grants_capabilities", []))
+			]
+		)
+		contract_lines.append(
+			"Copper upgrade %s · enabled=%s · cost %s · grants %s · %s."
+			% [
+				String(copper_upgrade.get("action_id", "")), str(copper_upgrade.get("enabled", "unknown")),
+				_item_amounts(copper_upgrade.get("consumes_items", [])), ", ".join(copper_upgrade.get("grants_capabilities", [])),
+				String(copper_upgrade.get("deferred_reason", "no reason supplied"))
+			]
+		)
+	var integration_status := (
+		"A1 native_playable=false · authored contract only"
+		if slice_handoff.get("native_playable", true) == false
+		else "A1 native status unknown"
+	)
+	return (
+		"Return route and progression are not simulated. A0 must report discovery, action receipts and return state.\n\n"
+		+ "CANONICAL A1 PREVIEW · %s\n%s\n\nNo item, capability or progression flag is granted by this A6 presentation."
+		% [integration_status, "\n".join(contract_lines) if not contract_lines.is_empty() else "POI contract withheld until A0 reports discovery."]
+	)
+
+
+func _slice_action(slice: Dictionary, action_id: String) -> Dictionary:
+	for raw: Variant in slice.get("actions", []):
+		if raw is Dictionary and String(raw.get("action_id", "")) == action_id:
+			return raw
+	return {}
+
+
+func _item_amounts(records: Variant) -> String:
+	if not records is Array or records.is_empty():
+		return "no item reward"
+	var values: Array[String] = []
+	for raw: Variant in records:
+		if raw is Dictionary:
+			values.append("%s × %d" % [String(raw.get("item_id", "unknown")), int(raw.get("quantity", 0))])
+	return ", ".join(values) if not values.is_empty() else "no item reward"
 
 
 func _choice_labels() -> Array[String]:
@@ -589,7 +676,10 @@ func _choice_labels() -> Array[String]:
 	if _journey == 1 and _step == 2 and _core_choice == "research":
 		return ["CONFIRM SACRIFICE PREVIEW · NO REQUEST", "CANCEL / KEEP SPECIMEN"]
 	if _journey == 2 and _step == 0:
-		return ["FOLLOW LOW-RISK ROAD", "COMPARE HIGH-RISK SHORTCUT"]
+		var labels: Array[String] = ["FOLLOW LOW-RISK ROAD"]
+		if _fixture.get("a1", {}).get("shortcut", {}).size() > 0:
+			labels.append("COMPARE HIGH-RISK SHORTCUT")
+		return labels
 	return []
 
 

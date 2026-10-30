@@ -66,7 +66,17 @@ func _run() -> void:
 	var snapshot := {
 		"schema": "soh.ui.player_hud.v1",
 		"provenance": "FIXTURE_PROJECTION",
+		"revision": "fixture-1",
+		"sequence": 1,
 		"mode": "exploration",
+		"focus": {
+			"kind": "poi",
+			"discovered": true,
+			"discovery_source": "FIXTURE_PROJECTION",
+			"label": "Crown Waystation",
+			"clue": "Broken signal mast",
+			"content_readiness": "AUTHORED_PLAN_NOT_NATIVE_INTEGRATED"
+		},
 		"needs":
 		[
 			{"label": "Health", "current": 84, "maximum": 100},
@@ -77,19 +87,24 @@ func _run() -> void:
 		"core":
 		{
 			"name": "Ember Core",
+			"item_id": "core_ember",
 			"instance_id": "soh_i_000000000011_a1c0ffee",
+			"instance_source": "FIXTURE_PROJECTION",
 			"ownership_state": "In satchel · unequipped",
+			"custody_source": "FIXTURE_PROJECTION",
 			"uses": 8,
 			"max_uses": 8,
 			"condition": 91,
 			"max_condition": 100,
-			"readiness": "BLOCKED_PENDING_A4"
+			"readiness": "BLOCKED_PENDING_A4",
+			"readiness_source": "FIXTURE_PROJECTION"
 		},
 		"feedback":
 		{
 			"status": "committed",
 			"kind": "core_acquired",
 			"provenance": "FIXTURE_PROJECTION",
+			"receipt_id": "fixture-receipt-1",
 			"item_name": "Ember Core"
 		}
 	}
@@ -111,6 +126,11 @@ func _run() -> void:
 	_check(
 		hud._core_panel.visible and hud._core_title.text.contains("EMBER CORE"),
 		"physical Core is visible as an owned object"
+	)
+	_check(hud._core_icon.texture != null, "Core status carries an icon beside identity and finite charges")
+	_check(
+		hud._context.text.contains("Crown Waystation") and hud._context.text.contains("AUTHORED PLAN NOT NATIVE INTEGRATED"),
+		"discovered POI clue is labeled as an authored, not native-integrated, plan"
 	)
 	_check(
 		hud._core_state.text == "In satchel · unequipped",
@@ -141,9 +161,95 @@ func _run() -> void:
 	)
 	var pending := snapshot.duplicate(true)
 	pending.feedback.status = "pending"
-	_check(hud.set_projection(pending), "accept pending owner status")
+	pending.erase("feedback")
+	pending.revision = "fixture-2"
+	pending.sequence = 2
+	pending.focus = {
+		"kind": "poi",
+		"discovered": false,
+		"discovery_source": "FIXTURE_PROJECTION",
+		"identity": "poi_crown_relay_shed",
+		"label": "Hidden Crown Relay",
+		"clue": "Private relay bypass requirement"
+	}
+	_check(hud.set_projection(pending), "accept newer pending owner status")
 	await process_frame
 	_check(not hud._feedback.visible, "pending action does not announce loot or commit")
+	_check(
+		hud._context.visible and hud._context.text == "POI clue withheld until discovery." and not hud._context.text.contains("Relay"),
+		"undiscovered identity, clue and private action metadata are absent from the rendered HUD"
+	)
+	var stale := pending.duplicate(true)
+	stale.mode = "battle"
+	_check(not hud.set_projection(stale), "reject changed snapshot that reuses a stale sequence and revision")
+	var no_receipt := pending.duplicate(true)
+	no_receipt.revision = "fixture-3"
+	no_receipt.sequence = 3
+	no_receipt.feedback = {"status": "committed", "provenance": "FIXTURE_PROJECTION", "title": "Loot claimed"}
+	_check(hud.set_projection(no_receipt), "accept newer committed record lacking receipt for visibility test")
+	await process_frame
+	_check(not hud._feedback.visible, "committed text is withheld without an owner receipt identifier")
+	var wrong_readiness_source := no_receipt.duplicate(true)
+	wrong_readiness_source.revision = "fixture-4"
+	wrong_readiness_source.sequence = 4
+	wrong_readiness_source.core.readiness_source = "A3_OWNER_PROJECTION"
+	_check(hud.set_projection(wrong_readiness_source), "accept owner revision for readiness-source test")
+	await process_frame
+	_check(hud._core_readiness.text.ends_with("UNKNOWN"), "A3 catalog cannot assert A4 runtime cast readiness")
+	var impostor_core := no_receipt.duplicate(true)
+	impostor_core.revision = "fixture-5"
+	impostor_core.sequence = 5
+	impostor_core.core.instance_id = "inventory_core_1"
+	impostor_core.feedback = {
+		"status": "committed",
+		"provenance": "FIXTURE_PROJECTION",
+		"kind": "core_acquired",
+		"receipt_id": "fixture-receipt-nonphysical",
+		"item_name": "Ember Core"
+	}
+	_check(hud.set_projection(impostor_core), "accept new projection to test non-physical Core identity")
+	await process_frame
+	_check(
+		not hud._core_panel.visible and not hud._feedback.visible,
+		"Core card and acquisition feedback require a physical soh_i identity, even with an event receipt"
+	)
+	var workshop := impostor_core.duplicate(true)
+	workshop.revision = "fixture-6"
+	workshop.sequence = 6
+	workshop.core.instance_id = "soh_i_000000000011_a1c0ffee"
+	workshop.focus = {
+		"kind": "workshop", "station_source": "FIXTURE_PROJECTION", "queue_source": "FIXTURE_PROJECTION",
+		"station": "Precision Workbench", "station_tier": 2, "queue_used": 1, "queue_capacity": 4,
+		"job_status": "RESEARCH RUNNING"
+	}
+	_check(hud.set_projection(workshop), "accept workshop station and queue preview")
+	await process_frame
+	_check(hud._context.text.contains("QUEUE 1 / 4") and hud._context.text.contains("RESEARCH RUNNING"), "workshop queue is presented as owner-projected context")
+	var recovery_focus := workshop.duplicate(true)
+	recovery_focus.revision = "fixture-7"
+	recovery_focus.sequence = 7
+	recovery_focus.mode = "death"
+	recovery_focus.focus = {"kind": "recovery", "source": "FIXTURE_PROJECTION", "status": "recovery_available", "label": "Death bag"}
+	_check(hud.set_projection(recovery_focus), "accept recovery custody preview")
+	await process_frame
+	_check(hud._context.text.contains("DEATH BAG") and hud._context.text.contains("RECOVERY AVAILABLE"), "death-bag status is explicit without claiming a transfer")
+	var recovery_rejected := recovery_focus.duplicate(true)
+	recovery_rejected.revision = "fixture-8"
+	recovery_rejected.sequence = 8
+	recovery_rejected.focus.status = "capacity_rejected"
+	recovery_rejected.feedback = {
+		"status": "owner_rejected",
+		"provenance": "A0_OWNER_PROJECTION",
+		"kind": "death_bag_recovery",
+		"message": "Pack full; death bag remains."
+	}
+	_check(hud.set_projection(recovery_rejected), "accept A0 recovery capacity rejection")
+	await process_frame
+	_check(
+		hud._feedback.visible and hud._feedback.text == "Pack full; death bag remains."
+			and hud._context.text.contains("CAPACITY REJECTED") and hud._bag.text.contains("PACK FULL"),
+		"full-bag recovery rejection stays owner-reported and leaves the death bag visible"
+	)
 	var equipped := ADAPTER.core_instance(
 		{
 			"instance_id": "soh_i_000000000011_a1c0ffee",
