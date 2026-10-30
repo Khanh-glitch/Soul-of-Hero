@@ -29,11 +29,9 @@ All fixture costs, yields, source quantities, and cooldowns remain proposals. Th
 
 **Completed independent/static checks on this source revision:**
 
-- `python3 tools/survival/world_content/author_site.py --check` — all four site definitions and actual wrapper references resolve and match identity.
-- `python3 -m unittest tests/survival/world_content/test_author_site.py` — 5 adversarial path/identity tests pass.
-- Scoped `gdformat --check`, `gdlint`, JSON parsing, and `git diff --check` are required after final edits.
+- On commit `9c180ef1`, `python3 tools/survival/world_content/author_site.py --check` passed for all four site definitions and actual wrapper references; the five adversarial path/identity tests passed; all eight A8 JSON files parsed; scoped `gdformat --check`, `gdlint`, and `git diff --check` passed.
 
-**Native status: `NOT_TESTED`.** No Godot executable is installed in the workspace. The latest queried Actions runs `41019182407` and `41019689728` were still `queued`; each `godot-native` job had `steps: []`. No scene execution, native physics result, interaction pass, visual capture, or inspected 1280×720 / 2560×1440 / 3840×2160 image exists. A clean formatter or validator is not native acceptance. Recheck live run status after code is pushed; if runners remain queued, keep `NOT_TESTED`.
+**Native status: `NOT_TESTED`.** No Godot executable is installed in the workspace. Required historical runs `41019182407` and `41019689728` each remained `queued` with `steps: []`. After pushing `9c180ef1`, the A8 native run `41024442152`, the runtime/capture run `41024441950`, and handoff run `41024441800` were also `queued` with no job steps. The prior A8 run `41019032228` failed at the native physics/interaction step on an older revision; its log retrieval returned EOF, so its specific assertion failure is unknown. No current-revision scene execution, native physics result, interaction pass, visual capture, or inspected 1280×720 / 2560×1440 / 3840×2160 image exists. Static checks are not native acceptance; keep status `NOT_TESTED` until the current runs execute and captures are visually reviewed.
 
 The PR-only workflow now runs authoring and adversarial checks, imports native resources with Godot 4.7, runs the physical/interaction/transition suite, and captures the harness at all three requested resolutions. Captures must be visually inspected; file generation alone is not evidence.
 
