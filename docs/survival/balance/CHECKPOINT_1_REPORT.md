@@ -95,12 +95,19 @@ A3's death assumptions cover only 6 of 130 edges. L1-S special road supply is `R
 - Pull request opened against `feature/surv-a7-balance-060a` for independent review; **not self-merged**, no
   force-push, `main` untouched.
 
-## Docs / issue sync
+## Docs / issue sync (verified 2026-10-30)
 
-Git is authoritative for this checkpoint. Issue #16 (`[QA WORKSTREAM] Independent deep review & balance gates`)
-received a status comment with the commit, commands and results; it is **not** marked IN_PROGRESS/DONE by itself
-beyond the evidence posted. Google Docs tab 04 handoff: see the sync note in the PR body — if the connector is
-unavailable the state is recorded as `DOCS_SYNC_PENDING` with the precise blocker rather than claimed as synced.
+- **Google Docs tab 04 (`04 · Nhật ký LIVE & bàn giao`, tab `t.h4haqfdoyzzn` of document
+  `1q8Vevy4qx_6AFyfJodmsWAhdSBBumtx31hxXnWPelqo`): WRITTEN AND READ BACK.** An A7 checkpoint-1 entry was appended
+  (commit SHAs, commands, 127/127 tests, 57 findings, non-claims, next actions) and the readback found the entry
+  at index `156980` with `total_match_count = 1`. No existing entry was edited or deleted.
+- **GitHub Issue #16: `DOCS_SYNC_PENDING`.** `gh issue comment 16` failed with
+  `Resource not accessible by integration` — this session's GitHub integration can open pull requests but has no
+  issue-write permission. The exact text to mirror is preserved verbatim in
+  `docs/survival/balance/DOCS_SYNC_PENDING.md`; Git (PR #25 + this report) is authoritative until someone with
+  issue-write access posts it. This is a **permission blocker, not a content blocker**.
+- `docs/survival/{STATE.json,WORKLOG.md}` are outside A7's owned paths and were deliberately **not** edited; the
+  A7 status is recorded here and in `docs/survival/balance/README.md` for the owner to mirror.
 
 ## Next recommendations (in priority order)
 

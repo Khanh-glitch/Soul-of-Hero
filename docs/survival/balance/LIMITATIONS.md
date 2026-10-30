@@ -54,8 +54,9 @@ unknown, and no artifact in this repository should be read as claiming otherwise
 - The **snapshot** is a point-in-time copy. If A1/A3 push new heads, `run_analysis.py --check` will not detect it
   by itself — `verify_upstream` will, on any machine where those commits are fetched, and the manifest must then
   be re-pinned deliberately.
-- **Google Docs tab 04 / Issue #16** updates are attempted outside this document; if the connector is
-  unavailable the docs sync is `DOCS_SYNC_PENDING` and Git is authoritative (see the checkpoint report).
+- **Docs sync is partial.** Google Docs tab 04 was written and read back on 2026-10-30; the GitHub Issue #16
+  status comment is `DOCS_SYNC_PENDING` because the session's integration returns
+  `Resource not accessible by integration` on issue writes (see `DOCS_SYNC_PENDING.md`).
 
 ## What would change the conclusions
 
