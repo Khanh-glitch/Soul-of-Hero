@@ -54,12 +54,47 @@ jobs:
       - name: Prove this job needs public content only
         run: |
           set -euo pipefail
+          # The checkout must not carry private art...
           test ! -e private_art/a6_avatar/avatar_art_private_runtime.json
           test -z "$(git ls-files private_art)"
-          if grep -q "drive.google.com" .github/workflows/a6-return-ui-render.yml; then
-            echo "::error::the return UI render job must not depend on private staging"
-            exit 1
-          fi
+          # ...and this workflow must not fetch anything from outside the public
+          # Godot build release. Parsing the file is safer than grepping it: a grep
+          # pattern in the file would match its own guard line.
+          python3 - <<'PY'
+          import pathlib, re, sys, urllib.parse, yaml
+
+          spec = yaml.safe_load(pathlib.Path(".github/workflows/a6-return-ui-render.yml").read_text())
+          steps = spec["jobs"]["render-frames"]["steps"]
+
+          # 1. The only network fetch allowed is the public Godot build release.
+          hosts = set()
+          for step in steps:
+              for url in re.findall(r"https?://[^\s\"']+", str(step.get("run", ""))):
+                  hosts.add(urllib.parse.urlparse(url).hostname)
+          print("fetch hosts:", sorted(hosts))
+          unexpected = hosts - {"github.com"}
+          if unexpected:
+              sys.exit(f"::error::unexpected external host(s): {sorted(unexpected)}")
+
+          # 2. Exactly one step may download anything at all.
+          # This guard is step 0 and is excluded by name, so its own source can
+          # never make the scan match itself.
+          GUARD = "Prove this job needs public content only"
+          curl_steps = [
+              s.get("name") for s in steps
+              if s.get("name") != GUARD and re.search(r"\bcurl\s", str(s.get("run", "")))
+          ]
+          print("downloading steps:", curl_steps)
+          if curl_steps != ["Install the official Godot 4.7-stable binary (SHA-256 verified)"]:
+              sys.exit(f"::error::unexpected download steps: {curl_steps}")
+
+          # 3. The job's whole environment is the engine digest and the capture tag.
+          env_keys = set(spec.get("env", {}))
+          print("job env:", sorted(env_keys))
+          if env_keys != {"GODOT_ARCHIVE_SHA256", "A6_CAPTURE_TAG"}:
+              sys.exit(f"::error::unexpected job env: {sorted(env_keys)}")
+          PY
+          PY
           echo "PUBLIC CONTENT ONLY" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Install the official Godot 4.7-stable binary (SHA-256 verified)
