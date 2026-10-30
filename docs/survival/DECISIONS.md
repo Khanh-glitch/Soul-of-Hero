@@ -179,3 +179,6 @@ This user research file was provided to preserve nuance and enable systemic rath
 
 ## D060 — Time continuity (user-locked, 2026-10-30)
 SOH in-world time continues at a consistent rate both when the game is open and while it is closed. Day/night, seasons, climate, and causally time-dependent processes are based on that timeline. The exact time scale, number of fictional years, and specific simulation rules remain design/engineering choices. D055–D059 remain unchanged. Do not infer endless resource generation or unapproved unattended enemy attacks from clock continuity alone.
+
+## D061
+LOCKED_USER: Monsters locate a home only through detectable, unexpired traces left by a player. The player checks remaining tracks and nearby monsters before logging off. Applies during play and offline world time. No automatic home targeting. Details of sensory ranges and trail decay are technical proposals.
