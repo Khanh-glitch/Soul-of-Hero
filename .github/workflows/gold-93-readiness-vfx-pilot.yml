@@ -60,6 +60,7 @@ jobs:
           set -e
           grep -E 'GOLD93_VENOM_PRESENTATION_UNIT' /tmp/pilot-unit.log | head -20 | sed -e 's/%/%25/g' | while IFS= read -r line; do echo "::notice title=vfx-pilot unit::$line"; done
           if [ "$STATUS" != "0" ] || ! grep -q 'GOLD93_VENOM_PRESENTATION_UNIT: PASS' /tmp/pilot-unit.log || grep -qE 'SCRIPT ERROR:|Parse Error:' /tmp/pilot-unit.log; then
+            python3 prototypes/skill_readiness/tools/ci/annotate_log.py --level error --title "vfx-pilot unit status=$STATUS" --log /tmp/pilot-unit.log --tail 40 --pattern 'GOLD93_VENOM_PRESENTATION_UNIT|FAIL|SCRIPT ERROR|Parse Error|ERROR'
             python3 prototypes/skill_readiness/pilot/tools/pilot_log_digest.py /tmp/pilot-unit.log "vfx-pilot unit status=$STATUS"
             exit 1
           fi
