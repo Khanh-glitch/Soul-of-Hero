@@ -19,6 +19,22 @@
 **Key recovery sources:** `AGENTS.md`, `NEW_CHAT_BOOTSTRAP.md`, this complete file, `CONTROL_TOWER_CURRENT.md`, `EVERY_REPLY_HANDOFF_PROTOCOL.md`, `CHANGE_PROTOCOL.md`, `INDEPENDENT_DEEP_REVIEW_PROTOCOL.md`, original immutable Atlas, D001–D054, CT01–12, `ACCEPTANCE.md`, latest eight-agent dispatch/status and current specific owned work orders, Docs 04/12. Read primary evidence before any task verdict.
 
 
+## SIX IDLE ARENA WORKERS — IMMEDIATE NEXT ACTION
+
+**2026-10-30 Latest user clarification:** A0/A1/A3/A6/A7/A8 (six distinct agents; user's repeated “A0” was an oral repetition) ALL finished their current Arena turns and are WAITING FOR NEXT PROMPT. AVFX work continues independently and S6 is outside this six-prompt dispatch. No Git commit can override firsthand Arena session status. Six concrete self-contained prompts are archived as READY_NOT_USER_SENT on this CT branch in:
+`docs/survival/tasks/CT_20261030_A0_SIX_IDLE_AGENT_CONTINUATION_WORK_ORDER.md`,
+`docs/survival/tasks/CT_20261030_A1_SIX_IDLE_AGENT_CONTINUATION_WORK_ORDER.md`,
+`docs/survival/tasks/CT_20261030_A3_SIX_IDLE_AGENT_CONTINUATION_WORK_ORDER.md`,
+`docs/survival/tasks/CT_20261030_A6_SIX_IDLE_AGENT_CONTINUATION_WORK_ORDER.md`,
+`docs/survival/tasks/CT_20261030_A7_SIX_IDLE_AGENT_CONTINUATION_WORK_ORDER.md`,
+`docs/survival/tasks/CT_20261030_A8_SIX_IDLE_AGENT_CONTINUATION_WORK_ORDER.md`.
+Use original Arena SAME CHAT and GitHub connector enabled for each; Drive optional per-turn enabled only where source binary needed. **Do not simply send a GitHub comment and call that a dispatch**. Mark USER_SENT only after the user reports actually pasting.
+
+A0 [41018366655] independent restart FAIL and [41022547962] Waystation authority fixture FAIL; newer native queued. A1 PR20 `2f6edd3f` art created, native current head queued; A3 PR19 `100b3406` V3 code/native queued; A6 PR24 `8bc0af5a` avatar art not installed, native in_progress; A7 PR25 `245cdbbb` QA static only with stale pins; A8 PR26 `5ccf7b3f` scene compact fix source only with invalid-looking `Vector2.from_array` Godot 4.7 API, native queued. All merge and player E2 acceptance HOLD. Latest independent CT checkpoint `docs/survival/CONTROL_TOWER_CURRENT.md` on this docs branch; read full bootstrap, Atlas, D001–D054, repo heads, Docs and owner code on any NEW coordinator chat.
+
+**Process root cause discovered:** CT had READ the process in previous turns but FAILED TO EXECUTE its sequence; treating six agent reports as general-status updates rather than six task-specific review→decision→work-order→paste-ready prompt→handoff transactions. Do not respond with another apology/protocol rewrite without six tangible prompts; process compliance requires a usable artifact and an end-of-reply self-contained Mode C handoff link.
+
+
 ## 0. What the receiving chat is and is not
 You take over **SOH Control Tower**, an independent reviewer and orchestrator of six existing AI seats. The user expects proactive, substantial, long-running tasks *within each real agent's session*, independent source/native audit, cross-system product thinking and updates to both GitHub and Google Docs, with no unnecessary micro-approval churn. You are not a seventh worker and may not overwrite another agent's active branch, silently merge PRs or claim you can run agents in the background. Existing S6 can be quota-limited; its *own same-session prompt* is narrower than this coordinator recovery.
 
