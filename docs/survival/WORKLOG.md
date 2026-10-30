@@ -444,3 +444,18 @@ Exact-head evidence, `arena/dea2428e-soul-of-hero`:
 Local native evidence (`tests/survival_a0_profile_port_test.gd`, headless source-built Godot 4.7): **44 checks** in the first process and **15 checks** in a second OS process on the same disk profile — same run id, exact balance 10, both real receipts, the refused proposal still absent, replays still refused. Deliberately corrupting the audit JSON (`balance 11`, `receipts 3`) makes the restart leg fail on exactly the two custody comparisons.
 
 **Not proven:** CI is not failing, it is starved. Every run since 19:14 UTC is `queued` because five AVFX/A8 Gold jobs started 16:55–19:09 hold all runner slots; this sandbox cannot cancel runs (403) and has no X11/GL, so the rendered oracle is unavailable locally. Rendered 720p/1440p/2160p, Gold parity, A6 bodies, human play and B0 acceptance remain HOLD.
+
+### 2026-10-31 — runner results at `4c52e42`: both A0 normal-entry gates green
+
+The queue drained and the whole matrix ran at `4c52e42c…` (the code under test is `b012385`'s plus the world-slice-absent restart branch):
+
+| workflow | result |
+| --- | --- |
+| A0 guarded production Waystation candidate (4 legs: controller, roadside, normal-entry, normal-entry-roadside) | **success** — normal-entry first process 122 checks, its independent process passed, and the new headless A0 profile port pair (44 + 15) passed inside the controller leg |
+| A0 normal entry, home and separate-process restart | **success** — 107 checks + 13 checks; this leg had failed at every SHA since `8eda2a8` |
+| Overworld Runtime Validation, Survival Handoff Contract, A0 + pinned A6 composition | success |
+| Godot 4.7 Runtime Validation | `Import and headless` success, `Xvfb rendered gameplay captures` success, only `Original main baseline comparison` fails (same failures on original main) |
+| Survival A0 (Foundation) | `SURVIVAL STATIC CONTRACTS` success and the full-capacity leg 34 checks, but the job produces no foundation log at all → reported as a CI-harness defect. The same script passes locally at this SHA: **144 checks** |
+| A0 + A6 V4 latest composition | failure inside A6-owned tests (parse error in `planner_test.gd`, avatar sheet dimensions, HUD copy) — not A0 |
+
+The "no world slice" failure was real and is now correctly modeled: the home-only route never mounts a POI, so `world_slice` is absent on disk. Decoding that baseline with the world-slice integer decoder reported `world_slice.pois_invalid`, and comparing two empty clocks reported a backwards clock. The restart comparison now asserts the true statement in each case — a present slice must keep integer slots, exact POI state and a monotonic clock; an absent slice must stay absent and the relaunch must invent neither a slice nor a POI receipt.

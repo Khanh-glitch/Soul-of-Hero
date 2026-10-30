@@ -8,7 +8,7 @@
   "audited_gold_branch": "feature/gold-93-skill-readiness-20261028",
   "audited_gold_sha": "6c58ecf6f7c2350ee49f3a82e3cef42bf80afaf7",
   "updated_date": "2026-10-31",
-  "phase": "SURV_020_A0_NORMAL_ROUTE_RENDERED_130_CHECKS_TWO_PROCESS_CUSTODY",
+  "phase": "SURV_020_A0_NORMAL_ROUTE_AND_TWO_PROCESS_CUSTODY_GREEN",
   "scope": "CURRENT PRODUCT AUTHORITY: max 14 real-day season or voluntary earlier restart, full run-local reset, account achievements/results/SECURED Ragnarok currency; final72h six bosses/stones, loot-to-repeat-deposit, independent physical evacuation, stable world with safe random spawn, authentic Gold; actual implementation separately gated",
   "code_claims": {
     "survival_system_integrated": false,
@@ -152,8 +152,8 @@
     {
       "id": "RENDERED_RUN",
       "owner": "A0/environment",
-      "state": "RENDERED_ROUTE_PASSES_QUEUE_STALLED",
-      "detail": "Rendered Xvfb candidate matrix: at 1a03c70 the normal-entry first process PASSED 130 checks (menu -> Home -> real overworld -> gather/reserve/place -> shelter/chest -> all three A1 crates at (395,220)/(400,217)/(402,221) with exact A3 items, then home again); controller, roadside and ridge probe PASS. At fff7de2 the second process failed only on JSON int->float type noise in the restart comparison; the fix (compare both sides through one JSON round trip, keep value-level custody assertions) is committed at 2aa7f63. Runs for 2aa7f63 and b012385 are QUEUED, not failing: five AVFX/A8 Gold jobs started 16:55-19:09 held every runner slot for hours. This session cannot cancel runs (403) and cannot render locally (headless-only build)."
+      "state": "RENDERED_ROUTE_GREEN",
+      "detail": "Rendered Xvfb matrix green at 4c52e42c for all four legs: controller, roadside, normal-entry (Home -> real Overworld -> three A1 crates -> home, 122 checks) and normal-entry-roadside, plus the independent-process legs and the new headless A0 profile port pair (44 + 15). The home-only restart workflow (107 + 13) is green for the first time since 8eda2a8. Remaining red: Godot 4.7 'Original main baseline comparison' (fails on original main too), Survival A0 Foundation native runtime (no log produced; same script passes locally at 144 checks), and A6-owned test failures in the V4 composition workflow."
     },
     {
       "id": "A1_VISUAL_LOCK",
