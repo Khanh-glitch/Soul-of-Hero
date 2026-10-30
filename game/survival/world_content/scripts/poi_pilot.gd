@@ -9,6 +9,11 @@ const SITE_SCENES := [
 	"res://game/survival/world_content/scenes/south_crown_mill.tscn",
 	"res://game/survival/world_content/scenes/fourth_salt_lookout_test.tscn"
 ]
+const SHELL_SCENES := [
+	"res://game/survival/world_content/scenes/south_quarry_overworld.tscn",
+	"res://game/survival/world_content/scenes/south_orchard_ruin_overworld.tscn",
+	"res://game/survival/world_content/scenes/south_crown_mill_overworld.tscn"
+]
 const FIXTURE_SCRIPT := preload(
 	"res://game/survival/world_content/scripts/poi_authority_fixture.gd"
 )
@@ -16,7 +21,10 @@ const PROBE_SCRIPT := preload("res://game/survival/world_content/scripts/player_
 
 var _authority: PoiAuthorityFixture
 var _site: NativePoiSite
+var _shell: NativePoiShell
+var _active_scene: Node2D
 var _probe: CharacterBody2D
+var _camera: Camera2D
 var _site_index := 0
 var _feedback: Label
 var _site_title: Label
@@ -40,18 +48,20 @@ func _ready() -> void:
 	var collision := CollisionShape2D.new()
 	collision.shape = shape
 	_probe.add_child(collision)
-	var camera := Camera2D.new()
-	camera.zoom = Vector2(0.68, 0.68)
-	camera.position_smoothing_enabled = false
-	camera.enabled = true
-	_probe.add_child(camera)
+	_camera = Camera2D.new()
+	_camera.zoom = Vector2(2.2, 2.2)
+	_camera.position_smoothing_enabled = false
+	_camera.enabled = true
+	_probe.add_child(_camera)
 	add_child(_probe)
 	_mount_site(0)
 	set_process_unhandled_input(true)
 
 
 func _process(_delta: float) -> void:
-	if is_instance_valid(_site):
+	if is_instance_valid(_shell):
+		_feedback.text = _shell.get_context_hint(_probe)
+	elif is_instance_valid(_site):
 		var hint := _site.get_context_hint(_probe)
 		if not hint.is_empty():
 			_feedback.text = hint
@@ -59,21 +69,27 @@ func _process(_delta: float) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("poi_interact"):
-		_site.try_interact(_probe)
+		if is_instance_valid(_shell):
+			_shell.try_enter(_probe)
+		elif is_instance_valid(_site):
+			if _site.is_at_exit(_probe):
+				_site.try_exit(_probe)
+			else:
+				_site.try_interact(_probe)
 		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("poi_action_0"):
+	elif event.is_action_pressed("poi_action_0") and is_instance_valid(_site):
 		_site.try_interact(_probe, 0)
 		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("poi_action_1"):
+	elif event.is_action_pressed("poi_action_1") and is_instance_valid(_site):
 		_site.try_interact(_probe, 1)
 		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("poi_choice_prev"):
+	elif event.is_action_pressed("poi_choice_prev") and is_instance_valid(_site):
 		_site.cycle_choice(-1)
 		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("poi_choice_next"):
+	elif event.is_action_pressed("poi_choice_next") and is_instance_valid(_site):
 		_site.cycle_choice(1)
 		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("poi_fixture_capability"):
+	elif event.is_action_pressed("poi_fixture_capability") and is_instance_valid(_site):
 		var granted: Array[String] = []
 		if not _authority.has_capability("cap_salvage"):
 			granted.append("cap_salvage")
@@ -96,25 +112,122 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _mount_site(index: int) -> void:
 	_site_index = clampi(index, 0, SITE_SCENES.size() - 1)
-	if is_instance_valid(_site):
-		_site.queue_free()
-	var packed: PackedScene = load(SITE_SCENES[_site_index])
+	_clear_active_scene()
+	if _site_index < SHELL_SCENES.size():
+		var packed_shell := load(SHELL_SCENES[_site_index]) as PackedScene
+		if packed_shell == null:
+			_feedback.text = "This exterior could not be loaded."
+			return
+		_shell = packed_shell.instantiate() as NativePoiShell
+		_shell.name = "CompactPOIShell_%d" % (_site_index + 1)
+		_active_scene = _shell
+		add_child(_shell)
+		_shell.transition_requested.connect(_on_transition_requested)
+		_shell.player_feedback.connect(_on_player_feedback)
+		_probe.global_position = (
+			_shell.global_position + _shell.get_entry_position() + Vector2(0, 40)
+		)
+		_camera.zoom = Vector2(2.2, 2.2)
+		_update_site_header(_shell.definition)
+		_feedback.text = "Walk through the south doorway to enter this local worksite."
+		return
+	_mount_worksite(SITE_SCENES[_site_index], Vector2.ZERO)
+
+
+func _mount_worksite(scene_path: String, spawn_override: Vector2) -> void:
+	_clear_active_scene()
+	var packed := load(scene_path) as PackedScene
+	if packed == null:
+		_feedback.text = "This local worksite could not be loaded."
+		return
 	_site = packed.instantiate() as NativePoiSite
-	_site.name = "PhysicalPOI_%s" % str(_site_index + 1)
+	_site.name = "LocalPOIWorksite_%d" % (_site_index + 1)
+	_site.test_harness_only = true
+	_active_scene = _site
 	add_child(_site)
 	_site.intent_requested.connect(_on_intent_requested)
 	_site.player_feedback.connect(_on_player_feedback)
+	_site.transition_requested.connect(_on_transition_requested)
 	_site.set_projection(_authority.project_state(_site.get_source_id()))
-	_probe.global_position = _site.get_spawn_position()
-	_site_title.text = _site.display_name
-	var source: Dictionary = _site.definition.get("source", {})
+	_probe.global_position = (
+		spawn_override if spawn_override != Vector2.ZERO else _site.get_spawn_position()
+	)
+	_camera.zoom = Vector2(0.68, 0.68)
+	_update_site_header(_site.definition)
+	_feedback.text = "Follow the marked route. G returns through the physical doorway."
+
+
+func _clear_active_scene() -> void:
+	if is_instance_valid(_active_scene):
+		_active_scene.queue_free()
+	_active_scene = null
+	_site = null
+	_shell = null
+
+
+func _update_site_header(definition: Dictionary) -> void:
+	_site_title.text = str(definition.get("display_name", "Worksite"))
+	var source: Dictionary = definition.get("source", {})
 	var canonical := (
 		"non-canonical authoring fixture"
-		if bool(_site.definition.get("test_only", false))
+		if bool(definition.get("test_only", false))
 		else "%s · A1 cell %s" % [source.get("poi_id", ""), str(source.get("canonical_cell", []))]
 	)
-	_details.text = "%s  |  %s" % [canonical, str(_site.definition.get("return_hook", ""))]
-	_feedback.text = "Find the brass work mark. No character art is substituted in this fixture."
+	_details.text = "%s  |  %s" % [canonical, str(definition.get("return_hook", ""))]
+
+
+func _on_transition_requested(request: Dictionary) -> void:
+	if (
+		str(request.get("contract_id", "")) != "soh.native_poi.transition.v1"
+		or int(request.get("contract_version", 0)) != 1
+	):
+		_feedback.text = "The doorway request was not understood."
+		return
+	var destination := str(request.get("to_scene", ""))
+	if str(request.get("direction", "")) == "enter" and is_instance_valid(_shell):
+		if str(request.get("poi_id", "")) != _shell.get_source_id():
+			_feedback.text = "This entrance does not match the selected site."
+			return
+		var return_anchor: Dictionary = request.get("return_anchor", {})
+		var shell_cell := _shell.get_canonical_cell()
+		var expected_worksite := str(_shell.definition.local_transition.worksite_scene)
+		if (
+			return_anchor.get("canonical_cell", []) != [shell_cell.x, shell_cell.y]
+			or str(return_anchor.get("poi_id", "")) != _shell.get_source_id()
+			or destination != expected_worksite
+		):
+			_feedback.text = "The exterior return point was rejected."
+			return
+		var interior_spawn: Variant = request.get("interior_spawn", Vector2.ZERO)
+		_mount_worksite(destination, interior_spawn if interior_spawn is Vector2 else Vector2.ZERO)
+		return
+	if str(request.get("direction", "")) == "exit" and is_instance_valid(_site):
+		if str(request.get("poi_id", "")) != _site.get_source_id():
+			_feedback.text = "This return request does not match the active site."
+			return
+		var return_to: Dictionary = request.get("return_anchor", {})
+		var packed_shell := load(destination) as PackedScene
+		if (
+			packed_shell == null
+			or destination != str(return_to.get("shell_scene", ""))
+			or str(return_to.get("poi_id", "")) != _site.get_source_id()
+			or return_to.get("canonical_cell", []) != _site.definition.source.canonical_cell
+		):
+			_feedback.text = "The canonical exterior return point could not be restored."
+			return
+		_clear_active_scene()
+		_shell = packed_shell.instantiate() as NativePoiShell
+		_active_scene = _shell
+		add_child(_shell)
+		_shell.transition_requested.connect(_on_transition_requested)
+		_shell.player_feedback.connect(_on_player_feedback)
+		var shell_return_position := Vector2.from_array(
+			return_to.get("shell_local_position", [64, 108])
+		)
+		_probe.global_position = _shell.global_position + shell_return_position
+		_camera.zoom = Vector2(2.2, 2.2)
+		_update_site_header(_shell.definition)
+		_feedback.text = "You are back at the exterior entrance."
 
 
 func _on_intent_requested(intent: Dictionary) -> void:

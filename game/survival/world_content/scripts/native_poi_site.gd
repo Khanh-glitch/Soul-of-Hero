@@ -8,6 +8,7 @@ extends Node2D
 signal intent_requested(intent: Dictionary)
 signal player_feedback(message: String)
 signal projection_applied(projection: Dictionary)
+signal transition_requested(request: Dictionary)
 
 const CONTRACT_ID := "soh.native_poi.intent.v1"
 const CONTRACT_VERSION := 1
@@ -48,6 +49,7 @@ var _gate_bodies: Array[StaticBody2D] = []
 var _pending: Dictionary = {}
 var _choice_index := 0
 var _interaction_area: Area2D
+var _exit_area: Area2D
 var _elapsed := 0.0
 var _world_props_atlas: Texture2D
 var _cainos_plant_atlas: Texture2D
@@ -113,6 +115,49 @@ func get_action_socket() -> Vector2:
 	return Vector2.from_array(definition.get("action_socket", [0, 0]))
 
 
+func get_exit_position() -> Vector2:
+	return Vector2.from_array(
+		definition.get("local_transition", {}).get("exit_portal", [-INF, -INF])
+	)
+
+
+func is_at_exit(actor: Node2D) -> bool:
+	var exit_position := get_exit_position()
+	return (
+		actor != null
+		and is_instance_valid(actor)
+		and exit_position.x >= 0.0
+		and actor.global_position.distance_to(global_position + exit_position) <= 22.0
+	)
+
+
+func try_exit(actor: Node2D) -> bool:
+	if not actor is CharacterBody2D or not is_at_exit(actor):
+		player_feedback.emit("Follow the marked doorway to return outside.")
+		return false
+	if _get_actor_facing(actor).dot(Vector2.DOWN) < 0.55:
+		player_feedback.emit("Face out through the doorway to return.")
+		return false
+	var transition: Dictionary = definition.get("local_transition", {})
+	var anchor: Dictionary = transition.get("return_anchor", {}).duplicate(true)
+	var canonical_cell: Array = definition.get("source", {}).get("canonical_cell", [0, 0])
+	var request := {
+		"contract_id": "soh.native_poi.transition.v1",
+		"contract_version": 1,
+		"transition_id": "%s|exit|%d" % [get_source_id(), Time.get_ticks_usec()],
+		"direction": "exit",
+		"world_id": str(definition.get("source", {}).get("world_id", "")),
+		"poi_id": get_source_id(),
+		"canonical_cell": Vector2i(int(canonical_cell[0]), int(canonical_cell[1])),
+		"from_scene": str(transition.get("worksite_scene", "")),
+		"to_scene": str(transition.get("shell_scene", "")),
+		"actor_local_position": to_local(actor.global_position),
+		"return_anchor": anchor,
+	}
+	transition_requested.emit(request)
+	return true
+
+
 func get_source_id() -> String:
 	return str(definition.get("source", {}).get("poi_id", site_id))
 
@@ -141,6 +186,8 @@ func is_inside_interaction_radius(
 
 func get_context_hint(actor: Node2D) -> String:
 	var prompts: Array[String] = []
+	if is_at_exit(actor):
+		prompts.append("G · Return to the exterior")
 	if is_inside_interaction_radius(actor, get_stand_position(), get_action_socket()):
 		var choices: Array = definition.get("choices", [])
 		if not choices.is_empty():
@@ -161,7 +208,16 @@ func get_context_hint(actor: Node2D) -> String:
 		)
 		if is_inside_interaction_radius(actor, stand, socket):
 			var key := "H" if index == 0 else "Y"
-			prompts.append("%s · %s" % [key, str(action.get("label", "Work"))])
+			var remaining := _cooldown_remaining(action)
+			if remaining > 0.0:
+				prompts.append(
+					(
+						"%s · %s · ready in %s"
+						% [key, str(action.get("label", "Work")), _format_duration(remaining)]
+					)
+				)
+			else:
+				prompts.append("%s · %s" % [key, str(action.get("label", "Work"))])
 	return "  |  ".join(prompts)
 
 
@@ -251,6 +307,20 @@ func _get_actor_facing(actor: CharacterBody2D) -> Vector2:
 	return Vector2.UP
 
 
+func _cooldown_remaining(action: Dictionary) -> float:
+	if str(action.get("claim_policy", "once")) != "replenishable":
+		return 0.0
+	var object_id := str(action.get("object_id", action.get("action_id", "")))
+	var ready_at := float(projection.get("resource_ready_at", {}).get(object_id, 0.0))
+	return maxf(0.0, ready_at - float(projection.get("clock_seconds", 0.0)))
+
+
+func _format_duration(seconds: float) -> String:
+	var whole_seconds := int(ceil(seconds))
+	var minutes := floori(float(whole_seconds) / 60.0)
+	return "%d:%02d" % [minutes, whole_seconds % 60]
+
+
 func _action_is_available(action: Dictionary) -> bool:
 	for capability: String in action.get("requires_capabilities", []):
 		if not projection.get("capabilities", []).has(capability):
@@ -282,6 +352,12 @@ func _action_is_available(action: Dictionary) -> bool:
 		and not projection.get("ready_actions", []).has(action_id)
 	):
 		player_feedback.emit("The water is moving; come back after the grafts have taken root.")
+		return false
+	var cooldown_remaining := _cooldown_remaining(action)
+	if cooldown_remaining > 0.0:
+		player_feedback.emit(
+			"The work face is recovering. Ready in %s." % _format_duration(cooldown_remaining)
+		)
 		return false
 	var choice_group := str(action.get("choice_group", ""))
 	if not choice_group.is_empty() and site_state.has(choice_group):
@@ -379,6 +455,20 @@ func _build_physics() -> void:
 		add_child(gate_body)
 		_gate_bodies.append(gate_body)
 	_refresh_gate()
+	var exit_position := get_exit_position()
+	if exit_position.x >= 0.0:
+		_exit_area = Area2D.new()
+		_exit_area.name = "PhysicalExteriorExit"
+		_exit_area.collision_layer = 0
+		_exit_area.collision_mask = PLAYER_LAYER
+		_exit_area.monitoring = true
+		var exit_shape := CircleShape2D.new()
+		exit_shape.radius = 22.0
+		var exit_collision := CollisionShape2D.new()
+		exit_collision.shape = exit_shape
+		_exit_area.add_child(exit_collision)
+		_exit_area.position = exit_position
+		add_child(_exit_area)
 
 
 func _build_choice_blockers() -> void:
@@ -416,14 +506,24 @@ func _add_solid_rect(at: Vector2, size: Vector2, label: String) -> void:
 	add_child(body)
 
 
+func _gate_is_blocked(gate: Dictionary) -> bool:
+	if not projection.get("capabilities", []).has(str(gate.get("requires", "cap_salvage"))):
+		return true
+	var state_values: Dictionary = gate.get("requires_state_values", {})
+	var site_state: Dictionary = projection.get("site_state", {})
+	for state_key: String in state_values:
+		if not state_values[state_key].has(site_state.get(state_key, null)):
+			return true
+	return false
+
+
 func _refresh_gate() -> void:
 	var gates: Array = definition.get("gates", [])
 	if gates.is_empty() and definition.has("gate"):
 		gates = [definition.gate]
 	for index: int in range(mini(gates.size(), _gate_bodies.size())):
 		var gate_body := _gate_bodies[index]
-		var requirement := str(gates[index].get("requires", "cap_salvage"))
-		var closed := not projection.get("capabilities", []).has(requirement)
+		var closed := _gate_is_blocked(gates[index])
 		gate_body.set_deferred("collision_layer", WORLD_LAYER if closed else 0)
 		gate_body.set_deferred("collision_mask", PLAYER_LAYER if closed else 0)
 
@@ -470,6 +570,17 @@ func _draw() -> void:
 		if action.has("socket_position"):
 			_draw_socket_at(Vector2.from_array(action.socket_position), water, ink)
 	_draw_gate()
+	_draw_local_exit(accent, ink)
+
+
+func _draw_local_exit(accent: Color, ink: Color) -> void:
+	var exit_position := get_exit_position()
+	if exit_position.x < 0.0:
+		return
+	draw_rect(Rect2(exit_position - Vector2(15, 7), Vector2(30, 14)), ink)
+	draw_rect(Rect2(exit_position - Vector2(11, 4), Vector2(22, 8)), accent.darkened(0.2))
+	draw_line(exit_position + Vector2(-8, -4), exit_position + Vector2(-8, 4), ink, 2.0)
+	draw_line(exit_position + Vector2(8, -4), exit_position + Vector2(8, 4), ink, 2.0)
 
 
 func _draw_world_prop(frame: String, destination: Rect2, tint := Color.WHITE) -> void:
@@ -625,9 +736,7 @@ func _draw_mill(accent: Color, ink: Color, water: Color) -> void:
 		)
 	for gate: Dictionary in gates:
 		var gate_rect: Array = gate.get("rect", [488, 314, 76, 14])
-		var blocked := not projection.get("capabilities", []).has(
-			str(gate.get("requires", "cap_salvage"))
-		)
+		var blocked := _gate_is_blocked(gate)
 		var gate_color := Color("#c2764e") if blocked else Color("#7b583d")
 		draw_rect(
 			Rect2(
@@ -690,9 +799,7 @@ func _draw_gate() -> void:
 		gates = [definition.gate]
 	for gate: Dictionary in gates:
 		var rect: Array = gate.get("rect", [0, 0, 1, 1])
-		var blocked := not projection.get("capabilities", []).has(
-			str(gate.get("requires", "cap_salvage"))
-		)
+		var blocked := _gate_is_blocked(gate)
 		var color := Color("#d47e52") if blocked else Color("#8bc895")
 		draw_line(
 			Vector2(float(rect[0]), float(rect[1]) - 8),

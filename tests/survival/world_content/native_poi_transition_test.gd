@@ -1,0 +1,393 @@
+extends SceneTree
+
+const FIXTURE_SCRIPT := preload(
+	"res://game/survival/world_content/scripts/poi_authority_fixture.gd"
+)
+const ACTOR_SCRIPT := preload("res://tests/survival/world_content/test_actor.gd")
+const SITE_SCENES := [
+	"res://game/survival/world_content/scenes/south_quarry.tscn",
+	"res://game/survival/world_content/scenes/south_orchard_ruin.tscn",
+	"res://game/survival/world_content/scenes/south_crown_mill.tscn",
+]
+const SHELL_SCENES := [
+	"res://game/survival/world_content/scenes/south_quarry_overworld.tscn",
+	"res://game/survival/world_content/scenes/south_orchard_ruin_overworld.tscn",
+	"res://game/survival/world_content/scenes/south_crown_mill_overworld.tscn",
+]
+const TRANSFORM_CELLS := [Vector2i(30, 280), Vector2i(140, 360), Vector2i(120, 300)]
+const TRANSFORM_ROOTS := [Vector2(424, 4424), Vector2(2184, 5704), Vector2(1864, 4744)]
+const ENTRANCE_X := [480.0, 480.0, 526.0]
+
+var _failures: Array[String] = []
+var _assertions := 0
+
+
+func _initialize() -> void:
+	call_deferred("_run")
+
+
+func _run() -> void:
+	await _physical_exterior_entry_exit_all_sites()
+	if _failures.is_empty():
+		print("A8_NATIVE_POI_TRANSITION_PASS assertions=%d" % _assertions)
+		quit(0)
+	else:
+		for failure: String in _failures:
+			push_error(failure)
+		print(
+			(
+				"A8_NATIVE_POI_TRANSITION_FAIL failures=%d assertions=%d"
+				% [_failures.size(), _assertions]
+			)
+		)
+		quit(1)
+
+
+func _physical_exterior_entry_exit_all_sites() -> void:
+	for index: int in range(SHELL_SCENES.size()):
+		var shell_scene: PackedScene = load(SHELL_SCENES[index]) as PackedScene
+		_check(shell_scene != null, "compact overworld shell loads: %s" % SHELL_SCENES[index])
+		if shell_scene == null:
+			continue
+		var shell := shell_scene.instantiate() as NativePoiShell
+		root.add_child(shell)
+		await process_frame
+		var shell_data: Dictionary = shell.definition.get("overworld_shell", {})
+		_check(
+			shell_data.get("bounds_px", []) == [128, 128],
+			"shell bounds stay inside four-tile footprint"
+		)
+		_check(
+			shell_data.get("action_socket", []) == [64, 64],
+			"A1 action socket remains shell-centered"
+		)
+		_check(
+			shell.get_canonical_cell() == TRANSFORM_CELLS[index],
+			"shell keeps the canonical A1 cell"
+		)
+		var shell_socket := shell.get_action_socket()
+		_check(
+			shell_socket == Vector2(64, 64), "shell exposes the authored A1 action socket marker"
+		)
+		_check(
+			shell.get_node("AnchorActionSocket").position == shell_socket,
+			"mount anchor is a real scene marker rather than an inferred spawn"
+		)
+		var expected_anchor := Vector2(
+			float(TRANSFORM_CELLS[index].x * 16 + 8), float(TRANSFORM_CELLS[index].y * 16 + 8)
+		)
+		var exact_root := expected_anchor - shell_socket
+		_check(
+			exact_root == TRANSFORM_ROOTS[index] and exact_root + shell_socket == expected_anchor,
+			"shell root uses the exact integer 1:1 A1 transform and accepted footprint bound"
+		)
+		var shell_walls := 0
+		for child: Node in shell.get_children():
+			if child is StaticBody2D:
+				shell_walls += 1
+		_check(shell_walls == 5, "shell keeps five collidable boundary segments and a real doorway")
+
+		var shell_actor := ACTOR_SCRIPT.new() as WorldContentTestActor
+		shell_actor.collision_layer = 2
+		shell_actor.collision_mask = 1
+		var shell_shape := CircleShape2D.new()
+		shell_shape.radius = 10.0
+		var shell_collision := CollisionShape2D.new()
+		shell_collision.shape = shell_shape
+		shell_actor.add_child(shell_collision)
+		root.add_child(shell_actor)
+		var entry_requests: Array[Dictionary] = []
+		shell.transition_requested.connect(
+			func(request: Dictionary): entry_requests.append(request)
+		)
+		shell_actor.global_position = Vector2(64, 148)
+		shell_actor.set("facing", Vector2.UP)
+		_check(
+			not shell.try_enter(shell_actor), "shell cannot be entered from beyond physical reach"
+		)
+		shell_actor.request_test_motion(Vector2(0, -42))
+		await physics_frame
+		_check(
+			shell_actor.motion_finished and shell_actor.last_collision == null,
+			"exterior actor physically passes through the shell doorway: %s" % shell.get_source_id()
+		)
+		_check(
+			shell.get_context_hint(shell_actor).contains("Enter"),
+			"doorway presents a concise contextual entry affordance"
+		)
+		shell_actor.set("facing", Vector2.DOWN)
+		_check(not shell.try_enter(shell_actor), "door entry requires facing into the worksite")
+		shell_actor.set("facing", Vector2.UP)
+		_check(
+			shell.try_enter(shell_actor), "physically reached shell doorway emits an entry request"
+		)
+		_check(entry_requests.size() == 1, "one shell entry request is emitted")
+		if not entry_requests.is_empty():
+			var entry: Dictionary = entry_requests[0]
+			_check(entry.direction == "enter", "shell request has explicit enter direction")
+			_check(
+				entry.poi_id == shell.get_source_id(),
+				"shell transition identity matches its source data"
+			)
+			_check(entry.canonical_cell == TRANSFORM_CELLS[index], "shell sends A1 canonical cell")
+			_check(
+				entry.to_scene == shell.definition.local_transition.worksite_scene,
+				"entry targets only the local worksite"
+			)
+			_check(
+				entry.return_anchor.shell_local_position == [64, 108],
+				"entry preserves the real exterior return doorway"
+			)
+		shell_actor.request_test_motion(Vector2(0, 50))
+		await physics_frame
+		_check(
+			shell_actor.last_collision == null and shell_actor.global_position.y > 128,
+			"shell doorway remains a physical egress path with side collision retained"
+		)
+		shell_actor.global_position = Vector2(48, 64)
+		shell_actor.request_test_motion(Vector2(-40, 0))
+		await physics_frame
+		_check(
+			shell_actor.last_collision != null and shell_actor.global_position.x >= 18,
+			"shell west boundary still blocks ordinary traversal"
+		)
+		shell_actor.queue_free()
+		shell.queue_free()
+		await process_frame
+
+		var pair := await _make_site(index)
+		var site: NativePoiSite = pair.site
+		var actor: WorldContentTestActor = pair.actor
+		var authority: PoiAuthorityFixture = pair.authority
+		var canonical_site_id := site.get_source_id()
+		var entry_x: float = ENTRANCE_X[index]
+		var local_requests: Array[Dictionary] = []
+		var return_request: Dictionary = {}
+		site.transition_requested.connect(func(request: Dictionary): local_requests.append(request))
+		actor.global_position = Vector2(entry_x, 626)
+		actor.request_test_motion(Vector2(0, -80))
+		await physics_frame
+		_check(
+			actor.motion_finished and actor.last_collision == null,
+			(
+				"exterior actor physically enters local worksite with perimeter collision retained: %s"
+				% site.get_source_id()
+			)
+		)
+		_check(
+			actor.global_position.distance_to(site.get_spawn_position()) <= 12.0,
+			"entry returns to an interior-only local spawn, never an overworld spawn"
+		)
+		var boundary_count := 0
+		for child: Node in site.get_children():
+			if child is StaticBody2D and str(child.name) == "Wall":
+				boundary_count += 1
+		_check(
+			boundary_count >= 5, "local worksite retains solid wall segments around an actual door"
+		)
+
+		var stand: Vector2
+		if index < 2:
+			stand = site.get_stand_position()
+			actor.request_test_motion(Vector2(stand.x - actor.global_position.x, 0))
+			await physics_frame
+			actor.request_test_motion(Vector2(0, stand.y - actor.global_position.y))
+			await physics_frame
+		else:
+			stand = Vector2(528, 536)
+			actor.request_test_motion(stand - actor.global_position)
+			await physics_frame
+		_check(
+			actor.global_position.distance_to(stand) <= 30.0,
+			(
+				"exterior entrance connects to the authored physical approach: %s"
+				% site.get_source_id()
+			)
+		)
+		actor.set("facing", Vector2.UP)
+		var accepted := site.try_interact(actor, 0) if index == 2 else site.try_interact(actor)
+		_check(
+			accepted,
+			"physical approach accepts its distinct worksite action: %s" % site.get_source_id()
+		)
+		if accepted:
+			var intent: Dictionary = site._pending.duplicate(true)
+			var result: Dictionary = authority.submit_intent(intent)
+			_check(
+				result.status == "committed", "owner fixture commits the approached worksite action"
+			)
+			site.receive_authoritative_result(
+				intent.intent_id, result, authority.project_state(site.get_source_id())
+			)
+		if index == 0:
+			_check(
+				site.get_site_state().get("quarry_route", "") in ["east_braced", "west_chocked"],
+				"Quarry route preparation changes its owner-projected route consequence"
+			)
+		elif index == 1:
+			_check(
+				site.get_site_state().get("orchard_channel", "") == "flowing",
+				"Orchard choice visibly changes the accepted irrigation projection"
+			)
+		else:
+			_check(
+				site.get_site_state().get("mill_race_observed", false),
+				"Mill exterior inspection commits before salvage access"
+			)
+
+		var spawn := site.get_spawn_position()
+		actor.request_test_motion(Vector2(spawn.x - actor.global_position.x, 0))
+		await physics_frame
+		actor.request_test_motion(Vector2(0, spawn.y - actor.global_position.y))
+		await physics_frame
+		_check(
+			actor.global_position.distance_to(spawn) <= 18.0,
+			"the same site path supports safe retreat to its doorway"
+		)
+		actor.set("facing", Vector2.UP)
+		_check(site.is_at_exit(actor), "local exterior exit is physically reachable")
+		_check(
+			not site.try_exit(actor), "local exit refuses an actor facing back into the worksite"
+		)
+		actor.set("facing", Vector2.DOWN)
+		_check(site.try_exit(actor), "local doorway emits a typed return request")
+		_check(local_requests.size() == 1, "one local exit request is emitted")
+		if not local_requests.is_empty():
+			var exit_request: Dictionary = local_requests[0]
+			return_request = exit_request.duplicate(true)
+			_check(exit_request.direction == "exit", "worksite request has explicit exit direction")
+			_check(
+				exit_request.poi_id == site.get_source_id(),
+				"return request preserves canonical POI identity"
+			)
+			_check(
+				exit_request.canonical_cell == TRANSFORM_CELLS[index],
+				"return request preserves A1 cell"
+			)
+			_check(
+				exit_request.to_scene == site.definition.local_transition.shell_scene,
+				"exit targets the compact shell"
+			)
+			_check(
+				exit_request.return_anchor.shell_local_position == [64, 108],
+				"exit returns to the shell doorway, not local spawn"
+			)
+		actor.request_test_motion(Vector2(0, 78))
+		await physics_frame
+		_check(
+			actor.last_collision == null and actor.global_position.y > 600,
+			"worksite egress remains physically open after interaction"
+		)
+		actor.global_position = Vector2(48, 300)
+		actor.request_test_motion(Vector2(-40, 0))
+		await physics_frame
+		_check(
+			actor.last_collision != null and actor.global_position.x >= 32,
+			"local worksite keeps its meaningful west perimeter collision"
+		)
+		if not return_request.is_empty():
+			var shell_path := str(return_request.get("to_scene", ""))
+			var returned_shell_scene := load(shell_path) as PackedScene
+			_check(returned_shell_scene != null, "exit request resolves its compact return shell")
+			if returned_shell_scene != null:
+				site.queue_free()
+				await process_frame
+				var returned_shell := returned_shell_scene.instantiate() as NativePoiShell
+				root.add_child(returned_shell)
+				await process_frame
+				var anchor: Dictionary = return_request.get("return_anchor", {})
+				var doorway := Vector2.from_array(anchor.get("shell_local_position", []))
+				actor.global_position = doorway
+				_check(
+					actor.global_position.distance_to(returned_shell.get_entry_position()) <= 0.1,
+					"owner return anchor lands at the actual compact-shell doorway"
+				)
+				actor.set("facing", Vector2.DOWN)
+				actor.request_test_motion(Vector2(0, 50))
+				await physics_frame
+				_check(
+					actor.last_collision == null and actor.global_position.y > 128,
+					"returned actor can physically leave the same shell doorway"
+				)
+				actor.set("facing", Vector2.UP)
+				actor.request_test_motion(Vector2(0, -50))
+				await physics_frame
+				var revisit_requests: Array[Dictionary] = []
+				returned_shell.transition_requested.connect(
+					func(request: Dictionary): revisit_requests.append(request)
+				)
+				_check(
+					returned_shell.try_enter(actor),
+					"the returned actor can physically revisit the same canonical site"
+				)
+				_check(
+					revisit_requests.size() == 1,
+					"revisit reuses the canonical shell identity without creating a new POI"
+				)
+				var revisit_site := (
+					(load(str(return_request.to_scene)) as PackedScene).instantiate()
+					as NativePoiSite
+				)
+				root.add_child(revisit_site)
+				await process_frame
+				revisit_site.set_projection(authority.project_state(revisit_site.get_source_id()))
+				var revisit_state := revisit_site.get_site_state()
+				_check(
+					revisit_site.get_source_id() == canonical_site_id,
+					"revisit retains the same source identity"
+				)
+				if index == 0:
+					_check(
+						revisit_state.has("quarry_route"),
+						"Quarry revisit restores its route from the owner projection"
+					)
+				elif index == 1:
+					_check(
+						revisit_state.get("orchard_channel", "") == "flowing",
+						"Orchard revisit restores visible water state from the owner projection"
+					)
+				else:
+					_check(
+						revisit_state.get("mill_race_observed", false),
+						"Mill revisit restores the inspection projection"
+					)
+				revisit_site.queue_free()
+				returned_shell.queue_free()
+		_cleanup(pair)
+
+
+func _make_site(index: int) -> Dictionary:
+	var fixture := FIXTURE_SCRIPT.new() as PoiAuthorityFixture
+	fixture.configure()
+	root.add_child(fixture)
+	var packed := load(SITE_SCENES[index]) as PackedScene
+	var site := packed.instantiate() as NativePoiSite
+	root.add_child(site)
+	await process_frame
+	site.set_projection(fixture.project_state(site.get_source_id()))
+	var actor := ACTOR_SCRIPT.new() as WorldContentTestActor
+	actor.collision_layer = 2
+	actor.collision_mask = 1
+	var shape := CircleShape2D.new()
+	shape.radius = 10.0
+	var collision := CollisionShape2D.new()
+	collision.shape = shape
+	actor.add_child(collision)
+	root.add_child(actor)
+	actor.global_position = site.get_spawn_position()
+	await physics_frame
+	return {"site": site, "actor": actor, "authority": fixture}
+
+
+func _cleanup(pair: Dictionary) -> void:
+	for key: String in ["site", "actor", "authority"]:
+		var node: Node = pair.get(key)
+		if is_instance_valid(node):
+			node.queue_free()
+	await process_frame
+
+
+func _check(condition: bool, message: String) -> void:
+	_assertions += 1
+	if not condition:
+		_failures.append("Assertion failed: %s" % message)

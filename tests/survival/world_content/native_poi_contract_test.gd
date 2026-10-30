@@ -10,6 +10,14 @@ const SCENES := [
 	"res://game/survival/world_content/scenes/south_crown_mill.tscn",
 	"res://game/survival/world_content/scenes/fourth_salt_lookout_test.tscn"
 ]
+const SHELL_SCENES := [
+	"res://game/survival/world_content/scenes/south_quarry_overworld.tscn",
+	"res://game/survival/world_content/scenes/south_orchard_ruin_overworld.tscn",
+	"res://game/survival/world_content/scenes/south_crown_mill_overworld.tscn"
+]
+const TRANSFORM_CELLS := [Vector2i(30, 280), Vector2i(140, 360), Vector2i(120, 300)]
+const TRANSFORM_ROOTS := [Vector2(424, 4424), Vector2(2184, 5704), Vector2(1864, 4744)]
+const ENTRANCE_X := [480.0, 480.0, 526.0]
 
 var _failures: Array[String] = []
 var _assertions := 0
@@ -321,6 +329,16 @@ func _candidate_claims_capacity_and_reload() -> void:
 		reloaded_projection.site_state.is_empty(),
 		"resource claims do not invent unrelated world facts"
 	)
+	site.set_projection(reloaded_projection)
+	var cooldown_hint := site.get_context_hint(actor)
+	_check(
+		cooldown_hint.contains("ready in 0:30"),
+		"cooldown presentation uses the owner-projected durable clock and a readable timer"
+	)
+	_check(
+		not site.try_interact(actor, 0),
+		"scene denies a locally premature retry using the accepted owner projection"
+	)
 	var too_soon: Dictionary = reload_fixture.submit_intent(
 		_clone_claim_with_generation(candidate, 1)
 	)
@@ -427,6 +445,8 @@ func _physical_mill_gate_and_retreat() -> void:
 	var site: NativePoiSite = pair.site
 	var actor: WorldContentTestActor = pair.actor
 	var authority: PoiAuthorityFixture = pair.authority
+	var intents: Array[Dictionary] = []
+	site.intent_requested.connect(func(intent: Dictionary): intents.append(intent))
 	actor.global_position = Vector2(528, 536)
 	actor.set("facing", Vector2.UP)
 	await physics_frame
@@ -434,54 +454,59 @@ func _physical_mill_gate_and_retreat() -> void:
 	await physics_frame
 	_check(actor.motion_finished, "mill negative traversal ran inside a physics frame")
 	_check(
-		actor.last_collision != null,
-		"mill outer gate blocks real CharacterBody2D traversal without cap_salvage"
+		actor.last_collision != null and actor.global_position.y > 480.0,
+		"mill outer gate blocks physical entry without cap_salvage"
 	)
-	_check(
-		actor.global_position.y > 480.0, "blocked player remains outside the locked outer boundary"
-	)
-	actor.global_position = Vector2(528, 536)
-	var intent_buffer: Array[Dictionary] = []
-	site.intent_requested.connect(func(intent: Dictionary): intent_buffer.append(intent))
 	_check(
 		site.try_interact(actor, 0),
-		"mill can be inspected from outside before the outer access capability"
+		"mill race is inspectable from outside before salvage capability"
 	)
-	var observation: Dictionary = intent_buffer.back()
+	var observation: Dictionary = intents.back()
 	var observed: Dictionary = authority.submit_intent(observation)
 	_check(observed.status == "committed", "outer inspection requires no salvage capability")
 	site.receive_authoritative_result(
 		observation.intent_id, observed, authority.project_state(site.get_source_id())
 	)
-	actor.global_position = site.get_stand_position()
+
+	var repair_template: Dictionary = site._make_intent(site.definition.choices[0])
 	_check(
-		not site.try_interact(actor), "repair action is denied without owner-projected cap_salvage"
+		authority.submit_intent(repair_template).status == "rejected",
+		"owner refuses the mill repair without salvage capability"
 	)
-	actor.global_position = Vector2(528, 536)
+	var repair_stand := Vector2(528, 410)
 	authority.set_capabilities(["cap_salvage"])
 	site.set_projection(authority.project_state(site.get_source_id()))
+	var premature_fastener: Dictionary = site._make_intent(site.definition.actions[1])
+	_check(
+		authority.submit_intent(premature_fastener).status == "rejected",
+		"owner rejects fastener salvage until an accepted wheel-repair state exists"
+	)
 	await physics_frame
+	actor.global_position = Vector2(528, 536)
 	actor.request_test_motion(Vector2(0, -140))
 	await physics_frame
 	_check(
 		actor.global_position.y < 400.0 and actor.global_position.y > 314.0,
-		"cap_salvage opens the outer POI boundary"
+		"salvage capability opens the outer gate but not the un-repaired maintenance walk"
 	)
-	actor.request_test_motion(Vector2(0, -170))
-	await physics_frame
-	_check(actor.global_position.y < 270.0, "cap_salvage opens the physical maintenance crossing")
-	actor.request_test_motion(Vector2(0, 140))
+	actor.request_test_motion(Vector2(0, -120))
 	await physics_frame
 	_check(
-		actor.global_position.y > 314.0, "player can retreat from maintenance walk to outer mill"
+		actor.last_collision != null and actor.global_position.y > 314.0,
+		"inner maintenance gate remains physically closed until the wheel is repaired"
 	)
-	actor.request_test_motion(Vector2(0, 180))
+	actor.request_test_motion(repair_stand - actor.global_position)
 	await physics_frame
-	_check(actor.global_position.y > 520.0, "player can safely retreat out of the outer gate")
-	actor.global_position = site.get_stand_position()
-	_check(site.try_interact(actor), "repair becomes reachable at the inner repair stand")
-	var repair: Dictionary = intent_buffer.back()
-	_check(repair.action_id == "repair_waterwheel", "native mill action is the repair transaction")
+	_check(
+		actor.last_collision == null and actor.global_position.distance_to(repair_stand) <= 30.0,
+		"repair workstation is physically reachable on the near side of the inner gate"
+	)
+	actor.set("facing", Vector2.UP)
+	_check(site.try_interact(actor), "repair interaction is eligible from the near side")
+	var repair: Dictionary = intents.back()
+	_check(
+		repair.action_id == "repair_waterwheel", "authored mill choice is the repair transaction"
+	)
 	var insufficient_fixture := FIXTURE_SCRIPT.new()
 	var poor_snapshot: Dictionary = authority.snapshot()
 	poor_snapshot.inventory["oak_wood"] = 0
@@ -491,7 +516,7 @@ func _physical_mill_gate_and_retreat() -> void:
 	_check(failure.status == "rejected", "mill repair requires its non-free material cost")
 	_check(
 		insufficient_fixture.snapshot().site_state.get(site.get_source_id(), {}).is_empty(),
-		"failed mill repair does not change machinery state"
+		"failed mill repair leaves machinery and route unchanged"
 	)
 	var repaired: Dictionary = authority.submit_intent(repair)
 	_check(repaired.status == "committed", "affordable mill repair commits through the owner")
@@ -499,26 +524,107 @@ func _physical_mill_gate_and_retreat() -> void:
 		repair.intent_id, repaired, authority.project_state(site.get_source_id())
 	)
 	_check(
-		site.get_site_state().mill_wheel == "turning",
-		"repair result projects the operating wheel state"
+		site.get_site_state().get("mill_wheel", "") == "turning",
+		"owner projection visibly turns the repaired wheel"
 	)
+	await physics_frame
+	actor.request_test_motion(Vector2(0, -160))
+	await physics_frame
 	_check(
-		(
-			authority.snapshot().inventory.oak_wood == 1
-			and authority.snapshot().inventory.iron_scrap == 0
-		),
-		"mill material costs are debited once by authority"
+		actor.last_collision == null and actor.global_position.y < 270.0,
+		"accepted repair opens the physical inner gate"
 	)
+	var salvage_stand := Vector2(678, 278)
+	actor.request_test_motion(salvage_stand - actor.global_position)
+	await physics_frame
 	_check(
-		site.try_interact(actor, 1),
-		"repaired maintenance site exposes its finite fastener candidate"
+		actor.global_position.distance_to(salvage_stand) <= 30.0,
+		"the separate fastener workstation is physically reachable beyond the repaired gate"
 	)
-	var fastener: Dictionary = intent_buffer.back()
+	actor.set("facing", Vector2.UP)
+	_check(site.try_interact(actor, 1), "repaired mill exposes its state-gated salvage action")
+	var fastener: Dictionary = intents.back()
+	_check(
+		fastener.action_id == "recover_fastener", "salvage request targets the fastener work face"
+	)
 	var fastener_result: Dictionary = authority.submit_intent(fastener)
 	_check(
-		fastener_result.status == "committed", "finite mill candidate uses the same owner contract"
+		fastener_result.status == "committed",
+		"finite mill candidate uses the shared owner contract"
+	)
+	site.receive_authoritative_result(
+		fastener.intent_id, fastener_result, authority.project_state(site.get_source_id())
+	)
+	_check(
+		int(authority.snapshot().inventory.iron_scrap) == 1,
+		"finite salvage consequence is applied only by the authority fixture"
+	)
+
+	actor.request_test_motion(Vector2(528 - actor.global_position.x, 0))
+	await physics_frame
+	actor.request_test_motion(Vector2(0, 410 - actor.global_position.y))
+	await physics_frame
+	actor.request_test_motion(Vector2(0, 536 - actor.global_position.y))
+	await physics_frame
+	_check(
+		actor.last_collision == null and actor.global_position.y >= 520.0,
+		"player can retreat through both repaired access gates to the safe outer walk"
+	)
+	authority.set_capabilities([])
+	site.set_projection(authority.project_state(site.get_source_id()))
+	await physics_frame
+	actor.request_test_motion(Vector2(0, -140))
+	await physics_frame
+	_check(
+		actor.last_collision != null and actor.global_position.y > 480.0,
+		"removing the owner-projected capability recloses the outer gate"
 	)
 	_cleanup(pair)
+
+	var leave_pair := await _make_site(2)
+	var leave_site: NativePoiSite = leave_pair.site
+	var leave_actor: WorldContentTestActor = leave_pair.actor
+	var leave_authority: PoiAuthorityFixture = leave_pair.authority
+	leave_authority.set_capabilities(["cap_salvage"])
+	leave_site.set_projection(leave_authority.project_state(leave_site.get_source_id()))
+	leave_actor.global_position = Vector2(528, 410)
+	leave_actor.set("facing", Vector2.UP)
+	leave_site.cycle_choice(1)
+	_check(leave_site.try_interact(leave_actor), "mill offers a real leave-wheel alternative")
+	var leave_intent: Dictionary = leave_site._pending.duplicate(true)
+	var left_seized: Dictionary = leave_authority.submit_intent(leave_intent)
+	_check(left_seized.status == "committed", "leaving the wheel is an owner-committed safe choice")
+	leave_site.receive_authoritative_result(
+		leave_intent.intent_id,
+		left_seized,
+		leave_authority.project_state(leave_site.get_source_id())
+	)
+	_check(
+		leave_site.get_site_state().get("mill_wheel", "") == "seized",
+		"the leave choice preserves the visibly stopped machinery state"
+	)
+	leave_actor.global_position = Vector2(528, 410)
+	leave_actor.request_test_motion(Vector2(0, -160))
+	await physics_frame
+	_check(
+		leave_actor.last_collision != null and leave_actor.global_position.y > 314.0,
+		"leaving the wheel seized keeps the inner salvage gate closed"
+	)
+	leave_actor.request_test_motion(Vector2(0, 126))
+	await physics_frame
+	leave_actor.request_test_motion(Vector2(0, 96))
+	await physics_frame
+	leave_actor.set("facing", Vector2.DOWN)
+	_check(
+		leave_site.try_exit(leave_actor), "safe no-repair branch keeps the return doorway usable"
+	)
+	leave_actor.request_test_motion(Vector2(0, 66))
+	await physics_frame
+	_check(
+		leave_actor.last_collision == null and leave_actor.global_position.y > 600.0,
+		"unrepaired Mill route permits a physical retreat to the exterior"
+	)
+	_cleanup(leave_pair)
 
 
 func _make_site(index: int) -> Dictionary:

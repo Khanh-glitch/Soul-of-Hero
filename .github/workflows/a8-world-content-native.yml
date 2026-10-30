@@ -21,12 +21,16 @@ jobs:
           version: 4.7.0
           use-dotnet: false
           include-templates: false
-      - name: Validate authoring data
-        run: python3 tools/survival/world_content/author_site.py --check
+      - name: Validate authoring data and adversarial path cases
+        run: |
+          python3 tools/survival/world_content/author_site.py --check
+          python3 -m unittest tests/survival/world_content/test_author_site.py
       - name: Import native project resources
         run: godot --headless --path . --editor --quit
-      - name: Run native physics, intent and persistence contracts
+      - name: Run native physics and interaction contracts
         run: godot --headless --path . --script tests/survival/world_content/native_poi_contract_test.gd
+      - name: Run exterior entry, return and revisit physics
+        run: godot --headless --path . --script tests/survival/world_content/native_poi_transition_test.gd
       - name: Capture native scenes at 720p, 2K and 4K
         run: |
           mkdir -p .artifacts/a8-world-content

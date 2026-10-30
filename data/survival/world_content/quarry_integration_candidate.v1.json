@@ -7,16 +7,17 @@
       "commit": "86831332324428c7623ad431a577d101b7af5c9c"
     },
     "a1_pr20": {
-      "head": "e16285ffbbf80829f07e056264751954cd16571a",
+      "head": "7fd000e1c017830a088749b965e651fafb501b98",
       "source": "data/survival/world/world_plan.v1.json"
     },
     "a3_pr19": {
-      "head": "18e7afcbd576bbd9bfbcc509b2ee13216186a522",
+      "head": "c23292be095903c67e3d6e6e4fbd310b6649da12",
       "items": "data/survival/items/items.json",
-      "sources": "data/survival/items/sources.json"
+      "sources": "data/survival/items/sources.json",
+      "world_source_bindings_v3": "data/survival/items/world_source_bindings.v3.json"
     },
     "a0_pr21": {
-      "head": "7315f8e83fa6c9c1ec9e2a00d9c0e4fd05b8e450",
+      "head": "122294f2237c1836d6f04561e090fe6aa6c6c0cf",
       "owner": "SaveService + SurvivalService + production overworld mount"
     },
     "a6_pr24": {
@@ -42,11 +43,23 @@
     "instance_rule": "Resolve the canonical world POI by world_id + poi_id + A1 cell; A0 supplies the persistent instance identity. A8 does not mint or persist a second identity."
   },
   "a8_scene": {
-    "packed_scene": "res://game/survival/world_content/scenes/south_quarry.tscn",
+    "canonical_mount_scene": "res://game/survival/world_content/scenes/south_quarry_overworld.tscn",
+    "local_worksite_scene": "res://game/survival/world_content/scenes/south_quarry.tscn",
     "site_definition": "res://data/survival/world_content/sites/south_quarry.json",
     "scene_source_id": "poi_crown_south_quarry",
+    "scene_role": "local_worksite",
+    "canonical_mount_footprint_px": [
+      128,
+      128
+    ],
+    "canonical_action_socket_px": [
+      64,
+      64
+    ],
+    "canonical_transform": "root = canonical_cell*16 + (8,8) - action_socket; rotation 0; scale [1,1]",
+    "local_transition_contract": "data/survival/world_content/transition_contract.v1.json",
     "test_harness_only": true,
-    "mount_transform": "A0 resolves the A1 cell through the existing world transform; do not convert the cell to guessed pixels."
+    "mount_transform": "A0 resolves and mounts the compact shell from the A1 cell; the 960x600 worksite is entered only through the typed doorway request and its local spawn is never a world position."
   },
   "actions": [
     {
@@ -150,5 +163,16 @@
     },
     "atomicity": "A0 must mutate cost/reward, claim receipt, generation/cooldown, route state and projection revision in the same SaveService.transact_once candidate."
   },
-  "fixture_values_policy": "Existing amounts and cooldowns in site JSON and PoiAuthorityFixture are test inputs only. They are not A3-approved prices, yields, loot rates, grants, or production state. Production adapters must ignore/reject provisional_test_only intents until A3 authorization exists."
+  "fixture_values_policy": "Existing amounts and cooldowns in site JSON and PoiAuthorityFixture are test inputs only. They are not A3-approved prices, yields, loot rates, grants, or production state. Production adapters must ignore/reject provisional_test_only intents until A3 authorization exists.",
+  "a3_binding_review": {
+    "schema": "soh.economy.world_source_bindings.v3",
+    "inspected_head": "c23292be095903c67e3d6e6e4fbd310b6649da12",
+    "status": "A3_IMPLEMENTED_NATIVE_FIXTURE_PENDING_A0_MOUNT",
+    "bound_poi_ids": [
+      "poi_crown_waystation",
+      "poi_crown_relay_shed"
+    ],
+    "quarry_orchard_mill_bound": false,
+    "source_identity_and_prices": "No A8 site binding or action price exists; all A8 candidate costs, yields and cooldowns remain proposal-only fixture inputs."
+  }
 }
