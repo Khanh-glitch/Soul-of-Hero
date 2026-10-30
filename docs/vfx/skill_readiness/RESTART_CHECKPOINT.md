@@ -553,3 +553,26 @@ Profile, from the code paths (not measured here; no local Godot):
   run `41076115355`), 008/015 host-lifecycle verdicts on fixed tree (same run), 021 host
   wall-clock (595s vs 180s bound unchanged; fast paths parity-verified in candidate lane),
   ARCANA 001 Pixi renderer port. No NATIVE_PORT_READY / OWNER_VISUAL_APPROVED anywhere.
+
+## Round 2026-10-30 (close): 007 RESOLVED + registered; only 013/016 remain
+
+- **007 PASS** — candidate run `41110354328` job `124250865627` at `2d2855c`:
+  `GOLD93_VENOM_DIFFERENTIAL: PASS`, first_divergent_tick -1, seed 7 (hits 30/30, cues 5/5
+  per immutable oracle). Registered in `5ba7428` (MODULE_PATHS/SOURCE_NATIVE_IDS, host matrix
+  19 skills, lifecycle count 19, parity record, manifest rebuilt → 19 native_executable).
+- Root-cause chain (all 1-ulp class, found by full-precision bisection EN12→E12S/E12P):
+  1. `M.mix` clamp for t>=1 (`49b5800`) — moved divergence t90 → t265.
+  2. **`venom_engine.resolve()` used `sqrt(x*x+y*y)`; engine.ts uses `Math.hypot`** — cast
+     target (Cocoon x) differed 1 ulp (322.048055943973 vs 322.04805594397294). Amplified via
+     Cocoon push-out → Ring knockback → hatchling flock steering (chaotic, ~×1.4/tick) to
+     ~1e-5 by t240, flipping the t265 raster. Fixed `2d2855c`; supporting conversions
+     `venom_world.gd` (`bcdf9ee`), `venom_fx.gd` Ring/Pool/Cloud/Proj (`0d4fd0b`).
+- Verified non-causes: task scheduler (fixed separately for 020), Hatchling steering code,
+  Hits.ok, hit_e, Ring band logic, enemy steering — all textually faithful; V8 math
+  bit-exactness workflow SUCCESS (sin/cos/atan2/hypot/pow).
+- Remaining Venomwright parity: **013 (t320), 016 (t195)** only. Registered host adapters: 19
+  (all except 013/016). Runtime-lane verdicts on the post-fix tree (host 007/008/015/020,
+  differentials 013/016) come from the readiness run at/after `5ba7428`.
+- 021 wall-clock still open (~595s vs 180s bound, unchanged); candidate parity PASS with
+  packed-byte fast paths. ARCANA 001 renderer port still not started.
+- No NATIVE_PORT_READY / OWNER_VISUAL_APPROVED promotion anywhere.
