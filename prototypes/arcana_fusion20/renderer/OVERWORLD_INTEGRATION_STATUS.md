@@ -332,6 +332,7 @@ comparison runs at tick 20, not every possible phase.
 extract small quantized review thumbnails from full-size JOIN captures, not
 replacement acceptance images. The #11 tick-180 crop appeared thin and low
 contrast in this limited inspection; it needs native-size Gold-vs-world creator
-review. The #20 OUT and collision crops are strongly screen-transforming and
-must receive the mandated human contamination review. No visual approval is
+review. The #20 OUT crop shows strong color inversion; the separately tested
+collision post is screen-wide. Both need the mandated human contamination
+review against full-size before/after captures. No visual approval is
 inferred from these thumbnails.
