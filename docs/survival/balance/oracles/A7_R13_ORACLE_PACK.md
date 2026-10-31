@@ -46,16 +46,17 @@ Implementation: [`tools/survival/balance/a7_oracle_pack.py`](../../../tools/surv
 Machine output: [`data/survival/balance/oracles/a7_oracle_pack.r13.v1.json`](../../../data/survival/balance/oracles/a7_oracle_pack.r13.v1.json).
 Pins used: [`pins.r13.json`](pins.r13.json).
 
-**Self-test (`--self-test`) proves the oracles discriminate, not that they are green:**
+**Self-test (`--self-test`) proves the oracles discriminate, not that they are green** — one case per
+known-bad evidence shape, asserting the verdict **and** the code:
 
 ```
-17/17 oracle expectations met
+31/31 oracle expectations met
 O1 harness false blocker → FAIL TEST_BOOTSTRAP_FALSE_NEGATIVE   | O1 clean → PASS
 O1 real A1 failure      → FAIL A1_SOURCE_CONTRACT               | O2 sidecar → FAIL SIDECAR_WORLD
 O2 clean, no run        → BLOCKED (never PASS)                  | O3 31 ok + NOT_TESTED → FAIL
 O4 prefix false + freed → FAIL PREFIX_INCOMPLETE                | O4 green exits, nothing to settle → FAIL
 O5 black frame          → FAIL BLANK_FRAME                      | O5 one resolution only → FAIL
-O6 stale pin            → FAIL STALE_PIN                        | O6 tree mismatch → FAIL STALE_COMPOSITION
+O6 stale pin (CURRENT)  → FAIL STALE_PIN                        | O6 tree mismatch → FAIL STALE_COMPOSITION
 ```
 
 ## 3. Baseline run — real evidence, not fixtures
@@ -203,3 +204,78 @@ be exercised; the push trigger uses the same defaults and is what ran.
 | pack run in CI, composition identity gate untripped | run `41214690921` on head `c2188052e5`, all steps success |
 | PR | #25, branch `arena/353cf120-soul-of-hero`, **unmerged** |
 | not done | no owner file edited, no merge, no dispatch, no E2 claim — a Git comment or a Docs edit does **not** start an Arena prompt |
+
+## 9. R13 final correction — CT review P0s, and what changed
+
+CT's independent review of `301baf85e1` (`issuecomment-6545572507`) found two fail-closed defects
+that blocked scoped acceptance. Both are fixed here; nothing else in the pack was re-architected,
+and no owner source was touched.
+
+### 9.1 P0-A7-01 — O4 accepted the absence of a duplicate *claim*
+
+The old rule was `if not resettle.duplicate and resettle.paid: FAIL`. It accepted
+`{"duplicate": false, "paid": false}` — a record that never claimed a refusal at all. Corrected
+contract, all of it mandatory:
+
+| requirement | rejection code | verdict |
+|---|---|---|
+| a funded first settlement (`ok=true`, reason not `nothing_to_settle`/empty) | `NOTHING_TO_SETTLE` | FAIL |
+| a non-empty receipt identity on that settlement | `BLOCKED_MISSING_RECEIPT_IDENTITY` | BLOCKED |
+| a countable grant equal to **exactly one** output | `BLOCKED_MISSING_GRANT_DETAIL` / `WRONG_GRANT_COUNT` | BLOCKED / FAIL |
+| the first settlement is not itself a duplicate | `FIRST_SETTLEMENT_WAS_A_DUPLICATE` | FAIL |
+| a custody line that agrees (`ingots=1 parts=0`) when one exists | `CUSTODY_MISMATCH` | FAIL |
+| a second attempt **explicitly** `duplicate=true` | `NO_DUPLICATE_REFUSAL` | FAIL |
+| …and `paid=false` where the field exists, plus zero regranted output | `SECOND_PAYOUT` | FAIL |
+| …naming the **same** receipt identity as the paid one | `RECEIPT_IDENTITY_MISMATCH` / `BLOCKED_MISSING_RECEIPT_IDENTITY` | FAIL / BLOCKED |
+
+A log marker alone can no longer manufacture custody proof: `applied` / `operations` are read from
+A0's real host receipt shape (`a0_offline_host.gd:167–190`), and an uncountable receipt is BLOCKED,
+never PASS.
+
+### 9.2 P0-A7-02 — O1 crashed on a half pair instead of blocking
+
+`CT_BOOTSTRAP_READER_AFTER` present with no `CT_BOOTSTRAP_BEFORE` used to dereference a missing
+match and raise (the runner caught it as `ORACLE_CRASHED`, which could read as "untested").
+Now: a half pair returns **`BLOCKED_MISSING_BOOTSTRAP_CONTROL`** with the missing half named, and
+a genuine refusal *after* a real bootstrap returns **`FAIL A1_SOURCE_CONTRACT`** — harness setup
+and A1 source are now distinguishable in the code, not in the prose.
+
+### 9.3 Scope corrections CT required, now enforced in code
+
+* **O5 is a non-blank gate, not an art verdict.** Code renamed `FRAMES_HAVE_CONTENT` →
+  `NONBLANK_FRAMES_ONLY`; measurements carry `visual_quality: NOT_GRADED` and
+  `scope: nonblank_gate_only`. No report may cite this PASS as visual acceptance.
+* **O6 distinguishes historical from current.** `workflow_pin_policy.json` declares six frozen
+  workflows (each with the wording in its own `name:` as the reason); **anything undeclared is
+  CURRENT and is held to the live pins** — the default fails closed. A tree with only historical
+  workflows returns `BLOCKED_NO_CURRENT_WORKFLOW` rather than a quiet PASS.
+* **The two P0s above were the only contract changes.** O2/O3 remain evidence gates: they judge
+  what a run *reported*, not live native implementation.
+
+### 9.4 Baseline re-run after the correction
+
+Same frozen tree `fbe5438381`, same round-14 evidence, now with the pin policy:
+
+| oracle | verdict | code | note |
+|---|---|---|---|
+| O1 | **BLOCKED** | `BLOCKED_NO_BOOTSTRAP_EVIDENCE` | unchanged in substance, no longer able to crash |
+| O2 | **FAIL** | `SIDECAR_WORLD` | A0, source-contract |
+| O3 | **BLOCKED** | `BLOCKED_NO_PHYSICAL_EVIDENCE` | 33 assertions, none about entering a site |
+| O4 | **FAIL** | `FREED_GUI_NODE` | A0; the exactly-once branch is never even reached |
+| O5 | **PASS** | `NONBLANK_FRAMES_ONLY` | non-blank only; **visual quality NOT_GRADED** |
+| O6 | **FAIL** | `STALE_PIN` | **3** stale pins in the **one** CURRENT workflow (`a0-connected-journey.yml`: A1 `8551a323` vs `a030cb89`, A6 `6d71410a` vs `6d1e8bce`, A8 `06d1758e` vs `0f885df8`); six historical workflows labelled, not forgiven |
+
+Machine output: `data/survival/balance/oracles/a7_oracle_pack.r13.v2.json`. The v1 file is kept as
+history and is **superseded** — it contains the O4 acceptance defect CT found.
+
+### 9.5 What this does and does not establish
+
+* **Establishes:** the pack now refuses every old false-green shape, demonstrated by 31 synthetic
+  controls that assert codes, plus two real journey logs failing with different codes and real
+  frames passing the non-blank gate.
+* **Does not establish:** that the product works. The baseline is still `FAIL`; O2/O4/O6 belong to
+  A0, and O1/O3 are missing evidence rather than results.
+
+**Status: `ACCEPT_SCOPED_ORACLE` — the oracle contract is closed. `PAUSE_DEPENDENCY` until A0
+publishes a NEW composed production tree** whose recomputed `write-tree` equals its declared SHA.
+No merge, no other-owner edits, no invented player PASS.

@@ -98,6 +98,7 @@ class Ctx:
     pins: Dict[str, str] = field(default_factory=dict)
     expected_tree: str = ""
     require_resolutions: int = 3
+    pin_policy: Dict[str, object] = field(default_factory=dict)
 
 
 # --------------------------------------------------------------------------- #
@@ -166,39 +167,57 @@ _AFTER = re.compile(r"(?:CT_BOOTSTRAP_READER_AFTER|A7_O1_AFTER).*?ok=(true|false
 _RESULT = re.compile(r"(?:CT_BOOTSTRAP_RESULT|A7_O1_RESULT)\s+(.+)", re.I)
 
 
+def both_missing(before, after) -> bool:
+    return before is None and after is None
+
+
 def oracle_bootstrap(ctx: Ctx) -> Result:
-    """O1 — `PLAYER_INPUT_*` before app init must never be scored as A1's fault."""
+    """O1 — `PLAYER_INPUT_*` before app init must never be scored as A1's fault.
+
+    Both halves are mandatory. A lone `AFTER` record is not a control, and a lone
+    `BEFORE` record is not a comparison: each returns a structured BLOCKED with a
+    machine-readable code instead of raising, because an oracle that crashes is an
+    oracle that could be mistaken for "untested".
+    """
     text = _evidence_text(ctx)
     before = _BEFORE.search(text)
     after = _AFTER.search(text)
     result = _RESULT.search(text)
-    if before is None and after is None:
+    if before is None or after is None:
+        missing = [name for name, value in (("BEFORE", before), ("AFTER", after)) if value is None]
+        present = None if both_missing(before, after) else ("AFTER" if before is None else "BEFORE")
+        runner = result.group(1).strip()[:160] if result else "(none)"
+        code = "BLOCKED_NO_BOOTSTRAP_EVIDENCE" if present is None else "BLOCKED_MISSING_BOOTSTRAP_CONTROL"
+        headline = ("no before/after input-bootstrap pair in the evidence" if present is None
+                    else f"the evidence has a {present} half and no {missing[0]} half")
         return Result(
-            "O1", BLOCKED, "BLOCKED_NO_BOOTSTRAP_EVIDENCE", "A7", "evidence-integrity",
-            "no before/after input-bootstrap pair in the evidence",
-            "A reader refusal is unattributable without a bootstrapped control run: "
-            "`a1_runtime_compatibility.gd` gates on `InputMap.has_action`, which only "
-            "exists after the game's `InputBootstrap` autoload has entered the tree.",
+            "O1", BLOCKED, code, "A7", "evidence-integrity",
+            headline,
+            "A single half cannot distinguish a harness ordering defect from a genuine A1 "
+            "refusal. `a1_runtime_compatibility.gd:124-131` gates on `InputMap.has_action`, "
+            "which only exists once the `InputBootstrap` autoload has entered the tree, so "
+            "both the pre-bootstrap and the bootstrapped run must be recorded. "
+            f"runner verdict present: {runner}",
+            [f"missing half: {name}" for name in missing] + [f"runner verdict: {runner}"],
+            {"missing": missing, "present": present},
         )
     before_ok, before_reason = _truth(before.group(1)), before.group(2)
-    after_ok = _truth(after.group(1)) if after else None
-    after_reason = after.group(2) if after else ""
+    after_ok, after_reason = _truth(after.group(1)), after.group(2)
     evidence = [
         f"direct run: reader_ok={before_ok} reason={before_reason or '(none)'}",
         f"bootstrapped run: reader_ok={after_ok} reason={after_reason or '(none)'}",
     ]
     if result:
         evidence.append(f"runner verdict: {result.group(1).strip()[:160]}")
-
     measurements = {"before_ok": before_ok, "after_ok": after_ok,
                     "before_reason": before_reason, "after_reason": after_reason}
 
-    if before_ok and (after_ok in (True, None)):
+    if before_ok and after_ok:
         return Result("O1", PASS, "NO_INPUT_BLOCKER", "A1", "source-contract",
-                      "the reader configures without waiting for the application bootstrap",
+                      "the reader configures in both the direct and the bootstrapped run",
                       "", evidence, measurements)
     if before_reason.startswith("PLAYER_INPUT_"):
-        if after_ok is True:
+        if after_ok:
             return Result(
                 "O1", FAIL, "TEST_BOOTSTRAP_FALSE_NEGATIVE", "A7", "test-only",
                 "a direct-scene-tree run reported a player-input refusal that the "
@@ -208,25 +227,19 @@ def oracle_bootstrap(ctx: Ctx) -> Result:
                 "source failure nor a player PASS. Exercise the reader after the "
                 "application has initialised, or the run proves nothing.",
                 evidence, measurements)
-        if after_ok is False:
-            return Result(
-                "O1", FAIL, "A1_SOURCE_CONTRACT", "A1", "source-contract",
-                "the reader still refuses after a real application bootstrap",
-                f"Bootstrapped run failed with `{after_reason or before_reason}`; this is "
-                "an A1 contract failure and must be fixed in A1's reader/connector, not "
-                "worked around by the caller.",
-                evidence, measurements)
         return Result(
-            "O1", BLOCKED, "BLOCKED_NO_BOOTSTRAPPED_RUN", "A7", "evidence-integrity",
-            "a pre-bootstrap refusal was recorded with no bootstrapped control",
-            "Run the same reader after `InputBootstrap` has entered the tree before "
-            "attributing anything to A1.",
+            "O1", FAIL, "A1_SOURCE_CONTRACT", "A1", "source-contract",
+            "the reader still refuses after a real application bootstrap",
+            f"Bootstrapped run failed with `{after_reason or before_reason}`; this is "
+            "an A1 contract failure and must be fixed in A1's reader/connector, not "
+            "worked around by the caller. The harness did initialise input, so this is "
+            "not a bootstrap artefact.",
             evidence, measurements)
     return Result(
         "O1", FAIL, "A1_SOURCE_CONTRACT", "A1", "source-contract",
         "the reader refuses for a non-input reason",
-        f"Reason `{before_reason}` is an A1 contract failure; no bootstrap control can "
-        "excuse it.",
+        f"Direct reason `{before_reason}`, bootstrapped reason `{after_reason}`: an A1 "
+        "contract failure that no bootstrap control can excuse.",
         evidence, measurements)
 
 
@@ -396,9 +409,6 @@ def oracle_physical_poi(ctx: Ctx) -> Result:
 # --------------------------------------------------------------------------- #
 # O4 — a paid two-process factory receipt, or nothing
 # --------------------------------------------------------------------------- #
-_SETTLE_BAD = ("nothing_to_settle", "no_job", "nothing_pending", "already_pending")
-
-
 def _settle_json(text: str, marker: str) -> Optional[dict]:
     for line in text.splitlines():
         if line.startswith(marker):
@@ -411,14 +421,69 @@ def _settle_json(text: str, marker: str) -> Optional[dict]:
     return None
 
 
+_IDENTITY_KEYS = ("proposal_id", "receipt", "receipt_id", "key", "job_id", "job")
+_BAD_SETTLE_REASONS = ("nothing_to_settle", "no_job", "nothing_pending", "already_pending", "")
+
+
+def _identity(record: dict) -> str:
+    """The one non-empty receipt identity a settlement record carries."""
+    for key in _IDENTITY_KEYS:
+        value = record.get(key)
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+    return ""
+
+
+def _granted_total(record: dict) -> Optional[int]:
+    """How many items a settlement actually granted, or None when unknowable.
+
+    A0's host reports `applied` plus an `operations` count. Anything that cannot be
+    counted this way is *unknown*, and unknown must never be read as "one".
+    """
+    applied = record.get("applied")
+    if isinstance(applied, dict) and applied:
+        total = 0
+        counted = False
+        for value in applied.values():
+            if isinstance(value, bool):
+                continue
+            if isinstance(value, int):
+                total += value
+                counted = True
+            elif isinstance(value, float):
+                total += int(value)
+                counted = True
+            elif isinstance(value, dict):
+                for inner_key in ("count", "amount", "quantity", "granted"):
+                    inner = value.get(inner_key)
+                    if isinstance(inner, int) and not isinstance(inner, bool):
+                        total += inner
+                        counted = True
+                        break
+        if counted:
+            return total
+    for key in ("granted", "outputs_granted", "ingots", "amount"):
+        value = record.get(key)
+        if isinstance(value, int) and not isinstance(value, bool):
+            return value
+    return None
+
+
 def oracle_paid_2pid(ctx: Ctx) -> Result:
-    """O4 — the only accepted offline payoff is a committed, exactly-once receipt."""
+    """O4 — the only accepted offline payoff is a *positively* exactly-once receipt.
+
+    Round 13's first version accepted `{"duplicate": false, "paid": false}`, which is
+    the absence of a duplicate *claim*, not proof of a refusal. This version requires
+    a funded first settlement with a real receipt identity and exactly one granted
+    output, and a second attempt that is explicitly `duplicate=true` **and**
+    `paid=false` against that same identity. A log marker alone cannot manufacture
+    custody proof.
+    """
     if ctx.evidence is None or not ctx.evidence.exists():
         return Result("O4", BLOCKED, "BLOCKED_NO_JOURNEY_EVIDENCE", "A7", "evidence-integrity",
                       "no evidence directory")
     logs = {p.name: p for p in _evidence_files(ctx, (".txt", ".log"))}
-    p1 = logs.get("process1.txt")
-    p2 = logs.get("process2.txt")
+    p1, p2 = logs.get("process1.txt"), logs.get("process2.txt")
     t1 = _read(p1) if p1 else ""
     t2 = _read(p2) if p2 else ""
     both = t1 + "\n" + t2
@@ -428,32 +493,52 @@ def oracle_paid_2pid(ctx: Ctx) -> Result:
     prefix = re.search(r"prefix_complete=(true|false)", both, re.I)
     freed = re.search(r"previously freed", both, re.I)
     departure = _settle_json(t1, "A0_CONNECTED_DEPARTURE")
-    settle = _settle_json(t2 or t1, "A0_CONNECTED_OFFLINE_SETTLE")
-    resettle = _settle_json(t2 or t1, "A0_CONNECTED_RESETTLE")
-    receipt = settle or {}
-    reason = str(receipt.get("reason", ""))
+    settle = _settle_json(t1, "A0_CONNECTED_OFFLINE_SETTLE") or _settle_json(t2, "A0_CONNECTED_OFFLINE_SETTLE")
+    resettle = _settle_json(t1, "A0_CONNECTED_RESETTLE") or _settle_json(t2, "A0_CONNECTED_RESETTLE")
+    parts = re.search(r"A0_CONNECTED_PARTS\s+job=(\S+)\s+ingots=(-?\d+)\s+parts=(-?\d+)", both)
+
+    settle = settle or {}
+    resettle = resettle or {}
+    settle_reason = str(settle.get("reason", ""))
+    settle_identity = _identity(settle)
+    resettle_identity = _identity(resettle)
+    granted = _granted_total(settle)
+    regranted = _granted_total(resettle) if resettle else None
     evidence = [
         f"process1 exit={exit1} file={p1.name if p1 else '(absent)'}",
         f"process2 exit={exit2} file={p2.name if p2 else '(absent)'}",
         f"prefix_complete={prefix.group(1) if prefix else '(absent)'}",
         f"departure={departure}",
-        f"offline settlement={settle}",
-        f"re-settlement={resettle}",
+        f"offline settlement={settle or '(absent)'}",
+        f"re-settlement={resettle or '(absent)'}",
+        f"granted total from first settlement={granted}",
+        f"receipt identity first/second={settle_identity or '(none)'} / {resettle_identity or '(none)'}",
+        f"custody line={parts.group(0) if parts else '(absent)'}",
         f"first 'previously freed' line: {freed.group(0) if freed else '(none)'}",
     ]
     m = {"exit1": exit1, "exit2": exit2,
          "prefix_complete": _truth(prefix.group(1)) if prefix else None,
-         "settle_reason": reason, "resettle": resettle}
+         "settle_reason": settle_reason, "settle_identity": settle_identity,
+         "resettle_identity": resettle_identity,
+         "granted": granted, "regranted": regranted,
+         "resettle_duplicate": resettle.get("duplicate") if resettle else None,
+         "resettle_paid": resettle.get("paid") if resettle else None,
+         "resettle_has_paid_key": "paid" in resettle if resettle else False}
 
-    def fail(code: str, title: str, detail: str, owner: str = "A0", kind: str = "real-gameplay") -> Result:
+    def fail(code: str, title: str, detail: str, owner: str = "A0",
+             kind: str = "real-gameplay") -> Result:
         return Result("O4", FAIL, code, owner, kind, title, detail, evidence, m)
 
+    def block(code: str, title: str, detail: str) -> Result:
+        return Result("O4", BLOCKED, code, "A7", "evidence-integrity", title, detail, evidence, m)
+
+    # --- stage gates: a run that never reached the factory is not a receipt at all
     if p1 is None:
-        return Result("O4", BLOCKED, "BLOCKED_NO_FIRST_PROCESS", "A7", "evidence-integrity",
-                      "no process1 log in the evidence", "", evidence, m)
+        return block("BLOCKED_NO_FIRST_PROCESS", "no process1 log in the evidence", "")
     if prefix is None:
         return fail("NO_PREFIX_MARKER", "the run never printed its own prefix verdict",
-                    "Without `A0_CONNECTED prefix_complete=` a green exit code is unreadable.", "A7", "test-only")
+                    "Without `A0_CONNECTED prefix_complete=` a green exit code is unreadable.",
+                    "A7", "test-only")
     if not _truth(prefix.group(1)):
         return fail("PREFIX_INCOMPLETE", "the run failed before the paid factory stage",
                     "`prefix_complete=false`: any later line is a partial trace, not a receipt.")
@@ -467,29 +552,70 @@ def oracle_paid_2pid(ctx: Ctx) -> Result:
                     "Exactly-once settlement cannot be shown inside one process.")
     if not departure or not departure.get("ok", False):
         return fail("NO_NORMAL_DEPARTURE", "the first process never departed through the normal path",
-                    f"departure={departure}")
-    if settle is None:
-        return fail("NO_SETTLEMENT_RECEIPT", "the second process printed no offline settlement",
-                    "A skipped or crashed second process leaves no receipt.")
-    if reason in _SETTLE_BAD or not receipt.get("ok", False):
+                    f"departure={departure or '(absent)'}")
+    if not settle:
+        return block("BLOCKED_NO_SETTLEMENT_RECEIPT", "the second process printed no settlement",
+                     "A skipped or crashed second process leaves no receipt. This is missing "
+                     "evidence, not a pass and not a payout.")
+    if settle_reason in _BAD_SETTLE_REASONS or not bool(settle.get("ok", False)):
         return fail("NOTHING_TO_SETTLE", "the second process had nothing to settle",
-                    f"reason=`{reason}`: no funded job survived the first process, so no "
-                    "offline payoff was paid.")
-    if any(code not in (0, None) for code in (exit1, exit2)):
-        return fail("PROCESS_FAILED", "a process exited non-zero",
-                    f"exit codes process1={exit1} process2={exit2}")
+                    f"reason=`{settle_reason or '(empty)'}`: no funded job survived the first "
+                    "process, so no offline payoff was paid.")
     if exit1 != 0 or exit2 != 0:
-        return fail("PROCESS_FAILED", "a process exit code is missing",
+        return fail("PROCESS_FAILED", "a process did not exit cleanly",
                     f"exit codes process1={exit1} process2={exit2}")
+
+    # --- positive exactly-once proof
+    if not settle_identity:
+        return block("BLOCKED_MISSING_RECEIPT_IDENTITY", "the first settlement has no receipt identity",
+                     "Without a job/receipt id the second attempt cannot be tied to the first, "
+                     "so 'exactly once' is unfalsifiable.")
+    if granted is None:
+        return block("BLOCKED_MISSING_GRANT_DETAIL", "the first settlement does not say what it granted",
+                     f"settle={settle}. A receipt without a countable output cannot prove "
+                     "'exactly one output'.")
+    if granted != 1:
+        return fail("WRONG_GRANT_COUNT", "the first settlement did not grant exactly one output",
+                    f"granted={granted} from applied={settle.get('applied')!r} "
+                    f"operations={settle.get('operations')!r}")
+    if parts and (int(parts.group(2)) != 1 or int(parts.group(3)) != 0):
+        return fail("CUSTODY_MISMATCH", "the custody line disagrees with the settlement",
+                    f"`{parts.group(0)}` reports ingots={parts.group(2)} parts={parts.group(3)} "
+                    "after a settlement that claims one granted output.")
+    if bool(settle.get("duplicate", False)):
+        return fail("FIRST_SETTLEMENT_WAS_A_DUPLICATE", "the 'first' settlement is itself a duplicate",
+                    "A duplicate cannot be the paid baseline that proves exactly-once.")
+
     if not resettle:
         return fail("NO_DUPLICATE_CONTROL", "no second claim was attempted",
                     "Proving 'exactly once' needs a duplicate attempt that is refused.")
-    if bool(resettle.get("duplicate", False)) is False and bool(resettle.get("paid", False)):
-        return fail("DOUBLE_SETTLEMENT", "the second claim paid again",
-                    f"resettle={resettle}")
+    if resettle.get("duplicate") is not True:
+        return fail("NO_DUPLICATE_REFUSAL", "the second claim was not recorded as a duplicate refusal",
+                    f"resettle={resettle}: `duplicate` must be exactly true. A record with "
+                    "`duplicate=false` proves nothing, whether `paid` is true or false.")
+    if "paid" not in resettle and regranted not in (0, None):
+        return fail("SECOND_PAYOUT", "the second claim granted something without saying it paid",
+                    f"resettle={resettle} granted={regranted}")
+    if "paid" in resettle and resettle.get("paid") is not False:
+        return fail("SECOND_PAYOUT", "the second claim was recorded as paid",
+                    f"resettle={resettle}: `paid` must be exactly false.")
+    if regranted not in (None, 0):
+        return fail("SECOND_PAYOUT", "the second claim granted a second output",
+                    f"regranted={regranted} from resettle={resettle}")
+    if resettle_identity and resettle_identity != settle_identity:
+        return fail("RECEIPT_IDENTITY_MISMATCH", "the refused claim used a different receipt identity",
+                    f"first={settle_identity} second={resettle_identity}: the two records are "
+                    "about different jobs, so no refusal of *this* job was demonstrated.")
+    if not resettle_identity:
+        return block("BLOCKED_MISSING_RECEIPT_IDENTITY",
+                     "the refused second claim carries no receipt identity",
+                     f"resettle={resettle}: a refusal that names no job cannot be tied to the "
+                     "paid one, so it cannot demonstrate exactly-once.")
     return Result("O4", PASS, "PAID_2PID_RECEIPT", "A0", "real-gameplay",
-                  "a funded job survived one process and settled exactly once in a second",
-                  f"settle reason=`{reason}`, duplicate control refused", evidence, m)
+                  "a funded job settled exactly once and the same receipt was then refused",
+                  f"granted={granted}, receipt={settle_identity}, duplicate refusal confirmed, "
+                  f"second grant={regranted if regranted is not None else 'none recorded'}",
+                  evidence, m)
 
 
 # --------------------------------------------------------------------------- #
@@ -569,9 +695,15 @@ def oracle_pixels(ctx: Ctx) -> Result:
         return Result("O5", FAIL, code, "A7", "visual-product",
                       "a capture is missing, blank or too flat to judge", "; ".join(failures),
                       evidence, {"frames": rows, "resolutions": resolutions})
-    return Result("O5", PASS, "FRAMES_HAVE_CONTENT", "A7", "visual-product",
-                  "every frame has real content at a reviewable resolution", "",
-                  evidence, {"frames": rows, "resolutions": resolutions})
+    return Result("O5", PASS, "NONBLANK_FRAMES_ONLY", "A7", "visual-product",
+                  "every frame is non-blank and reviewable in size — this is NOT a visual-quality verdict",
+                  "This gate only refuses black, flat, undersized or missing frames. It says "
+                  "nothing about art quality, readability, composition or lighting; those "
+                  "remain NOT_GRADED until a human or a specified visual rubric runs, and no "
+                  "report may cite this PASS as visual acceptance.",
+                  evidence, {"frames": rows, "resolutions": resolutions,
+                             "visual_quality": "NOT_GRADED",
+                             "scope": "nonblank_gate_only"})
 
 
 # --------------------------------------------------------------------------- #
@@ -609,34 +741,69 @@ def composition_tree(path: Path) -> Tuple[str, str]:
         shutil.rmtree(git_dir, ignore_errors=True)
 
 
+def _workflow_classes(ctx: Ctx, workflows: Sequence[Path]) -> Dict[str, Tuple[str, str]]:
+    """Classify each workflow as CURRENT or HISTORICAL, with a stated reason.
+
+    The default is CURRENT and that default is load-bearing: anything not explicitly
+    declared historical in `ctx.pin_policy` is held to the live pins. A frozen
+    Round-12 workflow must be *labelled* frozen rather than silently forgiven, and a
+    labelled-historical workflow can never be cited as current production evidence.
+    """
+    declared = ctx.pin_policy.get("historical", {}) if isinstance(ctx.pin_policy, dict) else {}
+    classes: Dict[str, Tuple[str, str]] = {}
+    for workflow in workflows:
+        name = workflow.name
+        if name in declared:
+            reason = declared[name].get("reason", "") if isinstance(declared[name], dict) else str(declared[name])
+            classes[name] = ("HISTORICAL", reason or "declared historical")
+            continue
+        marker = re.search(r"#\s*a7-pin-policy:\s*historical\b[^\n]*", _read(workflow))
+        if marker:
+            classes[name] = ("HISTORICAL", marker.group(0)[2:].strip())
+            continue
+        classes[name] = ("CURRENT", "not declared historical: held to the live pins")
+    return classes
+
+
 def oracle_provenance(ctx: Ctx) -> Result:
-    """O6 — stale pins and foreign compositions never qualify as current evidence."""
+    """O6 — stale pins, foreign trees and split owners never qualify as current evidence.
+
+    Historical workflows are labelled and excluded from the *current* pin requirement;
+    they are still listed, because a workflow that pins another owner's SHA is exactly
+    how a stale composition gets quoted as current.
+    """
     evidence: List[str] = []
-    failures: List[str] = []
     details: Dict[str, object] = {}
 
-    stale: List[dict] = []
     workflows = []
     if ctx.composition is not None:
         workflows = sorted((ctx.composition / ".github/workflows").glob("*.yml"))
         workflows += sorted((ctx.composition / ".github/workflows").glob("*.yaml"))
+    classes = _workflow_classes(ctx, workflows)
+    details["workflow_classes"] = {name: cls for name, (cls, _) in classes.items()}
+    details["workflow_reasons"] = {name: reason for name, (_, reason) in classes.items()}
+
+    stale_current: List[dict] = []
+    stale_historical: List[dict] = []
     for workflow in workflows:
+        bucket = stale_current if classes[workflow.name][0] == "CURRENT" else stale_historical
         for match in _PIN.finditer(_read(workflow)):
             owner, sha = match.group(1), match.group(2)
             expected = ctx.pins.get(owner)
-            if expected and not sha.startswith(expected[:12]) and not expected.startswith(sha[:12]):
-                stale.append({"file": workflow.name, "owner": owner, "pinned": sha[:12],
-                              "expected": expected[:12]})
-    details["stale_pins"] = stale
-    if stale:
+            if expected and not (sha.startswith(expected[:12]) or expected.startswith(sha[:12])):
+                bucket.append({"file": workflow.name, "owner": owner,
+                               "pinned": sha[:12], "expected": expected[:12],
+                               "class": classes[workflow.name][0]})
+    details["stale_pins_current"] = stale_current
+    details["stale_pins_historical"] = stale_historical
+    if stale_historical:
+        evidence.append("historical workflows with their own frozen pins (not current evidence): "
+                        + json.dumps(stale_historical))
+    if stale_current:
         by_owner: Dict[str, List[str]] = {}
-        for item in stale:
+        for item in stale_current:
             by_owner.setdefault(item["owner"], []).append(item["file"])
-        failures.append(
-            f"{len(stale)} stale pin(s) in {len({s['file'] for s in stale})} workflow(s): "
-            + "; ".join(f"{owner} in {', '.join(sorted(set(files)))}"
-                        for owner, files in sorted(by_owner.items())))
-        evidence.append("stale pins: " + json.dumps(stale))
+        evidence.append("current workflows with stale pins: " + json.dumps(stale_current))
 
     tree_measure = None
     if ctx.composition is not None and ctx.expected_tree:
@@ -648,34 +815,50 @@ def oracle_provenance(ctx: Ctx) -> Result:
         details["composition"] = tree_measure
         evidence.append(f"composition tree: expected {ctx.expected_tree[:12]}, "
                         f"recomputed {actual[:12]} ({method})")
-        if not actual.startswith(ctx.expected_tree[:12]):
-            failures.append(f"composition identity mismatch: expected {ctx.expected_tree[:12]}, "
-                            f"recomputed {actual[:12]}")
 
     stamps = set()
     text = _evidence_text(ctx)
     for match in re.finditer(r"composition[^0-9a-f]{0,8}([0-9a-f]{12,40})", text, re.I):
         stamps.add(match.group(1))
     details["evidence_composition_stamps"] = sorted(stamps)
+    if stamps:
+        evidence.append("evidence composition stamps: " + ", ".join(sorted(stamps)))
+
+    failures: List[str] = []
+    if tree_measure and not tree_measure["actual"].startswith(ctx.expected_tree[:12]):
+        failures.append(f"composition identity mismatch: expected {ctx.expected_tree[:12]}, "
+                        f"recomputed {tree_measure['actual'][:12]}")
     if stamps and ctx.expected_tree and not any(
             stamp.startswith(ctx.expected_tree[:12]) or ctx.expected_tree.startswith(stamp[:12])
             for stamp in stamps):
         failures.append("evidence is stamped with a different composition: "
                         + ", ".join(sorted(stamps))[:200])
-    if stamps:
-        evidence.append("evidence composition stamps: " + ", ".join(sorted(stamps)))
+    if stale_current:
+        owners = sorted({item["owner"] for item in stale_current})
+        files = sorted({item["file"] for item in stale_current})
+        failures.append(f"{len(stale_current)} stale pin(s) in {len(files)} CURRENT workflow(s) "
+                        f"({', '.join(files)}) for owner(s) {', '.join(owners)}")
 
     if failures:
-        code = "STALE_PIN" if stale else ("STALE_COMPOSITION" if "composition" in " ".join(failures) else "PROVENANCE_MISMATCH")
-        owner = "A0" if stale else "A7"
+        code = "STALE_PIN" if stale_current else ("STALE_COMPOSITION" if tree_measure else "PROVENANCE_MISMATCH")
+        owner = "A0" if stale_current else "A7"
         return Result("O6", FAIL, code, owner, "evidence-integrity",
                       "current-product provenance cannot be established",
                       "; ".join(failures), evidence, details)
+
+    has_current = any(cls == "CURRENT" for cls, _ in classes.values())
+    if not has_current and not tree_measure:
+        return Result("O6", BLOCKED, "BLOCKED_NO_CURRENT_WORKFLOW", "A7", "evidence-integrity",
+                      "every workflow in this tree is declared historical",
+                      "Without at least one CURRENT workflow, or a reproduced tree identity, "
+                      "the tree cannot be tied to the live owner pins.", evidence, details)
     if not workflows and not stamps and not tree_measure:
         return Result("O6", BLOCKED, "BLOCKED_NO_PROVENANCE_INPUT", "A7", "evidence-integrity",
                       "nothing to check provenance against")
+    note = (f"{len(stale_historical)} stale pin(s) live only in declared historical workflows"
+            if stale_historical else "no stale pins anywhere")
     return Result("O6", PASS, "PROVENANCE_CURRENT", "A7", "evidence-integrity",
-                  "pins, workflows and composition identity agree", "", evidence, details)
+                  "current workflows and composition identity agree", note, evidence, details)
 
 
 # --------------------------------------------------------------------------- #
@@ -794,108 +977,189 @@ def _mini_composition(root: Path, consistent: bool) -> None:
 
 
 def self_test(verbose: bool = True) -> int:
+    """Prove every oracle rejects the known-bad case and accepts the known-good one.
+
+    Each case states the verdict **and** the code, because a FAIL for the wrong reason
+    is how a fail-closed pack quietly stops discriminating.
+    """
     def fresh() -> Path:
         return Path(tempfile.mkdtemp(prefix="a7-oracle-"))
 
     good_pins = {"A1": "a030cb89a5033ba5faba39995762b4bea1332cec"}
-    cases: List[Tuple[str, object, str, str]] = []
+    cases: List[Tuple[str, "Ctx", str, str, Optional[str]]] = []
 
-    # O1
+    # ------------------------------------------------------------------ O1
     root = fresh(); _write(root / "ev/process1.txt",
-                            "CT_BOOTSTRAP_BEFORE action_registered=false reader_ok=false reason=PLAYER_INPUT_MOVE_LEFT\n"
-                            "CT_BOOTSTRAP_AFTER registered=true events=4\n"
-                            "CT_BOOTSTRAP_READER_AFTER ok=true reason=\n"
-                            "CT_BOOTSTRAP_RESULT PASS_DIRECT_SCRIPT_FALSE_BLOCKER\n")
-    cases.append(("O1 negative (harness false blocker)", Ctx(evidence=root / "ev"), "O1", FAIL))
+                           "CT_BOOTSTRAP_BEFORE action_registered=false reader_ok=false reason=PLAYER_INPUT_MOVE_LEFT\n"
+                           "CT_BOOTSTRAP_READER_AFTER ok=true reason=\n"
+                           "CT_BOOTSTRAP_RESULT PASS_DIRECT_SCRIPT_FALSE_BLOCKER\n")
+    cases.append(("O1 harness false blocker → FAIL", Ctx(evidence=root / "ev"),
+                  "O1", FAIL, "TEST_BOOTSTRAP_FALSE_NEGATIVE"))
     root = fresh(); _write(root / "ev/process1.txt",
-                            "CT_BOOTSTRAP_BEFORE action_registered=true reader_ok=true reason=\n"
-                            "CT_BOOTSTRAP_READER_AFTER ok=true reason=\n")
-    cases.append(("O1 positive", Ctx(evidence=root / "ev"), "O1", PASS))
+                           "CT_BOOTSTRAP_BEFORE action_registered=true reader_ok=true reason=\n"
+                           "CT_BOOTSTRAP_READER_AFTER ok=true reason=\n")
+    cases.append(("O1 both halves clean → PASS", Ctx(evidence=root / "ev"), "O1", PASS, "NO_INPUT_BLOCKER"))
     root = fresh(); _write(root / "ev/process1.txt",
-                            "CT_BOOTSTRAP_BEFORE action_registered=false reader_ok=false reason=PLAYER_INPUT_MOVE_LEFT\n"
-                            "CT_BOOTSTRAP_READER_AFTER ok=false reason=PLAYER_INPUT_MOVE_LEFT_UNBOUND\n")
-    cases.append(("O1 negative (real A1 failure)", Ctx(evidence=root / "ev"), "O1", FAIL))
+                           "CT_BOOTSTRAP_BEFORE action_registered=false reader_ok=false reason=PLAYER_INPUT_MOVE_LEFT\n"
+                           "CT_BOOTSTRAP_READER_AFTER ok=false reason=PLAYER_INPUT_MOVE_LEFT_UNBOUND\n")
+    cases.append(("O1 genuine bootstrapped source refusal → FAIL A1", Ctx(evidence=root / "ev"),
+                  "O1", FAIL, "A1_SOURCE_CONTRACT"))
+    root = fresh(); _write(root / "ev/process1.txt",
+                           "CT_BOOTSTRAP_READER_AFTER ok=true reason=\n"
+                           "CT_BOOTSTRAP_RESULT PASS_DIRECT_SCRIPT_FALSE_BLOCKER\n")
+    cases.append(("O1 AFTER without BEFORE → BLOCKED (was a crash)", Ctx(evidence=root / "ev"),
+                  "O1", BLOCKED, "BLOCKED_MISSING_BOOTSTRAP_CONTROL"))
+    root = fresh(); _write(root / "ev/process1.txt",
+                           "CT_BOOTSTRAP_BEFORE action_registered=false reader_ok=false reason=PLAYER_INPUT_MOVE_LEFT\n")
+    cases.append(("O1 BEFORE without AFTER → BLOCKED", Ctx(evidence=root / "ev"),
+                  "O1", BLOCKED, "BLOCKED_MISSING_BOOTSTRAP_CONTROL"))
+    root = fresh(); _write(root / "ev/process1.txt", "A0_CONNECTED prefix_complete=true\n")
+    cases.append(("O1 no bootstrap evidence at all → BLOCKED", Ctx(evidence=root / "ev"),
+                  "O1", BLOCKED, "BLOCKED_NO_BOOTSTRAP_EVIDENCE"))
 
-    # O2
+    # ------------------------------------------------------------------ O2
     root = fresh(); _mini_composition(root / "comp", consistent=False)
-    cases.append(("O2 negative (sidecar world)", Ctx(composition=root / "comp"), "O2", FAIL))
+    cases.append(("O2 sidecar world → FAIL", Ctx(composition=root / "comp"), "O2", FAIL, "SIDECAR_WORLD"))
     root = fresh(); _mini_composition(root / "comp", consistent=True)
     _write(root / "ev/run.txt", "A7_O2 same_source=true authority=authored\n")
-    cases.append(("O2 positive", Ctx(composition=root / "comp", evidence=root / "ev"), "O2", PASS))
+    cases.append(("O2 one world + runtime proof → PASS",
+                  Ctx(composition=root / "comp", evidence=root / "ev"), "O2", PASS, "PLAYER_WORLD_MOUNTED"))
     root = fresh(); _mini_composition(root / "comp", consistent=True)
-    cases.append(("O2 blocked (no runtime evidence)", Ctx(composition=root / "comp"), "O2", BLOCKED))
+    cases.append(("O2 one world, no runtime proof → BLOCKED (not PASS)",
+                  Ctx(composition=root / "comp"), "O2", BLOCKED, "BLOCKED_NO_RUNTIME_AUTHORITY_EVIDENCE"))
 
-    # O3
+    # ------------------------------------------------------------------ O3
     root = fresh()
     _write(root / "ev/poi.txt",
            "".join(f"  ok    assertion {i}\n" for i in range(31))
            + "A0_POI_MOUNT_PHYSICAL_NOT_TESTED no A8 site is reachable in A1's 384x256 runtime world\n")
-    cases.append(("O3 negative (31 PASS, PHYSICAL_NOT_TESTED)", Ctx(evidence=root / "ev"), "O3", FAIL))
+    cases.append(("O3 31 green assertions + PHYSICAL_NOT_TESTED → FAIL",
+                  Ctx(evidence=root / "ev"), "O3", FAIL, "PHYSICAL_NOT_TESTED"))
     root = fresh()
     _write(root / "ev/poi.txt",
            "A7_O3 site=poi_crown_south_quarry entry=true exit=true return=true\n"
            "A7_O3 site=poi_crown_south_orchard entry=true exit=true return=true\n")
-    cases.append(("O3 positive (two physical sites)", Ctx(evidence=root / "ev"), "O3", PASS))
+    cases.append(("O3 two physical sites → PASS", Ctx(evidence=root / "ev"), "O3", PASS, "TWO_PHYSICAL_SITES"))
 
-    # O4
-    root = fresh()
-    _write(root / "ev/process1.txt",
-           "A0_CONNECTED prefix_complete=false checks=29 failures=1\n"
-           "SCRIPT ERROR: Invalid type in function '_owning_scroll' ... (previously freed)\n")
-    _write(root / "ev/process1.txt.exit", "1\n")
-    cases.append(("O4 negative (prefix false, freed row)", Ctx(evidence=root / "ev"), "O4", FAIL))
-    root = fresh()
-    _write(root / "ev/process1.txt",
-           "A0_CONNECTED prefix_complete=true checks=60 failures=0\n"
-           'A0_CONNECTED_DEPARTURE {"ok": true}\n')
-    _write(root / "ev/process1.txt.exit", "0\n")
-    _write(root / "ev/process2.txt",
-           'A0_CONNECTED_OFFLINE_SETTLE {"ok": true, "reason": "nothing_to_settle"}\n')
-    _write(root / "ev/process2.txt.exit", "0\n")
-    cases.append(("O4 negative (green exits, nothing to settle)", Ctx(evidence=root / "ev"), "O4", FAIL))
-    root = fresh()
-    _write(root / "ev/process1.txt",
-           "A0_CONNECTED prefix_complete=true checks=60 failures=0\n"
-           'A0_CONNECTED_DEPARTURE {"ok": true, "run_id": "run-1"}\n')
-    _write(root / "ev/process1.txt.exit", "0\n")
-    _write(root / "ev/process2.txt",
-           'A0_CONNECTED_OFFLINE_SETTLE {"ok": true, "reason": "settled", "amount": 1}\n'
-           'A0_CONNECTED_RESETTLE {"ok": true, "duplicate": true, "paid": false}\n')
-    _write(root / "ev/process2.txt.exit", "0\n")
-    cases.append(("O4 positive (funded, exactly once)", Ctx(evidence=root / "ev"), "O4", PASS))
+    # ------------------------------------------------------------------ O4
+    def journey(root: Path, settle_line: str, resettle_line: str = "", parts: str = "") -> Path:
+        _write(root / "ev/process1.txt",
+               "A0_CONNECTED prefix_complete=true checks=60 failures=0\n"
+               'A0_CONNECTED_DEPARTURE {"ok": true, "run_id": "run-1"}\n')
+        _write(root / "ev/process1.txt.exit", "0\n")
+        body = "A0_CONNECTED prefix_complete=true checks=60 failures=0\n" + settle_line + resettle_line + parts
+        _write(root / "ev/process2.txt", body)
+        _write(root / "ev/process2.txt.exit", "0\n")
+        return root / "ev"
 
-    # O5
+    paid = ('A0_CONNECTED_OFFLINE_SETTLE {"ok": true, "reason": "settled", "duplicate": false, '
+            '"proposal_id": "prop-7", "operations": 1, "applied": {"iron_ingot": 1}}\n')
+    refused = ('A0_CONNECTED_RESETTLE {"ok": false, "reason": "duplicate_receipt", "duplicate": true, '
+               '"paid": false, "proposal_id": "prop-7", "applied": {}}\n')
+
+    root = fresh()
+    cases.append(("O4 funded, exactly once → PASS", Ctx(evidence=journey(root, paid, refused)), "O4",
+                  PASS, "PAID_2PID_RECEIPT"))
+    root = fresh()
+    cases.append(("O4 OLD FALSE GREEN duplicate=false,paid=false → FAIL",
+                  Ctx(evidence=journey(root, paid,
+                                       'A0_CONNECTED_RESETTLE {"ok": true, "duplicate": false, "paid": false, '
+                                       '"proposal_id": "prop-7"}\n')), "O4", FAIL, "NO_DUPLICATE_REFUSAL"))
+    root = fresh()
+    cases.append(("O4 duplicate refusal with no prior paid settlement → BLOCKED",
+                  Ctx(evidence=journey(root, "", refused)), "O4", BLOCKED, "BLOCKED_NO_SETTLEMENT_RECEIPT"))
+    root = fresh()
+    cases.append(("O4 refusal claims duplicate on a job never paid here → BLOCKED",
+                  Ctx(evidence=journey(root, 'A0_CONNECTED_OFFLINE_SETTLE {"ok": true, "reason": "nothing_to_settle", '
+                                              '"duplicate": false}\n', refused)), "O4", FAIL, "NOTHING_TO_SETTLE"))
+    root = fresh()
+    cases.append(("O4 two outputs granted → FAIL",
+                  Ctx(evidence=journey(root, paid.replace('"iron_ingot": 1', '"iron_ingot": 2'), refused)),
+                  "O4", FAIL, "WRONG_GRANT_COUNT"))
+    root = fresh()
+    cases.append(("O4 refused claim names a different receipt → FAIL",
+                  Ctx(evidence=journey(root, paid, refused.replace("prop-7", "prop-8"))), "O4",
+                  FAIL, "RECEIPT_IDENTITY_MISMATCH"))
+    root = fresh()
+    cases.append(("O4 second claim marked paid → FAIL",
+                  Ctx(evidence=journey(root, paid, refused.replace('"paid": false', '"paid": true'))),
+                  "O4", FAIL, "SECOND_PAYOUT"))
+    root = fresh()
+    cases.append(("O4 settlement without receipt identity → BLOCKED",
+                  Ctx(evidence=journey(root, paid.replace('"proposal_id": "prop-7", ', ''), refused)), "O4",
+                  BLOCKED, "BLOCKED_MISSING_RECEIPT_IDENTITY"))
+    root = fresh()
+    cases.append(("O4 settlement without grant detail → BLOCKED",
+                  Ctx(evidence=journey(root, paid.replace(', "applied": {"iron_ingot": 1}', ''), refused)), "O4",
+                  BLOCKED, "BLOCKED_MISSING_GRANT_DETAIL"))
+    root = fresh()
+    cases.append(("O4 malformed settlement JSON → BLOCKED, never PASS",
+                  Ctx(evidence=journey(root, 'A0_CONNECTED_OFFLINE_SETTLE {"ok": true, "reason": ')), "O4",
+                  BLOCKED, "BLOCKED_NO_SETTLEMENT_RECEIPT"))
+    root = fresh()
+    cases.append(("O4 no duplicate attempt → FAIL",
+                  Ctx(evidence=journey(root, paid)), "O4", FAIL, "NO_DUPLICATE_CONTROL"))
+    root = fresh()
+    cases.append(("O4 refused claim without an identity → BLOCKED",
+                  Ctx(evidence=journey(root, paid, refused.replace('"proposal_id": "prop-7", ', ''))), "O4",
+                  BLOCKED, "BLOCKED_MISSING_RECEIPT_IDENTITY"))
+
+    # ------------------------------------------------------------------ O5
     root = fresh(); _png(root / "ev/black.png", "black")
     _png(root / "ev/b.png", "noise"); _png(root / "ev/c.png", "noise")
-    cases.append(("O5 negative (black frame among real ones)", Ctx(evidence=root / "ev"), "O5", FAIL))
+    cases.append(("O5 black frame among real ones → FAIL", Ctx(evidence=root / "ev"), "O5", FAIL, "BLANK_FRAME"))
     root = fresh()
     for name, size in (("720", (1280, 720)), ("1440", (2560, 1440)), ("2160", (3840, 2160))):
         _png(root / f"ev/{name}.png", "noise", size)
-    cases.append(("O5 positive (three resolutions, content)", Ctx(evidence=root / "ev"), "O5", PASS))
+    cases.append(("O5 three resolutions, non-blank → PASS (nonblank gate only)",
+                  Ctx(evidence=root / "ev"), "O5", PASS, "NONBLANK_FRAMES_ONLY"))
     root = fresh()
     for name in ("720", "1440", "2160"):
         _png(root / f"ev/{name}.png", "noise")
-    cases.append(("O5 negative (three frames, one resolution)",
-                  Ctx(evidence=root / "ev"), "O5", FAIL))
+    cases.append(("O5 three frames, one resolution → FAIL",
+                  Ctx(evidence=root / "ev"), "O5", FAIL, "INSUFFICIENT_FRAMES"))
 
-    # O6
-    root = fresh(); _mini_composition(root / "comp", consistent=False)  # stale A1 pin
-    cases.append(("O6 negative (stale workflow pin)", Ctx(composition=root / "comp", pins=good_pins), "O6", FAIL))
+    # ------------------------------------------------------------------ O6
     root = fresh(); _mini_composition(root / "comp", consistent=True)
     tree, _ = composition_tree(root / "comp")
-    cases.append(("O6 positive (pins and tree agree)",
-                  Ctx(composition=root / "comp", pins=good_pins, expected_tree=tree), "O6", PASS))
+    cases.append(("O6 pins and tree agree → PASS",
+                  Ctx(composition=root / "comp", pins=good_pins, expected_tree=tree),
+                  "O6", PASS, "PROVENANCE_CURRENT"))
     root = fresh(); _mini_composition(root / "comp", consistent=True)
-    cases.append(("O6 negative (composition identity mismatch)",
-                  Ctx(composition=root / "comp", pins=good_pins, expected_tree="0" * 40), "O6", FAIL))
+    cases.append(("O6 composition identity mismatch → FAIL",
+                  Ctx(composition=root / "comp", pins=good_pins, expected_tree="0" * 40),
+                  "O6", FAIL, "STALE_COMPOSITION"))
+    # a stale pin in a workflow that is NOT declared historical is a current-workflow failure
+    root = fresh(); _mini_composition(root / "comp", consistent=False)
+    cases.append(("O6 stale pin in an undeclared workflow → FAIL (fail-closed default)",
+                  Ctx(composition=root / "comp", pins=good_pins), "O6", FAIL, "STALE_PIN"))
+    # a tree whose only workflow is declared historical has no current provenance at all
+    root = fresh(); _mini_composition(root / "comp", consistent=False)
+    cases.append(("O6 only historical workflows → BLOCKED, not quietly PASS",
+                  Ctx(composition=root / "comp", pins=good_pins,
+                      pin_policy={"historical": {"a0-connected-journey.yml": {"reason": "frozen Round 12 fixture"}}}),
+                  "O6", BLOCKED, "BLOCKED_NO_CURRENT_WORKFLOW"))
+    # historical pins are labelled, and a CURRENT workflow that agrees still passes
+    root = fresh(); _mini_composition(root / "comp", consistent=False)
+    _write(root / "comp/.github/workflows/a0-current-journey.yml",
+           "env:\n  A1_SHA: " + good_pins["A1"] + "\n")
+    cases.append(("O6 historical stale + current agreement → PASS, labelled",
+                  Ctx(composition=root / "comp", pins=good_pins,
+                      pin_policy={"historical": {"a0-connected-journey.yml": {"reason": "frozen Round 12 fixture"}}}),
+                  "O6", PASS, "PROVENANCE_CURRENT"))
 
     failures = 0
-    for label, ctx, key, expected in cases:
-        result = ORACLES[key][1](ctx)
-        ok = result.verdict == expected
+    for label, ctx, key, expected, expected_code in cases:
+        try:
+            result = ORACLES[key][1](ctx)
+        except Exception as error:  # a crash is a self-test failure, not a pass
+            result = Result(key, "CRASH", "ORACLE_CRASHED", "A7", "evidence-integrity", repr(error))
+        ok = result.verdict == expected and (expected_code is None or result.code == expected_code)
         failures += 0 if ok else 1
         if verbose or not ok:
-            print(f"{'ok  ' if ok else 'FAIL'} {label:<48} -> {result.verdict:<7} {result.code}")
+            mark = "ok  " if ok else "FAIL"
+            want = f"{expected}/{expected_code}" if expected_code else expected
+            print(f"{mark} {label:<62} -> {result.verdict}/{result.code:<34} want {want}")
     print(f"\nself-test: {len(cases) - failures}/{len(cases)} oracle expectations met")
     return 0 if failures == 0 else 1
 
@@ -909,6 +1173,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     parser.add_argument("--evidence", type=Path)
     parser.add_argument("--pins", type=Path, help="JSON {owner: 40-hex sha}")
     parser.add_argument("--expected-tree", default="")
+    parser.add_argument("--pin-policy", type=Path,
+                        help="JSON with {\"historical\": {file: {reason: ...}}}; "
+                             "anything not declared historical is treated as CURRENT")
     parser.add_argument("--resolutions", type=int, default=3)
     parser.add_argument("--only", nargs="*", default=[])
     parser.add_argument("--out", type=Path)
@@ -920,8 +1187,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         return self_test()
 
     pins = _json(args.pins) if args.pins else {}
+    policy = _json(args.pin_policy) if args.pin_policy else {}
     ctx = Ctx(composition=args.composition, evidence=args.evidence, pins=pins,
-              expected_tree=args.expected_tree, require_resolutions=args.resolutions)
+              expected_tree=args.expected_tree, require_resolutions=args.resolutions,
+              pin_policy=policy)
     pack = run_pack(ctx, [key.upper() for key in args.only])
     if args.out:
         args.out.parent.mkdir(parents=True, exist_ok=True)

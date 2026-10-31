@@ -1,0 +1,15 @@
+{
+  "schema": "soh.a7.workflow_pin_policy.v1",
+  "policy": "Anything not listed under `historical` is CURRENT and is held to the live owner pins. A missing declaration therefore fails closed rather than forgiving a stale pin.",
+  "historical": {
+    "a0-a6-composition-validation.yml": {"reason": "workflow name says 'temporary native composition'; a frozen A6 pin experiment, not the production journey"},
+    "a0-a6-v4-latest-composition.yml": {"reason": "workflow name says 'V4 latest temporary native composition'; superseded by the production journey workflow"},
+    "a0-connector-endpoints.yml": {"reason": "workflow name says 'connector legacy endpoint physical walk'; legacy endpoint probe"},
+    "a0-connector-pilot.yml": {"reason": "workflow name says 'controlled pilot'; a pilot harness, not a production input"},
+    "a0-round12-composition.yml": {"reason": "workflow name says 'Round 12 owner composition'; frozen at round 12 on purpose"},
+    "a0-waystation-input-restart.yml": {"reason": "workflow name says 'input and separate-process pilot'; pilot harness"}
+  },
+  "current": {
+    "a0-connected-journey.yml": {"reason": "workflow name says 'connected survival journey (normal input, composed owners)': this is the production journey that must match the live owner heads"}
+  }
+}

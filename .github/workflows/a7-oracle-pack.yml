@@ -56,7 +56,7 @@ jobs:
           set -euo pipefail
           python3 -m pip install --quiet pillow
           python3 tools/survival/balance/a7_oracle_pack.py --self-test | tee oracle_selftest.txt
-          grep -q "17/17" oracle_selftest.txt
+          grep -q "31/31" oracle_selftest.txt
 
       - name: Compose the exact owner matrix (read-only)
         env:
@@ -87,6 +87,7 @@ jobs:
             --composition "$RUNNER_TEMP/base/.composition" \
             --evidence "$GITHUB_WORKSPACE/$EVIDENCE_DIR" \
             --pins "$GITHUB_WORKSPACE/docs/survival/balance/oracles/pins.r13.json" \
+            --pin-policy "$GITHUB_WORKSPACE/docs/survival/balance/oracles/workflow_pin_policy.json" \
             --expected-tree "$EXPECTED_TREE" \
             --out "$RUNNER_TEMP/pack.json" --markdown "$RUNNER_TEMP/pack.md" \
             | tee "$RUNNER_TEMP/pack.txt"

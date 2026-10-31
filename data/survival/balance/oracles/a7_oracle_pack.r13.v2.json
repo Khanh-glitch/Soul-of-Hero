@@ -1,0 +1,508 @@
+{
+  "schema": "soh.a7.oracle_pack.v1",
+  "overall": "FAIL",
+  "policy": "no score, no average; PASS requires positive evidence, missing evidence is BLOCKED",
+  "first_blocker": {
+    "oracle": "O2",
+    "verdict": "FAIL",
+    "code": "SIDECAR_WORLD",
+    "owner": "A0",
+    "kind": "source-contract",
+    "title": "the player's authoritative world and A1's authored world are two different documents",
+    "detail": "runtime world 384x256 != authored 1024x768; A0's own mount declares the authored stream runs beside the legacy world; 3 of 3 A8 sites lie outside the live world; A0's mount documents its own refusal as A1_RUNTIME_WORLD_EXTENT_ABSENT",
+    "evidence": [
+      "live runtime world bounds: (384, 256)",
+      "A1 authored frame: (1024, 768)",
+      "A8 declared sites: [('poi_crown_south_quarry', (30, 280)), ('poi_crown_south_orchard', (140, 360)), ('poi_crown_south_mill', (120, 300))]",
+      "sites outside the live bounds: [('poi_crown_south_quarry', (30, 280)), ('poi_crown_south_orchard', (140, 360)), ('poi_crown_south_mill', (120, 300))]",
+      "A0 mount declares sidecar: ['render_legacy := true', 'mounted *beside*']",
+      "A0 poi-mount refusal reason: A1_RUNTIME_WORLD_EXTENT_ABSENT",
+      "A8 package status: A8_OWNER_CONTRACT_REFRESH_READY_FOR_A0_REVIEW_NOT_MOUNTED"
+    ],
+    "measurements": {
+      "live": [
+        384,
+        256
+      ],
+      "authored": [
+        1024,
+        768
+      ],
+      "outside_sites": [
+        [
+          "poi_crown_south_quarry",
+          [
+            30,
+            280
+          ]
+        ],
+        [
+          "poi_crown_south_orchard",
+          [
+            140,
+            360
+          ]
+        ],
+        [
+          "poi_crown_south_mill",
+          [
+            120,
+            300
+          ]
+        ]
+      ],
+      "sidecar_markers": [
+        "render_legacy := true",
+        "mounted *beside*"
+      ]
+    }
+  },
+  "results": [
+    {
+      "oracle": "O1",
+      "verdict": "BLOCKED",
+      "code": "BLOCKED_NO_BOOTSTRAP_EVIDENCE",
+      "owner": "A7",
+      "kind": "evidence-integrity",
+      "title": "no before/after input-bootstrap pair in the evidence",
+      "detail": "A single half cannot distinguish a harness ordering defect from a genuine A1 refusal. `a1_runtime_compatibility.gd:124-131` gates on `InputMap.has_action`, which only exists once the `InputBootstrap` autoload has entered the tree, so both the pre-bootstrap and the bootstrapped run must be recorded. runner verdict present: (none)",
+      "evidence": [
+        "missing half: BEFORE",
+        "missing half: AFTER",
+        "runner verdict: (none)"
+      ],
+      "measurements": {
+        "missing": [
+          "BEFORE",
+          "AFTER"
+        ],
+        "present": null
+      }
+    },
+    {
+      "oracle": "O2",
+      "verdict": "FAIL",
+      "code": "SIDECAR_WORLD",
+      "owner": "A0",
+      "kind": "source-contract",
+      "title": "the player's authoritative world and A1's authored world are two different documents",
+      "detail": "runtime world 384x256 != authored 1024x768; A0's own mount declares the authored stream runs beside the legacy world; 3 of 3 A8 sites lie outside the live world; A0's mount documents its own refusal as A1_RUNTIME_WORLD_EXTENT_ABSENT",
+      "evidence": [
+        "live runtime world bounds: (384, 256)",
+        "A1 authored frame: (1024, 768)",
+        "A8 declared sites: [('poi_crown_south_quarry', (30, 280)), ('poi_crown_south_orchard', (140, 360)), ('poi_crown_south_mill', (120, 300))]",
+        "sites outside the live bounds: [('poi_crown_south_quarry', (30, 280)), ('poi_crown_south_orchard', (140, 360)), ('poi_crown_south_mill', (120, 300))]",
+        "A0 mount declares sidecar: ['render_legacy := true', 'mounted *beside*']",
+        "A0 poi-mount refusal reason: A1_RUNTIME_WORLD_EXTENT_ABSENT",
+        "A8 package status: A8_OWNER_CONTRACT_REFRESH_READY_FOR_A0_REVIEW_NOT_MOUNTED"
+      ],
+      "measurements": {
+        "live": [
+          384,
+          256
+        ],
+        "authored": [
+          1024,
+          768
+        ],
+        "outside_sites": [
+          [
+            "poi_crown_south_quarry",
+            [
+              30,
+              280
+            ]
+          ],
+          [
+            "poi_crown_south_orchard",
+            [
+              140,
+              360
+            ]
+          ],
+          [
+            "poi_crown_south_mill",
+            [
+              120,
+              300
+            ]
+          ]
+        ],
+        "sidecar_markers": [
+          "render_legacy := true",
+          "mounted *beside*"
+        ]
+      }
+    },
+    {
+      "oracle": "O3",
+      "verdict": "BLOCKED",
+      "code": "BLOCKED_NO_PHYSICAL_EVIDENCE",
+      "owner": "A7",
+      "kind": "evidence-integrity",
+      "title": "no physical site record in the evidence",
+      "detail": "33 assertions were printed, none of them about entering a site.",
+      "evidence": [
+        "assertions printed as ok: 33",
+        "physical site records: {}",
+        "NOT_TESTED marker: (none)"
+      ],
+      "measurements": {
+        "ok_count": 33
+      }
+    },
+    {
+      "oracle": "O4",
+      "verdict": "FAIL",
+      "code": "FREED_GUI_NODE",
+      "owner": "A0",
+      "kind": "real-gameplay",
+      "title": "the run touched a GUI node after the panel rebuilt it",
+      "detail": "A legitimate click may rebuild its rows; the test must verify committed state and the transaction receipt, never a cached object. First occurrence: previously freed.",
+      "evidence": [
+        "process1 exit=1 file=process1.txt",
+        "process2 exit=1 file=process2.txt",
+        "prefix_complete=true",
+        "departure=None",
+        "offline settlement=(absent)",
+        "re-settlement=(absent)",
+        "granted total from first settlement=None",
+        "receipt identity first/second=(none) / (none)",
+        "custody line=(absent)",
+        "first 'previously freed' line: previously freed"
+      ],
+      "measurements": {
+        "exit1": 1,
+        "exit2": 1,
+        "prefix_complete": true,
+        "settle_reason": "",
+        "settle_identity": "",
+        "resettle_identity": "",
+        "granted": null,
+        "regranted": null,
+        "resettle_duplicate": null,
+        "resettle_paid": null,
+        "resettle_has_paid_key": false
+      }
+    },
+    {
+      "oracle": "O5",
+      "verdict": "PASS",
+      "code": "NONBLANK_FRAMES_ONLY",
+      "owner": "A7",
+      "kind": "visual-product",
+      "title": "every frame is non-blank and reviewable in size \u2014 this is NOT a visual-quality verdict",
+      "detail": "This gate only refuses black, flat, undersized or missing frames. It says nothing about art quality, readability, composition or lighting; those remain NOT_GRADED until a human or a specified visual rubric runs, and no report may cite this PASS as visual acceptance.",
+      "evidence": [
+        "r14_home_1280x720.png: 1280x720 colors=16062 stdev=20.94 nonmodal=0.9728",
+        "r14_home_2560x1440.png: 2560x1440 colors=16024 stdev=20.896 nonmodal=0.9726",
+        "r14_home_3840x2160.png: 3840x2160 colors=16009 stdev=20.894 nonmodal=0.9725",
+        "r14_home_interior_1280x720.png: 1280x720 colors=15222 stdev=21.95 nonmodal=0.9797",
+        "r14_home_interior_2560x1440.png: 2560x1440 colors=15255 stdev=21.908 nonmodal=0.98",
+        "r14_home_interior_3840x2160.png: 3840x2160 colors=15247 stdev=21.9 nonmodal=0.98"
+      ],
+      "measurements": {
+        "frames": [
+          {
+            "width": 1280,
+            "height": 720,
+            "unique_colors": 16062,
+            "stdev": 20.94,
+            "nonmodal_fraction": 0.9728,
+            "mean_luminance": 79.75,
+            "samples": 16062,
+            "file": "r14_home_1280x720.png"
+          },
+          {
+            "width": 2560,
+            "height": 1440,
+            "unique_colors": 16024,
+            "stdev": 20.896,
+            "nonmodal_fraction": 0.9726,
+            "mean_luminance": 79.72,
+            "samples": 16024,
+            "file": "r14_home_2560x1440.png"
+          },
+          {
+            "width": 3840,
+            "height": 2160,
+            "unique_colors": 16009,
+            "stdev": 20.894,
+            "nonmodal_fraction": 0.9725,
+            "mean_luminance": 79.73,
+            "samples": 16009,
+            "file": "r14_home_3840x2160.png"
+          },
+          {
+            "width": 1280,
+            "height": 720,
+            "unique_colors": 15222,
+            "stdev": 21.95,
+            "nonmodal_fraction": 0.9797,
+            "mean_luminance": 83.98,
+            "samples": 15222,
+            "file": "r14_home_interior_1280x720.png"
+          },
+          {
+            "width": 2560,
+            "height": 1440,
+            "unique_colors": 15255,
+            "stdev": 21.908,
+            "nonmodal_fraction": 0.98,
+            "mean_luminance": 83.95,
+            "samples": 15255,
+            "file": "r14_home_interior_2560x1440.png"
+          },
+          {
+            "width": 3840,
+            "height": 2160,
+            "unique_colors": 15247,
+            "stdev": 21.9,
+            "nonmodal_fraction": 0.98,
+            "mean_luminance": 83.96,
+            "samples": 15247,
+            "file": "r14_home_interior_3840x2160.png"
+          }
+        ],
+        "resolutions": [
+          [
+            1280,
+            720
+          ],
+          [
+            2560,
+            1440
+          ],
+          [
+            3840,
+            2160
+          ]
+        ],
+        "visual_quality": "NOT_GRADED",
+        "scope": "nonblank_gate_only"
+      }
+    },
+    {
+      "oracle": "O6",
+      "verdict": "FAIL",
+      "code": "STALE_PIN",
+      "owner": "A0",
+      "kind": "evidence-integrity",
+      "title": "current-product provenance cannot be established",
+      "detail": "3 stale pin(s) in 1 CURRENT workflow(s) (a0-connected-journey.yml) for owner(s) A1, A6, A8",
+      "evidence": [
+        "historical workflows with their own frozen pins (not current evidence): [{\"file\": \"a0-a6-composition-validation.yml\", \"owner\": \"A6\", \"pinned\": \"6b801554a6af\", \"expected\": \"6d1e8bcee0bb\", \"class\": \"HISTORICAL\"}, {\"file\": \"a0-a6-composition-validation.yml\", \"owner\": \"A1\", \"pinned\": \"2cb1a3c5f093\", \"expected\": \"a030cb89a503\", \"class\": \"HISTORICAL\"}, {\"file\": \"a0-a6-composition-validation.yml\", \"owner\": \"A3\", \"pinned\": \"18e7afcbd576\", \"expected\": \"b44e22df3af4\", \"class\": \"HISTORICAL\"}, {\"file\": \"a0-a6-v4-latest-composition.yml\", \"owner\": \"A6\", \"pinned\": \"8bc0af5a1f5f\", \"expected\": \"6d1e8bcee0bb\", \"class\": \"HISTORICAL\"}, {\"file\": \"a0-a6-v4-latest-composition.yml\", \"owner\": \"A1\", \"pinned\": \"7fd000e1c017\", \"expected\": \"a030cb89a503\", \"class\": \"HISTORICAL\"}, {\"file\": \"a0-a6-v4-latest-composition.yml\", \"owner\": \"A3\", \"pinned\": \"c363c7e7599d\", \"expected\": \"b44e22df3af4\", \"class\": \"HISTORICAL\"}, {\"file\": \"a0-connector-endpoints.yml\", \"owner\": \"A1\", \"pinned\": \"2951bf8559b2\", \"expected\": \"a030cb89a503\", \"class\": \"HISTORICAL\"}, {\"file\": \"a0-connector-pilot.yml\", \"owner\": \"A1\", \"pinned\": \"2951bf8559b2\", \"expected\": \"a030cb89a503\", \"class\": \"HISTORICAL\"}, {\"file\": \"a0-round12-composition.yml\", \"owner\": \"A1\", \"pinned\": \"9ca1453ccdd3\", \"expected\": \"a030cb89a503\", \"class\": \"HISTORICAL\"}, {\"file\": \"a0-round12-composition.yml\", \"owner\": \"A6\", \"pinned\": \"81c1f57ea013\", \"expected\": \"6d1e8bcee0bb\", \"class\": \"HISTORICAL\"}, {\"file\": \"a0-round12-composition.yml\", \"owner\": \"A8\", \"pinned\": \"6337533f7cc0\", \"expected\": \"0f885df862d7\", \"class\": \"HISTORICAL\"}, {\"file\": \"a0-waystation-input-restart.yml\", \"owner\": \"A1\", \"pinned\": \"2951bf8559b2\", \"expected\": \"a030cb89a503\", \"class\": \"HISTORICAL\"}]",
+        "current workflows with stale pins: [{\"file\": \"a0-connected-journey.yml\", \"owner\": \"A1\", \"pinned\": \"8551a323e444\", \"expected\": \"a030cb89a503\", \"class\": \"CURRENT\"}, {\"file\": \"a0-connected-journey.yml\", \"owner\": \"A6\", \"pinned\": \"6d71410a370d\", \"expected\": \"6d1e8bcee0bb\", \"class\": \"CURRENT\"}, {\"file\": \"a0-connected-journey.yml\", \"owner\": \"A8\", \"pinned\": \"06d1758e2cf7\", \"expected\": \"0f885df862d7\", \"class\": \"CURRENT\"}]",
+        "composition tree: expected fbe54383881c, recomputed fbe54383881c (git-write-tree)"
+      ],
+      "measurements": {
+        "workflow_classes": {
+          "a0-a6-composition-validation.yml": "HISTORICAL",
+          "a0-a6-v4-latest-composition.yml": "HISTORICAL",
+          "a0-canonical-seam-probe.yml": "CURRENT",
+          "a0-connected-journey.yml": "CURRENT",
+          "a0-connector-endpoints.yml": "HISTORICAL",
+          "a0-connector-pilot.yml": "HISTORICAL",
+          "a0-native-visual-resolutions.yml": "CURRENT",
+          "a0-normal-entry-home-restart.yml": "CURRENT",
+          "a0-normal-home-journey.yml": "CURRENT",
+          "a0-optional-threat-fault.yml": "CURRENT",
+          "a0-optional-threat-journey.yml": "CURRENT",
+          "a0-output-capacity-probe.yml": "CURRENT",
+          "a0-production-waystation-candidate.yml": "CURRENT",
+          "a0-research-clock-ui.yml": "CURRENT",
+          "a0-round11-run-lifecycle.yml": "CURRENT",
+          "a0-round12-composition.yml": "HISTORICAL",
+          "a0-save-ambiguous-write.yml": "CURRENT",
+          "a0-save-precision.yml": "CURRENT",
+          "a0-survival-web-validation.yml": "CURRENT",
+          "a0-threat-reservation-restart.yml": "CURRENT",
+          "a0-waystation-input-restart.yml": "HISTORICAL",
+          "archive-room-capture.yml": "CURRENT",
+          "chapter1-architecture.yml": "CURRENT",
+          "chapter1-visual-audit.yml": "CURRENT",
+          "chapter1-visual-overhaul.yml": "CURRENT",
+          "gate0-integration.yml": "CURRENT",
+          "gate2-runtime.yml": "CURRENT",
+          "gate3-runtime.yml": "CURRENT",
+          "godot-runtime-validation.yml": "CURRENT",
+          "hero-library-godot.yml": "CURRENT",
+          "hollow-marches-web-playtest.yml": "CURRENT",
+          "integration-godot-acceptance.yml": "CURRENT",
+          "level2-audition.yml": "CURRENT",
+          "level5-redesign.yml": "CURRENT",
+          "overworld-runtime-validation.yml": "CURRENT",
+          "survival-handoff-contract.yml": "CURRENT",
+          "survival-runtime-validation.yml": "CURRENT",
+          "web-playtest-pages.yml": "CURRENT"
+        },
+        "workflow_reasons": {
+          "a0-a6-composition-validation.yml": "workflow name says 'temporary native composition'; a frozen A6 pin experiment, not the production journey",
+          "a0-a6-v4-latest-composition.yml": "workflow name says 'V4 latest temporary native composition'; superseded by the production journey workflow",
+          "a0-canonical-seam-probe.yml": "not declared historical: held to the live pins",
+          "a0-connected-journey.yml": "not declared historical: held to the live pins",
+          "a0-connector-endpoints.yml": "workflow name says 'connector legacy endpoint physical walk'; legacy endpoint probe",
+          "a0-connector-pilot.yml": "workflow name says 'controlled pilot'; a pilot harness, not a production input",
+          "a0-native-visual-resolutions.yml": "not declared historical: held to the live pins",
+          "a0-normal-entry-home-restart.yml": "not declared historical: held to the live pins",
+          "a0-normal-home-journey.yml": "not declared historical: held to the live pins",
+          "a0-optional-threat-fault.yml": "not declared historical: held to the live pins",
+          "a0-optional-threat-journey.yml": "not declared historical: held to the live pins",
+          "a0-output-capacity-probe.yml": "not declared historical: held to the live pins",
+          "a0-production-waystation-candidate.yml": "not declared historical: held to the live pins",
+          "a0-research-clock-ui.yml": "not declared historical: held to the live pins",
+          "a0-round11-run-lifecycle.yml": "not declared historical: held to the live pins",
+          "a0-round12-composition.yml": "workflow name says 'Round 12 owner composition'; frozen at round 12 on purpose",
+          "a0-save-ambiguous-write.yml": "not declared historical: held to the live pins",
+          "a0-save-precision.yml": "not declared historical: held to the live pins",
+          "a0-survival-web-validation.yml": "not declared historical: held to the live pins",
+          "a0-threat-reservation-restart.yml": "not declared historical: held to the live pins",
+          "a0-waystation-input-restart.yml": "workflow name says 'input and separate-process pilot'; pilot harness",
+          "archive-room-capture.yml": "not declared historical: held to the live pins",
+          "chapter1-architecture.yml": "not declared historical: held to the live pins",
+          "chapter1-visual-audit.yml": "not declared historical: held to the live pins",
+          "chapter1-visual-overhaul.yml": "not declared historical: held to the live pins",
+          "gate0-integration.yml": "not declared historical: held to the live pins",
+          "gate2-runtime.yml": "not declared historical: held to the live pins",
+          "gate3-runtime.yml": "not declared historical: held to the live pins",
+          "godot-runtime-validation.yml": "not declared historical: held to the live pins",
+          "hero-library-godot.yml": "not declared historical: held to the live pins",
+          "hollow-marches-web-playtest.yml": "not declared historical: held to the live pins",
+          "integration-godot-acceptance.yml": "not declared historical: held to the live pins",
+          "level2-audition.yml": "not declared historical: held to the live pins",
+          "level5-redesign.yml": "not declared historical: held to the live pins",
+          "overworld-runtime-validation.yml": "not declared historical: held to the live pins",
+          "survival-handoff-contract.yml": "not declared historical: held to the live pins",
+          "survival-runtime-validation.yml": "not declared historical: held to the live pins",
+          "web-playtest-pages.yml": "not declared historical: held to the live pins"
+        },
+        "stale_pins_current": [
+          {
+            "file": "a0-connected-journey.yml",
+            "owner": "A1",
+            "pinned": "8551a323e444",
+            "expected": "a030cb89a503",
+            "class": "CURRENT"
+          },
+          {
+            "file": "a0-connected-journey.yml",
+            "owner": "A6",
+            "pinned": "6d71410a370d",
+            "expected": "6d1e8bcee0bb",
+            "class": "CURRENT"
+          },
+          {
+            "file": "a0-connected-journey.yml",
+            "owner": "A8",
+            "pinned": "06d1758e2cf7",
+            "expected": "0f885df862d7",
+            "class": "CURRENT"
+          }
+        ],
+        "stale_pins_historical": [
+          {
+            "file": "a0-a6-composition-validation.yml",
+            "owner": "A6",
+            "pinned": "6b801554a6af",
+            "expected": "6d1e8bcee0bb",
+            "class": "HISTORICAL"
+          },
+          {
+            "file": "a0-a6-composition-validation.yml",
+            "owner": "A1",
+            "pinned": "2cb1a3c5f093",
+            "expected": "a030cb89a503",
+            "class": "HISTORICAL"
+          },
+          {
+            "file": "a0-a6-composition-validation.yml",
+            "owner": "A3",
+            "pinned": "18e7afcbd576",
+            "expected": "b44e22df3af4",
+            "class": "HISTORICAL"
+          },
+          {
+            "file": "a0-a6-v4-latest-composition.yml",
+            "owner": "A6",
+            "pinned": "8bc0af5a1f5f",
+            "expected": "6d1e8bcee0bb",
+            "class": "HISTORICAL"
+          },
+          {
+            "file": "a0-a6-v4-latest-composition.yml",
+            "owner": "A1",
+            "pinned": "7fd000e1c017",
+            "expected": "a030cb89a503",
+            "class": "HISTORICAL"
+          },
+          {
+            "file": "a0-a6-v4-latest-composition.yml",
+            "owner": "A3",
+            "pinned": "c363c7e7599d",
+            "expected": "b44e22df3af4",
+            "class": "HISTORICAL"
+          },
+          {
+            "file": "a0-connector-endpoints.yml",
+            "owner": "A1",
+            "pinned": "2951bf8559b2",
+            "expected": "a030cb89a503",
+            "class": "HISTORICAL"
+          },
+          {
+            "file": "a0-connector-pilot.yml",
+            "owner": "A1",
+            "pinned": "2951bf8559b2",
+            "expected": "a030cb89a503",
+            "class": "HISTORICAL"
+          },
+          {
+            "file": "a0-round12-composition.yml",
+            "owner": "A1",
+            "pinned": "9ca1453ccdd3",
+            "expected": "a030cb89a503",
+            "class": "HISTORICAL"
+          },
+          {
+            "file": "a0-round12-composition.yml",
+            "owner": "A6",
+            "pinned": "81c1f57ea013",
+            "expected": "6d1e8bcee0bb",
+            "class": "HISTORICAL"
+          },
+          {
+            "file": "a0-round12-composition.yml",
+            "owner": "A8",
+            "pinned": "6337533f7cc0",
+            "expected": "0f885df862d7",
+            "class": "HISTORICAL"
+          },
+          {
+            "file": "a0-waystation-input-restart.yml",
+            "owner": "A1",
+            "pinned": "2951bf8559b2",
+            "expected": "a030cb89a503",
+            "class": "HISTORICAL"
+          }
+        ],
+        "composition": {
+          "expected": "fbe54383881c6cc29c30874782721ea63155e661",
+          "actual": "fbe54383881c6cc29c30874782721ea63155e661",
+          "method": "git-write-tree"
+        },
+        "evidence_composition_stamps": []
+      }
+    }
+  ],
+  "composition": "/tmp/base/.composition",
+  "evidence": "docs/survival/balance/visual/r14",
+  "pins": {
+    "A0": "ee5f9f5160c8e4385f35a63b355ddda957f93d10",
+    "A1": "a030cb89a5033ba5faba39995762b4bea1332cec",
+    "A3": "b44e22df3af40939069189be14afc23ee1ce21c4",
+    "A6": "6d1e8bcee0bbb09be0ff04f14de1f7e59f06cfb8",
+    "A7": "a755d2aa99ebfdef5778140f386833a9877412d4",
+    "A8": "0f885df862d7d34f18ca456e80b1aaac05b23de0"
+  },
+  "expected_tree": "fbe54383881c6cc29c30874782721ea63155e661"
+}
