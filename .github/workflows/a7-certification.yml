@@ -60,12 +60,20 @@ jobs:
       - name: Run the certification probe on the composed tree
         run: |
           set -euo pipefail
-          cd "$RUNNER_TEMP/base/.composition"
           mkdir -p "$RUNNER_TEMP/evidence"
-          # Copy the A7 probe in from the harness branch: it is A7's file, not an
-          # owner's, and the composed tree is read-only for this run.
+          # The probe is A7's own file and must not be part of the certified tree, or
+          # the composition identity would change underneath the certification. Run it
+          # on a copy that differs from the certified tree by exactly that one file, and
+          # record the delta explicitly.
+          cp -a "$RUNNER_TEMP/base/.composition" "$RUNNER_TEMP/probe_tree"
+          mkdir -p "$RUNNER_TEMP/probe_tree/tests/survival"
           cp "$GITHUB_WORKSPACE/tests/survival/a7_certification_probe.gd" \
-             tests/survival/a7_certification_probe.gd
+             "$RUNNER_TEMP/probe_tree/tests/survival/a7_certification_probe.gd"
+          ( cd "$RUNNER_TEMP/probe_tree" && find . -type f | sort | sha256sum ) \
+            > "$RUNNER_TEMP/evidence/probe_tree_files.sha256"
+          echo "probe tree = certified composition + tests/survival/a7_certification_probe.gd" \
+            > "$RUNNER_TEMP/evidence/probe_tree_delta.txt"
+          cd "$RUNNER_TEMP/probe_tree"
           set +e
           timeout 600 godot --headless --path . --script res://tests/survival/a7_certification_probe.gd \
             > "$RUNNER_TEMP/evidence/probe.txt" 2>&1
