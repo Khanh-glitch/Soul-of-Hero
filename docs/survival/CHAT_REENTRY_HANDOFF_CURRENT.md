@@ -1,3 +1,21 @@
+# CT A7 ROUND12 INDEPENDENT REVIEW — 2026-10-31 (LATEST CHECKPOINT)
+
+STATUS: ACCEPT_DIAGNOSTIC_SCOPED, HOLD_FULL_ACCEPTANCE, B0_HOLD, E2_NOT_STARTED, NO_MERGE. Suggested Arena choice for A7: TIẾP TỤC LÀM VIỆC, not a product pass. No Arena prompt was dispatched by CT.
+
+A7 Round12's r12_full = 663a83ede523 pins A0 a6b57c36, A1 9ca1453c, A3 b44e22df, A6 6d71410a, A8 e1fe550b. Ledger native_runs.v1.json confirms 10 probes/200 checks, PASS2 FAIL0 RED7 BLOCKED1. These are saved author-produced native results: CT inspected code+ledger but DID NOT independently run Godot. Fifty-probe sweep is a separate set: PASS7 FAIL8 BLOCKED9 RED26.
+
+CRITICAL CORRECTION: r12_home_probe.gd explicitly FIXTURE_GRANTs materials, calls select_piece/try_place, activate_bed, deposit_all/withdraw_all, queue_recipe directly. 18/18 proves paid home mechanics, real structure, topology and station-distance gates, NOT complete ordinary-input player construction. r12_j01_probe.gd similarly invokes node.interact and economy.queue_recipe/collect directly despite real movement. Thus report claims "player can do today with their own hands" and J01 "playable" REQUIRE scoped correction; no full normal-input journey proven. A7 §3.3 correctly assigns 13/57 item-kind rejection to A0 SaveService, but §10.2 mistakenly asks A3 to fix kind mapping; A3 owns knife/catalogue, not SaveService enum.
+
+A7 on pinned candidate correctly identifies missing A0 appearance API+scene mount, A6 art bytes absent, A1 118 POIs with only 10 inside 384x256, 3 A8 sites refused, threat default off, no live Core route. Visual captures headless failed: native survival 1x 720p/1440p/2160p VISUAL_NOT_TESTED. New A7 Xvfb workflow was added after original report, but no PNG was verified or opened; 1x gate remains NOT_TESTED.
+
+FRESH checked refs: A7 PR25 23cbf9df295b25efc837e6a3d16eacdd8cb4a5f7, A0 PR21 3a240d2a02a7f4ffdf68cce8f2bd75e913e5efe4 (new normal connected journey test), A8 PR26 efead2ad0cefc0113dd81185072c022efd8f0af2 (new native POI input test), A6 6d71410a370df805f8b29a018b61380d6c233b65. A7's candidate now stale relative to active A0/A8. Review comment on PR25: 6541013653. GH comment is NOT an Arena message.
+
+DECISION: Hold full A7 review until A7 corrects its own oracle overclaims and SaveService ownership in existing Round12 report, successfully publishes actual survival rendered PNGs and reviewer opens them, and independently composes up-to-date A0/A8 sources for ordinary user input+2PID and POI route evidence. Keep A0/A8/AVFX running uninterrupted; A1 parallel resumption only if creator dispatches, A3/A6 paused, S6 off. No merge. Read protocol/Contract/D062-74/complete Atlas/acceptance and exact A7 Round12 report and native probes before next verdict.
+
+NEXT: check newest A7 PR25 CI and visual/PNG files, check A0/A8 commits before treating old pinned failures as current, close the R12 normal-input and 1x visual evidence gaps. Any failure in Git/Docs sync is DOCS_SYNC_PENDING.
+
+---
+
 # 2026-10-31 CT SECOND AUDIT — MANDATORY HANDOFF / EVIDENCE CORRECTION (READ BEFORE OLDER SNAPSHOTS)
 
 **Why this entry exists.** The creator rejected the previous Control Tower review as procedurally unauditable: it issued an A0 continuation prompt without an adequate standalone handoff, durable Git/Docs synchronization, or explicit claim→evidence→action receipt. This is a correction IN EXISTING CANONICAL HANDOFF, not a new competing design contract. Effective product authority remains CURRENT_PRODUCT_CONTRACT.md + DECISIONS D062–D074; evaluation authority remains INDEPENDENT_DEEP_REVIEW_PROTOCOL.md.
