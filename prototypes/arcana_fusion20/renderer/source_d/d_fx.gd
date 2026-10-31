@@ -415,6 +415,12 @@ static func _col_at(col: Variant, i: int) -> Color:
 func poly(pts8: Array, col: Color, o: Dictionary = {}) -> void:
     if pts8.size() < 8:
         return
+    if float(o.get("edge", 0.05)) <= 1.5:
+        # The authored quad is two GL triangles; use their pixel-center
+        # interpolation, fragment derivatives and normalized RGBA8 transfer.
+        # The original voidSpace branch (edge > 1.5) is still unported.
+        DPolyTriangles.render(self, pts8, col, o)
+        return
     var glow := float(o.get("glow", 0.0))
     var edge := float(o.get("edge", 0.05))
     var alpha_mul := float(o.get("alpha", 1.0))
