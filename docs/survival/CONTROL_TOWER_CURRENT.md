@@ -1,4 +1,7 @@
 <!-- CT_FINISHLINE_ACTIVE_START -->
+## CT A1 R13 HANDOFF READBACK — 2026-11-01 · Docs sync confirmed
+
+Both canonical Google Docs tabs are now successfully updated and independently reread: tab04 contains the exact A1 R13 review checkpoint for ce9d4ba2d (native 299/0, 21 captured PNGs, visual marsh regression, D051 staged=false); tab12 contains the M1/M2 trigger and next A1/A0 contract. This supersedes the PRIOR generalized DOCS_SYNC_PENDING note only for this NEW A1 checkpoint; earlier blocked edits are historical and no claim of retroactive upload is made. PR20 review comment 6546947068 also posted. Git metadata observed after review: A3 PR19 head 9d751d574f5e... and A7 PR25 head a18b977f07b4... moved and are UNREVIEWED by this A1 audit; other owner statements are last-checked, not live Arena status. No Arena tasks have been dispatched or acknowledged.
 ## CT LIVE A1 R13 MAP ART ACCEPTANCE — 2026-11-01 · NEWEST SOURCE/VISUAL CHECKPOINT
 
 **Purpose:** This checkpoint supersedes older A1 art-state paragraphs, not the immutable Current Product Contract/Decisions/Atlas. User asked to read full current plans, deep gameplay and CT-GATE and independently accept A1 R13 map art; no Arena dispatch occurred. Exact A1 PR20 HEAD ce9d4ba2d3db153011874aa41b789fa8092be042 (open); implementation dab46059dae27d11369f0c62bee314c4f77549ec, HEAD changes 15→21 capture anti-vacuity expected count. Direct owner directive PR20 comment 6546121715, review CT PR20 comment 6546947068.
