@@ -1,0 +1,40 @@
+name: ARCANA20 Worldseed exact noise axis comparison
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-a16-noise-axes-bench.yml', 'prototypes/arcana_fusion20/renderer/a16_noise_axes_benchmark.gd', 'prototypes/arcana_fusion20/renderer/source_a/a_worldseed_growth.gd']
+permissions:
+  contents: read
+jobs:
+  worldseed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import source project
+        run: |
+          godot --headless --path . --import > import.log 2>&1
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' import.log
+      - name: Compare deterministic full source fields
+        run: |
+          set -o pipefail
+          timeout 600s godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/a16_noise_axes_benchmark.gd 2>&1 | tee bench.log
+          grep -Fq A16_NOISE_AXES_EXACT_COMPLETE bench.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|ERROR:' bench.log
+      - name: Surface timings and first errors
+        if: always()
+        run: |
+          test ! -f bench.log || grep -E 'A16_NOISE_AXES_EXACT|SCRIPT ERROR|Parse Error|ERROR:' bench.log | head -10 | sed 's/^/::notice::/'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcana20-a16-noise-axes-exact
+          path: |
+            import.log
+            bench.log
