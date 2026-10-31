@@ -107,6 +107,19 @@ jobs:
           grep -q "A6 AVATAR IDENTITY NATIVE TEST PASSED" .artifacts/fail-closed-verify.log
           echo "FAIL-CLOSED GATE PASSED" >> "$GITHUB_STEP_SUMMARY"
 
+      # The mount contract A0 has to satisfy, runnable on a public clone with no
+      # licensed art and no renderer. This is the executable half of the integration
+      # handoff: it proves the consumer fails closed by name rather than substituting
+      # a proxy character, and that a changed identity re-resolves.
+      - name: Avatar consumer contract (no licensed art required)
+        run: |
+          set -euo pipefail
+          timeout --signal=TERM --kill-after=15s 300s godot --headless --path . \
+            res://tests/survival/ui/player_avatar_consumer_contract_test.tscn \
+            2>&1 | tee .artifacts/consumer-contract.log
+          grep -q "A6 AVATAR CONSUMER CONTRACT PASSED" .artifacts/consumer-contract.log
+          echo "CONSUMER CONTRACT PASSED" >> "$GITHUB_STEP_SUMMARY"
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:

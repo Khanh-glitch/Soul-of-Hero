@@ -38,6 +38,13 @@ const STATUS_SOURCE_BLOCKED := "SOURCE_BLOCKED"
 ## 120x80 with the character standing on the last row, drawn from y=-31.
 @export var host_visual_feet_y := 9.0
 
+## Where the A0 appearance projection is read from. Production leaves this empty and
+## the presenter resolves the SaveService autoload; a contract test - or a future host
+## with a different owner node - points it at any object exposing
+## `get_player_appearance_projection()` and optionally `player_avatar_changed`.
+## The presenter still only ever reads: it never writes identity through this seam.
+var owner_source: Node = null
+
 var _host: Node2D
 var _host_sprite: AnimatedSprite2D
 var _avatar_sprite: AnimatedSprite2D
@@ -71,7 +78,7 @@ func _ready() -> void:
 		push_warning("PlayerAvatarPresenter: %s" % _reason)
 		return
 	refresh()
-	var save_service := get_node_or_null(SAVE_SERVICE_PATH)
+	var save_service := _owner()
 	# Both A0 signals carry a payload (the avatar record / the loaded snapshot),
 	# so they must land on handlers rather than on the zero-argument refresh().
 	if save_service != null and save_service.has_signal(&"player_avatar_changed"):
@@ -96,12 +103,20 @@ func _exit_tree() -> void:
 	_teardown_avatar_sprite()
 
 
+## The appearance authority: an explicitly supplied owner in tests, SaveService in the
+## running game. Missing is a legitimate answer and resolves to a named blocker.
+func _owner() -> Node:
+	if owner_source != null and is_instance_valid(owner_source):
+		return owner_source
+	return get_node_or_null(SAVE_SERVICE_PATH)
+
+
 ## Re-resolves A0 identity and the licensed art record. Safe to call at any time;
 ## a blocked result removes the avatar rather than inventing one.
 func refresh() -> void:
 	if _host_sprite == null:
 		return
-	var save_service := get_node_or_null(SAVE_SERVICE_PATH)
+	var save_service := _owner()
 	if save_service == null or not save_service.has_method(&"get_player_appearance_projection"):
 		_apply_blocked(STATUS_NO_SAVE, "", 0, "A0 SaveService is unavailable.")
 		return
