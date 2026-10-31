@@ -202,6 +202,13 @@ func _continuation(ow: Node) -> void:
 	await _tap_action(&"economy_toggle")
 	await process_frame
 	var charcoal_button := panel.find_child("Recipe_burn_charcoal_%s" % furnace_id, true, false) as Button
+	if charcoal_button == null:
+		# The panel rebuilds its station list as the player moves; give it a frame
+		# of real time before calling the recipe missing.
+		await create_timer(1.0).timeout
+		charcoal_button = panel.find_child("Recipe_burn_charcoal_%s" % furnace_id, true, false) as Button
+	if charcoal_button == null:
+		_dump_panel(panel, host, furnace_id)
 	_expect(charcoal_button != null, "the physical furnace offers its own charcoal recipe")
 	if charcoal_button == null:
 		_write_audit(ow, {})
@@ -486,6 +493,24 @@ func _place_piece(ow: Node, hero: CharacterBody2D, nav: OverworldTraversability,
 	await _click_window(window_point)
 	await process_frame
 	return placement
+
+
+## When a recipe is not where the panel says it should be, print what the panel
+## and the session actually contain. A missing button must be a fact, not a guess.
+func _dump_panel(panel: Node, host: Node, station_id: String) -> void:
+	var rows: Array[String] = []
+	for value: Node in panel.find_children("*", "Button", true, false):
+		rows.append(String(value.name))
+	var recipes: Array[String] = []
+	for entry: Variant in (host.call(&"available_recipes", station_id) as Array):
+		recipes.append(String((entry as Dictionary).get("id", "")))
+	var stations: Array[String] = []
+	for entry: Variant in (host.call(&"available_stations") as Array):
+		var station: Dictionary = entry
+		stations.append("%s:%s:t%d" % [String(station.get("station_id", "")),
+			String(station.get("kind", "")), int(station.get("tier", 0))])
+	print("A0_CONNECTED_PANEL open=%s station=%s recipes=%s stations=%s buttons=%s" % [
+		str(bool(panel.call(&"is_open"))), station_id, str(recipes), str(stations), str(rows.slice(0, 24))])
 
 
 ## Walk toward a physical station until it is within the interaction reach, using
