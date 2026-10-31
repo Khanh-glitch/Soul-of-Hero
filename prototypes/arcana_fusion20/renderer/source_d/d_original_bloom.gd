@@ -1,6 +1,6 @@
 ## Original D multi-resolution bright/blur chain operating on an explicit scene
 ## texture. This producer is not yet attached to the live SOH scene and does
-## do not constitute world/visual approval. A caller must pass
+## not constitute world/visual approval. A caller must pass
 ## the actual world-composited scene, never a Gold/fake battlefield.
 extends Node
 class_name DOriginalBloom
@@ -15,6 +15,7 @@ var _small: SubViewport
 var _wide: SubViewport
 var _post: SubViewport
 var _post_material: ShaderMaterial
+var _post_rect: ColorRect
 
 func _stage(input: Texture2D, size: Vector2i, mode: int, dir: Vector2, nearest := false, threshold := 0.42, knee := 0.5) -> SubViewport:
     var vp := SubViewport.new()
@@ -40,8 +41,9 @@ func _stage(input: Texture2D, size: Vector2i, mode: int, dir: Vector2, nearest :
     if _first_material == null: _first_material = mat
     return vp
 
-func setup(scene: Texture2D) -> void:
+func setup(scene: Texture2D, output_size := Vector2i(480, 270)) -> void:
     assert(_stages.is_empty(), "D bloom setup must only be called once")
+    assert(scene.get_size() == Vector2(480, 270), "D bloom needs the original 480x270 scene field")
     var bright := _stage(scene, HALF, 0, Vector2.ZERO, true, 0.42, 0.5)
     var h1 := _stage(bright.get_texture(), HALF, 1, Vector2(1.6 / HALF.x, 0.0))
     var v1 := _stage(h1.get_texture(), HALF, 1, Vector2(0.0, 1.6 / HALF.y))
@@ -53,24 +55,30 @@ func setup(scene: Texture2D) -> void:
     var h4 := _stage(v3.get_texture(), HALF, 1, Vector2(4.6 / QUARTER.x, 0.0))
     _wide = _stage(h4.get_texture(), QUARTER, 1, Vector2(0.0, 4.6 / HALF.y))
     _post = SubViewport.new()
-    _post.size = Vector2i(480, 270)
+    _post.size = output_size
     _post.disable_3d = true
     _post.render_target_update_mode = SubViewport.UPDATE_ALWAYS
     add_child(_post)
-    var post_rect := ColorRect.new()
-    post_rect.size = Vector2(_post.size)
+    _post_rect = ColorRect.new()
+    _post_rect.size = Vector2(_post.size)
     _post_material = ShaderMaterial.new()
     _post_material.shader = POST
     _post_material.set_shader_parameter("scene_tex", scene)
     _post_material.set_shader_parameter("bloom_tex", _small.get_texture())
     _post_material.set_shader_parameter("bloom2_tex", _wide.get_texture())
-    post_rect.material = _post_material
-    _post.add_child(post_rect)
+    _post_rect.material = _post_material
+    _post.add_child(_post_rect)
 
 func set_scene(scene: Texture2D) -> void:
+    assert(scene.get_size() == Vector2(480, 270), "D bloom needs the original 480x270 scene field")
     _first_material.set_shader_parameter("input_nearest", scene)
     _first_material.set_shader_parameter("input_linear", scene)
     _post_material.set_shader_parameter("scene_tex", scene)
+
+func set_output_size(output_size: Vector2i) -> void:
+    assert(output_size.x > 0 and output_size.y > 0)
+    _post.size = output_size
+    _post_rect.size = Vector2(output_size)
 
 func set_post_params(params: Dictionary) -> void:
     for key in ["bloom_amount", "exposure", "levels", "flash_amount", "vignette", "saturation", "chromatic_aberration"]:
