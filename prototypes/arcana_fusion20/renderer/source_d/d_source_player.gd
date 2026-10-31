@@ -144,6 +144,7 @@ func source_pass_frame() -> Arcana20SourcePassFrame:
     result.d_influence = _eng.fx.world_influence
     result.d_world_warp = _eng.fx.world_warp
     result.d_warp_influence = _eng.fx.world_warp_influence
+    result.d_renderer_time = _eng.fx.t
     result.d_warp_amount = _eng.fx.warp_amt
     result.d_bends = _eng.fx.world_bends.duplicate(true)
     result.d_bloom_gain = _eng.fx.bloom_gain

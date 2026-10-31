@@ -66,10 +66,11 @@ func _out_fade(t: float) -> float:
 
 func update(t: float, dt: float) -> void:
     fx.clear()
-    fx.t = t
-    # The browser source uses a tiny dt=0.0001 for the first reset
-    # render, then advances renderer.time at 60 Hz independently of t.
+    # The spell timeline and renderer shader clock differ on the reset frame:
+    # spell t advances 1/60, but Renderer.frame advances by only 0.0001.
+    # Ribbon/sprite shader animation uses renderer.time, not spell t.
     var renderer_time := maxf(0.0001, t - 1.0 / 60.0 + 0.0001)
+    fx.t = renderer_time
     fx.rng = DFx.source_rng(int(renderer_time * 977.0))
     var rng := DFx.source_rng(600 + floori(t * 30.0))
     var P := DFx.pal_astral()

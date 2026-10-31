@@ -38,7 +38,7 @@ func consume(frame: Arcana20SourcePassFrame) -> void:
     _material.set_shader_parameter("light_tex", _sprite.texture)
     _material.set_shader_parameter("warp_tex", _set_texture("warp", frame.d_world_warp))
     _material.set_shader_parameter("influence_tex", _set_texture("influence", influence))
-    _material.set_shader_parameter("source_time", frame.source_time)
+    _material.set_shader_parameter("source_time", frame.d_renderer_time)
     _material.set_shader_parameter("warp_amount", frame.d_warp_amount)
     _sprite.global_transform = frame.source_to_world
     _sprite.visible = true

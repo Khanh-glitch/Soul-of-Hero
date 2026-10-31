@@ -71,6 +71,7 @@ var d_rgb: PackedFloat32Array
 var d_influence: PackedByteArray
 var d_world_warp: PackedFloat32Array
 var d_warp_influence: PackedByteArray
+var d_renderer_time: float
 var d_warp_amount: float
 var d_bends: Array[Dictionary]
 var d_bloom_gain: float
