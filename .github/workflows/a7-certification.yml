@@ -12,7 +12,7 @@ on:
       - ".github/workflows/a7-certification.yml"
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write   # only to commit the run's own evidence back to the A7 branch
 
 env:
   A0_SHA: a6e3797879915510b2e86be0d2ee521f53967c94
@@ -121,6 +121,29 @@ jobs:
           # the harness produced no report at all.
           test -s "$RUNNER_TEMP/report.json"
           exit 0
+
+      - name: Commit the evidence into the A7 branch (readable without blob storage)
+        if: always()
+        run: |
+          set -euo pipefail
+          cd "$GITHUB_WORKSPACE"
+          OUT="docs/survival/balance/certification/r14_ci"
+          mkdir -p "$OUT"
+          for f in report.json report.md certify.txt; do
+            [ -f "$RUNNER_TEMP/$f" ] && cp "$RUNNER_TEMP/$f" "$OUT/$f"
+          done
+          [ -f "$RUNNER_TEMP/evidence/probe.txt" ] && cp "$RUNNER_TEMP/evidence/probe.txt" "$OUT/probe.txt"
+          cp selftest.txt "$OUT/selftest.txt" 2>/dev/null || true
+          git config user.name "a7-certification"
+          git config user.email "a7-certification@users.noreply.github.com"
+          git add "$OUT"
+          if git diff --cached --quiet; then
+            echo "no evidence change"
+          else
+            git commit -q -m "A7 R14 CI evidence: certification run $GITHUB_RUN_ID on $EXPECTED_TREE"
+            git pull --rebase --autostash -q origin "$GITHUB_REF_NAME" || true
+            git push -q origin "HEAD:$GITHUB_REF_NAME"
+          fi
 
       - name: Upload certification artifacts
         if: always()
