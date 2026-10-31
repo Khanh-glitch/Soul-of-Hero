@@ -18,6 +18,15 @@ func render(f: CFrame, t: float) -> void:
         {"n":12,"off":0.0,"l":18.0 * CMath.ease_out(CMath.inv(3.8,5.0,t)) * _fold(t,0.0),"wd":3.4,"tw":0.045,"kind":2},
         {"n":9,"off":0.5,"l":38.0 * CMath.back_out(CMath.inv(3.2,4.6,t),1.4) * _fold(t,0.15),"wd":9.0,"tw":0.0,"kind":1},
         {"n":7,"off":0.2,"l":76.0 * CMath.ease_out(CMath.inv(2.6,6.0,t),2.0) * _fold(t,0.35),"wd":17.0,"tw":0.0,"kind":0}]
+    # Each angle depends only on the layer/petal and source time, not the
+    # pixel. Keep the original double operations and order; do not subsample.
+    var fold_shift := (1.0-_fold(t,0.2))*1.6
+    for l in lay:
+        var angles := PackedFloat64Array()
+        var kind: int = l.kind
+        for k in range(int(l.n)):
+            angles.append(((float(k)+float(l.off))/float(l.n))*CMath.TAU + (t*0.05 if kind==1 else 0.0) + sin(t*31.0+float(k)*1.7)*float(l.tw) + fold_shift)
+        l.angles = angles
     f.field(CX-80.0,CY-80.0*SY,CX+80.0,CY+80.0*SY,func(x: int,y: int) -> void:
         var dx := float(x)+0.5-CX
         var dy := (float(y)+0.5-CY)/SY
@@ -28,11 +37,11 @@ func render(f: CFrame, t: float) -> void:
             var length: float = l.l
             if length < 1.0 or r > length: continue
             var kind: int = l.kind
+            var u := r/length
+            var hw := float(l.wd)*pow(sin(PI*minf(1.0,u)),0.8)*(1.0-0.25*u)
+            var angles: PackedFloat64Array = l.angles
             for k in range(int(l.n)):
-                var ang := ((float(k)+float(l.off))/float(l.n))*CMath.TAU + (t*0.05 if kind==1 else 0.0) + sin(t*31.0+float(k)*1.7)*float(l.tw) + (1.0-_fold(t,0.2))*1.6
-                var u := r/length
-                var hw := float(l.wd)*pow(sin(PI*minf(1.0,u)),0.8)*(1.0-0.25*u)
-                var v := CMath.ang_diff(ang,pa)*r/maxf(hw,0.3)
+                var v := CMath.ang_diff(angles[k],pa)*r/maxf(hw,0.3)
                 if absf(v)>=1.0: continue
                 var th := CMath.bayer(x,y)
                 var av := absf(v)

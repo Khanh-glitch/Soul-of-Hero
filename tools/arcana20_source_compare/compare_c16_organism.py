@@ -34,3 +34,9 @@ for tick in (180,240,300,381,456,510,558):
          **metrics,'regions':regions,'scope':'C16 original layered leaves and cellular/inner petals only, on zero base, seed119785; no other growth, post or world'}
     rows.append(row); print('C16_ORGANISM_COMPARE',json.dumps({k:v for k,v in row.items() if k!='regions'}),flush=True)
 (p/'comparison.json').write_text(json.dumps(rows,indent=2))
+
+# Strict source-field regression, not world or visual approval. A small fixed
+# absolute error allows float32 round-off; coverage must be exact.
+for row in rows:
+    if row['authored_write_coverage_iou'] != 1.0 or any(row[k+'_max'] > 1e-6 for k in ('ink','light','disp')):
+        raise SystemExit(f"source field regression at tick {row['tick']}")
