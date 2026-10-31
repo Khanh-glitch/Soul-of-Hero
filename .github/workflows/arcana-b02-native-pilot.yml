@@ -1,0 +1,41 @@
+name: ARCANA #02 original B source — Godot native pilot
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "prototypes/arcana_fusion20/r6/**"
+      - ".github/workflows/arcana-b02-native-pilot.yml"
+permissions:
+  contents: read
+jobs:
+  b02-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Prepare and import
+        shell: bash
+        run: |
+          mkdir -p .artifacts/b02
+          godot --version | tee .artifacts/b02/engine.log
+          timeout 180s godot --headless --editor --path . --import --quit 2>&1 | tee .artifacts/b02/import.log
+      - name: Native original B render with real map and enemy
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 150s xvfb-run -a -s '-screen 0 1280x720x24' godot --path . --rendering-method gl_compatibility --script \
+            res://prototypes/arcana_fusion20/r6/b02_native_visual_gate.gd 2>&1 | tee .artifacts/b02/native.log
+          grep -Fq 'B02_RESULT PASS failures=[]' .artifacts/b02/native.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|B02_FAIL' .artifacts/b02/native.log
+          find ~/.local/share/godot -name 'B02_*.png' -exec cp {} .artifacts/b02/ \; || true
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: b02-original-B-native-godot-evidence
+          path: .artifacts/b02
+          retention-days: 14
