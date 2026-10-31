@@ -9,7 +9,7 @@ const SLOTS: Array[Dictionary] = [
     {"id":1,"name":"Cinder Crown","school":"fire","lead":"A+C","parts":["A:01","C:01"],"duration":7.8,"climax":4.82,"approved":true},
     {"id":2,"name":"Furnace Wyrm","school":"fire","lead":"B","parts":["B:02"],"duration":7.6,"climax":5.12,"approved":true},
     {"id":3,"name":"Meteor Loom","school":"fire","lead":"B","parts":["B:03"],"duration":10.0,"climax":7.25,"approved":true},
-    {"id":4,"name":"Ashen Guillotine","school":"fire","lead":"NEW","parts":["C:04_STUDY","A:04_STUDY"],"duration":7.6,"climax":4.25,"approved":false,"redesign":"Diagonal slit > physical blade > one fast cut > delayed A cracks; C flame column study"},
+    {"id":4,"name":"Ashen Guillotine","school":"fire","lead":"NEW","parts":["C:04_STUDY","A:04_STUDY"],"duration":8.0,"climax":4.25,"approved":false,"redesign":"Diagonal slit > physical blade > one fast cut > delayed A cracks; C flame column study"},
     {"id":5,"name":"Abyssal Bloom","school":"water","lead":"A+C","parts":["A:05","C:05"],"duration":8.6,"climax":5.4,"approved":true},
     {"id":6,"name":"Riptide Calligraphy","school":"water","lead":"NEW","parts":["C:06_STUDY","A:06_STUDY"],"duration":8.8,"climax":6.15,"approved":false,"redesign":"C coherent water writing plus A smooth ribbons; readable glyph and moving tip contact"},
     {"id":7,"name":"Mirrorfrost Basilica","school":"ice","lead":"C","parts":["C:07"],"duration":9.2,"climax":6.62,"approved":true},
@@ -24,7 +24,7 @@ const SLOTS: Array[Dictionary] = [
     {"id":16,"name":"Worldseed","school":"verdant","lead":"A+C","parts":["A:16","C:16"],"duration":10.2,"climax":7.72,"approved":true},
     {"id":17,"name":"Event Horizon","school":"astral","lead":"C","parts":["C:17"],"duration":8.8,"climax":6.45,"approved":true},
     {"id":18,"name":"Chronoshard","school":"astral","lead":"NEW","parts":["B:18_STUDY"],"duration":10.0,"climax":5.2,"approved":false,"redesign":"B crystal design study, replace incoherent bouncing with authored time fractures"},
-    {"id":19,"name":"Constellation Engine","school":"astral","lead":"D","parts":["D:19","A:19_COMBAT"],"duration":-1.0,"climax":-1.0,"approved":true},
+    {"id":19,"name":"Constellation Engine","school":"astral","lead":"D","parts":["D:19","A:19_COMBAT"],"duration":9.8,"climax":8.15,"approved":true},
     {"id":20,"name":"Reality Ripper","school":"astral","lead":"A+C","parts":["A:20","C:20"],"duration":10.4,"climax":6.3,"approved":true}
 ]
 

@@ -116,7 +116,7 @@ func authored_events() -> Array:
 
 func _pulse(x: float, y: float, t: float) -> float:
     var v := 0.0
-    for p0 in [4.4, 4.95, 5.5]:
+    for p0: float in [4.4, 4.95, 5.5]:
         var r := (t - p0) * 150.0
         if r < 0.0 or r > 120.0:
             continue
@@ -250,8 +250,8 @@ func render(f: CFrame, t: float) -> void:
             var e2 := (e1 + 1 + floori(CMath.hash1(int(fc.seed) + k * 5) * float(n - 1))) % n
             var u1 := CMath.hash1(int(fc.seed) + k * 7)
             var u2 := CMath.hash1(int(fc.seed) + k * 11)
-            var a := pts[e1].lerp(pts[(e1 + 1) % n], u1)
-            var b := pts[e2].lerp(pts[(e2 + 1) % n], u2)
+            var a: Vector2 = pts[e1].lerp(pts[(e1 + 1) % n], u1)
+            var b: Vector2 = pts[e2].lerp(pts[(e2 + 1) % n], u2)
             f.line_l(a.x, a.y, b.x, b.y, WHITE, 0.35 + warn * 0.8 + 0.2 * sin(t * 30.0 + float(k)))
     if t >= TB:
         var r := (t - TB) * 165.0

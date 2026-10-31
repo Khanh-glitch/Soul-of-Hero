@@ -48,7 +48,7 @@ func setup() -> void:
     var angs := [-1.15, -0.55, 0.05, 0.6, 1.2]
     var ks := [26.0, 13.0, 9.0, 17.0, 5.5]
     for i in range(5):
-        var a := angs[i]
+        var a: float = angs[i]
         var base := Vector2(CASTER.x + 4.0 + cos(a) * 6.0, CASTER.y + sin(a) * 4.0 + 1.0)
         var pos: Array = []
         var prev: Array = []
