@@ -1,0 +1,44 @@
+name: ARCANA19 authored mote OUT fixed-clock diagnostic
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths:
+      - 'prototypes/arcana_fusion20/renderer/source_d/d_constellation_engine.gd'
+      - 'prototypes/arcana_fusion20/renderer/source_d/d_fx.gd'
+      - 'prototypes/arcana_fusion20/renderer/test_reference/d19_before_mote_out.gd'
+      - 'prototypes/arcana_fusion20/renderer/d19_mote_out_test.gd'
+      - '.github/workflows/arcana19-mote-out.yml'
+permissions:
+  contents: read
+jobs:
+  out:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import project
+        run: godot --headless --path . --import > import.log 2>&1 && ! grep -Eq 'SCRIPT ERROR:|Parse Error:' import.log
+      - name: Compare pre-OUT state and measure authored converging motes
+        run: |
+          set -o pipefail
+          timeout 600s godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/d19_mote_out_test.gd 2>&1 | tee out.log
+          grep -Fq D19_OUT_COMPLETE out.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|D19_OUT_(FAILURE|PRE_MISMATCH)' out.log
+          grep -E 'D19_OUT_(SAMPLES|COMPLETE)' out.log | sed 's/^/::notice::/'
+      - name: Surface errors
+        if: always()
+        run: |
+          for f in import.log out.log; do test -f "$f" && grep -E -A 3 'SCRIPT ERROR:|Parse Error:|D19_OUT_(FAILURE|PRE_MISMATCH)' "$f" | head -20 | sed 's/^/::notice title=D19_OUT_ERROR::/' || true; done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcana19-mote-out-diagnostic
+          path: |
+            out.log
+            import.log

@@ -597,9 +597,10 @@ func _run() -> void:
     # Isolate the already-selected membrane role first, then independently
     # restore the selected organism and leaflets in the world comparisons.
     var c16_trial := seed_debris._fx as CWorldseedFusion
-    check(c16_trial.organism != null and c16_trial.leaflets != null, "C16 original organism and leaflets selected for fusion")
+    check(c16_trial.organism != null and c16_trial.leaflets != null and c16_trial.core != null, "C16 original organism, leaflets and core selected for fusion")
     c16_trial.organism = null
     c16_trial.leaflets = null
+    c16_trial.core = null
     seed_growth.render_enabled = false
     seed_debris.render_enabled = false
     for tick in range(120): seed_fusion.advance(STEP)
@@ -678,7 +679,19 @@ func _run() -> void:
         organism_mask.c_influence = isolated_leaflets.world_influence
         var leaflet_contamination := contamination(with_organism, with_leaflets, c16_c_viewer, organism_mask)
         check(int(leaflet_contamination.get("inside_changed",0)) > 0 and int(leaflet_contamination.get("outside_changed",-1)) == 0, "C16 original leaflets separately affect real world only inside leaflet influence: " + str(leaflet_contamination))
-        # Keep both selected roles active for the rest of the lifecycle.
+        c16_trial.core = CWorldseedCore.new()
+        seed_debris._render_frame()
+        await process_frame
+        await process_frame
+        var with_core := await save_frame("fusion_16_trial_with_core")
+        var isolated_core := CFrame.new()
+        isolated_core.track_world_fragments = true
+        isolated_core.clear()
+        c16_trial.core.render(isolated_core, float(seed_debris._tick) * STEP)
+        organism_mask.c_influence = isolated_core.world_influence
+        var core_contamination := contamination(with_leaflets, with_core, c16_c_viewer, organism_mask)
+        check(int(core_contamination.get("inside_changed",0)) > 0 and int(core_contamination.get("outside_changed",-1)) == 0, "C16 original core separately affects real world only inside core influence: " + str(core_contamination))
+        # Keep all selected roles active for the rest of the lifecycle.
         seed_debris._render_frame()
         await process_frame
     else:

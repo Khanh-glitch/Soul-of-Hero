@@ -8,8 +8,9 @@
 ## light, motes converge/disappear; the separate OUT study is an
 ## unapproved reference only and was NOT copied). OUT here (8.6-9.8):
 ## finale ring contracts to the centre, filament/node/star light
-## withdraws with the same phase curve, pool motes keep their authored
-## envelopes to expiry. Labelled OUT_AUTHORED_EXTENSION.
+## withdraws with the same phase curve; surviving authored pool motes
+## converge to the center and fade with their original envelope. This is an
+## OUT_AUTHORED_EXTENSION, not original D or creator-approved source.
 ## fx.rng reseeds per frame as RNG((time*977)|0) in the original
 ## renderer; reproduced with the frame index (time = spell t at 60Hz).
 extends RefCounted
@@ -226,6 +227,20 @@ func update(t: float, dt: float) -> void:
     fx.decal_fade = 0.14
     fx.bloom_gain = 1.0 + (0.5 if finale else 0.1) + (0.6 * exp(-(t - 8.15) * 2.0) if _star else 0.0)
     fx.pool_step(dt)
+    # The original D scene ends with live motes. The decision explicitly
+    # requires an authored OUT instead: start only after OUT_START, preserve
+    # each authored particle/envelope and its pre-OUT motion, smoothly pull
+    # its state home, and withdraw its original alpha to zero. Fixed-step
+    # simulation, not an unapproved reference animation or a baked image.
+    if out_k > 0.0:
+        var retain := exp(-12.0 * out_k * dt)
+        for p in fx._pool:
+            if not p.has("_out_alpha"): p._out_alpha = p.a
+            p.x = lerpf(CENTER.x, float(p.x), retain)
+            p.y = lerpf(CENTER.y, float(p.y), retain)
+            p.vx = float(p.vx) * retain
+            p.vy = float(p.vy) * retain
+            p.a = float(p._out_alpha) * out_f
     fx.pool_render()
 
 func frame_bytes() -> PackedByteArray:

@@ -11,6 +11,7 @@ on:
       - 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_fusion.gd'
       - 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_organism.gd'
       - 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_leaflets.gd'
+      - 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_core.gd'
       - 'prototypes/arcana_fusion20/renderer/source_a/a_worldseed_growth.gd'
       - 'prototypes/arcana_fusion20/renderer/arcana20_overworld_join_test.gd'
 permissions:
