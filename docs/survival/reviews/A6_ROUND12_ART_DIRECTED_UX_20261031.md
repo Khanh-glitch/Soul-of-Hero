@@ -188,6 +188,36 @@ natural height stays bounded, and reflows the moment content outgrows its rect. 
 layout test now runs the real 640×360 case, the oversized case, and asserts no card
 is clipped under its minimum or pushed off screen.
 
+### 4.5 What the frames caught that the checks could not
+
+Each of these passed every automated gate and was still visibly wrong:
+
+* **Cards stacked on each other** — the digest frame drew the guidance panel over
+  the run card. Found by looking at the published frame; fixed in `ec033bc1`.
+* **A card clipped its own text** — after the overlap was gone, `Hết mùa 12/11` was
+  cut in half by the run card's own plate. The card is a `Button`, and a `Button`
+  takes no minimum size from its children; the harness only asks whether text is
+  inside the *viewport*, not inside the card holding it. Fixed in `a81fe20f`, with a
+  native assertion that the card is at least as tall as its content.
+* **Text pushed off screen by a card that could not shrink** — a `PanelContainer`
+  is sized by its content, so assigning it less height made the engine clamp it back
+  and drop the footnote below the window (`text overflow: guidance: 'Chưa ghi nhận:
+  3 bước' leaves the viewport`). Fixed in `36a97453` by making the card body
+  scrollable so the card's own minimum is a height the screen can always give it.
+
+### 4.6 Legibility finding, not yet fixed
+
+The published return frame reads `Đấu vết`, `Có tiếng đống` and `Tính đầy` where
+the source says `Dấu vết`, `Có tiếng động` and `Tỉnh dậy với 1 máu`. The strings are
+NFC-normalised and correct in `a6_site_cue_chip.gd` and `a6_return_digest.gd`; all
+three bundled faces carry every Vietnamese codepoint. What fails is the *rendering*
+of stacked marks (circumflex plus acute on `ấ`, hook above on `ỉ`) at UI sizes: the
+mark either merges with the letter above it or drops out, so the glyph reads as a
+different letter. This is the same reason `BẠN LÀ AI?` is hard to read in the
+blackletter headline. Fixing it means changing the type system — face or size — and
+re-inspecting every screen, so it is recorded with evidence rather than changed
+silently in the middle of another fix.
+
 ## 5. Gates
 
 Exact commit at the time of writing: `452d4d74` (frames and results are added as they
@@ -198,10 +228,10 @@ arrive; the commit that a result belongs to is stated with it).
 | R0 source provenance | fetch script asserts commits + SHA-256; receipt re-hashed | **PASS** (local, `29 assets, 0 problems`) |
 | R1 art fidelity | nine-slice stress sheet at 2–3× inspected by eye; two bad crops and two bad icon bindings found and fixed | **PASS** (local) |
 | R2 project integrity | `tools/review/scene_lint.py` over 315 scenes/resources/scripts: 0 problems, 4 notes (all pre-existing); gdtoolkit syntax pass over every changed script; semantic duplicate-declaration pass added this round | **PASS** (local, `340af5c7`) |
-| R2b UI layer test | `tests/survival/ui/a6_ui_layer_test.tscn` | **PASS** — `A6 UI LAYER PASSED`, in the render job) |
-| R3 native gameplay suites | A0/A3/A6 headless suites | **PARTIAL** — `Import and headless runtime tests` and `Xvfb rendered gameplay captures` pass on `ec033bc1`; only the pre-existing "original main baseline comparison" job fails |
-| R4 native renders 720/1440/2160 | `a6-survival-ui-render.yml` publishes frames to `docs/survival/reviews/native/` | **PASS for the sets published on `ec033bc1`** — 15 frames, dimensions asserted per frame. The return set is being re-rendered for `340af5c7` |
-| R5 visual acceptance by eye | inspection of R4 frames at each resolution | **PARTIAL** — avatar 720/2160 and title 720 inspected: clipping fixed, real title screen, honest no-art state. Return digest inspected: overlap found, fixed, re-render pending. Avatar frames still show the fail-closed state because this workflow stages no art |
+| R2b UI layer test | `tests/survival/ui/a6_ui_layer_test.tscn` | **PASS** — `A6 UI LAYER PASSED`, in the render job on `a81fe20f` |
+| R3 native gameplay suites | A0/A3/A6 headless suites | **PARTIAL** — `A6 native avatar validation` **PASS** on `a81fe20f`; `Import and headless runtime tests` and `Xvfb rendered gameplay captures` pass; only the pre-existing "original main baseline comparison" job fails |
+| R4 native renders 720/1440/2160 | both render workflows | **PASS** — survival set published from `a81fe20f` (`fae6ca7c`), 15 frames, dimensions asserted per frame; return set: **all twelve frames verified**, `A6 return UI renderer captures` green on `a81fe20f` |
+| R5 visual acceptance by eye | inspection of R4 frames at each resolution | **PARTIAL** — inspected: avatar 720/2160 (no clipping), title 720 (real title screen, not the boot screen), return digest 720 on `a81fe20f` (cards separated, run card no longer clipped). Found and fixed three real defects this way. Still open: the avatar frames show the fail-closed no-art state because the render job stages no private art; and small-size Vietnamese text below |
 
 Frames are now committed into the repository and were read by eye, so they are
 usable evidence. They are still not a claim that a *player* did anything: the
@@ -272,3 +302,6 @@ each screen's own layout to fit the window it was drawn in.
 | `a0b17fd8` | avatar screen parse error fixed; identity step rebuilt to the 640×360 budget; linter learns to see duplicate declarations |
 | `ec033bc1` | return layout resolves a shared column instead of stacking cards |
 | `340af5c7` | return cards move instead of being clipped; immediate reflow; real 640×360 layout tests |
+| `abf0f49a` | restore a helper a refactor deleted; linter flags undefined private calls and no longer misses `static func` |
+| `36a97453` | guidance card body scrolls, so the card can be given a height that fits |
+| `a81fe20f` | run card measures itself by its content; native test asserts it |
