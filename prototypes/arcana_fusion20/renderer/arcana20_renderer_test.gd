@@ -87,10 +87,16 @@ func _init() -> void:
     br.target = Vector2(262, 104)
     var wyrm := BPyreWyrm.new()
     wyrm.setup(br)
+    print("::notice::WYRMDBG cracks=", wyrm._cracks.size(), " debris=", wyrm._debris.size(), " ctrl=", wyrm._head_ctrl.size(), " head2=", wyrm.head(2.0))
     for key in ["t030", "t200", "t460", "t498", "t530", "t650"]:
         var t: float = float(meta[key].t)
         br.begin()
         wyrm.render(br, t)
+        if key == "t200":
+            var mx := 0.0
+            for v in br.main_buf:
+                mx = maxf(mx, v)
+            print("::notice::WYRMDBG t200 main_max=", mx, " lights=", br.lights.size())
         wyrm.post(br, t)
         br.lighting()
         var bytes := br.finalize()
