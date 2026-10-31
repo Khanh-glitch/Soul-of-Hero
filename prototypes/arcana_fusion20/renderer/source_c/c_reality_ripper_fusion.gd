@@ -133,6 +133,27 @@ func _a_time(t: float) -> float:
 
 func render(f: CFrame, t: float) -> void:
     if t >= TCOL and t < TCOL + 0.05: f.invert = 1.0
+    # Source C's early rendering glitches affect the actual world fields.
+    var early_slot := floori(t * 20.0)
+    if t > 0.3 and t < 0.45:
+        for x in range(130, 230):
+            f.D(x, 92, 3.0, 0.0)
+            f.D(x, 93, 3.0, 0.0)
+    if t > 0.6 and t < 0.9:
+        var x := 180.0 + t * 20.0
+        var y := 120.0 - t * 6.0
+        f.Lc(x, y, Vector3(0.5, 0.45, 0.6), 1.0)
+        f.Lc(x + 5.0, y, Vector3(0.5, 0.45, 0.6), 1.0)
+    if t > 0.95 and t < 1.2:
+        for y in range(120, 129):
+            for x in range(232, 247):
+                f.D(x, y, (CMath.hash1(early_slot) - 0.5) * 6.0, (CMath.hash1(early_slot + 1) - 0.5) * 3.0)
+                f.C(x, y, 2.0)
+    if t > 1.2 and t < 1.6:
+        for k in range(24):
+            var p := _at(0.4 + CMath.hash1(k * 7) * 0.2)
+            var light := 0.8 if CMath.hash1(k + early_slot * 3) > 0.5 else -0.3
+            f.L(float(p.x), float(p.y), light, light, 0.9 if light > 0.0 else -0.3)
     if t < 1.6 or t >= 9.4: return
     var span := CMath.inv(1.6, TOPEN, t)
     var slot := floori(t * 12.0)
