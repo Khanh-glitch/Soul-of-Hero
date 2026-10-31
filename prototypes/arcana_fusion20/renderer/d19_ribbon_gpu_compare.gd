@@ -12,7 +12,10 @@ func _run() -> void:
             var vp := SubViewport.new()
             vp.size = Vector2i(480, 270)
             vp.disable_3d = true
-            vp.transparent_bg = false
+            # Godot's opaque default clear is project gray, not the WebGL
+            # source's explicit black. Transparent clear yields exact zero
+            # RGB without introducing a fake background into this diagnostic.
+            vp.transparent_bg = true
             vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS
             root.add_child(vp)
             var rgba: Array = c.color
