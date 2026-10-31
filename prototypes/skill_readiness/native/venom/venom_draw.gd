@@ -382,6 +382,18 @@ static func puff(L, cx: float, cy: float, r: float, ramp: Array, dl: float,
 	var nz2t = RNG.NZ2F
 	var nz1t = RNG.NZ1F
 	var bayer = M.BAYER
+	# Pre-split ramp channels (per-pixel shifts were pure overhead).
+	var rch: PackedInt32Array = PackedInt32Array()
+	rch.resize(maxi(ramp_n, 1))
+	var gch: PackedInt32Array = PackedInt32Array()
+	gch.resize(maxi(ramp_n, 1))
+	var bch: PackedInt32Array = PackedInt32Array()
+	bch.resize(maxi(ramp_n, 1))
+	for ri3 in range(ramp_n):
+		rch[ri3] = ramp_i[ri3] & 255
+		gch[ri3] = (ramp_i[ri3] >> 8) & 255
+		bch[ri3] = (ramp_i[ri3] >> 16) & 255
+	var rmax: int = ramp_n - 1
 	for dy in range(-ri, ri + 1):
 		var gy: int = gcy + dy
 		# Row span: q <= 1 requires dx*dx <= R*R - dy*dy (the q check inside
@@ -394,16 +406,17 @@ static func puff(L, cx: float, cy: float, r: float, ramp: Array, dl: float,
 			span = ri
 		var wy: float = float(gy) / k
 		var row_n2: int = (int(floor(wy * 0.5)) & 63) << 6
-		var row_n1y: float = wy * 0.22 + t * 1.3
+		var row_n1: int = (int(floor(wy * 0.22 + t * 1.3)) & 63) << 6
 		var s_row: float = -(float(dy) / R) * 0.65
 		var q_row: float = float(dy * dy)
 		var b_row: int = (gy & 3) << 2
+		var in_y: bool = gy >= 0 and gy < lh
+		var row_o: int = gy * lw * 4
 		for dx in range(-span, span + 1):
 			var ci2: int = dx + ri
 			var q: float = (col_qx[ci2] + q_row) / rr2
 			if q > 1:
 				continue
-			var gx: int = gcx + dx
 			# `keep` depends only on n2, so evaluate n2 and the Bayer discard
 			# BEFORE nz1: discarded pixels never need n (pure table lookups,
 			# no RNG stream, so output is bit-identical).
@@ -411,21 +424,24 @@ static func puff(L, cx: float, cy: float, r: float, ramp: Array, dl: float,
 			var keep: float = dl * (1 - q * q * 0.75) + (n2 - 0.5) * 4
 			if bayer[b_row | col_bx[ci2]] >= keep:
 				continue
-			var n: float = nz1t[((int(floor(row_n1y)) & 63) << 6) | (int(floor(col_n1x[ci2])) & 63)]
+			var gx: int = gcx + dx
+			var n: float = nz1t[row_n1 | (int(floor(col_n1x[ci2])) & 63)]
 			var s: float = col_sx[ci2] + s_row \
 					+ (n - 0.5) * 0.9 + (n2 - 0.5) * 0.3 - q * 0.3
 			var idx: int = 0 if s < -0.45 else (1 if s < -0.05 else (2 if s < 0.38 else 3))
+			if idx > rmax:
+				idx = rmax
 			if fast:
-				if gx >= 0 and gy >= 0 and gx < lw and gy < lh:
-					var c: int = ramp_i[0] if outline and q > 0.8 else ramp_i[mini(idx, ramp_n - 1)]
-					var o: int = (gy * lw + gx) * 4
-					lb[o] = c & 255
-					lb[o + 1] = (c >> 8) & 255
-					lb[o + 2] = (c >> 16) & 255
+				if in_y and gx >= 0 and gx < lw:
+					var ci3: int = 0 if outline and q > 0.8 else idx
+					var o: int = row_o + gx * 4
+					lb[o] = rch[ci3]
+					lb[o + 1] = gch[ci3]
+					lb[o + 2] = bch[ci3]
 					lb[o + 3] = 255
 			else:
 				L.dl = 16
-				L.raw_px(gx, gy, ramp_i[0] if outline and q > 0.8 else ramp_i[mini(idx, ramp_n - 1)])
+				L.raw_px(gx, gy, ramp_i[0] if outline and q > 0.8 else ramp_i[idx])
 	if fast:
 		L.bytes = lb
 	L.dl = sd
