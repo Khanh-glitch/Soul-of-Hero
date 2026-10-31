@@ -196,6 +196,12 @@ func _continuation(ow: Node) -> void:
 	if not reached:
 		_write_audit(ow, {})
 		return
+	var nearby: Array = host.call(&"nearby_stations")
+	var furnace_visible := false
+	for entry: Variant in nearby:
+		if String((entry as Dictionary).get("station_id", "")) == furnace_id:
+			furnace_visible = true
+	_expect(furnace_visible, "the panel counts the built furnace as a nearby station")
 	_open_panel(panel)
 	var charcoal_button := _recipe_button(panel, "burn_charcoal", furnace_id)
 	if charcoal_button == null:
