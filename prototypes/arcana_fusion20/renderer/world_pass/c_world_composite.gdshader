@@ -58,6 +58,11 @@ void fragment() {
     vec4 ink = texelFetch(ink_tex, q, 0);
     vec4 frag = texelFetch(fragment_tex, q, 0);
     vec3 fragment_world = world_at(frag.xy - vec2(q), SCREEN_UV, SCREEN_PIXEL_SIZE);
+    // Authored C Reality Ripper inverted baseAt fragment; no RGB keying.
+    if (frag.w > 0.5) {
+        vec3 inv_world = clamp(vec3(1.0) - fragment_world * 3.0, 0.0, 1.0);
+        fragment_world = inv_world * vec3(0.45, 0.2, 0.5) + vec3(0.2, 0.0, 0.15);
+    }
     vec3 col = g * max(0.0, 1.0 - ink.a - frag.z) + ink.rgb + fragment_world * frag.z;
     float th = bayer(q) - 0.5;
     col += floor(l * 8.0 + th + 0.5) / 8.0;

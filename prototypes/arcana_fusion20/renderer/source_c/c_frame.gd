@@ -123,6 +123,7 @@ func blit_world_fragment(sx: int, sy: int, w: int, h: int, dx: int, dy: int) -> 
             world_fragment[i] = float(clampi(sx + xx, 0, W - 1))
             world_fragment[i + 1] = float(clampi(sy + yy, 0, H - 1))
             world_fragment[i + 2] = 1.0
+            world_fragment[i + 3] = 0.0
 
 func Ic(x: float, y: float, c: Vector3, a: float = 1.0) -> void:
     I(x, y, c.x, c.y, c.z, a)
@@ -147,6 +148,25 @@ func G(x: float, y: float, r: float, g: float, b: float, a: float = 1.0) -> void
 
 func Gc(x: float, y: float, c: Vector3, a: float = 1.0) -> void:
     G(x, y, c.x, c.y, c.z, a)
+
+## Original C Reality Ripper baseAt inversion, but sampled from the real world.
+## `world_fragment.w` records the authored transform, never a color key.
+func inverted_live_fragment(x: int, y: int, sx: float, sy: float) -> void:
+    if x < 0 or y < 0 or x >= W or y >= H:
+        return
+    if not track_world_fragments:
+        I(x, y, 0.65, 0.2, 0.65, 1.0)
+        return
+    var i := (y * W + x) * 4
+    ink[i] = 0.0
+    ink[i + 1] = 0.0
+    ink[i + 2] = 0.0
+    ink[i + 3] = 0.0
+    world_fragment[i] = clampi(int(sx), 0, W - 1)
+    world_fragment[i + 1] = clampi(int(sy), 0, H - 1)
+    world_fragment[i + 2] = 1.0
+    world_fragment[i + 3] = 1.0
+    world_influence[y * W + x] = 1
 
 func D(x: float, y: float, dx: float, dy: float) -> void:
     var xi := int(x)

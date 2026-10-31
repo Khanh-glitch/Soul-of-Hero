@@ -95,6 +95,10 @@ func begin(caster_world: Vector2, target_world: Vector2, kind: String) -> void:
             _fx = CThornOpera.new()
             duration = CThornOpera.DURATION
             _fx.setup()
+        "rift_fusion":
+            _fx = CRealityRipperFusion.new()
+            duration = CRealityRipperFusion.DURATION
+            _fx.setup()
         "bloom_late":
             _fx = CAbyssalBloomLate.new()
             duration = CAbyssalBloomLate.DURATION
@@ -133,6 +137,8 @@ func _anchor_local() -> Vector2:
             return CThunderloom.TG
         "thorn":
             return CThornOpera.FZ
+        "rift_fusion":
+            return CRealityRipperFusion.CENTER
         "bloom_late":
             return CAbyssalBloomLate.C
         "crown", "crown_outer":
@@ -273,7 +279,7 @@ func source_pass_frame() -> Arcana20SourcePassFrame:
     result.variant = StringName(_kind)
     result.tick = _tick
     result.source_time = source_time()
-    var seed_by_kind := {"bloom_late": 32676, "crown": 1000, "crown_outer": 1000, "basilica": 48514, "thunderloom": 72271, "thorn": 111866, "horizon": 127704}
+    var seed_by_kind := {"bloom_late": 32676, "crown": 1000, "crown_outer": 1000, "rift_fusion": 151461, "basilica": 48514, "thunderloom": 72271, "thorn": 111866, "horizon": 127704}
     result.seeds = PackedInt32Array([int(seed_by_kind.get(_kind, 0))])
     if _kind == "thunderloom":
         result.seeds.append(999)

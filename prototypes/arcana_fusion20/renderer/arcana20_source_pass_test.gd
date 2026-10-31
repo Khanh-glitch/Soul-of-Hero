@@ -80,6 +80,21 @@ func _run() -> void:
     for value in outer_frame.world_influence: outer_influence += int(value)
     check(outer_influence > 0, "C01 selected original outer tongue primitive rasterizes")
 
+    var rift := CRealityRipperFusion.new()
+    rift.setup()
+    var rift_frame := CFrame.new()
+    rift_frame.track_world_fragments = true
+    rift_frame.clear()
+    rift.render(rift_frame, 4.5)
+    var rift_ink := 0
+    var rift_inverted := 0
+    var rift_warp := 0
+    for i in range(CFrame.N):
+        if rift_frame.ink[i * 4 + 3] > 0.0: rift_ink += 1
+        if rift_frame.world_fragment[i * 4 + 3] > 0.5: rift_inverted += 1
+        if rift_frame.disp[i * 4] != 0.0 or rift_frame.disp[i * 4 + 1] != 0.0: rift_warp += 1
+    check(rift_ink > 0 and rift_inverted > 0 and rift_warp > 0, "C20 original contour, real-world inversion and A warp fields coexist")
+
     var growth := AWorldseedGrowth.new()
     growth.setup()
     var growth_fb := AFramebuffer.new()

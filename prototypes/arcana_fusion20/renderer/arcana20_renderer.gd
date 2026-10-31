@@ -103,7 +103,7 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
     if id < 1:
         return false
     cancel_skill(canonical_id)
-    if not (world_pass_mode and id == 5) and _a_cast(canonical_id, id, caster_world, target_world):
+    if not (world_pass_mode and (id == 5 or id == 20)) and _a_cast(canonical_id, id, caster_world, target_world):
         return true
     if id == 5 and world_pass_mode:
         # Selected source roles, still experimental: A owns opening/peak;
@@ -163,6 +163,23 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
         _casts[canonical_id] = fp
         cast_started.emit(canonical_id)
         fp.begin(caster_world, target_world)
+        return true
+    if id == 20 and world_pass_mode:
+        # C source contour/interior with A bgWarp deformation of those same
+        # world pixels. Other C/A roles remain explicitly unported.
+        var cp := CSourcePlayer.new()
+        cp.world_pass_mode = true
+        cp.source_pass_ready.connect(func(frame: Arcana20SourcePassFrame) -> void: source_pass_ready.emit(canonical_id, frame))
+        cp.screen_post.connect(func(state: Dictionary) -> void: screen_post.emit(canonical_id, state))
+        add_child(cp)
+        cp.visual_contact.connect(func(kind: StringName, pos: Vector2, _st: float) -> void:
+            visual_contact.emit(canonical_id, pos, kind)
+            body_event_cue.emit(canonical_id, pos, &"astral"))
+        cp.visual_event.connect(func(kind: StringName, pos: Vector2, st: float) -> void: visual_event.emit(canonical_id, kind, pos, st))
+        cp.finished.connect(func() -> void: _on_finished(canonical_id))
+        _casts[canonical_id] = cp
+        cast_started.emit(canonical_id)
+        cp.begin(caster_world, target_world, "rift_fusion")
         return true
     if id == 19:
         # TRUE source translation: D Constellation Engine (standalone
