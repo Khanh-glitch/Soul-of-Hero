@@ -477,6 +477,24 @@ func _run() -> void:
     await process_frame
     await process_frame
     check(mount.active_viewers(id16) == 0 and images_equal(baseline, await save_frame("fusion_16_cancelled")), "A16 C material candidate cleanup restores frozen world")
+    var id20 := Arcana20SourceCatalog.canonical_id(20)
+    multi.cast_skill(id20, player.global_position, enemy.global_position)
+    var rift := multi._casts[id20] as CSourcePlayer
+    rift.set_process(false)
+    rift.render_enabled = false
+    for tick in range(270): rift.advance(STEP, false)
+    rift.render_enabled = true
+    rift._render_frame()
+    await process_frame
+    await process_frame
+    var rift_img := await save_frame("fusion_20_candidate_tick270")
+    var rift_viewers: Dictionary = mount._passes.get(id20, {})
+    var rift_result := contamination(baseline, rift_img, rift_viewers.get(&"C"), rift.source_pass_frame()) if rift_viewers.has(&"C") else {"inside_changed": 0, "outside_changed": -1}
+    check(mount.active_viewers(id20) == 1 and int(rift_result.get("inside_changed", 0)) > 0 and int(rift_result.get("outside_changed", -1)) == 0, "C20 contour A pull transforms live world only within source influence: " + str(rift_result))
+    multi.cancel_skill(id20)
+    await process_frame
+    await process_frame
+    check(mount.active_viewers(id20) == 0 and images_equal(baseline, await save_frame("fusion_20_cancelled")), "C20 A pull candidate cleanup restores frozen world")
     var id19 := Arcana20SourceCatalog.canonical_id(19)
     multi.cast_skill(id19, player.global_position, enemy.global_position)
     var constellation := multi._casts[id19] as DSourcePlayer
