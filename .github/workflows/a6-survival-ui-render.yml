@@ -56,6 +56,12 @@ jobs:
       - uses: actions/checkout@v4
       - name: Lint every scene and resource reference
         run: python3 tools/review/scene_lint.py
+      # Parsing is not compiling. A missing helper compiles to "Function not found"
+      # in the engine, which loads no script and turns into a 5-minute timeout in a
+      # headless job. One second here replaces five minutes there.
+      - name: Resolve helper calls (no engine needed)
+        run: python3 tools/review/script_symbols.py
+
       - name: Parse every GDScript file
         run: |
           set -euo pipefail

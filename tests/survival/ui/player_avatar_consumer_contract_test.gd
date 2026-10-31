@@ -342,6 +342,10 @@ func _expect(condition: bool, label: String) -> void:
 		_failures.append(label)
 
 
+func _fail(label: String) -> void:
+	_failures.append(label)
+
+
 func _finish() -> void:
 	if _failures.is_empty():
 		print("A6 AVATAR CONSUMER CONTRACT PASSED (%d checks)" % _checks)
