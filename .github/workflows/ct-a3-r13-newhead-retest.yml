@@ -1,0 +1,72 @@
+name: CT A3 R13 actual new test RETEST (frozen owner, read-only)
+on:
+  push:
+    branches: [coordination/ct-pin-guard-pilot-20261031]
+    paths: [.github/workflows/ct-a3-r13-newhead-retest.yml]
+permissions:
+  contents: read
+jobs:
+  exact-new-r13:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 80fe8ceca6de02523985a6eb53e9567639885f0e
+          fetch-depth: 0
+      - name: Freeze owner HEAD and generate temp Node scene launcher (not owner edit)
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/ct-a3-newhead
+          test "$(git rev-parse HEAD)" = "80fe8ceca6de02523985a6eb53e9567639885f0e"
+          git rev-parse HEAD > artifacts/ct-a3-newhead/frozen_sha.txt
+          cat > tests/survival/ct_a3_r13_temp_runner.tscn <<'SCENE'
+          [gd_scene load_steps=2 format=3]
+
+          [ext_resource type="Script" path="res://tests/survival/a3_value_economy_test.gd" id="1_test"]
+
+          [node name="A3R13OwnedTest" type="Node"]
+          script = ExtResource("1_test")
+          SCENE
+          echo "TEMP_SCENE_WRAPPER_ONLY; not committed to owner" > artifacts/ct-a3-newhead/wrapper_scope.txt
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Godot import + R13 script parse, preserve diagnostics
+        shell: bash
+        run: |
+          set +e
+          timeout 260 godot --headless --path . --user-data-dir artifacts/ct-a3-newhead/import --import > artifacts/ct-a3-newhead/import.log 2>&1
+          import_rc=$?
+          timeout 160 godot --headless --path . --check-only --script res://tests/survival/a3_value_economy_test.gd > artifacts/ct-a3-newhead/parse.log 2>&1
+          parse_rc=$?
+          set -e
+          echo "$import_rc" > artifacts/ct-a3-newhead/import.exit
+          echo "$parse_rc" > artifacts/ct-a3-newhead/parse.exit
+          echo "IMPORT_EXIT=$import_rc PARSE_EXIT=$parse_rc"
+          tail -90 artifacts/ct-a3-newhead/parse.log
+          # Runner may fail in type validation; preserve and fail, do not silence.
+          test "$import_rc" -eq 0
+          test "$parse_rc" -eq 0
+      - name: Execute actual Node-based R13 suite via temporary scene, not unrelated older suites
+        shell: bash
+        run: |
+          set +e
+          timeout --signal=TERM --kill-after=10s 420 godot --headless --path . --user-data-dir artifacts/ct-a3-newhead/user \
+            res://tests/survival/ct_a3_r13_temp_runner.tscn \
+            > artifacts/ct-a3-newhead/r13_native.log 2>&1
+          rc=$?
+          set -e
+          echo "$rc" > artifacts/ct-a3-newhead/native.exit
+          tail -220 artifacts/ct-a3-newhead/r13_native.log
+          test "$rc" -eq 0
+          ! grep -qaE 'SCRIPT ERROR|Parse Error|(^|[[:space:]])FAIL[[:space:]]' artifacts/ct-a3-newhead/r13_native.log
+          grep -qa 'A3 VALUE ECONOMY.*PASSED' artifacts/ct-a3-newhead/r13_native.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ct-a3-r13-newhead-native-proof
+          path: artifacts/ct-a3-newhead
+          if-no-files-found: warn
