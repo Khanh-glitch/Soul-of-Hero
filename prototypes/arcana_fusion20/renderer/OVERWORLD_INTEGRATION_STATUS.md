@@ -659,3 +659,30 @@ SOH world source parity and creator review remain separate.
   `ac11476b1` explicitly types the index; source quick and A16 original-source
   comparison passed afterward. `gdparse` alone did not catch this; no threshold
   was changed.
+- Historical-world [phase sweep 41227122024](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41227122024)
+  ran all 20 in both normal and test-dimmed `WorldTint` with the experimental
+  real-viewport C post enabled. All **40/40** casts restored their own frozen
+  world and post state after cancellation. Both sets reported the same nine
+  shorter-timeline cases and the same unchanged sampled images (#04/#06/#12/
+  #13/#14 early; #05/#17 late; #20 early and late). Dimmed lighting is a test
+  stimulus on the real scene's existing node, not an authored night mode;
+  source-native parity, motion, combat, and full HUD visual review remain open.
+- The corrected #16 frame from [41227092193](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41227092193)
+  was inspected as a reduced 220px, 32-color real-world crop: C-inspired pink
+  inner petals are no longer hidden by green outer sheets. This is not a
+  full-resolution or same-source-frame visual comparison, not approval.
+  Worldseed's full natural-end, C post cleanup, restart and no-HP assertions
+  were separately surfaced in the same run. Same-family fusion cleanup and
+  parent-cancellation source regressions passed [41226665793](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41226665793).
+- D ribbon shader noise now uses the original h11 row-57 lattice (`5f1b3af32`)
+  instead of a different h21 lattice. [Original WebGL primitive diagnostic
+  41227400460](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41227400460)
+  showed the prior nearest-segment CPU renderer versus an experimental original
+  triangle-strip raster: light-support IoU **0.8069→0.9973** (bent tapered),
+  **0.9391→0.9942** (noise), **0.5801→0.9942** (self-crossing); diagonal was
+  1.0 for both. Full-image RGB MAE improved **0.00561→0.00197**,
+  **0.00274→0.00173**, **0.00952→0.00028**, respectively. Max RGB errors
+  remain as high as **0.863**, and nonzero RGB support is not authored coverage.
+  Multi-point strip raster is enabled at `222f73ecf`, with full D source and
+  actual-world reruns pending. GPU float32, 2×2 fwidth helper behavior,
+  blend quantization and full-world bloom/post remain unverified; no parity claim.
