@@ -987,7 +987,7 @@ func _physical_mill_gate_and_retreat() -> void:
 		actor.last_collision == null and actor.global_position.y < 270.0,
 		"accepted repair opens the physical inner gate"
 	)
-	var salvage_stand := Vector2(678, 278)
+	var salvage_stand := Vector2(678, 248)
 	actor.request_test_motion(salvage_stand - actor.global_position)
 	await actor.await_test_motion()
 	_check(

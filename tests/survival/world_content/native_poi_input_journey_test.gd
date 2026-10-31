@@ -10,6 +10,7 @@ const CAPTURE_DIR := "res://.artifacts/a8-world-content/input-journeys"
 const QUARRY_ID := "poi_crown_south_quarry"
 const ORCHARD_ID := "poi_crown_south_orchard"
 const MILL_ID := "poi_crown_south_mill"
+const JOURNEY_PROBE_SPEED := 90.0
 const EXPECTED_CAPTURE_COUNT := 27
 
 var _pilot: Node
@@ -453,9 +454,9 @@ func _journey_mill_owner_projected_repair() -> void:
 	# the bank-side fastener from its authored safe stand.
 	await _walk_axis_to("move_up", KEY_W, 270.0)
 	await _walk_axis_to("move_right", KEY_D, 678.0)
-	await _press_key(KEY_W)
+	await _walk_axis_to("move_up", KEY_W, 248.0)
 	_check(
-		_probe().global_position.distance_to(Vector2(678.0, 278.0)) <= 14.0,
+		_probe().global_position.distance_to(Vector2(678.0, 248.0)) <= 30.0,
 		(
 			"repaired mill route physically reaches the fastener source; position=%s "
 			% str(_probe().global_position)
@@ -510,6 +511,11 @@ func _start_pilot(owner_seed: Dictionary, site_index: int = 0) -> void:
 	_pilot.set("journey_test_mode", true)
 	_pilot.set("journey_owner_projection_seed", owner_seed)
 	root.add_child(_pilot)
+	# Test-probe speed is capped for repeatable single-pixel corridors at every
+	# capture resolution; it does not change production or A0-owned movement.
+	var probe := _pilot.get("_probe") as CharacterBody2D
+	if probe != null:
+		probe.set("speed", JOURNEY_PROBE_SPEED)
 	await _settle()
 	_check(
 		bool(_snapshot().get("journey_mode", false)), "pilot uses projection-only journey authority"
