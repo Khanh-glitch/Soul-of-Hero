@@ -356,7 +356,9 @@ func _card_row(
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	button.custom_minimum_size = Vector2(0, 17)
 	button.add_theme_font_size_override("font_size", 11)
-	button.add_theme_color_override("font_color", A6UiKit.CREAM)
+	# The action plates are light green; cream on them is the low-contrast pair the
+	# previous design was criticised for. Ink on parchment-tinted green reads.
+	button.add_theme_color_override("font_color", A6UiKit.INK)
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	middle.add_child(button)
 
@@ -364,7 +366,7 @@ func _card_row(
 
 	var right := VBoxContainer.new()
 	right.name = "Timing"
-	right.custom_minimum_size = Vector2(64, 0)
+	right.custom_minimum_size = Vector2(86, 0)
 	right.add_theme_constant_override("separation", 1)
 	right.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	row.add_child(right)
@@ -374,7 +376,7 @@ func _card_row(
 	clock.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	right.add_child(clock)
 
-	var state := A6UiKit.label(state_text, "caption", 9)
+	var state := A6UiKit.label(state_text, "caption", 10)
 	state.name = "State"
 	state.add_theme_color_override("font_color", state_colour)
 	state.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
@@ -412,13 +414,15 @@ func _amount_chip(item_id: String, have: int, needed: int, short: bool) -> HBoxC
 	var chip := HBoxContainer.new()
 	chip.add_theme_constant_override("separation", 1)
 	chip.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var picture := A6UiKit.icon(item_id, 9)
+	var picture := A6UiKit.icon(item_id, 11)
 	if picture != null:
 		chip.add_child(picture)
-	var amount := A6UiKit.label("%d/%d" % [have, needed], "number", 9)
+	var amount := A6UiKit.label("%d/%d" % [have, needed], "number", 11)
 	# Ink when the player can pay, amber when short: colour is never the only signal,
 	# the two numbers say it as well.
 	amount.add_theme_color_override("font_color", A6UiKit.WARN if short else A6UiKit.CREAM)
+	amount.add_theme_color_override("font_outline_color", Color(0.06, 0.04, 0.03, 1))
+	amount.add_theme_constant_override("outline_size", 3)
 	chip.add_child(amount)
 	chip.tooltip_text = "%s: %d of %d" % [_item_label(item_id), have, needed]
 	return chip
