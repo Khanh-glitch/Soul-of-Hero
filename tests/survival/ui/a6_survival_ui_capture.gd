@@ -114,7 +114,7 @@ func _resize_window() -> void:
 		return
 	DisplayServer.window_set_position(Vector2i(0, 0))
 	DisplayServer.window_set_size(_requested_size)
-	print("A6 SURVIVAL UI CAPTURE: requested window ", _requested_size)
+	printerr("A6 SURVIVAL UI CAPTURE: requested window ", _requested_size)
 
 
 func _start_watchdog() -> void:
@@ -145,8 +145,9 @@ func _capture_screen(state: String, scene_path: String, focus_name: String) -> v
 		_failures.append("%s: %s is not a Control scene" % [state, scene_path])
 		return
 	add_child(screen)
-	print("A6 SURVIVAL UI CAPTURE: rendering ", state)
+	printerr("A6 SURVIVAL UI CAPTURE: rendering ", state, " (", _usage(), ")")
 	await _settle(8)
+	printerr("A6 SURVIVAL UI CAPTURE: settled ", state)
 	if not focus_name.is_empty():
 		var target := screen.find_child(focus_name, true, false) as Control
 		if target == null:
@@ -154,8 +155,10 @@ func _capture_screen(state: String, scene_path: String, focus_name: String) -> v
 		elif target is BaseButton:
 			(target as BaseButton).grab_focus()
 		await _settle(4)
+	printerr("A6 SURVIVAL UI CAPTURE: drawing ", state)
 	await RenderingServer.frame_post_draw
 	var frame := get_viewport().get_texture().get_image()
+	printerr("A6 SURVIVAL UI CAPTURE: grabbed ", state)
 	if frame == null or frame.is_empty():
 		_failures.append("%s: no frame was drawn" % state)
 		screen.queue_free()
@@ -195,6 +198,7 @@ func _capture_hud(state: String) -> void:
 	var backdrop := (load(BACKDROP_SCENE) as PackedScene).instantiate() as Control
 	add_child(backdrop)
 	await _settle(2)
+	printerr("A6 SURVIVAL UI CAPTURE: hud backdrop ", state)
 	var hud := HUD_SCRIPT.new() as CanvasLayer
 	add_child(hud)
 	await _settle(3)
@@ -207,8 +211,10 @@ func _capture_hud(state: String) -> void:
 	if events != null and events.has_signal("player_health_changed"):
 		events.emit_signal("player_health_changed", 64, 100)
 	await _settle(5)
+	printerr("A6 SURVIVAL UI CAPTURE: drawing ", state)
 	await RenderingServer.frame_post_draw
 	var frame := get_viewport().get_texture().get_image()
+	printerr("A6 SURVIVAL UI CAPTURE: grabbed ", state)
 	if frame == null or frame.is_empty():
 		_failures.append("%s: no frame was drawn" % state)
 	elif not _is_non_blank(frame):
@@ -224,6 +230,7 @@ func _capture_hud(state: String) -> void:
 				])
 		var file := "%s/%s_%s_%dx%d.png" % [_capture_dir, _tag, state, pixels.x, pixels.y]
 		await _save(frame, file, state)
+		printerr("A6 SURVIVAL UI CAPTURE: saved ", state)
 		_entries.append({
 			"state": state,
 			"file": file,
@@ -233,7 +240,6 @@ func _capture_hud(state: String) -> void:
 			"direction": A6UiKit.direction(),
 			"texts": _audit_texts(hud_root if hud_root != null else hud),
 		})
-		print("A6 SURVIVAL UI CAPTURE: rendered ", state)
 	hud.queue_free()
 	backdrop.queue_free()
 	await _settle(2)
@@ -268,8 +274,10 @@ func _capture_return(state: String, fixture_name: String) -> void:
 	if open_record and layer.has_method(&"open_record"):
 		layer.call(&"open_record")
 		await _settle(4)
+	printerr("A6 SURVIVAL UI CAPTURE: drawing ", state)
 	await RenderingServer.frame_post_draw
 	var frame := get_viewport().get_texture().get_image()
+	printerr("A6 SURVIVAL UI CAPTURE: grabbed ", state)
 	if frame == null or frame.is_empty():
 		_failures.append("%s: no frame was drawn" % state)
 	elif not _is_non_blank(frame):
@@ -402,8 +410,10 @@ func _capture_workshop(state: String) -> void:
 	if not bool(panel.call(&"is_open")):
 		_failures.append("%s: the workshop did not open" % state)
 		return
+	printerr("A6 SURVIVAL UI CAPTURE: drawing ", state)
 	await RenderingServer.frame_post_draw
 	var frame := get_viewport().get_texture().get_image()
+	printerr("A6 SURVIVAL UI CAPTURE: grabbed ", state)
 	if frame == null or frame.is_empty():
 		_failures.append("%s: no frame was drawn" % state)
 		return
@@ -480,6 +490,12 @@ func _audit_texts(root: Control) -> Array[Dictionary]:
 			"disabled": button.disabled,
 		})
 	return out
+
+
+## Static memory in MiB, attached to every milestone. A capture that stops without an
+## error message is either a crash or an out-of-memory kill; this tells the two apart.
+func _usage() -> String:
+	return "%.0f MiB" % (float(OS.get_static_memory_usage()) / 1048576.0)
 
 
 func _rect_list(rect: Rect2) -> Array:

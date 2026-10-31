@@ -488,7 +488,9 @@ func _card_row(
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	button.custom_minimum_size = Vector2(0, A6UiKit.size_name() + 5)
 	button.add_theme_font_size_override("font_size", A6UiKit.size_name())
-	button.add_theme_font_override("font", A6UiKit.display_face() if A6UiKit.is_board() else A6UiKit.body_face())
+	var face := A6UiKit.display_face() if A6UiKit.is_board() else A6UiKit.body_face()
+	if face != null:
+		button.add_theme_font_override("font", face)
 	button.add_theme_color_override("font_color", A6UiKit.text_colour())
 	button.add_theme_color_override("font_hover_color", A6UiKit.accent_colour())
 	button.add_theme_color_override("font_focus_color", A6UiKit.accent_colour())

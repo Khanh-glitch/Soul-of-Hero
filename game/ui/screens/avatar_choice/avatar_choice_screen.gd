@@ -125,7 +125,7 @@ func _mark_missing(preview: TextureRect, caption: Label, word: String, gender: S
 	frame.content_margin_bottom = 4.0
 	seal.add_theme_stylebox_override("panel", frame)
 	box.add_child(seal)
-	box.move_child(seal, preview.get_index())
+	box.move_child(seal, clampi(preview.get_index(), 0, box.get_child_count() - 1))
 
 	var stack := VBoxContainer.new()
 	stack.alignment = BoxContainer.ALIGNMENT_CENTER
