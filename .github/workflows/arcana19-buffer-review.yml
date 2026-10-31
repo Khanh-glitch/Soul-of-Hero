@@ -1,0 +1,43 @@
+name: ARCANA19 isolated g-buffer review thumbnails
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana19-buffer-review.yml']
+permissions:
+  actions: read
+  contents: read
+jobs:
+  crop:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [192_original_diagnostic, 192_native_diagnostic, 192_light_support, 510_original_diagnostic, 510_native_diagnostic, 510_light_support]
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcana19-d-isolated-source-fields
+          run-id: 41213135534
+          github-token: ${{ github.token }}
+          path: review
+      - name: Expose source-buffer diagnostic thumbnail
+        env:
+          IMAGE: ${{ matrix.image }}
+        run: |
+          python3 -m pip install --quiet pillow
+          python3 - <<'PY'
+          import base64,io,os
+          from pathlib import Path
+          from PIL import Image
+          name=os.environ['IMAGE'];file=next(Path('review').rglob(name+'.png'))
+          im=Image.open(file).convert('RGB').resize((360,203),Image.Resampling.NEAREST).quantize(colors=32)
+          while True:
+            out=io.BytesIO();im.save(out,format='PNG',optimize=True)
+            data=base64.b64encode(out.getvalue()).decode();chunks=[data[i:i+3500] for i in range(0,len(data),3500)]
+            if len(chunks)<=9: break
+            if im.width<=150: raise SystemExit('thumbnail too large')
+            im=im.resize((int(im.width*.9),int(im.height*.9)),Image.Resampling.NEAREST)
+          for n,c in enumerate(chunks):print(f'::notice title=D19_{name}_{n:02d}_OF_{len(chunks):02d}::{c}',flush=True)
+          print(f'::notice title=D19_META::{name} thumbnail={im.size} scope=neutral-source-buffer-not-real-world-or-parity')
+          PY
