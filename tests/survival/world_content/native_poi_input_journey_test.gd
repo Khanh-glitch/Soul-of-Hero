@@ -827,7 +827,6 @@ func _walk_axis_to(action: String, keycode: Key, coordinate: float) -> bool:
 	var stalled_frames := 0
 	for _frame: int in range(240):
 		await physics_frame
-		await process_frame
 		if _measure_walk:
 			_measured_walk_input_frames += 1
 		var current := hero.global_position
@@ -887,7 +886,6 @@ func _walk_axis_to(action: String, keycode: Key, coordinate: float) -> bool:
 func _press_key(keycode: Key, measurement_tag: String = "") -> void:
 	var physics_frame_start := Engine.get_physics_frames()
 	await _send_key(keycode, true)
-	await process_frame
 	await physics_frame
 	await _send_key(keycode, false)
 	await _settle()
