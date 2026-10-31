@@ -231,8 +231,8 @@ func sp(x: float, y: float, size: float, col: Color, shape: int = DISC, o: Dicti
     var ext := ceili(sqrt(sx * sx + sy * sy)) + 1
     var cs := cos(-rot)
     var sn := sin(-rot)
-    for py in range(cy - ext, cy + ext + 1):
-        for pxx in range(cx - ext, cx + ext + 1):
+    for py in range(maxi(0, cy - ext), mini(H - 1, cy + ext) + 1):
+        for pxx in range(maxi(0, cx - ext), mini(W - 1, cx + ext) + 1):
             var q := Vector2(float(pxx) + 0.5 - float(cx), float(py) + 0.5 - float(cy))
             var rq := Vector2(q.x * cs - q.y * sn, q.x * sn + q.y * cs)
             if absf(rq.x) > sx or absf(rq.y) > sy:
