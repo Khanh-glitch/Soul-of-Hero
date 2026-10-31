@@ -144,8 +144,12 @@ func _continuation(ow: Node) -> void:
 	if kit_button == null:
 		_write_audit(ow, {})
 		return
-	_expect(await _scroll_recipe(panel, kit_button), "ordinary wheel input reaches the furnace kit (%s)" % _scroll_reason)
-	await _click_window(root.get_final_transform() * (kit_button.get_global_transform_with_canvas() * (kit_button.size * 0.5)))
+	var kit_row := await _scroll_recipe(panel, kit_button)
+	_expect(kit_row != null, "ordinary wheel input reaches the furnace kit (%s)" % _scroll_reason)
+	if kit_row == null:
+		_write_audit(ow, {})
+		return
+	await _click_window(root.get_final_transform() * (kit_row.get_global_transform_with_canvas() * (kit_row.size * 0.5)))
 	var furnace_job := _job_for("furnace_kit")
 	_expect(not furnace_job.is_empty(), "the GUI queues the furnace kit (%s)" % furnace_job)
 	if furnace_job.is_empty():
@@ -218,8 +222,12 @@ func _continuation(ow: Node) -> void:
 	if charcoal_button == null:
 		_write_audit(ow, {})
 		return
-	_expect(await _scroll_recipe(panel, charcoal_button), "ordinary wheel input reaches the charcoal recipe (%s)" % _scroll_reason)
-	await _click_window(root.get_final_transform() * (charcoal_button.get_global_transform_with_canvas() * (charcoal_button.size * 0.5)))
+	var charcoal_row := await _scroll_recipe(panel, charcoal_button)
+	_expect(charcoal_row != null, "ordinary wheel input reaches the charcoal recipe (%s)" % _scroll_reason)
+	if charcoal_row == null:
+		_write_audit(ow, {})
+		return
+	await _click_window(root.get_final_transform() * (charcoal_row.get_global_transform_with_canvas() * (charcoal_row.size * 0.5)))
 	var charcoal_job := _job_for("burn_charcoal")
 	_expect(not charcoal_job.is_empty(), "the GUI queues charcoal at the furnace (%s)" % charcoal_job)
 	await _close_panel(panel)
@@ -252,8 +260,12 @@ func _continuation(ow: Node) -> void:
 	if smelt_button == null:
 		_write_audit(ow, {})
 		return
-	_expect(await _scroll_recipe(panel, smelt_button), "ordinary wheel input reaches the smelt recipe (%s)" % _scroll_reason)
-	await _click_window(root.get_final_transform() * (smelt_button.get_global_transform_with_canvas() * (smelt_button.size * 0.5)))
+	var smelt_row := await _scroll_recipe(panel, smelt_button)
+	_expect(smelt_row != null, "ordinary wheel input reaches the smelt recipe (%s)" % _scroll_reason)
+	if smelt_row == null:
+		_write_audit(ow, {})
+		return
+	await _click_window(root.get_final_transform() * (smelt_row.get_global_transform_with_canvas() * (smelt_row.size * 0.5)))
 	var smelt_job := _job_for("smelt_iron")
 	_expect(not smelt_job.is_empty(), "the GUI queues the fuelled smelt (%s)" % smelt_job)
 	await _close_panel(panel)
@@ -306,8 +318,11 @@ func _verify_body() -> void:
 		return
 	var lifecycle: Node = root.get_node_or_null("RunLifecycle")
 	var run: Dictionary = lifecycle.call(&"phase") if lifecycle != null else {}
+	print("A0_CONNECTED_RUNID audit=%s lifecycle=%s keys=%s" % [String(audit.get("run_id", "")),
+		String(run.get("run_id", "")), str(run.keys())])
 	_expect(String(run.get("run_id", "")) == String(audit.get("run_id", "")),
-		"the independent process resumed the same run (%s)" % String(run.get("run_id", "")))
+		"the independent process resumed the same run (audit %s, relaunch %s)" % [
+			String(audit.get("run_id", "")), String(run.get("run_id", ""))])
 	var structures: Dictionary = _survival().call(&"structures")
 	var furnace_id := String(audit.get("furnace_id", ""))
 	_expect(structures.has(furnace_id), "the paid furnace survived the relaunch as a physical structure")
@@ -532,11 +547,14 @@ func _close_panel(panel: Node) -> bool:
 ## Bring a row into view with ordinary wheel input. If the list was already open
 ## with stale layout, a player closes and reopens the panel; the row is looked up
 ## again in the rebuilt list rather than trusting a stale node.
-func _scroll_recipe(panel: Node, button: Button) -> bool:
+## Returns the live row: the panel rebuilds its list when it reopens, which frees
+## the Button the caller handed in, so clicking the original node is a bug — a real
+## player clicks what is on screen.
+func _scroll_recipe(panel: Node, button: Button) -> Button:
 	_scroll_reason = ""
 	if button == null:
 		_scroll_reason = "row_absent"
-		return false
+		return null
 	var row_name := String(button.name)
 	# Two frames: the panel rebuilds its list on the toggle's frame and only then
 	# does the wrapped layout know how tall each row is.
@@ -547,7 +565,7 @@ func _scroll_recipe(panel: Node, button: Button) -> bool:
 	_scroll_reason = "open=%s scroll=%s" % [str(is_open), str(scroll != null)]
 	if scroll != null and await _wheel_until_visible(scroll, button):
 		_scroll_reason = "revealed"
-		return true
+		return button
 	# Reopening rebuilds the list; the row must be looked up again by name, because
 	# the old node is gone once the panel is rebuilt.
 	await _close_panel(panel)
@@ -559,12 +577,12 @@ func _scroll_recipe(panel: Node, button: Button) -> bool:
 	_scroll_reason += " | rebuilt=%s scroll=%s" % [str(rebuilt_button != null), str(rebuilt != null)]
 	if rebuilt_button != null and rebuilt != null and await _wheel_until_visible(rebuilt, rebuilt_button):
 		_scroll_reason += " | revealed_after_reopen"
-		return true
+		return rebuilt_button
 	var rows: Array[String] = []
 	for value: Node in panel.find_children("Recipe_*", "Button", true, false):
 		rows.append(String(value.name))
 	_scroll_reason += " | rows=%d %s" % [rows.size(), str(rows.slice(0, 12))]
-	return false
+	return null
 
 
 ## Wheel a row into view. A long list needs more than a fixed handful of clicks, so
@@ -573,13 +591,19 @@ func _scroll_recipe(panel: Node, button: Button) -> bool:
 func _wheel_until_visible(scroll: ScrollContainer, control: Control) -> bool:
 	var previous := -1.0
 	var still := 0
+	var spot := 0
 	for _i: int in range(400):
 		if scroll.get_global_rect().has_point(control.get_global_rect().get_center()):
 			return true
+		var rect := scroll.get_global_rect()
+		# The player wheels wherever the pointer happens to be: over the list, or
+		# over the scroll bar on its right edge. If one spot does not move the list,
+		# the next try is the other, exactly as a player would move the mouse.
+		var local_point := rect.size * 0.5 if spot == 0 else Vector2(rect.size.x - 4.0, rect.size.y * 0.5)
 		var target_y := control.get_global_rect().get_center().y
 		var wheel := InputEventMouseButton.new()
-		wheel.position = root.get_final_transform() * (scroll.get_global_transform_with_canvas() * (scroll.size * 0.5))
-		wheel.button_index = MOUSE_BUTTON_WHEEL_UP if target_y < scroll.get_global_rect().get_center().y else MOUSE_BUTTON_WHEEL_DOWN
+		wheel.position = root.get_final_transform() * (scroll.get_global_transform_with_canvas() * local_point)
+		wheel.button_index = MOUSE_BUTTON_WHEEL_UP if target_y < rect.get_center().y else MOUSE_BUTTON_WHEEL_DOWN
 		wheel.pressed = true
 		Input.parse_input_event(wheel)
 		wheel.pressed = false
@@ -588,8 +612,15 @@ func _wheel_until_visible(scroll: ScrollContainer, control: Control) -> bool:
 		var offset := float(scroll.scroll_vertical)
 		still = still + 1 if is_equal_approx(offset, previous) else 0
 		previous = offset
-		if still > 12:
+		if still > 4:
+			spot = 1 - spot
+			still = 0
+		if _i > 12 and spot == 1 and still == 0 and offset <= 0.0:
 			break
+	print("A0_CONNECTED_SCROLL_GEOM scroll=%s target=%s scroll_vertical=%d max=%.1f bar=%s visible=%s" % [
+		str(scroll.get_global_rect()), str(control.get_global_rect()), scroll.scroll_vertical,
+		scroll.get_v_scroll_bar().max_value, str(scroll.get_v_scroll_bar().visible),
+		str(control.is_visible_in_tree())])
 	return false
 
 
