@@ -26,19 +26,19 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
     if id < 1:
         return false
     cancel_skill(canonical_id)
-    if id == 2 or id == 3:
+    if id == 2 or id == 3 or id == 8:
         # TRUE source ports on the ported B HDR renderer (pyre.ts).
         var bp := BSourcePlayer.new()
         add_child(bp)
         bp.visual_contact.connect(func(pos: Vector2) -> void:
             visual_contact.emit(canonical_id, pos, &"source_impact")
-            body_event_cue.emit(canonical_id, pos, &"fire"))
+            body_event_cue.emit(canonical_id, pos, &"fire" if id != 8 else &"water"))
         bp.visual_event.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
             visual_event.emit(canonical_id, kind, pos, st))
         bp.finished.connect(func() -> void: _on_finished(canonical_id))
         _casts[canonical_id] = bp
         cast_started.emit(canonical_id)
-        bp.begin(caster_world, target_world, "wyrm" if id == 2 else "meteor")
+        bp.begin(caster_world, target_world, "wyrm" if id == 2 else ("meteor" if id == 3 else "maw"))
         return true
     stage_counts["new"] = int(stage_counts.get("new", 0)) + 1
     var inst := Arcana20SkillInstance.new()

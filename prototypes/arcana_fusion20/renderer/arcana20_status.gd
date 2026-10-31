@@ -1,9 +1,10 @@
-## Honest per-skill renderer status. NOT_IMPLEMENTED is gone only where a
-## real native driver runs the catalog timeline. Gold parity is claimed
-## NOWHERE: the original A/B/C/D source packages (ARCANA_FUSION_20SKILLS_
-## HANDOFF.zip) are not in this repository, so Gold-vs-native image
-## verification is VISUAL_NOT_VERIFIED until those packages are available
-## and compared frame-by-frame. OWNER_VISUAL_APPROVED is owner-only.
+## Honest per-skill renderer status. States are strictly separated:
+## source recovered (original_source/, SHA-verified) -> SOURCE_PORTED
+## (real TS ported) -> parity measured (spatial PNG metrics in CI) ->
+## NATIVE_VISUAL_VERIFIED (in-game, human-inspected) -> gameplay
+## integrated (PR #30) -> OWNER_VISUAL_APPROVED (owner only). No state
+## is granted by an earlier PASS. Synthetic candidates are labelled
+## SYNTHETIC_CANDIDATE and are NOT Gold.
 extends RefCounted
 class_name Arcana20Status
 
@@ -15,7 +16,7 @@ const ENTRIES := {
     5: {"state": "NATIVE_RUNTIME_CANDIDATE", "source": "A+C", "visual": "VISUAL_NOT_VERIFIED", "note": "A+C bloom fusion driver; fusion port pending; sources recovered in-repo"},
     6: {"state": "REDESIGN_CANDIDATE", "source": "NEW", "visual": "VISUAL_NOT_VERIFIED", "note": "Brief: coherent water glyph with moving tip contact. NOT Gold, NOT approved"},
     7: {"state": "NATIVE_RUNTIME_CANDIDATE", "source": "C", "visual": "VISUAL_NOT_VERIFIED", "note": "C basilica driver; C port pending; source recovered in-repo"},
-    8: {"state": "NATIVE_RUNTIME_CANDIDATE", "source": "B", "visual": "VISUAL_NOT_VERIFIED", "note": "B maw/vortex driver; B tide port pending; source recovered in-repo"},
+    8: {"state": "SOURCE_PORTED_CANDIDATE", "source": "B", "visual": "VISUAL_NOT_VERIFIED", "note": "TRUE port: undertowMaw (tide.ts seed 808) log-polar shaft + surge; pull/stillness/surge event ledger"},
     9: {"state": "NATIVE_RUNTIME_CANDIDATE", "source": "A+B+C", "visual": "VISUAL_NOT_VERIFIED", "note": "True chained-node fusion driver (not three overlays); fusion port pending; sources recovered in-repo"},
     10: {"state": "NATIVE_RUNTIME_CANDIDATE", "source": "C", "visual": "VISUAL_NOT_VERIFIED", "note": "C thunderloom driver; port pending; source recovered in-repo"},
     11: {"state": "NATIVE_RUNTIME_CANDIDATE", "source": "A+C09", "visual": "VISUAL_NOT_VERIFIED", "note": "Rotating carousel arcs driver; fusion port pending; sources recovered in-repo"},

@@ -53,11 +53,11 @@ func begin(caster_world: Vector2, target_world: Vector2, kind: String = "wyrm") 
             _fx = BMeteorLoom.new()
             duration = BMeteorLoom.DURATION
         "maw":
-            _fx = BPyreWyrm.new() # replaced by BUndertowMaw when the tide port lands
-            duration = BPyreWyrm.DURATION
+            _fx = BUndertowMaw.new()
+            duration = BUndertowMaw.DURATION
         _:
             _fx = BPyreWyrm.new()
-            duration = BPyreWyrm.DURATION
+            duration = BUndertowMaw.DURATION
     _r.caster = SRC_CASTER
     _r.target = SRC_TARGET
     _fx.setup(_r)

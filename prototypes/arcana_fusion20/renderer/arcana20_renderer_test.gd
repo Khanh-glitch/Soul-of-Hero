@@ -126,7 +126,25 @@ func _init() -> void:
                 var gy := (i / BRenderer.W) * 6 / BRenderer.H
                 var key := "%d,%d" % [gx, gy]
                 regions[key] = int(regions.get(key, 0)) + 1
-        return {"iou": float(inter) / maxf(1.0, float(union)), "mae": mae / maxf(1.0, float(npix)), "maxerr": maxerr, "regions": regions}
+        # Diagnostic: best +-1px shift MAE (detects systematic offsets).
+        var best := 1e9
+        var best_key := "0,0"
+        for sy in [-1, 0, 1]:
+            for sx in [-1, 0, 1]:
+                var acc := 0.0
+                for yy in range(BRenderer.H):
+                    var ry := clampi(yy - sy, 0, BRenderer.H - 1)
+                    for xx in range(BRenderer.W):
+                        var rx := clampi(xx - sx, 0, BRenderer.W - 1)
+                        var oo := (ry * BRenderer.W + rx) * 4
+                        var oo2 := (yy * BRenderer.W + xx) * 4
+                        acc += float(maxi(maxi(absi(int(bytes[oo2]) - int(rb[oo])), absi(int(bytes[oo2 + 1]) - int(rb[oo + 1]))), absi(int(bytes[oo2 + 2]) - int(rb[oo + 2]))))
+                var m := acc / float(npix)
+                if m < best:
+                    best = m
+                    best_key = "%d,%d" % [sx, sy]
+        var iou := 1.0 if union == 0 else float(inter) / float(union)
+        return {"iou": iou, "mae": mae / maxf(1.0, float(npix)), "maxerr": maxerr, "regions": regions, "shift_mae": best, "shift": best_key}
 
     # --- Source-B furnaceWyrm frame parity vs the ORIGINAL TS engine ---
     # Reference PNGs/meta were produced by running the unmodified B
@@ -153,7 +171,7 @@ func _init() -> void:
             if bytes[i + 3] != 0:
                 nonzero += 1
         var sp: Dictionary = _spatial.call(bytes, "res://prototypes/arcana_fusion20/renderer/source_b/reference/wyrm_%s.png" % key)
-        print("::notice::WYRM_SPATIAL ", key, " iou=", snappedf(float(sp.get("iou", 0.0)), 0.0001), " mae=", snappedf(float(sp.get("mae", 99.0)), 0.01), " maxerr=", int(sp.get("maxerr", 255)), " regions=", JSON.stringify(sp.get("regions", {})))
+        print("::notice::WYRM_SPATIAL ", key, " iou=", snappedf(float(sp.get("iou", 0.0)), 0.0001), " mae=", snappedf(float(sp.get("mae", 99.0)), 0.01), " maxerr=", int(sp.get("maxerr", 255)), " shift=", sp.get("shift", "?"), "@", snappedf(float(sp.get("shift_mae", 99.0)), 0.01), " regions=", JSON.stringify(sp.get("regions", {})))
         if float(sp.get("iou", 0.0)) < 0.90 or float(sp.get("mae", 99.0)) > 6.0:
             _fail("wyrm spatial %s iou=%f mae=%f" % [key, float(sp.get("iou", 0.0)), float(sp.get("mae", 99.0))])
         var exp_sum := int(meta[key].sum)
@@ -183,7 +201,7 @@ func _init() -> void:
         for i in range(0, bytes3.size(), 4):
             if bytes3[i + 3] != 0:
                 nz3 += 1
-        print("::notice::METEOR_SPATIAL ", key, " t=", t3, " iou=", snappedf(float(sp3.get("iou", 0.0)), 0.0001), " mae=", snappedf(float(sp3.get("mae", 99.0)), 0.01), " nz=", nz3, "/", int(mmeta[key].nonzero))
+        print("::notice::METEOR_SPATIAL ", key, " t=", t3, " iou=", snappedf(float(sp3.get("iou", 0.0)), 0.0001), " mae=", snappedf(float(sp3.get("mae", 99.0)), 0.01), " shift=", sp3.get("shift", "?"), "@", snappedf(float(sp3.get("shift_mae", 99.0)), 0.01), " nz=", nz3, "/", int(mmeta[key].nonzero))
         if float(sp3.get("iou", 0.0)) < 0.90 or float(sp3.get("mae", 99.0)) > 6.0:
             _fail("meteor spatial %s iou=%f mae=%f" % [key, float(sp3.get("iou", 0.0)), float(sp3.get("mae", 99.0))])
 
@@ -196,3 +214,23 @@ func _init() -> void:
     else:
         print("::error::ARCANA20_RENDER_RESULT FAIL failures=", _failures)
         quit(1)
+
+## #08 spatial parity vs original tide.ts (seed 808) — authored samples.
+func _maw_check(host: Arcana20Renderer) -> void:
+    var refs := {"t150": 1.5, "t300": 3.0, "t440": 4.4, "t510": 5.1, "t600": 6.0}
+    var bp := host._instances["arcana_fusion20_08"] as BSourcePlayer
+    if bp == null:
+        _fail("maw instance is not BSourcePlayer")
+        return
+    var k := 0
+    for tick in bp.frame_ticks():
+        k += 1
+        var st := float(tick) / 60.0
+        for key in refs.keys():
+            var tt: float = refs[key]
+            if abs(st - tt) < 0.001:
+                var got := bp.frame_image()
+                var werr := _spatial("maw_" + key + ".png", got, key)
+                if werr != "":
+                    _fail(werr)
+    print("MAW_FRAMES_CAPTURED ", k)
