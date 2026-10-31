@@ -163,6 +163,7 @@ jobs:
           bash tools/ci/gate_log.sh artifacts/research-clock.log "research clock" "A0 RESEARCH CLOCK UI PASSED"
           gate=$?
           if [ "${status}" -ne 0 ] || [ "${gate}" -ne 0 ]; then
+            tail -25 artifacts/research-clock.log | sed 's/^/::error::/'
             echo "::error::the A0 research controls no longer resolve"
             exit 1
           fi

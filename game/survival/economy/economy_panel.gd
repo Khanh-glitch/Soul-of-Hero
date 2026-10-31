@@ -146,7 +146,10 @@ func _item_label(item_id: String) -> String:
 		var definition: Dictionary = service.call(&"item_definition", item_id)
 		var label := String(definition.get("label", ""))
 		if not label.is_empty():
-			return label
+			# Cost lines are prose ("2 × oak wood"), so the catalog's title case is
+			# folded down; the headline re-capitalises its first letter. A0's research
+			# test asserts these exact nouns, so this casing is part of the surface.
+			return label.to_lower()
 	return item_id.replace("_", " ")
 
 
