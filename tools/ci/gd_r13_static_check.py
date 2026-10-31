@@ -176,6 +176,37 @@ def r13_job_slice(text: str) -> str:
     return "\n".join(lines[start:end])
 
 
+FUNC_START = re.compile(r"^(?:static\s+)?func\s+(\w+)")
+VAR_DECL = re.compile(r"^\s*var\s+(\w+)\s*[:=]")
+
+
+def check_duplicate_vars(path: Path, findings: list[str]) -> None:
+    """Godot 4.7 rejects a second `var` of the same name in a nested block.
+
+    Observed in run 41230670691 follow-up: `There is already a variable named
+    "core" declared in this scope.` For-loop bindings are naturally reusable, so
+    only `var` declarations are compared.
+    """
+    current = ""
+    seen: dict[str, int] = {}
+    for number, raw in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+        match = FUNC_START.match(raw)
+        if match:
+            current = match.group(1)
+            seen = {}
+            continue
+        decl = VAR_DECL.match(raw)
+        if decl and current:
+            name = decl.group(1)
+            if name in seen:
+                findings.append(
+                    f"{path}:{number}: duplicate `var {name}` in {current}() "
+                    f"(first declared line {seen[name]}); Godot 4.7 rejects nested re-declaration"
+                )
+            else:
+                seen[name] = number
+
+
 def check_workflow(path: Path, findings: list[str]) -> None:
     """Two-process steps must not share shell state."""
     text = path.read_text(encoding="utf-8")
@@ -208,6 +239,7 @@ def main() -> int:
             findings.append(f"{path}: missing required R13 file")
             continue
         check_file(path, findings)
+        check_duplicate_vars(path, findings)
     workflow = root / args.workflow
     if workflow.exists():
         check_workflow(workflow, findings)

@@ -298,11 +298,13 @@ jobs:
           rc=$?
           set -e
           cat "$ARTIFACT_DIR/r13_phase1.log"
-          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/r13_phase1.log" "R13 phase1" "P1 PASSED" || exit 1
           if [ "$rc" -ne 0 ]; then
+            bash tools/ci/gate_log.sh "$ARTIFACT_DIR/r13_phase1.log" "R13 phase1" "P1 PASSED" || true
+            bash tools/ci/annotate_log.sh "$ARTIFACT_DIR/r13_phase1.log" "R13 phase1" 60
             echo "::error::R13 phase1 exited $rc"
             exit 1
           fi
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/r13_phase1.log" "R13 phase1" "P1 PASSED" || exit 1
           echo "R13 phase1 PASSED (pid recorded in receipt)" >> "$GITHUB_STEP_SUMMARY"
       - name: R13 process 2 — reload, mature, claim once, refuse duplicate, exit
         # Independent Godot OS process 2 against the SAME isolated durable save.
@@ -318,11 +320,13 @@ jobs:
           rc=$?
           set -e
           cat "$ARTIFACT_DIR/r13_phase2.log"
-          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/r13_phase2.log" "R13 phase2" "P2 PASSED" || exit 1
           if [ "$rc" -ne 0 ]; then
+            bash tools/ci/gate_log.sh "$ARTIFACT_DIR/r13_phase2.log" "R13 phase2" "P2 PASSED" || true
+            bash tools/ci/annotate_log.sh "$ARTIFACT_DIR/r13_phase2.log" "R13 phase2" 60
             echo "::error::R13 phase2 exited $rc"
             exit 1
           fi
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/r13_phase2.log" "R13 phase2" "P2 PASSED" || exit 1
           echo "R13 phase2 PASSED (distinct pid recorded in receipt)" >> "$GITHUB_STEP_SUMMARY"
       - name: Two-process receipt verification (one paid settlement, duplicate refused)
         # The receipts are the evidence; no shell state crosses the steps above.
@@ -355,6 +359,12 @@ jobs:
           rc=$?
           set -e
           cat "$ARTIFACT_DIR/r13_single.log"
+          if [ "$rc" -ne 0 ]; then
+            bash tools/ci/gate_log.sh "$ARTIFACT_DIR/r13_single.log" "R13 single-process" "R13 NATIVE PASSED" || true
+            bash tools/ci/annotate_log.sh "$ARTIFACT_DIR/r13_single.log" "R13 single-process" 60
+            echo "::error::R13 single-process exited $rc"
+            exit 1
+          fi
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/r13_single.log" "R13 single-process" "R13 NATIVE PASSED" || exit 1
           if [ "$rc" -ne 0 ]; then
             echo "::error::R13 single-process exited $rc"

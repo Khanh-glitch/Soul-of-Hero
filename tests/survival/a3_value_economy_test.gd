@@ -488,8 +488,8 @@ func _test_bag_and_io_failure() -> void:
 	var removed := 0
 	for key: Variant in stacks_after.keys():
 		var record: Variant = stacks_after[key]
-		var item_id := String((record as Dictionary).get("item_id", String(key))) if record is Dictionary else String(key)
-		if removed < 3 and item_id.begins_with("r13_filler_"):
+		var stack_item := String((record as Dictionary).get("item_id", String(key))) if record is Dictionary else String(key)
+		if removed < 3 and stack_item.begins_with("r13_filler_"):
 			removed += 1
 			continue
 		open_stacks[key] = record
@@ -662,8 +662,8 @@ func _test_routes_and_core_distinction() -> void:
 	_begin_group("routes")
 	## The reset test wiped the run, so this group creates its own material state.
 	_give("quarry_core_fragment", 10, "routes")
-	var core := _give_instance("core_ember", "r13:routes:core", 100)
-	_expect(not core.is_empty(), "routes group owns a physical Skill Core instance")
+	var core_instance := _give_instance("core_ember", "r13:routes:core", 100)
+	_expect(not core_instance.is_empty(), "routes group owns a physical Skill Core instance")
 	var routes: Dictionary = a3.route_comparison()
 	var raw_routes: Variant = routes.get("routes", {})
 	_expect(raw_routes is Dictionary, "route comparison returns named routes")
@@ -692,10 +692,10 @@ func _test_routes_and_core_distinction() -> void:
 	var cores: Array = distinction.get("physical_skill_cores", [])
 	_expect(cores.size() >= 1, "a physical Skill Core instance is distinguishable from a fragment")
 	if cores.size() >= 1:
-		var core: Dictionary = cores[0]
-		_expect(not String(core.get("instance_id", "")).is_empty(), "Skill Core has a durable instance id")
-		_expect(int(core.get("max_uses", 0)) >= 1, "Skill Core has finite uses")
-		_expect_equal(String(core.get("item_id", "")).begins_with("core_"), true, "Skill Core item id is a core_* instance")
+		var core_view: Dictionary = cores[0]
+		_expect(not String(core_view.get("instance_id", "")).is_empty(), "Skill Core has a durable instance id")
+		_expect(int(core_view.get("max_uses", 0)) >= 1, "Skill Core has finite uses")
+		_expect(String(core_view.get("item_id", "")).begins_with("core_"), "Skill Core item id is a core_* instance")
 
 ## --- process 1 ---
 
