@@ -288,6 +288,61 @@ func _job_target(target: String) -> String:
 	return ""
 
 
+## A single key press with its own event objects: the input layer drops a re-parsed
+## event, so press and release must never share one.
+func _key(code: Key) -> void:
+	var down := InputEventKey.new()
+	down.keycode = code
+	down.physical_keycode = code
+	down.pressed = true
+	Input.parse_input_event(down)
+	await process_frame
+	var up := InputEventKey.new()
+	up.keycode = code
+	up.physical_keycode = code
+	up.pressed = false
+	Input.parse_input_event(up)
+	await process_frame
+
+
+## Ordinary keyboard navigation to a row and ordinary Enter on it. A player who
+## cannot or will not aim a pointer at a row that is one pixel inside the scroll
+## viewport can still focus it with Tab and press Enter; the panel is a normal
+## focusable UI, and ScrollContainer follows the focus.
+func _focus_and_accept(row: Button) -> bool:
+	if row == null or not is_instance_valid(row):
+		return false
+	for _i: int in range(80):
+		if root.gui_get_focus_owner() == row:
+			break
+		await _key(KEY_TAB)
+	if root.gui_get_focus_owner() != row:
+		return false
+	await _key(KEY_ENTER)
+	return true
+
+
+## Press a recipe row the way a player would. The pointer click comes first, because
+## a mouse click is the input a survival player actually uses; if the press does not
+## take (for instance because the row sits on the very edge of the scroll viewport),
+## Tab + Enter on the same row is the second, equally real attempt. The chosen path
+## is printed, never assumed.
+func _queue_row(row: Button, target: String) -> Dictionary:
+	var job_id := ""
+	var path := "mouse"
+	if row != null and is_instance_valid(row):
+		await _click_window(root.get_final_transform() * (row.get_global_transform_with_canvas() * (row.size * 0.5)))
+		job_id = _job_target(target)
+	if job_id.is_empty():
+		await create_timer(0.3).timeout
+		if await _focus_and_accept(row):
+			path = "keyboard"
+			await process_frame
+			job_id = _job_target(target)
+	print("A0_CONNECTED_INPUT_PATH target=%s path=%s job=%s" % [target, path, job_id])
+	return {"job": job_id, "path": path}
+
+
 func _click_window(position: Vector2) -> void:
 	var motion := InputEventMouseMotion.new()
 	motion.position = position
@@ -673,8 +728,8 @@ func _body() -> void:
 	var weave_live := panel.find_child(String(weave_button.name), true, false) as Button
 	if weave_live == null:
 		weave_live = weave_button
-	await _click_window(root.get_final_transform() * (weave_live.get_global_transform_with_canvas() * (weave_live.size * 0.5)))
-	var weave_id := _job_target("weave_cloth")
+	var queued := await _queue_row(weave_live, "weave_cloth")
+	var weave_id := String(queued.get("job", ""))
 	# The panel tells the player why a press did not take; print that sentence, the
 	# button's real state and both rects so the next run is diagnosis, not guesswork.
 	var texts: Array[String] = []
@@ -683,15 +738,6 @@ func _body() -> void:
 	print("A0_CONNECTED_WEAVE_CLICK job=%s disabled=%s row=%s scroll=%s focus=%s labels=%s" % [
 		weave_id, str(weave_live.disabled), str(weave_live.get_global_rect()),
 		str(weave_scroll.get_global_rect()), str(root.gui_get_focus_owner()), str(texts.slice(0, 4))])
-	if weave_id.is_empty():
-		# A player whose first click does not take clicks again rather than
-		# concluding the bench is broken; the second press is ordinary input too.
-		await create_timer(0.4).timeout
-		weave_live = panel.find_child(String(weave_button.name), true, false) as Button
-		if weave_live == null:
-			weave_live = weave_button
-		await _click_window(root.get_final_transform() * (weave_live.get_global_transform_with_canvas() * (weave_live.size * 0.5)))
-		weave_id = _job_target("weave_cloth")
 	# Two facts, two labels: a missing job and an unchanged reed count are different
 	# failures and must not share one sentence.
 	_expect(not weave_id.is_empty(), "workbench GUI queues the weave job (%s)" % weave_id)

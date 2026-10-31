@@ -149,8 +149,8 @@ func _continuation(ow: Node) -> void:
 	if kit_row == null:
 		_write_audit(ow, {})
 		return
-	await _click_window(root.get_final_transform() * (kit_row.get_global_transform_with_canvas() * (kit_row.size * 0.5)))
-	var furnace_job := _job_for("furnace_kit")
+	var kit_queue := await _queue_row(kit_row, "furnace_kit")
+	var furnace_job := String(kit_queue.get("job", ""))
 	_expect(not furnace_job.is_empty(), "the GUI queues the furnace kit (%s)" % furnace_job)
 	if furnace_job.is_empty():
 		_write_audit(ow, {})
@@ -227,8 +227,8 @@ func _continuation(ow: Node) -> void:
 	if charcoal_row == null:
 		_write_audit(ow, {})
 		return
-	await _click_window(root.get_final_transform() * (charcoal_row.get_global_transform_with_canvas() * (charcoal_row.size * 0.5)))
-	var charcoal_job := _job_for("burn_charcoal")
+	var charcoal_queue := await _queue_row(charcoal_row, "burn_charcoal")
+	var charcoal_job := String(charcoal_queue.get("job", ""))
 	_expect(not charcoal_job.is_empty(), "the GUI queues charcoal at the furnace (%s)" % charcoal_job)
 	await _close_panel(panel)
 	if charcoal_job.is_empty() or not await _wait_job(charcoal_job, 40000):
@@ -265,8 +265,8 @@ func _continuation(ow: Node) -> void:
 	if smelt_row == null:
 		_write_audit(ow, {})
 		return
-	await _click_window(root.get_final_transform() * (smelt_row.get_global_transform_with_canvas() * (smelt_row.size * 0.5)))
-	var smelt_job := _job_for("smelt_iron")
+	var smelt_queue := await _queue_row(smelt_row, "smelt_iron")
+	var smelt_job := String(smelt_queue.get("job", ""))
 	_expect(not smelt_job.is_empty(), "the GUI queues the fuelled smelt (%s)" % smelt_job)
 	await _close_panel(panel)
 	if smelt_job.is_empty():
@@ -404,8 +404,8 @@ func _verify_body() -> void:
 	_expect(parts_live != null, "ordinary wheel input reaches the parts recipe (%s)" % _scroll_reason)
 	if parts_live == null:
 		return
-	await _click_window(root.get_final_transform() * (parts_live.get_global_transform_with_canvas() * (parts_live.size * 0.5)))
-	var parts_job := _job_for("make_parts")
+	var parts_queue := await _queue_row(parts_live, "make_parts")
+	var parts_job := String(parts_queue.get("job", ""))
 	print("A0_CONNECTED_PARTS job=%s ingots=%d parts=%d" % [parts_job, _count("iron_ingot"), _count("iron_parts")])
 	_expect(not parts_job.is_empty(), "the collected ingot is spent on a queued make_parts job (%s)" % parts_job)
 	_expect(_count("iron_ingot") == 0, "the ingot is the price of the parts, not a free grant (%d left)" % _count("iron_ingot"))
