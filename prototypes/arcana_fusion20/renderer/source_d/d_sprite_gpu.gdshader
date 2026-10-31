@@ -6,8 +6,8 @@ uniform float source_time = 0.0;
 uniform vec2 half_size = vec2(1.0);
 uniform float rotation_angle = 0.0;
 uniform int shape_id = 0;
-uniform float seed = 1.7;
-uniform float hard = 0.9;
+uniform float sprite_seed = 1.7;
+uniform float sprite_hard = 0.9;
 uniform float glow = 0.3;
 uniform float edge = 0.0;
 uniform float flags = 0.0;
@@ -157,7 +157,7 @@ void fragment(){
   int id = shape_id;
   // organic wobble / chunky pixel quantisation, authored in pixels
   if(local_flags >= 4.0){
-    float s = seed;
+    float s = sprite_seed;
     q += half_size*0.14*vec2(sin(q.y*0.9 + source_time*2.0 + s*9.0), cos(q.x*0.8 - source_time*1.7 + s*5.0));
     local_flags -= 4.0;
   }
@@ -165,7 +165,7 @@ void fragment(){
   vec2 p = q / half_size;               // unit SDF domain
   float px = 1.0 / ((half_size.x + half_size.y) * 0.5);
   float rim;
-  float a = shapeAlpha(id, p, seed, hard * px, rim);
+  float a = shapeAlpha(id, p, sprite_seed, sprite_hard * px, rim);
   if(a <= 0.002) discard;
   float d = length(p);
   vec3 col = COLOR.rgb;
