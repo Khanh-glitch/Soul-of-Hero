@@ -19,6 +19,7 @@ signal cast_finished(canonical_id: StringName)
 # Experimental C post state; the scene owner decides whether/how to apply it.
 signal screen_post(canonical_id: StringName, state: Dictionary)
 signal source_pass_ready(canonical_id: StringName, frame: Arcana20SourcePassFrame)
+signal unbound_source_contact(canonical_id: StringName, kind: StringName, node_index: int, source_time: float)
 # Producer mode suppresses source quads for A/B/C/D. It is not an integrated
 # world compositor: the scene owner must consume every emitted field.
 @export var world_pass_mode := false
@@ -71,6 +72,8 @@ func _a_cast(canonical_id: StringName, id: int, caster_world: Vector2, target_wo
     ap.world_pass_mode = world_pass_mode
     ap.source_variant = StringName(_A_SPELLS[id])
     ap.source_pass_ready.connect(func(frame: Arcana20SourcePassFrame) -> void: source_pass_ready.emit(canonical_id, frame))
+    ap.unbound_source_contact.connect(func(kind: StringName, index: int, t: float) -> void:
+        unbound_source_contact.emit(canonical_id, kind, index, t))
     # Keep the existing candidate untouched in legacy mode. World mode #09
     # opts into A's actual graph schedule with B colors/C bolt primitives;
     # missing real actor anchors never manufacture visual contacts or HP.

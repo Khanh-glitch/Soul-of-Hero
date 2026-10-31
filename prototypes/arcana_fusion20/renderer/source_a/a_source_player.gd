@@ -7,6 +7,9 @@ signal visual_event(kind: StringName, world_pos: Vector2, source_time: float)
 signal visual_contact(kind: StringName, world_pos: Vector2, source_time: float)
 signal finished()
 signal source_pass_ready(frame: Arcana20SourcePassFrame)
+# An original contact whose selected real actor is missing/dead is still
+# reported; it cannot be turned into a fake position or a damage request.
+signal unbound_source_contact(kind: StringName, node_index: int, source_time: float)
 
 const STEP := 1.0 / 60.0
 const CASTER_LOCAL := Vector2(104, 150)
@@ -114,6 +117,8 @@ func _fire_events() -> void:
             var kind := StringName(String(ev.kind))
             var event_pos: Variant = _spell.call("event_local", ev) if _spell.has_method("event_local") else ev.pos_local
             if event_pos == null:
+                if String(ev.kind).ends_with("impact") or String(ev.kind).ends_with("contact"):
+                    unbound_source_contact.emit(kind, int(ev.get("node_index", -1)), t)
                 continue
             var wp := local_to_world(event_pos)
             visual_event.emit(kind, wp, t)

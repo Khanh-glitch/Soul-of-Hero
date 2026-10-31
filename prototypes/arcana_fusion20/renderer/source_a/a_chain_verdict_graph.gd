@@ -44,7 +44,7 @@ func bind_targets(player: ASourcePlayer, target_world: Vector2) -> void:
     actor_refs.clear()
     var candidates: Array[Node2D] = []
     for n in player.get_tree().get_nodes_in_group(&"enemies"):
-        if n is Node2D and is_instance_valid(n) and not n.is_queued_for_deletion():
+        if n is Node2D and _actor_live(n):
             candidates.append(n)
     candidates.sort_custom(func(a: Node2D, b: Node2D) -> bool:
         var da := a.global_position.distance_squared_to(target_world)
@@ -54,6 +54,14 @@ func bind_targets(player: ASourcePlayer, target_world: Vector2) -> void:
         actor_refs.append(weakref(candidates[i]))
     _update_anchors()
 
+func _actor_live(actor: Node2D) -> bool:
+    if not is_instance_valid(actor) or actor.is_queued_for_deletion() or not actor.is_inside_tree():
+        return false
+    for property in actor.get_property_list():
+        if StringName(property.name) == &"health":
+            return float(actor.get("health")) > 0.0
+    return true
+
 func _update_anchors() -> void:
     if not is_instance_valid(host):
         return
@@ -62,7 +70,7 @@ func _update_anchors() -> void:
         if i - 1 >= actor_refs.size():
             continue
         var actor := actor_refs[i - 1].get_ref() as Node2D
-        if not is_instance_valid(actor) or actor.is_queued_for_deletion() or not actor.is_inside_tree():
+        if not _actor_live(actor):
             continue
         var sprite := actor.find_child("AnimatedSprite2D", true, false) as AnimatedSprite2D
         if sprite == null or not sprite.is_visible_in_tree():

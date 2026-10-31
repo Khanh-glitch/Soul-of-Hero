@@ -274,6 +274,71 @@ func _run() -> void:
         await process_frame
         var clear_img := await save_frame("world_%02d_cancelled" % num)
         check(images_equal(baseline, clear_img), "cast cancel restores frozen world %d" % num)
+    # Exercise two real screen consumers concurrently, without turning either
+    # into combat authority. Capture each state at frozen simulation ticks.
+    renderer.queue_free()
+    a_world.queue_free()
+    b_world.queue_free()
+    c_world.queue_free()
+    await process_frame
+    await process_frame
+    var multi := Arcana20Renderer.new()
+    multi.world_pass_mode = true
+    multi.process_mode = Node.PROCESS_MODE_ALWAYS
+    world.add_child(multi)
+    var mount := Arcana20WorldPassMount.new()
+    mount.process_mode = Node.PROCESS_MODE_ALWAYS
+    world.add_child(mount)
+    check(mount.attach(multi), "multi-cast diagnostic mount attached")
+    var id2 := Arcana20SourceCatalog.canonical_id(2)
+    var id3 := Arcana20SourceCatalog.canonical_id(3)
+    var id10 := Arcana20SourceCatalog.canonical_id(10)
+    multi.cast_skill(id2, player.global_position, enemy.global_position)
+    var b2 := multi._casts[id2] as BSourcePlayer
+    b2.set_process(false)
+    b2.advance(3.0)
+    b2._render_frame()
+    await process_frame
+    await process_frame
+    var only_b := await save_frame("overlap_02_only")
+    multi.cast_skill(id10, player.global_position, enemy.global_position)
+    var c10 := multi._casts[id10] as CSourcePlayer
+    c10.set_process(false)
+    c10.render_enabled = false
+    for tick in range(180): c10.advance(STEP, false)
+    c10.render_enabled = true
+    c10._render_frame()
+    await process_frame
+    await process_frame
+    var both := await save_frame("overlap_02_10")
+    check(mount.active_viewers(id2) == 1 and mount.active_viewers(id10) == 1 and not images_equal(only_b, both), "B and C simultaneous world viewers both active")
+    multi.cancel_skill(id10)
+    await process_frame
+    await process_frame
+    var after_c_cancel := await save_frame("overlap_after_10_cancel")
+    check(mount.active_viewers(id10) == 0 and images_equal(only_b, after_c_cancel), "cancel one overlapping cast restores remaining B")
+    multi.cast_skill(id3, player.global_position, enemy.global_position)
+    var b3 := multi._casts[id3] as BSourcePlayer
+    b3.set_process(false)
+    b3.advance(3.0)
+    b3._render_frame()
+    await process_frame
+    await process_frame
+    var same_family := await save_frame("overlap_02_03")
+    check(mount.active_viewers(id2) == 1 and mount.active_viewers(id3) == 1 and not images_equal(only_b, same_family), "two B source casts have independent world viewers")
+    multi.cancel_skill(id3)
+    await process_frame
+    await process_frame
+    check(images_equal(only_b, await save_frame("overlap_after_03_cancel")), "same-family cancellation preserves other cast")
+    multi.cancel_skill(id2)
+    await process_frame
+    await process_frame
+    check(images_equal(baseline, await save_frame("overlap_all_cancelled")), "overlap cancellation restores frozen world")
+    mount.detach()
+    mount.queue_free()
+    multi.queue_free()
+    await process_frame
+
     var f := FileAccess.open(OUTPUT + "/contamination.json", FileAccess.WRITE)
     f.store_string(JSON.stringify({"stats": stats, "scope": "frozen actual overworld; one tick; experimental A/B/C terrain passes only; #04 is an unapproved redesign candidate; not source fidelity, gameplay, post, actor depth or approval"}, "  "))
     f.close()
