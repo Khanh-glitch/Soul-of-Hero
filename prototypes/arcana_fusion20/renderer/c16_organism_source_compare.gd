@@ -8,7 +8,9 @@ func _initialize() -> void:
         var frame := CFrame.new()
         frame.track_world_fragments = true
         frame.clear()
+        var started := Time.get_ticks_usec()
         growth.render(frame,float(tick)/60.0)
+        var render_us := Time.get_ticks_usec() - started
         for kind in ["ink","light","disp"]:
             var file := FileAccess.open(OUT + "/native_%d.%s32f" % [tick,kind],FileAccess.WRITE)
             var data: PackedFloat32Array = frame.get(kind)
@@ -17,6 +19,6 @@ func _initialize() -> void:
         var coverage := FileAccess.open(OUT + "/native_%d.coverage.u8" % tick,FileAccess.WRITE)
         coverage.store_buffer(frame.world_influence)
         coverage.close()
-        print("C16_ORGANISM_NATIVE ",tick)
+        print("C16_ORGANISM_NATIVE ",tick," render_us=",render_us)
     print("C16_ORGANISM_CAPTURE_COMPLETE")
     quit()

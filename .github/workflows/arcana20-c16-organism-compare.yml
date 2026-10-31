@@ -6,6 +6,7 @@ on:
     paths:
       - 'tools/arcana20_source_compare/c16_organism_reference.ts'
       - 'tools/arcana20_source_compare/compare_c16_organism.py'
+      - 'tools/arcana20_source_compare/surface_c16_organism.py'
       - 'prototypes/arcana_fusion20/renderer/c16_organism_source_compare.gd'
       - 'prototypes/arcana_fusion20/renderer/source_c/c_math.gd'
       - 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_organism.gd'
@@ -48,6 +49,13 @@ jobs:
           set -o pipefail
           python3 tools/arcana20_source_compare/compare_c16_organism.py artifacts/arcana20-c16-organism-source | tee comparison.log
           sed 's/^/::notice::/' comparison.log
+      - name: Surface C16 source/native ink crops and timings
+        if: always()
+        run: |
+          test ! -f native.log || grep 'C16_ORGANISM_NATIVE ' native.log | sed 's/^/::notice title=C16_ORGANISM_TIME::/'
+          if test -f artifacts/arcana20-c16-organism-source/native_381.png; then
+            python3 tools/arcana20_source_compare/surface_c16_organism.py artifacts/arcana20-c16-organism-source
+          fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:
