@@ -95,21 +95,31 @@ rejects before wear; no duplicate resource via idempotent event key.
 is A0's deposit receipt. No second wallet: `secured_ragnarok_currency` lives
 only in the profile inside the A0 SaveService document.
 
-## 7. Stale vendored economy bytes — decision
+## 7. Vendored economy bytes — byte equality vs source pins (decision)
 
-A0's `game/survival/economy/vendor/a3_economy_service.gd` pin `acbe03b0...`
-references A3 files pinned at `4bfba38d` (V5-era data + scripts:
-`vendor/a3_economy_service.gd acbe03b0`, `world_source_adapter.gd 8bab2441`,
-`vendor/a3_world_source_c23292be.gd 689a9b89`). The vendored copy at A0
-commit `84ac9c1a` was fetched and is BYTE-IDENTICAL to this repo's
-`game/survival/economy/economy_service.gd` at `35214ed8` — which proves the
-vendored bytes are a STALE V5 snapshot, not the V7 canonical.
+Two distinct facts must be kept separate; neither implies the other:
 
-Decision: the vendored bytes are WP1 reference only and MUST NOT be treated as
-canonical or copied into A3. A3 canonical V7 is `economy_service.gd` at
-`35214ed8` (PR #19 head). A0 production must re-pin or explicitly fail-closed;
-A3 will not edit the A0 branch and will not promote stale vendored bytes.
-`apply_meta_deposit` against an absent port returns
+**Fact A — byte equality:** A0's
+`game/survival/economy/vendor/a3_economy_service.gd` at commit `84ac9c1a`
+(fetched via GitHub raw) is BYTE-IDENTICAL to this repo's
+`game/survival/economy/economy_service.gd` at `35214ed8` (PR #19 head, V7
+canonical). This means the vendored *service code* is current V7, not older
+V5 code. Byte equality alone does NOT make it stale or canonical.
+
+**Fact B — source pins:** A0's `a0_v5_source_pins.gd` pins A3 files at
+`4bfba38d` (V5-era DATA: items/sources/bindings/recipes/research/stations +
+legacy bindings) and SCRIPTS `vendor/a3_economy_service.gd acbe03b0`,
+`world_source_adapter.gd 8bab2441`, `vendor/a3_world_source_c23292be.gd
+689a9b89`. These pin references are V5-era and may not match the V7 runtime
+caller, item data, or receipt versions.
+
+Decision: the vendored bytes are WP1 reference only. A3 canonical V7 is
+`economy_service.gd` at `35214ed8` (PR #19 head). A0 production must reconcile
+Fact A and Fact B — compare the EXACT linked scripts, item data, runtime
+caller and receipt versions — and either re-pin to V7-authoritative versions
+or explicitly fail-closed. A3 will not edit the A0 branch, will not blindly
+re-pin V5 pins over V7 code, and will not promote stale vendored bytes as
+canonical. `apply_meta_deposit` against an absent port returns
 `A0_PROFILE_BOUNDARY_ABSENT` (native tested).
 
 ## 8. What is NOT claimed here
