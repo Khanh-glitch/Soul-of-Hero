@@ -7,6 +7,7 @@ on:
       - '.github/workflows/arcana20-rift-overlap-perf.yml'
       - 'prototypes/arcana_fusion20/renderer/world_pass/c_world_pass.gd'
       - 'prototypes/arcana_fusion20/renderer/source_c/c_frame.gd'
+      - 'prototypes/arcana_fusion20/renderer/source_c/c_reality_ripper_fusion.gd'
       - 'prototypes/arcana_fusion20/renderer/arcana20_overworld_join_test.gd'
 permissions:
   contents: read

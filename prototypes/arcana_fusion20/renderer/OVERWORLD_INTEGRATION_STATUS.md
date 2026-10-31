@@ -499,5 +499,22 @@ SOH world source parity and creator review remain separate.
 - Opt-in CPU wall-time phase instrumentation (`ARCANA20_PROFILE_CPU=1`) at
   `62476fa4` separately records C clear, authored raster, source-field packing,
   and world-viewer submission p50/p95/p99. It does not measure asynchronous GPU
-  execution or target hardware. New [overlap run 41219131053](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41219131053)
-  and source/world regressions are pending.
+  execution or target hardware. [Run 41219131053](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41219131053)
+  failed because the probe's percentile helper was missing. Fix `4f00b5d6`
+  passed [source](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41219318245),
+  [world](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41219318271),
+  [live](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41219318226),
+  [all-20 lifecycle](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41219318304)
+  and [three-resolution overlap](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41219318293).
+  C raster p50/p95/p99 on 59 sampled frames was 241.803/414.451/498.013 ms
+  (720p runner), 171.598/292.092/348.645 ms (2K runner), and
+  117.124/200.050/241.283 ms (4K runner). These timings measure CPU wall time
+  on different shared software hosts; they demonstrate substantial source
+  raster cost but are not a controlled resolution comparison or GPU timings.
+  Viewer texture submission p50 was 0.355–0.935 ms, asynchronous only.
+- Candidate `9bd4df3f` keeps the exact valid contour positions in row-major
+  order and visits only those samples, rather than scanning known-invalid
+  pixels each rendered frame. The source-authored calculations and ordering
+  are unchanged; there is an extra int32 index per valid sample in the static
+  cache and each cast. Source comparisons, isolation, world regression and
+  new CPU/overlap measurements must pass before describing a speedup.
