@@ -8,7 +8,7 @@ func _initialize() -> void:
     eng.setup()
     var ticks := [72, 192, 312, 489, 510]
     for tick in range(1, ticks[-1] + 1):
-        eng.update(float(tick) / 60.0, 1.0 / 60.0)
+        eng.update(float(tick) / 60.0, 0.0001 if tick == 1 else 1.0 / 60.0)
         if tick in ticks:
             var file := FileAccess.open(OUT + "/native_%d.scene.rgb32f" % tick, FileAccess.WRITE)
             file.store_buffer(eng.fx.buf.to_byte_array())

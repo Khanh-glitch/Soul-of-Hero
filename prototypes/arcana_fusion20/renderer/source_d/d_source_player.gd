@@ -81,7 +81,9 @@ func advance(dt: float) -> void:
         _acc -= STEP
         guard += 1
         _tick += 1
-        _eng.update(source_time(), STEP)
+        # Original D's first browser frame after cast initializes with the
+        # source reset delta (0.0001s); later simulation stays fixed 60 Hz.
+        _eng.update(source_time(), 0.0001 if _tick == 1 else STEP)
         _fire_events()
         if source_time() >= duration:
             _active = false
