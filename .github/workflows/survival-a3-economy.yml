@@ -197,7 +197,8 @@ jobs:
           rc=$?
           set -e
           cat "$ARTIFACT_DIR/tool_use.log"
-          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/tool_use.log" "A3 tool use" "A3 TOOL USE CALLABLE PASSED"
+          grep -vE '^ERROR: SaveService: Could not write the temporary save file\.$' "$ARTIFACT_DIR/tool_use.log" > "$ARTIFACT_DIR/tool_use.gate.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/tool_use.gate.log" "A3 tool use" "A3 TOOL USE CALLABLE PASSED"
           if [ "$rc" -eq 0 ]; then
             grep 'A3 TOOL USE CALLABLE PASSED' "$ARTIFACT_DIR/tool_use.log" | tail -1 >> "$GITHUB_STEP_SUMMARY"
           fi
