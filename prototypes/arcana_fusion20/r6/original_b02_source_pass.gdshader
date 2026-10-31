@@ -52,7 +52,9 @@ void fragment(){
     source_pixel=rotate_source((pixel-caster_screen)/(pixel_scale*b_distance_scale),-b_direction)+vec2(104.0,132.0);
   }
   vec3 world=texture(screen_tex,SCREEN_UV).rgb;
-  if (source_pixel.x<0.0 || source_pixel.y<0.0 || source_pixel.x>=384.0 || source_pixel.y>=216.0){COLOR=vec4(world,1.0);return;}
+  if (source_pixel.x<0.0 || source_pixel.y<0.0 || source_pixel.x>=384.0 || source_pixel.y>=216.0){
+    COLOR=vec4(world,1.0);
+  } else {
   ivec2 p=ivec2(floor(source_pixel));
   float th=bayer(p)-0.5;
   if(spell==17){
@@ -96,5 +98,6 @@ void fragment(){
     // Authored ground decal albedo is retained, but not claimed Gold-level exact.
     col+=m.rgb*0.45;
     COLOR=vec4(clamp(col+global_flash,vec3(0.0),vec3(1.0)),1.0);
+  }
   }
 }
