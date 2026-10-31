@@ -81,6 +81,7 @@ func _run() -> void:
         await get_tree().process_frame
         await get_tree().process_frame
         if str(timing.label) == "peak":
+            print("SOH_TRANSFORM_DIAG target_screen=",actor.get_screen_transform().origin," actor_global=",actor.global_position," viewport_rect=",get_viewport().get_visible_rect().size," canvas_xform=",str(get_viewport().get_canvas_transform())," screen_xform=",str(get_viewport().get_screen_transform()))
             print("ANCHOR_DIAG ",fx.material.get_shader_parameter("anchor_screen")," caster=",fx.material.get_shader_parameter("caster_screen")," actor=",actor.get_global_transform_with_canvas().origin)
         _check(_snap(stage,"B02_"+str(timing.label)),"native_screenshot_"+str(timing.label))
         var image := stage.get_viewport().get_texture().get_image()
