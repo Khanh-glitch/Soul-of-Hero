@@ -39,6 +39,10 @@ func _on_world_ready() -> void:
         return
     var caster := overworld.player as Node2D
     var camera := overworld.camera as Camera2D
+    # R6 visual fixture: avoid the production camera's initial smoothing transient
+    # while checking source-to-target spatial fidelity against a fixed world.
+    camera.position_smoothing_enabled = false
+    camera.force_update_scroll()
     var starting_point := caster.global_position + Vector2(130,-16)
     if overworld.has_method(&"_nearest_walkable"):
         starting_point = overworld.call(&"_nearest_walkable", starting_point)
