@@ -67,7 +67,7 @@ failed; this historical pin is not an endorsement of the latest route.
 | 08 | B world fields available | Actual-world comparisons, post, gameplay missing |
 | 09 | New A graph/B colors/C bolt candidate; one moving-real-skeleton diagnostic | [run 41208565813](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41208565813); misses/deaths, C branches, B raster, full source comparison |
 | 10 | C world pass diagnostic | [run 41207915157](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41207915157), one frozen frame only |
-| 11 | Experimental seeded original-A rotor/fragment timing + C bolt-tree candidate `b7362e60`; [source-field smoke 41211652215](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211652215) | Actual-world JOIN pending; isolated original rotor parity, C branch role/fidelity, full cast/OUT, depth and review missing |
+| 11 | A rotor/fragment + C bolt-tree candidate; [isolated rotor comparison 41211833178](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211833178), [actual-world JOIN 41211652270](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211652270) | C branch role/fidelity, full fusion/post, natural motion/OUT, depth and review missing |
 | 12 | A candidate fields available; REDESIGN_CANDIDATE | Targeting, source craft and world review missing |
 | 13 | A candidate fields available; REDESIGN_CANDIDATE | Actor targeting, depth and world review missing |
 | 14 | A candidate fields available; REDESIGN_CANDIDATE | Actor/colony integration and world review missing |
@@ -215,3 +215,28 @@ passed all three resolutions, but that older screenshot was taken after the
 timing loop and did not establish that both casts remained active. The newer
 probe captures during overlap and samples memory while both viewers are active. Device-specific profiling,
 allocations, full-cast capture and cleanup analysis remain mandatory.
+
+## #11 isolated rotor and actual-world evidence
+
+The `b7362e60` world-mode #11 candidate uses original A seed `0xc0de`, six
+segmented rotor rings, synchronization and particle lifecycle; it replaces
+A bolt paths with C bolt-tree geometry, drawn in the A presentation palette.
+[JOIN 41211652270](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211652270),
+[assertions 41211916988](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211916988)
+verified 48,147 changed actual-world pixels inside explicit source influence,
+zero outside, and exact frozen-world restoration on cancel at tick 180.
+
+[Original A comparison 41211833178](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211833178)
+instruments the A bolt helper as a no-op in memory and disables the native C
+bolts to isolate A's rotor, sync, pulse ring and fragments on a black source
+canvas. Ticks 90/180/270/324/348/396/420 produced buffer-write-trace IoU 1.0,
+RGB max 1 and MAE <= 0.111, HDR MAE <= 2.4e-9. The trace is not authored
+alpha; this is not a comparison of C bolts, live-world composition, the
+entire fusion, human visual review or combat binding.
+
+[Late C #05 comparison 41211894503](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211894503)
+showed exact displacement and ink coverage IoU 1.0 at ticks 372/396/420/450/480/510,
+but light differed after tick 372 (max about 0.67). The original particle
+engine uses `Math.random()` for per-particle seeds, whereas native CKit uses a
+deterministic counter. A new controlled-seed comparison is pending to isolate
+that known difference; no light parity is claimed from the first run.
