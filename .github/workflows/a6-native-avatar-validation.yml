@@ -147,15 +147,24 @@ jobs:
 
       - name: Fetch the licensed source archives from their Git refs
         run: |
-          set -euo pipefail
+          set -uo pipefail
           # Commit, blob id, byte length and SHA-256 are all asserted by this script;
           # see tools/fetch_a6_avatar_sources.sh for the pin table and the reasoning.
-          bash tools/fetch_a6_avatar_sources.sh "$RUNNER_TEMP/a6_source" \
-            2>&1 | tee "$RUNNER_TEMP/a6_source/fetch.log"
-          grep -q "A6 ASSET SOURCES VERIFIED" "$RUNNER_TEMP/a6_source/fetch.log"
+          # The directory has to exist before anything writes into it: `tee` opens its
+          # target first and the step died here once with no diagnostic at all.
+          mkdir -p "$RUNNER_TEMP/a6_source"
+          log="$RUNNER_TEMP/a6_source/fetch.log"
+          bash tools/fetch_a6_avatar_sources.sh "$RUNNER_TEMP/a6_source" >"${log}" 2>&1
+          status=$?
+          cat "${log}"
+          if [ "${status}" -ne 0 ] || ! grep -q "A6 ASSET SOURCES VERIFIED" "${log}"; then
+            tail -12 "${log}" | sed 's/^/::error::/'
+            echo "::error::the licensed avatar source could not be verified (exit ${status})"
+            exit 1
+          fi
           {
             echo "### A6 avatar source (Git, pinned)"
-            grep -E "commit:|path:|blob:|sha256:" "$RUNNER_TEMP/a6_source/fetch.log"
+            grep -E "commit:|path:|blob:|sha256:" "${log}"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Stage the licensed base sheets privately (runner-only, never committed)
@@ -277,15 +286,24 @@ jobs:
 
       - name: Fetch the licensed source archives from their Git refs
         run: |
-          set -euo pipefail
+          set -uo pipefail
           # Commit, blob id, byte length and SHA-256 are all asserted by this script;
           # see tools/fetch_a6_avatar_sources.sh for the pin table and the reasoning.
-          bash tools/fetch_a6_avatar_sources.sh "$RUNNER_TEMP/a6_source" \
-            2>&1 | tee "$RUNNER_TEMP/a6_source/fetch.log"
-          grep -q "A6 ASSET SOURCES VERIFIED" "$RUNNER_TEMP/a6_source/fetch.log"
+          # The directory has to exist before anything writes into it: `tee` opens its
+          # target first and the step died here once with no diagnostic at all.
+          mkdir -p "$RUNNER_TEMP/a6_source"
+          log="$RUNNER_TEMP/a6_source/fetch.log"
+          bash tools/fetch_a6_avatar_sources.sh "$RUNNER_TEMP/a6_source" >"${log}" 2>&1
+          status=$?
+          cat "${log}"
+          if [ "${status}" -ne 0 ] || ! grep -q "A6 ASSET SOURCES VERIFIED" "${log}"; then
+            tail -12 "${log}" | sed 's/^/::error::/'
+            echo "::error::the licensed avatar source could not be verified (exit ${status})"
+            exit 1
+          fi
           {
             echo "### A6 avatar source (Git, pinned)"
-            grep -E "commit:|path:|blob:|sha256:" "$RUNNER_TEMP/a6_source/fetch.log"
+            grep -E "commit:|path:|blob:|sha256:" "${log}"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Stage the licensed base sheets privately (runner-only, never committed)
