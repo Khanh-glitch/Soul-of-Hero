@@ -70,4 +70,10 @@ static func _triangle(fx: Variant, a: Vector2, b: Vector2, c: Vector2, l0: Vecto
             if coverage <= 0.004: continue
             var mult := 1.0 + glow * (1.0 - r * r) * 2.0
             mult += exp(-maxf(0.0, -dist_px) / 2.6) * clampf(edge, 0.0, 1.0) * 1.3
-            fx._add_px(x, y, color.r * mult * alpha * coverage, color.g * mult * alpha * coverage, color.b * mult * alpha * coverage)
+            # The original g target is normalized RGBA8: GL clamps each
+            # fragment output before SRC_ALPHA/ONE blending, not just the
+            # accumulated scene at the end. Preserve this source transfer.
+            var src_alpha := clampf(alpha * coverage, 0.0, 1.0)
+            fx._add_px(x, y, clampf(color.r * mult, 0.0, 1.0) * src_alpha,
+                clampf(color.g * mult, 0.0, 1.0) * src_alpha,
+                clampf(color.b * mult, 0.0, 1.0) * src_alpha)
