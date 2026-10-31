@@ -168,9 +168,10 @@ jobs:
           # Self-contained transcript: the log artifact host is not reachable from
           # every reviewer's sandbox, annotations are.
           for phase_log in 1 2; do
-            body=$(tail -c 1400 "../artifacts/route_$phase_log.log" 2>/dev/null | tr '\n' '~')
+            body=$(tail -c 3000 "../artifacts/route_$phase_log.log" 2>/dev/null | tr '\n' '~')
             echo "::error::route_$phase_log $body"
           done
+          echo "::notice::route sites $(grep -a 'A0_AUTHORED_SITE_QUARRY\|A0_AUTHORED_SITE_ORCHARD' ../artifacts/route_1.log | tail -2 | tr '\n' '~')"
           [ "$first" -eq 0 ] && grep -qa 'A0 AUTHORED WORLD ROUTE PASSED' ../artifacts/route_1.log \
             && [ "$second" -eq 0 ] && grep -qa 'A0 AUTHORED WORLD ROUTE PASSED' ../artifacts/route_2.log
       - name: A0 site-mount authority against real A8/A1/A3 data

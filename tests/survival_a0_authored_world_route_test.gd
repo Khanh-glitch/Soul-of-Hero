@@ -614,8 +614,15 @@ func _plan(start_cell: Vector2i, goal_cell: Vector2i, margin: int, stride: int) 
 	var origin := lo
 	var cols := int((hi.x - lo.x) / stride) + 1
 	var rows := int((hi.y - lo.y) / stride) + 1
-	var start_node := Vector2i((start_cell.x - origin.x) / stride, (start_cell.y - origin.y) / stride)
 	var goal_node := Vector2i((goal_cell.x - origin.x) / stride, (goal_cell.y - origin.y) / stride)
+	var start_node := _nearest_free_node(origin, stride, cols, rows,
+		Vector2i((start_cell.x - origin.x) / stride, (start_cell.y - origin.y) / stride))
+	if start_node == Vector2i(-1, -1):
+		# The body is wedged in a place no coarse node can represent (against a
+		# building, say). That is a movement problem, not a path problem, and the
+		# caller's input steering is what gets it out.
+		print("A0_ROUTE_PLAN start=%s has no free coarse node at stride %d" % [str(start_cell), stride])
+		return []
 	if start_node == goal_node:
 		return [goal_cell]
 	var open: Array[Vector2i] = [start_node]
@@ -753,6 +760,26 @@ func _staging_cell(goal: Vector2i, from: Vector2i) -> Vector2i:
 		if best != goal:
 			return best
 	return goal
+
+
+## The nearest coarse node the body could stand in, searched outward from its own
+## cell. Without this, a player who has just stepped out of a doorway is "inside"
+## a blocked node and every plan from there is empty — a stall that has nothing to
+## do with the route.
+func _nearest_free_node(origin: Vector2i, stride: int, cols: int, rows: int, node: Vector2i) -> Vector2i:
+	if node.x >= 0 and node.y >= 0 and node.x < cols and node.y < rows and _node_free(origin, stride, node):
+		return node
+	for radius: int in range(1, 5):
+		for dy: int in range(-radius, radius + 1):
+			for dx: int in range(-radius, radius + 1):
+				if maxi(absi(dx), absi(dy)) != radius:
+					continue
+				var candidate := node + Vector2i(dx, dy)
+				if candidate.x < 0 or candidate.y < 0 or candidate.x >= cols or candidate.y >= rows:
+					continue
+				if _node_free(origin, stride, candidate):
+					return candidate
+	return Vector2i(-1, -1)
 
 
 func _coarse_free(cell: Vector2i) -> bool:
