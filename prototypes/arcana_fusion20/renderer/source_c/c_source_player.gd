@@ -114,7 +114,7 @@ func begin(caster_world: Vector2, target_world: Vector2, kind: String) -> void:
             _fx.setup()
         "worldseed_debris":
             _fx = CWorldseedFusion.new()
-            duration = CWorldseedDebris.DURATION
+            duration = CWorldseedFusion.EXTENDED_SOURCE_DURATION
             _fx.setup()
         "crown", "crown_outer":
             _fx = CCinderCrown.new()

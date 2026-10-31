@@ -143,7 +143,7 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
         return true
     if id == 16 and world_pass_mode:
         # A smooth growth + C material remain the lead. Add the original C
-        # seed/spore/petal debris, not a second organism or shock: align its
+        # seeded membranes, organism and seed/spore/petal debris: align its
         # 7.6s burst with A's 5.3s bloom on the single A-led clock. C source
         # pixel centers use the same uniform A basis and align their centers.
         # This is a fusion candidate, not source-world or creator approval.
@@ -168,7 +168,7 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
                     var a_center_from_caster := AWorldseedGrowth.C - ASourcePlayer.CASTER_LOCAL
                     var c_center_from_caster := CWorldseedDebris.C - Vector2(112, 126)
                     c_player._origin = ap._origin + (a_center_from_caster - c_center_from_caster).rotated(ap._rot) * ap._scale},
-        ], AWorldseedGrowth.FUSION_DURATION)
+        ], CWorldseedFusion.EXTENDED_SOURCE_DURATION - (CWorldseedDebris.BURST - AWorldseedGrowth.BLOOM))
         add_child(fp)
         fp.visual_contact.connect(func(kind: StringName, pos: Vector2, _st: float) -> void:
             visual_contact.emit(canonical_id, pos, kind)

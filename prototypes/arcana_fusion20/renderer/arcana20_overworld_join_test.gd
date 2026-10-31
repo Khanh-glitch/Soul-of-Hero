@@ -706,22 +706,37 @@ func _run() -> void:
     seed_debris.render_enabled = false
     for tick in range(145): seed_fusion.advance(STEP)
     seed_growth.render_enabled = true
+    seed_debris.render_enabled = true
     seed_growth._render_frame()
+    seed_debris._render_frame()
     await process_frame
     await process_frame
     var seed_layers: Dictionary = mount._passes.get(id16, {})
-    check(seed_fusion._active and seed_layers.has(&"A") and not seed_layers.has(&"C") and not seed_post._states.has(id16), "C16 source completion retires debris and post while A16 remains active")
+    check(seed_fusion._active and seed_layers.has(&"A") and seed_layers.has(&"C") and seed_fx.particles.size() > 0 and not seed_post._rect.visible, "C16 source particle OUT continues after original 10.2s endpoint without stale post")
     # A's source fold still ends at 8 s, but its authored pollen particles
     # can remain alive for three seconds after the 5.3–6.0 s burst. Verify
     # the single fusion clock keeps them rather than cutting the tail at 8 s.
     var growth_impl := seed_growth._spell as AWorldseedGrowth
     seed_growth.render_enabled = false
+    seed_debris.render_enabled = false
     for tick in range(30): seed_fusion.advance(STEP)
     check(seed_fusion._active and seed_fusion.source_time() > AWorldseedGrowth.DURATION and growth_impl.pollen.count() > 0, "A16 authored pollen remains active after original fold endpoint")
     for tick in range(36): seed_fusion.advance(STEP)
+    seed_debris.render_enabled = true
+    seed_debris._render_frame()
     await process_frame
     await process_frame
-    check(growth_impl.pollen.count() == 0, "A16 authored pollen finishes naturally before fusion exit")
+    var tail_layers: Dictionary = mount._passes.get(id16, {})
+    check(growth_impl.pollen.count() == 0 and not tail_layers.has(&"A") and tail_layers.has(&"C") and seed_fx.particles.size() > 0, "A16 pollen completes while original C16 seed tail remains alive")
+    var seed_tail_img := await save_frame("fusion_16_extended_seed_tail_tick541")
+    var seed_tail_contamination := contamination(baseline, seed_tail_img, tail_layers.get(&"C"), seed_debris.source_pass_frame()) if tail_layers.has(&"C") else {"inside_changed":0,"outside_changed":-1}
+    check(int(seed_tail_contamination.get("inside_changed",0)) > 0 and int(seed_tail_contamination.get("outside_changed",-1)) == 0, "C16 original seed tail visibly affects real world within authored influence: " + str(seed_tail_contamination))
+    seed_debris.render_enabled = false
+    for tick in range(110):
+        if seed_fusion._active: seed_fusion.advance(STEP)
+    await process_frame
+    await process_frame
+    check(seed_fx.particles.is_empty(), "C16 seed tail particles expire naturally before fusion cleanup")
     check(not multi._casts.has(id16) and mount.active_viewers(id16) == 0 and images_equal(baseline, await save_frame("fusion_16_naturally_finished")), "A16 C16 full fusion naturally finishes and restores world")
     check(int(enemy.get("health")) == seed_hp_before, "A16 C16 visual fusion never changes HP")
     seed_post.detach()
