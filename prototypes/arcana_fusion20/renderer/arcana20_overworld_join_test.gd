@@ -759,6 +759,10 @@ func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D)
     physical = null
     await RenderingServer.frame_post_draw
     var samples: Array[float] = []
+    var source_tick_start := -1
+    var source_tick_end := -1
+    var sampled_second: Node = renderer._casts.get(id10)
+    if sampled_second is CSourcePlayer: source_tick_start = (sampled_second as CSourcePlayer)._tick
     var overlapping_frames := 0
     var live_memory := before_memory
     var live_objects := before_objects
@@ -779,7 +783,9 @@ func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D)
     if samples.size() > 0:
         var n := samples.size()
         percentiles = {"p50_ms": samples[floori((n - 1) * 0.50)], "p95_ms": samples[floori((n - 1) * 0.95)], "p99_ms": samples[floori((n - 1) * 0.99)]}
-    var record := {"scope": "concurrent #02+#%02d early-cast frames on real historical overworld; shared software-rendered CI, not a target-device budget or full-cast measurement" % second_skill,
+    if is_instance_valid(sampled_second) and sampled_second is CSourcePlayer: source_tick_end = (sampled_second as CSourcePlayer)._tick
+    var record := {"scope": "concurrent #02+#%02d sampled frames on real historical overworld; shared software-rendered CI, not a target-device budget or full-cast measurement" % second_skill,
+        "second_source_tick_start": source_tick_start, "second_source_tick_end": source_tick_end,
         "viewport_capture_size": [viewport_size.x, viewport_size.y],
         "physical_capture_size": [physical_size.x, physical_size.y],
         "window_size": [window_size.x, window_size.y],
