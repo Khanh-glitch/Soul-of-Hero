@@ -32,6 +32,11 @@ jobs:
           mkdir -p artifacts/arcana19-sprite
           node tools/arcana19_sprite_compare/capture.mjs artifacts/arcana19-sprite | tee original.log
           test "$(grep -c D19_SPRITE_ORIGINAL_CAPTURE original.log)" -eq 10
+      - name: Audit source shader hash precision at sprite centers
+        run: |
+          SPRITE_HASH_AUDIT=1 node tools/arcana19_sprite_compare/capture.mjs artifacts/arcana19-sprite > hash-capture.log
+          python3 tools/arcana19_sprite_compare/hash_audit.py artifacts/arcana19-sprite | tee hash.log
+          sed 's/^/::notice title=D19_SPRITE_HASH::/' hash.log
       - name: Capture native sprite cases
         run: |
           set -o pipefail
@@ -59,3 +64,5 @@ jobs:
             native.log
             import.log
             compare.log
+            hash.log
+            hash-capture.log

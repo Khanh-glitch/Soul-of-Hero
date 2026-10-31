@@ -6,25 +6,26 @@ import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
 import path from 'node:path';
 import {pathToFileURL} from 'node:url';
 const out=process.argv[2];if(!out)throw Error('output path required');mkdirSync(out,{recursive:true});
+const hashAudit=process.env.SPRITE_HASH_AUDIT==='1';
 const cases=JSON.parse(readFileSync('tools/arcana19_sprite_compare/cases.json','utf8'));
 const html=path.resolve('prototypes/arcana_fusion20/original_source/package/handoff/reference/Elemental_VFX_Lab_FIXED_Standalone.html');
 const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||undefined,args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 try {
- for(const coverage of [false,true]) {
+ for(const coverage of (hashAudit?[true]:[false,true])) {
   const page=await browser.newPage({viewport:{width:900,height:700},deviceScaleFactor:1});
-  await page.addInitScript(({coverage})=>{
+  await page.addInitScript(({coverage,hashAudit})=>{
    window.requestAnimationFrame=()=>1;window.cancelAnimationFrame=()=>{};
    if(coverage){
     const original=WebGL2RenderingContext.prototype.shaderSource;
     WebGL2RenderingContext.prototype.shaderSource=function(shader,source){
      if(source.includes('in vec2 vP; in vec2 vSz; in vec4 vCol; in vec4 vB; in vec4 vD;') && source.includes('frag = vec4(col, vCol.a * a);')){
-      source=source.replace('frag = vec4(col, vCol.a * a);','frag = vec4(1.0, 1.0, 1.0, 1.0);');
+      source=source.replace('frag = vec4(col, vCol.a * a);',hashAudit?'frag = vec4(h11(vB.y), h11(vB.y + 3.7), 0.0, 1.0);':'frag = vec4(1.0, 1.0, 1.0, 1.0);');
       window.__spriteCoverageShaderInstrumented=true;
      }
      return original.call(this,shader,source);
     };
    }
-  },{coverage});
+  },{coverage,hashAudit});
   await page.goto(pathToFileURL(html).href);
   await page.waitForFunction(()=>window.__vfxDebug||window.__vfxError,null,{timeout:30000});
   for(const c of cases){
@@ -39,7 +40,7 @@ try {
     let binary='';for(let i=0;i<pixels.length;i+=8192)binary+=String.fromCharCode(...pixels.subarray(i,Math.min(i+8192,pixels.length)));
     return btoa(binary);
    },{c,coverage});
-   writeFileSync(path.join(out,`${c.name}.original${coverage?'.coverage':''}.rgba8`),Buffer.from(result,'base64'));
+   writeFileSync(path.join(out,`${c.name}.original${hashAudit?'.hash':coverage?'.coverage':''}.rgba8`),Buffer.from(result,'base64'));
    console.log('D19_SPRITE_ORIGINAL_CAPTURE',c.name,coverage?'instrumented-coverage':'color');
   }
   await page.close();
