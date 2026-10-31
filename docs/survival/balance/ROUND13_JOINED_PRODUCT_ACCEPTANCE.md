@@ -149,6 +149,8 @@ either head, and that file is A0's under every policy.
   headless for probes, X11 + llvmpipe for the captures (CI).
 - Ledger `data/survival/balance/results/native_runs.v1.json` — composition
   **`3d8630f5b1ad`**, **11 probes / 203 checks / PASS 2 · FAIL 1 · BLOCKED 1 · RED 7**.
+  *(Round 14 re-ran the family on `d75bcd41f131` and the live ledger now holds that run;
+  round 13's is preserved verbatim as `native_runs.r13_full.v1.json`. See §11.2.)*
 - Round 12's payload is preserved verbatim as `native_runs.r12_full.v1.json` (10 probes /
   200 checks / 2·0·1·7 on `663a83ede523`). The **50-probe cross-family sweep** is a
   separate artifact, `native_runs.r12_sweep.v1.json` (PASS 7 · FAIL 8 · BLOCKED 9 · RED 26);
@@ -610,6 +612,20 @@ composition, and the rest did not move.
 So the round's first sentence has to be this one: **between round 13 and round 14 the joined
 product did not change, one owner's test file did, and that test file got worse.**
 
+**P1–P8 and G1–G8 therefore keep round 13's verdicts verbatim (§7.1, §7.2), and not by
+inertia:** a claim about a product may only move when the product moves, and the composition
+diff is three non-product files. P1 `FAIL (A0_SOURCE_UNAVAILABLE)`, P2 `FAIL on readability`,
+P3 `FAIL`, P4 `bag PASS / threat absent`, P5 `FAIL`, P6 `FAIL`, P7 `FAIL`, P8 `FAIL`; G1–G8 as
+in §7.2. What round 14 *does* add is a sharper separation of the four things that used to be
+blurred together, and each Atlas row in §11.6 is labelled with exactly one of them:
+
+| label | meaning | examples on `d75bcd41f131` |
+|---|---|---|
+| **source-planned** | an owner wrote the mechanism down; nothing reads it | `hazard_capability_contracts.json`, `cap_filter`, the Ragnarok endpoint package |
+| **native fixture** | a probe built it through the product's own doors, with granted materials | the home (control A), the armed furnace job |
+| **production reachable** | a player can get there and do it with their own inputs | the `EV4` prefix: gather → craft → bench → cloth |
+| **human enjoyment** | a person's judgement | **nothing** — `HUMAN_NOT_TESTED` (EV8), and no weight table will ever stand in for it |
+
 ### 11.3 A0's normal-input journey at the new head: the first failure moved, and it moved into A0's own test
 
 Run **`41189630987`** (`.github/workflows/a7-r14-joined-evidence.yml`), X11 + llvmpipe,
@@ -722,13 +738,14 @@ plus a 5× nearest-neighbour crop of the interior label band to read the text):
 2. **From inside, the house is real and furnished.** `r14_home_interior_1280x720.png`: plank
    floor, wall band, a pale lilac bed, the interaction prompts for it. The roof reveal works
    when the Hero is inside, and **only** when he is inside.
-3. **Two interactables in one small room collide at 1×.** In the 720p interior frame the bed
-   prompt reads `[CLICK] Set respawn bed` with a second label's glyphs bleeding through it
-   (a dark duplicate trailing the text), and the chest prompt reads **`[CLICKy open`** — the
-   `[CLICK]` of one label overlapping the text of another anchored at the same place. In a
-   5×5 room with a bed and a chest, that is the *normal* case, not an edge case. At 2160p the
-   same two prompts are decipherable, which is exactly what makes it a 1× legibility defect
-   rather than a rendering failure.
+3. **Two prompts inside one 5×5 room are not reliably readable at 1×.** In the 720p interior
+   frame the bed row reads `[CLICK] Set respawn bed` with a dark duplicate offset behind every
+   glyph, and the chest row renders as **`[CLICKy open`** — a second prompt's glyph sitting
+   inside the `[CLICK]` brackets. Whether that is a shadow offset, two anchors at the same
+   point, or both, is not established here; what is established is the 1× effect, and that it
+   happens in the most ordinary furnished room the product can produce. At 2160p the same two
+   prompts are decipherable, which is what makes this a legibility defect at the design
+   resolution rather than a rendering failure.
 4. **The interior is legible as a room only by inference.** The floor and the walls are the
    same brick/plank band at the same scale, and the bed is a pale lilac 16 px square with a
    white bar: at 1× it reads as a rug or a chest, and the only thing that says "bed" is the
@@ -825,7 +842,7 @@ journeys and must not be counted as coverage of them):
 | id | native promise | verdict on `d75bcd41f131` | evidence |
 |---|---|---|---|
 | **N1** | Gold as currency | **does not exist.** No `gold`/`coin`/`currency` item among 57 ids; the only `gold` string in survival code is a colour in `player_avatar_presenter.gd`. The "knife → Core → Gold" chain's last link is a **name in a document** | `data/survival/items/items.json`; `git grep -l gold -- game/survival` |
-| **N2** | a genuinely funded offline return | **PASS at the transaction layer** (`r14_j03`: armed job, real closure, one settlement, one claim, second claim refused) and **absent for the player**: A6's return card reads 0 of 9 projections | `r14_j03` log; `A6_SOURCE_UNAVAILABLE` |
+| **N2** | a genuinely funded offline return | **PASS at the transaction layer** (`r14_j03`: armed job, real closure, one settlement, one claim, second claim refused) and **absent for the player**: A6 resolves 9 projection methods by name, **0** exist, and 6 of 6 accessors read an empty contract | `r14_j03` log; `A6_SOURCE_UNAVAILABLE` |
 | **N3** | a 336-hour closure | `MUTATION_RUN_CLOCK` reaches `last72` and `expired` and refuses claims. That is architecture, **not** a played 336 h | `r14_j06_j07`; forged clock labelled |
 | **N4** | the last-72-hour currency | `ragnarok_unbanked` exists as a `key_item`; its physical source (elder chest) answers `source_identity_forgery`; **0** kiosks mounted | `r14_j06_j07` |
 | **N5** | multi-deposit | the panel shows a real per-station queue (`queue N/capacity`) and the session enforces capacity; **one** armed job was exercised, never two deposits in one session | `r14_home`, `r14_j03` |
@@ -839,8 +856,8 @@ rest are `EV3`-or-lower refusals.
 
 ### 11.7 The A8 equality claim, re-tested on the head that matters
 
-Round 13 said the Orchard and the Mill are "identical". On `0f885df862` the measured signatures
-are:
+Round 13 reported "2 distinct shapes of 3" and its review notes named the Orchard and the Mill as
+the identical pair. On `0f885df862` the measured signatures are:
 
 ```
 south_quarry       -> 3 actions, 0 with a cost, risk=   [brace_east_shelf, chock_west_ramp, leave_seam_unworked]
@@ -889,7 +906,7 @@ Two dependencies, and no more:
 | who | defects that are mine (A7) | defects that are an owner's |
 |---|---|---|
 | **A7 (me)** | round-13's single house control (now replaced by two, §11.4); the first round-14 capture's `SurvivalService` lookup and its out-of-reach bench row (both fixed and re-run); round 13's "4K must show more" framing (withdrawn, §11.5); round 13's "doorless box" description of a capture that had placed a door (corrected, §4.1(6)) | — |
-| **A0** | — | `_scroll_recipe` use-after-free (§11.3); `available_stations` still called in `_dump_panel`; preview says legal / commit says `hero_in_footprint` (§11.4 B); roof hides door and interior from outside; two labels drawn at one position; a label clipped by the roof; 384×256 world; avatar API absent; `abandon_run` unreachable; threat off by default |
+| **A0** | — | `_scroll_recipe` use-after-free (§11.3); `available_stations` still called in `_dump_panel`; preview says legal / commit says `hero_in_footprint` (§11.4 B); roof hides door and interior from outside; the prompts of a furnished room are not reliably readable at 1× (shadow offset and/or two anchors at one point — §11.4(3)); a label clipped by the roof; 384×256 world; avatar API absent; `abandon_run` unreachable; threat off by default |
 | **A1** | — | hazard and capability contracts with no consumer; 1024×768 authored, 384×256 loaded; A8 site ids 1 of 3 declared |
 | **A3** | — | no knife in 57 ids; no Gold; A3 rewards fail-closed at every POI; no V computation |
 | **A6** | — | 0 of 9 return projections published; no presenter mount point from A0's side |
@@ -917,9 +934,10 @@ Same shape as `R13-G1`, with the pixel clause **replaced** because it was wrong:
 gh api repos/Khanh-glitch/Soul-of-Hero/branches/<branch> --jq .commit.sha
 git fetch --depth=1 origin <sha>:refs/live15/<branch>
 
-# composition
-python3 tools/survival/balance/compose.py --profile r14_heads --pin --ref-root refs/live15
-git rev-parse refs/comp/r14_heads     # if it moved, the profile name is stale: add r15_heads
+# composition: add a NEW profile for the new heads; never point an old profile at new refs
+#   "r14_heads" must keep reproducing d75bcd41f131 from refs/live14, forever
+python3 tools/survival/balance/compose.py --profile <r15_heads> --pin --ref-root refs/live15
+git rev-parse refs/comp/r15_heads
 
 # the family (11 probes) — import first, never --skip-import
 python3 tools/survival/balance/run_native.py --godot <godot> \
