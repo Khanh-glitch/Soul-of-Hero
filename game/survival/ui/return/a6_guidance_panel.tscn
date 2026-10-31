@@ -3,38 +3,50 @@
 [ext_resource type="Script" path="res://game/survival/ui/return/a6_guidance_panel.gd" id="1_script"]
 [ext_resource type="Theme" path="res://game/ui/theme/living_arsenal_theme.tres" id="2_theme"]
 
+; The whole body sits inside a scroll container so this card can be given any height
+; the screen can spare. A PanelContainer sizes itself to its content, so a card whose
+; steps grow taller than the window cannot be shrunk by the layout: the engine clamps
+; it back and the footnote falls off the bottom edge, which the capture harness
+; reports as text leaving the viewport. With the body scrollable the card's own
+; minimum is the 190 units declared here, and that always fits.
 [node name="A6GuidancePanel" type="PanelContainer"]
-custom_minimum_size = Vector2(296, 0)
+custom_minimum_size = Vector2(296, 190)
 offset_right = 296.0
-offset_bottom = 96.0
+offset_bottom = 190.0
 mouse_filter = 1
 theme = ExtResource("2_theme")
 theme_type_variation = &"HudPanel"
 script = ExtResource("1_script")
 
-[node name="Body" type="VBoxContainer" parent="."]
+[node name="Scroll" type="ScrollContainer" parent="."]
 layout_mode = 2
+horizontal_scroll_mode = 0
+mouse_filter = 1
+
+[node name="Body" type="VBoxContainer" parent="Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
 mouse_filter = 1
 theme_override_constants/separation = 3
 
-[node name="Head" type="HBoxContainer" parent="Body"]
+[node name="Head" type="HBoxContainer" parent="Scroll/Body"]
 layout_mode = 2
 mouse_filter = 1
 theme_override_constants/separation = 4
 
-[node name="Kicker" type="Label" parent="Body/Head"]
+[node name="Kicker" type="Label" parent="Scroll/Body/Head"]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
 theme_type_variation = &"KickerLabel"
 text = "BẮT ĐẦU"
 
-[node name="Filler" type="Control" parent="Body/Head"]
+[node name="Filler" type="Control" parent="Scroll/Body/Head"]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
 
-[node name="Progress" type="Label" parent="Body/Head"]
+[node name="Progress" type="Label" parent="Scroll/Body/Head"]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
@@ -42,7 +54,7 @@ theme_type_variation = &"NumberLabel"
 theme_override_font_sizes/font_size = 11
 text = "0/5"
 
-[node name="Dismiss" type="Button" parent="Body/Head"]
+[node name="Dismiss" type="Button" parent="Scroll/Body/Head"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(18, 18)
 layout_mode = 2
@@ -51,21 +63,14 @@ theme_override_font_sizes/font_size = 12
 text = "×"
 flat = true
 
-[node name="Steps" type="ScrollContainer" parent="Body"]
-custom_minimum_size = Vector2(0, 132)
-layout_mode = 2
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
-mouse_filter = 1
-
-[node name="StepList" type="VBoxContainer" parent="Body/Steps"]
+[node name="StepList" type="VBoxContainer" parent="Scroll/Body"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 1
 theme_override_constants/separation = 2
 
-[node name="Footnote" type="Label" parent="Body"]
+[node name="Footnote" type="Label" parent="Scroll/Body"]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
