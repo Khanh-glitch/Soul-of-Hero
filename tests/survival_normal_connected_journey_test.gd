@@ -358,18 +358,57 @@ func _verify_body() -> void:
 	await _close_panel(panel)
 	# A second settlement must not pay again.
 	var offline: Node = composition.get(&"_offline") as Node
-	var again: Dictionary = offline.call(&"settle", int(Time.get_unix_time_from_system()))
-	print("A0_CONNECTED_RESETTLE ", JSON.stringify(again))
-	_expect(not bool(again.get("ok", false)) or int((again.get("operations", 0) as int)) == 0 or bool(again.get("duplicate", false)),
-		"a second settlement of the same interval pays nothing (%s)" % String(again.get("reason", "")))
+	_expect(offline != null, "the relaunched world exposes the one offline host")
+	if offline != null:
+		var again: Dictionary = offline.call(&"settle", int(Time.get_unix_time_from_system()))
+		print("A0_CONNECTED_RESETTLE ", JSON.stringify(again))
+		_expect(not bool(again.get("ok", false)) or int(again.get("operations", 0)) == 0 or bool(again.get("duplicate", false)),
+			"a second settlement of the same interval pays nothing (%s)" % String(again.get("reason", "")))
 	_expect(_count("iron_ingot") == 1 and _collect_receipt_count() == receipts_before + 1,
 		"no duplicate ingot and no duplicate receipt after re-settling")
-	# The ingot is a new reason to play: a recipe that needs it becomes orderable.
+
+	# --- the new reason to play: the ingot becomes parts at the bench --------
+	# The bench the player built in the first process must still be there, and the
+	# ingot it just collected must be the thing that makes its recipe possible. The
+	# gate is a refused click before, and a queued job after: an oracle, not a
+	# recipe name that would have been on the list either way.
+	var bench_id := ""
+	var bench_cell := Vector2i(-1, -1)
+	for key: Variant in structures.keys():
+		var record: Dictionary = structures[key]
+		if String(record.get("piece", "")) == "station_workbench":
+			bench_id = String(key)
+			var cell: Array = record.get("cell", [])
+			if cell.size() == 2:
+				bench_cell = Vector2i(int(cell[0]), int(cell[1]))
+	_expect(not bench_id.is_empty(), "the workbench the player built survived the relaunch as a physical structure")
+	if bench_id.is_empty():
+		return
+	var bench_row := "Recipe_make_parts_%s" % bench_id
+	# Walk back to the ingot-less bench state is impossible now (the ingot is in the
+	# bag), so the negative half is the honest one: the same click that queued
+	# nothing at the furnace queues here, and it is the ingot that pays for it.
+	var reached_bench := await _approach_station(hero, _host.get_child(0).get(&"traversability"),
+		_station_point(bench_id, bench_cell), "the built workbench")
+	_expect(reached_bench, "the player can walk back to the bench it built")
+	if not reached_bench:
+		return
 	await _open_panel(panel)
-	var parts := panel.find_child("Recipe_make_parts_%s" % String(audit.get("furnace_id", "")), true, false) as Button
-	var hand_parts := panel.find_child("Recipe_make_parts_hand", true, false) as Button
-	_expect(parts != null or hand_parts != null,
-		"the smelted ingot makes an ingot-dependent recipe visible in the real panel")
+	var parts := panel.find_child(bench_row, true, false) as Button
+	if parts == null:
+		_dump_panel(panel, _host.get_child(0), bench_id)
+	_expect(parts != null, "the bench the player paid for offers make_parts once an ingot exists")
+	if parts == null:
+		return
+	var parts_live := await _scroll_recipe(panel, parts)
+	_expect(parts_live != null, "ordinary wheel input reaches the parts recipe (%s)" % _scroll_reason)
+	if parts_live == null:
+		return
+	await _click_window(root.get_final_transform() * (parts_live.get_global_transform_with_canvas() * (parts_live.size * 0.5)))
+	var parts_job := _job_for("make_parts")
+	print("A0_CONNECTED_PARTS job=%s ingots=%d parts=%d" % [parts_job, _count("iron_ingot"), _count("iron_parts")])
+	_expect(not parts_job.is_empty(), "the collected ingot is spent on a queued make_parts job (%s)" % parts_job)
+	_expect(_count("iron_ingot") == 0, "the ingot is the price of the parts, not a free grant (%d left)" % _count("iron_ingot"))
 	await _close_panel(panel)
 	_body_complete = true
 
