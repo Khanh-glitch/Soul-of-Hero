@@ -22,15 +22,17 @@ A7CTRL world READY hero=(904.0, 3496.0) build=yes
 A7CTRL FIXTURE_GRANT oak_wood x60 -> true
 A7CTRL FIXTURE_GRANT iron_scrap x30 -> true
 A7CTRL FIXTURE_GRANT workbench_kit x1 -> true
-A7CTRL VALID plot=(54, 235) r=2 ring=16/16 door=true bed=true/false chest=true bench=true room=room_9714e2c83143d85f761c2142f9d2412bfcbc63ee5287fdc3ad7f170388df9535
+A7CTRL VALID plot=(54, 235) r=2 ring=16/16 door=true bed=true/true chest=true bench=true room=room_9714e2c83143d85f761c2142f9d2412bfcbc63ee5287fdc3ad7f170388df9535
 A7CTRL BLOCKED wall_on_hero_cell -> {"case":"wall_on_hero_cell","cell":[58,238],"commit_ok":false,"commit_reason":"hero_in_footprint","preview_reason":"","preview_says_legal":true}
 A7CTRL BLOCKED bed_without_room -> {"case":"bed_without_room","cell":[61,238],"commit_ok":false,"commit_reason":"bed_requires_room","preview_reason":"bed_requires_room","preview_says_legal":false}
-A7CTRL BLOCKED furnace_recipe_at_workbench -> {"case":"furnace_recipe_at_workbench","ok":false,"reason":"station_not_reachable","station":"b28"}
+A7CTRL BLOCKED furnace_recipe_at_workbench -> {"case":"furnace_recipe_at_workbench","hero_to_bench_px":24.0,"ok":false,"reason":"station_recipe_mismatch","station":"b28"}
 A7CTRL BLOCKED recipe_from_out_of_reach -> {"case":"recipe_from_out_of_reach","distance_px":400,"ok":false,"reason":"station_not_reachable"}
 A7CTRL SHOT r14_home_1280x720.png 1280x720 bytes=293618 colours=343
-A7CTRL SHOT r14_home_2560x1440.png 2560x1440 bytes=439033 colours=338
+A7CTRL SHOT r14_home_2560x1440.png 2560x1440 bytes=439335 colours=338
 A7CTRL SHOT r14_home_3840x2160.png 3840x2160 bytes=552565 colours=336
 A7CTRL SHOT r14_home_interior_1280x720.png 1280x720 bytes=318501 colours=370
+A7CTRL SHOT r14_home_interior_2560x1440.png 2560x1440 bytes=470944 colours=368
+A7CTRL SHOT r14_home_interior_3840x2160.png 3840x2160 bytes=592678 colours=368
 A7CTRL summary /tmp/captures/r14_visual_controls.json
 A7CTRL DONE code=0
 WARNING: 10 ObjectDB instances were leaked at exit (run with `--verbose` for details).

@@ -48,6 +48,10 @@
       }
     ],
     "steps_out_of_footprint": 13,
+    "bed_validator": {
+      "room": "room_9714e2c83143d85f761c2142f9d2412bfcbc63ee5287fdc3ad7f170388df9535",
+      "hero_px_from_bed": 24.0
+    },
     "valid": {
       "built": true,
       "origin": [
@@ -66,8 +70,11 @@
       "bench_reason": "",
       "bed_placed": true,
       "bed_id": "b26",
-      "bed_activated": false,
-      "bed_activation": {},
+      "bed_activated": true,
+      "bed_activation": {
+        "ok": true,
+        "reason": ""
+      },
       "workbench_id": "b28",
       "chest_placed": true,
       "chest_cell": [
@@ -197,6 +204,17 @@
       "door_point": "(872.0, 3832.0)",
       "interior_point": "(872.0, 3768.0)"
     },
+    "blocked_bench_setup": {
+      "hero_at": [
+        856.0,
+        3744.0
+      ],
+      "bench_at": [
+        856.0,
+        3720.0
+      ],
+      "distance_px": 24.0
+    },
     "blocked": [
       {
         "case": "wall_on_hero_cell",
@@ -223,8 +241,9 @@
       {
         "case": "furnace_recipe_at_workbench",
         "station": "b28",
+        "hero_to_bench_px": 24.0,
         "ok": false,
-        "reason": "station_not_reachable"
+        "reason": "station_recipe_mismatch"
       },
       {
         "case": "recipe_from_out_of_reach",
@@ -277,7 +296,7 @@
         1440
       ],
       "save_result": 0,
-      "png_bytes": 439033,
+      "png_bytes": 439335,
       "sampled_colours": 338,
       "path": "/tmp/captures/r14_home_2560x1440.png"
     },
@@ -318,6 +337,44 @@
       "png_bytes": 318501,
       "sampled_colours": 370,
       "path": "/tmp/captures/r14_home_interior_1280x720.png"
+    },
+    {
+      "file": "r14_home_interior_2560x1440.png",
+      "size": [
+        2560,
+        1440
+      ],
+      "viewport": [
+        2560,
+        1440
+      ],
+      "image_size": [
+        2560,
+        1440
+      ],
+      "save_result": 0,
+      "png_bytes": 470944,
+      "sampled_colours": 368,
+      "path": "/tmp/captures/r14_home_interior_2560x1440.png"
+    },
+    {
+      "file": "r14_home_interior_3840x2160.png",
+      "size": [
+        3840,
+        2160
+      ],
+      "viewport": [
+        3840,
+        2160
+      ],
+      "image_size": [
+        3840,
+        2160
+      ],
+      "save_result": 0,
+      "png_bytes": 592678,
+      "sampled_colours": 368,
+      "path": "/tmp/captures/r14_home_interior_3840x2160.png"
     }
   ]
 }
