@@ -7,7 +7,7 @@ out=pathlib.Path(sys.argv[1]); cases=json.loads(pathlib.Path('tools/arcana19_rib
 for c in cases:
  name=c['name'];a=np.fromfile(out/f'{name}.original.rgba8',dtype=np.uint8).reshape(270,480,4)[::-1,:,:3].astype(np.float32)/255
  coverage=np.fromfile(out/f'{name}.original.coverage.rgba8',dtype=np.uint8).reshape(270,480,4)[::-1,:,0]!=0
- for variant in ('native','triangle','gpu'):
+ for variant in ('native','triangle','gpu','native_ldr','triangle_ldr'):
   if variant=='gpu':
    b=np.fromfile(out/f'{name}.gpu.rgba8',dtype=np.uint8).reshape(270,480,4)[:,:,:3].astype(np.float32)/255
    native_coverage=np.fromfile(out/f'{name}.gpu.coverage.rgba8',dtype=np.uint8).reshape(270,480,4)[:,:,0]!=0

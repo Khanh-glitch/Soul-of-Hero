@@ -29,6 +29,19 @@ func _initialize() -> void:
         var candidate_coverage := FileAccess.open(OUT + "/%s.triangle.coverage.u8" % c.name, FileAccess.WRITE)
         candidate_coverage.store_buffer(triangle_fx.world_influence)
         candidate_coverage.close()
+        for mode in ["native_ldr", "triangle_ldr"]:
+            var clipped := DFx.new()
+            clipped.t = float(c.time)
+            clipped.track_world_fields = true
+            clipped.rgba8_fragment_transfer = true
+            if mode == "native_ldr": clipped.line(c.pts, c.width, color, c.opts)
+            else: DRibbonTriangles.render(clipped, c.pts, c.width, color, c.opts)
+            var f := FileAccess.open(OUT + "/%s.%s.rgb32f" % [c.name, mode], FileAccess.WRITE)
+            f.store_buffer(clipped.buf.to_byte_array())
+            f.close()
+            f = FileAccess.open(OUT + "/%s.%s.coverage.u8" % [c.name, mode], FileAccess.WRITE)
+            f.store_buffer(clipped.world_influence)
+            f.close()
         print("D19_RIBBON_NATIVE_CAPTURE ", c.name)
     print("D19_RIBBON_CAPTURE_COMPLETE")
     quit()

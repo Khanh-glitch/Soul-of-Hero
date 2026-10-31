@@ -30,6 +30,9 @@ const FLAKE := 18
 
 var buf := PackedFloat32Array()
 var track_world_fields := false
+# Diagnostic opt-in until sprite/ribbon fragment transfer is compared against
+# the original WebGL RGBA8 target; polygon path has its own validated handling.
+var rgba8_fragment_transfer := false
 var world_influence := PackedByteArray()
 var world_bends: Array[Dictionary] = []
 var world_warp := PackedFloat32Array()
@@ -263,6 +266,11 @@ func sp(x: float, y: float, size: float, col: Color, shape: int = DISC, o: Dicti
             cg += cg * rim
             cb += cb * rim
             var al := col.a * a
+            if rgba8_fragment_transfer:
+                al = clampf(al, 0.0, 1.0)
+                cr = clampf(cr, 0.0, 1.0)
+                cg = clampf(cg, 0.0, 1.0)
+                cb = clampf(cb, 0.0, 1.0)
             _add_px(pxx, py, cr * al, cg * al, cb * al)
 
 ## fx.line — additive ribbon (RibbonBatch + RIBBON_FS). pts flat [x,y,...],
@@ -371,6 +379,11 @@ func line(pts: Array, width: Variant, col: Variant, o: Dictionary = {}) -> void:
                 cb += 0.9 * bump * (1.2 - d) * 1.5
                 a = maxf(a, bump * (1.0 - d * 0.6))
             var al := best_col.a * alpha_mul * a
+            if rgba8_fragment_transfer:
+                al = clampf(al, 0.0, 1.0)
+                cr = clampf(cr, 0.0, 1.0)
+                cg = clampf(cg, 0.0, 1.0)
+                cb = clampf(cb, 0.0, 1.0)
             _add_px(pxx, py, cr * al, cg * al, cb * al)
 
 # RibbonBatch's fragment shader uses a one-dimensional h11 lattice with

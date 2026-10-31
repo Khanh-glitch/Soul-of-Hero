@@ -51,6 +51,10 @@ jobs:
           set -o pipefail
           python3 tools/arcana19_ribbon_compare/compare.py artifacts/arcana19-ribbon | tee compare.log
           sed 's/^/::notice::/' compare.log
+      - name: Surface candidate normalized fragment transfer separately
+        if: always()
+        run: |
+          if test -f compare.log; then grep '_ldr"' compare.log | sed 's/^/::notice title=D19_RIBBON_LDR::/' || true; fi
       - name: Surface native GPU cases separately
         if: always()
         run: |

@@ -76,6 +76,7 @@ static func _draw_triangle(fx: Variant, v0: Dictionary, v1: Dictionary, v2: Dict
     var flow := float(opts.get("flow", 0.0))
     var flags := float(opts.get("flags", 0.0))
     var seed := float(opts.get("seed", 1.0))
+    var clip_source: bool = fx.rgba8_fragment_transfer
     var s0 := float(v0.across)
     var s1 := float(v1.across)
     var s2 := float(v2.across)
@@ -130,4 +131,10 @@ static func _draw_triangle(fx: Variant, v0: Dictionary, v1: Dictionary, v2: Dict
                 cg += 0.97 * bump * (1.2 - d) * 1.5
                 cb += 0.9 * bump * (1.2 - d) * 1.5
                 alpha = maxf(alpha, bump * (1.0 - d * 0.6))
-            fx._add_px(x, y, cr * ca * alpha, cg * ca * alpha, cb * ca * alpha)
+            var al := ca * alpha
+            if clip_source:
+                al = clampf(al, 0.0, 1.0)
+                cr = clampf(cr, 0.0, 1.0)
+                cg = clampf(cg, 0.0, 1.0)
+                cb = clampf(cb, 0.0, 1.0)
+            fx._add_px(x, y, cr * al, cg * al, cb * al)
