@@ -411,6 +411,9 @@ func _run() -> void:
     post.process_mode = Node.PROCESS_MODE_ALWAYS
     world.add_child(post)
     check(post.attach(multi), "C viewport post opt-in attaches")
+    await process_frame
+    await process_frame
+    check(not post._rect.visible and images_equal(baseline, await save_frame("c_viewport_post_idle")), "C viewport post idle causes no screen contamination")
     var horizon_id := Arcana20SourceCatalog.canonical_id(17)
     multi.cast_skill(horizon_id, player.global_position, enemy.global_position)
     var horizon := multi._casts[horizon_id] as CSourcePlayer
@@ -428,6 +431,17 @@ func _run() -> void:
     await process_frame
     var plain_image := await save_frame("c17_rebound_without_viewport_post")
     check(not images_equal(post_image, plain_image), "C17 authored screen impulse changes actual world viewport")
+    # Test the opaque fill of the actual A0 provisions HUD. It is drawn on
+    # layer 20 after the post's layer 10, not a synthetic HUD or sprite.
+    var hud: Node = world.get("hud")
+    var fill := hud.get("_provisions_fill") as ColorRect
+    if fill == null:
+        check(false, "C viewport post actual HUD fill missing")
+    else:
+        var hud_pixel := root.get_final_transform() * (fill.get_global_transform_with_canvas() * (fill.size * 0.5))
+        var hx := clampi(roundi(hud_pixel.x), 0, post_image.get_width() - 1)
+        var hy := clampi(roundi(hud_pixel.y), 0, post_image.get_height() - 1)
+        check(post_image.get_pixel(hx, hy) == plain_image.get_pixel(hx, hy), "C viewport post keeps actual opaque HUD pixel unchanged")
     post._apply()
     var loom_id := Arcana20SourceCatalog.canonical_id(10)
     multi.cast_skill(loom_id, player.global_position, enemy.global_position)
