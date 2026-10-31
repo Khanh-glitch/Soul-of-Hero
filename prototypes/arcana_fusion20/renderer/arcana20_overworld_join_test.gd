@@ -722,6 +722,12 @@ func _run() -> void:
 
 ## Actual post-draw intervals for #02 plus selected #10 or #20 on the real historical overworld.
 ## Shared software CI is a diagnostic only, never a target-device budget.
+func _perf_percentile(values: Array[float], percentile: float) -> float:
+    if values.is_empty(): return 0.0
+    var sorted := values.duplicate()
+    sorted.sort()
+    return sorted[floori(float(sorted.size() - 1) * percentile)]
+
 func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D) -> void:
     var renderer := Arcana20Renderer.new()
     renderer.world_pass_mode = true
