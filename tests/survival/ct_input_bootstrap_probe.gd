@@ -10,6 +10,13 @@ const BOOTSTRAP_PATH := "res://game/autoload/input_bootstrap.gd"
 const READER_PATH := "res://game/survival/world/a1_authored_world_reader.gd"
 
 func _initialize() -> void:
+	# A direct SceneTree --script enters before root becomes active. Defer this
+	# control to the actual initialized SceneTree stage so Node._enter_tree runs.
+	call_deferred("_run_probe")
+
+
+func _run_probe() -> void:
+	print("CT_BOOTSTRAP_ROOT_ACTIVE ", get_root().is_inside_tree())
 	var loaded: Variant = load(READER_PATH)
 	var bootstrap: Variant = load(BOOTSTRAP_PATH)
 	if not (loaded is Script) or not (bootstrap is Script):
