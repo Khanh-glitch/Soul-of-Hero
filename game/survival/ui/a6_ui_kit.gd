@@ -104,6 +104,11 @@ static func style_scroll(scroll: ScrollContainer, width := 9) -> void:
 	column.move_child(gutter, index)
 	gutter.add_child(scroll)
 	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	# The container creates the bar as its own child; a node with a parent cannot be
+	# added to a second one, so it is detached before it moves into the gutter. The
+	# ScrollContainer still drives it - the reference is what it uses, not the parentage.
+	if bar.get_parent() != null:
+		bar.get_parent().remove_child(bar)
 	gutter.add_child(bar)
 	bar.custom_minimum_size = Vector2(float(width), 0.0)
 	bar.size_flags_vertical = Control.SIZE_EXPAND_FILL
