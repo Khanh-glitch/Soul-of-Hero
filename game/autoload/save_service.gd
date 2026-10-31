@@ -2780,6 +2780,9 @@ func _sanitize_and_validate(document: Dictionary) -> String:
 		return soul_selection_error
 	_sanitize_legacy_audit(document["legacy_audit"])
 	_sanitize_settings(document["settings"])
+	var transition_error := _sanitize_site_transition(document)
+	if not transition_error.is_empty():
+		return transition_error
 	return ""
 
 
@@ -4498,6 +4501,9 @@ func _default_data() -> Dictionary:
 		"bestiary": {"discovered": []},
 		"settings": _default_settings(),
 		"applied_transactions": {},
+		# A0 Round 12: the only durable place a site transition may leave an
+		# entry record. Optional, so older profiles load unchanged.
+		"site_transition": {},
 		"legacy_audit": _default_legacy_audit(),
 	}
 
@@ -4554,6 +4560,39 @@ func _default_campaign() -> Dictionary:
 		"selected_difficulties": {},
 		"average_enemy_level_cap": 5,
 	}
+
+
+## A site transition record is an owner receipt, not player-facing state: it may
+## hold one entry per site, the exact overworld position, and the run that owns
+## it. Anything unreadable is dropped rather than repaired into a teleport.
+func _sanitize_site_transition(document: Dictionary) -> String:
+	if not document.has("site_transition"):
+		document["site_transition"] = {}
+		return ""
+	var raw: Variant = document["site_transition"]
+	if not raw is Dictionary:
+		return "Site transition section must be a Dictionary."
+	var clean := {}
+	for key: Variant in (raw as Dictionary).keys():
+		var site_id := String(key).strip_edges()
+		var record: Variant = (raw as Dictionary)[key]
+		if site_id.is_empty() or not record is Dictionary:
+			continue
+		var coords: Variant = (record as Dictionary).get("position", [])
+		if not coords is Array or (coords as Array).size() != 2:
+			continue
+		var x := float((coords as Array)[0])
+		var y := float((coords as Array)[1])
+		if not is_finite(x) or not is_finite(y):
+			continue
+		clean[site_id] = {
+			"site_instance_id": site_id,
+			"position": [x, y],
+			"run_id": String((record as Dictionary).get("run_id", "")),
+			"run_epoch": int((record as Dictionary).get("run_epoch", 0)),
+		}
+	document["site_transition"] = clean
+	return ""
 
 
 func _default_auxiliary_loadout() -> Dictionary:
