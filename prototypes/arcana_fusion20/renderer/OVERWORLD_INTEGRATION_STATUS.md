@@ -238,5 +238,9 @@ entire fusion, human visual review or combat binding.
 showed exact displacement and ink coverage IoU 1.0 at ticks 372/396/420/450/480/510,
 but light differed after tick 372 (max about 0.67). The original particle
 engine uses `Math.random()` for per-particle seeds, whereas native CKit uses a
-deterministic counter. A new controlled-seed comparison is pending to isolate
-that known difference; no light parity is claimed from the first run.
+deterministic counter. [Controlled-seed comparison 41212007767](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41212007767)
+matched the source `Math.random()` seed sequence to native's counter without
+modifying source logic: at all six ticks ink coverage IoU was 1.0, ink max
+<= 5.96e-8, light max <= 5.96e-8 and displacement max 0. This explains the
+previous light difference but does not prove uncontrolled random seeds match
+or cover t < 6.2, original full fusion, world composition, post, OUT or review.
