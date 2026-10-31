@@ -513,7 +513,7 @@ func _scroll_recipe(panel: Node, button: Button) -> bool:
 	var row_name := String(button.name)
 	await process_frame
 	var scroll := _owning_scroll(button)
-	if scroll != null and await _scroll_to(scroll, button):
+	if scroll != null and await _wheel_until_visible(scroll, button):
 		return true
 	# Reopening rebuilds the list; the row must be looked up again by name, because
 	# the old node is gone once the panel is rebuilt.
@@ -523,7 +523,33 @@ func _scroll_recipe(panel: Node, button: Button) -> bool:
 	await process_frame
 	var rebuilt_button := panel.find_child(row_name, true, false) as Button
 	var rebuilt := _owning_scroll(rebuilt_button)
-	return rebuilt_button != null and rebuilt != null and await _scroll_to(rebuilt, rebuilt_button)
+	return rebuilt_button != null and rebuilt != null and await _wheel_until_visible(rebuilt, rebuilt_button)
+
+
+## Wheel a row into view. A long list needs more than a fixed handful of clicks, so
+## the loop keeps wheeling in the row's direction until the row is inside the
+## viewport, the list stops moving, or the patience runs out.
+func _wheel_until_visible(scroll: ScrollContainer, control: Control) -> bool:
+	var previous := -1.0
+	var still := 0
+	for _i: int in range(400):
+		if scroll.get_global_rect().has_point(control.get_global_rect().get_center()):
+			return true
+		var target_y := control.get_global_rect().get_center().y
+		var wheel := InputEventMouseButton.new()
+		wheel.position = root.get_final_transform() * (scroll.get_global_transform_with_canvas() * (scroll.size * 0.5))
+		wheel.button_index = MOUSE_BUTTON_WHEEL_UP if target_y < scroll.get_global_rect().get_center().y else MOUSE_BUTTON_WHEEL_DOWN
+		wheel.pressed = true
+		Input.parse_input_event(wheel)
+		await process_frame
+		var offset := float(scroll.scroll_vertical)
+		still = still + 1 if is_equal_approx(offset, previous) else 0
+		previous = offset
+		if still > 12:
+			break
+	print("A0_CONNECTED_SCROLL row=%s offset=%.1f viewport=%s row_center=%.1f" % [
+		String(control.name), float(scroll.scroll_vertical), str(scroll.size), control.get_global_rect().get_center().y])
+	return false
 
 
 func _open_panel(panel: Node) -> bool:
