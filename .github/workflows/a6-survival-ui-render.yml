@@ -79,6 +79,102 @@ jobs:
           sys.exit(1 if failures else 0)
           PY
 
+  # The two A0 surfaces that expose the workshop and research controls - the economy
+  # session and the research clock UI - are the ones that would notice a renamed
+  # control. They live behind A0-owned workflows pinned to other branches, so until
+  # now nothing on this branch had ever run them. This job runs them on the real
+  # engine, with real input, and fails on the same PASS strings A0 gates on.
+  a0-control-resolution:
+    name: A0 workshop and research controls (real input)
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install the official Godot 4.7-stable binary (SHA-256 verified)
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/godot"
+          ARCHIVE="$RUNNER_TEMP/godot/Godot_v4.7-stable_linux.x86_64.zip"
+          curl -L --fail --retry 3 --max-time 900 -o "$ARCHIVE" \
+            "https://github.com/godotengine/godot-builds/releases/download/4.7-stable/Godot_v4.7-stable_linux.x86_64.zip"
+          echo "${GODOT_ARCHIVE_SHA256}  ${ARCHIVE}" | sha256sum -c -
+          unzip -q -o "$ARCHIVE" -d "$RUNNER_TEMP/godot"
+          ENGINE="$RUNNER_TEMP/godot/Godot_v4.7-stable_linux.x86_64"
+          chmod +x "$ENGINE"
+          ln -sf "$ENGINE" "$RUNNER_TEMP/godot/godot"
+          echo "$RUNNER_TEMP/godot" >> "$GITHUB_PATH"
+          "$ENGINE" --version
+
+      - name: Install a display server and a software GL driver
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends xvfb libgl1-mesa-dri libglx-mesa0 libegl1
+          grep -Eq "swrast|llvmpipe" <(ls /usr/lib/x86_64-linux-gnu/dri/)
+
+      - name: Import the project
+        run: |
+          set -uo pipefail
+          mkdir -p artifacts
+          timeout --signal=TERM --kill-after=30s 1200s godot --headless --editor --path . --import --quit \
+            2>&1 | tee artifacts/import.log | tail -20
+          if grep -E "SCRIPT ERROR|Parse Error" artifacts/import.log; then
+            echo "::error::the project does not import cleanly"
+            exit 1
+          fi
+
+      - name: Workshop controls through the production economy panel
+        run: |
+          set -uo pipefail
+          mkdir -p artifacts/ud_econ
+          timeout --signal=TERM --kill-after=15s 600s \
+            xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+                  --audio-driver Dummy --user-data-dir artifacts/ud_econ \
+                  --resolution 960x540 --windowed \
+                  --script res://tests/survival_economy_session_test.gd -- --survival-save-fault-test \
+                  > artifacts/economy-session.log 2>&1
+          status=$?
+          grep '^ECONOMY_GUI_TRACE ' artifacts/economy-session.log | head -3 | while IFS= read -r line; do echo "::notice::$line"; done
+          cat artifacts/economy-session.log
+          # A0's own gate: an exit code of 0 is not evidence if the log has a script
+          # error or never reached its pass line.
+          bash tools/ci/gate_log.sh artifacts/economy-session.log "Economy session" "SURVIVAL ECONOMY SESSION PASSED"
+          gate=$?
+          if [ "${status}" -ne 0 ] || [ "${gate}" -ne 0 ]; then
+            echo "::error::the A0 workshop controls no longer resolve"
+            exit 1
+          fi
+
+      - name: Research technology controls through the production panel
+        run: |
+          set -uo pipefail
+          mkdir -p artifacts/ud_research
+          timeout --signal=TERM --kill-after=15s 900s \
+            xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+                  --audio-driver Dummy --user-data-dir artifacts/ud_research \
+                  --resolution 960x540 --windowed \
+                  --script res://tests/survival_research_clock_ui_test.gd \
+                  > artifacts/research-clock.log 2>&1
+          status=$?
+          cat artifacts/research-clock.log
+          bash tools/ci/gate_log.sh artifacts/research-clock.log "research clock" "A0 RESEARCH CLOCK UI PASSED"
+          gate=$?
+          if [ "${status}" -ne 0 ] || [ "${gate}" -ne 0 ]; then
+            echo "::error::the A0 research controls no longer resolve"
+            exit 1
+          fi
+
+      - name: Keep the logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a0-control-logs
+          path: artifacts/*.log
+          if-no-files-found: warn
+
   render:
     name: Render at ${{ matrix.resolution }} (Xvfb, llvmpipe)
     runs-on: ubuntu-latest
