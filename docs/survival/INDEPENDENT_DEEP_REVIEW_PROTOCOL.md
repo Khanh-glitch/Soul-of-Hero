@@ -49,6 +49,23 @@ Use all 12 **adapted** Atlas journeys as coverage: J01 home-first vs explore-fir
 
 **Value measure:** novice and informed player can identify at least two attractive next actions from different systems after an ordinary session; a mid-run should create non-obvious synergies; representative long-form play should leave ≥3 credible enticing unfinished goals from ≥2 systems. Do not conflate length of play with quality or artificially inflate clocks/loot scarcity.
 
+### P1–P8: mandatory explicit player-facing veto matrix (from current ACCEPTANCE.md)
+
+Every cross-owner review must give EACH P a PASS / FAIL / NOT_TESTED / NA (NA only with an accepted narrow scope and a named full-product owner); do not turn the table into eight mandatory quests. For owner-scoped work identify whether the feature HONESTLY MOVES a promise or merely leaves it untouched.
+
+| Contract | PLAYER CHOICE / FELT RESULT that must be witnessed | False positive that must be refused |
+|---|---|---|
+| **P1 LIVING WORLD** | Understand region/landmarks/biome/hazard/route, discover geographically and economically worthwhile sources, revisit with real travel logistics | Unmounted 1024x768 author plan, 106 POI names, empty filler or visual-only map |
+| **P2 HOME WORTH RETURNING** | Build a paid real room/roof/bed/chest/workstation, change route/security/throughput, actually return to same home and collect funded production | GUI build button, debug house granted by fixture, fake login gift |
+| **P3 ECONOMY/RESEARCH** | Decide what to carry/store/repair/research; recognize three learning methods, competing material sinks, value change of old scrap after knowledge | Recipe registry exists, orange-on-green recipe lines, cost guessed, no source or item custody |
+| **P4 FAIR DANGER & RECOVERY** | Recognize danger and voluntarily sneak/fight/retreat/prepare; physical enemies/weather affect health, one death bag and bed recovery | Injected kill(), harmless default-OFF enemy, unavoidable ambush or threat radar |
+| **P5 LAYERED POI** | Discover inaccessible room, infer clue/key/power/hazard, get partial benefit, choose route/prep and revisit with durable consequences | Unreachable site stand or teleport into an isolated fixture with invented reward |
+| **P6 DISTINCT PHYSICAL CORE/GOLD** | Find scarce ready-to-use Core, choose USE/STORE/RESEARCH; cast uniquely affects enemy/ground with full original Gold source and correct charges | Effect registry count, fake generic projectile, off-map VFX, missing environmental phase |
+| **P7 CHARACTER/INTERFACE** | Consistent authentic male/female playable Adventurer with responsive movement, camera, readable controls/HUD/equipment/inventory/locale and world art | Staged avatar in menu but Knight in gameplay, full-res PNG existed but was never seen, debug build slab |
+| **P8 MULTI-SESSION ASPIRATION** | Earn meaningful offline payoff and several independent further goals; stay curious through early/mid/late season, secure money physically, end/reset with truthful next-run opportunity | 14x repeated timed chores, unearned return gifts, score-minted currency, eternal house/recipes, skipped Ragnarok |
+
+Never PASS an entire P on a representative early slice alone: identify full-game coverage and the current milestone slice independently. Ask both an inexperienced and an expert-oriented counterfactual: what could each player choose next without a mandatory script? If visuals, native input, durability or human enjoyment are missing, state the exact missing evidence rather than claiming the player enjoyed it.
+
 ## 3. Evidence ladder — never promote an earlier rung automatically
 
 EV0 DESIGN_AUTHORED: text/JSON/atlas/spec authored. May be good ideas, but no execution.
