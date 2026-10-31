@@ -148,18 +148,42 @@ jobs:
           print('R13_COMPOSED_SOURCE', json.dumps(value, sort_keys=True))
           PY
       - name: Stage SHA-locked D051 base art privately on the runner only
+        env:
+          A6_ASSET_REPO: Khanh-glitch/APEX-CHAOS
+          # Optional existing repository secret; never echo or request a value.
+          # Empty retains the fetcher's public-source behavior.
+          A6_ASSET_TOKEN: ${{ secrets.A6_ASSET_TOKEN }}
         run: |
-          set -euo pipefail
+          set -uo pipefail
           mkdir -p "$RUNNER_TEMP/a6_r13_source"
-          bash .composition/tools/fetch_a6_avatar_sources.sh "$RUNNER_TEMP/a6_r13_source" \
-            | tee artifacts/a1-r13-continent-seam/avatar-source-fetch.log
+          trap 'rm -f "$RUNNER_TEMP/a6_r13_source"/*.zip' EXIT
+          fetch_log=artifacts/a1-r13-continent-seam/avatar-source-fetch.log
+          bash .composition/tools/fetch_a6_avatar_sources.sh "$RUNNER_TEMP/a6_r13_source" >"$fetch_log" 2>&1
+          fetch_rc=$?
+          cat "$fetch_log"
+          if [ "$fetch_rc" -ne 0 ] || ! grep -q 'A6 ASSET SOURCES VERIFIED' "$fetch_log"; then
+            echo "::error::licensed D051 source fetch failed closed (exit $fetch_rc); pins were not changed"
+            exit 1
+          fi
+          stage_log=artifacts/a1-r13-continent-seam/avatar-private-staging.log
           python3 .composition/tools/stage_a6_avatar_art.py \
             --male-zip "$RUNNER_TEMP/a6_r13_source/male.zip" \
-            --female-zip "$RUNNER_TEMP/a6_r13_source/female.zip" \
-            | tee artifacts/a1-r13-continent-seam/avatar-private-staging.log
-          rm -f "$RUNNER_TEMP/a6_r13_source"/*.zip
-          test -f .composition/private_art/a6_avatar/avatar_art_private_runtime.json
-          test -z "$(git ls-files private_art)"
+            --female-zip "$RUNNER_TEMP/a6_r13_source/female.zip" >"$stage_log" 2>&1
+          stage_rc=$?
+          cat "$stage_log"
+          if [ "$stage_rc" -ne 0 ]; then
+            echo "::error::licensed D051 private staging failed closed (exit $stage_rc)"
+            exit "$stage_rc"
+          fi
+          if [ ! -f .composition/private_art/a6_avatar/avatar_art_private_runtime.json ]; then
+            echo "::error::private runtime manifest missing after staging"
+            exit 1
+          fi
+          if [ -n "$(git -C .composition ls-files private_art)" ]; then
+            echo "::error::private source art must remain untracked"
+            exit 1
+          fi
+          echo 'R13 licensed D051 private staging verified; source archives removed on exit'
       - uses: chickensoft-games/setup-godot@v2
         with:
           version: 4.7.0
@@ -167,7 +191,7 @@ jobs:
           include-templates: false
       - name: Import exact composed Godot 4.7 project
         run: |
-          set -euo pipefail
+          set -uo pipefail
           mkdir -p artifacts/ud_a1_r13_import
           timeout --signal=TERM --kill-after=10s 300s godot --headless \
             --path .composition --user-data-dir artifacts/ud_a1_r13_import \
@@ -178,7 +202,7 @@ jobs:
           exit $rc
       - name: Execute real D051 controller + real A8 approach/door/retreat and native 1x captures
         run: |
-          set -euo pipefail
+          set -uo pipefail
           mkdir -p artifacts/ud_a1_r13_native
           timeout --signal=TERM --kill-after=15s 1200s xvfb-run -a -s "-screen 0 3840x2160x24" \
             env LIBGL_ALWAYS_SOFTWARE=1 SOUL_OF_HERO_SAVE_PATH="user://r13_continent_seam_identity.json" \
