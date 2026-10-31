@@ -455,8 +455,9 @@ SOH world source parity and creator review remain separate.
   says it was clear both before and now. Active-to-inactive clears once;
   unknown producers upload conservatively. Black ink remains an operation, not
   a brightness key. [Source regression 41217802586](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41217802586)
-  passed the clear/write/clear/unknown sequence. Real-world regression is
-  pending. The subsequent 4K [overlap job 41217825832](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41217825832)
+  passed the clear/write/clear/unknown sequence. Historical real-world JOIN
+  [41217802768](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41217802768)
+  passed at `f95b8a00`. The subsequent 4K [overlap job 41217825832](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41217825832)
   at `c2ac274b` sampled p50/p95/p99 **849.165/1101.219/1157.922 ms**,
   with 256,177,152 raw bytes sent to C field textures since cast start;
   ground uploaded once and A20 live-light atlas/index nine times. Driver
