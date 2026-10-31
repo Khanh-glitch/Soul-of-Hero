@@ -260,7 +260,7 @@ jobs:
           captures=$(grep -c 'nonblank native 1x capture' "$log" || true)
           echo "R13 assertions=${checks}; captures=${captures}"
           test "${checks:-0}" -ge 100
-          test "${captures:-0}" -eq 15
+          test "${captures:-0}" -eq 21
           grep -q 'A1 R13 CONTINENT SEAM NATIVE FIXTURE PASSED' "$log"
           grep -q 'InputBootstrap autoload initialized before input/body diagnosis' "$log"
           grep -q 'actual A8 approach journey physically returns to retreat quarry' "$log"
