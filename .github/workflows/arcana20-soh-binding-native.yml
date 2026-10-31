@@ -1,0 +1,50 @@
+name: ARCANA Fusion20 — all 20 real SOH actor-bound reactions
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'prototypes/arcana_fusion20/soh_binding/**'
+      - '.github/workflows/arcana20-soh-binding-native.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  native-source-a-body-on-real-soh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import actual SOH native assets
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p .artifacts/arcana20-binding
+          godot --version | tee .artifacts/arcana20-binding/version.txt
+          timeout 180s godot --headless --path . --import 2>&1 | tee .artifacts/arcana20-binding/import.log
+      - name: All twenty hit receipts on authentic animated enemy sprites
+        shell: bash
+        run: |
+          set -o pipefail
+          timeout 120s godot --headless --path . --script \
+            res://prototypes/arcana_fusion20/soh_binding/arcana20_soh_binding_native_test.gd \
+            2>&1 | tee .artifacts/arcana20-binding/native.log
+          grep -Fq 'ARCANA20_BIND_RESULT PASS failures=[]' .artifacts/arcana20-binding/native.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|ARCANA20_BIND_FAIL ' .artifacts/arcana20-binding/native.log; then
+            echo 'Native ARCANA20 body binding regression' >&2
+            exit 1
+          fi
+      - name: Retain real native logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: arcana20-soh-native-binding
+          path: .artifacts/arcana20-binding/
+          if-no-files-found: warn
+          retention-days: 14
