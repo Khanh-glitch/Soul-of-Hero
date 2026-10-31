@@ -119,13 +119,30 @@ func _build_house() -> void:
 	_grant("iron_scrap", "material", 30)
 	_grant("workbench_kit", "material", 1)
 	var hero_cell := _cell_of(hero.global_position)
-	var plot := _find_plot(hero_cell, 2)
+	facts["reason_census_at_spawn"] = _reason_census(hero_cell)
+	var plot := Vector2i(-1, -1)
 	var radius := 2
+	var walks: Array = []
+	# The spawn is inside the Ashen Refuge: every cell around it answers
+	# `protected_place`, which is why the first two runs photographed no house.
+	# A player walks out of the refuge before building, so the capture does too.
+	for attempt in 5:
+		for radius_try: int in [2, 1]:
+			if plot == Vector2i(-1, -1):
+				plot = _find_plot(hero_cell, radius_try)
+				radius = radius_try
+		if plot != Vector2i(-1, -1):
+			break
+		if attempt < 4:
+			var direction: String = ["move_down", "move_right", "move_up", "move_left"][attempt]
+			await _walk(direction, 260)
+			hero_cell = _cell_of(hero.global_position)
+			walks.append({"attempt": attempt, "direction": direction,
+				"hero_cell": [hero_cell.x, hero_cell.y]})
+			facts["reason_census_after_walk_%d" % attempt] = _reason_census(hero_cell)
+	facts["walks"] = walks
 	if plot == Vector2i(-1, -1):
-		plot = _find_plot(hero_cell, 1)
-		radius = 1
-	if plot == Vector2i(-1, -1):
-		print("A7CAPTURE NOTE no legal plot near the spawn; capturing the world alone")
+		print("A7CAPTURE NOTE no legal plot within sixteen cells after four walks; capturing the world alone")
 		facts["house"] = {"built": false, "reason": "no_legal_plot", "hero_cell": [hero_cell.x, hero_cell.y]}
 		return
 	var attempts: Array = []
@@ -287,6 +304,31 @@ func _node_names(node: Node) -> Array:
 	for child in node.get_children():
 		names.append(String(child.name))
 	return names
+
+
+## The product's own refusal text, counted, so a "no plot" result says why.
+func _reason_census(center: Vector2i) -> Dictionary:
+	if not bool(build.call(&"select_piece", "wall_wood")):
+		return {"select_piece_refused": 1}
+	var counts := {}
+	for r in [1, 2, 3, 5, 8, 12]:
+		for dy in range(-r, r + 1):
+			for dx in range(-r, r + 1):
+				if maxi(absi(dx), absi(dy)) != r:
+					continue
+				var reason := String(build.call(&"validate_cell", center + Vector2i(dx, dy)))
+				if reason.is_empty():
+					reason = "<ok>"
+				counts[reason] = int(counts.get(reason, 0)) + 1
+	return counts
+
+
+## Real input, the same action map a player uses; nothing is teleported.
+func _walk(direction: String, frames: int) -> void:
+	Input.action_press(direction)
+	for i in frames:
+		await get_tree().physics_frame
+	Input.action_release(direction)
 
 
 func _cell_of(point: Vector2) -> Vector2i:
