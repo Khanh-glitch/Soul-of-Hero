@@ -191,10 +191,10 @@ func _continuation(ow: Node) -> void:
 		return
 
 	# --- 4. burn the fuel the smelting needs, at that furnace --------------
-	# The furnace now occupies the cell it was built on, so the player walks to a
-	# free cell beside it and works from arm's length, exactly as a player would.
-	var stand := nav.nearest_reachable(nav.cell_of(hero.global_position), placed, 2)
-	var reached := await _walk_to_cell(hero, nav, stand, "ordinary movement reaches the placed furnace")
+	# The furnace now occupies the cell it was built on, so the player cannot stand
+	# on it. They walk up to it with ordinary directional input until the station is
+	# within arm's length, which is what a player does after placing something.
+	var reached := await _approach_station(hero, nav, _station_point(furnace_id, placed))
 	_expect(reached, "the player can stand at the furnace it just built")
 	if not reached:
 		_write_audit(ow, {})
@@ -486,6 +486,40 @@ func _place_piece(ow: Node, hero: CharacterBody2D, nav: OverworldTraversability,
 	await _click_window(window_point)
 	await process_frame
 	return placement
+
+
+## Walk toward a physical station until it is within the interaction reach, using
+## only directional input. No teleport and no pathing shortcut: if the body cannot
+## get close enough, the step fails and says how far away it stopped.
+func _approach_station(hero: CharacterBody2D, nav: OverworldTraversability, point: Vector2) -> bool:
+	var deadline := Time.get_ticks_msec() + 9000
+	var stalled := 0
+	while point.distance_to(hero.global_position) > SurvivalStructure.REACH - 6 and Time.get_ticks_msec() < deadline:
+		var before := hero.global_position
+		_set_direction(point - before)
+		await physics_frame
+		stalled = stalled + 1 if hero.global_position.distance_to(before) < 0.2 else 0
+		if stalled > 40:
+			break
+	_set_direction(Vector2.ZERO)
+	var ok := point.distance_to(hero.global_position) <= SurvivalStructure.REACH
+	if not ok:
+		print("A0_CONNECTED_APPROACH cell=%s hero=%s distance=%.2f reach=%.1f" % [
+			str(nav.cell_of(point)), str(hero.global_position), point.distance_to(hero.global_position), SurvivalStructure.REACH])
+	return ok
+
+
+## Where a station physically stands, from the authoritative structure record.
+func _station_point(station_id: String, fallback_cell: Vector2i) -> Vector2:
+	var structures: Dictionary = _survival().call(&"structures")
+	var record: Dictionary = structures.get(station_id, {}) if structures.has(station_id) else {}
+	var point: Variant = record.get("position", null)
+	if point is Vector2:
+		return point as Vector2
+	var cell: Array = record.get("cell", [])
+	if cell.size() == 2:
+		return Vector2(float(cell[0]) * 16.0 + 8.0, float(cell[1]) * 16.0 + 8.0)
+	return Vector2(float(fallback_cell.x) * 16.0 + 8.0, float(fallback_cell.y) * 16.0 + 8.0)
 
 
 func _walk_to_cell(hero: CharacterBody2D, nav: OverworldTraversability, cell: Vector2i, label: String) -> bool:
