@@ -140,8 +140,8 @@ jobs:
                   --audio-driver Dummy --user-data-dir artifacts/ud_econ \
                   --resolution 960x540 --windowed \
                   --script res://tests/survival_economy_session_test.gd -- --survival-save-fault-test \
-                  > artifacts/economy-session.log 2>&1
-          status=$?
+                  > artifacts/economy-session.log 2>&1 || status=$?
+          status=${status:-0}
           grep '^ECONOMY_GUI_TRACE ' artifacts/economy-session.log | head -3 | while IFS= read -r line; do echo "::notice::$line"; done
           cat artifacts/economy-session.log
           # A0's own gate: an exit code of 0 is not evidence if the log has a script
@@ -338,14 +338,16 @@ jobs:
           log="artifacts/gui-input-${res}.log"
           mkdir -p "$(dirname "$log")"
           data_dir="$(mktemp -d)"
-          timeout --foreground --signal=TERM --kill-after=20s 300s xvfb-run --auto-servernum \
+          # `|| status=$?` rather than a bare call: GitHub runs this under `bash -e`,
+          # which would abort on the timeout's 124 before any diagnostic is printed.
+          status=0
+          timeout --foreground --signal=TERM --kill-after=20s 180s xvfb-run --auto-servernum \
             -s "-screen 0 ${res}x24" \
             env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe XDG_DATA_HOME="${data_dir}" \
             godot --path . --rendering-driver opengl3 --audio-driver Dummy \
             --resolution "${res}" --windowed \
             res://tests/survival/ui/a6_workshop_gui_input_test.tscn \
-            > "${log}" 2>&1
-          status=$?
+            > "${log}" 2>&1 || status=$?
           grep -E "A6 GUI|PASSED|FAILED|::error" "${log}" | head -40 || true
           if [ "${status}" -ne 0 ] || ! grep -q "A6 WORKSHOP GUI INPUT PASSED" "${log}"; then
             # One annotation carrying the whole log: a burst of ::error:: lines is
