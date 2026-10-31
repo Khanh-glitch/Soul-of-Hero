@@ -331,7 +331,10 @@ jobs:
         run: |
           godot --headless --editor --path . --import --quit 2>&1 | tail -20
 
-      - name: Render 1280x720 captures
+      - id: render_720
+        name: Render 1280x720 captures
+        # Evidence first: one failing frame must not hide the rest of the run.
+        continue-on-error: true
         run: |
           set -uo pipefail
           mkdir -p .artifacts/captures-1280x720
@@ -348,7 +351,10 @@ jobs:
           echo "720p capture exit: ${result}"
           exit "${result}"
 
-      - name: Render the second-process Continue frames (720p, same profile)
+      - id: render_continue
+        name: Render the second-process Continue frames (720p, same profile)
+        # Evidence first: one failing frame must not hide the rest of the run.
+        continue-on-error: true
         run: |
           set -uo pipefail
           export SOUL_OF_HERO_SAVE_PATH="user://a6_capture_720.json"
@@ -364,7 +370,10 @@ jobs:
           echo "720p continue capture exit: ${result}"
           exit "${result}"
 
-      - name: Render female journey at 720p
+      - id: render_female
+        name: Render female journey at 720p
+        # Evidence first: one failing frame must not hide the rest of the run.
+        continue-on-error: true
         run: |
           set -uo pipefail
           export SOUL_OF_HERO_SAVE_PATH="user://a6_capture_720_female.json"
@@ -380,7 +389,10 @@ jobs:
           echo "720p female capture exit: ${result}"
           exit "${result}"
 
-      - name: Render the female second-process Continue frames
+      - id: render_female_continue
+        name: Render the female second-process Continue frames
+        # Evidence first: one failing frame must not hide the rest of the run.
+        continue-on-error: true
         run: |
           set -uo pipefail
           export SOUL_OF_HERO_SAVE_PATH="user://a6_capture_720_female.json"
@@ -396,7 +408,10 @@ jobs:
           echo "720p female continue capture exit: ${result}"
           exit "${result}"
 
-      - name: Render 2560x1440 captures
+      - id: render_1440
+        name: Render 2560x1440 captures
+        # Evidence first: one failing frame must not hide the rest of the run.
+        continue-on-error: true
         run: |
           set -uo pipefail
           mkdir -p .artifacts/captures-2560x1440
@@ -413,7 +428,10 @@ jobs:
           echo "1440p capture exit: ${result}"
           exit "${result}"
 
-      - name: Render 3840x2160 captures
+      - id: render_2160
+        name: Render 3840x2160 captures
+        # Evidence first: one failing frame must not hide the rest of the run.
+        continue-on-error: true
         run: |
           set -uo pipefail
           mkdir -p .artifacts/captures-3840x2160
@@ -429,6 +447,35 @@ jobs:
           set -e
           echo "2160p capture exit: ${result}"
           exit "${result}"
+
+      # The render steps above are allowed to fail individually so every frame gets
+      # produced, but the job still fails unless ALL of them succeeded. Without this,
+      # a broken Continue phase silently leaves the female and 4K frames missing while
+      # the job still looks green.
+      - name: Fail unless every render step succeeded
+        if: always()
+        run: |
+          set -euo pipefail
+          failed=""
+          for entry in \
+            "720p:${{ steps.render_720.outcome }}" \
+            "continue:${{ steps.render_continue.outcome }}" \
+            "female:${{ steps.render_female.outcome }}" \
+            "female_continue:${{ steps.render_female_continue.outcome }}" \
+            "1440p:${{ steps.render_1440.outcome }}" \
+            "2160p:${{ steps.render_2160.outcome }}"; do
+            label="${entry%%:*}"
+            outcome="${entry##*:}"
+            echo "${label}: ${outcome}"
+            if [ "${outcome}" != "success" ]; then
+              failed="${failed} ${label}(${outcome})"
+            fi
+          done
+          if [ -n "${failed}" ]; then
+            echo "::error::render steps did not succeed:${failed}"
+            exit 1
+          fi
+          echo "every render step succeeded" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Assert every capture has the resolution it claims
         run: |
