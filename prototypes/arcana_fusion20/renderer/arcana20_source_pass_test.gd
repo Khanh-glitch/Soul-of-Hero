@@ -53,6 +53,19 @@ func _run() -> void:
     b.begin()
     check(b.ink_coverage[10 * BRenderer.W + 11] == 0.0 and b.world_warp[wi] == 0.0, "B world fields clear")
 
+    var bloom_lead := AAbyssalBloomLead.new()
+    bloom_lead.setup()
+    check(bloom_lead.petals.size() == 7 and bloom_lead.inner.size() == 7 and bloom_lead.bubbles.size() == 46, "A05 original seeded opening structures")
+    check(absf(float(bloom_lead.petals[0].len) - 71.08114593848586) < 0.00001, "A05 original seed sequence")
+    var bloom_fb := AFramebuffer.new()
+    bloom_fb.track_world_fields = true
+    bloom_fb.clear()
+    bloom_lead.render(bloom_fb, 1.5)
+    var marked := 0
+    for value in bloom_fb.world_influence:
+        marked += int(value)
+    check(marked > 0, "A05 selected opening writes source-operation footprint")
+
     var graph := AChainVerdictGraph.new()
     graph.setup()
     check(graph.events.size() == 23, "A09 original graph seeded probe count")
