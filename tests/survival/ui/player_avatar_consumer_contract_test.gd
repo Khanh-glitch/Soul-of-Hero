@@ -16,6 +16,7 @@ const PRESENTER_SCRIPT := preload("res://game/survival/player/player_avatar_pres
 
 var _checks := 0
 var _failures: Array[String] = []
+var _current_case := "startup"
 
 
 ## Stand-in for the A0 owner. It exposes exactly the surface the contract promises
@@ -44,13 +45,24 @@ func _ready() -> void:
 
 
 func _run() -> void:
+	# If a case aborts mid-coroutine the process would otherwise sit there until CI
+	# kills it, and the log would say only "exit code 124". The watchdog turns that
+	# into a named failure.
+	_start_watchdog(90)
 	await _check_owner_default()
+	_enter("_check_owner_without_api")
 	await _check_owner_without_api()
+	_enter("_check_no_identity")
 	await _check_no_identity()
+	_enter("_check_claimed_identity_without_art")
 	await _check_claimed_identity_without_art()
+	_enter("_check_grade_manifest_is_honest")
 	_check_grade_manifest_is_honest()
+	_enter("_check_grade_fallback_or_refusal")
 	await _check_grade_fallback_or_refusal()
+	_enter("_check_signal_reresolves")
 	await _check_signal_reresolves()
+	_enter("_check_state_shape")
 	_check_state_shape()
 	_finish()
 
@@ -187,7 +199,10 @@ func _check_grade_fallback_or_refusal() -> void:
 			_expect(not bool(state.get("ready", true)), "grade %d refusal is never reported ready" % grade)
 			_expect(presented == null or not is_instance_valid(presented),
 				"grade %d refusal presents no sprite at all, licensed or not" % grade)
-			_expect(not host.get_node("Sprite").visible,
+			# Typed: `get_node()` returns Node, and `.visible` on a Node is a script
+			# error that would abort this coroutine and hang the job.
+			var proxy := host.get_node("Sprite") as AnimatedSprite2D
+			_expect(proxy != null and not proxy.visible,
 				"grade %d refusal hides the proxy character instead of substituting it" % grade)
 
 		# A reload must not upgrade the answer: no unlicensed sprite appears after restart.
@@ -294,6 +309,25 @@ func _cleanup(presenter: Node, host: Node) -> void:
 func _settle() -> void:
 	for _frame in range(3):
 		await get_tree().process_frame
+
+
+func _enter(case_name: String) -> void:
+	_current_case = case_name
+	print("A6 CONSUMER CASE: %s" % case_name)
+
+
+func _start_watchdog(seconds: int) -> void:
+	var timer := Timer.new()
+	timer.name = "ContractWatchdog"
+	timer.one_shot = true
+	timer.wait_time = float(seconds)
+	timer.timeout.connect(func() -> void:
+		print("::error::A6 AVATAR CONSUMER CONTRACT stuck in '%s' after %ds" % [_current_case, seconds])
+		printerr("A6 AVATAR CONSUMER CONTRACT FAILED: stuck in ", _current_case)
+		get_tree().quit(1)
+	)
+	add_child(timer)
+	timer.start()
 
 
 func _equals(actual: Variant, expected: Variant, label: String) -> void:
