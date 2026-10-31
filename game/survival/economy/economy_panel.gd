@@ -127,9 +127,12 @@ func _ready() -> void:
 	scroll.name = "Scroll"
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	# The default grey engine bar on parchment reads as a rendering fault at 1x.
-	A6UiKit.style_scroll(scroll)
 	column.add_child(scroll)
+	# After the add, not before: style_scroll re-parents the bar into a gutter beside the
+	# list, which it can only do once the list has a parent to move it within. Called
+	# first, it silently left the bar inside the ScrollContainer - and the bar then sat on
+	# top of the rows' right-hand column and cut the verdict off. The order is the fix.
+	A6UiKit.style_scroll(scroll)
 	_list = VBoxContainer.new()
 	_list.name = "Jobs"
 	_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
