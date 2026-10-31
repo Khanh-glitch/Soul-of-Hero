@@ -1,5 +1,11 @@
 ok   T1.2 sidecar world → FAIL                            
 ok   T1.2 one world, no run → BLOCKED                     
+ok   T1.2 composed tree drops A0's authority → COMPOSITION_DROPS_OWNER_WORK 
+ok   T1.2 authority missing in both trees → SIDECAR_WORLD (source defect) 
+ok   T1.2 legacy document cannot overrule an authored controller 
+ok   T1.2 live frame is the authority frame, not the legacy file 
+ok   evidence split keeps the product marker              
+ok   evidence split keeps the control marker              
 ok   T1.3 spawn outside live world → FAIL                 
 ok   T1.3 standable spawn → PASS                          
 ok   T1.3 unstandable spawn → FAIL                        
@@ -36,4 +42,4 @@ ok   probe parser reads the bootstrap pair
 ok   maturity never grants HUMAN_ACCEPTED                 
 ok   maturity grants TEST_HARNESS_VALID first             
 
-A7_CERT_SELFTEST 37/37
+A7_CERT_SELFTEST 43/43

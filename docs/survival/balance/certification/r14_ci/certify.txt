@@ -3,7 +3,7 @@ A7_CERT overall=FAIL maturity=TEST_HARNESS_VALID
   T2 FAIL
   T3 FAIL
   T4 BLOCKED
-  T1.2 FAIL            SIDECAR_WORLD                A0
+  T1.2 FAIL            COMPOSITION_DROPS_OWNER_WORK A0
   T1.3 FAIL            SPAWN_OUTSIDE_LIVE_WORLD     A0
   T1.4 FAIL            SITE_OUTSIDE_LIVE_WORLD      A0
   T2.3 FAIL            NO_KNIFE_ITEM                A3

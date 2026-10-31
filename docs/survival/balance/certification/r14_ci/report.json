@@ -131,17 +131,19 @@
     "kind": "source-contract",
     "required_stage": "source",
     "verdict": "FAIL",
-    "code": "SIDECAR_WORLD",
-    "detail": "runtime 384x256 != authored 1024x768; A0's mount declares the authored stream runs beside the legacy world; 3 A8 site(s) outside the live world: poi_crown_south_quarry(30, 280), poi_crown_south_orchard(140, 360), poi_crown_south_mill(120, 300); A0 ships A0WorldAuthority but no production file references it (only tests/survival_a0_authored_world_route_test.gd does)",
-    "repro": "game/survival/a0_authored_world_mount.gd:12,29",
+    "code": "COMPOSITION_DROPS_OWNER_WORK",
+    "detail": "the composed controller does not mount A0WorldAuthority although A0's own committed controller does (1643 lines vs 1366); A0's declared resolution replaces it with a stale merge artifact, so the composed product runs the legacy sidecar (384, 256) while the authored continent is (1024, 768)",
+    "repro": "python3 tools/a0/compose_owners.py --owner a1=\u2026 ; diff the composed game/overworld/chapter1_overworld.gd against A0's committed file",
     "stages": {
       "source": "VALID"
     },
     "evidence": [
-      "live runtime world bounds (384, 256) (data/overworld/hollow_marches.json)",
+      "live world (384, 256) resolved from `legacy_sidecar` (game/overworld/chapter1_overworld.gd), legacy document (384, 256)",
       "A1 authored frame (1024, 768) (game/survival/a1_authored_source.gd:30)",
       "sidecar markers ['render_legacy := true'] (game/survival/a0_authored_world_mount.gd:12,29)",
       "A0 poi-mount refusal `A0_WORLD_ABSENT` (game/survival/a0_poi_mount.gd:69)",
+      "composed controller mounts A0WorldAuthority=False, A0AuthoredWorldMount=True, authority default authored=False, 1366 lines",
+      "reconciled control (A0's own controller restored): mounts A0WorldAuthority=True, 1643 lines, live_source=authored_authority, live frame=[1024, 768]",
       "live scene mounts A0AuthoredWorldMount=True behind `survival/a0_authored_stream` which defaults off=True and is defined in project.godot=False (game/overworld/chapter1_overworld.gd:65,275-277)",
       "A0WorldAuthority present=True, referenced by production=False (tests/survival_a0_authored_world_route_test.gd)"
     ],
@@ -150,9 +152,14 @@
         384,
         256
       ],
+      "live_source": "legacy_sidecar",
       "authored": [
         1024,
         768
+      ],
+      "legacy_document": [
+        384,
+        256
       ],
       "sites_outside": [
         [
@@ -190,6 +197,40 @@
         "authority_module": true,
         "authority_referenced_by_production": false,
         "authority_reference": "tests/survival_a0_authored_world_route_test.gd"
+      },
+      "authority": {
+        "controller": "game/overworld/chapter1_overworld.gd",
+        "controller_present": true,
+        "controller_lines": 1366,
+        "mounts_authority": false,
+        "mounts_sidecar": true,
+        "authority_default_authored": false,
+        "authority_setting_defined": false,
+        "live_source": "legacy_sidecar"
+      },
+      "reconciled_control": {
+        "authored_frame": [
+          1024,
+          768
+        ],
+        "authority_default_authored": true,
+        "authority_setting_defined": false,
+        "controller": "game/overworld/chapter1_overworld.gd",
+        "controller_lines": 1643,
+        "controller_present": true,
+        "controller_sha256": "53f3dac2380977cb4a21842ac433d015356b94605083c78288291ad6ca69e09f",
+        "legacy_frame": [
+          384,
+          256
+        ],
+        "live_frame": [
+          1024,
+          768
+        ],
+        "live_source": "authored_authority",
+        "mounts_authority": true,
+        "mounts_sidecar": false,
+        "setting_value": "<unset>"
       }
     }
   },
@@ -240,17 +281,19 @@
       "kind": "source-contract",
       "required_stage": "source",
       "verdict": "FAIL",
-      "code": "SIDECAR_WORLD",
-      "detail": "runtime 384x256 != authored 1024x768; A0's mount declares the authored stream runs beside the legacy world; 3 A8 site(s) outside the live world: poi_crown_south_quarry(30, 280), poi_crown_south_orchard(140, 360), poi_crown_south_mill(120, 300); A0 ships A0WorldAuthority but no production file references it (only tests/survival_a0_authored_world_route_test.gd does)",
-      "repro": "game/survival/a0_authored_world_mount.gd:12,29",
+      "code": "COMPOSITION_DROPS_OWNER_WORK",
+      "detail": "the composed controller does not mount A0WorldAuthority although A0's own committed controller does (1643 lines vs 1366); A0's declared resolution replaces it with a stale merge artifact, so the composed product runs the legacy sidecar (384, 256) while the authored continent is (1024, 768)",
+      "repro": "python3 tools/a0/compose_owners.py --owner a1=\u2026 ; diff the composed game/overworld/chapter1_overworld.gd against A0's committed file",
       "stages": {
         "source": "VALID"
       },
       "evidence": [
-        "live runtime world bounds (384, 256) (data/overworld/hollow_marches.json)",
+        "live world (384, 256) resolved from `legacy_sidecar` (game/overworld/chapter1_overworld.gd), legacy document (384, 256)",
         "A1 authored frame (1024, 768) (game/survival/a1_authored_source.gd:30)",
         "sidecar markers ['render_legacy := true'] (game/survival/a0_authored_world_mount.gd:12,29)",
         "A0 poi-mount refusal `A0_WORLD_ABSENT` (game/survival/a0_poi_mount.gd:69)",
+        "composed controller mounts A0WorldAuthority=False, A0AuthoredWorldMount=True, authority default authored=False, 1366 lines",
+        "reconciled control (A0's own controller restored): mounts A0WorldAuthority=True, 1643 lines, live_source=authored_authority, live frame=[1024, 768]",
         "live scene mounts A0AuthoredWorldMount=True behind `survival/a0_authored_stream` which defaults off=True and is defined in project.godot=False (game/overworld/chapter1_overworld.gd:65,275-277)",
         "A0WorldAuthority present=True, referenced by production=False (tests/survival_a0_authored_world_route_test.gd)"
       ],
@@ -259,9 +302,14 @@
           384,
           256
         ],
+        "live_source": "legacy_sidecar",
         "authored": [
           1024,
           768
+        ],
+        "legacy_document": [
+          384,
+          256
         ],
         "sites_outside": [
           [
@@ -299,6 +347,40 @@
           "authority_module": true,
           "authority_referenced_by_production": false,
           "authority_reference": "tests/survival_a0_authored_world_route_test.gd"
+        },
+        "authority": {
+          "controller": "game/overworld/chapter1_overworld.gd",
+          "controller_present": true,
+          "controller_lines": 1366,
+          "mounts_authority": false,
+          "mounts_sidecar": true,
+          "authority_default_authored": false,
+          "authority_setting_defined": false,
+          "live_source": "legacy_sidecar"
+        },
+        "reconciled_control": {
+          "authored_frame": [
+            1024,
+            768
+          ],
+          "authority_default_authored": true,
+          "authority_setting_defined": false,
+          "controller": "game/overworld/chapter1_overworld.gd",
+          "controller_lines": 1643,
+          "controller_present": true,
+          "controller_sha256": "53f3dac2380977cb4a21842ac433d015356b94605083c78288291ad6ca69e09f",
+          "legacy_frame": [
+            384,
+            256
+          ],
+          "live_frame": [
+            1024,
+            768
+          ],
+          "live_source": "authored_authority",
+          "mounts_authority": true,
+          "mounts_sidecar": false,
+          "setting_value": "<unset>"
         }
       }
     },
@@ -318,7 +400,7 @@
       },
       "evidence": [
         "game/survival/world/a1_authored_world_reader.gd:1011: func choose_safe_spawn(run_seed: int) -> Dictionary:",
-        "probe: {\"cell\": [389, 291], \"chunk_id\": \"chunk:6:4\", \"in_live_world\": false, \"ok\": true, \"production_spawn_approval\": false, \"region\": \"r_ashen_crown\", \"standable\": true, \"traversal\": \"\"}"
+        "probe: {\"cell\": [389, 291], \"chunk_id\": \"chunk:6:4\", \"in_live_world\": false, \"live_frame\": [384, 256], \"live_source\": \"legacy_sidecar\", \"ok\": true, \"production_spawn_approval\": false, \"region\": \"r_ashen_crown\", \"standable\": true, \"traversal\": \"\"}"
       ],
       "measurements": {
         "cell": [
@@ -327,6 +409,11 @@
         ],
         "chunk_id": "chunk:6:4",
         "in_live_world": false,
+        "live_frame": [
+          384,
+          256
+        ],
+        "live_source": "legacy_sidecar",
         "ok": true,
         "production_spawn_approval": false,
         "region": "r_ashen_crown",

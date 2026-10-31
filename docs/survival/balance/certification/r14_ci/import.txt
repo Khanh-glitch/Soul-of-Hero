@@ -4153,6 +4153,7 @@ WARNING: UID duplicate detected between res://game/ui/theme/living_arsenal_theme
 [  68% ] [90m[1mreimport[22m | UI_TravelBook_GamepadRT01a.png[39m[0m
 [  68% ] [90m[1mreimport[22m | UI_TravelBook_GamepadRB01a.png[39m[0m
 [  68% ] [90m[1mreimport[22m | UI_TravelBook_GamepadR301a.png[39m[0m
+[  68% ] [90m[1mreimport[22m | UI_TravelBook_GamepadR301a.png[39m[0m
 [  68% ] [90m[1mreimport[22m | UI_TravelBook_GamepadR01a.png[39m[0m
 [  68% ] [90m[1mreimport[22m | UI_TravelBook_GamepadMenu01a.png[39m[0m
 [  68% ] [90m[1mreimport[22m | UI_TravelBook_GamepadLT01a.png[39m[0m

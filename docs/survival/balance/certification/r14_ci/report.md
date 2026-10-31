@@ -16,7 +16,7 @@ Cases: 30 · PASS 6 · FAIL 5 · BLOCKED 14 · NOT_IMPLEMENTED 5
 | id | verdict | code | owner | stage | title |
 |---|---|---|---|---|---|
 | T1.1 | **PASS** | `COMPOSITION_IDENTITY` | A7 | source | one exact immutable composition |
-| T1.2 | **FAIL** | `SIDECAR_WORLD` | A0 | source | one authoritative world (no rendered sidecar) |
+| T1.2 | **FAIL** | `COMPOSITION_DROPS_OWNER_WORK` | A0 | source | one authoritative world (no rendered sidecar) |
 | T1.3 | **FAIL** | `SPAWN_OUTSIDE_LIVE_WORLD` | A0 | runtime | player spawns safely on the authored continent |
 | T1.4 | **FAIL** | `SITE_OUTSIDE_LIVE_WORLD` | A0 | source | canonical POI approaches lie inside the playable world |
 | T1.5 | **PASS** | `INPUT_BOOTSTRAP_INDEPENDENT` | A7 | runtime | input bootstrap is diagnosed as harness config, not A1 fault |
@@ -48,11 +48,11 @@ Cases: 30 · PASS 6 · FAIL 5 · BLOCKED 14 · NOT_IMPLEMENTED 5
 
 ## First failure
 
-`T1.2` · **SIDECAR_WORLD** · owner **A0**
+`T1.2` · **COMPOSITION_DROPS_OWNER_WORK** · owner **A0**
 
-runtime 384x256 != authored 1024x768; A0's mount declares the authored stream runs beside the legacy world; 3 A8 site(s) outside the live world: poi_crown_south_quarry(30, 280), poi_crown_south_orchard(140, 360), poi_crown_south_mill(120, 300); A0 ships A0WorldAuthority but no production file references it (only tests/survival_a0_authored_world_route_test.gd does)
+the composed controller does not mount A0WorldAuthority although A0's own committed controller does (1643 lines vs 1366); A0's declared resolution replaces it with a stale merge artifact, so the composed product runs the legacy sidecar (384, 256) while the authored continent is (1024, 768)
 
-repro: `game/survival/a0_authored_world_mount.gd:12,29`
+repro: `python3 tools/a0/compose_owners.py --owner a1=… ; diff the composed game/overworld/chapter1_overworld.gd against A0's committed file`
 
 ## First blocker
 
@@ -69,19 +69,21 @@ the declared tree reproduces byte for byte
 - declared tree=f6d5cf789995
 - recomputed tree=f6d5cf789995 (git-write-tree)
 
-### T1.2 — FAIL `SIDECAR_WORLD`
-runtime 384x256 != authored 1024x768; A0's mount declares the authored stream runs beside the legacy world; 3 A8 site(s) outside the live world: poi_crown_south_quarry(30, 280), poi_crown_south_orchard(140, 360), poi_crown_south_mill(120, 300); A0 ships A0WorldAuthority but no production file references it (only tests/survival_a0_authored_world_route_test.gd does)
-- live runtime world bounds (384, 256) (data/overworld/hollow_marches.json)
+### T1.2 — FAIL `COMPOSITION_DROPS_OWNER_WORK`
+the composed controller does not mount A0WorldAuthority although A0's own committed controller does (1643 lines vs 1366); A0's declared resolution replaces it with a stale merge artifact, so the composed product runs the legacy sidecar (384, 256) while the authored continent is (1024, 768)
+- live world (384, 256) resolved from `legacy_sidecar` (game/overworld/chapter1_overworld.gd), legacy document (384, 256)
 - A1 authored frame (1024, 768) (game/survival/a1_authored_source.gd:30)
 - sidecar markers ['render_legacy := true'] (game/survival/a0_authored_world_mount.gd:12,29)
 - A0 poi-mount refusal `A0_WORLD_ABSENT` (game/survival/a0_poi_mount.gd:69)
+- composed controller mounts A0WorldAuthority=False, A0AuthoredWorldMount=True, authority default authored=False, 1366 lines
+- reconciled control (A0's own controller restored): mounts A0WorldAuthority=True, 1643 lines, live_source=authored_authority, live frame=[1024, 768]
 - live scene mounts A0AuthoredWorldMount=True behind `survival/a0_authored_stream` which defaults off=True and is defined in project.godot=False (game/overworld/chapter1_overworld.gd:65,275-277)
 - A0WorldAuthority present=True, referenced by production=False (tests/survival_a0_authored_world_route_test.gd)
 
 ### T1.3 — FAIL `SPAWN_OUTSIDE_LIVE_WORLD`
 spawn [389, 291] is not inside (384, 256)
 - game/survival/world/a1_authored_world_reader.gd:1011: func choose_safe_spawn(run_seed: int) -> Dictionary:
-- probe: {"cell": [389, 291], "chunk_id": "chunk:6:4", "in_live_world": false, "ok": true, "production_spawn_approval": false, "region": "r_ashen_crown", "standable": true, "traversal": ""}
+- probe: {"cell": [389, 291], "chunk_id": "chunk:6:4", "in_live_world": false, "live_frame": [384, 256], "live_source": "legacy_sidecar", "ok": true, "production_spawn_approval": false, "region": "r_ashen_crown", "standable": true, "traversal": ""}
 
 ### T1.4 — FAIL `SITE_OUTSIDE_LIVE_WORLD`
 3/3 canonical sites cannot be approached; package_status=A8_OWNER_CONTRACT_REFRESH_READY_FOR_A0_REVIEW_NOT_MOUNTED
