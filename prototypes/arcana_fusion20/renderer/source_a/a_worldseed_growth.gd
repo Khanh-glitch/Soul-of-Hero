@@ -99,10 +99,47 @@ func _c_surface(layer: int, petal: int, u: float, v: float, x: float, y: float, 
     if av > 0.86: tone = 0.12
     return CPalette.ramp_d(CPalette.P.leaf, tone, threshold)
 
+# The three-octave A source noise repeatedly visits the same integer lattice
+# corners across dense petal samples. Cache the *exact* JS-compatible hash2
+# values for this frame, in float64; no sample, seed, interpolation or color
+# is changed. Petal index <= 15, u <= 1, and lacunarity is exactly 2.
+const NOISE_WIDTH := 151
+
+static func _cached_fbm(x: float, y: float, lattice: PackedFloat64Array, min_y: int) -> float:
+    var a := 0.5
+    var total := 0.0
+    var norm := 0.0
+    var xx := x
+    var yy := y
+    for octave in range(3):
+        var xi := floori(xx)
+        var yi := floori(yy)
+        var xf := xx - float(xi)
+        var yf := yy - float(yi)
+        var u := xf * xf * (3.0 - 2.0 * xf)
+        var v := yf * yf * (3.0 - 2.0 * yf)
+        var at := (yi - min_y) * NOISE_WIDTH + xi
+        var h0 := lerpf(lattice[at], lattice[at + 1], u)
+        var h1 := lerpf(lattice[at + NOISE_WIDTH], lattice[at + NOISE_WIDTH + 1], u)
+        total += a * lerpf(h0, h1, v)
+        norm += a
+        xx *= 2.0
+        yy *= 2.0
+        a *= 0.5
+    return total / norm
+
 func render(fb: AFramebuffer, t: float) -> void:
     var crack := AMath.seg(t, CRACK, CRACK + 0.5)
     var fold := AMath.seg(t, FOLD, DURATION)
     var bloom_k := AMath.seg(t, BLOOM, BLOOM + 0.5)
+    var lattice := PackedFloat64Array()
+    var min_y := floori(minf(-t * 1.1, -t * 1.1 * 4.0)) - 1
+    var max_y := ceili(maxf(5.0 - t * 1.1, (5.0 - t * 1.1) * 4.0)) + 1
+    if t >= 2.1 and fold < 1.0:
+        lattice.resize((max_y - min_y + 1) * NOISE_WIDTH)
+        for ly in range(min_y, max_y + 1):
+            for lx in range(NOISE_WIDTH):
+                lattice[(ly - min_y) * NOISE_WIDTH + lx] = AMath.hash2(float(lx), float(ly))
     var seed_r := lerpf(7.0, 10.0, sin(t * 1.4) * 0.5 + 0.5) * (1.0 - crack * 0.35) * (1.0 - fold)
     if seed_r > 0.5:
         var rotation := t * 0.7
@@ -178,7 +215,7 @@ func render(fb: AFramebuffer, t: float) -> void:
                 for jj in range(vs + 1):
                     var v: float = transverse[jj]
                     var av: float = abs_transverse[jj]
-                    var cell := AMath.fbm(uu * 7.0 + petal * 2.0, av * 5.0 - t * 1.1, 3)
+                    var cell := _cached_fbm(uu * 7.0 + petal * 2.0, av * 5.0 - t * 1.1, lattice, min_y)
                     var h := 0.16 + cell * 0.26 + veins[jj] + edges[jj]
                     h += wave_add
                     h *= taper
