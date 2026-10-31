@@ -283,6 +283,8 @@ func source_pass_frame() -> Arcana20SourcePassFrame:
     result.seeds = PackedInt32Array([int(seed_by_kind.get(_kind, 0))])
     if _kind == "thunderloom":
         result.seeds.append(999)
+    elif _kind == "rift_fusion":
+        result.seeds.append(0x7ea4) # selected A20 live-ground debris seed
     result.source_size = Vector2i(CFrame.W, CFrame.H)
     var bx := Vector2(cos(_rot), sin(_rot)) * _scale
     var by := Vector2(-sin(_rot), cos(_rot)) * _scale
