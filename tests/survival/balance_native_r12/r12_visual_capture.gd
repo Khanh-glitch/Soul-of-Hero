@@ -22,6 +22,7 @@ var world: Node = null
 var build: Node = null
 var hero: Node2D = null
 var report: Array[Dictionary] = []
+var facts: Dictionary = {}
 
 
 func _ready() -> void:
@@ -54,6 +55,12 @@ func _capture() -> void:
 	await _wait_frames(20)
 	for size: Vector2i in sizes:
 		await _capture_one(size)
+	if bool(facts.get("home_shot_pending", false)) and not sizes.is_empty():
+		var door: Array = facts.get("home_shot_cell", [0, 0])
+		hero.global_position = Vector2(float(door[0]) * 16.0 + 8.0, float(door[1]) * 16.0 + 8.0)
+		facts["home_shot_hero"] = [hero.global_position.x, hero.global_position.y]
+		await _wait_frames(20)
+		await _capture_one(sizes[0], "r12_home_%dx%d.png")
 	_finish(0)
 
 
@@ -86,6 +93,17 @@ func _mount_world() -> bool:
 	print("A7CAPTURE world READY hero=%s build=%s" % [
 		str(hero.global_position) if hero != null else "none", "yes" if build != null else "no",
 	])
+	facts["world_scene"] = WORLD_SCENE
+	facts["hero_spawn"] = [hero.global_position.x, hero.global_position.y] if hero != null else null
+	facts["has_survival_build"] = build != null
+	facts["has_room_topology"] = build != null and build.get(&"room_topology") != null
+	facts["world_children"] = _node_names(world)
+	facts["viewport"] = [get_tree().root.size.x, get_tree().root.size.y]
+	var cam := get_viewport().get_camera_2d()
+	facts["camera_zoom"] = [cam.zoom.x, cam.zoom.y] if cam != null else null
+	facts["content_scale_factor"] = get_tree().root.content_scale_factor
+	facts["content_scale_mode"] = get_tree().root.content_scale_mode
+	facts["content_scale_size"] = [get_tree().root.content_scale_size.x, get_tree().root.content_scale_size.y]
 	return hero != null
 
 
@@ -95,6 +113,7 @@ func _mount_world() -> bool:
 func _build_house() -> void:
 	if build == null:
 		print("A7CAPTURE NOTE no survival build system; capturing the world alone")
+		facts["house"] = {"built": false, "reason": "no_survival_build"}
 		return
 	_grant("oak_wood", "material", 60)
 	_grant("iron_scrap", "material", 30)
@@ -107,13 +126,17 @@ func _build_house() -> void:
 		radius = 1
 	if plot == Vector2i(-1, -1):
 		print("A7CAPTURE NOTE no legal plot near the spawn; capturing the world alone")
+		facts["house"] = {"built": false, "reason": "no_legal_plot", "hero_cell": [hero_cell.x, hero_cell.y]}
 		return
+	var attempts: Array = []
 	var placed := 0
 	for dy in range(-radius, radius + 1):
 		for dx in range(-radius, radius + 1):
 			if maxi(absi(dx), absi(dy)) != radius:
 				continue
-			if _place("wall_wood", plot + Vector2i(dx, dy)):
+			var wall_ok := _place("wall_wood", plot + Vector2i(dx, dy))
+			attempts.append(["wall_wood", plot.x + dx, plot.y + dy, wall_ok])
+			if wall_ok:
 				placed += 1
 	for dy in range(-radius + 1, radius):
 		for dx in range(-radius + 1, radius):
@@ -129,7 +152,14 @@ func _build_house() -> void:
 	if build.get(&"room_topology") != null:
 		room = String(build.get(&"room_topology").call(&"room_at", plot))
 	print("A7CAPTURE house origin=%s radius=%d walls=%d room=%s" % [str(plot), radius, placed, room if not room.is_empty() else "<none>"])
-	report.append({"house": {"origin": [plot.x, plot.y], "radius": radius, "walls": placed, "room": room}})
+	facts["house"] = {
+		"built": placed > 0, "origin": [plot.x, plot.y], "radius": radius,
+		"walls": placed, "room": room, "attempts": attempts,
+	}
+	# Photograph the home too, from the door: a roof you cannot see is not a house.
+	if placed > 0 and hero != null:
+		facts["home_shot_cell"] = [plot.x, plot.y + radius + 2]
+		facts["home_shot_pending"] = true
 
 
 func _grant(item_id: String, kind: String, quantity: int) -> void:
@@ -189,7 +219,7 @@ func _place(piece: String, cell: Vector2i) -> bool:
 
 
 # ----------------------------------------------------------------- 2. capture
-func _capture_one(size: Vector2i) -> void:
+func _capture_one(size: Vector2i, name_pattern: String = "r12_overworld_%dx%d.png") -> void:
 	DisplayServer.window_set_size(size)
 	get_tree().root.size = size
 	await _wait_frames(12)
@@ -197,7 +227,7 @@ func _capture_one(size: Vector2i) -> void:
 	await RenderingServer.frame_post_draw
 	var texture := get_tree().root.get_texture()
 	var image: Image = texture.get_image() if texture != null else null
-	var path := out_dir.path_join("r12_overworld_%dx%d.png" % [size.x, size.y])
+	var path := out_dir.path_join(name_pattern % [size.x, size.y])
 	var saved := ERR_UNAVAILABLE
 	var bytes := 0
 	var colours := 0
@@ -209,6 +239,8 @@ func _capture_one(size: Vector2i) -> void:
 		if FileAccess.file_exists(path):
 			bytes = FileAccess.get_file_as_bytes(path).size()
 	var row := {
+		"file": path.get_file(),
+		"viewport": [get_tree().root.size.x, get_tree().root.size.y],
 		"size": [size.x, size.y],
 		"image_size": image_size,
 		"save_result": saved,
@@ -242,6 +274,13 @@ func _wait_frames(count: int) -> void:
 		await get_tree().process_frame
 
 
+func _node_names(node: Node) -> Array:
+	var names: Array = []
+	for child in node.get_children():
+		names.append(String(child.name))
+	return names
+
+
 func _cell_of(point: Vector2) -> Vector2i:
 	return Vector2i(floori(point.x / 16.0), floori(point.y / 16.0))
 
@@ -254,6 +293,7 @@ func _finish(code: int) -> void:
 		"display_server": DisplayServer.get_name(),
 		"adapter": RenderingServer.get_video_adapter_name(),
 		"out_dir": out_dir,
+		"facts": facts,
 		"rows": report,
 	}
 	var json_path := out_dir.path_join("r12_visual_measurements.json")
