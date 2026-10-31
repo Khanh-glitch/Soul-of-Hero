@@ -44,6 +44,17 @@ jobs:
           timeout 1200s godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/d19_pass_compare.gd 2>&1 | tee native.log
           grep -Fq 'D19_NATIVE_SOURCE_CAPTURE_COMPLETE' native.log
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:' native.log
+      - name: Run original D bloom math on native GPU with the identical source scene
+        run: |
+          set -o pipefail
+          timeout 600s xvfb-run -a -s '-screen 0 1024x768x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script res://prototypes/arcana_fusion20/renderer/d19_bloom_compare.gd 2>&1 | tee bloom-native.log
+          grep -Fq 'D19_NATIVE_BLOOM_CAPTURE_COMPLETE' bloom-native.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|ERROR:' bloom-native.log
+      - name: Compare same-input D bloom intermediates without an acceptance threshold
+        run: |
+          set -o pipefail
+          python3 tools/arcana19_pass_compare/compare_bloom.py artifacts/arcana19-pass-source | tee bloom-comparison.log
+          sed 's/^/::notice::/' bloom-comparison.log
       - name: Spatial comparison of linear source g fields
         run: |
           set -o pipefail
@@ -59,4 +70,6 @@ jobs:
             import.log
             native.log
             comparison.log
+            bloom-native.log
+            bloom-comparison.log
           if-no-files-found: warn
