@@ -606,6 +606,8 @@ func _run() -> void:
     var seed_fx := seed_debris._fx as CWorldseedDebris
     check(seed_fx.burst and seed_fx.particles.size() == 536 and seed_debris._tick == 468, "A16 bloom triggers full original C16 seed/spore/petal burst on shared clock")
     check(seed_growth.local_to_world(AWorldseedGrowth.C).distance_to(seed_debris.local_to_world(CWorldseedDebris.C)) < 0.01, "A16 and C16 source centers share the same real-world anchor")
+    var seed_pass := seed_debris.source_pass_frame()
+    check(seed_pass.seeds == PackedInt32Array([119785]) and seed_pass.caster_world.is_equal_approx(player.global_position), "C16 source metadata retains original seed and real caster")
     check(mount.active_viewers(id16) == 2 and not images_equal(baseline, seed_img), "A16 source growth C material and C16 debris affect actual world")
     multi.cancel_skill(id16)
     await process_frame

@@ -42,6 +42,9 @@ var experimental_separate_passes := false
 var world_pass_mode := false
 var _bytes := PackedByteArray()
 var _origin := Vector2.ZERO
+# Kept separately because a selected source layer may align its visual basis
+# to a sibling without changing the actual SOH caster metadata.
+var _cast_caster := Vector2.ZERO
 var _target := Vector2.ZERO
 var _rot := 0.0
 var _scale := 1.0
@@ -126,6 +129,7 @@ func begin(caster_world: Vector2, target_world: Vector2, kind: String) -> void:
     _rot = axis.angle() - source_axis.angle() if axis.length() > 1.0 else 0.0
     _scale = clampf(axis.length() / maxf(1.0, source_axis.length()), 0.6, 3.5) if axis.length() > 1.0 else 1.0
     _origin = caster_world
+    _cast_caster = caster_world
     _target = target_world
     _frame.track_world_fragments = world_pass_mode
     _tick = 0
@@ -302,7 +306,7 @@ func source_pass_frame() -> Arcana20SourcePassFrame:
     result.variant = StringName(_kind)
     result.tick = _tick
     result.source_time = source_time()
-    var seed_by_kind := {"bloom_late": 32676, "crown": 1000, "crown_outer": 1000, "rift_fusion": 151461, "basilica": 48514, "thunderloom": 72271, "thorn": 111866, "horizon": 127704}
+    var seed_by_kind := {"bloom_late": 32676, "worldseed_debris": CWorldseedDebris.SEED, "crown": 1000, "crown_outer": 1000, "rift_fusion": 151461, "basilica": 48514, "thunderloom": 72271, "thorn": 111866, "horizon": 127704}
     result.seeds = PackedInt32Array([int(seed_by_kind.get(_kind, 0))])
     if _kind == "thunderloom":
         result.seeds.append(999)
@@ -312,7 +316,7 @@ func source_pass_frame() -> Arcana20SourcePassFrame:
     var bx := Vector2(cos(_rot), sin(_rot)) * _scale
     var by := Vector2(-sin(_rot), cos(_rot)) * _scale
     result.source_to_world = Transform2D(bx, by, _origin - bx * 112.0 - by * 126.0)
-    result.caster_world = _origin
+    result.caster_world = _cast_caster
     result.target_world = _target
     result.c_ground = _frame.ground
     result.c_ground_coverage = _frame.ground_coverage
