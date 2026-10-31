@@ -278,18 +278,46 @@ class Layer extends RefCounted:
 				lb[o + 2] = cb
 				lb[o + 3] = 255
 
+	# Packed-byte row writer replicating raw_hline+raw_px exactly for the
+	# additive case (add and not cov and dl >= 16). Bit-identical output.
+	func _span_write_add(x0: int, x1: int, y: int, c: int, lb: PackedByteArray) -> void:
+		if y < 0 or y >= H or x0 > x1:
+			return
+		if x0 < 0:
+			x0 = 0
+		if x1 >= W:
+			x1 = W - 1
+		if x0 > x1:
+			return
+		var cr: int = ((c & 255) * a) >> 8
+		var cg: int = (((c >> 8) & 255) * a) >> 8
+		var cb: int = (((c >> 16) & 255) * a) >> 8
+		var base: int = (y * W + x0) * 4
+		for i in range(x1 - x0 + 1):
+			var o: int = base + i * 4
+			var r2: int = int(lb[o]) + cr
+			var g2: int = int(lb[o + 1]) + cg
+			var b2: int = int(lb[o + 2]) + cb
+			lb[o] = 255 if r2 > 255 else r2
+			lb[o + 1] = 255 if g2 > 255 else g2
+			lb[o + 2] = 255 if b2 > 255 else b2
+			lb[o + 3] = 255
+
 	func disc(cx: float, cy: float, r: float, c: int) -> void:
 		var gcx: int = M.js_round(cx * k)
 		var gcy: int = M.js_round(cy * k)
 		var gr: float = r * k
 		var R: float = gr + 0.35
 		var ri: int = int(ceil(gr))
-		if not add and a == 255 and not cov:
+		if (not add and a == 255 and not cov) or (add and not cov and dl >= 16):
 			var lb: PackedByteArray = bytes
 			bytes = PackedByteArray()  # drop our ref so lb writes don't COW-copy the whole buffer
 			for dy in range(-ri, ri + 1):
 				var w: int = int(floor(sqrt(maxf(0.0, R * R - float(dy * dy)))))
-				_span_write(gcx - w, gcx + w, gcy + dy, c, lb)
+				if add:
+					_span_write_add(gcx - w, gcx + w, gcy + dy, c, lb)
+				else:
+					_span_write(gcx - w, gcx + w, gcy + dy, c, lb)
 			bytes = lb
 			return
 		for dy in range(-ri, ri + 1):
@@ -303,7 +331,7 @@ class Layer extends RefCounted:
 		var gry: float = ry * k
 		var RY: float = gry + 0.35
 		var iy: int = int(ceil(gry))
-		if not add and a == 255 and not cov:
+		if (not add and a == 255 and not cov) or (add and not cov and dl >= 16):
 			var lb: PackedByteArray = bytes
 			bytes = PackedByteArray()  # drop our ref so lb writes don't COW-copy the whole buffer
 			for dy in range(-iy, iy + 1):
@@ -311,7 +339,10 @@ class Layer extends RefCounted:
 				if q < 0.0:
 					continue
 				var w: int = int(floor((grx + 0.35) * sqrt(q)))
-				_span_write(gcx - w, gcx + w, gcy + dy, c, lb)
+				if add:
+					_span_write_add(gcx - w, gcx + w, gcy + dy, c, lb)
+				else:
+					_span_write(gcx - w, gcx + w, gcy + dy, c, lb)
 			bytes = lb
 			return
 		for dy in range(-iy, iy + 1):
