@@ -1,0 +1,47 @@
+name: ARCANA20 actual-overworld sweep visual inspection
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-sweep-inspection.yml']
+permissions:
+  actions: read
+  contents: read
+jobs:
+  inspection:
+    strategy:
+      fail-fast: false
+      matrix:
+        first: [1, 6, 11, 16]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcana20-frozen-overworld-all20-sweep
+          run-id: 41212751992
+          github-token: ${{ github.token }}
+          path: review
+      - name: Extract five diagnostic native-world frames
+        env:
+          FIRST: ${{ matrix.first }}
+        run: |
+          python3 -m pip install --quiet pillow
+          python3 - <<'PY'
+          import base64,io,os
+          from pathlib import Path
+          from PIL import Image
+          root=next(Path('review').rglob('arcana20-join'))
+          for n in range(int(os.environ['FIRST']),int(os.environ['FIRST'])+5):
+              p=root/f'sweep_{n:02d}.png'
+              if not p.exists(): raise SystemExit('missing '+str(p))
+              with Image.open(p) as source:
+                  source.thumbnail((320,180),Image.Resampling.NEAREST)
+                  im=source.convert('RGB').quantize(colors=24,method=Image.Quantize.MEDIANCUT)
+                  while True:
+                      f=io.BytesIO(); im.save(f,format='PNG',optimize=True)
+                      data=base64.b64encode(f.getvalue()).decode('ascii')
+                      if len(data)<=3900: break
+                      if im.width<=80: raise SystemExit(f'thumbnail too large: {n}')
+                      im=im.resize((int(im.width*.85),int(im.height*.85)),Image.Resampling.NEAREST)
+                  print(f'::notice title=SWEEP_IMAGE_{n:02d}::{data}',flush=True)
+          PY
