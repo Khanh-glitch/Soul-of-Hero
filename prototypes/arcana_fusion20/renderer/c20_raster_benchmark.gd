@@ -26,8 +26,18 @@ func _initialize() -> void:
     var ticks := [108, 270, 390, 444, 510]
     for tick in range(1, ticks[-1] + 1):
         var t := float(tick) / 60.0
+        # C particles without an explicit seed use a global deterministic
+        # counter. Present the same counter state to both independent casts;
+        # otherwise a dual-run test introduces false particle-light divergence.
+        var initial_seed := CKit._auto_seed
         old.call("update", 1.0 / 60.0, t)
+        var expected_seed := CKit._auto_seed
+        CKit._auto_seed = initial_seed
         revised.update(1.0 / 60.0, t)
+        if CKit._auto_seed != expected_seed:
+            push_error("C20 benchmark particle seed consumption diverged at tick %d" % tick)
+            quit(1)
+            return
         if not tick in ticks: continue
         var old_samples: Array[float] = []
         var new_samples: Array[float] = []
