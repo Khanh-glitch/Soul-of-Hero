@@ -22,6 +22,7 @@ var bloom_b := PackedFloat32Array()
 var track_world_fields := false
 var world_coverage := PackedFloat32Array()
 var world_multiplier := PackedFloat32Array()
+var world_warp := PackedFloat32Array()
 var world_influence := PackedByteArray()
 var bw: int
 var bh: int
@@ -38,6 +39,7 @@ func _init() -> void:
     buf.resize(n)
     world_coverage.resize(W * H)
     world_multiplier.resize(W * H)
+    world_warp.resize(W * H * 2)
     world_influence.resize(W * H)
     base.resize(n)
     trail.resize(n)
@@ -51,6 +53,7 @@ func clear() -> void:
     if track_world_fields:
         world_coverage.fill(0.0)
         world_multiplier.fill(1.0)
+        world_warp.fill(0.0)
         world_influence.fill(0)
     exposure = 1.0
     flash = Vector3.ZERO

@@ -158,6 +158,15 @@ static func heat_shimmer(fb: AFramebuffer, cx: float, cy: float, r: float, t: fl
     var h := y1 - y0 + 1
     var tmp := PackedFloat32Array()
     tmp.resize(w * h * 3)
+    # Copy the pre-shimmer source metadata just as the original copies RGB.
+    # Warp is a destination-to-source map composed in operation order.
+    var coverage := PackedFloat32Array()
+    var multiplier := PackedFloat32Array()
+    var warp := PackedFloat32Array()
+    if fb.track_world_fields:
+        coverage = fb.world_coverage.duplicate()
+        multiplier = fb.world_multiplier.duplicate()
+        warp = fb.world_warp.duplicate()
     for y in range(h):
         for x in range(w):
             var i := ((y + y0) * AFramebuffer.W + (x + x0)) * 3
@@ -182,3 +191,13 @@ static func heat_shimmer(fb: AFramebuffer, cx: float, cy: float, r: float, t: fl
             fb.buf[i] = tmp[si]
             fb.buf[i + 1] = tmp[si + 1]
             fb.buf[i + 2] = tmp[si + 2]
+            if fb.track_world_fields:
+                var dst := gy * AFramebuffer.W + gx
+                var src := (sy + y0) * AFramebuffer.W + sx + x0
+                fb.world_coverage[dst] = coverage[src]
+                fb.world_multiplier[dst] = multiplier[src]
+                fb.world_warp[dst * 2] = warp[src * 2] + float(sx - x)
+                fb.world_warp[dst * 2 + 1] = warp[src * 2 + 1] + float(sy - y)
+                # The source's circular shimmer operation, including dark or
+                # neutral texels, is the footprint; it is not an RGB key.
+                fb.world_influence[dst] = 1

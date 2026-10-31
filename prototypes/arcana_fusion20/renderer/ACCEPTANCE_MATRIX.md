@@ -1,5 +1,13 @@
 # ARCANA Fusion20 — Technical Progress Matrix (not visual acceptance) (AVFX renderer stream)
 
+> **Current world-integration overlay (2026-10-31):** This file's original
+> source/parity table below is historical, not a current-world approval table.
+> The authoritative integration status is the 20-row table in
+> `OVERWORLD_INTEGRATION_STATUS.md`. B/C now expose operation-footprint,
+> real-world-input experimental passes, A/D have partial source-field
+> extraction, and A #09 has a new, unverified real-actor graph candidate.
+> No technical gate or visual approval has been promoted.
+
 Branch: `arena/c7b0c4e8-soul-of-hero` · Renderer root: `prototypes/arcana_fusion20/renderer/`
 CI: `.github/workflows/arcana-fusion20-renderer.yml` (Godot 4.7, headless)
 Key CI evidence: run `41197756655` (HEAD `dd465e96c`) — **SUCCESS**:
@@ -21,7 +29,8 @@ Headless CI PASS is never a Gold/visual claim. **Round-next correction:**
 The old table's references to ground/air/distortion "passes" describe intended
 roles, not independently routable real-SOH passes: players currently expose
 composited sprites. #01 overlays whole source effects; #05/#09/#11/#16/#20
-are authored A-buffer interpretations, not faithful multi-source ports. See
+were authored A-buffer interpretations, not faithful multi-source ports (the
+new #09 real-actor graph candidate is under test). See
 `FUSION_REDESIGN_AUDIT.md` for specific gaps. Historical CI results below
 refer to the earlier commit, not any later changes.
 

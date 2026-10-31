@@ -152,6 +152,7 @@ func source_pass_frame() -> Arcana20SourcePassFrame:
     result.a_rgb = _fb.buf
     result.a_coverage = _fb.world_coverage
     result.a_multiplier = _fb.world_multiplier
+    result.a_world_warp = _fb.world_warp
     result.a_influence = _fb.world_influence
     result.a_exposure = _fb.exposure
     result.a_bloom = _fb.bloom_amt

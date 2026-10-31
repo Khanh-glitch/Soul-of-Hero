@@ -7,6 +7,14 @@ All 20 are `VISUAL_NOT_VERIFIED`; none is owner-approved. The all-skill capture
 is source-buffer evidence, not the actual SOH composite. See the CI artifact
 `arcana20-visual-review` only when the capture step completes successfully.
 
+> Update: world-pass-mode #09 now has a distinct candidate built around the
+> original A seeded graph schedule, live SOH `AnimatedSprite2D` anchors, B ARC
+> colors, and C `bolt_pts`; legacy candidate remains unchanged. Missing actors
+> produce no synthetic nodes/contacts. Native validation, original A sparks and
+> raster equivalence, complete C branching, B composition, actor lifecycle and
+> full-cast source/real-world review are still open. This is **not** an
+> approved or proven complete fusion. See `OVERWORLD_INTEGRATION_STATUS.md`.
+
 ## Six fusions
 
 | ID | Creator requirement | Code finding and remaining work |

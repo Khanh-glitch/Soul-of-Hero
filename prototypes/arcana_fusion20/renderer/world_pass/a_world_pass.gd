@@ -82,6 +82,8 @@ func consume(frame: Arcana20SourcePassFrame) -> void:
         ink[i + 2] = frame.a_rgb[j + 2]
         ink[i + 3] = frame.a_coverage[p]
         masks[i] = frame.a_multiplier[p]
+        masks[i + 1] = frame.a_world_warp[p * 2]
+        masks[i + 2] = frame.a_world_warp[p * 2 + 1]
         masks[i + 3] = float(expanded[p])
     for p in range(frame.a_bloom_size.x * frame.a_bloom_size.y):
         bloom[p * 4] = frame.a_bloom_rgb[p * 3]
@@ -95,6 +97,17 @@ func consume(frame: Arcana20SourcePassFrame) -> void:
     _material.set_shader_parameter("exposure", frame.a_exposure)
     _sprite.global_transform = frame.source_to_world
     _sprite.visible = true
+    _update_camera_basis()
+
+func _process(_delta: float) -> void:
+    _update_camera_basis()
+
+func _update_camera_basis() -> void:
+    if _sprite == null or _material == null:
+        return
+    var transform := _sprite.get_global_transform_with_canvas()
+    _material.set_shader_parameter("screen_dx", transform.x)
+    _material.set_shader_parameter("screen_dy", transform.y)
 
 func _set_texture(key: String, size: Vector2i, data: PackedFloat32Array) -> ImageTexture:
     var image := Image.create_from_data(size.x, size.y, false, Image.FORMAT_RGBAF, data.to_byte_array())

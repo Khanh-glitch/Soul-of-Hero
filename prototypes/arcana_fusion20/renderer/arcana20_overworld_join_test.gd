@@ -290,7 +290,7 @@ func save_fields(id: StringName, frame: Arcana20SourcePassFrame) -> void:
     var fields := {}
     if frame.family == &"A":
         fields = {"ink.rgb32f": frame.a_rgb.to_byte_array(), "ink_coverage.f32": frame.a_coverage.to_byte_array(),
-            "multiplier.f32": frame.a_multiplier.to_byte_array(), "influence.u8": frame.a_influence,
+            "multiplier.f32": frame.a_multiplier.to_byte_array(), "warp.rg32f": frame.a_world_warp.to_byte_array(), "influence.u8": frame.a_influence,
             "bloom.rgb32f": frame.a_bloom_rgb.to_byte_array()}
     elif frame.family == &"C":
         fields = {"ground.rgba8": frame.c_ground, "ground_coverage.f32": frame.c_ground_coverage.to_byte_array(),

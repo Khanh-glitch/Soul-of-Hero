@@ -47,6 +47,7 @@ var b_tint: Vector3
 var a_rgb: PackedFloat32Array
 var a_coverage: PackedFloat32Array
 var a_multiplier: PackedFloat32Array
+var a_world_warp: PackedFloat32Array
 var a_influence: PackedByteArray
 var a_exposure: float
 var a_bloom: float

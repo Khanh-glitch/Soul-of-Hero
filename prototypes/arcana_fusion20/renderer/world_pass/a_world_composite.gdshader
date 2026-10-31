@@ -9,6 +9,8 @@ uniform sampler2D influence_multiplier : repeat_disable, filter_nearest;
 uniform sampler2D bloom_tex : repeat_disable, filter_linear;
 uniform float bloom_amount = 0.75;
 uniform float exposure = 1.0;
+uniform vec2 screen_dx = vec2(1.0, 0.0);
+uniform vec2 screen_dy = vec2(0.0, 1.0);
 const ivec2 SIZE = ivec2(416,234);
 
 float tone(float x) {
@@ -26,7 +28,9 @@ void fragment() {
     vec2 bloom_uv = (vec2(p) + vec2(0.5)) / (vec2(textureSize(bloom_tex, 0)) * 4.0);
     vec3 bloom = texture(bloom_tex, clamp(bloom_uv, vec2(0.0), vec2(1.0))).rgb;
     vec3 original = texture(live_world, SCREEN_UV).rgb;
-    vec3 src = (original * mask.r * (1.0 - ink.a) + ink.rgb + bloom * bloom_amount) * exposure;
+    vec2 offset = (screen_dx * mask.g + screen_dy * mask.b) * SCREEN_PIXEL_SIZE;
+    vec3 warped = texture(live_world, clamp(SCREEN_UV + offset, vec2(0.0), vec2(1.0))).rgb;
+    vec3 src = (warped * mask.r * (1.0 - ink.a) + ink.rgb + bloom * bloom_amount) * exposure;
     vec3 neutral = original * exposure;
     vec3 mapped = vec3(tone(src.r), tone(src.g), tone(src.b));
     vec3 base = vec3(tone(neutral.r), tone(neutral.g), tone(neutral.b));

@@ -71,6 +71,15 @@ func _run() -> void:
     check(is_equal_approx(a.world_multiplier[9 * AFramebuffer.W + 11], 0.3), "A multiplier field")
     a.clear()
     check(a.world_influence[9 * AFramebuffer.W + 9] == 0 and a.world_multiplier[9 * AFramebuffer.W + 11] == 1.0, "A world fields clear")
+    ADraw.field(a, 20, 20, 21, 21, func(_x: int, _y: int, _out: Array) -> void: pass)
+    check(a.world_influence[20 * AFramebuffer.W + 20] == 1, "A direct field records operation bounds without RGB key")
+    ADraw.field_mul(a, 30, 30, 30, 30, func(_x: int, _y: int) -> float: return 0.5)
+    check(is_equal_approx(a.world_multiplier[30 * AFramebuffer.W + 30], 0.5), "A direct field multiplier affects real world")
+    ACommon.heat_shimmer(a, 80, 80, 20, 0.25, 20)
+    var warp_count := 0
+    for v in a.world_warp:
+        if v != 0.0: warp_count += 1
+    check(warp_count > 0 and a.world_influence[80 * AFramebuffer.W + 80] == 1, "A authored shimmer records live-world coordinate displacement")
 
     var d := DFx.new()
     d.track_world_fields = true
