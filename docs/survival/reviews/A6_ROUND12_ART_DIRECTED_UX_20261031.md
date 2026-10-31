@@ -154,7 +154,11 @@ the New Game identity step never opened: the whole path into Home was dead. Fixe
 The deeper problem is that `parse()` accepted it — gdtoolkit's grammar is happy with
 duplicate declarations, so "parses clean" had been treated as "is a valid script".
 `tools/review/scene_lint.py` now has a semantic pass for duplicate func/const/var
-across `game/` and `tests/`, with a fixture that proves it fails.
+across `game/` and `tests/`, with a fixture that proves it fails. The same round then
+proved the lesson twice: a refactor left a call to `_needs_reflow()` behind with the
+function gone, which the parser also accepts and the engine also refuses, so the
+linter now flags a private helper that no script in the repository declares. Both
+rules are exercised by temporarily reintroducing the defect.
 
 **2. The identity screen clipped at 720p.** The previous scene spent more than 400 of
 the 324 usable layout units, so the headline left the top of the window and the

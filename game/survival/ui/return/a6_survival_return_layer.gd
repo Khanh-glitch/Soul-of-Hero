@@ -319,6 +319,20 @@ static func _resolve_column(rects: Dictionary, top_id: String, bottom_id: String
 	return rects
 
 
+func _needs_reflow() -> bool:
+	for id: String in _placed_sizes.keys():
+		var control := _control_for(id)
+		if control == null or not control.visible:
+			continue
+		var placed: Vector2 = _placed_sizes[id]
+		var needed := control.get_combined_minimum_size()
+		# Only growth matters, and only past the rect we handed out: comparing for
+		# inequality would reflow forever as a wrapped label settles to its width.
+		if needed.x > placed.x + 0.5 or needed.y > placed.y + 0.5:
+			return true
+	return false
+
+
 func _collect_layout_item(items: Array, id: String, control: Control) -> void:
 	if control == null or not control.visible:
 		return

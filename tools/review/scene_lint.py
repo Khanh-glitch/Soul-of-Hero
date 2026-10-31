@@ -138,7 +138,7 @@ def check_scene(path: Path, problems: list[str], notes: list[str]) -> None:
                 notes.append(f"{rel}: theme_type_variation '{used}' is not declared in {theme_paths} (falls back to the base type)")
 
 
-FUNC_RE = re.compile(r"^func\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(", re.MULTILINE)
+FUNC_RE = re.compile(r"^(?:static\s+)?func\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(", re.MULTILINE)
 CONST_RE = re.compile(r"^const\s+([A-Za-z_][A-Za-z0-9_]*)", re.MULTILINE)
 MEMBER_VAR_RE = re.compile(r"^(?:@export[^\n]*\s)?var\s+([A-Za-z_][A-Za-z0-9_]*)", re.MULTILINE)
 
@@ -163,6 +163,86 @@ def check_script(path: Path, problems: list[str]) -> None:
                 )
             else:
                 seen[name] = line
+    check_undefined_calls(source, rel, problems)
+
+
+CALL_RE = re.compile(r"(?<![\w.$%])(_[A-Za-z][A-Za-z0-9_]*)\s*\(")
+
+
+def strip_noise(source: str) -> str:
+    """Blank out comments and string literals, keeping every newline in place."""
+    out: list[str] = []
+    i = 0
+    quote = ""
+    while i < len(source):
+        ch = source[i]
+        if quote:
+            if ch == "\\":
+                out.append("  ")
+                i += 2
+                continue
+            if ch == quote:
+                quote = ""
+            out.append("\n" if ch == "\n" else " ")
+            i += 1
+            continue
+        if ch in "\"'":
+            quote = ch
+            out.append(" ")
+            i += 1
+            continue
+        if ch == "#":
+            while i < len(source) and source[i] != "\n":
+                out.append(" ")
+                i += 1
+            continue
+        out.append(ch)
+        i += 1
+    return "".join(out)
+
+
+_REPO_FUNCS: set[str] | None = None
+
+
+def _repo_functions() -> set[str]:
+    """Every function name declared anywhere in the repo.
+
+    Helpers inherited from a base test script are not declared in the file that calls
+    them, so a per-file check reports thousands of false positives. Resolving against
+    the repository keeps the rule honest without modelling inheritance.
+    """
+    global _REPO_FUNCS
+    if _REPO_FUNCS is None:
+        _REPO_FUNCS = set()
+        for script in ROOT.glob("**/*.gd"):
+            if ".git" in script.parts:
+                continue
+            try:
+                _REPO_FUNCS |= set(FUNC_RE.findall(script.read_text(encoding="utf-8", errors="replace")))
+            except OSError:
+                continue
+    return _REPO_FUNCS
+
+
+def check_undefined_calls(source: str, rel: Path, problems: list[str]) -> None:
+    """A call to a helper that is not declared in the file is a hard parse error too.
+
+    Same blind spot as duplicate declarations, one step further along: the grammar is
+    happy with `_needs_reflow()` whether or not such a function exists, and the engine
+    refuses the whole script at load. Only `_`-prefixed bare calls are checked, which
+    is where a stale call site survives a refactor and keeps Godot built-ins out.
+    """
+    declared = set(FUNC_RE.findall(source)) | _repo_functions()
+    clean = strip_noise(source)
+    for match in CALL_RE.finditer(clean):
+        name = match.group(1)
+        if name in declared:
+            continue
+        prefix = clean[max(0, match.start() - 12):match.start()]
+        if re.search(r"func\s+$", prefix):
+            continue
+        line = clean.count("\n", 0, match.start()) + 1
+        problems.append(f"{rel}:{line}: calls '{name}()' but no such function is declared in this script")
 
 
 def check_theme(path: Path, problems: list[str], notes: list[str]) -> None:
