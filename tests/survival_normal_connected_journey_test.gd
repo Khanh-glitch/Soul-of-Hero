@@ -210,7 +210,7 @@ func _continuation(ow: Node) -> void:
 		return
 	await _tap_action(&"economy_toggle")
 	await process_frame
-	var charcoal_collect := _collect_button("charcoal")
+	var charcoal_collect := _collect_button("burn charcoal")
 	_expect(charcoal_collect != null, "the burned charcoal exposes a Collect control")
 	if charcoal_collect == null:
 		_write_audit(ow, {})
@@ -311,7 +311,7 @@ func _verify_body() -> void:
 	# Collecting is the player's act, through the visible panel.
 	await _tap_action(&"economy_toggle")
 	await process_frame
-	var collect := _collect_button("iron ingot")
+	var collect := _collect_button("smelt iron")
 	_expect(collect != null, "the settled smelt exposes a Collect control")
 	if collect == null:
 		return
@@ -441,8 +441,7 @@ func _collect_button(label_prefix: String) -> Button:
 		var candidate := value as Button
 		if candidate == null or candidate.text.to_lower() != "collect":
 			continue
-		var row := candidate.get_parent()
-		var label := row.get_child(0) as Label if row != null and row.get_child_count() > 0 else null
+		var label := _row_label(candidate.get_parent())
 		if label != null and label.text.to_lower().begins_with(label_prefix.to_lower()):
 			return candidate
 	return null

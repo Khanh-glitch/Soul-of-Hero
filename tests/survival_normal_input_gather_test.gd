@@ -290,6 +290,17 @@ func _click_window(position: Vector2) -> void:
 ## The panel joins the target and the status word with its own separator ("weave
 ## cloth · ready 12/12"), so a gate must match the words, not one owner's
 ## punctuation: the recipe must be this target and the status must be ready.
+## A job row is [progress bar, words, action]; the words are not child 0, so a
+## gate that grabs the first child gets the bar and silently finds no row.
+func _row_label(row: Node) -> Label:
+	if row == null:
+		return null
+	for child: Node in row.get_children():
+		if child is Label:
+			return child as Label
+	return null
+
+
 func _ready_label(label: Label, target: String) -> bool:
 	var text := label.text.to_lower()
 	return text.begins_with(target.to_lower()) and text.contains("ready")
@@ -598,8 +609,7 @@ func _body() -> void:
 	var output_button: Button = null
 	for value: Node in panel.find_children("*", "Button", true, false):
 		var candidate := value as Button
-		var row := candidate.get_parent()
-		var label := row.get_child(0) as Label if row != null and row.get_child_count() > 0 else null
+		var label := _row_label(candidate.get_parent())
 		if candidate.text.to_lower() == "collect" and label != null and _ready_label(label, "weave cloth"):
 			output_button = candidate
 			break
