@@ -39,9 +39,17 @@ var rng: BMath.BRng
 
 var _pool: Array = []
 
+## D's RNG is raw-seeded mulberry32. B's BRng shares the mixing
+## algorithm but its constructor hashes the seed for B's sources; undo that
+## constructor policy rather than changing B's parity-critical generator.
+static func source_rng(seed: int) -> BMath.BRng:
+    var result := BMath.BRng.new(1)
+    result.s = seed & 0xFFFFFFFF
+    return result
+
 func _init() -> void:
     buf.resize(N * 3)
-    rng = BMath.BRng.new(1337)
+    rng = source_rng(1337)
 
 func clear() -> void:
     buf.fill(0.0)

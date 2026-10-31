@@ -85,6 +85,17 @@ func _init() -> void:
         if renderer.is_active(cid):
             _fail("still active after finish %s" % cid)
 
+    # D uses raw mulberry32 seeds, unlike B's seed-hashing wrapper.
+    # Integer vectors below come directly from the original D JS RNG.
+    var d_rng := DFx.source_rng(97)
+    for expected in [2429163745, 942745579, 3581792554, 2315337567]:
+        var actual := int(d_rng.next() * 4294967296.0)
+        if actual != expected:
+            _fail("D raw-seeded RNG mismatch: got %d want %d" % [actual, expected])
+    var d_zero := DFx.source_rng(0)
+    if int(d_zero.next() * 4294967296.0) != 1144304738:
+        _fail("D zero seed must not be replaced or rehashed")
+
     # A's framebuffer height is not divisible by four. JavaScript ignores
     # typed-array writes past its truncated bloom buffer; verify that a bright
     # last row renders rather than throwing or returning a zero-length buffer.

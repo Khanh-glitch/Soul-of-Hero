@@ -51,7 +51,10 @@ measurements against this diagnostic, not a valid alpha-parity PASS. Run
 `41200457628` measured RGB MAE 3.78–4.35 and nonblack-mask IoU 0.032–0.100
 for 0.5–5.2 s; at 7.9/8.15 s MAE was 7.78/8.72 and IoU 0.747/0.755.
 Max errors were 243–254. These differences are substantial and cannot be
-passed by adjusting tolerances. Diagnose geometry, timing, bloom and alpha
+passed by adjusting tolerances. Investigation found that the D port incorrectly
+used B's seed-hashing wrapper for D's raw-seeded mulberry32 generator; the D
+path now uses raw seeds and accounts for the source renderer's initial reset dt.
+The above metrics are pre-fix; rerun the diagnostic before drawing conclusions. Diagnose geometry, timing, bloom and alpha
 against matching passes before setting a defensible regression gate. Original D
 continues after 8.6 s; it does not supply a gold reference for the authored
 native OUT extension. Matching isolated passes, proper alpha/bloom semantics,

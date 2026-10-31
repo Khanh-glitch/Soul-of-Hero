@@ -65,7 +65,7 @@ func _init() -> void:
 func _write_index(manifest: Array, names: Dictionary) -> void:
     var html := "<!doctype html><meta charset=utf-8><title>ARCANA Fusion20 — visual review</title>"
     html += "<style>body{background:#0b0e14;color:#dbe4f5;font:14px system-ui}img{width:864px;image-rendering:pixelated}section{margin:28px 0}</style>"
-    html += "<h1>ARCANA Fusion20 — native source-buffer review sheets</h1><p>Stages per sheet (row-major): opening, development, catalog peak, approximate first contact (nearest 0.4s sample), aftermath, OUT. Fixed-clock, sampled source-buffer evidence only, not SOH composite or approval. #01 is an FX-only software composition using the player world transforms; it is not a real SOH composite. See stages.json for times and limitations. VISUAL_NOT_VERIFIED for all 20.</p>"
+    html += "<h1>ARCANA Fusion20 — native source-buffer review sheets</h1><p>Stages per sheet (row-major): opening, development, catalog peak, first contact (fixed-step capture), aftermath, OUT. Additional contact_*.png files show each authored contact cue. Fixed-clock, sampled source-buffer evidence only, not SOH composite or approval. #01 is an FX-only software composition using the player world transforms; it is not a real SOH composite. See stages.json for times and limitations. VISUAL_NOT_VERIFIED for all 20.</p>"
     for e in manifest:
         var id := int(e["id"])
         html += "<section><h2>%02d %s — dur %.1fs, contacts %s, first contact %ss</h2><p><a href=\"skill_%02d/preview.gif\">Animation</a> · <a href=\"skill_%02d/stages.json\">stage data</a></p><img src=\"skill_%02d_sheet.png\"></section>" % [id, String(names[id]), float(e["duration"]), str(e.get("contacts", "?")), str(e.get("first_contact_t", "?")), id, id, id]
@@ -245,10 +245,29 @@ func _capture_skill(id: int, sname: String, host: Arcana20Renderer) -> Dictionar
     return {"id": id, "name": sname, "duration": dur, "contacts": contacts[0],
         "first_contact_t": snappedf(first_contact[0], 0.01)}
 
-func _run_plan(id: int, sname: String, dur: float, stages: Dictionary, grab: Callable, dir: String, _node: Node, contacts: Array, first_contact: Array, w: int, h: int) -> void:
+func _run_plan(id: int, sname: String, dur: float, stages: Dictionary, grab: Callable, dir: String, node: Node, contacts: Array, first_contact: Array, w: int, h: int) -> void:
     # Single ascending pass (source players are forward-only): merged
     # stage + animation capture points, grabbed once each.
     var points: Array = [] # {t, kind, key}
+    var cue_list: Array = []
+    if node is FusionPlayer:
+        for part in node._pending:
+            var part_events: Array = part.node.get("_events")
+            for ev in part_events:
+                var kind := String(ev.kind)
+                if kind.ends_with("impact") or kind.ends_with("contact") or kind == "bite":
+                    cue_list.append({"t": maxf(0.0, float(ev.t) - float(part.get("offset", 0.0))), "kind": kind})
+    else:
+        var events_v: Variant = node.get("_events")
+        if events_v is Array:
+            for ev in events_v:
+                var kind := String(ev.kind)
+                if kind.ends_with("impact") or kind.ends_with("contact") or kind == "bite":
+                    cue_list.append({"t": float(ev.t), "kind": kind})
+    cue_list.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return float(a.t) < float(b.t))
+    for i in range(cue_list.size()):
+        var cue: Dictionary = cue_list[i]
+        points.append({"t": cue.t, "kind": "cue", "key": "%02d" % i})
     var order := ["opening", "development", "peak", "contact", "aftermath", "out"]
     if id == 19:
         for tick in [30, 72, 120, 192, 264, 312, 384, 444, 474, 489]:
@@ -274,18 +293,18 @@ func _run_plan(id: int, sname: String, dur: float, stages: Dictionary, grab: Cal
             _save(bytes, w, h, dir + "/anim/f_%03d.png" % int(String(pt.key)))
         elif String(pt.kind) == "d_compare":
             _save(bytes, w, h, dir + "/native_%s.png" % String(pt.key))
+        elif String(pt.kind) == "cue":
+            _save(bytes, w, h, dir + "/contact_%s.png" % String(pt.key))
         else:
             var img := _save(bytes, w, h, dir + "/stage_%s.png" % String(pt.key))
             stage_imgs[String(pt.key)] = img
             stage_nz[String(pt.key)] = _nz(bytes)
-    # Contact frame: re-grab is impossible (forward-only); use the anim
-    # frame nearest the recorded first-contact time, else the peak frame.
+    # The first authored cue is captured as part of the ascending fixed-step
+    # pass. It is not substituted by a nearby animation sample.
     var contact_img: Image = stage_imgs.get("peak")
-    if first_contact[0] > 0.0:
-        var idx := int(round((first_contact[0] - 0.2) / 0.4))
-        var cpath := dir + "/anim/f_%03d.png" % idx
-        if FileAccess.file_exists(cpath):
-            contact_img = Image.load_from_file(cpath)
+    var first_cue_path := dir + "/contact_00.png"
+    if FileAccess.file_exists(first_cue_path):
+        contact_img = Image.load_from_file(first_cue_path)
     if contact_img != null:
         contact_img.save_png(dir + "/stage_contact.png")
         stage_nz["contact"] = _nz(contact_img.get_data())
@@ -301,5 +320,5 @@ func _run_plan(id: int, sname: String, dur: float, stages: Dictionary, grab: Cal
     if int(stage_nz.get("peak", 0)) == 0:
         _fail("capture %s peak frame empty" % sname)
     var f := FileAccess.open(dir + "/stages.json", FileAccess.WRITE)
-    f.store_string(JSON.stringify({"stages": stages, "nz": stage_nz, "first_contact_t": first_contact[0], "contacts": contacts[0]}, "  "))
+    f.store_string(JSON.stringify({"stages": stages, "nz": stage_nz, "first_contact_t": first_contact[0], "contacts": contacts[0], "contact_captures": cue_list}, "  "))
     f.close()

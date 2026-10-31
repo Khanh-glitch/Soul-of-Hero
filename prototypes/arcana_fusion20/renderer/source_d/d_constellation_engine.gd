@@ -37,7 +37,7 @@ static func _ease_out_expo(tt: float) -> float:
 
 func setup() -> void:
     fx = DFx.new()
-    var rng := BMath.BRng.new(97)
+    var rng := DFx.source_rng(97)
     _nodes.clear()
     _edges.clear()
     _pulses.clear()
@@ -67,8 +67,11 @@ func _out_fade(t: float) -> float:
 func update(t: float, dt: float) -> void:
     fx.clear()
     fx.t = t
-    fx.rng = BMath.BRng.new(int(t * 977.0))
-    var rng := BMath.BRng.new(600 + floori(t * 30.0))
+    # The browser source uses a tiny dt=0.0001 for the first reset
+    # render, then advances renderer.time at 60 Hz independently of t.
+    var renderer_time := maxf(0.0001, t - 1.0 / 60.0 + 0.0001)
+    fx.rng = DFx.source_rng(int(renderer_time * 977.0))
+    var rng := DFx.source_rng(600 + floori(t * 30.0))
     var P := DFx.pal_astral()
     var finale := t > 7.4
     var out_f := _out_fade(t)
