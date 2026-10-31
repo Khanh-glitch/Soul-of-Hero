@@ -35,6 +35,8 @@ jobs:
           mkdir -p "$RUNNER_TEMP/arcana20-perf/artifacts"
           timeout 300s godot --headless --path "$RUNNER_TEMP/arcana20-perf" --import 2>&1 | tee "$RUNNER_TEMP/arcana20-perf/artifacts/import.log"
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/arcana20-perf/artifacts/import.log"
+      - name: Install physical X11 screenshot helper
+        run: python3 -m pip install --quiet mss
       - name: Capture actual post-draw overlap intervals
         env:
           RESOLUTION: ${{ matrix.resolution }}

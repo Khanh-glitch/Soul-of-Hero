@@ -67,7 +67,7 @@ failed; this historical pin is not an endorsement of the latest route.
 | 08 | B world fields available | Actual-world comparisons, post, gameplay missing |
 | 09 | New A graph/B colors/C bolt candidate; one moving-real-skeleton diagnostic | [run 41208565813](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41208565813); misses/deaths, C branches, B raster, full source comparison |
 | 10 | C world pass diagnostic | [run 41207915157](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41207915157), one frozen frame only |
-| 11 | A candidate fields available | Original A rotor and full C #09 branching not integrated |
+| 11 | Experimental seeded original-A rotor/fragment timing + C bolt-tree candidate `b7362e60`; [source-field smoke 41211652215](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211652215) | Actual-world JOIN pending; isolated original rotor parity, C branch role/fidelity, full cast/OUT, depth and review missing |
 | 12 | A candidate fields available; REDESIGN_CANDIDATE | Targeting, source craft and world review missing |
 | 13 | A candidate fields available; REDESIGN_CANDIDATE | Actor targeting, depth and world review missing |
 | 14 | A candidate fields available; REDESIGN_CANDIDATE | Actor/colony integration and world review missing |
@@ -76,7 +76,7 @@ failed; this historical pin is not an endorsement of the latest route.
 | 17 | C world pass diagnostic incl. live-screen fragment mapping | [run 41207915157](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41207915157), one frozen frame only |
 | 18 | A candidate fields available; REDESIGN_CANDIDATE | Real actors, full-cast and world review missing |
 | 19 | D additive and persistent warp consumer, frozen-world/cancel [JOIN 41209511506](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41209511506) | D bloom/post, OUT review, depth and original parity missing |
-| 20 | C seeded contour + A real-world pull candidate `93256c98` | GPU/world test pending; polygons, blocks, particles, OUT and parity missing |
+| 20 | C seeded contour + A real-world pull candidate; [contour parity 41211396186](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211396186), [world JOIN 41211301091](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211301091) | Polygons, blocks, particles, full fusion parity, OUT and review missing |
 
 Run-level pass does not override a failing check annotation. No thresholds have
 been relaxed. Only CT owns `soh_binding/**`; no production mount, merge, fake
@@ -168,7 +168,7 @@ At `1bfcc1a0`, the opt-in viewport post consumer applies **source-authored**
 C flash/shake/chroma/invert above the real world/actors and below A0 HUD layer
 20. [JOIN 41210977545](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41210977545)
 passed C17 rebound enable, actual-screen change, overlapping-cast cancellation
-and exact frozen-world restoration. Idle/HUD-pixel regression is running.
+and exact frozen-world restoration. [JOIN 41211301091](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211301091), [assertions 41211488925](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211488925) additionally passed idle no-change and an actual opaque HUD-pixel isolation check.
 The consumer is NOT automatically mounted, lacks original multiscale bloom,
 uses an experimental overlap policy, and desaturates the composed scene rather
 than source-C's pre-ink ground. It needs human visual/contamination review.
@@ -177,7 +177,15 @@ At `93256c98`, opt-in #20 selects C's seeded rift contour, timing/edges and
 interior with a phase-aligned A bgWarp pull/stretch on that same real world;
 source-C inverted fragments explicitly sample the live world. This replaces
 neither legacy source nor approved systems. [Source-field quick 41211236215](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211236215)
-verified ink, inverted live fragments and displacement exist; real-world
-contamination/cancel is pending. Original C polygons/blocks/particles and A
-debris remain missing, as do source parity, OUT and visual approval. The
-all-20 sweep at `c6fb12ba` exercised the older #20 candidate.
+verified ink, inverted live fragments and displacement exist. Real-world [JOIN
+41211301091](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211301091)
+and [assertion triage 41211488925](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211488925)
+show 70,364 changed pixels inside explicit influence, zero outside, and exact
+frozen-world cancellation restoration at tick 270. The isolated original C
+first-contour field comparison [41211396186](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211396186)
+at ticks 270/324/396/450/540 produced authored ink coverage IoU 1.0, ink MAE/max
+0, and light MAE <= 2.1e-11 / max 5.96e-8 on a zero base. It excludes A warp
+and all other C geometry, so it is NOT whole-source/composite parity. Original
+C polygons/blocks/particles and A debris remain missing, as do full-source
+parity, OUT and visual approval. The all-20 sweep at `c6fb12ba` exercised the
+older #20 candidate.

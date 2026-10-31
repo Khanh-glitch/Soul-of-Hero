@@ -575,10 +575,16 @@ func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D)
             overlapping_frames += 1
         last = now
         if not renderer._casts.has(id2) or not renderer._casts.has(id10): break
-    var perf_image := await save_frame("overlap_perf_live")
+    var perf_image := await save_frame("overlap_perf_live_logical")
+    var physical_path := ProjectSettings.globalize_path(OUTPUT + "/overlap_perf_live_physical.png")
+    var capture_output: Array = []
+    var capture_status := OS.execute("python3", [ProjectSettings.globalize_path("res://prototypes/arcana_fusion20/renderer/arcana20_capture_x11.py"), physical_path], capture_output, true)
+    var physical: Image = Image.load_from_file(physical_path) if capture_status == 0 else null
+    var window_size := DisplayServer.window_get_size()
     var expected_resolution := OS.get_environment("RESOLUTION").split("x")
     if expected_resolution.size() == 2:
-        check(perf_image.get_width() == int(expected_resolution[0]) and perf_image.get_height() == int(expected_resolution[1]), "overlap capture matches requested physical resolution")
+        var expected := Vector2i(int(expected_resolution[0]), int(expected_resolution[1]))
+        check(physical != null and physical.get_size() == expected and window_size == expected, "X11 capture and game window match requested physical resolution: " + str(capture_output))
     samples.sort()
     check(samples.size() >= 2, "overlap perf produced multiple actually concurrent rendered frames")
     var percentiles := {}
@@ -586,7 +592,9 @@ func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D)
         var n := samples.size()
         percentiles = {"p50_ms": samples[floori((n - 1) * 0.50)], "p95_ms": samples[floori((n - 1) * 0.95)], "p99_ms": samples[floori((n - 1) * 0.99)]}
     var record := {"scope": "concurrent #02+#10 on real historical overworld; shared software-rendered CI, not a target-device budget",
-        "output_size": [perf_image.get_width(), perf_image.get_height()],
+        "logical_viewport_size": [perf_image.get_width(), perf_image.get_height()],
+        "physical_capture_size": [physical.get_width(), physical.get_height()] if physical != null else [],
+        "window_size": [window_size.x, window_size.y],
         "overlap_frames": overlapping_frames, "post_draw_intervals": percentiles,
         "static_bytes_live_delta": Performance.get_monitor(Performance.MEMORY_STATIC) - before_memory,
         "live_object_delta": Performance.get_monitor(Performance.OBJECT_COUNT) - before_objects,
