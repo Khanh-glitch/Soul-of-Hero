@@ -183,6 +183,35 @@ PROFILES: Dict[str, Dict[str, object]] = {
         "overlays": ["a1", "a3", "a6", "a8"],
         "question": "the product a player would install at the round-12 owner heads, under the current overlay policy",
     },
+    # Round 13. Same overlay policy as round 12; only the owner heads move. Round
+    # 12's `663a83ede523` stays reproducible through the `r12_*` names because
+    # `DEFAULT_REFS` still points at `refs/live12/*`; round 13 is built with
+    # `--ref-root refs/live13`, so neither round can silently rebuild the other.
+    "r13_a0": {
+        "base": "a0",
+        "overlays": [],
+        "question": "what does the A0 head alone do, at the round-13 SHA?",
+    },
+    "r13_core": {
+        "base": "a0",
+        "overlays": ["a1", "a3"],
+        "question": "A0 + A1 geography + A3 economy at the round-13 heads",
+    },
+    # The owners' own join: A0's published `tools/a0/ownership.json` scopes, so
+    # A6's title/avatar-choice screens, A1's reader under `tests/survival/world/`
+    # and A1's `data/overworld/` all land where their owners and A0 put them.
+    # This is the composition A0's own CI builds; A7's narrower map is `r13_full`.
+    "r13_heads": {
+        "base": "a0",
+        "overlays": ["a1", "a3", "a8", "a6"],
+        "scope_source": "a0_manifest",
+        "question": "the product at the round-13 owner heads, joined by the scopes A0 itself publishes",
+    },
+    "r13_full": {
+        "base": "a0",
+        "overlays": ["a1", "a3", "a6", "a8"],
+        "question": "the product a player would install at the round-13 owner heads, under the current overlay policy",
+    },
     # COUNTERFACTUAL, not a shipping candidate. A6's avatar integration lands on
     # paths this map assigns to A0 (`game/characters/knight/knight.tscn`,
     # `game/app/app_root.gd`, the avatar-choice screens). The shipping profile cannot
@@ -220,6 +249,14 @@ REFERENCE_ONLY: Dict[str, str] = {
         "pinned for provenance only: its unique paths are .github/workflows and docs/vfx, and every VFX "
         "asset it shares with A0 is identical or older, so overlaying it would downgrade the base"
     ),
+}
+
+#: Round 13's counterfactual is round 12's counterfactual applied to the new heads,
+#: so the out-of-prefix file list is inherited rather than retyped (a retyped list
+#: is a second source of truth that drifts).
+PROFILES["r13_wired"] = {
+    **PROFILES["r12_wired"],
+    "question": "COUNTERFACTUAL: round-13 heads plus A6's out-of-policy scene/UI files; never a product state",
 }
 
 DEFAULT_REFS: Dict[str, str] = {
@@ -268,6 +305,49 @@ def _index_env(tmp_index: Path) -> Dict[str, str]:
     return {"GIT_INDEX_FILE": str(tmp_index)}
 
 
+def a0_manifest_scopes(base_sha: str) -> Dict[str, List[str]]:
+    """The owner scopes A0 itself publishes in `tools/a0/ownership.json`.
+
+    A0 owns the integrated runtime, so its declaration of which owner may write
+    which path is the product's own answer. A7's map is narrower by design (it
+    was written before A0 had a manifest); a profile built from this returns the
+    owners' join, not A7's opinion of it.
+    """
+    try:
+        raw = git("show", f"{base_sha}:tools/a0/ownership.json", check=False).stdout
+    except SystemExit:
+        return {}
+    if not raw.strip():
+        return {}
+    import re
+
+    text = re.sub(r"^\s*#.*$", "", raw, flags=re.M)
+    try:
+        manifest = json.loads(text)
+    except json.JSONDecodeError:
+        return {}
+    owners = manifest.get("owners", {})
+    return {name: list(info.get("scopes", [])) for name, info in owners.items() if info.get("scopes")}
+
+
+def profile_prefixes(spec: Dict[str, object], base_sha: str, owner: str) -> List[str]:
+    declared = spec.get("scopes")
+    if isinstance(declared, dict) and owner in declared:
+        return list(declared[owner])  # type: ignore[index]
+    if spec.get("scope_source") == "a0_manifest":
+        return a0_manifest_scopes(base_sha).get(owner, OWNER_PREFIXES[owner])
+    return OWNER_PREFIXES[owner]
+
+
+def profile_mode(spec: Dict[str, object], owner: str, prefix: str) -> str:
+    # The owners' own join is additive: A0 copies every owner file inside its
+    # declared scope and never deletes a base file just because an owner's fork
+    # predates it. `replace` stays A7's default for its narrower map.
+    if spec.get("scope_source") == "a0_manifest":
+        return "merge"
+    return mode_for(owner, prefix)
+
+
 def build(profile: str, refs: Dict[str, str], work: Path, pin: bool) -> Dict[str, object]:
     spec = PROFILES[profile]
     base_owner = str(spec["base"])
@@ -287,8 +367,8 @@ def build(profile: str, refs: Dict[str, str], work: Path, pin: bool) -> Dict[str
     own_prefixes = [
         prefix
         for owner in overlays
-        for prefix in OWNER_PREFIXES[owner]
-        if mode_for(owner, prefix) == "replace"
+        for prefix in profile_prefixes(spec, base_sha, owner)
+        if profile_mode(spec, owner, prefix) == "replace"
     ]
     for mode, blob, path in ls_tree(base_sha):
         if any(path.startswith(p) for p in own_prefixes):
@@ -299,13 +379,13 @@ def build(profile: str, refs: Dict[str, str], work: Path, pin: bool) -> Dict[str
     lines: List[str] = []
     removed: List[Dict[str, str]] = []
     for owner in overlays:
-        prefixes = OWNER_PREFIXES[owner]
+        prefixes = profile_prefixes(spec, base_sha, owner)
         owner_sha = heads[owner]
         owner_rows = ls_tree(owner_sha, prefixes)
         owner_paths = {path for _mode, _blob, path in owner_rows}
         for mode, blob, path in ls_tree(base_sha, prefixes):
             prefix = next((pre for pre in prefixes if path.startswith(pre)), "")
-            if mode_for(owner, prefix) == "merge":
+            if profile_mode(spec, owner, prefix) == "merge":
                 continue
             if path not in owner_paths:
                 lines.append(f"0 {'0' * 40}\t{path}")
@@ -319,7 +399,7 @@ def build(profile: str, refs: Dict[str, str], work: Path, pin: bool) -> Dict[str
                     "owner": owner,
                     "source_sha": owner_sha,
                     "blob": blob,
-                    "mode": mode_for(owner, prefix),
+                    "mode": profile_mode(spec, owner, prefix),
                 }
             )
 
@@ -446,11 +526,22 @@ def main() -> int:
         action="store_true",
         help="with --merge-manifest: write only digests and counts, not per-file provenance",
     )
+    parser.add_argument(
+        "--ref-root",
+        default="refs/live12",
+        help="rewrite the default owner refs to this ref prefix (e.g. refs/live13); explicit --a0/--a1/... still win",
+    )
     for owner in DEFAULT_REFS:
         parser.add_argument(f"--{owner}", default=DEFAULT_REFS[owner])
     args = parser.parse_args()
 
-    refs = {owner: getattr(args, owner) for owner in DEFAULT_REFS}
+    refs = {}
+    for owner in DEFAULT_REFS:
+        explicit = getattr(args, owner) != DEFAULT_REFS[owner]
+        value = getattr(args, owner)
+        if not explicit:
+            value = value.replace("refs/live12", args.ref_root, 1)
+        refs[owner] = value
     work = Path(args.write) if args.write else Path(os.environ.get("TMPDIR", "/tmp")) / "soh-compose"
     work.mkdir(parents=True, exist_ok=True)
 

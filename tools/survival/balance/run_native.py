@@ -80,6 +80,10 @@ PROBE_FAMILIES = (
     # round-12 mission: the avatar-identity seam, the physical home, and the threat
     # + single death bag, plus a three-resolution visual attempt.
     ("balance_native_r12", REPO / "tests" / "survival" / "balance_native_r12"),
+    # Round 13. Same probes as round 12 (carried forward, id renamed) plus the
+    # round-13 world/input probes, so a round-12 → round-13 difference is a fact
+    # about the product rather than about the probe.
+    ("balance_native_r13", REPO / "tests" / "survival" / "balance_native_r13"),
 )
 #: A7-owned data the round-8 probes read. These are test configuration, not game
 #: data: the game never loads them. They are copied into the worktree next to the
