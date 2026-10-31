@@ -1,0 +1,44 @@
+name: ARCANA20 inspect existing review artifact
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-review-triage.yml']
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcana20-visual-review
+          run-id: 41200681217
+          github-token: ${{ github.token }}
+          path: prototypes/arcana_fusion20/renderer/evidence_out/review
+      - name: Emit stage data and review thumbnails
+        shell: bash
+        run: |
+          python3 -m pip install --quiet pillow
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('prototypes/arcana_fusion20/renderer/evidence_out/review')
+          manifest=root/'manifest.json'
+          print('::notice::REVIEW_MANIFEST '+(manifest.read_text().replace('\n',' ') if manifest.exists() else 'MISSING'))
+          docs={path.parent.name:json.loads(path.read_text()) for path in sorted(root.glob('skill_*/stages.json'))}
+          print('::notice::REVIEW_STAGES '+json.dumps(docs, separators=(',',':')))
+          PY
+      - name: Thumbnails 01-05
+        run: python3 tools/arcana20_review/emit_thumbnails.py source 0 5
+      - name: Thumbnails 06-10
+        run: python3 tools/arcana20_review/emit_thumbnails.py source 5 10
+      - name: Thumbnails 11-15
+        run: python3 tools/arcana20_review/emit_thumbnails.py source 10 15
+      - name: Thumbnails 16-20
+        run: python3 tools/arcana20_review/emit_thumbnails.py source 15 20

@@ -89,6 +89,7 @@ jobs:
             grep -E 'SCRIPT ERROR|Parse Error|ERROR:|ARCANA20_CAPTURE_FAIL|ARCANA20_CAPTURE_RESULT' capture.log | tail -20 | while IFS= read -r line; do echo "::notice::CAPTURE_LOG $line"; done || true
           fi
       - name: Build animated previews (GIF) from capture frames
+        if: always()
         shell: bash
         run: |
           python3 -m pip install --quiet pillow
@@ -105,11 +106,26 @@ jobs:
               imgs[0].save(out, save_all=True, append_images=imgs[1:], duration=400, loop=0)
               print('gif', out, len(imgs))
           PYEOF
-      - name: Expose source contact-sheet thumbnails for review
+      - name: Expose source thumbnails 01-05
         if: always()
         run: |
           python3 -m pip install --quiet pillow
-          python3 tools/arcana20_review/emit_thumbnails.py source
+          python3 tools/arcana20_review/emit_thumbnails.py source 0 5
+      - name: Expose source thumbnails 06-10
+        if: always()
+        run: |
+          python3 -m pip install --quiet pillow
+          python3 tools/arcana20_review/emit_thumbnails.py source 5 10
+      - name: Expose source thumbnails 11-15
+        if: always()
+        run: |
+          python3 -m pip install --quiet pillow
+          python3 tools/arcana20_review/emit_thumbnails.py source 10 15
+      - name: Expose source thumbnails 16-20
+        if: always()
+        run: |
+          python3 -m pip install --quiet pillow
+          python3 tools/arcana20_review/emit_thumbnails.py source 15 20
       - name: D source/native RGB spatial diagnostics (not a parity gate)
         if: always()
         shell: bash

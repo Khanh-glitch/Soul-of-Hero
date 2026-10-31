@@ -18,6 +18,9 @@ elif mode == 'scene':
     paths = sorted((root / 'real-scene').glob('skill_*_1.png'))
 else:
     raise SystemExit('expected source or scene')
+if len(sys.argv) == 4:
+    start, end = int(sys.argv[2]), int(sys.argv[3])
+    paths = paths[start:end]
 for path in paths:
     with Image.open(path) as image:
         image.thumbnail((432, 243), Image.Resampling.NEAREST)
