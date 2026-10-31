@@ -720,7 +720,7 @@ func _run() -> void:
     await process_frame
     _finish()
 
-## Actual post-draw intervals for #02+#10 on the real historical overworld.
+## Actual post-draw intervals for #02 plus selected #10 or #20 on the real historical overworld.
 ## Shared software CI is a diagnostic only, never a target-device budget.
 func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D) -> void:
     var renderer := Arcana20Renderer.new()
@@ -730,7 +730,8 @@ func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D)
     world.add_child(mount)
     check(mount.attach(renderer), "overlap perf source mount")
     var id2 := Arcana20SourceCatalog.canonical_id(2)
-    var id10 := Arcana20SourceCatalog.canonical_id(10)
+    var second_skill := 20 if OS.get_environment("ARCANA20_PERF_SECOND") == "20" else 10
+    var id10 := Arcana20SourceCatalog.canonical_id(second_skill)
     var before_memory := Performance.get_monitor(Performance.MEMORY_STATIC)
     var before_objects := Performance.get_monitor(Performance.OBJECT_COUNT)
     var hp := int(enemy.get("health"))
@@ -778,7 +779,7 @@ func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D)
     if samples.size() > 0:
         var n := samples.size()
         percentiles = {"p50_ms": samples[floori((n - 1) * 0.50)], "p95_ms": samples[floori((n - 1) * 0.95)], "p99_ms": samples[floori((n - 1) * 0.99)]}
-    var record := {"scope": "concurrent #02+#10 on real historical overworld; shared software-rendered CI, not a target-device budget",
+    var record := {"scope": "concurrent #02+#%02d early-cast frames on real historical overworld; shared software-rendered CI, not a target-device budget or full-cast measurement" % second_skill,
         "viewport_capture_size": [viewport_size.x, viewport_size.y],
         "physical_capture_size": [physical_size.x, physical_size.y],
         "window_size": [window_size.x, window_size.y],
