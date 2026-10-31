@@ -180,6 +180,35 @@ func _host_receipt(source_id: String) -> Dictionary:
 		return {}
 	if String(receipt.get("source_id", "")) != source_id:
 		return {}
+	return _normalize_source_receipt(receipt)
+
+## JSON has no integer type, so an A1 host that reads its own pinned document
+## hands back `406.0` where the binding says `406`. Normalising at the boundary
+## keeps number equality honest instead of loosening it, and it is applied to
+## both the caller receipt and the live host answer before they are compared.
+func _normalize_cell(raw: Variant) -> Array:
+	if not raw is Array or (raw as Array).size() != 2:
+		return []
+	var cell: Array = raw
+	var parts: Array = []
+	for part: Variant in cell:
+		if part is int:
+			parts.append(int(part))
+		elif part is float and float(part) == float(int(part)):
+			parts.append(int(part))
+		else:
+			return []
+	return parts
+
+func _normalize_source_receipt(raw: Dictionary) -> Dictionary:
+	var receipt: Dictionary = raw.duplicate(true)
+	var cell: Array = _normalize_cell(receipt.get("hero_cell", null))
+	if not cell.is_empty():
+		receipt["hero_cell"] = cell
+	for field: Variant in ["host_sequence", "active_seconds"]:
+		var value: Variant = receipt.get(String(field), null)
+		if value is float and float(value) == float(int(value)):
+			receipt[String(field)] = int(value)
 	return receipt
 
 func _receipt_shape_error(receipt: Dictionary) -> String:
@@ -215,8 +244,9 @@ func _receipt_shape_error(receipt: Dictionary) -> String:
 
 ## Verify the receipt against the pinned A1 binding, the live host, the A8
 ## verdict and the A0 clock. Returns {ok, reason, binding, receipt}.
-func verify_source_receipt(receipt: Dictionary) -> Dictionary:
+func verify_source_receipt(raw_receipt: Dictionary) -> Dictionary:
 	last_error = ""
+	var receipt := _normalize_source_receipt(raw_receipt)
 	var shape := _receipt_shape_error(receipt)
 	if not shape.is_empty():
 		last_error = shape
