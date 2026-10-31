@@ -9,6 +9,8 @@ class Ledger extends RefCounted:
         events.append({"kind":kind,"pos":pos,"time":time,"rgb":fx.buf.duplicate(),"influence":fx.world_influence.duplicate(),"warp":fx.world_warp.duplicate()})
     func on_contact(kind: StringName, pos: Vector2, time: float) -> void:
         contacts.append([kind,pos,time])
+    func cancel_on_event(_kind: StringName, _pos: Vector2, _time: float, player: DSourcePlayer) -> void:
+        player.stop()
 func _initialize() -> void:
     call_deferred("_run")
 func _run() -> void:
@@ -45,7 +47,30 @@ func _run() -> void:
         push_error("D19 player elision did not reach natural completion or lost authored signals")
         quit(1)
         return
-    print("D19_PLAYER_ELISION_RESULT ",JSON.stringify({"ticks":eager._tick,"calls":iteration,"events":a.events.size(),"contacts":a.contacts.size(),"exact":true,"scope":"batched actual DSourcePlayer, exact D fields and synchronous callback snapshots on neutral source; not visual world approval"}))
+    var cancelled := DSourcePlayer.new()
+    cancelled.world_pass_mode = true
+    cancelled.render_enabled = false
+    root.add_child(cancelled)
+    cancelled.set_process(false)
+    cancelled.begin(Vector2(100,140),Vector2(220,150))
+    var cancel_ledger := Ledger.new()
+    cancelled.visual_event.connect(cancel_ledger.cancel_on_event.bind(cancelled))
+    while cancelled._active and cancelled._tick < 100:
+        cancelled.advance(8.0 * DSourcePlayer.STEP)
+    if cancelled._active or cancelled._tick != 72:
+        push_error("D19 callback cancellation processed later fixed steps")
+        quit(1)
+        return
+    cancelled.visual_event.disconnect(cancel_ledger.cancel_on_event.bind(cancelled))
+    cancelled.begin(Vector2(100,140),Vector2(220,150))
+    cancelled.advance(DSourcePlayer.STEP)
+    if not cancelled._active or cancelled._tick != 1:
+        push_error("D19 restart after callback cancellation failed")
+        quit(1)
+        return
+    cancelled.stop()
+    cancelled.queue_free()
+    print("D19_PLAYER_ELISION_RESULT ",JSON.stringify({"ticks":eager._tick,"calls":iteration,"events":a.events.size(),"contacts":a.contacts.size(),"callback_cancel_tick":72,"restart_tick":1,"exact":true,"scope":"batched actual DSourcePlayer, exact D fields and synchronous callback snapshots on neutral source; not visual world approval"}))
     eager.queue_free()
     skipped.queue_free()
     await process_frame

@@ -97,7 +97,7 @@ func advance(dt: float) -> void:
         return
     _acc += dt
     var guard := 0
-    while _acc >= STEP and guard < 8:
+    while _active and _acc >= STEP and guard < 8:
         _acc -= STEP
         guard += 1
         _tick += 1
