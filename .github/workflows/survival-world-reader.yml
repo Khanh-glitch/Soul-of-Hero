@@ -432,7 +432,6 @@ jobs:
 
   godot-round11-continuity-native:
     name: A1 GODOT 4.7 ROUND 11 CONTINUITY / HAZARDS / SOCKETS (ISOLATED)
-    needs: python-authoring
     runs-on: ubuntu-latest
     # Separate from the slower visual regression job so engine/static-analysis
     # feedback and continuity evidence remain focused and independently gated.

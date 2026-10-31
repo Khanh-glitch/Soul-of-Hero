@@ -63,6 +63,8 @@ var capability_context: Array[String] = []
 var dry_metrics: Dictionary = {}
 var wet_metrics: Dictionary = {}
 var current_phase := "ordinary"
+var current_drive_label := ""
+var current_drive_target := Vector2i.ZERO
 var abort := false
 
 func _initialize() -> void:
@@ -112,14 +114,26 @@ func _chunk_of_cell(cell: Vector2i) -> String:
 func _set_direction(delta: Vector2) -> void:
 	for action: String in MOVE_ACTIONS:
 		Input.action_release(action)
-	if delta.x < -0.5:
-		Input.action_press("move_left")
-	elif delta.x > 0.5:
-		Input.action_press("move_right")
-	if delta.y < -0.5:
-		Input.action_press("move_up")
-	elif delta.y > 0.5:
-		Input.action_press("move_down")
+	if delta.is_zero_approx():
+		return
+	# Input.get_vector preserves analog magnitudes up to one. Brake before each
+	# compiled cell centre instead of applying full digital input until the last
+	# pixel; this keeps real acceleration/friction without inertial wall grazes.
+	var distance := delta.length()
+	var direction := delta / distance
+	var base_speed := maxf(1.0, hero.move_speed) if hero != null else 96.0
+	var target_speed := clampf(distance * 24.0, 0.0, base_speed)
+	var strength := clampf(target_speed / base_speed, 0.0, 1.0)
+	if target_speed <= 2.0:
+		strength = 0.0
+	if direction.x < 0.0:
+		Input.action_press("move_left", -direction.x * strength)
+	elif direction.x > 0.0:
+		Input.action_press("move_right", direction.x * strength)
+	if direction.y < 0.0:
+		Input.action_press("move_up", -direction.y * strength)
+	elif direction.y > 0.0:
+		Input.action_press("move_down", direction.y * strength)
 
 func _hits_at(cell: Vector2i) -> Array[Dictionary]:
 	if hero == null:
@@ -369,8 +383,12 @@ func _on_physics_frame() -> void:
 	if contact_mode == "journey":
 		for i: int in range(hero.get_slide_collision_count()):
 			var collision := hero.get_slide_collision(i)
+			var collider: Object = collision.get_collider()
 			unexpected_contacts.append({"frame": physics_serial, "normal": [collision.get_normal().x, collision.get_normal().y],
-				"foot": [hero.global_position.x, hero.global_position.y]})
+				"foot": [hero.global_position.x, hero.global_position.y], "drive_label": current_drive_label,
+				"target_cell": [current_drive_target.x, current_drive_target.y],
+				"velocity": [hero.velocity.x, hero.velocity.y],
+				"collider": String((collider as Node).name) if collider is Node else ""})
 	last_hero_position = hero.global_position
 	if camera != null:
 		last_camera_position = camera.global_position
@@ -404,6 +422,11 @@ func _spawn_source_hero(start: Vector2i) -> void:
 	hero = scene.instantiate() as CharacterBody2D
 	entities.add_child(hero)
 	hero.global_position = _foot(start)
+	# res://config/gameplay_tuning.json is loaded by Knight._ready(); the isolated
+	# fixture deliberately applies its pinned A0 comparison values afterwards.
+	hero.move_speed = float(inputs.hero.move_speed_px_s)
+	hero.acceleration = float(inputs.hero.acceleration_px_s2)
+	hero.friction = float(inputs.hero.friction_px_s2)
 	camera = hero.get_node("Camera") as Camera2D
 	camera.limit_left = 0
 	camera.limit_top = 0
@@ -450,6 +473,7 @@ func _capture(name: String, all_resolutions: bool = false) -> void:
 	RenderingServer.render_loop_enabled = false
 
 func _drive_cells(label: String, cells: Array) -> Dictionary:
+	current_drive_label = label
 	if cells.is_empty():
 		_expect(false, label + " has physical cells")
 		return {"ok": false}
@@ -467,13 +491,17 @@ func _drive_cells(label: String, cells: Array) -> Dictionary:
 	for raw: Variant in cells:
 		var c: Array = raw
 		var cell := Vector2i(int(c[0]), int(c[1]))
+		current_drive_target = cell
 		if not _hits_at(cell).is_empty():
 			_expect(false, label + " preflight clear at " + str(c))
 			return {"ok": false}
 		var target := _foot(cell)
 		var deadline := physics_serial + 180
-		while hero.global_position.distance_to(target) > 1.25 and physics_serial < deadline and not abort:
-			_set_direction(target - hero.global_position)
+		while (hero.global_position.distance_to(target) > 0.65 or hero.velocity.length() > 6.0) and physics_serial < deadline and not abort:
+			if hero.global_position.distance_to(target) <= 0.65:
+				_set_direction(Vector2.ZERO)
+			else:
+				_set_direction(target - hero.global_position)
 			await physics_frame
 			travelled += previous_position.distance_to(hero.global_position)
 			max_speed = maxf(max_speed, hero.velocity.length())
@@ -850,12 +878,14 @@ func _build_connector_host() -> void:
 	file.close()
 	var ok := world.build(data, _abs("annex_layers.v1.json"), props_path, entities)
 	_expect(ok and world.width == 448 and world.height == 256, "combined connector source world built")
-	_expect(_mount_waystation_obstacles() == 12, "12 canonical Waystation obstacle cells mounted with both trial endpoints")
+	_expect(_mount_waystation_obstacles() == 5, "all 5 canonical Waystation obstacle cells (4 source obstacle IDs) mounted with both trial endpoints")
 	var scene := load(KNIGHT) as PackedScene
 	hero = scene.instantiate() as CharacterBody2D
 	entities.add_child(hero)
 	hero.global_position = _foot(Vector2i(382, 200))
-	hero.move_speed = 96.0
+	hero.move_speed = float(inputs.hero.move_speed_px_s)
+	hero.acceleration = float(inputs.hero.acceleration_px_s2)
+	hero.friction = float(inputs.hero.friction_px_s2)
 	camera = hero.get_node("Camera") as Camera2D
 	camera.limit_left = 0
 	camera.limit_top = 0
