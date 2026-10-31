@@ -53,3 +53,30 @@ for tick in (72, 192, 312, 489, 510):
                                'original_exact_rgb': int(np.count_nonzero(np.max(od, axis=2) == 0)),
                                'native_exact_rgb': int(np.count_nonzero(np.max(nd, axis=2) == 0))})
     print('D19_FIRST_SAMPLE_PROBE', tick, json.dumps(candidates, separators=(',', ':')), flush=True)
+
+# Locate large extraction errors and report which of the four neighboring
+# source texels best explains the original GPU for those exact pixels.
+for tick in (72, 489, 510):
+    source = np.fromfile(p / f'original_{tick}.scene.rgba8', dtype=np.uint8).reshape(270, 480, 4)[::-1, :, :3]
+    original = np.fromfile(p / f'original_{tick}.stage0.rgba8', dtype=np.uint8).reshape(135, 240, 4)[::-1, :, :3].astype(np.int16)
+    native = np.fromfile(p / f'native_{tick}.stage0.rgba8', dtype=np.uint8).reshape(135, 240, 4)[:, :, :3].astype(np.int16)
+    error = np.max(np.abs(original - native), axis=2)
+    where = np.argwhere(error > 8)
+    labels = []
+    for y, x in where:
+        candidates = []
+        for dy in (0, 1):
+            for dx in (0, 1):
+                c = source[2*y+dy, 2*x+dx].astype(np.float64) / 255.0
+                lum = float(c @ np.array([0.2126, 0.7152, 0.0722]))
+                k = min(1.0, max(0.0, (lum - 0.42) / 0.5))
+                expected = np.rint(c * (k*k*(3-2*k)) * 255).astype(np.int16)
+                candidates.append(int(np.abs(original[y, x] - expected).sum()))
+        k = int(np.argmin(candidates))
+        labels.append((int(x), int(y), k, int(error[y,x])))
+    from collections import Counter
+    counts = Counter(v[2] for v in labels)
+    common_x = Counter(v[0] for v in labels if v[2] != 1).most_common(8)
+    common_y = Counter(v[1] for v in labels if v[2] != 1).most_common(8)
+    worst = sorted(labels, key=lambda v: -v[3])[:8]
+    print('D19_SAMPLE_TIE_MAP', tick, json.dumps({'large_error_pixels':len(labels), 'neighbor_choice_counts_00_01_10_11':dict(counts), 'common_x':common_x, 'common_y':common_y, 'worst_xy_choice_error':worst}, separators=(',', ':')), flush=True)
