@@ -205,7 +205,7 @@ func _draw_segs(f: CFrame, t: float, front: bool, mode: String, lift: float, alp
                 pts.append(_seg_pt(s, pa, lift - float(k) * 0.45))
                 ws.append(1.8 * (1.0 - float(k) / 14.0) * A)
             if pts.size() > 1:
-                f.ribbon(pts, ws, func(x: float, y: float, q: float) -> void:
+                f.ribbon(pts, ws, func(x: float, y: float, q: float, _edge: float) -> void:
                     f.Lc(x, y, fire(0.85 - q * 0.6), (1.0 - q) * 1.1 * (1.0 - dr)))
 
 func update(dt: float, t: float) -> void:

@@ -90,7 +90,7 @@ func advance(dt: float) -> void:
             var want_tick := int(round(local_t / STEP))
             var guard2 := 0
             while child_tick < want_tick and guard2 < 4:
-                node.call("advance", STEP)
+                node.call("advance", STEP, false)
                 child_tick = int(node.get("_tick"))
                 guard2 += 1
                 if not bool(node.get("_active")):
@@ -99,6 +99,13 @@ func advance(dt: float) -> void:
             _active = false
             finished.emit()
             break
+    # Both child simulations may have consumed several fixed steps; composite
+    # each source only once after the shared clock catches up.
+    if guard > 0 and _active:
+        for part in _pending:
+            var node: Node = part.node
+            if is_instance_valid(node) and bool(node.get("_active")):
+                node.call("_render_frame")
 
 func _process(delta: float) -> void:
     advance(delta)

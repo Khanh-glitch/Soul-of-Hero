@@ -85,6 +85,24 @@ func _init() -> void:
         if renderer.is_active(cid):
             _fail("still active after finish %s" % cid)
 
+    # Catch-up steps must advance the identical simulation and raster the
+    # final C frame once, independently of display frame cadence.
+    var c_single := CSourcePlayer.new()
+    var c_batch := CSourcePlayer.new()
+    root_node.add_child(c_single)
+    root_node.add_child(c_batch)
+    c_single.begin(Vector2(104, 132), Vector2(262, 104), "thunderloom")
+    c_batch.begin(Vector2(104, 132), Vector2(262, 104), "thunderloom")
+    c_single.set_process(false)
+    c_batch.set_process(false)
+    for i in range(4):
+        c_single.advance(1.0 / 60.0)
+    c_batch.advance(4.0 / 60.0)
+    if c_single._tick != c_batch._tick or c_single.frame_bytes() != c_batch.frame_bytes():
+        _fail("C catch-up simulation/final frame differs from fixed-step sequence")
+    c_single.queue_free()
+    c_batch.queue_free()
+
     # Authored cue positions/times must agree with rendered moving geometry.
     var carousel := AFusionSpells2.VoltCarousel.new()
     carousel.setup()

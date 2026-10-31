@@ -124,7 +124,7 @@ func stop() -> void:
 func source_time() -> float:
     return float(_tick) * STEP
 
-func advance(dt: float) -> void:
+func advance(dt: float, draw: bool = true) -> void:
     if not _active:
         return
     _acc += dt
@@ -154,12 +154,16 @@ func advance(dt: float) -> void:
             _shake_k = 0.0
         _flash_k *= 0.82
         _chroma_k *= 0.88
-        _render_frame()
         _fire_due_events()
         if source_time() >= duration:
             _active = false
             finished.emit()
             break
+
+    # Fixed-step simulation and event emission remain per tick. Rasterize
+    # only the final state once per displayed frame, not once per catch-up tick.
+    if guard > 0 and draw and _active:
+        _render_frame()
 
 func _process(delta: float) -> void:
     advance(delta)
