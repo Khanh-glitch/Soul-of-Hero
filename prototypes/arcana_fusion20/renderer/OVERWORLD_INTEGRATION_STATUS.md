@@ -772,3 +772,54 @@ SOH world source parity and creator review remain separate.
 - Owner A0 moved to `f518e795c8bc6aba7f9cfb8808fc6c981bc2dc2a`, another
   workflow-only child of `3a7b4591`; current JOIN's exact input remains the
   separately verified `b24a4918a01701842c783c711d309669c986fc50`.
+- No-AVFX normal entry and actual-world JOIN now pass the then-current A0
+  `f518e795c8bc6aba7f9cfb8808fc6c981bc2dc2a` with AVFX `a2db60b0d` and CT
+  `e505173edd119fdd955cf6249511b575a5468440`: [no-AVFX 41231143330](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41231143330),
+  [JOIN 41231143347](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41231143347).
+  Baseline and JOIN still both reported 17 ObjectDB/5 resources; this is not a
+  full journey, real-hit, source fidelity or owner acceptance claim.
+- The latest-A0 real-world phase sweep [41231157739](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41231157739)
+  at AVFX `74cc23c78` returned **40/40** frozen restoration checks for all 20
+  normal/test-dimmed casts. Unchanged early/late samples and nine short native
+  timelines were the same as the historical sweep; this is a capture/cleanup
+  diagnostic only, not human image review or gameplay/Gold approval.
+- A 32×32 local crop around the worst GPU discrepancy at D tick 489 from
+  [41231117305](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41231117305)
+  was inspected at 8× nearest-neighbor. At source pixel (305,140), original
+  RGB **68/68/68**, GPU **204/204/204**, CPU **102/83/103**; lines remain
+  recognizably aligned, but local color/overlap differences are substantial.
+  This confirms the error is real and local; GPU remains isolated, not approved.
+- #02+#16 overlap CPU profiling [41231244040](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41231244040)
+  on historical software CI isolated #16's A child: 720p A raster p50/p95/p99
+  **119.905/705.937/761.444 ms**, A bloom **67.965/69.067/69.419 ms**, A
+  synchronous source-pass submit **75.693/76.675/76.898 ms**. C-only raster
+  p50 **0.012 ms**, p95 **2.307 ms**; GPU timing is not exposed. These samples
+  may include a pre-overlap render and are not a target-device budget.
+- To address the measured work without removing source samples, `d4867bc1c`
+  reuses A bloom tap indices/weights across channels while retaining per-channel
+  accumulation order. Exact old/new bloom arrays matched empty/sparse/dense
+  scenarios and every alternating sample in
+  [41232048816](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41232048816):
+  old→new fixed-input CPU p50 **42.648→24.899 ms** empty,
+  **41.458→24.869 ms** sparse, **47.965→31.336 ms** dense. This microbenchmark
+  does not prove target-device or full-world performance. The first benchmark
+  run 41231887186 hit an untyped local parse error; `abf9cc3f1` fixed it.
+  `3fd7fc618` also hoists sample-row invariant A16 calculations without changing
+  any sample, and [41232025104](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41232025104)
+  matched all A world fields exactly at ticks 90/180/270/330/390/450/480/510/
+  539; single fixed-tick CPU samples at 330 and 390 went **576.040→544.287 ms**
+  and **645.601→608.387 ms**. Full-world overlap reruns are pending.
+- #16's earlier 8-second fusion stopped while original A pollen could still be
+  alive. `26245bb8a` retains the original 8-second fold and source-only A
+  duration, but extends the one fusion clock to **9 s** so the authored 5.3–6 s
+  burst's at-most-3 s pollen naturally expires; C selected debris still retires
+  independently at its source end. Latest-A0 JOIN
+  [41231971776](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41231971776)
+  passed new assertions that A pollen remains after 8 s, is empty before parent
+  exit, C post retires, and world/HP cleanup is preserved. This is a fusion
+  candidate, not C full OUT, creator review, or the catalog's 10.2 s timeline.
+- A profiling-test revision `4bd66664c` had an undeclared `sampled_first`
+  reference ([41231210343](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41231210343));
+  fixed in `9d5b7895e`, whose [JOIN 41231244050](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41231244050)
+  and [overlap 41231244040](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41231244040)
+  passed. `gdparse` alone did not catch the missing identifier.
