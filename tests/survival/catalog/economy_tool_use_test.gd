@@ -93,11 +93,12 @@ func _run() -> void:
 	_expect(int(eco.instance(tool_id).get("condition", -1)) == 99, "tool not worn on interrupted write")
 	_expect(int(eco.inventory_totals().get("stone_chunk", 0)) == 1, "interrupted write grants no yield")
 	DirAccess.remove_absolute(tmp_abs)
-	var recovered: bool = bool(save.call(&"transact_once", "fixture.tool_use.interrupted.1", func(candidate: Dictionary) -> bool:
+	var recovered_mutator: Callable = func(candidate: Dictionary) -> bool:
 		var result: Dictionary = eco.apply_tool_use_plan(candidate, fresh_plan)
 		if not bool(save.call(&"add_items_to_candidate", candidate, "stone_chunk", "material", 1, {"source": "native_fixture_recovered"})):
 			return false
-		return bool(result.get("ok", false)), {"kind": "native_fixture_recovered"}))
+		return bool(result.get("ok", false))
+	var recovered: bool = bool(save.call(&"transact_once", "fixture.tool_use.interrupted.1", recovered_mutator, {"kind": "native_fixture_recovered"}))
 	_expect(recovered, "retry after I/O repair commits once")
 	_expect(int(eco.instance(tool_id).get("condition", -1)) == 98, "retry wears tool exactly once more")
 	_expect(int(eco.inventory_totals().get("stone_chunk", 0)) == 2, "retry grants exact yield")
