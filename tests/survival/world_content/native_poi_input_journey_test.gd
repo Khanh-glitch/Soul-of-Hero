@@ -235,12 +235,11 @@ func _journey_orchard(choice_action: String, expected_channel: String, cross_ope
 		var graft_attempt := _snapshot()
 		var graft_hero := _hero()
 		var graft_message := (
-			"pos=%s face=%s d=%.1f/%.1f feedback=%s"
+			"pos=%s face=%s stand=%.1f feedback=%s"
 			% [
 				str(graft_hero.global_position),
 				str(graft_hero.get("facing_direction")),
 				graft_hero.global_position.distance_to(Vector2(510.0, 370.0)),
-				graft_hero.global_position.distance_to(Vector2(510.0, 292.0)),
 				str(graft_attempt.get("feedback", "")),
 			]
 		)
@@ -824,6 +823,7 @@ func _walk_axis_to(action: String, keycode: Key, coordinate: float) -> bool:
 	_last_collision_name = ""
 	if reached:
 		return true
+	Input.action_press(action)
 	await _send_key(keycode, true)
 	var best_distance := absf(starting_value - coordinate)
 	var stalled_frames := 0
@@ -853,6 +853,7 @@ func _walk_axis_to(action: String, keycode: Key, coordinate: float) -> bool:
 			_last_collision_name = str(collider.name) if collider is Node else str(collider)
 			if stalled_frames >= 30:
 				break
+	Input.action_release(action)
 	await _send_key(keycode, false)
 	for _frame: int in range(60):
 		if hero.velocity.length() <= 1.0:
