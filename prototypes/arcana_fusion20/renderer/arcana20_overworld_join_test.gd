@@ -576,7 +576,19 @@ func _run() -> void:
     var rift := multi._casts[id20] as CSourcePlayer
     rift.set_process(false)
     rift.render_enabled = false
-    for tick in range(270): rift.advance(STEP, false)
+    var rift_hp_before := int(enemy.get("health"))
+    var previous_tick := 0
+    # Frozen actual-world captures for authored opening/build phases. These
+    # are native visual evidence, not source parity or gameplay authority.
+    for phase_tick in [21, 120, 180, 240, 270]:
+        for tick in range(phase_tick - previous_tick): rift.advance(STEP, false)
+        previous_tick = phase_tick
+        rift.render_enabled = true
+        rift._render_frame()
+        await process_frame
+        await process_frame
+        await save_frame("fusion_20_phase_tick%d" % phase_tick)
+        rift.render_enabled = false
     rift.render_enabled = true
     rift._render_frame()
     await process_frame
@@ -646,7 +658,14 @@ func _run() -> void:
     var block_result := contamination(baseline, block_image, rift_viewers.get(&"C"), block_frame)
     check(world_blocks > 0 and int(block_result.get("inside_changed", 0)) > 0 and int(block_result.get("outside_changed", -1)) == 0, "C20 collision blocks sample actual world within source influence: fragments=" + str(world_blocks) + " " + str(block_result))
     rift.render_enabled = false
-    for tick in range(150): rift.advance(STEP, false)
+    for tick in range(90): rift.advance(STEP, false)
+    rift.render_enabled = true
+    rift._render_frame()
+    await process_frame
+    await process_frame
+    await save_frame("fusion_20_phase_tick510")
+    rift.render_enabled = false
+    for tick in range(60): rift.advance(STEP, false)
     rift.render_enabled = true
     rift._render_frame()
     await process_frame
@@ -658,10 +677,30 @@ func _run() -> void:
     var out_image := await save_frame("fusion_20_out_tick570")
     var out_result := contamination(baseline, out_image, rift_viewers.get(&"C"), out_frame)
     check(out_fragments > 0 and int(out_result.get("inside_changed", 0)) > 0 and int(out_result.get("outside_changed", -1)) == 0, "C20 source OUT inversion affects actual world only inside influence: fragments=" + str(out_fragments) + " " + str(out_result))
+    rift.render_enabled = false
+    for tick in range(30): rift.advance(STEP, false)
+    rift.render_enabled = true
+    rift._render_frame()
+    await process_frame
+    await process_frame
+    await save_frame("fusion_20_phase_tick600")
+    check(int(enemy.get("health")) == rift_hp_before, "C20 full visual sequence never changes SOH HP without a confirmed hit")
     multi.cancel_skill(id20)
     await process_frame
     await process_frame
     check(mount.active_viewers(id20) == 0 and images_equal(baseline, await save_frame("fusion_20_cancelled")), "C20 A pull candidate cleanup restores frozen world")
+    # Separately exercise natural finish; cancel above remains independently
+    # covered. The source is simulated to its authored lifecycle end.
+    check(multi.cast_skill(id20, player.global_position, enemy.global_position), "C20 natural finish cast starts")
+    var finishing_rift := multi._casts[id20] as CSourcePlayer
+    finishing_rift.set_process(false)
+    finishing_rift.render_enabled = false
+    for tick in range(630):
+        if is_instance_valid(finishing_rift): finishing_rift.advance(STEP, false)
+    await process_frame
+    await process_frame
+    check(not multi._casts.has(id20) and mount.active_viewers(id20) == 0 and images_equal(baseline, await save_frame("fusion_20_naturally_finished")), "C20 full lifecycle naturally finishes and restores frozen world")
+    check(int(enemy.get("health")) == rift_hp_before, "C20 natural visual completion has no damage authority")
     var id19 := Arcana20SourceCatalog.canonical_id(19)
     multi.cast_skill(id19, player.global_position, enemy.global_position)
     var constellation := multi._casts[id19] as DSourcePlayer
