@@ -463,6 +463,11 @@ class Ring extends Fx:
 ## Persistent liquid pool with metaball blobs, boil bubbles and tick damage.
 class Pool extends Fx:
 	var blobs: Array = []
+	# Packed blob mirrors (same values/order) — Dictionary gets per blob per
+	# tick were measurable in the 021 profile.
+	var _bdx: PackedFloat64Array = PackedFloat64Array()
+	var _bdy: PackedFloat64Array = PackedFloat64Array()
+	var _br: PackedFloat64Array = PackedFloat64Array()
 	var nt: float = 0.0
 	var seed: int = 0
 	var rad: float = 0.0
@@ -485,11 +490,19 @@ class Pool extends Fx:
 		var rr = RNG.new(seed + 5)
 		var n: int = int(o.get("blobs", 5))
 		blobs.append({"dx": 0.0, "dy": 0.0, "r": rad_ * 0.62})
+		_bdx.append(0.0)
+		_bdy.append(0.0)
+		_br.append(rad_ * 0.62)
 		for i in range(n):
 			var a: float = rr.range(0.0, M.TAU)
 			var d: float = rad_ * rr.range(0.25, 0.62)
-			blobs.append({"dx": V8M.v8_cos(a) * d, "dy": V8M.v8_sin(a) * d * 0.9,
-					"r": rad_ * rr.range(0.28, 0.5)})
+			var bdx: float = V8M.v8_cos(a) * d
+			var bdy: float = V8M.v8_sin(a) * d * 0.9
+			var brr: float = rad_ * rr.range(0.28, 0.5)
+			blobs.append({"dx": bdx, "dy": bdy, "r": brr})
+			_bdx.append(bdx)
+			_bdy.append(bdy)
+			_br.append(brr)
 
 	func upd(w, dt: float) -> void:
 		if age > life:
@@ -526,9 +539,9 @@ class Pool extends Fx:
 		var rem: float = life - age
 		var f = g.f
 		f.reset()
-		for b in blobs:
-			f.disc(x + b["dx"] * gs, y + b["dy"] * gs,
-					b["r"] * gs * (1 + V8M.v8_sin(g.t * 3 + b["dx"]) * 0.03), 0.25)
+		for bi in range(_bdx.size()):
+			f.disc(x + _bdx[bi] * gs, y + _bdy[bi] * gs,
+					_br[bi] * gs * (1 + V8M.v8_sin(g.t * 3 + _bdx[bi]) * 0.03), 0.25)
 		var dl: int = 16
 		if rem < 1:
 			dl = maxi(2, M.js_round(16 * rem))
