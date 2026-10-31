@@ -128,6 +128,14 @@ RGB difference reached 39 for #02, so do not call every pixel exact. These are
 measurements, not tuned PASS thresholds or source/coverage/visual approval.
 The artifact contains individual captures, camera heatmaps and metadata.
 
+A repeat at `37cb938c` includes the revised #09, #11, #16 and #20 candidates:
+[JOIN sweep 41212751992](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41212751992),
+[all rows 41213007733](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41213007733).
+All 20 changed the frozen world, kept their source transform anchored for camera
+(+40,+20) / screen (−40,−20 logical), and restored the baseline after cancel.
+Change-mask IoU was 0.999749–1.0; #02 0.999954, #17 and #20 1.0. One tick
+(120) only, not continuous movement, complete phases, performance or approval.
+
 The sweep's one-shot `source_snapshot_ms` includes 120 simulation ticks plus
 render/upload on shared software CI; it is **not** per-frame latency or a
 target-device budget. #19 cost 5474.832 ms for that whole snapshot, flagging
@@ -147,7 +155,7 @@ compared original TypeScript vs native at ticks 90/180/270: write-trace IoU
 are black-canvas source tests, not authored world alpha or approval. [Real-world tick-240/cancel JOIN 41210774544](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41210774544)
 passed. [Seven original-A source samples through tick 479 / near OUT](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41210844049)
 all have write-trace IoU 1.0 and RGB maximum 1 (maximum MAE 0.1042). The
-whole world cast and selected C-material source comparison remain pending. The earlier all-20 sweep at `c6fb12ba` exercised the older #16
+whole world cast and selected C-material source comparison remain pending. The older all-20 sweep at `c6fb12ba` exercised the older #16
 candidate, not this revision.
 
 ## Live movement diagnostic
@@ -213,8 +221,8 @@ final live-world inversion and glint; [neutral source-only OUT comparison
 41212515806](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41212515806)
 at ticks 570/582/591/593/594 recorded zero ink/light/displacement errors, but
 live-world and post fidelity are separate. [Actual-world JOIN 41212486419](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41212486419) and [assertions 41212683037](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41212683037) confirmed 30 live-world OUT inversion fragments and 1,104 changed pixels inside influence, zero outside, at tick 570, followed by exact frozen-world cancel. This is one frame, not a natural full OUT or a visual-accuracy review. A original ground-sample additive debris, full-source/world fidelity, motion,
-depth, owner review and production readiness all remain open. The all-20 sweep at `c6fb12ba` exercised the
-older #20 candidate.
+depth, owner review and production readiness all remain open. The older all-20 sweep at `c6fb12ba` exercised the
+older #20 candidate; the newer sweep at `37cb938c` includes current #20.
 
 ## Actual-overworld overlap frame probe
 
@@ -281,3 +289,12 @@ and 0 after cancel relative to baseline in these probes. Static-byte deltas
 were negative at higher resolutions as viewport/capture resources changed, so
 they are **not reliable cast-allocation measurements**. These software-CI
 results are not device budgets, full lifecycle or visual approval.
+
+#09 added C channel variants/branch generation over its A live-actor graph
+at `84d9bcb0`, retaining B colors. [Source smoke 41212672128](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41212672128)
+passed a branch-specific write assertion; [actual historical-world JOIN
+41212600375](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41212600375)
+with [assertion triage 41212776758](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41212776758)
+passed moving-real-actor anchors, no damage authority, unbound contact ledger
+and cancellation. It is not a source comparison of C raster/slot timing,
+full gameplay targeting, miss coverage or visual approval.
