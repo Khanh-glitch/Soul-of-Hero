@@ -155,6 +155,25 @@ jobs:
             exit 1
           fi
 
+      # A6 is a read-only surface: the season clock, the secured Ragnarok wallet and
+      # every other owner number must arrive as a projection. This proves the wallet
+      # contract refuses fixtures and invented balances, that evacuation is labelled
+      # as its own ending, that the D065 last-72h window is pure arithmetic on the
+      # owner's timestamps, and that no A6 file declares a second copy of owner state.
+      - name: Data authority (headless, real contract code)
+        run: |
+          set -uo pipefail
+          timeout --signal=TERM --kill-after=15s 180s godot --headless --path . \
+            res://tests/survival/ui/a6_data_authority_consumer_test.tscn \
+            > artifacts/data-authority.log 2>&1
+          status=$?
+          cat artifacts/data-authority.log
+          if [ "${status}" -ne 0 ] || ! grep -q "A6 DATA AUTHORITY PASSED" artifacts/data-authority.log; then
+            tail -12 artifacts/data-authority.log | sed 's/^/::error::/'
+            echo "::error::the A6 data authority test failed"
+            exit 1
+          fi
+
       - name: Negative control — a headless binary must refuse to fake a capture
         run: |
           set +e

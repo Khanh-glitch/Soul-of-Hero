@@ -17,6 +17,12 @@ extends RefCounted
 ##   * `soh.a6.digest_ack.v1`     — owner memory of digests already shown.
 ##   * `soh.a6.run_history.v1`    — D056 account records: completed runs + achievements.
 ##   * `soh.a6.site_cues.v2`      — D061 perceived, unexpired cues.
+##   * `soh.a6.account_wallet.v1` — D056/D064 `profile.secured_ragnarok_currency`.
+##
+## The wallet is deliberately the smallest contract here: A6 is handed a balance and
+## a deposit flag and prints them. It does not add, convert, total or remember one,
+## because D066 makes Ragnarok cash a physical item whose value changes only on a
+## physical deposit, and A6 is a read-only surface (D074).
 ##
 ## The exact shapes and the mount instructions for A0 are in
 ## `docs/survival/ux/A6_SURVIVAL_RETURN_UI_CONTRACT_20261030.md`.
@@ -27,10 +33,23 @@ const RETURN_DIGEST_CONTRACT := "soh.a6.return_digest.v1"
 const DIGEST_ACK_CONTRACT := "soh.a6.digest_ack.v1"
 const RUN_HISTORY_CONTRACT := "soh.a6.run_history.v1"
 const SITE_CUES_CONTRACT := "soh.a6.site_cues.v2"
+const ACCOUNT_WALLET_CONTRACT := "soh.a6.account_wallet.v1"
+
+## Provenances that may reach a player. Anything else - a fixture, a stub, a
+## hand-typed number - is refused rather than displayed.
+const OWNER_PROVENANCES := ["A0_OWNER_PROJECTION", "A3_OWNER_PROJECTION"]
 
 ## D055 is user-locked at 14 real calendar days including all offline time.
 const RUN_DAYS := 14
 const RUN_SECONDS := RUN_DAYS * 24 * 60 * 60
+
+## D065: the last 72 hours of the 14-day run are RAGNAROK. This is a window
+## derived from the owner's own two timestamps, not a second clock: A6 subtracts
+## and nothing else.
+const RAGNAROK_SECONDS := 72 * 60 * 60
+
+## D062/D068 run endings A6 is allowed to label.
+const ENDED_REASONS := ["", "deadline", "abandoned", "evacuation"]
 
 ## Production kinds A6 knows how to label. Anything else is ignored rather than
 ## printed raw, so a future A3 station cannot leak a source id into release UI.
@@ -100,6 +119,21 @@ static func make_unavailable_clock(reason: String) -> Dictionary:
 	return {"available": false, "reason": reason}
 
 
+## D065 window arithmetic over the validated clock. `available = false` when the
+## clock itself is unavailable, so a missing projection never becomes "Ragnarok".
+static func ragnarok_window(clock: Dictionary, now_unix: int) -> Dictionary:
+	if not bool(clock.get("available", false)):
+		return {"available": false, "active": false, "enters_at_unix": 0, "seconds_left": 0}
+	var ends := int(clock.get("ends_at_unix", 0))
+	var enters := ends - RAGNAROK_SECONDS
+	return {
+		"available": true,
+		"active": now_unix >= enters and now_unix < ends,
+		"enters_at_unix": enters,
+		"seconds_left": maxi(0, ends - now_unix),
+	}
+
+
 ## Validates the D055 run window. The span is required to be exactly 336 hours:
 ## a shorter or longer window would show the player a false deadline, so it is
 ## rejected rather than clamped. This is a *span* check, independent of how much
@@ -122,7 +156,9 @@ static func sanitize_season_clock(raw: Variant) -> Dictionary:
 		return make_unavailable_clock("season_clock_run_id_invalid")
 	var ended := bool(source.get("ended", false))
 	var ended_reason := String(source.get("ended_reason", "")).strip_edges().to_lower()
-	if ended_reason not in ["", "deadline", "abandoned"]:
+	# D062/D068: a run ends by deadline, by voluntary abandon, or by a successful
+	# physical evacuation. Evacuation is not abandon and must keep its own label.
+	if ended_reason not in ENDED_REASONS:
 		ended_reason = ""
 	return {
 		"available": true,
@@ -325,6 +361,54 @@ static func is_acknowledged(ack: Dictionary, run_id: String, digest_id: String) 
 		if String(entry.get("run_id", "")) == run_id and String(entry.get("digest_id", "")) == digest_id:
 			return true
 	return false
+
+
+# --- secured account wallet (D056/D064/D066) --------------------------------
+
+
+static func make_unavailable_wallet(reason: String) -> Dictionary:
+	return {
+		"available": false,
+		"reason": reason,
+		"amount": 0,
+		"secured": false,
+		"provenance": "",
+		"revision": "",
+	}
+
+
+## Validates `profile.secured_ragnarok_currency` as projected by its owner. The
+## balance is reported, never derived: no sum of chests, no conversion of junk,
+## no assumed zero. `secured` says the deposit already happened (D066).
+static func sanitize_account_wallet(raw: Variant) -> Dictionary:
+	if not raw is Dictionary:
+		return make_unavailable_wallet("wallet_missing")
+	var source: Dictionary = raw
+	if String(source.get("contract", "")) != ACCOUNT_WALLET_CONTRACT:
+		return make_unavailable_wallet("wallet_contract_mismatch")
+	var provenance := String(source.get("provenance", "")).strip_edges()
+	if provenance not in OWNER_PROVENANCES:
+		return make_unavailable_wallet("wallet_not_owner_projected")
+	var amount_value: Variant = source.get("amount", null)
+	if not amount_value is int and not amount_value is float:
+		return make_unavailable_wallet("wallet_amount_not_a_number")
+	if float(amount_value) < 0.0:
+		return make_unavailable_wallet("wallet_amount_negative")
+	var amount := int(amount_value)
+	# A balance with no currency name cannot be labelled, and a name that reads like
+	# a source token is a defect, not a translation (D052).
+	var label := String(source.get("currency_label", "")).strip_edges()
+	if label.is_empty() or not is_player_facing_text(label, 40):
+		return make_unavailable_wallet("wallet_label_unusable")
+	return {
+		"available": true,
+		"reason": "",
+		"amount": amount,
+		"secured": bool(source.get("secured", false)),
+		"currency_label": label,
+		"provenance": provenance,
+		"revision": String(source.get("revision", "")).strip_edges(),
+	}
 
 
 # --- return digest ----------------------------------------------------------
