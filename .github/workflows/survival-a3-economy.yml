@@ -142,6 +142,13 @@ jobs:
           fi
           grep -vE '^(USER )?ERROR: SaveService: Could not write the temporary save file[.]$' \
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/adapter.gate.log" "A3 adapter" "A3 ECONOMY ADAPTER PASSED"
+          if [ "$rc" -ne 0 ]; then
+            # The raw log is not retrievable through the API, so a nonzero
+            # engine exit must name itself here.
+            bash tools/ci/annotate_log.sh "$ARTIFACT_DIR/adapter.log" "A3 adapter rc=$rc" 30 || true
+            echo "::error::A3 adapter exited $rc with a clean log gate; see annotated tail"
+            exit $rc
+          fi
           if [ "$rc" -eq 0 ]; then
             summary="$(grep 'A3 ECONOMY ADAPTER PASSED' "$ARTIFACT_DIR/adapter.log" | tail -1)"
             echo "::notice title=A3 native adapter::$summary"
