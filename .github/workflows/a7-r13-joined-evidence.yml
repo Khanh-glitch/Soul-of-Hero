@@ -181,6 +181,11 @@ jobs:
           grep -aE "^A0_CONNECTED|A0 CONNECTED|  FAIL  |SCRIPT ERROR" /tmp/journey/process1.log | head -40
           grep -aE "^A0_CONNECTED|A0 CONNECTED|  FAIL  |SCRIPT ERROR" /tmp/journey/process2.log | head -40
           echo "::notice::connected journey process1=${first} process2=${second} $(grep -acE '  PASS  ' /tmp/journey/process1.log) pass-lines p1 / $(grep -acE '  PASS  ' /tmp/journey/process2.log) pass-lines p2"
+          # Surface the first concrete failures as annotations, so the reason is
+          # readable even if the artifact commit ever fails again.
+          for line in $(grep -aE '  FAIL  |SCRIPT ERROR|NOT_TESTED' /tmp/journey/process1.log | head -4 | tr ' ' '~'); do
+            echo "::error title=journey-p1::${line//\~/ }"
+          done
           mkdir -p /tmp/journey/captures
           find /tmp -maxdepth 4 -name 'capture_*.png' -exec cp {} /tmp/journey/captures/ \; 2>/dev/null
           exit 0
@@ -196,7 +201,10 @@ jobs:
             cp /tmp/captures/r13_visual_measurements.json docs/survival/balance/visual/r13/ 2>/dev/null || true
           fi
           cp /tmp/capture.log docs/survival/balance/visual/r13/render_output.txt 2>/dev/null || true
-          for f in process1.log process2.log process1.exit process2.exit engine.txt composition.txt; do
+          # .gitignore drops *.log, and losing these once already cost a whole run.
+          cp /tmp/journey/process1.log docs/survival/balance/visual/r13/journey/process1.txt 2>/dev/null || true
+          cp /tmp/journey/process2.log docs/survival/balance/visual/r13/journey/process2.txt 2>/dev/null || true
+          for f in process1.exit process2.exit engine.txt composition.txt; do
             cp "/tmp/journey/${f}" docs/survival/balance/visual/r13/journey/ 2>/dev/null || true
           done
           cp /tmp/journey/captures/*.png docs/survival/balance/visual/r13/journey/ 2>/dev/null || true

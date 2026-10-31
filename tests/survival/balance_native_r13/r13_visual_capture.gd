@@ -152,8 +152,9 @@ func _build_house() -> void:
 	# so a capture that builds from inside the ring can never seal a room and the
 	# photograph would say "no house" about a build system that has one.
 	var steps_out := 0
+	var directions := ["move_down", "move_right", "move_up", "move_left"]
 	while _inside_ring(_cell_of(hero.global_position), plot, radius) and steps_out < 40:
-		await _walk("move_down", 8)
+		await _walk(directions[int(steps_out / 10) % directions.size()], 8)
 		steps_out += 1
 	facts["steps_out_of_footprint"] = steps_out
 	facts["hero_cell_when_building"] = [
@@ -222,6 +223,12 @@ func _find_plot(hero_cell: Vector2i, radius: int) -> Vector2i:
 				if maxi(absi(dx), absi(dy)) != r:
 					continue
 				var center := hero_cell + Vector2i(dx, dy)
+				# A wall cannot be placed on the cell the Hero occupies, so a plot
+				# whose ring includes him can never seal. That is a property of the
+				# product, not a harness preference: look for ground beside him.
+				var hero_in_ring := maxi(absi(hero_cell.x - center.x), absi(hero_cell.y - center.y)) <= radius
+				if hero_in_ring:
+					continue
 				var all_ok := true
 				for wy in range(-radius, radius + 1):
 					for wx in range(-radius, radius + 1):
