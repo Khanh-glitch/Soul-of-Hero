@@ -699,7 +699,9 @@ func _drive_expected_block(start: Vector2i, target: Vector2i, context: String = 
 	_expect(expected_block_contacts > 0 and hero.velocity.length() <= 0.1
 		and hero.global_position.distance_to(_foot(target)) > 4.5 and not _hits_at(target).is_empty(),
 		"real Hero physically refused by visible dynamic full-cell body" + context)
-	contact_mode = "journey"
+	# The Hero intentionally remains beside the body for the reload capture.
+	# Only the next driven route may rearm the unexpected-contact ledger.
+	contact_mode = "expected_block_hold"
 
 
 func _harvest_stream() -> void:
