@@ -675,6 +675,14 @@ func _body() -> void:
 		weave_live = weave_button
 	await _click_window(root.get_final_transform() * (weave_live.get_global_transform_with_canvas() * (weave_live.size * 0.5)))
 	var weave_id := _job_target("weave_cloth")
+	# The panel tells the player why a press did not take; print that sentence, the
+	# button's real state and both rects so the next run is diagnosis, not guesswork.
+	var texts: Array[String] = []
+	for value: Node in panel.find_children("*", "Label", true, false):
+		texts.append(String((value as Label).text).substr(0, 60))
+	print("A0_CONNECTED_WEAVE_CLICK job=%s disabled=%s row=%s scroll=%s focus=%s labels=%s" % [
+		weave_id, str(weave_live.disabled), str(weave_live.get_global_rect()),
+		str(weave_scroll.get_global_rect()), str(root.gui_get_focus_owner()), str(texts.slice(0, 4))])
 	if weave_id.is_empty():
 		# A player whose first click does not take clicks again rather than
 		# concluding the bench is broken; the second press is ordinary input too.
