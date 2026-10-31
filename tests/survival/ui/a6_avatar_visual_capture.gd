@@ -146,11 +146,7 @@ func _run_continue_phase() -> void:
 		return
 	var home_state := _presenter_state(home_player)
 	await _capture("20_continue_home_idle")
-	var home_start := _actor_position()
-	Input.action_press(&"move_right")
-	await _wait_frames(12)
-	await _capture_walk("21_continue_home_walk", home_start)
-	Input.action_release(&"move_right")
+	await _walk_and_capture("21_continue_home_walk", home_player)
 	AppFlow.open_overworld()
 	if not await _wait_for_route(OVERWORLD_ROUTE, 20000):
 		_fail("continue -> overworld route")
@@ -178,11 +174,7 @@ func _run_continue_phase() -> void:
 	# The card can appear one or two frames after the route settles, so settle again
 	# immediately before the press rather than trusting an earlier look.
 	await _answer_death_card()
-	var world_start := _actor_position()
-	Input.action_press(&"move_right")
-	await _wait_frames(14)
-	await _capture_walk("23_continue_overworld_walk", world_start)
-	Input.action_release(&"move_right")
+	await _walk_and_capture("23_continue_overworld_walk", _knight)
 	await _wait_frames(30)
 	await _capture("24_continue_overworld_idle_after_walk")
 	var restored_gender := String(player_state.get("gender", ""))
@@ -341,31 +333,38 @@ func _motion_of(host: Node) -> Dictionary:
 	return out
 
 
-## Captures a frame and asserts the actor displaced since the mark, so a walk frame
-## cannot pass on its label alone.
-func _capture_walk(label: String, from_position: Vector2) -> void:
-	await _capture(label)
-	var host: Node = _knight if is_instance_valid(_knight) else _find_avatar_host(_current_screen())
+## Walks the actor and asserts it really displaced. The home actor lives inside an
+## authored movement bound, so pressing toward that bound is correct gameplay and a
+## perfectly still frame: the harness has to walk where there is room rather than
+## declare the character broken. Returns true when a frame was captured while the
+## actor was moving.
+func _walk_and_capture(label: String, host: Node) -> bool:
 	if host == null or not is_instance_valid(host):
-		_fail("%s: no actor to measure" % label)
-		return
-	var moved := ((host as Node2D).global_position - from_position).length()
-	if moved < MIN_WALK_DISPLACEMENT:
-		# Say which link in the chain broke, so the next run does not need a log that
-		# the review sandbox cannot fetch: was the input visible at all, did the
-		# gameplay gate permit it, and was the body actually moving?
-		_fail("%s: actor displaced %.2f px while the walk input was held (needs %.1f) "
-			% [label, moved, MIN_WALK_DISPLACEMENT]
-			+ "pressed=%s permitted=%s modals=%s velocity=%s route=%s dead=%s" % [
-				str(Input.is_action_pressed(&"move_right")),
-				str(_gate_permits()),
-				str(_visible_modals()),
-				str((host as CharacterBody2D).velocity) if host is CharacterBody2D else "n/a",
-				str(_app_root.call(&"get_current_route")) if is_instance_valid(_app_root) else "",
-				str(host.get(&"dead")),
-			])
-		return
-	print("A6 CAPTURE: %s displaced %.1f px" % [label, moved])
+		_fail("%s: no actor to walk" % label)
+		return false
+	var last_detail := ""
+	for action: StringName in [&"move_right", &"move_left"]:
+		var from := (host as Node2D).global_position
+		Input.action_press(action)
+		await _wait_frames(14)
+		var moved := ((host as Node2D).global_position - from).length()
+		await _capture(label)
+		Input.action_release(action)
+		if moved >= MIN_WALK_DISPLACEMENT:
+			print("A6 CAPTURE: %s displaced %.1f px via %s" % [label, moved, action])
+			return true
+		last_detail += " [%s moved %.2f px]" % [action, moved]
+		await _wait_frames(6)
+	_fail("%s: the actor did not walk in either direction (needs %.1f px)%s "
+		% [label, MIN_WALK_DISPLACEMENT, last_detail]
+		+ "permitted=%s modals=%s velocity=%s route=%s dead=%s" % [
+			str(_gate_permits()),
+			str(_visible_modals()),
+			str((host as CharacterBody2D).velocity) if host is CharacterBody2D else "n/a",
+			str(_app_root.call(&"get_current_route")) if is_instance_valid(_app_root) else "",
+			str(host.get(&"dead")),
+		])
+	return false
 
 
 ## Whether A0's gameplay gate would let a movement action through right now. A gate
@@ -390,13 +389,6 @@ func _visible_modals() -> Array[String]:
 		if node is CanvasItem and (node as CanvasItem).is_visible_in_tree():
 			out.append(String(node.name))
 	return out
-
-
-func _actor_position() -> Vector2:
-	var host: Node = _knight if is_instance_valid(_knight) else _find_avatar_host(_current_screen())
-	if host is Node2D:
-		return (host as Node2D).global_position
-	return Vector2.ZERO
 
 
 func _wait_for_route(route_id: StringName, timeout_msec := 6000) -> bool:
