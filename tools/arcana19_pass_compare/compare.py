@@ -9,7 +9,7 @@ for tick in (72,192,312,489,510):
     a=np.fromfile(p/f'original_{tick}.scene.rgba8',dtype='u1').reshape(h,w,4)[::-1,:,:3].astype(np.float32)/255.0
     raw_native=np.fromfile(p/f'native_{tick}.scene.rgb32f',dtype='<f4').reshape(h,w,3)
     b=np.clip(raw_native,0,1)
-    if not np.isfinite(a).all() or not np.isfinite(b).all():raise SystemExit(f'non-finite source buffer at {tick}')
+    if not np.isfinite(a).all() or not np.isfinite(raw_native).all():raise SystemExit(f'non-finite source buffer at {tick}')
     ma=np.any(a!=0,axis=2);mb=np.any(b!=0,axis=2);u=np.count_nonzero(ma|mb);inter=np.count_nonzero(ma&mb)
     diff=np.abs(a-b); scale=lambda x: np.clip(np.rint(np.maximum(x,0)/(1+np.maximum(x,0))*255),0,255).astype('uint8')
     Image.fromarray(scale(a),'RGB').save(p/f'{tick}_original_diagnostic.png');Image.fromarray(scale(b),'RGB').save(p/f'{tick}_native_diagnostic.png')

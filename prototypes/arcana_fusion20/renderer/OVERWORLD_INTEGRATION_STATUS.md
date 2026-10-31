@@ -313,3 +313,25 @@ RGBA8, while only warp targets are RGBA16F when supported. The first attempted
 float read of scene/bloom [41212972194](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41212972194)
 failed; the RGBA8 capture was corrected rather than pretending those original
 targets were HDR. No D bloom implementation or full parity is claimed.
+
+D19 neutral-base g-buffer diagnostic at old SHA `5f268dd3`, before the
+first-reset-delta fix: [41213135534](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41213135534)
+ran successfully, but **did not establish parity**. Original RGBA8 scene versus
+clipped native float g: light-support IoU 0.698/0.675/0.683/0.932/0.931,
+linear RGB MAE 0.00289/0.00296/0.00339/0.01332/0.01718 and max error
+1.0/0.957/1.0/0.980/0.984 at ticks 72/192/312/489/510 respectively.
+Support is a diagnostic measurement, never an alpha key. The raw native
+peak was 5.51/4.89/5.43/38.94/40.35; original RGBA8 clips to 1.0.
+Original bloom intermediates were captured but not compared to a native bloom;
+no live world, native post, source coverage or approval was established. Newer
+source initialization and a diagnostic-only skipped-intermediate-raster
+optimization must be rerun and assessed separately; its eager-vs-skipped
+comparison runs at tick 20, not every possible phase.
+
+[Real-overworld review crops 41213357418](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41213357418)
+extract small quantized review thumbnails from full-size JOIN captures, not
+replacement acceptance images. The #11 tick-180 crop appeared thin and low
+contrast in this limited inspection; it needs native-size Gold-vs-world creator
+review. The #20 OUT and collision crops are strongly screen-transforming and
+must receive the mandated human contamination review. No visual approval is
+inferred from these thumbnails.
