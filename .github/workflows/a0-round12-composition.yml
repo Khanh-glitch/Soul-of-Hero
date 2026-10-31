@@ -128,7 +128,7 @@ jobs:
           set +e
           log="../artifacts/poi_mount.log"
           timeout --signal=TERM --kill-after=10s 600s godot --headless --path . \
-            --script res://tests/survival_a0_poi_mount_test.gd > "$log" 2>&1
+            --script res://tests/survival_a0_poi_mount_test.gd -- --require-a8 > "$log" 2>&1
           rc=$?
           cat "$log"
           greet=$(grep -c 'A0_POI_MOUNT_PHYSICAL_NOT_TESTED' "$log")

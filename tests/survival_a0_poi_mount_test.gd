@@ -14,6 +14,7 @@ extends "res://tests/survival_normal_input_gather_test.gd"
 ## What is NOT proved here: physical stand/enter/return/revisit at an A8 site.
 ## There is no reachable A8 site in the shipped world, so that stays NOT_TESTED.
 const MOUNT_SCRIPT := preload("res://game/survival/a0_poi_mount.gd")
+const A8_PACKAGE := "res://data/survival/world_content/a8_a0_mount_transition_package.v2.json"
 const A8_SITES := ["poi_crown_south_quarry", "poi_crown_south_orchard", "poi_crown_south_mill"]
 const A8_CELLS := {
 	"poi_crown_south_quarry": Vector2i(30, 280),
@@ -26,6 +27,20 @@ var _world: Node
 
 
 func _console() -> void:
+	# A8's package only exists in the composed tree. In the A0 tree this suite
+	# cannot probe anything, and pretending otherwise would either fail for the
+	# wrong reason or pass for no reason, so it says exactly what is missing.
+	# The composition workflow passes --require-a8, which forbids the skip.
+	if not FileAccess.file_exists(A8_PACKAGE):
+		var required := OS.get_cmdline_user_args().has("--require-a8")
+		print("A0_POI_MOUNT_SKIP A8_PACKAGE_ABSENT %s required=%s" % [A8_PACKAGE, str(required)])
+		if required:
+			print("A0 POI MOUNT AUTHORITY FAILED - 1/1")
+			quit(1)
+			return
+		print("A0 POI MOUNT AUTHORITY SKIPPED - A8 package is composed, not vendored")
+		quit(0)
+		return
 	_deadline_msec = Time.get_ticks_msec() + int(BUILD_TIMEOUT_MS * 4)
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("user://tests"))
 	save_path = "user://tests/survival_a0_poi_mount.json"
