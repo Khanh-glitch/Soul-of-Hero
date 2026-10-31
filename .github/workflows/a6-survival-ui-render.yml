@@ -34,7 +34,11 @@ on:
       - "game/overworld/**"
       - "assets/a6_ui/**"
       - "tests/survival/ui/a6_survival_ui_capture.*"
+      # Every A6 UI test, not a hand-listed few: a test that changes without this
+      # workflow running is a test nobody is reading.
+      - "tests/survival/ui/**"
       - "tests/survival_visual_resolutions_test.gd"
+      - "tools/review/**"
       - ".github/workflows/a6-survival-ui-render.yml"
 
 permissions:
