@@ -50,6 +50,79 @@ func save_frame(name: String) -> Image:
         check(false, "save " + name)
     return image
 
+# Verify every pixel occupied by the real visible HUD, including translucent
+# edges. The black/white surfaces are diagnostic backgrounds BELOW the actual
+# HUD, not a substitute HUD or an acceptance screenshot. Their difference
+# recovers per-channel HUD transmission; for any two real-world backgrounds,
+# the post-on/post-off output difference must be that transmission times the
+# corresponding background difference. Two 8-bit render roundings justify a
+# fixed three-code-value error budget; this is not a visual-fidelity threshold.
+func check_hud_isolation(hud: CanvasLayer, post: Arcana20CViewportPost, with_post: Image, without_post: Image) -> void:
+    if hud == null or not hud.visible or hud.layer <= post.layer:
+        check(false, "C20 full HUD canvas must be visible and above viewport post")
+        return
+    hud.visible = false
+    await process_frame
+    await process_frame
+    var background_post := await save_frame("fusion_20_collision_post_without_hud")
+    post._rect.visible = false
+    await process_frame
+    await process_frame
+    var background_plain := await save_frame("fusion_20_collision_plain_without_hud")
+    hud.visible = true
+    var reference := CanvasLayer.new()
+    reference.layer = hud.layer - 1
+    reference.process_mode = Node.PROCESS_MODE_ALWAYS
+    root.add_child(reference)
+    var surface := ColorRect.new()
+    surface.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    surface.color = Color.BLACK
+    reference.add_child(surface)
+    surface.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    await process_frame
+    await process_frame
+    var black := await save_frame("fusion_20_actual_hud_on_black_diagnostic")
+    surface.color = Color.WHITE
+    await process_frame
+    await process_frame
+    var white := await save_frame("fusion_20_actual_hud_on_white_diagnostic")
+    reference.queue_free()
+    post._apply()
+    await process_frame
+    await process_frame
+    var images: Array[Image] = [with_post, without_post, background_post, background_plain, black, white]
+    var data: Array[PackedByteArray] = []
+    for source in images:
+        var copy := source.duplicate() as Image
+        copy.convert(Image.FORMAT_RGBA8)
+        data.append(copy.get_data())
+    var covered := 0
+    var opaque := 0
+    var partial := 0
+    var bad := 0
+    var max_error := 0.0
+    for i in range(0, data[0].size(), 4):
+        var pixel_covered := false
+        var pixel_opaque := true
+        var pixel_bad := false
+        for channel in range(3):
+            var j := i + channel
+            var transmission := int(data[5][j]) - int(data[4][j])
+            if transmission < 255: pixel_covered = true
+            if transmission != 0: pixel_opaque = false
+            var observed := int(data[0][j]) - int(data[1][j])
+            var backing := int(data[2][j]) - int(data[3][j])
+            var err := absf(float(observed) - float(backing * transmission) / 255.0)
+            max_error = maxf(max_error, err)
+            if err > 3.0: pixel_bad = true
+        if pixel_covered:
+            covered += 1
+            if pixel_opaque: opaque += 1
+            else: partial += 1
+            if pixel_bad: bad += 1
+    check(covered > 0 and opaque > 0 and partial > 0 and bad == 0,
+        "C20 full visible real HUD excluded from post, including translucent pixels: covered=%d opaque=%d partial=%d mismatched=%d max_error=%.3f" % [covered, opaque, partial, bad, max_error])
+
 func _run() -> void:
     DirAccess.make_dir_recursive_absolute(OUTPUT)
     DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("user://tests"))
@@ -536,6 +609,7 @@ func _run() -> void:
         var hx := clampi(roundi(hpixel.x), 0, rift_post.get_width() - 1)
         var hy := clampi(roundi(hpixel.y), 0, rift_post.get_height() - 1)
         check(rift_post.get_pixel(hx, hy) == rift_pre_post.get_pixel(hx, hy), "C20 collision viewport post leaves actual opaque HUD pixel unchanged")
+    await check_hud_isolation(hud as CanvasLayer, post20, rift_post, rift_pre_post)
     post20.detach()
     post20.queue_free()
     await process_frame
