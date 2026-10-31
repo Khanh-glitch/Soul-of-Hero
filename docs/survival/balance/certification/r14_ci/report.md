@@ -50,7 +50,7 @@ Cases: 30 · PASS 6 · FAIL 5 · BLOCKED 14 · NOT_IMPLEMENTED 5
 
 `T1.2` · **SIDECAR_WORLD** · owner **A0**
 
-runtime 384x256 != authored 1024x768; A0's mount declares the authored stream runs beside the legacy world; 3 A8 site(s) outside the live world: poi_crown_south_quarry(30, 280), poi_crown_south_orchard(140, 360), poi_crown_south_mill(120, 300)
+runtime 384x256 != authored 1024x768; A0's mount declares the authored stream runs beside the legacy world; 3 A8 site(s) outside the live world: poi_crown_south_quarry(30, 280), poi_crown_south_orchard(140, 360), poi_crown_south_mill(120, 300); A0 ships A0WorldAuthority but no production file references it (only tests/survival_a0_authored_world_route_test.gd does)
 
 repro: `game/survival/a0_authored_world_mount.gd:12,29`
 
@@ -70,11 +70,13 @@ the declared tree reproduces byte for byte
 - recomputed tree=f6d5cf789995 (git-write-tree)
 
 ### T1.2 — FAIL `SIDECAR_WORLD`
-runtime 384x256 != authored 1024x768; A0's mount declares the authored stream runs beside the legacy world; 3 A8 site(s) outside the live world: poi_crown_south_quarry(30, 280), poi_crown_south_orchard(140, 360), poi_crown_south_mill(120, 300)
+runtime 384x256 != authored 1024x768; A0's mount declares the authored stream runs beside the legacy world; 3 A8 site(s) outside the live world: poi_crown_south_quarry(30, 280), poi_crown_south_orchard(140, 360), poi_crown_south_mill(120, 300); A0 ships A0WorldAuthority but no production file references it (only tests/survival_a0_authored_world_route_test.gd does)
 - live runtime world bounds (384, 256) (data/overworld/hollow_marches.json)
 - A1 authored frame (1024, 768) (game/survival/a1_authored_source.gd:30)
-- sidecar markers ['render_legacy := true']
+- sidecar markers ['render_legacy := true'] (game/survival/a0_authored_world_mount.gd:12,29)
 - A0 poi-mount refusal `A0_WORLD_ABSENT` (game/survival/a0_poi_mount.gd:69)
+- live scene mounts A0AuthoredWorldMount=True behind `survival/a0_authored_stream` which defaults off=True and is defined in project.godot=False (game/overworld/chapter1_overworld.gd:65,275-277)
+- A0WorldAuthority present=True, referenced by production=False (tests/survival_a0_authored_world_route_test.gd)
 
 ### T1.3 — FAIL `SPAWN_OUTSIDE_LIVE_WORLD`
 spawn [389, 291] is not inside (384, 256)
