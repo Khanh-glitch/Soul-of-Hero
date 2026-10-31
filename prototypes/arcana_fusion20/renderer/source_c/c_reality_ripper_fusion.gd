@@ -1,7 +1,7 @@
 ## Selected #20 source-level candidate: C's seeded 9-point rift contour,
 ## timing/width/interior/edge, plus A Reality Ripper's bgWarp pull/fracture
 ## applied to the SAME real-world pixels relative to that C contour.
-## Original C blocks/polygons/particles and A debris are not yet selected;
+## Original C blocks/particles and A debris are not yet selected;
 ## full cast, source comparisons, actor depth and owner approval remain open.
 extends RefCounted
 class_name CRealityRipperFusion
@@ -14,6 +14,18 @@ const W := CFrame.W
 const H := CFrame.H
 const MAG := Vector3(1.0, 0.35, 0.85)
 const CYAN := Vector3(0.45, 0.95, 1.0)
+const GOLDW := Vector3(1.0, 0.9, 0.6)
+const POLYS := [
+    {"v": [[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]],
+     "e": [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]]},
+    {"v": [[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]],
+     "e": [[0,2],[0,3],[0,4],[0,5],[1,2],[1,3],[1,4],[1,5],[2,4],[4,3],[3,5],[5,2]]},
+    {"v": [[1,1,1],[-1,-1,1],[-1,1,-1],[1,-1,-1]],
+     "e": [[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]]},
+]
+# These flags isolate component source tests; production candidate keeps polygons.
+var include_polygons := true
+var audit_polygons_only := false
 # The original C uses Array.sort(() => rng.next() - 0.5). This is the
 # reproducible V8 order for source seed 151461 after seven waypoint draws;
 # its random comparator is engine-dependent and must not be re-sorted here.
@@ -124,6 +136,8 @@ func render(f: CFrame, t: float) -> void:
     if t < 1.6 or t >= 9.4: return
     var span := CMath.inv(1.6, TOPEN, t)
     var slot := floori(t * 12.0)
+    var mask := PackedByteArray()
+    mask.resize(W * H)
     var widths := PackedFloat32Array()
     widths.resize(257)
     for i in range(257): widths[i] = _width(float(i) / 256.0, t)
@@ -143,6 +157,7 @@ func render(f: CFrame, t: float) -> void:
                 continue
             var wj := width + ((CMath.hash3(x, y, slot) - 0.5) * 3.2 if width > 1.0 else 0.0)
             if ad < wj:
+                mask[k] = 1
                 var gy := (float(y) - 60.0) / 150.0
                 var color := CPalette.ramp_d(CPalette.P.void, 0.12 + gy * 0.2, CMath.bayer(x, y))
                 var n := CMath.noise3(x * 0.05, y * 0.05, t * 0.25)
@@ -178,3 +193,57 @@ func render(f: CFrame, t: float) -> void:
                 f.D(x, y, sx - float(x), sy - float(y))
                 f.S(x, y, 1.0 + 1.6 * exp(-distance / 3.0))
                 if CMath.hash1(floori(s * 48.0) + 31) > 0.9: f.C(x, y, 1.5)
+
+    if audit_polygons_only:
+        f.clear()
+    if include_polygons:
+        _render_polygons(f, t, mask)
+
+# Original source "at(s)" keeps scalar double precision until rasterization.
+func _at(s: float) -> Dictionary:
+    var length := s * path_len
+    var i := 0
+    while i < cum.size() - 2 and cum[i + 1] < length: i += 1
+    var u := (length - cum[i]) / (cum[i + 1] - cum[i])
+    var a: Dictionary = way[i]
+    var b: Dictionary = way[i + 1]
+    var d := cum[i + 1] - cum[i]
+    return {"x": lerpf(float(a.x), float(b.x), u), "y": lerpf(float(a.y), float(b.y), u),
+        "nx": -(float(b.y) - float(a.y)) / d, "ny": (float(b.x) - float(a.x)) / d}
+
+func _project(v: Array, ax: float, ay: float, scale: float) -> Dictionary:
+    var x := float(v[0]); var y := float(v[1]); var z := float(v[2])
+    var c := cos(ay); var si := sin(ay)
+    var next_x := x * c + z * si
+    z = -x * si + z * c
+    x = next_x
+    c = cos(ax); si = sin(ax)
+    y = y * c - z * si
+    return {"x": x * scale, "y": y * scale}
+
+func _render_polygons(f: CFrame, t: float, mask: PackedByteArray) -> void:
+    for i in range(POLYS.size()):
+        var poly: Dictionary = POLYS[i]
+        var s := fposmod(0.2 + i * 0.27 + t * 0.035, 0.8) + 0.1
+        var p := _at(s)
+        var ex := clampf((t - TCOL) / 0.7, 0.0, 1.0) if t >= TCOL else 0.0
+        var scale := (6.0 + i * 1.5) * (1.0 + ex * 4.0)
+        var cx := float(p.x) + float(p.nx) * (i - 1) * 6.0
+        var cy := float(p.y) + float(p.ny) * (i - 1) * 6.0
+        var vertices: Array = []
+        for v in poly.v: vertices.append(_project(v, t * (0.7 + i * 0.3), t * (1.1 - i * 0.2), scale))
+        for edge in poly.e:
+            var va: Dictionary = vertices[int(edge[0])]
+            var vb: Dictionary = vertices[int(edge[1])]
+            f.line(cx + float(va.x), cy + float(va.y), cx + float(vb.x), cy + float(vb.y), func(x: int, y: int, _s: float) -> void:
+                var inside := x >= 0 and y >= 0 and x < W and y < H and mask[y * W + x] == 1
+                if not inside and ex == 0.0: return
+                f.Lc(x, y, MAG if i == 1 else CYAN, 1.2 * (1.0 - ex) if ex > 0.0 else 1.0))
+        if t > 3.8 and t < 6.4 and i == 0:
+            var sp := 0.15 + (t - 3.8) * 0.12
+            var q := _at(sp)
+            var q2 := _at(1.0 - sp)
+            f.ring(float(q.x), float(q.y), 3.0, func(x: int, y: int, _a: float) -> void:
+                if x >= 0 and y >= 0 and x < W and y < H and mask[y * W + x] == 1: f.Lc(x, y, GOLDW, 1.2))
+            var out := 8.0 + (t - 3.8) * 6.0
+            f.ring_l(float(q2.x) + float(q2.nx) * (_width(1.0 - sp, t) + out), float(q2.y) + float(q2.ny) * (_width(1.0 - sp, t) + out), 3.0, GOLDW, 1.2)

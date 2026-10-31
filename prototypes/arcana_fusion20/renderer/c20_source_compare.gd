@@ -6,6 +6,7 @@ func _initialize() -> void:
     DirAccess.make_dir_recursive_absolute(OUT)
     var effect := CRealityRipperFusion.new()
     effect.setup()
+    effect.include_polygons = false
     for tick in [270, 324, 396, 450, 540]:
         var frame := CFrame.new()
         frame.clear()
