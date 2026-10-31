@@ -75,7 +75,7 @@ failed; this historical pin is not an endorsement of the latest route.
 | 16 | A candidate fields available | Original A growth and C palette/material not integrated |
 | 17 | C world pass diagnostic incl. live-screen fragment mapping | [run 41207915157](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41207915157), one frozen frame only |
 | 18 | A candidate fields available; REDESIGN_CANDIDATE | Real actors, full-cast and world review missing |
-| 19 | D additive and persistent warp field/world consumer added at `177f8228`; native test pending | D bloom/post, OUT review and original parity missing |
+| 19 | D additive and persistent warp consumer, frozen-world/cancel [JOIN 41209511506](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41209511506) | D bloom/post, OUT review, depth and original parity missing |
 | 20 | A candidate fields available | Original C rift and A real-world deformation not integrated |
 
 Run-level pass does not override a failing check annotation. No thresholds have
@@ -87,8 +87,25 @@ battlefield composition, visual approval, or damage authority is claimed.
 Run [41209339382](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41209339382)
 at `e45b1504` failed a **single JS-vs-Godot exact A hash** test at the large
 coordinate `(9000,1244)` after the signed-shift correction. Other listed hash
-vectors passed. Diagnostic `407afd03` prints native intermediates; do not mark
-A source math proven or weaken the expected value. The real-world JOIN was
+vectors passed. Diagnostic `407afd03` showed native intermediates match JavaScript. The
+comparison was switched to exact uint32 numerator vectors (not a relaxed
+floating tolerance), and [source quick 41209652104](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41209652104)
+at `305f595c` passed. This validates the tested vectors, not every input. The real-world JOIN was
 successful at that SHA, but that does not clear this independent source gate.
 The JOIN shutdown still reported 17 ObjectDB instances / 5 resources in use;
 verbose investigation is active.
+
+## Original A #05 opening source-only trace
+
+[Comparison 41209885994](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41209885994)
+runs the unmodified TypeScript A spell and isolated native A component with the
+same 416×234 dimensions, fixed 60 Hz seed/clock and black source input. At
+ticks 90/180/270, RGB PNG MAE is 0.0213/0.0433/0.0534 and maximum channel
+error is 1. Instrumented *source buffer write* footprint IoU is 1.0 for all
+three; artifacts include full PNGs, pixel heatmaps, 8×6 regional errors and
+HDR buffers. The instrumentation tracks write operations, not RGB-derived
+world alpha; it is not equivalent to opaque coverage or a world composite.
+Burst, C selected late role, full cast, real-world post and owner review remain
+unverified. [No-FX baseline leak isolation](https://github.com/Khanh-glitch/Soul-of-Hero/pull/21#issuecomment-6544643328)
+is underway; verbose leaked script resources implicate historical economy
+objects, while the exact ownership of every leaked instance remains unproven.
