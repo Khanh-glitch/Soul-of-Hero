@@ -1,4 +1,6 @@
 <!-- CT_FINISHLINE_ACTIVE_START -->
+**Docs sync readback (2026-11-01):** Google Docs 04 and 12 now both include new short correction checkpoints for creator veto of pilot 93c80959, checked after write. Earlier initial large Docs batch was blocked but the subsequent two short operations succeeded. Canonical Git PR20 review #6547541781 and current CT handoff remain authoritative. Candidate not promoted, no Arena send or ACK.
+
 ## CT CHECKPOINT 2026-11-01 — Candidate map pilot rejected by creator
 
 Candidate arena/103e4440-soul-of-hero at 93c80959835b05e45176a0ba745749d5991b9675 was NOT accepted as an art-direction deliverable. Three gates failed: (1) old atlases reused; new supplied 42 CraftPix packs not accessible in candidate Arena, (2) Knight sprite used despite locked D051 male base 555940/female base 419402, (3) creator assessed placement as cluttered and purposeless despite traceable rendering. D052 prohibits cosmetic filler. The earlier CT suggestion to fix Python/Godot parity first is superseded as inadequate art task prioritization. Technical lessons retained; NO visual acceptance, owner handover, Arena dispatch, ACK or merge. PR20 correction #6547541781.
