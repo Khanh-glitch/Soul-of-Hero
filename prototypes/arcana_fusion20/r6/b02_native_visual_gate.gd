@@ -80,6 +80,8 @@ func _run() -> void:
         fx.timeline = float(timing.time)
         await get_tree().process_frame
         await get_tree().process_frame
+        if str(timing.label) == "peak":
+            print("ANCHOR_DIAG ",fx.material.get_shader_parameter("anchor_screen")," caster=",fx.material.get_shader_parameter("caster_screen")," actor=",actor.get_global_transform_with_canvas().origin)
         _check(_snap(stage,"B02_"+str(timing.label)),"native_screenshot_"+str(timing.label))
         var image := stage.get_viewport().get_texture().get_image()
         _check(_world_pixels_visible(image), "native_visual_not_blank_" + str(timing.label))
