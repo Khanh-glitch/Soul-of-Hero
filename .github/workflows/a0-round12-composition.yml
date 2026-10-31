@@ -1,0 +1,114 @@
+name: A0 Round 12 owner composition (A1 + A3 + A6 + A8)
+on:
+  push:
+    branches: [arena/dea2428e-soul-of-hero]
+    paths-ignore: ['docs/**', 'README.md']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      A1_SHA: 9ca1453ccdd315c9de4aae01cf0e1e5b4e0a71cf
+      A3_SHA: b44e22df3af40939069189be14afc23ee1ce21c4
+      A6_SHA: 81c1f57ea01396686eb155af5b36fe8a64921a52
+      A8_SHA: 6337533f7cc0d39487921e279d3967ac29a59297
+      GODOT_SILENCE_ROOT_WARNING: 1
+      LIBGL_ALWAYS_SOFTWARE: 1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Pin and compose the exact owner SHAs
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin "$A1_SHA" "$A3_SHA" "$A6_SHA" "$A8_SHA"
+          python3 tools/a0/compose_owners.py --repo . --out .composition --copy-base \
+            --owner a1="$A1_SHA" --owner a3="$A3_SHA" --owner a8="$A8_SHA" --owner a6="$A6_SHA"
+          python3 - <<'PY'
+          import json
+          report = json.load(open(".composition/composition.json"))
+          assert report["conflicts"] == [], report["conflicts"]
+          for name, info in report["owners"].items():
+              assert len(info["sha"]) == 40, (name, info["sha"])
+          print("composition:", json.dumps({n: i["sha"][:12] for n, i in report["owners"].items()}))
+          PY
+          cat .composition/CONFLICTS.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import the composed project
+        run: |
+          set -euo pipefail
+          cd .composition
+          mkdir -p ../artifacts/ud_import
+          timeout --signal=TERM --kill-after=10s 240s godot --headless --path . \
+            --user-data-dir ../artifacts/ud_import --import > ../artifacts/import.log 2>&1 || true
+          cat ../artifacts/import.log
+          ! grep -E 'SCRIPT ERROR|Parse Error' ../artifacts/import.log
+      - name: A0 composed player journeys (native, real input)
+        run: |
+          set +e
+          failures=0
+          for name in survival_foundation_test survival_a0_pin_fence_test survival_a0_profile_port_test \
+                      survival_a0_run_lifecycle_test survival_a0_tool_and_offline_test \
+                      survival_a0_player_return_test; do
+            log="../artifacts/$name.log"
+            mkdir -p "../artifacts/ud_$name"
+            timeout --signal=TERM --kill-after=10s 900s xvfb-run -a -s "-screen 0 1280x720x24" \
+              godot --path . --audio-driver Dummy --resolution 1280x720 --windowed \
+              --user-data-dir "../artifacts/ud_$name" --script "res://tests/$name.gd" > "$log" 2>&1
+            rc=$?
+            cat "$log"
+            echo "::notice::composed $name exit=$rc $(grep -E 'PASSED|FAILED' "$log" | tail -1)"
+            if [ "$rc" -ne 0 ] || ! grep -qE 'PASSED' "$log"; then failures=$((failures+1)); fi
+          done
+          [ "$failures" -eq 0 ]
+      - name: A0 production threat across two processes
+        run: |
+          set +e
+          export SOUL_OF_HERO_SAVE_PATH="user://composed_threat_${GITHUB_RUN_ID}.json"
+          mkdir -p ../artifacts/ud_threat
+          timeout --signal=TERM --kill-after=10s 900s xvfb-run -a -s "-screen 0 1280x720x24" \
+            godot --path . --audio-driver Dummy --resolution 1280x720 --windowed \
+            --user-data-dir ../artifacts/ud_threat --script res://tests/survival_a0_production_threat_test.gd \
+            -- --keep-threat > ../artifacts/threat_1.log 2>&1
+          first=$?
+          cat ../artifacts/threat_1.log
+          timeout --signal=TERM --kill-after=10s 300s xvfb-run -a -s "-screen 0 1280x720x24" \
+            godot --path . --audio-driver Dummy --resolution 1280x720 --windowed \
+            --user-data-dir ../artifacts/ud_threat --script res://tests/survival_a0_production_threat_test.gd \
+            -- --verify-threat --keep-threat > ../artifacts/threat_2.log 2>&1
+          second=$?
+          cat ../artifacts/threat_2.log
+          echo "::notice::threat process1=$first process2=$second"
+          [ "$first" -eq 0 ] && [ "$second" -eq 0 ]
+      - name: A6 suites in the same composition
+        if: ${{ !cancelled() }}
+        run: |
+          set +e
+          failures=0
+          for name in ui_test journey_test player_first_hud_test; do
+            log="../artifacts/a6-$name.log"
+            mkdir -p "../artifacts/ud_a6_$name"
+            timeout --signal=TERM --kill-after=5s 300s godot --headless --path . \
+              --user-data-dir "../artifacts/ud_a6_$name" --script "res://tests/survival/ui/$name.gd" > "$log" 2>&1
+            rc=$?
+            cat "$log"
+            if [ "$rc" -ne 0 ] || grep -qE 'SCRIPT ERROR|Parse Error' "$log"; then failures=$((failures+1)); fi
+            echo "::notice::A6 $name exit=$rc"
+          done
+          [ "$failures" -eq 0 ]
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a0-round12-composition-native-logs
+          path: |
+            artifacts/*.log
+            .composition/composition.json
+            .composition/CONFLICTS.md
+          if-no-files-found: warn

@@ -27,7 +27,7 @@
     },
     "a8": {
       "branch": "arena/2d7e6d7a-soul-of-hero",
-      "scopes": ["data/survival/world_content/", "game/survival/world_content/"],
+      "scopes": ["data/survival/world_content/", "game/survival/world_content/", "tests/survival/world_content/", "tests/fixtures/survival/world_content/"],
       "note": "A8 owns POI world content and its neutral action identities. Rewards stay empty until A3 authorizes."
     },
     "a6": {
@@ -37,6 +37,7 @@
         "game/survival/ui/",
         "assets/a6_ui/",
         "tests/survival/ui/",
+        "game/survival/player/",
         "docs/survival/ux/",
         "tools/review/",
         "tools/fetch_a6_avatar_sources.sh",
@@ -49,6 +50,16 @@
         "tests/startup_profile_choice_test.gd"
       ],
       "note": "A6 owns presentation: title, avatar choice, HUD, panels, item icons and their tests."
+    }
+  },
+  "known_stale_seats": {
+    "game/survival/ui/expedition_workspace.tscn": {
+      "why": "A6's research workspace scene existed at 8bc0af5a and 63d3fae5 and was withdrawn in A6's rewritten history (first absent at 9afb7c8c, still absent at 81c1f57e). A0's earlier modal-composition test still names it, so the composition reports the break instead of hiding it; the Round 12 workflow runs A6's current suites and does not claim that scene.",
+      "owner_action": "A6: publish the current workspace scene name or confirm the workspace is out of scope for Round 12; A0 then re-pins its modal composition test."
+    },
+    "game/survival/web_probe_ci.gd": {
+      "why": "tools/survival/web_probe.tscn already referenced a script that does not exist at A0 base 738e621b. It predates this composition and is not used by any Round 12 job.",
+      "owner_action": "A0: delete or repair the dormant web-probe scene outside the survival journey."
     }
   },
   "rulings": {
