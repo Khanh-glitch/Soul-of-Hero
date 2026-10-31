@@ -51,6 +51,8 @@ jobs:
           set -o pipefail
           timeout 600s godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/c16_organism_optimization_test.gd 2>&1 | tee optimization.log
           grep -Fq 'C16_OPT_COMPLETE' optimization.log
+          grep -Fq 'C16_OPT_SWEEP_COMPLETE ticks=430 range=150..579' optimization.log
+          grep 'C16_OPT_SWEEP_COMPLETE' optimization.log | sed 's/^/::notice title=C16_OPT_SWEEP::/'
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:|C16_OPT_MISMATCH' optimization.log
           grep -E 'C16_OPT_EXACT tick=(180|300|381|456|510|558) ' optimization.log | sed 's/^/::notice title=C16_OPT::/'
       - name: Measure authored coverage and color errors

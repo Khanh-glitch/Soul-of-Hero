@@ -21,5 +21,21 @@ func _initialize() -> void:
             quit(1)
             return
         print("C16_OPT_EXACT tick=",tick," old_us=",old_us," new_us=",new_us)
+    # Exhaust every source tick in the organism's active window, comparing
+    # actual typed fields and authored influence, not nonzero RGB support.
+    var a := CFrame.new()
+    var b := CFrame.new()
+    a.track_world_fragments = true
+    b.track_world_fragments = true
+    for tick in range(150,580):
+        a.clear()
+        b.clear()
+        old.render(a,float(tick)/60.0)
+        candidate.render(b,float(tick)/60.0)
+        if a.ink != b.ink or a.light != b.light or a.disp != b.disp or a.world_influence != b.world_influence:
+            printerr("C16_OPT_MISMATCH sweep_tick=",tick)
+            quit(1)
+            return
+    print("C16_OPT_SWEEP_COMPLETE ticks=430 range=150..579")
     print("C16_OPT_COMPLETE")
     quit()
