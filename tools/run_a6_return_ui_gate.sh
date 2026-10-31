@@ -61,6 +61,12 @@ if grep -q "SCRIPT ERROR" "$LOG"; then
 	failures=$((failures + 1))
 fi
 
+# Workflow commands are read from stdout, so a failure has to be said out loud here:
+# the hosted job log is not reachable from every review environment.
+if [ "$failures" -ne 0 ]; then
+	grep -E "SCRIPT ERROR|Parse Error|FAIL|FAILED|ERROR" "$LOG" 2>/dev/null | head -8 | sed 's/^/::error::/' || true
+fi
+
 echo "== A0 consumer: return UI reads a real save across two processes =="
 # Two separate engine launches sharing one save file. Phase one plays the player
 # through A0's own API; phase two is a fresh process that must show exactly what A0
@@ -84,6 +90,7 @@ for phase in write read; do
 done
 if [ "$consumer_status" -ne 0 ]; then
 	failures=$((failures + 1))
+	grep -E "SCRIPT ERROR|Parse Error|FAIL|ERROR" "$CONSUMER_LOG" 2>/dev/null | head -8 | sed 's/^/::error::/' || true
 fi
 
 echo "== preview fixtures (no framebuffer needed) =="
@@ -102,6 +109,7 @@ fi
 if ! grep -q "A6 UI FIXTURE AUDIT OK" "$FIXTURE_LOG"; then
 	echo "FAILED: the preview fixture audit did not print its pass line" >&2
 	failures=$((failures + 1))
+	grep -E "SCRIPT ERROR|Parse Error|FAILED" "$FIXTURE_LOG" 2>/dev/null | head -6 | sed 's/^/::error::/' || true
 fi
 
 if [ "$failures" -ne 0 ]; then
