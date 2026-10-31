@@ -167,6 +167,9 @@ func _run() -> void:
     if OS.get_environment("ARCANA20_SWEEP") == "1":
         await _sweep_all20(app, world, player, enemy, camera)
         return
+    if OS.get_environment("ARCANA20_LIVE_INPUT") == "1":
+        await _live_input_probe(app, world, player, enemy, camera)
+        return
 
     # Freeze the actual world while comparing the same terrain at a single
     # source tick. This is an offline diagnostic, not normal-speed gameplay.
@@ -426,6 +429,98 @@ func _run() -> void:
     f.store_string(JSON.stringify({"stats": stats, "scope": "frozen actual overworld; one tick; experimental A/B/C terrain passes only; #04 is an unapproved redesign candidate; not source fidelity, gameplay, post, actor depth or approval"}, "  "))
     f.close()
     passes.clear()
+    app.queue_free()
+    await process_frame
+    await process_frame
+    _finish()
+
+## Live real-world input probe. The cast is deliberately injected by the test;
+## this is NOT a claim that SOH's gameplay skill routing is already bound.
+func _live_input_probe(app: Node, world: Node, player: CharacterBody2D, enemy: Node2D, camera: Camera2D) -> void:
+    var terrain: Node = world.get("world")
+    var choices := [
+        {"action": &"move_right", "direction": Vector2.RIGHT},
+        {"action": &"move_left", "direction": Vector2.LEFT},
+        {"action": &"move_down", "direction": Vector2.DOWN},
+        {"action": &"move_up", "direction": Vector2.UP},
+    ]
+    var action: StringName = &""
+    for choice in choices:
+        var direction: Vector2 = choice.direction
+        if bool(terrain.call("is_walkable", player.global_position + direction * 24.0, 6.0)):
+            action = choice.action
+            break
+    if action == &"":
+        check(false, "live input no safe adjacent direction")
+        app.queue_free()
+        await process_frame
+        _finish()
+        return
+    var renderer := Arcana20Renderer.new()
+    renderer.world_pass_mode = true
+    world.add_child(renderer)
+    var mount := Arcana20WorldPassMount.new()
+    world.add_child(mount)
+    check(mount.attach(renderer), "live input world mount")
+    var world_anchor := player.global_position
+    var screen_target := root.get_final_transform() * (player.get_global_transform_with_canvas() * Vector2(90, -20))
+    var motion := InputEventMouseMotion.new()
+    motion.position = screen_target
+    Input.parse_input_event(motion)
+    await process_frame
+    var aimed := player.get_global_mouse_position()
+    var id := Arcana20SourceCatalog.canonical_id(2)
+    check(renderer.cast_skill(id, world_anchor, aimed), "live input source cast accepted (diagnostic injection)")
+    var source := renderer._casts[id] as BSourcePlayer
+    var initial_transform := source.source_pass_frame().source_to_world
+    var before_player := player.global_position
+    var before_enemy := enemy.global_position
+    var before_camera := camera.get_screen_center_position()
+    var hp := int(enemy.get("health"))
+    enemy.set_physics_process(true)
+    Input.action_press(action)
+    var elapsed_frames: Array[float] = []
+    var before_memory := Performance.get_monitor(Performance.MEMORY_STATIC)
+    var last_frame := Time.get_ticks_usec()
+    for frame in range(35):
+        await physics_frame
+        var now := Time.get_ticks_usec()
+        elapsed_frames.append(float(now - last_frame) / 1000.0)
+        last_frame = now
+    Input.action_release(action)
+    await process_frame
+    await process_frame
+    var after_player := player.global_position
+    var after_enemy := enemy.global_position
+    var after_camera := camera.get_screen_center_position()
+    var by_family: Dictionary = mount._passes.get(id, {})
+    var stable_anchor := false
+    if by_family.has(&"B"):
+        var sprite := (by_family[&"B"] as Node).get("_sprite") as Sprite2D
+        stable_anchor = sprite.global_transform.is_equal_approx(initial_transform) and source.source_pass_frame().source_to_world.is_equal_approx(initial_transform)
+    elapsed_frames.sort()
+    var count := elapsed_frames.size()
+    var samples := {"count": count, "p50_ms": elapsed_frames[mini(count - 1, floori((count - 1) * 0.50))],
+        "p95_ms": elapsed_frames[mini(count - 1, floori((count - 1) * 0.95))],
+        "p99_ms": elapsed_frames[mini(count - 1, floori((count - 1) * 0.99))]}
+    var record := {"scope": "real historical world live input, injected #02 visual, shared software CI, not target-device budget or gameplay cast binding",
+        "action": String(action), "player_before": str(before_player), "player_after": str(after_player),
+        "player_distance": before_player.distance_to(after_player), "enemy_distance": before_enemy.distance_to(after_enemy),
+        "camera_distance": before_camera.distance_to(after_camera), "aimed_world": str(aimed), "source_tick": source.source_tick,
+        "actor_hp_before": hp, "actor_hp_after": int(enemy.get("health")), "source_anchor_consistent": stable_anchor,
+        "frame_samples": samples, "static_memory_delta_bytes": Performance.get_monitor(Performance.MEMORY_STATIC) - before_memory}
+    check(aimed.distance_to(world_anchor + Vector2(90, -20)) < 5.0, "live input pointer maps to real world aim")
+    check(before_player.distance_to(after_player) > 1.0, "live input moves actual SOH player during active cast")
+    check(before_enemy.distance_to(after_enemy) > 0.1, "live input observes natural real enemy movement")
+    check(int(enemy.get("health")) == hp, "injected visual cast never mutates enemy health")
+    check(stable_anchor, "live input source field remains attached to authored world transform")
+    print("JOIN_LIVE_INPUT ", JSON.stringify(record))
+    var file := FileAccess.open(OUTPUT + "/live_input.json", FileAccess.WRITE)
+    file.store_string(JSON.stringify(record, "  "))
+    file.close()
+    await save_frame("live_input_02")
+    renderer.cancel_skill(id)
+    mount.detach()
     app.queue_free()
     await process_frame
     await process_frame
