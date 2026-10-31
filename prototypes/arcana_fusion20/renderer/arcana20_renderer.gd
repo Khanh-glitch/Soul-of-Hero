@@ -36,9 +36,13 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
         cast_started.emit(canonical_id)
         b02.begin(caster_world, target_world)
         return true
+    print("::notice::CASTDBG new instance id=", id)
     var inst := Arcana20SkillInstance.new()
+    print("::notice::CASTDBG created")
     add_child(inst)
+    print("::notice::CASTDBG added")
     inst.setup(id, caster_world, target_world, facing)
+    print("::notice::CASTDBG setup done")
     inst.visual_contact.connect(func(sid: int, pos: Vector2, kind: StringName) -> void:
         visual_contact.emit(canonical_id, pos, kind))
     inst.body_event_cue.connect(func(sid: int, pos: Vector2, el: StringName) -> void:
