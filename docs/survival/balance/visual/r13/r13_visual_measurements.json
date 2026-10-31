@@ -69,24 +69,42 @@
         ]
       }
     ],
-    "steps_out_of_footprint": 40,
+    "steps_out_of_footprint": 11,
     "hero_cell_when_building": [
-      56,
-      237
+      57,
+      238
     ],
     "house": {
       "built": true,
       "origin": [
-        55,
-        236
+        54,
+        235
       ],
       "radius": 1,
-      "walls": 7,
-      "room": "",
+      "walls": 8,
+      "room": "room_7a5fecea4ed448b712494688f588d81e52dc57f825b62dca7e08ddb44e728d42",
       "attempts": [
         [
           "wall_wood",
+          53,
+          234,
+          true
+        ],
+        [
+          "wall_wood",
           54,
+          234,
+          true
+        ],
+        [
+          "wall_wood",
+          55,
+          234,
+          true
+        ],
+        [
+          "wall_wood",
+          53,
           235,
           true
         ],
@@ -98,50 +116,32 @@
         ],
         [
           "wall_wood",
-          56,
-          235,
-          true
-        ],
-        [
-          "wall_wood",
-          54,
-          236,
-          true
-        ],
-        [
-          "wall_wood",
-          56,
+          53,
           236,
           true
         ],
         [
           "wall_wood",
           54,
-          237,
+          236,
           true
         ],
         [
           "wall_wood",
           55,
-          237,
+          236,
           true
-        ],
-        [
-          "wall_wood",
-          56,
-          237,
-          false
         ]
       ]
     },
     "home_shot_cell": [
-      55,
-      239
+      54,
+      238
     ],
     "home_shot_pending": true,
     "home_shot_hero": [
-      888.0,
-      3832.0
+      872.0,
+      3816.0
     ]
   },
   "rows": [
@@ -160,8 +160,8 @@
         720
       ],
       "save_result": 0,
-      "png_bytes": 307732,
-      "sampled_colours": 365,
+      "png_bytes": 297599,
+      "sampled_colours": 355,
       "path": "/tmp/captures/r13_overworld_1280x720.png"
     },
     {
@@ -179,8 +179,8 @@
         1440
       ],
       "save_result": 0,
-      "png_bytes": 453638,
-      "sampled_colours": 360,
+      "png_bytes": 436221,
+      "sampled_colours": 350,
       "path": "/tmp/captures/r13_overworld_2560x1440.png"
     },
     {
@@ -198,8 +198,8 @@
         2160
       ],
       "save_result": 0,
-      "png_bytes": 569386,
-      "sampled_colours": 362,
+      "png_bytes": 546824,
+      "sampled_colours": 356,
       "path": "/tmp/captures/r13_overworld_3840x2160.png"
     },
     {
@@ -217,8 +217,8 @@
         720
       ],
       "save_result": 0,
-      "png_bytes": 288108,
-      "sampled_colours": 342,
+      "png_bytes": 300161,
+      "sampled_colours": 361,
       "path": "/tmp/captures/r13_home_1280x720.png"
     }
   ]
