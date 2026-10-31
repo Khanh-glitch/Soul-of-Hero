@@ -33,8 +33,12 @@ concurrency:
 
 env:
   GODOT_ARCHIVE_SHA256: "0b1a6c54c2c619c12e169fe9241edda4b81080b519451cec2984bf0d2c6cb73c"
-  MALE_ARCHIVE_ID: "1CuSQ3pr75U1l1Ep8FIDexQlMr8fO3qGb"
-  FEMALE_ARCHIVE_ID: "1o5hRVbPZjZxcPGwP5coPDHZARbAej75o"
+  # Where the licensed grade-0 source archives actually live: real Git binaries on
+  # the creator's asset repository, not an anonymous Drive link. The commits, blob
+  # ids and digests are pinned in tools/fetch_a6_avatar_sources.sh.
+  A6_ASSET_REPO: "Khanh-glitch/APEX-CHAOS"
+  MALE_ARCHIVE_COMMIT: "bf11a0cecfda43beca510062bd5d9dc1a8573cc5"
+  FEMALE_ARCHIVE_COMMIT: "b75dfc0ffa98c25059d67f655be14e419e63430b"
   MALE_ARCHIVE_SHA256: "b5579a3cc6006ef8c9d55c9ca0388575d75c987382b6cb504e2c7519e6c1e795"
   FEMALE_ARCHIVE_SHA256: "f704e7852273d5f0111435ae86975fa981354d699dff1f594934f6a32d9821ad"
 
@@ -141,39 +145,25 @@ jobs:
             echo "expected sha256: ${GODOT_ARCHIVE_SHA256}"
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Stage licensed base sheets privately (runner-only, never committed)
+      - name: Fetch the licensed source archives from their Git refs
         run: |
           set -euo pipefail
-          mkdir -p "$RUNNER_TEMP/a6_source"
-          curl -L --fail --retry 3 --max-time 300 \
-            -o "$RUNNER_TEMP/a6_source/male.zip" \
-            "https://drive.google.com/uc?export=download&id=${MALE_ARCHIVE_ID}"
-          curl -L --fail --retry 3 --max-time 300 \
-            -o "$RUNNER_TEMP/a6_source/female.zip" \
-            "https://drive.google.com/uc?export=download&id=${FEMALE_ARCHIVE_ID}"
-          python3 - <<'PY'
-          import hashlib, os, pathlib, sys
-          root = pathlib.Path(os.environ["RUNNER_TEMP"]) / "a6_source"
-          expected = {
-              "male.zip": os.environ["MALE_ARCHIVE_SHA256"],
-              "female.zip": os.environ["FEMALE_ARCHIVE_SHA256"],
-          }
-          for name, want in expected.items():
-              data = (root / name).read_bytes()
-              if not data.startswith(b"PK\x03\x04"):
-                  sys.exit(f"{name}: download is not a ZIP archive (blocked or HTML page)")
-              got = hashlib.sha256(data).hexdigest()
-              print(f"{name}: {len(data)} bytes sha256={got}")
-              if got != want:
-                  sys.exit(f"{name}: SHA-256 mismatch")
-          PY
+          # Commit, blob id, byte length and SHA-256 are all asserted by this script;
+          # see tools/fetch_a6_avatar_sources.sh for the pin table and the reasoning.
+          bash tools/fetch_a6_avatar_sources.sh "$RUNNER_TEMP/a6_source" \
+            2>&1 | tee "$RUNNER_TEMP/a6_source/fetch.log"
+          grep -q "A6 ASSET SOURCES VERIFIED" "$RUNNER_TEMP/a6_source/fetch.log"
+          {
+            echo "### A6 avatar source (Git, pinned)"
+            grep -E "commit:|path:|blob:|sha256:" "$RUNNER_TEMP/a6_source/fetch.log"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Stage the licensed base sheets privately (runner-only, never committed)
+        run: |
+          set -euo pipefail
           python3 tools/stage_a6_avatar_art.py \
             --male-zip "$RUNNER_TEMP/a6_source/male.zip" \
             --female-zip "$RUNNER_TEMP/a6_source/female.zip"
-          git status --porcelain --ignored private_art | head -5
-          test -f private_art/a6_avatar/avatar_art_private_runtime.json
-          test -z "$(git status --porcelain | grep -v '^?? private_art/' || true)"
-          echo "art staged privately; nothing added to Git"
           rm -f "$RUNNER_TEMP/a6_source"/*.zip
 
       - name: Import project with the staged sheets
@@ -285,29 +275,22 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends xvfb libgl1-mesa-dri libglx-mesa0 mesa-utils
 
-      - name: Stage licensed base sheets privately (runner-only, never committed)
+      - name: Fetch the licensed source archives from their Git refs
         run: |
           set -euo pipefail
-          mkdir -p "$RUNNER_TEMP/a6_source"
-          curl -L --fail --retry 3 --max-time 300 -o "$RUNNER_TEMP/a6_source/male.zip" \
-            "https://drive.google.com/uc?export=download&id=${MALE_ARCHIVE_ID}"
-          curl -L --fail --retry 3 --max-time 300 -o "$RUNNER_TEMP/a6_source/female.zip" \
-            "https://drive.google.com/uc?export=download&id=${FEMALE_ARCHIVE_ID}"
-          python3 - <<'PY'
-          import hashlib, os, pathlib, sys
-          root = pathlib.Path(os.environ["RUNNER_TEMP"]) / "a6_source"
-          expected = {
-              "male.zip": os.environ["MALE_ARCHIVE_SHA256"],
-              "female.zip": os.environ["FEMALE_ARCHIVE_SHA256"],
-          }
-          for name, want in expected.items():
-              data = (root / name).read_bytes()
-              if not data.startswith(b"PK\x03\x04"):
-                  sys.exit(f"{name}: download is not a ZIP archive")
-              if hashlib.sha256(data).hexdigest() != want:
-                  sys.exit(f"{name}: SHA-256 mismatch")
-              print(f"{name}: verified {len(data)} bytes")
-          PY
+          # Commit, blob id, byte length and SHA-256 are all asserted by this script;
+          # see tools/fetch_a6_avatar_sources.sh for the pin table and the reasoning.
+          bash tools/fetch_a6_avatar_sources.sh "$RUNNER_TEMP/a6_source" \
+            2>&1 | tee "$RUNNER_TEMP/a6_source/fetch.log"
+          grep -q "A6 ASSET SOURCES VERIFIED" "$RUNNER_TEMP/a6_source/fetch.log"
+          {
+            echo "### A6 avatar source (Git, pinned)"
+            grep -E "commit:|path:|blob:|sha256:" "$RUNNER_TEMP/a6_source/fetch.log"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Stage the licensed base sheets privately (runner-only, never committed)
+        run: |
+          set -euo pipefail
           python3 tools/stage_a6_avatar_art.py \
             --male-zip "$RUNNER_TEMP/a6_source/male.zip" \
             --female-zip "$RUNNER_TEMP/a6_source/female.zip"
