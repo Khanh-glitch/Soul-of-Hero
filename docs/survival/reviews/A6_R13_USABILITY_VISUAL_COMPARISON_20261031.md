@@ -133,6 +133,11 @@ What A7 should independently check, and what it should refuse:
 * **Not done:** grade 1/2 armour appearance (D051 source-approval gate; the consumer
   keeps the same character at grade 0 and names the gate).
 * **Not mine:** the home locomotion failure above.
-* **Unverified this round:** the 2160p workshop frame was not re-inspected by eye after
-  the final scrollbar change; the 720p and 1440p states it was checked against are from
-  the immediately preceding commit. This is stated so it is not counted as inspected.
+* **Inspected this round at 1×:** `world_economy_1280x720.png` from run 41221642100
+  (`a5d1d407`), the build that carries the gutter scrollbar: the bar is visible in its own
+  gutter, the list keeps its full width, the footer is on parchment rather than on the
+  border, and the fourth card is still clipped by the clip edge — which is the plain
+  overflow cue, not a layout fault, and is option 2 in the choice table above.
+* **Not inspected this round at 1×:** `world_economy_2560x1440.png` and
+  `world_economy_3840x2160.png` from the same run. They are rendered and published, so
+  they can be read, but no one has looked at them yet and they are not claimed as seen.
