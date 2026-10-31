@@ -308,23 +308,35 @@ jobs:
           set +e
           res="${{ matrix.resolution }}"
           mkdir -p "artifacts/captures-${res}"
-          export SOUL_OF_HERO_SAVE_PATH="user://a6_ui_${res}.json"
-          timeout --foreground --signal=TERM --kill-after=20s 720s xvfb-run --auto-servernum \
-            -s "-screen 0 ${res}x24" \
-            env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
-            godot --path . --rendering-driver opengl3 --audio-driver Dummy \
-            res://tests/survival/ui/a6_survival_ui_capture.tscn -- \
-            --a6-ui-capture --capture-size="${res}" \
-            --capture-dir="$PWD/artifacts/captures-${res}" \
-            --capture-tag=survival_ui > "artifacts/capture-${res}.log" 2>&1
-          status=$?
-          echo "A6 screen capture ${res}: exit ${status}" | tee -a "$GITHUB_STEP_SUMMARY"
-          tail -20 "artifacts/capture-${res}.log"
+          status=0
+          # One process per visual direction: both takes show the same scene and the same
+          # fixture, and neither can inherit state from the other.
+          for direction in a b; do
+            export A6_VISUAL_DIRECTION="${direction}"
+            # A save per direction, so the second take starts from an empty world rather
+            # than inheriting the first take's inventory and finished jobs.
+            export SOUL_OF_HERO_SAVE_PATH="user://a6_ui_${res}_${direction}.json"
+            timeout --foreground --signal=TERM --kill-after=20s 720s xvfb-run --auto-servernum \
+              -s "-screen 0 ${res}x24" \
+              env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe A6_VISUAL_DIRECTION="${direction}" \
+              godot --path . --rendering-driver opengl3 --audio-driver Dummy \
+              res://tests/survival/ui/a6_survival_ui_capture.tscn -- \
+              --a6-ui-capture --capture-size="${res}" \
+              --capture-dir="$PWD/artifacts/captures-${res}" \
+              --capture-tag=survival_ui > "artifacts/capture-${res}-dir${direction}.log" 2>&1
+            one=$?
+            echo "A6 screen capture ${res} direction ${direction}: exit ${one}" | tee -a "$GITHUB_STEP_SUMMARY"
+            if [ "${one}" -ne 0 ]; then
+              status="${one}"
+              break
+            fi
+          done
+          tail -20 "artifacts/capture-${res}-dir${direction}.log"
           if [ "${status}" -ne 0 ]; then
             # 60 lines, not 20: the driver marks each milestone on stderr (unbuffered), so
             # a hard stop is diagnosable from the annotation instead of needing the
             # artifact zip, which this sandbox cannot download.
-            tail -60 "artifacts/capture-${res}.log" | sed 's/^/::error::/'
+            tail -60 "artifacts/capture-${res}-dir${direction}.log" | sed 's/^/::error::/'
             echo "::error::A6 survival UI capture failed at ${res}"
             exit "${status}"
           fi
@@ -383,6 +395,9 @@ jobs:
           # are the same content rendered differently rather than two different moments.
           for direction in a b; do
             export A6_VISUAL_DIRECTION="${direction}"
+            # A save per direction, so the second take starts from an empty world rather
+            # than inheriting the first take's inventory and finished jobs.
+            export SOUL_OF_HERO_SAVE_PATH="user://a6_ui_${res}_${direction}.json"
             rm -f artifacts/visual_*.png
             timeout --foreground --signal=TERM --kill-after=20s 600s xvfb-run --auto-servernum \
               -s "-screen 0 ${res}x24" \

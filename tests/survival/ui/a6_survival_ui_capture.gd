@@ -65,20 +65,21 @@ func _run() -> void:
 	# world paints over every screen captured after it; ordering the world last means the
 	# scene screens are captured against their own backdrop and nothing has to be torn
 	# down mid-run.
-	for direction: String in [A6UiKit.DIRECTION_LEDGER, A6UiKit.DIRECTION_BOARD]:
-		A6UiKit.set_direction(direction)
-		var suffix := "_dir" + direction
-		printerr("A6 SURVIVAL UI CAPTURE: direction ", direction)
-		await _capture_screen("avatar_choice" + suffix, AVATAR_SCENE, "MaleButton")
-		await _capture_screen("avatar_female" + suffix, AVATAR_SCENE, "FemaleButton")
-		await _capture_hud("hud_field" + suffix)
+	# One direction per process, selected by A6_VISUAL_DIRECTION. The CI matrix runs this
+	# driver twice per resolution rather than switching direction inside one run: a
+	# direction is a property of the frame, and a fresh process cannot carry a stale one
+	# into the next frame.
+	var direction := A6UiKit.direction()
+	var suffix := "_dir" + direction
+	printerr("A6 SURVIVAL UI CAPTURE: direction ", direction)
+	await _capture_screen("avatar_choice" + suffix, AVATAR_SCENE, "MaleButton")
+	await _capture_screen("avatar_female" + suffix, AVATAR_SCENE, "FemaleButton")
+	await _capture_hud("hud_field" + suffix)
 	await _capture_return("return_digest", "digest")
 	await _capture_return("return_guidance", "guidance")
-	for direction: String in [A6UiKit.DIRECTION_LEDGER, A6UiKit.DIRECTION_BOARD]:
-		A6UiKit.set_direction(direction)
-		printerr("A6 SURVIVAL UI CAPTURE: workshop direction ", direction)
-		await _capture_workshop("workshop_queued_dir" + direction)
-		await _capture_workshop("workshop_settled_dir" + direction)
+	printerr("A6 SURVIVAL UI CAPTURE: workshop direction ", direction)
+	await _capture_workshop("workshop_queued" + suffix)
+	await _capture_workshop("workshop_settled" + suffix)
 	_write_manifest()
 	if not _failures.is_empty():
 		for message: String in _failures:
