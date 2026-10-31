@@ -730,6 +730,34 @@ class GroundDecal extends Fx:
 		var t: float = g.t * 22 * pulse
 		var pw: int = int(M.P["w"])
 		var cb: int = int(cols["b"])
+		# Single-pass fast path (bit-identical): when the layer is in the
+		# opaque full-density state, raw_px is a plain in-bounds write.
+		if L.dl >= 16 and not L.add and L.a == 255 and not L.cov:
+			var lb: PackedByteArray = L.bytes
+			L.bytes = PackedByteArray()  # avoid COW full-buffer copy
+			var LW: int = L.W
+			var LH: int = L.H
+			var kk: float = L.k
+			for i in range(_dxs.size()):
+				if fade < 1 and _dh1[i] > fade:
+					continue
+				if vis < 1 and _dh2[i] > vis:
+					continue
+				var c: int = _dcs[i]
+				if _dgs[i] >= 0:
+					var ph: float = fmod(fmod(t - float(_dgs[i]), 44.0) + 44.0, 44.0)
+					if ph < 7:
+						c = pw if ph < 2.5 else M.mix(cb, pw, 0.5)
+				var gx: int = int(floor((x + _dxs[i]) * kk + 0.5))
+				var gy: int = int(floor((y + _dys[i]) * kk + 0.5))
+				if gx >= 0 and gx < LW and gy >= 0 and gy < LH:
+					var o: int = (gy * LW + gx) * 4
+					lb[o] = c & 255
+					lb[o + 1] = (c >> 8) & 255
+					lb[o + 2] = (c >> 16) & 255
+					lb[o + 3] = 255
+			L.bytes = lb
+			return
 		_sgx.clear()
 		_sgy.clear()
 		_sc.clear()
@@ -758,6 +786,39 @@ class GroundDecal extends Fx:
 		_sgx.clear()
 		_sgy.clear()
 		_sc.clear()
+		# Single-pass fast path (bit-identical): additive full-density
+		# raw_px is a clamped channel add.
+		if L.dl >= 16 and not L.cov:
+			var lb2: PackedByteArray = L.bytes
+			L.bytes = PackedByteArray()  # avoid COW full-buffer copy
+			var LW2: int = L.W
+			var LH2: int = L.H
+			var kk2: float = L.k
+			var av: int = L.a
+			var cr: int = ((glowCol & 255) * av) >> 8
+			var cg: int = (((glowCol >> 8) & 255) * av) >> 8
+			var cb2: int = (((glowCol >> 16) & 255) * av) >> 8
+			var i2: int = 0
+			while i2 < _dxs.size():
+				if _dgs[i2] >= 0:
+					var ph2: float = fmod(fmod(t - float(_dgs[i2]), 44.0) + 44.0, 44.0)
+					if ph2 < 7:
+						var gx2: int = int(floor((x + _dxs[i2]) * kk2 + 0.5))
+						var gy2: int = int(floor((y + _dys[i2]) * kk2 + 0.5))
+						if gx2 >= 0 and gx2 < LW2 and gy2 >= 0 and gy2 < LH2:
+							var o2: int = (gy2 * LW2 + gx2) * 4
+							var r2: int = int(lb2[o2]) + cr
+							var g2: int = int(lb2[o2 + 1]) + cg
+							var b2: int = int(lb2[o2 + 2]) + cb2
+							lb2[o2] = 255 if r2 > 255 else r2
+							lb2[o2 + 1] = 255 if g2 > 255 else g2
+							lb2[o2 + 2] = 255 if b2 > 255 else b2
+							lb2[o2 + 3] = 255
+				i2 += 2
+			L.bytes = lb2
+			L.add = false
+			L.a = 255
+			return
 		var i: int = 0
 		while i < _dxs.size():
 			if _dgs[i] >= 0:
