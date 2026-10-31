@@ -12,6 +12,7 @@ jobs:
       fail-fast: false
       matrix:
         first: [1, 6, 11, 16]
+        lighting: [normal, dimmed]
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -33,9 +34,10 @@ jobs:
           mkdir -p "$RUNNER_TEMP/arcana20-phases/artifacts"
           timeout 300s godot --headless --path "$RUNNER_TEMP/arcana20-phases" --import 2>&1 | tee "$RUNNER_TEMP/arcana20-phases/artifacts/import.log"
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/arcana20-phases/artifacts/import.log"
-      - name: Capture six catalog-relative moments per cast on the actual overworld
+      - name: Capture six catalog-relative moments with actual world tint and experimental post
         env:
           FIRST: ${{ matrix.first }}
+          ARCANA20_PHASE_LIGHT: ${{ matrix.lighting }}
         run: |
           set -o pipefail
           timeout --signal=TERM --kill-after=10s 2100s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 ARCANA20_PHASE_FIRST="$FIRST" \
@@ -53,7 +55,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: arcana20-phase-sweep-${{ matrix.first }}
+          name: arcana20-phase-sweep-${{ matrix.first }}-${{ matrix.lighting }}
           path: |
             ${{ runner.temp }}/arcana20-phases/arcana20_join_manifest.json
             ${{ runner.temp }}/arcana20-phases/artifacts/

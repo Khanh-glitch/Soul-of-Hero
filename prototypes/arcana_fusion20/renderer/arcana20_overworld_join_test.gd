@@ -1117,6 +1117,16 @@ func _phase_draw(source: Node) -> void:
 ## selected-phase correctness, GPU/device performance or creator approval.
 func _phase_sweep(app: Node, world: Node, player: Node2D, enemy: Node2D, camera: Camera2D) -> void:
     app.process_mode = Node.PROCESS_MODE_DISABLED
+    var lighting := OS.get_environment("ARCANA20_PHASE_LIGHT")
+    if lighting == "dimmed":
+        # Exercise the real scene's existing WorldTint node, not an invented
+        # battlefield or a change to the authored effects. This is an explicit
+        # test stimulus, not a claim the game has an authored night cycle.
+        var world_tint := world.get_node_or_null("WorldTint") as CanvasModulate
+        check(world_tint != null, "phase sweep finds actual world tint")
+        if world_tint != null: world_tint.color *= Color(0.4, 0.4, 0.4, 1.0)
+    else:
+        lighting = "normal"
     var renderer := Arcana20Renderer.new()
     renderer.world_pass_mode = true
     renderer.process_mode = Node.PROCESS_MODE_ALWAYS
@@ -1125,6 +1135,10 @@ func _phase_sweep(app: Node, world: Node, player: Node2D, enemy: Node2D, camera:
     mount.process_mode = Node.PROCESS_MODE_ALWAYS
     world.add_child(mount)
     check(mount.attach(renderer), "all20 multi-phase world mount")
+    var post := Arcana20CViewportPost.new()
+    post.process_mode = Node.PROCESS_MODE_ALWAYS
+    world.add_child(post)
+    check(post.attach(renderer), "all20 multi-phase experimental real-viewport post")
     camera.force_update_scroll()
     await process_frame
     await process_frame
@@ -1171,14 +1185,15 @@ func _phase_sweep(app: Node, world: Node, player: Node2D, enemy: Node2D, camera:
         await process_frame
         await process_frame
         var cleared := await save_frame("phase_%02d_cleared" % num)
-        var restored := images_equal(baseline, cleared) and mount.active_viewers(id) == 0
+        var restored := images_equal(baseline, cleared) and mount.active_viewers(id) == 0 and not post._states.has(id)
         check(restored, "phase sweep cancellation restores actual world %d" % num)
-        var row := {"id": num, "catalog_duration": duration, "native_duration": native_duration, "samples": samples, "restored": restored}
+        var row := {"id": num, "lighting_stimulus": lighting, "experimental_c_post_enabled": true, "catalog_duration": duration, "native_duration": native_duration, "samples": samples, "restored": restored}
         records.append(row)
         print("JOIN_PHASE ", JSON.stringify(row))
     var out := FileAccess.open(OUTPUT + "/phase_sweep_%02d.json" % first, FileAccess.WRITE)
-    out.store_string(JSON.stringify({"scope": "frozen historical real overworld, six catalog-relative ticks; no source parity, gameplay, target-device, or creator approval", "records": records}, "  "))
+    out.store_string(JSON.stringify({"scope": "frozen historical real overworld; normal or test-dimmed WorldTint; experimental C viewport post; six catalog-relative ticks; no source parity, gameplay, target-device, or creator approval", "records": records}, "  "))
     out.close()
+    post.detach()
     mount.detach()
     app.queue_free()
     await process_frame
