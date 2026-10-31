@@ -191,7 +191,7 @@ func _continuation(ow: Node) -> void:
 	# The furnace now occupies the cell it was built on, so the player cannot stand
 	# on it. They walk up to it with ordinary directional input until the station is
 	# within arm's length, which is what a player does after placing something.
-	var reached := await _approach_station(hero, nav, _station_point(furnace_id, placed))
+	var reached := await _approach_station(hero, nav, _station_point(furnace_id, placed), "the built furnace")
 	_expect(reached, "the player can stand at the furnace it just built")
 	if not reached:
 		_write_audit(ow, {})
@@ -201,7 +201,7 @@ func _continuation(ow: Node) -> void:
 	for entry: Variant in nearby:
 		if String((entry as Dictionary).get("station_id", "")) == furnace_id:
 			furnace_visible = true
-	_expect(furnace_visible, "the panel counts the built furnace as a nearby station")
+	_expect(furnace_visible, "the panel counts the built furnace as a nearby station (%d listed)" % nearby.size())
 	_open_panel(panel)
 	var charcoal_button := _recipe_button(panel, "burn_charcoal", furnace_id)
 	if charcoal_button == null:
@@ -581,8 +581,16 @@ func _recipe_button(panel: Node, recipe_id: String, station_id: String) -> Butto
 	var exact := panel.find_child("Recipe_%s_%s" % [recipe_id, station_id], true, false) as Button
 	if exact != null:
 		return exact
-	for value: Node in panel.find_children("Recipe_%s_*" % recipe_id, "Button", true, false):
-		return value as Button
+	# A wildcard may match a row that belongs to a different station, so it is only
+	# trusted when exactly one row carries this recipe id.
+	var matches: Array = panel.find_children("Recipe_%s_*" % recipe_id, "Button", true, false)
+	if matches.size() == 1:
+		return matches[0] as Button
+	if matches.size() > 1:
+		var names: Array[String] = []
+		for value: Node in matches:
+			names.append(String(value.name))
+		print("A0_CONNECTED_RECIPE_AMBIGUOUS recipe=%s rows=%s" % [recipe_id, str(names)])
 	return null
 
 
@@ -596,18 +604,20 @@ func _dump_panel(panel: Node, host: Node, station_id: String) -> void:
 	for entry: Variant in (host.call(&"available_recipes", station_id) as Array):
 		recipes.append(String((entry as Dictionary).get("id", "")))
 	var stations: Array[String] = []
-	for entry: Variant in (host.call(&"available_stations") as Array):
+	for entry: Variant in (host.call(&"nearby_stations") as Array):
 		var station: Dictionary = entry
 		stations.append("%s:%s:t%d" % [String(station.get("station_id", "")),
 			String(station.get("kind", "")), int(station.get("tier", 0))])
-	print("A0_CONNECTED_PANEL open=%s station=%s recipes=%s stations=%s buttons=%s" % [
-		str(bool(panel.call(&"is_open"))), station_id, str(recipes), str(stations), str(rows.slice(0, 24))])
+	print("A0_CONNECTED_PANEL open=%s station=%s anchor_ok=%s recipes=%s stations=%s buttons=%s" % [
+		str(bool(panel.call(&"is_open"))), station_id,
+		str(bool(host.call(&"station_in_reach", station_id, host.call(&"get_node_or_null", NodePath("/root/__none"))))),
+		str(recipes), str(stations), str(rows.slice(0, 24))])
 
 
 ## Walk toward a physical station until it is within the interaction reach, using
 ## only directional input. No teleport and no pathing shortcut: if the body cannot
 ## get close enough, the step fails and says how far away it stopped.
-func _approach_station(hero: CharacterBody2D, nav: OverworldTraversability, point: Vector2) -> bool:
+func _approach_station(hero: CharacterBody2D, nav: OverworldTraversability, point: Vector2, label: String) -> bool:
 	var deadline := Time.get_ticks_msec() + 9000
 	var stalled := 0
 	# A3's panel lists a station within 64 px of the *centre of its footprint*
@@ -615,7 +625,11 @@ func _approach_station(hero: CharacterBody2D, nav: OverworldTraversability, poin
 	# For a 2x2 furnace those two windows disagree, so a player standing at a legal
 	# interaction distance can be outside the panel's station window. Walk up close
 	# enough that both agree, which is also what a player does at a furnace.
-	while point.distance_to(hero.global_position) > 26.0 and Time.get_ticks_msec() < deadline:
+	# One policy: SurvivalStationReach measures from the centre of the station's
+	# footprint and the player must be inside SurvivalStructure.REACH of it. Walk
+	# until comfortably inside that radius, not to an invented tighter number.
+	var want := SurvivalStationReach.RADIUS - 8.0
+	while point.distance_to(hero.global_position) > want and Time.get_ticks_msec() < deadline:
 		var before := hero.global_position
 		_set_direction(point - before)
 		await physics_frame
@@ -623,24 +637,26 @@ func _approach_station(hero: CharacterBody2D, nav: OverworldTraversability, poin
 		if stalled > 40:
 			break
 	_set_direction(Vector2.ZERO)
-	var ok := point.distance_to(hero.global_position) <= 30.0
+	var ok := point.distance_to(hero.global_position) <= SurvivalStationReach.RADIUS
 	if not ok:
-		print("A0_CONNECTED_APPROACH cell=%s hero=%s distance=%.2f want=%.1f panel_window=64.0" % [
-			str(nav.cell_of(point)), str(hero.global_position), point.distance_to(hero.global_position), 26.0])
+		print("A0_CONNECTED_APPROACH %s cell=%s hero=%s distance=%.2f radius=%.1f" % [
+			label, str(nav.cell_of(point)), str(hero.global_position),
+			point.distance_to(hero.global_position), SurvivalStationReach.RADIUS])
 	return ok
 
 
 ## Where a station physically stands, from the authoritative structure record.
+## The station's interaction anchor, measured exactly the way the product measures
+## it: the centre of the footprint of the piece that actually stands there.
 func _station_point(station_id: String, fallback_cell: Vector2i) -> Vector2:
 	var structures: Dictionary = _survival().call(&"structures")
 	var record: Dictionary = structures.get(station_id, {}) if structures.has(station_id) else {}
-	var point: Variant = record.get("position", null)
-	if point is Vector2:
-		return point as Vector2
+	var definition: Dictionary = _survival().call(&"piece_definition", String(record.get("piece", "")))
 	var cell: Array = record.get("cell", [])
+	var origin := Vector2(float(fallback_cell.x) * 16.0, float(fallback_cell.y) * 16.0)
 	if cell.size() == 2:
-		return Vector2(float(cell[0]) * 16.0 + 8.0, float(cell[1]) * 16.0 + 8.0)
-	return Vector2(float(fallback_cell.x) * 16.0 + 8.0, float(fallback_cell.y) * 16.0 + 8.0)
+		origin = Vector2(float(cell[0]) * 16.0, float(cell[1]) * 16.0)
+	return origin + SurvivalStationReach.footprint_pixels(definition) * 0.5
 
 
 func _walk_to_cell(hero: CharacterBody2D, nav: OverworldTraversability, cell: Vector2i, label: String) -> bool:

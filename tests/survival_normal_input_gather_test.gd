@@ -282,15 +282,21 @@ func _click_window(position: Vector2) -> void:
 	var motion := InputEventMouseMotion.new()
 	motion.position = position
 	Input.parse_input_event(motion)
-	var click := InputEventMouseButton.new()
-	click.position = position
-	click.button_index = MOUSE_BUTTON_LEFT
-	click.pressed = true
-	Input.parse_input_event(click)
+	# A parsed event object must not be re-sent for the release: Godot reports
+	# "Input.parse_input_event: reusing an event object" and the second parse is not
+	# guaranteed to be delivered as a fresh press/release pair.
+	var press := InputEventMouseButton.new()
+	press.position = position
+	press.button_index = MOUSE_BUTTON_LEFT
+	press.pressed = true
+	Input.parse_input_event(press)
 	await physics_frame
 	await process_frame
-	click.pressed = false
-	Input.parse_input_event(click)
+	var release := InputEventMouseButton.new()
+	release.position = position
+	release.button_index = MOUSE_BUTTON_LEFT
+	release.pressed = false
+	Input.parse_input_event(release)
 	await process_frame
 
 ## The panel joins the target and the status word with its own separator ("weave

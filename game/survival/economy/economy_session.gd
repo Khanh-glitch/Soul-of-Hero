@@ -155,6 +155,17 @@ func _resolve_station(id: String) -> Dictionary:
 	return data
 
 
+## Can the player use this physical station right now? One rule for listing,
+## queueing and research: within SurvivalStationReach.RADIUS of the centre of the
+## station's own footprint (see survival_station_reach.gd for why).
+func station_in_reach(station_id: String, node: Node2D) -> bool:
+	if node == null:
+		return false
+	var entry: Dictionary = (_survival.call(&"structures") as Dictionary).get(station_id, {})
+	var definition: Dictionary = _survival.call(&"piece_definition", String(entry.get("piece", "")))
+	return SurvivalStationReach.in_reach(_hero.global_position, node, definition)
+
+
 ## A0 read of the pausable world clock, for binding an A3 receipt to the moment
 ## the player actually swung. It is an echo, never an authority: A3 records it as
 ## "A0_REQUEST_ECHO_NOT_VERIFIED_BY_A3" and never pays based on it.
@@ -437,7 +448,7 @@ func queue_recipe(recipe_id: String, station_id: String) -> Dictionary:
 	if station_id != "hand":
 		var station := _resolve_station(station_id)
 		var node: Node2D = _build.call(&"structure_node", station_id)
-		if station.is_empty() or node == null or _hero.global_position.distance_to(node.global_position + Vector2(16, 16)) > 64:
+		if station.is_empty() or not station_in_reach(station_id, node):
 			return {"ok": false, "reason": "station_not_reachable"}
 		station_kind = String(station.get("kind", ""))
 	# A3's hand resolver intentionally permits a caller-provided id. The player
@@ -457,7 +468,7 @@ func queue_technology(technology_id: String, station_id: String) -> Dictionary:
 		return {"ok": false, "reason": "session_inactive"}
 	var station := _resolve_station(station_id)
 	var node: Node2D = _build.call(&"structure_node", station_id)
-	if station.is_empty() or node == null or _hero.global_position.distance_to(node.global_position + Vector2(16, 16)) > 64:
+	if station.is_empty() or not station_in_reach(station_id, node):
 		return {"ok": false, "reason": "station_not_reachable"}
 	if String(station.get("kind", "")) != "research":
 		return {"ok": false, "reason": "station_research_mismatch"}
@@ -577,7 +588,7 @@ func nearby_stations() -> Array[Dictionary]:
 		if station.is_empty():
 			continue
 		var node: Node2D = _build.call(&"structure_node", id)
-		if node != null and _hero.global_position.distance_to(node.global_position + Vector2(16, 16)) <= 64:
+		if node != null and station_in_reach(id, node):
 			result.append(station.duplicate(true))
 	return result
 
