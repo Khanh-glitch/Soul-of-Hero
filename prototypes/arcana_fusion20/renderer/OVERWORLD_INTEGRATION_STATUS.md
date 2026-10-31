@@ -75,8 +75,8 @@ failed; this historical pin is not an endorsement of the latest route.
 | 16 | A growth + C material; [original source samples 41210844049](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41210844049), [real-world sample 41210774544](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41210774544) | C material parity, full world cast/OUT and owner review |
 | 17 | C world pass diagnostic incl. live-screen fragment mapping | [run 41207915157](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41207915157), one frozen frame only |
 | 18 | A candidate fields available; REDESIGN_CANDIDATE | Real actors, full-cast and world review missing |
-| 19 | D additive and persistent warp consumer, frozen-world/cancel [JOIN 41209511506](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41209511506) | D bloom/post, OUT review, depth and original parity missing |
-| 20 | C contour/polygons/blocks/particles/OUT + A world pull candidate; [source and world diagnostics below](#experimental-c-viewport-impulses-and-20-rift) | A debris, complete fusion/world fidelity, gameplay depth and review missing |
+| 19 | D additive and persistent warp consumer; pixel-center sprite/ribbon source diagnostic [41216275855](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41216275855) | D bloom/post, full OUT, depth, full original parity and visual approval missing |
+| 20 | C contour/polygons/blocks/particles/OUT + A world pull and real-ground debris candidate; [motion](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41215663639), [overworld JOIN](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41215918902) | Complete fusion/world fidelity, gameplay authority, moving-hit/miss, depth and review missing |
 
 Run-level pass does not override a failing check annotation. No thresholds have
 been relaxed. Only CT owns `soh_binding/**`; no production mount, merge, fake
@@ -358,3 +358,60 @@ completed with the same reported summary metrics, and
 [world JOIN 41213605315](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41213605315)
 passed at `c2882d5a`. Ribbons/poly, GPU rounding, coverage, bloom/post, actual
 SOH world source parity and creator review remain separate.
+
+## 2026-10-31 continued native work — scoped evidence
+
+- At `8eaffdfb` A20's original seeded spawn, decay and bilinear debris role was
+  mapped onto C20's **single** selected contour, with C20's existing retimed
+  clock. It emits additive sampling instructions for actual SOH world pixels;
+  per-pixel operation lists preserve overlapping source coordinates rather
+  than overwriting earlier debris. [A motion reference 41215663639](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41215663639)
+  compares original A and native on the original A path at six A ticks:
+  counts 0/48/192/336/310/54, maximum state difference 5.12e-13. This does
+  not establish fused visual parity or gameplay hits. The retiming and C-path
+  mapping remain fusion-candidate decisions pending visual review.
+- Historical A0 JOIN at `d44e3892` [41215918902](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41215918902),
+  [triage 41216218828](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41216218828),
+  found 9,516 live sample operations over 4,117 pixels with 2,923 pixels
+  retaining multiple mappings; disabling the additive pass changed the real
+  world. This was a frozen tick, not a moving-cast, miss or damage proof.
+- Full **visible actual HUD at this state** isolation in the same JOIN was
+  measured using black/white backgrounds below the real HUD and post-on/off
+  live-world captures: 59,787 covered pixels, 17,930 opaque, 41,857 partial,
+  0 mismatches under a fixed 3/255 arithmetic-rounding bound (max 1.667/255).
+  Hidden panels/states, other A0 versions and human contamination review are
+  not covered. HUD geometry was not fabricated. Active-cast AppFlow transition
+  regression was added later at `79d632c1` and remains pending.
+- Five economy resources and 17 ObjectDB instances remained in both the
+  no-AVFX baseline and full frozen JOIN at `d44e3892`; the **count delta**
+  was zero, not proof that all possible AVFX lifecycle leaks are absent.
+- D at `bafac9de` [41216275855](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41216275855)
+  aligns straight-ribbon sampling with GPU fragment centers/finite strips,
+  approximating the source shader's screen-gradient fwidth. Neutral g-buffer
+  support IoU 0.961/0.964/0.873/0.987/0.987 and linear RGB MAE
+  0.000371/0.000500/0.001930/0.008032/0.009180 at ticks 72/192/312/489/510;
+  max error 0.820/0.894/1.0/0.980/0.986. **Not parity.** Further poly,
+  multi-segment ribbon, fwidth and source blend/rounding work remains.
+  Legacy D preview at `d4fd9040` is explicit additive blending with opaque
+  black inputs, not RGB-derived alpha or evidence of authored coverage; native
+  bloom, full post and full-cast comparison are still missing and tests pending.
+- `e0965930` caches the immutable seed-151461 nearest-contour fields to avoid
+  recomputation for repeated #20 casts; approximately 1,990,656 packed bytes
+  remain intentionally resident as a shared static cache. Cold/cached timing,
+  copy-on-write, allocation and world regression are pending. This does not
+  establish frame-rate performance or target-device memory budget.
+- Latest A0 inspected is `a6e3797879915510b2e86be0d2ee521f53967c94`:
+  [A0+A6 composition 41215828924](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41215828924/job/124580025221)
+  fails `res://game/survival/a0_world_authority.gd:157`, missing `_spawn_cell()`;
+  [connected journey 41215828926](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41215828926/job/124580025210)
+  separately fails accessing `disabled`/`pressed` on freed controls. Exact
+  normal-entry leg uses `timeout --signal=TERM --kill-after=15s 1800s xvfb-run
+  -a bash tools/ci/godot_isolated.sh --path . --rendering-method gl_compatibility
+  --rendering-driver opengl3 --audio-driver Dummy --user-data-dir
+  artifacts/ud_candidate --resolution 960x540 --windowed --script
+  res://tests/survival_normal_entry_waystation_candidate_test.gd`; its
+  [job 124580025941](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41215828989/job/124580025941)
+  fails. A0 owns these errors; no A0 fix or acceptance claim is made here.
+  Current AVFX code is on Arena branch, **not** PR #28 (`06ca9f15`, older #02
+  pilot). Coordination: [PR30 comment](https://github.com/Khanh-glitch/Soul-of-Hero/pull/30#issuecomment-6545495243),
+  [A0 owner comment](https://github.com/Khanh-glitch/Soul-of-Hero/pull/21#issuecomment-6545623258).
