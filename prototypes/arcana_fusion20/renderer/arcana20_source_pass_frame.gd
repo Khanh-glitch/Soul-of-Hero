@@ -73,6 +73,9 @@ var d_world_warp: PackedFloat32Array
 var d_warp_influence: PackedByteArray
 var d_renderer_time: float
 var d_warp_amount: float
+# Authored D OUT presentation weight. Leaves original accumulated warp field
+# untouched; falls to zero only during the explicitly new withdrawal.
+var d_warp_fade := 1.0
 var d_bends: Array[Dictionary]
 var d_bloom_gain: float
 var d_shake_amplitude: float

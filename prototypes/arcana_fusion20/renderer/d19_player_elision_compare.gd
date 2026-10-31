@@ -38,6 +38,12 @@ func _run() -> void:
         skipped.advance(dt)
         var x := eager._eng.fx
         var y := skipped._eng.fx
+        var f := eager.source_pass_frame()
+        var expected_out := 1.0 - clampf((eager.source_time()-DConstellationEngine.OUT_START)/(DConstellationEngine.DURATION-DConstellationEngine.OUT_START),0.0,1.0)
+        if absf(f.d_warp_fade-expected_out) > 0.0000001 or f.d_warp_fade != skipped.source_pass_frame().d_warp_fade:
+            push_error("D19 authored world warp fade mismatch at tick %d" % eager._tick)
+            quit(1)
+            return
         if eager._tick != skipped._tick or eager._acc != skipped._acc or eager._active != skipped._active or eager._events != skipped._events or eager._eng._nodes != skipped._eng._nodes or eager._eng._edges != skipped._eng._edges or eager._eng._pulses != skipped._eng._pulses or x._pool != y._pool or x.rng.s != y.rng.s or x.buf != y.buf or x.world_influence != y.world_influence or x.world_warp != y.world_warp or x.world_warp_influence != y.world_warp_influence or x.world_bends != y.world_bends or x.flash_amt != y.flash_amt or x.flash_col != y.flash_col or x.shake != y.shake or x.bloom_gain != y.bloom_gain or x.warp_amt != y.warp_amt or x.decal_fade != y.decal_fade or a.events != b.events or a.contacts != b.contacts:
             push_error("D19 player elision mismatch at tick %d" % eager._tick)
             quit(1)

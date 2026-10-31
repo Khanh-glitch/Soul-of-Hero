@@ -4,7 +4,7 @@ import json, pathlib, sys
 import numpy as np
 from PIL import Image
 p=pathlib.Path(sys.argv[1]); w,h=384,216; rows=[]
-for tick in (450,456,457,480,510,540,590):
+for tick in (450,456,457,480,510,540,590,610,660,720,744,780,786):
     fields={}
     for who in ('original','native'):
         for kind in ('ink','light','disp'):
@@ -14,6 +14,9 @@ for tick in (450,456,457,480,510,540,590):
     a,b=fields['original','ink'],fields['native','ink']
     am,bm=a[:,:,3]>0,b[:,:,3]>0
     union=np.count_nonzero(am|bm); inter=np.count_nonzero(am&bm)
+    aw=np.fromfile(p/f'original_{tick}.coverage.u8',dtype='u1').reshape(h,w)!=0
+    bw=np.fromfile(p/f'native_{tick}.coverage.u8',dtype='u1').reshape(h,w)!=0
+    write_union=int(np.count_nonzero(aw|bw));write_inter=int(np.count_nonzero(aw&bw))
     metrics={}; regions=[]
     for kind in ('ink','light','disp'):
         diff=np.abs(fields['original',kind]-fields['native',kind])
@@ -30,6 +33,11 @@ for tick in (450,456,457,480,510,540,590):
     mask[:,:,0]=np.where(bm & ~am,255,0); mask[:,:,1]=np.where(am & bm,255,0); mask[:,:,2]=np.where(am & ~bm,255,0)
     Image.fromarray(mask,'RGB').save(p/f'{tick}_coverage_iou.png')
     row={'tick':tick,'authored_ink_coverage_iou':float(inter/union) if union else None,'coverage_union':int(union),
-         **metrics,'regions':regions,'scope':'C16 selected seed/spore/petal particles on zero base; source Math.random particle-seed sequence controlled to match native; no growth, post or world'}
+         'authored_write_iou':float(write_inter/write_union) if write_union else None,'write_union':write_union,
+         **metrics,'regions':regions,'scope':'C16 particles on zero base, controlled source seeds; after tick612 is extrapolated source particle simulation beyond original scene duration, not original full-cast parity'}
     rows.append(row); print('C16_DEBRIS_COMPARE',json.dumps({k:v for k,v in row.items() if k!='regions'}),flush=True)
 (p/'comparison.json').write_text(json.dumps(rows,indent=2))
+
+for row in rows:
+    if (row['write_union'] and row['authored_write_iou'] != 1.0) or any(row[k+'_max'] > 1e-6 for k in ('ink','light','disp')):
+        raise SystemExit(f"source particle field regression at tick {row['tick']}")

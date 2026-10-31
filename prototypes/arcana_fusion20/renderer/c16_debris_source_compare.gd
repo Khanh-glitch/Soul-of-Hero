@@ -4,11 +4,12 @@ const OUT := "res://artifacts/arcana20-c16-debris-source"
 func _initialize() -> void:
     DirAccess.make_dir_recursive_absolute(OUT)
     CKit._auto_seed = 0
-    for tick in [450, 456, 457, 480, 510, 540, 590]:
+    for tick in [450, 456, 457, 480, 510, 540, 590, 610, 660, 720, 744, 780, 786]:
         var effect := CWorldseedDebris.new()
         effect.setup()
         for i in range(1, tick + 1): effect.update(1.0 / 60.0, float(i) / 60.0)
         var frame := CFrame.new()
+        frame.track_world_fragments = true
         frame.clear()
         effect.render(frame, float(tick) / 60.0)
         for kind in ["ink", "light", "disp"]:
@@ -16,6 +17,9 @@ func _initialize() -> void:
             var data: PackedFloat32Array = frame.get(kind)
             file.store_buffer(data.to_byte_array())
             file.close()
+        var coverage := FileAccess.open(OUT + "/native_%d.coverage.u8" % tick, FileAccess.WRITE)
+        coverage.store_buffer(frame.world_influence)
+        coverage.close()
         print("C16_DEBRIS_COUNT ", tick, " ", effect.particles.size())
     print("C16_DEBRIS_CAPTURE_COMPLETE")
     quit()

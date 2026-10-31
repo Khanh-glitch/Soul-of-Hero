@@ -11,6 +11,9 @@ uniform vec2 screen_dx = vec2(1.0, 0.0);
 uniform vec2 screen_dy = vec2(0.0, 1.0);
 uniform float source_time = 0.0;
 uniform float warp_amount = 1.0;
+// Withdraw the accumulated field continuously only during authored D OUT;
+// source warp history and its operation-based influence stay unchanged.
+uniform float warp_fade = 1.0;
 const ivec2 SIZE = ivec2(480,270);
 float bayer(ivec2 p) {
     int m[16] = int[16](0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5);
@@ -30,7 +33,7 @@ vec3 sample_world(vec2 delta, vec2 screen_uv, vec2 pixel_size) {
 void fragment() {
     ivec2 p = clamp(ivec2(floor(UV * vec2(SIZE))), ivec2(0), SIZE - ivec2(1));
     if (texelFetch(influence_tex, p, 0).a == 0.0) { discard; }
-    vec4 w = texelFetch(warp_tex, p, 0);
+    vec4 w = texelFetch(warp_tex, p, 0) * clamp(warp_fade, 0.0, 1.0);
     vec2 off = -w.xy * warp_amount;
     vec3 original = texture(live_world, SCREEN_UV).rgb;
     // Original FLOOR_FS samples three chromatic offsets and applies absorb

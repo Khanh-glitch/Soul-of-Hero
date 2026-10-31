@@ -45,7 +45,11 @@ jobs:
         run: |
           set -o pipefail
           python3 tools/arcana20_source_compare/compare_c16_debris.py artifacts/arcana20-c16-debris-source | tee comparison.log
-          sed 's/^/::notice::/' comparison.log
+          head -7 comparison.log | sed 's/^/::notice title=C16_DEBRIS_EARLY::/'
+      - name: Surface extended particle tail evidence
+        run: |
+          tail -6 comparison.log | sed 's/^/::notice title=C16_DEBRIS_TAIL::/'
+          grep 'C16_DEBRIS_COUNT' native.log | tail -6 | sed 's/^/::notice title=C16_DEBRIS_COUNT::/'
       - uses: actions/upload-artifact@v4
         if: always()
         with:

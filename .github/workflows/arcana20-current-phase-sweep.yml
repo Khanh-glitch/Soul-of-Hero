@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [arena/c7b0c4e8-soul-of-hero]
-    paths: ['.github/workflows/arcana20-current-phase-sweep.yml', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_fusion.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_membranes.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_debris.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_organism.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_leaflets.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_core.gd', 'prototypes/arcana_fusion20/renderer/source_d/d_constellation_engine.gd', 'prototypes/arcana_fusion20/renderer/arcana20_overworld_join_test.gd', 'prototypes/arcana_fusion20/renderer/arcana20_surface_d19_out.py']
+    paths: ['.github/workflows/arcana20-current-phase-sweep.yml', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_fusion.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_membranes.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_debris.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_organism.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_leaflets.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_core.gd', 'prototypes/arcana_fusion20/renderer/source_d/d_constellation_engine.gd', 'prototypes/arcana_fusion20/renderer/source_d/d_source_player.gd', 'prototypes/arcana_fusion20/renderer/world_pass/d_world_composite.gdshader', 'prototypes/arcana_fusion20/renderer/arcana20_overworld_join_test.gd', 'prototypes/arcana_fusion20/renderer/arcana20_surface_d19_out.py']
 permissions:
   contents: read
 jobs:
