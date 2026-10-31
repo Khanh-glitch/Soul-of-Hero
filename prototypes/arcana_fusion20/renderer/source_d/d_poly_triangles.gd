@@ -60,11 +60,19 @@ static func _triangle(fx: Variant, a: Vector2, b: Vector2, c: Vector2, l0: Vecto
             var lx := l0.x * w0 + l1.x * w1 + l2.x * w2
             var ly := l0.y * w0 + l1.y * w1 + l2.y * w2
             var r := _radius(lx, ly)
-            var left_x := lx - float(x & 1) * gx.x
-            var left_y := ly - float(x & 1) * gx.y
-            var top_x := lx - float(y & 1) * gy.x
-            var top_y := ly - float(y & 1) * gy.y
-            var fw := maxf(absf(_radius(left_x + gx.x, left_y + gx.y) - _radius(left_x, left_y)) + absf(_radius(top_x + gy.x, top_y + gy.y) - _radius(top_x, top_y)), 0.0001)
+            # WebGL's default derivatives are coarse on the tested backend:
+            # every pixel in the 2x2 helper quad uses the same x derivative
+            # from its framebuffer-even (top-coordinate odd) row and y
+            # derivative from its x-even column. Using per-row/column fine
+            # derivatives was visibly wrong where max(abs(x),abs(y)) switches
+            # axes near a corner. Other GPU backends may choose differently.
+            var qx := lx - float(x & 1) * gx.x
+            var qy := ly - float(x & 1) * gx.y
+            var bottom_x := qx + float(1 - (y & 1)) * gy.x
+            var bottom_y := qy + float(1 - (y & 1)) * gy.y
+            var top_x := qx - float(y & 1) * gy.x
+            var top_y := qy - float(y & 1) * gy.y
+            var fw := maxf(absf(_radius(bottom_x + gx.x, bottom_y + gx.y) - _radius(bottom_x, bottom_y)) + absf(_radius(top_x + gy.x, top_y + gy.y) - _radius(top_x, top_y)), 0.0001)
             var dist_px := (1.0 - r) / fw
             var coverage := clampf(dist_px / maxf(0.6, edge), 0.0, 1.0)
             if coverage <= 0.004: continue
