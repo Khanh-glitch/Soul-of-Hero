@@ -67,6 +67,34 @@ def validate(report: dict, inputs: dict, budget: dict | None = None) -> dict:
           and not dynamic.get("save_service_used") and not dynamic.get("paid_construction_approved"), dynamic)
     check("two_hazard_retreats", len(report.get("hazards", [])) == 2
           and all(x["forward_ok"] and x["retreat_ok"] and not x["damage_applied"] for x in report["hazards"]))
+    evaluation = report.get("journey_evaluation", {})
+    check("geographic_journey_ids", set(evaluation) == {"J01", "J03", "J04", "J06", "J07", "J12"}, sorted(evaluation))
+    j01 = evaluation.get("J01", {})
+    check("journey_J01_geographic_scope", j01.get("native_cases") == 36 and j01.get("physical_road_returns") == 12
+          and j01.get("explore_first_primary_executed") and j01.get("home_first_player_value_tested") is False, j01)
+    j03 = evaluation.get("J03", {})
+    check("journey_J03_geographic_scope", bool(j03.get("locked_poi_discoveries"))
+          and j03.get("site_arrivals") == report.get("site_arrivals") and len(j03.get("route_options", [])) == 3
+          and all(row.get("compiled_alternative_count") == 3 for row in j03.get("route_options", []))
+          and j03.get("activation_or_power_tested") is False, j03)
+    j04 = evaluation.get("J04", {})
+    check("journey_J04_geographic_scope", j04.get("rows") == report.get("hazards") and len(j04.get("rows", [])) == 2
+          and j04.get("site_arrivals") == report.get("site_arrivals") and bool(j04.get("salvage")), j04)
+    j06 = evaluation.get("J06", {})
+    logistics = j06.get("rows", [])
+    check("journey_J06_geographic_scope", logistics == inputs.get("logistics")
+          and any(float(row.get("repeat_roundtrip_seconds_saved", 0)) > 0 for row in logistics)
+          and any(float(row.get("repeat_roundtrip_seconds_saved", 0)) < 0 for row in logistics)
+          and j06.get("activation_or_carrying_tested") is False, j06)
+    j07_routes = evaluation.get("J07", {}).get("routes", {})
+    check("journey_J07_geographic_scope", set(j07_routes) == {"quarry", "orchard", "mill"}
+          and all(len(j07_routes[key]) == 3 for key in j07_routes), list(j07_routes))
+    j12 = evaluation.get("J12", {})
+    check("journey_J12_geographic_scope", len(j12.get("options", [])) == 3
+          and all(row.get("non_dungeon_outer_site_option") and not row.get("productive_reward_tested")
+                  for row in j12.get("options", []))
+          and j12.get("dynamic") == dynamic and j12.get("productive_sessions_tested") is False
+          and j12.get("dungeon_preparation_tested") is False, j12)
     work = planned_work(inputs)
     captures = report.get("captures", [])
     check("capture_count", len(captures) == work["captures"], {"actual": len(captures), "expected": work["captures"]})

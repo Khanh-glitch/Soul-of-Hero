@@ -881,13 +881,42 @@ func _run_visual_matrix() -> void:
 
 
 func _journey_report() -> Dictionary:
+	var road_returns := 0
+	for row: Variant in spawn_results:
+		if bool((row as Dictionary).get("native_drive", false)) and bool((row as Dictionary).get("return_ok", false)):
+			road_returns += 1
+	var geographic_options: Array = []
+	for site_key: String in (inputs.route_alternatives as Dictionary):
+		var alternatives: Array = (inputs.route_alternatives as Dictionary)[site_key]
+		if alternatives.is_empty():
+			continue
+		var route: Dictionary = alternatives[0]
+		var stats: Dictionary = route.stats
+		geographic_options.append({
+			"site_key": site_key, "poi_id": String((inputs.physical_sites as Dictionary)[site_key].poi_id),
+			"route_id": String(route.route_id), "compiled_alternative_count": alternatives.size(),
+			"cell_count": int(stats.cell_count), "estimated_travel_seconds_at_96": float(stats.estimated_travel_seconds_at_96),
+			"planning_effort_units": float(stats.planning_effort_units),
+			"opportunity_materials": (stats.opportunity_materials as Array).duplicate(),
+			"locked_poi_discoveries": (stats.locked_poi_discoveries as Array).duplicate(true),
+			"non_dungeon_outer_site_option": true, "productive_reward_tested": false,
+		})
 	return {
-		"J01": {"scope": "36 broad safe source spawns; 12 physical road returns; nearby source identities; no inventory", "native_cases": spawn_results.size()},
-		"J03": {"scope": "PLANNING_ONLY home/outpost distance, effort and source opportunity; no A0 activation or proven player value", "rows": inputs.logistics},
-		"J04": {"scope": "PHYSICAL outer approaches and home return; knife/combat/interior/economy not evaluated", "site_arrivals": site_arrivals, "salvage": salvage_arrival},
-		"J06": {"scope": "PHYSICAL warned hazard entry/retreat and asynchronous fields; no damage/mitigation/A6 approval", "rows": hazard_results},
-		"J07": {"scope": "THREE COMPILED ALTERNATIVES PER A8 SITE; primary/reload driven, not every alternative physically driven", "routes": inputs.route_alternatives},
-		"J12": {"scope": "VISIBLE RUN-LOCAL DESCRIPTOR RELOAD AND DETOUR ONLY; 336h production reset/Ragnarok NOT_TESTED", "dynamic": dynamic_results},
+		"J01": {"scope": "GEOGRAPHIC broad spawn and explore-first source choices; home-first construction/inventory value NOT_TESTED",
+			"native_cases": spawn_results.size(), "physical_road_returns": road_returns,
+			"explore_first_primary_executed": site_arrivals.size() == 3 and not salvage_arrival.is_empty(),
+			"home_first_player_value_tested": false},
+		"J03": {"scope": "GEOGRAPHIC locked-POI discovery, access requirements and alternate approaches; credential/power activation, interiors and next-tier unlock NOT_TESTED",
+			"locked_poi_discoveries": discovery_log, "site_arrivals": site_arrivals,
+			"route_options": geographic_options, "activation_or_power_tested": false},
+		"J04": {"scope": "PHYSICAL warned hazard preparation/retreat plus outer approaches/home return; damage/mitigation/A6/knife/interior/economy NOT_TESTED",
+			"rows": hazard_results, "site_arrivals": site_arrivals, "salvage": salvage_arrival},
+		"J06": {"scope": "PLANNING_ONLY home/outpost distance, effort and source opportunity; activation, carrying and proven player value NOT_TESTED",
+			"rows": inputs.logistics, "activation_or_carrying_tested": false},
+		"J07": {"scope": "THREE COMPILED ALTERNATIVES PER A8 SITE; primary/reload driven, not every alternative physically driven; no A3 net loot value", "routes": inputs.route_alternatives},
+		"J12": {"scope": "THREE NON-DUNGEON GEOGRAPHIC OPTIONS and run-local structure detour; three productive sessions and dungeon-preparation outcome NOT_TESTED",
+			"options": geographic_options, "dynamic": dynamic_results,
+			"productive_sessions_tested": false, "dungeon_preparation_tested": false},
 	}
 
 
