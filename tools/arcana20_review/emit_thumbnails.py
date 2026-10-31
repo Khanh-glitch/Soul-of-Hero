@@ -23,12 +23,17 @@ if len(sys.argv) == 4:
     paths = paths[start:end]
 for path in paths:
     with Image.open(path) as image:
-        image.thumbnail((432, 243), Image.Resampling.NEAREST)
-        image = image.convert('RGB').quantize(colors=32, method=Image.Quantize.MEDIANCUT)
-        buf = io.BytesIO()
-        image.save(buf, format='PNG', optimize=True)
-        data = base64.b64encode(buf.getvalue()).decode('ascii')
-        if len(data) > 48000:
-            raise SystemExit(f'{path}: annotation too large: {len(data)}')
+        image.thumbnail((240, 135), Image.Resampling.NEAREST)
+        image = image.convert('RGB').quantize(colors=16, method=Image.Quantize.MEDIANCUT)
+        while True:
+            buf = io.BytesIO()
+            image.save(buf, format='PNG', optimize=True)
+            data = base64.b64encode(buf.getvalue()).decode('ascii')
+            # Check-run annotation messages are truncated at 4096 chars.
+            if len(data) <= 3900:
+                break
+            if image.width <= 80:
+                raise SystemExit(f'{path}: thumbnail still too large: {len(data)}')
+            image = image.resize((int(image.width * 0.85), int(image.height * 0.85)), Image.Resampling.NEAREST)
         print(f'::notice title=REVIEW_{mode.upper()}_{path.stem}::{data}', flush=True)
 print(f'Emitted {len(paths)} {mode} diagnostic thumbnails')

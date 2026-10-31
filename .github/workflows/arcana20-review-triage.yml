@@ -31,8 +31,10 @@ jobs:
           root=Path('prototypes/arcana_fusion20/renderer/evidence_out/review')
           manifest=root/'manifest.json'
           print('::notice::REVIEW_MANIFEST '+(manifest.read_text().replace('\n',' ') if manifest.exists() else 'MISSING'))
-          docs={path.parent.name:json.loads(path.read_text()) for path in sorted(root.glob('skill_*/stages.json'))}
-          print('::notice::REVIEW_STAGES '+json.dumps(docs, separators=(',',':')))
+          files=sorted(root.glob('skill_*/stages.json'))
+          for i in range(0, len(files), 5):
+              docs={path.parent.name:json.loads(path.read_text()) for path in files[i:i+5]}
+              print('::notice::REVIEW_STAGES '+json.dumps(docs, separators=(',',':')))
           PY
       - name: Thumbnails 01-05
         run: python3 tools/arcana20_review/emit_thumbnails.py source 0 5
