@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [arena/c7b0c4e8-soul-of-hero]
-    paths: ['.github/workflows/arcana20-current-phase-sweep.yml']
+    paths: ['.github/workflows/arcana20-current-phase-sweep.yml', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_fusion.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_membranes.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_debris.gd']
 permissions:
   contents: read
 jobs:

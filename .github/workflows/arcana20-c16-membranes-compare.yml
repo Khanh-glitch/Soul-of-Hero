@@ -48,6 +48,9 @@ jobs:
           set -o pipefail
           python3 tools/arcana20_source_compare/compare_c16_membranes.py artifacts/arcana20-c16-membranes-source | tee comparison.log
           sed 's/^/::notice::/' comparison.log
+      - name: Surface paired source and native light crops
+        if: always()
+        run: python3 tools/arcana20_source_compare/surface_c16_membranes.py artifacts/arcana20-c16-membranes-source
       - uses: actions/upload-artifact@v4
         if: always()
         with:
