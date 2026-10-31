@@ -94,57 +94,6 @@ func _init() -> void:
     if renderer.cast_skill(&"venomwright_001", Vector2.ZERO, Vector2.ZERO):
         _fail("foreign id accepted")
 
-    # --- Spatial PNG parity (primary proof): alpha IoU, per-channel MAE,
-    # max error and an 8x6 region mismatch grid vs the Node-run original.
-    var _spatial := func(bytes: PackedByteArray, ref_path: String) -> Dictionary:
-        var tex := ResourceLoader.load(ref_path) as Texture2D
-        if tex == null:
-            return {"error": "no reference"}
-        var ref := tex.get_image()
-        if ref.get_format() != Image.FORMAT_RGBA8:
-            ref.convert(Image.FORMAT_RGBA8)
-        var rb := ref.get_data()
-        var inter := 0
-        var union := 0
-        var mae := 0.0
-        var maxerr := 0
-        var npix := BRenderer.W * BRenderer.H
-        var regions := {}
-        for i in range(npix):
-            var o := i * 4
-            var na := bytes[o + 3] > 0
-            var ra := rb[o + 3] > 0
-            if na and ra:
-                inter += 1
-            if na or ra:
-                union += 1
-            var d := maxi(maxi(absi(int(bytes[o]) - int(rb[o])), absi(int(bytes[o + 1]) - int(rb[o + 1]))), absi(int(bytes[o + 2]) - int(rb[o + 2])))
-            mae += float(d)
-            maxerr = maxi(maxerr, d)
-            if d > 24:
-                var gx := (i % BRenderer.W) * 8 / BRenderer.W
-                var gy := (i / BRenderer.W) * 6 / BRenderer.H
-                var key := "%d,%d" % [gx, gy]
-                regions[key] = int(regions.get(key, 0)) + 1
-        # Diagnostic: best +-1px shift MAE (detects systematic offsets).
-        var best := 1e9
-        var best_key := "0,0"
-        for sy in [-1, 0, 1]:
-            for sx in [-1, 0, 1]:
-                var acc := 0.0
-                for yy in range(BRenderer.H):
-                    var ry := clampi(yy - sy, 0, BRenderer.H - 1)
-                    for xx in range(BRenderer.W):
-                        var rx := clampi(xx - sx, 0, BRenderer.W - 1)
-                        var oo := (ry * BRenderer.W + rx) * 4
-                        var oo2 := (yy * BRenderer.W + xx) * 4
-                        acc += float(maxi(maxi(absi(int(bytes[oo2]) - int(rb[oo])), absi(int(bytes[oo2 + 1]) - int(rb[oo + 1]))), absi(int(bytes[oo2 + 2]) - int(rb[oo + 2]))))
-                var m := acc / float(npix)
-                if m < best:
-                    best = m
-                    best_key = "%d,%d" % [sx, sy]
-        var iou := 1.0 if union == 0 else float(inter) / float(union)
-        return {"iou": iou, "mae": mae / maxf(1.0, float(npix)), "maxerr": maxerr, "regions": regions, "shift_mae": best, "shift": best_key}
 
     # --- Source-B furnaceWyrm frame parity vs the ORIGINAL TS engine ---
     # Reference PNGs/meta were produced by running the unmodified B
@@ -170,7 +119,7 @@ func _init() -> void:
             sum = (sum + bytes[i] * 3 + bytes[i + 1] * 5 + bytes[i + 2] * 7) & 0xFFFFFFFF
             if bytes[i + 3] != 0:
                 nonzero += 1
-        var sp: Dictionary = _spatial.call(bytes, "res://prototypes/arcana_fusion20/renderer/source_b/reference/wyrm_%s.png" % key)
+        var sp: Dictionary = _spatial_compare(bytes, "res://prototypes/arcana_fusion20/renderer/source_b/reference/wyrm_%s.png" % key)
         print("::notice::WYRM_SPATIAL ", key, " iou=", snappedf(float(sp.get("iou", 0.0)), 0.0001), " mae=", snappedf(float(sp.get("mae", 99.0)), 0.01), " maxerr=", int(sp.get("maxerr", 255)), " shift=", sp.get("shift", "?"), "@", snappedf(float(sp.get("shift_mae", 99.0)), 0.01), " regions=", JSON.stringify(sp.get("regions", {})))
         if float(sp.get("iou", 0.0)) < 0.90 or float(sp.get("mae", 99.0)) > 6.0:
             _fail("wyrm spatial %s iou=%f mae=%f" % [key, float(sp.get("iou", 0.0)), float(sp.get("mae", 99.0))])
@@ -196,7 +145,7 @@ func _init() -> void:
         loom.post(br3, t3)
         br3.lighting()
         var bytes3 := br3.finalize()
-        var sp3: Dictionary = _spatial.call(bytes3, "res://prototypes/arcana_fusion20/renderer/source_b/reference/meteor_%s.png" % key)
+        var sp3: Dictionary = _spatial_compare(bytes3, "res://prototypes/arcana_fusion20/renderer/source_b/reference/meteor_%s.png" % key)
         var nz3 := 0
         for i in range(0, bytes3.size(), 4):
             if bytes3[i + 3] != 0:
@@ -216,21 +165,74 @@ func _init() -> void:
         quit(1)
 
 ## #08 spatial parity vs original tide.ts (seed 808) — authored samples.
-func _maw_check(host: Arcana20Renderer) -> void:
-    var refs := {"t150": 1.5, "t300": 3.0, "t440": 4.4, "t510": 5.1, "t600": 6.0}
-    var bp := host._instances["arcana_fusion20_08"] as BSourcePlayer
-    if bp == null:
-        _fail("maw instance is not BSourcePlayer")
-        return
-    var k := 0
-    for tick in bp.frame_ticks():
-        k += 1
-        var st := float(tick) / 60.0
-        for key in refs.keys():
-            var tt: float = refs[key]
-            if abs(st - tt) < 0.001:
-                var got := bp.frame_image()
-                var werr := _spatial("maw_" + key + ".png", got, key)
-                if werr != "":
-                    _fail(werr)
-    print("MAW_FRAMES_CAPTURED ", k)
+func _maw_check(_host: Arcana20Renderer) -> void:
+    var mmeta: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://prototypes/arcana_fusion20/renderer/source_b/reference/maw_meta.json"))
+    var br := BRenderer.new()
+    br.caster = Vector2(104, 132)
+    br.target = Vector2(262, 104)
+    var maw := BUndertowMaw.new()
+    maw.setup(br)
+    for key in ["t150", "t300", "t440", "t510", "t600"]:
+        var t: float = float(mmeta[key].t)
+        br.begin()
+        maw.render(br, t)
+        maw.post(br, t)
+        br.lighting()
+        var bytes := br.finalize()
+        var sp := _spatial_compare(bytes, "res://prototypes/arcana_fusion20/renderer/source_b/reference/maw_%s.png" % key)
+        var nz := 0
+        for i in range(0, bytes.size(), 4):
+            if bytes[i + 3] != 0:
+                nz += 1
+        print("::notice::MAW_SPATIAL ", key, " t=", t, " iou=", snappedf(float(sp.get("iou", 0.0)), 0.0001), " mae=", snappedf(float(sp.get("mae", 99.0)), 0.01), " shift=", sp.get("shift", "?"), "@", snappedf(float(sp.get("shift_mae", 99.0)), 0.01), " nz=", nz, "/", int(mmeta[key].nonzero))
+        if float(sp.get("iou", 0.0)) < 0.90 or float(sp.get("mae", 99.0)) > 6.0:
+            _fail("maw spatial %s iou=%f mae=%f" % [key, float(sp.get("iou", 0.0)), float(sp.get("mae", 99.0))])
+
+func _spatial_compare(bytes: PackedByteArray, ref_path: String) -> Dictionary:
+    var tex := ResourceLoader.load(ref_path) as Texture2D
+    if tex == null:
+        return {"error": "no reference"}
+    var ref := tex.get_image()
+    if ref.get_format() != Image.FORMAT_RGBA8:
+        ref.convert(Image.FORMAT_RGBA8)
+    var rb := ref.get_data()
+    var inter := 0
+    var union := 0
+    var mae := 0.0
+    var maxerr := 0
+    var npix := BRenderer.W * BRenderer.H
+    var regions := {}
+    for i in range(npix):
+        var o := i * 4
+        var na := bytes[o + 3] > 0
+        var ra := rb[o + 3] > 0
+        if na and ra:
+            inter += 1
+        if na or ra:
+            union += 1
+        var d := maxi(maxi(absi(int(bytes[o]) - int(rb[o])), absi(int(bytes[o + 1]) - int(rb[o + 1]))), absi(int(bytes[o + 2]) - int(rb[o + 2])))
+        mae += float(d)
+        maxerr = maxi(maxerr, d)
+        if d > 24:
+            var gx := (i % BRenderer.W) * 8 / BRenderer.W
+            var gy := (i / BRenderer.W) * 6 / BRenderer.H
+            var key := "%d,%d" % [gx, gy]
+            regions[key] = int(regions.get(key, 0)) + 1
+    var best := 1e9
+    var best_key := "0,0"
+    for sy in [-1, 0, 1]:
+        for sx in [-1, 0, 1]:
+            var acc := 0.0
+            for yy in range(BRenderer.H):
+                var ry := clampi(yy - sy, 0, BRenderer.H - 1)
+                for xx in range(BRenderer.W):
+                    var rx := clampi(xx - sx, 0, BRenderer.W - 1)
+                    var oo := (ry * BRenderer.W + rx) * 4
+                    var oo2 := (yy * BRenderer.W + xx) * 4
+                    acc += float(maxi(maxi(absi(int(bytes[oo2]) - int(rb[oo])), absi(int(bytes[oo2 + 1]) - int(rb[oo + 1]))), absi(int(bytes[oo2 + 2]) - int(rb[oo + 2]))))
+            var m := acc / float(npix)
+            if m < best:
+                best = m
+                best_key = "%d,%d" % [sx, sy]
+    var iou := 1.0 if union == 0 else float(inter) / float(union)
+    return {"iou": iou, "mae": mae / maxf(1.0, float(npix)), "maxerr": maxerr, "regions": regions, "shift_mae": best, "shift": best_key}

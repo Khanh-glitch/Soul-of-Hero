@@ -76,7 +76,7 @@ func render(r: BRenderer, t: float) -> void:
                     continue
                 var depth := -log(d + 0.015) * 3.2 + tf * 1.8
                 var ang := th + tf * (0.6 + 1.6 / (d + 0.12)) * (0.6 + violence)
-                var band := depth - floor(depth)
+                var band: float = depth - floor(depth)
                 var bri := pow(d, 0.75)
                 var nz := BMath.noise2(cos(ang) * 3.0 + sin(ang) * 2.0, depth * 1.6 + sin(ang * 3.0) * 0.5)
                 var nz2 := BMath.noise2(ang * 4.0 + 20.0, depth * 2.2)
