@@ -503,7 +503,7 @@ func _site_journey(hero: CharacterBody2D, authority: Node, poi_id: String) -> Di
 	# law the body is moved under. Walking to the published approach point is not
 	# enough: A8 opens on being within 22 px of the door, facing it.
 	if hero.global_position.distance_to(door) > 20.0:
-		reached = await _walk_to_door(hero, door) or reached
+		reached = await _walk_door(hero, door) or reached
 	report["walk_px"] = hero.global_position.distance_to(start_position)
 	report["reached"] = reached and hero.global_position.distance_to(door) <= 26.0
 	report["at_door_px"] = hero.global_position.distance_to(door)
@@ -778,6 +778,149 @@ func _walk_to_door(hero: CharacterBody2D, door: Vector2, budget := 2400) -> bool
 			last = hero.global_position
 	_release_moves()
 	return hero.global_position.distance_to(door) <= 16.0
+
+
+## The doorway approach, planned on the building's own collision.
+##
+## The map is right about terrain and wrong about doorways: the shell's walls are
+## marked as blocked, and a door gap is narrower than a map cell. So this builds a
+## small 8-pixel grid out of physics rays around the door itself — the same collision
+## that stops the body — plans across it, and then walks the result with the ordinary
+## direction keys. Nothing here writes a position; the body is still moved by
+## `move_and_slide` into whatever the building really is.
+const DOOR_STEP := 8.0
+const DOOR_RADIUS := 26
+
+
+func _walk_door(hero: CharacterBody2D, door: Vector2) -> bool:
+	var path := _plan_physical(hero.global_position, door)
+	if path.is_empty():
+		# No physical route in the small box: fall back to ray steering, which at
+		# least keeps trying instead of declaring the building unreachable.
+		return await _walk_to_door(hero, door)
+	for point: Vector2 in path:
+		if hero.global_position.distance_to(door) <= 12.0:
+			break
+		await _walk_point(hero, point)
+	_release_moves()
+	if hero.global_position.distance_to(door) <= 16.0:
+		return true
+	# One repair attempt: the physical plan can be spoiled by a moving body, so it is
+	# re-planned once from wherever the walk actually ended.
+	path = _plan_physical(hero.global_position, door)
+	for point: Vector2 in path:
+		if hero.global_position.distance_to(door) <= 12.0:
+			break
+		await _walk_point(hero, point)
+	_release_moves()
+	return hero.global_position.distance_to(door) <= 16.0
+
+
+## Is there room for the player's body at this point? Two short rays through the
+## body's own footprint, against the world's collision layer.
+func _point_free(point: Vector2) -> bool:
+	return _ray_clear(point + Vector2(0.0, -7.0), point + Vector2(0.0, 7.0)) \
+		and _ray_clear(point + Vector2(-6.0, 0.0), point + Vector2(6.0, 0.0))
+
+
+func _plan_physical(from: Vector2, door: Vector2) -> Array:
+	var nodes := int(DOOR_RADIUS * 2 / 1) + 1
+	var origin := door - Vector2(DOOR_RADIUS, DOOR_RADIUS) * DOOR_STEP
+	var start := Vector2i(roundi((from.x - origin.x) / DOOR_STEP), roundi((from.y - origin.y) / DOOR_STEP))
+	var goal := Vector2i(roundi((door.x - origin.x) / DOOR_STEP), roundi((door.y - origin.y) / DOOR_STEP))
+	start = Vector2i(clampi(start.x, 0, nodes - 1), clampi(start.y, 0, nodes - 1))
+	goal = Vector2i(clampi(goal.x, 0, nodes - 1), clampi(goal.y, 0, nodes - 1))
+	var free := {}
+	var point := func(node: Vector2i) -> Vector2:
+		return origin + Vector2(float(node.x), float(node.y)) * DOOR_STEP
+	var is_free := func(node: Vector2i) -> bool:
+		if node.x < 0 or node.y < 0 or node.x >= nodes or node.y >= nodes:
+			return false
+		var key := "%d:%d" % [node.x, node.y]
+		if free.has(key):
+			return bool(free[key])
+		var value := bool(_point_free.call(point.call(node)))
+		free[key] = value
+		return value
+	# The body's own cell may be occupied by its footprint; seed from the nearest
+	# free node instead of refusing to plan.
+	if not bool(is_free.call(start)):
+		var found := false
+		for radius: int in range(1, 6):
+			for dy: int in range(-radius, radius + 1):
+				for dx: int in range(-radius, radius + 1):
+					if maxi(absi(dx), absi(dy)) != radius:
+						continue
+					var candidate := start + Vector2i(dx, dy)
+					if bool(is_free.call(candidate)):
+						start = candidate
+						found = true
+						break
+				if found:
+					break
+			if found:
+				break
+		if not found:
+			return []
+	var open: Array[Vector2i] = [start]
+	var estimate: Dictionary = {start: 0.0}
+	var came: Dictionary = {}
+	var cost: Dictionary = {start: 0.0}
+	var closed := {}
+	var expansions := 0
+	while not open.is_empty() and expansions < 20_000:
+		var current: Vector2i = _heap_pop(open, estimate)
+		if closed.has(current):
+			continue
+		closed[current] = true
+		expansions += 1
+		if current == goal:
+			var steps: Array = []
+			var node: Vector2i = goal
+			while came.has(node):
+				steps.push_front(point.call(node))
+				node = came[node]
+			return steps
+		for step: Vector2i in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1),
+				Vector2i(1, 1), Vector2i(1, -1), Vector2i(-1, 1), Vector2i(-1, -1)]:
+			var next := current + step
+			if closed.has(next) or not bool(is_free.call(next)):
+				continue
+			if step.x != 0 and step.y != 0:
+				if not bool(is_free.call(current + Vector2i(step.x, 0))) \
+						or not bool(is_free.call(current + Vector2i(0, step.y))):
+					continue
+			var step_cost := 1.4142 if step.x != 0 and step.y != 0 else 1.0
+			var candidate := float(cost.get(current, INF)) + step_cost
+			if candidate >= float(cost.get(next, INF)):
+				continue
+			came[next] = current
+			cost[next] = candidate
+			estimate[next] = candidate + Vector2(next - goal).length()
+			open.append(next)
+			_heap_sift_up(open, estimate, open.size() - 1)
+	return []
+
+
+## Walk to one point of a physical plan, pressing the direction that is actually
+## clear. Short horizon on purpose: the plan is dense, so each step only has to cover
+## a few pixels of real space.
+func _walk_point(hero: CharacterBody2D, target: Vector2, budget := 90) -> bool:
+	for _frame: int in range(budget):
+		if hero.global_position.distance_to(target) <= 6.0:
+			return true
+		var bearing := (target - hero.global_position).angle()
+		var chosen := Vector2.ZERO
+		for offset: float in [0.0, 0.3, -0.3, 0.6, -0.6, 0.9, -0.9, 1.2, -1.2, 1.5, -1.5]:
+			var candidate := Vector2.RIGHT.rotated(bearing + offset)
+			if _ray_clear(hero.global_position, hero.global_position + candidate * 12.0):
+				chosen = candidate
+				break
+		if chosen == Vector2.ZERO:
+			return false
+		_press_direction(chosen)
+		await physics_frame
+	return hero.global_position.distance_to(target) <= 8.0
 
 
 func _waypoint(cell: Vector2i) -> Vector2:
