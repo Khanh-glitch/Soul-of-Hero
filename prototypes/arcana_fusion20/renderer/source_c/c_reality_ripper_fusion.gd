@@ -1,7 +1,7 @@
 ## Selected #20 source-level candidate: C's seeded 9-point rift contour,
 ## timing/width/interior/edge, plus A Reality Ripper's bgWarp pull/fracture
 ## applied to the SAME real-world pixels relative to that C contour.
-## Original C particles and A debris are not yet selected;
+## Original A debris and portions of original C OUT are not yet selected;
 ## full cast, source comparisons, actor depth and owner approval remain open.
 extends RefCounted
 class_name CRealityRipperFusion
@@ -28,6 +28,7 @@ var include_polygons := true
 var include_blocks := true
 var audit_polygons_only := false
 var audit_blocks_only := false
+var audit_particles_only := false
 # The original C uses Array.sort(() => rng.next() - 0.5). This is the
 # reproducible V8 order for source seed 151461 after seven waypoint draws;
 # its random comparator is engine-dependent and must not be re-sorted here.
@@ -47,10 +48,13 @@ var ttx := PackedFloat32Array()
 var tty := PackedFloat32Array()
 var collided := false
 var blocks: Array = []
+var rng: CMath.CRng
+var particles: Array = []
 
 func setup() -> void:
     CPalette._ensure()
-    var rng := CMath.CRng.new(151461)
+    rng = CMath.CRng.new(151461)
+    particles.clear()
     way.clear()
     cum.clear()
     for i in range(9):
@@ -128,13 +132,33 @@ func authored_events() -> Array:
         {"t": TCOL, "kind": "rift_collision_impact", "pos_local": CENTER, "emitted": false},
         {"t": 7.15, "kind": "rift_stitch", "pos_local": CENTER, "emitted": false}]
 
-func update(_dt: float, t: float) -> void:
+func update(dt: float, t: float) -> void:
+    CKit.particles_update(particles, dt)
+    if t > TOPEN + 0.4 and t < 7.2 and rng.chance(0.6):
+        var s := rng.r(0.1, 0.9)
+        var p := _at(s)
+        var width := _width(s, t)
+        var side := rng.sign()
+        particles.append(CKit.pt_defaults({"x": float(p.x) + float(p.nx) * (width + 1.0) * side,
+            "y": float(p.y) + float(p.ny) * (width + 1.0) * side,
+            "vx": -float(p.nx) * side * rng.r(4, 14), "vy": -float(p.ny) * side * rng.r(4, 14),
+            "kind": "pix", "c": MAG if rng.chance(0.5) else CYAN, "k": 1.2, "max": rng.r(0.4, 0.9)}))
     if not collided and t >= TCOL:
         collided = true
         fx_shake = 10.0
         fx_flash = Vector3(1.0, 0.5, 1.0)
         fx_flash_k = 0.35
         fx_kick = 6.0
+        for i in range(100):
+            var s := rng.r(0.05, 0.95)
+            var p := _at(s)
+            var side := rng.sign()
+            var particle := {"x": p.x, "y": p.y, "vx": float(p.nx) * side * rng.r(40, 200),
+                "vy": float(p.ny) * side * rng.r(40, 200), "drag": 1.4, "kind": "star", "col": CPalette.P.star,
+                "max": 0.0, "k": 1.2}
+            if rng.chance(0.3): particle.c = MAG
+            particle.max = rng.r(0.6, 1.6)
+            particles.append(CKit.pt_defaults(particle))
 
 func _width(s: float, t: float) -> float:
     if t < TOPEN: return 0.0
@@ -238,12 +262,14 @@ func render(f: CFrame, t: float) -> void:
                 f.S(x, y, 1.0 + 1.6 * exp(-distance / 3.0))
                 if CMath.hash1(floori(s * 48.0) + 31) > 0.9: f.C(x, y, 1.5)
 
-    if audit_polygons_only or audit_blocks_only:
+    if audit_polygons_only or audit_blocks_only or audit_particles_only:
         f.clear()
-    if include_polygons and not audit_blocks_only:
+    if include_polygons and not audit_blocks_only and not audit_particles_only:
         _render_polygons(f, t, mask)
-    if include_blocks and not audit_polygons_only:
+    if include_blocks and not audit_polygons_only and not audit_particles_only:
         _render_blocks(f, t)
+    if not audit_polygons_only and not audit_blocks_only:
+        CKit.particles_render(f, particles)
 
 # Original source "at(s)" keeps scalar double precision until rasterization.
 func _at(s: float) -> Dictionary:
