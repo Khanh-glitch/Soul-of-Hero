@@ -112,3 +112,24 @@ Burst, C selected late role, full cast, real-world post and owner review remain
 unverified. [No-FX baseline leak isolation](https://github.com/Khanh-glitch/Soul-of-Hero/pull/21#issuecomment-6544643328)
 reproduced the historical economy-resource leak without AVFX; exact ownership
 of every leaked instance and current A0 status remain unproven.
+
+## All-20 camera and cancellation diagnostic
+
+[Frozen sweep 41210274460](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41210274460)
+(`c6fb12ba`), with [all rows 41210426324](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41210426324),
+used actual historical AppRoot→Home→overworld, real injected SOH Skeleton and
+opt-in world consumers. Every ID changed the world at tick 120, held its
+source world transform when the camera offset moved (+40,+20), and restored
+the same frozen world when cancelled. Paired baseline/cast PNG comparison
+measured the visual change-mask translation as (−80,−40) physical pixels at
+1280×720 because the root render scale is 2×: logical (−40,−20). Change-mask
+IoU ranged 0.999749–1.0, including #02 0.999954 and #17 1.0; maximum individual
+RGB difference reached 39 for #02, so do not call every pixel exact. These are
+measurements, not tuned PASS thresholds or source/coverage/visual approval.
+The artifact contains individual captures, camera heatmaps and metadata.
+
+The sweep's one-shot `source_snapshot_ms` includes 120 simulation ticks plus
+render/upload on shared software CI; it is **not** per-frame latency or a
+target-device budget. #19 cost 5474.832 ms for that whole snapshot, flagging
+D for profiling. Gameplay input, natural motion, full cast/OUT, depth/post,
+multiple resolutions and target-device p50/p95/p99 still require evidence.
