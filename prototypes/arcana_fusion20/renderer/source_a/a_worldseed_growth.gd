@@ -132,8 +132,9 @@ func render(fb: AFramebuffer, t: float) -> void:
     # sheets bury the selected C gold/bloom palette. The A-only reference
     # keeps its original ascending additive draw order unchanged.
     var layer_order := [3, 2, 1, 0] if use_c_material else [0, 1, 2, 3]
-    for li in layer_order:
-        var layer: Dictionary = layers[int(li)]
+    for layer_index in layer_order:
+        var li: int = int(layer_index)
+        var layer: Dictionary = layers[li]
         var u := AMath.ease_out(AMath.seg(t, float(layer.t0), float(layer.t0) + 1.0 / float(layer.sp)), 2.0)
         if fold > 0.0: u *= 1.0 - AMath.ease_out(fold, 1.6)
         if u <= 0.01: continue
