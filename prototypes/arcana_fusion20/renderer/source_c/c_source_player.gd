@@ -56,11 +56,13 @@ func _ensure_sprite() -> void:
     _tex = ImageTexture.create_from_image(img)
     _sprite = Sprite2D.new()
     _sprite.texture = _tex
+    _sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
     _sprite.centered = true
     add_child(_sprite)
     _light_tex = ImageTexture.create_from_image(img)
     _light_sprite = Sprite2D.new()
     _light_sprite.texture = _light_tex
+    _light_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
     _light_sprite.centered = true
     _light_sprite.visible = false
     var additive := CanvasItemMaterial.new()
@@ -125,12 +127,11 @@ func _anchor_local() -> Vector2:
     return Vector2(192, 108)
 
 func local_to_world(p: Vector2) -> Vector2:
-    var anchor := _anchor_local()
     var caster_local := Vector2(112, 126)
     var v := (p - caster_local) * _scale
     var cs := cos(_rot)
     var sn := sin(_rot)
-    return _origin + Vector2(v.x * cs - v.y * sn, v.x * sn + v.y * cs) + (anchor - caster_local) * 0.0
+    return _origin + Vector2(v.x * cs - v.y * sn, v.x * sn + v.y * cs)
 
 func stop() -> void:
     var was := _active
@@ -233,7 +234,6 @@ func _render_frame() -> void:
         _light_sprite.visible = false
     if _sprite != null:
         _sprite.visible = true
-        var anchor := _anchor_local()
         var center_local := Vector2(SRC_W / 2.0, SRC_H / 2.0)
         _sprite.position = local_to_world(center_local)
         _sprite.rotation = _rot

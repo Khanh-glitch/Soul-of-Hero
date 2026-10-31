@@ -416,7 +416,7 @@ func native_passes() -> Dictionary:
             ink_bytes[i + 3] = int(a * 255.0)
             var th := CMath.bayer(x, y) - 0.5
             for channel in range(3):
-                var q := floor(light[i + channel] * 8.0 + th + 0.5) / 8.0
+                var q: float = floor(light[i + channel] * 8.0 + th + 0.5) / 8.0
                 light_bytes[i + channel] = int(clampf(q, 0.0, 1.0) * 255.0)
             # CanvasItemMaterial.BLEND_MODE_ADD: black contributes nothing.
             light_bytes[i + 3] = 255
