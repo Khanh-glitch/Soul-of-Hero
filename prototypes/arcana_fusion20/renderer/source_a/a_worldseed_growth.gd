@@ -126,8 +126,14 @@ func render(fb: AFramebuffer, t: float) -> void:
                 var k := 1.0 - absf(i) / seed_r
                 fb.add(C.x + i * 0.3, C.y + i, 2.4 * k * crack, 2.2 * k * crack, 1.6 * k * crack, 1.0)
                 i += 1.0
-    for li in range(layers.size()):
-        var layer: Dictionary = layers[li]
+    # Original C resolves the inner gold and bloom petals before outer
+    # leaves at overlapping pixels. For the C-material fusion, paint A's
+    # smooth outer sheets first and inner sheets last; otherwise later green
+    # sheets bury the selected C gold/bloom palette. The A-only reference
+    # keeps its original ascending additive draw order unchanged.
+    var layer_order := [3, 2, 1, 0] if use_c_material else [0, 1, 2, 3]
+    for li in layer_order:
+        var layer: Dictionary = layers[int(li)]
         var u := AMath.ease_out(AMath.seg(t, float(layer.t0), float(layer.t0) + 1.0 / float(layer.sp)), 2.0)
         if fold > 0.0: u *= 1.0 - AMath.ease_out(fold, 1.6)
         if u <= 0.01: continue
