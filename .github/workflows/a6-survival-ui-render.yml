@@ -323,6 +323,31 @@ jobs:
           fi
           find "artifacts/captures-${res}" -type f | sed 's/^/::notice::/'
 
+      # The GUI itself, not a synthetic signal: real pointer motion, real press and
+      # release, real wheel events, at this matrix resolution, while the panel rebuilds
+      # its own list. This is the acceptance line for R13-A6-USABILITY.
+      - name: Workshop GUI input under rebuild at ${{ matrix.resolution }}
+        run: |
+          set -uo pipefail
+          res="${{ matrix.resolution }}"
+          mkdir -p "artifacts/ud-gui-${res}"
+          timeout --foreground --signal=TERM --kill-after=20s 300s xvfb-run --auto-servernum \
+            -s "-screen 0 ${res}x24" \
+            env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
+            godot --path . --rendering-driver opengl3 --audio-driver Dummy \
+            --resolution "${res}" --windowed --user-data-dir "artifacts/ud-gui-${res}" \
+            res://tests/survival/ui/a6_workshop_gui_input_test.tscn \
+            > "artifacts/gui-input-${res}.log" 2>&1 || true
+          status=$?
+          cat "artifacts/gui-input-${res}.log"
+          if ! grep -q "A6 WORKSHOP GUI INPUT PASSED" "artifacts/gui-input-${res}.log"; then
+            tail -20 "artifacts/gui-input-${res}.log" | sed 's/^/::error::/'
+            echo "::error::workshop GUI input failed at ${res}"
+            exit 1
+          fi
+          grep -q "at ${res}" "artifacts/gui-input-${res}.log" \
+            || { echo "::error::the GUI test ran at the wrong viewport size"; exit 1; }
+
       - name: Render the survival overworld HUD and workshop through the real world
         run: |
           set -uo pipefail
