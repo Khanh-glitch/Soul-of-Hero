@@ -47,7 +47,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: arcana20-real-scene-diagnostics
-          run-id: 41200912184
+          run-id: 41201624379
           github-token: ${{ github.token }}
           path: prototypes/arcana_fusion20/renderer/evidence_out/real-scene
       - name: Real-scene manifest summary
