@@ -7,9 +7,13 @@ out=pathlib.Path(sys.argv[1]); cases=json.loads(pathlib.Path('tools/arcana19_spr
 for c in cases:
  name=c['name'];a=np.fromfile(out/f'{name}.original.rgba8',dtype=np.uint8).reshape(270,480,4)[::-1,:,:3].astype(np.float32)/255
  coverage=np.fromfile(out/f'{name}.original.coverage.rgba8',dtype=np.uint8).reshape(270,480,4)[::-1,:,0]!=0
- for variant in ('native','native_ldr','native_ldr8'):
-  b=np.clip(np.fromfile(out/f'{name}.{variant}.rgb32f',dtype='<f4').reshape(270,480,3),0,1)
-  native_coverage=np.fromfile(out/f'{name}.{variant}.coverage.u8',dtype=np.uint8).reshape(270,480)!=0
+ for variant in ('native','native_ldr','native_ldr8','gpu'):
+  if variant=='gpu':
+   b=np.fromfile(out/f'{name}.gpu.rgba8',dtype=np.uint8).reshape(270,480,4)[:,:,:3].astype(np.float32)/255
+   native_coverage=np.fromfile(out/f'{name}.gpu.coverage.rgba8',dtype=np.uint8).reshape(270,480,4)[:,:,0]!=0
+  else:
+   b=np.clip(np.fromfile(out/f'{name}.{variant}.rgb32f',dtype='<f4').reshape(270,480,3),0,1)
+   native_coverage=np.fromfile(out/f'{name}.{variant}.coverage.u8',dtype=np.uint8).reshape(270,480)!=0
   if not np.isfinite(b).all():raise SystemExit('nonfinite native ribbon')
   coverage_union=np.count_nonzero(coverage|native_coverage); coverage_inter=np.count_nonzero(coverage&native_coverage)
   am=np.any(a!=0,axis=2);bm=np.any(b!=0,axis=2);union=np.count_nonzero(am|bm);inter=np.count_nonzero(am&bm);diff=np.abs(a-b)

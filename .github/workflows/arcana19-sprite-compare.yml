@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [arena/c7b0c4e8-soul-of-hero]
-    paths: ['tools/arcana19_sprite_compare/**', 'prototypes/arcana_fusion20/renderer/d19_sprite_compare.gd', 'prototypes/arcana_fusion20/renderer/source_d/d_fx.gd', '.github/workflows/arcana19-sprite-compare.yml']
+    paths: ['tools/arcana19_sprite_compare/**', 'prototypes/arcana_fusion20/renderer/d19_sprite_compare.gd', 'prototypes/arcana_fusion20/renderer/d19_sprite_gpu_compare.gd', 'prototypes/arcana_fusion20/renderer/source_d/d_sprite_gpu.gd', 'prototypes/arcana_fusion20/renderer/source_d/d_sprite_gpu.gdshader', 'prototypes/arcana_fusion20/renderer/source_d/d_fx.gd', '.github/workflows/arcana19-sprite-compare.yml']
 permissions:
   contents: read
 jobs:
@@ -45,6 +45,12 @@ jobs:
           timeout 300s godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/d19_sprite_compare.gd 2>&1 | tee native.log
           grep -Fq 'D19_SPRITE_CAPTURE_COMPLETE' native.log
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:' native.log
+      - name: Capture candidate GPU sprites
+        run: |
+          set -o pipefail
+          timeout 300s xvfb-run -a -s '-screen 0 1024x768x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script res://prototypes/arcana_fusion20/renderer/d19_sprite_gpu_compare.gd 2>&1 | tee gpu.log
+          grep -Fq 'D19_SPRITE_GPU_CAPTURE_COMPLETE' gpu.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Shader compilation failed|ERROR:' gpu.log
       - name: Compare spatial metrics without tolerance gates
         run: |
           set -o pipefail
@@ -54,6 +60,10 @@ jobs:
         if: always()
         run: |
           if test -f compare.log; then grep 'native_ldr8' compare.log | sed 's/^/::notice title=D19_SPRITE_LDR8::/' || true; fi
+      - name: Surface native GPU sprite cases
+        if: always()
+        run: |
+          if test -f compare.log; then grep '"variant": "gpu"' compare.log | sed 's/^/::notice title=D19_SPRITE_GPU::/' || true; fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -64,5 +74,6 @@ jobs:
             native.log
             import.log
             compare.log
+            gpu.log
             hash.log
             hash-capture.log
