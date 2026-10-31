@@ -99,6 +99,8 @@ func _ready() -> void:
 	scroll.name = "Scroll"
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	# The default grey engine bar on parchment reads as a rendering fault at 1x.
+	A6UiKit.style_scroll(scroll)
 	column.add_child(scroll)
 	_scroll = scroll
 	_list = VBoxContainer.new()
@@ -227,12 +229,28 @@ func _refresh() -> void:
 	_fit_list_to_whole_rows.call_deferred()
 
 
+## The two cards whose spacing IS the row pitch. The list starts with a station
+## header, which is shorter than a recipe card; measuring from child 0 therefore
+## produced the header pitch and trimmed to a height that still sliced a card.
+func _card_pair() -> Array[Control]:
+	var cards: Array[Control] = []
+	if _list == null:
+		return cards
+	for child: Node in _list.get_children():
+		if String(child.name).begins_with("Row_"):
+			var control := child as Control
+			if control != null:
+				cards.append(control)
+		if cards.size() == 2:
+			break
+	return cards
+
+
 func _pitch_is_measurable() -> bool:
-	if _list == null or _list.get_child_count() < 2:
+	var cards := _card_pair()
+	if cards.size() < 2:
 		return false
-	var first := _list.get_child(0) as Control
-	var second := _list.get_child(1) as Control
-	return first != null and second != null and second.position.y - first.position.y > 1.0
+	return cards[1].position.y - cards[0].position.y > 1.0
 
 
 ## Trim the scroll viewport to whole recipe cards. Runs one frame later because the
@@ -250,11 +268,10 @@ func _fit_list_to_whole_rows() -> void:
 		return
 	if not is_open() or _list.get_child_count() < 2:
 		return
-	var first := _list.get_child(0) as Control
-	var second := _list.get_child(1) as Control
-	if first == null or second == null:
+	var cards := _card_pair()
+	if cards.size() < 2:
 		return
-	var pitch := second.position.y - first.position.y
+	var pitch := cards[1].position.y - cards[0].position.y
 	var available := _scroll.size.y
 	if pitch <= 1.0 or available <= pitch:
 		return
@@ -657,23 +674,58 @@ func _first_output_icon(recipe: Dictionary) -> TextureRect:
 
 func _queue(recipe: String, station: String) -> void:
 	var result: Dictionary = _host.call(&"queue_recipe", recipe, station)
-	_notice.text = "Queued. Close the panel to work." if bool(result.get("ok", false)) \
-		else "Cannot queue: " + String(result.get("reason", "rejected"))
-	_notice.add_theme_color_override("font_color", A6UiKit.INK_SOFT)
+	if bool(result.get("ok", false)):
+		_notify("Đã xếp vào hàng đợi. Đóng bảng để công việc chạy.", A6UiKit.INK_SOFT)
+	else:
+		_notify("Không xếp được: %s" % _refusal(result), A6UiKit.WARN)
 	_refresh()
 
 
 func _research(technology: String, station: String) -> void:
 	var result: Dictionary = _host.call(&"queue_technology", technology, station)
-	_notice.text = "Research queued. Close the panel to work." if bool(result.get("ok", false)) \
-		else "Cannot research: " + String(result.get("reason", "rejected"))
-	_notice.add_theme_color_override("font_color", A6UiKit.INK_SOFT)
+	if bool(result.get("ok", false)):
+		_notify("Đã bắt đầu nghiên cứu. Đóng bảng để công việc chạy.", A6UiKit.INK_SOFT)
+	else:
+		_notify("Không nghiên cứu được: %s" % _refusal(result), A6UiKit.WARN)
 	_refresh()
 
 
 func _job_action(job: String, collect_item: bool) -> void:
 	var result: Dictionary = _host.call(&"collect" if collect_item else &"cancel", job)
-	_notice.text = "Done." if bool(result.get("ok", false)) \
-		else "Cannot complete: " + String(result.get("reason", "rejected"))
-	_notice.add_theme_color_override("font_color", A6UiKit.INK_SOFT)
+	if bool(result.get("ok", false)):
+		_notify("Đã lấy thành phẩm." if collect_item else "Đã huỷ công việc.", A6UiKit.INK_SOFT)
+	else:
+		_notify("Không xong được: %s" % _refusal(result), A6UiKit.WARN)
 	_refresh()
+
+
+## Writes the one line the panel is allowed to say about an action, and attaches the
+## A6-neutral reason as a tooltip so a player who wants to know can hover, while a
+## player who does not is not handed an owner status code (D052).
+func _notify(text: String, colour: Color) -> void:
+	_notice.text = text
+	_notice.add_theme_color_override("font_color", colour)
+
+
+## Turns an A3 refusal code into a sentence a player can act on. Unknown codes are
+## never printed raw - they fall back to a neutral sentence rather than leaking a
+## source token into release UI.
+func _refusal(result: Dictionary) -> String:
+	var reason := String(result.get("reason", "")).strip_edges().to_lower()
+	match reason:
+		"missing_inputs", "insufficient_items", "not_enough_inputs":
+			return "thiếu nguyên liệu"
+		"queue_full":
+			return "hàng đợi đã đầy"
+		"station_offline", "station_unavailable":
+			return "trạm đang ngưng chạy"
+		"research_pending":
+			return "đang nghiên cứu rồi"
+		"already_known":
+			return "đã biết rồi"
+		"out_of_range", "too_far":
+			return "ở quá xa trạm"
+		"unknown_recipe":
+			return "không có công thức này"
+		_:
+			return "chưa đủ điều kiện"

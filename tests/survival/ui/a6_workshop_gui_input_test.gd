@@ -256,9 +256,15 @@ func expect_no_completion_claim(rig: Dictionary) -> void:
 		return
 	var text := notice.text.strip_edges()
 	print("A6 GUI: notice after refusal = %s" % text)
-	for claim: String in ["Đã xong", "Hoàn tất", "Done", "Queued"]:
+	for claim: String in ["Đã xếp", "Đã bắt đầu", "Đã lấy", "Đã huỷ", "Done", "Queued"]:
 		if text.begins_with(claim):
 			_fail("a refused request is reported as success (%s)" % text)
+	# A refusal must name a reason a player can act on, and must never print the owner's
+	# status token (D052: no source ids in release UI).
+	_expect(text.begins_with("Không"), "the refusal is phrased as a refusal (%s)" % text)
+	for leak: String in ["missing_inputs", "queue_full", "rejected", "_", "station_"]:
+		if text.contains(leak):
+			_fail("the refusal leaks an owner status token (%s)" % text)
 
 
 # --- rig --------------------------------------------------------------------

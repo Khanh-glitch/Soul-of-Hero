@@ -63,6 +63,47 @@ static func window() -> PanelContainer:
 	return panel
 
 
+## Styles a ScrollContainer's vertical bar in the authored palette.
+##
+## Godot's default bar is stock grey with a rounded grabber. On this parchment window it
+## reads as an unstyled engine widget dropped into a hand-drawn panel - visible in the
+## 4K frame at 1x - so it is recoloured here rather than left to the fallback theme.
+## The colours are the kit's own ink/wood/gold, not a new art decision: the bar keeps
+## the default shape and only loses the grey.
+static func style_scroll(scroll: ScrollContainer, width := 9) -> void:
+	if scroll == null:
+		return
+	var bar := scroll.get_v_scroll_bar()
+	if bar == null:
+		return
+	bar.custom_minimum_size.x = float(width)
+	# A wide, quiet track that the grabber sits on.
+	var track := StyleBoxFlat.new()
+	track.bg_color = Color(0.09, 0.055, 0.04, 0.55)
+	track.content_margin_left = 2.0
+	track.content_margin_right = 2.0
+	track.content_margin_top = 2.0
+	track.content_margin_bottom = 2.0
+	track.corner_radius_top_left = 2
+	track.corner_radius_top_right = 2
+	track.corner_radius_bottom_left = 2
+	track.corner_radius_bottom_right = 2
+	bar.add_theme_stylebox_override("scroll", track)
+	bar.add_theme_stylebox_override("grabber", _grabber(FILL_GOOD))
+	bar.add_theme_stylebox_override("grabber_highlight", _grabber(GOLD))
+	bar.add_theme_stylebox_override("grabber_pressed", _grabber(CREAM))
+
+
+static func _grabber(colour: Color) -> StyleBoxFlat:
+	var box := StyleBoxFlat.new()
+	box.bg_color = colour
+	box.corner_radius_top_left = 2
+	box.corner_radius_top_right = 2
+	box.corner_radius_bottom_left = 2
+	box.corner_radius_bottom_right = 2
+	return box
+
+
 ## An empty socket, for slots and bar tracks.
 static func socket() -> PanelContainer:
 	var panel := PanelContainer.new()
