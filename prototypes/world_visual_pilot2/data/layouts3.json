@@ -1,0 +1,385 @@
+{
+ "A": {
+  "id": "A",
+  "title": "Candidate A - the waystation is open",
+  "thesis": "A working post. The counter, its canopy and the goods sit in one compact block on the north edge of the paved yard, lit and facing the road; the delivery cart stands apart to the south-west so the yard between them stays open. One landmark (the red canopy), one secondary mass (the cart), and a wide empty pavement in front of both.",
+  "actor": {
+   "who": "male",
+   "cell": [
+    394,
+    200
+   ],
+   "frame": "walk",
+   "dir": "right"
+  },
+  "props": [
+   {
+    "crop": "stall_red",
+    "cell": [
+     405,
+     199
+    ],
+    "reason": "the counter: canopy, posts and board in one sprite; the landmark",
+    "cluster": "counter"
+   },
+   {
+    "crop": "barrel_a",
+    "cell": [
+     402,
+     201
+    ],
+    "reason": "water barrel at the counter's west end",
+    "cluster": "counter"
+   },
+   {
+    "crop": "crate_small",
+    "cell": [
+     409,
+     201
+    ],
+    "reason": "supply crate on the counter's east end",
+    "cluster": "counter"
+   },
+   {
+    "crop": "lantern",
+    "cell": [
+     407,
+     200
+    ],
+    "reason": "counter lantern - the only warm light in the yard at night",
+    "cluster": "counter"
+   },
+   {
+    "crop": "crate_big",
+    "cell": [
+     411,
+     202
+    ],
+    "reason": "the ledger crate stands on the authored ledger cell",
+    "cluster": "ledger"
+   },
+   {
+    "crop": "crate_small",
+    "cell": [
+     406,
+     203
+    ],
+    "reason": "cache crate on the authored cache cell",
+    "cluster": "cache"
+   },
+   {
+    "crop": "torch_post",
+    "cell": [
+     400,
+     199
+    ],
+    "reason": "light post at the entrance the player walks in through",
+    "cluster": "approach"
+   },
+   {
+    "crop": "signpost",
+    "cell": [
+     397,
+     198
+    ],
+    "reason": "route sign on the north verge, visible before the yard",
+    "cluster": "approach"
+   },
+   {
+    "crop": "cart",
+    "cell": [
+     392,
+     205
+    ],
+    "reason": "hand cart parked south-west, the second mass in the frame",
+    "cluster": "delivery"
+   },
+   {
+    "crop": "plank_pile",
+    "cell": [
+     394,
+     203
+    ],
+    "reason": "goods unloaded beside the cart",
+    "cluster": "delivery"
+   },
+   {
+    "crop": "burned_a",
+    "cell": [
+     398,
+     202
+    ],
+    "reason": "burned snag on the authored deadfall cell",
+    "cluster": "deadfall"
+   },
+   {
+    "crop": "broken_tree",
+    "cell": [
+     399,
+     203
+    ],
+    "reason": "broken trunk beside the deadfall",
+    "cluster": "deadfall"
+   },
+   {
+    "crop": "tree_c",
+    "cell": [
+     413,
+     195
+    ],
+    "reason": "flowering tree closes the north-east corner",
+    "cluster": "frame"
+   },
+   {
+    "crop": "tree_b",
+    "cell": [
+     386,
+     195
+    ],
+    "reason": "small tree at the cliff foot, west frame",
+    "cluster": "frame"
+   },
+   {
+    "crop": "rock_3",
+    "cell": [
+     384,
+     204
+    ],
+    "reason": "boulder fallen from the cliff onto the pavement",
+    "cluster": "frame"
+   },
+   {
+    "crop": "bush_a",
+    "cell": [
+     414,
+     199
+    ],
+    "reason": "bush where paving meets moor",
+    "cluster": "frame"
+   }
+  ],
+  "lights": [
+   {
+    "cell": [
+     407,
+     200
+    ],
+    "r": 62
+   },
+   {
+    "cell": [
+     400,
+     199
+    ],
+    "r": 58
+   }
+  ]
+ },
+ "B": {
+  "id": "B",
+  "title": "Candidate B - the waystation was overrun",
+  "thesis": "The same yard, after the post died. No canopy: a bracketed trophy skull stands where the counter was, and a diagonal of wreckage - broken cart, planks, flattened crate - runs from the south-west corner up to it, so the eye is dragged along the debris to the marker. Boulders have crept onto the paving from the cliff. One guttering lantern, no torch, and the moor is left to take the east side back.",
+  "actor": {
+   "who": "male",
+   "cell": [
+    394,
+    200
+   ],
+   "frame": "walk",
+   "dir": "right"
+  },
+  "props": [
+   {
+    "crop": "trophy_skull",
+    "cell": [
+     406,
+     199
+    ],
+    "reason": "bracketed trophy skull on the counter cell - the landmark",
+    "cluster": "marker"
+   },
+   {
+    "crop": "skull_sign",
+    "cell": [
+     403,
+     199
+    ],
+    "reason": "skull sign at the entrance, second death mark",
+    "cluster": "marker"
+   },
+   {
+    "crop": "banner",
+    "cell": [
+     408,
+     200
+    ],
+    "reason": "torn banner on the locker bank",
+    "cluster": "marker"
+   },
+   {
+    "crop": "cart_broken",
+    "cell": [
+     401,
+     204
+    ],
+    "reason": "overturned cart at the head of the debris line",
+    "cluster": "wreck"
+   },
+   {
+    "crop": "planks_a",
+    "cell": [
+     398,
+     205
+    ],
+    "reason": "planks spilled from the cart",
+    "cluster": "wreck"
+   },
+   {
+    "crop": "plank",
+    "cell": [
+     403,
+     206
+    ],
+    "reason": "single plank further along the diagonal",
+    "cluster": "wreck"
+   },
+   {
+    "crop": "planks_a",
+    "cell": [
+     405,
+     203
+    ],
+    "reason": "planks where the counter's west end was",
+    "cluster": "wreck"
+   },
+   {
+    "crop": "crate_flat",
+    "cell": [
+     409,
+     201
+    ],
+    "reason": "flattened crate at the east end of the counter",
+    "cluster": "wreck"
+   },
+   {
+    "crop": "barrel_b",
+    "cell": [
+     404,
+     202
+    ],
+    "reason": "barrel left standing in the open",
+    "cluster": "wreck"
+   },
+   {
+    "crop": "crate_small",
+    "cell": [
+     406,
+     203
+    ],
+    "reason": "cache crate, half emptied",
+    "cluster": "cache"
+   },
+   {
+    "crop": "crate_big",
+    "cell": [
+     411,
+     203
+    ],
+    "reason": "ledger crate at the authored ledger cell",
+    "cluster": "ledger"
+   },
+   {
+    "crop": "burned_a",
+    "cell": [
+     398,
+     202
+    ],
+    "reason": "burned snag on the authored deadfall cell",
+    "cluster": "deadfall"
+   },
+   {
+    "crop": "burned_b",
+    "cell": [
+     397,
+     204
+    ],
+    "reason": "second burned snag, thicker at the base",
+    "cluster": "deadfall"
+   },
+   {
+    "crop": "broken_tree",
+    "cell": [
+     399,
+     203
+    ],
+    "reason": "broken trunk between the snags",
+    "cluster": "deadfall"
+   },
+   {
+    "crop": "rock_1",
+    "cell": [
+     385,
+     201
+    ],
+    "reason": "large boulder crept onto the paving",
+    "cluster": "cliff"
+   },
+   {
+    "crop": "rock_2",
+    "cell": [
+     386,
+     206
+    ],
+    "reason": "second boulder at the cliff foot",
+    "cluster": "cliff"
+   },
+   {
+    "crop": "tree_a",
+    "cell": [
+     414,
+     199
+    ],
+    "reason": "moss tree where paving meets moor",
+    "cluster": "frame"
+   },
+   {
+    "crop": "bush_b",
+    "cell": [
+     413,
+     196
+    ],
+    "reason": "berry bush reclaiming the north-east corner",
+    "cluster": "frame"
+   },
+   {
+    "crop": "lantern",
+    "cell": [
+     399,
+     201
+    ],
+    "reason": "one guttering lantern, the only light at night",
+    "cluster": "approach"
+   }
+  ],
+  "lights": [
+   {
+    "cell": [
+     399,
+     201
+    ],
+    "r": 48,
+    "color": [
+     236,
+     150,
+     90
+    ]
+   }
+  ],
+  "withdrawn": [
+   {
+    "crop": "stone_wall",
+    "why": "2 Objects/3 Decor/13.png reads as a roofed shed with a stump at world scale, not collapsed stonework; withdrawn after inspection"
+   }
+  ]
+ }
+}

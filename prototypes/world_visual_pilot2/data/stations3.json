@@ -1,0 +1,34 @@
+{
+ "schema": "soh.world_visual_pilot3.stations.v1",
+ "note": "Station 1 is A1's authored home_first camera (route.camera_landmark_states). Stations 2 and 3 are consecutive points along the same authored outbound route, six cells apart; no new POI coordinates are introduced.",
+ "stations": [
+  {
+   "id": "s1_approach",
+   "centre": [
+    394,
+    201
+   ],
+   "purpose": "arrival: pavement underfoot, the counter and its light ahead-right, cliff closing the left"
+  },
+  {
+   "id": "s2_plaza",
+   "centre": [
+    400,
+    204
+   ],
+   "purpose": "mid-yard: the counter reads across the open pavement, delivery cart to the left"
+  },
+  {
+   "id": "s3_counter",
+   "centre": [
+    406,
+    202
+   ],
+   "purpose": "at the counter: goods at body scale, ledger crate east, cache crate behind"
+  }
+ ],
+ "validation_centre": [
+  400,
+  204
+ ]
+}

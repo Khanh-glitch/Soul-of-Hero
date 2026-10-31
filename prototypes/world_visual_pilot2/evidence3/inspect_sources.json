@@ -1,0 +1,1110 @@
+{
+  "crops": {
+    "stall_red": {
+      "file": "stall_red",
+      "rect": null,
+      "source_size": [
+        73,
+        65
+      ],
+      "bbox": [
+        0,
+        0,
+        73,
+        65
+      ],
+      "size": [
+        73,
+        65
+      ],
+      "anchor": "foot",
+      "purpose": "waystation counter, candidate A landmark",
+      "issues": [],
+      "ok": true
+    },
+    "stall_blue": {
+      "file": "stall_blue",
+      "rect": null,
+      "source_size": [
+        64,
+        61
+      ],
+      "bbox": [
+        0,
+        0,
+        64,
+        61
+      ],
+      "size": [
+        64,
+        61
+      ],
+      "anchor": "foot",
+      "purpose": "alternate canopy tint, unused",
+      "issues": [],
+      "ok": true
+    },
+    "stall_green": {
+      "file": "stall_green",
+      "rect": null,
+      "source_size": [
+        65,
+        62
+      ],
+      "bbox": [
+        0,
+        0,
+        65,
+        62
+      ],
+      "size": [
+        65,
+        62
+      ],
+      "anchor": "foot",
+      "purpose": "alternate canopy tint, unused",
+      "issues": [],
+      "ok": true
+    },
+    "barrel_a": {
+      "file": "barrel_a",
+      "rect": null,
+      "source_size": [
+        20,
+        22
+      ],
+      "bbox": [
+        0,
+        0,
+        20,
+        22
+      ],
+      "size": [
+        20,
+        22
+      ],
+      "anchor": "foot",
+      "purpose": "water barrel beside the counter",
+      "issues": [],
+      "ok": true
+    },
+    "barrel_b": {
+      "file": "barrel_b",
+      "rect": null,
+      "source_size": [
+        20,
+        22
+      ],
+      "bbox": [
+        0,
+        0,
+        20,
+        22
+      ],
+      "size": [
+        20,
+        22
+      ],
+      "anchor": "foot",
+      "purpose": "second barrel, candidate B wreck",
+      "issues": [],
+      "ok": true
+    },
+    "crate_small": {
+      "file": "crate_small",
+      "rect": null,
+      "source_size": [
+        16,
+        21
+      ],
+      "bbox": [
+        0,
+        0,
+        16,
+        21
+      ],
+      "size": [
+        16,
+        21
+      ],
+      "anchor": "foot",
+      "purpose": "supply crate at the cache node",
+      "issues": [],
+      "ok": true
+    },
+    "crate_flat": {
+      "file": "crate_flat",
+      "rect": null,
+      "source_size": [
+        16,
+        22
+      ],
+      "bbox": [
+        0,
+        0,
+        16,
+        22
+      ],
+      "size": [
+        16,
+        22
+      ],
+      "anchor": "foot",
+      "purpose": "flattened crate, candidate B",
+      "issues": [],
+      "ok": true
+    },
+    "crate_big": {
+      "file": "crate_big",
+      "rect": null,
+      "source_size": [
+        18,
+        25
+      ],
+      "bbox": [
+        0,
+        0,
+        18,
+        25
+      ],
+      "size": [
+        18,
+        25
+      ],
+      "anchor": "foot",
+      "purpose": "ledger crate at the ledger node",
+      "issues": [],
+      "ok": true
+    },
+    "cart": {
+      "file": "cart",
+      "rect": null,
+      "source_size": [
+        48,
+        26
+      ],
+      "bbox": [
+        0,
+        0,
+        48,
+        26
+      ],
+      "size": [
+        48,
+        26
+      ],
+      "anchor": "foot",
+      "purpose": "hand cart parked on the plaza, candidate A",
+      "issues": [],
+      "ok": true
+    },
+    "cart_broken": {
+      "file": "cart_broken",
+      "rect": null,
+      "source_size": [
+        41,
+        38
+      ],
+      "bbox": [
+        0,
+        0,
+        41,
+        38
+      ],
+      "size": [
+        41,
+        38
+      ],
+      "anchor": "foot",
+      "purpose": "abandoned cart, candidate B",
+      "issues": [],
+      "ok": true
+    },
+    "planks_a": {
+      "file": "planks_a",
+      "rect": null,
+      "source_size": [
+        19,
+        21
+      ],
+      "bbox": [
+        0,
+        0,
+        19,
+        21
+      ],
+      "size": [
+        19,
+        21
+      ],
+      "anchor": "foot",
+      "purpose": "loose planks, candidate B",
+      "issues": [],
+      "ok": true
+    },
+    "plank": {
+      "file": "plank",
+      "rect": null,
+      "source_size": [
+        15,
+        13
+      ],
+      "bbox": [
+        0,
+        0,
+        15,
+        13
+      ],
+      "size": [
+        15,
+        13
+      ],
+      "anchor": "foot",
+      "purpose": "single plank, candidate B",
+      "issues": [],
+      "ok": true
+    },
+    "plank_pile": {
+      "file": "plank_pile",
+      "rect": null,
+      "source_size": [
+        26,
+        17
+      ],
+      "bbox": [
+        0,
+        0,
+        26,
+        17
+      ],
+      "size": [
+        26,
+        17
+      ],
+      "anchor": "foot",
+      "purpose": "stacked planks on the delivery cart",
+      "issues": [],
+      "ok": true
+    },
+    "lantern": {
+      "file": "lantern",
+      "rect": null,
+      "source_size": [
+        14,
+        19
+      ],
+      "bbox": [
+        0,
+        0,
+        14,
+        19
+      ],
+      "size": [
+        14,
+        19
+      ],
+      "anchor": "foot",
+      "purpose": "small lantern on the counter",
+      "issues": [],
+      "ok": true
+    },
+    "torch_post": {
+      "file": "torch_post",
+      "rect": null,
+      "source_size": [
+        28,
+        42
+      ],
+      "bbox": [
+        0,
+        0,
+        28,
+        42
+      ],
+      "size": [
+        28,
+        42
+      ],
+      "anchor": "foot",
+      "purpose": "light post at the yard entrance",
+      "issues": [],
+      "ok": true
+    },
+    "signpost": {
+      "file": "signpost",
+      "rect": null,
+      "source_size": [
+        17,
+        40
+      ],
+      "bbox": [
+        0,
+        0,
+        17,
+        40
+      ],
+      "size": [
+        17,
+        40
+      ],
+      "anchor": "foot",
+      "purpose": "route sign at the west approach",
+      "issues": [],
+      "ok": true
+    },
+    "signpost_b": {
+      "file": "signpost_b",
+      "rect": null,
+      "source_size": [
+        16,
+        40
+      ],
+      "bbox": [
+        0,
+        0,
+        16,
+        40
+      ],
+      "size": [
+        16,
+        40
+      ],
+      "anchor": "foot",
+      "purpose": "second sign at the plaza east edge",
+      "issues": [],
+      "ok": true
+    },
+    "skull_sign": {
+      "file": "skull_sign",
+      "rect": null,
+      "source_size": [
+        20,
+        23
+      ],
+      "bbox": [
+        0,
+        0,
+        20,
+        23
+      ],
+      "size": [
+        20,
+        23
+      ],
+      "anchor": "foot",
+      "purpose": "death mark on a post, candidate B",
+      "issues": [],
+      "ok": true
+    },
+    "skull_trophy": {
+      "file": "skull_trophy",
+      "rect": null,
+      "source_size": [
+        23,
+        21
+      ],
+      "bbox": [
+        0,
+        0,
+        23,
+        21
+      ],
+      "size": [
+        23,
+        21
+      ],
+      "anchor": "foot",
+      "purpose": "skull trophy on the counter, candidate A",
+      "issues": [],
+      "ok": true
+    },
+    "stone_wall": {
+      "file": "stone_wall",
+      "rect": null,
+      "source_size": [
+        43,
+        54
+      ],
+      "bbox": [
+        0,
+        0,
+        43,
+        54
+      ],
+      "size": [
+        43,
+        54
+      ],
+      "anchor": "foot",
+      "purpose": "collapsed stonework at the cliff foot",
+      "issues": [],
+      "ok": true
+    },
+    "trophy_skull": {
+      "file": "other_objects",
+      "rect": [
+        7,
+        5,
+        34,
+        43
+      ],
+      "source_size": [
+        352,
+        112
+      ],
+      "bbox": [
+        0,
+        0,
+        34,
+        43
+      ],
+      "size": [
+        34,
+        43
+      ],
+      "anchor": "foot",
+      "purpose": "bracketed trophy skull, candidate B landmark",
+      "issues": [],
+      "ok": true
+    },
+    "banner": {
+      "file": "other_objects",
+      "rect": [
+        164,
+        64,
+        23,
+        30
+      ],
+      "source_size": [
+        352,
+        112
+      ],
+      "bbox": [
+        0,
+        0,
+        23,
+        30
+      ],
+      "size": [
+        23,
+        30
+      ],
+      "anchor": "foot",
+      "purpose": "hanging banner, both candidates",
+      "issues": [],
+      "ok": true
+    },
+    "tree_a": {
+      "file": "tree_a",
+      "rect": null,
+      "source_size": [
+        64,
+        64
+      ],
+      "bbox": [
+        0,
+        0,
+        38,
+        40
+      ],
+      "size": [
+        38,
+        40
+      ],
+      "anchor": "foot",
+      "purpose": "small moss tree framing the east edge",
+      "issues": [],
+      "ok": true
+    },
+    "tree_b": {
+      "file": "tree_b",
+      "rect": null,
+      "source_size": [
+        64,
+        64
+      ],
+      "bbox": [
+        0,
+        0,
+        39,
+        43
+      ],
+      "size": [
+        39,
+        43
+      ],
+      "anchor": "foot",
+      "purpose": "small tree north of the yard",
+      "issues": [],
+      "ok": true
+    },
+    "tree_c": {
+      "file": "tree_c",
+      "rect": null,
+      "source_size": [
+        64,
+        64
+      ],
+      "bbox": [
+        0,
+        0,
+        27,
+        33
+      ],
+      "size": [
+        27,
+        33
+      ],
+      "anchor": "foot",
+      "purpose": "flowering tree at the moor margin",
+      "issues": [],
+      "ok": true
+    },
+    "tree_d": {
+      "file": "tree_d",
+      "rect": null,
+      "source_size": [
+        64,
+        64
+      ],
+      "bbox": [
+        0,
+        0,
+        48,
+        58
+      ],
+      "size": [
+        48,
+        58
+      ],
+      "anchor": "foot",
+      "purpose": "mid tree on the north verge",
+      "issues": [],
+      "ok": true
+    },
+    "bush_a": {
+      "file": "bush_a",
+      "rect": null,
+      "source_size": [
+        32,
+        32
+      ],
+      "bbox": [
+        0,
+        0,
+        27,
+        28
+      ],
+      "size": [
+        27,
+        28
+      ],
+      "anchor": "foot",
+      "purpose": "bush at the plaza margin",
+      "issues": [],
+      "ok": true
+    },
+    "bush_b": {
+      "file": "bush_b",
+      "rect": null,
+      "source_size": [
+        64,
+        64
+      ],
+      "bbox": [
+        0,
+        0,
+        35,
+        36
+      ],
+      "size": [
+        35,
+        36
+      ],
+      "anchor": "foot",
+      "purpose": "berry bush at the layby",
+      "issues": [],
+      "ok": true
+    },
+    "burned_a": {
+      "file": "burned_a",
+      "rect": null,
+      "source_size": [
+        64,
+        64
+      ],
+      "bbox": [
+        0,
+        0,
+        49,
+        60
+      ],
+      "size": [
+        49,
+        60
+      ],
+      "anchor": "foot",
+      "purpose": "burned snag at the authored deadfall",
+      "issues": [],
+      "ok": true
+    },
+    "burned_b": {
+      "file": "burned_b",
+      "rect": null,
+      "source_size": [
+        64,
+        64
+      ],
+      "bbox": [
+        0,
+        0,
+        28,
+        37
+      ],
+      "size": [
+        28,
+        37
+      ],
+      "anchor": "foot",
+      "purpose": "second burned snag, candidate B",
+      "issues": [],
+      "ok": true
+    },
+    "broken_tree": {
+      "file": "broken_tree",
+      "rect": null,
+      "source_size": [
+        48,
+        48
+      ],
+      "bbox": [
+        0,
+        0,
+        32,
+        26
+      ],
+      "size": [
+        32,
+        26
+      ],
+      "anchor": "foot",
+      "purpose": "broken trunk at the deadfall",
+      "issues": [],
+      "ok": true
+    },
+    "rock_1": {
+      "file": "rock_1",
+      "rect": null,
+      "source_size": [
+        64,
+        64
+      ],
+      "bbox": [
+        0,
+        0,
+        56,
+        62
+      ],
+      "size": [
+        56,
+        62
+      ],
+      "anchor": "foot",
+      "purpose": "cliff boulder, grass shadow variant",
+      "issues": [],
+      "ok": true
+    },
+    "rock_2": {
+      "file": "rock_2",
+      "rect": null,
+      "source_size": [
+        64,
+        64
+      ],
+      "bbox": [
+        0,
+        0,
+        60,
+        60
+      ],
+      "size": [
+        60,
+        60
+      ],
+      "anchor": "foot",
+      "purpose": "cliff boulder, grass shadow variant",
+      "issues": [],
+      "ok": true
+    },
+    "rock_3": {
+      "file": "rock_3",
+      "rect": null,
+      "source_size": [
+        64,
+        64
+      ],
+      "bbox": [
+        0,
+        0,
+        41,
+        46
+      ],
+      "size": [
+        41,
+        46
+      ],
+      "anchor": "foot",
+      "purpose": "cliff boulder",
+      "issues": [],
+      "ok": true
+    },
+    "rock_4": {
+      "file": "rock_4",
+      "rect": null,
+      "source_size": [
+        64,
+        64
+      ],
+      "bbox": [
+        0,
+        0,
+        43,
+        42
+      ],
+      "size": [
+        43,
+        42
+      ],
+      "anchor": "foot",
+      "purpose": "cliff boulder",
+      "issues": [],
+      "ok": true
+    },
+    "rock_5": {
+      "file": "rock_5",
+      "rect": null,
+      "source_size": [
+        64,
+        64
+      ],
+      "bbox": [
+        0,
+        0,
+        44,
+        46
+      ],
+      "size": [
+        44,
+        46
+      ],
+      "anchor": "foot",
+      "purpose": "cliff boulder",
+      "issues": [],
+      "ok": true
+    },
+    "rock_6": {
+      "file": "rock_6",
+      "rect": null,
+      "source_size": [
+        32,
+        32
+      ],
+      "bbox": [
+        0,
+        0,
+        29,
+        30
+      ],
+      "size": [
+        29,
+        30
+      ],
+      "anchor": "foot",
+      "purpose": "mid boulder",
+      "issues": [],
+      "ok": true
+    },
+    "rock_7": {
+      "file": "rock_7",
+      "rect": null,
+      "source_size": [
+        32,
+        32
+      ],
+      "bbox": [
+        0,
+        0,
+        26,
+        25
+      ],
+      "size": [
+        26,
+        25
+      ],
+      "anchor": "foot",
+      "purpose": "small boulder",
+      "issues": [],
+      "ok": true
+    },
+    "rock_8": {
+      "file": "rock_8",
+      "rect": null,
+      "source_size": [
+        32,
+        32
+      ],
+      "bbox": [
+        0,
+        0,
+        26,
+        31
+      ],
+      "size": [
+        26,
+        31
+      ],
+      "anchor": "foot",
+      "purpose": "small boulder",
+      "issues": [],
+      "ok": true
+    }
+  },
+  "materials": {
+    "grass": [
+      {
+        "file": "ground",
+        "rect": [
+          29,
+          29,
+          16,
+          16
+        ],
+        "from_component": [
+          19,
+          19,
+          43,
+          43
+        ]
+      },
+      {
+        "file": "ground",
+        "rect": [
+          45,
+          125,
+          16,
+          16
+        ],
+        "from_component": [
+          35,
+          115,
+          43,
+          43
+        ]
+      },
+      {
+        "file": "ground",
+        "rect": [
+          45,
+          317,
+          16,
+          16
+        ],
+        "from_component": [
+          35,
+          307,
+          43,
+          43
+        ]
+      },
+      {
+        "file": "ground",
+        "rect": [
+          45,
+          413,
+          16,
+          16
+        ],
+        "from_component": [
+          35,
+          403,
+          43,
+          43
+        ]
+      }
+    ],
+    "pave": [
+      {
+        "file": "road1",
+        "rect": [
+          26,
+          16,
+          16,
+          16
+        ],
+        "blue_ratio": 0.996,
+        "spread": 62.9
+      },
+      {
+        "file": "road1",
+        "rect": [
+          28,
+          16,
+          16,
+          16
+        ],
+        "blue_ratio": 0.996,
+        "spread": 62.8
+      },
+      {
+        "file": "road1",
+        "rect": [
+          30,
+          16,
+          16,
+          16
+        ],
+        "blue_ratio": 0.996,
+        "spread": 62.6
+      },
+      {
+        "file": "road1",
+        "rect": [
+          32,
+          16,
+          16,
+          16
+        ],
+        "blue_ratio": 1.0,
+        "spread": 62.4
+      },
+      {
+        "file": "road1",
+        "rect": [
+          34,
+          16,
+          16,
+          16
+        ],
+        "blue_ratio": 1.0,
+        "spread": 62.4
+      },
+      {
+        "file": "road1",
+        "rect": [
+          36,
+          16,
+          16,
+          16
+        ],
+        "blue_ratio": 1.0,
+        "spread": 62.4
+      }
+    ],
+    "track": [
+      {
+        "file": "road2",
+        "rect": [
+          24,
+          16,
+          16,
+          16
+        ]
+      },
+      {
+        "file": "road2",
+        "rect": [
+          22,
+          18,
+          16,
+          16
+        ]
+      },
+      {
+        "file": "road2",
+        "rect": [
+          20,
+          20,
+          16,
+          16
+        ]
+      }
+    ]
+  },
+  "rejected": [
+    {
+      "name": "fence_h",
+      "pack": "village",
+      "file": "1.1 Tiles/Tileset2.png",
+      "rect": [
+        0,
+        8,
+        144,
+        46
+      ],
+      "why": "the rectangle overlaps the gate rectangle (96,4,64,46) and clips the fence run at x=144; Tileset2's palisade pieces touch, so no connected component exists that isolates one run."
+    },
+    {
+      "name": "gate",
+      "pack": "village",
+      "file": "1.1 Tiles/Tileset2.png",
+      "rect": [
+        96,
+        4,
+        64,
+        46
+      ],
+      "why": "shares 32 px of its column range with fence_h; the arch is also cut on its right side where the next fence bay starts."
+    },
+    {
+      "name": "spikes",
+      "pack": "village",
+      "file": "1.1 Tiles/Tileset2.png",
+      "rect": [
+        192,
+        192,
+        48,
+        40
+      ],
+      "why": "not a spike run: at world scale it renders as a loose red plank. Withdrawn."
+    },
+    {
+      "name": "road_strip_fill",
+      "pack": "road",
+      "file": "PNG_Tiled/Road1_grass.png",
+      "rect": [
+        0,
+        6,
+        96,
+        16
+      ],
+      "why": "the strip has fully transparent columns that were patched by 'heal_columns'; the fill is replaced by an opaque interior sample."
+    },
+    {
+      "name": "clay_auto",
+      "pack": "village",
+      "file": "1 Tiles/FieldsTileset.png",
+      "rect": null,
+      "why": "bare clay was chosen by a warm-pixel ratio over the whole pre-rendered scene, so the tile was whatever scored highest, not a designed material. The cliff is now drawn as boulders from the rock pack."
+    },
+    {
+      "name": "tree_big@0.5",
+      "pack": "trees",
+      "file": "PNG/Assets_separately/Trees/Tree1.png",
+      "rect": null,
+      "why": "128 px tree against a 22 px body (5.8x) had to be halved by NEAREST, which is resampling. Replaced by native 32-48 px frames."
+    },
+    {
+      "name": "burned_dup",
+      "pack": "trees",
+      "file": "PNG/Assets_separately/Trees/Burned_tree1.png",
+      "rect": null,
+      "why": "placed twice at the same world coordinates (398.6,203.4) by two edits; candidate layouts now assert unique positions."
+    }
+  ],
+  "policy": {
+    "scale": "native only, no resampling",
+    "sprite_source": "whole file bbox or exact connected component",
+    "materials": "100% opaque interior samples",
+    "pavement_edges": "road pack 6px band, native N/S, rotated for E/W"
+  }
+}

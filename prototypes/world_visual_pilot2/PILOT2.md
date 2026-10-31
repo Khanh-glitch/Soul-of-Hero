@@ -1,5 +1,10 @@
 # Waystation Audition — Pilot 2 (new CraftPix sources + D051 avatars)
 
+> **Superseded for visual judgement by [PILOT3.md](PILOT3.md).** Pilot 2's crops, scale
+> handling and prop placement were the subject of a correction round: the inspection sheet in
+> `evidence3/` shows which of these frames were refused and why. This file is kept as the
+> record of what was tried and rejected.
+
 Baseline for this reset: `93c80959835b05e45176a0ba745749d5991b9675`.
 Branch: `arena/103e4440-soul-of-hero`.
 

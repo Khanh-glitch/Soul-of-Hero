@@ -1,0 +1,1767 @@
+{
+  "schema": "soh.world_visual_pilot3.evidence.v1",
+  "a1_geometry": {
+    "file": "data/cells2.json",
+    "sha256": "0896ac09acfd7018bf679017ad85349453b73af7477179475f6bdff759ec6c74"
+  },
+  "viewport": {
+    "native": [
+      640,
+      360
+    ],
+    "world_window": [
+      320,
+      180
+    ],
+    "zoom": 2,
+    "cell_px": 16
+  },
+  "sources": {
+    "barrel_a": {
+      "pack": "504452",
+      "pack_name": "Village tileset for top-down defense",
+      "file": "2 Objects/4 Box/1.png",
+      "sha256": "276a8586a0abf62a6f9b7d40e64953b60b9a885e1b025265df3277c6371cdedb",
+      "size": [
+        20,
+        22
+      ]
+    },
+    "barrel_b": {
+      "pack": "504452",
+      "pack_name": "Village tileset for top-down defense",
+      "file": "2 Objects/4 Box/2.png",
+      "sha256": "9e3f2231dbd0696488ace2a85941ada163fc65da4ddf74174fbbd370ab34abec",
+      "size": [
+        20,
+        22
+      ]
+    },
+    "broken_tree": {
+      "pack": "385863",
+      "pack_name": "Top-down trees",
+      "file": "PNG/Assets_separately/Trees/Broken_tree3.png",
+      "sha256": "16c1ae4462fb915d9ee7a6cff0f2952cf9a14fd19c5a24e5f54931f441701e4b",
+      "size": [
+        48,
+        48
+      ]
+    },
+    "burned_a": {
+      "pack": "385863",
+      "pack_name": "Top-down trees",
+      "file": "PNG/Assets_separately/Trees/Burned_tree2.png",
+      "sha256": "42a12f723e78ef27194ed80669f38d93bd904006f8bf0974ab423fd3a62697cd",
+      "size": [
+        64,
+        64
+      ]
+    },
+    "burned_b": {
+      "pack": "385863",
+      "pack_name": "Top-down trees",
+      "file": "PNG/Assets_separately/Trees/Burned_tree3.png",
+      "sha256": "bb1244c11ec165d5d1d4044dbf0a8d11e612b8b7d75af80386e6037f00c86068",
+      "size": [
+        64,
+        64
+      ]
+    },
+    "bush_a": {
+      "pack": "141354",
+      "pack_name": "Top-down bushes",
+      "file": "PNG/Assets/Bush_simple1_1.png",
+      "sha256": "8a779f7bac37d55fc079d338849623a40344ada9b15de6bf62b9848f353f7a9d",
+      "size": [
+        32,
+        32
+      ]
+    },
+    "bush_b": {
+      "pack": "141354",
+      "pack_name": "Top-down bushes",
+      "file": "PNG/Assets/Bush_blue_flowers1.png",
+      "sha256": "1a6aec41a7e4799688ee7edd7fcbbef2658e1e85976803afd0284aeeac3f4f4b",
+      "size": [
+        64,
+        64
+      ]
+    },
+    "cart": {
+      "pack": "504452",
+      "pack_name": "Village tileset for top-down defense",
+      "file": "2 Objects/3 Decor/1.png",
+      "sha256": "c5713692ebcc130687bcce85e6110d2fd894b08eca8c693923600e908348cf12",
+      "size": [
+        48,
+        26
+      ]
+    },
+    "cart_broken": {
+      "pack": "504452",
+      "pack_name": "Village tileset for top-down defense",
+      "file": "2 Objects/3 Decor/2.png",
+      "sha256": "0f732ef506f415cd8c269fd94d5d18fdb5745b2e0d101d5f2ad6c56c0430333d",
+      "size": [
+        41,
+        38
+      ]
+    },
+    "crate_big": {
+      "pack": "504452",
+      "pack_name": "Village tileset for top-down defense",
+      "file": "2 Objects/4 Box/5.png",
+      "sha256": "0073197475b4a1536b96cca24ae0dbbfda9257add52c263f12dde847d13c6650",
+      "size": [
+        18,
+        25
+      ]
+    },
+    "crate_flat": {
+      "pack": "504452",
+      "pack_name": "Village tileset for top-down defense",
+      "file": "2 Objects/4 Box/4.png",
+      "sha256": "710633cb956145583c9107d20fc2abbc445cd125d32a74c3601518e04f5b33da",
+      "size": [
+        16,
+        22
+      ]
+    },
+    "crate_small": {
+      "pack": "504452",
+      "pack_name": "Village tileset for top-down defense",
+      "file": "2 Objects/4 Box/3.png",
+      "sha256": "1f227c50b0e64acc9d1dd6dc64475d5a4d8966833de4d403fa6b16c57b067a3b",
+      "size": [
+        16,
+        21
+      ]
+    },
+    "female_idle": {
+      "pack": "419402",
+      "pack_name": "Base 4-direction female character",
+      "file": "PNG/Unarmed/Without_shadow/Unarmed_Idle_without_shadow.png",
+      "sha256": "e298ba49fe89a30430a7ecaed8095583349b65c2ca4abffc3c07d2f00ab6efab",
+      "size": [
+        768,
+        256
+      ]
+    },
+    "female_walk": {
+      "pack": "419402",
+      "pack_name": "Base 4-direction female character",
+      "file": "PNG/Unarmed/Without_shadow/Unarmed_Walk_without_shadow.png",
+      "sha256": "3b77faab3b5cde395842aee5ad87a44cc9ea03b0b85189b84f5f5478578671ea",
+      "size": [
+        384,
+        256
+      ]
+    },
+    "ground": {
+      "pack": "574220",
+      "pack_name": "Path & road top-down tileset",
+      "file": "PNG_Tiled/Ground_grass.png",
+      "sha256": "d931a1daafbd64f81caae5547c5cbf05163f3c02d83b2385d289031f41baea44",
+      "size": [
+        272,
+        496
+      ]
+    },
+    "lantern": {
+      "pack": "504452",
+      "pack_name": "Village tileset for top-down defense",
+      "file": "2 Objects/3 Decor/6.png",
+      "sha256": "1f2a1c90aac644a17ebb57a7432b497971de8d692469e99493c26e848714adb3",
+      "size": [
+        14,
+        19
+      ]
+    },
+    "male_idle": {
+      "pack": "555940",
+      "pack_name": "Base 4-direction male character",
+      "file": "PNG/Unarmed/Without_shadow/Unarmed_Idle_without_shadow.png",
+      "sha256": "aefad5e0900791fe8be411399b26a1e287283c4636a9921fc1024c23e802b850",
+      "size": [
+        768,
+        256
+      ]
+    },
+    "male_walk": {
+      "pack": "555940",
+      "pack_name": "Base 4-direction male character",
+      "file": "PNG/Unarmed/Without_shadow/Unarmed_Walk_without_shadow.png",
+      "sha256": "07538f1ad5f77fd07a6fe112e87071c91cba19850ac6bf3630fb308556953de4",
+      "size": [
+        384,
+        256
+      ]
+    },
+    "other_objects": {
+      "pack": "218281",
+      "pack_name": "Pixel-art dungeon objects",
+      "file": "PNG/Other_objects.png",
+      "sha256": "cc85ba73c3ba90969de3d3c63ef1746eb704bd056d7e15111f64f96a3c0f8f47",
+      "size": [
+        352,
+        112
+      ]
+    },
+    "plank": {
+      "pack": "504452",
+      "pack_name": "Village tileset for top-down defense",
+      "file": "2 Objects/3 Decor/4.png",
+      "sha256": "c5932b90231fdd5bf00bfd1354ed50d3ff077c86ab795b87a0750785150c8a23",
+      "size": [
+        15,
+        13
+      ]
+    },
+    "plank_pile": {
+      "pack": "504452",
+      "pack_name": "Village tileset for top-down defense",
+      "file": "2 Objects/3 Decor/5.png",
+      "sha256": "9907b1f6183a712de2d4b63215777063c248397bca5a3c149f2473bbbf2c7c0a",
+      "size": [
+        26,
+        17
+      ]
+    },
+    "planks_a": {
+      "pack": "504452",
+      "pack_name": "Village tileset for top-down defense",
+      "file": "2 Objects/3 Decor/3.png",
+      "sha256": "0726587f92209483d1b3c0a31d5f6d93f130723879b37afeb148205563584dbc",
+      "size": [
+        19,
+        21
+      ]
+    },
+    "road1": {
+      "pack": "574220",
+      "pack_name": "Path & road top-down tileset",
+      "file": "PNG_Tiled/Road1_grass.png",
+      "sha256": "a6138307457524b3496acb86096ca51b1f8747baa4da8dfc7ccda51b7ff2045e",
+      "size": [
+        240,
+        416
+      ]
+    },
+    "road2": {
+      "pack": "574220",
+      "pack_name": "Path & road top-down tileset",
+      "file": "PNG_Tiled/Road2_grass.png",
+      "sha256": "42bcb914c22e98c5ad063f3732c8663b097a6f4cfd3ef7cf4373e5cb6141850f",
+      "size": [
+        240,
+        416
+      ]
+    },
+    "road3": {
+      "pack": "574220",
+      "pack_name": "Path & road top-down tileset",
+      "file": "PNG_Tiled/Road3_grass.png",
+      "sha256": "e2522e25bc5c5dcda37c8e2509dbfb4a3d16401ef765f72579c674371daceb15",
+      "size": [
+        240,
+        480
+      ]
+    },
+    "road4": {
+      "pack": "574220",
+      "pack_name": "Path & road top-down tileset",
+      "file": "PNG_Tiled/Road4_grass.png",
+      "sha256": "0ab034bb92072c5ae9e41bcac9c8acbe6684321e5ecfee1dbbfb3cae87f256a8",
+      "size": [
+        240,
+        480
+      ]
+    },
+    "road5": {
+      "pack": "574220",
+      "pack_name": "Path & road top-down tileset",
+      "file": "PNG_Tiled/Road5_grass.png",
+      "sha256": "a8b0a41e508c3f8cdcdb3fa278adf0fbad9b9bb02009e5de3ddded7ace5f55f3",
+      "size": [
+        240,
+        416
+      ]
+    },
+    "rock_1": {
+      "pack": "974061",
+      "pack_name": "Rocks and stones top-down",
+      "file": "PNG/Objects_separately/Rock1_grass_shadow1.png",
+      "sha256": "bf534dd892d4286cbf595cf969387acb97aca8d9578c6813e9e7e72d9dcc8311",
+      "size": [
+        64,
+        64
+      ]
+    },
+    "rock_2": {
+      "pack": "974061",
+      "pack_name": "Rocks and stones top-down",
+      "file": "PNG/Objects_separately/Rock2_grass_shadow1.png",
+      "sha256": "c130f8bf28f56c5fc7da74cb813d37e7d3147f4fe6cf695033bb80751a30321e",
+      "size": [
+        64,
+        64
+      ]
+    },
+    "rock_3": {
+      "pack": "974061",
+      "pack_name": "Rocks and stones top-down",
+      "file": "PNG/Objects_separately/Rock1_grass_shadow2.png",
+      "sha256": "71948d28e3e542e90f8b0feb56306ba6a70a495f2224081d94530567e3df7312",
+      "size": [
+        64,
+        64
+      ]
+    },
+    "rock_4": {
+      "pack": "974061",
+      "pack_name": "Rocks and stones top-down",
+      "file": "PNG/Objects_separately/Rock2_2_no_shadow.png",
+      "sha256": "a5a8b382d52c3f54c862f7d51caa97ae98e9ec540883c056c9aa69dc1d2dd89b",
+      "size": [
+        64,
+        64
+      ]
+    },
+    "rock_5": {
+      "pack": "974061",
+      "pack_name": "Rocks and stones top-down",
+      "file": "PNG/Objects_separately/Rock3_2_no_shadow.png",
+      "sha256": "1845dcea8edf77dd6f4bcabeb1b840f82d91d89e1dea0d25f628aae23da159ec",
+      "size": [
+        64,
+        64
+      ]
+    },
+    "rock_6": {
+      "pack": "974061",
+      "pack_name": "Rocks and stones top-down",
+      "file": "PNG/Objects_separately/Rock3_3_no_shadow.png",
+      "sha256": "4ae8140fc593f09384a03a761913df36359d70e46326eed1e7a6c70adc13d36b",
+      "size": [
+        32,
+        32
+      ]
+    },
+    "rock_7": {
+      "pack": "974061",
+      "pack_name": "Rocks and stones top-down",
+      "file": "PNG/Objects_separately/Rock4_4.png",
+      "sha256": "c24969aeb938dc248a60c5af89f7fd96dc8d4a2693d44bee45727e16707e62e5",
+      "size": [
+        32,
+        32
+      ]
+    },
+    "rock_8": {
+      "pack": "974061",
+      "pack_name": "Rocks and stones top-down",
+      "file": "PNG/Objects_separately/Rock1_3_no_shadow.png",
+      "sha256": "a2cb22882a95976457c1b9999d1032e08973faef5edc0bfe8b1963c7f49c7836",
+      "size": [
+        32,
+        32
+      ]
+    },
+    "signpost": {
+      "pack": "504452",
+      "pack_name": "Village tileset for top-down defense",
+      "file": "2 Objects/3 Decor/10.png",
+      "sha256": "30b0574bc5a9719c30510d0844cfd8d2a17d08e04f359679f6d578d967953cd9",
+      "size": [
+        17,
+        40
+      ]
+    },
+    "signpost_b": {
+      "pack": "504452",
+      "pack_name": "Village tileset for top-down defense",
+      "file": "2 Objects/3 Decor/9.png",
+      "sha256": "6f5e3a174c0e13e09443c04df0185f4a05bf7622784b0a8cfc0a35065cf4ae8f",
+      "size": [
+        16,
+        40
+      ]
+    },
+    "skull_sign": {
+      "pack": "504452",
+      "pack_name": "Village tileset for top-down defense",
+      "file": "2 Objects/3 Decor/12.png",
+      "sha256": "6ccd954c62bd318a768bf3f9f82e6ab74e018fc4428d81714d09ebaf7a8a7084",
+      "size": [
+        20,
+        23
+      ]
+    },
+    "skull_trophy": {
+      "pack": "504452",
+      "pack_name": "Village tileset for top-down defense",
+      "file": "2 Objects/3 Decor/14.png",
+      "sha256": "cb34f590abd79e8f1bf22eb5538618ddc2d3d951ac8289b5d476277af19f1108",
+      "size": [
+        23,
+        21
+      ]
+    },
+    "stall_blue": {
+      "pack": "504452",
+      "pack_name": "Village tileset for top-down defense",
+      "file": "2 Objects/6 Tent/2.png",
+      "sha256": "36f92f14f12260754cee28761ce33091c034007cedead9e84c1543a852a492d6",
+      "size": [
+        64,
+        61
+      ]
+    },
+    "stall_green": {
+      "pack": "504452",
+      "pack_name": "Village tileset for top-down defense",
+      "file": "2 Objects/6 Tent/3.png",
+      "sha256": "8c7e55f5a6d30d348533384f37f990161388c11238fb38c53d9bd6f88fe11951",
+      "size": [
+        65,
+        62
+      ]
+    },
+    "stall_red": {
+      "pack": "504452",
+      "pack_name": "Village tileset for top-down defense",
+      "file": "2 Objects/6 Tent/1.png",
+      "sha256": "e7160442be71c88c1e8a5f8781bebeeb1f3a88f1bb91209195102db491d1a30a",
+      "size": [
+        73,
+        65
+      ]
+    },
+    "stone_wall": {
+      "pack": "504452",
+      "pack_name": "Village tileset for top-down defense",
+      "file": "2 Objects/3 Decor/13.png",
+      "sha256": "594625741b6388a5ee2d6554b28e74c343b496afc08a8d53497a1c5bcf64e100",
+      "size": [
+        43,
+        54
+      ]
+    },
+    "torch_post": {
+      "pack": "504452",
+      "pack_name": "Village tileset for top-down defense",
+      "file": "2 Objects/3 Decor/8.png",
+      "sha256": "e9f9981a5347f73946cfa79e58d0fa09ac294825de438bcfa8ed8c0f8fe9e321",
+      "size": [
+        28,
+        42
+      ]
+    },
+    "tree_a": {
+      "pack": "385863",
+      "pack_name": "Top-down trees",
+      "file": "PNG/Assets_separately/Trees/Moss_tree3.png",
+      "sha256": "68089080b038e9bbb78768df2834590dc91bd14c70e0b7adb5aa036d6b6fd266",
+      "size": [
+        64,
+        64
+      ]
+    },
+    "tree_b": {
+      "pack": "385863",
+      "pack_name": "Top-down trees",
+      "file": "PNG/Assets_separately/Trees/Tree3.png",
+      "sha256": "b285a9276b7fe4dd4cb9ba7cf98f607884039d5abd32b6413cb780062ed79e7c",
+      "size": [
+        64,
+        64
+      ]
+    },
+    "tree_c": {
+      "pack": "385863",
+      "pack_name": "Top-down trees",
+      "file": "PNG/Assets_separately/Trees/Flower_tree3.png",
+      "sha256": "f93c8c4e234102802f1c6837ce67317c93fa611d8f33ce7949d57eac6a2fc543",
+      "size": [
+        64,
+        64
+      ]
+    },
+    "tree_d": {
+      "pack": "385863",
+      "pack_name": "Top-down trees",
+      "file": "PNG/Assets_separately/Trees/Moss_tree2.png",
+      "sha256": "9d9aec3ebacbd21e3e9ef6fd26297f8b831c80f2033ce31be861a474eff9acdb",
+      "size": [
+        64,
+        64
+      ]
+    }
+  },
+  "crops": {
+    "stall_red": {
+      "file": "stall_red",
+      "rect": null,
+      "source_size": [
+        73,
+        65
+      ],
+      "bbox": [
+        0,
+        0,
+        73,
+        65
+      ],
+      "size": [
+        73,
+        65
+      ],
+      "anchor": "foot",
+      "purpose": "waystation counter, candidate A landmark",
+      "issues": [],
+      "ok": true
+    },
+    "stall_blue": {
+      "file": "stall_blue",
+      "rect": null,
+      "source_size": [
+        64,
+        61
+      ],
+      "bbox": [
+        0,
+        0,
+        64,
+        61
+      ],
+      "size": [
+        64,
+        61
+      ],
+      "anchor": "foot",
+      "purpose": "alternate canopy tint, unused",
+      "issues": [],
+      "ok": true
+    },
+    "stall_green": {
+      "file": "stall_green",
+      "rect": null,
+      "source_size": [
+        65,
+        62
+      ],
+      "bbox": [
+        0,
+        0,
+        65,
+        62
+      ],
+      "size": [
+        65,
+        62
+      ],
+      "anchor": "foot",
+      "purpose": "alternate canopy tint, unused",
+      "issues": [],
+      "ok": true
+    },
+    "barrel_a": {
+      "file": "barrel_a",
+      "rect": null,
+      "source_size": [
+        20,
+        22
+      ],
+      "bbox": [
+        0,
+        0,
+        20,
+        22
+      ],
+      "size": [
+        20,
+        22
+      ],
+      "anchor": "foot",
+      "purpose": "water barrel beside the counter",
+      "issues": [],
+      "ok": true
+    },
+    "barrel_b": {
+      "file": "barrel_b",
+      "rect": null,
+      "source_size": [
+        20,
+        22
+      ],
+      "bbox": [
+        0,
+        0,
+        20,
+        22
+      ],
+      "size": [
+        20,
+        22
+      ],
+      "anchor": "foot",
+      "purpose": "second barrel, candidate B wreck",
+      "issues": [],
+      "ok": true
+    },
+    "crate_small": {
+      "file": "crate_small",
+      "rect": null,
+      "source_size": [
+        16,
+        21
+      ],
+      "bbox": [
+        0,
+        0,
+        16,
+        21
+      ],
+      "size": [
+        16,
+        21
+      ],
+      "anchor": "foot",
+      "purpose": "supply crate at the cache node",
+      "issues": [],
+      "ok": true
+    },
+    "crate_flat": {
+      "file": "crate_flat",
+      "rect": null,
+      "source_size": [
+        16,
+        22
+      ],
+      "bbox": [
+        0,
+        0,
+        16,
+        22
+      ],
+      "size": [
+        16,
+        22
+      ],
+      "anchor": "foot",
+      "purpose": "flattened crate, candidate B",
+      "issues": [],
+      "ok": true
+    },
+    "crate_big": {
+      "file": "crate_big",
+      "rect": null,
+      "source_size": [
+        18,
+        25
+      ],
+      "bbox": [
+        0,
+        0,
+        18,
+        25
+      ],
+      "size": [
+        18,
+        25
+      ],
+      "anchor": "foot",
+      "purpose": "ledger crate at the ledger node",
+      "issues": [],
+      "ok": true
+    },
+    "cart": {
+      "file": "cart",
+      "rect": null,
+      "source_size": [
+        48,
+        26
+      ],
+      "bbox": [
+        0,
+        0,
+        48,
+        26
+      ],
+      "size": [
+        48,
+        26
+      ],
+      "anchor": "foot",
+      "purpose": "hand cart parked on the plaza, candidate A",
+      "issues": [],
+      "ok": true
+    },
+    "cart_broken": {
+      "file": "cart_broken",
+      "rect": null,
+      "source_size": [
+        41,
+        38
+      ],
+      "bbox": [
+        0,
+        0,
+        41,
+        38
+      ],
+      "size": [
+        41,
+        38
+      ],
+      "anchor": "foot",
+      "purpose": "abandoned cart, candidate B",
+      "issues": [],
+      "ok": true
+    },
+    "planks_a": {
+      "file": "planks_a",
+      "rect": null,
+      "source_size": [
+        19,
+        21
+      ],
+      "bbox": [
+        0,
+        0,
+        19,
+        21
+      ],
+      "size": [
+        19,
+        21
+      ],
+      "anchor": "foot",
+      "purpose": "loose planks, candidate B",
+      "issues": [],
+      "ok": true
+    },
+    "plank": {
+      "file": "plank",
+      "rect": null,
+      "source_size": [
+        15,
+        13
+      ],
+      "bbox": [
+        0,
+        0,
+        15,
+        13
+      ],
+      "size": [
+        15,
+        13
+      ],
+      "anchor": "foot",
+      "purpose": "single plank, candidate B",
+      "issues": [],
+      "ok": true
+    },
+    "plank_pile": {
+      "file": "plank_pile",
+      "rect": null,
+      "source_size": [
+        26,
+        17
+      ],
+      "bbox": [
+        0,
+        0,
+        26,
+        17
+      ],
+      "size": [
+        26,
+        17
+      ],
+      "anchor": "foot",
+      "purpose": "stacked planks on the delivery cart",
+      "issues": [],
+      "ok": true
+    },
+    "lantern": {
+      "file": "lantern",
+      "rect": null,
+      "source_size": [
+        14,
+        19
+      ],
+      "bbox": [
+        0,
+        0,
+        14,
+        19
+      ],
+      "size": [
+        14,
+        19
+      ],
+      "anchor": "foot",
+      "purpose": "small lantern on the counter",
+      "issues": [],
+      "ok": true
+    },
+    "torch_post": {
+      "file": "torch_post",
+      "rect": null,
+      "source_size": [
+        28,
+        42
+      ],
+      "bbox": [
+        0,
+        0,
+        28,
+        42
+      ],
+      "size": [
+        28,
+        42
+      ],
+      "anchor": "foot",
+      "purpose": "light post at the yard entrance",
+      "issues": [],
+      "ok": true
+    },
+    "signpost": {
+      "file": "signpost",
+      "rect": null,
+      "source_size": [
+        17,
+        40
+      ],
+      "bbox": [
+        0,
+        0,
+        17,
+        40
+      ],
+      "size": [
+        17,
+        40
+      ],
+      "anchor": "foot",
+      "purpose": "route sign at the west approach",
+      "issues": [],
+      "ok": true
+    },
+    "signpost_b": {
+      "file": "signpost_b",
+      "rect": null,
+      "source_size": [
+        16,
+        40
+      ],
+      "bbox": [
+        0,
+        0,
+        16,
+        40
+      ],
+      "size": [
+        16,
+        40
+      ],
+      "anchor": "foot",
+      "purpose": "second sign at the plaza east edge",
+      "issues": [],
+      "ok": true
+    },
+    "skull_sign": {
+      "file": "skull_sign",
+      "rect": null,
+      "source_size": [
+        20,
+        23
+      ],
+      "bbox": [
+        0,
+        0,
+        20,
+        23
+      ],
+      "size": [
+        20,
+        23
+      ],
+      "anchor": "foot",
+      "purpose": "death mark on a post, candidate B",
+      "issues": [],
+      "ok": true
+    },
+    "skull_trophy": {
+      "file": "skull_trophy",
+      "rect": null,
+      "source_size": [
+        23,
+        21
+      ],
+      "bbox": [
+        0,
+        0,
+        23,
+        21
+      ],
+      "size": [
+        23,
+        21
+      ],
+      "anchor": "foot",
+      "purpose": "skull trophy on the counter, candidate A",
+      "issues": [],
+      "ok": true
+    },
+    "stone_wall": {
+      "file": "stone_wall",
+      "rect": null,
+      "source_size": [
+        43,
+        54
+      ],
+      "bbox": [
+        0,
+        0,
+        43,
+        54
+      ],
+      "size": [
+        43,
+        54
+      ],
+      "anchor": "foot",
+      "purpose": "collapsed stonework at the cliff foot",
+      "issues": [],
+      "ok": true
+    },
+    "trophy_skull": {
+      "file": "other_objects",
+      "rect": [
+        7,
+        5,
+        34,
+        43
+      ],
+      "source_size": [
+        352,
+        112
+      ],
+      "bbox": [
+        0,
+        0,
+        34,
+        43
+      ],
+      "size": [
+        34,
+        43
+      ],
+      "anchor": "foot",
+      "purpose": "bracketed trophy skull, candidate B landmark",
+      "issues": [],
+      "ok": true
+    },
+    "banner": {
+      "file": "other_objects",
+      "rect": [
+        164,
+        64,
+        23,
+        30
+      ],
+      "source_size": [
+        352,
+        112
+      ],
+      "bbox": [
+        0,
+        0,
+        23,
+        30
+      ],
+      "size": [
+        23,
+        30
+      ],
+      "anchor": "foot",
+      "purpose": "hanging banner, both candidates",
+      "issues": [],
+      "ok": true
+    },
+    "tree_a": {
+      "file": "tree_a",
+      "rect": null,
+      "source_size": [
+        64,
+        64
+      ],
+      "bbox": [
+        0,
+        0,
+        38,
+        40
+      ],
+      "size": [
+        38,
+        40
+      ],
+      "anchor": "foot",
+      "purpose": "small moss tree framing the east edge",
+      "issues": [],
+      "ok": true
+    },
+    "tree_b": {
+      "file": "tree_b",
+      "rect": null,
+      "source_size": [
+        64,
+        64
+      ],
+      "bbox": [
+        0,
+        0,
+        39,
+        43
+      ],
+      "size": [
+        39,
+        43
+      ],
+      "anchor": "foot",
+      "purpose": "small tree north of the yard",
+      "issues": [],
+      "ok": true
+    },
+    "tree_c": {
+      "file": "tree_c",
+      "rect": null,
+      "source_size": [
+        64,
+        64
+      ],
+      "bbox": [
+        0,
+        0,
+        27,
+        33
+      ],
+      "size": [
+        27,
+        33
+      ],
+      "anchor": "foot",
+      "purpose": "flowering tree at the moor margin",
+      "issues": [],
+      "ok": true
+    },
+    "tree_d": {
+      "file": "tree_d",
+      "rect": null,
+      "source_size": [
+        64,
+        64
+      ],
+      "bbox": [
+        0,
+        0,
+        48,
+        58
+      ],
+      "size": [
+        48,
+        58
+      ],
+      "anchor": "foot",
+      "purpose": "mid tree on the north verge",
+      "issues": [],
+      "ok": true
+    },
+    "bush_a": {
+      "file": "bush_a",
+      "rect": null,
+      "source_size": [
+        32,
+        32
+      ],
+      "bbox": [
+        0,
+        0,
+        27,
+        28
+      ],
+      "size": [
+        27,
+        28
+      ],
+      "anchor": "foot",
+      "purpose": "bush at the plaza margin",
+      "issues": [],
+      "ok": true
+    },
+    "bush_b": {
+      "file": "bush_b",
+      "rect": null,
+      "source_size": [
+        64,
+        64
+      ],
+      "bbox": [
+        0,
+        0,
+        35,
+        36
+      ],
+      "size": [
+        35,
+        36
+      ],
+      "anchor": "foot",
+      "purpose": "berry bush at the layby",
+      "issues": [],
+      "ok": true
+    },
+    "burned_a": {
+      "file": "burned_a",
+      "rect": null,
+      "source_size": [
+        64,
+        64
+      ],
+      "bbox": [
+        0,
+        0,
+        49,
+        60
+      ],
+      "size": [
+        49,
+        60
+      ],
+      "anchor": "foot",
+      "purpose": "burned snag at the authored deadfall",
+      "issues": [],
+      "ok": true
+    },
+    "burned_b": {
+      "file": "burned_b",
+      "rect": null,
+      "source_size": [
+        64,
+        64
+      ],
+      "bbox": [
+        0,
+        0,
+        28,
+        37
+      ],
+      "size": [
+        28,
+        37
+      ],
+      "anchor": "foot",
+      "purpose": "second burned snag, candidate B",
+      "issues": [],
+      "ok": true
+    },
+    "broken_tree": {
+      "file": "broken_tree",
+      "rect": null,
+      "source_size": [
+        48,
+        48
+      ],
+      "bbox": [
+        0,
+        0,
+        32,
+        26
+      ],
+      "size": [
+        32,
+        26
+      ],
+      "anchor": "foot",
+      "purpose": "broken trunk at the deadfall",
+      "issues": [],
+      "ok": true
+    },
+    "rock_1": {
+      "file": "rock_1",
+      "rect": null,
+      "source_size": [
+        64,
+        64
+      ],
+      "bbox": [
+        0,
+        0,
+        56,
+        62
+      ],
+      "size": [
+        56,
+        62
+      ],
+      "anchor": "foot",
+      "purpose": "cliff boulder, grass shadow variant",
+      "issues": [],
+      "ok": true
+    },
+    "rock_2": {
+      "file": "rock_2",
+      "rect": null,
+      "source_size": [
+        64,
+        64
+      ],
+      "bbox": [
+        0,
+        0,
+        60,
+        60
+      ],
+      "size": [
+        60,
+        60
+      ],
+      "anchor": "foot",
+      "purpose": "cliff boulder, grass shadow variant",
+      "issues": [],
+      "ok": true
+    },
+    "rock_3": {
+      "file": "rock_3",
+      "rect": null,
+      "source_size": [
+        64,
+        64
+      ],
+      "bbox": [
+        0,
+        0,
+        41,
+        46
+      ],
+      "size": [
+        41,
+        46
+      ],
+      "anchor": "foot",
+      "purpose": "cliff boulder",
+      "issues": [],
+      "ok": true
+    },
+    "rock_4": {
+      "file": "rock_4",
+      "rect": null,
+      "source_size": [
+        64,
+        64
+      ],
+      "bbox": [
+        0,
+        0,
+        43,
+        42
+      ],
+      "size": [
+        43,
+        42
+      ],
+      "anchor": "foot",
+      "purpose": "cliff boulder",
+      "issues": [],
+      "ok": true
+    },
+    "rock_5": {
+      "file": "rock_5",
+      "rect": null,
+      "source_size": [
+        64,
+        64
+      ],
+      "bbox": [
+        0,
+        0,
+        44,
+        46
+      ],
+      "size": [
+        44,
+        46
+      ],
+      "anchor": "foot",
+      "purpose": "cliff boulder",
+      "issues": [],
+      "ok": true
+    },
+    "rock_6": {
+      "file": "rock_6",
+      "rect": null,
+      "source_size": [
+        32,
+        32
+      ],
+      "bbox": [
+        0,
+        0,
+        29,
+        30
+      ],
+      "size": [
+        29,
+        30
+      ],
+      "anchor": "foot",
+      "purpose": "mid boulder",
+      "issues": [],
+      "ok": true
+    },
+    "rock_7": {
+      "file": "rock_7",
+      "rect": null,
+      "source_size": [
+        32,
+        32
+      ],
+      "bbox": [
+        0,
+        0,
+        26,
+        25
+      ],
+      "size": [
+        26,
+        25
+      ],
+      "anchor": "foot",
+      "purpose": "small boulder",
+      "issues": [],
+      "ok": true
+    },
+    "rock_8": {
+      "file": "rock_8",
+      "rect": null,
+      "source_size": [
+        32,
+        32
+      ],
+      "bbox": [
+        0,
+        0,
+        26,
+        31
+      ],
+      "size": [
+        26,
+        31
+      ],
+      "anchor": "foot",
+      "purpose": "small boulder",
+      "issues": [],
+      "ok": true
+    }
+  },
+  "materials": {
+    "grass": [
+      {
+        "file": "ground",
+        "rect": [
+          29,
+          29,
+          16,
+          16
+        ],
+        "from_component": [
+          19,
+          19,
+          43,
+          43
+        ]
+      },
+      {
+        "file": "ground",
+        "rect": [
+          45,
+          125,
+          16,
+          16
+        ],
+        "from_component": [
+          35,
+          115,
+          43,
+          43
+        ]
+      },
+      {
+        "file": "ground",
+        "rect": [
+          45,
+          317,
+          16,
+          16
+        ],
+        "from_component": [
+          35,
+          307,
+          43,
+          43
+        ]
+      },
+      {
+        "file": "ground",
+        "rect": [
+          45,
+          413,
+          16,
+          16
+        ],
+        "from_component": [
+          35,
+          403,
+          43,
+          43
+        ]
+      }
+    ],
+    "pave": [
+      {
+        "file": "road1",
+        "rect": [
+          26,
+          16,
+          16,
+          16
+        ],
+        "blue_ratio": 0.996,
+        "spread": 62.9
+      },
+      {
+        "file": "road1",
+        "rect": [
+          28,
+          16,
+          16,
+          16
+        ],
+        "blue_ratio": 0.996,
+        "spread": 62.8
+      },
+      {
+        "file": "road1",
+        "rect": [
+          30,
+          16,
+          16,
+          16
+        ],
+        "blue_ratio": 0.996,
+        "spread": 62.6
+      },
+      {
+        "file": "road1",
+        "rect": [
+          32,
+          16,
+          16,
+          16
+        ],
+        "blue_ratio": 1.0,
+        "spread": 62.4
+      },
+      {
+        "file": "road1",
+        "rect": [
+          34,
+          16,
+          16,
+          16
+        ],
+        "blue_ratio": 1.0,
+        "spread": 62.4
+      },
+      {
+        "file": "road1",
+        "rect": [
+          36,
+          16,
+          16,
+          16
+        ],
+        "blue_ratio": 1.0,
+        "spread": 62.4
+      }
+    ],
+    "track": [
+      {
+        "file": "road2",
+        "rect": [
+          24,
+          16,
+          16,
+          16
+        ]
+      },
+      {
+        "file": "road2",
+        "rect": [
+          22,
+          18,
+          16,
+          16
+        ]
+      },
+      {
+        "file": "road2",
+        "rect": [
+          20,
+          20,
+          16,
+          16
+        ]
+      }
+    ]
+  },
+  "renderer": "tools3/compose3.py - Pillow compositor, NOT a Godot capture",
+  "layouts": {
+    "A": {
+      "title": "Candidate A - the waystation is open",
+      "thesis": "A working post. The counter, its canopy and the goods sit in one compact block on the north edge of the paved yard, lit and facing the road; the delivery cart stands apart to the south-west so the yard between them stays open. One landmark (the red canopy), one secondary mass (the cart), and a wide empty pavement in front of both.",
+      "actor": {
+        "who": "male",
+        "cell": [
+          394,
+          200
+        ],
+        "frame": "walk",
+        "dir": "right"
+      },
+      "props": 16,
+      "lighting": {
+        "day": {
+          "stations": [
+            {
+              "id": "s1_approach",
+              "centre": [
+                394,
+                201
+              ],
+              "purpose": "arrival: pavement underfoot, the counter and its light ahead-right, cliff closing the left",
+              "origin": [
+                264,
+                62
+              ],
+              "sha256": "f54531b310517ce2d1303d8d094fb8dc9b75de81b0b2e9c075cbde0b7b625cfa"
+            },
+            {
+              "id": "s2_plaza",
+              "centre": [
+                400,
+                204
+              ],
+              "purpose": "mid-yard: the counter reads across the open pavement, delivery cart to the left",
+              "origin": [
+                360,
+                110
+              ],
+              "sha256": "6bc3cc98d4e183d2a0ead176e25c80c28bf10920b932198a172451fbee194f4b"
+            },
+            {
+              "id": "s3_counter",
+              "centre": [
+                406,
+                202
+              ],
+              "purpose": "at the counter: goods at body scale, ledger crate east, cache crate behind",
+              "origin": [
+                456,
+                78
+              ],
+              "sha256": "6e4807eb845f2e26c89ede799f656f8fe8678e59b11ffaff85087dbfcb8d548b"
+            }
+          ],
+          "validation": {
+            "who": "female",
+            "file": "A_day_validation_female_640x360.png",
+            "sha256": "a4eb928aebc8567579575b00d519441bbfdc59346e085e63c399d539a15d400e"
+          },
+          "trace_ops": 34,
+          "trace_layer_cells": 3400
+        },
+        "night": {
+          "stations": [
+            {
+              "id": "s1_approach",
+              "centre": [
+                394,
+                201
+              ],
+              "purpose": "arrival: pavement underfoot, the counter and its light ahead-right, cliff closing the left",
+              "origin": [
+                264,
+                62
+              ],
+              "sha256": "e0f5c07a8e6489d62c489e543b7893a0e2c7f246d3c03ae24026027dc0336adf"
+            },
+            {
+              "id": "s2_plaza",
+              "centre": [
+                400,
+                204
+              ],
+              "purpose": "mid-yard: the counter reads across the open pavement, delivery cart to the left",
+              "origin": [
+                360,
+                110
+              ],
+              "sha256": "5cade2bb524f8d0cea89f42a2aa19a29ebe692ac65d9b04159bf3741c56dddb6"
+            },
+            {
+              "id": "s3_counter",
+              "centre": [
+                406,
+                202
+              ],
+              "purpose": "at the counter: goods at body scale, ledger crate east, cache crate behind",
+              "origin": [
+                456,
+                78
+              ],
+              "sha256": "9e83a19b481ae712a83b8057a97b6353f1a5cf78d7aed0499605cc5ad1b4bd8c"
+            }
+          ],
+          "validation": {
+            "who": "female",
+            "file": "A_night_validation_female_640x360.png",
+            "sha256": "12811eee8bb28b083b6b1318de4ad8d269b39bbb8e1b5effbda31af16b763d9a"
+          },
+          "trace_ops": 34,
+          "trace_layer_cells": 3400
+        }
+      }
+    },
+    "B": {
+      "title": "Candidate B - the waystation was overrun",
+      "thesis": "The same yard, after the post died. No canopy: a bracketed trophy skull stands where the counter was, and a diagonal of wreckage - broken cart, planks, flattened crate - runs from the south-west corner up to it, so the eye is dragged along the debris to the marker. Boulders have crept onto the paving from the cliff. One guttering lantern, no torch, and the moor is left to take the east side back.",
+      "actor": {
+        "who": "male",
+        "cell": [
+          394,
+          200
+        ],
+        "frame": "walk",
+        "dir": "right"
+      },
+      "props": 19,
+      "lighting": {
+        "day": {
+          "stations": [
+            {
+              "id": "s1_approach",
+              "centre": [
+                394,
+                201
+              ],
+              "purpose": "arrival: pavement underfoot, the counter and its light ahead-right, cliff closing the left",
+              "origin": [
+                264,
+                62
+              ],
+              "sha256": "0eb561cba4f8244446658c560c1fed02ac39260a1bccaae045ceee2b295fb13f"
+            },
+            {
+              "id": "s2_plaza",
+              "centre": [
+                400,
+                204
+              ],
+              "purpose": "mid-yard: the counter reads across the open pavement, delivery cart to the left",
+              "origin": [
+                360,
+                110
+              ],
+              "sha256": "c4aca607a3c341144a16df29af0444a76817abc15410afc8cd08396d8a3f641b"
+            },
+            {
+              "id": "s3_counter",
+              "centre": [
+                406,
+                202
+              ],
+              "purpose": "at the counter: goods at body scale, ledger crate east, cache crate behind",
+              "origin": [
+                456,
+                78
+              ],
+              "sha256": "14a67edcfb21454cb6dfe4763b667e70391352b9a3e37a76b480be36c875edcd"
+            }
+          ],
+          "validation": {
+            "who": "female",
+            "file": "B_day_validation_female_640x360.png",
+            "sha256": "f4b1fdf592eab5ca28c40c5bceb9580c7faa17e11f7698a6dc09f64b16be0762"
+          },
+          "trace_ops": 40,
+          "trace_layer_cells": 3400
+        },
+        "night": {
+          "stations": [
+            {
+              "id": "s1_approach",
+              "centre": [
+                394,
+                201
+              ],
+              "purpose": "arrival: pavement underfoot, the counter and its light ahead-right, cliff closing the left",
+              "origin": [
+                264,
+                62
+              ],
+              "sha256": "f6fa401412b7a3afdac5f52e791ec4a58378c805015b28d62a5ad745cb8f6403"
+            },
+            {
+              "id": "s2_plaza",
+              "centre": [
+                400,
+                204
+              ],
+              "purpose": "mid-yard: the counter reads across the open pavement, delivery cart to the left",
+              "origin": [
+                360,
+                110
+              ],
+              "sha256": "956e308c2f07b49ecee999bb93703eb5635b4c6b11f83aa33af43c9fc5628937"
+            },
+            {
+              "id": "s3_counter",
+              "centre": [
+                406,
+                202
+              ],
+              "purpose": "at the counter: goods at body scale, ledger crate east, cache crate behind",
+              "origin": [
+                456,
+                78
+              ],
+              "sha256": "9bc8e431aa40f62ea3a358bc58e29e3b3eaf0a9dbbbe80741ae646a56cf460da"
+            }
+          ],
+          "validation": {
+            "who": "female",
+            "file": "B_night_validation_female_640x360.png",
+            "sha256": "379332bc96c496675ba0ddecb88cf3929d21adab79c5ddbcdeb81605b14832d2"
+          },
+          "trace_ops": 40,
+          "trace_layer_cells": 3400
+        }
+      }
+    }
+  }
+}
