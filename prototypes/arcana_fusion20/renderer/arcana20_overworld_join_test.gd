@@ -467,8 +467,20 @@ func _live_input_probe(app: Node, world: Node, player: CharacterBody2D, enemy: N
     var motion := InputEventMouseMotion.new()
     motion.position = screen_target
     Input.parse_input_event(motion)
-    await process_frame
-    var aimed := player.get_global_mouse_position()
+    # Let the actual Knight _input/_unhandled_input path accept the pointer;
+    # parse_input_event does not move the OS cursor for get_global_mouse_position.
+    var press := InputEventMouseButton.new()
+    press.position = screen_target
+    press.button_index = MOUSE_BUTTON_RIGHT
+    press.pressed = true
+    Input.parse_input_event(press)
+    var aimed: Vector2 = player.get("_pending_rmb_aim_world")
+    var aim_valid: bool = player.get("_pending_rmb_aim_valid")
+    var release := InputEventMouseButton.new()
+    release.position = screen_target
+    release.button_index = MOUSE_BUTTON_RIGHT
+    release.pressed = false
+    Input.parse_input_event(release)
     var id := Arcana20SourceCatalog.canonical_id(2)
     check(renderer.cast_skill(id, world_anchor, aimed), "live input source cast accepted (diagnostic injection)")
     var source := renderer._casts[id] as BSourcePlayer
@@ -509,7 +521,7 @@ func _live_input_probe(app: Node, world: Node, player: CharacterBody2D, enemy: N
         "camera_distance": before_camera.distance_to(after_camera), "aimed_world": str(aimed), "source_tick": source.source_tick,
         "actor_hp_before": hp, "actor_hp_after": int(enemy.get("health")), "source_anchor_consistent": stable_anchor,
         "frame_samples": samples, "static_memory_delta_bytes": Performance.get_monitor(Performance.MEMORY_STATIC) - before_memory}
-    check(aimed.distance_to(world_anchor + Vector2(90, -20)) < 5.0, "live input pointer maps to real world aim")
+    check(aim_valid and aimed.distance_to(world_anchor + Vector2(90, -20)) < 5.0, "live input pointer maps to real world aim")
     check(before_player.distance_to(after_player) > 1.0, "live input moves actual SOH player during active cast")
     check(before_enemy.distance_to(after_enemy) > 0.1, "live input observes natural real enemy movement")
     check(int(enemy.get("health")) == hp, "injected visual cast never mutates enemy health")
