@@ -71,6 +71,10 @@ func begin(caster_world: Vector2, target_world: Vector2, kind: String) -> void:
             _fx = CThornOpera.new()
             duration = CThornOpera.DURATION
             _fx.setup()
+        "crown":
+            _fx = CCinderCrown.new()
+            duration = CCinderCrown.DURATION
+            _fx.setup()
     _events = _fx.authored_events() if _fx != null else []
     var axis := target_world - caster_world
     _rot = axis.angle() - Vector2(250 - 112, 106 - 126).angle() if axis.length() > 1.0 else 0.0
@@ -97,6 +101,8 @@ func _anchor_local() -> Vector2:
             return CThunderloom.TG
         "thorn":
             return CThornOpera.FZ
+        "crown":
+            return CCinderCrown.C
     return Vector2(192, 108)
 
 func local_to_world(p: Vector2) -> Vector2:

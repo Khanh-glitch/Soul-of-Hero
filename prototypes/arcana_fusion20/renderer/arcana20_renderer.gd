@@ -26,6 +26,32 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
     if id < 1:
         return false
     cancel_skill(canonical_id)
+    if id == 1:
+        # FUSION #01 Cinder Crown (vote A+C, FUSION_DECISIONS §01):
+        # A crown formation/collapse/impact is the lead; C provides the
+        # complementary outer flame geometry. C local clock is offset
+        # +0.69s so C's burst (T_BU 4.64) lands on A's burst tick (3.95)
+        # — one impact beat, one radial contact. C owns the back layer
+        # (outer geometry/scar), A owns the front (crown body/petals).
+        var fp := FusionPlayer.new()
+        var ap := ASourcePlayer.new()
+        ap.configure(ACinderCrown.new(), ACinderCrown.DURATION)
+        var cp := CSourcePlayer.new()
+        fp.configure([
+            {"node": cp, "layer": -1, "offset": 0.69, "begin_call": func(n: Node, cw: Vector2, tw: Vector2) -> void: n.call("begin", cw, tw, "crown")},
+            {"node": ap, "layer": 1, "offset": 0.0, "begin_call": func(n: Node, cw: Vector2, tw: Vector2) -> void: n.call("begin", cw, tw)},
+        ], ACinderCrown.DURATION)
+        add_child(fp)
+        fp.visual_contact.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
+            visual_contact.emit(canonical_id, pos, kind)
+            body_event_cue.emit(canonical_id, pos, &"pyre"))
+        fp.visual_event.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
+            visual_event.emit(canonical_id, kind, pos, st))
+        fp.finished.connect(func() -> void: _on_finished(canonical_id))
+        _casts[canonical_id] = fp
+        cast_started.emit(canonical_id)
+        fp.begin(caster_world, target_world)
+        return true
     if id == 19:
         # TRUE source translation: D Constellation Engine (standalone
         # HTML WebGL -> CPU DFx; see source_d headers for differences).
@@ -139,6 +165,11 @@ func _process(_delta: float) -> void:
             if bp.active and int(_last_tick_emitted.get(key, -1)) != bp.source_tick:
                 _last_tick_emitted[key] = bp.source_tick
                 source_tick.emit(key, bp.source_tick, bp.phase_name())
+        elif node is FusionPlayer:
+            var fp2 := node as FusionPlayer
+            if int(_last_tick_emitted.get(key, -1)) != fp2._tick:
+                _last_tick_emitted[key] = fp2._tick
+                source_tick.emit(key, fp2._tick, &"SOURCE_A")
         elif node is DSourcePlayer:
             var dp2 := node as DSourcePlayer
             if int(_last_tick_emitted.get(key, -1)) != dp2._tick:

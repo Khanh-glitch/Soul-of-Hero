@@ -9,7 +9,7 @@ extends RefCounted
 class_name Arcana20Status
 
 const ENTRIES := {
-    1: {"state": "NATIVE_RUNTIME_CANDIDATE", "source": "A+C", "visual": "VISUAL_NOT_VERIFIED", "note": "Synthetic candidate; corrected A/C sources recovered in-repo (original_source/), fusion port pending"},
+    1: {"state": "FUSION_CANDIDATE", "source": "A+C", "visual": "VISUAL_NOT_VERIFIED", "note": "ONE choreography: ported A CinderCrown (lead) + ported C cinderCrown outer flame geometry on shared clock, C offset +0.69s aligning both bursts to one impact beat; C back layer / A front layer"},
     2: {"state": "SOURCE_PORTED_CANDIDATE", "source": "B", "visual": "VISUAL_NOT_VERIFIED", "note": "TRUE port: B engine (math/renderer/fx) + furnaceWyrm setup/render/post from pyre.ts seed 202 on native 384x216 HDR buffer; floor/actors excluded by design; Gold frame comparison pending"},
     3: {"state": "SOURCE_PORTED_CANDIDATE", "source": "B", "visual": "VISUAL_NOT_VERIFIED", "note": "TRUE port: meteorLoom (pyre.ts seed 303) — 8 authored meteors, per-impact events, sigil; spatial PNG parity in CI pending first run"},
     4: {"state": "REDESIGN_CANDIDATE", "source": "NEW", "visual": "VISUAL_NOT_VERIFIED", "note": "Brief: diagonal slit > blade > one cut > delayed cracks. NOT Gold, NOT approved"},
@@ -19,7 +19,7 @@ const ENTRIES := {
     8: {"state": "SOURCE_PORTED_CANDIDATE", "source": "B", "visual": "VISUAL_NOT_VERIFIED", "note": "TRUE port: undertowMaw (tide.ts seed 808) log-polar shaft + surge; pull/stillness/surge event ledger"},
     9: {"state": "NATIVE_RUNTIME_CANDIDATE", "source": "A+B+C", "visual": "VISUAL_NOT_VERIFIED", "note": "True chained-node fusion driver (not three overlays); fusion port pending; sources recovered in-repo"},
     10: {"state": "SOURCE_PORTED_CANDIDATE", "source": "C", "visual": "VISUAL_NOT_VERIFIED", "note": "TRUE port: thunderloom (tempest.ts seed 72271); Math.random spark substituted deterministically (documented)"},
-    11: {"state": "NATIVE_RUNTIME_CANDIDATE", "source": "A+C09", "visual": "VISUAL_NOT_VERIFIED", "note": "Rotating carousel arcs driver; fusion port pending; sources recovered in-repo"},
+    11: {"state": "FUSION_CANDIDATE", "source": "A+C", "visual": "VISUAL_NOT_VERIFIED", "note": "ONE choreography: ported A CinderCrown (lead) + ported C cinderCrown outer flame geometry on shared clock, C offset +0.69s aligning both bursts to one impact beat; C back layer / A front layer"},
     12: {"state": "REDESIGN_CANDIDATE", "source": "NEW", "visual": "VISUAL_NOT_VERIFIED", "note": "Brief: sky glyph then causal sky-to-ground strikes. NOT Gold, NOT approved"},
     13: {"state": "REDESIGN_CANDIDATE", "source": "NEW", "visual": "VISUAL_NOT_VERIFIED", "note": "Brief: directed readable root growth. NOT Gold, NOT approved"},
     14: {"state": "REDESIGN_CANDIDATE", "source": "NEW", "visual": "VISUAL_NOT_VERIFIED", "note": "Brief: causal fungal network, not random particles. NOT Gold, NOT approved"},

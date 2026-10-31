@@ -45,6 +45,9 @@ func _init() -> void:
         var node: Node = renderer._casts[cid]
         if node is CSourcePlayer or node is DSourcePlayer:
             node.set("render_enabled", false)
+        if node is FusionPlayer:
+            for part in node._pending:
+                part.node.set("render_enabled", false)
         var slot := Arcana20SourceCatalog.slot(id)
         var dur := float(slot.get("duration", 8.0))
         if dur <= 0.0:
