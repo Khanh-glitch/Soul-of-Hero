@@ -749,6 +749,22 @@ func try_place(cell: Vector2i, transaction_key := "") -> Dictionary:
 	return result
 
 
+## What the run is short of for a piece, e.g. "2 Oak Wood". Empty when it can afford
+## the piece or when no service is available - the caller then says nothing rather
+## than inventing a cost.
+func missing_summary(piece_id: String) -> String:
+	var svc := service()
+	if svc == null or not svc.has_method(&"missing_for"):
+		return ""
+	var definition: Dictionary = svc.call(&"piece_definition", piece_id)
+	var missing: Dictionary = svc.call(&"missing_for", definition.get("cost", {}))
+	var parts: Array[String] = []
+	for item_id: Variant in missing.keys():
+		var item: Dictionary = svc.call(&"item_definition", String(item_id))
+		parts.append("%d %s" % [int(missing[item_id]), String(item.get("label", item_id))])
+	return " + ".join(parts)
+
+
 ## Index of a piece's cost as a short readable string, e.g. "2 Oak Wood + 1 Iron Scrap".
 func cost_summary(piece_id: String) -> String:
 	var svc := service()
@@ -796,8 +812,15 @@ func _build_hud() -> void:
 	blocker.mouse_filter = Control.MOUSE_FILTER_STOP
 	blocker.visible = false
 	_hud_root.add_child(blocker)
+	# The strip is the one surface where the player reads material costs while the
+	# world is still live, so it is an authored plank rather than a flat box: the wood
+	# bar's lit top edge separates it from the grass behind it, and the text sits on
+	# the same cream ink as the rest of the survival interface. Node names stay
+	# `Strip`/`Text` because the input tests and the resolution gate find them by name.
+	A6UiKit.dress(_hud_root)
 	var panel := PanelContainer.new()
 	panel.name = "Strip"
+	panel.theme_type_variation = &"A6HudBar"
 	panel.anchor_left = 0.0
 	panel.anchor_top = 1.0
 	panel.anchor_right = 1.0
@@ -815,9 +838,9 @@ func _build_hud() -> void:
 	_hud_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_hud_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_hud_label.add_theme_font_size_override("font_size", 10)
-	_hud_label.add_theme_color_override("font_color", Color(0.94, 0.92, 0.84))
-	_hud_label.add_theme_color_override("font_outline_color", Color(0.04, 0.03, 0.06))
-	_hud_label.add_theme_constant_override("outline_size", 4)
+	_hud_label.add_theme_color_override("font_color", A6UiKit.CREAM)
+	_hud_label.add_theme_color_override("font_outline_color", Color(0.09, 0.05, 0.03, 0.85))
+	_hud_label.add_theme_constant_override("outline_size", 3)
 	_hud_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	panel.add_child(_hud_label)
 	_refresh_hud()
@@ -849,6 +872,10 @@ func _refresh_hud() -> void:
 			cost_text = _cost_text(definition.get("cost", {}))
 			var affordable := bool(svc.call(&"can_afford", definition.get("cost", {})))
 			if not affordable:
+				# "(short)" stays a single short token: the strip is a fixed-height
+				# band and the three slot rows must stay on screen at 720p. The
+				# concrete missing material is named in the placement refusal prompt,
+				# where there is room for a sentence.
 				cost_text = "%s (short)" % cost_text
 		parts.append("%s[%d] %s %s" % [marker, index + 1,
 			piece_id.replace("_wood", "").capitalize(), cost_text])

@@ -814,7 +814,11 @@ func _handle_survival_input() -> void:
 func _build_rejection_message(reason: String) -> String:
 	match reason:
 		"cannot_afford":
-			return "Not enough materials."
+			# Name the material: the player is standing in the world mid-build and
+			# cannot open the workshop to work out what is missing.
+			var short := survival_build.missing_summary(survival_build.selected_piece)
+			return "Not enough materials — short %s." % short if not short.is_empty() \
+				else "Not enough materials."
 		"on_route", "protected_place", "near_shortcut":
 			return "That ground is part of the road."
 		"solid_terrain", "water":
