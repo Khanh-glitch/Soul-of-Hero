@@ -632,6 +632,41 @@ func _run() -> void:
     var seed_pass := seed_debris.source_pass_frame()
     check(seed_pass.seeds == PackedInt32Array([119785]) and seed_pass.caster_world.is_equal_approx(player.global_position), "C16 source metadata retains original seed and real caster")
     check(mount.active_viewers(id16) == 2 and not images_equal(baseline, seed_img), "A16 source growth C material and C16 debris affect actual world")
+    # Original C's opaque layered organism is evaluated on the real world
+    # behind the smooth A lead before selecting it for the live fusion. Compare
+    # identical clock/actors/stacking with only that source role toggled.
+    var c16_trial := seed_debris._fx as CWorldseedFusion
+    var c16_viewers: Dictionary = mount._passes.get(id16, {})
+    var c16_a_viewer := c16_viewers.get(&"A") as Node2D
+    var c16_c_viewer := c16_viewers.get(&"C") as Node2D
+    if c16_a_viewer != null and c16_c_viewer != null:
+        c16_c_viewer.z_index = -25
+        c16_a_viewer.z_index = -23
+        await process_frame
+        await process_frame
+        var no_organism := await save_frame("fusion_16_trial_without_organism")
+        c16_trial.organism = CWorldseedOrganism.new()
+        seed_debris._render_frame()
+        await process_frame
+        await process_frame
+        var with_organism := await save_frame("fusion_16_trial_with_organism")
+        var isolated_organism := CFrame.new()
+        isolated_organism.track_world_fragments = true
+        isolated_organism.clear()
+        c16_trial.organism.render(isolated_organism, float(seed_debris._tick) * STEP)
+        var organism_mask := Arcana20SourcePassFrame.new()
+        organism_mask.family = &"C"
+        organism_mask.source_size = Vector2i(CFrame.W, CFrame.H)
+        organism_mask.c_influence = isolated_organism.world_influence
+        var org_contamination := contamination(no_organism, with_organism, c16_c_viewer, organism_mask)
+        check(int(org_contamination.get("inside_changed",0)) > 0 and int(org_contamination.get("outside_changed",-1)) == 0, "C16 original cellular organism separately affects real world behind A only inside C influence: " + str(org_contamination))
+        c16_trial.organism = null
+        c16_c_viewer.z_index = -24
+        c16_a_viewer.z_index = -24
+        seed_debris._render_frame()
+        await process_frame
+    else:
+        check(false, "C16 candidate trial requires both source viewers")
     var seed_post := Arcana20CViewportPost.new()
     seed_post.process_mode = Node.PROCESS_MODE_ALWAYS
     world.add_child(seed_post)
