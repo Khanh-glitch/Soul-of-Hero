@@ -160,11 +160,27 @@ func _run_continue_phase() -> void:
 	if _knight == null:
 		_fail("restored overworld player")
 		return
-	# A0 keeps a pending death across processes. Recover before capturing so the
-	# reload frames show the restored character standing, not the corpse of the
-	# previous process's death test.
+	# A0 keeps a pending death across processes: the reload restores the corpse AND
+	# the death card the previous process opened. Recovering by respawning the actor
+	# directly leaves that card on screen, and because it is registered as a gameplay
+	# modal, A0's input gate then suppresses every movement press for the rest of the
+	# run - the frame looks like a broken character when the harness is what is wrong.
+	# Recover through the card the player would actually press.
+	var overworld := _overworld_of(_knight)
+	if overworld != null:
+		var death_card := overworld.get_node_or_null("OverworldDeath") as CanvasItem
+		if death_card != null and death_card.is_visible_in_tree():
+			print("A6 CAPTURE: reload restored A0's pending-death card; answering it through the card")
+			var answer := death_card.find_child("Respawn", true, false) as Button
+			if answer == null:
+				_fail("pending-death card has no answer button")
+				return _finish()
+			answer.pressed.emit()
+			await _wait_frames(20)
+			if death_card.is_visible_in_tree():
+				_fail("pending-death card stayed visible after the player answered it")
+				return _finish()
 	if bool(_knight.get("dead")):
-		print("A6 CAPTURE: reload restored an A0 pending death; recovering first")
 		var survival := get_tree().root.get_node_or_null(^"SurvivalService")
 		if survival != null and survival.has_method(&"finish_overworld_death"):
 			survival.call(&"finish_overworld_death", _knight.get(&"global_position"))
@@ -211,6 +227,20 @@ func _find_avatar_host(root: Node) -> Node:
 	for candidate: Node in root.find_children("*", "CharacterBody2D", true, false):
 		if candidate.get_node_or_null(^"AvatarPresenter") != null:
 			return candidate
+	return null
+
+
+## The overworld that owns this actor, found by walking up to the node that carries
+## the HUD. Used to reach the death card the way a player does.
+func _overworld_of(actor: Node) -> Node:
+	var node := actor
+	while node != null:
+		# Ask the property list rather than get(): reading an undeclared property is
+		# an error in Godot, and most nodes on the way up have no `hud`.
+		for entry: Dictionary in node.get_property_list():
+			if String(entry.get("name", "")) == "hud" and node.get("hud") != null:
+				return node
+		node = node.get_parent()
 	return null
 
 
