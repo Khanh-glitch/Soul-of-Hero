@@ -36,7 +36,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 tools/survival/balance/a7_certify.py --self-test | tee selftest.txt
-          grep -q "A7_CERT_SELFTEST 37/37" selftest.txt
+          grep -q "A7_CERT_SELFTEST 43/43" selftest.txt
 
       - name: Compose the exact five-owner tree (read-only)
         run: |
@@ -90,6 +90,33 @@ jobs:
           # A probe crash is a harness failure; a product refusal is not.
           grep -q "A7C_DONE" "$RUNNER_TEMP/evidence/probe.txt"
 
+      - name: Reconciled control — does the composition drop work A0 already committed?
+        run: |
+          set -euo pipefail
+          # One variable changes: A0's *own committed* controller replaces the version the
+          # composition installed from A0's declared "resolution". If the composed tree fails
+          # and this control does not, the defect is the resolution artifact, not the game.
+          cp -a "$RUNNER_TEMP/base/.composition" "$RUNNER_TEMP/control_tree"
+          cp "$RUNNER_TEMP/base/game/overworld/chapter1_overworld.gd" \
+             "$RUNNER_TEMP/control_tree/game/overworld/chapter1_overworld.gd"
+          mkdir -p "$RUNNER_TEMP/control_tree/tests/survival"
+          cp "$GITHUB_WORKSPACE/tests/survival/a7_certification_probe.gd" \
+             "$RUNNER_TEMP/control_tree/tests/survival/a7_certification_probe.gd"
+          ( cd "$RUNNER_TEMP/control_tree" && sha256sum game/overworld/chapter1_overworld.gd ) \
+            > "$RUNNER_TEMP/evidence/control_delta.txt"
+          echo "control = certified composition + A0's committed game/overworld/chapter1_overworld.gd" \
+            >> "$RUNNER_TEMP/evidence/control_delta.txt"
+          cd "$RUNNER_TEMP/control_tree"
+          set +e
+          timeout 900 godot --headless --path . --import > "$RUNNER_TEMP/evidence/import_control.txt" 2>&1
+          timeout 600 godot --headless --path . --script res://tests/survival/a7_certification_probe.gd \
+            > "$RUNNER_TEMP/evidence/probe_control.txt" 2>&1
+          rc=$?
+          set -e
+          echo "control probe exit=$rc" >> "$RUNNER_TEMP/evidence/probe_control.txt"
+          grep -q "A7C_DONE" "$RUNNER_TEMP/evidence/probe_control.txt"
+          grep "^A7C AUTHORITY" "$RUNNER_TEMP/evidence/probe_control.txt" || true
+
       - name: Certify the four tracks against that tree
         run: |
           set -euo pipefail
@@ -140,6 +167,9 @@ jobs:
           done
           [ -f "$RUNNER_TEMP/evidence/probe.txt" ] && cp "$RUNNER_TEMP/evidence/probe.txt" "$OUT/probe.txt"
           [ -f "$RUNNER_TEMP/evidence/import.txt" ] && cp "$RUNNER_TEMP/evidence/import.txt" "$OUT/import.txt"
+          [ -f "$RUNNER_TEMP/evidence/probe_control.txt" ] && cp "$RUNNER_TEMP/evidence/probe_control.txt" "$OUT/probe_control.txt"
+          [ -f "$RUNNER_TEMP/evidence/import_control.txt" ] && cp "$RUNNER_TEMP/evidence/import_control.txt" "$OUT/import_control.txt"
+          [ -f "$RUNNER_TEMP/evidence/control_delta.txt" ] && cp "$RUNNER_TEMP/evidence/control_delta.txt" "$OUT/control_delta.txt"
           cp selftest.txt "$OUT/selftest.txt" 2>/dev/null || true
           git config user.name "a7-certification"
           git config user.email "a7-certification@users.noreply.github.com"

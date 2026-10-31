@@ -18,11 +18,16 @@ extends SceneTree
 
 const READER_PATH := "res://game/survival/world/a1_authored_world_reader.gd"
 const BOOTSTRAP_PATH := "res://game/autoload/input_bootstrap.gd"
+const CONTROLLER_PATH := "res://game/overworld/chapter1_overworld.gd"
 const LEGACY_WORLD := "res://data/overworld/hollow_marches.json"
 const A8_PACKAGE := "res://data/survival/world_content/a8_a0_mount_transition_package.v2.json"
 const COMPAT_PATH := "res://game/survival/world/a1_runtime_compatibility.gd"
 
 var _reader: Variant = null
+## The world the *game* activates, resolved once from the production controller.
+## The legacy document is only live when the controller does not mount an authority.
+var _live_frame := Vector2i.ZERO
+var _live_source := "UNRESOLVED"
 
 
 func _initialize() -> void:
@@ -34,6 +39,7 @@ func _initialize() -> void:
 func _run() -> void:
 	print("A7C_ENGINE {\"version\": \"%s\"}" % str(Engine.get_version_info().get("string", "")))
 	_case_t1_5_bootstrap()
+	_case_authority()
 	_case_t1_1_world()
 	_case_t1_3_spawn()
 	_case_t1_4_sites()
@@ -72,6 +78,57 @@ func _legacy_bounds() -> Vector2i:
 
 
 # --------------------------------------------------------------------------- #
+# AUTHORITY — which world does the production controller actually activate?
+#
+# Round 14 first answer treated `data/overworld/hollow_marches.json` as "the live
+# world" no matter what the controller mounted. On a tree whose controller mounts
+# A0's authored authority that assumption is wrong, and it produces a confident,
+# false owner defect. This case measures the controller instead: what it mounts,
+# what the project setting resolves to, and therefore which frame is live.
+# --------------------------------------------------------------------------- #
+func _case_authority() -> void:
+	var file := FileAccess.open(CONTROLLER_PATH, FileAccess.READ)
+	var text := ""
+	if file != null:
+		text = file.get_as_text()
+	var mounts_authority := text.contains("A0WorldAuthority") and text.contains("WORLD_AUTHORITY")
+	var mounts_sidecar := text.contains("A0AuthoredWorldMount")
+	var default_authored := text.contains("get_setting(WORLD_AUTHORITY_SETTING, WORLD_AUTHORITY_AUTHORED)") \
+		or text.contains("get_setting( WORLD_AUTHORITY_SETTING, WORLD_AUTHORITY_AUTHORED)")
+	var setting_defined := FileAccess.file_exists("res://project.godot") \
+		and FileAccess.get_file_as_string("res://project.godot").contains("survival/a0_world_authority")
+	var legacy := _legacy_bounds()
+	var authored := Vector2i.ZERO
+	var reader: Variant = _load_reader()
+	if reader != null and bool(reader.call(&"configure")):
+		authored = reader.call(&"world_frame")
+	if mounts_authority and default_authored and authored != Vector2i.ZERO:
+		_live_frame = authored
+		_live_source = "authored_authority"
+	elif mounts_sidecar:
+		_live_frame = legacy
+		_live_source = "legacy_sidecar"
+	else:
+		_live_frame = legacy if legacy != Vector2i.ZERO else authored
+		_live_source = "legacy_document"
+	_emit("AUTHORITY", {
+		"controller": CONTROLLER_PATH.replace("res://", ""),
+		"controller_present": text != "",
+		"controller_lines": text.split("\n").size(),
+		"controller_sha256": text.sha256_text(),
+		"mounts_authority": mounts_authority,
+		"mounts_sidecar": mounts_sidecar,
+		"authority_default_authored": default_authored,
+		"authority_setting_defined": setting_defined,
+		"setting_value": String(ProjectSettings.get_setting("survival/a0_world_authority", "<unset>")),
+		"authored_frame": [authored.x, authored.y],
+		"legacy_frame": [legacy.x, legacy.y],
+		"live_frame": [_live_frame.x, _live_frame.y],
+		"live_source": _live_source,
+	})
+
+
+# --------------------------------------------------------------------------- #
 # T1.5 — is a reader refusal a harness artefact or the owner's contract?
 # --------------------------------------------------------------------------- #
 func _case_t1_5_bootstrap() -> void:
@@ -106,7 +163,7 @@ func _case_t1_5_bootstrap() -> void:
 # T1.1 — world facts, measured in the engine from the composed data
 # --------------------------------------------------------------------------- #
 func _case_t1_1_world() -> void:
-	var live := _legacy_bounds()
+	var live := _live_frame
 	var reader: Variant = _load_reader()
 	var authored := Vector2i.ZERO
 	var reader_ok := false
@@ -115,7 +172,8 @@ func _case_t1_1_world() -> void:
 		if reader_ok:
 			authored = reader.call(&"world_frame")
 	_emit("T1.1", {"live": [live.x, live.y], "authored": [authored.x, authored.y],
-		"reader_ok": reader_ok, "same_document": reader_ok and live == authored})
+		"live_source": _live_source, "reader_ok": reader_ok,
+		"same_document": reader_ok and live == authored})
 
 
 # --------------------------------------------------------------------------- #
@@ -131,10 +189,11 @@ func _case_t1_3_spawn() -> void:
 		_emit("T1.3", {"ok": false, "error": String(spawn.get("error", "SPAWN_FAILED"))})
 		return
 	var cell := Vector2i(int(spawn.cell_array[0]), int(spawn.cell_array[1]))
-	var live := _legacy_bounds()
+	var live := _live_frame
 	var profile: Dictionary = reader.call(&"traversal_profile", cell)
 	_emit("T1.3", {
 		"ok": true, "cell": [cell.x, cell.y], "chunk_id": String(spawn.get("chunk_id", "")),
+		"live_frame": [live.x, live.y], "live_source": _live_source,
 		"in_live_world": cell.x >= 0 and cell.y >= 0 and cell.x < live.x and cell.y < live.y,
 		"standable": bool(profile.get("ok", false)) and bool(profile.get("walkable", false)),
 		"traversal": String(profile.get("profile", profile.get("reason", ""))),
@@ -148,7 +207,7 @@ func _case_t1_3_spawn() -> void:
 # --------------------------------------------------------------------------- #
 func _case_t1_4_sites() -> void:
 	var package := _read_json(A8_PACKAGE)
-	var live := _legacy_bounds()
+	var live := _live_frame
 	var rows: Array = []
 	var outside := 0
 	for raw: Variant in package.get("existing_a8_sites", []):
@@ -165,7 +224,8 @@ func _case_t1_4_sites() -> void:
 			outside += 1
 		rows.append({"poi_id": String(site.get("poi_id", "")), "cell": [x, y],
 			"inside_live_world": inside, "scene": String(site.get("scene", ""))})
-	_emit("T1.4", {"live": [live.x, live.y], "sites": rows, "outside": outside})
+	_emit("T1.4", {"live": [live.x, live.y], "live_source": _live_source, "sites": rows,
+		"outside": outside})
 
 
 func _case_t2_1_sites() -> void:

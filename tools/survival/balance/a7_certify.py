@@ -11,6 +11,12 @@ Design decisions, each of which exists because a previous round got it wrong:
    single 40-hex tree. The harness recomputes `git write-tree` itself; a declared
    SHA that no longer reproduces makes the whole run `STALE_COMPOSITION` rather
    than quietly grading whatever is on disk.
+1b. **A composed artifact is not an owner's source.** When the composition drops
+   something the base owner has committed (a declared "resolution" pointing at a
+   stale merge file), that is `COMPOSITION_DROPS_OWNER_WORK`, decided by running
+   the same probe on a control tree that differs by exactly that one file. Naming
+   the artifact the owner is the difference between a useful report and a false
+   accusation.
 2. **Four maturity levels, never conflated.**
    `TEST_HARNESS_VALID` → `OWNER_SOURCE_VALID` → `PRODUCT_COMPOSED` → `HUMAN_ACCEPTED`.
    A green self-test says nothing about the game; a source contract that exists says
@@ -20,7 +26,7 @@ Design decisions, each of which exists because a previous round got it wrong:
 3. **Every case walks the same pipeline:** source → contract → runtime → receipt →
    player outcome. Each stage is `VALID`, `FAIL`, `MISSING` or `BLOCKED`, and a case
    stops at its first non-`VALID` stage. A missing stage is `BLOCKED`, never PASS.
-4. **Few real journeys beat many assertions.** There are 24 named cases across four
+4. **Few real journeys beat many assertions.** There are 30 named cases across four
    tracks, each tied to a file:line or a runtime marker — not a pile of `_expect`s.
 5. **Fail-closed future gates.** Track 4 features do not exist yet; their gates are
    executable and are proven to work against synthetic fixtures in `--self-test`,
@@ -131,8 +137,14 @@ class Facts:
     tree: str = ""
     expected_tree: str = ""
     tree_method: str = ""
-    live_bounds: Optional[Tuple[int, int]] = None
+    live_bounds: Optional[Tuple[int, int]] = None      # the world the game activates
+    legacy_bounds: Optional[Tuple[int, int]] = None    # the 384x256 legacy document
     authored_frame: Optional[Tuple[int, int]] = None
+    live_source: str = ""                              # authored_authority | legacy_sidecar | legacy_document
+    authority: Dict[str, object] = field(default_factory=dict)
+    #: `probe_control.txt` — the same composition with A0's own controller restored, so a
+    #: composition artifact can be told apart from a gameplay defect. Never the product.
+    control: Dict[str, dict] = field(default_factory=dict)
     sidecar_markers: List[str] = field(default_factory=list)
     poi_refusal: str = ""
     sites: List[Tuple[str, Tuple[int, int], str]] = field(default_factory=list)
@@ -236,16 +248,64 @@ def read_probe(text: str) -> Dict[str, dict]:
     return out
 
 
+def read_evidence(evidence: Path) -> Tuple[Dict[str, dict], Dict[str, dict], str]:
+    """Split the product's runtime markers from the control tree's.
+
+    `probe_control.txt` describes a *different tree*. Letting it overwrite a product
+    marker would turn a control into a fabricated pass, so the product reads
+    `probe.txt` alone and the control is read only from its own file.
+    """
+    primary = evidence / "probe.txt"
+    raw = primary.read_text(encoding="utf-8", errors="replace") if primary.exists() else ""
+    if not raw:
+        raw = "\n".join(
+            path.read_text(encoding="utf-8", errors="replace")
+            for path in sorted(evidence.rglob("*"))
+            if path.is_file() and path.suffix.lower() in (".txt", ".log") and "control" not in path.name
+        )
+    control_file = evidence / "probe_control.txt"
+    control = (read_probe(control_file.read_text(encoding="utf-8", errors="replace"))
+               if control_file.exists() else {})
+    return read_probe(raw), control, raw
+
+
 def gather(root: Optional[Path], evidence: Optional[Path], expected_tree: str = "") -> Facts:
     facts = Facts(root=root, expected_tree=expected_tree)
     if root is not None and root.exists():
         legacy = _read_json(root / "data/overworld/hollow_marches.json").get("world_bounds") or {}
         if legacy.get("w") and legacy.get("h"):
-            facts.live_bounds = (int(legacy["w"]), int(legacy["h"]))
+            facts.legacy_bounds = (int(legacy["w"]), int(legacy["h"]))
         authored = re.search(r"AUTHORED_FRAME\s*:=\s*Vector2i\(\s*(\d+)\s*,\s*(\d+)\s*\)",
                              _text(root / "game/survival/a1_authored_source.gd"))
         if authored:
             facts.authored_frame = (int(authored.group(1)), int(authored.group(2)))
+        # Which world the production controller activates. The legacy document is only
+        # live when the controller does not mount an authority: assuming otherwise is how
+        # round 14 first produced a confident but false owner attribution.
+        controller = _text(root / "game/overworld/chapter1_overworld.gd")
+        mounts_authority = "A0WorldAuthority" in controller and "WORLD_AUTHORITY" in controller
+        mounts_sidecar = "A0AuthoredWorldMount" in controller
+        default_authored = bool(re.search(
+            r"get_setting\(\s*WORLD_AUTHORITY_SETTING\s*,\s*WORLD_AUTHORITY_AUTHORED\s*\)", controller))
+        if mounts_authority and default_authored and facts.authored_frame:
+            facts.live_bounds, facts.live_source = facts.authored_frame, "authored_authority"
+        elif mounts_sidecar:
+            facts.live_bounds, facts.live_source = facts.legacy_bounds, "legacy_sidecar"
+        elif facts.legacy_bounds:
+            facts.live_bounds, facts.live_source = facts.legacy_bounds, "legacy_document"
+        elif facts.authored_frame:
+            facts.live_bounds, facts.live_source = facts.authored_frame, "authored_authority"
+        facts.authority = {
+            "controller": "game/overworld/chapter1_overworld.gd",
+            "controller_present": bool(controller),
+            "controller_lines": len(controller.splitlines()),
+            "mounts_authority": mounts_authority,
+            "mounts_sidecar": mounts_sidecar,
+            "authority_default_authored": default_authored,
+            "authority_setting_defined": "survival/a0_world_authority" in _text(root / "project.godot"),
+            "live_source": facts.live_source,
+        }
+
         mount = _text(root / "game/survival/a0_authored_world_mount.gd").lower()
         for marker in ("beside it, never instead of it", "render_legacy := true",
                        "stays the world a0 governs"):
@@ -336,12 +396,7 @@ def gather(root: Optional[Path], evidence: Optional[Path], expected_tree: str = 
             facts.feature_hits[feature] = hits[:3]
 
     if evidence is not None and evidence.exists():
-        texts = []
-        for path in sorted(evidence.rglob("*")):
-            if path.is_file() and path.suffix.lower() in (".txt", ".log", ".json"):
-                texts.append(path.read_text(encoding="utf-8", errors="replace"))
-        facts.probe_raw = "\n".join(texts)
-        facts.probe = read_probe(facts.probe_raw)
+        facts.probe, facts.control, facts.probe_raw = read_evidence(evidence)
     return facts
 
 
@@ -424,13 +479,30 @@ def track1(f: Facts) -> List[Case]:
         outside = [(sid, cell) for sid, cell, _ in f.sites
                    if not (0 <= cell[0] < f.live_bounds[0] and 0 <= cell[1] < f.live_bounds[1])]
     mount = f.production_mount or {}
-    c.measurements = {"live": f.live_bounds, "authored": f.authored_frame,
+    auth = f.authority or {}
+    control = (f.control or {}).get("AUTHORITY", {})
+    c.measurements = {"live": f.live_bounds, "live_source": f.live_source,
+                      "authored": f.authored_frame, "legacy_document": f.legacy_bounds,
                       "sites_outside": outside, "sidecar_markers": f.sidecar_markers,
-                      "poi_refusal": f.poi_refusal, "production_mount": mount}
-    c.evidence = [f"live runtime world bounds {f.live_bounds} (data/overworld/hollow_marches.json)",
+                      "poi_refusal": f.poi_refusal, "production_mount": mount,
+                      "authority": auth, "reconciled_control": control}
+    c.evidence = [f"live world {f.live_bounds} resolved from `{f.live_source}` "
+                  f"(game/overworld/chapter1_overworld.gd), legacy document {f.legacy_bounds}",
                   f"A1 authored frame {f.authored_frame} (game/survival/a1_authored_source.gd:30)",
                   f"sidecar markers {f.sidecar_markers or 'none'} (game/survival/a0_authored_world_mount.gd:12,29)",
                   f"A0 poi-mount refusal `{f.poi_refusal or 'none'}` (game/survival/a0_poi_mount.gd:69)"]
+    if auth:
+        c.evidence.append(
+            f"composed controller mounts A0WorldAuthority={auth.get('mounts_authority')}, "
+            f"A0AuthoredWorldMount={auth.get('mounts_sidecar')}, "
+            f"authority default authored={auth.get('authority_default_authored')}, "
+            f"{auth.get('controller_lines')} lines")
+    if control:
+        c.evidence.append(
+            f"reconciled control (A0's own controller restored): "
+            f"mounts A0WorldAuthority={control.get('mounts_authority')}, "
+            f"{control.get('controller_lines')} lines, live_source={control.get('live_source')}, "
+            f"live frame={control.get('live_frame')}")
     if mount:
         c.evidence += [
             f"live scene mounts A0AuthoredWorldMount={mount.get('uses_sidecar_mount')} "
@@ -441,8 +513,23 @@ def track1(f: Facts) -> List[Case]:
             f"referenced by production={mount.get('authority_referenced_by_production')} "
             f"({mount.get('authority_reference') or 'no reference'})",
         ]
+    # A composed tree that drops an integration the base owner already committed is a
+    # *composition* defect, not a gameplay defect. Naming which one it is is the whole
+    # difference between a useful report and a confident false accusation.
+    composed_drops_owner_work = (bool(control.get("mounts_authority"))
+                                 and not auth.get("mounts_authority")
+                                 and auth.get("controller_present"))
     if not (f.live_bounds and f.authored_frame):
         c.settle(BLOCKED, "BLOCKED_WORLD_FACTS_UNREADABLE", f"errors={f.errors}")
+    elif composed_drops_owner_work:
+        c.settle(FAIL, "COMPOSITION_DROPS_OWNER_WORK",
+                 "the composed controller does not mount A0WorldAuthority although A0's own "
+                 f"committed controller does ({control.get('controller_lines')} lines vs "
+                 f"{auth.get('controller_lines')}); A0's declared resolution replaces it with a "
+                 "stale merge artifact, so the composed product runs the legacy sidecar "
+                 f"{f.legacy_bounds} while the authored continent is {f.authored_frame}",
+                 "python3 tools/a0/compose_owners.py --owner a1=… ; diff the composed "
+                 "game/overworld/chapter1_overworld.gd against A0's committed file")
     elif f.live_bounds != f.authored_frame or f.sidecar_markers or outside:
         reasons = []
         if f.live_bounds != f.authored_frame:
@@ -949,11 +1036,29 @@ def _write(path: Path, text: str) -> None:
 
 
 def _fixture(root: Path, *, one_world: bool, knife: bool = False, sites_inside: bool = True,
-             research: int = 3, fuel: bool = True, features: Optional[Sequence[str]] = None) -> None:
-    live = (1024, 768) if one_world else (384, 256)
+             research: int = 3, fuel: bool = True, features: Optional[Sequence[str]] = None,
+             legacy: Optional[Tuple[int, int]] = None) -> None:
+    live = legacy or ((1024, 768) if one_world else (384, 256))
     _write(root / "data/overworld/hollow_marches.json",
            json.dumps({"world_bounds": {"x": 0, "y": 0, "w": live[0], "h": live[1]}}))
     _write(root / "game/survival/a1_authored_source.gd", "const AUTHORED_FRAME := Vector2i(1024, 768)\n")
+    # The production controller is what decides which world is live. A fixture without it
+    # would silently fall back to "the legacy document is live", which is the assumption
+    # round 14 had to stop making.
+    if one_world:
+        _write(root / "game/overworld/chapter1_overworld.gd",
+               'const WORLD_AUTHORITY_SETTING := "survival/a0_world_authority"\n'
+               'const WORLD_AUTHORITY_AUTHORED := "authored"\n'
+               "var world_authority: A0WorldAuthority\n"
+               "func _mode():\n\treturn ProjectSettings.get_setting("
+               "WORLD_AUTHORITY_SETTING, WORLD_AUTHORITY_AUTHORED)\n")
+    else:
+        _write(root / "game/overworld/chapter1_overworld.gd",
+               'const AUTHORED_STREAM_SETTING := "survival/a0_authored_stream"\n'
+               "var authored_mount: A0AuthoredWorldMount\n"
+               "func _on():\n\treturn ProjectSettings.get_setting("
+               "AUTHORED_STREAM_SETTING, false)\n")
+    _write(root / "project.godot", "[application]\n")
     _write(root / "game/survival/a0_authored_world_mount.gd",
            "## one authoritative world\n" if one_world else
            "## the authored stream is mounted *beside* it, never instead of it.\nvar render_legacy := true\n")
@@ -1020,6 +1125,33 @@ def self_test(verbose: bool = True) -> int:
     # T1.2 — the round-12 false green
     check("T1.2 sidecar world → FAIL", case(fresh(one_world=False), "T1.2").verdict, FAIL)
     check("T1.2 one world, no run → BLOCKED", case(fresh(one_world=True), "T1.2").verdict, BLOCKED)
+
+    # T1.2 — composition fidelity versus source defect, and the legacy document's shadow
+    facts = fresh(one_world=False)
+    facts.control["AUTHORITY"] = {"mounts_authority": True, "controller_lines": 1642,
+                                  "live_source": "authored_authority", "live_frame": [1024, 768]}
+    got = case(facts, "T1.2")
+    check("T1.2 composed tree drops A0's authority → COMPOSITION_DROPS_OWNER_WORK",
+          got.code if got.verdict == FAIL else got.verdict, "COMPOSITION_DROPS_OWNER_WORK")
+    facts = fresh(one_world=False)
+    facts.control["AUTHORITY"] = {"mounts_authority": False, "controller_lines": 1366}
+    got = case(facts, "T1.2")
+    check("T1.2 authority missing in both trees → SIDECAR_WORLD (source defect)",
+          got.code if got.verdict == FAIL else got.verdict, "SIDECAR_WORLD")
+    # The 384x256 document must not overrule a controller that mounts the authority.
+    facts = fresh(one_world=True, legacy=(384, 256))
+    check("T1.2 legacy document cannot overrule an authored controller",
+          case(facts, "T1.2").verdict, BLOCKED)
+    check("T1.2 live frame is the authority frame, not the legacy file",
+          str(facts.live_source), "authored_authority")
+
+    # Evidence split: a control tree must never overwrite the product's markers.
+    box = Path(tempfile.mkdtemp(prefix="a7c-evidence-"))
+    _write(box / "probe.txt", 'A7C T1.3 {"ok": true, "in_live_world": false}\n')
+    _write(box / "probe_control.txt", 'A7C T1.3 {"ok": true, "in_live_world": true}\n')
+    product, control, _ = read_evidence(box)
+    check("evidence split keeps the product marker", str(product.get("T1.3", {}).get("in_live_world")), "False")
+    check("evidence split keeps the control marker", str(control.get("T1.3", {}).get("in_live_world")), "True")
 
     # T1.3 — spawn
     facts = fresh(one_world=False)
