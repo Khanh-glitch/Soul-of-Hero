@@ -220,7 +220,11 @@ jobs:
           # sandboxes can reach; annotations are not. One line per log, carrying the
           # first script/parse errors, so a red job is still diagnosable.
           shopt -s nullglob
-          for f in ../artifacts/*.log; do
+          # Steps that ran inside .composition wrote to its sibling `../artifacts`,
+          # which IS this workspace's artifacts/ directory. From the workspace root
+          # the same files are ./artifacts — `../artifacts` here matched nothing at
+          # all, which is how a red job stayed undiagnosable.
+          for f in ./artifacts/*.log ../artifacts/*.log; do
             name=$(basename "$f")
             hits=$(grep -aiE 'SCRIPT ERROR|Parse Error|Cannot open|Cannot get class|cyclic|Invalid' "$f" \
               | head -6 | tr '\n' '\u00a6')
