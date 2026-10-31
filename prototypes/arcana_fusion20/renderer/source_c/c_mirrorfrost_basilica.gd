@@ -42,7 +42,7 @@ func _add(pts: Array, shade: float, birth: float, extra: Dictionary = {}) -> voi
         cy += p.y
     cx /= float(pts.size())
     cy /= float(pts.size())
-    var fc := {"pts": pts, "shade": CMath.clampf(shade), "birth": birth, "cx": cx, "cy": cy,
+    var fc := {"pts": pts, "shade": CMath.cl01(shade), "birth": birth, "cx": cx, "cy": cy,
         "seed": float(_fcts.size() * 7 + 3), "tb": 0.0, "broke": false}
     for k in extra.keys():
         fc[k] = extra[k]
@@ -203,7 +203,7 @@ func render(f: CFrame, t: float) -> void:
     for fc in _fcts:
         if not fc.has("spire") or bool(fc.broke) or t < float(fc.birth):
             continue
-        var g := CMath.clampf((t - float(fc.birth)) / 0.4)
+        var g := CMath.cl01((t - float(fc.birth)) / 0.4)
         var b: Vector2 = fc.spire.base
         var tp: Vector2 = fc.spire.tip
         var ex := tp.x + (tp.x - b.x) * 0.4 + 10.0
@@ -222,7 +222,7 @@ func render(f: CFrame, t: float) -> void:
             f.line_l(CMath.lerp(Q.x, float(fc.cx), q * 0.7), CMath.lerp(Q.y, float(fc.cy), q * 0.7),
                 CMath.lerp(Q.x, float(fc.cx), q), CMath.lerp(Q.y, float(fc.cy), q), CPalette.ramp(CPalette.P["ice"], 0.9), 0.8)
             continue
-        var sc := CMath.back_out(CMath.clampf((t - float(fc.birth)) / 0.32), 2.2)
+        var sc := CMath.back_out(CMath.cl01((t - float(fc.birth)) / 0.32), 2.2)
         var pts: Array = []
         for p in fc.pts:
             pts.append(Vector2(float(fc.cx) + (p.x - float(fc.cx)) * sc, float(fc.cy) + (p.y - float(fc.cy)) * sc))

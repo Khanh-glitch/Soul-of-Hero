@@ -135,14 +135,14 @@ func render(f: CFrame, t: float) -> void:
         var cl := dark * (0.75 + 0.25 * CMath.inv(4.3, 4.75, t))
         f.disc(_sc.x, _sc.y, 92.0 * maxf(_scale, 0.3), func(x: int, y: int, d: float) -> void:
             var n := CMath.noise3(float(x) * 0.08, float(y) * 0.12, t * 0.4)
-            if CMath.clampf((1.0 - d) * 1.6) * (0.5 + n * 0.6) * cl > CMath.bayer(x, y):
+            if CMath.cl01((1.0 - d) * 1.6) * (0.5 + n * 0.6) * cl > CMath.bayer(x, y):
                 f.I(x, y, 0.025, 0.025, 0.06, 0.9), 0.6)
         if t > 4.38:
             f.field(0, 0, CFrame.W - 1, CFrame.H - 1, func(x: int, y: int) -> void: f.S(x, y, 1.0 - 0.6 * CMath.inv(4.38, 4.75, t)))
         var slot := floori(t * 20.0)
         var disch := 1.0 if CMath.hash1(slot * 3) > 0.5 else 0.0
         for th in _threads:
-            var rv := CMath.clampf((t - float(th.t0)) / 0.8)
+            var rv := CMath.cl01((t - float(th.t0)) / 0.8)
             if rv <= 0.0:
                 continue
             var n := floori(140.0 * rv)
@@ -197,7 +197,7 @@ func render(f: CFrame, t: float) -> void:
             f.ring_l(TG.x, TG.y, 8.0 + (a - 0.15) * 140.0, CORE, 1.2 * (1.0 - a / 0.6), 0.65)
         f.glow(TG.x, TG.y, 60.0, HALO, 1.6 * exp(-a * 3.0), 5.0, 0.7)
         for fr in _fract:
-            CKit.draw_bolt_tree(f, fr, 1.8 * exp(-a * 2.2) + 0.15 * _flick(float(fr.size()), t, 15.0), CORE, HALO, CMath.clampf(a * 8.0))
+            CKit.draw_bolt_tree(f, fr, 1.8 * exp(-a * 2.2) + 0.15 * _flick(float(fr.size()), t, 15.0), CORE, HALO, CMath.cl01(a * 8.0))
         if a < 0.6:
             var slot := floori(t * 30.0)
             var dec := 1.0 - a / 0.6
@@ -215,7 +215,7 @@ func render(f: CFrame, t: float) -> void:
             for s in ch:
                 if t < float(s.t0):
                     continue
-                var u := CMath.clampf((t - float(s.t0)) / (float(s.t1) - float(s.t0)))
+                var u := CMath.cl01((t - float(s.t0)) / (float(s.t1) - float(s.t0)))
                 f.line(float(s.x0), float(s.y0), CMath.lerp(float(s.x0), float(s.x1), u), CMath.lerp(float(s.y0), float(s.y1), u), func(x: int, y: int, _ss: float) -> void:
                     f.G(x, y, 0.04, 0.04, 0.08, 0.5)
                     if CMath.hash2(x, y + floori(t * 10.0)) < g:

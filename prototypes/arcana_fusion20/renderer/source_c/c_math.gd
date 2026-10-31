@@ -20,7 +20,7 @@ static func imul(a: int, b: int) -> int:
 static func u32(v: int) -> int:
     return v & 0xFFFFFFFF
 
-static func clampf(v: float, a: float = 0.0, b: float = 1.0) -> float:
+static func cl01(v: float, a: float = 0.0, b: float = 1.0) -> float:
     return a if v < a else (b if v > b else v)
 
 static func lerp(a: float, b: float, t: float) -> float:
@@ -30,25 +30,25 @@ static func inv(a: float, b: float, v: float) -> float:
     return clampf((v - a) / (b - a))
 
 static func smooth(t: float) -> float:
-    t = clampf(t)
+    t = cl01(t)
     return t * t * (3.0 - 2.0 * t)
 
 static func ease_out(t: float, p: float = 3.0) -> float:
-    return 1.0 - pow(1.0 - clampf(t), p)
+    return 1.0 - pow(1.0 - cl01(t), p)
 
 static func ease_in(t: float, p: float = 3.0) -> float:
-    return pow(clampf(t), p)
+    return pow(cl01(t), p)
 
 static func ease_in_out(t: float) -> float:
-    t = clampf(t)
+    t = cl01(t)
     return 4.0 * t * t * t if t < 0.5 else 1.0 - pow(-2.0 * t + 2.0, 3.0) / 2.0
 
 static func back_out(t: float, s: float = 1.7) -> float:
-    t = clampf(t) - 1.0
+    t = cl01(t) - 1.0
     return t * t * ((s + 1.0) * t + s) + 1.0
 
 static func elastic(t: float) -> float:
-    t = clampf(t)
+    t = cl01(t)
     if t == 0.0 or t == 1.0:
         return t
     return pow(2.0, -10.0 * t) * sin((t * 10.0 - 0.75) * (TAU / 3.0)) + 1.0

@@ -215,7 +215,7 @@ static func bolt_tree(seed: float, ax: float, ay: float, bx: float, by: float, b
 static func draw_bolt(f: CFrame, pts: Array, k: float, core := Vector3.ONE, halo := Vector3(0.35, 0.5, 1.0), width: float = 1.4, reveal: float = 1.0) -> void:
     if k <= 0.01:
         return
-    var n := maxi(2, ceili(float(pts.size()) * CMath.clampf(reveal)))
+    var n := maxi(2, ceili(float(pts.size()) * CMath.cl01(reveal)))
     var sub := pts.slice(0, n)
     f.ribbon(sub, width, func(x: int, y: int, _s: float, e: float) -> void:
         var a := absf(e)
@@ -226,7 +226,7 @@ static func draw_bolt(f: CFrame, pts: Array, k: float, core := Vector3.ONE, halo
 
 static func draw_bolt_tree(f: CFrame, tree: Array, k: float, core := Vector3.ONE, halo := Vector3(0.35, 0.5, 1.0), reveal: float = 1.0) -> void:
     for b in tree:
-        draw_bolt(f, b.pts, k * float(b.w), core, halo, 1.0 if int(b.depth) != 0 else 1.6, CMath.clampf(reveal * 1.5 - 0.3) if int(b.depth) != 0 else reveal)
+        draw_bolt(f, b.pts, k * float(b.w), core, halo, 1.0 if int(b.depth) != 0 else 1.6, CMath.cl01(reveal * 1.5 - 0.3) if int(b.depth) != 0 else reveal)
 
 # ---- timed branching growth ----
 static func grow_tree(rng: CMath.CRng, o: Dictionary) -> Array:
@@ -262,7 +262,7 @@ static func draw_tree(f: CFrame, segs: Array, t: float, fn: Callable) -> void:
     for s in segs:
         if t < float(s.t0):
             continue
-        var u := CMath.clampf((t - float(s.t0)) / (float(s.t1) - float(s.t0)))
+        var u := CMath.cl01((t - float(s.t0)) / (float(s.t1) - float(s.t0)))
         f.line(float(s.x0), float(s.y0), CMath.lerp(float(s.x0), float(s.x1), u), CMath.lerp(float(s.y0), float(s.y1), u), func(x: int, y: int, _ss: float) -> void: fn.call(x, y, s, t - float(s.t0)))
 
 # ---- displacement helpers ----

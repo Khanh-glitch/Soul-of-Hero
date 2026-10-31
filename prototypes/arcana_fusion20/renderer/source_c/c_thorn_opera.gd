@@ -107,7 +107,7 @@ func _cho(i: int, t: float) -> Vector2:
                     return Vector2(rest.x + sin(u) * 22.0, rest.y + sin(u * 2.0) * 12.0)
                 return Vector2(TARGETS[3].x, TARGETS[3].y - 6.0)
     if t < 3.9:
-        var u := CMath.ease_in_out(CMath.clampf((t - 2.7 - float(i >> 1) * 0.16) / 0.75))
+        var u := CMath.ease_in_out(CMath.cl01((t - 2.7 - float(i >> 1) * 0.16) / 0.75))
         var a := CMath.lerp(1.1, -1.1, u) if i % 2 else CMath.lerp(-1.1, 1.1, u)
         return Vector2(CASTER.x + cos(a) * 118.0, CASTER.y + sin(a) * 86.0)
     if t < 4.7:

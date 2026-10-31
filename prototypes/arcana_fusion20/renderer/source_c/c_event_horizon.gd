@@ -141,7 +141,7 @@ func _disk(f: CFrame, t: float, front: bool, tilt: float, rot: float, sy: float,
         var om := rot * 5.0 * pow(r0 / rd, 1.5)
         var ph := ad - om * t
         var n := CMath.noise3(rd * 0.28, cos(ph) * 2.2 + 5.0, sin(ph) * 2.2 + t * 0.15)
-        var v := CMath.clampf((n - 0.35) * 1.8) * (1.0 - (rd - r0) / (r1 - r0))
+        var v := CMath.cl01((n - 0.35) * 1.8) * (1.0 - (rd - r0) / (r1 - r0))
         for k in range(3):
             var rk := rh * (1.9 + float(k) * 0.95) * _ring_scale(float(k), t)
             if absf(rd - rk) < 0.75 and fmod(fmod((ph * float(k + 2)) / CMath.TAU, 1.0) + 1.0, 1.0) < 0.62:
@@ -170,9 +170,9 @@ func render(f: CFrame, t: float) -> void:
                 d = 0.01
             if d > 125.0:
                 return
-            var fall := CMath.clampf(1.0 - d / 125.0)
+            var fall := CMath.cl01(1.0 - d / 125.0)
             var amt := minf(70.0, (te * te) / maxf(d, 2.0)) * fall
-            var b := floor(d / 7.0)
+            var b: float = floor(d / 7.0)
             var off := fmod(fmod(t * 10.0 + b * 2.7, 7.0) + 7.0, 7.0) * band * fall
             f.D(x, y, (-dx / d) * amt + (dx / d) * off, ((-dy / d) * amt + (dy / d) * off) * 0.85)
             var dark := m * exp(-d / (16.0 + rh))

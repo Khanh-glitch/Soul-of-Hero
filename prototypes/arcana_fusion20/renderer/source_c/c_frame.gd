@@ -293,7 +293,7 @@ func ribbon(pts: Array, widths: Variant, fn: Callable) -> void:
                     continue
                 var px := float(x) + 0.5 - a.x
                 var py := float(y) + 0.5 - a.y
-                var u := clampf((px * dx + py * dy) / ll)
+                var u := CMath.cl01((px * dx + py * dy) / ll)
                 var qx := px - dx * u
                 var qy := py - dy * u
                 var d := Vector2(qx, qy).length()
@@ -359,9 +359,9 @@ func composite() -> PackedByteArray:
             var cg := gg * (1.0 - ia) + ink[qi + 1]
             var cb := gb * (1.0 - ia) + ink[qi + 2]
             var th := CMath.bayer(qx, qy) - 0.5
-            var lqr := floor(lr * 8.0 + th + 0.5) / 8.0
-            var lqg := floor(lg * 8.0 + th + 0.5) / 8.0
-            var lqb := floor(lb * 8.0 + th + 0.5) / 8.0
+            var lqr: float = floor(lr * 8.0 + th + 0.5) / 8.0
+            var lqg: float = floor(lg * 8.0 + th + 0.5) / 8.0
+            var lqb: float = floor(lb * 8.0 + th + 0.5) / 8.0
             cr += lqr
             cg += lqg
             cb += lqb
@@ -372,9 +372,9 @@ func composite() -> PackedByteArray:
             cr += ov
             cg += ov
             cb += ov
-            cr = clampf(cr)
-            cg = clampf(cg)
-            cb = clampf(cb)
+            cr = CMath.cl01(cr)
+            cg = CMath.cl01(cg)
+            cb = CMath.cl01(cb)
             if invert != 0.0:
                 var ir := 1.0 - cg
                 var ig := 1.0 - cb
@@ -382,9 +382,9 @@ func composite() -> PackedByteArray:
                 cr = lerpf(cr, ir, invert)
                 cg = lerpf(cg, ig, invert)
                 cb = lerpf(cb, ib, invert)
-            cr = clampf(cr + flash.x)
-            cg = clampf(cg + flash.y)
-            cb = clampf(cb + flash.z)
+            cr = CMath.cl01(cr + flash.x)
+            cg = CMath.cl01(cg + flash.y)
+            cb = CMath.cl01(cb + flash.z)
             var o := (fy * W + fx) * 4
             out[o] = int(cr * 255.0)
             out[o + 1] = int(cg * 255.0)
