@@ -20,12 +20,15 @@ The three A8 site JSON files at the current A8 pin are byte-identical to A1's fr
 | `data/survival/world/a1_continent_interface.v1.json` | Deterministic public manifest: world/transform/chunk/spawn/runtime/site/source contracts. |
 | `game/survival/world/a1_continent_interface.gd` | Additive façade over the existing strict reader and bounded live stream. |
 | `game/survival/world/a1_continent_consumer_sample.gd` | Executable A0 sample using only the façade and canonical `res://` data. |
+| `data/survival/world/art/asset_exploitation.v1.json` | Exact real-pixel source files/refs/rectangles and source/atlas hashes. |
+| `data/survival/world/art/continent_decor.v1.json` | Bounded deterministic live decor; 192 chunk records, not 192 hand-painted windows. |
+| `tools/survival/worldgen/compile_continent_art.py` | Geography-driven ground/prop and derived A8 shell-edge composition. |
 | `tools/survival/worldgen/compile_r13_continent_interface.py` | Read-only source compiler and `--check` stale-manifest gate. |
 | `tests/survival/world/r13_continent_seam_native_test.gd` | Isolated exact-owner native driver; never a production entry point. |
 | `tools/survival/worldgen/validate_r13_continent_seam.py` | Independent native report, source hash and PNG-byte validator. |
 | `.github/workflows/a1-r13-continent-seam.yml` | Exact-SHA A0+A1+A6+A8 composition and focused native gate. |
 
-The old reader, streamer, masterplan, chunks, routes, art, spawn index and A8 source files are unchanged. The consumer does **not** read `round12_native_inputs.json`, a journey packet, a test scene, or fixture-generated POI bodies.
+The masterplan, chunks, routes, spawn candidate semantics and A8 source files are unchanged. The existing reader/streamer is extended additively with fail-closed real-asset/decor bindings; see `R13_MAP_ART_ESCALATION.md`. The consumer does **not** read `round12_native_inputs.json`, a journey packet, a test scene, or fixture-generated POI bodies.
 
 ### Public calls
 
@@ -138,6 +141,8 @@ Expected artifact: `a1-r13-continent-seam-native-evidence`, containing the repor
 - Quarry day and night at 720p/1440p/2160p;
 - Orchard day and night at 720p/1440p/2160p;
 - a physically driven Crown grass→Mirrormere marsh region/chunk transition at `(336,383)→(336,384)`, continuing to `(336,391)` and returning, at 720p/1440p/2160p. The route was selected because the existing biome/surface change is source-visible; no marker or geography rewrite is added.
+
+Every after-art capture must also report the live real-asset renderer: at least 30 sourced frames, 192 decor chunk records, at least 1,000 bounded decor props, the three-cell region-transition band and a 40-character source ref. This prevents accidentally validating stale pre-art captures; it is not a visual-quality score.
 
 All captures are native 1×; day/night source-lighting state and pixels are checked independently. Frames still require eye inspection for source readability, silhouettes, bank/route readability, night salience, blur/nearest-neighbor scaling and region continuity. Prior traversal success and these captures do not reverse the existing visual HOLD. Do not substitute blurred vector art or rewrite the masterplan to hide a defect.
 

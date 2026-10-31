@@ -53,8 +53,19 @@ def test_payload_subset_hashes_match_both_lock_domains(provenance: dict) -> None
                 payload = {k: doc[k] for k in KEYS}
                 digest = sha(json.dumps(payload, sort_keys=True, separators=(",", ":")).encode())
                 assert digest == row["payload_subset_sha256"]
-            assert row["payload_subset_sha256"] == lock["payload_hashes"][tid]
+            lock_domain = lock["baseline_payload_hashes"] if profile_name == "a0_mounted_ad39bde6" else lock["payload_hashes"]
+            assert row["payload_subset_sha256"] == lock_domain[tid]
             assert row["file_sha256"] != row["payload_subset_sha256"]
+
+
+def test_r13_relock_preserves_a0_and_pins_real_asset_manifest(provenance: dict) -> None:
+    row = provenance["r13_visual_relock"]
+    assert row["a0_historical_profile_changed"] is False
+    assert row["canonical_bindings_preserved"] is True
+    assert row["before_payload_sha256"] != row["after_payload_sha256"]
+    manifest = ROOT / row["real_asset_manifest"]
+    assert sha(manifest.read_bytes()) == row["real_asset_manifest_sha256"]
+    assert provenance["a0_repin_policy"]["decision"] == "NO_BLIND_REPIN"
 
 
 def test_all_first_hour_crops_match_legacy_raw_rgba(provenance: dict) -> None:

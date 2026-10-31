@@ -56,7 +56,7 @@
     "lights": 2,
     "overlays": 33,
     "pier_cells": 0,
-    "props": 35,
+    "props": 49,
     "road_cells": 33,
     "road_overlays": 33,
     "track_cells": 0
@@ -3200,10 +3200,10 @@
   ],
   "owner": "A1",
   "pins": {
-    "atlas_sha256": "83d69373ca6c1258e8727800d0aa0c288851c34d25539c69c21ec9f5fc9d769a",
+    "atlas_sha256": "a9f9137f7c57945f67d9657fda7bdf26794d049b21eff854dce4752e95f0d8c5",
     "corridor_sha256": "9d3909b0625bdf6239a760fdf2ac982d0ede0314491cab315d7268d42ddc232f",
-    "grammar_sha256": "a5cecea7d749b56d7e8b6508bd9e880b3a70a92a97f0a06ab11fe81de965b53a",
-    "source_sha256": "2306757d860abbe63022baead2494417f9b53c1a3ed2dc5567afd7c74c83db73"
+    "grammar_sha256": "e055ec9f89db880d93f459900ef47a3448f00b029cd21e2c4cd076f0375bb7c5",
+    "source_sha256": "e0b5d5d6dfa88694cfaea359f259adfe6260ea8f0dfe0f5c6c381742119f9b4a"
   },
   "production_native_playable": false,
   "props": [
@@ -3213,7 +3213,7 @@
         201
       ],
       "collision_change": false,
-      "frame": "signpost",
+      "frame": "cainos_signpost",
       "id": "decor:393,201",
       "replaces": "signpost",
       "role": "return_route",
@@ -3245,7 +3245,7 @@
         214
       ],
       "collision_change": false,
-      "frame": "wall_stub",
+      "frame": "cainos_ruin_block",
       "id": "decor:394,214",
       "replaces": "wall_stub",
       "role": "restricted_access",
@@ -3261,7 +3261,7 @@
         214
       ],
       "collision_change": false,
-      "frame": "column_broken",
+      "frame": "cainos_column_broken",
       "id": "decor:405,214",
       "replaces": "column_broken",
       "role": "restricted_access",
@@ -3277,7 +3277,7 @@
         228
       ],
       "collision_change": false,
-      "frame": "tree_dead",
+      "frame": "cainos_tree_large",
       "id": "decor:389,228",
       "replaces": "tree_dead",
       "role": "background_scenery",
@@ -3293,7 +3293,7 @@
         215
       ],
       "collision_change": false,
-      "frame": "bush",
+      "frame": "cainos_bush_round",
       "id": "decor:396,215",
       "replaces": "bush",
       "role": "background_scenery",
@@ -3309,7 +3309,7 @@
         223
       ],
       "collision_change": false,
-      "frame": "rock_a",
+      "frame": "cainos_stone_large",
       "id": "decor:401,223",
       "replaces": "rock_a",
       "role": "background_scenery",
@@ -3325,7 +3325,7 @@
         219
       ],
       "collision_change": false,
-      "frame": "rock_c",
+      "frame": "cainos_stone_large",
       "id": "decor:398,219",
       "replaces": "rock_c",
       "role": "background_scenery",
@@ -3553,8 +3553,8 @@
         205
       ],
       "collision_change": false,
-      "frame": "tree_dead",
-      "id": "add:390,205:tree_dead",
+      "frame": "cainos_tree_medium",
+      "id": "add:390,205:cainos_tree_medium",
       "role": "background_scenery",
       "source": "treatment",
       "world_px": [
@@ -3568,8 +3568,8 @@
         208
       ],
       "collision_change": false,
-      "frame": "tree_dead",
-      "id": "add:414,208:tree_dead",
+      "frame": "cainos_tree_small",
+      "id": "add:414,208:cainos_tree_small",
       "role": "background_scenery",
       "source": "treatment",
       "world_px": [
@@ -3583,8 +3583,8 @@
         212
       ],
       "collision_change": false,
-      "frame": "bush",
-      "id": "add:397,212:bush",
+      "frame": "cainos_bush_round",
+      "id": "add:397,212:cainos_bush_round",
       "role": "background_scenery",
       "source": "treatment",
       "world_px": [
@@ -3676,8 +3676,8 @@
         214
       ],
       "collision_change": false,
-      "frame": "bush",
-      "id": "add:410,214:bush",
+      "frame": "cainos_bush_round",
+      "id": "add:410,214:cainos_bush_round",
       "role": "background_scenery",
       "source": "treatment",
       "world_px": [
@@ -3691,8 +3691,8 @@
         202
       ],
       "collision_change": false,
-      "frame": "tree_dead",
-      "id": "add:418,202:tree_dead",
+      "frame": "cainos_tree_large",
+      "id": "add:418,202:cainos_tree_large",
       "role": "background_scenery",
       "source": "treatment",
       "world_px": [
@@ -3706,8 +3706,8 @@
         210
       ],
       "collision_change": false,
-      "frame": "rock_c",
-      "id": "add:388,210:rock_c",
+      "frame": "cainos_boulder",
+      "id": "add:388,210:cainos_boulder",
       "role": "background_scenery",
       "source": "treatment",
       "world_px": [
@@ -3721,8 +3721,8 @@
         224
       ],
       "collision_change": false,
-      "frame": "reeds",
-      "id": "add:384,224:reeds",
+      "frame": "ocean_bush_wide",
+      "id": "add:384,224:ocean_bush_wide",
       "role": "background_scenery",
       "source": "treatment",
       "world_px": [
@@ -3743,6 +3743,216 @@
       "world_px": [
         6344,
         3632
+      ]
+    },
+    {
+      "cell": [
+        390,
+        202
+      ],
+      "collision_change": false,
+      "frame": "cainos_tuft_0",
+      "id": "add:390,202:cainos_tuft_0",
+      "role": "background_scenery",
+      "source": "treatment",
+      "world_px": [
+        6248,
+        3248
+      ]
+    },
+    {
+      "cell": [
+        394,
+        204
+      ],
+      "collision_change": false,
+      "frame": "cainos_tuft_1",
+      "id": "add:394,204:cainos_tuft_1",
+      "role": "background_scenery",
+      "source": "treatment",
+      "world_px": [
+        6312,
+        3280
+      ]
+    },
+    {
+      "cell": [
+        390,
+        209
+      ],
+      "collision_change": false,
+      "frame": "cainos_tuft_2",
+      "id": "add:390,209:cainos_tuft_2",
+      "role": "background_scenery",
+      "source": "treatment",
+      "world_px": [
+        6248,
+        3360
+      ]
+    },
+    {
+      "cell": [
+        394,
+        212
+      ],
+      "collision_change": false,
+      "frame": "cainos_tuft_3",
+      "id": "add:394,212:cainos_tuft_3",
+      "role": "background_scenery",
+      "source": "treatment",
+      "world_px": [
+        6312,
+        3408
+      ]
+    },
+    {
+      "cell": [
+        390,
+        216
+      ],
+      "collision_change": false,
+      "frame": "cainos_tuft_0",
+      "id": "add:390,216:cainos_tuft_0",
+      "role": "background_scenery",
+      "source": "treatment",
+      "world_px": [
+        6248,
+        3472
+      ]
+    },
+    {
+      "cell": [
+        394,
+        218
+      ],
+      "collision_change": false,
+      "frame": "cainos_tuft_1",
+      "id": "add:394,218:cainos_tuft_1",
+      "role": "background_scenery",
+      "source": "treatment",
+      "world_px": [
+        6312,
+        3504
+      ]
+    },
+    {
+      "cell": [
+        389,
+        222
+      ],
+      "collision_change": false,
+      "frame": "ocean_tuft_0",
+      "id": "add:389,222:ocean_tuft_0",
+      "role": "background_scenery",
+      "source": "treatment",
+      "world_px": [
+        6232,
+        3568
+      ]
+    },
+    {
+      "cell": [
+        399,
+        222
+      ],
+      "collision_change": false,
+      "frame": "cainos_tuft_2",
+      "id": "add:399,222:cainos_tuft_2",
+      "role": "background_scenery",
+      "source": "treatment",
+      "world_px": [
+        6392,
+        3568
+      ]
+    },
+    {
+      "cell": [
+        405,
+        220
+      ],
+      "collision_change": false,
+      "frame": "cainos_tuft_3",
+      "id": "add:405,220:cainos_tuft_3",
+      "role": "background_scenery",
+      "source": "treatment",
+      "world_px": [
+        6488,
+        3536
+      ]
+    },
+    {
+      "cell": [
+        406,
+        218
+      ],
+      "collision_change": false,
+      "frame": "cainos_tuft_0",
+      "id": "add:406,218:cainos_tuft_0",
+      "role": "background_scenery",
+      "source": "treatment",
+      "world_px": [
+        6504,
+        3504
+      ]
+    },
+    {
+      "cell": [
+        400,
+        204
+      ],
+      "collision_change": false,
+      "frame": "cainos_tuft_1",
+      "id": "add:400,204:cainos_tuft_1",
+      "role": "background_scenery",
+      "source": "treatment",
+      "world_px": [
+        6408,
+        3280
+      ]
+    },
+    {
+      "cell": [
+        405,
+        203
+      ],
+      "collision_change": false,
+      "frame": "cainos_tuft_2",
+      "id": "add:405,203:cainos_tuft_2",
+      "role": "background_scenery",
+      "source": "treatment",
+      "world_px": [
+        6488,
+        3264
+      ]
+    },
+    {
+      "cell": [
+        411,
+        203
+      ],
+      "collision_change": false,
+      "frame": "cainos_tuft_3",
+      "id": "add:411,203:cainos_tuft_3",
+      "role": "background_scenery",
+      "source": "treatment",
+      "world_px": [
+        6584,
+        3264
+      ]
+    },
+    {
+      "cell": [
+        414,
+        204
+      ],
+      "collision_change": false,
+      "frame": "cainos_tuft_0",
+      "id": "add:414,204:cainos_tuft_0",
+      "role": "background_scenery",
+      "source": "treatment",
+      "world_px": [
+        6632,
+        3280
       ]
     }
   ],

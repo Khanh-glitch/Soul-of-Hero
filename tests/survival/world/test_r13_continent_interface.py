@@ -194,7 +194,10 @@ def test_native_validator_accepts_complete_synthetic_evidence(built: dict, tmp_p
                 "visual_acceptance": "NOT_TESTED", "production_frame": False,
                 "sample_unique_colors": 12, "sample_luminance_range": 0.5,
                 "time_of_day": 0.82 if view.endswith("night") else 0.35,
-                "source_visual": {"night_factor": 0.8 if view.endswith("night") else 0.0},
+                "source_visual": {"night_factor": 0.8 if view.endswith("night") else 0.0,
+                                  "real_asset_frames": 36, "continent_chunk_records": 192,
+                                  "continent_decor_props": 2081, "region_transition_visual_band_cells": 3,
+                                  "asset_source_ref": "e1e4e9a4d4a0f7f0d38360d638715a0c9f144208"},
             })
     monkeypatch.setattr(native_validator, "png_size", lambda path: sizes[path])
     arrivals = []

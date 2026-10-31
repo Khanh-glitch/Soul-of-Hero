@@ -137,6 +137,13 @@ def validate(report: dict, manifest: dict, project: Path, require_d051_art: bool
             check(f"capture_unique_{view}_{resolution}", False, "duplicate view/resolution")
         by_pair[key] = row
     check("capture_matrix_complete", set(by_pair) == {(view, tuple(resolution)) for view in VIEWS for resolution in RESOLUTIONS})
+    check("real_asset_stream_active_in_every_capture", all(
+        int(row.get("source_visual", {}).get("real_asset_frames", 0)) >= 30
+        and int(row.get("source_visual", {}).get("continent_chunk_records", 0)) == 192
+        and int(row.get("source_visual", {}).get("continent_decor_props", 0)) >= 1000
+        and int(row.get("source_visual", {}).get("region_transition_visual_band_cells", 0)) == 3
+        and len(str(row.get("source_visual", {}).get("asset_source_ref", ""))) == 40
+        for row in captures), "36 real frames / 192 chunk records / bounded live decor required")
     for site in ("quarry", "orchard"):
         for resolution in RESOLUTIONS:
             day = by_pair.get((site + "_day", tuple(resolution)), {})

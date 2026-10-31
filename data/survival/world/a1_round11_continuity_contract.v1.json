@@ -38,23 +38,23 @@
     },
     "atlas": {
       "path": "data/survival/world/art/atlas.v1.json",
-      "sha256": "83d69373ca6c1258e8727800d0aa0c288851c34d25539c69c21ec9f5fc9d769a"
+      "sha256": "a9f9137f7c57945f67d9657fda7bdf26794d049b21eff854dce4752e95f0d8c5"
     },
     "asset_provenance": {
       "path": "data/survival/world/art/first_hour_asset_provenance.v1.json",
-      "sha256": "892c60903b6434288964a0017d57e7db5fd453e9dddff64cdbd32d58f2b62618"
+      "sha256": "82ff80aa8b6c96cb5646a02c661b8d03731caa01705649a6becf8814dcd7de8b"
     },
     "terrain": {
       "path": "assets/environment/survival_world/terrain.png",
-      "sha256": "6128d8f41abe6962fe705431db20e762e0cca613ffc3eca29065727422737d1c"
+      "sha256": "4d663a3dd1a865b8dcb2cfe9024c197e10ba3b0c8e8101c3ffe825d9e5ad5782"
     },
     "props": {
       "path": "assets/environment/survival_world/props.png",
-      "sha256": "8d4acf4028e0e065b901e78c59c65e5a68677fb75d46c04c7e5a029a76d27324"
+      "sha256": "5de614ec25db2d0b1a62393e5ebe18c9ae0dfc26d9aef0b247376cdeb7c43f32"
     },
     "a8_shell_visuals": {
       "path": "data/survival/world/art/a8_shell_visuals.v1.json",
-      "sha256": "f561d87483f52e42b775268ce4fb17a6f6439777a63a2fb9812db1660b00b251"
+      "sha256": "87e28c3380a63981ec7da2785f1cb04cee040a4044f7d93c267f8f592fb1d327"
     },
     "a8_commit": "3a7ab4612f14038c6be1e66bbd41c948a342852f",
     "a8_south_quarry": {

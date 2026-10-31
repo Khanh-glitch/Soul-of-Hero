@@ -15,6 +15,8 @@ on:
       - 'tests/survival/world/**'
       - 'docs/survival/world/**'
       - 'assets/environment/survival_world/**'
+      - 'assets/environment/cainos_demo/**'
+      - 'assets/environment/ocean_cainos/**'
       - 'game/world_art/**'
       - 'game/survival/world/**'
   pull_request:
@@ -26,6 +28,8 @@ on:
       - 'tests/survival/world/**'
       - 'docs/survival/world/**'
       - 'assets/environment/survival_world/**'
+      - 'assets/environment/cainos_demo/**'
+      - 'assets/environment/ocean_cainos/**'
       - 'game/world_art/**'
       - 'game/survival/world/**'
   workflow_dispatch:
@@ -72,7 +76,7 @@ jobs:
         run: python tools/survival/worldgen/validate_corridor.py | tee "$ARTIFACT_DIR/corridor_validation.json"
       - name: Author regional scene studies (narrow piers, causal detail clusters, night framing)
         run: python tools/survival/worldgen/author_region_scenes.py | tee "$ARTIFACT_DIR/region_scene_authoring.json"
-      - name: Bake A1 survival world art atlas (original + pinned inherited frames)
+      - name: Bake A1 atlas (legacy + exact supplied Cainos/Ocean source rectangles)
         run: python tools/survival/worldgen/build_region_art.py | tee "$ARTIFACT_DIR/world_art_bake.json"
       - name: Compile visual-only world art treatments
         run: python tools/survival/worldgen/compile_world_art.py | tee "$ARTIFACT_DIR/world_art_compile.json"
@@ -84,6 +88,10 @@ jobs:
         run: python tools/survival/worldgen/study_avfx_contrast.py | tee "$ARTIFACT_DIR/avfx_contrast.json"
       - name: Compile consumable A0/A8 mount bundle
         run: python tools/survival/worldgen/compile_mount_bundle.py | tee "$ARTIFACT_DIR/mount_bundle_compile.json"
+      - name: Explicit R13 first-hour visual relock (A0 historical profile preserved)
+        run: python tools/survival/worldgen/relock_first_hour_art.py | tee "$ARTIFACT_DIR/r13_visual_relock.json"
+      - name: Re-pin only whitelisted A1 visual source inputs
+        run: python tools/survival/worldgen/repin_r13_visual_sources.py | tee "$ARTIFACT_DIR/r13_visual_repin.json"
       - name: Compile A1 review of A8 territory + endpoint placements
         run: python tools/survival/worldgen/compile_placement_review.py --out artifacts/a1-placement/placement_native_inputs.json | tee "$ARTIFACT_DIR/placement_compile.json"
       - name: Compile Round 11 exact-source continuity / hazard / socket packet

@@ -1,10 +1,30 @@
 {
-  "artifact_count": 264,
+  "artifact_count": 278,
   "artifacts": [
     {
       "bytes": 9443,
       "path": "data/survival/world/a1_a3_material_decisions.json",
       "sha256": "28b94d48a2fb9eade4b9aca29478bac3d6212f4862441fe83cc61c82de5a15a0"
+    },
+    {
+      "bytes": 29384,
+      "path": "data/survival/world/a1_continent_interface.v1.json",
+      "sha256": "de3907d46550afa78cfdaac9b64bbb71e0b4eebd2406a1ff9516bab525544231"
+    },
+    {
+      "bytes": 24874,
+      "path": "data/survival/world/a1_round11_continuity_contract.v1.json",
+      "sha256": "afee48757c9f8ddb678c1225ae9ef67f6537e5eb4ec0388fd556fb2eb91a41a5"
+    },
+    {
+      "bytes": 20869,
+      "path": "data/survival/world/a1_round12_runtime_contract.v1.json",
+      "sha256": "37c506b4d7fcc19d72a4ed1a99afa98e5f1e69c60f0900b9b3e9bb0887b6e07a"
+    },
+    {
+      "bytes": 383207,
+      "path": "data/survival/world/a1_round12_spawn_index.v1.json",
+      "sha256": "1e9f5945613f9575d8a2abbb91801d2ad32f9fc9c0ff6ab00852c8982c9b302b"
     },
     {
       "bytes": 12601,
@@ -14,7 +34,7 @@
     {
       "bytes": 14155,
       "path": "data/survival/world/art/a8_shell_visuals.v1.json",
-      "sha256": "f561d87483f52e42b775268ce4fb17a6f6439777a63a2fb9812db1660b00b251"
+      "sha256": "87e28c3380a63981ec7da2785f1cb04cee040a4044f7d93c267f8f592fb1d327"
     },
     {
       "bytes": 4355,
@@ -27,9 +47,14 @@
       "sha256": "a8857293678f7ef97732c3c47bfb331b9e616c277fc9cf2707c8070ab0fc8123"
     },
     {
-      "bytes": 143371,
+      "bytes": 29754,
+      "path": "data/survival/world/art/asset_exploitation.v1.json",
+      "sha256": "4cf809ddfd2667ab04c970c7cde481b9e9cddfc143d35904ad8674f0a52f4756"
+    },
+    {
+      "bytes": 170126,
       "path": "data/survival/world/art/atlas.v1.json",
-      "sha256": "83d69373ca6c1258e8727800d0aa0c288851c34d25539c69c21ec9f5fc9d769a"
+      "sha256": "a9f9137f7c57945f67d9657fda7bdf26794d049b21eff854dce4752e95f0d8c5"
     },
     {
       "bytes": 160558,
@@ -44,92 +69,97 @@
     {
       "bytes": 70964,
       "path": "data/survival/world/art/compiled/amberwood_apothecary_herb_margin.presentation.v1.json",
-      "sha256": "3857836c5bf389b59bed4f6b6448545e73e4b86839d22bb9cacf1c319a377cdf"
+      "sha256": "a4564605097d7570dbb8dc3deefedb6b1d78794783b0faeefe58ad9747160a38"
     },
     {
       "bytes": 506440,
       "path": "data/survival/world/art/compiled/ashwater_fen_region_window.presentation.v1.json",
-      "sha256": "ba06dd3c24a58e56f620794a03319631eaabd803c24e3bca4e2cee984fbbf37f"
+      "sha256": "9fc8c67cf4fec8354faba3996b32ac5bf6b0207fa3516733c676d05e39ba5dd2"
     },
     {
-      "bytes": 70416,
+      "bytes": 74665,
       "path": "data/survival/world/art/compiled/crown_roadside_visual_treatment.presentation.v1.json",
-      "sha256": "39f1a9a91614430c573aedf5bfd148808cd630422f7be3d04024d57de9b7b4c1"
+      "sha256": "ff29d281e7b332c1ee4a6a90ca8e85c238a7c2a5ec5c767ae70ca6a7ddad6ab2"
     },
     {
       "bytes": 490131,
       "path": "data/survival/world/art/compiled/ember_steppe_region_window.presentation.v1.json",
-      "sha256": "b2cc4aae5e43925e78f4e5c6b95ec7d1a32302f703f3655598024296127052b5"
+      "sha256": "5d34a4318a65a4dacb1804c4f61e2c42f65ce0f63ba4bbeae5096ab1f467503b"
     },
     {
       "bytes": 135863,
       "path": "data/survival/world/art/compiled/frost_crown_shrine_skarn.presentation.v1.json",
-      "sha256": "28d602242b7c9deb40c77f985334771ab425233687b45d09befb361bb74e7792"
+      "sha256": "70ed845671e675e811b2fe3f6c2c76c34df84a3f68bc09ed8b735b4a524aeeef"
     },
     {
       "bytes": 196833,
       "path": "data/survival/world/art/compiled/glasswind_coast_region_window.presentation.v1.json",
-      "sha256": "311c2205d8856c368430e4300c1889aa67ba497ac0eb0fbeb8d0e66653d3b42e"
+      "sha256": "6274723a55f7f00393b2f45836d1028a05d853ea99052fafe3c5c4420465b902"
     },
     {
       "bytes": 175425,
       "path": "data/survival/world/art/compiled/mirrormere_region_window.presentation.v1.json",
-      "sha256": "026fffbbea6f9f3a0858e155345e6e46c5a00595708a6848e340a7eb36d6d603"
+      "sha256": "4cddff773e1b162c93ab6ae79ef4ba43848194571ae3b3eb9065a1547d284319"
     },
     {
       "bytes": 328152,
       "path": "data/survival/world/art/compiled/pearl_mangroves_region_window.presentation.v1.json",
-      "sha256": "ea46810ca0c7def66121fc76da128d3fc7c97fef91b48245706f3262402c42bd"
+      "sha256": "fe5bc972e0cbca557639f7b56524b655736fc1d9d88147ccd4d4927f3c928525"
     },
     {
       "bytes": 189416,
       "path": "data/survival/world/art/compiled/saffron_coast_region_window.presentation.v1.json",
-      "sha256": "7a9e0ef1beb4f0f0b8a374b5a5dd41811be50c7062b04a80fa418c16986aa070"
+      "sha256": "1c0abd3363b35a37e54ccf00bb5a37e771eda74638fa258a0369bc962e77e8e6"
     },
     {
       "bytes": 422736,
       "path": "data/survival/world/art/compiled/sunken_orchard_region_window.presentation.v1.json",
-      "sha256": "6364a235aedc15f2027b4f49cc813cbb47e7a5feceac0ddb17a6697bff4abeeb"
+      "sha256": "d43dd7d136ce06c8bfc6332ba5f658d2119f68471aaa4e45d3408607445cfc71"
     },
     {
       "bytes": 340308,
       "path": "data/survival/world/art/compiled/verdant_fold_region_window.presentation.v1.json",
-      "sha256": "884cd1f3886da92cc745668a8cc0c1fc3b1582fe50eda0b16a6846858f758371"
+      "sha256": "21f8b457137d52a8a73b404eb5f11b55dc3a7afb276d67be6f8b0dc708a1e661"
     },
     {
-      "bytes": 7225,
+      "bytes": 621012,
+      "path": "data/survival/world/art/continent_decor.v1.json",
+      "sha256": "e582bf2f1eb2994ce06165895bd48c0c9414597dc20d29ad3aa900590eca1bfc"
+    },
+    {
+      "bytes": 9180,
       "path": "data/survival/world/art/crown_roadside.treatment.v1.json",
-      "sha256": "2306757d860abbe63022baead2494417f9b53c1a3ed2dc5567afd7c74c83db73"
+      "sha256": "e0b5d5d6dfa88694cfaea359f259adfe6260ea8f0dfe0f5c6c381742119f9b4a"
     },
     {
-      "bytes": 210418,
+      "bytes": 216762,
       "path": "data/survival/world/art/first_hour_asset_provenance.v1.json",
-      "sha256": "892c60903b6434288964a0017d57e7db5fd453e9dddff64cdbd32d58f2b62618"
+      "sha256": "82ff80aa8b6c96cb5646a02c661b8d03731caa01705649a6becf8814dcd7de8b"
     },
     {
-      "bytes": 17067,
+      "bytes": 19423,
       "path": "data/survival/world/art/first_hour_visual_payload_lock.v1.json",
-      "sha256": "8c9a36c071f6f7249df2b169e506b82b83f6b7f1ae166ae539d976ce60f67dda"
+      "sha256": "63e66ca4d2e0f6fbfba0020d8f41af5e32673d2f4b12cdd68afc3d24f60f1904"
     },
     {
       "bytes": 10209,
       "path": "data/survival/world/art/mount_bundle.v1.json",
-      "sha256": "c2e5c596a8f60f12073593c084c3087465ae459f3201d97ca78279c503eadf38"
+      "sha256": "8718cefebacfd19ad29ed217a7e8fe0b5192e7447fccc72892e920f44bfe6e6b"
     },
     {
-      "bytes": 6566,
+      "bytes": 7140,
       "path": "data/survival/world/art/presentations.v1.json",
-      "sha256": "45af8278a959e5e3e1aa1fa697a4856d46e63237822cbee131c95bb60e98c1ee"
+      "sha256": "2710cdfb2b2f66aa13c81ab12ce1f9f9bd22d9fa5ddb7a69efc5d9db9e209dbc"
     },
     {
       "bytes": 13002,
       "path": "data/survival/world/art/region_coverage_matrix.v1.json",
-      "sha256": "491493d53fce2fed54037343561a843ad0145d065e66da2cbed036ac6d30f46a"
+      "sha256": "289733e88bb6d8eaf7adcb5eef9ec0a2dadd85542ddf96aeb6ec096360419c29"
     },
     {
-      "bytes": 19805,
+      "bytes": 20659,
       "path": "data/survival/world/art/world_art_grammar.v1.json",
-      "sha256": "a5cecea7d749b56d7e8b6508bd9e880b3a70a92a97f0a06ab11fe81de965b53a"
+      "sha256": "e055ec9f89db880d93f459900ef47a3448f00b029cd21e2c4cd076f0375bb7c5"
     },
     {
       "bytes": 3901,
@@ -1197,6 +1227,46 @@
       "sha256": "32856a7751ce395bdf9e70b4b0fe99b0224b1335207782e498839d4269f87797"
     },
     {
+      "bytes": 15311,
+      "path": "data/survival/world/references/a8_3a7ab461/south_quarry.json",
+      "sha256": "95e24c5bb2655439cb0b0780f1865a48df839af4292fbb5b0bef5c0582c3a447"
+    },
+    {
+      "bytes": 29794,
+      "path": "data/survival/world/references/a8_e1fe550b/a1_atlas_compatibility.v1.json",
+      "sha256": "764025f83b331a3d39356fbf8360c9bf339e92541049794ae80f69913eec89d3"
+    },
+    {
+      "bytes": 8071,
+      "path": "data/survival/world/references/a8_e1fe550b/a8_a0_mount_transition_package.v2.json",
+      "sha256": "2378ebd71a0057205839f88ae1b0aea6f9306f94bcbe749e7ec48bc672aacb03"
+    },
+    {
+      "bytes": 6102,
+      "path": "data/survival/world/references/a8_e1fe550b/interaction_contract.v3.json",
+      "sha256": "3c3dcb70a22de56facf4f1a214d28c49a26ebb8b00d341616199609d93062841"
+    },
+    {
+      "bytes": 16274,
+      "path": "data/survival/world/references/a8_e1fe550b/south_crown_mill.json",
+      "sha256": "cb404bd47f5776f3b0fa871fe104379144bf3490767580e3480ffbfd4d9f2cde"
+    },
+    {
+      "bytes": 16222,
+      "path": "data/survival/world/references/a8_e1fe550b/south_orchard_ruin.json",
+      "sha256": "7a31d25a7315f8d32911a2f8600246df7ad72ef8e5d7c059866c02034adbb16c"
+    },
+    {
+      "bytes": 16420,
+      "path": "data/survival/world/references/a8_e1fe550b/south_quarry.json",
+      "sha256": "db9ea0c92c0ecd7cffadc3cb5ac3f1a8d6e669736085ef60000c480d1dbb535d"
+    },
+    {
+      "bytes": 14037,
+      "path": "data/survival/world/references/a8_e1fe550b/surface_affordances.v1.json",
+      "sha256": "80d2cceda5229f3cb83a5d2bd3817e993118064856e531a3d55db86885c8f902"
+    },
+    {
       "bytes": 691,
       "path": "data/survival/world/schemas/biome.schema.json",
       "sha256": "8f93ac7ddbede3e9efcdee37c74870e5ea4c22b0d7395af44a665526c0b95516"
@@ -1322,8 +1392,8 @@
       "sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4"
     }
   ],
-  "compile_1_tree_sha256": "c354faef35e6cf79f8f0e1ecd5148aeb5edcc92d8c18b70662df307f3bf05134",
-  "compile_2_tree_sha256": "c354faef35e6cf79f8f0e1ecd5148aeb5edcc92d8c18b70662df307f3bf05134",
+  "compile_1_tree_sha256": "7f5e5521b3c2de1495a85d4591b9ef4f4bff54a3041b2a7e1c00fa4e88293b78",
+  "compile_2_tree_sha256": "7f5e5521b3c2de1495a85d4591b9ef4f4bff54a3041b2a7e1c00fa4e88293b78",
   "ok": true,
   "plan_sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4",
   "schema": "soh.world.determinism.v1",

@@ -14,6 +14,8 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
+import asset_exploitation
+
 ROOT = Path(__file__).resolve().parents[3]
 OUT = ROOT / "assets/environment/survival_world"
 DATA = ROOT / "data/survival/world/art"
@@ -649,6 +651,10 @@ def build(include_regions: bool = False) -> dict:
         props[name] = legacy.crop((m["x"], m["y"], m["x"] + m["w"], m["y"] + m["h"]))
         inherited[name] = {"source": "assets/environment/overworld/overworld_props.png", "rect": [m["x"], m["y"], m["w"], m["h"]], "license": "original", "decision": "REUSE_UNSCALED"}
 
+    # R13 full-asset escalation: append real source-rect crops after every
+    # legacy frame so all existing atlas coordinates remain byte-stable.
+    asset_frames = asset_exploitation.import_frames(terrain, props)
+
     def pack(frames: dict[str, Image.Image], width=1024) -> tuple[Image.Image, dict]:
         x = y = rowh = 2
         rects = {}
@@ -678,11 +684,13 @@ def build(include_regions: bool = False) -> dict:
         "textures": {"terrain": "res://assets/environment/survival_world/terrain.png", "props": "res://assets/environment/survival_world/props.png"},
         "terrain": trects, "props": prects,
         "inherited_frames": inherited,
-        "license": "original SOH art; inherited frames remain original project art",
+        "asset_frames": asset_frames,
+        "license": "original SOH art plus creator-rights-secured supplied pack crops; source rectangles and hashes are explicit",
         "perspective": "top-down three-quarter, feet anchor bottom-center, integer scale only",
         "sha256": {"terrain": hashlib.sha256(tsheet.tobytes()).hexdigest(), "props": hashlib.sha256(psheet.tobytes()).hexdigest()},
         "file_sha256": {"terrain": hashlib.sha256((OUT / "terrain.png").read_bytes()).hexdigest(), "props": hashlib.sha256((OUT / "props.png").read_bytes()).hexdigest()},
     }
+    asset_exploitation.write_manifest(manifest)
     (DATA / "atlas.v1.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
     # contact sheet for personal inspection, not runtime art
     cw = 1024; cols = 8; cellw = 128; cellh = 120
@@ -695,7 +703,8 @@ def build(include_regions: bool = False) -> dict:
         contact.paste(big, (x + (cellw - big.width) // 2, y + 22 + (88 - big.height)), big)
         d.text((x + 4, y + 4), name, fill="white")
     contact.save(DATA / "props_contact.png")
-    return {"ok": True, "terrain_frames": len(terrain), "prop_frames": len(props), "inherited": len(inherited), "atlas": str(DATA / "atlas.v1.json")}
+    return {"ok": True, "terrain_frames": len(terrain), "prop_frames": len(props), "inherited": len(inherited),
+            "real_asset_frames": len(asset_frames), "atlas": str(DATA / "atlas.v1.json")}
 
 
 if __name__ == "__main__":

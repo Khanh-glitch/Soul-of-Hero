@@ -445,6 +445,12 @@ func _run_contract_checks() -> void:
 	var report: Dictionary = continent.source_report()
 	_expect(bool(report.ok) and bool(report.interface_ready) and int(report.verified_chunks) == 192,
 		"R13 façade verifies the complete 192-chunk authored world")
+	var visual: Dictionary = continent.stream.source_visual_summary()
+	_expect(int(visual.get("real_asset_frames", 0)) >= 30 \
+		and int(visual.get("continent_chunk_records", 0)) == 192 \
+		and int(visual.get("continent_decor_props", 0)) >= 1000 \
+		and int(visual.get("region_transition_visual_band_cells", 0)) == 3,
+		"live stream binds real source-rect art and bounded continent decor")
 	_expect(String(continent.manifest.world.world_id) == "world:soh_continent_v1"
 		and continent.world_rect() == Rect2(0, 0, 16384, 12288), "stable canonical world identity and pixel bounds")
 	for cell: Vector2i in [Vector2i(0, 0), Vector2i(63, 63), Vector2i(64, 64), Vector2i(1023, 767), Vector2i(30, 280)]:
@@ -591,7 +597,7 @@ func _run_first_hour_route() -> void:
 	for index: int in range(35, outbound.size()):
 		to_waystation.append(_cell(outbound[index]))
 	var outbound_result: Dictionary = await _drive_cells("first-hour supply layby to Waystation", to_waystation)
-	var outbound_ok := bool(layby_result.ok) and bool(outbound_result.ok) \
+	var outbound_ok: bool = bool(layby_result.ok) and bool(outbound_result.ok) \
 		and continent.world_to_cell(hero.global_position).get("cell", Vector2i(-1, -1)) == goal
 	first_hour_route["outbound_ok"] = outbound_ok
 	_expect(outbound_ok, "real controller completes first-hour outbound route to the Waystation")
@@ -600,7 +606,7 @@ func _run_first_hour_route() -> void:
 	for index: int in range(1, returning.size()):
 		back.append(_cell(returning[index]))
 	var return_result: Dictionary = await _drive_cells("first-hour Waystation return to postern", back)
-	var return_ok := bool(return_result.ok) \
+	var return_ok: bool = bool(return_result.ok) \
 		and continent.world_to_cell(hero.global_position).get("cell", Vector2i(-1, -1)) == start
 	first_hour_route["return_ok"] = return_ok
 	first_hour_route["ok"] = outbound_ok and return_ok

@@ -943,11 +943,11 @@
     },
     "runtime_contract": {
       "path": "data/survival/world/a1_round12_runtime_contract.v1.json",
-      "sha256": "a1a5b736aec8c459fe56714f87f3ce17f37704e4790a18eb4b38d198b29a13ca"
+      "sha256": "37c506b4d7fcc19d72a4ed1a99afa98e5f1e69c60f0900b9b3e9bb0887b6e07a"
     },
     "spawn_index": {
       "path": "data/survival/world/a1_round12_spawn_index.v1.json",
-      "sha256": "22435ac8645d56f00569f2241a47cc7e5970122127781870dab2cb252ee9de0a"
+      "sha256": "1e9f5945613f9575d8a2abbb91801d2ad32f9fc9c0ff6ab00852c8982c9b302b"
     },
     "world_plan": {
       "path": "data/survival/world/world_plan.v1.json",

@@ -6223,6 +6223,188 @@
               24
             ]
           },
+          "cainos_boulder": {
+            "matches_first_hour_lock": true,
+            "raw_rgba_sha256": "7e15f90ab8ec79a3deead6d68ddc732738610285ed5cfaa0d1fb179841b74252",
+            "rect": [
+              308,
+              653,
+              57,
+              42
+            ],
+            "size": [
+              57,
+              42
+            ]
+          },
+          "cainos_bush_round": {
+            "matches_first_hour_lock": true,
+            "raw_rgba_sha256": "c0c03b991d2c90e4e25ca1ba81fa43d669a78a0c8ccb00269385f81c6432725b",
+            "rect": [
+              83,
+              653,
+              47,
+              42
+            ],
+            "size": [
+              47,
+              42
+            ]
+          },
+          "cainos_column_broken": {
+            "matches_first_hour_lock": true,
+            "raw_rgba_sha256": "77648770d3912b39f342b5bdcd2ae4e0f313ba09d082a71b885ea8e875c11bf1",
+            "rect": [
+              435,
+              653,
+              27,
+              61
+            ],
+            "size": [
+              27,
+              61
+            ]
+          },
+          "cainos_ruin_block": {
+            "matches_first_hour_lock": true,
+            "raw_rgba_sha256": "ca3333f948865a376cf10cf52465d0d52cfb55948da18c818221750887ef97ba",
+            "rect": [
+              492,
+              653,
+              26,
+              38
+            ],
+            "size": [
+              26,
+              38
+            ]
+          },
+          "cainos_signpost": {
+            "matches_first_hour_lock": true,
+            "raw_rgba_sha256": "d6276d7142dfd1e772c3a510290f60eeb94e76da8d3bed8365497bde8c05fc3f",
+            "rect": [
+              279,
+              653,
+              27,
+              32
+            ],
+            "size": [
+              27,
+              32
+            ]
+          },
+          "cainos_stone_large": {
+            "matches_first_hour_lock": true,
+            "raw_rgba_sha256": "63e9d30c297b77ccdfef859db124d14fdc5333d8349aa84762495e20f28c1ce3",
+            "rect": [
+              406,
+              653,
+              27,
+              27
+            ],
+            "size": [
+              27,
+              27
+            ]
+          },
+          "cainos_tree_large": {
+            "matches_first_hour_lock": true,
+            "raw_rgba_sha256": "0a85a191deedd8a8e4a1c54120737b290f83e4bcd9b76185952aed2c6e3f1386",
+            "rect": [
+              732,
+              512,
+              113,
+              139
+            ],
+            "size": [
+              113,
+              139
+            ]
+          },
+          "cainos_tree_medium": {
+            "matches_first_hour_lock": true,
+            "raw_rgba_sha256": "e65e3d27e1d725c1ab628d35f9bd2dd6a98c6a707c15336c68c41918af3d2145",
+            "rect": [
+              847,
+              512,
+              97,
+              136
+            ],
+            "size": [
+              97,
+              136
+            ]
+          },
+          "cainos_tree_small": {
+            "matches_first_hour_lock": true,
+            "raw_rgba_sha256": "5ef001d53cfd3204c117b86a82b776ab76dc7c298b826a1ac3e1bb770484487e",
+            "rect": [
+              2,
+              653,
+              79,
+              120
+            ],
+            "size": [
+              79,
+              120
+            ]
+          },
+          "cainos_tuft_0": {
+            "matches_first_hour_lock": true,
+            "raw_rgba_sha256": "24bbf2e94eea14d92c0115b3f0efa4eeeab4b2fa6a878e62d8f9296f61147931",
+            "rect": [
+              213,
+              653,
+              17,
+              9
+            ],
+            "size": [
+              17,
+              9
+            ]
+          },
+          "cainos_tuft_1": {
+            "matches_first_hour_lock": true,
+            "raw_rgba_sha256": "44c8d3765203f5d9fa4a45fefe5d8e1bc8f2244a3b4dcbe7fca621bfac350a1c",
+            "rect": [
+              232,
+              653,
+              16,
+              10
+            ],
+            "size": [
+              16,
+              10
+            ]
+          },
+          "cainos_tuft_2": {
+            "matches_first_hour_lock": true,
+            "raw_rgba_sha256": "7c8d77a65cf3ab8c820588f2bfb0aeebe6062af2066851a0d7c4d210b60eb144",
+            "rect": [
+              250,
+              653,
+              12,
+              10
+            ],
+            "size": [
+              12,
+              10
+            ]
+          },
+          "cainos_tuft_3": {
+            "matches_first_hour_lock": true,
+            "raw_rgba_sha256": "49e89292f0eb84eae8f09800b4745287f267d723ba8eb6696790852db3df612c",
+            "rect": [
+              264,
+              653,
+              13,
+              9
+            ],
+            "size": [
+              13,
+              9
+            ]
+          },
           "cairn": {
             "matches_first_hour_lock": true,
             "raw_rgba_sha256": "7e03f384e1e1f139d2cd61c9885f07d43f93ba77eb36b04dbc5e7390fed5a418",
@@ -6417,6 +6599,34 @@
             "size": [
               30,
               20
+            ]
+          },
+          "ocean_bush_wide": {
+            "matches_first_hour_lock": true,
+            "raw_rgba_sha256": "86e2b1d9a51bdc0710a18500a9b7b7804ae3c83e09d7a969ea0d7bcdebdc615c",
+            "rect": [
+              864,
+              653,
+              38,
+              32
+            ],
+            "size": [
+              38,
+              32
+            ]
+          },
+          "ocean_tuft_0": {
+            "matches_first_hour_lock": true,
+            "raw_rgba_sha256": "79795ebbad524cf37228c168c5f5eccc3d3f9f8aeafa0ab0f710187723d20a29",
+            "rect": [
+              904,
+              653,
+              17,
+              9
+            ],
+            "size": [
+              17,
+              9
             ]
           },
           "ore_skarn": {
@@ -8693,31 +8903,32 @@
       },
       "files": {
         "assets/environment/survival_world/props.png": {
-          "bytes": 40071,
-          "sha256": "8d4acf4028e0e065b901e78c59c65e5a68677fb75d46c04c7e5a029a76d27324"
+          "bytes": 119345,
+          "sha256": "5de614ec25db2d0b1a62393e5ebe18c9ae0dfc26d9aef0b247376cdeb7c43f32"
         },
         "assets/environment/survival_world/terrain.png": {
-          "bytes": 54286,
-          "sha256": "6128d8f41abe6962fe705431db20e762e0cca613ffc3eca29065727422737d1c"
+          "bytes": 54828,
+          "sha256": "4d663a3dd1a865b8dcb2cfe9024c197e10ba3b0c8e8101c3ffe825d9e5ad5782"
         },
         "data/survival/world/art/atlas.v1.json": {
-          "bytes": 143371,
-          "sha256": "83d69373ca6c1258e8727800d0aa0c288851c34d25539c69c21ec9f5fc9d769a"
+          "bytes": 170126,
+          "sha256": "a9f9137f7c57945f67d9657fda7bdf26794d049b21eff854dce4752e95f0d8c5"
         },
         "data/survival/world/art/mount_bundle.v1.json": {
           "bytes": 10209,
-          "sha256": "c2e5c596a8f60f12073593c084c3087465ae459f3201d97ca78279c503eadf38"
+          "sha256": "8718cefebacfd19ad29ed217a7e8fe0b5192e7447fccc72892e920f44bfe6e6b"
         },
         "data/survival/world/corridor/first_hour_route.v1.json": {
           "bytes": 5407,
           "sha256": "4e4c4eb9864dfc28aca4fcb4168cd856fc3f6be466b95e3ff6b7fb5b3784722c"
         }
       },
+      "revision_label": "R13_MAP_ART_ESCALATION_EXPLICIT_VISUAL_RELOCK",
       "source_commit": "7d2b017c8a90b7d5e24ff85f065ff1b18548cd29",
       "treatments": {
         "amberwood_apothecary_herb_margin": {
           "file_bytes": 70964,
-          "file_sha256": "3857836c5bf389b59bed4f6b6448545e73e4b86839d22bb9cacf1c319a377cdf",
+          "file_sha256": "a4564605097d7570dbb8dc3deefedb6b1d78794783b0faeefe58ad9747160a38",
           "path": "data/survival/world/art/compiled/amberwood_apothecary_herb_margin.presentation.v1.json",
           "payload_keys": [
             "ground",
@@ -8732,7 +8943,7 @@
         },
         "crown_roadside_visual_treatment": {
           "file_bytes": 70416,
-          "file_sha256": "39f1a9a91614430c573aedf5bfd148808cd630422f7be3d04024d57de9b7b4c1",
+          "file_sha256": "ff29d281e7b332c1ee4a6a90ca8e85c238a7c2a5ec5c767ae70ca6a7ddad6ab2",
           "path": "data/survival/world/art/compiled/crown_roadside_visual_treatment.presentation.v1.json",
           "payload_keys": [
             "ground",
@@ -8743,11 +8954,11 @@
             "ambient_day",
             "ambient_night"
           ],
-          "payload_subset_sha256": "cb613125d01ed47664597035e676277eb9e08e93bfc2d4310d6c25e9ad1000e3"
+          "payload_subset_sha256": "021c0431ff439e278c5c37cd9eebcf587d98cbaa3f6b3774edbdeac5df19dd30"
         },
         "frost_crown_shrine_skarn": {
           "file_bytes": 135863,
-          "file_sha256": "28d602242b7c9deb40c77f985334771ab425233687b45d09befb361bb74e7792",
+          "file_sha256": "70ed845671e675e811b2fe3f6c2c76c34df84a3f68bc09ed8b735b4a524aeeef",
           "path": "data/survival/world/art/compiled/frost_crown_shrine_skarn.presentation.v1.json",
           "payload_keys": [
             "ground",
@@ -8762,6 +8973,18 @@
         }
       }
     }
+  },
+  "r13_visual_relock": {
+    "a0_historical_profile_changed": false,
+    "after_payload_sha256": "021c0431ff439e278c5c37cd9eebcf587d98cbaa3f6b3774edbdeac5df19dd30",
+    "allowed_payload_key": "props",
+    "baseline_source_commit": "ad39bde6780c92169032246898c145c568f36e6e",
+    "before_payload_sha256": "cb613125d01ed47664597035e676277eb9e08e93bfc2d4310d6c25e9ad1000e3",
+    "canonical_bindings_preserved": true,
+    "changed_treatment": "crown_roadside_visual_treatment",
+    "policy": "EXPLICIT_A1_VISUAL_RELOCK_NOT_NO_BLIND_REPIN_OF_A0",
+    "real_asset_manifest": "data/survival/world/art/asset_exploitation.v1.json",
+    "real_asset_manifest_sha256": "4cf809ddfd2667ab04c970c7cde481b9e9cddfc143d35904ad8674f0a52f4756"
   },
   "schema": "soh.world.a1_first_hour_asset_provenance.v1",
   "status": "HASH_DOMAIN_RECONCILED_NO_A0_REPIN_PERFORMED"

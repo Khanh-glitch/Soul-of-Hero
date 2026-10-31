@@ -55,6 +55,9 @@ var _curated_lights: Dictionary = {}
 var _curated_resource_ids: Dictionary = {}
 var _curated_poi_ids: Dictionary = {}
 var _curated_instance_ids: Dictionary = {}
+var _continent_props: Dictionary = {}
+var _continent_decor: Dictionary = {}
+var _asset_manifest: Dictionary = {}
 var _region_ambient: Dictionary = {}
 var _a8_poi_ids: Dictionary = {}
 var _structures: Dictionary = {}
@@ -164,6 +167,67 @@ func _load_visual_sources() -> bool:
 			if not _curated_lights.has(cid):
 				_curated_lights[cid] = []
 			(_curated_lights[cid] as Array).append(light)
+
+	# The live layer is separately pinned so the 11 authored windows remain
+	# benchmarks, never a substitute for continent coverage evidence.
+	var decor_pin := index.get("continent_decor", {}) as Dictionary
+	var asset_pin := index.get("asset_exploitation", {}) as Dictionary
+	if decor_pin.is_empty() or asset_pin.is_empty():
+		last_error = "continent_visual_pins"
+		return false
+	var decor_path := "res://" + String(decor_pin.path)
+	var asset_path := "res://" + String(asset_pin.path)
+	if FileAccess.get_sha256(decor_path) != String(decor_pin.sha256) \
+			or FileAccess.get_sha256(asset_path) != String(asset_pin.sha256):
+		last_error = "continent_visual_pin_hash"
+		return false
+	_continent_decor = _json(decor_path)
+	_asset_manifest = _json(asset_path)
+	if String(_continent_decor.get("schema", "")) != "soh.world.continent_decor.v1" \
+			or String(_asset_manifest.get("schema", "")) != "soh.world.asset_exploitation.v1" \
+			or bool(_continent_decor.get("collision_change", true)) \
+			or bool(_continent_decor.get("build_eligibility_change", true)) \
+			or bool(_continent_decor.get("geography_change", true)):
+		last_error = "continent_visual_authority"
+		return false
+	var decor_pins := _continent_decor.get("pins", {}) as Dictionary
+	if String(decor_pins.get("atlas_sha256", "")) != FileAccess.get_sha256("res://" + String((pins.atlas as Dictionary).path)) \
+			or String(decor_pins.get("world_plan_sha256", "")) != String((pins.world_plan as Dictionary).sha256) \
+			or String(decor_pins.get("asset_exploitation_sha256", "")) != FileAccess.get_sha256(asset_path):
+		last_error = "continent_visual_source_hash"
+		return false
+	var asset_frames := _asset_manifest.get("frames", {}) as Dictionary
+	if asset_frames.size() != (atlas.get("asset_frames", {}) as Dictionary).size() or asset_frames.size() < 30:
+		last_error = "real_asset_frame_count"
+		return false
+	for frame: String in asset_frames:
+		var row := asset_frames[frame] as Dictionary
+		var kind := String(row.get("kind", ""))
+		if int(row.get("scale", 0)) != 1 or not (atlas.get(kind, {}) as Dictionary).has(frame) \
+				or (atlas[kind] as Dictionary)[frame] != row.get("atlas_rect", []):
+			last_error = "real_asset_frame_binding:" + frame
+			return false
+	var chunks := _continent_decor.get("chunks", {}) as Dictionary
+	if chunks.size() != 192:
+		last_error = "continent_chunk_coverage"
+		return false
+	for cid: String in chunks:
+		var cells := {}
+		for raw: Variant in (chunks[cid] as Array):
+			var prop := raw as Dictionary
+			var cell_raw: Array = prop.get("cell", [])
+			var frame := String(prop.get("frame", ""))
+			if cell_raw.size() != 2 or not atlas.props.has(frame) \
+					or bool(prop.get("collision_change", true)):
+				last_error = "continent_prop_binding:" + cid
+				return false
+			var cell := Vector2i(int(cell_raw[0]), int(cell_raw[1]))
+			if String(reader.chunk_id_at(cell)) != cid or cells.has(cell) \
+					or _ground_overrides.has(cell.y * 1024 + cell.x):
+				last_error = "continent_prop_cell:" + cid
+				return false
+			cells[cell] = true
+		_continent_props[cid] = chunks[cid]
 	for key: String in (contract.physical_sites as Dictionary):
 		var spec: Dictionary = contract.physical_sites[key]
 		_a8_poi_ids[String(spec.poi_id)] = true
@@ -248,7 +312,65 @@ func _source_material(surface: String, biome: String) -> String:
 	return "water"
 
 
-func _source_ground_frame(cell: Vector2i, surface: String, biome: String) -> String:
+func _region_transition(cell: Vector2i) -> Dictionary:
+	# Only the authored region rectangles are queried. No source cell is changed;
+	# the adjacent sample merely lends its palette to a narrow visual blend band.
+	for raw: Variant in plan.get("regions", []):
+		var region := raw as Dictionary
+		var rect: Array = region.get("rect", [])
+		if rect.size() != 4:
+			continue
+		var rx := int(rect[0])
+		var ry := int(rect[1])
+		var rw := int(rect[2])
+		var rh := int(rect[3])
+		if cell.x < rx or cell.y < ry or cell.x >= rx + rw or cell.y >= ry + rh:
+			continue
+		var region_id := String(region.get("region_id", ""))
+		var edges: Array = [
+			[Vector2i(-1, 0), cell.x - rx], [Vector2i(1, 0), rx + rw - 1 - cell.x],
+			[Vector2i(0, -1), cell.y - ry], [Vector2i(0, 1), ry + rh - 1 - cell.y],
+		]
+		for distance: int in range(0, 3):
+			for item: Array in edges:
+				if int(item[1]) != distance:
+					continue
+				var adjacent: Vector2i = cell + (item[0] as Vector2i)
+				if adjacent.x < 0 or adjacent.y < 0 or adjacent.x >= 1024 or adjacent.y >= 768:
+					continue
+				var adjacent_region := String(reader.named_value(adjacent, "region"))
+				if adjacent_region.is_empty() or adjacent_region == region_id:
+					continue
+				var adjacent_surface := String(reader.named_value(adjacent, "surface"))
+				var adjacent_biome := String(reader.named_value(adjacent, "biome"))
+				if adjacent_surface in ["grass", "forest", "orchard", "marsh", "mangrove", "mud", "bog"]:
+					return {"surface": adjacent_surface, "biome": adjacent_biome,
+						"chance": [0.68, 0.34, 0.12][distance]}
+		return {}
+	return {}
+
+
+func _base_source_ground_frame(cell: Vector2i, surface: String, biome: String) -> String:
+	# Cainos/Ocean Cainos are used at their authored 16px scale. The regional
+	# hand-authored materials remain for snow, volcanic, salt, dunes and water.
+	var family := ""
+	if surface in ["grass", "forest", "orchard"]:
+		family = "ocean" if biome in ["freshwater_marsh", "peat_bog", "mangrove", "tidal_flat", "coastal_scrub"] else "cainos"
+	elif surface in ["marsh", "mangrove", "mud", "bog"]:
+		family = "ocean"
+	elif surface == "gravel":
+		return "cainos_stone_worn" if int(_h01(cell.x, cell.y, 53) * 5.0) % 5 == 0 else "cainos_stone_base"
+	if not family.is_empty():
+		var variant := int(_h01(cell.x, cell.y, 47) * 16.0) % 16
+		if surface in ["forest", "orchard"]:
+			if variant < 5: return family + "_grass_base"
+			if variant < 10: return family + "_grass_tuft"
+			if variant < 14: return family + "_grass_herb"
+			return family + "_grass_flower"
+		if variant < 10: return family + "_grass_base"
+		if variant < 13: return family + "_grass_tuft"
+		if variant < 15: return family + "_grass_herb"
+		return family + "_grass_flower"
 	var material := _source_material(surface, biome)
 	if material.is_empty():
 		return ""
@@ -256,6 +378,15 @@ func _source_ground_frame(cell: Vector2i, surface: String, biome: String) -> Str
 	if material == "water":
 		variant %= 3
 	return "%s_%d" % [material, variant]
+
+
+func _source_ground_frame(cell: Vector2i, surface: String, biome: String) -> String:
+	if surface not in ["grass", "forest", "orchard", "marsh", "mangrove", "mud", "bog"]:
+		return _base_source_ground_frame(cell, surface, biome)
+	var transition := _region_transition(cell)
+	if not transition.is_empty() and _h01(cell.x, cell.y, 71) < float(transition.chance):
+		return _base_source_ground_frame(cell, String(transition.surface), String(transition.biome))
+	return _base_source_ground_frame(cell, surface, biome)
 
 
 func _road_mask(cell: Vector2i) -> int:
@@ -438,6 +569,10 @@ func _mount_chunk(cid: String) -> bool:
 			continue
 		_add_prop_sprite(prop_node, String(prop.frame), Vector2i(int(prop.cell[0]), int(prop.cell[1])),
 			String(prop.get("id", "curated")), prop)
+	for raw: Variant in _continent_props.get(cid, []):
+		var prop := raw as Dictionary
+		_add_prop_sprite(prop_node, String(prop.frame), Vector2i(int(prop.cell[0]), int(prop.cell[1])),
+			String(prop.id), prop)
 	if not bool((loaded.layers as Dictionary).preserved[0]) or render_legacy:
 		_add_resource_proxies(prop_node, cid)
 		_add_poi_proxies(prop_node, cid)
@@ -764,6 +899,12 @@ func source_visual_summary() -> Dictionary:
 	return {
 		"curated_ground_cells": _ground_overrides.size(), "curated_resource_nodes": _curated_resource_ids.size(),
 		"curated_pois": _curated_poi_ids.size(), "curated_instances": _curated_instance_ids.size(),
+		"continent_chunk_records": _continent_props.size(),
+		"continent_decor_props": int((_continent_decor.get("counts", {}) as Dictionary).get("props", 0)),
+		"real_asset_frames": (_asset_manifest.get("frames", {}) as Dictionary).size(),
+		"asset_source_ref": String(_asset_manifest.get("source_ref", "")),
+		"live_visual_coverage": "BOUNDED_SOURCE_DRIVEN_192_CHUNK_RECORDS_NOT_HAND_PAINTED_PRODUCTION_COMPLETE",
+		"region_transition_visual_band_cells": 3,
 		"generic_resource_proxy_policy": "EXPLICIT_MATERIAL_BINDINGS_NO_ECONOMY",
 		"unbound_poi_markers_rendered": false, "a8_generic_landmarks_rendered": false,
 		"legacy_rendered_by_stream": render_legacy, "private_light_mask": WORLD_LIGHT_MASK,

@@ -47,7 +47,7 @@
       ],
       "poi_count": 26,
       "presentation": "crown_roadside_visual_treatment",
-      "presentation_sha256": "39f1a9a91614430c573aedf5bfd148808cd630422f7be3d04024d57de9b7b4c1",
+      "presentation_sha256": "ff29d281e7b332c1ee4a6a90ca8e85c238a7c2a5ec5c767ae70ca6a7ddad6ab2",
       "player_decisions": [
         "read notes crate vs scrap cache",
         "return to Waystation before dark"
@@ -86,7 +86,7 @@
       ],
       "poi_count": 11,
       "presentation": "frost_crown_shrine_skarn",
-      "presentation_sha256": "28d602242b7c9deb40c77f985334771ab425233687b45d09befb361bb74e7792",
+      "presentation_sha256": "70ed845671e675e811b2fe3f6c2c76c34df84a3f68bc09ed8b735b4a524aeeef",
       "player_decisions": [
         "cold ridge vs sheltered shrine court",
         "skarn ore rewards thermal prep"
@@ -118,7 +118,7 @@
       "hazards": [],
       "poi_count": 9,
       "presentation": "glasswind_coast_region_window",
-      "presentation_sha256": "311c2205d8856c368430e4300c1889aa67ba497ac0eb0fbeb8d0e66653d3b42e",
+      "presentation_sha256": "6274723a55f7f00393b2f45836d1028a05d853ea99052fafe3c5c4420465b902",
       "player_decisions": [
         "sheltered dune approach vs exposed cliff",
         "silica placer after storm"
@@ -162,7 +162,7 @@
       ],
       "poi_count": 10,
       "presentation": "ember_steppe_region_window",
-      "presentation_sha256": "b2cc4aae5e43925e78f4e5c6b95ec7d1a32302f703f3655598024296127052b5",
+      "presentation_sha256": "5d34a4318a65a4dacb1804c4f61e2c42f65ce0f63ba4bbeae5096ab1f467503b",
       "player_decisions": [
         "lee road vs fumarole gas",
         "forge salvage requires filter/power"
@@ -206,7 +206,7 @@
       ],
       "poi_count": 9,
       "presentation": "saffron_coast_region_window",
-      "presentation_sha256": "7a9e0ef1beb4f0f0b8a374b5a5dd41811be50c7062b04a80fa418c16986aa070",
+      "presentation_sha256": "1c0abd3363b35a37e54ccf00bb5a37e771eda74638fa258a0369bc962e77e8e6",
       "player_decisions": [
         "shade/well route vs open salt glare",
         "dry-wind salt harvest timing"
@@ -250,7 +250,7 @@
       ],
       "poi_count": 9,
       "presentation": "verdant_fold_region_window",
-      "presentation_sha256": "884cd1f3886da92cc745668a8cc0c1fc3b1582fe50eda0b16a6846858f758371",
+      "presentation_sha256": "21f8b457137d52a8a73b404eb5f11b55dc3a7afb276d67be6f8b0dc708a1e661",
       "player_decisions": [
         "canopy terrace vs spore hollow",
         "climb/filter before temple vault"
@@ -292,7 +292,7 @@
       ],
       "poi_count": 9,
       "presentation": "pearl_mangroves_region_window",
-      "presentation_sha256": "ea46810ca0c7def66121fc76da128d3fc7c97fef91b48245706f3262402c42bd",
+      "presentation_sha256": "fe5bc972e0cbca557639f7b56524b655736fc1d9d88147ccd4d4927f3c928525",
       "player_decisions": [
         "stilt walk vs tidal channel",
         "tide gauge before boat-dependent customs"
@@ -326,7 +326,7 @@
       "hazards": [],
       "poi_count": 9,
       "presentation": "amberwood_apothecary_herb_margin",
-      "presentation_sha256": "3857836c5bf389b59bed4f6b6448545e73e4b86839d22bb9cacf1c319a377cdf",
+      "presentation_sha256": "a4564605097d7570dbb8dc3deefedb6b1d78794783b0faeefe58ad9747160a38",
       "player_decisions": [
         "tended garden vs wild herb margin",
         "orchard rows mark safe foraging"
@@ -356,7 +356,7 @@
       "hazards": [],
       "poi_count": 8,
       "presentation": "mirrormere_region_window",
-      "presentation_sha256": "026fffbbea6f9f3a0858e155345e6e46c5a00595708a6848e340a7eb36d6d603",
+      "presentation_sha256": "4cddff773e1b162c93ab6ae79ef4ba43848194571ae3b3eb9065a1547d284319",
       "player_decisions": [
         "boardwalk/causeway vs open water",
         "reed/clay shallows vs ferry shortcut"
@@ -398,7 +398,7 @@
       ],
       "poi_count": 8,
       "presentation": "sunken_orchard_region_window",
-      "presentation_sha256": "6364a235aedc15f2027b4f49cc813cbb47e7a5feceac0ddb17a6697bff4abeeb",
+      "presentation_sha256": "d43dd7d136ce06c8bfc6332ba5f658d2119f68471aaa4e45d3408607445cfc71",
       "player_decisions": [
         "karst terrace vs cenote rim",
         "surface orchard vs deepward conduit"
@@ -441,7 +441,7 @@
       ],
       "poi_count": 10,
       "presentation": "ashwater_fen_region_window",
-      "presentation_sha256": "ba06dd3c24a58e56f620794a03319631eaabd803c24e3bca4e2cee984fbbf37f",
+      "presentation_sha256": "9fc8c67cf4fec8354faba3996b32ac5bf6b0207fa3516733c676d05e39ba5dd2",
       "player_decisions": [
         "boardwalk vs toxic pool",
         "pump station requires filter; bleached reeds warn"

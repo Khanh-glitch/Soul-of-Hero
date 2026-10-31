@@ -21,7 +21,7 @@ def art():
     }
 
 
-def test_atlas_is_original_unscaled_and_grid_aligned(art):
+def test_atlas_is_unscaled_grid_aligned_and_provenance_rich(art):
     atlas = art["atlas"]
     assert atlas["tile_px"] == 16
     assert atlas["perspective"].startswith("top-down three-quarter")
@@ -33,7 +33,109 @@ def test_atlas_is_original_unscaled_and_grid_aligned(art):
     assert len(atlas["inherited_frames"]) == 9
     for meta in atlas["inherited_frames"].values():
         assert meta["license"] == "original" and meta["decision"] == "REUSE_UNSCALED"
-    assert not any("cainos" in k.lower() for k in atlas["props"])
+    assert len(atlas["asset_frames"]) >= 30
+
+
+def test_real_asset_source_rectangles_match_atlas_pixels_and_roles(art):
+    from PIL import Image
+    atlas = art["atlas"]
+    manifest = cwa.load(cwa.ART / "asset_exploitation.v1.json")
+    assert manifest["source_ref"] == atlas["asset_frames"][next(iter(atlas["asset_frames"]))]["source_ref"]
+    assert len(manifest["frames"]) == len(atlas["asset_frames"]) >= 30
+    assert manifest["unused_sources"] and manifest["catalog_rows_without_committed_pixel_paths_in_scanned_refs"]
+    sheets = {kind: Image.open(cwa.ROOT / "assets/environment/survival_world" / f"{kind}.png").convert("RGBA")
+              for kind in ("terrain", "props")}
+    sources = {}
+    for frame, row in manifest["frames"].items():
+        assert row["scale"] == 1 and row["palette_or_perspective_rewrite"] is False
+        source_path = cwa.ROOT / row["source"]
+        assert hashlib.sha256(source_path.read_bytes()).hexdigest() == row["source_sha256"]
+        if source_path not in sources:
+            sources[source_path] = Image.open(source_path).convert("RGBA")
+        x, y, w, h = row["source_rect"]
+        source_crop = sources[source_path].crop((x, y, x + w, y + h))
+        rect = atlas[row["kind"]][frame]
+        assert rect == row["atlas_rect"]
+        atlas_crop = sheets[row["kind"]].crop((rect[0], rect[1], rect[0] + rect[2], rect[1] + rect[3]))
+        def visible_bytes(image):
+            return b"".join(bytes(pixel) if pixel[3] else b"\0\0\0\0" for pixel in image.get_flattened_data())
+        assert visible_bytes(atlas_crop) == visible_bytes(source_crop), frame
+        assert atlas_crop.getchannel("A").tobytes() == source_crop.getchannel("A").tobytes(), frame
+        assert hashlib.sha256(source_crop.tobytes()).hexdigest() == row["source_raw_rgba_sha256"]
+        assert hashlib.sha256(atlas_crop.tobytes()).hexdigest() == row["atlas_raw_rgba_sha256"]
+        if row["kind"] == "terrain":
+            assert row["source_rect"][2:] == [16, 16]
+        else:
+            assert frame in art["grammar"]["semantic_roles"][row["semantic_role"]]["frames"]
+
+
+def test_every_legacy_atlas_frame_keeps_its_rect_and_visible_pixels(art):
+    import io
+    import subprocess
+    from PIL import Image
+    ref = "e1e4e9a4d4a0f7f0d38360d638715a0c9f144208"
+    old_atlas = json.loads(subprocess.check_output(["git", "show", f"{ref}:data/survival/world/art/atlas.v1.json"]))
+    for kind in ("terrain", "props"):
+        old_sheet = Image.open(io.BytesIO(subprocess.check_output(
+            ["git", "show", f"{ref}:assets/environment/survival_world/{kind}.png"]))).convert("RGBA")
+        new_sheet = Image.open(cwa.ROOT / "assets/environment/survival_world" / f"{kind}.png").convert("RGBA")
+        for frame, old_rect in old_atlas[kind].items():
+            assert art["atlas"][kind][frame] == old_rect, f"legacy rect moved: {kind}/{frame}"
+            x, y, w, h = old_rect
+            old_crop = old_sheet.crop((x, y, x + w, y + h))
+            new_crop = new_sheet.crop((x, y, x + w, y + h))
+            def visible(image):
+                return b"".join(bytes(pixel) if pixel[3] else b"\0\0\0\0" for pixel in image.get_flattened_data())
+            assert visible(new_crop) == visible(old_crop), f"legacy visible pixels changed: {kind}/{frame}"
+
+
+def test_continent_decor_is_deterministic_bounded_and_clear_of_authority(art):
+    import compile_continent_art as cci
+    path = cwa.ART / "continent_decor.v1.json"
+    before = path.read_bytes()
+    cci.compile_all()
+    assert path.read_bytes() == before
+    doc = json.loads(before)
+    plan = cwa.load_plan()
+    assert doc["schema"] == "soh.world.continent_decor.v1"
+    assert set(doc["chunks"]) == {row["chunk_id"] for row in plan["chunk_manifest"]}
+    assert len(doc["chunks"]) == 192 and doc["counts"]["curated_windows_preserved"] == 11
+    assert doc["counts"]["nonempty_chunks"] < 192  # bounded clusters, not full-map random fill
+    assert doc["counts"]["props"] == sum(len(rows) for rows in doc["chunks"].values())
+    assert doc["counts"]["p0"]["p0_quarry_approach"] >= 10
+    assert doc["counts"]["p0"]["p0_orchard_approach"] >= 10
+    assert doc["counts"]["p0"]["p0_quarry_shell_transition"] >= 4
+    assert doc["counts"]["p0"]["p0_orchard_shell_transition"] >= 4
+    for pin in doc["pins"]["a8_shell_sources"].values():
+        assert hashlib.sha256((cwa.ROOT / pin["path"]).read_bytes()).hexdigest() == pin["sha256"]
+    assert "NOT_HAND_PAINTED" in doc["status"]
+    spawn = cci._spawn_cells()
+    resources = {tuple(row["cell"]) for row in plan["resource_nodes"]}
+    route = cwa.load(cwa.WORLD / "corridor/first_hour_route.v1.json")
+    route_cells = {tuple(row) for row in route["outbound_cells"] + route["return_cells"]}
+    poi_clear = set()
+    for poi in plan["pois"]:
+        x, y = poi["cell"]
+        radius = int(poi["footprint_radius_tiles"]) + 2
+        poi_clear.update((xx, yy) for yy in range(y - radius, y + radius + 1)
+                         for xx in range(x - radius, x + radius + 1))
+    layers = cwa.Layers(plan)
+    seen = set()
+    for cid, rows in doc["chunks"].items():
+        for row in rows:
+            cell = tuple(row["cell"])
+            assert cell not in seen and cell not in spawn and cell not in resources
+            assert cell not in route_cells
+            if cell in poi_clear:
+                assert row["source"] in {"p0_quarry_shell_transition", "p0_orchard_shell_transition"}
+                assert cell not in {(30, 280), (30, 283), (30, 289), (140, 360), (140, 363), (140, 369)}
+                assert row["frame"] in {"cainos_stone_small", "cainos_stone_medium", "cainos_tuft_0",
+                                        "cainos_tuft_1", "cainos_tuft_2", "cainos_tuft_3"}
+            assert row["collision_change"] is False
+            assert row["frame"] in art["atlas"]["asset_frames"]
+            assert layers.value(list(cell), "road") == 0
+            assert layers.value(list(cell), "hazard") == 0
+            seen.add(cell)
 
 
 def test_grammar_separates_supply_harvestable_waystation_scenery_danger(art):
@@ -271,19 +373,32 @@ def test_region_windows_are_distinct_canonical_and_water_safe(art):
             assert frame_sets[i] != frame_sets[j]
 
 
-def test_legacy_first_hour_pixel_payload_preserved(art):
+def test_r13_first_hour_relock_is_visual_only_and_preserves_bindings(art):
     import subprocess
+    keys = ("ground", "overlays", "props", "lights", "capture_views", "ambient_day", "ambient_night")
     for tid in ("crown_roadside_visual_treatment", "amberwood_apothecary_herb_margin", "frost_crown_shrine_skarn"):
         path = f"data/survival/world/art/compiled/{tid}.presentation.v1.json"
         old = json.loads(subprocess.check_output(["git", "show", f"ad39bde6:{path}"]))
         new = art["docs"][tid]
-        for key in ("ground", "overlays", "props", "lights", "capture_views", "ambient_day", "ambient_night"):
-            assert old[key] == new[key], f"{tid} pixel payload drifted: {key}"
+        for key in keys:
+            if tid == "crown_roadside_visual_treatment" and key == "props":
+                continue
+            assert old[key] == new[key], f"{tid} unapproved pixel payload drifted: {key}"
+        def bindings(doc):
+            return {(key, row[key]): (row["cell"], row["frame"], row["role"])
+                    for row in doc["props"] for key in ("instance_id", "node_id", "poi_id") if key in row}
+        assert bindings(old) == bindings(new)
+    crown = art["docs"]["crown_roadside_visual_treatment"]
+    assert sum(row["frame"].startswith(("cainos_", "ocean_")) for row in crown["props"]) >= 20
+    assert crown["collision_change"] is False and crown["stand_change"] is False and crown["economy_change"] is False
 
 
-def test_first_hour_visual_payloads_and_used_crops_are_frozen(art):
+def test_first_hour_visual_payloads_and_used_crops_are_explicitly_relocked(art):
     from PIL import Image
     lock = cwa.load(cwa.ART / "first_hour_visual_payload_lock.v1.json")
+    assert lock["a0_historical_profile_changed"] is False
+    assert lock["baseline_payload_hashes"]["crown_roadside_visual_treatment"] != lock["payload_hashes"]["crown_roadside_visual_treatment"]
+    assert len(lock["r13_real_asset_frames"]) >= 15
     keys = ["ground", "overlays", "props", "lights", "capture_views", "ambient_day", "ambient_night"]
     for tid, expected in lock["payload_hashes"].items():
         doc = art["docs"][tid]

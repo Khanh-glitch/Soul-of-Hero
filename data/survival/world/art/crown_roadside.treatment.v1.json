@@ -125,14 +125,14 @@
     "impassable_mass_material": "basalt"
   },
   "replace_corridor_decor": {
-    "393,201": "signpost",
+    "393,201": "cainos_signpost",
     "397,224": "handcart",
-    "394,214": "wall_stub",
-    "405,214": "column_broken",
-    "389,228": "tree_dead",
-    "396,215": "bush",
-    "401,223": "rock_a",
-    "398,219": "rock_c"
+    "394,214": "cainos_ruin_block",
+    "405,214": "cainos_column_broken",
+    "389,228": "cainos_tree_large",
+    "396,215": "cainos_bush_round",
+    "401,223": "cainos_stone_large",
+    "398,219": "cainos_stone_large"
   },
   "add_props": [
     {
@@ -250,7 +250,7 @@
       "role": "physical_danger"
     },
     {
-      "frame": "tree_dead",
+      "frame": "cainos_tree_medium",
       "cell": [
         390,
         205
@@ -258,7 +258,7 @@
       "role": "background_scenery"
     },
     {
-      "frame": "tree_dead",
+      "frame": "cainos_tree_small",
       "cell": [
         414,
         208
@@ -266,7 +266,7 @@
       "role": "background_scenery"
     },
     {
-      "frame": "bush",
+      "frame": "cainos_bush_round",
       "cell": [
         397,
         212
@@ -317,7 +317,7 @@
       "role": "ordinary_harvestable"
     },
     {
-      "frame": "bush",
+      "frame": "cainos_bush_round",
       "cell": [
         410,
         214
@@ -325,7 +325,7 @@
       "role": "background_scenery"
     },
     {
-      "frame": "tree_dead",
+      "frame": "cainos_tree_large",
       "cell": [
         418,
         202
@@ -333,7 +333,7 @@
       "role": "background_scenery"
     },
     {
-      "frame": "rock_c",
+      "frame": "cainos_boulder",
       "cell": [
         388,
         210
@@ -341,7 +341,7 @@
       "role": "background_scenery"
     },
     {
-      "frame": "reeds",
+      "frame": "ocean_bush_wide",
       "cell": [
         384,
         224
@@ -353,6 +353,118 @@
       "cell": [
         396,
         226
+      ],
+      "role": "background_scenery"
+    },
+    {
+      "frame": "cainos_tuft_0",
+      "cell": [
+        390,
+        202
+      ],
+      "role": "background_scenery"
+    },
+    {
+      "frame": "cainos_tuft_1",
+      "cell": [
+        394,
+        204
+      ],
+      "role": "background_scenery"
+    },
+    {
+      "frame": "cainos_tuft_2",
+      "cell": [
+        390,
+        209
+      ],
+      "role": "background_scenery"
+    },
+    {
+      "frame": "cainos_tuft_3",
+      "cell": [
+        394,
+        212
+      ],
+      "role": "background_scenery"
+    },
+    {
+      "frame": "cainos_tuft_0",
+      "cell": [
+        390,
+        216
+      ],
+      "role": "background_scenery"
+    },
+    {
+      "frame": "cainos_tuft_1",
+      "cell": [
+        394,
+        218
+      ],
+      "role": "background_scenery"
+    },
+    {
+      "frame": "ocean_tuft_0",
+      "cell": [
+        389,
+        222
+      ],
+      "role": "background_scenery"
+    },
+    {
+      "frame": "cainos_tuft_2",
+      "cell": [
+        399,
+        222
+      ],
+      "role": "background_scenery"
+    },
+    {
+      "frame": "cainos_tuft_3",
+      "cell": [
+        405,
+        220
+      ],
+      "role": "background_scenery"
+    },
+    {
+      "frame": "cainos_tuft_0",
+      "cell": [
+        406,
+        218
+      ],
+      "role": "background_scenery"
+    },
+    {
+      "frame": "cainos_tuft_1",
+      "cell": [
+        400,
+        204
+      ],
+      "role": "background_scenery"
+    },
+    {
+      "frame": "cainos_tuft_2",
+      "cell": [
+        405,
+        203
+      ],
+      "role": "background_scenery"
+    },
+    {
+      "frame": "cainos_tuft_3",
+      "cell": [
+        411,
+        203
+      ],
+      "role": "background_scenery"
+    },
+    {
+      "frame": "cainos_tuft_0",
+      "cell": [
+        414,
+        204
       ],
       "role": "background_scenery"
     }

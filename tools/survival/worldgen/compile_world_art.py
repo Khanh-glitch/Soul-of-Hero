@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any
 
 from compile_slice import TILE, load_plan, write_json
+from asset_exploitation import SPECS
 
 ROOT = Path(__file__).resolve().parents[3]
 WORLD = ROOT / "data/survival/world"
@@ -52,6 +53,9 @@ FRAME_ROLE = {
     "lantern_post": "return_route", "pier_rail": "return_route", "warning_stakes": "physical_danger",
     "tide_gauge_large": "physical_danger", "pump_tank": "background_scenery", "spore_mushroom": "physical_danger",
 }
+for _frame, (_kind, _source, _rect, _role) in SPECS.items():
+    if _kind == "props":
+        FRAME_ROLE[_frame] = _role
 
 
 def load(p: Path) -> dict:
@@ -559,7 +563,12 @@ def compile_all() -> dict:
     index = {"schema": "soh.world.art_presentations_index.v1", "owner": "A1", "presentations": outputs,
              "atlas_sha256": sha(ART / "atlas.v1.json"), "grammar_sha256": sha(ART / "world_art_grammar.v1.json")}
     write_json(ART / "presentations.v1.json", index)
-    return {"ok": True, "presentations": len(outputs), "index": str(ART / "presentations.v1.json")}
+    # Bind the bounded live-continent layer only after all 11 benchmark windows
+    # are compiled; the presentations array itself remains exactly those 11.
+    from compile_continent_art import compile_all as compile_continent
+    coverage = compile_continent()
+    return {"ok": True, "presentations": len(outputs), "index": str(ART / "presentations.v1.json"),
+            "continent_decor": coverage}
 
 
 if __name__ == "__main__":

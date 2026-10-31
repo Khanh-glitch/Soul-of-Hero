@@ -326,11 +326,11 @@
     },
     "art_grammar": {
       "path": "data/survival/world/art/world_art_grammar.v1.json",
-      "sha256": "a5cecea7d749b56d7e8b6508bd9e880b3a70a92a97f0a06ab11fe81de965b53a"
+      "sha256": "e055ec9f89db880d93f459900ef47a3448f00b029cd21e2c4cd076f0375bb7c5"
     },
     "atlas": {
       "path": "data/survival/world/art/atlas.v1.json",
-      "sha256": "83d69373ca6c1258e8727800d0aa0c288851c34d25539c69c21ec9f5fc9d769a"
+      "sha256": "a9f9137f7c57945f67d9657fda7bdf26794d049b21eff854dce4752e95f0d8c5"
     },
     "legacy_data": {
       "path": "data/overworld/hollow_marches.json",
@@ -366,11 +366,11 @@
     },
     "presentations": {
       "path": "data/survival/world/art/presentations.v1.json",
-      "sha256": "45af8278a959e5e3e1aa1fa697a4856d46e63237822cbee131c95bb60e98c1ee"
+      "sha256": "2710cdfb2b2f66aa13c81ab12ce1f9f9bd22d9fa5ddb7a69efc5d9db9e209dbc"
     },
     "props": {
       "path": "assets/environment/survival_world/props.png",
-      "sha256": "8d4acf4028e0e065b901e78c59c65e5a68677fb75d46c04c7e5a029a76d27324"
+      "sha256": "5de614ec25db2d0b1a62393e5ebe18c9ae0dfc26d9aef0b247376cdeb7c43f32"
     },
     "reader_contract": {
       "path": "data/survival/world/reader_contract.json",
@@ -382,7 +382,7 @@
     },
     "terrain": {
       "path": "assets/environment/survival_world/terrain.png",
-      "sha256": "6128d8f41abe6962fe705431db20e762e0cca613ffc3eca29065727422737d1c"
+      "sha256": "4d663a3dd1a865b8dcb2cfe9024c197e10ba3b0c8e8101c3ffe825d9e5ad5782"
     },
     "world_id": "world:soh_continent_v1",
     "world_plan": {

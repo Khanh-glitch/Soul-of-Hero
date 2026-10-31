@@ -237,7 +237,29 @@
         "tree_orchard",
         "tree_pine",
         "understory_fern",
-        "vent_stack"
+        "vent_stack",
+        "cainos_boulder",
+        "cainos_bush_round",
+        "cainos_bush_triangle",
+        "cainos_bush_wide",
+        "cainos_stone_large",
+        "cainos_stone_medium",
+        "cainos_stone_small",
+        "cainos_tree_large",
+        "cainos_tree_medium",
+        "cainos_tree_small",
+        "cainos_tuft_0",
+        "cainos_tuft_1",
+        "cainos_tuft_2",
+        "cainos_tuft_3",
+        "ocean_bush_round",
+        "ocean_bush_wide",
+        "ocean_tree_large",
+        "ocean_tree_medium",
+        "ocean_tree_small",
+        "ocean_tuft_0",
+        "ocean_tuft_1",
+        "ocean_tuft_2"
       ],
       "read": "Non-interactive scenery/outcrop unless a canonical node_id is bound; never a reward authority.",
       "glow": false,
@@ -270,7 +292,10 @@
       "frames": [
         "wall_stub",
         "column_broken",
-        "cairn_warning"
+        "cairn_warning",
+        "cainos_column_broken",
+        "cainos_column_tall",
+        "cainos_ruin_block"
       ],
       "read": "ruin mass and warning cairn communicate old closure; never a fake interactable gate",
       "glow": false,
@@ -294,7 +319,8 @@
         "stone_causeway",
         "tide_gauge",
         "tide_gauge_large",
-        "warning_stakes"
+        "warning_stakes",
+        "cainos_signpost"
       ],
       "read": "maintained road, repeated warm markers and shelter silhouette leading back to the postern",
       "glow": "warm light only",
@@ -788,6 +814,7 @@
     "Regional maintained crossings are narrow purposeful piers/causeways on authored spines; broad source road cells receive transparent wear decals, not opaque plank carpets.",
     "Impassable source water remains visually water/brine; only explicit source bridge/road cells may carry pier or causeway decks.",
     "Night readability uses A1-private lantern pools and raised ambient floors for hazard/destination silhouettes; original AVFX Gold remains untouched.",
-    "Ecological detail clusters are authored landforms/decals, not random material confetti; frame totals are not a quality metric."
+    "Ecological detail clusters are authored landforms/decals, not random material confetti; frame totals are not a quality metric.",
+    "R13 real-asset source-rect crops are unscaled, unrecolored, hash-pinned and admitted only to their declared semantic role."
   ]
 }
