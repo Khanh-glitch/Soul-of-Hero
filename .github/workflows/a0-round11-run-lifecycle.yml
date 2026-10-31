@@ -1,0 +1,104 @@
+name: A0 run lifecycle, economy port and tool use
+on:
+  push:
+    branches: [arena/dea2428e-soul-of-hero]
+    paths:
+      - 'game/survival/economy/**'
+      - 'game/autoload/save_service.gd'
+      - 'game/overworld/chapter1_overworld.gd'
+      - 'game/survival/survival_service.gd'
+      - 'game/survival/survival_resource_node.gd'
+      - 'game/ui/screens/title/**'
+      - 'data/survival/items/**'
+      - 'data/survival/recipes/**'
+      - 'tests/survival_a0_*.gd'
+      - 'tests/survival_foundation_test.gd'
+      - 'tests/validate_a3_v5_composition.py'
+      - '.github/workflows/a0-round11-run-lifecycle.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  run-lifecycle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      GODOT_SILENCE_ROOT_WARNING: 1
+      LIBGL_ALWAYS_SOFTWARE: 1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import
+        run: |
+          mkdir -p artifacts/ud_import
+          timeout 300s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_import --import > artifacts/import.log 2>&1
+          tail -5 artifacts/import.log
+      - name: A3 owner bytes and A1 policy cross-check
+        run: |
+          set -euo pipefail
+          python3 tests/validate_a3_v5_composition.py
+      - name: A0 profile port pair (one wallet, one run)
+        run: |
+          set -uo pipefail
+          mkdir -p artifacts/ud_port
+          timeout 300s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_port --script res://tests/survival_a0_profile_port_test.gd -- --keep-profile > artifacts/port-first.log 2>&1
+          rc1=$?
+          cat artifacts/port-first.log
+          timeout 300s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_port --script res://tests/survival_a0_profile_port_test.gd -- --verify-profile > artifacts/port-second.log 2>&1
+          rc2=$?
+          cat artifacts/port-second.log
+          while IFS= read -r line; do echo "::error title=profile-port::$line"; done < <(grep -E '  FAIL  |SCRIPT ERROR|Parse Error' artifacts/port-*.log | head -10 || true)
+          bash tools/ci/gate_log.sh artifacts/port-first.log 'A0 profile port first' 'A0 PROFILE PORT PASSED' || exit 1
+          bash tools/ci/gate_log.sh artifacts/port-second.log 'A0 profile port second' 'A0 PROFILE PORT PASSED' || exit 1
+          [ "$rc1" -eq 0 ] && [ "$rc2" -eq 0 ]
+      - name: A0 run lifecycle (264 h / 336 h boundaries and two processes)
+        run: |
+          set -uo pipefail
+          mkdir -p artifacts/ud_run
+          timeout 300s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_run --script res://tests/survival_a0_run_lifecycle_test.gd -- --survival-run-clock-test --keep-run > artifacts/run-first.log 2>&1
+          rc1=$?
+          cat artifacts/run-first.log
+          timeout 300s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_run --script res://tests/survival_a0_run_lifecycle_test.gd -- --survival-run-clock-test --verify-run > artifacts/run-second.log 2>&1
+          rc2=$?
+          cat artifacts/run-second.log
+          while IFS= read -r line; do echo "::error title=run-lifecycle::$line"; done < <(grep -E '  FAIL  |SCRIPT ERROR|Parse Error' artifacts/run-*.log | head -10 || true)
+          bash tools/ci/gate_log.sh artifacts/run-first.log 'A0 run lifecycle first' 'A0 RUN LIFECYCLE PASSED' || exit 1
+          bash tools/ci/gate_log.sh artifacts/run-second.log 'A0 run lifecycle second' 'A0 RUN LIFECYCLE PASSED' || exit 1
+          [ "$rc1" -eq 0 ] && [ "$rc2" -eq 0 ]
+      - name: A3 V7 tool use and prepared offline settlement
+        run: |
+          set -uo pipefail
+          mkdir -p artifacts/ud_tool
+          timeout 900s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_tool --script res://tests/survival_a0_tool_and_offline_test.gd -- --keep-tool > artifacts/tool-first.log 2>&1
+          rc1=$?
+          cat artifacts/tool-first.log
+          timeout 600s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_tool --script res://tests/survival_a0_tool_and_offline_test.gd -- --verify-tool-offline > artifacts/tool-second.log 2>&1
+          rc2=$?
+          cat artifacts/tool-second.log
+          while IFS= read -r line; do echo "::error title=tool-offline::$line"; done < <(grep -E '  FAIL  |SCRIPT ERROR|Parse Error' artifacts/tool-*.log | head -10 || true)
+          bash tools/ci/gate_log.sh artifacts/tool-first.log 'A0 tool use first' 'A0 TOOL AND OFFLINE PASSED' || exit 1
+          bash tools/ci/gate_log.sh artifacts/tool-second.log 'A0 tool use second' 'A0 TOOL AND OFFLINE PASSED' || exit 1
+          [ "$rc1" -eq 0 ] && [ "$rc2" -eq 0 ]
+      - name: A0 owner-composition damage/death-bag probe (NOT gameplay)
+        run: |
+          set -uo pipefail
+          mkdir -p artifacts/ud_death
+          timeout 900s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_death --script res://tests/survival_a0_damage_death_probe_test.gd -- --keep-death > artifacts/death-first.log 2>&1
+          rc1=$?
+          cat artifacts/death-first.log
+          timeout 600s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_death --script res://tests/survival_a0_damage_death_probe_test.gd -- --verify-death-probe > artifacts/death-second.log 2>&1
+          rc2=$?
+          cat artifacts/death-second.log
+          while IFS= read -r line; do echo "::error title=death-probe::$line"; done < <(grep -E '  FAIL  |SCRIPT ERROR|Parse Error' artifacts/death-*.log | head -10 || true)
+          bash tools/ci/gate_log.sh artifacts/death-first.log 'A0 damage death probe first' 'A0 DAMAGE DEATH PROBE PASSED' || exit 1
+          bash tools/ci/gate_log.sh artifacts/death-second.log 'A0 damage death probe second' 'A0 DAMAGE DEATH PROBE PASSED' || exit 1
+          [ "$rc1" -eq 0 ] && [ "$rc2" -eq 0 ]
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a0-run-lifecycle-logs
+          path: artifacts/*.log

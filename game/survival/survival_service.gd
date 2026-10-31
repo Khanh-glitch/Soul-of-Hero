@@ -284,6 +284,105 @@ func harvest(node_id: String, kind: String, now_unix: int = -1) -> Dictionary:
 	return result.duplicate(true)
 
 
+## Harvest with a physically owned A3 tool: the node's hit, the bag grant and the
+## tool's wear are ONE SaveService commit. A3 (`soh.economy.tool_use.v1`) owns the
+## wear rule and re-plans from the live candidate, so a stale revision, a foreign
+## or broken tool, or a wrong node kind is refused before anything is written. A
+## full bag also refuses the whole swing, so a swing never costs condition without
+## paying out. `economy` is the live A0 economy session; it is the only holder of
+## the pinned A3 adapter, and this function follows the same node state machine as
+## [method harvest] so tool and hand swings cannot disagree about a node.
+func harvest_with_tool(
+	node_id: String,
+	kind: String,
+	economy: Node,
+	tool_instance_id: String,
+	world_revision: String,
+	active_seconds: int,
+	now_unix: int = -1
+) -> Dictionary:
+	var definition := resource_definition(kind)
+	if definition.is_empty():
+		return {"ok": false, "reason": "unknown_resource_kind"}
+	var save := _save()
+	if save == null or economy == null:
+		return {"ok": false, "reason": "save_service_unavailable"}
+	var adapter: RefCounted = economy.get("_adapter")
+	if adapter == null or not adapter.has_method(&"commit_tool_use"):
+		return {"ok": false, "reason": "a3_tool_use_unavailable"}
+	var item_id := String(definition.get("item", ""))
+	var item_kind := String(definition.get("item_kind", "material"))
+	var per_hit := maxi(1, int(definition.get("per_hit", 1)))
+	var full_hits := maxi(1, int(definition.get("hits", 1)))
+	var respawn := maxi(0, int(definition.get("respawn_seconds", 0)))
+	var stamp := now_unix if now_unix >= 0 else int(Time.get_unix_time_from_system())
+	var stored: Dictionary = (document().get("resource_nodes", {}) as Dictionary).get(node_id, {})
+	var next_harvest := int(stored.get("harvests", 0)) + 1
+	var instances: Dictionary = (adapter.call(&"document") as Dictionary).get("instances", {})
+	if not instances.has(tool_instance_id):
+		return {"ok": false, "reason": "TOOL_NOT_OWNED", "node_id": node_id}
+	var request := {
+		"contract": "soh.economy.tool_use.v1",
+		"node_id": node_id,
+		"resource_kind": kind,
+		"tool_instance_id": tool_instance_id,
+		"expected_tool_revision": int((instances[tool_instance_id] as Dictionary).get("revision", -1)),
+		"world_revision": world_revision,
+		"active_seconds": active_seconds,
+	}
+	var result := {"ok": false, "reason": "rejected"}
+	var grant := func(candidate: Dictionary) -> bool:
+		var document_candidate: Dictionary = SurvivalStateData.sanitize(candidate.get("survival", {}))
+		var nodes: Dictionary = document_candidate.get("resource_nodes", {})
+		var entry: Dictionary = nodes.get(node_id, {})
+		var hits_left := int(entry.get("hits_left", full_hits))
+		var depleted_at := int(entry.get("depleted_at", 0))
+		if hits_left <= 0 and respawn > 0 and depleted_at > 0 and stamp >= depleted_at + respawn:
+			hits_left = full_hits
+			depleted_at = 0
+		if hits_left <= 0:
+			result["reason"] = "depleted"
+			return false
+		var remaining := hits_left - 1
+		nodes[node_id] = {
+			"hits_left": remaining,
+			"depleted_at": stamp if remaining <= 0 else 0,
+			"harvests": int(entry.get("harvests", 0)) + 1,
+		}
+		document_candidate["resource_nodes"] = nodes
+		candidate["survival"] = document_candidate
+		if not bool(save.call(&"add_items_to_candidate", candidate, item_id, item_kind, per_hit,
+				{"source": "resource_node", "node_id": node_id, "kind": kind, "tool": tool_instance_id})):
+			# A full bag must not cost tool condition: refuse the whole swing.
+			result["reason"] = "inventory_full"
+			return false
+		result["item_id"] = item_id
+		result["quantity"] = per_hit
+		result["hits_left"] = remaining
+		return true
+	var committed: Dictionary = adapter.call(&"commit_tool_use", request,
+		"harvest.%s.%d.%s" % [node_id, next_harvest, tool_instance_id.substr(0, 24)], grant)
+	var out := {
+		"ok": bool(committed.get("ok", false)),
+		"reason": String(committed.get("reason", "")),
+		"node_id": node_id,
+		"tool_instance_id": tool_instance_id,
+		"item_id": String(result.get("item_id", "")),
+		"quantity": int(result.get("quantity", 0)),
+		"hits_left": int(result.get("hits_left", 0)),
+		"wear": (committed.get("wear", {}) as Dictionary).duplicate(true),
+		"plan_id": String((committed.get("plan", {}) as Dictionary).get("plan_id", "")),
+	}
+	if not out["ok"]:
+		transaction_rejected.emit(String(out["reason"]))
+		return out
+	harvested.emit(node_id, out["item_id"], out["quantity"], out["hits_left"])
+	if out["hits_left"] <= 0:
+		resource_depleted.emit(node_id)
+	survival_state_changed.emit()
+	return out
+
+
 ## Whether a node can be swung at right now (ignores whether the bag has room).
 func is_node_harvestable(node_id: String, kind: String, now_unix: int = -1) -> bool:
 	var definition := resource_definition(kind)

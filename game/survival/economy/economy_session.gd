@@ -155,6 +155,55 @@ func _resolve_station(id: String) -> Dictionary:
 	return data
 
 
+## A0 read of the pausable world clock, for binding an A3 receipt to the moment
+## the player actually swung. It is an echo, never an authority: A3 records it as
+## "A0_REQUEST_ECHO_NOT_VERIFIED_BY_A3" and never pays based on it.
+func world_active_seconds() -> int:
+	var world: Variant = _save.call(&"get_snapshot").get("world_slice", {})
+	if not world is Dictionary or not (world as Dictionary).get("clock") is Dictionary:
+		return 0
+	return int(((world as Dictionary).get("clock", {}) as Dictionary).get("active_seconds", 0))
+
+
+## A stable A0 world-revision string for the same receipt binding.
+func world_revision() -> String:
+	var world: Variant = _save.call(&"get_snapshot").get("world_slice", {})
+	if not world is Dictionary or not (world as Dictionary).get("clock") is Dictionary:
+		return "world:0:0"
+	var clock: Dictionary = (world as Dictionary).get("clock", {})
+	return "world:%d:%d" % [int(clock.get("active_seconds", 0)), int(clock.get("sequence", 0))]
+
+
+## Which owned A3 tool, if any, may be used on this node right now. The decision
+## is A3's: A0 only enumerates the tools the player physically owns and asks the
+## pinned adapter's read-only planner. An empty string means bare hands, which is
+## still the ordinary knife-first path and pays no tool wear.
+func tool_for_node(node_id: String, resource_kind: String) -> String:
+	if _adapter == null:
+		return ""
+	var candidate: Dictionary = _save.call(&"get_snapshot")
+	var instances: Dictionary = (_adapter.call(&"document") as Dictionary).get("instances", {})
+	var ids: Array = instances.keys()
+	ids.sort()
+	var revision := world_revision()
+	var active := world_active_seconds()
+	for raw_id: Variant in ids:
+		var tool_id := String(raw_id)
+		var request := {
+			"contract": "soh.economy.tool_use.v1",
+			"node_id": node_id,
+			"resource_kind": resource_kind,
+			"tool_instance_id": tool_id,
+			"expected_tool_revision": int((instances[raw_id] as Dictionary).get("revision", -1)),
+			"world_revision": revision,
+			"active_seconds": active,
+		}
+		var plan: Dictionary = _adapter.call(&"plan_tool_use_candidate", candidate, request)
+		if bool(plan.get("ok", false)) and bool(plan.get("allowed", false)):
+			return tool_id
+	return ""
+
+
 ## Pure read, called synchronously by the A3 adapter when verifying an advance.
 func _snapshot(id: String) -> Dictionary:
 	if not _configured or id.is_empty() or id.length() > 64:

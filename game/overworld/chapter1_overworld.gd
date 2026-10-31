@@ -46,6 +46,7 @@ const TRAVERSABILITY_SCRIPT := preload("res://game/overworld/overworld_traversab
 const OCCLUSION_SCRIPT := preload("res://game/overworld/overworld_occlusion.gd")
 const SURVIVAL_BUILD_SCRIPT := preload("res://game/survival/survival_build_system.gd")
 const ECONOMY_SESSION_SCRIPT := preload("res://game/survival/economy/economy_session.gd")
+const ECONOMY_COMPOSITION_SCRIPT := preload("res://game/survival/economy/a0_economy_composition.gd")
 const ECONOMY_PANEL_SCRIPT := preload("res://game/survival/economy/economy_panel.gd")
 const CHEST_PANEL_SCRIPT := preload("res://game/survival/chest_inventory_panel.gd")
 const SURVIVAL_NODE_SCRIPT := preload("res://game/survival/survival_resource_node.gd")
@@ -88,6 +89,7 @@ var traversability_failures: Array[Dictionary] = []
 
 var survival_build: SurvivalBuildSystem
 var economy_session: Node
+var economy_composition: Node
 var economy_panel: CanvasLayer
 var chest_panel: CanvasLayer
 var _death_bags: Dictionary = {}
@@ -213,6 +215,7 @@ func _build_world() -> void:
 	if _waystation_candidate_enabled() and survival_build != null:
 		survival_build.annex_disabled_from_x = 384
 	_build_economy_session()
+	_build_economy_composition()
 	_build_occlusion()
 	_build_hud()
 	if _waystation_candidate_enabled():
@@ -263,6 +266,24 @@ func _build_economy_session() -> void:
 		push_warning("Economy session unavailable; crafting remains disabled.")
 		economy_session.queue_free()
 		economy_session = null
+
+
+## A0 composition root: run lifecycle, A3 V7 profile port and offline
+## settlement, all bound to this live world. It is opt-in only in the sense that
+## a world without a configured A3 session cannot host it; a world WITH the
+## session must have it, or the player would be able to play a run that has no
+## durable identity.
+func _build_economy_composition() -> void:
+	if economy_session == null:
+		return
+	var composition := ECONOMY_COMPOSITION_SCRIPT.new()
+	composition.name = "EconomyComposition"
+	add_child(composition)
+	if not bool(composition.call(&"configure", self, player, economy_session)):
+		push_error("A0 economy composition refused: " + String(composition.get("last_error")))
+		composition.queue_free()
+		return
+	economy_composition = composition
 
 
 func _build_economy_panel() -> void:

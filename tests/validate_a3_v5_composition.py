@@ -7,9 +7,9 @@ import json
 
 ROOT = Path(__file__).resolve().parents[1]
 PINS = {
-    'game/survival/economy/vendor/a3_economy_service.gd': 'acbe03b0253f85a868d9ffdd115c8f33772f3789844fa604afd83344ce2933a7',
+    'game/survival/economy/vendor/a3_economy_service.gd': '109c268036bb92e5dcca2d23ec5f5c1664e1f8645c01abf189d6b5c90f06302c',
     'game/survival/economy/world_source_adapter.gd': '8bab244159e17acc34d51a22ab05112090e4f08f146511aa5c61683c7d999a47',
-    'data/survival/items/items.json': 'cc3c11659fc191529fb56e6a50a1bd27a29f091e2857e2f4d7b7e7d993e15a4a',
+    'data/survival/items/items.json': 'cd1a27c48078a69489904e86182dc63750941d9fc296830f711dd5d574615520',
     'data/survival/items/sources.json': 'bc88143efb61f2202ae37c96373e07a1643cc29b7fc9a38abc84e4958fe2b984',
     'data/survival/items/world_source_bindings.v3.json': '7b9670f4971d2f161138e0754cbbe66dfe2a239bf0d15d3079a766d729dd230b',
     'data/survival/recipes/recipes.json': '4dbf48da0dbb841bedd3333f0def33f328af4ed55c0e1f919b4a19cc3385539c',

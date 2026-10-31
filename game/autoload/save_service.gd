@@ -30,7 +30,7 @@ const PRODUCTION_ECONOMY_BASE := preload("res://game/survival/economy/vendor/a3_
 # Immutable, first-party A3 integration fixture. Production composition must
 # explicitly review/re-pin future adapter revisions; a caller label is never
 # evidence of authority.
-const PINNED_A3_SCRIPT_SHA256 := "acbe03b0253f85a868d9ffdd115c8f33772f3789844fa604afd83344ce2933a7"
+const PINNED_A3_SCRIPT_SHA256 := "109c268036bb92e5dcca2d23ec5f5c1664e1f8645c01abf189d6b5c90f06302c"
 # The independently pinned 86dc2195 regression adapter remains supported.
 const PINNED_A3_FIXTURE_SHA256 := "b1ee9792b4460e956ec6c59437269078e4f6767f76d35145e680dcc03ba3806c"
 const PINNED_A0_ADAPTER_SHA256 := "2b539f3320828c2fa850b6057c735e032153d5a1e8fa1b8ade63d2e3380ed2ce"
@@ -2381,6 +2381,60 @@ func reset_progression_keep_settings(confirmation: String) -> bool:
 	save_reset.emit()
 	save_committed.emit(get_snapshot())
 	settings_changed.emit(get_value(["settings"], {}))
+	return true
+
+
+const RUN_RESET_TOKEN := "RESET_SOUL_OF_HERO_RUN_KEEP_PROFILE"
+## A0 RunLifecycle owns run boundaries (D062-D067 / A3 V7 run_reset_rule). A run
+## transition clears every run-local namespace in ONE durable commit while
+## preserving only the secured profile: profile currency, its receipts, elder
+## stone achievements and run history. It is not reachable from Continue, death,
+## logout or any modal; the lifecycle passes the explicit token.
+func reset_run_preserving_profile(
+	confirmation: String,
+	run_record: Dictionary,
+	history_entry: Dictionary = {}
+) -> bool:
+	if confirmation != RUN_RESET_TOKEN:
+		return false
+	if run_record.is_empty() or not run_record.get("run_id") is String \
+			or String(run_record.get("run_id", "")).is_empty():
+		return false
+	_ensure_loaded()
+	var previous: Dictionary = _data.get("profile", {}) if _data.get("profile") is Dictionary else {}
+	var profile: Dictionary = previous.duplicate(true)
+	var history: Array = profile.get("run_history", []) if profile.get("run_history") is Array else []
+	if not history_entry.is_empty():
+		history.append(history_entry.duplicate(true))
+	# A durable log, not an unbounded one: the profile keeps the most recent 32
+	# run summaries and nothing else from an ended run.
+	profile["run_history"] = history.slice(maxi(0, history.size() - 32), history.size())
+	profile["run"] = run_record.duplicate(true)
+	profile["schema"] = 1
+	profile["secured_ragnarok_currency"] = maxi(0, int(profile.get("secured_ragnarok_currency", 0)))
+	if not profile.get("achievements") is Dictionary:
+		profile["achievements"] = {"elder_stones": []}
+	# Only the profile is mine to keep. Everything else is a fresh run: home,
+	# items, Core, stations, recipes, POI claims, wallet tokens and world clock.
+	var reset_snapshot := _default_data()
+	var kept_settings: Variant = _data.get("settings", {})
+	if kept_settings is Dictionary:
+		reset_snapshot["settings"] = (kept_settings as Dictionary).duplicate(true)
+	reset_snapshot["profile"] = profile
+	reset_snapshot["revision"] = int(_data.get("revision", 0)) + 1
+	var prepared := _prepare_document(reset_snapshot)
+	if not bool(prepared.get("ok", false)):
+		_push_failure(String(prepared.get("error", "Run reset validation failed.")))
+		return false
+	reset_snapshot = prepared.get("data", {})
+	if not _commit_snapshot(reset_snapshot, false, _disk_commit_capability):
+		return false
+	if not _copy_text_file(_save_path, _backup_path):
+		_remove_if_present(_backup_path)
+	_data = reset_snapshot
+	_is_loaded = true
+	save_reset.emit()
+	save_committed.emit(get_snapshot())
 	return true
 
 

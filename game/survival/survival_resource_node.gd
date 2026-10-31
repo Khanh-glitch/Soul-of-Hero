@@ -133,7 +133,17 @@ func interact(player: Node2D) -> bool:
 	if _cooldown > 0.0:
 		return true
 	_cooldown = INTERACT_COOLDOWN
-	var result: Dictionary = svc.call(&"harvest", node_id, resource_kind)
+	# If the player physically owns an A3 tool that A3 allows on this kind, the
+	# swing is one atomic harvest+wear. Otherwise it stays the bare-handed swing:
+	# no tool, no wear, and the same yields as before.
+	var economy := _economy()
+	var tool_id := String(economy.call(&"tool_for_node", node_id, resource_kind)) if economy != null else ""
+	var result: Dictionary
+	if not tool_id.is_empty():
+		result = svc.call(&"harvest_with_tool", node_id, resource_kind, economy, tool_id,
+			String(economy.call(&"world_revision")), int(economy.call(&"world_active_seconds")))
+	else:
+		result = svc.call(&"harvest", node_id, resource_kind)
 	_last_result = result
 	if bool(result.get("ok", false)):
 		gathered.emit(node_id, String(result.get("item_id", "")), int(result.get("quantity", 0)))
@@ -162,6 +172,19 @@ func _item_label(item_id: String) -> String:
 		return item_id
 	var definition: Dictionary = svc.call(&"item_definition", item_id)
 	return String(definition.get("label", item_id))
+
+
+## The live A0 economy session mounted by the overworld, if this run has one.
+## Walked up from this node so it also works for a world hosted by a test rig; a
+## world without the A3 session simply has no tool swing.
+func _economy() -> Node:
+	var parent := get_parent()
+	while parent != null:
+		var session: Variant = parent.get("economy_session")
+		if session is Node and (session as Node).get_script() != null:
+			return session as Node
+		parent = parent.get_parent()
+	return null
 
 
 func _hud() -> Node:

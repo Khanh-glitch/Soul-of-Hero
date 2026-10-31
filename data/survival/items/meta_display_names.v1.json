@@ -1,0 +1,22 @@
+{
+  "schema": "soh.economy.display_names.v1",
+  "note": "Display-only localization registry. Technical IDs and SaveService receipt fields never depend on these strings. Renaming requires no save migration.",
+  "working_title": "Tàn Ấn",
+  "working_title_status": "WORKING_TITLE_NOT_CREATOR_CANON",
+  "entries": {
+    "currency.ragnarok_unbanked": {"vi": "Tàn Ấn", "en": "Ragnarok Remnant Seal", "status": "WORKING_TITLE"},
+    "profile.secured_ragnarok_currency": {"vi": "Tàn Ấn đã bảo tồn", "en": "Preserved Remnant Seals", "status": "WORKING_TITLE"},
+    "profile.achievements.elder_stones": {"vi": "Ấn Thạch Elder", "en": "Elder Achievement Stones", "status": "WORKING_TITLE"},
+    "endpoint.preservation_kiosk": {"vi": "Trạm Bảo Tồn", "en": "Preservation Kiosk", "status": "WORKING_TITLE"},
+    "endpoint.vending_kiosk": {"vi": "Máy Tiếp Tế Cố Định", "en": "Fixed Supply Vending Machine", "status": "WORKING_TITLE"},
+    "endpoint.recycler": {"vi": "Máy Tháo Rã", "en": "Disassembly Recycler", "status": "WORKING_TITLE"}
+  },
+  "alternatives_considered": [
+    {"term": "Tàn Ấn", "meaning": "Remnant/residual seal; late-world survival residue, physical seal-like token", "recommended": true},
+    {"term": "Dư Ấn", "meaning": "Surviving/remaining seal; emphasizes what remains after catastrophe", "recommended": false},
+    {"term": "Hồi Ấn", "meaning": "Return/echo seal; emphasizes cross-season return", "recommended": false},
+    {"term": "Di Tích Ấn", "meaning": "Relic/ruin seal; emphasizes archaeological provenance", "recommended": false}
+  ],
+  "unverified_speech_reference": "tiền suy ngụ",
+  "unverified_speech_status": "NOT_CANONICAL_NOT_AN_ITEM_ID"
+}
