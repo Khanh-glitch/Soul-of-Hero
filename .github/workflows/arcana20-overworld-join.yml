@@ -5,6 +5,7 @@ on:
     branches: [arena/c7b0c4e8-soul-of-hero]
     paths:
       - 'prototypes/arcana_fusion20/renderer/**'
+      - '!prototypes/arcana_fusion20/renderer/**/*.md'
       - 'tools/arcana20_join/**'
       - '.github/workflows/arcana20-overworld-join.yml'
 permissions:
