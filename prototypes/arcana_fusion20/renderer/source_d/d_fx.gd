@@ -168,7 +168,7 @@ static func _radial(th: float, seed: float, a1: float, h1: float, a2: float, h2:
     return r
 
 ## Returns [alpha, rim].
-static func shape_alpha(id: int, p: Vector2, seed: float, hard: float) -> Array:
+static func shape_alpha(id: int, p: Vector2, seed: float, hard: float, star_p1: float = NAN, star_p2: float = NAN) -> Array:
     var rim := 0.0
     var r := p.length()
     var th := atan2(p.y, p.x)
@@ -186,7 +186,14 @@ static func shape_alpha(id: int, p: Vector2, seed: float, hard: float) -> Array:
             d = maxf(absf(r - (1.0 - w * 0.5)) - w * 0.5, 0.0)
             a = _aa(d, hard)
         STAR:
-            var pr := _radial(th, seed, 0.10, 2.0, 0.05, 4.0, 1.5, 4.0)
+            # h11(seed) is constant across this sprite. Preserve the source
+            # expression and multiplication order while reusing its phases.
+            var pr: float
+            if is_nan(star_p1):
+                pr = _radial(th, seed, 0.10, 2.0, 0.05, 4.0, 1.5, 4.0)
+            else:
+                pr = 1.0 + 0.10 * cos(2.0 * th + star_p1) + 0.05 * cos(4.0 * th + star_p2)
+                pr += 1.5 * pow(maxf(0.0, cos(4.0 * th + star_p1 * 2.0)), 6.0)
             d = r - pr
             a = _aa(d, hard)
         FLARE:
@@ -242,6 +249,9 @@ func sp(x: float, y: float, size: float, col: Color, shape: int = DISC, o: Dicti
     var flags := float(o.get("flags", 0.0))
     var vsz := Vector2(maxf(sx, 0.75), maxf(sy, 0.75))
     var pxs := 1.0 / ((vsz.x + vsz.y) * 0.5)
+    var shape_hard := hard * pxs
+    var star_p1 := _h11(seed) * 6.283 if shape == STAR else NAN
+    var star_p2 := _h11(seed + 3.7) * 6.283 if shape == STAR else NAN
     # GPU fragments are sampled at pixel centers, and the shader only
     # runs inside the rotated sprite quad, not its surrounding SDF field.
     var ext := ceili(sqrt(sx * sx + sy * sy)) + 1
@@ -261,7 +271,7 @@ func sp(x: float, y: float, size: float, col: Color, shape: int = DISC, o: Dicti
                 rq = Vector2(floor(rq.x * 0.5) / 0.5, floor(rq.y * 0.5) / 0.5)
                 fl -= 2.0
             var p := Vector2(rq.x / vsz.x, rq.y / vsz.y)
-            var res := shape_alpha(shape, p, seed, hard * pxs)
+            var res := shape_alpha(shape, p, seed, shape_hard, star_p1, star_p2)
             var a := float(res[0])
             if a <= 0.002:
                 continue

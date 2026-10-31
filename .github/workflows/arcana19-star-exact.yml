@@ -1,0 +1,42 @@
+name: ARCANA19 exact star hash-hoist benchmark
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths:
+      - 'prototypes/arcana_fusion20/renderer/d19_star_*.gd'
+      - 'prototypes/arcana_fusion20/renderer/source_d/d_fx.gd'
+      - '.github/workflows/arcana19-star-exact.yml'
+permissions:
+  contents: read
+jobs:
+  exact:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import project
+        run: godot --headless --path . --import > import.log 2>&1 && ! grep -Eq 'SCRIPT ERROR:|Parse Error:' import.log
+      - name: Exact fields and same-host benchmark
+        run: |
+          set -o pipefail
+          timeout 600s godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/d19_star_exact_benchmark.gd 2>&1 | tee exact.log
+          grep -Fq D19_STAR_EXACT_COMPLETE exact.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|ERROR:' exact.log
+          grep -E 'D19_STAR_EXACT |D19_STAR_BENCH' exact.log | sed 's/^/::notice::/'
+      - name: Surface errors
+        if: always()
+        run: |
+          for f in exact.log import.log; do test -f "$f" && grep -E -A 3 'SCRIPT ERROR:|Parse Error:|ERROR:' "$f" | head -20 | sed 's/^/::notice title=D19_STAR_ERROR::/' || true; done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcana19-star-exact
+          path: |
+            exact.log
+            import.log
