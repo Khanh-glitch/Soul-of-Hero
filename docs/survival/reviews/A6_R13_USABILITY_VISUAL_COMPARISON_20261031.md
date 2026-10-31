@@ -126,10 +126,39 @@ What A7 should independently check, and what it should refuse:
 5. **Do not** accept the home-walk gate as green on an idle frame. The only pass is real
    displacement in both directions.
 
+## 5.1 The one reproducible blocker: licensed-art transport
+
+The avatar half of this round cannot produce new evidence, and the reason is outside
+the code:
+
+```text
+$ git ls-remote https://github.com/Khanh-glitch/APEX-CHAOS.git
+remote: Write access to repository not granted.
+fatal: unable to access ...: The requested URL returned error: 403
+$ gh api repos/Khanh-glitch/APEX-CHAOS
+{"message":"Resource not accessible by integration","status":"403"}
+```
+
+`a6-native-avatar-validation.yml` → `private-staged-art` → *Fetch the licensed source
+archives from their Git refs* fails at the first step, so every downstream stage is
+skipped. The same job **passed** at `a5630426`, so this is a regression in access, not
+in the workflow: the pinned commit/blob/SHA-256 checks never run.
+
+| owner | what is needed |
+| --- | --- |
+| asset repository access | either make `Khanh-glitch/APEX-CHAOS` readable by this workflow's identity, or supply `A6_ASSET_TOKEN` (read-only) as a repository secret — the fetch script already uses it when present |
+| nobody else | no A6, A0 or A7 code change unblocks this |
+
+**What is unaffected:** `public-clone-fail-closed` **PASSES** on the same run, which is
+the honest no-art state — no Knight substitute, no claimed identity, no unlicensed
+sprite. What cannot be claimed this round is any *dressed* avatar frame at 720p, 1440p
+or 2160p: those are **NOT_TESTED**, not failed, and not passed.
+
 ## 6. Remaining scope, stated plainly
 
 * **Not done:** the wallet row, durability, Core charges, bag recovery and the in-world
   clock — all blocked on owner projections, all drawn as absent rather than faked.
+* **Blocked externally:** any new dressed-avatar frame — see §5.1 (asset repository 403).
 * **Not done:** grade 1/2 armour appearance (D051 source-approval gate; the consumer
   keeps the same character at grade 0 and names the gate).
 * **Not mine:** the home locomotion failure above.
