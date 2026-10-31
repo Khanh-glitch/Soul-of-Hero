@@ -25,6 +25,7 @@ const DEFAULT_SPENT := Color(0.36, 0.32, 0.3, 1)
 @onready var countdown_label: Label = %Countdown
 @onready var bar: ProgressBar = %RemainingBar
 @onready var note_label: Label = %EndNote
+@onready var content: MarginContainer = $Content
 
 var _last_view: Dictionary = {}
 
@@ -32,6 +33,20 @@ var _last_view: Dictionary = {}
 func _ready() -> void:
 	pressed.connect(func() -> void: activated.emit())
 	clear()
+	# A Button is not a container: its minimum size ignores the content it draws, so a
+	# third line of season text was clipped by the card's own plate while every frame
+	# check still passed. Publish the real minimum and let the layout place the card at
+	# the height it needs.
+	content.minimum_size_changed.connect(_fit_to_content)
+	_fit_to_content()
+
+
+func _fit_to_content() -> void:
+	var needed := content.get_combined_minimum_size()
+	if needed.y > custom_minimum_size.y:
+		custom_minimum_size.y = needed.y
+	if needed.x > custom_minimum_size.x:
+		custom_minimum_size.x = needed.x
 
 
 ## Pure presentation model, kept static so tests can assert wording without a

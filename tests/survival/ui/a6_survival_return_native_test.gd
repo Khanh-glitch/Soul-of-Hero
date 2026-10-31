@@ -691,6 +691,13 @@ func _test_read_only() -> void:
 		"return_digest": _digest(NOW, 18 * 3600, [{"kind": "forge", "completed_units": 2, "unit_label": "thỏi sắt", "stop_reason": "fuel_empty"}]),
 		"current": _current_all_done(),
 	})
+	# The run card is a Button, and a Button takes no minimum size from the content it
+	# draws. The card therefore clipped its own third line ("Hết mùa 12/11") while the
+	# capture harness reported every frame clean, because it only checks that text stays
+	# inside the viewport, not that it stays inside the card holding it.
+	var card := _layer.run_card
+	_expect(card.custom_minimum_size.y >= card.content.get_combined_minimum_size().y, "the run card is at least as tall as the content it draws")
+	_expect(card.custom_minimum_size.x >= card.content.get_combined_minimum_size().x, "the run card is at least as wide as the content it draws")
 	_layer.open_record()
 	_layer.close_record()
 	_layer.dismiss_digest()
