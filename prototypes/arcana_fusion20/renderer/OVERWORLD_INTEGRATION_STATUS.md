@@ -57,7 +57,7 @@ failed; this historical pin is not an endorsement of the latest route.
 
 | ID | Current actual-world source status | Remaining / evidence |
 |---|---|---|
-| 01 | A/C field producers; paired source players still duplicate whole crown | Isolate selected geometry, A shimmer world and C flame, one shock/scar/ash, post, OUT |
+| 01 | A candidate + selected C outer tongue primitives, frozen-world/cancel [41209822468](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41209822468) | Whole-cast source parity, viewport post, actor depth and owner review |
 | 02 | B world pass diagnostic | [run 41207915157](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41207915157), one frozen frame only |
 | 03 | B world fields available | Actual-world comparison and lifecycle not checked |
 | 04 | A world pass diagnostic; REDESIGN_CANDIDATE | [run 41208517991](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41208517991); no visual approval |
@@ -72,7 +72,7 @@ failed; this historical pin is not an endorsement of the latest route.
 | 13 | A candidate fields available; REDESIGN_CANDIDATE | Actor targeting, depth and world review missing |
 | 14 | A candidate fields available; REDESIGN_CANDIDATE | Actor/colony integration and world review missing |
 | 15 | C world fields available | Actual-world and moving-actor review missing |
-| 16 | A candidate fields available | Original A growth and C palette/material not integrated |
+| 16 | Original A growth with selected C coverage/material candidate; neutral A source [41210721707](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41210721707) | Live-world sample pending; C material parity, full cast/OUT and owner review |
 | 17 | C world pass diagnostic incl. live-screen fragment mapping | [run 41207915157](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41207915157), one frozen frame only |
 | 18 | A candidate fields available; REDESIGN_CANDIDATE | Real actors, full-cast and world review missing |
 | 19 | D additive and persistent warp consumer, frozen-world/cancel [JOIN 41209511506](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41209511506) | D bloom/post, OUT review, depth and original parity missing |
