@@ -85,3 +85,32 @@ design intent.
   A7 to re-tune against `ECONOMY_AND_14DAY_REPLAY_BALANCE.md`, not a design verdict.
 * **A green CI run is the only thing allowed to move `STATE.json`'s
   `code_claims.survival_system_integrated` to `true`.**
+
+### SURV-020 WIP storage safety (not shelter acceptance)
+
+- Demolition of a nonempty container is rejected within the save transaction; its contents, structure and inventory remain intact. No automatic refund or evacuation is claimed.
+- Repeated whole-container sweeps use a committed `survival.counters.container_sweeps` sequence and `survival.transfer.all.v2.*` receipts rather than quantity signatures. This additive counter defaults to zero for v1 survival documents, and existing receipts are skipped if an older build dropped the counter. As with existing sweep calls, separate calls are separate user actions; caller-supplied replay keys are not available on this API.
+- Evidence: [native run 40849106485](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40849106485), code commit `77c639331d8d4b0c472e86e7538275e6778aa697`; 132 foundation checks. This does not verify rooms, roofs, beds, respawn, shelter visuals or Web shelter behavior.
+
+### SURV-020 WIP — bounded derived room topology and layered occupancy
+
+At tested code `4afe3d94cea92be9cc2355f3fb8362ab358907f4`, room interiors are derived from persisted wall/door cells and never separately saved. Eight-way open-space connectivity rejects diagonal corner leaks. Disconnected wall clusters have independent bounding boxes; clusters above 16,384 local cells report overflow and produce no room. Boundary signatures include nested seals; unaffected cluster floods are cached. Construction-state changes still index the current set of structure records, so no claim is made of constant-time updates or of dynamic navigation.
+
+A cell has one floor slot and one object slot, enforced by both the build validator and `SurvivalService.place_structure` transaction. Existing v1 survival records remain compatible without an outer save schema migration. Visual floor/furniture ordering, actual door traversability, door threshold continuity, roof rendering and bed/respawn are **not** established by this change. At that historical revision doors counted as seals before their physical open/closed state was implemented.
+
+[Godot native run 40862246794](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40862246794) passed 132 foundation and 50 topology/storage checks. This is not SURV-020 acceptance and does not constitute screenshots or human playtesting. Replaying a caller-keyed single-item transfer is tested, but whole-container sweeps still lack logical command IDs.
+
+### SURV-020 WIP door projection (native-limited)
+
+`door_open` and `door_revision` are additive per-structure fields inside the existing survival namespace; absent fields default to closed/revision zero. The service opens/toggles in one SaveService candidate transaction, with optional caller-provided request key; closing requires a scene-owned validator. A `SurvivalStructure` projects that state to its named existing `StaticBody2D` shape via `set_deferred`, with conservative player clearance. This is not a promise of safe closure around NPCs, AI navigation updates, backward downgrade preservation, or complete visual UX. Placement also checks live world collision while excluding owned structures to preserve floor/object layering. [Native run 40863794097](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40863794097) at `30cb746e4f1881c86abefc6cdd229ee0c2ef6011` tests Hero collision using `test_move`, close rejection and reload; no actual player-input walk or shelter acceptance is claimed.
+
+
+### SURV-020 WIP — physical door, visual roof and modal contracts
+
+At `15965c26`, [native Godot run 40871270822](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40871270822) passed 132 foundation and 94 topology/door/roof/modal checks. Real Hero `move_and_slide` travel stopped at 12 px at the closed door, crossed 38.4 px when open, and after reload was stopped by an indoor chest at 28 px. A layer-4 `CharacterBody2D` fixture and the actual Hero each prevent closing on an occupied threshold. This does not prove all NPC types, concurrent collision races or pathfinding.
+
+The placeholder `SurvivalRoofLayer` is derived from topology only; it does not own collision. Each room has separate alpha, doorway hold and exit grace. Native frames show outside/inside/shared-wall-adjacent switching, but visually are development art, with large Hero scale and overlapping interaction text; 2K/4K, threshold walkthrough visuals and product review are not proven.
+
+Visible A6 modal root controls must join group `gameplay_modal` and consume their close/cancel event. `chapter1_overworld.gd` guards polled build actions against that group and hovered interactive UI, and handles cancellation through unhandled events: one cancel closes build instead of also retreating. The native fixture uses a simulated modal, not the real A6 journal; A6 must independently integrate and test this contract. The gate does not claim all UI or controller modality is complete.
+
+Beds, persistent activation, safe/dungeon-aware death/respawn, dynamic navigation, full journey, survival Web, final art and product acceptance are unimplemented/unproven. W-01: A1 `build=0` in the legacy inset delegates to A0's existing validator, never prohibits player construction; no authored 192-chunk plan was integrated.

@@ -1,0 +1,131 @@
+extends "res://tests/survival_foundation_test.gd"
+## Fixture-funded setup; real production Hero, BuildSystem and SaveService.
+## Exercises the last-wall rejection and physical exit; not a fresh B0 journey.
+
+func _finish() -> void:
+	for action: String in ["move_up", "move_down", "move_left", "move_right"]:
+		Input.action_release(action)
+	if FileAccess.file_exists(save_path):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(save_path))
+	if failures.is_empty():
+		print("SURVIVAL HERO EXIT PASSED - %d checks" % checks)
+		quit(0)
+	else:
+		print("SURVIVAL HERO EXIT FAILED - %d/%d" % [failures.size(), checks])
+		quit(1)
+
+func _body() -> void:
+	var ow := _host.get_child(0)
+	var build := ow.get(&"survival_build") as SurvivalBuildSystem
+	var hero := ow.get(&"player") as CharacterBody2D
+	var world := ow.get(&"world") as OverworldWorld
+	_clear_inventory()
+	_expect(_give(WOOD, 40) and _give(IRON, 1), "fixture materials use the sole inventory")
+	build.select_piece("wall_wood")
+	var origin := Vector2i(-1, -1)
+	for y in range(6, world.height - 7, 4):
+		if origin.x >= 0:
+			break
+		for x in range(6, world.width - 7, 4):
+			hero.global_position = Vector2((x + 2) * 16 + 8, (y + 2) * 16 + 15)
+			var valid := true
+			for dy in range(-3, 6):
+				for dx in range(-1, 6):
+					if not build.validate_cell(Vector2i(x + dx, y + dy)).is_empty():
+						valid = false
+			if valid:
+				origin = Vector2i(x, y)
+				break
+	_expect(origin.x >= 0, "real world has legal five by five room site")
+	if origin.x < 0:
+		_body_complete = true
+		return
+	hero.set_physics_process(false)
+	for y in range(5):
+		for x in range(5):
+			if x != 0 and x != 4 and y != 0 and y != 4:
+				continue
+			if x == 2 and y == 0:
+				continue
+			_expect(bool(build.try_place(origin + Vector2i(x, y)).get("ok", false)), "paid perimeter %d,%d" % [x, y])
+	await physics_frame
+	var gap := origin + Vector2i(2, 0)
+	var wood := _count(WOOD)
+	var before: Dictionary = _save().call(&"get_snapshot")
+	var refused := build.try_place(gap, "hero.exit.final.wall")
+	var after: Dictionary = _save().call(&"get_snapshot")
+	_expect(not bool(refused.get("ok", true)) and refused.get("reason", "") == "no_hero_exit", "final wall is rejected while Hero is inside")
+	_expect(_count(WOOD) == wood and before == after and build.entity_at_layer(gap, "object").is_empty(), "rejected last wall changes no item, receipt, save or occupancy")
+	var retry := build.try_place(gap, "hero.exit.final.wall")
+	_expect(not bool(retry.get("ok", true)) and _count(WOOD) == wood and before == (_save().call(&"get_snapshot") as Dictionary), "same failed key retry remains a no-op")
+	# This is the actual Hero controller and collision, driven by the move action.
+	hero.set_physics_process(true)
+	Input.action_press("move_up")
+	for i in range(120):
+		await physics_frame
+	print("HERO_EXIT_WALK origin=%s hero=%s velocity=%s collisions=%d north1=%s north2=%s gap=%s" % [str(origin), str(hero.global_position), str(hero.velocity), hero.get_slide_collision_count(), str(world.is_solid_cell(gap.x, gap.y - 1)), str(world.is_solid_cell(gap.x, gap.y - 2)), str(build.entity_at_layer(gap, "object"))])
+	for index in range(hero.get_slide_collision_count()):
+		var hit := hero.get_slide_collision(index)
+		var collider := hit.get_collider()
+		print("HERO_EXIT_COLLISION collider=%s path=%s point=%s normal=%s" % [str(collider), str((collider as Node).get_path() if collider is Node else "non-node"), str(hit.get_position()), str(hit.get_normal())])
+	Input.action_release("move_up")
+	await physics_frame
+	_expect(hero.global_position.y < origin.y * 16, "actual Hero walks through unsealed last opening")
+	# Return on foot, then place a legitimate openable door in the same gap.
+	Input.action_press("move_down")
+	var ticks := 0
+	while hero.global_position.y < origin.y * 16 + 35 and ticks < 150:
+		await physics_frame
+		ticks += 1
+	Input.action_release("move_down")
+	await physics_frame
+	_expect(hero.global_position.y >= origin.y * 16 + 32, "actual Hero returns through the gap before fitting door")
+	build.select_piece("door_wood")
+	var paid_wood := _count(WOOD)
+	var paid_iron := _count(IRON)
+	var fitted := build.try_place(gap, "hero.exit.legitimate.door")
+	var door := build.structure_node(String(fitted.get("entity_id", "")))
+	_expect(bool(fitted.get("ok", false)) and door != null and _count(WOOD) == paid_wood - 2 and _count(IRON) == paid_iron - 1, "reachable door is allowed and paid once while Hero is inside")
+	if door != null:
+		await physics_frame
+		_expect(door.interact(hero), "actual Hero interacts with the closed door from inside")
+		await process_frame
+		await physics_frame
+		var record: Dictionary = (_survival().call(&"structures") as Dictionary).get(String(fitted.get("entity_id", "")), {})
+		_expect(bool(record.get("door_open", false)), "door opens durably")
+		Input.action_press("move_up")
+		for i in range(100):
+			await physics_frame
+		Input.action_release("move_up")
+		await physics_frame
+		_expect(hero.global_position.y < origin.y * 16, "actual Hero walks out through the opened door")
+		# Fixture positions the real Hero back inside and funds three chests.
+		# Two are allowed beside the doorway; the third would seal its only
+		# interior approach and must not consume items or create a receipt.
+		hero.set_physics_process(false)
+		hero.global_position = Vector2((origin.x + 2) * 16 + 8, (origin.y + 3) * 16 + 15)
+		_expect(_give(WOOD, 12) and _give(IRON, 3), "fixture funds the furniture exit adversary")
+		build.select_piece("chest_wood")
+		var left := build.try_place(origin + Vector2i(1, 1))
+		await physics_frame
+		var right := build.try_place(origin + Vector2i(3, 1))
+		await physics_frame
+		_expect(bool(left.get("ok", false)) and bool(right.get("ok", false)), "paid side furniture leaves the sole door approach open")
+		var snapshot: Dictionary = _save().call(&"get_snapshot")
+		var wood_before := _count(WOOD)
+		var iron_before := _count(IRON)
+		var blocked := build.try_place(origin + Vector2i(2, 1), "hero.exit.furniture")
+		_expect(not bool(blocked.get("ok", true)) and blocked.get("reason", "") == "no_hero_exit", "last chest that would block the Hero's sole exit is rejected")
+		_expect(_count(WOOD) == wood_before and _count(IRON) == iron_before \
+			and snapshot == (_save().call(&"get_snapshot") as Dictionary) \
+			and build.entity_at_layer(origin + Vector2i(2, 1), "object").is_empty(), "rejected chest changes no inventory, receipt, save or occupancy")
+		var repeated := build.try_place(origin + Vector2i(2, 1), "hero.exit.furniture")
+		_expect(not bool(repeated.get("ok", true)) and snapshot == (_save().call(&"get_snapshot") as Dictionary), "same rejected chest key remains a no-op")
+		hero.set_physics_process(true)
+		Input.action_press("move_up")
+		for i in range(100):
+			await physics_frame
+		Input.action_release("move_up")
+		await physics_frame
+		_expect(hero.global_position.y < origin.y * 16, "real Hero still physically exits past the two chests")
+	_body_complete = true

@@ -1,0 +1,40 @@
+name: A0 canonical seam prerequisite
+on:
+  push:
+    branches: [arena/dea2428e-soul-of-hero]
+    paths: ['tests/survival_canonical_seam_probe_test.gd', '.github/workflows/a0-canonical-seam-probe.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Prepare and import
+        run: |
+          mkdir -p artifacts/ud_import artifacts/ud_seam
+          timeout 180s godot --headless --path . --user-data-dir artifacts/ud_import --import > artifacts/import-seam.log 2>&1
+      - name: Production Hero physical seam prerequisite
+        shell: bash
+        run: |
+          set +e
+          timeout --signal=TERM --kill-after=10s 360s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_seam --resolution 960x540 --windowed --script res://tests/survival_canonical_seam_probe_test.gd > artifacts/seam.log 2>&1
+          rc=$?
+          cat artifacts/seam.log
+          echo "::notice::seam exit=$rc $(grep -E '^(SEAM_|CANONICAL SEAM)' artifacts/seam.log | tr '\n' '~')"
+          bash tools/ci/gate_log.sh artifacts/seam.log 'Canonical seam prerequisite' 'CANONICAL SEAM PREREQUISITE BLOCKER CONFIRMED'
+          gate=$?
+          if [ "$rc" -ne 0 ]; then exit "$rc"; fi
+          exit "$gate"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: canonical-seam-native
+          path: artifacts/*.log

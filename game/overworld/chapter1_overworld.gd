@@ -37,6 +37,10 @@ const WORLD_DATA_PATH := "res://data/overworld/hollow_marches.json"
 const LAYERS_PATH := "res://data/overworld/hollow_marches_layers.json"
 const PROPS_PATH := "res://data/overworld/hollow_marches_props.json"
 const KNIGHT_SCENE: PackedScene = preload("res://game/characters/knight/knight.tscn")
+## R13: the player controller the game really ships. A6's AvatarPresenter is a
+## child of this scene and reads A0's saved male/female identity, so the body the
+## player moves is the adventurer they chose — not a stand-in fixture body.
+const PLAYER_SCENE_PATH := "res://game/characters/knight/knight.tscn"
 const GATE_SCRIPT := preload("res://game/overworld/overworld_gate.gd")
 const CAMP_SCRIPT := preload("res://game/overworld/overworld_camp.gd")
 const DISCOVERY_SCRIPT := preload("res://game/overworld/overworld_discovery.gd")
@@ -45,8 +49,52 @@ const WORLD_SCRIPT := preload("res://game/overworld/overworld_world.gd")
 const TRAVERSABILITY_SCRIPT := preload("res://game/overworld/overworld_traversability.gd")
 const OCCLUSION_SCRIPT := preload("res://game/overworld/overworld_occlusion.gd")
 const SURVIVAL_BUILD_SCRIPT := preload("res://game/survival/survival_build_system.gd")
+const ECONOMY_SESSION_SCRIPT := preload("res://game/survival/economy/economy_session.gd")
+const ECONOMY_COMPOSITION_SCRIPT := preload("res://game/survival/economy/a0_economy_composition.gd")
+const ECONOMY_PANEL_SCRIPT := preload("res://game/survival/economy/economy_panel.gd")
+const CHEST_PANEL_SCRIPT := preload("res://game/survival/chest_inventory_panel.gd")
 const SURVIVAL_NODE_SCRIPT := preload("res://game/survival/survival_resource_node.gd")
+const DEATH_BAG_SCRIPT := preload("res://game/survival/survival_death_bag.gd")
 const SURVIVAL_RESOURCE_PLAN_PATH := "res://data/survival/hollow_marches_resources.json"
+# Reversible candidate only. The default production route remains unchanged
+# until native input/restart and owner gates are independently reviewed.
+const WORLD_ART_CANDIDATE_SETTING := "survival/a0_world_art_candidate"
+const A0_WORLD_ART_CANDIDATE := preload("res://game/survival/a0_world_art_candidate.gd")
+## A0 Round 12 production threat (CT decision T1). Off by default; when on, it is
+## the ONE way the survival world ever exposes an enemy.
+const A0_THREAT_MOUNT := preload("res://game/survival/a0_threat_mount.gd")
+const WAYSTATION_CANDIDATE_SETTING := "survival/a0_waystation_candidate"
+## R13: which world is authoritative. "authored" is A1's 1024x768 continent and is
+## the default production world; "annex" is the retained 384x256 Hollow Marches
+## route world, kept reusable (component probes and the chapter-1 landmark route
+## still run on it) but no longer the main game.
+const WORLD_AUTHORITY_SETTING := "survival/a0_world_authority"
+const WORLD_AUTHORITY_AUTHORED := "authored"
+const WORLD_AUTHORITY_ANNEX := "annex"
+## A0's authored-world join: terrain, streamed collision, spawn, sites.
+const A0_WORLD_AUTHORITY := preload("res://game/survival/a0_world_authority.gd")
+const A0_AUTHORED_TRAVERSABILITY := preload("res://game/survival/a0_authored_traversability.gd")
+## A1 material keys -> A0's survival resource kinds. A0 does not invent sources:
+## each entry maps an authored material onto the resource the service already knows.
+## A1 publishes material keys, A3's catalog publishes harvestable kinds. The map is
+## A0's join between the two; anything A1 names that A3 has no kind for is not
+## mounted, and the count is printed so the gap is visible instead of silent.
+const AUTHORED_SOURCE_KINDS := {
+	"deadwood": "oak_tree", "timber": "oak_tree", "oak": "oak_tree", "hardwood": "oak_tree",
+	"stone": "stone_outcrop", "granite": "stone_outcrop", "slate": "stone_outcrop",
+	"limestone": "stone_outcrop", "basalt": "stone_outcrop",
+	"scrap": "scrap_pile", "salvage": "scrap_pile",
+	"iron": "iron_vein", "ore": "iron_vein", "glacial_iron": "iron_vein",
+	"reed": "reed_clump", "reed_fibre": "reed_clump", "fiber": "reed_clump", "fibre": "reed_clump",
+}
+const WAYSTATION_ROOT := "res://data/survival/connector/a0_candidate/"
+const A0_WAYSTATION_GEOMETRY := preload("res://game/survival/waystation_geometry.gd")
+const A0_WAYSTATION_HOST := preload("res://game/survival/waystation_host.gd")
+const WAYSTATION_ASSET_PINS := {
+	"annex_world.v1.json": "8883a224f05372f7ad3afa5317da82268e624acfc76f9891ba9fc24a22f6e1c6",
+	"annex_layers.v1.json": "674643e862168ab52b00fe7f8038fcf6be8c6aa66cb6666c28ca752394ca2d00",
+	"annex_props.v1.json": "dc80877a0425ceac546fbed2dcc352c14fb6548e67c346d9f1226ef914440cd2",
+}
 
 const CAMERA_ZOOM := Vector2.ONE
 const WEARY_SPEED_SCALE := 0.82
@@ -60,6 +108,9 @@ var state: OverworldState
 var player: CharacterBody2D
 var camera: Camera2D
 var hud: OverworldHud
+## How often the HUD re-reads A0's pack snapshot (4 Hz).
+const CARRY_SAMPLE_MS := 250
+var _carry_sampled_at := -100000
 ## Runtime walkability that includes prop bodies, and the fade that keeps the
 ## Knight visible behind architecture. Both are built from the live scene, not
 ## from the authored document, so they describe the world the player has.
@@ -70,6 +121,23 @@ var occlusion: OverworldOcclusion
 var traversability_failures: Array[Dictionary] = []
 
 var survival_build: SurvivalBuildSystem
+var economy_session: Node
+## R13: the authored-continent join. Present only in "authored" mode.
+var world_authority: A0WorldAuthority
+## Why the authored world could not be used, if it could not. Named, never hidden.
+var authored_world_error := ""
+## Why the authored continent was not mounted even though it was asked for. Only
+## the "this tree does not contain A1's continent" case sets it.
+var authored_world_degraded := ""
+## True when this build is the authored continent (as opposed to the annex route).
+var authored_world_active := false
+var authored_sources: Array = []
+var economy_composition: Node
+var threat_mount: Node
+var economy_panel: CanvasLayer
+var chest_panel: CanvasLayer
+var _death_bags: Dictionary = {}
+var _death_bag_root: Node2D
 var survival_nodes: Dictionary = {}  # node_id:String -> SurvivalResourceNode
 var gates: Dictionary = {}       # level_id:String -> OverworldGate
 var camps: Dictionary = {}       # camp_id:String -> OverworldCamp
@@ -90,7 +158,80 @@ func _ready() -> void:
 	# AppRoot calls configure() right after add_child(); remember anything that
 	# arrives before the deferred build runs.
 	_payload = _pending_payload.duplicate(true)
+	_ensure_prepare_work_binding()
 	call_deferred(&"_build_world")
+
+
+## A0-owned production binding. A6 owns presentation; this is the gameplay input
+## that says "keep my paid work running while I am away". It is registered here,
+## not in an A6 panel, so a missing panel cannot make preparation impossible.
+const PREPARE_WORK_ACTION := &"prepare_work"
+
+func _ensure_prepare_work_binding() -> void:
+	if InputMap.has_action(PREPARE_WORK_ACTION):
+		return
+	InputMap.add_action(PREPARE_WORK_ACTION)
+	var key := InputEventKey.new()
+	key.physical_keycode = KEY_P
+	InputMap.action_add_event(PREPARE_WORK_ACTION, key)
+
+
+## One departure, three ordered SaveService steps, all through the composition's
+## authoritative offline host:
+##   1. settle the interval that ended now (active play is never re-settled),
+##   2. mark the jobs the player actually paid for and left running as prepared,
+##   3. stamp the departure again so the offline interval starts at this moment.
+## Returns the exact report the world can show and a test can inspect.
+func depart_world(now_unix: int = -1) -> Dictionary:
+	var report := {"ok": false, "reason": "not_ready", "settle": {}, "prepared": {}, "stamp": {}, "persisted": false}
+	if build_stage != BuildStage.READY or economy_composition == null or not is_instance_valid(economy_composition):
+		return report
+	var offline: Node = economy_composition.get(&"_offline") as Node
+	if offline == null:
+		report["reason"] = "offline_host_absent"
+		return report
+	var stamp := now_unix if now_unix >= 0 else int(Time.get_unix_time_from_system())
+	report["settle"] = offline.call(&"settle", stamp)
+	if economy_session != null and is_instance_valid(economy_session):
+		report["prepared"] = economy_session.call(&"prepare_work_away")
+	report["stamp"] = offline.call(&"settle", stamp)
+	# Leaving the world is the last thing this process does, so the departure must
+	# be durable before the process can die. Relying on a later autosave would make
+	# "close the game" and "the game lost my furnace" the same event — and the
+	# position is part of that: a player who leaves standing at a doorway and comes
+	# back must not be standing twenty pixels away from where they left.
+	if state != null and is_instance_valid(player):
+		# A save must not record a place the loader will refuse. If the player quit
+		# standing on scenery, the durable position is the nearest standable cell of
+		# that footprint, and the body itself is not moved: leaving the game is not a
+		# teleport. Reloading then lands exactly where the save says, every time.
+		var stored_position := player.global_position
+		if traversability != null and is_instance_valid(camera) \
+				and (world_authority == null or String(world_authority.inside_site()).is_empty()):
+			var settled := traversability.nearest_free_position(stored_position, 12)
+			if settled.distance_to(stored_position) > 0.5:
+				push_warning("A0 departure: position %s is not standable; saving %s instead"
+					% [str(stored_position), str(settled)])
+			stored_position = settled
+		state.set_world_position(stored_position, true)
+		report["position"] = [stored_position.x, stored_position.y]
+		report["body_position"] = [player.global_position.x, player.global_position.y]
+	var save := get_node_or_null("/root/SaveService")
+	if save != null and save.has_method(&"save_now"):
+		report["persisted"] = bool(save.call(&"save_now"))
+	else:
+		report["persisted"] = false
+	report["reason"] = ""
+	report["ok"] = true
+	return report
+
+
+func _notification(what: int) -> void:
+	# Closing the window is a normal exit, not a run end: it must leave the same
+	# durable truth a quit-to-title does.
+	if what == NOTIFICATION_WM_CLOSE_REQUEST and build_stage == BuildStage.READY:
+		var departure := depart_world()
+		print("A0_DEPARTURE ", JSON.stringify(departure))
 
 
 func configure(payload: Dictionary) -> void:
@@ -104,13 +245,236 @@ func is_world_ready() -> bool:
 	return build_stage == BuildStage.READY
 
 
+## The world this build is actually running. A gate reads this instead of assuming
+## which one was mounted.
+func world_authority_report() -> Dictionary:
+	if world_authority == null or not is_instance_valid(world_authority):
+		return {"mode": WORLD_AUTHORITY_ANNEX, "error": authored_world_error,
+			"degraded": authored_world_degraded,
+			"frame": [world.width, world.height] if world != null else [0, 0]}
+	var report: Dictionary = world_authority.source_report()
+	report["mode"] = WORLD_AUTHORITY_AUTHORED
+	report["sources"] = authored_sources.duplicate(true)
+	report["error"] = authored_world_error
+	return report
+
+
+# The scene defaults to pinned legacy sources. A project-level candidate may
+# explicitly select the bounded source; payloads and saves cannot select files.
+func _waystation_candidate_enabled() -> bool:
+	return bool(ProjectSettings.get_setting(WAYSTATION_CANDIDATE_SETTING, false))
+
+
+func _world_source_paths() -> Dictionary:
+	if _waystation_candidate_enabled():
+		for name: String in WAYSTATION_ASSET_PINS:
+			var path := WAYSTATION_ROOT + name
+			if not FileAccess.file_exists(path) or FileAccess.get_sha256(path) != String(WAYSTATION_ASSET_PINS[name]):
+				_fail("Waystation candidate source mismatch: " + name)
+				return {}
+		return {"world": WAYSTATION_ROOT + "annex_world.v1.json", "layers": WAYSTATION_ROOT + "annex_layers.v1.json", "props": WAYSTATION_ROOT + "annex_props.v1.json"}
+	return {"world": WORLD_DATA_PATH, "layers": LAYERS_PATH, "props": PROPS_PATH}
+
+
+func _mount_world_extensions() -> void:
+	if not _waystation_candidate_enabled():
+		return
+	var result: Dictionary = A0_WAYSTATION_GEOMETRY.mount(world, WAYSTATION_ROOT + "slices/")
+	if not bool(result.get("ok", false)):
+		_fail("Waystation candidate geometry refused: " + String(result.get("reason", "unknown")))
+
+
+func _world_authority_mode() -> String:
+	# A caller may ask for the retained Chapter-1 route world explicitly. That is how
+	# the legacy landmark/camp/discovery suites keep playing the world they were
+	# written for: the old content is reusable, it is simply not the main world any
+	# more. Only the annex is selectable this way — asking for "authored" is the same
+	# as saying nothing, so there is no second switch to keep in sync.
+	if String(_pending_payload.get("world_authority", "")) == WORLD_AUTHORITY_ANNEX:
+		return WORLD_AUTHORITY_ANNEX
+	var mode := String(ProjectSettings.get_setting(WORLD_AUTHORITY_SETTING, WORLD_AUTHORITY_AUTHORED))
+	if mode == WORLD_AUTHORITY_ANNEX:
+		return WORLD_AUTHORITY_ANNEX
+	return WORLD_AUTHORITY_AUTHORED
+
+
 func _build_world() -> void:
 	if build_stage != BuildStage.IDLE:
 		return
 	build_stage = BuildStage.LOADING_DATA
-	world_data = _load_json(WORLD_DATA_PATH)
+	if _world_authority_mode() == WORLD_AUTHORITY_AUTHORED:
+		_build_authored_world()
+		return
+	_build_annex_world()
+
+
+## The production world: A1's authored continent, mounted by A0 with A0's player,
+## collision, camera, spawn, save and sites. If A1's data cannot be mounted the
+## build fails by name — a silent fall back to the legacy inset is exactly the
+## "sidecar" behaviour this round removes.
+func _build_authored_world() -> void:
+	world_authority = A0_WORLD_AUTHORITY.new()
+	world_authority.name = "AuthoredWorld"
+	add_child(world_authority)
+	var player_scene := PLAYER_SCENE_PATH
+	if not world_authority.configure(self, null, null, player_scene):
+		authored_world_error = String(world_authority.last_error)
+		# The one case that may fall back is a tree that does not *contain* A1's
+		# continent at all (A0's own branch): there is nothing to be authoritative
+		# about, so the retained Chapter-1 route world is mounted and the degradation
+		# is reported by name. Any other refusal — a streamer that will not mount, a
+		# spawn that is not safe — is a failed build, not a fallback: that silent
+		# swap is exactly the sidecar behaviour this round removes.
+		if authored_world_error == "A1_AUTHORED_INTERFACE_ABSENT":
+			print("A0_WORLD_AUTHORITY_DEGRADED reason=%s" % authored_world_error)
+			world_authority.queue_free()
+			world_authority = null
+			world = null
+			authored_world_active = false
+			authored_world_degraded = authored_world_error
+			_build_annex_world()
+			return
+		_fail("AUTHORED_WORLD_REFUSED: " + authored_world_error)
+		return
+	# The spawn is bound to the run that is standing in it, so the run must exist
+	# before it is chosen. That is the same RunLifecycle the economy composition
+	# opens a run through — A0 is one clock, not two, and a run that is already
+	# active refuses to be replaced.
+	var lifecycle := get_node_or_null("/root/RunLifecycle")
+	if lifecycle != null and lifecycle.has_method(&"phase"):
+		var run_state: Dictionary = lifecycle.call(&"phase")
+		# Only an empty profile is opened here. An expired or exited run is the
+		# economy composition's transition to make, with its settlement attached.
+		if String(run_state.get("state", "absent")) == "absent":
+			var opened: Dictionary = lifecycle.call(&"start_run")
+			if not bool(opened.get("ok", false)):
+				push_warning("A0 run open refused: " + String(opened.get("reason", "")))
+	var spawn := world_authority.ensure_spawn()
+	if not bool(spawn.get("ok", false)):
+		authored_world_error = String(spawn.get("reason", ""))
+		_fail("AUTHORED_SPAWN_REFUSED: " + authored_world_error)
+		return
+	world = world_authority.view
+	world.name = "World"
+	world_data = world_authority.world_document()
+	add_child(world)
+	authored_world_active = true
+
+	build_stage = BuildStage.SPAWNING_PLAYER
+	state = OverworldState.new()
+	state.state_saved.connect(_on_state_saved)
+	state.discovery_found.connect(_on_state_discovery)
+	state.shortcut_opened.connect(_on_state_shortcut_opened)
+	state.provisions_changed.connect(_on_provisions_changed)
+	state.configure(world_data, _authored_spawn_world(), StringName("camp_refuge"), _save_service())
+	_spawn_player()
+	_setup_camera()
+	# Hand the authority the real body and camera it will move between exterior and
+	# interior, and the same player scene the reader validated its spawn rules with.
+	world_authority.configure(self, player, camera, player_scene)
+	# The camera is the authored frame, so it cannot be dragged into empty space
+	# outside the continent by a fast player.
+	camera.limit_left = 0
+	camera.limit_top = 0
+	camera.limit_right = int(world_authority.world_pixels().size.x)
+	camera.limit_bottom = int(world_authority.world_pixels().size.y)
+
+	build_stage = BuildStage.RESTORING_PROGRESS
+	_apply_payload_spawn()
+	_restore_progress()
+	# Collision first, then the body is settled onto real ground.
+	_build_authored_traversability()
+	_settle_spawn_on_walkable_ground()
+	print("A0_AUTHORED_SPAWN_SETTLED cell=%s position=%s"
+		% [str(traversability.cell_of(player.position)), str(player.position)])
+	_build_authored_survival()
+	_build_economy_session()
+	_build_economy_composition()
+	_build_occlusion()
+	_build_hud()
+	_build_economy_panel()
+	chest_panel = CHEST_PANEL_SCRIPT.new()
+	chest_panel.name = "ChestInventoryPanel"
+	add_child(chest_panel)
+	_mount_optional_threat()
+	_mount_authored_sites()
+	_connect_run_events()
+	_apply_hud()
+	build_stage = BuildStage.READY
+	var advance := world_authority.advance(player.global_position, _stream_rect())
+	print("A0_AUTHORED_WORLD_READY ", JSON.stringify({
+		"spawn": world_authority.spawn_record(), "stream": world_authority.stream_status(),
+		"advance": advance.get("ok", false)}))
+	world_ready.emit()
+	var survival := get_node_or_null("/root/SurvivalService")
+	if survival != null and not String((survival.call(&"document") as Dictionary).get("pending_death", "")).is_empty():
+		player.call(&"_die")
+
+
+func _build_authored_traversability() -> void:
+	traversability = A0_AUTHORED_TRAVERSABILITY.new() as A0AuthoredTraversability
+	traversability.build_authored(world_authority)
+	# The authored continent has no legacy landmarks to seal off; the endpoints A0
+	# does care about are the two physical sites, and they are checked by the gate
+	# that walks to them.
+	traversability_failures = []
+
+
+func _build_authored_survival() -> void:
+	var root := _ensure_node("Resources")
+	authored_sources = world_authority.mount_authored_sources(root, AUTHORED_SOURCE_KINDS)
+	for entry: Variant in authored_sources:
+		var record: Dictionary = entry
+		var node := root.get_node_or_null("Authored_%s" % String(record.get("node_id", "")).replace(":", "_").replace(",", "_"))
+		if node != null:
+			survival_nodes[String(record.get("node_id", ""))] = node
+	survival_build = SURVIVAL_BUILD_SCRIPT.new() as SurvivalBuildSystem
+	survival_build.name = "SurvivalBuild"
+	add_child(survival_build)
+	survival_build.configure(world, player, camera, state)
+	_death_bag_root = Node2D.new()
+	_death_bag_root.name = "DeathBags"
+	add_child(_death_bag_root)
+	_sync_death_bags()
+	var svc2 := get_node_or_null("/root/SurvivalService")
+	if svc2 != null and svc2.has_signal(&"survival_state_changed"):
+		svc2.connect(&"survival_state_changed", _on_survival_state_changed)
+
+
+func _mount_authored_sites() -> void:
+	var report: Dictionary = world_authority.mount_physical_sites()
+	if not bool(report.get("ok", false)):
+		# Not fatal to the world, but it is named and it travels into the evidence:
+		# a player who cannot reach the quarry cannot be said to have reached it.
+		push_warning("A0 physical sites incomplete: " + JSON.stringify(report))
+	world_authority.bind_focus(player)
+
+
+func _stream_rect() -> Rect2:
+	if not is_inside_tree():
+		return Rect2(0, 0, 1280, 720)
+	var size := get_viewport_rect().size
+	return Rect2(player.global_position - size * 0.5, size)
+
+
+func _authored_spawn_world() -> Vector2:
+	var cell := world_authority.spawn_cell()
+	if cell.x < 0:
+		return Vector2(8, 8)
+	return Vector2(cell.x * OverworldWorld.TILE + OverworldWorld.TILE * 0.5,
+		cell.y * OverworldWorld.TILE + OverworldWorld.TILE * 0.5)
+
+
+func _build_annex_world() -> void:
+	var sources := _world_source_paths()
+	if build_stage == BuildStage.FAILED:
+		return
+	var world_path := String(sources.get("world", ""))
+	var layers_path := String(sources.get("layers", ""))
+	var props_path := String(sources.get("props", ""))
+	world_data = _load_json(world_path)
 	if world_data.is_empty():
-		_fail("world document missing at %s" % WORLD_DATA_PATH)
+		_fail("world document missing at %s" % world_path)
 		return
 	var landmark_names: Array = world_data.get("landmarks", [])
 	if landmark_names.size() != 10:
@@ -122,8 +486,11 @@ func _build_world() -> void:
 	world = WORLD_SCRIPT.new() as OverworldWorld
 	world.name = "World"
 	add_child(world)
-	if not world.build(world_data, LAYERS_PATH, PROPS_PATH, entities):
+	if not world.build(world_data, layers_path, props_path, entities):
 		_fail("world layers failed to paint")
+		return
+	_mount_world_extensions()
+	if build_stage == BuildStage.FAILED:
 		return
 
 	build_stage = BuildStage.SPAWNING_PLAYER
@@ -154,12 +521,111 @@ func _build_world() -> void:
 	# nodes and built structures carry collision, and the occlusion system has to
 	# see them when it buckets occluders.
 	_build_survival()
+	if _waystation_candidate_enabled() and survival_build != null:
+		survival_build.annex_disabled_from_x = 384
+	_build_economy_session()
+	_build_economy_composition()
 	_build_occlusion()
 	_build_hud()
+	if _waystation_candidate_enabled():
+		if economy_session == null:
+			_fail("Waystation candidate requires the A3 economy session")
+			return
+		var candidate_host := A0_WAYSTATION_HOST.new()
+		candidate_host.name = "WaystationRuntime"
+		add_child(candidate_host)
+		if not bool(candidate_host.call(&"configure", self, player, economy_session)):
+			candidate_host.queue_free()
+			_fail("Waystation candidate physical host refused")
+			return
+	# Separate opt-in A1 visual candidate: never silently reparent the Hero or
+	# activate unrelated region art. Default remains OFF pending visual review.
+	if bool(ProjectSettings.get_setting(WORLD_ART_CANDIDATE_SETTING, false)):
+		if not _waystation_candidate_enabled():
+			_fail("A1 roadside art candidate requires the guarded connector")
+			return
+		var art_result: Dictionary = A0_WORLD_ART_CANDIDATE.mount(self, player)
+		if not bool(art_result.get("ok", false)):
+			_fail("A1 roadside art candidate refused: " + String(art_result.get("reason", "unknown")))
+			return
+	_mount_optional_threat()
+	_build_economy_panel()
+	chest_panel = CHEST_PANEL_SCRIPT.new()
+	chest_panel.name = "ChestInventoryPanel"
+	add_child(chest_panel)
 	_connect_run_events()
 	_apply_hud()
 	build_stage = BuildStage.READY
 	world_ready.emit()
+	# A death interrupted after its save commit must resume the death screen,
+	# not grant a free life or create a second bag.
+	var survival := get_node_or_null("/root/SurvivalService")
+	if survival != null and not String((survival.call(&"document") as Dictionary).get("pending_death", "")).is_empty():
+		player.call(&"_die")
+
+
+## The annex is a route world now: it is built only in "annex" mode, and the
+## continent is no longer *also* mounted beside whatever else is on screen. One
+## world, one authority — that is the whole point of the R13 change.
+func _annex_mode_note() -> String:
+	return "Hollow Marches annex route world (legacy 384x256 content, reusable)"
+
+
+func _build_economy_session() -> void:
+	var save := get_node_or_null("/root/SaveService")
+	var survival := get_node_or_null("/root/SurvivalService")
+	if save == null or survival == null or survival_build == null:
+		return
+	economy_session = ECONOMY_SESSION_SCRIPT.new()
+	economy_session.name = "EconomySession"
+	add_child(economy_session)
+	if not bool(economy_session.call(&"configure", save, survival, self, survival_build, player)):
+		push_warning("Economy session unavailable; crafting remains disabled.")
+		economy_session.queue_free()
+		economy_session = null
+
+
+## A0 composition root: run lifecycle, A3 V7 profile port and offline
+## settlement, all bound to this live world. It is opt-in only in the sense that
+## a world without a configured A3 session cannot host it; a world WITH the
+## session must have it, or the player would be able to play a run that has no
+## durable identity.
+func _build_economy_composition() -> void:
+	if economy_session == null:
+		return
+	var composition := ECONOMY_COMPOSITION_SCRIPT.new()
+	composition.name = "EconomyComposition"
+	add_child(composition)
+	if not bool(composition.call(&"configure", self, player, economy_session)):
+		push_error("A0 economy composition refused: " + String(composition.get("last_error")))
+		composition.queue_free()
+		return
+	economy_composition = composition
+
+
+## A0 WP-A0.3: the guarded production threat. Placement is validated against the
+## live world by the encounter seam itself; a refusal is a build failure, never a
+## silent "no danger today", so a player can never be told one thing while the
+## world holds another.
+func _mount_optional_threat() -> void:
+	var mount := A0_THREAT_MOUNT.new()
+	mount.name = "A0ThreatMount"
+	add_child(mount)
+	var report: Dictionary = mount.call(&"mount", self, player, traversability, survival_build)
+	threat_mount = mount
+	if not bool(report.get("enabled", false)):
+		return
+	if not bool(report.get("mounted", false)):
+		_fail("A0 production threat refused: " + str(report.get("last_error", "unknown")))
+
+
+func _build_economy_panel() -> void:
+	if economy_session == null:
+		return
+	economy_panel = ECONOMY_PANEL_SCRIPT.new()
+	economy_panel.name = "EconomyPanel"
+	add_child(economy_panel)
+	economy_panel.call(&"configure", economy_session)
 
 
 func _build_traversability() -> void:
@@ -231,6 +697,10 @@ func _build_survival() -> void:
 	survival_build.name = "SurvivalBuild"
 	add_child(survival_build)
 	survival_build.configure(world, player, camera, state)
+	_death_bag_root = Node2D.new()
+	_death_bag_root.name = "DeathBags"
+	add_child(_death_bag_root)
+	_sync_death_bags()
 	var svc2 := get_node_or_null("/root/SurvivalService")
 	if svc2 != null and svc2.has_signal(&"survival_state_changed"):
 		svc2.connect(&"survival_state_changed", _on_survival_state_changed)
@@ -242,6 +712,7 @@ func _on_survival_state_changed() -> void:
 	# would destroy colliders the player is standing against.
 	if survival_build != null and is_instance_valid(survival_build):
 		survival_build.reconcile_from_save()
+	_sync_death_bags()
 	# Only the node that changed needs to re-read its own state, but the signal
 	# carries no identity — a chain of harvests is short, and refreshing the plan
 	# costs one dictionary lookup per node against a document already in memory.
@@ -249,6 +720,33 @@ func _on_survival_state_changed() -> void:
 		var node: SurvivalResourceNode = survival_nodes[node_id]
 		if is_instance_valid(node):
 			node.refresh()
+
+
+func _sync_death_bags() -> void:
+	if _death_bag_root == null or not is_instance_valid(_death_bag_root):
+		return
+	var svc := get_node_or_null("/root/SurvivalService")
+	if svc == null:
+		return
+	var bags: Dictionary = (svc.call(&"document") as Dictionary).get("death_bags", {})
+	for key: Variant in _death_bags.keys():
+		if not bags.has(key):
+			var old: Node = _death_bags[key]
+			_death_bags.erase(key)
+			if is_instance_valid(old):
+				old.queue_free()
+	for key: Variant in bags.keys():
+		if _death_bags.has(key) or not bags[key] is Dictionary:
+			continue
+		var record: Dictionary = bags[key]
+		var coords: Variant = record.get("position", [])
+		if String(record.get("region", "")) != "hollow_marches" or not coords is Array or coords.size() != 2:
+			continue
+		var node := DEATH_BAG_SCRIPT.new()
+		node.entity_id = String(key)
+		node.position = Vector2(float(coords[0]), float(coords[1]))
+		_death_bag_root.add_child(node)
+		_death_bags[key] = node
 
 
 func survival_node(node_id: String) -> SurvivalResourceNode:
@@ -306,6 +804,10 @@ func _app_flow() -> Node:
 # spawning
 # ---------------------------------------------------------------------------
 func _authored_spawn() -> Vector2:
+	# On the authored continent the spawn is A1's safe choice stored in A0's save,
+	# never the legacy refuge cell.
+	if world_authority != null and is_instance_valid(world_authority) and authored_world_active:
+		return _authored_spawn_world()
 	var start: Array = world_data.get("start_position", [56, 218])
 	if start.size() < 2:
 		return Vector2(56 * 16 + 8, 218 * 16 + 8)
@@ -432,6 +934,7 @@ func _build_hud() -> void:
 	hud = HUD_SCRIPT.new() as OverworldHud
 	hud.name = "HUD"
 	add_child(hud)
+	hud.respawn_requested.connect(_respawn_overworld_hero)
 
 
 # ---------------------------------------------------------------------------
@@ -536,13 +1039,29 @@ func _title_for_level(level_id: StringName) -> String:
 # ---------------------------------------------------------------------------
 # per-frame
 # ---------------------------------------------------------------------------
+# Opt-in bounded debug probe; samples this node's process chain only, not GPU,
+# other nodes, or complete frame time. Disabled in ordinary gameplay.
+var _perf_trace_enabled := false
+var _perf_trace_usec: Array[int] = []
+
+func _begin_perf_trace() -> void:
+	if OS.is_debug_build():
+		_perf_trace_usec.clear()
+		_perf_trace_enabled = true
+
+func _end_perf_trace() -> Array[int]:
+	_perf_trace_enabled = false
+	return _perf_trace_usec.duplicate()
+
 func _process(delta: float) -> void:
 	_frame_count += 1
 	if build_stage != BuildStage.READY:
 		return
 	if state == null or not is_instance_valid(player):
 		return
-	state.set_world_position(player.global_position)
+	var perf_start := Time.get_ticks_usec() if _perf_trace_enabled else 0
+	if not bool(player.get(&"dead")):
+		state.set_world_position(player.global_position)
 	if occlusion != null and is_instance_valid(occlusion):
 		occlusion.step(delta)
 	var hazard := _in_hazard(player.global_position)
@@ -551,34 +1070,170 @@ func _process(delta: float) -> void:
 	_apply_fatigue()
 	_apply_hud()
 	_handle_survival_input()
-	if Input.is_action_just_pressed(&"pause") or Input.is_action_just_pressed(&"ui_cancel"):
+	if world_authority != null and is_instance_valid(world_authority) and _frame_count % 10 == 0 \
+			and String(world_authority.inside_site()).is_empty():
+		# Inside a worksite the body stands at the interior origin, which is not a
+		# cell of the continent; streaming there would ask A1 for a chunk that cannot
+		# exist. The exterior stays loaded and suspended until the player walks out.
+		# Stream around the real viewport the camera is showing, not a fixed
+		# 1280x720 guess: a 2160p player sees four times as much continent.
+		var screen := get_viewport_rect().size
+		var view := Rect2(camera.get_screen_center_position() - screen * 0.5, screen)
+		var streamed: Dictionary = world_authority.advance(player.global_position, view)
+		# New chunk bodies are new collision. Walkability is a cache of what is really
+		# mounted, so it learns them before the next frame's movement is judged.
+		if traversability != null and traversability.has_method(&"refresh_bodies"):
+			traversability.call(&"refresh_bodies")
+		if not bool(streamed.get("ok", false)) and _frame_count % 120 == 0:
+			push_warning("A0 authored stream: " + String(streamed.get("error", "")))
+	if _perf_trace_enabled and _perf_trace_usec.size() < 240:
+		_perf_trace_usec.append(Time.get_ticks_usec() - perf_start)
+
+
+# Cancellation follows Godot's event dispatch instead of polling Input. A modal
+# that consumes Escape cannot also cause a retreat, and one Escape closes build
+# mode rather than both closing it and returning to the Sanctum.
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_echo():
+		return
+	if event.is_action_pressed(&"storage_toggle") and chest_panel != null and is_instance_valid(player) and not bool(player.get(&"dead")):
+		if bool(chest_panel.call(&"is_open")):
+			chest_panel.call(&"close_panel")
+		elif not _has_gameplay_modal() and _world_action_allowed(&"storage_toggle"):
+			var nearest: SurvivalStructure = null
+			var nearest_distance := SurvivalStructure.REACH
+			for value: Variant in survival_build._placed.values():
+				var candidate := value as SurvivalStructure
+				if not is_instance_valid(candidate) or candidate.piece_id != SurvivalStructure.PIECE_CHEST:
+					continue
+				var distance := candidate.global_position.distance_to(player.global_position)
+				if distance <= nearest_distance:
+					nearest = candidate
+					nearest_distance = distance
+			if nearest != null:
+				if survival_build.active:
+					survival_build.set_active(false)
+				chest_panel.call(&"open_chest", nearest, player, get_node_or_null("/root/SurvivalService"))
+			elif hud != null:
+				hud.show_prompt("Stand near a chest to choose items.", 2.0)
+		get_viewport().set_input_as_handled()
+		return
+	if event.is_action_pressed(&"economy_toggle") and economy_panel != null and not bool(player.get(&"dead")):
+		# A different visible modal owns input; do not stack a crafting panel on
+		# top of it. Closing our own panel remains available with the same key.
+		if _has_gameplay_modal() and not bool(economy_panel.call(&"is_open")):
+			get_viewport().set_input_as_handled()
+			return
+		if survival_build != null and survival_build.active:
+			survival_build.set_active(false)
+		economy_panel.call(&"toggle")
+		get_viewport().set_input_as_handled()
+		return
+	if not (event.is_action_pressed(&"pause") or event.is_action_pressed(&"ui_cancel")):
+		return
+	if (event.is_action_pressed(&"pause") and not _world_action_allowed(&"pause")) \
+			or (event.is_action_pressed(&"ui_cancel") and not _world_action_allowed(&"ui_cancel")):
+		get_viewport().set_input_as_handled()
+		return
+	if build_stage != BuildStage.READY:
+		return
+	if _has_gameplay_modal():
+		get_viewport().set_input_as_handled()
+		return
+	if survival_build != null and is_instance_valid(survival_build) and survival_build.active:
+		survival_build.set_active(false)
+	else:
 		_retreat_to_home()
+	get_viewport().set_input_as_handled()
+
+
+# A6 modal roots must join this group while visible; merely consuming mouse GUI
+# events is insufficient because build placement is polled from Input.
+## Physically nearest paid station, by the same reach the build system uses. A
+## station the player cannot stand next to cannot be prepared.
+func _prepare_work_at_nearest_station() -> void:
+	if economy_session == null or not is_instance_valid(economy_session) or survival_build == null:
+		return
+	var nearest := ""
+	var nearest_distance := 99999.0
+	for value: Variant in survival_build._placed.values():
+		var structure := value as SurvivalStructure
+		if structure == null or not is_instance_valid(structure) or not structure.piece_id.begins_with("station_"):
+			continue
+		var distance := structure.global_position.distance_to(player.global_position)
+		if distance <= SurvivalStructure.REACH and distance < nearest_distance:
+			nearest = String(structure.entity_id)
+			nearest_distance = distance
+	if nearest.is_empty():
+		_say("Stand at a workstation to keep its work running while you are away.")
+		return
+	var report: Dictionary = economy_session.call(&"prepare_work_away", nearest)
+	if bool(report.get("ok", false)):
+		var jobs: Array = report.get("prepared", [])
+		_say("Prepared %d job(s) to run while you are away." % jobs.size())
+	else:
+		var reason := String(report.get("reason", ""))
+		if reason == "nothing_in_progress":
+			_say("Nothing is being made here yet.")
+		elif reason == "already_prepared":
+			_say("That work is already prepared.")
+		else:
+			_say("Could not prepare that work (%s)." % reason)
+
+
+func _has_gameplay_modal() -> bool:
+	for node: Node in get_tree().get_nodes_in_group(&"gameplay_modal"):
+		if node is CanvasItem and (node as CanvasItem).is_visible_in_tree():
+			return true
+	return false
+
+
+func _world_action_allowed(action: StringName) -> bool:
+	return player == null or not is_instance_valid(player) or not player.has_method(&"gameplay_input_allowed") \
+		or bool(player.call(&"gameplay_input_allowed", action))
+
+
+func _world_action_just_pressed(action: StringName) -> bool:
+	return _world_action_allowed(action) and Input.is_action_just_pressed(action)
 
 
 ## Build-mode input. Deliberately a small, self-contained block: survival does not
 ## touch the Knight's combat bindings, and the modal build tool is enterable and
 ## leavable with one key so an accidental press cannot trap the player.
 func _handle_survival_input() -> void:
-	if survival_build == null or not is_instance_valid(survival_build):
+	# The ordinary interact key is how a player enters a worksite doorway, works at
+	# its socket, or walks back out. A0 remains the only code that moves the body.
+	if world_authority != null and is_instance_valid(world_authority) and not bool(player.get(&"dead")) \
+			and _world_action_just_pressed(&"interact") and not _has_gameplay_modal():
+		var result: Dictionary = world_authority.interact(player)
+		if bool(result.get("ok", false)) or String(result.get("action", "")) != "no_site_in_reach":
+			print("A0_SITE_INPUT ", JSON.stringify(result))
+			get_viewport().set_input_as_handled()
+			return
+	if _world_action_just_pressed(PREPARE_WORK_ACTION) and not bool(player.get(&"dead")):
+		_prepare_work_at_nearest_station()
 		return
-	if Input.is_action_just_pressed(&"build_toggle"):
+	if survival_build == null or not is_instance_valid(survival_build) or _has_gameplay_modal():
+		return
+	if _world_action_just_pressed(&"build_toggle"):
 		survival_build.set_active(not survival_build.active)
 		_say("Build: %s" % survival_build.selected_piece.replace("_", " ")
 			if survival_build.active else "Build closed")
 		return
 	if not survival_build.active:
 		return
-	if Input.is_action_just_pressed(&"ui_cancel"):
-		survival_build.set_active(false)
-		return
-	for index: int in 4:
-		if Input.is_action_just_pressed(&"build_slot_%d" % (index + 1)):
-			var ids: Array[String] = ["foundation_wood", "wall_wood", "door_wood", "chest_wood"]
+	for index: int in SurvivalBuildSystem.BUILD_SLOTS.size():
+		if _world_action_just_pressed(&"build_slot_%d" % (index + 1)):
+			var ids: Array[String] = SurvivalBuildSystem.BUILD_SLOTS
 			if index < ids.size() and survival_build.select_piece(ids[index]):
 				_say("Build: %s — %s" % [
 					ids[index].replace("_", " "), survival_build.cost_summary(ids[index])])
 				return
-	if Input.is_action_just_pressed(&"build_place"):
+	if _world_action_just_pressed(&"build_place"):
+		var hovered := get_viewport().gui_get_hovered_control()
+		if hovered != null and hovered.is_visible_in_tree() and hovered.mouse_filter != Control.MOUSE_FILTER_IGNORE \
+				and not survival_build.is_build_click_blocker(hovered):
+			return
 		var result := survival_build.try_place(survival_build.preview_cell())
 		if bool(result.get("ok", false)):
 			_say("Built %s." % survival_build.selected_piece.replace("_", " "))
@@ -600,6 +1255,10 @@ func _build_rejection_message(reason: String) -> String:
 			return "Something is already there."
 		"not_configured":
 			return "The ground here is not ready yet."
+		"no_hero_exit", "exit_check_limit":
+			return "Leave yourself a clear door and exit."
+		"hero_in_footprint":
+			return "Move clear before building there."
 		"duplicate_or_failed":
 			return "The build could not be recorded."
 		_:
@@ -652,9 +1311,39 @@ func _apply_hud() -> void:
 		state.discoveries.size(), discoveries.size(),
 		_open_shortcut_count(), int((world_data.get("shortcuts", []) as Array).size())
 	)
+	_refresh_carry()
+
+
+## Pack capacity is an A0 projection, not a HUD guess: SaveService owns the slot count
+## and reports both used and capacity in one snapshot. `_apply_hud` runs every frame,
+## so the snapshot is sampled at 4 Hz instead of per frame — the number changes when
+## the player picks something up, not 60 times a second.
+func _refresh_carry() -> void:
+	var now := Time.get_ticks_msec()
+	if now - _carry_sampled_at < CARRY_SAMPLE_MS:
+		return
+	_carry_sampled_at = now
+	var save_service := get_node_or_null("/root/SaveService")
+	if save_service == null or not save_service.has_method(&"get_inventory_capacity_snapshot"):
+		return
+	var snapshot: Dictionary = save_service.call(&"get_inventory_capacity_snapshot")
+	# `set_carry` is the HUD's to provide (A6 owns the presentation). A0 will not
+	# assume a widget API is present in every tree that mounts this world.
+	if hud.has_method(&"set_carry"):
+		hud.set_carry(
+			int(snapshot.get("bag_used", 0)),
+			int(snapshot.get("bag_capacity", 0)),
+		)
 
 
 func _region_label() -> String:
+	# On the authored continent A1 names the region; the legacy landmark table does
+	# not exist there, and an empty label would show the world id to the player.
+	if authored_world_active and world_authority != null and is_instance_valid(world_authority) \
+			and is_instance_valid(player):
+		var authored_label := String(world_authority.region_label_at(player.global_position))
+		if not authored_label.is_empty():
+			return authored_label
 	var region := _region_at(player.global_position) if is_instance_valid(player) else ""
 	if region.is_empty():
 		return "THE HOLLOW MARCHES"
@@ -708,9 +1397,15 @@ func _open_shortcut_count() -> int:
 	return count
 
 
-func _say(text: String) -> void:
+## Resource-node descendants discover this host via their ancestor chain.
+## Keep harvest success and full-pack feedback on the existing overworld HUD.
+func show_prompt(text: String, seconds := 3.0) -> void:
 	if hud != null:
-		hud.show_prompt(text)
+		hud.show_prompt(text, seconds)
+
+
+func _say(text: String) -> void:
+	show_prompt(text)
 	travel_prompt.emit(text)
 
 
@@ -838,6 +1533,9 @@ func _on_state_saved(ok: bool) -> void:
 
 
 func _connect_run_events() -> void:
+	var death_events := get_node_or_null("/root/GameEvents")
+	if death_events != null and not death_events.is_connected(&"player_died", _on_overworld_hero_died):
+		death_events.connect(&"player_died", _on_overworld_hero_died)
 	# A run that finishes while the overworld is still mounted (a very fast
 	# return, or a future in-place dungeon host) should still unlock its
 	# shortcut. The normal path is the AppFlow completion check at build time.
@@ -845,6 +1543,111 @@ func _connect_run_events() -> void:
 	if events != null and events.has_signal(&"run_completion_ready"):
 		if not events.is_connected(&"run_completion_ready", _on_run_completion_ready):
 			events.connect(&"run_completion_ready", _on_run_completion_ready)
+
+
+func _on_overworld_hero_died() -> void:
+	# The signal is global. Only the Hero belonging to this live world is ours;
+	# a dungeon's own Hero and checkpoint remain entirely under dungeon control.
+	if not is_instance_valid(player) or not bool(player.get(&"dead")) or build_stage != BuildStage.READY:
+		return
+	if survival_build != null:
+		survival_build.set_active(false)
+	if economy_panel != null:
+		economy_panel.call(&"close_panel")
+	if chest_panel != null:
+		chest_panel.call(&"close_panel")
+	if state != null:
+		state.save_now()
+	var svc := get_node_or_null("/root/SurvivalService")
+	var recorded := false
+	if svc != null:
+		recorded = bool((svc.call(&"begin_overworld_death", player.global_position) as Dictionary).get("ok", false))
+	if hud != null:
+		hud.show_death("You fell in the Hollow Marches. Choose respawn." if recorded else "Could not save your death bag. Retry respawn to save again.")
+	get_tree().paused = true
+
+
+# Fail closed instead of reviving into a wall. The static camp graph gives an
+# ordered search center; the live Hero shape checks every candidate, and a local
+# flood rejects sealed-off spots. No random choice or world-sized per-frame scan.
+func _fallback_has_escape(start: Vector2i) -> bool:
+	var pending: Array[Vector2i] = [start]
+	var seen: Dictionary = {start: true}
+	var cursor := 0
+	while cursor < pending.size() and cursor < 2048:
+		var cell: Vector2i = pending[cursor]
+		cursor += 1
+		# Protected route cells cannot legally be blocked by construction. Reaching
+		# one is stronger than merely finding several cells in a dead-end pocket.
+		if survival_build._on_route_detail(cell):
+			return true
+		for step: Vector2i in [Vector2i.UP, Vector2i.LEFT, Vector2i.RIGHT, Vector2i.DOWN]:
+			var next := cell + step
+			if seen.has(next):
+				continue
+			seen[next] = true
+			if survival_build.room_topology.room_at(next).is_empty() and survival_build._wake_cell_clear(next):
+				pending.append(next)
+	return false
+
+
+func _resolve_overworld_respawn() -> Dictionary:
+	if survival_build == null or not is_instance_valid(survival_build):
+		return {"ok": false, "reason": "world_not_ready"}
+	var svc := get_node_or_null("/root/SurvivalService")
+	if svc != null:
+		var doc: Dictionary = svc.call(&"document")
+		var bed_id := String(doc.get("spawn_anchor", ""))
+		if not bed_id.is_empty():
+			var wake: Dictionary = survival_build.bed_wake_position(bed_id)
+			if bool(wake.get("ok", false)):
+				wake["source"] = "bed"
+				return wake
+	var centers: Array[Vector2] = []
+	var camp := camps.get(String(state.last_camp_id), null) as OverworldCamp if state != null else null
+	if camp != null and is_instance_valid(camp):
+		centers.append(camp.rest_position())
+	centers.append(_authored_spawn())
+	for centre: Vector2 in centers:
+		var base := world.tile_of(centre)
+		for ring in range(0, 33):
+			for dy in range(-ring, ring + 1):
+				for dx in range(-ring, ring + 1):
+					if maxi(absi(dx), absi(dy)) != ring:
+						continue
+					var cell := base + Vector2i(dx, dy)
+					if not survival_build.room_topology.room_at(cell).is_empty() or not survival_build._wake_cell_clear(cell):
+						continue
+					if _fallback_has_escape(cell):
+						return {"ok": true, "position": Vector2(cell.x * 16 + 8, cell.y * 16 + 15), "source": "camp"}
+	return {"ok": false, "reason": "no_safe_fallback"}
+
+
+func _respawn_overworld_hero() -> bool:
+	if not is_instance_valid(player) or not bool(player.get(&"dead")):
+		return false
+	var svc := get_node_or_null("/root/SurvivalService")
+	if svc == null or not bool((svc.call(&"begin_overworld_death", player.global_position) as Dictionary).get("ok", false)):
+		if hud != null:
+			hud.show_death("Could not save your death bag. Please retry.")
+		return false
+	var destination := _resolve_overworld_respawn()
+	if not bool(destination.get("ok", false)):
+		if hud != null:
+			hud.show_death("No safe respawn point is currently available.")
+		return false
+	if not bool(svc.call(&"finish_overworld_death", destination["position"])):
+		if hud != null:
+			hud.show_death("Could not save respawn. Please retry.")
+		return false
+	player.call(&"respawn", destination["position"])
+	if state != null:
+		state.set_world_position(player.global_position, true)
+	if hud != null:
+		hud.hide_death()
+	get_tree().paused = false
+	_say("Returned to your bed." if String(destination.get("source", "")) == "bed" else "Returned to a safe camp.")
+	return true
 
 
 func _on_run_completion_ready(result: Dictionary, _options: Dictionary) -> void:

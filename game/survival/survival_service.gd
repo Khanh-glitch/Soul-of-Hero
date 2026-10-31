@@ -284,6 +284,110 @@ func harvest(node_id: String, kind: String, now_unix: int = -1) -> Dictionary:
 	return result.duplicate(true)
 
 
+## Harvest with a physically owned A3 tool: the node's hit, the bag grant and the
+## tool's wear are ONE SaveService commit. A3 (`soh.economy.tool_use.v1`) owns the
+## wear rule and re-plans from the live candidate, so a stale revision, a foreign
+## or broken tool, or a wrong node kind is refused before anything is written. A
+## full bag also refuses the whole swing, so a swing never costs condition without
+## paying out. `economy` is the live A0 economy session; it is the only holder of
+## the pinned A3 adapter, and this function follows the same node state machine as
+## [method harvest] so tool and hand swings cannot disagree about a node.
+func harvest_with_tool(
+	node_id: String,
+	kind: String,
+	economy: Node,
+	tool_instance_id: String,
+	world_revision: String,
+	active_seconds: int,
+	now_unix: int = -1,
+	expected_tool_revision: int = -1
+) -> Dictionary:
+	var definition := resource_definition(kind)
+	if definition.is_empty():
+		return {"ok": false, "reason": "unknown_resource_kind"}
+	var save := _save()
+	if save == null or economy == null:
+		return {"ok": false, "reason": "save_service_unavailable"}
+	var adapter: RefCounted = economy.get("_adapter")
+	if adapter == null or not adapter.has_method(&"commit_tool_use"):
+		return {"ok": false, "reason": "a3_tool_use_unavailable"}
+	var item_id := String(definition.get("item", ""))
+	var item_kind := String(definition.get("item_kind", "material"))
+	var per_hit := maxi(1, int(definition.get("per_hit", 1)))
+	var full_hits := maxi(1, int(definition.get("hits", 1)))
+	var respawn := maxi(0, int(definition.get("respawn_seconds", 0)))
+	var stamp := now_unix if now_unix >= 0 else int(Time.get_unix_time_from_system())
+	var stored: Dictionary = (document().get("resource_nodes", {}) as Dictionary).get(node_id, {})
+	var next_harvest := int(stored.get("harvests", 0)) + 1
+	var instances: Dictionary = (adapter.call(&"document") as Dictionary).get("instances", {})
+	if not instances.has(tool_instance_id):
+		return {"ok": false, "reason": "TOOL_NOT_OWNED", "node_id": node_id}
+	var request := {
+		"contract": "soh.economy.tool_use.v1",
+		"node_id": node_id,
+		"resource_kind": kind,
+		"tool_instance_id": tool_instance_id,
+		# A caller that planned ahead passes the revision it planned with, so A3 can
+		# refuse a plan that went stale. -1 means "commit against the live tool",
+		# which is only safe for a caller that holds the single write path.
+		"expected_tool_revision": expected_tool_revision if expected_tool_revision >= 0 \
+			else int((instances[tool_instance_id] as Dictionary).get("revision", -1)),
+		"world_revision": world_revision,
+		"active_seconds": active_seconds,
+	}
+	var result := {"ok": false, "reason": "rejected"}
+	var grant := func(candidate: Dictionary) -> bool:
+		var document_candidate: Dictionary = SurvivalStateData.sanitize(candidate.get("survival", {}))
+		var nodes: Dictionary = document_candidate.get("resource_nodes", {})
+		var entry: Dictionary = nodes.get(node_id, {})
+		var hits_left := int(entry.get("hits_left", full_hits))
+		var depleted_at := int(entry.get("depleted_at", 0))
+		if hits_left <= 0 and respawn > 0 and depleted_at > 0 and stamp >= depleted_at + respawn:
+			hits_left = full_hits
+			depleted_at = 0
+		if hits_left <= 0:
+			result["reason"] = "depleted"
+			return false
+		var remaining := hits_left - 1
+		nodes[node_id] = {
+			"hits_left": remaining,
+			"depleted_at": stamp if remaining <= 0 else 0,
+			"harvests": int(entry.get("harvests", 0)) + 1,
+		}
+		document_candidate["resource_nodes"] = nodes
+		candidate["survival"] = document_candidate
+		if not bool(save.call(&"add_items_to_candidate", candidate, item_id, item_kind, per_hit,
+				{"source": "resource_node", "node_id": node_id, "kind": kind, "tool": tool_instance_id})):
+			# A full bag must not cost tool condition: refuse the whole swing.
+			result["reason"] = "inventory_full"
+			return false
+		result["item_id"] = item_id
+		result["quantity"] = per_hit
+		result["hits_left"] = remaining
+		return true
+	var committed: Dictionary = adapter.call(&"commit_tool_use", request,
+		"harvest.%s.%d.%s" % [node_id, next_harvest, tool_instance_id.substr(0, 24)], grant)
+	var out := {
+		"ok": bool(committed.get("ok", false)),
+		"reason": String(committed.get("reason", "")),
+		"node_id": node_id,
+		"tool_instance_id": tool_instance_id,
+		"item_id": String(result.get("item_id", "")),
+		"quantity": int(result.get("quantity", 0)),
+		"hits_left": int(result.get("hits_left", 0)),
+		"wear": (committed.get("wear", {}) as Dictionary).duplicate(true),
+		"plan_id": String((committed.get("plan", {}) as Dictionary).get("plan_id", "")),
+	}
+	if not out["ok"]:
+		transaction_rejected.emit(String(out["reason"]))
+		return out
+	harvested.emit(node_id, out["item_id"], out["quantity"], out["hits_left"])
+	if out["hits_left"] <= 0:
+		resource_depleted.emit(node_id)
+	survival_state_changed.emit()
+	return out
+
+
 ## Whether a node can be swung at right now (ignores whether the bag has room).
 func is_node_harvestable(node_id: String, kind: String, now_unix: int = -1) -> bool:
 	var definition := resource_definition(kind)
@@ -296,6 +400,44 @@ func is_node_harvestable(node_id: String, kind: String, now_unix: int = -1) -> b
 		return true
 	var depleted_at := int(state.get("depleted_at", 0))
 	return respawn > 0 and depleted_at > 0 and stamp >= depleted_at + respawn
+
+
+# A surface can share a cell with one physical object; other objects may not
+# overlap each other. This is derived from catalog data, so old saves need no rewrite.
+func occupancy_layer(piece_id: String) -> String:
+	return "floor" if String(piece_definition(piece_id).get("kind", "")) == "floor" else "object"
+
+
+## Fixed catalog footprints are the shared save/world occupancy contract.
+## Unknown or legacy pieces retain the historical single-cell footprint.
+func footprint_cells(piece_id: String, origin: Vector2i) -> Array[Vector2i]:
+	var raw: Variant = piece_definition(piece_id).get("footprint", [1, 1])
+	var size := Vector2i.ONE
+	if raw is Array and (raw as Array).size() == 2:
+		size = Vector2i(clampi(int(raw[0]), 1, 8), clampi(int(raw[1]), 1, 8))
+	var cells: Array[Vector2i] = []
+	for y in range(size.y):
+		for x in range(size.x):
+			cells.append(origin + Vector2i(x, y))
+	return cells
+
+
+## Resolves only durable player-owned station records, never caller metadata.
+func resolve_station(station_id: String) -> Dictionary:
+	var entry: Dictionary = structures().get(station_id, {})
+	var definition := piece_definition(String(entry.get("piece", "")))
+	if String(definition.get("kind", "")) != "station":
+		return {}
+	var origin_key := String(entry.get("origin_key", ""))
+	if origin_key.is_empty():
+		return {} # A station without its placement receipt has no safe revision.
+	var condition := int(entry.get("station_condition", 100))
+	return {"ok": true, "station_id": station_id,
+		"kind": String(definition.get("station_kind", "")),
+		"tier": int(definition.get("station_tier", 1)),
+		"queue_capacity": int(definition.get("queue_capacity", 1)),
+		"operational": bool(entry.get("station_enabled", true)) and condition > 0,
+		"condition": condition, "station_revision": "placed:" + station_id + ":" + origin_key.sha256_text()}
 
 
 # ---------------------------------------------------------------------------
@@ -322,6 +464,8 @@ func place_structure(
 	var save := _save()
 	if save == null:
 		return {"ok": false, "reason": "save_service_unavailable"}
+	if String(definition.get("kind", "")) == "station" and not spatial_validator.is_valid():
+		return {"ok": false, "reason": "world_validation_required"}
 	var cost: Dictionary = definition.get("cost", {})
 	if not can_afford(cost):
 		var shortfall := missing_for(cost)
@@ -340,14 +484,21 @@ func place_structure(
 		func(candidate: Dictionary) -> bool:
 			var document_candidate: Dictionary = SurvivalStateData.sanitize(candidate.get("survival", {}))
 			var placed: Dictionary = document_candidate.get("structures", {})
+			var requested_cells := footprint_cells(piece_id, cell)
 			for existing_id: Variant in placed.keys():
 				var existing: Dictionary = placed[existing_id]
 				var existing_cell: Array = existing.get("cell", [])
-				if existing_cell.size() >= 2 \
-						and int(existing_cell[0]) == cell.x and int(existing_cell[1]) == cell.y:
-					result["ok"] = false
-					result["reason"] = "cell_occupied"
-					return false
+				if existing_cell.size() < 2 or occupancy_layer(String(existing.get("piece", ""))) != occupancy_layer(piece_id):
+					continue
+				var existing_origin := Vector2i(int(existing_cell[0]), int(existing_cell[1]))
+				for occupied_cell: Vector2i in footprint_cells(String(existing.get("piece", "")), existing_origin):
+					if occupied_cell in requested_cells:
+						result["ok"] = false
+						result["reason"] = "cell_occupied"
+						return false
+			if spatial_validator.is_valid() and not String(spatial_validator.call()).is_empty():
+				result["reason"] = "world_changed"
+				return false
 			# Payment and creation are in this one mutator: if the removal fails
 			# nothing is created, and if the commit fails neither happened.
 			for item_id: Variant in cost.keys():
@@ -359,6 +510,9 @@ func place_structure(
 					result["reason"] = "cannot_afford"
 					return false
 			var entity_id := SurvivalStateData.next_structure_id(document_candidate)
+			if placed.has(entity_id):
+				result["reason"] = "identity_collision"
+				return false
 			placed[entity_id] = {
 				"piece": piece_id,
 				"cell": [cell.x, cell.y],
@@ -395,6 +549,214 @@ func place_structure(
 	return result.duplicate(true)
 
 
+## Atomically move carried stack records, not permanent knowledge or equipped
+## Hero identities, into a distinct durable overworld death bag. The pending id
+## also prevents a crash/reload from creating a second bag for the same death.
+func begin_overworld_death(position: Vector2) -> Dictionary:
+	var save := _save()
+	if save == null or not is_finite(position.x) or not is_finite(position.y):
+		return {"ok": false, "reason": "invalid_death"}
+	var before := document()
+	var pending := String(before.get("pending_death", ""))
+	if not pending.is_empty():
+		return {"ok": true, "entity_id": pending, "already_pending": true}
+	var serial := int((before.get("counters", {}) as Dictionary).get("deaths", 0)) + 1
+	var bag_id := "death_%d" % serial
+	var applied := bool(save.call(&"transact_once", "survival.death.%d" % serial,
+		func(candidate: Dictionary) -> bool:
+			var doc := SurvivalStateData.sanitize(candidate.get("survival", {}))
+			var counters: Dictionary = doc.get("counters", {})
+			if int(counters.get("deaths", 0)) != serial - 1 or not String(doc.get("pending_death", "")).is_empty():
+				return false
+			var inventory: Dictionary = candidate.get("inventory", {})
+			var stacks: Dictionary = inventory.get("item_stacks", {})
+			var dropped: Dictionary = {}
+			var retained: Dictionary = {}
+			for raw_key: Variant in stacks.keys():
+				if not stacks[raw_key] is Dictionary:
+					return false
+				var record: Dictionary = stacks[raw_key]
+				var base_id := String(record.get("item_id", raw_key))
+				# A3 instances have a coupled attribute record. Until death-bag
+				# ownership is supported by its audit, keep the token in the bag;
+				# moving it alone would create a broken/orphaned unique item.
+				if base_id.begins_with("soh_i_"):
+					retained[raw_key] = record.duplicate(true)
+				else:
+					dropped[raw_key] = record.duplicate(true)
+			var bags: Dictionary = doc.get("death_bags", {})
+			if bags.has(bag_id):
+				return false
+			bags[bag_id] = {"region": "hollow_marches", "position": [position.x, position.y], "stacks": dropped}
+			inventory["item_stacks"] = retained
+			candidate["inventory"] = inventory
+			doc["death_bags"] = bags
+			doc["pending_death"] = bag_id
+			counters["deaths"] = serial
+			doc["counters"] = counters
+			candidate["survival"] = doc
+			return true,
+		{"kind": "survival_death", "entity_id": bag_id}))
+	if applied:
+		survival_state_changed.emit()
+	return {"ok": applied, "entity_id": bag_id if applied else "", "reason": "" if applied else "commit_failed"}
+
+
+## Exactly one commit clears pending death and records the safe overworld spawn.
+## Crash before the commit leaves the Hero dead; after it the new position loads.
+func finish_overworld_death(position: Vector2) -> bool:
+	var save := _save()
+	var pending := String(document().get("pending_death", ""))
+	if save == null or pending.is_empty() or not is_finite(position.x) or not is_finite(position.y):
+		return false
+	var applied := bool(save.call(&"transact_once", "survival.respawn." + pending,
+		func(candidate: Dictionary) -> bool:
+			var doc := SurvivalStateData.sanitize(candidate.get("survival", {}))
+			if String(doc.get("pending_death", "")) != pending:
+				return false
+			doc["pending_death"] = ""
+			candidate["survival"] = doc
+			var overworld: Dictionary = candidate.get("overworld", {})
+			var state: Dictionary = overworld.get("hollow_marches", {})
+			state["last_position"] = [position.x, position.y]
+			overworld["hollow_marches"] = state
+			candidate["overworld"] = overworld
+			return true,
+		{"kind": "survival_respawn", "entity_id": pending}))
+	if applied:
+		survival_state_changed.emit()
+	return applied
+
+
+## Recover the entire bag or none. Stack records stay distinct (no merge and no
+## provenance replacement); a full inventory leaves the bag untouched.
+func recover_death_bag(bag_id: String) -> bool:
+	var save := _save()
+	if save == null:
+		return false
+	var applied := bool(save.call(&"transact_once", "survival.death.recover." + bag_id,
+		func(candidate: Dictionary) -> bool:
+			var doc := SurvivalStateData.sanitize(candidate.get("survival", {}))
+			var bags: Dictionary = doc.get("death_bags", {})
+			if not bags.has(bag_id) or String(doc.get("pending_death", "")) == bag_id:
+				return false
+			var bag: Dictionary = bags[bag_id]
+			var raw: Variant = bag.get("stacks", null)
+			if not raw is Dictionary:
+				return false
+			var inventory: Dictionary = candidate.get("inventory", {})
+			var stacks: Dictionary = inventory.get("item_stacks", {})
+			var entries: Dictionary = raw
+			var occupied: int = (inventory.get("hero_souls", []) as Array).size() + (inventory.get("auxiliary_equipment", []) as Array).size() + stacks.size()
+			if occupied + entries.size() > 30:
+				return false
+			for raw_key: Variant in entries.keys():
+				var key := String(raw_key)
+				if not entries[raw_key] is Dictionary:
+					return false
+				var record: Dictionary = (entries[raw_key] as Dictionary).duplicate(true)
+				var item_id := String(record.get("item_id", key))
+				# No A3 instance location exists for death bags yet. Never recover
+				# an injected/stale token as an uncoupled duplicate.
+				if item_id.strip_edges().to_lower().begins_with("soh_i_") or key.strip_edges().to_lower().begins_with("soh_i_"):
+					return false
+				if stacks.has(key):
+					key = String(save.call(&"_next_inventory_stack_key", stacks, item_id))
+				if key == item_id:
+					record.erase("item_id")
+				else:
+					record["item_id"] = item_id
+				stacks[key] = record
+			inventory["item_stacks"] = stacks
+			candidate["inventory"] = inventory
+			bags.erase(bag_id)
+			doc["death_bags"] = bags
+			candidate["survival"] = doc
+			return true,
+		{"kind": "survival_death_recovery", "entity_id": bag_id}))
+	if applied:
+		survival_state_changed.emit()
+	return applied
+
+
+## The scene supplies ownership, proximity, enclosure and safe-wake validation.
+## The transaction rechecks structure identity and its expected activation serial.
+func activate_bed(entity_id: String, validator: Callable) -> Dictionary:
+	var save := _save()
+	var doc := document()
+	var record: Dictionary = (doc.get("structures", {}) as Dictionary).get(entity_id, {})
+	if save == null or String(record.get("piece", "")) != "bed_wood":
+		return {"ok": false, "reason": "not_a_bed"}
+	if not validator.is_valid() or not bool(validator.call()):
+		return {"ok": false, "reason": "bed_not_safe"}
+	if String(doc.get("spawn_anchor", "")) == entity_id:
+		return {"ok": true, "already_active": true}
+	var counters: Dictionary = doc.get("counters", {})
+	var revision := int(counters.get("bed_activations", 0))
+	var applied := bool(save.call(&"transact_once", "survival.bed.activation.%d" % (revision + 1),
+		func(candidate: Dictionary) -> bool:
+			var current := SurvivalStateData.sanitize(candidate.get("survival", {}))
+			var placed: Dictionary = current.get("structures", {})
+			var bed: Dictionary = placed.get(entity_id, {})
+			var next_counters: Dictionary = current.get("counters", {})
+			if String(bed.get("piece", "")) != "bed_wood" or int(next_counters.get("bed_activations", 0)) != revision:
+				return false
+			if not bool(validator.call()):
+				return false
+			current["spawn_anchor"] = entity_id
+			next_counters["bed_activations"] = revision + 1
+			current["counters"] = next_counters
+			candidate["survival"] = current
+			return true,
+		{"kind": "survival_bed_activation", "entity_id": entity_id}))
+	if applied:
+		survival_state_changed.emit()
+	return {"ok": applied, "reason": "" if applied else "commit_failed"}
+
+
+## Toggle a door atomically. Closing requires a world-owned overlap validator;
+## the autoload cannot determine whether a live Hero occupies the doorway.
+## The per-door revision generates distinct action keys while an optional stable
+## request key allows a caller to reject replay of the same logical command.
+func toggle_door(entity_id: String, close_validator: Callable, request_key := "") -> Dictionary:
+	var save := _save()
+	var entry: Dictionary = structures().get(entity_id, {})
+	if save == null or String(entry.get("piece", "")) != "door_wood":
+		return {"ok": false, "reason": "not_a_door"}
+	var revision := int(entry.get("door_revision", 0))
+	var key := request_key if not request_key.is_empty() else "survival.door.%s.%d" % [entity_id, revision + 1]
+	var result := {"ok": false, "reason": "rejected"}
+	var applied := bool(save.call(
+		&"transact_once", key,
+		func(candidate: Dictionary) -> bool:
+			var doc: Dictionary = SurvivalStateData.sanitize(candidate.get("survival", {}))
+			var placed: Dictionary = doc.get("structures", {})
+			var current: Dictionary = placed.get(entity_id, {})
+			if String(current.get("piece", "")) != "door_wood" or int(current.get("door_revision", 0)) != revision:
+				result["reason"] = "changed"
+				return false
+			var was_open := bool(current.get("door_open", false))
+			if was_open and (not close_validator.is_valid() or not bool(close_validator.call())):
+				result["reason"] = "doorway_occupied"
+				return false
+			current["door_open"] = not was_open
+			current["door_revision"] = revision + 1
+			placed[entity_id] = current
+			doc["structures"] = placed
+			candidate["survival"] = doc
+			result["ok"] = true
+			result["reason"] = ""
+			result["open"] = not was_open
+			return true,
+		{"kind": "survival_door", "entity_id": entity_id},
+	))
+	if not applied:
+		result["ok"] = false
+		return result
+	survival_state_changed.emit()
+	return result
+
+
 ## Removes a structure without refunding. Demolition economics are A3's; this is
 ## the primitive they will call, and it exists now so that a misplaced structure
 ## is never a permanent save-file artefact during development.
@@ -410,9 +772,16 @@ func remove_structure(entity_id: String) -> bool:
 			var placed: Dictionary = document_candidate.get("structures", {})
 			if not placed.has(entity_id):
 				return false
-			placed.erase(entity_id)
-			document_candidate["structures"] = placed
 			var containers: Dictionary = document_candidate.get("containers", {})
+			# Never destroy a container and silently delete its contents. This
+			# guard is inside the transaction so the check and removal are atomic.
+			var contents: Dictionary = containers.get(entity_id, {})
+			if not contents.is_empty():
+				return false
+			placed.erase(entity_id)
+			if String(document_candidate.get("spawn_anchor", "")) == entity_id:
+				document_candidate["spawn_anchor"] = ""
+			document_candidate["structures"] = placed
 			containers.erase(entity_id)
 			document_candidate["containers"] = containers
 			candidate["survival"] = document_candidate
@@ -459,7 +828,7 @@ func _transfer(
 		into_container: bool,
 ) -> bool:
 	var normalized := item_id.strip_edges().to_lower()
-	if normalized.is_empty() or quantity < 1 or transaction_key.strip_edges().is_empty():
+	if normalized.is_empty() or normalized.begins_with("soh_i_") or quantity < 1 or transaction_key.strip_edges().is_empty():
 		return false
 	var save := _save()
 	if save == null:
@@ -485,7 +854,7 @@ func _transfer(
 				var capacity := int(piece_definition("chest_wood").get("slots", 12))
 				var would_be := contents.duplicate(true)
 				would_be[normalized] = int(would_be.get(normalized, 0)) + quantity
-				if would_be.size() > capacity:
+				if would_be.size() > capacity or int(would_be[normalized]) > MAX_STACK_PER_SLOT:
 					return false
 				contents = would_be
 			else:
@@ -534,6 +903,25 @@ func inventory_totals() -> Dictionary:
 	return (save.call(&"inventory_totals") as Dictionary).duplicate(true)
 
 
+## Whether generic chest sweeps can move this item without breaking an A3
+## instance/attribute pair. Coupled instances require a dedicated A3 operation.
+func is_sweepable_item(item_id: String) -> bool:
+	var normalized := item_id.strip_edges().to_lower()
+	return not normalized.is_empty() and not normalized.begins_with("soh_i_")
+
+
+## Only items the one-press generic chest sweep is allowed to stash. In
+## particular, carrying a protected A3 instance must not prevent taking ordinary
+## materials out of a chest.
+func sweepable_inventory_totals() -> Dictionary:
+	var result := {}
+	var totals := inventory_totals()
+	for item_id: Variant in totals.keys():
+		if is_sweepable_item(String(item_id)) and int(totals[item_id]) > 0:
+			result[item_id] = int(totals[item_id])
+	return result
+
+
 ## Moves *everything* that fits from the bag into a container, as one commit.
 ##
 ## This is the one-press stash verb. It is deliberately all-or-nothing per item:
@@ -566,26 +954,32 @@ func _transfer_all(container_id: String, into_container: bool) -> Dictionary:
 	var planned: Dictionary = {}
 	var projected_slots := stored.size()
 	for item_id: Variant in source.keys():
+		# Leave coupled unique instances where the A3 ownership audit supports
+		# them; ordinary materials can still be deposited in the same sweep.
+		if not is_sweepable_item(String(item_id)):
+			continue
 		var quantity := int(source[item_id])
 		if quantity <= 0:
 			continue
 		if into_container and not stored.has(item_id):
-			if projected_slots + planned.size() >= capacity:
+			if projected_slots >= capacity:
 				continue
+			projected_slots += 1
 		planned[String(item_id)] = quantity
 	if planned.is_empty():
 		return {"ok": false, "reason": "container_full", "moved": {}}
 	var moved: Dictionary = {}
-	# One commit for the whole sweep. The key includes the planned quantities so
-	# that the identical sweep replayed in the same second is refused, while a
-	# genuinely different sweep gets its own receipt.
-	var signature := ""
-	for item_id: Variant in planned.keys():
-		signature += "%s=%d;" % [String(item_id), int(planned[item_id])]
+	# A committed sequence distinguishes two legitimate identical sweeps. The
+	# old quantity signature permanently rejected the second identical deposit.
+	# A failed candidate does not advance this counter or leave a receipt.
+	var sequence := int((document().get("counters", {}) as Dictionary).get("container_sweeps", 0)) + 1
+	# An older build may drop this new counter while retaining transaction receipts.
+	# Skip those receipts rather than making the next sweep permanently unusable.
+	while bool(save.call(&"is_transaction_applied", "%sall.v2.%d" % [TX_TRANSFER_PREFIX, sequence])):
+		sequence += 1
 	var applied := bool(save.call(
 		&"transact_once",
-		"%sall.%s.%s.%s" % [
-			TX_TRANSFER_PREFIX, container_id, "in" if into_container else "out", signature.md5_text()],
+		"%sall.v2.%d" % [TX_TRANSFER_PREFIX, sequence],
 		func(candidate: Dictionary) -> bool:
 			var document_candidate: Dictionary = SurvivalStateData.sanitize(candidate.get("survival", {}))
 			var containers: Dictionary = document_candidate.get("containers", {})
@@ -621,6 +1015,9 @@ func _transfer_all(container_id: String, into_container: bool) -> Dictionary:
 				return false
 			containers[container_id] = contents
 			document_candidate["containers"] = containers
+			var counters: Dictionary = document_candidate.get("counters", {})
+			counters["container_sweeps"] = sequence
+			document_candidate["counters"] = counters
 			candidate["survival"] = document_candidate
 			return true,
 		{

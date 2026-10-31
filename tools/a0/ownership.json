@@ -1,0 +1,135 @@
+# A0-owned composition declarations (Round 12, WP-A0.1).
+#
+# Every owner publishes files inside a declared scope. The composer refuses to
+# copy a file outside a scope, records every file two owners both touched, and
+# applies ONE documented ruling per integration file. Nothing here changes what
+# an owner owns; it makes the join reproducible, auditable and fail-closed.
+#
+# Ruling kinds:
+#   accept_owner  A0 accepts the owner's version verbatim (A0 did not change it).
+#   a0_resolution A0 committed a reviewed three-way merge under
+#                 tools/a0/merges/ (*.gd.merged: the .merged extension keeps the
+#                 artifact out of Godot's global class registry, which otherwise
+#                 sees a duplicate `class_name` and fails to load SaveService);
+#                 the composer copies that, never a blind copy.
+#   reject        A0 refuses the owner's change; the composition FAILS if the
+#                 owner still carries it, so it cannot silently disappear.
+{
+  "schema": "soh.a0.owner_composition.v2",
+  "precedence": ["a1", "a3", "a8", "a6"],
+  "owners": {
+    "a1": {
+      "branch": "arena/e385312a-soul-of-hero",
+      "scopes": ["data/survival/world/", "data/overworld/", "assets/environment/",
+        "tests/survival/world/", "game/survival/world/"],
+      "note": "A1 owns geography, stands, hazard geometry and biome material references. A1's own reader and its tests live under tests/survival/world/ at the pinned SHA (SURV-050A: tests/survival/world/godot/chunk_reader.gd), so that tree is composed as A1's authoring surface; as of PR20 8551a323 A1 also publishes the production interfaces game/survival/world/a1_authored_world_reader.gd and a1_authored_world_stream.gd, which A0 prefers and mounts beside its own inset. A0 forks neither reader nor streamer."
+    },
+    "a3": {
+      "branch": "arena/7a12b27e-soul-of-hero",
+      "scopes": ["data/survival/items/", "data/survival/recipes/", "game/survival/economy/vendor/"],
+      "note": "A3 owns item catalog, recipes, stations, research, prices, yields and the pinned economy service."
+    },
+    "a8": {
+      "branch": "arena/2d7e6d7a-soul-of-hero",
+      "scopes": ["data/survival/world_content/", "game/survival/world_content/", "tests/survival/world_content/", "tests/fixtures/survival/world_content/"],
+      "note": "A8 owns POI world content and its neutral action identities. Rewards stay empty until A3 authorizes."
+    },
+    "a6": {
+      "branch": "arena/05e0328d-soul-of-hero",
+      "scopes": [
+        "game/ui/",
+        "game/survival/ui/",
+        "assets/a6_ui/",
+        "tests/survival/ui/",
+        "game/survival/player/",
+        "docs/survival/ux/",
+        "tools/review/",
+        "tools/fetch_a6_avatar_sources.sh",
+        "tools/fetch_a6_ui_sources.sh",
+        "tools/import_a6_ui_art.py",
+        "tools/stage_a6_avatar_art.py",
+        "tools/run_a6_native_gates.sh",
+        "tools/run_a6_return_ui_gate.sh",
+        "tools/verify_a6_return_ui_captures.py",
+        "tests/startup_profile_choice_test.gd"
+      ],
+      "note": "A6 owns presentation: title, avatar choice, HUD, panels, item icons and their tests."
+    }
+  },
+  "known_stale_seats": {
+    "game/survival/ui/expedition_workspace.tscn": {
+      "why": "A6's research workspace scene existed at 8bc0af5a and 63d3fae5 and was withdrawn in A6's rewritten history (first absent at 9afb7c8c, still absent at 81c1f57e). A0's earlier modal-composition test still names it, so the composition reports the break instead of hiding it; the Round 12 workflow runs A6's current suites and does not claim that scene.",
+      "owner_action": "A6: publish the current workspace scene name or confirm the workspace is out of scope for Round 12; A0 then re-pins its modal composition test."
+    },
+    "game/survival/web_probe_ci.gd": {
+      "why": "tools/survival/web_probe.tscn already referenced a script that does not exist at A0 base 738e621b. It predates this composition and is not used by any Round 12 job.",
+      "owner_action": "A0: delete or repair the dormant web-probe scene outside the survival journey."
+    }
+  },
+  "rulings": {
+    "game/ui/screens/title/title_screen.gd": {
+      "kind": "accept_owner",
+      "owner": "a6",
+      "why": "A6 owns the title screen, including the new-profile flow through avatar choice. A0's earlier hook (start the run inside _start_new_game) is dropped on purpose: it started the 336 h clock at the title, before the player had an identity or a world. The mounted world opens a run when none exists (game/survival/economy/a0_economy_composition.gd), which is the truer moment and still fails closed."
+    },
+    "game/autoload/save_service.gd": {
+      "kind": "a0_resolution",
+      "owners": ["a0", "a6"],
+      "winner": "a0",
+      "merge": "tools/a0/merges/save_service.gd.merged",
+      "why": "A0 owns the single SaveService. A6 needs player identity to be durable and projected, so A6 authored a 173-line identity block (schema, commit path, sanitizer). A0 applied it as a reviewed three-way merge on top of its own Round 11 survival/reset additions in ONE service: no second wallet, no second clock, no parallel save. A6's authorship is credited in the merge commit and in the Round 12 review."
+    },
+    "game/overworld/chapter1_overworld.gd": {
+      "kind": "a0_resolution",
+      "owners": ["a0", "a6"],
+      "winner": "a0",
+      "merge": "tools/a0/merges/chapter1_overworld.gd.merged",
+      "why": "A0 owns the live world build order. A6 contributed avatar/style wiring; A0 contributed the economy composition, the guarded A1 art candidate, the Round 12 threat mount and the A1 authored-stream mount (off by default). The reviewed merge keeps all three and is the file the A0 journey tests run."
+    },
+    "tests/survival_normal_entry_home_restart_test.gd": {
+      "kind": "accept_owner",
+      "owner": "a6",
+      "why": "A6 adapted A0's pointer journey to the new identity step instead of weakening it: the test now proves New Game -> avatar choice -> Home and still fails if Home does not open. A0 keeps it because it is strictly stronger, and it is listed here so the ownership change is visible."
+    },
+    "game/characters/knight/knight.tscn": {
+      "kind": "accept_owner",
+      "owner": "a6",
+      "why": "A6 adds a single AvatarPresenter node that reads A0's projection. The physical art it draws remains A1's; A0 does not ratify art, only that the node exists and the scene loads."
+    },
+    "game/app/app_flow.gd": {
+      "kind": "accept_owner",
+      "owner": "a6",
+      "why": "Adds the avatar_choice route. Additive; the A0 pointer journey exercises it end to end."
+    },
+    "game/app/app_root.gd": {
+      "kind": "accept_owner",
+      "owner": "a6",
+      "why": "Additive presentation bootstrapping; the composed boot is verified natively."
+    },
+    "game/overworld/overworld_hud.gd": {
+      "kind": "accept_owner",
+      "owner": "a6",
+      "why": "A6's art-directed HUD. A0 verifies the seats it depends on (set_provisions, show_death, respawn_requested, prompt) still exist and that the death/respawn journey works; the file itself is presentation."
+    },
+    "game/survival/economy/economy_panel.gd": {
+      "kind": "accept_owner",
+      "owner": "a6",
+      "why": "Presentation of A3's economy session. A0 does not accept a changed economy API through it: the A0 composition tests drive the real session, not this panel."
+    },
+    "game/survival/chest_inventory_panel.gd": {
+      "kind": "accept_owner",
+      "owner": "a6",
+      "why": "Presentation of A0's storage; A0's storage truth stays in SurvivalService and its tests."
+    },
+    "game/survival/survival_build_system.gd": {
+      "kind": "accept_owner",
+      "owner": "a6",
+      "why": "Additive reporting used by the build strip. A0's build/gather oracles are unchanged and are executed natively."
+    },
+    "game/survival/player/player_avatar_presenter.gd": {
+      "kind": "accept_owner",
+      "owner": "a6",
+      "why": "New presentation node; it reads the A0 identity projection and writes nothing."
+    }
+  }
+}

@@ -25,20 +25,27 @@ const GROUP := &"player_interactable"
 const SERVICE_PATH := "/root/SurvivalService"
 const REACH := 44.0
 const PIECE_CHEST := "chest_wood"
+const PIECE_DOOR := "door_wood"
+const PIECE_BED := "bed_wood"
 
 var _prompt: Label
 var _last_interaction: Dictionary = {}
 
 
 func _ready() -> void:
+	# Proximity prompts must disappear even when the death modal pauses play.
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	# A chest is interactable on its own terms, not because the build system
 	# remembered to put it in the group. Anything that materializes a structure —
 	# the build system now, a region loader or a save migration later — gets the
 	# same behaviour from the same place.
-	if piece_id != PIECE_CHEST:
+	if piece_id not in [PIECE_CHEST, PIECE_DOOR, PIECE_BED]:
 		return
 	add_to_group(GROUP)
-	set_meta("container_entity", entity_id)
+	if piece_id == PIECE_BED:
+		add_to_group(&"survival_bed")
+	if piece_id == PIECE_CHEST:
+		set_meta("container_entity", entity_id)
 	_build_prompt()
 	refresh_prompt()
 
@@ -47,8 +54,8 @@ func _build_prompt() -> void:
 	_prompt = Label.new()
 	_prompt.name = "Prompt"
 	_prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_prompt.position = Vector2(-70, -6)
-	_prompt.size = Vector2(140, 14)
+	_prompt.position = Vector2(-70, -26) if piece_id == PIECE_BED else Vector2(-70, -6)
+	_prompt.size = Vector2(140, 28)
 	_prompt.add_theme_font_size_override("font_size", 9)
 	_prompt.add_theme_color_override("font_color", Color(0.94, 0.9, 0.74))
 	_prompt.add_theme_color_override("font_outline_color", Color(0.04, 0.03, 0.06))
@@ -68,11 +75,11 @@ func chest_contents() -> Dictionary:
 	return svc.call(&"container_contents", entity_id)
 
 
-func _bag_is_empty() -> bool:
+func _bag_has_sweepable_items() -> bool:
 	var svc := service()
 	if svc == null:
-		return true
-	return (svc.call(&"inventory_totals") as Dictionary).is_empty()
+		return false
+	return not (svc.call(&"sweepable_inventory_totals") as Dictionary).is_empty()
 
 
 ## Which way the next press will move items. Shown in the prompt so the player is
@@ -80,7 +87,7 @@ func _bag_is_empty() -> bool:
 func interaction_verb() -> String:
 	if piece_id != PIECE_CHEST:
 		return ""
-	if not _bag_is_empty():
+	if _bag_has_sweepable_items():
 		return "stash"
 	if not chest_contents().is_empty():
 		return "take"
@@ -90,17 +97,34 @@ func interaction_verb() -> String:
 func refresh_prompt() -> void:
 	if _prompt == null:
 		return
+	if piece_id == PIECE_BED:
+		_prompt.text = "[CLICK] Set respawn bed"
+		return
+	if piece_id == PIECE_DOOR:
+		var svc := service()
+		if svc == null:
+			return
+		var record: Dictionary = (svc.call(&"structures") as Dictionary).get(entity_id, {})
+		var is_open := bool(record.get("door_open", false))
+		var shape := get_node_or_null("Solid/CollisionShape2D") as CollisionShape2D
+		if shape != null:
+			shape.set_deferred("disabled", is_open)
+		var sprite := get_node_or_null("Sprite") as Sprite2D
+		if sprite != null:
+			sprite.modulate = Color(0.65, 0.75, 0.65, 0.6) if is_open else Color.WHITE
+		_prompt.text = "[CLICK] Close door" if is_open else "[CLICK] Open door"
+		return
 	var contents := chest_contents()
 	var total := 0
 	for item_id: Variant in contents.keys():
 		total += int(contents[item_id])
 	match interaction_verb():
 		"stash":
-			_prompt.text = "[CLICK]  Stash items  (%d/%d)" % [contents.size(), capacity()]
+			_prompt.text = "[CLICK]  Stash items  (%d/%d)" % [contents.size(), capacity()] + "\n[V] Choose items"
 		"take":
-			_prompt.text = "[CLICK]  Take all  (%d stored)" % total
+			_prompt.text = "[CLICK]  Take all  (%d stored)" % total + "\n[V] Choose items"
 		_:
-			_prompt.text = "Chest — empty"
+			_prompt.text = "Chest — empty\n[V] Choose items"
 
 
 func capacity() -> int:
@@ -111,18 +135,63 @@ func capacity() -> int:
 
 
 func can_interact(player: Node2D) -> bool:
-	if piece_id != PIECE_CHEST:
+	if piece_id not in [PIECE_CHEST, PIECE_DOOR, PIECE_BED]:
 		return false
 	if player != null and is_instance_valid(player):
 		if player.global_position.distance_to(global_position) > REACH:
 			return false
-	return interaction_verb() != "empty"
+	return piece_id in [PIECE_DOOR, PIECE_BED] or interaction_verb() != "empty"
+
+
+func _doorway_clear() -> bool:
+	# Conservative clearance around the cell, accounting for the Hero collider.
+	# Scene ownership lives here rather than in the save autoload.
+	var centre := global_position + Vector2(8, 8)
+	for actor: Node in get_tree().get_nodes_in_group(&"player"):
+		if actor is Node2D and (actor as Node2D).global_position.distance_to(centre) < 24.0:
+			return false
+	# Query live actor bodies as well as the Hero. Terrain and the door itself are
+	# on layer 1; players and enemies use layers 2 and 4 respectively. Areas are
+	# excluded so an attack hitbox or interactable prompt cannot jam the door.
+	var query := PhysicsShapeQueryParameters2D.new()
+	var doorway := RectangleShape2D.new()
+	doorway.size = Vector2(16, 16)
+	query.shape = doorway
+	query.transform = Transform2D(0.0, centre)
+	query.collision_mask = 2 | 4
+	query.collide_with_areas = false
+	query.collide_with_bodies = true
+	for hit: Dictionary in get_world_2d().direct_space_state.intersect_shape(query, 64):
+		var collider: Variant = hit.get("collider")
+		if collider is CharacterBody2D or collider is RigidBody2D:
+			return false
+	return true
+
+
+func _process(_delta: float) -> void:
+	if piece_id not in [PIECE_DOOR, PIECE_BED] or _prompt == null:
+		return
+	_prompt.visible = false
+	for actor: Node in get_tree().get_nodes_in_group(&"player"):
+		if not actor is Node2D or bool(actor.get(&"dead")):
+			continue
+		var distance := (actor as Node2D).global_position.distance_to(global_position)
+		if distance > REACH:
+			continue
+		var nearer_bag := false
+		if piece_id == PIECE_BED:
+			for candidate: Node in get_tree().get_nodes_in_group(&"player_interactable"):
+				if candidate.is_in_group(&"survival_death_bag") and candidate is Node2D and (candidate as Node2D).global_position.distance_to((actor as Node2D).global_position) < distance:
+					nearer_bag = true
+					break
+		_prompt.visible = not nearer_bag
+		break
 
 
 func interact(player: Node2D) -> bool:
 	# The chest owns the click even when it has nothing to offer: an empty press
 	# that silently becomes an attack swing is how a player loses a structure.
-	if piece_id != PIECE_CHEST:
+	if piece_id not in [PIECE_CHEST, PIECE_DOOR, PIECE_BED]:
 		return false
 	if player != null and is_instance_valid(player):
 		if player.global_position.distance_to(global_position) > REACH:
@@ -130,6 +199,19 @@ func interact(player: Node2D) -> bool:
 	var svc := service()
 	if svc == null:
 		return false
+	if piece_id == PIECE_BED:
+		var build := get_parent().get_parent() if get_parent() != null else null
+		if build == null or not build.has_method(&"activate_bed"):
+			return false
+		_last_interaction = build.call(&"activate_bed", entity_id, player)
+		var world := build.get_parent()
+		if world != null and world.has_method(&"_say"):
+			world.call(&"_say", "Bed activated." if bool(_last_interaction.get("ok", false)) else "Bed needs a safe room and clear exit.")
+		return true
+	if piece_id == PIECE_DOOR:
+		_last_interaction = svc.call(&"toggle_door", entity_id, Callable(self, "_doorway_clear"))
+		refresh_prompt()
+		return true
 	var verb := interaction_verb()
 	var result: Dictionary = {}
 	if verb == "stash":
@@ -178,4 +260,4 @@ static func is_solid_piece(piece_id_value: String) -> bool:
 	# A single source would be better; the catalog is data that survives a save
 	# and this is a compile-time constant, so the two are asserted equal by
 	# tests/survival_build_runtime_test.gd rather than trusted.
-	return piece_id_value in ["wall_wood", "door_wood", "chest_wood"]
+	return piece_id_value in ["wall_wood", "door_wood", "chest_wood", "bed_wood"]

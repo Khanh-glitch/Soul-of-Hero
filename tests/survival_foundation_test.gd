@@ -44,7 +44,9 @@ const IRON := "iron_scrap"
 var failures: Array[String] = []
 var checks := 0
 var save_path := ""
-var _host: Node2D
+# The ordinary shell uses a Node route host; isolated tests use a Node2D.
+# Both host the same real overworld scene.
+var _host: Node
 var _deadline_msec := 0
 var _body_complete := false
 
@@ -72,7 +74,26 @@ func _console() -> void:
 # ---------------------------------------------------------------------------
 # harness
 # ---------------------------------------------------------------------------
+## A headless DisplayServer reports a 0x0 window, so Godot's stretch transform
+## collapses to 0.1 and every screen->world pointer conversion is wrong: a build
+## click landed 400 px away and was refused as solid terrain even though the same
+## gesture works in a real 720p window. Declaring the window size the run is
+## meant to represent (1280x720 with the project's 640x360 content scale) gives
+## the identical 2x transform a windowed 720p run uses. Test harness only: no
+## product setting is changed, and nothing is skipped.
+const HARNESS_WINDOW := Vector2i(1280, 720)
+
+
+func _normalize_headless_window() -> void:
+	if DisplayServer.get_name() != "headless":
+		return
+	if root.size == HARNESS_WINDOW:
+		return
+	root.size = HARNESS_WINDOW
+
+
 func _boot() -> Node:
+	_normalize_headless_window()
 	var scene: PackedScene = load(OW_SCENE_PATH) as PackedScene
 	if scene == null:
 		_expect(false, "the production overworld scene loads")
@@ -82,7 +103,12 @@ func _boot() -> Node:
 	root.add_child(_host)
 	var ow := scene.instantiate()
 	_host.add_child(ow)
-	ow.configure({})
+	# This suite plays A0's retained Chapter-1 route world: the ten landmark
+	# thresholds, the camps and the discoveries live there, and R13 keeps them
+	# reusable without letting them compete with A1's continent for the player's
+	# main world. The authored continent has its own production gate
+	# (survival_a0_authored_world_route_test.gd), which plays it with real input.
+	ow.configure({"world_authority": "annex"})
 	var deadline := Time.get_ticks_msec() + BUILD_TIMEOUT_MS
 	while Time.get_ticks_msec() < deadline:
 		await process_frame
@@ -251,12 +277,18 @@ func _body() -> void:
 	var node_view: SurvivalResourceNode = ow.call(&"survival_node", tree_id)
 	_expect(node_view != null, "case 01: the node exists in the mounted scene")
 	if node_view != null:
+		var old_player_position := player.global_position
+		player.global_position = node_view.global_position + Vector2(300, 0)
+		_expect(not node_view.interact(player), "case 01: distant node interaction is rejected")
+		# This is a direct-interaction fixture, not a player navigation test.
+		player.global_position = node_view.global_position
 		var via_node := _count(WOOD)
 		var node_hit := bool(node_view.interact(player))
 		_expect(node_hit and _count(WOOD) > via_node,
-			"case 01: interacting through the world node also gathers")
+			"case 01: interacting through the nearby world node also gathers")
 		_expect(not node_view.last_result().is_empty(),
 			"case 01: interacting through the node reports its result")
+		player.global_position = old_player_position
 
 	print("[case 02] begin")  # heartbeat: a crash names the case it died in
 	# -- 02 exhausted node yields nothing; replay cannot farm it ----------------
@@ -416,6 +448,11 @@ func _body() -> void:
 	_expect(into, "case 07: the deposit is accepted")
 	var contents: Dictionary = survival.call(&"container_contents", chest_id)
 	_expect(int(contents.get(STONE, 0)) == 6, "case 07: the chest holds 6 stone")
+	var before_demolition := _document()
+	_expect(not bool(survival.call(&"remove_structure", chest_id)),
+		"case 07: a nonempty chest cannot be demolished")
+	_expect(_document() == before_demolition,
+		"case 07: refused demolition preserves the whole survival document")
 	_expect(_count(STONE) == total_before - 6,
 		"case 07: the bag lost exactly 6 stone (%d)" % _count(STONE))
 	var stored_total := 0
@@ -459,6 +496,13 @@ func _body() -> void:
 			"case 07: everything came back (%d)" % _count(STONE))
 		var after_take := (survival.call(&"container_contents", chest_id) as Dictionary)
 		_expect(after_take.is_empty(), "case 07: the chest is empty again")
+		# An identical second cycle is a new action, not a replay of the first.
+		_expect(chest_node.interact(player), "case 07: second identical deposit accepted")
+		_expect(_count(STONE) == 0, "case 07: second deposit really moved stone")
+		_expect(chest_node.interact(player), "case 07: second identical withdrawal accepted")
+		_expect(_count(STONE) == bag_before, "case 07: second round trip conserves stone")
+		_expect((survival.call(&"container_contents", chest_id) as Dictionary).is_empty(),
+			"case 07: second withdrawal empties the chest")
 		# Case 08 records the reload expectations from here, so put the bag back to
 		# a known state rather than depending on case 03's leftovers.
 		_expect(_count(WOOD) > 0, "case 07: the building timber came back too")
@@ -535,6 +579,29 @@ func _body() -> void:
 		"case 10: L01 is still present in the gate system")
 	_expect(gate_ids.has(&"chapter_1_level_10"),
 		"case 10: L10 is still present in the gate system")
+	# Explicit per-entrance adversary: fixture repositions the real Hero (not an
+	# ordinary-input journey). A placement attempt at each authored threshold
+	# must be refused before payment/receipt, even though the gate remains live.
+	var original_position := player.global_position
+	var before_gate_builds: Dictionary = _save().call(&"get_snapshot")
+	build.select_piece("wall_wood")
+	var checked_gates := 0
+	for raw_landmark: Variant in world.data.get("landmarks", []):
+		if not raw_landmark is Dictionary:
+			continue
+		var landmark: Dictionary = raw_landmark
+		var threshold: Array = landmark.get("threshold", [])
+		if threshold.size() != 2:
+			continue
+		var cell := Vector2i(int(threshold[0]), int(threshold[1]))
+		player.global_position = Vector2(cell.x * 16 + 8, cell.y * 16 + 8)
+		var rejected: Dictionary = build.try_place(cell, "fixture.protected.gate.%d" % checked_gates)
+		_expect(not bool(rejected.get("ok", true)) and String(rejected.get("reason", "")) == "protected_place",
+			"case 10: authored gate %s refuses wall at threshold" % String(landmark.get("id", "?")))
+		checked_gates += 1
+	player.global_position = original_position
+	_expect(checked_gates == 10 and (_save().call(&"get_snapshot") as Dictionary) == before_gate_builds,
+		"case 10: all ten refusals leave save, inventory and receipts unchanged")
 
 	print("[case 08] begin")  # heartbeat: a crash names the case it died in
 	# -- 08 save / reload restores everything ----------------------------------

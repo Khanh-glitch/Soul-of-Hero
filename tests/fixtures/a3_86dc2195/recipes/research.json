@@ -1,0 +1,80 @@
+{
+  "schema": "soh.economy.research.v1",
+  "technologies": {
+    "tech_smelting": {
+      "id": "tech_smelting",
+      "label": "Ore & alloy smelting",
+      "inputs": {
+        "knowledge_spares": 4,
+        "iron_scrap": 3
+      },
+      "prerequisites": [],
+      "station": "research",
+      "min_tier": 1,
+      "duration_ticks": 30,
+      "scope": "permanent_profile",
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "tech_precision": {
+      "id": "tech_precision",
+      "label": "Springs & precision parts",
+      "inputs": {
+        "knowledge_spares": 4,
+        "iron_ingot": 2
+      },
+      "prerequisites": [
+        "tech_smelting"
+      ],
+      "station": "research",
+      "min_tier": 1,
+      "duration_ticks": 30,
+      "scope": "permanent_profile",
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "tech_toxin": {
+      "id": "tech_toxin",
+      "label": "Toxin protection & extraction",
+      "inputs": {
+        "research_notes": 2,
+        "venom_spine": 1
+      },
+      "prerequisites": [],
+      "station": "research",
+      "min_tier": 1,
+      "duration_ticks": 30,
+      "scope": "permanent_profile",
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "tech_frost": {
+      "id": "tech_frost",
+      "label": "Frost protection & extraction",
+      "inputs": {
+        "research_notes": 2,
+        "frost_shard": 1
+      },
+      "prerequisites": [],
+      "station": "research",
+      "min_tier": 1,
+      "duration_ticks": 30,
+      "scope": "permanent_profile",
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "tech_core_binding": {
+      "id": "tech_core_binding",
+      "label": "Core binding",
+      "inputs": {
+        "research_notes": 3,
+        "soul_ember": 2,
+        "crypt_bone_shard": 2
+      },
+      "prerequisites": [
+        "tech_precision"
+      ],
+      "station": "research",
+      "min_tier": 1,
+      "duration_ticks": 30,
+      "scope": "permanent_profile",
+      "balance_status": "SOH_PROPOSAL"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+# A0 SURV-020 continuation after independent review — 2026-10-30
+
+Owner A0; Draft PR #21, same session branch. Control Tower verdict: scoped technical gates passed, B0 and full SURV-020 not accepted, keep draft/unmerged. Independently refresh 49d50a3 review, prior work orders, Atlas, CT contracts and CI. Do not redo accepted narrow resource→paid bench→two cloth/one receipt/reload, composed A0+A6 modal, A3 authority/interruption/bed/topology, or temporary-entry Web fixture as a substitute for new work.
+
+## Priority 1 — canonical seam
+First prove mounted legacy x383,y200 collision/navigation and an ordinary-input route from actual Refuge (56,218). A1 original chunk6:3 begins at (384,192), Waystation (408,200), Relay (440,236). CT decoded A1 chunk5:3 x383,y200 and chunk6:3 x384,y200 as road=1, walk=1, hazard=0; this is not a legacy-world physical proof. Investigate a bounded temporary production-host native mount of original chunk6:3 in its unchanged global coordinates, same world and authority. Preserve 10 entrances, camera, collision, roads, SaveService and A1 geometry; no POI relocation, teleport, fake nodes, second world or full migration. If impossible document exact physical evidence and narrow owner compatibility decision required.
+
+## Priority 2 — B0 and authoritative actions
+Independently continue real enclosed home/chest/bed, source-to-station economy, return trip, death/body bag/reload, last-exit real-Hero anti-softlock, all-custody conservation. If POIs can be mounted implement exact atomic A1 actions: locker cap_salvage only/zero items; ledger cap_seal_1 only; cache 3 iron_scrap + 2 knowledge_spares/1800 active seconds; deadfall 2 oak_wood/300 active seconds; relay debits 2 iron_scrap + 1 oak_wood and grants cap_power_1 once. No A3 obsolete locker reward. A1/A3 paused, do not change owner branches.
+
+## Priority 3 — negative/player gates
+Retain earlier native suites; independently test last exit, full storage/output/death bag, duplicate transactions, cooldown/reload and actual route. Diagnose shutdown leaks and +109% vs +7% performance without relaxing gate. Obtain actual native 720p/2K/4K frames; expand Web only owner-compatible. Separate fixtures, ordinary-input gameplay and human playtesting. Male/female Adventurer choice is later art migration; do not interrupt or alter A4 Gold VFX. Work sustained until independent A0 work is done or remaining blocker demonstrably cross-owner. Report exact SHAs/native evidence and truthful B0 verdict; do not merge.

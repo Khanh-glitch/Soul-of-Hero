@@ -1,0 +1,449 @@
+{
+  "schema": "soh.economy.meta_economy.v1",
+  "policy": {
+    "policy_id": "a3_two_layer_meta_economy_v1",
+    "policy_revision": 1,
+    "content_rev": "d062_d067_20261030",
+    "rate_approval": "AI_TUNABLE_NOT_CREATOR_LOCKED",
+    "creator_locked": {
+      "run_max_seconds": 1209600,
+      "ragnarok_last_seconds": 259200,
+      "ragnarok_start_elapsed_seconds": 950400,
+      "elder_region_count": 6,
+      "physical_deposit_required": true,
+      "profile_persistence_only_after_deposit": true,
+      "fixed_physical_vending": true,
+      "no_automatic_starting_kit": true,
+      "no_core_vendor": true
+    },
+    "technical_ids": {
+      "physical_currency_item": "ragnarok_unbanked",
+      "physical_currency_contract": "currency.ragnarok_unbanked",
+      "profile_balance_field": "profile.secured_ragnarok_currency",
+      "profile_stone_field": "profile.achievements.elder_stones",
+      "display_registry": "data/survival/items/meta_display_names.v1.json"
+    },
+    "source_authority_contract": "soh.economy.meta_source_authority.v1",
+    "endpoint_authority_contract": "soh.economy.meta_endpoint_authority.v1",
+    "profile_port_contract": "soh.economy.a0_profile_port.v1",
+    "run_context_contract": "soh.economy.a0_run_context.v1",
+    "currency_sources": [
+      {
+        "source_id": "elder_ashen_vault",
+        "region_id": "elder_ashen_region",
+        "kind": "awakened_elder_territory",
+        "max_claims_per_run": 1,
+        "drop_chance": 0.35,
+        "min_units": 2,
+        "max_units": 5,
+        "travel_round_trip_hours": 2.5,
+        "risk_tier": 4,
+        "integration_status": "OWNER_CONTRACT_CANDIDATE_A8"
+      },
+      {
+        "source_id": "elder_tide_vault",
+        "region_id": "elder_tide_region",
+        "kind": "awakened_elder_territory",
+        "max_claims_per_run": 1,
+        "drop_chance": 0.35,
+        "min_units": 2,
+        "max_units": 5,
+        "travel_round_trip_hours": 2.5,
+        "risk_tier": 4,
+        "integration_status": "OWNER_CONTRACT_CANDIDATE_A8"
+      },
+      {
+        "source_id": "elder_stone_vault",
+        "region_id": "elder_stone_region",
+        "kind": "awakened_elder_territory",
+        "max_claims_per_run": 1,
+        "drop_chance": 0.35,
+        "min_units": 2,
+        "max_units": 5,
+        "travel_round_trip_hours": 2.75,
+        "risk_tier": 4,
+        "integration_status": "OWNER_CONTRACT_CANDIDATE_A8"
+      },
+      {
+        "source_id": "elder_frost_vault",
+        "region_id": "elder_frost_region",
+        "kind": "awakened_elder_territory",
+        "max_claims_per_run": 1,
+        "drop_chance": 0.35,
+        "min_units": 2,
+        "max_units": 5,
+        "travel_round_trip_hours": 2.75,
+        "risk_tier": 4,
+        "integration_status": "OWNER_CONTRACT_CANDIDATE_A8"
+      },
+      {
+        "source_id": "elder_venom_vault",
+        "region_id": "elder_venom_region",
+        "kind": "awakened_elder_territory",
+        "max_claims_per_run": 1,
+        "drop_chance": 0.35,
+        "min_units": 2,
+        "max_units": 5,
+        "travel_round_trip_hours": 3.0,
+        "risk_tier": 5,
+        "integration_status": "OWNER_CONTRACT_CANDIDATE_A8"
+      },
+      {
+        "source_id": "elder_storm_vault",
+        "region_id": "elder_storm_region",
+        "kind": "awakened_elder_territory",
+        "max_claims_per_run": 1,
+        "drop_chance": 0.35,
+        "min_units": 2,
+        "max_units": 5,
+        "travel_round_trip_hours": 3.0,
+        "risk_tier": 5,
+        "integration_status": "OWNER_CONTRACT_CANDIDATE_A8"
+      },
+      {
+        "source_id": "ragnarok_roadside_vault",
+        "region_id": "contiguous_roadside",
+        "kind": "rare_last72_site_treasure",
+        "max_claims_per_run": 12,
+        "drop_chance": 0.18,
+        "min_units": 1,
+        "max_units": 2,
+        "travel_round_trip_hours": 1.2,
+        "risk_tier": 2,
+        "integration_status": "OWNER_CONTRACT_CANDIDATE_A8"
+      }
+    ],
+    "elder_stones": [
+      {
+        "stone_id": "stone_ashen",
+        "elder_id": "elder_ashen",
+        "region_id": "elder_ashen_region",
+        "profile_achievement": true,
+        "currency_value": 0,
+        "vendor_purchasable": false
+      },
+      {
+        "stone_id": "stone_tide",
+        "elder_id": "elder_tide",
+        "region_id": "elder_tide_region",
+        "profile_achievement": true,
+        "currency_value": 0,
+        "vendor_purchasable": false
+      },
+      {
+        "stone_id": "stone_stone",
+        "elder_id": "elder_stone",
+        "region_id": "elder_stone_region",
+        "profile_achievement": true,
+        "currency_value": 0,
+        "vendor_purchasable": false
+      },
+      {
+        "stone_id": "stone_frost",
+        "elder_id": "elder_frost",
+        "region_id": "elder_frost_region",
+        "profile_achievement": true,
+        "currency_value": 0,
+        "vendor_purchasable": false
+      },
+      {
+        "stone_id": "stone_venom",
+        "elder_id": "elder_venom",
+        "region_id": "elder_venom_region",
+        "profile_achievement": true,
+        "currency_value": 0,
+        "vendor_purchasable": false
+      },
+      {
+        "stone_id": "stone_storm",
+        "elder_id": "elder_storm",
+        "region_id": "elder_storm_region",
+        "profile_achievement": true,
+        "currency_value": 0,
+        "vendor_purchasable": false
+      }
+    ],
+    "deposit_endpoints": [
+      {
+        "endpoint_id": "preservation_kiosk_01",
+        "kind": "deposit",
+        "region_id": "opening_marches",
+        "stand_cells": [
+          [
+            408,
+            199
+          ]
+        ],
+        "endpoint_revision": "rev-1",
+        "integration_status": "OWNER_CONTRACT_CANDIDATE_A1_A8"
+      },
+      {
+        "endpoint_id": "preservation_kiosk_02",
+        "kind": "deposit",
+        "region_id": "crown_approach",
+        "stand_cells": [
+          [
+            512,
+            240
+          ]
+        ],
+        "endpoint_revision": "rev-1",
+        "integration_status": "OWNER_CONTRACT_CANDIDATE_A1_A8"
+      },
+      {
+        "endpoint_id": "preservation_kiosk_03",
+        "kind": "deposit",
+        "region_id": "harbor_ruin",
+        "stand_cells": [
+          [
+            300,
+            410
+          ]
+        ],
+        "endpoint_revision": "rev-1",
+        "integration_status": "OWNER_CONTRACT_CANDIDATE_A1_A8"
+      }
+    ],
+    "vending_machines": [
+      {
+        "machine_id": "vending_kiosk_01",
+        "kind": "vending",
+        "region_id": "opening_marches",
+        "stand_cells": [
+          [
+            410,
+            199
+          ]
+        ],
+        "endpoint_revision": "rev-1",
+        "stock_revision": 1,
+        "integration_status": "OWNER_CONTRACT_CANDIDATE_A1_A8",
+        "stock": {
+          "field_meal": {
+            "quantity": 4,
+            "unit_price": 1
+          },
+          "oak_wood": {
+            "quantity": 3,
+            "unit_price": 1
+          },
+          "iron_scrap": {
+            "quantity": 3,
+            "unit_price": 2
+          },
+          "charcoal": {
+            "quantity": 2,
+            "unit_price": 2
+          },
+          "stone_pick": {
+            "quantity": 1,
+            "unit_price": 4
+          },
+          "salvage_hammer": {
+            "quantity": 1,
+            "unit_price": 5
+          },
+          "research_kit": {
+            "quantity": 1,
+            "unit_price": 6
+          },
+          "binding_cloth": {
+            "quantity": 2,
+            "unit_price": 2
+          }
+        }
+      },
+      {
+        "machine_id": "vending_kiosk_02",
+        "kind": "vending",
+        "region_id": "crown_approach",
+        "stand_cells": [
+          [
+            514,
+            240
+          ]
+        ],
+        "endpoint_revision": "rev-1",
+        "stock_revision": 1,
+        "integration_status": "OWNER_CONTRACT_CANDIDATE_A1_A8",
+        "stock": {
+          "field_meal": {
+            "quantity": 4,
+            "unit_price": 1
+          },
+          "reed_fibre": {
+            "quantity": 3,
+            "unit_price": 1
+          },
+          "iron_scrap": {
+            "quantity": 3,
+            "unit_price": 2
+          },
+          "charcoal": {
+            "quantity": 2,
+            "unit_price": 2
+          },
+          "iron_pick": {
+            "quantity": 1,
+            "unit_price": 8
+          },
+          "research_kit": {
+            "quantity": 1,
+            "unit_price": 6
+          }
+        }
+      },
+      {
+        "machine_id": "vending_kiosk_03",
+        "kind": "vending",
+        "region_id": "harbor_ruin",
+        "stand_cells": [
+          [
+            302,
+            410
+          ]
+        ],
+        "endpoint_revision": "rev-1",
+        "stock_revision": 1,
+        "integration_status": "OWNER_CONTRACT_CANDIDATE_A1_A8",
+        "stock": {
+          "field_meal": {
+            "quantity": 4,
+            "unit_price": 1
+          },
+          "oak_wood": {
+            "quantity": 3,
+            "unit_price": 1
+          },
+          "stone_pick": {
+            "quantity": 1,
+            "unit_price": 4
+          },
+          "salvage_hammer": {
+            "quantity": 1,
+            "unit_price": 5
+          },
+          "binding_cloth": {
+            "quantity": 2,
+            "unit_price": 2
+          }
+        }
+      }
+    ],
+    "recycler_machines": [
+      {
+        "machine_id": "recycler_01",
+        "kind": "recycler",
+        "region_id": "opening_marches",
+        "stand_cells": [
+          [
+            412,
+            199
+          ]
+        ],
+        "endpoint_revision": "rev-1",
+        "integration_status": "OWNER_CONTRACT_CANDIDATE_A1_A8",
+        "allowed_input_tags": [
+          "salvage",
+          "metal",
+          "wood",
+          "fibre"
+        ],
+        "forbidden_input_kinds": [
+          "skill_core",
+          "key_item"
+        ],
+        "forbidden_input_tags": [
+          "meta_currency",
+          "elder_stone"
+        ],
+        "salvage_ratio": 0.5,
+        "max_quantity_per_transaction": 10
+      },
+      {
+        "machine_id": "recycler_02",
+        "kind": "recycler",
+        "region_id": "crown_approach",
+        "stand_cells": [
+          [
+            516,
+            240
+          ]
+        ],
+        "endpoint_revision": "rev-1",
+        "integration_status": "OWNER_CONTRACT_CANDIDATE_A1_A8",
+        "allowed_input_tags": [
+          "salvage",
+          "metal",
+          "wood",
+          "fibre"
+        ],
+        "forbidden_input_kinds": [
+          "skill_core",
+          "key_item"
+        ],
+        "forbidden_input_tags": [
+          "meta_currency",
+          "elder_stone"
+        ],
+        "salvage_ratio": 0.5,
+        "max_quantity_per_transaction": 10
+      }
+    ],
+    "recycler_salvage": {
+      "stone_pick": {
+        "outputs": {
+          "stone_chunk": 1,
+          "oak_wood": 1
+        },
+        "profile_currency_delta": 0
+      },
+      "salvage_hammer": {
+        "outputs": {
+          "iron_scrap": 2,
+          "oak_wood": 1
+        },
+        "profile_currency_delta": 0
+      },
+      "iron_pick": {
+        "outputs": {
+          "iron_scrap": 2,
+          "oak_wood": 1
+        },
+        "profile_currency_delta": 0
+      },
+      "binding_cloth": {
+        "outputs": {
+          "reed_fibre": 1
+        },
+        "profile_currency_delta": 0
+      }
+    },
+    "forbidden_meta_effects": [
+      "automatic_profile_credit_on_chest_open",
+      "automatic_profile_credit_on_boss_kill",
+      "automatic_profile_credit_on_home_storage",
+      "automatic_profile_credit_on_run_expiry",
+      "generic_scrap_or_score_conversion",
+      "vendor_skill_core",
+      "vendor_high_tier_equipment_at_spawn",
+      "recycler_profile_currency_output",
+      "cross_run_item_recipe_core_station_house_leak",
+      "stone_to_currency_conversion"
+    ],
+    "balance_targets": {
+      "expected_banked_units_full_currency_route": [
+        6,
+        12
+      ],
+      "expected_banked_units_casual_late_route": [
+        1,
+        4
+      ],
+      "vendor_basic_meal_affordable_after_one_successful_small_trip": true,
+      "vendor_full_clear_requires_multiple_risky_trips": true,
+      "no_universally_dominant_strategy": true,
+      "six_stone_reward": "PROFILE_TITLE_HISTORY_ONLY_NO_CURRENCY_MULTIPLIER"
+    }
+  }
+}

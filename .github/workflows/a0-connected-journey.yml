@@ -1,0 +1,209 @@
+name: A0 connected survival journey (normal input, composed owners)
+on:
+  push:
+    branches: [arena/dea2428e-soul-of-hero]
+    paths-ignore: ['docs/**', 'README.md']
+  workflow_dispatch:
+permissions:
+  contents: read
+  pull-requests: write
+env:
+  # Round 12 corrective pins. Refresh from the Control Tower before reusing.
+  A1_SHA: 8551a323e444f755d7a29b1ad518aa29aeb039cb
+  A3_SHA: b44e22df3af40939069189be14afc23ee1ce21c4
+  A6_SHA: 6d71410a370df805f8b29a018b61380d6c233b65
+  A8_SHA: 06d1758e2cf7e44c588d158745359d7617fe32d6
+  GODOT_SILENCE_ROOT_WARNING: 1
+  LIBGL_ALWAYS_SOFTWARE: 1
+jobs:
+  journey:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Pin and compose the exact owner SHAs
+        run: |
+          set -euo pipefail
+          rm -rf .godot
+          git fetch --no-tags origin "$A1_SHA" "$A3_SHA" "$A6_SHA" "$A8_SHA"
+          python3 tools/a0/compose_owners.py --repo . --out .composition --copy-base \
+            --owner a1="$A1_SHA" --owner a3="$A3_SHA" --owner a8="$A8_SHA" --owner a6="$A6_SHA"
+          python3 - <<'PY'
+          import json, os
+          report = json.load(open(".composition/composition.json"))
+          assert report["conflicts"] == [], report["conflicts"]
+          for name, info in report["owners"].items():
+              assert len(info["sha"]) == 40, (name, info["sha"])
+          print("composition:", json.dumps({n: i["sha"][:12] for n, i in report["owners"].items()}))
+          required = [
+              "tests/survival/world/godot/chunk_reader.gd",
+              "data/survival/world/world_plan.v1.json",
+              "data/survival/world/connector/canonical_connector.v1.json",
+              "game/survival/world_content/" ,
+              "data/survival/world_content/",
+              "game/ui/screens/avatar_choice/avatar_choice_screen.gd",
+          ]
+          missing = [p for p in required if not os.path.exists(os.path.join(".composition", p))]
+          assert missing == [], f"A0_REQUIRED_OWNER_ARTIFACT_ABSENT: {missing}"
+          dup = open(".composition/game/ui/screens/avatar_choice/avatar_choice_screen.gd").read().count("func _manifest_has_staged_art")
+          assert dup == 1, f"A6_DUPLICATE_FUNCTION_STILL_PRESENT: {dup} declarations"
+          print("required owner artifacts present:", len(required))
+          PY
+          python3 tools/a0/check_composition.py .composition | tee .composition/seats.txt
+          grep -q "COMPOSITION SEATS PASSED" .composition/seats.txt
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import the composed project
+        run: |
+          set -euo pipefail
+          cd .composition
+          mkdir -p ../artifacts/ud_import
+          timeout --signal=TERM --kill-after=10s 300s bash tools/ci/godot_isolated.sh --headless --path . \
+            --user-data-dir ../artifacts/ud_import --import > ../artifacts/import.log 2>&1 || true
+          cat ../artifacts/import.log
+          ! grep -E 'SCRIPT ERROR|Parse Error' ../artifacts/import.log
+      - name: Composition integrity (authored world, A8 mount, A6 identity)
+        run: |
+          set +e
+          cd .composition
+          failures=0
+          run() {
+            local name="$1"; shift
+            local log="../artifacts/$name.log"
+            timeout --signal=TERM --kill-after=10s 600s "$@" > "$log" 2>&1
+            local rc=$?
+            cat "$log"
+            echo "::notice::$name exit=$rc $(grep -aE 'PASSED|FAILED|SKIP' "$log" | tail -1)"
+            while IFS= read -r line; do echo "::error title=$name::$line"; done < <(grep -aE '  FAIL  |SCRIPT ERROR|Parse Error' "$log" | head -8)
+            if [ "$rc" -ne 0 ]; then failures=$((failures+1)); fi
+          }
+          run authored bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir ../artifacts/ud_authored \
+            --script res://tests/survival_a0_authored_world_contract_test.gd -- --require-authored
+          run poi bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir ../artifacts/ud_poi \
+            --script res://tests/survival_a0_poi_mount_test.gd -- --require-a8
+          run identity bash -c 'SOUL_OF_HERO_SAVE_PATH=user://ci_identity.json bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir ../artifacts/ud_identity -- --avatar-identity-test --avatar-phase=full --avatar-gender=male --avatar-expectation=auto'
+          [ "$failures" -eq 0 ]
+      - name: A0 station policy and A1 authored-stream probes (composition)
+        if: ${{ !cancelled() }}
+        run: |
+          set +e
+          cd .composition
+          failures=0
+          run_probe () {
+            local name="$1"; shift
+            local log="../artifacts/probe-$name.log"
+            timeout --signal=TERM --kill-after=10s 300s godot --headless --path . --script "res://tests/$name.gd" > "$log" 2>&1
+            local rc=$?
+            cat "$log"
+            echo "::notice::probe $name exit=$rc"
+            while IFS= read -r line; do echo "::error title=probe-$name::$line"; done < <(grep -aE '  FAIL  |Parse Error|SCRIPT ERROR' "$log" | head -6)
+            if [ "$rc" -ne 0 ]; then failures=$((failures+1)); fi
+            if ! grep -qaE 'PASSED|NOT_APPLICABLE|BLOCKED' "$log"; then failures=$((failures+1)); fi
+          }
+          rm -rf "$HOME/.local/share/godot/app_userdata/SOUL OF HERO/tests"
+          run_probe survival_a0_station_reach_test
+          rm -rf "$HOME/.local/share/godot/app_userdata/SOUL OF HERO/tests"
+          run_probe survival_a0_authored_stream_test
+          echo "::notice::probe failures=$failures"
+          [ "$failures" -eq 0 ]
+      - name: Connected journey at 1280x720 (two independent processes)
+        if: ${{ !cancelled() }}
+        run: |
+          set +e
+          cd .composition
+          log1="../artifacts/connected-first.log"
+          log2="../artifacts/connected-second.log"
+          rm -rf "../artifacts/ud_connected"
+          timeout --signal=TERM --kill-after=15s 1800s xvfb-run -a bash tools/ci/godot_isolated.sh \
+            --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+            --audio-driver Dummy --user-data-dir ../artifacts/ud_connected --resolution 1280x720 --windowed \
+            --script res://tests/survival_normal_connected_journey_test.gd -- --keep-connected > "$log1" 2>&1
+          first=$?
+          cat "$log1"
+          # The world is closed for real here: nothing runs between the two
+          # processes, and the only thing that can finish the smelt is the
+          # authoritative offline settlement of the elapsed wall clock.
+          sleep 25
+          timeout --signal=TERM --kill-after=15s 1800s xvfb-run -a bash tools/ci/godot_isolated.sh \
+            --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+            --audio-driver Dummy --user-data-dir ../artifacts/ud_connected --resolution 1280x720 --windowed \
+            --script res://tests/survival_normal_connected_journey_test.gd -- --verify-connected --keep-connected > "$log2" 2>&1
+          second=$?
+          cat "$log2"
+          echo "::notice::connected journey process1=$first process2=$second"
+          for f in "$log1" "$log2"; do
+            while IFS= read -r line; do echo "::error title=connected-$(basename "$f" .log)::$line"; done < <(grep -aE '  FAIL  |SCRIPT ERROR|Parse Error' "$f" | head -10)
+            while IFS= read -r line; do echo "::notice::$line"; done < <(grep -aE '^A0_CONNECTED' "$f" | head -60)
+            # A gate whose log cannot be read is not a gate: publish the
+            # diagnostic lines that explain a failure, not just the failure.
+            while IFS= read -r line; do echo "::error title=diag-$(basename "$f" .log)::$line"; done < <(grep -aE 'A0_CONNECTED_(STATIONS|ROWLOOKUP|PANEL|PRESS_POINT|INPUT_PATH|WEAVE_CLICK|SCROLL_GEOM|APPROACH|GATHER|RUNID|OFFLINE_SETTLE|RESETTLE|PARTS|DEPARTURE|DIAG)|NORMAL_GATHER_TRACE|HOME_ROUTE_FAIL' "$f" | head -14)
+          done
+          # A gate nobody can read is not a gate: publish the whole tail of each
+          # process log so a failure is diagnosable from the run page itself.
+          for f in "$log1" "$log2"; do
+            while IFS= read -r line; do echo "::notice title=$(basename "$f") tail::$line"; done < <(tail -n 12 "$f")
+          done
+          # The journey's own 1280x720 pixels are evidence too: collect them from
+          # the shared profile so the return image comes from a real second process.
+          mkdir -p ../artifacts/captures
+          find ../artifacts/ud_connected -name 'capture_*.png' -exec cp {} ../artifacts/captures/ \;
+          # Exit codes alone would let a NOT_TESTED run read as a pass, so the
+          # composed gate also requires the exact PASS banner from both processes.
+          grep -qa 'A0 CONNECTED SURVIVAL JOURNEY PASSED' "$log2" || second=1
+          [ "$first" -eq 0 ] && [ "$second" -eq 0 ]
+      - name: Survival production captures at 1440p and 2160p
+        if: ${{ !cancelled() }}
+        run: |
+          set +e
+          cd .composition
+          for res in 2560x1440 3840x2160; do
+            rm -rf "../artifacts/ud_capture_$res"
+            timeout --signal=TERM --kill-after=15s 1800s xvfb-run -a bash tools/ci/godot_isolated.sh \
+              --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+              --audio-driver Dummy --user-data-dir "../artifacts/ud_capture_$res" --resolution "$res" --windowed \
+              --script res://tests/survival_normal_connected_journey_test.gd > "../artifacts/capture-$res.log" 2>&1
+            rc=$?
+            cat "../artifacts/capture-$res.log"
+            echo "::notice::capture $res exit=$rc $(grep -ac 'A0_CAPTURE ' "../artifacts/capture-$res.log") images"
+            mkdir -p "../artifacts/captures"
+            find "../artifacts/ud_capture_$res" -name 'capture_*.png' -exec cp {} "../artifacts/captures/" \;
+            while IFS= read -r line; do echo "::notice::$line"; done < <(grep -a '^A0_CAPTURE' "../artifacts/capture-$res.log" | head -8)
+          done
+          ls -l ../artifacts/captures || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a0-connected-journey
+          path: |
+            artifacts/**/*.log
+            artifacts/captures/*.png
+            .composition/composition.json
+            .composition/seats.txt
+          if-no-files-found: warn
+      - name: GDScript parse gate (the engine, not a linter)
+        run: |
+          set +e
+          cd .composition
+          failures=0
+          for f in tests/survival_normal_input_gather_test.gd \
+                   tests/survival_normal_connected_journey_test.gd \
+                   tests/survival_a0_station_reach_test.gd \
+                   tests/survival_a0_authored_world_contract_test.gd \
+                   tests/survival_a0_authored_stream_test.gd \
+                   game/survival/a0_authored_world_mount.gd \
+                   game/survival/a1_authored_source.gd \
+                   game/overworld/chapter1_overworld.gd; do
+            out=$(timeout 120 bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir ../artifacts/ud_parse --check-only --script "res://$f" 2>&1)
+            if echo "$out" | grep -qE 'SCRIPT ERROR|Parse Error'; then
+              echo "::error title=parse::$f $(echo "$out" | grep -aE 'SCRIPT ERROR|Parse Error' | head -1)"
+              failures=$((failures+1))
+            else
+              echo "parse ok $f"
+            fi
+          done
+          [ "$failures" -eq 0 ]

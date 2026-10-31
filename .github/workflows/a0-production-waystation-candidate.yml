@@ -1,0 +1,189 @@
+name: A0 guarded production Waystation candidate
+on:
+  push:
+    branches: [arena/dea2428e-soul-of-hero]
+    paths: ['tools/ci/godot_isolated.sh', 'game/overworld/**', 'game/survival/**', 'game/world_art/**', 'assets/environment/survival_world/**', 'game/characters/knight/**', 'game/autoload/save_service.gd', 'data/survival/**', 'tests/survival_*', 'tests/fixtures/a0_save_diff.gd', '.github/workflows/a0-production-waystation-candidate.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  pull-requests: write
+jobs:
+  native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    strategy:
+      fail-fast: false
+      matrix:
+        route: [controller, normal-entry, roadside, normal-entry-roadside]
+    env:
+      LIBGL_ALWAYS_SOFTWARE: 1
+      GODOT_SILENCE_ROOT_WARNING: 1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify A1-produced candidate bytes, source pins, and HOLD
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib, json, pathlib
+          d = pathlib.Path('data/survival/connector/a0_candidate')
+          m = json.loads((d/'pilot_manifest.json').read_text())
+          assert m['connector_id'] == 'a1_crown_canonical_seam_v1' and m['native_playable'] is False
+          assert m['contract_sha256'] == '1516e23bda93ba3fd6bb3b729699c08527e1addf2fac0706300940e566df620c'
+          assert m['delta_sha256'] == '03acafe2f679c104312e7e4b66f911636e182b0cf42ce0b6743d1fae07b27eb3'
+          for name, info in m['files'].items():
+              assert hashlib.sha256((d/name).read_bytes()).hexdigest() == info['sha256'], name
+          for name, pin in {'poi_crown_waystation.slice.json':'3a4981fd3e24580e2e7c2ee5d0929f76c432d785e142b67a222c6480af01e16f', 'poi_crown_relay_shed.slice.json':'5ab0042980a43e64f05aa73870b0d99f906fb95f70492daf2a6b6f7b585b77ad'}.items():
+              assert hashlib.sha256((d/'slices'/name).read_bytes()).hexdigest() == pin, name
+          print('A1 exact connector candidate bytes verified; native_playable remains false')
+          PY
+          python3 tests/validate_a3_v5_composition.py
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import exact production project
+        run: |
+          mkdir -p artifacts/ud_candidate artifacts/ud_import
+          timeout 180s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_import --import > artifacts/candidate-import.log 2>&1
+          bash tools/ci/gate_log.sh artifacts/candidate-import.log 'candidate import' 'Godot Engine'
+      - name: Headless A1 visual-candidate ownership and physics invariants
+        if: matrix.route == 'controller'
+        run: |
+          mkdir -p artifacts/ud_art_candidate
+          timeout 180s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_art_candidate --script res://tests/survival_a1_world_art_candidate_test.gd > artifacts/candidate-art.log 2>&1
+          cat artifacts/candidate-art.log
+          bash tools/ci/gate_log.sh artifacts/candidate-art.log 'A1 visual candidate' 'A0 A1 WORLD ART CANDIDATE PASSED'
+      - name: V3 to V5 SaveService migration and simulated interruption
+        if: matrix.route == 'controller'
+        run: |
+          mkdir -p artifacts/ud_a3_v5_migration
+          timeout 120s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_a3_v5_migration --script res://tests/survival_a3_v5_migration_test.gd -- --survival-save-fault-test > artifacts/a3-v5-migration.log 2>&1
+          cat artifacts/a3-v5-migration.log
+          bash tools/ci/gate_log.sh artifacts/a3-v5-migration.log 'A3 V5 migration' 'A0 A3 V5 MIGRATION PASSED'
+      - name: Actual V3 producer then V5 migration in a second process
+        if: matrix.route == 'controller'
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin fa0c119c544d306c31ff749803cb362363885dcf
+          mkdir -p "$RUNNER_TEMP/a0-v3" artifacts/ud_a3_v3_real
+          git archive fa0c119c544d306c31ff749803cb362363885dcf | tar -x -C "$RUNNER_TEMP/a0-v3"
+          cp tests/fixtures/a3_v3_migration_producer.gd "$RUNNER_TEMP/a0-v3/tests/fixtures/a3_v3_migration_producer.gd"
+          timeout 300s bash tools/ci/godot_isolated.sh --headless --path "$RUNNER_TEMP/a0-v3" --user-data-dir artifacts/ud_a3_v3_real --import > artifacts/a3-v3-import.log 2>&1
+          bash tools/ci/gate_log.sh artifacts/a3-v3-import.log 'V3 project import' 'Godot Engine'
+          timeout 120s bash tools/ci/godot_isolated.sh --headless --path "$RUNNER_TEMP/a0-v3" --user-data-dir artifacts/ud_a3_v3_real --script res://tests/fixtures/a3_v3_migration_producer.gd > artifacts/a3-v3-producer.log 2>&1
+          cat artifacts/a3-v3-producer.log
+          bash tools/ci/gate_log.sh artifacts/a3-v3-producer.log 'V3 producer' 'A0 REAL V3 MIGRATION PRODUCER PASSED'
+          timeout 120s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_a3_v3_real --script res://tests/survival_a3_v5_real_legacy_restart_test.gd > artifacts/a3-v5-migration-restart.log 2>&1
+          cat artifacts/a3-v5-migration-restart.log
+          bash tools/ci/gate_log.sh artifacts/a3-v5-migration-restart.log 'V5 independent migration' 'A0 REAL V3 TO V5 RESTART PASSED'
+      - name: V5 roadside full-bag and replay authority fixture
+        if: matrix.route == 'controller'
+        run: |
+          mkdir -p artifacts/ud_a3_v5_roadside
+          timeout 120s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_a3_v5_roadside --script res://tests/survival_a3_v5_roadside_authority_test.gd > artifacts/a3-v5-roadside-authority.log 2>&1
+          cat artifacts/a3-v5-roadside-authority.log
+          bash tools/ci/gate_log.sh artifacts/a3-v5-roadside-authority.log 'A3 V5 roadside fixture' 'A0 A3 V5 ROADSIDE AUTHORITY PASSED'
+      - name: Rendered walker ridge probe (both ridges, both directions)
+        if: matrix.route == 'controller'
+        shell: bash
+        run: |
+          set -uo pipefail
+          mkdir -p artifacts/ud_walker_probe
+          timeout --signal=TERM --kill-after=15s 900s xvfb-run -a bash tools/ci/godot_isolated.sh --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_walker_probe --resolution 960x540 --windowed --script res://tests/survival_a0_walker_ridge_probe.gd > artifacts/walker-probe.log 2>&1
+          rc=$?
+          cat artifacts/walker-probe.log
+          while IFS= read -r line; do echo "::notice::$line"; done < <(grep -E '^A0_WALK_STALL|^A0_WALKER_RIDGE' artifacts/walker-probe.log || true)
+          bash tools/ci/gate_log.sh artifacts/walker-probe.log 'walker ridge probe' 'A0 WALKER RIDGE PROBE PASSED' || exit 1
+          [ "$rc" -eq 0 ]
+      - name: A0 profile port (one wallet, one run, two processes)
+        if: matrix.route == 'controller'
+        run: |
+          mkdir -p artifacts/ud_profile_port
+          timeout 300s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_profile_port --script res://tests/survival_a0_profile_port_test.gd -- --keep-profile > artifacts/profile-port-first.log 2>&1
+          rc1=$?
+          cat artifacts/profile-port-first.log
+          timeout 300s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_profile_port --script res://tests/survival_a0_profile_port_test.gd -- --verify-profile > artifacts/profile-port-second.log 2>&1
+          rc2=$?
+          cat artifacts/profile-port-second.log
+          while IFS= read -r line; do echo "::error title=profile-port::$line"; done < <(grep -E '  FAIL  |SCRIPT ERROR|Parse Error' artifacts/profile-port-first.log artifacts/profile-port-second.log | head -12 || true)
+          bash tools/ci/gate_log.sh artifacts/profile-port-first.log 'A0 profile port first process' 'A0 PROFILE PORT PASSED' || exit 1
+          bash tools/ci/gate_log.sh artifacts/profile-port-second.log 'A0 profile port second process' 'A0 PROFILE PORT PASSED' || exit 1
+          [ "$rc1" -eq 0 ] && [ "$rc2" -eq 0 ]
+      - name: Verify exact physical cache owner identity seam
+        if: matrix.route == 'controller'
+        run: |
+          mkdir -p artifacts/ud_identity_candidate
+          timeout 60s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_identity_candidate --script res://tests/survival_waystation_identity_probe.gd > artifacts/candidate-identity.log 2>&1
+          cat artifacts/candidate-identity.log
+          bash tools/ci/gate_log.sh artifacts/candidate-identity.log 'physical identity probe' 'A0 WAYSTATION IDENTITY PROBE PASSED'
+      - name: Ordinary physical journey and independent process
+        shell: bash
+        run: |
+          set -uo pipefail
+          if [ '${{ matrix.route }}' = controller ]; then
+            script=res://tests/survival_production_waystation_candidate_test.gd
+            marker='A0 WAYSTATION INPUT RESTART PASSED'
+            restart=--restart
+          elif [ '${{ matrix.route }}' = normal-entry-roadside ]; then
+            script=res://tests/survival_normal_entry_roadside_v5_test.gd
+            marker='NORMAL ENTRY HOME RESTART PASSED'
+            restart=--verify-separate-process
+          elif [ '${{ matrix.route }}' = roadside ]; then
+            script=res://tests/survival_roadside_v5_input_test.gd
+            marker='A0 WAYSTATION INPUT RESTART PASSED'
+            restart=--restart
+          else
+            script=res://tests/survival_normal_entry_waystation_candidate_test.gd
+            marker='NORMAL ENTRY HOME RESTART PASSED'
+            restart=--verify-separate-process
+          fi
+          failed=0
+          for mode in first restart; do
+            args=()
+            if [ "$mode" = restart ]; then args=(-- "$restart"); fi
+            timeout --signal=TERM --kill-after=15s 1800s xvfb-run -a bash tools/ci/godot_isolated.sh --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_candidate --resolution 960x540 --windowed --script "$script" "${args[@]}" > "artifacts/candidate-$mode.log" 2>&1
+            rc=$?
+            cat "artifacts/candidate-$mode.log"
+            echo "::notice::Candidate ${{ matrix.route }} $mode exit=$rc $(grep -E 'PASSED|FAILED|  FAIL  |SCRIPT ERROR|Parse Error' "artifacts/candidate-$mode.log" | tail -15 | tr '\n' '~')"
+            while IFS= read -r line; do echo "::notice::$line"; done < <(grep '^A0_SAVE_DIFF ' "artifacts/candidate-$mode.log" || true)
+            # Job logs live behind a blob store this owner cannot read from every
+            # sandbox, so every failed check and engine error is also emitted as an
+            # annotation that the GitHub API can always return.
+            while IFS= read -r line; do echo "::error title=candidate-${{ matrix.route }}-$mode::$line"; done < <(grep -E '  FAIL  |SCRIPT ERROR|Parse Error|^ERROR: ' "artifacts/candidate-$mode.log" | head -12 || true)
+            bash tools/ci/gate_log.sh "artifacts/candidate-$mode.log" "candidate $mode" "$marker" || failed=1
+            [ "$rc" -eq 0 ] || failed=1
+          done
+          exit "$failed"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a0-candidate-${{ matrix.route }}-logs
+          path: artifacts/candidate-*.log
+          if-no-files-found: warn
+      # Runner logs and artifact ZIPs live in a blob store some A0 sandboxes
+      # cannot read, so a failing route also publishes its own check list into
+      # PR #21 where every participant can read it.
+      - name: Publish failing journey checks to the pull request
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -uo pipefail
+          note="artifacts/candidate-journey-note.md"
+          {
+            echo "A0 candidate matrix leg \`${{ matrix.route }}\` failed at \`${{ github.sha }}\`."
+            for f in artifacts/candidate-first.log artifacts/candidate-restart.log; do
+              [ -f "$f" ] || continue
+              echo
+              echo "**$f**"
+              echo '```'
+              grep -E '^  FAIL  |^A0_STAND|^HOME_DOOR|^ROADSIDE_STAND|^HOME_EXIT|^HOME_ROUTE|^A0_STARTER|SCRIPT ERROR|Parse Error|^ERROR: |PASSED|FAILED' "$f" | tail -40
+              echo '--- field differences ---'
+              grep -E 'A0_SAVE_DIFF .*(values=[1-9]|types=[1-9])' "$f" | head -12 || true
+              echo '--- trace ---'
+              grep -E '^A0_|^HOME_|^NORMAL_|^ENTRY_|^ROADSIDE_' "$f" | tail -12 || true
+              echo '```'
+            done
+          } > "$note"
+          gh pr comment 21 --repo "$GITHUB_REPOSITORY" --body-file "$note" || echo 'diagnostic comment could not be published'

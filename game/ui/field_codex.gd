@@ -274,6 +274,9 @@ var _pending_external_drop: Dictionary = {}
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	# The book intentionally leaves combat time running, but while it is visible
+	# its inputs must not drive the Hero underneath it.
+	add_to_group(&"gameplay_modal")
 	_save = get_node_or_null("/root/SaveService")
 	_build_secondary_stat_rows()
 	close_button.pressed.connect(hide_codex)

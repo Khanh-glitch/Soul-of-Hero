@@ -25,6 +25,7 @@ const SERVICE_PATH := "/root/SurvivalService"
 ## UI guard: the authoritative gate is the transaction key in the service, which
 ## makes a repeated action a no-op regardless of how it was triggered.
 const INTERACT_COOLDOWN := 0.18
+const REACH := 44.0
 
 var _used_marker: Polygon2D
 var _prompt: Label
@@ -111,23 +112,40 @@ func _prompt_text(ripe: bool, left: int, full: int) -> String:
 	return "[CLICK]  %s  %d/%d" % [display_name, left, full]
 
 
-func can_interact(_player: Node2D) -> bool:
+func _within_reach(player: Node2D) -> bool:
+	return player != null and is_instance_valid(player) and player.global_position.distance_to(global_position) <= REACH
+
+
+func can_interact(player: Node2D) -> bool:
 	var svc := service()
-	if svc == null:
+	if svc == null or not _within_reach(player):
 		return false
 	return bool(svc.call(&"is_node_harvestable", node_id, resource_kind))
 
 
-func interact(_player: Node2D) -> bool:
-	# An already-spent node still owns the click: it explains itself instead of
-	# letting the press fall through to an attack.
+func interact(player: Node2D) -> bool:
+	# An already-spent *nearby* node still owns the click and explains itself.
+	if not _within_reach(player):
+		return false
 	var svc := service()
 	if svc == null:
 		return true
 	if _cooldown > 0.0:
 		return true
 	_cooldown = INTERACT_COOLDOWN
-	var result: Dictionary = svc.call(&"harvest", node_id, resource_kind)
+	# If the player physically owns an A3 tool that A3 allows on this kind, the
+	# swing is one atomic harvest+wear. Otherwise it stays the bare-handed swing:
+	# no tool, no wear, and the same yields as before.
+	var economy := _economy()
+	var plan: Dictionary = economy.call(&"tool_plan_for_node", node_id, resource_kind) if economy != null else {}
+	var tool_id := String(plan.get("tool_id", ""))
+	var result: Dictionary
+	if not tool_id.is_empty():
+		result = svc.call(&"harvest_with_tool", node_id, resource_kind, economy, tool_id,
+			String(plan.get("world_revision", "")), int(plan.get("active_seconds", 0)), -1,
+			int(plan.get("expected_tool_revision", -1)))
+	else:
+		result = svc.call(&"harvest", node_id, resource_kind)
 	_last_result = result
 	if bool(result.get("ok", false)):
 		gathered.emit(node_id, String(result.get("item_id", "")), int(result.get("quantity", 0)))
@@ -156,6 +174,19 @@ func _item_label(item_id: String) -> String:
 		return item_id
 	var definition: Dictionary = svc.call(&"item_definition", item_id)
 	return String(definition.get("label", item_id))
+
+
+## The live A0 economy session mounted by the overworld, if this run has one.
+## Walked up from this node so it also works for a world hosted by a test rig; a
+## world without the A3 session simply has no tool swing.
+func _economy() -> Node:
+	var parent := get_parent()
+	while parent != null:
+		var session: Variant = parent.get("economy_session")
+		if session is Node and (session as Node).get_script() != null:
+			return session as Node
+		parent = parent.get_parent()
+	return null
 
 
 func _hud() -> Node:

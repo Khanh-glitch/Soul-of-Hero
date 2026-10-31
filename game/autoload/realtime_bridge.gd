@@ -68,6 +68,12 @@ var _loaded_level_path := ""
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	# Browsers cannot bind a local TCP listener. The optional editor bridge is
+	# not a game service and must not attempt to start one in a Web export.
+	if OS.has_feature("web"):
+		_listen_error = ERR_UNAVAILABLE
+		set_process(false)
+		return
 	_port = _configured_port()
 	_workspace_id = ProjectSettings.globalize_path("res://").simplify_path().to_lower().sha256_text()
 	_workspace_token = _load_or_create_workspace_token()

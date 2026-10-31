@@ -1,0 +1,121 @@
+name: A0 + pinned A6 temporary native composition
+on:
+  push:
+    branches: [arena/dea2428e-soul-of-hero]
+    paths-ignore: ['docs/**', 'README.md']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  composed-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      A6_SHA: 6b801554a6af95424b4e39dd29f43c146aa13848
+      A1_SHA: 2cb1a3c5f093724eb9fecbdf45909ccb611f7b32
+      A3_SHA: 18e7afcbd576bbd9bfbcc509b2ee13216186a522
+      GODOT_SILENCE_ROOT_WARNING: 1
+      LIBGL_ALWAYS_SOFTWARE: 1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: 6b801554a6af95424b4e39dd29f43c146aa13848
+          path: .a6-source
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: 2cb1a3c5f093724eb9fecbdf45909ccb611f7b32
+          path: .a1-source
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: 18e7afcbd576bbd9bfbcc509b2ee13216186a522
+          path: .a3-source
+          persist-credentials: false
+      - name: Compose A6-owned files and read-only source inputs temporarily
+        run: |
+          set -euo pipefail
+          test "$(git -C .a6-source rev-parse HEAD)" = "$A6_SHA"
+          test "$(git -C .a1-source rev-parse HEAD)" = "$A1_SHA"
+          test "$(git -C .a3-source rev-parse HEAD)" = "$A3_SHA"
+          echo "A0=$(git rev-parse HEAD) A6=$A6_SHA A1=$A1_SHA A3=$A3_SHA" | tee -a "$GITHUB_STEP_SUMMARY"
+          mkdir -p game/survival/ui tests/survival/ui docs/survival/ux .a6-contract-inputs/a1/world/poi_authoring .a6-contract-inputs/a3/{items,recipes,source}
+          cp -a .a6-source/game/survival/ui/. game/survival/ui/
+          cp -a .a6-source/tests/survival/ui/. tests/survival/ui/
+          cp -a .a6-source/docs/survival/ux/. docs/survival/ux/
+          cp .a1-source/data/survival/world/{poi_route_graph,hazard_capability_contracts,material_source_contracts}.json .a6-contract-inputs/a1/world/
+          cp .a1-source/data/survival/world/poi_authoring/poi_crown_{waystation,relay_shed}.v1.json .a6-contract-inputs/a1/world/poi_authoring/
+          cp .a3-source/game/survival/economy/economy_service.gd .a6-contract-inputs/a3/source/
+          cp .a3-source/data/survival/items/items.json .a6-contract-inputs/a3/items/
+          cp .a3-source/data/survival/recipes/{recipes,research,stations}.json .a6-contract-inputs/a3/recipes/
+          rm -rf .a6-source .a1-source .a3-source
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Install virtual display and import composition
+        run: |
+          sudo apt-get update && sudo apt-get install -y xvfb
+          mkdir -p artifacts/ud_import
+          timeout --signal=TERM --kill-after=10s 180s godot --headless --path . --user-data-dir artifacts/ud_import --import > artifacts/a6-import.log 2>&1
+          cat artifacts/a6-import.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|^ERROR:' artifacts/a6-import.log
+      - name: Original A6 input regression
+        if: ${{ !cancelled() }}
+        run: |
+          set +e
+          timeout --signal=TERM --kill-after=10s 240s godot --headless --path . res://tests/survival/ui/a0_modal_gameplay_input_regression.tscn > artifacts/a6-original-modal.log 2>&1
+          rc=$?
+          cat artifacts/a6-original-modal.log
+          echo "::notice::A6 original probe exit=$rc $(grep 'A0_MODAL_' artifacts/a6-original-modal.log | tail -2 | tr '\n' '~')"
+          bash tools/ci/gate_log.sh artifacts/a6-original-modal.log 'A6 original probe' 'A0_MODAL_INPUT_GATE_PASS'
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+      - name: Real A6 workspace on current A0 overworld
+        if: ${{ !cancelled() }}
+        run: |
+          set +e
+          mkdir -p artifacts/ud_a6
+          timeout --signal=TERM --kill-after=10s 600s xvfb-run -a godot --verbose --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_a6 --resolution 960x540 --windowed --script res://tests/survival_a6_modal_composition_test.gd > artifacts/a6-workspace-world.log 2>&1
+          rc=$?
+          cat artifacts/a6-workspace-world.log
+          echo "::notice::A6 workspace exit=$rc $(grep -E 'A0 A6 COMPOSITION|  FAIL  |SCRIPT ERROR|Parse Error' artifacts/a6-workspace-world.log | tail -10 | tr '\n' '~')"
+          grep '^A6_INPUT_TRACE ' artifacts/a6-workspace-world.log | while IFS= read -r line; do echo "::notice::$line"; done
+          grep -E 'Leaked instance:|ObjectDB instances were leaked|resources still in use at exit|Resource still in use:' artifacts/a6-workspace-world.log | head -8 | while IFS= read -r line; do echo "::notice::A6_LEAK_DIAG $line"; done
+          bash tools/ci/gate_log.sh artifacts/a6-workspace-world.log 'A6 workspace in world' 'A0 A6 COMPOSITION PASSED'
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+      - name: Exact previous A0 bed suite in the same composition
+        if: ${{ !cancelled() }}
+        run: |
+          set +e
+          mkdir -p artifacts/ud_a6_bed
+          timeout --signal=TERM --kill-after=10s 240s xvfb-run -a -s "-screen 0 1280x720x24" godot --verbose --path . --audio-driver Dummy --windowed --resolution 1280x720 --user-data-dir artifacts/ud_a6_bed --script res://tests/survival_bed_respawn_test.gd > artifacts/a6-bed.log 2>&1
+          rc=$?
+          cat artifacts/a6-bed.log
+          echo "::notice::A6 composed bed exit=$rc $(grep -E 'SURVIVAL BED|  FAIL  |SCRIPT ERROR|Parse Error' artifacts/a6-bed.log | tail -12 | tr '\n' '~')"
+          grep -E 'Leaked instance:|ObjectDB instances were leaked|resources still in use at exit|Resource still in use:' artifacts/a6-bed.log | head -8 | while IFS= read -r line; do echo "::notice::BED_LEAK_DIAG $line"; done
+          bash tools/ci/gate_log.sh artifacts/a6-bed.log 'A6 composed bed' 'SURVIVAL BED RESPAWN PASSED'
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+      - name: Pinned A6 isolated UI acceptance
+        if: ${{ !cancelled() }}
+        run: |
+          set +e
+          failures=0
+          for name in ui_test planner_test workspace_v1_test modal_lifecycle_test journey_test; do
+            timeout --signal=TERM --kill-after=5s 90s godot --headless --path . --script "res://tests/survival/ui/${name}.gd" > "artifacts/a6-${name}.log" 2>&1
+            rc=$?
+            cat "artifacts/a6-${name}.log"
+            if [ "$rc" -ne 0 ] || grep -E 'SCRIPT ERROR|Parse Error|^ERROR:' "artifacts/a6-${name}.log" | grep -v -E 'resources still in use|[0-9]+ RID allocations'; then failures=$((failures+1)); fi
+            echo "::notice::A6 $name exit=$rc $(tail -4 "artifacts/a6-${name}.log" | tr '\n' '~')"
+          done
+          [ "$failures" -eq 0 ]
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a0-a6-composition-native-logs
+          path: artifacts/a6-*.log
+          if-no-files-found: warn

@@ -1,0 +1,66 @@
+name: A0 native survival visual resolutions
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/dea2428e-soul-of-hero]
+    paths: ['tests/survival_visual_resolutions_test.gd', '.github/workflows/a0-native-visual-resolutions.yml', 'tools/ci/visual_annotation_chunks.py']
+permissions:
+  contents: read
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        resolution: ['1280x720', '2560x1440', '3840x2160']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import
+        run: |
+          mkdir -p artifacts/ud_import artifacts/ud_visual
+          timeout 180s godot --headless --path . --user-data-dir artifacts/ud_import --import > artifacts/import-visual.log 2>&1
+      - name: Capture actual native frames
+        env:
+          A0_VISUAL_RESOLUTION: ${{ matrix.resolution }}
+        shell: bash
+        run: |
+          set +e
+          timeout --signal=TERM --kill-after=15s 600s xvfb-run -a -s "-screen 0 3840x2160x24" env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_visual --resolution "$A0_VISUAL_RESOLUTION" --windowed --script res://tests/survival_visual_resolutions_test.gd > artifacts/visual.log 2>&1
+          rc=$?
+          cat artifacts/visual.log
+          echo "::notice::visual $A0_VISUAL_RESOLUTION exit=$rc $(grep '^NATIVE_VISUAL' artifacts/visual.log | tr '\n' '~')"
+          bash tools/ci/gate_log.sh artifacts/visual.log 'Visual fixture' 'SURVIVAL TOPOLOGY PASSED'
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+      - name: Install review thumbnail encoder
+        if: always()
+        run: python3 -m pip install --user Pillow==11.3.0
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-visual-${{ matrix.resolution }}
+          path: |
+            artifacts/visual*.png
+            artifacts/visual.log
+      # Downscaled lossy review copies only. The artifact contains actual PNGs.
+      - name: Review thumbnail transfer 00
+        if: always()
+        run: python3 tools/ci/visual_annotation_chunks.py 0
+      - name: Review thumbnail transfer 01
+        if: always()
+        run: python3 tools/ci/visual_annotation_chunks.py 1
+      - name: Review thumbnail transfer 02
+        if: always()
+        run: python3 tools/ci/visual_annotation_chunks.py 2
+      - name: Review thumbnail transfer 03
+        if: always()
+        run: python3 tools/ci/visual_annotation_chunks.py 3
+      - name: Review thumbnail transfer 04
+        if: always()
+        run: python3 tools/ci/visual_annotation_chunks.py 4

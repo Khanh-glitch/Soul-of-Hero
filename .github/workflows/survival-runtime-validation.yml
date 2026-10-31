@@ -15,7 +15,7 @@ name: Survival A0 (Foundation) Runtime Validation
 
 on:
   push:
-    branches: [arena/54306b59-soul-of-hero]
+    branches: [arena/54306b59-soul-of-hero, arena/dea2428e-soul-of-hero]
     paths-ignore:
       - 'docs/**'
       - 'README.md'
@@ -161,7 +161,27 @@ jobs:
           costed = set()
           for definition in pieces.values():
               costed.update(definition.get("cost", {}).keys())
-          for item in sorted(costed):
+          # Station kits are A3 craft-only outputs, not harvestable resources.
+          # Require the pinned catalog/recipe evidence rather than claiming they
+          # are reachable in the current production build (E-02 wiring is WIP).
+          a3_items = json.load(open("tests/fixtures/a3_86dc2195/items/items.json"))["items"]
+          a3_recipes = json.load(open("tests/fixtures/a3_86dc2195/recipes/recipes.json"))["recipes"]
+          a3_stations = json.load(open("tests/fixtures/a3_86dc2195/recipes/stations.json"))["stations"]
+          crafted_kits = set()
+          for piece_id, piece in pieces.items():
+              if piece.get("kind") != "station":
+                  continue
+              station = a3_stations.get(piece.get("station_kind"), {})
+              kit = station.get("kit", "")
+              if (not kit or piece.get("cost") != {kit: 1}
+                      or piece.get("footprint") != station.get("footprint")
+                      or piece.get("queue_capacity") != station.get("queue_capacity")
+                      or a3_items.get(kit, {}).get("acquisition_status") != "CRAFT_ONLY"
+                      or not any(r.get("outputs", {}).get(kit) == 1 for r in a3_recipes.values())):
+                  errors.append("station contract/kit mismatch: " + piece_id)
+              else:
+                  crafted_kits.add(kit)
+          for item in sorted(costed - crafted_kits):
               if reach.get(item, 10 ** 6) > 24:
                   errors.append("nothing yielding %s within 24 tiles of spawn (nearest %s)"
                                 % (item, reach.get(item, "none")))
@@ -217,7 +237,7 @@ jobs:
             || { echo "::error::SurvivalService is not registered as an autoload"; exit 1; }
           # The build actions are created at runtime by InputBootstrap rather than
           # declared in project.godot, so the source of truth is that file.
-          for action in build_toggle build_place build_slot_1 build_slot_2 build_slot_3 build_slot_4; do
+          for action in build_toggle build_place build_slot_1 build_slot_2 build_slot_3 build_slot_4 build_slot_5; do
             grep -q "&\"${action}\"," game/autoload/input_bootstrap.gd \
               || { echo "::error::input action ${action} is not declared by InputBootstrap"; exit 1; }
             grep -q "&\"${action}\": \[" game/autoload/input_bootstrap.gd \
@@ -265,6 +285,13 @@ jobs:
           tail -40 "$ARTIFACT_DIR/godot-import.log"
           exit $rc
 
+      - name: Verify vendored production catalogs match pinned A3 fixtures
+        run: |
+          for f in items/items.json items/sources.json recipes/recipes.json recipes/research.json recipes/stations.json; do
+            cmp "data/survival/$f" "tests/fixtures/a3_86dc2195/$f"
+          done
+          cmp game/survival/economy/vendor/a3_economy_service.gd tests/fixtures/a3_86dc2195/adapter/economy_service.gd
+
       - name: Foundation loop, twelve cases (state-asserting)
         run: |
           # Xvfb + opengl3 because the overworld paints ImageTexture atlases at
@@ -281,6 +308,240 @@ jobs:
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/survival-foundation.log" \
             "Foundation" "SURVIVAL FOUNDATION PASSED"
           exit $rc
+
+      - name: Actual Hero last-exit safety (native)
+        run: |
+          mkdir -p artifacts/ud_hero_exit
+          set +e
+          timeout --signal=TERM --kill-after=15s 600s \
+            xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+                  --audio-driver Dummy --user-data-dir artifacts/ud_hero_exit \
+                  --resolution 960x540 --windowed \
+                  --script res://tests/survival_hero_exit_test.gd >"$ARTIFACT_DIR/survival-hero-exit.log" 2>&1
+          rc=$?
+          cat "$ARTIFACT_DIR/survival-hero-exit.log"
+          echo "::notice::hero-exit exit=$rc $(tail -8 "$ARTIFACT_DIR/survival-hero-exit.log" | tr '\n' '~')"
+          grep -E 'SCRIPT ERROR|Parse Error|^ERROR:|  FAIL  ' "$ARTIFACT_DIR/survival-hero-exit.log" | head -10 | while IFS= read -r line; do echo "::error::$line"; done
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/survival-hero-exit.log" "Hero exit" "SURVIVAL HERO EXIT PASSED"
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+
+      - name: Bounded topology and layered occupancy (native)
+        run: |
+          mkdir -p artifacts/ud_topology
+          set +e
+          timeout --signal=TERM --kill-after=15s 600s \
+            xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+                  --audio-driver Dummy --user-data-dir artifacts/ud_topology \
+                  --resolution 960x540 --windowed \
+                  --script res://tests/survival_room_topology_test.gd >"$ARTIFACT_DIR/survival-topology.log" 2>&1
+          rc=$?
+          cat "$ARTIFACT_DIR/survival-topology.log"
+          echo "::notice::topology exit=$rc $(tail -4 "$ARTIFACT_DIR/survival-topology.log" | tr '\n' '~')"
+          echo "::notice::$(grep -E '\[spatial\]|\[door\]|\[frame\]' "$ARTIFACT_DIR/survival-topology.log" | tr '\n' '~')"
+          grep -E 'SCRIPT ERROR|Parse Error|^ERROR:|  FAIL  ' "$ARTIFACT_DIR/survival-topology.log" | head -8 | while IFS= read -r line; do echo "::error::$line"; done
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/survival-topology.log" "Topology" "SURVIVAL TOPOLOGY PASSED"
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+
+      - name: Paid multi-cell station placement (native)
+        run: |
+          mkdir -p artifacts/ud_station
+          set +e
+          timeout --signal=TERM --kill-after=15s 600s \
+            xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+                  --audio-driver Dummy --user-data-dir artifacts/ud_station \
+                  --resolution 960x540 --windowed \
+                  --script res://tests/survival_station_placement_test.gd >"$ARTIFACT_DIR/survival-station.log" 2>&1
+          rc=$?
+          cat "$ARTIFACT_DIR/survival-station.log"
+          echo "::notice::station exit=$rc $(tail -6 "$ARTIFACT_DIR/survival-station.log" | tr '\n' '~')"
+          grep -E 'SCRIPT ERROR|Parse Error|^ERROR:|  FAIL  ' "$ARTIFACT_DIR/survival-station.log" | head -10 | while IFS= read -r line; do echo "::error::$line"; done
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/survival-station.log" "Station" "SURVIVAL STATION PLACEMENT PASSED"
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+
+      - name: A0 plus pinned A3 unique authority (native)
+        run: |
+          mkdir -p artifacts/ud_a0_a3
+          set +e
+          timeout --signal=TERM --kill-after=15s 600s \
+            xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+                  --audio-driver Dummy --user-data-dir artifacts/ud_a0_a3 \
+                  --resolution 960x540 --windowed \
+                  --script res://tests/survival_a3_authority_test.gd >"$ARTIFACT_DIR/survival-a0-a3.log" 2>&1
+          rc=$?
+          cat "$ARTIFACT_DIR/survival-a0-a3.log"
+          echo "::notice::a0-a3 exit=$rc $(tail -6 "$ARTIFACT_DIR/survival-a0-a3.log" | tr '\n' '~')"
+          grep -E 'SCRIPT ERROR|Parse Error|^ERROR:|  FAIL  ' "$ARTIFACT_DIR/survival-a0-a3.log" | head -10 | while IFS= read -r line; do echo "::error::$line"; done
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/survival-a0-a3.log" "A0 A3 authority" "A0 A3 AUTHORITY PASSED"
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+
+      - name: Production A0 active-session and real A3 queues (native)
+        run: |
+          mkdir -p artifacts/ud_economy_session
+          set +e
+          timeout --signal=TERM --kill-after=15s 180s \
+            xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+                  --audio-driver Dummy --user-data-dir artifacts/ud_economy_session \
+                  --resolution 960x540 --windowed \
+                  --script res://tests/survival_economy_session_test.gd -- --survival-save-fault-test >"$ARTIFACT_DIR/survival-economy-session.log" 2>&1
+          rc=$?
+          cat "$ARTIFACT_DIR/survival-economy-session.log"
+          echo "::notice::economy-session exit=$rc $(tail -8 "$ARTIFACT_DIR/survival-economy-session.log" | tr '\n' '~')"
+          grep '^ECONOMY_GUI_TRACE ' "$ARTIFACT_DIR/survival-economy-session.log" | head -3 | while IFS= read -r line; do echo "::notice::$line"; done
+          grep -E 'SCRIPT ERROR|Parse Error|^ERROR:|  FAIL  ' "$ARTIFACT_DIR/survival-economy-session.log" | head -12 | while IFS= read -r line; do echo "::error::$line"; done
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/survival-economy-session.log" "Economy session" "SURVIVAL ECONOMY SESSION PASSED"
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+
+      - name: Fresh spawn ordinary-input resource gathering (native, partial journey)
+        run: |
+          mkdir -p artifacts/ud_normal_gather
+          set +e
+          timeout --signal=TERM --kill-after=15s 180s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+              --audio-driver Dummy --user-data-dir artifacts/ud_normal_gather \
+              --resolution 960x540 --windowed --script res://tests/survival_normal_input_gather_test.gd >"$ARTIFACT_DIR/survival-normal-gather.log" 2>&1
+          rc=$?
+          cat "$ARTIFACT_DIR/survival-normal-gather.log"
+          echo "::notice::normal-gather exit=$rc $(tail -12 "$ARTIFACT_DIR/survival-normal-gather.log" | tr '\n' '~')"
+          grep -E '^NORMAL_(BUILD|SCROLL)_TRACE ' "$ARTIFACT_DIR/survival-normal-gather.log" | head -5 | while IFS= read -r line; do echo "::notice::$line"; done
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/survival-normal-gather.log" "Normal gather" "SURVIVAL NORMAL INPUT GATHER PASSED"
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+
+      - name: Full bag and chest harvest rollback (fixture, native)
+        if: ${{ !cancelled() }}
+        run: |
+          mkdir -p artifacts/ud_capacity
+          set +e
+          timeout --signal=TERM --kill-after=15s 180s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+              --audio-driver Dummy --user-data-dir artifacts/ud_capacity \
+              --resolution 960x540 --windowed --script res://tests/survival_full_capacity_test.gd >"$ARTIFACT_DIR/survival-capacity.log" 2>&1
+          rc=$?
+          cat "$ARTIFACT_DIR/survival-capacity.log"
+          echo "::notice::full-capacity exit=$rc $(grep -E 'SURVIVAL FULL CAPACITY|  FAIL  |SCRIPT ERROR|Parse Error' "$ARTIFACT_DIR/survival-capacity.log" | tail -12 | tr '\n' '~')"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/survival-capacity.log" "Full capacity" "SURVIVAL FULL CAPACITY PASSED"
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+
+      - name: Death transaction interruption boundaries (native)
+        run: |
+          mkdir -p artifacts/ud_death_faults
+          set +e
+          timeout --signal=TERM --kill-after=15s 600s \
+            xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+                  --audio-driver Dummy --user-data-dir artifacts/ud_death_faults \
+                  --resolution 960x540 --windowed \
+                  --script res://tests/survival_save_interruption_test.gd -- --survival-save-fault-test >"$ARTIFACT_DIR/survival-interruption.log" 2>&1
+          rc=$?
+          cat "$ARTIFACT_DIR/survival-interruption.log"
+          echo "::notice::interruption exit=$rc $(tail -6 "$ARTIFACT_DIR/survival-interruption.log" | tr '\n' '~')"
+          grep -E 'SCRIPT ERROR|Parse Error|^ERROR:|  FAIL  ' "$ARTIFACT_DIR/survival-interruption.log" | head -10 | while IFS= read -r line; do echo "::error::$line"; done
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/survival-interruption.log" "Death interruption" "SURVIVAL SAVE INTERRUPTION PASSED"
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+
+      - name: Production bed and overworld respawn (native)
+        run: |
+          mkdir -p artifacts/ud_bed
+          set +e
+          timeout --signal=TERM --kill-after=15s 600s \
+            xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --verbose --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+                  --audio-driver Dummy --user-data-dir artifacts/ud_bed \
+                  --resolution 960x540 --windowed \
+                  --script res://tests/survival_bed_respawn_test.gd >"$ARTIFACT_DIR/survival-bed.log" 2>&1
+          rc=$?
+          cat "$ARTIFACT_DIR/survival-bed.log"
+          echo "::notice::bed exit=$rc $(tail -6 "$ARTIFACT_DIR/survival-bed.log" | tr '\n' '~')"
+          grep '^GUI_POINTER_TRACE ' "$ARTIFACT_DIR/survival-bed.log" | head -3 | while IFS= read -r line; do echo "::notice::$line"; done
+          grep -E 'Leaked instance:|Resource still in use:|ObjectDB instances were leaked|resources still in use at exit' "$ARTIFACT_DIR/survival-bed.log" | head -9 | while IFS= read -r line; do echo "::notice::BED_VERBOSE_DIAG $line"; done
+          grep -E 'SCRIPT ERROR|Parse Error|^ERROR:|  FAIL  ' "$ARTIFACT_DIR/survival-bed.log" | head -10 | while IFS= read -r line; do echo "::error::$line"; done
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/survival-bed.log" "Bed" "SURVIVAL BED RESPAWN PASSED"
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+
+      - name: Bed frame bed_active review bytes 1
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py bed_active 0
+
+      - name: Bed frame bed_active review bytes 2
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py bed_active 1
+
+      - name: Bed frame bed_active review bytes 3
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py bed_active 2
+
+      - name: Bed frame bed_death review bytes 1
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py bed_death 0
+
+      - name: Bed frame bed_death review bytes 2
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py bed_death 1
+
+      - name: Bed frame bed_death review bytes 3
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py bed_death 2
+
+      - name: Bed frame bed_respawn review bytes 1
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py bed_respawn 0
+
+      - name: Bed frame bed_respawn review bytes 2
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py bed_respawn 1
+
+      - name: Bed frame bed_respawn review bytes 3
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py bed_respawn 2
+
+      - name: Roof frame outside review bytes 1
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py outside 0
+
+      - name: Roof frame outside review bytes 2
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py outside 1
+
+      - name: Roof frame outside review bytes 3
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py outside 2
+
+      - name: Roof frame inside review bytes 1
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py inside 0
+
+      - name: Roof frame inside review bytes 2
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py inside 1
+
+      - name: Roof frame inside review bytes 3
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py inside 2
+
+      - name: Roof frame adjacent review bytes 1
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py adjacent 0
+
+      - name: Roof frame adjacent review bytes 2
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py adjacent 1
+
+      - name: Roof frame adjacent review bytes 3
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py adjacent 2
 
       - name: Every check actually ran (anti-vacuity)
         if: always()
@@ -356,6 +617,14 @@ jobs:
           name: survival-runtime-evidence
           path: |
             artifacts/survival-foundation.log
+            artifacts/survival-topology.log
+            artifacts/survival-hero-exit.log
+            artifacts/survival-bed.log
+            artifacts/survival-station.log
+            artifacts/survival-economy-session.log
+            artifacts/survival-a0-a3.log
+            artifacts/survival-interruption.log
+            artifacts/roof_*.png
             artifacts/godot-import.log
           if-no-files-found: warn
           retention-days: 14

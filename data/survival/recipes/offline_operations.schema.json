@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SOH A3 prepared offline-operation policy v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "policy"],
+  "properties": {
+    "schema": {"const": "soh.economy.offline_operations.v1"},
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy_id", "status", "user_rate_approval", "run_deadline_seconds", "operation_tick_microseconds", "operation_tick_provenance", "max_armed_operations", "output_custody", "auto_collect", "auto_start_next_queue", "eligible_craft_recipes", "eligible_research_recipes", "eligible_technologies", "ineligible_categories", "cultivation", "collectors", "active_only_sources_unchanged", "forbidden_offline_effects"],
+      "properties": {
+        "policy_id": {"type": "string", "minLength": 1},
+        "status": {"const": "OPT_IN_A3_ENGINEERING_DEFAULT_A0_MOUNT_REQUIRED"},
+        "user_rate_approval": {"const": "NOT_USER_LOCKED"},
+        "run_deadline_seconds": {"const": 1209600},
+        "operation_tick_microseconds": {"const": 1000000},
+        "operation_tick_provenance": {"type": "string", "minLength": 1},
+        "max_armed_operations": {"type": "integer", "minimum": 1, "maximum": 256},
+        "output_custody": {"const": "EXISTING_JOB_ESCROW_UNTIL_PLAYER_COLLECT"},
+        "auto_collect": {"const": false},
+        "auto_start_next_queue": {"const": false},
+        "eligible_craft_recipes": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+        "eligible_research_recipes": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+        "eligible_technologies": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+        "ineligible_categories": {"type": "array", "uniqueItems": true, "items": {"type": "string"}, "allOf": [{"contains": {"const": "core"}}, {"contains": {"const": "reconstruction"}}]},
+        "cultivation": {"type": "object", "additionalProperties": false, "required": ["status", "reason"], "properties": {"status": {"type": "string", "pattern": "^DISABLED_"}, "reason": {"type": "string", "minLength": 1}}},
+        "collectors": {"type": "object", "additionalProperties": false, "required": ["status", "reason"], "properties": {"status": {"type": "string", "pattern": "^DISABLED_"}, "reason": {"type": "string", "minLength": 1}}},
+        "active_only_sources_unchanged": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+        "forbidden_offline_effects": {"type": "array", "minItems": 8, "uniqueItems": true, "items": {"type": "string"}}
+      }
+    }
+  }
+}
