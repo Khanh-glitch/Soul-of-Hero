@@ -16,6 +16,7 @@ var _pilot: Node
 var _failures: Array[String] = []
 var _assertions := 0
 var _last_axis_collided := false
+var _last_collision_name := ""
 var _capture_index := 0
 var _headless_visual_capture_skipped := false
 var _measure_walk := false
@@ -130,7 +131,18 @@ func _journey_quarry(
 	await _capture("quarry-%s-choice" % expected_route)
 
 	var traversed_open_route := await _walk_to(Vector2(open_x, 378.0))
-	_check(traversed_open_route, "quarry selected route remains physically traversable")
+	var route_attempt := _snapshot()
+	_check(
+		traversed_open_route,
+		(
+			"quarry selected route remains traversable; pos=%s target=%s state=%s"
+			% [
+				str(route_attempt.get("position", Vector2.ZERO)),
+				str(Vector2(open_x, 378.0)),
+				str(route_attempt.get("site_state", {}))
+			]
+		)
+	)
 	var open_reached := await _walk_axis_to("move_up", KEY_W, 220.0)
 	_check(
 		open_reached and not _last_axis_collided, "quarry owner-selected route is physically open"
@@ -222,28 +234,19 @@ func _journey_orchard(choice_action: String, expected_channel: String, cross_ope
 		await _settle()
 		var graft_attempt := _snapshot()
 		var graft_hero := _hero()
-		var graft_position := graft_hero.global_position if graft_hero != null else Vector2.ZERO
-		var graft_facing: Vector2 = (
-			graft_hero.call("get_facing_direction")
-			if graft_hero != null and graft_hero.has_method("get_facing_direction")
-			else Vector2.ZERO
-		)
-		var graft_diagnostic := (
-			"position=%s facing=%s stand_delta=%.2f socket_delta=%.2f feedback=%s"
+		var graft_message := (
+			"pos=%s face=%s d=%.1f/%.1f feedback=%s"
 			% [
-				str(graft_position),
-				str(graft_facing),
-				graft_position.distance_to(Vector2(510.0, 370.0)),
-				graft_position.distance_to(Vector2(510.0, 292.0)),
+				str(graft_hero.global_position),
+				str(graft_hero.get("facing_direction")),
+				graft_hero.global_position.distance_to(Vector2(510.0, 370.0)),
+				graft_hero.global_position.distance_to(Vector2(510.0, 292.0)),
 				str(graft_attempt.get("feedback", "")),
 			]
 		)
 		_check(
 			bool(graft_attempt.get("site_state", {}).get("graft_marks_read", false)),
-			(
-				"owner-ready graft-mark action commits through the physical action socket; "
-				+ graft_diagnostic
-			)
+			"owner-ready graft-mark action fails; " + graft_message
 		)
 		_check(
 			_has_visual_prop("graft_mark_herb"),
@@ -816,12 +819,12 @@ func _walk_axis_to(action: String, keycode: Key, coordinate: float) -> bool:
 	)
 	var reached := absf(starting_value - coordinate) <= 5.0
 	_last_axis_collided = false
+	_last_collision_name = ""
 	if reached:
 		return true
 	await _send_key(keycode, true)
 	var best_distance := absf(starting_value - coordinate)
 	var stalled_frames := 0
-	var observed_colliders: Array[String] = []
 	for _frame: int in range(240):
 		await physics_frame
 		await process_frame
@@ -845,40 +848,37 @@ func _walk_axis_to(action: String, keycode: Key, coordinate: float) -> bool:
 			stalled_frames += 1
 		if hero.get_slide_collision_count() > 0:
 			_last_axis_collided = true
-			for collision_index: int in range(hero.get_slide_collision_count()):
-				var collider: Object = hero.get_slide_collision(collision_index).get_collider()
-				var collider_name := str(collider.name) if collider is Node else str(collider)
-				if collider_name not in observed_colliders:
-					observed_colliders.append(collider_name)
+			var collider: Object = hero.get_slide_collision(0).get_collider()
+			_last_collision_name = str(collider.name) if collider is Node else str(collider)
 			if stalled_frames >= 30:
 				break
 	await _send_key(keycode, false)
+	for _frame: int in range(60):
+		if hero.velocity.length() <= 1.0:
+			break
+		await physics_frame
+		await process_frame
 	await _settle()
 	var ending_value := (
 		hero.global_position.x if action in ["move_left", "move_right"] else hero.global_position.y
 	)
 	if not reached:
-		var axis_result := (
-			"A8_HERO_AXIS_RESULT action=%s target=%.1f start=%s end=%s collided=%s "
-			% [
-				action,
-				coordinate,
-				str(starting_position),
-				str(hero.global_position),
-				str(_last_axis_collided),
-			]
+		print(
+			(
+				"A8_HERO_AXIS_RESULT action=%s target=%.1f start=%s end=%s collided=%s state=%s collider=%s"
+				% [
+					action,
+					coordinate,
+					str(starting_position),
+					str(hero.global_position),
+					str(_last_axis_collided),
+					str(_snapshot().get("site_state", {})),
+					_last_collision_name,
+				]
+			)
 		)
-		var context_result := (
-			"input=%s site_state=%s colliders=%s"
-			% [
-				str(Input.get_vector("move_left", "move_right", "move_up", "move_down")),
-				str(_snapshot().get("site_state", {})),
-				str(observed_colliders),
-			]
-		)
-		print(axis_result + context_result)
 	_check(
-		hero.global_position.distance_to(starting_position) > 0.5 or _last_axis_collided,
+		reached or hero.global_position.distance_to(starting_position) > 0.5 or _last_axis_collided,
 		"keyboard movement or collision is observed on %s" % action
 	)
 	return reached or absf(ending_value - coordinate) <= 5.0

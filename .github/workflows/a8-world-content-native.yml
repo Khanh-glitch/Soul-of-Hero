@@ -161,7 +161,7 @@ jobs:
             label="$2"
             log_path="$3"
             if [ "$outcome" != success ] && [ -f "$log_path" ]; then
-              excerpt="$(grep -E 'ERROR: Assertion failed:|SCRIPT ERROR:|A8_HERO_AXIS_RESULT|A8_HERO_ROUTE_MEASURE' "$log_path" | tail -n 60 | tr '\n' ' ' | cut -c1-5000)"
+              excerpt="$(grep -E 'ERROR: Assertion failed:|SCRIPT ERROR:|A8_HERO_AXIS_RESULT|A8_HERO_ROUTE_MEASURE' "$log_path" | tail -n 60 | tr '\n' ' ' | tail -c 5000)"
               echo "::warning title=A8 ${label} failure excerpt::${excerpt}"
             fi
           }
