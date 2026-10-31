@@ -51,6 +51,10 @@ jobs:
           set -o pipefail
           python3 tools/arcana19_ribbon_compare/compare.py artifacts/arcana19-ribbon | tee compare.log
           sed 's/^/::notice::/' compare.log
+      - name: Surface native GPU cases separately
+        if: always()
+        run: |
+          if test -f compare.log; then grep '"variant": "gpu"' compare.log | sed 's/^/::notice title=D19_RIBBON_GPU::/' || true; fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:
