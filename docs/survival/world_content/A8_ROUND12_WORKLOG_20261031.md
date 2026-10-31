@@ -1,6 +1,6 @@
 # A8 Round 12 worklog — real Hero input, readable three-site projection, one withheld source candidate
 
-**Disposition: `PARTIAL_WITH_BLOCKERS`.** This is a continuation of the already-open PR #26 on `arena/2d7e6d7a-soul-of-hero`; do not create another PR, merge, or claim production acceptance. Current source changes are in the working tree based on A8 head `6337533f7cc0d39487921e279d3967ac29a59297`; the exact implementation commit and exact-head Actions results must be filled after push. This report separates A8 local/fixture evidence from current A0/A1/A3 production evidence.
+**Disposition: `PARTIAL_WITH_BLOCKERS`.** This is a continuation of the already-open PR #26 on `arena/2d7e6d7a-soul-of-hero`; do not create another PR, merge, or claim production acceptance. Latest exact A8 source head recorded here is `efead2ad0cefc0113dd81185072c022efd8f0af2`. Exact-head A8 native CI passed, but production mounting, A0 durable restart/no-duplicate evidence, A3 authorization, and human visual/play acceptance remain open. The exact-head addendum at the end supersedes earlier pending CI notes below; this report keeps A8 fixture evidence separate from A0/A1/A3 production evidence.
 
 ## Round 12 source and owner refresh
 
@@ -81,10 +81,21 @@ The local measured A8 fixture route on Quarry was: spawn `(480.0,544.7778)` to r
 | `INTEGRATION` | HOLD | A0/A1/A3 owner composition and production entry are not present in this checkout. |
 | `BALANCE_REPLAY` | NOT_TESTED | No approved rates/terms or human/14-day replay. |
 
-## Exact next actions
+## Remaining actions after the exact-head A8 pass
 
-1. Recheck `git status`, exact `HEAD`, and current PR #26 owner pins; commit and push only to `arena/2d7e6d7a-soul-of-hero`.
-2. Wait for exact-head `.github/workflows/a8-world-content-native.yml`. Fix any GDScript/native failures before updating test claims.
-3. Retrieve the three-resolution native artifacts and inspect images by eye if a supported display path is available. Record artifact/run ID, `headSha`, screenshots inspected, legibility/collision/black-void findings, and any image-access limitation. Do not substitute Python tests for runtime/visual review.
-4. Keep production blockers explicit: A0 canonical `site_instance_id` + real world mount + entry/return/restart/no-duplicate save; A1 route reachability; A3 bound source, run capacity, site-specific risk, authorized run sink, costs/yield/cooldown/capability; separate human choice/play acceptance.
-5. Update this worklog and `A8_NATIVE_POI_PILOT.md` with actual exact-head CI/artifact results after they exist, append/read back the Google Docs LIVE handoff tabs, and keep PR #26 open/unmerged.
+1. Refresh the A0/A1 source pins at their advanced current heads and verify only relevant compatibility sources; do not edit owner-owned code.
+2. Retrieve the three-resolution artifact from A8 run `41183381361` and inspect the images by eye if access succeeds. The first download attempt returned Azure Blob `EOF`; record screenshots inspected or the continuing access limitation. Do not substitute CI capture success or Python tests for visual review.
+3. Obtain owner-approved A0 canonical `site_instance_id`, real world mount, transition and separate-process SaveService restart/idempotency proof; A1 route/socket approval; and A3 source binding, run capacity, site-specific risk, authorized run sink, costs/yield/cooldown/capability before production claims.
+4. Conduct separate human choice/play acceptance after approved composition. Keep R0–R5 and the nine strict gates scoped honestly, preserve the unapproved reward fail-closed behavior, and keep PR #26 open/unmerged.
+
+
+## Exact-head Round 12 addendum — 2026-10-31
+
+- **PR #26:** open and unmerged at `efead2ad0cefc0113dd81185072c022efd8f0af2` ([PR #26](https://github.com/Khanh-glitch/Soul-of-Hero/pull/26)). No merge or production acceptance is claimed.
+- **A8 native pilot:** exact-head run [41183381361](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41183381361) **passed**. It completed native contracts, transitions, the three-site input journey, source-backed presentation, surface/owner reset, Ragnarok route/endpoint checks, and captures at 1280×720, 2560×1440, and 3840×2160. The journey uses the A8 pilot and current checkout Hero scene/controller; it does not prove the canonical A0 production mount or compatibility with A0's advanced current head.
+- **Local Hero journey:** custom Godot 4.7 headless run passed **291 assertions**; headless mode skipped image writes. GDScript formatting/lint and `git diff --check` passed for the journey changes; the workflow YAML parsed successfully.
+- **Godot Runtime Validation:** exact-head run [41183381442](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41183381442) passed current-branch import/headless runtime tests and Xvfb rendered gameplay captures. Its original-main control comparison failed: 20 Chapter 2 campaign-entry signed-XP assertions and 3 combat smoke assertions failed on original main. This is recorded as a baseline/control failure, not represented as a current-branch pass for those original-main tests.
+- **Handoff Contract:** exact-head run [41183381701](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41183381701) **passed**.
+- The A8 artifact was listed but download failed with Azure Blob `EOF`; therefore the 720p/1440p/2160p captures were generated by CI but **not reviewed by eye**. No human gameplay acceptance has occurred.
+- A0/A1 owner heads have advanced since the source pins recorded in the earlier sections: A0 PR #21 is now `ee837fb06ab5108b40533f516cca95f6b56ce61f`, A1 PR #20 is now `c17c04f853ec4c95fbeb1de3561783d56fee9c22`, and A3 PR #19 remains `b44e22df3af40939069189be14afc23ee1ce21c4`. The earlier A0/A1 source-hash comparisons are historical to their cited heads; refresh and compare the relevant source pins before making any current-owner compatibility claim.
+- **A8.1–A8.4 disposition remains partial:** no canonical production `site_instance_id`/A0 world composition, separate-process SaveService restart/idempotency proof, A1 production route approval, A3 Quarry binding/cost/yield/cooldown/capacity/risk/sink authorization, or by-eye/human play acceptance. `a3_approved_bindings=[]`; prices, yields, and cooldowns remain null; unapproved source rewards remain withheld. Keep R0–R5 and the nine strict gates scoped as before and PR #26 open/unmerged.
