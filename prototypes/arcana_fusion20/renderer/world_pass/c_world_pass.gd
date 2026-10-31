@@ -44,7 +44,15 @@ func consume(frame: Arcana20SourcePassFrame) -> void:
     _material.set_shader_parameter("live_light_enabled", has_live_light)
     if has_live_light:
         _material.set_shader_parameter("live_light_index", _set_texture("live_light_index", Image.create_from_data(384, 216, false, Image.FORMAT_RGBAF, frame.c_live_light_index.to_byte_array())))
-        _material.set_shader_parameter("live_light_ops", _set_texture("live_light_ops", Image.create_from_data(384, frame.c_live_light_height, false, Image.FORMAT_RGBAF, frame.c_live_light_operations.to_byte_array())))
+        # Hold an exponentially grown atlas while this viewer lives: changing
+        # particle counts must not reallocate a GPU texture on every frame.
+        var atlas_height := 1
+        while atlas_height < frame.c_live_light_height: atlas_height *= 2
+        if _textures.has("live_light_ops"):
+            atlas_height = maxi(atlas_height, (_textures["live_light_ops"] as ImageTexture).get_height())
+        var atlas := frame.c_live_light_operations.duplicate()
+        atlas.resize(384 * atlas_height * 4)
+        _material.set_shader_parameter("live_light_ops", _set_texture("live_light_ops", Image.create_from_data(384, atlas_height, false, Image.FORMAT_RGBAF, atlas.to_byte_array())))
     _sprite.global_transform = frame.source_to_world
     _sprite.visible = true
     _update_camera_basis()
