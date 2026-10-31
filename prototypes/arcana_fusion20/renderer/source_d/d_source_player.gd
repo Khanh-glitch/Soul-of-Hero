@@ -24,6 +24,9 @@ var _origin := Vector2.ZERO
 var _target := Vector2.ZERO
 var _rot := 0.0
 var _scale := 1.0
+# Skip only additive fields that the next fixed step clears before any
+# observable frame; event-bearing ticks still raster for synchronous listeners.
+var elide_intermediate_raster := true
 var profile_cpu := false
 var profile_update_us: Array[float] = []
 var profile_submit_us: Array[float] = []
@@ -100,9 +103,18 @@ func advance(dt: float) -> void:
         _tick += 1
         # Original D's first browser frame after cast initializes with the
         # source reset delta (0.0001s); later simulation stays fixed 60 Hz.
+        var event_due := false
+        if elide_intermediate_raster:
+            for ev in _events:
+                if not bool(ev.emitted) and source_time() >= float(ev.t):
+                    event_due = true
+                    break
+        var next_step_before_draw := _acc >= STEP and guard < 8 and source_time() < duration
+        _eng.fx.raster_enabled = not elide_intermediate_raster or not next_step_before_draw or event_due
         var update_start := Time.get_ticks_usec() if profile_cpu else 0
         _eng.update(source_time(), 0.0001 if _tick == 1 else STEP)
         if profile_cpu: profile_update_us.append(float(Time.get_ticks_usec() - update_start))
+        _eng.fx.raster_enabled = true
         _fire_events()
         if source_time() >= duration:
             _active = false
