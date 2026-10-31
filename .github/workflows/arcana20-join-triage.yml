@@ -29,6 +29,8 @@ jobs:
           for i in hits[-12:]:
               msg=' | '.join(lines[max(0,i-1):i+6]).replace('%','%25').replace('\n',' ')
               print('::notice::JOIN_CONTEXT '+msg[:3600])
+          for l in lines:
+              if 'full visible real HUD' in l: print('::notice title=FULL_HUD::'+l.replace('%','%25'))
           ok=[l for l in lines if l.startswith('JOIN_OK') or l.startswith('JOIN_FAIL')]
           print('::notice title=JOIN_ALL::'+ ' | '.join(ok)[:3800].replace('%','%25'))
           leaks=[l for l in lines if any(k in l for k in ('Leaked instance:', 'Resource still in use:', 'ObjectDB instances leaked', 'resources still in use'))]
