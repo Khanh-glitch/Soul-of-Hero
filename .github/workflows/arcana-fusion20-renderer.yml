@@ -34,10 +34,11 @@ jobs:
         run: |
           : > checkonly.log
           while IFS= read -r f; do
-            out=$(timeout 60s godot --headless --path . --check-only --script "res://$f" 2>&1 | grep -A1 -E 'SCRIPT ERROR|Parse Error|ERROR:' | head -8 || true)
-            if [ -n "$out" ]; then
-              echo "CHECKFAIL $f" >> checkonly.log
-              echo "$out" | sed "s|^|$f :: |" >> checkonly.log
+            rc=0
+            timeout 60s godot --headless --path . --check-only --script "res://$f" > checkone.log 2>&1 || rc=$?
+            if [ "$rc" -ne 0 ] || grep -Eq 'SCRIPT ERROR|Parse Error|ERROR:' checkone.log; then
+              echo "CHECKFAIL $f (exit $rc)" >> checkonly.log
+              head -12 checkone.log | sed "s|^|$f :: |" >> checkonly.log
             fi
           done < <(find prototypes/arcana_fusion20/renderer -name '*.gd' | sort)
           head -9 checkonly.log | while IFS= read -r l; do echo "::error::$l"; done || true
@@ -96,6 +97,17 @@ jobs:
               imgs[0].save(out, save_all=True, append_images=imgs[1:], duration=400, loop=0)
               print('gif', out, len(imgs))
           PYEOF
+      - name: D source/native RGB spatial diagnostics (not a parity gate)
+        if: always()
+        shell: bash
+        run: |
+          if compgen -G 'prototypes/arcana_fusion20/renderer/evidence_out/review/skill_19/native_t*.png' > /dev/null; then
+            python3 -m pip install --quiet pillow
+            python3 tools/arcana19_d_capture/compare.py | tee d-compare.log
+            while IFS= read -r l; do echo "::notice::$l"; done < d-compare.log
+          else
+            echo 'No D native captures produced; comparison remains unmeasured.'
+          fi
       - name: Upload all-20 visual review package
         if: always()
         uses: actions/upload-artifact@v4

@@ -1,10 +1,7 @@
-// ARCANA #19 (D Constellation Engine) reference capture.
-// Loads the ORIGINAL standalone HTML (Elemental_VFX_Lab) in headless
-// Chromium (WebGL2/SwiftShader), casts ALL index 2 (Constellation
-// Engine), and steps it with a virtual deterministic 60 Hz clock
-// (rAF + performance.now replaced before page scripts run), so the
-// dt-integrated node motion is reproducible frame-for-frame.
-// Output: renderer/source_d/reference/constellation_tXXX.png + meta.
+// Deterministic browser capture of the original D standalone HTML.
+// The original canvas includes a simulated floor and markers; it is evidence
+// only, NEVER a texture for SOH. The isolated diagnostic suppresses those
+// draw calls, but is not an unmodified full-scene source or parity gate.
 import { chromium } from 'playwright';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
@@ -13,72 +10,73 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const html = path.join(root, 'prototypes/arcana_fusion20/original_source/package/handoff/reference/Elemental_VFX_Lab_FIXED_Standalone.html');
-const outDir = path.join(root, 'prototypes/arcana_fusion20/renderer/source_d/reference');
+const outDir = process.env.ARCANA_D_OUTPUT || path.join(root, 'prototypes/arcana_fusion20/renderer/evidence_out/d-browser');
 mkdirSync(outDir, { recursive: true });
-
-const TIMES = [0.5, 1.2, 2.0, 3.2, 4.4, 5.2, 6.4, 7.4, 7.9, 8.15, 8.8, 9.3];
-
-const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
-const page = await browser.newPage({ viewport: { width: 900, height: 700 }, deviceScaleFactor: 1 });
-await page.addInitScript(() => {
-  let vnow = 0;
-  let idc = 0;
-  const cbs = new Map();
-  window.requestAnimationFrame = (cb) => { const id = ++idc; cbs.set(id, cb); return id; };
-  window.cancelAnimationFrame = (id) => cbs.delete(id);
-  performance.now = () => vnow;
-  window.__advance = (frames) => {
-    for (let i = 0; i < frames; i++) {
-      vnow += 1000 / 60;
-      const list = [...cbs.values()];
-      cbs.clear();
-      for (const cb of list) cb(vnow);
+const times = [0.5, 1.2, 2.0, 3.2, 4.4, 5.2, 6.4, 7.4, 7.9, 8.15, 8.8, 9.3];
+const browser = await chromium.launch({executablePath: process.env.CHROMIUM_PATH || undefined, args: ['--no-sandbox', '--use-angle=swiftshader', '--enable-unsafe-swiftshader']});
+async function capture(isolated, requested, save) {
+  const page = await browser.newPage({viewport:{width:900,height:700},deviceScaleFactor:1});
+  await page.addInitScript(() => {
+    let now = 0, id = 0;
+    const callbacks = new Map();
+    window.requestAnimationFrame = cb => { callbacks.set(++id, cb); return id; };
+    window.cancelAnimationFrame = n => callbacks.delete(n);
+    Object.defineProperty(performance, 'now', {value: () => now});
+    window.__advance = count => {
+      for (let i = 0; i < count; i++) {
+        now += 1000 / 60;
+        const frame = [...callbacks.values()]; callbacks.clear();
+        for (const cb of frame) cb(now);
+      }
+    };
+  });
+  page.on('pageerror', e => console.error('PAGEERROR', e.message));
+  await page.goto(pathToFileURL(html).href);
+  await page.waitForFunction(() => window.__vfxDebug || window.__vfxError, null, {timeout:30000});
+  const details = await page.evaluate(isolate => {
+    if (window.__vfxError) throw Error(window.__vfxError);
+    const debug = window.__vfxDebug, r = debug.state.renderer;
+    const canvas = document.getElementById('stage');
+    canvas.style.width = '480px'; canvas.style.height = '270px'; r.resize();
+    const idx = debug.ALL.findIndex(s => s.id === 19 && s.name === 'Constellation Engine');
+    if (idx < 0) throw Error('D spell not found');
+    if (isolate) {
+      // Suppress battlefield floor + marker calls without rewriting the HTML.
+      // Preserve all other source spell rendering and postprocessing.
+      const quad = r.quad.bind(r);
+      r.quad = p => { if (p !== r.floorProg) quad(p); };
+      r.drawMarkers = () => {};
     }
-  };
-});
-page.on('pageerror', (e) => console.error('PAGEERROR', e.message));
-await page.goto(pathToFileURL(html).href);
-await page.waitForFunction(() => window.__vfxDebug || window.__vfxError, null, { timeout: 30000 });
-const err = await page.evaluate(() => window.__vfxError || null);
-if (err) { console.error('VFX ERROR', err); process.exit(1); }
-
-await page.evaluate(() => {
-  const c = document.getElementById('stage');
-  c.style.width = '480px';
-  c.style.height = '270px';
-  window.__vfxDebug.state.renderer.resize();
-  window.__vfxDebug.cast(2); // Constellation Engine
-  window.__vfxDebug.state.playing = true;
-  window.__vfxDebug.state.speed = 1;
-});
-const dims = await page.evaluate(() => {
-  const c = document.getElementById('stage');
-  return { w: c.width, h: c.height, name: window.__vfxDebug.ALL[window.__vfxDebug.state.idx].name };
-});
-console.log('canvas', dims);
-if (dims.w !== 480 || dims.h !== 270) { console.error('unexpected canvas size'); process.exit(1); }
-
-const meta = {};
-let done = 0;
-const hashes = {};
-for (const t of TIMES) {
-  const target = Math.round(t * 60);
-  await page.evaluate((n) => window.__advance(n), target - done);
-  done = target;
-  const dataUrl = await page.evaluate(() => window.__vfxDebug.state.renderer.capture());
-  const buf = Buffer.from(dataUrl.split(',')[1], 'base64');
-  const key = 't' + String(Math.round(t * 100)).padStart(3, '0');
-  writeFileSync(path.join(outDir, `constellation_${key}.png`), buf);
-  hashes[key] = createHash('sha256').update(buf).digest('hex').slice(0, 16);
-  meta[key] = { t };
-  console.log('captured', key, 't=', t, buf.length, 'bytes', hashes[key]);
+    debug.cast(idx); debug.state.playing = true; debug.state.speed = 1;
+    return {width:canvas.width,height:canvas.height, index:idx, name:debug.ALL[idx].name,
+      webgl:r.gl.getParameter(r.gl.RENDERER)};
+  }, isolated);
+  if (details.width !== 480 || details.height !== 270) throw Error('incorrect capture dimensions: '+JSON.stringify(details));
+  console.log('renderer', JSON.stringify({isolated,...details}));
+  const result = {}; let done = 0;
+  for (const t of requested) {
+    const target = Math.round(t * 60);
+    await page.evaluate(n => window.__advance(n), target - done); done = target;
+    const state = await page.evaluate(() => ({time:window.__vfxDebug.state.t, error:window.__vfxError || null,
+      data:window.__vfxDebug.state.renderer.capture()}));
+    if (state.error) throw Error(state.error);
+    const bytes = Buffer.from(state.data.split(',')[1], 'base64');
+    const key = `t${String(Math.round(t*100)).padStart(3,'0')}`;
+    const hash = createHash('sha256').update(bytes).digest('hex');
+    result[key] = {requested:t,actual:state.time,sha256:hash};
+    if (save) writeFileSync(path.join(outDir, `${isolated ? 'fx-only' : 'original'}_${key}.png`),bytes);
+    console.log(key, 'actual=',state.time,'sha256=',hash);
+  }
+  await page.close();
+  return result;
 }
-writeFileSync(path.join(outDir, 'constellation_meta.json'), JSON.stringify(meta, null, 2));
-
-// Determinism proof: fresh cast, re-step to t=5.2, hash must match.
-await page.evaluate(() => { window.__vfxDebug.cast(2); window.__advance(Math.round(5.2 * 60)); });
-const again = await page.evaluate(() => window.__vfxDebug.state.renderer.capture());
-const h2 = createHash('sha256').update(Buffer.from(again.split(',')[1], 'base64')).digest('hex').slice(0, 16);
-console.log('determinism t320 first=', hashes['t520'], 'second=', h2, h2 === hashes['t520'] ? 'MATCH' : 'MISMATCH');
-await browser.close();
-if (h2 !== hashes['t520']) process.exit(2);
+try {
+  const original = await capture(false, times, true);
+  const isolated = await capture(true, times, true);
+  // A fresh page resets renderer.time, persistent framebuffer and pool; a
+  // second cast in the same page does not reset them and is not comparable.
+  const repeat = await capture(true, [5.2], false);
+  if (repeat.t520.sha256 !== isolated.t520.sha256) throw Error('Fresh-page deterministic repeat mismatch');
+  writeFileSync(path.join(outDir,'manifest.json'), JSON.stringify({source:path.relative(root,html), clock:'virtual requestAnimationFrame, 60 Hz', original, isolated,
+    caveats:'Original images contain simulated floor/markers; FX-only skips floor/markers but retains source post. Neither is yet a like-for-like native parity gate. Authored native OUT has no matching original.'},null,2));
+} finally { await browser.close(); }

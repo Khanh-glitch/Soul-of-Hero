@@ -65,10 +65,10 @@ func _init() -> void:
 func _write_index(manifest: Array, names: Dictionary) -> void:
     var html := "<!doctype html><meta charset=utf-8><title>ARCANA Fusion20 — visual review</title>"
     html += "<style>body{background:#0b0e14;color:#dbe4f5;font:14px system-ui}img{width:864px;image-rendering:pixelated}section{margin:28px 0}</style>"
-    html += "<h1>ARCANA Fusion20 — native source-buffer review sheets</h1><p>Stages per sheet (row-major): opening, development, peak (catalog climax), first contact, aftermath, OUT. Source-buffer evidence only; VISUAL_NOT_VERIFIED for all 20; OWNER_VISUAL_APPROVED = 0.</p>"
+    html += "<h1>ARCANA Fusion20 — native source-buffer review sheets</h1><p>Stages per sheet (row-major): opening, development, catalog peak, approximate first contact (nearest 0.4s sample), aftermath, OUT. Fixed-clock, sampled source-buffer evidence only, not SOH composite or approval. #01 is an approximate A/C image overlay, not the real world-transform composite. See stages.json for times and limitations. VISUAL_NOT_VERIFIED for all 20.</p>"
     for e in manifest:
         var id := int(e["id"])
-        html += "<section><h2>%02d %s — dur %.1fs, contacts %s, first contact %ss</h2><img src=\"skill_%02d_sheet.png\"></section>" % [id, String(names[id]), float(e["duration"]), str(e.get("contacts", "?")), str(e.get("first_contact_t", "?"))]
+        html += "<section><h2>%02d %s — dur %.1fs, contacts %s, first contact %ss</h2><p><a href=\"skill_%02d/preview.gif\">Animation</a> · <a href=\"skill_%02d/stages.json\">stage data</a></p><img src=\"skill_%02d_sheet.png\"></section>" % [id, String(names[id]), float(e["duration"]), str(e.get("contacts", "?")), str(e.get("first_contact_t", "?")), id, id, id]
     var f := FileAccess.open(OUT_DIR + "/index.html", FileAccess.WRITE)
     f.store_string(html)
     f.close()
@@ -107,8 +107,11 @@ func _capture_skill(id: int, sname: String, host: Arcana20Renderer) -> Dictionar
         grab = func(t: float) -> PackedByteArray:
             bp.elapsed = t
             bp._fire_due_events()
-            bp._render_frame()
-            return (bp._tex.get_image() as Image).get_data()
+            bp._r.begin()
+            bp._fx.call("render", bp._r, bp.elapsed)
+            bp._fx.call("post", bp._r, bp.elapsed)
+            bp._r.lighting()
+            return bp._r.finalize()
         _run_plan(id, sname, dur, stages, grab, dir, bp, contacts, first_contact, 384, 216)
         bp.queue_free()
     elif id == 7 or id == 10 or id == 15 or id == 17:
@@ -181,12 +184,11 @@ func _capture_skill(id: int, sname: String, host: Arcana20Renderer) -> Dictionar
             cp.set("render_enabled", true)
             cp.call("_render_frame")
             cp.set("render_enabled", false)
-            ap.set("render_enabled", true)
-            ap.call("_render_frame")
-            ap.set("render_enabled", false)
+            ap._fb.clear()
+            ap._spell.call("render", ap._fb, ap.source_time())
             var cimg := Image.create_from_data(384, 216, false, Image.FORMAT_RGBA8, cp.frame_bytes())
             cimg.resize(416, 234, Image.INTERPOLATE_NEAREST)
-            var aimg := Image.create_from_data(416, 234, false, Image.FORMAT_RGBA8, (ap.get("_fb") as AFramebuffer).present())
+            var aimg := Image.create_from_data(416, 234, false, Image.FORMAT_RGBA8, ap._fb.present())
             cimg.blend_rect(aimg, Rect2i(0, 0, 416, 234), Vector2i.ZERO)
             return cimg.get_data()
         _run_plan(id, sname, dur, stages, grab, dir, ap, contacts, first_contact, 416, 234)
@@ -207,10 +209,9 @@ func _capture_skill(id: int, sname: String, host: Arcana20Renderer) -> Dictionar
         grab = func(t: float) -> PackedByteArray:
             while ap.source_time() < t - 0.0001 and bool(ap.get("_active")):
                 ap.advance(STEP)
-            ap.set("render_enabled", true)
-            ap.call("_render_frame")
-            ap.set("render_enabled", false)
-            return (ap.get("_fb") as AFramebuffer).present()
+            ap._fb.clear()
+            ap._spell.call("render", ap._fb, ap.source_time())
+            return ap._fb.present()
         _run_plan(id, sname, dur, stages, grab, dir, ap, contacts, first_contact, 416, 234)
         ap.queue_free()
     return {"id": id, "name": sname, "duration": dur, "contacts": contacts[0],
@@ -221,6 +222,9 @@ func _run_plan(id: int, sname: String, dur: float, stages: Dictionary, grab: Cal
     # stage + animation capture points, grabbed once each.
     var points: Array = [] # {t, kind, key}
     var order := ["opening", "development", "peak", "contact", "aftermath", "out"]
+    if id == 19:
+        for tick in [30, 72, 120, 192, 264, 312, 384, 444, 474, 489]:
+            points.append({"t": float(tick) / 60.0, "kind": "d_compare", "key": "t%03d" % int(round(float(tick) * 100.0 / 60.0))})
     for key in order:
         var t: float = float(stages.get(key, -1.0))
         if key == "contact":
@@ -240,6 +244,8 @@ func _run_plan(id: int, sname: String, dur: float, stages: Dictionary, grab: Cal
         var bytes: PackedByteArray = grab.call(clampf(float(pt.t), 0.0, dur - 0.001))
         if String(pt.kind) == "anim":
             _save(bytes, w, h, dir + "/anim/f_%03d.png" % int(String(pt.key)))
+        elif String(pt.kind) == "d_compare":
+            _save(bytes, w, h, dir + "/native_%s.png" % String(pt.key))
         else:
             var img := _save(bytes, w, h, dir + "/stage_%s.png" % String(pt.key))
             stage_imgs[String(pt.key)] = img

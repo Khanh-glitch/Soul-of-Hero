@@ -102,7 +102,7 @@ func _fire_events() -> void:
             var kind := StringName(String(ev.kind))
             var wp := local_to_world(ev.pos_local)
             visual_event.emit(kind, wp, t)
-            if String(ev.kind).ends_with("impact"):
+            if String(ev.kind).ends_with("impact") or String(ev.kind).ends_with("contact"):
                 visual_contact.emit(kind, wp, t)
 
 func _render_frame() -> void:

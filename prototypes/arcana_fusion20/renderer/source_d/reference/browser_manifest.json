@@ -1,0 +1,129 @@
+{
+  "source": "prototypes/arcana_fusion20/original_source/package/handoff/reference/Elemental_VFX_Lab_FIXED_Standalone.html",
+  "clock": "virtual requestAnimationFrame, 60 Hz",
+  "original": {
+    "t050": {
+      "requested": 0.5,
+      "actual": 0.49999999999999994,
+      "sha256": "ae4d9b9f4051d7a1f75233792a44d4e749d0ec656ffe84ab0a5e6f7bdb8d6669"
+    },
+    "t120": {
+      "requested": 1.2,
+      "actual": 1.1999999999999997,
+      "sha256": "b395dae0124b4409757b20f5c3b106c9acb24f992692158d08b6a1ea0bd3f6d1"
+    },
+    "t200": {
+      "requested": 2,
+      "actual": 2.0000000000000075,
+      "sha256": "ef95bfe37662a033b7e9b74ea40301f9132cc1f4a4059d6426efb1bba4f85108"
+    },
+    "t320": {
+      "requested": 3.2,
+      "actual": 3.2000000000000033,
+      "sha256": "b5e2750081f73e18bfdbce493834fc2750cf88b88e0afd6ec6829ecd1537fc83"
+    },
+    "t440": {
+      "requested": 4.4,
+      "actual": 4.399999999999999,
+      "sha256": "c23d95be4bb8db15ab4e27e4108ca39bc202727743459652854fd4a003afbd51"
+    },
+    "t520": {
+      "requested": 5.2,
+      "actual": 5.199999999999996,
+      "sha256": "db0f1dda3ee73f25acd9930b5af258b6cd02daafdf1e16d1f5b44228a4fadcaa"
+    },
+    "t640": {
+      "requested": 6.4,
+      "actual": 6.3999999999999915,
+      "sha256": "79441a353da1c5cd574b77dec40ddfbdae55cb2f5f6e49dd1579d894ce44c793"
+    },
+    "t740": {
+      "requested": 7.4,
+      "actual": 7.399999999999988,
+      "sha256": "02e6ec85a366302779e99dbc40ea59d4359a7fd07fd11c83207c3a9dbd31398b"
+    },
+    "t790": {
+      "requested": 7.9,
+      "actual": 7.899999999999986,
+      "sha256": "71282ae07f685a9b90689f0f0a72427941decf7de5f0ad80d379374b1b0682d7"
+    },
+    "t815": {
+      "requested": 8.15,
+      "actual": 8.149999999999993,
+      "sha256": "ef109c8297dadc685831cd0cbfc9de46b891267c629fe23d09cd2fe7f189b09a"
+    },
+    "t880": {
+      "requested": 8.8,
+      "actual": 8.799999999999962,
+      "sha256": "874301db0e31328a7edcaa4641f440366437585a1c7b0dad5037dbd76e1562a0"
+    },
+    "t930": {
+      "requested": 9.3,
+      "actual": 9.299999999999933,
+      "sha256": "fa09bcbe77675b451a6e74204a8bda4acf91c031e40c0784f0bab3cf1ce5df01"
+    }
+  },
+  "isolated": {
+    "t050": {
+      "requested": 0.5,
+      "actual": 0.49999999999999994,
+      "sha256": "42884e0aeaebe2f8bc64c6cebd255ce244e4e580e8e0bc5270c2a9459b39ccde"
+    },
+    "t120": {
+      "requested": 1.2,
+      "actual": 1.1999999999999997,
+      "sha256": "1b16567894e4ebee933776b347770c4c140111aca4d99d7e2a5bbb8c5f5f93c7"
+    },
+    "t200": {
+      "requested": 2,
+      "actual": 2.0000000000000075,
+      "sha256": "ae6fb6e80bb8e009dc86a93c0f29e6c60e172298f56b966ae43c8a07bfd5278e"
+    },
+    "t320": {
+      "requested": 3.2,
+      "actual": 3.2000000000000033,
+      "sha256": "b8b23861811b0649523b9c01ce8c59c7b9e3ad54930b48b8eb7558b093d813d5"
+    },
+    "t440": {
+      "requested": 4.4,
+      "actual": 4.399999999999999,
+      "sha256": "8ace9acdc1285bf85797ed1f1db2035a871eecfd77668f1d5419dc1728154c7e"
+    },
+    "t520": {
+      "requested": 5.2,
+      "actual": 5.199999999999996,
+      "sha256": "6345ad639d26dc78d77ff10bfab9cc797852a3b961371fb7d7439751200cc9a6"
+    },
+    "t640": {
+      "requested": 6.4,
+      "actual": 6.3999999999999915,
+      "sha256": "3bddccbd51c0f94b424219ab522df81ac36c0384ad808a97e236565b52b024f5"
+    },
+    "t740": {
+      "requested": 7.4,
+      "actual": 7.399999999999988,
+      "sha256": "e75e640289a5d1b02e9d7de0b16deef94b049f6c73c9885b6925203a07204fcb"
+    },
+    "t790": {
+      "requested": 7.9,
+      "actual": 7.899999999999986,
+      "sha256": "74afea934ea7770461d7191ade8d49f2d0c6d47b1c969ee68d95c35e24f245c3"
+    },
+    "t815": {
+      "requested": 8.15,
+      "actual": 8.149999999999993,
+      "sha256": "4faef95b26b2f21ce20ab38286683fc77590121b3eeb6ce5d5ef2b5767436f2d"
+    },
+    "t880": {
+      "requested": 8.8,
+      "actual": 8.799999999999962,
+      "sha256": "e6106dd726610c04de993f55aa248267b995af41c81f85c76adc926abcad5486"
+    },
+    "t930": {
+      "requested": 9.3,
+      "actual": 9.299999999999933,
+      "sha256": "287546980a34fb2c00bb3081d676f70280d2da2fb97c893f7f3b2825e1e57e03"
+    }
+  },
+  "caveats": "Original images contain simulated floor/markers; FX-only skips floor/markers but retains source post. Neither is yet a like-for-like native parity gate. Authored native OUT has no matching original."
+}

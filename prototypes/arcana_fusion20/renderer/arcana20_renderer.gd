@@ -86,7 +86,7 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
         # A crown formation/collapse/impact is the lead; C provides the
         # complementary outer flame geometry. C local clock is offset
         # +0.69s so C's burst (T_BU 4.64) lands on A's burst tick (3.95)
-        # — one impact beat, one radial contact. C owns the back layer
+        # — one impact beat; both visual contacts are forwarded. C owns the back layer
         # (outer geometry/scar), A owns the front (crown body/petals).
         var fp := FusionPlayer.new()
         var ap := ASourcePlayer.new()

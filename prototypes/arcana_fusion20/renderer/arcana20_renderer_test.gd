@@ -1,7 +1,7 @@
 ## Headless lifecycle gate for the ARCANA Fusion20 renderer (AVFX stream).
 ## Casts all 20 canonical IDs on the catalog timeline with a fixed 60 Hz
 ## source clock and asserts: cast_started, exactly one visual contact at
-## the source climax tick, body cue, finish + cleanup, cancel cleanup.
+## the authored contact ledger, body cue, finish + cleanup, cancel cleanup.
 ## This proves the native runtime contract only — NOT Gold visual parity.
 extends SceneTree
 
@@ -67,7 +67,7 @@ func _init() -> void:
                 node._process(1.0 / 60.0)
             if not renderer.is_active(cid):
                 break
-        var want_contacts: int = int({9: 11, 11: 7, 4: 2, 12: 4, 13: 4}.get(_skill_num(cid), 1))
+        var want_contacts: int = int({1: 2, 4: 2, 6: 4, 9: 11, 11: 7, 12: 4, 13: 4, 14: 6}.get(_skill_num(cid), 1))
         if id == 3:
             want_contacts = 8 # authored per-meteor impacts (fusion decisions #03)
         if int(_contacts[cid]) != want_contacts:
@@ -84,6 +84,28 @@ func _init() -> void:
             _fail("no finish %s" % cid)
         if renderer.is_active(cid):
             _fail("still active after finish %s" % cid)
+
+    # Authored cue positions/times must agree with rendered moving geometry.
+    var carousel := AFusionSpells2.VoltCarousel.new()
+    carousel.setup()
+    var carousel_events: Array = carousel.authored_events()
+    for i in range(6):
+        var ev: Dictionary = carousel_events[i + 1]
+        var connector: Dictionary = carousel._conns[i]
+        var expected: Vector2 = carousel._conn_pos(connector, float(ev.t))
+        var actual: Vector2 = ev.pos_local
+        if expected.distance_to(actual) > 0.001:
+            _fail("carousel contact %d not on moving connector" % i)
+    var calligraphy := ARedesignSpells.RiptideCalligraphyR.new()
+    calligraphy.setup()
+    var stroke_events: Array = calligraphy.authored_events()
+    for i in range(3):
+        var ev: Dictionary = stroke_events[i]
+        if absf(float(ev.t) - (2.0 + float(i) * 1.1)) > 0.001:
+            _fail("calligraphy stroke %d end cue fired before tip arrives" % i)
+        var pos: Vector2 = ev.pos_local
+        if pos.distance_to(calligraphy._stroke_pt(i, 0.98)) > 0.001:
+            _fail("calligraphy stroke %d cue position wrong" % i)
 
     # Cancel path: mid-cast cancel must finish + clean up with no contact leak.
     var cid5 := Arcana20SourceCatalog.canonical_id(5)

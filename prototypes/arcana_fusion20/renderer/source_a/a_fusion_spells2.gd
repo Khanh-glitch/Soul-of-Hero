@@ -24,7 +24,8 @@ class VoltCarousel:
     func authored_events() -> Array:
         var ev: Array = [{"t": 0.9, "kind": "carousel_spinup", "pos_local": C, "emitted": false}]
         for i in range(6):
-            ev.append({"t": 2.2 + float(i) * 0.55, "kind": "conduction_impact", "pos_local": C + Vector2(60, 0), "emitted": false})
+            var event_t := 2.2 + float(i) * 0.55
+            ev.append({"t": event_t, "kind": "conduction_impact", "pos_local": _conn_pos(_conns[i], event_t), "emitted": false})
         ev.append({"t": 5.6, "kind": "alignment_impact", "pos_local": C, "emitted": false})
         ev.append({"t": 7.2, "kind": "rotors_fracture", "pos_local": C, "emitted": false})
         return ev

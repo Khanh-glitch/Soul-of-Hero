@@ -79,7 +79,7 @@ class RiptideCalligraphyR:
     func authored_events() -> Array:
         var ev: Array = []
         for i in range(3):
-            ev.append({"t": 1.0 + float(i) * 1.1, "kind": "stroke_tip_contact", "pos_local": _stroke_pt(i, 0.98), "emitted": false})
+            ev.append({"t": 2.0 + float(i) * 1.1, "kind": "stroke_tip_contact", "pos_local": _stroke_pt(i, 0.98), "emitted": false})
         ev.append({"t": 4.6, "kind": "wave_release_impact", "pos_local": C + Vector2(60, 10), "emitted": false})
         ev.append({"t": 6.8, "kind": "strokes_dissolve", "pos_local": C, "emitted": false})
         return ev

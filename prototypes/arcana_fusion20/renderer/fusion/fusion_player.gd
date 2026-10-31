@@ -21,7 +21,6 @@ var _tick := 0
 var _acc := 0.0
 var _active := false
 var _pending: Array = []
-var _last_contact_tick := -1
 
 ## parts: Array of {node, offset, layer} — node must implement
 ## begin(caster,target[,kind]) variants handled by caller before add.
@@ -50,17 +49,13 @@ func begin(caster_world: Vector2, target_world: Vector2) -> void:
         node.visual_event.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
             visual_event.emit(kind, pos, source_time()))
         node.visual_contact.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
-            # One authored impact beat: simultaneous contacts from the
-            # fused sources at the same fusion tick merge into one cue.
-            if _last_contact_tick == _tick:
-                return
-            _last_contact_tick = _tick
+            # Preserve each source contact even if timestamps coincide.
+            # These are visual cues, never combat-damage instructions.
             visual_contact.emit(kind, pos, source_time()))
         node.finished.connect(func() -> void:
             pass)
     _tick = 0
     _acc = 0.0
-    _last_contact_tick = -1
     _active = true
 
 func stop() -> void:
