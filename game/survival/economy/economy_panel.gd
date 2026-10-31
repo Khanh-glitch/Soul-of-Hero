@@ -261,9 +261,15 @@ func _add_recipes(station: Dictionary, owned: Dictionary) -> void:
 		var recipe: Dictionary = value
 		var inputs: Dictionary = recipe.inputs
 		var shortfall := _first_shortfall(inputs, owned)
+		# The control is named by the RECIPE, never by what it produces. 23 of the 36
+		# recipes in the real catalog produce an item whose id differs from theirs
+		# (burn_charcoal -> charcoal, smelt_iron -> iron_ingot), and five output ids
+		# are produced by several recipes (iron_ingot by smelt_iron and smelt_ore).
+		# Naming by output merged those into one control and let a click queue the
+		# wrong recipe; the output only ever decides the icon and the headline.
 		var button := _card_row(
 			station_id, "Recipe",
-			_first_output_id(recipe),
+			String(recipe.id),
 			_button_text(_first_output_id(recipe), inputs),
 			_first_output_icon(recipe),
 			inputs,
@@ -306,13 +312,15 @@ func _add_technologies(station: Dictionary, owned: Dictionary) -> void:
 		button.pressed.connect(_research.bind(String(tech.id), station_id))
 
 
-## Builds one card and returns its action button. `prefix` and `key` form the node
-## name (`Recipe_<id>_<station>` / `Technology_<id>_<station>`), which callers and the
-## input-gate tests resolve by.
+## Builds one card and returns its action button. `prefix` and `recipe_or_tech_id`
+## form the node name (`Recipe_<recipe_id>_<station_id>` /
+## `Technology_<tech_id>_<station_id>`), which callers, the input-gate tests and A0's
+## real-input furnace tests resolve by. The id, not the output: the two are different
+## for most of the catalog.
 func _card_row(
 	station_id: String,
 	prefix: String,
-	key: String,
+	recipe_or_tech_id: String,
 	text: String,
 	icon: TextureRect,
 	inputs: Dictionary,
@@ -323,7 +331,7 @@ func _card_row(
 	state_colour: Color,
 ) -> Button:
 	var card := PanelContainer.new()
-	card.name = "Row_%s_%s" % [key, station_id]
+	card.name = "Row_%s_%s" % [recipe_or_tech_id, station_id]
 	card.theme_type_variation = &"A6HudBar"
 	card.mouse_filter = Control.MOUSE_FILTER_PASS
 	_list.add_child(card)
@@ -348,7 +356,7 @@ func _card_row(
 	row.add_child(middle)
 
 	var button := Button.new()
-	button.name = "%s_%s_%s" % [prefix, key, station_id]
+	button.name = "%s_%s_%s" % [prefix, recipe_or_tech_id, station_id]
 	button.text = text
 	# A recipe line is a shopping list, not prose: it wraps inside the column instead
 	# of widening the list and pushing the action off the right edge.

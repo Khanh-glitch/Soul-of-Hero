@@ -136,6 +136,25 @@ jobs:
             exit 1
           fi
 
+      # The workshop names its controls after the RECIPE, not after the item it makes.
+      # 23 of the 36 catalog recipes differ between the two, and iron_ingot is made by
+      # two recipes, so naming by output merged controls and let a click queue the
+      # wrong recipe while every furnace test still passed. This runs the negative
+      # control that would have caught it.
+      - name: Recipe control identity (headless, real catalog)
+        run: |
+          set -uo pipefail
+          timeout --signal=TERM --kill-after=15s 180s godot --headless --path . \
+            res://tests/survival/ui/economy_recipe_identity_test.tscn \
+            > artifacts/recipe-identity.log 2>&1
+          status=$?
+          cat artifacts/recipe-identity.log
+          if [ "${status}" -ne 0 ] || ! grep -q "A6 RECIPE IDENTITY PASSED" artifacts/recipe-identity.log; then
+            tail -12 artifacts/recipe-identity.log | sed 's/^/::error::/'
+            echo "::error::the recipe control identity test failed"
+            exit 1
+          fi
+
       - name: Negative control — a headless binary must refuse to fake a capture
         run: |
           set +e

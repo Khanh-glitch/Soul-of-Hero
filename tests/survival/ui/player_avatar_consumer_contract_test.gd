@@ -23,6 +23,7 @@ var _failures: Array[String] = []
 class FakeOwner:
 	extends Node
 	signal player_avatar_changed(snapshot: Dictionary)
+	signal save_loaded(snapshot: Dictionary)
 	var projection: Dictionary = {}
 	var projectable := true
 
@@ -32,6 +33,10 @@ class FakeOwner:
 	func announce(next: Dictionary) -> void:
 		projection = next
 		player_avatar_changed.emit(next)
+
+	## The same-process shape of a reload: A0 re-emits the loaded document.
+	func reload() -> void:
+		save_loaded.emit({})
 
 
 func _ready() -> void:
@@ -43,7 +48,8 @@ func _run() -> void:
 	await _check_owner_without_api()
 	await _check_no_identity()
 	await _check_claimed_identity_without_art()
-	await _check_unlicensed_art_record()
+	_check_grade_manifest_is_honest()
+	await _check_grade_fallback_or_refusal()
 	await _check_signal_reresolves()
 	_check_state_shape()
 	_finish()
@@ -116,26 +122,85 @@ func _check_claimed_identity_without_art() -> void:
 	owner.queue_free()
 
 
-## A grade-1/2 garment request whose art is not licensed must not silently dress the
-## player in something unverified; the base appearance of the same character is used
-## and the gate is recorded by name.
-func _check_unlicensed_art_record() -> void:
-	var host := _make_host()
-	var owner := FakeOwner.new()
-	owner.name = "ArmoredOwner"
-	add_child(owner)
-	owner.projection = _projection("female", 2)
-	var presenter := _make_presenter(host, owner)
-	await _settle()
-	var state: Dictionary = presenter.call(&"get_presentation_state")
-	_expect(
-		String(state.get("status", "")) in ["SOURCE_BLOCKED", "READY"],
-		"an unlicensed garment grade resolves to a legal state (%s)" % String(state.get("status", "")),
-	)
-	if String(state.get("status", "")) == "SOURCE_BLOCKED":
-		_expect(not host.get_node("Sprite").visible, "an unlicensed garment never leaves the proxy actor visible as the player")
-	_cleanup(presenter, host)
-	owner.queue_free()
+## Data-level proof that no unlicensed garment can be presented at all: the shipped
+## manifest may only carry a grade record that is loadable. D051 requires grade 1 and
+## grade 2 gender-matched art to come from inspected sources; until they do, the record
+## must be absent or unloadable, and this test says which.
+func _check_grade_manifest_is_honest() -> void:
+	var path := "res://game/survival/ui/avatar_art_manifest.json"
+	if not FileAccess.file_exists(path):
+		_fail("the avatar art manifest is missing")
+		return
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+	_expect(parsed is Dictionary, "the avatar art manifest parses")
+	if not parsed is Dictionary:
+		return
+	var manifest: Dictionary = parsed
+	_equals(String((manifest.get("license_review", {}) as Dictionary).get("status", "")),
+		"VERIFIED_GAME_USE", "the manifest states a verified game-use license")
+	var people: Dictionary = manifest.get("characters", {})
+	for gender: String in ["male", "female"]:
+		_expect(people.has(gender), "the manifest has a %s character record" % gender)
+		var grades: Dictionary = (people.get(gender, {}) as Dictionary).get("armor_grades", {})
+		for grade: String in ["1", "2"]:
+			if not grades.has(grade):
+				# Not a passing assertion, just the observed fact: with no record there
+				# is nothing that could dress the player.
+				print("note: %s grade %s has no manifest record; nothing can be presented" % [gender, grade])
+				continue
+			# A record is only honest if an unlicensed one cannot load.
+			var sheet := String((grades[grade] as Dictionary).get("idle_sheet", ""))
+			_expect(
+				sheet.is_empty() or not ResourceLoader.exists(sheet),
+				"%s grade %s does not point at a loadable sheet it is not licensed for (%s)" % [gender, grade, sheet],
+			)
+
+
+## With no staged garment art the consumer must refuse by name, never present the
+## proxy character and never claim readiness; and the refusal must survive a reload.
+func _check_grade_fallback_or_refusal() -> void:
+	for grade: int in [1, 2]:
+		var host := _make_host()
+		var owner := FakeOwner.new()
+		owner.name = "Grade%dOwner" % grade
+		add_child(owner)
+		owner.projection = _projection("male", grade)
+		var presenter := _make_presenter(host, owner)
+		await _settle()
+		var state: Dictionary = presenter.call(&"get_presentation_state")
+
+		var status := String(state.get("status", ""))
+		var gate := String(state.get("appearance_gate", ""))
+		var presented := presenter.call(&"get_avatar_sprite") as Node
+		if status == "READY":
+			# The only legal READY is the same person at their licensed base look.
+			_equals(int(state.get("armor_grade", -1)), 0, "grade %d READY is the licensed grade-0 look" % grade)
+			_equals(gate, "GRADE_%d_APPEARANCE_SOURCE_BLOCKED" % grade,
+				"grade %d fallback records the appearance gate by name" % grade)
+			_equals(String(state.get("gender", "")), "male", "grade %d fallback keeps the chosen identity" % grade)
+			_expect(presented != null and is_instance_valid(presented),
+				"grade %d fallback presents the licensed base character" % grade)
+		else:
+			# Refusal is the other legal answer, and it must be explicit.
+			_equals(status, "SOURCE_BLOCKED", "grade %d without licensed art refuses by name (%s)" % [grade, status])
+			_expect(not String(state.get("reason", "")).is_empty(), "grade %d refusal explains itself" % grade)
+			_expect(not bool(state.get("ready", true)), "grade %d refusal is never reported ready" % grade)
+			_expect(presented == null or not is_instance_valid(presented),
+				"grade %d refusal presents no sprite at all, licensed or not" % grade)
+			_expect(not host.get_node("Sprite").visible,
+				"grade %d refusal hides the proxy character instead of substituting it" % grade)
+
+		# A reload must not upgrade the answer: no unlicensed sprite appears after restart.
+		owner.reload()
+		await _settle()
+		var after: Dictionary = presenter.call(&"get_presentation_state")
+		_equals(String(after.get("status", "")), status, "grade %d keeps its answer across a reload" % grade)
+		var sprite_after := presenter.call(&"get_avatar_sprite") as Node
+		if status != "READY":
+			_expect(sprite_after == null or not is_instance_valid(sprite_after),
+				"grade %d presents no sprite after a reload either" % grade)
+		_cleanup(presenter, host)
+		owner.queue_free()
 
 
 ## A changed identity must re-resolve without a restart of the process, and a commit

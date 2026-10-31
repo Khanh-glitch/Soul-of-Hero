@@ -272,7 +272,8 @@ func _body() -> void:
 	Input.parse_input_event(toggle)
 	await process_frame
 	var panel: Node = ow.get(&"economy_panel")
-	var recipe_button := panel.find_child("Recipe_workbench_kit_hand", true, false) as Button
+	# `workbench_kit` is the catalog id; the old literal named a recipe that does not exist.
+	var recipe_button := panel.find_child("Recipe_workbench_kit_*", true, false) as Button
 	_expect(recipe_button != null and recipe_button.is_visible_in_tree(), "ordinary C action exposes the starter kit")
 	if recipe_button == null or not recipe_button.is_visible_in_tree():
 		_body_complete = true

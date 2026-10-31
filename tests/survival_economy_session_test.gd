@@ -127,7 +127,9 @@ func _body() -> void:
 	await process_frame
 	await process_frame
 	var panel: Node = ow.get(&"economy_panel")
-	var button := panel.find_child("Recipe_workbench_kit_hand", true, false) as Button
+	# Station suffix is composed at runtime, so match the catalog id by prefix.
+	# The id is `workbench_kit`; `workbench_kit_hand` was never in the catalog.
+	var button := panel.find_child("Recipe_workbench_kit_*", true, false) as Button
 	print("ECONOMY_GUI_TRACE action=%s panel=%s visible=%s button=%s" % [str(InputMap.has_action(&"economy_toggle")), str(panel != null), str((panel.get_node_or_null("EconomyOverlay") as Control).visible if panel != null else false), str(button != null)])
 	_expect(button != null and button.is_visible_in_tree(), "normal economy input exposes hand-kit button")
 	if button == null or not button.is_visible_in_tree():
