@@ -1,0 +1,31 @@
+name: ARCANA20 inspect failed JOIN
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-failure-triage.yml']
+permissions:
+  actions: read
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcana20-overworld-join-diagnostic
+          run-id: 41215612255
+          github-token: ${{ github.token }}
+          path: review
+      - name: Surface first errors and assertions
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          for p in Path('review').rglob('*.log'):
+            text=p.read_text(errors='replace').splitlines()
+            hits=[i for i,s in enumerate(text) if re.search(r'SCRIPT ERROR|Parse Error|SHADER ERROR|JOIN_FAIL|ARCANA20_JOIN_DIAGNOSTIC',s)]
+            print('::notice::JOIN_TRIAGE_FILE '+str(p)+' lines='+str(len(text)))
+            for i in hits[:12]:
+              print('::notice::JOIN_TRIAGE '+str(p)+' line='+str(i+1)+' '+ ' | '.join(text[max(0,i-1):i+4])[:3400])
+          PY
