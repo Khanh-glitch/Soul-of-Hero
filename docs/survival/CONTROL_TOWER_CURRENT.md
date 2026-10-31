@@ -1,4 +1,6 @@
 <!-- CT_FINISHLINE_ACTIVE_START -->
+**DOCS SYNC EXCEPTION (2026-11-01):** After the 2 canonical Git handoff updates were committed/read back, TWO attempted Google Docs batch_update_document appends to tabs 04/12 were blocked by the integration safety layer. No successful Docs edit or readback occurred in this checkpoint. Mark **DOCS_SYNC_PENDING**; last verified Docs 04/12 checkpoint remains the earlier joint A3/A6/A7 report. Do not claim Docs updated, don't write alternate Docs or duplicate history; retry only with an authorized editor context after access resumes.
+
 ## CT LIVE HANDOFF — 2026-11-01 · A3/A6/A7 acceptance, creator visual veto and NEXT
 
 **Operational correction (not new gameplay canon):** The creator rightly rejected CT replies that analyzed reports and drafted prompts but omitted the mandatory durable Mode-A handoff, checked images, and a complete actionable next owner package. A finished Arena report closes THAT worker turn, not the Control Tower audit. Future acceptance MUST reconcile ORIGINAL work order → delivered source/CI/report/actual images → entire owner state → M1–M6/E2 convergence → owner-specific substantial NEXT and real dispatch receipt → Git/Docs readback. Do not substitute explanations of this protocol for execution.
