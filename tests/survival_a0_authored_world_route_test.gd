@@ -312,6 +312,8 @@ func _play_body() -> void:
 	# --- 6. harvest a physical authored source ------------------------------
 	var source := await _harvest_journey(hero)
 	_expect(not source.is_empty(), "an authored source is harvested by walking to it and pressing G (%s)" % str(source))
+	if source.has("reason"):
+		_note("harvest failed: %s" % str(source))
 	if not source.is_empty():
 		_expect(int(source.get("after", 0)) > int(source.get("before", 0)),
 			"the bag grew by the node's yield (%d -> %d %s)"
@@ -452,25 +454,44 @@ func _verify_body() -> void:
 func _harvest_journey(hero: CharacterBody2D) -> Dictionary:
 	var candidates: Array = (_ow.get(&"authored_sources") as Array).duplicate()
 	if candidates.is_empty():
-		return {}
+		return {"reason": "NO_AUTHORED_SOURCES_MOUNTED"}
+	if _traversability == null:
+		return {"reason": "NO_TRAVERSABILITY"}
 	var resources := _ow.get_node_or_null("Resources")
 	if resources == null:
-		return {}
+		return {"reason": "NO_RESOURCES_CONTAINER"}
+	# Nearest to the body, not nearest to the spawn: the harvest happens after the
+	# walk, so the source that matters is the one close to where the player stands.
+	var here := hero.global_position
 	candidates.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
-		return int(a.get("distance_cells", 0)) < int(b.get("distance_cells", 0)))
-	var tried := 0
+		return _cell_distance(a.get("cell", []), here) < _cell_distance(b.get("cell", []), here))
+	var tried: Array[String] = []
+	var attempts := 0
 	for raw: Variant in candidates:
-		if tried >= 8:
+		if attempts >= 8:
 			break
-		tried += 1
 		var entry: Dictionary = raw
 		var node := resources.get_node_or_null("Authored_%s"
 			% String(entry.get("node_id", "")).replace(":", "_").replace(",", "_")) as Node2D
 		if node == null:
+			tried.append("%s:node_absent" % String(entry.get("node_id", "")))
 			continue
-		var reached := await _walk_to(hero, node.global_position)
-		if not reached:
-			_note("source %s at %s was not reached on foot in this run" % [String(entry.get("node_id", "")), str(node.global_position)])
+		# A source stands in a blocked cell, so a player cannot walk *into* it: they
+		# walk to the nearest cell beside it that the body really fits in, then press
+		# the key. Aiming the whole route at the prop is how the walk stalls against
+		# the prop's own collision and the source is reported unreachable.
+		var stand := _stand_cell_for(node.global_position, here)
+		if stand.x < 0:
+			tried.append("%s:no_stand_cell" % String(entry.get("node_id", "")))
+			continue
+		attempts += 1
+		var target := _waypoint(stand)
+		var reached := await _walk_to(hero, target)
+		if reached and hero.global_position.distance_to(target) > 12.0:
+			reached = await _walk_input(hero, target, 240, 10.0)
+		var reach := hero.global_position.distance_to(node.global_position)
+		if reach > REACH_PX:
+			tried.append("%s:not_reached px=%.1f" % [String(entry.get("node_id", "")), reach])
 			continue
 		var item := _item_for_kind(String(entry.get("kind", "")))
 		var before := _count(item)
@@ -481,9 +502,39 @@ func _harvest_journey(hero: CharacterBody2D) -> Dictionary:
 		if after > before:
 			return {"node_id": String(entry.get("node_id", "")), "kind": String(entry.get("kind", "")),
 				"item": item, "before": before, "after": after,
-				"cell": entry.get("cell", []), "walked_to": [node.global_position.x, node.global_position.y]}
-		_note("G at %s did not gather %s (before %d after %d)" % [String(entry.get("node_id", "")), item, before, after])
-	return {}
+				"cell": entry.get("cell", []), "stand_cell": [stand.x, stand.y],
+				"walked_to": [node.global_position.x, node.global_position.y]}
+		tried.append("%s:no_gather %s before=%d after=%d" % [String(entry.get("node_id", "")), item, before, after])
+	return {"reason": "NO_SOURCE_HARVESTED", "tried": tried, "candidates": candidates.size()}
+
+
+## The cell within reach of `node_position` that the body can actually stand in,
+## preferring the one closest to where the body already is.
+func _stand_cell_for(node_position: Vector2, from: Vector2) -> Vector2i:
+	var cell := _traversability.cell_of(node_position)
+	var options: Array[Vector2i] = [cell]
+	for step: Vector2i in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1),
+			Vector2i(1, 1), Vector2i(-1, 1), Vector2i(1, -1), Vector2i(-1, -1)]:
+		options.append(cell + step)
+	var best := Vector2i(-1, -1)
+	var best_score := INF
+	for option: Vector2i in options:
+		if not _traversability.is_free(option):
+			continue
+		if _waypoint(option).distance_to(node_position) > REACH_PX:
+			continue
+		var score := _waypoint(option).distance_to(from)
+		if score < best_score:
+			best_score = score
+			best = option
+	return best
+
+
+func _cell_distance(cell: Variant, from: Vector2) -> float:
+	if cell is Array and (cell as Array).size() == 2:
+		var c := Vector2i(int((cell as Array)[0]), int((cell as Array)[1]))
+		return _waypoint(c).distance_to(from)
+	return INF
 
 
 func _site_journey(hero: CharacterBody2D, authority: Node, poi_id: String) -> Dictionary:
@@ -606,6 +657,10 @@ func _site_journey(hero: CharacterBody2D, authority: Node, poi_id: String) -> Di
 # ---------------------------------------------------------------------------
 # real input
 # ---------------------------------------------------------------------------
+## The reach the survival node itself uses for `G`; a source further than this is not
+## harvestable however close the walk got.
+const REACH_PX := 44.0
+
 ## A route across the continent: a coarse A* over A0's own walkability, exactly the
 ## grid the game uses to decide what is ground. It is a *test* navigation aid (the
 ## player would look at the screen); the body still has to be walked there by input,
