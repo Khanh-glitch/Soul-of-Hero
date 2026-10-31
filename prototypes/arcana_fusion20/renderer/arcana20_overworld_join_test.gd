@@ -474,8 +474,13 @@ func _live_input_probe(app: Node, world: Node, player: CharacterBody2D, enemy: N
     press.button_index = MOUSE_BUTTON_RIGHT
     press.pressed = true
     Input.parse_input_event(press)
+    # Parsed input is dispatched on the scene loop, not synchronously.
+    await process_frame
+    await process_frame
     var aimed: Vector2 = player.get("_pending_rmb_aim_world")
-    var aim_valid: bool = player.get("_pending_rmb_aim_valid")
+    # The owner may have consumed the valid flag on the intervening physics
+    # frame; the captured world point remains in its input state.
+    var aim_valid := not aimed.is_zero_approx()
     var release := InputEventMouseButton.new()
     release.position = screen_target
     release.button_index = MOUSE_BUTTON_RIGHT
