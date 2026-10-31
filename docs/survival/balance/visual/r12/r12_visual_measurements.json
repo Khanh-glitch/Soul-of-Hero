@@ -1,0 +1,51 @@
+{
+  "schema": "soh.a7.r12.visual_capture.v1",
+  "engine": "4.7-stable (official)",
+  "display_server": "X11",
+  "adapter": "llvmpipe (LLVM 20.1.2, 256 bits)",
+  "out_dir": "/tmp/captures",
+  "rows": [
+    {
+      "size": [
+        1280,
+        720
+      ],
+      "image_size": [
+        1280,
+        720
+      ],
+      "save_result": 0,
+      "png_bytes": 333608,
+      "sampled_colours": 343,
+      "path": "/tmp/captures/r12_overworld_1280x720.png"
+    },
+    {
+      "size": [
+        2560,
+        1440
+      ],
+      "image_size": [
+        2560,
+        1440
+      ],
+      "save_result": 0,
+      "png_bytes": 484853,
+      "sampled_colours": 340,
+      "path": "/tmp/captures/r12_overworld_2560x1440.png"
+    },
+    {
+      "size": [
+        3840,
+        2160
+      ],
+      "image_size": [
+        3840,
+        2160
+      ],
+      "save_result": 0,
+      "png_bytes": 604046,
+      "sampled_colours": 340,
+      "path": "/tmp/captures/r12_overworld_3840x2160.png"
+    }
+  ]
+}
