@@ -44,3 +44,32 @@ jobs:
         run: python3 tools/arcana20_review/emit_thumbnails.py source 10 15
       - name: Thumbnails 16-20
         run: python3 tools/arcana20_review/emit_thumbnails.py source 15 20
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcana20-real-scene-diagnostics
+          run-id: 41200912184
+          github-token: ${{ github.token }}
+          path: prototypes/arcana_fusion20/renderer/evidence_out/real-scene
+      - name: Real-scene manifest summary
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('prototypes/arcana_fusion20/renderer/evidence_out/real-scene')
+          f=root/'manifest.json'
+          if f.exists():
+              doc=json.loads(f.read_text())
+              print('::notice::SCENE_SUMMARY '+json.dumps({k:doc.get(k) for k in ('scene','level','enemy','limitations','overlap_probe')},separators=(',',':')))
+          else:
+              print('::notice::SCENE_SUMMARY manifest missing')
+          print('::notice::SCENE_COUNT '+str(len(list(root.glob('skill_*.png')))))
+          PY
+      - name: Scene thumbnails 01-05
+        run: python3 tools/arcana20_review/emit_thumbnails.py scene 0 5
+      - name: Scene thumbnails 06-10
+        run: python3 tools/arcana20_review/emit_thumbnails.py scene 5 10
+      - name: Scene thumbnails 11-15
+        run: python3 tools/arcana20_review/emit_thumbnails.py scene 10 15
+      - name: Scene thumbnails 16-20
+        run: python3 tools/arcana20_review/emit_thumbnails.py scene 15 20
