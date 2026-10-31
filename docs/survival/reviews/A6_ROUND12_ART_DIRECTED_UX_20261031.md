@@ -358,6 +358,36 @@ step fails the job unless all six succeeded. The job is still red on the real bu
 | home-actor movement after Continue | **blocked** — `velocity` held while position is static, see above |
 
 
+### 4.9 Final state of this pass — `5716930c`
+
+**What is proven, with frames inspected by eye:**
+
+| claim | evidence |
+| --- | --- |
+| the selected character is the one on screen | `avatar/male_720p_05_05_overworld_avatar_idle.png`, `avatar/female_1440p_05_05_overworld_avatar_idle.png` — two visibly different authentic Adventurers in the real overworld, Knight proxy removed, A6 HUD above |
+| identity survives a separate process | Continue frames in `avatar/*_continue_*`, and the identity assertion inside `private-staged-art` |
+| all three resolutions render | 68 published frames: 14 male 720p, 14 female 720p, 14 female 1440p, 28 male 2160p (plus native + half-size copies) |
+| death is a real prompt, not a debug box | `avatar/male_720p_12_09_overworld_death.png` — parchment card, heading and message inside the panel, `TỈNH DẬY` action |
+| the HUD reports real health and capacity | `world_fresh_world_1280x720.png`, `survival_ui_hud_field_3840x2160_half.png` |
+| Continue locomotion in the overworld | `23_continue_overworld_walk` now displaces a measured distance and reports it in the run log |
+
+**What still fails, and whose it is:**
+
+| failure | measured state | owner |
+| --- | --- | --- |
+| home actor does not walk after Continue | both directions move 1.0–2.5 px then `velocity=(0.0,0.0)`, no modal, no gate — the home screen's walkable-position resolution pins the restored actor | **A0** (`game/ui/screens/home/**`); A6 measures and reports it, does not edit it |
+| equipment grade 1/2 appearance | `GRADE_n_APPEARANCE_SOURCE_BLOCKED`, same character kept at grade 0 | **source-approval gate**, not an API gap |
+| season clock, equipped tool, durability, Core possession in the HUD | no projection exists; the HUD draws nothing rather than inventing | **A0** API gap |
+
+**The five integration facts A0 needs** are in
+`docs/survival/ux/A6_PLAYER_AVATAR_CONSUMER_CONTRACT.md`; the executable half runs on a
+public clone in the `public-clone-fail-closed` job.
+
+**Two false claims this pass killed.** First, that Continue locomotion had been
+captured: frames named "walk" reported `idle` and were accepted anyway. Second, that
+licensed-art visuals were verified: they were uploaded to unreadable CI artifacts. Both
+are now measurable, and the second now publishes inspectable frames with each run.
+
 ## 5. Gates
 
 Exact commit at the time of writing: `452d4d74` (frames and results are added as they
@@ -369,9 +399,9 @@ arrive; the commit that a result belongs to is stated with it).
 | R1 art fidelity | the chosen Adventurer is on screen in the real overworld, Knight proxy removed; frames inspected at 720p | **PASS** (male). Female captured by the same job; its frames publish from the same run |
 | R2 project integrity | `scene_lint.py` 317 files: 0 problems, 4 pre-existing notes; gdtoolkit syntax on every changed script; YAML of both workflows parsed | **PASS** (`6f0a6df2`) |
 | R2b UI layer test + avatar consumer contract | layer test, and the new headless contract on a public clone | **PASS** — "Public clone fails closed" job green including the contract |
-| R3 native gameplay suites | avatar identity journeys, headless runtime, Xvfb captures | **PARTIAL** — `Private staged art drives both identities natively` **PASS**; import/headless and Xvfb **PASS**; the separate-process Continue walk **FAILS** on the two measured causes above |
-| R4 native renders 720/1440/2160 | both render workflows publish into the repo | **PARTIAL** — staged-art frames now published and readable (`5699f762`); female + 1440p + 2160p blocked until the Continue gate is green or the evidence split is honoured |
-| R5 visual acceptance by eye | inspection at each resolution | **PARTIAL** — male overworld, HUD close-up, return digest inspected by eye at 720/2160. Continue walk is a measured failure, not accepted |
+| R3 native gameplay suites | avatar identity journeys, headless runtime, Xvfb captures | **PARTIAL** — staged-art identities, public-clone fail-closed, return UI, import/headless and Xvfb all **PASS**; the Continue *home* walk **FAILS** with a measured collision-bound cause owned by A0 |
+| R4 native renders 720/1440/2160 | both render workflows publish into the repo | **PASS** — 68 staged-art frames published across male/female at 720p, female at 1440p and male at 2160p, plus the survival and return sets |
+| R5 visual acceptance by eye | inspection at each resolution | **PARTIAL** — inspected: male + female overworld, death prompt, HUD close-up, return digest. The home walk frame is published and labelled as a measured failure rather than accepted |
 
 ### Nine-gate verdict, this round
 
@@ -468,3 +498,7 @@ each screen's own layout to fit the window it was drawn in.
 | `bb9ffe50` | publish job gets write permission; capture failures emit annotations |
 | `b60d17d4` | evidence gathering split from the gate |
 | `6f0a6df2` | pending-death card answered the way a player does |
+| `18d72ffc` | recovery settles before deciding, and again before the press |
+| `e00daa11` | find the death card where it actually lives (child of the HUD layer) |
+| `b2507d04` | death card under the themed root in a centring container; layer test asserts structure |
+| `5716930c` | walk where there is room; a bounded actor stopped at its edge is not a broken character |
