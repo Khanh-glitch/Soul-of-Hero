@@ -67,6 +67,10 @@ func _boot_and_kill() -> void:
 	if hero == null:
 		return
 	var svc := _survival()
+	# Start from a known bag: earlier cases in the same profile may have gathered.
+	_clear_inventory()
+	var deaths_before := int((svc.call(&"document") as Dictionary).get("counters", {}).get("deaths", 0))
+	var bags_before := int(((svc.call(&"document") as Dictionary).get("death_bags", {}) as Dictionary).size())
 	_expect(bool(_give(CARRIED, 3)), "the Hero carries ordinary materials before the hit")
 	var carried := _count(CARRIED)
 	_expect(carried == 3, "carried count is exact before death (%d)" % carried)
@@ -74,43 +78,58 @@ func _boot_and_kill() -> void:
 
 	# Real damage API, real invulnerability window: keep striking until lethal.
 	# Each call is an authentic in-engine damage event, not a death toggle.
+	# The Hero starts at its real progression health (1100 here, not a test
+	# constant), so a lethal probe has to land several hits *through* the real
+	# 0.75 s i-frame window rather than toggling a flag.
 	var strikes := 0
-	while not bool(hero.get(&"dead")) and strikes < 64:
-		hero.call(&"take_damage", 250, hero.global_position + Vector2(8, 0))
+	var refused := 0
+	while not bool(hero.get(&"dead")) and strikes < 24:
+		var landed := bool(hero.call(&"take_damage", 250, hero.global_position + Vector2(8, 0)))
 		strikes += 1
-		await physics_frame
-	_expect(strikes > 1, "the damage path respected the real i-frames (%d strikes)" % strikes)
+		if not landed:
+			refused += 1
+			await physics_frame
+			continue
+		# Wait out the real invulnerability window; striking faster is refused by
+		# the Hero itself and proves nothing.
+		while float(hero.get(&"invulnerability_remaining")) > 0.0 and not bool(hero.get(&"dead")):
+			await physics_frame
+	_expect(strikes > 1, "the damage path respected the real i-frames (%d strikes, %d refused)" % [strikes, refused])
 	_expect(bool(hero.get(&"dead")), "lethal production damage kills the real Hero")
 	var document: Dictionary = svc.call(&"document")
 	var bag_id := String(document.get("pending_death", ""))
 	_expect(not bag_id.is_empty(), "death atomically created one pending bag")
-	_expect(int((document.get("counters", {}) as Dictionary).get("deaths", 0)) == 1, "exactly one death is recorded")
-	_expect((document.get("death_bags", {}) as Dictionary).size() == 1, "exactly one bag exists in the document")
+	_expect(int((document.get("counters", {}) as Dictionary).get("deaths", 0)) == deaths_before + 1,
+		"exactly one death is recorded (%d -> %d)" % [deaths_before, int((document.get("counters", {}) as Dictionary).get("deaths", 0))])
+	_expect((document.get("death_bags", {}) as Dictionary).size() == bags_before + 1,
+		"exactly one bag exists in the document")
 	_expect(_count(CARRIED) == 0, "carried materials moved into the bag, not duplicated")
 	var bag: Dictionary = (document.get("death_bags", {}) as Dictionary).get(bag_id, {})
 	_expect(int(((bag.get("stacks", {}) as Dictionary).get(CARRIED, {}) as Dictionary).get("quantity", 0)) == 3,
 		"the bag holds exactly the carried stack")
 	var bag_nodes := 0
-	for node: Node in get_tree().get_nodes_in_group(&"survival_death_bag"):
+	for node: Node in get_nodes_in_group(&"survival_death_bag"):
 		bag_nodes += 1
 	_expect(bag_nodes == 1, "exactly one physical bag is projected in the world (%d)" % bag_nodes)
 
 	# The run survives death: dying is not a run boundary and must not reset or
 	# extend the 336 h deadline (D062-D067).
-	var lifecycle: Node = get_node_or_null("/root/RunLifecycle")
+	var lifecycle: Node = root.get_node_or_null("RunLifecycle")
 	if lifecycle != null:
 		var run: Dictionary = lifecycle.call(&"phase")
 		_expect(String(run.get("state", "")) == "active", "death does not end the run")
 		var run_id := String(run.get("run_id", ""))
 		# Respawn through the production service, then confirm the run identity is
 		# unchanged and no second bag appears.
-		var respawned := bool(svc.call(&"finish_overworld_death", hero.global_position))
+		var respawned: bool = bool(svc.call(&"finish_overworld_death", hero.global_position))
 		_expect(respawned, "the production respawn commit clears pending death")
 		_expect(String((lifecycle.call(&"phase") as Dictionary).get("run_id", "")) == run_id,
 			"respawn keeps the same durable run identity")
 		var after: Dictionary = svc.call(&"document")
-		_expect(int((after.get("counters", {}) as Dictionary).get("deaths", 0)) == 1, "respawn creates no second death")
-		_expect((after.get("death_bags", {}) as Dictionary).size() == 1, "respawn creates no second bag")
+		_expect(int((after.get("counters", {}) as Dictionary).get("deaths", 0)) == deaths_before + 1,
+			"respawn creates no second death")
+		_expect((after.get("death_bags", {}) as Dictionary).size() == bags_before + 1,
+			"respawn creates no second bag")
 
 	var audit := {
 		"bag_id": bag_id,
@@ -144,7 +163,7 @@ func _verify_process() -> void:
 		"the relaunch restores exactly the same bags")
 	_expect((document.get("death_bags", {}) as Dictionary).has(String(base.get("bag_id", ""))),
 		"the original bag identity survives the relaunch")
-	_expect(int((document.get("counters", {}) as Dictionary).get("deaths", -1)) == 1,
+	_expect(int((document.get("counters", {}) as Dictionary).get("deaths", -1)) == int(base.get("deaths", -2)),
 		"the relaunch does not add a death")
 	_expect(_count(CARRIED) == 0, "the bag still owns the materials after relaunch (no duplication)")
 	# Recovery after a genuine relaunch pays the bag exactly once.
@@ -152,7 +171,7 @@ func _verify_process() -> void:
 	_expect(bool(_survival().call(&"recover_death_bag", bag_id)), "the relaunched process recovers the same bag")
 	_expect(_count(CARRIED) == int(base.get("carried", -1)), "recovery restores the exact carried count")
 	_expect(not bool(_survival().call(&"recover_death_bag", bag_id)), "a replayed recovery pays nothing")
-	var lifecycle: Node = get_node_or_null("/root/RunLifecycle")
+	var lifecycle: Node = root.get_node_or_null("RunLifecycle")
 	if lifecycle != null:
 		_expect(String((lifecycle.call(&"phase") as Dictionary).get("run_id", "")) == String((base.get("run", {}) as Dictionary).get("run_id", "x")),
 			"the full death/recovery cycle kept one run identity")
