@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="StackItemDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/content/items/stack_item_definition.gd" id="1_item"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/rpg_icons_400/Icon207.png" id="2_icon"]
+
+[resource]
+resource_name = "Salvage Kit Blueprint"
+script = ExtResource("1_item")
+item_id = &"salvage_kit_blueprint"
+display_name = "Bao Thiet Ke Bo Cuu Thu"
+description = "Blueprint that unlocks roadside material processing at the paid salvage station. Consumed on research."
+icon = ExtResource("2_icon")
+item_kind = "blueprint"
+rarity_id = &"normal"
+stack_capacity = 50
+authoring_notes = "Directed research output. Unlocks the salvage kit recipe at the paid processing station."

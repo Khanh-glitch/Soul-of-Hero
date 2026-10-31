@@ -12,8 +12,15 @@
 [ext_resource type="Resource" path="res://data/content/items/hero_xp_stone_small.tres" id="10_xp_small"]
 [ext_resource type="Resource" path="res://data/content/items/hero_xp_stone_medium.tres" id="11_xp_medium"]
 [ext_resource type="Resource" path="res://data/content/items/hero_xp_stone_large.tres" id="12_xp_large"]
+[ext_resource type="Resource" path="res://data/content/items/roadside_oak_scrap.tres" id="13_roadside_oak_scrap"]
+[ext_resource type="Resource" path="res://data/content/items/roadside_stone_chip.tres" id="14_roadside_stone_chip"]
+[ext_resource type="Resource" path="res://data/content/items/roadside_iron_scrap.tres" id="15_roadside_iron_scrap"]
+[ext_resource type="Resource" path="res://data/content/items/knowledge_spare.tres" id="16_knowledge_spare"]
+[ext_resource type="Resource" path="res://data/content/items/quarry_sample.tres" id="17_quarry_sample"]
+[ext_resource type="Resource" path="res://data/content/items/quarry_core_fragment.tres" id="18_quarry_core_fragment"]
+[ext_resource type="Resource" path="res://data/content/items/salvage_kit_blueprint.tres" id="19_salvage_kit_blueprint"]
 
 [resource]
 resource_name = "Soul of Hero Item Catalog"
 script = ExtResource("1_catalog")
-items = Array[ExtResource("2_item")]([ExtResource("3_bone"), ExtResource("4_reaper"), ExtResource("5_blueprint"), ExtResource("6_venom"), ExtResource("7_axe"), ExtResource("8_jaw"), ExtResource("9_ember"), ExtResource("10_xp_small"), ExtResource("11_xp_medium"), ExtResource("12_xp_large")])
+items = Array[ExtResource("2_item")]([ExtResource("3_bone"), ExtResource("4_reaper"), ExtResource("5_blueprint"), ExtResource("6_venom"), ExtResource("7_axe"), ExtResource("8_jaw"), ExtResource("9_ember"), ExtResource("10_xp_small"), ExtResource("11_xp_medium"), ExtResource("12_xp_large"), ExtResource("13_roadside_oak_scrap"), ExtResource("14_roadside_stone_chip"), ExtResource("15_roadside_iron_scrap"), ExtResource("16_knowledge_spare"), ExtResource("17_quarry_sample"), ExtResource("18_quarry_core_fragment"), ExtResource("19_salvage_kit_blueprint")])

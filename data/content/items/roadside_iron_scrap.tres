@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="StackItemDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/content/items/stack_item_definition.gd" id="1_item"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/rpg_icons_400/Icon203.png" id="2_icon"]
+
+[resource]
+resource_name = "Roadside Iron Scrap"
+script = ExtResource("1_item")
+item_id = &"roadside_iron_scrap"
+display_name = "Sat Luoi Bien"
+description = "Iron scrap gathered from roadside deposits. Low-value until a run-local discovery unlocks its use."
+icon = ExtResource("2_icon")
+rarity_id = &"normal"
+stack_capacity = 50
+authoring_notes = "Roadside salvage material. Lawful, limited yield from physical world-source identity. Becomes strategically useful after run-local discovery via reverse-use lookup."

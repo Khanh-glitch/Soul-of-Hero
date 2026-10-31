@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="StackItemDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/content/items/stack_item_definition.gd" id="1_item"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/rpg_icons_400/Icon206.png" id="2_icon"]
+
+[resource]
+resource_name = "Quarry Core Fragment"
+script = ExtResource("1_item")
+item_id = &"quarry_core_fragment"
+display_name = "Parc Viet To Khoang San"
+description = "Finite Quarry reward. Used by paid stations and recipes to prepare future expeditions."
+icon = ExtResource("2_icon")
+rarity_id = &"rare"
+stack_capacity = 50
+authoring_notes = "Quarry source-action finite reward. Not Ragnarok currency; not manufactured; limited by physical site capacity."

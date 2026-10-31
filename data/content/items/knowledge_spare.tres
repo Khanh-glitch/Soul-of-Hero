@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="StackItemDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/content/items/stack_item_definition.gd" id="1_item"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/rpg_icons_400/Icon204.png" id="2_icon"]
+
+[resource]
+resource_name = "Knowledge Spare"
+script = ExtResource("1_item")
+item_id = &"knowledge_spare"
+display_name = "Phu Kien Tri Thuc"
+description = "Spare research component used in bounded random Spares research and directed research. Consumed on use."
+icon = ExtResource("2_icon")
+item_kind = "consumable"
+rarity_id = &"normal"
+stack_capacity = 50
+authoring_notes = "Spares for the tri-knowledge research model. Roadside salvage may yield Spares alongside materials. Consumed by research actions."
