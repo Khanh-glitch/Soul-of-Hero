@@ -27,7 +27,7 @@ const ENTRIES := {
     16: {"state": "NATIVE_RUNTIME_CANDIDATE", "source": "A+C", "visual": "VISUAL_NOT_VERIFIED", "note": "A+C worldseed growth driver; fusion port pending; sources recovered in-repo"},
     17: {"state": "SOURCE_PORTED_CANDIDATE", "source": "C", "visual": "VISUAL_NOT_VERIFIED", "note": "TRUE port: C frame/kit + eventHorizon (astral.ts seed 127704); spatial PNG parity in CI pending first run; blitBase dark-fragment adaptation documented"},
     18: {"state": "REDESIGN_CANDIDATE", "source": "NEW", "visual": "VISUAL_NOT_VERIFIED", "note": "Brief: authored time fractures, no incoherent bouncing. NOT Gold, NOT approved"},
-    19: {"state": "NATIVE_RUNTIME_CANDIDATE", "source": "D", "visual": "VISUAL_NOT_VERIFIED", "note": "Creator D override honoured; D timeline duration/climax NOT in catalog (duration=-1) — candidate timing used, flagged"},
+    19: {"state": "SOURCE_PORTED_CANDIDATE", "source": "D", "visual": "VISUAL_NOT_VERIFIED", "note": "TRUE translation: D Constellation Engine (HTML WebGL->CPU DFx 480x270), 9.8s lifecycle verified in HTML; authored OUT extension 8.6-9.8 (OUT study NOT copied); GPU-vs-CPU differences documented in d_fx header"},
     20: {"state": "NATIVE_RUNTIME_CANDIDATE", "source": "A+C", "visual": "VISUAL_NOT_VERIFIED", "note": "A+C ripper slashes driver; fusion port pending; sources recovered in-repo"},
 }
 

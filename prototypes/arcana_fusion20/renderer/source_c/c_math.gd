@@ -27,7 +27,7 @@ static func lerp(a: float, b: float, t: float) -> float:
     return a + (b - a) * t
 
 static func inv(a: float, b: float, v: float) -> float:
-    return clampf((v - a) / (b - a))
+    return cl01((v - a) / (b - a))
 
 static func smooth(t: float) -> float:
     t = cl01(t)

@@ -26,6 +26,21 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
     if id < 1:
         return false
     cancel_skill(canonical_id)
+    if id == 19:
+        # TRUE source translation: D Constellation Engine (standalone
+        # HTML WebGL -> CPU DFx; see source_d headers for differences).
+        var dp := DSourcePlayer.new()
+        add_child(dp)
+        dp.visual_contact.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
+            visual_contact.emit(canonical_id, pos, kind)
+            body_event_cue.emit(canonical_id, pos, &"astral"))
+        dp.visual_event.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
+            visual_event.emit(canonical_id, kind, pos, st))
+        dp.finished.connect(func() -> void: _on_finished(canonical_id))
+        _casts[canonical_id] = dp
+        cast_started.emit(canonical_id)
+        dp.begin(caster_world, target_world)
+        return true
     if id == 17 or id == 7 or id == 10 or id == 15:
         # TRUE source port on the ported C frame/compositor (astral.ts).
         var cp := CSourcePlayer.new()
@@ -124,6 +139,11 @@ func _process(_delta: float) -> void:
             if bp.active and int(_last_tick_emitted.get(key, -1)) != bp.source_tick:
                 _last_tick_emitted[key] = bp.source_tick
                 source_tick.emit(key, bp.source_tick, bp.phase_name())
+        elif node is DSourcePlayer:
+            var dp2 := node as DSourcePlayer
+            if int(_last_tick_emitted.get(key, -1)) != dp2._tick:
+                _last_tick_emitted[key] = dp2._tick
+                source_tick.emit(key, dp2._tick, &"SOURCE_D")
         elif node is CSourcePlayer:
             var cp2 := node as CSourcePlayer
             if int(_last_tick_emitted.get(key, -1)) != cp2._tick:
