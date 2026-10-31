@@ -50,7 +50,7 @@ func begin(caster_world: Vector2, target_world: Vector2) -> void:
     var axis := target_world - caster_world
     var src_axis := ARENA_LOCAL - CASTER_LOCAL
     _rot = axis.angle() - src_axis.angle() if axis.length() > 1.0 else 0.0
-    _scale = cl01(axis.length() / maxf(1.0, src_axis.length()), 0.6, 3.5) if axis.length() > 1.0 else 1.0
+    _scale = clampf(axis.length() / maxf(1.0, src_axis.length()), 0.6, 3.5) if axis.length() > 1.0 else 1.0
     _origin = caster_world
     _tick = 0
     _acc = 0.0

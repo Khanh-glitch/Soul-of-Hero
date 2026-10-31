@@ -153,7 +153,7 @@ class ChainVerdict:
                     var h := (1.0 - edge) * (0.25 + age_k * 0.6)
                     return AMath.R("volt", 0.3 + h * 0.5))
             # bolt (B two-colour + C density): re-struck each 0.12s window
-            var win := floor(lt / 0.12)
+            var win: float = floor(lt / 0.12)
             var wk := exp(-fmod(lt, 0.12) * 22.0) * die
             if wk > 0.03:
                 var seed := i * 977 + int(win) * 131

@@ -223,6 +223,7 @@ func present() -> PackedByteArray:
             bytes[o + 1] = gb
             bytes[o + 2] = bbb
             bytes[o + 3] = 255 if (rb != 0 or gb != 0 or bbb != 0) else 0
+    return bytes
 
 static func cl01(v: float, a: float = 0.0, b: float = 1.0) -> float:
     return a if v < a else (b if v > b else v)
