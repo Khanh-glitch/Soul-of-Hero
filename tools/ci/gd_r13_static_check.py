@@ -31,6 +31,16 @@ R13_FILES = [
     "tests/survival/a3_value_economy_test.gd",
 ]
 
+# Every other script the R13 job loads. The gate is cheap, so it checks the
+# whole composed economy surface rather than only the new file.
+R13_CONTEXT_FILES = [
+    "game/survival/economy/economy_service.gd",
+    "game/survival/economy/offline_operation_planner.gd",
+    "game/survival/economy/meta_economy_planner.gd",
+    "game/survival/economy/world_source_adapter.gd",
+    "tests/survival/catalog/economy_adapter_test.gd",
+]
+
 # Expressions whose static type is Variant, so `:=` on them is an
 # INFERRED_DECLARATION warning that Godot 4.7 promotes to an error.
 VARIANT_CALL = re.compile(
@@ -54,6 +64,7 @@ FORBIDDEN_AUTHORITY = [
     (re.compile(r"\ba3_learned_recipes\b"), "second learned-recipe store (survival.knowledge.recipes is canonical)"),
     (re.compile(r"\ba3_job_counter\b"), "second job counter (canonical state.counter is canonical)"),
     (re.compile(r'\bowner_domain\b'), "owner-string source authentication"),
+    (re.compile(r'begins_with\(\s*"A1"'), "owner-string domain prefix treated as source authentication"),
 ]
 
 GDSCRIPT3 = [
@@ -207,6 +218,85 @@ def check_duplicate_vars(path: Path, findings: list[str]) -> None:
                 seen[name] = number
 
 
+ENGINE_VIRTUALS = {
+    "_init", "_ready", "_process", "_physics_process", "_enter_tree", "_exit_tree",
+    "_input", "_unhandled_input", "_shortcut_input", "_unhandled_key_input",
+    "_gui_input", "_draw", "_notification", "_to_string", "_get", "_set",
+    "_get_property_list", "_validate_property", "_property_can_revert",
+    "_property_get_revert", "_iter_init", "_iter_next", "_iter_get",
+}
+
+CALL = re.compile(r"(?<![\w.$])([A-Za-z_]\w*)\s*\(")
+
+# @GlobalScope functions, GDScript keywords that take parentheses, and the
+# base-class methods that R13 scripts legitimately call unqualified.
+BUILTIN_CALLS = {
+    "abs", "absi", "absf", "ceil", "ceilf", "ceili", "clamp", "clampf", "clampi",
+    "floor", "floorf", "floori", "max", "maxf", "maxi", "min", "minf", "mini",
+    "round", "roundf", "roundi", "sign", "signf", "signi", "snapped", "wrap",
+    "wrapf", "wrapi", "pow", "sqrt", "lerp", "lerpf", "lerp_angle", "remap",
+    "is_equal_approx", "is_zero_approx", "is_instance_valid", "is_instance_id_valid",
+    "is_nan", "is_inf", "is_finite", "print", "print_rich", "print_verbose",
+    "printerr", "printraw", "prints", "printt", "push_error", "push_warning",
+    "str", "type_string", "typeof", "len", "range", "preload", "load", "weakref",
+    "hash", "error_string", "String", "StringName", "Array", "Dictionary",
+    "Callable", "Vector2", "Vector2i", "Vector3", "NodePath", "PackedStringArray",
+    "int", "float", "bool", "func", "assert", "super", "not", "and", "or", "in",
+    "return", "if", "elif", "else", "while", "for", "match", "await", "is",
+}
+
+INHERITED_CALLS = {
+    "quit", "create_timer", "change_scene_to_file", "change_scene_to_packed",
+    "get_node", "get_nodes_in_group", "get_first_node_in_group", "add_child",
+    "remove_child", "get_parent", "get_children", "get_tree", "is_inside_tree",
+    "queue_free", "free", "emit_signal", "connect", "disconnect", "is_connected",
+    "has_method", "has_signal", "call", "callv", "call_deferred", "callv_deferred",
+    "get", "set", "get_script", "set_script", "duplicate", "get_class",
+    "is_class", "notification", "set_process", "set_physics_process",
+    "set_process_input", "get_script_method_list", "get_method_list",
+    "get_meta", "set_meta", "has_meta", "remove_meta", "to_string",
+    "get_root", "get_current_scene", "get_script", "set_script",
+}
+
+ENGINE_VIRTUALS = {
+    "_init", "_ready", "_process", "_physics_process", "_enter_tree", "_exit_tree",
+    "_input", "_unhandled_input", "_shortcut_input", "_unhandled_key_input",
+    "_gui_input", "_draw", "_notification", "_to_string", "_get", "_set",
+    "_get_property_list", "_validate_property", "_property_can_revert",
+    "_property_get_revert", "_iter_init", "_iter_next", "_iter_get", "_bind_method",
+}
+
+
+def check_undefined_calls(path: Path, findings: list[str]) -> None:
+    """Every unqualified call must resolve to this file or to the engine.
+
+    Run 41231359686 phase 1 died at load time with `Parse Error: Function
+    "advance_active_seconds()" not found in base self.` - a typo for
+    `_advance_active_seconds`. Godot reports that only inside the engine, so the
+    gate now resolves unqualified calls itself.
+    """
+    text = path.read_text(encoding="utf-8")
+    defined = {m.group(1) for m in (FUNC_START.match(line) for line in text.splitlines()) if m}
+    allowed = defined | BUILTIN_CALLS | INHERITED_CALLS | ENGINE_VIRTUALS
+    for number, raw in enumerate(text.splitlines(), start=1):
+        line = strip_line(raw)
+        if not line.strip():
+            continue
+        code = code_only(line)
+        for match in CALL.finditer(code):
+            name = match.group(1)
+            if name in allowed:
+                continue
+            before = code[: match.start()].rstrip()
+            if before.endswith(("func", "class", "enum", "signal", "const", "var")):
+                continue
+            findings.append(
+                f"{path}:{number}: unqualified call `{name}()` resolves to nothing in this file "
+                f"(Godot 4.7 fails to load the script); defined here: "
+                f"{', '.join(sorted(defined)) or '(none)'}"
+            )
+
+
 def check_workflow(path: Path, findings: list[str]) -> None:
     """Two-process steps must not share shell state."""
     text = path.read_text(encoding="utf-8")
@@ -240,6 +330,13 @@ def main() -> int:
             continue
         check_file(path, findings)
         check_duplicate_vars(path, findings)
+        check_undefined_calls(path, findings)
+    for relative in R13_CONTEXT_FILES:
+        path = root / relative
+        if not path.exists():
+            findings.append(f"{path}: missing R13 context file")
+            continue
+        check_undefined_calls(path, findings)
     workflow = root / args.workflow
     if workflow.exists():
         check_workflow(workflow, findings)
@@ -248,7 +345,8 @@ def main() -> int:
             print(f"::error::R13 static gate: {finding}")
         print(f"R13 STATIC GATE FAILED - {len(findings)} finding(s)")
         return 1
-    print(f"R13 STATIC GATE PASSED - {len(R13_FILES)} file(s), 1 workflow checked")
+    print(f"R13 STATIC GATE PASSED - {len(R13_FILES)} R13 file(s), "
+          f"{len(R13_CONTEXT_FILES)} context file(s), 1 workflow checked")
     return 0
 
 

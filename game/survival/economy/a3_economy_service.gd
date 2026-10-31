@@ -238,8 +238,15 @@ func verify_source_receipt(receipt: Dictionary) -> Dictionary:
 		if String(receipt.get(field, "")) != String(binding.get(field, "")):
 			last_error = "BINDING_FIELD_MISMATCH:" + field
 			return {"ok": false, "reason": "BINDING_FIELD_MISMATCH:" + field}
-	if String(receipt.get("owner", "")) != String(binding.get("a1_source_class_id", "")) \
-			and not String(receipt.get("owner", "")).begins_with("A1"):
+	## Consistency check, not authentication: the owner must be exactly the A1
+	## source class pinned for this binding. A bare domain string such as "A1"
+	## is refused, and this check can never be the reason a grant exists — the
+	## live host equality below is.
+	var expected_owner := String(binding.get("a1_source_class_id", ""))
+	if expected_owner.is_empty():
+		last_error = "BINDING_OWNER_MISSING"
+		return {"ok": false, "reason": "BINDING_OWNER_MISSING"}
+	if String(receipt.get("owner", "")) != expected_owner:
 		last_error = "OWNER_DOMAIN_REJECTED"
 		return {"ok": false, "reason": "OWNER_DOMAIN_REJECTED"}
 	## Physical reach: the hero must stand on a cell A1 authored for this binding.

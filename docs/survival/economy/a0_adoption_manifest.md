@@ -1,298 +1,126 @@
-# A0 Adoption Manifest — A3 Value Economy (R13)
+# A0 Adoption Manifest — A3 Value Economy (R13-A3-CLOSE, v2)
 
-**Version:** 1.0  
-**Status:** OWNER_NATIVE_READY / PRODUCT_COMPOSED_NOT_TESTED  
-**Branch:** `arena/7a12b27e-soul-of-hero`  
-**Exact SHA:** `9d751d57` (baseline) → pending push of this manifest  
-**Owner:** A3 (economy)  
-**Consumer:** A0 (SaveService composition), A6 (UI projections), A7 (product acceptance)
-
----
-
-## 1. Purpose
-
-Deliver a single trustworthy, native-tested, A0-adoptable paid economy chain
-with meaningful player choices and no duplicate authority. A3 owns all source
-code listed below; A0 composes it into the production save/load tree without
-editing A3 files.
-
-The chain: lawful roadside material + Spares → bounded/directed/destructive
-research → newly learned recipe revalues stored ingredients → paid station
-operation (physical fuel escrow, not account currency) → durable return payout
-→ choice of next route or material sink.
+**Version:** 2.0
+**Status:** `OWNER_NATIVE_PENDING_EXACT_HEAD_CI` → `PRODUCT_COMPOSED_NOT_TESTED`
+(never `PRODUCT_COMPOSED_PASS` from an A3 branch)
+**Machine-readable contract:** [`A0_ADOPTION_CONTRACT_V2.json`](A0_ADOPTION_CONTRACT_V2.json)
+— regenerated from the tree by `python tools/survival/economy/a3_adoption_contract.py`,
+so every SHA-256 in it is the file that was tested.
+**Branch:** `arena/daadd745-soul-of-hero`
+**Predecessor:** `b751a29f213d3c934caa204eb8d2d86943f07b65` (PR #19) — audited, not trusted
+**Audit of record:** [`R13_A3_CLOSE_AUDIT.md`](R13_A3_CLOSE_AUDIT.md)
 
 ---
 
-## 2. A3-Owner Files for A0 Composition
+## 1. Why v1 was withdrawn
 
-| File | Role | A0 Action |
-|------|------|-----------|
-| `game/survival/economy/a3_economy_service.gd` | A3 economy orchestrator (RefCounted, class_name `A3EconomyService`) | Instantiate once, configure with the A0 SaveService autoload node via `configure(save_node)`. Never create a second SaveService. |
-| `tests/survival/a3_value_economy_test.gd` | R13 native test suite (SceneTree-based, Godot 4.7) | Run as mandatory CI gate. Supports `A3_TEST_ROLE=process_1\|process_2` for true two-process proof. |
-| `tools/run_a3_value_economy_tests.ps1` | Local Windows runner (convenience only, not CI) | Not required for A0 composition. |
-| `data/content/items/roadside_oak_scrap.tres` | Item definition (material) | Include in item catalog. |
-| `data/content/items/roadside_stone_chip.tres` | Item definition (material) | Include in item catalog. |
-| `data/content/items/roadside_iron_scrap.tres` | Item definition (material) | Include in item catalog. |
-| `data/content/items/knowledge_spare.tres` | Item definition (material) — physical fuel | Include in item catalog. |
-| `data/content/items/quarry_sample.tres` | Item definition (material) — specimen | Include in item catalog. |
-| `data/content/items/quarry_core_fragment.tres` | Item definition (material) — processed output | Include in item catalog. |
-| `data/content/items/salvage_kit_blueprint.tres` | Item definition (blueprint) | Include in item catalog. |
-| `data/content/items/stone_pick.tres` | Item definition (material) — harvest tool | Include in item catalog. |
-| `data/content/items/iron_pick.tres` | Item definition (material) — harvest tool | Include in item catalog. |
-| `data/content/items/item_catalog.tres` | StackItemCatalog (17 items) | Updated to include all 9 new items. |
+The predecessor manifest stated "zero migration", "OWNER_NATIVE_READY" and described
+`authenticate_source(source_id, "A1")` as *physical* authentication. All three were
+wrong:
 
-**Files NOT to edit:** `game/autoload/save_service.gd` (A0), A1 world files,
-A8 scene files, A6 UI files.
+* the API only compared a caller-supplied owner string, so any caller could mint
+  source entitlement;
+* four source ids (`roadside_oak_1`, `roadside_stone_1`, `roadside_iron_1`,
+  `quarry_deep_1`) exist in no A1 binding;
+* the R13 native suite never executed (nine hard Godot 4.7 `Variant` inference errors
+  on the exact audited SHA), so "ready" had no engine evidence.
 
----
+A7 R17 separately recorded `A3_SERVICE_REFUSED_BY_SCOPE` against the composed tree.
 
-## 3. APIs A0 / A6 Consume
+## 2. What A0 is asked to compose
 
-### `configure(save_node: Node) -> bool`
-Bind the service to the A0 SaveService autoload. Loads run-local state from
-SaveService mastery (`a3_run_id`, `a3_learned_recipes`, `a3_discoveries`,
-`a3_authenticated_sources`, `a3_station_jobs`, `a3_job_counter`). Returns false
-if `save_node` is null.
+The full list with SHA-256, role and per-file action is in
+`A0_ADOPTION_CONTRACT_V2.json` (`files[]`). Summary:
 
-### `get_save() -> Node`
-Expose the SaveService node for test/orchestration use.
+| Group | Files | Action |
+|---|---|---|
+| Canonical economy core (V5–V7) | `economy_service.gd`, `offline_operation_planner.gd`, `meta_economy_planner.gd`, `world_source_adapter.gd` | **Replace any A0 vendored fork** by the exact hashes in the contract |
+| R13 custody layer | `a3_economy_service.gd` | Instantiate **after** the canonical service; configure with the same SaveService |
+| Catalogs | `data/survival/items/*.json` (58 items, 5 pinned A1 bindings, sources, loot), `data/survival/recipes/*.json` (38 recipes, stations, research, offline/meta policies + schemas) | Include |
+| SOUL item resources | `data/content/items/item_catalog.tres` + 7 R13 `.tres` | Include |
+| Gates | `tests/survival/a3_value_economy_test.gd`, `economy_adapter_test.gd`, `tools/ci/gd_r13_static_check.py`, `tools/ci/verify_r13_receipts.py` | Run as gates |
 
-### `authenticate_source(source_id: String, owner_domain: String) -> bool`
-Physically bind a source under an owner domain. A1 roadside sources authenticate
-when `owner_domain == "A1"` and the contract exists. A8 Quarry sources require
-`a8_authorized == true` in the source contract — a bare string `"A8"` never
-mints entitlement. Persisted through `SaveService.transact_once`.
+**Removed in this round (do not resurrect):**
+`game/survival/economy/roadside_source.gd`, `game/survival/economy/quarry_source.gd`
+— fabricated source identities superseded by the pinned A1 binding document.
 
-### `is_source_authenticated(source_id: String) -> bool`
-Fail-closed gate. Reads SaveService mastery first, falls back to in-memory
-cache. Returns false for unknown sources.
+## 3. Composition order (exact)
 
-### `harvest(source_id: String, tool_id: String) -> Dictionary`
-Atomic harvest: tool wear + yield grant in one `transact_once`. Returns
-`{ok, reason, yield, tool_condition_remaining, source_yields_remaining,
-transaction_key}`. Fail-closed on: unknown source, not authenticated, unknown
-tool, broken tool, source exhausted, inventory full, transaction rejected.
+1. A0 `SaveService` remains the single inventory/transaction authority.
+2. `economy_service.configure(SaveService, station_resolver)`.
+3. `economy_service.configure_time_host(active_tick_receipt_host)` — the
+   `soh.economy.active_tick.v1` producer.
+4. `economy_service.configure_world_host(world_host)` (only when A1 discovery/cells
+   are wired) and, if used, `configure_offline_time_host(offline_projection_host)`.
+5. `a3_economy_service.new()`; `configure(SaveService, economy_service)`;
+   `configure_source_host(A1_source_host)`.
+6. Nothing else. A3 never creates a SaveService, wallet, clock, queue or catalog loader.
 
-### `bounded_random_research(spares_quantity: int) -> Dictionary`
-Spend Spares, learn a random recipe from the researchable pool. Atomic spend+
-learn in one transaction. Returns `{ok, reason, recipe_learned,
-spares_consumed, mechanism}`.
+## 4. One authority per concern
 
-### `directed_research(recipe_id: String) -> Dictionary`
-Spend specific inputs, learn a specific recipe. Atomic. Returns
-`{ok, reason, recipe_learned, inputs_consumed, mechanism}`.
+| Concern | Owner | Evidence in code |
+|---|---|---|
+| Inventory, receipts, durability | A0 `SaveService.transact_once` | every A3 mutation goes through one transaction |
+| Station queue, escrow, maturity | canonical `EconomyService` (`enqueue`/`advance`/`collect`/`cancel`) | `prepare_at_station`, `advance_station`, `claim_production`, `cancel_production` are thin delegations |
+| Recipe knowledge (3 mechanisms) | canonical `research_recipe(blueprint|specimen|targeted)` → `survival.knowledge.recipes` | `research_blueprint` / `research_specimen` / `research_targeted` |
+| Clock | A0 active-tick receipt | no `set_time_source`, no wall-clock maturity, absent host fails closed |
+| Physical source identity | pinned A1 bindings + injected A0/A1 source receipt | `verify_source_receipt` |
+| Quarry | A8 authorization document | REJECTED → fail closed; no Quarry binding exists |
+| UI | A6, read-only | `get_projections()` mutates nothing |
 
-### `reverse_engineer_specimen(specimen_id: String) -> Dictionary`
-Consume a specimen, destroy it, learn its taught recipe. The taught recipe must
-be registered in the recipe registry. Atomic. Returns
-`{ok, reason, recipe_learned, specimen_consumed, specimen_quantity,
-mechanism}`.
+## 5. Save namespaces
 
-### `prepare_at_station(recipe_id: String, station_id: String) -> Dictionary`
-Escrow physical fuel + inputs, create a unique job. Outputs NOT granted at
-prepare. Returns `{ok, reason, job_id, recipe, station, fuel_item,
-fuel_quantity, queue_seconds, outputs, transaction_key, status}`.
+| Namespace | Written by | Purpose |
+|---|---|---|
+| `inventory.item_stacks` | A0 only | materials/Core tokens |
+| `applied_transactions[...]` | A0 | `soh.a3.source_claim.<source>.<n>`, `soh.a3.source_auth.<source>.<h>`, `soh.a3.discovery.<h>`, canonical `soh.a3.*` receipts |
+| `survival_economy` | canonical | schema/instances/jobs/technologies/counter/time/offline/meta |
+| `survival.knowledge.recipes` | canonical | learned recipes |
+| `world_slice` | canonical `world_action` | A1 discovery/claim counters/reward receipts |
+| `mastery.a3_source_receipts` | A3 | binding identity + binding-document SHA + host session/sequence |
+| `mastery.a3_discoveries` | A3 | reverse-use display knowledge (never authorises a grant) |
 
-### `claim_offline_production(job_id: String) -> Dictionary`
-Grant outputs exactly once after queue maturity. Atomic output+claimed flag.
-Returns `{ok, reason, job_id, recipe, station, outputs, transaction_key}`.
-Rejected on: not found, already claimed, queue not ready, transaction rejected
-(full bag).
+## 6. Migration
 
-### `cancel_station_job(job_id: String) -> Dictionary`
-Refund fuel, remove job. Inputs remain spent. Idempotent.
+**No schema migration is required.** R13 has never been composed into a shipped save.
+Three predecessor keys are **removed** and are no longer read for authority:
 
-### `register_discovery(material_id, use_description, recipe_id) -> bool`
-Register a reverse-use lookup. Persisted through SaveService.
+* `mastery.a3_station_jobs`
+* `mastery.a3_job_counter`
+* `mastery.a3_learned_recipes`
 
-### `lookup_use(material_id: String) -> Dictionary`
-Return discovered use description + recipe_id for a material.
+If an experimental save contains them, they are inert and `SaveService.RESET_ALL`
+clears them. V5–V7 documents (`survival_economy` schema 2, legacy v1) keep loading
+unchanged; the adapter/offline/meta regression tests run on every push.
 
-### `is_discovered(material_id: String) -> bool`
-Check if a material's use has been discovered this run.
+## 7. Verification A0 must reproduce
 
-### `get_projections() -> Dictionary`
-Read-only source/recipe/discovery/learned-recipes projections for A6 UI
-consumers. No state mutation.
+| Gate | Command | Proves |
+|---|---|---|
+| Static hazard | `python3 tools/ci/gd_r13_static_check.py` | no Variant inference, no duplicate `var`, no second authority, no cross-step shell state |
+| Import | `godot --headless --path . --import` | the script actually parses on Godot 4.7 |
+| Process 1 | `A3_TEST_ROLE=process_1` + shared `SOUL_OF_HERO_SAVE_PATH` | authenticate → harvest (wear) → research → paid enqueue |
+| Process 2 | `A3_TEST_ROLE=process_2`, same save, **separate step** | reload → refuse early → mature → collect once → refuse duplicate |
+| Receipts | `python3 tools/ci/verify_r13_receipts.py --p1 ... --p2 ...` | distinct PIDs, one paid settlement, conservation |
+| Negative controls | default role | forgery ×7, cooldown, one-time exhaustion, tool wear, full bag, obstructed disk write, cancel, stale run, reset |
+| Canonical regression | adapter + offline + meta + tool-use + restart suites | V5–V7 behaviour unchanged |
 
-### `set_time_source(source: Callable) -> void`
-Inject an external clock for queue readiness. Tests use simulated time;
-production A0 injects the authoritative active-session time host.
+## 8. Consumer handoff
 
----
+* **A6:** `get_projections()` and `route_comparison()` are read-only. UI flags never
+  authorise a claim, grant, craft or research event.
+* **A7:** do not mark `PRODUCT_COMPOSED_PASS`, balance or acceptance from an A3 branch.
+  The Quarry remains `BLOCKED_PENDING_A8`.
+* **A8:** supply a durable site instance, native two-route collision/reload proof and a
+  new **APPROVED** authorization SHA before any Quarry source, cost or reward exists.
 
-## 4. Item / Source Namespaces
-
-### Item IDs (all in `data/content/items/item_catalog.tres`, 17 total)
-
-| Item ID | Kind | Source |
-|---------|------|--------|
-| `roadside_oak_scrap` | material | Harvest from `roadside_oak_1` |
-| `roadside_stone_chip` | material | Harvest from `roadside_stone_1` |
-| `roadside_iron_scrap` | material | Harvest from `roadside_iron_1` |
-| `knowledge_spare` | material | Harvest bonus, research fuel, station fuel |
-| `quarry_sample` | material | Harvest from `quarry_deep_1` (when authorized) |
-| `quarry_core_fragment` | material | Output of `process_roadside_materials`, `process_quarry_sample` |
-| `salvage_kit_blueprint` | blueprint | Output of `salvage_kit` |
-| `stone_pick` | material | Harvest tool (max_condition 100, wear 25/use) |
-| `iron_pick` | material | Harvest tool (max_condition 200, wear 10/use) |
-
-### Source IDs
-
-| Source ID | Owner | Kind | POI ID | Instance ID | Action ID | Authorized |
-|-----------|-------|------|--------|-------------|-----------|------------|
-| `roadside_oak_1` | A1 | roadside | — | — | — | Yes (A1) |
-| `roadside_stone_1` | A1 | roadside | — | — | — | Yes (A1) |
-| `roadside_iron_1` | A1 | roadside | — | — | — | Yes (A1) |
-| `quarry_deep_1` | A8 | quarry | `poi_crown_south_quarry` | `south_seam_outcrop` | `extract_outcrop` | **No** (fail-closed) |
-
-### Recipe IDs
-
-| Recipe ID | Station | Fuel Item | Fuel Qty | Queue Seconds | Outputs |
-|-----------|---------|-----------|----------|---------------|---------|
-| `salvage_kit` | salvage_station | knowledge_spare | 1 | 300 | salvage_kit_blueprint x1 |
-| `process_roadside_materials` | salvage_station | knowledge_spare | 2 | 600 | quarry_core_fragment x5 |
-| `process_quarry_sample` | salvage_station | knowledge_spare | 1 | 120 | quarry_core_fragment x6 |
-
----
-
-## 5. Migration Needs
-
-None. All A3 state is stored under `mastery.a3_*` keys in SaveService, which
-A0 already owns. No schema migration, no data transformation, no backward
-compatibility shims required. On a true new-run reset (SaveService
-`RESET_ALL_TOKEN`), all A3 run-local state is cleared.
-
----
-
-## 6. Exact Tests (R13 Suite)
-
-**File:** `tests/survival/a3_value_economy_test.gd`  
-**Runner:** Godot 4.7 headless, `--script res://tests/survival/a3_value_economy_test.gd`  
-**Exit code:** 0 = pass, 1 = fail
-
-### Single-process mode (default)
-24 test groups:
-
-| Group | Tests | What they verify |
-|-------|-------|------------------|
-| SETUP | 1 | Service configures with SaveService autoload |
-| SOURCE_CUSTODY_ROADSIDE | 6 | Auth, unauth fail, exhaustion, tool wear, breakage, inventory full |
-| QUARRY_SOURCE_FAIL_CLOSED | 3 | Physical identity, fail-closed, bare A8 rejection |
-| RESEARCH_MODEL | 6 | Bounded random, directed, duplicate, persistence, specimen, craftable-only |
-| PAID_PRODUCTION | 8 | Escrow-at-prepare, exactly-once, duplicate, early, cancel, unique job ID, wrong run, full bag |
-| NEGATIVE_CONTROLS | 5 | Premature claim, capacity overflow, canceled job, stale run, replay |
-| TWO_PROCESS_PERSISTENCE_SIMULATED | 1 | Simulated 2P within one process |
-| STRATEGIC_ROADSIDE_CHAIN | 1 | Salvage → discovery → research → paid processing → expedition choice |
-
-### Two-process mode (CI)
-Run two distinct Godot invocations against the same durable save:
-
-1. `A3_TEST_ROLE=process_1` — authenticate source, harvest, research, prepare,
-   write receipt marker to `user://tests/a3_p1_receipt.json`, exit 0.
-2. `A3_TEST_ROLE=process_2` — reload same save, verify inventory/knowledge,
-   verify job persisted, mature queue, claim once, refuse duplicate, exit 0.
-
-Both must print `P1 PASSED` / `P2 PASSED` respectively. CI uses
-`tools/ci/gate_log.sh` to check exit codes, clean error logs, and required
-pass lines.
-
----
-
-## 7. Negative Controls (all must pass)
-
-| Control | Scenario | Expected |
-|---------|----------|----------|
-| Premature claim | Claim at 1s (queue 600s) | `QUEUE_NOT_READY` |
-| Capacity overflow | Full bag (30 stacks) at claim | `TRANSACTION_REJECTED`, no output |
-| Canceled job | Cancel then claim | `QUEUE_NOT_FOUND_OR_ALREADY_CLAIMED`, no output |
-| Stale run | Change run ID, then claim | `QUEUE_NOT_FOUND_OR_ALREADY_CLAIMED` |
-| Replay after claim | Re-claim after success with matured clock | `ALREADY_CLAIMED`, no duplicate output |
-| Duplicate research | Research same recipe twice | `RECIPE_ALREADY_KNOWN` |
-| Duplicate specimen | Reverse-engineer same specimen twice | `RECIPE_ALREADY_KNOWN` |
-| Unauthenticated harvest | Harvest without auth | `SOURCE_NOT_AUTHENTICATED` |
-| Unauthorized Quarry | Harvest quarry without A8 approval | `SOURCE_NOT_AUTHENTICATED` |
-| Bare A8 string | `authenticate_source("quarry_deep_1", "A8")` without approval | `false` |
-
----
-
-## 8. Balance / Source→Sink Receipts
-
-| Flow | Input Cost | Fuel Cost | Output | Tool Wear | Time |
-|------|-----------|-----------|--------|-----------|------|
-| Harvest oak | — | — | 1 oak_scrap | 25 (stone_pick) | — |
-| Harvest iron | — | — | 1 iron_scrap | 10 (iron_pick) | — |
-| Directed research: salvage_kit | 3 oak + 2 stone + 1 spare | — | recipe learned | — | — |
-| Directed research: process_roadside | 5 oak + 3 iron | — | recipe learned | — | — |
-| Prepare: salvage_kit | — | 1 spare | deferred | — | 300s queue |
-| Prepare: process_roadside | 5 oak + 3 iron | 2 spare | deferred | — | 600s queue |
-| Prepare: process_quarry_sample | 3 quarry_sample | 1 spare | deferred | — | 120s queue |
-| Claim: process_roadside | — | — | 5 core_fragment | — | — |
-| Claim: process_quarry_sample | — | — | 6 core_fragment | — | — |
-| Cancel: any recipe | — | fuel refunded | — | inputs spent | — |
-
-**Competing choices:**
-- `process_roadside_materials`: 5 core_fragment, cost 2 fuel + 5 oak + 3 iron, 600s
-- `process_quarry_sample`: 6 core_fragment, cost 1 fuel + 3 quarry_sample, 120s
-  (requires quarry authorization + specimen reverse engineering)
-
-**No unearned Core:** `quarry_core_fragment` only comes from processing recipes,
-never from direct harvest or currency substitution.
-
----
-
-## 9. Source→Paid Job→Collected Output Proof (2PID)
-
-Process 1 writes receipt to `user://tests/a3_p1_receipt.json` with:
-- `job_id`, `recipe`, `station`, `fuel_item`, `fuel_quantity`, `queue_seconds`,
-  `outputs`, `transaction_key`, pre/post quantities
-
-Process 2 verifies:
-- Same `job_id` exists in SaveService mastery `a3_station_jobs`
-- Pre-purchase inventory quantities match receipt
-- Learned recipe persisted
-- Claim once succeeds with correct output quantity
-- Duplicate claim refused with `ALREADY_CLAIMED`
-- Inventory unchanged after refused duplicate
-
----
-
-## 10. Handoff to A0 / A6 / A7
-
-### A0 (SaveService composition)
-- Instantiate `A3EconomyService` once, call `configure(SaveService_autoload_node)`
-- Do NOT create a second SaveService, wallet, or clock
-- Do NOT edit `save_service.gd`
-- All A3 state lives under `mastery.a3_*` keys — no schema migration needed
-- Production time source: inject via `set_time_source()` with authoritative clock
-
-### A6 (UI consumers)
-- Call `get_projections()` for read-only source/recipe/discovery data
-- `authenticated` field per source shows fail-closed status
-- `learned` field per recipe shows research state
-- No state mutation through projections
-
-### A7 (product acceptance)
-- R13 test suite is the mandatory CI gate
-- Do not silence failures or report old suites as R13 success
-- A0 + A7 control product acceptance on the exact composed tree
-- Report `OWNER_NATIVE_PASS` only after native CI run URL and matching SHA
-  are confirmed
-
----
-
-## 11. Current Status
+## 9. Status table
 
 | Milestone | Status |
-|-----------|--------|
-| A3 source code complete | ✅ |
-| R13 test suite (source-level fixed) | ✅ |
-| Godot 4.7 CI workflow added | ✅ |
-| True two-process test (P1/P2) | ✅ |
-| Native CI run executed | ❌ (awaiting Godot 4.7 CI) |
-| Run URL + SHA match confirmed | ❌ |
-| A0 composition of A3 files | ❌ (pending A0 action) |
-| Product acceptance (A0 + A7) | ❌ |
-
-**Do not merge.** A0 composes at its own pace. A3 does not self-declare
-production readiness.
+|---|---|
+| A3 source + catalogs | ✅ this branch |
+| Static hazard gate | ✅ executes on every push |
+| Godot 4.7 native R13 (two processes + negatives) | ⏳ exact-head CI on this branch |
+| V5–V7 canonical regression | ✅ on the same workflow |
+| A0 composition of the 29 files | ❌ pending A0 |
+| Product acceptance / human playtest / balance verdict | ❌ not claimed |

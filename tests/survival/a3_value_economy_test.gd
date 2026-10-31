@@ -202,7 +202,7 @@ func _source_host(source_id: String) -> Dictionary:
 	return {
 		"contract": SOURCE_RECEIPT_CONTRACT,
 		"source_id": source_id,
-		"owner": "A1",
+		"owner": String(binding.get("a1_source_class_id", "")),
 		"poi_id": String(binding.get("poi_id", "")),
 		"instance_id": String(binding.get("instance_id", "")),
 		"action_id": String(binding.get("action_id", "")),
@@ -226,7 +226,7 @@ func _advance_active_seconds(seconds: int) -> void:
 
 func _tick_station(station_id: String, ticks: int, event_id: String) -> Dictionary:
 	station_ticks[station_id] = int(station_ticks.get(station_id, 0)) + ticks
-	advance_active_seconds(ticks)
+	_advance_active_seconds(ticks)
 	return eco.advance(station_id, _station_time_host(station_id), event_id)
 
 ## --- inventory helpers ---
@@ -386,6 +386,12 @@ func _test_source_forgery() -> void:
 	_expect_equal(String(result.get("reason", "")), "SOURCE_RECEIPT_MISSING_FIELD", "owner string is not authentication")
 
 	var valid: Dictionary = _receipt_for(SOURCE_CACHE)
+	var bare_domain: Dictionary = valid.duplicate(true)
+	bare_domain["owner"] = "A1"
+	result = a3.authenticate_source(bare_domain)
+	_expect(not bool(result.get("ok", true)), "a complete receipt with owner forced to \"A1\" is refused")
+	_expect_equal(String(result.get("reason", "")), "OWNER_DOMAIN_REJECTED", "owner must equal the pinned A1 source class")
+
 	var mismatch: Dictionary = valid.duplicate(true)
 	mismatch["active_seconds"] = int(mismatch["active_seconds"]) + 600
 	result = a3.authenticate_source(mismatch)
