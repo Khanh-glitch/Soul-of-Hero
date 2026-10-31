@@ -226,13 +226,17 @@ func sp(x: float, y: float, size: float, col: Color, shape: int = DISC, o: Dicti
     var flags := float(o.get("flags", 0.0))
     var vsz := Vector2(maxf(sx, 0.75), maxf(sy, 0.75))
     var pxs := 1.0 / ((vsz.x + vsz.y) * 0.5)
-    var ext := maxf(vsz.x, vsz.y) + 2.0
+    # GPU fragments are sampled at pixel centers, and the shader only
+    # runs inside the rotated sprite quad, not its surrounding SDF field.
+    var ext := ceili(sqrt(sx * sx + sy * sy)) + 1
     var cs := cos(-rot)
     var sn := sin(-rot)
-    for py in range(cy - int(ext), cy + int(ext) + 1):
-        for pxx in range(cx - int(ext), cx + int(ext) + 1):
-            var q := Vector2(float(pxx) - float(cx), float(py) - float(cy))
+    for py in range(cy - ext, cy + ext + 1):
+        for pxx in range(cx - ext, cx + ext + 1):
+            var q := Vector2(float(pxx) + 0.5 - float(cx), float(py) + 0.5 - float(cy))
             var rq := Vector2(q.x * cs - q.y * sn, q.x * sn + q.y * cs)
+            if absf(rq.x) > sx or absf(rq.y) > sy:
+                continue
             var fl := flags
             if fl >= 4.0:
                 fl -= 4.0
