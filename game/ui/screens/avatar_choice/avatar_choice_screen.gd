@@ -102,7 +102,9 @@ func _accent(gender: String) -> Color:
 ## character: no Knight, no silhouette that could be mistaken for staged art.
 func _mark_missing(preview: TextureRect, caption: Label, word: String, gender: String) -> void:
 	preview.hide()
-	caption.text = word
+	# The seal states the identity, so the caption under the button would say it twice -
+	# and at 186 units of card height the duplicate was clipped by the card edge.
+	caption.hide()
 	var box := caption.get_parent() as VBoxContainer
 	if box == null or box.get_node_or_null("NoArtSeal") != null:
 		return
@@ -132,12 +134,14 @@ func _mark_missing(preview: TextureRect, caption: Label, word: String, gender: S
 	stack.add_theme_constant_override("separation", 2)
 	seal.add_child(stack)
 
-	var mark := A6UiKit.face_label(word, "title", 26, _accent(gender))
+	# "heading", not "title": the title variation carries a 2px drop shadow, which on a
+	# single word reads as a doubled, broken glyph at 1x.
+	var mark := A6UiKit.face_label(word, "heading", 24, _accent(gender))
 	mark.name = "SealWord"
 	mark.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	stack.add_child(mark)
 
-	var tag := A6UiKit.face_label("CHƯA CÓ HÌNH", "caption", 10, A6UiKit.quiet_colour())
+	var tag := A6UiKit.face_label("CHƯA CÓ HÌNH", "caption", 11, A6UiKit.quiet_colour())
 	tag.name = "SealTag"
 	tag.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	stack.add_child(tag)

@@ -421,8 +421,8 @@ static func row_style(state: String) -> StyleBoxFlat:
 	box.bg_color = BOARD_INK if is_board() else LEDGER_PLATE
 	box.content_margin_left = 4.0
 	box.content_margin_right = 4.0
-	box.content_margin_top = 3.0
-	box.content_margin_bottom = 3.0
+	box.content_margin_top = 2.0
+	box.content_margin_bottom = 2.0
 	if is_board():
 		box.border_width_left = 3
 		box.border_color = state_colour(state)
@@ -501,6 +501,20 @@ static func card_style() -> StyleBox:
 	card.content_margin_right = 5.0
 	card.content_margin_bottom = 4.0
 	return card
+
+
+## The plate a station heading sits on. The ledger keeps the authored wooden bar; the
+## board draws its own, so a heading and the rows under it belong to the same surface.
+static func header_style() -> StyleBox:
+	var box := StyleBoxFlat.new()
+	box.bg_color = Color(0.23, 0.16, 0.1, 0.98)
+	box.border_width_bottom = 2
+	box.border_color = BOARD_EDGE
+	box.content_margin_left = 5.0
+	box.content_margin_right = 5.0
+	box.content_margin_top = 2.0
+	box.content_margin_bottom = 2.0
+	return box
 
 
 ## The small filled plate that states a row's verdict, or its action.

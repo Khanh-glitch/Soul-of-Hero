@@ -288,13 +288,15 @@ func _refresh() -> void:
 	var owned := _owned_totals()
 	var jobs: Dictionary = _host.call(&"jobs")
 	var stations: Array = _host.call(&"nearby_stations")
+	# Queue first. What is already running is why a player opens this panel, and putting
+	# it above the catalog means the first thing on the surface is the live state.
+	_add_running_jobs(jobs)
 	for raw: Variant in stations:
 		var station: Dictionary = raw
 		_add_station_header(station, jobs)
 		_add_recipes(station, owned)
 		if String(station.get("kind", "")) == "research":
 			_add_technologies(station, owned)
-	_add_running_jobs(jobs)
 
 
 ## The two cards whose spacing IS the row pitch. The list starts with a station
@@ -325,6 +327,10 @@ func _add_station_header(station: Dictionary, jobs: Dictionary) -> void:
 	var plate := PanelContainer.new()
 	plate.name = "Station_%s" % station_id
 	plate.theme_type_variation = &"A6HudBar"
+	if A6UiKit.is_board():
+		# The ledger keeps the authored wooden bar; only the board draws its own heading
+		# plate, because its rows are not parchment either.
+		plate.add_theme_stylebox_override("panel", A6UiKit.header_style())
 	plate.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_list.add_child(plate)
 	var row := HBoxContainer.new()
@@ -344,6 +350,7 @@ func _add_station_header(station: Dictionary, jobs: Dictionary) -> void:
 		A6UiKit.CREAM,
 	)
 	name_label.name = "StationName"
+	name_label.add_theme_color_override("font_color", A6UiKit.CREAM if not A6UiKit.is_board() else A6UiKit.GOLD)
 	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	name_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	row.add_child(name_label)
@@ -588,7 +595,10 @@ func _amount_chip(item_id: String, have: int, needed: int, short: bool) -> HBoxC
 	if picture != null:
 		picture.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		chip.add_child(picture)
-	var amount := A6UiKit.face_label("%d/%d" % [have, needed], "number", A6UiKit.size_cost(), A6UiKit.text_colour())
+	# One number, and it is the requirement: the row is a shopping list, so "2" means
+	# "this costs two". What the bag holds is the colour (ink: covered, amber: short) and
+	# the shortfall sentence; a bare "4/2" made the player work out which number was which.
+	var amount := A6UiKit.face_label("%d" % needed, "number", A6UiKit.size_cost(), A6UiKit.text_colour())
 	if short:
 		amount.add_theme_color_override("font_color", A6UiKit.WARN)
 	# Ink when the player can pay, warn when short: colour is never the only signal, the
@@ -619,12 +629,15 @@ func _queue_used(station: Dictionary, jobs: Dictionary) -> int:
 ## Player-facing state, derived only from owner answers: the station's own
 ## operational flag, its own queue capacity, and the bag totals A0 reports.
 func _state_key(operational: bool, queue_full: bool, shortfall: String) -> String:
+	# The row answers "can I make this?", not "is the station free?": a full queue is the
+	# station's own fact and the header states it once. Repeating it on every row covered
+	# the payability answer, which is what a row is for.
 	if not operational:
 		return A6UiKit.STATE_OFFLINE
-	if queue_full:
-		return A6UiKit.STATE_BUSY
 	if not shortfall.is_empty():
 		return A6UiKit.STATE_SHORT
+	if queue_full:
+		return A6UiKit.STATE_BUSY
 	return A6UiKit.STATE_CRAFT
 
 
@@ -637,7 +650,7 @@ func _add_running_jobs(jobs: Dictionary) -> void:
 	var ids: Array = jobs.keys()
 	if ids.is_empty():
 		return
-	var heading := A6UiKit.face_label("HÀNG ĐỢI", "caption", A6UiKit.size_caption(), A6UiKit.accent_colour())
+	var heading := A6UiKit.face_label("ĐANG CHẾ", "caption", A6UiKit.size_caption(), A6UiKit.accent_colour())
 	_list.add_child(heading)
 	ids.sort()
 	for raw_id: Variant in ids:
