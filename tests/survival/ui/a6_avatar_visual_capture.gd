@@ -301,9 +301,10 @@ func _capture_walk(label: String, from_position: Vector2) -> void:
 		# gameplay gate permit it, and was the body actually moving?
 		_fail("%s: actor displaced %.2f px while the walk input was held (needs %.1f) "
 			% [label, moved, MIN_WALK_DISPLACEMENT]
-			+ "pressed=%s permitted=%s velocity=%s route=%s dead=%s" % [
+			+ "pressed=%s permitted=%s modals=%s velocity=%s route=%s dead=%s" % [
 				str(Input.is_action_pressed(&"move_right")),
 				str(_gate_permits()),
+				str(_visible_modals()),
 				str((host as CharacterBody2D).velocity) if host is CharacterBody2D else "n/a",
 				str(_app_root.call(&"get_current_route")) if is_instance_valid(_app_root) else "",
 				str(host.get(&"dead")),
@@ -324,6 +325,16 @@ func _gate_permits() -> String:
 	if gate == null or not gate.has_method(&"permits"):
 		return "no-gate"
 	return str(gate.call(&"permits", &"move_right"))
+
+
+## The nodes A0's gate is actually consulting. A refused press names its blocker
+## instead of leaving the next run to guess between a latch and a stale modal.
+func _visible_modals() -> Array[String]:
+	var out: Array[String] = []
+	for node: Node in get_tree().get_nodes_in_group(&"gameplay_modal"):
+		if node is CanvasItem and (node as CanvasItem).is_visible_in_tree():
+			out.append(String(node.name))
+	return out
 
 
 func _actor_position() -> Vector2:
