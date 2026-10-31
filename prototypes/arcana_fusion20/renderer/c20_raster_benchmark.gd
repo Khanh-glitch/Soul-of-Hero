@@ -70,6 +70,6 @@ func _initialize() -> void:
                 push_error("C20 optimized source fields diverged from immutable baseline at tick %d, repetition %d: %s" % [tick, rep, str(mismatches)])
                 quit(1)
                 return
-        print("C20_CONTROLLED_RASTER ", JSON.stringify({"tick": tick, "samples_each": old_samples.size(), "baseline_ms": [percentile(old_samples, 0.5), percentile(old_samples, 0.95), percentile(old_samples, 0.99)], "sparse_ms": [percentile(new_samples, 0.5), percentile(new_samples, 0.95), percentile(new_samples, 0.99)], "scope": "same shared CPU, alternating exact source-state render; excludes clear, scene, GPU and target-device performance"}))
+        print("C20_CONTROLLED_RASTER ", JSON.stringify({"tick": tick, "samples_each": old_samples.size(), "baseline_ms": [percentile(old_samples, 0.5), percentile(old_samples, 0.95), percentile(old_samples, 0.99)], "sparse_ms": [percentile(new_samples, 0.5), percentile(new_samples, 0.95), percentile(new_samples, 0.99)], "first_baseline_ms": old_samples[0], "first_optimized_ms": new_samples[0], "scope": "same shared CPU, alternating exact source-state render; 8 samples at one fixed tick include repeated warm cache; excludes clear, scene, GPU and target-device performance"}))
     print("C20_CONTROLLED_RASTER_PASS")
     quit(0)
