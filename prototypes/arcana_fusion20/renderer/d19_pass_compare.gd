@@ -7,12 +7,36 @@ const OUT := "res://artifacts/arcana19-pass-source"
 # Simulation and RNG calls still run. Persistent warp is outside this test.
 class SnapshotFx extends DFx:
     var capture := true
+    var ldr := DFx.new()
+    var ldr8 := DFx.new()
+    func _init() -> void:
+        super._init()
+        ldr.rgba8_fragment_transfer = true
+        ldr8.rgba8_fragment_transfer = true
+        ldr8.rgba8_scene_blend = true
+    func clear() -> void:
+        super.clear()
+        ldr.clear()
+        ldr8.clear()
     func sp(x: float, y: float, size: float, col: Color, shape: int = DISC, o: Dictionary = {}) -> void:
-        if capture: super.sp(x, y, size, col, shape, o)
+        if capture:
+            super.sp(x, y, size, col, shape, o)
+            ldr.t = t
+            ldr8.t = t
+            ldr.sp(x, y, size, col, shape, o)
+            ldr8.sp(x, y, size, col, shape, o)
     func line(pts: Array, width: Variant, col: Variant, o: Dictionary = {}) -> void:
-        if capture: super.line(pts, width, col, o)
+        if capture:
+            super.line(pts, width, col, o)
+            ldr.t = t
+            ldr8.t = t
+            ldr.line(pts, width, col, o)
+            ldr8.line(pts, width, col, o)
     func poly(pts8: Array, col: Color, o: Dictionary = {}) -> void:
-        if capture: super.poly(pts8, col, o)
+        if capture:
+            super.poly(pts8, col, o)
+            ldr.poly(pts8, col, o)
+            ldr8.poly(pts8, col, o)
 
 func _initialize() -> void:
     DirAccess.make_dir_recursive_absolute(OUT)
@@ -43,6 +67,12 @@ func _initialize() -> void:
             var file := FileAccess.open(OUT + "/native_%d.scene.rgb32f" % tick, FileAccess.WRITE)
             file.store_buffer(eng.fx.buf.to_byte_array())
             file.close()
+            var snapshot := eng.fx as SnapshotFx
+            for mode in ["ldr", "ldr8"]:
+                var other: DFx = snapshot.ldr if mode == "ldr" else snapshot.ldr8
+                file = FileAccess.open(OUT + "/%s_%d.scene.rgb32f" % [mode, tick], FileAccess.WRITE)
+                file.store_buffer(other.buf.to_byte_array())
+                file.close()
             print("D19_NATIVE_SOURCE_PASS ", tick, " bloom_gain=", eng.fx.bloom_gain)
     print("D19_NATIVE_SOURCE_CAPTURE_COMPLETE")
     quit()

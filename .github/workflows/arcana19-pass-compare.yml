@@ -62,6 +62,14 @@ jobs:
           set -o pipefail
           python3 tools/arcana19_pass_compare/compare.py artifacts/arcana19-pass-source | tee comparison.log
           sed 's/^/::notice::/' comparison.log
+      - name: Surface native LDR source transfer
+        if: always()
+        run: |
+          if test -f comparison.log; then grep '"variant": "ldr"' comparison.log | sed 's/^/::notice title=D19_SCENE_LDR::/' || true; fi
+      - name: Surface native LDR8 source transfer
+        if: always()
+        run: |
+          if test -f comparison.log; then grep '"variant": "ldr8"' comparison.log | sed 's/^/::notice title=D19_SCENE_LDR8::/' || true; fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:
