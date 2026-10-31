@@ -496,7 +496,14 @@ func _site_journey(hero: CharacterBody2D, authority: Node, poi_id: String) -> Di
 		report["error"] = "SITE_NOT_MOUNTED"
 		return report
 	var start_position := hero.global_position
-	var reached := await _walk_to(hero, approach)
+	# Approach in two honest steps: the forecourt in front of the building (reached by
+	# the ordinary route planner over A0's walkability), then the last few metres along
+	# the door's own axis, where the shell's collision is the only authority. Coming
+	# at a doorway diagonally is how a body ends up pinned against a facade.
+	var forecourt := approach + Vector2(0, 56)
+	var reached := await _walk_to(hero, forecourt)
+	if hero.global_position.distance_to(approach) > 20.0:
+		reached = await _walk_input(hero, approach, 600, 8.0) or reached
 	# The last metres belong to the building, not to the map. A doorway is a gap in
 	# the shell's own collision, and A0's walkability marks the shell's walls as
 	# blocked — so the final approach is steered by physics rays, which is the same
@@ -1005,24 +1012,19 @@ func _nearest_free_node(origin: Vector2i, stride: int, cols: int, rows: int, nod
 
 
 func _coarse_free(cell: Vector2i) -> bool:
-	for offset: Vector2i in [Vector2i.ZERO, Vector2i(1, 0), Vector2i(-1, 0),
-			Vector2i(0, 1), Vector2i(0, -1)]:
-		var probe := cell + offset
-		if not _traversability.in_bounds(probe) or not _traversability.is_free(probe):
-			return false
-	return true
+	return _traversability.in_bounds(cell) and _traversability.is_free(cell)
 
 
 ## A coarse node is walkable only if its own cell and its four neighbours are: a
 ## route that squeezes along a one-cell ledge is not a route a body can follow.
+## A planning node is the cell it stands on. Demanding a ring of clear neighbours as
+## well sounds careful and is wrong: A1's continent has one-cell necks and doorways,
+## and a body 12 pixels wide walks them. Clearance is the *step* rule instead — a
+## diagonal move needs both of its shoulders — which is where squeezing actually
+## fails, and the walker decides the rest with physics rays.
 func _node_free(origin: Vector2i, stride: int, node: Vector2i) -> bool:
 	var cell := Vector2i(origin.x + node.x * stride, origin.y + node.y * stride)
-	for offset: Vector2i in [Vector2i.ZERO, Vector2i(1, 0), Vector2i(-1, 0),
-			Vector2i(0, 1), Vector2i(0, -1)]:
-		var probe := cell + offset
-		if not _traversability.in_bounds(probe) or not _traversability.is_free(probe):
-			return false
-	return true
+	return _traversability.in_bounds(cell) and _traversability.is_free(cell)
 
 
 func _heuristic(node: Vector2i, goal: Vector2i) -> float:

@@ -289,14 +289,11 @@ jobs:
           python3 -m pip install --user Pillow==11.3.0 > /dev/null 2>&1 \
             || python3 -m pip install --user --break-system-packages Pillow==11.3.0 > /dev/null 2>&1 \
             || true
-          for group in 0 1 2 3 4; do
-            python3 tools/ci/authored_visual_annotation_chunks.py "$group" || true
-          done
-          # Thumbnails are for orientation; these are 1:1 crops of the same frames so
-          # a reviewer can actually read the HUD instead of trusting a caption.
-          for group in 0 1 2 3 4; do
-            python3 tools/ci/authored_visual_annotation_chunks.py "$group" crops || true
-          done
+          # Annotations are capped per step, so this one carries the whole visual
+          # evidence: 1:1 crops of the 720p HUD and camera. The thumbnails and the
+          # untouched PNGs live in the artifact, which is the canonical copy.
+          python3 tools/ci/authored_visual_annotation_chunks.py 0 crops || true
+          ls -la artifacts/visual_authored_*.png 2>/dev/null || true
       - name: R13 first-failure transcript (engine version, artifacts, one log)
         if: always()
         run: |
