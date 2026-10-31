@@ -585,3 +585,10 @@ Profile, from the code paths (not measured here; no local Godot):
 - 021 wall-clock: 537s -> 404.6s after perf round 1 (d5bad21: puff row-span/hoists, Field extents/reset-fill/disc-span, additive hline fast path; candidate 21 PASS = bit-identical). Round 2 (8755a11: GroundDecal packed arrays, Cloud packed sort) and round 3 (505a604: shade/vapor dict hoists) pushed; host re-measurement pending in their runtime runs. Bound stays 180s.
 - Native runtime contract still FAILING on ARCANA reference RNG (scattered mulberry32 steps: seed1/0 steps 1,3,4,10; seed7 0,7,14; seed12345 0,13,15). Python sim of the GDScript logic matches vectors, so a GDScript-semantics detail differs; debug print added (17fdedd) — read GOLD93_ARCANA_RNG got/exp from the next contract job.
 - Host lifecycle verdicts so far (run 41130672080 @d5bad21): SUCCESS 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,17,18,19,20; 21 FAIL (wall-clock only); 16 pending first run at 9baa305.
+
+## Update (2026-10-31, later still)
+
+- ARCANA RNG RESOLVED (29d0010): native mulberry32 was exact all along (got == k/2^32 verified against Fraction arithmetic); Godot's JSON parser mis-rounds some long decimal vector literals by 1 ulp. vectors.json regenerated from original util.ts adding rng_seed_N_u32 raw uint32 arrays; test now gates on integer-exact outputs. **Native Godot 4.7 runtime contract: SUCCESS (run 41155043902 @29d0010)** — first fully green contract.
+- Host lifecycle: **20/21 SUCCESS** (016 SUCCESS @29d0010 run; 020 SUCCESS same run). Only 021 wall-clock open.
+- 021 perf: profile per_tick 1179 -> 908 (r1 d5bad21) -> 560 (r1-r3, 6d6d56e run; host full_cast 179.6s PASS but lab_run 181.1s FAIL by 1.1s) -> 504 (r4 de1d258 run, slower runner: full_cast 326s) -> c2cfd96 disc/ellipse span writer, 6e38661 puff micro-opts (both candidate-SUCCESS = bit-identical). Runner variance ~40% dominates host timings; need profile per_tick <= ~300ms for a safe margin on slow runners. Remaining hotspots (slow-runner profile): air.cloud ~214ms/tick, gnd.fx ~166, gnd.pool ~126, lit ~106, up ~65.
+- Candidate lane fully green at f8512b8, 9baa305, de1d258, c2cfd96, 6e38661 (all 8 skills incl. 013/016/021).
