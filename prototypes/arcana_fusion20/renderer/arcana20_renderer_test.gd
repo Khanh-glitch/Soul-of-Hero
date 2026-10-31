@@ -87,6 +87,8 @@ func _init() -> void:
     br.target = Vector2(262, 104)
     var wyrm := BPyreWyrm.new()
     wyrm.setup(br)
+    var probe_rng := BMath.BRng.new(202)
+    print("::notice::WYRMDBG rng=", probe_rng.next(), ",", probe_rng.next(), " orbit=", wyrm._orbit(2.1), " caster=", wyrm._caster)
     print("::notice::WYRMDBG cracks=", wyrm._cracks.size(), " debris=", wyrm._debris.size(), " ctrl=", wyrm._head_ctrl.size(), " head2=", wyrm.head(2.0))
     for key in ["t030", "t200", "t460", "t498", "t530", "t650"]:
         var t: float = float(meta[key].t)
