@@ -7,6 +7,7 @@ func _initialize() -> void:
     var effect := CRealityRipperFusion.new()
     effect.setup()
     effect.include_polygons = false
+    effect.include_blocks = false
     for tick in [270, 324, 396, 450, 540]:
         var frame := CFrame.new()
         frame.clear()

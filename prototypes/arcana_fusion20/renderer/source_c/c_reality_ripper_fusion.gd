@@ -1,7 +1,7 @@
 ## Selected #20 source-level candidate: C's seeded 9-point rift contour,
 ## timing/width/interior/edge, plus A Reality Ripper's bgWarp pull/fracture
 ## applied to the SAME real-world pixels relative to that C contour.
-## Original C blocks/particles and A debris are not yet selected;
+## Original C particles and A debris are not yet selected;
 ## full cast, source comparisons, actor depth and owner approval remain open.
 extends RefCounted
 class_name CRealityRipperFusion
@@ -25,7 +25,9 @@ const POLYS := [
 ]
 # These flags isolate component source tests; production candidate keeps polygons.
 var include_polygons := true
+var include_blocks := true
 var audit_polygons_only := false
+var audit_blocks_only := false
 # The original C uses Array.sort(() => rng.next() - 0.5). This is the
 # reproducible V8 order for source seed 151461 after seven waypoint draws;
 # its random comparator is engine-dependent and must not be re-sorted here.
@@ -44,6 +46,7 @@ var tny := PackedFloat32Array()
 var ttx := PackedFloat32Array()
 var tty := PackedFloat32Array()
 var collided := false
+var blocks: Array = []
 
 func setup() -> void:
     CPalette._ensure()
@@ -98,6 +101,23 @@ func setup() -> void:
             if best < 46.0:
                 var k := y * W + x
                 ts[k] = bs; td[k] = bd; tnx[k] = bnx; tny[k] = bny; ttx[k] = btx; tty[k] = bty
+    # Original V8 sort for this seed consumed 29 RNG draws after the seven
+    # waypoints. The permutation itself is fixed above; preserve the resulting
+    # RNG state for C's 56 original world-fragment blocks.
+    rng.s = 1512011289
+    blocks.clear()
+    for i in range(56):
+        var s := rng.r(0.08, 0.92)
+        var side := rng.sign()
+        var d := rng.r(8.0, 38.0)
+        var p := _at(s)
+        var size := rng.i(5, 9)
+        var hx := floori(float(p.x) + float(p.nx) * d * side - float(size) / 2.0 + 0.5)
+        var hy := floori(float(p.y) + float(p.ny) * d * side - float(size) / 2.0 + 0.5)
+        blocks.append({"hx": hx, "hy": hy, "sz": size,
+            "vx": float(p.nx) * side * rng.r(60, 170) + rng.r(-40, 40),
+            "vy": float(p.ny) * side * rng.r(60, 170) + rng.r(-40, 40),
+            "ret": rng.r(7.3, 9.1), "mode": i % 4, "mx": float(p.nx) * d * side * 2.0})
     collided = false
     fx_shake = 0.0
     fx_flash_k = 0.0
@@ -154,7 +174,10 @@ func render(f: CFrame, t: float) -> void:
             var p := _at(0.4 + CMath.hash1(k * 7) * 0.2)
             var light := 0.8 if CMath.hash1(k + early_slot * 3) > 0.5 else -0.3
             f.L(float(p.x), float(p.y), light, light, 0.9 if light > 0.0 else -0.3)
-    if t < 1.6 or t >= 9.4: return
+    if t < 1.6: return
+    if t >= 9.4:
+        if include_blocks: _render_blocks(f, t)
+        return
     var span := CMath.inv(1.6, TOPEN, t)
     var slot := floori(t * 12.0)
     var mask := PackedByteArray()
@@ -215,10 +238,12 @@ func render(f: CFrame, t: float) -> void:
                 f.S(x, y, 1.0 + 1.6 * exp(-distance / 3.0))
                 if CMath.hash1(floori(s * 48.0) + 31) > 0.9: f.C(x, y, 1.5)
 
-    if audit_polygons_only:
+    if audit_polygons_only or audit_blocks_only:
         f.clear()
-    if include_polygons:
+    if include_polygons and not audit_blocks_only:
         _render_polygons(f, t, mask)
+    if include_blocks and not audit_polygons_only:
+        _render_blocks(f, t)
 
 # Original source "at(s)" keeps scalar double precision until rasterization.
 func _at(s: float) -> Dictionary:
@@ -268,3 +293,44 @@ func _render_polygons(f: CFrame, t: float, mask: PackedByteArray) -> void:
                 if x >= 0 and y >= 0 and x < W and y < H and mask[y * W + x] == 1: f.Lc(x, y, GOLDW, 1.2))
             var out := 8.0 + (t - 3.8) * 6.0
             f.ring_l(float(q2.x) + float(q2.nx) * (_width(1.0 - sp, t) + out), float(q2.y) + float(q2.ny) * (_width(1.0 - sp, t) + out), 3.0, GOLDW, 1.2)
+
+func _render_blocks(f: CFrame, t: float) -> void:
+    if t < TCOL: return
+    var age := t - TCOL
+    for block in blocks:
+        var oa := minf(age, 1.3)
+        var ox := float(block.hx) + float(block.vx) * oa * (1.0 - oa / 2.6)
+        var oy := float(block.hy) + float(block.vy) * oa * (1.0 - oa / 2.6)
+        var px := ox
+        var py := oy
+        if t >= float(block.ret):
+            var q := clampf((t - float(block.ret)) / 0.6, 0.0, 1.0)
+            if q >= 1.0: continue
+            match int(block.mode):
+                0:
+                    px = lerpf(ox, float(block.hx), CMath.ease_in_out(q))
+                    py = lerpf(oy, float(block.hy), CMath.ease_in_out(q))
+                1:
+                    px = lerpf(float(block.hx) - float(block.mx) * 3.0, float(block.hx), q)
+                    py = float(block.hy)
+                2:
+                    var angle := q * CMath.TAU * 2.0
+                    var r := 1.0 - q
+                    px = float(block.hx) + ((ox - float(block.hx)) * cos(angle) - (oy - float(block.hy)) * sin(angle)) * r
+                    py = float(block.hy) + ((ox - float(block.hx)) * sin(angle) + (oy - float(block.hy)) * cos(angle)) * r
+                _:
+                    continue
+        var hx := int(block.hx)
+        var hy := int(block.hy)
+        var size := int(block.sz)
+        for y in range(size):
+            for x in range(size):
+                f.I(hx + x, hy + y, 0.02, 0.01, 0.05, 1.0)
+                if CMath.hash2(hx + x, hy + y) > 0.95: f.Lc(hx + x, hy + y, CPalette.ramp(CPalette.P.star, 0.8), 0.7)
+        f.blit_world_fragment(hx, hy, size, size, floori(px + 0.5), floori(py + 0.5))
+        f.Lc(px, py, MAG if int(block.mode) % 2 != 0 else CYAN, 0.8)
+        f.Lc(px + size - 1.0, py + size - 1.0, CYAN if int(block.mode) % 2 != 0 else MAG, 0.8)
+    if age < 0.7:
+        for k in range(5):
+            var p := _at(0.1 + k * 0.2)
+            CKit.shock(f, float(p.x), float(p.y), age * 190.0, 14.0, 9.0 * (1.0 - age / 0.7), 1.0, 3.0)
