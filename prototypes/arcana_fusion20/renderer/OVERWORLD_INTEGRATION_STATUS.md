@@ -72,7 +72,7 @@ failed; this historical pin is not an endorsement of the latest route.
 | 13 | A candidate fields available; REDESIGN_CANDIDATE | Actor targeting, depth and world review missing |
 | 14 | A candidate fields available; REDESIGN_CANDIDATE | Actor/colony integration and world review missing |
 | 15 | C world fields available | Actual-world and moving-actor review missing |
-| 16 | Original A growth with selected C coverage/material candidate; neutral A source [41210721707](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41210721707) | Live-world sample pending; C material parity, full cast/OUT and owner review |
+| 16 | A growth + C material; [original source samples 41210844049](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41210844049), [real-world sample 41210774544](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41210774544) | C material parity, full world cast/OUT and owner review |
 | 17 | C world pass diagnostic incl. live-screen fragment mapping | [run 41207915157](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41207915157), one frozen frame only |
 | 18 | A candidate fields available; REDESIGN_CANDIDATE | Real actors, full-cast and world review missing |
 | 19 | D additive and persistent warp consumer, frozen-world/cancel [JOIN 41209511506](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41209511506) | D bloom/post, OUT review, depth and original parity missing |
@@ -144,7 +144,20 @@ combines A geometry with C material; it is not a claim of full C material or
 post parity. [A-only neutral-material source comparison 41210721707](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41210721707)
 compared original TypeScript vs native at ticks 90/180/270: write-trace IoU
 1.0 each; RGB MAE 0.00393/0.00866/0.04427, max channel error 1. These
-are black-canvas source tests, not authored world alpha or approval. Native
-real-world tick-240/cancel test and whole-cast/source-material comparison are
-pending. The earlier all-20 sweep at `c6fb12ba` exercised the older #16
+are black-canvas source tests, not authored world alpha or approval. [Real-world tick-240/cancel JOIN 41210774544](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41210774544)
+passed. [Seven original-A source samples through tick 479 / near OUT](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41210844049)
+all have write-trace IoU 1.0 and RGB maximum 1 (maximum MAE 0.1042). The
+whole world cast and selected C-material source comparison remain pending. The earlier all-20 sweep at `c6fb12ba` exercised the older #16
 candidate, not this revision.
+
+## Live movement diagnostic
+
+[Live input 41210774548](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41210774548)
+used the real historical-world Knight's right-click input route and target,
+held `move_right` while an opt-in #02 visual cast was *injected by the test*,
+and enabled the actual Skeleton's physics. The player moved 46.76 world
+units, Skeleton 19.80, camera 57.29; the target's HP stayed 69 and source
+anchor remained world-consistent. This is not a gameplay skill binding or
+combat targeting/miss test. The 35 intervals in that log are **physics-signal
+intervals**, not rendered-frame percentiles; its memory delta is not an
+allocation count. Shared software CI is not a target-device budget.
