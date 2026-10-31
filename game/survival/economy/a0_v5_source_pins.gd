@@ -33,15 +33,26 @@ const SCRIPTS := {
 }
 
 static func verify() -> String:
+	return verify_with({})
+
+
+## Same fence with caller-supplied expectations. Production never overrides this;
+## the native test uses it to prove that a stale A3 byte set is refused by name
+## instead of silently running older formulas.
+static func verify_with(overrides: Dictionary) -> String:
 	for path: String in DATA:
-		if not FileAccess.file_exists(path) or FileAccess.get_sha256(path) != DATA[path]:
+		var expected := String(overrides.get(path, DATA[path]))
+		if not FileAccess.file_exists(path):
+			return "a3_data_pin_mismatch:" + path
+		if FileAccess.get_sha256(path) != expected:
 			return "a3_data_pin_mismatch:" + path
 	for path: String in SCRIPTS:
+		var expected := String(overrides.get(path, SCRIPTS[path]))
 		var script := load(path) as Script
 		if script == null: return "a3_script_missing:" + path
 		# Tokenized release scripts cannot expose source bytes. Export CI must
 		# verify these exact source hashes before Godot compiles the package.
-		if not script.source_code.is_empty() and script.source_code.sha256_text() != SCRIPTS[path]:
+		if not script.source_code.is_empty() and script.source_code.sha256_text() != expected:
 			return "a3_script_pin_mismatch:" + path
 	return ""
 

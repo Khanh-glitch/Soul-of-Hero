@@ -41,6 +41,15 @@ jobs:
         run: |
           set -euo pipefail
           python3 tests/validate_a3_v5_composition.py
+      - name: A0 pin fence refuses stale owner bytes
+        run: |-
+          set -uo pipefail
+          timeout 300s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_pins --script res://tests/survival_a0_pin_fence_test.gd > artifacts/pin-fence.log 2>&1
+          rc=$?
+          cat artifacts/pin-fence.log
+          while IFS= read -r line; do echo "::error title=pin-fence::$line"; done < <(grep -E '  FAIL  |SCRIPT ERROR|Parse Error' artifacts/pin-fence.log | head -10 || true)
+          bash tools/ci/gate_log.sh artifacts/pin-fence.log 'A0 pin fence' 'A0 PIN FENCE PASSED' || exit 1
+          [ "$rc" -eq 0 ]
       - name: A0 profile port pair (one wallet, one run)
         run: |
           set -uo pipefail
