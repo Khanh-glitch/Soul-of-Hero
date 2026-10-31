@@ -1,0 +1,34 @@
+name: ARCANA20 inspect all-20 world sweep
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-sweep-triage.yml']
+permissions:
+  actions: read
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcana20-frozen-overworld-all20-sweep
+          run-id: 41210274460
+          github-token: ${{ github.token }}
+          path: review
+      - name: Report all world, camera and CPU diagnostic metrics
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=next(Path('review').rglob('all20_camera_comparison.json'))
+          data=json.loads(p.read_text()); rows=data['records']
+          for i in range(0,len(rows),5):
+            out=[]
+            for r in rows[i:i+5]:
+              c=r.get('camera_pixel_metrics',{})
+              out.append('id={id} changed={world_changed} anchored={anchored} restored={restored} iou={iou} max={max} rgb_mae={mae} source_snapshot_ms={ms}'.format(**r, iou=c.get('change_mask_iou'), max=c.get('difference_rgb_max'),mae=c.get('difference_rgb_mae'),ms=r.get('single_source_snapshot_ms')))
+            print('::notice title=SWEEP_ROWS_%02d::'%i+' | '.join(out))
+          print('::notice title=SWEEP_SCOPE::'+data['scope'])
+          PY
