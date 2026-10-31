@@ -596,7 +596,29 @@ func _run() -> void:
     var seed_debris := seed_fusion._pending[1].node as CSourcePlayer
     seed_growth.render_enabled = false
     seed_debris.render_enabled = false
-    for tick in range(330): seed_fusion.advance(STEP)
+    for tick in range(120): seed_fusion.advance(STEP)
+    seed_growth.render_enabled = true
+    seed_debris.render_enabled = true
+    seed_growth._render_frame()
+    seed_debris._render_frame()
+    await process_frame
+    await process_frame
+    var early_seed_layers: Dictionary = mount._passes.get(id16, {})
+    var early_c := early_seed_layers.get(&"C") as Arcana20CWorldPass
+    check(early_c != null and seed_debris._fx is CWorldseedFusion and (seed_debris._fx as CWorldseedFusion).particles.is_empty(), "C16 living membranes active on shared clock before seed burst")
+    var seed_before := await save_frame("fusion_16_living_membranes_with_a")
+    if early_c != null:
+        early_c.visible = false
+        await process_frame
+        await process_frame
+        var a_without_c := await save_frame("fusion_16_a_without_c_living_membranes")
+        var living_contamination := contamination(a_without_c, seed_before, early_c, seed_debris.source_pass_frame())
+        check(int(living_contamination.get("inside_changed",0)) > 0 and int(living_contamination.get("outside_changed",-1)) == 0, "C16 original membranes independently change real world only inside authored influence: " + str(living_contamination))
+        early_c.visible = true
+        await process_frame
+    seed_growth.render_enabled = false
+    seed_debris.render_enabled = false
+    for tick in range(210): seed_fusion.advance(STEP)
     seed_growth.render_enabled = true
     seed_debris.render_enabled = true
     seed_growth._render_frame()

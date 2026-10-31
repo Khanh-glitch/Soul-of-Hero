@@ -113,7 +113,7 @@ func begin(caster_world: Vector2, target_world: Vector2, kind: String) -> void:
             duration = CAbyssalBloomLate.DURATION
             _fx.setup()
         "worldseed_debris":
-            _fx = CWorldseedDebris.new()
+            _fx = CWorldseedFusion.new()
             duration = CWorldseedDebris.DURATION
             _fx.setup()
         "crown", "crown_outer":

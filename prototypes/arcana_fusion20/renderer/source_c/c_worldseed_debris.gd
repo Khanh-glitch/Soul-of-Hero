@@ -12,6 +12,9 @@ const SYW := 0.78
 const SEED := 119785 # original Stage: 1000 + index 15 * 7919
 var rng: CMath.CRng
 var particles: Array = []
+# Preserve the original seeded membrane trees for a fusion that also selects
+# C's living-growth role; pure debris render remains unchanged.
+var membrane_trees: Array = []
 var burst := false
 var fx_shake := 0.0
 var fx_flash := Vector3.ZERO
@@ -22,14 +25,15 @@ func setup() -> void:
     CPalette._ensure()
     rng = CMath.CRng.new(SEED)
     particles.clear()
+    membrane_trees.clear()
     burst = false
     # The original allocates seven branching membrane trees and fourteen motes
-    # before any particles. Consume the exact source RNG sequence even though
-    # this selected role does not draw those other primitives.
+    # before any particles. Preserve the exact source RNG sequence and retain
+    # the trees for the separately selected living-growth role.
     for k in range(7):
-        CKit.grow_tree(rng, {"x": C.x, "y": C.y, "ang": (float(k) + 0.5) / 7.0 * CMath.TAU + 0.2,
+        membrane_trees.append(CKit.grow_tree(rng, {"x": C.x, "y": C.y, "ang": (float(k) + 0.5) / 7.0 * CMath.TAU + 0.2,
             "step": 4, "steps": 11, "speed": 22, "branch": 0.45, "spread": 0.45,
-            "jitter": 0.25, "maxDepth": 2, "t0": 3.4, "sy": SYW})
+            "jitter": 0.25, "maxDepth": 2, "t0": 3.4, "sy": SYW}))
     for i in range(14):
         rng.r(0, CMath.TAU)
         rng.r(8, 22)
