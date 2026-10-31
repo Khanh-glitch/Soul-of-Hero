@@ -28,6 +28,7 @@ var _quarry_lamp_radial: Texture2D
 var _terrain_layer: TileMapLayer
 var _path_layer: TileMapLayer
 var _track_layer: TileMapLayer
+var _detail_layer: TileMapLayer
 var _surface_layer: TileMapLayer
 var _context_layer: TileMapLayer
 var _props_root: Node2D
@@ -147,7 +148,9 @@ func _update_depth_layers() -> void:
 func get_terrain_frame_at_cell(cell: Vector2i) -> String:
 	if not is_instance_valid(_terrain_layer):
 		return ""
-	for layer: TileMapLayer in [_surface_layer, _track_layer, _path_layer, _terrain_layer]:
+	for layer: TileMapLayer in [
+		_surface_layer, _track_layer, _path_layer, _detail_layer, _terrain_layer
+	]:
 		if not is_instance_valid(layer):
 			continue
 		var source_id := layer.get_cell_source_id(cell)
@@ -175,7 +178,7 @@ func get_environment_projection() -> Dictionary:
 
 func _build_ground() -> void:
 	for layer: TileMapLayer in [
-		_context_layer, _terrain_layer, _path_layer, _track_layer, _surface_layer
+		_context_layer, _terrain_layer, _path_layer, _track_layer, _detail_layer, _surface_layer
 	]:
 		if is_instance_valid(layer):
 			if layer.get_parent() == self:
@@ -255,6 +258,12 @@ func _build_ground() -> void:
 	_track_layer.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	_track_layer.tile_set = tile_set
 	add_child(_track_layer)
+	_detail_layer = TileMapLayer.new()
+	_detail_layer.name = "A8_SourceBacked_Details"
+	_detail_layer.z_index = -6
+	_detail_layer.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_detail_layer.tile_set = tile_set
+	add_child(_detail_layer)
 	_surface_layer = TileMapLayer.new()
 	_surface_layer.name = "A8_Surface_Affordances"
 	_surface_layer.z_index = -7
@@ -418,14 +427,14 @@ func _paint_overlay(overlay: Dictionary, source_id: int) -> void:
 	var cell := VECTOR_UTIL.from_int_pair(overlay.get("cell", []), Vector2i(-1, -1))
 	var frame_name := str(overlay.get("frame", ""))
 	if (
-		is_instance_valid(_surface_layer)
+		is_instance_valid(_detail_layer)
 		and _terrain_ids.has(frame_name)
 		and cell.x >= 0
 		and cell.y >= 0
 		and cell.x < _columns
 		and cell.y < _rows
 	):
-		_surface_layer.set_cell(cell, source_id, _terrain_ids[frame_name])
+		_detail_layer.set_cell(cell, source_id, _terrain_ids[frame_name])
 
 
 func _build_context_ground(source_id: int) -> void:
