@@ -95,15 +95,22 @@ func _play() -> void:
 	await _walk_input(Vector2.DOWN, 90)
 	await _capture("terrain")
 
-	# The nearest authored source, approached on foot. If the walk cannot reach it,
-	# the frame is still captured and the miss is named — never assumed.
+	# The nearest authored source, approached on foot, harvested with the key. A
+	# capture run that cannot show a source would be handing a reviewer a picture of
+	# grass and calling it a world, so the miss is a failure, not a footnote.
 	var source: Dictionary = await _walk_to_source(authority)
+	_expect(not source.is_empty(), "an authored source is reached on foot for the source frames")
 	if not source.is_empty():
 		await _capture("source")
+		var item := String(source.get("item", ""))
+		var before := _count(item)
 		await _press_key(KEY_G)
+		for _i: int in range(6):
+			await process_frame
+		var after := _count(item)
 		await _capture("source_after_g")
-	else:
-		_note("no authored source was reached on foot in this capture run")
+		_expect(after > before, "the G press at the source really gathered (before %d after %d)"
+			% [before, after])
 
 	# The HUD is part of what a player reads: prove it is painted and legible.
 	var hud: CanvasLayer = _ow.get(&"hud") as CanvasLayer
@@ -236,6 +243,11 @@ func _press_key(keycode: Key) -> void:
 
 ## Steers toward the nearest authored source with rays, pressing the same keys a
 ## player presses. No plan, no teleport: if a ridge is in the way the capture says so.
+##
+## A source stands in a blocked cell, so "walk to the node" is not a place a body can
+## go: the target is the nearest cell *beside* it that A0 says is ground, within the
+## node's own 44 px reach. Steering into the prop itself is how an earlier capture run
+## stalled 60 px short and quietly dropped the two source frames.
 func _walk_to_source(authority: Node) -> Dictionary:
 	var sources: Array = (_ow.get(&"authored_sources") as Array).duplicate()
 	if sources.is_empty():
@@ -245,16 +257,20 @@ func _walk_to_source(authority: Node) -> Dictionary:
 	var resources: Node = _ow.get_node_or_null("Resources")
 	if resources == null:
 		return {}
-	for raw: Variant in sources.slice(0, 4):
+	for raw: Variant in sources.slice(0, 6):
 		var entry: Dictionary = raw
 		var node := resources.get_node_or_null("Authored_%s"
 			% String(entry.get("node_id", "")).replace(":", "_").replace(",", "_")) as Node2D
 		if node == null:
 			continue
+		var stand := _stand_point(node.global_position)
+		if stand.x < 0.0:
+			_note("source %s has no standable cell in reach" % String(entry.get("node_id", "")))
+			continue
 		for _frame: int in range(900):
-			var to_target := node.global_position - _hero.global_position
-			if to_target.length() <= 26.0:
-				return entry
+			var to_target := stand - _hero.global_position
+			if to_target.length() <= 10.0:
+				break
 			var bearing := to_target.normalized()
 			var chosen := Vector2.ZERO
 			for offset: float in [0.0, 0.4, -0.4, 0.8, -0.8, 1.2, -1.2, 1.6, -1.6, 2.0, -2.0, 2.4, -2.4, PI]:
@@ -266,13 +282,55 @@ func _walk_to_source(authority: Node) -> Dictionary:
 			if chosen == Vector2.ZERO:
 				break
 			Input.action_press(&"move_left" if chosen.x < -0.35 else &"move_right" if chosen.x > 0.35 else &"move_up" if chosen.y < -0.35 else &"move_down")
-			if _hero.global_position.distance_to(node.global_position) <= 26.0:
-				_release()
-				return entry
 			await physics_frame
 		_release()
-		_note("source %s was not reached on foot" % String(entry.get("node_id", "")))
+		var reach := _hero.global_position.distance_to(node.global_position)
+		if reach > 44.0:
+			_note("source %s is %.1f px away after the walk (reach is 44)" % [String(entry.get("node_id", "")), reach])
+			continue
+		return {"node_id": String(entry.get("node_id", "")), "item": _item_for_kind(String(entry.get("kind", ""))),
+			"reach_px": reach, "stand": [stand.x, stand.y]}
 	return {}
+
+
+## The cell within the node's reach that the body can stand in, nearest to the body.
+func _stand_point(node_position: Vector2) -> Vector2:
+	var cell: Vector2i = _traversability.call(&"cell_of", node_position)
+	var best := Vector2(-1.0, -1.0)
+	var best_distance := INF
+	for dy: int in range(-2, 3):
+		for dx: int in range(-2, 3):
+			var option: Vector2i = cell + Vector2i(dx, dy)
+			if not bool(_traversability.call(&"is_free", option)):
+				continue
+			var point := Vector2(option.x * 16.0 + 8.0, option.y * 16.0 + 8.0)
+			if point.distance_to(node_position) > 44.0:
+				continue
+			var distance := point.distance_to(_hero.global_position)
+			if distance < best_distance:
+				best_distance = distance
+				best = point
+	return best
+
+
+## How many of `item_id` the run's bag holds, asked of the same service the HUD asks.
+func _count(item_id: String) -> int:
+	if item_id.is_empty():
+		return 0
+	var survival := root.get_node_or_null("SurvivalService")
+	if survival == null or not survival.has_method(&"inventory_count"):
+		return 0
+	return int(survival.call(&"inventory_count", item_id))
+
+
+func _item_for_kind(kind: String) -> String:
+	var survival := root.get_node_or_null("SurvivalService")
+	if survival == null or not survival.has_method(&"resource_definition"):
+		return ""
+	var definition: Variant = survival.call(&"resource_definition", kind)
+	if definition is Dictionary:
+		return String((definition as Dictionary).get("item", ""))
+	return ""
 
 
 # ---------------------------------------------------------------------------
