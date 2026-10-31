@@ -141,6 +141,49 @@ art.
 | `capacity` | `Icon48_1` | pouch |
 | `travel` | `Icon44_1` | compass |
 
+## 4.4 Round 12 continuation — the four defects CT reproduced
+
+CT inspected the native frames independently and found failures this document had
+already marked as passing plumbing. All four were real; three were bugs in this
+work, one was the linter being blind.
+
+**1. `avatar_choice_screen.gd` declared `_manifest_has_staged_art()` twice.** A
+duplicate function is a hard GDScript parse error, so the script never attached and
+the New Game identity step never opened: the whole path into Home was dead. Fixed in
+`a0b17fd8`; the file is written whole rather than patched, and the count is asserted.
+The deeper problem is that `parse()` accepted it — gdtoolkit's grammar is happy with
+duplicate declarations, so "parses clean" had been treated as "is a valid script".
+`tools/review/scene_lint.py` now has a semantic pass for duplicate func/const/var
+across `game/` and `tests/`, with a fixture that proves it fails.
+
+**2. The identity screen clipped at 720p.** The previous scene spent more than 400 of
+the 324 usable layout units, so the headline left the top of the window and the
+NAM/NỮ captions fell below the bottom edge, around oversized and mostly empty
+parchment cards. Rebuilt against the budget (12 + 11 + 30 + 186 + 12 + 24 + 6×4 ≈
+299 of 324): every band has an explicit size, the previews keep their source art and
+aspect, and the captions live inside the cards. Inspected at 720p and 2160p — nothing
+is clipped at either, and the honest "no art in this build" line replaces the blank
+card instead of pretending.
+
+**3. The frame labelled `title` was the legacy SOUL FORGE loading screen.** The
+current published frames show the real title: wordmark, season line, and the profile
+panel with Tiếp tục / Chơi mới. The legacy boot screen is no longer what a capture of
+the title lands on.
+
+**4. The return cards were stacked on each other.** In the published
+`return_digest` frame the guidance panel covered the run card: five guidance steps
+measure ~320 of the 360 authored units, so the card was pushed to the top edge and
+drawn over its neighbour. `layout_rects()` clamped cards onto the screen but never
+separated them, and its test fed sizes that always fit, so it agreed with itself.
+The first repair shrank the lower card — which the capture harness then rejected
+with `text overflow: guidance: 'Chưa ghi nhận: 3 bước' leaves the viewport`, because
+a card given less than its own minimum is clamped back up by the engine and its text
+falls out of the window. The shipped fix moves the upper card toward the top edge
+instead of clipping the lower one, keeps the step list in a scroll container so its
+natural height stays bounded, and reflows the moment content outgrows its rect. The
+layout test now runs the real 640×360 case, the oversized case, and asserts no card
+is clipped under its minimum or pushed off screen.
+
 ## 5. Gates
 
 Exact commit at the time of writing: `452d4d74` (frames and results are added as they
@@ -150,13 +193,16 @@ arrive; the commit that a result belongs to is stated with it).
 | --- | --- | --- |
 | R0 source provenance | fetch script asserts commits + SHA-256; receipt re-hashed | **PASS** (local, `29 assets, 0 problems`) |
 | R1 art fidelity | nine-slice stress sheet at 2–3× inspected by eye; two bad crops and two bad icon bindings found and fixed | **PASS** (local) |
-| R2 project integrity | `tools/review/scene_lint.py` over all 134 scenes/resources: 0 problems; every `game/**/*.gd` and `tests/**/*.gd` parses under gdtoolkit (only the intentionally-broken fixture fails); scene references, `%UniqueName` ownership, theme variations and `load_steps` all checked | **PASS** (local, `8b39f756`) |
-| R2b UI layer test | `tests/survival/ui/a6_ui_layer_test.tscn` — icons have files and pinned commits, unknown ids return null, theme variations exist, button skin is authored art, HUD/workshop/chest build and refuse invalid context | **NOT_TESTED** — written (`e88f2cee`), runs in the render job |
-| R3 native gameplay suites | A0/A3/A6 headless suites | **NOT_TESTED** — queued on GitHub runners at the time of writing |
-| R4 native renders 720/1440/2160 | `a6-survival-ui-render.yml` publishes frames to `docs/survival/reviews/native/` | **NOT_TESTED** — queued |
-| R5 visual acceptance by eye | inspection of R4 frames at each resolution | **NOT_TESTED** — depends on R4 |
+| R2 project integrity | `tools/review/scene_lint.py` over 315 scenes/resources/scripts: 0 problems, 4 notes (all pre-existing); gdtoolkit syntax pass over every changed script; semantic duplicate-declaration pass added this round | **PASS** (local, `340af5c7`) |
+| R2b UI layer test | `tests/survival/ui/a6_ui_layer_test.tscn` | **PASS** — `A6 UI LAYER PASSED`, in the render job) |
+| R3 native gameplay suites | A0/A3/A6 headless suites | **PARTIAL** — `Import and headless runtime tests` and `Xvfb rendered gameplay captures` pass on `ec033bc1`; only the pre-existing "original main baseline comparison" job fails |
+| R4 native renders 720/1440/2160 | `a6-survival-ui-render.yml` publishes frames to `docs/survival/reviews/native/` | **PASS for the sets published on `ec033bc1`** — 15 frames, dimensions asserted per frame. The return set is being re-rendered for `340af5c7` |
+| R5 visual acceptance by eye | inspection of R4 frames at each resolution | **PARTIAL** — avatar 720/2160 and title 720 inspected: clipping fixed, real title screen, honest no-art state. Return digest inspected: overlap found, fixed, re-render pending. Avatar frames still show the fail-closed state because this workflow stages no art |
 
-No screenshot is claimed as evidence yet: §6 explains why, and what replaces it.
+Frames are now committed into the repository and were read by eye, so they are
+usable evidence. They are still not a claim that a *player* did anything: the
+avatar frames come from a job that stages no private art, so they show the honest
+fail-closed screen, not the dressed one.
 
 ## 6. Evidence policy and why the render job changed
 
@@ -194,6 +240,11 @@ each screen's own layout to fit the window it was drawn in.
 * **Return-after-offline UI** — the season chip is now authored parchment, but the
   guidance/digest/record panels keep their older surfaces; judging them needs the
   published frames.
+* **Blackletter headings with Vietnamese diacritics** — the display face
+  (Grenze Gotisch) covers all 50 Vietnamese glyphs tested, so this is not a missing
+  glyph, but at 26 layout units the dot-below marks sit on the hairline and
+  `BẠN LÀ AI?` reads poorly. Changing the display face changes the identity of every
+  screen, so it is recorded here rather than changed silently.
 * **No standalone pack screen.** §3C's list view exists in the chest (bag side) and
   the workshop (costs and outputs), but there is no full-screen pack browser, because
   the only free key (`I`/`TAB`) is already bound to `field_codex` and inventing a
@@ -214,3 +265,6 @@ each screen's own layout to fit the window it was drawn in.
 | `3b86a3cc` | season card on parchment; return frames included in the published set |
 | `e88f2cee` | mechanical UI layer test + lint/parse jobs in CI |
 | `8b39f756` | HUD built directly on its CanvasLayer |
+| `a0b17fd8` | avatar screen parse error fixed; identity step rebuilt to the 640×360 budget; linter learns to see duplicate declarations |
+| `ec033bc1` | return layout resolves a shared column instead of stacking cards |
+| `340af5c7` | return cards move instead of being clipped; immediate reflow; real 640×360 layout tests |
