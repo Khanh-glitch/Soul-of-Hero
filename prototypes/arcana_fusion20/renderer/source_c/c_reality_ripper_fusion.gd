@@ -46,6 +46,9 @@ var tnx := PackedFloat32Array()
 var tny := PackedFloat32Array()
 var ttx := PackedFloat32Array()
 var tty := PackedFloat32Array()
+# Row-major positions with a valid contour sample. Iterating this exact subset
+# avoids testing tens of thousands of known-invalid pixels on every frame.
+var contour_indices := PackedInt32Array()
 # This nearest-contour field depends only on the fixed original seed, source
 # resolution and immutable waypoints. Cache an independent master and clone
 # packed arrays per cast instead of recomputing ~70k x 8 projections per cast.
@@ -113,7 +116,8 @@ func setup() -> void:
                 if best < 46.0:
                     var k := y * W + x
                     ts[k] = bs; td[k] = bd; tnx[k] = bnx; tny[k] = bny; ttx[k] = btx; tty[k] = bty
-        _contour_cache = {"ts": ts.duplicate(), "td": td.duplicate(), "tnx": tnx.duplicate(), "tny": tny.duplicate(), "ttx": ttx.duplicate(), "tty": tty.duplicate()}
+                    contour_indices.append(k)
+        _contour_cache = {"ts": ts.duplicate(), "td": td.duplicate(), "tnx": tnx.duplicate(), "tny": tny.duplicate(), "ttx": ttx.duplicate(), "tty": tty.duplicate(), "indices": contour_indices.duplicate()}
     else:
         ts = (_contour_cache.ts as PackedFloat32Array).duplicate()
         td = (_contour_cache.td as PackedFloat32Array).duplicate()
@@ -121,6 +125,7 @@ func setup() -> void:
         tny = (_contour_cache.tny as PackedFloat32Array).duplicate()
         ttx = (_contour_cache.ttx as PackedFloat32Array).duplicate()
         tty = (_contour_cache.tty as PackedFloat32Array).duplicate()
+        contour_indices = (_contour_cache.indices as PackedInt32Array).duplicate()
     # Original V8 sort for this seed consumed 29 RNG draws after the seven
     # waypoints. The permutation itself is fixed above; preserve the resulting
     # RNG state for C's 56 original world-fragment blocks.
@@ -231,57 +236,56 @@ func render(f: CFrame, t: float) -> void:
     for i in range(257): widths[i] = _width(float(i) / 256.0, t)
     var at := _a_time(t)
     var pull := AMath.smoothstep(1.2, 5.3, at) * (1.0 - AMath.seg(at, 6.1, 8.3) if at > 6.1 else 1.0)
-    for y in range(16, 215):
-        for x in range(40, 381):
-            var k := y * W + x
-            var s := float(ts[k])
-            if s < 0.0 or absf(s - 0.5) > span * 0.5: continue
-            var d := float(td[k])
-            var ad := absf(d)
-            var width := float(widths[roundi(s * 256.0)])
-            if t < TOPEN:
-                if ad < 0.8: f.L(x, y, 1.6, 1.6, 1.8)
-                elif ad < 3.0: f.C(x, y, 2.0)
-                continue
-            var wj := width + ((CMath.hash3(x, y, slot) - 0.5) * 3.2 if width > 1.0 else 0.0)
-            if ad < wj:
-                mask[k] = 1
-                var gy := (float(y) - 60.0) / 150.0
-                var color := CPalette.ramp_d(CPalette.P.void, 0.12 + gy * 0.2, CMath.bayer(x, y))
-                var n := CMath.noise3(x * 0.05, y * 0.05, t * 0.25)
-                if n > 0.62:
-                    f.inverted_live_fragment(x, y, 420.0 - x + sin(t * 0.7) * 10.0, 232.0 - y)
-                else:
-                    f.Ic(x, y, color, 1.0)
-                if CMath.hash2(floori(x - t * 10.0), y) > 0.985: f.Lc(x, y, CPalette.ramp(CPalette.P.star, 0.8), 0.7)
-                if CMath.hash2(floori((x + t * 26.0) / 2.0), floori((y + t * 6.0) / 2.0)) > 0.965: f.Lc(x, y, Vector3.ONE, 1.0)
-                if fposmod(x * 0.7 + y * 0.3 + t * 22.0, 37.0) < 1.0: f.Lc(x, y, CYAN, 0.35)
-                f.L(x, y, 0.02, 0.0, 0.05)
-                continue
-            if ad < wj + 1.6 and width > 0.5:
-                var edge := MAG if CMath.hash3(x, y, slot + 5) > 0.5 else CYAN
-                f.Ic(x, y, edge, 1.0)
-                f.Lc(x, y, edge, 1.0)
-                continue
-            if width > 1.0 and ad < 44.0:
-                # Original A bgWarp pull, stretch, folded-back strips and edge
-                # glow evaluated against C's nearest point/selected opening.
-                var band := floori(float(y) / 3.0)
-                var bh := AMath.hash2(band, 77)
-                var nearest_x := float(x) + 0.5 - float(tnx[k]) * ad
-                var dir_x := -1.0 if float(x) < nearest_x else 1.0
-                var distance := ad - width
-                var shift := float(int(pull * 46.0 * exp(-distance / 34.0)))
-                if bh > 0.78: shift = round(shift * (1.0 + bh))
-                var sx := float(x) - dir_x * shift
-                var sy := float(y)
-                if bh > 0.93 and distance < 40.0 and pull > 0.4:
-                    sx = nearest_x + (nearest_x - float(x)) * 1.1
-                    sy += round((bh - 0.93) * 120.0)
-                f.D(x, y, sx - float(x), sy - float(y))
-                f.S(x, y, 1.0 + 1.6 * exp(-distance / 3.0))
-                if CMath.hash1(floori(s * 48.0) + 31) > 0.9: f.C(x, y, 1.5)
-
+    for k in contour_indices:
+        var y := floori(float(k) / float(W))
+        var x: int = int(k) - y * W
+        var s := float(ts[k])
+        if s < 0.0 or absf(s - 0.5) > span * 0.5: continue
+        var d := float(td[k])
+        var ad := absf(d)
+        var width := float(widths[roundi(s * 256.0)])
+        if t < TOPEN:
+            if ad < 0.8: f.L(x, y, 1.6, 1.6, 1.8)
+            elif ad < 3.0: f.C(x, y, 2.0)
+            continue
+        var wj := width + ((CMath.hash3(x, y, slot) - 0.5) * 3.2 if width > 1.0 else 0.0)
+        if ad < wj:
+            mask[k] = 1
+            var gy := (float(y) - 60.0) / 150.0
+            var color := CPalette.ramp_d(CPalette.P.void, 0.12 + gy * 0.2, CMath.bayer(x, y))
+            var n := CMath.noise3(x * 0.05, y * 0.05, t * 0.25)
+            if n > 0.62:
+                f.inverted_live_fragment(x, y, 420.0 - x + sin(t * 0.7) * 10.0, 232.0 - y)
+            else:
+                f.Ic(x, y, color, 1.0)
+            if CMath.hash2(floori(x - t * 10.0), y) > 0.985: f.Lc(x, y, CPalette.ramp(CPalette.P.star, 0.8), 0.7)
+            if CMath.hash2(floori((x + t * 26.0) / 2.0), floori((y + t * 6.0) / 2.0)) > 0.965: f.Lc(x, y, Vector3.ONE, 1.0)
+            if fposmod(x * 0.7 + y * 0.3 + t * 22.0, 37.0) < 1.0: f.Lc(x, y, CYAN, 0.35)
+            f.L(x, y, 0.02, 0.0, 0.05)
+            continue
+        if ad < wj + 1.6 and width > 0.5:
+            var edge := MAG if CMath.hash3(x, y, slot + 5) > 0.5 else CYAN
+            f.Ic(x, y, edge, 1.0)
+            f.Lc(x, y, edge, 1.0)
+            continue
+        if width > 1.0 and ad < 44.0:
+            # Original A bgWarp pull, stretch, folded-back strips and edge
+            # glow evaluated against C's nearest point/selected opening.
+            var band := floori(float(y) / 3.0)
+            var bh := AMath.hash2(band, 77)
+            var nearest_x := float(x) + 0.5 - float(tnx[k]) * ad
+            var dir_x := -1.0 if float(x) < nearest_x else 1.0
+            var distance := ad - width
+            var shift := float(int(pull * 46.0 * exp(-distance / 34.0)))
+            if bh > 0.78: shift = round(shift * (1.0 + bh))
+            var sx := float(x) - dir_x * shift
+            var sy := float(y)
+            if bh > 0.93 and distance < 40.0 and pull > 0.4:
+                sx = nearest_x + (nearest_x - float(x)) * 1.1
+                sy += round((bh - 0.93) * 120.0)
+            f.D(x, y, sx - float(x), sy - float(y))
+            f.S(x, y, 1.0 + 1.6 * exp(-distance / 3.0))
+            if CMath.hash1(floori(s * 48.0) + 31) > 0.9: f.C(x, y, 1.5)
     if audit_polygons_only or audit_blocks_only or audit_particles_only:
         f.clear()
     if include_polygons and not audit_blocks_only and not audit_particles_only:

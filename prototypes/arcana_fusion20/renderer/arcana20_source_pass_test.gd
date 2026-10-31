@@ -138,11 +138,23 @@ func _run() -> void:
     setup_start = Time.get_ticks_usec()
     rift_cached.setup()
     var cached_setup_usec := Time.get_ticks_usec() - setup_start
-    print("C20_SETUP_COST first_ms=%.3f cached_ms=%.3f scope=software_CPU_source_setup_not_frame_or_device_budget cache_payload_bytes=%d" % [float(first_setup_usec) / 1000.0, float(cached_setup_usec) / 1000.0, 6 * CFrame.N * 4])
+    print("C20_SETUP_COST first_ms=%.3f cached_ms=%.3f scope=software_CPU_source_setup_not_frame_or_device_budget cache_payload_bytes=%d" % [float(first_setup_usec) / 1000.0, float(cached_setup_usec) / 1000.0, 6 * CFrame.N * 4 + rift.contour_indices.size() * 4])
     check(rift.ts == rift_cached.ts and rift.td == rift_cached.td and rift.tnx == rift_cached.tnx and rift.tny == rift_cached.tny and rift.ttx == rift_cached.ttx and rift.tty == rift_cached.tty and rift.blocks == rift_cached.blocks, "C20 cached immutable contour retains exact source fields and seeded blocks")
     var old_ts := rift.ts[0]
     rift_cached.ts[0] = old_ts + 1.0
     check(rift.ts[0] == old_ts and (CRealityRipperFusion._contour_cache.ts as PackedFloat32Array)[0] == old_ts, "C20 per-cast contour clone cannot mutate cache or other casts")
+    check(not rift.contour_indices.is_empty() and rift.contour_indices.size() < CFrame.N, "C20 valid contour traversal is sparse")
+    var old_index := rift.contour_indices[0]
+    rift_cached.contour_indices[0] = -1
+    check(rift.contour_indices[0] == old_index and (CRealityRipperFusion._contour_cache.indices as PackedInt32Array)[0] == old_index, "C20 contour index clone cannot mutate cache or other casts")
+    var previous_index := -1
+    for contour_index in rift.contour_indices:
+        check(contour_index > previous_index and rift.ts[contour_index] >= 0.0, "C20 sparse contour preserves valid row-major order")
+        previous_index = contour_index
+    var valid_count := 0
+    for sample in rift.ts:
+        if sample >= 0.0: valid_count += 1
+    check(valid_count == rift.contour_indices.size(), "C20 sparse contour includes every valid sample")
     var rift_frame := CFrame.new()
     rift_frame.track_world_fragments = true
     rift_frame.clear()
