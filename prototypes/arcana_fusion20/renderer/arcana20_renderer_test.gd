@@ -11,6 +11,9 @@ var _events: Dictionary = {}
 var _finished: Dictionary = {}
 var _started: Dictionary = {}
 
+func _skill_num(cid: StringName) -> int:
+    return int(String(cid).trim_prefix("arcana_fusion20_"))
+
 func _fail(msg: String) -> void:
     _failures.append(msg)
     print("::error::ARCANA20_RENDER_FAIL ", msg)
