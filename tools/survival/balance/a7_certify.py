@@ -444,6 +444,18 @@ def _text(path: Path) -> str:
         return ""
 
 
+def drops_owner_work(f: Facts) -> bool:
+    """True when the composition's controller lost an integration the base owner committed.
+
+    Decided by the reconciled control tree (`probe_control.txt`), never by a guess: the
+    control differs from the certified composition by exactly one owner file.
+    """
+    auth = f.authority or {}
+    control = (f.control or {}).get("AUTHORITY", {})
+    return bool(control.get("mounts_authority")) and not auth.get("mounts_authority") \
+        and bool(auth.get("controller_present"))
+
+
 # --------------------------------------------------------------------------- #
 # Track 1 — world, player, geography
 # --------------------------------------------------------------------------- #
@@ -516,9 +528,7 @@ def track1(f: Facts) -> List[Case]:
     # A composed tree that drops an integration the base owner already committed is a
     # *composition* defect, not a gameplay defect. Naming which one it is is the whole
     # difference between a useful report and a confident false accusation.
-    composed_drops_owner_work = (bool(control.get("mounts_authority"))
-                                 and not auth.get("mounts_authority")
-                                 and auth.get("controller_present"))
+    composed_drops_owner_work = drops_owner_work(f)
     if not (f.live_bounds and f.authored_frame):
         c.settle(BLOCKED, "BLOCKED_WORLD_FACTS_UNREADABLE", f"errors={f.errors}")
     elif composed_drops_owner_work:
@@ -568,8 +578,15 @@ def track1(f: Facts) -> List[Case]:
         if not spawn.get("ok"):
             c.settle(FAIL, "SPAWN_UNSAFE", f"reason={spawn.get('error')}")
         elif not spawn.get("in_live_world"):
+            note = ""
+            control_spawn = (f.control or {}).get("T1.3", {})
+            if drops_owner_work(f):
+                note = ("; caused by the composition artifact named in T1.2 — with A0's committed "
+                        f"controller the same spawn is in_live_world={control_spawn.get('in_live_world')} "
+                        f"in {control_spawn.get('live_frame')}")
+                c.evidence.append(f"reconciled control: {json.dumps(control_spawn)[:240]}")
             c.settle(FAIL, "SPAWN_OUTSIDE_LIVE_WORLD",
-                     f"spawn {spawn.get('cell')} is not inside {f.live_bounds}")
+                     f"spawn {spawn.get('cell')} is not inside {f.live_bounds}{note}")
         elif not spawn.get("standable"):
             c.settle(FAIL, "SPAWN_NOT_STANDABLE", f"traversal={spawn.get('traversal')}")
         else:
@@ -585,9 +602,15 @@ def track1(f: Facts) -> List[Case]:
     if not (f.sites and f.live_bounds):
         c.settle(BLOCKED, "BLOCKED_NO_SITE_DATA", "A8 package or live bounds unreadable")
     elif outside:
+        note = ""
+        control_sites = (f.control or {}).get("T1.4", {})
+        if drops_owner_work(f) and control_sites:
+            note = (f"; caused by the composition artifact named in T1.2 — the reconciled control "
+                    f"measures outside={control_sites.get('outside')} in {control_sites.get('live')}")
+            c.evidence.append(f"reconciled control: {json.dumps(control_sites)[:240]}")
         c.settle(FAIL, "SITE_OUTSIDE_LIVE_WORLD",
                  f"{len(outside)}/{len(f.sites)} canonical sites cannot be approached; "
-                 f"package_status={f.package_status}", "game/survival/a0_poi_mount.gd:69")
+                 f"package_status={f.package_status}{note}", "game/survival/a0_poi_mount.gd:69")
     else:
         c.stage("contract", VALID).settle(BLOCKED, "BLOCKED_NO_APPROACH_RUN",
                                          "sites are in bounds; no approach run recorded")
