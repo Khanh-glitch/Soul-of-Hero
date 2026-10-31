@@ -25,6 +25,10 @@ func _initialize() -> void:
         t0 = Time.get_ticks_usec()
         skipped.update(float(tick) / 60.0, dt)
         skipped_us += Time.get_ticks_usec() - t0
+        if eager._nodes != skipped._nodes or eager._edges != skipped._edges or eager._pulses != skipped._pulses or eager.fx._pool != skipped.fx._pool or eager.fx.rng.s != skipped.fx.rng.s or eager.fx.flash_amt != skipped.fx.flash_amt or eager.fx.flash_col != skipped.fx.flash_col or eager.fx.shake != skipped.fx.shake or eager.fx.bloom_gain != skipped.fx.bloom_gain or eager.fx.warp_amt != skipped.fx.warp_amt or eager.fx.decal_fade != skipped.fx.decal_fade or eager.fx.world_bends != skipped.fx.world_bends:
+            push_error("D19 skipped-step simulation, RNG or post metadata mismatch at tick %d" % tick)
+            quit(1)
+            return
         if visible:
             visible_count += 1
             if eager.fx.buf != skipped.fx.buf or eager.fx.world_influence != skipped.fx.world_influence or eager.fx.world_warp != skipped.fx.world_warp or eager.fx.world_warp_influence != skipped.fx.world_warp_influence or eager.fx.world_bends != skipped.fx.world_bends or eager._nodes != skipped._nodes or eager._edges != skipped._edges or eager._pulses != skipped._pulses or eager.fx._pool != skipped.fx._pool or eager.fx.rng.s != skipped.fx.rng.s or eager.fx.flash_amt != skipped.fx.flash_amt or eager.fx.bloom_gain != skipped.fx.bloom_gain:
