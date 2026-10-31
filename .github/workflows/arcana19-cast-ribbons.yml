@@ -46,6 +46,11 @@ jobs:
           set -o pipefail
           python3 tools/arcana19_cast_ribbons/compare.py artifacts/arcana19-cast-ribbons | tee compare.log
           sed 's/^/::notice::/' compare.log
+      - name: Compare authored call geometry separately
+        run: |
+          set -o pipefail
+          python3 tools/arcana19_cast_ribbons/compare_calls.py artifacts/arcana19-cast-ribbons | tee calls.log
+          sed 's/^/::notice title=D19_CAST_LINE_CALLS::/' calls.log
       - name: Surface native GPU cases separately
         if: always()
         run: |
@@ -60,3 +65,4 @@ jobs:
             native.log
             import.log
             compare.log
+            calls.log
