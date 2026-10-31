@@ -89,6 +89,26 @@ which is reported as a composition probe, never as combat.
   foreign tool identity, full bag (29 slots) with no condition cost and no partial
   grant, broken tool, empty interval, future interval, rolled-back interval.
 
+### 4a. Real receipt timeline from one kept profile (`a0_player_return.json`, revision 17)
+
+Dumped from the profile the two-process run left on disk — commit order, not a plan:
+
+```
+soh.a0.run.start.run-1793425231-c4d3a3d0        run_id=run-… epoch=1 (expires +1209600 s)
+survival.harvest.stone_outcrop@102,150.1        bare-handed stone: 3 stone_chunk
+survival.harvest.oak_tree@21,206.1              bare-handed wood: 2 oak_wood
+soh.a3.enqueue.16b812d4…                        stone_pick job queued (job_000001)
+soh.a3.advance.* (×6, hand.1..hand.6)           the same job completes on the station clock
+soh.a3.collect.baf1debc…                        one unique pick minted: soh_i_000000000002_…
+soh.a3.tool_use.86b92f47…                       one iron swing at iron_vein@101,126 → 1 iron_scrap,
+                                                condition −1, tool revision +1
+```
+
+Counts in that document: **13 applied transactions, revision 17, run state `active`,
+`site_transition` empty, `death_bags` empty**. The second process re-read the same
+file and asserted conservation of stone/oak/iron, the same instance id, unchanged
+condition and revision, and no extra receipt or transaction.
+
 ## 5. Why three journey checks stop here (environment, not product)
 
 A headless Godot `DisplayServer` reports a **0x0** window. Consequences measured
