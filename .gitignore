@@ -3,6 +3,7 @@
 .inspect_assets/
 .inspect_*.gd
 .artifacts/
+private_art/
 .backups/
 tmp/
 *.log

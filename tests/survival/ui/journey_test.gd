@@ -1,0 +1,402 @@
+extends SceneTree
+## Exercises the three fixture journeys against exact pinned A0/A1/A3 source files.
+## This is native UI verification only, never a gameplay or owner-transaction test.
+const WORKSPACE := preload("res://game/survival/ui/expedition_workspace.tscn")
+const FIXTURE := preload("res://tests/survival/ui/journey_contract_fixture.gd")
+const ADAPTER := preload("res://game/survival/ui/survival_view_adapter.gd")
+const A3_ECONOMY_SOURCE := "res://.a6-contract-inputs/a3/source/economy_service.gd"
+var failures: Array[String] = []
+var checks := 0
+var emitted_actions := 0
+
+
+func check(ok: bool, message: String) -> void:
+	checks += 1
+	if not ok:
+		failures.append(message)
+		printerr("FAIL: ", message)
+
+
+func _initialize() -> void:
+	call_deferred("_run")
+
+
+func _source_pin(owner: String) -> String:
+	for line in FileAccess.get_file_as_string("res://.a6-contract-inputs/source-pins.txt").split("\n"):
+		if line.begins_with(owner + "="):
+			return line.substr(owner.length() + 1).strip_edges()
+	return ""
+
+
+func _run() -> void:
+	var fixture: Dictionary = FIXTURE.snapshot()
+	check(
+		fixture.get("schema", "") == "soh.ui.journey.fixture.v1",
+		"fixture loads versioned source-backed journey DTO"
+	)
+	check(
+		fixture.get("source_refs", {}).get("a0", "") == _source_pin("A0")
+			and not _source_pin("A0").is_empty(),
+		"fixture uses the exact composed A0 source pin"
+	)
+	check(
+		fixture.get("source_refs", {}).get("a1", "") == _source_pin("A1")
+			and not _source_pin("A1").is_empty(),
+		"fixture uses the exact composed A1 route/source pin"
+	)
+	check(
+		fixture.get("source_refs", {}).get("a3", "") == _source_pin("A3")
+			and not _source_pin("A3").is_empty(),
+		"fixture uses the exact composed A3 economy/catalog pin"
+	)
+	check(
+		(
+			not fixture.is_empty()
+			and (
+				fixture.get("a1", {}).get("salvage_material_contract", {}).get("status", "")
+				== "CONTRACT_NOT_SPAWNED"
+			)
+		),
+		"A1 authored salvage site retains not-spawned negative status"
+	)
+	if fixture.is_empty():
+		print(
+			"A6 JOURNEYS: %d checks, %d failures (fixture unavailable)" % [checks, failures.size()]
+		)
+		quit(1)
+		return
+	var a3_source := FileAccess.get_file_as_string(A3_ECONOMY_SOURCE)
+	check(
+		(
+			a3_source.contains('costs["knowledge_spares"] = 5')
+			and a3_source.contains('"duration": 40')
+			and a3_source.contains('"consumed_by_research"')
+			and a3_source.contains('"research:" + String(job["job_id"])')
+		),
+		"sacrifice preview facts match the pinned A3 implementation source without mounting it"
+	)
+	var workspace: Variant = WORKSPACE.instantiate()
+	root.add_child(workspace)
+	workspace.request_action.connect(
+		func(_action: String, _id: String, _payload: Dictionary): emitted_actions += 1
+	)
+	check(workspace.apply_journey_fixture(fixture), "workspace accepts source-pinned fixture only")
+	var bad_version: Dictionary = fixture.duplicate(true)
+	bad_version.schema = "soh.ui.journey.fixture.v0"
+	check(
+		not workspace.apply_journey_fixture(bad_version),
+		"unknown journey fixture version fails closed"
+	)
+	var bad_pin: Dictionary = fixture.duplicate(true)
+	bad_pin.source_refs.a3 = "unreviewed"
+	check(not workspace.apply_journey_fixture(bad_pin), "unapproved A3 source pin fails closed")
+	workspace.open_workspace()
+	workspace.show_journeys()
+	await process_frame
+	var view: Variant = workspace.journeys
+	check(
+		workspace.is_modal_active() and view.is_visible_in_tree(),
+		"journey page is included in aggregate modal state"
+	)
+	check(
+		view.is_in_group(&"gameplay_modal") == false and workspace.is_in_group(&"gameplay_modal"),
+		"only the hidden-until-open workspace root advertises modal discovery"
+	)
+
+	# A: source -> shortfall -> valid bed fixture -> persistent death recovery.
+	view.select_journey(0)
+	check(
+		(
+			view._detail_text().contains("Abandoned Supplies")
+			and view._detail_text().contains("iron_scrap")
+		),
+		"A0 source/item identity is visible without claiming a gathered drop"
+	)
+	view.select_step(1)
+	check(
+		(
+			view._detail_text().contains("4 Oak Wood + 1 Iron Scrap")
+			and view._detail_text().contains("Missing in this fixture")
+		),
+		"bed costs and scarce-material shortfall match A0 catalog"
+	)
+	view.select_step(2)
+	check(
+		(
+			view._detail_text().contains("FIXTURE_VALIDATED_ONLY")
+			and view._detail_text().contains("A6 did not pay")
+		),
+		"valid bed is explicitly fixture-only, not a construction transaction"
+	)
+	view.select_step(3)
+	check(
+		(
+			view._detail_text().contains("pending_death: death_7")
+			and view._detail_text().contains("all-or-none")
+		),
+		"death/respawn and capacity-bound recovery remain owner-state projections"
+	)
+
+	# B: unique physical Core, finite uses/condition, sacrifice warning and independent formula.
+	view.select_journey(1)
+	check(
+		(
+			view._detail_text().contains("soh_i_000000000011_a1c0ffee")
+			and view._detail_text().contains("5 / 8")
+			and view._detail_text().contains("61 / 100")
+		),
+		"A3 physical Core instance, uses and condition remain distinct"
+	)
+	check(
+		view._detail_text().contains("BLOCKED_PENDING_A4"),
+		"missing A4 attestation is not rendered as cast-ready"
+	)
+	var original_instance: Dictionary = fixture.a3.core_instance.duplicate(true)
+	view.select_step(1)
+	view.select_core_choice("research")
+	check(
+		(
+			view.current_projection().step == 2
+			and view._detail_text().contains("5 knowledge_spares")
+			and view._detail_text().contains("queue 2")
+			and view._detail_text().contains("40 active ticks")
+			and view._detail_text().contains("consumed_by_research")
+		),
+		"research choice presents exact cost and irreversible completion consequence"
+	)
+	view.confirm_sacrifice_preview()
+	check(
+		(
+			view._sacrifice_preview_confirmed
+			and fixture.a3.core_instance == original_instance
+			and emitted_actions == 0
+		),
+		"confirm preview sends no owner request and cannot consume/change fixture token"
+	)
+	view.select_step(3)
+	check(
+		(
+			view._detail_text().contains("charged_blank")
+			and view._detail_text().contains("T2")
+			and view._detail_text().contains("enqueue stays disabled")
+		),
+		"craft inputs/tier/ticks and missing owner queue stay explicit"
+	)
+	check(
+		view._status_text().contains("BLOCKED"),
+		"A0 active-time and A3 station owner absence remains a negative state"
+	)
+
+	# C: safe route, known clues, dangerous alternative; hidden records are withheld.
+	view.select_journey(2)
+	view.select_step(0)
+	check(
+		(
+			view._detail_text().contains("rt_crown_safe_approach")
+			and view._detail_text().contains("low")
+		),
+		"safe A1 route uses authored risk/capability fields"
+	)
+	view.select_step(1)
+	check(
+		view._detail_text().contains("lit lantern") and view._detail_text().contains("dead lamp"),
+		"fixture-discovered A1 clues are shown for both POIs"
+	)
+	check(
+		(
+			view._detail_text().contains("AUTHORED_PLAN_NOT_NATIVE_INTEGRATED")
+			and view._detail_text().contains("none disclosed")
+		),
+		"POI readiness and no-known-hazard state remain explicit"
+	)
+	view.select_step(2)
+	check(
+		(
+			view._detail_text().contains("rt_east_seam")
+			and view._detail_text().contains("high")
+			and view._detail_text().contains("cap_filter")
+		),
+		"shortcut remains an authored risk label, not fabricated damage"
+	)
+	view.select_step(3)
+	var reward_preview: String = view._detail_text()
+	check(
+		reward_preview.contains("native_playable=false")
+			and reward_preview.contains("rr_waystation_cache_claim")
+			and reward_preview.contains("cache_restock")
+			and reward_preview.contains("iron_scrap × 3")
+			and reward_preview.contains("knowledge_spares × 2")
+			and reward_preview.contains("1800 active-sec cooldown")
+			and reward_preview.contains("gather_deadfall")
+			and reward_preview.contains("oak_wood × 2")
+			and reward_preview.contains("300 active-sec cooldown")
+			and reward_preview.contains("rr_waystation_salvage_tool")
+			and reward_preview.contains("cap_salvage")
+			and reward_preview.contains("rr_waystation_seal_ledger")
+			and reward_preview.contains("cap_seal_1")
+			and reward_preview.contains("rr_relay_power_bypass")
+			and reward_preview.contains("iron_scrap × 2")
+			and reward_preview.contains("oak_wood × 1")
+			and reward_preview.contains("cap_power_1")
+			and reward_preview.contains("copper_upgrade")
+			and reward_preview.contains("enabled=false")
+			and reward_preview.contains("copper × 2")
+			and reward_preview.contains("ITEM_NOT_IN_A3_CATALOG:copper"),
+		"A1 canonical action, reward, cost, capability and deferred-status vectors remain authored-only"
+	)
+	var hidden: Dictionary = FIXTURE.hidden_relay_snapshot(fixture)
+	var hidden_a1: Dictionary = hidden.get("a1", {})
+	var hidden_view: Dictionary = ADAPTER.poi_presentation(hidden_a1.get("relay", {}), false)
+	var hidden_projection_text := JSON.stringify(hidden_a1)
+	check(
+		hidden_view.is_empty()
+			and not hidden_a1.has("relay")
+			and not hidden_a1.has("relay_slice")
+			and not hidden_a1.has("shortcut")
+			and not hidden_a1.discovery_fixture.has("relay")
+			and hidden_a1.slice_handoff.keys().size() == 3
+			and not hidden_projection_text.contains("poi_crown_relay_shed")
+			and not hidden_projection_text.contains("rr_relay_power_bypass")
+			and not hidden_projection_text.contains("cap_power_1")
+			and not hidden_projection_text.contains("cap_filter")
+			and not hidden_projection_text.contains("copper_upgrade")
+			and not hidden_projection_text.contains("ITEM_NOT_IN_A3_CATALOG:copper")
+			and not hidden_projection_text.contains("rt_east_seam")
+			and not hidden_projection_text.contains("hz_crown"),
+		"undiscovered identity, route, hazard, reward, action, and handoff-private metadata are omitted before A6 projection"
+	)
+	check(
+		view.set_fixture(hidden), "same pinned fixture can represent a separate A0 discovery state"
+	)
+	view.select_step(1)
+	check(
+		not view._detail_text().contains("dead lamp") and view._detail_text().contains("withheld"),
+		"hidden Relay clue is not projected when its identity is absent from discovery data"
+	)
+	view.select_step(0)
+	check(
+		view._choice_labels().size() == 1 and not view._detail_text().contains("rt_east_seam"),
+		"undiscovered alternative route identity is absent from the consumer and choice list"
+	)
+	view.select_route("shortcut")
+	check(
+		view._detail_text().contains("Alternative route withheld") and not view._detail_text().contains("cap_filter"),
+		"a direct route-preview request still cannot reveal an undiscovered route or requirement"
+	)
+	view.select_step(2)
+	check(
+		view._detail_text().contains("identity, authored hazard, materials and capability requirements are withheld"),
+		"risk comparison explicitly withholds all undiscovered route metadata"
+	)
+	view.select_step(3)
+	check(
+		not view._detail_text().contains("rr_relay_power_bypass")
+			and not view._detail_text().contains("ITEM_NOT_IN_A3_CATALOG:copper"),
+		"undiscovered Relay reward and upgrade metadata remain stripped from the A6 consumer"
+	)
+	check(
+		view.current_projection().route_choice == "shortcut",
+		"shortcut selection is only a local route-preview choice"
+	)
+	check(emitted_actions == 0, "all three journeys remain read-only and emit no gameplay mutation")
+
+	# Mouse, keyboard and controller-oriented focus; pause/Escape is UI-local only.
+	view.set_fixture(fixture)
+	view.select_journey(0)
+	await process_frame
+	var right := InputEventAction.new()
+	right.action = "ui_focus_next"
+	right.pressed = true
+	root.push_input(right)
+	await process_frame
+	check(
+		view._journey_tabs[1].has_focus() or view._journey_tabs[0].has_focus(),
+		"keyboard navigation retains an explicit journey focus target"
+	)
+	check(
+		(
+			view._journey_tabs[0].focus_neighbor_right
+			== view._journey_tabs[0].get_path_to(view._journey_tabs[1])
+		),
+		"controller-oriented right-neighbor wraps into the next journey"
+	)
+	view._journey_tabs[1].grab_focus()
+	var accept := InputEventJoypadButton.new()
+	accept.button_index = JOY_BUTTON_A
+	accept.device = 0
+	if not InputMap.action_has_event(&"ui_accept", accept):
+		InputMap.action_add_event(&"ui_accept", accept)
+	accept.pressed = true
+	check(
+		accept.is_action_pressed(&"ui_accept") and view._journey_tabs[1].has_focus(),
+		"controller A maps to ui_accept on the focused journey control"
+	)
+	# SceneTree headless mode cannot synthesize native joypad delivery to BaseButton;
+	# emit the focused control's accept signal after verifying the Joypad A mapping.
+	view._journey_tabs[1].pressed.emit()
+	await process_frame
+	check(view.current_projection().journey == 1, "focused journey accept handler changes only the selected story")
+	accept.pressed = false
+	await process_frame
+	view._journey_tabs[2].grab_focus()
+	var mouse := InputEventMouseButton.new()
+	mouse.button_index = MOUSE_BUTTON_LEFT
+	mouse.position = view._journey_tabs[0].get_global_rect().get_center()
+	mouse.pressed = true
+	root.push_input(mouse, true)
+	mouse = InputEventMouseButton.new()
+	mouse.button_index = MOUSE_BUTTON_LEFT
+	mouse.position = view._journey_tabs[0].get_global_rect().get_center()
+	mouse.pressed = false
+	root.push_input(mouse, true)
+	await process_frame
+	check(
+		view.current_projection().journey == 0,
+		"GUI mouse click changes only the selected story tab"
+	)
+	var pause := InputEventJoypadButton.new()
+	pause.button_index = JOY_BUTTON_START
+	pause.pressed = true
+	root.push_input(pause, true)
+	await process_frame
+	check(
+		not workspace.visible and not workspace.is_modal_active(),
+		"controller pause closes aggregate UI modal and clears registry state"
+	)
+	pause = InputEventJoypadButton.new()
+	pause.button_index = JOY_BUTTON_START
+	pause.pressed = false
+	root.push_input(pause, true)
+	await process_frame
+	check(
+		not workspace.visible and emitted_actions == 0,
+		"controller release after close cannot submit an action or reopen UI"
+	)
+	workspace.open_workspace()
+	workspace.show_journeys()
+	var escape := InputEventKey.new()
+	escape.keycode = KEY_ESCAPE
+	escape.pressed = true
+	root.push_input(escape)
+	await process_frame
+	check(
+		not workspace.visible and not workspace.is_modal_active(),
+		"Escape closes aggregate UI modal and clears its registry state"
+	)
+	escape = InputEventKey.new()
+	escape.keycode = KEY_ESCAPE
+	escape.pressed = false
+	root.push_input(escape)
+	await process_frame
+	check(
+		not workspace.visible and emitted_actions == 0,
+		"keyboard release after close cannot submit a request or reopen UI"
+	)
+
+	print("A6 JOURNEYS: %d checks, %d failures" % [checks, failures.size()])
+	if not failures.is_empty():
+		for failure: String in failures:
+			printerr(" - ", failure)
+	workspace.queue_free()
+	await process_frame
+	quit(0 if failures.is_empty() else 1)

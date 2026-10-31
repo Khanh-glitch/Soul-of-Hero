@@ -1,0 +1,421 @@
+name: A6 V3 Sustained Product Acceptance
+
+on:
+  push:
+    branches:
+      - arena/443f004f-soul-of-hero
+    paths:
+      - game/survival/ui/**
+      - tests/survival/ui/**
+      - docs/survival/ux/**
+      - .github/workflows/a6-v3-product-acceptance.yml
+  pull_request:
+    branches:
+      - feature/survival-rpg-foundation-20261029
+    paths:
+      - game/survival/ui/**
+      - tests/survival/ui/**
+      - docs/survival/ux/**
+      - .github/workflows/a6-v3-product-acceptance.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  a6-composed-acceptance:
+    name: Pinned A0 composition · A6 UI, sources and captures
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      A0_SHA: 5387bed6260cb7b9bd4d8229ee759dee08a0d918
+      A1_SHA: 2f6edd3f1c45916fb1fd85b167c3f635bf11cc3b
+      A3_SHA: 2b18bb25dd3b0425c6b5d5ed1617a545e5e1bca0
+      EVIDENCE_SHA: 1ee7e43da22adb4b9ce1647efbcb1b07988ceaf7
+      GODOT_SILENCE_ROOT_WARNING: 1
+      LIBGL_ALWAYS_SOFTWARE: 1
+    steps:
+      - name: Check out A6 UI and acceptance source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Check out pinned source owners
+        uses: actions/checkout@v4
+        with:
+          repository: Khanh-glitch/Soul-of-Hero
+          ref: 5387bed6260cb7b9bd4d8229ee759dee08a0d918
+          path: a0-source
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Check out pinned A1 authored contracts
+        uses: actions/checkout@v4
+        with:
+          repository: Khanh-glitch/Soul-of-Hero
+          ref: 2f6edd3f1c45916fb1fd85b167c3f635bf11cc3b
+          path: a1-source
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Check out pinned A3 authored catalogs
+        uses: actions/checkout@v4
+        with:
+          repository: Khanh-glitch/Soul-of-Hero
+          ref: 2b18bb25dd3b0425c6b5d5ed1617a545e5e1bca0
+          path: a3-source
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Check out pinned Atlas and coverage-trace evidence
+        uses: actions/checkout@v4
+        with:
+          repository: Khanh-glitch/Soul-of-Hero
+          ref: 1ee7e43da22adb4b9ce1647efbcb1b07988ceaf7
+          path: a6-evidence
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Compose temporary A0 + A6 project and read-only owner/evidence inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C a0-source rev-parse HEAD)" = "$A0_SHA"
+          test "$(git -C a1-source rev-parse HEAD)" = "$A1_SHA"
+          test "$(git -C a3-source rev-parse HEAD)" = "$A3_SHA"
+          test "$(git -C a6-evidence rev-parse HEAD)" = "$EVIDENCE_SHA"
+          mkdir -p a0-source/game/survival/ui a0-source/tests/survival/ui a0-source/docs/survival/ux a0-source/docs/survival/source_archive
+          cp a6-evidence/docs/survival/SOURCE_COVERAGE_TRACE.json a0-source/docs/survival/
+          cp a6-evidence/docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md a0-source/docs/survival/source_archive/
+          cp -a "$GITHUB_WORKSPACE/game/survival/ui/." a0-source/game/survival/ui/
+          cp -a "$GITHUB_WORKSPACE/tests/survival/ui/." a0-source/tests/survival/ui/
+          cp -a "$GITHUB_WORKSPACE/docs/survival/ux/." a0-source/docs/survival/ux/
+          mkdir -p a0-source/.a6-contract-inputs/a1/world/poi_authoring
+          cp a1-source/data/survival/world/poi_route_graph.json a0-source/.a6-contract-inputs/a1/world/
+          cp a1-source/data/survival/world/hazard_capability_contracts.json a0-source/.a6-contract-inputs/a1/world/
+          cp a1-source/data/survival/world/material_source_contracts.json a0-source/.a6-contract-inputs/a1/world/
+          cp a1-source/data/survival/world/poi_authoring/poi_crown_waystation.v1.json a0-source/.a6-contract-inputs/a1/world/poi_authoring/
+          cp a1-source/data/survival/world/poi_authoring/poi_crown_relay_shed.v1.json a0-source/.a6-contract-inputs/a1/world/poi_authoring/
+          mkdir -p a0-source/.a6-contract-inputs/a1/world/vertical_slice
+          cp a1-source/data/survival/world/vertical_slice/poi_crown_waystation.slice.json a0-source/.a6-contract-inputs/a1/world/vertical_slice/
+          cp a1-source/data/survival/world/vertical_slice/poi_crown_relay_shed.slice.json a0-source/.a6-contract-inputs/a1/world/vertical_slice/
+          cp a1-source/data/survival/world/vertical_slice/handoff_contracts.json a0-source/.a6-contract-inputs/a1/world/vertical_slice/
+          mkdir -p a0-source/.a6-contract-inputs/a3/items a0-source/.a6-contract-inputs/a3/recipes a0-source/.a6-contract-inputs/a3/source
+          cp a3-source/game/survival/economy/economy_service.gd a0-source/.a6-contract-inputs/a3/source/
+          cp a3-source/data/survival/items/items.json a0-source/.a6-contract-inputs/a3/items/
+          cp a3-source/data/survival/recipes/recipes.json a0-source/.a6-contract-inputs/a3/recipes/
+          cp a3-source/data/survival/recipes/research.json a0-source/.a6-contract-inputs/a3/recipes/
+          cp a3-source/data/survival/recipes/stations.json a0-source/.a6-contract-inputs/a3/recipes/
+          printf 'A0=%s\nA1=%s\nA3=%s\nATLAS_EVIDENCE=%s\n' "$A0_SHA" "$A1_SHA" "$A3_SHA" "$EVIDENCE_SHA" | tee a0-source/.a6-contract-inputs/source-pins.txt
+          python3 - <<'PY'
+          import subprocess
+          allowed = ("game/survival/ui/", "tests/survival/ui/", "docs/survival/ux/", "docs/survival/SOURCE_COVERAGE_TRACE.json", "docs/survival/source_archive/", ".a6-contract-inputs/")
+          paths = subprocess.check_output(["git", "-C", "a0-source", "status", "--porcelain", "--untracked-files=all"], text=True).splitlines()
+          unexpected = [line for line in paths if not line[3:].startswith(allowed)]
+          if unexpected:
+              raise SystemExit("Temporary composition modified a non-A6 path:\n" + "\n".join(unexpected))
+          print("Temporary overlay is limited to A6-owned UI/tests/docs and isolated contract inputs.")
+          PY
+          {
+            echo "### Temporary source composition"
+            echo "- A0 project: \`$A0_SHA\` (project/autoloads/gameplay source only)"
+            echo "- A1 read-only contracts: \`$A1_SHA\`"
+            echo "- A3 read-only catalogs: \`$A3_SHA\`"
+            echo "- Atlas and coverage-trace inputs: source commit \`$EVIDENCE_SHA\`; Atlas content SHA is independently checked by the audit"
+            echo "- Production mount: **none**"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Install Godot 4.7 stable
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+
+      - name: Record Godot version and install virtual display
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb
+          godot --version | tee a0-source/godot-version.txt
+          echo "Godot CLI version: $(cat a0-source/godot-version.txt)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Import the composed project
+        shell: bash
+        run: |
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=10s 180s godot --headless --editor --path a0-source --import --quit 2>&1 | tee a0-source/a6-editor-import.log
+          result=${PIPESTATUS[0]}
+          set -e
+          echo "Composed editor import exit code: $result"
+          exit "$result"
+
+      - name: Audit the real pinned Atlas archive and coverage trace
+        run: |
+          python3 a0-source/tests/survival/ui/source_trace_audit.py | tee a0-source/a6-source-trace-audit.log
+
+      - name: Run dedicated native A6 acceptance suites
+        shell: bash
+        run: |
+          set -uo pipefail
+          mkdir -p a0-source/.artifacts/a6-ci
+          tests=(
+            tests/survival/ui/ui_test.gd
+            tests/survival/ui/planner_test.gd
+            tests/survival/ui/workspace_v1_test.gd
+            tests/survival/ui/modal_lifecycle_test.gd
+            tests/survival/ui/journey_test.gd
+          )
+          failures=0
+          for test_path in "${tests[@]}"; do
+            name=${test_path##*/}
+            name=${name%.gd}
+            echo "Running composed A6 suite: $test_path"
+            export SOUL_OF_HERO_SAVE_PATH="user://a6_ci_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}_${name}.json"
+            export LIVING_ARSENAL_SAVE_PATH="$SOUL_OF_HERO_SAVE_PATH"
+            set +e
+            timeout --signal=TERM --kill-after=5s 90s godot --headless --path a0-source --script "res://$test_path" 2>&1 | tee "a0-source/.artifacts/a6-ci/${name}.log"
+            result=${PIPESTATUS[0]}
+            set -e
+            TEST_PATH="$test_path" TEST_EXIT="$result" TEST_LOG="a0-source/.artifacts/a6-ci/${name}.log" python3 - <<'PY'
+          import os
+          from pathlib import Path
+          path = os.environ["TEST_PATH"]
+          result = int(os.environ["TEST_EXIT"])
+          lines = [line.strip() for line in Path(os.environ["TEST_LOG"]).read_text(errors="replace").splitlines() if line.strip()]
+          relevant = []
+          for index, line in enumerate(lines):
+              if any(key in line for key in ("FAIL:", "SCRIPT ERROR", "ERROR:", "Parse Error", " checks, ", "A6 JOURNEYS:")):
+                  relevant.extend(lines[index:min(index + (5 if "SCRIPT ERROR" in line or "ERROR:" in line else 1), len(lines))])
+          summary = " | ".join((relevant or lines[-8:])[-24:]) or "no console output"
+          if result == 124:
+              summary = "TIMEOUT after 90s | " + summary
+          if result == 137:
+              summary = "KILLED after timeout grace | " + summary
+          summary = summary[:5000].replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+          print(f"::notice file={path},line=1,title=Native test exit {result}::{summary}")
+          PY
+            if [[ $result -ne 0 ]]; then failures=$((failures + 1)); fi
+            echo "$test_path exit code: $result"
+          done
+          echo "### A6 native test results: $(( ${#tests[@]} - failures ))/${#tests[@]} passed" >> "$GITHUB_STEP_SUMMARY"
+          for test_path in "${tests[@]}"; do
+            name=${test_path##*/}; name=${name%.gd}
+            grep -E 'A6 (JOURNEYS|MODAL LIFECYCLE)|SURVIVAL UI:|EXPEDITION PLANNER:|WORKSPACE V1:' "a0-source/.artifacts/a6-ci/${name}.log" || true
+          done >> "$GITHUB_STEP_SUMMARY"
+          exit "$failures"
+
+      - name: Import pinned A3 owner project before its native suite
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p a3-source/.artifacts/a3-ci
+          timeout --signal=TERM --kill-after=10s 180s godot --headless --editor --path a3-source --import 2>&1 | tee a3-source/.artifacts/a3-ci/import.log
+
+      - name: Run pinned A3 economy owner-native adapter regression (separate checkout)
+        shell: bash
+        run: |
+          set -uo pipefail
+          mkdir -p a3-source/.artifacts/a3-ci
+          export SOUL_OF_HERO_SAVE_PATH="user://a6_a3_economy_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}.json"
+          export LIVING_ARSENAL_SAVE_PATH="$SOUL_OF_HERO_SAVE_PATH"
+          set +e
+          timeout --signal=TERM --kill-after=10s 360s godot --headless --path a3-source --script res://tests/survival/catalog/economy_adapter_test.gd 2>&1 | tee a3-source/.artifacts/a3-ci/economy-adapter.log
+          result=${PIPESTATUS[0]}
+          set -e
+          echo "Pinned A3 owner adapter test exit code: $result" >> "$GITHUB_STEP_SUMMARY"
+          A3_EXIT="$result" A3_LOG=a3-source/.artifacts/a3-ci/economy-adapter.log python3 - <<'PY'
+          import os
+          from pathlib import Path
+          lines = [line.strip() for line in Path(os.environ["A3_LOG"]).read_text(errors="replace").splitlines() if line.strip()]
+          relevant = [line for line in lines if any(key in line for key in ("FAIL", "A3 ECONOMY", "ERROR", "checks"))]
+          summary = " | ".join((relevant or lines[-6:])[-8:]) or "no console output"
+          print(f"::notice file=.github/workflows/a6-v3-product-acceptance.yml,line=1,title=A3_owner_test exit {os.environ['A3_EXIT']}::{summary[:5000]}")
+          PY
+          exit "$result"
+
+      - name: Run A0 bed/death/respawn owner regression
+        shell: bash
+        run: |
+          set -uo pipefail
+          export SOUL_OF_HERO_SAVE_PATH="user://a6_a0_bed_respawn_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}.json"
+          export LIVING_ARSENAL_SAVE_PATH="$SOUL_OF_HERO_SAVE_PATH"
+          mkdir -p a0-source/artifacts
+          set +e
+          timeout --signal=TERM --kill-after=10s 240s xvfb-run -a -s "-screen 0 1280x720x24" godot --path a0-source --windowed --resolution 1280x720 --script res://tests/survival_bed_respawn_test.gd 2>&1 | tee a0-source/.artifacts/a6-ci/a0-bed-respawn.log
+          result=${PIPESTATUS[0]}
+          set -e
+          echo "A0 bed/death/respawn test exit code: $result"
+          A0_EXIT="$result" A0_LOG=a0-source/.artifacts/a6-ci/a0-bed-respawn.log python3 - <<'PY'
+          import os
+          from pathlib import Path
+          lines = [line.strip() for line in Path(os.environ["A0_LOG"]).read_text(errors="replace").splitlines() if line.strip()]
+          relevant = [line for line in lines if any(key in line for key in ("FAIL", "BED", "RESPAWN", "ERROR", "passed"))]
+          summary = " | ".join((relevant or lines[-6:])[-8:]) or "no console output"
+          print(f"::notice file=.github/workflows/a6-v3-product-acceptance.yml,line=1,title=A0_bed_recovery_test exit {os.environ['A0_EXIT']}::{summary[:5000]}")
+          PY
+          exit "$result"
+
+      - name: Execute A0 combined modal/gameplay input regression (record current blocker)
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          export SOUL_OF_HERO_SAVE_PATH="user://a6_a0_modal_probe_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}.json"
+          export LIVING_ARSENAL_SAVE_PATH="$SOUL_OF_HERO_SAVE_PATH"
+          set +e
+          timeout --signal=TERM --kill-after=10s 240s godot --headless --path a0-source res://tests/survival/ui/a0_modal_gameplay_input_regression.tscn 2>&1 | tee a0-source/.artifacts/a6-ci/a0-modal-input-probe.log
+          result=${PIPESTATUS[0]}
+          set -e
+          if [[ $result -eq 2 ]] && grep -q 'A0_MODAL_INPUT_GATE_LEAK:' a0-source/.artifacts/a6-ci/a0-modal-input-probe.log; then
+            echo "A0_GATE_BLOCKER_REPRODUCED: modal did not suppress one or more polled gameplay inputs; inspect per-input probe values. Production hookup remains HOLD." | tee -a "$GITHUB_STEP_SUMMARY"
+          elif [[ $result -eq 0 ]] && grep -q 'A0_MODAL_INPUT_GATE_PASS:' a0-source/.artifacts/a6-ci/a0-modal-input-probe.log; then
+            echo "A0_GATE_NATIVE_PROBE_PASS: pinned A0 head suppressed simultaneous gameplay inputs under modal." | tee -a "$GITHUB_STEP_SUMMARY"
+          else
+            A0_PROBE_EXIT="$result" A0_PROBE_LOG=a0-source/.artifacts/a6-ci/a0-modal-input-probe.log python3 - <<'PY'
+          import os
+          from pathlib import Path
+          lines = [line.strip() for line in Path(os.environ["A0_PROBE_LOG"]).read_text(errors="replace").splitlines() if line.strip()]
+          relevant = [line for line in lines if any(key in line for key in ("FAIL", "SCRIPT ERROR", "ERROR", "Parse Error", "A0_MODAL"))]
+          summary = " | ".join((relevant or lines[-12:])[-16:]) or "no console output"
+          print(f"::error file=tests/survival/ui/a0_modal_gameplay_input_regression.gd,line=1,title=A0 modal probe exit {os.environ['A0_PROBE_EXIT']}::{summary[:5000]}")
+          PY
+            echo "A0 modal input probe did not produce a recognized pass/blocker result (exit $result)." >&2
+            exit 1
+          fi
+          python3 - <<'PY'
+          from pathlib import Path
+          log = Path("a0-source/.artifacts/a6-ci/a0-modal-input-probe.log").read_text(errors="replace").splitlines()
+          result = next((line.strip() for line in reversed(log) if "A0_MODAL_INPUT_GATE_" in line), "No recognized modal result line")
+          result = result[:5000].replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+          print(f"::notice file=tests/survival/ui/a0_modal_gameplay_input_regression.gd,line=1,title=A0 modal probe::{result}")
+          PY
+
+      - name: Install image inspection helpers
+        if: always()
+        run: sudo apt-get install -y imagemagick
+
+      - name: Capture bounded UI frames at 720p, 2K and 4K
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd a0-source
+          for spec in "1280 1280x720" "2560 2560x1440" "3840 3840x2160"; do
+            read -r tag resolution <<< "$spec"
+            echo "Capturing $resolution"
+            set +e
+            timeout --signal=TERM --kill-after=10s 180s xvfb-run -a -s "-screen 0 3840x2160x24" godot --path . --windowed --resolution "$resolution" res://tests/survival/ui/visual_capture.tscn -- "$tag" 2>&1 | tee ".artifacts/a6-ci/capture-${tag}.log"
+            result=${PIPESTATUS[0]}
+            set -e
+            if [[ $result -ne 0 ]]; then
+              CAPTURE_TAG="$tag" CAPTURE_EXIT="$result" CAPTURE_LOG=".artifacts/a6-ci/capture-${tag}.log" python3 - <<'PY'
+          import os
+          from pathlib import Path
+          lines = [line.strip() for line in Path(os.environ["CAPTURE_LOG"]).read_text(errors="replace").splitlines() if line.strip()]
+          relevant = [line for line in lines if any(key in line for key in ("ERROR", "SCRIPT ERROR", "Parse Error", "CAPTURE", "VISUAL"))]
+          summary = " | ".join((relevant or lines[-12:])[-16:]) or "no console output"
+          print(f"::error file=tests/survival/ui/visual_capture.gd,line=1,title=Capture_{os.environ['CAPTURE_TAG']}_exit_{os.environ['CAPTURE_EXIT']}::{summary[:5000]}")
+          PY
+              exit "$result"
+            fi
+          done
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess
+          root = Path(".artifacts/a6-ui")
+          pngs = sorted(root.glob("*.png"))
+          owner_candidates = [
+              Path("artifacts/roof_bed_active.png"),
+              Path("artifacts/roof_bed_death.png"),
+              Path("artifacts/roof_bed_respawn.png"),
+          ]
+          owner_pngs = [path for path in owner_candidates if path.is_file()]
+          all_frames = pngs + owner_pngs
+          if len(all_frames) > 12:
+              raise SystemExit(f"capture bound exceeded: {len(all_frames)} selected PNGs")
+          total = sum(p.stat().st_size for p in all_frames)
+          if total > 80 * 1024 * 1024:
+              raise SystemExit(f"capture byte bound exceeded: {total}")
+          expected = {
+              "a6_workspace_satchel_1280.png", "a6_journey_a_shelter_cost_1280.png",
+              "a6_journey_b_sacrifice_confirmation_1280.png", "a6_journey_c_discovered_clues_1280.png",
+              "a6_journey_c_route_risk_1280.png", "a6_workspace_core_1280.png", "a6_workspace_core_2560.png", "a6_workspace_core_3840.png",
+          }
+          actual = {p.name for p in pngs}
+          if actual != expected:
+              raise SystemExit(f"capture set mismatch; missing={sorted(expected-actual)}, extra={sorted(actual-expected)}")
+          expected_dimensions = {
+              "a6_workspace_satchel_1280.png": "1280x720",
+              "a6_journey_a_shelter_cost_1280.png": "1280x720",
+              "a6_journey_b_sacrifice_confirmation_1280.png": "1280x720",
+              "a6_journey_c_discovered_clues_1280.png": "1280x720",
+              "a6_journey_c_route_risk_1280.png": "1280x720",
+              "a6_workspace_core_1280.png": "1280x720",
+              "a6_workspace_core_2560.png": "2560x1440",
+              "a6_workspace_core_3840.png": "3840x2160",
+              "roof_bed_active.png": "1280x720",
+              "roof_bed_death.png": "1280x720",
+              "roof_bed_respawn.png": "1280x720",
+          }
+          for image in all_frames:
+              dimensions = subprocess.check_output(["identify", "-format", "%wx%h", str(image)], text=True)
+              expected_size = expected_dimensions[image.name]
+              if dimensions != expected_size:
+                  raise SystemExit(f"{image}: expected {expected_size}, got {dimensions}")
+              print(f"{image}: {dimensions}, {image.stat().st_size} bytes")
+          print(f"bounded PNG total: {total} bytes across {len(all_frames)} representative frames")
+          PY
+          echo "### Bounded visual evidence" >> "$GITHUB_STEP_SUMMARY"
+          identify -format '- %f — %wx%h — %b\n' .artifacts/a6-ui/*.png >> "$GITHUB_STEP_SUMMARY"
+          for image in artifacts/roof_bed_active.png artifacts/roof_bed_death.png artifacts/roof_bed_respawn.png; do
+            if [[ -f "$image" ]]; then identify -format '- %f — %wx%h — %b\n' "$image" >> "$GITHUB_STEP_SUMMARY"; fi
+          done
+
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess
+          import tempfile
+          frames = sorted(Path(".artifacts/a6-ui").glob("*.png"))
+          frames.extend(path for path in [
+              Path("artifacts/roof_bed_active.png"),
+              Path("artifacts/roof_bed_death.png"),
+              Path("artifacts/roof_bed_respawn.png"),
+          ] if path.is_file())
+          for png in frames:
+              with tempfile.NamedTemporaryFile(suffix=".jpg") as thumb:
+                  subprocess.run(["convert", str(png), "-resize", "480x270!", "-strip", "-sampling-factor", "4:2:0", "-quality", "30", thumb.name], check=True)
+                  encoded = subprocess.check_output(["base64", "-w0", thumb.name], text=True)
+                  if len(encoded) > 3500:
+                      subprocess.run(["convert", str(png), "-resize", "320x180!", "-strip", "-quality", "20", thumb.name], check=True)
+                      encoded = subprocess.check_output(["base64", "-w0", thumb.name], text=True)
+                  if len(encoded) > 3500:
+                      subprocess.run(["convert", str(png), "-resize", "240x135!", "-strip", "-quality", "12", thumb.name], check=True)
+                      encoded = subprocess.check_output(["base64", "-w0", thumb.name], text=True)
+                  if len(encoded) > 3500:
+                      subprocess.run(["convert", str(png), "-resize", "160x90!", "-strip", "-quality", "8", thumb.name], check=True)
+                      encoded = subprocess.check_output(["base64", "-w0", thumb.name], text=True)
+                  if len(encoded) > 3500:
+                      raise SystemExit(f"visual preview exceeds GitHub annotation's 4096-character truncation limit: {png.name}")
+                  print(f"::notice file=.github/workflows/a6-v3-product-acceptance.yml,line=1,title=A6_preview_{png.stem}::{encoded}")
+          PY
+
+      - name: Upload bounded A6 artifacts and native logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a6-v3-native-acceptance
+          path: |
+            a0-source/.artifacts/a6-ui/*.png
+            a0-source/artifacts/roof_bed_active.png
+            a0-source/artifacts/roof_bed_death.png
+            a0-source/artifacts/roof_bed_respawn.png
+            a0-source/.artifacts/a6-ci/*.log
+            a0-source/a6-editor-import.log
+            a0-source/a6-source-trace-audit.log
+            a0-source/godot-version.txt
+            a3-source/.artifacts/a3-ci/*.log
+          if-no-files-found: warn
+          retention-days: 7
+          include-hidden-files: true
