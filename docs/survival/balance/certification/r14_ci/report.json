@@ -61,7 +61,7 @@
         "T2.3": "FAIL",
         "T2.4": "BLOCKED",
         "T2.5": "BLOCKED",
-        "T2.6": "FAIL"
+        "T2.6": "BLOCKED"
       },
       "titles": {
         "T2.1": "two canonical sites ship real scenes",
@@ -83,7 +83,7 @@
         "T3.6": "PASS",
         "T3.7": "PASS",
         "T3.8": "PASS",
-        "T3.9": "FAIL",
+        "T3.9": "BLOCKED",
         "T3.10": "BLOCKED"
       },
       "titles": {
@@ -287,19 +287,28 @@
       "kind": "runtime",
       "required_stage": "runtime",
       "verdict": "FAIL",
-      "code": "SPAWN_UNSAFE",
-      "detail": "reason=READER_UNAVAILABLE",
+      "code": "SPAWN_OUTSIDE_LIVE_WORLD",
+      "detail": "spawn [389, 291] is not inside (384, 256)",
       "repro": "",
       "stages": {
         "source": "VALID"
       },
       "evidence": [
         "game/survival/world/a1_authored_world_reader.gd:1011: func choose_safe_spawn(run_seed: int) -> Dictionary:",
-        "probe: {\"error\": \"READER_UNAVAILABLE\", \"ok\": false}"
+        "probe: {\"cell\": [389, 291], \"chunk_id\": \"chunk:6:4\", \"in_live_world\": false, \"ok\": true, \"production_spawn_approval\": false, \"region\": \"r_ashen_crown\", \"standable\": true, \"traversal\": \"\"}"
       ],
       "measurements": {
-        "error": "READER_UNAVAILABLE",
-        "ok": false
+        "cell": [
+          389,
+          291
+        ],
+        "chunk_id": "chunk:6:4",
+        "in_live_world": false,
+        "ok": true,
+        "production_spawn_approval": false,
+        "region": "r_ashen_crown",
+        "standable": true,
+        "traversal": ""
       }
     },
     {
@@ -488,9 +497,9 @@
       "owner": "A8",
       "kind": "source-contract",
       "required_stage": "contract",
-      "verdict": "FAIL",
-      "code": "DEEPER_ACCESS_NOT_BLOCKED",
-      "detail": "the player entered the gated area without preparation",
+      "verdict": "BLOCKED",
+      "code": "BLOCKED_NO_BLOCKED_ACCESS_RUN",
+      "detail": "gates are declared; no run shows the player actually refused at the threshold",
       "repro": "",
       "stages": {
         "source": "VALID"
@@ -681,9 +690,9 @@
       "owner": "A0",
       "kind": "real-gameplay",
       "required_stage": "receipt",
-      "verdict": "FAIL",
-      "code": "NOT_SETTLED",
-      "detail": "{\"duplicate_refused\": false, \"granted\": 0, \"note\": \"requires A0's normal-input two-process journey; A7 never fabricates it\", \"reason\": \"NOT_THIS_PROBE\", \"second_granted\": null, \"settled\": false}",
+      "verdict": "BLOCKED",
+      "code": "BLOCKED_NO_2PID_RECEIPT",
+      "detail": "requires a second-OS-process settlement receipt with a duplicate refusal; the R13 O4 oracle rules apply unchanged",
       "repro": "",
       "stages": {},
       "evidence": [
@@ -867,8 +876,8 @@
   "counts": {
     "cases": 30,
     "pass": 5,
-    "fail": 7,
-    "blocked": 13,
+    "fail": 5,
+    "blocked": 15,
     "not_implemented": 5
   }
 }

@@ -5,11 +5,11 @@
 | track | verdict | cases |
 |---|---|---|
 | T1 | **FAIL** | T1.1=PASS, T1.2=FAIL, T1.3=FAIL, T1.4=FAIL, T1.5=BLOCKED, T1.6=BLOCKED |
-| T2 | **FAIL** | T2.1=BLOCKED, T2.2=BLOCKED, T2.3=FAIL, T2.4=BLOCKED, T2.5=BLOCKED, T2.6=FAIL |
-| T3 | **FAIL** | T3.1=BLOCKED, T3.2=FAIL, T3.3=BLOCKED, T3.4=BLOCKED, T3.5=PASS, T3.6=PASS, T3.7=PASS, T3.8=PASS, T3.9=FAIL, T3.10=BLOCKED |
+| T2 | **FAIL** | T2.1=BLOCKED, T2.2=BLOCKED, T2.3=FAIL, T2.4=BLOCKED, T2.5=BLOCKED, T2.6=BLOCKED |
+| T3 | **FAIL** | T3.1=BLOCKED, T3.2=FAIL, T3.3=BLOCKED, T3.4=BLOCKED, T3.5=PASS, T3.6=PASS, T3.7=PASS, T3.8=PASS, T3.9=BLOCKED, T3.10=BLOCKED |
 | T4 | **BLOCKED** | T4.1=NOT_IMPLEMENTED, T4.2=NOT_IMPLEMENTED, T4.3=NOT_IMPLEMENTED, T4.4=BLOCKED, T4.5=NOT_IMPLEMENTED, T4.6=BLOCKED, T4.7=NOT_IMPLEMENTED, T4.8=BLOCKED |
 
-Cases: 30 · PASS 5 · FAIL 7 · BLOCKED 13 · NOT_IMPLEMENTED 5
+Cases: 30 · PASS 5 · FAIL 5 · BLOCKED 15 · NOT_IMPLEMENTED 5
 
 ## Cases
 
@@ -17,7 +17,7 @@ Cases: 30 · PASS 5 · FAIL 7 · BLOCKED 13 · NOT_IMPLEMENTED 5
 |---|---|---|---|---|---|
 | T1.1 | **PASS** | `COMPOSITION_IDENTITY` | A7 | source | one exact immutable composition |
 | T1.2 | **FAIL** | `SIDECAR_WORLD` | A0 | source | one authoritative world (no rendered sidecar) |
-| T1.3 | **FAIL** | `SPAWN_UNSAFE` | A0 | runtime | player spawns safely on the authored continent |
+| T1.3 | **FAIL** | `SPAWN_OUTSIDE_LIVE_WORLD` | A0 | runtime | player spawns safely on the authored continent |
 | T1.4 | **FAIL** | `SITE_OUTSIDE_LIVE_WORLD` | A0 | source | canonical POI approaches lie inside the playable world |
 | T1.5 | **BLOCKED** | `BLOCKED_MISSING_BOOTSTRAP_CONTROL` | A7 | runtime | input bootstrap is diagnosed as harness config, not A1 fault |
 | T1.6 | **BLOCKED** | `BLOCKED_NO_MOVEMENT_RUN` | A0 | runtime | physical movement and collision with normal input |
@@ -26,7 +26,7 @@ Cases: 30 · PASS 5 · FAIL 7 · BLOCKED 13 · NOT_IMPLEMENTED 5
 | T2.3 | **FAIL** | `NO_KNIFE_ITEM` | A3 | source | knife-first exploration is possible |
 | T2.4 | **BLOCKED** | `BLOCKED_NO_EARNED_EVIDENCE` | A7 | receipt | no fixture credential counts as player-earned capability |
 | T2.5 | **BLOCKED** | `BLOCKED_NO_REVISIT_RECEIPT` | A8 | receipt | safe retreat and durable revisit with the same identity |
-| T2.6 | **FAIL** | `DEEPER_ACCESS_NOT_BLOCKED` | A8 | contract | deeper access is genuinely blocked before preparation |
+| T2.6 | **BLOCKED** | `BLOCKED_NO_BLOCKED_ACCESS_RUN` | A8 | contract | deeper access is genuinely blocked before preparation |
 | T3.1 | **BLOCKED** | `BLOCKED_NO_HARVEST_RUN` | A3 | source | authentic finite source → inventory |
 | T3.2 | **FAIL** | `TOOL_WEAR_ABSENT` | A0 | source | tool wear and inventory limits are enforced |
 | T3.3 | **BLOCKED** | `BLOCKED_NO_RESEARCH_RUN` | A3 | source | three distinct research methods are real and distinguishable |
@@ -35,7 +35,7 @@ Cases: 30 · PASS 5 · FAIL 7 · BLOCKED 13 · NOT_IMPLEMENTED 5
 | T3.6 | **PASS** | `FUEL_REQUIRED` | A3 | contract | missing physical fuel fails a job |
 | T3.7 | **PASS** | `DUPLICATE_REFUSED` | A0 | contract | duplicate job ids and early claims are refused |
 | T3.8 | **PASS** | `STALE_RUN_REFUSED` | A0 | contract | stale run and expired window are refused |
-| T3.9 | **FAIL** | `NOT_SETTLED` | A0 | receipt | funded job completes in a separate process, exactly once |
+| T3.9 | **BLOCKED** | `BLOCKED_NO_2PID_RECEIPT` | A0 | receipt | funded job completes in a separate process, exactly once |
 | T3.10 | **BLOCKED** | `BLOCKED_NO_OUTCOME_RUN` | A3 | outcome | the payoff changes a later choice |
 | T4.1 | **NOT_IMPLEMENTED** | `FEATURE_ABSENT` | A0 | runtime | Core can be carried, used and stored |
 | T4.2 | **NOT_IMPLEMENTED** | `FEATURE_ABSENT` | AVFX | runtime | a physical Core gates research |
@@ -74,10 +74,10 @@ runtime 384x256 != authored 1024x768; A0's mount declares the authored stream ru
 - sidecar markers ['render_legacy := true']
 - A0 poi-mount refusal `A0_WORLD_ABSENT` (game/survival/a0_poi_mount.gd:69)
 
-### T1.3 — FAIL `SPAWN_UNSAFE`
-reason=READER_UNAVAILABLE
+### T1.3 — FAIL `SPAWN_OUTSIDE_LIVE_WORLD`
+spawn [389, 291] is not inside (384, 256)
 - game/survival/world/a1_authored_world_reader.gd:1011: func choose_safe_spawn(run_seed: int) -> Dictionary:
-- probe: {"error": "READER_UNAVAILABLE", "ok": false}
+- probe: {"cell": [389, 291], "chunk_id": "chunk:6:4", "in_live_world": false, "ok": true, "production_spawn_approval": false, "region": "r_ashen_crown", "standable": true, "traversal": ""}
 
 ### T1.4 — FAIL `SITE_OUTSIDE_LIVE_WORLD`
 3/3 canonical sites cannot be approached; package_status=A8_OWNER_CONTRACT_REFRESH_READY_FOR_A0_REVIEW_NOT_MOUNTED
@@ -118,8 +118,8 @@ requires an exit+return receipt for the same site_instance_id in a second proces
 - game/survival/a0_poi_mount.gd:158: func finish_transition(save: Node, site_instance_id: String) -> Dictionary:
 - game/survival/a0_poi_mount.gd:168: return {"ok": false, "reason": "A0_RUN_IDENTITY_MISMATCH"}
 
-### T2.6 — FAIL `DEEPER_ACCESS_NOT_BLOCKED`
-the player entered the gated area without preparation
+### T2.6 — BLOCKED `BLOCKED_NO_BLOCKED_ACCESS_RUN`
+gates are declared; no run shows the player actually refused at the threshold
 - 7 production_mount_gates declared
 - package_status=A8_OWNER_CONTRACT_REFRESH_READY_FOR_A0_REVIEW_NOT_MOUNTED
 
@@ -170,8 +170,8 @@ expiry/identity guards present
 - game/survival/economy/offline_operation_planner.gd:316: result["reason"] = "run_id_mismatch"; return false
 - game/survival/economy/a0_economy_composition.gd:93: if bool(_last_settle.get("run_expired", false)):
 
-### T3.9 — FAIL `NOT_SETTLED`
-{"duplicate_refused": false, "granted": 0, "note": "requires A0's normal-input two-process journey; A7 never fabricates it", "reason": "NOT_THIS_PROBE", "second_granted": null, "settled": false}
+### T3.9 — BLOCKED `BLOCKED_NO_2PID_RECEIPT`
+requires a second-OS-process settlement receipt with a duplicate refusal; the R13 O4 oracle rules apply unchanged
 - game/survival/economy/a0_offline_host.gd:175: last_settle = {"ok": true, "reason": "nothing_to_settle", "duplicate": false,
 
 ### T3.10 — BLOCKED `BLOCKED_NO_OUTCOME_RUN`

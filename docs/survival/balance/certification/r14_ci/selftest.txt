@@ -22,6 +22,9 @@ ok   T3.6 fuel escrow → PASS
 ok   T3.9 two granted → FAIL                              
 ok   T3.9 not exactly once → FAIL                         
 ok   T3.9 exact once → PASS                               
+ok   T2.6 refused=null → BLOCKED                          
+ok   T2.6 refused=false → FAIL                            
+ok   T3.9 not-this-probe → BLOCKED                        
 ok   T4.1 core absent → NOT_IMPLEMENTED                   
 ok   T4.1 core present + gate passes → PASS               
 ok   T4.1 core present, no run → BLOCKED                  
@@ -31,4 +34,4 @@ ok   T1.1 tree diverges → FAIL
 ok   maturity never grants HUMAN_ACCEPTED                 
 ok   maturity grants TEST_HARNESS_VALID first             
 
-A7_CERT_SELFTEST 32/32
+A7_CERT_SELFTEST 35/35
