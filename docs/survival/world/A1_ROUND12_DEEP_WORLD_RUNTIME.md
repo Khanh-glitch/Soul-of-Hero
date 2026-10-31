@@ -1,6 +1,6 @@
 # A1 Round 12 — deep world runtime handoff
 
-Status: **SOURCE IMPLEMENTATION / NATIVE CI PENDING**. This is an additive A1 source reader and isolated native fixture, not an A0 production mount. PR20 remains open; A0 owns production adoption.
+Status: **SOURCE READY / ISOLATED NATIVE FIXTURE ACCEPTANCE EVIDENCE**. The exact-head World Reader run, immutable evidence manifest and measured report are linked in the PR20 handoff. This is an additive A1 source reader and isolated native fixture, not an A0 production mount. PR20 remains open; A0 owns production adoption.
 
 ## Consumable files
 
@@ -103,15 +103,21 @@ Captures come from the live source stream at **1280×720, 2560×1440 and 3840×2
 
 CI first runs a 64-cell **budget probe** with 720p/1440p/2160p captures plus one explicit single-resolution 720p branch capture. The full process will not launch unless a measured, margined timeout fits the 1,800-second cap. A probe is always `NATIVE_FIXTURE_PASS=NOT_TESTED`; any Godot `SCRIPT ERROR` fails the job even if later assertions continue.
 
+## Exact-head evidence and visual review
+
+The PR20 handoff is the authoritative pointer to the exact commit, World Reader run, Git-blob evidence manifest and fresh native report; this document deliberately does not duplicate a run ID that can become stale. The completed full-matrix oracle requires **249 native assertions / 0 failures**, an independent **128-check / 0-failure** report validation, **37 driven journeys**, **36 spawn cases**, **189 stream events** and **69 portable captures**. It also requires zero unexpected contacts, within-route teleports or stream violations. Capture dimensions and SHA-256 values are checked against the actual PNG bytes. Measured configure/mount/capture timings remain in the native report; headless CI software rendering is not a target-hardware performance certification.
+
+Fresh review of the actual Godot frames covers every region, the physical Quarry/Orchard/Mill approaches, the reloaded palisade, day/night variants and all three resolutions. The source windows are legible and the Knight remains at a consistent 1× world scale, but visual review is **HOLD/DEFECT**: repetitive or dead fields, crude banks/paths, weak night landmark contrast and staged proxy composition still prevent visual acceptance. Successful capture creation and physical traversal do not override that review.
+
 ## Dispositions
 
 Each gate is independent:
 
 - `SOURCE_READY`: source pins, compiler and reader contract only.
-- `NATIVE_FIXTURE_PASS`: the completed isolated Godot matrix only.
+- `NATIVE_FIXTURE_PASS`: the completed isolated Godot matrix at the exact head cited in PR20 only.
 - `PRODUCTION_MOUNTED`: A0 production integration; not established by A1.
 - `PLAYER_PLAYABLE`: production player/E2 experience; not established by a fixture.
-- `VISUALLY_ACCEPTED`: separate visual review; never inferred from successful capture creation.
+- `VISUALLY_ACCEPTED`: separate visual acceptance; never inferred from successful capture creation. The current source-window review is HOLD/DEFECT.
 - `NOT_TESTED`: explicit absence of evidence, not a failure or silent pass.
 
 No loot, POI economics, production save behavior, Gold effects, boss behavior, weather/cargo/pets, six-Elder recreation, or final movement/friction balance is authorized here.
