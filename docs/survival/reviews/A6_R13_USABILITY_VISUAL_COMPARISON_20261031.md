@@ -1,172 +1,220 @@
 # A6 R13 — creator visual comparison and handoffs
 
-Round: **R13-A6-USABILITY**. Branch `arena/05e0328d-soul-of-hero`.
-Authority read from `origin/feature/survival-rpg-foundation-20261029`: `CURRENT_PRODUCT_CONTRACT.md`,
-`DECISIONS.md` (D051–D074, D074 confirms A6 = authoritative read-only UX), `ACCEPTANCE.md`
-P1–P8, `INDEPENDENT_DEEP_REVIEW_PROTOCOL.md` R0–R5. Shared ledger: issue #9 comment 6545071995.
+Round: **R13-A6-USABILITY (continuation)**. Branch `arena/05e0328d-soul-of-hero`.
+Scope is presentation only: no A3 business logic, no A0 movement, no merge, and no
+self-declared visual acceptance.
 
-**No self-declared product visual acceptance.** Everything below is either a measured
-result or a question for the creator.
+Authority read from `origin/feature/survival-rpg-foundation-20261029`
+(`CURRENT_PRODUCT_CONTRACT.md`, `DECISIONS.md` D051–D074, `ACCEPTANCE.md` P1–P8,
+`INDEPENDENT_DEEP_REVIEW_PROTOCOL.md`) plus the R13 ledger in issue #9 and the joint
+audit comment `6546555828`, which accepted the pointer/rebuild/focus/recipe-identity
+work as scoped and asked for this round to stay narrow: localisation, legibility,
+hierarchy, and **two strongly contrasted 1× views of the same scene**.
 
-## 1. What this round fixed, with proof
+## 1. The five defects the creator named, and what answered each
 
-| defect | how it looked to a player | proof it is fixed |
+| what the creator saw at 1× | cause | what changed | evidence |
+| --- | --- | --- | --- |
+| every recipe was the same green button | the row **was** the `Button`, so the authored green button texture painted every row identically | rows are plates now. State is stated three ways: a coloured tag or word, a one-word verdict (`CHẾ` / `THIẾU` / `ĐẦY` / `TẮT` / `ĐÃ BIẾT`), and the spine/edge of the plate. The green survives only where it means "press me": `ĐÓNG`, `CHỌN`, `HUỶ` | `survival_ui_workshop_queued_dir{a,b}_1280x720.png` |
+| English nouns in a Vietnamese panel (`Field meal`, `Furnace kit`, `Stone pick`, `Workbench kit`) | the panel printed the A3 catalog's English `label` | `game/survival/ui/a6_vietnamese_names.gd`: one display table for all **56** catalog items, all **36** recipe outputs and **5** station kinds, keyed by the catalog's own ids. Unknown ids fall back to the catalog label, then to the raw id — nothing is invented. A3 data is untouched | `Bữa ăn dã chiến`, `Bộ lò rèn`, `Cuốc đá`, `Bộ bàn thợ` in the same frames |
+| Vietnamese pixel text was muddy | **measured, not guessed** — see §2 | the body face is VT323 in both directions, and the smallest type on these surfaces went from 8–10 canvas units to 11–13 | §2 |
+| the missing-ingredient text was tiny and pushed to the right | it was the right-hand "state" column, at 10 units, aligned right | the shortfall is now the **first thing on the cost line**, left-aligned, at 11 units, in warn colour; the cost chips beside it carry the requirement only | `workshop_*` frames, `Thiếu …` rows |
+| queue rows could not be read at a glance | one bar, a 9-unit status word and `COLLECT`/`CANCEL` in English-ish words | the queue now sits **above** the catalog, names the product (through the catalog's own recipe→output table), draws its progress, states its status in Vietnamese, and offers exactly one action | `survival_ui_workshop_queued_*` |
+| two empty avatar card frames | an unstaged `TextureRect` and a caption that said `(chưa có hình)` | a deliberate seal: accent band per identity, framed slot, the word being chosen, and a tag that states the truth. Still no Knight, still no stand-in character | `survival_ui_avatar_choice_dir{a,b}_1280x720.png` |
+
+Two smaller defects the new frames exposed and this round also fixed: a row said `ĐẦY`
+on **every** row whenever the station queue was full (hiding the payability answer — the
+header states queue fullness once now), and the cost chips read `4/2`, which made the
+player work out which number was which (the chip carries the requirement; the colour and
+the shortfall sentence carry whether the bag covers it).
+
+## 2. Why the font changed — the measurement, not a preference
+
+Both faces ship in the repo with their OFL licences. Rendering the same Vietnamese
+string with the same string at the same pixel size, offline, with the shipped TTFs:
+
+| face | 20 px | 22 px | 24 px | 28 px | 32 px |
+| --- | --- | --- | --- | --- | --- |
+| Handjet-SemiBold | unreadable | unreadable | unreadable | unreadable | unreadable |
+| VT323-Regular | clean | clean | clean | clean | clean |
+| GrenzeGotisch-SemiBold | partial | partial | use as display only | — | — |
+
+Handjet's precomposed glyphs for **stacked** marks (`Bữa`, `XƯỞNG`, `Thiếu`, `NỮ`)
+overlap into one blob at every raster size — growing the type does not fix it, which is
+why "make the font bigger" was not the answer. This is visible in the previous build's
+own published frame: at 3840×2160 the workshop title is still a blocky smear, because
+the engine rasters at canvas size (640×360), not at window size.
+
+Consequences applied to both directions: the survival theme's default, `Button`, `Label`
+and `RichTextLabel` faces are VT323; the HUD's region/carry/number/prompt type went
+8–12 → 11–13 units; the workshop's name/cost/caption type went 11/10/9 → 15/13/12.
+
+**What this does not claim:** VT323 is not a pixel-art *design* decision for the whole
+game — it is the smallest change that makes Vietnamese legible at the sizes this
+interface needs. If the creator wants Handjet's narrower voice back, the only honest
+route is to drop diacritics, which this project will not do.
+
+## 3. Two directions, same scene, same content
+
+`A6_VISUAL_DIRECTION` selects the take; the CI matrix renders **both** per resolution, in
+separate processes and with separate save files, so neither take inherits the other's
+state.
+
+| | **A — "SỔ TAY DÃ NGOẠI"** (field ledger) | **B — "BẢNG KHẮC"** (carved board) |
 | --- | --- | --- |
-| the workshop named controls by output item | five item ids were produced by 2–3 recipes, so a click could queue a recipe the player did not choose (23/36 ids differ from their product) | `economy_recipe_identity_test.gd` over the real catalog, with the collision case (`smelt_iron`/`smelt_ore` → `iron_ingot`) asserted as two separate controls |
-| panel rebuild ran inside the button's own `pressed` signal | a click could land twice, or on a row that no longer existed | `a6_workshop_gui_input_test.gd`: real pointer motion + press + release at 720p/1440p/2160p, 19 checks each — one click queues one job, a rebuild under a stationary pointer queues nothing, a click after a wheel scroll queues the row under the pointer, focus never survives on a freed node |
-| refusals printed owner status codes in English | `Cannot queue: missing_inputs` in a Vietnamese game | refusals are Vietnamese sentences ("thiếu nguyên liệu", "hàng đợi đã đầy"); unknown codes fall back to a neutral sentence; the GUI test asserts both that a refusal is never phrased as success and that no token leaks |
-| scrollbar was Godot's stock grey grabber on the parchment border | an engine widget dropped into a hand-drawn window | the bar now lives in its own gutter beside the list (`A6UiKit.style_scroll`) |
-| workshop chrome was English | `WORKSHOP`, `CLOSE [C]`, `station offline`, `short 8 stone chunk` | `XƯỞNG CHẾ TÁC`, `ĐÓNG [C]`, `trạm ngưng chạy`, `thiếu 8 × stone chunk`; every glyph checked against Handjet-SemiBold's cmap before use |
-| footer printed on the parchment's bottom border | the last line sat on the frame | window pinned to a fixed rect inside the 640×360 canvas |
+| surface | the authored parchment window, thrown open as a ledger | a dark walnut plate with a warm hairline edge |
+| rows | pale plates with an ink hairline under each: a register | dark plates with a 3-unit state-coloured spine |
+| names | VT323, ink on paper, quiet | Grenze Gotisch, cream, louder |
+| verdict | a coloured **word**, ink-on-paper | a filled coloured **tag** |
+| stations | the authored wooden bar, cream label | a dark bar with a gold rule and gold label |
+| feel | a notebook you keep while working | a board hanging in the shop |
 
-### Verification cost is now honest
+Both keep the same layout budget, the same node names, the same input behaviour and the
+same numbers. The frames are paired by state name: `…_dira_…` and `…_dirb_…`.
 
-Three CI rounds this round were spent on "the engine never loaded the script" rather
-than on the product: a dropped `_fail()` helper, a dropped `Rig` class, and untyped
-`Dictionary` fields. All three are now caught in about a second by
-`tools/review/script_symbols.py` (helper calls + declaration-line types against a
-baseline), which fails the lint job before any engine starts. `parse OK` from a
-grammar-only parser is not evidence that a script compiles.
+**Recommendation: A (ledger).** Reasons, in order of weight:
 
-## 2. Frames to review (native 1×, three resolutions)
+1. A keeps the parchment and the wooden station bar that the rest of the survival
+   surfaces (HUD card, build strip, return card) already use; B would introduce a second
+   material language the other seven A6 screens do not have.
+2. At 1× the ledger's ink-on-pale-plate wins on the smallest text (the cost chips), while
+   B's cream-on-dark needs one more step of contrast to reach the same legibility on the
+   smallest line.
+3. B's gold tags are the most striking element on the surface, which is *good* for a
+   collectible queue and *bad* for a list where five of eight rows can be unabtainable;
+   A's colour is confined to the word that states the verdict.
 
-Published by `a6-survival-ui-render.yml` into `docs/survival/reviews/native/`:
+That is a recommendation, **not a decision**: D054 keeps the art language with the
+creator.
 
-| frame | resolution | what it is |
+## 4. Frames (native 1×, published by CI)
+
+All frames are at `docs/survival/reviews/native/`, at **1280×720**, **2560×1440** and
+**3840×2160** (with a `_half` viewing copy for the 4K ones).
+
+| frame | what it shows | source of the data |
 | --- | --- | --- |
-| `world_economy_1280x720.png` | 1280×720 | home workshop through the real world, real inventory, real affordability |
-| `world_economy_2560x1440.png` | 2560×1440 | same |
-| `world_economy_3840x2160.png` | 3840×2160 | same, plus `_half` copy for window-scale reading |
-| `world_fresh_world_*.png` | all three | overworld HUD on the live world |
-| `world_build_*.png` | all three | construction strip |
-| `world_roof_inside/outside/adjacent_*.png` | all three | roof fade and room visibility |
-| `survival_ui_avatar_choice/female/title/hud_field/return_digest/return_guidance_*` | all three | A6-owned survival surfaces |
+| `survival_ui_workshop_queued_dira/dirb_*` | workshop with one **real** A3 job in the queue, real bag totals, real affordability | production overworld, production `economy_session` |
+| `survival_ui_workshop_refused_dira/dirb_*` | the same surface after the session refused a second queue (queue full) — the notice is the production refusal sentence | production session answer |
+| `survival_ui_avatar_choice_dira/dirb_*`, `..._avatar_female_*` | New Game's identity step, male/female focused, unstaged art | real screen, real manifest |
+| `survival_ui_hud_field_dira/dirb_*` | HUD over the authored **dark** backdrop | production `overworld_hud.gd` |
+| `world_fresh_world_1280x720_dira/dirb`, `…_2560x1440_…`, `…_3840x2160_…` | HUD on the **bright** live world | A0's native world driver |
+| `world_economy_*_dira/dirb` | workshop opened through the real world | A0's native world driver |
+| `world_build_*`, `world_roof_*` | build strip, roof fade — unchanged surfaces, re-rendered to prove they did not regress | A0's native world driver |
 
-**Evidence class.** `world_*` frames are native production components on the real
-scene. `survival_ui_*` frames are the production component driven by a fixture — they
-are *not* a claim that a player earned those numbers, and they are labelled that way in
-`docs/survival/reviews/`. Neither is a human playtest.
+**Evidence class.** `world_*` frames are production components on the real scene.
+`survival_ui_*` frames are production components driven by fixtures — the workshop ones
+run on the production overworld with the production session, and their inventory is
+granted through `SaveService.grant_inventory_item` with a transaction key, which is this
+repo's established fixture pattern. They are not a claim that a player earned those
+numbers, and they are not a human playtest.
 
-## 3. Visual choices that are yours, not mine
+**Not captured this round, and not claimed:** a job in the `ready`/`LẤY` state. The CI
+window is unfocused, so the A3 session is given no clock and a queued job never
+completes; the frame that was going to show it showed the same queue twice, so it was
+replaced with the refusal state instead. The collect affordance is therefore
+**NOT_TESTED at 1×** this round.
 
-D054 delegates asset selection but keeps the language of the game with you. These are
-the open questions the frames raise, each with the two options I can implement quickly
-and what each costs:
+## 5. Input, identity and scroll: unchanged, and re-proved
 
-| # | choice | option A | option B | current |
-| --- | --- | --- | --- | --- |
-| 1 | recipe card rhythm | one card per row, tall, icon + name + costs (current) | two columns of half-height cards, more on screen | A |
-| 2 | scroll affordance | gutter bar (current) | no bar; a "▼ còn nữa" tag on the last visible card | A |
-| 3 | cost chips | icon + `have/needed`, amber when short (current) | plain text cost line, chips only for shortfalls | A |
-| 4 | refusal feedback | inline notice line under the header (current) | flash the offending cost chip, no notice line | A |
-| 5 | job rows | quiet bar + status word + COLLECT/CANCEL (current) | collect-all button once, rows collapsed | A |
-| 6 | workshop title | `XƯỞNG CHẾ TÁC` (current) | `CHẾ TÁC` | A |
-| 7 | bar/parchment palette | authored kit colours (current) | darker wood frame for modal windows | A |
-
-If nothing is answered, A stays. **None of these change the contract**: the control
-names, the cost text shape and the action semantics stay exactly as they are, so a
-later choice is a styling pass, not a rewrite.
-
-## 4. Exact handoff — A0
-
-Two items, both measurable, neither edited by me.
-
-### 4.1 Continue → home actor does not walk (blocking P2, and the only red native gate)
+The R13 GUI acceptance is not re-litigated here. The same suite ran at the same three
+resolutions on the redesigned surface:
 
 ```text
-21_continue_home_walk: walked neither direction (needs 4.0 px)
-  [move_right moved 1.80 px] {bounds=150,44 900x1112 controls=true walkable=on auto=false slides=<sampled while held>}
-  [move_left  moved 2.07 px] {…same…}
-  permitted=no-gate modals=[] velocity=(0.0, 0.0) route=home
+A6 WORKSHOP GUI INPUT PASSED (19 checks) at 1280x720 (canvas 640x360)
+A6 WORKSHOP GUI INPUT PASSED (19 checks) at 2560x1440 (canvas 640x360)
+A6 WORKSHOP GUI INPUT PASSED (19 checks) at 3840x2160 (canvas 640x360)
 ```
 
-The diagnosis now rules out three of the four candidates: bounds are a real
-900×1112 rect (not collapsed), `controls_enabled` is true, a walkability test is
-installed, and no auto-move is running. What remains is `move_and_slide()` being
-stopped immediately, or `_resolve_walkable_position()` returning `previous` for the
-candidate, the x-only candidate **and** the y-only candidate.
+Real pointer motion, press and release, real wheel events, across a list rebuild:
+one click queues one job, a rebuild under a stationary pointer queues nothing, a click
+after a wheel scroll queues the row under the pointer, an unaffordable row does not
+queue, a refusal is never phrased as success and never prints an owner token, and focus
+never survives on a freed node. Node names (`Recipe_<recipe_id>_<station>`) and the
+pressed handler are unchanged, which is why the suite still passes after the row was
+rebuilt.
 
-**What A0 needs to answer:** does `_walkability_test` accept any point within ~4 px of
-the restored spawn, and is the restored spawn inside a solid? The file and lines are in
-`docs/survival/ux/A6_A0_HOME_LOCOMOTION_HANDOFF_20261031.md`. A6 will re-run the same
-capture and report the new numbers unchanged.
+One assertion *was* changed, deliberately and in the open: `economy_recipe_identity_test`
+asserted `text.begins_with("Charcoal")`, i.e. it pinned the old English headline. It now
+asserts `begins_with("Than củi")` **and** `not contains("burn_charcoal")`, which is the
+same fact (the headline names the product, never the recipe id) expressed in the
+interface's language. It is not weaker: it now also fails if the id leaks through.
 
-Note for A0: the capture now samples `velocity` and slide collisions **while the key is
-held**. Earlier readings were taken after release and answered nothing.
+## 6. Data: what the frames really draw
 
-### 4.2 Projections A6 still cannot draw
-
-| value | status | A6 today |
+| value in these frames | really connected? | producer |
 | --- | --- | --- |
-| `soh.a6.account_wallet.v1` — secured Ragnarok currency | contract + validator landed, no owner projection | nothing drawn |
-| in-world time / season (`D060`) | no projection | nothing drawn |
-| equipped tool | no projection | nothing drawn |
-| durability | **no such concept anywhere in the repo** | nothing drawn |
-| Core charges (`D072`) | no projection | nothing drawn |
-| death bag (`D073`) | no projection | nothing drawn |
+| bag totals, capacity (`TÚI 6/30`) | **yes** | A0 `SaveService.get_inventory_capacity_snapshot` |
+| recipe list, costs, durations, station, queue capacity | **yes** | A3 catalog + `economy_session` |
+| affordability per row | **yes**, derived from the two above | A6, read-only |
+| jobs, status, elapsed/duration | **yes** | A3 `economy_session.jobs()` |
+| refusals | **yes** | A3 command result → A6 Vietnamese mapping |
+| HUD vitals / provisions / carry / counts | **yes** | A0 signals + `SaveService` |
+| secured wallet `soh.a6.account_wallet.v1` | **no** — contract + validator, no owner projection | drawn as absent |
+| in-world clock / season (D060) | **no** — no projection | absent |
+| equipped tool | **no** — no projection | absent |
+| durability | **no such concept in the repo** | absent |
+| Core charges (D072) | **no** — no projection | absent |
+| death bag (D073) | **no** — no projection | absent |
+| region name | yes, but it is **A0's English string** (`THE HOLLOW MARCHES · WESTERN FOUNDRY QUARTER`), trimmed with an ellipsis | A0 fixture string, not an A6 label |
 
-Shapes are in `docs/survival/ux/A6_DATA_AUTHORITY_AND_BLOCKED_OWNER_CONTRACTS_20261031.md`.
-A6 will not fabricate any of them, and `a6_data_authority_consumer_test.gd` fails the
-build if an A6 file grows its own copy.
+`a6_data_authority_consumer_test.gd` fails the build if an A6 file grows its own copy of
+any of the missing projections.
 
-## 5. Exact handoff — A7
+## 7. The one external blocker (recorded once, not re-run)
 
-What A7 should independently check, and what it should refuse:
-
-1. **Refuse** any claim that the workshop controls work because `pressed.emit()` was
-   called. Only real pointer events count; `a6_workshop_gui_input_test.gd` is the shape
-   to copy, and its deliberate negative is that it skips cards half-hidden by the clip
-   edge rather than clicking through them.
-2. **Refuse** `parse OK` as compile evidence. Run `tools/review/script_symbols.py`
-   first; it catches dropped helpers and dropped inner classes.
-3. **Check** that a refusal is never phrased as success and never prints an owner token.
-4. **Check** the recipe identity invariant against the live catalog, not a fixture:
-   36 recipes, 30 distinct first-output ids, `Recipe_burn_charcoal_*` present,
-   `Recipe_charcoal_*` absent.
-5. **Do not** accept the home-walk gate as green on an idle frame. The only pass is real
-   displacement in both directions.
-
-## 5.1 The one reproducible blocker: licensed-art transport
-
-The avatar half of this round cannot produce new evidence, and the reason is outside
-the code:
+The avatar art cannot be staged in CI, and the reason is access, not code:
 
 ```text
 $ git ls-remote https://github.com/Khanh-glitch/APEX-CHAOS.git
 remote: Write access to repository not granted.
 fatal: unable to access ...: The requested URL returned error: 403
-$ gh api repos/Khanh-glitch/APEX-CHAOS
-{"message":"Resource not accessible by integration","status":"403"}
+$ gh api repos/Khanh-glitch/APEX-CHAOS                       → 403 Resource not accessible by integration
+$ gh api repos/Khanh-glitch/APEX-CHAOS/contents?ref=<pin>    → 403
+$ codeload.github.com/Khanh-glitch/APEX-CHAOS/tar.gz/<pin>   → 404
 ```
 
-`a6-native-avatar-validation.yml` → `private-staged-art` → *Fetch the licensed source
-archives from their Git refs* fails at the first step, so every downstream stage is
-skipped. The same job **passed** at `a5630426`, so this is a regression in access, not
-in the workflow: the pinned commit/blob/SHA-256 checks never run.
+Exhausted before concluding that: every remote branch was searched
+(`git ls-tree -r` for `unarmed|craftpix|555940|419402|avatar_art`), both pinned commits
+were looked up in this repository (`git cat-file` → absent), and no `private_art/`
+staging directory exists in this checkout. So `a6-native-avatar-validation.yml` fails at
+*Fetch the licensed source archives*, and every dressed-avatar frame is **NOT_TESTED**,
+not failed and not passed.
 
-| owner | what is needed |
+| owner | what would unblock it |
 | --- | --- |
-| asset repository access | either make `Khanh-glitch/APEX-CHAOS` readable by this workflow's identity, or supply `A6_ASSET_TOKEN` (read-only) as a repository secret — the fetch script already uses it when present |
-| nobody else | no A6, A0 or A7 code change unblocks this |
+| asset repository | make `Khanh-glitch/APEX-CHAOS` readable by the workflow identity, or add a read-only `A6_ASSET_TOKEN` secret (the fetch script already uses it) |
+| nobody | no A6, A0 or A7 change unblocks it |
 
-**What is unaffected:** `public-clone-fail-closed` **PASSES** on the same run, which is
-the honest no-art state — no Knight substitute, no claimed identity, no unlicensed
-sprite. What cannot be claimed this round is any *dressed* avatar frame at 720p, 1440p
-or 2160p: those are **NOT_TESTED**, not failed, and not passed.
+What is unaffected: the **no-art state fails closed** — no Knight, no substitute
+character, no claimed identity, and now a deliberate seal instead of two empty frames.
 
-## 6. Remaining scope, stated plainly
+## 8. What the creator actually has to decide
 
-* **Not done:** the wallet row, durability, Core charges, bag recovery and the in-world
-  clock — all blocked on owner projections, all drawn as absent rather than faked.
-* **Blocked externally:** any new dressed-avatar frame — see §5.1 (asset repository 403).
-* **Not done:** grade 1/2 armour appearance (D051 source-approval gate; the consumer
-  keeps the same character at grade 0 and names the gate).
-* **Not mine:** the home locomotion failure above.
-* **Inspected this round at 1×:** `world_economy_1280x720.png` from run 41221642100
-  (`a5d1d407`), the build that carries the gutter scrollbar: the bar is visible in its own
-  gutter, the list keeps its full width, the footer is on parchment rather than on the
-  border, and the fourth card is still clipped by the clip edge — which is the plain
-  overflow cue, not a layout fault, and is option 2 in the choice table above.
-* **Not inspected this round at 1×:** `world_economy_2560x1440.png` and
-  `world_economy_3840x2160.png` from the same run. They are rendered and published, so
-  they can be read, but no one has looked at them yet and they are not claimed as seen.
+1. **Direction: A (ledger) or B (board)?** Recommendation above is A; both are already
+   built, so the choice is one constant.
+2. **Body face: VT323 for the survival interface (both directions).** If you want
+   Handjet's narrower voice back anywhere, say which words may lose their diacritics —
+   this round will not drop them.
+3. **Technology rows keep the catalog's English cost list** (`4 knowledge spares`,
+   `3 iron scrap`) because A0's research gate asserts those exact substrings. Localising
+   them needs a one-line change on A0's side:
+   `tests/survival_research_clock_ui_test.gd:66` → assert the Vietnamese names instead.
+   Do you want me to hand that patch to A0?
+4. **Queue above the catalog** (what is running first) — keep, or put recipes first?
+5. **The refusal line lives in the header notice** — keep, or flash the offending chip?
+6. **`ĐANG CHẾ` as the queue heading** — or `HÀNG ĐỢI`?
+
+## 9. Not done, and not claimed
+
+* No merge, no `VISUAL_ACCEPTED`, no "product integrated". The branch is a review branch.
+* No A3/A0/A7 change: `economy_panel.gd` (A6 surface), `overworld_hud.gd` type sizes and
+  the A6 theme's faces only.
+* The `LẤY` (collect) state is not captured — see §4.
+* Region names, prompt strings and world labels that come from A0 data are still English;
+  they are A0's strings, not A6 labels, and this round did not touch them.
+* Grade 1/2 armour appearance stays blocked on D051; the consumer keeps grade 0 and names
+  the gate.
+* A0's `21_continue_home_walk` failure (1.80 px / 2.07 px against a 4.0 px floor) is
+  unchanged and is not A6's to fix; the handoff is
+  `docs/survival/ux/A6_A0_HOME_LOCOMOTION_HANDOFF_20261031.md`.

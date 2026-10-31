@@ -334,6 +334,34 @@ func _ensure_world() -> bool:
 	return false
 
 
+## Layout numbers, printed rather than eyeballed: a row wider than its scroll viewport
+## is clipped at the right edge, and right-aligned text is exactly what disappears first.
+## This names the widest child so the fix is aimed, not guessed.
+func _report_widths(panel: Node) -> void:
+	var scroll := panel.find_child("Scroll", true, false) as ScrollContainer
+	if scroll == null:
+		printerr("A6 SURVIVAL UI CAPTURE: widths: no Scroll node")
+		return
+	var list := scroll.find_child("Jobs", false, false) as Control
+	var widest := ""
+	var widest_x := 0.0
+	if list != null:
+		for child: Node in list.get_children():
+			var control := child as Control
+			if control == null:
+				continue
+			var minimum := control.get_combined_minimum_size().x
+			if minimum > widest_x:
+				widest_x = minimum
+				widest = String(control.name)
+	printerr("A6 SURVIVAL UI CAPTURE: widths viewport=%d list_min=%d widest=%s(%d)" % [
+		int(scroll.size.x),
+		int(list.get_combined_minimum_size().x) if list != null else -1,
+		widest,
+		int(widest_x),
+	])
+
+
 ## One refused queue through the panel's own command path, so the frame shows the
 ## sentence a player would get.
 func _refuse_once(panel: Node, session: Node) -> void:
@@ -429,6 +457,7 @@ func _capture_workshop(state: String) -> void:
 	panel.call(&"refresh")
 	await _settle(6)
 	printerr("A6 SURVIVAL UI CAPTURE: workshop list rebuilt ", state)
+	_report_widths(panel)
 	if not bool(panel.call(&"is_open")):
 		_failures.append("%s: the workshop did not open" % state)
 		return
