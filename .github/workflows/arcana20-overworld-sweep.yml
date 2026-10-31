@@ -1,3 +1,4 @@
+# Includes revised #09, #11, #16 and #20 opt-in candidates at the triggering SHA.
 name: ARCANA20 all-20 actual-overworld frozen sweep
 on:
   workflow_dispatch:
