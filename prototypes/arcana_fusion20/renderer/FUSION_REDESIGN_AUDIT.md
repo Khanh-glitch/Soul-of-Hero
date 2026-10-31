@@ -54,7 +54,10 @@ Max errors were 243–254. These differences are substantial and cannot be
 passed by adjusting tolerances. Investigation found that the D port incorrectly
 used B's seed-hashing wrapper for D's raw-seeded mulberry32 generator; the D
 path now uses raw seeds and accounts for the source renderer's initial reset dt.
-The above metrics are pre-fix; rerun the diagnostic before drawing conclusions. Diagnose geometry, timing, bloom and alpha
+The above metrics are pre-fix. After the fix, run `41201951664` measured
+nonblack-mask IoU 0.344–0.438 at 0.5–7.4 s and 0.767/0.775 at 7.9/8.15 s;
+RGB MAE ranged 1.08–6.83, with max errors up to 254. It improved the
+comparison, but is still not a like-for-like alpha parity PASS. Diagnose geometry, timing, bloom and alpha
 against matching passes before setting a defensible regression gate. Original D
 continues after 8.6 s; it does not supply a gold reference for the authored
 native OUT extension. Matching isolated passes, proper alpha/bloom semantics,

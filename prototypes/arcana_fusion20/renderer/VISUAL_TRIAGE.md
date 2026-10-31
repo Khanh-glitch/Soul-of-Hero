@@ -78,3 +78,11 @@ silently ignores out-of-range typed-array writes, whereas Godot raised an index
 error. The port now explicitly skips that partial bloom block (preserving JS
 behavior) and has a bright-bottom-edge regression check; CI re-verification is
 pending. This is not a substitute for a source/native A parity gate.
+
+The latest complete source review artifact is from successful run
+`41201951664` (commit `e185f43ef`); the matching real-crypt capture is run
+`41201951676`. Its 60-frame overlap probe measured 55 frames with both #02 and
+#10 active, both-active p95 **803.183 ms/frame**, and Godot static memory rose
+from 105,621,987 to 117,080,407 bytes. This is shared software-runner evidence,
+not a controlled target-device benchmark or GPU-memory measurement.
+The HTML review index contains reduced thumbnails from those two runs.

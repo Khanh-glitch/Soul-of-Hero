@@ -12,6 +12,11 @@ Status vocabulary (Audit D, no auto-promotion): Source recovered →
 SOURCE_PORTED → parity measured → NATIVE_VISUAL_VERIFIED → gameplay
 integrated (PR #30) → OWNER_VISUAL_APPROVED (owner only).
 **Every row below is VISUAL_NOT_VERIFIED. OWNER_VISUAL_APPROVED = 0.**
+Current complete diagnostic artifacts: source review and existing parity gates
+run `41201951664`, real crypt scene run `41201951676` (both at `e185f43ef`).
+See `VISUAL_REVIEW.html` for a browsable low-resolution index. These are not
+owner acceptance or actual PR #30 gameplay integration.
+
 Headless CI PASS is never a Gold/visual claim. **Round-next correction:**
 The old table's references to ground/air/distortion "passes" describe intended
 roles, not independently routable real-SOH passes: players currently expose
