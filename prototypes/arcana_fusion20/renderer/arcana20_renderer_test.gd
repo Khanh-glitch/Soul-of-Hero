@@ -116,6 +116,12 @@ func _init() -> void:
     # Authored cue positions/times must agree with rendered moving geometry.
     var carousel := AFusionSpells2.VoltCarousel.new()
     carousel.setup()
+    var p0 := Vector2(23, 17)
+    var p1 := Vector2(81, 49)
+    var actual_bolt: Array = carousel._connector_path(p0, p1, 909)
+    var source_bolt: Array = CKit.bolt_pts(909.0, p0.x, p0.y, p1.x, p1.y, 0.32, 3.0)
+    if actual_bolt != source_bolt:
+        _fail("carousel connector no longer uses C source bolt geometry")
     var carousel_events: Array = carousel.authored_events()
     for i in range(6):
         var ev: Dictionary = carousel_events[i + 1]

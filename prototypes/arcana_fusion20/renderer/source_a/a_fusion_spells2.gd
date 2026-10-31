@@ -21,6 +21,10 @@ class VoltCarousel:
     func _conn_pos(c: Dictionary, t: float) -> Vector2:
         var a: float = float(c.a0) + float(c.sp) * t
         return Vector2(C.x + cos(a) * float(c.r), C.y + sin(a) * float(c.r) * 0.72)
+    func _connector_path(p: Vector2, q: Vector2, seed: int) -> Array:
+        # Shared C #09 source geometry, adapted to the moving A-buffer
+        # connectors. C's original raster/post pipeline is not yet ported here.
+        return CKit.bolt_pts(float(seed), p.x, p.y, q.x, q.y, 0.32, 3.0)
     func authored_events() -> Array:
         var ev: Array = [{"t": 0.9, "kind": "carousel_spinup", "pos_local": C, "emitted": false}]
         for i in range(6):
@@ -44,10 +48,10 @@ class VoltCarousel:
             var n: Dictionary = _conns[(i + 1) % _conns.size()]
             var q := _conn_pos(n, tt)
             if speed_k > 0.05:
-                var seg_pts := ADraw.bolt_path(p.x, p.y, q.x, q.y, 9.0, i * 331 + int(floor(t * 9.0)) * 17, 4)
+                var seg_pts := _connector_path(p, q, i * 331 + int(floor(t * 9.0)) * 17)
                 var wk := (0.35 + 0.65 * absf(sin(t * 7.0 + float(c.ph)))) * speed_k
                 ADraw.bolt_draw(fb, seg_pts, 1.9, AMath.R("volt", 0.55), AMath.R("volt", 0.97), wk)
-                var sp := ADraw.bolt_path(p.x, p.y, C.x, C.y, 7.0, i * 733 + int(floor(t * 9.0)) * 29, 3)
+                var sp := _connector_path(p, C, i * 733 + int(floor(t * 9.0)) * 29)
                 ADraw.bolt_draw(fb, sp, 1.3, AMath.R("volt", 0.5), AMath.R("volt", 0.9), wk * 0.8)
             ADraw.disc(fb, p.x, p.y, 3.0, AMath.R("volt", 0.85), speed_k)
             ADraw.glow(fb, p.x, p.y, 9.0, AMath.R("volt", 0.7), 0.7 * speed_k)

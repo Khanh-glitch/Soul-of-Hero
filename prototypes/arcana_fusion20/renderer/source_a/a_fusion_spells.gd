@@ -161,14 +161,16 @@ class ChainVerdict:
             var wk := exp(-fmod(lt, 0.12) * 22.0) * die
             if wk > 0.03:
                 var seed := i * 977 + int(win) * 131
-                var bp := ADraw.bolt_path(a.x, a.y, b.x, b.y, 13.0, seed, 4)
+                # C's original midpoint-displacement bolt generator; the
+                # A framebuffer transport is still not the C raster pass.
+                var bp := CKit.bolt_pts(float(seed), a.x, a.y, b.x, b.y, 0.32, 3.0)
                 var hot := i % 2 == 0
                 ADraw.bolt_draw(fb, bp, 2.4,
                     AMath.R("volt", 0.55) if hot else AMath.R("fire", 0.6),
                     AMath.R("volt", 0.98) if hot else AMath.R("fire", 0.95), wk)
                 if i % 3 == 0:
                     var mid: Vector2 = bp[bp.size() / 2]
-                    var bp2 := ADraw.bolt_path(mid.x, mid.y, mid.x + (AMath.hash2(seed, 7) - 0.5) * 44.0, mid.y + (AMath.hash2(seed, 8) - 0.5) * 36.0, 8.0, seed + 5, 3)
+                    var bp2 := CKit.bolt_pts(float(seed + 5), mid.x, mid.y, mid.x + (AMath.hash2(seed, 7) - 0.5) * 44.0, mid.y + (AMath.hash2(seed, 8) - 0.5) * 36.0, 0.35, 3.0)
                     ADraw.bolt_draw(fb, bp2, 1.4, AMath.R("volt", 0.5), AMath.R("volt", 0.9), wk * 0.8)
             ADraw.glow(fb, b.x, b.y, 7.0, AMath.R("volt", 0.8), (0.3 + age_k) * die)
         if t > 5.0:
