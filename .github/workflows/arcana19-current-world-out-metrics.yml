@@ -20,15 +20,28 @@ jobs:
           name: arcana20-current-phase-sweep-16-normal
           run-id: 41241455013
           github-token: ${{ github.token }}
-          path: phase
+          path: phase-before
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcana20-current-phase-sweep-16-normal
+          run-id: 41242339723
+          github-token: ${{ github.token }}
+          path: phase-after
       - run: python3 -m pip install --quiet pillow numpy
-      - name: Measure actual-world frame deltas from no-cast baseline
+      - name: Measure world OUT before warp fade
         run: |
           set -o pipefail
-          python3 prototypes/arcana_fusion20/renderer/arcana20_d19_out_world_metrics.py phase | tee metrics.log
-          sed 's/^/::notice title=D19_WORLD_OUT::/' metrics.log
+          python3 prototypes/arcana_fusion20/renderer/arcana20_d19_out_world_metrics.py phase-before | tee before.log
+          sed 's/^/::notice title=D19_WORLD_OUT_BEFORE::/' before.log
+      - name: Measure world OUT after warp fade
+        run: |
+          set -o pipefail
+          python3 prototypes/arcana_fusion20/renderer/arcana20_d19_out_world_metrics.py phase-after | tee after.log
+          sed 's/^/::notice title=D19_WORLD_OUT_AFTER::/' after.log
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: arcana19-world-out-image-deltas
-          path: metrics.log
+          path: |
+            before.log
+            after.log

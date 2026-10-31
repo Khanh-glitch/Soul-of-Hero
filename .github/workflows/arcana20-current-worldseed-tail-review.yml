@@ -1,0 +1,32 @@
+name: ARCANA20 original seed tail real-world crop diagnostic
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths:
+      - '.github/workflows/arcana20-current-worldseed-tail-review.yml'
+      - 'prototypes/arcana_fusion20/renderer/arcana20_surface_worldseed.py'
+permissions:
+  actions: read
+  contents: read
+jobs:
+  crop:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcana20-current-overworld-join-diagnostic
+          run-id: 41242339621
+          github-token: ${{ github.token }}
+          path: join
+      - run: python3 -m pip install --quiet pillow numpy
+      - name: Surface real-world baseline crop
+        run: |
+          dir="$(dirname "$(find join -name fusion_16_extended_seed_tail_tick541.png -print -quit)")"
+          python3 prototypes/arcana_fusion20/renderer/arcana20_surface_worldseed.py "$dir" tail before
+      - name: Surface real-world selected seed tail crop
+        run: |
+          dir="$(dirname "$(find join -name fusion_16_extended_seed_tail_tick541.png -print -quit)")"
+          python3 prototypes/arcana_fusion20/renderer/arcana20_surface_worldseed.py "$dir" tail tail
