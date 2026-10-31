@@ -1,0 +1,52 @@
+name: ARCANA20 C20 controlled CPU raster benchmark
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths:
+      - 'prototypes/arcana_fusion20/renderer/c20_raster_benchmark.gd'
+      - 'prototypes/arcana_fusion20/renderer/source_c/c_reality_ripper_fusion.gd'
+      - '.github/workflows/arcana20-c20-raster-benchmark.yml'
+permissions:
+  contents: read
+jobs:
+  raster:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Materialize exact previous AVFX source as diagnostic baseline
+        run: |
+          mkdir -p artifacts/arcana20-c20-benchmark
+          git show 4f00b5d67bd46c2ae7d13e8fc5bb1dba7497d657:prototypes/arcana_fusion20/renderer/source_c/c_reality_ripper_fusion.gd | sed 's/^class_name CRealityRipperFusion$/class_name C20BenchmarkBaseline/' > artifacts/arcana20-c20-benchmark/baseline_rift.gd
+      - name: Import project
+        run: |
+          set -o pipefail
+          godot --headless --path . --import 2>&1 | tee import.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' import.log
+      - name: Compare identical source fields and alternating raster timings
+        run: |
+          set -o pipefail
+          timeout 900s godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/c20_raster_benchmark.gd 2>&1 | tee raster.log
+          grep -Fq 'C20_CONTROLLED_RASTER_PASS' raster.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' raster.log
+      - name: Surface evidence
+        if: always()
+        run: |
+          test -f raster.log || exit 0
+          grep -E 'C20_CONTROLLED_RASTER|SCRIPT ERROR|Parse Error|ERROR:' raster.log | head -30 | while IFS= read -r l; do echo "::notice::$l"; done || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcana20-c20-controlled-raster
+          path: |
+            raster.log
+            import.log
+          if-no-files-found: warn
