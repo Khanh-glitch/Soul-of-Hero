@@ -401,8 +401,11 @@ SOH world source parity and creator review remain separate.
   [41216341845](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41216341845)
   exposed mutable packed-array aliasing (cold/cached setup 495.4/1.14 ms); the
   implementation was corrected to explicitly duplicate each cast's arrays.
-  Revised timing, allocation and world regression are pending. This does not
-  establish frame-rate performance or target-device memory budget.
+  [Regression 41216872164](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41216872164)
+  passed mutation isolation and measured cold/cached setup 520.145/1.199 ms
+  on shared software CI, with a ~1.99 MB master plus ~1.99 MB per cast (array
+  payload only, excludes allocator overhead). This is not frame time or a
+  target-device memory budget.
 - Latest A0 inspected is `a6e3797879915510b2e86be0d2ee521f53967c94`:
   [A0+A6 composition 41215828924](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41215828924/job/124580025221)
   fails `res://game/survival/a0_world_authority.gd:157`, missing `_spawn_cell()`;
@@ -418,3 +421,18 @@ SOH world source parity and creator review remain separate.
   Current AVFX code is on Arena branch, **not** PR #28 (`06ca9f15`, older #02
   pilot). Coordination: [PR30 comment](https://github.com/Khanh-glitch/Soul-of-Hero/pull/30#issuecomment-6545495243),
   [A0 owner comment](https://github.com/Khanh-glitch/Soul-of-Hero/pull/21#issuecomment-6545623258).
+
+- Real #02+#20 early-phase overlap at `a831193b` on software X11 4K
+  ([run 41217166376](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41217166376))
+  sampled 54 actual post-draw intervals: p50/p95/p99 **859.002/1110.438/
+  1172.719 ms**, live objects +36 and post-cancel object delta 0. Allocation
+  counts were unavailable; static-memory deltas were negative and unusable.
+  720p/2K jobs are pending; this is not full-cast or target-device performance.
+  Architectural costs remain: procedural CPU source raster, multiple full
+  384×216 field texture uploads and full-viewport BackBufferCopy per cast;
+  this does not prove the CI renderer alone caused the whole delay.
+- Active #20 collision post and real overworld viewer were present before
+  AppFlow opened Home; [JOIN 41217063693](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41217063693)
+  passed removal, weak-reference cleanup and frozen-Home stability assertions
+  at `39db0ff0`. This is an isolated historical-A0 scene transition, not a
+  complete death/despawn/production lifecycle test.
