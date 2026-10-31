@@ -92,6 +92,18 @@ func _run() -> void:
             " peak_to_out=", changes_peak_out)
         _check(changes_open_peak > 150 and changes_peak_out > 150,
             "real_skill_temporal_frame_difference")
+    # Native framebuffer playback samples, no fake interpolated VFX artwork.
+    var sample_times: Array[float] = [
+        0.35, 0.9, 1.45, 2.05, 2.7, 3.35,
+        3.95, 4.45, 4.85, 5.12, 5.55, 6.5
+    ]
+    for sample_i in range(sample_times.size()):
+        _check(fx.cast(2,origin),"sample_cast_" + str(sample_i))
+        fx.timeline = sample_times[sample_i]
+        await get_tree().process_frame
+        await get_tree().process_frame
+        _check(_snap(stage,"B02_seq_%02d" % sample_i),
+            "native_original_B_sequence_" + str(sample_i))
     _check(fx.spell_id==2,"only_original_source_B02")
     print("B02_RESULT ","PASS" if failures.is_empty() else "FAIL"," failures=",JSON.stringify(failures))
     get_tree().quit(0 if failures.is_empty() else 1)
