@@ -299,17 +299,23 @@ func line(pts: Array, width: Variant, col: Variant, o: Dictionary = {}) -> void:
     maxy += wmax + 2.0
     for py in range(maxi(0, floori(miny)), mini(H - 1, ceili(maxy)) + 1):
         for pxx in range(maxi(0, floori(minx)), mini(W - 1, ceili(maxx)) + 1):
-            var pc := Vector2(float(pxx), float(py))
+            var pc := Vector2(float(pxx) + 0.5, float(py) + 0.5)
             var best_d := 1e9
             var best_along := 0.0
             var best_w := 1.0
+            var best_fw_scale := 1.0
+            var inside_single_strip := true
             var best_col := _col_at(col, 0)
             for i in range(n - 1):
                 var a := Vector2(float(pts[i * 2]), float(pts[i * 2 + 1]))
                 var b := Vector2(float(pts[(i + 1) * 2]), float(pts[(i + 1) * 2 + 1]))
                 var ab := b - a
                 var ll := ab.length_squared()
-                var u := 0.0 if ll == 0.0 else clampf(((pc - a).dot(ab)) / ll, 0.0, 1.0)
+                var raw_u := 0.0 if ll == 0.0 else ((pc - a).dot(ab)) / ll
+                if n == 2 and (ll == 0.0 or raw_u < 0.0 or raw_u > 1.0):
+                    inside_single_strip = false
+                    break
+                var u := clampf(raw_u, 0.0, 1.0)
                 var q := a + ab * u
                 var d := (pc - q).length()
                 if d < best_d:
@@ -317,11 +323,18 @@ func line(pts: Array, width: Variant, col: Variant, o: Dictionary = {}) -> void:
                     best_along = float(along[i]) + ab.length() * u
                     best_w = lerpf(_width_at(width, i), _width_at(width, i + 1), u)
                     best_col = _col_at(col, i).lerp(_col_at(col, i + 1), u)
+                    # fwidth(abs(across)) for a straight strip is the L1
+                    # screen gradient of its normal, subject to GPU quad edges.
+                    if n == 2 and ll > 0.0:
+                        best_fw_scale = (absf(ab.x) + absf(ab.y)) / sqrt(ll)
+            if not inside_single_strip: continue
             var w := maxf(best_w, 0.02)
             var d := best_d / w
-            if d > 1.6:
+            # A two-point RibbonBatch is one finite quad, with no round caps.
+            if d > (1.0 if n == 2 else 1.6):
                 continue
-            var a := clampf((1.0 - d) * w / maxf(0.8, hard), 0.0, 1.0)
+            var dist_px := (1.0 - d) * w / best_fw_scale
+            var a := clampf(dist_px / maxf(0.8, hard), 0.0, 1.0)
             var fl := flags
             if fl >= 4.0:
                 fl -= 4.0
@@ -329,7 +342,7 @@ func line(pts: Array, width: Variant, col: Variant, o: Dictionary = {}) -> void:
             if fl >= 2.0:
                 fl -= 2.0
                 var dd := d + (_h11(floor(best_along * 46.0) + floor(t * 22.0) * 0.37) - 0.5) * 0.8
-                a = maxf(a * 0.35, clampf((1.0 - dd) * w / 1.6, 0.0, 1.0))
+                a = maxf(a * 0.35, clampf((1.0 - dd) * w / best_fw_scale / 1.6, 0.0, 1.0))
                 d = dd
             if a <= 0.003:
                 continue
