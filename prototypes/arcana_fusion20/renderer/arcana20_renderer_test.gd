@@ -45,6 +45,8 @@ func _init() -> void:
         var node: Node = renderer._casts[cid]
         if node is CSourcePlayer or node is DSourcePlayer:
             node.set("render_enabled", false)
+        if node is ASourcePlayer:
+            node.set("render_enabled", false)
         if node is FusionPlayer:
             for part in node._pending:
                 part.node.set("render_enabled", false)
@@ -62,7 +64,7 @@ func _init() -> void:
                 node._process(1.0 / 60.0)
             if not renderer.is_active(cid):
                 break
-        var want_contacts := 1
+        var want_contacts := {9: 11, 11: 7, 4: 2, 12: 4, 13: 4}.get(_skill_num(cid), 1)
         if id == 3:
             want_contacts = 8 # authored per-meteor impacts (fusion decisions #03)
         if int(_contacts[cid]) != want_contacts:

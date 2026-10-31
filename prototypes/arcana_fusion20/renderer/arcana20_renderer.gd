@@ -21,11 +21,66 @@ var _casts: Dictionary = {} # canonical_id -> Node (instance or B02 geometry)
 var stage_counts: Dictionary = {}
 var _last_tick_emitted: Dictionary = {}
 
+
+const _A_SPELLS := {
+    5: "abyssal", 9: "chain", 11: "carousel", 16: "worldseed", 20: "ripper",
+    4: "guillotine", 6: "riptide", 12: "skybreaker", 13: "rootwake", 14: "spore", 18: "chronoshard",
+}
+
+func _make_a_spell(id: int) -> Variant:
+    match id:
+        5: return AFusionSpells.AbyssalBloom.new()
+        9: return AFusionSpells.ChainVerdict.new()
+        11: return AFusionSpells2.VoltCarousel.new()
+        16: return AFusionSpells2.Worldseed.new()
+        20: return AFusionSpells2.RealityRipper.new()
+        4: return ARedesignSpells.AshenGuillotineR.new()
+        6: return ARedesignSpells.RiptideCalligraphyR.new()
+        12: return ARedesignSpells.SkybreakerScriptR.new()
+        13: return ARedesignSpells2.RootwakeR.new()
+        14: return ARedesignSpells2.SporeNebulaR.new()
+        18: return ARedesignSpells2.ChronoshardR.new()
+    return null
+
+func _a_spell_dur(id: int) -> float:
+    match id:
+        5: return AFusionSpells.AbyssalBloom.DUR
+        9: return AFusionSpells.ChainVerdict.DUR
+        11: return AFusionSpells2.VoltCarousel.DUR
+        16: return AFusionSpells2.Worldseed.DUR
+        20: return AFusionSpells2.RealityRipper.DUR
+        4: return ARedesignSpells.AshenGuillotineR.DUR
+        6: return ARedesignSpells.RiptideCalligraphyR.DUR
+        12: return ARedesignSpells.SkybreakerScriptR.DUR
+        13: return ARedesignSpells2.RootwakeR.DUR
+        14: return ARedesignSpells2.SporeNebulaR.DUR
+        18: return ARedesignSpells2.ChronoshardR.DUR
+    return 6.0
+
+func _a_cast(canonical_id: StringName, id: int, caster_world: Vector2, target_world: Vector2) -> bool:
+    if not _A_SPELLS.has(id):
+        return false
+    var ap := ASourcePlayer.new()
+    ap.configure(_make_a_spell(id), _a_spell_dur(id))
+    add_child(ap)
+    ap.visual_contact.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
+        visual_contact.emit(canonical_id, pos, kind)
+        body_event_cue.emit(canonical_id, pos, &"astral"))
+    ap.visual_event.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
+        visual_event.emit(canonical_id, kind, pos, st))
+    ap.finished.connect(func() -> void: _on_finished(canonical_id))
+    _casts[canonical_id] = ap
+    cast_started.emit(canonical_id)
+    ap.begin(caster_world, target_world)
+    return true
+
 func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: Vector2, facing: float = 1.0) -> bool:
     var id := Arcana20SOHRegistry_index(canonical_id)
     if id < 1:
         return false
     cancel_skill(canonical_id)
+    if _a_cast(canonical_id, id, caster_world, target_world):
+        return true
     if id == 1:
         # FUSION #01 Cinder Crown (vote A+C, FUSION_DECISIONS §01):
         # A crown formation/collapse/impact is the lead; C provides the
@@ -165,6 +220,11 @@ func _process(_delta: float) -> void:
             if bp.active and int(_last_tick_emitted.get(key, -1)) != bp.source_tick:
                 _last_tick_emitted[key] = bp.source_tick
                 source_tick.emit(key, bp.source_tick, bp.phase_name())
+        elif node is ASourcePlayer:
+            var ap2 := node as ASourcePlayer
+            if int(_last_tick_emitted.get(key, -1)) != ap2._tick:
+                _last_tick_emitted[key] = ap2._tick
+                source_tick.emit(key, ap2._tick, &"SOURCE_A")
         elif node is FusionPlayer:
             var fp2 := node as FusionPlayer
             if int(_last_tick_emitted.get(key, -1)) != fp2._tick:
