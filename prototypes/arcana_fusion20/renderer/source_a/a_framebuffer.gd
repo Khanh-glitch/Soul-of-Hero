@@ -189,21 +189,35 @@ func compute_bloom() -> void:
         for y in range(bh):
             for x in range(bw):
                 var o := (y * bw + x) * 3
-                for c in range(3):
-                    var s := 0.0
-                    for k in range(-3, 4):
-                        var xx: int = clampi(x + k, 0, bw - 1)
-                        s += bloom_a[(y * bw + xx) * 3 + c] * float(WK[k + 3])
-                    bloom_b[o + c] = s
+                var r := 0.0
+                var g := 0.0
+                var b := 0.0
+                for k in range(-3, 4):
+                    var xx: int = clampi(x + k, 0, bw - 1)
+                    var at := (y * bw + xx) * 3
+                    var weight := float(WK[k + 3])
+                    r += bloom_a[at] * weight
+                    g += bloom_a[at + 1] * weight
+                    b += bloom_a[at + 2] * weight
+                bloom_b[o] = r
+                bloom_b[o + 1] = g
+                bloom_b[o + 2] = b
         for y in range(bh):
             for x in range(bw):
                 var o := (y * bw + x) * 3
-                for c in range(3):
-                    var s := 0.0
-                    for k in range(-3, 4):
-                        var yy: int = clampi(y + k, 0, bh - 1)
-                        s += bloom_b[(yy * bw + x) * 3 + c] * float(WK[k + 3])
-                    bloom_a[o + c] = s
+                var r := 0.0
+                var g := 0.0
+                var b := 0.0
+                for k in range(-3, 4):
+                    var yy: int = clampi(y + k, 0, bh - 1)
+                    var at := (yy * bw + x) * 3
+                    var weight := float(WK[k + 3])
+                    r += bloom_b[at] * weight
+                    g += bloom_b[at + 1] * weight
+                    b += bloom_b[at + 2] * weight
+                bloom_a[o] = r
+                bloom_a[o + 1] = g
+                bloom_a[o + 2] = b
 
 func present() -> PackedByteArray:
     compute_bloom()

@@ -1,0 +1,40 @@
+name: ARCANA20 source A exact bloom CPU comparison
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-a-bloom-exact.yml', 'prototypes/arcana_fusion20/renderer/a_bloom_benchmark.gd', 'prototypes/arcana_fusion20/renderer/source_a/a_framebuffer.gd']
+permissions:
+  contents: read
+jobs:
+  bloom:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import source project
+        run: |
+          godot --headless --path . --import > import.log 2>&1
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' import.log
+      - name: Compare exact source bloom fields and alternating CPU timing
+        run: |
+          set -o pipefail
+          timeout 300s godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/a_bloom_benchmark.gd 2>&1 | tee bench.log
+          grep -Fq A_BLOOM_EXACT_BENCH_COMPLETE bench.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|ERROR:' bench.log
+      - name: Surface timings and first errors
+        if: always()
+        run: |
+          test ! -f bench.log || grep -E 'A_BLOOM_EXACT_BENCH|SCRIPT ERROR|Parse Error|ERROR:' bench.log | head -8 | sed 's/^/::notice::/'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcana20-a-bloom-exact
+          path: |
+            import.log
+            bench.log
