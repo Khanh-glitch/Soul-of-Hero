@@ -590,3 +590,20 @@ SOH world source parity and creator review remain separate.
   it records actual native duration and explicitly marks casts that terminate
   before a requested sample. It does not assert those ticks are the original
   authored phase boundaries or substitute for source-native comparisons.
+- [All-20 historical-world phase sweep 41223761713](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41223761713)
+  ran four five-skill batches at `08eddd80`; **PASS means captures completed and
+  the frozen actual world restored, not all expected phases or parity**. It
+  exposed shorter native than catalog timelines: #01 6.6/7.8 s, #06 8.4/8.8,
+  #09 7.2/7.8, #11 7.2/8.2, #12 8.6/8.8, #13 8.4/9.4, #14 8.6/9.4,
+  #16 8.0/10.2, #18 8.4/10.0; their late catalog-relative samples expired,
+  and #16 also expired before its requested aftermath. These durations do not
+  establish that the original selected source must be stretched; source OUT and
+  fusion alignment must be individually investigated. C16 rules and B/C09
+  selected primitives can be embedded in an A-owned source pass, so pass family
+  alone does not establish their presence or fidelity. The same run identified
+  B's `source_tick` reporting one tick behind due to floating-point floor;
+  `7f6d6110` counts fixed updates directly without changing elapsed/render/event
+  time, with [source quick regression 41224124206](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41224124206).
+  Phase images have not been source-paired or approved; post is not enabled in
+  this sweep, and no moving actor, damage, occlusion, target-device or dark-world
+  conclusion is implied.
