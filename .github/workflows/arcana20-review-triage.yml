@@ -73,3 +73,22 @@ jobs:
         run: python3 tools/arcana20_review/emit_thumbnails.py scene 10 15
       - name: Scene thumbnails 16-20
         run: python3 tools/arcana20_review/emit_thumbnails.py scene 15 20
+      - name: Retrieve runtime error stack context
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          gh run view 41201111499 --log > /tmp/arcana-scene-log.txt
+          gh run view 41200681217 --log > /tmp/arcana-source-log.txt
+          python3 - <<'PY'
+          from pathlib import Path
+          for name in ('scene','source'):
+              lines=Path('/tmp/arcana-'+name+'-log.txt').read_text().splitlines()
+              matched=[]
+              for i,line in enumerate(lines):
+                  if 'SCRIPT ERROR:' in line or 'ARCANA20_CAPTURE_FAIL' in line:
+                      matched.append(' | '.join(lines[i:i+4]))
+              for item in sorted(set(matched))[:8]:
+                  print('::notice::STACK_'+name.upper()+' '+item[:3500].replace('%','%25'))
+              print('::notice::STACK_'+name.upper()+'_COUNT '+str(len(matched)))
+          PY
