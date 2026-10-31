@@ -42,8 +42,22 @@ func _initialize() -> void:
                 var elapsed := float(Time.get_ticks_usec() - start) / 1000.0
                 if variant == 0: old_samples.append(elapsed)
                 else: new_samples.append(elapsed)
-            if a.ground != b.ground or a.ground_coverage != b.ground_coverage or a.ink != b.ink or a.light != b.light or a.disp != b.disp or a.world_fragment != b.world_fragment or a.world_influence != b.world_influence or a.live_light_fields() != b.live_light_fields() or a.invert != b.invert:
-                push_error("C20 optimized source fields diverged from immutable baseline at tick %d, repetition %d" % [tick, rep])
+            var live_a := a.live_light_fields()
+            var live_b := b.live_light_fields()
+            var mismatches: Array[String] = []
+            if a.ground != b.ground: mismatches.append("ground")
+            if a.ground_coverage != b.ground_coverage: mismatches.append("ground_coverage")
+            if a.ink != b.ink: mismatches.append("ink")
+            if a.light != b.light: mismatches.append("light")
+            if a.disp != b.disp: mismatches.append("disp")
+            if a.world_fragment != b.world_fragment: mismatches.append("fragment")
+            if a.world_influence != b.world_influence: mismatches.append("influence")
+            if live_a.index != live_b.index: mismatches.append("live_index")
+            if live_a.operations != live_b.operations: mismatches.append("live_operations")
+            if live_a.count != live_b.count or live_a.height != live_b.height: mismatches.append("live_dimensions")
+            if a.invert != b.invert: mismatches.append("invert")
+            if not mismatches.is_empty():
+                push_error("C20 optimized source fields diverged from immutable baseline at tick %d, repetition %d: %s" % [tick, rep, str(mismatches)])
                 quit(1)
                 return
         print("C20_CONTROLLED_RASTER ", JSON.stringify({"tick": tick, "samples_each": old_samples.size(), "baseline_ms": [percentile(old_samples, 0.5), percentile(old_samples, 0.95), percentile(old_samples, 0.99)], "sparse_ms": [percentile(new_samples, 0.5), percentile(new_samples, 0.95), percentile(new_samples, 0.99)], "scope": "same shared CPU, alternating exact source-state render; excludes clear, scene, GPU and target-device performance"}))
