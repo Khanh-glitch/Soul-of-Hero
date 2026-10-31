@@ -18,7 +18,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: arcana20-visual-review
-          run-id: 41201951664
+          run-id: 41202674400
           github-token: ${{ github.token }}
           path: prototypes/arcana_fusion20/renderer/evidence_out/review
       - name: Emit stage data and review thumbnails
@@ -52,7 +52,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: arcana20-real-scene-diagnostics
-          run-id: 41201951676
+          run-id: 41203931063
           github-token: ${{ github.token }}
           path: prototypes/arcana_fusion20/renderer/evidence_out/real-scene
       - name: Real-scene manifest summary
@@ -69,6 +69,28 @@ jobs:
           else:
               print('::notice::SCENE_SUMMARY manifest missing')
           print('::notice::SCENE_COUNT '+str(len(list(root.glob('skill_*.png')))))
+          PY
+      - name: Experimental C-pass thumbnails
+        run: |
+          python3 - <<'PY'
+          import base64, io
+          from pathlib import Path
+          from PIL import Image
+          root = Path('prototypes/arcana_fusion20/renderer/evidence_out/real-scene')
+          for path in sorted(root.glob('skill_*_c_separate.png')):
+              with Image.open(path) as im:
+                  im.thumbnail((240, 135), Image.Resampling.NEAREST)
+                  im = im.convert('RGB').quantize(colors=16, method=Image.Quantize.MEDIANCUT)
+                  while True:
+                      out = io.BytesIO()
+                      im.save(out, format='PNG', optimize=True)
+                      data = base64.b64encode(out.getvalue()).decode('ascii')
+                      if len(data) <= 3900:
+                          break
+                      if im.width <= 80:
+                          raise SystemExit(f'{path}: thumbnail too large')
+                      im = im.resize((int(im.width * 0.85), int(im.height * 0.85)), Image.Resampling.NEAREST)
+                  print(f'::notice title=REVIEW_C_SEPARATE_{path.stem}::{data}', flush=True)
           PY
       - name: Scene thumbnails 01-05
         run: python3 tools/arcana20_review/emit_thumbnails.py scene 0 5
