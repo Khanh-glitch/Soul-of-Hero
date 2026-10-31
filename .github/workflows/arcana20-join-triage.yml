@@ -31,6 +31,9 @@ jobs:
               print('::notice::JOIN_CONTEXT '+msg[:3600])
           ok=[l for l in lines if l.startswith('JOIN_OK') or l.startswith('JOIN_FAIL')]
           print('::notice title=JOIN_ALL::'+ ' | '.join(ok)[:3800].replace('%','%25'))
+          leaks=[l for l in lines if any(k in l for k in ('Leaked instance:', 'Resource still in use:', 'ObjectDB instances leaked', 'resources still in use'))]
+          for n in range(0,len(leaks),8):
+              print('::notice title=LEAK_DETAILS_%02d::'%n + ' | '.join(leaks[n:n+8])[:3700].replace('%','%25'))
           print('::notice::JOIN_END '+ ' | '.join(lines[-12:])[:3600].replace('%','%25'))
           print('::notice::JOIN_FILES '+str([str(p) for p in Path('review').rglob('*') if p.is_file()])[:3500])
           PY
