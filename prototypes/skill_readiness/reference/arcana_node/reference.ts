@@ -12,8 +12,12 @@ if (mode === 'vectors') {
   for (const seed of [1, 7, 0, 12345]) {
     reseed(seed);
     const seq: number[] = [];
-    for (let i = 0; i < 16; i++) seq.push(rand());
+    const raw: number[] = [];
+    for (let i = 0; i < 16; i++) { const v = rand(); seq.push(v); raw.push(Math.round(v * 4294967296)); }
     out[`rng_seed_${seed}`] = seq;
+    // Exact integer form: Godot's JSON parser can mis-round long decimal
+    // literals by 1 ulp, so the gate compares against raw uint32 outputs.
+    out[`rng_seed_${seed}_u32`] = raw;
   }
   const ts = [0, 0.1, 0.25, 0.5, 0.75, 0.9, 1];
   out['ease'] = Object.fromEntries(Object.entries(ease).map(([k, f]) => [k, ts.map((t) => (f as (x: number) => number)(t))]));

@@ -33,12 +33,13 @@ func _init() -> void:
 	for seed in [1, 7, 0, 12345]:
 		var u = UTIL.new()
 		u.reseed(seed)
-		var exp: Array = data["rng_seed_%d" % seed]
-		for i in range(exp.size()):
+		var raw: Array = data["rng_seed_%d_u32" % seed]
+		for i in range(raw.size()):
 			var got: float = u.rand()
-			if got != float(exp[i]):
-				print("GOLD93_ARCANA_RNG seed=%d step=%d got=%0.17f exp=%0.17f" % [seed, i, got, float(exp[i])])
-			_check(got == float(exp[i]), "rng seed %d step %d bit-exact" % [seed, i])
+			# Integer-exact comparison: rand() == k / 2^32 with k the original
+			# uint32 output (Godot's JSON parser mis-rounds some long decimal
+			# literals by 1 ulp, so the float vectors alone cannot gate this).
+			_check(got == float(int(raw[i])) / 4294967296.0, "rng seed %d step %d bit-exact" % [seed, i])
 	var ts: Array = [0.0, 0.1, 0.25, 0.5, 0.75, 0.9, 1.0]
 	for name in data["ease"].keys():
 		var exp2: Array = data["ease"][name]
