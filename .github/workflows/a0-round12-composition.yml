@@ -72,6 +72,11 @@ jobs:
           ! grep -E 'SCRIPT ERROR|Parse Error' ../artifacts/import.log
       - name: A0 composed player journeys (native, real input)
         run: |
+          # Every composed step must play the COMPOSED tree. Without this the
+          # suites ran against A0's own checkout, which has no A1 continent, no
+          # import cache and no owner modules — that is why six suites reported
+          # exit=1 with an empty log, and why the digest step could not find them.
+          cd .composition
           set +e
           failures=0
           # `--user-data-dir` is a NO-OP in Godot 4.7: every suite shares
@@ -98,6 +103,11 @@ jobs:
           [ "$failures" -eq 0 ]
       - name: A0 authored-world spatial contract (A1 reader, 1024x768 frame)
         run: |
+          # Every composed step must play the COMPOSED tree. Without this the
+          # suites ran against A0's own checkout, which has no A1 continent, no
+          # import cache and no owner modules — that is why six suites reported
+          # exit=1 with an empty log, and why the digest step could not find them.
+          cd .composition
           set +e
           log="../artifacts/authored_world.log"
           SOUL_OF_HERO_SAVE_PATH="user://composed_authored_${GITHUB_RUN_ID}.json" \
@@ -109,6 +119,11 @@ jobs:
           [ "$rc" -eq 0 ] && grep -qa 'A0 AUTHORED WORLD CONTRACT PASSED' "$log"
       - name: A0 production threat across two processes
         run: |
+          # Every composed step must play the COMPOSED tree. Without this the
+          # suites ran against A0's own checkout, which has no A1 continent, no
+          # import cache and no owner modules — that is why six suites reported
+          # exit=1 with an empty log, and why the digest step could not find them.
+          cd .composition
           set +e
           export SOUL_OF_HERO_SAVE_PATH="user://composed_threat_${GITHUB_RUN_ID}.json"
           mkdir -p ../artifacts/ud_threat
@@ -129,6 +144,11 @@ jobs:
       - name: R13 A0 authored continent route — real player, two OS processes
         if: ${{ !cancelled() }}
         run: |
+          # Every composed step must play the COMPOSED tree. Without this the
+          # suites ran against A0's own checkout, which has no A1 continent, no
+          # import cache and no owner modules — that is why six suites reported
+          # exit=1 with an empty log, and why the digest step could not find them.
+          cd .composition
           set +e
           # Process 1 chooses the Adventurer, plays the continent, saves, and keeps
           # the save. Process 2 is a different OS process that resumes it. Nothing
@@ -145,10 +165,21 @@ jobs:
           second=$?
           cat ../artifacts/route_2.log
           echo "::notice::authored route process1=$first process2=$second $(grep -a 'A0_AUTHORED_ROUTE_VERIFY' ../artifacts/route_2.log | tail -1)"
+          # Self-contained transcript: the log artifact host is not reachable from
+          # every reviewer's sandbox, annotations are.
+          for phase_log in 1 2; do
+            body=$(tail -c 1400 "../artifacts/route_$phase_log.log" 2>/dev/null | tr '\n' '~')
+            echo "::error::route_$phase_log $body"
+          done
           [ "$first" -eq 0 ] && grep -qa 'A0 AUTHORED WORLD ROUTE PASSED' ../artifacts/route_1.log \
             && [ "$second" -eq 0 ] && grep -qa 'A0 AUTHORED WORLD ROUTE PASSED' ../artifacts/route_2.log
       - name: A0 site-mount authority against real A8/A1/A3 data
         run: |
+          # Every composed step must play the COMPOSED tree. Without this the
+          # suites ran against A0's own checkout, which has no A1 continent, no
+          # import cache and no owner modules — that is why six suites reported
+          # exit=1 with an empty log, and why the digest step could not find them.
+          cd .composition
           set +e
           log="../artifacts/poi_mount.log"
           timeout --signal=TERM --kill-after=10s 600s godot --headless --path . \
@@ -161,6 +192,11 @@ jobs:
       - name: A6 suites in the same composition
         if: ${{ !cancelled() }}
         run: |
+          # Every composed step must play the COMPOSED tree. Without this the
+          # suites ran against A0's own checkout, which has no A1 continent, no
+          # import cache and no owner modules — that is why six suites reported
+          # exit=1 with an empty log, and why the digest step could not find them.
+          cd .composition
           set +e
           failures=0
           USER_ROOT="$HOME/.local/share/godot/app_userdata/SOUL OF HERO"
