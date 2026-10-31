@@ -26,13 +26,15 @@ var _host: Node = null
 
 func configure_authored(host: Node) -> void:
 	_host = host
-	var authority := host as A0WorldAuthority
-	width = int(authority.world_cells().x)
-	height = int(authority.world_cells().y)
-	data = authority.world_document()
+	# Duck-typed on purpose: this script and A0WorldAuthority preload each other, and
+	# a class-name annotation across that pair is a cyclic reference at load time.
+	var cells: Variant = host.call(&"world_cells")
+	width = int((cells as Vector2i).x)
+	height = int((cells as Vector2i).y)
+	data = host.call(&"world_document")
 	# A1's streamed bodies are the real collision; pointing the traversability
 	# grid at anything else would measure a world the player cannot touch.
-	blocker_root = authority.collision_root()
+	blocker_root = host.call(&"collision_root") as Node2D
 
 
 func is_solid_cell(x: int, y: int) -> bool:

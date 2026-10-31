@@ -45,7 +45,10 @@ const INTERIOR_ORIGIN := Vector2(40000, 40000)
 var last_error := ""
 var reader: Variant = null
 var stream: Node2D = null
-var view: A0AuthoredWorldView = null
+## Typed as the base world so this file does not depend on its own view by name:
+## the two scripts preload each other's class, and a name dependency there is a
+## cyclic script reference at load time.
+var view: OverworldWorld = null
 var sites_root: Node2D = null
 var interior_root: Node2D = null
 
@@ -117,7 +120,7 @@ func configure(host: Node, player: Node2D, camera: Camera2D, player_scene_overri
 
 
 func _build_view() -> void:
-	view = VIEW_SCRIPT.new() as A0AuthoredWorldView
+	view = VIEW_SCRIPT.new() as OverworldWorld
 	view.name = "AuthoredWorldView"
 	# The view is a query surface, not a painter: nothing is drawn and nothing is
 	# added to the tree, because A1's streamer already painted the continent.

@@ -22,9 +22,8 @@ var _terrain_resolved_any := false
 
 func build_authored(host: Node) -> void:
 	_host = host
-	var authority := host as A0WorldAuthority
-	width = int(authority.world_cells().x)
-	height = int(authority.world_cells().y)
+	width = int((host.call(&"world_cells") as Vector2i).x)
+	height = int((host.call(&"world_cells") as Vector2i).y)
 	_cells = PackedByteArray()
 	_cells.resize(width * height)
 	_cells.fill(0)
@@ -34,7 +33,7 @@ func build_authored(host: Node) -> void:
 	_terrain_resolved_any = false
 	_terrain_cells = 0
 	_prop_cells = 0
-	var blockers: Node = authority.collision_root()
+	var blockers: Node = host.call(&"collision_root") as Node
 	if blockers != null:
 		for child: Node in blockers.get_children():
 			# Chunk roots are containers; every real body sits under one of them.

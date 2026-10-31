@@ -213,6 +213,20 @@ jobs:
             fi
           fi
           [ "$failures" -eq 0 ]
+      - name: R13 failure digest (annotations survive a blocked artifact host)
+        if: always()
+        run: |
+          # The artifact store and the job-log endpoint are both outside what some
+          # sandboxes can reach; annotations are not. One line per log, carrying the
+          # first script/parse errors, so a red job is still diagnosable.
+          shopt -s nullglob
+          for f in ../artifacts/*.log; do
+            name=$(basename "$f")
+            hits=$(grep -aiE 'SCRIPT ERROR|Parse Error|Cannot open|Cannot get class|cyclic|Invalid' "$f" \
+              | head -6 | tr '\n' '\u00a6')
+            tail_line=$(grep -aE 'PASSED|FAILED|exit=|A0_' "$f" | tail -2 | tr '\n' '\u00a6')
+            echo "::error::$name ¦ $hits ¦ $tail_line"
+          done
       - uses: actions/upload-artifact@v4
         if: always()
         with:
