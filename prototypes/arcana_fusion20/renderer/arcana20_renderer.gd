@@ -77,8 +77,15 @@ func _a_cast(canonical_id: StringName, id: int, caster_world: Vector2, target_wo
     # Keep the existing candidate untouched in legacy mode. World mode #09
     # opts into A's actual graph schedule with B colors/C bolt primitives;
     # missing real actor anchors never manufacture visual contacts or HP.
-    var spell: Variant = AChainVerdictGraph.new() if world_pass_mode and id == 9 else _make_a_spell(id)
-    ap.configure(spell, _a_spell_dur(id))
+    var spell: Variant = _make_a_spell(id)
+    var spell_duration := _a_spell_dur(id)
+    if world_pass_mode and id == 9:
+        spell = AChainVerdictGraph.new()
+    elif world_pass_mode and id == 16:
+        spell = AWorldseedGrowth.new()
+        spell_duration = AWorldseedGrowth.DURATION
+        ap.source_variant = &"worldseed_a_growth_c_material"
+    ap.configure(spell, spell_duration)
     add_child(ap)
     ap.visual_contact.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
         visual_contact.emit(canonical_id, pos, kind)

@@ -80,6 +80,17 @@ func _run() -> void:
     for value in outer_frame.world_influence: outer_influence += int(value)
     check(outer_influence > 0, "C01 selected original outer tongue primitive rasterizes")
 
+    var growth := AWorldseedGrowth.new()
+    growth.setup()
+    var growth_fb := AFramebuffer.new()
+    growth_fb.track_world_fields = true
+    for i in range(1, 181): growth.update(1.0 / 60.0, float(i) / 60.0)
+    growth_fb.clear()
+    growth.render(growth_fb, 3.0)
+    var growth_coverage := 0.0
+    for value in growth_fb.world_coverage: growth_coverage += value
+    check(growth.source_seeds() == PackedInt32Array([0x5eed]) and growth_coverage > 0.0, "A16 seeded source growth C material uses authored ink coverage")
+
     var bloom_lead := AAbyssalBloomLead.new()
     bloom_lead.setup()
     check(bloom_lead.petals.size() == 7 and bloom_lead.inner.size() == 7 and bloom_lead.bubbles.size() == 46, "A05 original seeded opening structures")
