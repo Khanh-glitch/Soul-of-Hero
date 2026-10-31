@@ -624,4 +624,5 @@ SOH world source parity and creator review remain separate.
   from uncontrolled source Math.random. Creator and visual review remain open.
   Additional natural-end/post/restart/no-HP checks were added at `fa2ebdfcd`;
   their [JOIN 41225009855](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41225009855)
-  is pending and no verdict is inferred here.
+  passed; assertion-level triage is pending. This validates lifecycle under the
+  historical pinned world, not the selected primitive's appearance or current A0.
