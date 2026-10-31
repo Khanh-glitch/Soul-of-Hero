@@ -191,11 +191,22 @@ func _control_valid() -> Dictionary:
 	var bed_activated := false
 	var bed_activation := {}
 	if bed and not bed_id.is_empty():
-		var service: Node = world.get(&"survival_service") as Node
+		var service: Node = get_node_or_null("/root/SurvivalService")
 		if service != null and service.has_method(&"activate_bed"):
-			var validator := func() -> bool: return String(build.call(&"validate_cell", plot)).is_empty()
+			# The scene supplies ownership/proximity/enclosure to `activate_bed`.
+			# The control answers the same three questions from the product's own
+			# room topology, the Hero's real distance, and nothing else: it must
+			# not hand the transaction a bare `true`.
+			var kept := hero.global_position
+			var bed_point := Vector2(plot.x * 16.0 + 8.0, plot.y * 16.0 + 8.0)
+			hero.global_position = bed_point + Vector2(0, 24)
+			var bed_room := String(build.get(&"room_topology").call(&"room_at", plot))
+			var validator := func() -> bool:
+				return not bed_room.is_empty() and hero.global_position.distance_to(bed_point) <= 48.0
 			bed_activation = service.call(&"activate_bed", bed_id, validator) as Dictionary
 			bed_activated = bool(bed_activation.get("ok", false))
+			facts["bed_validator"] = {"room": bed_room, "hero_px_from_bed": hero.global_position.distance_to(bed_point)}
+			hero.global_position = kept
 	out = {
 		"built": placed > 0, "origin": [plot.x, plot.y], "radius": radius,
 		"ring_pieces": placed, "ring_expected": 8 if radius == 1 else 16,
@@ -248,18 +259,28 @@ func _control_blocked(valid: Dictionary) -> void:
 			"commit_reason": String(commit_bed.get("reason", ""))})
 	# (iii) A furnace recipe asked of the workbench the player just built: physical
 	# station, wrong kind. The session answers, the player must read it.
+	# FIXTURE (disclosed): the two recipe rows below are about the *station kind*
+	# and the *reach* rule, so the control stands the Hero beside the bench for
+	# the first row and 400 px away for the second. It is a control message, not
+	# player movement, and it never claims to be EV3.
 	var session: Node = world.get(&"economy_session") as Node
 	var bench_id := String(valid.get("workbench_id", ""))
+	var bench_cell: Array = valid.get("workbench_cell", [-1, -1])
+	var bench_point := Vector2(float(bench_cell[0]) * 16.0 + 8.0, float(bench_cell[1]) * 16.0 + 8.0)
+	var kept := hero.global_position
 	if session != null and session.has_method(&"queue_recipe") and not bench_id.is_empty():
+		hero.global_position = bench_point + Vector2(0, 24)
+		facts["blocked_bench_setup"] = {"hero_at": [hero.global_position.x, hero.global_position.y],
+			"bench_at": [bench_point.x, bench_point.y], "distance_px": hero.global_position.distance_to(bench_point)}
 		var wrong: Dictionary = session.call(&"queue_recipe", "smelt_iron", bench_id) as Dictionary
 		rows.append({"case": "furnace_recipe_at_workbench", "station": bench_id,
+			"hero_to_bench_px": hero.global_position.distance_to(bench_point),
 			"ok": bool(wrong.get("ok", false)), "reason": String(wrong.get("reason", ""))})
 	# (iv) The same bench reached from across the map — the reach rule, not the kind.
 	if session != null and not bench_id.is_empty():
-		var keep := hero.global_position
-		hero.global_position = keep + Vector2(400, 0)
+		hero.global_position = bench_point + Vector2(400, 0)
 		var far: Dictionary = session.call(&"queue_recipe", "make_parts", bench_id) as Dictionary
-		hero.global_position = keep
+		hero.global_position = kept
 		rows.append({"case": "recipe_from_out_of_reach", "distance_px": 400,
 			"ok": bool(far.get("ok", false)), "reason": String(far.get("reason", ""))})
 	facts["blocked"] = rows
@@ -279,10 +300,14 @@ func _photograph(valid: Dictionary) -> void:
 	await _wait_frames(20)
 	for size: Vector2i in sizes:
 		await _capture_one(size, "r14_home_%dx%d.png")
-	# Inside the room: does the roof let a player see their own home?
+	# Inside the room: does the roof let a player see their own home? All three
+	# framings, because the interior is the frame that proves the house is
+	# enterable and furnished, and a 720p-only interior would leave the 1440p and
+	# 2160p verdicts resting on an exterior slab.
 	hero.global_position = valid["interior_point"] as Vector2
 	await _wait_frames(24)
-	await _capture_one(sizes[0], "r14_home_interior_%dx%d.png")
+	for size: Vector2i in sizes:
+		await _capture_one(size, "r14_home_interior_%dx%d.png")
 	facts["home_shots"] = {
 		"outside_from": valid["door_point"], "inside_at": valid["interior_point"],
 		"frames": ["r14_home_<w>x<h>.png", "r14_home_interior_<w>x<h>.png"],
