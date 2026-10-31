@@ -849,3 +849,24 @@ SOH world source parity and creator review remain separate.
   samples, +47 live objects, zero after cancel and HP 69→69. Different shared
   software runners yielded non-monotonic results; do not interpret cross-run
   timing differences as speedup, target-device budget, allocations or GPU time.
+- A16 `8ffa22ce2` builds the exact A hash2 lattice once per frame for the
+  unchanged three-octave sampled petals; no geometry, colors, samples or
+  seeds are removed. Compared with immediate `4a62a6e1f`, four alternating
+  same-host fixed-tick samples in [41233228230](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41233228230)
+  matched every captured world field bit-for-bit at ticks 180/270/330/390/450/
+  480/510/539. Old→new CPU p50: tick 270 **372.761→182.022 ms**, 330
+  **543.078→300.809 ms**, 390 **608.326→306.772 ms**, 450 **55.282→31.532 ms**;
+  ticks 480–539 are already mostly empty. The original A-only source comparison
+  [41233203619](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41233203619)
+  passed too. This warm fixed-tick CPU comparison is not a GPU or device budget.
+  Follow-on `6bd1f1773` reuses exact octave-axis interpolation values; same-host
+  [41233531103](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41233531103)
+  matched fields and measured only small p50 reductions at ticks 270/330/390
+  **128.986→125.509, 210.427→206.303, 209.663→207.208 ms**; no large speedup
+  claimed. Original-A source and independent reference reruns also passed.
+- Historical-world [41233203569](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41233203569)
+  sampled the cached-lattice #02+#16 overlap at 720p/2K/4K: post-draw p50/p95/
+  p99 **311/615/639**, **633/1009/1035**, **514/720/731 ms**. Different shared
+  software hosts invalidate direct before/after world-frame speedup claims;
+  each still ended with zero object delta after cancellation. Current-world and
+  axis-cache reruns are pending. No device or production acceptance follows.
