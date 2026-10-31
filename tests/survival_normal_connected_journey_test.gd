@@ -24,7 +24,10 @@ extends "res://tests/survival_normal_input_gather_test.gd"
 ##    calls it through the world exactly as the closing application does.
 ##  * The run seed and the station are produced by ordinary play; nothing is
 ##    minted, teleported or granted.
-const AUDIT := "user://tests/a0_connected_journey.json"
+# The audit must never share a path with the save: reading the save document as
+# the audit is how a two-process gate silently "passes" check one and then fails
+# everything it recorded.
+const AUDIT := "user://tests/a0_connected_audit.json"
 const FURNACE_SLOT := "6"   # SurvivalBuildSystem.BUILD_SLOTS index 5 -> build_slot_6
 
 var _phase := "play"
@@ -44,8 +47,10 @@ func _console() -> void:
 	# Process 1 must start from a genuinely fresh profile; process 2 (verify) must
 	# find the profile process 1 left behind. Deleting here can never mask a
 	# persistence failure, because the verify phase never deletes.
-	if _phase == "play" and FileAccess.file_exists(save_path):
-		DirAccess.remove_absolute(ProjectSettings.globalize_path(save_path))
+	if _phase == "play":
+		for stale: String in [save_path, AUDIT]:
+			if FileAccess.file_exists(stale):
+				DirAccess.remove_absolute(ProjectSettings.globalize_path(stale))
 	var save := root.get_node_or_null("SaveService")
 	if save != null:
 		save.call(&"configure_storage", save_path, true)
@@ -524,6 +529,10 @@ func _write_audit(ow: Node, extra: Dictionary) -> void:
 		"receipts": _collect_receipt_count(),
 		"extra": extra,
 	}
+	# Flatten the continuation's own fields: a reader should not have to know
+	# which half of the journey a field came from.
+	for key: Variant in extra.keys():
+		audit[String(key)] = extra[key]
 	var file := FileAccess.open(AUDIT, FileAccess.WRITE)
 	if file != null:
 		file.store_string(JSON.stringify(audit, "\t", true, true))

@@ -287,6 +287,14 @@ func _click_window(position: Vector2) -> void:
 	Input.parse_input_event(click)
 	await process_frame
 
+## The panel joins the target and the status word with its own separator ("weave
+## cloth · ready 12/12"), so a gate must match the words, not one owner's
+## punctuation: the recipe must be this target and the status must be ready.
+func _ready_label(label: Label, target: String) -> bool:
+	var text := label.text.to_lower()
+	return text.begins_with(target.to_lower()) and text.contains("ready")
+
+
 func _owning_scroll(control: Control) -> ScrollContainer:
 	var ancestor := control.get_parent() if control != null else null
 	while ancestor != null:
@@ -592,7 +600,7 @@ func _body() -> void:
 		var candidate := value as Button
 		var row := candidate.get_parent()
 		var label := row.get_child(0) as Label if row != null and row.get_child_count() > 0 else null
-		if candidate.text.to_lower() == "collect" and label != null and label.text.to_lower().begins_with("weave cloth: ready"):
+		if candidate.text.to_lower() == "collect" and label != null and _ready_label(label, "weave cloth"):
 			output_button = candidate
 			break
 	var output_scroll := _owning_scroll(output_button)
