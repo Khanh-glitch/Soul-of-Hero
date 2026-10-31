@@ -65,7 +65,7 @@ func _init() -> void:
 func _write_index(manifest: Array, names: Dictionary) -> void:
     var html := "<!doctype html><meta charset=utf-8><title>ARCANA Fusion20 — visual review</title>"
     html += "<style>body{background:#0b0e14;color:#dbe4f5;font:14px system-ui}img{width:864px;image-rendering:pixelated}section{margin:28px 0}</style>"
-    html += "<h1>ARCANA Fusion20 — native source-buffer review sheets</h1><p>Stages per sheet (row-major): opening, development, catalog peak, approximate first contact (nearest 0.4s sample), aftermath, OUT. Fixed-clock, sampled source-buffer evidence only, not SOH composite or approval. #01 is an approximate A/C image overlay, not the real world-transform composite. See stages.json for times and limitations. VISUAL_NOT_VERIFIED for all 20.</p>"
+    html += "<h1>ARCANA Fusion20 — native source-buffer review sheets</h1><p>Stages per sheet (row-major): opening, development, catalog peak, approximate first contact (nearest 0.4s sample), aftermath, OUT. Fixed-clock, sampled source-buffer evidence only, not SOH composite or approval. #01 is an FX-only software composition using the player world transforms; it is not a real SOH composite. See stages.json for times and limitations. VISUAL_NOT_VERIFIED for all 20.</p>"
     for e in manifest:
         var id := int(e["id"])
         html += "<section><h2>%02d %s — dur %.1fs, contacts %s, first contact %ss</h2><p><a href=\"skill_%02d/preview.gif\">Animation</a> · <a href=\"skill_%02d/stages.json\">stage data</a></p><img src=\"skill_%02d_sheet.png\"></section>" % [id, String(names[id]), float(e["duration"]), str(e.get("contacts", "?")), str(e.get("first_contact_t", "?")), id, id, id]
@@ -81,6 +81,42 @@ func _stage_times(dur: float, climax: float) -> Dictionary:
         "aftermath": dur * 0.85,
         "out": dur * 0.97,
     }
+
+## Nearest-neighbor source-over of #01's two actual source buffers after
+## the same similarity transforms used by their Sprite2D hosts. The viewport
+## covers world (0,120)..(640,480), with caster (200,300), target (420,300).
+## This is a source FX-only diagnostic, not an in-game screenshot.
+func _fusion_world_frame(cp: CSourcePlayer, ap: ASourcePlayer) -> PackedByteArray:
+    var cb := cp.frame_bytes()
+    var ab := ap._fb.present()
+    var out := PackedByteArray()
+    out.resize(416 * 234 * 4)
+    for y in range(234):
+        for x in range(416):
+            var world := Vector2(float(x) * 640.0 / 416.0, 120.0 + float(y) * 360.0 / 234.0)
+            var cpos := (world - cp._origin).rotated(-cp._rot) / cp._scale + Vector2(112, 126)
+            var apos := (world - ap._origin).rotated(-ap._rot) / ap._scale + ASourcePlayer.CASTER_LOCAL
+            var cx := floori(cpos.x)
+            var cy := floori(cpos.y)
+            var ax := floori(apos.x)
+            var ay := floori(apos.y)
+            var ci := (cy * 384 + cx) * 4
+            var ai := (ay * 416 + ax) * 4
+            var ca := 0.0
+            var aa := 0.0
+            if cx >= 0 and cx < 384 and cy >= 0 and cy < 216:
+                ca = float(cb[ci + 3]) / 255.0
+            if ax >= 0 and ax < 416 and ay >= 0 and ay < 234:
+                aa = float(ab[ai + 3]) / 255.0
+            var alpha := aa + ca * (1.0 - aa)
+            var oi := (y * 416 + x) * 4
+            if alpha > 0.0:
+                for channel in range(3):
+                    var c := float(cb[ci + channel]) if ca > 0.0 else 0.0
+                    var a := float(ab[ai + channel]) if aa > 0.0 else 0.0
+                    out[oi + channel] = clampi(roundi((a * aa + c * ca * (1.0 - aa)) / alpha), 0, 255)
+                out[oi + 3] = clampi(roundi(alpha * 255.0), 0, 255)
+    return out
 
 func _capture_skill(id: int, sname: String, host: Arcana20Renderer) -> Dictionary:
     var slot := Arcana20SourceCatalog.slot(id)
@@ -155,45 +191,37 @@ func _capture_skill(id: int, sname: String, host: Arcana20Renderer) -> Dictionar
         _run_plan(id, sname, dur, stages, grab, dir, dp, contacts, first_contact, 480, 270)
         dp.queue_free()
     elif id == 1:
-        # Fusion #01: A crown (front) + C crown (back, +0.69s local clock).
+        # Exercise the real fusion clock and map both source sprites into the
+        # same world-space viewport. This is FX-only, not a SOH scene.
+        var fp := FusionPlayer.new()
         var ap := ASourcePlayer.new()
-        root.add_child(ap)
-        ap.configure(ACinderCrown.new(), ACinderCrown.DURATION)
-        ap.set("render_enabled", false)
         var cp := CSourcePlayer.new()
-        root.add_child(cp)
-        cp.visual_contact.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
+        ap.configure(ACinderCrown.new(), ACinderCrown.DURATION)
+        fp.configure([
+            {"node": cp, "layer": -1, "offset": 0.69, "begin_call": func(n: Node, cw: Vector2, tw: Vector2) -> void: n.call("begin", cw, tw, "crown")},
+            {"node": ap, "layer": 1, "offset": 0.0, "begin_call": func(n: Node, cw: Vector2, tw: Vector2) -> void: n.call("begin", cw, tw)},
+        ], ACinderCrown.DURATION)
+        root.add_child(fp)
+        fp.visual_contact.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
             contacts[0] += 1
             if first_contact[0] < 0.0:
                 first_contact[0] = st)
-        ap.visual_contact.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
-            contacts[0] += 1
-            if first_contact[0] < 0.0:
-                first_contact[0] = st)
+        fp.begin(Vector2(200, 300), Vector2(420, 300))
+        ap.set("render_enabled", false)
         cp.set("render_enabled", false)
-        ap.begin(Vector2(200, 300), Vector2(420, 300))
-        cp.begin(Vector2(200, 300), Vector2(420, 300), "crown")
-        dur = ACinderCrown.DURATION
-        stages = _stage_times(dur, climax)
+        dur = fp.duration
+        stages = _stage_times(dur, 3.95)
         grab = func(t: float) -> PackedByteArray:
-            while ap.source_time() < t - 0.0001 and bool(ap.get("_active")):
-                ap.advance(STEP)
-            var ct: float = minf(t + 0.69, cp.duration - 0.001)
-            while cp.source_time() < ct - 0.0001 and bool(cp.get("_active")):
-                cp.advance(STEP)
+            while fp.source_time() < t - 0.0001 and bool(fp.get("_active")):
+                fp.advance(STEP)
             cp.set("render_enabled", true)
             cp.call("_render_frame")
             cp.set("render_enabled", false)
             ap._fb.clear()
             ap._spell.call("render", ap._fb, ap.source_time())
-            var cimg := Image.create_from_data(384, 216, false, Image.FORMAT_RGBA8, cp.frame_bytes())
-            cimg.resize(416, 234, Image.INTERPOLATE_NEAREST)
-            var aimg := Image.create_from_data(416, 234, false, Image.FORMAT_RGBA8, ap._fb.present())
-            cimg.blend_rect(aimg, Rect2i(0, 0, 416, 234), Vector2i.ZERO)
-            return cimg.get_data()
-        _run_plan(id, sname, dur, stages, grab, dir, ap, contacts, first_contact, 416, 234)
-        ap.queue_free()
-        cp.queue_free()
+            return _fusion_world_frame(cp, ap)
+        _run_plan(id, sname, dur, stages, grab, dir, fp, contacts, first_contact, 416, 234)
+        fp.queue_free()
     else:
         var ap := ASourcePlayer.new()
         root.add_child(ap)

@@ -1,0 +1,63 @@
+name: ARCANA20 real SOH scene visual diagnostics
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths:
+      - 'prototypes/arcana_fusion20/renderer/**'
+      - '.github/workflows/arcana20-real-scene-capture.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  real-scene:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import project
+        run: timeout 240s godot --headless --path . --import
+      - name: Capture real crypt scene, knight, skeleton and camera
+        shell: bash
+        run: |
+          set -o pipefail
+          timeout --signal=TERM --kill-after=10s 1500s xvfb-run -a -s '-screen 0 1600x900x24' \
+            godot --path . --rendering-method gl_compatibility --audio-driver Dummy \
+            --script res://prototypes/arcana_fusion20/renderer/arcana20_real_scene_capture.gd \
+            2>&1 | tee real-scene.log
+          grep -Fq 'ARCANA20_REAL_SCENE_CAPTURE PASS' real-scene.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|ARCANA20_REAL_SCENE_FAIL' real-scene.log; then
+            echo 'real scene capture failed' >&2
+            exit 1
+          fi
+      - name: Create browsable scene review index
+        if: always()
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import html
+          p = Path('prototypes/arcana_fusion20/renderer/evidence_out/real-scene')
+          if not p.exists():
+              raise SystemExit(0)
+          names = ['Cinder Crown','Furnace Wyrm','Meteor Loom','Ashen Guillotine','Abyssal Bloom','Riptide Calligraphy','Mirrorfrost Basilica','Undertow Maw','Chain Verdict','Thunderloom','Volt Carousel','Skybreaker Script','Rootwake','Spore Nebula','Thorn Opera','Worldseed','Event Horizon','Chronoshard','Constellation Engine','Reality Ripper']
+          sections = []
+          for i, name in enumerate(names, 1):
+              imgs = ''.join(f'<a href="skill_{i:02}_{j}.png"><img src="skill_{i:02}_{j}.png" alt="sample {j}"></a>' for j in range(3) if (p / f'skill_{i:02}_{j}.png').exists())
+              sections.append(f'<section><h2>{i:02} {html.escape(name)}</h2>{imgs or "No captures produced."}</section>')
+          (p / 'index.html').write_text('<!doctype html><meta charset="utf-8"><title>ARCANA real-scene diagnostics</title><style>body{background:#10121a;color:#ddd;font:14px system-ui}img{width:32%;image-rendering:pixelated}section{margin:24px 0}</style><h1>Real SOH crypt scene — AVFX direct-render diagnostics</h1><p>Actual game/main.tscn, knight, skeleton and camera. Samples: 0.5s, 55%, 93% duration; enemy and camera are repositioned between samples. No PR30 binding, gameplay hit integration, actual overworld, bright scene, real-time benchmark or visual approval is implied. <a href="manifest.json">Manifest/event positions</a>.</p><p><a href="baseline.png">Baseline</a> · <a href="overlap_02_10.png">Overlap #02 + #10</a></p>' + ''.join(sections))
+          PY
+      - name: Upload real-scene evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: arcana20-real-scene-diagnostics
+          path: prototypes/arcana_fusion20/renderer/evidence_out/real-scene/
+          if-no-files-found: ignore
