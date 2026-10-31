@@ -10,7 +10,8 @@ import struct
 
 
 RESOLUTIONS = ([1280, 720], [2560, 1440], [3840, 2160])
-VIEWS = ("quarry_day", "quarry_night", "orchard_day", "orchard_night", "region_transition")
+VIEWS = ("quarry_day", "quarry_night", "orchard_day", "orchard_night", "region_transition",
+         "first_hour_layby", "first_hour_waystation")
 NEGATIVES = {
     "negative_coordinates": "WORLD_BOUNDS",
     "unloaded_cell": "CHUNK_NOT_ACQUIRED",
@@ -83,6 +84,15 @@ def validate(report: dict, manifest: dict, project: Path, require_d051_art: bool
     check("all_journeys_input_driven_without_coordinate_writes", len(journeys) >= 20
           and all(row.get("ok") and row.get("input_driven") and row.get("position_writes") == 0
                   and not row.get("production_mount") for row in journeys), len(journeys))
+    route_path = project / "data/survival/world/corridor/first_hour_route.v1.json"
+    route = report.get("first_hour_route", {})
+    check("first_hour_physical_round_trip", route.get("ok") is True
+          and route.get("route_id") == "a1_corridor:crown_roadside_local_v1"
+          and route.get("source_sha256") == sha(route_path)
+          and route.get("start_cell") == [392, 200] and route.get("layby_cell") == [400, 220]
+          and route.get("goal_cell") == [408, 199] and route.get("outbound_cells") == 66
+          and route.get("return_cells") == 30 and route.get("outbound_ok") and route.get("return_ok")
+          and route.get("input_driven") and route.get("position_writes") == 0, route)
     check("no_teleport_stream_or_contact_defects", report.get("travel_position_writes") == 0
           and not report.get("teleport_violations") and not report.get("stream_violations")
           and not report.get("unexpected_contacts") and float(report.get("max_hero_step_px", 999)) <= 20.0)
@@ -101,7 +111,7 @@ def validate(report: dict, manifest: dict, project: Path, require_d051_art: bool
     check("blocked_terrain_was_physical", int(controls.get("blocked_terrain", {}).get("contacts", 0)) > 0)
 
     captures = report.get("captures", [])
-    check("capture_matrix_count", len(captures) == 15, len(captures))
+    check("capture_matrix_count", len(captures) == len(VIEWS) * len(RESOLUTIONS), len(captures))
     by_pair: dict[tuple[str, tuple[int, ...]], dict] = {}
     for row in captures:
         view = row.get("view_id")

@@ -53,6 +53,7 @@ var current_drive_label := ""
 var started_ticks := 0
 var consumer_sample_used := false
 var initial_spawn: Dictionary = {}
+var first_hour_route: Dictionary = {}
 
 
 func _initialize() -> void:
@@ -558,6 +559,54 @@ func _run_spawn_matrix() -> void:
 	_expect(_hits_at(selected.cell).is_empty(), "selected initial spawn is clear for the actual composed body")
 
 
+func _run_first_hour_route() -> void:
+	const ROUTE_PATH := "res://data/survival/world/corridor/first_hour_route.v1.json"
+	var route: Dictionary = _json(ROUTE_PATH)
+	var outbound: Array = route.get("outbound_cells", [])
+	var returning: Array = route.get("return_cells", [])
+	_expect(String(route.get("route_id", "")) == "a1_corridor:crown_roadside_local_v1"
+		and outbound.size() == 66 and returning.size() == 30,
+		"committed first-hour corridor route loads without a fixture-only path")
+	if outbound.size() != 66 or returning.size() != 30:
+		abort = true
+		return
+	var start := _cell(route.start_cell)
+	var layby := Vector2i(400, 220)
+	var goal := _cell(route.goal_cell)
+	_reset_actor(start)  # Labelled independent setup; the complete route below is input-driven.
+	await physics_frame
+	await physics_frame
+	first_hour_route = {"route_id": String(route.route_id), "source_sha256": FileAccess.get_sha256(ROUTE_PATH),
+		"start_cell": route.start_cell, "layby_cell": [layby.x, layby.y], "goal_cell": route.goal_cell,
+		"outbound_cells": outbound.size(), "return_cells": returning.size(), "outbound_ok": false,
+		"return_ok": false, "input_driven": true, "position_writes": 0}
+	var to_layby: Array[Vector2i] = []
+	for index: int in range(1, 35):
+		to_layby.append(_cell(outbound[index]))
+	var layby_result: Dictionary = await _drive_cells("first-hour postern to supply layby", to_layby)
+	_expect(bool(layby_result.ok) and continent.world_to_cell(hero.global_position).get("cell", Vector2i(-1, -1)) == layby,
+		"real controller reaches first-hour supply layby through the committed route")
+	await _capture("first_hour_layby", 0.35, "")
+	var to_waystation: Array[Vector2i] = []
+	for index: int in range(35, outbound.size()):
+		to_waystation.append(_cell(outbound[index]))
+	var outbound_result: Dictionary = await _drive_cells("first-hour supply layby to Waystation", to_waystation)
+	var outbound_ok := bool(layby_result.ok) and bool(outbound_result.ok) \
+		and continent.world_to_cell(hero.global_position).get("cell", Vector2i(-1, -1)) == goal
+	first_hour_route["outbound_ok"] = outbound_ok
+	_expect(outbound_ok, "real controller completes first-hour outbound route to the Waystation")
+	await _capture("first_hour_waystation", 0.35, "")
+	var back: Array[Vector2i] = []
+	for index: int in range(1, returning.size()):
+		back.append(_cell(returning[index]))
+	var return_result: Dictionary = await _drive_cells("first-hour Waystation return to postern", back)
+	var return_ok := bool(return_result.ok) \
+		and continent.world_to_cell(hero.global_position).get("cell", Vector2i(-1, -1)) == start
+	first_hour_route["return_ok"] = return_ok
+	first_hour_route["ok"] = outbound_ok and return_ok
+	_expect(return_ok, "real controller returns from Waystation to the first-hour postern")
+
+
 func _site_path(descriptor: Dictionary) -> Array[Vector2i]:
 	var retreat := _cell(descriptor.retreat_target.cell)
 	var approach := _cell(descriptor.physical_approach.cell)
@@ -757,7 +806,7 @@ func _finish() -> void:
 		"avatar": avatar_state, "identity_selection": identity_selection,
 		"d051_art_required": require_d051_art,
 		"d051_art_staged": art_staged,
-		"spawn_results": spawn_results, "initial_spawn": initial_spawn,
+		"spawn_results": spawn_results, "initial_spawn": initial_spawn, "first_hour_route": first_hour_route,
 		"site_arrivals": site_arrivals, "journeys": journeys, "negative_controls": negative_controls,
 		"captures": captures, "chunk_transitions": chunk_transitions, "region_transitions": region_transitions,
 		"unexpected_contacts": unexpected_contacts, "stream_violations": stream_violations,
@@ -818,6 +867,8 @@ func _run() -> void:
 	_run_contract_checks()
 	if not abort:
 		await _run_spawn_matrix()
+	if not abort:
+		await _run_first_hour_route()
 	for key: String in ["quarry", "mill", "orchard"]:
 		if not abort:
 			await _run_site(key)
@@ -826,6 +877,7 @@ func _run() -> void:
 	if not abort:
 		await _run_blocked_terrain_negative()
 	_verify_capture_pairs()
+	_expect(bool(first_hour_route.get("ok", false)), "committed first-hour corridor outbound and return are physically complete")
 	_expect(site_arrivals.size() >= 2, "at least two distinct real A8 approach/door/retreat journeys completed")
 	_expect(not region_transitions.is_empty() and not chunk_transitions.is_empty(), "native region and chunk transitions executed")
 	_expect(unexpected_contacts.is_empty(), "valid driven routes have no unexpected physical contacts")
