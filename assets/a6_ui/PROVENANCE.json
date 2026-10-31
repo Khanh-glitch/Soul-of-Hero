@@ -1,0 +1,704 @@
+{
+ "schema": "soh.a6.ui_art_receipt.v1",
+ "generated_by": "tools/import_a6_ui_art.py",
+ "license": {
+  "status": "GAME_USE_SUPPORTED_RAW_REDISTRIBUTION_NOT_APPROVED",
+  "url": "https://craftpix.net/file-licenses/",
+  "boundary": "These are derivative crops of licensed CraftPix packs, imported so the game can display them. The source ZIPs are not stored in this repository and must not be; do not republish these crops as an asset pack."
+ },
+ "slice_contract": "nine_slice_margin is authored-corner safe: the UI must set texture_margin_* to these values and enable nine-slice, never stretch the raw texture.",
+ "assets": [
+  {
+   "kind": "panel",
+   "id": "window",
+   "output": "assets/a6_ui/panels/window.png",
+   "source": {
+    "pack": "255216",
+    "repository": "Khanh-glitch/APEX-CHAOS",
+    "commit": "bf11a0cecfda43beca510062bd5d9dc1a8573cc5",
+    "branch": "Khanh-glitch-patch-6",
+    "archive": "craftpix-net-255216-free-basic-pixel-art-ui-for-rpg.zip",
+    "product": "https://craftpix.net/freebies/free-basic-pixel-art-ui-for-rpg/",
+    "member": "PNG/Inventory.png",
+    "member_sha256": "fba22498887f45cbac3ff8a2cfea4849bbd3687cd773886d4f40c915e6693869",
+    "rect": [
+     7,
+     0,
+     98,
+     101
+    ]
+   },
+   "size": [
+    98,
+    101
+   ],
+   "nine_slice_margin": [
+    4,
+    15,
+    4,
+    5
+   ],
+   "scale": 3,
+   "note": "teal band (y0-13) + parchment body; lettering-free",
+   "output_sha256": "f6b89c3f10416f5778063bcaecc0364d0b73c1c1b4117bba9d3eee613e0b3842"
+  },
+  {
+   "kind": "panel",
+   "id": "panel",
+   "output": "assets/a6_ui/panels/panel.png",
+   "source": {
+    "pack": "255216",
+    "repository": "Khanh-glitch/APEX-CHAOS",
+    "commit": "bf11a0cecfda43beca510062bd5d9dc1a8573cc5",
+    "branch": "Khanh-glitch-patch-6",
+    "archive": "craftpix-net-255216-free-basic-pixel-art-ui-for-rpg.zip",
+    "product": "https://craftpix.net/freebies/free-basic-pixel-art-ui-for-rpg/",
+    "member": "PNG/Inventory.png",
+    "member_sha256": "fba22498887f45cbac3ff8a2cfea4849bbd3687cd773886d4f40c915e6693869",
+    "rect": [
+     7,
+     14,
+     98,
+     88
+    ]
+   },
+   "size": [
+    98,
+    88
+   ],
+   "nine_slice_margin": [
+    4,
+    3,
+    4,
+    5
+   ],
+   "scale": 3,
+   "note": "parchment body without the title band",
+   "output_sha256": "cdf9a3125f0734659e351c0e4520aab88f1a9a637cf4c06ecde19fec69b42fe9"
+  },
+  {
+   "kind": "panel",
+   "id": "slot",
+   "output": "assets/a6_ui/panels/slot.png",
+   "source": {
+    "pack": "255216",
+    "repository": "Khanh-glitch/APEX-CHAOS",
+    "commit": "bf11a0cecfda43beca510062bd5d9dc1a8573cc5",
+    "branch": "Khanh-glitch-patch-6",
+    "archive": "craftpix-net-255216-free-basic-pixel-art-ui-for-rpg.zip",
+    "product": "https://craftpix.net/freebies/free-basic-pixel-art-ui-for-rpg/",
+    "member": "PNG/Action_panel.png",
+    "member_sha256": "0816398d8dabbbf0a3b8b196142258c9add14f25721d141fa78a2cba925c0d0c",
+    "rect": [
+     96,
+     80,
+     16,
+     16
+    ]
+   },
+   "size": [
+    16,
+    16
+   ],
+   "nine_slice_margin": [
+    4,
+    4,
+    4,
+    4
+   ],
+   "scale": 3,
+   "note": "wood-framed empty socket",
+   "output_sha256": "28f75c7a051127989be53d80564437b93082c16100a757725f09c8e14e5e62dc"
+  },
+  {
+   "kind": "panel",
+   "id": "button_normal",
+   "output": "assets/a6_ui/panels/button_normal.png",
+   "source": {
+    "pack": "255216",
+    "repository": "Khanh-glitch/APEX-CHAOS",
+    "commit": "bf11a0cecfda43beca510062bd5d9dc1a8573cc5",
+    "branch": "Khanh-glitch-patch-6",
+    "archive": "craftpix-net-255216-free-basic-pixel-art-ui-for-rpg.zip",
+    "product": "https://craftpix.net/freebies/free-basic-pixel-art-ui-for-rpg/",
+    "member": "PNG/Buttons.png",
+    "member_sha256": "d48d6f7158b8b3f4f198b16bbaa408412b6a93aa366c0d9594807830030a6695",
+    "rect": [
+     13,
+     12,
+     22,
+     23
+    ]
+   },
+   "size": [
+    22,
+    23
+   ],
+   "nine_slice_margin": [
+    7,
+    8,
+    7,
+    8
+   ],
+   "scale": 3,
+   "note": "default state",
+   "output_sha256": "113bb4cfdf4da88caf8902ce785aaca0474591d793b0aef5a2c84c44808d9cfa"
+  },
+  {
+   "kind": "panel",
+   "id": "button_hover",
+   "output": "assets/a6_ui/panels/button_hover.png",
+   "source": {
+    "pack": "255216",
+    "repository": "Khanh-glitch/APEX-CHAOS",
+    "commit": "bf11a0cecfda43beca510062bd5d9dc1a8573cc5",
+    "branch": "Khanh-glitch-patch-6",
+    "archive": "craftpix-net-255216-free-basic-pixel-art-ui-for-rpg.zip",
+    "product": "https://craftpix.net/freebies/free-basic-pixel-art-ui-for-rpg/",
+    "member": "PNG/Buttons.png",
+    "member_sha256": "d48d6f7158b8b3f4f198b16bbaa408412b6a93aa366c0d9594807830030a6695",
+    "rect": [
+     61,
+     13,
+     22,
+     22
+    ]
+   },
+   "size": [
+    22,
+    22
+   ],
+   "nine_slice_margin": [
+    7,
+    7,
+    7,
+    7
+   ],
+   "scale": 3,
+   "note": "hover state (second authored shade)",
+   "output_sha256": "30f5bcff5fbd56a9f1d101bf6b0e5b9d5f47d230d5a4cb874f803f417aacb17e"
+  },
+  {
+   "kind": "panel",
+   "id": "button_pressed",
+   "output": "assets/a6_ui/panels/button_pressed.png",
+   "source": {
+    "pack": "255216",
+    "repository": "Khanh-glitch/APEX-CHAOS",
+    "commit": "bf11a0cecfda43beca510062bd5d9dc1a8573cc5",
+    "branch": "Khanh-glitch-patch-6",
+    "archive": "craftpix-net-255216-free-basic-pixel-art-ui-for-rpg.zip",
+    "product": "https://craftpix.net/freebies/free-basic-pixel-art-ui-for-rpg/",
+    "member": "PNG/Buttons.png",
+    "member_sha256": "d48d6f7158b8b3f4f198b16bbaa408412b6a93aa366c0d9594807830030a6695",
+    "rect": [
+     109,
+     12,
+     22,
+     23
+    ]
+   },
+   "size": [
+    22,
+    23
+   ],
+   "nine_slice_margin": [
+    7,
+    8,
+    7,
+    8
+   ],
+   "scale": 3,
+   "note": "pressed state (third authored shade)",
+   "output_sha256": "0f8898f4a5c99e2286d8e4b6b7b95521e626c705414390291606038794a5675a"
+  },
+  {
+   "kind": "panel",
+   "id": "button_disabled",
+   "output": "assets/a6_ui/panels/button_disabled.png",
+   "source": {
+    "pack": "255216",
+    "repository": "Khanh-glitch/APEX-CHAOS",
+    "commit": "bf11a0cecfda43beca510062bd5d9dc1a8573cc5",
+    "branch": "Khanh-glitch-patch-6",
+    "archive": "craftpix-net-255216-free-basic-pixel-art-ui-for-rpg.zip",
+    "product": "https://craftpix.net/freebies/free-basic-pixel-art-ui-for-rpg/",
+    "member": "PNG/Buttons.png",
+    "member_sha256": "d48d6f7158b8b3f4f198b16bbaa408412b6a93aa366c0d9594807830030a6695",
+    "rect": [
+     157,
+     13,
+     22,
+     22
+    ]
+   },
+   "size": [
+    22,
+    22
+   ],
+   "nine_slice_margin": [
+    7,
+    7,
+    7,
+    7
+   ],
+   "scale": 3,
+   "note": "disabled state (desaturated authored shade)",
+   "output_sha256": "23c3e136e08c222a1ec4d44439f863470255da7f64dbe8caae00c8063312f05b"
+  },
+  {
+   "kind": "panel",
+   "id": "hud_bar",
+   "output": "assets/a6_ui/panels/hud_bar.png",
+   "source": {
+    "pack": "255216",
+    "repository": "Khanh-glitch/APEX-CHAOS",
+    "commit": "bf11a0cecfda43beca510062bd5d9dc1a8573cc5",
+    "branch": "Khanh-glitch-patch-6",
+    "archive": "craftpix-net-255216-free-basic-pixel-art-ui-for-rpg.zip",
+    "product": "https://craftpix.net/freebies/free-basic-pixel-art-ui-for-rpg/",
+    "member": "PNG/Action_panel.png",
+    "member_sha256": "0816398d8dabbbf0a3b8b196142258c9add14f25721d141fa78a2cba925c0d0c",
+    "rect": [
+     13,
+     13,
+     166,
+     19
+    ]
+   },
+   "size": [
+    166,
+    19
+   ],
+   "nine_slice_margin": [
+    6,
+    4,
+    6,
+    4
+   ],
+   "scale": 3,
+   "note": "plain wood bar, no lettering",
+   "output_sha256": "a220ee18be76b7c6fbb6176766959ac35bd14e79190eba138da699a4525cff2a"
+  },
+  {
+   "kind": "icon",
+   "id": "capacity",
+   "output": "assets/a6_ui/icons/capacity.png",
+   "source": {
+    "pack": "994534",
+    "repository": "Khanh-glitch/APEX-CHAOS",
+    "commit": "a960f0945b36614c9754d8dbf2d3e6ec367d449f",
+    "branch": "Khanh-glitch-patch-3",
+    "archive": "craftpix-net-994534-free-basic-pixel-art-fantasy-icons-16x16-for-ui.zip",
+    "product": "https://craftpix.net/freebies/free-basic-pixel-art-fantasy-icons-16x16-for-ui/",
+    "member": "PNG/Separately/Icon48_1.png",
+    "member_sha256": "45a0a845d8a60d6bf3f66b4ea467c2ebcb381661abd54efa57a77f420f4d4f3a"
+   },
+   "size": [
+    16,
+    16
+   ],
+   "note": "Icon48_1",
+   "output_sha256": "0a2e445e5da72f9814e4b91c2387f7cee56d99c70e34ac6d680674a5f85100b4"
+  },
+  {
+   "kind": "icon",
+   "id": "crystal_shard",
+   "output": "assets/a6_ui/icons/crystal_shard.png",
+   "source": {
+    "pack": "994534",
+    "repository": "Khanh-glitch/APEX-CHAOS",
+    "commit": "a960f0945b36614c9754d8dbf2d3e6ec367d449f",
+    "branch": "Khanh-glitch-patch-3",
+    "archive": "craftpix-net-994534-free-basic-pixel-art-fantasy-icons-16x16-for-ui.zip",
+    "product": "https://craftpix.net/freebies/free-basic-pixel-art-fantasy-icons-16x16-for-ui/",
+    "member": "PNG/Separately/Icon29_1.png",
+    "member_sha256": "85e6a9ebd01d7f78d307cc5cfb4ac9216d1bab25fd8b162b8eb27fe68b319e81"
+   },
+   "size": [
+    16,
+    16
+   ],
+   "note": "Icon29_1",
+   "output_sha256": "4f001ad70affca844705d070fbb8ff43d7fc0df5b64a2ceeb6341edd41df3b0f"
+  },
+  {
+   "kind": "icon",
+   "id": "fire_wood",
+   "output": "assets/a6_ui/icons/fire_wood.png",
+   "source": {
+    "pack": "994534",
+    "repository": "Khanh-glitch/APEX-CHAOS",
+    "commit": "a960f0945b36614c9754d8dbf2d3e6ec367d449f",
+    "branch": "Khanh-glitch-patch-3",
+    "archive": "craftpix-net-994534-free-basic-pixel-art-fantasy-icons-16x16-for-ui.zip",
+    "product": "https://craftpix.net/freebies/free-basic-pixel-art-fantasy-icons-16x16-for-ui/",
+    "member": "PNG/Separately/Icon27_1.png",
+    "member_sha256": "9c611e0f7fb9901fba41de22a223240142e6a9dcfac18d0bcddf21495a3d3efd"
+   },
+   "size": [
+    16,
+    16
+   ],
+   "note": "Icon27_1",
+   "output_sha256": "aeb2eafc7cf1d9dc0a5f6be897b88d5a60fc3db264296813ddc27981f702bfc0"
+  },
+  {
+   "kind": "icon",
+   "id": "frost_shard",
+   "output": "assets/a6_ui/icons/frost_shard.png",
+   "source": {
+    "pack": "994534",
+    "repository": "Khanh-glitch/APEX-CHAOS",
+    "commit": "a960f0945b36614c9754d8dbf2d3e6ec367d449f",
+    "branch": "Khanh-glitch-patch-3",
+    "archive": "craftpix-net-994534-free-basic-pixel-art-fantasy-icons-16x16-for-ui.zip",
+    "product": "https://craftpix.net/freebies/free-basic-pixel-art-fantasy-icons-16x16-for-ui/",
+    "member": "PNG/Separately/Icon16_1.png",
+    "member_sha256": "f70b20a5802ead9ae785e8cf2b6a0b252947e130a44cac37531b7290a094d1f6"
+   },
+   "size": [
+    16,
+    16
+   ],
+   "note": "Icon16_1",
+   "output_sha256": "36e791a7df70a6814e4da5e77b480e1c1982ec8ddfa79a7cd9c95e3f2f6b5ab1"
+  },
+  {
+   "kind": "icon",
+   "id": "furnace_kit",
+   "output": "assets/a6_ui/icons/furnace_kit.png",
+   "source": {
+    "pack": "994534",
+    "repository": "Khanh-glitch/APEX-CHAOS",
+    "commit": "a960f0945b36614c9754d8dbf2d3e6ec367d449f",
+    "branch": "Khanh-glitch-patch-3",
+    "archive": "craftpix-net-994534-free-basic-pixel-art-fantasy-icons-16x16-for-ui.zip",
+    "product": "https://craftpix.net/freebies/free-basic-pixel-art-fantasy-icons-16x16-for-ui/",
+    "member": "PNG/Separately/Icon47_1.png",
+    "member_sha256": "96670d677e59118da444adc1b8d38206c5d8648107daac3bfab753ecfe02e0c6"
+   },
+   "size": [
+    16,
+    16
+   ],
+   "note": "Icon47_1",
+   "output_sha256": "3adab3b6a0a33f2c54dccdf714b91ee23a29d0aa4db1e0b74bf94783054f5d1e"
+  },
+  {
+   "kind": "icon",
+   "id": "garden_kit",
+   "output": "assets/a6_ui/icons/garden_kit.png",
+   "source": {
+    "pack": "994534",
+    "repository": "Khanh-glitch/APEX-CHAOS",
+    "commit": "a960f0945b36614c9754d8dbf2d3e6ec367d449f",
+    "branch": "Khanh-glitch-patch-3",
+    "archive": "craftpix-net-994534-free-basic-pixel-art-fantasy-icons-16x16-for-ui.zip",
+    "product": "https://craftpix.net/freebies/free-basic-pixel-art-fantasy-icons-16x16-for-ui/",
+    "member": "PNG/Separately/Icon74_1.png",
+    "member_sha256": "ba7abdbca5e6899e137084c00755aad4a1b46c373762452081b493a2ac1a8960"
+   },
+   "size": [
+    16,
+    16
+   ],
+   "note": "Icon74_1",
+   "output_sha256": "bb5691bd041007202f8c4ab98dc5a7918744ac78b22c54ba5af2e1c0f981ed83"
+  },
+  {
+   "kind": "icon",
+   "id": "health",
+   "output": "assets/a6_ui/icons/health.png",
+   "source": {
+    "pack": "994534",
+    "repository": "Khanh-glitch/APEX-CHAOS",
+    "commit": "a960f0945b36614c9754d8dbf2d3e6ec367d449f",
+    "branch": "Khanh-glitch-patch-3",
+    "archive": "craftpix-net-994534-free-basic-pixel-art-fantasy-icons-16x16-for-ui.zip",
+    "product": "https://craftpix.net/freebies/free-basic-pixel-art-fantasy-icons-16x16-for-ui/",
+    "member": "PNG/Separately/Icon1_1.png",
+    "member_sha256": "e6bc1a72ddfdd6966243f25e4cdf563f4d1c90d97821506adb345ed051fe27bc"
+   },
+   "size": [
+    16,
+    16
+   ],
+   "note": "Icon1_1",
+   "output_sha256": "e41e9aa80686edf03f89278b997d93442b001e00211c2c36626730b7586b0976"
+  },
+  {
+   "kind": "icon",
+   "id": "iron_ingot",
+   "output": "assets/a6_ui/icons/iron_ingot.png",
+   "source": {
+    "pack": "994534",
+    "repository": "Khanh-glitch/APEX-CHAOS",
+    "commit": "a960f0945b36614c9754d8dbf2d3e6ec367d449f",
+    "branch": "Khanh-glitch-patch-3",
+    "archive": "craftpix-net-994534-free-basic-pixel-art-fantasy-icons-16x16-for-ui.zip",
+    "product": "https://craftpix.net/freebies/free-basic-pixel-art-fantasy-icons-16x16-for-ui/",
+    "member": "PNG/Separately/Icon21_1_2.png",
+    "member_sha256": "165848f3e62b715da1a133ce898548bfa6b63e3ef88125061aa4b6b8709ac24b"
+   },
+   "size": [
+    32,
+    32
+   ],
+   "note": "Icon21_1_2",
+   "output_sha256": "c869e307d595b344ee424cecc933e6ee567a7150953059db1859b51dc39402dd"
+  },
+  {
+   "kind": "icon",
+   "id": "iron_scrap",
+   "output": "assets/a6_ui/icons/iron_scrap.png",
+   "source": {
+    "pack": "994534",
+    "repository": "Khanh-glitch/APEX-CHAOS",
+    "commit": "a960f0945b36614c9754d8dbf2d3e6ec367d449f",
+    "branch": "Khanh-glitch-patch-3",
+    "archive": "craftpix-net-994534-free-basic-pixel-art-fantasy-icons-16x16-for-ui.zip",
+    "product": "https://craftpix.net/freebies/free-basic-pixel-art-fantasy-icons-16x16-for-ui/",
+    "member": "PNG/Separately/Icon20_1.png",
+    "member_sha256": "34570fdaffff70bae6bbbd9a4ba5f4c00b9698ba15f0aa5280e49ad90e7f32fb"
+   },
+   "size": [
+    16,
+    16
+   ],
+   "note": "Icon20_1",
+   "output_sha256": "3057b753c2a335ba11871302c9a32e9b42cd128cd9e7157eed7edc650dace7ef"
+  },
+  {
+   "kind": "icon",
+   "id": "knife",
+   "output": "assets/a6_ui/icons/knife.png",
+   "source": {
+    "pack": "994534",
+    "repository": "Khanh-glitch/APEX-CHAOS",
+    "commit": "a960f0945b36614c9754d8dbf2d3e6ec367d449f",
+    "branch": "Khanh-glitch-patch-3",
+    "archive": "craftpix-net-994534-free-basic-pixel-art-fantasy-icons-16x16-for-ui.zip",
+    "product": "https://craftpix.net/freebies/free-basic-pixel-art-fantasy-icons-16x16-for-ui/",
+    "member": "PNG/Separately/Icon57_1.png",
+    "member_sha256": "4af4364e446aaca816293fd76bc294dd73f2b5ae972008a5efd21f1a9df19bb0"
+   },
+   "size": [
+    16,
+    16
+   ],
+   "note": "Icon57_1",
+   "output_sha256": "e3784ab5ab79a020fce56ccda6aeab5251b2f6c4863b6e6b8301024a3bca270d"
+  },
+  {
+   "kind": "icon",
+   "id": "moonleaf_seed",
+   "output": "assets/a6_ui/icons/moonleaf_seed.png",
+   "source": {
+    "pack": "994534",
+    "repository": "Khanh-glitch/APEX-CHAOS",
+    "commit": "a960f0945b36614c9754d8dbf2d3e6ec367d449f",
+    "branch": "Khanh-glitch-patch-3",
+    "archive": "craftpix-net-994534-free-basic-pixel-art-fantasy-icons-16x16-for-ui.zip",
+    "product": "https://craftpix.net/freebies/free-basic-pixel-art-fantasy-icons-16x16-for-ui/",
+    "member": "PNG/Separately/Icon73_1.png",
+    "member_sha256": "30544863f21f079fb92aecf27a072847369e3ef0f0c939ac113a2ed513f03139"
+   },
+   "size": [
+    16,
+    16
+   ],
+   "note": "Icon73_1",
+   "output_sha256": "f7996438a5eaf73534de4a6f14455291cb34312f890a4e00a38f8cbabddc5143"
+  },
+  {
+   "kind": "icon",
+   "id": "oak_wood",
+   "output": "assets/a6_ui/icons/oak_wood.png",
+   "source": {
+    "pack": "994534",
+    "repository": "Khanh-glitch/APEX-CHAOS",
+    "commit": "a960f0945b36614c9754d8dbf2d3e6ec367d449f",
+    "branch": "Khanh-glitch-patch-3",
+    "archive": "craftpix-net-994534-free-basic-pixel-art-fantasy-icons-16x16-for-ui.zip",
+    "product": "https://craftpix.net/freebies/free-basic-pixel-art-fantasy-icons-16x16-for-ui/",
+    "member": "PNG/Separately/Icon75_1.png",
+    "member_sha256": "2f04864433ad140ff53b894592681a9780bad25a4c8d7366f5ce9ed82a38c268"
+   },
+   "size": [
+    16,
+    16
+   ],
+   "note": "Icon75_1",
+   "output_sha256": "3a800e98fb6d730f813f197904ddedb7b681b08dde193dde30e9c6d14a3c9c47"
+  },
+  {
+   "kind": "icon",
+   "id": "reed_fibre",
+   "output": "assets/a6_ui/icons/reed_fibre.png",
+   "source": {
+    "pack": "994534",
+    "repository": "Khanh-glitch/APEX-CHAOS",
+    "commit": "a960f0945b36614c9754d8dbf2d3e6ec367d449f",
+    "branch": "Khanh-glitch-patch-3",
+    "archive": "craftpix-net-994534-free-basic-pixel-art-fantasy-icons-16x16-for-ui.zip",
+    "product": "https://craftpix.net/freebies/free-basic-pixel-art-fantasy-icons-16x16-for-ui/",
+    "member": "PNG/Separately/Icon99_1.png",
+    "member_sha256": "9fbec72208ffb78d6b8808c4ee460593a7e12f46aea5480153fccf4281a37631"
+   },
+   "size": [
+    16,
+    16
+   ],
+   "note": "Icon99_1",
+   "output_sha256": "88719c1ff2535432596e183249a958e9277612d26bce2d03a52e1257d855209e"
+  },
+  {
+   "kind": "icon",
+   "id": "research_kit",
+   "output": "assets/a6_ui/icons/research_kit.png",
+   "source": {
+    "pack": "994534",
+    "repository": "Khanh-glitch/APEX-CHAOS",
+    "commit": "a960f0945b36614c9754d8dbf2d3e6ec367d449f",
+    "branch": "Khanh-glitch-patch-3",
+    "archive": "craftpix-net-994534-free-basic-pixel-art-fantasy-icons-16x16-for-ui.zip",
+    "product": "https://craftpix.net/freebies/free-basic-pixel-art-fantasy-icons-16x16-for-ui/",
+    "member": "PNG/Separately/Icon25_1.png",
+    "member_sha256": "e48e0ba1910752a8bb79766116da881e58322185de968c46aa0988b8f78ad628"
+   },
+   "size": [
+    16,
+    16
+   ],
+   "note": "Icon25_1",
+   "output_sha256": "573f9a1a6c514bb728c9413b8c1326f9c11347d14c937de6b827eb0a3202d1e8"
+  },
+  {
+   "kind": "icon",
+   "id": "shelter",
+   "output": "assets/a6_ui/icons/shelter.png",
+   "source": {
+    "pack": "994534",
+    "repository": "Khanh-glitch/APEX-CHAOS",
+    "commit": "a960f0945b36614c9754d8dbf2d3e6ec367d449f",
+    "branch": "Khanh-glitch-patch-3",
+    "archive": "craftpix-net-994534-free-basic-pixel-art-fantasy-icons-16x16-for-ui.zip",
+    "product": "https://craftpix.net/freebies/free-basic-pixel-art-fantasy-icons-16x16-for-ui/",
+    "member": "PNG/Separately/Icon42_1.png",
+    "member_sha256": "7cc3495e6ab22fb5fb91976ed1a1f06b9d848c03cf8d024c3ea69b71c8a3d7a6"
+   },
+   "size": [
+    16,
+    16
+   ],
+   "note": "Icon42_1",
+   "output_sha256": "4e2fc38b6391e2effc9a55ee0b39b3da1f878337c43ba317af0488b43526d966"
+  },
+  {
+   "kind": "icon",
+   "id": "station_kit",
+   "output": "assets/a6_ui/icons/station_kit.png",
+   "source": {
+    "pack": "994534",
+    "repository": "Khanh-glitch/APEX-CHAOS",
+    "commit": "a960f0945b36614c9754d8dbf2d3e6ec367d449f",
+    "branch": "Khanh-glitch-patch-3",
+    "archive": "craftpix-net-994534-free-basic-pixel-art-fantasy-icons-16x16-for-ui.zip",
+    "product": "https://craftpix.net/freebies/free-basic-pixel-art-fantasy-icons-16x16-for-ui/",
+    "member": "PNG/Separately/Icon53_1.png",
+    "member_sha256": "637c316057076b27ce8317c9b19d5e95c000e106467770690b0f4c781863af0f"
+   },
+   "size": [
+    16,
+    16
+   ],
+   "note": "Icon53_1",
+   "output_sha256": "48dac7f35420079a3f1841f8b07505aecda25c0d2d73d5395e45db86f110f62e"
+  },
+  {
+   "kind": "icon",
+   "id": "stone_chunk",
+   "output": "assets/a6_ui/icons/stone_chunk.png",
+   "source": {
+    "pack": "994534",
+    "repository": "Khanh-glitch/APEX-CHAOS",
+    "commit": "a960f0945b36614c9754d8dbf2d3e6ec367d449f",
+    "branch": "Khanh-glitch-patch-3",
+    "archive": "craftpix-net-994534-free-basic-pixel-art-fantasy-icons-16x16-for-ui.zip",
+    "product": "https://craftpix.net/freebies/free-basic-pixel-art-fantasy-icons-16x16-for-ui/",
+    "member": "PNG/Separately/Icon19_1.png",
+    "member_sha256": "0a7d7f6202d00ea6732c4a02b6faba92a8d9528a190f091b732e05e32ec01b35"
+   },
+   "size": [
+    16,
+    16
+   ],
+   "note": "Icon19_1",
+   "output_sha256": "6e823075cc58a59f160e8050c726dbf87b6f0d007e6ae34dc78e496345a2c7ea"
+  },
+  {
+   "kind": "icon",
+   "id": "time_dawn",
+   "output": "assets/a6_ui/icons/time_dawn.png",
+   "source": {
+    "pack": "994534",
+    "repository": "Khanh-glitch/APEX-CHAOS",
+    "commit": "a960f0945b36614c9754d8dbf2d3e6ec367d449f",
+    "branch": "Khanh-glitch-patch-3",
+    "archive": "craftpix-net-994534-free-basic-pixel-art-fantasy-icons-16x16-for-ui.zip",
+    "product": "https://craftpix.net/freebies/free-basic-pixel-art-fantasy-icons-16x16-for-ui/",
+    "member": "PNG/Separately/Icon49_1.png",
+    "member_sha256": "12f296b41dc8f29ec5c5eba91c22d8fbc1cc3b3811a6560c4775dcc52a20f37c"
+   },
+   "size": [
+    16,
+    16
+   ],
+   "note": "Icon49_1",
+   "output_sha256": "a78876aa44f6c5e50931ab74686a04755b96ca3fae74b98654a2ed2e66c9975b"
+  },
+  {
+   "kind": "icon",
+   "id": "travel",
+   "output": "assets/a6_ui/icons/travel.png",
+   "source": {
+    "pack": "994534",
+    "repository": "Khanh-glitch/APEX-CHAOS",
+    "commit": "a960f0945b36614c9754d8dbf2d3e6ec367d449f",
+    "branch": "Khanh-glitch-patch-3",
+    "archive": "craftpix-net-994534-free-basic-pixel-art-fantasy-icons-16x16-for-ui.zip",
+    "product": "https://craftpix.net/freebies/free-basic-pixel-art-fantasy-icons-16x16-for-ui/",
+    "member": "PNG/Separately/Icon44_1.png",
+    "member_sha256": "e48f42a051e6903c2a830717aea4bbecc6d41e1d65a5a8b1b59328f145e41ba2"
+   },
+   "size": [
+    16,
+    16
+   ],
+   "note": "Icon44_1",
+   "output_sha256": "88e6135f932d058513c39c8f7f7eb4b1e71dbe278e52255353f44800878e5f1d"
+  },
+  {
+   "kind": "icon",
+   "id": "workbench_kit",
+   "output": "assets/a6_ui/icons/workbench_kit.png",
+   "source": {
+    "pack": "994534",
+    "repository": "Khanh-glitch/APEX-CHAOS",
+    "commit": "a960f0945b36614c9754d8dbf2d3e6ec367d449f",
+    "branch": "Khanh-glitch-patch-3",
+    "archive": "craftpix-net-994534-free-basic-pixel-art-fantasy-icons-16x16-for-ui.zip",
+    "product": "https://craftpix.net/freebies/free-basic-pixel-art-fantasy-icons-16x16-for-ui/",
+    "member": "PNG/Separately/Icon54_1.png",
+    "member_sha256": "d6f7a9f90e41b4d93620f5b8569a47d64ea6e6c1ce13108001672ec6b45d7114"
+   },
+   "size": [
+    16,
+    16
+   ],
+   "note": "Icon54_1",
+   "output_sha256": "a28a1306b923e703c608f6ba7b34b23ff928f6b305113f8ae39ca0d9091a34ba"
+  }
+ ]
+}

@@ -1,0 +1,208 @@
+[gd_resource type="Theme" format=3]
+
+
+[ext_resource type="Texture2D" path="res://assets/a6_ui/panels/window.png" id="1_window"]
+[ext_resource type="Texture2D" path="res://assets/a6_ui/panels/panel.png" id="2_panel"]
+[ext_resource type="Texture2D" path="res://assets/a6_ui/panels/slot.png" id="3_slot"]
+[ext_resource type="Texture2D" path="res://assets/a6_ui/panels/button_normal.png" id="4_btn"]
+[ext_resource type="Texture2D" path="res://assets/a6_ui/panels/button_hover.png" id="5_btn_hover"]
+[ext_resource type="Texture2D" path="res://assets/a6_ui/panels/button_pressed.png" id="6_btn_press"]
+[ext_resource type="Texture2D" path="res://assets/a6_ui/panels/button_disabled.png" id="7_btn_disabled"]
+[ext_resource type="Texture2D" path="res://assets/a6_ui/panels/hud_bar.png" id="8_hud_bar"]
+[ext_resource type="FontFile" path="res://assets/fonts/GrenzeGotisch-SemiBold.ttf" id="9_display"]
+[ext_resource type="FontFile" path="res://assets/fonts/Handjet-SemiBold.ttf" id="10_body"]
+[ext_resource type="FontFile" path="res://assets/fonts/VT323-Regular.ttf" id="11_number"]
+
+[sub_resource type="StyleBoxTexture" id="Window"]
+texture = ExtResource("1_window")
+texture_margin_left = 8.0
+texture_margin_top = 15.0
+texture_margin_right = 4.0
+texture_margin_bottom = 5.0
+content_margin_left = 12.0
+content_margin_top = 22.0
+content_margin_right = 12.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxTexture" id="Panel"]
+texture = ExtResource("2_panel")
+texture_margin_left = 4.0
+texture_margin_top = 3.0
+texture_margin_right = 4.0
+texture_margin_bottom = 5.0
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxTexture" id="Slot"]
+texture = ExtResource("3_slot")
+texture_margin_left = 4.0
+texture_margin_top = 4.0
+texture_margin_right = 4.0
+texture_margin_bottom = 4.0
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxTexture" id="HudBar"]
+texture = ExtResource("8_hud_bar")
+texture_margin_left = 6.0
+texture_margin_top = 4.0
+texture_margin_right = 6.0
+texture_margin_bottom = 4.0
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxTexture" id="ButtonNormal"]
+texture = ExtResource("4_btn")
+texture_margin_left = 7.0
+texture_margin_top = 8.0
+texture_margin_right = 7.0
+texture_margin_bottom = 8.0
+content_margin_left = 14.0
+content_margin_top = 7.0
+content_margin_right = 14.0
+content_margin_bottom = 7.0
+
+[sub_resource type="StyleBoxTexture" id="ButtonHover"]
+texture = ExtResource("5_btn_hover")
+texture_margin_left = 7.0
+texture_margin_top = 7.0
+texture_margin_right = 7.0
+texture_margin_bottom = 7.0
+content_margin_left = 14.0
+content_margin_top = 7.0
+content_margin_right = 14.0
+content_margin_bottom = 7.0
+
+[sub_resource type="StyleBoxTexture" id="ButtonPressed"]
+texture = ExtResource("6_btn_press")
+texture_margin_left = 7.0
+texture_margin_top = 8.0
+texture_margin_right = 7.0
+texture_margin_bottom = 8.0
+content_margin_left = 14.0
+content_margin_top = 8.0
+content_margin_right = 14.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="ButtonDisabled"]
+texture = ExtResource("7_btn_disabled")
+texture_margin_left = 7.0
+texture_margin_top = 7.0
+texture_margin_right = 7.0
+texture_margin_bottom = 7.0
+content_margin_left = 14.0
+content_margin_top = 7.0
+content_margin_right = 14.0
+content_margin_bottom = 7.0
+modulate_color = Color(0.62, 0.6, 0.58, 0.85)
+
+[sub_resource type="StyleBoxTexture" id="ButtonFocus"]
+texture = ExtResource("5_btn_hover")
+texture_margin_left = 7.0
+texture_margin_top = 7.0
+texture_margin_right = 7.0
+texture_margin_bottom = 7.0
+expand_margin_left = 2.0
+expand_margin_top = 2.0
+expand_margin_right = 2.0
+expand_margin_bottom = 2.0
+modulate_color = Color(1, 0.95, 0.72, 1)
+
+[sub_resource type="StyleBoxFlat" id="Tooltip"]
+bg_color = Color(0.176, 0.114, 0.09, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.376, 0.659, 0.471, 1)
+content_margin_left = 8.0
+content_margin_top = 5.0
+content_margin_right = 8.0
+content_margin_bottom = 5.0
+
+[resource]
+default_font = ExtResource("10_body")
+default_font_size = 20
+Button/colors/font_color = Color(0.145, 0.084, 0.063, 1)
+Button/colors/font_disabled_color = Color(0.35, 0.33, 0.3, 1)
+Button/colors/font_focus_color = Color(0.09, 0.05, 0.04, 1)
+Button/colors/font_hover_color = Color(0.09, 0.05, 0.04, 1)
+Button/colors/font_pressed_color = Color(0.09, 0.05, 0.04, 1)
+Button/colors/font_outline_color = Color(0, 0, 0, 0)
+Button/constants/outline_size = 0
+Button/font_sizes/font_size = 20
+Button/fonts/font = ExtResource("10_body")
+Button/styles/disabled = SubResource("ButtonDisabled")
+Button/styles/focus = SubResource("ButtonFocus")
+Button/styles/hover = SubResource("ButtonHover")
+Button/styles/hover_pressed = SubResource("ButtonPressed")
+Button/styles/normal = SubResource("ButtonNormal")
+Button/styles/pressed = SubResource("ButtonPressed")
+CheckBox/colors/font_color = Color(1, 0.94, 0.84, 1)
+CheckBox/colors/font_hover_color = Color(1, 1, 0.9, 1)
+CheckBox/font_sizes/font_size = 20
+CheckBox/fonts/font = ExtResource("10_body")
+Label/colors/font_color = Color(1, 0.95, 0.85, 1)
+Label/colors/font_shadow_color = Color(0, 0, 0, 0.65)
+Label/constants/shadow_offset_x = 1
+Label/constants/shadow_offset_y = 2
+Label/font_sizes/font_size = 20
+Label/fonts/font = ExtResource("10_body")
+MarginContainer/constants/margin_bottom = 0
+Panel/styles/panel = SubResource("Panel")
+PanelContainer/styles/panel = SubResource("Panel")
+ProgressBar/colors/font_color = Color(1, 0.95, 0.85, 1)
+ProgressBar/styles/background = SubResource("Slot")
+ProgressBar/styles/fill = SubResource("HudBar")
+RichTextLabel/colors/default_color = Color(1, 0.95, 0.85, 1)
+RichTextLabel/font_sizes/normal_font_size = 20
+RichTextLabel/fonts/normal_font = ExtResource("10_body")
+ScrollContainer/styles/panel = SubResource("Panel")
+TooltipLabel/colors/font_color = Color(1, 0.96, 0.88, 1)
+TooltipLabel/font_sizes/font_size = 18
+TooltipLabel/styles/normal = SubResource("Tooltip")
+TooltipPanel/styles/panel = SubResource("Tooltip")
+VBoxContainer/constants/separation = 8
+HBoxContainer/constants/separation = 8
+
+A6Window/base_type = &"PanelContainer"
+A6Window/styles/panel = SubResource("Window")
+A6Card/base_type = &"PanelContainer"
+A6Card/styles/panel = SubResource("Panel")
+A6Slot/base_type = &"PanelContainer"
+A6Slot/styles/panel = SubResource("Slot")
+A6HudBar/base_type = &"PanelContainer"
+A6HudBar/styles/panel = SubResource("HudBar")
+A6Title/base_type = &"Label"
+A6Title/colors/font_color = Color(0.98, 0.93, 0.78, 1)
+A6Title/colors/font_shadow_color = Color(0.09, 0.05, 0.04, 0.9)
+A6Title/constants/shadow_offset_x = 2
+A6Title/constants/shadow_offset_y = 2
+A6Title/font_sizes/font_size = 40
+A6Title/fonts/font = ExtResource("9_display")
+A6Heading/base_type = &"Label"
+A6Heading/colors/font_color = Color(0.98, 0.93, 0.78, 1)
+A6Heading/font_sizes/font_size = 26
+A6Heading/fonts/font = ExtResource("9_display")
+A6Body/base_type = &"Label"
+A6Body/colors/font_color = Color(0.21, 0.13, 0.09, 1)
+A6Body/font_sizes/font_size = 19
+A6Body/fonts/font = ExtResource("10_body")
+A6Number/base_type = &"Label"
+A6Number/colors/font_color = Color(1, 0.95, 0.8, 1)
+A6Number/font_sizes/font_size = 22
+A6Number/fonts/font = ExtResource("11_number")
+A6Caption/base_type = &"Label"
+A6Caption/colors/font_color = Color(0.21, 0.13, 0.09, 0.85)
+A6Caption/font_sizes/font_size = 16
+A6Caption/fonts/font = ExtResource("10_body")
+A6Warning/base_type = &"Label"
+A6Warning/colors/font_color = Color(0.98, 0.72, 0.36, 1)
+A6Warning/font_sizes/font_size = 18
+A6Warning/fonts/font = ExtResource("10_body")

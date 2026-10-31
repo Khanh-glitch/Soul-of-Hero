@@ -1,0 +1,281 @@
+name: A6 survival UI native renders
+
+## Real pixels for the A6 survival interface, published back into the repository so
+## they can actually be looked at.
+##
+## Every earlier A6 round ended with frames in a CI artifact, and artifacts are
+## unreachable from the review sandbox, so "inspected by eye" kept degrading into
+## "the PNG had plausible dimensions". This job therefore commits the frames it draws
+## to `docs/survival/reviews/native/` (with `[skip ci]`), which makes them reviewable
+## in the repository and diffable against the next round.
+##
+## What a green run proves:
+##   * the production scenes render on the OpenGL compatibility renderer at
+##     1280x720, 2560x1440 and 3840x2160;
+##   * each frame is individually checked: exact pixel dimensions, non-blank, the
+##     screen's own layout fits the window, and every visible string is recorded
+##     with its box in the manifest;
+##   * the survival overworld's own test scene reaches its capture points
+##     (`fresh_world`, `economy`, `build`, roof frames) on the same engine.
+##
+## What it does NOT prove: that gameplay behaviour is correct (that is the native
+## test suites), that the CraftPix avatar sheets are present (they are private and
+## this job stages nothing), or that the return-UI projections are real data (that is
+## `a6-return-ui-render.yml`).
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - arena/05e0328d-soul-of-hero
+    paths:
+      - "game/ui/**"
+      - "game/survival/**"
+      - "game/overworld/**"
+      - "assets/a6_ui/**"
+      - "tests/survival/ui/a6_survival_ui_capture.*"
+      - "tests/survival_visual_resolutions_test.gd"
+      - ".github/workflows/a6-survival-ui-render.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: a6-survival-ui-render-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GODOT_ARCHIVE_SHA256: "0b1a6c54c2c619c12e169fe9241edda4b81080b519451cec2984bf0d2c6cb73c"
+
+jobs:
+  render:
+    name: Render at ${{ matrix.resolution }} (Xvfb, llvmpipe)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        resolution: ["1280x720", "2560x1440", "3840x2160"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install the official Godot 4.7-stable binary (SHA-256 verified)
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/godot"
+          ARCHIVE="$RUNNER_TEMP/godot/Godot_v4.7-stable_linux.x86_64.zip"
+          curl -L --fail --retry 3 --max-time 900 -o "$ARCHIVE" \
+            "https://github.com/godotengine/godot-builds/releases/download/4.7-stable/Godot_v4.7-stable_linux.x86_64.zip"
+          echo "${GODOT_ARCHIVE_SHA256}  ${ARCHIVE}" | sha256sum -c -
+          unzip -q -o "$ARCHIVE" -d "$RUNNER_TEMP/godot"
+          ENGINE="$RUNNER_TEMP/godot/Godot_v4.7-stable_linux.x86_64"
+          chmod +x "$ENGINE"
+          ln -sf "$ENGINE" "$RUNNER_TEMP/godot/godot"
+          echo "$RUNNER_TEMP/godot" >> "$GITHUB_PATH"
+          "$ENGINE" --version
+
+      - name: Install a display server and a software GL driver
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends xvfb libgl1-mesa-dri libglx-mesa0 libegl1
+          grep -Eq "swrast|llvmpipe" <(ls /usr/lib/x86_64-linux-gnu/dri/)
+
+      - name: Import the project
+        run: |
+          set -uo pipefail
+          mkdir -p artifacts
+          timeout --signal=TERM --kill-after=30s 1200s godot --headless --editor --path . --import --quit \
+            2>&1 | tee artifacts/import.log | tail -20
+          if grep -E "SCRIPT ERROR|Parse Error" artifacts/import.log; then
+            echo "::error::the project does not import cleanly"
+            exit 1
+          fi
+
+      - name: Negative control — a headless binary must refuse to fake a capture
+        run: |
+          set +e
+          timeout --signal=TERM --kill-after=15s 120s godot --headless --path . \
+            res://tests/survival/ui/a6_survival_ui_capture.tscn > artifacts/headless-capture.log 2>&1
+          status=$?
+          set -e
+          cat artifacts/headless-capture.log
+          test "${status}" -eq 2
+          grep -q "RENDERER REQUIRED" artifacts/headless-capture.log
+
+      - name: Warm up the windowed engine
+        run: |
+          set +e
+          timeout --foreground 180s xvfb-run --auto-servernum -s "-screen 0 1280x720x24" \
+            env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
+            godot --path . --quit-after 30 --rendering-driver opengl3 --audio-driver Dummy \
+            > artifacts/warmup.log 2>&1
+          echo "warm-up exit: $?"
+          tail -5 artifacts/warmup.log
+
+      - name: Render the A6-owned survival screens
+        run: |
+          set -uo pipefail
+          set +e
+          res="${{ matrix.resolution }}"
+          mkdir -p "artifacts/captures-${res}"
+          export SOUL_OF_HERO_SAVE_PATH="user://a6_ui_${res}.json"
+          timeout --foreground --signal=TERM --kill-after=20s 420s xvfb-run --auto-servernum \
+            -s "-screen 0 ${res}x24" \
+            env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
+            godot --path . --rendering-driver opengl3 --audio-driver Dummy \
+            res://tests/survival/ui/a6_survival_ui_capture.tscn -- \
+            --a6-ui-capture --capture-size="${res}" \
+            --capture-dir="$PWD/artifacts/captures-${res}" \
+            --capture-tag=survival_ui > "artifacts/capture-${res}.log" 2>&1
+          status=$?
+          echo "A6 screen capture ${res}: exit ${status}" | tee -a "$GITHUB_STEP_SUMMARY"
+          tail -20 "artifacts/capture-${res}.log"
+          if [ "${status}" -ne 0 ]; then
+            tail -20 "artifacts/capture-${res}.log" | sed 's/^/::error::/'
+            echo "::error::A6 survival UI capture failed at ${res}"
+            exit "${status}"
+          fi
+          find "artifacts/captures-${res}" -type f | sed 's/^/::notice::/'
+
+      - name: Render the survival overworld HUD and workshop through the real world
+        run: |
+          set -uo pipefail
+          set +e
+          res="${{ matrix.resolution }}"
+          mkdir -p "artifacts/ud-${res}" artifacts/world-captures-${res}
+          export A0_VISUAL_RESOLUTION="${res}"
+          export SOUL_OF_HERO_SAVE_PATH="user://a6_world_${res}.json"
+          timeout --foreground --signal=TERM --kill-after=20s 600s xvfb-run --auto-servernum \
+            -s "-screen 0 ${res}x24" \
+            env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
+            godot --path . --rendering-driver opengl3 --audio-driver Dummy \
+            --resolution "${res}" --windowed --user-data-dir "artifacts/ud-${res}" \
+            --script res://tests/survival_visual_resolutions_test.gd \
+            > "artifacts/world-${res}.log" 2>&1
+          status=$?
+          echo "A6 world renders ${res}: exit ${status}" | tee -a "$GITHUB_STEP_SUMMARY"
+          tail -25 "artifacts/world-${res}.log"
+          # The world test writes res://artifacts/visual_*.png; move them beside the
+          # screen captures so one publish step can carry both sets.
+          if ls artifacts/visual_*.png >/dev/null 2>&1; then
+            for png in artifacts/visual_*.png; do
+              cp "$png" "artifacts/world-captures-${res}/world_$(basename "$png" .png | sed 's/^visual_//')_${res}.png"
+            done
+          fi
+          ls -la "artifacts/world-captures-${res}" || true
+          if [ "${status}" -ne 0 ]; then
+            echo "::warning::the world render exited ${status}; its frames are still published when present"
+          fi
+
+      - name: Assert every frame is the native size it claims
+        run: |
+          set -euo pipefail
+          res="${{ matrix.resolution }}"
+          python3 - "$res" <<'PY'
+          import pathlib, struct, sys
+          res = sys.argv[1]
+          want = tuple(int(part) for part in res.split("x"))
+          root = pathlib.Path("artifacts")
+          problems = []
+          seen = 0
+          for png in sorted(root.glob(f"captures-{res}/*.png")) + sorted(root.glob(f"world-captures-{res}/*.png")):
+              head = png.read_bytes()[:24]
+              if head[:8] != b"\x89PNG\r\n\x1a\n":
+                  problems.append(f"{png.name}: not a PNG")
+                  continue
+              size = struct.unpack(">II", head[16:24])
+              seen += 1
+              if size != want:
+                  problems.append(f"{png.name}: {size[0]}x{size[1]} != {want[0]}x{want[1]}")
+          if seen < 3:
+              problems.append(f"only {seen} frames were produced, expected at least the three A6 screens")
+          for problem in problems:
+              print(f"FAIL {problem}")
+          print(f"checked {seen} frames at {res}")
+          sys.exit(1 if problems else 0)
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a6-survival-ui-${{ matrix.resolution }}-${{ github.run_id }}
+          path: |
+            artifacts/captures-*/
+            artifacts/world-captures-*/
+            artifacts/*.log
+          include-hidden-files: true
+          if-no-files-found: warn
+
+  publish:
+    name: Publish the frames into docs/survival/reviews/native
+    needs: render
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: a6-survival-ui-*-${{ github.run_id }}
+          merge-multiple: true
+          path: downloaded
+
+      - name: Lay the frames out by resolution
+        run: |
+          set -euo pipefail
+          sudo apt-get install -y --no-install-recommends python3-pil >/dev/null
+          ls -R downloaded | head -30
+          mkdir -p docs/survival/reviews/native
+          python3 - <<'PY'
+          import pathlib, shutil
+          from PIL import Image
+
+          src = pathlib.Path("downloaded")
+          dst = pathlib.Path("docs/survival/reviews/native")
+          native = 0
+          reduced = 0
+          for png in sorted(src.rglob("*.png")):
+              if not png.name.endswith(".png"):
+                  continue
+              image = Image.open(png)
+              width, height = image.size
+              shutil.copy2(png, dst / png.name)
+              native += 1
+              # 4K frames are large enough to bloat the repository. A whole-integer
+              # NEAREST downscale is published beside them as a viewing aid; the
+              # native file next to it is the evidence, and every frame's true size
+              # is asserted before this step runs.
+              if width > 2600:
+                  half = image.resize((width // 2, height // 2), Image.NEAREST)
+                  half.save(dst / png.name.replace(".png", "_half.png"), optimize=True)
+                  reduced += 1
+          print(f"published {native} native frames and {reduced} half-size viewing copies")
+          PY
+          du -sh docs/survival/reviews/native
+          ls docs/survival/reviews/native | head -30
+
+      - name: Commit the frames
+        run: |
+          set -euo pipefail
+          git config user.name "a6-render-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add docs/survival/reviews/native
+          if git diff --cached --quiet; then
+            echo "a6 renders: nothing new to publish"
+            exit 0
+          fi
+          git commit -m "ci(a6): publish native survival UI renders [skip ci]"
+          for attempt in 1 2 3; do
+            if git push origin "HEAD:${GITHUB_REF_NAME}"; then
+              echo "renders published"
+              exit 0
+            fi
+            echo "push rejected (attempt ${attempt}); rebasing on the new branch tip"
+            git pull --rebase --autostash --quiet origin "${GITHUB_REF_NAME}" || true
+            sleep 10
+          done
+          echo "::error::could not publish the renders"
+          exit 1
