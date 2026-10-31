@@ -50,8 +50,6 @@ func _init() -> void:
                 node._process(1.0 / 60.0)
             if not renderer.is_active(cid):
                 break
-        if id == 2:
-            print("::notice::P2DBG node=", node, " diag=", node.diagnostics() if is_instance_valid(node) and node.has_method("diagnostics") else "freed")
         if int(_contacts[cid]) != 1:
             _fail("contact count %s = %d (want 1)" % [cid, int(_contacts[cid])])
         if not _finished.has(cid):
@@ -89,18 +87,10 @@ func _init() -> void:
     br.target = Vector2(262, 104)
     var wyrm := BPyreWyrm.new()
     wyrm.setup(br)
-    var probe_rng := BMath.BRng.new(202)
-    print("::notice::WYRMDBG rng=", probe_rng.next(), ",", probe_rng.next(), " orbit=", wyrm._orbit(2.1), " caster=", wyrm._caster)
-    print("::notice::WYRMDBG cracks=", wyrm._cracks.size(), " debris=", wyrm._debris.size(), " ctrl=", wyrm._head_ctrl.size(), " head2=", wyrm.head(2.0))
     for key in ["t030", "t200", "t460", "t498", "t530", "t650"]:
         var t: float = float(meta[key].t)
         br.begin()
         wyrm.render(br, t)
-        if key == "t200":
-            var mx := 0.0
-            for v in br.main_buf:
-                mx = maxf(mx, v)
-            print("::notice::WYRMDBG t200 main_max=", mx, " lights=", br.lights.size())
         wyrm.post(br, t)
         br.lighting()
         var bytes := br.finalize()
