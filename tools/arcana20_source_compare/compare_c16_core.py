@@ -38,5 +38,6 @@ for tick in (270,300,360,381,423,456,510,540,558):
 # Strict source-field regression, not world or visual approval. A small fixed
 # absolute error allows float32 round-off; coverage must be exact.
 for row in rows:
-    if row['authored_write_coverage_iou'] != 1.0 or any(row[k+'_max'] > 1e-6 for k in ('ink','light','disp')):
+    expected_coverage = row['authored_write_coverage_iou'] == 1.0 or (row['tick'] >= 552 and row['coverage_union'] == 0)
+    if not expected_coverage or any(row[k+'_max'] > 1e-6 for k in ('ink','light','disp')):
         raise SystemExit(f"source field regression at tick {row['tick']}")

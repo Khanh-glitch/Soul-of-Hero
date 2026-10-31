@@ -15,7 +15,11 @@ for(const tick of [270,300,360,381,423,456,510,540,558]){
  f.discL=(...args)=>{if(!active){f.clear();active=true;}disc(...args);};
  f.glow=(...args)=>{glow(...args);if(active){done=true;throw new Error('CORE_END');}};
  try{spell.render(f,tick/60);}catch(e){if(!(e instanceof Error)||e.message!=='CORE_END')throw e;}
- if(!done)throw Error(`core not found ${tick}`);
+ if(!done){
+  // Original fold(t,-0.1) reaches zero at 9.2s; the core is absent.
+  if(tick<552)throw Error(`core not found ${tick}`);
+  f.clear();
+ }
  for(const kind of ['ink','light','disp'] as const)writeFileSync(`${dir}/original_${tick}.${kind}32f`,Buffer.from(f[kind].buffer));
  writeFileSync(`${dir}/original_${tick}.coverage.u8`,coverage);
  console.log('C16_CORE_ORIGINAL',tick);
