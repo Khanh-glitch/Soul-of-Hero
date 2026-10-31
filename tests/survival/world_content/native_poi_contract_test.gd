@@ -70,8 +70,10 @@ func _mill_action_authority_gates() -> void:
 		actions[str(entry.get("action_id", ""))] = entry
 	var repair: Dictionary = actions.get("repair_waterwheel", {})
 	_check(
-		repair.get("requires_capabilities", []).has("cap_salvage")
-		and not bool(repair.get("owner_ready_required", false)),
+		(
+			repair.get("requires_capabilities", []).has("cap_salvage")
+			and not bool(repair.get("owner_ready_required", false))
+		),
 		"Mill repair requires the owner-projected salvage capability, not fixture readiness"
 	)
 	_check(
@@ -153,9 +155,7 @@ func _scene_and_data_contracts() -> void:
 			match site.get_source_id():
 				"poi_crown_south_quarry":
 					_check(
-						site.has_node(
-							"SourceBackedWorldArt/A8_SourceSized_Props/unstable_seam_warning"
-						),
+						site.has_node("SourceBackedWorldArt/A8_SourceSized_Props/deep_roof_hazard"),
 						"Quarry warns visibly while both routes remain unworked"
 					)
 				"poi_crown_south_orchard":
@@ -203,9 +203,13 @@ func _assert_site_art(site: NativePoiSite) -> void:
 				expected_surface_cells = 20
 			"poi_crown_south_mill":
 				expected_surface_cells = 8
+		var actual_surface_cells := surface_layer.get_used_cells().size()
 		_check(
-			surface_layer.get_used_cells().size() == expected_surface_cells,
-			"only authored mud/plank surface overlay cells are rendered"
+			actual_surface_cells == expected_surface_cells,
+			(
+				"only authored mud/plank surface overlay cells are rendered "
+				+ "(expected=%d actual=%d)" % [expected_surface_cells, actual_surface_cells]
+			)
 		)
 	var props := site.get_node_or_null("SourceBackedWorldArt/A8_SourceSized_Props")
 	_check(
@@ -362,7 +366,7 @@ func _interaction_eligibility_and_choice() -> void:
 			"environmental projection only changes after owner commit"
 		)
 		_check(
-			not site.has_node("SourceBackedWorldArt/A8_SourceSized_Props/unstable_seam_warning"),
+			not site.has_node("SourceBackedWorldArt/A8_SourceSized_Props/deep_roof_hazard"),
 			"committed west route removes the unstable-seam cue without changing route collision"
 		)
 		_check(

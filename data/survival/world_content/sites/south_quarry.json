@@ -1239,6 +1239,20 @@
           "deep_gate_bar_4",
           "deep_gate_bar_5"
         ]
+      },
+      {
+        "key": "deep_seam_note",
+        "equals": "read",
+        "props": [
+          {
+            "frame": "signpost",
+            "cell": [
+              30,
+              5
+            ],
+            "id": "deep_route_marks_read"
+          }
+        ]
       }
     ],
     "lighting_profile": "overcast_frontier",

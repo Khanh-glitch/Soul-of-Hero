@@ -287,9 +287,13 @@ class ArtManifestTests(unittest.TestCase):
         self.assertTrue(any(overlay["frame"].startswith("detail_water_ripple_")
                             for state in o_layout["state_overlays"]
                             for overlay in state["overlays"]))
-        self.assertFalse(any(prop["frame"] == "herb_moonleaf"
-                             for variant in o_layout["state_props"]
-                             for prop in variant.get("props", [])))
+        graft_marker = next(
+            variant
+            for variant in o_layout["state_props"]
+            if variant["key"] == "graft_marks_read" and variant["equals"] == "true"
+        )
+        self.assertEqual(graft_marker["props"][0]["frame"], "herb_moonleaf")
+        self.assertEqual(graft_marker["props"][0]["id"], "graft_mark_herb")
         self.assertEqual(orchard["source"]["canonical_cell"], [140, 360])
         self.assertEqual(o_layout["state_paths"]["orchard_channel"]["flowing"][0]["width"], 2)
 

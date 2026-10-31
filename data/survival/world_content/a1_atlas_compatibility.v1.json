@@ -2049,6 +2049,21 @@
         ],
         "rgba_crop_sha256": "41ae3a0969bbb1fd08e5d2755a62b1061c5980d25ed3c8e4556aff167f0b1985"
       },
+      "herb_moonleaf": {
+        "a1_rect": [
+          876,
+          2,
+          18,
+          16
+        ],
+        "a8_rect": [
+          876,
+          2,
+          18,
+          16
+        ],
+        "rgba_crop_sha256": "d31cf449e23b973296436eb6dbcb30d67f5035c7a9a00c94c0372adbe62cfaaf"
+      },
       "lamp": {
         "a1_rect": [
           714,

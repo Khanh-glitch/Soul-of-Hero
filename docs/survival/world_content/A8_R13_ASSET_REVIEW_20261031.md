@@ -46,4 +46,8 @@ These exact project files were opened as sprite sheets. The decision is visual/s
 
 - Source-composed clean layout previews are in `.artifacts/r13-art-review/previews/`; files are identified by POI/state and 720/1440/2160 dimensions. They use exact source pixels and an exact idle Hero frame, but they are **not native Godot captures**.
 - Native player-view journey captures at 1280×720, 2560×1440, and 3840×2160 remain required. CI capture generation, eye inspection, A0 owner integration, and human play are separately reported. No visual or product acceptance is inferred from frame/pixel tests or Pillow previews.
+### Exact-head native CI follow-up
+
+A8 run `41224164615` on first art-correction SHA `2cebbf49ba6a416bc2a1209d46cf1896b62ff632` generated the multi-resolution capture artifact but failed native assertions for two missing owner-projected clue sprites, the Quarry warning node ID, and the Orchard/Mill surface-cell counts. The follow-up restores source-backed `signpost` `[644,512,26,26]` for `deep_seam_note=read` and `herb_moonleaf` `[876,2,18,16]` for `graft_marks_read=true`; the `herb_moonleaf` per-frame pixel crop is recorded in `a1_atlas_compatibility.v1.json`. The Quarry assertion now uses the active `deep_roof_hazard` prop ID and reports actual surface counts. This follow-up needs its own passing native run; the first artifact could not be downloaded because the blob-host redirect returned EOF and has not received eye review.
+
 - The existing Quarry and Orchard identities/canonical cells stay `[30,280]` and `[140,360]`. No POI is added; no A0/A1/A3-owned source is edited.

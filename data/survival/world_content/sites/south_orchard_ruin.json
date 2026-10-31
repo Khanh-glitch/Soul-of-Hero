@@ -1197,6 +1197,20 @@
         "hide_ids": [
           "sluice_blocking_deadfall"
         ]
+      },
+      {
+        "key": "graft_marks_read",
+        "equals": "true",
+        "props": [
+          {
+            "frame": "herb_moonleaf",
+            "cell": [
+              44,
+              21
+            ],
+            "id": "graft_mark_herb"
+          }
+        ]
       }
     ],
     "lighting_profile": "amber_morning",
