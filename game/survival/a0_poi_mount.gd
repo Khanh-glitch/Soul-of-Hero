@@ -131,7 +131,12 @@ func begin_transition(save: Node, site_instance_id: String, hero_position: Vecto
 	var run := _run_identity()
 	if String(run.get("run_id", "")).is_empty():
 		return {"ok": false, "reason": "A0_RUN_ABSENT"}
-	var key := ENTRY_RECEIPT % site_instance_id
+	# The transaction key is qualified by the save revision: SaveService is
+	# once-per-key by design, and a site may legitimately be entered again after a
+	# return. Idempotency is enforced by the mutator (one record per site), not by
+	# reusing a key that can never be replayed.
+	var key := "%s.%s.r%d" % [ENTRY_RECEIPT % site_instance_id, String(run["run_id"]),
+		int((save.call(&"get_snapshot") as Dictionary).get("revision", 0))]
 	var record := {"site_instance_id": site_instance_id, "position": [hero_position.x, hero_position.y],
 		"run_id": String(run["run_id"]), "run_epoch": int(run.get("run_epoch", 0))}
 	var applied := bool(save.call(&"transact_once", key,
@@ -164,7 +169,8 @@ func finish_transition(save: Node, site_instance_id: String) -> Dictionary:
 	var coords: Array = (record as Dictionary).get("position", [])
 	if coords.size() != 2:
 		return {"ok": false, "reason": "A0_ENTRY_POSITION_INVALID"}
-	var applied := bool(save.call(&"transact_once", RETURN_RECEIPT % site_instance_id,
+	var applied := bool(save.call(&"transact_once", "%s.%s.r%d" % [RETURN_RECEIPT % site_instance_id,
+			String(run.get("run_id", "")), int(document.get("revision", 0))],
 		func(candidate: Dictionary) -> bool:
 			var site: Dictionary = candidate.get("site_transition", {})
 			if not site.has(site_instance_id):

@@ -91,13 +91,13 @@ func _body() -> void:
 		"A1-only POI is not mountable without an A8 package entry")
 
 	# --- A3 reward authority is separate from the site ----------------------
-	var quarry_intent := _mount.call(&"handle_intent", {
+	var quarry_intent: Dictionary = _mount.call(&"handle_intent", {
 		"contract_id": "soh.native_poi.intent.v3", "contract_version": 3,
 		"site_instance_id": "poi_crown_south_quarry", "action_id": "quarry_face_harvest",
 	})
 	_expect(String(quarry_intent.get("reason", "")) == "A3_BINDING_ABSENT",
 		"an A8 action without an A3 binding grants nothing (A3_BINDING_ABSENT)")
-	var cache_intent := _mount.call(&"handle_intent", {
+	var cache_intent: Dictionary = _mount.call(&"handle_intent", {
 		"contract_id": "soh.native_poi.intent.v3", "contract_version": 3,
 		"site_instance_id": "poi_crown_waystation", "action_id": "cache_restock",
 	})
@@ -142,7 +142,7 @@ func _body() -> void:
 	_expect(lifecycle != null, "the run lifecycle is the one run identity")
 	if lifecycle != null:
 		_mount.call(&"begin_transition", save, site_id, start)
-		var ended: Dictionary = lifecycle.call(&"end_run", "abandoned", "")
+		var ended: Dictionary = lifecycle.call(&"end_run", "voluntary_exit", "")
 		_expect(bool(ended.get("ok", false)), "the run can be ended for a new epoch")
 		var started: Dictionary = lifecycle.call(&"start_run", "run-a0-poi-epoch")
 		_expect(bool(started.get("ok", false)), "a new run opens a new epoch")

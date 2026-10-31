@@ -215,10 +215,10 @@ func _play_process() -> void:
 		"ordinary movement physically returns to the same bag")
 	if not walked:
 		return
-	camera.reset_smoothing()
-	camera.force_update_scroll()
-	await process_frame
-	await _click_window(root.get_final_transform() * (camera.get_canvas_transform() * bag_node.global_position))
+	# Recovery is the game's own left-click interaction: the pointer is resolved to
+	# a world point and the nearest interactable inside the player's local radius
+	# answers. Clicking at the Hero is the same gesture a player makes.
+	await _click_window(root.get_final_transform() * (root.get_visible_rect().size * 0.5))
 	await process_frame
 	_expect(_count(CARRIED) == carried_before, "recovering the bag restores the exact carried stack (%d)" % _count(CARRIED))
 	_expect(not ((_survival().call(&"document") as Dictionary).get("death_bags", {}) as Dictionary).has(bag_id),

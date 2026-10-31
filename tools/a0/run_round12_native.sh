@@ -30,11 +30,17 @@ if [ ${#SUITES[@]} -eq 0 ]; then
   fi
 fi
 
+# Godot 4.7 ignores --user-data-dir here (verified: user:// still points at the
+# shared app_userdata directory), so suites that write user://tests/ see each
+# other's leftovers. Clear the survival test directory before every run instead
+# of pretending the flag isolates anything.
+USERDIR="${GODOT_USER_DIR:-$HOME/.local/share/godot/app_userdata/SOUL OF HERO}"
 mkdir -p "$OUT"
 pass=0
 fail=0
 for suite in "${SUITES[@]}"; do
   log="$OUT/$suite.log"
+  rm -rf "$USERDIR/tests"
   mkdir -p "$OUT/ud_$suite"
   if [ "$HEADLESS" -eq 1 ]; then
     runner=("$GODOT" --headless)

@@ -8,7 +8,10 @@
 # Ruling kinds:
 #   accept_owner  A0 accepts the owner's version verbatim (A0 did not change it).
 #   a0_resolution A0 committed a reviewed three-way merge under
-#                 tools/a0/merges/; the composer copies that, never a blind copy.
+#                 tools/a0/merges/ (*.gd.merged: the .merged extension keeps the
+#                 artifact out of Godot's global class registry, which otherwise
+#                 sees a duplicate `class_name` and fails to load SaveService);
+#                 the composer copies that, never a blind copy.
 #   reject        A0 refuses the owner's change; the composition FAILS if the
 #                 owner still carries it, so it cannot silently disappear.
 {
@@ -72,14 +75,14 @@
       "kind": "a0_resolution",
       "owners": ["a0", "a6"],
       "winner": "a0",
-      "merge": "tools/a0/merges/save_service.gd",
+      "merge": "tools/a0/merges/save_service.gd.merged",
       "why": "A0 owns the single SaveService. A6 needs player identity to be durable and projected, so A6 authored a 173-line identity block (schema, commit path, sanitizer). A0 applied it as a reviewed three-way merge on top of its own Round 11 survival/reset additions in ONE service: no second wallet, no second clock, no parallel save. A6's authorship is credited in the merge commit and in the Round 12 review."
     },
     "game/overworld/chapter1_overworld.gd": {
       "kind": "a0_resolution",
       "owners": ["a0", "a6"],
       "winner": "a0",
-      "merge": "tools/a0/merges/chapter1_overworld.gd",
+      "merge": "tools/a0/merges/chapter1_overworld.gd.merged",
       "why": "A0 owns the live world build order. A6 contributed avatar/style wiring; A0 contributed the economy composition, the guarded A1 art candidate and the Round 12 threat mount. The reviewed merge keeps all three and is the file the A0 journey tests run."
     },
     "tests/survival_normal_entry_home_restart_test.gd": {
