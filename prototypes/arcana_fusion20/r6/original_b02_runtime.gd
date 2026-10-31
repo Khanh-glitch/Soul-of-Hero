@@ -126,6 +126,22 @@ func _process(delta: float) -> void:
         canvas_origin = actor.get_global_transform_with_canvas().origin
         if is_instance_valid(caster):
             cast_position = caster.get_global_transform_with_canvas().origin
+    if timeline > 5.0 and timeline < 5.3 and idx == 154:
+        var actor_canvas := Vector2.ZERO
+        var player_canvas := Vector2.ZERO
+        if is_instance_valid(actor):
+            actor_canvas = actor.get_global_transform_with_canvas().origin
+        if is_instance_valid(caster):
+            player_canvas = caster.get_global_transform_with_canvas().origin
+        print("B02_COORDS viewport=",viewport_size,
+            " viewport_texture=",get_viewport().get_texture().get_size(),
+            " caster_world=",caster.global_position if is_instance_valid(caster) else Vector2.ZERO,
+            " actor_world=",actor.global_position if is_instance_valid(actor) else Vector2.ZERO,
+            " caster_calc=",cast_position,
+            " target_calc=",canvas_origin,
+            " caster_canvas=",player_canvas,
+            " target_canvas=",actor_canvas,
+            " camera_center=",scene_camera.get_screen_center_position() if is_instance_valid(scene_camera) else Vector2.ZERO)
     material.set_shader_parameter("viewport_pixels", viewport_size)
     material.set_shader_parameter("anchor_screen", canvas_origin)
     if spell_id == 2 and is_instance_valid(caster):
