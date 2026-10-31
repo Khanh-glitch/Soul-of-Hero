@@ -101,9 +101,13 @@ Two distinct causes were found for the furnace step, one product and one harness
   interaction distance can be standing next to a furnace the panel does not consider nearby and
   see no furnace recipes at all. The journey now walks up close enough that both windows agree
   and asserts `the panel counts the built furnace as a nearby station` before asking for recipes.
-* **Harness (intermittent stale list).** Scrolling to a recipe row could fail whenever the list
-  had been built earlier, and the reopen fallback reused the freed button node, turning a flake
-  into a false "row is missing". The row is now looked up again by name after the rebuild.
+* **Harness (screen-space scrolling).** Bringing a recipe row into view failed with a fixed
+  handful of wheel clicks, and the reopen fallback reused the freed button node, turning a flake
+  into a false "row is missing". The gate now wheels in the row's direction until the row is
+  inside the viewport or the list stops moving, re-finds the row by name after a rebuild, and
+  prints `A0_CONNECTED_SCROLL row=… offset=… viewport=… row_center=…` so the next run states the
+  offset it stopped at instead of only that the row was "missing". A hosted run at `757359cb`
+  still fails at this step, so the step remains unclaimed.
 
 `tools/probe` (local, headless) shows the placed piece resolves as
 `station_kind=furnace, station_tier=1, queue_capacity=3`, and A3's own `recipes.json` at
