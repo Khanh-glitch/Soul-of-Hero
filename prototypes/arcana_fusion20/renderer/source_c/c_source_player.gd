@@ -109,6 +109,10 @@ func begin(caster_world: Vector2, target_world: Vector2, kind: String) -> void:
             _fx = CAbyssalBloomLate.new()
             duration = CAbyssalBloomLate.DURATION
             _fx.setup()
+        "worldseed_debris":
+            _fx = CWorldseedDebris.new()
+            duration = CWorldseedDebris.DURATION
+            _fx.setup()
         "crown", "crown_outer":
             _fx = CCinderCrown.new()
             duration = CCinderCrown.DURATION
@@ -147,6 +151,8 @@ func _anchor_local() -> Vector2:
             return CRealityRipperFusion.CENTER
         "bloom_late":
             return CAbyssalBloomLate.C
+        "worldseed_debris":
+            return CWorldseedDebris.C
         "crown", "crown_outer":
             return CCinderCrown.C
     return Vector2(192, 108)

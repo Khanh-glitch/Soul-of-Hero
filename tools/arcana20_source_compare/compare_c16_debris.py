@@ -30,6 +30,6 @@ for tick in (450,456,457,480,510,540,590):
     mask[:,:,0]=np.where(bm & ~am,255,0); mask[:,:,1]=np.where(am & bm,255,0); mask[:,:,2]=np.where(am & ~bm,255,0)
     Image.fromarray(mask,'RGB').save(p/f'{tick}_coverage_iou.png')
     row={'tick':tick,'authored_ink_coverage_iou':float(inter/union) if union else None,'coverage_union':int(union),
-         **metrics,'regions':regions,'scope':'C16 selected debriss only on zero base; source Math.random particle-seed sequence controlled to match native; no contour, blocks, post or world'}
+         **metrics,'regions':regions,'scope':'C16 selected seed/spore/petal particles on zero base; source Math.random particle-seed sequence controlled to match native; no growth, post or world'}
     rows.append(row); print('C16_DEBRIS_COMPARE',json.dumps({k:v for k,v in row.items() if k!='regions'}),flush=True)
 (p/'comparison.json').write_text(json.dumps(rows,indent=2))

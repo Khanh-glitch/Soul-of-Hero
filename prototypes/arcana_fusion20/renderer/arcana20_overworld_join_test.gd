@@ -589,16 +589,24 @@ func _run() -> void:
     check(mount.active_viewers(id11) == 0 and images_equal(baseline, await save_frame("fusion_11_cancelled")), "A11 rotor candidate cleanup restores frozen world")
     var id16 := Arcana20SourceCatalog.canonical_id(16)
     multi.cast_skill(id16, player.global_position, enemy.global_position)
-    var seed_growth := multi._casts[id16] as ASourcePlayer
-    seed_growth.set_process(false)
+    var seed_fusion := multi._casts[id16] as FusionPlayer
+    seed_fusion.set_process(false)
+    var seed_growth := seed_fusion._pending[0].node as ASourcePlayer
+    var seed_debris := seed_fusion._pending[1].node as CSourcePlayer
     seed_growth.render_enabled = false
-    for tick in range(240): seed_growth.advance(STEP, false)
+    seed_debris.render_enabled = false
+    for tick in range(330): seed_fusion.advance(STEP)
     seed_growth.render_enabled = true
+    seed_debris.render_enabled = true
     seed_growth._render_frame()
+    seed_debris._render_frame()
     await process_frame
     await process_frame
-    var seed_img := await save_frame("fusion_16_candidate_tick240")
-    check(mount.active_viewers(id16) == 1 and not images_equal(baseline, seed_img), "A16 source growth C material affects actual world")
+    var seed_img := await save_frame("fusion_16_candidate_tick330")
+    var seed_fx := seed_debris._fx as CWorldseedDebris
+    check(seed_fx.burst and seed_fx.particles.size() == 536 and seed_debris._tick == 468, "A16 bloom triggers full original C16 seed/spore/petal burst on shared clock")
+    check(seed_growth.local_to_world(AWorldseedGrowth.C).distance_to(seed_debris.local_to_world(CWorldseedDebris.C)) < 0.01, "A16 and C16 source centers share the same real-world anchor")
+    check(mount.active_viewers(id16) == 2 and not images_equal(baseline, seed_img), "A16 source growth C material and C16 debris affect actual world")
     multi.cancel_skill(id16)
     await process_frame
     await process_frame

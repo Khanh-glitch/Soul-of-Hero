@@ -110,7 +110,7 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
     if id < 1:
         return false
     cancel_skill(canonical_id)
-    if not (world_pass_mode and (id == 5 or id == 20)) and _a_cast(canonical_id, id, caster_world, target_world):
+    if not (world_pass_mode and (id == 5 or id == 16 or id == 20)) and _a_cast(canonical_id, id, caster_world, target_world):
         return true
     if id == 5 and world_pass_mode:
         # Selected source roles, still experimental: A owns opening/peak;
@@ -136,6 +136,42 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
             body_event_cue.emit(canonical_id, pos, &"water"))
         fp.visual_event.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
             visual_event.emit(canonical_id, kind, pos, st))
+        fp.finished.connect(func() -> void: _on_finished(canonical_id))
+        _casts[canonical_id] = fp
+        cast_started.emit(canonical_id)
+        fp.begin(caster_world, target_world)
+        return true
+    if id == 16 and world_pass_mode:
+        # A smooth growth + C material remain the lead. Add the original C
+        # seed/spore/petal debris, not a second organism or shock: align its
+        # 7.6s burst with A's 5.3s bloom on the single A-led clock. C source
+        # pixel centers use the same uniform A basis and align their centers.
+        # This is a fusion candidate, not source-world or creator approval.
+        var fp := FusionPlayer.new()
+        var ap := ASourcePlayer.new()
+        ap.world_pass_mode = true
+        ap.source_variant = &"worldseed_a_growth_c_material"
+        ap.configure(AWorldseedGrowth.new(), AWorldseedGrowth.DURATION)
+        var cp := CSourcePlayer.new()
+        cp.world_pass_mode = true
+        fp.source_pass_ready.connect(func(frame: Arcana20SourcePassFrame) -> void: source_pass_ready.emit(canonical_id, frame))
+        fp.source_layer_finished.connect(func(family: StringName) -> void: source_layer_finished.emit(canonical_id, family))
+        fp.screen_post.connect(func(state: Dictionary) -> void: screen_post.emit(canonical_id, state))
+        fp.configure([
+            {"node": ap, "layer": -1, "offset": 0.0, "begin_call": func(n: Node, cw: Vector2, tw: Vector2) -> void: n.call("begin", cw, tw)},
+            {"node": cp, "layer": 1, "offset": CWorldseedDebris.BURST - AWorldseedGrowth.BLOOM,
+                "begin_call": func(n: Node, cw: Vector2, tw: Vector2) -> void:
+                    var c_player := n as CSourcePlayer
+                    c_player.begin(cw, tw, "worldseed_debris")
+                    c_player._rot = ap._rot
+                    c_player._scale = ap._scale
+                    c_player._origin = ap._origin + (AWorldseedGrowth.C - CWorldseedDebris.C).rotated(ap._rot) * ap._scale},
+        ], AWorldseedGrowth.DURATION)
+        add_child(fp)
+        fp.visual_contact.connect(func(kind: StringName, pos: Vector2, _st: float) -> void:
+            visual_contact.emit(canonical_id, pos, kind)
+            body_event_cue.emit(canonical_id, pos, &"verdant"))
+        fp.visual_event.connect(func(kind: StringName, pos: Vector2, st: float) -> void: visual_event.emit(canonical_id, kind, pos, st))
         fp.finished.connect(func() -> void: _on_finished(canonical_id))
         _casts[canonical_id] = fp
         cast_started.emit(canonical_id)
