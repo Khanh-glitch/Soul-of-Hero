@@ -151,21 +151,28 @@ func render(fb: AFramebuffer, t: float) -> void:
             var vs := maxi(4, ceili(length * float(layer.w) * 0.9))
             for ii in range(us + 1):
                 var uu := float(ii) / float(us)
+                # These source expressions depend on the radial sample only,
+                # not on the transverse sample. Compute them once per row;
+                # every original sample, material, and operation is retained.
+                var wave := maxf(0.0, sin(uu * 8.0 - t * 5.0 + li * 1.5))
+                var wave_add := wave * 0.2 * (1.6 if bloom_k > 0.0 else 0.6)
+                var taper := (1.0 - uu * 0.2) * AMath.smoothstep(0.02, 0.26, uu)
+                var a := a0 + tremble * uu + sin(uu * 2.5) * 0.12
+                var ca := cos(a)
+                var sa := sin(a)
+                var radius := (5.0 + li * 5.0) * u + length * uu
+                var width := length * float(layer.w) * sin(pow(uu, 0.6) * PI)
                 for jj in range(vs + 1):
                     var v := float(jj) / float(vs) * 2.0 - 1.0
                     var av := absf(v)
                     var cell := AMath.fbm(uu * 7.0 + petal * 2.0, av * 5.0 - t * 1.1, 3)
                     var vein := exp(-pow(av * 4.0, 2.0)) * 0.3
                     var h := 0.16 + cell * 0.26 + vein + pow(av, 4.0) * 0.5
-                    var wave := maxf(0.0, sin(uu * 8.0 - t * 5.0 + li * 1.5))
-                    h += wave * 0.2 * (1.6 if bloom_k > 0.0 else 0.6)
-                    h *= (1.0 - uu * 0.2) * AMath.smoothstep(0.02, 0.26, uu)
+                    h += wave_add
+                    h *= taper
                     if h < 0.05: continue
-                    var a := a0 + tremble * uu + sin(uu * 2.5) * 0.12
-                    var radius := (5.0 + li * 5.0) * u + length * uu
-                    var width := length * float(layer.w) * sin(pow(uu, 0.6) * PI)
-                    var x := C.x + cos(a) * radius - sin(a) * v * width
-                    var y := C.y + (sin(a) * radius + cos(a) * v * width) / SQ - uu * uu * 10.0 * u
+                    var x := C.x + ca * radius - sa * v * width
+                    var y := C.y + (sa * radius + ca * v * width) / SQ - uu * uu * 10.0 * u
                     if use_c_material:
                         _ink_splat(fb, x, y, _c_surface(li, petal, uu, v, x, y, t))
                     else:
