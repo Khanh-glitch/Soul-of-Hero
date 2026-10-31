@@ -68,8 +68,27 @@ def main() -> int:
     stale_found: list[str] = []
     checks = 0
 
-    def exists(rel: str) -> bool:
-        return (root / rel.replace("res://", "", 1)).is_file()
+    # A composed owner may ship a nested Godot project (A1's reader lives in
+    # `tests/survival/world/godot/` next to its own project.godot). Inside such a
+    # subtree `res://` is relative to that root, not to the composition root, so
+    # resolve the reference the way the nested engine would.
+    def _project_root_for(path: Path) -> Path:
+        for candidate in path.parents:
+            if candidate == root.parent:
+                break
+            if (candidate / "project.godot").is_file() and candidate != root:
+                return candidate
+            if candidate == root:
+                break
+        return root
+
+    def exists(rel: str, from_path: Path | None = None) -> bool:
+        clean = rel.replace("res://", "", 1)
+        if from_path is not None:
+            nested = _project_root_for(from_path)
+            if nested != root and (nested / clean).is_file():
+                return True
+        return (root / clean).is_file()
 
     for path in sorted(root.rglob("*")):
         if path.is_dir() or ".godot" in path.parts:
@@ -87,7 +106,7 @@ def main() -> int:
             if "%" in ref or ref.startswith("res://.artifacts") or ref.endswith("/"):
                 continue
             checks += 1
-            if exists(ref):
+            if exists(ref, path):
                 continue
             rel_path = ref.replace("res://", "", 1)
             if rel_path in stale:

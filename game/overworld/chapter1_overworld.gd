@@ -118,7 +118,54 @@ func _ready() -> void:
 	# AppRoot calls configure() right after add_child(); remember anything that
 	# arrives before the deferred build runs.
 	_payload = _pending_payload.duplicate(true)
+	_ensure_prepare_work_binding()
 	call_deferred(&"_build_world")
+
+
+## A0-owned production binding. A6 owns presentation; this is the gameplay input
+## that says "keep my paid work running while I am away". It is registered here,
+## not in an A6 panel, so a missing panel cannot make preparation impossible.
+const PREPARE_WORK_ACTION := &"prepare_work"
+
+func _ensure_prepare_work_binding() -> void:
+	if InputMap.has_action(PREPARE_WORK_ACTION):
+		return
+	InputMap.add_action(PREPARE_WORK_ACTION)
+	var key := InputEventKey.new()
+	key.physical_keycode = KEY_P
+	InputMap.action_add_event(PREPARE_WORK_ACTION, key)
+
+
+## One departure, three ordered SaveService steps, all through the composition's
+## authoritative offline host:
+##   1. settle the interval that ended now (active play is never re-settled),
+##   2. mark the jobs the player actually paid for and left running as prepared,
+##   3. stamp the departure again so the offline interval starts at this moment.
+## Returns the exact report the world can show and a test can inspect.
+func depart_world(now_unix: int = -1) -> Dictionary:
+	var report := {"ok": false, "reason": "not_ready", "settle": {}, "prepared": {}, "stamp": {}}
+	if build_stage != BuildStage.READY or economy_composition == null or not is_instance_valid(economy_composition):
+		return report
+	var offline: Node = economy_composition.get(&"_offline") as Node
+	if offline == null:
+		report["reason"] = "offline_host_absent"
+		return report
+	var stamp := now_unix if now_unix >= 0 else int(Time.get_unix_time_from_system())
+	report["settle"] = offline.call(&"settle", stamp)
+	if economy_session != null and is_instance_valid(economy_session):
+		report["prepared"] = economy_session.call(&"prepare_work_away")
+	report["stamp"] = offline.call(&"settle", stamp)
+	report["reason"] = ""
+	report["ok"] = true
+	return report
+
+
+func _notification(what: int) -> void:
+	# Closing the window is a normal exit, not a run end: it must leave the same
+	# durable truth a quit-to-title does.
+	if what == NOTIFICATION_WM_CLOSE_REQUEST and build_stage == BuildStage.READY:
+		var departure := depart_world()
+		print("A0_DEPARTURE ", JSON.stringify(departure))
 
 
 func configure(payload: Dictionary) -> void:
@@ -817,6 +864,38 @@ func _unhandled_input(event: InputEvent) -> void:
 
 # A6 modal roots must join this group while visible; merely consuming mouse GUI
 # events is insufficient because build placement is polled from Input.
+## Physically nearest paid station, by the same reach the build system uses. A
+## station the player cannot stand next to cannot be prepared.
+func _prepare_work_at_nearest_station() -> void:
+	if economy_session == null or not is_instance_valid(economy_session) or survival_build == null:
+		return
+	var nearest := ""
+	var nearest_distance := 99999.0
+	for value: Variant in survival_build._placed.values():
+		var structure := value as SurvivalStructure
+		if structure == null or not is_instance_valid(structure) or not structure.piece_id.begins_with("station_"):
+			continue
+		var distance := structure.global_position.distance_to(player.global_position)
+		if distance <= SurvivalStructure.REACH and distance < nearest_distance:
+			nearest = String(structure.entity_id)
+			nearest_distance = distance
+	if nearest.is_empty():
+		_say("Stand at a workstation to keep its work running while you are away.")
+		return
+	var report: Dictionary = economy_session.call(&"prepare_work_away", nearest)
+	if bool(report.get("ok", false)):
+		var jobs: Array = report.get("prepared", [])
+		_say("Prepared %d job(s) to run while you are away." % jobs.size())
+	else:
+		var reason := String(report.get("reason", ""))
+		if reason == "nothing_in_progress":
+			_say("Nothing is being made here yet.")
+		elif reason == "already_prepared":
+			_say("That work is already prepared.")
+		else:
+			_say("Could not prepare that work (%s)." % reason)
+
+
 func _has_gameplay_modal() -> bool:
 	for node: Node in get_tree().get_nodes_in_group(&"gameplay_modal"):
 		if node is CanvasItem and (node as CanvasItem).is_visible_in_tree():
@@ -837,6 +916,9 @@ func _world_action_just_pressed(action: StringName) -> bool:
 ## touch the Knight's combat bindings, and the modal build tool is enterable and
 ## leavable with one key so an accidental press cannot trap the player.
 func _handle_survival_input() -> void:
+	if _world_action_just_pressed(PREPARE_WORK_ACTION) and not bool(player.get(&"dead")):
+		_prepare_work_at_nearest_station()
+		return
 	if survival_build == null or not is_instance_valid(survival_build) or _has_gameplay_modal():
 		return
 	if _world_action_just_pressed(&"build_toggle"):

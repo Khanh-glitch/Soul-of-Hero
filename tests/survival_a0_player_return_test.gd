@@ -24,6 +24,16 @@ extends "res://tests/survival_foundation_test.gd"
 const RETURN_SAVE := "user://tests/a0_player_return.json"
 const AUDIT := "user://tests/a0_player_return_audit.json"
 const HOME_CELL := Vector2i(392, 200)
+##
+## RECLASSIFIED (Round 12 corrective audit): this is a COMPONENT / TRANSACTION
+## PROBE, not a player journey. It sets `hero.global_position` onto the node and
+## calls `node.interact(hero)`, and it drives crafting through
+## `queue_recipe`/`collect` instead of the visible panel. What it proves is real
+## and worth keeping: the production save, the A3 session, the authored recipes,
+## unique tool instances, wear receipts and cross-process persistence. What it
+## does NOT prove is that a player can walk, see, click and build their way
+## there; `survival_normal_connected_journey_test.gd` is the gate for that.
+
 
 var _world: Node
 var _session: Node
@@ -75,10 +85,10 @@ func _finish() -> void:
 
 func _report() -> void:
 	if failures.is_empty():
-		print("A0 PLAYER RETURN PASSED - %d checks" % checks)
+		print("A0 PLAYER COMPONENT PROBE PASSED - %d checks (teleport + direct interact; NOT a player journey)" % checks)
 		quit(0)
 	else:
-		print("A0 PLAYER RETURN FAILED - %d/%d" % [failures.size(), checks])
+		print("A0 PLAYER COMPONENT PROBE FAILED - %d/%d" % [failures.size(), checks])
 		quit(1)
 
 

@@ -498,6 +498,65 @@ func collect(job_id: String) -> Dictionary:
 	return _adapter.call(&"collect", job_id, _event())
 
 
+## A0 Round 12 (WP6). The player has started real work at a real station and now
+## leaves the world. A0 marks exactly those in-progress jobs as *prepared*, in the
+## one authoritative SaveService, so A3's offline planner may settle them across
+## the closure. A3 owns whether an armed job is eligible and what it is worth; A0
+## only states which jobs the player actually paid for and left running.
+##
+## A job that was never queued+funded cannot be armed (nothing to arm), and an
+## already-armed job reports `already_prepared` instead of paying twice.
+func prepare_work_away(station_id: String = "") -> Dictionary:
+	if not _commands_available():
+		return {"ok": false, "reason": "session_inactive", "prepared": [], "refused": []}
+	var prepared: Array[String] = []
+	var refused: Array[Dictionary] = []
+	var jobs_now := jobs()
+	for key: Variant in jobs_now.keys():
+		var job: Dictionary = jobs_now[key]
+		var status := String(job.get("status", ""))
+		if status not in ["queued", "running"]:
+			continue
+		var job_station := String(job.get("station_id", ""))
+		if not station_id.is_empty() and job_station != station_id:
+			continue
+		var result: Dictionary = _adapter.call(&"arm_offline_operation", String(key), _event())
+		if bool(result.get("ok", false)):
+			prepared.append(String(key))
+		elif bool(result.get("duplicate", false)):
+			refused.append({"job": String(key), "reason": "already_prepared"})
+		else:
+			refused.append({"job": String(key), "reason": String(result.get("reason", "arm_refused"))})
+	var state: Dictionary = _adapter.call(&"offline_operation_state")
+	var armed: Dictionary = (state.get("armed", {}) as Dictionary).duplicate()
+	if prepared.is_empty() and refused.is_empty():
+		return {"ok": false, "reason": "nothing_in_progress", "prepared": [], "refused": [],
+			"armed": armed}
+	return {"ok": not prepared.is_empty(), "reason": "" if not prepared.is_empty() else String(refused[0].get("reason", "")),
+		"prepared": prepared, "refused": refused, "armed": armed}
+
+
+## Read-only: what would keep working while the world is closed.
+func prepared_work() -> Dictionary:
+	if not _configured:
+		return {"armed": {}, "jobs": []}
+	var state: Dictionary = _adapter.call(&"offline_operation_state")
+	var armed: Dictionary = state.get("armed", {})
+	var jobs_now := jobs()
+	var listed: Array[Dictionary] = []
+	for key: Variant in armed.keys():
+		var job: Dictionary = jobs_now.get(String(key), {})
+		listed.append({
+			"job_id": String(key),
+			"target": String(job.get("target", "")),
+			"station_id": String(job.get("station_id", "")),
+			"status": String(job.get("status", "")),
+			"elapsed": int(job.get("elapsed", 0)),
+			"duration": int(job.get("duration", 0)),
+		})
+	return {"armed": armed.duplicate(true), "jobs": listed}
+
+
 func cancel(job_id: String) -> Dictionary:
 	if not _commands_available():
 		return {"ok": false, "reason": "session_inactive"}

@@ -154,6 +154,7 @@ func _play_process() -> void:
 	var enemy_contact := int(enemy.get(&"contact_damage"))
 	var enemy_reach := float(enemy.get(&"attack_range"))
 	var hits := 0
+	var damage_total := 0
 	var last_hp := int(hero.get("health"))
 	var until_wait := Time.get_ticks_msec() + 60000
 	var enemy_lost := false
@@ -167,6 +168,10 @@ func _play_process() -> void:
 		var hp := int(hero.get("health"))
 		if hp < last_hp:
 			hits += 1
+			# A real denominator: sum the decrements the engine actually applied.
+			# The old report divided the whole pool delta by this count and folded
+			# a preceding hit into every per-hit figure.
+			damage_total += last_hp - hp
 			last_hp = hp
 	_set_direction(Vector2.ZERO)
 	_expect(hits >= 2, "the shipped enemy lands repeated real hits through the Hero's i-frame (%d)" % hits)
@@ -175,7 +180,9 @@ func _play_process() -> void:
 	# after a few knockbacks. That is the current bounded design, reported as fact.
 	print("A0_THREAT_LETHALITY ", JSON.stringify({
 		"max_health": max_hp, "hp_before": hp_before, "hp_after": last_hp,
-		"hits": hits, "damage_per_hit": int(round(float(hp_before - last_hp) / float(maxi(1, hits)))),
+		"hits": hits, "damage_observed": damage_total,
+		"damage_per_hit": int(round(float(damage_total) / float(maxi(1, hits)))),
+		"player_pool_max": int(hero.get("max_health")),
 		"enemy_contact_damage": enemy_contact, "enemy_attack_range": enemy_reach,
 		"enemy_disengaged": enemy_lost, "site_cell": [site.x, site.y],
 		"hero_at": [hero.global_position.x, hero.global_position.y],
