@@ -575,8 +575,200 @@
       "rule": "A composition is not an owner branch and no owner file is edited to build it. Every path names the commit its bytes came from; a path an overlay owns is either that overlay's blob or absent, never the base's stale copy.",
       "schema": "soh.balance.composition.v1",
       "tree": "009c058eb8cf0e003e203c70206ecd13c8ad6698"
+    },
+    {
+      "base": {
+        "owner": "a0",
+        "ref": "refs/live/arena-dea2428e",
+        "sha": "738e621b688e9d9890f636ef2ece48f6d29f5b01"
+      },
+      "commit": "f0f520e10d954a176a688ddacc9e00aea1680bc2",
+      "control_tower": {
+        "ref": "refs/live/docs-ct-loot-discovery-gate-20261030",
+        "sha": "971e0b95e1ea1c5f579f57f53fb35f3a6c3845e8"
+      },
+      "files": 5279,
+      "overlays": [],
+      "pinned_ref": "refs/comp/r11_a0",
+      "profile": "r11_a0",
+      "provenance_digest": "f5faef35e49a5da9379383b4a0ad663147ab1838aa28d0f1b6eb9d756c2b9ec6",
+      "question": "what can A0's own bytes do before any other owner is composed in?",
+      "reference_only": [
+        {
+          "owner": "avfx",
+          "sha": "8eb6b31c3c1ae51227f8b5079bf4fbbe966291a3",
+          "why": "pinned for provenance only: its unique paths are .github/workflows and docs/vfx, and every VFX asset it shares with A0 is identical or older, so overlaying it would downgrade the base"
+        }
+      ],
+      "removed_from_base": [],
+      "reproduce": "python3 tools/survival/balance/compose.py --profile r11_a0 --pin  # then: git worktree add --detach /tmp/comp f0f520e10d954a176a688ddacc9e00aea1680bc2",
+      "rule": "A composition is not an owner branch and no owner file is edited to build it. Every path names the commit its bytes came from; a path an overlay owns is either that overlay's blob or absent, never the base's stale copy.",
+      "schema": "soh.balance.composition.v1",
+      "tree": "acd6502b216f1b93dae72f32320b1d2d932b7d79"
+    },
+    {
+      "base": {
+        "owner": "a0",
+        "ref": "refs/live/arena-dea2428e",
+        "sha": "738e621b688e9d9890f636ef2ece48f6d29f5b01"
+      },
+      "commit": "7af17172ee65cc8042963692ae5d2e290abd595c",
+      "control_tower": {
+        "ref": "refs/live/docs-ct-loot-discovery-gate-20261030",
+        "sha": "971e0b95e1ea1c5f579f57f53fb35f3a6c3845e8"
+      },
+      "files": 5555,
+      "overlays": [
+        {
+          "file_count": 267,
+          "owner": "a1",
+          "prefixes": [
+            {
+              "mode": "replace",
+              "path": "data/survival/world/"
+            }
+          ],
+          "ref": "refs/live/arena-e385312a",
+          "sha": "9ca1453ccdd315c9de4aae01cf0e1e5b4e0a71cf"
+        },
+        {
+          "file_count": 26,
+          "owner": "a3",
+          "prefixes": [
+            {
+              "mode": "replace",
+              "path": "data/survival/items/"
+            },
+            {
+              "mode": "replace",
+              "path": "data/survival/recipes/"
+            },
+            {
+              "mode": "replace",
+              "path": "data/survival/economy/"
+            },
+            {
+              "mode": "merge",
+              "path": "game/survival/economy/"
+            }
+          ],
+          "ref": "refs/live/arena-7a12b27e",
+          "sha": "b44e22df3af40939069189be14afc23ee1ce21c4"
+        }
+      ],
+      "pinned_ref": "refs/comp/r11_core",
+      "profile": "r11_core",
+      "provenance_digest": "1615ace292913b546e620de18129d068376d0ab9edeb7d090b903109fa3d270c",
+      "question": "does current A0 mount current A1 geography and current A3 V7 alone?",
+      "reference_only": [
+        {
+          "owner": "avfx",
+          "sha": "8eb6b31c3c1ae51227f8b5079bf4fbbe966291a3",
+          "why": "pinned for provenance only: its unique paths are .github/workflows and docs/vfx, and every VFX asset it shares with A0 is identical or older, so overlaying it would downgrade the base"
+        }
+      ],
+      "removed_from_base": [],
+      "reproduce": "python3 tools/survival/balance/compose.py --profile r11_core --pin  # then: git worktree add --detach /tmp/comp 7af17172ee65cc8042963692ae5d2e290abd595c",
+      "rule": "A composition is not an owner branch and no owner file is edited to build it. Every path names the commit its bytes came from; a path an overlay owns is either that overlay's blob or absent, never the base's stale copy.",
+      "schema": "soh.balance.composition.v1",
+      "tree": "664d512f717cd255cf2e8179595d49ac9173a5d2"
+    },
+    {
+      "base": {
+        "owner": "a0",
+        "ref": "refs/live/arena-dea2428e",
+        "sha": "738e621b688e9d9890f636ef2ece48f6d29f5b01"
+      },
+      "commit": "c5eb573bfadba4cd9a788ca60b015f7ff6163b11",
+      "control_tower": {
+        "ref": "refs/live/docs-ct-loot-discovery-gate-20261030",
+        "sha": "971e0b95e1ea1c5f579f57f53fb35f3a6c3845e8"
+      },
+      "files": 5635,
+      "overlays": [
+        {
+          "file_count": 267,
+          "owner": "a1",
+          "prefixes": [
+            {
+              "mode": "replace",
+              "path": "data/survival/world/"
+            }
+          ],
+          "ref": "refs/live/arena-e385312a",
+          "sha": "9ca1453ccdd315c9de4aae01cf0e1e5b4e0a71cf"
+        },
+        {
+          "file_count": 26,
+          "owner": "a3",
+          "prefixes": [
+            {
+              "mode": "replace",
+              "path": "data/survival/items/"
+            },
+            {
+              "mode": "replace",
+              "path": "data/survival/recipes/"
+            },
+            {
+              "mode": "replace",
+              "path": "data/survival/economy/"
+            },
+            {
+              "mode": "merge",
+              "path": "game/survival/economy/"
+            }
+          ],
+          "ref": "refs/live/arena-7a12b27e",
+          "sha": "b44e22df3af40939069189be14afc23ee1ce21c4"
+        },
+        {
+          "file_count": 31,
+          "owner": "a6",
+          "prefixes": [
+            {
+              "mode": "replace",
+              "path": "game/survival/ui/"
+            }
+          ],
+          "ref": "refs/live/arena-05e0328d",
+          "sha": "e88f2cee18ddafc971023e09a99f716fd518c191"
+        },
+        {
+          "file_count": 49,
+          "owner": "a8",
+          "prefixes": [
+            {
+              "mode": "replace",
+              "path": "game/survival/world_content/"
+            },
+            {
+              "mode": "replace",
+              "path": "data/survival/world_content/"
+            }
+          ],
+          "ref": "refs/live/arena-2d7e6d7a",
+          "sha": "6337533f7cc0d39487921e279d3967ac29a59297"
+        }
+      ],
+      "pinned_ref": "refs/comp/r11_full",
+      "profile": "r11_full",
+      "provenance_digest": "0d070eea1b232d958cad4f24e6de7135410038df51fffe51666adb78d146bff5",
+      "question": "the integrated product a player would install at the round-11 owner heads",
+      "reference_only": [
+        {
+          "owner": "avfx",
+          "sha": "8eb6b31c3c1ae51227f8b5079bf4fbbe966291a3",
+          "why": "pinned for provenance only: its unique paths are .github/workflows and docs/vfx, and every VFX asset it shares with A0 is identical or older, so overlaying it would downgrade the base"
+        }
+      ],
+      "removed_from_base": [],
+      "reproduce": "python3 tools/survival/balance/compose.py --profile r11_full --pin  # then: git worktree add --detach /tmp/comp c5eb573bfadba4cd9a788ca60b015f7ff6163b11",
+      "rule": "A composition is not an owner branch and no owner file is edited to build it. Every path names the commit its bytes came from; a path an overlay owns is either that overlay's blob or absent, never the base's stale copy.",
+      "schema": "soh.balance.composition.v1",
+      "tree": "f37c538377d133bee3a9ae91b432323b8e1eddf6"
     }
   ],
-  "rule": "Digest-level manifest. Every per-file {path, owner, source_sha, blob} row is reproducible with `python3 tools/survival/balance/compose.py --all --write <dir>`; it is not committed because it is 5 MB of derivable data.",
+  "rule": "Compositions are append-only. A profile name is bound to the owner bytes it was cut from, so a new round adds new names (`r11_a0`/`r11_core`/`r11_full`) instead of re-cutting an old one \u2014 otherwise a history row would silently start describing a different tree. Per-file provenance for any row is reproduced with `python3 tools/survival/balance/compose.py --profile <name> --write <dir>`.",
   "schema": "soh.balance.composition.v1.set"
 }

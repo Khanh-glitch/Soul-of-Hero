@@ -67,6 +67,12 @@ PROBE_FAMILIES = (
     # cross-owner seams round 9 could not see. Kept separate so the round-9 ledger
     # stays a historical record of what that composition actually did.
     ("balance_native_r10", REPO / "tests" / "survival" / "balance_native_r10"),
+    # Round 11 (CT multidimensional gameplay gate). The round-10 composition is
+    # stale, so this family starts from the current owner bytes and never inherits a
+    # round-10 verdict. Round-10 probes are still executed in the same run: a defect
+    # that disappeared and a defect that survived are both facts about *this* tree,
+    # and the ledger keeps them apart by family.
+    ("balance_native_r11", REPO / "tests" / "survival" / "balance_native_r11"),
 )
 #: A7-owned data the round-8 probes read. These are test configuration, not game
 #: data: the game never loads them. They are copied into the worktree next to the

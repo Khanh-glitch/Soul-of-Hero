@@ -1,3 +1,51 @@
+# A7 acceptance scoreboard — round 11 (the current composition, played)
+
+_2026-10-31. **Supersedes round 10 for status questions.** Real Godot
+`4.7.stable.custom_build.5b4e0cb0f` built from source in this sandbox, against
+`refs/comp/r11_full` = `c5eb573bfadba4cd9a788ca60b015f7ff6163b11` (A0 `738e621b688e` +
+A1 `9ca1453ccdd3` + A3 `b44e22df3af4` + A6 `e88f2cee18dd` + A8 `6337533f7cc0`),
+`7af17172ee65` (`r11_core`) and `f0f520e10d95` (`r11_a0`, A0 alone). Full report:
+[`ROUND11_SYSTEM_ACCEPTANCE.md`](ROUND11_SYSTEM_ACCEPTANCE.md). Ledger:
+`data/survival/balance/results/native_runs.v1.json` (rows keyed `c5eb573bfadb`); round
+10's payload is preserved verbatim as `native_runs.r10_full.v1.json` (as round 9's is in
+`native_runs.r9_full.v1.json`), and no round-10 verdict was carried forward untested._
+
+| probe | checks | failed | missing | verdict |
+|---|---|---|---|---|
+| `r11_seam_probe` | 34 | 0 | 0 | **PASS** |
+| `r11_j01_probe` | 33 | 0 | 2 | `RED_NOT_IMPLEMENTED` |
+| `r11_j02_j05_probe` | 28 | 0 | 4 | `RED_NOT_IMPLEMENTED` |
+| `r11_j03_probe` | 21 | 0 | 1 | `RED_NOT_IMPLEMENTED` |
+| `r11_j04_probe` | 11 | 1 | 2 | `RED_NOT_IMPLEMENTED` |
+| `r11_j06_j07_probe` | 41 | 0 | 2 | `RED_NOT_IMPLEMENTED` |
+| `r11_adversarial_probe` | 21 | 0 | 0 | **PASS** |
+| `r11_visual_probe` | 5 | 0 | 1 | `RED_NOT_IMPLEMENTED` |
+| **total** | **194** | **1** | **12** | **PASS 2 / RED 6 / FAIL 0 / BLOCKED 0** |
+
+* **The fence is fixed: 15/15 exact.** Round 10's `a3_data_pin_mismatch` and the
+  unresolvable `35214ed8` are gone, because the composition now overlays A3 at the
+  commit A0 pins. A7 re-hashed all 15 paths from the composed bytes instead of
+  asking A0 whether A0's fence is happy.
+* **The paid offline job is whole.** `burn_charcoal` escrows exactly 2 oak, arms,
+  survives 12 s of real absence, settles **once** in a second OS process
+  (`charcoal 2`), and a second claim is refused. Measured tick rate is ≈1 per real
+  second **both** online (`elapsed 0,1,3,4,5,6` over six seconds) and offline, so
+  the two clocks agree — an earlier draft of this round claimed a 60× gap from the
+  `TICKS_PER_SECOND := 60` constant and the measurement retracts it.
+* **Nine ranked owner fixes in §8.5 of the report.** The two that were not visible in
+  round 10: a kind-vocabulary split where `SaveService.INVENTORY_ITEM_KIND_IDS`
+  refuses 13 of 57 catalogue ids (`station_kit`/`equipment`/`skill_core`), and a
+  successful `collect` that reports `reason: "rejected"`.
+* **Nothing can hurt the Hero, and nothing a Hero can reach pays.** 0 damage call
+  sites, 0 mounted A8 site nodes, `unknown_world_poi` for all three POIs, all 7
+  currency sources `OWNER_CONTRACT_CANDIDATE_A8`, all 9 kiosks unauthorized or
+  site-less, `abandon_run` with 0 callers, and A6's six owner projections empty.
+* **No frame was inspected.** No display server, no GL/Vulkan/DRI in this sandbox;
+  `VISUAL_NOT_REVIEWED`, and no screenshot was fabricated.
+* **Retracted, not argued away:** round 11's first reading of "the Hero spawns
+  inside blocking collision" was a probe/query mismatch. The spawn opens onto
+  **98 304 reachable cells** and the Hero walks out in all four directions.
+
 # A7 acceptance scoreboard — round 10 (one hash, one player path)
 
 _2026-10-31. Supersedes round 9 for status questions. Real Godot

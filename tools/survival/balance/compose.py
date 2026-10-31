@@ -142,6 +142,26 @@ PROFILES: Dict[str, Dict[str, object]] = {
         "overlays": ["a1", "a3", "a6", "a8"],
         "question": "the product a player would actually install, at current owner heads",
     },
+    # Round 11 (CT multidimensional gate). Same three-layer attribution question as
+    # round 10, re-cut against refs that all five owners have moved since. The
+    # profiles are *new* names on purpose: a round-10 verdict belongs to the
+    # round-10 bytes, and reusing the profile name would silently transfer an old
+    # failure to a tree that may not have it.
+    "r11_a0": {
+        "base": "a0",
+        "overlays": [],
+        "question": "what can A0's own bytes do before any other owner is composed in?",
+    },
+    "r11_core": {
+        "base": "a0",
+        "overlays": ["a1", "a3"],
+        "question": "does current A0 mount current A1 geography and current A3 V7 alone?",
+    },
+    "r11_full": {
+        "base": "a0",
+        "overlays": ["a1", "a3", "a6", "a8"],
+        "question": "the integrated product a player would install at the round-11 owner heads",
+    },
 }
 
 #: Owners whose work is pinned for provenance but cannot be overlaid without
