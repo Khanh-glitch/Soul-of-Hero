@@ -800,6 +800,7 @@ func _walk_axis_to(action: String, keycode: Key, coordinate: float) -> bool:
 	await _send_key(keycode, true)
 	var best_distance := absf(starting_value - coordinate)
 	var stalled_frames := 0
+	var observed_colliders: Array[String] = []
 	for _frame: int in range(240):
 		await physics_frame
 		await process_frame
@@ -823,6 +824,11 @@ func _walk_axis_to(action: String, keycode: Key, coordinate: float) -> bool:
 			stalled_frames += 1
 		if hero.get_slide_collision_count() > 0:
 			_last_axis_collided = true
+			for collision_index: int in range(hero.get_slide_collision_count()):
+				var collider: Object = hero.get_slide_collision(collision_index).get_collider()
+				var collider_name := str(collider.name) if collider is Node else str(collider)
+				if collider_name not in observed_colliders:
+					observed_colliders.append(collider_name)
 			if stalled_frames >= 30:
 				break
 	await _send_key(keycode, false)
@@ -831,34 +837,37 @@ func _walk_axis_to(action: String, keycode: Key, coordinate: float) -> bool:
 		hero.global_position.x if action in ["move_left", "move_right"] else hero.global_position.y
 	)
 	if not reached:
-		print(
-			(
-				(
-					"A8_HERO_AXIS_RESULT action=%s target=%.1f start=%s end=%s collided=%s "
-					% [
-						action,
-						coordinate,
-						str(starting_position),
-						str(hero.global_position),
-						str(_last_axis_collided)
-					]
-				)
-				+ (
-					"input=%s velocity=%s actor_input=%s state=%s current_action=%s keys_wasd=%s/%s/%s/%s"
-					% [
-						str(Input.get_vector("move_left", "move_right", "move_up", "move_down")),
-						str(hero.velocity),
-						str(hero.get("move_input")),
-						str(hero.get("player_state")),
-						str(hero.get("current_action")),
-						str(Input.is_physical_key_pressed(KEY_W)),
-						str(Input.is_physical_key_pressed(KEY_A)),
-						str(Input.is_physical_key_pressed(KEY_S)),
-						str(Input.is_physical_key_pressed(KEY_D)),
-					]
-				)
-			)
+		var axis_result := (
+			"A8_HERO_AXIS_RESULT action=%s target=%.1f start=%s end=%s collided=%s "
+			% [
+				action,
+				coordinate,
+				str(starting_position),
+				str(hero.global_position),
+				str(_last_axis_collided),
+			]
 		)
+		var input_format := (
+			"input=%s velocity=%s actor_input=%s state=%s current_action=%s keys_wasd=%s/%s/%s/%s "
+			+ "site_state=%s colliders=%s"
+		)
+		var input_result := (
+			input_format
+			% [
+				str(Input.get_vector("move_left", "move_right", "move_up", "move_down")),
+				str(hero.velocity),
+				str(hero.get("move_input")),
+				str(hero.get("player_state")),
+				str(hero.get("current_action")),
+				str(Input.is_physical_key_pressed(KEY_W)),
+				str(Input.is_physical_key_pressed(KEY_A)),
+				str(Input.is_physical_key_pressed(KEY_S)),
+				str(Input.is_physical_key_pressed(KEY_D)),
+				str(_snapshot().get("site_state", {})),
+				str(observed_colliders),
+			]
+		)
+		print(axis_result + input_result)
 	_check(
 		hero.global_position.distance_to(starting_position) > 0.5 or _last_axis_collided,
 		"keyboard movement or collision is observed on %s" % action
