@@ -56,6 +56,14 @@ jobs:
           set -o pipefail
           python3 tools/arcana19_sprite_compare/compare.py artifacts/arcana19-sprite | tee compare.log
           sed 's/^/::notice::/' compare.log
+      - name: Surface first GPU or import errors
+        if: always()
+        run: |
+          for log in gpu.log import.log; do
+            if test -f "$log"; then
+              grep -E -A 5 -B 3 'SCRIPT ERROR:|Parse Error:|SHADER ERROR:|Shader compilation failed|ERROR:' "$log" | head -n 40 | sed 's/^/::notice title=D19_SPRITE_GPU_ERROR::/' || true
+            fi
+          done
       - name: Surface all sprite transfer candidates
         if: always()
         run: |
