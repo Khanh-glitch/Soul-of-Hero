@@ -185,7 +185,7 @@ func _run() -> void:
     renderer.cast_finished.connect(func(id: StringName) -> void:
         if String(id).ends_with("_02"):
             b_world.clear()
-        elif String(id).ends_with("_04"):
+        elif passes.has(id) and (passes[id] as Arcana20SourcePassFrame).family == &"A":
             a_world.clear()
         else:
             c_world.clear())
@@ -193,6 +193,30 @@ func _run() -> void:
     await process_frame
     await process_frame
     var baseline := await save_frame("world_before")
+    # #09 candidate graph tracks the current real injected enemy, not a Gold
+    # demo formation. Moving the target is a diagnostic transform, not proof
+    # of natural AI/target selection or permission to deal gameplay damage.
+    var graph_id := Arcana20SourceCatalog.canonical_id(9)
+    renderer.cast_skill(graph_id, player.global_position, enemy.global_position)
+    var chain := renderer._casts[graph_id] as ASourcePlayer
+    chain.set_process(false)
+    chain.render_enabled = false
+    var graph := chain._spell as AChainVerdictGraph
+    var first_anchor: Variant = graph.nodes[1]
+    var old_position := enemy.global_position
+    var hp_graph := int(enemy.get("health"))
+    enemy.global_position += Vector2(20, 10)
+    chain.advance(STEP, false)
+    var moved_anchor: Variant = graph.nodes[1]
+    check(first_anchor != null and moved_anchor != null and chain.local_to_world(moved_anchor).distance_to(chain.local_to_world(first_anchor) + Vector2(20, 10)) < 0.1, "A09 graph follows actual moving AnimatedSprite2D target")
+    check(int(enemy.get("health")) == hp_graph, "A09 graph alone has no damage authority")
+    enemy.global_position = old_position
+    renderer.cancel_skill(graph_id)
+    passes.erase(graph_id)
+    await process_frame
+    await process_frame
+    var after_chain := await save_frame("world_09_cancelled")
+    check(images_equal(baseline, after_chain), "A09 graph cancellation restores frozen world")
     var stats: Array = []
     for num in [2, 4, 10, 17]:
         var id := Arcana20SourceCatalog.canonical_id(num)

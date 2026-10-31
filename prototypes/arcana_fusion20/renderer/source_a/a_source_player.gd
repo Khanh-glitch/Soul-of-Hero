@@ -58,6 +58,8 @@ func begin(caster_world: Vector2, target_world: Vector2) -> void:
     _scale = clampf(axis.length() / maxf(1.0, src_axis.length()), 0.6, 3.5) if axis.length() > 1.0 else 1.0
     _origin = caster_world
     _target = target_world
+    if _spell.has_method("bind_targets"):
+        _spell.call("bind_targets", self, target_world)
     _tick = 0
     _acc = 0.0
     _active = true
@@ -110,7 +112,10 @@ func _fire_events() -> void:
         if not bool(ev.emitted) and t >= float(ev.t):
             ev.emitted = true
             var kind := StringName(String(ev.kind))
-            var wp := local_to_world(ev.pos_local)
+            var event_pos: Variant = _spell.call("event_local", ev) if _spell.has_method("event_local") else ev.pos_local
+            if event_pos == null:
+                continue
+            var wp := local_to_world(event_pos)
             visual_event.emit(kind, wp, t)
             if String(ev.kind).ends_with("impact") or String(ev.kind).ends_with("contact"):
                 visual_contact.emit(kind, wp, t)

@@ -71,7 +71,11 @@ func _a_cast(canonical_id: StringName, id: int, caster_world: Vector2, target_wo
     ap.world_pass_mode = world_pass_mode
     ap.source_variant = StringName(_A_SPELLS[id])
     ap.source_pass_ready.connect(func(frame: Arcana20SourcePassFrame) -> void: source_pass_ready.emit(canonical_id, frame))
-    ap.configure(_make_a_spell(id), _a_spell_dur(id))
+    # Keep the existing candidate untouched in legacy mode. World mode #09
+    # opts into A's actual graph schedule with B colors/C bolt primitives;
+    # missing real actor anchors never manufacture visual contacts or HP.
+    var spell: Variant = AChainVerdictGraph.new() if world_pass_mode and id == 9 else _make_a_spell(id)
+    ap.configure(spell, _a_spell_dur(id))
     add_child(ap)
     ap.visual_contact.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
         visual_contact.emit(canonical_id, pos, kind)

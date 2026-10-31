@@ -53,6 +53,13 @@ func _run() -> void:
     b.begin()
     check(b.ink_coverage[10 * BRenderer.W + 11] == 0.0 and b.world_warp[wi] == 0.0, "B world fields clear")
 
+    var graph := AChainVerdictGraph.new()
+    graph.setup()
+    check(graph.events.size() == 23, "A09 original graph seeded probe count")
+    check(int(graph.events[0].a) == 0 and int(graph.events[0].b) == 6 and int(graph.events[0].seed) == 990, "A09 original first probe seed and endpoints")
+    check(int(graph.events[2].b) == 1 and not bool(graph.events[2].fail) and is_equal_approx(float(graph.events[2].t0), 1.49), "A09 first success ordering and time")
+    check(graph.event_local({"node_index": 1}) == null, "A09 absent real target has no contact anchor")
+
     var a := AFramebuffer.new()
     a.track_world_fields = true
     a.clear()
