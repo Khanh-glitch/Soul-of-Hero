@@ -9,18 +9,26 @@ func _initialize() -> void:
         var c: Dictionary = entry
         var fx := DFx.new()
         fx.t = float(c.time)
+        fx.track_world_fields = true
         var rgba: Array = c.color
         var color := Color(float(rgba[0]), float(rgba[1]), float(rgba[2]), float(rgba[3]))
         fx.line(c.pts, c.width, color, c.opts)
         var file := FileAccess.open(OUT + "/%s.native.rgb32f" % c.name, FileAccess.WRITE)
         file.store_buffer(fx.buf.to_byte_array())
         file.close()
+        var coverage := FileAccess.open(OUT + "/%s.native.coverage.u8" % c.name, FileAccess.WRITE)
+        coverage.store_buffer(fx.world_influence)
+        coverage.close()
         var triangle_fx := DFx.new()
         triangle_fx.t = float(c.time)
+        triangle_fx.track_world_fields = true
         DRibbonTriangles.render(triangle_fx, c.pts, c.width, color, c.opts)
         var candidate_file := FileAccess.open(OUT + "/%s.triangle.rgb32f" % c.name, FileAccess.WRITE)
         candidate_file.store_buffer(triangle_fx.buf.to_byte_array())
         candidate_file.close()
+        var candidate_coverage := FileAccess.open(OUT + "/%s.triangle.coverage.u8" % c.name, FileAccess.WRITE)
+        candidate_coverage.store_buffer(triangle_fx.world_influence)
+        candidate_coverage.close()
         print("D19_RIBBON_NATIVE_CAPTURE ", c.name)
     print("D19_RIBBON_CAPTURE_COMPLETE")
     quit()

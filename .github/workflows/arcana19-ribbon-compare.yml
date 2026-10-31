@@ -31,7 +31,7 @@ jobs:
           set -o pipefail
           mkdir -p artifacts/arcana19-ribbon
           node tools/arcana19_ribbon_compare/capture.mjs artifacts/arcana19-ribbon | tee original.log
-          test "$(grep -c D19_RIBBON_ORIGINAL_CAPTURE original.log)" -eq 4
+          test "$(grep -c D19_RIBBON_ORIGINAL_CAPTURE original.log)" -eq 8
       - name: Capture native ribbon cases
         run: |
           set -o pipefail
