@@ -161,10 +161,13 @@ func I(x: float, y: float, r: float, g: float, b: float, a: float = 1.0) -> void
         a = 1.0
     var i := (yi * W + xi) * 4
     var ia := 1.0 - a
-    field_activity |= FIELD_FRAGMENT | FIELD_INFLUENCE
+    field_activity |= FIELD_INK | FIELD_INFLUENCE
     if track_world_fragments:
         world_influence[yi * W + xi] = 1
-        # Subsequent ink is source-over the already-mapped live fragment.
+        # Source-over ink changes fragment coverage only where one exists.
+        # This tests authored coverage, never black vs bright RGB.
+        if world_fragment[i + 2] != 0.0:
+            field_activity |= FIELD_FRAGMENT
         world_fragment[i + 2] *= ia
     ink[i] = r * a + ink[i] * ia
     ink[i + 1] = g * a + ink[i + 1] * ia
