@@ -98,3 +98,31 @@ jobs:
           for i,c in enumerate(chunks): print(f'::notice title=C_CROP_{i:02d}_OF_{len(chunks):02d}::{c}',flush=True)
           print('bounding box',box,'crop',crop,'resolution',b.size)
           PY
+      - name: Surface Worldseed lifecycle checks
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          lines=next(Path('review').rglob('join.log')).read_text(errors='replace').splitlines()
+          selected=[line for line in lines if line.startswith(('JOIN_OK','JOIN_FAIL')) and ('A16' in line or 'C16' in line)]
+          for line in selected:
+              print('::notice title=WORLDSEED_LIFECYCLE::'+line.replace('%','%25'))
+          if len(selected)<10: raise SystemExit('missing Worldseed lifecycle assertions')
+          PY
+      - name: Expose real-world Worldseed bloom crop
+        run: |
+          python3 - <<'PY'
+          import base64,io,pathlib
+          from PIL import Image,ImageChops
+          root=next(pathlib.Path('review').rglob('arcana20-join'))
+          before=Image.open(root/'world_before.png').convert('RGB')
+          image=Image.open(root/'fusion_16_candidate_tick330.png').convert('RGB')
+          box=ImageChops.difference(before,image).getbbox()
+          if not box: raise SystemExit('Worldseed did not change actual world image')
+          cx=(box[0]+box[2])//2;cy=(box[1]+box[3])//2
+          crop=(max(0,cx-180),max(0,cy-150),min(image.width,cx+180),min(image.height,cy+150))
+          output=io.BytesIO();image.crop(crop).quantize(colors=64).save(output,format='PNG',optimize=True)
+          data=base64.b64encode(output.getvalue()).decode();chunks=[data[i:i+3500] for i in range(0,len(data),3500)]
+          if len(chunks)>30:raise SystemExit('Worldseed crop too large')
+          for i,c in enumerate(chunks):print(f'::notice title=WORLDSEED_CROP_{i:02d}_OF_{len(chunks):02d}::{c}',flush=True)
+          print('worldseed_difference_bbox',box,'crop',crop,'physical_resolution',image.size)
+          PY
