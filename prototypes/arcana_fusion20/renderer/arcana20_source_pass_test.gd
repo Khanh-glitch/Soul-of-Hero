@@ -53,6 +53,15 @@ func _run() -> void:
     b.begin()
     check(b.ink_coverage[10 * BRenderer.W + 11] == 0.0 and b.world_warp[wi] == 0.0, "B world fields clear")
 
+    # Exact JS Number + signed bitwise hash results, generated from the
+    # original engine/math.ts expression, not tuned image thresholds.
+    check(AMath.hash2(1, 2) == 0.11692661442793906, "A hash2 JS signed/float 1,2")
+    check(AMath.hash2(-5, 9) == 0.14582930994220078, "A hash2 JS signed/float -5,9")
+    check(AMath.hash2(10, 20) == 0.24044638429768384, "A hash2 JS signed/float 10,20")
+    check(AMath.hash2(9000, 1244) == 0.008933292934671044, "A hash2 JS signed/float 9000,1244")
+    check(AMath.hash3(1, 2, 3) == 0.29924265178851783, "A hash3 JS signed/float 1,2,3")
+    check(AMath.hash3(-3, 9, -4) == 0.4674732191488147, "A hash3 JS signed/float -3,9,-4")
+
     var bloom_lead := AAbyssalBloomLead.new()
     bloom_lead.setup()
     check(bloom_lead.petals.size() == 7 and bloom_lead.inner.size() == 7 and bloom_lead.bubbles.size() == 46, "A05 original seeded opening structures")

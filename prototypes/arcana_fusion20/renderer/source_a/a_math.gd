@@ -54,22 +54,24 @@ static func back_out(t: float, s: float = 1.7) -> float:
     var x := cl01(t) - 1.0
     return x * x * ((s + 1.0) * x + s) + 1.0
 
+static func _signed32(value: int) -> int:
+    var v := value & 0xFFFFFFFF
+    return v - 0x100000000 if v >= 0x80000000 else v
+
 static func hash2(x: float, y: float) -> float:
-    var h := x * 374761393.0 + y * 668265263.0
-    # JS: h = (h ^ (h >> 13)) * 1274126177 with float64 h; >> coerces to int32.
-    var hi := int(h) & 0xFFFFFFFF
-    hi = (hi ^ (hi >> 13)) & 0xFFFFFFFF
-    var prod := float(hi) * 1274126177.0
-    var pi := int(prod) & 0xFFFFFFFF
-    return float((pi ^ (pi >> 16)) & 0xFFFFFFFF) / 4294967296.0
+    # JS bitwise operations first coerce Number to signed int32; >> is an
+    # arithmetic shift. The following multiplication is JS float64, *not*
+    # exact integer multiplication. Coerce its rounded result back to int32.
+    var h := _signed32(int(x * 374761393.0 + y * 668265263.0))
+    var mixed := h ^ (h >> 13)
+    var product := _signed32(int(float(mixed) * 1274126177.0))
+    return float((product ^ (product >> 16)) & 0xFFFFFFFF) / 4294967296.0
 
 static func hash3(x: float, y: float, z: float) -> float:
-    var h := x * 374761393.0 + y * 668265263.0 + z * 2147483647.0
-    var hi := int(h) & 0xFFFFFFFF
-    hi = (hi ^ (hi >> 13)) & 0xFFFFFFFF
-    var prod := float(hi) * 1274126177.0
-    var pi := int(prod) & 0xFFFFFFFF
-    return float((pi ^ (pi >> 16)) & 0xFFFFFFFF) / 4294967296.0
+    var h := _signed32(int(x * 374761393.0 + y * 668265263.0 + z * 2147483647.0))
+    var mixed := h ^ (h >> 13)
+    var product := _signed32(int(float(mixed) * 1274126177.0))
+    return float((product ^ (product >> 16)) & 0xFFFFFFFF) / 4294967296.0
 
 static func vnoise(x: float, y: float) -> float:
     var xi: int = floori(x)
