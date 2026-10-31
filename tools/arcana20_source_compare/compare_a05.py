@@ -2,7 +2,7 @@
 RGB comparisons are not a world-coverage/visual acceptance gate."""
 import json, pathlib, struct, sys
 from PIL import Image
-root = pathlib.Path(sys.argv[1]); w,h=416,234
+root = pathlib.Path(sys.argv[1]); label=sys.argv[2] if len(sys.argv)>2 else 'A05'; w,h=416,234
 results=[]
 for tick in (90,180,270):
     a=(root/f'original_{tick}.rgba8').read_bytes()
@@ -36,7 +36,7 @@ for tick in (90,180,270):
       'write_trace_iou': intersection/union if union else 1.0,
       'write_trace_union': union,
       'coverage_iou':'not measured: write traces are not alpha or authored coverage',
-      'scope':'A05 pre-burst component only, black source canvas, not live world'}
+      'scope':f'{label} neutral-A component only, black source canvas, not live world'}
     results.append(result)
-    print('A05_SOURCE_COMPARE',json.dumps({k:v for k,v in result.items() if k!='regions'}),flush=True)
+    print(f'{label}_SOURCE_COMPARE',json.dumps({k:v for k,v in result.items() if k!='regions'}),flush=True)
 (root/'comparison.json').write_text(json.dumps(results,indent=2))

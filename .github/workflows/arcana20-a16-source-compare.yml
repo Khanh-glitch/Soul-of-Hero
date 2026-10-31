@@ -1,0 +1,56 @@
+name: ARCANA20 A16 growth source comparison diagnostic
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths:
+      - 'tools/arcana20_source_compare/**'
+      - 'prototypes/arcana_fusion20/renderer/source_a/**'
+      - 'prototypes/arcana_fusion20/renderer/a16_source_compare.gd'
+      - '.github/workflows/arcana20-a16-source-compare.yml'
+permissions:
+  contents: read
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Install isolated comparison tools
+        run: |
+          npm install --prefix "$RUNNER_TEMP/a16-node" esbuild@0.25.12
+          python3 -m pip install --quiet pillow
+      - name: Import and capture exact source TS
+        run: |
+          set -o pipefail
+          godot --headless --path . --import > import.log 2>&1
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' import.log
+          mkdir -p artifacts/arcana20-a16-source
+          "$RUNNER_TEMP/a16-node/node_modules/.bin/esbuild" tools/arcana20_source_compare/a16_reference.ts --bundle --platform=node --format=esm --outfile="$RUNNER_TEMP/a16-ref.mjs"
+          node "$RUNNER_TEMP/a16-ref.mjs" artifacts/arcana20-a16-source
+      - name: Capture native selected source component
+        run: |
+          set -o pipefail
+          timeout 600s godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/a16_source_compare.gd 2>&1 | tee native.log
+          grep -Fq 'A16_COMPONENT_CAPTURE_COMPLETE' native.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' native.log
+      - name: Measure same-seed/tick spatial RGB and HDR difference
+        run: |
+          set -o pipefail
+          python3 tools/arcana20_source_compare/compare_a05.py artifacts/arcana20-a16-source A16 | tee comparison.log
+          sed 's/^/::notice::/' comparison.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcana20-a16-original-native-diagnostic
+          path: |
+            artifacts/arcana20-a16-source/
+            import.log
+            native.log
+            comparison.log
+          if-no-files-found: warn
