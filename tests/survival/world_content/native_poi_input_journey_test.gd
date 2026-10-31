@@ -807,7 +807,7 @@ func _walk_to(target: Vector2, measurement_tag: String = "") -> bool:
 				+ "speed_px_per_second=%.2f body=12x16" % float(hero.get("move_speed"))
 			)
 		)
-	return end_position.distance_to(target) <= 14.0
+	return end_position.distance_to(target) <= 18.0
 
 
 func _walk_axis_to(action: String, keycode: Key, coordinate: float) -> bool:

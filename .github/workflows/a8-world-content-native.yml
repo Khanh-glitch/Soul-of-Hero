@@ -83,7 +83,10 @@ jobs:
             cat ".artifacts/a8-world-content/native-input-journeys-${size}.log" >> .artifacts/a8-world-content/native-input-journeys.log
             if [ "$run_status" -ne 0 ]; then
               status=$run_status
-              tail -n 140 ".artifacts/a8-world-content/native-input-journeys-${size}.log" >> .artifacts/a8-world-content/input-journey-failures.log
+              {
+                echo "resolution=${size}"
+                grep -E 'A8_POINT|ERROR: Assertion failed|A8_NATIVE_POI_INPUT_JOURNEY_(PASS|FAIL)' ".artifacts/a8-world-content/native-input-journeys-${size}.log" || true
+              } >> .artifacts/a8-world-content/input-journey-failures.log
             fi
           done
           set -e
