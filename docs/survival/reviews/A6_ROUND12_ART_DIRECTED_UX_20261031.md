@@ -427,6 +427,106 @@ captures`) pass on the rebuilt panel.
 first rebuild render is what caught the contrast, the 9 px chips and the clipped
 shortfall, all fixed in `d31de790`.
 
+### 4.11 Round 12 continuation — recipe identity, tenant data authority, the workshop in Vietnamese
+
+Authority re-read at `origin/feature/survival-rpg-foundation-20261029` @ `3c6a9ae5`:
+`CURRENT_PRODUCT_CONTRACT.md`, **`DECISIONS.md` D051–D074** (D055–D074 do exist — an
+earlier read of this branch stopped at D054 and wrongly concluded they were absent),
+`INDEPENDENT_DEEP_REVIEW_PROTOCOL.md`, `ACCEPTANCE.md` and the A6 Round 11 work order.
+
+#### The workshop named its controls after the item, not the recipe
+
+`_card_row(...)` was passed `_first_output_id(recipe)`. In the real catalog
+(`data/survival/recipes/recipes.json`, 36 recipes) **23 ids differ from the item they
+produce** — `burn_charcoal` → `charcoal`, `smelt_iron` → `iron_ingot` — and five item
+ids are produced by two or three recipes each (`iron_ingot` by `smelt_iron` and
+`smelt_ore`; `knowledge_spares` by three). So the panel labelled recipes by their
+product, five names merged into one control, and a click queued whichever recipe the
+lookup happened to find. The furnace tests never noticed: every recipe they use is one
+whose id equals its product.
+
+Controls are now named by `recipe.id` (`Recipe_<recipe_id>_<station_id>`), the id the
+owner is asked to queue, with the product only deciding the headline and icon.
+`Technology_<tech_id>_<station_id>` was already correct.
+
+The guard is `tests/survival/ui/economy_recipe_identity_test.gd`, driven by the real
+JSON, not a fixture: it asserts the premise (30 distinct names for 36 recipes under
+output naming, `burn_charcoal` unresolvable, `iron_ingot` an item and not a recipe),
+then that `Recipe_burn_charcoal_*` exists and `Recipe_charcoal_*` does not, then that
+`smelt_iron` and `smelt_ore` are two visible controls that each queue their own recipe.
+Re-introducing the bug and re-running locally is how the first draft was caught: the
+initial version asserted the premise but not the collision, and passed under the bug.
+
+Two A0 surface tests searched for `Recipe_workbench_kit_hand`, an id that exists in no
+catalog — their own job assertion already expected `workbench_kit`. They could not have
+found the control in any revision; they now match `Recipe_workbench_kit_*`.
+
+#### The workshop did not speak the game's language, and its footer sat on the border
+
+The frames showed the same three defects at 720p, 1440p and 2160p:
+
+| defect | what it looked like | fix |
+| --- | --- | --- |
+| English chrome in a Vietnamese game | `WORKSHOP`, `CLOSE [C]`, `PACK 1/30`, `station offline`, `short 8 stone chunk`, while the HUD, death card and return digest are Vietnamese | `XƯỞNG CHẾ TÁC`, `ĐÓNG [C]`, `TÚI 1/30`, `trạm ngưng chạy`, `hàng đợi đầy`, `đủ nguyên liệu`, `thiếu 8 × stone chunk`, `6 giây` |
+| footer printed on the parchment's bottom border | window centred by offset with `KEEP_SIZE`, so the column could outgrow the panel | fixed rect inside the 640×360 virtual screen (460×320 at (90,20)); the scroll list absorbs the difference |
+| last card sliced through its ingredient chips | viewport height was "whatever was left" at every resolution | list trims itself to a whole number of card pitches after layout |
+
+Every glyph in the new Vietnamese strings was checked against `Handjet-SemiBold.ttf`'s
+cmap before use — 79/79 present, including `Ư`, `Ở`, `Ế`, `Đ` and `×` — so nothing here
+is a font defect papered over with different letters.
+
+Item nouns still come from `SurvivalService.item_definition()` (A3), not from a
+translation table in A6. The cost lines keep the catalog's lowercase (`to_lower()`),
+because A0's research test asserts the exact nouns (`4 knowledge spares`,
+`3 iron scrap`); that casing is part of the surface, and it is now commented as such.
+
+#### Data authority: three disagreements with D055–D074, and a wallet contract
+
+Reading the missing decisions turned up three real conflicts in A6's own read-only
+layer, all now fixed and tested:
+
+* **Evacuation had no label.** `sanitize_season_clock` accepted only `deadline` and
+  `abandoned` as end reasons and blanked anything else, but D062/D068 make a successful
+  physical evacuation a third ending. A run that ended by escaping would have been shown
+  as a run with no ending.
+* **Ragnarok did not exist.** D065 makes the last 72 hours a distinct phase;
+  `ragnarok_window()` now derives it from the owner's own two timestamps. It refuses to
+  claim a window when the clock is unavailable, and is asserted on both sides of the
+  boundary (one second before, first second, last second, expired).
+* **The secured wallet had no contract.** D056/D064 persist exactly
+  `profile.secured_ragnarok_currency` besides achievements and history, and D066 makes
+  the balance physical until a deposit happens.
+  `sanitize_account_wallet` accepts a balance only from `A0_OWNER_PROJECTION` or
+  `A3_OWNER_PROJECTION`, refuses negative and string balances instead of coercing,
+  refuses unlabelled and source-token labels (D052), and passes the number through
+  untouched — A6 does not add, convert or total it. **The wallet row itself is still
+  owed**; the contract and its validator are not the same as a shipped row.
+
+`tests/survival/ui/a6_data_authority_consumer_test.gd` also scans the A6 sources for a
+second copy of wallet, clock, durability, Core or bag state, and proves the detector
+fires on a known-bad declaration rather than passing vacuously.
+
+The seven exact owner requests are in
+`docs/survival/ux/A6_DATA_AUTHORITY_AND_BLOCKED_OWNER_CONTRACTS_20261031.md`.
+
+#### The consumer contract hung instead of failing
+
+The public-clone job went red with exit code 124 — a 300 s timeout — which names nothing.
+The contract now runs under a 90 s watchdog that prints the case it was in and exits
+non-zero, and each case announces itself. That is the difference between "the harness is
+broken" and "the product is broken", and it is now on the harness's side permanently.
+
+#### Home locomotion: measured again, still A0's, still failing
+
+`21_continue_home_walk` reports 1.27 px / 0.33 px, `velocity=(0.0, 0.0)`, `modals=[]`,
+`permitted=no-gate`, `route=home`, `dead=false`. The overworld walk passes on the same
+build, so this is the home route's actor, not the harness. The capture now reads the
+actor's own state — movement bounds (and whether they are collapsed),
+`controls_enabled`, whether a walkability test is installed, auto-move, and live slide
+collisions with the collider's name — so the next run names which of the four candidates
+in `docs/survival/ux/A6_A0_HOME_LOCOMOTION_HANDOFF_20261031.md` is true. The gate is not
+lowered, not retried into, and not called green.
+
 ## 5. Gates
 
 Exact commit at the time of writing: `452d4d74` (frames and results are added as they

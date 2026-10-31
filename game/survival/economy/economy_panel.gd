@@ -160,8 +160,12 @@ func _format_items(items: Dictionary) -> String:
 	var ids: Array = items.keys()
 	ids.sort()
 	for key: Variant in ids:
-		parts.append("%d × %s" % [int(items[key]), _item_label(String(key))])
-	return ", ".join(parts) if not parts.is_empty() else "nothing"
+		# Plain count + noun, no multiplication sign: A0's research test asserts these
+		# exact substrings ("4 knowledge spares", "3 iron scrap"), so the cost list's
+		# shape is part of the surface. The multiplication sign is used only in the
+		# shortfall sentence, where a numeral glued to a singular noun was the problem.
+		parts.append("%d %s" % [int(items[key]), _item_label(String(key))])
+	return ", ".join(parts) if not parts.is_empty() else "không cần gì"
 
 
 ## How many of each item the committed bag holds. A0 owns this; the panel never adds.
