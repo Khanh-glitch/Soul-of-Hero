@@ -871,7 +871,7 @@ SOH world source parity and creator review remain separate.
   each still ended with zero object delta after cancellation. Current-world and
   axis-cache reruns are pending. No device or production acceptance follows.
 
-### 2026-11-01 — D polygon source transfer and current A0 refresh
+### 2026-10-31 UTC — D polygon source transfer and current A0 refresh
 
 - PR21 A0 `9eaa1936682d3941282185249a7ae37d21abf328` with AVFX
   `8517661588d6f3ee8d122a0d9280d5ba6ec5dbd0`: no-FX route
@@ -949,7 +949,7 @@ SOH world source parity and creator review remain separate.
   [6548112267](https://github.com/Khanh-glitch/Soul-of-Hero/pull/30#issuecomment-6548112267)
   reiterates open pre-HUD and confirmed-hit responsibilities. No acceptance.
 
-### 2026-11-01 — latest A0 route and D fixed-step work
+### 2026-10-31 UTC — latest A0 route and D fixed-step work
 
 - PR21 advanced to `018316b78f3454362a889acc4e1db66422cdec6d`, a one-commit
   change to the authored-world **tests** relative to `9eaa1936`. At AVFX
@@ -996,7 +996,7 @@ SOH world source parity and creator review remain separate.
   errors and creator-approved OUT remain open. Coordination:
   [6548364942](https://github.com/Khanh-glitch/Soul-of-Hero/pull/30#issuecomment-6548364942).
 
-### 2026-11-01 — D star CPU hoist and PR21 5a refresh
+### 2026-10-31 UTC — D star CPU hoist and PR21 5a refresh
 
 - `19a60da88` reuses the two hash phases that are constant within each STAR
   sprite, retaining the same arithmetic and source colors; this does **not**
@@ -1023,7 +1023,7 @@ SOH world source parity and creator review remain separate.
   remains explicitly historical until the refreshed runs complete. No
   acceptance granted.
 
-### 2026-11-01 — #16 original C living membranes added to fusion
+### 2026-10-31 UTC — #16 original C living membranes added to fusion
 
 - The selected C16 seed/spore/petal burst alone did not satisfy the decision's
   **C living growth** role. `CWorldseedMembranes` ports the original seven
@@ -1066,7 +1066,7 @@ SOH world source parity and creator review remain separate.
   target-device budgets or full-cast gameplay. Current no-FX economy baseline
   still shows **17 ObjectDB / 5 resources**; no conclusion about every leak.
 
-### 2026-11-01 — #16 source organism/core and #19 authored mote OUT
+### 2026-10-31 UTC — #16 source organism/core and #19 authored mote OUT
 
 - #16 adds original C layered leaf/cellular/inner-petal geometry, 14 leaflet
   ribbons, and the luminous core, on the existing C source clock behind A's
@@ -1145,3 +1145,49 @@ SOH world source parity and creator review remain separate.
   **546/948/966**, **550/817/844**, **936/1324/1369 ms**, +51 live objects,
   zero after cancel, HP **69→69**. Shared machines vary materially; GPU time,
   allocation counts, full duration and target-device budgets remain unknown.
+
+
+### 2026-10-31 UTC — #16 natural seed OUT and #19 actual-world fade
+
+- A0 entry `e5529c13335d5da8272d7b9d2cfb74897dcaf7e2`, CT
+  `e505173edd119fdd955cf6249511b575a5468440`, AVFX `e8b986f` passed
+  actual overworld JOIN [41242339621](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41242339621)
+  and 40 normal/dim cast phase captures
+  [41242339723](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41242339723).
+  The new 10.8-second #16 fusion OUT continues the **same original C particle
+  updates and renders** after the original C scene ends at 10.2 seconds; this
+  is an extrapolated fusion extension, not original full-cast parity or an
+  approved redesign. A pollen finishes first, C seeds continue, no stale post
+  remains, and all C particles naturally expire before the cast/viewer clears.
+  On the frozen actual world at fusion tick541, the surviving C particle tail
+  changed **111 pixels inside authored influence, zero outside**; paired
+  real-world crops were inspected ([41242677397](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41242677397)).
+  At catalog aftermath tick538 and late tick606, #16 now changes both normal
+  and dim world images; the latter contains the C family only. Baseline restores
+  on completion and cancel; HP stays **69→69**. This is not moving-actor,
+  depth/occlusion, full-cast Gold or creator review.
+- Controlled original/native C particle comparison
+  [41242339751](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41242339751)
+  tests both authored write masks and fields through source tick786. After the
+  original 10.2-second scene limit, tick660/720/744/780 write IoU **1.0**,
+  light maximum error **≤1.192e-7**, with **28/12/5/1** seeded particles;
+  tick786 has zero particles and zero writes. These samples execute original
+  source particle code *past its original scene duration*, not an assertion
+  that the original cast played that long or a human Gold approval.
+- D's retained accumulated warp was still visible at its last OUT frame. In
+  AVFX `ffcb934`, only the new post-8.6-second OUT continuously contracts
+  the real-world warp and fades the quantized world delta, leaving original
+  history/pre-OUT raster unchanged. Actual D player state/callback/batching
+  regression [41242188339](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41242188339)
+  passed; enhanced original pre-OUT state and six exact field snapshots
+  [41242032447](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41242032447)
+  passed. Full e552 world phase sweep
+  [41242740910](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41242740910)
+  restored 40/40 casts and the new D crops at ticks516/540/564/587 were
+  inspected. Compared with AVFX `b59d1c2`, tick587 actual frozen-world
+  changed pixels **15,196→356**, maximum channel difference **59→1 of 255**;
+  clearance restores baseline exactly
+  ([41242876884](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41242876884)).
+  This is a scoped frozen-scene withdrawal measurement, **not** proof across
+  moving worlds or source D bloom/post parity. D OUT remains an unapproved
+  authored extension and STAR/ribbon residuals remain open.
