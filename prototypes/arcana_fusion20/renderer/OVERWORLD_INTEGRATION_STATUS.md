@@ -422,12 +422,14 @@ SOH world source parity and creator review remain separate.
   pilot). Coordination: [PR30 comment](https://github.com/Khanh-glitch/Soul-of-Hero/pull/30#issuecomment-6545495243),
   [A0 owner comment](https://github.com/Khanh-glitch/Soul-of-Hero/pull/21#issuecomment-6545623258).
 
-- Real #02+#20 early-phase overlap at `a831193b` on software X11 4K
+- Real #02+#20 sampled overlap at `a831193b` on software X11 4K
   ([run 41217166376](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41217166376))
   sampled 54 actual post-draw intervals: p50/p95/p99 **859.002/1110.438/
   1172.719 ms**, live objects +36 and post-cancel object delta 0. Allocation
   counts were unavailable; static-memory deltas were negative and unusable.
-  720p was **363.090/526.892/568.072 ms** and 2K was
+  Source-tick start/end were not recorded in this older run; phase coverage
+  must not be inferred from wall-clock frame count. 720p was
+  **363.090/526.892/568.072 ms** and 2K was
   **608.223/818.918/854.339 ms**, 54 overlap frames each. All three jobs
   completed, but this is not full-cast or target-device performance.
   Architectural costs remain: procedural CPU source raster, multiple full
@@ -448,3 +450,20 @@ SOH world source parity and creator review remain separate.
   failed because the enemy stayed still, not because the cast anchor shifted.
   This probe does not implement or prove a gameplay hit volume, moving-enemy
   miss, confirmed receipt, full cast or the current A0 route.
+
+- At `f95b8a00`, C field uploads skip a texture only when authored activity
+  says it was clear both before and now. Active-to-inactive clears once;
+  unknown producers upload conservatively. Black ink remains an operation, not
+  a brightness key. [Source regression 41217802586](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41217802586)
+  passed the clear/write/clear/unknown sequence. Real-world regression is
+  pending. The subsequent 4K [overlap job 41217825832](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41217825832)
+  at `c2ac274b` sampled p50/p95/p99 **849.165/1101.219/1157.922 ms**,
+  with 256,177,152 raw bytes sent to C field textures since cast start;
+  ground uploaded once and A20 live-light atlas/index nine times. Driver
+  allocation, effective bandwidth and target-device cost are not measured.
+  Comparing shared CI runs cannot establish a reliable performance gain.
+  Source tick interval was not captured; `dec5fcf4` adds it for future probes.
+- Disposable assembly now supports caller-supplied exact A0 and PR30 SHAs.
+  [Current A0 no-AVFX entry probe 41218212859](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41218212859)
+  at A0 `a6e37978`, AVFX `482de022` and PR30 `e505173e` is pending. It does
+  not mutate owner files and is not production acceptance.
