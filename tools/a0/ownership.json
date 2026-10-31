@@ -21,8 +21,8 @@
     "a1": {
       "branch": "arena/e385312a-soul-of-hero",
       "scopes": ["data/survival/world/", "data/overworld/", "assets/environment/",
-        "tests/survival/world/"],
-      "note": "A1 owns geography, stands, hazard geometry and biome material references. A1's own reader and its tests live under tests/survival/world/ at the pinned SHA (SURV-050A: tests/survival/world/godot/chunk_reader.gd), so that tree is composed as A1's authoring surface: A0 mounts the reader from there by path instead of forking a second reader."
+        "tests/survival/world/", "game/survival/world/"],
+      "note": "A1 owns geography, stands, hazard geometry and biome material references. A1's own reader and its tests live under tests/survival/world/ at the pinned SHA (SURV-050A: tests/survival/world/godot/chunk_reader.gd), so that tree is composed as A1's authoring surface; as of PR20 8551a323 A1 also publishes the production interfaces game/survival/world/a1_authored_world_reader.gd and a1_authored_world_stream.gd, which A0 prefers and mounts beside its own inset. A0 forks neither reader nor streamer."
     },
     "a3": {
       "branch": "arena/7a12b27e-soul-of-hero",
@@ -84,7 +84,7 @@
       "owners": ["a0", "a6"],
       "winner": "a0",
       "merge": "tools/a0/merges/chapter1_overworld.gd.merged",
-      "why": "A0 owns the live world build order. A6 contributed avatar/style wiring; A0 contributed the economy composition, the guarded A1 art candidate and the Round 12 threat mount. The reviewed merge keeps all three and is the file the A0 journey tests run."
+      "why": "A0 owns the live world build order. A6 contributed avatar/style wiring; A0 contributed the economy composition, the guarded A1 art candidate, the Round 12 threat mount and the A1 authored-stream mount (off by default). The reviewed merge keeps all three and is the file the A0 journey tests run."
     },
     "tests/survival_normal_entry_home_restart_test.gd": {
       "kind": "accept_owner",

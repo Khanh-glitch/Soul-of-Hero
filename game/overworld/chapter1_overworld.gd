@@ -97,6 +97,8 @@ var survival_build: SurvivalBuildSystem
 var economy_session: Node
 ## A1's authored continent, mounted by A0 when `survival/a0_authored_stream` is on.
 var authored_mount: A0AuthoredWorldMount
+## Why the authored mount refused, if it did. Named, never swallowed.
+var authored_stream_error := ""
 var economy_composition: Node
 var threat_mount: Node
 var economy_panel: CanvasLayer
@@ -329,6 +331,7 @@ func _mount_authored_stream() -> void:
 	mount.name = "AuthoredWorldMount"
 	add_child(mount)
 	if not mount.mount():
+		authored_stream_error = mount.last_error
 		print("A0_AUTHORED_STREAM_REFUSED ", mount.last_error)
 		mount.queue_free()
 		return

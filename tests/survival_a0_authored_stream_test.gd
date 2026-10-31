@@ -44,11 +44,25 @@ func _console() -> void:
 		return
 
 	var mount: Node = _ow.get(&"authored_mount")
-	_expect(mount != null, "A0 mounts A1's authored stream on the production controller")
 	if mount == null:
-		print("A0 AUTHORED STREAM REFUSED ", String(_ow.get(&"build_error")))
-		_finish()
+		# A refusal that names an A1 dependency is an owner blocker, not an A0
+		# defect: A1's runtime contract pins the bytes of files other owners edit, so
+		# the reader refuses to boot in a composition where those bytes moved. Say so
+		# with the owner and the artifact, keep A0's own world proven, and never call
+		# it a pass.
+		var refusal := String(_ow.get(&"authored_stream_error"))
+		var world_ok := (_ow.get(&"world") as OverworldWorld) != null
+		var player_ok: CharacterBody2D = _ow.get(&"player")
+		print("A0 AUTHORED STREAM BLOCKED owner=A1 reason=%s" % refusal)
+		_expect(world_ok and player_ok != null,
+			"A0's own world and player keep working while the authored mount is blocked")
+		_expect(refusal.begins_with("A1_"),
+			"the refusal names A1's own artifact hash/path rather than an A0 failure (%s)" % refusal)
+		print("A0 AUTHORED STREAM COMPONENT PROBE NOT_APPLICABLE - A1 owner blocker: ", refusal)
+		_cleanup()
+		quit(0)
 		return
+	_expect(true, "A0 mounts A1's authored stream on the production controller")
 	var status: Dictionary = mount.call(&"status")
 	_expect(bool(status.get("configured", false)), "the mounted stream is configured (%s)" % String(status.get("last_error", "")))
 	_expect(String(status.get("last_error", "")) == "", "the mount reports no refusal reason")

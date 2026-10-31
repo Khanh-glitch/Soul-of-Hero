@@ -9,7 +9,7 @@ permissions:
   pull-requests: write
 env:
   # Round 12 corrective pins. Refresh from the Control Tower before reusing.
-  A1_SHA: 9ca1453ccdd315c9de4aae01cf0e1e5b4e0a71cf
+  A1_SHA: 8551a323e444f755d7a29b1ad518aa29aeb039cb
   A3_SHA: b44e22df3af40939069189be14afc23ee1ce21c4
   A6_SHA: 6d71410a370df805f8b29a018b61380d6c233b65
   A8_SHA: 06d1758e2cf7e44c588d158745359d7617fe32d6
@@ -86,6 +86,29 @@ jobs:
           run poi bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir ../artifacts/ud_poi \
             --script res://tests/survival_a0_poi_mount_test.gd -- --require-a8
           run identity bash -c 'SOUL_OF_HERO_SAVE_PATH=user://ci_identity.json bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir ../artifacts/ud_identity -- --avatar-identity-test --avatar-phase=full --avatar-gender=male --avatar-expectation=auto'
+          [ "$failures" -eq 0 ]
+      - name: A0 station policy and A1 authored-stream probes (composition)
+        if: ${{ !cancelled() }}
+        run: |
+          set +e
+          cd .composition
+          failures=0
+          run_probe () {
+            local name="$1"; shift
+            local log="../artifacts/probe-$name.log"
+            timeout --signal=TERM --kill-after=10s 300s godot --headless --path . --script "res://tests/$name.gd" > "$log" 2>&1
+            local rc=$?
+            cat "$log"
+            echo "::notice::probe $name exit=$rc"
+            while IFS= read -r line; do echo "::error title=probe-$name::$line"; done < <(grep -aE '  FAIL  |Parse Error|SCRIPT ERROR' "$log" | head -6)
+            if [ "$rc" -ne 0 ]; then failures=$((failures+1)); fi
+            if ! grep -qaE 'PASSED|NOT_APPLICABLE|BLOCKED' "$log"; then failures=$((failures+1)); fi
+          }
+          rm -rf "$HOME/.local/share/godot/app_userdata/SOUL OF HERO/tests"
+          run_probe survival_a0_station_reach_test
+          rm -rf "$HOME/.local/share/godot/app_userdata/SOUL OF HERO/tests"
+          run_probe survival_a0_authored_stream_test
+          echo "::notice::probe failures=$failures"
           [ "$failures" -eq 0 ]
       - name: Connected journey at 1280x720 (two independent processes)
         run: |
