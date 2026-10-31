@@ -133,7 +133,14 @@ jobs:
           # The V5 failed-save oracle intentionally obstructs the temporary write.
           # Keep the full negative log in the artifact; gate the expected I/O line
           # by name so it cannot mask unrelated script/engine errors.
-          grep -vE '^ERROR: SaveService: Could not write the temporary save file\.$' "$ARTIFACT_DIR/adapter.log" > "$ARTIFACT_DIR/adapter.gate.log"
+          # Name every failed assertion explicitly: the raw log is not readable
+          # through the API, annotations are.
+          if grep -q '^\[FAIL\]' "$ARTIFACT_DIR/r13_single.log"; then
+            grep '^\[FAIL\]' "$ARTIFACT_DIR/r13_single.log" | head -8 | while IFS= read -r line; do
+              echo "::error::R13 assertion ${line}"
+            done
+          fi
+          grep -vE '^(USER )?ERROR: SaveService: Could not write the temporary save file[.]$' \
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/adapter.gate.log" "A3 adapter" "A3 ECONOMY ADAPTER PASSED"
           if [ "$rc" -eq 0 ]; then
             summary="$(grep 'A3 ECONOMY ADAPTER PASSED' "$ARTIFACT_DIR/adapter.log" | tail -1)"
@@ -172,7 +179,7 @@ jobs:
           set -e
           cat "$ARTIFACT_DIR/offline.log"
           # The crash/replay case intentionally obstructs the temporary write.
-          grep -vE '^ERROR: SaveService: Could not write the temporary save file\.$' "$ARTIFACT_DIR/offline.log" > "$ARTIFACT_DIR/offline.gate.log"
+          grep -vE '^(USER )?ERROR: SaveService: Could not write the temporary save file[.]$' \
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/offline.gate.log" "A3 offline" "A3 OFFLINE OPERATIONS PASSED"
           if [ "$rc" -eq 0 ]; then
             grep 'A3 OFFLINE OPERATIONS PASSED' "$ARTIFACT_DIR/offline.log" | tail -1 >> "$GITHUB_STEP_SUMMARY"
@@ -207,7 +214,7 @@ jobs:
           rc=$?
           set -e
           cat "$ARTIFACT_DIR/tool_use.log"
-          grep -vE '^ERROR: SaveService: Could not write the temporary save file\.$' "$ARTIFACT_DIR/tool_use.log" > "$ARTIFACT_DIR/tool_use.gate.log"
+          grep -vE '^(USER )?ERROR: SaveService: Could not write the temporary save file[.]$' \
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/tool_use.gate.log" "A3 tool use" "A3 TOOL USE CALLABLE PASSED"
           if [ "$rc" -eq 0 ]; then
             grep 'A3 TOOL USE CALLABLE PASSED' "$ARTIFACT_DIR/tool_use.log" | tail -1 >> "$GITHUB_STEP_SUMMARY"
@@ -223,7 +230,7 @@ jobs:
           rc=$?
           set -e
           cat "$ARTIFACT_DIR/meta.log"
-          grep -vE '^ERROR: SaveService: Could not write the temporary save file\.$' "$ARTIFACT_DIR/meta.log" > "$ARTIFACT_DIR/meta.gate.log"
+          grep -vE '^(USER )?ERROR: SaveService: Could not write the temporary save file[.]$' \
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/meta.gate.log" "A3 meta" "A3 META ECONOMY PASSED"
           if [ "$rc" -eq 0 ]; then
             grep 'A3 META ECONOMY PASSED' "$ARTIFACT_DIR/meta.log" | tail -1 >> "$GITHUB_STEP_SUMMARY"
@@ -244,7 +251,7 @@ jobs:
           rc2=$?
           set -e
           cat "$ARTIFACT_DIR/meta_restart_phase1.log" "$ARTIFACT_DIR/meta_restart_phase2.log"
-          grep -vE '^ERROR: SaveService: Could not write the temporary save file\.$' "$ARTIFACT_DIR/meta_restart_phase2.log" > "$ARTIFACT_DIR/meta_restart_phase2.gate.log"
+          grep -vE '^(USER )?ERROR: SaveService: Could not write the temporary save file[.]$' \
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/meta_restart_phase1.log" "A3 meta restart phase1" "A3 META RESTART PHASE 1 PASSED"
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/meta_restart_phase2.gate.log" "A3 meta restart phase2" "A3 META RESTART PHASE 2 PASSED"
           if [ "$rc1" -ne 0 ] || [ "$rc2" -ne 0 ]; then exit 1; fi
@@ -366,7 +373,7 @@ jobs:
           # repairs it, so the SaveService failure line is EXPECTED. Gate the log
           # with exactly that line removed (same convention as the V5/V6 steps),
           # never a blanket filter.
-          grep -vE '^(USER )?ERROR: SaveService: Could not write the temporary save file\.$' \
+          grep -vE '^(USER )?ERROR: SaveService: Could not write the temporary save file[.]$' \
             "$ARTIFACT_DIR/r13_single.log" > "$ARTIFACT_DIR/r13_single.gate.log"
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/r13_single.gate.log" "R13 single-process" "R13 NATIVE PASSED" || exit 1
           summary="$(grep 'R13 NATIVE PASSED' "$ARTIFACT_DIR/r13_single.log" | tail -1)"
