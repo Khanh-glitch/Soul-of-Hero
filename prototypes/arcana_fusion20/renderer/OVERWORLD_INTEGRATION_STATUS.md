@@ -870,3 +870,53 @@ SOH world source parity and creator review remain separate.
   software hosts invalidate direct before/after world-frame speedup claims;
   each still ended with zero object delta after cancellation. Current-world and
   axis-cache reruns are pending. No device or production acceptance follows.
+
+### 2026-11-01 — D polygon source transfer and current A0 refresh
+
+- PR21 A0 `9eaa1936682d3941282185249a7ae37d21abf328` with AVFX
+  `8517661588d6f3ee8d122a0d9280d5ba6ec5dbd0`: no-FX route
+  [41233539854](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41233539854)
+  and JOIN [41233539865](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41233539865)
+  passed. With AVFX `242974a52629d99cf5adf21c8d3276bf2f018995`, JOIN
+  [41234239866](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41234239866)
+  passed; annotations still show the same no-FX shutdown **17 ObjectDB / 5
+  resources** baseline. This is not full journey or visual acceptance. The
+  phase and #02+#16 overlap workflows were repinned to the same A0; runs
+  41234239957 and 41234240042 had not completed at this entry.
+- D non-void `POLY_FS` source inspection exposed an omitted authored edge
+  term, wrong pixel-center triangle coverage and an RGBA8 transfer difference:
+  WebGL clamps each fragment before SRC_ALPHA/ONE blend. Candidate two-triangle
+  coverage/interpolation and clamped source fragment were integrated at
+  `65ac7d56f`; the **voidSpace branch remains unported**. Instrumented original
+  fragment coverage on square, rotated, thin and distorted quads improved from
+  IoU **0.984675 / 0.988437 / 0.917280 / 0.987914** to **1.0 for all four**;
+  overall RGB MAE improved respectively **0.020759→0.0000736**,
+  **0.031711→0.000143**, **0.004466→0.0000629**, **0.028063→0.000188** in
+  [41234020919](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41234020919)
+  (before integration) and
+  [41234174783](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41234174783)
+  (production path). **Max errors remain 0.00196 / 0.22160 / 0.42335 / 0.35492**,
+  so means and coverage are not parity. The effect of this change was hidden in
+  the whole-scene clipped preview because overlapping fields were saturated.
+  Crop/derivative work is pending; this is not original-world, bloom or OUT.
+- The same source-fragment transfer is **opt-in diagnostic only** for sprites
+  and ribbons, as is per-blend RGBA8 quantization; this must not silently clamp
+  unrelated HDR fields or be called full source parity. On isolated sprites
+  [41234240075](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41234240075),
+  `native→native_ldr` improved the disc mean **0.001125→0.0000108** and max
+  **0.400→0.00195**, while star coverage remained **0.90315** and max **0.675**.
+  Local Chromium shader-hash instrumentation of that star (seed 82.303)
+  produced quantized GPU `h11` bytes **166/62**, while native double math
+  returned **0.17084/0.72032**; this is backend-dependent evidence of a hash
+  precision problem, not grounds to substitute a fixed value. The source
+  shader is being compared as an unintegrated native GPU sprite candidate.
+  Ribbon diagnostic [41234174813](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41234174813)
+  improved diagonal RGB max **0.200→0.00386** with fragment transfer, but
+  bent/tapered max remains **0.563**. No automatic approval or relaxed threshold.
+- New diagnostic runs include polygon error crops **41234340981**, overlapping
+  sprite RGBA8 **41234313080**, full-cast ribbons **41234369398**, and full
+  neutral D scene candidate transfer **41234471506**; they were queued at this
+  entry. CPU per-blend diagnostic follows call order, not original grouped GPU
+  batch order. CT coordination comment
+  [6548112267](https://github.com/Khanh-glitch/Soul-of-Hero/pull/30#issuecomment-6548112267)
+  reiterates open pre-HUD and confirmed-hit responsibilities. No acceptance.
