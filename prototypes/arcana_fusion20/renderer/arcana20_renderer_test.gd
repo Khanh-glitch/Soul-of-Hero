@@ -59,7 +59,6 @@ func _init() -> void:
             _fail("no finish %s" % cid)
         if renderer.is_active(cid):
             _fail("still active after finish %s" % cid)
-        print("::notice::ARCANA20_SKILL_DONE ", cid)
 
     # Cancel path: mid-cast cancel must finish + clean up with no contact leak.
     var cid5 := Arcana20SourceCatalog.canonical_id(5)
@@ -81,6 +80,7 @@ func _init() -> void:
         _fail("foreign id accepted")
 
     var st := Arcana20Status.summary()
+    print("::notice::ARCANA20_DBG stages=", JSON.stringify(renderer.stage_counts), " contacts=", JSON.stringify(_contacts), " finished=", _finished.size(), " started=", _started.size())
     print("ARCANA20_RENDER_STATUS ", JSON.stringify(st))
     if _failures.is_empty():
         print("::notice::ARCANA20_RENDER_RESULT PASS failures=[] casts=20 contacts=20")

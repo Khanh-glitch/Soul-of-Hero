@@ -17,6 +17,7 @@ signal body_event_cue(canonical_id: StringName, world_position: Vector2, element
 signal cast_finished(canonical_id: StringName)
 
 var _casts: Dictionary = {} # canonical_id -> Node (instance or B02 geometry)
+var stage_counts: Dictionary = {}
 var _last_tick_emitted: Dictionary = {}
 
 func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: Vector2, facing: float = 1.0) -> bool:
@@ -36,13 +37,12 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
         cast_started.emit(canonical_id)
         b02.begin(caster_world, target_world)
         return true
-    print("::notice::CASTDBG new instance id=", id)
+    stage_counts["new"] = int(stage_counts.get("new", 0)) + 1
     var inst := Arcana20SkillInstance.new()
-    print("::notice::CASTDBG created")
+    stage_counts["created"] = int(stage_counts.get("created", 0)) + 1
     add_child(inst)
-    print("::notice::CASTDBG added")
     inst.setup(id, caster_world, target_world, facing)
-    print("::notice::CASTDBG setup done")
+    stage_counts["setup"] = int(stage_counts.get("setup", 0)) + 1
     inst.visual_contact.connect(func(sid: int, pos: Vector2, kind: StringName) -> void:
         visual_contact.emit(canonical_id, pos, kind))
     inst.body_event_cue.connect(func(sid: int, pos: Vector2, el: StringName) -> void:
@@ -51,6 +51,7 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
     _casts[canonical_id] = inst
     cast_started.emit(canonical_id)
     inst.begin()
+    stage_counts["begin"] = int(stage_counts.get("begin", 0)) + 1
     return true
 
 static func Arcana20SOHRegistry_index(canonical_id: StringName) -> int:
