@@ -54,7 +54,7 @@ jobs:
         run: |
           set -o pipefail
           python3 tools/arcana19_pass_compare/compare_bloom.py artifacts/arcana19-pass-source | tee bloom-comparison.log
-          sed 's/^/::notice::/' bloom-comparison.log
+          grep '^D19_BLOOM_STAGE_SUMMARY' bloom-comparison.log | sed 's/^/::notice::/'
       - name: Spatial comparison of linear source g fields
         run: |
           set -o pipefail

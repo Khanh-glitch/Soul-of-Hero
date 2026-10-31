@@ -29,4 +29,5 @@ for tick in (72, 192, 312, 489, 510):
         results.append(row)
 (p / 'bloom_comparison.json').write_text(json.dumps(results, indent=2))
 
-print('D19_BLOOM_STAGE_SUMMARY', json.dumps([{'tick': row['tick'], 'pass': row['pass'], 'mae_255': round(row['mae_255'], 4), 'max_255': row['max_255']} for row in results], separators=(',', ':')), flush=True)
+for tick in (72, 192, 312, 489, 510):
+    print('D19_BLOOM_STAGE_SUMMARY', tick, json.dumps([{'pass': row['pass'], 'mae_255': round(row['mae_255'], 4), 'max_255': row['max_255']} for row in results if row['tick'] == tick], separators=(',', ':')), flush=True)
