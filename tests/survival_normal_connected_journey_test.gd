@@ -634,9 +634,18 @@ func _wheel_until_visible(scroll: ScrollContainer, control: Control) -> bool:
 	var previous := -1.0
 	var still := 0
 	var spot := 0
+	var inside := 0
 	for _i: int in range(400):
+		# Two consecutive frames: a container re-lays out the frame after a scroll,
+		# so a single "it is inside" reading can still be the pre-scroll geometry and
+		# the click would land on the neighbouring row.
 		if scroll.get_global_rect().has_point(control.get_global_rect().get_center()):
-			return true
+			inside += 1
+			if inside >= 2:
+				return true
+			await process_frame
+			continue
+		inside = 0
 		var rect := scroll.get_global_rect()
 		# The player wheels wherever the pointer happens to be: over the list, or
 		# over the scroll bar on its right edge. If one spot does not move the list,

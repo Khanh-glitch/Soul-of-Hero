@@ -396,9 +396,17 @@ func _owning_scroll(control: Control) -> ScrollContainer:
 	return null
 
 func _scroll_to(scroll: ScrollContainer, control: Control) -> bool:
+	var inside := 0
 	for _i: int in range(60):
+		# Two consecutive frames, because a container re-lays out the frame after a
+		# scroll and one reading can still be the pre-scroll geometry.
 		if scroll.get_global_rect().has_point(control.get_global_rect().get_center()):
-			return true
+			inside += 1
+			if inside >= 2:
+				return true
+			await process_frame
+			continue
+		inside = 0
 		# The pointer has to be over the list, and each notch needs its own event
 		# object: the engine drops a re-parsed one, which is why a re-used wheel
 		# object looked like "wheel input does not scroll".
@@ -662,13 +670,19 @@ func _body() -> void:
 	if not weave_visible:
 		_body_complete = true
 		return
-	await _click_window(root.get_final_transform() * (weave_button.get_global_transform_with_canvas() * (weave_button.size * 0.5)))
+	var weave_live := panel.find_child(String(weave_button.name), true, false) as Button
+	if weave_live == null:
+		weave_live = weave_button
+	await _click_window(root.get_final_transform() * (weave_live.get_global_transform_with_canvas() * (weave_live.size * 0.5)))
 	var weave_id := _job_target("weave_cloth")
 	if weave_id.is_empty():
 		# A player whose first click does not take clicks again rather than
 		# concluding the bench is broken; the second press is ordinary input too.
 		await create_timer(0.4).timeout
-		await _click_window(root.get_final_transform() * (weave_button.get_global_transform_with_canvas() * (weave_button.size * 0.5)))
+		weave_live = panel.find_child(String(weave_button.name), true, false) as Button
+		if weave_live == null:
+			weave_live = weave_button
+		await _click_window(root.get_final_transform() * (weave_live.get_global_transform_with_canvas() * (weave_live.size * 0.5)))
 		weave_id = _job_target("weave_cloth")
 	# Two facts, two labels: a missing job and an unchanged reed count are different
 	# failures and must not share one sentence.
