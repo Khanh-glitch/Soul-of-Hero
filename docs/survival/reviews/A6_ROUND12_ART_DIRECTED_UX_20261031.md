@@ -272,6 +272,92 @@ information stays out by D061 (no omniscient radar); the HUD shows an engagement
 only if the world ever emits one. Prompt copy in the world is still English
 (`Stand near a chest to choose items.`) because it is A0-owned copy, not HUD copy.
 
+## 4.8 A6 purposeful resume — avatar consumer, staged-art evidence, locomotion truth
+
+Implementation `6f0a6df2`, building on `6d71410a`. Four things were finished, and one
+long-standing claim was finally put to the test and **failed on the evidence**.
+
+### The avatar consumer existed; its contract did not
+
+`player_avatar_presenter.gd` (413 lines, under `game/survival/player/`) was already
+mounted on both production actors and already read A0 correctly. What was missing was
+anything an owner could point at: no injectable seam, no headless proof, no document.
+
+- The presenter now resolves its appearance authority through one `_owner()` seam —
+  `/root/SaveService` in the game, an injected object in a test. It still only reads.
+- `tests/survival/ui/player_avatar_consumer_contract_test.tscn` proves the entire
+  blocker matrix **on a public clone with no licensed art and no renderer**: the
+  SaveService fallback, an owner without the projection method, an empty projection
+  (`NO_IDENTITY`, proxy actor stays visible), a claimed identity without staged art
+  (`SOURCE_BLOCKED`, proxy actor hidden, diagnostic visible), an unlicensed garment
+  grade, `player_avatar_changed` re-resolution without restarting, and the published
+  state shape. It runs in the public-clone CI job and gates on the result.
+- `docs/survival/ux/A6_PLAYER_AVATAR_CONSUMER_CONTRACT.md` is the one-page mount
+  contract, verified field-by-field against `save_service.gd` at these SHAs.
+
+Writing the contract found two real drifts, which is what a contract test is for: the
+test assumed a null seam meant "no owner" (the seam deliberately falls back to
+SaveService), and the document promised a boolean `ready` the presenter never
+published. Both are fixed; the presenter now publishes `ready`.
+
+### The licensed-art frames were never reviewable
+
+The avatar workflow uploaded its frames to CI artifacts only. Artifact downloads are
+blocked from this sandbox, so every "native visual evidence" claim about the licensed
+adventurers was really a claim about a green job. A publish job now commits the
+rendered game frames to `docs/survival/reviews/native/avatar/` (with half-size viewing
+copies for 4K); source ZIPs and extracted sheets stay runner-only and are never
+committed. It needed `permissions: contents: write` on its own job, which the
+workflow-level read-only token had been silently denying.
+
+Inspected by eye at 720p: `male_720p_05_05_overworld_avatar_idle.png` is the authentic
+male Adventurer standing in the real overworld with the Knight proxy removed and the
+A6 HUD above him. Identity persists across a separate process.
+
+### Continue locomotion: the claim was false, and now says why
+
+Frames named `23_continue_overworld_walk` had been reporting `action=idle` for rounds.
+Every frame now records the actor's position, velocity, whether the input is visible
+and - when a walk assertion fails - which modals the gate is consulting.
+
+The first honest run produced:
+
+```
+23_continue_overworld_walk: displaced 0.00 px  pressed=true permitted=false
+  modals=["OverworldDeath"] velocity=(0.0,0.0) route=overworld dead=false
+21_continue_home_walk:      displaced 0.87 px  pressed=true permitted=no-gate
+  modals=[] velocity=(112.0,0.0) route=home
+```
+
+Two different failures, separated by evidence that did not exist before:
+
+1. **Overworld — harness bug, now fixed.** A0 restores the pending death across
+   processes together with the death card the previous process opened. The harness
+   respawned the actor directly and left the card up; the card is a registered gameplay
+   modal, so A0's input gate correctly suppressed every press. The character was never
+   broken. Recovery now presses the card's own answer button and fails if the card
+   survives the answer (`6f0a6df2`).
+2. **Home — still open, and it is not A6's.** The home actor holds `velocity=(112,0)`
+   while displacing 0.87 px, i.e. `move_and_slide()` is being blocked immediately after
+   the move. That is collision or a movement bound in A0's home scene, not the avatar
+   and not the harness. It is recorded as a named blocker with the measurement rather
+   than papered over; the walk frame remains a real failure.
+
+The gate structure was also split so a failing step cannot hide the rest of the
+evidence: each render step is allowed to fail so its frames still exist, and a final
+step fails the job unless all six succeeded. The job is still red on the real bug.
+
+### What A0 still has to provide
+
+| need | status |
+| --- | --- |
+| `get_player_appearance_projection()` / `set_player_avatar()` / `player_avatar_changed` | **present and verified** at `6f0a6df2` |
+| licensed art for equipment grades 1 and 2 | **absent** — a source-approval gate, not an API gap; consumer keeps the same character at grade 0 and names the gate |
+| season/day clock projection for the HUD | **absent** — the HUD shows no clock rather than inventing one |
+| equipped tool, durability, Core possession | **absent** — no such projection exists; the HUD draws nothing |
+| home-actor movement after Continue | **blocked** — `velocity` held while position is static, see above |
+
+
 ## 5. Gates
 
 Exact commit at the time of writing: `452d4d74` (frames and results are added as they
@@ -279,27 +365,27 @@ arrive; the commit that a result belongs to is stated with it).
 
 | gate | what it checks | status |
 | --- | --- | --- |
-| R0 source provenance | fetch script asserts commits + SHA-256; receipt re-hashed | **PASS** (`29 assets, 0 problems`); no new art this round, fonts already pinned |
-| R1 art fidelity | nine-slice stress sheet inspected by eye; two bad crops and two bad icon bindings found and fixed | **PASS** (local) |
-| R2 project integrity | `scene_lint.py` over 316 files: 0 problems, 4 pre-existing notes; gdtoolkit syntax pass on every changed script; duplicate-declaration and undefined-helper rules | **PASS** (`5a85ef4a`) |
-| R2b UI layer test | `a6_ui_layer_test.tscn` incl. the field card building without owner state | **PASS** — `A6 UI LAYER PASSED` in the render job on `5a85ef4a` |
-| R3 native gameplay suites | A0/A3/A6 headless and Xvfb suites | **PARTIAL** — `A6 native avatar validation` **PASS**, `Import and headless runtime tests` **PASS**, `Xvfb rendered gameplay captures` **PASS**; only the pre-existing "original main baseline comparison" job fails (`5a85ef4a`) |
-| R4 native renders 720/1440/2160 | both render workflows publish into `docs/survival/reviews/native/` | **PASS** — survival set published from `5a85ef4a` (`43cb0f66`), 18 frames, dimensions asserted per frame; return set all twelve verified |
-| R5 visual acceptance by eye | inspection of R4 frames at each resolution | **PARTIAL** — WP1/WP5 inspected at 720 and 2160 (before/after above). WP2 inventory, WP3 crafting, WP4 homecoming, WP6 locomotion remain |
+| R0 source provenance | licensed archives fetched from pinned refs; receipt re-hashed; `license_review.status = VERIFIED_GAME_USE`; no source ZIP or sheet committed | **PASS** — `git ls-files private_art` empty, asserted in CI |
+| R1 art fidelity | the chosen Adventurer is on screen in the real overworld, Knight proxy removed; frames inspected at 720p | **PASS** (male). Female captured by the same job; its frames publish from the same run |
+| R2 project integrity | `scene_lint.py` 317 files: 0 problems, 4 pre-existing notes; gdtoolkit syntax on every changed script; YAML of both workflows parsed | **PASS** (`6f0a6df2`) |
+| R2b UI layer test + avatar consumer contract | layer test, and the new headless contract on a public clone | **PASS** — "Public clone fails closed" job green including the contract |
+| R3 native gameplay suites | avatar identity journeys, headless runtime, Xvfb captures | **PARTIAL** — `Private staged art drives both identities natively` **PASS**; import/headless and Xvfb **PASS**; the separate-process Continue walk **FAILS** on the two measured causes above |
+| R4 native renders 720/1440/2160 | both render workflows publish into the repo | **PARTIAL** — staged-art frames now published and readable (`5699f762`); female + 1440p + 2160p blocked until the Continue gate is green or the evidence split is honoured |
+| R5 visual acceptance by eye | inspection at each resolution | **PARTIAL** — male overworld, HUD close-up, return digest inspected by eye at 720/2160. Continue walk is a measured failure, not accepted |
 
 ### Nine-gate verdict, this round
 
 | gate | verdict | evidence / why |
 | --- | --- | --- |
-| RESEARCH_PROVENANCE | **PASS** | type decision measured on real rasters of the four strings CT named; D045/D046 avatars and animation repertoire untouched |
-| ARCHITECTURE | **PASS** | vitals travel over the existing `GameEvents` signal plus the same sampled seam the pack uses; no second inventory or save authority, no A0/A3 file rewritten |
-| CODE_RUNTIME | **PASS** | parse-clean plus hosted `Import and headless runtime tests` and `Xvfb rendered gameplay captures` on `5a85ef4a` |
-| TEST_ORACLE | **PARTIAL** | `scene_lint` proves the duplicate/undefined-helper classes; the HUD frame is a component render, not a played session, and is labelled as such |
-| VISUAL_UX | **PARTIAL** | WP1/WP5 accepted by eye at 720/2160 with before/after; WP7's full set (bag, crafting, POI, death, Gold occlusion) not yet captured |
-| SYSTEM_VALUE | **PARTIAL** | health is visible before the first hit and the counter strip stops lying with 0/0; season, equipment and Core possession still have no owner projection to show |
-| SAVE_MIGRATION | **NOT_APPLICABLE** | no persisted schema or save field changed this round |
-| INTEGRATION | **PARTIAL** | the HUD is production-mounted and the world pushes into it; the new type has not been re-inspected on every legacy screen that shares the A6 theme |
-| BALANCE_REPLAY | **NOT_TESTED** | no balance claim; nothing here changes costs, durations or rewards |
+| RESEARCH_PROVENANCE | **PASS** | consumer verified field-by-field against `save_service.gd`; type decision measured on rasters; D045/D046 untouched |
+| ARCHITECTURE | **PASS** | one read-only seam, one owner; no second inventory, save or appearance authority; no A0/A1/A3/A8 file edited |
+| CODE_RUNTIME | **PARTIAL** | every changed script parses and lints; the public-clone contract passes; the Continue walk fails on measured state |
+| TEST_ORACLE | **PARTIAL** | the contract test is adversarial (fake owners, absent API, unstaged art); the walk assertion now measures displacement and names the blocker instead of trusting a label |
+| VISUAL_UX | **PARTIAL** | authentic male Adventurer verified on screen at 720p; female and 4K frames not yet produced |
+| SYSTEM_VALUE | **PARTIAL** | identity survives a process restart and the HUD reports real health and capacity; season, equipment and durability still have no projection to show |
+| SAVE_MIGRATION | **NOT_APPLICABLE** | no persisted schema changed; identity still written only by A0 |
+| INTEGRATION | **PARTIAL** | presenter already mounted on both production actors; the executable handoff exists; the home-actor movement blocker and grade-1/2 art gate remain |
+| BALANCE_REPLAY | **NOT_TESTED** | nothing here changes costs, durations or rewards |
 
 Frames are now committed into the repository and were read by eye, so they are
 usable evidence. They are still not a claim that a *player* did anything: the
@@ -375,3 +461,10 @@ each screen's own layout to fit the window it was drawn in.
 | `a81fe20f` | run card measures itself by its content; native test asserts it |
 | `744db254` | functional Vietnamese type (VT323) with A6-owned return theme; field card rebuilt; HUD close-up capture |
 | `5a85ef4a` | vitals pushed from the character at a sampled cadence; bar fill reads as a gauge |
+| `3a76f6fa` | walk frames assert real displacement and record actor motion; avatar frames get a publish path |
+| `7359d5c4` | injectable owner seam + headless avatar consumer contract |
+| `e98f35f2` | A0 mount contract document |
+| `a33a3783` | contract test corrected against the real fallback; presenter publishes `ready` |
+| `bb9ffe50` | publish job gets write permission; capture failures emit annotations |
+| `b60d17d4` | evidence gathering split from the gate |
+| `6f0a6df2` | pending-death card answered the way a player does |
