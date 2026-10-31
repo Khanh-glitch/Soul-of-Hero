@@ -237,6 +237,9 @@ func _run() -> void:
     check(binding.call(&"get_actor_visual", enemy) != null, "PR30 actual AnimatedSprite reaction bound")
     await process_frame
     await save_frame("real_overworld_receipt")
+    if OS.has_environment("ARCANA20_PHASE_FIRST"):
+        await _phase_sweep(app, world, player, enemy, camera)
+        return
     if OS.get_environment("ARCANA20_SWEEP") == "1":
         await _sweep_all20(app, world, player, enemy, camera)
         return
@@ -1045,6 +1048,103 @@ func _live_input_probe(app: Node, world: Node, player: CharacterBody2D, enemy: N
     renderer.cancel_skill(rift_id)
     await process_frame
     check(mount.active_viewers(rift_id) == 0, "live C20 cancellation removes world viewer")
+    mount.detach()
+    app.queue_free()
+    await process_frame
+    await process_frame
+    _finish()
+
+# Disable intermediate raster while still advancing each authentic source tick.
+func _phase_set_render(source: Node, enabled: bool) -> void:
+    if source is FusionPlayer:
+        for part in (source as FusionPlayer)._pending:
+            var child: Node = part.node
+            if is_instance_valid(child): child.set("render_enabled", enabled)
+    elif source is ASourcePlayer or source is CSourcePlayer or source is DSourcePlayer:
+        source.set("render_enabled", enabled)
+
+func _phase_advance(source: Node) -> void:
+    if source is FusionPlayer: (source as FusionPlayer).advance(STEP)
+    elif source is ASourcePlayer: (source as ASourcePlayer).advance(STEP, false)
+    elif source is CSourcePlayer: (source as CSourcePlayer).advance(STEP, false)
+    elif source is DSourcePlayer: (source as DSourcePlayer).advance(STEP)
+    elif source is BSourcePlayer: (source as BSourcePlayer).advance(STEP)
+
+func _phase_draw(source: Node) -> void:
+    if source is FusionPlayer:
+        for part in (source as FusionPlayer)._pending:
+            var child: Node = part.node
+            if is_instance_valid(child) and bool(child.get("_active")): child.call("_render_frame")
+    else:
+        source.call("_render_frame")
+
+## Same frozen real overworld + actual real enemy across catalog-relative source
+## ticks. These are output inspection frames, not source matching, combat,
+## selected-phase correctness, GPU/device performance or creator approval.
+func _phase_sweep(app: Node, world: Node, player: Node2D, enemy: Node2D, camera: Camera2D) -> void:
+    app.process_mode = Node.PROCESS_MODE_DISABLED
+    var renderer := Arcana20Renderer.new()
+    renderer.world_pass_mode = true
+    renderer.process_mode = Node.PROCESS_MODE_ALWAYS
+    world.add_child(renderer)
+    var mount := Arcana20WorldPassMount.new()
+    mount.process_mode = Node.PROCESS_MODE_ALWAYS
+    world.add_child(mount)
+    check(mount.attach(renderer), "all20 multi-phase world mount")
+    camera.force_update_scroll()
+    await process_frame
+    await process_frame
+    var baseline := await save_frame("phase_baseline")
+    var first := clampi(int(OS.get_environment("ARCANA20_PHASE_FIRST")), 1, 20)
+    var records: Array = []
+    for num in range(first, mini(21, first + 5)):
+        var id := Arcana20SourceCatalog.canonical_id(num)
+        var slot := Arcana20SourceCatalog.slot(num)
+        var climax := float(slot.climax)
+        var duration := float(slot.duration)
+        var targets := [30, maxi(31, roundi(climax * 0.5 * 60.0)), roundi((climax - 0.15) * 60.0), roundi(climax * 60.0), roundi((climax + duration) * 30.0), roundi((duration - 0.1) * 60.0)]
+        var labels := ["early", "build", "pre_catalog_climax", "catalog_climax", "aftermath", "late"]
+        var accepted := renderer.cast_skill(id, player.global_position, enemy.global_position)
+        if not accepted or not renderer._casts.has(id):
+            check(false, "phase sweep cast starts %d" % num)
+            continue
+        var source: Node = renderer._casts[id]
+        source.set_process(false)
+        var native_duration := float(source.get("duration"))
+        _phase_set_render(source, false)
+        var previous := 0
+        var samples: Array = []
+        for sample_index in range(targets.size()):
+            var requested := int(targets[sample_index])
+            for tick in range(maxi(0, requested - previous)):
+                if not renderer._casts.has(id): break
+                _phase_advance(source)
+            previous = requested
+            if not renderer._casts.has(id):
+                samples.append({"label": labels[sample_index], "requested_tick": requested, "expired_before_sample": true})
+                continue
+            _phase_set_render(source, true)
+            _phase_draw(source)
+            await process_frame
+            await process_frame
+            var image := await save_frame("phase_%02d_%s_tick%d" % [num, labels[sample_index], requested])
+            var tick_value := int(source.get("source_tick")) if source is BSourcePlayer else int(source.get("_tick"))
+            var families: Dictionary = mount._passes.get(id, {})
+            samples.append({"label": labels[sample_index], "requested_tick": requested, "native_tick": tick_value,
+                "families": families.keys(), "changed_world_image": not images_equal(baseline, image)})
+            _phase_set_render(source, false)
+        renderer.cancel_skill(id)
+        await process_frame
+        await process_frame
+        var cleared := await save_frame("phase_%02d_cleared" % num)
+        var restored := images_equal(baseline, cleared) and mount.active_viewers(id) == 0
+        check(restored, "phase sweep cancellation restores actual world %d" % num)
+        var row := {"id": num, "catalog_duration": duration, "native_duration": native_duration, "samples": samples, "restored": restored}
+        records.append(row)
+        print("JOIN_PHASE ", JSON.stringify(row))
+    var out := FileAccess.open(OUTPUT + "/phase_sweep_%02d.json" % first, FileAccess.WRITE)
+    out.store_string(JSON.stringify({"scope": "frozen historical real overworld, six catalog-relative ticks; no source parity, gameplay, target-device, or creator approval", "records": records}, "  "))
+    out.close()
     mount.detach()
     app.queue_free()
     await process_frame
