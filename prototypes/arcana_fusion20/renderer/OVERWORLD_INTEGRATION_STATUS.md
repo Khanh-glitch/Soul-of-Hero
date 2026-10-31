@@ -161,3 +161,23 @@ anchor remained world-consistent. This is not a gameplay skill binding or
 combat targeting/miss test. The 35 intervals in that log are **physics-signal
 intervals**, not rendered-frame percentiles; its memory delta is not an
 allocation count. Shared software CI is not a target-device budget.
+
+## Experimental C viewport impulses and #20 rift
+
+At `1bfcc1a0`, the opt-in viewport post consumer applies **source-authored**
+C flash/shake/chroma/invert above the real world/actors and below A0 HUD layer
+20. [JOIN 41210977545](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41210977545)
+passed C17 rebound enable, actual-screen change, overlapping-cast cancellation
+and exact frozen-world restoration. Idle/HUD-pixel regression is running.
+The consumer is NOT automatically mounted, lacks original multiscale bloom,
+uses an experimental overlap policy, and desaturates the composed scene rather
+than source-C's pre-ink ground. It needs human visual/contamination review.
+
+At `93256c98`, opt-in #20 selects C's seeded rift contour, timing/edges and
+interior with a phase-aligned A bgWarp pull/stretch on that same real world;
+source-C inverted fragments explicitly sample the live world. This replaces
+neither legacy source nor approved systems. [Source-field quick 41211236215](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211236215)
+verified ink, inverted live fragments and displacement exist; real-world
+contamination/cancel is pending. Original C polygons/blocks/particles and A
+debris remain missing, as do source parity, OUT and visual approval. The
+all-20 sweep at `c6fb12ba` exercised the older #20 candidate.
