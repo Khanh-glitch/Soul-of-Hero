@@ -170,6 +170,9 @@ func _run() -> void:
     if OS.get_environment("ARCANA20_LIVE_INPUT") == "1":
         await _live_input_probe(app, world, player, enemy, camera)
         return
+    if OS.get_environment("ARCANA20_PERF") == "1":
+        await _overlap_frame_probe(app, world, player, enemy)
+        return
 
     # Freeze the actual world while comparing the same terrain at a single
     # source tick. This is an offline diagnostic, not normal-speed gameplay.
@@ -520,6 +523,61 @@ func _run() -> void:
     f.store_string(JSON.stringify({"stats": stats, "scope": "frozen actual overworld; one tick; experimental A/B/C terrain passes only; #04 is an unapproved redesign candidate; not source fidelity, gameplay, post, actor depth or approval"}, "  "))
     f.close()
     passes.clear()
+    app.queue_free()
+    await process_frame
+    await process_frame
+    _finish()
+
+## Actual post-draw intervals for #02+#10 on the real historical overworld.
+## Shared software CI is a diagnostic only, never a target-device budget.
+func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D) -> void:
+    var renderer := Arcana20Renderer.new()
+    renderer.world_pass_mode = true
+    world.add_child(renderer)
+    var mount := Arcana20WorldPassMount.new()
+    world.add_child(mount)
+    check(mount.attach(renderer), "overlap perf source mount")
+    var id2 := Arcana20SourceCatalog.canonical_id(2)
+    var id10 := Arcana20SourceCatalog.canonical_id(10)
+    var before_memory := Performance.get_monitor(Performance.MEMORY_STATIC)
+    var before_objects := Performance.get_monitor(Performance.OBJECT_COUNT)
+    var hp := int(enemy.get("health"))
+    var accepted_2 := renderer.cast_skill(id2, player.global_position, enemy.global_position)
+    var accepted_10 := renderer.cast_skill(id10, player.global_position, enemy.global_position)
+    check(accepted_2 and accepted_10, "overlap perf casts accepted")
+    await RenderingServer.frame_post_draw
+    var samples: Array[float] = []
+    var overlapping_frames := 0
+    var last := Time.get_ticks_usec()
+    for i in range(60):
+        await RenderingServer.frame_post_draw
+        var now := Time.get_ticks_usec()
+        if mount.active_viewers(id2) > 0 and mount.active_viewers(id10) > 0:
+            samples.append(float(now - last) / 1000.0)
+            overlapping_frames += 1
+        last = now
+        if not renderer._casts.has(id2) or not renderer._casts.has(id10): break
+    await save_frame("overlap_perf_live")
+    samples.sort()
+    check(samples.size() >= 2, "overlap perf produced multiple actually concurrent rendered frames")
+    var percentiles := {}
+    if samples.size() > 0:
+        var n := samples.size()
+        percentiles = {"p50_ms": samples[floori((n - 1) * 0.50)], "p95_ms": samples[floori((n - 1) * 0.95)], "p99_ms": samples[floori((n - 1) * 0.99)]}
+    var record := {"scope": "concurrent #02+#10 on real historical overworld; shared software-rendered CI, not a target-device budget",
+        "output_size": [root.get_visible_rect().size.x, root.get_visible_rect().size.y],
+        "overlap_frames": overlapping_frames, "post_draw_intervals": percentiles,
+        "static_bytes_live_delta": Performance.get_monitor(Performance.MEMORY_STATIC) - before_memory,
+        "live_object_delta": Performance.get_monitor(Performance.OBJECT_COUNT) - before_objects,
+        "allocation_count": "not exposed by this Godot diagnostic",
+        "enemy_hp_before": hp, "enemy_hp_after": int(enemy.get("health"))}
+    check(int(enemy.get("health")) == hp, "overlap visuals have no damage authority")
+    print("JOIN_RENDERED_FRAME_PERF ", JSON.stringify(record))
+    var file := FileAccess.open(OUTPUT + "/overlap_frame_perf.json", FileAccess.WRITE)
+    file.store_string(JSON.stringify(record, "  "))
+    file.close()
+    renderer.cancel_all()
+    mount.detach()
     app.queue_free()
     await process_frame
     await process_frame
