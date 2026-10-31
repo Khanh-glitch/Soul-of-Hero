@@ -1,0 +1,4 @@
+SCRIPT ERROR: Parse Error: Function "_spawn_cell()" not found in base self.
+SCRIPT ERROR: Parse Error: Function "_spawn_cell()" not found in base self.
+ERROR: Failed to load script "res://game/survival/a0_world_authority.gd" with error "Parse error".
+SCRIPT ERROR: Invalid call. Nonexistent function 'new' in base 'GDScript'.
