@@ -245,132 +245,300 @@ func _add_station_header(station: Dictionary, jobs: Dictionary) -> void:
 		row.add_child(offline)
 
 
+## One recipe or technology, as a card you can read at a glance:
+##   [result icon]  Name - exact costs            [duration]
+##                  [icon] 3/5  [icon] 8/8  [fuel] 2/2
+##                  "short 8 stone chunk"
+## The button keeps the contract its consumers rely on - the name `Recipe_<id>_<station>`
+## and a text that ends in the exact cost list - while the icons and counts beside it
+## carry the comparison (what you have against what it wants) that a sentence cannot.
 func _add_recipes(station: Dictionary, owned: Dictionary) -> void:
 	var station_id := String(station.get("station_id", ""))
 	var operational := bool(station.get("operational", true))
+	var used := _queue_used(station, _host.call(&"jobs") as Dictionary)
+	var capacity := int(station.get("queue_capacity", 1))
 	for value: Variant in (_host.call(&"available_recipes", station_id) as Array):
 		var recipe: Dictionary = value
-		var row := HBoxContainer.new()
-		row.name = "Row_%s_%s" % [String(recipe.id), station_id]
-		row.add_theme_constant_override("separation", 4)
-		_list.add_child(row)
-
-		var output_icon := _first_output_icon(recipe)
-		var frame := A6UiKit.socket()
-		frame.custom_minimum_size = Vector2(20, 20)
-		frame.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		row.add_child(frame)
-		if output_icon != null:
-			frame.add_child(output_icon)
-
-		var button := Button.new()
-		button.name = "Recipe_%s_%s" % [String(recipe.id), station_id]
-		var shortfall := _first_shortfall(recipe.inputs, owned)
-		var cost_note := "" if shortfall.is_empty() else "  —  %s" % shortfall
-		button.text = "%s — needs %s — fuel %s — makes %s — %ds active%s" % [
-			_item_label(_first_output_id(recipe)).capitalize(),
-			_format_items(recipe.inputs),
-			_format_items(recipe.fuel),
-			_format_items(recipe.outputs),
-			int(recipe.duration_ticks),
-			cost_note,
-		]
-		# A long recipe must wrap inside the scroll viewport instead of widening the
-		# list and pushing Collect off the right edge.
-		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		button.custom_minimum_size = Vector2(0, 18)
-		button.add_theme_font_size_override("font_size", 10)
-		button.disabled = not operational
-		if not shortfall.is_empty():
-			# Amber, not red: short of materials is a shopping list, not an error.
-			button.add_theme_color_override("font_color", A6UiKit.FILL_GOOD)
-		button.pressed.connect(_queue.bind(String(recipe.id), station_id))
-		row.add_child(button)
+		var inputs: Dictionary = recipe.inputs
+		var shortfall := _first_shortfall(inputs, owned)
+		var button := _card_row(
+			station_id, "Recipe",
+			_first_output_id(recipe),
+			_button_text(_first_output_id(recipe), inputs),
+			_first_output_icon(recipe),
+			inputs,
+			owned,
+			recipe.fuel,
+			"%ds" % int(recipe.duration_ticks),
+			_state_of(operational, used >= capacity, shortfall),
+			_state_colour(operational, used >= capacity, shortfall),
+		)
+		if button != null:
+			button.pressed.connect(_queue.bind(String(recipe.id), station_id))
 
 
 func _add_technologies(station: Dictionary, owned: Dictionary) -> void:
 	var station_id := String(station.get("station_id", ""))
 	var operational := bool(station.get("operational", true))
+	var used := _queue_used(station, _host.call(&"jobs") as Dictionary)
+	var capacity := int(station.get("queue_capacity", 1))
 	for value: Variant in (_host.call(&"available_technologies", station_id) as Array):
 		var tech: Dictionary = value
 		var known := bool(tech.known)
-		var row := HBoxContainer.new()
-		row.name = "TechRow_%s_%s" % [String(tech.id), station_id]
-		row.add_theme_constant_override("separation", 4)
-		_list.add_child(row)
-
-		var frame := A6UiKit.socket()
-		frame.custom_minimum_size = Vector2(20, 20)
-		frame.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		row.add_child(frame)
-		var scroll_icon := A6UiKit.icon("research_kit", 16)
-		if scroll_icon != null:
-			frame.add_child(scroll_icon)
-
-		var button := Button.new()
-		button.name = "Technology_%s_%s" % [String(tech.id), station_id]
-		var required := ", ".join(PackedStringArray(tech.prerequisites)) if not (tech.prerequisites as Array).is_empty() else "none"
-		var state := "learned" if known else _first_shortfall(tech.inputs, owned)
-		button.text = "%s — needs %s — requires %s — %ds active%s" % [
-			String(tech.label),
-			_format_items(tech.inputs),
-			required,
-			int(tech.duration_ticks),
-			"" if state.is_empty() else "  —  " + state,
-		]
-		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		button.custom_minimum_size = Vector2(0, 18)
-		button.add_theme_font_size_override("font_size", 10)
+		var shortfall := _first_shortfall(tech.inputs, owned)
+		var state := "learned" if known else _state_of(operational, used >= capacity, shortfall)
+		var colour := A6UiKit.INK_SOFT if known else _state_colour(operational, used >= capacity, shortfall)
+		var button := _card_row(
+			station_id, "Technology",
+			String(tech.id),
+			_button_text_for(String(tech.label), tech.inputs, tech.prerequisites),
+			A6UiKit.icon("research_kit", 14),
+			tech.inputs,
+			owned,
+			{},
+			"%ds" % int(tech.duration_ticks),
+			state,
+			colour,
+		)
+		if button == null:
+			continue
 		button.disabled = known or not operational
-		if not known and not state.is_empty() and state != "learned":
-			button.add_theme_color_override("font_color", A6UiKit.FILL_GOOD)
 		button.pressed.connect(_research.bind(String(tech.id), station_id))
-		row.add_child(button)
+
+
+## Builds one card and returns its action button. `prefix` and `key` form the node
+## name (`Recipe_<id>_<station>` / `Technology_<id>_<station>`), which callers and the
+## input-gate tests resolve by.
+func _card_row(
+	station_id: String,
+	prefix: String,
+	key: String,
+	text: String,
+	icon: TextureRect,
+	inputs: Dictionary,
+	owned: Dictionary,
+	fuel: Dictionary,
+	duration_text: String,
+	state_text: String,
+	state_colour: Color,
+) -> Button:
+	var card := PanelContainer.new()
+	card.name = "Row_%s_%s" % [key, station_id]
+	card.theme_type_variation = &"A6HudBar"
+	card.mouse_filter = Control.MOUSE_FILTER_PASS
+	_list.add_child(card)
+
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 5)
+	row.mouse_filter = Control.MOUSE_FILTER_PASS
+	card.add_child(row)
+
+	var frame := A6UiKit.socket()
+	frame.custom_minimum_size = Vector2(22, 22)
+	frame.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	row.add_child(frame)
+	if icon != null:
+		frame.add_child(icon)
+
+	var middle := VBoxContainer.new()
+	middle.name = "Body"
+	middle.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	middle.add_theme_constant_override("separation", 1)
+	middle.mouse_filter = Control.MOUSE_FILTER_PASS
+	row.add_child(middle)
+
+	var button := Button.new()
+	button.name = "%s_%s_%s" % [prefix, key, station_id]
+	button.text = text
+	# A recipe line is a shopping list, not prose: it wraps inside the column instead
+	# of widening the list and pushing the action off the right edge.
+	button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	button.custom_minimum_size = Vector2(0, 17)
+	button.add_theme_font_size_override("font_size", 11)
+	button.add_theme_color_override("font_color", A6UiKit.CREAM)
+	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	middle.add_child(button)
+
+	middle.add_child(_ingredient_row(inputs, owned, fuel))
+
+	var right := VBoxContainer.new()
+	right.name = "Timing"
+	right.custom_minimum_size = Vector2(64, 0)
+	right.add_theme_constant_override("separation", 1)
+	right.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(right)
+
+	var clock := A6UiKit.label(duration_text, "number", 10)
+	clock.add_theme_color_override("font_color", A6UiKit.GOLD)
+	clock.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	right.add_child(clock)
+
+	var state := A6UiKit.label(state_text, "caption", 9)
+	state.name = "State"
+	state.add_theme_color_override("font_color", state_colour)
+	state.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	state.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	right.add_child(state)
+	return button
+
+
+## The comparison a sentence cannot give: one chip per ingredient showing its own
+## icon and `owned/required`, amber when short, plus the fuel it will burn.
+func _ingredient_row(inputs: Dictionary, owned: Dictionary, fuel: Dictionary) -> HBoxContainer:
+	var row := HBoxContainer.new()
+	row.name = "Ingredients"
+	row.add_theme_constant_override("separation", 6)
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var ids: Array = inputs.keys()
+	ids.sort()
+	for value: Variant in ids:
+		var item_id := String(value)
+		var needed := int(inputs[value])
+		var have := int(owned.get(item_id, 0))
+		row.add_child(_amount_chip(item_id, have, needed, have < needed))
+	if not fuel.is_empty():
+		var fuel_ids: Array = fuel.keys()
+		fuel_ids.sort()
+		for value: Variant in fuel_ids:
+			var item_id := String(value)
+			var needed := int(fuel[value])
+			var have := int(owned.get(item_id, 0))
+			row.add_child(_amount_chip(item_id, have, needed, have < needed))
+	return row
+
+
+func _amount_chip(item_id: String, have: int, needed: int, short: bool) -> HBoxContainer:
+	var chip := HBoxContainer.new()
+	chip.add_theme_constant_override("separation", 1)
+	chip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var picture := A6UiKit.icon(item_id, 9)
+	if picture != null:
+		chip.add_child(picture)
+	var amount := A6UiKit.label("%d/%d" % [have, needed], "number", 9)
+	# Ink when the player can pay, amber when short: colour is never the only signal,
+	# the two numbers say it as well.
+	amount.add_theme_color_override("font_color", A6UiKit.WARN if short else A6UiKit.CREAM)
+	chip.add_child(amount)
+	chip.tooltip_text = "%s: %d of %d" % [_item_label(item_id), have, needed]
+	return chip
+
+
+## The text its consumers still resolve: the result name, then the exact cost list.
+func _button_text(output_id: String, inputs: Dictionary) -> String:
+	return "%s — %s" % [_capitalised(output_id), _format_items(inputs)]
+
+
+func _button_text_for(label: String, inputs: Dictionary, prerequisites: Array) -> String:
+	var needs := _format_items(inputs)
+	if prerequisites.is_empty():
+		return "%s — %s" % [label, needs]
+	return "%s — %s — requires %s" % [label, needs, ", ".join(PackedStringArray(prerequisites))]
+
+
+func _capitalised(item_id: String) -> String:
+	var label := _item_label(item_id)
+	return label.substr(0, 1).to_upper() + label.substr(1)
+
+
+## How many jobs this station already holds; the owner's queue capacity decides the rest.
+func _queue_used(station: Dictionary, jobs: Dictionary) -> int:
+	var station_id := String(station.get("station_id", ""))
+	var used := 0
+	for job: Variant in jobs.values():
+		if String((job as Dictionary).get("station_id", "")) == station_id \
+				and String((job as Dictionary).get("status", "")) in ["queued", "running", "paused", "ready", "cancelled"]:
+			used += 1
+	return used
+
+
+## Player-facing state, derived only from owner answers: the station's own
+## operational flag, its own queue capacity, and the bag totals A0 reports.
+func _state_of(operational: bool, queue_full: bool, shortfall: String) -> String:
+	if not operational:
+		return "station offline"
+	if queue_full:
+		return "queue full"
+	if not shortfall.is_empty():
+		return shortfall
+	return "all materials"
+
+
+func _state_colour(operational: bool, queue_full: bool, shortfall: String) -> Color:
+	if not operational or queue_full:
+		return A6UiKit.WARN
+	if not shortfall.is_empty():
+		return A6UiKit.FILL_GOOD
+	return A6UiKit.CREAM
 
 
 func _add_running_jobs(jobs: Dictionary) -> void:
 	var ids: Array = jobs.keys()
-	if not ids.is_empty():
-		var spacer := Control.new()
-		spacer.custom_minimum_size = Vector2(0, 2)
-		_list.add_child(spacer)
+	if ids.is_empty():
+		return
+	var heading := A6UiKit.label("JOBS", "caption", 9)
+	heading.add_theme_color_override("font_color", A6UiKit.INK_SOFT)
+	_list.add_child(heading)
 	ids.sort()
 	for raw_id: Variant in ids:
 		var job_id := String(raw_id)
 		var job: Dictionary = jobs[raw_id]
 		var status := String(job.get("status", ""))
-		var row := HBoxContainer.new()
+		var ready := status == "ready"
+		var row := PanelContainer.new()
 		row.name = "Job_%s" % job_id
-		row.add_theme_constant_override("separation", 4)
+		# A finished job is worth collecting, so it gets the same authored plate the
+		# station headers use; a running one stays quiet so the claimable row reads first.
+		if ready:
+			row.theme_type_variation = &"A6HudBar"
 		_list.add_child(row)
+
+		var line := HBoxContainer.new()
+		line.add_theme_constant_override("separation", 5)
+		row.add_child(line)
 
 		var elapsed := int(job.get("elapsed", 0))
 		var duration := maxi(1, int(job.get("duration", 1)))
 		var bar_parts := A6UiKit.bar(70, 9)
 		var bar_root: Control = bar_parts["root"]
 		bar_root.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		row.add_child(bar_root)
+		line.add_child(bar_root)
 		A6UiKit.set_bar(bar_parts, float(elapsed), float(duration))
 
+		var status_label := A6UiKit.label(_status_word(status).to_upper(), "caption", 9)
+		status_label.name = "Status"
+		status_label.add_theme_color_override("font_color", _job_colour(status))
+		status_label.custom_minimum_size = Vector2(52, 0)
+		line.add_child(status_label)
+
 		var label := A6UiKit.label(
-			"%s · %s %d/%d" % [String(job.get("target", "")).replace("_", " "), _status_word(status), elapsed, duration],
-			"caption", 10
+			"%s · %d/%d" % [String(job.get("target", "")).replace("_", " "), elapsed, duration],
+			"number", 10
 		)
 		label.add_theme_color_override("font_color", A6UiKit.INK)
 		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		row.add_child(label)
+		line.add_child(label)
 
 		var action := Button.new()
 		action.name = "JobAction"
-		var ready := status == "ready"
 		action.text = "COLLECT" if ready else "CANCEL"
-		action.custom_minimum_size = Vector2(0, 18)
+		action.custom_minimum_size = Vector2(0, 17)
 		action.add_theme_font_size_override("font_size", 10)
 		action.pressed.connect(_job_action.bind(job_id, ready))
-		row.add_child(action)
+		line.add_child(action)
+
+
+## One colour per owner status so a claimable job cannot be mistaken for a busy one.
+func _job_colour(status: String) -> Color:
+	match status:
+		"ready":
+			return A6UiKit.GOLD
+		"running":
+			return A6UiKit.CREAM
+		"paused", "cancelled":
+			return A6UiKit.WARN
+		_:
+			return A6UiKit.INK_SOFT
 
 
 ## Player words for the session's own status strings. Unknown statuses are shown
