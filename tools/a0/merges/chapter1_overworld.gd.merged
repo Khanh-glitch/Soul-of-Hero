@@ -126,6 +126,9 @@ var economy_session: Node
 var world_authority: A0WorldAuthority
 ## Why the authored world could not be used, if it could not. Named, never hidden.
 var authored_world_error := ""
+## Why the authored continent was not mounted even though it was asked for. Only
+## the "this tree does not contain A1's continent" case sets it.
+var authored_world_degraded := ""
 ## True when this build is the authored continent (as opposed to the annex route).
 var authored_world_active := false
 var authored_sources: Array = []
@@ -247,6 +250,7 @@ func is_world_ready() -> bool:
 func world_authority_report() -> Dictionary:
 	if world_authority == null or not is_instance_valid(world_authority):
 		return {"mode": WORLD_AUTHORITY_ANNEX, "error": authored_world_error,
+			"degraded": authored_world_degraded,
 			"frame": [world.width, world.height] if world != null else [0, 0]}
 	var report: Dictionary = world_authority.source_report()
 	report["mode"] = WORLD_AUTHORITY_AUTHORED
@@ -315,6 +319,21 @@ func _build_authored_world() -> void:
 	var player_scene := PLAYER_SCENE_PATH
 	if not world_authority.configure(self, null, null, player_scene):
 		authored_world_error = String(world_authority.last_error)
+		# The one case that may fall back is a tree that does not *contain* A1's
+		# continent at all (A0's own branch): there is nothing to be authoritative
+		# about, so the retained Chapter-1 route world is mounted and the degradation
+		# is reported by name. Any other refusal — a streamer that will not mount, a
+		# spawn that is not safe — is a failed build, not a fallback: that silent
+		# swap is exactly the sidecar behaviour this round removes.
+		if authored_world_error == "A1_AUTHORED_INTERFACE_ABSENT":
+			print("A0_WORLD_AUTHORITY_DEGRADED reason=%s" % authored_world_error)
+			world_authority.queue_free()
+			world_authority = null
+			world = null
+			authored_world_active = false
+			authored_world_degraded = authored_world_error
+			_build_annex_world()
+			return
 		_fail("AUTHORED_WORLD_REFUSED: " + authored_world_error)
 		return
 	# The spawn is bound to the run that is standing in it, so the run must exist
@@ -1308,10 +1327,13 @@ func _refresh_carry() -> void:
 	if save_service == null or not save_service.has_method(&"get_inventory_capacity_snapshot"):
 		return
 	var snapshot: Dictionary = save_service.call(&"get_inventory_capacity_snapshot")
-	hud.set_carry(
-		int(snapshot.get("bag_used", 0)),
-		int(snapshot.get("bag_capacity", 0)),
-	)
+	# `set_carry` is the HUD's to provide (A6 owns the presentation). A0 will not
+	# assume a widget API is present in every tree that mounts this world.
+	if hud.has_method(&"set_carry"):
+		hud.set_carry(
+			int(snapshot.get("bag_used", 0)),
+			int(snapshot.get("bag_capacity", 0)),
+		)
 
 
 func _region_label() -> String:
