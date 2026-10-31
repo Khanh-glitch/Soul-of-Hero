@@ -11,6 +11,9 @@ class_name CSourcePlayer
 signal visual_event(kind: StringName, world_pos: Vector2, source_time: float)
 signal visual_contact(kind: StringName, world_pos: Vector2, source_time: float)
 signal finished()
+# Per-fixed-tick presentation state, not combat instructions. The external
+# viewport/camera owner must combine concurrent casts and clear on finish.
+signal screen_post(state: Dictionary)
 
 const STEP := 1.0 / 60.0
 const SRC_W := 384.0
@@ -22,6 +25,11 @@ var _kind := ""
 var _frame: CFrame
 var _tex: ImageTexture
 var _sprite: Sprite2D
+var _light_tex: ImageTexture
+var _light_sprite: Sprite2D
+# Opt-in only: source-buffer parity and existing captures stay on the legacy
+# path until this separate world-composite experiment is visually validated.
+var experimental_separate_passes := false
 var _bytes := PackedByteArray()
 var _origin := Vector2.ZERO
 var _rot := 0.0
@@ -50,6 +58,15 @@ func _ensure_sprite() -> void:
     _sprite.texture = _tex
     _sprite.centered = true
     add_child(_sprite)
+    _light_tex = ImageTexture.create_from_image(img)
+    _light_sprite = Sprite2D.new()
+    _light_sprite.texture = _light_tex
+    _light_sprite.centered = true
+    _light_sprite.visible = false
+    var additive := CanvasItemMaterial.new()
+    additive.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+    _light_sprite.material = additive
+    add_child(_light_sprite)
 
 func begin(caster_world: Vector2, target_world: Vector2, kind: String) -> void:
     _ensure_sprite()
@@ -77,10 +94,12 @@ func begin(caster_world: Vector2, target_world: Vector2, kind: String) -> void:
             _fx.setup()
     _events = _fx.authored_events() if _fx != null else []
     var axis := target_world - caster_world
-    _rot = axis.angle() - Vector2(250 - 112, 106 - 126).angle() if axis.length() > 1.0 else 0.0
-    # authored anchors: CASTER (112,126) -> E per spell; keep simple
-    # similarity: authored caster->E axis preserved below via _anchor_local.
-    _scale = clampf(axis.length() / maxf(1.0, _anchor_local().distance_to(Vector2(112, 126))), 0.6, 3.5) if axis.length() > 1.0 else 1.0
+    # Each C spell has its own authored target anchor. Rotation and scale
+    # must use the same caster->anchor vector, otherwise events and geometry
+    # miss the real target by an angle-dependent amount.
+    var source_axis := _anchor_local() - Vector2(112, 126)
+    _rot = axis.angle() - source_axis.angle() if axis.length() > 1.0 else 0.0
+    _scale = clampf(axis.length() / maxf(1.0, source_axis.length()), 0.6, 3.5) if axis.length() > 1.0 else 1.0
     _origin = caster_world
     _tick = 0
     _acc = 0.0
@@ -118,6 +137,8 @@ func stop() -> void:
     _active = false
     if _sprite != null:
         _sprite.visible = false
+    if _light_sprite != null:
+        _light_sprite.visible = false
     if was:
         finished.emit()
 
@@ -154,6 +175,10 @@ func advance(dt: float, draw: bool = true) -> void:
             _shake_k = 0.0
         _flash_k *= 0.82
         _chroma_k *= 0.88
+        if experimental_separate_passes:
+            screen_post.emit({"source_time": source_time(),
+                "flash": _flash_c * _flash_k * 0.28,
+                "shake": _shake_vector(), "chroma": _chroma_k})
         _fire_due_events()
         if source_time() >= duration:
             _active = false
@@ -179,6 +204,12 @@ func _fire_due_events() -> void:
             if String(ev.kind).ends_with("impact"):
                 visual_contact.emit(kind, wp, t)
 
+func _shake_vector() -> Vector2:
+    if _shake_k <= 0.0:
+        return Vector2.ZERO
+    return Vector2((CMath.hash1(_steps * 3) - 0.5) * 2.0 * _shake_k,
+        (CMath.hash1(_steps * 3 + 1) - 0.5) * 2.0 * _shake_k)
+
 func _render_frame() -> void:
     if _fx == null or not render_enabled:
         return
@@ -188,14 +219,18 @@ func _render_frame() -> void:
     _frame.desat = 0.0
     _frame.chroma = _chroma_k
     _frame.flash = _flash_c * _flash_k * 0.28
-    if _shake_k > 0.0:
-        _frame.shake = Vector2((CMath.hash1(_steps * 3) - 0.5) * 2.0 * _shake_k, (CMath.hash1(_steps * 3 + 1) - 0.5) * 2.0 * _shake_k)
-    else:
-        _frame.shake = Vector2.ZERO
+    _frame.shake = _shake_vector()
     _fx.render(_frame, source_time())
-    _bytes = _frame.composite()
-    var img := Image.create_from_data(384, 216, false, Image.FORMAT_RGBA8, _bytes)
-    _tex.update(img)
+    if experimental_separate_passes:
+        var passes := _frame.native_passes()
+        _bytes = passes.ink
+        _tex.update(Image.create_from_data(384, 216, false, Image.FORMAT_RGBA8, _bytes))
+        _light_tex.update(Image.create_from_data(384, 216, false, Image.FORMAT_RGBA8, passes.light))
+        _light_sprite.visible = true
+    else:
+        _bytes = _frame.composite()
+        _tex.update(Image.create_from_data(384, 216, false, Image.FORMAT_RGBA8, _bytes))
+        _light_sprite.visible = false
     if _sprite != null:
         _sprite.visible = true
         var anchor := _anchor_local()
@@ -203,6 +238,9 @@ func _render_frame() -> void:
         _sprite.position = local_to_world(center_local)
         _sprite.rotation = _rot
         _sprite.scale = Vector2.ONE * _scale
+        _light_sprite.position = _sprite.position
+        _light_sprite.rotation = _sprite.rotation
+        _light_sprite.scale = _sprite.scale
 
 func frame_bytes() -> PackedByteArray:
     return _bytes

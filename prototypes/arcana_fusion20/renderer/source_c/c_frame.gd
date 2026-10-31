@@ -7,7 +7,9 @@
 ## Bloom/downsample passes of the GL compositor are NOT reproduced in
 ## the buffer parity path (post difference, documented); invert /
 ## desat / flash / chroma / shake from COMP are reproduced.
-## Alpha transport: 255 iff composited RGB != 0 (same rule as B port).
+## Legacy composite() alpha: 255 iff composited RGB != 0 (same rule as B).
+## Experimental native_passes() instead exposes explicit ink + additive light;
+## it does not implement world ground/displacement or screen-space post.
 extends RefCounted
 class_name CFrame
 
@@ -391,3 +393,31 @@ func composite() -> PackedByteArray:
             out[o + 2] = int(cb * 255.0)
             out[o + 3] = 255 if (out[o] != 0 or out[o + 1] != 0 or out[o + 2] != 0) else 0
     return out
+
+## Experimental world-transport passes. Unlike composite(), neither pass
+## contains floor, screen flash, invert, shake or displacement. Ink already
+## carries source coverage in ink.a (premultiplied RGB); light is additive
+## and therefore uses an opaque black neutral element, never RGB keying.
+## This is NOT a parity replacement for the original post compositor: real
+## scene displacement, screen effects and occlusion still need integration.
+func native_passes() -> Dictionary:
+    var ink_bytes := PackedByteArray()
+    var light_bytes := PackedByteArray()
+    ink_bytes.resize(N * 4)
+    light_bytes.resize(N * 4)
+    for y in range(H):
+        for x in range(W):
+            var i := (y * W + x) * 4
+            var a := clampf(ink[i + 3], 0.0, 1.0)
+            if a > 0.0:
+                ink_bytes[i] = int(clampf(ink[i] / a, 0.0, 1.0) * 255.0)
+                ink_bytes[i + 1] = int(clampf(ink[i + 1] / a, 0.0, 1.0) * 255.0)
+                ink_bytes[i + 2] = int(clampf(ink[i + 2] / a, 0.0, 1.0) * 255.0)
+            ink_bytes[i + 3] = int(a * 255.0)
+            var th := CMath.bayer(x, y) - 0.5
+            for channel in range(3):
+                var q := floor(light[i + channel] * 8.0 + th + 0.5) / 8.0
+                light_bytes[i + channel] = int(clampf(q, 0.0, 1.0) * 255.0)
+            # CanvasItemMaterial.BLEND_MODE_ADD: black contributes nothing.
+            light_bytes[i + 3] = 255
+    return {"ink": ink_bytes, "light": light_bytes}

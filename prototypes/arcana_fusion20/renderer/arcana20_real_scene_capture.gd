@@ -81,6 +81,23 @@ func _run() -> void:
             await process_frame
             await process_frame
             await _save("skill_%02d_%d.png" % [id, j])
+            # Same frame/world state, experimental C ink + additive light
+            # only. Source post is deliberately not applied by this harness.
+            if j == 1 and id in [1, 7, 10, 15, 17]:
+                var c_player: CSourcePlayer = null
+                if player is CSourcePlayer:
+                    c_player = player as CSourcePlayer
+                elif player is FusionPlayer:
+                    for part in player._pending:
+                        if part.node is CSourcePlayer:
+                            c_player = part.node as CSourcePlayer
+                if c_player != null:
+                    c_player.experimental_separate_passes = true
+                    _render_now(player)
+                    await process_frame
+                    await process_frame
+                    await _save("skill_%02d_c_separate.png" % id)
+                    c_player.experimental_separate_passes = false
         var ms := float(Time.get_ticks_usec() - started) / 1000.0
         times.append({"id": id, "capture_wall_ms": ms, "sample_times": points,
             "note": "offline seek/capture time, not gameplay frame-time"})
@@ -129,11 +146,11 @@ func _run() -> void:
     var f := FileAccess.open(OUTPUT + "/manifest.json", FileAccess.WRITE)
     f.store_string(JSON.stringify({"scene": "res://game/main.tscn", "level": "res://game/levels/crypt_entrance.tscn",
         "enemy": "res://game/characters/enemies/skeleton_enemy.tscn", "camera": "actual Knight/Camera with explicit offsets",
-        "limitations": "visual-only AVFX direct cast, not PR30 binding/combat; no overworld/bright scene or target-hardware benchmark; manual seek screenshots; not owner approved",
+        "limitations": "visual-only AVFX direct cast, not PR30 binding/combat; no overworld/bright scene or target-hardware benchmark; manual seek screenshots; not owner approved. skill_*_c_separate are opt-in experimental C ink/additive light only; screen post/terrain/displacement are not applied, and #01 still includes legacy A.",
         "samples": times, "visual_events": visual_events, "overlap_probe": overlap_stats}, "  "))
     f.close()
     if _failures.is_empty():
-        print("ARCANA20_REAL_SCENE_CAPTURE PASS screenshots=62")
+        print("ARCANA20_REAL_SCENE_CAPTURE PASS screenshots=67 (5 experimental C comparisons)")
     quit(0 if _failures.is_empty() else 1)
 
 func _set_rendering(player: Node, enabled: bool) -> void:

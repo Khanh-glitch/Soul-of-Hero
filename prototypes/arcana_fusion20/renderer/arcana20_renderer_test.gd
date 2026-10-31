@@ -1,7 +1,7 @@
 ## Headless lifecycle gate for the ARCANA Fusion20 renderer (AVFX stream).
 ## Casts all 20 canonical IDs on the catalog timeline with a fixed 60 Hz
-## source clock and asserts: cast_started, exactly one visual contact at
-## the authored contact ledger, body cue, finish + cleanup, cancel cleanup.
+## source clock and asserts cast_started, the authored multi-contact ledger,
+## body cues, finish + cleanup, and cancel cleanup.
 ## This proves the native runtime contract only — NOT Gold visual parity.
 extends SceneTree
 
@@ -84,6 +84,76 @@ func _init() -> void:
             _fail("no finish %s" % cid)
         if renderer.is_active(cid):
             _fail("still active after finish %s" % cid)
+
+    # C's individual authored caster/target axes must map exactly to the
+    # requested world points across rotations/scales. Render is disabled:
+    # source-buffer parity remains independently tested below.
+    for kind in ["crown", "basilica", "thunderloom", "thorn", "horizon"]:
+        var placement := CSourcePlayer.new()
+        placement.render_enabled = false
+        root_node.add_child(placement)
+        for angle in [-2.2, 0.0, 1.1]:
+            for factor in [0.8, 1.0, 1.7]:
+                var cw := Vector2(-237.0, 419.0)
+                # begin once to select the spell's own authored anchor.
+                placement.begin(cw, cw + Vector2(140, 0), kind)
+                var source_axis: Vector2 = placement._anchor_local() - Vector2(112, 126)
+                var tw := cw + source_axis.rotated(float(angle)) * float(factor)
+                placement.begin(cw, tw, kind)
+                if placement.local_to_world(Vector2(112, 126)).distance_to(cw) > 0.001:
+                    _fail("C %s caster anchor does not map to caster" % kind)
+                if placement.local_to_world(placement._anchor_local()).distance_to(tw) > 0.001:
+                    _fail("C %s target anchor mismatch angle=%s factor=%s" % [kind, angle, factor])
+        placement.free()
+
+    # Explicit source coverage preserves black ink. Additive light has an
+    # opaque-black neutral element; neither pass bakes the screen flash.
+    var pass_frame := CFrame.new()
+    pass_frame.I(10, 10, 0.0, 0.0, 0.0, 0.5)
+    pass_frame.I(11, 10, 0.2, 0.4, 0.6, 0.5)
+    pass_frame.L(12, 10, 0.75, 0.25, 0.0)
+    pass_frame.flash = Vector3.ONE
+    var pass_data := pass_frame.native_passes()
+    var ink_pass: PackedByteArray = pass_data.ink
+    var light_pass: PackedByteArray = pass_data.light
+    var black := (10 * CFrame.W + 10) * 4
+    var colored := (10 * CFrame.W + 11) * 4
+    var lit := (10 * CFrame.W + 12) * 4
+    if ink_pass[black] != 0 or ink_pass[black + 3] != 127:
+        _fail("C separate pass lost black ink coverage")
+    if ink_pass[colored + 3] != 127 or absi(int(ink_pass[colored]) - 51) > 1:
+        _fail("C separate pass failed to unpremultiply source ink")
+    if ink_pass[3] != 0 or light_pass[0] != 0 or light_pass[1] != 0 or light_pass[2] != 0 or light_pass[3] != 255:
+        _fail("C separate pass baked flash or keyed additive neutral")
+    if light_pass[lit] == 0 or light_pass[lit + 3] != 255:
+        _fail("C additive light pass lost source light")
+
+    # Opt-in screen-post state remains presentation-only and is forwarded
+    # by the host on every fixed step, including zero/release samples.
+    var post_host := Arcana20Renderer.new()
+    post_host.experimental_c_separate_passes = true
+    root_node.add_child(post_host)
+    var post_samples: Array = []
+    post_host.screen_post.connect(func(cid: StringName, state: Dictionary) -> void:
+        post_samples.append({"id": cid, "state": state}))
+    var post_id := Arcana20SourceCatalog.canonical_id(17)
+    post_host.cast_skill(post_id, Vector2(100, 100), Vector2(240, 80))
+    var post_player: CSourcePlayer = post_host._casts[post_id]
+    post_player.render_enabled = false
+    for i in range(500):
+        if post_host.is_active(post_id):
+            post_player.advance(1.0 / 60.0)
+    var nonzero_post := false
+    for sample in post_samples:
+        var state: Dictionary = sample.state
+        var flash: Vector3 = state.flash
+        var shake: Vector2 = state.shake
+        if flash.length() > 0.0 or shake.length() > 0.0 or float(state.chroma) > 0.0:
+            nonzero_post = true
+    if post_samples.is_empty() or not nonzero_post:
+        _fail("C separate screen-post state not forwarded from source")
+    post_host.cancel_all()
+    post_host.free()
 
     # D uses raw mulberry32 seeds, unlike B's seed-hashing wrapper.
     # Integer vectors below come directly from the original D JS RNG.

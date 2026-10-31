@@ -9,6 +9,7 @@ class_name FusionPlayer
 signal visual_event(kind: StringName, world_pos: Vector2, source_time: float)
 signal visual_contact(kind: StringName, world_pos: Vector2, source_time: float)
 signal finished()
+signal screen_post(state: Dictionary)
 
 const STEP := 1.0 / 60.0
 
@@ -52,6 +53,9 @@ func begin(caster_world: Vector2, target_world: Vector2) -> void:
             # Preserve each source contact even if timestamps coincide.
             # These are visual cues, never combat-damage instructions.
             visual_contact.emit(kind, pos, source_time()))
+        if node.has_signal("screen_post"):
+            node.connect("screen_post", func(state: Dictionary) -> void:
+                screen_post.emit(state))
         node.finished.connect(func() -> void:
             pass)
     _tick = 0

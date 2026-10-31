@@ -16,6 +16,9 @@ signal visual_contact(canonical_id: StringName, world_position: Vector2, kind: S
 signal visual_event(canonical_id: StringName, kind: StringName, world_position: Vector2, source_time: float)
 signal body_event_cue(canonical_id: StringName, world_position: Vector2, element: StringName)
 signal cast_finished(canonical_id: StringName)
+# Experimental C post state; the scene owner decides whether/how to apply it.
+signal screen_post(canonical_id: StringName, state: Dictionary)
+@export var experimental_c_separate_passes := false
 
 var _casts: Dictionary = {} # canonical_id -> Node (instance or B02 geometry)
 var stage_counts: Dictionary = {}
@@ -92,6 +95,8 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
         var ap := ASourcePlayer.new()
         ap.configure(ACinderCrown.new(), ACinderCrown.DURATION)
         var cp := CSourcePlayer.new()
+        cp.experimental_separate_passes = experimental_c_separate_passes
+        fp.screen_post.connect(func(state: Dictionary) -> void: screen_post.emit(canonical_id, state))
         fp.configure([
             {"node": cp, "layer": -1, "offset": 0.69, "begin_call": func(n: Node, cw: Vector2, tw: Vector2) -> void: n.call("begin", cw, tw, "crown")},
             {"node": ap, "layer": 1, "offset": 0.0, "begin_call": func(n: Node, cw: Vector2, tw: Vector2) -> void: n.call("begin", cw, tw)},
@@ -125,6 +130,8 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
     if id == 17 or id == 7 or id == 10 or id == 15:
         # TRUE source port on the ported C frame/compositor (astral.ts).
         var cp := CSourcePlayer.new()
+        cp.experimental_separate_passes = experimental_c_separate_passes
+        cp.screen_post.connect(func(state: Dictionary) -> void: screen_post.emit(canonical_id, state))
         add_child(cp)
         cp.visual_contact.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
             visual_contact.emit(canonical_id, pos, kind)
