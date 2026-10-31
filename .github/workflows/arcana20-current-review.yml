@@ -1,0 +1,50 @@
+name: ARCANA20 current overworld diagnostic crop extraction
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-current-review.yml']
+permissions:
+  actions: read
+  contents: read
+jobs:
+  crop:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [fusion_11_candidate_tick180, fusion_20_candidate_tick270, fusion_20_blocks_tick420, fusion_20_out_tick570, fusion_20_collision_with_post]
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcana20-overworld-join-diagnostic
+          run-id: 41213047595
+          github-token: ${{ github.token }}
+          path: review
+      - name: Extract diagnostic crop from actual overworld capture
+        env:
+          IMAGE: ${{ matrix.image }}
+        run: |
+          python3 -m pip install --quiet pillow
+          python3 - <<'PY'
+          import base64,io,os
+          from pathlib import Path
+          from PIL import Image,ImageChops
+          root=next(Path('review').rglob('arcana20-join')); name=os.environ['IMAGE']
+          before=Image.open(root/'world_before.png').convert('RGB'); after=Image.open(root/(name+'.png')).convert('RGB')
+          box=ImageChops.difference(before,after).getbbox()
+          if box is None: raise SystemExit('no actual-world pixel difference')
+          cx=(box[0]+box[2])//2;cy=(box[1]+box[3])//2
+          crop=(max(0,cx-110),max(0,cy-110),min(after.width,cx+110),min(after.height,cy+110))
+          # Quantization only exposes an inspectable thumbnail; the native-size
+          # original capture remains in the JOIN artifact for creator review.
+          image=after.crop(crop).quantize(colors=32)
+          while True:
+              out=io.BytesIO();image.save(out,format='PNG',optimize=True)
+              data=base64.b64encode(out.getvalue()).decode();chunks=[data[i:i+3500] for i in range(0,len(data),3500)]
+              if len(chunks)<=9:break
+              if image.width<=100:raise SystemExit('diagnostic crop too large')
+              image=image.resize((int(image.width*.9),int(image.height*.9)),Image.Resampling.NEAREST)
+          for n,c in enumerate(chunks):print(f'::notice title=ACTUAL_{name}_{n:02d}_OF_{len(chunks):02d}::{c}',flush=True)
+          print(f'::notice title=CROP_META::{name} source={after.size} change_bbox={box} crop={crop} thumbnail={image.size} scope=actual_world_diagnostic_not_visual_approval')
+          PY
