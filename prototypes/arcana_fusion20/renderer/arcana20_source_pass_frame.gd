@@ -38,6 +38,7 @@ var b_ground_coverage: PackedFloat32Array
 var b_shade: PackedFloat32Array
 var b_light: PackedFloat32Array
 var b_world_warp: PackedFloat32Array
+var b_influence: PackedByteArray
 var b_ambient: float
 var b_tint: Vector3
 

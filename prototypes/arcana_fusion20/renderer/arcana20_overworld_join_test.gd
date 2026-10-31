@@ -91,7 +91,9 @@ func _run() -> void:
         check(false, "normal entry Home player/campaign missing")
         _finish()
         return
-    var start := home_player.global_position
+    # Home moves its parent canvas as a follow camera, so the player's global
+    # screen-like position can stay fixed while its local world position moves.
+    var start := home_player.position
     await click(root.get_final_transform() * gate.get_global_transform_with_canvas().origin)
     var deadline := Time.get_ticks_msec() + 30000
     while Time.get_ticks_msec() < deadline and StringName(home.call(&"get_current_function")) != &"campaign":
@@ -100,7 +102,7 @@ func _run() -> void:
         check(false, "normal entry campaign walk")
         _finish()
         return
-    check(home_player.global_position.distance_to(start) > 1.0, "Home player walked to campaign through pointer")
+    check(home_player.position.distance_to(start) > 1.0, "Home player walked to campaign through pointer")
     var enter := home.find_child("EnterOverworldButton", true, false) as Button
     if enter == null or not enter.is_visible_in_tree() or enter.disabled:
         check(false, "normal entry overworld button")
@@ -164,12 +166,22 @@ func _run() -> void:
     renderer.process_mode = Node.PROCESS_MODE_ALWAYS
     world.add_child(renderer)
     var c_world := Arcana20CWorldPass.new()
+    var b_world := Arcana20BWorldPass.new()
     c_world.process_mode = Node.PROCESS_MODE_ALWAYS
+    b_world.process_mode = Node.PROCESS_MODE_ALWAYS
     world.add_child(c_world)
+    world.add_child(b_world)
     renderer.source_pass_ready.connect(func(id: StringName, frame: Arcana20SourcePassFrame) -> void:
         passes[id] = frame
         if frame.family == &"C":
-            c_world.consume(frame))
+            c_world.consume(frame)
+        elif frame.family == &"B":
+            b_world.consume(frame))
+    renderer.cast_finished.connect(func(id: StringName) -> void:
+        if String(id).ends_with("_02"):
+            b_world.clear()
+        else:
+            c_world.clear())
     camera.force_update_scroll()
     await process_frame
     await process_frame
@@ -180,6 +192,7 @@ func _run() -> void:
         renderer.cast_skill(id, player.global_position, enemy.global_position)
         var source: Node = renderer._casts[id]
         source.set_process(false)
+        var viewer: Node2D = b_world if num == 2 else c_world
         if source is CSourcePlayer:
             var cp := source as CSourcePlayer
             cp.render_enabled = false
@@ -187,44 +200,44 @@ func _run() -> void:
                 cp.advance(STEP, false)
             cp.render_enabled = true
             cp._render_frame()
-            await process_frame
-            await process_frame
-            var cast_img := await save_frame("world_%02d_tick180" % num)
-            var pass_frame: Arcana20SourcePassFrame = passes.get(id)
-            var result := contamination(baseline, cast_img, c_world, pass_frame)
-            result["skill"] = num
-            stats.append(result)
-            save_fields(id, pass_frame)
-            check(int(result.get("inside_changed", 0)) > 0, "source C actually transforms live scene %d" % num)
-            check(int(result.get("outside_changed", -1)) == 0, "no changes outside explicit influence %d: %s" % [num, str(result)])
-            if num == 17:
-                var field_world := pass_frame.source_to_world * Vector2(250, 106)
-                var before_screen := c_world._sprite.get_global_transform_with_canvas() * Vector2(250, 106)
-                camera.offset += Vector2(40, 20)
-                camera.force_update_scroll()
-                c_world._update_camera_basis()
-                await process_frame
-                await process_frame
-                var after_screen := c_world._sprite.get_global_transform_with_canvas() * Vector2(250, 106)
-                await save_frame("world_17_camera_plus_40_20")
-                check((after_screen - before_screen).distance_to(Vector2(-40, -20)) < 0.1 and (pass_frame.source_to_world * Vector2(250, 106)).distance_to(field_world) < 0.001, "C camera (+40,+20) preserves world field and moves screen (-40,-20)")
-                camera.offset -= Vector2(40, 20)
-                camera.force_update_scroll()
-                c_world._update_camera_basis()
-            c_world.clear()
         else:
             var bp := source as BSourcePlayer
             bp.advance(3.0)
             bp._render_frame()
-            check(passes.has(id), "B raw world fields emitted; B compositor not mounted")
-            if passes.has(id):
-                save_fields(id, passes[id])
+        await process_frame
+        await process_frame
+        var cast_img := await save_frame("world_%02d_tick180" % num)
+        var pass_frame: Arcana20SourcePassFrame = passes.get(id)
+        var result := contamination(baseline, cast_img, viewer, pass_frame)
+        result["skill"] = num
+        stats.append(result)
+        save_fields(id, pass_frame)
+        check(int(result.get("inside_changed", 0)) > 0, "source transforms live scene %d" % num)
+        check(int(result.get("outside_changed", -1)) == 0, "no changes outside explicit influence %d: %s" % [num, str(result)])
+        if num == 2 or num == 17:
+            var sprite := viewer.get("_sprite") as Sprite2D
+            var local_anchor := Vector2(262, 104) if num == 2 else Vector2(250, 106)
+            var field_world := pass_frame.source_to_world * local_anchor
+            var before_screen := sprite.get_global_transform_with_canvas() * local_anchor
+            camera.offset += Vector2(40, 20)
+            camera.force_update_scroll()
+            viewer.call("_update_camera_basis")
+            await process_frame
+            await process_frame
+            var after_screen := sprite.get_global_transform_with_canvas() * local_anchor
+            await save_frame("world_%02d_camera_plus_40_20" % num)
+            check((after_screen - before_screen).distance_to(Vector2(-40, -20)) < 0.1 and (pass_frame.source_to_world * local_anchor).distance_to(field_world) < 0.001, "camera (+40,+20) preserves %d field world position and moves screen (-40,-20)" % num)
+            camera.offset -= Vector2(40, 20)
+            camera.force_update_scroll()
+            viewer.call("_update_camera_basis")
         renderer.cancel_skill(id)
         passes.erase(id)
         await process_frame
         await process_frame
+        var clear_img := await save_frame("world_%02d_cancelled" % num)
+        check(images_equal(baseline, clear_img), "cast cancel restores frozen world %d" % num)
     var f := FileAccess.open(OUTPUT + "/contamination.json", FileAccess.WRITE)
-    f.store_string(JSON.stringify({"stats": stats, "scope": "frozen actual overworld; one tick; C experimental terrain pass only; not source fidelity, gameplay, post, occlusion or approval"}, "  "))
+    f.store_string(JSON.stringify({"stats": stats, "scope": "frozen actual overworld; one tick; experimental B/C terrain passes only; not source fidelity, gameplay, post, actor depth or approval"}, "  "))
     f.close()
     _finish()
 
@@ -242,7 +255,7 @@ func save_fields(id: StringName, frame: Arcana20SourcePassFrame) -> void:
         fields = {"ink.rgb32f": frame.b_ink_rgb.to_byte_array(), "ink_coverage.f32": frame.b_ink_coverage.to_byte_array(),
             "ground.rgb32f": frame.b_ground_rgb.to_byte_array(), "ground_coverage.f32": frame.b_ground_coverage.to_byte_array(),
             "shade.f32": frame.b_shade.to_byte_array(), "light.rgb32f": frame.b_light.to_byte_array(),
-            "warp.rg32f": frame.b_world_warp.to_byte_array()}
+            "warp.rg32f": frame.b_world_warp.to_byte_array(), "influence.u8": frame.b_influence}
     for name in fields:
         var file := FileAccess.open(prefix + "." + String(name), FileAccess.WRITE)
         file.store_buffer(fields[name])
@@ -255,10 +268,17 @@ func save_fields(id: StringName, frame: Arcana20SourcePassFrame) -> void:
         "scope": "raw source fields, not final world acceptance"}, "  "))
     manifest.close()
 
-func contamination(before: Image, after: Image, viewer: Arcana20CWorldPass, frame: Arcana20SourcePassFrame) -> Dictionary:
+func images_equal(before: Image, after: Image) -> bool:
+    if before == null or after == null or before.get_size() != after.get_size():
+        return false
+    return before.get_data() == after.get_data()
+
+func contamination(before: Image, after: Image, viewer: Node2D, frame: Arcana20SourcePassFrame) -> Dictionary:
     if before == null or after == null or frame == null or before.get_size() != after.get_size():
         return {"outside_changed": -1, "reason": "image/frame missing"}
-    var transform := root.get_final_transform() * viewer._sprite.get_global_transform_with_canvas()
+    var sprite := viewer.get("_sprite") as Sprite2D
+    var influence: PackedByteArray = frame.b_influence if frame.family == &"B" else frame.c_influence
+    var transform := root.get_final_transform() * sprite.get_global_transform_with_canvas()
     var inverse := transform.affine_inverse()
     var outside := 0
     var inside := 0
@@ -275,7 +295,7 @@ func contamination(before: Image, after: Image, viewer: Arcana20CWorldPass, fram
                 for ox in range(-2, 3):
                     var sx := floori(p.x) + ox
                     var sy := floori(p.y) + oy
-                    if sx >= 0 and sy >= 0 and sx < 384 and sy < 216 and frame.c_influence[sy * 384 + sx] != 0:
+                    if sx >= 0 and sy >= 0 and sx < 384 and sy < 216 and influence[sy * 384 + sx] != 0:
                         influenced = true
                         break
                 if influenced:

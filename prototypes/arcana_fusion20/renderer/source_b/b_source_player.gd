@@ -179,6 +179,7 @@ func source_pass_frame() -> Arcana20SourcePassFrame:
     result.b_shade = _r.shade
     result.b_light = _r.light_buf
     result.b_world_warp = _r.world_warp
+    result.b_influence = _r.world_influence
     result.b_ambient = _r.ambient
     result.b_tint = _r.tint
     result.flash = _r.flash_col * _r.flash

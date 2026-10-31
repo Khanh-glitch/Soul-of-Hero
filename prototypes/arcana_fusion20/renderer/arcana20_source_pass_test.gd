@@ -31,6 +31,7 @@ func _run() -> void:
     var fi := (40 * CFrame.W + 30) * 4
     check(c.world_fragment[fi] == 10.0 and c.world_fragment[fi + 1] == 20.0 and is_equal_approx(c.world_fragment[fi + 2], 0.75), "C live fragment coordinates and subsequent ink")
     check(is_equal_approx(c.ink[fi + 3], 0.25), "C overdraw on live fragment")
+    check(c.world_influence[40 * CFrame.W + 30] == 1 and c.world_influence[0] == 0, "C explicit authored influence")
     c.clear()
     check(c.world_fragment[fi + 2] == 0.0 and c.ground_coverage[2 * CFrame.W + 2] == 0.0, "C world fields clear")
 
@@ -47,6 +48,7 @@ func _run() -> void:
     check(b.ink_coverage[10 * BRenderer.W + 11] == 1.0, "B warp transports explicit coverage")
     var wi := (10 * BRenderer.W + 11) * 2
     check(b.world_warp[wi] == -1.0 and b.world_warp[wi + 1] == 0.0, "B warp maps actual world sampling")
+    check(b.world_influence[10 * BRenderer.W + 11] == 1 and b.world_influence[0] == 0, "B explicit authored influence")
     b.begin()
     check(b.ink_coverage[10 * BRenderer.W + 11] == 0.0 and b.world_warp[wi] == 0.0, "B world fields clear")
 

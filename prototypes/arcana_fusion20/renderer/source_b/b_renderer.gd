@@ -38,6 +38,7 @@ var decal_coverage := PackedFloat32Array()
 # XY source-pixel offsets, destination -> original scene sample, including
 # ordered post warps. This is consumed against the live world, never Gold.
 var world_warp := PackedFloat32Array()
+var world_influence := PackedByteArray()
 var lights: Array = []
 var ambient := 0.62
 var tint := Vector3(0.85, 0.9, 1.15)
@@ -63,6 +64,7 @@ func _init() -> void:
     ink_coverage.resize(N)
     decal_coverage.resize(N)
     world_warp.resize(N * 2)
+    world_influence.resize(N)
 
 func begin() -> void:
     for i in range(main_buf.size()):
@@ -76,6 +78,7 @@ func begin() -> void:
         ink_coverage.fill(0.0)
         decal_coverage.fill(0.0)
         world_warp.fill(0.0)
+        world_influence.fill(0)
     lights.clear()
     ambient = 0.62
     tint = Vector3(0.85, 0.9, 1.15)
@@ -114,6 +117,8 @@ func lighting() -> void:
                 if f <= 0.0:
                     continue
                 var k := f * li
+                if track_world_coverage:
+                    world_influence[y * W + x] = 1
                 var idx := (y * W + x) * 3
                 light_buf[idx] += lc.x * k
                 light_buf[idx + 1] += lc.y * k
@@ -173,6 +178,7 @@ func plot(ix: int, iy: int, r: float, g: float, b: float, mode: int, a: float) -
     var p := iy * W + ix
     var i := p * 3
     if track_world_coverage:
+        world_influence[p] = 1
         match mode:
             SET:
                 ink_coverage[p] = 1.0
@@ -391,6 +397,8 @@ func shadow(x: float, y: float, rx: float, ry: float, amt: float) -> void:
             var f := (1.0 - d) * amt
             if bayer(xx, yy) < f * 1.6:
                 shade[yy * W + xx] *= 1.0 - minf(0.85, f)
+                if track_world_coverage:
+                    world_influence[yy * W + xx] = 1
 
 func decal(x: float, y: float, col: Vector3, a: float = 1.0) -> void:
     var ix := floori(x)
@@ -401,6 +409,7 @@ func decal(x: float, y: float, col: Vector3, a: float = 1.0) -> void:
     if track_world_coverage:
         var p := iy * W + ix
         decal_coverage[p] = a + decal_coverage[p] * (1.0 - a)
+        world_influence[p] = 1
     alb[i] += (col.x - alb[i]) * a
     alb[i + 1] += (col.y - alb[i + 1]) * a
     alb[i + 2] += (col.z - alb[i + 2]) * a
@@ -426,6 +435,7 @@ func warp(x0: float, y0: float, x1: float, y1: float, fn: Callable) -> void:
     tmp_buf = main_buf.duplicate()
     var previous_coverage := ink_coverage.duplicate() if track_world_coverage else PackedFloat32Array()
     var previous_warp := world_warp.duplicate() if track_world_coverage else PackedFloat32Array()
+    var previous_influence := world_influence.duplicate() if track_world_coverage else PackedByteArray()
     for y in range(int(y0), int(y1) + 1):
         for x in range(int(x0), int(x1) + 1):
             var o: Array = fn.call(x, y)
@@ -444,5 +454,10 @@ func warp(x0: float, y0: float, x1: float, y1: float, fn: Callable) -> void:
                 ink_coverage[y * W + x] = previous_coverage[sy * W + sx]
                 var wi := (y * W + x) * 2
                 var wj := (sy * W + sx) * 2
+                # A nonidentity warp is itself authored influence, even if
+                # the sampled geometry is empty or black.
+                world_influence[y * W + x] = 1
+                if previous_influence[sy * W + sx] != 0:
+                    world_influence[y * W + x] = previous_influence[sy * W + sx]
                 world_warp[wi] = float(sx - x) + previous_warp[wj]
                 world_warp[wi + 1] = float(sy - y) + previous_warp[wj + 1]
