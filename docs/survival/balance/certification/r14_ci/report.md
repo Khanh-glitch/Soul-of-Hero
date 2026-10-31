@@ -81,15 +81,17 @@ the composed controller does not mount A0WorldAuthority although A0's own commit
 - A0WorldAuthority present=True, referenced by production=False (tests/survival_a0_authored_world_route_test.gd)
 
 ### T1.3 — FAIL `SPAWN_OUTSIDE_LIVE_WORLD`
-spawn [389, 291] is not inside (384, 256)
+spawn [389, 291] is not inside (384, 256); caused by the composition artifact named in T1.2 — with A0's committed controller the same spawn is in_live_world=True in [1024, 768]
 - game/survival/world/a1_authored_world_reader.gd:1011: func choose_safe_spawn(run_seed: int) -> Dictionary:
 - probe: {"cell": [389, 291], "chunk_id": "chunk:6:4", "in_live_world": false, "live_frame": [384, 256], "live_source": "legacy_sidecar", "ok": true, "production_spawn_approval": false, "region": "r_ashen_crown", "standable": true, "traversal": ""}
+- reconciled control: {"cell": [389, 291], "chunk_id": "chunk:6:4", "in_live_world": true, "live_frame": [1024, 768], "live_source": "authored_authority", "ok": true, "production_spawn_approval": false, "region": "r_ashen_crown", "standable": true, "traversal": 
 
 ### T1.4 — FAIL `SITE_OUTSIDE_LIVE_WORLD`
-3/3 canonical sites cannot be approached; package_status=A8_OWNER_CONTRACT_REFRESH_READY_FOR_A0_REVIEW_NOT_MOUNTED
+3/3 canonical sites cannot be approached; package_status=A8_OWNER_CONTRACT_REFRESH_READY_FOR_A0_REVIEW_NOT_MOUNTED; caused by the composition artifact named in T1.2 — the reconciled control measures outside=0 in [1024, 768]
 - poi_crown_south_quarry (30, 280) scene=res://game/survival/world_content/scenes/south_quarry.tscn
 - poi_crown_south_orchard (140, 360) scene=res://game/survival/world_content/scenes/south_orchard_ruin.tscn
 - poi_crown_south_mill (120, 300) scene=res://game/survival/world_content/scenes/south_crown_mill.tscn
+- reconciled control: {"live": [1024, 768], "live_source": "authored_authority", "outside": 0, "sites": [{"cell": [30, 280], "inside_live_world": true, "poi_id": "poi_crown_south_quarry", "scene": "res://game/survival/world_content/scenes/south_quarry.tscn"}, {"
 
 ### T1.5 — PASS `INPUT_BOOTSTRAP_INDEPENDENT`
 the reader configures with and without the bootstrap

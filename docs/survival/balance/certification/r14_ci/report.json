@@ -393,14 +393,15 @@
       "required_stage": "runtime",
       "verdict": "FAIL",
       "code": "SPAWN_OUTSIDE_LIVE_WORLD",
-      "detail": "spawn [389, 291] is not inside (384, 256)",
+      "detail": "spawn [389, 291] is not inside (384, 256); caused by the composition artifact named in T1.2 \u2014 with A0's committed controller the same spawn is in_live_world=True in [1024, 768]",
       "repro": "",
       "stages": {
         "source": "VALID"
       },
       "evidence": [
         "game/survival/world/a1_authored_world_reader.gd:1011: func choose_safe_spawn(run_seed: int) -> Dictionary:",
-        "probe: {\"cell\": [389, 291], \"chunk_id\": \"chunk:6:4\", \"in_live_world\": false, \"live_frame\": [384, 256], \"live_source\": \"legacy_sidecar\", \"ok\": true, \"production_spawn_approval\": false, \"region\": \"r_ashen_crown\", \"standable\": true, \"traversal\": \"\"}"
+        "probe: {\"cell\": [389, 291], \"chunk_id\": \"chunk:6:4\", \"in_live_world\": false, \"live_frame\": [384, 256], \"live_source\": \"legacy_sidecar\", \"ok\": true, \"production_spawn_approval\": false, \"region\": \"r_ashen_crown\", \"standable\": true, \"traversal\": \"\"}",
+        "reconciled control: {\"cell\": [389, 291], \"chunk_id\": \"chunk:6:4\", \"in_live_world\": true, \"live_frame\": [1024, 768], \"live_source\": \"authored_authority\", \"ok\": true, \"production_spawn_approval\": false, \"region\": \"r_ashen_crown\", \"standable\": true, \"traversal\": "
       ],
       "measurements": {
         "cell": [
@@ -430,7 +431,7 @@
       "required_stage": "source",
       "verdict": "FAIL",
       "code": "SITE_OUTSIDE_LIVE_WORLD",
-      "detail": "3/3 canonical sites cannot be approached; package_status=A8_OWNER_CONTRACT_REFRESH_READY_FOR_A0_REVIEW_NOT_MOUNTED",
+      "detail": "3/3 canonical sites cannot be approached; package_status=A8_OWNER_CONTRACT_REFRESH_READY_FOR_A0_REVIEW_NOT_MOUNTED; caused by the composition artifact named in T1.2 \u2014 the reconciled control measures outside=0 in [1024, 768]",
       "repro": "game/survival/a0_poi_mount.gd:69",
       "stages": {
         "source": "VALID"
@@ -438,7 +439,8 @@
       "evidence": [
         "poi_crown_south_quarry (30, 280) scene=res://game/survival/world_content/scenes/south_quarry.tscn",
         "poi_crown_south_orchard (140, 360) scene=res://game/survival/world_content/scenes/south_orchard_ruin.tscn",
-        "poi_crown_south_mill (120, 300) scene=res://game/survival/world_content/scenes/south_crown_mill.tscn"
+        "poi_crown_south_mill (120, 300) scene=res://game/survival/world_content/scenes/south_crown_mill.tscn",
+        "reconciled control: {\"live\": [1024, 768], \"live_source\": \"authored_authority\", \"outside\": 0, \"sites\": [{\"cell\": [30, 280], \"inside_live_world\": true, \"poi_id\": \"poi_crown_south_quarry\", \"scene\": \"res://game/survival/world_content/scenes/south_quarry.tscn\"}, {\""
       ],
       "measurements": {
         "outside": [
