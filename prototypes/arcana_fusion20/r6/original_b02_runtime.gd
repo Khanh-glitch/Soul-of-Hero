@@ -112,22 +112,23 @@ func _process(delta: float) -> void:
         return
     var idx := mini(int(round(timeline * PIXELS_PER_SECOND)), int(_manifest.get("frames", 1)) - 1)
     var point := world_anchor
-    var canvas_origin: Vector2
-    if scene_camera != null and is_instance_valid(scene_camera):
-        # Converts world position through real live SOH canvas transform.
-        canvas_origin = scene_camera.get_viewport_transform() * point
-    else:
-        canvas_origin = point
-    # Node2D's global canvas transform includes viewport and camera.
-    # Use world host to avoid screen-space constants.
-    if actor != null and is_instance_valid(actor):
-        var from_actor := actor.get_global_transform_with_canvas() * actor.to_local(point)
-        canvas_origin = from_actor
     var viewport_size := get_viewport().get_visible_rect().size
+    var canvas_origin := point
+    var cast_position := point - Vector2(158.0, -28.0)
+    if scene_camera != null and is_instance_valid(scene_camera):
+        # Camera2D may be LIMIT-CLAMPED near a world edge. Its actual screen
+        # center, not a node-local canvas transform, is the ground truth.
+        var screen_center := scene_camera.get_screen_center_position()
+        canvas_origin = (point - screen_center) * scene_camera.zoom + viewport_size * 0.5
+        if is_instance_valid(caster):
+            cast_position = (caster.global_position - screen_center) * scene_camera.zoom + viewport_size * 0.5
+    elif actor != null and is_instance_valid(actor):
+        canvas_origin = actor.get_global_transform_with_canvas().origin
+        if is_instance_valid(caster):
+            cast_position = caster.get_global_transform_with_canvas().origin
     material.set_shader_parameter("viewport_pixels", viewport_size)
     material.set_shader_parameter("anchor_screen", canvas_origin)
     if spell_id == 2 and is_instance_valid(caster):
-        var cast_position := caster.get_global_transform_with_canvas().origin
         var aim_vec := canvas_origin - cast_position
         var source_dir := Vector2(158.0,-28.0)
         var angle := aim_vec.angle() - source_dir.angle()
