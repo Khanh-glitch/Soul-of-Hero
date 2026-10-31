@@ -31,6 +31,9 @@ try {
     };r.drawMarkers=()=>{};
     const idx=d.ALL.findIndex(s=>s.id===19&&s.name==='Constellation Engine');if(idx<0)throw Error('D19 missing');
     d.cast(idx);d.state.playing=true;d.state.speed=1;
+    const pushRibbon=r.fx.g.line.push.bind(r.fx.g.line);
+    window.__lineCalls=[];
+    r.fx.g.line.push=(pts,width,col,opts)=>{window.__lineCalls.push({pts:[...pts],width,col,opts});return pushRibbon(pts,width,col,opts);};
     r.drawLayerSet=(ls)=>{const gl=r.gl;gl.blendEquation(gl.FUNC_ADD);gl.blendFunc(gl.SRC_ALPHA,gl.ONE);ls.line.draw([480,270],[0,0],r.time);};
     return {width:c.width,height:c.height,floatOK:r.floatOK,renderer:r.gl.getParameter(r.gl.RENDERER)};
   },coverage);
@@ -39,7 +42,7 @@ try {
   const manifest={setup,scope:'source D WebGL RGBA8 scene and bloom targets on neutral base; no floor, actors or SOH world; not HDR',captures:[]};
   let last=0;
   for(const tick of [72,192,312,489,510]) {
-    await page.evaluate(n=>{window.__capturePass=false;if(n>1)window.__advance(n-1);window.__capturedPasses=[];window.__capturePass=true;window.__advance(1);window.__capturePass=false},tick-last);last=tick;
+    await page.evaluate(n=>{window.__capturePass=false;if(n>1)window.__advance(n-1);window.__capturedPasses=[];window.__lineCalls=[];window.__capturePass=true;window.__advance(1);window.__capturePass=false},tick-last);last=tick;
     const result=await page.evaluate(()=>{
       const r=window.__vfxDebug.state.renderer,gl=r.gl;
       gl.bindFramebuffer(gl.FRAMEBUFFER,r.scene.fbo);
@@ -47,10 +50,11 @@ try {
       const bytes=new Uint8Array(480*270*4);gl.readPixels(0,0,480,270,gl.RGBA,gl.UNSIGNED_BYTE,bytes);
       const error=gl.getError();if(error!==gl.NO_ERROR)throw Error(`readPixels: ${error}`);
       let binary='';for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,Math.min(i+8192,bytes.length)));
-      return {time:window.__vfxDebug.state.t,renderer_time:r.time,vertex_count:r.fx.g.line.n,base64:btoa(binary)};
+      return {time:window.__vfxDebug.state.t,renderer_time:r.time,vertex_count:r.fx.g.line.n,line_calls:window.__lineCalls,base64:btoa(binary)};
     });
     writeFileSync(path.join(out,`tick${tick}.original${coverage?'.coverage':''}.rgba8`),Buffer.from(result.base64,'base64'));
-    const record={tick,time:result.time,renderer_time:result.renderer_time,vertex_count:result.vertex_count,coverage};
+    writeFileSync(path.join(out,`tick${tick}.original.calls.json`),JSON.stringify(result.line_calls));
+    const record={tick,time:result.time,renderer_time:result.renderer_time,vertex_count:result.vertex_count,call_count:result.line_calls.length,coverage};
     manifest.captures.push(record);console.log('D19_CAST_RIBBON_ORIGINAL',JSON.stringify(record));
   }
   writeFileSync(path.join(out,`source_manifest${coverage?'.coverage':''}.json`),JSON.stringify(manifest,null,2));

@@ -32,6 +32,19 @@ func _run() -> void:
         fx.capture = tick in TICKS
         eng.update(float(tick) / 60.0, 0.0001 if tick == 1 else 1.0 / 60.0)
         if tick not in TICKS: continue
+        var calls := []
+        for command in fx.commands:
+            var cols := []
+            var raw_col: Variant = command.color
+            if raw_col is Array:
+                for cc in raw_col: cols.append([cc.r, cc.g, cc.b, cc.a])
+            else:
+                var cc: Color = raw_col
+                cols = [cc.r, cc.g, cc.b, cc.a]
+            calls.append({"pts": command.pts, "width": command.width, "col": cols, "opts": command.opts})
+        var json_file := FileAccess.open(OUT + "/tick%d.native.calls.json" % tick, FileAccess.WRITE)
+        json_file.store_string(JSON.stringify(calls))
+        json_file.close()
         var file := FileAccess.open(OUT + "/tick%d.native.rgb32f" % tick, FileAccess.WRITE)
         file.store_buffer(fx.buf.to_byte_array())
         file.close()
