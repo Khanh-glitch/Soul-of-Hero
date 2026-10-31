@@ -629,6 +629,7 @@ jobs:
             ! grep -q 'A1 ROUND12 NATIVE FIXTURE PASSED' "$log" || \
             ! grep -q 'production and visual acceptance remain separate' "$log" || \
             ! grep -q 'tile carves open routes while original prop bodies still block' "$log" || \
+            ! grep -q 'asymmetric biome resources/climate/traversal proposals across all 11 regions' "$log" || \
             ! grep -q 'real Hero physically refused by visible dynamic full-cell body after source reload' "$log" || \
             ! grep -q 'reloaded dynamic detour physical return' "$log" || \
             ! grep -q 'no-teleport inset -> salvage -> Quarry -> Orchard -> Mill -> inset return' "$log"; then

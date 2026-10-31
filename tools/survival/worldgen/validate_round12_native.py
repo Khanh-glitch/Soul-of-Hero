@@ -67,6 +67,15 @@ def validate(report: dict, inputs: dict, budget: dict | None = None) -> dict:
           and not dynamic.get("save_service_used") and not dynamic.get("paid_construction_approved"), dynamic)
     check("two_hazard_retreats", len(report.get("hazards", [])) == 2
           and all(x["forward_ok"] and x["retreat_ok"] and not x["damage_applied"] for x in report["hazards"]))
+    asymmetry = report.get("geography_asymmetry", {})
+    regional_materials = asymmetry.get("regional_materials", {})
+    material_signatures = {tuple(sorted(row)) for row in regional_materials.values()}
+    check("asymmetric_geography", len(set(asymmetry.get("climate_channels", []))) == 11
+          and len(regional_materials) == 11 and len(material_signatures) == 11
+          and asymmetry.get("material_signature_count") == 11
+          and len(set(asymmetry.get("surface_ids", []))) >= 8
+          and len(set(asymmetry.get("planning_effort_per_cell_rates", []))) >= 4
+          and asymmetry.get("application_status") == "A1_SOURCE_QUERY_ONLY_NO_A0_SPEED_A3_COST_OR_DAMAGE", asymmetry)
     evaluation = report.get("journey_evaluation", {})
     check("geographic_journey_ids", set(evaluation) == {"J01", "J03", "J04", "J06", "J07", "J12"}, sorted(evaluation))
     j01 = evaluation.get("J01", {})

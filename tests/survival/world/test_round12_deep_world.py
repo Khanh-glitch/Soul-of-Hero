@@ -149,6 +149,40 @@ def test_hazards_and_visual_viewpoints_are_explicit(native_inputs: dict) -> None
             assert view["hazard_preparation_required"]
 
 
+def test_geography_asymmetry_is_source_derived(native_inputs: dict) -> None:
+    contract = json.loads(CONTRACT.read_text())
+    plan = json.loads((compiler.WORLD / "world_plan.v1.json").read_text())
+    climates: set[str] = set()
+    surfaces: set[str] = set()
+    efforts: set[float] = set()
+    regional_materials: dict[str, set[str]] = {}
+    for view in native_inputs["visual_views"]:
+        region = view["region_id"]
+        climates.add(contract["traversal"]["climate_channels"][region])
+        source = view["stand_source"]
+        surfaces.add(source["surface_id"])
+        speed = 1.0 if source["road"] and source["walk"] else contract["traversal"]["surface_profiles"][source["surface_id"]]
+        if source["walk"] and speed > 0:
+            efforts.add(round(1.0 / speed, 6))
+        x, y = view["stand_cell"]
+        materials = regional_materials.setdefault(region, set())
+        for node in plan["resource_nodes"]:
+            nx, ny = node["cell"]
+            if abs(nx - x) + abs(ny - y) <= 64:
+                materials.add(node["material_key"])
+        for poi in plan["pois"]:
+            px, py = poi["cell"]
+            if abs(px - x) + abs(py - y) <= 64:
+                materials.update(poi.get("material_keys", []))
+        for source_row in native_inputs["roadside_sources"]:
+            sx, sy = source_row["cell"]
+            if abs(sx - x) + abs(sy - y) <= 64:
+                materials.add("salvage")
+    assert len(climates) == len(regional_materials) == 11
+    assert len({tuple(sorted(materials)) for materials in regional_materials.values()}) == 11
+    assert len(surfaces) >= 8 and len(efforts) >= 4
+
+
 def test_compiler_output_is_byte_deterministic(tmp_path: Path) -> None:
     outputs = []
     for index in range(2):

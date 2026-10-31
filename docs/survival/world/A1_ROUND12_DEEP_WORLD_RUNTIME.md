@@ -95,6 +95,8 @@ This is **not SaveService**, A0 build validation, construction cost, inventory, 
 
 The isolated driver uses the real A0-comparable Knight scene, 12×16 body, 96/900/1100 movement constants and stand camera. It drives inset → existing roadside salvage → exact Quarry/Orchard/Mill outer approaches → inset, with no within-route teleport. It separately proves dynamic baseline/block/reload/detour and two warned hazard retreats. A8 interiors, interactions, rewards, damage and production mounting are not executed.
 
+The native reader also queries all 11 region viewpoints and requires 11 distinct climate channels and regional material signatures, plus multiple surface/effort proposals. These are source geography queries only: no A0 movement adoption, A3 inventory cost or hazard damage is applied.
+
 The report uses the CT journey IDs without upgrading their scope: J01 broad spawn/explore-first geography, J03 locked-POI discovery and alternate access, J04 preparation/retreat, J06 home/outpost logistics, J07 route cost/opportunity alternatives, and J12 three non-dungeon geographic options. Home-first value, credential/power activation, carrying, A3 net loot value, three productive sessions and dungeon-preparation outcomes remain explicitly untested.
 
 Captures come from the live source stream at **1280×720, 2560×1440 and 3840×2160**, across all 11 regions, with paired day/night views. Hazard probe stands are labelled with their required preparation and are not called safe spawns. Pillow sheets remain supplementary only. Capture filenames are artifact-portable even when a logical day/night pair ID contains `:`. The automated nonblank check rejects solid/two-tone samples; it does not score art richness or grant visual acceptance.

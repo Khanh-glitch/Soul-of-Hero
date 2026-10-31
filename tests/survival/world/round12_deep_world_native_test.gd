@@ -55,6 +55,7 @@ var site_arrivals: Array[Dictionary] = []
 var discovery_log: Array[Dictionary] = []
 var discovered: Dictionary = {}
 var hazard_results: Array[Dictionary] = []
+var geography_asymmetry: Dictionary = {}
 var dynamic_results: Dictionary = {}
 var region_transitions: Array[Dictionary] = []
 var field_transitions: Array[Dictionary] = []
@@ -543,6 +544,41 @@ func _run_reader_checks() -> void:
 	var reset_context: Dictionary = reader.temporal_context(86400.0 * 14.0 + 3600.0, 336.0 * 3600.0)
 	_expect(bool(reset_context.reset_required) and not bool(reset_context.static_geography_mutation), "336h reset boundary never mutates master geography")
 	_expect(FileAccess.get_sha256("res://data/survival/world/world_plan.v1.json") == String(inputs.world_plan_sha256), "world identity unchanged after temporal queries")
+	var climate_channels: Dictionary = {}
+	var surface_ids: Dictionary = {}
+	var effort_rates: Dictionary = {}
+	var regional_materials: Dictionary = {}
+	for raw: Variant in (inputs.visual_views as Array):
+		var view := raw as Dictionary
+		var stand: Array = view.stand_cell
+		var cell := Vector2i(int(stand[0]), int(stand[1]))
+		var profile: Dictionary = reader.traversal_profile(cell)
+		if not bool(profile.get("ok", false)):
+			continue
+		climate_channels[String(profile.climate_channel)] = true
+		surface_ids[String(profile.surface_id)] = true
+		if bool(profile.walkable):
+			effort_rates["%.6f" % float(profile.planning_effort_per_cell)] = true
+		var opportunities: Dictionary = reader.opportunities_near(cell, 64)
+		var materials: Array = (opportunities.material_keys as Array).duplicate()
+		materials.sort()
+		if not materials.is_empty():
+			regional_materials[String(view.region_id)] = materials
+	var material_signatures: Dictionary = {}
+	for region_id: String in regional_materials:
+		material_signatures[JSON.stringify(regional_materials[region_id])] = true
+	var climate_list := climate_channels.keys()
+	var surface_list := surface_ids.keys()
+	var effort_list := effort_rates.keys()
+	climate_list.sort()
+	surface_list.sort()
+	effort_list.sort()
+	geography_asymmetry = {"climate_channels": climate_list, "surface_ids": surface_list,
+		"planning_effort_per_cell_rates": effort_list, "regional_materials": regional_materials,
+		"material_signature_count": material_signatures.size(),
+		"application_status": "A1_SOURCE_QUERY_ONLY_NO_A0_SPEED_A3_COST_OR_DAMAGE"}
+	_expect(climate_channels.size() == 11 and regional_materials.size() == 11 and material_signatures.size() == 11
+		and surface_ids.size() >= 8 and effort_rates.size() >= 4, "asymmetric biome resources/climate/traversal proposals across all 11 regions")
 
 
 func _run_spawn_matrix() -> void:
@@ -939,7 +975,8 @@ func _finish() -> void:
 		"spawn_results": spawn_results, "journeys": journey_trace, "prepare_measurements": prepare_measurements,
 		"journey_evaluation": _journey_report(),
 		"site_arrivals": site_arrivals, "locked_poi_discoveries": discovery_log, "roadside_salvage": salvage_arrival,
-		"hazards": hazard_results, "dynamic": dynamic_results, "stream_events": stream_events,
+		"hazards": hazard_results, "geography_asymmetry": geography_asymmetry,
+		"dynamic": dynamic_results, "stream_events": stream_events,
 		"stream_performance": stream_performance, "region_transitions": region_transitions,
 		"chunk_transitions": chunk_transitions, "field_transitions": field_transitions,
 		"captures": capture_rows, "screenshots": screenshots,
