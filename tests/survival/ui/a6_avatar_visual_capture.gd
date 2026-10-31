@@ -358,14 +358,16 @@ func _walk_and_capture(label: String, host: Node) -> bool:
 		# walk is worth nothing to the owner without these four facts.
 		last_detail += " {%s}" % _actor_diagnosis(host)
 		await _wait_frames(6)
-	_fail("%s: walked neither direction (needs %.1f px)%s permitted=%s modals=%s "
+	# The format is applied to the joined template. Binding `%` to the second half
+	# alone printed the raw "%s" template in CI instead of the measurement.
+	var message := "%s: walked neither direction (needs %.1f px)%s permitted=%s modals=%s " \
 		+ "velocity=%s route=%s dead=%s"
-		% [label, MIN_WALK_DISPLACEMENT, last_detail,
-			str(_gate_permits()),
-			str(_visible_modals()),
-			str((host as CharacterBody2D).velocity) if host is CharacterBody2D else "n/a",
-			str(_app_root.call(&"get_current_route")) if is_instance_valid(_app_root) else "",
-			str(host.get(&"dead"))])
+	_fail(message % [label, MIN_WALK_DISPLACEMENT, last_detail,
+		str(_gate_permits()),
+		str(_visible_modals()),
+		str((host as CharacterBody2D).velocity) if host is CharacterBody2D else "n/a",
+		str(_app_root.call(&"get_current_route")) if is_instance_valid(_app_root) else "",
+		str(host.get(&"dead"))])
 	return false
 
 
