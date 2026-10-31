@@ -91,7 +91,7 @@ func _tongue(f: CFrame, x: float, y: float, ang: float, len: float, wid: float, 
         ws.append(wid * pow(sin(PI * minf(1.0, s * 1.5 + 0.12)), 0.8) * (1.0 - s * 0.55))
     f.ribbon(pts, ws, func(px: float, py: float, s: float, e: float) -> void:
         var nz := CMath.noise3(px * 0.28, py * 0.28 - ts * 7.0, seed)
-        var h := CMath.clampf((1.0 - absf(e)) * 1.15 - s * 0.7 + (nz - 0.5) * 0.6) * heat
+        var h := CMath.cl01((1.0 - absf(e)) * 1.15 - s * 0.7 + (nz - 0.5) * 0.6) * heat
         if h < 0.1:
             return
         f.Lc(px, py, fire(h), 0.4 + h * 0.7))
@@ -155,7 +155,7 @@ func _draw_segs(f: CFrame, t: float, front: bool, mode: String, lift: float, alp
                 return
             var band := 1.0 - off / (sw * 0.5)
             var n := CMath.noise3(pa * 5.0 + t * 2.0, rr * 0.3, CMath.step_t(t, 12.0) * 2.0)
-            var h := CMath.clampf((0.45 + 0.55 * n) * (0.55 + 0.45 * band) * heat_g)
+            var h := CMath.cl01((0.45 + 0.55 * n) * (0.55 + 0.45 * band) * heat_g)
             var k := 1.0 if front else 0.55
             var ic := fire(h * (0.95 if front else 0.7) * (1.1 if edge else 1.0))
             var kd := (1.0 - dr) * (1.0 if front else 0.7)
@@ -176,7 +176,7 @@ func _draw_segs(f: CFrame, t: float, front: bool, mode: String, lift: float, alp
             var tl := Vector2(tx, ty).length()
             if tl == 0.0:
                 tl = 1.0
-            var hh := float(sp.h) * CMath.clampf(A * 1.4 - float(sp.u) * 0.4)
+            var hh := float(sp.h) * CMath.cl01(A * 1.4 - float(sp.u) * 0.4)
             var tip := Vector2(B.x + cos(pa) * 2.0, B.y - hh)
             var tri: Array = [Vector2(B.x - (tx / tl) * 2.6, B.y - (ty / tl) * 2.6), Vector2(B.x + (tx / tl) * 2.6, B.y + (ty / tl) * 2.6), tip]
             if mode == "ghost":
@@ -251,7 +251,7 @@ func render(f: CFrame, t: float) -> void:
         for e in _embers:
             var s: Dictionary = _segs[int(e.seg)]
             var pos = func(tt: float) -> Dictionary:
-                var p := CMath.ease_in_out(CMath.clampf(tt / float(e.arr)))
+                var p := CMath.ease_in_out(CMath.cl01(tt / float(e.arr)))
                 var ang: float = float(e.a) + (1.0 - p) * float(e.spin)
                 var ax := C.x + cos(ang) * float(e.rad)
                 var ay := C.y - LIFT + sin(ang) * float(e.rad) * 0.6
