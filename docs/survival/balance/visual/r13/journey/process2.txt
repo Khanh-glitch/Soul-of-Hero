@@ -4,13 +4,13 @@ WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by 
 OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
 
   ok    the second process reads the first process's audit
-A0_CONNECTED_DIAG relaunch path=user://tests/a0_connected_journey.json exists=true size=24679 sha=057f3f729d34a864 run_id=run-1793438722-66a7483f epoch=1.0 state=active phase_state=active ltree=true
+A0_CONNECTED_DIAG relaunch path=user://tests/a0_connected_journey.json exists=true size=24680 sha=aa938ce373d3878f run_id=run-1793439697-3ce0fcab epoch=1.0 state=active phase_state=active ltree=true
 A0_CAPTURE connected_return /home/runner/.local/share/godot/app_userdata/SOUL OF HERO/tests/capture_connected_return_1280x720.png error=0
   ok    the relaunched world exposes its seats
-  ok    the independent process resumed the same run (run-1793438722-66a7483f)
+  ok    the independent process resumed the same run (run-1793439697-3ce0fcab)
   FAIL  the paid furnace survived the relaunch as a physical structure
   ok    the woven cloth survived the relaunch exactly
-A0_CONNECTED_OFFLINE_SETTLE {"blocked":[],"duplicate":false,"ok":true,"proposal_id":"2aceba78a160bb62433b9e9146c303ef00536bde3deac467572a256a86692c58","reason":"nothing_to_settle"}
+A0_CONNECTED_OFFLINE_SETTLE {"blocked":[],"duplicate":false,"ok":true,"proposal_id":"6936dca7b0740d421a393a885cfbb86abb452b01a7c069310d3ca5bf5a9787cb","reason":"nothing_to_settle"}
   FAIL  the prepared fuelled smelt completed while the application was closed ()
 A0 CONNECTED SURVIVAL JOURNEY FAILED - 2/6 (verify)
 WARNING: 10 ObjectDB instances were leaked at exit (run with `--verbose` for details).

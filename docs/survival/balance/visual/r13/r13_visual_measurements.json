@@ -165,7 +165,7 @@
         720
       ],
       "save_result": 0,
-      "png_bytes": 297599,
+      "png_bytes": 297697,
       "sampled_colours": 355,
       "path": "/tmp/captures/r13_overworld_1280x720.png"
     },
@@ -184,7 +184,7 @@
         1440
       ],
       "save_result": 0,
-      "png_bytes": 436221,
+      "png_bytes": 436228,
       "sampled_colours": 350,
       "path": "/tmp/captures/r13_overworld_2560x1440.png"
     },
@@ -203,7 +203,7 @@
         2160
       ],
       "save_result": 0,
-      "png_bytes": 546805,
+      "png_bytes": 546800,
       "sampled_colours": 356,
       "path": "/tmp/captures/r13_overworld_3840x2160.png"
     },
@@ -222,7 +222,7 @@
         720
       ],
       "save_result": 0,
-      "png_bytes": 301871,
+      "png_bytes": 301630,
       "sampled_colours": 361,
       "path": "/tmp/captures/r13_home_1280x720.png"
     }

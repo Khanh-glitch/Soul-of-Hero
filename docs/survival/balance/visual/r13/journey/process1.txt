@@ -34,7 +34,7 @@ NORMAL_BUILD_TRACE target=(29, 185) world=(472.0, 2968.0) window=(545.9849, 265.
   ok    fresh journey has no cloth before collection
   ok    ordinary GUI collects exactly two cloth with one committed receipt
   ok    paid workbench, exact cloth and collection receipt survive reload
-A0_CONNECTED_DIAG after-prefix path=user://tests/a0_connected_journey.json exists=true size=16206 sha=e652e260306c6dbd run_id=run-1793438722-66a7483f epoch=1.0 state=active phase_state=active ltree=true
+A0_CONNECTED_DIAG after-prefix path=user://tests/a0_connected_journey.json exists=true size=16205 sha=74a277c050d35c62 run_id=run-1793439697-3ce0fcab epoch=1.0 state=active phase_state=active ltree=true
 A0_CAPTURE connected_home /home/runner/.local/share/godot/app_userdata/SOUL OF HERO/tests/capture_connected_home_1280x720.png error=0
 A0_CONNECTED prefix_complete=true checks=29 failures=0
   ok    ordinary movement and clicks gather the furnace's 8 stone

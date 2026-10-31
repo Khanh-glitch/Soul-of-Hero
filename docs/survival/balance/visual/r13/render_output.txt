@@ -24,10 +24,10 @@ A7CAPTURE13 FIXTURE_GRANT iron_scrap x30 -> true
 A7CAPTURE13 FIXTURE_GRANT workbench_kit x1 -> true
 A7CAPTURE13 plot found at (54, 235) (chebyshev 2 from the hero)
 A7CAPTURE13 house origin=(54, 235) radius=1 walls=8 room=room_7a5fecea4ed448b712494688f588d81e52dc57f825b62dca7e08ddb44e728d42
-A7CAPTURE13 1280x720 -> image=[1280, 720] save=0 bytes=297599 colours=355 /tmp/captures/r13_overworld_1280x720.png
-A7CAPTURE13 2560x1440 -> image=[2560, 1440] save=0 bytes=436221 colours=350 /tmp/captures/r13_overworld_2560x1440.png
-A7CAPTURE13 3840x2160 -> image=[3840, 2160] save=0 bytes=546805 colours=356 /tmp/captures/r13_overworld_3840x2160.png
-A7CAPTURE13 1280x720 -> image=[1280, 720] save=0 bytes=301871 colours=361 /tmp/captures/r13_home_1280x720.png
+A7CAPTURE13 1280x720 -> image=[1280, 720] save=0 bytes=297697 colours=355 /tmp/captures/r13_overworld_1280x720.png
+A7CAPTURE13 2560x1440 -> image=[2560, 1440] save=0 bytes=436228 colours=350 /tmp/captures/r13_overworld_2560x1440.png
+A7CAPTURE13 3840x2160 -> image=[3840, 2160] save=0 bytes=546800 colours=356 /tmp/captures/r13_overworld_3840x2160.png
+A7CAPTURE13 1280x720 -> image=[1280, 720] save=0 bytes=301630 colours=361 /tmp/captures/r13_home_1280x720.png
 A7CAPTURE13 summary /tmp/captures/r13_visual_measurements.json
 A7CAPTURE13 DONE code=0
 WARNING: 10 ObjectDB instances were leaked at exit (run with `--verbose` for details).
