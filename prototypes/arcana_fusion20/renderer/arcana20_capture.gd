@@ -56,6 +56,7 @@ func _init() -> void:
     f.store_string(JSON.stringify(manifest, "  "))
     f.close()
     _write_index(manifest, names)
+    host.free()
     if _failures.is_empty():
         print("ARCANA20_CAPTURE_RESULT PASS skills=20")
     else:
@@ -149,7 +150,7 @@ func _capture_skill(id: int, sname: String, host: Arcana20Renderer) -> Dictionar
             bp._r.lighting()
             return bp._r.finalize()
         _run_plan(id, sname, dur, stages, grab, dir, bp, contacts, first_contact, 384, 216)
-        bp.queue_free()
+        bp.free()
     elif id == 7 or id == 10 or id == 15 or id == 17:
         var cp := CSourcePlayer.new()
         root.add_child(cp)
@@ -169,7 +170,7 @@ func _capture_skill(id: int, sname: String, host: Arcana20Renderer) -> Dictionar
             cp.set("render_enabled", false)
             return cp.frame_bytes()
         _run_plan(id, sname, dur, stages, grab, dir, cp, contacts, first_contact, 384, 216)
-        cp.queue_free()
+        cp.free()
     elif id == 19:
         var dp := DSourcePlayer.new()
         root.add_child(dp)
@@ -189,7 +190,7 @@ func _capture_skill(id: int, sname: String, host: Arcana20Renderer) -> Dictionar
             dp.set("render_enabled", false)
             return (dp.get("_eng") as DConstellationEngine).frame_bytes()
         _run_plan(id, sname, dur, stages, grab, dir, dp, contacts, first_contact, 480, 270)
-        dp.queue_free()
+        dp.free()
     elif id == 1:
         # Exercise the real fusion clock and map both source sprites into the
         # same world-space viewport. This is FX-only, not a SOH scene.
@@ -221,7 +222,7 @@ func _capture_skill(id: int, sname: String, host: Arcana20Renderer) -> Dictionar
             ap._spell.call("render", ap._fb, ap.source_time())
             return _fusion_world_frame(cp, ap)
         _run_plan(id, sname, dur, stages, grab, dir, fp, contacts, first_contact, 416, 234)
-        fp.queue_free()
+        fp.free()
     else:
         var ap := ASourcePlayer.new()
         root.add_child(ap)
@@ -241,7 +242,7 @@ func _capture_skill(id: int, sname: String, host: Arcana20Renderer) -> Dictionar
             ap._spell.call("render", ap._fb, ap.source_time())
             return ap._fb.present()
         _run_plan(id, sname, dur, stages, grab, dir, ap, contacts, first_contact, 416, 234)
-        ap.queue_free()
+        ap.free()
     return {"id": id, "name": sname, "duration": dur, "contacts": contacts[0],
         "first_contact_t": snappedf(first_contact[0], 0.01)}
 

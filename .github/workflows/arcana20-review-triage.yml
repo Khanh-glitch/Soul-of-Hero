@@ -18,7 +18,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: arcana20-visual-review
-          run-id: 41200681217
+          run-id: 41201951664
           github-token: ${{ github.token }}
           path: prototypes/arcana_fusion20/renderer/evidence_out/review
       - name: Emit stage data and review thumbnails
@@ -31,6 +31,11 @@ jobs:
           root=Path('prototypes/arcana_fusion20/renderer/evidence_out/review')
           manifest=root/'manifest.json'
           print('::notice::REVIEW_MANIFEST '+(manifest.read_text().replace('\n',' ') if manifest.exists() else 'MISSING'))
+          comp=root/'skill_19/d_comparison.json'
+          if comp.exists():
+              d=json.loads(comp.read_text())['results']
+              compact={k:{n:v[n] for n in ('rgb_mae','rgb_max_error','nonblack_mask_iou')} for k,v in d.items()}
+              print('::notice::D_RESULTS '+json.dumps(compact,separators=(',',':')))
           files=sorted(root.glob('skill_*/stages.json'))
           for i in range(0, len(files), 5):
               docs={path.parent.name:json.loads(path.read_text()) for path in files[i:i+5]}
@@ -47,7 +52,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: arcana20-real-scene-diagnostics
-          run-id: 41201624379
+          run-id: 41201951676
           github-token: ${{ github.token }}
           path: prototypes/arcana_fusion20/renderer/evidence_out/real-scene
       - name: Real-scene manifest summary
