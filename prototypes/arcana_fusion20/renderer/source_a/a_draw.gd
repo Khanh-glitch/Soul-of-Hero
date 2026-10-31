@@ -16,6 +16,10 @@ static func field(fb: AFramebuffer, x0: float, y0: float, x1: float, y1: float, 
             out[1] = 0.0
             out[2] = 0.0
             fn.call(x, y, out)
+            # The operation owns its explicit source bounding box; never infer
+            # influence/alpha from out's RGB, including black authored values.
+            if fb.track_world_fields:
+                fb.world_influence[y * AFramebuffer.W + x] = 1
             if float(out[0]) != 0.0 or float(out[1]) != 0.0 or float(out[2]) != 0.0:
                 fb.buf[i] += float(out[0])
                 fb.buf[i + 1] += float(out[1])
@@ -31,6 +35,9 @@ static func field_mul(fb: AFramebuffer, x0: float, y0: float, x1: float, y1: flo
         var i := (y * AFramebuffer.W + xa) * 3
         for x in range(xa, xb + 1):
             var m: float = fn.call(x, y)
+            if fb.track_world_fields:
+                fb.world_multiplier[y * AFramebuffer.W + x] *= m
+                fb.world_influence[y * AFramebuffer.W + x] = 1
             if m != 1.0:
                 fb.buf[i] *= m
                 fb.buf[i + 1] *= m
