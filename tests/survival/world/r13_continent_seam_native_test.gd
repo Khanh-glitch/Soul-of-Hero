@@ -283,8 +283,11 @@ func _sync_stream(record_transition: bool = true) -> void:
 	var region := String(sample.region_id)
 	if region != current_region_id:
 		if record_transition and not current_region_id.is_empty():
+			var previous: Dictionary = continent.sample_world(last_position)
 			region_transitions.append({"frame": physics_serial, "from": current_region_id, "to": region,
-				"world_id": String(sample.world_id), "from_world_id": current_world_id, "cell": sample.cell_array})
+				"world_id": String(sample.world_id), "from_world_id": current_world_id, "cell": sample.cell_array,
+				"from_biome_id": String(previous.get("biome_id", "")), "to_biome_id": String(sample.biome_id),
+				"from_surface_id": String(previous.get("surface_id", "")), "to_surface_id": String(sample.surface_id)})
 		current_region_id = region
 		continent.set_time_of_day(current_time_of_day, current_region_id)
 	current_world_id = String(sample.world_id)
@@ -608,24 +611,28 @@ func _run_site(key: String) -> void:
 
 
 func _run_region_transition() -> void:
+	var start := Vector2i(336, 383)
+	_reset_actor(start)  # Labelled fixture reset; every subsequent crossing is input-driven.
+	await physics_frame
+	await physics_frame
 	var before_region := current_region_id
 	var before_chunk := current_chunk_id
-	var start := Vector2i(140, 369)
 	_expect(continent.world_to_cell(hero.global_position).get("cell", Vector2i(-1, -1)) == start,
-		"region journey starts continuously at Orchard retreat")
+		"region journey starts at body-clear Crown grass after a labelled independent reset")
 	var cells: Array[Vector2i] = []
-	for y: int in range(370, 387):
-		cells.append(Vector2i(140, y))
-	var result: Dictionary = await _drive_cells("Crown to Amberwood physical region/chunk transition", cells)
+	for y: int in range(383, 392):
+		cells.append(Vector2i(336, y))
+	var result: Dictionary = await _drive_cells("Crown grass to Mirrormere marsh physical region/chunk transition", cells)
 	var after: Dictionary = continent.sample_world(hero.global_position)
-	_expect(bool(result.ok) and before_region == "r_ashen_crown" and String(after.region_id) == "r_amberwood"
+	_expect(bool(result.ok) and before_region == "r_ashen_crown" and String(after.region_id) == "r_mirrormere"
+		and String(after.biome_id) == "freshwater_marsh" and String(after.surface_id) == "marsh"
 		and before_chunk != String(after.chunk_id) and String(after.world_id) == "world:soh_continent_v1",
 		"physical crossing changes region and chunk but never world identity")
-	await _capture("region_transition", 0.35, "orchard")
+	await _capture("region_transition", 0.35, "")
 	var back: Array[Vector2i] = []
-	for y: int in range(385, 368, -1):
-		back.append(Vector2i(140, y))
-	await _drive_cells("Amberwood to Crown physical return", back)
+	for y: int in range(390, 382, -1):
+		back.append(Vector2i(336, y))
+	await _drive_cells("Mirrormere marsh to Crown grass physical return", back)
 
 
 func _run_blocked_terrain_negative() -> void:
@@ -691,6 +698,7 @@ func _capture(view_id: String, time_of_day: float, site_key: String) -> void:
 			"sha256": FileAccess.get_sha256(path), "time_of_day": time_of_day,
 			"camera_zoom": [camera.zoom.x, camera.zoom.y], "logical_viewport": [LOGICAL.x, LOGICAL.y],
 			"render_scale": 1, "world_id": String(actor_sample.world_id), "region_id": String(actor_sample.region_id),
+			"biome_id": String(actor_sample.biome_id), "surface_id": String(actor_sample.surface_id),
 			"chunk_id": String(actor_sample.chunk_id), "actor_foot": [hero.global_position.x, hero.global_position.y],
 			"site_key": site_key, "real_a8_scene": String((shells.get(site_key) as Node2D).scene_file_path) if shells.has(site_key) else "",
 			"avatar": avatar_state.duplicate(true), "live_source_chunk_hashes": live_hashes,

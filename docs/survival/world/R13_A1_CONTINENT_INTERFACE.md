@@ -136,7 +136,7 @@ Expected artifact: `a1-r13-continent-seam-native-evidence`, containing the repor
 
 - Quarry day and night at 720p/1440p/2160p;
 - Orchard day and night at 720p/1440p/2160p;
-- a physically driven Crown→Amberwood region/chunk transition at 720p/1440p/2160p.
+- a physically driven Crown grass→Mirrormere marsh region/chunk transition at `(336,383)→(336,384)`, continuing to `(336,391)` and returning, at 720p/1440p/2160p. The route was selected because the existing biome/surface change is source-visible; no marker or geography rewrite is added.
 
 All captures are native 1×; day/night source-lighting state and pixels are checked independently. Frames still require eye inspection for source readability, silhouettes, bank/route readability, night salience, blur/nearest-neighbor scaling and region continuity. Prior traversal success and these captures do not reverse the existing visual HOLD. Do not substitute blurred vector art or rewrite the masterplan to hide a defect.
 

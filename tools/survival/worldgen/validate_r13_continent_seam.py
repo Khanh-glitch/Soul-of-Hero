@@ -87,7 +87,9 @@ def validate(report: dict, manifest: dict, project: Path, require_d051_art: bool
           and not report.get("teleport_violations") and not report.get("stream_violations")
           and not report.get("unexpected_contacts") and float(report.get("max_hero_step_px", 999)) <= 20.0)
     check("physical_region_and_chunk_transition",
-          any(row.get("from") == "r_ashen_crown" and row.get("to") == "r_amberwood"
+          any(row.get("from") == "r_ashen_crown" and row.get("to") == "r_mirrormere"
+              and row.get("from_biome_id") == "temperate_mixed" and row.get("to_biome_id") == "freshwater_marsh"
+              and row.get("from_surface_id") == "grass" and row.get("to_surface_id") == "marsh"
               and row.get("from_world_id") == row.get("world_id") == "world:soh_continent_v1"
               for row in report.get("region_transitions", []))
           and len(report.get("chunk_transitions", [])) >= 1)
@@ -116,6 +118,9 @@ def validate(report: dict, manifest: dict, project: Path, require_d051_art: bool
         valid = valid and row.get("logical_viewport") == [640, 360]
         valid = valid and row.get("world_id") == "world:soh_continent_v1"
         valid = valid and row.get("visual_acceptance") == "NOT_TESTED" and not row.get("production_frame")
+        if view == "region_transition":
+            valid = valid and row.get("region_id") == "r_mirrormere"
+            valid = valid and row.get("biome_id") == "freshwater_marsh" and row.get("surface_id") == "marsh"
         valid = valid and int(row.get("sample_unique_colors", 0)) >= 3 and float(row.get("sample_luminance_range", 0)) > 0.03
         check(f"capture_{view}_{resolution}", valid, row.get("path"))
         if key in by_pair:

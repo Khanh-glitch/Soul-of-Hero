@@ -30,6 +30,10 @@ on:
       - 'docs/survival/world/R13_A1_CONTINENT_INTERFACE.md'
   workflow_dispatch:
 
+concurrency:
+  group: a1-r13-continent-seam-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
