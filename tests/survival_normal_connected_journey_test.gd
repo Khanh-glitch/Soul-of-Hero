@@ -325,6 +325,9 @@ func _verify_body() -> void:
 			String(audit.get("run_id", "")), String(run.get("run_id", ""))])
 	var structures: Dictionary = _survival().call(&"structures")
 	var furnace_id := String(audit.get("furnace_id", ""))
+	if furnace_id.is_empty():
+		_expect(false, "process 1 finished the paid cycle, so there is a furnace to resume (audit has no furnace_id)")
+		return
 	_expect(structures.has(furnace_id), "the paid furnace survived the relaunch as a physical structure")
 	var audit_cell: Array = audit.get("furnace_cell", [])
 	if structures.has(furnace_id) and audit_cell.size() == 2:
@@ -601,12 +604,16 @@ func _wheel_until_visible(scroll: ScrollContainer, control: Control) -> bool:
 		# the next try is the other, exactly as a player would move the mouse.
 		var local_point := rect.size * 0.5 if spot == 0 else Vector2(rect.size.x - 4.0, rect.size.y * 0.5)
 		var target_y := control.get_global_rect().get_center().y
+		var window_point: Vector2 = root.get_final_transform() * (scroll.get_global_transform_with_canvas() * local_point)
+		# Move the pointer onto the list first. A wheel event with no pointer over the
+		# control is not a player action and this engine does not route it there.
+		await _move_pointer(window_point)
+		# A fresh event object per notch: a re-parsed event is dropped by the input
+		# layer, which is why a re-used wheel object never moved a list.
 		var wheel := InputEventMouseButton.new()
-		wheel.position = root.get_final_transform() * (scroll.get_global_transform_with_canvas() * local_point)
+		wheel.position = window_point
 		wheel.button_index = MOUSE_BUTTON_WHEEL_UP if target_y < rect.get_center().y else MOUSE_BUTTON_WHEEL_DOWN
 		wheel.pressed = true
-		Input.parse_input_event(wheel)
-		wheel.pressed = false
 		Input.parse_input_event(wheel)
 		await process_frame
 		var offset := float(scroll.scroll_vertical)
@@ -622,6 +629,15 @@ func _wheel_until_visible(scroll: ScrollContainer, control: Control) -> bool:
 		scroll.get_v_scroll_bar().max_value, str(scroll.get_v_scroll_bar().visible),
 		str(control.is_visible_in_tree())])
 	return false
+
+
+## Ordinary mouse motion: the pointer travels to a point and settles there.
+func _move_pointer(point: Vector2) -> void:
+	var motion := InputEventMouseMotion.new()
+	motion.position = point
+	motion.global_position = point
+	Input.parse_input_event(motion)
+	await process_frame
 
 
 func _open_panel(panel: Node) -> bool:

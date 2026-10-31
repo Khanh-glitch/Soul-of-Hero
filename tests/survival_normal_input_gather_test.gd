@@ -389,13 +389,18 @@ func _scroll_to(scroll: ScrollContainer, control: Control) -> bool:
 	for _i: int in range(60):
 		if scroll.get_global_rect().has_point(control.get_global_rect().get_center()):
 			return true
+		# The pointer has to be over the list, and each notch needs its own event
+		# object: the engine drops a re-parsed one, which is why a re-used wheel
+		# object looked like "wheel input does not scroll".
+		var point: Vector2 = root.get_final_transform() * (scroll.get_global_transform_with_canvas() * (scroll.size * 0.5))
+		var motion := InputEventMouseMotion.new()
+		motion.position = point
+		Input.parse_input_event(motion)
+		await process_frame
 		var wheel := InputEventMouseButton.new()
-		wheel.position = root.get_final_transform() * (scroll.get_global_transform_with_canvas() * (scroll.size * 0.5))
+		wheel.position = point
 		wheel.button_index = MOUSE_BUTTON_WHEEL_UP if control.get_global_rect().get_center().y < scroll.get_global_rect().position.y else MOUSE_BUTTON_WHEEL_DOWN
 		wheel.pressed = true
-		Input.parse_input_event(wheel)
-		await process_frame
-		wheel.pressed = false
 		Input.parse_input_event(wheel)
 		await process_frame
 	print("NORMAL_SCROLL_TRACE scroll=%s target=%s value=%d max=%.1f visible=%s target_parent=%s" % [str(scroll.get_global_rect()), str(control.get_global_rect()), scroll.scroll_vertical, scroll.get_v_scroll_bar().max_value, str(control.is_visible_in_tree()), str(control.get_parent())])
