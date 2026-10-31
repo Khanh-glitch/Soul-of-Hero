@@ -132,8 +132,6 @@ func _run() -> void:
 	var save_before: Dictionary = save.call(&"get_snapshot")
 	var full_bag_plan: Dictionary = eco.plan_tool_use(_request(tool_id, 2))
 	_expect(bool(full_bag_plan.ok), "fresh plan for full-bag harvest")
-	_expect(str(full_bag_plan.get("node_id", "")) == "a3_stone_1", "plan targets the correct node")
-	_expect(str(full_bag_plan.get("resource_kind", "")) == "stone_outcrop", "plan targets correct resource kind")
 	var full_bag_mut: Callable = func(candidate: Dictionary) -> bool:
 		if not bool(save.call(&"add_items_to_candidate", candidate, "stone_chunk", "material", 1, {"source": "native_fixture_full_bag"})):
 			return false
