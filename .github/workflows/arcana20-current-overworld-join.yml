@@ -52,6 +52,14 @@ jobs:
             2>&1 | tee "$RUNNER_TEMP/arcana20-join/artifacts/join.log"
           grep -Fq 'ARCANA20_JOIN_DIAGNOSTIC PASS' "$RUNNER_TEMP/arcana20-join/artifacts/join.log"
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Shader compilation failed|JOIN_FAIL' "$RUNNER_TEMP/arcana20-join/artifacts/join.log"
+      - name: Surface paired C16 living-growth world crops
+        if: always()
+        run: |
+          dir="$RUNNER_TEMP/arcana20-join/artifacts/arcana20-join"
+          if test -f "$dir/fusion_16_living_membranes_with_a.png" && test -f "$dir/fusion_16_a_without_c_living_membranes.png"; then
+            python3 -m pip install --quiet pillow numpy
+            python3 prototypes/arcana_fusion20/renderer/arcana20_surface_worldseed.py "$dir"
+          fi
       - name: Summarize findings
         if: always()
         run: |
