@@ -69,6 +69,11 @@
         ]
       }
     ],
+    "steps_out_of_footprint": 40,
+    "hero_cell_when_building": [
+      56,
+      237
+    ],
     "house": {
       "built": true,
       "origin": [
@@ -155,7 +160,7 @@
         720
       ],
       "save_result": 0,
-      "png_bytes": 307715,
+      "png_bytes": 307732,
       "sampled_colours": 365,
       "path": "/tmp/captures/r13_overworld_1280x720.png"
     },
@@ -174,7 +179,7 @@
         1440
       ],
       "save_result": 0,
-      "png_bytes": 453494,
+      "png_bytes": 453638,
       "sampled_colours": 360,
       "path": "/tmp/captures/r13_overworld_2560x1440.png"
     },
@@ -193,7 +198,7 @@
         2160
       ],
       "save_result": 0,
-      "png_bytes": 569115,
+      "png_bytes": 569386,
       "sampled_colours": 362,
       "path": "/tmp/captures/r13_overworld_3840x2160.png"
     },
@@ -212,7 +217,7 @@
         720
       ],
       "save_result": 0,
-      "png_bytes": 288252,
+      "png_bytes": 288108,
       "sampled_colours": 342,
       "path": "/tmp/captures/r13_home_1280x720.png"
     }

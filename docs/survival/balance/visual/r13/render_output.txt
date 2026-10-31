@@ -26,10 +26,10 @@ A7CAPTURE13 plot found at (55, 236) (chebyshev 1 from the hero)
 A7CAPTURE13 NOTE placement wall_wood at (56, 237) refused: hero_in_footprint
 A7CAPTURE13 NOTE placement bed_wood at (55, 236) refused: bed_requires_room
 A7CAPTURE13 house origin=(55, 236) radius=1 walls=7 room=<none>
-A7CAPTURE13 1280x720 -> image=[1280, 720] save=0 bytes=307715 colours=365 /tmp/captures/r13_overworld_1280x720.png
-A7CAPTURE13 2560x1440 -> image=[2560, 1440] save=0 bytes=453494 colours=360 /tmp/captures/r13_overworld_2560x1440.png
-A7CAPTURE13 3840x2160 -> image=[3840, 2160] save=0 bytes=569115 colours=362 /tmp/captures/r13_overworld_3840x2160.png
-A7CAPTURE13 1280x720 -> image=[1280, 720] save=0 bytes=288252 colours=342 /tmp/captures/r13_home_1280x720.png
+A7CAPTURE13 1280x720 -> image=[1280, 720] save=0 bytes=307732 colours=365 /tmp/captures/r13_overworld_1280x720.png
+A7CAPTURE13 2560x1440 -> image=[2560, 1440] save=0 bytes=453638 colours=360 /tmp/captures/r13_overworld_2560x1440.png
+A7CAPTURE13 3840x2160 -> image=[3840, 2160] save=0 bytes=569386 colours=362 /tmp/captures/r13_overworld_3840x2160.png
+A7CAPTURE13 1280x720 -> image=[1280, 720] save=0 bytes=288108 colours=342 /tmp/captures/r13_home_1280x720.png
 A7CAPTURE13 summary /tmp/captures/r13_visual_measurements.json
 A7CAPTURE13 DONE code=0
 WARNING: 10 ObjectDB instances were leaked at exit (run with `--verbose` for details).
