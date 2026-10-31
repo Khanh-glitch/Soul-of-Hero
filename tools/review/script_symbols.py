@@ -47,10 +47,70 @@ def declared_names(paths: list[Path]) -> set[str]:
     return names
 
 
+INNER_CLASS = re.compile(r"^class\s+(\w+)\s*:", re.M)
+# A type annotation is `name: Type` or `-> Type`. The colon must not be part of `::`,
+# and prose inside a comment is not code, so comments are stripped before matching -
+# otherwise strings like "A6 -> A0" and "::error::..." produce nonsense.
+BASELINE_PATH = Path(__file__).with_name("known_types.txt")
+DECLARATION = re.compile(r"^\s*(?:@\w+\s+)?(?:static\s+)?(?:var|func|const)\s")
+ANNOTATION = re.compile(r"(?<!:):\s*([A-Z]\w*)\b")
+RETURN_TYPE = re.compile(r"->\s*([A-Z]\w*)\b")
+
+
+STRING_LITERAL = re.compile(r'"(?:[^"\\]|\\.)*"|\'(?:[^\'\\]|\\.)*\'')
+
+
+def _code_only(text: str) -> str:
+    out: list[str] = []
+    for line in text.splitlines():
+        hash_at = line.find("#")
+        code = line if hash_at < 0 else line[:hash_at]
+        out.append(STRING_LITERAL.sub('""', code))
+    return "\n".join(out)
+
+
+def declared_class_names(paths: list[Path]) -> set[str]:
+    names: set[str] = set()
+    for path in paths:
+        for match in re.finditer(r"^class_name\s+(\w+)",
+                                 path.read_text(encoding="utf-8", errors="replace"), re.M):
+            names.add(match.group(1))
+    return names
+
+
+def collect_types(paths: list[Path]) -> dict[str, list[str]]:
+    """Every type name used on a declaration line, mapped to where it was seen.
+
+    A dictionary literal `{"key": VALUE}` looks exactly like an annotation
+    `var x: Type`, and prose that survives comment stripping looks like a return type,
+    so only declaration lines are read.
+    """
+    found: dict[str, list[str]] = {}
+    for path in paths:
+        text = _code_only(path.read_text(encoding="utf-8", errors="replace"))
+        for line_number, line in enumerate(text.splitlines(), start=1):
+            if not DECLARATION.match(line):
+                continue
+            for pattern in (ANNOTATION, RETURN_TYPE):
+                for match in pattern.finditer(line):
+                    found.setdefault(match.group(1), []).append(f"{path}:{line_number}")
+    return found
+
+
+def load_baseline() -> set[str]:
+    if not BASELINE_PATH.exists():
+        return set()
+    return {
+        line.strip()
+        for line in BASELINE_PATH.read_text(encoding="utf-8").splitlines()
+        if line.strip() and not line.startswith("#")
+    }
+
+
 def main(argv: list[str]) -> int:
     roots = [Path(arg) for arg in argv] or [Path("game"), Path("tests")]
     files = [p for root in roots for p in root.rglob("*.gd")]
-    known = declared_names(files)
+    known = declared_names(files) | declared_class_names(files)
 
     failures: list[str] = []
     for path in files:
@@ -70,9 +130,26 @@ def main(argv: list[str]) -> int:
                 continue
             failures.append(f"{path}:{line}: calls '{name}()' but no script declares it\n    {source_line[:140]}")
 
+    # Types that the tree already uses are not this check's business: the engine, the
+    # project's own class_name registry and every autoload live outside these files, and
+    # re-deriving that list here would mean maintaining an allow-list forever. What
+    # matters is a NEW unresolved name - the shape of a class deleted while its
+    # annotations stayed behind.
+    declared_anywhere = set()
+    for path in files:
+        raw = path.read_text(encoding="utf-8", errors="replace")
+        declared_anywhere.update(INNER_CLASS.findall(raw))
+    declared_anywhere |= declared_class_names(files) | known
+    baseline = load_baseline()
+    for name, sites in sorted(collect_types(files).items()):
+        if name in declared_anywhere or name in baseline:
+            continue
+        for site in sites:
+            failures.append(f"{site}: uses undeclared type '{name}'")
+
     for failure in failures:
         print("FAIL " + failure)
-    print(f"symbol check: {len(files)} scripts, {len(failures)} undefined helper calls")
+    print(f"symbol check: {len(files)} scripts, {len(failures)} unresolved symbols")
     return 1 if failures else 0
 
 

@@ -117,6 +117,15 @@ func _run() -> void:
 	_finish()
 
 
+## The mounted panel and the owner it talks to. Typed on purpose: fields of a
+## Dictionary are Variants, and GDScript refuses to infer from those, so a Dictionary
+## rig turns every `var n := rig.host.count()` into a compile error found only in CI.
+class Rig:
+	extends RefCounted
+	var panel: Node
+	var host: FakeHost
+
+
 # --- cases ------------------------------------------------------------------
 
 
