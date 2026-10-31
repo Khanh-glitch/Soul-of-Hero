@@ -1,0 +1,28 @@
+name: ARCANA19 inspect isolated source diagnostic
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana19-pass-triage.yml']
+permissions:
+  actions: read
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcana19-d-isolated-source-fields
+          run-id: 41212972194
+          github-token: ${{ github.token }}
+          path: review
+      - name: Inspect first captured diagnostic output
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          for path in Path('review').rglob('*.log'):
+              lines=path.read_text(errors='replace').splitlines()
+              print('::notice::D19_TRIAGE '+str(path)+' '+(' | '.join(lines[-20:]) or '(empty)')[:3700].replace('%','%25'))
+          print('::notice::D19_TRIAGE_FILES '+str([str(p) for p in Path('review').rglob('*') if p.is_file()]))
+          PY
