@@ -55,16 +55,16 @@ func _run() -> void:
 
     # Exact JS Number + signed bitwise hash results, generated from the
     # original engine/math.ts expression, not tuned image thresholds.
-    check(AMath.hash2(1, 2) == 0.11692661442793906, "A hash2 JS signed/float 1,2")
-    check(AMath.hash2(-5, 9) == 0.14582930994220078, "A hash2 JS signed/float -5,9")
-    check(AMath.hash2(10, 20) == 0.24044638429768384, "A hash2 JS signed/float 10,20")
+    check(int(AMath.hash2(1, 2) * 4294967296.0) == 502195985, "A hash2 JS signed/float 1,2")
+    check(int(AMath.hash2(-5, 9) * 4294967296.0) == 626332117, "A hash2 JS signed/float -5,9")
+    check(int(AMath.hash2(10, 20) * 4294967296.0) == 1032709357, "A hash2 JS signed/float 10,20")
     var hash_large := AMath.hash2(9000, 1244)
     var debug_h := AMath._signed32(int(9000.0 * 374761393.0 + 1244.0 * 668265263.0))
     var debug_mix := debug_h ^ (debug_h >> 13)
     var debug_product := AMath._signed32(int(float(debug_mix) * 1274126177.0))
-    check(hash_large == 0.008933292934671044, "A hash2 JS signed/float 9000,1244 actual=%.17f h=%d mix=%d product=%d" % [hash_large, debug_h, debug_mix, debug_product])
-    check(AMath.hash3(1, 2, 3) == 0.29924265178851783, "A hash3 JS signed/float 1,2,3")
-    check(AMath.hash3(-3, 9, -4) == 0.4674732191488147, "A hash3 JS signed/float -3,9,-4")
+    check(int(hash_large * 4294967296.0) == 38368201, "A hash2 JS signed/float 9000,1244 actual=%.17f h=%d mix=%d product=%d" % [hash_large, debug_h, debug_mix, debug_product])
+    check(int(AMath.hash3(1, 2, 3) * 4294967296.0) == 1285237403, "A hash3 JS signed/float 1,2,3")
+    check(int(AMath.hash3(-3, 9, -4) * 4294967296.0) == 2007782188, "A hash3 JS signed/float -3,9,-4")
 
     var bloom_lead := AAbyssalBloomLead.new()
     bloom_lead.setup()
