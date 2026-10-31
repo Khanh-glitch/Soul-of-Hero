@@ -359,8 +359,13 @@ jobs:
             echo "::error title=Workshop GUI input ${res}::exit=${status}, $(wc -c < "${log}") bytes: $(tr '\n' '~' < "${log}" | cut -c1-2600)"
             exit 1
           fi
-          grep -q "at ${res}" "${log}" \
-            || { echo "::error::the GUI test ran at the wrong viewport size"; exit 1; }
+          # The canvas is 640x360 by design (canvas_items stretch); the window is the
+          # resolution a reviewer actually looks at, so that is what is asserted.
+          if ! grep -q "at ${res} " "${log}"; then
+            echo "::error::the GUI test ran at the wrong window size: $(grep -o 'at [0-9]*x[0-9]*' "${log}" | tail -1)"
+            exit 1
+          fi
+          grep -o "A6 WORKSHOP GUI INPUT PASSED.*" "${log}" | sed 's/^/::notice::/'
 
       - name: Render the survival overworld HUD and workshop through the real world
         run: |

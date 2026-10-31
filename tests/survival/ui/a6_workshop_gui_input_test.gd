@@ -500,6 +500,13 @@ func _finish() -> void:
 	get_tree().quit(1)
 
 
+## The window size, not the canvas size. This project renders on a 640x360 canvas with
+## `canvas_items` stretch and `expand` aspect, so the viewport reports 640x360 at every
+## matrix resolution while the window - and therefore every rendered pixel a reviewer
+## looks at - is 1280x720, 2560x1440 or 3840x2160.
 func _resolution() -> String:
-	var size := get_viewport().get_visible_rect().size
-	return "%dx%d" % [int(size.x), int(size.y)]
+	var window := DisplayServer.window_get_size()
+	var canvas := get_viewport().get_visible_rect().size
+	return "%dx%d (canvas %dx%d)" % [
+		int(window.x), int(window.y), int(canvas.x), int(canvas.y),
+	]
