@@ -1,4 +1,6 @@
 <!-- CT_FINISHLINE_ACTIVE_START -->
+**2026-11-01 Docs 04/12 verified:** Creator rejection of world pilot 93c80959 has now been appended and read back in both Google Docs tabs. The previous short Git rejection checkpoint remains authoritative. No Arena prompt sent or ACK.
+
 ## CT CHECKPOINT 2026-11-01 — Candidate map pilot rejected by creator
 
 Candidate arena/103e4440-soul-of-hero at 93c80959835b05e45176a0ba745749d5991b9675 was NOT accepted as an art-direction deliverable. Three gates failed: (1) old atlases reused; new supplied 42 CraftPix packs not accessible in candidate Arena, (2) Knight sprite used despite locked D051 male base 555940/female base 419402, (3) creator assessed placement as cluttered and purposeless despite traceable rendering. D052 prohibits cosmetic filler. The earlier CT suggestion to fix Python/Godot parity first is superseded as inadequate art task prioritization. Technical lessons retained; NO visual acceptance, owner handover, Arena dispatch, ACK or merge. PR20 correction #6547541781.
