@@ -49,13 +49,14 @@ func setup() -> void:
     var ks := [26.0, 13.0, 9.0, 17.0, 5.5]
     for i in range(5):
         var a: float = angs[i]
-        var base := Vector2(CASTER.x + 4.0 + cos(a) * 6.0, CASTER.y + sin(a) * 4.0 + 1.0)
+        var bx := CASTER.x + 4.0 + cos(a) * 6.0
+        var by := CASTER.y + sin(a) * 4.0 + 1.0
         var pos: Array = []
         var prev: Array = []
         for j in range(M):
-            pos.append(Vector2(base))
-            prev.append(Vector2(base))
-        _tds.append({"a": a, "i": i, "base": base, "pos": pos, "prev": prev, "tip": Vector2(base), "k": ks[i]})
+            pos.append([bx, by])
+            prev.append([bx, by])
+        _tds.append({"a": a, "i": i, "base": [bx, by], "pos": pos, "prev": prev, "tip": [bx, by], "k": ks[i]})
     _lashes.clear()
     for k in range(3):
         _lashes.append({"t": TB + 0.04 + float(k) * 0.1, "a0": -2.4 + float(k) * 1.9 + _rng.r(-0.3, 0.3),
@@ -72,114 +73,119 @@ func authored_events() -> Array:
         {"t": 7.6, "kind": "aftermath_fade", "pos_local": Vector2(FZ), "emitted": false},
     ]
 
-func _cho(i: int, t: float) -> Vector2:
+func _cho(i: int, t: float) -> Array:
     var td: Dictionary = _tds[i]
-    var b: Vector2 = td.base
-    var rest := Vector2(b.x + cos(float(td.a)) * 55.0 + sin(t * 1.3 + float(i)) * 8.0, b.y + sin(float(td.a)) * 40.0 + cos(t * 1.1 + float(i) * 2.0) * 6.0)
+    var b: Array = td.base
+    var rest := [float(b[0]) + cos(float(td.a)) * 55.0 + sin(t * 1.3 + float(i)) * 8.0, float(b[1]) + sin(float(td.a)) * 40.0 + cos(t * 1.1 + float(i) * 2.0) * 6.0]
     if t < 0.75:
         var g := CMath.ease_out(t / 0.75)
         var a := float(td.a) + (1.0 - g) * 2.5
-        return Vector2(b.x + cos(a) * 34.0 * g, b.y + sin(a) * 26.0 * g)
+        return [float(b[0]) + cos(a) * 34.0 * g, float(b[1]) + sin(a) * 26.0 * g]
     if t < 2.7:
         var q := (t - 0.75 - float(i) * 0.37) / 0.55
         if q < 0.0 or q > 1.0:
             return rest
         match i:
             0:
-                return Vector2(TARGETS[0].x, TARGETS[0].y - 6.0) if q < 0.35 else rest
+                return [TARGETS[0].x, TARGETS[0].y - 6.0] if q < 0.35 else rest
             1:
                 if q < 0.3:
                     var a := q * 34.0
-                    return Vector2(b.x + 26.0 + cos(a) * 14.0, b.y - 4.0 + sin(a) * 10.0)
-                return Vector2(TARGETS[2].x, TARGETS[2].y - 5.0)
+                    return [float(b[0]) + 26.0 + cos(a) * 14.0, float(b[1]) - 4.0 + sin(a) * 10.0]
+                return [TARGETS[2].x, TARGETS[2].y - 5.0]
             2:
                 if q < 0.45:
                     var u := q / 0.45
-                    return Vector2(CMath.lerp(rest.x, TARGETS[1].x, u), CMath.lerp(rest.y, TARGETS[1].y, u) + sin(u * 14.0) * 22.0)
-                return Vector2(TARGETS[1].x - 34.0, TARGETS[1].y - 30.0)
+                    return [CMath.lerp(float(rest[0]), TARGETS[1].x, u), CMath.lerp(float(rest[1]), TARGETS[1].y, u) + sin(u * 14.0) * 22.0]
+                return [TARGETS[1].x - 34.0, TARGETS[1].y - 30.0]
             3:
                 if q < 0.5:
                     var a := CMath.lerp(-1.1, 1.0, q / 0.5)
-                    return Vector2(CASTER.x + cos(a) * 112.0, CASTER.y + sin(a) * 80.0)
-                return Vector2(CASTER.x + 60.0, CASTER.y - 44.0)
+                    return [CASTER.x + cos(a) * 112.0, CASTER.y + sin(a) * 80.0]
+                return [CASTER.x + 60.0, CASTER.y - 44.0]
             4:
                 if q < 0.45:
                     var u := q * 9.0
-                    return Vector2(rest.x + sin(u) * 22.0, rest.y + sin(u * 2.0) * 12.0)
-                return Vector2(TARGETS[3].x, TARGETS[3].y - 6.0)
+                    return [float(rest[0]) + sin(u) * 22.0, float(rest[1]) + sin(u * 2.0) * 12.0]
+                return [TARGETS[3].x, TARGETS[3].y - 6.0]
     if t < 3.9:
         var u := CMath.ease_in_out(CMath.cl01((t - 2.7 - float(i >> 1) * 0.16) / 0.75))
         var a := CMath.lerp(1.1, -1.1, u) if i % 2 else CMath.lerp(-1.1, 1.1, u)
-        return Vector2(CASTER.x + cos(a) * 118.0, CASTER.y + sin(a) * 86.0)
+        return [CASTER.x + cos(a) * 118.0, CASTER.y + sin(a) * 86.0]
     if t < 4.7:
         var a := float(i - 2) * 0.42
         var r := 72.0 + 52.0 * absf(sin((t - 3.9) * PI * 2.5))
-        return Vector2(CASTER.x + cos(a) * r, CASTER.y + sin(a) * r * 0.8)
+        return [CASTER.x + cos(a) * r, CASTER.y + sin(a) * r * 0.8]
     if t < TB:
         var q := CMath.inv(4.7, 5.6, t)
         var a := float(i) / 5.0 * CMath.TAU + (t - 4.7) * 3.2
         var r := 18.0 * (1.0 - q * 0.6)
-        return Vector2(FZ.x + cos(a) * r, FZ.y + sin(a) * r * 0.75)
+        return [FZ.x + cos(a) * r, FZ.y + sin(a) * r * 0.75]
     if t < 6.5:
         var a := float(i) / 5.0 * CMath.TAU + 0.3
-        return Vector2(FZ.x + cos(a) * 85.0, FZ.y + sin(a) * 62.0)
-    return Vector2(b.x + cos(float(td.a)) * 30.0, b.y + sin(float(td.a)) * 18.0 + 10.0)
+        return [FZ.x + cos(a) * 85.0, FZ.y + sin(a) * 62.0]
+    return [float(b[0]) + cos(float(td.a)) * 30.0, float(b[1]) + sin(float(td.a)) * 18.0 + 10.0]
 
 func update(dt: float, t: float) -> void:
     CKit.particles_update(_ps, dt)
     var grow := CMath.ease_out(CMath.inv(0.05, 0.8, t)) * (1.0 - 0.88 * CMath.inv(6.6, 8.0, t))
     var rl := LS * (0.12 + 0.88 * grow)
     for td in _tds:
-        var tg := _cho(int(td.i), t)
+        var tg: Array = _cho(int(td.i), t)
         var k := float(td.k) * 1.6 if (t > 0.75 and t < 2.7) else (30.0 if (t > TB and t < 6.2) else float(td.k))
-        var tip: Vector2 = td.tip
-        tip += (tg - tip) * (1.0 - exp(-dt * k))
-        td.tip = tip
+        var tip: Array = td.tip
+        var tipx := float(tip[0]) + (float(tg[0]) - float(tip[0])) * (1.0 - exp(-dt * k))
+        var tipy := float(tip[1]) + (float(tg[1]) - float(tip[1])) * (1.0 - exp(-dt * k))
+        td.tip = [tipx, tipy]
         var P2: Array = td.pos
         var PV: Array = td.prev
         for j in range(1, M):
-            var pj: Vector2 = P2[j]
-            var pvj: Vector2 = PV[j]
-            var vx := (pj.x - pvj.x) * 0.93
-            var vy := (pj.y - pvj.y) * 0.93
-            PV[j] = Vector2(pj)
-            P2[j] = Vector2(pj.x + vx, pj.y + vy)
-        var tip_prev := Vector2(PV[M - 1])
-        P2[M - 1] = Vector2(P2[M - 1].x + (tip.x - P2[M - 1].x) * 0.3, P2[M - 1].y + (tip.y - P2[M - 1].y) * 0.3)
+            var pj: Array = P2[j]
+            var pvj: Array = PV[j]
+            var vx := (float(pj[0]) - float(pvj[0])) * 0.93
+            var vy := (float(pj[1]) - float(pvj[1])) * 0.93
+            PV[j] = [float(pj[0]), float(pj[1])]
+            P2[j] = [float(pj[0]) + vx, float(pj[1]) + vy]
+        var tip_prev: Array = PV[M - 1]
+        var lastp: Array = P2[M - 1]
+        P2[M - 1] = [float(lastp[0]) + (tipx - float(lastp[0])) * 0.3, float(lastp[1]) + (tipy - float(lastp[1])) * 0.3]
+        var base_a: Array = td.base
         for it in range(10):
-            P2[0] = Vector2(td.base)
+            P2[0] = [float(base_a[0]), float(base_a[1])]
             for j in range(M - 1):
-                var a: Vector2 = P2[j]
-                var b: Vector2 = P2[j + 1]
-                var dx := b.x - a.x
-                var dy := b.y - a.y
-                var d := Vector2(dx, dy).length()
+                var a: Array = P2[j]
+                var b: Array = P2[j + 1]
+                var dx := float(b[0]) - float(a[0])
+                var dy := float(b[1]) - float(a[1])
+                var d := sqrt(dx * dx + dy * dy)
                 if d == 0.0:
                     d = 1e-4
                 var df := (d - rl) / d
                 if j == 0:
-                    P2[j + 1] = Vector2(b.x - dx * df, b.y - dy * df)
+                    P2[j + 1] = [float(b[0]) - dx * df, float(b[1]) - dy * df]
                 else:
-                    P2[j] = Vector2(a.x + dx * df * 0.5, a.y + dy * df * 0.5)
-                    P2[j + 1] = Vector2(b.x - dx * df * 0.5, b.y - dy * df * 0.5)
+                    P2[j] = [float(a[0]) + dx * df * 0.5, float(a[1]) + dy * df * 0.5]
+                    P2[j + 1] = [float(b[0]) - dx * df * 0.5, float(b[1]) - dy * df * 0.5]
             for j in range(M - 2):
-                var a: Vector2 = P2[j]
-                var c: Vector2 = P2[j + 2]
-                var dx := c.x - a.x
-                var dy := c.y - a.y
-                var d := Vector2(dx, dy).length()
+                var a: Array = P2[j]
+                var c: Array = P2[j + 2]
+                var dx := float(c[0]) - float(a[0])
+                var dy := float(c[1]) - float(a[1])
+                var d := sqrt(dx * dx + dy * dy)
                 if d == 0.0:
                     d = 1e-4
                 if d < rl * 1.55:
                     var df := (d - rl * 1.55) / d * 0.25
                     if j > 0:
-                        P2[j] = Vector2(a.x + dx * df, a.y + dy * df)
-                    P2[j + 2] = Vector2(c.x - dx * df, c.y - dy * df)
-        var sp := (Vector2(P2[M - 1]) - tip_prev).length() / dt
+                        P2[j] = [float(a[0]) + dx * df, float(a[1]) + dy * df]
+                    P2[j + 2] = [float(c[0]) - dx * df, float(c[1]) - dy * df]
+        var endp: Array = P2[M - 1]
+        var sp := sqrt(pow(float(endp[0]) - float(tip_prev[0]), 2.0) + pow(float(endp[1]) - float(tip_prev[1]), 2.0)) / dt
         if sp > 230.0 and _rng.chance(0.5):
-            _ps.append(CKit.pt_defaults({"x": P2[M - 2].x, "y": P2[M - 2].y, "z": 3.0,
-                "vx": (P2[M - 1].x - tip_prev.x) / dt * 0.25 + _rng.r(-20.0, 20.0),
-                "vy": (P2[M - 1].y - tip_prev.y) / dt * 0.25 + _rng.r(-20.0, 20.0),
+            var pm2: Array = P2[M - 2]
+            _ps.append(CKit.pt_defaults({"x": float(pm2[0]), "y": float(pm2[1]), "z": 3.0,
+                "vx": (float(endp[0]) - float(tip_prev[0])) / dt * 0.25 + _rng.r(-20.0, 20.0),
+                "vy": (float(endp[1]) - float(tip_prev[1])) / dt * 0.25 + _rng.r(-20.0, 20.0),
                 "vz": _rng.r(10.0, 40.0), "grav": 18.0, "drag": 1.2, "spin": _rng.r(-8.0, 8.0),
                 "kind": "petal", "col": CPalette.P["leaf"] if _rng.chance(0.5) else CPalette.P["bloom"], "max": _rng.r(1.2, 2.2)}))
     if not _bloomed and t >= TB:
@@ -198,7 +204,11 @@ func update(dt: float, t: float) -> void:
 
 func render(f: CFrame, t: float) -> void:
     for td in _tds:
-        var pts := CMath.catmull(td.pos, 2)
+        var vpos: Array = []
+        for pp in td.pos:
+            var pa: Array = pp
+            vpos.append(Vector2(float(pa[0]), float(pa[1])))
+        var pts := CMath.catmull(vpos, 2)
         var n := pts.size()
         var ws: Array = []
         for j in range(n):
@@ -214,9 +224,9 @@ func render(f: CFrame, t: float) -> void:
                 f.Lc(x, y, CPalette.ramp(CPalette.P["leaf"], 0.85), 0.1))
         var j := 2
         while j < M - 1:
-            var p: Vector2 = td.pos[j]
-            var a: Vector2 = td.pos[j - 1]
-            var b: Vector2 = td.pos[j + 1]
+            var p: Vector2 = vpos[j]
+            var a: Vector2 = vpos[j - 1]
+            var b: Vector2 = vpos[j + 1]
             var tx := b.x - a.x
             var ty := b.y - a.y
             var tl := Vector2(tx, ty).length()
@@ -237,7 +247,7 @@ func render(f: CFrame, t: float) -> void:
             if j % 6 == 4:
                 flower(f, p.x - nx * w, p.y - ny * w, 0.35, float(j) + t, 3.0, CPalette.P["leaf"])
             j += 2
-        f.Lc(td.pos[M - 1].x, td.pos[M - 1].y, CPalette.ramp(CPalette.P["leaf"], 1.0), 0.7)
+        f.Lc(vpos[M - 1].x, vpos[M - 1].y, CPalette.ramp(CPalette.P["leaf"], 1.0), 0.7)
     if t > 4.9 and t < TB:
         var g := CMath.inv(4.9, 5.7, t)
         f.disc(FZ.x, FZ.y - 2.0, 3.0 + g * 8.0, func(x: int, y: int, d: float) -> void:
