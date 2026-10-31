@@ -56,7 +56,7 @@ jobs:
         if: always()
         run: |
           if test -f "$RUNNER_TEMP/arcana20-join/artifacts/join.log"; then
-            grep -E 'JOIN_(OK|FAIL).*C16 (living membranes active|original membranes independently|original cellular organism)' "$RUNNER_TEMP/arcana20-join/artifacts/join.log" | sed 's/^/::notice title=C16_WORLD_GROWTH::/' || true
+            grep -E 'JOIN_(OK|FAIL).*C16 (living membranes active|original membranes independently|original cellular organism|original leaflets)' "$RUNNER_TEMP/arcana20-join/artifacts/join.log" | sed 's/^/::notice title=C16_WORLD_GROWTH::/' || true
           fi
       - name: Surface paired C16 living-growth world crops
         if: always()
@@ -66,12 +66,19 @@ jobs:
             python3 -m pip install --quiet pillow numpy
             python3 prototypes/arcana_fusion20/renderer/arcana20_surface_worldseed.py "$dir"
           fi
-      - name: Surface paired C16 original-organism world trial
+      - name: Surface real-world baseline for C16 organism trial
         if: always()
         run: |
           dir="$RUNNER_TEMP/arcana20-join/artifacts/arcana20-join"
           if test -f "$dir/fusion_16_trial_without_organism.png" && test -f "$dir/fusion_16_trial_with_organism.png"; then
-            python3 prototypes/arcana_fusion20/renderer/arcana20_surface_worldseed.py "$dir" organism
+            python3 prototypes/arcana_fusion20/renderer/arcana20_surface_worldseed.py "$dir" organism without_organism
+          fi
+      - name: Surface original C16 organism on the real world
+        if: always()
+        run: |
+          dir="$RUNNER_TEMP/arcana20-join/artifacts/arcana20-join"
+          if test -f "$dir/fusion_16_trial_without_organism.png" && test -f "$dir/fusion_16_trial_with_organism.png"; then
+            python3 prototypes/arcana_fusion20/renderer/arcana20_surface_worldseed.py "$dir" organism with_organism
           fi
       - name: Summarize findings
         if: always()

@@ -16,6 +16,7 @@ cx=int((xs.min()+xs.max())/2);cy=int((ys.min()+ys.max())/2);h,w=a.shape[:2]
 x0=max(0,min(w-wanted_w,cx-wanted_w//2));y0=max(0,min(h-wanted_h,cy-wanted_h//2))
 print(f'::notice title={prefix}_INFO::'+json.dumps({'rect':[x0,y0,wanted_w,wanted_h],'changed_pixels':int(mask.sum()),'scope':f'actual frozen current overworld; tick {330 if organism else 120}, diagnostic only, not Gold or owner approval'}))
 for label,img in zip(labels,(a,b)):
+ if len(sys.argv)>3 and sys.argv[3]!=label: continue
  im=Image.fromarray(img[y0:y0+wanted_h,x0:x0+wanted_w],'RGB').resize((96,67),Image.Resampling.NEAREST)
  buf=io.BytesIO();im.save(buf,format='PNG',optimize=True);encoded=base64.b64encode(buf.getvalue()).decode()
  for i in range(0,len(encoded),2800):print(f'::notice title={prefix}_{label}_{i//2800}::{encoded[i:i+2800]}')

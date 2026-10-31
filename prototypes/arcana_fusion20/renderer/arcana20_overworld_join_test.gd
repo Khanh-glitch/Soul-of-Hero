@@ -660,6 +660,21 @@ func _run() -> void:
         organism_mask.c_influence = isolated_organism.world_influence
         var org_contamination := contamination(no_organism, with_organism, c16_c_viewer, organism_mask)
         check(int(org_contamination.get("inside_changed",0)) > 0 and int(org_contamination.get("outside_changed",-1)) == 0, "C16 original cellular organism separately affects real world behind A only inside C influence: " + str(org_contamination))
+        # Probe the 14 original leaflet ribbons independently from the
+        # larger cellular organism and the already-present seed debris.
+        c16_trial.leaflets = CWorldseedLeaflets.new()
+        seed_debris._render_frame()
+        await process_frame
+        await process_frame
+        var with_leaflets := await save_frame("fusion_16_trial_with_leaflets")
+        var isolated_leaflets := CFrame.new()
+        isolated_leaflets.track_world_fragments = true
+        isolated_leaflets.clear()
+        c16_trial.leaflets.render(isolated_leaflets, float(seed_debris._tick) * STEP)
+        organism_mask.c_influence = isolated_leaflets.world_influence
+        var leaflet_contamination := contamination(with_organism, with_leaflets, c16_c_viewer, organism_mask)
+        check(int(leaflet_contamination.get("inside_changed",0)) > 0 and int(leaflet_contamination.get("outside_changed",-1)) == 0, "C16 original leaflets separately affect real world only inside leaflet influence: " + str(leaflet_contamination))
+        c16_trial.leaflets = null
         c16_trial.organism = null
         c16_c_viewer.z_index = -24
         c16_a_viewer.z_index = -24
