@@ -340,6 +340,9 @@ jobs:
             echo "::error::A6 survival UI capture failed at ${res}"
             exit "${status}"
           fi
+          # The driver's own layout numbers, surfaced on success rather than only in the
+          # artifact log: they are the measurement behind the visual fixes.
+          grep -hE "A6 SURVIVAL UI CAPTURE: (widths|row |rendered )" artifacts/capture-${res}-dir*.log | sed 's/^/::notice::/' || true
           find "artifacts/captures-${res}" -type f | sed 's/^/::notice::/'
 
       # The GUI itself, not a synthetic signal: real pointer motion, real press and

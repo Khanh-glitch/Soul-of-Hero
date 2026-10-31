@@ -360,6 +360,30 @@ func _report_widths(panel: Node) -> void:
 		widest,
 		int(widest_x),
 	])
+	# Per-row diagnosis. A verdict that renders on two lines is a measurement, not an
+	# opinion: this prints the label's own text, box, minimum width, font size and wrap
+	# mode, and the column it lives in.
+	var shown := 0
+	for child: Node in list.get_children() if list != null else []:
+		var row := child as Control
+		if row == null:
+			continue
+		var state_label := row.find_child("State", true, false) as Label
+		var timing := row.find_child("Timing", true, false) as Control
+		if state_label == null:
+			continue
+		shown += 1
+		if shown > 3:
+			break
+		printerr("A6 SURVIVAL UI CAPTURE: row %s state='%s' size=%s min_x=%d font=%d wrap=%d timing_x=%d" % [
+			String(row.name),
+			state_label.text,
+			str(state_label.size),
+			int(state_label.get_combined_minimum_size().x),
+			int(state_label.get_theme_font_size("font_size")),
+			int(state_label.autowrap_mode),
+			int(timing.size.x) if timing != null else -1,
+		])
 
 
 ## One refused queue through the panel's own command path, so the frame shows the
