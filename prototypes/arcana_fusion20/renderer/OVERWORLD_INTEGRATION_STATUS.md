@@ -1191,3 +1191,16 @@ SOH world source parity and creator review remain separate.
   This is a scoped frozen-scene withdrawal measurement, **not** proof across
   moving worlds or source D bloom/post parity. D OUT remains an unapproved
   authored extension and STAR/ribbon residuals remain open.
+- On AVFX `13df6c9934014b820e569d05daec8612814c4263` with the same
+  e552/CT pins, current-world JOIN
+  [41243020414](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41243020414)
+  and all-20 normal/dim sweep
+  [41243020418](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41243020418)
+  passed. #16's extended OUT still changed the world at ticks630/642, while
+  the last active tick647 was pixel-identical to the no-cast frozen baseline
+  in both lighting stimuli; cancellation restored baseline. This is a sampled
+  frozen-world result, not proof for every seed/camera or approval of OUT.
+  The mathematical one-tick 8-bit fade bound for #19 passed separately:
+  max allowed **4**, actual **1**, cleared delta **0**
+  ([41242951635](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41242951635));
+  the bound derives from normalized delta × 1/72, not a Gold tolerance.
