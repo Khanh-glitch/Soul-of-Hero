@@ -12,9 +12,11 @@ objects without merge/checkout. Tested pin: historical A0
 `2cb1a3c5f093724eb9fecbdf45909ccb611f7b32` /
 `18e7afcbd576bbd9bfbcc509b2ee13216186a522`, PR30
 `e505173edd119fdd955cf6249511b575a5468440`. Latest observed A0
-`ee5f9f5160c8e4385f35a63b355ddda957f93d10` connected-journey
-[run 41206034344](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41206034344)
-failed; this historical pin is not an endorsement of the latest route.
+`a6e3797879915510b2e86be0d2ee521f53967c94` fails `_spawn_cell()` at
+`game/survival/a0_world_authority.gd:157` in independent
+[no-AVFX run 41218212859](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41218212859).
+Owner notified in [PR21 comment](https://github.com/Khanh-glitch/Soul-of-Hero/pull/21#issuecomment-6545906989).
+The historical pin is not an endorsement of the current route.
 
 - B/C run [41207915157](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41207915157)
   at `98bd1ff1`: actual AppRoot/Home/AppFlow world and readiness; *injected*
@@ -55,28 +57,30 @@ failed; this historical pin is not an endorsement of the latest route.
   same-seed original-vs-native full-cast comparisons remain open. Experimental
   per-frame CPU packing is not a production renderer.
 
-| ID | Current actual-world source status | Remaining / evidence |
-|---|---|---|
-| 01 | A candidate + selected C outer tongue primitives, frozen-world/cancel [41209822468](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41209822468) | Whole-cast source parity, viewport post, actor depth and owner review |
-| 02 | B world pass diagnostic | [run 41207915157](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41207915157), one frozen frame only |
-| 03 | B world fields available | Actual-world comparison and lifecycle not checked |
-| 04 | A world pass diagnostic; REDESIGN_CANDIDATE | [run 41208517991](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41208517991); no visual approval |
-| 05 | World-mode A original opening/peak + C selected column/fall candidates, one frozen JOIN sample | [run 41209253992](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41209253992); source pass comparison, wet actor and whole-cast review missing |
-| 06 | A candidate fields available; REDESIGN_CANDIDATE | Moving-tip sweep, water and full world review missing |
-| 07 | C world fields available | Actual-world comparisons, occlusion, phases missing |
-| 08 | B world fields available | Actual-world comparisons, post, gameplay missing |
-| 09 | A graph/B colors/C bolt candidate; real-enemy anchor diagnostic [41208565813](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41208565813); C channel variants/branches added `84d9bcb0` | New branch tests pending; misses/deaths, B raster, full source comparison and review missing |
-| 10 | C world pass diagnostic | [run 41207915157](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41207915157), one frozen frame only |
-| 11 | A rotor/fragment + C bolt-tree candidate; [isolated rotor comparison 41211833178](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211833178), [actual-world JOIN 41211652270](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211652270) | C branch role/fidelity, full fusion/post, natural motion/OUT, depth and review missing |
-| 12 | A candidate fields available; REDESIGN_CANDIDATE | Targeting, source craft and world review missing |
-| 13 | A candidate fields available; REDESIGN_CANDIDATE | Actor targeting, depth and world review missing |
-| 14 | A candidate fields available; REDESIGN_CANDIDATE | Actor/colony integration and world review missing |
-| 15 | C world fields available | Actual-world and moving-actor review missing |
-| 16 | A growth + C material; [original source samples 41210844049](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41210844049), [real-world sample 41210774544](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41210774544) | C material parity, full world cast/OUT and owner review |
-| 17 | C world pass diagnostic incl. live-screen fragment mapping | [run 41207915157](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41207915157), one frozen frame only |
-| 18 | A candidate fields available; REDESIGN_CANDIDATE | Real actors, full-cast and world review missing |
-| 19 | D additive and persistent warp consumer; pixel-center sprite/ribbon source diagnostic [41216275855](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41216275855) | D bloom/post, full OUT, depth, full original parity and visual approval missing |
-| 20 | C contour/polygons/blocks/particles/OUT + A world pull and real-ground debris candidate; [motion](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41215663639), [overworld JOIN](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41215918902) | Complete fusion/world fidelity, gameplay authority, moving-hit/miss, depth and review missing |
+The phase column links to [frozen historical-world sweep 41223761713](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41223761713): six catalog-relative requests, not source-aligned phase verification. An unchanged image may represent an empty/ended source phase, not a pass or failure by itself. C viewport post was not enabled. Results predate the #16 debris and #16 painter-order changes; B tick labels in this sweep were corrected later.
+
+| ID | Current actual-world source status | Historical-world phase images | Remaining / evidence |
+|---|---|---|---|
+| 01 | A candidate + selected C outer tongue primitives, frozen-world/cancel [41209822468](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41209822468) | 5/6 (late expired) | Whole-cast source parity, viewport post, actor depth and owner review |
+| 02 | B world pass diagnostic | 6/6 | [run 41207915157](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41207915157), one frozen frame only |
+| 03 | B world fields available | 6/6 | Source parity, actual moving actors, OUT and gameplay not checked |
+| 04 | A world pass diagnostic; REDESIGN_CANDIDATE | 6/6; early unchanged | [run 41208517991](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41208517991); no visual approval |
+| 05 | World-mode A original opening/peak + C selected column/fall candidates, one frozen JOIN sample | 6/6; late unchanged | [run 41209253992](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41209253992); source pass comparison, wet actor and whole-cast review missing |
+| 06 | A candidate fields available; REDESIGN_CANDIDATE | 5/6 (late expired); early unchanged | Moving-tip sweep, water and full world review missing |
+| 07 | C world fields available | 6/6 | Source parity, moving actors and occlusion missing |
+| 08 | B world fields available | 6/6 | Actual-world comparisons, post, gameplay missing |
+| 09 | A graph/B colors/C bolt candidate; real-enemy anchor diagnostic [41208565813](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41208565813); C channel variants/branches added `84d9bcb0` | 5/6 (late expired) | New branch tests pending; misses/deaths, B raster, full source comparison and review missing |
+| 10 | C world pass diagnostic | 6/6 | [run 41207915157](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41207915157), one frozen frame only |
+| 11 | A rotor/fragment + C bolt-tree candidate; [isolated rotor comparison 41211833178](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211833178), [actual-world JOIN 41211652270](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211652270) | 5/6 (late expired) | C branch role/fidelity, full fusion/post, natural motion/OUT, depth and review missing |
+| 12 | A candidate fields available; REDESIGN_CANDIDATE | 5/6 (late expired); early unchanged | Targeting, source craft and world review missing |
+| 13 | A candidate fields available; REDESIGN_CANDIDATE | 5/6 (late expired); early unchanged | Actor targeting, depth and world review missing |
+| 14 | A candidate fields available; REDESIGN_CANDIDATE | 5/6 (late expired); early unchanged | Actor/colony integration and world review missing |
+| 15 | C world fields available | 6/6 | Full source comparisons and moving-actor review missing |
+| 16 | A growth + C material and source-selected C seed/spore/petal debris; [original source samples 41210844049](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41210844049), [real-world sample 41210774544](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41210774544) | 4/6 (aftermath/late expired) | C living environment, selected material/OUT parity, full world cast and owner review |
+| 17 | C world pass diagnostic incl. live-screen fragment mapping | 6/6; late unchanged | [run 41207915157](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41207915157), one frozen frame only |
+| 18 | A candidate fields available; REDESIGN_CANDIDATE | 5/6 (late expired) | Real actors, full-cast and world review missing |
+| 19 | D additive and persistent warp consumer; pixel-center sprite/ribbon source diagnostic [41216275855](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41216275855) | 6/6 | D bloom/post, full OUT, depth, full original parity and visual approval missing |
+| 20 | C contour/polygons/blocks/particles/OUT + A world pull and real-ground debris candidate; [motion](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41215663639), [overworld JOIN](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41215918902) | 6/6; early/late unchanged | Complete fusion/world fidelity, gameplay authority, moving-hit/miss, depth and review missing |
 
 Run-level pass does not override a failing check annotation. No thresholds have
 been relaxed. Only CT owns `soh_binding/**`; no production mount, merge, fake
