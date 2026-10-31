@@ -26,11 +26,15 @@ Design decisions, each of which exists because a previous round got it wrong:
 3. **Every case walks the same pipeline:** source → contract → runtime → receipt →
    player outcome. Each stage is `VALID`, `FAIL`, `MISSING` or `BLOCKED`, and a case
    stops at its first non-`VALID` stage. A missing stage is `BLOCKED`, never PASS.
-4. **Few real journeys beat many assertions.** There are 30 named cases across four
+4. **Few real journeys beat many assertions.** There are 32 named cases across four
    tracks, each tied to a file:line or a runtime marker — not a pile of `_expect`s.
 5. **Fail-closed future gates.** Track 4 features do not exist yet; their gates are
    executable and are proven to work against synthetic fixtures in `--self-test`,
    while returning `NOT_IMPLEMENTED` against the real tree.
+6. **Text is not a program.** `T1.7` requires the controller and the authority to `load()` and
+   `new()` in the engine; a tree whose Godot log carries SCRIPT ERROR/Parse Error cannot be
+   promoted, no matter what its source says. `SOURCE_AUTHORITY_PRESENT` and
+   `RUNTIME_AUTHORITY_VERIFIED` are different sentences and this tool never conflates them.
 
 Output is a machine-readable report (`soh.a7.certification.v2`) plus a markdown
 report. Nothing here edits owner code, merges, or grants rewards.
@@ -43,6 +47,7 @@ report. Nothing here edits owner code, merges, or grants rewards.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -142,6 +147,19 @@ class Facts:
     authored_frame: Optional[Tuple[int, int]] = None
     live_source: str = ""                              # authored_authority | legacy_sidecar | legacy_document
     authority: Dict[str, object] = field(default_factory=dict)
+    #: `native.txt` — engine-level failures observed while probing each tree. A tree that
+    #: prints SCRIPT ERROR/Parse Error cannot be promoted, whatever its text says.
+    native: Dict[str, Dict[str, int]] = field(default_factory=dict)
+    wear_contract: List[str] = field(default_factory=list)
+    wear_consumers: List[str] = field(default_factory=list)
+    provenance: List[str] = field(default_factory=list)
+    melee: List[str] = field(default_factory=list)
+    equipment_ids: List[str] = field(default_factory=list)
+    item_kinds: Dict[str, int] = field(default_factory=dict)
+    #: What the composer actually let in. A3's economy code lives under a path A0 owns, so
+    #: the composition can silently refuse the very service Track 3 is meant to test.
+    a3_service: Dict[str, object] = field(default_factory=dict)
+    composition_refused: Dict[str, List[str]] = field(default_factory=dict)
     #: `probe_control.txt` — the same composition with A0's own controller restored, so a
     #: composition artifact can be told apart from a gameplay defect. Never the product.
     control: Dict[str, dict] = field(default_factory=dict)
@@ -269,6 +287,23 @@ def read_evidence(evidence: Path) -> Tuple[Dict[str, dict], Dict[str, dict], str
     return read_probe(raw), control, raw
 
 
+_NATIVE_PATTERNS = ("SCRIPT ERROR", "Parse Error", "Failed to load script", "Compile Error")
+
+
+def count_native(text: str) -> Dict[str, int]:
+    """Engine-level failures in a Godot log. A log with any of these is not a working tree."""
+    return {name: text.count(name) for name in _NATIVE_PATTERNS}
+
+
+def read_native(evidence: Path) -> Dict[str, Dict[str, int]]:
+    out: Dict[str, Dict[str, int]] = {}
+    for tree in ("composed", "control"):
+        path = evidence / f"{tree}.native.txt"
+        if path.exists():
+            out[tree] = count_native(path.read_text(encoding="utf-8", errors="replace"))
+    return out
+
+
 def gather(root: Optional[Path], evidence: Optional[Path], expected_tree: str = "") -> Facts:
     facts = Facts(root=root, expected_tree=expected_tree)
     if root is not None and root.exists():
@@ -331,6 +366,11 @@ def gather(root: Optional[Path], evidence: Optional[Path], expected_tree: str = 
         raw_items = items.get("items", items)
         if isinstance(raw_items, dict):
             facts.item_ids = sorted(str(k) for k in raw_items)
+            for key, entry in raw_items.items():
+                kind = str(entry.get("kind", "")) if isinstance(entry, dict) else ""
+                facts.item_kinds[kind] = facts.item_kinds.get(kind, 0) + 1
+                if kind == "equipment":
+                    facts.equipment_ids.append(str(key))
         elif isinstance(raw_items, list):
             facts.item_ids = sorted(str(i.get("id", "")) for i in raw_items if isinstance(i, dict))
         recipes_path = root / "data/survival/recipes/progression_model.json"
@@ -389,6 +429,43 @@ def gather(root: Optional[Path], evidence: Optional[Path], expected_tree: str = 
                         facts.production_mount["authority_reference"] = str(file.relative_to(root))
                         break
 
+        # Composition scope: is the submitted A3 service in the tree at all?
+        composed_service = root / "game/survival/economy/a3_economy_service.gd"
+        vendor_service = root / "game/survival/economy/vendor/a3_economy_service.gd"
+        report = _read_json(root / "composition.json")
+        refused = report.get("refused_out_of_scope") or {}
+        if isinstance(refused, dict):
+            for name, paths in refused.items():
+                if isinstance(paths, list):
+                    facts.composition_refused[str(name)] = [str(x) for x in paths]
+        a3_refused = facts.composition_refused.get("a3", [])
+        facts.a3_service = {
+            "submitted_path": "game/survival/economy/a3_economy_service.gd",
+            "composed": composed_service.exists(),
+            "refused_by_scope": "game/survival/economy/a3_economy_service.gd" in a3_refused,
+            "refused_paths": [x for x in a3_refused if x.startswith("game/survival/economy/")],
+            "vendor_path": "game/survival/economy/vendor/a3_economy_service.gd",
+            "vendor_present": vendor_service.exists(),
+            "vendor_lines": len(_text(vendor_service).splitlines()) if vendor_service.exists() else 0,
+            "vendor_sha256": hashlib.sha256(vendor_service.read_bytes()).hexdigest()
+            if vendor_service.exists() else "",
+            "composition_report": bool(report),
+        }
+
+        # Tool wear: A3 V7 publishes the contract, A0 must consume it and a run must show
+        # a player's tool condition actually dropping. Source presence is not wear.
+        facts.wear_contract = (facts.hit("game/survival/economy", r"func apply_tool_use_plan|condition_cost|"
+                                         r"record\[\"condition\"\]", 3))
+        facts.wear_consumers = facts.hit("game/survival/economy", r"apply_tool_use_plan\(", 3)
+        # Provenance / source-authorisation refusals, which are NOT escrow mismatches.
+        facts.provenance = facts.hit("game/survival/economy",
+                                     r"func authenticate_source|is_source_authenticated|"
+                                     r"provenance_(mismatch|refused)|source_(mismatch|unauthori[sz]ed)|"
+                                     r"owner_domain", 6)
+        # Melee/combat capability is a different subsystem from a knife in the catalog.
+        facts.melee = (facts.hit("game/characters/knight", r"weapon_manager|normal_attack|melee", 3)
+                       + facts.hit("game/survival/player", r"weapon|melee", 2))
+
         for feature, patterns in FEATURE_PROBES.items():
             hits: List[str] = []
             for pattern in patterns:
@@ -397,6 +474,7 @@ def gather(root: Optional[Path], evidence: Optional[Path], expected_tree: str = 
 
     if evidence is not None and evidence.exists():
         facts.probe, facts.control, facts.probe_raw = read_evidence(evidence)
+        facts.native = read_native(evidence)
     return facts
 
 
@@ -491,7 +569,7 @@ def track1(f: Facts) -> List[Case]:
         outside = [(sid, cell) for sid, cell, _ in f.sites
                    if not (0 <= cell[0] < f.live_bounds[0] and 0 <= cell[1] < f.live_bounds[1])]
     mount = f.production_mount or {}
-    auth = f.authority or {}
+    auth = {**(f.authority or {}), **(f.probe.get("AUTHORITY") or {})}
     control = (f.control or {}).get("AUTHORITY", {})
     c.measurements = {"live": f.live_bounds, "live_source": f.live_source,
                       "authored": f.authored_frame, "legacy_document": f.legacy_bounds,
@@ -509,12 +587,26 @@ def track1(f: Facts) -> List[Case]:
             f"A0AuthoredWorldMount={auth.get('mounts_sidecar')}, "
             f"authority default authored={auth.get('authority_default_authored')}, "
             f"{auth.get('controller_lines')} lines")
+    control_verified = bool(control.get("runtime_authority_verified"))
     if control:
         c.evidence.append(
             f"reconciled control (A0's own controller restored): "
             f"mounts A0WorldAuthority={control.get('mounts_authority')}, "
-            f"{control.get('controller_lines')} lines, live_source={control.get('live_source')}, "
-            f"live frame={control.get('live_frame')}")
+            f"{control.get('controller_lines')} lines, "
+            f"runtime_authority_verified={control_verified} "
+            f"(controller_runnable={control.get('controller_runnable')}, "
+            f"authority_runnable={control.get('authority_runnable')}), "
+            f"live_source={control.get('live_source')}")
+        control_native = (f.native or {}).get("control", {})
+        if any(control_native.values()):
+            c.evidence.append(
+                "control engine errors: " + json.dumps(control_native) +
+                " (see r14_ci/control.native.txt) — the control tree does not compile cleanly")
+        if not control_verified:
+            c.evidence.append(
+                "the control's authored world is NOT runtime-verified — its own script errors are "
+                "recorded in T1.7; this case therefore claims a *source/composition* difference only, "
+                "never that the control tree plays")
     if mount:
         c.evidence += [
             f"live scene mounts A0AuthoredWorldMount={mount.get('uses_sidecar_mount')} "
@@ -537,7 +629,9 @@ def track1(f: Facts) -> List[Case]:
                  f"committed controller does ({control.get('controller_lines')} lines vs "
                  f"{auth.get('controller_lines')}); A0's declared resolution replaces it with a "
                  "stale merge artifact, so the composed product runs the legacy sidecar "
-                 f"{f.legacy_bounds} while the authored continent is {f.authored_frame}",
+                 f"{f.legacy_bounds} while the authored continent is {f.authored_frame}. This is a "
+                 "source/composition finding: it does not claim the control tree runs — see T1.7, "
+                 f"where the control's authority script is graded ({'verified' if control_verified else 'NOT verified'})",
                  "python3 tools/a0/compose_owners.py --owner a1=… ; diff the composed "
                  "game/overworld/chapter1_overworld.gd against A0's committed file")
     elif f.live_bounds != f.authored_frame or f.sidecar_markers or outside:
@@ -577,13 +671,19 @@ def track1(f: Facts) -> List[Case]:
         c.evidence.append(f"probe: {json.dumps(spawn)[:300]}")
         if not spawn.get("ok"):
             c.settle(FAIL, "SPAWN_UNSAFE", f"reason={spawn.get('error')}")
+        elif spawn.get("in_live_world") is None or spawn.get("live_resolved") is False:
+            c.settle(BLOCKED, "BLOCKED_LIVE_WORLD_UNRESOLVED",
+                     "the probe could not resolve which world is live on this tree "
+                     f"(live_source={spawn.get('live_source')}); an unknown live world is not a pass "
+                     "and not a failure — see T1.7 for the native reason")
         elif not spawn.get("in_live_world"):
             note = ""
             control_spawn = (f.control or {}).get("T1.3", {})
-            if drops_owner_work(f):
+            if drops_owner_work(f) and control_spawn.get("in_live_world") is True:
                 note = ("; caused by the composition artifact named in T1.2 — with A0's committed "
-                        f"controller the same spawn is in_live_world={control_spawn.get('in_live_world')} "
-                        f"in {control_spawn.get('live_frame')}")
+                        f"controller the same spawn reports in_live_world=true in "
+                        f"{control_spawn.get('live_frame')} (control runtime verified: "
+                        f"{bool(control_spawn.get('live_resolved'))})")
                 c.evidence.append(f"reconciled control: {json.dumps(control_spawn)[:240]}")
             c.settle(FAIL, "SPAWN_OUTSIDE_LIVE_WORLD",
                      f"spawn {spawn.get('cell')} is not inside {f.live_bounds}{note}")
@@ -601,12 +701,17 @@ def track1(f: Facts) -> List[Case]:
     c.measurements = {"outside": outside, "package_status": f.package_status}
     if not (f.sites and f.live_bounds):
         c.settle(BLOCKED, "BLOCKED_NO_SITE_DATA", "A8 package or live bounds unreadable")
+    elif outside is None:
+        c.settle(BLOCKED, "BLOCKED_LIVE_WORLD_UNRESOLVED",
+                 "the probe could not resolve which world is live on this tree, so no site can be "
+                 "placed inside or outside it; T1.7 carries the native reason")
     elif outside:
         note = ""
         control_sites = (f.control or {}).get("T1.4", {})
-        if drops_owner_work(f) and control_sites:
-            note = (f"; caused by the composition artifact named in T1.2 — the reconciled control "
-                    f"measures outside={control_sites.get('outside')} in {control_sites.get('live')}")
+        if drops_owner_work(f) and control_sites.get("outside") == 0:
+            note = (f"; source/composition cause named in T1.2 — the control measures outside=0 "
+                    f"in {control_sites.get('live')} (control runtime verified: "
+                    f"{bool(control_sites.get('live_resolved'))})")
             c.evidence.append(f"reconciled control: {json.dumps(control_sites)[:240]}")
         c.settle(FAIL, "SITE_OUTSIDE_LIVE_WORLD",
                  f"{len(outside)}/{len(f.sites)} canonical sites cannot be approached; "
@@ -653,6 +758,61 @@ def track1(f: Facts) -> List[Case]:
     else:
         c.stage("runtime", VALID).settle(PASS, "PLAYER_MOVES_WITH_COLLISION", "")
     cases.append(c)
+
+    # T1.7 — the case round 14 needed and did not have: does the authority actually run?
+    c = Case("T1.7", "T1", "the authority script loads and instantiates in this engine build",
+             "A0", "native-runtime", "runtime")
+    native = f.probe.get("NATIVE_LOAD", {})
+    # Source facts plus what the engine measured: text alone can never answer T1.7.
+    authority = {**(f.authority or {}), **(f.probe.get("AUTHORITY") or {})}
+    native_log = (f.native or {}).get("composed", {})
+    parse_errors = sum(int(native_log.get(k, 0)) for k in ("SCRIPT ERROR", "Parse Error",
+                                                           "Compile Error", "Failed to load script"))
+    c.evidence = [f"probe NATIVE_LOAD: {json.dumps(native)[:320]}",
+                  f"composed probe log engine errors: {native_log or 'none recorded'}"]
+    c.measurements = {"native": native, "engine_errors": native_log,
+                      "source_authority_present": bool(authority.get("mounts_authority")),
+                      "runtime_authority_verified": bool(authority.get("runtime_authority_verified"))}
+    if not native:
+        c.settle(BLOCKED, "BLOCKED_NO_NATIVE_EVIDENCE",
+                 "requires `A7C NATIVE_LOAD {…}` from the probe; no native marker was recorded")
+    elif not native.get("known_good_loads"):
+        c.settle(FAIL, "HARNESS_LOADER_BROKEN",
+                 "the probe could not load a script it knows is good: the load check itself failed, "
+                 "so no verdict about owner code can be drawn")
+    elif not native.get("controller_loads") or not native.get("controller_instantiates"):
+        c.settle(FAIL, "CONTROLLER_DOES_NOT_RUN",
+                 f"chapter1_overworld.gd loads={native.get('controller_loads')} "
+                 f"instantiates={native.get('controller_instantiates')} "
+                 f"error={native.get('controller_error')}",
+                 "godot --headless --path <tree> --script res://tests/survival/a7_certification_probe.gd")
+    elif not native.get("authority_loads") or not native.get("authority_instantiates"):
+        # The file is in the tree either way. If the engine cannot load it, no amount of
+        # source reading ("mounts A0WorldAuthority") can make the authored world real.
+        c.settle(FAIL, "AUTHORITY_SCRIPT_DOES_NOT_RUN",
+                 f"game/survival/a0_world_authority.gd loads={native.get('authority_loads')} "
+                 f"instantiates={native.get('authority_instantiates')}; the composed controller "
+                 f"mounts it={authority.get('mounts_authority')}. Source presence is not a running "
+                 f"world, and {parse_errors} engine error(s) were logged",
+                 "grep -n '_spawn_cell' game/survival/a0_world_authority.gd")
+    elif parse_errors:
+        c.settle(FAIL, "ENGINE_REPORTED_SCRIPT_ERRORS",
+                 f"{parse_errors} engine error(s) while probing: the tree does not compile cleanly",
+                 "grep -n 'SCRIPT ERROR\|Parse Error' r14_ci/composed.native.txt")
+    elif not authority.get("mounts_authority"):
+        # The scripts run, the controller simply does not mount them: T1.2's finding.
+        c.stage("runtime", VALID).settle(BLOCKED, "BLOCKED_AUTHORITY_NOT_MOUNTED",
+                                        "the composed controller does not mount the authority, so "
+                                        "there is nothing here to run; see T1.2")
+    elif not authority.get("runtime_authority_verified"):
+        c.settle(FAIL, "AUTHORITY_NOT_RUNTIME_VERIFIED",
+                 f"scripts load but the controller's own resolver answers "
+                 f"`{authority.get('controller_mode_resolved') or 'unknown'}`")
+    else:
+        c.stage("runtime", VALID).settle(PASS, "RUNTIME_AUTHORITY_VERIFIED",
+                                        "controller and authority load, instantiate, and the "
+                                        "controller resolves the authored world")
+    cases.append(c)
     return cases
 
 
@@ -692,15 +852,28 @@ def track2(f: Facts) -> List[Case]:
         c.stage("runtime", VALID).settle(PASS, "ROUTE_WALKED", f"{route.get('seconds')}s walk")
     cases.append(c)
 
+    # T2.3 — a catalog gap, not proof that the starting melee is unplayable. Round 14 turned
+    # "no item id contains 'knife'" into "P3 cannot be played at all", which the catalog cannot
+    # support: melee lives in the character/weapon subsystem, not in the survival item catalog.
     c = Case("T2.3", "T2", "knife-first exploration is possible", "A3", "source", "source")
     knives = [i for i in f.item_ids if "knife" in i.lower()]
+    melee_tools = [i for i in f.equipment_ids
+                   if any(t in str(i).lower() for t in ("pick", "hammer", "axe", "blade", "knife"))]
     c.stage("source", VALID if f.item_ids else MISSING)
-    c.evidence = [f"{len(f.item_ids)} item ids; knife-like={knives}"]
+    c.evidence = [f"{len(f.item_ids)} item ids; knife-like={knives}; kinds={dict(sorted(f.item_kinds.items()))}",
+                  f"melee/tool equipment ids={melee_tools}",
+                  f"melee subsystem hits={f.melee[:3] or 'none'}"]
+    c.measurements = {"knife_item_ids": knives, "equipment_ids": f.equipment_ids,
+                      "item_kinds": f.item_kinds, "melee_hits": f.melee}
     if not f.item_ids:
         c.settle(BLOCKED, "BLOCKED_NO_CATALOG")
     elif not knives:
-        c.settle(FAIL, "NO_KNIFE_ITEM",
-                 "P3 (knife-first) cannot be played: no knife exists in the item catalog")
+        c.settle(BLOCKED, "BLOCKED_NO_MELEE_RUN",
+                 "no item id contains 'knife', so the knife-first journey's starting tool is not in "
+                 "the catalog; whether the starting melee is playable is NOT decided here — melee "
+                 f"lives in the weapon subsystem ({f.melee[0] if f.melee else 'no hit found'}) and "
+                 "this probe runs no combat, so no player-level melee claim is made",
+                 "grep -n 'weapon_manager\|normal_attack' game/characters/knight/knight.gd")
     else:
         c.stage("contract", VALID).settle(BLOCKED, "BLOCKED_NO_CRAFT_RUN",
                                          "a knife exists; nobody has crafted it from a real source")
@@ -787,12 +960,36 @@ def track3(f: Facts) -> List[Case]:
                                          "bindings exist; no real harvest receipt in this composition")
     cases.append(c)
 
-    c = Case("T3.2", "T3", "tool wear and inventory limits are enforced", "A0", "source-contract", "source")
-    wear = f.hit("game/survival", r"durability|tool_wear", 3)
-    c.stage("source", VALID if wear else MISSING)
-    c.evidence = wear or ["no durability/tool-wear symbol in game/survival"]
-    cases.append(c.settle(PASS, "TOOL_WEAR_PRESENT", "source-level only") if wear
-                 else c.settle(FAIL, "TOOL_WEAR_ABSENT", "no wear model exists to certify"))
+    # T3.2 — A3 V7 publishes the wear contract (`condition_cost`, `apply_tool_use_plan`) and
+    # A0 consumes it. Source presence is not player tool wear: only a run that drops a tool's
+    # condition can certify that, so the honest grade is BLOCKED, not PASS and not FAIL.
+    c = Case("T3.2", "T3", "tool wear is enforced for a player's tool", "A0", "source-contract",
+             "runtime")
+    contract = f.wear_contract
+    consumers = f.wear_consumers
+    wear_run = f.probe.get("T3.2", {})
+    legacy_hits = f.hit("game/survival", r"durability|tool_wear", 2)
+    c.evidence = ([f"A3 contract: {h}" for h in contract[:2]]
+                  + [f"A0 consumer: {h}" for h in consumers[:2]]
+                  + ([f"legacy symbol: {h}" for h in legacy_hits] if legacy_hits else []))
+    c.measurements = {"contract": contract, "consumers": consumers, "legacy_symbols": legacy_hits,
+                      "run": wear_run or None}
+    c.stage("source", VALID if contract else MISSING)
+    if not contract and not legacy_hits:
+        c.settle(FAIL, "TOOL_WEAR_ABSENT", "no wear contract exists anywhere in the composed tree")
+    elif not wear_run:
+        c.settle(BLOCKED, "BLOCKED_NO_TOOL_WEAR_RUN",
+                 f"{len(contract)} contract symbol(s) and {len(consumers)} consumer call(s) exist, "
+                 "but no run shows a player's tool condition dropping; a contract is not wear",
+                 "needs `A7C T3.2 {\"condition_before\":n,\"condition_after\":n,\"tool_id\":…}` "
+                 "from A0's journey harness")
+    elif int(wear_run.get("condition_after", 0)) >= int(wear_run.get("condition_before", 0)):
+        c.settle(FAIL, "TOOL_WEAR_NOT_APPLIED",
+                 f"the run reports no wear: {json.dumps(wear_run)[:200]}")
+    else:
+        c.stage("runtime", VALID).settle(PASS, "TOOL_WEAR_APPLIED",
+                                        f"tool {wear_run.get('tool_id')} lost condition in a real run")
+    cases.append(c)
 
     c = Case("T3.3", "T3", "three distinct research methods are real and distinguishable", "A3",
              "source-contract", "source")
@@ -821,19 +1018,39 @@ def track3(f: Facts) -> List[Case]:
                                          "sinks are declared; nothing has been crafted from a real source")
     cases.append(c)
 
+    # T3.5 — the question is *provenance*: does an owner-string-only source claim get refused?
+    # Round 14 answered it with `input_escrow_mismatch`/`fuel_escrow_mismatch`, which are
+    # escrow-integrity invariants for an operation that already exists. They say nothing about
+    # whether a source may be authorised by a name, so they cannot pass this case.
     c = Case("T3.5", "T3", "owner-string-only source authentication is refused", "A3",
              "source-contract", "contract")
     codes = f.rejection_codes
-    c.stage("source", VALID if codes else MISSING)
-    c.evidence = [f"`{k}` at {v}" for k, v in sorted(codes.items())][:8]
-    if not codes:
-        c.settle(BLOCKED, "BLOCKED_NO_REJECTION_VOCABULARY")
-    elif "input_escrow_mismatch" in codes and "fuel_escrow_mismatch" in codes:
-        c.stage("contract", VALID).settle(PASS, "ESCROW_MISMATCH_REFUSED",
-                                          "the planner refuses mismatched escrow by name")
+    provenance = f.provenance
+    provenance_run = f.probe.get("T3.5", {})
+    c.stage("source", VALID if codes or provenance else MISSING)
+    c.evidence = ([f"escrow vocabulary (a different invariant): `{k}` at {v}"
+                   for k, v in sorted(codes.items())][:4]
+                  + [f"provenance surface: {h}" for h in provenance[:4]]
+                  + ([f"measured surface is A0's vendored fork "
+                      f"({f.a3_service.get('vendor_path')}, "
+                      f"{f.a3_service.get('vendor_lines')} lines); A3's submitted service is "
+                      f"refused by scope (T3.11)"] if f.a3_service.get("refused_by_scope") else []))
+    c.measurements = {"escrow_codes": sorted(codes), "provenance_hits": provenance,
+                      "run": provenance_run or None}
+    if not provenance_run:
+        c.settle(BLOCKED, "BLOCKED_NO_PROVENANCE_REJECTION",
+                 "no run shows an owner-string-only source claim being refused. "
+                 f"{'A provenance surface exists' if provenance else 'No provenance refusal exists'}"
+                 " (`authenticate_source`/`is_source_authenticated`), but the escrow mismatch codes "
+                 "this case used to pass on are escrow integrity, not source authorisation",
+                 "needs `A7C T3.5 {\"owner_string_only_refused\":true,\"source_id\":…}` from a run "
+                 "that calls authenticate_source with a name and nothing physical")
+    elif not provenance_run.get("owner_string_only_refused"):
+        c.settle(FAIL, "OWNER_STRING_SOURCE_ACCEPTED",
+                 f"a source claim with only an owner string was accepted: {json.dumps(provenance_run)[:200]}")
     else:
-        c.settle(FAIL, "ESCROW_CHECK_ABSENT",
-                 f"planner reasons found: {sorted(codes)}")
+        c.stage("contract", VALID).settle(PASS, "OWNER_STRING_SOURCE_REFUSED",
+                                         "a name-only source claim is refused by the service")
     cases.append(c)
 
     c = Case("T3.6", "T3", "missing physical fuel fails a job", "A3", "source-contract", "contract")
@@ -891,6 +1108,38 @@ def track3(f: Facts) -> List[Case]:
         c.settle(FAIL, "NO_NEW_OPTION", json.dumps(choice)[:200])
     else:
         c.stage("outcome", VALID).settle(PASS, "MEANINGFUL_NEXT_CHOICE", "")
+    cases.append(c)
+
+    # T3.11 — the submitted A3 service must be what the product runs. The composer scopes
+    # `game/survival/economy/` to A0, so A3's own service and planner can be refused wholesale
+    # while an A0 vendored fork keeps the name: every "A3" contract above would then be A0's code.
+    c = Case("T3.11", "T3", "the submitted A3 economy service is the one the product runs",
+             "A0", "composition", "source")
+    info = f.a3_service or {}
+    c.evidence = [f"submitted service present={info.get('composed')} "
+                  f"({info.get('submitted_path')})",
+                  f"refused by composition scope={info.get('refused_by_scope')} "
+                  f"({len(info.get('refused_paths') or [])} A3 economy file(s))",
+                  f"vendor fork={info.get('vendor_path')} present={info.get('vendor_present')} "
+                  f"lines={info.get('vendor_lines')} sha={str(info.get('vendor_sha256'))[:12]}"]
+    c.measurements = info
+    if not info.get("composition_report"):
+        c.settle(BLOCKED, "BLOCKED_NO_COMPOSITION_REPORT",
+                 "no composition.json: scope refusals cannot be read")
+    elif info.get("composed"):
+        c.stage("source", VALID).settle(PASS, "A3_SERVICE_COMPOSED",
+                                       "the submitted service is in the certified tree")
+    elif info.get("refused_by_scope"):
+        c.settle(FAIL, "A3_SERVICE_REFUSED_BY_SCOPE",
+                 "A3's submitted economy service is refused as out of scope, so the composed "
+                 "product runs A0's vendored fork instead; Track 3's consumer tests are then "
+                 "testing a copy, not the submitted service",
+                 "python3 tools/a0/compose_owners.py … && python3 -c \"import json;"
+                 "print(json.load(open('.composition/composition.json'))"
+                 "['refused_out_of_scope']['a3'])\"")
+    else:
+        c.settle(BLOCKED, "BLOCKED_NO_A3_SERVICE_EVIDENCE",
+                 "the service is neither composed nor listed as refused")
     cases.append(c)
     return cases
 
@@ -1060,7 +1309,8 @@ def _write(path: Path, text: str) -> None:
 
 def _fixture(root: Path, *, one_world: bool, knife: bool = False, sites_inside: bool = True,
              research: int = 3, fuel: bool = True, features: Optional[Sequence[str]] = None,
-             legacy: Optional[Tuple[int, int]] = None) -> None:
+             legacy: Optional[Tuple[int, int]] = None, wear_contract: bool = True,
+             legacy_wear: bool = False, a3_service: str = "absent") -> None:
     live = legacy or ((1024, 768) if one_world else (384, 256))
     _write(root / "data/overworld/hollow_marches.json",
            json.dumps({"world_bounds": {"x": 0, "y": 0, "w": live[0], "h": live[1]}}))
@@ -1099,8 +1349,11 @@ def _fixture(root: Path, *, one_world: bool, knife: bool = False, sites_inside: 
                        "production_mount_gates": [{"id": "g1"}]}))
     for scene in ("south_quarry", "south_orchard_ruin"):
         _write(root / f"game/survival/world_content/scenes/{scene}.tscn", "[gd_scene]\n")
-    items = ["stone_chunk", "stone_pick"] + (["iron_knife"] if knife else [])
-    _write(root / "data/survival/items/items.json", json.dumps({"items": {i: {} for i in items}}))
+    catalog = {"stone_chunk": {"kind": "material"}}
+    catalog["stone_pick"] = {"kind": "equipment", "tags": ["tool"]}
+    if knife:
+        catalog["iron_knife"] = {"kind": "equipment", "tags": ["tool", "knife"]}
+    _write(root / "data/survival/items/items.json", json.dumps({"items": catalog}))
     _write(root / "data/survival/items/world_source_bindings.v3.json",
            json.dumps({"bindings": [{"source_id": "s1", "source_sha256": "ab" * 32}]}))
     _write(root / "data/survival/recipes/progression_model.json",
@@ -1119,8 +1372,30 @@ def _fixture(root: Path, *, one_world: bool, knife: bool = False, sites_inside: 
     _write(root / "game/survival/world/a1_authored_world_reader.gd",
            "func choose_safe_spawn(run_seed: int) -> Dictionary:\n\treturn {}\n")
     _write(root / "game/survival/gameplay_input_gate.gd", "func _m():\n\tInput.get_vector()\n")
-    _write(root / "game/survival/survival_service.gd",
-           "func wear():\n\tdurability = 1\nfunc damage(x):\n\tpass\n")
+    _write(root / "game/characters/knight/knight.gd",
+           "func attack():\n\tvar weapon_manager := null\n\tvar t := weapon_manager.normal_attack\n")
+    if wear_contract:
+        _write(root / "game/survival/economy/economy_service.gd",
+               "func plan_tool_use(tool_item: String) -> Dictionary:\n"
+               "\tvar condition_cost := 1\n"
+               "\treturn {\"condition_cost\": condition_cost}\n"
+               "func apply_tool_use_plan(candidate: Dictionary, plan: Dictionary) -> Dictionary:\n"
+               "\trecord[\"condition\"] = maxi(0, int(record.condition) - int(plan.condition_cost))\n")
+        _write(root / "game/survival/economy/a0_economy_adapter.gd",
+               "func _use(candidate, planned):\n\tvar wear: Dictionary = apply_tool_use_plan(candidate, planned)\n")
+    _write(root / "game/survival/economy/vendor/a3_economy_service.gd",
+           "func apply_tool_use_plan(candidate: Dictionary, plan: Dictionary) -> Dictionary:\n"
+           "\treturn {}\n" if wear_contract else "## vendored copy without a wear contract\n")
+    report = {"schema": "fixture", "refused_out_of_scope": {"a3": []}}
+    if a3_service == "composed":
+        _write(root / "game/survival/economy/a3_economy_service.gd",
+               "func authenticate_source(source_id: String, owner_domain: String) -> bool:\n"
+               "\treturn false\n")
+    elif a3_service == "refused":
+        report["refused_out_of_scope"]["a3"] = ["game/survival/economy/a3_economy_service.gd"]
+    _write(root / "composition.json", json.dumps(report))
+    if legacy_wear:
+        _write(root / "game/survival/survival_service.gd", "func wear():\n\tdurability = 1\n")
     for feature in (features or []):
         snippet = FEATURE_FIXTURES[feature]
         _write(root / f"game/survival/feature_{feature}.gd", snippet)
@@ -1176,6 +1451,64 @@ def self_test(verbose: bool = True) -> int:
     check("evidence split keeps the product marker", str(product.get("T1.3", {}).get("in_live_world")), "False")
     check("evidence split keeps the control marker", str(control.get("T1.3", {}).get("in_live_world")), "True")
 
+    # T1.2 — a control tree that does not compile can never be quoted as "the world works"
+    facts = fresh(one_world=False)
+    facts.control["AUTHORITY"] = {"mounts_authority": True, "controller_lines": 1642,
+                                  "runtime_authority_verified": False, "controller_runnable": False,
+                                  "authority_runnable": False,
+                                  "live_source": "UNRESOLVED_AUTHORITY_NOT_RUNNABLE"}
+    got = case(facts, "T1.2")
+    check("T1.2 dead control still names the composition artifact",
+          got.code if got.verdict == FAIL else got.verdict, "COMPOSITION_DROPS_OWNER_WORK")
+    check("T1.2 dead control is not quoted as a working world",
+          "yes" if any("NOT runtime-verified" in e for e in got.evidence) else "no", "yes")
+
+    # T1.7 — engine truth beats source inference
+    facts = fresh(one_world=True)
+    facts.probe["NATIVE_LOAD"] = {"known_good_loads": True, "controller_loads": True,
+                                  "controller_instantiates": True, "authority_loads": False,
+                                  "authority_instantiates": False, "controller_mode": "authored"}
+    facts.probe["AUTHORITY"] = {"mounts_authority": True, "runtime_authority_verified": False}
+    check("T1.7 authority cannot load → FAIL AUTHORITY_SCRIPT_DOES_NOT_RUN",
+          case(facts, "T1.7").code, "AUTHORITY_SCRIPT_DOES_NOT_RUN")
+
+    facts = fresh(one_world=True)
+    facts.probe["NATIVE_LOAD"] = {"known_good_loads": True, "controller_loads": True,
+                                  "controller_instantiates": True, "authority_loads": True,
+                                  "authority_instantiates": True, "controller_mode": "authored"}
+    facts.probe["AUTHORITY"] = {"mounts_authority": True, "runtime_authority_verified": True}
+    check("T1.7 authority runs → PASS RUNTIME_AUTHORITY_VERIFIED",
+          case(facts, "T1.7").verdict, PASS)
+
+    facts = fresh(one_world=True)
+    facts.probe["NATIVE_LOAD"] = {"known_good_loads": False, "controller_loads": True,
+                                  "controller_instantiates": True, "authority_loads": True,
+                                  "authority_instantiates": True, "controller_mode": "authored"}
+    check("T1.7 loader itself broken → FAIL HARNESS_LOADER_BROKEN",
+          case(facts, "T1.7").code, "HARNESS_LOADER_BROKEN")
+
+    facts = fresh(one_world=True)
+    facts.probe["NATIVE_LOAD"] = {"known_good_loads": True, "controller_loads": True,
+                                  "controller_instantiates": True, "authority_loads": True,
+                                  "authority_instantiates": True, "controller_mode": "authored"}
+    facts.probe["AUTHORITY"] = {"mounts_authority": True, "runtime_authority_verified": True}
+    facts.native["composed"] = {"SCRIPT ERROR": 2, "Parse Error": 1, "Compile Error": 0,
+                                "Failed to load script": 1}
+    check("T1.7 engine errors beat every source claim → FAIL",
+          case(facts, "T1.7").code, "ENGINE_REPORTED_SCRIPT_ERRORS")
+
+    facts = fresh(one_world=True)
+    check("T1.7 no native marker → BLOCKED", case(facts, "T1.7").verdict, BLOCKED)
+
+    # T1.3 / T1.4 — an unresolved live world is BLOCKED, never PASS and never FAIL
+    facts = fresh(one_world=True)
+    facts.probe["T1.3"] = {"ok": True, "cell": [389, 291], "in_live_world": None,
+                           "live_resolved": False,
+                           "live_source": "UNRESOLVED_AUTHORITY_NOT_RUNNABLE"}
+    check("T1.3 unknown live world → BLOCKED", case(facts, "T1.3").verdict, BLOCKED)
+    facts.probe["T1.4"] = {"live": None, "live_resolved": False, "sites": [], "outside": None}
+    check("T1.4 unknown live world → BLOCKED", case(facts, "T1.4").verdict, BLOCKED)
+
     # T1.3 — spawn
     facts = fresh(one_world=False)
     facts.probe["T1.3"] = {"ok": True, "cell": [30, 280], "in_live_world": False, "standable": True}
@@ -1210,7 +1543,11 @@ def self_test(verbose: bool = True) -> int:
     check("T1.6 moves and collides → PASS", case(facts, "T1.6").verdict, PASS)
 
     # T2
-    check("T2.3 no knife → FAIL", case(fresh(one_world=True, knife=False), "T2.3").verdict, FAIL)
+    # T2.3 — a missing catalog id is not a melee verdict (round-14 false conclusion)
+    got = case(fresh(one_world=True, knife=False), "T2.3")
+    check("T2.3 no knife id → BLOCKED, not FAIL", got.verdict, BLOCKED)
+    check("T2.3 knife gap says the melee verdict is NOT decided here",
+          "yes" if "NOT decided here" in got.detail else got.detail[:60], "yes")
     check("T2.3 knife present → BLOCKED (no craft run)",
           case(fresh(one_world=True, knife=True), "T2.3").verdict, BLOCKED)
     facts = fresh(one_world=True)
@@ -1225,6 +1562,43 @@ def self_test(verbose: bool = True) -> int:
     facts = fresh(one_world=True)
     facts.probe["T2.4"] = {"fixture_grants": 0, "player_earned": True}
     check("T2.4 player earned → PASS", case(facts, "T2.4").verdict, PASS)
+
+    # T3.11 — is the submitted service in the tree, or an A0 fork wearing its name?
+    facts = fresh(one_world=True, a3_service="composed")
+    check("T3.11 submitted service composed → PASS", case(facts, "T3.11").verdict, PASS)
+    facts = fresh(one_world=True, a3_service="refused")
+    got = case(facts, "T3.11")
+    check("T3.11 submitted service refused by scope → FAIL", got.code, "A3_SERVICE_REFUSED_BY_SCOPE")
+    facts = fresh(one_world=True)
+    (Path(facts.root) / "composition.json").unlink()
+    facts = gather(facts.root, None)
+    check("T3.11 no composition report → BLOCKED", case(facts, "T3.11").verdict, BLOCKED)
+
+    # T3.5 — escrow integrity is not provenance (round-14 false pass)
+    facts = fresh(one_world=True)
+    got = case(facts, "T3.5")
+    check("T3.5 escrow codes alone never PASS", got.verdict, BLOCKED)
+    check("T3.5 missing provenance run → BLOCKED_NO_PROVENANCE_REJECTION",
+          got.code, "BLOCKED_NO_PROVENANCE_REJECTION")
+    facts.probe["T3.5"] = {"owner_string_only_refused": False}
+    check("T3.5 owner string accepted → FAIL", case(facts, "T3.5").code,
+          "OWNER_STRING_SOURCE_ACCEPTED")
+    facts.probe["T3.5"] = {"owner_string_only_refused": True}
+    check("T3.5 owner string refused in a run → PASS", case(facts, "T3.5").verdict, PASS)
+
+    # T3.2 — the A3 V7 contract is not player-visible wear
+    facts = fresh(one_world=True)
+    got = case(facts, "T3.2")
+    check("T3.2 contract present, no run → BLOCKED", got.verdict, BLOCKED)
+    check("T3.2 wear run missing → BLOCKED_NO_TOOL_WEAR_RUN", got.code,
+          "BLOCKED_NO_TOOL_WEAR_RUN")
+    facts = fresh(one_world=True, wear_contract=False)
+    check("T3.2 no contract at all → FAIL", case(facts, "T3.2").code, "TOOL_WEAR_ABSENT")
+    facts = fresh(one_world=True)
+    facts.probe["T3.2"] = {"tool_id": "stone_pick", "condition_before": 3, "condition_after": 3}
+    check("T3.2 run without wear → FAIL", case(facts, "T3.2").code, "TOOL_WEAR_NOT_APPLIED")
+    facts.probe["T3.2"] = {"tool_id": "stone_pick", "condition_before": 3, "condition_after": 2}
+    check("T3.2 run loses condition → PASS", case(facts, "T3.2").verdict, PASS)
 
     # T3
     check("T3.3 two research methods → FAIL", case(fresh(one_world=True, research=2), "T3.3").verdict, FAIL)

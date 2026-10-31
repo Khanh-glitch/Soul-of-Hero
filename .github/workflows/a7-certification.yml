@@ -36,7 +36,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 tools/survival/balance/a7_certify.py --self-test | tee selftest.txt
-          grep -q "A7_CERT_SELFTEST 43/43" selftest.txt
+          grep -q "A7_CERT_SELFTEST 65/65" selftest.txt
 
       - name: Compose the exact five-owner tree (read-only)
         run: |
@@ -87,6 +87,11 @@ jobs:
           set -e
           echo "probe exit=$rc" | tee -a "$RUNNER_TEMP/evidence/probe.txt"
           tail -40 "$RUNNER_TEMP/evidence/probe.txt"
+          # Engine-level failures are evidence, not noise. A tree that cannot compile must never
+          # be promoted by a probe that only read its text.
+          grep -E "SCRIPT ERROR|Parse Error|Compile Error|Failed to load script" \
+            "$RUNNER_TEMP/evidence/probe.txt" > "$RUNNER_TEMP/evidence/composed.native.txt" || true
+          echo "composed engine errors: $(wc -l < "$RUNNER_TEMP/evidence/composed.native.txt")"
           # A probe crash is a harness failure; a product refusal is not.
           grep -q "A7C_DONE" "$RUNNER_TEMP/evidence/probe.txt"
 
@@ -114,6 +119,9 @@ jobs:
           rc=$?
           set -e
           echo "control probe exit=$rc" >> "$RUNNER_TEMP/evidence/probe_control.txt"
+          grep -E "SCRIPT ERROR|Parse Error|Compile Error|Failed to load script" \
+            "$RUNNER_TEMP/evidence/probe_control.txt" > "$RUNNER_TEMP/evidence/control.native.txt" || true
+          echo "control engine errors: $(wc -l < "$RUNNER_TEMP/evidence/control.native.txt")"
           grep -q "A7C_DONE" "$RUNNER_TEMP/evidence/probe_control.txt"
           grep "^A7C AUTHORITY" "$RUNNER_TEMP/evidence/probe_control.txt" || true
 
@@ -162,6 +170,8 @@ jobs:
           cd "$GITHUB_WORKSPACE"
           OUT="docs/survival/balance/certification/r14_ci"
           mkdir -p "$OUT"
+          test -f "$RUNNER_TEMP/evidence/composed.native.txt"
+          test -f "$RUNNER_TEMP/evidence/control.native.txt"
           for f in report.json report.md certify.txt; do
             [ -f "$RUNNER_TEMP/$f" ] && cp "$RUNNER_TEMP/$f" "$OUT/$f"
           done
@@ -170,6 +180,9 @@ jobs:
           [ -f "$RUNNER_TEMP/evidence/probe_control.txt" ] && cp "$RUNNER_TEMP/evidence/probe_control.txt" "$OUT/probe_control.txt"
           [ -f "$RUNNER_TEMP/evidence/import_control.txt" ] && cp "$RUNNER_TEMP/evidence/import_control.txt" "$OUT/import_control.txt"
           [ -f "$RUNNER_TEMP/evidence/control_delta.txt" ] && cp "$RUNNER_TEMP/evidence/control_delta.txt" "$OUT/control_delta.txt"
+          for n in composed control; do
+            [ -f "$RUNNER_TEMP/evidence/$n.native.txt" ] && cp "$RUNNER_TEMP/evidence/$n.native.txt" "$OUT/$n.native.txt"
+          done
           cp selftest.txt "$OUT/selftest.txt" 2>/dev/null || true
           git config user.name "a7-certification"
           git config user.email "a7-certification@users.noreply.github.com"

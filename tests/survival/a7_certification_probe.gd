@@ -19,11 +19,16 @@ extends SceneTree
 const READER_PATH := "res://game/survival/world/a1_authored_world_reader.gd"
 const BOOTSTRAP_PATH := "res://game/autoload/input_bootstrap.gd"
 const CONTROLLER_PATH := "res://game/overworld/chapter1_overworld.gd"
+const AUTHORITY_PATH := "res://game/survival/a0_world_authority.gd"
+## A script this probe knows compiles in this tree. It proves the load check itself
+## works, so "nothing loaded" is never confused with "the loader is broken".
+const KNOWN_GOOD_PATH := "res://game/survival/world/a1_authored_world_reader.gd"
 const LEGACY_WORLD := "res://data/overworld/hollow_marches.json"
 const A8_PACKAGE := "res://data/survival/world_content/a8_a0_mount_transition_package.v2.json"
 const COMPAT_PATH := "res://game/survival/world/a1_runtime_compatibility.gd"
 
 var _reader: Variant = null
+var _native: Dictionary = {}
 ## The world the *game* activates, resolved once from the production controller.
 ## The legacy document is only live when the controller does not mount an authority.
 var _live_frame := Vector2i.ZERO
@@ -39,6 +44,7 @@ func _initialize() -> void:
 func _run() -> void:
 	print("A7C_ENGINE {\"version\": \"%s\"}" % str(Engine.get_version_info().get("string", "")))
 	_case_t1_5_bootstrap()
+	_case_native_load()
 	_case_authority()
 	_case_t1_1_world()
 	_case_t1_3_spawn()
@@ -78,6 +84,58 @@ func _legacy_bounds() -> Vector2i:
 
 
 # --------------------------------------------------------------------------- #
+# NATIVE_LOAD — does the tree actually compile, or only read well?
+#
+# Round 14's second answer scanned `chapter1_overworld.gd` as text and reported
+# "authored 1024x768" on a tree where Godot printed
+#   SCRIPT ERROR: Function "_spawn_cell()" not found in base self.
+#   SCRIPT ERROR: Failed to compile depended scripts.
+# and could not load the controller at all. Text is not a program. Every claim of
+# an active world must survive `load()` and `new()` in this engine build.
+# --------------------------------------------------------------------------- #
+func _case_native_load() -> void:
+	var known_good: Variant = load(KNOWN_GOOD_PATH)
+	var controller_script: Variant = load(CONTROLLER_PATH)
+	var authority_script: Variant = load(AUTHORITY_PATH)
+	var controller_inst := false
+	var authority_inst := false
+	var controller_error := ""
+	var mode := ""
+	if controller_script is Script:
+		var node: Variant = (controller_script as Script).new()
+		if node != null:
+			controller_inst = true
+			if node.has_method(&"_world_authority_mode"):
+				mode = String(node.call(&"_world_authority_mode"))
+			elif node.has_method(&"world_authority_report"):
+				mode = String((node.call(&"world_authority_report") as Dictionary).get("mode", ""))
+			(node as Node).free()
+		else:
+			controller_error = "NEW_RETURNED_NULL"
+	else:
+		controller_error = "SCRIPT_DOES_NOT_LOAD"
+	if authority_script is Script:
+		var authority: Variant = (authority_script as Script).new()
+		if authority != null:
+			authority_inst = true
+			(authority as Node).free()
+	_native = {
+		"known_good_loads": known_good is Script,
+		"controller_loads": controller_script is Script,
+		"controller_instantiates": controller_inst,
+		"authority_loads": authority_script is Script,
+		"authority_instantiates": authority_inst,
+		"controller_mode": mode,
+		"controller_error": controller_error,
+		"controller_sha256": FileAccess.get_file_as_string(CONTROLLER_PATH).sha256_text() \
+			if FileAccess.file_exists(CONTROLLER_PATH) else "",
+		"authority_sha256": FileAccess.get_file_as_string(AUTHORITY_PATH).sha256_text() \
+			if FileAccess.file_exists(AUTHORITY_PATH) else "",
+	}
+	_emit("NATIVE_LOAD", _native)
+
+
+# --------------------------------------------------------------------------- #
 # AUTHORITY — which world does the production controller actually activate?
 #
 # Round 14 first answer treated `data/overworld/hollow_marches.json` as "the live
@@ -102,15 +160,31 @@ func _case_authority() -> void:
 	var reader: Variant = _load_reader()
 	if reader != null and bool(reader.call(&"configure")):
 		authored = reader.call(&"world_frame")
-	if mounts_authority and default_authored and authored != Vector2i.ZERO:
-		_live_frame = authored
-		_live_source = "authored_authority"
-	elif mounts_sidecar:
+	var controller_runnable := bool(_native.get("controller_loads", false)) \
+		and bool(_native.get("controller_instantiates", false))
+	var authority_runnable := bool(_native.get("authority_loads", false)) \
+		and bool(_native.get("authority_instantiates", false))
+	var mode_resolved := String(_native.get("controller_mode", ""))
+	var source_mount := "authored" if mounts_authority else ("sidecar" if mounts_sidecar else "none")
+	var runtime_authority_verified := false
+	if mounts_authority:
+		# Source says "authored". Only the engine can confirm it: the controller and the
+		# authority must both load and instantiate, and the controller's own resolver
+		# must answer "authored". Text alone proves nothing (round 14: `_spawn_cell()`).
+		runtime_authority_verified = controller_runnable and authority_runnable \
+			and default_authored and mode_resolved == "authored"
+		if runtime_authority_verified:
+			_live_frame = authored
+			_live_source = "authored_authority"
+		else:
+			_live_frame = Vector2i.ZERO
+			_live_source = "UNRESOLVED_AUTHORITY_NOT_RUNNABLE"
+	elif mounts_sidecar and controller_runnable:
 		_live_frame = legacy
 		_live_source = "legacy_sidecar"
 	else:
-		_live_frame = legacy if legacy != Vector2i.ZERO else authored
-		_live_source = "legacy_document"
+		_live_frame = Vector2i.ZERO
+		_live_source = "UNRESOLVED_CONTROLLER_NOT_RUNNABLE"
 	_emit("AUTHORITY", {
 		"controller": CONTROLLER_PATH.replace("res://", ""),
 		"controller_present": text != "",
@@ -125,6 +199,12 @@ func _case_authority() -> void:
 		"legacy_frame": [legacy.x, legacy.y],
 		"live_frame": [_live_frame.x, _live_frame.y],
 		"live_source": _live_source,
+		"source_mount": source_mount,
+		"source_authority_present": mounts_authority,
+		"runtime_authority_verified": runtime_authority_verified,
+		"controller_runnable": controller_runnable,
+		"authority_runnable": authority_runnable,
+		"controller_mode_resolved": mode_resolved,
 	})
 
 
@@ -171,9 +251,12 @@ func _case_t1_1_world() -> void:
 		reader_ok = bool(reader.call(&"configure"))
 		if reader_ok:
 			authored = reader.call(&"world_frame")
-	_emit("T1.1", {"live": [live.x, live.y], "authored": [authored.x, authored.y],
+	var live_resolved := live != Vector2i.ZERO
+	_emit("T1.1", {"live": [live.x, live.y] if live_resolved else null,
+		"live_resolved": live_resolved,
+		"authored": [authored.x, authored.y],
 		"live_source": _live_source, "reader_ok": reader_ok,
-		"same_document": reader_ok and live == authored})
+		"same_document": (reader_ok and live == authored) if live_resolved else null})
 
 
 # --------------------------------------------------------------------------- #
@@ -191,10 +274,13 @@ func _case_t1_3_spawn() -> void:
 	var cell := Vector2i(int(spawn.cell_array[0]), int(spawn.cell_array[1]))
 	var live := _live_frame
 	var profile: Dictionary = reader.call(&"traversal_profile", cell)
+	var live_resolved := live != Vector2i.ZERO
 	_emit("T1.3", {
 		"ok": true, "cell": [cell.x, cell.y], "chunk_id": String(spawn.get("chunk_id", "")),
-		"live_frame": [live.x, live.y], "live_source": _live_source,
-		"in_live_world": cell.x >= 0 and cell.y >= 0 and cell.x < live.x and cell.y < live.y,
+		"live_frame": [live.x, live.y] if live_resolved else null, "live_source": _live_source,
+		"live_resolved": live_resolved,
+		"in_live_world": (cell.x >= 0 and cell.y >= 0 and cell.x < live.x and cell.y < live.y) \
+			if live_resolved else null,
 		"standable": bool(profile.get("ok", false)) and bool(profile.get("walkable", false)),
 		"traversal": String(profile.get("profile", profile.get("reason", ""))),
 		"region": String(spawn.get("region_id", "")),
@@ -210,6 +296,7 @@ func _case_t1_4_sites() -> void:
 	var live := _live_frame
 	var rows: Array = []
 	var outside := 0
+	var live_resolved := live != Vector2i.ZERO
 	for raw: Variant in package.get("existing_a8_sites", []):
 		if not (raw is Dictionary):
 			continue
@@ -219,13 +306,16 @@ func _case_t1_4_sites() -> void:
 			continue
 		var x := int(cell[0])
 		var y := int(cell[1])
-		var inside := x >= 0 and y >= 0 and x < live.x and y < live.y
-		if not inside:
-			outside += 1
+		var inside: Variant = null
+		if live_resolved:
+			inside = x >= 0 and y >= 0 and x < live.x and y < live.y
+			if not bool(inside):
+				outside += 1
 		rows.append({"poi_id": String(site.get("poi_id", "")), "cell": [x, y],
 			"inside_live_world": inside, "scene": String(site.get("scene", ""))})
-	_emit("T1.4", {"live": [live.x, live.y], "live_source": _live_source, "sites": rows,
-		"outside": outside})
+	_emit("T1.4", {"live": [live.x, live.y] if live_resolved else null,
+		"live_source": _live_source, "live_resolved": live_resolved, "sites": rows,
+		"outside": outside if live_resolved else null})
 
 
 func _case_t2_1_sites() -> void:
