@@ -1,6 +1,7 @@
 ## A source-space frame for a world compositor; no Gold floor, actors or HUD.
-## Packed arrays are copy-on-write snapshots. Hold only as long as necessary:
-## retaining one while its source renders again forces copies on the next tick.
+## Packed arrays may share mutable backing storage with the producer. Consume
+## them synchronously; a receiver retaining a frame across source updates must
+## explicitly duplicate each required array instead of assuming COW isolation.
 ## All pixel arrays are row-major and untransformed. The owner applies
 ## source_to_world first, then the current Camera2D/viewport transform.
 ## These are VISUAL DATA, never damage or resource-authority instructions.
