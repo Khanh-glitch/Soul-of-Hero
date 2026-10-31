@@ -186,6 +186,11 @@ func world_revision() -> String:
 func tool_plan_for_node(node_id: String, resource_kind: String) -> Dictionary:
 	if _adapter == null or node_id.is_empty() or resource_kind.is_empty():
 		return {}
+	# A3 cannot see the world: it would happily plan a swing at a node that does
+	# not exist. The mounted world is A0's authority, so the plan is refused here
+	# unless the caller names a real mounted node of the kind it claims.
+	if not _mounted_node_matches(node_id, resource_kind):
+		return {}
 	var candidate: Dictionary = _save.call(&"get_snapshot")
 	var instances: Dictionary = (_adapter.call(&"document") as Dictionary).get("instances", {})
 	var ids: Array = instances.keys()
@@ -213,6 +218,18 @@ func tool_plan_for_node(node_id: String, resource_kind: String) -> Dictionary:
 				"active_seconds": active,
 			}
 	return {}
+
+
+func _mounted_node_matches(node_id: String, resource_kind: String) -> bool:
+	if not is_instance_valid(_world):
+		return false
+	var nodes: Variant = _world.get(&"survival_nodes")
+	if not nodes is Dictionary:
+		return false
+	var node: Variant = (nodes as Dictionary).get(node_id)
+	if node == null or not is_instance_valid(node as Node):
+		return false
+	return String((node as Node).get(&"resource_kind")) == resource_kind
 
 
 ## Convenience read for callers that only need to know whether a tool applies.

@@ -92,6 +92,20 @@ jobs:
           bash tools/ci/gate_log.sh artifacts/tool-first.log 'A0 tool use first' 'A0 TOOL AND OFFLINE PASSED' || exit 1
           bash tools/ci/gate_log.sh artifacts/tool-second.log 'A0 tool use second' 'A0 TOOL AND OFFLINE PASSED' || exit 1
           [ "$rc1" -eq 0 ] && [ "$rc2" -eq 0 ]
+      - name: A0 player-return economy chain (quit, relaunch, exact conservation)
+        run: |-
+          set -uo pipefail
+          mkdir -p artifacts/ud_return
+          timeout 600s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_return --script res://tests/survival_a0_player_return_test.gd -- --keep-return > artifacts/return-first.log 2>&1
+          rc1=$?
+          cat artifacts/return-first.log
+          timeout 300s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_return --script res://tests/survival_a0_player_return_test.gd -- --verify-return > artifacts/return-second.log 2>&1
+          rc2=$?
+          cat artifacts/return-second.log
+          while IFS= read -r line; do echo "::error title=player-return::$line"; done < <(grep -E '  FAIL  |SCRIPT ERROR|Parse Error' artifacts/return-*.log | head -10 || true)
+          bash tools/ci/gate_log.sh artifacts/return-first.log 'A0 player return first' 'A0 PLAYER RETURN PASSED' || exit 1
+          bash tools/ci/gate_log.sh artifacts/return-second.log 'A0 player return second' 'A0 PLAYER RETURN PASSED' || exit 1
+          [ "$rc1" -eq 0 ] && [ "$rc2" -eq 0 ]
       - name: A0 owner-composition damage/death-bag probe (NOT gameplay)
         run: |
           set -uo pipefail
