@@ -1,25 +1,38 @@
 class_name OverworldHud
 extends CanvasLayer
-## The survival HUD: where you are, how much you are carrying, what you have found,
-## and the one line the world is telling you.
+## The survival HUD: where you are, how you are doing, what you carry, and the one
+## line the world is telling you.
 ##
 ## This is the screen the player stares at for hours, so it is dressed from the
-## authored kit (parchment card, wood bar, pack icons) instead of coloured rectangles,
-## and it stays in the corner so it never covers the tile the player is walking into.
+## authored kit (parchment card, wood bars, pack icons) rather than coloured
+## rectangles, and it holds one column in the top-left corner so it never covers the
+## tile the player is walking into.
 ##
 ## Every number here is handed in by the owner. The HUD never reads the save file,
-## never totals an inventory itself, and shows nothing it has not been told - an
-## unknown season is simply absent rather than guessed.
+## never totals an inventory itself, and shows nothing it has not been told: vitals
+## stay absent until the world emits them, an unknown season is absent rather than
+## guessed, and a discovery counter whose total is zero is hidden instead of standing
+## there as 0/0.
+##
+## Layout is authored in the 640x360 virtual space the whole interface uses, so it
+## stretches to 720p/1440p/2160p by whole multiples.
 
 signal respawn_requested
 
-## Virtual-pixel footprint. The viewport is 640x360 and stretches to 720/1080/1440/
-## 2160 by whole multiples, so these are the real on-screen sizes divided by 2..6.
+## Virtual-pixel footprint. Only the width is pinned; the parchment grows to whatever
+## the rows need, which is what keeps a long region name from being clipped by its own
+## card (the previous fixed 46-unit height did exactly that).
 const CARD_WIDTH := 214
-const CARD_HEIGHT := 46
+const CARD_X := 6
+const CARD_Y := 5
+const BAR_WIDTH := 92
+const BAR_HEIGHT := 7
 
 var _card: PanelContainer
 var _region_label: Label
+var _vitals_row: HBoxContainer
+var _vitals_bar: Dictionary
+var _vitals_number: Label
 var _provisions_bar: Dictionary
 var _provisions_number: Label
 var _carry_label: Label
@@ -38,7 +51,20 @@ func _ready() -> void:
 	layer = 20
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_build()
+	_listen_to_owner()
 	set_process(true)
+
+
+## Vitals are only ever what the owner says they are. If the signal never fires the
+## row stays hidden; it is never seeded with a made-up full bar.
+func _listen_to_owner() -> void:
+	var events := get_node_or_null("/root/GameEvents")
+	if events == null:
+		return
+	if events.has_signal("player_health_changed"):
+		events.connect("player_health_changed", _on_health_changed)
+	if events.has_signal("hero_health_pools_changed"):
+		events.connect("hero_health_pools_changed", _on_health_pools_changed)
 
 
 func _build() -> void:
@@ -56,70 +82,109 @@ func _build() -> void:
 	_build_prompt(root)
 
 
-## Top-left: region, provisions, carry, and the three discovery counters.
+## Top-left: where you are, then vitals and provisions as bars, then the quiet
+## strip of discovery counters. Order is the order the player needs them.
 func _build_field_card(root: Control) -> void:
 	_card = A6UiKit.card()
 	_card.theme_type_variation = &"A6HudCard"
 	_card.name = "FieldCard"
-	_card.position = Vector2(6, 5)
-	_card.custom_minimum_size = Vector2(CARD_WIDTH, CARD_HEIGHT)
-	_card.size = Vector2(CARD_WIDTH, CARD_HEIGHT)
+	_card.position = Vector2(CARD_X, CARD_Y)
+	# Width is pinned so the card has a stable silhouette; height is the content's.
+	_card.custom_minimum_size = Vector2(CARD_WIDTH, 0)
 	root.add_child(_card)
 
 	var column := VBoxContainer.new()
 	column.name = "Rows"
-	column.add_theme_constant_override("separation", 1)
+	column.add_theme_constant_override("separation", 2)
 	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_card.add_child(column)
 
-	_region_label = A6UiKit.label("THE HOLLOW MARCHES", "heading", 11)
-	_region_label.add_theme_color_override("font_color", A6UiKit.INK)
+	_region_label = A6UiKit.label("THE HOLLOW MARCHES", "caption", 8)
+	_region_label.add_theme_color_override("font_color", A6UiKit.INK_SOFT)
 	_region_label.name = "Region"
+	# clip_text drops the label's minimum width to zero, so a long region name can be
+	# trimmed with an ellipsis instead of widening the card past the safe corner.
+	_region_label.clip_text = true
+	_region_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	_region_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	column.add_child(_region_label)
 
-	var provisions_row := HBoxContainer.new()
-	provisions_row.name = "ProvisionsRow"
-	provisions_row.add_theme_constant_override("separation", 4)
-	provisions_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_vitals_row = _bar_row("VitalsRow", "health", "0/0")
+	_vitals_row.visible = false
+	_vitals_bar = _vitals_row.get_meta("bar")
+	_vitals_number = _vitals_row.get_meta("number")
+	column.add_child(_vitals_row)
+
+	var provisions_row := _bar_row("ProvisionsRow", "capacity", "0/0")
+	_provisions_bar = provisions_row.get_meta("bar")
+	_provisions_number = provisions_row.get_meta("number")
 	column.add_child(provisions_row)
 
-	var pack_icon := A6UiKit.icon("capacity", 12)
-	if pack_icon != null:
-		pack_icon.name = "PackIcon"
-		provisions_row.add_child(pack_icon)
+	var footer := HBoxContainer.new()
+	footer.name = "Footer"
+	footer.add_theme_constant_override("separation", 6)
+	footer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	column.add_child(footer)
 
-	_provisions_bar = A6UiKit.bar(104, 8)
-	var bar_root: Control = _provisions_bar["root"]
-	bar_root.name = "ProvisionsBar"
-	bar_root.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	provisions_row.add_child(bar_root)
-
-	_provisions_number = A6UiKit.label("0", "number", 11)
-	_provisions_number.add_theme_color_override("font_color", A6UiKit.INK)
-	_provisions_number.name = "ProvisionsNumber"
-	provisions_row.add_child(_provisions_number)
-
-	_carry_label = A6UiKit.label("", "caption", 9)
+	_carry_label = A6UiKit.label("", "caption", 8)
 	_carry_label.add_theme_color_override("font_color", A6UiKit.INK_SOFT)
 	_carry_label.name = "Carry"
-	column.add_child(_carry_label)
+	_carry_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	footer.add_child(_carry_label)
+
+	var filler := Control.new()
+	filler.name = "Filler"
+	filler.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	filler.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	footer.add_child(filler)
 
 	var counters := HBoxContainer.new()
 	counters.name = "Counters"
-	counters.add_theme_constant_override("separation", 7)
+	counters.add_theme_constant_override("separation", 6)
 	counters.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	column.add_child(counters)
-	_chips["camps"] = A6UiKit.chip("camp_light", "0/0", 10, 9)
+	footer.add_child(counters)
+	_chips["camps"] = A6UiKit.chip("camp_light", "0", 8, 9)
+	_chips["finds"] = A6UiKit.chip("research_kit", "0", 8, 9)
+	_chips["ways"] = A6UiKit.chip("travel", "0", 8, 9)
 	_chips["camps"].name = "CampsChip"
-	counters.add_child(_chips["camps"])
-	_chips["finds"] = A6UiKit.chip("research_kit", "0/0", 10, 9)
 	_chips["finds"].name = "FindsChip"
-	counters.add_child(_chips["finds"])
-	_chips["ways"] = A6UiKit.chip("travel", "0/0", 10, 9)
 	_chips["ways"].name = "WaysChip"
-	counters.add_child(_chips["ways"])
 	for chip_name: String in _chips.keys():
-		_ink_chip(_chips[chip_name] as Node)
+		var chip_node: Node = _chips[chip_name]
+		_ink_chip(chip_node)
+		counters.add_child(chip_node)
+
+
+## One status line: an icon, an authored track with a growing plank, and the numbers.
+## The parts are handed back on the row so callers can set the ratio without a lookup.
+func _bar_row(node_name: String, icon_id: String, text: String) -> HBoxContainer:
+	var row := HBoxContainer.new()
+	row.name = node_name
+	row.add_theme_constant_override("separation", 4)
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	var picture := A6UiKit.icon(icon_id, 10)
+	if picture != null:
+		picture.name = "Icon"
+		picture.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		row.add_child(picture)
+
+	var bar_parts := A6UiKit.bar(BAR_WIDTH, BAR_HEIGHT)
+	var bar_root: Control = bar_parts["root"]
+	bar_root.name = "Bar"
+	bar_root.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	bar_root.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(bar_root)
+
+	var number := A6UiKit.label(text, "number", 10)
+	number.add_theme_color_override("font_color", A6UiKit.INK)
+	number.name = "Number"
+	number.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(number)
+
+	row.set_meta("bar", bar_parts)
+	row.set_meta("number", number)
+	return row
 
 
 ## Chip numbers sit on parchment, so they are ink rather than cream.
@@ -129,16 +194,18 @@ func _ink_chip(chip: Node) -> void:
 			(child as Label).add_theme_color_override("font_color", A6UiKit.INK)
 
 
+## The keys are a quiet legend, not a headline: small, outlined so they survive a
+## bright sand tile, and in the same language as the rest of the interface.
 func _build_hint(root: Control) -> void:
 	_hint_label = A6UiKit.world_label(
-		"WASD move  ·  CLICK interact  ·  B build  ·  C craft  ·  ESC retreat", 8
+		"WASD di chuyển  ·  Click tương tác  ·  B xây dựng  ·  C chế tạo  ·  ESC rút lui", 9
 	)
 	_hint_label.name = "Hints"
-	_hint_label.modulate = Color(1, 1, 1, 0.75)
+	_hint_label.modulate = Color(1, 1, 1, 0.78)
 	_hint_label.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
 	_hint_label.offset_left = 8
-	_hint_label.offset_top = -14
-	_hint_label.offset_bottom = -3
+	_hint_label.offset_top = -16
+	_hint_label.offset_bottom = -4
 	root.add_child(_hint_label)
 
 
@@ -158,7 +225,7 @@ func _build_prompt(root: Control) -> void:
 	_prompt_bar.visible = false
 	root.add_child(_prompt_bar)
 
-	_prompt_label = A6UiKit.label("", "body", 11)
+	_prompt_label = A6UiKit.label("", "body", 10)
 	_prompt_label.add_theme_color_override("font_color", A6UiKit.CREAM)
 	_prompt_label.name = "Prompt"
 	_prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -213,6 +280,35 @@ func set_region(text: String) -> void:
 		_region_label.text = text
 
 
+## Owner-emitted vitals. Until this arrives the row is hidden: an empty bar would be
+## an invented value, and a full one would be a lie.
+func set_vitals(current: int, maximum: int) -> void:
+	if _vitals_row == null:
+		return
+	if maximum <= 0:
+		_vitals_row.visible = false
+		return
+	_vitals_row.visible = true
+	A6UiKit.set_bar(_vitals_bar, float(current), float(maximum))
+	_vitals_number.text = "%d/%d" % [current, maximum]
+	_vitals_number.add_theme_color_override(
+		"font_color", A6UiKit.WARN if current * 3 <= maximum else A6UiKit.INK
+	)
+
+
+func _on_health_changed(current: int, maximum: int) -> void:
+	set_vitals(current, maximum)
+
+
+func _on_health_pools_changed(snapshot: Dictionary) -> void:
+	# The pools snapshot carries per-pool detail; the readable total is what the HUD
+	# can state without inventing an aggregate the owner did not send.
+	var current := int(snapshot.get("current", -1))
+	var maximum := int(snapshot.get("maximum", -1))
+	if current >= 0 and maximum > 0:
+		set_vitals(current, maximum)
+
+
 ## `current`/`maximum` come from the run state; both are shown so an empty pack is
 ## never mistaken for a full one.
 func set_provisions(current: int, maximum: int) -> void:
@@ -233,7 +329,7 @@ func set_carry(used: int, capacity: int) -> void:
 	if capacity <= 0:
 		_carry_label.text = ""
 		return
-	_carry_label.text = "PACK %d/%d" % [used, capacity]
+	_carry_label.text = "TÚI %d/%d" % [used, capacity]
 	_carry_label.add_theme_color_override(
 		"font_color", A6UiKit.WARN if used >= capacity else A6UiKit.INK_SOFT
 	)
@@ -241,16 +337,20 @@ func set_carry(used: int, capacity: int) -> void:
 
 func set_counts(camps: int, camps_total: int, discoveries: int, discoveries_total: int,
 		shortcuts: int, shortcuts_total: int) -> void:
-	_set_chip_text("camps", "%d/%d" % [camps, camps_total])
-	_set_chip_text("finds", "%d/%d" % [discoveries, discoveries_total])
-	_set_chip_text("ways", "%d/%d" % [shortcuts, shortcuts_total])
+	_set_chip_text("camps", "%d/%d" % [camps, camps_total], camps_total)
+	_set_chip_text("finds", "%d/%d" % [discoveries, discoveries_total], discoveries_total)
+	_set_chip_text("ways", "%d/%d" % [shortcuts, shortcuts_total], shortcuts_total)
 
 
-func _set_chip_text(key: String, text: String) -> void:
+## A world with nothing to find yet should not wear three 0/0 counters: the strip is
+## an answer to "what is left out there", and it stays silent until there is one.
+func _set_chip_text(key: String, text: String, total: int) -> void:
 	var chip_value: Variant = _chips.get(key, null)
 	if chip_value == null:
 		return
-	for child: Node in (chip_value as Node).get_children():
+	var chip_node := chip_value as Node
+	chip_node.visible = total > 0
+	for child: Node in chip_node.get_children():
 		if child is Label:
 			(child as Label).text = text
 

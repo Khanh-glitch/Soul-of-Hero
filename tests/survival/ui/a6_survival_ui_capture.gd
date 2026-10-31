@@ -24,6 +24,10 @@ const RETURN_LAYER_SCENE := "res://game/survival/ui/return/a6_survival_return_la
 ## frames this driver publishes then show exactly the states that gate audits.
 const RETURN_FIXTURES := preload("res://tests/survival/ui/a6_return_ui_capture.gd")
 const AVATAR_SCENE := "res://game/ui/screens/avatar_choice/avatar_choice_screen.tscn"
+## The production HUD class itself, fed through the same entry points the overworld
+## uses, so the frame shows the component that ships rather than a mock of it.
+const HUD_SCRIPT := preload("res://game/overworld/overworld_hud.gd")
+const BACKDROP_SCENE := "res://game/ui/theme/dungeon_backdrop.tscn"
 const WATCHDOG_SECONDS := 120.0
 
 var _capture_dir := "user://a6_ui_captures"
@@ -51,6 +55,7 @@ func _run() -> void:
 	await _capture_screen("title", TITLE_SCENE, "")
 	await _capture_screen("avatar_choice", AVATAR_SCENE, "MaleButton")
 	await _capture_screen("avatar_female", AVATAR_SCENE, "FemaleButton")
+	await _capture_hud("hud_field")
 	await _capture_return("return_digest", "digest")
 	await _capture_return("return_guidance", "guidance")
 	_write_manifest()
@@ -155,6 +160,59 @@ func _capture_screen(state: String, scene_path: String, focus_name: String) -> v
 		"texts": _audit_texts(screen),
 	})
 	screen.queue_free()
+	await _settle(2)
+
+
+## The production HUD, mounted on the authored backdrop and fed exactly what the
+## overworld feeds it: region, provisions, pack, discovery counters and one prompt
+## line the world really emits. Vitals arrive through the production `GameEvents`
+## signal rather than a private setter, so this frame exercises the same path a hit
+## in the world does. A close-up at each resolution is what makes Vietnamese text,
+## bar contrast and icon legibility inspectable at 720p/1440p/2160p.
+func _capture_hud(state: String) -> void:
+	var backdrop := (load(BACKDROP_SCENE) as PackedScene).instantiate() as Control
+	add_child(backdrop)
+	await _settle(2)
+	var hud := HUD_SCRIPT.new() as CanvasLayer
+	add_child(hud)
+	await _settle(3)
+	hud.call(&"set_region", "THE HOLLOW MARCHES  ·  WESTERN FOUNDRY QUARTER")
+	hud.call(&"set_provisions", 80, 100)
+	hud.call(&"set_carry", 7, 50)
+	hud.call(&"set_counts", 1, 4, 2, 6, 0, 3)
+	hud.call(&"show_prompt", "Stand near a chest to choose items.", 6.0)
+	var events := get_node_or_null("/root/GameEvents")
+	if events != null and events.has_signal("player_health_changed"):
+		events.emit_signal("player_health_changed", 64, 100)
+	await _settle(5)
+	await RenderingServer.frame_post_draw
+	var frame := get_viewport().get_texture().get_image()
+	if frame == null or frame.is_empty():
+		_failures.append("%s: no frame was drawn" % state)
+	elif not _is_non_blank(frame):
+		_failures.append("%s: frame is a flat colour" % state)
+	else:
+		var pixels := frame.get_size()
+		var hud_root := hud.get_node_or_null("Root") as Control
+		if hud_root != null:
+			var rect := hud_root.get_global_rect()
+			if rect.size.x > float(pixels.x) + 1.0 or rect.size.y > float(pixels.y) + 1.0:
+				_failures.append("%s: HUD %s does not fit %dx%d" % [
+					state, str(rect.size), pixels.x, pixels.y,
+				])
+		var file := "%s/%s_%s_%dx%d.png" % [_capture_dir, _tag, state, pixels.x, pixels.y]
+		await _save(frame, file, state)
+		_entries.append({
+			"state": state,
+			"file": file,
+			"saved": FileAccess.file_exists(file),
+			"width": pixels.x,
+			"height": pixels.y,
+			"texts": _audit_texts(hud_root if hud_root != null else hud),
+		})
+		print("A6 SURVIVAL UI CAPTURE: rendered ", state)
+	hud.queue_free()
+	backdrop.queue_free()
 	await _settle(2)
 
 

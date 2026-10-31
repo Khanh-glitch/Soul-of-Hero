@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://game/survival/ui/return/a6_guidance_panel.gd" id="1_script"]
-[ext_resource type="Theme" path="res://game/ui/theme/living_arsenal_theme.tres" id="2_theme"]
+[ext_resource type="Theme" path="res://game/survival/ui/return/a6_return_theme.tres" id="2_theme"]
 
 ; The whole body sits inside a scroll container so this card can be given any height
 ; the screen can spare. A PanelContainer sizes itself to its content, so a card whose
