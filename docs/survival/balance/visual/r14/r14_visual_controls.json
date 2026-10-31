@@ -1,0 +1,323 @@
+{
+  "schema": "soh.a7.r14.visual_controls.v1",
+  "label": "FIXTURE_SETUP for materials only; every placement goes through the product's own build door",
+  "engine": "4.7-stable (official)",
+  "display_server": "X11",
+  "adapter": "llvmpipe (LLVM 20.1.2, 256 bits)",
+  "out_dir": "/tmp/captures",
+  "facts": {
+    "world_scene": "res://game/overworld/chapter1_overworld.tscn",
+    "hero_spawn": [
+      904.0,
+      3496.0
+    ],
+    "has_survival_build": true,
+    "viewport": [
+      1280,
+      720
+    ],
+    "content_scale_size": [
+      640,
+      360
+    ],
+    "camera_zoom": [
+      1.0,
+      1.0
+    ],
+    "render": {
+      "adapter": "llvmpipe (LLVM 20.1.2, 256 bits)",
+      "display": "X11",
+      "scale_mode": 1,
+      "scale_factor": 1.0
+    },
+    "census_at_spawn": {
+      "protected_place": 75,
+      "on_route": 46,
+      "world_blocker": 1,
+      "<ok>": 4,
+      "out_of_range": 122
+    },
+    "walks": [
+      {
+        "attempt": 0,
+        "direction": "move_down",
+        "hero_cell": [
+          56,
+          237
+        ]
+      }
+    ],
+    "steps_out_of_footprint": 13,
+    "valid": {
+      "built": true,
+      "origin": [
+        54,
+        235
+      ],
+      "radius": 2,
+      "ring_pieces": 16,
+      "ring_expected": 16,
+      "door_cell": [
+        54,
+        237
+      ],
+      "door_placed": true,
+      "chest_reason": "",
+      "bench_reason": "",
+      "bed_placed": true,
+      "bed_id": "b26",
+      "bed_activated": false,
+      "bed_activation": {},
+      "workbench_id": "b28",
+      "chest_placed": true,
+      "chest_cell": [
+        52,
+        232
+      ],
+      "workbench_placed": true,
+      "workbench_cell": [
+        53,
+        232
+      ],
+      "room": "room_9714e2c83143d85f761c2142f9d2412bfcbc63ee5287fdc3ad7f170388df9535",
+      "attempts": [
+        [
+          "wall_wood",
+          52,
+          233,
+          true,
+          ""
+        ],
+        [
+          "wall_wood",
+          53,
+          233,
+          true,
+          ""
+        ],
+        [
+          "wall_wood",
+          54,
+          233,
+          true,
+          ""
+        ],
+        [
+          "wall_wood",
+          55,
+          233,
+          true,
+          ""
+        ],
+        [
+          "wall_wood",
+          56,
+          233,
+          true,
+          ""
+        ],
+        [
+          "wall_wood",
+          52,
+          234,
+          true,
+          ""
+        ],
+        [
+          "wall_wood",
+          56,
+          234,
+          true,
+          ""
+        ],
+        [
+          "wall_wood",
+          52,
+          235,
+          true,
+          ""
+        ],
+        [
+          "wall_wood",
+          56,
+          235,
+          true,
+          ""
+        ],
+        [
+          "wall_wood",
+          52,
+          236,
+          true,
+          ""
+        ],
+        [
+          "wall_wood",
+          56,
+          236,
+          true,
+          ""
+        ],
+        [
+          "wall_wood",
+          52,
+          237,
+          true,
+          ""
+        ],
+        [
+          "wall_wood",
+          53,
+          237,
+          true,
+          ""
+        ],
+        [
+          "door_wood",
+          54,
+          237,
+          true,
+          ""
+        ],
+        [
+          "wall_wood",
+          55,
+          237,
+          true,
+          ""
+        ],
+        [
+          "wall_wood",
+          56,
+          237,
+          true,
+          ""
+        ]
+      ],
+      "door_point": "(872.0, 3832.0)",
+      "interior_point": "(872.0, 3768.0)"
+    },
+    "blocked": [
+      {
+        "case": "wall_on_hero_cell",
+        "cell": [
+          58,
+          238
+        ],
+        "preview_reason": "",
+        "preview_says_legal": true,
+        "commit_ok": false,
+        "commit_reason": "hero_in_footprint"
+      },
+      {
+        "case": "bed_without_room",
+        "cell": [
+          61,
+          238
+        ],
+        "preview_reason": "bed_requires_room",
+        "preview_says_legal": false,
+        "commit_ok": false,
+        "commit_reason": "bed_requires_room"
+      },
+      {
+        "case": "furnace_recipe_at_workbench",
+        "station": "b28",
+        "ok": false,
+        "reason": "station_not_reachable"
+      },
+      {
+        "case": "recipe_from_out_of_reach",
+        "distance_px": 400,
+        "ok": false,
+        "reason": "station_not_reachable"
+      }
+    ],
+    "home_shots": {
+      "outside_from": "(872.0, 3832.0)",
+      "inside_at": "(872.0, 3768.0)",
+      "frames": [
+        "r14_home_<w>x<h>.png",
+        "r14_home_interior_<w>x<h>.png"
+      ]
+    }
+  },
+  "rows": [
+    {
+      "file": "r14_home_1280x720.png",
+      "size": [
+        1280,
+        720
+      ],
+      "viewport": [
+        1280,
+        720
+      ],
+      "image_size": [
+        1280,
+        720
+      ],
+      "save_result": 0,
+      "png_bytes": 293618,
+      "sampled_colours": 343,
+      "path": "/tmp/captures/r14_home_1280x720.png"
+    },
+    {
+      "file": "r14_home_2560x1440.png",
+      "size": [
+        2560,
+        1440
+      ],
+      "viewport": [
+        2560,
+        1440
+      ],
+      "image_size": [
+        2560,
+        1440
+      ],
+      "save_result": 0,
+      "png_bytes": 439033,
+      "sampled_colours": 338,
+      "path": "/tmp/captures/r14_home_2560x1440.png"
+    },
+    {
+      "file": "r14_home_3840x2160.png",
+      "size": [
+        3840,
+        2160
+      ],
+      "viewport": [
+        3840,
+        2160
+      ],
+      "image_size": [
+        3840,
+        2160
+      ],
+      "save_result": 0,
+      "png_bytes": 552565,
+      "sampled_colours": 336,
+      "path": "/tmp/captures/r14_home_3840x2160.png"
+    },
+    {
+      "file": "r14_home_interior_1280x720.png",
+      "size": [
+        1280,
+        720
+      ],
+      "viewport": [
+        1280,
+        720
+      ],
+      "image_size": [
+        1280,
+        720
+      ],
+      "save_result": 0,
+      "png_bytes": 318501,
+      "sampled_colours": 370,
+      "path": "/tmp/captures/r14_home_interior_1280x720.png"
+    }
+  ]
+}
