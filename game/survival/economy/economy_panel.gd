@@ -172,7 +172,14 @@ func _format_items(items: Dictionary) -> String:
 
 
 ## How many of each item the committed bag holds. A0 owns this; the panel never adds.
+##
+## The economy session that owns the queue is asked first, because it is the object this
+## panel already treats as authoritative for jobs, stations and recipes; if it does not
+## publish totals, A0's SaveService is read directly. Both paths are read-only and the
+## answer is never cached, so a stale panel cannot disagree with the save.
 func _owned_totals() -> Dictionary:
+	if _host != null and is_instance_valid(_host) and _host.has_method(&"inventory_totals"):
+		return _host.call(&"inventory_totals") as Dictionary
 	var save := get_node_or_null("/root/SaveService")
 	if save == null or not save.has_method(&"inventory_totals"):
 		return {}

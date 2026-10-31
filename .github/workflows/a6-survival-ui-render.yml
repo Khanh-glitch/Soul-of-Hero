@@ -326,26 +326,34 @@ jobs:
       # The GUI itself, not a synthetic signal: real pointer motion, real press and
       # release, real wheel events, at this matrix resolution, while the panel rebuilds
       # its own list. This is the acceptance line for R13-A6-USABILITY.
+      #
+      # `--user-data-dir` is not a Godot option in this build: the engine ignores the
+      # flag and then treats its VALUE as the positional scene path, so it tries to load
+      # a directory, prints nothing useful and exits 1 after video init. Isolation is
+      # XDG_DATA_HOME instead, which is what the rest of the repo's CI uses.
       - name: Workshop GUI input under rebuild at ${{ matrix.resolution }}
         run: |
           set -uo pipefail
           res="${{ matrix.resolution }}"
-          mkdir -p "artifacts/ud-gui-${res}"
+          log="artifacts/gui-input-${res}.log"
+          mkdir -p "$(dirname "$log")"
+          data_dir="$(mktemp -d)"
           timeout --foreground --signal=TERM --kill-after=20s 300s xvfb-run --auto-servernum \
             -s "-screen 0 ${res}x24" \
-            env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
+            env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe XDG_DATA_HOME="${data_dir}" \
             godot --path . --rendering-driver opengl3 --audio-driver Dummy \
-            --resolution "${res}" --windowed --user-data-dir "artifacts/ud-gui-${res}" \
+            --resolution "${res}" --windowed \
             res://tests/survival/ui/a6_workshop_gui_input_test.tscn \
-            > "artifacts/gui-input-${res}.log" 2>&1 || true
+            > "${log}" 2>&1
           status=$?
-          cat "artifacts/gui-input-${res}.log"
-          if ! grep -q "A6 WORKSHOP GUI INPUT PASSED" "artifacts/gui-input-${res}.log"; then
-            tail -20 "artifacts/gui-input-${res}.log" | sed 's/^/::error::/'
-            echo "::error::workshop GUI input failed at ${res}"
+          grep -E "A6 GUI|PASSED|FAILED|::error" "${log}" | head -40 || true
+          if [ "${status}" -ne 0 ] || ! grep -q "A6 WORKSHOP GUI INPUT PASSED" "${log}"; then
+            # One annotation carrying the whole log: a burst of ::error:: lines is
+            # capped by GitHub and the decisive line is often the one that gets cut.
+            echo "::error title=Workshop GUI input ${res}::exit=${status}, $(wc -c < "${log}") bytes: $(tr '\n' '~' < "${log}" | cut -c1-2600)"
             exit 1
           fi
-          grep -q "at ${res}" "artifacts/gui-input-${res}.log" \
+          grep -q "at ${res}" "${log}" \
             || { echo "::error::the GUI test ran at the wrong viewport size"; exit 1; }
 
       - name: Render the survival overworld HUD and workshop through the real world

@@ -92,17 +92,10 @@ class FakeHost:
 		job_list.erase(job)
 		return {"ok": true}
 
-	## The panel reads A0's committed bag through this, never by totalling itself.
-	func totals() -> Dictionary:
-		return owned.duplicate()
-
-
-class SaveStub:
-	extends Node
-	var host: Node
-
+	## The panel reads committed totals through the host when it can; either way this is
+	## a read of the owner's number, never a total the panel computed.
 	func inventory_totals() -> Dictionary:
-		return host.call(&"totals") as Dictionary
+		return owned.duplicate()
 
 
 func _ready() -> void:
@@ -272,9 +265,6 @@ func expect_no_completion_claim(rig: Dictionary) -> void:
 
 
 func _mount(catalog: Dictionary, owned: Dictionary) -> Dictionary:
-	var save := SaveStub.new()
-	save.name = "SaveService"
-	add_child(save)
 	var host := FakeHost.new()
 	host.name = "WorkshopHost"
 	add_child(host)
@@ -286,13 +276,13 @@ func _mount(catalog: Dictionary, owned: Dictionary) -> Dictionary:
 	add_child(panel)
 	panel.call(&"configure", host)
 	panel.call(&"toggle")
-	return {"panel": panel, "host": host, "save": save}
+	return {"panel": panel, "host": host}
 
 
 func _teardown(rig: Dictionary) -> void:
 	if get_viewport().gui_get_focus_owner() != null:
 		get_viewport().gui_get_focus_owner().release_focus()
-	for key: String in ["panel", "host", "save"]:
+	for key: String in ["panel", "host"]:
 		var node: Node = rig.get(key)
 		if node != null and is_instance_valid(node):
 			node.get_parent().remove_child(node)
