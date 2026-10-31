@@ -25,12 +25,12 @@ func _initialize() -> void:
         for rep in range(6):
             old.clear()
             now.clear()
-            var opts := {"rot":c.rot,"seed":c.seed,"flags":c.flags,"glow":1.2,"edge":0.6,"sx":c.size,"sy":float(c.size) * 0.7}
+            var opts := {"rot":c.rot,"seed":c.seed,"flags":c.flags,"glow":1.2,"edge":0.6,"sx":c["size"],"sy":float(c["size"]) * 0.7}
             var color := Color(0.65,0.35,0.9,0.7)
             var order := [old,now] if rep % 2 == 0 else [now,old]
             for fx in order:
                 var t0 := Time.get_ticks_usec()
-                fx.sp(240.0,130.0,float(c.size),color,4,opts)
+                fx.sp(240.0,130.0,float(c["size"]),color,4,opts)
                 var elapsed := float(Time.get_ticks_usec() - t0)
                 if fx == old: old_times.append(elapsed)
                 else: new_times.append(elapsed)
@@ -38,7 +38,7 @@ func _initialize() -> void:
                 push_error("D19 star phase hoist changed source field or coverage")
                 quit(1)
                 return
-        print("D19_STAR_EXACT ",JSON.stringify({"size":c.size,"seed":c.seed,"flags":c.flags,"samples":6,"equal":true}))
+        print("D19_STAR_EXACT ",JSON.stringify({"size":c["size"],"seed":c.seed,"flags":c.flags,"samples":6,"equal":true}))
     old_times.sort()
     new_times.sort()
     print("D19_STAR_BENCH ",JSON.stringify({"mixed_case_old_median_us":old_times[int((old_times.size()-1)/2)],"mixed_case_new_median_us":new_times[int((new_times.size()-1)/2)],"scope":"same-host alternating single-sprite CPU, five mixed cases; not world or device budget"}))
