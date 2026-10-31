@@ -189,7 +189,6 @@ func _mount_worksite(scene_path: String, spawn_override: Vector2) -> void:
 		return
 	_site = packed.instantiate() as NativePoiSite
 	_site.name = "LocalPOIWorksite_%d" % (_site_index + 1)
-	_site.test_harness_only = true
 	_active_scene = _site
 	add_child(_site)
 	_site.intent_requested.connect(_on_intent_requested)

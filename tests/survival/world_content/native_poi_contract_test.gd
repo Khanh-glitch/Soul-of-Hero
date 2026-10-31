@@ -1057,7 +1057,7 @@ func _physical_mill_gate_and_retreat() -> void:
 		"the leave choice preserves the visibly stopped machinery state"
 	)
 	leave_actor.global_position = Vector2(528, 410)
-	leave_actor.request_test_motion(Vector2(0, -160))
+	leave_actor.request_test_motion(Vector2(0, -260))
 	await leave_actor.await_test_motion()
 	_check(
 		leave_actor.last_collision != null and leave_actor.global_position.y > 314.0,
