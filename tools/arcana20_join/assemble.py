@@ -47,11 +47,13 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument('--out', type=Path, required=True)
     ap.add_argument('--avfx-sha', required=True)
+    ap.add_argument('--a0-sha', default=PINS['a0'], help='exact A0 commit; nonhistorical inputs are unverified unless independently tested')
+    ap.add_argument('--pr30-sha', default=PINS['pr30'], help='exact CT binding commit')
     args = ap.parse_args()
     out = args.out.resolve()
     if out == ROOT or ROOT in out.parents or out.exists():
         raise SystemExit('out must be a nonexistent directory outside the repository')
-    shas = dict(PINS, avfx=args.avfx_sha)
+    shas = dict(PINS, a0=args.a0_sha, pr30=args.pr30_sha, avfx=args.avfx_sha)
     for label, sha in shas.items():
         resolved = subprocess.check_output(['git', '-C', str(ROOT), 'rev-parse', '--verify', sha + '^{commit}'], text=True).strip()
         if resolved != sha:
@@ -75,7 +77,8 @@ def main() -> None:
             shutil.copy2(t / 'data/survival/recipes' / f, out / '.a6-contract-inputs/a3/recipes' / f)
         shutil.copy2(t / 'data/survival/items/items.json', out / '.a6-contract-inputs/a3/items/items.json')
         shutil.copy2(t / 'game/survival/economy/economy_service.gd', out / '.a6-contract-inputs/a3/source/economy_service.gd')
-    manifest = {'shas': shas, 'scene': 'res://game/overworld/chapter1_overworld.tscn', 'entry': 'res://game/app/app_root.tscn via AppFlow', 'a0_normal_entry_reference_run': 41194096996, 'latest_observed_a0_not_tested': 'ee5f9f5160c8e4385f35a63b355ddda957f93d10', 'composition': 'isolated archive overlay, no merge; A1/A3 are read-only A6 inputs only', 'acceptance': 'UNVERIFIED'}
+    historical = shas['a0'] == PINS['a0']
+    manifest = {'shas': shas, 'scene': 'res://game/overworld/chapter1_overworld.tscn', 'entry': 'res://game/app/app_root.tscn via AppFlow', 'a0_input_classification': 'historical independently passing normal-entry pin; not current A0 acceptance' if historical else 'caller-supplied A0 SHA; no prior normal-entry validation assumed', 'a0_normal_entry_reference_run': 41194096996 if historical else None, 'composition': 'isolated archive overlay, no merge; A1/A3 are read-only A6 inputs only', 'acceptance': 'UNVERIFIED'}
     (out / 'arcana20_join_manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
     print(json.dumps(manifest, indent=2))
 

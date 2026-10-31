@@ -1,0 +1,65 @@
+name: ARCANA20 disposable latest A0 normal-entry integration probe
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-current-a0-join.yml']
+permissions:
+  contents: read
+jobs:
+  current-a0:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      A0_SHA: a6e3797879915510b2e86be0d2ee521f53967c94
+      CT_SHA: e505173edd119fdd955cf6249511b575a5468440
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fetch exact owner inputs
+        run: |
+          git fetch --no-tags origin "$A0_SHA" "$CT_SHA" 6b801554a6af95424b4e39dd29f43c146aa13848 2cb1a3c5f093724eb9fecbdf45909ccb611f7b32 18e7afcbd576bbd9bfbcc509b2ee13216186a522
+      - name: Assemble disposable current-A0 integration without changing owner files
+        run: python3 tools/arcana20_join/assemble.py --out "$RUNNER_TEMP/arcana20-current-a0" --avfx-sha "$GITHUB_SHA" --a0-sha "$A0_SHA" --pr30-sha "$CT_SHA"
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import current A0 disposable composition
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/arcana20-current-a0/artifacts"
+          timeout 300s godot --headless --path "$RUNNER_TEMP/arcana20-current-a0" --import 2>&1 | tee "$RUNNER_TEMP/arcana20-current-a0/artifacts/import.log"
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/arcana20-current-a0/artifacts/import.log"
+      - name: Run current A0 normal entry without mounting AVFX
+        run: |
+          set -euo pipefail
+          timeout --signal=TERM --kill-after=10s 300s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 ARCANA20_BASELINE_ONLY=1 \
+            godot --verbose --path "$RUNNER_TEMP/arcana20-current-a0" --rendering-method gl_compatibility --audio-driver Dummy --resolution 1280x720 --windowed \
+            --user-data-dir "$RUNNER_TEMP/arcana20-current-a0-user" --script res://prototypes/arcana_fusion20/renderer/arcana20_overworld_join_test.gd \
+            2>&1 | tee "$RUNNER_TEMP/arcana20-current-a0/artifacts/current-a0.log"
+          grep -Fq 'ARCANA20_JOIN_DIAGNOSTIC PASS' "$RUNNER_TEMP/arcana20-current-a0/artifacts/current-a0.log"
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|JOIN_FAIL' "$RUNNER_TEMP/arcana20-current-a0/artifacts/current-a0.log"
+      - name: Surface first current-A0 errors
+        if: always()
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import os,re
+          root=Path(os.environ['RUNNER_TEMP'])/'arcana20-current-a0/artifacts'
+          for p in root.glob('*.log'):
+            lines=p.read_text(errors='replace').splitlines()
+            hits=[i for i,s in enumerate(lines) if re.search(r'SCRIPT ERROR|Parse Error|JOIN_FAIL|ARCANA20_JOIN_DIAGNOSTIC',s)]
+            for i in hits[:8]:
+              print('::notice title=CURRENT_A0::'+str(p.name)+' '+' | '.join(lines[i:i+3])[:2800])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcana20-current-a0-normal-entry-probe
+          path: |
+            ${{ runner.temp }}/arcana20-current-a0/arcana20_join_manifest.json
+            ${{ runner.temp }}/arcana20-current-a0/artifacts/
+          if-no-files-found: warn
