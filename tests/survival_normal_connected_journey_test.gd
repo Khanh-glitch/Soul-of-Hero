@@ -135,8 +135,7 @@ func _continuation(ow: Node) -> void:
 	var scrap_before := _count(IRON)
 
 	# --- 2. craft the furnace kit through the visible panel -----------------
-	await _tap_action(&"economy_toggle")
-	await process_frame
+	_open_panel(panel)
 	var kit_button := panel.find_child("Recipe_furnace_kit_hand", true, false) as Button
 	_expect(kit_button != null, "the hand station visibly offers the furnace kit")
 	if kit_button == null:
@@ -153,14 +152,13 @@ func _continuation(ow: Node) -> void:
 	_expect(_count(STONE) == stone_before - 8 and _count(IRON) == scrap_before - 3,
 		"the furnace kit reserves exactly the gathered inputs (stone %d->%d, scrap %d->%d)"
 			% [stone_before, _count(STONE), scrap_before, _count(IRON)])
-	await _tap_action(&"economy_toggle")
+	_close_panel(panel)
 	var kit_ready := await _wait_job(furnace_job, 30000)
 	_expect(kit_ready, "active gameplay completes the furnace kit")
 	if not kit_ready:
 		_write_audit(ow, {})
 		return
-	await _tap_action(&"economy_toggle")
-	await process_frame
+	_open_panel(panel)
 	var kit_collect := _collect_button("furnace kit")
 	_expect(kit_collect != null, "the finished furnace kit exposes a Collect control")
 	if kit_collect == null:
@@ -170,7 +168,7 @@ func _continuation(ow: Node) -> void:
 	_expect(await _scroll_to(kit_scroll2, kit_collect), "ordinary wheel input reaches the furnace kit collect control")
 	await _click_window(root.get_final_transform() * (kit_collect.get_global_transform_with_canvas() * (kit_collect.size * 0.5)))
 	_expect(_count("furnace_kit") == 1, "ordinary GUI click collects exactly one furnace kit")
-	await _tap_action(&"economy_toggle")
+	_close_panel(panel)
 
 	# --- 3. place the furnace with the build pointer ------------------------
 	if _count("furnace_kit") != 1:
@@ -199,8 +197,7 @@ func _continuation(ow: Node) -> void:
 	if not reached:
 		_write_audit(ow, {})
 		return
-	await _tap_action(&"economy_toggle")
-	await process_frame
+	_open_panel(panel)
 	var charcoal_button := _recipe_button(panel, "burn_charcoal", furnace_id)
 	if charcoal_button == null:
 		# The panel rebuilds its station list as the player moves; give it a frame
@@ -218,13 +215,12 @@ func _continuation(ow: Node) -> void:
 	await _click_window(root.get_final_transform() * (charcoal_button.get_global_transform_with_canvas() * (charcoal_button.size * 0.5)))
 	var charcoal_job := _job_for("burn_charcoal")
 	_expect(not charcoal_job.is_empty(), "the GUI queues charcoal at the furnace (%s)" % charcoal_job)
-	await _tap_action(&"economy_toggle")
+	_close_panel(panel)
 	if charcoal_job.is_empty() or not await _wait_job(charcoal_job, 40000):
 		_expect(false, "active gameplay completes the charcoal burn")
 		_write_audit(ow, {})
 		return
-	await _tap_action(&"economy_toggle")
-	await process_frame
+	_open_panel(panel)
 	var charcoal_collect := _collect_button("burn charcoal")
 	_expect(charcoal_collect != null, "the burned charcoal exposes a Collect control")
 	if charcoal_collect == null:
@@ -233,7 +229,7 @@ func _continuation(ow: Node) -> void:
 	_expect(await _scroll_to(_owning_scroll(charcoal_collect), charcoal_collect), "ordinary wheel input reaches the charcoal control")
 	await _click_window(root.get_final_transform() * (charcoal_collect.get_global_transform_with_canvas() * (charcoal_collect.size * 0.5)))
 	_expect(_count("charcoal") == 2, "ordinary GUI click collects two charcoal")
-	await _tap_action(&"economy_toggle")
+	_close_panel(panel)
 
 	# --- 5. queue the fuelled smelt, then prepare it for the time away -----
 	var scrap_for_smelt := _count(IRON)
@@ -242,8 +238,7 @@ func _continuation(ow: Node) -> void:
 		_expect(false, "the smelt has its fuelled inputs (scrap %d, charcoal %d)" % [scrap_for_smelt, charcoal_for_smelt])
 		_write_audit(ow, {})
 		return
-	await _tap_action(&"economy_toggle")
-	await process_frame
+	_open_panel(panel)
 	var smelt_button := _recipe_button(panel, "smelt_iron", furnace_id)
 	_expect(smelt_button != null, "the furnace offers the fuelled smelt recipe")
 	if smelt_button == null:
@@ -253,7 +248,7 @@ func _continuation(ow: Node) -> void:
 	await _click_window(root.get_final_transform() * (smelt_button.get_global_transform_with_canvas() * (smelt_button.size * 0.5)))
 	var smelt_job := _job_for("smelt_iron")
 	_expect(not smelt_job.is_empty(), "the GUI queues the fuelled smelt (%s)" % smelt_job)
-	await _tap_action(&"economy_toggle")
+	_close_panel(panel)
 	if smelt_job.is_empty():
 		_write_audit(ow, {})
 		return
@@ -324,8 +319,7 @@ func _verify_body() -> void:
 	if String(job.get("status", "")) != "ready":
 		return
 	# Collecting is the player's act, through the visible panel.
-	await _tap_action(&"economy_toggle")
-	await process_frame
+	_open_panel(panel)
 	var collect := _collect_button("smelt iron")
 	_expect(collect != null, "the settled smelt exposes a Collect control")
 	if collect == null:
@@ -335,7 +329,7 @@ func _verify_body() -> void:
 	await _click_window(root.get_final_transform() * (collect.get_global_transform_with_canvas() * (collect.size * 0.5)))
 	_expect(_count("iron_ingot") == 1, "the player collects exactly one smelted iron ingot")
 	_expect(_collect_receipt_count() == receipts_before + 1, "the collection is one committed receipt")
-	await _tap_action(&"economy_toggle")
+	_close_panel(panel)
 	# A second settlement must not pay again.
 	var offline: Node = composition.get(&"_offline") as Node
 	var again: Dictionary = offline.call(&"settle", int(Time.get_unix_time_from_system()))
@@ -345,13 +339,12 @@ func _verify_body() -> void:
 	_expect(_count("iron_ingot") == 1 and _collect_receipt_count() == receipts_before + 1,
 		"no duplicate ingot and no duplicate receipt after re-settling")
 	# The ingot is a new reason to play: a recipe that needs it becomes orderable.
-	await _tap_action(&"economy_toggle")
-	await process_frame
+	_open_panel(panel)
 	var parts := panel.find_child("Recipe_make_parts_%s" % String(audit.get("furnace_id", "")), true, false) as Button
 	var hand_parts := panel.find_child("Recipe_make_parts_hand", true, false) as Button
 	_expect(parts != null or hand_parts != null,
 		"the smelted ingot makes an ingot-dependent recipe visible in the real panel")
-	await _tap_action(&"economy_toggle")
+	_close_panel(panel)
 	_body_complete = true
 
 
@@ -493,6 +486,29 @@ func _place_piece(ow: Node, hero: CharacterBody2D, nav: OverworldTraversability,
 	await _click_window(window_point)
 	await process_frame
 	return placement
+
+
+## A player presses C until the panel they want is on screen. Asserting the toggle
+## did exactly the right thing every time is not a player behaviour and it hid the
+## panel behind a second press; open() is idempotent instead.
+func _close_panel(panel: Node) -> bool:
+	for _i: int in range(3):
+		if not bool(panel.call(&"is_open")):
+			return true
+		await _tap_action(&"economy_toggle")
+		await process_frame
+	return not bool(panel.call(&"is_open"))
+
+
+func _open_panel(panel: Node) -> bool:
+	if panel == null:
+		return false
+	for _i: int in range(3):
+		if bool(panel.call(&"is_open")):
+			return true
+		await _tap_action(&"economy_toggle")
+		await process_frame
+	return bool(panel.call(&"is_open"))
 
 
 ## The row a player actually sees for this recipe at this station. The panel names
