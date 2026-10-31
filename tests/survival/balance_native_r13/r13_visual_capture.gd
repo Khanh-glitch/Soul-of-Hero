@@ -147,6 +147,17 @@ func _build_house() -> void:
 		print("A7CAPTURE13 NOTE no legal plot within sixteen cells after four walks; capturing the world alone")
 		facts["house"] = {"built": false, "reason": "no_legal_plot", "hero_cell": [hero_cell.x, hero_cell.y]}
 		return
+	# Stand outside the footprint before building. The product refuses a wall on the
+	# cell the Hero occupies (`hero_in_footprint`), exactly as it would for a player,
+	# so a capture that builds from inside the ring can never seal a room and the
+	# photograph would say "no house" about a build system that has one.
+	var steps_out := 0
+	while _inside_ring(_cell_of(hero.global_position), plot, radius) and steps_out < 40:
+		await _walk("move_down", 8)
+		steps_out += 1
+	facts["steps_out_of_footprint"] = steps_out
+	facts["hero_cell_when_building"] = [
+		_cell_of(hero.global_position).x, _cell_of(hero.global_position).y]
 	var attempts: Array = []
 	var placed := 0
 	for dy in range(-radius, radius + 1):
@@ -179,6 +190,12 @@ func _build_house() -> void:
 	if placed > 0 and hero != null:
 		facts["home_shot_cell"] = [plot.x, plot.y + radius + 2]
 		facts["home_shot_pending"] = true
+
+
+func _inside_ring(cell: Vector2i, center: Vector2i, radius: int) -> bool:
+	var dx := absi(cell.x - center.x)
+	var dy := absi(cell.y - center.y)
+	return maxi(dx, dy) <= radius + 1
 
 
 func _grant(item_id: String, kind: String, quantity: int) -> void:
