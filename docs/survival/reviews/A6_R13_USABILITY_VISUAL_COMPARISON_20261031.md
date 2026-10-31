@@ -1,6 +1,9 @@
 # A6 R13 — creator visual comparison and handoffs
 
 Round: **R13-A6-USABILITY (continuation)**. Branch `arena/05e0328d-soul-of-hero`.
+Frames below are from run **41237422836**, published at commit
+**`dd574b9c`** (workflow code `c91d947d` + the notice-colour fix). Earlier frames in this
+document's history were superseded and are not cited.
 Scope is presentation only: no A3 business logic, no A0 movement, no merge, and no
 self-declared visual acceptance.
 
@@ -22,11 +25,19 @@ hierarchy, and **two strongly contrasted 1× views of the same scene**.
 | queue rows could not be read at a glance | one bar, a 9-unit status word and `COLLECT`/`CANCEL` in English-ish words | the queue now sits **above** the catalog, names the product (through the catalog's own recipe→output table), draws its progress, states its status in Vietnamese, and offers exactly one action | `survival_ui_workshop_queued_*` |
 | two empty avatar card frames | an unstaged `TextureRect` and a caption that said `(chưa có hình)` | a deliberate seal: accent band per identity, framed slot, the word being chosen, and a tag that states the truth. Still no Knight, still no stand-in character | `survival_ui_avatar_choice_dir{a,b}_1280x720.png` |
 
-Two smaller defects the new frames exposed and this round also fixed: a row said `ĐẦY`
-on **every** row whenever the station queue was full (hiding the payability answer — the
-header states queue fullness once now), and the cost chips read `4/2`, which made the
-player work out which number was which (the chip carries the requirement; the colour and
-the shortfall sentence carry whether the bag covers it).
+### What looking at the frames caught that reading the code did not
+
+Six defects in this round were found by inspecting published pixels, not by reading the
+code. They are recorded because they are the argument for inspecting at 1×:
+
+| what the frame showed | real cause | fix |
+| --- | --- | --- |
+| every row said `ĐẦY` whenever the station queue was full, hiding payability | the row's state ranked queue-full above shortfall | queue fullness is the header's fact, stated once; the row answers "can I make this?" |
+| cost chips read `4/2` | `have/needed` needs the reader to know the order | the chip carries the requirement; colour + the shortfall sentence carry the comparison |
+| the verdict word looked **wrapped onto two lines** | measured: the label is 62×12, one line — the ghost was the theme's **global 1×2 px Label shadow** | the survival theme sets no global label shadow; display variations and world text keep theirs |
+| the scroll bar cut the right-hand column in half | `style_scroll()` was called **before** the list was added to its column, so its reparent guard silently did nothing and the bar stayed inside the ScrollContainer | add first, then style — and `style_scroll()` now refuses loudly instead of half-working |
+| direction B had a pale band under the queue heading and cream seams between rows | the theme's `ScrollContainer` parchment `panel` stylebox, invisible on parchment and glaring on the board | the list owns no surface; its panel style is empty in both directions |
+| the refusal line rendered in plain ink, not warn | the capture rebuild restyled the panel, repainting the live notice with the standing-hint colour | the panel remembers the notice's colour; only the never-notified hint follows the direction |
 
 ## 2. Why the font changed — the measurement, not a preference
 
@@ -72,17 +83,23 @@ state.
 Both keep the same layout budget, the same node names, the same input behaviour and the
 same numbers. The frames are paired by state name: `…_dira_…` and `…_dirb_…`.
 
-**Recommendation: A (ledger).** Reasons, in order of weight:
+**Recommendation: A (ledger).** Reasons, in order of weight, all from the published 1×
+frames rather than from the code:
 
 1. A keeps the parchment and the wooden station bar that the rest of the survival
-   surfaces (HUD card, build strip, return card) already use; B would introduce a second
-   material language the other seven A6 screens do not have.
-2. At 1× the ledger's ink-on-pale-plate wins on the smallest text (the cost chips), while
-   B's cream-on-dark needs one more step of contrast to reach the same legibility on the
-   smallest line.
-3. B's gold tags are the most striking element on the surface, which is *good* for a
-   collectible queue and *bad* for a list where five of eight rows can be unabtainable;
-   A's colour is confined to the word that states the verdict.
+   surfaces (HUD card, build strip, return card) already use; B introduces a second
+   material language that the other seven A6 screens do not have, so choosing B is a
+   decision to restyle those too.
+2. A's row state is carried by a **word on paper** and B's by a **filled tag**; with four
+   of four visible rows reading `THIẾU` in the real world frame, B's surface becomes a
+   wall of red tags, while A's stays quiet and the one row that is craftable is the only
+   green word on screen. B is the better surface for a queue full of collectables and the
+   worse one for a shopping list.
+3. At 1×, A's cost chips (icon + one number) sit on pale plates and read without effort;
+   B's need one more step of contrast on the smallest line before they are as easy,
+   because a dark plate reduces the headroom the amber short colour has.
+4. A is the smaller change: it keeps the authored window art that already exists in
+   `assets/a6_ui/panels/`, so no new art is needed to ship it.
 
 That is a recommendation, **not a decision**: D054 keeps the art language with the
 creator.
@@ -95,7 +112,7 @@ All frames are at `docs/survival/reviews/native/`, at **1280×720**, **2560×144
 | frame | what it shows | source of the data |
 | --- | --- | --- |
 | `survival_ui_workshop_queued_dira/dirb_*` | workshop with one **real** A3 job in the queue, real bag totals, real affordability | production overworld, production `economy_session` |
-| `survival_ui_workshop_refused_dira/dirb_*` | the same surface after the session refused a second queue (queue full) — the notice is the production refusal sentence | production session answer |
+| `survival_ui_workshop_refused_dira/dirb_*` | the same surface after the session refused a second queue (queue full) — `Không xếp được: hàng đợi đã đầy`, in warn colour | production session answer → production refusal mapping |
 | `survival_ui_avatar_choice_dira/dirb_*`, `..._avatar_female_*` | New Game's identity step, male/female focused, unstaged art | real screen, real manifest |
 | `survival_ui_hud_field_dira/dirb_*` | HUD over the authored **dark** backdrop | production `overworld_hud.gd` |
 | `world_fresh_world_1280x720_dira/dirb`, `…_2560x1440_…`, `…_3840x2160_…` | HUD on the **bright** live world | A0's native world driver |
@@ -113,7 +130,27 @@ numbers, and they are not a human playtest.
 window is unfocused, so the A3 session is given no clock and a queued job never
 completes; the frame that was going to show it showed the same queue twice, so it was
 replaced with the refusal state instead. The collect affordance is therefore
-**NOT_TESTED at 1×** this round.
+**NOT_TESTED at 1×** this round, and nothing in this document claims otherwise.
+
+### What was actually looked at, at native size
+
+Inspected at 1×, from run 41237422836 / `dd574b9c` (96 direction-tagged frames published
+across the three resolutions):
+
+* `survival_ui_workshop_queued_dir{a,b}_1280x720.png` — whole surface.
+* `survival_ui_workshop_refused_dir{a,b}_1280x720.png` — the refusal sentence, and its
+  colour, checked by sampling the pixels (225,107,71 = warn).
+* `survival_ui_avatar_choice_dir{a,b}_1280x720.png`, `survival_ui_avatar_female_dir{b}_1280x720.png`.
+* `survival_ui_hud_field_dir{a}_1280x720.png` — HUD on the dark backdrop.
+* `world_fresh_world_1280x720_dir{a,b}.png` — HUD on the **bright** live world, plus the
+  bottom key legend.
+* `world_economy_1280x720_dir{a,b}.png` — the workshop through the real world; every row
+  reads `THIẾU` with its concrete shortfall (`thiếu 2 × thóc`, `thiếu 8 × đá vụn`).
+* `survival_ui_workshop_queued_dirb_3840x2160.png` and `…_2560x1440.png` — cropped to the
+  window and reduced, to confirm the layout holds at the larger window sizes.
+
+**Not inspected:** the 4K and 1440p frames other than the workshop pair named above, and
+the `return_*` frames, which this round did not touch.
 
 ## 5. Input, identity and scroll: unchanged, and re-proved
 
@@ -204,6 +241,25 @@ character, no claimed identity, and now a deliberate seal instead of two empty f
 4. **Queue above the catalog** (what is running first) — keep, or put recipes first?
 5. **The refusal line lives in the header notice** — keep, or flash the offending chip?
 6. **`ĐANG CHẾ` as the queue heading** — or `HÀNG ĐỢI`?
+
+## 8.1 The commit trail for this round
+
+| commit | what it did |
+| --- | --- |
+| `ede12830` | localisation table, row hierarchy, two directions, VT323 body face, avatar seal |
+| `46c17bba` | capture ordering, unbuffered milestones |
+| `c11b87b4` | per-milestone memory reading so a silent stop is diagnosable |
+| `35692452` | one capture process per direction (the in-process switch was killing the run) |
+| `8fce0ac3` | payability outranks queue-full; chips carry the requirement; queue above catalog |
+| `34936089` | print the row widths instead of guessing at the clip |
+| `f1724b3e` | `style_scroll` called in the right order — the bar was inside the list all along |
+| `891dee4e` | detach the bar before moving it into the gutter |
+| `c91d947d` | remove the global 1×2 label shadow (the real cause of "muddy") |
+| `448fee51` | the list owns no surface (the pale band in direction B) |
+| (notice-colour fix) | a restyle no longer repaints a live refusal |
+
+Each of the last four was found by looking at a published frame, and each one is a
+presentation defect that no assertion in the repo was watching for.
 
 ## 9. Not done, and not claimed
 
