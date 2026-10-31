@@ -41,7 +41,7 @@
         "T1.2": "FAIL",
         "T1.3": "FAIL",
         "T1.4": "FAIL",
-        "T1.5": "BLOCKED",
+        "T1.5": "PASS",
         "T1.6": "BLOCKED"
       },
       "titles": {
@@ -182,20 +182,19 @@
     }
   },
   "first_blocker": {
-    "id": "T1.5",
+    "id": "T1.6",
     "track": "T1",
-    "title": "input bootstrap is diagnosed as harness config, not A1 fault",
-    "owner": "A7",
-    "kind": "test-only",
+    "title": "physical movement and collision with normal input",
+    "owner": "A0",
+    "kind": "real-gameplay",
     "required_stage": "runtime",
     "verdict": "BLOCKED",
-    "code": "BLOCKED_MISSING_BOOTSTRAP_CONTROL",
-    "detail": "both a pre-bootstrap and a bootstrapped run must be recorded",
-    "repro": "",
+    "code": "BLOCKED_NO_MOVEMENT_RUN",
+    "detail": "requires `A7C T1.6 {\"input_moves\":true,\"collision_blocks\":true}` from a real player walk on the composed tree",
+    "repro": "must be run by A0's journey harness in CI",
     "stages": {},
     "evidence": [
-      "before={}",
-      "after={}"
+      "game/survival/gameplay_input_gate.gd:92: var result := Input.get_vector(\"move_left\", \"move_right\", \"move_up\", \"move_down\")"
     ],
     "measurements": {}
   },
@@ -364,14 +363,16 @@
       "owner": "A7",
       "kind": "test-only",
       "required_stage": "runtime",
-      "verdict": "BLOCKED",
-      "code": "BLOCKED_MISSING_BOOTSTRAP_CONTROL",
-      "detail": "both a pre-bootstrap and a bootstrapped run must be recorded",
+      "verdict": "PASS",
+      "code": "INPUT_BOOTSTRAP_INDEPENDENT",
+      "detail": "the reader configures with and without the bootstrap",
       "repro": "",
-      "stages": {},
+      "stages": {
+        "runtime": "VALID"
+      },
       "evidence": [
-        "before={}",
-        "after={}"
+        "before={\"input_action_present\": true, \"reader_ok\": true, \"reason\": \"\"}",
+        "after={\"input_action_present\": true, \"reader_ok\": true, \"reason\": \"\"}"
       ],
       "measurements": {}
     },
@@ -875,9 +876,9 @@
   ],
   "counts": {
     "cases": 30,
-    "pass": 5,
+    "pass": 6,
     "fail": 5,
-    "blocked": 15,
+    "blocked": 14,
     "not_implemented": 5
   }
 }

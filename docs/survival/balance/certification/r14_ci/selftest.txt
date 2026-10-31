@@ -31,7 +31,9 @@ ok   T4.1 core present, no run → BLOCKED
 ok   T4.1 core present, gate fails → FAIL                 
 ok   T1.1 tree reproduces → PASS                          
 ok   T1.1 tree diverges → FAIL                            
+ok   probe parser keeps underscore markers                
+ok   probe parser reads the bootstrap pair                
 ok   maturity never grants HUMAN_ACCEPTED                 
 ok   maturity grants TEST_HARNESS_VALID first             
 
-A7_CERT_SELFTEST 35/35
+A7_CERT_SELFTEST 37/37

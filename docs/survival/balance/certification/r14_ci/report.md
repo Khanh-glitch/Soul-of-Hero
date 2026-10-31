@@ -4,12 +4,12 @@
 
 | track | verdict | cases |
 |---|---|---|
-| T1 | **FAIL** | T1.1=PASS, T1.2=FAIL, T1.3=FAIL, T1.4=FAIL, T1.5=BLOCKED, T1.6=BLOCKED |
+| T1 | **FAIL** | T1.1=PASS, T1.2=FAIL, T1.3=FAIL, T1.4=FAIL, T1.5=PASS, T1.6=BLOCKED |
 | T2 | **FAIL** | T2.1=BLOCKED, T2.2=BLOCKED, T2.3=FAIL, T2.4=BLOCKED, T2.5=BLOCKED, T2.6=BLOCKED |
 | T3 | **FAIL** | T3.1=BLOCKED, T3.2=FAIL, T3.3=BLOCKED, T3.4=BLOCKED, T3.5=PASS, T3.6=PASS, T3.7=PASS, T3.8=PASS, T3.9=BLOCKED, T3.10=BLOCKED |
 | T4 | **BLOCKED** | T4.1=NOT_IMPLEMENTED, T4.2=NOT_IMPLEMENTED, T4.3=NOT_IMPLEMENTED, T4.4=BLOCKED, T4.5=NOT_IMPLEMENTED, T4.6=BLOCKED, T4.7=NOT_IMPLEMENTED, T4.8=BLOCKED |
 
-Cases: 30 · PASS 5 · FAIL 5 · BLOCKED 15 · NOT_IMPLEMENTED 5
+Cases: 30 · PASS 6 · FAIL 5 · BLOCKED 14 · NOT_IMPLEMENTED 5
 
 ## Cases
 
@@ -19,7 +19,7 @@ Cases: 30 · PASS 5 · FAIL 5 · BLOCKED 15 · NOT_IMPLEMENTED 5
 | T1.2 | **FAIL** | `SIDECAR_WORLD` | A0 | source | one authoritative world (no rendered sidecar) |
 | T1.3 | **FAIL** | `SPAWN_OUTSIDE_LIVE_WORLD` | A0 | runtime | player spawns safely on the authored continent |
 | T1.4 | **FAIL** | `SITE_OUTSIDE_LIVE_WORLD` | A0 | source | canonical POI approaches lie inside the playable world |
-| T1.5 | **BLOCKED** | `BLOCKED_MISSING_BOOTSTRAP_CONTROL` | A7 | runtime | input bootstrap is diagnosed as harness config, not A1 fault |
+| T1.5 | **PASS** | `INPUT_BOOTSTRAP_INDEPENDENT` | A7 | runtime | input bootstrap is diagnosed as harness config, not A1 fault |
 | T1.6 | **BLOCKED** | `BLOCKED_NO_MOVEMENT_RUN` | A0 | runtime | physical movement and collision with normal input |
 | T2.1 | **BLOCKED** | `BLOCKED_NO_ENTRY_RUN` | A8 | source | two canonical sites ship real scenes |
 | T2.2 | **BLOCKED** | `BLOCKED_NO_ROUTE_RUN` | A0 | runtime | ordinary route from spawn to each site |
@@ -56,9 +56,11 @@ repro: `game/survival/a0_authored_world_mount.gd:12,29`
 
 ## First blocker
 
-`T1.5` · **BLOCKED_MISSING_BOOTSTRAP_CONTROL** · owner **A7**
+`T1.6` · **BLOCKED_NO_MOVEMENT_RUN** · owner **A0**
 
-both a pre-bootstrap and a bootstrapped run must be recorded
+requires `A7C T1.6 {"input_moves":true,"collision_blocks":true}` from a real player walk on the composed tree
+
+repro: `must be run by A0's journey harness in CI`
 
 ## Evidence per case
 
@@ -85,10 +87,10 @@ spawn [389, 291] is not inside (384, 256)
 - poi_crown_south_orchard (140, 360) scene=res://game/survival/world_content/scenes/south_orchard_ruin.tscn
 - poi_crown_south_mill (120, 300) scene=res://game/survival/world_content/scenes/south_crown_mill.tscn
 
-### T1.5 — BLOCKED `BLOCKED_MISSING_BOOTSTRAP_CONTROL`
-both a pre-bootstrap and a bootstrapped run must be recorded
-- before={}
-- after={}
+### T1.5 — PASS `INPUT_BOOTSTRAP_INDEPENDENT`
+the reader configures with and without the bootstrap
+- before={"input_action_present": true, "reader_ok": true, "reason": ""}
+- after={"input_action_present": true, "reader_ok": true, "reason": ""}
 
 ### T1.6 — BLOCKED `BLOCKED_NO_MOVEMENT_RUN`
 requires `A7C T1.6 {"input_moves":true,"collision_blocks":true}` from a real player walk on the composed tree
