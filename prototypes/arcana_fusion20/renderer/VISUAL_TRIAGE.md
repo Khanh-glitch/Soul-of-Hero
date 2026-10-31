@@ -86,3 +86,15 @@ The latest complete source review artifact is from successful run
 from 105,621,987 to 117,080,407 bytes. This is shared software-runner evidence,
 not a controlled target-device benchmark or GPU-memory measurement.
 The HTML review index contains reduced thumbnails from those two runs.
+
+## C separate-pass experiment (not acceptance)
+
+An opt-in C path now transports source ink coverage and additive light as
+separate sprites and forwards screen-post state without baking a rectangle.
+The existing default source-buffer path is unchanged and remains unsuitable as
+an approved native composite. See [C pass review](C_PASS_REVIEW.html) and
+[C pass limitations](C_NATIVE_PASS_EXPERIMENT.md). These five same-frame
+real-crypt comparisons cover only one time point each; #01 still includes A's
+legacy transport. Screen post, terrain/distortion, bloom and actor occlusion are
+not integrated. All-20 visual, actual overworld, normal-motion and integration
+requirements remain open.

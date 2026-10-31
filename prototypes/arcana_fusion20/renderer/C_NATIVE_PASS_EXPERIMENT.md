@@ -37,3 +37,20 @@ a bright-overworld, moving-camera video, PR #30 binding or performance proof.
 The gate additionally tests black ink coverage, additive neutral, flash
 separation and source-post signal forwarding. Existing spatial source gates are
 unchanged.
+
+## Preliminary scene review
+
+At `05050c1e2`, [real-crypt run 41203931063](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41203931063)
+succeeded and generated five same-frame experimental comparisons. The
+[comparison page](C_PASS_REVIEW.html) contains reduced 16-color thumbnails;
+full-resolution files remain in that run's artifact. At this scale the C
+split is visibly different around the #17 dark centre and broadly similar at
+the selected #01/#07/#10/#15 stills; that does not establish source fidelity,
+correct flash, actor occlusion or quality in motion. The HUD covers much of
+the scene and the test does not apply the emitted screen post. The #01 image
+still contains the old A transport. Keep this path opt-in.
+
+The same runner's **legacy** #02+#10 overlap probe recorded 55 both-active
+samples, p95 599.191 ms/frame and static memory 105,676,434 → 117,141,486
+bytes. This is shared software-rendered CI, not a controlled target-device
+benchmark, GPU memory measure, or a performance test of the experimental mode.
