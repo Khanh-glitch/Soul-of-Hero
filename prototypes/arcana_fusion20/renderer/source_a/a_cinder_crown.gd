@@ -77,7 +77,7 @@ func update(dt: float, t: float) -> void:
     for f in _frags:
         f["px"] = f["x"]
         f["py"] = f["y"]
-        var g := AMath.ease_out(AMath.clampf((gather - float(f.delay) * 0.3) / 0.9), 2.6)
+        var g := AMath.ease_out(AMath.cl01((gather - float(f.delay) * 0.3) / 0.9), 2.6)
         var ang: float = float(f.a) + float(f.sp) * t
         var collapse := 1.0 - 0.92 * AMath.smoothstep(3.0, 3.8, t)
         var tx := C.x + cos(ang) * float(f.r) * collapse
@@ -94,7 +94,7 @@ func render(fb: AFramebuffer, t: float) -> void:
     for f in _frags:
         var d := Vector2(float(f.x) - float(f.px), float(f.y) - float(f.py)).length()
         if d > 0.5 and t < 3.9:
-            var c := ACommon.fire_col(0.55 + AMath.clampf(d / 14.0) * 0.45)
+            var c := ACommon.fire_col(0.55 + AMath.cl01(d / 14.0) * 0.45)
             ADraw.streak(fb, float(f.px), float(f.py), float(f.x), float(f.y), float(f.size) * 0.5, float(f.size) * 0.9, c, 0.9)
     if build > 0.0 and burst < 1.0:
         var open_ := 1.0 - inhale * 0.55
@@ -120,11 +120,11 @@ func render(fb: AFramebuffer, t: float) -> void:
             var inner := base * 0.52 * (1.0 - inhale * 0.9)
             if d > surf or d < inner:
                 return
-            var h: float = AMath.clampf(minf((surf - d) / 9.0, (d - inner) / 5.0)) * build
-            var rim := AMath.clampf(1.0 - absf(d - surf) / 2.1)
+            var h: float = AMath.cl01(minf((surf - d) / 9.0, (d - inner) / 5.0)) * build
+            var rim := AMath.cl01(1.0 - absf(d - surf) / 2.1)
             var heat := lerpf(h * 0.85, 0.08, inhale * 0.85) * bright
             heat += rim * (0.55 + inhale * 0.9)
-            var c := ACommon.fire_col(AMath.clampf(heat))
+            var c := ACommon.fire_col(AMath.cl01(heat))
             out[0] = c.x
             out[1] = c.y
             out[2] = c.z)
@@ -149,11 +149,11 @@ func render(fb: AFramebuffer, t: float) -> void:
         if inhale > 0.2:
             ADraw.field_mul(fb, C.x - 46.0, C.y - 40.0, C.x + 46.0, C.y + 40.0, func(x: int, y: int) -> float:
                 var d := Vector2(float(x) - C.x, (float(y) - C.y) * 1.2).length()
-                return lerpf(1.0, 0.2, inhale * AMath.clampf(1.0 - d / 30.0)) if d < 30.0 else 1.0)
+                return lerpf(1.0, 0.2, inhale * AMath.cl01(1.0 - d / 30.0)) if d < 30.0 else 1.0)
     if burst > 0.0 and burst < 1.0:
         var e := burst
         for p in _petals:
-            var u := AMath.clampf((e - float(p.delay) * 0.3) * float(p.sp))
+            var u := AMath.cl01((e - float(p.delay) * 0.3) * float(p.sp))
             if u <= 0.0:
                 continue
             var grow := AMath.ease_out(u, 4.5)
@@ -166,7 +166,7 @@ func render(fb: AFramebuffer, t: float) -> void:
                 var a: float = float(p.a) + float(p.curve) * s * s * 0.75 * (-1.5 if int(p.back) else 1.0)
                 var rr := r0 + len_ * s
                 pts.append(Vector2(C.x + cos(a) * rr, C.y + (sin(a) * rr) / 1.22))
-            var fade := 1.0 - AMath.clampf((u - 0.55) / 0.45)
+            var fade := 1.0 - AMath.cl01((u - 0.55) / 0.45)
             var pw: float = p.w
             var pa: float = p.a
             ADraw.ribbon(fb, pts,
@@ -177,8 +177,8 @@ func render(fb: AFramebuffer, t: float) -> void:
                     var h := (1.0 - edge) * (1.0 - s * 0.5) * (0.35 + n * 0.75) * fade * 0.95
                     if h < 0.06:
                         return null
-                    return ACommon.fire_col(AMath.clampf(h)))
-        var fl := pow(1.0 - AMath.clampf(burst * 9.0), 2.0)
+                    return ACommon.fire_col(AMath.cl01(h)))
+        var fl := pow(1.0 - AMath.cl01(burst * 9.0), 2.0)
         fb.flash += Vector3(0.45, 0.22, 0.08) * fl
         ADraw.pulse_ring(fb, C.x, C.y, 10.0 + AMath.ease_out(burst, 2.0) * 210.0, 5.0 * (1.0 - burst), AMath.R("fire", 0.62), 0.45 * pow(1.0 - burst, 2.0), 1.25)
         ACommon.heat_shimmer(fb, C.x, C.y, 70.0 + burst * 60.0, t, 3.0 * (1.0 - burst))

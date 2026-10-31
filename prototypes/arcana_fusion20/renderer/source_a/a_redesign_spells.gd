@@ -88,7 +88,7 @@ class RiptideCalligraphyR:
     func render(fb: AFramebuffer, t: float) -> void:
         var diss := 1.0 - AMath.seg(t, 6.8, 8.4)
         for i in range(_strokes.size()):
-            var u := AMath.clampf(AMath.seg(t, 1.0 + float(i) * 1.1, 2.0 + float(i) * 1.1))
+            var u := AMath.cl01(AMath.seg(t, 1.0 + float(i) * 1.1, 2.0 + float(i) * 1.1))
             if u <= 0.0:
                 continue
             var pts: Array = []
@@ -136,7 +136,7 @@ class SkybreakerScriptR:
     func render(fb: AFramebuffer, t: float) -> void:
         var dis := 1.0 - AMath.seg(t, 7.8, 8.6)
         for i in range(_glyph.size()):
-            var u := AMath.clampf(AMath.seg(t, 0.8 + float(i) * 0.55, 1.35 + float(i) * 0.55))
+            var u := AMath.cl01(AMath.seg(t, 0.8 + float(i) * 0.55, 1.35 + float(i) * 0.55))
             if u <= 0.0:
                 continue
             var pts: Array = AMath.catmull_pt([Vector2.ZERO], 0.0) if false else []

@@ -86,7 +86,7 @@ class Worldseed:
         ADraw.disc(fb, C.x, C.y, 5.0 + AMath.seg(t, 0.7, 2.0) * 4.0, AMath.R("verdant", 0.55), fold)
         for p in _petals:
             var layer: int = int(p.layer)
-            var u := AMath.clampf(AMath.seg(t, 2.0 + float(layer) * 0.9, 4.2 + float(layer) * 0.9))
+            var u := AMath.cl01(AMath.seg(t, 2.0 + float(layer) * 0.9, 4.2 + float(layer) * 0.9))
             u *= fold
             if u <= 0.0:
                 continue
@@ -142,11 +142,11 @@ class RealityRipper:
                 var dx := float(x) + 0.5 - C.x
                 var dy := float(y) + 0.5 - C.y
                 var jag := (AMath.hash2(floor(dy * 0.5), 3.0) - 0.5) * 10.0
-                var d := absf(dx - jag * AMath.clampf(1.0 - absf(dy) / hh)) / maxf(1.0, hw) + absf(dy) / maxf(1.0, hh)
+                var d := absf(dx - jag * AMath.cl01(1.0 - absf(dy) / hh)) / maxf(1.0, hw) + absf(dy) / maxf(1.0, hh)
                 if d > 1.0:
                     return
-                var edge := AMath.clampf(1.0 - absf(d - 0.82) * 6.0)
-                var core := AMath.clampf(1.0 - d)
+                var edge := AMath.cl01(1.0 - absf(d - 0.82) * 6.0)
+                var core := AMath.cl01(1.0 - d)
                 var c := AMath.R("astral", 0.25 + core * 0.4)
                 out[0] = c.x * core * 0.35 + 1.9 * edge
                 out[1] = c.y * core * 0.35 + 1.7 * edge

@@ -87,7 +87,7 @@ class SporeNebulaR:
         var fade := 1.0 - AMath.seg(t, 7.6, 8.6)
         # hyphal links grow colony-to-colony (causal propagation)
         for i in range(_links.size()):
-            var u := AMath.clampf(AMath.seg(t, 1.2 + float(i) * 0.42, 2.2 + float(i) * 0.42))
+            var u := AMath.cl01(AMath.seg(t, 1.2 + float(i) * 0.42, 2.2 + float(i) * 0.42))
             if u <= 0.0:
                 continue
             var a: Vector2 = _colonies[int(_links[i][0])]

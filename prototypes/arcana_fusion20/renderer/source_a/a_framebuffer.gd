@@ -173,13 +173,13 @@ func present() -> PackedByteArray:
     var inv_r := 1.0 / sqrt(cx * cx + cy * cy)
     var itm := maxf(maxf(impact_tint.x, impact_tint.y), maxf(impact_tint.z, 1e-9))
     for y in range(H):
-        var byf: float = clampf((float(y) + 0.5) * 0.25 - 0.5, 0.0, float(bh) - 1.001)
+        var byf: float = cl01((float(y) + 0.5) * 0.25 - 0.5, 0.0, float(bh) - 1.001)
         var by0: int = floori(byf)
         var by1: int = mini(bh - 1, by0 + 1)
         var bfy := byf - float(by0)
         for x in range(W):
             var i := (y * W + x) * 3
-            var bxf: float = clampf((float(x) + 0.5) * 0.25 - 0.5, 0.0, float(bw) - 1.001)
+            var bxf: float = cl01((float(x) + 0.5) * 0.25 - 0.5, 0.0, float(bw) - 1.001)
             var bx0: int = floori(bxf)
             var bfx := bxf - float(bx0)
             var i00 := (by0 * bw + bx0) * 3
@@ -216,13 +216,13 @@ func present() -> PackedByteArray:
                     b = 0.03
             var dth := ((float(BAYER8[(y & 7) * 8 + (x & 7)]) / 64.0 - 0.5) * 0.8) / q
             var o := (y * W + x) * 4
-            var rb: int = clampi(int(floor((clampf(r + dth) * q + 0.5)) / q * 255.0), 0, 255)
-            var gb: int = clampi(int(floor((clampf(g + dth) * q + 0.5)) / q * 255.0), 0, 255)
-            var bbb: int = clampi(int(floor((clampf(b + dth) * q + 0.5)) / q * 255.0), 0, 255)
+            var rb: int = clampi(int(floor((cl01(r + dth) * q + 0.5)) / q * 255.0), 0, 255)
+            var gb: int = clampi(int(floor((cl01(g + dth) * q + 0.5)) / q * 255.0), 0, 255)
+            var bbb: int = clampi(int(floor((cl01(b + dth) * q + 0.5)) / q * 255.0), 0, 255)
             bytes[o] = rb
             bytes[o + 1] = gb
             bytes[o + 2] = bbb
             bytes[o + 3] = 255 if (rb != 0 or gb != 0 or bbb != 0) else 0
 
-static func clampf(v: float, a: float, b: float) -> float:
+static func cl01(v: float, a: float, b: float) -> float:
     return a if v < a else (b if v > b else v)

@@ -7,7 +7,7 @@ class_name AMath
 
 const TAU := PI * 2.0
 
-static func clampf(v: float, a: float = 0.0, b: float = 1.0) -> float:
+static func cl01(v: float, a: float = 0.0, b: float = 1.0) -> float:
     return a if v < a else (b if v > b else v)
 
 static func lerp(a: float, b: float, t: float) -> float:
@@ -15,43 +15,43 @@ static func lerp(a: float, b: float, t: float) -> float:
 
 static func smoothstep(e0: float, e1: float, x: float) -> float:
     var d := e1 - e0
-    var t := clampf((x - e0) / (d if d != 0.0 else 1e-6))
+    var t := cl01((x - e0) / (d if d != 0.0 else 1e-6))
     return t * t * (3.0 - 2.0 * t)
 
 static func smootherstep(e0: float, e1: float, x: float) -> float:
     var d := e1 - e0
-    var t := clampf((x - e0) / (d if d != 0.0 else 1e-6))
+    var t := cl01((x - e0) / (d if d != 0.0 else 1e-6))
     return t * t * t * (t * (t * 6.0 - 15.0) + 10.0)
 
 static func seg(t: float, a: float, b: float) -> float:
     var d := b - a
-    return clampf((t - a) / (d if d != 0.0 else 1e-6))
+    return cl01((t - a) / (d if d != 0.0 else 1e-6))
 
 static func segu(t: float, a: float, b: float) -> float:
     var d := b - a
     return (t - a) / (d if d != 0.0 else 1e-6)
 
 static func bump(t: float) -> float:
-    return sin(clampf(t) * PI)
+    return sin(cl01(t) * PI)
 
 static func ease_out(t: float, p: float = 3.0) -> float:
-    return 1.0 - pow(1.0 - clampf(t), p)
+    return 1.0 - pow(1.0 - cl01(t), p)
 
 static func ease_in(t: float, p: float = 3.0) -> float:
-    return pow(clampf(t), p)
+    return pow(cl01(t), p)
 
 static func ease_in_out(t: float) -> float:
-    var x := clampf(t)
+    var x := cl01(t)
     return 4.0 * x * x * x if x < 0.5 else 1.0 - pow(-2.0 * x + 2.0, 3.0) / 2.0
 
 static func elastic_out(t: float) -> float:
-    var x := clampf(t)
+    var x := cl01(t)
     if x == 0.0 or x == 1.0:
         return x
     return pow(2.0, -10.0 * x) * sin((x * 10.0 - 0.75) * (TAU / 3.0)) + 1.0
 
 static func back_out(t: float, s: float = 1.7) -> float:
-    var x := clampf(t) - 1.0
+    var x := cl01(t) - 1.0
     return x * x * ((s + 1.0) * x + s) + 1.0
 
 static func hash2(x: float, y: float) -> float:
@@ -151,7 +151,7 @@ static func hsv(h: float, s: float, v: float) -> Vector3:
     return Vector3(v, p, q)
 
 static func ramp(stops: Array, t: float) -> Vector3:
-    t = clampf(t)
+    t = cl01(t)
     for i in range(stops.size() - 1):
         var a: Array = stops[i]
         var b: Array = stops[i + 1]
@@ -194,7 +194,7 @@ static func catmull_pt(pts: Array, u: float) -> Vector2:
         return Vector2.ZERO
     if n == 1:
         return pts[0]
-    var f := clampf(u) * float(n - 1)
+    var f := cl01(u) * float(n - 1)
     var i := mini(floori(f), n - 2)
     var t := f - float(i)
     var p0: Vector2 = pts[maxi(0, i - 1)]

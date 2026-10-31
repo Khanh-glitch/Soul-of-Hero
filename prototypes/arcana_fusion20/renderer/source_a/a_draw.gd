@@ -129,7 +129,7 @@ static func streak(fb: AFramebuffer, x0: float, y0: float, x1: float, y1: float,
     field(fb, minf(x0, x1) - w_max, minf(y0, y1) - w_max, maxf(x0, x1) + w_max, maxf(y0, y1) + w_max, func(x: int, y: int, out: Array) -> void:
         var px0 := float(x) + 0.5 - x0
         var py0 := float(y) + 0.5 - y0
-        var t: float = AMath.clampf((px0 * dx + py0 * dy) * il2)
+        var t: float = AMath.cl01((px0 * dx + py0 * dy) * il2)
         var qx := px0 - dx * t
         var qy := py0 - dy * t
         var d := Vector2(qx, qy).length()
@@ -284,7 +284,7 @@ static func bolt_draw(fb: AFramebuffer, pts: Array, w: float, sheath: Vector3, c
         line(fb, a.x, a.y, b.x, b.y, core, k)
 
 static func band(v: float, steps: float) -> float:
-    return floor(AMath.clampf(v) * steps) / steps
+    return floor(AMath.cl01(v) * steps) / steps
 
 static func arc_px(fb: AFramebuffer, cx: float, cy: float, r: float, a0: float, a1: float, c: Vector3, a: float = 1.0, squash: float = 1.0) -> void:
     var steps: int = maxi(4, ceili(absf(a1 - a0) * r))

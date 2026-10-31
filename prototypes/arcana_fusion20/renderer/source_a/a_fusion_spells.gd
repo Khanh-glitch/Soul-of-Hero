@@ -70,7 +70,7 @@ class AbyssalBloom:
                 out[1] = c.y * h
                 out[2] = c.z * h)
             for p in _petals:
-                var u := AMath.clampf((open_ - float(p.del) * 0.3) * 1.6)
+                var u := AMath.cl01((open_ - float(p.del) * 0.3) * 1.6)
                 if u <= 0.0:
                     continue
                 var pts: Array = []

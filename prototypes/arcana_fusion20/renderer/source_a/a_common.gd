@@ -3,10 +3,10 @@ extends RefCounted
 class_name ACommon
 
 static func fire_col(h: float, steps: float = 9.0) -> Vector3:
-    return AMath.R("fire", floor(AMath.clampf(h) * steps) / steps)
+    return AMath.R("fire", floor(AMath.cl01(h) * steps) / steps)
 
 static func ramp_step(name: String, h: float, steps: float = 8.0) -> Vector3:
-    return AMath.R(name, floor(AMath.clampf(h) * steps) / steps)
+    return AMath.R(name, floor(AMath.cl01(h) * steps) / steps)
 
 static func flame_blob(fb: AFramebuffer, cx: float, cy: float, radius: float, t: float, seed_off: float, k: float, squash: float = 1.0, steps: float = 9.0) -> void:
     var rr := radius * 1.35
@@ -57,7 +57,7 @@ static func grow_branches(rng: AMath.ARng, x0: float, y0: float, a0: float, w0: 
 
 static func update_branches(bs: Array, t: float) -> void:
     for b in bs:
-        b["grow"] = AMath.clampf((t - float(b.delay)) * float(b.speed))
+        b["grow"] = AMath.cl01((t - float(b.delay)) * float(b.speed))
 
 static func draw_branch(fb: AFramebuffer, b: Dictionary, col_fn: Callable, width_fn: Callable, blend: bool = false) -> void:
     var pts: Array = b.pts
@@ -68,7 +68,7 @@ static func draw_branch(fb: AFramebuffer, b: Dictionary, col_fn: Callable, width
     for i in range(mini(n - 1, ceili(limit))):
         var p: Vector2 = pts[i]
         var q: Vector2 = pts[i + 1]
-        var f := AMath.clampf(limit - float(i))
+        var f := AMath.cl01(limit - float(i))
         var u0 := float(i) / float(n - 1)
         var ex := p.x + (q.x - p.x) * f
         var ey := p.y + (q.y - p.y) * f
@@ -141,7 +141,7 @@ static func shard(fb: AFramebuffer, cx: float, cy: float, r: float, a: float, si
             for x in range(xa, xb + 1):
                 var d := Vector2(float(x) - cx, (float(y) - cy) * squash).length() / (r if r != 0.0 else 1.0)
                 var edge := minf(float(x) - float(xs[k]), float(xs[k + 1]) - float(x))
-                var c: Variant = col_fn.call(AMath.clampf(d), edge)
+                var c: Variant = col_fn.call(AMath.cl01(d), edge)
                 if c != null:
                     var cc: Vector3 = c
                     fb.add(float(x), float(y), cc.x, cc.y, cc.z, 1.0)
