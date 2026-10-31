@@ -1,0 +1,21 @@
+﻿ID,Spell,Visual lead,Source winners,Needs redesign,Preserved winner visual,Enemy hit physically aligned,A on-body elemental effect,Selected environmental effect,Complete out,Runtime visually verified,Notes
+1,Cinder Crown,A+C,A+C,False,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,
+2,Furnace Wyrm,B,B,False,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,
+3,Meteor Loom,B,B,False,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,
+4,Ashen Guillotine,NEW,,True,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,cả 3 đều tạo ra 1 cột dọc r nổ ra chéo nhìn k make sense lắm. nhưng cột lửa của C ok nhưng impact và vết nứt của A đã hơn
+5,Abyssal Bloom,A+C,A+C,False,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,A có opening vào peak tuyệt với nhưng nhưng cú nổ tạo ra các tail hơi thừa trong khi C là 1 cột nước nổ kèm nước rơi khá ổn
+6,Riptide Calligraphy,NEW,,True,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,"Chiêu khó đẹp nhất, tuy nhiên C có độ make sense cao, nhìn k bị vô lí, A có các dài nước mềm mại và nét hơn"
+7,Mirrorfrost Basilica,C,C,False,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,C vượt trội về nhịp và hiệu ứng
+8,Undertow Maw,B,B,False,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,
+9,Chain Verdict,A+B+C,A+B+C,False,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,"Maybe k ai quá trội nhưng k tệ, A có hiệu ứng giật người đẹp và chuỗi dây chuyền hợp lí, B có 2 màu sét là 1 điểm mạnh, C có độ cân bằng mật độ sét và impact cao"
+10,Thunderloom,C,C,False,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,
+11,Volt Carousel,A+C(#9),A,False,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,"A có độ cầu kì trong không gian và thiết kế, điểm yếu là chính xác tia sét cấu thành chiêu chưa quá đẹp, nên tìm cách kết nối dc thiết kế tia sét của C ở chiêu 9 "
+12,Skybreaker Script,NEW,,True,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,"A có độ cầu kì trong thiết kế nhưng html hiện tại k kéo dc tới lúc nổ, k bt nhưng vẫn nhưu cũ hiệu ứng sét của A nên học C"
+13,Rootwake,NEW,,True,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,"B và C đều có opening rất tốt nhưng cách đẩy chiêu lên tương đối buồn cười và k tự nhiên, C trội hơn tí"
+14,Spore Nebula,NEW,,True,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,cả 3 đều nhìn khá random
+15,Thorn Opera,C,C,False,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,
+16,Worldseed,A+C,A+C,False,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,"mỗi cái  1 phong cách, A smooth, C màu đẹp"
+17,Event Horizon,C,C,False,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,
+18,Chronoshard,NEW,,True,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,"cả 3 đều k có độ mạke sense ở khúc chiêu nảy qua lại giữa các tinh thể, ở đây tinh thể B đẹp hơn"
+19,Constellation Engine,D(+A combat),A,False,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,
+20,Reality Ripper,A+C,A+C,False,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,NOT TESTED,"A có hiệu ứng ngoại cảnh vượt trội, C cho 1 thiết kế vết xé khả hợp lí"

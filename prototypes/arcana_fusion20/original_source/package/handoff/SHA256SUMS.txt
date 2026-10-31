@@ -1,0 +1,5 @@
+3b682931125ab16ad7cb563a2a041e4d3a0917285d433ef8068c86b004b8eaff  sources_original/pixel-art-magic-laboratory (1).zip # A
+94451e10d9c5527053ba38bbbec35278b96b2fecac598549ab10111fd69664ac  sources_original/pixel-magic-vfx-laboratory (1).zip # B
+122ab162f867f25f3f2acbf1b23a681c2e3089fdc9e70ed7e215cbba63a59919  sources_original/pixel-magic-vfx-laboratory.zip # C
+4d249d53d81c5ff699ebd606983c27b333f7be903fc949ceeb4dd55504a63291  reference/Elemental_VFX_Lab_FIXED_Standalone.html # D
+91cc1cdf9b81463643760573bc9a13f8650b25c04cfa4cd2dba2a222733234bd  votes/ARCANA_Votes_20-of-20.json # votes

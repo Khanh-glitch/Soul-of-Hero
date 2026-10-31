@@ -1,0 +1,191 @@
+{
+  "format": "arcana-three-way-vote",
+  "version": 1,
+  "exportedAt": "2026-10-25T02:54:01.186Z",
+  "purpose": "User visual votes. Multi-select winners; none means no candidate met the bar; missing vote means not yet rated.",
+  "candidates": {
+    "A": "pixel-art-magic-laboratory (1).zip",
+    "B": "pixel-magic-vfx-laboratory (1).zip",
+    "C": "pixel-magic-vfx-laboratory.zip"
+  },
+  "summary": {
+    "completed": 20,
+    "total": 20
+  },
+  "votes": [
+    {
+      "index": 1,
+      "skill": "Cinder Crown",
+      "winners": [
+        "A",
+        "C"
+      ],
+      "none": false,
+      "note": ""
+    },
+    {
+      "index": 2,
+      "skill": "Furnace Wyrm",
+      "winners": [
+        "B"
+      ],
+      "none": false,
+      "note": ""
+    },
+    {
+      "index": 3,
+      "skill": "Meteor Loom",
+      "winners": [
+        "B"
+      ],
+      "none": false,
+      "note": ""
+    },
+    {
+      "index": 4,
+      "skill": "Ashen Guillotine",
+      "winners": [],
+      "none": true,
+      "note": "cả 3 đều tạo ra 1 cột dọc r nổ ra chéo nhìn k make sense lắm. nhưng cột lửa của C ok nhưng impact và vết nứt của A đã hơn"
+    },
+    {
+      "index": 5,
+      "skill": "Abyssal Bloom",
+      "winners": [
+        "A",
+        "C"
+      ],
+      "none": false,
+      "note": "A có opening vào peak tuyệt với nhưng nhưng cú nổ tạo ra các tail hơi thừa trong khi C là 1 cột nước nổ kèm nước rơi khá ổn"
+    },
+    {
+      "index": 6,
+      "skill": "Riptide Calligraphy",
+      "winners": [],
+      "none": true,
+      "note": "Chiêu khó đẹp nhất, tuy nhiên C có độ make sense cao, nhìn k bị vô lí, A có các dài nước mềm mại và nét hơn"
+    },
+    {
+      "index": 7,
+      "skill": "Mirrorfrost Basilica",
+      "winners": [
+        "C"
+      ],
+      "none": false,
+      "note": "C vượt trội về nhịp và hiệu ứng"
+    },
+    {
+      "index": 8,
+      "skill": "Undertow Maw",
+      "winners": [
+        "B"
+      ],
+      "none": false,
+      "note": ""
+    },
+    {
+      "index": 9,
+      "skill": "Chain Verdict",
+      "winners": [
+        "A",
+        "B",
+        "C"
+      ],
+      "none": false,
+      "note": "Maybe k ai quá trội nhưng k tệ, A có hiệu ứng giật người đẹp và chuỗi dây chuyền hợp lí, B có 2 màu sét là 1 điểm mạnh, C có độ cân bằng mật độ sét và impact cao"
+    },
+    {
+      "index": 10,
+      "skill": "Thunderloom",
+      "winners": [
+        "C"
+      ],
+      "none": false,
+      "note": ""
+    },
+    {
+      "index": 11,
+      "skill": "Volt Carousel",
+      "winners": [
+        "A"
+      ],
+      "none": false,
+      "note": "A có độ cầu kì trong không gian và thiết kế, điểm yếu là chính xác tia sét cấu thành chiêu chưa quá đẹp, nên tìm cách kết nối dc thiết kế tia sét của C ở chiêu 9 "
+    },
+    {
+      "index": 12,
+      "skill": "Skybreaker Script",
+      "winners": [],
+      "none": true,
+      "note": "A có độ cầu kì trong thiết kế nhưng html hiện tại k kéo dc tới lúc nổ, k bt nhưng vẫn nhưu cũ hiệu ứng sét của A nên học C"
+    },
+    {
+      "index": 13,
+      "skill": "Rootwake",
+      "winners": [],
+      "none": true,
+      "note": "B và C đều có opening rất tốt nhưng cách đẩy chiêu lên tương đối buồn cười và k tự nhiên, C trội hơn tí"
+    },
+    {
+      "index": 14,
+      "skill": "Spore Nebula",
+      "winners": [],
+      "none": true,
+      "note": "cả 3 đều nhìn khá random"
+    },
+    {
+      "index": 15,
+      "skill": "Thorn Opera",
+      "winners": [
+        "C"
+      ],
+      "none": false,
+      "note": ""
+    },
+    {
+      "index": 16,
+      "skill": "Worldseed",
+      "winners": [
+        "A",
+        "C"
+      ],
+      "none": false,
+      "note": "mỗi cái  1 phong cách, A smooth, C màu đẹp"
+    },
+    {
+      "index": 17,
+      "skill": "Event Horizon",
+      "winners": [
+        "C"
+      ],
+      "none": false,
+      "note": ""
+    },
+    {
+      "index": 18,
+      "skill": "Chronoshard",
+      "winners": [],
+      "none": true,
+      "note": "cả 3 đều k có độ mạke sense ở khúc chiêu nảy qua lại giữa các tinh thể, ở đây tinh thể B đẹp hơn"
+    },
+    {
+      "index": 19,
+      "skill": "Constellation Engine",
+      "winners": [
+        "A"
+      ],
+      "none": false,
+      "note": ""
+    },
+    {
+      "index": 20,
+      "skill": "Reality Ripper",
+      "winners": [
+        "A",
+        "C"
+      ],
+      "none": false,
+      "note": "A có hiệu ứng ngoại cảnh vượt trội, C cho 1 thiết kế vết xé khả hợp lí"
+    }
+  ]
+}

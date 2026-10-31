@@ -1,0 +1,209 @@
+{
+  "format": "arcana-fusion20-corrected-single-source-v2",
+  "date": "2026-10-31",
+  "source": "ARCANA_FUSION_20SKILLS_HANDOFF.zip",
+  "unverified_claims_prohibited": [
+    "SOH enemy actors",
+    "native SOH map",
+    "20/20 visually approved",
+    "shader-perfect multi-renderer fusion",
+    "multi-source fusion completed"
+  ],
+  "fusion_verified": false,
+  "profiles": [
+    {
+      "index": 1,
+      "name": "Cinder Crown",
+      "source": "A",
+      "other": [
+        "C"
+      ],
+      "classification": "FUSION",
+      "creator_approved": true,
+      "note": ""
+    },
+    {
+      "index": 2,
+      "name": "Furnace Wyrm",
+      "source": "B",
+      "other": [],
+      "classification": "SELECTED_SOURCE",
+      "creator_approved": true,
+      "note": ""
+    },
+    {
+      "index": 3,
+      "name": "Meteor Loom",
+      "source": "B",
+      "other": [],
+      "classification": "SELECTED_SOURCE",
+      "creator_approved": true,
+      "note": ""
+    },
+    {
+      "index": 4,
+      "name": "Ashen Guillotine",
+      "source": "C",
+      "other": [],
+      "classification": "DIRECTED_REDESIGN",
+      "creator_approved": false,
+      "note": "cả 3 đều tạo ra 1 cột dọc r nổ ra chéo nhìn k make sense lắm. nhưng cột lửa của C ok nhưng impact và vết nứt của A đã hơn"
+    },
+    {
+      "index": 5,
+      "name": "Abyssal Bloom",
+      "source": "A",
+      "other": [
+        "C"
+      ],
+      "classification": "FUSION",
+      "creator_approved": true,
+      "note": "A có opening vào peak tuyệt với nhưng nhưng cú nổ tạo ra các tail hơi thừa trong khi C là 1 cột nước nổ kèm nước rơi khá ổn"
+    },
+    {
+      "index": 6,
+      "name": "Riptide Calligraphy",
+      "source": "C",
+      "other": [],
+      "classification": "DIRECTED_REDESIGN",
+      "creator_approved": false,
+      "note": "Chiêu khó đẹp nhất, tuy nhiên C có độ make sense cao, nhìn k bị vô lí, A có các dài nước mềm mại và nét hơn"
+    },
+    {
+      "index": 7,
+      "name": "Mirrorfrost Basilica",
+      "source": "C",
+      "other": [],
+      "classification": "SELECTED_SOURCE",
+      "creator_approved": true,
+      "note": "C vượt trội về nhịp và hiệu ứng"
+    },
+    {
+      "index": 8,
+      "name": "Undertow Maw",
+      "source": "B",
+      "other": [],
+      "classification": "SELECTED_SOURCE",
+      "creator_approved": true,
+      "note": ""
+    },
+    {
+      "index": 9,
+      "name": "Chain Verdict",
+      "source": "B",
+      "other": [
+        "A",
+        "C"
+      ],
+      "classification": "FUSION",
+      "creator_approved": true,
+      "note": "Maybe k ai quá trội nhưng k tệ, A có hiệu ứng giật người đẹp và chuỗi dây chuyền hợp lí, B có 2 màu sét là 1 điểm mạnh, C có độ cân bằng mật độ sét và impact cao"
+    },
+    {
+      "index": 10,
+      "name": "Thunderloom",
+      "source": "C",
+      "other": [],
+      "classification": "SELECTED_SOURCE",
+      "creator_approved": true,
+      "note": ""
+    },
+    {
+      "index": 11,
+      "name": "Volt Carousel",
+      "source": "A",
+      "other": [
+        "C9"
+      ],
+      "classification": "FUSION",
+      "creator_approved": true,
+      "note": "A có độ cầu kì trong không gian và thiết kế, điểm yếu là chính xác tia sét cấu thành chiêu chưa quá đẹp, nên tìm cách kết nối dc thiết kế tia sét của C ở chiêu 9 "
+    },
+    {
+      "index": 12,
+      "name": "Skybreaker Script",
+      "source": "A",
+      "other": [],
+      "classification": "DIRECTED_REDESIGN",
+      "creator_approved": false,
+      "note": "A có độ cầu kì trong thiết kế nhưng html hiện tại k kéo dc tới lúc nổ, k bt nhưng vẫn nhưu cũ hiệu ứng sét của A nên học C"
+    },
+    {
+      "index": 13,
+      "name": "Rootwake",
+      "source": "C",
+      "other": [],
+      "classification": "DIRECTED_REDESIGN",
+      "creator_approved": false,
+      "note": "B và C đều có opening rất tốt nhưng cách đẩy chiêu lên tương đối buồn cười và k tự nhiên, C trội hơn tí"
+    },
+    {
+      "index": 14,
+      "name": "Spore Nebula",
+      "source": "C",
+      "other": [],
+      "classification": "DIRECTED_REDESIGN",
+      "creator_approved": false,
+      "note": "cả 3 đều nhìn khá random"
+    },
+    {
+      "index": 15,
+      "name": "Thorn Opera",
+      "source": "C",
+      "other": [],
+      "classification": "SELECTED_SOURCE",
+      "creator_approved": true,
+      "note": ""
+    },
+    {
+      "index": 16,
+      "name": "Worldseed",
+      "source": "A",
+      "other": [
+        "C"
+      ],
+      "classification": "FUSION",
+      "creator_approved": true,
+      "note": "mỗi cái  1 phong cách, A smooth, C màu đẹp"
+    },
+    {
+      "index": 17,
+      "name": "Event Horizon",
+      "source": "C",
+      "other": [],
+      "classification": "SELECTED_SOURCE",
+      "creator_approved": true,
+      "note": ""
+    },
+    {
+      "index": 18,
+      "name": "Chronoshard",
+      "source": "B",
+      "other": [],
+      "classification": "DIRECTED_REDESIGN",
+      "creator_approved": false,
+      "note": "cả 3 đều k có độ mạke sense ở khúc chiêu nảy qua lại giữa các tinh thể, ở đây tinh thể B đẹp hơn"
+    },
+    {
+      "index": 19,
+      "name": "Constellation Engine",
+      "source": "D",
+      "other": [],
+      "classification": "SELECTED_SOURCE",
+      "creator_approved": true,
+      "note": ""
+    },
+    {
+      "index": 20,
+      "name": "Reality Ripper",
+      "source": "C",
+      "other": [
+        "A"
+      ],
+      "classification": "FUSION",
+      "creator_approved": true,
+      "note": "A có hiệu ứng ngoại cảnh vượt trội, C cho 1 thiết kế vết xé khả hợp lí"
+    }
+  ],
+  "status": "SOURCE_VISUAL_ONLY_FUSION_PENDING_NOT_GOLD_NOT_SOH"
+}
