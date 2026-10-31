@@ -1,0 +1,150 @@
+name: CT candidate composition PILOT (read-only owner branches)
+on:
+  push:
+    branches: [coordination/ct-pin-guard-pilot-20261031]
+    paths: [.github/workflows/ct-composition-candidate-pilot.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  composition:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      A0_SHA: ee5f9f5160c8e4385f35a63b355ddda957f93d10
+      A1_SHA: a030cb89a5033ba5faba39995762b4bea1332cec
+      A3_SHA: b44e22df3af40939069189be14afc23ee1ce21c4
+      A6_SHA: 6d1e8bcee0bbb09be0ff04f14de1f7e59f06cfb8
+      A8_SHA: 0f885df862d7d34f18ca456e80b1aaac05b23de0
+    steps:
+      - name: Checkout CT test utilities (pilot only)
+        uses: actions/checkout@v4
+        with:
+          path: ct-tools
+          fetch-depth: 1
+      - name: Checkout frozen A0 (no owner writes)
+        uses: actions/checkout@v4
+        with:
+          ref: ee5f9f5160c8e4385f35a63b355ddda957f93d10
+          path: product
+          fetch-depth: 0
+      - name: Verify frozen refs, record legacy workflow pin mismatches
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          test "$(git -C product rev-parse HEAD)" = "$A0_SHA"
+          git -C product fetch --no-tags origin "$A1_SHA" "$A3_SHA" "$A6_SHA" "$A8_SHA"
+          for value in "$A1_SHA" "$A3_SHA" "$A6_SHA" "$A8_SHA"; do
+            test "$(git -C product rev-parse "$value^{commit}")" = "$value"
+          done
+          set +e
+          python3 ct-tools/tools/survival/ct_pin_guard.py \
+            --pin "a1=$A1_SHA" --pin "a3=$A3_SHA" --pin "a6=$A6_SHA" --pin "a8=$A8_SHA" \
+            --json-out artifacts/historical_current_workflow_pins.json \
+            product/.github/workflows/a0-connected-journey.yml \
+            product/.github/workflows/a0-round12-composition.yml > artifacts/pin_guard.txt
+          rc=$?
+          set -e
+          test "$rc" -eq 1
+          python3 - <<'PY'
+          import json
+          p=json.load(open('artifacts/historical_current_workflow_pins.json'))
+          assert p['verdict']=='FAIL_CLOSED'
+          assert len([e for e in p['errors'] if 'STALE_PIN' in e])==6
+          assert len([e for e in p['errors'] if 'CURRENT_WORKFLOW_SPLIT' in e])==3
+          print('CT_SOURCE_HAZARD_REPRODUCED: 6 stale pins; 3 mismatched workflow owners')
+          PY
+      - name: Compose exact five-party candidate and classify conflicts
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          python3 product/tools/a0/compose_owners.py \
+            --repo product --out product/.composition --copy-base \
+            --owner "a1=$A1_SHA" --owner "a3=$A3_SHA" \
+            --owner "a8=$A8_SHA" --owner "a6=$A6_SHA" \
+            > artifacts/compose.log 2>&1
+          rc=$?
+          set -e
+          cat artifacts/compose.log
+          test -f product/.composition/composition.json || { echo '::error::NO_COMPOSITION_MANIFEST'; exit 1; }
+          cp product/.composition/composition.json artifacts/composition.json
+          cp product/.composition/CONFLICTS.md artifacts/CONFLICTS.md
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          c=json.load(open('artifacts/composition.json'))
+          print('CT_COMPOSE_BASE', c['base']['sha'])
+          for name, p in sorted(c['owners'].items()):
+              print('CT_COMPOSE_OWNER',name,p['sha'], 'copied',p['copied_files'], 'refused',p['changed_outside_scope'])
+          unresolved=[x for x in c['conflicts'] if not x.get('resolved')]
+          print('CT_COMPOSE_CONFLICTS',len(c['conflicts']),'UNRESOLVED',len(unresolved))
+          for x in unresolved: print('::error::',str(x)[:500])
+          Path('artifacts/compose_status.json').write_text(json.dumps({
+            'composition_schema': c['schema'],
+            'base_sha': c['base']['sha'],
+            'owners': {n:v['sha'] for n,v in c['owners'].items()},
+            'conflict_count': len(c['conflicts']),
+            'unresolved_conflict_count':len(unresolved),
+            'status':'PASS_SOURCE_COMPOSITION' if not unresolved else 'FAIL_SOURCE_COMPOSITION',
+            'evidence_scope':'COMPOSITION_ONLY_NOT_PLAYER_PLAYABLE'
+          },indent=2)+'\n')
+          PY
+          test "$rc" -eq 0
+      - name: Static production seat check (not gameplay)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 product/tools/a0/check_composition.py product/.composition 2>&1 | tee artifacts/seat_check.log
+          grep -q "COMPOSITION SEATS PASSED" artifacts/seat_check.log
+      - name: Record immutable composed-content git tree ID
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd product/.composition
+          git init --quiet
+          git add --force --all
+          git write-tree | tee ../../artifacts/composed_tree_sha.txt
+          test "$(wc -c < ../../artifacts/composed_tree_sha.txt)" -eq 41
+      - name: Setup Godot 4.7 for native source validation
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Godot import plus engine-level parse; fail closed
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd product/.composition
+          godot --version | tee ../../artifacts/godot_version.txt
+          set +e
+          timeout 300 godot --headless --path . --import > ../../artifacts/godot_import.log 2>&1
+          import_rc=$?
+          set -e
+          tail -n 85 ../../artifacts/godot_import.log
+          if grep -qaE 'SCRIPT ERROR|Parse Error' ../../artifacts/godot_import.log; then
+            echo "::error::GODOT_ENGINE_PARSE_FAILURE"
+            exit 1
+          fi
+          test "$import_rc" -eq 0
+          for script in \
+            game/survival/a0_authored_world_mount.gd \
+            tests/survival_normal_connected_journey_test.gd \
+            tests/survival_a0_authored_world_contract_test.gd; do
+            test -f "$script" || { echo "::error::MISSING_SCRIPT=$script"; exit 1; }
+            timeout 120 godot --headless --path . --check-only --script "res://$script" \
+              > ../../artifacts/parse-$(basename "$script").log 2>&1 || {
+                cat ../../artifacts/parse-$(basename "$script").log
+                exit 1
+              }
+          done
+          echo "CT_NATIVE_IMPORT_PARSE_PASS; THIS IS NOT GAMEPLAY ACCEPTANCE"
+      - name: Preserve source + native diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ct-composition-candidate-pilot-evidence
+          path: artifacts/*
+          if-no-files-found: warn
