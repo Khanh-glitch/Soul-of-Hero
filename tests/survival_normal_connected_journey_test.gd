@@ -31,6 +31,9 @@ const AUDIT := "user://tests/a0_connected_audit.json"
 const FURNACE_SLOT := "6"   # SurvivalBuildSystem.BUILD_SLOTS index 5 -> build_slot_6
 
 var _phase := "play"
+## Why the last recipe row could not be revealed. The failure label carries it, so
+## the annotation itself says what happened instead of only that it did.
+var _scroll_reason := ""
 var _keep := false
 var _prefix_complete := false
 
@@ -141,7 +144,7 @@ func _continuation(ow: Node) -> void:
 	if kit_button == null:
 		_write_audit(ow, {})
 		return
-	_expect(await _scroll_recipe(panel, kit_button), "ordinary wheel input reaches the furnace kit")
+	_expect(await _scroll_recipe(panel, kit_button), "ordinary wheel input reaches the furnace kit (%s)" % _scroll_reason)
 	await _click_window(root.get_final_transform() * (kit_button.get_global_transform_with_canvas() * (kit_button.size * 0.5)))
 	var furnace_job := _job_for("furnace_kit")
 	_expect(not furnace_job.is_empty(), "the GUI queues the furnace kit (%s)" % furnace_job)
@@ -215,7 +218,7 @@ func _continuation(ow: Node) -> void:
 	if charcoal_button == null:
 		_write_audit(ow, {})
 		return
-	_expect(await _scroll_recipe(panel, charcoal_button), "ordinary wheel input reaches the charcoal recipe")
+	_expect(await _scroll_recipe(panel, charcoal_button), "ordinary wheel input reaches the charcoal recipe (%s)" % _scroll_reason)
 	await _click_window(root.get_final_transform() * (charcoal_button.get_global_transform_with_canvas() * (charcoal_button.size * 0.5)))
 	var charcoal_job := _job_for("burn_charcoal")
 	_expect(not charcoal_job.is_empty(), "the GUI queues charcoal at the furnace (%s)" % charcoal_job)
@@ -248,7 +251,7 @@ func _continuation(ow: Node) -> void:
 	if smelt_button == null:
 		_write_audit(ow, {})
 		return
-	_expect(await _scroll_recipe(panel, smelt_button), "ordinary wheel input reaches the smelt recipe")
+	_expect(await _scroll_recipe(panel, smelt_button), "ordinary wheel input reaches the smelt recipe (%s)" % _scroll_reason)
 	await _click_window(root.get_final_transform() * (smelt_button.get_global_transform_with_canvas() * (smelt_button.size * 0.5)))
 	var smelt_job := _job_for("smelt_iron")
 	_expect(not smelt_job.is_empty(), "the GUI queues the fuelled smelt (%s)" % smelt_job)
@@ -508,22 +511,17 @@ func _close_panel(panel: Node) -> bool:
 ## with stale layout, a player closes and reopens the panel; the row is looked up
 ## again in the rebuilt list rather than trusting a stale node.
 func _scroll_recipe(panel: Node, button: Button) -> bool:
+	_scroll_reason = ""
 	if button == null:
+		_scroll_reason = "row_absent"
 		return false
 	var row_name := String(button.name)
 	await process_frame
+	var is_open := bool(panel.call(&"is_open"))
 	var scroll := _owning_scroll(button)
-	if scroll == null:
-		# A row with no scroll ancestor is not in the list the panel scrolls, so
-		# wheeling can never reveal it. Print the ancestry instead of guessing.
-		var chain: Array[String] = []
-		var walk: Node = button
-		while walk != null and chain.size() < 8:
-			chain.append("%s(%s)" % [String(walk.name), walk.get_class()])
-			walk = walk.get_parent()
-		print("A0_CONNECTED_SCROLL row=%s no_scroll_ancestor chain=%s in_panel=%s" % [
-			row_name, str(chain), str(button.get_parent() != null and panel.is_ancestor_of(button))])
+	_scroll_reason = "open=%s scroll=%s" % [str(is_open), str(scroll != null)]
 	if scroll != null and await _wheel_until_visible(scroll, button):
+		_scroll_reason = "revealed"
 		return true
 	# Reopening rebuilds the list; the row must be looked up again by name, because
 	# the old node is gone once the panel is rebuilt.
@@ -533,32 +531,14 @@ func _scroll_recipe(panel: Node, button: Button) -> bool:
 	await process_frame
 	var rebuilt_button := panel.find_child(row_name, true, false) as Button
 	var rebuilt := _owning_scroll(rebuilt_button)
-	return rebuilt_button != null and rebuilt != null and await _wheel_until_visible(rebuilt, rebuilt_button)
-
-
-## Wheel a row into view. A long list needs more than a fixed handful of clicks, so
-## the loop keeps wheeling in the row's direction until the row is inside the
-## viewport, the list stops moving, or the patience runs out.
-func _wheel_until_visible(scroll: ScrollContainer, control: Control) -> bool:
-	var previous := -1.0
-	var still := 0
-	for _i: int in range(400):
-		if scroll.get_global_rect().has_point(control.get_global_rect().get_center()):
-			return true
-		var target_y := control.get_global_rect().get_center().y
-		var wheel := InputEventMouseButton.new()
-		wheel.position = root.get_final_transform() * (scroll.get_global_transform_with_canvas() * (scroll.size * 0.5))
-		wheel.button_index = MOUSE_BUTTON_WHEEL_UP if target_y < scroll.get_global_rect().get_center().y else MOUSE_BUTTON_WHEEL_DOWN
-		wheel.pressed = true
-		Input.parse_input_event(wheel)
-		await process_frame
-		var offset := float(scroll.scroll_vertical)
-		still = still + 1 if is_equal_approx(offset, previous) else 0
-		previous = offset
-		if still > 12:
-			break
-	print("A0_CONNECTED_SCROLL row=%s offset=%.1f viewport=%s row_center=%.1f" % [
-		String(control.name), float(scroll.scroll_vertical), str(scroll.size), control.get_global_rect().get_center().y])
+	_scroll_reason += " | rebuilt=%s scroll=%s" % [str(rebuilt_button != null), str(rebuilt != null)]
+	if rebuilt_button != null and rebuilt != null and await _wheel_until_visible(rebuilt, rebuilt_button):
+		_scroll_reason += " | revealed_after_reopen"
+		return true
+	var rows: Array[String] = []
+	for value: Node in panel.find_children("Recipe_*", "Button", true, false):
+		rows.append(String(value.name))
+	_scroll_reason += " | rows=%d %s" % [rows.size(), str(rows.slice(0, 12))]
 	return false
 
 
