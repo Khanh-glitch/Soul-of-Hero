@@ -11,15 +11,15 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      A0_SHA: 5a173ff7d5da08c617e6a5a11e97b0808f5584cc
+      A0_SHA: e5529c13335d5da8272d7b9d2cfb74897dcaf7e2
       CT_SHA: e505173edd119fdd955cf6249511b575a5468440
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1
       - name: Fetch exact owner inputs
         run: |
-          git fetch --no-tags origin "$A0_SHA" "$CT_SHA" 6b801554a6af95424b4e39dd29f43c146aa13848 2cb1a3c5f093724eb9fecbdf45909ccb611f7b32 18e7afcbd576bbd9bfbcc509b2ee13216186a522
+          git fetch --depth=1 --no-tags origin "$A0_SHA" "$CT_SHA" 6b801554a6af95424b4e39dd29f43c146aa13848 2cb1a3c5f093724eb9fecbdf45909ccb611f7b32 18e7afcbd576bbd9bfbcc509b2ee13216186a522
       - name: Assemble disposable current-A0 integration without changing owner files
         run: python3 tools/arcana20_join/assemble.py --out "$RUNNER_TEMP/arcana20-current-a0" --avfx-sha "$GITHUB_SHA" --a0-sha "$A0_SHA" --pr30-sha "$CT_SHA"
       - uses: chickensoft-games/setup-godot@v2

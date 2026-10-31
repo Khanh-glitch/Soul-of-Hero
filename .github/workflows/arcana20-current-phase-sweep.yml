@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [arena/c7b0c4e8-soul-of-hero]
-    paths: ['.github/workflows/arcana20-current-phase-sweep.yml', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_fusion.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_membranes.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_debris.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_organism.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_leaflets.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_core.gd', 'prototypes/arcana_fusion20/renderer/source_d/d_constellation_engine.gd']
+    paths: ['.github/workflows/arcana20-current-phase-sweep.yml', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_fusion.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_membranes.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_debris.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_organism.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_leaflets.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_core.gd', 'prototypes/arcana_fusion20/renderer/source_d/d_constellation_engine.gd', 'prototypes/arcana_fusion20/renderer/arcana20_overworld_join_test.gd', 'prototypes/arcana_fusion20/renderer/arcana20_surface_d19_out.py']
 permissions:
   contents: read
 jobs:
@@ -21,8 +21,8 @@ jobs:
           fetch-depth: 1
       - name: Assemble isolated current owner composition
         run: |
-          git fetch --depth=1 --no-tags origin 5a173ff7d5da08c617e6a5a11e97b0808f5584cc 6b801554a6af95424b4e39dd29f43c146aa13848 2cb1a3c5f093724eb9fecbdf45909ccb611f7b32 18e7afcbd576bbd9bfbcc509b2ee13216186a522 e505173edd119fdd955cf6249511b575a5468440
-          python3 tools/arcana20_join/assemble.py --out "$RUNNER_TEMP/arcana20-phases" --avfx-sha "$GITHUB_SHA" --a0-sha 5a173ff7d5da08c617e6a5a11e97b0808f5584cc
+          git fetch --depth=1 --no-tags origin e5529c13335d5da8272d7b9d2cfb74897dcaf7e2 6b801554a6af95424b4e39dd29f43c146aa13848 2cb1a3c5f093724eb9fecbdf45909ccb611f7b32 18e7afcbd576bbd9bfbcc509b2ee13216186a522 e505173edd119fdd955cf6249511b575a5468440
+          python3 tools/arcana20_join/assemble.py --out "$RUNNER_TEMP/arcana20-phases" --avfx-sha "$GITHUB_SHA" --a0-sha e5529c13335d5da8272d7b9d2cfb74897dcaf7e2
       - uses: chickensoft-games/setup-godot@v2
         with:
           version: 4.7.0
@@ -46,6 +46,21 @@ jobs:
             2>&1 | tee "$RUNNER_TEMP/arcana20-phases/artifacts/phases.log"
           grep -Fq 'ARCANA20_JOIN_DIAGNOSTIC PASS' "$RUNNER_TEMP/arcana20-phases/artifacts/phases.log"
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Shader compilation failed|JOIN_FAIL' "$RUNNER_TEMP/arcana20-phases/artifacts/phases.log"
+      - name: Install D19 OUT crop tools
+        if: matrix.first == 16 && matrix.lighting == 'normal'
+        run: python3 -m pip install --quiet pillow numpy
+      - name: Surface actual D19 OUT start crop
+        if: matrix.first == 16 && matrix.lighting == 'normal'
+        run: python3 prototypes/arcana_fusion20/renderer/arcana20_surface_d19_out.py "$RUNNER_TEMP/arcana20-phases/artifacts/arcana20-join" start
+      - name: Surface actual D19 OUT withdraw crop
+        if: matrix.first == 16 && matrix.lighting == 'normal'
+        run: python3 prototypes/arcana_fusion20/renderer/arcana20_surface_d19_out.py "$RUNNER_TEMP/arcana20-phases/artifacts/arcana20-join" withdraw
+      - name: Surface actual D19 OUT converge crop
+        if: matrix.first == 16 && matrix.lighting == 'normal'
+        run: python3 prototypes/arcana_fusion20/renderer/arcana20_surface_d19_out.py "$RUNNER_TEMP/arcana20-phases/artifacts/arcana20-join" converge
+      - name: Surface actual D19 OUT last crop
+        if: matrix.first == 16 && matrix.lighting == 'normal'
+        run: python3 prototypes/arcana_fusion20/renderer/arcana20_surface_d19_out.py "$RUNNER_TEMP/arcana20-phases/artifacts/arcana20-join" last
       - name: Surface phase and duration evidence
         if: always()
         run: |
