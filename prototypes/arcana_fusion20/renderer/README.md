@@ -38,9 +38,9 @@ signals: cast_started, source_tick(id, tick, phase),
 
 ## Honest status
 See `arcana20_status.gd`: 14 NATIVE_RUNTIME_CANDIDATE + 6
-REDESIGN_CANDIDATE; Gold visual parity = VISUAL_NOT_VERIFIED x20 because
-the original A/B/C/D packages (ARCANA_FUSION_20SKILLS_HANDOFF.zip) are
-not in this repository. OWNER_VISUAL_APPROVED is owner-only.
+REDESIGN_CANDIDATE; Gold visual parity = VISUAL_NOT_VERIFIED until per-skill spatial
+PNG comparison + in-game verification pass. Original A/B/C/D sources
+are recovered in-repo under `original_source/` (SHA-verified). OWNER_VISUAL_APPROVED is owner-only.
 
 ## Gate
 `arcana20_renderer_test.gd` (workflow `arcana-fusion20-renderer.yml`):

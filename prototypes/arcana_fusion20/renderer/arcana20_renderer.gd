@@ -13,6 +13,7 @@ class_name Arcana20Renderer
 signal cast_started(canonical_id: StringName)
 signal source_tick(canonical_id: StringName, tick: int, phase: StringName)
 signal visual_contact(canonical_id: StringName, world_position: Vector2, kind: StringName)
+signal visual_event(canonical_id: StringName, kind: StringName, world_position: Vector2, source_time: float)
 signal body_event_cue(canonical_id: StringName, world_position: Vector2, element: StringName)
 signal cast_finished(canonical_id: StringName)
 
@@ -25,19 +26,19 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
     if id < 1:
         return false
     cancel_skill(canonical_id)
-    if id == 2:
-        # TRUE source port: B furnaceWyrm (pyre.ts seed 202) on the ported
-        # B HDR renderer. Supersedes the earlier reinterpreted geometry
-        # (arcana_b02_source_geometry.gd, kept for reference only).
-        var b02 := BSourcePlayer.new()
-        add_child(b02)
-        b02.visual_contact.connect(func(pos: Vector2) -> void:
-            visual_contact.emit(canonical_id, pos, &"source_impact_4.98")
+    if id == 2 or id == 3:
+        # TRUE source ports on the ported B HDR renderer (pyre.ts).
+        var bp := BSourcePlayer.new()
+        add_child(bp)
+        bp.visual_contact.connect(func(pos: Vector2) -> void:
+            visual_contact.emit(canonical_id, pos, &"source_impact")
             body_event_cue.emit(canonical_id, pos, &"fire"))
-        b02.finished.connect(func() -> void: _on_finished(canonical_id))
-        _casts[canonical_id] = b02
+        bp.visual_event.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
+            visual_event.emit(canonical_id, kind, pos, st))
+        bp.finished.connect(func() -> void: _on_finished(canonical_id))
+        _casts[canonical_id] = bp
         cast_started.emit(canonical_id)
-        b02.begin(caster_world, target_world)
+        bp.begin(caster_world, target_world, "wyrm" if id == 2 else "meteor")
         return true
     stage_counts["new"] = int(stage_counts.get("new", 0)) + 1
     var inst := Arcana20SkillInstance.new()
@@ -104,6 +105,11 @@ func _process(_delta: float) -> void:
             if inst.active and int(_last_tick_emitted.get(key, -1)) != inst.source_tick:
                 _last_tick_emitted[key] = inst.source_tick
                 source_tick.emit(key, inst.source_tick, inst.phase_name())
+        elif node is BSourcePlayer:
+            var bp := node as BSourcePlayer
+            if bp.active and int(_last_tick_emitted.get(key, -1)) != bp.source_tick:
+                _last_tick_emitted[key] = bp.source_tick
+                source_tick.emit(key, bp.source_tick, bp.phase_name())
 
 func _on_finished(canonical_id: StringName) -> void:
     if _casts.has(canonical_id):

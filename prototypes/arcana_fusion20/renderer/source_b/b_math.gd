@@ -125,3 +125,21 @@ class BRng:
         return -1.0 if next() < 0.5 else 1.0
     func gauss() -> float:
         return (next() + next() + next() - 1.5) / 1.5
+
+static func shard_shape(rng: BRng, n: int = 5, jag: float = 0.45) -> Array:
+    var out: Array = []
+    var base := rng.r(0.0, TAU)
+    for i in range(n):
+        var a := base + (float(i) / float(n)) * TAU + rng.r(-0.3, 0.3) * (TAU / float(n))
+        out.append(a)
+        out.append(1.0 - rng.r(0.0, jag))
+    return out
+
+static func shard_pts(shape: Array, cx: float, cy: float, rad: float, rot: float, sx: float = 1.0, sy: float = 1.0) -> Array:
+    var p: Array = []
+    for i in range(0, shape.size(), 2):
+        var a := float(shape[i]) + rot
+        var r := float(shape[i + 1]) * rad
+        p.append(cx + cos(a) * r * sx)
+        p.append(cy + sin(a) * r * sy)
+    return p

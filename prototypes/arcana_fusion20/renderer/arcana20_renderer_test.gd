@@ -7,6 +7,7 @@ extends SceneTree
 
 var _failures: Array[String] = []
 var _contacts: Dictionary = {}
+var _events: Dictionary = {}
 var _finished: Dictionary = {}
 var _started: Dictionary = {}
 
@@ -22,6 +23,10 @@ func _init() -> void:
     renderer.cast_started.connect(func(cid: StringName) -> void: _started[cid] = true)
     renderer.visual_contact.connect(func(cid: StringName, pos: Vector2, kind: StringName) -> void:
         _contacts[cid] = int(_contacts.get(cid, 0)) + 1)
+    renderer.visual_event.connect(func(cid: StringName, kind: StringName, pos: Vector2, st: float) -> void:
+        var arr: Array = _events.get(cid, [])
+        arr.append(String(kind))
+        _events[cid] = arr)
     renderer.cast_finished.connect(func(cid: StringName) -> void: _finished[cid] = true)
 
     var catalog_errors := Arcana20SourceCatalog.validate()
@@ -46,12 +51,25 @@ func _init() -> void:
         for s in range(steps):
             if not is_instance_valid(node):
                 break
-            if node.has_method("_process"):
+            if node is BSourcePlayer:
+                (node as BSourcePlayer).advance(1.0 / 60.0)
+            elif node.has_method("_process"):
                 node._process(1.0 / 60.0)
             if not renderer.is_active(cid):
                 break
-        if int(_contacts[cid]) != 1:
-            _fail("contact count %s = %d (want 1)" % [cid, int(_contacts[cid])])
+        var want_contacts := 1
+        if id == 3:
+            want_contacts = 8 # authored per-meteor impacts (fusion decisions #03)
+        if int(_contacts[cid]) != want_contacts:
+            _fail("contact count %s = %d (want %d)" % [cid, int(_contacts[cid]), want_contacts])
+        if id == 2:
+            var kinds: Array = _events.get(cid, [])
+            if not kinds.has("bite") or kinds.count("sweep") < 3:
+                _fail("wyrm event ledger incomplete: %s" % str(kinds))
+        if id == 3:
+            var kinds3: Array = _events.get(cid, [])
+            if kinds3.count("meteor_impact") != 8 or not kinds3.has("sigil_ignition"):
+                _fail("meteor event ledger incomplete: %s" % str(kinds3))
         if not _finished.has(cid):
             _fail("no finish %s" % cid)
         if renderer.is_active(cid):
@@ -75,6 +93,40 @@ func _init() -> void:
         _fail("bad id accepted")
     if renderer.cast_skill(&"venomwright_001", Vector2.ZERO, Vector2.ZERO):
         _fail("foreign id accepted")
+
+    # --- Spatial PNG parity (primary proof): alpha IoU, per-channel MAE,
+    # max error and an 8x6 region mismatch grid vs the Node-run original.
+    var _spatial := func(bytes: PackedByteArray, ref_path: String) -> Dictionary:
+        var tex := ResourceLoader.load(ref_path) as Texture2D
+        if tex == null:
+            return {"error": "no reference"}
+        var ref := tex.get_image()
+        if ref.get_format() != Image.FORMAT_RGBA8:
+            ref.convert(Image.FORMAT_RGBA8)
+        var rb := ref.get_data()
+        var inter := 0
+        var union := 0
+        var mae := 0.0
+        var maxerr := 0
+        var npix := BRenderer.W * BRenderer.H
+        var regions := {}
+        for i in range(npix):
+            var o := i * 4
+            var na := bytes[o + 3] > 0
+            var ra := rb[o + 3] > 0
+            if na and ra:
+                inter += 1
+            if na or ra:
+                union += 1
+            var d := maxi(maxi(absi(int(bytes[o]) - int(rb[o])), absi(int(bytes[o + 1]) - int(rb[o + 1]))), absi(int(bytes[o + 2]) - int(rb[o + 2])))
+            mae += float(d)
+            maxerr = maxi(maxerr, d)
+            if d > 24:
+                var gx := (i % BRenderer.W) * 8 / BRenderer.W
+                var gy := (i / BRenderer.W) * 6 / BRenderer.H
+                var key := "%d,%d" % [gx, gy]
+                regions[key] = int(regions.get(key, 0)) + 1
+        return {"iou": float(inter) / maxf(1.0, float(union)), "mae": mae / maxf(1.0, float(npix)), "maxerr": maxerr, "regions": regions}
 
     # --- Source-B furnaceWyrm frame parity vs the ORIGINAL TS engine ---
     # Reference PNGs/meta were produced by running the unmodified B
@@ -100,6 +152,10 @@ func _init() -> void:
             sum = (sum + bytes[i] * 3 + bytes[i + 1] * 5 + bytes[i + 2] * 7) & 0xFFFFFFFF
             if bytes[i + 3] != 0:
                 nonzero += 1
+        var sp: Dictionary = _spatial.call(bytes, "res://prototypes/arcana_fusion20/renderer/source_b/reference/wyrm_%s.png" % key)
+        print("::notice::WYRM_SPATIAL ", key, " iou=", snappedf(float(sp.get("iou", 0.0)), 0.0001), " mae=", snappedf(float(sp.get("mae", 99.0)), 0.01), " maxerr=", int(sp.get("maxerr", 255)), " regions=", JSON.stringify(sp.get("regions", {})))
+        if float(sp.get("iou", 0.0)) < 0.90 or float(sp.get("mae", 99.0)) > 6.0:
+            _fail("wyrm spatial %s iou=%f mae=%f" % [key, float(sp.get("iou", 0.0)), float(sp.get("mae", 99.0))])
         var exp_sum := int(meta[key].sum)
         var exp_nz := int(meta[key].nonzero)
         var sum_rel := absf(float(sum - exp_sum)) / maxf(1.0, float(exp_sum))
@@ -107,6 +163,29 @@ func _init() -> void:
         print("::notice::WYRM_PARITY ", key, " t=", t, " sum_rel=", snappedf(sum_rel, 0.0001), " nz_rel=", snappedf(nz_rel, 0.0001), " nz=", nonzero, "/", exp_nz)
         if nz_rel > 0.05 or sum_rel > 0.10:
             _fail("wyrm parity %s nz_rel=%f sum_rel=%f" % [key, nz_rel, sum_rel])
+
+    # --- Source-B meteorLoom parity (spatial + aggregate) ---
+    var mmeta: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://prototypes/arcana_fusion20/renderer/source_b/reference/meteor_meta.json"))
+    var br3 := BRenderer.new()
+    br3.caster = Vector2(104, 132)
+    br3.target = Vector2(262, 104)
+    var loom := BMeteorLoom.new()
+    loom.setup(br3)
+    for key in ["t100", "t300", "t500", "t660", "t730", "t900"]:
+        var t3: float = float(mmeta[key].t)
+        br3.begin()
+        loom.render(br3, t3)
+        loom.post(br3, t3)
+        br3.lighting()
+        var bytes3 := br3.finalize()
+        var sp3: Dictionary = _spatial.call(bytes3, "res://prototypes/arcana_fusion20/renderer/source_b/reference/meteor_%s.png" % key)
+        var nz3 := 0
+        for i in range(0, bytes3.size(), 4):
+            if bytes3[i + 3] != 0:
+                nz3 += 1
+        print("::notice::METEOR_SPATIAL ", key, " t=", t3, " iou=", snappedf(float(sp3.get("iou", 0.0)), 0.0001), " mae=", snappedf(float(sp3.get("mae", 99.0)), 0.01), " nz=", nz3, "/", int(mmeta[key].nonzero))
+        if float(sp3.get("iou", 0.0)) < 0.90 or float(sp3.get("mae", 99.0)) > 6.0:
+            _fail("meteor spatial %s iou=%f mae=%f" % [key, float(sp3.get("iou", 0.0)), float(sp3.get("mae", 99.0))])
 
     var st := Arcana20Status.summary()
     print("::notice::ARCANA20_DBG stages=", JSON.stringify(renderer.stage_counts), " contacts=", JSON.stringify(_contacts), " finished=", _finished.size(), " started=", _started.size())

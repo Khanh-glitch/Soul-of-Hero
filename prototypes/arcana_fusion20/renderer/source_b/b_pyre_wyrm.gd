@@ -261,3 +261,15 @@ func post(r: BRenderer, t: float) -> void:
             if d > 1.0:
                 return [float(x), float(y)]
             return [float(x) + sin(float(y) * 0.7 + tt * 24.0) * aamp * (1.0 - d), float(y) + cos(float(x) * 0.5 + tt * 17.0) * aamp * 0.5 * (1.0 - d)])
+
+## Source-authored event ledger (FUSION_DECISIONS #02: traveling sweep
+## against head/body, distinct final bite). Positions are source-local.
+func authored_events() -> Array:
+    var ev: Array = []
+    ev.append({"t": 0.55, "kind": "emerge", "pos_local": Vector2(_caster.x + 4, _caster.y + 6), "emitted": false})
+    for tt in [1.4, 2.4, 3.4, 4.3]:
+        var h := head(tt)
+        ev.append({"t": tt, "kind": "sweep", "pos_local": Vector2(h.x, h.y - h.z), "emitted": false})
+    ev.append({"t": TI, "kind": "bite", "pos_local": Vector2(_target), "emitted": false})
+    ev.append({"t": 5.6, "kind": "aftermath_scorch", "pos_local": Vector2(_target), "emitted": false})
+    return ev
