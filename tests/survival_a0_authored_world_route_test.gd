@@ -503,7 +503,7 @@ func _site_journey(hero: CharacterBody2D, authority: Node, poi_id: String) -> Di
 	# law the body is moved under. Walking to the published approach point is not
 	# enough: A8 opens on being within 22 px of the door, facing it.
 	if hero.global_position.distance_to(door) > 20.0:
-		reached = await _walk_door(hero, door) or reached
+		reached = await _walk_door(hero, door, approach) or reached
 	report["walk_px"] = hero.global_position.distance_to(start_position)
 	report["reached"] = reached and hero.global_position.distance_to(door) <= 26.0
 	report["at_door_px"] = hero.global_position.distance_to(door)
@@ -607,8 +607,8 @@ func _site_journey(hero: CharacterBody2D, authority: Node, poi_id: String) -> Di
 ## player (stride 4) and a whole-map plan (stride 8) when geography forces a detour
 ## outside the straight box. A* over A0's own walkability, with a real priority
 ## queue — a whole-continent plan needs it, and a linear scan is quadratic.
-const PLAN_LADDER := [[96, 4], [320, 6], [9999, 4]]
-const PLAN_MAX_EXPANSIONS := 90_000
+const PLAN_LADDER := [[96, 2], [9999, 2], [9999, 1]]
+const PLAN_MAX_EXPANSIONS := 900_000
 
 
 func _plan(start_cell: Vector2i, goal_cell: Vector2i, margin: int, stride: int) -> Array[Vector2i]:
@@ -792,35 +792,47 @@ const DOOR_STEP := 8.0
 const DOOR_RADIUS := 26
 
 
-func _walk_door(hero: CharacterBody2D, door: Vector2) -> bool:
-	var path := _plan_physical(hero.global_position, door)
+func _walk_door(hero: CharacterBody2D, door: Vector2, stand_point := Vector2.INF) -> bool:
+	# Plan to the published approach point, not into the doorframe: a body is 12x16
+	# and a door gap is about that wide, so "standing in the doorway" is not the
+	# player's pose — "standing in front of it, facing it" is, and that is the pose
+	# A8 opens on. The physical grid still decides how to get there.
+	var aim := door
+	if stand_point != Vector2.INF and stand_point.distance_to(door) <= 60.0:
+		aim = stand_point
+	var path := _plan_physical(hero.global_position, aim)
+	print("A0_DOOR_PLAN aim=%s path=%d from=%s stand_free=%s door_free=%s"
+		% [str(aim), path.size(), str(hero.global_position), str(_point_free.call(aim)), str(_point_free.call(door))])
 	if path.is_empty():
 		# No physical route in the small box: fall back to ray steering, which at
 		# least keeps trying instead of declaring the building unreachable.
 		return await _walk_to_door(hero, door)
 	for point: Vector2 in path:
-		if hero.global_position.distance_to(door) <= 12.0:
+		if hero.global_position.distance_to(door) <= 18.0:
 			break
 		await _walk_point(hero, point)
 	_release_moves()
-	if hero.global_position.distance_to(door) <= 16.0:
+	print("A0_DOOR_RESULT end=%s door_px=%.1f aim_px=%.1f"
+		% [str(hero.global_position), hero.global_position.distance_to(door),
+			hero.global_position.distance_to(aim)])
+	if hero.global_position.distance_to(door) <= 20.0:
 		return true
 	# One repair attempt: the physical plan can be spoiled by a moving body, so it is
 	# re-planned once from wherever the walk actually ended.
-	path = _plan_physical(hero.global_position, door)
+	path = _plan_physical(hero.global_position, aim)
 	for point: Vector2 in path:
-		if hero.global_position.distance_to(door) <= 12.0:
+		if hero.global_position.distance_to(door) <= 18.0:
 			break
 		await _walk_point(hero, point)
 	_release_moves()
-	return hero.global_position.distance_to(door) <= 16.0
+	return hero.global_position.distance_to(door) <= 20.0
 
 
 ## Is there room for the player's body at this point? Two short rays through the
 ## body's own footprint, against the world's collision layer.
 func _point_free(point: Vector2) -> bool:
-	return _ray_clear(point + Vector2(0.0, -7.0), point + Vector2(0.0, 7.0)) \
-		and _ray_clear(point + Vector2(-6.0, 0.0), point + Vector2(6.0, 0.0))
+	return _ray_clear(point + Vector2(0.0, -5.0), point + Vector2(0.0, 5.0)) \
+		and _ray_clear(point + Vector2(-5.0, 0.0), point + Vector2(5.0, 0.0))
 
 
 func _plan_physical(from: Vector2, door: Vector2) -> Array:
@@ -1157,12 +1169,21 @@ func _free_direction(position: Vector2, bearing: float) -> Vector2:
 	return Vector2.ZERO
 
 
+## Free to step toward? The map is a *hint*, physics is the truth.
+##
+## On open terrain both agree, and the map is cheaper. Next to a building they do not:
+## A0's walkability marks a shell's walls, and a doorway is a gap in that shell's own
+## collision — narrower than a map cell. Asking the map alone makes the player refuse
+## to walk through a door that is open, so a clear physics ray is accepted even where
+## the map is pessimistic. The body is still moved by `move_and_slide`, so a ray that
+## passed a prop only costs a frame of pushing, never a wall the player walks through.
 func _probe_free(position: Vector2, direction: Vector2, distance: float) -> bool:
 	var probe := position + direction * distance
 	var interior := _authority != null and not String(_authority.call(&"inside_site")).is_empty()
 	if _traversability != null and not interior \
-			and _traversability.in_bounds(_traversability.cell_of(probe)):
-		return _traversability.is_free(_traversability.cell_of(probe))
+			and _traversability.in_bounds(_traversability.cell_of(probe)) \
+			and _traversability.is_free(_traversability.cell_of(probe)):
+		return true
 	return _ray_clear(position, probe)
 
 
