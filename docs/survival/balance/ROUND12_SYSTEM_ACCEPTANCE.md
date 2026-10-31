@@ -128,6 +128,13 @@ surface.
   preserved as `native_runs.r12_sweep.v1.json` (PASS 7 · FAIL 8 · BLOCKED 9 · RED 26);
   §9 explains why three of those FAILs are an oracle/environment artifact and not
   product defects. Round 11's payload is preserved as `native_runs.r11_full.v1.json`.
+* The only red CI job on this branch is **"Original main baseline comparison"**, and it is
+  red on `main`'s own commit `52147889`, not on this branch: the job copies this branch's
+  test scripts into original main and runs them there, where
+  `second light input is accepted` and `hot-tuned light damage reaches an overlapping enemy
+  using the active Hero damage projection` fail (job `124487637801`). Those are campaign
+  combat clauses outside A7's survival scope, recorded here so the red X is not read as a
+  survival regression.
 * Visual evidence: `.github/workflows/a7-r12-survival-visual.yml` (A7-owned, test-only),
   run **`41184551136`**, rendering the same pinned composition in a real X11 window; it
   produced the four 1× PNGs in `docs/survival/balance/visual/r12/` that §4 inspects. The
