@@ -7,11 +7,29 @@ const INTERACT_REACH := 40.0
 const POI := "poi_crown_waystation"
 const RELAY_POI := "poi_crown_relay_shed"
 const A1_TREATMENT := "res://data/survival/world/art/compiled/crown_roadside_visual_treatment.presentation.v1.json"
-const A1_TREATMENT_SHA := "3ad267e47a4d1d47980887fbf9b8d1547323c0b695b3696e499d2a246d2f387f"
 const A1_ATLAS := "res://data/survival/world/art/atlas.v1.json"
-const A1_ATLAS_SHA := "617fc36d866653d67eb1b890ddcf5501b8660d87031ae04fefdb73941393326e"
 const A1_TEXTURE := "res://assets/environment/survival_world/props.png"
-const A1_TEXTURE_SHA := "ff88e06852af61c50019f85c3de2c54409a953624b952c1e11f538e8ccdd1279"
+## Round 12: A1 republished the roadside treatment, atlas and props sheet at
+## 9ca1453c, so the same artifact exists in two reviewed byte states - the one
+## this A0 tree ships and the one A1's current commit ships. Both are named and
+## both must pass the structural oracle below (three authored instances on their
+## exact cells, `collision_change: false`, frames present in the atlas); the
+## hashes only prove the bytes are one of the two reviewed sets, they never
+## authorize geometry. A third, unreviewed state is refused.
+const A1_ART_PIN_SETS := [
+	{
+		"reviewed_as": "a0 tree before the Round 12 A1 seat",
+		"treatment": "3ad267e47a4d1d47980887fbf9b8d1547323c0b695b3696e499d2a246d2f387f",
+		"atlas": "617fc36d866653d67eb1b890ddcf5501b8660d87031ae04fefdb73941393326e",
+		"texture": "ff88e06852af61c50019f85c3de2c54409a953624b952c1e11f538e8ccdd1279",
+	},
+	{
+		"reviewed_as": "a1 9ca1453ccdd315c9de4aae01cf0e1e5b4e0a71cf (Round 12 composition)",
+		"treatment": "39f1a9a91614430c573aedf5bfd148808cd630422f7be3d04024d57de9b7b4c1",
+		"atlas": "83d69373ca6c1258e8727800d0aa0c288851c34d25539c69c21ec9f5fc9d769a",
+		"texture": "8d4acf4028e0e065b901e78c59c65e5a68677fb75d46c04c7e5a029a76d27324",
+	},
+]
 const POINTS := {
 	"locker": {"cell": Vector2i(408, 198), "stand": Vector2i(408, 199), "action": "pry_locker", "instance": ""},
 	"cache": {"cell": Vector2i(406, 203), "stand": Vector2i(406, 202), "action": "cache_restock", "instance": "si:r_ashen_crown:waystation_cache:01"},
@@ -73,11 +91,20 @@ func configure(world: Node, hero: Node2D, session: Node) -> bool:
 # A1 ad39 exact treatment owns the three visible cells and frames. A3 owns
 # grants/stands; interaction remains bound to these exact live nodes and Hero.
 func _validate_roadside_art() -> Dictionary:
-	for pair: Array in [[A1_TREATMENT, A1_TREATMENT_SHA], [A1_ATLAS, A1_ATLAS_SHA]]:
-		if not FileAccess.file_exists(pair[0]) or FileAccess.get_sha256(pair[0]) != pair[1]: return {}
-	# Imported textures in export packages are compiled resources. Verify raw
-	# bytes when present; export CI pins the original before compilation.
-	if FileAccess.file_exists(A1_TEXTURE) and FileAccess.get_sha256(A1_TEXTURE) != A1_TEXTURE_SHA: return {}
+	if not FileAccess.file_exists(A1_TREATMENT) or not FileAccess.file_exists(A1_ATLAS):
+		return {}
+	var treatment_hash := FileAccess.get_sha256(A1_TREATMENT)
+	var atlas_hash := FileAccess.get_sha256(A1_ATLAS)
+	var texture_hash := FileAccess.get_sha256(A1_TEXTURE) if FileAccess.file_exists(A1_TEXTURE) else ""
+	var reviewed := false
+	for pin_set: Dictionary in A1_ART_PIN_SETS:
+		if treatment_hash == String(pin_set.treatment) and atlas_hash == String(pin_set.atlas) \
+				and (texture_hash.is_empty() or texture_hash == String(pin_set.texture)):
+			reviewed = true
+			break
+	if not reviewed: return {}
+	# Imported textures in export packages are compiled resources; the raw pin is
+	# checked above only when the original file is present.
 	if not ResourceLoader.exists(A1_TEXTURE): return {}
 	var f := FileAccess.open(A1_TREATMENT, FileAccess.READ)
 	var treatment: Variant = JSON.parse_string(f.get_as_text()) if f != null else null

@@ -340,15 +340,47 @@ func _check_authored_annex(authored: A1AuthoredSource, composed_grid: Dictionary
 		"all %d authored-walkable annex cells are walkable in the composed world" % authored_walkable
 			if walls_on_authored_ground == 0
 			else "%d authored walkable cells are solid in the composed world (%s)" % [walls_on_authored_ground, ", ".join(examples)])
-	# A1's build_permission is machine-readable authority; A0 must be the delegate.
-	var sample := Vector2i(400, 200)
-	var answer := authored.cell(sample)
-	var build: Dictionary = answer.get("build", {}) if answer is Dictionary else {}
-	measurements["annex_build_authority"] = String(build.get("authority", "unknown"))
-	_check("annex_build_delegates_to_a0",
-		String(build.get("authority", "")) in ["a0", "a1", "a1_candidate", "dynamic_child"],
-		"build_permission at 400,200 resolves with authority '%s' (never a silent deny)"
-			% String(build.get("authority", "missing")))
+	# A1's build_permission is machine-readable authority. Two answers matter: a
+	# permission==2 cell must be *delegated* to A0 (authority a0), and a
+	# permission==0 cell must be denied BY A1 (authority a1). Neither may be an
+	# error, and an annex cell may never be silently allowed by A1 alone.
+	var delegated := 0
+	var denied_by_a1 := 0
+	var candidates := 0
+	var silently_allowed := 0
+	var errored := 0
+	var scanned := 0
+	for y: int in range(192, 256):
+		for x: int in range(384, 448):
+			var answer := authored.cell(Vector2i(x, y))
+			scanned += 1
+			if not bool(answer.get("ok", false)):
+				errored += 1
+				continue
+			var build: Dictionary = answer.get("build", {})
+			var decision := String(build.get("decision", ""))
+			var authority := String(build.get("authority", ""))
+			if decision == "error" or authority == "":
+				errored += 1
+			elif authority == "a0" or authority == "a0+dynamic_child":
+				delegated += 1
+			elif authority == "a1":
+				denied_by_a1 += 1
+			elif authority == "a1_candidate":
+				candidates += 1
+			if decision == "allow" and authority != "a0" and authority != "a0+dynamic_child":
+				silently_allowed += 1
+	measurements["annex_build_cells_scanned"] = scanned
+	measurements["annex_build_delegated_to_a0"] = delegated
+	measurements["annex_build_denied_by_a1"] = denied_by_a1
+	measurements["annex_build_errors"] = errored
+	measurements["annex_build_candidates_needing_a0"] = candidates
+	measurements["annex_build_silently_allowed"] = silently_allowed
+	_check("annex_build_authority_is_explicit",
+		errored == 0 and silently_allowed == 0 and (denied_by_a1 + candidates) == scanned,
+		"%d annex cells: %d denied outright by A1, %d candidates that require A0 validate_cell, "
+			% [scanned, denied_by_a1, candidates]
+			+ "%d delegated now, %d errors, %d allowed by A1 alone" % [delegated, errored, silently_allowed])
 
 
 func _check_authored_coverage(authored: A1AuthoredSource, composed_size: Vector2i) -> void:
@@ -378,8 +410,19 @@ func _check_authored_coverage(authored: A1AuthoredSource, composed_size: Vector2
 			if region >= 0:
 				regions[region] = int(regions.get(region, 0)) + 1
 	measurements["authored_regions_sampled_in_composed"] = regions.size()
-	_check("composed_covers_multiple_regions", regions.size() >= 1,
-		"%d distinct authored region ids sampled inside the composed frame" % regions.size())
+	measurements["authored_regions_declared"] = authored.region_ids().size()
+	# Reported, not asserted: A1's approved pilot is one region. Claiming a
+	# multi-region journey here would be exactly the false capability this
+	# contract exists to prevent.
+	checks.append({
+		"name": "region_coverage_measured",
+		"ok": true,
+		"detail": "%d distinct authored region id(s) inside the playable frame of %d declared: %s"
+			% [regions.size(), authored.region_ids().size(), str(regions.keys())],
+	})
+	print("A0_AUTHORED_REGION_REACH playable=%d declared=%d%s" % [regions.size(),
+		authored.region_ids().size(),
+		" MULTI_REGION_JOURNEY_NOT_AVAILABLE" if regions.size() < 2 else ""])
 	var hazards := {}
 	for raw: Variant in ((authored.plan.get("hazards", []) as Array)):
 		if not raw is Dictionary:
