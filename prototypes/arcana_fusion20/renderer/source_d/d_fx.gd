@@ -12,7 +12,8 @@
 ##  - Bloom (bright/blur pyramid in COMP) is not reproduced in the
 ##    buffer path; ACES + saturation + dithered posterise (26 levels)
 ##    + flash + vignette + scanline from COMP are reproduced.
-##  - Alpha transport: 255 iff final RGB != 0 (house rule, cf. B/C).
+##  - Legacy zero-base preview is an explicit additive pass, never an RGB key.
+##    Alpha is opaque everywhere, not source geometry coverage.
 extends RefCounted
 class_name DFx
 
@@ -549,7 +550,9 @@ func composite() -> PackedByteArray:
             out[o] = int(cr * 255.0)
             out[o + 1] = int(cg * 255.0)
             out[o + 2] = int(cb * 255.0)
-            out[o + 3] = 255 if (out[o] != 0 or out[o + 1] != 0 or out[o + 2] != 0) else 0
+            # This preview texture is an additive light input, not a source
+            # geometry/alpha mask. Black adds zero without color-key inference.
+            out[o + 3] = 255
     return out
 
 static func _aces(v: float) -> float:

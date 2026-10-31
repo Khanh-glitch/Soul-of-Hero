@@ -33,6 +33,11 @@ func _ensure() -> void:
         return
     _sprite = Sprite2D.new()
     _sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+    # Legacy zero-base preview is additive; an opaque black input contributes
+    # nothing and no RGB value is reinterpreted as authored alpha coverage.
+    var additive := CanvasItemMaterial.new()
+    additive.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+    _sprite.material = additive
     add_child(_sprite)
     var img := Image.create(DFx.W, DFx.H, false, Image.FORMAT_RGBA8)
     _tex = ImageTexture.create_from_image(img)

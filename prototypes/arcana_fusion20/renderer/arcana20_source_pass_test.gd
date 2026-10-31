@@ -214,6 +214,13 @@ func _run() -> void:
     check(warp_count > 0 and a.world_influence[80 * AFramebuffer.W + 80] == 1, "A authored shimmer records live-world coordinate displacement")
 
     var d := DFx.new()
+    var preview := d.composite()
+    check(preview[0] == 0 and preview[1] == 0 and preview[2] == 0 and preview[3] == 255, "D zero light uses opaque additive transport, not RGB-derived coverage")
+    var preview_host := DSourcePlayer.new()
+    root.add_child(preview_host)
+    var preview_material := preview_host._sprite.material as CanvasItemMaterial
+    check(preview_material != null and preview_material.blend_mode == CanvasItemMaterial.BLEND_MODE_ADD, "D legacy light preview uses additive blend")
+    preview_host.queue_free()
     d.track_world_fields = true
     d.clear()
     d._add_px(4, 4, 0.0, 0.0, 0.0)
