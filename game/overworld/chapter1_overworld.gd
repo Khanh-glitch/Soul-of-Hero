@@ -60,6 +60,9 @@ const A0_WORLD_ART_CANDIDATE := preload("res://game/survival/a0_world_art_candid
 ## the ONE way the survival world ever exposes an enemy.
 const A0_THREAT_MOUNT := preload("res://game/survival/a0_threat_mount.gd")
 const WAYSTATION_CANDIDATE_SETTING := "survival/a0_waystation_candidate"
+## Off by default. A1's authored continent is mounted beside the legacy inset A0
+## already governs, never instead of it, and only when a caller explicitly asks.
+const AUTHORED_STREAM_SETTING := "survival/a0_authored_stream"
 const WAYSTATION_ROOT := "res://data/survival/connector/a0_candidate/"
 const A0_WAYSTATION_GEOMETRY := preload("res://game/survival/waystation_geometry.gd")
 const A0_WAYSTATION_HOST := preload("res://game/survival/waystation_host.gd")
@@ -92,6 +95,8 @@ var traversability_failures: Array[Dictionary] = []
 
 var survival_build: SurvivalBuildSystem
 var economy_session: Node
+## A1's authored continent, mounted by A0 when `survival/a0_authored_stream` is on.
+var authored_mount: A0AuthoredWorldMount
 var economy_composition: Node
 var threat_mount: Node
 var economy_panel: CanvasLayer
@@ -299,6 +304,7 @@ func _build_world() -> void:
 			_fail("A1 roadside art candidate refused: " + String(art_result.get("reason", "unknown")))
 			return
 	_mount_optional_threat()
+	_mount_authored_stream()
 	_build_economy_panel()
 	chest_panel = CHEST_PANEL_SCRIPT.new()
 	chest_panel.name = "ChestInventoryPanel"
@@ -312,6 +318,23 @@ func _build_world() -> void:
 	var survival := get_node_or_null("/root/SurvivalService")
 	if survival != null and not String((survival.call(&"document") as Dictionary).get("pending_death", "")).is_empty():
 		player.call(&"_die")
+
+
+## A1 owns the continent; A0 puts it on screen beside the world it already governs.
+## A refusal is recorded, never hidden: the legacy inset keeps playing either way.
+func _mount_authored_stream() -> void:
+	if not bool(ProjectSettings.get_setting(AUTHORED_STREAM_SETTING, false)):
+		return
+	var mount := A0AuthoredWorldMount.new()
+	mount.name = "AuthoredWorldMount"
+	add_child(mount)
+	if not mount.mount():
+		print("A0_AUTHORED_STREAM_REFUSED ", mount.last_error)
+		mount.queue_free()
+		return
+	authored_mount = mount
+	var view := Rect2(Vector2.ZERO, get_viewport_rect().size) if is_inside_tree() else Rect2(0, 0, 1280, 720)
+	print("A0_AUTHORED_STREAM_MOUNTED ", JSON.stringify(mount.advance(player, view)))
 
 
 func _build_economy_session() -> void:
@@ -809,6 +832,9 @@ func _process(delta: float) -> void:
 	_apply_fatigue()
 	_apply_hud()
 	_handle_survival_input()
+	if authored_mount != null and is_instance_valid(authored_mount) and _frame_count % 15 == 0:
+		var camera_view := Rect2(camera.get_screen_center_position() - Vector2(640, 360), Vector2(1280, 720))
+		authored_mount.advance(player, camera_view)
 	if _perf_trace_enabled and _perf_trace_usec.size() < 240:
 		_perf_trace_usec.append(Time.get_ticks_usec() - perf_start)
 

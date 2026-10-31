@@ -20,13 +20,20 @@ extends RefCounted
 ## structures, and never decides whether a cell may be built on (that stays A0
 ## SurvivalBuildSystem.validate_cell, which the owner's reader delegates to).
 
-const READER_PATH := "res://tests/survival/world/godot/chunk_reader.gd"
+## A1 now ships a production-path reader (Round 12, PR20): A0 uses that interface
+## first. The older SURV-050A reader that lived under tests/ is only accepted as a
+## fallback when the production file is absent, so a composition that contains A1's
+## production source can never silently keep reading the test-path one.
+const PRODUCTION_READER_PATH := "res://game/survival/world/a1_authored_world_reader.gd"
+const LEGACY_READER_PATH := "res://tests/survival/world/godot/chunk_reader.gd"
 const WORLD_ROOT := "res://data/survival/world/"
 const AUTHORED_FRAME := Vector2i(1024, 768)
 const AUTHORED_CHUNK_SIZE := 64
 const AUTHORED_TILE_PX := 16
 
 var reader: RefCounted
+var reader_path := ""
+var reader_source := ""
 var plan: Dictionary = {}
 var frame: Vector2i = Vector2i.ZERO
 var last_error := ""
@@ -39,10 +46,18 @@ func configure(world_root: String = WORLD_ROOT) -> bool:
 	plan = {}
 	frame = Vector2i.ZERO
 	last_error = ""
-	if not FileAccess.file_exists(READER_PATH):
+	reader_path = ""
+	reader_source = ""
+	if FileAccess.file_exists(PRODUCTION_READER_PATH):
+		reader_path = PRODUCTION_READER_PATH
+		reader_source = "a1_production"
+	elif FileAccess.file_exists(LEGACY_READER_PATH):
+		reader_path = LEGACY_READER_PATH
+		reader_source = "a1_surv050a_test"
+	else:
 		last_error = "A1_AUTHORED_READER_ABSENT"
 		return false
-	var script: Variant = load(READER_PATH)
+	var script: Variant = load(reader_path)
 	if script == null or not (script is Script):
 		last_error = "A1_AUTHORED_READER_UNLOADABLE"
 		return false
