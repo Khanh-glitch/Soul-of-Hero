@@ -29,6 +29,8 @@ const CUE_SCENE: PackedScene = preload("res://game/survival/ui/return/a6_site_cu
 
 const EDGE := 16.0
 const CARD_TOP := 96.0
+## Vertical breathing room between the two cards that share a column.
+const GAP := 8.0
 
 @onready var root: Control = %Root
 @onready var run_card: A6RunCard = %RunCard
@@ -203,7 +205,10 @@ func _on_digest_dismissed() -> void:
 	digest_dismissed.emit(String(dismissed.get("run_id", "")), String(dismissed.get("digest_id", "")))
 
 
-# --- layout -----------------------------------------------------------------
+# --- layout ---
+
+
+var _placed_sizes: Dictionary = {}
 
 
 func _process(delta: float) -> void:
@@ -220,6 +225,10 @@ func _process(delta: float) -> void:
 		run_card.present(_last_clock, now)
 	if site_cue_chip.visible and not _last_cues.is_empty():
 		site_cue_chip.present(_last_cues, now)
+	# A card whose text grew since the last placement no longer fits its rect: its
+	# content spills past the screen edge instead of being re-anchored. Reflow.
+	if _needs_reflow():
+		_place_cards()
 
 
 func _place_cards() -> void:
@@ -243,6 +252,7 @@ func _place_cards() -> void:
 		control.set_anchors_preset(Control.PRESET_TOP_LEFT, false)
 		control.position = rect.position
 		control.size = rect.size
+		_placed_sizes[id] = control.get_combined_minimum_size()
 
 
 ## Pure placement, so the 720p / 1440p / 2160p checks can assert geometry without
@@ -276,7 +286,51 @@ static func layout_rects(view: Vector2, items: Array) -> Dictionary:
 		var max_y := maxf(EDGE, view.y - item_size.y - EDGE)
 		at = Vector2(clampf(at.x, EDGE, max_x), clampf(at.y, EDGE, max_y))
 		rects[id] = Rect2(at.round(), item_size)
+	# Two cards can share a column (run card above guidance on the left, digest above
+	# the site cue on the right). Clamping keeps them on screen but never separates
+	# them: a guidance panel that grows taller than the viewport slides up over the
+	# run card and both stay readable in neither place. Resolve the column instead.
+	rects = _resolve_column(rects, view, "run_card", "guidance")
+	rects = _resolve_column(rects, view, "digest", "site_cue")
 	return rects
+
+
+## Push the lower card of a column below the upper one and shrink it into the space
+## that is actually left. The minimum size of the shrinking card is the caller's
+## business (a scroll container is what makes the shrink safe to render).
+static func _resolve_column(rects: Dictionary, view: Vector2, top_id: String, bottom_id: String) -> Dictionary:
+	if not rects.has(top_id) or not rects.has(bottom_id):
+		return rects
+	var top: Rect2 = rects[top_id]
+	var bottom: Rect2 = rects[bottom_id]
+	if not bottom.intersects(top):
+		return rects
+	var floor_y := top.position.y + top.size.y + GAP
+	var room := view.y - EDGE - floor_y
+	if room <= 0.0:
+		# No room below the upper card: give the lower card back its screen edge and
+		# let it shrink rather than sit on top of its neighbour.
+		bottom.size.y = maxf(0.0, minf(bottom.size.y, view.y - 2.0 * EDGE))
+		bottom.position.y = view.y - EDGE - bottom.size.y
+		if bottom.intersects(top):
+			bottom.size.y = maxf(0.0, floor_y - GAP - bottom.position.y)
+	else:
+		bottom.position.y = floor_y
+		bottom.size.y = minf(bottom.size.y, room)
+	bottom.position.y = clampf(bottom.position.y, EDGE, maxf(EDGE, view.y - bottom.size.y - EDGE))
+	rects[bottom_id] = Rect2(bottom.position.round(), bottom.size.round())
+	return rects
+
+
+
+func _needs_reflow() -> bool:
+	for id: String in _placed_sizes.keys():
+		var control := _control_for(id)
+		if control == null or not control.visible:
+			continue
+		if control.get_combined_minimum_size() != _placed_sizes[id]:
+			return true
+	return false
 
 
 func _collect_layout_item(items: Array, id: String, control: Control) -> void:

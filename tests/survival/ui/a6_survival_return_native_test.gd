@@ -652,6 +652,22 @@ func _test_layout() -> void:
 	var unknown := A6SurvivalReturnLayer.layout_rects(Vector2(1280, 720), [{"id": "bogus", "size": Vector2(10, 10)}])
 	_expect(unknown.is_empty(), "an unknown layout id is ignored")
 
+	# The authored UI space is 640x360 units. A real guidance panel with five steps
+	# measures about 292x320 there, so it used to clamp to the top edge and slide
+	# over the run card: both cards were on screen and neither was readable. Clamping
+	# is not layout; the column has to be resolved.
+	var authored: Array = [
+		{"id": "run_card", "size": Vector2(228, 64)},
+		{"id": "guidance", "size": Vector2(292, 320)},
+		{"id": "digest", "size": Vector2(240, 190)},
+		{"id": "site_cue", "size": Vector2(150, 34)},
+	]
+	var authored_view := Vector2(640, 360)
+	var tight := A6SurvivalReturnLayer.layout_rects(authored_view, authored)
+	_expect(not (tight["guidance"] as Rect2).intersects(tight["run_card"] as Rect2), "a taller-than-viewport guidance panel no longer covers the run card")
+	_expect((tight["guidance"] as Rect2).size.y < 320.0, "the guidance panel shrinks into the room left below the run card")
+	_expect(Rect2(Vector2.ZERO, authored_view).encloses(tight["guidance"] as Rect2), "the shrunk guidance panel stays on the authored 640x360 screen")
+
 
 # --- ownership --------------------------------------------------------------
 
