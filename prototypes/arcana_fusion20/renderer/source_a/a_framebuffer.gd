@@ -132,6 +132,11 @@ func present() -> PackedByteArray:
     # bloom threshold + downsample
     bloom_a.fill(0.0)
     for y in range(H):
+        # The source allocates floor(H / 4) rows. JS typed-array writes
+        # outside that allocation are ignored; GDScript throws instead.
+        # Preserve the source's discarded partial bottom block explicitly.
+        if (y >> 2) >= bh:
+            continue
         var by := (y >> 2) * bw
         for x in range(W):
             var i := (y * W + x) * 3

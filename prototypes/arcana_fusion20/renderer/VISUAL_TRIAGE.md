@@ -38,7 +38,7 @@ the real SOH framebuffer. Names below identify observed risks, not approvals.
 
 ## Cross-cutting blockers
 
-* The B and C compositors derive alpha from whether resulting RGB is nonzero,
+* The A/B/C/D compositors derive alpha from whether resulting RGB is nonzero,
   and bake flash/invert into the same source-local sprite. A transformed opaque
   flash rectangle is **not** a correct real screen-space lighting/post pass.
   Replace this with explicit source coverage and separate real-world/screen
@@ -67,3 +67,10 @@ software-rendered CI, with casts ending during the window. This is a severe
 performance warning, not a target-device benchmark. Later work moves A/C
 rasterization out of the per-catch-up-tick loop; remeasure before claiming an
 improvement, and profile the D CPU raster path independently.
+
+The sampled-source capture also revealed an A framebuffer error at the bottom
+two image rows: the original JS truncates the quarter-height bloom array and
+silently ignores out-of-range typed-array writes, whereas Godot raised an index
+error. The port now explicitly skips that partial bloom block (preserving JS
+behavior) and has a bright-bottom-edge regression check; CI re-verification is
+pending. This is not a substitute for a source/native A parity gate.

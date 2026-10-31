@@ -85,6 +85,16 @@ func _init() -> void:
         if renderer.is_active(cid):
             _fail("still active after finish %s" % cid)
 
+    # A's framebuffer height is not divisible by four. JavaScript ignores
+    # typed-array writes past its truncated bloom buffer; verify that a bright
+    # last row renders rather than throwing or returning a zero-length buffer.
+    var edge_fb := AFramebuffer.new()
+    edge_fb.add_px(10, AFramebuffer.H - 1, 2.0, 1.0, 0.5)
+    var edge_bytes := edge_fb.present()
+    var edge_offset := ((AFramebuffer.H - 1) * AFramebuffer.W + 10) * 4
+    if edge_bytes.size() != AFramebuffer.W * AFramebuffer.H * 4 or edge_bytes[edge_offset + 3] == 0:
+        _fail("A framebuffer bottom-edge bloom/render failure")
+
     # Catch-up steps must advance the identical simulation and raster the
     # final C frame once, independently of display frame cadence.
     var c_single := CSourcePlayer.new()
