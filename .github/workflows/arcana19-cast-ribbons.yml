@@ -1,0 +1,62 @@
+name: ARCANA19 full-cast ribbon-only comparison
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['tools/arcana19_cast_ribbons/**', 'prototypes/arcana_fusion20/renderer/d19_cast_ribbon_compare.gd', 'prototypes/arcana_fusion20/renderer/source_d/d_ribbon_gpu.gd', 'prototypes/arcana_fusion20/renderer/source_d/d_ribbon_gpu.gdshader', 'prototypes/arcana_fusion20/renderer/source_d/d_constellation_engine.gd', 'prototypes/arcana_fusion20/renderer/source_d/d_fx.gd', 'prototypes/arcana_fusion20/renderer/source_d/d_ribbon_triangles.gd', '.github/workflows/arcana19-cast-ribbons.yml']
+permissions:
+  contents: read
+jobs:
+  primitive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Install comparison tools
+        run: |
+          npm install --prefix "$RUNNER_TEMP/d19-ribbon" playwright@1.57.0
+          "$RUNNER_TEMP/d19-ribbon/node_modules/.bin/playwright" install --with-deps chromium
+          python3 -m pip install --quiet numpy pillow
+          ln -s "$RUNNER_TEMP/d19-ribbon/node_modules" tools/arcana19_cast_ribbons/node_modules
+      - name: Capture original isolated WebGL ribbon cases
+        run: |
+          set -o pipefail
+          mkdir -p artifacts/arcana19-cast-ribbons
+          node tools/arcana19_cast_ribbons/capture.mjs artifacts/arcana19-cast-ribbons color | tee original.log
+          node tools/arcana19_cast_ribbons/capture.mjs artifacts/arcana19-cast-ribbons coverage | tee -a original.log
+          test "$(grep -c D19_CAST_RIBBON_ORIGINAL original.log)" -eq 10
+      - name: Capture native cast ribbons on CPU and GPU
+        run: |
+          set -o pipefail
+          godot --headless --path . --import > import.log 2>&1
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' import.log
+          timeout 600s xvfb-run -a -s '-screen 0 1024x768x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script res://prototypes/arcana_fusion20/renderer/d19_cast_ribbon_compare.gd 2>&1 | tee native.log
+          grep -Fq 'D19_CAST_RIBBON_NATIVE_COMPLETE' native.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Shader compilation failed|ERROR:' native.log
+      - name: Compare spatial metrics without tolerance gates
+        run: |
+          set -o pipefail
+          python3 tools/arcana19_cast_ribbons/compare.py artifacts/arcana19-cast-ribbons | tee compare.log
+          sed 's/^/::notice::/' compare.log
+      - name: Surface native GPU cases separately
+        if: always()
+        run: |
+          if test -f compare.log; then grep '"variant": "gpu"' compare.log | sed 's/^/::notice title=D19_CAST_RIBBON_GPU::/' || true; fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: d19-full-cast-ribbon-diagnostic
+          path: |
+            artifacts/arcana19-cast-ribbons/
+            original.log
+            native.log
+            import.log
+            compare.log
