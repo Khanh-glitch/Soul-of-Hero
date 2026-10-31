@@ -90,6 +90,11 @@ def build() -> dict:
         raise ValueError("spawn index is stale against the authored plan")
     if spawn["runtime_contract_sha256"] != sha_file(CONTRACT):
         raise ValueError("spawn index is stale against the runtime contract")
+    # Re-prove every candidate's component/road/two-family eligibility. Runtime
+    # validation can then use index membership without substituting the reader's
+    # different general-purpose Manhattan opportunity query as spawn evidence.
+    if json_bytes(builder.build_spawn_index()) != SPAWN_INDEX.read_bytes():
+        raise ValueError("safe spawn index does not regenerate byte-for-byte")
     component_bytes = bytearray(builder.w * builder.h)
     for x, y in builder.component:
         component_bytes[y * builder.w + x] = 1
@@ -293,6 +298,8 @@ def build() -> dict:
             "candidate_cells": spawn["candidate_cells"],
             "candidate_chunks": spawn["candidate_chunks"],
             "region_counts": spawn["region_counts"],
+            "candidate_evidence": "PINNED_ROUND12_INDEX_REGENERATED_BYTE_FOR_BYTE; membership proves all spawn criteria",
+            "opportunity_distance_metric": "COMPILER_SQUARE_WINDOW; not the reader's general Manhattan opportunity query",
             "selection": "choose_safe_spawn(run_seed)",
             "persisted_validation": "validate_spawn_cell(cell)",
             "dynamic_occupancy_authority": "A0_REQUIRED_ON_LOAD",

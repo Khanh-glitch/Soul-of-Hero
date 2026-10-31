@@ -121,6 +121,8 @@ def test_spawn_contract_is_broad_deterministic_and_not_three_zones(built: dict) 
     assert len(spawn["region_counts"]) >= 3
     assert spawn["production_spawn_approval"] is False
     assert spawn["criteria"] == index["criteria"]
+    assert spawn["candidate_evidence"].startswith("PINNED_ROUND12_INDEX_REGENERATED_BYTE_FOR_BYTE")
+    assert "COMPILER_SQUARE_WINDOW" in spawn["opportunity_distance_metric"]
     assert "no fixed spawn rectangles or seed%3 zone picker" in spawn["criteria"]["rules"]
     chunks = {row["chunk_id"]: row for row in index["chunks"]}
     selected = []
@@ -203,8 +205,8 @@ def test_native_validator_accepts_complete_synthetic_evidence(built: dict, tmp_p
             "return_ok": True, "interior_entered": False, "production_scene_mounted": False,
         })
     spawns = [{"cell": [i, i + 1], "chunk_id": f"chunk:{i % 12}:0",
-               "region_id": f"region:{i % 3}", "material_families": 2, "deterministic": True}
-              for i in range(36)]
+               "region_id": f"region:{i % 3}", "minimum_material_families": 2,
+               "index_verified": True, "deterministic": True} for i in range(36)]
     controls = [{"id": key, "pass": True, "refused": True, "actual": actual,
                  "contacts": 1 if key == "blocked_terrain" else 0}
                 for key, actual in native_validator.NEGATIVES.items()]

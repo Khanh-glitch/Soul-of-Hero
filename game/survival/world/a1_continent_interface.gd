@@ -373,7 +373,11 @@ func choose_safe_spawn(run_seed: int) -> Dictionary:
 	chosen["geography_instance_id"] = String(manifest.world.geography_instance_id)
 	chosen["spawn_identity"] = "spawn:%s:%d" % [String(manifest.world.world_id), run_seed]
 	chosen["dynamic_occupancy_validation"] = "A0_REQUIRED_BEFORE_PLACEMENT"
-	chosen["opportunity_material_keys"] = validated.get("opportunity_material_keys", [])
+	chosen["indexed_candidate"] = true
+	chosen["spawn_evidence"] = validated.get("spawn_evidence", "")
+	chosen["safe_basic_material_families_minimum"] = validated.get("safe_basic_material_families_minimum", 0)
+	chosen["opportunity_radius_cells"] = validated.get("opportunity_radius_cells", 0)
+	chosen["road_max_distance_cells"] = validated.get("road_max_distance_cells", 0)
 	chosen["region_entry_capabilities"] = validated.get("region_entry_capabilities", [])
 	chosen["production_spawn_approval"] = false
 	return chosen
@@ -393,13 +397,18 @@ func validate_spawn_cell(cell: Vector2i) -> Dictionary:
 			"cell": cell, "chunk_id": cid, "region_id": String(identity.region_id),
 		}
 	var transform := cell_to_world(cell)
-	var opportunities: Dictionary = reader.opportunities_near(cell, 64)
 	var traversal: Dictionary = reader.traversal_profile(cell)
+	var spawn_contract: Dictionary = manifest.get("spawn", {})
+	var criteria: Dictionary = spawn_contract.get("criteria", {})
 	return {
 		"ok": true, "error": "", "cell": cell, "cell_array": [cell.x, cell.y], "chunk_id": cid,
 		"region_id": String(identity.region_id), "actor_origin_px": transform.world_px,
 		"actor_origin_px_array": transform.world_px_array, "indexed_candidate": true,
-		"opportunity_material_keys": (opportunities.get("material_keys", []) as Array).duplicate(),
+		"spawn_evidence": "HASH_VERIFIED_COMPILER_INDEX_MEMBERSHIP",
+		"safe_basic_material_families_minimum": int(criteria.get("minimum_material_families", 0)),
+		"opportunity_radius_cells": int(criteria.get("opportunity_radius_cells", 0)),
+		"road_max_distance_cells": int(criteria.get("road_max_distance_cells", 0)),
+		"opportunity_distance_metric": String(spawn_contract.get("opportunity_distance_metric", "")),
 		"region_entry_capabilities": (traversal.get("region_entry_capabilities", []) as Array).duplicate(),
 		"dynamic_occupancy_validation": "A0_REQUIRED_BEFORE_PLACEMENT", "source": identity,
 		"production_spawn_approval": false,

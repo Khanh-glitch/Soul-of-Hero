@@ -62,7 +62,8 @@ def validate(report: dict, manifest: dict, project: Path, require_d051_art: bool
     chunks = {row.get("chunk_id") for row in spawns}
     regions = {row.get("region_id") for row in spawns}
     check("broad_safe_spawn_matrix", len(spawns) == 36 and len(cells) >= 30 and len(chunks) >= 12 and len(regions) >= 3
-          and all(row.get("deterministic") and int(row.get("material_families", 0)) >= 2 for row in spawns),
+          and all(row.get("deterministic") and row.get("index_verified")
+                  and int(row.get("minimum_material_families", 0)) >= 2 for row in spawns),
           {"rows": len(spawns), "cells": len(cells), "chunks": len(chunks), "regions": sorted(regions)})
 
     arrivals = {row.get("site_key"): row for row in report.get("site_arrivals", [])}

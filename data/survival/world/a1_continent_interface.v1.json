@@ -958,6 +958,7 @@
     "algorithm": "sorted eligible chunk = u64(SHA256(world_id|run_seed|round12-spawn-v1)[0:8]) mod chunk_count; local cell = next_u64 mod chunk_cell_count",
     "candidate_cells": 27445,
     "candidate_chunks": 20,
+    "candidate_evidence": "PINNED_ROUND12_INDEX_REGENERATED_BYTE_FOR_BYTE; membership proves all spawn criteria",
     "criteria": {
       "algorithm": "sorted eligible chunk = u64(SHA256(world_id|run_seed|round12-spawn-v1)[0:8]) mod chunk_count; local cell = next_u64 mod chunk_cell_count",
       "basic_materials": [
@@ -1040,6 +1041,7 @@
       "status": "BROAD_SOURCE_ELIGIBILITY_NOT_THREE_ZONES; A0 persists selected run-local cell"
     },
     "dynamic_occupancy_authority": "A0_REQUIRED_ON_LOAD",
+    "opportunity_distance_metric": "COMPILER_SQUARE_WINDOW; not the reader's general Manhattan opportunity query",
     "persisted_validation": "validate_spawn_cell(cell)",
     "production_spawn_approval": false,
     "region_counts": {

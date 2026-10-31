@@ -530,14 +530,18 @@ func _run_spawn_matrix() -> void:
 			var cell: Vector2i = chosen.cell
 			var sample: Dictionary = continent.sample_cell(cell)
 			valid = bool(continent.validate_spawn_cell(cell).get("ok", false)) and bool(sample.source_walkable) \
-				and String(sample.hazard_id).is_empty() and (chosen.opportunity_material_keys as Array).size() >= 2 \
+				and String(sample.hazard_id).is_empty() and bool(chosen.get("indexed_candidate", false)) \
+				and int(chosen.get("safe_basic_material_families_minimum", 0)) >= 2 \
+				and int(chosen.get("opportunity_radius_cells", 0)) == 64 \
+				and int(chosen.get("road_max_distance_cells", 0)) == 32 \
 				and (chosen.region_entry_capabilities as Array).is_empty()
 			unique[str(cell)] = true
 			chunks[String(chosen.chunk_id)] = true
 			regions[String(chosen.region_id)] = true
 			spawn_results.append({"seed": seed, "cell": chosen.cell_array, "chunk_id": String(chosen.chunk_id),
 				"region_id": String(chosen.region_id), "actor_origin_px": chosen.actor_origin_px_array,
-				"material_families": (chosen.opportunity_material_keys as Array).size(), "deterministic": true})
+				"minimum_material_families": int(chosen.safe_basic_material_families_minimum),
+				"index_verified": bool(chosen.indexed_candidate), "deterministic": true})
 		_expect(valid, "broad deterministic nonlethal spawn seed %d" % seed)
 	_expect(unique.size() >= 30 and chunks.size() >= 12 and regions.size() >= 3,
 		"36 seeds retain broad cell/chunk/regional variety through the public consumer")

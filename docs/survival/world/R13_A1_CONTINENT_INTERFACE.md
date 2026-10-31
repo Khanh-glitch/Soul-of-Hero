@@ -110,7 +110,7 @@ Each descriptor also contains the 128×128 unrotated/unscaled shell, doorway cle
 
 ## 6. Broad spawn contract
 
-The verified index remains **27,445 candidates** across at least 18 chunks and three regions, not three spawn rectangles or `seed % 3`. Selection is SHA-256 over `world_id|run_seed|round12-spawn-v1`, then deterministic chunk/cell selection. `validate_spawn_cell` requires membership in that verified index and returns actor origin, region entry requirements and nearby material-family evidence. A0 must still validate dynamic occupancy when placing/loading the actor. Unsafe, POI-footprint, hazard, stranded or out-of-frame cells fail closed.
+The verified index remains **27,445 candidates** across at least 18 chunks and three regions, not three spawn rectangles or `seed % 3`. Selection is SHA-256 over `world_id|run_seed|round12-spawn-v1`, then deterministic chunk/cell selection. The R13 compiler regenerates the complete index byte-for-byte, re-proving every candidate's connected-component, road-distance and two-safe-material-family eligibility. `validate_spawn_cell` requires membership in that hash-verified index and returns actor origin, region entry requirements and the applicable policy minima. Its two-family evidence uses the compiler's 64-cell square window; the reader's separate Manhattan `opportunities_near` query is not spawn proof. A0 must still validate dynamic occupancy when placing/loading the actor. Unsafe, POI-footprint, hazard, stranded or out-of-frame cells fail closed.
 
 ## 7. Required native negative behavior
 
