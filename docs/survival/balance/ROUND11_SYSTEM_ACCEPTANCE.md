@@ -299,7 +299,7 @@ Two custody facts worth CT's attention:
 
 | axis | result |
 | --- | --- |
-| SOURCE_DEFINED | **yes** — 7 currency sources, 9 endpoints, a 336 h run, a 5-token reset, 3 benefits |
+| SOURCE_DEFINED | **yes** — 7 currency sources, 9 endpoints, a 336 h run, a reset that carries 5 units, 3 profile benefits |
 | CODE_PRESENT | yes |
 | PRODUCTION_REACHABLE | **no** — no physical chest, no player-facing abandon, no operational kiosk |
 | PLAYER_INPUT_EXECUTED | **yes at the API door** |
@@ -376,9 +376,11 @@ What this says about the *economy*, in three sentences a designer can argue with
 
 1. **The tool is not a money sink.** 2 oak + 3 stone buys 100 swings; those swings return 200 stone
    or 100 iron, which is 30–100× its own cost. Tool choice is therefore a *permission* decision
-   (the catalogue's `TOOL_USE_RESOURCE_KINDS` maps a pick to outcrops and veins; wood is always
-   bare-handed), never a cost decision. There are **no repair recipes**, so condition is a pure
-   timer that never interacts with the economy.
+   (the catalogue's `TOOL_USE_RESOURCE_KINDS` maps `stone_pick` to `stone_outcrop`/`iron_vein`,
+   `iron_pick` to `iron_vein`/`scrap_pile` and `salvage_hammer` to `scrap_pile`; **wood is always
+   bare-handed**), never a cost decision. The second pick does not raise yield — it adds one node
+   kind — so `iron_pick` is a *key*, not an upgrade. There are **no repair recipes** at all (36
+   recipes, none repairs), so condition is a pure timer that never interacts with the economy.
 2. **The only real wall is travel and respawn.** The nearest oak is 260 px (16 tiles) from spawn,
    stone 247 px. The full first-hour loop — spawn → oak → stone → craft → swing → chest → deposit —
    ran in **19.8 s of wall clock for the whole probe**. `respawn_seconds` (300–720 s) is the binding constraint, and it
