@@ -40,7 +40,6 @@ var impact_tint := Vector3.ONE
 func _init() -> void:
     var n := W * H * 3
     buf.resize(n)
-    audit_writes.resize(W * H)
     world_coverage.resize(W * H)
     world_multiplier.resize(W * H)
     world_warp.resize(W * H * 2)
@@ -54,7 +53,9 @@ func _init() -> void:
 
 func clear() -> void:
     buf.fill(0.0)
-    if track_audit_writes: audit_writes.fill(0)
+    if track_audit_writes:
+        audit_writes.resize(W * H)
+        audit_writes.fill(0)
     if track_world_fields:
         world_coverage.fill(0.0)
         world_multiplier.fill(1.0)
