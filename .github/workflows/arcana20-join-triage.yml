@@ -119,10 +119,10 @@ jobs:
           box=ImageChops.difference(before,image).getbbox()
           if not box: raise SystemExit('Worldseed did not change actual world image')
           cx=(box[0]+box[2])//2;cy=(box[1]+box[3])//2
-          crop=(max(0,cx-180),max(0,cy-150),min(image.width,cx+180),min(image.height,cy+150))
-          output=io.BytesIO();image.crop(crop).quantize(colors=64).save(output,format='PNG',optimize=True)
+          crop=(max(0,cx-110),max(0,cy-110),min(image.width,cx+110),min(image.height,cy+110))
+          output=io.BytesIO();image.crop(crop).quantize(colors=32).save(output,format='PNG',optimize=True)
           data=base64.b64encode(output.getvalue()).decode();chunks=[data[i:i+3500] for i in range(0,len(data),3500)]
-          if len(chunks)>30:raise SystemExit('Worldseed crop too large')
+          if len(chunks)>9:raise SystemExit('Worldseed crop too large for annotations')
           for i,c in enumerate(chunks):print(f'::notice title=WORLDSEED_CROP_{i:02d}_OF_{len(chunks):02d}::{c}',flush=True)
           print('worldseed_difference_bbox',box,'crop',crop,'physical_resolution',image.size)
           PY
