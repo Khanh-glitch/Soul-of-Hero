@@ -29,6 +29,11 @@ var c_light: PackedFloat32Array
 var c_disp: PackedFloat32Array
 var c_world_fragment: PackedFloat32Array
 var c_influence: PackedByteArray
+# Optional A20 additive live-world sample mapping, independent of C ink.
+var c_live_light_index: PackedFloat32Array
+var c_live_light_operations: PackedFloat32Array
+var c_live_light_height := 1
+var c_live_light_count := 0
 
 # B: ink/emissive RGB float + coverage; ground marks RGB float + coverage;
 # shade, HDR light and post warp (destination->source pixel offset).

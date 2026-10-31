@@ -33,6 +33,16 @@ func _run() -> void:
     check(c.world_fragment[fi] == 10.0 and c.world_fragment[fi + 1] == 20.0 and is_equal_approx(c.world_fragment[fi + 2], 0.75), "C live fragment coordinates and subsequent ink")
     check(is_equal_approx(c.ink[fi + 3], 0.25), "C overdraw on live fragment")
     check(c.world_influence[40 * CFrame.W + 30] == 1 and c.world_influence[0] == 0, "C explicit authored influence")
+    c.add_live_world_light(25.0, 25.0, 4, 5, 0.75)
+    c.add_live_world_light(25.0, 25.0, 8, 9, 1.25)
+    var live := c.live_light_fields()
+    var live_index: PackedFloat32Array = live.index
+    var live_ops: PackedFloat32Array = live.operations
+    var live_pixel := (25 * CFrame.W + 25) * 4
+    check(int(live.count) == 2 and int(live_index[live_pixel + 1]) == 2 and live_ops[0] == 4.0 and live_ops[4] == 8.0, "C20 A additive live-world samples retain both overlapping source coordinates")
+    c.add_live_world_light(26.5, 25.5, 3, 4, 1.0)
+    var bilinear := c.live_light_fields()
+    check(int(bilinear.count) == 6, "A20 bilinear ground sample writes all four weighted destinations")
     c.ripper_remainder_fragment(30, 41, 32, 41)
     var out_i := (41 * CFrame.W + 30) * 4
     check(c.world_fragment[out_i] == 32.0 and c.world_fragment[out_i + 1] == 41.0 and c.world_fragment[out_i + 2] == 1.0 and c.world_fragment[out_i + 3] == 2.0, "C20 OUT inversion preserves explicit live-world source coordinates and mode")

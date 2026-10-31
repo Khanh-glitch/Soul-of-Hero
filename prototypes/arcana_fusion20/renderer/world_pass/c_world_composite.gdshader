@@ -13,6 +13,9 @@ uniform sampler2D light_tex : repeat_disable, filter_nearest;
 uniform sampler2D disp_tex : repeat_disable, filter_nearest;
 uniform sampler2D fragment_tex : repeat_disable, filter_nearest;
 uniform sampler2D influence_tex : repeat_disable, filter_nearest;
+uniform sampler2D live_light_index : repeat_disable, filter_nearest;
+uniform sampler2D live_light_ops : repeat_disable, filter_nearest;
+uniform bool live_light_enabled = false;
 uniform vec2 screen_dx = vec2(1.0, 0.0);
 uniform vec2 screen_dy = vec2(0.0, 1.0);
 const ivec2 SIZE = ivec2(384, 216);
@@ -55,6 +58,18 @@ void fragment() {
         l = light_at(q);
     }
     g *= d.z;
+    // A20 ground fragments are additive, not ink. Each operation samples
+    // the same real backbuffer; a per-pixel list preserves overlapping debris.
+    if (live_light_enabled) {
+        vec2 range_info = texelFetch(live_light_index, q, 0).rg;
+        int start = int(range_info.x);
+        int count = int(range_info.y);
+        for (int i = 0; i < count; i++) {
+            int n = start + i;
+            vec3 op = texelFetch(live_light_ops, ivec2(n % SIZE.x, n / SIZE.x), 0).rgb;
+            l += world_at(op.xy - vec2(q), SCREEN_UV, SCREEN_PIXEL_SIZE) * op.z;
+        }
+    }
     vec4 ink = texelFetch(ink_tex, q, 0);
     vec4 frag = texelFetch(fragment_tex, q, 0);
     vec3 fragment_world = world_at(frag.xy - vec2(q), SCREEN_UV, SCREEN_PIXEL_SIZE);

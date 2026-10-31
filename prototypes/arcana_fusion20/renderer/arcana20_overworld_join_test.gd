@@ -626,6 +626,23 @@ func _run() -> void:
     for p in range(CFrame.N):
         if block_frame.c_world_fragment[p * 4 + 2] > 0.0 and block_frame.c_world_fragment[p * 4 + 3] == 0.0: world_blocks += 1
     var block_image := await save_frame("fusion_20_blocks_tick420")
+    var overlap_samples := 0
+    var mapped_pixels := 0
+    for i in range(0, block_frame.c_live_light_index.size(), 4):
+        var count := int(block_frame.c_live_light_index[i + 1])
+        if count > 0: mapped_pixels += 1
+        if count > 1: overlap_samples += 1
+    var c20_viewer := rift_viewers.get(&"C") as Arcana20CWorldPass
+    check(block_frame.c_live_light_count > 0 and mapped_pixels > 0 and overlap_samples > 0 and c20_viewer != null, "A20 mapped real-ground additive debris preserves overlapping samples: operations=%d mapped_pixels=%d overlaps=%d" % [block_frame.c_live_light_count, mapped_pixels, overlap_samples])
+    if c20_viewer != null:
+        c20_viewer._material.set_shader_parameter("live_light_enabled", false)
+        await process_frame
+        await process_frame
+        var no_debris := await save_frame("fusion_20_blocks_without_a_debris")
+        check(not images_equal(block_image, no_debris), "A20 additive debris samples actual SOH world")
+        c20_viewer._material.set_shader_parameter("live_light_enabled", true)
+        await process_frame
+        await process_frame
     var block_result := contamination(baseline, block_image, rift_viewers.get(&"C"), block_frame)
     check(world_blocks > 0 and int(block_result.get("inside_changed", 0)) > 0 and int(block_result.get("outside_changed", -1)) == 0, "C20 collision blocks sample actual world within source influence: fragments=" + str(world_blocks) + " " + str(block_result))
     rift.render_enabled = false

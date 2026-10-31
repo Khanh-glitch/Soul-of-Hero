@@ -25,6 +25,9 @@ var ground_coverage := PackedFloat32Array()
 # because the legacy source reference needs the original zero-base behavior.
 var track_world_fragments := false
 var world_fragment := PackedFloat32Array()
+# Sparse, ordered additive live-world samples. Multiple samples at one pixel
+# remain distinct, so overlapping A20 debris never overwrites an earlier map.
+var live_light_buckets: Dictionary = {}
 # Explicit authored operation footprint for contamination checks and shader
 # scissoring; independent of resulting RGB or resulting ink alpha.
 var world_influence := PackedByteArray()
@@ -59,6 +62,7 @@ func clear() -> void:
     if track_world_fragments:
         world_fragment.fill(0.0)
         world_influence.fill(0)
+        live_light_buckets.clear()
     ink.fill(0.0)
     light.fill(0.0)
     for i in range(0, N * 4, 4):
@@ -81,6 +85,60 @@ func L(x: float, y: float, r: float, g: float, b: float) -> void:
 
 func Lc(x: float, y: float, c: Vector3, k: float = 1.0) -> void:
     L(x, y, c.x * k, c.y * k, c.z * k)
+
+# Original A framebuffer.add splats a sample to up to four destination pixels.
+func add_live_world_light(x: float, y: float, sx: int, sy: int, gain: float) -> void:
+    var x0 := floori(x)
+    var y0 := floori(y)
+    var fx := x - float(x0)
+    var fy := y - float(y0)
+    if fx < 0.02 and fy < 0.02:
+        _record_live_light(x0, y0, sx, sy, gain)
+        return
+    _record_live_light(x0, y0, sx, sy, gain * (1.0 - fx) * (1.0 - fy))
+    _record_live_light(x0 + 1, y0, sx, sy, gain * fx * (1.0 - fy))
+    _record_live_light(x0, y0 + 1, sx, sy, gain * (1.0 - fx) * fy)
+    _record_live_light(x0 + 1, y0 + 1, sx, sy, gain * fx * fy)
+
+func _record_live_light(x: int, y: int, sx: int, sy: int, gain: float) -> void:
+    if not track_world_fragments or gain <= 0.0 or x < 0 or y < 0 or x >= W or y >= H: return
+    var p := y * W + x
+    if not live_light_buckets.has(p): live_light_buckets[p] = []
+    (live_light_buckets[p] as Array).append(Vector3(sx, sy, gain))
+    world_influence[p] = 1
+
+func add_bilinear_light(x: float, y: float, c: Vector3) -> void:
+    var x0 := floori(x); var y0 := floori(y)
+    var fx := x - float(x0); var fy := y - float(y0)
+    if fx < 0.02 and fy < 0.02:
+        Lc(x0, y0, c)
+        return
+    Lc(x0, y0, c, (1.0 - fx) * (1.0 - fy))
+    Lc(x0 + 1, y0, c, fx * (1.0 - fy))
+    Lc(x0, y0 + 1, c, (1.0 - fx) * fy)
+    Lc(x0 + 1, y0 + 1, c, fx * fy)
+
+# Compressed-row offsets/counts plus a dense float atlas of source mappings.
+# No maximum overlaps per pixel; the original order is preserved in each row.
+func live_light_fields() -> Dictionary:
+    var index := PackedFloat32Array()
+    index.resize(N * 4)
+    var ops := PackedFloat32Array()
+    var count := 0
+    for pixel in live_light_buckets:
+        var bucket: Array = live_light_buckets[pixel]
+        index[int(pixel) * 4] = float(count)
+        index[int(pixel) * 4 + 1] = float(bucket.size())
+        for v in bucket:
+            var operation: Vector3 = v
+            ops.append(operation.x)
+            ops.append(operation.y)
+            ops.append(operation.z)
+            ops.append(0.0)
+            count += 1
+    var height := maxi(1, ceili(float(count) / float(W)))
+    ops.resize(W * height * 4)
+    return {"index": index, "operations": ops, "height": height, "count": count}
 
 func I(x: float, y: float, r: float, g: float, b: float, a: float = 1.0) -> void:
     var xi := int(x)

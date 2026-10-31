@@ -40,6 +40,11 @@ func consume(frame: Arcana20SourcePassFrame) -> void:
     _material.set_shader_parameter("disp_tex", _set_texture("disp", Image.create_from_data(384, 216, false, Image.FORMAT_RGBAF, frame.c_disp.to_byte_array())))
     _material.set_shader_parameter("fragment_tex", _set_texture("fragment", Image.create_from_data(384, 216, false, Image.FORMAT_RGBAF, frame.c_world_fragment.to_byte_array())))
     _material.set_shader_parameter("influence_tex", _set_texture("influence", Image.create_from_data(384, 216, false, Image.FORMAT_R8, frame.c_influence)))
+    var has_live_light := frame.c_live_light_count > 0
+    _material.set_shader_parameter("live_light_enabled", has_live_light)
+    if has_live_light:
+        _material.set_shader_parameter("live_light_index", _set_texture("live_light_index", Image.create_from_data(384, 216, false, Image.FORMAT_RGBAF, frame.c_live_light_index.to_byte_array())))
+        _material.set_shader_parameter("live_light_ops", _set_texture("live_light_ops", Image.create_from_data(384, frame.c_live_light_height, false, Image.FORMAT_RGBAF, frame.c_live_light_operations.to_byte_array())))
     _sprite.global_transform = frame.source_to_world
     _sprite.visible = true
     _update_camera_basis()
@@ -55,7 +60,7 @@ func _update_camera_basis() -> void:
     _material.set_shader_parameter("screen_dy", transform.y)
 
 func _set_texture(key: String, image: Image) -> ImageTexture:
-    if not _textures.has(key):
+    if not _textures.has(key) or (_textures[key] as ImageTexture).get_size() != image.get_size():
         _textures[key] = ImageTexture.create_from_image(image)
     else:
         var tex: ImageTexture = _textures[key]

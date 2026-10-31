@@ -1,7 +1,7 @@
 ## Selected #20 source-level candidate: C's seeded 9-point rift contour,
 ## timing/width/interior/edge, plus A Reality Ripper's bgWarp pull/fracture
 ## applied to the SAME real-world pixels relative to that C contour.
-## Original A debris and full source-world OUT fidelity are not yet selected;
+## Original A debris uses mapped live-world samples; full OUT fidelity remains open;
 ## full cast, source comparisons, actor depth and owner approval remain open.
 extends RefCounted
 class_name CRealityRipperFusion
@@ -50,11 +50,13 @@ var collided := false
 var blocks: Array = []
 var rng: CMath.CRng
 var particles: Array = []
+var a_debris := ARealityRipperDebris.new()
 
 func setup() -> void:
     CPalette._ensure()
     rng = CMath.CRng.new(151461)
     particles.clear()
+    a_debris.setup()
     way.clear()
     cum.clear()
     for i in range(9):
@@ -133,6 +135,7 @@ func authored_events() -> Array:
         {"t": 7.15, "kind": "rift_stitch", "pos_local": CENTER, "emitted": false}]
 
 func update(dt: float, t: float) -> void:
+    a_debris.advance_to(_a_time(t), Callable(self, "_at"))
     CKit.particles_update(particles, dt)
     if t > TOPEN + 0.4 and t < 7.2 and rng.chance(0.6):
         var s := rng.r(0.1, 0.9)
@@ -274,6 +277,7 @@ func render(f: CFrame, t: float) -> void:
     if not audit_polygons_only and not audit_blocks_only:
         if not audit_particles_only: _render_remainder(f, t)
         CKit.particles_render(f, particles)
+        if not audit_particles_only: a_debris.render(f)
 
 # Original source "at(s)" keeps scalar double precision until rasterization.
 func _at(s: float) -> Dictionary:
