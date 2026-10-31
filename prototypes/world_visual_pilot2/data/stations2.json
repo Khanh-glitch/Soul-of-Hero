@@ -1,0 +1,45 @@
+{
+ "schema": "soh.world_visual_pilot2.stations.v2",
+ "viewport": {
+  "native": [
+   640,
+   360
+  ],
+  "eval": [
+   1280,
+   720
+  ],
+  "zoom": 2,
+  "tile_px": 16,
+  "visible_world_px": [
+   320,
+   180
+  ]
+ },
+ "stations": [
+  {
+   "id": "approach_west",
+   "centre": [
+    396,
+    200
+   ],
+   "purpose": "road reads east to the gate; clay shelf and dead tree mark the hazard side"
+  },
+  {
+   "id": "gate_front",
+   "centre": [
+    402,
+    200
+   ],
+   "purpose": "gate and palisade frame the carriageway; supply stand visible beyond"
+  },
+  {
+   "id": "yard",
+   "centre": [
+    407,
+    201
+   ],
+   "purpose": "inside the waystation: stands, produce, lane turning south, forage layby beyond"
+  }
+ ]
+}

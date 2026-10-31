@@ -1,0 +1,202 @@
+{
+ "schema": "soh.world_visual_pilot2.placement.v2",
+ "world_cells": "A1 corridor window, unchanged",
+ "legend": {
+  "cobbled road": "authored route/nav corridor widened to 3 cells, clipped to authored dirt",
+  "trodden earth": "authored ground 'd' outside the carriageway",
+  "grass moor": "authored ground ';' - optional exploration",
+  "clay shelf": "authored solid '#' - inaccessible"
+ },
+ "props": [
+  {
+   "crop": "fence_h",
+   "x": 6560.0,
+   "y": 3182.4,
+   "reason": "north palisade of the waystation yard, off the carriageway",
+   "z": 0
+  },
+  {
+   "crop": "fence_h",
+   "x": 6560.0,
+   "y": 3182.4,
+   "reason": "south palisade, mirrored, closes the yard without blocking the lane",
+   "z": 0,
+   "flip": "h"
+  },
+  {
+   "crop": "gate",
+   "x": 6472.0,
+   "y": 3182.4,
+   "reason": "gate structure over the road: the destination read from the west approach",
+   "z": 0
+  },
+  {
+   "crop": "shelf",
+   "x": 6582.4,
+   "y": 3241.6,
+   "reason": "supply stand - the reason a waystation exists here",
+   "z": 0
+  },
+  {
+   "crop": "shelf2",
+   "x": 6611.2,
+   "y": 3283.2,
+   "reason": "second stand, mirrored, forms a stall inside the fence",
+   "z": 0
+  },
+  {
+   "crop": "produce",
+   "x": 6569.6,
+   "y": 3257.6,
+   "reason": "grain/vegetable sacks stacked at the stand",
+   "z": 0
+  },
+  {
+   "crop": "produce2",
+   "x": 6598.4,
+   "y": 3270.4,
+   "reason": "produce crate beside the second stand",
+   "z": 0
+  },
+  {
+   "crop": "burned",
+   "x": 6377.6,
+   "y": 3254.4,
+   "reason": "charred stump at the authored deadfall cell",
+   "z": 0
+  },
+  {
+   "crop": "rock_big",
+   "x": 6249.6,
+   "y": 3158.4,
+   "reason": "boulder at the foot of the impassable clay shelf",
+   "z": 0,
+   "scale": 0.5
+  },
+  {
+   "crop": "rock_mid",
+   "x": 6259.2,
+   "y": 3267.2,
+   "reason": "second boulder, continues the shelf edge",
+   "z": 0,
+   "scale": 0.5
+  },
+  {
+   "crop": "rock_small",
+   "x": 6278.4,
+   "y": 3216.0,
+   "reason": "loose rock fallen from the shelf onto the verge",
+   "z": 0,
+   "scale": 0.5
+  },
+  {
+   "crop": "bush_berry",
+   "x": 6387.2,
+   "y": 3513.6,
+   "reason": "forage bush at the layby: optional reward off the road",
+   "z": 0,
+   "scale": 0.5
+  },
+  {
+   "crop": "bush_small",
+   "x": 6422.4,
+   "y": 3539.2,
+   "reason": "second forage bush, edge of the layby clearing",
+   "z": 0,
+   "scale": 0.5
+  },
+  {
+   "crop": "tree_small",
+   "x": 6473.6,
+   "y": 3430.4,
+   "reason": "lone tree south of the road - depth without clutter",
+   "z": 0,
+   "scale": 0.5
+  },
+  {
+   "crop": "tree_big",
+   "x": 6601.6,
+   "y": 3468.8,
+   "reason": "single large tree closing the south-east corner",
+   "z": 0,
+   "scale": 0.5
+  },
+  {
+   "crop": "burned",
+   "x": 6377.6,
+   "y": 3254.4,
+   "reason": "charred stump marks the authored deadfall",
+   "z": 1
+  },
+  {
+   "crop": "dead_tree",
+   "x": 6128.0,
+   "y": 3392.0,
+   "reason": "dead tree silhouette on the far shelf, outside all three stations",
+   "z": 0,
+   "scale": 0.5
+  }
+ ],
+ "actors": {
+  "male": {
+   "cell": [
+    392,
+    200
+   ],
+   "dir": "right",
+   "frame": "walk",
+   "frame_index": 0
+  },
+  "female": {
+   "cell": [
+    405,
+    202
+   ],
+   "dir": "down",
+   "frame": "idle",
+   "frame_index": 0
+  }
+ },
+ "lights": [
+  {
+   "x": 6582.4,
+   "y": 3232.0,
+   "r": 78,
+   "color": [
+    255,
+    186,
+    110
+   ],
+   "s": 0.72
+  },
+  {
+   "x": 6456.0,
+   "y": 3177.6,
+   "r": 58,
+   "color": [
+    255,
+    170,
+    96
+   ],
+   "s": 0.55
+  },
+  {
+   "x": 6377.6,
+   "y": 3251.2,
+   "r": 40,
+   "color": [
+    255,
+    132,
+    72
+   ],
+   "s": 0.45
+  }
+ ],
+ "scale_note": "CraftPix packs ship at different scales. D051 body is 22 px tall vs 16 px cells; trees/rocks/bushes are halved (integer NEAREST) to sit in the same scale band. Fences, gate, shelves and produce stay native.",
+ "rejected_crops": [
+  {
+   "crop": "spikes",
+   "why": "Tileset2 (192,192,48,40) reads as a loose red plank at world scale, not a spike run; withdrawn after inspection"
+  }
+ ]
+}

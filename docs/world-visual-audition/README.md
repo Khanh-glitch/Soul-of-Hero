@@ -36,8 +36,11 @@ all 7,463 individual draw operations with cell, crop, paste pixel and flip.
 
 ## 2. Source recovery — and the blocker
 
-The brief points at private repo `Khanh-glitch/APEX-CHAOS`, branches `43-new-asset` and
-`Khanh-glitch-patch-1…6`, holding 42 CraftPix ZIPs. **Those files could not be read:**
+> **This section describes pilot 1, which was rejected.** It is kept because the rejection
+> reason is recorded here. The sources are no longer unreachable: the 43 CraftPix ZIPs were
+> delivered through the Drive connector and pilot 2 renders from them — see
+> [`prototypes/world_visual_pilot2/PILOT2.md`](../../prototypes/world_visual_pilot2/PILOT2.md).
+> The APEX-CHAOS GitHub route below is still closed and should not be retried.
 
 | attempt | result |
 |---|---|
@@ -45,15 +48,14 @@ The brief points at private repo `Khanh-glitch/APEX-CHAOS`, branches `43-new-ass
 | `codeload.github.com/.../zip/refs/heads/43-new-asset` | `404` |
 | GitHub repository search for `APEX-CHAOS` | no such repository (only unrelated namesakes) |
 
-No CraftPix ZIP is reconstructed, inferred or invented here. Instead the pilot uses the
-project's own shipped art — `assets/overworld/overworld_tiles.png`,
-`overworld_props.png`, `light_radial.png`, and the knight `_Idle.png` sheet — the same
-pixels A1 renders at runtime, pinned by commit and SHA-256 in `tools/extract_slice.py` and
-re-checked on every run (`art pin mismatch` aborts the build).
+Pilot 1 fell back to the project's own shipped art — `assets/overworld/overworld_tiles.png`,
+`overworld_props.png`, `light_radial.png` and the knight `_Idle.png` sheet — and that fallback
+is exactly what the creator rejected: it reused old atlases and showed the obsolete Knight
+instead of the D051 base avatars. **Do not repeat that fallback.**
 
-Consequence to be explicit about: **this pilot proves composition and implementation
-quality with A1's current atlas; it cannot prove that the CraftPix packs would fix A1's
-asset-quality problem, because those packs are not reachable from this environment.**
+Live blocker for Gate 2 is unchanged: no Godot binary and no way to obtain one from this
+sandbox (no egress to GitHub release assets or Google storage; no Vulkan ICD, libGL or
+libEGL), so no Python render here may be presented as a native capture.
 
 ## 3. The area
 
