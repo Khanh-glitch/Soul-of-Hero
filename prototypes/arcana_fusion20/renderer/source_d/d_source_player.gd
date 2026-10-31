@@ -47,6 +47,12 @@ func begin(caster_world: Vector2, target_world: Vector2) -> void:
     _ensure()
     _eng = DConstellationEngine.new()
     _eng.setup()
+    # Original D's additive g scene is RGBA8, with normalized fragment
+    # output and a quantized destination after every SRC_ALPHA/ONE blend.
+    # This is D source-transfer semantics, not a clamp on other HDR families.
+    # CPU call ordering and source hash/derivative differences remain open.
+    _eng.fx.rgba8_fragment_transfer = true
+    _eng.fx.rgba8_scene_blend = true
     _eng.fx.track_world_fields = world_pass_mode
     _events = _eng.authored_events()
     var axis := target_world - caster_world
