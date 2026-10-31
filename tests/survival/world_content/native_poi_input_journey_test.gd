@@ -774,6 +774,8 @@ func _walk_to(target: Vector2, measurement_tag: String = "") -> bool:
 	var vertical_key := KEY_S if target.y > hero.global_position.y else KEY_W
 	await _walk_axis_to(vertical_action, vertical_key, target.y)
 	var end_position := hero.global_position
+	if end_position.distance_to(target) > 14.0:
+		print("A8_POINT %s %s %s %s" % [start_position, horizontal_position, end_position, target])
 	_measure_walk = false
 	if measure_this_walk:
 		var physics_frames := Engine.get_physics_frames() - physics_frame_start
