@@ -302,6 +302,25 @@ func _click_window(position: Vector2) -> void:
 ## The panel joins the target and the status word with its own separator ("weave
 ## cloth · ready 12/12"), so a gate must match the words, not one owner's
 ## punctuation: the recipe must be this target and the status must be ready.
+## Walk up to a structure the player just built, with ordinary directional input,
+## until the product's own station policy says it is in reach. A player who placed a
+## bench three cells away has to walk to it; nothing here moves the body.
+func _stand_by(ow: Node, hero: CharacterBody2D, station_id: String) -> bool:
+	var structures: Dictionary = _survival().call(&"structures")
+	var record: Dictionary = structures.get(station_id, {})
+	var definition: Dictionary = _survival().call(&"piece_definition", String(record.get("piece", "")))
+	var node: Node2D = (ow.get(&"survival_build") as SurvivalBuildSystem).structure_node(station_id)
+	if node == null:
+		return false
+	var deadline := Time.get_ticks_msec() + 6000
+	var target := SurvivalStationReach.anchor_for(node, definition)
+	while not SurvivalStationReach.in_reach(hero.global_position, node, definition) and Time.get_ticks_msec() < deadline:
+		_set_direction(target - hero.global_position)
+		await physics_frame
+	_set_direction(Vector2.ZERO)
+	return SurvivalStationReach.in_reach(hero.global_position, node, definition)
+
+
 ## A job row is [progress bar, words, action]; the words are not child 0, so a
 ## gate that grabs the first child gets the bar and silently finds no row.
 func _row_label(row: Node) -> Label:
@@ -585,6 +604,7 @@ func _body() -> void:
 	if station_id.is_empty():
 		_body_complete = true
 		return
+	_expect(await _stand_by(ow, hero, station_id), "ordinary movement brings the player to the bench it built")
 	await _tap_action(&"economy_toggle")
 	var weave_button := panel.find_child("Recipe_weave_cloth_%s" % station_id, true, false) as Button
 	var weave_scroll := _owning_scroll(weave_button)
