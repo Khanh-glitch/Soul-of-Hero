@@ -39,12 +39,13 @@ python -m pytest tests/survival/world/test_round12_deep_world.py -q
 
 Each composed matrix runner uses A0's `tools/a0/compose_owners.py`, records owner SHAs and a pre-import Git tree ID, verifies every composed `data/survival/world` and `game/survival/world` file against the new A1 event SHA, rejects out-of-scope copied files, and verifies A0 script/A6 scene/A0 reviewed-controller provenance separately from semantic runtime acceptance. A1's compiler runs from the exact A1 checkout against byte-identical composed world data; no unowned tooling overlay is added to the production source tree.
 
-## Interim verification (before first push)
+## Verification result
 
-- Local `17/17` Round12 pytest, deterministic compiler regeneration, GDScript parsing, workflow YAML parsing, Python compilation and `git diff --check` pass.
-- Exact-head Godot isolated/reproduction/forward results are **PENDING**, not inferred from source gates. No composed tree ID exists yet.
-- The next immutable source commit must be the A1 input to both composed profiles; historical `8551a323` is not a valid new-code test target.
+- Native target `2a4f6e7964ec38e41ce3af8344f2bc3c37f48cc6`; Godot `4.7.stable.official.5b4e0cb0f`; [World Reader run 41199262481](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41199262481).
+- Isolated, frozen reproduction and forward composition each passed **263 native + 132 oracle checks**, 37 journeys, 36 spawn cases, 69 captures and all eight named refusals. Frozen tree `efb776c3e430eeb21aaad9e33add45703552a524`; forward tree `e844bf142e858a5de070204b87fbad8c2bcf3665`.
+- Source gates: **160/160 world pytest**, deterministic compiler regeneration, handoff validation and diff-check. The initial new-SHA oracle path-spelling failure was diagnosed and fixed; it was not hidden or bypassed.
+- Full evidence, R0–R5, nine independent gates and the single A0 owner order are in `docs/survival/world/REVIEW_A1_ROUND12_RUNTIME_CONTRACT_2A4F6E79.md`.
 
 ## Remaining handoff boundary
 
-A green result closes only the A1 cross-owner source-contract defect. A0 must still decide and implement actual production mounting and prove production traversal/build/collision/POI/save behavior. A7 and human visual review remain separate; existing source-window visual HOLD/DEFECT is not cleared by this contract fix.
+The green result closes only the A1 cross-owner source-contract defect at the cited native target. A0 must still decide and implement actual production mounting and prove production traversal/build/collision/POI/save behavior. A7 and human visual review remain separate; inspected source-window visual HOLD/DEFECT is not cleared by this contract fix.

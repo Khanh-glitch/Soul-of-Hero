@@ -239,18 +239,33 @@
     {
       "id": "SURV-050A-ROUND12-RUNTIME-CONTRACT",
       "name": "A1 immutable world-data integrity versus mutable A0/A6 semantic runtime compatibility",
-      "status": "in_progress",
+      "status": "verified",
       "assigned_branch": "arena/e385312a-soul-of-hero",
       "work_order": "docs/survival/tasks/A1_ROUND12_RUNTIME_CONTRACT_WORK_ORDER.md",
-      "verification_scope": "17_round12_pytest_gdparse_yaml_and_deterministic_source_gates_passed_native_isolated_reproduction_forward_pending_first_push",
+      "verification_scope": "160_world_pytest_and_three_godot_4_7_profiles_each_263_native_132_oracle_8_refusals_passed_fixture_only_production_player_visual_not_accepted",
       "evidence": [
         "game/survival/world/a1_runtime_compatibility.gd",
         "game/survival/world/a1_authored_world_reader.gd",
         "data/survival/world/a1_round12_runtime_contract.v1.json",
         "tests/survival/world/round12_deep_world_native_test.gd",
-        ".github/workflows/survival-world-reader.yml"
+        ".github/workflows/survival-world-reader.yml",
+        "docs/survival/world/A1_ROUND12_DEEP_WORLD_RUNTIME.md",
+        "docs/survival/world/REVIEW_A1_ROUND12_RUNTIME_CONTRACT_2A4F6E79.md"
       ],
-      "next": "Push new exact A1 SHA; run isolated plus frozen A0 62f6a32d/A6 6d71410a and forward A0 86ac20ba/A6 6518c098 Godot matrices; inspect eight native refusals and composed trees before final evidence handoff"
+      "next": "A0 owner: compose A1 2a4f6e7964ec38e41ce3af8344f2bc3c37f48cc6 with chosen immutable A0/A6 pins and run production mount/traversal/collision/build/save acceptance with the selected D051 override before default activation",
+      "native_target_sha": "2a4f6e7964ec38e41ce3af8344f2bc3c37f48cc6",
+      "native_evidence": {
+        "workflow": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41199262481",
+        "engine": "4.7.stable.official.5b4e0cb0f",
+        "isolated_job": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41199262481/job/124531620666",
+        "reproduction_job": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41199262481/job/124531620685",
+        "forward_job": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41199262481/job/124531620652",
+        "reproduction_composed_tree": "efb776c3e430eeb21aaad9e33add45703552a524",
+        "forward_composed_tree": "e844bf142e858a5de070204b87fbad8c2bcf3665",
+        "production_mounted": "NOT_TESTED",
+        "player_playable": "NOT_TESTED",
+        "visually_accepted": "HOLD_DEFECT"
+      }
     }
   ],
   "next_action": {
