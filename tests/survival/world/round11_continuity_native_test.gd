@@ -122,10 +122,15 @@ func _set_direction(delta: Vector2) -> void:
 	var distance := delta.length()
 	var direction := delta / distance
 	var base_speed := maxf(1.0, hero.move_speed) if hero != null else 96.0
-	var target_speed := clampf(distance * 24.0, 0.0, base_speed)
+	var deceleration := maxf(1.0, hero.acceleration) if hero != null else 900.0
+	var braking_speed := sqrt(2.0 * deceleration * 0.8 * maxf(0.0, distance - 0.5))
+	var target_speed := clampf(braking_speed, 0.0, base_speed)
 	var strength := clampf(target_speed / base_speed, 0.0, 1.0)
-	if target_speed <= 2.0:
-		strength = 0.0
+	if strength <= 0.001:
+		return
+	# InputBootstrap's action deadzone is 0.2; remain just above it for the
+	# final sub-pixel correction, then the settled branch releases to friction.
+	strength = maxf(0.21, strength)
 	if direction.x < 0.0:
 		Input.action_press("move_left", -direction.x * strength)
 	elif direction.x > 0.0:
@@ -134,6 +139,18 @@ func _set_direction(delta: Vector2) -> void:
 		Input.action_press("move_up", -direction.y * strength)
 	elif direction.y > 0.0:
 		Input.action_press("move_down", direction.y * strength)
+
+func _set_measurement_direction(delta: Vector2) -> void:
+	for action: String in MOVE_ACTIONS:
+		Input.action_release(action)
+	if delta.x < -0.5:
+		Input.action_press("move_left")
+	elif delta.x > 0.5:
+		Input.action_press("move_right")
+	if delta.y < -0.5:
+		Input.action_press("move_up")
+	elif delta.y > 0.5:
+		Input.action_press("move_down")
 
 func _hits_at(cell: Vector2i) -> Array[Dictionary]:
 	if hero == null:
@@ -472,7 +489,7 @@ func _capture(name: String, all_resolutions: bool = false) -> void:
 	await process_frame
 	RenderingServer.render_loop_enabled = false
 
-func _drive_cells(label: String, cells: Array) -> Dictionary:
+func _drive_cells(label: String, cells: Array, measurement_control: bool = false) -> Dictionary:
 	current_drive_label = label
 	if cells.is_empty():
 		_expect(false, label + " has physical cells")
@@ -497,8 +514,18 @@ func _drive_cells(label: String, cells: Array) -> Dictionary:
 			return {"ok": false}
 		var target := _foot(cell)
 		var deadline := physics_serial + 180
-		while (hero.global_position.distance_to(target) > 0.65 or hero.velocity.length() > 6.0) and physics_serial < deadline and not abort:
-			if hero.global_position.distance_to(target) <= 0.65:
+		var completed := false
+		while physics_serial < deadline and not abort:
+			var distance := hero.global_position.distance_to(target)
+			if measurement_control and distance <= 1.25:
+				completed = true
+				break
+			if not measurement_control and distance <= 0.65 and hero.velocity.length() <= 6.0:
+				completed = true
+				break
+			if measurement_control:
+				_set_measurement_direction(target - hero.global_position)
+			elif distance <= 0.65:
 				_set_direction(Vector2.ZERO)
 			else:
 				_set_direction(target - hero.global_position)
@@ -506,6 +533,9 @@ func _drive_cells(label: String, cells: Array) -> Dictionary:
 			travelled += previous_position.distance_to(hero.global_position)
 			max_speed = maxf(max_speed, hero.velocity.length())
 			previous_position = hero.global_position
+		if not completed:
+			_expect(false, label + " reached its cell and settled before the frame deadline at " + str(c))
+			return {"ok": false}
 		_set_direction(Vector2.ZERO)
 		await physics_frame
 		travelled += previous_position.distance_to(hero.global_position)
@@ -522,7 +552,7 @@ func _drive_cells(label: String, cells: Array) -> Dictionary:
 		"frames": frames, "travelled_px": travelled, "average_speed_px_s": travelled / maxf(1.0, frames / 60.0),
 		"max_speed_px_s": max_speed, "start_foot": [start_position.x, start_position.y],
 		"end_foot": [hero.global_position.x, hero.global_position.y], "health": hero.health,
-		"phase": current_phase, "contact_mode": contact_mode}
+		"phase": current_phase, "contact_mode": contact_mode, "measurement_control": measurement_control}
 	journey_trace.append(metrics)
 	_expect(true, "%s frame-stepped forward/return segment (%d cells, %d frames)" % [label, cells.size(), frames])
 	return metrics
@@ -731,7 +761,8 @@ func _run_expeditions() -> void:
 	_expect(trial_bodies.has(String(chest.proposal_id)) and not bool(chest.interaction_enabled), "last72 chest is physical but sealed/non-interactive")
 	for raw: Variant in inputs.last72_expedition.legs:
 		var leg: Dictionary = raw
-		var result: Dictionary = await _drive_cells("last72 " + String(leg.leg_id), leg.cells)
+		var measurement_control := String(leg.leg_id) in ["dry_control_8_steps", "marsh_enter_8_steps"]
+		var result: Dictionary = await _drive_cells("last72 " + String(leg.leg_id), leg.cells, measurement_control)
 		if not bool(result.get("ok", false)):
 			abort = true
 			return
