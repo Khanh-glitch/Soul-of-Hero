@@ -309,6 +309,10 @@ jobs:
           # untouched PNGs live in the artifact, which is the canonical copy.
           python3 tools/ci/authored_visual_annotation_chunks.py 0 crops || true
           ls -la artifacts/visual_authored_*.png 2>/dev/null || true
+      - name: R13 authored frame pixel probe (1:1 crop, through annotations)
+        if: always()
+        run: |
+          python3 tools/ci/authored_frame_probe.py || true
       - name: R13 first-failure transcript (engine version, artifacts, one log)
         if: always()
         run: |
