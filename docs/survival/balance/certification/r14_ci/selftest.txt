@@ -18,7 +18,9 @@ ok   T1.4 unknown live world → BLOCKED
 ok   T1.3 spawn outside live world → FAIL                 
 ok   T1.3 standable spawn → PASS                          
 ok   T1.3 unstandable spawn → FAIL                        
-ok   T1.4 sites outside world → FAIL                      
+ok   T1.4 engine-measured sites outside world → FAIL      
+ok   T1.4 source inference never overrules an unresolved engine measurement 
+ok   T1.4 no placement marker at all → BLOCKED            
 ok   T1.5 harness false negative → FAIL                   
 ok   T1.5 both halves clean → PASS                        
 ok   T1.5 half pair → BLOCKED                             
@@ -64,4 +66,4 @@ ok   probe parser reads the bootstrap pair
 ok   maturity never grants HUMAN_ACCEPTED                 
 ok   maturity grants TEST_HARNESS_VALID first             
 
-A7_CERT_SELFTEST 65/65
+A7_CERT_SELFTEST 67/67

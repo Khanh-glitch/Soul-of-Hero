@@ -4,12 +4,12 @@
 
 | track | verdict | cases |
 |---|---|---|
-| T1 | **FAIL** | T1.1=PASS, T1.2=FAIL, T1.3=BLOCKED, T1.4=FAIL, T1.5=PASS, T1.6=BLOCKED, T1.7=BLOCKED |
+| T1 | **FAIL** | T1.1=PASS, T1.2=FAIL, T1.3=FAIL, T1.4=FAIL, T1.5=PASS, T1.6=BLOCKED, T1.7=FAIL |
 | T2 | **BLOCKED** | T2.1=BLOCKED, T2.2=BLOCKED, T2.3=BLOCKED, T2.4=BLOCKED, T2.5=BLOCKED, T2.6=BLOCKED |
 | T3 | **FAIL** | T3.1=BLOCKED, T3.2=BLOCKED, T3.3=BLOCKED, T3.4=BLOCKED, T3.5=BLOCKED, T3.6=PASS, T3.7=PASS, T3.8=PASS, T3.9=BLOCKED, T3.10=BLOCKED, T3.11=FAIL |
 | T4 | **BLOCKED** | T4.1=NOT_IMPLEMENTED, T4.2=NOT_IMPLEMENTED, T4.3=NOT_IMPLEMENTED, T4.4=BLOCKED, T4.5=NOT_IMPLEMENTED, T4.6=BLOCKED, T4.7=NOT_IMPLEMENTED, T4.8=BLOCKED |
 
-Cases: 32 · PASS 5 · FAIL 3 · BLOCKED 19 · NOT_IMPLEMENTED 5
+Cases: 32 · PASS 5 · FAIL 5 · BLOCKED 17 · NOT_IMPLEMENTED 5
 
 ## Cases
 
@@ -17,11 +17,11 @@ Cases: 32 · PASS 5 · FAIL 3 · BLOCKED 19 · NOT_IMPLEMENTED 5
 |---|---|---|---|---|---|
 | T1.1 | **PASS** | `COMPOSITION_IDENTITY` | A7 | source | one exact immutable composition |
 | T1.2 | **FAIL** | `COMPOSITION_DROPS_OWNER_WORK` | A0 | source | one authoritative world (no rendered sidecar) |
-| T1.3 | **BLOCKED** | `BLOCKED_LIVE_WORLD_UNRESOLVED` | A0 | runtime | player spawns safely on the authored continent |
-| T1.4 | **FAIL** | `SITE_OUTSIDE_LIVE_WORLD` | A0 | source | canonical POI approaches lie inside the playable world |
+| T1.3 | **FAIL** | `SPAWN_OUTSIDE_LIVE_WORLD` | A0 | runtime | player spawns safely on the authored continent |
+| T1.4 | **FAIL** | `SITE_OUTSIDE_LIVE_WORLD` | A0 | runtime | canonical POI approaches lie inside the playable world |
 | T1.5 | **PASS** | `INPUT_BOOTSTRAP_INDEPENDENT` | A7 | runtime | input bootstrap is diagnosed as harness config, not A1 fault |
 | T1.6 | **BLOCKED** | `BLOCKED_NO_MOVEMENT_RUN` | A0 | runtime | physical movement and collision with normal input |
-| T1.7 | **BLOCKED** | `BLOCKED_NO_NATIVE_EVIDENCE` | A0 | runtime | the authority script loads and instantiates in this engine build |
+| T1.7 | **FAIL** | `AUTHORITY_SCRIPT_DOES_NOT_RUN` | A0 | runtime | the authority script loads and instantiates in this engine build |
 | T2.1 | **BLOCKED** | `BLOCKED_NO_ENTRY_RUN` | A8 | source | two canonical sites ship real scenes |
 | T2.2 | **BLOCKED** | `BLOCKED_NO_ROUTE_RUN` | A0 | runtime | ordinary route from spawn to each site |
 | T2.3 | **BLOCKED** | `BLOCKED_NO_MELEE_RUN` | A3 | source | knife-first exploration is possible |
@@ -52,15 +52,17 @@ Cases: 32 · PASS 5 · FAIL 3 · BLOCKED 19 · NOT_IMPLEMENTED 5
 
 `T1.2` · **COMPOSITION_DROPS_OWNER_WORK** · owner **A0**
 
-the composed controller does not mount A0WorldAuthority although A0's own committed controller does (1643 lines vs 1367); A0's declared resolution replaces it with a stale merge artifact, so the composed product runs the legacy sidecar (384, 256) while the authored continent is (1024, 768). This is a source/composition finding: it does not claim the control tree runs — see T1.7, where the control's authority script is graded (NOT verified)
+the composed controller does not mount A0WorldAuthority although A0's own committed controller does (1643 lines vs 1367); A0's declared resolution replaces it with a stale merge artifact, so the composed product is configured for the legacy sidecar (384, 256) while the authored continent is (1024, 768) (runtime live_source=legacy_sidecar). This is a source/composition finding: it does not claim the control tree runs — see T1.7, where the control's authority script is graded (NOT verified)
 
 repro: `python3 tools/a0/compose_owners.py --owner a1=… ; diff the composed game/overworld/chapter1_overworld.gd against A0's committed file`
 
 ## First blocker
 
-`T1.3` · **BLOCKED_LIVE_WORLD_UNRESOLVED** · owner **A0**
+`T1.6` · **BLOCKED_NO_MOVEMENT_RUN** · owner **A0**
 
-the probe could not resolve which world is live on this tree (live_source=UNRESOLVED_CONTROLLER_NOT_RUNNABLE); an unknown live world is not a pass and not a failure — see T1.7 for the native reason
+requires `A7C T1.6 {"input_moves":true,"collision_blocks":true}` from a real player walk on the composed tree
+
+repro: `must be run by A0's journey harness in CI`
 
 ## Evidence per case
 
@@ -70,25 +72,25 @@ the declared tree reproduces byte for byte
 - recomputed tree=f6d5cf789995 (git-write-tree)
 
 ### T1.2 — FAIL `COMPOSITION_DROPS_OWNER_WORK`
-the composed controller does not mount A0WorldAuthority although A0's own committed controller does (1643 lines vs 1367); A0's declared resolution replaces it with a stale merge artifact, so the composed product runs the legacy sidecar (384, 256) while the authored continent is (1024, 768). This is a source/composition finding: it does not claim the control tree runs — see T1.7, where the control's authority script is graded (NOT verified)
+the composed controller does not mount A0WorldAuthority although A0's own committed controller does (1643 lines vs 1367); A0's declared resolution replaces it with a stale merge artifact, so the composed product is configured for the legacy sidecar (384, 256) while the authored continent is (1024, 768) (runtime live_source=legacy_sidecar). This is a source/composition finding: it does not claim the control tree runs — see T1.7, where the control's authority script is graded (NOT verified)
 - live world (384, 256) resolved from `legacy_sidecar` (game/overworld/chapter1_overworld.gd), legacy document (384, 256)
 - A1 authored frame (1024, 768) (game/survival/a1_authored_source.gd:30)
 - sidecar markers ['render_legacy := true'] (game/survival/a0_authored_world_mount.gd:12,29)
 - A0 poi-mount refusal `A0_WORLD_ABSENT` (game/survival/a0_poi_mount.gd:69)
 - composed controller mounts A0WorldAuthority=False, A0AuthoredWorldMount=True, authority default authored=False, 1367 lines
-- reconciled control (A0's own controller restored): mounts A0WorldAuthority=True, 1643 lines, runtime_authority_verified=False (controller_runnable=False, authority_runnable=False), live_source=UNRESOLVED_AUTHORITY_NOT_RUNNABLE
-- control engine errors: {"SCRIPT ERROR": 4, "Parse Error": 2, "Failed to load script": 1, "Compile Error": 1} (see r14_ci/control.native.txt) — the control tree does not compile cleanly
+- reconciled control (A0's own controller restored): mounts A0WorldAuthority=True, 1643 lines, runtime_authority_verified=False (controller_runnable=True, authority_runnable=False), live_source=UNRESOLVED_AUTHORITY_NOT_RUNNABLE
+- control engine errors: {"SCRIPT ERROR": 3, "Parse Error": 2, "Failed to load script": 1, "Compile Error": 1} (see r14_ci/control.native.txt) — the control tree does not compile cleanly
 - the control's authored world is NOT runtime-verified — its own script errors are recorded in T1.7; this case therefore claims a *source/composition* difference only, never that the control tree plays
 - live scene mounts A0AuthoredWorldMount=True behind `survival/a0_authored_stream` which defaults off=True and is defined in project.godot=False (game/overworld/chapter1_overworld.gd:65,275-277)
 - A0WorldAuthority present=True, referenced by production=False (tests/survival_a0_authored_world_route_test.gd)
 
-### T1.3 — BLOCKED `BLOCKED_LIVE_WORLD_UNRESOLVED`
-the probe could not resolve which world is live on this tree (live_source=UNRESOLVED_CONTROLLER_NOT_RUNNABLE); an unknown live world is not a pass and not a failure — see T1.7 for the native reason
+### T1.3 — FAIL `SPAWN_OUTSIDE_LIVE_WORLD`
+spawn [389, 291] is not inside (384, 256)
 - game/survival/world/a1_authored_world_reader.gd:1011: func choose_safe_spawn(run_seed: int) -> Dictionary:
-- probe: {"cell": [389, 291], "chunk_id": "chunk:6:4", "in_live_world": null, "live_frame": null, "live_resolved": false, "live_source": "UNRESOLVED_CONTROLLER_NOT_RUNNABLE", "ok": true, "production_spawn_approval": false, "region": "r_ashen_crown", "standable": true, "traversal": ""}
+- probe: {"cell": [389, 291], "chunk_id": "chunk:6:4", "in_live_world": false, "live_frame": [384, 256], "live_resolved": true, "live_source": "legacy_sidecar", "ok": true, "production_spawn_approval": false, "region": "r_ashen_crown", "standable": true, "traversal": ""}
 
 ### T1.4 — FAIL `SITE_OUTSIDE_LIVE_WORLD`
-3/3 canonical sites cannot be approached; package_status=A8_OWNER_CONTRACT_REFRESH_READY_FOR_A0_REVIEW_NOT_MOUNTED
+3/3 canonical sites cannot be approached in the measured live world [384, 256]; package_status=A8_OWNER_CONTRACT_REFRESH_READY_FOR_A0_REVIEW_NOT_MOUNTED
 - poi_crown_south_quarry (30, 280) scene=res://game/survival/world_content/scenes/south_quarry.tscn
 - poi_crown_south_orchard (140, 360) scene=res://game/survival/world_content/scenes/south_orchard_ruin.tscn
 - poi_crown_south_mill (120, 300) scene=res://game/survival/world_content/scenes/south_crown_mill.tscn
@@ -102,10 +104,10 @@ the reader configures with and without the bootstrap
 requires `A7C T1.6 {"input_moves":true,"collision_blocks":true}` from a real player walk on the composed tree
 - game/survival/gameplay_input_gate.gd:92: var result := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 
-### T1.7 — BLOCKED `BLOCKED_NO_NATIVE_EVIDENCE`
-requires `A7C NATIVE_LOAD {…}` from the probe; no native marker was recorded
-- probe NATIVE_LOAD: {}
-- composed probe log engine errors: {'SCRIPT ERROR': 3, 'Parse Error': 2, 'Failed to load script': 1, 'Compile Error': 0}
+### T1.7 — FAIL `AUTHORITY_SCRIPT_DOES_NOT_RUN`
+game/survival/a0_world_authority.gd loads=True instantiates=False; the composed controller mounts it=False. Source presence is not a running world, and 5 engine error(s) were logged
+- probe NATIVE_LOAD: {"authority_can_instantiate": false, "authority_failing_preloads": [], "authority_instantiates": false, "authority_loads": true, "authority_sha256": "cc823725c3cba322d9d9c16079e884687bdf8b5870429a7f6b12b87cd0c1e307", "controller_can_instantiate": true, "controller_error": "", "controller_failing_preloads": [], "control
+- composed probe log engine errors: {'SCRIPT ERROR': 2, 'Parse Error': 2, 'Failed to load script': 1, 'Compile Error': 0}
 
 ### T2.1 — BLOCKED `BLOCKED_NO_ENTRY_RUN`
 scenes exist; nobody has physically entered them
