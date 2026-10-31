@@ -22,10 +22,14 @@ A7CAPTURE world READY hero=(904.0, 3496.0) build=yes
 A7CAPTURE FIXTURE_GRANT oak_wood x60 -> true
 A7CAPTURE FIXTURE_GRANT iron_scrap x30 -> true
 A7CAPTURE FIXTURE_GRANT workbench_kit x1 -> true
-A7CAPTURE NOTE no legal plot near the spawn; capturing the world alone
-A7CAPTURE 1280x720 -> image=[1280, 720] save=0 bytes=333608 colours=343 /tmp/captures/r12_overworld_1280x720.png
-A7CAPTURE 2560x1440 -> image=[2560, 1440] save=0 bytes=484853 colours=340 /tmp/captures/r12_overworld_2560x1440.png
-A7CAPTURE 3840x2160 -> image=[3840, 2160] save=0 bytes=604046 colours=340 /tmp/captures/r12_overworld_3840x2160.png
+A7CAPTURE plot found at (54, 235) (chebyshev 2 from the hero)
+A7CAPTURE NOTE placement wall_wood at (56, 237) refused: hero_in_footprint
+A7CAPTURE NOTE placement bed_wood at (54, 235) refused: bed_requires_room
+A7CAPTURE house origin=(54, 235) radius=2 walls=15 room=<none>
+A7CAPTURE 1280x720 -> image=[1280, 720] save=0 bytes=306989 colours=366 /tmp/captures/r12_overworld_1280x720.png
+A7CAPTURE 2560x1440 -> image=[2560, 1440] save=0 bytes=452863 colours=361 /tmp/captures/r12_overworld_2560x1440.png
+A7CAPTURE 3840x2160 -> image=[3840, 2160] save=0 bytes=568487 colours=362 /tmp/captures/r12_overworld_3840x2160.png
+A7CAPTURE 1280x720 -> image=[1280, 720] save=0 bytes=295320 colours=344 /tmp/captures/r12_home_1280x720.png
 A7CAPTURE summary /tmp/captures/r12_visual_measurements.json
 A7CAPTURE DONE code=0
 WARNING: 10 ObjectDB instances were leaked at exit (run with `--verbose` for details).
