@@ -70,9 +70,12 @@ func _run() -> void:
     for n: String in ["b_fx","b_ground","b_light","b_disp_x","b_disp_y","b_mask"]:
         var t := fx.material.get_shader_parameter(n) as Texture2D
         _check(t != null and t.get_width() == 3072,"source_B_pass_"+n)
+    var debug_hud := stage.get("hud") as Label
+    if debug_hud != null:
+        debug_hud.visible = false
     var origin := actor.global_position
     var visual_snapshots: Dictionary = {}
-    for timing: Dictionary in [{"label":"opening","time":1.3}, {"label":"peak","time":4.5}, {"label":"out","time":6.5}]:
+    for timing: Dictionary in [{"label":"opening","time":1.3}, {"label":"peak","time":5.12}, {"label":"out","time":6.5}]:
         _check(fx.cast(2,origin),"original_B02_cast_"+str(timing.label))
         fx.timeline = float(timing.time)
         await get_tree().process_frame
