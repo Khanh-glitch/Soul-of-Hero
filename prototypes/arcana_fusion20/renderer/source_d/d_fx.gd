@@ -30,6 +30,10 @@ const FLAKE := 18
 
 var buf := PackedFloat32Array()
 var track_world_fields := false
+# Experimental intermediate-fixed-step elision: simulation, warp and events
+# still run; only an additive buffer cleared on the next step may be skipped.
+# Runtime leaves this on until exact state/field comparisons pass.
+var raster_enabled := true
 # Defaults retain a standalone baseline; DSourcePlayer opts into normalized
 # source transfer. Sprite/ribbon local errors and GPU backend differences remain.
 var rgba8_fragment_transfer := false
@@ -223,6 +227,7 @@ func _add_px(x: int, y: int, r: float, g: float, b: float) -> void:
 
 ## fx.sp — additive sprite (SpriteBatch + SPRITE_FS).
 func sp(x: float, y: float, size: float, col: Color, shape: int = DISC, o: Dictionary = {}) -> void:
+    if not raster_enabled: return
     var cx := roundi(x)
     var cy := roundi(y)
     var sx := float(o.get("sx", roundi(size)))
@@ -283,6 +288,7 @@ func sp(x: float, y: float, size: float, col: Color, shape: int = DISC, o: Dicti
 ## fx.line — additive ribbon (RibbonBatch + RIBBON_FS). pts flat [x,y,...],
 ## width scalar or per-point Array, col Color or per-point Array of Color.
 func line(pts: Array, width: Variant, col: Variant, o: Dictionary = {}) -> void:
+    if not raster_enabled: return
     var n := pts.size() / 2
     if n < 2:
         return
@@ -433,6 +439,7 @@ static func _col_at(col: Variant, i: int) -> Color:
 
 ## fx.poly — additive quad (PolyBatch + POLY_FS, non-voidSpace path).
 func poly(pts8: Array, col: Color, o: Dictionary = {}) -> void:
+    if not raster_enabled: return
     if pts8.size() < 8:
         return
     if float(o.get("edge", 0.05)) <= 1.5:
