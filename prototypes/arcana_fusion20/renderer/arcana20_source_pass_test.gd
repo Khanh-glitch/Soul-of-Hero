@@ -52,6 +52,44 @@ func _run() -> void:
     check(bclock.source_tick == 2, "B source tick restarts and counts catch-up steps")
     bclock.stop()
     bclock.free()
+    # Two children of the same source family must retire the shared family
+    # only after the final active child; parent cancellation emits no redundant
+    # layer-finished event. Exercise actual source nodes, including legacy sprite
+    # cleanup, rather than fake stand-ins.
+    var fusion_clock := FusionPlayer.new()
+    var first_a := ASourcePlayer.new()
+    var second_a := ASourcePlayer.new()
+    first_a.configure(ACinderCrown.new(), 0.1)
+    second_a.configure(ACinderCrown.new(), 0.2)
+    var retired: Array[StringName] = []
+    fusion_clock.source_layer_finished.connect(func(family: StringName) -> void: retired.append(family))
+    fusion_clock.configure([
+        {"node": first_a, "layer": -1, "begin_call": func(n: Node, cw: Vector2, tw: Vector2) -> void: n.call("begin", cw, tw)},
+        {"node": second_a, "layer": 1, "begin_call": func(n: Node, cw: Vector2, tw: Vector2) -> void: n.call("begin", cw, tw)},
+    ], 1.0)
+    root.add_child(fusion_clock)
+    fusion_clock.begin(Vector2.ZERO, Vector2(100, 0))
+    fusion_clock.set_process(false)
+    first_a.render_enabled = false
+    second_a.render_enabled = false
+    for i in range(6): fusion_clock.advance(STEP)
+    check(retired.is_empty() and not first_a._active and second_a._active and not first_a._sprite.visible, "fusion keeps shared family until last child and hides finished legacy sprite")
+    for i in range(6): fusion_clock.advance(STEP)
+    check(retired == [&"A"] and fusion_clock._active and not second_a._sprite.visible, "fusion retires same family exactly once after last child")
+    fusion_clock.stop()
+    check(retired == [&"A"], "fusion parent cancellation emits no redundant layer retirement")
+    fusion_clock.free()
+    var cancelling_fusion := FusionPlayer.new()
+    var cancelling_a := ASourcePlayer.new()
+    cancelling_a.configure(ACinderCrown.new(), 0.3)
+    var cancel_retired: Array[StringName] = []
+    cancelling_fusion.source_layer_finished.connect(func(family: StringName) -> void: cancel_retired.append(family))
+    cancelling_fusion.configure([{"node": cancelling_a, "layer": 1, "begin_call": func(n: Node, cw: Vector2, tw: Vector2) -> void: n.call("begin", cw, tw)}], 0.3)
+    root.add_child(cancelling_fusion)
+    cancelling_fusion.begin(Vector2.ZERO, Vector2(100, 0))
+    cancelling_fusion.stop()
+    check(cancel_retired.is_empty(), "fusion cancellation suppresses child retirement signals")
+    cancelling_fusion.free()
     var c := CFrame.new()
     c.track_world_fragments = true
     c.G(2, 2, 0.0, 0.0, 0.0, 0.5)
