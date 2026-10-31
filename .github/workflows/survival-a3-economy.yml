@@ -5,20 +5,24 @@ on:
     branches: [arena/7a12b27e-soul-of-hero]
     paths:
       - '.github/workflows/survival-a3-economy.yml'
+      - 'data/content/items/**'
       - 'data/survival/items/**'
       - 'data/survival/recipes/**'
       - 'game/survival/economy/**'
       - 'tools/survival/economy/**'
+      - 'tests/survival/a3_value_economy_test.gd'
       - 'tests/survival/catalog/**'
       - 'docs/survival/economy/**'
   pull_request:
-    branches: [feature/survival-rpg-foundation-20261029]
+    branches: [arena/7a12b27e-soul-of-hero]
     paths:
       - '.github/workflows/survival-a3-economy.yml'
+      - 'data/content/items/**'
       - 'data/survival/items/**'
       - 'data/survival/recipes/**'
       - 'game/survival/economy/**'
       - 'tools/survival/economy/**'
+      - 'tests/survival/a3_value_economy_test.gd'
       - 'tests/survival/catalog/**'
       - 'docs/survival/economy/**'
   workflow_dispatch:
@@ -244,3 +248,64 @@ jobs:
         with:
           name: a3-economy-native
           path: artifacts/a3-economy/
+
+  r13-value-economy:
+    name: R13 A3 VALUE ECONOMY NATIVE (GODOT 4.7)
+    needs: native-adapter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - run: mkdir -p artifacts/r13-value-economy
+      - name: Import project (real engine parser)
+        run: |
+          timeout --signal=TERM --kill-after=10s 240s godot --headless --path . \
+            --user-data-dir artifacts/r13-import --import >"artifacts/r13-value-economy/import.log" 2>&1
+          rc=$?
+          tail -60 "artifacts/r13-value-economy/import.log"
+          bash tools/ci/gate_log.sh "artifacts/r13-value-economy/import.log" "R13 import" || exit $rc
+          exit $rc
+      - name: R13 process 1 — authenticate, pay, learn, queue, exit
+        env:
+          A3_TEST_ROLE: process_1
+          SOUL_OF_HERO_SAVE_PATH: user://tests/r13_value_economy_p1.json
+        run: |
+          set +e
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . \
+            --user-data-dir artifacts/r13-value-economy \
+            --script res://tests/survival/a3_value_economy_test.gd \
+            >"artifacts/r13-value-economy/r13_phase1.log" 2>&1
+          rc1=$?
+          set -e
+          cat "artifacts/r13-value-economy/r13_phase1.log"
+          bash tools/ci/gate_log.sh "artifacts/r13-value-economy/r13_phase1.log" "R13 phase1" "P1 PASSED"
+          if [ "$rc1" -ne 0 ]; then exit 1; fi
+      - name: R13 process 2 — reload, claim once, refuse duplicate, exit
+        env:
+          A3_TEST_ROLE: process_2
+          SOUL_OF_HERO_SAVE_PATH: user://tests/r13_value_economy_p1.json
+        run: |
+          set +e
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . \
+            --user-data-dir artifacts/r13-value-economy \
+            --script res://tests/survival/a3_value_economy_test.gd \
+            >"artifacts/r13-value-economy/r13_phase2.log" 2>&1
+          rc2=$?
+          set -e
+          cat "artifacts/r13-value-economy/r13_phase2.log"
+          bash tools/ci/gate_log.sh "artifacts/r13-value-economy/r13_phase2.log" "R13 phase2" "P2 PASSED"
+          if [ "$rc2" -ne 0 ] || [ "$rc1" -ne 0 ]; then exit 1; fi
+      - name: Record R13 SHA and result
+        run: |
+          echo "R13 SHA: $(git rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"
+          echo "R13 test: tests/survival/a3_value_economy_test.gd" >> "$GITHUB_STEP_SUMMARY"
+          echo "R13 two-process: distinct Godot PIDs, same durable SaveService" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: r13-value-economy
+          path: artifacts/r13-value-economy/

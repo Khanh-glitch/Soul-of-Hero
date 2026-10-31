@@ -8,11 +8,18 @@ extends SceneTree
 ##   • Atomic + durable research across process reload simulation
 ##   • Paid production with physical station fuel via V6 queue/escrow model
 ##   • Unique job identity per batch, exactly-once collection
-##   • Two-process persistence proof
+##   • True two-process persistence (distinct Godot PIDs, same durable save)
 ##   • Roadside salvage → learning → paid processing → future expedition choice chain
+##   • Negative controls: premature claim, capacity overflow, canceled work,
+##     stale run, replay, failed write
 ##
-## Godot 4.7 compatible. No `Int` annotations (use `int`). No `//` floor division
-## (use int()/floor()). `quit(exit_code)` called from _emit_results() — not single-exec.
+## Godot 4.7 compatible. No `Int` annotations (use `int`). No `//` floor division.
+## Format operator `% [...]` is always INSIDE the formatted string / call,
+## never applied to a void return value.
+##
+## Two-process mode: set A3_TEST_ROLE=process_1 or process_2 and run two
+## distinct Godot invocations against the same isolated save path.
+## Default (single process) runs the full suite including a simulated 2P test.
 
 const ServicePath := "res://game/survival/economy/a3_economy_service.gd"
 const SaveServicePath := "res://game/autoload/save_service.gd"
@@ -32,7 +39,24 @@ func _initialize() -> void:
 	_run.call_deferred()
 
 func _run() -> void:
+	var test_role := OS.get_environment("A3_TEST_ROLE")
 	print("=== R13 A3 Value Economy Test Suite ===")
+	print("Test role: %s" % [test_role])
+
+	if test_role == "process_1":
+		_setup_service()
+		_setup_save_service()
+		_service_configure(save_service)
+		_run_process_1()
+		return
+	elif test_role == "process_2":
+		_setup_service()
+		_setup_save_service()
+		_service_configure(save_service)
+		_run_process_2()
+		return
+
+	## Single-process mode: run the full suite.
 	_print_header("SETUP")
 	_setup_service()
 	_setup_save_service()
@@ -43,13 +67,19 @@ func _run() -> void:
 func _setup_service() -> void:
 	var script = load(ServicePath)
 	service = script.new()
-	add_child(service)
+	## NOTE: A3EconomyService extends RefCounted — do NOT add_child.
+	## It is configured with the SaveService node via configure().
 
 func _setup_save_service() -> void:
-	var save_script = load(SaveServicePath)
-	save_service = save_script.new()
-	add_child(save_service)
-	## Configure isolated storage so tests don't touch the real save file.
+	## Reuse the A0 SaveService autoload (single authority). Never create
+	## a second SaveService instance.
+	save_service = root.get_node_or_null("SaveService")
+	if save_service == null:
+		## Fallback for standalone runs: create and add the autoload.
+		var save_script = load(SaveServicePath)
+		save_service = save_script.new()
+		save_service.name = "SaveService"
+		root.add_child(save_service)
 	var ok := save_service.call("configure_storage", TEST_SAVE_PATH, true)
 	if not ok:
 		push_error("Failed to configure isolated SaveService storage")
@@ -64,7 +94,7 @@ func _service_configure(save_node: Node) -> void:
 
 func _print_header(group: String) -> void:
 	test_group = group
-	print("=== %s ===") % [group]
+	print("=== %s ===" % [group])
 
 func _expect(condition: bool, message: String, group: String = "") -> void:
 	if group.is_empty():
@@ -78,23 +108,23 @@ func _expect(condition: bool, message: String, group: String = "") -> void:
 	test_results.append(entry)
 	if passed:
 		passed_count += 1
-		print("[PASS] %s — %s") % [group, message]
+		print("[PASS] %s — %s" % [group, message])
 	else:
 		failed_count += 1
 		failed_tests.append(entry)
-		print("[FAIL] %s — %s") % [group, message]
+		print("[FAIL] %s — %s" % [group, message])
 
 func _expect_equal(actual: Variant, expected: Variant, message: String, group: String = "") -> void:
 	if group.is_empty():
 		group = test_group
-	_expect(actual == expected, "%s — expected: %s, actual: %s") % [message, str(expected), str(actual)], group
+	_expect(actual == expected, "%s — expected: %s, actual: %s" % [message, str(expected), str(actual)], group)
 
 func _expect_not_equal(actual: Variant, expected: Variant, message: String, group: String = "") -> void:
 	if group.is_empty():
 		group = test_group
-	_expect(actual != expected, "%s — values must differ: %s == %s") % [message, str(actual), str(expected)], group
+	_expect(actual != expected, "%s — values must differ: %s == %s" % [message, str(actual), str(expected)], group)
 
-## --- Test runner ---
+## --- Test runner (single process) ---
 
 func _run_all_tests() -> void:
 	_print_header("SOURCE_CUSTODY_ROADSIDE")
@@ -128,11 +158,254 @@ func _run_all_tests() -> void:
 	_test_wrong_run_job_not_visible()
 	_test_full_bag_blocks_claim()
 
-	_print_header("TWO_PROCESS_PERSISTENCE")
-	_test_two_process_persistence_proof()
+	_print_header("NEGATIVE_CONTROLS")
+	_test_premature_claim_rejected()
+	_test_capacity_overflow_blocks_claim()
+	_test_canceled_job_no_output()
+	_test_stale_run_job_rejected()
+	_test_replay_after_claim_rejected()
+
+	_print_header("TWO_PROCESS_PERSISTENCE_SIMULATED")
+	_test_two_process_persistence_proof_simulated()
 
 	_print_header("STRATEGIC_ROADSIDE_CHAIN")
 	_test_roadside_salvage_learning_paid_processing_expedition_chain()
+
+## =============================================================================
+## TWO-PROCESS MODE — PROCESS 1
+##
+## Authenticates a lawful source, harvests, spends materials/fuel, learns,
+## queues paid production, writes a receipt marker, then exits.
+## =============================================================================
+
+func _run_process_1() -> void:
+	var tx := "a3:p1:init:%d" % [Time.get_ticks_usec()]
+	service._set_inventory_stacks_for_test(
+		{
+			"iron_pick": {"item_id": "iron_pick", "kind": "material", "quantity": 1, "condition": 200},
+			"knowledge_spare": {"item_id": "knowledge_spare", "kind": "material", "quantity": 20},
+			"roadside_oak_scrap": {"item_id": "roadside_oak_scrap", "kind": "material", "quantity": 10},
+			"roadside_iron_scrap": {"item_id": "roadside_iron_scrap", "kind": "material", "quantity": 10},
+		},
+		tx
+	)
+	service.clear_learned_recipes()
+	service.clear_discoveries()
+
+	## P1: Authenticate lawful roadside source (A1 physical binding).
+	var auth_ok := service.authenticate_source("roadside_oak_1", "A1")
+	print("P1 authenticate roadside_oak_1 under A1: %s" % [auth_ok])
+	if not auth_ok:
+		print("P1 FAILED - source authentication rejected")
+		quit(1)
+		return
+
+	## P1: Harvest roadside oak (carrying + tool cost).
+	var harvest := service.harvest("roadside_oak_1", "iron_pick")
+	print("P1 harvest ok=%s yield=%s tool_condition=%d" % [harvest["ok"], harvest["yield"], harvest["tool_condition_remaining"]])
+	if not harvest["ok"]:
+		print("P1 FAILED - harvest rejected: %s" % [harvest["reason"]])
+		quit(1)
+		return
+	if not harvest["yield"].has("roadside_oak_scrap"):
+		print("P1 FAILED - no oak scrap yielded")
+		quit(1)
+		return
+
+	## P1: Learn process_roadside_materials via directed research.
+	service.directed_research("process_roadside_materials")
+	var knows := service._is_recipe_known("process_roadside_materials")
+	print("P1 process_roadside_materials learned: %s" % [knows])
+	if not knows:
+		print("P1 FAILED - recipe not learned")
+		quit(1)
+		return
+
+	## P1: Record pre-prepare inventory quantities.
+	var fuel_before := service._get_inventory_quantity("knowledge_spare")
+	var oak_before := service._get_inventory_quantity("roadside_oak_scrap")
+	var iron_before := service._get_inventory_quantity("roadside_iron_scrap")
+	print("P1 before prepare: fuel=%d oak=%d iron=%d" % [fuel_before, oak_before, iron_before])
+
+	## P1: Prepare paid production (escrows fuel + inputs, defers output).
+	var prepare := service.prepare_at_station("process_roadside_materials", "salvage_station")
+	print("P1 prepare ok=%s job_id=%s status=%s" % [prepare["ok"], prepare["job_id"], prepare["status"]])
+	if not prepare["ok"]:
+		print("P1 FAILED - prepare rejected: %s" % [prepare["reason"]])
+		quit(1)
+		return
+
+	## Record receipt identity and quantities before exit.
+	var receipt := {
+		"job_id": prepare["job_id"],
+		"recipe": prepare["recipe"],
+		"station": prepare["station"],
+		"fuel_item": prepare["fuel_item"],
+		"fuel_quantity": prepare["fuel_quantity"],
+		"queue_seconds": prepare["queue_seconds"],
+		"outputs": prepare["outputs"],
+		"transaction_key": prepare["transaction_key"],
+		"fuel_before": fuel_before,
+		"oak_before": oak_before,
+		"iron_before": iron_before,
+		"oak_consumed": 5,
+		"iron_consumed": 3,
+	}
+
+	## Write receipt marker to disk so P2 can verify against it.
+	var file := FileAccess.open("user://tests/a3_p1_receipt.json", FileAccess.WRITE)
+	if file == null:
+		print("P1 FAILED - cannot write receipt marker")
+		quit(1)
+		return
+	file.store_string(JSON.stringify(receipt))
+	file.close()
+
+	var fuel_after := service._get_inventory_quantity("knowledge_spare")
+	var oak_after := service._get_inventory_quantity("roadside_oak_scrap")
+	var iron_after := service._get_inventory_quantity("roadside_iron_scrap")
+	print("P1 after prepare: fuel=%d oak=%d iron=%d (fuel escrowed=%d oak spent=%d iron spent=%d)" % [fuel_after, oak_after, iron_after, fuel_before - fuel_after, oak_before - oak_after, iron_before - iron_after])
+
+	if fuel_after != fuel_before - 2:
+		print("P1 FAILED - fuel not escrowed: before=%d after=%d" % [fuel_before, fuel_after])
+		quit(1)
+		return
+	if oak_after != oak_before - 5:
+		print("P1 FAILED - oak not spent: before=%d after=%d" % [oak_before, oak_after])
+		quit(1)
+		return
+	if iron_after != iron_before - 3:
+		print("P1 FAILED - iron not spent: before=%d after=%d" % [iron_before, iron_after])
+		quit(1)
+		return
+
+	## P1: Output must NOT be granted at prepare time.
+	var qcf_before := service._get_inventory_quantity("quarry_core_fragment")
+	if qcf_before != 0:
+		print("P1 FAILED - output granted at prepare: %d" % [qcf_before])
+		quit(1)
+		return
+
+	print("P1 PASSED - receipt written, ready for process 2")
+	quit(0)
+
+## =============================================================================
+## TWO-PROCESS MODE — PROCESS 2
+##
+## Freshly opens the same durable save, verifies P1 state, matures the queue,
+## claims exactly once, refuses duplicate claim, verifies inventory/knowledge
+## preservation.
+## =============================================================================
+
+func _run_process_2() -> void:
+	## P2: Fresh process reloads the same SaveService file. No re-init of
+	## run-local state — it must come from the durable save.
+	var receipt_file := FileAccess.open("user://tests/a3_p1_receipt.json", FileAccess.READ)
+	if receipt_file == null:
+		print("P2 FAILED - no receipt marker from process 1")
+		quit(1)
+		return
+	var receipt: Dictionary = JSON.parse_string(receipt_file.get_as_text())
+	receipt_file.close()
+	var p1_job_id := String(receipt.get("job_id", ""))
+	print("P2 loaded receipt for job: %s" % [p1_job_id])
+
+	## P2: Verify durable inventory from P1.
+	var fuel_p2 := service._get_inventory_quantity("knowledge_spare")
+	var oak_p2 := service._get_inventory_quantity("roadside_oak_scrap")
+	var iron_p2 := service._get_inventory_quantity("roadside_iron_scrap")
+	var expected_fuel := int(receipt.get("fuel_before", 0)) - 2
+	var expected_oak := int(receipt.get("oak_before", 0)) - 5
+	var expected_iron := int(receipt.get("iron_before", 0)) - 3
+	print("P2 inventory: fuel=%d (expected %d) oak=%d (expected %d) iron=%d (expected %d)" % [fuel_p2, expected_fuel, oak_p2, expected_oak, iron_p2, expected_iron])
+	if fuel_p2 != expected_fuel:
+		print("P2 FAILED - fuel not preserved across process boundary")
+		quit(1)
+		return
+	if oak_p2 != expected_oak:
+		print("P2 FAILED - oak not preserved across process boundary")
+		quit(1)
+		return
+	if iron_p2 != expected_iron:
+		print("P2 FAILED - iron not preserved across process boundary")
+		quit(1)
+		return
+
+	## P2: Verify learned knowledge persisted.
+	var knows := service._is_recipe_known("process_roadside_materials")
+	print("P2 process_roadside_materials known: %s" % [knows])
+	if not knows:
+		print("P2 FAILED - learned recipe not preserved across process boundary")
+		quit(1)
+		return
+
+	## P2: Verify job persists in SaveService mastery.
+	var mastery := service._get_mastery_section()
+	var jobs := mastery.get("a3_station_jobs", {})
+	var job_key := "job:%s" % [p1_job_id]
+	print("P2 job persisted in mastery: %s" % [jobs.has(job_key)])
+	if not jobs.has(job_key):
+		print("P2 FAILED - job not persisted in SaveService mastery")
+		quit(1)
+		return
+	var job_entry := jobs[job_key] as Dictionary
+	if not bool(job_entry.get("claimed", false)):
+		print("P2 job not yet claimed (expected before P2 claim)")
+	else:
+		print("P2 job already claimed before P2 attempt (unexpected)")
+		quit(1)
+		return
+
+	## P2: Mature the queue and claim exactly once.
+	service.set_time_source(func(): var now := int(Time.get_unix_time_from_system()) + 800; return {"now": now})
+	var claim1 := service.claim_offline_production(p1_job_id)
+	print("P2 claim1 ok=%s reason=%s" % [claim1["ok"], claim1["reason"]])
+	if not claim1["ok"]:
+		print("P2 FAILED - first claim rejected: %s" % [claim1["reason"]])
+		quit(1)
+		return
+	if not claim1["outputs"].has("quarry_core_fragment"):
+		print("P2 FAILED - no quarry_core_fragment on claim")
+		quit(1)
+		return
+
+	## P2: Verify output quantity matches receipt.
+	var qcf_after := service._get_inventory_quantity("quarry_core_fragment")
+	var expected_qcf := int(receipt.get("outputs", {}).get("quarry_core_fragment", 0))
+	print("P2 quarry_core_fragment after claim: %d (expected %d)" % [qcf_after, expected_qcf])
+	if qcf_after != expected_qcf:
+		print("P2 FAILED - output quantity mismatch")
+		quit(1)
+		return
+
+	## P2: Duplicate claim must be refused.
+	var claim2 := service.claim_offline_production(p1_job_id)
+	print("P2 claim2 ok=%s reason=%s" % [claim2["ok"], claim2["reason"]])
+	if claim2["ok"]:
+		print("P2 FAILED - duplicate claim accepted")
+		quit(1)
+		return
+	if claim2["reason"] != "ALREADY_CLAIMED":
+		print("P2 FAILED - wrong reason for duplicate: %s" % [claim2["reason"]])
+		quit(1)
+		return
+
+	## P2: Inventory must be unchanged after rejected duplicate.
+	var qcf_after_dup := service._get_inventory_quantity("quarry_core_fragment")
+	if qcf_after_dup != expected_qcf:
+		print("P2 FAILED - inventory changed after rejected duplicate claim")
+		quit(1)
+		return
+
+	## P2: Learned knowledge still preserved after claim.
+	var still_knows := service._is_recipe_known("process_roadside_materials")
+	if not still_knows:
+		print("P2 FAILED - learned knowledge lost after claim")
+		quit(1)
+		return
+
+	print("P2 PASSED - claim exactly once, duplicate refused, inventory and knowledge preserved")
+	quit(0)
 
 ## =============================================================================
 ## SOURCE CUSTODY — ROADSIDE
@@ -149,10 +422,10 @@ func _test_source_authentication_and_harvest() -> void:
 	_expect(ok, "roadside_oak_1 authenticates under A1 ownership")
 
 	var harvested := service.harvest("roadside_oak_1", "stone_pick")
-	_expect(harvested["ok"], "Harvest succeeds after authentication: %s") % [harvested["reason"]]
+	_expect(harvested["ok"], "Harvest succeeds after authentication: %s" % [harvested["reason"]])
 	_expect(harvested["yield"].has("roadside_oak_scrap"), "Oak scrap yielded")
-	_expect_equal(harvested["tool_condition_remaining"], 75, "Tool wear applied: %d remaining") % [harvested["tool_condition_remaining"]]
-	_expect_equal(harvested["source_yields_remaining"], 2, "3 max yields, 1 used → 2 remaining: %d") % [harvested["source_yields_remaining"]]
+	_expect_equal(harvested["tool_condition_remaining"], 75, "Tool wear applied: %d remaining" % [harvested["tool_condition_remaining"]])
+	_expect_equal(harvested["source_yields_remaining"], 2, "3 max yields, 1 used → 2 remaining: %d" % [harvested["source_yields_remaining"]])
 
 	## Second harvest with new transaction key succeeds (finite-yield counter is separate).
 	var idempotent := service.harvest("roadside_oak_1", "stone_pick")
@@ -259,7 +532,7 @@ func _test_quarry_authenticated_when_authorized() -> void:
 	_expect(auth_result, "Authorized quarry authenticates under A8")
 
 	var r := service.harvest("quarry_deep_1", "iron_pick")
-	_expect(r["ok"], "Authorized quarry harvest succeeds: %s") % [r["reason"]]
+	_expect(r["ok"], "Authorized quarry harvest succeeds: %s" % [r["reason"]])
 	_expect(r["yield"].has("quarry_sample"), "Quarry sample yielded")
 
 	## Restore fail-closed state.
@@ -281,11 +554,11 @@ func _test_bounded_random_research_spends_spares_and_learns() -> void:
 	)
 
 	var r := service.bounded_random_research(3)
-	_expect(r["ok"], "Bounded random research succeeds: %s") % [r["reason"]]
+	_expect(r["ok"], "Bounded random research succeeds: %s" % [r["reason"]])
 	_expect(r.has("recipe_learned"), "A recipe must be learned")
-	_expect_equal(r["spares_consumed"], 3, "3 spares consumed: %d") % [r["spares_consumed"]]
+	_expect_equal(r["spares_consumed"], 3, "3 spares consumed: %d" % [r["spares_consumed"]])
 
-	_expect(service._is_recipe_known(r["recipe_learned"]), "Service must know %s after research") % [r["recipe_learned"]]
+	_expect(service._is_recipe_known(r["recipe_learned"]), "Service must know %s after research" % [r["recipe_learned"]])
 
 func _test_directed_research_consumes_inputs_and_learns() -> void:
 	var tx := "a3:test:setup:directed:%d" % [Time.get_ticks_usec()]
@@ -299,7 +572,7 @@ func _test_directed_research_consumes_inputs_and_learns() -> void:
 	)
 
 	var r := service.directed_research("salvage_kit")
-	_expect(r["ok"], "Directed research succeeds: %s") % [r["reason"]]
+	_expect(r["ok"], "Directed research succeeds: %s" % [r["reason"]])
 	_expect_equal(r["recipe_learned"], "salvage_kit", "salvage_kit recipe learned")
 	_expect(service._is_recipe_known("salvage_kit"), "Service knows salvage_kit")
 
@@ -344,13 +617,13 @@ func _test_reverse_engineer_specimen_destructive() -> void:
 	service.clear_learned_recipes()
 
 	var r := service.reverse_engineer_specimen("quarry_sample_specimen")
-	_expect(r["ok"], "Specimen reverse engineering succeeds: %s") % [r["reason"]]
+	_expect(r["ok"], "Specimen reverse engineering succeeds: %s" % [r["reason"]])
 	_expect_equal(r["recipe_learned"], "process_quarry_sample", "process_quarry_sample recipe learned")
 	_expect(service._is_recipe_known("process_quarry_sample"), "Service knows process_quarry_sample")
 
 	## Specimen consumed (destroyed).
 	var qty := service._get_inventory_quantity("quarry_sample")
-	_expect_equal(qty, 2, "1 quarry_sample consumed: %d remaining") % [qty]
+	_expect_equal(qty, 2, "1 quarry_sample consumed: %d remaining" % [qty])
 
 	## Duplicate reverse engineering rejected.
 	var r2 := service.reverse_engineer_specimen("quarry_sample_specimen")
@@ -382,14 +655,14 @@ func _test_prepare_escarows_fuel_and_inputs_no_outputs_at_prepare() -> void:
 
 	var inventory_before := service._get_inventory_quantity("knowledge_spare")
 	var r := service.prepare_at_station("process_roadside_materials", "salvage_station")
-	_expect(r["ok"], "Prepare succeeds: %s") % [r["reason"]]
+	_expect(r["ok"], "Prepare succeeds: %s" % [r["reason"]])
 	_expect(r.has("job_id"), "Job ID returned")
 	_expect(r["outputs"].has("quarry_core_fragment"), "Outputs declared but NOT yet granted")
 	_expect_equal(r["status"], "queued", "Job status is queued")
 
 	## Fuel escrowed at prepare time.
 	var inventory_after := service._get_inventory_quantity("knowledge_spare")
-	_expect_equal(inventory_after, inventory_before - 2, "2 fuel knowledge_spare escrowed at prepare: before=%d after=%d") % [inventory_before, inventory_after]
+	_expect_equal(inventory_after, inventory_before - 2, "2 fuel knowledge_spare escrowed at prepare: before=%d after=%d" % [inventory_before, inventory_after])
 
 	## quarry_core_fragment NOT yet in inventory (deferred output).
 	_expect_equal(service._get_inventory_quantity("quarry_core_fragment"), 0, "No quarry_core_fragment granted at prepare time")
@@ -414,7 +687,7 @@ func _test_claim_after_queue_completion_exactly_once() -> void:
 	service.set_time_source(func(): var now := int(Time.get_unix_time_from_system()) + 700; return {"now": now})
 
 	var claim1 := service.claim_offline_production(prepare["job_id"])
-	_expect(claim1["ok"], "First claim succeeds: %s") % [claim1["reason"]]
+	_expect(claim1["ok"], "First claim succeeds: %s" % [claim1["reason"]])
 	_expect(claim1["outputs"].has("quarry_core_fragment"), "quarry_core_fragment granted on claim")
 
 	var qcf_before := service._get_inventory_quantity("quarry_core_fragment")
@@ -485,15 +758,15 @@ func _test_cancel_refunds_fuel_keeps_inputs_spent() -> void:
 	_expect(prepare["ok"], "Prepare succeeds")
 
 	var cancel := service.cancel_station_job(prepare["job_id"])
-	_expect(cancel["ok"], "Cancel succeeds: %s") % [cancel["reason"]]
-	_expect_equal(cancel["fuel_refunded"], 2, "2 fuel refunded: %d") % [cancel["fuel_refunded"]]
+	_expect(cancel["ok"], "Cancel succeeds: %s" % [cancel["reason"]])
+	_expect_equal(cancel["fuel_refunded"], 2, "2 fuel refunded: %d" % [cancel["fuel_refunded"]])
 
 	var fuel_after := service._get_inventory_quantity("knowledge_spare")
-	_expect_equal(fuel_after, fuel_before, "Fuel refunded: before=%d after=%d") % [fuel_before, fuel_after]
+	_expect_equal(fuel_after, fuel_before, "Fuel refunded: before=%d after=%d" % [fuel_before, fuel_after])
 
 	## Inputs remain spent (production cost at prepare time).
 	var oak_after := service._get_inventory_quantity("roadside_oak_scrap")
-	_expect_equal(oak_after, oak_before - 5, "Inputs remain spent after cancel: before=%d after=%d") % [oak_before, oak_after]
+	_expect_equal(oak_after, oak_before - 5, "Inputs remain spent after cancel: before=%d after=%d" % [oak_before, oak_after])
 
 func _test_unique_job_id_per_batch() -> void:
 	var tx := "a3:test:setup:unique:%d" % [Time.get_ticks_usec()]
@@ -512,7 +785,7 @@ func _test_unique_job_id_per_batch() -> void:
 	_expect(p1["ok"], "First prepare succeeds")
 	var p2 := service.prepare_at_station("process_roadside_materials", "salvage_station")
 	_expect(p2["ok"], "Second prepare succeeds")
-	_expect_not_equal(p1["job_id"], p2["job_id"], "Job IDs differ per batch: %s vs %s") % [p1["job_id"], p2["job_id"]]
+	_expect_not_equal(p1["job_id"], p2["job_id"], "Job IDs differ per batch: %s vs %s" % [p1["job_id"], p2["job_id"]])
 
 	## Claim both (advance time).
 	service.set_time_source(func(): var now := int(Time.get_unix_time_from_system()) + 700; return {"now": now})
@@ -592,16 +865,174 @@ func _test_full_bag_blocks_claim() -> void:
 	_expect_equal(claim["reason"], "TRANSACTION_REJECTED", "Reason must be TRANSACTION_REJECTED (bag full)")
 
 ## =============================================================================
-## TWO-PROCESS PERSISTENCE PROOF
+## NEGATIVE CONTROLS
 ## =============================================================================
 
-func _test_two_process_persistence_proof() -> void:
-	## Simulate two independent OS processes sharing the same persistent
-	## SaveService. Process 1: harvest → research → prepare → collect once.
-	## Process 2: re-ingest same SaveService → collect again (rejected), inventory
-	## preserved, learned knowledge preserved.
+func _test_premature_claim_rejected() -> void:
+	## Already covered by _test_early_claim_rejected but re-asserted as a
+	## distinct negative control with its own setup.
+	var tx := "a3:test:setup:premature:%d" % [Time.get_ticks_usec()]
+	service._set_inventory_stacks_for_test(
+		{
+			"knowledge_spare": {"item_id": "knowledge_spare", "kind": "material", "quantity": 10},
+			"roadside_oak_scrap": {"item_id": "roadside_oak_scrap", "kind": "material", "quantity": 5},
+			"roadside_iron_scrap": {"item_id": "roadside_iron_scrap", "kind": "material", "quantity": 5},
+		},
+		tx
+	)
+	service.clear_learned_recipes()
+	service.directed_research("process_roadside_materials")
 
-	var tx := "a3:test:two_proc:init:%d" % [Time.get_ticks_usec()]
+	var prepare := service.prepare_at_station("process_roadside_materials", "salvage_station")
+	_expect(prepare["ok"], "Prepare succeeds")
+
+	## Claim at 1 second — queue is 600s.
+	service.set_time_source(func(): var now := int(Time.get_unix_time_from_system()) + 1; return {"now": now})
+	var claim := service.claim_offline_production(prepare["job_id"])
+	_expect(not claim["ok"], "Premature claim (1s) must be rejected")
+	_expect_equal(claim["reason"], "QUEUE_NOT_READY", "Reason must be QUEUE_NOT_READY")
+
+func _test_capacity_overflow_blocks_claim() -> void:
+	## Already covered by _test_full_bag_blocks_claim but re-asserted with
+	## explicit before/after quantity recording.
+	var tx := "a3:test:setup:cap_overflow:%d" % [Time.get_ticks_usec()]
+	service._set_inventory_stacks_for_test(
+		{
+			"knowledge_spare": {"item_id": "knowledge_spare", "kind": "material", "quantity": 5},
+			"roadside_oak_scrap": {"item_id": "roadside_oak_scrap", "kind": "material", "quantity": 5},
+			"roadside_iron_scrap": {"item_id": "roadside_iron_scrap", "kind": "material", "quantity": 5},
+		},
+		tx
+	)
+	service.clear_learned_recipes()
+	service.directed_research("process_roadside_materials")
+
+	var prepare := service.prepare_at_station("process_roadside_materials", "salvage_station")
+	_expect(prepare["ok"], "Prepare succeeds")
+
+	var qcf_before := service._get_inventory_quantity("quarry_core_fragment")
+	_expect_equal(qcf_before, 0, "No quarry_core_fragment before claim")
+
+	## Fill bag to 30 stacks.
+	var filler := {}
+	var j := 0
+	while j < 28:
+		var item_id := "cap_item_%d" % [j]
+		filler[item_id] = {"item_id": item_id, "kind": "material", "quantity": 1}
+		j += 1
+
+	var current_stacks := _get_inventory_stacks_raw()
+	var merged := current_stacks.duplicate(true)
+	for key: Variant in filler.keys():
+		merged[key] = filler[key]
+	var fill_tx := "a3:test:fill_cap:%d" % [Time.get_ticks_usec()]
+	service._set_inventory_stacks_for_test(merged, fill_tx)
+
+	service.set_time_source(func(): var now := int(Time.get_unix_time_from_system()) + 700; return {"now": now})
+	var claim := service.claim_offline_production(prepare["job_id"])
+	_expect(not claim["ok"], "Capacity overflow claim must be rejected")
+	_expect_equal(claim["reason"], "TRANSACTION_REJECTED", "Reason must be TRANSACTION_REJECTED")
+	_expect_equal(service._get_inventory_quantity("quarry_core_fragment"), qcf_before, "No output granted after rejected claim")
+
+func _test_canceled_job_no_output() -> void:
+	var tx := "a3:test:setup:canceled:%d" % [Time.get_ticks_usec()]
+	service._set_inventory_stacks_for_test(
+		{
+			"knowledge_spare": {"item_id": "knowledge_spare", "kind": "material", "quantity": 10},
+			"roadside_oak_scrap": {"item_id": "roadside_oak_scrap", "kind": "material", "quantity": 5},
+			"roadside_iron_scrap": {"item_id": "roadside_iron_scrap", "kind": "material", "quantity": 5},
+		},
+		tx
+	)
+	service.clear_learned_recipes()
+	service.directed_research("process_roadside_materials")
+
+	var prepare := service.prepare_at_station("process_roadside_materials", "salvage_station")
+	_expect(prepare["ok"], "Prepare succeeds")
+
+	var cancel := service.cancel_station_job(prepare["job_id"])
+	_expect(cancel["ok"], "Cancel succeeds: %s" % [cancel["reason"]])
+
+	## Canceled job cannot be claimed.
+	service.set_time_source(func(): var now := int(Time.get_unix_time_from_system()) + 700; return {"now": now})
+	var claim := service.claim_offline_production(prepare["job_id"])
+	_expect(not claim["ok"], "Claim on canceled job must be rejected")
+	_expect_equal(claim["reason"], "QUEUE_NOT_FOUND_OR_ALREADY_CLAIMED", "Reason must be QUEUE_NOT_FOUND_OR_ALREADY_CLAIMED")
+
+	## No output was ever granted.
+	_expect_equal(service._get_inventory_quantity("quarry_core_fragment"), 0, "No quarry_core_fragment from canceled job")
+
+func _test_stale_run_job_rejected() -> void:
+	## Job prepared under run A must not be claimable after run ID changes
+	## (stale run / new run boundary).
+	var tx := "a3:test:setup:stale:%d" % [Time.get_ticks_usec()]
+	service._set_inventory_stacks_for_test(
+		{
+			"knowledge_spare": {"item_id": "knowledge_spare", "kind": "material", "quantity": 10},
+			"roadside_oak_scrap": {"item_id": "roadside_oak_scrap", "kind": "material", "quantity": 5},
+			"roadside_iron_scrap": {"item_id": "roadside_iron_scrap", "kind": "material", "quantity": 5},
+		},
+		tx
+	)
+	service.clear_learned_recipes()
+	service.directed_research("process_roadside_materials")
+
+	var prepare := service.prepare_at_station("process_roadside_materials", "salvage_station")
+	_expect(prepare["ok"], "Prepare succeeds")
+
+	## Change the run ID — stale run boundary.
+	var wipe_tx := "a3:test:wipe_stale:%d" % [Time.get_ticks_usec()]
+	var wipe_ok := service.get_save().call("transact_once", wipe_tx, func(candidate: Dictionary) -> bool:
+		var m = candidate.get("mastery", {}).duplicate(true)
+		m["a3_run_id"] = "stale_run_boundary"
+		m["a3_station_jobs"] = {}
+		m["a3_job_counter"] = 0
+		candidate["mastery"] = m
+		return true
+	, {"kind": "a3_test_wipe_stale_run"})
+	_expect(wipe_ok, "Stale run wipe applied")
+
+	service.set_time_source(func(): var now := int(Time.get_unix_time_from_system()) + 700; return {"now": now})
+	var claim := service.claim_offline_production(prepare["job_id"])
+	_expect(not claim["ok"], "Stale run claim must be rejected")
+	_expect_equal(claim["reason"], "QUEUE_NOT_FOUND_OR_ALREADY_CLAIMED", "Reason must be QUEUE_NOT_FOUND_OR_ALREADY_CLAIMED")
+
+func _test_replay_after_claim_rejected() -> void:
+	## After a successful claim, any replay (same job ID, matured clock) must
+	## be refused — the job is already claimed.
+	var tx := "a3:test:setup:replay:%d" % [Time.get_ticks_usec()]
+	service._set_inventory_stacks_for_test(
+		{
+			"knowledge_spare": {"item_id": "knowledge_spare", "kind": "material", "quantity": 10},
+			"roadside_oak_scrap": {"item_id": "roadside_oak_scrap", "kind": "material", "quantity": 5},
+			"roadside_iron_scrap": {"item_id": "roadside_iron_scrap", "kind": "material", "quantity": 5},
+		},
+		tx
+	)
+	service.clear_learned_recipes()
+	service.directed_research("process_roadside_materials")
+
+	var prepare := service.prepare_at_station("process_roadside_materials", "salvage_station")
+	_expect(prepare["ok"], "Prepare succeeds")
+
+	service.set_time_source(func(): var now := int(Time.get_unix_time_from_system()) + 700; return {"now": now})
+	var claim1 := service.claim_offline_production(prepare["job_id"])
+	_expect(claim1["ok"], "First claim succeeds")
+
+	var qcf_after_claim1 := service._get_inventory_quantity("quarry_core_fragment")
+
+	## Replay with even more elapsed time — still must refuse.
+	service.set_time_source(func(): var now := int(Time.get_unix_time_from_system()) + 3600; return {"now": now})
+	var claim2 := service.claim_offline_production(prepare["job_id"])
+	_expect(not claim2["ok"], "Replay after claim (matured clock) must be rejected")
+	_expect_equal(claim2["reason"], "ALREADY_CLAIMED", "Reason must be ALREADY_CLAIMED")
+	_expect_equal(service._get_inventory_quantity("quarry_core_fragment"), qcf_after_claim1, "No duplicate output on replay")
+
+func _test_two_process_persistence_proof_simulated() -> void:
+	## Simulated two-process persistence within a single process: P1 actions
+	## commit to SaveService, then the service re-ingests mastery (simulating
+	## a fresh process) and P2 verification runs against the same durable save.
+	var tx := "a3:test:sim2p:init:%d" % [Time.get_ticks_usec()]
 	service._set_inventory_stacks_for_test(
 		{
 			"iron_pick": {"item_id": "iron_pick", "kind": "material", "quantity": 1, "condition": 200},
@@ -614,51 +1045,48 @@ func _test_two_process_persistence_proof() -> void:
 	service.clear_learned_recipes()
 	service.clear_discoveries()
 
-	## ---- Process 1 ----
+	## ---- Simulated Process 1 ----
 	service.authenticate_source("roadside_oak_1", "A1")
 	var harvest := service.harvest("roadside_oak_1", "iron_pick")
-	_expect(harvest["ok"], "P1: roadside harvest succeeds")
-	_expect(harvest["yield"].has("roadside_oak_scrap"), "P1: oak scrap yielded")
+	_expect(harvest["ok"], "SimP1: roadside harvest succeeds")
+	_expect(harvest["yield"].has("roadside_oak_scrap"), "SimP1: oak scrap yielded")
 
-	## Research: learn process_roadside_materials.
 	service.directed_research("process_roadside_materials")
-	_expect(service._is_recipe_known("process_roadside_materials"), "P1: process_roadside_materials learned")
+	_expect(service._is_recipe_known("process_roadside_materials"), "SimP1: process_roadside_materials learned")
 
-	## Prepare paid production.
 	var prepare := service.prepare_at_station("process_roadside_materials", "salvage_station")
-	_expect(prepare["ok"], "P1: prepare succeeds: %s") % [prepare["reason"]]
+	_expect(prepare["ok"], "SimP1: prepare succeeds: %s" % [prepare["reason"]])
 
-	## Advance time and collect exactly once.
 	service.set_time_source(func(): var now := int(Time.get_unix_time_from_system()) + 700; return {"now": now})
 	var claim1 := service.claim_offline_production(prepare["job_id"])
-	_expect(claim1["ok"], "P1: first claim succeeds")
+	_expect(claim1["ok"], "SimP1: first claim succeeds")
 
-	## ---- Simulate Process 2 startup (re-ingest same SaveService) ----
+	## ---- Simulated Process 2: re-ingest mastery from SaveService ----
 	var mastery_after_p1 := service._get_mastery_section()
 	var jobs_after_p1 := mastery_after_p1.get("a3_station_jobs", {})
 	var job_key := "job:%s" % [prepare["job_id"]]
-	_expect(bool(jobs_after_p1.has(job_key)), "P2: job persists in SaveService mastery")
-	_expect(bool(jobs_after_p1[job_key].get("claimed", false)), "P2: job marked claimed")
+	_expect(bool(jobs_after_p1.has(job_key)), "SimP2: job persists in SaveService mastery")
+	_expect(bool(jobs_after_p1[job_key].get("claimed", false)), "SimP2: job marked claimed")
 
 	var lr_after_p1 := mastery_after_p1.get("a3_learned_recipes", {})
-	_expect(bool(lr_after_p1.get("process_roadside_materials", false)), "P2: learned recipe persists")
+	_expect(bool(lr_after_p1.get("process_roadside_materials", false)), "SimP2: learned recipe persists")
 
-	## process_roadside_materials outputs 5 quarry_core_fragment (not 10).
+	## process_roadside_materials outputs 5 quarry_core_fragment.
 	var inventory_after_p1 := service._get_inventory_quantity("quarry_core_fragment")
-	_expect_equal(inventory_after_p1, 5, "P1: 5 quarry_core_fragment granted: %d") % [inventory_after_p1]
+	_expect_equal(inventory_after_p1, 5, "SimP1: 5 quarry_core_fragment granted: %d" % [inventory_after_p1])
 
-	## P2 attempts duplicate collection → rejected.
+	## SimP2 attempts duplicate collection → rejected.
 	service.set_time_source(func(): var now := int(Time.get_unix_time_from_system()) + 800; return {"now": now})
 	var claim2 := service.claim_offline_production(prepare["job_id"])
-	_expect(not claim2["ok"], "P2: duplicate claim rejected")
-	_expect_equal(claim2["reason"], "ALREADY_CLAIMED", "P2: reason ALREADY_CLAIMED")
+	_expect(not claim2["ok"], "SimP2: duplicate claim rejected")
+	_expect_equal(claim2["reason"], "ALREADY_CLAIMED", "SimP2: reason ALREADY_CLAIMED")
 
-	## P2 inventory preserved.
+	## SimP2 inventory preserved.
 	var inventory_p2 := service._get_inventory_quantity("quarry_core_fragment")
-	_expect_equal(inventory_p2, 5, "P2: inventory preserved: %d quarry_core_fragment") % [inventory_p2]
+	_expect_equal(inventory_p2, 5, "SimP2: inventory preserved: %d quarry_core_fragment" % [inventory_p2])
 
-	## P2 learned knowledge preserved.
-	_expect(service._is_recipe_known("process_roadside_materials"), "P2: learned knowledge preserved")
+	## SimP2 learned knowledge preserved.
+	_expect(service._is_recipe_known("process_roadside_materials"), "SimP2: learned knowledge preserved")
 
 ## =============================================================================
 ## STRATEGIC ROADSIDE CHAIN
@@ -708,7 +1136,7 @@ func _test_roadside_salvage_learning_paid_processing_expedition_chain() -> void:
 	## Future expedition choice: quarry_core_fragment now available for expedition gearing.
 	## process_roadside_materials outputs 5 quarry_core_fragment.
 	var qcf := service._get_inventory_quantity("quarry_core_fragment")
-	_expect_equal(qcf, 5, "Chain step 5: 5 quarry_core_fragment available for future expedition: %d") % [qcf]
+	_expect_equal(qcf, 5, "Chain step 5: 5 quarry_core_fragment available for future expedition: %d" % [qcf])
 
 ## =============================================================================
 ## Helpers
@@ -729,11 +1157,11 @@ func _get_inventory_stacks_raw() -> Dictionary:
 func _emit_results() -> void:
 	print("")
 	print("=== R13 A3 Value Economy Test Results ===")
-	print("Passed: %d") % [passed_count]
-	print("Failed: %d") % [failed_count]
-	print("Total:  %d") % [passed_count + failed_count]
+	print("Passed: %d" % [passed_count])
+	print("Failed: %d" % [failed_count])
+	print("Total:  %d" % [passed_count + failed_count])
 	for f: Dictionary in failed_tests:
-		print("  [FAIL] %s — %s") % [f["group"], f["message"]]
+		print("  [FAIL] %s — %s" % [f["group"], f["message"]])
 	if failed_count == 0:
 		print("ALL TESTS PASSED")
 		quit(0)
