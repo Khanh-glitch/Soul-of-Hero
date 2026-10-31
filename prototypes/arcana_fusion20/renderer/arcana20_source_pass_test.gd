@@ -66,6 +66,20 @@ func _run() -> void:
     check(int(AMath.hash3(1, 2, 3) * 4294967296.0) == 1285237403, "A hash3 JS signed/float 1,2,3")
     check(int(AMath.hash3(-3, 9, -4) * 4294967296.0) == 2007782188, "A hash3 JS signed/float -3,9,-4")
 
+    var outer := CCinderCrown.new()
+    outer.setup()
+    var outer_frame := CFrame.new()
+    outer_frame.track_world_fragments = true
+    outer_frame.clear()
+    outer.render_outer_flame(outer_frame, CCinderCrown.T_BU - 0.1)
+    var pre_influence := 0
+    for value in outer_frame.world_influence: pre_influence += int(value)
+    check(pre_influence == 0, "C01 selected outer role excludes duplicate pre-burst crown")
+    outer.render_outer_flame(outer_frame, CCinderCrown.T_BU + 0.3)
+    var outer_influence := 0
+    for value in outer_frame.world_influence: outer_influence += int(value)
+    check(outer_influence > 0, "C01 selected original outer tongue primitive rasterizes")
+
     var bloom_lead := AAbyssalBloomLead.new()
     bloom_lead.setup()
     check(bloom_lead.petals.size() == 7 and bloom_lead.inner.size() == 7 and bloom_lead.bubbles.size() == 46, "A05 original seeded opening structures")

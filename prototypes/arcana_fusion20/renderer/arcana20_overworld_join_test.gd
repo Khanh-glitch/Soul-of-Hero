@@ -371,6 +371,26 @@ func _run() -> void:
     await process_frame
     await process_frame
     check(mount.active_viewers(id5) == 0 and images_equal(baseline, await save_frame("fusion_05_cancelled")), "A05 C05 candidate cleanup restores frozen world")
+    var id1 := Arcana20SourceCatalog.canonical_id(1)
+    multi.cast_skill(id1, player.global_position, enemy.global_position)
+    var crown := multi._casts[id1] as FusionPlayer
+    crown.set_process(false)
+    for part in crown._pending:
+        var child: Node = part.node
+        child.set("render_enabled", false)
+    for tick in range(246): crown.advance(STEP)
+    for part in crown._pending:
+        var child: Node = part.node
+        child.set("render_enabled", true)
+        child.call("_render_frame")
+    await process_frame
+    await process_frame
+    var crown_img := await save_frame("fusion_01_candidate_tick246")
+    check(mount.active_viewers(id1) == 2 and not images_equal(baseline, crown_img), "A01 crown and selected C01 outer flame share actual world")
+    multi.cancel_skill(id1)
+    await process_frame
+    await process_frame
+    check(mount.active_viewers(id1) == 0 and images_equal(baseline, await save_frame("fusion_01_cancelled")), "A01 C01 candidate cleanup restores frozen world")
     var id19 := Arcana20SourceCatalog.canonical_id(19)
     multi.cast_skill(id19, player.global_position, enemy.global_position)
     var constellation := multi._casts[id19] as DSourcePlayer

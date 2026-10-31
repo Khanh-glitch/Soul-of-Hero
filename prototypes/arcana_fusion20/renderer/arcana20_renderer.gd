@@ -128,11 +128,10 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
         return true
     if id == 1:
         # FUSION #01 Cinder Crown (vote A+C, FUSION_DECISIONS §01):
-        # A crown formation/collapse/impact is the lead; C provides the
-        # complementary outer flame geometry. C local clock is offset
-        # +0.69s so C's burst (T_BU 4.64) lands on A's burst tick (3.95)
-        # — one impact beat; both visual contacts are forwarded. C owns the back layer
-        # (outer geometry/scar), A owns the front (crown body/petals).
+        # A crown formation/collapse/impact is the lead. In world mode C
+        # contributes only its original outer tongue primitives, not a second
+        # crown/shock/scar/contact/post. The +0.69s source offset aligns C's
+        # outer-flame beat (4.64) to A's burst (3.95). Legacy stays unchanged.
         var fp := FusionPlayer.new()
         var ap := ASourcePlayer.new()
         ap.world_pass_mode = world_pass_mode
@@ -144,7 +143,7 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
         fp.source_pass_ready.connect(func(frame: Arcana20SourcePassFrame) -> void: source_pass_ready.emit(canonical_id, frame))
         fp.screen_post.connect(func(state: Dictionary) -> void: screen_post.emit(canonical_id, state))
         fp.configure([
-            {"node": cp, "layer": -1, "offset": 0.69, "begin_call": func(n: Node, cw: Vector2, tw: Vector2) -> void: n.call("begin", cw, tw, "crown")},
+            {"node": cp, "layer": -1, "offset": 0.69, "begin_call": func(n: Node, cw: Vector2, tw: Vector2) -> void: n.call("begin", cw, tw, "crown_outer" if world_pass_mode else "crown")},
             {"node": ap, "layer": 1, "offset": 0.0, "begin_call": func(n: Node, cw: Vector2, tw: Vector2) -> void: n.call("begin", cw, tw)},
         ], ACinderCrown.DURATION)
         add_child(fp)

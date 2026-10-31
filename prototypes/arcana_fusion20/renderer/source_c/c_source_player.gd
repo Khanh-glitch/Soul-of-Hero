@@ -99,11 +99,11 @@ func begin(caster_world: Vector2, target_world: Vector2, kind: String) -> void:
             _fx = CAbyssalBloomLate.new()
             duration = CAbyssalBloomLate.DURATION
             _fx.setup()
-        "crown":
+        "crown", "crown_outer":
             _fx = CCinderCrown.new()
             duration = CCinderCrown.DURATION
             _fx.setup()
-    _events = _fx.authored_events() if _fx != null else []
+    _events = _fx.authored_events() if _fx != null and _kind != "crown_outer" else []
     var axis := target_world - caster_world
     # Each C spell has its own authored target anchor. Rotation and scale
     # must use the same caster->anchor vector, otherwise events and geometry
@@ -135,7 +135,7 @@ func _anchor_local() -> Vector2:
             return CThornOpera.FZ
         "bloom_late":
             return CAbyssalBloomLate.C
-        "crown":
+        "crown", "crown_outer":
             return CCinderCrown.C
     return Vector2(192, 108)
 
@@ -171,6 +171,10 @@ func advance(dt: float, draw: bool = true) -> void:
         _steps += 1
         if _fx != null:
             _fx.update(STEP, source_time())
+            if _kind == "crown_outer":
+                _fx.set("fx_shake", 0.0)
+                _fx.set("fx_flash_k", 0.0)
+                _fx.set("fx_kick", 0.0)
             var sh = _fx.get("fx_shake")
             if sh != null and float(sh) > 0.0:
                 _shake_k = maxf(_shake_k, float(sh))
@@ -234,7 +238,10 @@ func _render_frame() -> void:
     _frame.chroma = _chroma_k
     _frame.flash = _flash_c * _flash_k * 0.28
     _frame.shake = _shake_vector()
-    _fx.render(_frame, source_time())
+    if _kind == "crown_outer":
+        _fx.call("render_outer_flame", _frame, source_time())
+    else:
+        _fx.render(_frame, source_time())
     if world_pass_mode:
         _sprite.visible = false
         _light_sprite.visible = false
@@ -266,7 +273,7 @@ func source_pass_frame() -> Arcana20SourcePassFrame:
     result.variant = StringName(_kind)
     result.tick = _tick
     result.source_time = source_time()
-    var seed_by_kind := {"bloom_late": 32676, "crown": 1000, "basilica": 48514, "thunderloom": 72271, "thorn": 111866, "horizon": 127704}
+    var seed_by_kind := {"bloom_late": 32676, "crown": 1000, "crown_outer": 1000, "basilica": 48514, "thunderloom": 72271, "thorn": 111866, "horizon": 127704}
     result.seeds = PackedInt32Array([int(seed_by_kind.get(_kind, 0))])
     if _kind == "thunderloom":
         result.seeds.append(999)

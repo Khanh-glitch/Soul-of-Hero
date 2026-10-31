@@ -357,3 +357,24 @@ func render(f: CFrame, t: float) -> void:
             f.ring_l(C.x, C.y, tb * 260.0, fire(0.8), (1.0 - tb / 0.7) * 1.2, 0.62)
         CKit.haze(f, C.x, C.y - 10.0, 60.0, t, 2.2 * maxf(0.0, 1.0 - tb * 0.5), 0.8)
     CKit.particles_render(f, _ps)
+
+## Selected #01 fusion role only: actual C tongue primitive and original
+## petal trajectories after the synchronized A burst. Do not draw C's crown,
+## shockwave, scar, ghosts, particles or screen post a second time.
+func render_outer_flame(f: CFrame, t: float) -> void:
+    if t < T_BU:
+        return
+    var tb := t - T_BU
+    for p in _petals:
+        var q := CMath.ease_out((tb - float(p.del)) / float(p.dur), 4.0)
+        if q <= 0.0:
+            continue
+        var fade := 1.0 - CMath.inv(0.25, 1.5, tb)
+        if fade <= 0.0:
+            continue
+        var a: float = p.a
+        var angle := atan2(sin(a) * 0.72, cos(a))
+        _tongue(f, _hub.x, _hub.y, angle, float(p.L) * q, float(p.w), t, float(p.seed), 0.85 * fade + 0.1, float(p.curl) * q)
+        _tongue(f, _hub.x, _hub.y, angle + 0.05, float(p.L) * q * 0.68, float(p.w) * 0.42, t, float(p.seed) + 3.0, 1.5 * fade, float(p.curl) * q * 0.6)
+        var peel := tb * float(p.peel)
+        _tongue(f, _hub.x + cos(angle) * peel, _hub.y + sin(angle) * peel, angle, float(p.L) * 0.4 * q, float(p.w) * 0.5, t, float(p.seed) + 7.0, 0.7 * fade * (1.0 - CMath.inv(0.1, 0.8, tb)), -float(p.curl))
