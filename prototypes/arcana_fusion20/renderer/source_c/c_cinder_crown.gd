@@ -186,10 +186,10 @@ func _draw_segs(f: CFrame, t: float, front: bool, mode: String, lift: float, alp
             if mode == "scar":
                 continue
             if black:
-                f.poly_i(tri, [0, 0, 0], 1.0)
-                f.poly_outline_l(tri, [1, 0.95, 0.85], 2.2)
+                f.poly_i(tri, Vector3.ZERO, 1.0)
+                f.poly_outline_l(tri, Vector3(1, 0.95, 0.85), 2.2)
                 continue
-            f.poly_i(tri, [DARK.x, DARK.y, DARK.z], 1.0)
+            f.poly_i(tri, DARK, 1.0)
             f.poly(tri, func(x: float, y: float) -> void:
                 var q := 1.0 - (B.y - y) / maxf(1.0, hh)
                 f.Lc(x, y, fire(0.35 + q * 0.5 * heat_g), (1.0 if front else 0.55) * (1.0 - dr) * (1.0 - dr)))
@@ -298,7 +298,7 @@ func render(f: CFrame, t: float) -> void:
                 f.disc_l(sx, sy, 1.6, fire(1.0), 1.6 * arch)
                 f.ring_l(sx, sy, 3.5, fire(0.6), 0.35 * arch, 0.6)
         if t >= T_SW:
-            f.glow(_hub.x, _hub.y, 80.0, [-1, -0.9, -0.8], 0.42 * dr, 5.0, 0.75)
+            f.glow(_hub.x, _hub.y, 80.0, Vector3(-1, -0.9, -0.8), 0.42 * dr, 5.0, 0.75)
             f.shade_disc(C.x, C.y, 110.0, 1.0 - 0.6 * dr, 0.6, 4.0)
             f.disc(_hub.x, _hub.y, 64.0, func(x: float, y: float, d: float) -> void:
                 var k := 2.4 * dr * (1.0 - d)
@@ -318,7 +318,7 @@ func render(f: CFrame, t: float) -> void:
                 var x2 := _hub.x + cos(a - 0.2) * r2
                 var y2 := _hub.y + sin(a - 0.2) * r2 * 0.6
                 f.line_l(x2, y2, x, y, fire(0.9), dr * 0.9 * ph)
-            f.disc_l(_hub.x, _hub.y, lerpf(6.0, 1.0, dr), [1, 1, 1], 1.0 + dr * 3.0)
+            f.disc_l(_hub.x, _hub.y, lerpf(6.0, 1.0, dr), Vector3.ONE, 1.0 + dr * 3.0)
         else:
             f.glow(_hub.x, _hub.y, 9.0, fire(0.9), 0.7 * CMath.inv(1.2, 2.5, t), 3.0)
         _draw_segs(f, t, true, "live", LIFT)
@@ -350,7 +350,7 @@ func render(f: CFrame, t: float) -> void:
             var po := tb * float(p.peel)
             _tongue(f, _hub.x + cos(ang) * po, _hub.y + sin(ang) * po, ang, float(p.L) * 0.4 * q, float(p.w) * 0.5, t, float(p.seed) + 7.0, 0.7 * fade * (1.0 - CMath.inv(0.1, 0.8, tb)), -float(p.curl))
         if tb < 0.15:
-            f.disc_l(_hub.x, _hub.y, 12.0 * (1.0 - tb / 0.15), [1, 1, 1], 2.0)
+            f.disc_l(_hub.x, _hub.y, 12.0 * (1.0 - tb / 0.15), Vector3.ONE, 2.0)
         f.glow(_hub.x, _hub.y, 70.0, fire(0.6), maxf(0.0, 0.4 - tb * 0.4), 5.0, 0.8)
         if tb < 0.7:
             CKit.shock(f, C.x, C.y, tb * 260.0, 14.0, 9.0 * (1.0 - tb / 0.7), 0.62, 1.5)
