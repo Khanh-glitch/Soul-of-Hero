@@ -686,3 +686,43 @@ SOH world source parity and creator review remain separate.
   Multi-point strip raster is enabled at `222f73ecf`, with full D source and
   actual-world reruns pending. GPU float32, 2×2 fwidth helper behavior,
   blend quantization and full-world bloom/post remain unverified; no parity claim.
+- The production strip's complete neutral-base D scene rerun
+  [41227947512](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41227947512)
+  passed capture/comparison, not visual acceptance. At ticks 72/192/312/489/510
+  its full-image MAE was **0.000363/0.000463/0.001894/0.008001/0.009162**;
+  support IoU was **0.961064/0.963184/0.873242/0.987464/0.987402**. The
+  prior pre-strip corrected-noise run was **0.000371/0.000499/0.001931/
+  0.008032/0.009180** MAE, so isolated primitive gains did not translate into
+  similarly large full-scene gains. The corresponding max errors reach **0.98**;
+  the prior source RGB mask is still not authored coverage.
+- [41228174308](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41228174308)
+  instruments original ribbon fragments after the original discard rather than
+  brightness-keying: CPU fragment-coverage IoU diagonal/bent/noise/crossing
+  **0.998807/0.996917/0.996166/0.995525**. The isolated candidate GPU mesh and
+  shader, using a correctly transparent-black viewport clear, ran in
+  [41228636421](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41228636421):
+  diagonal/bent/noise coverage IoU **0.998807/0.996917/0.996484**, RGB MAE
+  **0.000033/0.000115/0.001237** versus CPU **0.001070/0.001975/0.001732**.
+  Bent/noise local RGB max remains **0.561/0.471**. The GPU candidate is
+  **not integrated**, full-cast ribbon-only comparison is pending, and no
+  world composition, GPU-vendor parity or approval follows from these cases.
+  Initial GPU run 41228263211 used Godot's opaque default gray clear and its
+  GPU masks were invalid; transparent black fixed the diagnostic, not thresholds.
+- An authored renderer-clock correction `b61c75794` uses D's distinct shader
+  clock (reset frame 0.0001 s, later 1/60 steps), while preserving the spell
+  timeline for gameplay events. Full-scene and real-world reruns are pending;
+  no fidelity improvement is claimed until their results are inspected.
+- A #02+#16 real-overworld overlap at **2560×1440**
+  [41228671506](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41228671506)
+  completed that resolution, 54 overlapping post-draw intervals, p50/p95/p99
+  **784.098/1572.195/1638.106 ms**. This is shared software CI, not a device
+  budget; it samples ticks 23–463, not the full timeline. C-child raster p50/
+  p95/p99 **13/2898/2981 µs** excludes the A child, and raw C uploads were
+  **82,944,000 bytes**, not allocation or GPU bandwidth. Live object delta
+  **+47**, after cancellation **0**, target HP **69→69**; static-byte deltas
+  were negative and cannot establish a memory allocation budget. Other
+  resolutions were still queued at this writing.
+- PR21 A0 owner head moved to `4dcbaed21f9de7ba2c1e3cf2fa4b933c47d12518`;
+  no-AVFX disposable current-entry probe is queued at `796b70767`. The historical
+  world pin remains diagnostic only, and the newer owner revision is not yet a
+  verified playable route or acceptance.
