@@ -80,6 +80,11 @@ static func style_scroll(scroll: ScrollContainer, width := 9) -> void:
 	if not (scroll.get_parent() is VBoxContainer):
 		push_error("A6UiKit.style_scroll: %s must already be a child of a VBoxContainer" % scroll.name)
 		return
+	# The list never owns a surface; the window behind it does. The theme gives every
+	# ScrollContainer the parchment `Panel` stylebox, which is invisible while the window
+	# is parchment and a pale band behind every gap the moment the surface changes - the
+	# R13 board direction showed it as a cream stripe under the queue heading.
+	scroll.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
 	var bar := scroll.get_v_scroll_bar()
 	if bar == null:
 		return
