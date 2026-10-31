@@ -276,6 +276,7 @@ func source_pass_frame() -> Arcana20SourcePassFrame:
     result.c_light = _frame.light
     result.c_disp = _frame.disp
     result.c_world_fragment = _frame.world_fragment
+    result.c_influence = _frame.world_influence
     result.flash = _frame.flash
     result.shake = _frame.shake
     result.chroma = _frame.chroma

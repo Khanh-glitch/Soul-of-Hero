@@ -25,6 +25,9 @@ var ground_coverage := PackedFloat32Array()
 # because the legacy source reference needs the original zero-base behavior.
 var track_world_fragments := false
 var world_fragment := PackedFloat32Array()
+# Explicit authored operation footprint for contamination checks and shader
+# scissoring; independent of resulting RGB or resulting ink alpha.
+var world_influence := PackedByteArray()
 var ink := PackedFloat32Array()
 var light := PackedFloat32Array()
 var disp := PackedFloat32Array()
@@ -43,6 +46,7 @@ func _init() -> void:
     ground.resize(N * 4)
     ground_coverage.resize(N)
     world_fragment.resize(N * 4)
+    world_influence.resize(N)
     ink.resize(N * 4)
     light.resize(N * 4)
     disp.resize(N * 4)
@@ -54,6 +58,7 @@ func clear() -> void:
     ground_coverage.fill(0.0)
     if track_world_fragments:
         world_fragment.fill(0.0)
+        world_influence.fill(0)
     ink.fill(0.0)
     light.fill(0.0)
     for i in range(0, N * 4, 4):
@@ -68,6 +73,8 @@ func L(x: float, y: float, r: float, g: float, b: float) -> void:
     if xi < 0 or yi < 0 or xi >= W or yi >= H:
         return
     var i := (yi * W + xi) * 4
+    if track_world_fragments:
+        world_influence[yi * W + xi] = 1
     light[i] += r
     light[i + 1] += g
     light[i + 2] += b
@@ -85,6 +92,7 @@ func I(x: float, y: float, r: float, g: float, b: float, a: float = 1.0) -> void
     var i := (yi * W + xi) * 4
     var ia := 1.0 - a
     if track_world_fragments:
+        world_influence[yi * W + xi] = 1
         # Subsequent ink is source-over the already-mapped live fragment.
         world_fragment[i + 2] *= ia
     ink[i] = r * a + ink[i] * ia
@@ -111,6 +119,7 @@ func blit_world_fragment(sx: int, sy: int, w: int, h: int, dx: int, dy: int) -> 
             ink[i + 1] = 0.0
             ink[i + 2] = 0.0
             ink[i + 3] = 0.0
+            world_influence[y * W + x] = 1
             world_fragment[i] = float(clampi(sx + xx, 0, W - 1))
             world_fragment[i + 1] = float(clampi(sy + yy, 0, H - 1))
             world_fragment[i + 2] = 1.0
@@ -130,6 +139,8 @@ func G(x: float, y: float, r: float, g: float, b: float, a: float = 1.0) -> void
     var i := (yi * W + xi) * 4
     var ia := 1.0 - a
     ground_coverage[yi * W + xi] = a + ground_coverage[yi * W + xi] * ia
+    if track_world_fragments:
+        world_influence[yi * W + xi] = 1
     ground[i] = int(ground[i] * ia + r * 255.0 * a)
     ground[i + 1] = int(ground[i + 1] * ia + g * 255.0 * a)
     ground[i + 2] = int(ground[i + 2] * ia + b * 255.0 * a)
@@ -143,6 +154,8 @@ func D(x: float, y: float, dx: float, dy: float) -> void:
     if xi < 0 or yi < 0 or xi >= W or yi >= H:
         return
     var i := (yi * W + xi) * 4
+    if track_world_fragments:
+        world_influence[yi * W + xi] = 1
     disp[i] += dx
     disp[i + 1] += dy
 
@@ -151,6 +164,8 @@ func S(x: float, y: float, m: float) -> void:
     var yi := int(y)
     if xi < 0 or yi < 0 or xi >= W or yi >= H:
         return
+    if track_world_fragments:
+        world_influence[yi * W + xi] = 1
     disp[(yi * W + xi) * 4 + 2] *= m
 
 func C(x: float, y: float, v: float) -> void:
@@ -158,6 +173,8 @@ func C(x: float, y: float, v: float) -> void:
     var yi := int(y)
     if xi < 0 or yi < 0 or xi >= W or yi >= H:
         return
+    if track_world_fragments:
+        world_influence[yi * W + xi] = 1
     disp[(yi * W + xi) * 4 + 3] += v
 
 func field(x0: float, y0: float, x1: float, y1: float, fn: Callable) -> void:

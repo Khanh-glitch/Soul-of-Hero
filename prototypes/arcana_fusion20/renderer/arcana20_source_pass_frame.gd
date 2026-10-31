@@ -27,6 +27,7 @@ var c_ink: PackedFloat32Array
 var c_light: PackedFloat32Array
 var c_disp: PackedFloat32Array
 var c_world_fragment: PackedFloat32Array
+var c_influence: PackedByteArray
 
 # B: ink/emissive RGB float + coverage; ground marks RGB float + coverage;
 # shade, HDR light and post warp (destination->source pixel offset).

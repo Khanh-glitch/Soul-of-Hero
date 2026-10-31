@@ -1,0 +1,58 @@
+name: ARCANA20 isolated pinned overworld JOIN diagnostics
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths:
+      - 'prototypes/arcana_fusion20/renderer/**'
+      - 'tools/arcana20_join/**'
+      - '.github/workflows/arcana20-overworld-join.yml'
+permissions:
+  contents: read
+jobs:
+  isolated-join:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fetch immutable owner objects
+        run: |
+          git fetch --no-tags origin 62f6a32d08d319bfdcd28235786558f54f49b420 6b801554a6af95424b4e39dd29f43c146aa13848 2cb1a3c5f093724eb9fecbdf45909ccb611f7b32 18e7afcbd576bbd9bfbcc509b2ee13216186a522 e505173edd119fdd955cf6249511b575a5468440
+      - name: Assemble isolated JOIN QA without a merge or checkout
+        run: python3 tools/arcana20_join/assemble.py --out "$RUNNER_TEMP/arcana20-join" --avfx-sha "$GITHUB_SHA"
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import pinned composition
+        run: |
+          set -o pipefail
+          mkdir -p "$RUNNER_TEMP/arcana20-join/artifacts"
+          timeout --signal=TERM --kill-after=10s 300s godot --headless --path "$RUNNER_TEMP/arcana20-join" --import 2>&1 | tee "$RUNNER_TEMP/arcana20-join/artifacts/join-import.log"
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/arcana20-join/artifacts/join-import.log"
+      - name: Normal AppRoot entry and real-world C diagnostic
+        run: |
+          set -o pipefail
+          timeout --signal=TERM --kill-after=10s 1200s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path "$RUNNER_TEMP/arcana20-join" --rendering-method gl_compatibility --audio-driver Dummy --resolution 1280x720 --windowed \
+            --user-data-dir "$RUNNER_TEMP/arcana20-join-user" --script res://prototypes/arcana_fusion20/renderer/arcana20_overworld_join_test.gd \
+            2>&1 | tee "$RUNNER_TEMP/arcana20-join/artifacts/join.log"
+          grep -Fq 'ARCANA20_JOIN_DIAGNOSTIC PASS' "$RUNNER_TEMP/arcana20-join/artifacts/join.log"
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Shader compilation failed|JOIN_FAIL' "$RUNNER_TEMP/arcana20-join/artifacts/join.log"
+      - name: Summarize findings
+        if: always()
+        run: |
+          if test -f "$RUNNER_TEMP/arcana20-join/artifacts/join.log"; then
+            grep -E 'JOIN_(OK|FAIL|WORLD)|ARCANA20_JOIN_DIAGNOSTIC|SCRIPT ERROR|Parse Error|SHADER ERROR' "$RUNNER_TEMP/arcana20-join/artifacts/join.log" | tail -30 | while IFS= read -r line; do echo "::notice::$line"; done || true
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcana20-overworld-join-diagnostic
+          path: |
+            ${{ runner.temp }}/arcana20-join/arcana20_join_manifest.json
+            ${{ runner.temp }}/arcana20-join/artifacts/
+          if-no-files-found: warn
