@@ -48,6 +48,10 @@ var _notice: Label
 var _pack_label: Label
 var _title: Label
 var _footer: Label
+## The colour the notice line currently carries. A refusal is warn-coloured, and the
+## panel is restyled during a rebuild; the restyle must not repaint a live refusal as if
+## it were the standing hint - that turns "hàng đợi đã đầy" back into plain ink.
+var _notice_colour := Color(0, 0, 0, 0)
 
 
 func _ready() -> void:
@@ -169,7 +173,10 @@ func restyle() -> void:
 			label.add_theme_font_override("font", display)
 	_title.add_theme_color_override("font_color", A6UiKit.accent_colour())
 	_pack_label.add_theme_color_override("font_color", A6UiKit.text_colour())
-	_notice.add_theme_color_override("font_color", A6UiKit.quiet_colour())
+	# The notice keeps whatever it is currently saying. Only the standing hint (which was
+	# never notified) follows the direction's quiet colour.
+	if _notice_colour.a == 0.0:
+		_notice.add_theme_color_override("font_color", A6UiKit.quiet_colour())
 	_footer.add_theme_color_override("font_color", A6UiKit.quiet_colour())
 
 
@@ -806,6 +813,7 @@ func _job_action(job: String, collect_item: bool) -> void:
 ## player who does not is not handed an owner status code (D052).
 func _notify(text: String, colour: Color) -> void:
 	_notice.text = text
+	_notice_colour = colour
 	_notice.add_theme_color_override("font_color", colour)
 
 

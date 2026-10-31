@@ -452,13 +452,7 @@ func _capture_workshop(state: String) -> void:
 	if panel == null or session == null:
 		_failures.append("%s: the overworld has no economy panel/session" % state)
 		return
-	if state.contains("refused"):
-		# Drive the panel's own queue command once more, with the queue full: the refusal
-		# notice in this frame is produced by the production refusal mapping, from the
-		# session's own answer. Pointer clicks are not claimed here - the 19-check GUI
-		# suite owns those.
-		_refuse_once(panel, session)
-	elif state.contains("queued"):
+	if state.contains("queued"):
 		# Start each direction's "just handed over" frame from an empty queue, so the two
 		# directions show the same moment instead of one showing what the other finished.
 		_collect_finished(session)
@@ -481,6 +475,12 @@ func _capture_workshop(state: String) -> void:
 	panel.call(&"refresh")
 	await _settle(6)
 	printerr("A6 SURVIVAL UI CAPTURE: workshop list rebuilt ", state)
+	if state.contains("refused"):
+		# After the restyle, not before: the frame must show the refusal the player is left
+		# with, not one the panel then repainted. The command is the panel's own; pointer
+		# clicks are not claimed here - the 19-check GUI suite owns those.
+		_refuse_once(panel, session)
+		await _settle(3)
 	_report_widths(panel)
 	if not bool(panel.call(&"is_open")):
 		_failures.append("%s: the workshop did not open" % state)
