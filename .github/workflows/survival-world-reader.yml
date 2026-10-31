@@ -84,6 +84,8 @@ jobs:
         run: python tools/survival/worldgen/compile_mount_bundle.py | tee "$ARTIFACT_DIR/mount_bundle_compile.json"
       - name: Compile A1 review of A8 territory + endpoint placements
         run: python tools/survival/worldgen/compile_placement_review.py --out artifacts/a1-placement/placement_native_inputs.json | tee "$ARTIFACT_DIR/placement_compile.json"
+      - name: Compile Round 11 exact-source continuity / hazard / socket packet
+        run: python tools/survival/worldgen/compile_round11_continuity.py --out artifacts/a1-continuity/continuity_native_inputs.json | tee "$ARTIFACT_DIR/continuity_compile.json"
       - name: Validate world art grammar, atlas, presentations and A8 visual contract
         run: python tools/survival/worldgen/validate_world_art.py | tee "$ARTIFACT_DIR/world_art_validation.json"
       - name: A0/A8 consumer validation of mount bundle
@@ -107,6 +109,7 @@ jobs:
           path: |
             artifacts/a1-world/
             artifacts/a1-connector/
+            artifacts/a1-continuity/
             docs/survival/world/evidence/world_art_*.png
             docs/survival/world/evidence/quality_uplift/*.png
           if-no-files-found: warn
@@ -317,6 +320,10 @@ jobs:
         run: |
           mkdir -p artifacts/a1-placement
           python tools/survival/worldgen/compile_placement_review.py --out artifacts/a1-placement/placement_native_inputs.json
+      - name: Compile Round 11 continuity native inputs
+        run: |
+          mkdir -p artifacts/a1-continuity
+          python tools/survival/worldgen/compile_round11_continuity.py --out artifacts/a1-continuity/continuity_native_inputs.json
       - name: Import root project for real Knight / OverworldOcclusion fixture
         run: |
           mkdir -p artifacts/a1-world-art artifacts/ud_world_art_import
@@ -405,6 +412,43 @@ jobs:
             echo "::error::placement fixture gate failed (checks=${checks}, captures=${captures}); log tail: $(tail -c 2400 "$log" | paste -sd' ' -)"
             exit 1
           fi
+      - name: Drive Round 11 multi-region / hazards / combined sockets with real Hero
+        if: always()
+        run: |
+          mkdir -p artifacts/a1-continuity artifacts/ud_a1_continuity
+          timeout --signal=TERM --kill-after=15s 1500s xvfb-run -a -s "-screen 0 3840x2160x24" env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy \
+            --user-data-dir artifacts/ud_a1_continuity --windowed --fixed-fps 60 \
+            --script res://tests/survival/world/round11_continuity_native_test.gd -- \
+            --inputs="$GITHUB_WORKSPACE/artifacts/a1-continuity/continuity_native_inputs.json" \
+            --connector-root="$GITHUB_WORKSPACE/artifacts/a1-connector-art" \
+            --out-root="$GITHUB_WORKSPACE/artifacts/a1-continuity" \
+            --resolutions=1280x720,2560x1440,3840x2160 \
+            >artifacts/a1-continuity/godot-continuity.log 2>&1
+          rc=$?
+          echo "continuity fixture exit_code=$rc"
+          cat artifacts/a1-continuity/godot-continuity.log
+          echo "$rc" >artifacts/a1-continuity/continuity-exit-code
+          exit $rc
+      - name: Round 11 continuity native anti-vacuity gate
+        if: always()
+        run: |
+          log=artifacts/a1-continuity/godot-continuity.log
+          [ -f "$log" ] || { echo "::error::no continuity fixture log"; exit 1; }
+          checks=$(grep -cE '^A1_CONTINUITY (PASS|FAIL): ' "$log" || true)
+          captures=$(grep -c 'native source-window capture' "$log" || true)
+          spawns=$(grep -cE '^A1_CONTINUITY PASS: deterministic safe spawn seed' "$log" || true)
+          echo "continuity assertions=${checks}; captures=${captures}; spawn cases=${spawns}"
+          if [ "${checks:-0}" -lt 150 ] || [ "${captures:-0}" -lt 24 ] || [ "${spawns:-0}" -ne 18 ] || \
+            ! grep -q 'A1 CONTINUITY NATIVE FIXTURE PASSED' "$log" || \
+            ! grep -q 'production integration still A0-owned' "$log" || \
+            ! grep -q 'test-only marsh response measured 96 -> 62.4px/s' "$log" || \
+            ! grep -q 'simultaneous deposit+vendor 28x28 bodies' "$log" || \
+            ! grep -q 'combined crowd alternate route' "$log" || \
+            ! grep -q 'fixture stream never drained current/missing Hero chunk' "$log"; then
+            echo "::error::continuity fixture gate failed; log tail: $(tail -c 3000 "$log" | paste -sd' ' -)"
+            exit 1
+          fi
       - name: Upload world art native evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -414,6 +458,7 @@ jobs:
             artifacts/a1-world-art/
             artifacts/a1-world-art-corridor/
             artifacts/a1-placement/
+            artifacts/a1-continuity/
           if-no-files-found: warn
           retention-days: 14
       - name: Mirror native evidence as Git blobs (artifact-host fallback)
@@ -425,4 +470,5 @@ jobs:
           python tools/ci/mirror_native_evidence.py \
             --root artifacts/a1-world-art \
             --root artifacts/a1-world-art-corridor \
-            --root artifacts/a1-placement
+            --root artifacts/a1-placement \
+            --root artifacts/a1-continuity
