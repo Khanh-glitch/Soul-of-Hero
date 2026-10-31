@@ -168,6 +168,55 @@ func _boot_and_run() -> void:
 		"soh_i_000000000999_foreign", "world:0:0", 0)
 	_expect(not bool(foreign.get("ok", true)) and String(foreign.get("reason", "")) == "TOOL_NOT_OWNED",
 		"a foreign tool identity is refused")
+	# A full bag must refuse the whole swing: no wear, no partial grant. "Full"
+	# means the save's 30 inventory slots with the iron stack already at its own
+	# 50-item limit, so the yield genuinely has nowhere to go.
+	var iron_held := _count("iron_scrap")
+	if iron_held < 50:
+		_expect(bool(_give("iron_scrap", 50 - iron_held)), "the iron stack is filled to its authored limit")
+	var fillers: Array[String] = []
+	var material_ids: Array[String] = []
+	var items_file := FileAccess.open("res://data/survival/items/items.json", FileAccess.READ)
+	if items_file != null:
+		var parsed: Variant = JSON.parse_string(items_file.get_as_text())
+		items_file.close()
+		if parsed is Dictionary:
+			for id: Variant in ((parsed as Dictionary).get("items", {}) as Dictionary).keys():
+				var entry: Dictionary = ((parsed as Dictionary)["items"] as Dictionary)[id]
+				if String(entry.get("kind", "")) == "material" and String(id) != "iron_scrap":
+					material_ids.append(String(id))
+	material_ids.sort()
+	for item_id: String in material_ids:
+		if ((_save().call(&"get_inventory_stacks") as Dictionary).size()) >= 30:
+			break
+		if (_save().call(&"get_inventory_stacks") as Dictionary).has(item_id):
+			continue
+		if bool(_give(item_id, 1)):
+			fillers.append(item_id)
+	var filled_slots: Dictionary = _save().call(&"get_inventory_stacks")
+	# Every grantable material is in the bag and the iron stack is at its limit, so
+	# the next yield can only arrive by opening a new slot.
+	_expect(filled_slots.size() >= 29, "the bag holds every authored material stack (%d slots)" % filled_slots.size())
+	var slot_count_before := filled_slots.size()
+	var full_before: Dictionary = _adapter.call(&"instance", tool_id)
+	var full_swing: Dictionary = _survival().call(&"harvest_with_tool", node_id, "iron_vein", _economy,
+		tool_id, "world:0:0", 0, -1, int(full_before.get("revision", -1)))
+	var after_full: Dictionary = _adapter.call(&"instance", tool_id)
+	_expect(not bool(full_swing.get("ok", true)),
+		"a full bag refuses the harvest (%s)" % str(full_swing.get("reason", "")))
+	_expect(int(after_full.get("condition", -2)) == int(full_before.get("condition", -3)),
+		"a full bag costs no tool condition")
+	_expect(int(after_full.get("revision", -2)) == int(full_before.get("revision", -3)),
+		"a full bag does not advance the tool revision")
+	_expect(((_save().call(&"get_inventory_stacks") as Dictionary).size()) == slot_count_before,
+		"the refused harvest grants no partial item and opens no slot")
+	# Give the bag back so the offline section starts from the same state.
+	for item_id: String in fillers:
+		var held := _count(item_id)
+		if held > 0:
+			_save().call(&"consume_inventory_item", item_id, held, "test.clear.%s.%d" % [item_id, Time.get_ticks_usec()])
+	_expect(((_save().call(&"get_inventory_stacks") as Dictionary).size()) < slot_count_before, "the filler materials are released")
+
 	# A broken tool is refused by A3 and pays nothing. The tool is worn out
 	# through A3's own `wear` API, so this is the owner's state transition and
 	# not a test poking at the economy document.
