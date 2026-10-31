@@ -274,3 +274,18 @@ contain this code". A0 may evaluate the contract's SHA in a **temporary composed
 the PR ref. No force-push, no second PR, no merge, and no `PRODUCT_COMPOSED_PASS` from
 this branch.
 
+### 7.5 Exact-head evidence for this round
+
+| item | value |
+|---|---|
+| native run | [41241588905](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41241588905) on `2d06a7de0334` — all three jobs `success` |
+| suite | `R13 NATIVE PASSED - 190 checks` (was 135 before the random-research group) |
+| engine exit | `engine exited 0` for phase 1, phase 2 **and** the negative suite (strict rc gate, shutdown notices logged as non-fatal accounting) |
+| two processes | `p1=2407 p2=2436 distinct=True` |
+| bounded random draw | `job=job_000003 target_p1=frost_cloak target_p2=frost_cloak same=True learned=True pool_excludes_target=True`, `pool_size=8`, `spares 16->12` (4 escrowed at enqueue, unchanged at settlement) |
+| settlement | `job=job_000004 granted=4 duplicate=nothing_to_collect`, conservation `{ok:true, output:4, problems:[], source_claim_receipts:1}` |
+| adoption contract | `OWNER_NATIVE_EXACT_HEAD_CI_PASSED`, 29 composed files, `composed hashes match this tree` |
+
+`A0_ADOPTION_CONTRACT_V2.json` now names that exact head and run id, so A0 can compose
+the SHA it was given instead of the branch tip.
+

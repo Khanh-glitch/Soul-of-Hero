@@ -1,18 +1,18 @@
 {
   "schema": "soh.economy.a0_adoption_contract.v2",
   "version": 2,
-  "status": "OWNER_NATIVE_PENDING_EXACT_HEAD_CI",
+  "status": "OWNER_NATIVE_EXACT_HEAD_CI_PASSED",
   "owner": "A3 (economy)",
   "consumer": "A0 (composition/save), A6 (read-only UI), A7 (balance/acceptance), A8 (Quarry authorization)",
   "generated_from": {
     "branch": "arena/daadd745-soul-of-hero",
-    "head": "26f3cf26ebf7518e92627693234b49e783159626",
-    "tested_head": "26f3cf26ebf7518e92627693234b49e783159626",
-    "native_run_id": "",
-    "native_run_url": "",
+    "head": "2d06a7de03343673b150f6f065b5e7659a2d8596",
+    "tested_head": "2d06a7de03343673b150f6f065b5e7659a2d8596",
+    "native_run_id": "41241588905",
+    "native_run_url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41241588905",
     "predecessor_head": "b751a29f213d3c934caa204eb8d2d86943f07b65",
     "generator": "tools/survival/economy/a3_adoption_contract.py",
-    "regeneration_command": "python tools/survival/economy/a3_adoption_contract.py --tested-head 26f3cf26ebf7518e92627693234b49e783159626"
+    "regeneration_command": "python tools/survival/economy/a3_adoption_contract.py --tested-head 2d06a7de03343673b150f6f065b5e7659a2d8596 --run-id 41241588905"
   },
   "claim_boundary": [
     "This contract is an A3 request. It does not assert A0 composition, product integration, human playtest or balance.",
