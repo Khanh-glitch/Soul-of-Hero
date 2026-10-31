@@ -133,3 +133,18 @@ render/upload on shared software CI; it is **not** per-frame latency or a
 target-device budget. #19 cost 5474.832 ms for that whole snapshot, flagging
 D for profiling. Gameplay input, natural motion, full cast/OUT, depth/post,
 multiple resolutions and target-device p50/p95/p99 still require evidence.
+
+## #16 original growth and selected material
+
+At `5a10246b`, opt-in world mode selects the original A `0x5eed` seed,
+four-layer parametric growth, fold, pollen and bloom, with C Worldseed's
+leaf/bloom/gold palette and material rules on explicit coverage-bearing ink.
+Original legacy candidate remains unchanged. This adaptation deliberately
+combines A geometry with C material; it is not a claim of full C material or
+post parity. [A-only neutral-material source comparison 41210721707](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41210721707)
+compared original TypeScript vs native at ticks 90/180/270: write-trace IoU
+1.0 each; RGB MAE 0.00393/0.00866/0.04427, max channel error 1. These
+are black-canvas source tests, not authored world alpha or approval. Native
+real-world tick-240/cancel test and whole-cast/source-material comparison are
+pending. The earlier all-20 sweep at `c6fb12ba` exercised the older #16
+candidate, not this revision.
