@@ -1,0 +1,45 @@
+name: ARCANA20 isolated source-field quick diagnostic
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths:
+      - 'prototypes/arcana_fusion20/renderer/**'
+      - '.github/workflows/arcana20-source-quick.yml'
+permissions:
+  contents: read
+jobs:
+  source-quick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import source project
+        run: godot --headless --path . --import > import.log 2>&1 && ! grep -Eq 'SCRIPT ERROR:|Parse Error:' import.log
+      - name: Run source-field regression independently
+        run: |
+          set -o pipefail
+          timeout 420s godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/arcana20_source_pass_test.gd 2>&1 | tee source.log
+          grep -Fq 'ARCANA20_SOURCE_PASS_RESULT PASS' source.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|SOURCE_PASS_FAIL' source.log
+      - name: Report native source errors and results
+        if: always()
+        run: |
+          for file in import.log source.log; do
+            if test -f "$file"; then
+              grep -E 'SCRIPT ERROR:|Parse Error:|SOURCE_PASS_FAIL|ARCANA20_SOURCE_PASS_RESULT' "$file" | tail -25 | while IFS= read -r line; do echo "::notice::$line"; done || true
+            fi
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcana20-source-quick-log
+          path: |
+            import.log
+            source.log
+          if-no-files-found: warn
