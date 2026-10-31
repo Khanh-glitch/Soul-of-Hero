@@ -114,8 +114,9 @@ jobs:
           for f in "$log1" "$log2"; do
             while IFS= read -r line; do echo "::error title=connected-$(basename "$f" .log)::$line"; done < <(grep -aE '  FAIL  |SCRIPT ERROR|Parse Error' "$f" | head -10)
             while IFS= read -r line; do echo "::notice::$line"; done < <(grep -aE '^A0_CONNECTED' "$f" | head -40)
-            # A gate whose log cannot be read is not a gate: publish the tail.
-            while IFS= read -r line; do echo "::notice title=tail-$(basename "$f" .log)::$line"; done < <(tail -n 60 "$f")
+            # A gate whose log cannot be read is not a gate: publish the
+            # diagnostic lines that explain a failure, not just the failure.
+            while IFS= read -r line; do echo "::error title=diag-$(basename "$f" .log)::$line"; done < <(grep -aE 'A0_CONNECTED_(PANEL|GATHER|APPROACH|DIAG)|NORMAL_GATHER_TRACE|HOME_ROUTE_FAIL|A0_CONNECTED_OFFLINE_SETTLE|A0_CONNECTED_RESETTLE|A0_CONNECTED_DEPARTURE' "$f" | head -6)
           done
           # The journey's own 1280x720 pixels are evidence too: collect them from
           # the shared profile so the return image comes from a real second process.

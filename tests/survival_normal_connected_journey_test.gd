@@ -201,12 +201,12 @@ func _continuation(ow: Node) -> void:
 		return
 	await _tap_action(&"economy_toggle")
 	await process_frame
-	var charcoal_button := panel.find_child("Recipe_burn_charcoal_%s" % furnace_id, true, false) as Button
+	var charcoal_button := _recipe_button(panel, "burn_charcoal", furnace_id)
 	if charcoal_button == null:
 		# The panel rebuilds its station list as the player moves; give it a frame
 		# of real time before calling the recipe missing.
 		await create_timer(1.0).timeout
-		charcoal_button = panel.find_child("Recipe_burn_charcoal_%s" % furnace_id, true, false) as Button
+		charcoal_button = _recipe_button(panel, "burn_charcoal", furnace_id)
 	if charcoal_button == null:
 		_dump_panel(panel, host, furnace_id)
 	_expect(charcoal_button != null, "the physical furnace offers its own charcoal recipe")
@@ -244,7 +244,7 @@ func _continuation(ow: Node) -> void:
 		return
 	await _tap_action(&"economy_toggle")
 	await process_frame
-	var smelt_button := panel.find_child("Recipe_smelt_iron_%s" % furnace_id, true, false) as Button
+	var smelt_button := _recipe_button(panel, "smelt_iron", furnace_id)
 	_expect(smelt_button != null, "the furnace offers the fuelled smelt recipe")
 	if smelt_button == null:
 		_write_audit(ow, {})
@@ -493,6 +493,19 @@ func _place_piece(ow: Node, hero: CharacterBody2D, nav: OverworldTraversability,
 	await _click_window(window_point)
 	await process_frame
 	return placement
+
+
+## The row a player actually sees for this recipe at this station. The panel names
+## rows after the station it resolved, which is not required to be the same string
+## the structure record is keyed by, so the exact name is tried first and the
+## recipe's own rows second; the caller still proves the furnace is a real station.
+func _recipe_button(panel: Node, recipe_id: String, station_id: String) -> Button:
+	var exact := panel.find_child("Recipe_%s_%s" % [recipe_id, station_id], true, false) as Button
+	if exact != null:
+		return exact
+	for value: Node in panel.find_children("Recipe_%s_*" % recipe_id, "Button", true, false):
+		return value as Button
+	return null
 
 
 ## When a recipe is not where the panel says it should be, print what the panel
