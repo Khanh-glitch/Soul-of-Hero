@@ -12,7 +12,7 @@ var _started: Dictionary = {}
 
 func _fail(msg: String) -> void:
     _failures.append(msg)
-    print("ARCANA20_RENDER_FAIL ", msg)
+    print("::error::ARCANA20_RENDER_FAIL ", msg)
 
 func _init() -> void:
     var root_node := Node2D.new()
@@ -56,6 +56,7 @@ func _init() -> void:
             _fail("no finish %s" % cid)
         if renderer.is_active(cid):
             _fail("still active after finish %s" % cid)
+        print("::notice::ARCANA20_SKILL_DONE ", cid)
 
     # Cancel path: mid-cast cancel must finish + clean up with no contact leak.
     var cid5 := Arcana20SourceCatalog.canonical_id(5)
@@ -79,8 +80,8 @@ func _init() -> void:
     var st := Arcana20Status.summary()
     print("ARCANA20_RENDER_STATUS ", JSON.stringify(st))
     if _failures.is_empty():
-        print("ARCANA20_RENDER_RESULT PASS failures=[] casts=20 contacts=20")
+        print("::notice::ARCANA20_RENDER_RESULT PASS failures=[] casts=20 contacts=20")
         quit(0)
     else:
-        print("ARCANA20_RENDER_RESULT FAIL failures=", _failures)
+        print("::error::ARCANA20_RENDER_RESULT FAIL failures=", _failures)
         quit(1)
