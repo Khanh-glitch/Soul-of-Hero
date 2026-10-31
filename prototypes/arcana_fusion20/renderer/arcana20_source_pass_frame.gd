@@ -60,6 +60,9 @@ var a_impact_tint: Vector3
 # bloom, decal and full WebGL post remain unresolved, not source parity.
 var d_rgb: PackedFloat32Array
 var d_influence: PackedByteArray
+var d_world_warp: PackedFloat32Array
+var d_warp_influence: PackedByteArray
+var d_warp_amount: float
 var d_bends: Array[Dictionary]
 var d_bloom_gain: float
 var d_shake_amplitude: float

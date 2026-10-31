@@ -122,9 +122,13 @@ func _run() -> void:
     d._add_px(4, 4, 0.0, 0.0, 0.0)
     d.bend(10.0, 11.0, 12.0, 1.0, -2.0, 0.5, 0.8)
     check(d.world_influence[4 * DFx.W + 4] == 1, "D authored additive operation footprint")
-    check(d.world_bends.size() == 1 and float(d.world_bends[0].chroma) == 0.8, "D bend parameters retained, not simulated")
+    check(d.world_bends.size() == 1 and float(d.world_bends[0].chroma) == 0.8, "D authored bend parameters retained")
+    var warp_index := (11 * DFx.W + 10) * 4
+    var warp_before := float(d.world_warp[warp_index + 3])
+    check(warp_before > 0.0 and d.world_warp_influence[11 * DFx.W + 10] == 1, "D original warp shader falloff records field")
     d.clear()
-    check(d.world_bends.is_empty() and d.world_influence[4 * DFx.W + 4] == 0, "D world fields clear")
+    check(d.world_bends.is_empty() and d.world_influence[4 * DFx.W + 4] == 0, "D per-frame world light fields clear")
+    check(is_equal_approx(float(d.world_warp[warp_index + 3]), warp_before * exp(-3.4 / 60.0)) and d.world_warp_influence[11 * DFx.W + 10] == 1, "D persistent warp decays by original 60Hz ping-pong factor")
 
     var host := Arcana20Renderer.new()
     host.world_pass_mode = true

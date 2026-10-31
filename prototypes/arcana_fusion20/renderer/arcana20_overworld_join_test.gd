@@ -371,6 +371,22 @@ func _run() -> void:
     await process_frame
     await process_frame
     check(mount.active_viewers(id5) == 0 and images_equal(baseline, await save_frame("fusion_05_cancelled")), "A05 C05 candidate cleanup restores frozen world")
+    var id19 := Arcana20SourceCatalog.canonical_id(19)
+    multi.cast_skill(id19, player.global_position, enemy.global_position)
+    var constellation := multi._casts[id19] as DSourcePlayer
+    constellation.set_process(false)
+    constellation.render_enabled = false
+    for tick in range(120): constellation.advance(STEP)
+    constellation.render_enabled = true
+    constellation._render_frame()
+    await process_frame
+    await process_frame
+    var constellation_img := await save_frame("world_19_candidate_tick120")
+    check(mount.active_viewers(id19) == 1 and not images_equal(baseline, constellation_img), "D19 additive source field affects actual world")
+    multi.cancel_skill(id19)
+    await process_frame
+    await process_frame
+    check(mount.active_viewers(id19) == 0 and images_equal(baseline, await save_frame("world_19_cancelled")), "D19 candidate cleanup restores frozen world")
     mount.detach()
     mount.queue_free()
     multi.queue_free()

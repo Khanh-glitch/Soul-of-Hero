@@ -31,6 +31,9 @@ var buf := PackedFloat32Array()
 var track_world_fields := false
 var world_influence := PackedByteArray()
 var world_bends: Array[Dictionary] = []
+var world_warp := PackedFloat32Array()
+var world_warp_influence := PackedByteArray()
+var _warp_has_history := false
 var t := 0.0
 var flash_amt := 0.0
 var flash_col := Vector3.ONE
@@ -53,6 +56,8 @@ static func source_rng(seed: int) -> BMath.BRng:
 func _init() -> void:
     buf.resize(N * 3)
     world_influence.resize(N)
+    world_warp.resize(N * 4)
+    world_warp_influence.resize(N)
     rng = source_rng(1337)
 
 func clear() -> void:
@@ -60,6 +65,10 @@ func clear() -> void:
     if track_world_fields:
         world_influence.fill(0)
         world_bends.clear()
+        # Original D renderer ping-pongs warp with exp(-3.4*dt) decay.
+        if _warp_has_history:
+            var decay := exp(-3.4 / 60.0)
+            for i in range(world_warp.size()): world_warp[i] *= decay
     flash_amt = 0.0
     shake = 0.0
     bloom_gain = 1.0
@@ -80,6 +89,27 @@ func bend(x: float, y: float, size: float, ox: float, oy: float, absorb: float =
     # no-op until the actual original D warp batch is ported and validated.
     if track_world_fields:
         world_bends.append({"x": x, "y": y, "size": size, "ox": ox, "oy": oy, "absorb": absorb, "chroma": chroma})
+        if size <= 0.0:
+            return
+        _warp_has_history = true
+        var x0 := maxi(0, floori(x - size))
+        var x1 := mini(W - 1, ceili(x + size))
+        var y0 := maxi(0, floori(y - size))
+        var y1 := mini(H - 1, ceili(y + size))
+        for py in range(y0, y1 + 1):
+            for px in range(x0, x1 + 1):
+                var dx := (float(px) + 0.5 - x) / size
+                var dy := (float(py) + 0.5 - y) / size
+                var falloff := 1.0 - dx * dx - dy * dy
+                if falloff <= 0.0:
+                    continue
+                falloff *= falloff
+                var at := py * W + px
+                world_warp[at * 4] += ox * falloff
+                world_warp[at * 4 + 1] += oy * falloff
+                world_warp[at * 4 + 2] += absorb * falloff
+                world_warp[at * 4 + 3] += chroma * falloff
+                world_warp_influence[at] = 1
 
 static func _h11(n: float) -> float:
     var s := sin(n * 127.1) * 43758.5453

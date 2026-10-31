@@ -1,6 +1,6 @@
-## Diagnostic multi-cast A/B/C world-field router. Each cast/family gets its
+## Diagnostic multi-cast A/B/C/D world-field router. Each cast/family gets its
 ## own consumer and ordered BackBufferCopy. This is intentionally opt-in: it
-## does not implement post arbitration, actor/foreground depth, D post, or a
+## does not implement post arbitration, actor/foreground depth, D bloom/post, or a
 ## production/performance contract, and must not mount itself in production.
 extends Node2D
 class_name Arcana20WorldPassMount
@@ -19,7 +19,7 @@ func attach(renderer: Arcana20Renderer) -> bool:
     return true
 
 func _on_frame(id: StringName, frame: Arcana20SourcePassFrame) -> void:
-    if frame.family not in [&"A", &"B", &"C"]:
+    if frame.family not in [&"A", &"B", &"C", &"D"]:
         unsupported[id] = frame.family
         return
     var by_family: Dictionary = _passes.get(id, {})
@@ -29,6 +29,7 @@ func _on_frame(id: StringName, frame: Arcana20SourcePassFrame) -> void:
             &"A": viewer = Arcana20AWorldPass.new()
             &"B": viewer = Arcana20BWorldPass.new()
             &"C": viewer = Arcana20CWorldPass.new()
+            &"D": viewer = Arcana20DWorldPass.new()
         if viewer == null:
             return
         # Source #01's chosen C outer layer is behind A's crown candidate.
