@@ -34,6 +34,24 @@ func _run() -> void:
         var x := (i * 2654435761) & 0xFFFFFFFF
         var y := ((i + 12289) * 2246822519) & 0xFFFFFFFF
         check(CMath.imul(x, y) == split_imul(x, y), "C imul signed-int64 sampled identity")
+    # Regression: a fixed-step counter must report the number of executed
+    # updates, not floor(accumulated floating-point time * 60).
+    var bclock := BSourcePlayer.new()
+    root.add_child(bclock)
+    bclock.begin(Vector2.ZERO, Vector2(100, 0))
+    bclock.set_process(false)
+    var expected_elapsed := 0.0
+    for i in range(300):
+        bclock.advance(STEP)
+        expected_elapsed += STEP
+        check(bclock.source_tick == i + 1 and bclock.elapsed == expected_elapsed, "B exact fixed-step source tick without changing source time")
+    bclock.stop()
+    bclock.begin(Vector2.ZERO, Vector2(100, 0))
+    bclock.set_process(false)
+    bclock.advance(STEP * 2.0)
+    check(bclock.source_tick == 2, "B source tick restarts and counts catch-up steps")
+    bclock.stop()
+    bclock.free()
     var c := CFrame.new()
     c.track_world_fragments = true
     c.G(2, 2, 0.0, 0.0, 0.0, 0.5)

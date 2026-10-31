@@ -109,7 +109,9 @@ func advance(dt: float) -> void:
     while _acc >= STEP and active:
         _acc -= STEP
         elapsed += STEP
-        source_tick = int(floor(elapsed * 60.0))
+        # elapsed is retained as the source rendering/event clock. Counting
+        # fixed steps directly avoids floating-point floor reporting tick N-1.
+        source_tick += 1
         _fire_due_events()
         if elapsed >= duration:
             stop()

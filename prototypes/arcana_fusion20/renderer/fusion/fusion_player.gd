@@ -78,6 +78,10 @@ func _source_family(node: Node) -> StringName:
     if node is DSourcePlayer: return &"D"
     return &""
 
+func _child_active(child: Node) -> bool:
+    if child is BSourcePlayer: return (child as BSourcePlayer).active
+    return bool(child.get("_active"))
+
 func _on_child_finished(child: Node) -> void:
     # stop() also hides the legacy sprite when advance() naturally finished;
     # its own _active flag is already false, so it does not re-emit finished.
@@ -87,7 +91,7 @@ func _on_child_finished(child: Node) -> void:
     if family == &"" or _retired_families.has(family): return
     for part in _pending:
         var other: Node = part.node
-        if other != child and is_instance_valid(other) and _source_family(other) == family and bool(other.get("_active")):
+        if other != child and is_instance_valid(other) and _source_family(other) == family and _child_active(other):
             return
     _retired_families[family] = true
     source_layer_finished.emit(family)
