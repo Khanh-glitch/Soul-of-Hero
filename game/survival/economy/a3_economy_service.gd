@@ -30,9 +30,9 @@ const KEY_RUN_ID := "a3_run_id"
 const KEY_STATION_JOBS := "a3_station_jobs"
 const KEY_JOB_COUNTER := "a3_job_counter"
 
-## Harvest transaction key namespace. One durable receipt namespace per
-## physical source instance. The prefix must match what _count_harvests
-## counts, or exhaustion tracking silently breaks.
+## Harvest transaction key prefix. One durable receipt namespace per physical
+## source instance. The prefix must match what harvest counters count, or
+## exhaustion tracking silently breaks.
 const HARVEST_TX_PREFIX := "harvest"
 
 ## A8 Quarry physical identity (per A8 specification).
@@ -41,10 +41,8 @@ const A8_QUARRY_POI_ID := "poi_crown_south_quarry"
 const A8_QUARRY_INSTANCE_ID := "south_seam_outcrop"
 const A8_QUARRY_ACTION_ID := "extract_outcrop"
 
-## Source contract definitions. Each source has finite yields keyed by
-## transaction key so SaveService idempotency prevents double-harvest.
-## Roadside contracts (A1) and Quarry contracts (A8) are reconciled with
-## roadside_source.gd and quarry_source.gd.
+## Source contract definitions. Roadside contracts (A1) and Quarry contracts
+## (A8) are reconciled with roadside_source.gd and quarry_source.gd.
 var source_contracts: Dictionary = {
 	"roadside_oak_1": {
 		"owner": "A1",
@@ -102,7 +100,6 @@ var source_contracts: Dictionary = {
 }
 
 ## Tool definitions. Condition degrades with use; at 0 the tool is broken.
-## Tool condition is stored on the inventory stack record via SaveService.
 var tool_definitions: Dictionary = {
 	"stone_pick": {"max_condition": 100, "wear_per_use": 25},
 	"iron_pick": {"max_condition": 200, "wear_per_use": 10},
@@ -111,16 +108,15 @@ var tool_definitions: Dictionary = {
 ## Recipe registry. Each recipe has inputs, outputs, station, costs, and a
 ## knowledge mechanism. Recipes are learned through research; unknown recipes
 ## cannot be crafted. process_quarry_sample is the reverse-engineering target
-## from quarry specimens and is a genuine craftable recipe.
+## from quarry specimens and is a genuine craftable recipe in the registry.
 var recipes: Dictionary = {
 	"salvage_kit": {
 		"recipe_id": "salvage_kit",
 		"display_name": "Salvage Kit",
-		"inputs": {"roadside_oak_scrap": 3, "roadside_stone_chip": 2, "knowledge_spare": 1},
+		"inputs": {"roadside_oak_scrap": 3, "roadside_stone_chip": 2},
 		"outputs": {"salvage_kit_blueprint": 1},
 		"station": "salvage_station",
-		"fuel_cost": 5,
-		"fuel_item": "knowledge_spare",  ## physical fuel item, not account currency
+		"fuel_item": "knowledge_spare",
 		"fuel_quantity": 1,
 		"queue_seconds": 300,
 		"knowledge_mechanism": "directed",
@@ -131,7 +127,6 @@ var recipes: Dictionary = {
 		"inputs": {"roadside_oak_scrap": 5, "roadside_iron_scrap": 3},
 		"outputs": {"quarry_core_fragment": 5},
 		"station": "salvage_station",
-		"fuel_cost": 10,
 		"fuel_item": "knowledge_spare",
 		"fuel_quantity": 2,
 		"queue_seconds": 600,
@@ -143,7 +138,6 @@ var recipes: Dictionary = {
 		"inputs": {"quarry_sample": 3},
 		"outputs": {"quarry_core_fragment": 6},
 		"station": "salvage_station",
-		"fuel_cost": 3,
 		"fuel_item": "knowledge_spare",
 		"fuel_quantity": 1,
 		"queue_seconds": 120,
@@ -152,7 +146,6 @@ var recipes: Dictionary = {
 }
 
 ## Specimen registry for destructive reverse engineering.
-## specimen_id → {item_id, consumes_quantity, teaches_recipe_id, destroy_on_use}
 var specimen_registry: Dictionary = {
 	"quarry_sample_specimen": {
 		"item_id": "quarry_sample",
@@ -162,20 +155,20 @@ var specimen_registry: Dictionary = {
 	},
 }
 
-var save: Node
+## Reference to A0 SaveService (single authority). Never a second SaveService.
+var save: Node = null
 
-## Optional time source for queue readiness. In tests this is simulated;
-## in production A0 injects the authoritative active-session time host.
+## Optional time source for queue readiness. Tests inject a simulated clock;
+## production A0 injects the authoritative active-session time host here.
 var time_source: Callable = Callable()
 
-## Expose SaveService node for test orchestration (A3-owned, no A0 edit).
-func get_save() -> Node:
-	return save
+## In-memory caches synced from SaveService mastery. Declared BEFORE any
+## function that reads/writes them (GDScript class init order).
+var authenticated_sources: Dictionary = {"roadside": {}, "quarry": {}}
+var learned_recipes: Dictionary = {}
+var run_discoveries: Dictionary = {}
 
-func _ready() -> void:
-	save = root.get_node_or_null("SaveService")
-
-## Configure the service with a SaveService node (tests or runtime).
+## Configure the service with a SaveService node. Returns true on success.
 func configure(save_node: Node) -> bool:
 	if save_node == null:
 		return false
@@ -183,11 +176,11 @@ func configure(save_node: Node) -> bool:
 	return _ensure_run_id()
 
 ## Set an external time source for queue readiness checks.
-## production A0 injects the authoritative clock here.
 func set_time_source(source: Callable) -> void:
 	time_source = source
 
-## Ensure a run ID exists in SaveService mastery. Not SaveService revision.
+## Ensure a run ID exists in SaveService mastery. Loads existing run-local
+## state if present; initializes empty state for a new run.
 func _ensure_run_id() -> bool:
 	if save == null:
 		return false
@@ -203,19 +196,15 @@ func _ensure_run_id() -> bool:
 			m[KEY_JOB_COUNTER] = 0
 			candidate["mastery"] = m
 			return true
-		return bool(save.call("transact_once", "a3:init:run_id", mutator, {"kind": "a3_init_run"}))
+		var applied := save.call("transact_once", "a3:init:run_id", mutator, {"kind": "a3_init_run"})
+		if not bool(applied):
+			return false
 	## Load existing run-local state from SaveService into memory.
-	var lr = mastery.get(KEY_LEARNED_RECIPES, {})
-	if lr is Dictionary:
-		learned_recipes = lr.duplicate(true)
-	var disc = mastery.get(KEY_DISCOVERIES, {})
-	if disc is Dictionary:
-		run_discoveries = disc.duplicate(true)
+	learned_recipes = _get_learned_recipes_from_save()
+	run_discoveries = _get_discoveries_from_save()
 	var auth = mastery.get(KEY_AUTHENTICATED_SOURCES, {})
 	if auth is Dictionary:
-		var new_auth = {}
-		for kind in ["roadside", "quarry"]:
-			new_auth[kind] = {}
+		var new_auth = {"roadside": {}, "quarry": {}}
 		for raw_k: Variant in auth.keys():
 			var kind = String(raw_k)
 			if not new_auth.has(kind):
@@ -238,22 +227,6 @@ func _get_mastery_section() -> Dictionary:
 		return {}
 	return mastery
 
-## Source IDs that A1 (roadside) and A8 (Quarry) have committed to physically
-## authenticate. Empty by default = fail-closed. Populated by A1/A8 at mount
-## time through SaveService mastery; this service never invents or mutates the
-## list except via authenticated_source() which persists through SaveService.
-var authenticated_sources: Dictionary = {
-	"roadside": {},
-	"quarry": {},
-}
-
-## Run-local discoveries: material_id → {use_description, recipe_id, discovered_at_run}.
-## Reset on run reset; persisted only through SaveService transaction receipts.
-var run_discoveries: Dictionary = {}
-
-## Learned recipe IDs (run-local). Reset on run reset.
-var learned_recipes: Dictionary = {}
-
 ## Authenticate a source ID for its owner domain through SaveService.
 ## Called by A1/A8 when they physically mount a site. The authentication is
 ## persisted in SaveService mastery.a3_authenticated_sources so it survives
@@ -270,7 +243,6 @@ func authenticate_source(source_id: String, owner_domain: String) -> bool:
 		return false
 
 	## A8 Quarry sources require explicit A8 authorization.
-	## A bare string domain claim is insufficient for physical source entitlement.
 	if String(contract.get("kind", "")) == "quarry":
 		if not bool(contract.get("a8_authorized", false)):
 			return false
@@ -278,7 +250,7 @@ func authenticate_source(source_id: String, owner_domain: String) -> bool:
 	var kind = String(contract.get("kind", ""))
 
 	## Persist authentication through SaveService (A0 authority).
-	var tx_key := "a3:auth:%s" % source_id
+	var tx_key := "a3:auth:%s" % [source_id]
 	var mutator := func(candidate: Dictionary) -> bool:
 		var m = candidate.get("mastery", {}).duplicate(true)
 		if not m.has(KEY_AUTHENTICATED_SOURCES):
@@ -293,10 +265,7 @@ func authenticate_source(source_id: String, owner_domain: String) -> bool:
 		candidate["mastery"] = m
 		return true
 
-	var applied := false
-	if save != null:
-		applied = bool(save.call("transact_once", tx_key, mutator, {"kind": "a3_authenticate_source", "source": source_id, "owner": owner_domain}))
-
+	var applied := bool(save.call("transact_once", tx_key, mutator, {"kind": "a3_authenticate_source", "source": source_id, "owner": owner_domain}))
 	if not applied:
 		return false
 
@@ -338,16 +307,16 @@ func is_source_authenticated(source_id: String) -> bool:
 ## IDs are stable across reloads and unique per legitimate batch.
 func _next_job_id() -> String:
 	if save == null:
-		return "a3_job_0"
+		return "a3_job_000001"
 	var mastery = _get_mastery_section()
 	var counter := int(mastery.get(KEY_JOB_COUNTER, 0)) + 1
-	return "a3_job_%06d" % counter
+	return "a3_job_%06d" % [counter]
 
 ## Increment the job counter in SaveService.
 func _increment_job_counter() -> bool:
 	if save == null:
 		return false
-	var tx_key := "a3:job_counter:%d" % Time.get_ticks_usec()
+	var tx_key := "a3:job_counter:%d" % [Time.get_ticks_usec()]
 	var mutator := func(candidate: Dictionary) -> bool:
 		var m = candidate.get("mastery", {}).duplicate(true)
 		var counter := int(m.get(KEY_JOB_COUNTER, 0)) + 1
@@ -360,7 +329,8 @@ func _increment_job_counter() -> bool:
 
 ## Harvest from a roadside or Quarry source. Atomic: tool wear + yield grant
 ## commit in one SaveService transaction. Fails closed on any precondition
-## violation. Returns {ok, reason, yield, tool_condition_remaining, source_yields_remaining, transaction_key}.
+## violation. Returns {ok, reason, yield, tool_condition_remaining,
+## source_yields_remaining, transaction_key}.
 func harvest(source_id: String, tool_id: String) -> Dictionary:
 	var contract = source_contracts.get(source_id, {})
 	if contract.is_empty():
@@ -374,13 +344,12 @@ func harvest(source_id: String, tool_id: String) -> Dictionary:
 	if tool_def.is_empty():
 		return {"ok": false, "reason": "UNKNOWN_TOOL"}
 
-	var tool_condition = _get_tool_condition(tool_id)
+	var tool_condition := _get_tool_condition(tool_id)
 	if tool_condition <= 0:
 		return {"ok": false, "reason": "TOOL_BROKEN"}
 
 	## Source finite-yield precondition: harvest count below max_yields.
-	## Uses the SAME prefix as the transaction key (harvest:) for consistency.
-	var harvest_key_prefix := "harvest:%s:" % source_id
+	var harvest_key_prefix := "harvest:%s:" % [source_id]
 	var times_harvested := _count_transactions_with_prefix(harvest_key_prefix)
 	var max_yields := int(contract.get("max_yields", 0))
 	if times_harvested >= max_yields:
@@ -398,17 +367,43 @@ func harvest(source_id: String, tool_id: String) -> Dictionary:
 	## Build the atomic mutator: wear tool + grant yield in one transaction.
 	## Transaction key uses harvest: prefix to match the counter.
 	var transaction_key := "%s:%s:%d" % [HARVEST_TX_PREFIX, source_id, harvest_index]
-	var mutator_result := _build_harvest_mutator(tool_id, tool_def, yield_result)
 
-	var applied := false
-	if save != null:
-		applied = bool(save.call("transact_once", transaction_key, mutator_result, {"kind": "a3_harvest", "source": source_id}))
+	var mutator := func(candidate: Dictionary) -> bool:
+		## Wear the tool: reduce condition on the inventory stack record.
+		var inventory = candidate.get("inventory", {}).duplicate(true)
+		var stacks = inventory.get("item_stacks", {}).duplicate(true)
+		var tool_stack_key := _find_stack_key(stacks, tool_id)
+		if tool_stack_key.is_empty():
+			return false
+		var tool_record = stacks[tool_stack_key] as Dictionary
+		var current_condition := int(tool_record.get("condition", int(tool_def.get("max_condition", 100))))
+		var wear := int(tool_def.get("wear_per_use", 0))
+		var new_condition := max(0, current_condition - wear)
+		if new_condition <= 0:
+			stacks.erase(tool_stack_key)  ## tool breaks
+		else:
+			tool_record["condition"] = new_condition
+			stacks[tool_stack_key] = tool_record
+		inventory["item_stacks"] = stacks
+		candidate["inventory"] = inventory
 
+		## Grant yields — re-read inventory from candidate after each grant
+		## so prior grants are not overwritten by stale local state.
+		var yields = yield_result.get("items", {}) as Dictionary
+		for item_id: String in yields.keys():
+			var qty := int(yields[item_id])
+			if qty <= 0:
+				continue
+			if not _grant_to_candidate_stacks(candidate, item_id, qty):
+				return false
+		return true
+
+	var applied := bool(save.call("transact_once", transaction_key, mutator, {"kind": "a3_harvest", "source": source_id}))
 	if not applied:
 		return {"ok": false, "reason": "TRANSACTION_REJECTED"}
 
 	var remaining_condition := _get_tool_condition(tool_id)
-	var remaining_yields := max_yields - times_harvested - 1
+	var remaining_yields := max(0, max_yields - times_harvested - 1)
 
 	return {
 		"ok": true,
@@ -419,7 +414,7 @@ func harvest(source_id: String, tool_id: String) -> Dictionary:
 		"transaction_key": transaction_key,
 	}
 
-## --- Tri-knowledge research model ---
+## --- Research ---
 
 ## Bounded random Spares research: spend Spares, receive a random recipe from
 ## the bounded pool of researchable recipes. All mutations (spend + learn)
@@ -437,7 +432,8 @@ func bounded_random_research(spares_quantity: int) -> Dictionary:
 	if researchable.is_empty():
 		return {"ok": false, "reason": "NO_RESEARCHABLE_RECIPES"}
 
-	var tx_key := "a3:research:bounded_random:%d" % Time.get_ticks_usec()
+	var tx_key := "a3:research:bounded_random:%d" % [Time.get_ticks_usec()]
+	var chosen := ""
 	var mutator := func(candidate: Dictionary) -> bool:
 		## Spend Spares from inventory.
 		var inventory = candidate.get("inventory", {}).duplicate(true)
@@ -459,7 +455,7 @@ func bounded_random_research(spares_quantity: int) -> Dictionary:
 		rng.seed = Time.get_ticks_usec()
 		var recipe_ids := researchable.duplicate()
 		recipe_ids.shuffle(rng)
-		var chosen := recipe_ids[0]
+		chosen = recipe_ids[0]
 		var m = candidate.get("mastery", {}).duplicate(true)
 		var lr = m.get(KEY_LEARNED_RECIPES, {})
 		if not lr is Dictionary:
@@ -469,14 +465,10 @@ func bounded_random_research(spares_quantity: int) -> Dictionary:
 		candidate["mastery"] = m
 		return true
 
-	var applied := false
-	if save != null:
-		applied = bool(save.call("transact_once", tx_key, mutator, {"kind": "a3_research_bounded_random", "spares_spent": spares_quantity}))
-
+	var applied := bool(save.call("transact_once", tx_key, mutator, {"kind": "a3_research_bounded_random", "spares_spent": spares_quantity}))
 	if not applied:
 		return {"ok": false, "reason": "TRANSACTION_REJECTED"}
 
-	## Update in-memory model after successful commit.
 	learned_recipes = _get_learned_recipes_from_save()
 
 	return {
@@ -507,9 +499,9 @@ func directed_research(recipe_id: String) -> Dictionary:
 		var required_qty := int(inputs[input_id])
 		var available := _get_inventory_quantity(input_id)
 		if available < required_qty:
-			return {"ok": false, "reason": "INSUFFICIENT_%s" % input_id.to_upper()}
+			return {"ok": false, "reason": "INSUFFICIENT_%s" % [input_id.to_upper()]}
 
-	var tx_key := "a3:research:directed:%s" % recipe_id
+	var tx_key := "a3:research:directed:%s" % [recipe_id]
 	var mutator := func(candidate: Dictionary) -> bool:
 		## Consume inputs from inventory.
 		var inventory = candidate.get("inventory", {}).duplicate(true)
@@ -538,10 +530,7 @@ func directed_research(recipe_id: String) -> Dictionary:
 		candidate["mastery"] = m
 		return true
 
-	var applied := false
-	if save != null:
-		applied = bool(save.call("transact_once", tx_key, mutator, {"kind": "a3_research_directed", "recipe": recipe_id}))
-
+	var applied := bool(save.call("transact_once", tx_key, mutator, {"kind": "a3_research_directed", "recipe": recipe_id}))
 	if not applied:
 		return {"ok": false, "reason": "TRANSACTION_REJECTED"}
 
@@ -583,9 +572,9 @@ func reverse_engineer_specimen(specimen_id: String) -> Dictionary:
 
 	var available := _get_inventory_quantity(item_id)
 	if available < consumes_qty:
-		return {"ok": false, "reason": "INSUFFICIENT_%s" % item_id.to_upper()}
+		return {"ok": false, "reason": "INSUFFICIENT_%s" % [item_id.to_upper()]}
 
-	var tx_key := "a3:research:specimen:%s" % specimen_id
+	var tx_key := "a3:research:specimen:%s" % [specimen_id]
 	var mutator := func(candidate: Dictionary) -> bool:
 		## Consume the specimen from inventory.
 		var inventory = candidate.get("inventory", {}).duplicate(true)
@@ -612,10 +601,7 @@ func reverse_engineer_specimen(specimen_id: String) -> Dictionary:
 		candidate["mastery"] = m
 		return true
 
-	var applied := false
-	if save != null:
-		applied = bool(save.call("transact_once", tx_key, mutator, {"kind": "a3_research_specimen", "specimen": specimen_id, "recipe": teaches_recipe_id}))
-
+	var applied := bool(save.call("transact_once", tx_key, mutator, {"kind": "a3_research_specimen", "specimen": specimen_id, "recipe": teaches_recipe_id}))
 	if not applied:
 		return {"ok": false, "reason": "TRANSACTION_REJECTED"}
 
@@ -630,7 +616,7 @@ func reverse_engineer_specimen(specimen_id: String) -> Dictionary:
 		"mechanism": "destructive_specimen",
 	}
 
-## --- Paid station / fuel / queue / offline proposal ---
+## --- Paid station / fuel / queue / offline production ---
 
 ## Prepare an expedition at a paid station. Escrows fuel cost and inputs,
 ## starts a real job, persists station identity. Outputs are NOT granted at
@@ -652,35 +638,34 @@ func prepare_at_station(recipe_id: String, station_id: String) -> Dictionary:
 	if station != station_id:
 		return {"ok": false, "reason": "RECIPE_NOT_FOR_STATION"}
 
-	var fuel_cost := int(recipe.get("fuel_cost", 0))
-	var fuel_item := String(recipe.get("fuel_item", "knowledge_spare"))
+	var fuel_item = String(recipe.get("fuel_item", "knowledge_spare"))
 	var fuel_quantity := int(recipe.get("fuel_quantity", 1))
+	var queue_seconds := int(recipe.get("queue_seconds", 0))
+	var outputs = recipe.get("outputs", {}).duplicate(true)
+	var inputs = recipe.get("inputs", {}).duplicate(true)
 
 	## Pay fuel from physical fuel item, not account currency.
 	var fuel_available := _get_inventory_quantity(fuel_item)
 	if fuel_available < fuel_quantity:
-		return {"ok": false, "reason": "INSUFFICIENT_%s" % fuel_item.to_upper()}
+		return {"ok": false, "reason": "INSUFFICIENT_%s" % [fuel_item.to_upper()]}
 
-	var inputs = recipe.get("inputs", {})
+	## Verify all inputs are available.
 	for input_id: String in inputs.keys():
 		var required_qty := int(inputs[input_id])
 		var available := _get_inventory_quantity(input_id)
 		if available < required_qty:
-			return {"ok": false, "reason": "INSUFFICIENT_%s" % input_id.to_upper()}
-
-	var queue_seconds := int(recipe.get("queue_seconds", 0))
-	var outputs = recipe.get("outputs", {}).duplicate(true)
+			return {"ok": false, "reason": "INSUFFICIENT_%s" % [input_id.to_upper()]}
 
 	## Unique job ID per legitimate batch — not just station+recipe.
 	var job_id := _next_job_id()
-	var job_key := "job:%s" % job_id
+	var job_key := "job:%s" % [job_id]
 
 	## Check idempotency: same job key cannot be prepared twice.
 	var existing_jobs = _get_station_jobs()
 	if existing_jobs.has(job_key):
 		return {"ok": false, "reason": "JOB_ALREADY_QUEUED"}
 
-	var tx_key := "a3:station:prepare:%s" % job_id
+	var tx_key := "a3:station:prepare:%s" % [job_id]
 
 	var mutator := func(candidate: Dictionary) -> bool:
 		## Pay fuel from physical fuel item (escrowed at prepare time).
@@ -699,6 +684,8 @@ func prepare_at_station(recipe_id: String, station_id: String) -> Dictionary:
 		candidate["inventory"] = inventory
 
 		## Consume inputs from inventory (escrowed at prepare time).
+		## Re-read inventory from candidate to avoid stale state overwrite.
+		inventory = candidate.get("inventory", {}).duplicate(true)
 		stacks = inventory.get("item_stacks", {}).duplicate(true)
 		for input_id: String in inputs.keys():
 			var required_qty := int(inputs[input_id])
@@ -737,10 +724,7 @@ func prepare_at_station(recipe_id: String, station_id: String) -> Dictionary:
 		candidate["mastery"] = m
 		return true
 
-	var applied := false
-	if save != null:
-		applied = bool(save.call("transact_once", tx_key, mutator, {"kind": "a3_station_prepare", "station": station_id, "recipe": recipe_id, "job_id": job_id}))
-
+	var applied := bool(save.call("transact_once", tx_key, mutator, {"kind": "a3_station_prepare", "station": station_id, "recipe": recipe_id, "job_id": job_id}))
 	if not applied:
 		return {"ok": false, "reason": "TRANSACTION_REJECTED"}
 
@@ -760,8 +744,10 @@ func prepare_at_station(recipe_id: String, station_id: String) -> Dictionary:
 
 ## Claim a completed offline production. Grants outputs exactly once on valid
 ## collection. Fails on duplicate, early claim, full bag, or wrong-run.
+## On success, outputs AND claimed flag are committed atomically — output
+## is never lost after a successful claim return.
 func claim_offline_production(job_id: String) -> Dictionary:
-	var job_key := "job:%s" % job_id
+	var job_key := "job:%s" % [job_id]
 	var jobs = _get_station_jobs()
 	if not jobs.has(job_key):
 		return {"ok": false, "reason": "QUEUE_NOT_FOUND_OR_ALREADY_CLAIMED"}
@@ -786,23 +772,27 @@ func claim_offline_production(job_id: String) -> Dictionary:
 		return {"ok": false, "reason": "QUEUE_NOT_READY"}
 
 	var outputs = entry.get("outputs", {}).duplicate(true)
-	var tx_key := "a3:station:claim:%s" % job_id
+	var tx_key := "a3:station:claim:%s" % [job_id]
 
 	var mutator := func(candidate: Dictionary) -> bool:
-		## Grant outputs exactly once. Check full bag.
+		## Grant outputs exactly once. Re-read inventory from candidate after
+		## each grant so prior grants are never overwritten by stale state.
+		## If the bag is full, mutator returns false → transaction rejected →
+		## job stays unclaimed → no output is granted or lost.
 		var inventory = candidate.get("inventory", {}).duplicate(true)
 		var stacks = inventory.get("item_stacks", {}).duplicate(true)
 		for output_id: String in outputs.keys():
 			var qty := int(outputs[output_id])
 			if qty <= 0:
 				continue
-			if not _grant_to_candidate_stacks(candidate, stacks, output_id, qty):
+			if not _grant_to_candidate_stacks(candidate, output_id, qty):
 				return false
+			inventory = candidate.get("inventory", {}).duplicate(true)
 			stacks = inventory.get("item_stacks", {}).duplicate(true)
 		inventory["item_stacks"] = stacks
 		candidate["inventory"] = inventory
 
-		## Mark job as claimed.
+		## Mark job as claimed — committed in the SAME transaction as outputs.
 		var m = candidate.get("mastery", {}).duplicate(true)
 		var j = m.get(KEY_STATION_JOBS, {})
 		if j is Dictionary and j.has(job_key):
@@ -813,10 +803,7 @@ func claim_offline_production(job_id: String) -> Dictionary:
 		candidate["mastery"] = m
 		return true
 
-	var applied := false
-	if save != null:
-		applied = bool(save.call("transact_once", tx_key, mutator, {"kind": "a3_station_claim", "job_id": job_id}))
-
+	var applied := bool(save.call("transact_once", tx_key, mutator, {"kind": "a3_station_claim", "job_id": job_id}))
 	if not applied:
 		return {"ok": false, "reason": "TRANSACTION_REJECTED"}
 
@@ -833,7 +820,7 @@ func claim_offline_production(job_id: String) -> Dictionary:
 ## Cancel a queued job. Refunds fuel but NOT consumed inputs (inputs are
 ## spent at prepare time as production cost). Idempotent.
 func cancel_station_job(job_id: String) -> Dictionary:
-	var job_key := "job:%s" % job_id
+	var job_key := "job:%s" % [job_id]
 	var jobs = _get_station_jobs()
 	if not jobs.has(job_key):
 		return {"ok": false, "reason": "QUEUE_NOT_FOUND"}
@@ -842,17 +829,17 @@ func cancel_station_job(job_id: String) -> Dictionary:
 	if bool(entry.get("claimed", false)):
 		return {"ok": false, "reason": "ALREADY_CLAIMED"}
 
-	var fuel_item := String(entry.get("fuel_item", "knowledge_spare"))
+	var fuel_item = String(entry.get("fuel_item", "knowledge_spare"))
 	var fuel_quantity := int(entry.get("fuel_quantity", 0))
-	var tx_key := "a3:station:cancel:%s" % job_id
+	var tx_key := "a3:station:cancel:%s" % [job_id]
 
 	var mutator := func(candidate: Dictionary) -> bool:
 		## Refund fuel to inventory.
 		var inventory = candidate.get("inventory", {}).duplicate(true)
-		var stacks = inventory.get("item_stacks", {}).duplicate(true)
-		if not _grant_to_candidate_stacks(candidate, stacks, fuel_item, fuel_quantity):
+		if not _grant_to_candidate_stacks(candidate, fuel_item, fuel_quantity):
 			return false
-		inventory["item_stacks"] = stacks
+		inventory = candidate.get("inventory", {}).duplicate(true)
+		inventory["item_stacks"] = inventory.get("item_stacks", {})
 		candidate["inventory"] = inventory
 
 		## Remove job from queue.
@@ -864,10 +851,7 @@ func cancel_station_job(job_id: String) -> Dictionary:
 		candidate["mastery"] = m
 		return true
 
-	var applied := false
-	if save != null:
-		applied = bool(save.call("transact_once", tx_key, mutator, {"kind": "a3_station_cancel", "job_id": job_id}))
-
+	var applied := bool(save.call("transact_once", tx_key, mutator, {"kind": "a3_station_cancel", "job_id": job_id}))
 	if not applied:
 		return {"ok": false, "reason": "TRANSACTION_REJECTED"}
 
@@ -901,7 +885,7 @@ func register_discovery(material_id: String, use_description: String, recipe_id:
 	if material_id.is_empty() or use_description.is_empty():
 		return false
 
-	var tx_key := "a3:discovery:%s" % material_id
+	var tx_key := "a3:discovery:%s" % [material_id]
 	var mutator := func(candidate: Dictionary) -> bool:
 		var m = candidate.get("mastery", {}).duplicate(true)
 		var disc = m.get(KEY_DISCOVERIES, {})
@@ -916,10 +900,7 @@ func register_discovery(material_id: String, use_description: String, recipe_id:
 		candidate["mastery"] = m
 		return true
 
-	var applied := false
-	if save != null:
-		applied = bool(save.call("transact_once", tx_key, mutator, {"kind": "a3_register_discovery", "material": material_id}))
-
+	var applied := bool(save.call("transact_once", tx_key, mutator, {"kind": "a3_register_discovery", "material": material_id}))
 	if not applied:
 		return false
 
@@ -960,7 +941,7 @@ func get_projections() -> Dictionary:
 			"display_name": String(contract.get("display_name", "")),
 			"authenticated": is_source_authenticated(source_id),
 			"max_yields": int(contract.get("max_yields", 0)),
-			"yields_remaining": max(0, int(contract.get("max_yields", 0)) - _count_transactions_with_prefix("harvest:%s:" % source_id)),
+			"yields_remaining": max(0, int(contract.get("max_yields", 0)) - _count_transactions_with_prefix("harvest:%s:" % [source_id])),
 			"risk": String(contract.get("risk", "")),
 			"poi_id": String(contract.get("poi_id", "")),
 			"instance_id": String(contract.get("instance_id", "")),
@@ -974,7 +955,6 @@ func get_projections() -> Dictionary:
 		recipe_projections[recipe_id] = {
 			"display_name": String(recipe.get("display_name", "")),
 			"station": String(recipe.get("station", "")),
-			"fuel_cost": int(recipe.get("fuel_cost", 0)),
 			"fuel_item": String(recipe.get("fuel_item", "")),
 			"fuel_quantity": int(recipe.get("fuel_quantity", 0)),
 			"queue_seconds": int(recipe.get("queue_seconds", 0)),
@@ -993,37 +973,6 @@ func get_projections() -> Dictionary:
 
 ## --- Internal helpers ---
 
-func _build_harvest_mutator(tool_id: String, tool_def: Dictionary, yield_result: Dictionary) -> Callable:
-	return func(candidate: Dictionary) -> bool:
-		## Wear the tool: reduce condition on the inventory stack record.
-		var inventory = candidate.get("inventory", {}).duplicate(true)
-		var stacks = inventory.get("item_stacks", {}).duplicate(true)
-		var tool_stack_key := _find_stack_key(stacks, tool_id)
-		if tool_stack_key.is_empty():
-			return false
-		var tool_record = stacks[tool_stack_key] as Dictionary
-		var current_condition := int(tool_record.get("condition", int(tool_def.get("max_condition", 100))))
-		var wear := int(tool_def.get("wear_per_use", 0))
-		var new_condition := max(0, current_condition - wear)
-		if new_condition <= 0:
-			stacks.erase(tool_stack_key)  ## tool breaks
-		else:
-			tool_record["condition"] = new_condition
-			stacks[tool_stack_key] = tool_record
-		inventory["item_stacks"] = stacks
-		candidate["inventory"] = inventory
-
-		## Grant yields.
-		var yields = yield_result.get("items", {}) as Dictionary
-		for item_id: String in yields.keys():
-			var qty := int(yields[item_id])
-			if qty <= 0:
-				continue
-			if not _grant_to_candidate_stacks(candidate, stacks, item_id, qty):
-				return false
-			stacks = inventory.get("item_stacks", {}).duplicate(true)
-		return true
-
 func _compute_yields(contract: Dictionary, harvest_index: int) -> Dictionary:
 	var base_yields = contract.get("yields_per_harvest", {}) as Dictionary
 	var result := {}
@@ -1034,7 +983,7 @@ func _compute_yields(contract: Dictionary, harvest_index: int) -> Dictionary:
 
 	## Chance-based bonus (Spares or Core fragment).
 	var rng := RandomNumberGenerator.new()
-	rng.seed = harvest_index * 1000 + Time.get_ticks_usec() % 100000
+	rng.seed = harvest_index * 1000 + int(Time.get_ticks_usec() % 100000)
 
 	var spare_chance := float(contract.get("spare_chance", 0.0))
 	if spare_chance > 0 and rng.randf() < spare_chance:
@@ -1099,13 +1048,6 @@ func _get_inventory_quantity(item_id: String) -> int:
 			total += int(record.get("quantity", 0))
 	return total
 
-func _get_currency(currency_id: String) -> int:
-	if save == null:
-		return 0
-	var snapshot = save.call("get_snapshot") as Dictionary
-	var currencies = snapshot.get("currencies", {}) as Dictionary
-	return int(currencies.get(currency_id, 0))
-
 func _get_tool_condition(tool_id: String) -> int:
 	if save == null:
 		return int(tool_definitions.get(tool_id, {}).get("max_condition", 100))
@@ -1132,25 +1074,13 @@ func _count_transactions_with_prefix(prefix: String) -> int:
 			count += 1
 	return count
 
-func _get_value(path: Array[String], fallback: Variant) -> Variant:
-	if save == null:
-		return fallback
-	var cursor = save.call("get_snapshot") as Dictionary
-	for segment: String in path:
-		if not cursor is Dictionary or not cursor.has(segment):
-			return fallback
-		cursor = cursor[segment]
-	return cursor
-
-func _is_transaction_applied(transaction_key: String) -> bool:
-	if save == null:
-		return false
-	return bool(save.call("is_transaction_applied", transaction_key))
-
-## Grant items to a candidate's inventory stacks dictionary (used within
-## mutators). Returns false if the bag is full.
-func _grant_to_candidate_stacks(candidate: Dictionary, stacks: Dictionary, item_id: String, quantity: int) -> bool:
+## Grant items to a candidate's inventory stacks. Re-reads inventory from
+## candidate on each call so prior grants within the same mutator are never
+## overwritten by stale local state. Returns false if the bag is full.
+func _grant_to_candidate_stacks(candidate: Dictionary, item_id: String, quantity: int) -> bool:
 	var remaining := quantity
+	var inventory = candidate.get("inventory", {}).duplicate(true)
+	var stacks = inventory.get("item_stacks", {}) as Dictionary
 	var matching_keys := _find_matching_stack_keys(stacks, item_id)
 	for stack_key: String in matching_keys:
 		if remaining <= 0:
@@ -1166,24 +1096,21 @@ func _grant_to_candidate_stacks(candidate: Dictionary, stacks: Dictionary, item_
 		stacks[stack_key] = record
 		remaining -= added
 	while remaining > 0:
-		var inventory = candidate.get("inventory", {}).duplicate(true)
-		var stacks_ref = inventory.get("item_stacks", {}) as Dictionary
 		var souls = inventory.get("hero_souls", []) as Array
 		var equipment = inventory.get("auxiliary_equipment", []) as Array
-		var used := souls.size() + equipment.size() + stacks_ref.size()
+		var used := souls.size() + equipment.size() + stacks.size()
 		if used >= 30:
 			return false
 		var stack_key := item_id
 		var suffix := 2
-		while stacks_ref.has("%s_stack_%d" % [item_id, suffix]):
+		while stacks.has("%s_stack_%d" % [item_id, suffix]):
 			suffix += 1
 		stack_key = "%s_stack_%d" % [item_id, suffix]
 		var added := min(remaining, 50)
-		stacks_ref[stack_key] = {"item_id": item_id, "kind": "material", "quantity": added}
-		inventory["item_stacks"] = stacks_ref
-		candidate["inventory"] = inventory
-		stacks = stacks_ref
+		stacks[stack_key] = {"item_id": item_id, "kind": "material", "quantity": added}
 		remaining -= added
+	inventory["item_stacks"] = stacks
+	candidate["inventory"] = inventory
 	return true
 
 func _find_matching_stack_keys(stacks: Dictionary, item_id: String) -> Array[String]:
@@ -1203,10 +1130,6 @@ func _find_matching_stack_keys(stacks: Dictionary, item_id: String) -> Array[Str
 		return left.naturalnocasecmp_to(right) < 0
 	)
 	return matches
-
-func _learn_recipe(recipe_id: String) -> void:
-	## Kept for API symmetry; persistence is via SaveService mastery.
-	pass
 
 func _is_recipe_known(recipe_id: String) -> bool:
 	return bool(learned_recipes.get(recipe_id, false))
@@ -1252,7 +1175,6 @@ func _get_run_id_from_save() -> String:
 func _set_inventory_stacks_for_test(stacks: Dictionary, transaction_key: String) -> bool:
 	if save == null:
 		return false
-	## Validate stacks before committing
 	for raw_key: Variant in stacks.keys():
 		var key := String(raw_key)
 		if not _is_valid_item_id(key):
@@ -1269,7 +1191,6 @@ func _set_inventory_stacks_for_test(stacks: Dictionary, transaction_key: String)
 
 	var mutator := func(candidate: Dictionary) -> bool:
 		var inventory = candidate.get("inventory", {}).duplicate(true)
-		## Preserve existing souls and equipment; only replace item_stacks.
 		inventory["item_stacks"] = stacks.duplicate(true)
 		candidate["inventory"] = inventory
 		return true
@@ -1322,7 +1243,7 @@ func grant_currency_for_test(currency_id: String, amount: int, transaction_key: 
 func clear_learned_recipes() -> void:
 	learned_recipes = {}
 	if save != null:
-		var tx_key := "a3:test:clear_learned:%d" % Time.get_ticks_usec()
+		var tx_key := "a3:test:clear_learned:%d" % [Time.get_ticks_usec()]
 		var mutator := func(candidate: Dictionary) -> bool:
 			var m = candidate.get("mastery", {}).duplicate(true)
 			m[KEY_LEARNED_RECIPES] = {}
@@ -1334,7 +1255,7 @@ func clear_learned_recipes() -> void:
 func clear_discoveries() -> void:
 	run_discoveries = {}
 	if save != null:
-		var tx_key := "a3:test:clear_discoveries:%d" % Time.get_ticks_usec()
+		var tx_key := "a3:test:clear_discoveries:%d" % [Time.get_ticks_usec()]
 		var mutator := func(candidate: Dictionary) -> bool:
 			var m = candidate.get("mastery", {}).duplicate(true)
 			m[KEY_DISCOVERIES] = {}
@@ -1350,3 +1271,7 @@ func _is_valid_item_id(item_id: String) -> bool:
 		if ALLOWED.find(item_id[index]) < 0:
 			return false
 	return true
+
+## Expose SaveService node for test orchestration.
+func get_save() -> Node:
+	return save
