@@ -119,7 +119,9 @@ jobs:
           set -uo pipefail
           timeout --signal=TERM --kill-after=15s 300s godot --headless --path . \
             res://tests/survival/ui/player_avatar_consumer_contract_test.tscn \
-            2>&1 | tee .artifacts/consumer-contract.log
+            2>&1 | tee .artifacts/consumer-contract.log || true
+          # GitHub runs this script under `bash -e`, which aborts on the pipeline above
+          # before the log can be read; `|| true` keeps control so the tail is printed.
           status=${PIPESTATUS[0]}
           if [ "${status}" -ne 0 ] || ! grep -q "A6 AVATAR CONSUMER CONTRACT PASSED" .artifacts/consumer-contract.log; then
             echo "::error::consumer contract exit=${status} (124 = the harness itself hung)"
