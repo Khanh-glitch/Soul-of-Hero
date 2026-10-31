@@ -308,6 +308,26 @@ func _spatial_compare(bytes: PackedByteArray, ref_path: String) -> Dictionary:
                 rn += 1
         grow2.append(gn)
         rrow.append(rn)
+    # Audit A evidence: diff heatmap (red=got-only, blue=ref-only, white=both-diff) + got frame.
+    var ev_dir := "res://prototypes/arcana_fusion20/renderer/evidence_out"
+    DirAccess.make_dir_recursive_absolute(ev_dir)
+    var stem := ref_path.get_file().get_basename()
+    var heat := PackedByteArray()
+    heat.resize(npix * 4)
+    for i in range(npix):
+        var o := i * 4
+        var ga3: bool = bytes[o + 3] > 0
+        var ra3: bool = rb[o + 3] > 0
+        var dd := maxi(maxi(absi(int(bytes[o]) - int(rb[o])), absi(int(bytes[o + 1]) - int(rb[o + 1]))), absi(int(bytes[o + 2]) - int(rb[o + 2])))
+        if ga3 and not ra3:
+            heat[o] = 255; heat[o + 3] = 255
+        elif ra3 and not ga3:
+            heat[o + 2] = 255; heat[o + 3] = 255
+        elif dd > 0:
+            var v := mini(255, dd * 2)
+            heat[o] = v; heat[o + 1] = v; heat[o + 2] = v; heat[o + 3] = 255
+    Image.create_from_data(BRenderer.W, BRenderer.H, false, Image.FORMAT_RGBA8, heat).save_png(ev_dir + "/" + stem + "_heat.png")
+    Image.create_from_data(BRenderer.W, BRenderer.H, false, Image.FORMAT_RGBA8, bytes).save_png(ev_dir + "/" + stem + "_got.png")
     return {"rows_g": str(grow2), "rows_r": str(rrow), "ref_w": ref.get_width(), "ref_h": ref.get_height(), "ref_nz": ref_nz, "ref_rgb_nz": ref_rgb_nz, "ref_sum": ref_sum, "iou": iou, "mae": mae / maxf(1.0, float(npix)), "maxerr": maxerr, "regions": regions, "shift_mae": best, "shift": best_key, "gbbox": "%d,%d-%d,%d" % [gb[0], gb[1], gb[2], gb[3]], "rbbox": "%d,%d-%d,%d" % [rb2[0], rb2[1], rb2[2], rb2[3]], "go": str(go), "ro": str(ro), "gcen": "%.0f,%.0f" % [gc[0] / maxf(1.0, float(inter + (union - inter))), gc[1] / maxf(1.0, float(inter + (union - inter)))], "rcen": "%.0f,%.0f" % [rc[0] / maxf(1.0, float(ref_nz_count(rb))), rc[1] / maxf(1.0, float(ref_nz_count(rb)))]}
 
 ## C-family spatial parity vs original C spells (stage loop, seeds per
@@ -367,5 +387,3 @@ func _c_parity(label: String, fx: RefCounted, prefix: String) -> void:
                 print("::notice::" + label + "_SPATIAL ", key, " t=", t, " iou=", snappedf(float(sp.get("iou", 0.0)), 0.0001), " mae=", snappedf(float(sp.get("mae", 99.0)), 0.01), " shift=", sp.get("shift", "?"), "@", snappedf(float(sp.get("shift_mae", 99.0)), 0.01), " nz=", nz, "/", int(meta[key].nonzero))
                 if float(sp.get("iou", 0.0)) < 0.90 or float(sp.get("mae", 99.0)) > 6.0:
                     _fail("%s spatial %s iou=%f mae=%f nz=%d/%d shift=%s@%f gbb=%s rbb=%s go=%s ro=%s" % [label, key, float(sp.get("iou", 0.0)), float(sp.get("mae", 99.0)), nz, int(meta[key].nonzero), str(sp.get("shift", "?")), float(sp.get("shift_mae", 99.0)), str(sp.get("gbbox", "?")), str(sp.get("rbbox", "?")), str(sp.get("go", "?")), str(sp.get("ro", "?"))])
-                if label == "THORN" and key == "t100":
-                    print("::error::THORNROWS g=", sp.get("rows_g"), " r=", sp.get("rows_r"))

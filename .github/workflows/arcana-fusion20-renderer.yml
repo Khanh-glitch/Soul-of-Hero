@@ -55,3 +55,10 @@ jobs:
             echo 'renderer parse/runtime/assertion failure' >&2
             exit 1
           fi
+      - name: Upload parity evidence (heatmaps + native frames)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: arcana20-parity-evidence
+          path: prototypes/arcana_fusion20/renderer/evidence_out/
+          if-no-files-found: ignore
