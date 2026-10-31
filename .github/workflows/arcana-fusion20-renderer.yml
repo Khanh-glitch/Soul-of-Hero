@@ -15,7 +15,7 @@ jobs:
   renderer-lifecycle:
     name: 20 canonical IDs cast/contact/finish/cancel on Godot 4.7
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - uses: chickensoft-games/setup-godot@v2
@@ -41,6 +41,10 @@ jobs:
             fi
           done < <(find prototypes/arcana_fusion20/renderer -name '*.gd' | sort)
           head -9 checkonly.log | while IFS= read -r l; do echo "::error::$l"; done || true
+          if [ -s checkonly.log ]; then
+            echo 'check-only compile errors present — failing job' >&2
+            exit 1
+          fi
       - name: Renderer lifecycle test (all 20 skills)
         shell: bash
         run: |
@@ -61,4 +65,41 @@ jobs:
         with:
           name: arcana20-parity-evidence
           path: prototypes/arcana_fusion20/renderer/evidence_out/
+          if-no-files-found: ignore
+      - name: All-20 visual capture (contact sheets + anim frames)
+        shell: bash
+        run: |
+          set -o pipefail
+          timeout --signal=TERM --kill-after=10s 1200s \
+            godot --headless --path . --script \
+              res://prototypes/arcana_fusion20/renderer/arcana20_capture.gd \
+            2>&1 | tee capture.log
+          grep -Fq 'ARCANA20_CAPTURE_RESULT PASS' capture.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|ARCANA20_CAPTURE_FAIL' capture.log; then
+            echo 'capture failure' >&2
+            exit 1
+          fi
+      - name: Build animated previews (GIF) from capture frames
+        shell: bash
+        run: |
+          python3 -m pip install --quiet pillow
+          python3 - << 'PYEOF'
+          import glob, os
+          from PIL import Image
+          base = 'prototypes/arcana_fusion20/renderer/evidence_out/review'
+          for d in sorted(glob.glob(base + '/skill_*/anim')):
+              frames = sorted(glob.glob(d + '/f_*.png'))
+              if not frames:
+                  continue
+              imgs = [Image.open(f).convert('RGBA') for f in frames]
+              out = os.path.join(os.path.dirname(d), 'preview.gif')
+              imgs[0].save(out, save_all=True, append_images=imgs[1:], duration=400, loop=0)
+              print('gif', out, len(imgs))
+          PYEOF
+      - name: Upload all-20 visual review package
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: arcana20-visual-review
+          path: prototypes/arcana_fusion20/renderer/evidence_out/review/
           if-no-files-found: ignore
