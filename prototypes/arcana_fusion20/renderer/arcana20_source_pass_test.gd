@@ -155,6 +155,10 @@ func _run() -> void:
     for sample in rift.ts:
         if sample >= 0.0: valid_count += 1
     check(valid_count == rift.contour_indices.size(), "C20 sparse contour includes every valid sample")
+    for noise_z in [0.0, 0.8, 1.0, 1.775, 2.349, 4.0]:
+        for noise_x in [2.0, 4.35, 9.75, 19.0, -5.0]:
+            for noise_y in [0.8, 3.15, 7.3, 10.7, -3.0]:
+                check(rift._contour_noise(noise_x, noise_y, noise_z) == CMath.noise3(noise_x, noise_y, noise_z), "C20 cached lattice noise equals original float64 formula")
     var rift_frame := CFrame.new()
     rift_frame.track_world_fragments = true
     rift_frame.clear()

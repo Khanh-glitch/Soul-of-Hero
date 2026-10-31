@@ -52,6 +52,12 @@ var contour_indices := PackedInt32Array()
 # A's per-horizontal-band hash is time-invariant. Retain float64 exactly;
 # float32 here changes source branch thresholds around 0.78/0.93.
 var _band_hash := PackedFloat64Array()
+# Lazy exact float64 cache for C noise lattice hashes, per cast. No geometry
+# or temporal samples are skipped; fallback handles coordinates outside the
+# fixed contour domain. A negative sentinel cannot be a real hash value.
+const NOISE_HASH_W := 72
+const NOISE_HASH_H := 108
+var _noise_hash := PackedFloat64Array()
 # This nearest-contour field depends only on the fixed original seed, source
 # resolution and immutable waypoints. Cache an independent master and clone
 # packed arrays per cast instead of recomputing ~70k x 8 projections per cast.
@@ -65,6 +71,8 @@ var a_debris := ARealityRipperDebris.new()
 
 func setup() -> void:
     CPalette._ensure()
+    _noise_hash.resize(NOISE_HASH_W * NOISE_HASH_H)
+    _noise_hash.fill(-1.0)
     _band_hash.resize(72)
     for band in range(_band_hash.size()):
         _band_hash[band] = AMath.hash2(float(band), 77.0)
@@ -203,6 +211,37 @@ func _a_time(t: float) -> float:
     if t < TCOL: return 1.0 + (t - TOPEN) * 4.3 / 3.6
     return 5.3 + (t - TCOL) * 0.8 / 0.55
 
+func _cached_lattice_hash(x: int, y: int) -> float:
+    if x < 0 or y < 0 or x >= NOISE_HASH_W or y >= NOISE_HASH_H:
+        return CMath.hash2(x, y)
+    var index := y * NOISE_HASH_W + x
+    var value := _noise_hash[index]
+    if value < 0.0:
+        value = CMath.hash2(x, y)
+        _noise_hash[index] = value
+    return value
+
+func _cached_noise2(x: float, y: float) -> float:
+    var xi := floori(x)
+    var yi := floori(y)
+    var xf := x - float(xi)
+    var yf := y - float(yi)
+    var u := xf * xf * (3.0 - 2.0 * xf)
+    var v := yf * yf * (3.0 - 2.0 * yf)
+    var a := _cached_lattice_hash(xi, yi)
+    var b := _cached_lattice_hash(xi + 1, yi)
+    var c := _cached_lattice_hash(xi, yi + 1)
+    var d := _cached_lattice_hash(xi + 1, yi + 1)
+    return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v
+
+func _contour_noise(x: float, y: float, z: float) -> float:
+    var zi := floori(z)
+    var zf := z - float(zi)
+    var w := zf * zf * (3.0 - 2.0 * zf)
+    var a := _cached_noise2(x + float(zi) * 17.13, y + float(zi) * 31.7)
+    var b := _cached_noise2(x + float(zi + 1) * 17.13, y + float(zi + 1) * 31.7)
+    return a + (b - a) * w
+
 func render(f: CFrame, t: float) -> void:
     if t >= TCOL and t < TCOL + 0.05: f.invert = 1.0
     # Source C's early rendering glitches affect the actual world fields.
@@ -261,7 +300,7 @@ func render(f: CFrame, t: float) -> void:
             mask[k] = 1
             var gy := (float(y) - 60.0) / 150.0
             var color := CPalette.ramp_d(CPalette.P.void, 0.12 + gy * 0.2, CMath.bayer(x, y))
-            var n := CMath.noise3(x * 0.05, y * 0.05, t * 0.25)
+            var n := _contour_noise(x * 0.05, y * 0.05, t * 0.25)
             if n > 0.62:
                 f.inverted_live_fragment(x, y, 420.0 - x + inverted_x_offset, 232.0 - y)
             else:
