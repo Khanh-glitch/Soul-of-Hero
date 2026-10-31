@@ -28,6 +28,7 @@ const CARD_Y := 5
 const BAR_WIDTH := 92
 const BAR_HEIGHT := 7
 
+var _root: Control
 var _card: PanelContainer
 var _region_label: Label
 var _vitals_row: HBoxContainer
@@ -74,6 +75,7 @@ func _build() -> void:
 	root.name = "Root"
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_root = root
 	add_child(root)
 	A6UiKit.dress(root)
 
@@ -232,32 +234,41 @@ func _build_prompt(root: Control) -> void:
 	_prompt_bar.add_child(_prompt_label)
 
 
-func show_death(message: String, title := "YOU FELL") -> void:
+func show_death(message: String, title := "NGÃ XUỐNG") -> void:
 	if _death_panel == null:
+		# Parented to the themed root, not to this CanvasLayer. A card added to the
+		# layer inherits Godot's default theme, which is why the death prompt used to
+		# render as a black debug box with the heading outside its own panel.
+		var centre := CenterContainer.new()
+		centre.name = "DeathCentre"
+		centre.set_anchors_preset(Control.PRESET_FULL_RECT)
+		centre.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		(_root if _root != null else self).add_child(centre)
+
 		_death_panel = A6UiKit.window()
 		_death_panel.name = "OverworldDeath"
 		_death_panel.add_to_group(&"gameplay_modal")
 		_death_panel.process_mode = Node.PROCESS_MODE_ALWAYS
-		_death_panel.set_anchors_and_offsets_preset(
-			Control.PRESET_CENTER, Control.PRESET_MODE_MINSIZE
-		)
-		_death_panel.custom_minimum_size = Vector2(250, 0)
-		add_child(_death_panel)
+		# CenterContainer sizes the card from its content, so the heading cannot end up
+		# outside the parchment the way fixed center offsets allowed.
+		_death_panel.custom_minimum_size = Vector2(252, 0)
+		centre.add_child(_death_panel)
 		var column := VBoxContainer.new()
 		column.name = "Column"
 		column.add_theme_constant_override("separation", 6)
 		_death_panel.add_child(column)
 		_death_title = A6UiKit.label(title, "heading", 16)
 		_death_title.name = "DeathTitle"
+		_death_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		column.add_child(_death_title)
 		_death_message = A6UiKit.label("", "body", 11)
 		_death_message.name = "DeathMessage"
 		_death_message.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		_death_message.custom_minimum_size = Vector2(220, 0)
+		_death_message.custom_minimum_size = Vector2(228, 0)
 		column.add_child(_death_message)
 		var button := Button.new()
 		button.name = "Respawn"
-		button.text = "WAKE UP"
+		button.text = "TỈNH DẬY"
 		button.custom_minimum_size = Vector2(0, 22)
 		button.pressed.connect(func() -> void: respawn_requested.emit())
 		column.add_child(button)

@@ -94,12 +94,19 @@ func _check_hud_without_owner() -> void:
 	hud.set_counts(0, 0, 0, 0, 0, 0)
 	hud.set_carry(0, 0)
 	hud.show_death("You fell.")
-	var death := hud.get_node_or_null("OverworldDeath")
-	_expect(death != null and (death as CanvasItem).visible, "death card is authored and visible")
+	# The card lives under the dressed root inside a centring container; it is not a
+	# direct child of the CanvasLayer, which is what used to give it Godot's default
+	# theme (a black debug box) and let its heading escape the panel.
+	var death := hud.find_child("OverworldDeath", true, false) as Control
+	_expect(death != null and death.visible, "death card is authored and visible")
 	if death != null:
 		_expect(death.is_in_group(&"gameplay_modal"), "death card registers as a gameplay modal")
+		_expect(death.get_parent() is CenterContainer, "a centring container sizes the death card from its content")
+		_expect(death.get_parent().get_parent().name == "Root", "the death card inherits the authored HUD theme")
 		var respawn := death.find_child("Respawn", true, false) as Button
-		_expect(respawn != null and respawn.text == "WAKE UP", "death card offers one clear action")
+		_expect(respawn != null and respawn.text == "TỈNH DẬY", "death card offers one clear action")
+		if respawn != null:
+			_expect(respawn.theme == null and death.theme_type_variation == &"A6Window", "the answer button is skinned by the card it sits in")
 	hud.hide_death()
 	hud.queue_free()
 	await get_tree().process_frame
