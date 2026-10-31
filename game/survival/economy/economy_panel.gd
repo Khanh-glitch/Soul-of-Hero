@@ -105,6 +105,9 @@ func _ready() -> void:
 	_list.name = "Jobs"
 	_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_list.add_theme_constant_override("separation", 3)
+	# Rows are added and removed on every refresh; refit whenever the list's size floor
+	# changes so the viewport never ends mid-card.
+	_list.minimum_size_changed.connect(func() -> void: _fit_list_to_whole_rows.call_deferred())
 	scroll.add_child(_list)
 
 	var footer := A6UiKit.label("Việc đang chạy chỉ tiến triển khi bảng này đóng.", "caption", 9)
@@ -217,10 +220,25 @@ func _refresh() -> void:
 	_fit_list_to_whole_rows.call_deferred()
 
 
+func _pitch_is_measurable() -> bool:
+	if _list == null or _list.get_child_count() < 2:
+		return false
+	var first := _list.get_child(0) as Control
+	var second := _list.get_child(1) as Control
+	return first != null and second != null and second.position.y - first.position.y > 1.0
+
+
 ## Trim the scroll viewport to whole recipe cards. Runs one frame later because the
 ## card pitch is only known once the list has been laid out; when the panel is closed
 ## the sizes are zero and this leaves the previous height alone.
 func _fit_list_to_whole_rows() -> void:
+	# A `call_deferred` lands before the new children have been laid out, so their
+	# positions are all 0 and the pitch reads as zero. Wait for the layout to settle,
+	# then measure; two frames is the floor VBoxContainer needs after an insert.
+	for _attempt in range(3):
+		await get_tree().process_frame
+		if _pitch_is_measurable():
+			break
 	if _scroll == null or _list == null or not is_instance_valid(_scroll):
 		return
 	if not is_open() or _list.get_child_count() < 2:
