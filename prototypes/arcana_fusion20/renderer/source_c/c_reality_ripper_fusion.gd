@@ -49,6 +49,9 @@ var tty := PackedFloat32Array()
 # Row-major positions with a valid contour sample. Iterating this exact subset
 # avoids testing tens of thousands of known-invalid pixels on every frame.
 var contour_indices := PackedInt32Array()
+# A's per-horizontal-band hash is time-invariant. Retain float64 exactly;
+# float32 here changes source branch thresholds around 0.78/0.93.
+var _band_hash := PackedFloat64Array()
 # This nearest-contour field depends only on the fixed original seed, source
 # resolution and immutable waypoints. Cache an independent master and clone
 # packed arrays per cast instead of recomputing ~70k x 8 projections per cast.
@@ -62,6 +65,9 @@ var a_debris := ARealityRipperDebris.new()
 
 func setup() -> void:
     CPalette._ensure()
+    _band_hash.resize(72)
+    for band in range(_band_hash.size()):
+        _band_hash[band] = AMath.hash2(float(band), 77.0)
     rng = CMath.CRng.new(151461)
     particles.clear()
     a_debris.setup()
@@ -236,6 +242,8 @@ func render(f: CFrame, t: float) -> void:
     for i in range(257): widths[i] = _width(float(i) / 256.0, t)
     var at := _a_time(t)
     var pull := AMath.smoothstep(1.2, 5.3, at) * (1.0 - AMath.seg(at, 6.1, 8.3) if at > 6.1 else 1.0)
+    var inverted_x_offset := sin(t * 0.7) * 10.0
+    var star_color := CPalette.ramp(CPalette.P.star, 0.8)
     for k in contour_indices:
         var y := floori(float(k) / float(W))
         var x: int = int(k) - y * W
@@ -255,10 +263,10 @@ func render(f: CFrame, t: float) -> void:
             var color := CPalette.ramp_d(CPalette.P.void, 0.12 + gy * 0.2, CMath.bayer(x, y))
             var n := CMath.noise3(x * 0.05, y * 0.05, t * 0.25)
             if n > 0.62:
-                f.inverted_live_fragment(x, y, 420.0 - x + sin(t * 0.7) * 10.0, 232.0 - y)
+                f.inverted_live_fragment(x, y, 420.0 - x + inverted_x_offset, 232.0 - y)
             else:
                 f.Ic(x, y, color, 1.0)
-            if CMath.hash2(floori(x - t * 10.0), y) > 0.985: f.Lc(x, y, CPalette.ramp(CPalette.P.star, 0.8), 0.7)
+            if CMath.hash2(floori(x - t * 10.0), y) > 0.985: f.Lc(x, y, star_color, 0.7)
             if CMath.hash2(floori((x + t * 26.0) / 2.0), floori((y + t * 6.0) / 2.0)) > 0.965: f.Lc(x, y, Vector3.ONE, 1.0)
             if fposmod(x * 0.7 + y * 0.3 + t * 22.0, 37.0) < 1.0: f.Lc(x, y, CYAN, 0.35)
             f.L(x, y, 0.02, 0.0, 0.05)
@@ -272,7 +280,7 @@ func render(f: CFrame, t: float) -> void:
             # Original A bgWarp pull, stretch, folded-back strips and edge
             # glow evaluated against C's nearest point/selected opening.
             var band := floori(float(y) / 3.0)
-            var bh := AMath.hash2(band, 77)
+            var bh := _band_hash[band]
             var nearest_x := float(x) + 0.5 - float(tnx[k]) * ad
             var dir_x := -1.0 if float(x) < nearest_x else 1.0
             var distance := ad - width
