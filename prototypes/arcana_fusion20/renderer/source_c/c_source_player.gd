@@ -24,6 +24,12 @@ var duration := 8.8
 var _fx: RefCounted = null
 var _kind := ""
 var _frame: CFrame
+# Opt-in CPU-side diagnostic only; GPU work is not synchronized or timed.
+var profile_cpu := OS.has_environment("ARCANA20_PROFILE_CPU")
+var profile_clear_us: Array[float] = []
+var profile_raster_us: Array[float] = []
+var profile_pack_us: Array[float] = []
+var profile_submit_us: Array[float] = []
 var _tex: ImageTexture
 var _sprite: Sprite2D
 var _light_tex: ImageTexture
@@ -237,7 +243,9 @@ func _shake_vector() -> Vector2:
 func _render_frame() -> void:
     if _fx == null or not render_enabled:
         return
+    var profile_start := Time.get_ticks_usec() if profile_cpu else 0
     _frame.clear()
+    var profile_clear_done := Time.get_ticks_usec() if profile_cpu else 0
     _frame.t = source_time()
     _frame.invert = 0.0
     _frame.desat = 0.0
@@ -249,9 +257,18 @@ func _render_frame() -> void:
     else:
         _fx.render(_frame, source_time())
     if world_pass_mode:
+        var profile_raster_done := Time.get_ticks_usec() if profile_cpu else 0
         _sprite.visible = false
         _light_sprite.visible = false
-        source_pass_ready.emit(source_pass_frame())
+        var pass_frame := source_pass_frame()
+        var profile_pack_done := Time.get_ticks_usec() if profile_cpu else 0
+        source_pass_ready.emit(pass_frame)
+        if profile_cpu:
+            var profile_submit_done := Time.get_ticks_usec()
+            profile_clear_us.append(float(profile_clear_done - profile_start))
+            profile_raster_us.append(float(profile_raster_done - profile_clear_done))
+            profile_pack_us.append(float(profile_pack_done - profile_raster_done))
+            profile_submit_us.append(float(profile_submit_done - profile_pack_done))
         return
     if experimental_separate_passes:
         var passes := _frame.native_passes()

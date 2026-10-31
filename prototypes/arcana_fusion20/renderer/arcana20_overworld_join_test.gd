@@ -794,6 +794,15 @@ func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D)
         "live_object_delta": live_objects - before_objects,
         "allocation_count": "not exposed by this Godot diagnostic",
         "enemy_hp_before": hp, "enemy_hp_after": int(enemy.get("health"))}
+    if is_instance_valid(sampled_second) and sampled_second is CSourcePlayer:
+        var cpu_source := sampled_second as CSourcePlayer
+        if cpu_source.profile_cpu and not cpu_source.profile_clear_us.is_empty():
+            record["cpu_scope"] = "C source-side CPU wall time in microseconds; texture submission is asynchronous, not GPU time"
+            record["cpu_sample_count"] = cpu_source.profile_clear_us.size()
+            record["cpu_clear_p50_p95_p99_us"] = [_perf_percentile(cpu_source.profile_clear_us, 0.50), _perf_percentile(cpu_source.profile_clear_us, 0.95), _perf_percentile(cpu_source.profile_clear_us, 0.99)]
+            record["cpu_raster_p50_p95_p99_us"] = [_perf_percentile(cpu_source.profile_raster_us, 0.50), _perf_percentile(cpu_source.profile_raster_us, 0.95), _perf_percentile(cpu_source.profile_raster_us, 0.99)]
+            record["cpu_pack_p50_p95_p99_us"] = [_perf_percentile(cpu_source.profile_pack_us, 0.50), _perf_percentile(cpu_source.profile_pack_us, 0.95), _perf_percentile(cpu_source.profile_pack_us, 0.99)]
+            record["cpu_submit_p50_p95_p99_us"] = [_perf_percentile(cpu_source.profile_submit_us, 0.50), _perf_percentile(cpu_source.profile_submit_us, 0.95), _perf_percentile(cpu_source.profile_submit_us, 0.99)]
     var second_viewers: Dictionary = mount._passes.get(id10, {})
     if second_viewers.has(&"C"):
         var c_viewer := second_viewers[&"C"] as Arcana20CWorldPass

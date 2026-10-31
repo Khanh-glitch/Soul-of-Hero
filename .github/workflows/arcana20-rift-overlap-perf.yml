@@ -45,7 +45,7 @@ jobs:
           ARCANA20_PERF_SECOND: '20'
         run: |
           set -o pipefail
-          timeout --signal=TERM --kill-after=10s 1800s xvfb-run -a -s "-screen 0 ${RESOLUTION}x24" env LIBGL_ALWAYS_SOFTWARE=1 ARCANA20_PERF=1 \
+          timeout --signal=TERM --kill-after=10s 1800s xvfb-run -a -s "-screen 0 ${RESOLUTION}x24" env LIBGL_ALWAYS_SOFTWARE=1 ARCANA20_PERF=1 ARCANA20_PROFILE_CPU=1 \
             godot --verbose --path "$RUNNER_TEMP/arcana20-perf" --rendering-method gl_compatibility --audio-driver Dummy --resolution "$RESOLUTION" --windowed \
             --user-data-dir "$RUNNER_TEMP/arcana20-perf-user" --script res://prototypes/arcana_fusion20/renderer/arcana20_overworld_join_test.gd \
             2>&1 | tee "$RUNNER_TEMP/arcana20-perf/artifacts/perf.log"
