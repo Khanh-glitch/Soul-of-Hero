@@ -683,11 +683,21 @@ func _wheel_until_visible(scroll: ScrollContainer, control: Control) -> bool:
 		await _move_pointer(window_point)
 		# A fresh event object per notch: a re-parsed event is dropped by the input
 		# layer, which is why a re-used wheel object never moved a list.
-		var wheel := InputEventMouseButton.new()
-		wheel.position = window_point
-		wheel.button_index = MOUSE_BUTTON_WHEEL_UP if target_y < rect.get_center().y else MOUSE_BUTTON_WHEEL_DOWN
-		wheel.pressed = true
-		Input.parse_input_event(wheel)
+		var button := MOUSE_BUTTON_WHEEL_UP if target_y < rect.get_center().y else MOUSE_BUTTON_WHEEL_DOWN
+		var notch := InputEventMouseButton.new()
+		notch.position = window_point
+		notch.button_index = button
+		notch.pressed = true
+		Input.parse_input_event(notch)
+		await process_frame
+		# The notch has to be released with its own event object. A wheel press left
+		# un-released keeps the GUI's mouse focus on the scroll container, and every
+		# later left press is then delivered to that container instead of the row.
+		var unpress := InputEventMouseButton.new()
+		unpress.position = window_point
+		unpress.button_index = button
+		unpress.pressed = false
+		Input.parse_input_event(unpress)
 		await process_frame
 		var offset := float(scroll.scroll_vertical)
 		still = still + 1 if is_equal_approx(offset, previous) else 0

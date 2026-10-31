@@ -522,11 +522,21 @@ func _scroll_to(scroll: ScrollContainer, control: Control) -> bool:
 		motion.position = point
 		Input.parse_input_event(motion)
 		await process_frame
-		var wheel := InputEventMouseButton.new()
-		wheel.position = point
-		wheel.button_index = MOUSE_BUTTON_WHEEL_UP if control.get_global_rect().get_center().y < scroll.get_global_rect().position.y else MOUSE_BUTTON_WHEEL_DOWN
-		wheel.pressed = true
-		Input.parse_input_event(wheel)
+		var button := MOUSE_BUTTON_WHEEL_UP if control.get_global_rect().get_center().y < scroll.get_global_rect().position.y else MOUSE_BUTTON_WHEEL_DOWN
+		var notch := InputEventMouseButton.new()
+		notch.position = point
+		notch.button_index = button
+		notch.pressed = true
+		Input.parse_input_event(notch)
+		await process_frame
+		# Release the notch with a fresh object: an un-released wheel press leaves the
+		# GUI's mouse focus on the scroll container, so the next left press goes
+		# there instead of to the row the pointer is hovering.
+		var unpress := InputEventMouseButton.new()
+		unpress.position = point
+		unpress.button_index = button
+		unpress.pressed = false
+		Input.parse_input_event(unpress)
 		await process_frame
 	print("NORMAL_SCROLL_TRACE scroll=%s target=%s value=%d max=%.1f visible=%s target_parent=%s" % [str(scroll.get_global_rect()), str(control.get_global_rect()), scroll.scroll_vertical, scroll.get_v_scroll_bar().max_value, str(control.is_visible_in_tree()), str(control.get_parent())])
 	return scroll.get_global_rect().has_point(control.get_global_rect().get_center())
