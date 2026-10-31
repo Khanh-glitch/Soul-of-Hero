@@ -60,18 +60,25 @@ func _run() -> void:
 	await _capture_screen("title", TITLE_SCENE, "")
 	# Two deliberately different directions of the *same* screens: one build, one scene
 	# graph, two surfaces, so the creator compares tone rather than content.
+	#
+	# The world-backed frames run last. The overworld's HUD is on a CanvasLayer, so a live
+	# world paints over every screen captured after it; ordering the world last means the
+	# scene screens are captured against their own backdrop and nothing has to be torn
+	# down mid-run.
 	for direction: String in [A6UiKit.DIRECTION_LEDGER, A6UiKit.DIRECTION_BOARD]:
 		A6UiKit.set_direction(direction)
 		var suffix := "_dir" + direction
-		print("A6 SURVIVAL UI CAPTURE: direction ", direction, " (", A6UiKit.direction(), ")")
+		printerr("A6 SURVIVAL UI CAPTURE: direction ", direction)
 		await _capture_screen("avatar_choice" + suffix, AVATAR_SCENE, "MaleButton")
 		await _capture_screen("avatar_female" + suffix, AVATAR_SCENE, "FemaleButton")
 		await _capture_hud("hud_field" + suffix)
-		await _capture_workshop("workshop_queued" + suffix)
-		await _capture_workshop("workshop_settled" + suffix)
-	_free_world()
 	await _capture_return("return_digest", "digest")
 	await _capture_return("return_guidance", "guidance")
+	for direction: String in [A6UiKit.DIRECTION_LEDGER, A6UiKit.DIRECTION_BOARD]:
+		A6UiKit.set_direction(direction)
+		printerr("A6 SURVIVAL UI CAPTURE: workshop direction ", direction)
+		await _capture_workshop("workshop_queued_dir" + direction)
+		await _capture_workshop("workshop_settled_dir" + direction)
 	_write_manifest()
 	if not _failures.is_empty():
 		for message: String in _failures:
@@ -360,17 +367,6 @@ func _queue_real_work(session: Node) -> int:
 ## `workshop_queued` is the list the moment work is handed over; `workshop_settled` is
 ## the same list after the session's own clock has run it down, where a finished job can
 ## be collected. Both frames read the same owner state a player reads.
-## The world is freed before the return-layer frames: those are their own screen, and a
-## live overworld behind them would be a different picture from the one that gate audits.
-func _free_world() -> void:
-	if _world == null or not is_instance_valid(_world):
-		return
-	var host := _world.get_parent()
-	if host != null:
-		host.queue_free()
-	_world = null
-
-
 func _capture_workshop(state: String) -> void:
 	var world_ready: bool = await _ensure_world()
 	if not world_ready:
@@ -386,14 +382,23 @@ func _capture_workshop(state: String) -> void:
 		_collect_finished(session)
 		var queued := _queue_real_work(session)
 		if queued > 0:
-			print("A6 SURVIVAL UI CAPTURE: queued %d real jobs" % queued)
+			printerr("A6 SURVIVAL UI CAPTURE: queued %d real jobs" % queued)
 	else:
-		await get_tree().create_timer(1.6).timeout
+		# Frames, not a SceneTree timer: a timer created with process_always=false stops
+		# advancing the moment anything pauses the tree, and the capture would then hang
+		# until the watchdog rather than settle. 90 frames is the same 1.5s at 60 Hz and
+		# cannot deadlock.
+		for _frame in range(40):
+			await get_tree().process_frame
+			if _frame % 10 == 9:
+				printerr("A6 SURVIVAL UI CAPTURE: settling ", state, " frame ", _frame + 1)
+	printerr("A6 SURVIVAL UI CAPTURE: workshop chrome ", state)
 	panel.call(&"restyle")
 	if not bool(panel.call(&"is_open")):
 		panel.call(&"toggle")
 	panel.call(&"refresh")
 	await _settle(6)
+	printerr("A6 SURVIVAL UI CAPTURE: workshop list rebuilt ", state)
 	if not bool(panel.call(&"is_open")):
 		_failures.append("%s: the workshop did not open" % state)
 		return
@@ -424,7 +429,11 @@ func _capture_workshop(state: String) -> void:
 		"direction": A6UiKit.direction(),
 		"texts": _audit_texts(root if root != null else panel),
 	})
-	print("A6 SURVIVAL UI CAPTURE: rendered ", state, " (direction ", A6UiKit.direction(), ")")
+	printerr("A6 SURVIVAL UI CAPTURE: rendered ", state, " (direction ", A6UiKit.direction(), ")")
+	if state.contains("settled"):
+		# Leave the panel closed: the next frame is a different screen, and an open modal
+		# on layer 21 would cover it.
+		panel.call(&"close_panel")
 
 
 func _save(frame: Image, file: String, state: String) -> void:

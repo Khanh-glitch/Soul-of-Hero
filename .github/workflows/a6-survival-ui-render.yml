@@ -321,7 +321,10 @@ jobs:
           echo "A6 screen capture ${res}: exit ${status}" | tee -a "$GITHUB_STEP_SUMMARY"
           tail -20 "artifacts/capture-${res}.log"
           if [ "${status}" -ne 0 ]; then
-            tail -20 "artifacts/capture-${res}.log" | sed 's/^/::error::/'
+            # 60 lines, not 20: the driver marks each milestone on stderr (unbuffered), so
+            # a hard stop is diagnosable from the annotation instead of needing the
+            # artifact zip, which this sandbox cannot download.
+            tail -60 "artifacts/capture-${res}.log" | sed 's/^/::error::/'
             echo "::error::A6 survival UI capture failed at ${res}"
             exit "${status}"
           fi
