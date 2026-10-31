@@ -1065,3 +1065,83 @@ SOH world source parity and creator review remain separate.
   HP **69→69**. These sample frames and shared-host timings do not establish
   target-device budgets or full-cast gameplay. Current no-FX economy baseline
   still shows **17 ObjectDB / 5 resources**; no conclusion about every leak.
+
+### 2026-11-01 — #16 source organism/core and #19 authored mote OUT
+
+- #16 adds original C layered leaf/cellular/inner-petal geometry, 14 leaflet
+  ribbons, and the luminous core, on the existing C source clock behind A's
+  smooth growth lead. At C ticks 180/240/300/381/456/510/558 the actual
+  original/native organism had authored-write coverage IoU 1.0, identical
+  ink, and light max error ≤5.96e-8
+  ([41239716936](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41239716936));
+  matched original/native tick381 ink crops were inspected. Optimized native
+  fields and influence were byte-exact against the unoptimized port over every
+  C tick 150–579 ([41240677302](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41240677302)).
+  On one shared CI host, original→optimized CPU raster examples were
+  121.0→40.3 ms at tick300 and 141.1→47.8 ms at tick381
+  ([41240245754](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41240245754));
+  geometry caching costs 327,152 bytes of per-cast float64 arrays, released
+  with the cast. These source-buffer tests do not establish target performance.
+- Original leaflet raster/write masks and fields were exact at eight source
+  ticks ([41240196653](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41240196653));
+  core write IoU 1.0 through tick540 and light max ≤1.192e-7, both empty at
+  tick558 ([41240871982](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41240871982)).
+  The actual A0 5a + AVFX `b74290e` JOIN
+  ([41241004285](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41241004285))
+  independently toggled each selected C role over the real world: organism,
+  leaflets and core changed **11,540 / 922 / 1,307** pixels, respectively,
+  with **zero outside each isolated role's recorded influence**. Matched real
+  world crops with/without the C organism were inspected; A remains foreground.
+  This is not full-cast Gold, moving actor/occlusion, or creator acceptance.
+- #02+#16 on A0 5a + AVFX `b74290e`
+  ([41241004206](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41241004206))
+  software CI post-draw p50/p95/p99 at 720p/2K/4K were **307/527/540**,
+  **699/1073/1104**, **940/1350/1380 ms**, respectively. C child CPU raster
+  p95 **44.8/82.0/83.6 ms**, 54 overlapping rendered frames, **51 active
+  objects and zero delta after cancel**, HP **69→69**. Each run submitted
+  173,352,960 raw C image bytes over the sample, **not** GPU allocations or
+  bandwidth. Static-memory deltas were inconsistent/negative on two hosts;
+  texture allocations and GPU time are not exposed. No target-device claim.
+- #19's previously authored OUT contracted nodes/filaments but left original
+  burst motes moving outward. It now preserves each original particle and
+  envelope, then converges and fades surviving motes only after 8.6 s. This is
+  `OUT_AUTHORED_EXTENSION`, **not original D source and not creator-approved**.
+  Fixed-step test [41241004399](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41241004399)
+  compared all 516 pre-OUT state ticks and measured surviving mote max radius
+  **78.10 → 16.51 → 0.317 → 0.041** and maximum alpha
+  **0.95 → 0.633 → 0.317 → 0.013** at ticks 516/540/564/587; 56 motes
+  remained naturally alive at 587. Actual-player batching, eight events,
+  one contact, callback cancel and restart still matched exactly
+  ([41241004171](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41241004171)).
+  This proves state/cleanup properties, not visual approval. D original
+  bloom/post in the world, STAR/ribbon residuals and full OUT review remain open.
+- Latest PR21 moved to `e5529c13335d5da8272d7b9d2cfb74897dcaf7e2`; its only
+  change from 5a is A0's authored route test. Owner CI reports an incomplete
+  connected journey (24 checks, no failed checks before stopping, second
+  process cannot read its audit), failed normal-entry jobs with generic exit
+  annotations, and lifecycle mismatch/5 resource shutdown. Owner notified
+  ([PR21 comment](https://github.com/Khanh-glitch/Soul-of-Hero/pull/21#issuecomment-6549066180)).
+  Disposable no-AVFX [41241455004](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41241455004)
+  and current-world JOIN [41241455003](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41241455003)
+  both passed on e552 with AVFX `b59d1c2`, so e552 is the latest independently
+  verified *entry* pin. Both reproduce the 17 ObjectDB / 5 economy resources
+  no-FX baseline; this is not acceptance of the failed full journey or proof
+  that all incremental AVFX leak scenarios are clean.
+- On e552 + AVFX `b59d1c2`, the native-world phase sweep
+  [41241455013](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41241455013)
+  restored **40/40** normal/dim casts. #19 additionally captured OUT ticks
+  516/540/564/582/587; all changed the frozen real-world image, and cancel
+  restored baseline. Four actual-world normal-light crops at 516/540/564/587
+  were inspected: the visible star/filaments and world warp recede toward
+  the center and the last crop is close to the unmodified terrain. This is not
+  a quantitative no-abrupt-reset proof, source bloom/post parity, moving-world
+  test, or creator approval. #16 tick538 remains visually unchanged and
+  catalog-late tick606 already expired, so its full OUT remains unresolved.
+- e552 + AVFX `b59d1c2` software CI simultaneous #02+#19
+  [41241454961](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41241454961)
+  post-draw p50/p95/p99 at 720p/2K/4K **354/432/460**, **500/580/612**,
+  **554/617/642 ms**, +27 live objects, zero after cancel, HP **69→69**.
+  #02+#16 [41241454984](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41241454984)
+  **546/948/966**, **550/817/844**, **936/1324/1369 ms**, +51 live objects,
+  zero after cancel, HP **69→69**. Shared machines vary materially; GPU time,
+  allocation counts, full duration and target-device budgets remain unknown.

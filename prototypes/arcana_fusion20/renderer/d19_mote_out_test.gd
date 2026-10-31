@@ -7,13 +7,27 @@ func _initialize() -> void:
     var current := DConstellationEngine.new()
     old.setup()
     current.setup()
-    old.fx.raster_enabled = false
-    current.fx.raster_enabled = false
+    old.fx.rgba8_fragment_transfer = true
+    old.fx.rgba8_scene_blend = true
+    old.fx.track_world_fields = true
+    current.fx.rgba8_fragment_transfer = true
+    current.fx.rgba8_scene_blend = true
+    current.fx.track_world_fields = true
     var samples := {}
+    var captured := 0
     for tick in range(1,588):
         var t := float(tick)*STEP
+        var capture := tick in [72,192,312,489,510,516]
+        old.fx.raster_enabled = capture
+        current.fx.raster_enabled = capture
         old.update(t,STEP)
         current.update(t,STEP)
+        if capture:
+            if old.fx.buf != current.fx.buf or old.fx.world_influence != current.fx.world_influence or old.fx.world_warp != current.fx.world_warp or old.fx.world_warp_influence != current.fx.world_warp_influence:
+                printerr("D19_OUT_PRE_MISMATCH fields_tick=",tick)
+                quit(1)
+                return
+            captured += 1
         if tick <= 516:
             if old._nodes != current._nodes or old._edges != current._edges or old._pulses != current._pulses or old.fx._pool != current.fx._pool or old.fx.rng.s != current.fx.rng.s:
                 printerr("D19_OUT_PRE_MISMATCH tick=",tick)
@@ -34,5 +48,5 @@ func _initialize() -> void:
         quit(1)
         return
     print("D19_OUT_SAMPLES ",JSON.stringify(samples))
-    print("D19_OUT_COMPLETE pre_out_exact_ticks=516")
+    print("D19_OUT_COMPLETE pre_out_exact_ticks=516 field_snapshots=",captured)
     quit()
