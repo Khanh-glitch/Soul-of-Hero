@@ -460,11 +460,28 @@ SOH world source parity and creator review remain separate.
   passed at `f95b8a00`. The subsequent 4K [overlap job 41217825832](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41217825832)
   at `c2ac274b` sampled p50/p95/p99 **849.165/1101.219/1157.922 ms**,
   with 256,177,152 raw bytes sent to C field textures since cast start;
-  ground uploaded once and A20 live-light atlas/index nine times. Driver
+  ground uploaded once and A20 live-light atlas/index nine times. At 720p
+  the same run measured **478.139/704.420/757.338 ms**, and at 2K
+  **623.485/862.887/920.063 ms**; both were slower than the earlier run.
+  Driver
   allocation, effective bandwidth and target-device cost are not measured.
   Comparing shared CI runs cannot establish a reliable performance gain.
   Source tick interval was not captured; `dec5fcf4` adds it for future probes.
 - Disposable assembly now supports caller-supplied exact A0 and PR30 SHAs.
   [Current A0 no-AVFX entry probe 41218212859](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41218212859)
-  at A0 `a6e37978`, AVFX `482de022` and PR30 `e505173e` is pending. It does
-  not mutate owner files and is not production acceptance.
+  at A0 `a6e37978`, AVFX `482de022` and PR30 `e505173e` failed, without
+  mounting AVFX: `Function "_spawn_cell()" not found in base self` at
+  `game/survival/a0_world_authority.gd:157`, followed by dependent
+  `chapter1_overworld.gd` compile/instantiation and readiness failure. Import
+  succeeded. A0 owner was notified directly
+  [PR21](https://github.com/Khanh-glitch/Soul-of-Hero/pull/21#issuecomment-6545906989).
+  No owner files were changed; historical normal-entry success does not
+  constitute acceptance of the current runtime.
+
+- Follow-up coverage-aware fragment activity at `f8d86501` avoids marking a
+  clear fragment dirty for unrelated ink; black ink always marks the ink
+  field, and overdraw of an actual fragment marks fragment coverage dirty.
+  The intermediate `2bab675b` accidentally dropped the ink dirty bit and is
+  invalid; it was corrected before acceptance. Latest source/world and
+  three-resolution regressions are pending. Do not treat either optimization
+  as a demonstrated target-device win.
