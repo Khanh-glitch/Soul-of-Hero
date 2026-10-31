@@ -404,6 +404,22 @@ func _run() -> void:
     await process_frame
     await process_frame
     check(mount.active_viewers(id1) == 0 and images_equal(baseline, await save_frame("fusion_01_cancelled")), "A01 C01 candidate cleanup restores frozen world")
+    var id16 := Arcana20SourceCatalog.canonical_id(16)
+    multi.cast_skill(id16, player.global_position, enemy.global_position)
+    var seed_growth := multi._casts[id16] as ASourcePlayer
+    seed_growth.set_process(false)
+    seed_growth.render_enabled = false
+    for tick in range(240): seed_growth.advance(STEP, false)
+    seed_growth.render_enabled = true
+    seed_growth._render_frame()
+    await process_frame
+    await process_frame
+    var seed_img := await save_frame("fusion_16_candidate_tick240")
+    check(mount.active_viewers(id16) == 1 and not images_equal(baseline, seed_img), "A16 source growth C material affects actual world")
+    multi.cancel_skill(id16)
+    await process_frame
+    await process_frame
+    check(mount.active_viewers(id16) == 0 and images_equal(baseline, await save_frame("fusion_16_cancelled")), "A16 C material candidate cleanup restores frozen world")
     var id19 := Arcana20SourceCatalog.canonical_id(19)
     multi.cast_skill(id19, player.global_position, enemy.global_position)
     var constellation := multi._casts[id19] as DSourcePlayer
