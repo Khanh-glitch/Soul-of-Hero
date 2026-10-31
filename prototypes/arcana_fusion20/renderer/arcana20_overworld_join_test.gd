@@ -404,6 +404,49 @@ func _run() -> void:
     await process_frame
     await process_frame
     check(mount.active_viewers(id1) == 0 and images_equal(baseline, await save_frame("fusion_01_cancelled")), "A01 C01 candidate cleanup restores frozen world")
+    # Original C event horizon explicitly authors screen flash/shake/chroma.
+    # The opt-in consumer affects the real world/actors before the real HUD;
+    # disabled and cancel comparisons enforce no unrelated residual effects.
+    var post := Arcana20CViewportPost.new()
+    post.process_mode = Node.PROCESS_MODE_ALWAYS
+    world.add_child(post)
+    check(post.attach(multi), "C viewport post opt-in attaches")
+    var horizon_id := Arcana20SourceCatalog.canonical_id(17)
+    multi.cast_skill(horizon_id, player.global_position, enemy.global_position)
+    var horizon := multi._casts[horizon_id] as CSourcePlayer
+    horizon.set_process(false)
+    horizon.render_enabled = false
+    for tick in range(375): horizon.advance(STEP, false)
+    horizon.render_enabled = true
+    horizon._render_frame()
+    await process_frame
+    await process_frame
+    check(post._states.has(horizon_id) and post._rect.visible, "C17 authored rebound activates actual viewport impulses")
+    var post_image := await save_frame("c17_rebound_viewport_post")
+    post._rect.visible = false
+    await process_frame
+    await process_frame
+    var plain_image := await save_frame("c17_rebound_without_viewport_post")
+    check(not images_equal(post_image, plain_image), "C17 authored screen impulse changes actual world viewport")
+    post._apply()
+    var loom_id := Arcana20SourceCatalog.canonical_id(10)
+    multi.cast_skill(loom_id, player.global_position, enemy.global_position)
+    var loom := multi._casts[loom_id] as CSourcePlayer
+    loom.set_process(false)
+    loom.render_enabled = false
+    for tick in range(120): loom.advance(STEP, false)
+    loom.render_enabled = true
+    loom._render_frame()
+    await process_frame
+    multi.cancel_skill(loom_id)
+    await process_frame
+    check(post._states.has(horizon_id) and post._rect.visible, "cancel overlapping C cast preserves remaining authored post")
+    multi.cancel_skill(horizon_id)
+    await process_frame
+    await process_frame
+    check(not post._rect.visible and post._states.is_empty() and images_equal(baseline, await save_frame("c17_viewport_post_cancelled")), "C viewport post cancel restores exact frozen world")
+    post.detach()
+    post.queue_free()
     var id16 := Arcana20SourceCatalog.canonical_id(16)
     multi.cast_skill(id16, player.global_position, enemy.global_position)
     var seed_growth := multi._casts[id16] as ASourcePlayer
