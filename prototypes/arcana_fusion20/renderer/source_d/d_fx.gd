@@ -343,7 +343,7 @@ func poly(pts8: Array, col: Color, o: Dictionary = {}) -> void:
     for py in range(maxi(0, floori(miny)), mini(H - 1, ceili(maxy)) + 1):
         for pxx in range(maxi(0, floori(minx)), mini(W - 1, ceili(maxx)) + 1):
             var pc := Vector2(float(pxx), float(py))
-            var l := _quad_local(corners, locs, pc)
+            var l: Variant = _quad_local(corners, locs, pc)
             if l == null:
                 continue
             var lv: Vector2 = l
