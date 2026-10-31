@@ -42,8 +42,13 @@ func _ready() -> void:
 
 
 func _build() -> void:
-	var root := A6UiKit.layer(self, 20, "HudLayer")
+	# Built straight onto this CanvasLayer: nesting a second CanvasLayer inside the
+	# HUD's own would put the death card in a sibling draw pass for no benefit.
+	var root := Control.new()
 	root.name = "Root"
+	root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(root)
 	A6UiKit.dress(root)
 
 	_build_field_card(root)

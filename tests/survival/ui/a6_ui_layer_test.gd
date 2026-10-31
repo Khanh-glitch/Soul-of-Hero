@@ -83,9 +83,9 @@ func _check_hud_without_owner() -> void:
 	var hud := HUD_SCRIPT.new() as CanvasLayer
 	add_child(hud)
 	await get_tree().process_frame
-	var root := hud.get_node_or_null("HudLayer/Root")
+	var root := hud.get_node_or_null("Root")
 	_expect(root != null, "HUD builds its authored surface")
-	_expect(hud.get_node_or_null("HudLayer/Root/FieldCard") != null, "HUD has the parchment field card")
+	_expect(hud.get_node_or_null("Root/FieldCard") != null, "HUD has the parchment field card")
 	hud.set_region("THE HOLLOW MARCHES")
 	_expect(hud.prompt_text() == "", "an idle HUD shows no prompt")
 	hud.show_prompt("Your pack is full.", 1.0)
