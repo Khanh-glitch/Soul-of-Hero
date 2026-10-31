@@ -46,5 +46,9 @@ void fragment() {
     float floor_uv_y = 1.0 - (float(p.y) + 0.5) / float(SIZE.y);
     warped *= 1.0 + w.w * 0.10 * sin(floor_uv_y * 180.0 + source_time * 8.0);
     vec3 light = texelFetch(light_tex, p, 0).rgb;
-    COLOR = vec4(clamp(original + tone(warped + light, p) - tone(original, p), 0.0, 1.0), 1.0);
+    // Tone quantization has discontinuities even for an infinitesimal field.
+    // Fade its full contribution as well as the geometric warp during the new
+    // OUT, so deleting the viewer at the next tick cannot drop a bright step.
+    vec3 delta = tone(warped + light, p) - tone(original, p);
+    COLOR = vec4(clamp(original + delta * clamp(warp_fade, 0.0, 1.0), 0.0, 1.0), 1.0);
 }
