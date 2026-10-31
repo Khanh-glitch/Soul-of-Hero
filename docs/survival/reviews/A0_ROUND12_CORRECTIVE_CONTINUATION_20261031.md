@@ -85,11 +85,25 @@ That prefix is the whole first hour, through ordinary input only (fresh profile,
 7. `station_furnace` placed with the build pointer, kit paid, station registered on a cell;
 8. the player walks up to the furnace it built.
 
-Where it currently stops, and the last observed reason:
+Where it currently stops, and the last observed reasons:
 
 ```
 FAIL  the physical furnace offers its own charcoal recipe
 ```
+
+Two distinct causes were found for the furnace step, one product and one harness:
+
+* **Product (A0/A3 station window mismatch).** `economy_session.nearby_stations()`
+  (`game/survival/economy/economy_session.gd:565-582`) lists a station only when the hero is
+  within **64 px of `structure.global_position + Vector2(16, 16)`**, i.e. the centre of the
+  footprint, while A0 lets the player work a station within `SurvivalStructure.REACH` (**44 px**)
+  of the origin cell. For the 2×2 furnace those two windows disagree, so a player at a legal
+  interaction distance can be standing next to a furnace the panel does not consider nearby and
+  see no furnace recipes at all. The journey now walks up close enough that both windows agree
+  and asserts `the panel counts the built furnace as a nearby station` before asking for recipes.
+* **Harness (intermittent stale list).** Scrolling to a recipe row could fail whenever the list
+  had been built earlier, and the reopen fallback reused the freed button node, turning a flake
+  into a false "row is missing". The row is now looked up again by name after the rebuild.
 
 `tools/probe` (local, headless) shows the placed piece resolves as
 `station_kind=furnace, station_tier=1, queue_capacity=3`, and A3's own `recipes.json` at
@@ -99,6 +113,11 @@ recipe is authored and the station is real; what is still unproven is that the p
 at that station for that player. The gate prints a full dump
 (`A0_CONNECTED_PANEL open=… recipes=… stations=… buttons=…`) whenever it fails to find the
 row, and CI promotes that dump to an error annotation.
+
+The step is intermittent rather than absent: the same build reached the furnace and the recipe
+lookup in some runs and reported the row missing in others, which is exactly why it is not
+claimed. A hosted run that prints `A0_CONNECTED_PANEL open=true … buttons=[Recipe_burn_charcoal_…]`
+and then completes the fuelled queue is the bar for claiming it.
 
 **Verdict for the connected journey: FAIL (not yet a completed journey).** Everything up to
 and including a physically placed, paid furnace passes; the fuelled work, the departure, the
