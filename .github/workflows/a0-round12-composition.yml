@@ -36,6 +36,8 @@ jobs:
           print("composition:", json.dumps({n: i["sha"][:12] for n, i in report["owners"].items()}))
           PY
           cat .composition/CONFLICTS.md >> "$GITHUB_STEP_SUMMARY"
+          python3 tools/a0/check_composition.py .composition | tee .composition/seats.txt
+          grep -q "COMPOSITION SEATS PASSED" .composition/seats.txt
       - uses: chickensoft-games/setup-godot@v2
         with:
           version: 4.7.0
@@ -92,7 +94,10 @@ jobs:
         run: |
           set +e
           failures=0
-          for name in ui_test journey_test player_first_hud_test; do
+          # A6 rewrote its UI between 63d3fae5 and 81c1f57e: the eight suite names
+          # pinned by the old V4 workflow no longer exist at the pinned SHA. These
+          # are the suites A6 actually ships at 81c1f57e.
+          for name in a6_ui_layer_test a6_a0_consumer_test avatar_identity_native_test a6_survival_return_native_test; do
             log="../artifacts/a6-$name.log"
             mkdir -p "../artifacts/ud_a6_$name"
             timeout --signal=TERM --kill-after=5s 300s godot --headless --path . \
