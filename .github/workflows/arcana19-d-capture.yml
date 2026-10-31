@@ -1,0 +1,42 @@
+name: ARCANA 19 - D HTML reference capture (browser/WebGL)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths:
+      - 'tools/arcana19_d_capture/**'
+      - '.github/workflows/arcana19-d-capture.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  d-capture:
+    name: Capture Constellation Engine frames from original D HTML
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install Playwright Chromium
+        working-directory: tools/arcana19_d_capture
+        run: |
+          npm install
+          npx playwright install --with-deps chromium
+      - name: Capture reference frames (deterministic virtual 60 Hz clock)
+        working-directory: tools/arcana19_d_capture
+        run: node capture.mjs
+      - name: Commit reference frames back to branch
+        run: |
+          git config user.name "arcana-ci"
+          git config user.email "arcana-ci@users.noreply.github.com"
+          git add prototypes/arcana_fusion20/renderer/source_d/reference/
+          if git diff --cached --quiet; then
+            echo "no reference changes"
+          else
+            git commit -m "ci(arcana19): D Constellation reference frames from original HTML (headless Chromium, virtual 60Hz clock)"
+            git push origin HEAD:arena/c7b0c4e8-soul-of-hero
+          fi
