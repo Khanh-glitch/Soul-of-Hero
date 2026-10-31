@@ -275,11 +275,20 @@ jobs:
               echo "::error::authored capture $res body=$(tail -c 1200 "$log" | tr '\n' '~')"
             fi
           done
+          # The test saves frames under res://artifacts, which inside the composition
+          # is .composition/artifacts. The artifact upload and the review thumbnails
+          # both read the workspace's artifacts/ directory, so the frames are moved
+          # to where a reviewer actually looks.
+          mkdir -p ../artifacts
+          cp -v artifacts/visual_authored_*.png ../artifacts/ 2>/dev/null || true
+          ls -la ../artifacts/visual_authored_*.png 2>/dev/null || echo "::error::no authored frames reached the artifact directory"
           [ "$failures" -eq 0 ]
       - name: R13 authored frame review thumbnails
         if: always()
         run: |
-          python3 -m pip install --user Pillow==11.3.0 > /dev/null 2>&1 || true
+          python3 -m pip install --user Pillow==11.3.0 > /dev/null 2>&1 \
+            || python3 -m pip install --user --break-system-packages Pillow==11.3.0 > /dev/null 2>&1 \
+            || true
           for group in 0 1 2 3 4; do
             python3 tools/ci/authored_visual_annotation_chunks.py "$group" || true
           done
@@ -327,6 +336,7 @@ jobs:
           name: a0-round12-composition-native-logs
           path: |
             artifacts/*.log
+            artifacts/visual_authored_*.png
             .composition/composition.json
             .composition/CONFLICTS.md
           if-no-files-found: warn
