@@ -825,7 +825,7 @@ func _run() -> void:
     await process_frame
     _finish()
 
-## Actual post-draw intervals for #02 plus selected #10 or #20 on the real historical overworld.
+## Actual post-draw intervals for #02 plus selected #10/#16/#20 on the real historical overworld.
 ## Shared software CI is a diagnostic only, never a target-device budget.
 func _perf_percentile(values: Array[float], percentile: float) -> float:
     if values.is_empty(): return 0.0
@@ -841,7 +841,8 @@ func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D)
     world.add_child(mount)
     check(mount.attach(renderer), "overlap perf source mount")
     var id2 := Arcana20SourceCatalog.canonical_id(2)
-    var second_skill := 20 if OS.get_environment("ARCANA20_PERF_SECOND") == "20" else 10
+    var requested_second := int(OS.get_environment("ARCANA20_PERF_SECOND"))
+    var second_skill := requested_second if requested_second in [16, 20] else 10
     var id10 := Arcana20SourceCatalog.canonical_id(second_skill)
     var before_memory := Performance.get_monitor(Performance.MEMORY_STATIC)
     var before_objects := Performance.get_monitor(Performance.OBJECT_COUNT)
@@ -874,6 +875,13 @@ func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D)
     var source_tick_end := -1
     var sampled_second: Node = renderer._casts.get(id10)
     if sampled_second is CSourcePlayer: source_tick_start = (sampled_second as CSourcePlayer)._tick
+    elif sampled_second is FusionPlayer: source_tick_start = (sampled_second as FusionPlayer)._tick
+    var profiled_c: CSourcePlayer = null
+    if sampled_second is CSourcePlayer:
+        profiled_c = sampled_second as CSourcePlayer
+    elif sampled_second is FusionPlayer:
+        for part in (sampled_second as FusionPlayer)._pending:
+            if part.node is CSourcePlayer: profiled_c = part.node as CSourcePlayer
     var overlapping_frames := 0
     var live_memory := before_memory
     var live_objects := before_objects
@@ -894,7 +902,9 @@ func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D)
     if samples.size() > 0:
         var n := samples.size()
         percentiles = {"p50_ms": samples[floori((n - 1) * 0.50)], "p95_ms": samples[floori((n - 1) * 0.95)], "p99_ms": samples[floori((n - 1) * 0.99)]}
-    if is_instance_valid(sampled_second) and sampled_second is CSourcePlayer: source_tick_end = (sampled_second as CSourcePlayer)._tick
+    if is_instance_valid(sampled_second):
+        if sampled_second is CSourcePlayer: source_tick_end = (sampled_second as CSourcePlayer)._tick
+        elif sampled_second is FusionPlayer: source_tick_end = (sampled_second as FusionPlayer)._tick
     var record := {"scope": "concurrent #02+#%02d sampled frames on real historical overworld; shared software-rendered CI, not a target-device budget or full-cast measurement" % second_skill,
         "second_source_tick_start": source_tick_start, "second_source_tick_end": source_tick_end,
         "viewport_capture_size": [viewport_size.x, viewport_size.y],
@@ -905,10 +915,10 @@ func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D)
         "live_object_delta": live_objects - before_objects,
         "allocation_count": "not exposed by this Godot diagnostic",
         "enemy_hp_before": hp, "enemy_hp_after": int(enemy.get("health"))}
-    if is_instance_valid(sampled_second) and sampled_second is CSourcePlayer:
-        var cpu_source := sampled_second as CSourcePlayer
+    if is_instance_valid(profiled_c):
+        var cpu_source := profiled_c
         if cpu_source.profile_cpu and not cpu_source.profile_clear_us.is_empty():
-            record["cpu_scope"] = "C source-side CPU wall time in microseconds; texture submission is asynchronous, not GPU time"
+            record["cpu_scope"] = "C source-side CPU wall time in microseconds (C child only for fusion #16); texture submission is asynchronous, not GPU time"
             record["cpu_sample_count"] = cpu_source.profile_clear_us.size()
             record["cpu_clear_p50_p95_p99_us"] = [_perf_percentile(cpu_source.profile_clear_us, 0.50), _perf_percentile(cpu_source.profile_clear_us, 0.95), _perf_percentile(cpu_source.profile_clear_us, 0.99)]
             record["cpu_raster_p50_p95_p99_us"] = [_perf_percentile(cpu_source.profile_raster_us, 0.50), _perf_percentile(cpu_source.profile_raster_us, 0.95), _perf_percentile(cpu_source.profile_raster_us, 0.99)]
