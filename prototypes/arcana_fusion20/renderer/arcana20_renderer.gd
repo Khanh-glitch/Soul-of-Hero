@@ -26,6 +26,20 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
     if id < 1:
         return false
     cancel_skill(canonical_id)
+    if id == 17:
+        # TRUE source port on the ported C frame/compositor (astral.ts).
+        var cp := CSourcePlayer.new()
+        add_child(cp)
+        cp.visual_contact.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
+            visual_contact.emit(canonical_id, pos, kind)
+            body_event_cue.emit(canonical_id, pos, &"astral"))
+        cp.visual_event.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
+            visual_event.emit(canonical_id, kind, pos, st))
+        cp.finished.connect(func() -> void: _on_finished(canonical_id))
+        _casts[canonical_id] = cp
+        cast_started.emit(canonical_id)
+        cp.begin(caster_world, target_world, "horizon")
+        return true
     if id == 2 or id == 3 or id == 8:
         # TRUE source ports on the ported B HDR renderer (pyre.ts).
         var bp := BSourcePlayer.new()
@@ -110,6 +124,11 @@ func _process(_delta: float) -> void:
             if bp.active and int(_last_tick_emitted.get(key, -1)) != bp.source_tick:
                 _last_tick_emitted[key] = bp.source_tick
                 source_tick.emit(key, bp.source_tick, bp.phase_name())
+        elif node is CSourcePlayer:
+            var cp2 := node as CSourcePlayer
+            if int(_last_tick_emitted.get(key, -1)) != cp2._tick:
+                _last_tick_emitted[key] = cp2._tick
+                source_tick.emit(key, cp2._tick, &"SOURCE_C")
 
 func _on_finished(canonical_id: StringName) -> void:
     if _casts.has(canonical_id):

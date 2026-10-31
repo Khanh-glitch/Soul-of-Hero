@@ -120,6 +120,7 @@ func _init() -> void:
             if bytes[i + 3] != 0:
                 nonzero += 1
         var sp: Dictionary = _spatial_compare(bytes, "res://prototypes/arcana_fusion20/renderer/source_b/reference/wyrm_%s.png" % key)
+        print("::notice::REFDIAG ", key, " ref=", sp.get("ref_w"), "x", sp.get("ref_h"), " ref_nz=", sp.get("ref_nz"), " ref_sum=", sp.get("ref_sum"))
         print("::notice::WYRM_SPATIAL ", key, " iou=", snappedf(float(sp.get("iou", 0.0)), 0.0001), " mae=", snappedf(float(sp.get("mae", 99.0)), 0.01), " maxerr=", int(sp.get("maxerr", 255)), " shift=", sp.get("shift", "?"), "@", snappedf(float(sp.get("shift_mae", 99.0)), 0.01), " regions=", JSON.stringify(sp.get("regions", {})))
         if float(sp.get("iou", 0.0)) < 0.90 or float(sp.get("mae", 99.0)) > 6.0:
             _fail("wyrm spatial %s iou=%f mae=%f" % [key, float(sp.get("iou", 0.0)), float(sp.get("mae", 99.0))])
@@ -153,6 +154,9 @@ func _init() -> void:
         print("::notice::METEOR_SPATIAL ", key, " t=", t3, " iou=", snappedf(float(sp3.get("iou", 0.0)), 0.0001), " mae=", snappedf(float(sp3.get("mae", 99.0)), 0.01), " shift=", sp3.get("shift", "?"), "@", snappedf(float(sp3.get("shift_mae", 99.0)), 0.01), " nz=", nz3, "/", int(mmeta[key].nonzero))
         if float(sp3.get("iou", 0.0)) < 0.90 or float(sp3.get("mae", 99.0)) > 6.0:
             _fail("meteor spatial %s iou=%f mae=%f" % [key, float(sp3.get("iou", 0.0)), float(sp3.get("mae", 99.0))])
+
+    _maw_check(renderer)
+    _horizon_check()
 
     var st := Arcana20Status.summary()
     print("::notice::ARCANA20_DBG stages=", JSON.stringify(renderer.stage_counts), " contacts=", JSON.stringify(_contacts), " finished=", _finished.size(), " started=", _started.size())
@@ -235,4 +239,61 @@ func _spatial_compare(bytes: PackedByteArray, ref_path: String) -> Dictionary:
                 best = m
                 best_key = "%d,%d" % [sx, sy]
     var iou := 1.0 if union == 0 else float(inter) / float(union)
-    return {"iou": iou, "mae": mae / maxf(1.0, float(npix)), "maxerr": maxerr, "regions": regions, "shift_mae": best, "shift": best_key}
+    var ref_nz := 0
+    var ref_sum := 0
+    for i in range(npix):
+        var o := i * 4
+        if rb[o + 3] > 0:
+            ref_nz += 1
+        ref_sum = (ref_sum + rb[o] * 3 + rb[o + 1] * 5 + rb[o + 2] * 7) & 0xFFFFFFFF
+    return {"ref_w": ref.get_width(), "ref_h": ref.get_height(), "ref_nz": ref_nz, "ref_sum": ref_sum, "iou": iou, "mae": mae / maxf(1.0, float(npix)), "maxerr": maxerr, "regions": regions, "shift_mae": best, "shift": best_key}
+
+## #17 spatial parity vs original C astral.ts (seed 127704, stage loop).
+func _horizon_check() -> void:
+    var meta: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://prototypes/arcana_fusion20/renderer/source_c/reference/horizon_meta.json"))
+    var fx := CEventHorizon.new()
+    fx.setup()
+    var frame := CFrame.new()
+    var targets := {"t200": 2.0, "t400": 4.0, "t580": 5.8, "t595": 5.95, "t650": 6.5, "t800": 8.0}
+    var t := 0.0
+    var shake_k := 0.0
+    var flash_k := 0.0
+    var flash_c := Vector3.ZERO
+    var chroma_k := 0.0
+    var steps := 0
+    while t <= 8.05:
+        fx.update(1.0 / 60.0, t)
+        t += 1.0 / 60.0
+        steps += 1
+        if float(fx.fx_shake) > 0.0:
+            shake_k = maxf(shake_k, float(fx.fx_shake))
+            fx.fx_shake = 0.0
+        if float(fx.fx_flash_k) > 0.0:
+            flash_c = fx.fx_flash
+            flash_k = maxf(flash_k, float(fx.fx_flash_k))
+            fx.fx_flash_k = 0.0
+        if float(fx.fx_kick) > 0.0:
+            chroma_k = maxf(chroma_k, float(fx.fx_kick))
+            fx.fx_kick = 0.0
+        shake_k *= 0.86
+        if shake_k < 0.3:
+            shake_k = 0.0
+        flash_k *= 0.82
+        chroma_k *= 0.88
+        for key in targets.keys():
+            if absf(t - float(targets[key])) < 1.0 / 120.0:
+                frame.clear()
+                frame.t = t
+                frame.chroma = chroma_k
+                frame.flash = flash_c * flash_k * 0.28
+                frame.shake = Vector2((CMath.hash1(steps * 3) - 0.5) * 2.0 * shake_k, (CMath.hash1(steps * 3 + 1) - 0.5) * 2.0 * shake_k) if shake_k > 0.0 else Vector2.ZERO
+                fx.render(frame, t)
+                var bytes := frame.composite()
+                var sp := _spatial_compare(bytes, "res://prototypes/arcana_fusion20/renderer/source_c/reference/horizon_%s.png" % key)
+                var nz := 0
+                for i in range(0, bytes.size(), 4):
+                    if bytes[i + 3] != 0:
+                        nz += 1
+                print("::notice::HORIZON_SPATIAL ", key, " t=", t, " iou=", snappedf(float(sp.get("iou", 0.0)), 0.0001), " mae=", snappedf(float(sp.get("mae", 99.0)), 0.01), " shift=", sp.get("shift", "?"), "@", snappedf(float(sp.get("shift_mae", 99.0)), 0.01), " nz=", nz, "/", int(meta[key].nonzero))
+                if float(sp.get("iou", 0.0)) < 0.90 or float(sp.get("mae", 99.0)) > 6.0:
+                    _fail("horizon spatial %s iou=%f mae=%f" % [key, float(sp.get("iou", 0.0)), float(sp.get("mae", 99.0))])

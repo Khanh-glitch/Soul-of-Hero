@@ -57,7 +57,7 @@ func begin(caster_world: Vector2, target_world: Vector2, kind: String = "wyrm") 
             duration = BUndertowMaw.DURATION
         _:
             _fx = BPyreWyrm.new()
-            duration = BUndertowMaw.DURATION
+            duration = BPyreWyrm.DURATION
     _r.caster = SRC_CASTER
     _r.target = SRC_TARGET
     _fx.setup(_r)
