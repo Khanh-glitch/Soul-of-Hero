@@ -276,6 +276,16 @@ history and is **superseded** — it contains the O4 acceptance defect CT found.
 * **Does not establish:** that the product works. The baseline is still `FAIL`; O2/O4/O6 belong to
   A0, and O1/O3 are missing evidence rather than results.
 
+### 9.6 CI receipt on the corrected SHA
+
+Run **`41217362377`** on exact head **`de144d96de30`** — all steps **success**:
+`Oracle self-test` (the step greps `31/31`, so the count itself is asserted in CI), `Compose the
+exact owner matrix` (same five SHAs → same tree), `Run the pack against that tree and the recorded
+evidence` (the composition-identity assertion did not trip; the step still ends `exit 0` because
+the baseline is *expected* to be `FAIL`). As in round 14, artifact and log downloads from
+`productionresultssa*.blob.core.windows.net` returned `EOF`, so CI-measured numbers are not
+quoted; the numbers in §9.4 come from the local run on the same tree, evidence and policy.
+
 **Status: `ACCEPT_SCOPED_ORACLE` — the oracle contract is closed. `PAUSE_DEPENDENCY` until A0
 publishes a NEW composed production tree** whose recomputed `write-tree` equals its declared SHA.
 No merge, no other-owner edits, no invented player PASS.
