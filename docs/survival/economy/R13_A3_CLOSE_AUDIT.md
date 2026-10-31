@@ -99,3 +99,20 @@ The takeover therefore adds `tools/ci/gd_r13_static_check.py`, which fails the b
 
 No claim of product integration, visual gameplay, human acceptance or final balance is
 made here, and `PRODUCT_COMPOSED_PASS` must not be written from this branch.
+
+## 5. Final verification on the takeover branch
+
+Exact-SHA run [41236254354](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41236254354)
+on `ac148f877fffbc30ec66cbd5ac90cbb888717c31`:
+
+* `A3 CATALOG / BALANCE CONTRACTS` — success
+* `A3 NATIVE SAVE ADAPTER` — success (V5 adapter 566 checks / 27 cases, world
+  restart, V6 offline + two-process settlement, V5 tool use, V7 meta +
+  two-process deposits)
+* `R13 A3 VALUE ECONOMY NATIVE (GODOT 4.7)` — success: static gate, real-engine
+  import, process 1, process 2, two-process receipt verification and the
+  single-process negative suite (`R13 NATIVE PASSED - 135 checks`).
+
+Evidence details and the unresolved owner seams are in
+[`R13_A3_CLOSE_HANDOFF.md`](R13_A3_CLOSE_HANDOFF.md). No product-composition,
+balance, human-playtest or acceptance claim is made from this branch.

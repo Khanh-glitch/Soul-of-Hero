@@ -24,6 +24,13 @@ This file is the takeover deliverable. It states only what an exact SHA executed
 | `3936cdc0f` | fix receipt location, publish evidence notices, gate the expected I/O line |
 | `a0206d98a` | fix the expected-I/O log filter (escaped dot), name failed assertions |
 | `f767d10d3` | worklog entry (docs only; does not trigger the A3 workflow) |
+| `ad967ccbb` | handoff document (first draft) |
+| `45b67c503` | annotate the adapter log when the engine exits nonzero |
+| `4a812ceea` | reject exit codes as evidence; repair the adapter step |
+| `61f9dfff7` | rebuild the native-adapter job; gate continuation damage |
+| `e042d904b` | two-process suites gate named copies of their logs |
+| `a8f5c08ac` | gate before annotating; trace the routes group |
+| `ac148f877` | **final: authenticate the third source before asserting the tool gate** |
 
 ## 2. Native evidence
 
@@ -90,6 +97,34 @@ step on every SHA including the predecessor and main-derived commits, while its
 native import/render jobs pass. Per the work order this is **not** attributed to A3
 and is not used as A3 evidence.
 
+### 2.4 FINAL exact-SHA run — [41236254354](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41236254354), SHA `ac148f877fffbc30ec66cbd5ac90cbb888717c31`
+
+| Job | Conclusion |
+|---|---|
+| `A3 CATALOG / BALANCE CONTRACTS` | success |
+| `A3 NATIVE SAVE ADAPTER` (V5 adapter 566 checks/27 cases, world restart, V6 offline + two-process, V5 tool use, V7 meta + two-process) | success |
+| `R13 A3 VALUE ECONOMY NATIVE (GODOT 4.7)` | **success** |
+
+Notices published from that job (read back through the check-run annotation API):
+
+```
+R13 NATIVE PASSED - 135 checks
+p1=2399 p2=2428 distinct=True save=user://tests/r13_value_economy_p1.json
+job=job_000003 granted=4 duplicate=nothing_to_collect
+bindings=7b9670f4971d2f16 a8=REJECTED_PENDING_EVIDENCE_FAIL_CLOSED
+  auth_tx=soh.a3.source_auth.a1_waystation_roadside_cache_v3.9fbbdcd28ac756ffbb6335620b1fda55
+  harvest_tx=soh.a3.source_claim.a1_waystation_roadside_cache_v3.1
+source=a1_waystation_roadside_cache_v3
+  rewards=[iron_scrap x3 (road_scrap), knowledge_spares x2 (road_supplies)] tool_after=80
+preparation oak 20->15 iron 23->20 output_at_prepare=0
+conservation {"ok": true, "output": 4, "problems": [], "source_claim_receipts": 1}
+verdict ok=True findings=[] p2_checks={'checks_failed': 0, 'checks_passed': 13}
+```
+
+Every step of the R13 job succeeded on that SHA: static hazard gate, real-engine
+import, process 1, process 2, two-process receipt verification, and the
+single-process negative-control suite (135 executed assertions).
+
 ## 3. What changed in behaviour (not just in wording)
 
 | Area | Before (audited) | Now |
@@ -108,9 +143,9 @@ and is not used as A3 evidence.
 |---|---|
 | Static hazard gate (Variant inference, duplicate `var`, unresolved call, second authority, cross-step shell state) | ✅ executes on every push, verified to fail on an injected historical defect |
 | Real Godot 4.7 import | ✅ |
-| Two distinct OS processes, one paid durable settlement, duplicate refused | ✅ run 41233482362 |
-| Single-process negatives (forgery ×7, cooldown, one-time exhaustion, tool wear, full bag, obstructed write + rollback + retry, cancel escrow, stale run, reset) | ⏳ verified by the fixed step; see the latest run on the branch head |
-| V5–V7 canonical regression | ✅ same workflow |
+| Two distinct OS processes, one paid durable settlement, duplicate refused | ✅ run 41233482362 and again on 41236254354 |
+| Single-process negatives (forgery ×7, cooldown, one-time exhaustion, tool wear, full bag, obstructed write + rollback + retry, cancel escrow, stale run, reset) | ✅ 135 checks, run 41236254354 |
+| V5–V7 canonical regression (adapter, world restart, V6 offline ×2, tool use, V7 meta ×2) | ✅ same workflow, run 41236254354 |
 | A0 composition of the 29 files | ❌ pending A0 (contract delivered) |
 | A6 UI integration, A8 Quarry, human/Web playtest, final balance | ❌ not claimed |
 

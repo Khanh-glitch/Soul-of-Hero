@@ -6,7 +6,7 @@
   "consumer": "A0 (composition/save), A6 (read-only UI), A7 (balance/acceptance), A8 (Quarry authorization)",
   "generated_from": {
     "branch": "arena/daadd745-soul-of-hero",
-    "head": "10980b0eae9340c824d172597152ce16474e2d51",
+    "head": "ac148f877fffbc30ec66cbd5ac90cbb888717c31",
     "predecessor_head": "b751a29f213d3c934caa204eb8d2d86943f07b65",
     "generator": "tools/survival/economy/a3_adoption_contract.py"
   },
@@ -56,8 +56,8 @@
       "path": "game/survival/economy/a3_economy_service.gd",
       "role": "R13 physical source custody + discovery + route projections; delegates queue/knowledge/clock",
       "a0_action": "INSTANTIATE_AFTER_CANONICAL",
-      "sha256": "28348627ab3a991a3e994658aaceabb207eccb585dafd91d722def33ccb63df8",
-      "bytes": 35462
+      "sha256": "7b62a10962e2cd751d5bd57c702f08c5ca43993b3c54d0af8c0934124bac671b",
+      "bytes": 36674
     },
     {
       "path": "data/survival/items/items.json",
@@ -203,8 +203,8 @@
       "path": "tests/survival/a3_value_economy_test.gd",
       "role": "R13 native suite: two-process receipts + negative controls",
       "a0_action": "RUN_AS_GATE",
-      "sha256": "23a7a42f78230923f00c094c51d60a063e2faefaa8c52628707cb535e2a64712",
-      "bytes": 47282
+      "sha256": "09751a1f620868a13d236ea9f14f3cf6297ae932e0fae4641e3090eb6a9e0ddf",
+      "bytes": 47899
     },
     {
       "path": "tests/survival/catalog/economy_adapter_test.gd",
@@ -217,8 +217,8 @@
       "path": "tools/ci/gd_r13_static_check.py",
       "role": "static hazard gate (Variant inference, duplicate var, second authority)",
       "a0_action": "RUN_AS_GATE",
-      "sha256": "913926b9dd34ee2d4bea6aae90dda99fee05936e9bb0b34c318b2c4f3094b691",
-      "bytes": 14637
+      "sha256": "641f94d999565bd28d29675addc4787b783a4f6a6185323ec83fef51eb924861",
+      "bytes": 15908
     },
     {
       "path": "tools/ci/verify_r13_receipts.py",
