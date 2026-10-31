@@ -331,7 +331,17 @@ func _queue_row(row: Button, target: String) -> Dictionary:
 	var job_id := ""
 	var path := "mouse"
 	if row != null and is_instance_valid(row):
-		await _click_window(root.get_final_transform() * (row.get_global_transform_with_canvas() * (row.size * 0.5)))
+		var point: Vector2 = root.get_final_transform() * (row.get_global_transform_with_canvas() * (row.size * 0.5))
+		# Say what the engine thinks is under the pointer before pressing: "the click
+		# was dropped" and "the click was aimed at a different control" are different
+		# facts and only one of them is a product problem.
+		await _move_pointer(point)
+		await process_frame
+		var hovered: Node = root.gui_get_hovered_control()
+		print("A0_CONNECTED_PRESS_POINT target=%s point=%s row=%s hovered=%s" % [
+			target, str(point), str(row.get_global_rect()),
+			String(hovered.get_path()) if hovered != null else "none"])
+		await _click_window(point)
 		job_id = _job_target(target)
 	if job_id.is_empty():
 		await create_timer(0.3).timeout
