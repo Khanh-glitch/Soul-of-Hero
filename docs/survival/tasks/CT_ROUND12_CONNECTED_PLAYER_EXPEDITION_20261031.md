@@ -1,0 +1,65 @@
+# CT ROUND12 — One connected player expedition, not micro-tickets
+
+**Authority:** CURRENT_PRODUCT_CONTRACT + D062–D074 + complete original Atlas/trace; AGENTS.md; INDEPENDENT_DEEP_REVIEW_PROTOCOL R0–R5; EVERY_REPLY_HANDOFF_PROTOCOL. **Read full independent audit:** `docs/survival/reviews/CT_ROUND11_FOUR_OWNER_NATIVE_VISUAL_INTEGRATION_AUDIT_20261031.md`. Do not copy stale Round10 verdict to current refs. All agent work stays on its EXISTING session/branch/PR. These are coordinated **substantive owner milestones**, not four tiny "CI fix" tasks. Aim for 3–6+ hours of useful execution *when technically warranted*, not artificial delay. Refresh branch HEAD, worktree, CI, source pins, prior work orders before editing.
+
+**User outcome being built:** Player picks authentic male/female, starts a safe random real-clock solo run, explores with ordinary weak melee/knife and physically finds/useful items without compulsory Core, gathers→crafts→tool wears/yields→returns to a physically useful house, one genuine risk/repair/revisit site offers consequential physical choice, funded offline work reappears once after relaunch, HUD communicates all actual state, and player has more than one voluntary next goal. The last72 physical custody/deposit remains a separate protected dependency, NOT fake-finished in this first-hour milestone. All original Gold sprite/timeline/terrain/enemy stages MUST remain AVFX-owned.
+
+## A0 OWNER — joined production experience and one authoritative SaveService
+
+Existing PR21 branch `arena/dea2428e-soul-of-hero`; last reviewed head `738e621b`; native tested code `222f6357`. Existing production first-run chain includes bare-hand gathering, A3-priced stone_pick→iron vein with exact wear/yield, receipt and 2pid restart. DO NOT REBUILD THESE.
+
+**WP-A0.1 Production composite:** Derive exact current A0+A1+A3+A6+A8 immutable SHA composition, with documented overlay precedence and conflict map (especially overworld, HUD, modal, source and source pin files). Keep one GameRoot, player actor, lifecycle, economy Session, SaveService; reproduce both [older pinned temp PASS 41166608047] and [newer A6 V4 temp failure 41166608006]. Attribute A6 planner parsing and wrong tests correctly. Do not sidestep broken module by removing the actual route. Controlled launch with latest A6 after its parse/layout fix.
+
+**WP-A0.2 One actual walk/input/save journey:** From NEW GAME A1 safe spawn and real chosen A6 grade0, use real keyboard/mouse to walk onto roadside resource, gather, craft stone_pick at actual station, wear/harvest iron, return physically to paid house, reopen storage/inventory/crafting UI, exit and fresh-process Continue. Assert actor world positions and verbs rather than teleported fixture state; persist exact items, tool revision, receipts, structures, home, run_id/epoch/deadline; fail the test on bad producer, stale pin, early window, full bag, restart replay and null UI projections.
+
+**WP-A0.3 Honest threat and recovery:** Make a real world-owned, source-justified damage producer and minimal starter knife/basic melee using only approved existing item/combat/animation authority, honoring real 0.75s i-frame if applicable; no fake near-lethal test-only hits. Demonstrate threat can land damage, one recoverable bag, collision-safe bed/default respawn, item recovery after 2pid quit/restart. If A3 item ID or actual damage rate cannot be approved locally, expose exact owner action/contract and complete A0-owned health/hit routing with fail-closed proof; do not fabricate a catalog or Gold cast.
+
+**WP-A0.4 Funded offline homecoming:** Exercise a true owner-funded job from player UI→SaveService paid input→correct offline UTC bound→settle and claim once after second process→actual A6 read-only digest. No free output, no user session timer for expiry, no duplicate stack. Distinguish 'owned storage projection' from fabricated UI rows. Confirm 336h reset with only achievements/history/secured deposited Ragnarok currency retained. Clear overdue history/deposit write holes without minting physical money.
+
+**WP-A0.5 POI connection:** Mount one A1-authored A8 POI using actual production actor collision and real stand/entry/return/mount/revisit. Consume A8 neutral action identity under A0 authority. DO NOT authorize rewards until A3 policy passes source identity and finite cost/cooldown; no generic fixture grant.
+
+**Definition of Done:** exactly pinned code; native full player-input continuous 720/1440/2160 rendered frames inspected, actual physical movement, step-by-step event/receipt timeline including two OS processes, negative/fault tests, R0–R5 and nine gates, A6/A7/A8 handoff. Keep PR21 draft; no merge.
+
+## A6 OWNER — finished authored survival UX in production
+
+Existing active branch `arena/05e0328d-soul-of-hero`, last verified `b32f347e`. Round12 source art: 29 255216/994534 pieces is a GOOD foundation; do NOT repeat source fetching or redesign the entire kit from scratch.
+
+**WP-A6.1 Blockers found by CT:** Repair duplicate `_manifest_has_staged_art()` at lines 122/139 of `avatar_choice_screen.gd`, preserving true staged art detection; hosted run [41167017013] failed actual Godot parse, route to home absent. Inspect [native artifact 13029686099] real 1280x720: identity heading 'BẠN LÀ AI?' clips off the top, gender NAM/NỮ labels cut at bottom, character looks tiny in huge empty cards. Fix scene responsive anchors, margins, typography, avatar scaling/composition, keyboard focus at 720p/2K/4K with exact authentic source sprites, not redraw. Title screenshot captured legacy loading screen at 08%, so wait for settled actual title state; distinguish capture error vs old production copy.
+
+**WP-A6.2 Owner integration regression:** [A0+A6 V4 41166608006] with A6 `8bc0af5a` FAILED planner/world input/modal; diagnose `expedition_planner.gd` live_owner/developer_fixture type errors, missing planner functions and missing owner projections with A0. Repair A6-owned callers/oracles without weakening real movement/input/modals. Ensure Continue after restart genuinely walks: assert actor position/action/velocity after keypress and on-screen displacement, including pending-death path.
+
+**WP-A6.3 Real HUD/UX holistic:** Make title→character selection→real world HUD→bag/chest/tool wear→workbench/research→home return digest→death/bed into ONE consistent authored pixel-art language. Compact contextual survival HUD, large touch/click targets, high contrast, proper keyboard navigation and modal blocking without suppressing combat. Season clock/HP/equipment/owner facts from A0 only; never invent. Work around I/TAB conflicts with field_codex by a coherent A0-approved input map, not hijacking keys. Missing item icons show readable honest category/name, not developer 'no art' as a final foreground item. Visually distinguish paid/locked/bag-full/durable/claimable using real state, avoiding giant blank parchment.
+
+**WP-A6.4 Visual proof:** Actual Xvfb Godot 4.7 framebuffer at 1280x720/2560x1440/3840x2160 in real A0 production composite. Compare before/after same state for title, avatars, walking, HUD, inventory, stations, loot, damage/death and offline return. Count unobstructed avatar, UI safe bounds, contrast in bright/very dark biome, Gold effect occlusion, correct scale. Inspect every representative PNG BY EYE and fix; image dimensions alone are not a gate.
+
+**Definition of Done:** Real native PASS at tested exact current SHA including no parse/click/modal errors, art provenance 29/29, high quality reviewed screenshots and a joined owner-driven experience. Do not call theme source crop images 'finished UI'. No self-merge, no independent wallet.
+
+## A8 OWNER — turn three physics-safe POIs into meaningful production sites
+
+Existing PR26 branch `arena/2d7e6d7a-soul-of-hero`, verified head `6337533f`. Native [41166238346] **SUCCESS** for source-scoped physics/transition/input (293 real native journey assertions, 3 resolution captures), no longer repeat obsolete Orchard/Mill numeric-Array/collision bug. DO NOT reopen solved gate F2/F3/waypoint issues without a current regression.
+
+**WP-A8.1 Real A0 player mount:** Use A1 approved geography/socket and production Hero's actual 20x24/other measured body rather than only A8's stand-in mover. Validate ordinary source real entrance/return, safe movement, gated paths, one-way retreat and revisit at every POI, across screen/project restart. Keep A8 pure physical request+projection, A0 SaveService only.
+
+**WP-A8.2 POI depth + actor legibility:** Replace fixture-debug-only impression with authored, intelligible environmental interaction using existing actual A1/asset sources and A8 scene authority: Quarry east/west exclusive choice, Orchard irrigation/graft discoverability, Mill repair vs leave seized. Reveal a clear player-visible difference for every decision (door, water, wheel, source access, safe retreat) with feedback, animations/position if available and site-specific art. CT inspected 27 native 720p frames: many baseline frames contain large black void and tiny debug status. This is acceptable as a temporary harness but NOT a production site presentation. Never hide black only by adding overlay; prove actual production scene is full, physically filled and readable. Gold stays untouched.
+
+**WP-A8.3 Economic consequence without mint:** Hand A3 ONE exact production-vetted source with stable source+instance+stand+state, real travel/interaction costs, source capacity and a real item sink/benefit. Maintain `a3_approved_bindings=[]` and price/yield/cooldown null until A3 explicitly authorizes; do NOT promote test fixture numbers. Explain why 104px path delta alone does not make Quarry choices fun. If unapproved, scene must present a truthful physical outcome and reason for withheld reward, and log the exact dependency.
+
+**WP-A8.4 Adversarial native visuals:** 720/1440/2160 real native actor test, input with alternate route, collision and disabled source, one-sided gate, safe/unsafe choices, true reopen/revisit, reloaded A0 projection and no dupe. Capture before/after exact same scene and inspect real images by eye. Distinguish fixture stand-in from genuine A0 journey.
+
+**Definition of Done:** production A0 mount proven or exact bounded A0 dependency; three physical POIs worthy of exploration beyond a 239/293-assertion fixture; owner-neutral single source evidence candidate, negative and restart probes; R0–R5 and nine-gate honesty, PR26 unmerged.
+
+## A7 OWNER — independent newest join and player-value gate
+
+Existing PR25 `arena/353cf120-soul-of-hero`, head `9a386d8d`. Round10 `1d39e92e` old composition is an excellent historical forensics artifact, NOT current game acceptance. Use all current exact source SHAs (A0/A1/A3/A6/A8 plus AVFX provenance), independent immutable composition. Verify success older A0+A6 `6b801554` and newer fail `8bc0af5a`; observe A6 `b32f347e` parse and captured 720px clipping.
+
+Run J01 (knife/basic survival), J03 (funded homecoming), J04 (physical 3-site choices), J05 (threat/death/bed), then J02 Core and J06/J07 late72 currency+336h as AVAILABLE/INCOMPLETE individually. Use real mouse/key input, exact physical owner projections, SaveService 2pid, replay/late claims, malicious client payload, stale run, no invented rewards. Compare screenshots personally and record **5 separate quality axes**: technical correct, actually playable, strategically worthwhile, original creator contract fidelity, human-tested enjoyment (NOT_TESTED unless creator plays). Quantify travel/net resource cost where real; no fabricated 'fun' model. At current incomplete sources do independent exploratory oracles in parallel; don't wait idle for every owner. Source all defects by owner + exact method/CI. No owner file edits/no merge.
+
+## A1 / A3 / AVFX status
+
+A1: source/native scoped acceptance. **PAUSE NEW WORLD AUTHORING**, provide approved stand/collision/biome/material references and actual rendered evidence to A0/A8; no expansion into another 106 POI plan.
+A3: PAUSED. React only when A8/A1/A0 surface ONE owner-approved real physics source+durable state and a measured item sink or A7 identifies A3-owned concrete defect. Do not mint missing rewards, wallet or equipment.
+AVFX: continue source-perfect Gold independent; A0/A6/A8 must not approximate/repaint Gold.
+
+## Shared R5 milestone
+
+**PLAYER_EXPEDITION_S1:** Fresh live run→authentic selected grade0→physically walk→scavenge→pay/craft/use tool→physical POI choice with consequential opened/closed route→return to bed/storage→fund an existing legitimate station job→quit→elapsed clock→fresh process truthful completed output once→further voluntary options. Threat/death route must have one authentic source; Core/Gold remain explicitly blocked unless source-perfect path exists. 720p/2K/4K real PNGs inspected by eyes, with adverse light/night and accessible inputs; separate fixture and production labels. Nine gates R0–R5 and 5 distinct product-quality axes; no superficial green badge or tiny 10-minute status acceptance.
