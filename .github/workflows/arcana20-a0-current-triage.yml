@@ -1,0 +1,32 @@
+name: ARCANA20 inspect newest A0 normal-entry failure
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-a0-current-triage.yml']
+permissions:
+  actions: read
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: a0-candidate-normal-entry-logs
+          run-id: 41215393687
+          github-token: ${{ github.token }}
+          path: review
+      - name: Expose first actual failure and diagnostic commands
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          for p in Path('review').rglob('*'):
+            if not p.is_file(): continue
+            print('::notice::A0_TRIAGE_FILE '+str(p))
+            text=p.read_text(errors='replace').splitlines()
+            matches=[(i,s) for i,s in enumerate(text) if re.search(r'ERROR|FAILED|FAIL |Assertion|timeout|EXIT|exit=',s,re.I)]
+            for i,s in matches[:20]:
+              print('::notice::A0_TRIAGE '+str(p)+' line='+str(i+1)+' '+s[:1000])
+          PY
