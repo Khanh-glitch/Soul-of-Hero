@@ -288,6 +288,15 @@ func _job_target(target: String) -> String:
 	return ""
 
 
+## Ordinary mouse motion: the pointer travels to a point and settles there.
+func _move_pointer(point: Vector2) -> void:
+	var motion := InputEventMouseMotion.new()
+	motion.position = point
+	motion.global_position = point
+	Input.parse_input_event(motion)
+	await process_frame
+
+
 ## A single key press with its own event objects: the input layer drops a re-parsed
 ## event, so press and release must never share one.
 func _key(code: Key) -> void:

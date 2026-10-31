@@ -679,15 +679,6 @@ func _wheel_until_visible(scroll: ScrollContainer, control: Control) -> bool:
 	return false
 
 
-## Ordinary mouse motion: the pointer travels to a point and settles there.
-func _move_pointer(point: Vector2) -> void:
-	var motion := InputEventMouseMotion.new()
-	motion.position = point
-	motion.global_position = point
-	Input.parse_input_event(motion)
-	await process_frame
-
-
 func _open_panel(panel: Node) -> bool:
 	if panel == null:
 		return false

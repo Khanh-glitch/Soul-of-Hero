@@ -57,6 +57,29 @@ jobs:
           version: 4.7.0
           use-dotnet: false
           include-templates: false
+      - name: GDScript parse gate (the engine, not a linter)
+        run: |
+          set +e
+          failures=0
+          for f in tests/survival_normal_input_gather_test.gd \
+                   tests/survival_normal_connected_journey_test.gd \
+                   tests/survival_a0_station_reach_test.gd \
+                   tests/survival_a0_authored_world_contract_test.gd \
+                   tests/survival_a0_authored_stream_test.gd \
+                   game/survival/a0_authored_world_mount.gd \
+                   game/survival/a1_authored_source.gd \
+                   game/overworld/chapter1_overworld.gd; do
+            out=$(timeout 120 bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir ../artifacts/ud_parse --check-only --script "res://$f" 2>&1)
+            if echo "$out" | grep -qE 'SCRIPT ERROR|Parse Error'; then
+              echo "::error title=parse::$f $(echo "$out" | grep -aE 'SCRIPT ERROR|Parse Error' | head -1)"
+              echo "$out" | grep -aE -A2 'SCRIPT ERROR|Parse Error' | head -6
+              failures=$((failures+1))
+            else
+              echo "parse ok $f"
+            fi
+          done
+          [ "$failures" -eq 0 ]
+
       - name: Import the composed project
         run: |
           set -euo pipefail
