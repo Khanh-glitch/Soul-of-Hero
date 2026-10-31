@@ -1,3 +1,13 @@
+# SUPERSEDING CT INDEPENDENT PLAYER-REHEARSAL ORACLES — A7 (2026-10-31)
+Read [source+gameplay rehearsal](https://github.com/Khanh-glitch/Soul-of-Hero/blob/feature/survival-rpg-foundation-20261029/docs/survival/reviews/CT_PRE_DISPATCH_GAMEPLAY_REHEARSAL_ASSET_A6_20261031.md). Stop overvaluing fixture volume and old composition. Independently test at least these **FOUR** real owner-composed vertical journeys, with source→input→world consequence→SaveService→new PID→A6 display where possible:
+- **J01** A0 first-hour route with actual A6 selected avatar and A1 broader safe spawn.
+- **J03** one actually FUNDED forge/garden/research job, offline simulated by legitimate A0 wall-clock/restart and A3 settlement exactly once; A6 return display must reflect exact paid production.
+- **J04/J05** A8 real physically chosen POI with A3-approved source, physical retreat, one actual hazard/knife fight → same death bag and bed; if action unavailable record exact missing SOURCE/CALLER rather than model PASS.
+- **J06/J07** one A8 late chest neutral request at A1 real physical source, A3 approved policy, A0 inventory custody/death bag→real kiosk deposit→new-run vendor, 336h run reset, no second wallet/receipt; if not mounted return precise RED_NOT_IMPLEMENTED and test adversarial closest real seams.
+- **J02 Core** must be a separate gate: immediate cast/stored/research with Gold original FX, charges and real effects; AVFX independent active and may block actual integration, so separate `GOLD_WAIT` not silent omission.
+Mark actual visuals NOT_TESTED when no pixels opened. Read A0 new profile port and last prior A8 native FAIL before deciding. Do not reissue old ClickBlocker/missing-port mistakes. No owner source edits or merge.
+---
+
 # CT A7 — ROUND 10 P0: CURRENT-HEAD INDEPENDENT B0/POI/RUN AUDIT AND FALSIFICATION
 **Existing [PR25](https://github.com/Khanh-glitch/Soul-of-Hero/pull/25), head `0949f7499cce20b575407ec11e604db825a609aa`; previous [Round9](https://github.com/Khanh-glitch/Soul-of-Hero/blob/0949f7499cce20b575407ec11e604db825a609aa/docs/survival/balance/ROUND9_SYSTEM_ACCEPTANCE.md) 3 PASS/1 FAIL/2 BLOCKED/1 RED is now HISTORICAL at composition `ef2ad0f09310` (old A0 `4b4b63f5`, old A6 `63d3fae5`, old A8 `02ad8b72`). Creator says A7 IDLE.**
 ## REQUIRED READING AND NON-NEGOTIABLE PROCESS
