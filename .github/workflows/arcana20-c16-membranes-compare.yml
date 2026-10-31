@@ -8,7 +8,9 @@ on:
       - 'tools/arcana20_source_compare/compare_c16_membranes.py'
       - 'prototypes/arcana_fusion20/renderer/c16_membranes_source_compare.gd'
       - 'prototypes/arcana_fusion20/renderer/source_c/c_math.gd'
-      - 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_membranes.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_kit.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_frame.gd'
+      - 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_membranes.gd'
+      - 'prototypes/arcana_fusion20/renderer/source_c/c_kit.gd'
+      - 'prototypes/arcana_fusion20/renderer/source_c/c_frame.gd'
       - '.github/workflows/arcana20-c16-membranes-compare.yml'
 permissions:
   contents: read
