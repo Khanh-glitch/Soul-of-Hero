@@ -895,11 +895,20 @@ func _physical_mill_gate_and_retreat() -> void:
 			% str(mill_feedback)
 		)
 	)
-	var observation: Dictionary = intents.back()
+	var observation: Dictionary = intents.back() if not intents.is_empty() else {}
+	_check(
+		not observation.is_empty(),
+		"physical Mill inspection emits a neutral request before owner submission"
+	)
+	if observation.is_empty():
+		_cleanup(pair)
+		return
 	var observed: Dictionary = authority.submit_intent(observation)
-	_check(observed.status == "committed", "outer inspection requires no salvage capability")
+	_check(observed.get("status") == "committed", "outer inspection requires no salvage capability")
 	site.receive_authoritative_result(
-		observation.intent_id, observed, authority.project_state(site.get_source_id())
+		str(observation.get("intent_id", "")),
+		observed,
+		authority.project_state(site.get_source_id())
 	)
 
 	var repair_template: Dictionary = site._make_intent(site.definition.choices[0])

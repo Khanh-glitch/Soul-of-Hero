@@ -217,7 +217,7 @@ func _journey_mill_without_capability() -> void:
 		(
 			outer_shape != null
 			and outer_shape.one_way_collision
-			and outer_shape.one_way_collision_direction == Vector2.DOWN
+			and outer_shape.one_way_collision_direction == Vector2.UP
 		),
 		"locked Mill gate blocks entry from south while preserving outward retreat"
 	)
@@ -248,7 +248,7 @@ func _journey_mill_without_capability() -> void:
 		await _stop_pilot()
 		return
 	var safe_direction := outer_shape.one_way_collision_direction
-	outer_shape.one_way_collision_direction = Vector2.UP
+	outer_shape.one_way_collision_direction = Vector2.DOWN
 	await _settle()
 	var mutant_reached := await _walk_axis_to("move_up", KEY_W, 420.0)
 	if mutant_reached and _snapshot().get("position", Vector2.ZERO).y < 480.0:
@@ -485,8 +485,10 @@ func _enter_worksite(expected_source: String) -> bool:
 			and str(snapshot.get("source_id", "")) == expected_source
 		),
 		(
-			"physical doorway signal mounts the exact existing local worksite; active=%s source=%s "
-			+ "feedback=%s position=%s trace=%s"
+			(
+				"physical doorway signal mounts the exact existing local worksite; active=%s source=%s "
+				+ "feedback=%s position=%s trace=%s"
+			)
 			% [
 				str(snapshot.get("active_kind", "")),
 				str(snapshot.get("source_id", "")),

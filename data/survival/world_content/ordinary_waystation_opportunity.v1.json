@@ -22,7 +22,7 @@
     "a3_binding_status": "A3_V5_IMPLEMENTED_NATIVE_FIXTURE_PENDING_A0_MOUNT",
     "a0_contract": "Owner-projected phase/site context; A0 integration remains pending",
     "a0_pr": 21,
-    "a0_head": "4b4b63f56b92c2f7b50d770554afd96d5d0a098b",
+    "a0_head": "84ac9c1afe19627044c572f6f76794f4923334d6",
     "a0_candidate_slice_path": "data/survival/connector/a0_candidate/slices/poi_crown_waystation.slice.json",
     "a0_candidate_slice_sha256": "3a4981fd3e24580e2e7c2ee5d0929f76c432d785e142b67a222c6480af01e16f"
   },
@@ -276,7 +276,7 @@
     "a0_integration_evidence": {
       "status": "GUARDED_CANDIDATE_ONLY_NOT_NORMAL_ENTRY_OR_FULL_WORLD_ACCEPTANCE",
       "a0_waystation_host_path": "game/survival/waystation_host.gd",
-      "a0_waystation_host_sha256": "23c7f6c2c04ab40e1008943336029e278244ed58a604f265452afeb6bab97243",
+      "a0_waystation_host_sha256": "be01490ee52fc004f11cb07fb93176ecea0aefdbe38f814a3d268ea3465bc444",
       "a0_economy_session_path": "game/survival/economy/economy_session.gd",
       "a0_economy_session_sha256": "06ce3c98a90f3b296cdaae961162b903d171fcf2796283a0fb7670be461b159b",
       "a0_save_service_path": "game/autoload/save_service.gd",

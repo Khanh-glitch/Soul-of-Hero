@@ -108,7 +108,7 @@ class RagnarokAuthoringContractTests(unittest.TestCase):
     def test_physical_endpoint_intents_are_neutral_and_use_existing_anchors(self) -> None:
         data = read_json(WORLD_CONTENT / "physical_ragnarok_endpoints.v1.json")
         contract = data["intent_contract"]
-        self.assertEqual(data["source_pins"]["a0_head"], "4b4b63f56b92c2f7b50d770554afd96d5d0a098b")
+        self.assertEqual(data["source_pins"]["a0_head"], "84ac9c1afe19627044c572f6f76794f4923334d6")
         self.assertEqual(data["source_pins"]["a1_head"], "439d5ef1f743da388883377c3e1d4c594e5e8101")
         self.assertEqual(data["source_pins"]["a1_trial_placement_contract_commit"], "439d5ef1f743da388883377c3e1d4c594e5e8101")
         self.assertEqual(data["source_pins"]["a1_trial_placement_contract_path"], "data/survival/world/a1_world_placement_contract.v1.json")
@@ -184,7 +184,7 @@ class RagnarokAuthoringContractTests(unittest.TestCase):
         self.assertEqual(pins["a1_authoring_sha256"], "8f2e437a9c4200f737e1b048be70030e4affde37012f1f05421efe7a2e8064cf")
         self.assertEqual(pins["a3_head"], "35214ed8f555350b83bd8985e9bec7512f3181e8")
         self.assertEqual(pins["a3_bindings_sha256"], "7b9670f4971d2f161138e0754cbbe66dfe2a239bf0d15d3079a766d729dd230b")
-        self.assertEqual(pins["a0_head"], "4b4b63f56b92c2f7b50d770554afd96d5d0a098b")
+        self.assertEqual(pins["a0_head"], "84ac9c1afe19627044c572f6f76794f4923334d6")
         self.assertEqual(pins["a0_candidate_slice_sha256"], pins["a1_slice_sha256"])
         source = data["canonical_source"]
         self.assertEqual(source["poi_id"], "poi_crown_waystation")
@@ -202,7 +202,7 @@ class RagnarokAuthoringContractTests(unittest.TestCase):
         self.assertEqual(cache["a3_binding_id"], "a1_waystation_roadside_cache_v3")
         self.assertFalse(cache["core_or_boss_required"])
         self.assertIn("A0_PR21_GUARDED_CANDIDATE", cache["a0_production_receipt_or_save_grant"])
-        self.assertEqual(cache["a0_integration_evidence"]["a0_waystation_host_sha256"], "23c7f6c2c04ab40e1008943336029e278244ed58a604f265452afeb6bab97243")
+        self.assertEqual(cache["a0_integration_evidence"]["a0_waystation_host_sha256"], "be01490ee52fc004f11cb07fb93176ecea0aefdbe38f814a3d268ea3465bc444")
         self.assertTrue(cache["a0_integration_evidence"]["separate_from_a8_shadow_physics"])
         harness = data["owner_independent_physics_harness"]
         self.assertEqual(harness["status"], "TEST_HARNESS_ONLY_NOT_A1_WORLD_MOUNT")

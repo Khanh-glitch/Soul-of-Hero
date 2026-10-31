@@ -562,7 +562,10 @@ func _physical_endpoint_intents_and_owner_fail_closed() -> void:
 			and not bool(placement_policy.get("production_mount_authorized", true))
 			and not bool(placement_policy.get("economy_or_reward_authorized", true))
 		),
-		"A1-approved socket geometry is recorded as trial-only, without production or economy authority"
+		(
+			"A1 trial geometry/policy is source-pinned and never production/economy authority; policy=%s"
+			% JSON.stringify(placement_policy)
+		)
 	)
 	var approved_trial_cells := {
 		"endpoint.ragnarok.deposit": [[404, 202], [404, 204]],
@@ -589,7 +592,18 @@ func _physical_endpoint_intents_and_owner_fail_closed() -> void:
 				and endpoint_definition.get("placement_status", "")
 				== "A1_APPROVED_TRIAL_ONLY_NOT_PRODUCTION_MOUNT"
 			),
-			"endpoint retains its exact A1 trial socket and stand: %s" % endpoint_id
+			(
+				"endpoint retains its exact A1 trial socket and stand: %s expected=%s actual=%s status=%s"
+				% [
+					endpoint_id,
+					JSON.stringify(expected_cells),
+					JSON.stringify([
+						endpoint_definition.get("a1_trial_socket_cell", []),
+						endpoint_definition.get("a1_trial_stand_cell", [])
+					]),
+					str(endpoint_definition.get("placement_status", ""))
+				]
+			)
 		)
 		var endpoint_collider := endpoint.get_collision_body().get_child(0) as CollisionShape2D
 		var endpoint_rect := (
