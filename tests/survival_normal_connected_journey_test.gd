@@ -210,7 +210,13 @@ func _continuation(ow: Node) -> void:
 			furnace_visible = true
 	_expect(furnace_visible, "the panel counts the built furnace as a nearby station (%d listed)" % nearby.size())
 	await _open_panel(panel)
+	# Report the station list and the panel's own row names before asking for the
+	# row, so a missing recipe is explained by the panel's state rather than guessed.
+	print("A0_CONNECTED_STATIONS furnace=%s listed=%s" % [furnace_id, str(_station_summary(host))])
 	var charcoal_button := _recipe_button(panel, "burn_charcoal", furnace_id)
+	print("A0_CONNECTED_ROWLOOKUP want=Recipe_burn_charcoal_%s found=%s open=%s rows=%s" % [
+		furnace_id, str(charcoal_button != null), str(bool(panel.call(&"is_open"))),
+		str(_button_names(panel).slice(0, 24))])
 	if charcoal_button == null:
 		# The panel rebuilds its station list as the player moves; give it a frame
 		# of real time before calling the recipe missing.
@@ -533,6 +539,25 @@ func _job_rows(panel: Node) -> String:
 	if rows.is_empty():
 		return "no job rows open=%s" % str(bool(panel.call(&"is_open")))
 	return "; ".join(rows)
+
+
+## "id:kind:tier" for every station the session says is in reach.
+func _station_summary(host: Node) -> Array[String]:
+	var out: Array[String] = []
+	for entry: Variant in (host.call(&"nearby_stations") as Array):
+		var station: Dictionary = entry
+		out.append("%s:%s:t%d:op%s" % [String(station.get("station_id", "")),
+			String(station.get("kind", "")), int(station.get("tier", 0)),
+			str(bool(station.get("operational", true)))])
+	return out
+
+
+## The names of every button the panel is showing, in tree order.
+func _button_names(panel: Node) -> Array[String]:
+	var out: Array[String] = []
+	for value: Node in panel.find_children("*", "Button", true, false):
+		out.append(String(value.name))
+	return out
 
 
 func _collect_button(label_prefix: String) -> Button:

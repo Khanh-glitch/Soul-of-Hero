@@ -336,11 +336,39 @@ func _focus_and_accept(row: Button) -> bool:
 ## take (for instance because the row sits on the very edge of the scroll viewport),
 ## Tab + Enter on the same row is the second, equally real attempt. The chosen path
 ## is printed, never assumed.
+## The part of a row a player can actually see: its centre clamped into the scroll
+## viewport it lives in. A row that pokes two pixels into the viewport is still
+## clickable in principle, but pressing its centre means aiming at the edge of the
+## clip, which is exactly where a real press is least reliable.
+func _visible_point(scroll: ScrollContainer, row: Control) -> Vector2:
+	var rect := row.get_global_rect()
+	if scroll == null:
+		return rect.get_center()
+	var view := scroll.get_global_rect().grow(-4.0)
+	return Vector2(
+		clampf(rect.get_center().x, view.position.x, view.end.x),
+		clampf(rect.get_center().y, view.position.y, view.end.y))
+
+
+func _row_notice(panel: Node) -> String:
+	for value: Node in panel.find_children("*", "Label", true, false):
+		var label := value as Label
+		if label == null:
+			continue
+		var text := label.text
+		if text.begins_with("Cannot") or text.begins_with("Queued") or text.begins_with("Done") or text.begins_with("Hand kits"):
+			return text.substr(0, 80)
+	return ""
+
+
 func _queue_row(row: Button, target: String) -> Dictionary:
 	var job_id := ""
 	var path := "mouse"
 	if row != null and is_instance_valid(row):
-		var point: Vector2 = root.get_final_transform() * (row.get_global_transform_with_canvas() * (row.size * 0.5))
+		var fired := [false]
+		var probe := func() -> void: fired[0] = true
+		row.pressed.connect(probe)
+		var point: Vector2 = root.get_final_transform() * _visible_point(_owning_scroll(row), row)
 		# Say what the engine thinks is under the pointer before pressing: "the click
 		# was dropped" and "the click was aimed at a different control" are different
 		# facts and only one of them is a product problem.
@@ -352,6 +380,11 @@ func _queue_row(row: Button, target: String) -> Dictionary:
 			String(hovered.get_path()) if hovered != null else "none"])
 		await _click_window(point)
 		job_id = _job_target(target)
+		if row.pressed.is_connected(probe):
+			row.pressed.disconnect(probe)
+		var panel: Node = _host.get_child(0).get(&"economy_panel")
+		print("A0_CONNECTED_PRESS_RESULT target=%s fired=%s job=%s notice=%s" % [
+			target, str(fired[0]), job_id, _row_notice(panel)])
 	if job_id.is_empty():
 		await create_timer(0.3).timeout
 		if await _focus_and_accept(row):

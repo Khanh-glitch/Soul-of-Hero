@@ -141,12 +141,12 @@ jobs:
             while IFS= read -r line; do echo "::notice::$line"; done < <(grep -aE '^A0_CONNECTED' "$f" | head -60)
             # A gate whose log cannot be read is not a gate: publish the
             # diagnostic lines that explain a failure, not just the failure.
-            while IFS= read -r line; do echo "::error title=diag-$(basename "$f" .log)::$line"; done < <(grep -aE 'A0_CONNECTED_(PANEL|GATHER|APPROACH|DIAG|SCROLL|RUNID|OFFLINE_SETTLE|RESETTLE|DEPARTURE)|NORMAL_GATHER_TRACE|HOME_ROUTE_FAIL' "$f" | head -12)
+            while IFS= read -r line; do echo "::error title=diag-$(basename "$f" .log)::$line"; done < <(grep -aE 'A0_CONNECTED_(STATIONS|ROWLOOKUP|PANEL|PRESS_POINT|INPUT_PATH|WEAVE_CLICK|SCROLL_GEOM|APPROACH|GATHER|RUNID|OFFLINE_SETTLE|RESETTLE|PARTS|DEPARTURE|DIAG)|NORMAL_GATHER_TRACE|HOME_ROUTE_FAIL' "$f" | head -14)
           done
           # A gate nobody can read is not a gate: publish the whole tail of each
           # process log so a failure is diagnosable from the run page itself.
           for f in "$log1" "$log2"; do
-            while IFS= read -r line; do echo "::notice title=$(basename "$f") tail::$line"; done < <(tail -n 80 "$f")
+            while IFS= read -r line; do echo "::notice title=$(basename "$f") tail::$line"; done < <(tail -n 12 "$f")
           done
           # The journey's own 1280x720 pixels are evidence too: collect them from
           # the shared profile so the return image comes from a real second process.
