@@ -177,6 +177,12 @@ C flash/shake/chroma/invert above the real world/actors and below A0 HUD layer
 20. [JOIN 41210977545](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41210977545)
 passed C17 rebound enable, actual-screen change, overlapping-cast cancellation
 and exact frozen-world restoration. [JOIN 41211301091](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211301091), [assertions 41211488925](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211488925) additionally passed idle no-change and an actual opaque HUD-pixel isolation check.
+[C20 collision JOIN 41213047595](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41213047595),
+[assertions 41213261574](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41213261574)
+also verified original C20 collision inversion in the real viewport, one
+actual opaque HUD pixel remained unchanged, and detaching the opt-in consumer
+restored the no-post frame. The collision impulse is intentionally screen-wide;
+this is not a human contamination or source-post fidelity review.
 The consumer is NOT automatically mounted, lacks original multiscale bloom,
 uses an experimental overlap policy, and desaturates the composed scene rather
 than source-C's pre-ink ground. It needs human visual/contamination review.
@@ -298,3 +304,12 @@ with [assertion triage 41212776758](https://github.com/Khanh-glitch/Soul-of-Hero
 passed moving-real-actor anchors, no damage authority, unbound contact ledger
 and cancellation. It is not a source comparison of C raster/slot timing,
 full gameplay targeting, miss coverage or visual approval.
+
+#19 D source initialization was corrected at `b9b8a165` to use the original
+browser's 0.0001-second first reset update before subsequent 60 Hz steps. A
+new [source-pass diagnostic 41213284257](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41213284257)
+is pending. Original D HTML allocates scene and both bloom target scales as
+RGBA8, while only warp targets are RGBA16F when supported. The first attempted
+float read of scene/bloom [41212972194](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41212972194)
+failed; the RGBA8 capture was corrected rather than pretending those original
+targets were HDR. No D bloom implementation or full parity is claimed.
