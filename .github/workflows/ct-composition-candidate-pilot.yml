@@ -61,7 +61,7 @@ jobs:
           set -euo pipefail
           set +e
           python3 product/tools/a0/compose_owners.py \
-            --repo product --out product/.composition --copy-base \
+            --repo product --out .composition --copy-base \
             --owner "a1=$A1_SHA" --owner "a3=$A3_SHA" \
             --owner "a8=$A8_SHA" --owner "a6=$A6_SHA" \
             > artifacts/compose.log 2>&1
