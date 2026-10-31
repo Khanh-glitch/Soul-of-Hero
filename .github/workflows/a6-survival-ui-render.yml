@@ -309,7 +309,7 @@ jobs:
           res="${{ matrix.resolution }}"
           mkdir -p "artifacts/captures-${res}"
           export SOUL_OF_HERO_SAVE_PATH="user://a6_ui_${res}.json"
-          timeout --foreground --signal=TERM --kill-after=20s 420s xvfb-run --auto-servernum \
+          timeout --foreground --signal=TERM --kill-after=20s 720s xvfb-run --auto-servernum \
             -s "-screen 0 ${res}x24" \
             env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
             godot --path . --rendering-driver opengl3 --audio-driver Dummy \
@@ -372,29 +372,39 @@ jobs:
           set -uo pipefail
           set +e
           res="${{ matrix.resolution }}"
-          mkdir -p "artifacts/ud-${res}" artifacts/world-captures-${res}
+          mkdir -p "artifacts/ud-${res}" "artifacts/world-captures-${res}"
           export A0_VISUAL_RESOLUTION="${res}"
           export SOUL_OF_HERO_SAVE_PATH="user://a6_world_${res}.json"
-          timeout --foreground --signal=TERM --kill-after=20s 600s xvfb-run --auto-servernum \
-            -s "-screen 0 ${res}x24" \
-            env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
-            godot --path . --rendering-driver opengl3 --audio-driver Dummy \
-            --resolution "${res}" --windowed --user-data-dir "artifacts/ud-${res}" \
-            --script res://tests/survival_visual_resolutions_test.gd \
-            > "artifacts/world-${res}.log" 2>&1
-          status=$?
-          echo "A6 world renders ${res}: exit ${status}" | tee -a "$GITHUB_STEP_SUMMARY"
-          tail -25 "artifacts/world-${res}.log"
-          # The world test writes res://artifacts/visual_*.png; move them beside the
-          # screen captures so one publish step can carry both sets.
-          if ls artifacts/visual_*.png >/dev/null 2>&1; then
-            for png in artifacts/visual_*.png; do
-              cp "$png" "artifacts/world-captures-${res}/world_$(basename "$png" .png | sed 's/^visual_//')_${res}.png"
-            done
-          fi
+          worst=0
+          # One pass per visual direction, same scene and same fixture, so the two takes
+          # are the same content rendered differently rather than two different moments.
+          for direction in a b; do
+            export A6_VISUAL_DIRECTION="${direction}"
+            rm -f artifacts/visual_*.png
+            timeout --foreground --signal=TERM --kill-after=20s 600s xvfb-run --auto-servernum \
+              -s "-screen 0 ${res}x24" \
+              env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe A6_VISUAL_DIRECTION="${direction}" \
+              godot --path . --rendering-driver opengl3 --audio-driver Dummy \
+              --resolution "${res}" --windowed --user-data-dir "artifacts/ud-${res}" \
+              --script res://tests/survival_visual_resolutions_test.gd \
+              > "artifacts/world-${res}-dir${direction}.log" 2>&1
+            status=$?
+            echo "A6 world render ${res} direction ${direction}: exit ${status}" | tee -a "$GITHUB_STEP_SUMMARY"
+            tail -25 "artifacts/world-${res}-dir${direction}.log"
+            if [ "${status}" -ne 0 ]; then
+              worst="${status}"
+            fi
+            # The world test writes res://artifacts/visual_*.png; move them beside the
+            # screen captures so one publish step can carry both sets.
+            if ls artifacts/visual_*.png >/dev/null 2>&1; then
+              for png in artifacts/visual_*.png; do
+                cp "$png" "artifacts/world-captures-${res}/world_$(basename "$png" .png | sed 's/^visual_//')_${res}_dir${direction}.png"
+              done
+            fi
+          done
           ls -la "artifacts/world-captures-${res}" || true
-          if [ "${status}" -ne 0 ]; then
-            echo "::warning::the world render exited ${status}; its frames are still published when present"
+          if [ "${worst}" -ne 0 ]; then
+            echo "::warning::a world render exited ${worst}; its frames are still published when present"
           fi
 
       - name: Assert every frame is the native size it claims

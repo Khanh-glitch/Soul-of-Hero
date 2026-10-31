@@ -27,6 +27,11 @@ const SUPPORTED_GENDERS := ["male", "female"]
 @onready var female_caption: Label = %FemaleCaption
 @onready var status_label: Label = %StatusLabel
 
+## The two identity cards, so the surface they are drawn on can follow the direction
+## (parchment ledger vs dark board) without a second scene.
+@onready var male_card: PanelContainer = %MaleCard
+@onready var female_card: PanelContainer = %FemaleCard
+
 
 func _ready() -> void:
 	male_button.pressed.connect(_choose.bind("male"))
@@ -42,16 +47,100 @@ func configure(_payload: Dictionary = {}) -> void:
 
 
 func _apply_previews() -> void:
+	_skin_cards()
 	var manifest := _load_manifest()
 	if not _manifest_has_staged_art(manifest):
 		# Straight talk instead of a stand-in character: the player can still choose,
 		# but they are told the preview art is not staged in this build.
-		status_label.text = "Chưa có hình nhân vật trong bản cài này. Bạn vẫn chọn được danh tính."
+		status_label.text = "Bản cài này chưa có hình nhân vật. Bạn vẫn chọn được danh tính."
 		status_label.show()
 	_start_preview(male_preview, "male", "idle")
 	_start_preview(female_preview, "female", "walk")
-	male_caption.text = "NAM" if _preview_missing(male_preview).is_empty() else "NAM\n(chưa có hình)"
-	female_caption.text = "NỮ" if _preview_missing(female_preview).is_empty() else "NỮ\n(chưa có hình)"
+	var male_ready := _preview_missing(male_preview).is_empty()
+	var female_ready := _preview_missing(female_preview).is_empty()
+	male_caption.text = "NAM"
+	female_caption.text = "NỮ"
+	if not male_ready:
+		_mark_missing(male_preview, male_caption, "NAM", "male")
+	if not female_ready:
+		_mark_missing(female_preview, female_caption, "NỮ", "female")
+
+
+## The card surface follows the direction, and each identity carries its own accent so
+## two unillustrated cards are still distinguishable at a glance.
+func _skin_cards() -> void:
+	for pair: Array in [[male_card, "male"], [female_card, "female"]]:
+		var card: PanelContainer = pair[0]
+		if card == null:
+			continue
+		card.add_theme_stylebox_override("panel", A6UiKit.card_style())
+		# The accent band lives inside the card's column: a PanelContainer stretches every
+		# child to its own rect, so a sibling band would cover the whole card instead of
+		# ruling its top edge.
+		var box := card.get_child(0) as VBoxContainer
+		if box == null or box.get_node_or_null("Accent") != null:
+			continue
+		var accent := ColorRect.new()
+		accent.name = "Accent"
+		accent.color = _accent(String(pair[1]))
+		accent.custom_minimum_size = Vector2(0, 3)
+		accent.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		box.add_child(accent)
+		box.move_child(accent, 0)
+
+
+func _accent(gender: String) -> Color:
+	return Color(0.36, 0.6, 0.72) if gender == "male" else Color(0.78, 0.54, 0.32)
+
+
+## What an unstaged identity card looks like on purpose.
+##
+## The previous build drew an empty 128x128 rectangle and printed "(chưa có hình)"
+## underneath it, which reads as a broken image rather than a design. This draws the
+## slot the portrait will occupy, framed in the identity's own accent, with the word the
+## player is choosing and a tag that states the truth. It is deliberately not a
+## character: no Knight, no silhouette that could be mistaken for staged art.
+func _mark_missing(preview: TextureRect, caption: Label, word: String, gender: String) -> void:
+	preview.hide()
+	caption.text = word
+	var box := caption.get_parent() as VBoxContainer
+	if box == null or box.get_node_or_null("NoArtSeal") != null:
+		return
+	var seal := PanelContainer.new()
+	seal.name = "NoArtSeal"
+	seal.custom_minimum_size = Vector2(128, 96)
+	seal.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	seal.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	seal.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var frame := StyleBoxFlat.new()
+	frame.bg_color = Color(0.09, 0.06, 0.05, 0.58) if A6UiKit.is_board() else Color(0.88, 0.81, 0.65, 0.9)
+	frame.border_width_left = 2
+	frame.border_width_right = 2
+	frame.border_width_top = 2
+	frame.border_width_bottom = 2
+	frame.border_color = _accent(gender)
+	frame.content_margin_left = 4.0
+	frame.content_margin_right = 4.0
+	frame.content_margin_top = 4.0
+	frame.content_margin_bottom = 4.0
+	seal.add_theme_stylebox_override("panel", frame)
+	box.add_child(seal)
+	box.move_child(seal, preview.get_index())
+
+	var stack := VBoxContainer.new()
+	stack.alignment = BoxContainer.ALIGNMENT_CENTER
+	stack.add_theme_constant_override("separation", 2)
+	seal.add_child(stack)
+
+	var mark := A6UiKit.face_label(word, "title", 26, _accent(gender))
+	mark.name = "SealWord"
+	mark.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	stack.add_child(mark)
+
+	var tag := A6UiKit.face_label("CHƯA CÓ HÌNH", "caption", 10, A6UiKit.quiet_colour())
+	tag.name = "SealTag"
+	tag.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	stack.add_child(tag)
 
 
 func _start_preview(preview: A6AvatarPreview, gender: String, action: String) -> void:

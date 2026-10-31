@@ -28,7 +28,12 @@ const AVATAR_SCENE := "res://game/ui/screens/avatar_choice/avatar_choice_screen.
 ## uses, so the frame shows the component that ships rather than a mock of it.
 const HUD_SCRIPT := preload("res://game/overworld/overworld_hud.gd")
 const BACKDROP_SCENE := "res://game/ui/theme/dungeon_backdrop.tscn"
-const WATCHDOG_SECONDS := 120.0
+const WATCHDOG_SECONDS := 300.0
+## The production overworld, mounted so the workshop frame shows a real A3 session with
+## real jobs in it. A capture rendered from a stub host would show pixels that no player
+## can ever reach, which is the thing R13's review said must stop.
+const OW_SCENE_PATH := "res://game/overworld/chapter1_overworld.tscn"
+const OW_BUILD_TIMEOUT_MS := 90_000
 
 var _capture_dir := "user://a6_ui_captures"
 var _requested_size := Vector2i.ZERO
@@ -53,9 +58,18 @@ func _run() -> void:
 	_resize_window()
 	await _settle(6)
 	await _capture_screen("title", TITLE_SCENE, "")
-	await _capture_screen("avatar_choice", AVATAR_SCENE, "MaleButton")
-	await _capture_screen("avatar_female", AVATAR_SCENE, "FemaleButton")
-	await _capture_hud("hud_field")
+	# Two deliberately different directions of the *same* screens: one build, one scene
+	# graph, two surfaces, so the creator compares tone rather than content.
+	for direction: String in [A6UiKit.DIRECTION_LEDGER, A6UiKit.DIRECTION_BOARD]:
+		A6UiKit.set_direction(direction)
+		var suffix := "_dir" + direction
+		print("A6 SURVIVAL UI CAPTURE: direction ", direction, " (", A6UiKit.direction(), ")")
+		await _capture_screen("avatar_choice" + suffix, AVATAR_SCENE, "MaleButton")
+		await _capture_screen("avatar_female" + suffix, AVATAR_SCENE, "FemaleButton")
+		await _capture_hud("hud_field" + suffix)
+		await _capture_workshop("workshop_queued" + suffix)
+		await _capture_workshop("workshop_settled" + suffix)
+	_free_world()
 	await _capture_return("return_digest", "digest")
 	await _capture_return("return_guidance", "guidance")
 	_write_manifest()
@@ -157,6 +171,7 @@ func _capture_screen(state: String, scene_path: String, focus_name: String) -> v
 		"saved": FileAccess.file_exists(file),
 		"width": pixels.x,
 		"height": pixels.y,
+		"direction": A6UiKit.direction(),
 		"texts": _audit_texts(screen),
 	})
 	screen.queue_free()
@@ -208,6 +223,7 @@ func _capture_hud(state: String) -> void:
 			"saved": FileAccess.file_exists(file),
 			"width": pixels.x,
 			"height": pixels.y,
+			"direction": A6UiKit.direction(),
 			"texts": _audit_texts(hud_root if hud_root != null else hud),
 		})
 		print("A6 SURVIVAL UI CAPTURE: rendered ", state)
@@ -259,6 +275,156 @@ func _capture_return(state: String, fixture_name: String) -> void:
 		print("A6 SURVIVAL UI CAPTURE: rendered ", state)
 	layer.queue_free()
 	await _settle(2)
+
+
+
+# --- workshop, on the production world ---------------------------------------
+
+## The workshop is captured over the **real** overworld, with a real A3 session and a
+## real queue, because a craft list rendered from a stub host proves layout and nothing
+## else. One world is built per run and reused for both directions; only the surface is
+## re-applied between them.
+var _world: Node = null
+
+
+func _ensure_world() -> bool:
+	if _world != null and is_instance_valid(_world):
+		return true
+	if not ResourceLoader.exists(OW_SCENE_PATH):
+		_failures.append("workshop: %s is missing" % OW_SCENE_PATH)
+		return false
+	var scene := load(OW_SCENE_PATH) as PackedScene
+	if scene == null:
+		_failures.append("workshop: %s did not load" % OW_SCENE_PATH)
+		return false
+	var host := Node2D.new()
+	host.name = "WorkshopCaptureHost"
+	add_child(host)
+	var world := scene.instantiate()
+	host.add_child(world)
+	world.call(&"configure", {})
+	var deadline := Time.get_ticks_msec() + OW_BUILD_TIMEOUT_MS
+	while Time.get_ticks_msec() < deadline:
+		await get_tree().process_frame
+		if world.has_method(&"is_world_ready") and bool(world.call(&"is_world_ready")):
+			_world = world
+			return true
+		if world.has_method(&"is_world_ready"):
+			var reason := String(world.get(&"build_error"))
+			if not reason.is_empty():
+				_failures.append("workshop: the overworld did not build (%s)" % reason)
+				return false
+	_failures.append("workshop: the overworld did not build within %d ms" % OW_BUILD_TIMEOUT_MS)
+	return false
+
+
+## Take in anything the session has already finished, through the session's own command.
+## A job that is not ready refuses and stays; nothing is claimed on the player's behalf.
+func _collect_finished(session: Node) -> void:
+	var jobs: Dictionary = session.call(&"jobs")
+	for raw_id: Variant in jobs.keys():
+		session.call(&"collect", String(raw_id))
+
+
+## Queue real work through the session, paying for it out of a granted bag. The grant is
+## the established fixture pattern (`grant_inventory_item` with a transaction key); the
+## queue itself is the production command, and the row that appears is the session's own
+## job, not a fabricated one.
+func _queue_real_work(session: Node) -> int:
+	var save := get_node_or_null("/root/SaveService")
+	var queued := 0
+	for raw_station: Variant in (session.call(&"nearby_stations") as Array):
+		var station: Dictionary = raw_station
+		var station_id := String(station.get("station_id", ""))
+		for raw_recipe: Variant in (session.call(&"available_recipes", station_id) as Array):
+			if queued >= 3:
+				break
+			var recipe: Dictionary = raw_recipe
+			var inputs: Dictionary = recipe.get("inputs", {})
+			for item_id: Variant in inputs.keys():
+				if save != null and save.has_method(&"grant_inventory_item"):
+					save.call(
+						&"grant_inventory_item", String(item_id), "material",
+						int(inputs[item_id]) + 4,
+						"capture.grant.%s.%s.%d" % [station_id, String(item_id), Time.get_ticks_usec()],
+						{"source": "capture"},
+					)
+			var result: Dictionary = session.call(&"queue_recipe", String(recipe.get("id", "")), station_id)
+			if bool(result.get("ok", false)):
+				queued += 1
+	if queued == 0:
+		_failures.append("workshop: the session refused every queue, so the frame would show an empty list")
+	return queued
+
+
+## `workshop_queued` is the list the moment work is handed over; `workshop_settled` is
+## the same list after the session's own clock has run it down, where a finished job can
+## be collected. Both frames read the same owner state a player reads.
+## The world is freed before the return-layer frames: those are their own screen, and a
+## live overworld behind them would be a different picture from the one that gate audits.
+func _free_world() -> void:
+	if _world == null or not is_instance_valid(_world):
+		return
+	var host := _world.get_parent()
+	if host != null:
+		host.queue_free()
+	_world = null
+
+
+func _capture_workshop(state: String) -> void:
+	var world_ready: bool = await _ensure_world()
+	if not world_ready:
+		return
+	var panel := _world.get(&"economy_panel") as Node
+	var session := _world.get(&"economy_session") as Node
+	if panel == null or session == null:
+		_failures.append("%s: the overworld has no economy panel/session" % state)
+		return
+	if state.contains("queued"):
+		# Start each direction's "just handed over" frame from an empty queue, so the two
+		# directions show the same moment instead of one showing what the other finished.
+		_collect_finished(session)
+		var queued := _queue_real_work(session)
+		if queued > 0:
+			print("A6 SURVIVAL UI CAPTURE: queued %d real jobs" % queued)
+	else:
+		await get_tree().create_timer(1.6).timeout
+	panel.call(&"restyle")
+	if not bool(panel.call(&"is_open")):
+		panel.call(&"toggle")
+	panel.call(&"refresh")
+	await _settle(6)
+	if not bool(panel.call(&"is_open")):
+		_failures.append("%s: the workshop did not open" % state)
+		return
+	await RenderingServer.frame_post_draw
+	var frame := get_viewport().get_texture().get_image()
+	if frame == null or frame.is_empty():
+		_failures.append("%s: no frame was drawn" % state)
+		return
+	if not _is_non_blank(frame):
+		_failures.append("%s: frame is a flat colour" % state)
+		return
+	var root := panel.get_node_or_null("EconomyOverlay") as Control
+	if root != null:
+		var rect := root.get_global_rect()
+		var pixels := frame.get_size()
+		if rect.size.x > float(pixels.x) + 1.0 or rect.size.y > float(pixels.y) + 1.0:
+			_failures.append("%s: the workshop %s does not fit %dx%d" % [
+				state, str(rect.size), pixels.x, pixels.y,
+			])
+	var file := "%s/%s_%s_%dx%d.png" % [_capture_dir, _tag, state, frame.get_width(), frame.get_height()]
+	await _save(frame, file, state)
+	_entries.append({
+		"state": state,
+		"file": file,
+		"saved": FileAccess.file_exists(file),
+		"width": frame.get_width(),
+		"height": frame.get_height(),
+		"direction": A6UiKit.direction(),
+		"texts": _audit_texts(root if root != null else panel),
+	})
+	print("A6 SURVIVAL UI CAPTURE: rendered ", state, " (direction ", A6UiKit.direction(), ")")
 
 
 func _save(frame: Image, file: String, state: String) -> void:

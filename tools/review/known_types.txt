@@ -27,6 +27,7 @@ Control
 Dictionary
 Error
 FakeTarget
+Font
 GridContainer
 HBoxContainer
 HSlider

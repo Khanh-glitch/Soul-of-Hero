@@ -264,3 +264,269 @@ static func layer(parent: Node, layer_index: int, name: String) -> Control:
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	canvas.add_child(root)
 	return root
+
+
+# --- visual direction ---------------------------------------------------------
+#
+# R13 asks for two deliberately different looks of the *same* scene and content, so the
+# creator can choose a tone instead of approving a single take. Both directions share
+# the layout budget, the node names and the input behaviour; only the surface, the type
+# and how state is stated differ. The switch is read from A6_VISUAL_DIRECTION so a CI
+# matrix (or one test process) can render both without a code change.
+#
+# Why the body face is VT323 in both: Handjet cannot draw Vietnamese. Its precomposed
+# glyphs for stacked marks (Bữa, XƯỞNG, Thiếu) overlap into one blob at every raster
+# size, which is what the creator saw as "muddy". VT323 carries the same marks cleanly,
+# so the legibility fix is not a style choice between directions - it is a defect fix
+# applied to both.
+
+const DIRECTION_LEDGER := "a"
+const DIRECTION_BOARD := "b"
+const DIRECTION_ENV := "A6_VISUAL_DIRECTION"
+const FACE_BODY_PATH := "res://assets/fonts/VT323-Regular.ttf"
+const FACE_DISPLAY_PATH := "res://assets/fonts/GrenzeGotisch-SemiBold.ttf"
+
+## Row states. Derived by the caller from owner answers only.
+const STATE_CRAFT := "craft"
+const STATE_SHORT := "short"
+const STATE_BUSY := "busy"
+const STATE_OFFLINE := "offline"
+const STATE_DONE := "done"
+const STATE_KNOWN := "known"
+
+const BOARD_INK := Color(0.16, 0.108, 0.078)
+const BOARD_EDGE := Color(0.52, 0.4, 0.2, 0.9)
+const LEDGER_PLATE := Color(0.945, 0.9, 0.78, 0.92)
+const LEDGER_RULE := Color(0.42, 0.29, 0.19, 0.55)
+
+static var _direction := ""
+static var _faces: Dictionary = {}
+
+
+## The direction in play. Read once from the environment; "a" when unset or unknown.
+static func direction() -> String:
+	if _direction.is_empty():
+		var from_env := OS.get_environment(DIRECTION_ENV).strip_edges().to_lower()
+		_direction = from_env if from_env in [DIRECTION_LEDGER, DIRECTION_BOARD] else DIRECTION_LEDGER
+	return _direction
+
+
+## Switches the direction in-process. Used by the capture driver so one run renders both
+## takes of the same frame; the game itself only reads the environment.
+static func set_direction(value: String) -> void:
+	_direction = value if value in [DIRECTION_LEDGER, DIRECTION_BOARD] else DIRECTION_LEDGER
+
+
+static func is_board() -> bool:
+	return direction() == DIRECTION_BOARD
+
+
+## A loaded face, cached. Both files ship in assets/fonts with their OFL licences.
+static func face(path: String) -> Font:
+	if not _faces.has(path):
+		_faces[path] = load(path) as Font if ResourceLoader.exists(path) else null
+	return _faces[path]
+
+
+## The body face. Vietnamese reads here; Handjet does not (see the note above).
+static func body_face() -> Font:
+	return face(FACE_BODY_PATH)
+
+
+## The display face for names and section headings in the board direction.
+static func display_face() -> Font:
+	return face(FACE_DISPLAY_PATH)
+
+
+## Type sizes, in the 640x360 canvas units the whole interface is authored in.
+## These are the numbers the R13 readability fix is made of: the old captions were 8-10
+## units, which is 8-10 *raster* pixels - below the size at which a stacked Vietnamese
+## mark survives, at any window size.
+static func size_name() -> int:
+	return 15
+
+
+static func size_cost() -> int:
+	return 13
+
+
+static func size_caption() -> int:
+	return 12
+
+
+static func size_heading() -> int:
+	return 15
+
+
+## Text on the window/parchment (ledger) or on the board (board direction).
+static func text_colour() -> Color:
+	return CREAM if is_board() else INK
+
+
+static func quiet_colour() -> Color:
+	return Color(0.86, 0.78, 0.62, 0.9) if is_board() else INK_SOFT
+
+
+static func accent_colour() -> Color:
+	return GOLD if is_board() else Color(0.42, 0.29, 0.12)
+
+
+## The colour a state is stated in: the spine, the tag fill and the queue chip all use
+## it, so one look carries one meaning.
+static func state_colour(state: String) -> Color:
+	match state:
+		STATE_CRAFT:
+			return Color(0.33, 0.58, 0.36) if is_board() else Color(0.24, 0.47, 0.31)
+		STATE_SHORT:
+			return WARN
+		STATE_BUSY:
+			return Color(0.72, 0.52, 0.22)
+		STATE_OFFLINE:
+			return Color(0.45, 0.42, 0.4)
+		STATE_DONE:
+			return GOLD if is_board() else Color(0.72, 0.5, 0.14)
+		_:
+			return Color(0.42, 0.42, 0.46)
+
+
+## Readable ink on top of `state_colour`.
+static func on_state_colour() -> Color:
+	return Color(0.09, 0.06, 0.04) if is_board() else CREAM
+
+
+## The one or two word answer a row gives without reading a sentence.
+static func state_word(state: String) -> String:
+	match state:
+		STATE_CRAFT:
+			return "CHẾ"
+		STATE_SHORT:
+			return "THIẾU"
+		STATE_BUSY:
+			return "ĐẦY"
+		STATE_OFFLINE:
+			return "TẮT"
+		STATE_DONE:
+			return "LẤY"
+		STATE_KNOWN:
+			return "ĐÃ BIẾT"
+		_:
+			return ""
+
+
+## The plate one row is drawn on. Ledger: a light plate with an ink hairline under it,
+## so a list of rows reads as a register. Board: a dark plate with a warm edge, so each
+## row is a chalked line on a hanging board.
+static func row_style(state: String) -> StyleBoxFlat:
+	var box := StyleBoxFlat.new()
+	box.bg_color = BOARD_INK if is_board() else LEDGER_PLATE
+	box.content_margin_left = 4.0
+	box.content_margin_right = 4.0
+	box.content_margin_top = 3.0
+	box.content_margin_bottom = 3.0
+	if is_board():
+		box.border_width_left = 3
+		box.border_color = state_colour(state)
+		box.border_width_top = 1
+		box.border_width_bottom = 1
+		box.border_width_right = 1
+		box.corner_radius_top_left = 2
+		box.corner_radius_top_right = 2
+		box.corner_radius_bottom_left = 2
+		box.corner_radius_bottom_right = 2
+	else:
+		box.border_width_bottom = 1
+		box.border_color = LEDGER_RULE
+	return box
+
+
+## The window the list sits in. The ledger keeps the authored parchment; the board
+## replaces it with a dark plate rather than tinting the parchment, because a tinted
+## parchment is the same picture in a different colour, not a different direction.
+static func window_style() -> StyleBox:
+	if not is_board():
+		var parchment := StyleBoxTexture.new()
+		var texture := load(PANEL_DIR + "/window.png") as Texture2D
+		if texture == null:
+			return row_style(STATE_CRAFT)
+		parchment.texture = texture
+		parchment.texture_margin_left = 8.0
+		parchment.texture_margin_top = 15.0
+		parchment.texture_margin_right = 4.0
+		parchment.texture_margin_bottom = 5.0
+		parchment.content_margin_left = 12.0
+		parchment.content_margin_top = 22.0
+		parchment.content_margin_right = 12.0
+		parchment.content_margin_bottom = 10.0
+		return parchment
+	var board := StyleBoxFlat.new()
+	board.bg_color = Color(0.118, 0.082, 0.058, 0.97)
+	board.border_width_left = 2
+	board.border_width_right = 2
+	board.border_width_top = 2
+	board.border_width_bottom = 2
+	board.border_color = BOARD_EDGE
+	board.content_margin_left = 12.0
+	board.content_margin_top = 12.0
+	board.content_margin_right = 12.0
+	board.content_margin_bottom = 10.0
+	return board
+
+
+## A card surface for the smaller plates (avatar identity cards, queue rows).
+static func card_style() -> StyleBox:
+	if not is_board():
+		var parchment := StyleBoxTexture.new()
+		var texture := load(PANEL_DIR + "/panel.png") as Texture2D
+		if texture == null:
+			return row_style(STATE_CRAFT)
+		parchment.texture = texture
+		parchment.texture_margin_left = 4.0
+		parchment.texture_margin_top = 3.0
+		parchment.texture_margin_right = 4.0
+		parchment.texture_margin_bottom = 3.0
+		parchment.content_margin_left = 4.0
+		parchment.content_margin_top = 3.0
+		parchment.content_margin_right = 4.0
+		parchment.content_margin_bottom = 3.0
+		return parchment
+	var card := StyleBoxFlat.new()
+	card.bg_color = Color(0.15, 0.102, 0.072, 0.96)
+	card.border_width_left = 2
+	card.border_width_right = 2
+	card.border_width_top = 2
+	card.border_width_bottom = 2
+	card.border_color = BOARD_EDGE
+	card.content_margin_left = 5.0
+	card.content_margin_top = 4.0
+	card.content_margin_right = 5.0
+	card.content_margin_bottom = 4.0
+	return card
+
+
+## The small filled plate that states a row's verdict, or its action.
+static func tag_style(state: String) -> StyleBoxFlat:
+	var box := StyleBoxFlat.new()
+	box.bg_color = state_colour(state)
+	box.content_margin_left = 4.0
+	box.content_margin_right = 4.0
+	box.content_margin_top = 1.0
+	box.content_margin_bottom = 1.0
+	box.corner_radius_top_left = 2
+	box.corner_radius_top_right = 2
+	box.corner_radius_bottom_left = 2
+	box.corner_radius_bottom_right = 2
+	return box
+
+
+## A label with the body face at an explicit size and the direction's text colour.
+## `role` picks the theme variation for weight/colour defaults; the face and size are
+## set here so a direction change is one call, not a theme rebuild.
+static func face_label(text: String, role: String, size: int, colour: Color) -> Label:
+	var out := label(text, role, size)
+	var chosen := body_face()
+	if is_board() and role in ["heading", "title"]:
+		chosen = display_face()
+	if chosen != null:
+		out.add_theme_font_override("font", chosen)
+	out.add_theme_color_override("font_color", colour)
+	return out

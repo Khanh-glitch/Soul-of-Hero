@@ -141,9 +141,13 @@ func _check_control_identity(catalog: Dictionary) -> void:
 	if control != null:
 		_expect(control.is_visible_in_tree(), "the recipe control is visible and clickable")
 		# The headline still names the thing you get, because that is what the player
-		# is shopping for.
-		_expect(control.text.begins_with("Charcoal"),
-			"the headline still names the product (%s)" % control.text)
+		# is shopping for. R13 moved the display language to Vietnamese, so the product
+		# name is the one A6VietnameseNames gives `charcoal`; the assertion is unchanged
+		# in intent and still fails if the headline falls back to the recipe id.
+		_expect(control.text.begins_with("Than củi"),
+			"the headline still names the product, in the interface language (%s)" % control.text)
+		_expect(not control.text.contains("burn_charcoal"),
+			"the headline is the product, never the recipe id (%s)" % control.text)
 		control.pressed.emit()
 		var queued: Array = host.queued
 		_expect(queued.size() == 1 and String(queued[0]["recipe"]) == "burn_charcoal",

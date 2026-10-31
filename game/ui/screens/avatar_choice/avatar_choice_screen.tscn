@@ -74,6 +74,7 @@ alignment = 1
 theme_override_constants/separation = 16
 
 [node name="MaleCard" type="PanelContainer" parent="SafeMargin/Column/Cards"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(178, 186)
 layout_mode = 2
 size_flags_vertical = 4
@@ -111,6 +112,7 @@ horizontal_alignment = 1
 text = "NAM"
 
 [node name="FemaleCard" type="PanelContainer" parent="SafeMargin/Column/Cards"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(178, 186)
 layout_mode = 2
 size_flags_vertical = 4

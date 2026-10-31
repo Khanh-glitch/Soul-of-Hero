@@ -101,7 +101,7 @@ func _build_field_card(root: Control) -> void:
 	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_card.add_child(column)
 
-	_region_label = A6UiKit.label("THE HOLLOW MARCHES", "caption", 8)
+	_region_label = A6UiKit.label("THE HOLLOW MARCHES", "caption", 11)
 	_region_label.add_theme_color_override("font_color", A6UiKit.INK_SOFT)
 	_region_label.name = "Region"
 	# clip_text drops the label's minimum width to zero, so a long region name can be
@@ -128,7 +128,7 @@ func _build_field_card(root: Control) -> void:
 	footer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	column.add_child(footer)
 
-	_carry_label = A6UiKit.label("", "caption", 8)
+	_carry_label = A6UiKit.label("", "caption", 11)
 	_carry_label.add_theme_color_override("font_color", A6UiKit.INK_SOFT)
 	_carry_label.name = "Carry"
 	_carry_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
@@ -178,7 +178,7 @@ func _bar_row(node_name: String, icon_id: String, text: String) -> HBoxContainer
 	bar_root.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(bar_root)
 
-	var number := A6UiKit.label(text, "number", 10)
+	var number := A6UiKit.label(text, "number", 12)
 	number.add_theme_color_override("font_color", A6UiKit.INK)
 	number.name = "Number"
 	number.size_flags_vertical = Control.SIZE_SHRINK_CENTER
@@ -200,13 +200,13 @@ func _ink_chip(chip: Node) -> void:
 ## bright sand tile, and in the same language as the rest of the interface.
 func _build_hint(root: Control) -> void:
 	_hint_label = A6UiKit.world_label(
-		"WASD di chuyển  ·  Click tương tác  ·  B xây dựng  ·  C chế tạo  ·  ESC rút lui", 9
+		"WASD di chuyển  ·  Click tương tác  ·  B xây dựng  ·  C chế tạo  ·  ESC rút lui", 11
 	)
 	_hint_label.name = "Hints"
 	_hint_label.modulate = Color(1, 1, 1, 0.78)
 	_hint_label.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
 	_hint_label.offset_left = 8
-	_hint_label.offset_top = -16
+	_hint_label.offset_top = -20
 	_hint_label.offset_bottom = -4
 	root.add_child(_hint_label)
 
@@ -222,12 +222,12 @@ func _build_prompt(root: Control) -> void:
 	_prompt_bar.anchor_left = 0.5
 	_prompt_bar.anchor_right = 0.5
 	_prompt_bar.grow_horizontal = Control.GROW_DIRECTION_BOTH
-	_prompt_bar.offset_top = -34
+	_prompt_bar.offset_top = -38
 	_prompt_bar.offset_bottom = -18
 	_prompt_bar.visible = false
 	root.add_child(_prompt_bar)
 
-	_prompt_label = A6UiKit.label("", "body", 10)
+	_prompt_label = A6UiKit.label("", "body", 12)
 	_prompt_label.add_theme_color_override("font_color", A6UiKit.CREAM)
 	_prompt_label.name = "Prompt"
 	_prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
