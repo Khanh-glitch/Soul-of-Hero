@@ -38,7 +38,10 @@ failed; this historical pin is not an endorsement of the latest route.
   used as acceptance.
 - #09 `e0cae48d` adds an experimental A graph schedule with actual actor
   references, B ARC colors and C `bolt_pts`. Its native JOIN and source tests
-  were still running when this document was written; no success is asserted.
+  [JOIN run 41208565813](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41208565813)
+  at `e0cae48d` passed the moving-real-skeleton anchor, no-damage, and cancel
+  diagnostics. This one-injected-actor test is not AI targeting or source
+  fidelity. Source regression/full capture and later revisions remain pending.
   Legacy candidate remains separate. No effects engine mutates combat HP.
 - Screen flash/shake, D full bloom/warp, A body integration, world lighting,
   post overlap policy, occlusion layers, target-device performance and all
@@ -55,7 +58,7 @@ failed; this historical pin is not an endorsement of the latest route.
 | 06 | A candidate fields available; REDESIGN_CANDIDATE | Moving-tip sweep, water and full world review missing |
 | 07 | C world fields available | Actual-world comparisons, occlusion, phases missing |
 | 08 | B world fields available | Actual-world comparisons, post, gameplay missing |
-| 09 | New A graph/B colors/C bolt candidate; native result pending | Real actors/misses/deaths, C branches, B raster, full source comparison |
+| 09 | New A graph/B colors/C bolt candidate; one moving-real-skeleton diagnostic | [run 41208565813](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41208565813); misses/deaths, C branches, B raster, full source comparison |
 | 10 | C world pass diagnostic | [run 41207915157](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41207915157), one frozen frame only |
 | 11 | A candidate fields available | Original A rotor and full C #09 branching not integrated |
 | 12 | A candidate fields available; REDESIGN_CANDIDATE | Targeting, source craft and world review missing |

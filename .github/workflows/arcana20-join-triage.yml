@@ -14,7 +14,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: arcana20-overworld-join-diagnostic
-          run-id: 41208517991
+          run-id: 41208565813
           github-token: ${{ github.token }}
           path: review
       - name: Log tail and failure context
@@ -29,6 +29,8 @@ jobs:
           for i in hits[-12:]:
               msg=' | '.join(lines[max(0,i-1):i+6]).replace('%','%25').replace('\n',' ')
               print('::notice::JOIN_CONTEXT '+msg[:3600])
+          ok=[l for l in lines if l.startswith('JOIN_OK') or l.startswith('JOIN_FAIL')]
+          print('::notice title=JOIN_ALL::'+ ' | '.join(ok)[:3800].replace('%','%25'))
           print('::notice::JOIN_END '+ ' | '.join(lines[-12:])[:3600].replace('%','%25'))
           print('::notice::JOIN_FILES '+str([str(p) for p in Path('review').rglob('*') if p.is_file()])[:3500])
           PY

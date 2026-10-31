@@ -197,6 +197,15 @@ func _run() -> void:
     # demo formation. Moving the target is a diagnostic transform, not proof
     # of natural AI/target selection or permission to deal gameplay damage.
     var graph_id := Arcana20SourceCatalog.canonical_id(9)
+    var secondary := skeleton_scene.instantiate() as Node2D
+    world.get_node("Entities").add_child(secondary)
+    secondary.global_position = enemy.global_position + Vector2(25, 0)
+    secondary.set_physics_process(false)
+    var graph_contacts := {"bound": 0, "unbound": 0}
+    renderer.visual_contact.connect(func(id: StringName, _pos: Vector2, _kind: StringName) -> void:
+        if id == graph_id: graph_contacts.bound += 1)
+    renderer.unbound_source_contact.connect(func(id: StringName, _kind: StringName, _index: int, _t: float) -> void:
+        if id == graph_id: graph_contacts.unbound += 1)
     renderer.cast_skill(graph_id, player.global_position, enemy.global_position)
     var chain := renderer._casts[graph_id] as ASourcePlayer
     chain.set_process(false)
@@ -211,6 +220,14 @@ func _run() -> void:
     check(first_anchor != null and moved_anchor != null and chain.local_to_world(moved_anchor).distance_to(chain.local_to_world(first_anchor) + Vector2(20, 10)) < 0.1, "A09 graph follows actual moving AnimatedSprite2D target")
     check(int(enemy.get("health")) == hp_graph, "A09 graph alone has no damage authority")
     enemy.global_position = old_position
+    check(graph.nodes[2] != null, "A09 second anchor references another actual enemy")
+    secondary.queue_free()
+    await process_frame
+    chain.advance(STEP, false)
+    check(graph.nodes[2] == null, "A09 removed actor no longer serves as live anchor")
+    for tick in range(330): chain.advance(STEP, false)
+    check(int(graph_contacts.bound) + int(graph_contacts.unbound) == 18 and int(graph_contacts.unbound) > 0, "A09 preserves bound and unbound source contact ledger")
+    check(int(enemy.get("health")) == hp_graph, "A09 source contacts do not inflict damage")
     renderer.cancel_skill(graph_id)
     passes.erase(graph_id)
     await process_frame

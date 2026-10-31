@@ -190,6 +190,20 @@ func render(fb: AFramebuffer, t: float) -> void:
         fb.flash.x += 0.1 * web * web
         for node in nodes:
             if node != null: ADraw.glow(fb, node.x, node.y, 8 + web * 10, B_MID, web * 0.55)
+        if final > 0.55:
+            var dissolve := AMath.seg(t, FINAL + 0.55, FINAL + 1.6)
+            for ev in events:
+                if bool(ev.fail): continue
+                var a: Variant = nodes[int(ev.a)]
+                var b: Variant = nodes[int(ev.b)]
+                if a == null or b == null: continue
+                var length: float = a.distance_to(b)
+                var path := CKit.bolt_pts(float(ev.seed), a.x, a.y, b.x, b.y, 20.0 / maxf(length, 1.0), 4.0)
+                for j in range(path.size() - 1):
+                    if AMath.hash2(float(ev.seed), j) > dissolve:
+                        var p: Vector2 = path[j]
+                        var q: Vector2 = path[j + 1]
+                        ADraw.line(fb, p.x, p.y, q.x, q.y, B_MID, (1.0 - dissolve) * 0.5)
     sparks.each(func(p: Dictionary) -> void:
         var life := float(p.life) / float(p.max)
         fb.add(float(p.x), float(p.y), B_MID.x, B_MID.y, B_MID.z, life)
