@@ -607,3 +607,21 @@ SOH world source parity and creator review remain separate.
   Phase images have not been source-paired or approved; post is not enabled in
   this sweep, and no moving actor, damage, occlusion, target-device or dark-world
   conclusion is implied.
+- C16 selected original seed/spore/petal debris is now integrated with the A16
+  smooth-growth/C-material candidate (`427531650`, center correction
+  `a752dc065`, seed/caster metadata `fd845cf7f`). Its original 7.6 s burst is
+  aligned to the A lead's 5.3 s bloom on one 8.0 s shared timeline; the visual
+  source is not damage authority. Its selected isolated C role, with original
+  seeded setup and controlled default particle seeds, matched source ink IoU 1
+  at ticks 456/457/480/510/540/590 and light max ≤ 2.39e-7 in
+  [41224321145](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41224321145).
+  Historical real-world JOIN [41224789542](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41224789542)
+  passed after [41224490229](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41224490229)
+  exposed and led to correction of different A/C caster-local bases; triage
+  [41224754368](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41224754368).
+  The C layer is selected debris only, not C's full organism, environment, OUT,
+  or proof of SOH/source composite fidelity; its particle default seed differs
+  from uncontrolled source Math.random. Creator and visual review remain open.
+  Additional natural-end/post/restart/no-HP checks were added at `fa2ebdfcd`;
+  their [JOIN 41225009855](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41225009855)
+  is pending and no verdict is inferred here.
