@@ -31,6 +31,18 @@ try {
     };r.drawMarkers=()=>{};
     const idx=d.ALL.findIndex(s=>s.id===19&&s.name==='Constellation Engine');if(idx<0)throw Error('D19 missing');
     d.cast(idx);d.state.playing=true;d.state.speed=1;
+    // Canonical fixed tick for both timelines and RNG seed derivation. The
+    // unmodified accumulated-browser-timing run is preserved in CI 41229145777.
+    // This isolates primitive/algorithm differences from boundary-dependent
+    // Math.floor(t*30) and renderer RNG changes at nominally identical ticks.
+    const frame=r.frame.bind(r);let sourceTick=0;
+    r.frame=(update,dt,restart)=>{
+      sourceTick++;
+      d.state.t=sourceTick/60;
+      const renderTime=Math.max(0.0001,sourceTick/60-1/60+0.0001);
+      r.time=renderTime-dt;
+      return frame(update,dt,restart);
+    };
     const pushRibbon=r.fx.g.line.push.bind(r.fx.g.line);
     window.__lineCalls=[];
     r.fx.g.line.push=(pts,width,col,opts)=>{window.__lineCalls.push({pts:[...pts],width,col,opts});return pushRibbon(pts,width,col,opts);};
@@ -39,7 +51,7 @@ try {
   },coverage);
   if(setup.width!==480||setup.height!==270)throw Error('incorrect source dimensions '+JSON.stringify(setup));
   console.log('D19_ORIGINAL_GL',JSON.stringify(setup));
-  const manifest={setup,scope:'source D WebGL RGBA8 scene and bloom targets on neutral base; no floor, actors or SOH world; not HDR',captures:[]};
+  const manifest={setup,scope:'source D g ribbons at canonical fixed ticks; original scene is neutral, zero camera; no SOH world, OUT parity, or approval',captures:[]};
   let last=0;
   for(const tick of [72,192,312,489,510,528,558,582]) {
     await page.evaluate(n=>{window.__capturePass=false;if(n>1)window.__advance(n-1);window.__capturedPasses=[];window.__lineCalls=[];window.__capturePass=true;window.__advance(1);window.__capturePass=false},tick-last);last=tick;
