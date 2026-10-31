@@ -130,6 +130,13 @@ func _run() -> void:
         return
     check(true, "normal AppRoot/AppFlow route and is_world_ready")
     print("JOIN_WORLD scene=", world.scene_file_path, " player=", player.global_position, " camera=", camera.get_path(), " terrain=", terrain.get_path())
+    if OS.get_environment("ARCANA20_BASELINE_ONLY") == "1":
+        print("JOIN_BASELINE_NO_FX route complete; releasing app before any AVFX or R4 actor setup")
+        app.queue_free()
+        await process_frame
+        await process_frame
+        _finish()
+        return
 
     # A real A0 Skeleton in a diagnostic test mount, not an overworld spawn or
     # gameplay aim/hit-volume proof. R4 and the untouched PR30 binding own HP.
