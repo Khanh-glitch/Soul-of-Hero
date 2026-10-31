@@ -94,7 +94,7 @@
   "trial_visual_authority": {
     "status": "DISTINCT_SOURCE_ATLAS_COMPOSITIONS_TRIAL_ONLY_NOT_FINAL_A1_ART_APPROVAL",
     "texture_path": "res://game/survival/world_content/art/props.png",
-    "texture_sha256": "8be1628352be518e1ac8d7f90a58bb74bf40b1355ff59c3861608d1c99ca2030",
+    "texture_sha256": "8d4acf4028e0e065b901e78c59c65e5a68677fb75d46c04c7e5a029a76d27324",
     "license": "original SOH art; A1 atlas manifest license original",
     "labels_are_affordances_not_result_or_reward_claims": true,
     "production_mount_authorized": false
@@ -102,7 +102,7 @@
   "trial_visual_authority": {
     "status": "DISTINCT_SOURCE_ATLAS_COMPOSITIONS_TRIAL_ONLY_NOT_FINAL_A1_ART_APPROVAL",
     "texture_path": "res://game/survival/world_content/art/props.png",
-    "texture_sha256": "8be1628352be518e1ac8d7f90a58bb74bf40b1355ff59c3861608d1c99ca2030",
+    "texture_sha256": "8d4acf4028e0e065b901e78c59c65e5a68677fb75d46c04c7e5a029a76d27324",
     "license": "original SOH art; A1 atlas manifest license original",
     "labels_are_affordances_not_result_or_reward_claims": true,
     "production_mount_authorized": false

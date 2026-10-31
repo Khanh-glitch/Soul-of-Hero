@@ -18,10 +18,17 @@ class ArtManifestTests(unittest.TestCase):
         cls.terrain_frames = cls.manifest["terrain_frames"]
         cls.prop_frames = cls.manifest["props_frames"]
 
+    def test_complete_current_a1_atlas_counts_are_available_to_the_site_compositor(self) -> None:
+        self.assertEqual(len(self.terrain_frames), 1759)
+        self.assertEqual(len(self.prop_frames), 138)
+        self.assertEqual(self.manifest["a1_head"], "e1e4e9a4d4a0f7f0d38360d638715a0c9f144208")
+
     def test_texture_hashes_and_png_dimensions_match_the_pinned_source(self) -> None:
         expected = {
-            "terrain": ("4317e9b1aa49dbd401fb6b8c03b67e79311acca90fb04604f9c7017626da811e", (512, 128)),
-            "props": ("8be1628352be518e1ac8d7f90a58bb74bf40b1355ff59c3861608d1c99ca2030", (1024, 186)),
+            "terrain": ("6128d8f41abe6962fe705431db20e762e0cca613ffc3eca29065727422737d1c", (512, 880)),
+            "props": ("8d4acf4028e0e065b901e78c59c65e5a68677fb75d46c04c7e5a029a76d27324", (1024, 572)),
+            "surface": ("1c09dc358ea7724b97bfe15695d6fa4612b57cf2d78d7a5a9ea23164eb3b44e2", (80, 16)),
+            "quarry_lamp_radial": ("351ed8009dae7be3ae61c80f5161bce6984a4444576c7c5b51500f6fcea8d69e", (256, 256)),
         }
         for name, (digest, dimensions) in expected.items():
             record = self.manifest["textures"][name]
@@ -33,7 +40,7 @@ class ArtManifestTests(unittest.TestCase):
             self.assertEqual(contents[:8], b"\x89PNG\r\n\x1a\n")
 
     def test_frames_are_positive_and_inside_the_copied_atlas(self) -> None:
-        dimensions = {"terrain": (512, 128), "props": (1024, 186)}
+        dimensions = {"terrain": (512, 880), "props": (1024, 572)}
         for name, frames, expected_size in (
             ("terrain", self.terrain_frames, 16),
             ("props", self.prop_frames, None),
@@ -101,6 +108,17 @@ class ArtManifestTests(unittest.TestCase):
                 self.assertTrue(self._has_family(path_data["family"]))
                 for cell in path_data["points"]:
                     self._assert_cell_inside(cell, width // 16, height // 16, path.name)
+            for path_data in layout.get("track_paths", []):
+                self.assertTrue(self._has_family(path_data["family"]))
+                for cell in path_data["points"]:
+                    self._assert_cell_inside(cell, width // 16, height // 16, path.name)
+            for overlay in layout.get("overlays", []):
+                self.assertIn(overlay["frame"], self.terrain_frames, (path.name, overlay))
+                self._assert_cell_inside(overlay["cell"], width // 16, height // 16, path.name)
+            for variant in layout.get("state_overlays", []):
+                for overlay in variant.get("overlays", []):
+                    self.assertIn(overlay["frame"], self.terrain_frames, (path.name, overlay))
+                    self._assert_cell_inside(overlay["cell"], width // 16, height // 16, path.name)
             shell = data["overworld_shell"]
             self.assertEqual(shell["bounds_px"], [128, 128], path.name)
             self.assertEqual(shell["action_socket"], [64, 64], path.name)
@@ -235,6 +253,45 @@ class ArtManifestTests(unittest.TestCase):
             if variant["key"] == "mill_wheel" and variant["equals"] == "seized"
         )
         self.assertTrue(any(prop["id"] == "seized_race_deadfall" for prop in seized["props"]))
+
+    def test_quarry_and_orchard_compositions_use_distinct_source_backed_visual_grammar(self) -> None:
+        quarry = json.loads((ROOT / "data/survival/world_content/sites/south_quarry.json").read_text())
+        q_layout = quarry["visual_layout"]
+        q_frames = {prop["frame"] for prop in q_layout["props"]}
+        self.assertTrue(
+            {"lm_quarry_workface", "lm_ashwater_pump", "mill_wheel", "pipe_run", "pump_tank", "ore_skarn"}
+            <= q_frames
+        )
+        self.assertTrue(q_layout["track_paths"])
+        self.assertTrue(any(path["family"] == "road_stone" for path in q_layout["paths"]))
+        powered = next(
+            variant
+            for variant in q_layout["state_props"]
+            if variant["key"] == "quarry_deep_gate" and variant["equals"] == "open"
+        )
+        live_lamp = next(prop for prop in powered["props"] if prop["frame"] == "lamp")
+        self.assertIn("local_light", live_lamp)
+        self.assertTrue(powered["hide_ids"])
+        self.assertEqual(quarry["source"]["canonical_cell"], [30, 280])
+
+        orchard = json.loads(
+            (ROOT / "data/survival/world_content/sites/south_orchard_ruin.json").read_text()
+        )
+        o_layout = orchard["visual_layout"]
+        o_frames = {prop["frame"] for prop in o_layout["props"]}
+        self.assertTrue(
+            {"tree_orchard", "canopy_tree", "tree_dead", "lm_orchard_shed", "sluice_gate", "boardwalk_post", "pump_tank"}
+            <= o_frames
+        )
+        self.assertGreaterEqual(sum(bool(prop.get("occludes_actor")) for prop in o_layout["props"]), 5)
+        self.assertTrue(any(overlay["frame"].startswith("detail_water_ripple_")
+                            for state in o_layout["state_overlays"]
+                            for overlay in state["overlays"]))
+        self.assertFalse(any(prop["frame"] == "herb_moonleaf"
+                             for variant in o_layout["state_props"]
+                             for prop in variant.get("props", [])))
+        self.assertEqual(orchard["source"]["canonical_cell"], [140, 360])
+        self.assertEqual(o_layout["state_paths"]["orchard_channel"]["flowing"][0]["width"], 2)
 
     def test_site_renderer_has_no_procedural_or_unlicensed_art_fallback(self) -> None:
         for filename in ("native_poi_site.gd", "native_poi_shell.gd"):

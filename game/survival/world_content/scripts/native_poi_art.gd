@@ -10,6 +10,7 @@ const SURFACE_SCRIPT := preload(
 )
 const ART_MANIFEST := "res://data/survival/world_content/a8_art_manifest.v1.json"
 const TILE_PX := 16
+const CARDINAL_STEPS := [Vector2i(0, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 0)]
 
 var _definition: Dictionary = {}
 var _layout: Dictionary = {}
@@ -23,13 +24,20 @@ var _surface_contract: Dictionary = {}
 var _terrain_texture: Texture2D
 var _props_texture: Texture2D
 var _surface_texture: Texture2D
+var _quarry_lamp_radial: Texture2D
 var _terrain_layer: TileMapLayer
+var _path_layer: TileMapLayer
+var _track_layer: TileMapLayer
 var _surface_layer: TileMapLayer
 var _context_layer: TileMapLayer
 var _props_root: Node2D
 var _terrain_ids: Dictionary = {}
 var _surface_ids: Dictionary = {}
+var _terrain_source_id := -1
+var _surface_source_id := -1
 var _animated_props: Array[Dictionary] = []
+var _depth_sorted_props: Array[Dictionary] = []
+var _depth_actor: Node2D
 var _animation_clock := 0.0
 
 
@@ -59,10 +67,18 @@ func configure(definition: Dictionary, shell_role: bool = false) -> bool:
 	_terrain_texture = load(str(textures.get("terrain", {}).get("path", ""))) as Texture2D
 	_props_texture = load(str(textures.get("props", {}).get("path", ""))) as Texture2D
 	_surface_texture = load(str(textures.get("surface", {}).get("path", ""))) as Texture2D
+	_quarry_lamp_radial = (
+		load(str(textures.get("quarry_lamp_radial", {}).get("path", ""))) as Texture2D
+	)
 	_surface_contract = SURFACE_SCRIPT.site_surface(
 		str(definition.get("source", {}).get("poi_id", ""))
 	)
-	if _terrain_texture == null or _props_texture == null or _surface_texture == null:
+	if (
+		_terrain_texture == null
+		or _props_texture == null
+		or _surface_texture == null
+		or _quarry_lamp_radial == null
+	):
 		return false
 	_build_ground()
 	_build_props()
@@ -108,15 +124,42 @@ func _process(delta: float) -> void:
 		var degrees_per_step := float(rule.get("degrees_per_step", 90.0))
 		var step_index := floori(_animation_clock / step_seconds)
 		sprite.rotation_degrees = fposmod(float(step_index) * degrees_per_step, 360.0)
+	_update_depth_layers()
+
+
+func set_depth_actor(actor: Node2D) -> void:
+	_depth_actor = actor
+	_update_depth_layers()
+
+
+func _update_depth_layers() -> void:
+	if not is_instance_valid(_depth_actor):
+		return
+	for record: Dictionary in _depth_sorted_props:
+		var sprite := record.get("sprite") as Sprite2D
+		if not is_instance_valid(sprite):
+			continue
+		# Prop feet are the authored anchor. The source-sized tree canopy moves in
+		# front of the actor only when the actor stands behind that anchor.
+		sprite.z_index = 1 if _depth_actor.global_position.y < sprite.global_position.y else -1
 
 
 func get_terrain_frame_at_cell(cell: Vector2i) -> String:
 	if not is_instance_valid(_terrain_layer):
 		return ""
-	var atlas_cell := _terrain_layer.get_cell_atlas_coords(cell)
-	for frame_name: String in _terrain_ids:
-		if _terrain_ids[frame_name] == atlas_cell:
-			return frame_name
+	for layer: TileMapLayer in [_surface_layer, _track_layer, _path_layer, _terrain_layer]:
+		if not is_instance_valid(layer):
+			continue
+		var source_id := layer.get_cell_source_id(cell)
+		if source_id < 0:
+			continue
+		var atlas_cell := layer.get_cell_atlas_coords(cell)
+		var frame_map: Dictionary = (
+			_surface_ids if source_id == _surface_source_id else _terrain_ids
+		)
+		for frame_name: String in frame_map:
+			if frame_map[frame_name] == atlas_cell:
+				return frame_name
 	return ""
 
 
@@ -131,13 +174,17 @@ func get_environment_projection() -> Dictionary:
 
 
 func _build_ground() -> void:
-	for layer: TileMapLayer in [_context_layer, _terrain_layer, _surface_layer]:
+	for layer: TileMapLayer in [
+		_context_layer, _terrain_layer, _path_layer, _track_layer, _surface_layer
+	]:
 		if is_instance_valid(layer):
 			if layer.get_parent() == self:
 				remove_child(layer)
 			layer.queue_free()
 	_terrain_ids.clear()
 	_surface_ids.clear()
+	_terrain_source_id = -1
+	_surface_source_id = -1
 	var tile_px := int(_manifest.get("tile_px", TILE_PX))
 	if tile_px != TILE_PX:
 		push_error("A8 art atlas tile size must remain 16 px")
@@ -165,6 +212,7 @@ func _build_ground() -> void:
 			source.create_tile(atlas_cell)
 		_terrain_ids[frame_name] = atlas_cell
 	var source_id := tile_set.add_source(source)
+	_terrain_source_id = source_id
 	var surface_source_id := -1
 	var surface_frames: Dictionary = _manifest.get("surface_frames", {})
 	if not surface_frames.is_empty():
@@ -182,6 +230,7 @@ func _build_ground() -> void:
 				surface_source.create_tile(atlas_cell)
 			_surface_ids[frame_name] = atlas_cell
 		surface_source_id = tile_set.add_source(surface_source)
+		_surface_source_id = surface_source_id
 	_context_layer = TileMapLayer.new()
 	_context_layer.name = "A8_SourceBacked_EnvironmentContext"
 	_context_layer.z_index = -11
@@ -194,9 +243,21 @@ func _build_ground() -> void:
 	_terrain_layer.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	_terrain_layer.tile_set = tile_set
 	add_child(_terrain_layer)
+	_path_layer = TileMapLayer.new()
+	_path_layer.name = "A8_SourceBacked_Roads_Tracks_And_Water"
+	_path_layer.z_index = -9
+	_path_layer.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_path_layer.tile_set = tile_set
+	add_child(_path_layer)
+	_track_layer = TileMapLayer.new()
+	_track_layer.name = "A8_SourceBacked_Track_Overlays"
+	_track_layer.z_index = -8
+	_track_layer.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_track_layer.tile_set = tile_set
+	add_child(_track_layer)
 	_surface_layer = TileMapLayer.new()
 	_surface_layer.name = "A8_Surface_Affordances"
-	_surface_layer.z_index = -9
+	_surface_layer.z_index = -7
 	_surface_layer.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	_surface_layer.tile_set = tile_set
 	add_child(_surface_layer)
@@ -207,33 +268,164 @@ func _build_ground() -> void:
 			var row: Array = ground_rows[y]
 			for x: int in range(mini(row.size(), _columns)):
 				_paint_cell(Vector2i(x, y), str(row[x]), source_id)
-		for overlay: Dictionary in _layout.get("overlays", []):
-			_paint_cell(
-				VECTOR_UTIL.from_int_pair(overlay.get("cell", []), Vector2i(-1, -1)),
-				str(overlay.get("frame", "")),
-				source_id
-			)
 	else:
-		var base_family := str(_layout.get("ground_family", "ash"))
-		for y: int in range(_rows):
-			for x: int in range(_columns):
-				_paint_cell(Vector2i(x, y), _family_frame(base_family, x, y), source_id)
-		for area: Dictionary in _layout.get("ground_areas", []):
-			_paint_ellipse(
-				VECTOR_UTIL.from_int_pair(area.get("center", []), Vector2i(-1, -1)),
-				VECTOR_UTIL.from_int_pair(area.get("radius", []), Vector2i.ZERO),
-				str(area.get("family", base_family)),
-				source_id
-			)
-		for path: Dictionary in _layout.get("paths", []):
-			_paint_path(path, source_id)
+		var materials := _build_material_grid(str(_layout.get("ground_family", "ash")))
+		_paint_material_grid(materials, source_id)
+		_paint_material_transitions(materials, source_id)
+	var path_cells: Dictionary = {}
+	for path: Dictionary in _layout.get("paths", []):
+		_collect_path_cells(path, path_cells)
 	var state_paths: Dictionary = _layout.get("state_paths", {})
 	for state_key: String in state_paths:
 		var values: Dictionary = state_paths[state_key]
 		var state_value := str(_site_state.get(state_key, ""))
 		for path: Dictionary in values.get(state_value, []):
-			_paint_path(path, source_id)
+			_collect_path_cells(path, path_cells)
+	_paint_path_cells(path_cells, source_id, _path_layer)
+	var track_cells: Dictionary = {}
+	for path: Dictionary in _layout.get("track_paths", []):
+		_collect_path_cells(path, track_cells)
+	var state_track_paths: Dictionary = _layout.get("state_track_paths", {})
+	for state_key: String in state_track_paths:
+		var values: Dictionary = state_track_paths[state_key]
+		var state_value := str(_site_state.get(state_key, ""))
+		for path: Dictionary in values.get(state_value, []):
+			_collect_path_cells(path, track_cells)
+	_paint_path_cells(track_cells, source_id, _track_layer)
+	for overlay: Dictionary in _layout.get("overlays", []):
+		_paint_overlay(overlay, source_id)
+	for variant: Dictionary in _layout.get("state_overlays", []):
+		if str(_site_state.get(str(variant.get("key", "")), "")) != str(variant.get("equals", "")):
+			continue
+		for overlay: Dictionary in variant.get("overlays", []):
+			_paint_overlay(overlay, source_id)
 	_paint_surface_contract(source_id, surface_source_id)
+
+
+func _build_material_grid(base_family: String) -> Dictionary:
+	var materials: Dictionary = {}
+	for y: int in range(_rows):
+		for x: int in range(_columns):
+			materials[Vector2i(x, y)] = base_family
+	for area: Dictionary in _layout.get("ground_areas", []):
+		var center := VECTOR_UTIL.from_int_pair(area.get("center", []), Vector2i(-1, -1))
+		var radius := VECTOR_UTIL.from_int_pair(area.get("radius", []), Vector2i.ZERO)
+		_stamp_material_ellipse(materials, center, radius, str(area.get("family", base_family)))
+	return materials
+
+
+func _stamp_material_ellipse(
+	materials: Dictionary, center: Vector2i, radius: Vector2i, family: String
+) -> void:
+	if center.x < 0 or center.y < 0 or radius.x <= 0 or radius.y <= 0:
+		return
+	for y: int in range(center.y - radius.y, center.y + radius.y + 1):
+		for x: int in range(center.x - radius.x, center.x + radius.x + 1):
+			var cell := Vector2i(x, y)
+			if x < 0 or y < 0 or x >= _columns or y >= _rows:
+				continue
+			var dx := float(x - center.x) / float(radius.x)
+			var dy := float(y - center.y) / float(radius.y)
+			var edge_wear := float(posmod(x * 13 + y * 7 + x * y, 9)) * 0.012
+			if dx * dx + dy * dy <= 1.0 + edge_wear:
+				materials[cell] = family
+
+
+func _paint_material_grid(materials: Dictionary, source_id: int) -> void:
+	for cell_value: Variant in materials:
+		var cell: Vector2i = cell_value
+		var family := str(materials[cell])
+		_paint_cell(cell, _family_frame(family, cell.x, cell.y), source_id)
+
+
+func _paint_material_transitions(materials: Dictionary, source_id: int) -> void:
+	for cell_value: Variant in materials:
+		var cell: Vector2i = cell_value
+		var family := str(materials[cell])
+		var mask := 0
+		var blend_counts: Dictionary = {}
+		for index: int in range(CARDINAL_STEPS.size()):
+			var neighbor_family := str(materials.get(cell + CARDINAL_STEPS[index], ""))
+			if neighbor_family == family:
+				mask |= 1 << index
+			elif not neighbor_family.is_empty():
+				var prefix := "blend_%s_%s_" % [neighbor_family, family]
+				if _terrain_ids.has(prefix + "0"):
+					blend_counts[prefix] = int(blend_counts.get(prefix, 0)) + 1
+		var chosen_prefix := ""
+		var chosen_count := 0
+		for prefix_value: Variant in blend_counts:
+			var prefix := str(prefix_value)
+			var count := int(blend_counts[prefix])
+			if count > chosen_count:
+				chosen_prefix = prefix
+				chosen_count = count
+		if not chosen_prefix.is_empty():
+			var transition_frame := chosen_prefix + str(mask)
+			if _terrain_ids.has(transition_frame):
+				_paint_cell(cell, transition_frame, source_id)
+
+
+func _collect_path_cells(path: Dictionary, path_cells: Dictionary) -> void:
+	var points: Array = path.get("points", [])
+	var width := maxi(1, int(path.get("width", 1)))
+	var family := str(path.get("family", "gravel"))
+	if points.size() < 2:
+		return
+	for index: int in range(points.size() - 1):
+		var start := VECTOR_UTIL.from_int_pair(points[index], Vector2i(-1, -1))
+		var finish := VECTOR_UTIL.from_int_pair(points[index + 1], Vector2i(-1, -1))
+		if start.x < 0 or start.y < 0 or finish.x < 0 or finish.y < 0:
+			continue
+		var delta := finish - start
+		var steps := maxi(absi(delta.x), absi(delta.y))
+		for step: int in range(steps + 1):
+			var ratio := float(step) / float(maxi(steps, 1))
+			var center := Vector2i(
+				roundi(lerpf(start.x, finish.x, ratio)), roundi(lerpf(start.y, finish.y, ratio))
+			)
+			var before := floori(float(width - 1) * 0.5)
+			var after := width - before
+			for y: int in range(center.y - before, center.y + after):
+				for x: int in range(center.x - before, center.x + after):
+					if x >= 0 and y >= 0 and x < _columns and y < _rows:
+						path_cells[Vector2i(x, y)] = family
+
+
+func _paint_path_cells(path_cells: Dictionary, source_id: int, target_layer: TileMapLayer) -> void:
+	for cell_value: Variant in path_cells:
+		var cell: Vector2i = cell_value
+		var family := str(path_cells[cell])
+		var mask := 0
+		for index: int in range(CARDINAL_STEPS.size()):
+			if str(path_cells.get(cell + CARDINAL_STEPS[index], "")) == family:
+				mask |= 1 << index
+		var frame_name := family + "_" + str(mask)
+		if not _terrain_ids.has(frame_name):
+			frame_name = _family_frame(family, cell.x, cell.y)
+		if (
+			is_instance_valid(target_layer)
+			and _terrain_ids.has(frame_name)
+			and cell.x >= 0
+			and cell.y >= 0
+			and cell.x < _columns
+			and cell.y < _rows
+		):
+			target_layer.set_cell(cell, source_id, _terrain_ids[frame_name])
+
+
+func _paint_overlay(overlay: Dictionary, source_id: int) -> void:
+	var cell := VECTOR_UTIL.from_int_pair(overlay.get("cell", []), Vector2i(-1, -1))
+	var frame_name := str(overlay.get("frame", ""))
+	if (
+		is_instance_valid(_surface_layer)
+		and _terrain_ids.has(frame_name)
+		and cell.x >= 0
+		and cell.y >= 0
+		and cell.x < _columns
+		and cell.y < _rows
+	):
+		_surface_layer.set_cell(cell, source_id, _terrain_ids[frame_name])
 
 
 func _build_context_ground(source_id: int) -> void:
@@ -334,45 +526,9 @@ func _family_frame(family: String, x: int, y: int) -> String:
 	return variants[pick]
 
 
-func _paint_ellipse(center: Vector2i, radius: Vector2i, family: String, source_id: int) -> void:
-	if center.x < 0 or center.y < 0 or radius.x <= 0 or radius.y <= 0:
-		return
-	for y: int in range(center.y - radius.y, center.y + radius.y + 1):
-		for x: int in range(center.x - radius.x, center.x + radius.x + 1):
-			var dx := float(x - center.x) / float(radius.x)
-			var dy := float(y - center.y) / float(radius.y)
-			var edge_wear := float(posmod(x * 13 + y * 7 + x * y, 9)) * 0.012
-			if dx * dx + dy * dy <= 1.0 + edge_wear:
-				_paint_cell(Vector2i(x, y), _family_frame(family, x, y), source_id)
-
-
-func _paint_path(path: Dictionary, source_id: int) -> void:
-	var points: Array = path.get("points", [])
-	var width := maxi(1, int(path.get("width", 1)))
-	var family := str(path.get("family", "gravel"))
-	if points.size() < 2:
-		return
-	for index: int in range(points.size() - 1):
-		var start := VECTOR_UTIL.from_int_pair(points[index], Vector2i(-1, -1))
-		var finish := VECTOR_UTIL.from_int_pair(points[index + 1], Vector2i(-1, -1))
-		if start.x < 0 or finish.x < 0:
-			continue
-		var delta := finish - start
-		var steps := maxi(absi(delta.x), absi(delta.y))
-		for step: int in range(steps + 1):
-			var ratio := float(step) / float(maxi(steps, 1))
-			var center := Vector2i(
-				roundi(lerpf(start.x, finish.x, ratio)), roundi(lerpf(start.y, finish.y, ratio))
-			)
-			var before := floori(float(width - 1) * 0.5)
-			var after := width - before
-			for y: int in range(center.y - before, center.y + after):
-				for x: int in range(center.x - before, center.x + after):
-					_paint_cell(Vector2i(x, y), _family_frame(family, x, y), source_id)
-
-
 func _build_props() -> void:
 	_animated_props.clear()
+	_depth_sorted_props.clear()
 	if is_instance_valid(_props_root):
 		if _props_root.get_parent() == self:
 			remove_child(_props_root)
@@ -394,18 +550,41 @@ func _build_props() -> void:
 		if hidden_ids.has(str(prop.get("id", ""))):
 			continue
 		var sprite := _make_sprite(prop)
-		if sprite != null:
-			var rotation_animation: Variant = prop.get("rotation_animation", {})
-			if rotation_animation is Dictionary and not rotation_animation.is_empty():
-				var frame_rect: Array = frame_map.get(str(prop.get("frame", "")), [])
-				if frame_rect.size() == 4:
-					sprite.centered = true
-					sprite.position += Vector2(0.0, -float(frame_rect[3]) * 0.5)
-					sprite.offset = Vector2.ZERO
-					_animated_props.append(
-						{"sprite": sprite, "rule": rotation_animation.duplicate(true)}
-					)
-			_props_root.add_child(sprite)
+		if sprite == null:
+			continue
+		_props_root.add_child(sprite)
+		if bool(prop.get("occludes_actor", false)):
+			_depth_sorted_props.append({"sprite": sprite})
+		var light_data: Variant = prop.get("local_light", {})
+		if light_data is Dictionary and not light_data.is_empty():
+			_add_local_light(sprite, light_data, frame_map.get(str(prop.get("frame", "")), []))
+		var rotation_animation: Variant = prop.get("rotation_animation", {})
+		if rotation_animation is Dictionary and not rotation_animation.is_empty():
+			var frame_rect: Array = frame_map.get(str(prop.get("frame", "")), [])
+			if frame_rect.size() == 4:
+				sprite.centered = true
+				sprite.position += Vector2(0.0, -float(frame_rect[3]) * 0.5)
+				sprite.offset = Vector2.ZERO
+				_animated_props.append(
+					{"sprite": sprite, "rule": rotation_animation.duplicate(true)}
+				)
+	_update_depth_layers()
+
+
+func _add_local_light(sprite: Sprite2D, light_data: Dictionary, frame_rect: Array) -> void:
+	if _quarry_lamp_radial == null or frame_rect.size() != 4:
+		return
+	var light := PointLight2D.new()
+	light.name = "A1_SourceBacked_LocalLampLight"
+	light.texture = _quarry_lamp_radial
+	light.texture_scale = float(light_data.get("texture_scale", 0.55))
+	light.energy = float(light_data.get("energy", 0.42))
+	light.color = Color(str(light_data.get("color", "#ffc77a")))
+	light.blend_mode = PointLight2D.BLEND_MODE_ADD
+	light.shadow_enabled = false
+	light.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	light.position = Vector2(0.0, -float(frame_rect[3]) * 0.74)
+	sprite.add_child(light)
 
 
 func _make_sprite(prop: Dictionary) -> Sprite2D:
@@ -440,5 +619,7 @@ func _make_sprite(prop: Dictionary) -> Sprite2D:
 	sprite.centered = false
 	sprite.position = anchor
 	sprite.offset = Vector2(-float(floori(float(rect[2]) * 0.5)), -float(rect[3]))
+	sprite.z_as_relative = false
+	sprite.z_index = -1
 	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	return sprite

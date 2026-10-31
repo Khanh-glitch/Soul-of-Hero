@@ -37,6 +37,7 @@ const BASE_VIEWPORT_SIZE := Vector2(1280.0, 720.0)
 ## test-only and never writes to SaveService or the production economy.
 @export var journey_test_mode := false
 @export var journey_owner_projection_seed: Dictionary = {}
+@export var clean_player_view_capture := false
 
 var _authority: PoiAuthorityFixture
 var _journey_authority: PoiJourneyAuthorityFixture
@@ -56,6 +57,7 @@ var _details: Label
 func _ready() -> void:
 	_install_fixture_inputs()
 	if journey_test_mode:
+		clean_player_view_capture = true
 		_journey_authority = JOURNEY_FIXTURE_SCRIPT.new() as PoiJourneyAuthorityFixture
 		_journey_authority.configure(_load_site_definitions(), journey_owner_projection_seed)
 	else:
@@ -178,6 +180,7 @@ func _mount_site(index: int) -> void:
 		_active_scene = _shell
 		add_child(_shell)
 		_shell.apply_run_phase_projection(PHASE_FIXTURE.project(_shell.definition))
+		_shell.set_visual_depth_actor(_hero)
 		_shell.transition_requested.connect(_on_transition_requested)
 		_shell.player_feedback.connect(_on_player_feedback)
 		_hero.global_position = (
@@ -225,6 +228,7 @@ func _mount_worksite(scene_path: String, spawn_override: Vector2) -> void:
 	_site.transition_requested.connect(_on_transition_requested)
 	_site.set_projection(_project_state(_site.get_source_id()))
 	_site.apply_run_phase_projection(PHASE_FIXTURE.project(_site.definition))
+	_site.set_visual_depth_actor(_hero)
 	_hero.global_position = (
 		spawn_override if spawn_override != Vector2.ZERO else _site.get_spawn_position()
 	)
@@ -565,6 +569,7 @@ func _on_player_feedback(message: String) -> void:
 func _build_ui() -> void:
 	var layer := CanvasLayer.new()
 	layer.name = "HarnessOnlyHud"
+	layer.visible = not clean_player_view_capture
 	add_child(layer)
 	var viewport_size := get_viewport().get_visible_rect().size
 	var scale_factor := floorf(

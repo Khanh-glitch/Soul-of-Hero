@@ -292,6 +292,12 @@ func get_source_id() -> String:
 	return str(definition.get("source", {}).get("poi_id", site_id))
 
 
+func set_visual_depth_actor(actor: Node2D) -> void:
+	# A8 art-only depth sorting; this does not alter Hero, collision, or site state.
+	if is_instance_valid(_art):
+		_art.call("set_depth_actor", actor)
+
+
 func get_site_state() -> Dictionary:
 	return projection.get("site_state", {}).duplicate(true)
 

@@ -559,53 +559,130 @@
     "ground_areas": [
       {
         "center": [
-          2,
-          12
+          4,
+          18
         ],
         "radius": [
-          3,
-          20
+          4,
+          13
         ],
-        "family": "moor"
+        "family": "grass"
       },
       {
         "center": [
-          58,
-          12
+          55,
+          18
         ],
         "radius": [
-          3,
-          20
+          4,
+          13
         ],
-        "family": "moor"
+        "family": "grass"
       },
       {
         "center": [
-          17,
-          12
-        ],
-        "radius": [
-          7,
+          11,
           11
+        ],
+        "radius": [
+          6,
+          5
         ],
         "family": "soil"
       },
       {
         "center": [
-          42,
-          12
+          23,
+          10
         ],
         "radius": [
-          7,
-          11
+          5,
+          4
         ],
         "family": "soil"
+      },
+      {
+        "center": [
+          40,
+          11
+        ],
+        "radius": [
+          6,
+          5
+        ],
+        "family": "soil"
+      },
+      {
+        "center": [
+          51,
+          11
+        ],
+        "radius": [
+          5,
+          5
+        ],
+        "family": "soil"
+      },
+      {
+        "center": [
+          11,
+          28
+        ],
+        "radius": [
+          6,
+          5
+        ],
+        "family": "soil"
+      },
+      {
+        "center": [
+          23,
+          27
+        ],
+        "radius": [
+          5,
+          5
+        ],
+        "family": "soil"
+      },
+      {
+        "center": [
+          40,
+          28
+        ],
+        "radius": [
+          6,
+          5
+        ],
+        "family": "soil"
+      },
+      {
+        "center": [
+          51,
+          27
+        ],
+        "radius": [
+          5,
+          5
+        ],
+        "family": "soil"
+      },
+      {
+        "center": [
+          30,
+          17
+        ],
+        "radius": [
+          18,
+          2
+        ],
+        "family": "grass"
       }
     ],
     "paths": [
       {
-        "family": "gravel",
-        "width": 3,
+        "family": "road_dirt",
+        "width": 2,
         "points": [
           [
             30,
@@ -617,11 +694,15 @@
           ],
           [
             30,
-            28
+            29
+          ],
+          [
+            30,
+            25
           ],
           [
             31,
-            24
+            22
           ],
           [
             31,
@@ -630,7 +711,7 @@
         ]
       },
       {
-        "family": "gravel",
+        "family": "road_dirt",
         "width": 2,
         "points": [
           [
@@ -638,8 +719,12 @@
             24
           ],
           [
-            24,
+            26,
             23
+          ],
+          [
+            22,
+            22
           ],
           [
             18,
@@ -648,7 +733,7 @@
         ]
       },
       {
-        "family": "gravel",
+        "family": "road_dirt",
         "width": 2,
         "points": [
           [
@@ -656,12 +741,60 @@
             24
           ],
           [
-            38,
+            36,
             23
+          ],
+          [
+            40,
+            22
           ],
           [
             44,
             21
+          ]
+        ]
+      },
+      {
+        "family": "track_dirt",
+        "width": 1,
+        "points": [
+          [
+            9,
+            16
+          ],
+          [
+            14,
+            14
+          ],
+          [
+            19,
+            14
+          ],
+          [
+            24,
+            15
+          ]
+        ]
+      },
+      {
+        "family": "track_dirt",
+        "width": 1,
+        "points": [
+          [
+            36,
+            15
+          ],
+          [
+            41,
+            14
+          ],
+          [
+            47,
+            14
+          ],
+          [
+            52,
+            16
           ]
         ]
       },
@@ -725,94 +858,294 @@
         "untouched": []
       }
     },
+    "overlays": [
+      {
+        "frame": "detail_orchard_grass_0",
+        "cell": [
+          6,
+          15
+        ],
+        "layer": "surface"
+      },
+      {
+        "frame": "detail_orchard_grass_2",
+        "cell": [
+          53,
+          15
+        ],
+        "layer": "surface"
+      },
+      {
+        "frame": "detail_mud_crack_0",
+        "cell": [
+          19,
+          16
+        ],
+        "layer": "surface"
+      },
+      {
+        "frame": "detail_mud_crack_1",
+        "cell": [
+          40,
+          19
+        ],
+        "layer": "surface"
+      },
+      {
+        "frame": "detail_mud_crack_2",
+        "cell": [
+          25,
+          20
+        ],
+        "layer": "surface"
+      },
+      {
+        "frame": "detail_reed_tuft_0",
+        "cell": [
+          14,
+          16
+        ],
+        "layer": "surface"
+      },
+      {
+        "frame": "detail_reed_tuft_2",
+        "cell": [
+          44,
+          16
+        ],
+        "layer": "surface"
+      }
+    ],
+    "state_overlays": [
+      {
+        "key": "orchard_channel",
+        "equals": "flowing",
+        "overlays": [
+          {
+            "frame": "detail_water_ripple_0",
+            "cell": [
+              19,
+              17
+            ],
+            "layer": "surface"
+          },
+          {
+            "frame": "detail_water_ripple_1",
+            "cell": [
+              25,
+              18
+            ],
+            "layer": "surface"
+          },
+          {
+            "frame": "detail_water_ripple_2",
+            "cell": [
+              37,
+              17
+            ],
+            "layer": "surface"
+          },
+          {
+            "frame": "detail_water_ripple_0",
+            "cell": [
+              42,
+              18
+            ],
+            "layer": "surface"
+          }
+        ]
+      },
+      {
+        "key": "graft_marks_read",
+        "equals": "true",
+        "overlays": [
+          {
+            "frame": "detail_orchard_grass_1",
+            "cell": [
+              39,
+              22
+            ],
+            "layer": "surface"
+          },
+          {
+            "frame": "detail_orchard_grass_2",
+            "cell": [
+              40,
+              22
+            ],
+            "layer": "surface"
+          }
+        ]
+      }
+    ],
     "props": [
       {
-        "frame": "tree_orchard",
+        "frame": "canopy_tree",
         "cell": [
-          10,
-          9
+          7,
+          8
         ],
-        "id": "old_graft_northwest"
+        "id": "northwest_canopy",
+        "occludes_actor": true
       },
       {
         "frame": "tree_orchard",
         "cell": [
-          22,
-          9
+          18,
+          10
         ],
-        "id": "old_graft_north"
+        "id": "north_grafted_tree",
+        "occludes_actor": true
       },
       {
-        "frame": "tree_orchard",
-        "cell": [
-          39,
-          9
-        ],
-        "id": "old_graft_northeast"
-      },
-      {
-        "frame": "tree_orchard",
-        "cell": [
-          51,
-          9
-        ],
-        "id": "old_graft_east"
-      },
-      {
-        "frame": "tree_orchard",
-        "cell": [
-          10,
-          26
-        ],
-        "id": "old_graft_southwest"
-      },
-      {
-        "frame": "tree_orchard",
-        "cell": [
-          22,
-          26
-        ],
-        "id": "old_graft_south"
-      },
-      {
-        "frame": "tree_orchard",
-        "cell": [
-          39,
-          26
-        ],
-        "id": "old_graft_southeast"
-      },
-      {
-        "frame": "tree_orchard",
-        "cell": [
-          51,
-          26
-        ],
-        "id": "old_graft_south_east"
-      },
-      {
-        "frame": "reeds",
-        "cell": [
-          15,
-          17
-        ],
-        "id": "sluice_reeds_west"
-      },
-      {
-        "frame": "reeds",
-        "cell": [
-          46,
-          17
-        ],
-        "id": "sluice_reeds_east"
-      },
-      {
-        "frame": "signpost",
+        "frame": "lm_orchard_shed",
         "cell": [
           30,
-          34
+          6
         ],
-        "id": "garden_return_marker"
+        "id": "orchard_shed_ruin"
+      },
+      {
+        "frame": "tree_orchard",
+        "cell": [
+          42,
+          10
+        ],
+        "id": "northeast_grafted_tree",
+        "occludes_actor": true
+      },
+      {
+        "frame": "canopy_tree",
+        "cell": [
+          53,
+          8
+        ],
+        "id": "northeast_canopy",
+        "occludes_actor": true
+      },
+      {
+        "frame": "orchard_wall",
+        "cell": [
+          13,
+          8
+        ],
+        "id": "west_garden_wall"
+      },
+      {
+        "frame": "orchard_wall",
+        "cell": [
+          46,
+          8
+        ],
+        "id": "east_garden_wall"
+      },
+      {
+        "frame": "tree_orchard",
+        "cell": [
+          10,
+          28
+        ],
+        "id": "southwest_grafted_tree",
+        "occludes_actor": true
+      },
+      {
+        "frame": "tree_orchard",
+        "cell": [
+          23,
+          28
+        ],
+        "id": "south_grafted_tree",
+        "occludes_actor": true
+      },
+      {
+        "frame": "tree_orchard",
+        "cell": [
+          40,
+          28
+        ],
+        "id": "southeast_grafted_tree",
+        "occludes_actor": true
+      },
+      {
+        "frame": "tree_dead",
+        "cell": [
+          54,
+          22
+        ],
+        "id": "storm_damaged_tree",
+        "occludes_actor": true
+      },
+      {
+        "frame": "reed_bed",
+        "cell": [
+          14,
+          17
+        ],
+        "id": "west_channel_reeds"
+      },
+      {
+        "frame": "reed_bed",
+        "cell": [
+          44,
+          17
+        ],
+        "id": "east_channel_reeds"
+      },
+      {
+        "frame": "pump_tank",
+        "cell": [
+          50,
+          15
+        ],
+        "id": "orchard_irrigation_tank"
+      },
+      {
+        "frame": "pipe_run",
+        "cell": [
+          46,
+          15
+        ],
+        "id": "irrigation_feed_line"
+      },
+      {
+        "frame": "pump_pipe",
+        "cell": [
+          49,
+          16
+        ],
+        "id": "irrigation_coupling"
+      },
+      {
+        "frame": "sluice_gate",
+        "cell": [
+          35,
+          16
+        ],
+        "id": "sluice_gear"
+      },
+      {
+        "frame": "boardwalk_post",
+        "cell": [
+          29,
+          16
+        ],
+        "id": "west_boardwalk_support"
+      },
+      {
+        "frame": "boardwalk_post",
+        "cell": [
+          32,
+          16
+        ],
+        "id": "east_boardwalk_support"
+      },
+      {
+        "frame": "split_rail",
+        "cell": [
+          34,
+          19
+        ],
+        "id": "broken_boardwalk_rail"
       },
       {
         "frame": "handcart",
@@ -820,7 +1153,7 @@
           8,
           32
         ],
-        "id": "harvest_cart"
+        "id": "abandoned_garden_cart"
       },
       {
         "frame": "bush",
@@ -828,7 +1161,7 @@
           4,
           22
         ],
-        "id": "wild_edge"
+        "id": "wild_west_edge"
       },
       {
         "frame": "bush",
@@ -836,7 +1169,7 @@
           55,
           21
         ],
-        "id": "wild_edge_east"
+        "id": "wild_east_edge"
       },
       {
         "frame": "deadfall",
@@ -855,7 +1188,7 @@
           {
             "frame": "reeds",
             "cell": [
-              29,
+              28,
               16
             ],
             "id": "flowing_channel_reeds"
@@ -863,20 +1196,6 @@
         ],
         "hide_ids": [
           "sluice_blocking_deadfall"
-        ]
-      },
-      {
-        "key": "graft_marks_read",
-        "equals": "true",
-        "props": [
-          {
-            "frame": "herb_moonleaf",
-            "cell": [
-              44,
-              21
-            ],
-            "id": "graft_mark_herb"
-          }
         ]
       }
     ],
@@ -891,7 +1210,7 @@
         -64
       ],
       "ground_family": "forest",
-      "purpose": "source-backed local terrain outside the 960x608 worksite bounds; decorative only, no collision or world extension"
+      "purpose": "A1 source-backed capture-context forest beyond the 960x608 worksite bounds; decorative only, no collision or world extension"
     }
   },
   "approach_clue": {

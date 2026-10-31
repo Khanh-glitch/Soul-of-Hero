@@ -590,25 +590,36 @@
     "ground_areas": [
       {
         "center": [
-          1,
-          14
+          2,
+          15
         ],
         "radius": [
-          2,
-          20
+          3,
+          19
         ],
-        "family": "moor"
+        "family": "basalt"
       },
       {
         "center": [
-          58,
-          13
+          57,
+          15
         ],
         "radius": [
-          2,
-          20
+          3,
+          19
         ],
-        "family": "moor"
+        "family": "basalt"
+      },
+      {
+        "center": [
+          30,
+          2
+        ],
+        "radius": [
+          23,
+          2
+        ],
+        "family": "basalt"
       },
       {
         "center": [
@@ -624,7 +635,7 @@
       {
         "center": [
           46,
-          9
+          10
         ],
         "radius": [
           8,
@@ -634,19 +645,30 @@
       },
       {
         "center": [
-          31,
-          18
+          29,
+          8
         ],
         "radius": [
-          8,
+          10,
           4
         ],
-        "family": "soil"
+        "family": "cinder"
+      },
+      {
+        "center": [
+          30,
+          25
+        ],
+        "radius": [
+          7,
+          3
+        ],
+        "family": "gravel"
       }
     ],
     "paths": [
       {
-        "family": "gravel",
+        "family": "road_stone",
         "width": 3,
         "points": [
           [
@@ -662,44 +684,90 @@
             29
           ],
           [
-            31,
+            30,
             25
           ]
         ]
       },
       {
-        "family": "gravel",
+        "family": "road_stone",
         "width": 2,
         "points": [
           [
-            31,
+            30,
+            27
+          ],
+          [
+            29,
             25
           ],
           [
             27,
-            22
+            23
           ],
           [
-            23,
-            19
+            24,
+            20
+          ],
+          [
+            20,
+            18
+          ],
+          [
+            15,
+            16
           ]
         ]
       },
       {
-        "family": "gravel",
+        "family": "road_stone",
         "width": 2,
         "points": [
           [
-            31,
+            30,
+            27
+          ],
+          [
+            33,
             25
           ],
           [
             35,
-            22
+            23
           ],
           [
             39,
-            19
+            20
+          ],
+          [
+            43,
+            18
+          ],
+          [
+            47,
+            16
+          ]
+        ]
+      },
+      {
+        "family": "road_stone",
+        "width": 2,
+        "points": [
+          [
+            30,
+            26
+          ],
+          [
+            30,
+            22
+          ],
+          [
+            30,
+            18
+          ],
+          [
+            30,
+            14
           ]
         ]
       }
@@ -708,12 +776,12 @@
       "quarry_route": {
         "east_braced": [
           {
-            "family": "gravel",
+            "family": "road_stone",
             "width": 2,
             "points": [
               [
                 39,
-                19
+                20
               ],
               [
                 43,
@@ -722,113 +790,162 @@
               [
                 47,
                 16
+              ],
+              [
+                49,
+                18
+              ],
+              [
+                50,
+                21
               ]
             ]
           }
         ],
         "west_chocked": [
           {
-            "family": "gravel",
+            "family": "road_stone",
             "width": 2,
             "points": [
               [
-                23,
-                19
+                24,
+                20
               ],
               [
-                19,
+                20,
                 18
               ],
               [
                 15,
                 16
+              ],
+              [
+                14,
+                19
+              ],
+              [
+                13,
+                22
               ]
             ]
           }
         ],
         "left_unworked": []
+      },
+      "quarry_deep_gate": {
+        "open": [
+          {
+            "family": "road_stone",
+            "width": 2,
+            "points": [
+              [
+                30,
+                14
+              ],
+              [
+                30,
+                10
+              ],
+              [
+                30,
+                7
+              ]
+            ]
+          }
+        ],
+        "closed": []
       }
     },
-    "props": [
+    "overlays": [
       {
-        "frame": "rock_a",
+        "frame": "detail_karst_fissure_0",
         "cell": [
-          3,
-          8
-        ],
-        "id": "west_rim_large"
-      },
-      {
-        "frame": "rock_a",
-        "cell": [
-          8,
-          28
-        ],
-        "id": "west_rim_low"
-      },
-      {
-        "frame": "rock_a",
-        "cell": [
-          53,
-          7
-        ],
-        "id": "east_rim_large"
-      },
-      {
-        "frame": "rock_a",
-        "cell": [
-          56,
-          28
-        ],
-        "id": "east_rim_low"
-      },
-      {
-        "frame": "rock_a",
-        "cell": [
-          7,
+          20,
           13
         ],
-        "id": "loose_face_a"
+        "layer": "surface"
       },
       {
-        "frame": "rock_c",
+        "frame": "detail_karst_fissure_1",
         "cell": [
-          10,
+          39,
           14
         ],
-        "id": "loose_face_b"
+        "layer": "surface"
       },
       {
-        "frame": "rock_a",
+        "frame": "detail_karst_fissure_2",
         "cell": [
-          50,
-          13
+          27,
+          7
         ],
-        "id": "loose_face_c"
+        "layer": "surface"
       },
       {
-        "frame": "rock_c",
+        "frame": "detail_cinder_scoria_0",
         "cell": [
-          48,
-          15
+          24,
+          9
         ],
-        "id": "loose_face_d"
+        "layer": "surface"
       },
       {
-        "frame": "rock_a",
+        "frame": "detail_cinder_scoria_1",
         "cell": [
-          15,
-          5
+          35,
+          8
         ],
-        "id": "north_bench_west"
+        "layer": "surface"
       },
       {
-        "frame": "rock_a",
+        "frame": "detail_cinder_scoria_2",
         "cell": [
-          44,
-          5
+          31,
+          10
         ],
-        "id": "north_bench_east"
+        "layer": "surface"
+      }
+    ],
+    "props": [
+      {
+        "frame": "lm_quarry_workface",
+        "cell": [
+          30,
+          6
+        ],
+        "id": "deep_quarry_face"
+      },
+      {
+        "frame": "rock_e",
+        "cell": [
+          3,
+          9
+        ],
+        "id": "west_broken_ledge"
+      },
+      {
+        "frame": "rock_e",
+        "cell": [
+          56,
+          8
+        ],
+        "id": "east_broken_ledge"
+      },
+      {
+        "frame": "rock_e",
+        "cell": [
+          4,
+          29
+        ],
+        "id": "west_scree_fall"
+      },
+      {
+        "frame": "rock_e",
+        "cell": [
+          55,
+          28
+        ],
+        "id": "east_scree_fall"
       },
       {
         "frame": "wall_stub",
@@ -847,84 +964,60 @@
         "id": "cut_face_east"
       },
       {
-        "frame": "handcart",
+        "frame": "ore_skarn",
         "cell": [
-          10,
-          31
+          26,
+          8
         ],
-        "id": "haul_cart"
-      },
-      {
-        "frame": "signpost",
-        "cell": [
-          30,
-          34
-        ],
-        "id": "south_return_marker"
+        "id": "north_ore_seam"
       },
       {
         "frame": "ore_skarn",
         "cell": [
-          31,
-          18
+          34,
+          8
         ],
-        "id": "south_seam_outcrop"
+        "id": "east_ore_seam"
       },
       {
-        "frame": "rock_a",
-        "cell": [
-          35,
-          18
-        ],
-        "id": "seam_right_spall"
-      },
-      {
-        "frame": "rock_c",
-        "cell": [
-          28,
-          17
-        ],
-        "id": "seam_left_spall"
-      },
-      {
-        "frame": "tree_pine",
-        "cell": [
-          4,
-          34
-        ],
-        "id": "quarry_edge_pine"
-      },
-      {
-        "frame": "log_pile",
-        "cell": [
-          13,
-          30
-        ],
-        "id": "timber_stack"
-      },
-      {
-        "frame": "cairn_warning",
-        "cell": [
-          32,
-          18
-        ],
-        "id": "unstable_seam_warning"
-      },
-      {
-        "frame": "cairn_warning",
+        "frame": "light_pool",
         "cell": [
           30,
-          7
+          10
         ],
-        "id": "deep_roof_scree_warning"
+        "id": "wheel_shadow"
       },
       {
-        "frame": "ore_skarn",
+        "frame": "mill_wheel",
         "cell": [
           30,
+          10
+        ],
+        "id": "quarry_hoist_wheel"
+      },
+      {
+        "frame": "split_rail",
+        "cell": [
+          38,
+          21
+        ],
+        "id": "east_broken_brace"
+      },
+      {
+        "frame": "deadfall",
+        "cell": [
+          20,
+          22
+        ],
+        "id": "west_collapsed_chock"
+      },
+      {
+        "frame": "warning_stakes",
+        "cell": [
+          33,
           6
         ],
-        "id": "deep_seam_inscription"
+        "id": "deep_roof_hazard"
       },
       {
         "frame": "fence_h",
@@ -973,6 +1066,86 @@
           12
         ],
         "id": "deep_gate_bar_5"
+      },
+      {
+        "frame": "lm_ashwater_pump",
+        "cell": [
+          50,
+          21
+        ],
+        "id": "east_pump_station"
+      },
+      {
+        "frame": "pipe_run",
+        "cell": [
+          40,
+          15
+        ],
+        "id": "pressure_feed_west"
+      },
+      {
+        "frame": "pipe_run",
+        "cell": [
+          43,
+          15
+        ],
+        "id": "pressure_feed_east"
+      },
+      {
+        "frame": "pump_pipe",
+        "cell": [
+          46,
+          15
+        ],
+        "id": "pressure_coupling"
+      },
+      {
+        "frame": "pump_tank",
+        "cell": [
+          49,
+          16
+        ],
+        "id": "pressure_tank"
+      },
+      {
+        "frame": "cooling_trough",
+        "cell": [
+          50,
+          23
+        ],
+        "id": "drainage_trough"
+      },
+      {
+        "frame": "fence_v",
+        "cell": [
+          16,
+          19
+        ],
+        "id": "west_cut_timber_brace"
+      },
+      {
+        "frame": "fence_h",
+        "cell": [
+          14,
+          18
+        ],
+        "id": "west_cut_cross_brace"
+      },
+      {
+        "frame": "fence_v",
+        "cell": [
+          45,
+          20
+        ],
+        "id": "east_cut_timber_brace"
+      },
+      {
+        "frame": "fence_h",
+        "cell": [
+          43,
+          19
+        ],
+        "id": "east_cut_cross_brace"
       }
     ],
     "state_props": [
@@ -998,7 +1171,7 @@
           }
         ],
         "hide_ids": [
-          "unstable_seam_warning"
+          "deep_roof_hazard"
         ]
       },
       {
@@ -1014,7 +1187,7 @@
             "id": "west_ramp_chock"
           },
           {
-            "frame": "rock_a",
+            "frame": "basalt_chunk",
             "cell": [
               23,
               20
@@ -1023,7 +1196,7 @@
           }
         ],
         "hide_ids": [
-          "unstable_seam_warning"
+          "deep_roof_hazard"
         ]
       },
       {
@@ -1031,7 +1204,7 @@
         "equals": "left_unworked",
         "props": [
           {
-            "frame": "cairn_warning",
+            "frame": "warning_stakes",
             "cell": [
               31,
               20
@@ -1047,10 +1220,15 @@
           {
             "frame": "lamp",
             "cell": [
-              30,
-              12
+              34,
+              10
             ],
-            "id": "counterweight_live_lamp"
+            "id": "counterweight_live_lamp",
+            "local_light": {
+              "energy": 0.68,
+              "texture_scale": 0.76,
+              "color": "#ffd18b"
+            }
           }
         ],
         "hide_ids": [
@@ -1060,20 +1238,6 @@
           "deep_gate_bar_3",
           "deep_gate_bar_4",
           "deep_gate_bar_5"
-        ]
-      },
-      {
-        "key": "deep_seam_note",
-        "equals": "read",
-        "props": [
-          {
-            "frame": "signpost",
-            "cell": [
-              30,
-              5
-            ],
-            "id": "deep_route_marks_read"
-          }
         ]
       }
     ],
@@ -1088,8 +1252,136 @@
         -64
       ],
       "ground_family": "ash",
-      "purpose": "source-backed local terrain outside the 960x608 worksite bounds; decorative only, no collision or world extension"
-    }
+      "purpose": "A1 source-backed capture-context terrain beyond the 960x608 worksite bounds; decorative only, no collision or world extension"
+    },
+    "track_paths": [
+      {
+        "family": "track_stone",
+        "width": 1,
+        "points": [
+          [
+            30,
+            37
+          ],
+          [
+            30,
+            33
+          ],
+          [
+            30,
+            29
+          ],
+          [
+            30,
+            25
+          ],
+          [
+            30,
+            20
+          ],
+          [
+            30,
+            14
+          ]
+        ]
+      },
+      {
+        "family": "track_stone",
+        "width": 1,
+        "points": [
+          [
+            30,
+            27
+          ],
+          [
+            29,
+            25
+          ],
+          [
+            27,
+            23
+          ],
+          [
+            24,
+            20
+          ],
+          [
+            20,
+            18
+          ],
+          [
+            15,
+            16
+          ]
+        ]
+      },
+      {
+        "family": "track_stone",
+        "width": 1,
+        "points": [
+          [
+            30,
+            27
+          ],
+          [
+            33,
+            25
+          ],
+          [
+            35,
+            23
+          ],
+          [
+            39,
+            20
+          ],
+          [
+            43,
+            18
+          ],
+          [
+            47,
+            16
+          ]
+        ]
+      },
+      {
+        "family": "track_stone",
+        "width": 1,
+        "points": [
+          [
+            47,
+            16
+          ],
+          [
+            49,
+            18
+          ],
+          [
+            50,
+            21
+          ]
+        ]
+      },
+      {
+        "family": "track_stone",
+        "width": 1,
+        "points": [
+          [
+            15,
+            16
+          ],
+          [
+            14,
+            19
+          ],
+          [
+            13,
+            22
+          ]
+        ]
+      }
+    ]
   },
   "gates": [
     {

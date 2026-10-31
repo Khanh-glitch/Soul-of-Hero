@@ -142,6 +142,12 @@ func get_source_id() -> String:
 	return str(definition.get("source", {}).get("poi_id", ""))
 
 
+func set_visual_depth_actor(actor: Node2D) -> void:
+	# A8 art-only depth sorting; this does not alter shell collision or transition state.
+	if is_instance_valid(_art):
+		_art.call("set_depth_actor", actor)
+
+
 func get_entry_position() -> Vector2:
 	return VECTOR_UTIL.from_pair(
 		definition.get("overworld_shell", {}).get("entry_portal", [64, 108])

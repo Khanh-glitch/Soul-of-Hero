@@ -19,7 +19,9 @@ func _capture() -> void:
 		push_error("Pilot scene could not be loaded for native capture")
 		quit(2)
 		return
-	get_root().add_child(scene.instantiate())
+	var pilot := scene.instantiate()
+	pilot.set("clean_player_view_capture", true)
+	get_root().add_child(pilot)
 	for frame: int in range(8):
 		await process_frame
 	var timer := create_timer(1.0)
