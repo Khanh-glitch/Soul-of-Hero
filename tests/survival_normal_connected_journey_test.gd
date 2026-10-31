@@ -508,15 +508,22 @@ func _close_panel(panel: Node) -> bool:
 ## with stale layout, a player closes and reopens the panel; the row is looked up
 ## again in the rebuilt list rather than trusting a stale node.
 func _scroll_recipe(panel: Node, button: Button) -> bool:
+	if button == null:
+		return false
+	var row_name := String(button.name)
+	await process_frame
 	var scroll := _owning_scroll(button)
 	if scroll != null and await _scroll_to(scroll, button):
 		return true
+	# Reopening rebuilds the list; the row must be looked up again by name, because
+	# the old node is gone once the panel is rebuilt.
 	await _close_panel(panel)
 	await _open_panel(panel)
 	await process_frame
 	await process_frame
-	var rebuilt := _owning_scroll(button)
-	return rebuilt != null and await _scroll_to(rebuilt, button)
+	var rebuilt_button := panel.find_child(row_name, true, false) as Button
+	var rebuilt := _owning_scroll(rebuilt_button)
+	return rebuilt_button != null and rebuilt != null and await _scroll_to(rebuilt, rebuilt_button)
 
 
 func _open_panel(panel: Node) -> bool:
