@@ -336,3 +336,18 @@ review. The #20 OUT crop shows strong color inversion; the separately tested
 collision post is screen-wide. Both need the mandated human contamination
 review against full-size before/after captures. No visual approval is
 inferred from these thumbnails.
+
+At corrected initial delta SHA `b9b8a165`, [41213284257](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41213284257)
+reproduced the same reported g-buffer summary metrics above. Diagnostic-only
+skipped-intermediate raster at `0cd7f78e` also reproduced these reported
+metrics in [41213481876](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41213481876),
+with an explicit eager-state-and-buffer check at tick 20. This is not a claim
+of full buffer equality at the five sampled frames.
+
+Original D `SPRITE_VS` rasterizes a rotated quad and fragment centers are at
+half pixels; at `c2882d5a` the CPU sprite port was corrected to sample those
+centers and restrict rasterization to the quad. A new original-vs-native
+[diagnostic 41213605327](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41213605327)
+is pending; this implementation change must not be called a fidelity fix until
+the new measurements and regressions are checked. Ribbons/poly, GPU rounding,
+coverage, bloom/post, actual SOH world and creator review remain separate.
