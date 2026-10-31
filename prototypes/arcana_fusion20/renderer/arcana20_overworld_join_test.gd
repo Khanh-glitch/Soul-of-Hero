@@ -557,7 +557,7 @@ func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D)
             overlapping_frames += 1
         last = now
         if not renderer._casts.has(id2) or not renderer._casts.has(id10): break
-    await save_frame("overlap_perf_live")
+    var perf_image := await save_frame("overlap_perf_live")
     samples.sort()
     check(samples.size() >= 2, "overlap perf produced multiple actually concurrent rendered frames")
     var percentiles := {}
@@ -565,7 +565,7 @@ func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D)
         var n := samples.size()
         percentiles = {"p50_ms": samples[floori((n - 1) * 0.50)], "p95_ms": samples[floori((n - 1) * 0.95)], "p99_ms": samples[floori((n - 1) * 0.99)]}
     var record := {"scope": "concurrent #02+#10 on real historical overworld; shared software-rendered CI, not a target-device budget",
-        "output_size": [root.get_visible_rect().size.x, root.get_visible_rect().size.y],
+        "output_size": [perf_image.get_width(), perf_image.get_height()],
         "overlap_frames": overlapping_frames, "post_draw_intervals": percentiles,
         "static_bytes_live_delta": Performance.get_monitor(Performance.MEMORY_STATIC) - before_memory,
         "live_object_delta": Performance.get_monitor(Performance.OBJECT_COUNT) - before_objects,
