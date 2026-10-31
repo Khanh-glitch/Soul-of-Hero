@@ -92,8 +92,11 @@ comparison was switched to exact uint32 numerator vectors (not a relaxed
 floating tolerance), and [source quick 41209652104](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41209652104)
 at `305f595c` passed. This validates the tested vectors, not every input. The real-world JOIN was
 successful at that SHA, but that does not clear this independent source gate.
-The JOIN shutdown still reported 17 ObjectDB instances / 5 resources in use;
-verbose investigation is active.
+The JOIN shutdown reported 17 ObjectDB instances / 5 resources in use.
+[No-FX baseline 41209973572](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41209973572)
+reproduced the same counts and same five economy scripts without creating AVFX
+or R4 actors; this isolates the observed historical baseline, not all possible
+AVFX leaks or the current A0 route.
 
 ## Original A #05 opening source-only trace
 
@@ -107,5 +110,5 @@ HDR buffers. The instrumentation tracks write operations, not RGB-derived
 world alpha; it is not equivalent to opaque coverage or a world composite.
 Burst, C selected late role, full cast, real-world post and owner review remain
 unverified. [No-FX baseline leak isolation](https://github.com/Khanh-glitch/Soul-of-Hero/pull/21#issuecomment-6544643328)
-is underway; verbose leaked script resources implicate historical economy
-objects, while the exact ownership of every leaked instance remains unproven.
+reproduced the historical economy-resource leak without AVFX; exact ownership
+of every leaked instance and current A0 status remain unproven.
