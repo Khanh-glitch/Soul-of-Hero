@@ -26,19 +26,19 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
     if id < 1:
         return false
     cancel_skill(canonical_id)
-    if id == 17:
+    if id == 17 or id == 7 or id == 10 or id == 15:
         # TRUE source port on the ported C frame/compositor (astral.ts).
         var cp := CSourcePlayer.new()
         add_child(cp)
         cp.visual_contact.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
             visual_contact.emit(canonical_id, pos, kind)
-            body_event_cue.emit(canonical_id, pos, &"astral"))
+            body_event_cue.emit(canonical_id, pos, &"astral" if id == 17 else (&"ice" if id == 7 else (&"volt" if id == 10 else &"leaf"))))
         cp.visual_event.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
             visual_event.emit(canonical_id, kind, pos, st))
         cp.finished.connect(func() -> void: _on_finished(canonical_id))
         _casts[canonical_id] = cp
         cast_started.emit(canonical_id)
-        cp.begin(caster_world, target_world, "horizon")
+        cp.begin(caster_world, target_world, "horizon" if id == 17 else ("basilica" if id == 7 else ("thunderloom" if id == 10 else "thorn")))
         return true
     if id == 2 or id == 3 or id == 8:
         # TRUE source ports on the ported B HDR renderer (pyre.ts).

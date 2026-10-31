@@ -212,13 +212,13 @@ func glow(cx: float, cy: float, r: float, c: Vector3, k: float = 1.0, bands: flo
     if r <= 0.0 or k == 0.0:
         return
     disc(cx, cy, r, func(x: int, y: int, d: float) -> void:
-        var f := ceil((1.0 - d) * bands) / bands
+        var f: float = ceil((1.0 - d) * bands) / bands
         var v := f * f * k
         L(x, y, c.x * v, c.y * v, c.z * v), sy)
 
 func shade_disc(cx: float, cy: float, r: float, m: float, sy: float = 1.0, bands: float = 3.0) -> void:
     disc(cx, cy, r, func(x: int, y: int, d: float) -> void:
-        var f := ceil((1.0 - d) * bands) / bands
+        var f: float = ceil((1.0 - d) * bands) / bands
         S(x, y, 1.0 - (1.0 - m) * f), sy)
 
 func poly(pts: Array, fn: Callable) -> void:

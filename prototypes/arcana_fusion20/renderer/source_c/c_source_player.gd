@@ -58,6 +58,18 @@ func begin(caster_world: Vector2, target_world: Vector2, kind: String) -> void:
             _fx = CEventHorizon.new()
             duration = CEventHorizon.DURATION
             _fx.setup()
+        "basilica":
+            _fx = CMirrorfrostBasilica.new()
+            duration = CMirrorfrostBasilica.DURATION
+            _fx.setup()
+        "thunderloom":
+            _fx = CThunderloom.new()
+            duration = CThunderloom.DURATION
+            _fx.setup()
+        "thorn":
+            _fx = CThornOpera.new()
+            duration = CThornOpera.DURATION
+            _fx.setup()
     _events = _fx.authored_events() if _fx != null else []
     var axis := target_world - caster_world
     _rot = axis.angle() - Vector2(250 - 112, 106 - 126).angle() if axis.length() > 1.0 else 0.0
@@ -75,7 +87,16 @@ func begin(caster_world: Vector2, target_world: Vector2, kind: String) -> void:
     _render_frame()
 
 func _anchor_local() -> Vector2:
-    return CEventHorizon.E if _kind == "horizon" else Vector2(192, 108)
+    match _kind:
+        "horizon":
+            return CEventHorizon.E
+        "basilica":
+            return CMirrorfrostBasilica.Q
+        "thunderloom":
+            return CThunderloom.TG
+        "thorn":
+            return CThornOpera.FZ
+    return Vector2(192, 108)
 
 func local_to_world(p: Vector2) -> Vector2:
     var anchor := _anchor_local()
@@ -108,16 +129,19 @@ func advance(dt: float) -> void:
         _steps += 1
         if _fx != null:
             _fx.update(STEP, source_time())
-            if _fx.get("fx_shake") != null and float(_fx.fx_shake) > 0.0:
-                _shake_k = maxf(_shake_k, float(_fx.fx_shake))
-                _fx.fx_shake = 0.0
-            if _fx.get("fx_flash_k") != null and float(_fx.fx_flash_k) > 0.0:
-                _flash_c = _fx.fx_flash
-                _flash_k = maxf(_flash_k, float(_fx.fx_flash_k))
-                _fx.fx_flash_k = 0.0
-            if _fx.get("fx_kick") != null and float(_fx.fx_kick) > 0.0:
-                _chroma_k = maxf(_chroma_k, float(_fx.fx_kick))
-                _fx.fx_kick = 0.0
+            var sh = _fx.get("fx_shake")
+            if sh != null and float(sh) > 0.0:
+                _shake_k = maxf(_shake_k, float(sh))
+                _fx.set("fx_shake", 0.0)
+            var fk = _fx.get("fx_flash_k")
+            if fk != null and float(fk) > 0.0:
+                _flash_c = _fx.get("fx_flash")
+                _flash_k = maxf(_flash_k, float(fk))
+                _fx.set("fx_flash_k", 0.0)
+            var kk = _fx.get("fx_kick")
+            if kk != null and float(kk) > 0.0:
+                _chroma_k = maxf(_chroma_k, float(kk))
+                _fx.set("fx_kick", 0.0)
         _shake_k *= 0.86
         if _shake_k < 0.3:
             _shake_k = 0.0

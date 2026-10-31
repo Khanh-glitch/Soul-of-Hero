@@ -120,7 +120,7 @@ func _init() -> void:
             if bytes[i + 3] != 0:
                 nonzero += 1
         var sp: Dictionary = _spatial_compare(bytes, "res://prototypes/arcana_fusion20/renderer/source_b/reference/wyrm_%s.png" % key)
-        print("::notice::REFDIAG ", key, " ref=", sp.get("ref_w"), "x", sp.get("ref_h"), " ref_nz=", sp.get("ref_nz"), " ref_sum=", sp.get("ref_sum"))
+        print("::notice::REFDIAG ", key, " ref=", sp.get("ref_w"), "x", sp.get("ref_h"), " ref_nz=", sp.get("ref_nz"), " ref_rgb_nz=", sp.get("ref_rgb_nz"), " ref_sum=", sp.get("ref_sum"))
         print("::notice::WYRM_SPATIAL ", key, " iou=", snappedf(float(sp.get("iou", 0.0)), 0.0001), " mae=", snappedf(float(sp.get("mae", 99.0)), 0.01), " maxerr=", int(sp.get("maxerr", 255)), " shift=", sp.get("shift", "?"), "@", snappedf(float(sp.get("shift_mae", 99.0)), 0.01), " regions=", JSON.stringify(sp.get("regions", {})))
         if float(sp.get("iou", 0.0)) < 0.90 or float(sp.get("mae", 99.0)) > 6.0:
             _fail("wyrm spatial %s iou=%f mae=%f" % [key, float(sp.get("iou", 0.0)), float(sp.get("mae", 99.0))])
@@ -193,10 +193,12 @@ func _maw_check(_host: Arcana20Renderer) -> void:
             _fail("maw spatial %s iou=%f mae=%f" % [key, float(sp.get("iou", 0.0)), float(sp.get("mae", 99.0))])
 
 func _spatial_compare(bytes: PackedByteArray, ref_path: String) -> Dictionary:
-    var tex := ResourceLoader.load(ref_path) as Texture2D
-    if tex == null:
-        return {"error": "no reference"}
-    var ref := tex.get_image()
+    var ref := Image.load_from_file(ref_path)
+    if ref == null or ref.is_empty():
+        var tex := ResourceLoader.load(ref_path) as Texture2D
+        if tex == null:
+            return {"error": "no reference"}
+        ref = tex.get_image()
     if ref.get_format() != Image.FORMAT_RGBA8:
         ref.convert(Image.FORMAT_RGBA8)
     var rb := ref.get_data()
@@ -240,21 +242,32 @@ func _spatial_compare(bytes: PackedByteArray, ref_path: String) -> Dictionary:
                 best_key = "%d,%d" % [sx, sy]
     var iou := 1.0 if union == 0 else float(inter) / float(union)
     var ref_nz := 0
+    var ref_rgb_nz := 0
     var ref_sum := 0
     for i in range(npix):
         var o := i * 4
         if rb[o + 3] > 0:
             ref_nz += 1
+        if rb[o] != 0 or rb[o + 1] != 0 or rb[o + 2] != 0:
+            ref_rgb_nz += 1
         ref_sum = (ref_sum + rb[o] * 3 + rb[o + 1] * 5 + rb[o + 2] * 7) & 0xFFFFFFFF
-    return {"ref_w": ref.get_width(), "ref_h": ref.get_height(), "ref_nz": ref_nz, "ref_sum": ref_sum, "iou": iou, "mae": mae / maxf(1.0, float(npix)), "maxerr": maxerr, "regions": regions, "shift_mae": best, "shift": best_key}
+    return {"ref_w": ref.get_width(), "ref_h": ref.get_height(), "ref_nz": ref_nz, "ref_rgb_nz": ref_rgb_nz, "ref_sum": ref_sum, "iou": iou, "mae": mae / maxf(1.0, float(npix)), "maxerr": maxerr, "regions": regions, "shift_mae": best, "shift": best_key}
 
-## #17 spatial parity vs original C astral.ts (seed 127704, stage loop).
+## C-family spatial parity vs original C spells (stage loop, seeds per
+## spell index: seed = 1000 + index*7919).
 func _horizon_check() -> void:
-    var meta: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://prototypes/arcana_fusion20/renderer/source_c/reference/horizon_meta.json"))
-    var fx := CEventHorizon.new()
+    _c_parity("HORIZON", CEventHorizon.new(), "horizon")
+    _c_parity("BASILICA", CMirrorfrostBasilica.new(), "basilica")
+    _c_parity("THUNDERLOOM", CThunderloom.new(), "thunderloom")
+    _c_parity("THORN", CThornOpera.new(), "thorn")
+
+func _c_parity(label: String, fx: RefCounted, prefix: String) -> void:
+    var meta: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://prototypes/arcana_fusion20/renderer/source_c/reference/%s_meta.json" % prefix))
     fx.setup()
     var frame := CFrame.new()
-    var targets := {"t200": 2.0, "t400": 4.0, "t580": 5.8, "t595": 5.95, "t650": 6.5, "t800": 8.0}
+    var targets: Dictionary = {}
+    for key in meta.keys():
+        targets[key] = float(meta[key].t)
     var t := 0.0
     var shake_k := 0.0
     var flash_k := 0.0
@@ -289,11 +302,11 @@ func _horizon_check() -> void:
                 frame.shake = Vector2((CMath.hash1(steps * 3) - 0.5) * 2.0 * shake_k, (CMath.hash1(steps * 3 + 1) - 0.5) * 2.0 * shake_k) if shake_k > 0.0 else Vector2.ZERO
                 fx.render(frame, t)
                 var bytes := frame.composite()
-                var sp := _spatial_compare(bytes, "res://prototypes/arcana_fusion20/renderer/source_c/reference/horizon_%s.png" % key)
+                var sp := _spatial_compare(bytes, "res://prototypes/arcana_fusion20/renderer/source_c/reference/%s_%s.png" % [prefix, key])
                 var nz := 0
                 for i in range(0, bytes.size(), 4):
                     if bytes[i + 3] != 0:
                         nz += 1
-                print("::notice::HORIZON_SPATIAL ", key, " t=", t, " iou=", snappedf(float(sp.get("iou", 0.0)), 0.0001), " mae=", snappedf(float(sp.get("mae", 99.0)), 0.01), " shift=", sp.get("shift", "?"), "@", snappedf(float(sp.get("shift_mae", 99.0)), 0.01), " nz=", nz, "/", int(meta[key].nonzero))
+                print("::notice::" + label + "_SPATIAL ", key, " t=", t, " iou=", snappedf(float(sp.get("iou", 0.0)), 0.0001), " mae=", snappedf(float(sp.get("mae", 99.0)), 0.01), " shift=", sp.get("shift", "?"), "@", snappedf(float(sp.get("shift_mae", 99.0)), 0.01), " nz=", nz, "/", int(meta[key].nonzero))
                 if float(sp.get("iou", 0.0)) < 0.90 or float(sp.get("mae", 99.0)) > 6.0:
-                    _fail("horizon spatial %s iou=%f mae=%f" % [key, float(sp.get("iou", 0.0)), float(sp.get("mae", 99.0))])
+                    _fail("%s spatial %s iou=%f mae=%f" % [label, key, float(sp.get("iou", 0.0)), float(sp.get("mae", 99.0))])
