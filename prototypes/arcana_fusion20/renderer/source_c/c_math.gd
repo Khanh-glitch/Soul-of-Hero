@@ -7,14 +7,14 @@ class_name CMath
 const TAU := PI * 2.0
 
 static func imul(a: int, b: int) -> int:
-    # 16-bit split keeps every partial product inside int64.
-    var ua := a & 0xFFFFFFFF
-    var ub := b & 0xFFFFFFFF
-    var al := ua & 0xFFFF
-    var ah := (ua >> 16) & 0xFFFF
-    var bl := ub & 0xFFFF
-    var bh := (ub >> 16) & 0xFFFF
-    var r := (al * bl + (((ah * bl + al * bh) & 0xFFFF) << 16)) & 0xFFFFFFFF
+    # Coerce each input to signed int32 before multiplication. Their product
+    # fits safely in signed int64 (at most 2^62); masking its low 32 bits is
+    # exactly Math.imul's modular result, without unsigned 64-bit overflow.
+    var sa := a & 0xFFFFFFFF
+    var sb := b & 0xFFFFFFFF
+    if sa >= 0x80000000: sa -= 0x100000000
+    if sb >= 0x80000000: sb -= 0x100000000
+    var r := (sa * sb) & 0xFFFFFFFF
     return r - 0x100000000 if r >= 0x80000000 else r
 
 static func u32(v: int) -> int:

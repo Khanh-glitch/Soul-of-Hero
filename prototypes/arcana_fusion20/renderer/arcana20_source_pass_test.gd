@@ -10,10 +10,30 @@ func check(ok: bool, name: String) -> void:
         failures.append(name)
         print("::error::SOURCE_PASS_FAIL ", name)
 
+# Previous exact 16-bit-split imul, retained solely as an independent
+# regression oracle for the signed-int64 implementation.
+func split_imul(a: int, b: int) -> int:
+    var ua := a & 0xFFFFFFFF
+    var ub := b & 0xFFFFFFFF
+    var al := ua & 0xFFFF
+    var ah := (ua >> 16) & 0xFFFF
+    var bl := ub & 0xFFFF
+    var bh := (ub >> 16) & 0xFFFF
+    var result := (al * bl + (((ah * bl + al * bh) & 0xFFFF) << 16)) & 0xFFFFFFFF
+    return result - 0x100000000 if result >= 0x80000000 else result
+
 func _init() -> void:
     call_deferred("_run")
 
 func _run() -> void:
+    var edge_values := [0, 1, -1, 0x7FFFFFFF, -0x80000000, 0xFFFFFFFF, 0x100000001, -0x100000001, 0x7FFFFFFFFFFFFFFF]
+    for x in edge_values:
+        for y in edge_values:
+            check(CMath.imul(x, y) == split_imul(x, y), "C imul signed-int64 edge identity")
+    for i in range(10000):
+        var x := (i * 2654435761) & 0xFFFFFFFF
+        var y := ((i + 12289) * 2246822519) & 0xFFFFFFFF
+        check(CMath.imul(x, y) == split_imul(x, y), "C imul signed-int64 sampled identity")
     var c := CFrame.new()
     c.track_world_fragments = true
     c.G(2, 2, 0.0, 0.0, 0.0, 0.5)
