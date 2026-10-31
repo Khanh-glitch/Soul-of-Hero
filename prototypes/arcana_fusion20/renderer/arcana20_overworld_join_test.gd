@@ -512,6 +512,19 @@ func _run() -> void:
     var rift_viewers: Dictionary = mount._passes.get(id20, {})
     var rift_result := contamination(baseline, rift_img, rift_viewers.get(&"C"), rift.source_pass_frame()) if rift_viewers.has(&"C") else {"inside_changed": 0, "outside_changed": -1}
     check(mount.active_viewers(id20) == 1 and int(rift_result.get("inside_changed", 0)) > 0 and int(rift_result.get("outside_changed", -1)) == 0, "C20 contour A pull transforms live world only within source influence: " + str(rift_result))
+    rift.render_enabled = false
+    for tick in range(150): rift.advance(STEP, false)
+    rift.render_enabled = true
+    rift._render_frame()
+    await process_frame
+    await process_frame
+    var block_frame := rift.source_pass_frame()
+    var world_blocks := 0
+    for p in range(CFrame.N):
+        if block_frame.c_world_fragment[p * 4 + 2] > 0.0 and block_frame.c_world_fragment[p * 4 + 3] == 0.0: world_blocks += 1
+    var block_image := await save_frame("fusion_20_blocks_tick420")
+    var block_result := contamination(baseline, block_image, rift_viewers.get(&"C"), block_frame)
+    check(world_blocks > 0 and int(block_result.get("inside_changed", 0)) > 0 and int(block_result.get("outside_changed", -1)) == 0, "C20 collision blocks sample actual world within source influence: fragments=" + str(world_blocks) + " " + str(block_result))
     multi.cancel_skill(id20)
     await process_frame
     await process_frame
