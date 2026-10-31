@@ -556,5 +556,37 @@ SOH world source parity and creator review remain separate.
   110.105→105.708 ms. Raster remains far too costly on this runner.
 - `0a945024` adds a **62,208-byte per-cast float64** lattice-hash memo for
   source C noise with an out-of-range exact fallback and a direct float64
-  equality regression. Source comparisons, controlled timings, world tests and
-  full overlap tests are pending; no gain or parity is asserted yet.
+  equality regression. [Source quick 41222716458](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41222716458)
+  and [historical JOIN 41222716378](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41222716378)
+  passed. [Controlled source comparison 41222801681](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41222801681)
+  matched fields through ticks 108/270/390/444/510/570/590/600. Eight alternating
+  samples p50 baseline→optimized were **277.620→192.569 ms** (tick 270),
+  **387.143→237.260** (390), **318.349→215.351** (444), and
+  **131.910→91.275** (510), on one shared software CPU; repeated samples
+  include warm-cache behavior. [720p/2K/4K overlap 41222716429](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41222716429)
+  passed with ticks 23–463, but full-cast, source-native composite parity,
+  GPU timing and target-device budget remain open. This is not visual approval.
+
+- Fusion lifecycle fix `ec91610e`: a C05 source ends before its A05/shared
+  timeline due to the authored offset. Previously the last C world texture
+  and post state remained frozen until the entire cast finished. Each completed
+  source family is now retired independently, while sibling and other-cast
+  layers remain. [Historical JOIN 41223399432](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41223399432),
+  [assertion triage 41223645326](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41223645326)
+  passed C05 layer/post/legacy sprite cleanup with A05 and an independent C10
+  still active. The same run captured C20 ticks 21/120/180/240/270/396/420/
+  510/570/600 and passed a separate natural-end cleanup and no-damage check.
+  Frozen-world visual captures are not source parity, moving-target hit/miss,
+  or proof of current A0 readiness.
+- `0c606912` replaces C `imul`'s 16-bit split with signed-int32 operands
+  multiplied safely inside int64, preserving low 32 bits exactly. Source quick
+  [41222994576](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41222994576)
+  passed edge and 10,000 sampled identities against the former implementation;
+  C05 and six C20 role comparisons at `12b2a04e` also passed. Controlled
+  comparison [41223085300](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41223085300)
+  uses the actual prior source and C20's direct prior math, matching all fields
+  through tick 600; exact matched output and timing are limited to those ticks.
+- A new six-catalog-relative-tick actual-overworld sweep `08eddd80` is queued;
+  it records actual native duration and explicitly marks casts that terminate
+  before a requested sample. It does not assert those ticks are the original
+  authored phase boundaries or substitute for source-native comparisons.
