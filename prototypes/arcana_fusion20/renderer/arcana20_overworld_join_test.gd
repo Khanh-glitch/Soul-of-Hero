@@ -678,10 +678,38 @@ func _run() -> void:
     await process_frame
     await process_frame
     check(mount.active_viewers(id19) == 0 and images_equal(baseline, await save_frame("world_19_cancelled")), "D19 candidate cleanup restores frozen world")
-    mount.detach()
-    mount.queue_free()
-    multi.queue_free()
+    # Exercise the actual AppFlow route change with a still-active #20 cast
+    # and its opt-in viewport post, rather than cancelling it before exiting.
+    var transition_post := Arcana20CViewportPost.new()
+    transition_post.process_mode = Node.PROCESS_MODE_ALWAYS
+    world.add_child(transition_post)
+    check(transition_post.attach(multi) and multi.cast_skill(id20, player.global_position, enemy.global_position), "C20 scene-transition diagnostic starts active cast and post")
+    var transition_rift := multi._casts[id20] as CSourcePlayer
+    transition_rift.set_process(false)
+    transition_rift.render_enabled = false
+    for tick in range(396): transition_rift.advance(STEP, false)
+    transition_rift.render_enabled = true
+    transition_rift._render_frame()
     await process_frame
+    await process_frame
+    check(mount.active_viewers(id20) == 1 and transition_post._rect.visible, "C20 world viewer and collision post active immediately before route change")
+    var old_world_ref := weakref(world)
+    var old_mount_ref := weakref(mount)
+    var old_renderer_ref := weakref(multi)
+    var old_post_ref := weakref(transition_post)
+    var flow := root.get_node_or_null("AppFlow")
+    if flow == null:
+        check(false, "C20 route transition AppFlow missing")
+    else:
+        flow.call(&"open_home")
+        check(await wait_route(app, &"home", 30000), "C20 actual AppFlow overworld-to-Home route succeeds")
+        await process_frame
+        await process_frame
+        check(old_world_ref.get_ref() == null and old_mount_ref.get_ref() == null and old_renderer_ref.get_ref() == null and old_post_ref.get_ref() == null, "C20 active cast, world viewer and viewport post are freed on scene transition")
+        var home_clean := await save_frame("fusion_20_transition_home")
+        await process_frame
+        await process_frame
+        check(images_equal(home_clean, await save_frame("fusion_20_transition_home_stable")), "C20 scene transition leaves no changing viewport residue on frozen Home")
 
     var f := FileAccess.open(OUTPUT + "/contamination.json", FileAccess.WRITE)
     f.store_string(JSON.stringify({"stats": stats, "scope": "frozen actual overworld; one tick; experimental A/B/C terrain passes only; #04 is an unapproved redesign candidate; not source fidelity, gameplay, post, actor depth or approval"}, "  "))
