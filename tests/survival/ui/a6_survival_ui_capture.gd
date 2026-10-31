@@ -79,7 +79,7 @@ func _run() -> void:
 	await _capture_return("return_guidance", "guidance")
 	printerr("A6 SURVIVAL UI CAPTURE: workshop direction ", direction)
 	await _capture_workshop("workshop_queued" + suffix)
-	await _capture_workshop("workshop_settled" + suffix)
+	await _capture_workshop("workshop_refused" + suffix)
 	_write_manifest()
 	if not _failures.is_empty():
 		for message: String in _failures:
@@ -334,6 +334,21 @@ func _ensure_world() -> bool:
 	return false
 
 
+## One refused queue through the panel's own command path, so the frame shows the
+## sentence a player would get.
+func _refuse_once(panel: Node, session: Node) -> void:
+	for raw_station: Variant in (session.call(&"nearby_stations") as Array):
+		var station: Dictionary = raw_station
+		var station_id := String(station.get("station_id", ""))
+		var recipes: Array = session.call(&"available_recipes", station_id)
+		if recipes.is_empty():
+			continue
+		var recipe: Dictionary = recipes[0]
+		printerr("A6 SURVIVAL UI CAPTURE: refusing ", String(recipe.get("id", "")), " at ", station_id)
+		panel.call(&"_queue", String(recipe.get("id", "")), station_id)
+		return
+
+
 ## Take in anything the session has already finished, through the session's own command.
 ## A job that is not ready refuses and stays; nothing is claimed on the player's behalf.
 func _collect_finished(session: Node) -> void:
@@ -373,9 +388,9 @@ func _queue_real_work(session: Node) -> int:
 	return queued
 
 
-## `workshop_queued` is the list the moment work is handed over; `workshop_settled` is
-## the same list after the session's own clock has run it down, where a finished job can
-## be collected. Both frames read the same owner state a player reads.
+## `workshop_queued` is the list the moment work is handed over; `workshop_refused` is the
+## same surface after the session refused a second queue because its queue is full. Both
+## frames read owner state: nothing in either is a number the panel invented.
 func _capture_workshop(state: String) -> void:
 	var world_ready: bool = await _ensure_world()
 	if not world_ready:
@@ -385,7 +400,13 @@ func _capture_workshop(state: String) -> void:
 	if panel == null or session == null:
 		_failures.append("%s: the overworld has no economy panel/session" % state)
 		return
-	if state.contains("queued"):
+	if state.contains("refused"):
+		# Drive the panel's own queue command once more, with the queue full: the refusal
+		# notice in this frame is produced by the production refusal mapping, from the
+		# session's own answer. Pointer clicks are not claimed here - the 19-check GUI
+		# suite owns those.
+		_refuse_once(panel, session)
+	elif state.contains("queued"):
 		# Start each direction's "just handed over" frame from an empty queue, so the two
 		# directions show the same moment instead of one showing what the other finished.
 		_collect_finished(session)

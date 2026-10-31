@@ -628,7 +628,7 @@ func _queue_used(station: Dictionary, jobs: Dictionary) -> int:
 
 ## Player-facing state, derived only from owner answers: the station's own
 ## operational flag, its own queue capacity, and the bag totals A0 reports.
-func _state_key(operational: bool, queue_full: bool, shortfall: String) -> String:
+func _state_key(operational: bool, _queue_full: bool, shortfall: String) -> String:
 	# The row answers "can I make this?", not "is the station free?": a full queue is the
 	# station's own fact and the header states it once. Repeating it on every row covered
 	# the payability answer, which is what a row is for.
@@ -636,8 +636,6 @@ func _state_key(operational: bool, queue_full: bool, shortfall: String) -> Strin
 		return A6UiKit.STATE_OFFLINE
 	if not shortfall.is_empty():
 		return A6UiKit.STATE_SHORT
-	if queue_full:
-		return A6UiKit.STATE_BUSY
 	return A6UiKit.STATE_CRAFT
 
 
@@ -699,7 +697,7 @@ func _add_running_jobs(jobs: Dictionary) -> void:
 		var progress := HBoxContainer.new()
 		progress.add_theme_constant_override("separation", 4)
 		column.add_child(progress)
-		var bar_parts := A6UiKit.bar(120, 9)
+		var bar_parts := A6UiKit.bar(88, 9)
 		var bar_root: Control = bar_parts["root"]
 		bar_root.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		bar_root.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -716,15 +714,16 @@ func _add_running_jobs(jobs: Dictionary) -> void:
 			A6UiKit.state_colour(A6UiKit.STATE_DONE if ready else A6UiKit.STATE_BUSY),
 		)
 		status_label.name = "Status"
-		status_label.custom_minimum_size = Vector2(56, 0)
+		status_label.custom_minimum_size = Vector2(54, 0)
 		status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		status_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		status_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		line.add_child(status_label)
 
 		var action := Button.new()
 		action.name = "JobAction"
 		action.text = "LẤY" if ready else "HUỶ"
-		action.custom_minimum_size = Vector2(0, 22)
+		action.custom_minimum_size = Vector2(44, 22)
 		action.add_theme_font_size_override("font_size", A6UiKit.size_caption())
 		if ready:
 			# The one thing worth collecting is the only thing on the surface that looks
