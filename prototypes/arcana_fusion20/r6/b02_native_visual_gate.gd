@@ -1,9 +1,9 @@
 ## Native Godot 4.7 B02 original-source visual pilot. Screenshots are native viewport.
-extends SceneTree
+extends Node
 const SCENE := preload("res://prototypes/arcana_fusion20/r6/b02_soh_world.tscn")
 var failures: Array[String] = []
 
-func _initialize() -> void:
+func _ready() -> void:
     call_deferred("_run")
 
 func _check(ok: bool, detail: String) -> void:
@@ -22,20 +22,19 @@ func _snap(stage: Node2D, name: String) -> bool:
 
 func _run() -> void:
     var stage := SCENE.instantiate() as Node2D
-    root.add_child(stage)
-    current_scene = stage
+    add_child(stage)
     for i: int in range(300):
-        await process_frame
+        await get_tree().process_frame
         if bool(stage.get("_ready_for_cast")): break
     _check(bool(stage.get("_ready_for_cast")),"SOH_overworld_ready")
     if not bool(stage.get("_ready_for_cast")):
         print("B02_RESULT FAIL world_not_ready")
-        quit(1)
+        get_tree().quit(1)
         return
     var fx := stage.get("fx") as ArcanaB02Runtime
     _check(fx != null and fx.material != null and fx.material.shader != null,"original_B02_shader_loaded")
     if fx == null:
-        quit(1)
+        get_tree().quit(1)
         return
     var actor := stage.get("skeleton") as Node2D
     _check(actor != null and actor.is_in_group(&"enemies"),"real_SOH_enemy_present")
@@ -46,9 +45,9 @@ func _run() -> void:
     for timing: Dictionary in [{"label":"opening","time":1.3}, {"label":"peak","time":4.5}, {"label":"out","time":6.5}]:
         _check(fx.cast(2,origin),"original_B02_cast_"+str(timing.label))
         fx.timeline = float(timing.time)
-        await process_frame
-        await process_frame
+        await get_tree().process_frame
+        await get_tree().process_frame
         _check(_snap(stage,"B02_"+str(timing.label)),"native_screenshot_"+str(timing.label))
     _check(fx.spell_id==2,"only_original_source_B02")
     print("B02_RESULT ","PASS" if failures.is_empty() else "FAIL"," failures=",JSON.stringify(failures))
-    quit(0 if failures.is_empty() else 1)
+    get_tree().quit(0 if failures.is_empty() else 1)
