@@ -554,6 +554,9 @@ class GroundDecal extends Fx:
 	var _dgs: PackedInt32Array = PackedInt32Array()
 	var _dh1: PackedFloat64Array = PackedFloat64Array()
 	var _dh2: PackedFloat64Array = PackedFloat64Array()
+	var _sgx: PackedInt32Array = PackedInt32Array()
+	var _sgy: PackedInt32Array = PackedInt32Array()
+	var _sc: PackedInt32Array = PackedInt32Array()
 	var glowCol: int = 0
 	var size: float = 0.0
 	var life: float = 0.0
@@ -714,6 +717,9 @@ class GroundDecal extends Fx:
 		var t: float = g.t * 22 * pulse
 		var pw: int = int(M.P["w"])
 		var cb: int = int(cols["b"])
+		_sgx.clear()
+		_sgy.clear()
+		_sc.clear()
 		for i in range(_dxs.size()):
 			if fade < 1 and _dh1[i] > fade:
 				continue
@@ -724,7 +730,10 @@ class GroundDecal extends Fx:
 				var ph: float = fmod(fmod(t - float(_dgs[i]), 44.0) + 44.0, 44.0)
 				if ph < 7:
 					c = pw if ph < 2.5 else M.mix(cb, pw, 0.5)
-			L.raw_px(int(floor((x + _dxs[i]) * L.k + 0.5)), int(floor((y + _dys[i]) * L.k + 0.5)), c)
+			_sgx.append(int(floor((x + _dxs[i]) * L.k + 0.5)))
+			_sgy.append(int(floor((y + _dys[i]) * L.k + 0.5)))
+			_sc.append(c)
+		L.stamp_packed(_sgx, _sgy, _sc, _sc.size())
 
 	func lit(g, _w) -> void:
 		var rem: float = life - age
@@ -733,13 +742,19 @@ class GroundDecal extends Fx:
 		L.add = true
 		L.a = M.js_round(60 * fade)
 		var t: float = g.t * 22 * pulse
+		_sgx.clear()
+		_sgy.clear()
+		_sc.clear()
 		var i: int = 0
 		while i < _dxs.size():
 			if _dgs[i] >= 0:
 				var ph: float = fmod(fmod(t - float(_dgs[i]), 44.0) + 44.0, 44.0)
 				if ph < 7:
-					L.raw_px(int(floor((x + _dxs[i]) * L.k + 0.5)), int(floor((y + _dys[i]) * L.k + 0.5)), glowCol)
+					_sgx.append(int(floor((x + _dxs[i]) * L.k + 0.5)))
+					_sgy.append(int(floor((y + _dys[i]) * L.k + 0.5)))
+					_sc.append(glowCol)
 			i += 2
+		L.stamp_packed(_sgx, _sgy, _sc, _sc.size())
 		L.add = false
 		L.a = 255
 

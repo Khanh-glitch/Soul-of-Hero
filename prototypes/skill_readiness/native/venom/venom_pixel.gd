@@ -125,6 +125,63 @@ class Layer extends RefCounted:
 	func dot(x: float, y: float, c: int) -> void:
 		raw_px(M.js_round(x * k), M.js_round(y * k), c)
 
+	# Bulk dot stamp replicating raw_px per pixel exactly (bounds, Bayer
+	# density, additive/alpha branches). Used by GroundDecal, whose per-pixel
+	# dot() function calls were a measurable wall-clock cost. Generic states
+	# fall back to the literal raw_px loop.
+	func stamp_packed(gxs: PackedInt32Array, gys: PackedInt32Array, cs: PackedInt32Array, n: int) -> void:
+		if add and not cov and dl >= 16:
+			var lb: PackedByteArray = bytes
+			var av: int = a
+			for i in range(n):
+				var gx: int = gxs[i]
+				var gy: int = gys[i]
+				if gx < 0 or gy < 0 or gx >= W or gy >= H:
+					continue
+				var c: int = cs[i]
+				var o: int = (gy * W + gx) * 4
+				var r2: int = int(lb[o]) + (((c & 255) * av) >> 8)
+				var g2: int = int(lb[o + 1]) + ((((c >> 8) & 255) * av) >> 8)
+				var b2: int = int(lb[o + 2]) + ((((c >> 16) & 255) * av) >> 8)
+				lb[o] = 255 if r2 > 255 else r2
+				lb[o + 1] = 255 if g2 > 255 else g2
+				lb[o + 2] = 255 if b2 > 255 else b2
+				lb[o + 3] = 255
+			bytes = lb
+			return
+		if not add and a == 255 and not cov:
+			var lb2: PackedByteArray = bytes
+			if dl >= 16:
+				for i in range(n):
+					var gx: int = gxs[i]
+					var gy: int = gys[i]
+					if gx < 0 or gy < 0 or gx >= W or gy >= H:
+						continue
+					var c: int = cs[i]
+					var o: int = (gy * W + gx) * 4
+					lb2[o] = c & 255
+					lb2[o + 1] = (c >> 8) & 255
+					lb2[o + 2] = (c >> 16) & 255
+					lb2[o + 3] = 255
+			else:
+				for i in range(n):
+					var gx: int = gxs[i]
+					var gy: int = gys[i]
+					if gx < 0 or gy < 0 or gx >= W or gy >= H:
+						continue
+					if M.BAYER[((gy & 3) << 2) | (gx & 3)] >= dl:
+						continue
+					var c: int = cs[i]
+					var o: int = (gy * W + gx) * 4
+					lb2[o] = c & 255
+					lb2[o + 1] = (c >> 8) & 255
+					lb2[o + 2] = (c >> 16) & 255
+					lb2[o + 3] = 255
+			bytes = lb2
+			return
+		for i in range(n):
+			raw_px(gxs[i], gys[i], cs[i])
+
 	func raw_hline(x0: int, x1: int, y: int, c: int) -> void:
 		if not (y >= 0 and y < H) or not (x0 <= x1):
 			return
