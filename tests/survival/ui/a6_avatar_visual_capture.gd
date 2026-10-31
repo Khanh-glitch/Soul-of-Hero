@@ -15,6 +15,9 @@ extends Node
 const OVERWORLD_ROUTE := &"overworld"
 const HOME_ROUTE := &"home"
 const DEATH_HOLD_SECONDS := 1.6
+## A held directional input must move the actor at least this far, or the frame is
+## not a walk and the capture fails instead of publishing a misleading picture.
+const MIN_WALK_DISPLACEMENT := 4.0
 
 var _app_root: Node
 var _phase := "full"
@@ -143,9 +146,10 @@ func _run_continue_phase() -> void:
 		return
 	var home_state := _presenter_state(home_player)
 	await _capture("20_continue_home_idle")
+	var home_start := _actor_position()
 	Input.action_press(&"move_right")
 	await _wait_frames(12)
-	await _capture("21_continue_home_walk")
+	await _capture_walk("21_continue_home_walk", home_start)
 	Input.action_release(&"move_right")
 	AppFlow.open_overworld()
 	if not await _wait_for_route(OVERWORLD_ROUTE, 20000):
@@ -168,9 +172,10 @@ func _run_continue_phase() -> void:
 		await _wait_frames(14)
 	var player_state := _presenter_state(_knight)
 	await _capture("22_continue_overworld_idle")
+	var world_start := _actor_position()
 	Input.action_press(&"move_right")
 	await _wait_frames(14)
-	await _capture("23_continue_overworld_walk")
+	await _capture_walk("23_continue_overworld_walk", world_start)
 	Input.action_release(&"move_right")
 	await _wait_frames(30)
 	await _capture("24_continue_overworld_idle_after_walk")
@@ -247,6 +252,7 @@ func _capture(label: String) -> void:
 		"route": String(_app_root.call(&"get_current_route")) if is_instance_valid(_app_root) else "",
 	}
 	var host: Node = _knight if is_instance_valid(_knight) else _find_avatar_host(_current_screen())
+	evidence["motion"] = _motion_of(host)
 	var state := _presenter_state(host) if host != null else {}
 	if not state.is_empty():
 		evidence["avatar"] = {
@@ -258,6 +264,50 @@ func _capture(label: String) -> void:
 		}
 	_frames.append(evidence)
 	print("A6 CAPTURE: wrote %s (%dx%d)" % [path, image.get_width(), image.get_height()])
+
+
+## A frame labelled "walk" proven nothing unless the actor actually moved. This
+## records what the character is doing - position, velocity and whether the input is
+## visible to the world at all - so a still frame says whether the harness, the input
+## gate or the animation is the one that failed.
+func _motion_of(host: Node) -> Dictionary:
+	if host == null or not is_instance_valid(host):
+		return {}
+	var body := host as Node2D
+	if body == null:
+		return {}
+	var out := {
+		"position": [body.global_position.x, body.global_position.y],
+		"input_pressed": Input.is_action_pressed(&"move_right"),
+	}
+	if body is CharacterBody2D:
+		var velocity := (body as CharacterBody2D).velocity
+		out["velocity"] = [velocity.x, velocity.y]
+	return out
+
+
+## Captures a frame and asserts the actor displaced since the mark, so a walk frame
+## cannot pass on its label alone.
+func _capture_walk(label: String, from_position: Vector2) -> void:
+	await _capture(label)
+	var host: Node = _knight if is_instance_valid(_knight) else _find_avatar_host(_current_screen())
+	if host == null or not is_instance_valid(host):
+		_fail("%s: no actor to measure" % label)
+		return
+	var moved := ((host as Node2D).global_position - from_position).length()
+	if moved < MIN_WALK_DISPLACEMENT:
+		_fail("%s: actor displaced %.2f px while the walk input was held (needs %.1f)" % [
+			label, moved, MIN_WALK_DISPLACEMENT,
+		])
+		return
+	print("A6 CAPTURE: %s displaced %.1f px" % [label, moved])
+
+
+func _actor_position() -> Vector2:
+	var host: Node = _knight if is_instance_valid(_knight) else _find_avatar_host(_current_screen())
+	if host is Node2D:
+		return (host as Node2D).global_position
+	return Vector2.ZERO
 
 
 func _wait_for_route(route_id: StringName, timeout_msec := 6000) -> bool:

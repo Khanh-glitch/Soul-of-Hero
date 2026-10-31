@@ -517,3 +517,76 @@ jobs:
           name: a6-return-ui-logs
           path: .artifacts/*.log
           include-hidden-files: true
+
+  publish-frames:
+    name: Publish the staged-art frames for independent review
+    needs: [visual-captures]
+    if: ${{ always() && needs.visual-captures.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      # The frames this job publishes are RENDERED GAME FRAMEWORKS of the licensed
+      # characters, not the licensed source art. The source ZIPs and extracted sheets
+      # stay runner-only (staged into private_art/ and never committed); what lands in
+      # git is what a player would see on screen. Artifacts cannot be read from the
+      # review sandbox, which is exactly why the visuals have been unverifiable.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: a6-native-captures
+          path: downloaded
+
+      - name: Lay the frames out for review
+        run: |
+          set -euo pipefail
+          sudo apt-get install -y --no-install-recommends python3-pil >/dev/null
+          mkdir -p docs/survival/reviews/native/avatar
+          python3 - <<'PY'
+          import pathlib, shutil
+          from PIL import Image
+
+          src = pathlib.Path("downloaded")
+          dst = pathlib.Path("docs/survival/reviews/native/avatar")
+          native = reduced = 0
+          for png in sorted(src.rglob("*.png")):
+              image = Image.open(png)
+              width, height = image.size
+              shutil.copy2(png, dst / png.name)
+              native += 1
+              # Whole-integer NEAREST downscales are viewing aids; the native file
+              # beside each one is the evidence and its true size is asserted earlier.
+              if width > 2600:
+                  image.resize((width // 2, height // 2), Image.NEAREST).save(
+                      dst / png.name.replace(".png", "_half.png"), optimize=True
+                  )
+                  reduced += 1
+          print(f"published {native} native frames and {reduced} half-size copies")
+          PY
+          du -sh docs/survival/reviews/native/avatar
+          ls docs/survival/reviews/native/avatar | head -40
+
+      - name: Commit the frames
+        run: |
+          set -euo pipefail
+          git config user.name "a6-render-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add docs/survival/reviews/native/avatar
+          if git diff --cached --quiet; then
+            echo "a6 avatar frames: nothing new to publish"
+            exit 0
+          fi
+          git commit -m "ci(a6): publish staged-art avatar frames [skip ci]"
+          for attempt in 1 2 3; do
+            if git push origin "HEAD:${GITHUB_REF_NAME}"; then
+              echo "avatar frames published"
+              exit 0
+            fi
+            echo "push rejected (attempt ${attempt}); rebasing on the new branch tip"
+            git pull --rebase --autostash --quiet origin "${GITHUB_REF_NAME}" || true
+            sleep 10
+          done
+          echo "::error::could not publish the avatar frames"
+          exit 1
