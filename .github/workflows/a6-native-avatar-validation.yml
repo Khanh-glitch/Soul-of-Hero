@@ -534,7 +534,7 @@ jobs:
   publish-frames:
     name: Publish the staged-art frames for independent review
     needs: [visual-captures]
-    if: ${{ always() && needs.visual-captures.result == 'success' }}
+    if: ${{ always() && needs.visual-captures.result != 'cancelled' }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:

@@ -296,11 +296,34 @@ func _capture_walk(label: String, from_position: Vector2) -> void:
 		return
 	var moved := ((host as Node2D).global_position - from_position).length()
 	if moved < MIN_WALK_DISPLACEMENT:
-		_fail("%s: actor displaced %.2f px while the walk input was held (needs %.1f)" % [
-			label, moved, MIN_WALK_DISPLACEMENT,
-		])
+		# Say which link in the chain broke, so the next run does not need a log that
+		# the review sandbox cannot fetch: was the input visible at all, did the
+		# gameplay gate permit it, and was the body actually moving?
+		_fail("%s: actor displaced %.2f px while the walk input was held (needs %.1f) "
+			% [label, moved, MIN_WALK_DISPLACEMENT]
+			+ "pressed=%s permitted=%s velocity=%s route=%s dead=%s" % [
+				str(Input.is_action_pressed(&"move_right")),
+				str(_gate_permits()),
+				str((host as CharacterBody2D).velocity) if host is CharacterBody2D else "n/a",
+				str(_app_root.call(&"get_current_route")) if is_instance_valid(_app_root) else "",
+				str(host.get(&"dead")),
+			])
 		return
 	print("A6 CAPTURE: %s displaced %.1f px" % [label, moved])
+
+
+## Whether A0's gameplay gate would let a movement action through right now. A gate
+## that latched the press under a modal keeps the actor still while the key is held.
+func _gate_permits() -> String:
+	var gate := get_tree().root.get_node_or_null(^"GameplayInputGate")
+	if gate == null:
+		for node: Node in get_tree().root.find_children("*", "", true, false):
+			if node.has_method(&"permits"):
+				gate = node
+				break
+	if gate == null or not gate.has_method(&"permits"):
+		return "no-gate"
+	return str(gate.call(&"permits", &"move_right"))
 
 
 func _actor_position() -> Vector2:

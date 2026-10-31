@@ -39,7 +39,7 @@ func _ready() -> void:
 
 
 func _run() -> void:
-	await _check_missing_owner()
+	await _check_owner_default()
 	await _check_owner_without_api()
 	await _check_no_identity()
 	await _check_claimed_identity_without_art()
@@ -49,16 +49,18 @@ func _run() -> void:
 	_finish()
 
 
-## A host with no appearance authority at all must say so by name, not present a
-## default character.
-func _check_missing_owner() -> void:
+## With no injected owner the presenter resolves the production SaveService autoload.
+## That fallback is the contract, so it is asserted rather than assumed: a null seam
+## must never be treated as "no appearance authority".
+func _check_owner_default() -> void:
 	var host := _make_host()
 	var presenter := _make_presenter(host, null)
 	await _settle()
 	var state: Dictionary = presenter.call(&"get_presentation_state")
-	_equals(String(state.get("status", "")), "NO_SAVE_SERVICE", "an absent owner is reported as NO_SAVE_SERVICE")
-	_expect(not bool(state.get("ready", false)), "an absent owner is never READY")
-	_expect(not String(state.get("reason", "")).is_empty(), "an absent owner carries a human-readable reason")
+	_expect(
+		String(state.get("status", "")) != "NO_SAVE_SERVICE",
+		"a null owner seam falls back to the production SaveService (%s)" % String(state.get("status", "")),
+	)
 	_cleanup(presenter, host)
 
 

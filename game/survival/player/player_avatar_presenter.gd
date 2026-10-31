@@ -188,6 +188,9 @@ func is_avatar_active() -> bool:
 func get_presentation_state() -> Dictionary:
 	return {
 		"status": _status,
+		# A host should not have to string-compare to know whether it can hide its
+		# own actor; this is the single answer to that question.
+		"ready": _status == STATUS_READY,
 		"gender": _gender,
 		"armor_grade": _armor_grade,
 		"requested_armor_grade": _requested_grade,
