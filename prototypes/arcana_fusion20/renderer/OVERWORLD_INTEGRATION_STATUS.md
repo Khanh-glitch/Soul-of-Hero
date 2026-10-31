@@ -518,3 +518,43 @@ SOH world source parity and creator review remain separate.
   are unchanged; there is an extra int32 index per valid sample in the static
   cache and each cast. Source comparisons, isolation, world regression and
   new CPU/overlap measurements must pass before describing a speedup.
+
+- D's original ten-stage bright/blur chain and COMP shader now have an
+  explicit-scene GPU producer (`DOriginalBloom`), **not yet mounted** on the
+  SOH viewport. Original WebGL and native GPU were fed the identical original
+  neutral-base scene and original actual GL uniforms. The full per-stage
+  [diagnostic 41222553731](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41222553731)
+  at `b7e4d2af` recorded bloomSmall RGB MAE **0.097–0.177/255**, max **5–9/255**;
+  bloom2 MAE **0–0.109/255**, max **0–1/255**; post MAE **0.052–0.227/255**,
+  max **10/255** at ticks 72/192/312/489/510. The first bright stage still has
+  local max **255/255** because source WebGL's 2:1 nearest samples land on
+  texel boundaries and do not select the same neighbor consistently. The
+  native shader uses the dominant observed selection, not proven bit-exact
+  GPU rounding. Source geometry, real-world HUD/depth, post/full OUT and
+  parity remain unresolved. Unmounted results are not acceptance.
+- Sparse traversal source comparisons [41221651890](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41221651890),
+  [polygons](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41221651906),
+  [blocks](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41221651864),
+  [particles](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41221651870),
+  [early](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41221651982),
+  [OUT](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41221651871),
+  [JOIN](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41221651873)
+  and [all-20 lifecycle](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41221651876)
+  passed at `9bd4df3f`. The first controlled baseline comparison
+  [41221988308](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41221988308)
+  failed at tick 444 due to differing process-global particle seed counters;
+  [41222306130](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41222306130)
+  controlled the counters and matched every captured field at ticks
+  108/270/390/444/510. Eight-sample p50 baseline→sparse was
+  5.434→4.360, 206.108→205.573, 279.299→278.564,
+  234.214→232.998, 96.424→95.585 ms on a shared CPU. The extra index
+  costs **127,600 bytes per master and per cast**; target hardware remains
+  unmeasured. At `815d3a40` float64 row-band hashes additionally reduce
+  repeated work: [controlled run 41222515279](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41222515279)
+  matched all fields and p50 baseline→new was 5.936→4.589,
+  232.704→222.039, 321.551→312.704, 266.130→256.674,
+  110.105→105.708 ms. Raster remains far too costly on this runner.
+- `0a945024` adds a **62,208-byte per-cast float64** lattice-hash memo for
+  source C noise with an out-of-range exact fallback and a direct float64
+  equality regression. Source comparisons, controlled timings, world tests and
+  full overlap tests are pending; no gain or parity is asserted yet.
