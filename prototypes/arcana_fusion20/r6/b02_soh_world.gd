@@ -39,7 +39,7 @@ func _on_world_ready() -> void:
         return
     var caster := overworld.player as Node2D
     var camera := overworld.camera as Camera2D
-    var starting_point := caster.global_position + Vector2(70,-6)
+    var starting_point := caster.global_position + Vector2(130,-16)
     if overworld.has_method(&"_nearest_walkable"):
         starting_point = overworld.call(&"_nearest_walkable", starting_point)
     skeleton = SKELETON_SCENE.instantiate() as SkeletonEnemy
@@ -63,7 +63,8 @@ func _on_world_ready() -> void:
     ui.layer = 20
     add_child(ui)
     hud = Label.new()
-    hud.position = Vector2(16,12)
+    hud.position = Vector2(365,8)
+    hud.add_theme_font_size_override("font_size",10)
     hud.add_theme_color_override("font_color",Color.WHITE)
     ui.add_child(hud)
     _ready_for_cast = true
@@ -75,7 +76,7 @@ func _process(_dt: float) -> void:
     if not _ready_for_cast:
         return
     var hp_text := "dead" if not is_instance_valid(skeleton) else str(skeleton.health)
-    hud.text = "ARCANA B#02 - ORIGINAL SOURCE PASS / REAL SOH OVERWORLD\n1: B#02 Furnace Wyrm | left click: cast | Player: SOH controls\nReal Skeleton HP=%s | 30Hz original B passes | VISUAL APPROVAL PENDING" % hp_text
+    hud.text = "Furnace Wyrm / click to cast / HP %s" % hp_text
 
 
 func _unhandled_input(event: InputEvent) -> void:
