@@ -753,3 +753,22 @@ SOH world source parity and creator review remain separate.
   p50 **642/784/1040 ms**, p95 **1406/1572/1808 ms**, p99 **1477/1638/1869 ms**.
   Each sampled 54 overlap frames, +47 live objects and 0 after cancellation,
   HP unchanged; the C-only timing and memory caveats above remain in force.
+- [Canonical same-fixed-tick cast ribbons 41230009661](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41230009661)
+  fixes the prior comparison's mismatched `floor(t*30)`/renderer RNG inputs
+  without changing source algorithms. At ticks 72/192/312/489/510, source and
+  native have **62/60/52/60/60** calls respectively, with no corresponding
+  geometry coordinate difference above 0.01 px. GPU coverage IoU becomes
+  **0.991736/0.953206/0.979751/0.985957/0.986998**, GPU RGB MAE
+  **0.0000477/0.0000618/0.0000832/0.001001/0.001176**; CPU MAE
+  **0.000108/0.000162/0.000203/0.004032/0.004596**. GPU local max remains
+  **0.46–0.80**; source primitive raster/rounding and accumulated-time behavior
+  are still unresolved. At ticks 528/558/582 the native intentional unapproved
+  OUT extension differs from the original, so low coverage IoU there is not a
+  source-parity failure or creator approval. The GPU path remains isolated.
+  The renderer-clock fix was also compared in the existing accumulated-time
+  complete neutral g scene [41229074691](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41229074691):
+  MAE **0.000362/0.000463/0.001894/0.007982/0.009089** at ticks 72/192/312/
+  489/510, still with large local maxima; not SOH world or bloom acceptance.
+- Owner A0 moved to `f518e795c8bc6aba7f9cfb8808fc6c981bc2dc2a`, another
+  workflow-only child of `3a7b4591`; current JOIN's exact input remains the
+  separately verified `b24a4918a01701842c783c711d309669c986fc50`.
