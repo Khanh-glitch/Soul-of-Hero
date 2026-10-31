@@ -16,6 +16,7 @@ on:
       - 'docs/survival/world/**'
       - 'assets/environment/survival_world/**'
       - 'game/world_art/**'
+      - 'game/survival/world/**'
   pull_request:
     branches: [main, feature/survival-rpg-foundation-20261029]
     paths:
@@ -26,6 +27,7 @@ on:
       - 'docs/survival/world/**'
       - 'assets/environment/survival_world/**'
       - 'game/world_art/**'
+      - 'game/survival/world/**'
   workflow_dispatch:
 
 permissions:
@@ -517,3 +519,133 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           python tools/ci/mirror_native_evidence.py --root artifacts/a1-continuity
+
+  godot-round12-deep-world-native:
+    name: A1 GODOT 4.7 ROUND 12 FULL SOURCE STREAM / REAL HERO (ISOLATED)
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Compile Round 12 full-continent runtime and verify committed spawn index
+        run: |
+          mkdir -p artifacts/a1-round12
+          python tools/survival/worldgen/compile_round12_runtime.py \
+            --out artifacts/a1-round12/round12_native_inputs.json \
+            | tee artifacts/a1-round12/compile.log
+          git diff --exit-code -- data/survival/world/a1_round12_spawn_index.v1.json
+      - name: Import root project for Round 12 native fixture
+        run: |
+          mkdir -p artifacts/ud_a1_round12_import
+          timeout --signal=TERM --kill-after=10s 300s godot --headless \
+            --path . --user-data-dir artifacts/ud_a1_round12_import \
+            --import >artifacts/a1-round12/godot-import.log 2>&1
+          rc=$?
+          echo "Round 12 import exit_code=$rc"
+          tail -60 artifacts/a1-round12/godot-import.log
+          exit $rc
+      - name: Measure short Round 12 drive + 720p/1440p/2160p budget probe
+        run: |
+          mkdir -p artifacts/a1-round12/probe artifacts/ud_a1_round12_probe
+          timeout --signal=TERM --kill-after=15s 300s xvfb-run -a -s "-screen 0 3840x2160x24" env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy \
+            --user-data-dir artifacts/ud_a1_round12_probe --windowed --fixed-fps 60 \
+            --script res://tests/survival/world/round12_deep_world_native_test.gd -- \
+            --inputs="$GITHUB_WORKSPACE/artifacts/a1-round12/round12_native_inputs.json" \
+            --out-root="$GITHUB_WORKSPACE/artifacts/a1-round12/probe" \
+            --resolutions=1280x720,2560x1440,3840x2160 --budget-probe \
+            >artifacts/a1-round12/probe/godot-probe.log 2>&1
+          rc=$?
+          echo "Round 12 budget probe exit_code=$rc"
+          cat artifacts/a1-round12/probe/godot-probe.log
+          exit $rc
+      - name: Budget probe anti-vacuity gate
+        if: always()
+        run: |
+          log=artifacts/a1-round12/probe/godot-probe.log
+          [ -f "$log" ] || { echo "::error::no Round 12 probe log"; exit 1; }
+          grep -q 'A1 ROUND12 BUDGET PROBE PASSED - not a full native fixture' "$log" || {
+            echo "::error::Round 12 probe failed; log tail: $(tail -c 3000 "$log" | paste -sd' ' -)"; exit 1; }
+          python - <<'PY'
+          import json
+          p=json.load(open('artifacts/a1-round12/probe/round12_native_report.json'))
+          assert p['budget_probe'] and p['dispositions']['NATIVE_FIXTURE_PASS']=='NOT_TESTED'
+          assert len(p['journeys'])==2 and sum(x['cells'] for x in p['journeys'])==64
+          assert len(p['captures'])==3 and all(x['capture_wall_ms']>0 for x in p['captures'])
+          assert len(p['prepare_measurements'])==1 and p['prepare_measurements'][0]['wall_ms']>0
+          PY
+      - name: Calculate measured full-run timeout; refuse over-cap big-bang execution
+        run: |
+          python tools/survival/worldgen/estimate_round12_native_budget.py \
+            --probe artifacts/a1-round12/probe/round12_native_report.json \
+            --inputs artifacts/a1-round12/round12_native_inputs.json \
+            --out artifacts/a1-round12/native_budget.json \
+            --cap-seconds 1800 | tee artifacts/a1-round12/budget.log
+      - name: Drive complete Round 12 source/stream matrix within measured budget
+        run: |
+          budget=$(python -c "import json; print(json.load(open('artifacts/a1-round12/native_budget.json'))['timeout_seconds'])")
+          echo "Measured Round 12 full-run timeout: ${budget}s"
+          mkdir -p artifacts/a1-round12/full artifacts/ud_a1_round12
+          timeout --signal=TERM --kill-after=15s "${budget}s" xvfb-run -a -s "-screen 0 3840x2160x24" env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy \
+            --user-data-dir artifacts/ud_a1_round12 --windowed --fixed-fps 60 \
+            --script res://tests/survival/world/round12_deep_world_native_test.gd -- \
+            --inputs="$GITHUB_WORKSPACE/artifacts/a1-round12/round12_native_inputs.json" \
+            --out-root="$GITHUB_WORKSPACE/artifacts/a1-round12/full" \
+            --resolutions=1280x720,2560x1440,3840x2160 \
+            >artifacts/a1-round12/full/godot-round12.log 2>&1
+          rc=$?
+          echo "Round 12 full fixture exit_code=$rc"
+          cat artifacts/a1-round12/full/godot-round12.log
+          exit $rc
+      - name: Round 12 full native anti-vacuity gate
+        if: always()
+        run: |
+          log=artifacts/a1-round12/full/godot-round12.log
+          [ -f "$log" ] || { echo "::error::no Round 12 full fixture log"; exit 1; }
+          checks=$(grep -cE '^A1_R12 (PASS|FAIL): ' "$log" || true)
+          captures=$(grep -c 'nonblank native source capture' "$log" || true)
+          spawns=$(grep -c 'safe spawn/body/material seed' "$log" || true)
+          a8=$(grep -c 'physical A8 outer approach/return anchor' "$log" || true)
+          echo "Round 12 assertions=${checks}; captures=${captures}; spawns=${spawns}; A8 arrivals=${a8}"
+          if [ "${checks:-0}" -lt 220 ] || [ "${captures:-0}" -lt 69 ] || [ "${spawns:-0}" -ne 36 ] || [ "${a8:-0}" -ne 3 ] || \
+            ! grep -q 'A1 ROUND12 NATIVE FIXTURE PASSED' "$log" || \
+            ! grep -q 'production and visual acceptance remain separate' "$log" || \
+            ! grep -q 'tile carves open routes while original prop bodies still block' "$log" || \
+            ! grep -q 'reloaded dynamic detour physical return' "$log" || \
+            ! grep -q 'no-teleport inset -> salvage -> Quarry -> Orchard -> Mill -> inset return' "$log"; then
+            echo "::error::Round 12 full gate failed; log tail: $(tail -c 4000 "$log" | paste -sd' ' -)"
+            exit 1
+          fi
+      - name: Validate exact engine, source journeys, capture bytes and independent dispositions
+        if: always()
+        run: |
+          [ -f artifacts/a1-round12/full/round12_native_report.json ] || { echo "::error::missing Round 12 report"; exit 1; }
+          python tools/survival/worldgen/validate_round12_native.py \
+            --report artifacts/a1-round12/full/round12_native_report.json \
+            --inputs artifacts/a1-round12/round12_native_inputs.json \
+            --budget artifacts/a1-round12/native_budget.json \
+            --out artifacts/a1-round12/full/native_validation.json
+      - name: Upload Round 12 native evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a1-round12-deep-world-native-evidence
+          path: artifacts/a1-round12/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Mirror Round 12 evidence as Git blobs (artifact-host fallback)
+        if: always()
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python tools/ci/mirror_native_evidence.py --root artifacts/a1-round12

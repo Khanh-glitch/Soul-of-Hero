@@ -1,0 +1,94 @@
+{
+  "schema": "soh.a8.a0_mount_transition_package.v2",
+  "package_status": "A8_OWNER_CONTRACT_REFRESH_READY_FOR_A0_REVIEW_NOT_MOUNTED",
+  "source_pins": {
+    "a8_pr26_base_head": "54c66b89b839d773f93c023afb13f0f9295ec9a",
+    "a0_pr21_head": "738e621b688e9d9890f636ef2ece48f6d29f5b01",
+    "a1_pr20_head": "9ca1453ccdd315c9de4aae01cf0e1e5b4e0a71cf",
+    "a1_world_plan_sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4",
+    "a1_route_graph_sha256": "8e49506889149cde043ed69cf5007b219c9ba9464cb7d3eeb25f0eef108d24a9",
+    "a3_pr19_head": "b44e22df3af40939069189be14afc23ee1ce21c4",
+    "a3_quarry_authorization_status": "REJECTED_PENDING_EVIDENCE_FAIL_CLOSED",
+    "a3_bindings_sha256": "7b9670f4971d2f161138e0754cbbe66dfe2a239bf0d15d3079a766d729dd230b",
+    "a3_economy_policy_sha256": "bbe1095ca589a767742bf0a54ffd4f012d2135410713baa274bafee97cbf91bf",
+    "a3_meta_integration_contract_sha256": "69f52eac22cd15d66464a6b07fe2af2c157032f273b8e42a502715be0882b50b",
+    "a3_display_registry_sha256": "bc5dc5173a13ffcea691289c860baa5532c79b246ad4685ecc2572f75c707c59",
+    "a8_changes_on_this_branch": "A8_SCOPED_OWNER_PIN_AND_CONTRACT_REFRESH; NEW_EXACT_HEAD_CI_REQUIRED; NO_PRODUCTION_MOUNT"
+  },
+  "verified_source_bytes": {
+    "a0_pr21": {
+      "data/survival/connector/a0_candidate/slices/poi_crown_waystation.slice.json": "3a4981fd3e24580e2e7c2ee5d0929f76c432d785e142b67a222c6480af01e16f",
+      "game/survival/waystation_host.gd": "23c7f6c2c04ab40e1008943336029e278244ed58a604f265452afeb6bab97243",
+      "game/survival/economy/economy_session.gd": "06ce3c98a90f3b296cdaae961162b903d171fcf2796283a0fb7670be461b159b",
+      "game/autoload/save_service.gd": "7d07873381b6d9e8bdc44ea7845ffe191b632f66b6c677cc8208025b4390f21b",
+      "note": "The A0 candidate slice is byte-identical to the pinned A1 Waystation slice; guarded candidate composition is not normal-entry/full-world acceptance."
+    },
+    "a1_pr20": {
+      "data/survival/world/vertical_slice/poi_crown_waystation.slice.json": "3a4981fd3e24580e2e7c2ee5d0929f76c432d785e142b67a222c6480af01e16f",
+      "data/survival/world/poi_authoring/poi_crown_waystation.v1.json": "8f2e437a9c4200f737e1b048be70030e4affde37012f1f05421efe7a2e8064cf",
+      "data/survival/world/world_plan.v1.json": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4",
+      "data/survival/world/poi_route_graph.json": "8e49506889149cde043ed69cf5007b219c9ba9464cb7d3eeb25f0eef108d24a9",
+      "data/survival/world/vertical_slice/handoff_contracts.json": "c4f0a453c8143bfae9db88b269cd5406d6e4ae1c8b80ad2c0e70f865de7f97a1",
+      "data/survival/world/vertical_slice/poi_crown_relay_shed.slice.json": "5ab0042980a43e64f05aa73870b0d99f906fb95f70492daf2a6b6f7b585b77ad",
+      "data/survival/world/poi_authoring/poi_crown_relay_shed.v1.json": "ce450be63c341011fe1d472f3194f9cbe128e4b5e36f2bb9ef207c6818bfda22",
+      "data/survival/world/novice_bootstrap_contract.json": "b98466943b2f49fe6c4b74b728b642851db15e611cf7af372b2d05bcdd6f049a",
+      "data/survival/world/corridor/a8_site_transforms.v1.json": "3db1350b05b1657826caea7ab625e6a2b4513ef6f59072bbc53dbc728c72f66e",
+      "data/survival/world/art/atlas.v1.json": "83d69373ca6c1258e8727800d0aa0c288851c34d25539c69c21ec9f5fc9d769a",
+      "assets/environment/survival_world/terrain.png": "6128d8f41abe6962fe705431db20e762e0cca613ffc3eca29065727422737d1c",
+      "assets/environment/survival_world/props.png": "8d4acf4028e0e065b901e78c59c65e5a68677fb75d46c04c7e5a029a76d27324"
+    },
+    "a3_pr19": {
+      "data/survival/items/world_source_bindings.v3.json": "7b9670f4971d2f161138e0754cbbe66dfe2a239bf0d15d3079a766d729dd230b",
+      "data/survival/recipes/meta_economy.v1.json": "bbe1095ca589a767742bf0a54ffd4f012d2135410713baa274bafee97cbf91bf",
+      "docs/survival/economy/A0_META_ECONOMY_CONTRACT_V7.json": "69f52eac22cd15d66464a6b07fe2af2c157032f273b8e42a502715be0882b50b",
+      "data/survival/items/meta_display_names.v1.json": "bc5dc5173a13ffcea691289c860baa5532c79b246ad4685ecc2572f75c707c59",
+      "note": "A3 current candidate names are identifiers only; the meta integration contract remains candidate-only and fail-closed absent owner integration."
+    }
+  },
+  "world_id": "world:soh_continent_v1",
+  "a1_authored_world_extent_cells": [1024, 768],
+  "production_world_extent_mount_status": "A0_REVIEW_REQUIRED_NOT_ASSERTED_BY_A8",
+  "contracts": {
+    "physical_interaction": "data/survival/world_content/interaction_contract.v3.json",
+    "shell_transition": "data/survival/world_content/transition_contract.v2.json",
+    "run_phase_projection": "soh.a0.run_phase_projection.v1",
+    "physical_endpoint_intent": "soh.a8.physical_intent.v1"
+  },
+  "owner_seam": {
+    "a0_owns": ["active clock and run phase", "run/site instance IDs", "scene mount and transitions", "SaveService", "durable reload/idempotency", "owner receipts", "environment projection", "death, evacuation and run finalization"],
+    "a1_owns": ["canonical cells", "global geography", "world routes", "source transforms", "approval of endpoint socket placements"],
+    "a3_owns": ["source/action authorization", "costs and rewards", "currency custody and prices", "vendor stock", "recycling plans", "cooldowns and capability effects"],
+    "avfx_owns": ["exact Gold source and production timeline"],
+    "a8_owns": ["local physical site scenes", "source-art presentation", "collision and approach", "neutral intents only"],
+    "a8_has_save_or_currency_authority": false
+  },
+  "existing_a8_sites": [
+    {"poi_id": "poi_crown_south_quarry", "region_id": "r_ashen_crown", "canonical_cell": [30, 280], "a1_route_id": "sp_poi_crown_south_quarry", "scene": "res://game/survival/world_content/scenes/south_quarry.tscn"},
+    {"poi_id": "poi_crown_south_orchard", "region_id": "r_ashen_crown", "canonical_cell": [140, 360], "a1_route_id": "sp_poi_crown_south_orchard", "scene": "res://game/survival/world_content/scenes/south_orchard_ruin.tscn"},
+    {"poi_id": "poi_crown_south_mill", "region_id": "r_ashen_crown", "canonical_cell": [120, 300], "a1_route_id": "sp_poi_crown_south_mill", "scene": "res://game/survival/world_content/scenes/south_crown_mill.tscn"}
+  ],
+  "ragnarok_owner_contract": {
+    "phase_boundaries_hours": [264, 288, 312, 336],
+    "phase_source": "A0 projection only; A8 has no tick/clock/save service",
+    "site_phase_data": "data/survival/world_content/site_phase_transformations.v1.json",
+    "six_territory_model": "data/survival/world_content/ragnarok_six_territories.v1.json",
+    "physical_endpoints": "data/survival/world_content/physical_ragnarok_endpoints.v1.json",
+    "A3_authorized_Ragnarok_currency_or_rewards": false,
+    "A8_boss_combat_or_stone_grant": false
+  },
+  "production_mount_gates": [
+    "A0 approve/adapt v3 action intent, v2 transition request, and run-phase projection through A0-owned APIs.",
+    "A0 supplies durable run_id, run_epoch, site_instance_id and monotonic phase projection revision; A8 does not synthesize these in production.",
+    "A0 independently validates actor/world transform, physical approach, stale phase, source identity and duplicate request before any scene transition or SaveService mutation.",
+    "A1 confirms that the host world map is the current 1024x768 authored geography and approves physical bank/vendor/recycler/evacuation socket placement; A8 does not add POIs or move anchors.",
+    "A3 publishes source-bound authorization and wallet/vendor/recycler contracts before any endpoint can credit, debit, consume, or grant.",
+    "AVFX exact Gold and A5 combat contracts remain external; no A8 shadow implementation substitutes for them.",
+    "A0 two-process SaveService restart, idempotency, new-run reset and physical revisit tests are required after production mount."
+  ],
+  "current_evidence_status": {
+    "owner_independent_native_code": "ACCEPTED_SCOPED_AT_5da2545e; POST_REFRESH_EXACT_HEAD_CI_PENDING",
+    "rendered_visuals": "VISUAL_NOT_REVIEWED",
+    "a0_a1_a3_avfx_production_integration": "HOLD_PRODUCTION_NOT_INTEGRATED",
+    "human_play": "NOT_REVIEWED"
+  }
+}
