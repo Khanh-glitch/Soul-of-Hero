@@ -80,7 +80,12 @@ static func style_scroll(scroll: ScrollContainer, width := 9) -> void:
 	# paints behind both, so the grabber lands on the window's parchment border. The bar
 	# becomes a sibling column instead: the list scrolls, the bar sits in a gutter of its
 	# own and does not touch the frame.
-	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER
+	# The mode must stay AUTO: SCROLL_MODE_SHOW_NEVER hides the bar NODE, and the bar is
+	# this gutter's child now, so hiding it would hide the only scroll affordance on
+	# screen. AUTO keeps it visible while the content overflows, and because the bar is no
+	# longer a child of the ScrollContainer, the container reserves no space for it and
+	# the list keeps its full width.
+	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
 	if scroll.get_parent() is VBoxContainer:
 		var column := scroll.get_parent() as VBoxContainer
 		var gutter := HBoxContainer.new()
