@@ -65,7 +65,7 @@ failed; this historical pin is not an endorsement of the latest route.
 | 06 | A candidate fields available; REDESIGN_CANDIDATE | Moving-tip sweep, water and full world review missing |
 | 07 | C world fields available | Actual-world comparisons, occlusion, phases missing |
 | 08 | B world fields available | Actual-world comparisons, post, gameplay missing |
-| 09 | New A graph/B colors/C bolt candidate; one moving-real-skeleton diagnostic | [run 41208565813](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41208565813); misses/deaths, C branches, B raster, full source comparison |
+| 09 | A graph/B colors/C bolt candidate; real-enemy anchor diagnostic [41208565813](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41208565813); C channel variants/branches added `84d9bcb0` | New branch tests pending; misses/deaths, B raster, full source comparison and review missing |
 | 10 | C world pass diagnostic | [run 41207915157](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41207915157), one frozen frame only |
 | 11 | A rotor/fragment + C bolt-tree candidate; [isolated rotor comparison 41211833178](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211833178), [actual-world JOIN 41211652270](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211652270) | C branch role/fidelity, full fusion/post, natural motion/OUT, depth and review missing |
 | 12 | A candidate fields available; REDESIGN_CANDIDATE | Targeting, source craft and world review missing |
@@ -76,7 +76,7 @@ failed; this historical pin is not an endorsement of the latest route.
 | 17 | C world pass diagnostic incl. live-screen fragment mapping | [run 41207915157](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41207915157), one frozen frame only |
 | 18 | A candidate fields available; REDESIGN_CANDIDATE | Real actors, full-cast and world review missing |
 | 19 | D additive and persistent warp consumer, frozen-world/cancel [JOIN 41209511506](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41209511506) | D bloom/post, OUT review, depth and original parity missing |
-| 20 | C seeded contour/polygons + A real-world pull candidate; [contour 41211396186](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211396186), [isolated polygons 41212119457](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41212119457) | New actual-world JOIN pending; C blocks/particles, full fusion parity, OUT and review missing |
+| 20 | C contour/polygons/blocks/particles/OUT + A world pull candidate; [source diagnostics below](#experimental-c-viewport-impulses-and-20-rift) | Latest actual-world OUT JOIN pending; A debris, full fusion/source/world parity, gameplay depth and review missing |
 
 Run-level pass does not override a failing check annotation. No thresholds have
 been relaxed. Only CT owns `soh_binding/**`; no production mount, merge, fake
@@ -186,13 +186,35 @@ first-contour field comparison [41211396186](https://github.com/Khanh-glitch/Sou
 at ticks 270/324/396/450/540 produced authored ink coverage IoU 1.0, ink MAE/max
 0, and light MAE <= 2.1e-11 / max 5.96e-8 on a zero base. It excludes A warp
 and all other C geometry, so it is NOT whole-source/composite parity. Original
-C blocks/particles and A debris remain missing, as do full-source parity, OUT
-and visual approval. `006c0073` adds C original clipped wireframe geometry and
-passage; [isolated polygon comparison 41212119457](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41212119457)
+`006c0073` added C original clipped wireframe geometry and passage;
+[isolated polygon comparison 41212119457](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41212119457)
 at ticks 270/324/378 has light-support IoU 1.0 and light max <= 2.38e-7 on zero
-base, excluding contour, blocks, particles, A warp and actual world. The older
-world JOIN predates those additions. `4da30c26` also adds original early glitch
-fields; source comparison and new JOIN remain pending. The all-20 sweep at `c6fb12ba` exercised the
+base, excluding contour, blocks, particles, A warp and actual world. The
+[early-glitch comparison 41212198883](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41212198883)
+at ticks 20/45/64/84 reported zero light/displacement error on zero base.
+
+`e7f6ecce` adds C's 56 seeded source-world blocks and collision shock;
+[isolated comparison 41212314942](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41212314942)
+at ticks 396/420/450/480/540/558 had ink coverage IoU 1.0 and max ink error 0,
+light max <= 2.98e-8 and displacement max <= 8.95e-6 (zero base, no other
+roles). Actual-world [JOIN 41212334117](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41212334117)
+and [assertions 41212530822](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41212530822)
+confirmed 2,421 direct live-world fragment pixels and 146,257 changed pixels
+inside source influence, zero outside, at tick 420, plus exact frozen-world
+cancel restoration. This JOIN predates the later particles and OUT code.
+
+`5dc94018` adds original C edge/collision particles. [Controlled-seed source
+comparison 41212432542](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41212432542)
+at ticks 270/324/396/420/450/480/510 recorded max light error <= 2.39e-7,
+and zero ink/displacement errors; no ink is authored here. C's original
+Math.random particle-seed sequence was controlled to match native, so this is
+not unrestricted-random or complete-cast parity. `aa0ff825` adds source C's
+final live-world inversion and glint; [neutral source-only OUT comparison
+41212515806](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41212515806)
+at ticks 570/582/591/593/594 recorded zero ink/light/displacement errors, but
+live-world and post fidelity are separate and latest OUT JOIN is pending. A
+original ground-sample additive debris, full-source/world fidelity, motion,
+depth, owner review and production readiness all remain open. The all-20 sweep at `c6fb12ba` exercised the
 older #20 candidate.
 
 ## Actual-overworld overlap frame probe
