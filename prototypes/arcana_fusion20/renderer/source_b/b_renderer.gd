@@ -30,6 +30,14 @@ var alb := PackedFloat32Array()
 var shade := PackedFloat32Array()
 var mask := PackedByteArray()
 var light_buf := PackedFloat32Array()
+# Coverage is kept separately from RGB; it is only enabled for the world-pass
+# producer, so the source-reference path and its parity remain unchanged.
+var track_world_coverage := false
+var ink_coverage := PackedFloat32Array()
+var decal_coverage := PackedFloat32Array()
+# XY source-pixel offsets, destination -> original scene sample, including
+# ordered post warps. This is consumed against the live world, never Gold.
+var world_warp := PackedFloat32Array()
 var lights: Array = []
 var ambient := 0.62
 var tint := Vector3(0.85, 0.9, 1.15)
@@ -52,6 +60,9 @@ func _init() -> void:
     shade.resize(N)
     mask.resize(N)
     light_buf.resize(N * 3)
+    ink_coverage.resize(N)
+    decal_coverage.resize(N)
+    world_warp.resize(N * 2)
 
 func begin() -> void:
     for i in range(main_buf.size()):
@@ -61,6 +72,10 @@ func begin() -> void:
     for i in range(N):
         shade[i] = 1.0
         mask[i] = 0
+    if track_world_coverage:
+        ink_coverage.fill(0.0)
+        decal_coverage.fill(0.0)
+        world_warp.fill(0.0)
     lights.clear()
     ambient = 0.62
     tint = Vector3(0.85, 0.9, 1.15)
@@ -103,6 +118,11 @@ func lighting() -> void:
                 light_buf[idx] += lc.x * k
                 light_buf[idx + 1] += lc.y * k
                 light_buf[idx + 2] += lc.z * k
+    # Native world input replaces the missing demo floor, so retain ground,
+    # shade and HDR lighting independently rather than baking albedo onto a
+    # black source buffer. Original legacy parity path remains unchanged.
+    if track_world_coverage:
+        return
     var ar := ambient * tint.x
     var ag := ambient * tint.y
     var ab := ambient * tint.z
@@ -152,6 +172,17 @@ func plot(ix: int, iy: int, r: float, g: float, b: float, mode: int, a: float) -
         return
     var p := iy * W + ix
     var i := p * 3
+    if track_world_coverage:
+        match mode:
+            SET:
+                ink_coverage[p] = 1.0
+            BLEND:
+                ink_coverage[p] = a + ink_coverage[p] * (1.0 - a)
+            DITHER:
+                if bayer(ix, iy) < a:
+                    ink_coverage[p] = 1.0
+            # ADD is emissive and does not erase the real scene; MUL/SUB
+            # affect the existing source ink but do not invent coverage.
     match mode:
         ADD:
             main_buf[i] += r * a
@@ -367,6 +398,9 @@ func decal(x: float, y: float, col: Vector3, a: float = 1.0) -> void:
     if ix < 0 or iy < 0 or ix >= W or iy >= H:
         return
     var i := (iy * W + ix) * 3
+    if track_world_coverage:
+        var p := iy * W + ix
+        decal_coverage[p] = a + decal_coverage[p] * (1.0 - a)
     alb[i] += (col.x - alb[i]) * a
     alb[i + 1] += (col.y - alb[i + 1]) * a
     alb[i + 2] += (col.z - alb[i + 2]) * a
@@ -390,6 +424,8 @@ func warp(x0: float, y0: float, x1: float, y1: float, fn: Callable) -> void:
     x1 = minf(float(W - 1), ceil(x1))
     y1 = minf(float(H - 1), ceil(y1))
     tmp_buf = main_buf.duplicate()
+    var previous_coverage := ink_coverage.duplicate() if track_world_coverage else PackedFloat32Array()
+    var previous_warp := world_warp.duplicate() if track_world_coverage else PackedFloat32Array()
     for y in range(int(y0), int(y1) + 1):
         for x in range(int(x0), int(x1) + 1):
             var o: Array = fn.call(x, y)
@@ -404,3 +440,9 @@ func warp(x0: float, y0: float, x1: float, y1: float, fn: Callable) -> void:
             main_buf[i] = tmp_buf[j]
             main_buf[i + 1] = tmp_buf[j + 1]
             main_buf[i + 2] = tmp_buf[j + 2]
+            if track_world_coverage:
+                ink_coverage[y * W + x] = previous_coverage[sy * W + sx]
+                var wi := (y * W + x) * 2
+                var wj := (sy * W + sx) * 2
+                world_warp[wi] = float(sx - x) + previous_warp[wj]
+                world_warp[wi + 1] = float(sy - y) + previous_warp[wj + 1]

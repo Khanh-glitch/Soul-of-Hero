@@ -10,6 +10,7 @@ signal visual_event(kind: StringName, world_pos: Vector2, source_time: float)
 signal visual_contact(kind: StringName, world_pos: Vector2, source_time: float)
 signal finished()
 signal screen_post(state: Dictionary)
+signal source_pass_ready(frame: Arcana20SourcePassFrame)
 
 const STEP := 1.0 / 60.0
 
@@ -56,6 +57,9 @@ func begin(caster_world: Vector2, target_world: Vector2) -> void:
         if node.has_signal("screen_post"):
             node.connect("screen_post", func(state: Dictionary) -> void:
                 screen_post.emit(state))
+        if node.has_signal("source_pass_ready"):
+            node.connect("source_pass_ready", func(frame: Arcana20SourcePassFrame) -> void:
+                source_pass_ready.emit(frame))
         node.finished.connect(func() -> void:
             pass)
     _tick = 0

@@ -14,6 +14,7 @@ class_name BSourcePlayer
 signal visual_contact(world_position: Vector2)
 signal visual_event(kind: StringName, world_position: Vector2, source_time: float)
 signal finished()
+signal source_pass_ready(frame: Arcana20SourcePassFrame)
 
 const SRC_CASTER := Vector2(104, 132)
 const SRC_TARGET := Vector2(262, 104)
@@ -32,6 +33,9 @@ var _tex: ImageTexture
 var _acc := 0.0
 var _events: Array = [] # {t, kind, pos_local, emitted}
 var _world_target := Vector2.ZERO
+var _world_caster := Vector2.ZERO
+# Suppresses legacy sprite, publishes raw fields to real-world owner.
+var world_pass_mode := false
 var _max_frame_ms := 0.0
 var _frames := 0
 
@@ -48,6 +52,7 @@ func begin(caster_world: Vector2, target_world: Vector2, kind: String = "wyrm") 
         _ready()
     _kind = kind
     _r = BRenderer.new()
+    _r.track_world_coverage = world_pass_mode
     match kind:
         "meteor":
             _fx = BMeteorLoom.new()
@@ -63,6 +68,7 @@ func begin(caster_world: Vector2, target_world: Vector2, kind: String = "wyrm") 
     _fx.setup(_r)
     _events = _fx.call("authored_events") if _fx.has_method("authored_events") else []
     _world_target = target_world
+    _world_caster = caster_world
     # Similarity transform: rotate authored axis onto world axis.
     var src_axis := SRC_TARGET - SRC_CASTER
     var world_axis := target_world - caster_world
@@ -134,6 +140,16 @@ func _render_frame() -> void:
     var start := Time.get_ticks_usec()
     _r.begin()
     _fx.render(_r, elapsed)
+    if world_pass_mode:
+        # Original B scene order: lighting before post. Ground is held out
+        # of main_buf for application against the live world by the owner.
+        _r.lighting()
+        _fx.post(_r, elapsed)
+        _sprite.visible = false
+        source_pass_ready.emit(source_pass_frame())
+        _frames += 1
+        _max_frame_ms = maxf(_max_frame_ms, float(Time.get_ticks_usec() - start) / 1000.0)
+        return
     _fx.post(_r, elapsed)
     _r.lighting()
     var bytes := _r.finalize()
@@ -141,6 +157,33 @@ func _render_frame() -> void:
     _tex.update(img)
     _frames += 1
     _max_frame_ms = maxf(_max_frame_ms, float(Time.get_ticks_usec() - start) / 1000.0)
+
+func source_pass_frame() -> Arcana20SourcePassFrame:
+    var result := Arcana20SourcePassFrame.new()
+    result.family = &"B"
+    result.variant = StringName(_kind)
+    result.tick = source_tick
+    result.source_time = elapsed
+    var seed_by_kind := {"wyrm": 202, "meteor": 303, "maw": 808}
+    result.seeds = PackedInt32Array([int(seed_by_kind.get(_kind, 0))])
+    result.source_size = Vector2i(BRenderer.W, BRenderer.H)
+    var bx := Vector2(cos(_sprite.rotation), sin(_sprite.rotation)) * _sprite.scale.x
+    var by := Vector2(-sin(_sprite.rotation), cos(_sprite.rotation)) * _sprite.scale.x
+    result.source_to_world = Transform2D(bx, by, _sprite.position - bx * (BRenderer.W / 2.0) - by * (BRenderer.H / 2.0))
+    result.caster_world = _world_caster
+    result.target_world = _world_target
+    result.b_ink_rgb = _r.main_buf
+    result.b_ink_coverage = _r.ink_coverage
+    result.b_ground_rgb = _r.alb
+    result.b_ground_coverage = _r.decal_coverage
+    result.b_shade = _r.shade
+    result.b_light = _r.light_buf
+    result.b_world_warp = _r.world_warp
+    result.b_ambient = _r.ambient
+    result.b_tint = _r.tint
+    result.flash = _r.flash_col * _r.flash
+    result.shake = Vector2(_r.shake_x, _r.shake_y)
+    return result
 
 func diagnostics() -> Dictionary:
     return {"transport": "source_b_native_384x216_procedural", "kind": _kind,

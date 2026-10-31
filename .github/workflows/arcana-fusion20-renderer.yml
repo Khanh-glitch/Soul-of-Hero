@@ -61,6 +61,13 @@ jobs:
             echo 'renderer parse/runtime/assertion failure' >&2
             exit 1
           fi
+      - name: Source world-field extraction regression
+        shell: bash
+        run: |
+          set -o pipefail
+          timeout 300s godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/arcana20_source_pass_test.gd 2>&1 | tee source-pass.log
+          grep -Fq 'ARCANA20_SOURCE_PASS_RESULT PASS' source-pass.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|SOURCE_PASS_FAIL' source-pass.log; then exit 1; fi
       - name: Upload parity evidence (heatmaps + native frames)
         if: always()
         uses: actions/upload-artifact@v4

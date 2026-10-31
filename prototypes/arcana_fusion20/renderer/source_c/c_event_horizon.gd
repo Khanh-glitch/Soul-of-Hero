@@ -1,9 +1,8 @@
 ## Faithful port of original C eventHorizon (src/spells/astral.ts:17-143).
 ## Stage seed for spell index 16: Rng(1000 + 16*7919) = 127704.
 ## Anchored at authored E=(250,106) in the 384x216 source buffer.
-## blitBase adaptation: pristine floor is excluded (anti-compositing),
-## so displaced "world fragments" composite as dark ink blocks — the
-## VOID_INK home blocks and outlines remain authored. Documented diff.
+## Legacy reference uses zero-base blits; the opt-in world-field producer
+## retains blitBase source/destination coordinates for live terrain sampling.
 ## Duration 8.8, climax 6.45 (source constants preserved).
 extends RefCounted
 class_name CEventHorizon
@@ -225,10 +224,9 @@ func render(f: CFrame, t: float) -> void:
                     f.I(float(b.hx + xx), float(b.hy + yy), VOID_INK.x, VOID_INK.y, VOID_INK.z, 1.0)
                     if CMath.hash2(b.hx + xx, b.hy + yy) > 0.96:
                         f.Lc(float(b.hx + xx), float(b.hy + yy), CPalette.ramp(CPalette.P["star"], 0.9), 0.8)
-            # blitBase with zeroed base: displaced fragment = dark block
-            for yy in range(int(b.s)):
-                for xx in range(int(b.s)):
-                    f.I(float(roundi(bx) + xx), float(roundi(by) + yy), 0, 0, 0, 1.0)
+            # Preserve the source's blitBase source/destination mapping;
+            # native consumers sample the actual world instead of zero-base.
+            f.blit_world_fragment(int(b.hx), int(b.hy), int(b.s), int(b.s), roundi(bx), roundi(by))
             f.poly_outline_l([Vector2(bx, by), Vector2(bx + float(b.s) - 1.0, by), Vector2(bx + float(b.s) - 1.0, by + float(b.s) - 1.0), Vector2(bx, by + float(b.s) - 1.0)], CPalette.ramp(CPalette.P["void"], 0.85), 0.4 * (1.0 - q))
         f.glow(E.x, E.y, 50.0, CPalette.ramp(CPalette.P["void"], 0.7), 0.45 * exp(-a * 3.0), 5.0)
     CKit.particles_render(f, _ps)

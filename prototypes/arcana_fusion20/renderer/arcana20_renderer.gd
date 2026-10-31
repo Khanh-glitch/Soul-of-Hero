@@ -18,6 +18,10 @@ signal body_event_cue(canonical_id: StringName, world_position: Vector2, element
 signal cast_finished(canonical_id: StringName)
 # Experimental C post state; the scene owner decides whether/how to apply it.
 signal screen_post(canonical_id: StringName, state: Dictionary)
+signal source_pass_ready(canonical_id: StringName, frame: Arcana20SourcePassFrame)
+# Producer mode suppresses source quads for B/C. It is not an integrated
+# world compositor: the scene owner must consume every emitted field.
+@export var world_pass_mode := false
 @export var experimental_c_separate_passes := false
 
 var _casts: Dictionary = {} # canonical_id -> Node (instance or B02 geometry)
@@ -96,6 +100,8 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
         ap.configure(ACinderCrown.new(), ACinderCrown.DURATION)
         var cp := CSourcePlayer.new()
         cp.experimental_separate_passes = experimental_c_separate_passes
+        cp.world_pass_mode = world_pass_mode
+        fp.source_pass_ready.connect(func(frame: Arcana20SourcePassFrame) -> void: source_pass_ready.emit(canonical_id, frame))
         fp.screen_post.connect(func(state: Dictionary) -> void: screen_post.emit(canonical_id, state))
         fp.configure([
             {"node": cp, "layer": -1, "offset": 0.69, "begin_call": func(n: Node, cw: Vector2, tw: Vector2) -> void: n.call("begin", cw, tw, "crown")},
@@ -131,6 +137,8 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
         # TRUE source port on the ported C frame/compositor (astral.ts).
         var cp := CSourcePlayer.new()
         cp.experimental_separate_passes = experimental_c_separate_passes
+        cp.world_pass_mode = world_pass_mode
+        cp.source_pass_ready.connect(func(frame: Arcana20SourcePassFrame) -> void: source_pass_ready.emit(canonical_id, frame))
         cp.screen_post.connect(func(state: Dictionary) -> void: screen_post.emit(canonical_id, state))
         add_child(cp)
         cp.visual_contact.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
@@ -146,6 +154,8 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
     if id == 2 or id == 3 or id == 8:
         # TRUE source ports on the ported B HDR renderer (pyre.ts).
         var bp := BSourcePlayer.new()
+        bp.world_pass_mode = world_pass_mode
+        bp.source_pass_ready.connect(func(frame: Arcana20SourcePassFrame) -> void: source_pass_ready.emit(canonical_id, frame))
         add_child(bp)
         bp.visual_contact.connect(func(pos: Vector2) -> void:
             visual_contact.emit(canonical_id, pos, &"source_impact")

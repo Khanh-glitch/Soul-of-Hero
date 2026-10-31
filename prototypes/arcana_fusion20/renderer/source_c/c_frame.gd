@@ -18,6 +18,13 @@ const H := 216
 const N := W * H
 
 var ground := PackedByteArray()
+# Source ground is painted over an external base. Track authored decal
+# coverage independently so even a black mark can be applied to live terrain.
+var ground_coverage := PackedFloat32Array()
+# Source-world fragment sampling map, not a copied screenshot. Optional,
+# because the legacy source reference needs the original zero-base behavior.
+var track_world_fragments := false
+var world_fragment := PackedFloat32Array()
 var ink := PackedFloat32Array()
 var light := PackedFloat32Array()
 var disp := PackedFloat32Array()
@@ -34,6 +41,8 @@ var flash := Vector3.ZERO
 
 func _init() -> void:
     ground.resize(N * 4)
+    ground_coverage.resize(N)
+    world_fragment.resize(N * 4)
     ink.resize(N * 4)
     light.resize(N * 4)
     disp.resize(N * 4)
@@ -42,6 +51,9 @@ func _init() -> void:
 
 func clear() -> void:
     ground.fill(0)
+    ground_coverage.fill(0.0)
+    if track_world_fragments:
+        world_fragment.fill(0.0)
     ink.fill(0.0)
     light.fill(0.0)
     for i in range(0, N * 4, 4):
@@ -72,10 +84,36 @@ func I(x: float, y: float, r: float, g: float, b: float, a: float = 1.0) -> void
         a = 1.0
     var i := (yi * W + xi) * 4
     var ia := 1.0 - a
+    if track_world_fragments:
+        # Subsequent ink is source-over the already-mapped live fragment.
+        world_fragment[i + 2] *= ia
     ink[i] = r * a + ink[i] * ia
     ink[i + 1] = g * a + ink[i + 1] * ia
     ink[i + 2] = b * a + ink[i + 2] * ia
     ink[i + 3] = a + ink[i + 3] * ia
+
+## Original blitBase writes a source-world fragment into ink. For the world
+## path keep its source coordinates and coverage rather than black pixels;
+## the compositor samples the real scene at these positions. On the legacy
+## zero-base path preserve the old reference behavior exactly.
+func blit_world_fragment(sx: int, sy: int, w: int, h: int, dx: int, dy: int) -> void:
+    for yy in range(h):
+        for xx in range(w):
+            var x := dx + xx
+            var y := dy + yy
+            if x < 0 or y < 0 or x >= W or y >= H:
+                continue
+            if not track_world_fragments:
+                I(float(x), float(y), 0.0, 0.0, 0.0, 1.0)
+                continue
+            var i := (y * W + x) * 4
+            ink[i] = 0.0
+            ink[i + 1] = 0.0
+            ink[i + 2] = 0.0
+            ink[i + 3] = 0.0
+            world_fragment[i] = float(clampi(sx + xx, 0, W - 1))
+            world_fragment[i + 1] = float(clampi(sy + yy, 0, H - 1))
+            world_fragment[i + 2] = 1.0
 
 func Ic(x: float, y: float, c: Vector3, a: float = 1.0) -> void:
     I(x, y, c.x, c.y, c.z, a)
@@ -91,6 +129,7 @@ func G(x: float, y: float, r: float, g: float, b: float, a: float = 1.0) -> void
         return
     var i := (yi * W + xi) * 4
     var ia := 1.0 - a
+    ground_coverage[yi * W + xi] = a + ground_coverage[yi * W + xi] * ia
     ground[i] = int(ground[i] * ia + r * 255.0 * a)
     ground[i + 1] = int(ground[i + 1] * ia + g * 255.0 * a)
     ground[i + 2] = int(ground[i + 2] * ia + b * 255.0 * a)

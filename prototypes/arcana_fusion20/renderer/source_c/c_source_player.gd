@@ -14,6 +14,7 @@ signal finished()
 # Per-fixed-tick presentation state, not combat instructions. The external
 # viewport/camera owner must combine concurrent casts and clear on finish.
 signal screen_post(state: Dictionary)
+signal source_pass_ready(frame: Arcana20SourcePassFrame)
 
 const STEP := 1.0 / 60.0
 const SRC_W := 384.0
@@ -30,8 +31,12 @@ var _light_sprite: Sprite2D
 # Opt-in only: source-buffer parity and existing captures stay on the legacy
 # path until this separate world-composite experiment is visually validated.
 var experimental_separate_passes := false
+# World-field mode suppresses all legacy quads. A real-world owner must
+# consume source_pass_ready, including all environmental fields and post.
+var world_pass_mode := false
 var _bytes := PackedByteArray()
 var _origin := Vector2.ZERO
+var _target := Vector2.ZERO
 var _rot := 0.0
 var _scale := 1.0
 var _tick := 0
@@ -103,6 +108,8 @@ func begin(caster_world: Vector2, target_world: Vector2, kind: String) -> void:
     _rot = axis.angle() - source_axis.angle() if axis.length() > 1.0 else 0.0
     _scale = clampf(axis.length() / maxf(1.0, source_axis.length()), 0.6, 3.5) if axis.length() > 1.0 else 1.0
     _origin = caster_world
+    _target = target_world
+    _frame.track_world_fragments = world_pass_mode
     _tick = 0
     _acc = 0.0
     _steps = 0
@@ -176,7 +183,7 @@ func advance(dt: float, draw: bool = true) -> void:
             _shake_k = 0.0
         _flash_k *= 0.82
         _chroma_k *= 0.88
-        if experimental_separate_passes:
+        if experimental_separate_passes or world_pass_mode:
             screen_post.emit({"source_time": source_time(),
                 "flash": _flash_c * _flash_k * 0.28,
                 "shake": _shake_vector(), "chroma": _chroma_k})
@@ -222,6 +229,11 @@ func _render_frame() -> void:
     _frame.flash = _flash_c * _flash_k * 0.28
     _frame.shake = _shake_vector()
     _fx.render(_frame, source_time())
+    if world_pass_mode:
+        _sprite.visible = false
+        _light_sprite.visible = false
+        source_pass_ready.emit(source_pass_frame())
+        return
     if experimental_separate_passes:
         var passes := _frame.native_passes()
         _bytes = passes.ink
@@ -241,6 +253,35 @@ func _render_frame() -> void:
         _light_sprite.position = _sprite.position
         _light_sprite.rotation = _sprite.rotation
         _light_sprite.scale = _sprite.scale
+
+func source_pass_frame() -> Arcana20SourcePassFrame:
+    var result := Arcana20SourcePassFrame.new()
+    result.family = &"C"
+    result.variant = StringName(_kind)
+    result.tick = _tick
+    result.source_time = source_time()
+    var seed_by_kind := {"crown": 1000, "basilica": 48514, "thunderloom": 72271, "thorn": 111866, "horizon": 127704}
+    result.seeds = PackedInt32Array([int(seed_by_kind.get(_kind, 0))])
+    if _kind == "thunderloom":
+        result.seeds.append(999)
+    result.source_size = Vector2i(CFrame.W, CFrame.H)
+    var bx := Vector2(cos(_rot), sin(_rot)) * _scale
+    var by := Vector2(-sin(_rot), cos(_rot)) * _scale
+    result.source_to_world = Transform2D(bx, by, _origin - bx * 112.0 - by * 126.0)
+    result.caster_world = _origin
+    result.target_world = _target
+    result.c_ground = _frame.ground
+    result.c_ground_coverage = _frame.ground_coverage
+    result.c_ink = _frame.ink
+    result.c_light = _frame.light
+    result.c_disp = _frame.disp
+    result.c_world_fragment = _frame.world_fragment
+    result.flash = _frame.flash
+    result.shake = _frame.shake
+    result.chroma = _frame.chroma
+    result.invert = _frame.invert
+    result.desat = _frame.desat
+    return result
 
 func frame_bytes() -> PackedByteArray:
     return _bytes

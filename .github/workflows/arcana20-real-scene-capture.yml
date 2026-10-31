@@ -1,13 +1,7 @@
-name: ARCANA20 real SOH scene visual diagnostics
+name: ARCANA20 historical crypt diagnostic (not survival acceptance)
 
 on:
   workflow_dispatch:
-  push:
-    branches: [arena/c7b0c4e8-soul-of-hero]
-    paths:
-      - 'prototypes/arcana_fusion20/renderer/**'
-      - '.github/workflows/arcana20-real-scene-capture.yml'
-      - 'tools/arcana20_review/**'
 
 permissions:
   contents: read
