@@ -96,9 +96,14 @@ func _run() -> void:
     check(outer_influence > 0, "C01 selected original outer tongue primitive rasterizes")
 
     var rift := CRealityRipperFusion.new()
+    var setup_start := Time.get_ticks_usec()
     rift.setup()
+    var first_setup_usec := Time.get_ticks_usec() - setup_start
     var rift_cached := CRealityRipperFusion.new()
+    setup_start = Time.get_ticks_usec()
     rift_cached.setup()
+    var cached_setup_usec := Time.get_ticks_usec() - setup_start
+    print("C20_SETUP_COST first_ms=%.3f cached_ms=%.3f scope=software_CPU_source_setup_not_frame_or_device_budget cache_payload_bytes=%d" % [float(first_setup_usec) / 1000.0, float(cached_setup_usec) / 1000.0, 6 * CFrame.N * 4])
     check(rift.ts == rift_cached.ts and rift.td == rift_cached.td and rift.tnx == rift_cached.tnx and rift.tny == rift_cached.tny and rift.ttx == rift_cached.ttx and rift.tty == rift_cached.tty and rift.blocks == rift_cached.blocks, "C20 cached immutable contour retains exact source fields and seeded blocks")
     var old_ts := rift.ts[0]
     rift_cached.ts[0] = old_ts + 1.0
