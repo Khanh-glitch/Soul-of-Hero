@@ -686,7 +686,12 @@ func _walk_axis_to(action: String, keycode: Key, coordinate: float) -> bool:
 		var current := probe.global_position
 		var current_value := current.x if action in ["move_left", "move_right"] else current.y
 		var distance := absf(current_value - coordinate)
-		if distance <= 5.0:
+		var crossed_target := (
+			current_value >= coordinate
+			if action in ["move_right", "move_down"]
+			else current_value <= coordinate
+		)
+		if distance <= 5.0 or crossed_target:
 			reached = true
 			break
 		if distance < best_distance - 0.15:
