@@ -165,7 +165,9 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
                     c_player.begin(cw, tw, "worldseed_debris")
                     c_player._rot = ap._rot
                     c_player._scale = ap._scale
-                    c_player._origin = ap._origin + (AWorldseedGrowth.C - CWorldseedDebris.C).rotated(ap._rot) * ap._scale},
+                    var a_center_from_caster := AWorldseedGrowth.C - ASourcePlayer.CASTER_LOCAL
+                    var c_center_from_caster := CWorldseedDebris.C - Vector2(112, 126)
+                    c_player._origin = ap._origin + (a_center_from_caster - c_center_from_caster).rotated(ap._rot) * ap._scale},
         ], AWorldseedGrowth.DURATION)
         add_child(fp)
         fp.visual_contact.connect(func(kind: StringName, pos: Vector2, _st: float) -> void:
