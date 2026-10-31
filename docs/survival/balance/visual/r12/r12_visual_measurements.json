@@ -43,6 +43,8 @@
       640,
       360
     ],
+    "select_piece_wall_wood": true,
+    "validate_at_hero_cell": "protected_place",
     "house": {
       "built": false,
       "reason": "no_legal_plot",
