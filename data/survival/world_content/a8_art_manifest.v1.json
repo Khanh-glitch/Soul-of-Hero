@@ -7,7 +7,7 @@
   "a1_head": "939720d50a0b822ff9042d4104dc69ba78ffe0f8",
   "source_atlas": "data/survival/world/art/atlas.v1.json",
   "surface_derivative_source": {
-    "a1_head": "5aed8e8647c896e9a79ea812735ec237342462c4",
+    "a1_head": "9ca1453ccdd315c9de4aae01cf0e1e5b4e0a71cf",
     "atlas_sha256": "83d69373ca6c1258e8727800d0aa0c288851c34d25539c69c21ec9f5fc9d769a",
     "terrain_sha256": "6128d8f41abe6962fe705431db20e762e0cca613ffc3eca29065727422737d1c",
     "frames": ["mud_0", "mud_1", "mud_2", "mud_3", "boardwalk_ns"],
@@ -1858,7 +1858,7 @@
   },
   "current_a1_compatibility": {
     "source_pr": 20,
-    "current_head": "5aed8e8647c896e9a79ea812735ec237342462c4",
+    "current_head": "9ca1453ccdd315c9de4aae01cf0e1e5b4e0a71cf",
     "decision": "KEEP_COMPLETE_BASE_PIN_AND_ADOPT_FIVE_TARGETED_SURFACE_CROPS",
     "evidence": "data/survival/world_content/a1_atlas_compatibility.v1.json",
     "summary": "All 23 terrain frames and 25 prop frames used by the three site interiors and shells have source-pixel-identical crops at current A1 coordinates. The current atlas contains 1,759 terrain and 138 prop frames; 23 used prop rectangles moved while pixels remain exact. A8 keeps its complete pinned base atlas/coordinates, confirms its existing four snow frames match current A1, refreshes four mud crops and retains one plank crop in its five-frame local strip, and does not adopt 80 transition masks or two unrelated notes-crate props."

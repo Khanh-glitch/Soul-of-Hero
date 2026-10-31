@@ -6,11 +6,11 @@
   "source_pins": {
     "a8_source_review_base": "0e22d5f00532cf5e079b540e30a54281606fc757",
     "a1_pr": 20,
-    "a1_current_head": "5aed8e8647c896e9a79ea812735ec237342462c4",
+    "a1_current_head": "9ca1453ccdd315c9de4aae01cf0e1e5b4e0a71cf",
     "a3_pr": 19,
-    "a3_current_head": "4bfba38d87bb2b6529745bf4a3caf2ba0ca07947",
+    "a3_current_head": "b44e22df3af40939069189be14afc23ee1ce21c4",
     "a0_pr": 21,
-    "a0_current_head_at_source_review": "32bced6d612958838cdf337b437685316c6d9009",
+    "a0_current_head_at_source_review": "738e621b688e9d9890f636ef2ece48f6d29f5b01",
     "a3_authorization_file": "docs/survival/economy/A8_QUARRY_AUTHORIZATION_V4.json",
     "a3_authorization_status": "REJECTED_PENDING_EVIDENCE_FAIL_CLOSED",
     "world_id": "world:soh_continent_v1",
@@ -35,11 +35,11 @@
     "authorization_note": "A3 PR #19 current source has no A8 Quarry/Orchard/Mill binding; A8_QUARRY_AUTHORIZATION_V4 remains rejected. Nulls remain fail-closed."
   },
   "current_a3_source_sink_evidence": {
-    "source_commit": "4bfba38d87bb2b6529745bf4a3caf2ba0ca07947",
+    "source_commit": "b44e22df3af40939069189be14afc23ee1ce21c4",
     "source_files": {
       "items": {
         "path": "data/survival/items/items.json",
-        "sha256": "cc3c11659fc191529fb56e6a50a1bd27a29f091e2857e2f4d7b7e7d993e15a4a"
+        "sha256": "cd1a27c48078a69489904e86182dc63750941d9fc296830f711dd5d574615520"
       },
       "sources": {
         "path": "data/survival/items/sources.json",
@@ -346,6 +346,122 @@
       }
     ]
   },
+  "a3_candidate_source": {
+    "status": "SOURCE_GRAPH_READY_A0_INSTANCE_AND_A3_AUTHORIZATION_BLOCKED",
+    "source_identity": {
+      "a1_world_id": "world:soh_continent_v1",
+      "a1_region_id": "r_ashen_crown",
+      "a1_poi_id": "poi_crown_south_quarry",
+      "a1_canonical_cell": [
+        30,
+        280
+      ],
+      "a1_route_id": "sp_poi_crown_south_quarry",
+      "a8_local_scene": "res://game/survival/world_content/scenes/south_quarry.tscn",
+      "a8_local_site_id": "crown_south_quarry",
+      "a8_object_id": "south_seam_outcrop",
+      "a8_action_id": "extract_outcrop",
+      "candidate_a3_source_id": "live_stone_chunk",
+      "a3_site_bound_source_id": null,
+      "a3_binding_id": null
+    },
+    "physical_instance": {
+      "a0_site_instance_id": null,
+      "a0_production_mount_status": "NOT_PROVEN_IN_CURRENT_A0_WORLD_MOUNT",
+      "identity_owner": "A0 resolves the canonical A1 POI to one durable production instance; A8 must not mint an instance key.",
+      "a0_blocker": "A0 must publish the canonical physical site_instance_id and mount the 960x608 worksite from ordinary entry in the full A1 world."
+    },
+    "approach_and_interaction": {
+      "local_spawn_px": [
+        480,
+        548
+      ],
+      "source_approach_stand_px": [
+        506,
+        378
+      ],
+      "source_action_socket_px": [
+        506,
+        302
+      ],
+      "interaction_radius_px": 86,
+      "stand_to_socket_px": 76,
+      "standing_position_is_inside_authored_radius": true,
+      "local_doorway_return_px": [
+        480,
+        560
+      ],
+      "spawn_to_stand_axis_aligned_path_px": 196,
+      "stand_to_return_axis_aligned_path_px": 208,
+      "actor_scene_path": "res://game/characters/knight/knight.tscn",
+      "actor_body_collider_px": [
+        12,
+        16
+      ],
+      "actor_body_offset_px": [
+        0,
+        -8
+      ],
+      "actor_move_speed_px_per_second_in_pr26_checkout": 112,
+      "movement_evidence_status": "Local Godot 4.7 headless native_poi_input_journey_test.gd measured the current Hero fixture route from spawn (480.0,544.7778) to reached stand (510.3272,379.6538): 188.76 px Manhattan input path, 107 held physics frames / 109 total frames / 1.817 s at 60 Hz, with runtime tuning at 112 px/s. This is not A0-world travel or strategic acceptance; current exact-head hosted three-resolution capture remains pending.",
+      "interaction_evidence": "One physical H key press is attempted at the authored stand. Until owner readiness is projected, A8 emits no extraction intent and explains that the reward is withheld."
+    },
+    "proposed_durable_state_not_implemented": {
+      "authority": "A0 SaveService only",
+      "a0_physical_instance_id_required": true,
+      "owner_projection_fields_to_review": [
+        "site_state.quarry_route",
+        "claim_generation.south_seam_outcrop",
+        "resource_ready_at.south_seam_outcrop",
+        "projection_revision"
+      ],
+      "idempotency_requirement": "A0 atomically advances the owner claim generation and receipt with any approved item debit/grant; restart must preserve exactly one outcome.",
+      "a8_write_authority": false,
+      "a0_restart_test_status": "NOT_RUN; must be run by A0 after the production instance and binding are mounted."
+    },
+    "existing_a3_source_and_capacity_evidence": {
+      "generic_source_id": "live_stone_chunk",
+      "generic_item_id": "stone_chunk",
+      "generic_yield_per_claim": 2,
+      "generic_source_record_replenishment_seconds": 480,
+      "generic_source_risk_label": "low",
+      "generic_source_poi_id": null,
+      "generic_source_balance_status": "SOH_PROPOSAL",
+      "site_specific_yield": null,
+      "site_specific_capacity_or_stock": null,
+      "a0_authoritative_active_cooldown_seconds": null,
+      "stone_chunk_stack_limit_items": 50,
+      "run_bag_capacity": null,
+      "capacity_note": "The generic source record contains no Quarry binding or finite stock/capacity. Item stack_limit=50 is not a source-capacity proof. A3/A0 must specify usable inventory capacity and source stock/replenishment before approving this candidate."
+    },
+    "existing_item_sink_candidate": {
+      "recipe_id": "stone_pick",
+      "output_item_id": "stone_pick",
+      "inputs": {
+        "stone_chunk": 3,
+        "oak_wood": 2
+      },
+      "station": "hand",
+      "duration_ticks": 6,
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "useful_existing_sink": true,
+      "usable_in_current_survival_run": false,
+      "sink_blocker": "The existing source data restricts this recipe to persistent_home. A3 must authorize a survival-run mode or identify an already-approved run sink; A8 will not silently change the recipe."
+    },
+    "risk_and_authority": {
+      "site_specific_risk_measurement": null,
+      "known_a8_physical_risk": "The unstable seam requires one of the two exclusive brace/chock projections or the player may leave it untouched; the source route is physically blocked until a safe route is owner-projected. No damage, status effect, exposure, failure probability, or real loss rate is authored.",
+      "generic_low_risk_label_is_site_risk": false,
+      "reward_withheld_reason": "A3 rejected Quarry authorization and no A0 durable site instance, A3 binding, approved source capacity, survival-run sink, or SaveService restart proof exists.",
+      "a3_approved_bindings": [],
+      "a3_approved_costs": null,
+      "a3_approved_yields": null,
+      "a3_approved_cooldowns": null
+    }
+  },
   "fixture_value_disclosure": {
     "only_source": "tests/fixtures/survival/world_content/a8_native_poi_action_catalog.fixture.json",
     "status": "TEST_ONLY_FAKE_VALUES_NOT_LIVE",
@@ -379,7 +495,7 @@
         "cooldown_seconds": 90
       }
     },
-    "rule": "These sample values are not in production site JSON and are never included in soh.native_poi.intent.v2. The test-only fixture resolves them locally; A0 independently resolves every production economic field from A3 or rejects."
+    "rule": "These sample values are not in production site JSON and are never included in soh.native_poi.intent.v3. The test-only fixture resolves them locally; A0 independently resolves every production economic field from A3 or rejects."
   },
   "decision_request_to_a3": [
     "Maintain the current rejection until native and A0 durable-instance evidence is available; do not promote fixture amounts.",
@@ -389,8 +505,8 @@
     "After approval, publish a new A3 authorization/binding revision and supply its exact source SHA; A0 must validate it and commit via the existing SaveService."
   ],
   "evidence_separation": {
-    "a8_source": "Dimensionally valid source/sink comparison and neutral v2 request are present; no prices/yields/cooldowns are approved.",
-    "godot_native": "At A8 review base 1426a0eb250a0a680081c2dfabfe4eb339f61f5d, exact-head Godot/render workflows were queued; no native result or capture is claimed. The closeout SHA still needs its own runner result.",
+    "a8_source": "Dimensionally valid source/sink comparison and neutral v3 request are present; no prices/yields/cooldowns are approved.",
+    "godot_native": "Local Godot 4.7 import and six headless suites pass (1,260 assertions). The frame-driven test explicitly skips image output under the headless renderer. Exact pushed-SHA hosted CI and 720p/1440p/2160p image capture/eye review remain pending.",
     "a0_production": "A0 current PR#21 head has no A8 production mount or SaveService adapter; no reachability or durable restart is claimed.",
     "a3_economics": "Current A3 authorization remains REJECTED_PENDING_EVIDENCE_FAIL_CLOSED; all Quarry parameters remain null.",
     "human_play": "No human play session or strategic-choice acceptance has been observed."

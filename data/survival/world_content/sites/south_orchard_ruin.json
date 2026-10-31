@@ -204,7 +204,12 @@
       "set_state": {
         "graft_marks_read": true
       },
-      "owner_ready_required": true
+      "owner_ready_required": true,
+      "requires_state_values": {
+        "orchard_channel": [
+          "flowing"
+        ]
+      }
     }
   ],
   "return_hook": "After the sluice is cleared, the water line reaches old graft marks; returning reveals how to revive the lower terrace. No honey or rare-herb grant is authored.",
@@ -486,7 +491,43 @@
         92,
         40,
         36
-      ]
+      ],
+      "context_ground": {
+        "size_px": [
+          1280,
+          736
+        ],
+        "origin_px": [
+          -576,
+          -304
+        ],
+        "ground_family": "grass",
+        "purpose": "source-backed local terrain outside the existing 128x128 shell; decorative only, no POI footprint or collision extension",
+        "paths": [
+          {
+            "family": "road_dirt",
+            "width": 3,
+            "points": [
+              [
+                4,
+                7
+              ],
+              [
+                4,
+                10
+              ],
+              [
+                4,
+                18
+              ],
+              [
+                4,
+                28
+              ]
+            ]
+          }
+        ]
+      }
     },
     "obstacles_px": [
       [
@@ -616,7 +657,7 @@
       },
       {
         "family": "water",
-        "width": 2,
+        "width": 1,
         "points": [
           [
             14,
@@ -635,7 +676,7 @@
             17
           ],
           [
-            46,
+            45,
             17
           ]
         ]
@@ -665,13 +706,13 @@
                 17
               ],
               [
-                46,
+                45,
                 17
               ]
             ]
           }
         ],
-        "stagnant": []
+        "untouched": []
       }
     },
     "props": [
@@ -829,6 +870,18 @@
         ]
       }
     ],
-    "lighting_profile": "amber_morning"
+    "lighting_profile": "amber_morning",
+    "context_ground": {
+      "size_px": [
+        1280,
+        736
+      ],
+      "origin_px": [
+        -160,
+        -64
+      ],
+      "ground_family": "forest",
+      "purpose": "source-backed local terrain outside the 960x608 worksite bounds; decorative only, no collision or world extension"
+    }
   }
 }

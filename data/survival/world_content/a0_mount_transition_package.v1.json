@@ -3,9 +3,9 @@
   "package_status": "HISTORICAL_SUPERSEDED_BY_V2; DO_NOT_USE_ITS_STALE_OWNER_PINS",
   "source_pins_reviewed": {
     "a8_pr26_pre_package_head": "0e22d5f00532cf5e079b540e30a54281606fc757",
-    "a1_pr20_current_head": "5aed8e8647c896e9a79ea812735ec237342462c4",
-    "a0_pr21_current_head": "32bced6d612958838cdf337b437685316c6d9009",
-    "a3_pr19_current_head": "4bfba38d87bb2b6529745bf4a3caf2ba0ca07947"
+    "a1_pr20_current_head": "9ca1453ccdd315c9de4aae01cf0e1e5b4e0a71cf",
+    "a0_pr21_current_head": "738e621b688e9d9890f636ef2ece48f6d29f5b01",
+    "a3_pr19_current_head": "b44e22df3af40939069189be14afc23ee1ce21c4"
   },
   "world_id": "world:soh_continent_v1",
   "geometry": {

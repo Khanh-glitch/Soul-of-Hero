@@ -1,42 +1,115 @@
 {
   "schema": "soh.a8.quarry.integration_candidate.v2",
-  "status": "A8_SOURCE_READY_A0_A3_INTEGRATION_HOLD",
+  "status": "A8_SOURCE_GRAPH_READY_A0_INSTANCE_A3_AUTHORIZATION_BLOCKED",
   "source_pins_at_review": {
-    "a8_pr26": {"review_base": "0e22d5f00532cf5e079b540e30a54281606fc757", "branch": "arena/2d7e6d7a-soul-of-hero"},
-    "a1_pr20_current": {"head": "5aed8e8647c896e9a79ea812735ec237342462c4", "status": "OPEN", "source_contract": "A1 canonical authored cells and 128x128 shell context"},
-    "a3_pr19_current": {"head": "4bfba38d87bb2b6529745bf4a3caf2ba0ca07947", "status": "OPEN", "quarry_authorization": "REJECTED_PENDING_EVIDENCE_FAIL_CLOSED"},
-    "a0_pr21_current_at_review": {"head": "32bced6d612958838cdf337b437685316c6d9009", "status": "OPEN", "owner": "A0 production overworld mount, scene transitions, SaveService and durable reload"}
+    "a8_pr26": {
+      "review_base": "0e22d5f00532cf5e079b540e30a54281606fc757",
+      "branch": "arena/2d7e6d7a-soul-of-hero"
+    },
+    "a1_pr20_current": {
+      "head": "9ca1453ccdd315c9de4aae01cf0e1e5b4e0a71cf",
+      "status": "OPEN",
+      "source_contract": "A1 canonical authored cells and 128x128 shell context"
+    },
+    "a3_pr19_current": {
+      "head": "b44e22df3af40939069189be14afc23ee1ce21c4",
+      "status": "OPEN",
+      "quarry_authorization": "REJECTED_PENDING_EVIDENCE_FAIL_CLOSED"
+    },
+    "a0_pr21_current_at_review": {
+      "head": "738e621b688e9d9890f636ef2ece48f6d29f5b01",
+      "status": "OPEN",
+      "owner": "A0 production overworld mount, scene transitions, SaveService and durable reload"
+    }
   },
   "canonical_quarry_instance_request": {
     "world_id": "world:soh_continent_v1",
     "region_id": "r_ashen_crown",
     "poi_id": "poi_crown_south_quarry",
-    "cell": [30, 280],
+    "cell": [
+      30,
+      280
+    ],
     "physical_instance_id": null,
     "instance_identity_owner": "A0 resolves canonical A1 identity; A8 does not mint or persist another identity",
     "reachability_evidence_state": "NOT_PROVEN_IN_CURRENT_A0_WORLD_MOUNT",
     "shell_scene": "res://game/survival/world_content/scenes/south_quarry_overworld.tscn",
-    "shell_size_px": [128, 128],
-    "action_socket_px": [64, 64],
-    "world_root_transform_from_a1_cell": [424, 4424],
+    "shell_size_px": [
+      128,
+      128
+    ],
+    "action_socket_px": [
+      64,
+      64
+    ],
+    "world_root_transform_from_a1_cell": [
+      424,
+      4424
+    ],
     "local_interior_scene": "res://game/survival/world_content/scenes/south_quarry.tscn",
-    "local_interior_size_px": [960, 608],
+    "local_interior_size_px": [
+      960,
+      608
+    ],
     "entry_and_return": "A0 owns exterior->interior mount/reload and return placement. A8 local doorway tests do not prove production transitions."
   },
   "neutral_action_contract": {
-    "contract_id": "soh.native_poi.intent.v2",
-    "contract_version": 2,
-    "contract_path": "data/survival/world_content/interaction_contract.v2.json",
-    "required_fields": ["contract_id", "contract_version", "intent_id", "source_id", "object_id", "action_id", "claim_id", "observed_projection_revision"],
-    "sent_by_a8": "Canonical source/object/action identity, expected claim identity and last observed owner revision only.",
-    "never_sent_by_a8": ["costs", "rewards", "cooldown_seconds", "claim_policy", "state_delta", "unlock_actions", "catalog_source", "a3_approval_ref", "provisional_test_only", "receipt"],
+    "contract_id": "soh.native_poi.intent.v3",
+    "contract_version": 3,
+    "contract_path": "data/survival/world_content/interaction_contract.v3.json",
+    "required_fields": [
+      "contract_id",
+      "contract_version",
+      "intent_id",
+      "world_id",
+      "run_id",
+      "run_epoch",
+      "phase_id",
+      "observed_phase_projection_revision",
+      "source_id",
+      "site_instance_id",
+      "object_id",
+      "action_id",
+      "claim_id",
+      "observed_projection_revision",
+      "actor_local_position",
+      "actor_facing"
+    ],
+    "sent_by_a8": "Canonical source/object/action/claim identity, A0-issued world/run/site/phase context, observed owner revisions, and actor local position/facing only.",
+    "never_sent_by_a8": [
+      "costs",
+      "rewards",
+      "cooldown_seconds",
+      "claim_policy",
+      "state_delta",
+      "unlock_actions",
+      "catalog_source",
+      "a3_approval_ref",
+      "provisional_test_only",
+      "receipt"
+    ],
     "a3_binding_refs": {},
-    "rule": "The neutral action identity does not authorize an action. A0 independently resolves A1 identity/current state and the exact A3-approved binding; reject until an approved binding is available. Reject extra client fields and retired intent v1."
+    "rule": "The neutral v3 identity does not authorize an action. A0 independently resolves canonical A1 identity/current state and the exact A3-approved binding; reject until an approved binding is available. Reject extra client fields and retired intent v1/v2."
   },
   "a8_action_identities": {
-    "poi_crown_south_quarry": ["brace_east_shelf", "chock_west_ramp", "leave_seam_unworked", "extract_outcrop"],
-    "poi_crown_south_orchard": ["clear_irrigation", "leave_for_safety", "gather_reeds", "read_water_marks"],
-    "poi_crown_south_mill": ["repair_waterwheel", "leave_wheel", "observe_race", "recover_fastener"]
+    "poi_crown_south_quarry": [
+      "brace_east_shelf",
+      "chock_west_ramp",
+      "leave_seam_unworked",
+      "extract_outcrop"
+    ],
+    "poi_crown_south_orchard": [
+      "clear_irrigation",
+      "leave_for_safety",
+      "gather_reeds",
+      "read_water_marks"
+    ],
+    "poi_crown_south_mill": [
+      "repair_waterwheel",
+      "leave_wheel",
+      "observe_race",
+      "recover_fastener"
+    ]
   },
   "economics_boundary": {
     "evidence_pack": "data/survival/world_content/quarry_economics_evidence.v2.json",
@@ -56,16 +129,32 @@
   "a0_acceptance_request": [
     "Resolve the canonical A1 cell to a real reachable A0 world instance and preserve the 128x128 shell / 960x608 interior separation.",
     "Use A0-owned physical actor entry/exit and existing transition/SaveService owners; add no duplicate SaveService or A8 production mount.",
-    "Resolve A8 neutral v2 identities against canonical A1 and A3 data, reject unknown/extra fields and reject every unapproved action.",
+    "Resolve A8 neutral v3 identities and A0-issued run/site/phase context against canonical A1 and A3 data; reject unknown/extra fields and every unapproved action.",
     "Commit A3-authorized debit, grant, state, generation, active cooldown and durable receipt atomically using the existing SaveService; prove separate-process restart and no second reward.",
     "Run owner-side walk/facing/doorway/retreat/revisit with owner-projected blocker changes; verify the opposite Quarry route stays closed and leave/unprepared routes remain safe."
   ],
+  "a3_candidate_source": {
+    "evidence": "data/survival/world_content/quarry_economics_evidence.v2.json#a3_candidate_source",
+    "a8_action": "poi_crown_south_quarry / south_seam_outcrop / extract_outcrop",
+    "a3_generic_source_candidate": "live_stone_chunk",
+    "a0_site_instance_id": null,
+    "local_stand_px": [
+      506,
+      378
+    ],
+    "local_action_socket_px": [
+      506,
+      302
+    ],
+    "durable_state_owner": "A0 SaveService only",
+    "reward_status": "WITHHELD_UNTIL_A3_BINDING_A0_DURABLE_INSTANCE_AND_CAPACITY_APPROVAL"
+  },
   "a3_decision_request": "See quarry_economics_evidence.v2.json. Keep all Quarry/Orchard/Mill material terms null and fail-closed until A3 publishes an exact approved binding; no fixture terms should be promoted.",
   "acceptance_status": {
-    "a8_source": "LOCAL_STATIC_CHECKS_PASS: neutral request, fixture isolation, local route data and source evidence are A8-owned; exact-head CI pending push",
-    "godot_native": "HOLD: exact-head runner was queued at review; no native pass or 720p/1440p/2160p captures",
+    "a8_source": "LOCAL_STATIC_AND_HEADLESS_GODOT_PASS: current Hero-scene fixture journey and neutral v3 request pass locally; no production mount or economic authority claimed.",
+    "godot_native": "PASS locally: Godot 4.7 import plus six headless suites (1,260 assertions); capture is skipped under renderer=headless. Exact pushed-SHA hosted CI and 720p/1440p/2160p rendered captures remain pending.",
     "a0_production": "HOLD: A0 mount, actual reachability, production transitions and separate-process SaveService restart not proven",
     "a3_economics": "HOLD: A3 rejected Quarry approval; all actual costs/yields/cooldowns null",
-    "human_play": "HOLD: no inspected native visual or human strategic-choice playtest"
+    "human_play": "HOLD: no inspected rendered visual or human strategic-choice playtest"
   }
 }

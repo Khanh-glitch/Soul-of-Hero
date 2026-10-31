@@ -19,7 +19,7 @@
   },
   "a1_current": {
     "pr": 20,
-    "head": "5aed8e8647c896e9a79ea812735ec237342462c4",
+    "head": "9ca1453ccdd315c9de4aae01cf0e1e5b4e0a71cf",
     "atlas_path": "data/survival/world/art/atlas.v1.json",
     "terrain_sha256": "6128d8f41abe6962fe705431db20e762e0cca613ffc3eca29065727422737d1c",
     "props_sha256": "8d4acf4028e0e065b901e78c59c65e5a68677fb75d46c04c7e5a029a76d27324",
@@ -1344,7 +1344,7 @@
   },
   "existing_surface_frames": {
     "purpose": "A8 already-pinned snow frames available to the local surface contract; not currently applied to these three interiors because no A0 weather projection exists.",
-    "a1_head": "5aed8e8647c896e9a79ea812735ec237342462c4",
+    "a1_head": "9ca1453ccdd315c9de4aae01cf0e1e5b4e0a71cf",
     "frames": {
       "snow_0": {
         "a8_rect": [
@@ -1409,7 +1409,7 @@
     }
   },
   "adopted_surface_frames": {
-    "source_a1_head": "5aed8e8647c896e9a79ea812735ec237342462c4",
+    "source_a1_head": "9ca1453ccdd315c9de4aae01cf0e1e5b4e0a71cf",
     "source_texture_sha256": "6128d8f41abe6962fe705431db20e762e0cca613ffc3eca29065727422737d1c",
     "a8_surface_texture_sha256": "280342586563b2df63e325ea0e926f06027497dbd2f5fc86e6cd3d729a88068f",
     "a8_surface_dimensions": [
@@ -1507,7 +1507,7 @@
   },
   "native_visual_acceptance": "HOLD; this is a source-pixel compatibility check, not native render acceptance.",
   "potential_new_transitions_source": {
-    "a1_head": "5aed8e8647c896e9a79ea812735ec237342462c4",
+    "a1_head": "9ca1453ccdd315c9de4aae01cf0e1e5b4e0a71cf",
     "atlas_sha256": "83d69373ca6c1258e8727800d0aa0c288851c34d25539c69c21ec9f5fc9d769a",
     "terrain_png_sha256": "6128d8f41abe6962fe705431db20e762e0cca613ffc3eca29065727422737d1c",
     "frame_count": 80,

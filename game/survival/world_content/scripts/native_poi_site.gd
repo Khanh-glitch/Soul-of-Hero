@@ -101,6 +101,8 @@ func _load_definition() -> bool:
 
 
 func _install_phase_layer() -> void:
+	if bool(definition.get("test_only", false)):
+		return
 	_phase_layer = PHASE_LAYER_SCRIPT.new() as Node2D
 	_phase_layer.name = "A8OwnerProjectedPhaseLayer"
 	add_child(_phase_layer)
@@ -460,7 +462,7 @@ func _get_actor_facing(actor: CharacterBody2D) -> Vector2:
 		if method_facing is Vector2 and method_facing.length_squared() > 0.01:
 			return method_facing.normalized()
 	for property: Dictionary in actor.get_property_list():
-		if str(property.get("name", "")) in ["facing", "last_facing"]:
+		if str(property.get("name", "")) in ["facing", "last_facing", "facing_direction"]:
 			var value: Variant = actor.get(str(property.name))
 			if value is Vector2 and value.length_squared() > 0.01:
 				return value.normalized()

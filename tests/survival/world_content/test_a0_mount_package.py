@@ -18,8 +18,8 @@ class A0MountTransitionPackageTests(unittest.TestCase):
     def test_current_owner_pins_and_contract_versions_are_explicit(self) -> None:
         package = self.package
         self.assertEqual(package["package_status"], "A8_OWNER_CONTRACT_REFRESH_READY_FOR_A0_REVIEW_NOT_MOUNTED")
-        self.assertEqual(package["source_pins"]["a0_pr21_head"], "4b4b63f56b92c2f7b50d770554afd96d5d0a098b")
-        self.assertEqual(package["source_pins"]["a1_pr20_head"], "7d2b017c8a90b7d5e24ff85f065ff1b18548cd29")
+        self.assertEqual(package["source_pins"]["a0_pr21_head"], "738e621b688e9d9890f636ef2ece48f6d29f5b01")
+        self.assertEqual(package["source_pins"]["a1_pr20_head"], "9ca1453ccdd315c9de4aae01cf0e1e5b4e0a71cf")
         self.assertEqual(package["contracts"]["physical_interaction"], "data/survival/world_content/interaction_contract.v3.json")
         self.assertEqual(package["contracts"]["shell_transition"], "data/survival/world_content/transition_contract.v2.json")
         self.assertEqual(package["contracts"]["run_phase_projection"], "soh.a0.run_phase_projection.v1")

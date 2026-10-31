@@ -2,9 +2,9 @@
   "schema": "soh.a8.local_surface_affordance.v1",
   "owner": "A8 local, source-backed presentation and local walkability metadata; no world simulation",
   "source_pins": {
-    "a1_pr20_current_head": "5aed8e8647c896e9a79ea812735ec237342462c4",
-    "a0_pr21_current_head": "32bced6d612958838cdf337b437685316c6d9009",
-    "a3_pr19_current_head": "4bfba38d87bb2b6529745bf4a3caf2ba0ca07947"
+    "a1_pr20_current_head": "9ca1453ccdd315c9de4aae01cf0e1e5b4e0a71cf",
+    "a0_pr21_current_head": "738e621b688e9d9890f636ef2ece48f6d29f5b01",
+    "a3_pr19_current_head": "b44e22df3af40939069189be14afc23ee1ce21c4"
   },
   "coordinate_system": {
     "site_space": "A8 local scene pixels; origin at scene top-left; tile size 16 px",
@@ -20,7 +20,13 @@
   "environment_projection": {
     "a8_consumer_input_contract": "soh.a8.environment_presentation_input.v1",
     "provider": "A0 only",
-    "fields": ["site_id", "projection_revision", "world_time", "weather", "tide"],
+    "fields": [
+      "site_id",
+      "projection_revision",
+      "world_time",
+      "weather",
+      "tide"
+    ],
     "owner_site_state_uses_existing_projection_contract": true,
     "missing_or_null_value": "UNKNOWN",
     "current_a0_source_support": {
@@ -36,24 +42,39 @@
   },
   "surface_classes": {
     "mud": {
-      "presentation_frames": ["mud_0", "mud_1", "mud_2", "mud_3"],
+      "presentation_frames": [
+        "mud_0",
+        "mud_1",
+        "mud_2",
+        "mud_3"
+      ],
       "physical_effect": "none",
       "trace_affordance": "local metadata only; does not emit, persist, or discover footprints",
       "weather_effect": "UNKNOWN unless an A0-owned source projection and A8-authored visual mapping are both present"
     },
     "snow": {
-      "presentation_frames": ["snow_0", "snow_1", "snow_2", "snow_3"],
+      "presentation_frames": [
+        "snow_0",
+        "snow_1",
+        "snow_2",
+        "snow_3"
+      ],
       "physical_effect": "none",
       "trace_affordance": "local metadata only; does not emit, persist, or discover footprints",
       "weather_effect": "UNKNOWN unless an A0-owned source projection and A8-authored visual mapping are both present"
     },
     "stone": {
-      "presentation_families": ["gravel", "ash"],
+      "presentation_families": [
+        "gravel",
+        "ash"
+      ],
       "physical_effect": "authored collision only; no speed, stamina, damage, or noise values",
       "trace_affordance": "no A8 footprint creation"
     },
     "plank": {
-      "presentation_frames": ["boardwalk_ns"],
+      "presentation_frames": [
+        "boardwalk_ns"
+      ],
       "physical_effect": "fixed authored walkable crossing over the locally blocked water channel",
       "weather_effect": "cannot change collision or close retreat"
     },
@@ -92,11 +113,19 @@
           "route_id": "quarry_entry_to_workface",
           "from": "local_spawn",
           "to": "authored gravel approach and workface",
-          "surface_sequence": ["stone"],
+          "surface_sequence": [
+            "stone"
+          ],
           "exposure": "UNKNOWN",
           "retreat": "same doorway remains physically open; no weather-dependent collision"
         }
-      ]
+      ],
+      "choice_presentation": {
+        "east_braced": "The east brace and east gravel approach appear; the west lane stays blocked.",
+        "west_chocked": "The west chock and west gravel approach appear; the east lane stays blocked.",
+        "left_unworked": "The unstable-seam warning remains; neither source route opens and the south retreat remains available.",
+        "source_result": "extract_outcrop requires owner readiness. Until A3 authorization and A0 durable mount exist, the physical action is withheld and grants nothing."
+      }
     },
     "poi_crown_south_orchard": {
       "local_site_id": "crown_south_orchard",
@@ -104,43 +133,175 @@
         {
           "zone_id": "orchard_irrigation_channel",
           "surface_class": "water_unknown_depth",
-          "rect_px": [224, 272, 528, 32],
+          "rect_px": [
+            224,
+            272,
+            528,
+            32
+          ],
           "owner_site_state_key": "orchard_channel",
           "depth_value": null,
           "physical_effect": "Solid left/right bank-water collision with a 32 px bridge gap; a separate owner-state deadfall blocker closes that gap until orchard_channel=flowing.",
-          "state_visual": "The water itself remains visible in UNKNOWN, untouched, and flowing states; owner-projected flow removes the deadfall cue and reveals the fixed boardwalk."
+          "state_visual": "The base thin water channel remains visible while untouched. Only owner-projected orchard_channel=flowing widens it, removes the blocking deadfall cue, reveals the fixed boardwalk, and permits the separate graft-mark action. Water depth remains UNKNOWN; the safe retreat is unchanged."
         },
         {
           "zone_id": "orchard_mud_banks",
           "surface_class": "mud",
-          "tile_overlay_cells": [[20, 16], [21, 16], [22, 16], [24, 19], [25, 19], [26, 19], [36, 16], [37, 16], [38, 16], [40, 19], [41, 19], [42, 19]],
+          "tile_overlay_cells": [
+            [
+              20,
+              16
+            ],
+            [
+              21,
+              16
+            ],
+            [
+              22,
+              16
+            ],
+            [
+              24,
+              19
+            ],
+            [
+              25,
+              19
+            ],
+            [
+              26,
+              19
+            ],
+            [
+              36,
+              16
+            ],
+            [
+              37,
+              16
+            ],
+            [
+              38,
+              16
+            ],
+            [
+              40,
+              19
+            ],
+            [
+              41,
+              19
+            ],
+            [
+              42,
+              19
+            ]
+          ],
           "physical_effect": "visual only; ordinary walkability is determined by authored collision"
         },
         {
           "zone_id": "orchard_sluice_boardwalk",
           "surface_class": "plank",
-          "tile_overlay_cells": [[30, 16], [31, 16], [30, 17], [31, 17], [30, 18], [31, 18], [30, 19], [31, 19]],
-          "rect_px": [480, 256, 32, 64],
+          "tile_overlay_cells": [
+            [
+              30,
+              16
+            ],
+            [
+              31,
+              16
+            ],
+            [
+              30,
+              17
+            ],
+            [
+              31,
+              17
+            ],
+            [
+              30,
+              18
+            ],
+            [
+              31,
+              18
+            ],
+            [
+              30,
+              19
+            ],
+            [
+              31,
+              19
+            ]
+          ],
+          "rect_px": [
+            480,
+            256,
+            32,
+            64
+          ],
           "walkable": true,
           "collision_effect": "The water blocker gap is fixed; only the owner-projected deadfall blocker opens or closes the approach.",
           "weather_effect": "never blocks this local retreat or crossing"
         }
       ],
       "physical_blockers": [
-        {"blocker_id": "orchard_water_west_bank", "rect_px": [224, 272, 256, 32], "when": "always"},
-        {"blocker_id": "orchard_water_east_bank", "rect_px": [512, 272, 240, 32], "when": "always"},
-        {"blocker_id": "orchard_sluice_deadfall", "rect_px": [480, 272, 32, 32], "when_site_state_not": {"orchard_channel": ["flowing"]}}
+        {
+          "blocker_id": "orchard_water_west_bank",
+          "rect_px": [
+            224,
+            272,
+            256,
+            32
+          ],
+          "when": "always"
+        },
+        {
+          "blocker_id": "orchard_water_east_bank",
+          "rect_px": [
+            512,
+            272,
+            240,
+            32
+          ],
+          "when": "always"
+        },
+        {
+          "blocker_id": "orchard_sluice_deadfall",
+          "rect_px": [
+            480,
+            272,
+            32,
+            32
+          ],
+          "when_site_state_not": {
+            "orchard_channel": [
+              "flowing"
+            ]
+          }
+        }
       ],
       "authored_exposure_routes": [
         {
           "route_id": "orchard_entry_to_sluice",
           "from": "local_spawn",
           "to": "sluice approach stand",
-          "surface_sequence": ["stone", "mud", "plank", "water_unknown_depth"],
+          "surface_sequence": [
+            "stone",
+            "mud",
+            "plank",
+            "water_unknown_depth"
+          ],
           "exposure": "UNKNOWN",
           "retreat": "fixed boardwalk and south doorway remain available in every weather value; channel blocker changes only after owner projection"
         }
-      ]
+      ],
+      "choice_presentation": {
+        "flowing": "Water visibly widens and runs; the sluice deadfall is removed, the fixed boardwalk is revealed, and water-mark reading is only available under owner-projected flowing state.",
+        "untouched": "The thin water channel and fallen sluice remain; the north-bank crossing stays blocked while the south retreat remains safe."
+      }
     },
     "poi_crown_south_mill": {
       "local_site_id": "crown_south_mill",
@@ -148,34 +309,104 @@
         {
           "zone_id": "mill_wheel_race",
           "surface_class": "water_unknown_depth",
-          "rect_px": [288, 288, 464, 32],
+          "rect_px": [
+            288,
+            288,
+            464,
+            32
+          ],
           "owner_site_state_key": "mill_wheel",
           "depth_value": null,
-          "physical_effect": "Solid left/right water blockers; only the fixed 32 px plank bridge is walkable. The existing salvage/state gate above remains A8-owned site geometry under owner state."
+          "physical_effect": "Solid left/right water blockers; only the fixed 32 px plank bridge is walkable. The existing salvage/state gate above remains A8-owned site geometry under owner state.",
+          "state_visual": "The thin base race water remains visible in the seized state. Owner-projected mill_wheel=turning widens the race, rotates the source-art wheel, and reveals a lit race lamp/bearing. The seized state stays still with authored deadfall; the fixed boardwalk and south retreat never depend on wheel power."
         },
         {
           "zone_id": "mill_race_boardwalk",
           "surface_class": "plank",
-          "tile_overlay_cells": [[32, 17], [33, 17], [32, 18], [33, 18], [32, 19], [33, 19], [32, 20], [33, 20]],
-          "rect_px": [512, 272, 32, 64],
+          "tile_overlay_cells": [
+            [
+              32,
+              17
+            ],
+            [
+              33,
+              17
+            ],
+            [
+              32,
+              18
+            ],
+            [
+              33,
+              18
+            ],
+            [
+              32,
+              19
+            ],
+            [
+              33,
+              19
+            ],
+            [
+              32,
+              20
+            ],
+            [
+              33,
+              20
+            ]
+          ],
+          "rect_px": [
+            512,
+            272,
+            32,
+            64
+          ],
           "walkable": true,
           "collision_effect": "fixed, independent of time, weather, tide, and wheel state"
         }
       ],
       "physical_blockers": [
-        {"blocker_id": "mill_race_west_bank", "rect_px": [288, 288, 224, 32], "when": "always"},
-        {"blocker_id": "mill_race_east_bank", "rect_px": [544, 288, 208, 32], "when": "always"}
+        {
+          "blocker_id": "mill_race_west_bank",
+          "rect_px": [
+            288,
+            288,
+            224,
+            32
+          ],
+          "when": "always"
+        },
+        {
+          "blocker_id": "mill_race_east_bank",
+          "rect_px": [
+            544,
+            288,
+            208,
+            32
+          ],
+          "when": "always"
+        }
       ],
       "authored_exposure_routes": [
         {
           "route_id": "mill_entry_to_repair_and_return",
           "from": "local_spawn",
           "to": "south race / repair approach",
-          "surface_sequence": ["stone", "plank", "water_unknown_depth"],
+          "surface_sequence": [
+            "stone",
+            "plank",
+            "water_unknown_depth"
+          ],
           "exposure": "UNKNOWN",
           "retreat": "the fixed boardwalk and south doorway are independent of wheel power and weather"
         }
-      ]
+      ],
+      "choice_presentation": {
+        "turning": "The source-art waterwheel turns and the water race widens; the salvage gate still requires its separate owner-projected capability and action readiness.",
+        "seized": "The wheel remains still with a seized-race deadfall cue. The route is not repaired, and the physical south return remains open."
+      }
     }
   },
   "non_features": [
@@ -183,6 +414,7 @@
     "No second world clock or elapsed-time rates.",
     "No weather-driven collision or unsafe return.",
     "No A8 movement modifiers, hazard damage, swimming, or survival consequences.",
-    "No inferred water depth, tide, temperature, rainfall, or shelter value."
+    "No inferred water depth, tide, temperature, rainfall, or shelter value.",
+    "The source-backed context-ground extension exists only to fill the local capture view; it adds no A1 world cells, collision, POI reachability, or production mount."
   ]
 }

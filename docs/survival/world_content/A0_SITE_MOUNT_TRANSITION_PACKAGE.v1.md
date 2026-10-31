@@ -5,9 +5,9 @@ Status: **READY FOR A0 REVIEW; NOT A PRODUCTION MOUNT OR SAVE PROOF**
 ## Exact source pins reviewed
 
 - A8 PR #26 working source before this package: `0e22d5f00532cf5e079b540e30a54281606fc757` (the handoff must be refreshed to the eventual commit SHA).
-- A1 PR #20 current: `5aed8e8647c896e9a79ea812735ec237342462c4`.
-- A0 PR #21 current: `32bced6d612958838cdf337b437685316c6d9009`.
-- A3 PR #19 current: `4bfba38d87bb2b6529745bf4a3caf2ba0ca07947`.
+- A1 PR #20 current: `9ca1453ccdd315c9de4aae01cf0e1e5b4e0a71cf`.
+- A0 PR #21 current: `738e621b688e9d9890f636ef2ece48f6d29f5b01`.
+- A3 PR #19 current: `b44e22df3af40939069189be14afc23ee1ce21c4`.
 
 A0 advanced from reviewed head `eedf933e910eaf28568a63c03e51d0b864a18d5c` during this verification. The exact-head diff changes only `.github/workflows/a0-production-waystation-candidate.yml`; the current connector still disables the annex build and marks it non-playable, while `SaveService` and the legacy A0-owned `active_seconds` binding are unchanged.
 

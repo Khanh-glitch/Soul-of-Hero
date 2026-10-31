@@ -25,9 +25,12 @@ var _props_texture: Texture2D
 var _surface_texture: Texture2D
 var _terrain_layer: TileMapLayer
 var _surface_layer: TileMapLayer
+var _context_layer: TileMapLayer
 var _props_root: Node2D
 var _terrain_ids: Dictionary = {}
 var _surface_ids: Dictionary = {}
+var _animated_props: Array[Dictionary] = []
+var _animation_clock := 0.0
 
 
 func configure(definition: Dictionary, shell_role: bool = false) -> bool:
@@ -78,10 +81,43 @@ func _apply_ambient_profile() -> void:
 
 
 func set_site_state(state: Dictionary) -> void:
-	_site_state = state.duplicate(true)
+	var next_state := state.duplicate(true)
+	if next_state != _site_state:
+		_animation_clock = 0.0
+	_site_state = next_state
 	if not _definition.is_empty():
 		_build_ground()
 		_build_props()
+
+
+func _process(delta: float) -> void:
+	_animation_clock += delta
+	for animation: Dictionary in _animated_props:
+		var sprite := animation.get("sprite") as Sprite2D
+		if not is_instance_valid(sprite):
+			continue
+		var rule: Dictionary = animation.get("rule", {})
+		var active := (
+			str(_site_state.get(str(rule.get("state_key", "")), ""))
+			== str(rule.get("state_value", ""))
+		)
+		if not active:
+			sprite.rotation_degrees = 0.0
+			continue
+		var step_seconds := maxf(0.05, float(rule.get("step_seconds", 0.35)))
+		var degrees_per_step := float(rule.get("degrees_per_step", 90.0))
+		var step_index := floori(_animation_clock / step_seconds)
+		sprite.rotation_degrees = fposmod(float(step_index) * degrees_per_step, 360.0)
+
+
+func get_terrain_frame_at_cell(cell: Vector2i) -> String:
+	if not is_instance_valid(_terrain_layer):
+		return ""
+	var atlas_cell := _terrain_layer.get_cell_atlas_coords(cell)
+	for frame_name: String in _terrain_ids:
+		if _terrain_ids[frame_name] == atlas_cell:
+			return frame_name
+	return ""
 
 
 func set_environment_projection(projection: Dictionary) -> void:
@@ -95,7 +131,7 @@ func get_environment_projection() -> Dictionary:
 
 
 func _build_ground() -> void:
-	for layer: TileMapLayer in [_terrain_layer, _surface_layer]:
+	for layer: TileMapLayer in [_context_layer, _terrain_layer, _surface_layer]:
 		if is_instance_valid(layer):
 			if layer.get_parent() == self:
 				remove_child(layer)
@@ -146,6 +182,12 @@ func _build_ground() -> void:
 				surface_source.create_tile(atlas_cell)
 			_surface_ids[frame_name] = atlas_cell
 		surface_source_id = tile_set.add_source(surface_source)
+	_context_layer = TileMapLayer.new()
+	_context_layer.name = "A8_SourceBacked_EnvironmentContext"
+	_context_layer.z_index = -11
+	_context_layer.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_context_layer.tile_set = tile_set
+	add_child(_context_layer)
 	_terrain_layer = TileMapLayer.new()
 	_terrain_layer.name = "A8_16px_Ground"
 	_terrain_layer.z_index = -10
@@ -158,6 +200,7 @@ func _build_ground() -> void:
 	_surface_layer.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	_surface_layer.tile_set = tile_set
 	add_child(_surface_layer)
+	_build_context_ground(source_id)
 	var ground_rows: Array = _layout.get("ground_rows", [])
 	if not ground_rows.is_empty():
 		for y: int in range(mini(ground_rows.size(), _rows)):
@@ -191,6 +234,55 @@ func _build_ground() -> void:
 		for path: Dictionary in values.get(state_value, []):
 			_paint_path(path, source_id)
 	_paint_surface_contract(source_id, surface_source_id)
+
+
+func _build_context_ground(source_id: int) -> void:
+	var context: Variant = _layout.get("context_ground", {})
+	if not context is Dictionary or context.is_empty() or not is_instance_valid(_context_layer):
+		return
+	var size_px := VECTOR_UTIL.from_pair(context.get("size_px", [0, 0]), Vector2.ZERO)
+	var origin_px := VECTOR_UTIL.from_pair(context.get("origin_px", [0, 0]), Vector2.ZERO)
+	var family := str(context.get("ground_family", ""))
+	if size_px.x <= 0.0 or size_px.y <= 0.0 or family.is_empty():
+		return
+	var start_x := floori(origin_px.x / TILE_PX)
+	var start_y := floori(origin_px.y / TILE_PX)
+	var end_x := ceili((origin_px.x + size_px.x) / TILE_PX)
+	var end_y := ceili((origin_px.y + size_px.y) / TILE_PX)
+	for y: int in range(start_y, end_y):
+		for x: int in range(start_x, end_x):
+			var frame_name := _family_frame(family, x, y)
+			if _terrain_ids.has(frame_name):
+				_context_layer.set_cell(Vector2i(x, y), source_id, _terrain_ids[frame_name])
+	for path: Dictionary in context.get("paths", []):
+		_paint_context_path(path, source_id)
+
+
+func _paint_context_path(path: Dictionary, source_id: int) -> void:
+	var points: Array = path.get("points", [])
+	var width := maxi(1, int(path.get("width", 1)))
+	var family := str(path.get("family", "gravel"))
+	if points.size() < 2:
+		return
+	for index: int in range(points.size() - 1):
+		var start := VECTOR_UTIL.from_int_pair(points[index], Vector2i(-1, -1))
+		var finish := VECTOR_UTIL.from_int_pair(points[index + 1], Vector2i(-1, -1))
+		if start.x < 0 or start.y < 0 or finish.x < 0 or finish.y < 0:
+			continue
+		var delta := finish - start
+		var steps := maxi(absi(delta.x), absi(delta.y))
+		for step: int in range(steps + 1):
+			var ratio := float(step) / float(maxi(steps, 1))
+			var center := Vector2i(
+				roundi(lerpf(start.x, finish.x, ratio)), roundi(lerpf(start.y, finish.y, ratio))
+			)
+			var before := floori(float(width - 1) * 0.5)
+			var after := width - before
+			for y: int in range(center.y - before, center.y + after):
+				for x: int in range(center.x - before, center.x + after):
+					var frame_name := _family_frame(family, x, y)
+					if _terrain_ids.has(frame_name):
+						_context_layer.set_cell(Vector2i(x, y), source_id, _terrain_ids[frame_name])
 
 
 func _paint_surface_contract(terrain_source_id: int, surface_source_id: int) -> void:
@@ -280,6 +372,7 @@ func _paint_path(path: Dictionary, source_id: int) -> void:
 
 
 func _build_props() -> void:
+	_animated_props.clear()
 	if is_instance_valid(_props_root):
 		if _props_root.get_parent() == self:
 			remove_child(_props_root)
@@ -296,11 +389,22 @@ func _build_props() -> void:
 			props.append_array(variant.get("props", []))
 			for hidden_id: String in variant.get("hide_ids", []):
 				hidden_ids.append(hidden_id)
+	var frame_map: Dictionary = _manifest.get("props_frames", {})
 	for prop: Dictionary in props:
 		if hidden_ids.has(str(prop.get("id", ""))):
 			continue
 		var sprite := _make_sprite(prop)
 		if sprite != null:
+			var rotation_animation: Variant = prop.get("rotation_animation", {})
+			if rotation_animation is Dictionary and not rotation_animation.is_empty():
+				var frame_rect: Array = frame_map.get(str(prop.get("frame", "")), [])
+				if frame_rect.size() == 4:
+					sprite.centered = true
+					sprite.position += Vector2(0.0, -float(frame_rect[3]) * 0.5)
+					sprite.offset = Vector2.ZERO
+					_animated_props.append(
+						{"sprite": sprite, "rule": rotation_animation.duplicate(true)}
+					)
 			_props_root.add_child(sprite)
 
 

@@ -4,7 +4,7 @@
 
 ## Canonical identity and exact transform
 
-Current source comparison was performed against A1 PR #20 head `5aed8e8647c896e9a79ea812735ec237342462c4`; A8's geometry remains an A1 read-only consumer. A1's current transform review still classifies these 960 px worksites as interior/local and does not grant an overworld mount; A8 preserves its explicit 960×608 interior. Canonical site:
+Current source comparison was performed against A1 PR #20 head `9ca1453ccdd315c9de4aae01cf0e1e5b4e0a71cf`; A8's geometry remains an A1 read-only consumer. A1's current transform review still classifies these 960 px worksites as interior/local and does not grant an overworld mount; A8 preserves its explicit 960×608 interior. Canonical site:
 
 - `world_id`: `world:soh_continent_v1`
 - `poi_id`: `poi_crown_south_quarry`
@@ -27,7 +27,7 @@ A1's route graph supplies the intended foot spur from `node_refuge` cell `[56,21
 1. Place the player in the A1 world at the shell exterior. Physical portal center is local `[64,108]`; approach from the south and face north to enter.
 2. At the existing A0 transition owner, validate the live actor, `world_id`, `poi_id`, canonical cell, shell scene, destination, and transition identity. Load the 960×608 worksite and set the local actor to `[480,548]`. Keep owner-saved global world position/scene identity separate from local spawn.
 3. Before enabling state-dependent UI/collision, load the A0 owner projection. A8 proposes projection identity/revision, site state, claim generation, capability/readiness fields, and owner clock. `PoiAuthorityFixture` is test-only and not A0's adapter or SaveService.
-4. A8's current scene request is `soh.native_poi.intent.v2`: `contract_id`, `contract_version`, `intent_id`, `source_id`, `object_id`, `action_id`, `claim_id`, and `observed_projection_revision` only. It carries **no** amount, reward, cooldown, claim policy, state delta, unlock, catalog source, client approval/provisional flag, or receipt. The neutral identity does not authorize an action. A0 must independently resolve canonical A1 identity/state and the exact A3-approved binding; reject unknown/extra fields and all actions with no current binding.
+4. A8's current scene request is `soh.native_poi.intent.v3`: `contract_id`, `contract_version`, `intent_id`, A0-issued `world_id`/run/phase/site-instance context and observed phase revision, canonical source/object/action/claim identity, observed projection revision, and actor-local position/facing. It carries **no** amount, reward, cooldown, claim policy, capability grant, state delta, unlock, catalog source, client approval/provisional flag, currency/item delta, or receipt. The neutral identity does not authorize an action. A0 must independently validate its issued context, canonical A1 identity/state and exact A3-approved binding; reject unknown/extra fields and all actions with no current binding.
 5. To exit, require physical arrival at `[480,560]`, facing south. Return to the same shell at `[64,108]`, retaining world/POI/cell. A0 restores the actual world actor/global position and persists through existing SaveService; do not create a second Quarry instance.
 6. On revisit/reload, A0 projects the same canonical instance. For an accepted east brace, remove only the east collision blocker and keep the west blocker; for an accepted west chock, do the reverse. A stale/foreign projection must not reopen a prior branch.
 

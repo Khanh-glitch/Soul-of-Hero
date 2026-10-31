@@ -30,7 +30,8 @@ const FIXTURE_SCRIPT := preload(
 const JOURNEY_FIXTURE_SCRIPT := preload(
 	"res://game/survival/world_content/scripts/poi_journey_authority_fixture.gd"
 )
-const PROBE_SCRIPT := preload("res://game/survival/world_content/scripts/player_probe.gd")
+const HERO_SCENE: PackedScene = preload("res://game/characters/knight/knight.tscn")
+const BASE_VIEWPORT_SIZE := Vector2(1280.0, 720.0)
 
 ## Enabled only by the frame-driven A8 native journey test. Its owner seed is
 ## test-only and never writes to SaveService or the production economy.
@@ -43,9 +44,10 @@ var _journey_trace: Array[Dictionary] = []
 var _site: NativePoiSite
 var _shell: NativePoiShell
 var _active_scene: Node2D
-var _probe: CharacterBody2D
+var _hero: CharacterBody2D
 var _camera: Camera2D
 var _site_index := 0
+var _feedback_hold_seconds := 0.0
 var _feedback: Label
 var _site_title: Label
 var _details: Label
@@ -62,31 +64,32 @@ func _ready() -> void:
 		_authority.configure()
 		add_child(_authority)
 	_build_ui()
-	_probe = CharacterBody2D.new()
-	_probe.name = "InvisibleHarnessNavigationProbe"
-	_probe.set_script(PROBE_SCRIPT)
-	_probe.collision_layer = 2
-	_probe.collision_mask = 1
-	var shape := CircleShape2D.new()
-	shape.radius = 10.0
-	var collision := CollisionShape2D.new()
-	collision.shape = shape
-	_probe.add_child(collision)
-	_camera = Camera2D.new()
-	_camera.zoom = Vector2(2.2, 2.2)
+	var current_hero := HERO_SCENE.instantiate()
+	_hero = current_hero as CharacterBody2D
+	if _hero == null:
+		push_error("The current Hero scene did not instantiate a CharacterBody2D.")
+		return
+	_hero.name = "CurrentHeroScene_A8ProjectionFixture"
+	add_child(_hero)
+	_camera = _hero.get_node_or_null("Camera") as Camera2D
+	if _camera == null:
+		_camera = Camera2D.new()
+		_camera.name = "A8HeroCameraFallback"
+		_hero.add_child(_camera)
 	_camera.position_smoothing_enabled = false
 	_camera.enabled = true
-	_probe.add_child(_camera)
-	add_child(_probe)
 	_mount_site(0)
 	set_process_unhandled_input(true)
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	if _feedback_hold_seconds > 0.0:
+		_feedback_hold_seconds = maxf(0.0, _feedback_hold_seconds - delta)
+		return
 	if is_instance_valid(_shell):
-		_feedback.text = _shell.get_context_hint(_probe)
+		_feedback.text = _shell.get_context_hint(_hero)
 	elif is_instance_valid(_site):
-		var hint := _site.get_context_hint(_probe)
+		var hint := _site.get_context_hint(_hero)
 		if not hint.is_empty():
 			_feedback.text = hint
 
@@ -96,10 +99,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		if is_instance_valid(_shell):
 			var entry_shell := _shell
 			var entry_source_id := entry_shell.get_source_id()
-			var entry_position := _probe.global_position
-			var entry_facing: Variant = _probe.get("facing")
+			var entry_position := _hero.global_position
+			var entry_facing := _get_actor_facing(_hero)
 			var entry_context := entry_shell.get_run_phase_context()
-			var entry_accepted := entry_shell.try_enter(_probe)
+			var entry_accepted := entry_shell.try_enter(_hero)
 			if journey_test_mode:
 				_record_journey_event(
 					{
@@ -114,16 +117,16 @@ func _unhandled_input(event: InputEvent) -> void:
 					}
 				)
 		elif is_instance_valid(_site):
-			if _site.is_at_exit(_probe):
-				_site.try_exit(_probe)
+			if _site.is_at_exit(_hero):
+				_site.try_exit(_hero)
 			else:
-				_site.try_interact(_probe)
+				_site.try_interact(_hero)
 		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("poi_action_0") and is_instance_valid(_site):
-		_site.try_interact(_probe, 0)
+		_site.try_interact(_hero, 0)
 		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("poi_action_1") and is_instance_valid(_site):
-		_site.try_interact(_probe, 1)
+		_site.try_interact(_hero, 1)
 		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("poi_choice_prev") and is_instance_valid(_site):
 		_site.cycle_choice(-1)
@@ -171,14 +174,34 @@ func _mount_site(index: int) -> void:
 		_shell.apply_run_phase_projection(PHASE_FIXTURE.project(_shell.definition))
 		_shell.transition_requested.connect(_on_transition_requested)
 		_shell.player_feedback.connect(_on_player_feedback)
-		_probe.global_position = (
+		_hero.global_position = (
 			_shell.global_position + _shell.get_entry_position() + Vector2(0, 40)
 		)
-		_camera.zoom = Vector2(2.2, 2.2)
+		_configure_camera(true)
 		_update_site_header(_shell.definition)
 		_feedback.text = "Walk through the south doorway to enter this local worksite."
 		return
 	_mount_worksite(SITE_SCENES[_site_index], Vector2.ZERO)
+
+
+func _configure_camera(shell_mode: bool) -> void:
+	if not is_instance_valid(_camera):
+		return
+	var viewport_size := get_viewport().get_visible_rect().size
+	var scale_factor := floorf(
+		minf(viewport_size.x / BASE_VIEWPORT_SIZE.x, viewport_size.y / BASE_VIEWPORT_SIZE.y)
+	)
+	var integer_scale := maxf(1.0, scale_factor)
+	_camera.zoom = Vector2(integer_scale, integer_scale)
+	_camera.position = Vector2.ZERO
+	_camera.position_smoothing_enabled = false
+	_camera.limit_smoothed = false
+	_camera.limit_enabled = true
+	_camera.limit_left = 0
+	_camera.limit_top = 0
+	_camera.limit_right = 128 if shell_mode else 960
+	_camera.limit_bottom = 128 if shell_mode else 608
+	_camera.reset_smoothing()
 
 
 func _mount_worksite(scene_path: String, spawn_override: Vector2) -> void:
@@ -196,10 +219,10 @@ func _mount_worksite(scene_path: String, spawn_override: Vector2) -> void:
 	_site.transition_requested.connect(_on_transition_requested)
 	_site.set_projection(_project_state(_site.get_source_id()))
 	_site.apply_run_phase_projection(PHASE_FIXTURE.project(_site.definition))
-	_probe.global_position = (
+	_hero.global_position = (
 		spawn_override if spawn_override != Vector2.ZERO else _site.get_spawn_position()
 	)
-	_camera.zoom = Vector2(0.68, 0.68)
+	_configure_camera(false)
 	_update_site_header(_site.definition)
 	_feedback.text = "Follow the marked route. G returns through the physical doorway."
 
@@ -215,12 +238,28 @@ func _clear_active_scene() -> void:
 func _update_site_header(definition: Dictionary) -> void:
 	_site_title.text = str(definition.get("display_name", "Worksite"))
 	var source: Dictionary = definition.get("source", {})
-	var canonical := (
-		"non-canonical authoring fixture"
-		if bool(definition.get("test_only", false))
-		else "%s · A1 cell %s" % [source.get("poi_id", ""), str(source.get("canonical_cell", []))]
-	)
-	_details.text = "%s  |  %s" % [canonical, str(definition.get("return_hook", ""))]
+	if bool(definition.get("test_only", false)):
+		_details.text = "Non-canonical authoring fixture"
+	else:
+		_details.text = (
+			"%s · A1 cell %s"
+			% [str(source.get("poi_id", "")), str(source.get("canonical_cell", []))]
+		)
+
+
+func _get_actor_facing(actor: CharacterBody2D) -> Vector2:
+	if actor.has_method("get_facing_direction"):
+		var method_direction: Variant = actor.call("get_facing_direction")
+		if method_direction is Vector2 and method_direction.length_squared() > 0.01:
+			return method_direction.normalized()
+	for property: Dictionary in actor.get_property_list():
+		if str(property.get("name", "")) == "facing_direction":
+			var property_direction: Variant = actor.get(str(property.name))
+			if property_direction is Vector2 and property_direction.length_squared() > 0.01:
+				return property_direction.normalized()
+	if actor.velocity.length_squared() > 0.01:
+		return actor.velocity.normalized()
+	return Vector2.UP
 
 
 # gdlint: disable=max-returns
@@ -245,7 +284,9 @@ func _on_transition_requested(request: Dictionary) -> void:
 		"site_instance_id"
 	]:
 		if request.get(context_key, null) != active_context.get(context_key, null):
-			_reject_transition("The doorway request no longer matches the owner-projected run.", request)
+			_reject_transition(
+				"The doorway request no longer matches the owner-projected run.", request
+			)
 			return
 	var destination := str(request.get("to_scene", ""))
 	if str(request.get("direction", "")) == "enter" and is_instance_valid(_shell):
@@ -304,7 +345,9 @@ func _on_transition_requested(request: Dictionary) -> void:
 			or str(return_to.get("poi_id", "")) != _site.get_source_id()
 			or return_cell != site_cell
 		):
-			_reject_transition("The canonical exterior return point could not be restored.", request)
+			_reject_transition(
+				"The canonical exterior return point could not be restored.", request
+			)
 			return
 		if journey_test_mode:
 			_record_journey_event(
@@ -334,8 +377,8 @@ func _on_transition_requested(request: Dictionary) -> void:
 		var shell_return_position := VECTOR_UTIL.from_pair(
 			return_to.get("shell_local_position", [64, 108])
 		)
-		_probe.global_position = _shell.global_position + shell_return_position
-		_camera.zoom = Vector2(2.2, 2.2)
+		_hero.global_position = _shell.global_position + shell_return_position
+		_configure_camera(true)
 		_update_site_header(_shell.definition)
 		_feedback.text = "You are back at the exterior entrance."
 
@@ -350,7 +393,8 @@ func _reject_transition(reason: String, request: Dictionary) -> void:
 				"transition_id": str(request.get("transition_id", "")),
 				"direction": str(request.get("direction", "")),
 				"poi_id": str(request.get("poi_id", "")),
-				"request_context": {
+				"request_context":
+				{
 					"run_id": str(request.get("run_id", "")),
 					"run_epoch": int(request.get("run_epoch", -1)),
 					"phase_id": str(request.get("phase_id", "")),
@@ -370,6 +414,8 @@ func _on_intent_requested(intent: Dictionary) -> void:
 	else:
 		result = _authority.submit_intent(intent)
 		next_projection = _authority.project_state(source_id)
+	if str(result.get("status", "")) == "committed":
+		result["feedback"] = _projection_feedback(str(intent.get("action_id", "")))
 	_site.receive_authoritative_result(str(intent.get("intent_id", "")), result, next_projection)
 	if journey_test_mode:
 		_record_journey_event(
@@ -378,7 +424,7 @@ func _on_intent_requested(intent: Dictionary) -> void:
 				"source_id": source_id,
 				"action_id": str(intent.get("action_id", "")),
 				"result": str(result.get("status", "")),
-				"position": _probe.global_position,
+				"position": _hero.global_position,
 				"phase_id": str(intent.get("phase_id", "")),
 				"run_id": str(intent.get("run_id", "")),
 				"run_epoch": int(intent.get("run_epoch", -1)),
@@ -387,6 +433,30 @@ func _on_intent_requested(intent: Dictionary) -> void:
 		)
 	else:
 		print("S2 fixture authority: ", JSON.stringify({"intent": intent, "result": result}))
+
+
+func _projection_feedback(action_id: String) -> String:
+	var consequence := "The owner-projected site state changed."
+	match action_id:
+		"brace_east_shelf":
+			consequence = "The east shelf is braced; the west ramp remains blocked."
+		"chock_west_ramp":
+			consequence = "The west ramp is chocked; the east shelf remains blocked."
+		"leave_seam_unworked":
+			consequence = "You leave the unstable seam alone; the south retreat stays open."
+		"clear_irrigation":
+			consequence = "Water now runs through the sluice; the fixed boardwalk stays safe."
+		"leave_for_safety":
+			consequence = "The channel stays blocked; the south return remains open."
+		"read_water_marks":
+			consequence = "The flowing channel reveals the old graft marks."
+		"repair_waterwheel":
+			consequence = "The wheel turns and the race runs; the retreat remains open."
+		"leave_wheel":
+			consequence = "The wheel stays seized; the safe south return remains open."
+		"observe_race":
+			consequence = "The stopped race marks are visible from the dry bank."
+	return "A8 projection fixture only: %s No live item, currency, or save effect." % consequence
 
 
 func _record_journey_event(event: Dictionary) -> void:
@@ -421,15 +491,33 @@ func get_journey_snapshot() -> Dictionary:
 		active_kind = "site"
 		source_id = _site.get_source_id()
 		projection = _site.projection.duplicate(true)
+	var actor_script_path := ""
+	var actor_body_size := Vector2.ZERO
+	var actor_move_speed := -1.0
+	if is_instance_valid(_hero):
+		var actor_script := _hero.get_script() as Script
+		if actor_script != null:
+			actor_script_path = actor_script.resource_path
+		if _hero.get("move_speed") is float or _hero.get("move_speed") is int:
+			actor_move_speed = float(_hero.get("move_speed"))
+		var body_shape := _hero.get_node_or_null("BodyShape") as CollisionShape2D
+		if body_shape != null and body_shape.shape is RectangleShape2D:
+			actor_body_size = (body_shape.shape as RectangleShape2D).size
 	return {
 		"journey_mode": journey_test_mode,
+		"hero_scene_path": HERO_SCENE.resource_path,
+		"hero_script_path": actor_script_path,
+		"hero_body_collider_size": actor_body_size,
+		"hero_move_speed": actor_move_speed,
+		"viewport_size": get_viewport().get_visible_rect().size,
+		"camera_zoom": _camera.zoom if is_instance_valid(_camera) else Vector2.ZERO,
 		"active_kind": active_kind,
 		"source_id": source_id,
 		"feedback": _feedback.text if is_instance_valid(_feedback) else "",
-		"position": _probe.global_position if is_instance_valid(_probe) else Vector2.ZERO,
-		"velocity": _probe.velocity if is_instance_valid(_probe) else Vector2.ZERO,
+		"position": _hero.global_position if is_instance_valid(_hero) else Vector2.ZERO,
+		"velocity": _hero.velocity if is_instance_valid(_hero) else Vector2.ZERO,
 		"slide_collision_count":
-		_probe.get_slide_collision_count() if is_instance_valid(_probe) else 0,
+		_hero.get_slide_collision_count() if is_instance_valid(_hero) else 0,
 		"site_state": projection.get("site_state", {}).duplicate(true),
 		"projection_revision": int(projection.get("projection_revision", -1)),
 		"fixture_state": _journey_authority.snapshot() if journey_test_mode else {},
@@ -439,58 +527,122 @@ func get_journey_snapshot() -> Dictionary:
 
 func _on_player_feedback(message: String) -> void:
 	_feedback.text = message
+	_feedback_hold_seconds = 3.0
 
 
 func _build_ui() -> void:
 	var layer := CanvasLayer.new()
 	layer.name = "HarnessOnlyHud"
 	add_child(layer)
-	var panel := ColorRect.new()
-	panel.position = Vector2(10, 8)
-	panel.size = Vector2(620, 66)
-	panel.color = Color(0.055, 0.08, 0.075, 0.90)
-	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	layer.add_child(panel)
-	_site_title = _label("", Vector2(20, 10), 18, Color("#f1d79a"))
-	layer.add_child(_site_title)
-	var harness_text := (
-		"A8 INPUT JOURNEY · projection fixture only · no live economy/save"
-		if journey_test_mode
-		else "S2 TEST HARNESS · fixture transactions only · no live inventory/save"
+	var viewport_size := get_viewport().get_visible_rect().size
+	var scale_factor := floorf(
+		minf(viewport_size.x / BASE_VIEWPORT_SIZE.x, viewport_size.y / BASE_VIEWPORT_SIZE.y)
 	)
-	var harness_label := _label(harness_text, Vector2(20, 34), 11, Color("#c5d4c6"))
-	layer.add_child(harness_label)
-	var bottom := ColorRect.new()
-	bottom.position = Vector2(10, 308)
-	bottom.size = Vector2(620, 44)
-	bottom.color = Color(0.055, 0.08, 0.075, 0.90)
-	bottom.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	layer.add_child(bottom)
-	_feedback = _label("", Vector2(20, 312), 12, Color("#fff0c6"))
-	layer.add_child(_feedback)
+	var ui_scale := maxf(1.0, scale_factor)
+	var panel_color := Color(0.035, 0.065, 0.055, 0.90)
+	var border_color := Color("#8b9b78")
+	var header := PanelContainer.new()
+	header.name = "SiteIdentityCard"
+	header.position = Vector2(16.0, 14.0) * ui_scale
+	header.size = Vector2(630.0, 92.0) * ui_scale
+	header.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	header.add_theme_stylebox_override("panel", _panel_style(panel_color, border_color, ui_scale))
+	layer.add_child(header)
+	var header_content := Control.new()
+	header_content.custom_minimum_size = header.size
+	header.add_child(header_content)
+	_site_title = _label(
+		"",
+		Vector2(16.0, 7.0) * ui_scale,
+		int(24.0 * ui_scale),
+		Color("#f3d99c"),
+		Vector2(590.0, 32.0) * ui_scale
+	)
+	header_content.add_child(_site_title)
+	var proof_text := (
+		"A8 NATIVE INPUT · PROJECTION FIXTURE · NO LIVE SAVE / ECONOMY"
+		if journey_test_mode
+		else "A8 PREVIEW · TEST AUTHORITY · NO LIVE INVENTORY / SAVE"
+	)
+	var proof_label := _label(
+		proof_text,
+		Vector2(17.0, 40.0) * ui_scale,
+		int(14.0 * ui_scale),
+		Color("#c7d9c5"),
+		Vector2(590.0, 20.0) * ui_scale
+	)
+	header_content.add_child(proof_label)
+	_details = _label(
+		"",
+		Vector2(17.0, 63.0) * ui_scale,
+		int(14.0 * ui_scale),
+		Color("#e0e6db"),
+		Vector2(590.0, 20.0) * ui_scale
+	)
+	header_content.add_child(_details)
+	var footer := PanelContainer.new()
+	footer.name = "ContextAndControlsCard"
+	footer.position = Vector2(16.0, viewport_size.y / ui_scale - 88.0 - 14.0) * ui_scale
+	footer.size = Vector2(960.0, 88.0) * ui_scale
+	footer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	footer.add_theme_stylebox_override("panel", _panel_style(panel_color, border_color, ui_scale))
+	layer.add_child(footer)
+	var footer_content := Control.new()
+	footer_content.custom_minimum_size = footer.size
+	footer.add_child(footer_content)
+	_feedback = _label(
+		"",
+		Vector2(18.0, 11.0) * ui_scale,
+		int(19.0 * ui_scale),
+		Color("#fff0c6"),
+		Vector2(920.0, 30.0) * ui_scale
+	)
+	footer_content.add_child(_feedback)
 	var controls_text := (
-		"WASD move · G work · [ / ] choose · H / Y action · F1-F4 sites · owner seed read-only"
+		"WASD move · G work / doorway · [ ] choose · H / Y action · F1–F3 sites"
 		if journey_test_mode
-		else "Move · face + G work · [ / ] choose · H/Y action · F1-F4 sites · C test cap"
+		else (
+			"WASD move · G work / doorway · [ ] choose · H / Y action · "
+			+ "F1–F4 sites · C fixture capability"
+		)
 	)
-	var controls := _label(controls_text, Vector2(20, 332), 10, Color("#bdc8bc"))
-	layer.add_child(controls)
-	_details = _label("", Vector2(12, 80), 10, Color("#e0e6db"))
-	_details.size = Vector2(616, 34)
-	_details.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	layer.add_child(_details)
+	var controls := _label(
+		controls_text,
+		Vector2(18.0, 48.0) * ui_scale,
+		int(14.0 * ui_scale),
+		Color("#c7d1c5"),
+		Vector2(920.0, 22.0) * ui_scale
+	)
+	footer_content.add_child(controls)
 
 
-func _label(text_value: String, at: Vector2, font_size: int, color: Color) -> Label:
+func _panel_style(fill: Color, outline: Color, ui_scale: float) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = fill
+	style.border_color = outline
+	style.set_border_width_all(maxi(1, roundi(ui_scale)))
+	style.set_corner_radius_all(roundi(5.0 * ui_scale))
+	style.content_margin_left = 8.0 * ui_scale
+	style.content_margin_right = 8.0 * ui_scale
+	style.content_margin_top = 5.0 * ui_scale
+	style.content_margin_bottom = 5.0 * ui_scale
+	return style
+
+
+func _label(
+	text_value: String, at: Vector2, font_size: int, color: Color, label_size: Vector2
+) -> Label:
 	var label := Label.new()
 	label.text = text_value
 	label.position = at
+	label.size = label_size
 	label.add_theme_font_size_override("font_size", font_size)
 	label.add_theme_color_override("font_color", color)
-	label.add_theme_color_override("font_shadow_color", Color.BLACK)
+	label.add_theme_color_override("font_shadow_color", Color(0.0, 0.0, 0.0, 0.8))
 	label.add_theme_constant_override("shadow_offset_x", 1)
 	label.add_theme_constant_override("shadow_offset_y", 1)
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.clip_text = true
 	return label
 
 

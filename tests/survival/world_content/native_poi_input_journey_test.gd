@@ -1,16 +1,15 @@
 extends SceneTree
 
-## Frame-driven input journeys through the existing A8 pilot. The invisible
-## probe starts only at authored scene spawns; all approaches, choices,
-## collision checks, exits, and revisits use keyboard events and physics frames.
-## The injected authority is projection-only test state, never production play.
+## Frame-driven input journeys through the existing A8 pilot using the current
+## production Hero scene. All approaches, choices, collision checks, exits, and
+## revisits use keyboard events and physics frames. Injected authority is
+## projection-only fixture state, never production play.
 
 const PILOT_SCENE := "res://game/survival/world_content/scenes/poi_pilot.tscn"
 const CAPTURE_DIR := "res://.artifacts/a8-world-content/input-journeys"
 const QUARRY_ID := "poi_crown_south_quarry"
 const ORCHARD_ID := "poi_crown_south_orchard"
 const MILL_ID := "poi_crown_south_mill"
-const JOURNEY_PROBE_SPEED := 90.0
 const EXPECTED_CAPTURE_COUNT := 27
 
 var _pilot: Node
@@ -19,6 +18,8 @@ var _assertions := 0
 var _last_axis_collided := false
 var _capture_index := 0
 var _headless_visual_capture_skipped := false
+var _measure_walk := false
+var _measured_walk_input_frames := 0
 
 
 func _initialize() -> void:
@@ -70,7 +71,7 @@ func _journey_quarry(
 	if choice_option == "brace_oak":
 		await _capture("quarry-interior-baseline")
 	var start: Vector2 = _snapshot().get("position", Vector2.ZERO)
-	var stand_ok := await _walk_to(Vector2(506.0, 378.0))
+	var stand_ok := await _walk_to(Vector2(506.0, 378.0), "quarry-source-stand")
 	_check(stand_ok, "quarry choice approach uses live movement from the interior entry")
 	if choice_option == "chock_stone":
 		await _press_key(KEY_BRACKETRIGHT)
@@ -84,6 +85,35 @@ func _journey_quarry(
 	_check(
 		str(after_choice.get("site_state", {}).get("quarry_route", "")) == expected_route,
 		"quarry owner projection records %s" % expected_route
+	)
+	var quarry_feedback_phrase := (
+		"east shelf is braced" if expected_route == "east_braced" else "west ramp is chocked"
+	)
+	_check(
+		(
+			str(after_choice.get("feedback", "")).contains(quarry_feedback_phrase)
+			and str(after_choice.get("feedback", "")).contains("No live item")
+		),
+		"Quarry choice gives site-specific route feedback without claiming a reward"
+	)
+	var source_intents_before := _intent_count()
+	await _press_key(KEY_H, "quarry-unapproved-extraction")
+	var source_attempt: Dictionary = _snapshot()
+	_check(
+		_intent_count() == source_intents_before,
+		"unapproved Quarry extraction emits no A0/A3 source intent"
+	)
+	var quarry_claim_generations: Dictionary = (
+		source_attempt.get("fixture_state", {}).get("claim_generation", {}).get(QUARRY_ID, {})
+	)
+	var source_generation := int(quarry_claim_generations.get("south_seam_outcrop", 0))
+	_check(
+		source_generation == 0 and not source_attempt.get("fixture_state", {}).has("inventory"),
+		"withheld Quarry source does not claim a generation or mint inventory"
+	)
+	_check(
+		str(source_attempt.get("feedback", "")).contains("not projected this action as ready"),
+		"Quarry explains that reward is withheld until an owner readiness projection"
 	)
 	_check(
 		start.distance_to(after_choice.get("position", start)) > 100.0,
@@ -148,6 +178,14 @@ func _journey_orchard(choice_action: String, expected_channel: String, cross_ope
 	_check(
 		str(after_choice.get("site_state", {}).get("orchard_channel", "")) == expected_channel,
 		"orchard choice records %s in owner projection" % expected_channel
+	)
+	var orchard_feedback_phrase := "Water now runs" if cross_open else "channel stays blocked"
+	_check(
+		(
+			str(after_choice.get("feedback", "")).contains(orchard_feedback_phrase)
+			and str(after_choice.get("feedback", "")).contains("No live item")
+		),
+		"Orchard choice explains its water and safe-return consequence without a reward claim"
 	)
 	_check(
 		_has_visual_prop("flowing_channel_reeds") == cross_open,
@@ -236,7 +274,7 @@ func _journey_mill_without_capability() -> void:
 
 	var shell: NativePoiShell = _pilot.get("_shell") as NativePoiShell
 	if shell == null:
-		_check(false, "Mill exterior is available for the gate falsification probe")
+		_check(false, "Mill exterior is available for the gate falsification journey")
 		await _stop_pilot()
 		return
 	await _walk_axis_to("move_down", KEY_S, shell.get_entry_position().y + 32.0)
@@ -299,9 +337,17 @@ func _journey_mill_leave_wheel() -> void:
 	)
 	await _press_key(KEY_G)
 	await _settle()
+	var seized_snapshot: Dictionary = _snapshot()
 	_check(
-		str(_snapshot().get("site_state", {}).get("mill_wheel", "")) == "seized",
+		str(seized_snapshot.get("site_state", {}).get("mill_wheel", "")) == "seized",
 		"owner projection records the no-repair Mill alternative"
+	)
+	_check(
+		(
+			str(seized_snapshot.get("feedback", "")).contains("wheel stays seized")
+			and str(seized_snapshot.get("feedback", "")).contains("No live item")
+		),
+		"Mill explains the still-seized wheel and safe return without granting salvage"
 	)
 	await _capture("mill-wheel-left-seized")
 	var crossed_closed_gate := await _walk_axis_to("move_up", KEY_W, 420.0)
@@ -428,9 +474,17 @@ func _journey_mill_owner_projected_repair() -> void:
 	)
 	await _press_key(KEY_G)
 	await _settle()
+	var repaired_snapshot: Dictionary = _snapshot()
 	_check(
-		str(_snapshot().get("site_state", {}).get("mill_wheel", "")) == "turning",
+		str(repaired_snapshot.get("site_state", {}).get("mill_wheel", "")) == "turning",
 		"test-only ready owner projection exposes the authored repair consequence"
+	)
+	_check(
+		(
+			str(repaired_snapshot.get("feedback", "")).contains("wheel turns")
+			and str(repaired_snapshot.get("feedback", "")).contains("No live item")
+		),
+		"Mill repair feedback names the turning race and withholds unapproved items"
 	)
 	var fixture_state: Dictionary = _snapshot().get("fixture_state", {})
 	_check(
@@ -456,10 +510,10 @@ func _journey_mill_owner_projected_repair() -> void:
 	await _walk_axis_to("move_right", KEY_D, 678.0)
 	await _walk_axis_to("move_up", KEY_W, 248.0)
 	_check(
-		_probe().global_position.distance_to(Vector2(678.0, 248.0)) <= 30.0,
+		_hero().global_position.distance_to(Vector2(678.0, 248.0)) <= 30.0,
 		(
 			"repaired mill route physically reaches the fastener source; position=%s "
-			% str(_probe().global_position)
+			% str(_hero().global_position)
 		)
 	)
 	var intent_count_before := _intent_count()
@@ -511,14 +565,33 @@ func _start_pilot(owner_seed: Dictionary, site_index: int = 0) -> void:
 	_pilot.set("journey_test_mode", true)
 	_pilot.set("journey_owner_projection_seed", owner_seed)
 	root.add_child(_pilot)
-	# Test-probe speed is capped for repeatable single-pixel corridors at every
-	# capture resolution; it does not change production or A0-owned movement.
-	var probe := _pilot.get("_probe") as CharacterBody2D
-	if probe != null:
-		probe.set("speed", JOURNEY_PROBE_SPEED)
 	await _settle()
+	var hero_snapshot: Dictionary = _snapshot()
 	_check(
-		bool(_snapshot().get("journey_mode", false)), "pilot uses projection-only journey authority"
+		str(hero_snapshot.get("hero_scene_path", "")) == "res://game/characters/knight/knight.tscn",
+		"journey uses the current in-game Hero PackedScene"
+	)
+	_check(
+		str(hero_snapshot.get("hero_script_path", "")) == "res://game/characters/knight/knight.gd",
+		"journey executes the Hero script from the A8 checkout; A0 source parity remains explicit"
+	)
+	_check(
+		hero_snapshot.get("hero_body_collider_size", Vector2.ZERO) == Vector2(12.0, 16.0),
+		"measured Hero body collider is 12 by 16 source pixels"
+	)
+	_check(
+		is_equal_approx(float(hero_snapshot.get("hero_move_speed", -1.0)), 112.0),
+		"Hero runtime move speed is read from the checked-out tuning configuration (112 px/s)"
+	)
+	var viewport_size: Vector2 = hero_snapshot.get("viewport_size", Vector2.ZERO)
+	var expected_scale := maxf(1.0, floorf(minf(viewport_size.x / 1280.0, viewport_size.y / 720.0)))
+	_check(
+		hero_snapshot.get("camera_zoom", Vector2.ZERO) == Vector2(expected_scale, expected_scale),
+		"camera uses stable integer scaling at the requested capture resolution"
+	)
+	_check(
+		bool(hero_snapshot.get("journey_mode", false)),
+		"pilot uses projection-only journey authority"
 	)
 	_check(
 		str(_snapshot().get("active_kind", "")) == "shell",
@@ -532,30 +605,32 @@ func _start_pilot(owner_seed: Dictionary, site_index: int = 0) -> void:
 	_check(
 		(
 			str(_snapshot().get("active_kind", "")) == "shell"
-			and str(_snapshot().get("source_id", ""))
-			== [QUARRY_ID, ORCHARD_ID, MILL_ID][site_index]
+			and (
+				str(_snapshot().get("source_id", ""))
+				== [QUARRY_ID, ORCHARD_ID, MILL_ID][site_index]
+			)
 		),
 		"keyboard POI selection keeps the journey at the requested authored exterior"
 	)
 
 
 func _enter_worksite(expected_source: String) -> bool:
-	var probe: CharacterBody2D = _probe()
-	if probe == null:
-		_check(false, "pilot contains the existing CharacterBody2D probe")
+	var hero: CharacterBody2D = _hero()
+	if hero == null:
+		_check(false, "pilot contains the current Hero CharacterBody2D")
 		return false
 	var shell: NativePoiShell = _pilot.get("_shell") as NativePoiShell
 	if shell == null:
 		_check(false, "pilot starts in the source-backed exterior shell")
 		return false
 	var entry := shell.get_entry_position()
-	if probe.global_position.y < entry.y + 32.0:
+	if hero.global_position.y < entry.y + 32.0:
 		await _walk_axis_to("move_down", KEY_S, entry.y + 32.0)
-	var before := probe.global_position
+	var before := hero.global_position
 	var reached := await _walk_axis_to("move_up", KEY_W, entry.y)
 	_check(reached, "exterior doorway is physically approached using keyboard input")
 	_check(
-		before.distance_to(probe.global_position) > 20.0,
+		before.distance_to(hero.global_position) > 20.0,
 		"exterior approach moves the live actor rather than setting its position"
 	)
 	await _press_key(KEY_G)
@@ -658,26 +733,65 @@ func _exit_and_revisit(expected_source: String, state_key: String, expected_valu
 	await _capture("%s-return-revisit" % expected_source.get_slice("_", -1))
 
 
-func _walk_to(target: Vector2) -> bool:
-	var horizontal_action := "move_right" if target.x > _probe().global_position.x else "move_left"
-	var horizontal_key := KEY_D if target.x > _probe().global_position.x else KEY_A
+func _walk_to(target: Vector2, measurement_tag: String = "") -> bool:
+	var hero := _hero()
+	if hero == null:
+		return false
+	var start_position := hero.global_position
+	var physics_frame_start := Engine.get_physics_frames()
+	var measure_this_walk := not measurement_tag.is_empty()
+	_measured_walk_input_frames = 0
+	_measure_walk = measure_this_walk
+	var horizontal_action := "move_right" if target.x > hero.global_position.x else "move_left"
+	var horizontal_key := KEY_D if target.x > hero.global_position.x else KEY_A
 	await _walk_axis_to(horizontal_action, horizontal_key, target.x)
-	var vertical_action := "move_down" if target.y > _probe().global_position.y else "move_up"
-	var vertical_key := KEY_S if target.y > _probe().global_position.y else KEY_W
+	var horizontal_position := hero.global_position
+	var vertical_action := "move_down" if target.y > hero.global_position.y else "move_up"
+	var vertical_key := KEY_S if target.y > hero.global_position.y else KEY_W
 	await _walk_axis_to(vertical_action, vertical_key, target.y)
-	return _probe().global_position.distance_to(target) <= 14.0
+	var end_position := hero.global_position
+	_measure_walk = false
+	if measure_this_walk:
+		var physics_frames := Engine.get_physics_frames() - physics_frame_start
+		var path_length := (
+			start_position.distance_to(horizontal_position)
+			+ horizontal_position.distance_to(end_position)
+		)
+		var hz := maxi(1, Engine.physics_ticks_per_second)
+		print(
+			(
+				(
+					"A8_HERO_ROUTE_MEASURE tag=%s source=%s start=%s stand=%s path_px=%.2f "
+					% [
+						measurement_tag,
+						QUARRY_ID,
+						str(start_position),
+						str(end_position),
+						path_length
+					]
+				)
+				+ (
+					"held_physics_frames=%d elapsed_physics_frames=%d elapsed_physics_seconds=%.3f "
+					% [
+						_measured_walk_input_frames,
+						physics_frames,
+						float(physics_frames) / float(hz)
+					]
+				)
+				+ "speed_px_per_second=%.2f body=12x16" % float(hero.get("move_speed"))
+			)
+		)
+	return end_position.distance_to(target) <= 14.0
 
 
 func _walk_axis_to(action: String, keycode: Key, coordinate: float) -> bool:
-	var probe := _probe()
-	if probe == null:
+	var hero := _hero()
+	if hero == null:
 		_last_axis_collided = false
 		return false
-	var starting_position := probe.global_position
+	var starting_position := hero.global_position
 	var starting_value := (
-		probe.global_position.x
-		if action in ["move_left", "move_right"]
-		else probe.global_position.y
+		hero.global_position.x if action in ["move_left", "move_right"] else hero.global_position.y
 	)
 	var reached := absf(starting_value - coordinate) <= 5.0
 	_last_axis_collided = false
@@ -689,7 +803,9 @@ func _walk_axis_to(action: String, keycode: Key, coordinate: float) -> bool:
 	for _frame: int in range(240):
 		await physics_frame
 		await process_frame
-		var current := probe.global_position
+		if _measure_walk:
+			_measured_walk_input_frames += 1
+		var current := hero.global_position
 		var current_value := current.x if action in ["move_left", "move_right"] else current.y
 		var distance := absf(current_value - coordinate)
 		var crossed_target := (
@@ -705,30 +821,70 @@ func _walk_axis_to(action: String, keycode: Key, coordinate: float) -> bool:
 			stalled_frames = 0
 		else:
 			stalled_frames += 1
-		if probe.get_slide_collision_count() > 0:
+		if hero.get_slide_collision_count() > 0:
 			_last_axis_collided = true
-		if stalled_frames >= 10:
-			break
+			if stalled_frames >= 30:
+				break
 	await _send_key(keycode, false)
 	await _settle()
 	var ending_value := (
-		probe.global_position.x
-		if action in ["move_left", "move_right"]
-		else probe.global_position.y
+		hero.global_position.x if action in ["move_left", "move_right"] else hero.global_position.y
 	)
+	if not reached:
+		print(
+			(
+				(
+					"A8_HERO_AXIS_RESULT action=%s target=%.1f start=%s end=%s collided=%s "
+					% [
+						action,
+						coordinate,
+						str(starting_position),
+						str(hero.global_position),
+						str(_last_axis_collided)
+					]
+				)
+				+ (
+					"input=%s velocity=%s actor_input=%s state=%s current_action=%s keys_wasd=%s/%s/%s/%s"
+					% [
+						str(Input.get_vector("move_left", "move_right", "move_up", "move_down")),
+						str(hero.velocity),
+						str(hero.get("move_input")),
+						str(hero.get("player_state")),
+						str(hero.get("current_action")),
+						str(Input.is_physical_key_pressed(KEY_W)),
+						str(Input.is_physical_key_pressed(KEY_A)),
+						str(Input.is_physical_key_pressed(KEY_S)),
+						str(Input.is_physical_key_pressed(KEY_D)),
+					]
+				)
+			)
+		)
 	_check(
-		probe.global_position.distance_to(starting_position) > 0.5 or _last_axis_collided,
+		hero.global_position.distance_to(starting_position) > 0.5 or _last_axis_collided,
 		"keyboard movement or collision is observed on %s" % action
 	)
 	return reached or absf(ending_value - coordinate) <= 5.0
 
 
-func _press_key(keycode: Key) -> void:
+func _press_key(keycode: Key, measurement_tag: String = "") -> void:
+	var physics_frame_start := Engine.get_physics_frames()
 	await _send_key(keycode, true)
 	await process_frame
 	await physics_frame
 	await _send_key(keycode, false)
 	await _settle()
+	if not measurement_tag.is_empty():
+		var elapsed_frames := Engine.get_physics_frames() - physics_frame_start
+		var hz := maxi(1, Engine.physics_ticks_per_second)
+		print(
+			(
+				"A8_HERO_INTERACTION_MEASURE tag=%s key=H held_presses=1 " % measurement_tag
+				+ (
+					"physical_request_frames=%d physical_request_seconds=%.3f"
+					% [elapsed_frames, float(elapsed_frames) / float(hz)]
+				)
+			)
+		)
 
 
 func _send_key(keycode: Key, is_pressed: bool) -> void:
@@ -745,8 +901,8 @@ func _settle() -> void:
 	await process_frame
 
 
-func _probe() -> CharacterBody2D:
-	return _pilot.get("_probe") as CharacterBody2D if is_instance_valid(_pilot) else null
+func _hero() -> CharacterBody2D:
+	return _pilot.get("_hero") as CharacterBody2D if is_instance_valid(_pilot) else null
 
 
 func _snapshot() -> Dictionary:

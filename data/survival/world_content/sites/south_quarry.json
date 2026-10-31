@@ -156,7 +156,8 @@
           "east_braced",
           "west_chocked"
         ]
-      }
+      },
+      "owner_ready_required": true
     }
   ],
   "return_hook": "The split shelf exposes a finite seam; its work face visibly resets after the replenishment window.",
@@ -416,7 +417,43 @@
         92,
         40,
         36
-      ]
+      ],
+      "context_ground": {
+        "size_px": [
+          1280,
+          736
+        ],
+        "origin_px": [
+          -576,
+          -304
+        ],
+        "ground_family": "gravel",
+        "purpose": "source-backed local terrain outside the existing 128x128 shell; decorative only, no POI footprint or collision extension",
+        "paths": [
+          {
+            "family": "gravel",
+            "width": 3,
+            "points": [
+              [
+                4,
+                7
+              ],
+              [
+                4,
+                10
+              ],
+              [
+                4,
+                18
+              ],
+              [
+                4,
+                28
+              ]
+            ]
+          }
+        ]
+      }
     },
     "obstacles_px": []
   },
@@ -812,6 +849,18 @@
         ]
       }
     ],
-    "lighting_profile": "overcast_frontier"
+    "lighting_profile": "overcast_frontier",
+    "context_ground": {
+      "size_px": [
+        1280,
+        736
+      ],
+      "origin_px": [
+        -160,
+        -64
+      ],
+      "ground_family": "ash",
+      "purpose": "source-backed local terrain outside the 960x608 worksite bounds; decorative only, no collision or world extension"
+    }
   }
 }

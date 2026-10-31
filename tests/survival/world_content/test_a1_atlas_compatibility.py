@@ -93,7 +93,7 @@ class A1AtlasCompatibilityTests(unittest.TestCase):
     def test_pinned_site_frames_match_current_a1_source_pixels(self) -> None:
         evidence = self.evidence
         current = evidence["a1_current"]
-        self.assertEqual(current["head"], "5aed8e8647c896e9a79ea812735ec237342462c4")
+        self.assertEqual(current["head"], "9ca1453ccdd315c9de4aae01cf0e1e5b4e0a71cf")
         self.assertEqual(current["atlas_sha256"], "83d69373ca6c1258e8727800d0aa0c288851c34d25539c69c21ec9f5fc9d769a")
         self.assertEqual(current["terrain_sha256"], "6128d8f41abe6962fe705431db20e762e0cca613ffc3eca29065727422737d1c")
         self.assertEqual(current["props_sha256"], "8d4acf4028e0e065b901e78c59c65e5a68677fb75d46c04c7e5a029a76d27324")

@@ -502,7 +502,43 @@
         92,
         40,
         36
-      ]
+      ],
+      "context_ground": {
+        "size_px": [
+          1280,
+          736
+        ],
+        "origin_px": [
+          -576,
+          -304
+        ],
+        "ground_family": "forest",
+        "purpose": "source-backed local terrain outside the existing 128x128 shell; decorative only, no POI footprint or collision extension",
+        "paths": [
+          {
+            "family": "gravel",
+            "width": 3,
+            "points": [
+              [
+                4,
+                7
+              ],
+              [
+                4,
+                10
+              ],
+              [
+                4,
+                18
+              ],
+              [
+                4,
+                28
+              ]
+            ]
+          }
+        ]
+      }
     },
     "obstacles_px": [
       [
@@ -638,7 +674,7 @@
       },
       {
         "family": "water",
-        "width": 2,
+        "width": 1,
         "points": [
           [
             18,
@@ -657,7 +693,7 @@
             18
           ],
           [
-            46,
+            45,
             18
           ]
         ]
@@ -687,7 +723,7 @@
                 18
               ],
               [
-                46,
+                45,
                 18
               ]
             ]
@@ -703,7 +739,13 @@
           33,
           14
         ],
-        "id": "race_wheel"
+        "id": "race_wheel",
+        "rotation_animation": {
+          "state_key": "mill_wheel",
+          "state_value": "turning",
+          "step_seconds": 0.35,
+          "degrees_per_step": 90
+        }
       },
       {
         "frame": "wall_stub",
@@ -811,8 +853,34 @@
         "hide_ids": [
           "seized_race_warning"
         ]
+      },
+      {
+        "key": "mill_wheel",
+        "equals": "seized",
+        "props": [
+          {
+            "frame": "deadfall",
+            "cell": [
+              37,
+              18
+            ],
+            "id": "seized_race_deadfall"
+          }
+        ]
       }
     ],
-    "lighting_profile": "overcast_frontier"
+    "lighting_profile": "overcast_frontier",
+    "context_ground": {
+      "size_px": [
+        1280,
+        736
+      ],
+      "origin_px": [
+        -160,
+        -64
+      ],
+      "ground_family": "ash",
+      "purpose": "source-backed local terrain outside the 960x608 worksite bounds; decorative only, no collision or world extension"
+    }
   }
 }

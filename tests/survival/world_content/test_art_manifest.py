@@ -183,6 +183,59 @@ class ArtManifestTests(unittest.TestCase):
         self.assertTrue(action_sets[0].isdisjoint(action_sets[2]))
         self.assertTrue(action_sets[1].isdisjoint(action_sets[2]))
 
+    def test_context_ground_and_owner_projected_site_states_are_authored_and_bounded(self) -> None:
+        expected_context_families = {
+            "south_quarry.json": ("ash", [1280, 736], [-160, -64]),
+            "south_orchard_ruin.json": ("forest", [1280, 736], [-160, -64]),
+            "south_crown_mill.json": ("ash", [1280, 736], [-160, -64]),
+        }
+        for filename, (family, size_px, origin_px) in expected_context_families.items():
+            data = json.loads((ROOT / "data/survival/world_content/sites" / filename).read_text())
+            context = data["visual_layout"]["context_ground"]
+            self.assertEqual(context["ground_family"], family, filename)
+            self.assertEqual(context["size_px"], size_px, filename)
+            self.assertEqual(context["origin_px"], origin_px, filename)
+            self.assertIn("decorative only", context["purpose"], filename)
+            self.assertTrue(self._has_family(context["ground_family"]))
+
+        quarry = json.loads(
+            (ROOT / "data/survival/world_content/sites/south_quarry.json").read_text()
+        )
+        extraction = next(action for action in quarry["actions"] if action["action_id"] == "extract_outcrop")
+        self.assertTrue(extraction["owner_ready_required"])
+        self.assertIsNone(quarry["source"].get("physical_instance_id"))
+
+        orchard = json.loads(
+            (ROOT / "data/survival/world_content/sites/south_orchard_ruin.json").read_text()
+        )
+        orchard_layout = orchard["visual_layout"]
+        base_water = [path for path in orchard_layout["paths"] if path["family"] == "water"]
+        flow_water = orchard_layout["state_paths"]["orchard_channel"]["flowing"]
+        self.assertEqual([path["width"] for path in base_water], [1])
+        self.assertTrue(flow_water)
+        self.assertTrue(all(path["family"] == "water" and path["width"] == 2 for path in flow_water))
+        water_marks = next(action for action in orchard["actions"] if action["action_id"] == "read_water_marks")
+        self.assertEqual(water_marks["requires_state_values"]["orchard_channel"], ["flowing"])
+
+        mill = json.loads(
+            (ROOT / "data/survival/world_content/sites/south_crown_mill.json").read_text()
+        )
+        mill_layout = mill["visual_layout"]
+        mill_base_water = [path for path in mill_layout["paths"] if path["family"] == "water"]
+        mill_flow_water = mill_layout["state_paths"]["mill_wheel"]["turning"]
+        self.assertEqual([path["width"] for path in mill_base_water], [1])
+        self.assertTrue(mill_flow_water)
+        self.assertTrue(all(path["family"] == "water" and path["width"] == 2 for path in mill_flow_water))
+        wheel = next(prop for prop in mill_layout["props"] if prop.get("id") == "race_wheel")
+        self.assertEqual(wheel["rotation_animation"]["state_key"], "mill_wheel")
+        self.assertEqual(wheel["rotation_animation"]["state_value"], "turning")
+        seized = next(
+            variant
+            for variant in mill_layout["state_props"]
+            if variant["key"] == "mill_wheel" and variant["equals"] == "seized"
+        )
+        self.assertTrue(any(prop["id"] == "seized_race_deadfall" for prop in seized["props"]))
+
     def test_site_renderer_has_no_procedural_or_unlicensed_art_fallback(self) -> None:
         for filename in ("native_poi_site.gd", "native_poi_shell.gd"):
             source = (ROOT / "game/survival/world_content/scripts" / filename).read_text(encoding="utf-8")
