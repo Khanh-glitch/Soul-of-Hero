@@ -592,3 +592,25 @@ Profile, from the code paths (not measured here; no local Godot):
 - Host lifecycle: **20/21 SUCCESS** (016 SUCCESS @29d0010 run; 020 SUCCESS same run). Only 021 wall-clock open.
 - 021 perf: profile per_tick 1179 -> 908 (r1 d5bad21) -> 560 (r1-r3, 6d6d56e run; host full_cast 179.6s PASS but lab_run 181.1s FAIL by 1.1s) -> 504 (r4 de1d258 run, slower runner: full_cast 326s) -> c2cfd96 disc/ellipse span writer, 6e38661 puff micro-opts (both candidate-SUCCESS = bit-identical). Runner variance ~40% dominates host timings; need profile per_tick <= ~300ms for a safe margin on slow runners. Remaining hotspots (slow-runner profile): air.cloud ~214ms/tick, gnd.fx ~166, gnd.pool ~126, lit ~106, up ~65.
 - Candidate lane fully green at f8512b8, 9baa305, de1d258, c2cfd96, 6e38661 (all 8 skills incl. 013/016/021).
+
+### Update (2026-10-31, later): 021 wall-clock CLOSED on CI; margin work continues
+
+- Perf rounds 4-8 (all candidate-verified bit-identical): NZ float-table
+  mirrors + Field/disc hoists (`de1d258`), packed span/disc/ellipse writers
+  (`c2cfd96`), puff micro-hoists (`6e38661`), GroundDecal bulk stamp
+  (`541cf17`), Field written-list experiment REVERTED (`6196a3d`->`1ee65f8`,
+  slower), PackedByteArray COW elimination (`8eb6b31` — the single biggest
+  win: per-pixel code held `lb = L.bytes` locals, forcing a 3.26 MB
+  copy-on-write detach per puff/shade/disc call, 100+ calls/tick),
+  Pool packed blob mirrors (`680f5d5`), additive disc/ellipse span writer
+  (`f651d77`). Profile per_tick: 1179 -> 908 -> 560 -> 504 -> 449 ->
+  330 ms (runner-dependent; slow runners read up to ~2x).
+- **Host-21 SUCCESS @`f651d77`** (runtime run `41170264709`):
+  full_cast 157307 ms, lab_run 158800 ms, replay 155589 ms — all under the
+  unchanged 180000 ms bound. Host lifecycle is now **21/21 SUCCESS at
+  least once**. Native runtime contract SUCCESS again in the same run
+  family (`29d0010`, `541cf17`, `f651d77` runs).
+- Caveat: wall-clock remains runner-sensitive. In run `41170264709`
+  host-20 drew a slow runner and failed at 216 s (it passed @29d0010).
+  Further margin work (decal single-pass stamp, shade) is still valuable
+  but 021's bound is met with verified parity. No bound changes, ever.
