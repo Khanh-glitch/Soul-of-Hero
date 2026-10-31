@@ -189,3 +189,25 @@ and all other C geometry, so it is NOT whole-source/composite parity. Original
 C polygons/blocks/particles and A debris remain missing, as do full-source
 parity, OUT and visual approval. The all-20 sweep at `c6fb12ba` exercised the
 older #20 candidate.
+
+## Actual-overworld overlap frame probe
+
+At `38c408e8`, [overlap diagnostic 41211526529](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211526529)
+measured 54 actual post-draw intervals while #02 and #10 were concurrently
+active in the pinned historical overworld, at verified viewport-capture sizes.
+Shared software-rendered CI results (milliseconds):
+
+| Captured size | p50 | p95 | p99 |
+|---|---:|---:|---:|
+| 1280x720 | 371.446 | 394.153 | 409.275 |
+| 2560x1440 | 646.300 | 676.415 | 719.087 |
+| 3840x2160 | 881.093 | 915.322 | 950.645 |
+
+The live static-byte delta was about 7.22 MB and live-object delta 15, measured
+from before casts to while active; these are **not allocation counts**, peak
+memory, post-cancel leak counts, or target-device results. Enemy HP stayed
+69 throughout. This software CI is very slow and **does not satisfy a frame
+budget**. The test does not prove all effects, natural gameplay, or 4K visual
+quality. `9c3fe144` adds an X11 physical framebuffer screenshot and explicit
+window-size check; that follow-up run is pending. Device-specific profiling,
+allocations, full-cast capture and cleanup analysis remain mandatory.
