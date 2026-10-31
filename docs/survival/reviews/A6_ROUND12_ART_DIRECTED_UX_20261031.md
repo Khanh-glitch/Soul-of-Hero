@@ -388,6 +388,45 @@ captured: frames named "walk" reported `idle` and were accepted anyway. Second, 
 licensed-art visuals were verified: they were uploaded to unreadable CI artifacts. Both
 are now measurable, and the second now publishes inspectable frames with each run.
 
+### 4.10 WP3 — the workshop, rebuilt as a shopping list
+
+Implementation `d31de790`; frames published from it.
+
+The crafting screen asked the player to parse one long sentence per recipe, in orange
+on green, with no icons and no sense of how close they were:
+
+```
+Field Meal — needs 2 grain, 1 wild berries — fuel nothing — makes 2 field meal
+— 6s active — short 2 grain
+```
+
+Each recipe is now a card. The result icon sits in an authored socket; the action is
+the result name and its exact cost list in ink on the plate (cream on green was the
+same low-contrast habit the old design had, merely relocated); below it sits one chip
+per ingredient carrying that ingredient's own icon and `owned/required`, amber and
+numerically short when it cannot be paid; fuel is shown as the same chips; the
+duration is stated once; and the state column names the concrete blocker — *station
+offline*, *queue full*, the shortfall, or *all materials* — derived only from the
+owner's own answers.
+
+Jobs are separated the same way: a claimable job gets the authored plate, a gold
+`COLLECT` and a gold status word; a running one stays quiet; paused and cancelled read
+amber. A finished job can no longer be mistaken for a busy one at a glance.
+
+**What is deliberately absent.** Durability, station tier and fuel efficiency are not
+rendered because the economy data does not carry them. Inventing those numbers would
+be worse than their absence; they are an A3 handoff, not an A6 omission.
+
+**Contract preserved.** Node names `Recipe_<id>_<station>` and
+`Technology_<id>_<station>` still live in the scroll, and the button text still ends
+in the exact cost list that `survival_research_clock_ui_test.gd` asserts. The
+orchestration oracles (`Import and headless runtime tests`, `Xvfb rendered gameplay
+captures`) pass on the rebuilt panel.
+
+**Inspected by eye** at 720p in `world_economy_1280x720.png`, before and after; the
+first rebuild render is what caught the contrast, the 9 px chips and the clipped
+shortfall, all fixed in `d31de790`.
+
 ## 5. Gates
 
 Exact commit at the time of writing: `452d4d74` (frames and results are added as they
@@ -502,3 +541,5 @@ each screen's own layout to fit the window it was drawn in.
 | `e00daa11` | find the death card where it actually lives (child of the HUD layer) |
 | `b2507d04` | death card under the themed root in a centring container; layer test asserts structure |
 | `5716930c` | walk where there is room; a bounded actor stopped at its edge is not a broken character |
+| `aa38d1d0` | workshop recipes rebuilt as cards with ingredient chips and owner-derived states |
+| `d31de790` | workshop contrast, chip size and shortfall wrapping fixed from the render |
