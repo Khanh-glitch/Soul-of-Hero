@@ -962,3 +962,67 @@ Read the **journey's** exit codes and its first `SCRIPT ERROR` before anything e
 | A0's journey executed, unmodified, two processes | `docs/survival/balance/visual/r14/journey/` (`process1.txt`, `process2.txt`, both `.exit` = 1, engine, composition) |
 | the capture harness corrected and re-dispatched | commit `36b5961`; second run's artifacts replace the first's |
 | nothing merged, nothing dispatched | PR #25 open; **a Git comment or a Docs edit does not dispatch an Arena prompt**, and A7 has no dispatch to show |
+
+### 11.11 Post-publication head refresh and two harness defects (not new round-14 evidence)
+
+Added after §11.10 was published. It changes **no verdict in this document** and adds **no new
+execution**: everything here is either a `gh api` head lookup or a source read. It exists because
+round 14's own rules say a stale composition never inherits a verdict, and one owner moved while
+this report was being written.
+
+**A0 moved off the pin.** `arena/dea2428e-soul-of-hero` went from `ea6a7495d7` (the ref this
+composition was built from, 09:25:48Z) to `1a3ea120b5295159c941a3a94962b19ade1d0927`
+("A0: one station interaction policy, and a diagnostic that uses the real API", 09:57:08Z),
+9 files, +253/−28:
+
+| path | change |
+|---|---|
+| `game/survival/survival_station_reach.gd` | new, +55 |
+| `tests/survival_a0_station_reach_test.gd` | new, +121 |
+| `game/survival/economy/economy_session.gd` | 17 lines; `nearby_stations()` now exists at `:578` |
+| `tests/survival_normal_connected_journey_test.gd` | +60/−? (disambiguated `_recipe_button`, scroll diagnostic, `nearby_stations` in `_dump_panel`) |
+| `tests/survival_normal_input_gather_test.gd` | 20 lines |
+| `docs/survival/tasks/A0_ROUND12_CORRECTIVE_CONTINUATION_20261031.md` | 5 lines |
+
+So two things round 14 listed as A0 defects are **visible as addressed in A0's source and
+unverified by any execution**: the invented 26.0 px approach distance is replaced by a
+`SurvivalStationReach` policy measured from the footprint centre, and `_dump_panel` no longer
+calls the non-existent `available_stations()` — at `1a3ea120` that symbol does not occur in
+`economy_session.gd` at all; the panel call is `nearby_stations()`. Whether either fixes the
+journey is **UNKNOWN**: composition `d75bcd41f131` does not contain `1a3ea120`, and A7 has run
+nothing at the new SHA. No §11 verdict, no probe result and no EV rung is transferred to it.
+
+A1 `8551a323e4`, A3 `b44e22df3a`, A6 `6d71410a37`, A8 `0f885df862` are still exactly the r14
+refs (verified by `gh api .../branches/<b>` at the time of this note). AVFX's `arena/c7b0c4e8`
+tip is now `5dbbd2d446`, not the pinned `83bd398d08`; A7 did not resolve the containment, and
+AVFX's 115 art files are not in the composition, so this cannot move any verdict here.
+
+**Two defects in A7's harness, both mine, both source-level.** The r14 journey died at
+`survival_normal_connected_journey_test.gd:515` with
+
+```
+SCRIPT ERROR: Invalid type in function '_owning_scroll' ... The Object-derived class of
+argument 1 (previously freed) is not a subclass of the expected argument class.
+```
+
+1. `_scroll_recipe(panel: Node, button: Button)` guards with `if button == null`, then calls
+   `_owning_scroll(button)`, whose parameter is typed `Control` and whose body also guards with
+   `if control != null`. Neither guard can help: a freed `Object` is not `null` in GDScript, and
+   Godot rejects a typed argument at bind time, before the body runs. The log names
+   `_owning_scroll` and "argument 1", which is the call on line 515 — not `String(button.name)`
+   on line 514. The same shape recurs at the end of the helper, where `_owning_scroll(rebuilt)` is
+   evaluated before the `rebuilt_button != null` test that follows it. Round 13's report already
+   described this as "a previously freed instance"; this note fixes the mechanism, and the fix is
+   A7's, not A0's: untyped parameter plus `is_instance_valid()` before any use.
+2. The added `A0_CONNECTED_SCROLL ... no_scroll_ancestor` diagnostic sits in the
+   `scroll == null` branch. On the failing path that branch is never reached, because the call
+   raised first. Worse, after the failed expectation the test keeps using `kit_button`
+   (`get_global_transform_with_canvas` on a freed instance, line 145), which converts one dead
+   node into three cascading FAILs and hides which assertion actually broke. A failed
+   precondition has to return, not continue.
+
+Neither defect changes what the round established: `prefix_complete=true checks=29 failures=0`,
+then the journey aborts before the furnace, and process 2 verifies nothing because process 1 never
+wrote the audit. EV4 still gains no evidence. Fixing the harness would tell us whether the crash
+is *only* A7's or also A0's — that is the first falsifiable step of round 15, and it costs one
+CI run, not a re-review.

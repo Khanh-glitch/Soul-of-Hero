@@ -9,6 +9,11 @@ with `gh api .../branches/<b>`, not from remembered SHAs. Round 13's `3d8630f5b1
 sections appended: [`ROUND13_JOINED_PRODUCT_ACCEPTANCE.md`](ROUND13_JOINED_PRODUCT_ACCEPTANCE.md)
 (§11).
 
+_Post-publication note (2026-10-31): A0 moved from the pinned `ea6a7495d7` to `1a3ea120b5`
+after this round was published; A1/A3/A6/A8 are unchanged. Nothing in the table below
+was executed against that SHA, so nothing in it transfers. Two defects in A7's own journey
+harness are identified in report §11.11._
+
 | probe | checks | failed | missing | verdict |
 |---|---|---|---|---|
 | `r14_adversarial_probe` | 17 | 0 | 0 | **PASS** |
