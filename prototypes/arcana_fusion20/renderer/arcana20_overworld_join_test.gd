@@ -921,8 +921,22 @@ func _live_input_probe(app: Node, world: Node, player: CharacterBody2D, enemy: N
     var rift_source := renderer._casts[rift_id] as CSourcePlayer
     var rift_transform := rift_source.source_pass_frame().source_to_world
     check(rift_source.local_to_world(CRealityRipperFusion.CENTER).distance_to(rift_aim) < 0.1, "live C20 source axis matches selected world-space direction")
+    # The real Skeleton AI can enter a stationary attack state. Drive the
+    # actual CharacterBody2D through move_and_collide during this probe rather
+    # than claiming it happened to move naturally or teleporting a fake actor.
+    var moving_enemy := enemy as CharacterBody2D
+    var enemy_direction := Vector2.ZERO
+    if moving_enemy != null:
+        moving_enemy.set_physics_process(false)
+        for direction in [Vector2.RIGHT, Vector2.LEFT, Vector2.DOWN, Vector2.UP]:
+            if bool(terrain.call("is_walkable", enemy.global_position + direction * 24.0, 6.0)):
+                enemy_direction = direction
+                break
+    check(moving_enemy != null and not enemy_direction.is_zero_approx(), "live C20 actual enemy has a test-driven traversable motion direction")
     Input.action_press(action)
-    for frame in range(12): await physics_frame
+    for frame in range(12):
+        await physics_frame
+        if moving_enemy != null and not enemy_direction.is_zero_approx(): moving_enemy.move_and_collide(enemy_direction * 1.0)
     Input.action_release(action)
     await process_frame
     await process_frame
@@ -931,7 +945,7 @@ func _live_input_probe(app: Node, world: Node, player: CharacterBody2D, enemy: N
     var rift_stable := rift_source.source_pass_frame().source_to_world.is_equal_approx(rift_transform)
     check(rift_player_distance > 0.1 and rift_enemy_distance > 0.1 and rift_stable, "live C20 keeps nonhoming world anchor while real player and enemy move")
     check(int(enemy.get("health")) == rift_hp, "live C20 visual movement never changes enemy HP")
-    print("JOIN_C20_LIVE ", JSON.stringify({"scope": "real historical overworld; visual injection only, no hit-volume proof", "player_distance": rift_player_distance, "enemy_distance": rift_enemy_distance, "source_tick": rift_source._tick, "anchor_stable": rift_stable, "hp_before": rift_hp, "hp_after": int(enemy.get("health"))}))
+    print("JOIN_C20_LIVE ", JSON.stringify({"scope": "real historical overworld; visual injection and test-driven real enemy physics; no hit-volume proof", "player_distance": rift_player_distance, "enemy_distance": rift_enemy_distance, "source_tick": rift_source._tick, "anchor_stable": rift_stable, "hp_before": rift_hp, "hp_after": int(enemy.get("health"))}))
     await save_frame("live_input_20")
     renderer.cancel_skill(rift_id)
     await process_frame
