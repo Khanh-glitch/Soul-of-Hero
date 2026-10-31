@@ -183,12 +183,53 @@ class Layer extends RefCounted:
 		for j in range(gh):
 			raw_hline(gx, gx + gw - 1, gy + j, c)
 
+	# Packed-byte row writer replicating raw_hline+raw_px exactly for the
+	# opaque (non-additive, non-coverage) case at any density dl: Bayer
+	# discard when dl < 16, plain write otherwise. Bit-identical output.
+	func _span_write(x0: int, x1: int, y: int, c: int, lb: PackedByteArray) -> void:
+		if y < 0 or y >= H or x0 > x1:
+			return
+		if x0 < 0:
+			x0 = 0
+		if x1 >= W:
+			x1 = W - 1
+		if x0 > x1:
+			return
+		var cr: int = c & 255
+		var cg: int = (c >> 8) & 255
+		var cb: int = (c >> 16) & 255
+		var base: int = (y * W + x0) * 4
+		if dl >= 16:
+			for i in range(x1 - x0 + 1):
+				var o: int = base + i * 4
+				lb[o] = cr
+				lb[o + 1] = cg
+				lb[o + 2] = cb
+				lb[o + 3] = 255
+		else:
+			var brow: int = (y & 3) << 2
+			for i in range(x1 - x0 + 1):
+				if M.BAYER[brow | ((x0 + i) & 3)] >= dl:
+					continue
+				var o: int = base + i * 4
+				lb[o] = cr
+				lb[o + 1] = cg
+				lb[o + 2] = cb
+				lb[o + 3] = 255
+
 	func disc(cx: float, cy: float, r: float, c: int) -> void:
 		var gcx: int = M.js_round(cx * k)
 		var gcy: int = M.js_round(cy * k)
 		var gr: float = r * k
 		var R: float = gr + 0.35
 		var ri: int = int(ceil(gr))
+		if not add and a == 255 and not cov:
+			var lb: PackedByteArray = bytes
+			for dy in range(-ri, ri + 1):
+				var w: int = int(floor(sqrt(maxf(0.0, R * R - float(dy * dy)))))
+				_span_write(gcx - w, gcx + w, gcy + dy, c, lb)
+			bytes = lb
+			return
 		for dy in range(-ri, ri + 1):
 			var w: int = int(floor(sqrt(maxf(0.0, R * R - float(dy * dy)))))
 			raw_hline(gcx - w, gcx + w, gcy + dy, c)
@@ -200,6 +241,16 @@ class Layer extends RefCounted:
 		var gry: float = ry * k
 		var RY: float = gry + 0.35
 		var iy: int = int(ceil(gry))
+		if not add and a == 255 and not cov:
+			var lb: PackedByteArray = bytes
+			for dy in range(-iy, iy + 1):
+				var q: float = 1.0 - float(dy * dy) / (RY * RY)
+				if q < 0.0:
+					continue
+				var w: int = int(floor((grx + 0.35) * sqrt(q)))
+				_span_write(gcx - w, gcx + w, gcy + dy, c, lb)
+			bytes = lb
+			return
 		for dy in range(-iy, iy + 1):
 			var q: float = 1.0 - float(dy * dy) / (RY * RY)
 			if q < 0.0:
