@@ -1294,6 +1294,11 @@ func _phase_sweep(app: Node, world: Node, player: Node2D, enemy: Node2D, camera:
         var duration := float(slot.duration)
         var targets := [30, maxi(31, roundi(climax * 0.5 * 60.0)), roundi((climax - 0.15) * 60.0), roundi(climax * 60.0), roundi((climax + duration) * 30.0), roundi((duration - 0.1) * 60.0)]
         var labels := ["early", "build", "pre_catalog_climax", "catalog_climax", "aftermath", "late"]
+        if num == 16:
+            # Natural seeded C tail after the catalog scene endpoint; show
+            # its final active tick as well as the earlier sparse withdrawal.
+            targets.append_array([630, 642, 647])
+            labels.append_array(["seed_out", "seed_last", "fusion_last"])
         if num == 19:
             # Independently inspect the authored D OUT on real terrain at
             # start, withdrawal, convergence and the final active tick.
