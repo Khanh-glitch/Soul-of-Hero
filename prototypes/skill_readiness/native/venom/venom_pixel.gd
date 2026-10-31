@@ -132,6 +132,8 @@ class Layer extends RefCounted:
 	func stamp_packed(gxs: PackedInt32Array, gys: PackedInt32Array, cs: PackedInt32Array, n: int) -> void:
 		if add and not cov and dl >= 16:
 			var lb: PackedByteArray = bytes
+			bytes = PackedByteArray()  # drop our ref so lb writes don't COW-copy the whole buffer
+			bytes = PackedByteArray()  # drop our ref so lb writes don't COW-copy the whole buffer
 			var av: int = a
 			for i in range(n):
 				var gx: int = gxs[i]
@@ -151,6 +153,7 @@ class Layer extends RefCounted:
 			return
 		if not add and a == 255 and not cov:
 			var lb2: PackedByteArray = bytes
+			bytes = PackedByteArray()  # drop our ref so lb writes don't COW-copy the whole buffer
 			if dl >= 16:
 				for i in range(n):
 					var gx: int = gxs[i]
@@ -210,6 +213,7 @@ class Layer extends RefCounted:
 			var cb: int = (((c >> 16) & 255) * a) >> 8
 			var base2: int = (y * W + x0) * 4
 			var lb: PackedByteArray = bytes
+			bytes = PackedByteArray()  # drop our ref so lb writes don't COW-copy the whole buffer
 			for i in range(x1 - x0 + 1):
 				var o: int = base2 + i * 4
 				var r2: int = int(lb[o]) + cr
@@ -282,6 +286,7 @@ class Layer extends RefCounted:
 		var ri: int = int(ceil(gr))
 		if not add and a == 255 and not cov:
 			var lb: PackedByteArray = bytes
+			bytes = PackedByteArray()  # drop our ref so lb writes don't COW-copy the whole buffer
 			for dy in range(-ri, ri + 1):
 				var w: int = int(floor(sqrt(maxf(0.0, R * R - float(dy * dy)))))
 				_span_write(gcx - w, gcx + w, gcy + dy, c, lb)
@@ -300,6 +305,7 @@ class Layer extends RefCounted:
 		var iy: int = int(ceil(gry))
 		if not add and a == 255 and not cov:
 			var lb: PackedByteArray = bytes
+			bytes = PackedByteArray()  # drop our ref so lb writes don't COW-copy the whole buffer
 			for dy in range(-iy, iy + 1):
 				var q: float = 1.0 - float(dy * dy) / (RY * RY)
 				if q < 0.0:
@@ -646,6 +652,8 @@ class Field extends RefCounted:
 		# straight to the packed bytes; assigned back once (copy-on-write).
 		var fast: bool = L.dl >= 16 and not L.add and L.a == 255 and not L.cov
 		var lb: PackedByteArray = L.bytes
+		if fast:
+			L.bytes = PackedByteArray()  # drop the layer's ref so lb writes don't COW-copy the whole buffer (fast path only; the slow path writes via L.raw_px)
 		var sc: float = float(m.get("sc", 1.0)) / rk
 		var hi_w: float = float(m.get("hiW", 0.0)) * rk
 		var hi_t: float = float(m.get("hiT", 0.25))

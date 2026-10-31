@@ -348,6 +348,8 @@ static func puff(L, cx: float, cy: float, r: float, ramp: Array, dl: float,
 	# the end (PackedByteArray is copy-on-write).
 	var fast: bool = not L.add and L.a == 255 and not L.cov
 	var lb: PackedByteArray = L.bytes
+	if fast:
+		L.bytes = PackedByteArray()  # drop the layer's ref so lb writes don't COW-copy the whole buffer per puff (fast path only; slow path writes via L.raw_px)
 	var lw: int = L.W
 	var lh: int = L.H
 	# Per-column invariants hoisted out of the pixel loop (bit-identical:
