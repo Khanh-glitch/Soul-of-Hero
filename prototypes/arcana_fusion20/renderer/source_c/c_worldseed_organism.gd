@@ -5,6 +5,21 @@ class_name CWorldseedOrganism
 const CX := 244.0
 const CY := 106.0
 const SY := 0.78
+# Pixel centers and view geometry are time-independent. Per-instance doubles
+# preserve the original operations and are released with the source cast.
+var _radii := PackedFloat64Array()
+var _directions := PackedFloat64Array()
+func _ensure_geometry() -> void:
+    if not _radii.is_empty(): return
+    _radii.resize(161 * 127)
+    _directions.resize(161 * 127)
+    for y in range(43, 170):
+        for x in range(164, 325):
+            var dx := float(x)+0.5-CX
+            var dy := (float(y)+0.5-CY)/SY
+            var at := (y-43)*161+x-164
+            _radii[at] = sqrt(dx*dx+dy*dy)
+            _directions[at] = atan2(dy,dx)
 static func _fold(t: float, d: float) -> float:
     return 1.0 - CMath.ease_in_out(CMath.inv(8.0 + d, 9.3 + d, t))
 static func _pulse(t: float, j: int, r: float) -> float:
@@ -14,6 +29,9 @@ static func _pulse(t: float, j: int, r: float) -> float:
 func render(f: CFrame, t: float) -> void:
     if t < 2.5: return
     CPalette._ensure()
+    _ensure_geometry()
+    var radii := _radii
+    var directions := _directions
     var lay: Array[Dictionary] = [
         {"n":12,"off":0.0,"l":18.0 * CMath.ease_out(CMath.inv(3.8,5.0,t)) * _fold(t,0.0),"wd":3.4,"tw":0.045,"kind":2},
         {"n":9,"off":0.5,"l":38.0 * CMath.back_out(CMath.inv(3.2,4.6,t),1.4) * _fold(t,0.15),"wd":9.0,"tw":0.0,"kind":1},
@@ -28,11 +46,10 @@ func render(f: CFrame, t: float) -> void:
             angles.append(((float(k)+float(l.off))/float(l.n))*CMath.TAU + (t*0.05 if kind==1 else 0.0) + sin(t*31.0+float(k)*1.7)*float(l.tw) + fold_shift)
         l.angles = angles
     f.field(CX-80.0,CY-80.0*SY,CX+80.0,CY+80.0*SY,func(x: int,y: int) -> void:
-        var dx := float(x)+0.5-CX
-        var dy := (float(y)+0.5-CY)/SY
-        var r := sqrt(dx*dx+dy*dy)
+        var at := (y-43)*161+x-164
+        var r := radii[at]
         if r > 80.0: return
-        var pa := atan2(dy,dx)
+        var pa := directions[at]
         for l in lay:
             var length: float = l.l
             if length < 1.0 or r > length: continue
