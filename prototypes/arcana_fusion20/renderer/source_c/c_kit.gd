@@ -45,9 +45,10 @@ static func particles_update(list: Array, dt: float) -> void:
         var d := exp(-float(p.drag) * dt)
         p.vx = (float(p.vx) + float(p.ax) * dt) * d
         p.vy = (float(p.vy) + float(p.ay) * dt) * d
-        if p.has("home"):
-            var hk := float(p.get("homeK", 4.0))
-            var home: Vector2 = p.home
+        var home_v: Variant = p.get("home")
+        if home_v is Vector2:
+            var hk := float(p.get("homeK", p.get("home_k", 4.0)))
+            var home: Vector2 = home_v
             p.vx = float(p.vx) + (home.x - float(p.x)) * hk * dt
             p.vy = float(p.vy) + (home.y - float(p.y)) * hk * dt
         p.vz = float(p.vz) - float(p.grav) * dt
