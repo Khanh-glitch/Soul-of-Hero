@@ -319,4 +319,4 @@ func _c_parity(label: String, fx: RefCounted, prefix: String) -> void:
                         nz += 1
                 print("::notice::" + label + "_SPATIAL ", key, " t=", t, " iou=", snappedf(float(sp.get("iou", 0.0)), 0.0001), " mae=", snappedf(float(sp.get("mae", 99.0)), 0.01), " shift=", sp.get("shift", "?"), "@", snappedf(float(sp.get("shift_mae", 99.0)), 0.01), " nz=", nz, "/", int(meta[key].nonzero))
                 if float(sp.get("iou", 0.0)) < 0.90 or float(sp.get("mae", 99.0)) > 6.0:
-                    _fail("%s spatial %s iou=%f mae=%f" % [label, key, float(sp.get("iou", 0.0)), float(sp.get("mae", 99.0))])
+                    _fail("%s spatial %s iou=%f mae=%f nz=%d/%d shift=%s@%f" % [label, key, float(sp.get("iou", 0.0)), float(sp.get("mae", 99.0)), nz, int(meta[key].nonzero), str(sp.get("shift", "?")), float(sp.get("shift_mae", 99.0))])
