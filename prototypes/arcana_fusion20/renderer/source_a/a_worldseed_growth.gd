@@ -143,12 +143,25 @@ func render(fb: AFramebuffer, t: float) -> void:
         if fold > 0.0: u *= 1.0 - AMath.ease_out(fold, 1.6)
         if u <= 0.01: continue
         var pulse := 1.0 + 0.18 * sin(t * 7.0 - li * 1.2) * maxf(0.0, 1.0 - (t - BLOOM) * 0.6) if bloom_k > 0.0 else 1.0
+        # Every petal in a layer has the same length and transverse samples.
+        # Cache their exact double-precision values, not a reduced sampling.
+        var length := float(layer.len) * u * pulse
+        var us := maxi(6, ceili(length))
+        var vs := maxi(4, ceili(length * float(layer.w) * 0.9))
+        var transverse: Array[float] = []
+        var abs_transverse: Array[float] = []
+        var veins: Array[float] = []
+        var edges: Array[float] = []
+        for jj in range(vs + 1):
+            var v := float(jj) / float(vs) * 2.0 - 1.0
+            var av := absf(v)
+            transverse.append(v)
+            abs_transverse.append(av)
+            veins.append(exp(-pow(av * 4.0, 2.0)) * 0.3)
+            edges.append(pow(av, 4.0) * 0.5)
         for petal in range(int(layer.count)):
             var a0 := float(layer.tilt) + float(petal) / float(layer.count) * AMath.TAU
-            var length := float(layer.len) * u * pulse
             var tremble := sin(t * (3.0 + float(layer.tremble) * 3.0) + petal) * float(layer.tremble) * 0.02
-            var us := maxi(6, ceili(length))
-            var vs := maxi(4, ceili(length * float(layer.w) * 0.9))
             for ii in range(us + 1):
                 var uu := float(ii) / float(us)
                 # These source expressions depend on the radial sample only,
@@ -163,11 +176,10 @@ func render(fb: AFramebuffer, t: float) -> void:
                 var radius := (5.0 + li * 5.0) * u + length * uu
                 var width := length * float(layer.w) * sin(pow(uu, 0.6) * PI)
                 for jj in range(vs + 1):
-                    var v := float(jj) / float(vs) * 2.0 - 1.0
-                    var av := absf(v)
+                    var v: float = transverse[jj]
+                    var av: float = abs_transverse[jj]
                     var cell := AMath.fbm(uu * 7.0 + petal * 2.0, av * 5.0 - t * 1.1, 3)
-                    var vein := exp(-pow(av * 4.0, 2.0)) * 0.3
-                    var h := 0.16 + cell * 0.26 + vein + pow(av, 4.0) * 0.5
+                    var h := 0.16 + cell * 0.26 + veins[jj] + edges[jj]
                     h += wave_add
                     h *= taper
                     if h < 0.05: continue
