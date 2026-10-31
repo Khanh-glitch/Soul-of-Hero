@@ -8,6 +8,9 @@ on:
       - 'prototypes/arcana_fusion20/renderer/world_pass/c_world_pass.gd'
       - 'prototypes/arcana_fusion20/renderer/source_c/c_frame.gd'
       - 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_debris.gd'
+      - 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_fusion.gd'
+      - 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_organism.gd'
+      - 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_leaflets.gd'
       - 'prototypes/arcana_fusion20/renderer/source_a/a_worldseed_growth.gd'
       - 'prototypes/arcana_fusion20/renderer/arcana20_overworld_join_test.gd'
 permissions:
@@ -23,10 +26,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1
       - name: Assemble pinned disposable overworld
         run: |
-          git fetch --no-tags origin 5a173ff7d5da08c617e6a5a11e97b0808f5584cc 6b801554a6af95424b4e39dd29f43c146aa13848 2cb1a3c5f093724eb9fecbdf45909ccb611f7b32 18e7afcbd576bbd9bfbcc509b2ee13216186a522 e505173edd119fdd955cf6249511b575a5468440
+          git fetch --depth=1 --no-tags origin 5a173ff7d5da08c617e6a5a11e97b0808f5584cc 6b801554a6af95424b4e39dd29f43c146aa13848 2cb1a3c5f093724eb9fecbdf45909ccb611f7b32 18e7afcbd576bbd9bfbcc509b2ee13216186a522 e505173edd119fdd955cf6249511b575a5468440
           python3 tools/arcana20_join/assemble.py --out "$RUNNER_TEMP/arcana20-perf" --avfx-sha "$GITHUB_SHA" --a0-sha 5a173ff7d5da08c617e6a5a11e97b0808f5584cc
       - uses: chickensoft-games/setup-godot@v2
         with:

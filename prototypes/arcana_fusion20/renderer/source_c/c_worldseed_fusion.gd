@@ -1,12 +1,12 @@
-## Selected original C16 living membranes plus original seed/spore/petal burst.
-## One source clock and seeded setup; full C16 organism and OUT are still open.
+## Selected original C16 membranes, layered organism/leaflets and debris.
+## One source clock and seeded setup; source/world post and full OUT remain open.
 extends CWorldseedDebris
 class_name CWorldseedFusion
 var growth := CWorldseedMembranes.new()
-# Optional, for native-world composition trials only. Shipping fusion remains
-# unchanged until the original opaque C geometry's stacking is inspected.
-var organism: CWorldseedOrganism
-var leaflets: CWorldseedLeaflets
+# Keep the original C geometry on the same clock and paint it behind the
+# A growth lead in the diagnostic world mount. Nullable for isolated tests.
+var organism: CWorldseedOrganism = CWorldseedOrganism.new()
+var leaflets: CWorldseedLeaflets = CWorldseedLeaflets.new()
 func setup() -> void:
     super.setup()
     growth.trees = membrane_trees

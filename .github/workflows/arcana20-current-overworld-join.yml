@@ -56,7 +56,7 @@ jobs:
         if: always()
         run: |
           if test -f "$RUNNER_TEMP/arcana20-join/artifacts/join.log"; then
-            grep -E 'JOIN_(OK|FAIL).*C16 (living membranes active|original membranes independently|original cellular organism|original leaflets)' "$RUNNER_TEMP/arcana20-join/artifacts/join.log" | sed 's/^/::notice title=C16_WORLD_GROWTH::/' || true
+            grep -E 'JOIN_(OK|FAIL).*C16 (living membranes active|original membranes independently|original cellular organism|original leaflets|original organism and leaflets selected)' "$RUNNER_TEMP/arcana20-join/artifacts/join.log" | sed 's/^/::notice title=C16_WORLD_GROWTH::/' || true
           fi
       - name: Surface paired C16 living-growth world crops
         if: always()

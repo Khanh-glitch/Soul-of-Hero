@@ -1,5 +1,5 @@
 ## Original C16 layered leaves / cellular and trembling petals, isolated.
-## Candidate only: fusion stacking and owner review are not resolved.
+## Selected behind the A motion lead; world and owner review remain open.
 extends RefCounted
 class_name CWorldseedOrganism
 const CX := 244.0

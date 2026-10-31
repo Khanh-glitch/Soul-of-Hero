@@ -1,5 +1,5 @@
-## Original C16 leaflets sprouting from the outer leaves. Isolated until
-## source raster and A-led fusion layering are inspected.
+## Original C16 leaflets sprouting from the outer leaves, selected behind
+## the A growth lead; full-world fidelity and owner review remain open.
 extends RefCounted
 class_name CWorldseedLeaflets
 const CX := 244.0

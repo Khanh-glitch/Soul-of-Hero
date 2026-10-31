@@ -33,9 +33,9 @@ func _on_frame(id: StringName, frame: Arcana20SourcePassFrame) -> void:
             &"D": viewer = Arcana20DWorldPass.new()
         if viewer == null:
             return
-        # Source #01's chosen C outer layer is behind A's crown candidate.
-        # This does not establish actor depth or remove duplicated geometry.
-        if String(id).ends_with("_01"):
+        # #01 and #16 retain the A motion lead over selected C geometry.
+        # This does not establish actor depth or creator visual approval.
+        if String(id).ends_with("_01") or String(id).ends_with("_16"):
             viewer.z_index = -25 if frame.family == &"C" else -23
         add_child(viewer)
         by_family[frame.family] = viewer

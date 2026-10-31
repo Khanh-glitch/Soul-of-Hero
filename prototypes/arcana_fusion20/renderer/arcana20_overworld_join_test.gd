@@ -594,6 +594,12 @@ func _run() -> void:
     seed_fusion.set_process(false)
     var seed_growth := seed_fusion._pending[0].node as ASourcePlayer
     var seed_debris := seed_fusion._pending[1].node as CSourcePlayer
+    # Isolate the already-selected membrane role first, then independently
+    # restore the selected organism and leaflets in the world comparisons.
+    var c16_trial := seed_debris._fx as CWorldseedFusion
+    check(c16_trial.organism != null and c16_trial.leaflets != null, "C16 original organism and leaflets selected for fusion")
+    c16_trial.organism = null
+    c16_trial.leaflets = null
     seed_growth.render_enabled = false
     seed_debris.render_enabled = false
     for tick in range(120): seed_fusion.advance(STEP)
@@ -632,10 +638,8 @@ func _run() -> void:
     var seed_pass := seed_debris.source_pass_frame()
     check(seed_pass.seeds == PackedInt32Array([119785]) and seed_pass.caster_world.is_equal_approx(player.global_position), "C16 source metadata retains original seed and real caster")
     check(mount.active_viewers(id16) == 2 and not images_equal(baseline, seed_img), "A16 source growth C material and C16 debris affect actual world")
-    # Original C's opaque layered organism is evaluated on the real world
-    # behind the smooth A lead before selecting it for the live fusion. Compare
-    # identical clock/actors/stacking with only that source role toggled.
-    var c16_trial := seed_debris._fx as CWorldseedFusion
+    # Compare original C's opaque organism behind the smooth A lead with
+    # identical clock/actors/stacking and only that source role toggled.
     var c16_viewers: Dictionary = mount._passes.get(id16, {})
     var c16_a_viewer := c16_viewers.get(&"A") as Node2D
     var c16_c_viewer := c16_viewers.get(&"C") as Node2D
@@ -674,10 +678,7 @@ func _run() -> void:
         organism_mask.c_influence = isolated_leaflets.world_influence
         var leaflet_contamination := contamination(with_organism, with_leaflets, c16_c_viewer, organism_mask)
         check(int(leaflet_contamination.get("inside_changed",0)) > 0 and int(leaflet_contamination.get("outside_changed",-1)) == 0, "C16 original leaflets separately affect real world only inside leaflet influence: " + str(leaflet_contamination))
-        c16_trial.leaflets = null
-        c16_trial.organism = null
-        c16_c_viewer.z_index = -24
-        c16_a_viewer.z_index = -24
+        # Keep both selected roles active for the rest of the lifecycle.
         seed_debris._render_frame()
         await process_frame
     else:
