@@ -73,6 +73,13 @@ PROBE_FAMILIES = (
     # that disappeared and a defect that survived are both facts about *this* tree,
     # and the ledger keeps them apart by family.
     ("balance_native_r11", REPO / "tests" / "survival" / "balance_native_r11"),
+    # Round 12 (CT-GATE-v2026-10-31). The round-11 composition commit is
+    # historical evidence, so this family runs against the round-12 composition.
+    # Six probes are the round-11 bodies carried forward with only the id changed
+    # (a survived defect is a fact about this tree); three are new and target the
+    # round-12 mission: the avatar-identity seam, the physical home, and the threat
+    # + single death bag, plus a three-resolution visual attempt.
+    ("balance_native_r12", REPO / "tests" / "survival" / "balance_native_r12"),
 )
 #: A7-owned data the round-8 probes read. These are test configuration, not game
 #: data: the game never loads them. They are copied into the worktree next to the

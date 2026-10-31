@@ -1,3 +1,56 @@
+# A7 acceptance scoreboard — round 12 (identity seam, paid home, reachable geography)
+
+_2026-10-31. **Supersedes round 11 for status questions.** Engine
+`4.7.stable.custom_build.5b4e0cb0f` built from source in this sandbox, against
+`refs/comp/r12_full` = `663a83ede5239baaf372a907d7e138ab31f4f70d` (A0 `a6b57c36` +
+A1 `9ca1453c` + A3 `b44e22df` + A6 `6d71410a` + A8 `e1fe550b`; CT `971e0b95`).
+`21c37aecc9c7` = A0 alone, `2a3ab8724959` = A0+A1+A3, and `fce825edb22d` = the
+**`r12_wired` counterfactual** (A6's 10 out-of-prefix scene files accepted; never a
+product state). Full report: [`ROUND12_SYSTEM_ACCEPTANCE.md`](ROUND12_SYSTEM_ACCEPTANCE.md).
+Ledger: `native_runs.v1.json` (rows keyed `663a83ede523`); the 50-probe cross-family
+sweep is preserved as `native_runs.r12_sweep.v1.json`, round 11's as
+`native_runs.r11_full.v1.json`, round 10's as `native_runs.r10_full.v1.json`.
+
+| probe | checks | failed | missing | verdict |
+|---|---|---|---|---|
+| `r12_adversarial_probe` | 17 | 0 | 0 | **PASS** |
+| `r12_home_probe` | 18 | 0 | 0 | **PASS** |
+| `r12_identity_probe` | 10 | 0 | 6 | `RED_NOT_IMPLEMENTED` |
+| `r12_j01_probe` | 33 | 0 | 2 | `RED_NOT_IMPLEMENTED` |
+| `r12_j02_j05_probe` | 28 | 0 | 4 | `RED_NOT_IMPLEMENTED` |
+| `r12_j03_probe` | 21 | 0 | 1 | `RED_NOT_IMPLEMENTED` |
+| `r12_j04_probe` | 11 | 1 | 2 | `RED_NOT_IMPLEMENTED` |
+| `r12_j06_j07_probe` | 41 | 0 | 2 | `RED_NOT_IMPLEMENTED` |
+| `r12_threat_death_probe` | 13 | 0 | 1 | `RED_NOT_IMPLEMENTED` |
+| `r12_visual_probe` | 8 | 0 | 0 | `BLOCKED` (VISUAL_NOT_TESTED) |
+| **total** | **200** | **1** | **18** | **PASS 2 / RED 7 / FAIL 0 / BLOCKED 1** |
+
+* **The paid physical home is real.** 8/8 paid walls → a room id → roof footprint 1 at
+  alpha 1.00 → paid floor → bed placed **and activated as the spawn anchor** → chest
+  deposit/withdraw → workbench whose recipe is refused at 195 px
+  (`station_not_reachable`) and accepted at the bench, with the kit consumed 1 → 0.
+* **The avatar seam is one A0-owned method, not a missing feature.** A6's presenter,
+  pipeline, adapter and manifest are all in the composition; `SaveService.
+  get_player_appearance_projection()` / `player_avatar_changed` are not, and no scene
+  mounts the presenter. In `r12_wired` the presenter *does* mount (`AvatarPresenter` +
+  `AvatarUnavailable`) and the avatar **still** does not appear — the API is the root.
+* **The authored continent is not the loaded one.** 118 A1 POIs, **10 inside** A0's
+  384×256 runtime world; A8 authored against 1024×768, so all three south sites refuse
+  `A1_RUNTIME_WORLD_EXTENT_ABSENT` from A0's own mount authority.
+* **Nothing can hurt the Hero, and the threat is off.** 0 `take_damage` call sites under
+  `game/overworld` + `game/survival`; `survival/a0_optional_threat` false. The
+  counterfactual mount is fair-shaped (443 px from spawn, 14 damage vs 1100 HP) and
+  unreachable.
+* **`VISUAL_NOT_TESTED` at 1× 720p/1440p/2160p.** 3/3 real capture attempts returned no
+  image (headless, no rasterizer). Measured substitutes: camera zoom 1.00 at all three,
+  HUD fonts fixed at 8–11 px, Hero at 4.44 % / 2.22 % / 1.48 % of screen height.
+* **Adversarial paths hold**: full bag (29 records), stale tool revision, depleted node,
+  stale offline proposal, duplicate chest claim, second death before recovery — 17/17.
+* **Next action (single):** A0 authors the identity projection and mounts A6's
+  presenter; dependencies A6 (licensed sheets, 0 bytes in Git today) and A1+A0 (extent).
+
+---
+
 # A7 acceptance scoreboard — round 11 (the current composition, played)
 
 _2026-10-31. **Supersedes round 10 for status questions.** Real Godot

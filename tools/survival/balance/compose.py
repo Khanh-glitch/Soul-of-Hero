@@ -49,7 +49,7 @@ SCHEMA = "soh.balance.composition.v1"
 OWNER_PREFIXES: Dict[str, List[str]] = {
     "a1": ["data/survival/world/"],
     "a3": ["data/survival/items/", "data/survival/recipes/", "data/survival/economy/", "game/survival/economy/"],
-    "a6": ["game/survival/ui/"],
+    "a6": ["game/survival/ui/", "game/survival/player/"],
     "a8": ["game/survival/world_content/", "data/survival/world_content/"],
     # Round 10. A6's active branch keeps its whole survival UI (avatar art, return
     # cards, projection contract) under `game/survival/ui/`, which A0 does not have
@@ -76,6 +76,9 @@ PREFIX_MODES: Dict[Tuple[str, str], str] = {
     ("a3", "data/survival/economy/"): "replace",
     ("a3", "game/survival/economy/"): "merge",
     ("a6", "game/survival/ui/"): "replace",
+    # A0 has no `game/survival/player/` at all, so A6 is unambiguously its author and
+    # replacing the prefix removes nothing from the base.
+    ("a6", "game/survival/player/"): "replace",
     ("a8", "game/survival/world_content/"): "replace",
     ("a8", "data/survival/world_content/"): "replace",
 }
@@ -162,6 +165,51 @@ PROFILES: Dict[str, Dict[str, object]] = {
         "overlays": ["a1", "a3", "a6", "a8"],
         "question": "the integrated product a player would install at the round-11 owner heads",
     },
+    # Round 12 (CT-GATE-v2026-10-31). A0, A6, A8 and AVFX all moved since round 11,
+    # so the three-layer attribution question is re-cut again on new names. Nothing
+    # from round 10 or 11 is inherited: those verdicts belong to those bytes.
+    "r12_a0": {
+        "base": "a0",
+        "overlays": [],
+        "question": "what can A0's own bytes do before any other owner is composed in?",
+    },
+    "r12_core": {
+        "base": "a0",
+        "overlays": ["a1", "a3"],
+        "question": "does current A0 mount current A1 geography and current A3 economy alone?",
+    },
+    "r12_full": {
+        "base": "a0",
+        "overlays": ["a1", "a3", "a6", "a8"],
+        "question": "the product a player would install at the round-12 owner heads, under the current overlay policy",
+    },
+    # COUNTERFACTUAL, not a shipping candidate. A6's avatar integration lands on
+    # paths this map assigns to A0 (`game/characters/knight/knight.tscn`,
+    # `game/app/app_root.gd`, the avatar-choice screens). The shipping profile cannot
+    # contain them, so "is the avatar merely unmerged, or actually broken?" is
+    # unanswerable from `r12_full` alone. This profile copies exactly A6's *changed*
+    # files on those paths and nothing else, so the answer is measured instead of
+    # argued. It is labelled `r12_wired` everywhere and is never reported as the
+    # product.
+    "r12_wired": {
+        "base": "a0",
+        "overlays": ["a1", "a3", "a6", "a8"],
+        "question": "COUNTERFACTUAL: if A6's out-of-prefix integration files were accepted by A0, would the avatar actually mount?",
+        "extra_files": {
+            "a6": [
+                "game/characters/knight/knight.tscn",
+                "game/app/app_root.gd",
+                "game/app/app_flow.gd",
+                "game/ui/screens/avatar_choice/avatar_choice_screen.gd",
+                "game/ui/screens/avatar_choice/avatar_choice_screen.tscn",
+                "game/ui/screens/avatar_choice/a6_avatar_preview.gd",
+                "game/ui/screens/home/home_actor.tscn",
+                "game/ui/screens/title/title_screen.gd",
+                "game/ui/screens/title/title_screen.tscn",
+                "game/ui/theme/a6_survival_theme.tres",
+            ],
+        },
+    },
 }
 
 #: Owners whose work is pinned for provenance but cannot be overlaid without
@@ -175,16 +223,16 @@ REFERENCE_ONLY: Dict[str, str] = {
 }
 
 DEFAULT_REFS: Dict[str, str] = {
-    "a0": "refs/live/arena-dea2428e",
-    "a1": "refs/live/arena-e385312a",
-    "a3": "refs/live/arena-7a12b27e",
+    "a0": "refs/live12/arena_dea2428e-soul-of-hero",
+    "a1": "refs/live12/arena_e385312a-soul-of-hero",
+    "a3": "refs/live12/arena_7a12b27e-soul-of-hero",
     # `arena-443f004f` is the old PR24 head. The ACTIVE A6 branch is
     # `arena/05e0328d-soul-of-hero`; round 9 pinned PR24 by mistake and CT's
     # round-10 order names the active branch explicitly.
-    "a6": "refs/live/arena-05e0328d",
-    "a8": "refs/live/arena-2d7e6d7a",
-    "avfx": "refs/live/arena-c7b0c4e8",
-    "ct": "refs/live/docs-ct-loot-discovery-gate-20261030",
+    "a6": "refs/live12/arena_05e0328d-soul-of-hero",
+    "a8": "refs/live12/arena_2d7e6d7a-soul-of-hero",
+    "avfx": "refs/live12/arena_c7b0c4e8-soul-of-hero",
+    "ct": "refs/live12/docs_ct-loot-discovery-gate-20261030",
 }
 
 
@@ -275,6 +323,23 @@ def build(profile: str, refs: Dict[str, str], work: Path, pin: bool) -> Dict[str
                 }
             )
 
+    # Exact-path overlay: the counterfactual profile's whole mechanism. Each named
+    # file must exist on the owner's head, or the composition refuses to build —
+    # a missing file would otherwise look like a passing integration.
+    extra_files: Dict[str, List[str]] = dict(spec.get("extra_files", {}) or {})  # type: ignore[arg-type]
+    for owner, paths in extra_files.items():
+        owner_sha = heads[owner]
+        for path in paths:
+            rows = ls_tree(owner_sha, [path])
+            if not rows:
+                raise SystemExit(f"extra file {path} is not on {owner} {owner_sha[:12]}")
+            for mode, blob, real_path in rows:
+                lines.append(f"{mode} {blob}\t{real_path}")
+                provenance.append(
+                    {"path": real_path, "owner": owner, "source_sha": owner_sha, "blob": blob,
+                     "mode": "counterfactual_exact_file"}
+                )
+
     if lines:
         proc = subprocess.run(
             ["git", "update-index", "--index-info"],
@@ -333,6 +398,9 @@ def build(profile: str, refs: Dict[str, str], work: Path, pin: bool) -> Dict[str
         "control_tower": {"ref": refs.get("ct", ""), "sha": ct_sha},
         "files": len(provenance),
         "removed_from_base": removed,
+        "counterfactual_files": sorted(
+            row["path"] for row in provenance if row.get("mode") == "counterfactual_exact_file"
+        ),
         "provenance": provenance,
         "provenance_digest": hashlib.sha256(
             "\n".join(f"{row['path']}:{row['owner']}:{row['blob']}" for row in provenance).encode()
