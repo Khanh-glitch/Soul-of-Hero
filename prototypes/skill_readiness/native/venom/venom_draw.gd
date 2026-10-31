@@ -360,6 +360,8 @@ static func puff(L, cx: float, cy: float, r: float, ramp: Array, dl: float,
 	col_n2x.resize(ncol)
 	var col_n1x: PackedFloat64Array = PackedFloat64Array()
 	col_n1x.resize(ncol)
+	var col_n1i: PackedInt32Array = PackedInt32Array()
+	col_n1i.resize(ncol)
 	var col_sx: PackedFloat64Array = PackedFloat64Array()
 	col_sx.resize(ncol)
 	var col_qx: PackedFloat64Array = PackedFloat64Array()
@@ -373,6 +375,7 @@ static func puff(L, cx: float, cy: float, r: float, ramp: Array, dl: float,
 		var wx0: float = float(gx0) / k
 		col_n2x[ci] = int(floor(wx0 * 0.5 - t * 3 + float(seed))) & 63
 		col_n1x[ci] = wx0 * 0.22 + float(seed) * 7 + t * 2.2
+		col_n1i[ci] = int(floor(col_n1x[ci])) & 63
 		col_sx[ci] = -(float(dx0) / R) * 0.55
 		col_qx[ci] = float(dx0 * dx0)
 		col_bx[ci] = gx0 & 3
@@ -427,7 +430,7 @@ static func puff(L, cx: float, cy: float, r: float, ramp: Array, dl: float,
 			if bayer[b_row | col_bx[ci2]] >= keep:
 				continue
 			var gx: int = gcx + dx
-			var n: float = nz1t[row_n1 | (int(floor(col_n1x[ci2])) & 63)]
+			var n: float = nz1t[row_n1 | col_n1i[ci2]]
 			var s: float = col_sx[ci2] + s_row \
 					+ (n - 0.5) * 0.9 + (n2 - 0.5) * 0.3 - q * 0.3
 			var idx: int = 0 if s < -0.45 else (1 if s < -0.05 else (2 if s < 0.38 else 3))
