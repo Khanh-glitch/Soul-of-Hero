@@ -25,8 +25,15 @@ if [ ${#SUITES[@]} -eq 0 ]; then
   SUITES=(survival_foundation_test survival_a0_pin_fence_test survival_a0_profile_port_test
           survival_a0_run_lifecycle_test survival_a0_tool_and_offline_test survival_a0_player_return_test
           survival_a0_damage_death_probe_test)
+  # The pointer-placement legs need a real mouse position; a headless
+  # DisplayServer reports 0x0 and get_mouse_position() stays (0,0) even after
+  # warp/parse/push, so those suites are only honest under a display.
+  SUITES+=(survival_a0_production_threat_test survival_a0_poi_mount_test)
   if [ "$HEADLESS" -eq 0 ]; then
-    SUITES+=(survival_normal_home_journey_test survival_a0_production_threat_test)
+    SUITES+=(survival_normal_input_gather_test survival_normal_home_journey_test
+             survival_normal_entry_home_restart_test)
+  else
+    echo "note: pointer-placement suites skipped (no display); they are not reported as passing"
   fi
 fi
 
