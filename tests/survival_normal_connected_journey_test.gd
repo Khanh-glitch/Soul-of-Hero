@@ -73,6 +73,12 @@ func _console() -> void:
 	if _host != null:
 		await _body()
 		if not _body_complete:
+			# A prefix that stopped early without a failed check is still a stop: say
+			# exactly how far the run got and what it had in the bag, so the reader is
+			# not left with "the body did not finish" as the only fact.
+			print("A0_CONNECTED_STOPPED stone=%d oak=%d scrap=%d reed=%d cloth=%d kit=%d steps=%d failures=%d" % [
+				_count(STONE), _count(WOOD), _count(IRON), _count("reed_fibre"),
+				_count("binding_cloth"), _count("workbench_kit"), checks, failures.size()])
 			_expect(false, "test body ran to completion")
 	_teardown()
 	await process_frame
