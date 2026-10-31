@@ -32,6 +32,7 @@ var terrain_texture: Texture2D
 var props_texture: Texture2D
 var motion_tracking := false
 var contact_mode := "journey"
+var suppress_stale_slide_frame := false
 var current_phase := "source_checks"
 var current_drive_label := ""
 var current_drive_target := Vector2i.ZERO
@@ -375,7 +376,12 @@ func _on_physics_frame() -> void:
 		teleport_violations.append("frame %d displacement %.3f at %s" % [physics_serial, hero_delta, current_drive_label])
 	var camera_delta := camera.global_position.distance_to(last_camera_position)
 	max_camera_step = maxf(max_camera_step, camera_delta)
-	if contact_mode == "journey":
+	# CharacterBody2D exposes the previous move_and_slide contacts until its next
+	# physics step. Ignore only that known cache frame after an explicit fixture
+	# reset; all subsequent route contacts remain adversarially recorded.
+	var record_slide_contacts := not suppress_stale_slide_frame
+	suppress_stale_slide_frame = false
+	if record_slide_contacts and contact_mode == "journey":
 		for i: int in range(hero.get_slide_collision_count()):
 			var collision := hero.get_slide_collision(i)
 			var collider: Object = collision.get_collider()
@@ -383,7 +389,7 @@ func _on_physics_frame() -> void:
 				"foot": [hero.global_position.x, hero.global_position.y], "drive_label": current_drive_label,
 				"target_cell": [current_drive_target.x, current_drive_target.y], "velocity": [hero.velocity.x, hero.velocity.y],
 				"collider": String((collider as Node).name) if collider is Node else ""})
-	elif contact_mode == "expected_block" and hero.get_slide_collision_count() > 0:
+	elif record_slide_contacts and contact_mode == "expected_block" and hero.get_slide_collision_count() > 0:
 		expected_block_contacts += 1
 	last_hero_position = hero.global_position
 	last_camera_position = camera.global_position
@@ -405,6 +411,7 @@ func _reset_hero(cell: Vector2i) -> void:
 	_set_direction(Vector2.ZERO)
 	hero.global_position = _foot(cell)
 	hero.velocity = Vector2.ZERO
+	suppress_stale_slide_frame = true
 	hero.health = 100
 	camera.reset_smoothing()
 	camera.force_update_scroll()
@@ -683,8 +690,14 @@ func _drive_expected_block(start: Vector2i, target: Vector2i, context: String = 
 		_set_direction(_foot(target) - hero.global_position)
 		await physics_frame
 	_set_direction(Vector2.ZERO)
+	# Do not reclassify expected contacts while residual velocity is still
+	# settling during the following capture or journey phase.
+	var settle_deadline := physics_serial + 45
+	while physics_serial < settle_deadline and hero.velocity.length() > 0.1:
+		await physics_frame
 	await physics_frame
-	_expect(expected_block_contacts > 0 and hero.global_position.distance_to(_foot(target)) > 4.5 and not _hits_at(target).is_empty(),
+	_expect(expected_block_contacts > 0 and hero.velocity.length() <= 0.1
+		and hero.global_position.distance_to(_foot(target)) > 4.5 and not _hits_at(target).is_empty(),
 		"real Hero physically refused by visible dynamic full-cell body" + context)
 	contact_mode = "journey"
 

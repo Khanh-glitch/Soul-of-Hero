@@ -51,8 +51,8 @@ def planned_work(inputs: dict, resolutions: int = 3) -> dict:
         "dynamic_cells": dynamic_cells, "hazard_cells": hazard_cells,
         "drive_cells": spawn_cells + primary_cells + dynamic_cells + hazard_cells,
         "drive_segments": len(planned_journey_labels(inputs)),
-        # The real Hero must refuse the dynamic body both before and after reload.
-        "expected_block_frames": 180, "visual_captures": visual_captures,
+        # Two 90-frame refusal probes plus their bounded post-refusal settling.
+        "expected_block_frames": 270, "visual_captures": visual_captures,
         "visual_preparations": len(inputs["visual_views"]), "journey_captures": journey_captures,
         "captures": visual_captures + journey_captures,
         "reader_stream_constructions": 3,
