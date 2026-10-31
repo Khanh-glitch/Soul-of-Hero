@@ -524,6 +524,13 @@ class Field extends RefCounted:
 		var ya: int = maxi(2, int(floor(gy - gr - 1.0)))
 		var yb: int = mini(H - 3, int(ceil(gy + gr + 1.0)))
 		var lim: float = gr + 0.5
+		# Per-column dx^2 hoisted (same float values as the per-pixel form).
+		var ndx: int = xb - xa + 1
+		var col_dx2: PackedFloat64Array = PackedFloat64Array()
+		col_dx2.resize(ndx)
+		for xi in range(ndx):
+			var dxc: float = float(xa + xi) + 0.5 - gx
+			col_dx2[xi] = dxc * dxc
 		for y in range(ya, yb + 1):
 			var dy: float = float(y) + 0.5 - gy
 			var rem: float = lim * lim - dy * dy
@@ -540,9 +547,9 @@ class Field extends RefCounted:
 				continue
 			_touch_row(y, sxa, sxb)
 			var base: int = y * W
+			var dy2: float = dy * dy
 			for x in range(sxa, sxb + 1):
-				var dx: float = float(x) + 0.5 - gx
-				var v: float = gr - sqrt(dx * dx + dy * dy) + 0.5
+				var v: float = gr - sqrt(col_dx2[x - xa] + dy2) + 0.5
 				if v <= 0.0:
 					continue
 				var i: int = base + x
@@ -646,6 +653,8 @@ class Field extends RefCounted:
 		for y in range(self.y0, self.y1 + 1):
 			if row_lo[y] < 0:
 				continue
+			var sy: float = float(y) * sc
+			var brow2: int = (y & 3) << 2
 			for x in range(row_lo[y], row_hi[y] + 1):
 				var i: int = y * W + x
 				var v: float = h[i]
@@ -653,7 +662,6 @@ class Field extends RefCounted:
 					continue
 				var c: int
 				var sx: float = float(x) * sc + sd
-				var sy: float = float(y) * sc
 				if v < 1.0 * rk:
 					c = c_outline
 				else:
@@ -668,7 +676,7 @@ class Field extends RefCounted:
 						var dn: float = M.clampf((v - 2.0 * rk) / dep, 0.0, 1.0)
 						var q: float = (1.0 - dn) * (1.0 - amp) + n * amp
 						var kk: int = int(floor(q * float(nR)
-								+ (float(M.BAYER[((y & 3) << 2) | (x & 3)]) - 7.5) * 0.05))
+								+ (float(M.BAYER[brow2 | (x & 3)]) - 7.5) * 0.05))
 						if kk < 0:
 							kk = 0
 						elif kk >= nR:
@@ -715,13 +723,13 @@ class Field extends RefCounted:
 		for y in range(self.y0, self.y1 + 1):
 			if row_lo[y] < 0:
 				continue
+			var sy: float = float(y) * sc
 			for x in range(row_lo[y], row_hi[y] + 1):
 				var i: int = y * W + x
 				var v: float = h[i]
 				if v <= 0.0:
 					continue
 				var sx: float = float(x) * sc + sd
-				var sy: float = float(y) * sc
 				var wp: float = (float(RNG.NZ2[((int(floor(sy * 1.7 - fx * 0.5)) & 63) << 6) | (int(floor(sx * 1.7 + fy * 0.5)) & 63)])
 						- 128.0) * 0.05
 				var n: float = RNG.NZ1F[((int(floor(sy + fy + wp * 8.0)) & 63) << 6) | (int(floor(sx + fx + wp * 8.0)) & 63)]
