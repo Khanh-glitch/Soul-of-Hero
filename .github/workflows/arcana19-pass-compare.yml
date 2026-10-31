@@ -30,11 +30,11 @@ jobs:
           "$RUNNER_TEMP/d19-node/node_modules/.bin/playwright" install --with-deps chromium
           python3 -m pip install --quiet numpy pillow
           ln -s "$RUNNER_TEMP/d19-node/node_modules" tools/arcana19_pass_compare/node_modules
-      - name: Capture original isolated WebGL scene and bloom intermediates
+      - name: Capture original isolated RGBA8 WebGL scene and bloom intermediates
         run: |
           set -o pipefail
           mkdir -p artifacts/arcana19-pass-source
-          node tools/arcana19_pass_compare/capture.mjs artifacts/arcana19-pass-source | tee source.log
+          node tools/arcana19_pass_compare/capture.mjs artifacts/arcana19-pass-source 2>&1 | tee source.log
           grep -Fq 'D19_SOURCE_PASS' source.log
       - name: Capture native D additive source field
         run: |
@@ -44,7 +44,7 @@ jobs:
           timeout 1200s godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/d19_pass_compare.gd 2>&1 | tee native.log
           grep -Fq 'D19_NATIVE_SOURCE_CAPTURE_COMPLETE' native.log
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:' native.log
-      - name: Spatial comparison of HDR g fields
+      - name: Spatial comparison of linear source g fields
         run: |
           set -o pipefail
           python3 tools/arcana19_pass_compare/compare.py artifacts/arcana19-pass-source | tee comparison.log

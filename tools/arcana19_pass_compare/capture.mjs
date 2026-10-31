@@ -24,9 +24,9 @@ try {
     d.cast(idx);d.state.playing=true;d.state.speed=1;
     return {width:c.width,height:c.height,floatOK:r.floatOK,renderer:r.gl.getParameter(r.gl.RENDERER)};
   });
-  if(setup.width!==480||setup.height!==270||!setup.floatOK)throw Error('HDR reference unavailable '+JSON.stringify(setup));
+  if(setup.width!==480||setup.height!==270)throw Error('incorrect source dimensions '+JSON.stringify(setup));
   console.log('D19_ORIGINAL_GL',JSON.stringify(setup));
-  const manifest={setup,scope:'source D GPU isolated light on neutral base; no floor, actors or SOH world; bloom buffers are source debug data',captures:[]};
+  const manifest={setup,scope:'source D WebGL RGBA8 scene and bloom targets on neutral base; no floor, actors or SOH world; not HDR',captures:[]};
   let last=0;
   for(const tick of [72,192,312,489,510]) {
     await page.evaluate(n=>window.__advance(n),tick-last);last=tick;
@@ -35,10 +35,12 @@ try {
       for(const name of ['scene','bloomSmall','bloom2']) {
         const target=r[name];gl.bindFramebuffer(gl.FRAMEBUFFER,target.fbo);
         while(gl.getError()!==gl.NO_ERROR){};
-        const data=new Float32Array(target.w*target.h*4);
-        gl.readPixels(0,0,target.w,target.h,gl.RGBA,gl.FLOAT,data);
-        const error=gl.getError();if(error!==gl.NO_ERROR)throw Error(`readPixels ${name} FLOAT failed: ${error}`);
-        const bytes=new Uint8Array(data.buffer);let binary='';
+        // The original HTML allocates scene and bloom targets as RGBA8,
+        // even when its warp targets support RGBA16F. Preserve source format.
+        const bytes=new Uint8Array(target.w*target.h*4);
+        gl.readPixels(0,0,target.w,target.h,gl.RGBA,gl.UNSIGNED_BYTE,bytes);
+        const error=gl.getError();if(error!==gl.NO_ERROR)throw Error(`readPixels ${name} RGBA8 failed: ${error}`);
+        let binary='';
         for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,Math.min(i+8192,bytes.length)));
         result.buffers[name]={width:target.w,height:target.h,base64:btoa(binary)};
       }
@@ -46,7 +48,7 @@ try {
     });
     const record={tick,time:result.time,buffers:{}};
     for(const [name,v] of Object.entries(result.buffers)) {
-      writeFileSync(path.join(out,`original_${tick}.${name}.rgba32f`),Buffer.from(v.base64,'base64'));
+      writeFileSync(path.join(out,`original_${tick}.${name}.rgba8`),Buffer.from(v.base64,'base64'));
       record.buffers[name]={width:v.width,height:v.height};
     }
     manifest.captures.push(record);console.log('D19_SOURCE_PASS',JSON.stringify(record));
