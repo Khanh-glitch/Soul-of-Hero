@@ -12,7 +12,8 @@ for tick in (210,240,300,381,456,510,558):
             if v.size!=w*h*4: raise SystemExit(f'bad buffer {who} {kind} {tick}')
             fields[who,kind]=v.reshape(h,w,4)
     a,b=fields['original','ink'],fields['native','ink']
-    am,bm=a[:,:,3]>0,b[:,:,3]>0
+    am=np.fromfile(p/f'original_{tick}.coverage.u8',dtype='u1').reshape(h,w)!=0
+    bm=np.fromfile(p/f'native_{tick}.coverage.u8',dtype='u1').reshape(h,w)!=0
     union=np.count_nonzero(am|bm); inter=np.count_nonzero(am&bm)
     metrics={}; regions=[]
     for kind in ('ink','light','disp'):
@@ -29,7 +30,7 @@ for tick in (210,240,300,381,456,510,558):
     mask=np.zeros((h,w,3),dtype=np.uint8)
     mask[:,:,0]=np.where(bm & ~am,255,0); mask[:,:,1]=np.where(am & bm,255,0); mask[:,:,2]=np.where(am & ~bm,255,0)
     Image.fromarray(mask,'RGB').save(p/f'{tick}_coverage_iou.png')
-    row={'tick':tick,'authored_ink_coverage_iou':float(inter/union) if union else None,'coverage_union':int(union),
+    row={'tick':tick,'authored_light_write_coverage_iou':float(inter/union) if union else None,'coverage_union':int(union),
          **metrics,'regions':regions,'scope':'C16 original membrane wedges and branching veins only, on zero base, seed119785; no other growth, post or world'}
     rows.append(row); print('C16_MEMBRANES_COMPARE',json.dumps({k:v for k,v in row.items() if k!='regions'}),flush=True)
 (p/'comparison.json').write_text(json.dumps(rows,indent=2))
