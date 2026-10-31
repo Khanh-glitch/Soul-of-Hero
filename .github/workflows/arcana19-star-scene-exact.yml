@@ -1,0 +1,64 @@
+name: ARCANA19 full-source star hoist exact comparison
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths:
+      - 'prototypes/arcana_fusion20/renderer/source_d/d_fx.gd'
+      - 'prototypes/arcana_fusion20/renderer/d19_pass_compare.gd'
+      - '.github/workflows/arcana19-star-scene-exact.yml'
+permissions:
+  contents: read
+jobs:
+  scene:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Build isolated immediate pre-hoist source checkout
+        run: |
+          set -euo pipefail
+          git worktree add --detach "$RUNNER_TEMP/d19-before" 6fd259e5110d67600e658583c5c7b311249d7ff2
+          godot --headless --path "$RUNNER_TEMP/d19-before" --import > old-import.log 2>&1
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' old-import.log
+      - name: Capture prior and current D source scenes
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/d19-before/artifacts/arcana19-pass-source" artifacts/arcana19-pass-source
+          timeout 600s godot --headless --path "$RUNNER_TEMP/d19-before" --script res://prototypes/arcana_fusion20/renderer/d19_pass_compare.gd > old.log 2>&1
+          grep -Fq D19_NATIVE_SOURCE_CAPTURE_COMPLETE old.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|ERROR:' old.log
+          godot --headless --path . --import > new-import.log 2>&1
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' new-import.log
+          timeout 600s godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/d19_pass_compare.gd > new.log 2>&1
+          grep -Fq D19_NATIVE_SOURCE_CAPTURE_COMPLETE new.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|ERROR:' new.log
+      - name: Require byte-exact all-channel source scene fields
+        run: |
+          set -euo pipefail
+          for tick in 72 192 312 489 510; do
+            for mode in native ldr ldr8; do
+              cmp "$RUNNER_TEMP/d19-before/artifacts/arcana19-pass-source/${mode}_${tick}.scene.rgb32f" "artifacts/arcana19-pass-source/${mode}_${tick}.scene.rgb32f"
+            done
+            echo "::notice title=D19_STAR_SCENE_EXACT::tick=$tick native/ldr/ldr8 byte-identical"
+          done
+      - name: Surface first errors
+        if: always()
+        run: |
+          for f in old-import.log old.log new-import.log new.log; do test -f "$f" && grep -E -A 3 'SCRIPT ERROR:|Parse Error:|ERROR:' "$f" | head -20 | sed 's/^/::notice title=D19_STAR_SCENE_ERROR::/' || true; done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcana19-star-full-scene-exact
+          path: |
+            old-import.log
+            old.log
+            new-import.log
+            new.log
