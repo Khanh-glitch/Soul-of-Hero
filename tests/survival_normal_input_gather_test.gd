@@ -278,6 +278,16 @@ func _walk_to_kind(ow: Node, hero: CharacterBody2D, navigation: OverworldTravers
 func _within(hero: CharacterBody2D, node: SurvivalResourceNode) -> bool:
 	return hero.global_position.distance_to(node.global_position) <= SurvivalResourceNode.REACH
 
+## The job id whose target recipe is `target`, or "" when nothing queued.
+func _job_target(target: String) -> String:
+	var host: Node = _host.get_child(0).get(&"economy_session")
+	for key: Variant in (host.call(&"jobs") as Dictionary).keys():
+		var job: Dictionary = (host.call(&"jobs") as Dictionary)[key]
+		if String(job.get("target", "")) == target:
+			return String(key)
+	return ""
+
+
 func _click_window(position: Vector2) -> void:
 	var motion := InputEventMouseMotion.new()
 	motion.position = position
@@ -653,12 +663,18 @@ func _body() -> void:
 		_body_complete = true
 		return
 	await _click_window(root.get_final_transform() * (weave_button.get_global_transform_with_canvas() * (weave_button.size * 0.5)))
-	var weave_id := ""
-	for key: Variant in (host.call(&"jobs") as Dictionary).keys():
-		var candidate_job: Dictionary = (host.call(&"jobs") as Dictionary)[key]
-		if String(candidate_job.get("target", "")) == "weave_cloth":
-			weave_id = String(key)
-	_expect(not weave_id.is_empty() and _count("reed_fibre") == fibre_before, "workbench GUI reserves player-gathered reeds")
+	var weave_id := _job_target("weave_cloth")
+	if weave_id.is_empty():
+		# A player whose first click does not take clicks again rather than
+		# concluding the bench is broken; the second press is ordinary input too.
+		await create_timer(0.4).timeout
+		await _click_window(root.get_final_transform() * (weave_button.get_global_transform_with_canvas() * (weave_button.size * 0.5)))
+		weave_id = _job_target("weave_cloth")
+	# Two facts, two labels: a missing job and an unchanged reed count are different
+	# failures and must not share one sentence.
+	_expect(not weave_id.is_empty(), "workbench GUI queues the weave job (%s)" % weave_id)
+	_expect(_count("reed_fibre") == fibre_before,
+		"workbench GUI reserves player-gathered reeds (reed_fibre %d->%d)" % [fibre_before, _count("reed_fibre")])
 	if weave_id.is_empty():
 		_body_complete = true
 		return
