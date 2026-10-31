@@ -258,6 +258,20 @@ func _spatial_compare(bytes: PackedByteArray, ref_path: String) -> Dictionary:
                 best = m
                 best_key = "%d,%d" % [sx, sy]
     var iou := 1.0 if union == 0 else float(inter) / float(union)
+    var go := {}
+    var ro := {}
+    for yy in range(BRenderer.H):
+        for xx in range(BRenderer.W):
+            var oo := (yy * BRenderer.W + xx) * 4
+            var ga2: bool = bytes[oo + 3] > 0
+            var ra2: bool = rb[oo + 3] > 0
+            if ga2 == ra2:
+                continue
+            var key2 := "%d,%d" % [xx * 8 / BRenderer.W, yy * 6 / BRenderer.H]
+            if ga2:
+                go[key2] = int(go.get(key2, 0)) + 1
+            else:
+                ro[key2] = int(ro.get(key2, 0)) + 1
     var gb := [9999, 9999, -1, -1]
     var rb2 := [9999, 9999, -1, -1]
     var gc := [0.0, 0.0]
@@ -281,7 +295,7 @@ func _spatial_compare(bytes: PackedByteArray, ref_path: String) -> Dictionary:
         if rb[o] != 0 or rb[o + 1] != 0 or rb[o + 2] != 0:
             ref_rgb_nz += 1
         ref_sum = (ref_sum + rb[o] * 3 + rb[o + 1] * 5 + rb[o + 2] * 7) & 0xFFFFFFFF
-    return {"ref_w": ref.get_width(), "ref_h": ref.get_height(), "ref_nz": ref_nz, "ref_rgb_nz": ref_rgb_nz, "ref_sum": ref_sum, "iou": iou, "mae": mae / maxf(1.0, float(npix)), "maxerr": maxerr, "regions": regions, "shift_mae": best, "shift": best_key, "gbbox": "%d,%d-%d,%d" % [gb[0], gb[1], gb[2], gb[3]], "rbbox": "%d,%d-%d,%d" % [rb2[0], rb2[1], rb2[2], rb2[3]], "gcen": "%.0f,%.0f" % [gc[0] / maxf(1.0, float(inter + (union - inter))), gc[1] / maxf(1.0, float(inter + (union - inter)))], "rcen": "%.0f,%.0f" % [rc[0] / maxf(1.0, float(ref_nz_count(rb))), rc[1] / maxf(1.0, float(ref_nz_count(rb)))]}
+    return {"ref_w": ref.get_width(), "ref_h": ref.get_height(), "ref_nz": ref_nz, "ref_rgb_nz": ref_rgb_nz, "ref_sum": ref_sum, "iou": iou, "mae": mae / maxf(1.0, float(npix)), "maxerr": maxerr, "regions": regions, "shift_mae": best, "shift": best_key, "gbbox": "%d,%d-%d,%d" % [gb[0], gb[1], gb[2], gb[3]], "rbbox": "%d,%d-%d,%d" % [rb2[0], rb2[1], rb2[2], rb2[3]], "go": str(go), "ro": str(ro), "gcen": "%.0f,%.0f" % [gc[0] / maxf(1.0, float(inter + (union - inter))), gc[1] / maxf(1.0, float(inter + (union - inter)))], "rcen": "%.0f,%.0f" % [rc[0] / maxf(1.0, float(ref_nz_count(rb))), rc[1] / maxf(1.0, float(ref_nz_count(rb)))]}
 
 ## C-family spatial parity vs original C spells (stage loop, seeds per
 ## spell index: seed = 1000 + index*7919).
@@ -339,4 +353,4 @@ func _c_parity(label: String, fx: RefCounted, prefix: String) -> void:
                         nz += 1
                 print("::notice::" + label + "_SPATIAL ", key, " t=", t, " iou=", snappedf(float(sp.get("iou", 0.0)), 0.0001), " mae=", snappedf(float(sp.get("mae", 99.0)), 0.01), " shift=", sp.get("shift", "?"), "@", snappedf(float(sp.get("shift_mae", 99.0)), 0.01), " nz=", nz, "/", int(meta[key].nonzero))
                 if float(sp.get("iou", 0.0)) < 0.90 or float(sp.get("mae", 99.0)) > 6.0:
-                    _fail("%s spatial %s iou=%f mae=%f nz=%d/%d shift=%s@%f gbb=%s rbb=%s" % [label, key, float(sp.get("iou", 0.0)), float(sp.get("mae", 99.0)), nz, int(meta[key].nonzero), str(sp.get("shift", "?")), float(sp.get("shift_mae", 99.0)), str(sp.get("gbbox", "?")), str(sp.get("rbbox", "?"))])
+                    _fail("%s spatial %s iou=%f mae=%f nz=%d/%d shift=%s@%f gbb=%s rbb=%s go=%s ro=%s" % [label, key, float(sp.get("iou", 0.0)), float(sp.get("mae", 99.0)), nz, int(meta[key].nonzero), str(sp.get("shift", "?")), float(sp.get("shift_mae", 99.0)), str(sp.get("gbbox", "?")), str(sp.get("rbbox", "?")), str(sp.get("go", "?")), str(sp.get("ro", "?"))])
