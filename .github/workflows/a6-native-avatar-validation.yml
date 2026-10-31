@@ -113,11 +113,19 @@ jobs:
       # a proxy character, and that a changed identity re-resolves.
       - name: Avatar consumer contract (no licensed art required)
         run: |
-          set -euo pipefail
+          # No `set -e` here on purpose: when the harness times out, the only useful
+          # artefact is the log it had already written, and `set -e` would exit before
+          # printing it. A timeout used to surface as nothing but "exit code 124".
+          set -uo pipefail
           timeout --signal=TERM --kill-after=15s 300s godot --headless --path . \
             res://tests/survival/ui/player_avatar_consumer_contract_test.tscn \
             2>&1 | tee .artifacts/consumer-contract.log
-          grep -q "A6 AVATAR CONSUMER CONTRACT PASSED" .artifacts/consumer-contract.log
+          status=${PIPESTATUS[0]}
+          if [ "${status}" -ne 0 ] || ! grep -q "A6 AVATAR CONSUMER CONTRACT PASSED" .artifacts/consumer-contract.log; then
+            echo "::error::consumer contract exit=${status} (124 = the harness itself hung)"
+            tail -25 .artifacts/consumer-contract.log | sed 's/^/::error::/'
+            exit 1
+          fi
           echo "CONSUMER CONTRACT PASSED" >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/upload-artifact@v4
