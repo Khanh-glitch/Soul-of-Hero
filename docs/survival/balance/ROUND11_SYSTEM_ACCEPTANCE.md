@@ -478,11 +478,12 @@ The probe records the gate that stopped it instead of passing it by proxy.
 ### 8.3 What a player can and cannot do on `c5eb573bfadb`
 
 **Can:** spawn safely; walk the world; scavenge wood/stone/iron by hand; craft a pick and use it
-with atomic wear; place foundations, walls, a chest, a bed, a furnace, a workbench, a research
-station and a garden; deposit and withdraw ordinary materials; start a paid furnace job, leave, come
-back in a new process, collect once; die into one bag and recover it; expire a run; reset and carry
-benefits forward; play the whole thing in 19.8 s of engine time without a single frame being
-rendered here.
+with atomic wear; place a chest and a furnace through the player's own door (the other seven pieces
+are priced and offered by the same door, though round 11 did not build them); deposit and withdraw
+ordinary materials; start a paid furnace job, leave, come back in a new process, collect once; die
+into one bag and recover it; have a run reach `state=expired` and be closed by the product's own
+`settle_expiry`; reset and carry benefits forward. The first-hour probe performs the whole loop in
+19.8 s of wall clock, and not one frame of it was rendered here.
 
 **Cannot:** see a character (no avatar in the composition); start with a knife (no such item); find
 a Skill Core; use a Skill Core; store a Skill Core; research a Core; meet anything that can hurt
