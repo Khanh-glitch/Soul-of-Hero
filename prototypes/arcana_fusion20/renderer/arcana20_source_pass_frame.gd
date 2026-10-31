@@ -61,6 +61,7 @@ var d_rgb: PackedFloat32Array
 var d_influence: PackedByteArray
 var d_bends: Array[Dictionary]
 var d_bloom_gain: float
+var d_shake_amplitude: float
 
 # Presentation state is per cast; consumer arbitrates overlap and cleanup and
 # must keep HUD outside the world post. C-local vs B-local ticks are explicit.

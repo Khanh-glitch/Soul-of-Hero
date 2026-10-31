@@ -55,3 +55,39 @@ jobs:
                       im=im.resize((int(im.width*.85),int(im.height*.85)),Image.Resampling.NEAREST)
                   print(f'::notice title=JOIN_IMAGE_{name}::{data}',flush=True)
           PY
+      - name: Inspect source B impact crop
+        run: |
+          python3 - <<'PY'
+          import base64, io, pathlib
+          from PIL import Image,ImageChops
+          root=next(pathlib.Path('review').rglob('arcana20-join'))
+          a=Image.open(root/'world_before.png').convert('RGB')
+          b=Image.open(root/'world_02_tick180.png').convert('RGB')
+          box=ImageChops.difference(a,b).getbbox()
+          if not box: raise SystemExit('no visible change')
+          cx=(box[0]+box[2])//2; cy=(box[1]+box[3])//2
+          crop=(max(0,cx-110),max(0,cy-110),min(b.width,cx+110),min(b.height,cy+110))
+          f=io.BytesIO(); b.crop(crop).quantize(colors=32).save(f,format='PNG',optimize=True)
+          data=base64.b64encode(f.getvalue()).decode(); chunks=[data[i:i+3500] for i in range(0,len(data),3500)]
+          if len(chunks)>9: raise SystemExit('crop too large')
+          for i,c in enumerate(chunks): print(f'::notice title=B_CROP_{i:02d}_OF_{len(chunks):02d}::{c}',flush=True)
+          print('bounding box',box,'crop',crop,'resolution',b.size)
+          PY
+      - name: Inspect source C impact crop
+        run: |
+          python3 - <<'PY'
+          import base64, io, pathlib
+          from PIL import Image,ImageChops
+          root=next(pathlib.Path('review').rglob('arcana20-join'))
+          a=Image.open(root/'world_before.png').convert('RGB')
+          b=Image.open(root/'world_17_tick180.png').convert('RGB')
+          box=ImageChops.difference(a,b).getbbox()
+          if not box: raise SystemExit('no visible change')
+          cx=(box[0]+box[2])//2; cy=(box[1]+box[3])//2
+          crop=(max(0,cx-110),max(0,cy-110),min(b.width,cx+110),min(b.height,cy+110))
+          f=io.BytesIO(); b.crop(crop).quantize(colors=32).save(f,format='PNG',optimize=True)
+          data=base64.b64encode(f.getvalue()).decode(); chunks=[data[i:i+3500] for i in range(0,len(data),3500)]
+          if len(chunks)>9: raise SystemExit('crop too large')
+          for i,c in enumerate(chunks): print(f'::notice title=C_CROP_{i:02d}_OF_{len(chunks):02d}::{c}',flush=True)
+          print('bounding box',box,'crop',crop,'resolution',b.size)
+          PY

@@ -137,7 +137,7 @@ func source_pass_frame() -> Arcana20SourcePassFrame:
     result.d_bends = _eng.fx.world_bends.duplicate(true)
     result.d_bloom_gain = _eng.fx.bloom_gain
     result.flash = _eng.fx.flash_col * _eng.fx.flash_amt
-    result.shake = Vector2(_eng.fx.shake, _eng.fx.shake)
+    result.d_shake_amplitude = _eng.fx.shake
     return result
 
 func diagnostics() -> Dictionary:

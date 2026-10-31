@@ -253,6 +253,10 @@ func _run() -> void:
     var f := FileAccess.open(OUTPUT + "/contamination.json", FileAccess.WRITE)
     f.store_string(JSON.stringify({"stats": stats, "scope": "frozen actual overworld; one tick; experimental A/B/C terrain passes only; #04 is an unapproved redesign candidate; not source fidelity, gameplay, post, actor depth or approval"}, "  "))
     f.close()
+    passes.clear()
+    app.queue_free()
+    await process_frame
+    await process_frame
     _finish()
 
 func save_fields(id: StringName, frame: Arcana20SourcePassFrame) -> void:
