@@ -115,7 +115,7 @@ func _fire_col(h: float) -> Vector3:
         if t <= b.x:
             var k := clampf((t - a.x) / maxf(0.00001, b.x - a.x), 0.0, 1.0)
             return Vector3(lerpf(a.y,b.y,k), lerpf(a.z,b.z,k), lerpf(a.w,b.w,k))
-    var last := FIRE_RAMP.back()
+    var last: Vector4 = FIRE_RAMP[FIRE_RAMP.size() - 1]
     return Vector3(last.y,last.z,last.w)
 
 
