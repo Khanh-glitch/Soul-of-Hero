@@ -148,6 +148,10 @@ jobs:
           print('R13_COMPOSED_SOURCE', json.dumps(value, sort_keys=True))
           PY
       - name: Stage SHA-locked D051 base art privately on the runner only
+        id: licensed_art
+        # Native controller/world diagnostics still run on a transport failure;
+        # the mandatory final gate below keeps the overall R13 job FAILED.
+        continue-on-error: true
         env:
           A6_ASSET_REPO: Khanh-glitch/APEX-CHAOS
           # Optional existing repository secret; never echo or request a value.
@@ -204,12 +208,18 @@ jobs:
         run: |
           set -uo pipefail
           mkdir -p artifacts/ud_a1_r13_native
+          art_args=()
+          if [ "${{ steps.licensed_art.outcome }}" = "success" ]; then
+            art_args+=(--require-d051-art)
+          else
+            echo 'R13 DIAGNOSTIC MODE: licensed D051 art unavailable; real body/world evidence only; final gate remains FAILED'
+          fi
           timeout --signal=TERM --kill-after=15s 1200s xvfb-run -a -s "-screen 0 3840x2160x24" \
             env LIBGL_ALWAYS_SOFTWARE=1 SOUL_OF_HERO_SAVE_PATH="user://r13_continent_seam_identity.json" \
             godot --path .composition --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy \
             --user-data-dir artifacts/ud_a1_r13_native --windowed --fixed-fps 60 \
             --script res://tests/survival/world/r13_continent_seam_native_test.gd -- \
-            --out-root="$GITHUB_WORKSPACE/artifacts/a1-r13-continent-seam" --require-d051-art \
+            --out-root="$GITHUB_WORKSPACE/artifacts/a1-r13-continent-seam" "${art_args[@]}" \
             >artifacts/a1-r13-continent-seam/godot-r13.log 2>&1
           rc=$?
           echo "R13 native exit_code=$rc"
@@ -232,10 +242,14 @@ jobs:
           grep -q 'actual A8 approach journey physically returns to retreat quarry' "$log"
           grep -q 'actual A8 approach journey physically returns to retreat orchard' "$log"
           grep -q 'physical crossing changes region and chunk but never world identity' "$log"
+          art_args=()
+          if [ "${{ steps.licensed_art.outcome }}" = "success" ]; then
+            art_args+=(--require-d051-art)
+          fi
           python3 tools/survival/worldgen/validate_r13_continent_seam.py \
             --report artifacts/a1-r13-continent-seam/r13_native_report.json \
             --manifest data/survival/world/a1_continent_interface.v1.json \
-            --project .composition --require-d051-art \
+            --project .composition "${art_args[@]}" \
             --out artifacts/a1-r13-continent-seam/native_validation.json
       - name: Upload exact-head R13 evidence without private source sheets
         if: always()
@@ -254,3 +268,22 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: python tools/ci/mirror_native_evidence.py --root artifacts/a1-r13-continent-seam
+      - name: Enforce licensed D051 source availability after preserving diagnostics
+        if: always()
+        env:
+          LICENSED_ART_OUTCOME: ${{ steps.licensed_art.outcome }}
+        run: |
+          set -euo pipefail
+          if [ "$LICENSED_ART_OUTCOME" != "success" ]; then
+            echo "::error::R13 INCOMPLETE: licensed D051 source transport failed; semantic/native artifacts are diagnostic only"
+            exit 1
+          fi
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('artifacts/a1-r13-continent-seam/r13_native_report.json').read_text())
+          assert report.get('d051_art_required') is True
+          assert report.get('d051_art_staged') is True
+          assert report.get('dispositions', {}).get('D051_LICENSED_ART_STAGED') == 'PASS'
+          print('R13 licensed D051 art and semantic native evidence both present; visual acceptance remains separate')
+          PY

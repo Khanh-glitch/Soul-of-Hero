@@ -130,6 +130,8 @@ The primary source tree is never modified by these probes; altered manifests/sce
 
 The workflow composes the exact SHAs above, stages the two SHA-locked D051 base packs privately on the runner, initializes InputBootstrap, uses the real A0/A6 scene and real A8 shells, and drives every approach/door/retreat through movement actions. Only labelled independent test resets write coordinates. The isolated profile may select the canonical male identity through A0's real projection API; this is not production save acceptance and no world/run/economy save mutation is claimed.
 
+If the licensed archive transport is unavailable, the workflow may still publish **diagnostic no-art** controller/world evidence with `d051_art_staged:false` and `D051_LICENSED_ART_STAGED:BLOCKED_SOURCE_TRANSPORT`. A mandatory final step keeps the overall R13 job failed in that case. Those diagnostic frames are not D051 evidence, visual acceptance, or a substitute sprite authorization.
+
 Expected artifact: `a1-r13-continent-seam-native-evidence`, containing the report, independent validation, source provenance, exact composed-tree identity and 15 native PNGs:
 
 - Quarry day and night at 720p/1440p/2160p;

@@ -726,6 +726,7 @@ func _verify_capture_pairs() -> void:
 
 func _finish() -> void:
 	_release_input()
+	var art_staged := bool(avatar_state.get("ready", false)) and bool(avatar_state.get("has_avatar_sprite", false))
 	var report := {
 		"schema": "soh.world.a1_r13_continent_seam_native_report.v1",
 		"ok": failures.is_empty() and not abort, "checks": checks, "failures": failures, "abort": abort,
@@ -742,6 +743,8 @@ func _finish() -> void:
 		},
 		"source_report": continent.source_report() if continent != null else {},
 		"avatar": avatar_state, "identity_selection": identity_selection,
+		"d051_art_required": require_d051_art,
+		"d051_art_staged": art_staged,
 		"spawn_results": spawn_results, "initial_spawn": initial_spawn,
 		"site_arrivals": site_arrivals, "journeys": journeys, "negative_controls": negative_controls,
 		"captures": captures, "chunk_transitions": chunk_transitions, "region_transitions": region_transitions,
@@ -759,6 +762,7 @@ func _finish() -> void:
 			"COMPOSED_NATIVE_SEAM": "PASS" if failures.is_empty() and not abort else "FAIL",
 			"PRODUCTION_MOUNTED": "NOT_TESTED", "PLAYER_PLAYABLE": "NOT_TESTED",
 			"VISUALLY_ACCEPTED": "NOT_TESTED", "D051_VISUALLY_ACCEPTED": "NOT_TESTED",
+			"D051_LICENSED_ART_STAGED": "PASS" if art_staged else "BLOCKED_SOURCE_TRANSPORT",
 			"A8_INTERIOR_OR_LOOT_ACCEPTED": "NOT_TESTED",
 		},
 		"scope": "R13_ISOLATED_EXACT_OWNER_COMPOSITION_REAL_CONTROLLER_AND_A8_SHELLS_NOT_PRODUCTION",

@@ -132,10 +132,13 @@ def validate(report: dict, manifest: dict, project: Path, require_d051_art: bool
     if require_d051_art:
         avatar = report.get("avatar", {})
         projection = report.get("identity_selection", {}).get("projection", {})
-        check("real_d051_presenter_active", avatar.get("ready") and avatar.get("gender") == "male"
+        check("real_d051_presenter_active", report.get("d051_art_staged") is True
+              and avatar.get("ready") and avatar.get("gender") == "male"
               and avatar.get("has_avatar_sprite") and projection.get("gender") == "male"
               and projection.get("provenance") == "A0_OWNER_PROJECTION", avatar)
     dispositions = report.get("dispositions", {})
+    check("honest_d051_art_staging_disposition",
+          bool(report.get("d051_art_staged")) == (dispositions.get("D051_LICENSED_ART_STAGED") == "PASS"))
     check("scoped_dispositions", dispositions.get("SOURCE_INTERFACE_READY") == "PASS"
           and dispositions.get("COMPOSED_NATIVE_SEAM") == "PASS"
           and all(dispositions.get(key) == "NOT_TESTED" for key in
@@ -161,6 +164,8 @@ def main() -> int:
     failed = [row for row in checks if not row["ok"]]
     result = {"schema": "soh.world.a1_r13_native_validation.v1", "ok": not failed,
               "checks": checks, "check_count": len(checks), "failures": failed,
+              "d051_art_required": args.require_d051_art,
+              "d051_art_staged": bool(report.get("d051_art_staged")),
               "scope": "NATIVE_SOURCE_INTERFACE_ONLY_NOT_PRODUCTION_OR_VISUAL_ACCEPTANCE"}
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
