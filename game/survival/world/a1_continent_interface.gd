@@ -36,6 +36,23 @@ func _source_path(path: String) -> String:
 	return path if path.begins_with("res://") or path.begins_with("user://") or path.begins_with("/") else "res://" + path
 
 
+func _int_list(value: Variant) -> Array:
+	# Godot JSON numbers are floats. Normalize only finite integral values so
+	# identity comparisons remain exact without accepting strings/fractions.
+	var result: Array = []
+	if not value is Array:
+		return result
+	for item: Variant in value:
+		var kind := typeof(item)
+		if kind != TYPE_INT and kind != TYPE_FLOAT:
+			return []
+		var number := float(item)
+		if not is_finite(number) or number != floor(number):
+			return []
+		result.append(int(number))
+	return result
+
+
 func _fail(reason: String) -> bool:
 	last_error = reason
 	return false
@@ -59,8 +76,8 @@ func configure(world_root: String = DEFAULT_WORLD_ROOT, player_scene_override: S
 		return _fail("interface_manifest_schema")
 	var world: Dictionary = manifest.get("world", {})
 	if String(world.get("world_id", "")) != "world:soh_continent_v1" \
-			or world.get("cell_size_px", []) != [16, 16] or world.get("cell_origin_px", []) != [0, 0] \
-			or world.get("world_size_cells", []) != [1024, 768] or world.get("chunk_cells", []) != [64, 64] \
+			or _int_list(world.get("cell_size_px", [])) != [16, 16] or _int_list(world.get("cell_origin_px", [])) != [0, 0] \
+			or _int_list(world.get("world_size_cells", [])) != [1024, 768] or _int_list(world.get("chunk_cells", [])) != [64, 64] \
 			or int(world.get("chunk_count", 0)) != 192:
 		return _fail("interface_world_identity")
 	var runtime: Dictionary = manifest.get("runtime", {})
@@ -100,11 +117,11 @@ func configure(world_root: String = DEFAULT_WORLD_ROOT, player_scene_override: S
 		var approach: Dictionary = descriptor.get("physical_approach", {})
 		var door: Dictionary = descriptor.get("door_target", {})
 		var shell: Dictionary = descriptor.get("shell", {})
-		if descriptor.get("canonical_cell", []) != physical.get("canonical_cell", []) \
-				or approach.get("cell", []) != physical.get("approach_cell", []) \
-				or approach.get("actor_origin_px", []) != physical.get("approach_foot_world_px", []) \
-				or door.get("world_px", []) != physical.get("entry_portal_world_px", []) \
-				or shell.get("origin_world_px", []) != physical.get("shell_origin_world_px", []) \
+		if _int_list(descriptor.get("canonical_cell", [])) != _int_list(physical.get("canonical_cell", [])) \
+				or _int_list(approach.get("cell", [])) != _int_list(physical.get("approach_cell", [])) \
+				or _int_list(approach.get("actor_origin_px", [])) != _int_list(physical.get("approach_foot_world_px", [])) \
+				or _int_list(door.get("world_px", [])) != _int_list(physical.get("entry_portal_world_px", [])) \
+				or _int_list(shell.get("origin_world_px", [])) != _int_list(physical.get("shell_origin_world_px", [])) \
 				or String(shell.get("scene", "")) != String(physical.get("shell_scene", "")) \
 				or String(identity.get("poi_id", "")) != String(physical.get("poi_id", "")):
 			return _fail("interface_site_transform:" + key)
