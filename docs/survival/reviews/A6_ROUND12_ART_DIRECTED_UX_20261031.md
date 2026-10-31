@@ -115,6 +115,32 @@ art.
 | chest | `game/survival/chest_inventory_panel.gd` | Bag/chest lists with icons, catalog names, quantities, pack capacity, empty states, and honest "no art" for ids without a picture. |
 | refusal copy | `game/overworld/chapter1_overworld.gd` | A refused placement names the missing material from `SurvivalService.missing_for()` instead of "Not enough materials." |
 
+### 2.3 Final icon table (21 bindings)
+
+| concept / item id | member | reads as |
+| --- | --- | --- |
+| `oak_wood` | `Icon75_1` | bundle of split logs |
+| `stone_chunk` | `Icon19_1` | faceted grey rock |
+| `iron_scrap` | `Icon20_1` | lump of grey metal-bearing rock |
+| `iron_ingot` | `Icon21_1_2` (32px) | cast silver ingot |
+| `reed_fibre` | `Icon99_1` | green leaf cluster |
+| `fire_wood` | `Icon27_1` | glowing golden fuel bundle |
+| `crystal_shard` | `Icon29_1` | blue crystal cluster |
+| `frost_shard` | `Icon16_1` | cold blue gem cluster |
+| `moonleaf_seed` | `Icon73_1` | sapling |
+| `furnace_kit` | `Icon102_1` | cauldron on coals |
+| `workbench_kit` | `Icon54_1` | hammer |
+| `research_kit` | `Icon25_1` | spark of insight |
+| `garden_kit` | `Icon74_1` | potted plant |
+| `station_kit` | `Icon53_1` | pickaxe |
+| `knife` | `Icon57_1` | short blue blade |
+| `field_meal` | `Icon92_1` | bowl of stew |
+| `health` | `Icon1_1` | red cross |
+| `camp_light` | `Icon42_1` | lit lantern |
+| `time_dawn` | `Icon49_1` | hourglass |
+| `capacity` | `Icon48_1` | pouch |
+| `travel` | `Icon44_1` | compass |
+
 ## 5. Gates
 
 Exact commit at the time of writing: `452d4d74` (frames and results are added as they
@@ -124,7 +150,8 @@ arrive; the commit that a result belongs to is stated with it).
 | --- | --- | --- |
 | R0 source provenance | fetch script asserts commits + SHA-256; receipt re-hashed | **PASS** (local, `29 assets, 0 problems`) |
 | R1 art fidelity | nine-slice stress sheet at 2–3× inspected by eye; two bad crops and two bad icon bindings found and fixed | **PASS** (local) |
-| R2 project integrity | `tools/review/scene_lint.py` over all 134 scenes/resources: 0 problems; every `game/**/*.gd` and `tests/**/*.gd` parses under gdtoolkit | **PASS** (local, `452d4d74`) |
+| R2 project integrity | `tools/review/scene_lint.py` over all 134 scenes/resources: 0 problems; every `game/**/*.gd` and `tests/**/*.gd` parses under gdtoolkit (only the intentionally-broken fixture fails); scene references, `%UniqueName` ownership, theme variations and `load_steps` all checked | **PASS** (local, `8b39f756`) |
+| R2b UI layer test | `tests/survival/ui/a6_ui_layer_test.tscn` — icons have files and pinned commits, unknown ids return null, theme variations exist, button skin is authored art, HUD/workshop/chest build and refuse invalid context | **NOT_TESTED** — written (`e88f2cee`), runs in the render job |
 | R3 native gameplay suites | A0/A3/A6 headless suites | **NOT_TESTED** — queued on GitHub runners at the time of writing |
 | R4 native renders 720/1440/2160 | `a6-survival-ui-render.yml` publishes frames to `docs/survival/reviews/native/` | **NOT_TESTED** — queued |
 | R5 visual acceptance by eye | inspection of R4 frames at each resolution | **NOT_TESTED** — depends on R4 |
@@ -164,6 +191,26 @@ each screen's own layout to fit the window it was drawn in.
   fix needs real position/velocity/displacement assertions after Continue, with and
   without a pending death, and a diagnosis of input versus capture harness. Marked
   **NOT_TESTED**, not passed.
-* **Return-after-offline UI** — its cards are still skinned with `StyleBoxFlat`
-  button shells (`a6_run_card.tscn`). Replacing them is the next visual step; the
-  frames from `a6-return-ui-render.yml` are the place to judge the replacement.
+* **Return-after-offline UI** — the season chip is now authored parchment, but the
+  guidance/digest/record panels keep their older surfaces; judging them needs the
+  published frames.
+* **No standalone pack screen.** §3C's list view exists in the chest (bag side) and
+  the workshop (costs and outputs), but there is no full-screen pack browser, because
+  the only free key (`I`/`TAB`) is already bound to `field_codex` and inventing a
+  second binding for the same key would be a gameplay change nobody asked for. Pack
+  contents, capacity and empty/full state are all visible; browsing every stack as a
+  grid is the remaining piece. *Handoff A0: an input action for a pack surface, or a
+  decision to reuse `field_codex` in the overworld.*
+
+## 8. Commits
+
+| commit | what |
+| --- | --- |
+| `9afb7c8c` | art-directed survival interface: kit, theme, identity step, HUD, workshop, chest, render workflow |
+| `78a11963` | title screen rewritten for the survival run |
+| `fe3c9da3` | build strip on authored wood; shortfall named on refusal |
+| `452d4d74` | icon bindings re-verified against members; two wrong bindings fixed |
+| `83f23828` | HUD pack snapshot sampled at 4 Hz |
+| `3b86a3cc` | season card on parchment; return frames included in the published set |
+| `e88f2cee` | mechanical UI layer test + lint/parse jobs in CI |
+| `8b39f756` | HUD built directly on its CanvasLayer |
