@@ -116,11 +116,26 @@ func _init() -> void:
     c_batch.begin(Vector2(104, 132), Vector2(262, 104), "thunderloom")
     c_single.set_process(false)
     c_batch.set_process(false)
+    c_single.render_enabled = false
+    c_batch.render_enabled = false
+    # Advance to an active development stage rather than comparing blank
+    # opening frames. Updates and events still run on every fixed tick.
+    for i in range(90):
+        c_single.advance(1.0 / 60.0)
+        c_batch.advance(1.0 / 60.0)
+    c_single.render_enabled = true
+    c_batch.render_enabled = true
     for i in range(4):
         c_single.advance(1.0 / 60.0)
     c_batch.advance(4.0 / 60.0)
-    if c_single._tick != c_batch._tick or c_single.frame_bytes() != c_batch.frame_bytes():
-        _fail("C catch-up simulation/final frame differs from fixed-step sequence")
+    var meaningful := false
+    var c_bytes := c_single.frame_bytes()
+    for i in range(3, c_bytes.size(), 4):
+        if c_bytes[i] != 0:
+            meaningful = true
+            break
+    if not meaningful or c_single._tick != c_batch._tick or c_bytes != c_batch.frame_bytes():
+        _fail("C catch-up simulation/final active frame differs from fixed-step sequence")
     c_single.queue_free()
     c_batch.queue_free()
 
