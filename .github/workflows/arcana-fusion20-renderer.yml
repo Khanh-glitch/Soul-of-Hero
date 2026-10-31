@@ -7,6 +7,7 @@ on:
     paths:
       - 'prototypes/arcana_fusion20/renderer/**'
       - '.github/workflows/arcana-fusion20-renderer.yml'
+      - 'tools/arcana20_review/**'
 
 permissions:
   contents: read
@@ -97,6 +98,11 @@ jobs:
               imgs[0].save(out, save_all=True, append_images=imgs[1:], duration=400, loop=0)
               print('gif', out, len(imgs))
           PYEOF
+      - name: Expose source contact-sheet thumbnails for review
+        if: always()
+        run: |
+          python3 -m pip install --quiet pillow
+          python3 tools/arcana20_review/emit_thumbnails.py source
       - name: D source/native RGB spatial diagnostics (not a parity gate)
         if: always()
         shell: bash

@@ -7,6 +7,7 @@ on:
     paths:
       - 'prototypes/arcana_fusion20/renderer/**'
       - '.github/workflows/arcana20-real-scene-capture.yml'
+      - 'tools/arcana20_review/**'
 
 permissions:
   contents: read
@@ -54,6 +55,11 @@ jobs:
               sections.append(f'<section><h2>{i:02} {html.escape(name)}</h2>{imgs or "No captures produced."}</section>')
           (p / 'index.html').write_text('<!doctype html><meta charset="utf-8"><title>ARCANA real-scene diagnostics</title><style>body{background:#10121a;color:#ddd;font:14px system-ui}img{width:32%;image-rendering:pixelated}section{margin:24px 0}</style><h1>Real SOH crypt scene — AVFX direct-render diagnostics</h1><p>Actual game/main.tscn, knight, skeleton and camera. Samples: 0.5s, 55%, 93% duration; enemy and camera are repositioned between samples. No PR30 binding, gameplay hit integration, actual overworld, bright scene, real-time benchmark or visual approval is implied. <a href="manifest.json">Manifest/event positions</a>.</p><p><a href="baseline.png">Baseline</a> · <a href="overlap_02_10.png">Overlap #02 + #10</a></p>' + ''.join(sections))
           PY
+      - name: Expose real-scene thumbnails for review
+        if: always()
+        run: |
+          python3 -m pip install --quiet pillow
+          python3 tools/arcana20_review/emit_thumbnails.py scene
       - name: Upload real-scene evidence
         if: always()
         uses: actions/upload-artifact@v4
