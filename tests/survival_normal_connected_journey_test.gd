@@ -119,11 +119,16 @@ func _continuation(ow: Node) -> void:
 		return
 
 	# --- 1. the furnace's own inputs, from the world ------------------------
-	var stone := await _gather_until(ow, hero, nav, camera, "stone_outcrop", STONE, 8, 8)
+	# The furnace kit costs 8 stone + 3 scrap; the fuelled smelt costs 3 scrap and
+	# 1 charcoal, and the charcoal itself costs 2 oak. Everything is walked to and
+	# clicked by the player, in one trip, before any of it is spent.
+	var stone := await _gather_until(ow, hero, nav, camera, "stone_outcrop", STONE, 8, 10)
 	_expect(stone, "ordinary movement and clicks gather the furnace's 8 stone")
-	var scrap := await _gather_until(ow, hero, nav, camera, "scrap_pile", IRON, 3, 8)
-	_expect(scrap, "ordinary movement and clicks gather the furnace's 3 iron scrap")
-	if not stone or not scrap:
+	var wood := await _gather_until(ow, hero, nav, camera, "oak_tree", WOOD, 2, 5)
+	_expect(wood, "ordinary movement and clicks gather the charcoal's 2 oak")
+	var scrap := await _gather_until(ow, hero, nav, camera, "scrap_pile", IRON, 6, 12)
+	_expect(scrap, "ordinary movement and clicks gather the 6 iron scrap the kit and smelt need")
+	if not stone or not wood or not scrap:
 		_write_audit(ow, {})
 		return
 	var stone_before := _count(STONE)
@@ -380,29 +385,35 @@ func _diag(tag: String, ow: Node) -> void:
 # ---------------------------------------------------------------------------
 # small helpers, all expressed through ordinary input
 # ---------------------------------------------------------------------------
+## Gathering is a real walk to a real node, so a node whose approach is blocked
+## must not end the journey: the next nearest node of the same kind is tried, and
+## only running out of nodes reports a miss. Nothing is granted or teleported.
 func _gather_until(ow: Node, hero: CharacterBody2D, nav: OverworldTraversability, camera: Camera2D,
 		kind: String, item_id: String, target: int, max_swings: int) -> bool:
-	if _count(item_id) >= target:
-		return true
-	var node := await _walk_to_kind(ow, hero, nav, kind)
-	if node == null or bool(hero.get(&"dead")):
-		return false
-	camera.reset_smoothing()
-	camera.force_update_scroll()
-	await process_frame
-	var guard := 0
-	while _count(item_id) < target and guard < max_swings:
-		guard += 1
-		if not node.can_interact(hero):
-			# The node may have been spent; find the next one of the same kind.
-			node = await _walk_to_kind(ow, hero, nav, kind)
-			if node == null:
+	var tried: Array = []
+	for attempt: int in range(4):
+		if _count(item_id) >= target:
+			return true
+		var node := await _walk_to_kind(ow, hero, nav, kind, tried)
+		if node == null or bool(hero.get(&"dead")):
+			break
+		camera.reset_smoothing()
+		camera.force_update_scroll()
+		await process_frame
+		var before := _count(item_id)
+		for swing: int in range(max_swings):
+			if _count(item_id) >= target:
 				break
-			camera.reset_smoothing()
-			camera.force_update_scroll()
-			await process_frame
-		await _click_window(root.get_final_transform() * (root.get_visible_rect().size * 0.5))
-		await create_timer(0.25).timeout
+			if not node.can_interact(hero):
+				break
+			await _click_window(root.get_final_transform() * (root.get_visible_rect().size * 0.5))
+			await create_timer(0.25).timeout
+		if _count(item_id) == before:
+			# This node gave nothing: it is spent or its swings miss. Remember it
+			# and walk to the next one instead of retrying the same dead end.
+			tried.append(node.node_id)
+	print("A0_CONNECTED_GATHER kind=%s want=%d have=%d at=%s tried=%d" % [
+		kind, target, _count(item_id), str(hero.global_position), tried.size()])
 	return _count(item_id) >= target
 
 

@@ -201,7 +201,11 @@ func _escape_direction(hero: CharacterBody2D, at: Vector2, point: Vector2, attem
 			return candidate
 	return order[(attempt - 1) % order.size()] if not order.is_empty() else Vector2.ZERO
 
-func _walk_to_kind(ow: Node, hero: CharacterBody2D, navigation: OverworldTraversability, kind: String) -> SurvivalResourceNode:
+## `exclude` lets a caller that already failed on one node ask for the next one
+## instead of retrying the same blocked node forever. It is a search filter, not
+## a grant: the returned node is still reached on foot and harvested by input.
+func _walk_to_kind(ow: Node, hero: CharacterBody2D, navigation: OverworldTraversability, kind: String,
+		exclude: Array = []) -> SurvivalResourceNode:
 	var start := navigation.cell_of(hero.global_position)
 	var distances := navigation.reachable_from(start)
 	var goal := Vector2i(-1, -1)
@@ -210,7 +214,9 @@ func _walk_to_kind(ow: Node, hero: CharacterBody2D, navigation: OverworldTravers
 	var reachable_stands: Dictionary = {}
 	for raw: Variant in (ow.get(&"survival_nodes") as Dictionary).values():
 		var node := raw as SurvivalResourceNode
-		if node == null or node.resource_kind != kind or not bool(_survival().call(&"is_node_harvestable", node.node_id, kind)):
+		if node == null or node.resource_kind != kind or exclude.has(node.node_id):
+			continue
+		if not bool(_survival().call(&"is_node_harvestable", node.node_id, kind)):
 			continue
 		var node_cell := navigation.cell_of(node.global_position)
 		for dy: int in range(-1, 2):
