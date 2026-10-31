@@ -21,10 +21,28 @@
     "a3_approved_bindings": []
   },
   "owner_boundary": {
-    "a8_owns": ["local physical scenery", "collision", "scene-local approaches", "neutral interaction and transition requests"],
-    "a0_owns": ["world composition and route reachability", "world/site instance identity", "scene mount and transitions", "SaveService persistence and idempotent receipts"],
-    "a1_owns": ["canonical POI cells", "world geography and routes", "approval of approach transforms"],
-    "a3_owns": ["action/source/sink authorization", "item and currency costs/yields", "cooldowns and capability effects"],
+    "a8_owns": [
+      "local physical scenery",
+      "collision",
+      "scene-local approaches",
+      "neutral interaction and transition requests"
+    ],
+    "a0_owns": [
+      "world composition and route reachability",
+      "world/site instance identity",
+      "scene mount and transitions",
+      "SaveService persistence and idempotent receipts"
+    ],
+    "a1_owns": [
+      "canonical POI cells",
+      "world geography and routes",
+      "approval of approach transforms"
+    ],
+    "a3_owns": [
+      "action/source/sink authorization",
+      "item and currency costs/yields",
+      "cooldowns and capability effects"
+    ],
     "a8_local_save_or_inventory_authority": false,
     "a8_local_hazard_damage_authority": false,
     "a0_composition_status": "NOT_MOUNTED"
@@ -36,14 +54,27 @@
       "source_identity": {
         "world_id": "world:soh_continent_v1",
         "poi_id": "poi_crown_south_quarry",
-        "source_object_ids": ["quarry_cut_line_marks", "brace_east_shelf", "chock_west_ramp", "south_seam_outcrop", "deep_cut_counterweight_lock", "deep_seam_inscription"],
+        "source_object_ids": [
+          "quarry_cut_line_marks",
+          "brace_east_shelf",
+          "chock_west_ramp",
+          "south_seam_outcrop",
+          "deep_cut_counterweight_lock",
+          "deep_seam_inscription"
+        ],
         "physical_instance_id": null,
         "a3_action_binding": null,
         "note": "Object IDs identify A8-neutral scene events only. A3 has rejected Quarry costs and source yield; A0 must reject economic dispatch until a current A3 binding and A0-issued instance exist."
       },
-      "canonical_cell": [30, 280],
+      "canonical_cell": [
+        30,
+        280
+      ],
       "approach_stand_cell": {
-        "cell": [30, 278],
+        "cell": [
+          30,
+          278
+        ],
         "source": "A1 ordinary safe threshold in current placement contract",
         "approval": "A1_AUTHORED_SOURCE_WINDOW_NOT_A0_PRODUCTION_MOUNT"
       },
@@ -53,37 +84,185 @@
         "definition": "res://data/survival/world_content/sites/south_quarry.json"
       },
       "mount_transform": {
-        "shell_local_action_socket_px": [64, 64],
-        "root_world_px": [424, 4424],
+        "shell_local_action_socket_px": [
+          64,
+          64
+        ],
+        "root_world_px": [
+          424,
+          4424
+        ],
         "rotation_degrees": 0,
-        "scale": [1, 1],
+        "scale": [
+          1,
+          1
+        ],
         "interior_is_separate_scene": true,
         "interior_must_not_be_scaled_or_mounted_overworld": true
       },
       "transition": {
         "contract_id": "soh.native_poi.transition.v2",
-        "entry": {"approach": "south_to_north", "shell_local_px": [64, 108], "interior_spawn_px": [480, 548]},
-        "exit": {"interior_local_px": [480, 560], "facing": "south"},
-        "return": {"same_world_id": true, "same_poi_id": true, "same_canonical_cell": true, "shell_local_px": [64, 108]}
+        "entry": {
+          "approach": "south_to_north",
+          "shell_local_px": [
+            64,
+            108
+          ],
+          "interior_spawn_px": [
+            480,
+            548
+          ]
+        },
+        "exit": {
+          "interior_local_px": [
+            480,
+            560
+          ],
+          "facing": "south"
+        },
+        "return": {
+          "same_world_id": true,
+          "same_poi_id": true,
+          "same_canonical_cell": true,
+          "shell_local_px": [
+            64,
+            108
+          ]
+        }
       },
       "collision_footprint": {
-        "shell_bounds_px": [128, 128],
-        "shell_solid_rectangles_px": [[0, 0, 128, 8], [0, 0, 8, 120], [120, 0, 8, 120], [0, 120, 44, 8], [84, 120, 44, 8]],
-        "shell_clear_doorway_px": [44, 92, 40, 36],
-        "interior_bounds_px": [960, 608],
+        "shell_bounds_px": [
+          128,
+          128
+        ],
+        "shell_solid_rectangles_px": [
+          [
+            0,
+            0,
+            128,
+            8
+          ],
+          [
+            0,
+            0,
+            8,
+            120
+          ],
+          [
+            120,
+            0,
+            8,
+            120
+          ],
+          [
+            0,
+            120,
+            44,
+            8
+          ],
+          [
+            84,
+            120,
+            44,
+            8
+          ]
+        ],
+        "shell_clear_doorway_px": [
+          44,
+          92,
+          40,
+          36
+        ],
+        "interior_bounds_px": [
+          960,
+          608
+        ],
         "interior_static_walls_source": "sites.south_quarry.walls",
         "choice_blockers_source": "sites.south_quarry.choice_blockers",
-        "deep_gate_rect_px": [468, 194, 104, 14],
-        "deep_gate_requires_owner_projection": {"capabilities": ["cap_salvage", "cap_power_1"], "state_values": {"quarry_route": ["east_braced", "west_chocked"], "quarry_deep_gate": ["open"]}},
-        "deep_scree_obstacle_rectangles_px": [[392, 80, 64, 48], [504, 80, 64, 48]],
+        "deep_gate_rect_px": [
+          468,
+          194,
+          104,
+          14
+        ],
+        "deep_gate_requires_owner_projection": {
+          "capabilities": [
+            "cap_salvage",
+            "cap_power_1"
+          ],
+          "state_values": {
+            "quarry_route": [
+              "east_braced",
+              "west_chocked"
+            ],
+            "quarry_deep_gate": [
+              "open"
+            ]
+          }
+        },
+        "deep_scree_obstacle_rectangles_px": [
+          [
+            392,
+            80,
+            64,
+            48
+          ],
+          [
+            504,
+            80,
+            64,
+            48
+          ]
+        ],
         "retreat": "The gate is one-way outward while shut; the southern doorway remains physically reachable from every authored state. No damage or HP rule is authored by A8."
       },
       "actions": {
-        "neutral_action_ids": ["inspect_cut_marks", "brace_east_shelf", "chock_west_ramp", "leave_seam_unworked", "extract_outcrop", "open_quarry_deep_gate", "survey_deep_cut"],
-        "outside_clue": {"action_id": "inspect_cut_marks", "object_id": "quarry_cut_line_marks", "requires_capabilities": [], "requires_a3_item_or_currency": false},
-        "deep_gate": {"action_id": "open_quarry_deep_gate", "requires_capabilities": ["cap_salvage", "cap_power_1"], "requires_state_values": {"quarry_route": ["east_braced", "west_chocked"]}, "owner_ready_required": true},
-        "deep_partial_information": {"action_id": "survey_deep_cut", "object_id": "deep_seam_inscription", "requires_state_values": {"quarry_deep_gate": ["open"]}, "reward": null, "a3_receipt": null},
-        "economic_salvage": {"action_id": "extract_outcrop", "object_id": "south_seam_outcrop", "a3_binding": null, "dispatch": "FAIL_CLOSED"}
+        "neutral_action_ids": [
+          "inspect_cut_marks",
+          "brace_east_shelf",
+          "chock_west_ramp",
+          "leave_seam_unworked",
+          "extract_outcrop",
+          "open_quarry_deep_gate",
+          "survey_deep_cut"
+        ],
+        "outside_clue": {
+          "action_id": "inspect_cut_marks",
+          "object_id": "quarry_cut_line_marks",
+          "requires_capabilities": [],
+          "requires_a3_item_or_currency": false
+        },
+        "deep_gate": {
+          "action_id": "open_quarry_deep_gate",
+          "requires_capabilities": [
+            "cap_salvage",
+            "cap_power_1"
+          ],
+          "requires_state_values": {
+            "quarry_route": [
+              "east_braced",
+              "west_chocked"
+            ]
+          },
+          "owner_ready_required": true
+        },
+        "deep_partial_information": {
+          "action_id": "survey_deep_cut",
+          "object_id": "deep_seam_inscription",
+          "requires_state_values": {
+            "quarry_deep_gate": [
+              "open"
+            ]
+          },
+          "reward": null,
+          "a3_receipt": null
+        },
+        "economic_salvage": {
+          "action_id": "extract_outcrop",
+          "object_id": "south_seam_outcrop",
+          "a3_binding": null,
+          "dispatch": "FAIL_CLOSED"
+        }
       },
       "clue_credential_power_hazard_conditions": {
         "quiet_entry": "Exterior marks and the south perimeter are accessible without combat or capability gating.",
@@ -97,6 +276,15 @@
         "owner_projection_only": true,
         "a0_save_service_required": true,
         "same_source_revisit": "A0 should reissue the same poi_id and durable site_instance_id after transition/reload; A8 never writes SaveService."
+      },
+      "exterior_clue": {
+        "object_id": "quarry_cut_line_marks",
+        "shell_local_px": [
+          36,
+          76
+        ],
+        "presentation": "player-facing context hint at the exterior signpost; no intent, inventory or persistence",
+        "text": "Cut marks: east brace is shorter; the lower gate needs salvage and power."
       }
     },
     "orchard": {
@@ -105,14 +293,25 @@
       "source_identity": {
         "world_id": "world:soh_continent_v1",
         "poi_id": "poi_crown_south_orchard",
-        "source_object_ids": ["clear_irrigation", "leave_for_safety", "sluice_reeds", "old_graft_marks"],
+        "source_object_ids": [
+          "clear_irrigation",
+          "leave_for_safety",
+          "sluice_reeds",
+          "old_graft_marks"
+        ],
         "physical_instance_id": null,
         "a3_action_binding": null,
         "note": "Bank reeds and graft marks are scene objects, not approved inventory yields. No item is awarded by A8."
       },
-      "canonical_cell": [140, 360],
+      "canonical_cell": [
+        140,
+        360
+      ],
       "approach_stand_cell": {
-        "cell": [140, 362],
+        "cell": [
+          140,
+          362
+        ],
         "source": "A8 proposed south approach immediately outside the canonical anchor",
         "approval": "A1_REVIEW_REQUIRED_NOT_A1_GEOGRAPHY_CHANGE"
       },
@@ -122,34 +321,166 @@
         "definition": "res://data/survival/world_content/sites/south_orchard_ruin.json"
       },
       "mount_transform": {
-        "shell_local_action_socket_px": [64, 64],
-        "root_world_px": [2184, 5704],
+        "shell_local_action_socket_px": [
+          64,
+          64
+        ],
+        "root_world_px": [
+          2184,
+          5704
+        ],
         "rotation_degrees": 0,
-        "scale": [1, 1],
+        "scale": [
+          1,
+          1
+        ],
         "interior_is_separate_scene": true,
         "interior_must_not_be_scaled_or_mounted_overworld": true
       },
       "transition": {
         "contract_id": "soh.native_poi.transition.v2",
-        "entry": {"approach": "south_to_north", "shell_local_px": [64, 108], "interior_spawn_px": [480, 548]},
-        "exit": {"interior_local_px": [480, 560], "facing": "south"},
-        "return": {"same_world_id": true, "same_poi_id": true, "same_canonical_cell": true, "shell_local_px": [64, 108]}
+        "entry": {
+          "approach": "south_to_north",
+          "shell_local_px": [
+            64,
+            108
+          ],
+          "interior_spawn_px": [
+            480,
+            548
+          ]
+        },
+        "exit": {
+          "interior_local_px": [
+            480,
+            560
+          ],
+          "facing": "south"
+        },
+        "return": {
+          "same_world_id": true,
+          "same_poi_id": true,
+          "same_canonical_cell": true,
+          "shell_local_px": [
+            64,
+            108
+          ]
+        }
       },
       "collision_footprint": {
-        "shell_bounds_px": [128, 128],
-        "shell_solid_rectangles_px": [[0, 0, 128, 8], [0, 0, 8, 120], [120, 0, 8, 120], [0, 120, 44, 8], [84, 120, 44, 8]],
-        "shell_prop_obstacles_px": [[18, 68, 12, 12], [98, 68, 12, 12]],
-        "shell_clear_doorway_px": [44, 92, 40, 36],
-        "interior_bounds_px": [960, 608],
+        "shell_bounds_px": [
+          128,
+          128
+        ],
+        "shell_solid_rectangles_px": [
+          [
+            0,
+            0,
+            128,
+            8
+          ],
+          [
+            0,
+            0,
+            8,
+            120
+          ],
+          [
+            120,
+            0,
+            8,
+            120
+          ],
+          [
+            0,
+            120,
+            44,
+            8
+          ],
+          [
+            84,
+            120,
+            44,
+            8
+          ]
+        ],
+        "shell_prop_obstacles_px": [
+          [
+            18,
+            68,
+            12,
+            12
+          ],
+          [
+            98,
+            68,
+            12,
+            12
+          ]
+        ],
+        "shell_clear_doorway_px": [
+          44,
+          92,
+          40,
+          36
+        ],
+        "interior_bounds_px": [
+          960,
+          608
+        ],
         "interior_static_walls_source": "sites.south_orchard_ruin.walls",
-        "irrigation_channel_px": [224, 272, 528, 32],
-        "owner_state_blockers_px": [[224, 272, 256, 32], [512, 272, 240, 32], [480, 272, 32, 32]],
+        "irrigation_channel_px": [
+          224,
+          272,
+          528,
+          32
+        ],
+        "owner_state_blockers_px": [
+          [
+            224,
+            272,
+            256,
+            32
+          ],
+          [
+            512,
+            272,
+            240,
+            32
+          ],
+          [
+            480,
+            272,
+            32,
+            32
+          ]
+        ],
         "return_route": "south doorway remains open regardless of channel projection; only the owner-projected flowing state removes the sluice blocker and reveals the fixed boardwalk."
       },
       "actions": {
-        "neutral_action_ids": ["clear_irrigation", "leave_for_safety", "gather_reeds", "read_water_marks"],
-        "knowledge_opportunity": {"action_id": "read_water_marks", "object_id": "old_graft_marks", "requires_state_values": {"orchard_channel": ["flowing"]}, "owner_ready_required": true, "reward": null, "a3_receipt": null},
-        "bank_reeds": {"action_id": "gather_reeds", "a3_binding": null, "dispatch": "FAIL_CLOSED"}
+        "neutral_action_ids": [
+          "clear_irrigation",
+          "leave_for_safety",
+          "gather_reeds",
+          "read_water_marks"
+        ],
+        "knowledge_opportunity": {
+          "action_id": "read_water_marks",
+          "object_id": "old_graft_marks",
+          "requires_state_values": {
+            "orchard_channel": [
+              "flowing"
+            ]
+          },
+          "owner_ready_required": true,
+          "reward": null,
+          "a3_receipt": null
+        },
+        "bank_reeds": {
+          "action_id": "gather_reeds",
+          "a3_binding": null,
+          "dispatch": "FAIL_CLOSED"
+        }
       },
       "clue_credential_power_hazard_conditions": {
         "quiet_route": "Walk orchard rows and follow the narrow irrigation trench; no Quarry brace/chock interactions are reused.",
@@ -162,6 +493,15 @@
         "owner_projection_only": true,
         "a0_save_service_required": true,
         "same_source_revisit": "A0 should reissue the same poi_id and durable site_instance_id after transition/reload; A8 never writes SaveService."
+      },
+      "exterior_clue": {
+        "object_id": "old_graft_marks",
+        "shell_local_px": [
+          88,
+          84
+        ],
+        "presentation": "player-facing context hint at the exterior signpost; water depth remains unknown",
+        "text": "Graft marks: follow flowing water to read the orchard route; depth unknown."
       }
     }
   }

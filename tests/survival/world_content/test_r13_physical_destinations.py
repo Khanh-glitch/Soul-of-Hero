@@ -29,6 +29,17 @@ class R13PhysicalDestinationTests(unittest.TestCase):
                 )
                 self.assertEqual(definition["source"]["poi_id"], entry["poi_id"])
                 self.assertEqual(definition["source"]["canonical_cell"], cell)
+                clue = definition["approach_clue"]
+                clue_marker = next(
+                    prop
+                    for prop in definition["overworld_shell"]["visual_layout"]["props"]
+                    if prop.get("id", "").endswith("notice")
+                )
+                self.assertEqual(clue["local_px"], clue_marker["local_px"])
+                if name == "orchard":
+                    self.assertIn("unknown", clue["text"].lower())
+                else:
+                    self.assertIn("power", clue["text"].lower())
                 socket = entry["mount_transform"]["shell_local_action_socket_px"]
                 expected_root = [cell[0] * 16 + 8 - socket[0], cell[1] * 16 + 8 - socket[1]]
                 self.assertEqual(expected_root, root_px)

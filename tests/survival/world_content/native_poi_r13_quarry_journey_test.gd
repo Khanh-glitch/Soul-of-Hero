@@ -1,6 +1,6 @@
 extends "res://tests/survival/world_content/native_poi_input_journey_test.gd"
 
-## Focused R13 Quarry journey; reuses the established physical-input harness.
+## Focused R13 exterior clue and Quarry journey; reuses physical-input harness.
 
 
 func _initialize() -> void:
@@ -8,8 +8,12 @@ func _initialize() -> void:
 
 
 func _run() -> void:
+	await _journey_exterior_clue(0, QUARRY_ID, "Cut marks:")
+	await _journey_exterior_clue(1, ORCHARD_ID, "Graft marks:")
 	await _journey_quarry_deep_return()
-	_check(_capture_index == 4, "R13 Quarry lock/open/revisit visual states were captured")
+	_check(
+		_capture_index == 6, "R13 exterior clues and Quarry lock/open/revisit visuals were captured"
+	)
 	if _failures.is_empty():
 		if _headless_visual_capture_skipped:
 			print("A8_R13_QUARRY_CAPTURE_SKIPPED renderer=headless")
@@ -22,6 +26,45 @@ func _run() -> void:
 			"A8_R13_QUARRY_JOURNEY_FAIL failures=%d assertions=%d" % [_failures.size(), _assertions]
 		)
 		quit(1)
+
+
+func _journey_exterior_clue(site_index: int, expected_source: String, phrase: String) -> void:
+	await _start_pilot({}, site_index)
+	var shell := _pilot.get("_shell") as NativePoiShell
+	_check(shell != null, "canonical exterior shell is mounted for its authored clue")
+	if shell == null:
+		await _stop_pilot()
+		return
+	var clue: Dictionary = shell.definition.get("approach_clue", {})
+	var clue_pair: Array = clue.get("local_px", [0, 0])
+	var clue_position := Vector2(float(clue_pair[0]), float(clue_pair[1]))
+	var entry := shell.get_entry_position()
+	_check(
+		await _walk_axis_to("move_up", KEY_W, entry.y - 3.0),
+		"actor walks through the south entrance into the exterior shell"
+	)
+	var horizontal_action := (
+		"move_right" if clue_position.x > _hero().global_position.x else "move_left"
+	)
+	var horizontal_key := KEY_D if clue_position.x > _hero().global_position.x else KEY_A
+	_check(
+		await _walk_axis_to(horizontal_action, horizontal_key, clue_position.x),
+		"actor reaches the exterior clue marker without a position injection"
+	)
+	_check(
+		await _walk_axis_to("move_up", KEY_W, clue_position.y),
+		"actor reaches the source-authored exterior clue by live movement"
+	)
+	await _settle()
+	_check(
+		(
+			str(shell.definition.get("source", {}).get("poi_id", "")) == expected_source
+			and shell.get_context_hint(_hero()).contains(phrase)
+		),
+		"%s exterior clue is visible outside the interior-entry transaction" % expected_source
+	)
+	await _capture("%s-exterior-clue" % expected_source.get_slice("_", -1))
+	await _stop_pilot()
 
 
 func _journey_quarry_deep_return() -> void:
@@ -207,13 +250,22 @@ func _journey_quarry_deep_return() -> void:
 		(_pilot.get("_site") as NativePoiSite).set_projection(authority.project_state(QUARRY_ID)),
 		"owner revocation projects the gate back to a visibly locked state"
 	)
+	await _settle()
 	gate_body = (_pilot.get("_site") as NativePoiSite).get("_gate_bodies")[0] as StaticBody2D
 	_check(
 		gate_body.collision_layer != 0 and _has_visual_prop("deep_gate_bar_1"),
 		"missing power restores both the locked silhouette and physical gate collider"
 	)
 	_check(
-		await _walk_to(Vector2(520.0, 220.0)),
+		await _walk_axis_to("move_down", KEY_S, 160.0),
+		"deep scree lets the actor descend to the marked retreat lane"
+	)
+	_check(
+		await _walk_axis_to("move_right", KEY_D, 520.0),
+		"marked retreat lane reaches the counterweight gate from its deep side"
+	)
+	_check(
+		await _walk_axis_to("move_down", KEY_S, 220.0),
 		"one-way powered gate still permits safe physical retreat after power revocation"
 	)
 	await _exit_and_revisit(QUARRY_ID, "deep_seam_note", "read")

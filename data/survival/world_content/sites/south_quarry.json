@@ -1118,7 +1118,11 @@
   ],
   "approach_clue": {
     "object_id": "quarry_cut_line_marks",
-    "text": "Old cut marks point toward the east brace; the lower seam needs both an owner-issued credential and power.",
-    "presentation": "scene feedback after neutral physical inspection; no inventory or persistent reward"
+    "text": "Cut marks: east brace is shorter; the lower gate needs salvage and power.",
+    "presentation": "scene feedback after neutral physical inspection; no inventory or persistent reward",
+    "local_px": [
+      36,
+      76
+    ]
   }
 }

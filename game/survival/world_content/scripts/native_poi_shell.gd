@@ -169,6 +169,16 @@ func get_run_phase_context() -> Dictionary:
 func get_context_hint(actor: Node2D) -> String:
 	if _is_at_door(actor):
 		return "G · Enter %s" % str(definition.get("display_name", "the worksite"))
+	if actor != null and is_instance_valid(actor):
+		var clue: Dictionary = definition.get("approach_clue", {})
+		var clue_position := VECTOR_UTIL.from_pair(clue.get("local_px", [-1, -1]), Vector2(-1, -1))
+		var clue_text := str(clue.get("text", ""))
+		if (
+			clue_position.x >= 0.0
+			and not clue_text.is_empty()
+			and actor.global_position.distance_to(global_position + clue_position) <= 22.0
+		):
+			return clue_text
 	return ""
 
 

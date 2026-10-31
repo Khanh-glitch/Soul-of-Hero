@@ -488,8 +488,8 @@
         {
           "frame": "signpost",
           "local_px": [
-            92,
-            76
+            88,
+            84
           ],
           "role": "exterior_clue_marker",
           "collision_change": false,
@@ -896,7 +896,11 @@
   },
   "approach_clue": {
     "object_id": "old_graft_marks",
-    "text": "Follow the irrigation banks to read the old graft marks; water depth remains unknown.",
-    "presentation": "scene feedback only when owner projection permits read_water_marks; no item grant"
+    "text": "Graft marks: follow flowing water to read the orchard route; depth unknown.",
+    "presentation": "scene feedback only when owner projection permits read_water_marks; no item grant",
+    "local_px": [
+      88,
+      84
+    ]
   }
 }
