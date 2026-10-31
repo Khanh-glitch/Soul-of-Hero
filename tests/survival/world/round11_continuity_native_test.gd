@@ -948,7 +948,7 @@ func _run_combined_waystation() -> void:
 	_expect(bool(overlay_ok.get("ok", false)) and overlay.mouse_filter == Control.MOUSE_FILTER_IGNORE, "screen overlay does not block physical endpoint approach")
 	layer.queue_free()
 	endpoint_results.append({"endpoint_id": "combined.deposit+vendor", "seam_ok": seam.get("ok", false),
-		"deposit_ok": deposit_ok.get("ok", false), "vendor_ok": vendor.get("ok", false),
+		"deposit_ok": deposit_ok.get("ok", false), "vendor_ok": vendor_ok.get("ok", false),
 		"return_ok": returned.get("ok", false), "large_ok": large.get("ok", false),
 		"large_return_ok": large_return.get("ok", false), "crowd_alternate_ok": crowd_ok.get("ok", false),
 		"overlay_ok": overlay_ok.get("ok", false), "dynamic_streaming_claim": false,

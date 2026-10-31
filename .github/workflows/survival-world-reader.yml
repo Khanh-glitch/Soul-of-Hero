@@ -320,10 +320,6 @@ jobs:
         run: |
           mkdir -p artifacts/a1-placement
           python tools/survival/worldgen/compile_placement_review.py --out artifacts/a1-placement/placement_native_inputs.json
-      - name: Compile Round 11 continuity native inputs
-        run: |
-          mkdir -p artifacts/a1-continuity
-          python tools/survival/worldgen/compile_round11_continuity.py --out artifacts/a1-continuity/continuity_native_inputs.json
       - name: Import root project for real Knight / OverworldOcclusion fixture
         run: |
           mkdir -p artifacts/a1-world-art artifacts/ud_world_art_import
@@ -412,6 +408,64 @@ jobs:
             echo "::error::placement fixture gate failed (checks=${checks}, captures=${captures}); log tail: $(tail -c 2400 "$log" | paste -sd' ' -)"
             exit 1
           fi
+      - name: Upload world art native evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a1-world-art-native-fixture-evidence
+          path: |
+            artifacts/a1-world-art/
+            artifacts/a1-world-art-corridor/
+            artifacts/a1-placement/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Mirror native evidence as Git blobs (artifact-host fallback)
+        if: always()
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python tools/ci/mirror_native_evidence.py \
+            --root artifacts/a1-world-art \
+            --root artifacts/a1-world-art-corridor \
+            --root artifacts/a1-placement
+
+  godot-round11-continuity-native:
+    name: A1 GODOT 4.7 ROUND 11 CONTINUITY / HAZARDS / SOCKETS (ISOLATED)
+    needs: python-authoring
+    runs-on: ubuntu-latest
+    # Separate from the slower visual regression job so engine/static-analysis
+    # feedback and continuity evidence remain focused and independently gated.
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Derive bounded annex inputs for Round 11 source composition
+        run: |
+          mkdir -p artifacts/a1-connector-art
+          python tools/survival/worldgen/compile_connector.py --out artifacts/a1-connector-art --no-contract
+      - name: Compile Round 11 continuity native inputs
+        run: |
+          mkdir -p artifacts/a1-continuity
+          python tools/survival/worldgen/compile_round11_continuity.py --out artifacts/a1-continuity/continuity_native_inputs.json
+      - name: Import root project for Round 11 native fixture
+        run: |
+          mkdir -p artifacts/a1-continuity artifacts/ud_a1_continuity_import
+          timeout --signal=TERM --kill-after=10s 300s godot --headless \
+            --path . --user-data-dir artifacts/ud_a1_continuity_import \
+            --import >artifacts/a1-continuity/godot-import.log 2>&1
+          rc=$?
+          echo "continuity import exit_code=$rc"
+          tail -40 artifacts/a1-continuity/godot-import.log
+          exit $rc
       - name: Drive Round 11 multi-region / hazards / combined sockets with real Hero
         if: always()
         run: |
@@ -449,26 +503,18 @@ jobs:
             echo "::error::continuity fixture gate failed; log tail: $(tail -c 3000 "$log" | paste -sd' ' -)"
             exit 1
           fi
-      - name: Upload world art native evidence
+      - name: Upload Round 11 continuity native evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: a1-world-art-native-fixture-evidence
-          path: |
-            artifacts/a1-world-art/
-            artifacts/a1-world-art-corridor/
-            artifacts/a1-placement/
-            artifacts/a1-continuity/
+          name: a1-round11-continuity-native-evidence
+          path: artifacts/a1-continuity/
           if-no-files-found: warn
           retention-days: 14
-      - name: Mirror native evidence as Git blobs (artifact-host fallback)
+      - name: Mirror Round 11 evidence as Git blobs (artifact-host fallback)
         if: always()
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          python tools/ci/mirror_native_evidence.py \
-            --root artifacts/a1-world-art \
-            --root artifacts/a1-world-art-corridor \
-            --root artifacts/a1-placement \
-            --root artifacts/a1-continuity
+          python tools/ci/mirror_native_evidence.py --root artifacts/a1-continuity
