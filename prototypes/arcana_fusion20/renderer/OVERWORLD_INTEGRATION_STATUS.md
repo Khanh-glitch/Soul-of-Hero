@@ -427,7 +427,9 @@ SOH world source parity and creator review remain separate.
   sampled 54 actual post-draw intervals: p50/p95/p99 **859.002/1110.438/
   1172.719 ms**, live objects +36 and post-cancel object delta 0. Allocation
   counts were unavailable; static-memory deltas were negative and unusable.
-  720p/2K jobs are pending; this is not full-cast or target-device performance.
+  720p was **363.090/526.892/568.072 ms** and 2K was
+  **608.223/818.918/854.339 ms**, 54 overlap frames each. All three jobs
+  completed, but this is not full-cast or target-device performance.
   Architectural costs remain: procedural CPU source raster, multiple full
   384×216 field texture uploads and full-viewport BackBufferCopy per cast;
   this does not prove the CI renderer alone caused the whole delay.
@@ -436,3 +438,13 @@ SOH world source parity and creator review remain separate.
   passed removal, weak-reference cleanup and frozen-Home stability assertions
   at `39db0ff0`. This is an isolated historical-A0 scene transition, not a
   complete death/despawn/production lifecycle test.
+
+- A live #20 visual-motion probe at `a02d2d46` [41217365513](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41217365513)
+  verified selected world direction and retained a nonhoming world transform
+  while the actual player moved 6.40 units and the real enemy moved 12 units
+  using test-driven `CharacterBody2D.move_and_collide`. HP remained 69→69;
+  source tick 19, and cancel removed the viewer. The first natural-AI attempt
+  [41217130242](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41217130242)
+  failed because the enemy stayed still, not because the cast anchor shifted.
+  This probe does not implement or prove a gameplay hit volume, moving-enemy
+  miss, confirmed receipt, full cast or the current A0 route.
