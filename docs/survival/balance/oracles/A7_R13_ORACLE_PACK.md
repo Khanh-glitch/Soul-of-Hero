@@ -165,6 +165,33 @@ When that happens the run is finite and already specified:
 
 Until then A7 adds no new conclusions and spends no CI on cosmetics.
 
+## 7.1 CI receipt — the pack runs on the repo, not only on my laptop
+
+`.github/workflows/a7-oracle-pack.yml` (push on the pack's own paths, plus `workflow_dispatch`
+with owner-SHA inputs) does three things and nothing else: it runs `--self-test`, it composes
+the exact owner matrix from the five 40-character SHAs, and it runs the pack against that tree
+with the declared `expected_tree`. It uses a blob-less partial clone, so it never downloads the
+full 4.4 GB history up front.
+
+Run **`41214690921`** (head `c2188052e5`): all six steps succeeded —
+`Oracle self-test` **success** (the step's own `17/17` grep is part of it), `Compose the exact
+owner matrix` **success**, `Run the pack against that tree and the recorded evidence` **success**.
+
+What that success does and does not mean:
+
+* it **does** mean the composition identity assertion inside the step did not fire — that check
+  exits non-zero when the recomputed `write-tree` differs from the declared `expected_tree`, so
+  a silent divergence would have failed the job;
+* it does **not** mean the product passed. The step deliberately ends `exit 0` after the
+  provenance gate, because on this baseline the pack is *expected* to return `FAIL`;
+* the precise CI-measured numbers are **not quoted**, because the artifact and log downloads
+  from `productionresultssa*.blob.core.windows.net` failed with `EOF` in this environment (the
+  same failure mode recorded in round 14). The numbers in §3 come from the local run against
+  the same tree and the same evidence directory.
+
+`workflow_dispatch` itself returned **403** for this token, so the dispatch-only inputs could not
+be exercised; the push trigger uses the same defaults and is what ran.
+
 ## 8. Receipt
 
 | action | evidence |
@@ -173,5 +200,6 @@ Until then A7 adds no new conclusions and spends no CI on cosmetics.
 | composition rebuilt and identity reproduced | tree `fbe54383881c6cc29c30874782721ea63155e661`, `conflicts=0` |
 | oracle pack written, self-tested | `tools/survival/balance/a7_oracle_pack.py`, 17/17 |
 | pack run on the real baseline | `data/survival/balance/oracles/a7_oracle_pack.r13.v1.json` |
+| pack run in CI, composition identity gate untripped | run `41214690921` on head `c2188052e5`, all steps success |
 | PR | #25, branch `arena/353cf120-soul-of-hero`, **unmerged** |
 | not done | no owner file edited, no merge, no dispatch, no E2 claim — a Git comment or a Docs edit does **not** start an Arena prompt |
