@@ -29,6 +29,14 @@ jobs:
           set -o pipefail
           timeout --signal=TERM --kill-after=10s 240s \
             godot --headless --path . --import 2>&1 | tee import.log
+      - name: Godot check-only per renderer script
+        shell: bash
+        run: |
+          for f in prototypes/arcana_fusion20/renderer/*.gd; do
+            echo "CHECK $f"
+            timeout 60s godot --headless --path . --check-only --script "res://$f" 2>&1 | head -6
+          done > checkonly.log 2>&1 || true
+          grep -E 'CHECK|ERROR|error' checkonly.log | head -9 | while IFS= read -r l; do echo "::error::$l"; done || true
       - name: Renderer lifecycle test (all 20 skills)
         shell: bash
         run: |
