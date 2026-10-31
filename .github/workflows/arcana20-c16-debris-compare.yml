@@ -1,0 +1,58 @@
+name: ARCANA20 C16 selected debris source diagnostic
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths:
+      - 'tools/arcana20_source_compare/c16_debris_reference.ts'
+      - 'tools/arcana20_source_compare/compare_c16_debris.py'
+      - 'prototypes/arcana_fusion20/renderer/c16_debris_source_compare.gd'
+      - 'prototypes/arcana_fusion20/renderer/source_c/c_math.gd'
+      - 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_debris.gd'
+      - '.github/workflows/arcana20-c16-debris-compare.yml'
+permissions:
+  contents: read
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Install comparison tools
+        run: |
+          npm install --prefix "$RUNNER_TEMP/c16-node" esbuild@0.25.12
+          python3 -m pip install --quiet pillow numpy
+      - name: Capture original C16 debris
+        run: |
+          set -o pipefail
+          godot --headless --path . --import > import.log 2>&1
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' import.log
+          mkdir -p artifacts/arcana20-c16-debris-source
+          "$RUNNER_TEMP/c16-node/node_modules/.bin/esbuild" tools/arcana20_source_compare/c16_debris_reference.ts --bundle --platform=node --format=esm --outfile="$RUNNER_TEMP/c16-ref.mjs"
+          node "$RUNNER_TEMP/c16-ref.mjs" artifacts/arcana20-c16-debris-source
+      - name: Capture native selected C16 debris
+        run: |
+          set -o pipefail
+          timeout 600s godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/c16_debris_source_compare.gd 2>&1 | tee native.log
+          grep -Fq 'C16_DEBRIS_CAPTURE_COMPLETE' native.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' native.log
+      - name: Measure authored coverage and color errors
+        run: |
+          set -o pipefail
+          python3 tools/arcana20_source_compare/compare_c16_debris.py artifacts/arcana20-c16-debris-source | tee comparison.log
+          sed 's/^/::notice::/' comparison.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcana20-c16-original-debris
+          path: |
+            artifacts/arcana20-c16-debris-source/
+            import.log
+            native.log
+            comparison.log
+          if-no-files-found: warn
