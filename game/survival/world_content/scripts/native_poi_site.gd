@@ -636,7 +636,7 @@ func _build_physics() -> void:
 		gate_collision.shape = gate_shape
 		if bool(gate.get("retreat_one_way", false)):
 			gate_collision.one_way_collision = true
-			gate_collision.one_way_collision_direction = Vector2.UP
+			gate_collision.one_way_collision_direction = Vector2.DOWN
 		gate_body.add_child(gate_collision)
 		gate_body.position = Vector2(
 			float(rect[0]) + float(rect[2]) * 0.5, float(rect[1]) + float(rect[3]) * 0.5

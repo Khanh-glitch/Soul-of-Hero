@@ -217,7 +217,7 @@ func _journey_mill_without_capability() -> void:
 		(
 			outer_shape != null
 			and outer_shape.one_way_collision
-			and outer_shape.one_way_collision_direction == Vector2.UP
+			and outer_shape.one_way_collision_direction == Vector2.DOWN
 		),
 		"locked Mill gate blocks entry from south while preserving outward retreat"
 	)
@@ -248,7 +248,7 @@ func _journey_mill_without_capability() -> void:
 		await _stop_pilot()
 		return
 	var safe_direction := outer_shape.one_way_collision_direction
-	outer_shape.one_way_collision_direction = Vector2.DOWN
+	outer_shape.one_way_collision_direction = Vector2.UP
 	await _settle()
 	var mutant_reached := await _walk_axis_to("move_up", KEY_W, 420.0)
 	if mutant_reached and _snapshot().get("position", Vector2.ZERO).y < 480.0:
@@ -278,12 +278,7 @@ func _journey_mill_without_capability() -> void:
 func _journey_mill_revocation_race() -> void:
 	# The physical input creates a pending neutral request. The fixture owner
 	# revokes its projection before validation, so the old revision must reject.
-	await _start_pilot(
-		{
-			"capabilities": ["cap_salvage"],
-			"ready_actions": ["repair_waterwheel"],
-		}
-	)
+	await _start_pilot({"capabilities": ["cap_salvage"]})
 	await _capture("mill-shell-pending-revocation")
 	if not await _enter_worksite(MILL_ID):
 		await _stop_pilot()
@@ -355,12 +350,7 @@ func _journey_mill_revocation_race() -> void:
 
 func _journey_mill_owner_projected_repair() -> void:
 	# This seed is an explicit A8 test projection, not an A3 binding or live grant.
-	await _start_pilot(
-		{
-			"capabilities": ["cap_salvage"],
-			"ready_actions": ["repair_waterwheel"],
-		}
-	)
+	await _start_pilot({"capabilities": ["cap_salvage"]})
 	await _capture("mill-shell-owner-projection-seed")
 	if not await _enter_worksite(MILL_ID):
 		await _stop_pilot()
@@ -494,10 +484,27 @@ func _enter_worksite(expected_source: String) -> bool:
 			str(snapshot.get("active_kind", "")) == "site"
 			and str(snapshot.get("source_id", "")) == expected_source
 		),
-		"physical doorway signal mounts the exact existing local worksite"
+		(
+			"physical doorway signal mounts the exact existing local worksite; active=%s source=%s "
+			+ "feedback=%s position=%s trace=%s"
+			% [
+				str(snapshot.get("active_kind", "")),
+				str(snapshot.get("source_id", "")),
+				str(snapshot.get("feedback", "")),
+				str(snapshot.get("position", Vector2.ZERO)),
+				JSON.stringify(snapshot.get("trace", []))
+			]
+		)
 	)
 	var trace: Array = snapshot.get("trace", [])
-	var entry_event: Dictionary = trace.back() if not trace.is_empty() else {}
+	var entry_event: Dictionary = {}
+	for trace_value: Variant in trace:
+		if (
+			trace_value is Dictionary
+			and str(trace_value.get("kind", "")) == "transition"
+			and str(trace_value.get("direction", "")) == "enter"
+		):
+			entry_event = trace_value
 	_check(
 		str(entry_event.get("direction", "")) == "enter",
 		"entry transition signal is recorded from the live doorway request"
@@ -512,7 +519,10 @@ func _enter_worksite(expected_source: String) -> bool:
 		),
 		"doorway transition preserves the owner-projected run and phase boundary"
 	)
-	return str(snapshot.get("active_kind", "")) == "site"
+	return (
+		str(snapshot.get("active_kind", "")) == "site"
+		and str(snapshot.get("source_id", "")) == expected_source
+	)
 
 
 func _exit_and_revisit(expected_source: String, state_key: String, expected_value: String) -> void:

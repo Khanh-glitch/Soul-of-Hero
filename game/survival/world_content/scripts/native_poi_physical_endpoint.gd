@@ -230,36 +230,91 @@ func _build_physical_object() -> void:
 	_interaction_area.add_child(area_collision)
 	add_child(_interaction_area)
 
+	var manifest := _load_art_manifest()
+	if manifest.is_empty():
+		return
+	_art = _make_source_sprite(
+		manifest,
+		str(definition.get("art_frame", "")),
+		"SourceAtlasEndpointPresentation",
+		Vector2.ZERO,
+		float(definition.get("art_scale", 1.5))
+	)
+	if _art != null:
+		_art.set_meta("presentation_key", _presentation_key)
+	var accent_value: Variant = definition.get("accent_art_frame", "")
+	var accent_frame := str(accent_value) if accent_value is String else ""
+	if not accent_frame.is_empty():
+		var accent_position: Array = definition.get("accent_art_position_px", [0, -12])
+		var accent_offset := (
+			Vector2(float(accent_position[0]), float(accent_position[1]))
+			if accent_position.size() == 2
+			else Vector2(0.0, -12.0)
+		)
+		var accent := _make_source_sprite(
+			manifest,
+			accent_frame,
+			"SourceAtlasEndpointAccent",
+			accent_offset,
+			float(definition.get("accent_art_scale", 1.0))
+		)
+		if accent != null:
+			accent.set_meta("presentation_key", _presentation_key)
+	var label_text := str(definition.get("trial_affordance_label", ""))
+	if not label_text.is_empty():
+		var affordance := Label.new()
+		affordance.name = "TrialAffordanceLabel"
+		affordance.text = label_text
+		affordance.position = Vector2(-48.0, -34.0)
+		affordance.size = Vector2(96.0, 16.0)
+		affordance.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		affordance.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		affordance.add_theme_font_size_override("font_size", 10)
+		affordance.add_theme_color_override("font_color", Color("#f6e5ae"))
+		affordance.add_theme_color_override("font_outline_color", Color("#17211d"))
+		affordance.add_theme_constant_override("outline_size", 2)
+		affordance.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		affordance.set_meta("is_trial_affordance_only", true)
+		add_child(affordance)
+
+
+func _load_art_manifest() -> Dictionary:
 	var manifest_file := FileAccess.open(
 		"res://data/survival/world_content/a8_art_manifest.v1.json", FileAccess.READ
 	)
 	if manifest_file == null:
-		return
+		return {}
 	var manifest_value: Variant = JSON.parse_string(manifest_file.get_as_text())
 	manifest_file.close()
-	if not manifest_value is Dictionary:
-		return
-	var manifest: Dictionary = manifest_value
-	var frame_name := str(definition.get("art_frame", ""))
+	return manifest_value if manifest_value is Dictionary else {}
+
+
+func _make_source_sprite(
+	manifest: Dictionary,
+	frame_name: String,
+	node_name: String,
+	local_position: Vector2,
+	sprite_scale: float
+) -> Sprite2D:
 	var frame: Array = manifest.get("props_frames", {}).get(frame_name, [])
 	if frame.size() != 4:
-		return
+		return null
 	var texture_path := str(manifest.get("textures", {}).get("props", {}).get("path", ""))
 	var atlas := load(texture_path) as Texture2D
 	if atlas == null:
-		return
+		return null
 	var atlas_texture := AtlasTexture.new()
 	atlas_texture.atlas = atlas
 	atlas_texture.region = Rect2(float(frame[0]), float(frame[1]), float(frame[2]), float(frame[3]))
-	_art = Sprite2D.new()
-	_art.name = "SourceAtlasEndpointPresentation"
-	_art.texture = atlas_texture
-	_art.scale = Vector2(1.5, 1.5)
-	_art.z_index = 10
-	_art.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	_art.set_meta("presentation_key", _presentation_key)
-	add_child(_art)
-
+	var sprite := Sprite2D.new()
+	sprite.name = node_name
+	sprite.texture = atlas_texture
+	sprite.scale = Vector2.ONE * sprite_scale
+	sprite.position = local_position
+	sprite.z_index = 10
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	add_child(sprite)
+	return sprite
 
 func _get_actor_facing(actor: CharacterBody2D) -> Vector2:
 	if actor.has_method("get_facing_direction"):

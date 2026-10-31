@@ -38,7 +38,7 @@ func _initialize() -> void:
 func _run() -> void:
 	_vector_pair_compatibility()
 	await _scene_and_data_contracts()
-	_mill_actions_require_owner_readiness()
+	_mill_action_authority_gates()
 	await _type_aware_owner_state_gates()
 	await _interaction_eligibility_and_choice()
 	await _intent_boundary_adversarial_tests()
@@ -56,7 +56,7 @@ func _run() -> void:
 		quit(1)
 
 
-func _mill_actions_require_owner_readiness() -> void:
+func _mill_action_authority_gates() -> void:
 	var parsed: Variant = JSON.parse_string(
 		FileAccess.get_file_as_string(
 			"res://data/survival/world_content/sites/south_crown_mill.json"
@@ -68,9 +68,11 @@ func _mill_actions_require_owner_readiness() -> void:
 	var actions: Dictionary = {}
 	for entry: Dictionary in parsed.get("choices", []) + parsed.get("actions", []):
 		actions[str(entry.get("action_id", ""))] = entry
+	var repair: Dictionary = actions.get("repair_waterwheel", {})
 	_check(
-		bool(actions.get("repair_waterwheel", {}).get("owner_ready_required", false)),
-		"Mill repair remains unavailable without owner-projected readiness"
+		repair.get("requires_capabilities", []).has("cap_salvage")
+		and not bool(repair.get("owner_ready_required", false)),
+		"Mill repair requires the owner-projected salvage capability, not fixture readiness"
 	)
 	_check(
 		bool(actions.get("recover_fastener", {}).get("owner_ready_required", false)),

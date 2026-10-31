@@ -156,8 +156,7 @@
         "mill_route": "open"
       },
       "choice_group": "mill_wheel",
-      "object_id": "repair_waterwheel",
-      "owner_ready_required": true
+      "object_id": "repair_waterwheel"
     },
     {
       "action_id": "leave_wheel",

@@ -94,7 +94,25 @@ func _process(_delta: float) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("poi_interact"):
 		if is_instance_valid(_shell):
-			_shell.try_enter(_probe)
+			var entry_shell := _shell
+			var entry_source_id := entry_shell.get_source_id()
+			var entry_position := _probe.global_position
+			var entry_facing: Variant = _probe.get("facing")
+			var entry_context := entry_shell.get_run_phase_context()
+			var entry_accepted := entry_shell.try_enter(_probe)
+			if journey_test_mode:
+				_record_journey_event(
+					{
+						"kind": "doorway_input",
+						"accepted": entry_accepted,
+						"poi_id": entry_source_id,
+						"actor_position": entry_position,
+						"actor_facing": entry_facing,
+						"feedback": _feedback.text,
+						"run_context": entry_context,
+						"input_pressed": Input.is_action_pressed("poi_interact")
+					}
+				)
 		elif is_instance_valid(_site):
 			if _site.is_at_exit(_probe):
 				_site.try_exit(_probe)
@@ -212,7 +230,7 @@ func _on_transition_requested(request: Dictionary) -> void:
 		str(request.get("contract_id", "")) != "soh.native_poi.transition.v2"
 		or int(request.get("contract_version", 0)) != 2
 	):
-		_feedback.text = "The doorway request was not understood."
+		_reject_transition("The doorway request was not understood.", request)
 		return
 	var active_context: Dictionary = {}
 	if is_instance_valid(_shell):
@@ -228,12 +246,12 @@ func _on_transition_requested(request: Dictionary) -> void:
 		"site_instance_id"
 	]:
 		if request.get(context_key, null) != active_context.get(context_key, null):
-			_feedback.text = "The doorway request no longer matches the owner-projected run."
+			_reject_transition("The doorway request no longer matches the owner-projected run.", request)
 			return
 	var destination := str(request.get("to_scene", ""))
 	if str(request.get("direction", "")) == "enter" and is_instance_valid(_shell):
 		if str(request.get("poi_id", "")) != _shell.get_source_id():
-			_feedback.text = "This entrance does not match the selected site."
+			_reject_transition("This entrance does not match the selected site.", request)
 			return
 		var return_anchor: Dictionary = request.get("return_anchor", {})
 		var shell_cell := _shell.get_canonical_cell()
@@ -243,7 +261,7 @@ func _on_transition_requested(request: Dictionary) -> void:
 			or str(return_anchor.get("poi_id", "")) != _shell.get_source_id()
 			or destination != expected_worksite
 		):
-			_feedback.text = "The exterior return point was rejected."
+			_reject_transition("The exterior return point was rejected.", request)
 			return
 		var interior_spawn: Variant = request.get("interior_spawn", Vector2.ZERO)
 		if journey_test_mode:
@@ -268,7 +286,7 @@ func _on_transition_requested(request: Dictionary) -> void:
 		return
 	if str(request.get("direction", "")) == "exit" and is_instance_valid(_site):
 		if str(request.get("poi_id", "")) != _site.get_source_id():
-			_feedback.text = "This return request does not match the active site."
+			_reject_transition("This return request does not match the active site.", request)
 			return
 		var return_to: Dictionary = request.get("return_anchor", {})
 		var packed_shell := load(destination) as PackedScene
@@ -278,7 +296,7 @@ func _on_transition_requested(request: Dictionary) -> void:
 			or str(return_to.get("poi_id", "")) != _site.get_source_id()
 			or return_to.get("canonical_cell", []) != _site.definition.source.canonical_cell
 		):
-			_feedback.text = "The canonical exterior return point could not be restored."
+			_reject_transition("The canonical exterior return point could not be restored.", request)
 			return
 		if journey_test_mode:
 			_record_journey_event(
@@ -312,6 +330,26 @@ func _on_transition_requested(request: Dictionary) -> void:
 		_camera.zoom = Vector2(2.2, 2.2)
 		_update_site_header(_shell.definition)
 		_feedback.text = "You are back at the exterior entrance."
+
+
+func _reject_transition(reason: String, request: Dictionary) -> void:
+	_feedback.text = reason
+	if journey_test_mode:
+		_record_journey_event(
+			{
+				"kind": "transition_rejected",
+				"reason": reason,
+				"transition_id": str(request.get("transition_id", "")),
+				"direction": str(request.get("direction", "")),
+				"poi_id": str(request.get("poi_id", "")),
+				"request_context": {
+					"run_id": str(request.get("run_id", "")),
+					"run_epoch": int(request.get("run_epoch", -1)),
+					"phase_id": str(request.get("phase_id", "")),
+					"site_instance_id": str(request.get("site_instance_id", "")),
+				}
+			}
+		)
 
 
 func _on_intent_requested(intent: Dictionary) -> void:
@@ -379,6 +417,7 @@ func get_journey_snapshot() -> Dictionary:
 		"journey_mode": journey_test_mode,
 		"active_kind": active_kind,
 		"source_id": source_id,
+		"feedback": _feedback.text if is_instance_valid(_feedback) else "",
 		"position": _probe.global_position if is_instance_valid(_probe) else Vector2.ZERO,
 		"velocity": _probe.velocity if is_instance_valid(_probe) else Vector2.ZERO,
 		"slide_collision_count":

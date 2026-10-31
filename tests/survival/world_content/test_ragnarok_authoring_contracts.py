@@ -103,13 +103,16 @@ class RagnarokAuthoringContractTests(unittest.TestCase):
         self.assertEqual(data["two_economies"]["candidate_ids_and_display_keys"], "PROPOSAL_NOT_A3_OR_A0_SCHEMA_APPROVAL")
         for service in data["shared_logistics"].values():
             if isinstance(service, dict) and "poi_id" in service:
-                self.assertIn(service["status"], {"A1_AUTHORED_ANCHOR_NOT_A8_MOUNTED", "A1_AUTHORED_ANCHOR_A8_SOCKET_PLACEMENT_REQUIRES_A1_REVIEW"})
+                self.assertIn(service["status"], {"A1_AUTHORED_ANCHOR_NOT_A8_MOUNTED", "A1_AUTHORED_ANCHOR_A8_SOCKET_PLACEMENT_REQUIRES_A1_REVIEW", "A1_TRIAL_SOCKET_APPROVED_A8_NOT_PRODUCTION_MOUNTED"})
 
     def test_physical_endpoint_intents_are_neutral_and_use_existing_anchors(self) -> None:
         data = read_json(WORLD_CONTENT / "physical_ragnarok_endpoints.v1.json")
         contract = data["intent_contract"]
         self.assertEqual(data["source_pins"]["a0_head"], "4b4b63f56b92c2f7b50d770554afd96d5d0a098b")
-        self.assertEqual(data["source_pins"]["a1_head"], "7d2b017c8a90b7d5e24ff85f065ff1b18548cd29")
+        self.assertEqual(data["source_pins"]["a1_head"], "439d5ef1f743da388883377c3e1d4c594e5e8101")
+        self.assertEqual(data["source_pins"]["a1_trial_placement_contract_commit"], "439d5ef1f743da388883377c3e1d4c594e5e8101")
+        self.assertEqual(data["source_pins"]["a1_trial_placement_contract_path"], "data/survival/world/a1_world_placement_contract.v1.json")
+        self.assertEqual(data["source_pins"]["a1_trial_placement_contract_sha256"], "b3ba37aa2dfe91b51689fdac0bab2ad44caa9059204332050c5322d6643f9969")
         self.assertEqual(data["source_pins"]["a3_head"], "35214ed8f555350b83bd8985e9bec7512f3181e8")
         self.assertEqual(data["source_pins"]["a1_world_plan_sha256"], "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4")
         self.assertEqual(contract["contract_id"], "soh.a8.physical_intent.v1")
@@ -118,12 +121,40 @@ class RagnarokAuthoringContractTests(unittest.TestCase):
         self.assertEqual({item["endpoint_id"] for item in data["endpoints"]}, {
             "endpoint.ragnarok.deposit", "endpoint.ragnarok.fixed_vendor", "endpoint.ragnarok.recycler", "endpoint.ragnarok.evacuation"
         })
+        art_manifest = read_json(WORLD_CONTENT / "a8_art_manifest.v1.json")
+        visual_authority = data["trial_visual_authority"]
+        self.assertEqual(visual_authority["texture_sha256"], art_manifest["textures"]["props"]["sha256"])
+        self.assertFalse(visual_authority["production_mount_authorized"])
+        self.assertTrue(visual_authority["labels_are_affordances_not_result_or_reward_claims"])
+        seen_labels = set()
         for endpoint in data["endpoints"]:
+            self.assertIn(endpoint["art_frame"], art_manifest["props_frames"])
+            if endpoint.get("accent_art_frame"):
+                self.assertIn(endpoint["accent_art_frame"], art_manifest["props_frames"])
+            self.assertEqual(endpoint["trial_visual_status"], "A8_SOURCE_ATLAS_COMPOSITION_TRIAL_ONLY_NOT_FINAL_A1_ART_APPROVAL")
+            self.assertNotIn(endpoint["trial_affordance_label"], seen_labels)
+            seen_labels.add(endpoint["trial_affordance_label"])
             self.assertTrue(endpoint["existing_poi_id"].startswith("poi_"))
             self.assertTrue(endpoint["a1_route_id"].startswith("sp_"))
-            self.assertEqual(endpoint["placement_status"], "A1_REVIEW_REQUIRED_SOCKET_NOT_CANONICAL")
+            self.assertEqual(endpoint["placement_status"], "A1_APPROVED_TRIAL_ONLY_NOT_PRODUCTION_MOUNT")
             self.assertEqual(endpoint["a1_geography_status"], "AUTHORED_PLAN_NOT_NATIVE_INTEGRATED")
+            self.assertEqual(endpoint["trial_collision_size_px"], [28, 28])
+            self.assertEqual(endpoint["collision_size_px"], [28, 28])
+            self.assertEqual(endpoint["trial_interaction_radius_px"], 62)
+            self.assertEqual(endpoint["interaction_radius_px"], 62)
+            self.assertEqual(endpoint["trial_stand_offset_px"], [0, 39])
+            self.assertEqual(endpoint["fixture_stand_offset_px"], [0, 39])
             self.assertIn("NOT_IMPLEMENTED_FAIL_CLOSED", str(endpoint))
+        approved_trial_cells = {
+            "endpoint.ragnarok.deposit": ([404, 202], [404, 204]),
+            "endpoint.ragnarok.fixed_vendor": ([412, 202], [412, 204]),
+            "endpoint.ragnarok.recycler": ([126, 440], [126, 442]),
+            "endpoint.ragnarok.evacuation": ([894, 422], [894, 424]),
+        }
+        for endpoint in data["endpoints"]:
+            socket, stand = approved_trial_cells[endpoint["endpoint_id"]]
+            self.assertEqual(endpoint["a1_trial_socket_cell"], socket)
+            self.assertEqual(endpoint["a1_trial_stand_cell"], stand)
         deposit = next(item for item in data["endpoints"] if item["endpoint_id"] == "endpoint.ragnarok.deposit")
         self.assertEqual(deposit["candidate_resource_slot"], "ragnarok_unbanked")
         self.assertEqual(deposit["candidate_destination_slot"], "profile.secured_ragnarok_currency")
@@ -136,6 +167,11 @@ class RagnarokAuthoringContractTests(unittest.TestCase):
         self.assertTrue({"currency_delta", "item_delta", "price", "yield", "reward", "balance_after", "transaction_receipt", "save_patch", "run_finalized"}.issubset(forbidden))
         self.assertFalse(data["canonical_placement_policy"]["A8_may_add_world_map_poi"])
         self.assertTrue(data["canonical_placement_policy"]["physical_test_fixture_coordinates_are_not_world_cells"])
+        self.assertFalse(data["canonical_placement_policy"]["production_mount_authorized"])
+        self.assertFalse(data["canonical_placement_policy"]["economy_or_reward_authorized"])
+        self.assertEqual(data["canonical_placement_policy"]["trial_socket_dimensions_px"], [28, 28])
+        self.assertEqual(data["canonical_placement_policy"]["trial_interaction_radius_px"], 62)
+        self.assertEqual(data["canonical_placement_policy"]["trial_stand_offset_px"], [0, 39])
 
     def test_ordinary_waystation_slice_is_source_pinned_and_only_emits_neutral_intents(self) -> None:
         data = read_json(WORLD_CONTENT / "ordinary_waystation_opportunity.v1.json")

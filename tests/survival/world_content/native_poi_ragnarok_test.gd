@@ -422,9 +422,20 @@ func _ordinary_waystation_physical_opportunity() -> void:
 		),
 		"ordinary opportunity points to the exact A3 cache binding"
 	)
+	var a0_integration_evidence: Dictionary = cache.get("a0_integration_evidence", {})
 	_check(
-		cache.get("a0_production_receipt_or_save_grant") == "NOT_INTEGRATED",
-		"ordinary opportunity makes no production reward or persistence claim"
+		(
+			str(cache.get("a0_production_receipt_or_save_grant", "")).begins_with(
+				"A0_PR21_GUARDED_CANDIDATE_"
+			)
+			and a0_integration_evidence.get("status")
+			== "GUARDED_CANDIDATE_ONLY_NOT_NORMAL_ENTRY_OR_FULL_WORLD_ACCEPTANCE"
+			and bool(a0_integration_evidence.get("separate_from_a8_shadow_physics", false))
+		),
+		(
+			"ordinary opportunity records guarded A0 candidate evidence, not "
+			+ "normal-entry/full-world/human acceptance"
+		)
 	)
 	var endpoint := ENDPOINT_SCRIPT.new() as NativePoiPhysicalEndpoint
 	_check(
@@ -540,6 +551,25 @@ func _physical_endpoint_intents_and_owner_fail_closed() -> void:
 		data.get("schema") == "soh.a8.physical_ragnarok_endpoints.v1",
 		"versioned physical endpoint catalog loads"
 	)
+	var placement_policy: Dictionary = data.get("canonical_placement_policy", {})
+	_check(
+		(
+			placement_policy.get("a1_trial_contract_commit")
+			== "439d5ef1f743da388883377c3e1d4c594e5e8101"
+			and placement_policy.get("trial_socket_dimensions_px") == [28, 28]
+			and int(placement_policy.get("trial_interaction_radius_px", -1)) == 62
+			and placement_policy.get("trial_stand_offset_px") == [0, 39]
+			and not bool(placement_policy.get("production_mount_authorized", true))
+			and not bool(placement_policy.get("economy_or_reward_authorized", true))
+		),
+		"A1-approved socket geometry is recorded as trial-only, without production or economy authority"
+	)
+	var approved_trial_cells := {
+		"endpoint.ragnarok.deposit": [[404, 202], [404, 204]],
+		"endpoint.ragnarok.fixed_vendor": [[412, 202], [412, 204]],
+		"endpoint.ragnarok.recycler": [[126, 440], [126, 442]],
+		"endpoint.ragnarok.evacuation": [[894, 422], [894, 424]],
+	}
 	var actor := _new_actor()
 	actor.global_position = Vector2(64, 520)
 	for endpoint_definition: Dictionary in data.get("endpoints", []):
@@ -549,6 +579,59 @@ func _physical_endpoint_intents_and_owner_fail_closed() -> void:
 			"physical endpoint config loads: %s" % str(endpoint_definition.endpoint_id)
 		)
 		root.add_child(endpoint)
+		var endpoint_id := str(endpoint_definition.get("endpoint_id", ""))
+		var expected_cells: Array = approved_trial_cells.get(endpoint_id, [])
+		_check(
+			(
+				expected_cells.size() == 2
+				and endpoint_definition.get("a1_trial_socket_cell", []) == expected_cells[0]
+				and endpoint_definition.get("a1_trial_stand_cell", []) == expected_cells[1]
+				and endpoint_definition.get("placement_status", "")
+				== "A1_APPROVED_TRIAL_ONLY_NOT_PRODUCTION_MOUNT"
+			),
+			"endpoint retains its exact A1 trial socket and stand: %s" % endpoint_id
+		)
+		var endpoint_collider := endpoint.get_collision_body().get_child(0) as CollisionShape2D
+		var endpoint_rect := (
+			endpoint_collider.shape as RectangleShape2D
+			if endpoint_collider != null
+			else null
+		)
+		var endpoint_area := endpoint.get_interaction_area().get_child(0) as CollisionShape2D
+		var endpoint_radius := endpoint_area.shape as CircleShape2D if endpoint_area != null else null
+		_check(
+			(
+				endpoint_rect != null
+				and endpoint_rect.size == Vector2(28.0, 28.0)
+				and endpoint_radius != null
+				and is_equal_approx(endpoint_radius.radius, 62.0)
+				and endpoint.get_interaction_stand_position() - endpoint.global_position
+				== Vector2(0.0, 39.0)
+			),
+			"endpoint collision, interaction radius and stand offset match A1 trial dimensions: %s"
+			% endpoint_id
+		)
+		var trial_label := endpoint.get_node_or_null("TrialAffordanceLabel") as Label
+		var source_sprite := (
+			endpoint.get_node_or_null("SourceAtlasEndpointPresentation") as Sprite2D
+		)
+		_check(
+			(
+				trial_label != null
+				and trial_label.text == str(endpoint_definition.get("trial_affordance_label", ""))
+				and source_sprite != null
+				and source_sprite.texture != null
+				and str(endpoint_definition.get("trial_visual_status", "")).contains("TRIAL_ONLY")
+			),
+			"endpoint has a distinct source-atlas trial affordance without granting function: %s"
+			% endpoint_id
+		)
+		var accent_frame_value: Variant = endpoint_definition.get("accent_art_frame", "")
+		if accent_frame_value is String and not str(accent_frame_value).is_empty():
+			_check(
+				endpoint.get_node_or_null("SourceAtlasEndpointAccent") is Sprite2D,
+				"endpoint accent is composed from the pinned source atlas: %s" % endpoint_id
+			)
 		var phase_id := "ordinary"
 		var elapsed := 0.0
 		if (

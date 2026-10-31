@@ -781,18 +781,43 @@ func _physical_water_routes_and_weather_non_stranding() -> void:
 	)
 	mill_actor.global_position = mill.get_stand_position()
 	mill_actor.set("facing", Vector2.UP)
-	_check(
-		mill.try_interact(mill_actor), "Mill repair choice is physically available at its approach"
+	var repair_interaction_accepted := mill.try_interact(mill_actor)
+	var pending_value: Variant = mill.get("_pending")
+	var mill_intent: Dictionary = (
+		pending_value.duplicate(true) if pending_value is Dictionary else {}
 	)
-	var mill_intent: Dictionary = mill._pending.duplicate(true)
-	var mill_receipt: Dictionary = mill_authority.submit_intent(mill_intent)
+	var mill_intent_has_v3_schema := (
+		repair_interaction_accepted
+		and str(mill_intent.get("contract_id", "")) == "soh.native_poi.intent.v3"
+		and int(mill_intent.get("contract_version", 0)) == 3
+		and mill_intent.has("intent_id")
+		and not str(mill_intent.get("intent_id", "")).is_empty()
+		and str(mill_intent.get("source_id", "")) == mill.get_source_id()
+		and str(mill_intent.get("run_id", "")).length() > 0
+		and int(mill_intent.get("run_epoch", -1)) >= 0
+		and str(mill_intent.get("phase_id", "")).length() > 0
+		and int(mill_intent.get("observed_phase_projection_revision", -1)) >= 0
+	)
+	_check(
+		mill_intent_has_v3_schema,
+		"Mill repair emits a fail-closed v3 intent with source/run/phase identity"
+	)
+	var mill_receipt: Dictionary = {}
+	if mill_intent_has_v3_schema:
+		mill_receipt = mill_authority.submit_intent(mill_intent)
 	_check(
 		mill_receipt.get("status") == "committed",
 		"fixture owner commits the existing waterwheel repair choice"
 	)
-	mill.receive_authoritative_result(
-		mill_intent.intent_id, mill_receipt, mill_authority.project_state(mill.get_source_id())
-	)
+	if (
+		mill_receipt.get("status") == "committed"
+		and str(mill_receipt.get("intent_id", "")) == str(mill_intent.get("intent_id", ""))
+	):
+		mill.receive_authoritative_result(
+			str(mill_intent.get("intent_id", "")),
+			mill_receipt,
+			mill_authority.project_state(mill.get_source_id())
+		)
 	await physics_frame
 	_check(
 		mill.get_site_state().get("mill_wheel") == "turning",

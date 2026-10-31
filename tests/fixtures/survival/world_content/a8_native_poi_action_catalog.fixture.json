@@ -76,7 +76,9 @@
           "mill_wheel": "turning",
           "mill_route": "open"
         },
-        "unlock_actions": {},
+        "unlock_actions": {
+          "recover_fastener": 0
+        },
         "choice_group": "mill_wheel",
         "unlock_after_state_seconds": 0
       },

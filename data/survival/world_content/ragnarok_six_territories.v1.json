@@ -52,9 +52,9 @@
   },
   "shared_logistics": {
     "refuge": {"poi_id": "poi_refuge", "status": "A1_AUTHORED_ANCHOR_NOT_A8_MOUNTED"},
-    "bank_and_fixed_vendor": {"poi_id": "poi_crown_waystation", "status": "A1_AUTHORED_ANCHOR_A8_SOCKET_PLACEMENT_REQUIRES_A1_REVIEW"},
-    "recycler": {"poi_id": "poi_amberwood_mill", "status": "A1_AUTHORED_ANCHOR_A8_SOCKET_PLACEMENT_REQUIRES_A1_REVIEW"},
-    "evacuation": {"poi_id": "poi_saffron_drydock", "status": "A1_AUTHORED_ANCHOR_A8_SOCKET_PLACEMENT_REQUIRES_A1_REVIEW"},
+    "bank_and_fixed_vendor": {"poi_id": "poi_crown_waystation", "status": "A1_TRIAL_SOCKET_APPROVED_A8_NOT_PRODUCTION_MOUNTED"},
+    "recycler": {"poi_id": "poi_amberwood_mill", "status": "A1_TRIAL_SOCKET_APPROVED_A8_NOT_PRODUCTION_MOUNTED"},
+    "evacuation": {"poi_id": "poi_saffron_drydock", "status": "A1_TRIAL_SOCKET_APPROVED_A8_NOT_PRODUCTION_MOUNTED"},
     "later_exploration": "RETURN_TO_EXISTING_A1_ROUTE_GRAPH; NO_NEW_SHORTCUT_OR_GEOGRAPHY_CLAIM"
   },
   "territories": [
