@@ -512,8 +512,37 @@ func _run() -> void:
     var rift_viewers: Dictionary = mount._passes.get(id20, {})
     var rift_result := contamination(baseline, rift_img, rift_viewers.get(&"C"), rift.source_pass_frame()) if rift_viewers.has(&"C") else {"inside_changed": 0, "outside_changed": -1}
     check(mount.active_viewers(id20) == 1 and int(rift_result.get("inside_changed", 0)) > 0 and int(rift_result.get("outside_changed", -1)) == 0, "C20 contour A pull transforms live world only within source influence: " + str(rift_result))
+    # Original C20 explicitly authors a short screen invert at collision.
+    # Test only the opt-in world/actor viewport consumer below the real HUD.
     rift.render_enabled = false
-    for tick in range(150): rift.advance(STEP, false)
+    for tick in range(126): rift.advance(STEP, false)
+    rift.render_enabled = true
+    rift._render_frame()
+    await process_frame
+    await process_frame
+    var rift_pre_post := await save_frame("fusion_20_collision_without_post")
+    var post20 := Arcana20CViewportPost.new()
+    post20.process_mode = Node.PROCESS_MODE_ALWAYS
+    world.add_child(post20)
+    check(post20.attach(multi), "C20 authored collision viewport post attaches")
+    rift._render_frame()
+    await process_frame
+    await process_frame
+    var rift_post := await save_frame("fusion_20_collision_with_post")
+    var rift_post_state: Dictionary = post20._states.get(id20, {})
+    check(float(rift_post_state.get("invert", 0.0)) == 1.0 and post20._rect.visible and not images_equal(rift_pre_post, rift_post), "C20 authored collision inversion changes actual viewport")
+    if fill != null:
+        var hpixel := root.get_final_transform() * (fill.get_global_transform_with_canvas() * (fill.size * 0.5))
+        var hx := clampi(roundi(hpixel.x), 0, rift_post.get_width() - 1)
+        var hy := clampi(roundi(hpixel.y), 0, rift_post.get_height() - 1)
+        check(rift_post.get_pixel(hx, hy) == rift_pre_post.get_pixel(hx, hy), "C20 collision viewport post leaves actual opaque HUD pixel unchanged")
+    post20.detach()
+    post20.queue_free()
+    await process_frame
+    await process_frame
+    check(images_equal(rift_pre_post, await save_frame("fusion_20_collision_post_detached")), "C20 opt-in collision post detaches without residual contamination")
+    rift.render_enabled = false
+    for tick in range(24): rift.advance(STEP, false)
     rift.render_enabled = true
     rift._render_frame()
     await process_frame
