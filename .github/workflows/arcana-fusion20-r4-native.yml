@@ -1,0 +1,57 @@
+name: ARCANA Fusion20 R4 - Isolated Native SOH Actor Gate
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'prototypes/arcana_fusion20/r4/**'
+      - '.github/workflows/arcana-fusion20-r4-native.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  soh-actor-bridge:
+    name: Real SkeletonEnemy + CombatDamage + source-A frame intake
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Prepare evidence
+        run: |
+          mkdir -p .artifacts/arcana20-r4
+          godot --version | tee .artifacts/arcana20-r4/version.txt
+      - name: Import project and original SOH skeleton sprites
+        shell: bash
+        run: |
+          set -o pipefail
+          timeout --signal=TERM --kill-after=10s 180s \
+            godot --headless --path . --import 2>&1 | tee .artifacts/arcana20-r4/import.log
+      - name: Native hit receipts, multi-target and moving camera
+        shell: bash
+        run: |
+          set -o pipefail
+          export SOUL_OF_HERO_SAVE_PATH="user://tests/r4_isolated_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}.json"
+          export LIVING_ARSENAL_SAVE_PATH="$SOUL_OF_HERO_SAVE_PATH"
+          timeout --signal=TERM --kill-after=10s 120s \
+            godot --headless --path . --script \
+              res://prototypes/arcana_fusion20/r4/r4_native_headless_test.gd \
+            2>&1 | tee .artifacts/arcana20-r4/native-test.log
+          grep -Fq 'R4_RESULT PASS failures=[]' .artifacts/arcana20-r4/native-test.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|R4_FAIL ' .artifacts/arcana20-r4/native-test.log; then
+            echo 'R4 parse/runtime/assertion failure' >&2
+            exit 1
+          fi
+      - name: Upload logs even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: arcana-fusion20-r4-native
+          path: .artifacts/arcana20-r4/
+          if-no-files-found: warn
+          retention-days: 14
