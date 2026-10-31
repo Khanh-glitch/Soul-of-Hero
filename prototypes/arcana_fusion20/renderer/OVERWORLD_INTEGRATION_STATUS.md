@@ -1018,6 +1018,7 @@ SOH world source parity and creator review remain separate.
   JOIN [41237784846](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41237784846)
   passed with the same no-FX **17 ObjectDB / 5 resources** shutdown baseline;
   independent no-FX [41237784844](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41237784844)
-  was still running at this entry. Latest 5a was repinned for JOIN and no-FX;
-  018 phase/performance evidence remains explicitly historical until repinned
-  and rerun. No acceptance granted.
+  passed, also noting 17 ObjectDB instances at shutdown. Latest 5a was
+  repinned for JOIN, no-FX, phase and overlap; 018 phase/performance evidence
+  remains explicitly historical until the refreshed runs complete. No
+  acceptance granted.
