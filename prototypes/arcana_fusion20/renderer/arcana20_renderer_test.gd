@@ -67,7 +67,7 @@ func _init() -> void:
                 node._process(1.0 / 60.0)
             if not renderer.is_active(cid):
                 break
-        var want_contacts := {9: 11, 11: 7, 4: 2, 12: 4, 13: 4}.get(_skill_num(cid), 1)
+        var want_contacts: int = int({9: 11, 11: 7, 4: 2, 12: 4, 13: 4}.get(_skill_num(cid), 1))
         if id == 3:
             want_contacts = 8 # authored per-meteor impacts (fusion decisions #03)
         if int(_contacts[cid]) != want_contacts:
