@@ -24,6 +24,25 @@ def png_size(path: Path) -> list[int]:
     return list(struct.unpack(">II", header[16:24]))
 
 
+def source_path(path: object) -> str:
+    value = str(path or "")
+    return value[6:] if value.startswith("res://") else value
+
+
+def semantic_runtime_interfaces_ok(report: dict, inputs: dict) -> bool:
+    compatibility = report.get("source_report", {}).get("runtime_compatibility", {})
+    observed = compatibility.get("observed_sha256", {})
+    expected_observations = inputs.get("runtime_interfaces", {}).get("observed_paths", {})
+    return (compatibility.get("ok") is True
+            and compatibility.get("policy") == "SEMANTIC_INTERFACE_NOT_MUTABLE_BYTE_IDENTITY"
+            and set(compatibility.get("interfaces", {})) == {"player", "LEGACY_CONTROLLER", "LEGACY_TRAVERSABILITY", "LEGACY_WORLD"}
+            and compatibility.get("interfaces", {}).get("player", {}).get("identity_policy") == "PHYSICAL_INTERFACE_ONLY_NO_VISUAL_OR_SCRIPT_IDENTITY"
+            and set(observed) == set(expected_observations)
+            and all(source_path(row.get("path")) == expected_observations.get(key) and len(str(row.get("sha256", ""))) == 64
+                    for key, row in observed.items())
+            and report.get("runtime_observed_sha256") == observed)
+
+
 def validate(report: dict, inputs: dict, budget: dict | None = None) -> dict:
     checks: list[dict] = []
 
@@ -39,14 +58,7 @@ def validate(report: dict, inputs: dict, budget: dict | None = None) -> dict:
     compatibility = report.get("source_report", {}).get("runtime_compatibility", {})
     observed = compatibility.get("observed_sha256", {})
     expected_observations = inputs.get("runtime_interfaces", {}).get("observed_paths", {})
-    check("semantic_runtime_interfaces", compatibility.get("ok") is True
-          and compatibility.get("policy") == "SEMANTIC_INTERFACE_NOT_MUTABLE_BYTE_IDENTITY"
-          and set(compatibility.get("interfaces", {})) == {"player", "LEGACY_CONTROLLER", "LEGACY_TRAVERSABILITY", "LEGACY_WORLD"}
-          and compatibility.get("interfaces", {}).get("player", {}).get("identity_policy") == "PHYSICAL_INTERFACE_ONLY_NO_VISUAL_OR_SCRIPT_IDENTITY"
-          and set(observed) == set(expected_observations)
-          and all(row.get("path") == expected_observations.get(key) and len(str(row.get("sha256", ""))) == 64
-                  for key, row in observed.items())
-          and report.get("runtime_observed_sha256") == observed, compatibility)
+    check("semantic_runtime_interfaces", semantic_runtime_interfaces_ok(report, inputs), compatibility)
     pinned_paths = {row.get("path") for row in report.get("source_hash_manifest", {}).values()}
     check("mutable_runtime_not_byte_pinned", pinned_paths.isdisjoint(expected_observations.values()))
     expected_refusals = {

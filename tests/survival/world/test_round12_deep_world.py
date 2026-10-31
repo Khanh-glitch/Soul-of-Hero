@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "tools/survival/worldgen"))
 import compile_round12_runtime as compiler
 import estimate_round12_native_budget as budget
+import validate_round12_native as native_oracle
 
 CONTRACT = compiler.CONTRACT
 
@@ -258,6 +259,33 @@ def test_compatible_mutable_runtime_drift_does_not_invalidate_world(monkeypatch:
 
     monkeypatch.setattr(compiler, "sha_file", compatible_drift)
     compiler.RuntimeBuilder().validate_sources()
+
+
+def test_native_oracle_normalizes_only_resource_path_spelling(native_inputs: dict) -> None:
+    observed = {
+        key: {"path": "res://" + row["path"], "sha256": row["sha256"]}
+        for key, row in native_inputs["runtime_observed_sha256"].items()
+    }
+    compatibility = {
+        "ok": True,
+        "policy": "SEMANTIC_INTERFACE_NOT_MUTABLE_BYTE_IDENTITY",
+        "observed_sha256": observed,
+        "interfaces": {
+            "player": {"identity_policy": "PHYSICAL_INTERFACE_ONLY_NO_VISUAL_OR_SCRIPT_IDENTITY"},
+            "LEGACY_CONTROLLER": {}, "LEGACY_TRAVERSABILITY": {}, "LEGACY_WORLD": {},
+        },
+    }
+    report = {"source_report": {"runtime_compatibility": compatibility},
+              "runtime_observed_sha256": observed}
+    assert native_oracle.semantic_runtime_interfaces_ok(report, native_inputs)
+
+    corrupted = deepcopy(report)
+    corrupted["source_report"]["runtime_compatibility"]["observed_sha256"]["knight_scene"]["sha256"] = "0" * 63
+    corrupted["runtime_observed_sha256"] = corrupted["source_report"]["runtime_compatibility"]["observed_sha256"]
+    assert not native_oracle.semantic_runtime_interfaces_ok(corrupted, native_inputs)
+    wrong_identity = deepcopy(report)
+    wrong_identity["source_report"]["runtime_compatibility"]["interfaces"]["player"]["identity_policy"] = "KNIGHT_BYTES"
+    assert not native_oracle.semantic_runtime_interfaces_ok(wrong_identity, native_inputs)
 
 
 def test_runtime_byte_pin_regression_fails_closed(tmp_path: Path) -> None:
