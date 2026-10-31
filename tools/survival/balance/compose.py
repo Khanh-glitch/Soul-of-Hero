@@ -51,6 +51,12 @@ OWNER_PREFIXES: Dict[str, List[str]] = {
     "a3": ["data/survival/items/", "data/survival/recipes/", "data/survival/economy/", "game/survival/economy/"],
     "a6": ["game/survival/ui/"],
     "a8": ["game/survival/world_content/", "data/survival/world_content/"],
+    # Round 10. A6's active branch keeps its whole survival UI (avatar art, return
+    # cards, projection contract) under `game/survival/ui/`, which A0 does not have
+    # at all. Its copies of `game/app/*` and `game/ui/screens/*` are A0-owned paths
+    # in this map and are NOT overlaid: they are A6's older view of A0's files, and
+    # copying them would silently revert the base. That difference is reported by
+    # the composition rather than hidden.
 }
 
 #: How each prefix is applied.
@@ -115,6 +121,27 @@ PROFILES: Dict[str, Dict[str, object]] = {
         "overlays": ["a1", "a3", "a6", "a8"],
         "question": "the same question with the UI and POI layers on top",
     },
+    # Round 10 (CT P0). Current head of every owner, active A6 branch included.
+    # `r10_core` is the attribution base: it answers whether a failure survives
+    # without A6/A8, so a defect is never blamed on "the composition".
+    # Attribution base: A0's bytes alone, which is what A0's own CI runs. A claim
+    # that is green here and red on `r10_full` is a *composition* defect, not an A0
+    # one, and that distinction has to be measurable rather than argued.
+    "r10_a0": {
+        "base": "a0",
+        "overlays": [],
+        "question": "does A0's own green claim survive its own bytes, before any overlay?",
+    },
+    "r10_core": {
+        "base": "a0",
+        "overlays": ["a1", "a3"],
+        "question": "does the current A0 runtime mount current A1 geography and A3 V7 alone?",
+    },
+    "r10_full": {
+        "base": "a0",
+        "overlays": ["a1", "a3", "a6", "a8"],
+        "question": "the product a player would actually install, at current owner heads",
+    },
 }
 
 #: Owners whose work is pinned for provenance but cannot be overlaid without
@@ -131,7 +158,10 @@ DEFAULT_REFS: Dict[str, str] = {
     "a0": "refs/live/arena-dea2428e",
     "a1": "refs/live/arena-e385312a",
     "a3": "refs/live/arena-7a12b27e",
-    "a6": "refs/live/arena-443f004f",
+    # `arena-443f004f` is the old PR24 head. The ACTIVE A6 branch is
+    # `arena/05e0328d-soul-of-hero`; round 9 pinned PR24 by mistake and CT's
+    # round-10 order names the active branch explicitly.
+    "a6": "refs/live/arena-05e0328d",
     "a8": "refs/live/arena-2d7e6d7a",
     "avfx": "refs/live/arena-c7b0c4e8",
     "ct": "refs/live/docs-ct-loot-discovery-gate-20261030",

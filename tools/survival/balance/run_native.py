@@ -63,6 +63,10 @@ PROBE_FAMILIES = (
     # economy. Separate from round 8 because these probes drive the *player* input
     # pipeline rather than calling product methods.
     ("balance_native_r9", REPO / "tests" / "survival" / "balance_native_r9"),
+    # Round 10 (CT P0). Current owner heads, A0's real profile port, and the
+    # cross-owner seams round 9 could not see. Kept separate so the round-9 ledger
+    # stays a historical record of what that composition actually did.
+    ("balance_native_r10", REPO / "tests" / "survival" / "balance_native_r10"),
 )
 #: A7-owned data the round-8 probes read. These are test configuration, not game
 #: data: the game never loads them. They are copied into the worktree next to the

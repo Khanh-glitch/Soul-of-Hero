@@ -1,3 +1,57 @@
+# A7 acceptance scoreboard — round 10 (one hash, one player path)
+
+_2026-10-31. Supersedes round 9 for status questions. Real Godot
+`4.7.stable.custom_build` against `1d39e92e75d8` (`r10_full`: A0 `84ac9c1a` +
+A1 `439d5ef1` + A3 `35214ed8` + A6 `3fa646cb` + A8 `3a7ab461`), `acb955c71744`
+(`r10_core`) and `edbe909f6834` (`r10_a0`, A0 alone). Full report:
+[`ROUND10_SYSTEM_ACCEPTANCE.md`](ROUND10_SYSTEM_ACCEPTANCE.md). Ledger:
+`data/survival/balance/results/native_runs.v1.json`; round 9's payload is preserved
+as `native_runs.r9_full.v1.json` and no historical row was rewritten._
+
+| verdict | count |
+|---|---|
+| PASS | 3 |
+| FAIL | 3 |
+| BLOCKED | 1 |
+| RED_NOT_IMPLEMENTED | 1 |
+
+* **It is one item in one file, and it is now attributable.** `r10_a0` (A0's own
+  bytes) boots with `economy_session` **non-null** and a clean fence
+  (`drifted_pins=[]`). Add A3 and the fence reports
+  `a3_data_pin_mismatch:res://data/survival/items/items.json`, the session goes
+  **null**, and the Waystation candidate refuses to mount. The two files differ by
+  exactly one item: `ragnarok_unbanked` (A0 56 items at `cc3c1165…`, A3 57 at
+  `cd1a27c4…`). One re-pin turns the survival economy back on.
+* **The new A0 profile port is real and unreachable.** `a0_profile_port.gd` exists,
+  configures and works when driven (V7 custody 16/16; a run record and a wallet that
+  survive a second OS process), but `configure_meta_profile_port`, `ensure_run`,
+  `commit_meta_deposit` and the file name itself have **0 callers in `game/`**.
+  CT's question is answered: mounted—no; initialised—only by tests; committed and
+  restored—only by tests.
+* **One expiry hole.** `commit_profile_delta` accepts a deposit after
+  `run_context().status == "expired"` (`ok=true`, `balance=10`). The clock is right;
+  the refusal is missing.
+* **A8's current red is four causes, three of them A8's.** A float/int **Array**
+  compare at `poi_pilot.gd:242` (`[30,280] == [30.0,280.0]` is false in 4.7) rejects
+  every doorway entry and explains 21 of 22 input-journey failures; the Mill
+  `ready_actions` producer is missing from A8's own fixture catalogue (9 contract + 2
+  transition failures); a "closed" `retreat_one_way` gate lets an actor walk 410→250
+  through it (3 failures). The fourth is a **stale test**: the Ragnarok negative
+  claim still expects `NOT_INTEGRATED` while the data and the Python contract test
+  both say `A0_PR21_GUARDED_CANDIDATE`.
+* **A6 mounts and shows nothing.** All five projections are `empty` because **0 of
+  12** candidate producer methods exist in `game/`; the avatar is
+  `A6_SOURCE_UNAVAILABLE` (no sprite bytes in Git, no caller of
+  `avatar_sprite_pipeline.gd`). The Hero the player sees is A0's own
+  `AnimatedSprite2D` with 34 animations.
+* **The four CT journeys are RED, per clause.** `r10_journey_probe`: 10 checks, 0
+  failed, 8 missing — every missing symbol named (funded job, Core cast, A3-approved
+  source, hazard, A1-native late-chest socket, kiosk deposit, A6 return display,
+  avatar). `PLAYER_RETURN_S1` is `PARTIAL_WITH_BLOCKERS`; `PLAYER_POI_S1` is
+  `BLOCKED` behind A8's own red.
+* **Round 9's retraction stands.** No placement-HUD/ClickBlocker claim is made or
+  re-tested here; round 9 withdrew it and round 10 does not resurrect it.
+
 # A7 acceptance scoreboard — round 9 (the seam, the clock, the mover, the click)
 
 _2026-10-31. Supersedes round 8 for status questions; round 9 ran a real Godot

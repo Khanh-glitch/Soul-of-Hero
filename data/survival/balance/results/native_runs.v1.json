@@ -1,7 +1,7 @@
 {
   "composition": {
-    "ref": "refs/comp/r9_full",
-    "sha": "ef2ad0f09310760b594a01ec834fa0d0fd8d5592"
+    "ref": "refs/comp/r10_full",
+    "sha": "1d39e92e75d8ac0eecb4481f88154964e62d943d"
   },
   "display": "headless (DisplayServerHeadless): no GPU, no rendered frame, no human review",
   "engine": "4.7.stable.custom_build",
@@ -18,6 +18,15 @@
     "balance_native_decisions/d061_trail_probe.gd": "331dd064d94f3a3eab88bd9185279db1a8acfa3b95983881da51e59e6e21eed0",
     "balance_native_decisions/d_harness.gd": "b1aa8ab937c852eba3a0a5ed186ae76674c82f7b87a1f1187d2f35e01984f246",
     "balance_native_decisions/oracle_corruption_probe.gd": "c11488558f27e6b1f9da5fc2cf66bd6cdda539652a880f559dfb8c69d84d56cb",
+    "balance_native_r10/r10_a6_projection_probe.gd": "5ae5754bb077ba80247f11b0bf5c7882ffd792aa15ba8fb32737142465c64f3e",
+    "balance_native_r10/r10_a8_differential_probe.gd": "b9e38a937bdc500fea9cbd96e0a0ae2d42f751eedfaded55ca33145ede4b6a1b",
+    "balance_native_r10/r10_harness.gd": "c6723c5d6248ce62d2ac4eadbd20c0480f390923e8beee49d8b3b81b6ed35d18",
+    "balance_native_r10/r10_journey_probe.gd": "cf527922329d01a953f1e0f3f469da430acbb4481b48273769efc7e929658c10",
+    "balance_native_r10/r10_port_lifecycle_probe.gd": "ebc53fc0988a50548bfef5320e6550d17ea1d8c1405cd99f43ac4fbfcdd6eb2e",
+    "balance_native_r10/r10_restart_probe.gd": "fac0e96fba01a0a163288cc00f0120021706f5ae3bde244462977066b86a546a",
+    "balance_native_r10/r10_seam_probe.gd": "0cd8f1cc2077b1654105584ed4e1f20576d3271babc467458f21bc432499ee03",
+    "balance_native_r10/r10_v7_custody_probe.gd": "25b2e34b3108a6d11956907f3ede25d7bd71c3ecf2b95c002f5d92a4ef58ca75",
+    "balance_native_r10/r10_waystation_probe.gd": "c4bcd1570ed4b914b60e02662d3ddc864eed590f5c5db9029c37cdb479810e0f",
     "balance_native_r9/r9_economy_custody_probe.gd": "9b9b0a2588f8e46c4daacf94e661e5eeed5be7b79b8207622e529bed4db7fc8e",
     "balance_native_r9/r9_economy_seam_probe.gd": "0f6b36d1228bf85134877b9403343223f89d40fb23d34145db15b3c54e0c9cb4",
     "balance_native_r9/r9_harness.gd": "b35ee5d452d713128734df97ae25045d1cbe10058c874ad147d3440b7bae8a55",
@@ -39,80 +48,69 @@
   "results": [
     {
       "blocked_reason": "",
-      "checks": 7,
-      "claimed": "PASS",
-      "engine_lines": [
-        "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
-      ],
-      "exit_code": 0,
-      "failed": [],
-      "family": "balance_native_r9",
-      "log": ".artifacts/native_runs/ef2ad0f09310/balance_native_r9__r9_run_clock_probe.gd.log",
-      "log_lines": 15,
-      "log_sha256": "3e962ef1bce3a4a5d706fe5ff01145b3198c3d435ffb23dde975cc675eb03698",
-      "mismatch": "",
-      "missing": [],
-      "probe": "r9_run_clock_probe.gd",
-      "verdict": "PASS"
-    },
-    {
-      "blocked_reason": "",
-      "checks": 12,
+      "checks": 23,
       "claimed": "FAIL",
       "engine_lines": [
         "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
       ],
       "exit_code": 1,
       "failed": [
-        "the shipped overworld builds with survival/a0_waystation_candidate=true, its own door"
+        "the shipped overworld configures the survival economy (economy_session=null, fence=\"a3_data_pin_mismatch:res://data/survival/items/items.json\")",
+        "A0's source fence agrees with the A3 bytes it composes (\"a3_data_pin_mismatch:res://data/survival/items/items.json\")",
+        "some production path mounts `configure_meta_profile_port`, so the boundary is reachable rather than dead code",
+        "some production path mounts `ensure_run`, so the boundary is reachable rather than dead code",
+        "some production path mounts `commit_meta_deposit`, so the boundary is reachable rather than dead code",
+        "some production path mounts `a0_profile_port.gd`, so the boundary is reachable rather than dead code"
       ],
-      "family": "balance_native_r9",
-      "log": ".artifacts/native_runs/ef2ad0f09310/balance_native_r9__r9_economy_seam_probe.gd.log",
-      "log_lines": 40,
-      "log_sha256": "c84294eb73403711d6b2382f2cb0e57d70ff3668078f341f80453fb19a1f816f",
+      "family": "balance_native_r10",
+      "log": ".artifacts/native_runs/1d39e92e75d8/balance_native_r10__r10_seam_probe.gd.log",
+      "log_lines": 51,
+      "log_sha256": "c06ddd45bbf3beab49f670b88d60f5fa3559fcfc945d958a2add0fcca2612801",
       "mismatch": "",
       "missing": [],
-      "probe": "r9_economy_seam_probe.gd",
+      "probe": "r10_seam_probe.gd",
       "verdict": "FAIL"
     },
     {
       "blocked_reason": "",
-      "checks": 10,
-      "claimed": "PASS",
+      "checks": 20,
+      "claimed": "FAIL",
       "engine_lines": [
         "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
       ],
-      "exit_code": 0,
-      "failed": [],
-      "family": "balance_native_r9",
-      "log": ".artifacts/native_runs/ef2ad0f09310/balance_native_r9__r9_placement_cursor_probe.gd.log",
-      "log_lines": 27,
-      "log_sha256": "269e99e936322f80ed0ff5d44fc82a85e44c0134843a1420c8028c65623b5a08",
+      "exit_code": 1,
+      "failed": [
+        "A0's own wallet door refuses a deposit after the run expired (ok=true, balance=10)"
+      ],
+      "family": "balance_native_r10",
+      "log": ".artifacts/native_runs/1d39e92e75d8/balance_native_r10__r10_port_lifecycle_probe.gd.log",
+      "log_lines": 15,
+      "log_sha256": "59a4892947fd7971d80c0fceebbf1e8aad9db195e556ce8f2acf72c72f4f12af",
       "mismatch": "",
       "missing": [],
-      "probe": "r9_placement_cursor_probe.gd",
-      "verdict": "PASS"
+      "probe": "r10_port_lifecycle_probe.gd",
+      "verdict": "FAIL"
     },
     {
       "blocked_reason": "",
-      "checks": 11,
+      "checks": 16,
       "claimed": "PASS",
       "engine_lines": [
         "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
       ],
       "exit_code": 0,
       "failed": [],
-      "family": "balance_native_r9",
-      "log": ".artifacts/native_runs/ef2ad0f09310/balance_native_r9__r9_shadow_physics_probe.gd.log",
-      "log_lines": 24,
-      "log_sha256": "69ff4ce79b72082c9ef32a4554fb5a82ada4208f0c28c8aa3c600afd7c105e96",
+      "family": "balance_native_r10",
+      "log": ".artifacts/native_runs/1d39e92e75d8/balance_native_r10__r10_v7_custody_probe.gd.log",
+      "log_lines": 36,
+      "log_sha256": "c14d7abdde20e5c2e5d8c7527e73231a519e36ee2dcb98825afc0eb87ff83211",
       "mismatch": "",
       "missing": [],
-      "probe": "r9_shadow_physics_probe.gd",
+      "probe": "r10_v7_custody_probe.gd",
       "verdict": "PASS"
     },
     {
-      "blocked_reason": "the Waystation host cannot be mounted in this composition, so no stand cell or click can be walked: the production overworld never reached READY (build_error=Waystation candidate requires the A3 economy session, flag_forced=true)",
+      "blocked_reason": "REACHED and CLICKED are unmeasured: the overworld refuses to build with survival/a0_waystation_candidate=true. Cause: the production overworld never reached READY (build_error=Waystation candidate requires the A3 economy session, flag_forced=true)",
       "checks": 5,
       "claimed": "BLOCKED",
       "engine_lines": [
@@ -120,61 +118,104 @@
       ],
       "exit_code": 2,
       "failed": [],
-      "family": "balance_native_r9",
-      "log": ".artifacts/native_runs/ef2ad0f09310/balance_native_r9__r9_waystation_walk_probe.gd.log",
-      "log_lines": 22,
-      "log_sha256": "fdc97dac385f2aa40d72614d24f4dc413f484e4ed6044bb45eeee52de59a0c51",
+      "family": "balance_native_r10",
+      "log": ".artifacts/native_runs/1d39e92e75d8/balance_native_r10__r10_waystation_probe.gd.log",
+      "log_lines": 23,
+      "log_sha256": "94020076fbe5fe5d039c974a9b09a298b8ef26e83d1d6477d36b776c6a1e97a2",
       "mismatch": "",
       "missing": [],
-      "probe": "r9_waystation_walk_probe.gd",
-      "verdict": "BLOCKED"
-    },
-    {
-      "blocked_reason": "the replayed physical interaction is unmeasurable: the Waystation host requires the A3 economy session, which A0's stale items.json pin disables (the production overworld never reached READY (build_error=Waystation candidate requires the A3 economy session, flag_forced=true)). Durability of a committed action was measured across two processes; the duplicate-payment rule at the Waystation was not.",
-      "checks": 12,
-      "claimed": "BLOCKED",
-      "engine_lines": [
-        "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
-      ],
-      "exit_code": 2,
-      "failed": [],
-      "family": "balance_native_r9",
-      "log": ".artifacts/native_runs/ef2ad0f09310/balance_native_r9__r9_restart_replay_probe.gd.log",
-      "log_lines": 38,
-      "log_sha256": "d2e59901018eb8dec38c3b714f16b681c9accccb1bba16fcfa7a60a4cf5e8241",
-      "mismatch": "",
-      "missing": [],
-      "probe": "r9_restart_replay_probe.gd",
+      "probe": "r10_waystation_probe.gd",
       "verdict": "BLOCKED"
     },
     {
       "blocked_reason": "",
-      "checks": 29,
+      "checks": 13,
+      "claimed": "PASS",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
+      ],
+      "exit_code": 0,
+      "failed": [],
+      "family": "balance_native_r10",
+      "log": ".artifacts/native_runs/1d39e92e75d8/balance_native_r10__r10_restart_probe.gd.log",
+      "log_lines": 19,
+      "log_sha256": "edca3012c6a79df9b0df9b307f6ac8aab10f15d57674fb019440eeae998b246c",
+      "mismatch": "",
+      "missing": [],
+      "probe": "r10_restart_probe.gd",
+      "verdict": "PASS"
+    },
+    {
+      "blocked_reason": "",
+      "checks": 8,
+      "claimed": "PASS",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
+      ],
+      "exit_code": 0,
+      "failed": [],
+      "family": "balance_native_r10",
+      "log": ".artifacts/native_runs/1d39e92e75d8/balance_native_r10__r10_a8_differential_probe.gd.log",
+      "log_lines": 32,
+      "log_sha256": "ca2f05622a2b690f6d1bc46789f5fa2b2bb7dd42e1465019f8107042f6e5f33a",
+      "mismatch": "",
+      "missing": [],
+      "probe": "r10_a8_differential_probe.gd",
+      "verdict": "PASS"
+    },
+    {
+      "blocked_reason": "",
+      "checks": 5,
+      "claimed": "FAIL",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
+      ],
+      "exit_code": 1,
+      "failed": [
+        "an owner publishes at least one projection A6 is allowed to show (0 of 12 candidate methods exist in game/, so every A6 card is empty: A6_SOURCE_UNAVAILABLE)"
+      ],
+      "family": "balance_native_r10",
+      "log": ".artifacts/native_runs/1d39e92e75d8/balance_native_r10__r10_a6_projection_probe.gd.log",
+      "log_lines": 13,
+      "log_sha256": "d03f3df201663bfac5df3c677aabf326181fcf2cd7addaab731210841bf65b07",
+      "mismatch": "",
+      "missing": [],
+      "probe": "r10_a6_projection_probe.gd",
+      "verdict": "FAIL"
+    },
+    {
+      "blocked_reason": "",
+      "checks": 10,
       "claimed": "RED_NOT_IMPLEMENTED",
       "engine_lines": [
         "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
       ],
       "exit_code": 3,
       "failed": [],
-      "family": "balance_native_r9",
-      "log": ".artifacts/native_runs/ef2ad0f09310/balance_native_r9__r9_economy_custody_probe.gd.log",
-      "log_lines": 36,
-      "log_sha256": "502e982e4dffc1af8f710fed8d4b5dd68b312dc7f2ccfecb0856da335edc8814",
+      "family": "balance_native_r10",
+      "log": ".artifacts/native_runs/1d39e92e75d8/balance_native_r10__r10_journey_probe.gd.log",
+      "log_lines": 58,
+      "log_sha256": "7b892f9b339e876a1d9c2c3083439a6c3c73ffd15d4c1ea1eb34c5036b1cf236",
       "mismatch": "",
       "missing": [
-        "the meta-economy API in the adapter the runtime loads (absent: [\"configure_meta_profile_port\",\"plan_meta_source_claim\",\"apply_meta_source_claim\",\"plan_meta_deposit\",\"apply_meta_deposit\",\"plan_meta_purchase\",\"plan_meta_recycle\",\"plan_meta_refund\"]) (expected in res://game/survival/economy/vendor/a3_economy_service.gd)",
-        "a `profile` namespace in the authoritative save (D056's three durable categories live there) (expected in res://game/autoload/save_service.gd)",
-        "SaveService profile port: run_context / endpoint_authority / source_authority / read_profile / apply_profile_delta (expected in res://game/autoload/save_service.gd)"
+        "A6_SOURCE_UNAVAILABLE: an avatar a player can select and see (manifest staged 0 sprite files; nothing in game/ calls avatar_sprite_pipeline.gd, so no selected avatar can reach the Hero)",
+        "a Core cast/charge action: the `research` *station kind* and its recipe table exist, but no `cast_core`/`core_cast` API or Core ability exists under game/, so USE/STORE/RESEARCH cannot be played",
+        "a funded job a player can queue: the shipped overworld has `economy_session == null` (A0 fence: a3_data_pin_mismatch:data/survival/items/items.json), so the forge/garden/research door is closed before Gold is even considered",
+        "A6 return display of paid production (run_facts/return_digest/run_history are all `empty`: no owner publishes the projection A6 is allowed to read)",
+        "an A3-approved source and endpoint: 0 of 15 are approved in A3's own policy (all are `OWNER_CONTRACT_CANDIDATE_A1_A8`/`_A8`)",
+        "a hazard or an opponent that can hurt the player in game/survival (0 hits for take_damage/apply_damage/`health -=`), so no survival death can produce the death bag that does exist",
+        "an A1-native late-chest socket: all 4 composed ragnarok endpoints are `A1_REVIEW_REQUIRED_SOCKET_NOT_CANONICAL` and `AUTHORED_PLAN_NOT_NATIVE_INTEGRATED`",
+        "a real kiosk deposit a player can make: `commit_meta_deposit` has 0 callers in game/, so the death bag -> kiosk -> new-run-vendor chain has no door even though the V7 rules exist"
       ],
-      "probe": "r9_economy_custody_probe.gd",
+      "probe": "r10_journey_probe.gd",
       "verdict": "RED_NOT_IMPLEMENTED"
     }
   ],
   "rule": "A probe counts only for the composition SHA it ran on. BLOCKED and RED_NOT_IMPLEMENTED are recorded, never converted into a pass. A probe that exits 0 without its verdict line is BLOCKED_NO_VERDICT.",
   "schema": "soh.balance.native_runs.v1",
   "summary": {
-    "BLOCKED": 2,
-    "FAIL": 1,
+    "BLOCKED": 1,
+    "FAIL": 3,
     "PASS": 3,
     "RED_NOT_IMPLEMENTED": 1
   },
