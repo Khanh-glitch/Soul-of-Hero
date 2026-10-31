@@ -58,6 +58,11 @@ var _band_hash := PackedFloat64Array()
 const NOISE_HASH_W := 72
 const NOISE_HASH_H := 108
 var _noise_hash := PackedFloat64Array()
+# hash2/hash3 are sums of independent 32-bit imul terms. These per-axis
+# integer terms are exact (no float quantization); time-varying star terms
+# are regenerated per rendered frame, not approximated across ticks.
+var _hash_x := PackedInt64Array()
+var _hash_y := PackedInt64Array()
 # This nearest-contour field depends only on the fixed original seed, source
 # resolution and immutable waypoints. Cache an independent master and clone
 # packed arrays per cast instead of recomputing ~70k x 8 projections per cast.
@@ -73,6 +78,10 @@ func setup() -> void:
     CPalette._ensure()
     _noise_hash.resize(NOISE_HASH_W * NOISE_HASH_H)
     _noise_hash.fill(-1.0)
+    _hash_x.resize(W)
+    _hash_y.resize(H)
+    for x in range(W): _hash_x[x] = CMath.imul(x, 374761393)
+    for y in range(H): _hash_y[y] = CMath.imul(y, 668265263)
     _band_hash.resize(72)
     for band in range(_band_hash.size()):
         _band_hash[band] = AMath.hash2(float(band), 77.0)
@@ -274,6 +283,20 @@ func render(f: CFrame, t: float) -> void:
         return
     var span := CMath.inv(1.6, TOPEN, t)
     var slot := floori(t * 12.0)
+    var slot_hash := CMath.imul(slot, 2147483647)
+    var edge_slot_hash := CMath.imul(slot + 5, 2147483647)
+    var star_x := PackedInt64Array()
+    var star_x2 := PackedInt64Array()
+    var star_y2 := PackedInt64Array()
+    if t >= TOPEN:
+        star_x.resize(W)
+        star_x2.resize(W)
+        star_y2.resize(H)
+        for x in range(W):
+            star_x[x] = CMath.imul(floori(float(x) - t * 10.0), 374761393)
+            star_x2[x] = CMath.imul(floori((float(x) + t * 26.0) / 2.0), 374761393)
+        for y in range(H):
+            star_y2[y] = CMath.imul(floori((float(y) + t * 6.0) / 2.0), 668265263)
     var mask := PackedByteArray()
     mask.resize(W * H)
     var widths := PackedFloat32Array()
@@ -295,7 +318,8 @@ func render(f: CFrame, t: float) -> void:
             if ad < 0.8: f.L(x, y, 1.6, 1.6, 1.8)
             elif ad < 3.0: f.C(x, y, 2.0)
             continue
-        var wj := width + ((CMath.hash3(x, y, slot) - 0.5) * 3.2 if width > 1.0 else 0.0)
+        var spatial_hash := _hash_x[x] + _hash_y[y]
+        var wj := width + ((CMath.hash1(spatial_hash + slot_hash) - 0.5) * 3.2 if width > 1.0 else 0.0)
         if ad < wj:
             mask[k] = 1
             var gy := (float(y) - 60.0) / 150.0
@@ -305,13 +329,13 @@ func render(f: CFrame, t: float) -> void:
                 f.inverted_live_fragment(x, y, 420.0 - x + inverted_x_offset, 232.0 - y)
             else:
                 f.Ic(x, y, color, 1.0)
-            if CMath.hash2(floori(x - t * 10.0), y) > 0.985: f.Lc(x, y, star_color, 0.7)
-            if CMath.hash2(floori((x + t * 26.0) / 2.0), floori((y + t * 6.0) / 2.0)) > 0.965: f.Lc(x, y, Vector3.ONE, 1.0)
+            if CMath.hash1(star_x[x] + _hash_y[y]) > 0.985: f.Lc(x, y, star_color, 0.7)
+            if CMath.hash1(star_x2[x] + star_y2[y]) > 0.965: f.Lc(x, y, Vector3.ONE, 1.0)
             if fposmod(x * 0.7 + y * 0.3 + t * 22.0, 37.0) < 1.0: f.Lc(x, y, CYAN, 0.35)
             f.L(x, y, 0.02, 0.0, 0.05)
             continue
         if ad < wj + 1.6 and width > 0.5:
-            var edge := MAG if CMath.hash3(x, y, slot + 5) > 0.5 else CYAN
+            var edge := MAG if CMath.hash1(spatial_hash + edge_slot_hash) > 0.5 else CYAN
             f.Ic(x, y, edge, 1.0)
             f.Lc(x, y, edge, 1.0)
             continue
