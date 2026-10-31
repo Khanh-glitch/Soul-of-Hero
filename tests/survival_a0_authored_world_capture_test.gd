@@ -110,7 +110,6 @@ func _play() -> void:
 	if hud != null:
 		var label: String = _first_label_text(hud)
 		_expect(not label.is_empty(), "the HUD paints readable text (%s)" % label)
-	_ow.call(&"apply_hud")
 
 
 func _teardown() -> void:
