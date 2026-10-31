@@ -27,13 +27,16 @@ var _max_frame_ms := 0.0
 var _frames := 0
 
 func _ready() -> void:
+    if _sprite != null:
+        return
     _sprite = Sprite2D.new()
     _sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
     add_child(_sprite)
     set_process(false)
 
 func begin(caster_world: Vector2, target_world: Vector2) -> void:
-    print("::notice::P2BEGIN sprite=", _sprite)
+    if _sprite == null:
+        _ready()
     _r = BRenderer.new()
     _fx = BPyreWyrm.new()
     duration = BPyreWyrm.DURATION
@@ -41,7 +44,6 @@ func begin(caster_world: Vector2, target_world: Vector2) -> void:
     _r.caster = SRC_CASTER
     _r.target = SRC_TARGET
     _fx.setup(_r)
-    print("::notice::P2BEGIN setup done")
     _world_target = target_world
     var dist := caster_world.distance_to(target_world)
     var s := clampf(dist / SRC_CASTER.distance_to(SRC_TARGET), 0.75, 3.0)
@@ -53,7 +55,6 @@ func begin(caster_world: Vector2, target_world: Vector2) -> void:
     var img := Image.create(BRenderer.W, BRenderer.H, false, Image.FORMAT_RGBA8)
     _tex = ImageTexture.create_from_image(img)
     _sprite.texture = _tex
-    print("::notice::P2BEGIN tex=", _tex)
     elapsed = 0.0
     _contact_done = false
     _frames = 0
