@@ -51,17 +51,17 @@ Use all 12 **adapted** Atlas journeys as coverage: J01 home-first vs explore-fir
 
 ## 3. Evidence ladder — never promote an earlier rung automatically
 
-E0 DESIGN_AUTHORED: text/JSON/atlas/spec authored. May be good ideas, but no execution.
-E1 SOURCE_INTEGRATED: exact real code/API/assets and transitive dependencies, one owner/SaveService and valid source/licence proven; project.godot/scene caller verified.
-E2 MACHINE_NATIVE: same pinned composition imports in Godot 4.7, non-vacuous tests, negative controls; engine does not crash. (NOT product gate E2, distinguish labels.)
-E3 PLAYER_REACHABLE: **ordinary live input** by a true avatar through real UI, physical walking and collision without cheat inject/teleport; player can find/understand the route rather than test knowing coordinates.
-E4 DURABLE_CAUSAL: one atomic A0 SaveService receipt, correct physical item UUID/capacity/source/consumption, second OS process restart, expiry/offline/crash replay and no double claim.
-E5 VISUAL_ACTUAL: actual staged original game pixels on correct native **production** composition at 720p/1440p/2160p, gameplay speed and appropriate zoom; a human reviewer opened each key frame at 1×, compared matched before/after, inspected full player and world, NOT just a thumbnail collage or agent self-report. A debug fixture/public no-art fallback is separate from private staged-art game evidence. Visual defects can veto acceptance.
-E6 GAMEPLAY_VALUE: independent counterfactual player paths with meaningful opportunity cost, later consequence, net risk/return and right to retreat/ignore compulsory content; no fake sources/one-tick rewards.
-E7 CREATOR_FIDELITY: the admitted full-game graphs above and D062–D074 represented, related unimplemented systems tracked with owners rather than silently omitted.
-E8 HUMAN_ENJOYMENT: observed real play by an actual person (for E2/full experience), documenting confusion, delight, fatigue, legibility and desire to return. Model guesses or automation cannot mark this rung PASS.
+EV0 DESIGN_AUTHORED: text/JSON/atlas/spec authored. May be good ideas, but no execution.
+EV1 SOURCE_INTEGRATED: exact real code/API/assets and transitive dependencies, one owner/SaveService and valid source/licence proven; project.godot/scene caller verified.
+EV2 MACHINE_NATIVE: same pinned composition imports in Godot 4.7, non-vacuous tests, negative controls; engine does not crash. (NOT product gate E2, distinguish labels.)
+EV3 PLAYER_REACHABLE: **ordinary live input** by a true avatar through real UI, physical walking and collision without cheat inject/teleport; player can find/understand the route rather than test knowing coordinates.
+EV4 DURABLE_CAUSAL: one atomic A0 SaveService receipt, correct physical item UUID/capacity/source/consumption, second OS process restart, expiry/offline/crash replay and no double claim.
+EV5 VISUAL_ACTUAL: actual staged original game pixels on correct native **production** composition at 720p/1440p/2160p, gameplay speed and appropriate zoom; a human reviewer opened each key frame at 1×, compared matched before/after, inspected full player and world, NOT just a thumbnail collage or agent self-report. A debug fixture/public no-art fallback is separate from private staged-art game evidence. Visual defects can veto acceptance.
+EV6 GAMEPLAY_VALUE: independent counterfactual player paths with meaningful opportunity cost, later consequence, net risk/return and right to retreat/ignore compulsory content; no fake sources/one-tick rewards.
+EV7 CREATOR_FIDELITY: the admitted full-game graphs above and D062–D074 represented, related unimplemented systems tracked with owners rather than silently omitted.
+EV8 HUMAN_ENJOYMENT: observed real play by an actual person (for E2/full experience), documenting confusion, delight, fatigue, legibility and desire to return. Model guesses or automation cannot mark this rung PASS.
 
-An artifact may be native PASS at E2 and NOT_TESTED E3–E8. If dependent systems are absent, label BLOCKED_BY_OWNER with exact contract and **no claim of passing product**. A7's old immutable composition cannot prove new live owner code; CI at HEAD does not prove a fresh composition.
+An artifact may be native PASS at EV2 and NOT_TESTED EV3–EV8. If dependent systems are absent, label BLOCKED_BY_OWNER with exact contract and **no claim of passing product**. A7's old immutable composition cannot prove new live owner code; CI at HEAD does not prove a fresh composition.
 
 ## 4. R0–R5 universal independent audit, EVERY AGENT, EVERY REPORT
 
