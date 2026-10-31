@@ -249,6 +249,39 @@ jobs:
             fi
           fi
           [ "$failures" -eq 0 ]
+      - name: R13 authored continent native frames (720p / 1440p / 2160p)
+        if: ${{ !cancelled() }}
+        run: |
+          set +e
+          # A composition can be playable and still be unpainted. These are the
+          # engine's own frames at three native resolutions, captured from the same
+          # production scene the route gate plays; a frame that is blank, flat or the
+          # wrong size fails inside the test, not in a reviewer's eyes.
+          cd .composition
+          failures=0
+          for res in 1280x720 2560x1440 3840x2160; do
+            log="../artifacts/authored_capture_$res.log"
+            A0_VISUAL_RESOLUTION=$res timeout --signal=TERM --kill-after=10s 900s \
+              xvfb-run -a -s "-screen 0 3840x2160x24" \
+              env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --rendering-method gl_compatibility \
+              --rendering-driver opengl3 --audio-driver Dummy --resolution "$res" --windowed \
+              --script res://tests/survival_a0_authored_world_capture_test.gd > "$log" 2>&1
+            rc=$?
+            echo "::notice::authored capture $res exit=$rc $(grep -aE 'PASSED|FAILED' "$log" | tail -1)"
+            grep -a 'A0_AUTHORED_FRAME' "$log" || true
+            if [ "$rc" -ne 0 ] || ! grep -qa 'A0 AUTHORED CAPTURE PASSED' "$log"; then
+              failures=$((failures+1))
+              echo "::error::authored capture $res body=$(tail -c 1200 "$log" | tr '\n' '~')"
+            fi
+          done
+          [ "$failures" -eq 0 ]
+      - name: R13 authored frame review thumbnails
+        if: always()
+        run: |
+          python3 -m pip install --user Pillow==11.3.0 > /dev/null 2>&1 || true
+          for group in 0 1 2 3 4; do
+            python3 tools/ci/authored_visual_annotation_chunks.py "$group" || true
+          done
       - name: R13 first-failure transcript (engine version, artifacts, one log)
         if: always()
         run: |
