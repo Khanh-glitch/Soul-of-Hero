@@ -23,11 +23,12 @@ func _run() -> void:
     current_scene = game
     for i in range(8):
         await process_frame
-    var knight := game.get_node_or_null("Knight") as Node2D
-    var camera := game.get_node_or_null("Knight/Camera") as Camera2D
+    # game/main.gd reparents Knight into Level/Entities during _ready.
+    var knight := get_first_node_in_group(&"player") as Node2D
+    var camera := knight.get_node_or_null("Camera") as Camera2D if knight != null else null
     var enemy_scene := load("res://game/characters/enemies/skeleton_enemy.tscn") as PackedScene
     if knight == null or camera == null or enemy_scene == null:
-        _fail("actual knight, camera or skeleton scene missing")
+        _fail("actual knight/camera/skeleton missing: knight=%s camera=%s skeleton=%s" % [str(knight != null), str(camera != null), str(enemy_scene != null)])
         quit(1)
         return
     knight.set_physics_process(false)
