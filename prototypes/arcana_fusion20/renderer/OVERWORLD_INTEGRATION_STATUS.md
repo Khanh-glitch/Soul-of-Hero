@@ -726,3 +726,30 @@ SOH world source parity and creator review remain separate.
   no-AVFX disposable current-entry probe is queued at `796b70767`. The historical
   world pin remains diagnostic only, and the newer owner revision is not yet a
   verified playable route or acceptance.
+- A0 is no longer blocked at the earlier `_spawn_cell()` error on the newer
+  input: no-AVFX normal-entry probes passed at `4dcbaed21f9de7ba2c1e3cf2fa4b933c47d12518`
+  ([41229182433](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41229182433))
+  and `b24a4918a01701842c783c711d309669c986fc50`
+  ([41229617524](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41229617524)).
+  The latter's isolated actual-world JOIN with AVFX `e32f5f49f` and CT
+  `e505173edd119fdd955cf6249511b575a5468440` passed its baseline and JOIN steps
+  ([41229735197](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41229735197));
+  both report 17 ObjectDB/5 resource shutdown leaks, as did historical baseline.
+  This is normal entry plus the existing frozen/controlled JOIN assertions, not
+  full campaign journey, motion/real hit, visual or owner acceptance. Owner HEAD
+  subsequently moved to `3a7b4591ae31a91588b57e45f91784cd917cb61a`, a workflow-
+  only child of `b24a`; that exact SHA has not been independently tested here.
+- Separate [D cast ribbon-only comparison 41229145777](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41229145777)
+  exposed large authored-coverage geometry divergences despite good isolated
+  primitives. At ticks 72/192/312/489/510 GPU coverage IoU was
+  **0.514/0.826/0.300/0.795/0.795**, max RGB error **0.525/0.663/0.792/1/1**.
+  This comparison used the source browser's accumulated time and the native
+  integer-tick clock; their RNG seed boundaries and one-shot transitions can
+  differ. A canonical same-tick/seed rerun with geometry-call diagnostics and
+  separate unapproved OUT samples is queued; it must be examined before
+  attributing the differences solely to rasterization or integrating GPU.
+- #02+#16 [41228671506](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41228671506)
+  completed all three software-CI resolutions: 720p/2K/4K post-draw
+  p50 **642/784/1040 ms**, p95 **1406/1572/1808 ms**, p99 **1477/1638/1869 ms**.
+  Each sampled 54 overlap frames, +47 live objects and 0 after cancellation,
+  HP unchanged; the C-only timing and memory caveats above remain in force.
