@@ -564,8 +564,29 @@ func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D)
     var accepted_10 := renderer.cast_skill(id10, player.global_position, enemy.global_position)
     check(accepted_2 and accepted_10, "overlap perf casts accepted")
     await RenderingServer.frame_post_draw
+    # Capture while BOTH casts are still active, before the timing sample.
+    # Screenshot encoding/OS capture are excluded from frame intervals.
+    check(mount.active_viewers(id2) > 0 and mount.active_viewers(id10) > 0, "overlap screenshot has both live source viewers")
+    var perf_image := await save_frame("overlap_perf_live_viewport")
+    var viewport_size := perf_image.get_size()
+    var physical_path := ProjectSettings.globalize_path(OUTPUT + "/overlap_perf_live_physical.png")
+    var capture_output: Array = []
+    var capture_status := OS.execute("python3", [ProjectSettings.globalize_path("res://prototypes/arcana_fusion20/renderer/arcana20_capture_x11.py"), physical_path], capture_output, true)
+    var physical: Image = Image.load_from_file(physical_path) if capture_status == 0 else null
+    var physical_size := physical.get_size() if physical != null else Vector2i.ZERO
+    var window_size := DisplayServer.window_get_size()
+    var expected_resolution := OS.get_environment("RESOLUTION").split("x")
+    if expected_resolution.size() == 2:
+        var expected := Vector2i(int(expected_resolution[0]), int(expected_resolution[1]))
+        check(physical_size == expected and viewport_size == expected and window_size == expected, "X11 capture, Godot viewport and game window match requested physical resolution: " + str(capture_output))
+    check(mount.active_viewers(id2) > 0 and mount.active_viewers(id10) > 0, "both source viewers persist across overlap screenshot")
+    perf_image = null
+    physical = null
+    await RenderingServer.frame_post_draw
     var samples: Array[float] = []
     var overlapping_frames := 0
+    var live_memory := before_memory
+    var live_objects := before_objects
     var last := Time.get_ticks_usec()
     for i in range(60):
         await RenderingServer.frame_post_draw
@@ -573,18 +594,10 @@ func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D)
         if mount.active_viewers(id2) > 0 and mount.active_viewers(id10) > 0:
             samples.append(float(now - last) / 1000.0)
             overlapping_frames += 1
+            live_memory = Performance.get_monitor(Performance.MEMORY_STATIC)
+            live_objects = Performance.get_monitor(Performance.OBJECT_COUNT)
         last = now
         if not renderer._casts.has(id2) or not renderer._casts.has(id10): break
-    var perf_image := await save_frame("overlap_perf_live_logical")
-    var physical_path := ProjectSettings.globalize_path(OUTPUT + "/overlap_perf_live_physical.png")
-    var capture_output: Array = []
-    var capture_status := OS.execute("python3", [ProjectSettings.globalize_path("res://prototypes/arcana_fusion20/renderer/arcana20_capture_x11.py"), physical_path], capture_output, true)
-    var physical: Image = Image.load_from_file(physical_path) if capture_status == 0 else null
-    var window_size := DisplayServer.window_get_size()
-    var expected_resolution := OS.get_environment("RESOLUTION").split("x")
-    if expected_resolution.size() == 2:
-        var expected := Vector2i(int(expected_resolution[0]), int(expected_resolution[1]))
-        check(physical != null and physical.get_size() == expected and window_size == expected, "X11 capture and game window match requested physical resolution: " + str(capture_output))
     samples.sort()
     check(samples.size() >= 2, "overlap perf produced multiple actually concurrent rendered frames")
     var percentiles := {}
@@ -592,20 +605,25 @@ func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D)
         var n := samples.size()
         percentiles = {"p50_ms": samples[floori((n - 1) * 0.50)], "p95_ms": samples[floori((n - 1) * 0.95)], "p99_ms": samples[floori((n - 1) * 0.99)]}
     var record := {"scope": "concurrent #02+#10 on real historical overworld; shared software-rendered CI, not a target-device budget",
-        "logical_viewport_size": [perf_image.get_width(), perf_image.get_height()],
-        "physical_capture_size": [physical.get_width(), physical.get_height()] if physical != null else [],
+        "viewport_capture_size": [viewport_size.x, viewport_size.y],
+        "physical_capture_size": [physical_size.x, physical_size.y],
         "window_size": [window_size.x, window_size.y],
         "overlap_frames": overlapping_frames, "post_draw_intervals": percentiles,
-        "static_bytes_live_delta": Performance.get_monitor(Performance.MEMORY_STATIC) - before_memory,
-        "live_object_delta": Performance.get_monitor(Performance.OBJECT_COUNT) - before_objects,
+        "static_bytes_live_delta": live_memory - before_memory,
+        "live_object_delta": live_objects - before_objects,
         "allocation_count": "not exposed by this Godot diagnostic",
         "enemy_hp_before": hp, "enemy_hp_after": int(enemy.get("health"))}
     check(int(enemy.get("health")) == hp, "overlap visuals have no damage authority")
+    renderer.cancel_all()
+    await process_frame
+    await process_frame
+    check(mount.active_viewers(id2) == 0 and mount.active_viewers(id10) == 0, "overlap cancellation removes both source viewers")
+    record["static_bytes_after_cancel_delta"] = Performance.get_monitor(Performance.MEMORY_STATIC) - before_memory
+    record["objects_after_cancel_delta"] = Performance.get_monitor(Performance.OBJECT_COUNT) - before_objects
     print("JOIN_RENDERED_FRAME_PERF ", JSON.stringify(record))
     var file := FileAccess.open(OUTPUT + "/overlap_frame_perf.json", FileAccess.WRITE)
     file.store_string(JSON.stringify(record, "  "))
     file.close()
-    renderer.cancel_all()
     mount.detach()
     app.queue_free()
     await process_frame

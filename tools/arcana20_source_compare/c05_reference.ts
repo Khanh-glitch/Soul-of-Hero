@@ -6,6 +6,11 @@ import { Rng } from '../../prototypes/arcana_fusion20/original_source/package/ha
 import { TIDE } from '../../prototypes/arcana_fusion20/original_source/package/handoff/sources/C/src/spells/tide';
 const dir = process.argv[2]; if (!dir) throw new Error('output required');
 mkdirSync(dir, {recursive:true});
+// C Particles.add uses Math.random() for unprovided per-particle seeds. Use
+// the same deterministic counter sequence as native CKit solely for this
+// controlled comparison; source geometry and update logic remain untouched.
+let autoSeed = 0;
+Math.random = () => ((++autoSeed * 7919 % 1000000) + 0.25) / 1000000;
 for (const tick of [372,396,420,450,480,510]) {
   const f = new Frame(); f.clear();
   const fx = {shake() {}, flash() {}, kick() {}, invert:0, desat:0, chroma:0, bloom:1, ambient:1, ambientEcho:0};

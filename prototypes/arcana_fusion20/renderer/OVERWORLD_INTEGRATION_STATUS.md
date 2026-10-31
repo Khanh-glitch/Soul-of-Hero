@@ -203,11 +203,15 @@ Shared software-rendered CI results (milliseconds):
 | 2560x1440 | 646.300 | 676.415 | 719.087 |
 | 3840x2160 | 881.093 | 915.322 | 950.645 |
 
-The live static-byte delta was about 7.22 MB and live-object delta 15, measured
-from before casts to while active; these are **not allocation counts**, peak
-memory, post-cancel leak counts, or target-device results. Enemy HP stayed
+The recorded static-byte delta (~7.22 MB) and object delta (15) included the
+capture image and were sampled after the timing loop, possibly after a cast
+ended; they are **not a reliable simultaneous-cast memory delta**, allocation
+counts, peak memory, post-cancel leak counts, or target-device results. Enemy HP stayed
 69 throughout. This software CI is very slow and **does not satisfy a frame
 budget**. The test does not prove all effects, natural gameplay, or 4K visual
-quality. `9c3fe144` adds an X11 physical framebuffer screenshot and explicit
-window-size check; that follow-up run is pending. Device-specific profiling,
+quality. `9c3fe144` added an X11 screenshot and explicit window-size check;
+[run 41211743348](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211743348)
+passed all three resolutions, but that older screenshot was taken after the
+timing loop and did not establish that both casts remained active. The newer
+probe captures during overlap and samples memory while both viewers are active. Device-specific profiling,
 allocations, full-cast capture and cleanup analysis remain mandatory.
