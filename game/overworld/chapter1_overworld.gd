@@ -77,7 +77,10 @@ var camera: Camera2D
 var hud: OverworldHud
 ## How often the HUD re-reads A0's pack snapshot (4 Hz).
 const CARRY_SAMPLE_MS := 250
+## Vitals change on a hit, not on a frame; the HUD's signal covers the hit itself.
+const VITALS_SAMPLE_MS := 250
 var _carry_sampled_at := -100000
+var _vitals_sampled_at := -1000000
 ## Runtime walkability that includes prop bodies, and the fade that keeps the
 ## Knight visible behind architecture. Both are built from the live scene, not
 ## from the authored document, so they describe the world the player has.
@@ -897,6 +900,12 @@ func _apply_hud() -> void:
 ## current afterwards. Nothing here is defaulted: a player without a health property
 ## simply leaves the row hidden.
 func _push_vitals() -> void:
+	# Same discipline as the pack snapshot: sampled, not synthesised per frame. The
+	# signal keeps a hit instant; this only guarantees a correct value at session start.
+	var now := Time.get_ticks_msec()
+	if now - _vitals_sampled_at < VITALS_SAMPLE_MS:
+		return
+	_vitals_sampled_at = now
 	if not is_instance_valid(player):
 		return
 	var maximum := _read_health(player, &"max_health")
