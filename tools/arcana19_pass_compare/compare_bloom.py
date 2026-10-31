@@ -31,3 +31,25 @@ for tick in (72, 192, 312, 489, 510):
 
 for tick in (72, 192, 312, 489, 510):
     print('D19_BLOOM_STAGE_SUMMARY', tick, json.dumps([{'pass': row['pass'], 'mae_255': round(row['mae_255'], 4), 'max_255': row['max_255']} for row in results if row['tick'] == tick], separators=(',', ':')), flush=True)
+
+# Probe WebGL's actual 2:1 nearest sampling tie behavior on the original scene.
+# Four candidates are evaluated independently; this is diagnostic, not a key.
+for tick in (72, 192, 312, 489, 510):
+    source = np.fromfile(p / f'original_{tick}.scene.rgba8', dtype=np.uint8).reshape(270, 480, 4)[::-1, :, :3]
+    original = np.fromfile(p / f'original_{tick}.stage0.rgba8', dtype=np.uint8).reshape(135, 240, 4)[::-1, :, :3]
+    native = np.fromfile(p / f'native_{tick}.stage0.rgba8', dtype=np.uint8).reshape(135, 240, 4)[:, :, :3]
+    candidates = []
+    for dy in (0, 1):
+        for dx in (0, 1):
+            c = source[dy::2, dx::2].astype(np.float32) / 255.0
+            lum = c @ np.array([0.2126, 0.7152, 0.0722], dtype=np.float32)
+            k = np.clip((lum - 0.42) / 0.5, 0, 1)
+            k = k * k * (3 - 2 * k)
+            expected = np.rint(c * k[:, :, None] * 255).astype(np.int16)
+            od = np.abs(original.astype(np.int16) - expected)
+            nd = np.abs(native.astype(np.int16) - expected)
+            candidates.append({'dx': dx, 'dy': dy, 'original_mae_255': round(float(od.mean()), 4),
+                               'native_mae_255': round(float(nd.mean()), 4),
+                               'original_exact_rgb': int(np.count_nonzero(np.max(od, axis=2) == 0)),
+                               'native_exact_rgb': int(np.count_nonzero(np.max(nd, axis=2) == 0))})
+    print('D19_FIRST_SAMPLE_PROBE', tick, json.dumps(candidates, separators=(',', ':')), flush=True)
