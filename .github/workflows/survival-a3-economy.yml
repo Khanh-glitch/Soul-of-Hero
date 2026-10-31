@@ -171,8 +171,14 @@ jobs:
             bash tools/ci/annotate_log.sh "$ARTIFACT_DIR/restart_phase2.log" "A3 restart phase2 engine exit $rc2" 25 || true
             echo "::warning::A3 world restart: rc1=$rc1 rc2=$rc2; both logs must pass their gates"
           fi
-          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/restart_phase1.log" "A3 restart phase1" "A3 WORLD RESTART PHASE 1 PASSED" || exit 1
-          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/restart_phase2.log" "A3 restart phase2" "A3 WORLD RESTART PHASE 2 PASSED" || exit 1
+          # Both phases deliberately exercise a failed atomic write, so gate copies
+          # with exactly that line removed (named, never a blanket filter).
+          for phase in restart_phase1 restart_phase2; do
+            grep -vE '^(USER )?ERROR: SaveService: Could not write the temporary save file[.]$' \
+              "$ARTIFACT_DIR/${phase}.log" > "$ARTIFACT_DIR/${phase}.gate.log"
+          done
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/restart_phase1.gate.log" "A3 restart phase1" "A3 WORLD RESTART PHASE 1 PASSED" || exit 1
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/restart_phase2.gate.log" "A3 restart phase2" "A3 WORLD RESTART PHASE 2 PASSED" || exit 1
           echo "A3 two-process world restart PASSED" >> "$GITHUB_STEP_SUMMARY"
           exit 0
       - name: V6 prepared offline operations against real SaveService
@@ -214,8 +220,14 @@ jobs:
             bash tools/ci/annotate_log.sh "$ARTIFACT_DIR/offline_restart_phase2.log" "A3 offline restart phase2 engine exit $rc2" 25 || true
             echo "::warning::A3 offline restart: rc1=$rc1 rc2=$rc2; both logs must pass their gates"
           fi
-          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/offline_restart_phase1.log" "A3 offline restart phase1" "A3 OFFLINE RESTART PHASE 1 PASSED" || exit 1
-          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/offline_restart_phase2.log" "A3 offline restart phase2" "A3 OFFLINE RESTART PHASE 2 PASSED" || exit 1
+          # Both phases deliberately exercise a failed atomic write, so gate copies
+          # with exactly that line removed (named, never a blanket filter).
+          for phase in offline_restart_phase1 offline_restart_phase2; do
+            grep -vE '^(USER )?ERROR: SaveService: Could not write the temporary save file[.]$' \
+              "$ARTIFACT_DIR/${phase}.log" > "$ARTIFACT_DIR/${phase}.gate.log"
+          done
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/offline_restart_phase1.gate.log" "A3 offline restart phase1" "A3 OFFLINE RESTART PHASE 1 PASSED" || exit 1
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/offline_restart_phase2.gate.log" "A3 offline restart phase2" "A3 OFFLINE RESTART PHASE 2 PASSED" || exit 1
           echo "A3 two-process offline restart PASSED" >> "$GITHUB_STEP_SUMMARY"
           exit 0
       - name: V5 tool-use callable read-only plan / atomic candidate transform
@@ -275,8 +287,14 @@ jobs:
             bash tools/ci/annotate_log.sh "$ARTIFACT_DIR/meta_restart_phase2.log" "A3 meta restart phase2 engine exit $rc2" 25 || true
             echo "::warning::A3 meta restart: rc1=$rc1 rc2=$rc2; both logs must pass their gates"
           fi
-          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/meta_restart_phase1.log" "A3 meta restart phase1" "A3 META RESTART PHASE 1 PASSED" || exit 1
-          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/meta_restart_phase2.log" "A3 meta restart phase2" "A3 META RESTART PHASE 2 PASSED" || exit 1
+          # Both phases deliberately exercise a failed atomic write, so gate copies
+          # with exactly that line removed (named, never a blanket filter).
+          for phase in meta_restart_phase1 meta_restart_phase2; do
+            grep -vE '^(USER )?ERROR: SaveService: Could not write the temporary save file[.]$' \
+              "$ARTIFACT_DIR/${phase}.log" > "$ARTIFACT_DIR/${phase}.gate.log"
+          done
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/meta_restart_phase1.gate.log" "A3 meta restart phase1" "A3 META RESTART PHASE 1 PASSED" || exit 1
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/meta_restart_phase2.gate.log" "A3 meta restart phase2" "A3 META RESTART PHASE 2 PASSED" || exit 1
           echo "A3 two-process meta restart PASSED" >> "$GITHUB_STEP_SUMMARY"
           exit 0
       - uses: actions/upload-artifact@v4
