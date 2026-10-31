@@ -1,0 +1,661 @@
+name: SURV-050A World Reader
+
+# A1-owned authored-world gate. This workflow does not boot the production
+# overworld, does not modify SaveService, and does not claim native continent
+# integration. It proves the authored data compiles deterministically and that a
+# minimal isolated Godot 4.7 reader can consume the chunks/RLE/build contract.
+
+on:
+  push:
+    branches: [arena/e385312a-soul-of-hero]
+    paths:
+      - '.github/workflows/survival-world-reader.yml'
+      - 'data/survival/world/**'
+      - 'tools/survival/worldgen/**'
+      - 'tests/survival/world/**'
+      - 'docs/survival/world/**'
+      - 'assets/environment/survival_world/**'
+      - 'game/world_art/**'
+      - 'game/survival/world/**'
+  pull_request:
+    branches: [main, feature/survival-rpg-foundation-20261029]
+    paths:
+      - '.github/workflows/survival-world-reader.yml'
+      - 'data/survival/world/**'
+      - 'tools/survival/worldgen/**'
+      - 'tests/survival/world/**'
+      - 'docs/survival/world/**'
+      - 'assets/environment/survival_world/**'
+      - 'game/world_art/**'
+      - 'game/survival/world/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  ARTIFACT_DIR: artifacts/a1-world
+
+jobs:
+  python-authoring:
+    name: A1 PYTHON AUTHORING / SCHEMAS / DETERMINISM
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install authoring dependencies
+        run: python -m pip install -r tools/survival/worldgen/requirements.txt
+      - name: Compile authored world
+        run: |
+          mkdir -p "$ARTIFACT_DIR"
+          python tools/survival/worldgen/make_schemas.py
+          python tools/survival/worldgen/compile_plan.py | tee "$ARTIFACT_DIR/compile.json"
+      - name: Compile native-ready two-POI vertical slice contracts
+        run: python tools/survival/worldgen/compile_slice.py | tee "$ARTIFACT_DIR/slice_compile.json"
+      - name: Render vertical-slice inspection diagram
+        run: python tools/survival/worldgen/preview_slice.py | tee "$ARTIFACT_DIR/slice_preview.json"
+      - name: Pacing / scale audit (estimates, not playtime)
+        run: python tools/survival/worldgen/analyze_pacing.py | tee "$ARTIFACT_DIR/pacing.json"
+      - name: Validate world + schemas
+        run: python tools/survival/worldgen/validate_world.py | tee "$ARTIFACT_DIR/validation.json"
+      - name: Validate vertical-slice handoff
+        run: python tools/survival/worldgen/validate_slice.py | tee "$ARTIFACT_DIR/slice_validation.json"
+      - name: Compile canonical geography connector contract + bounded annex pilot
+        run: python tools/survival/worldgen/compile_connector.py --out artifacts/a1-connector | tee "$ARTIFACT_DIR/connector_compile.json"
+      - name: Validate connector evidence gate (source-verified, not native playable)
+        run: python tools/survival/worldgen/validate_connector.py --out artifacts/a1-connector | tee "$ARTIFACT_DIR/connector_validation.json"
+      - name: Compile first-hour roadside corridor + A8 transform review
+        run: python tools/survival/worldgen/compile_corridor.py | tee "$ARTIFACT_DIR/corridor_compile.json"
+      - name: Validate corridor source identity, route, collision, art and A8 transform
+        run: python tools/survival/worldgen/validate_corridor.py | tee "$ARTIFACT_DIR/corridor_validation.json"
+      - name: Author regional scene studies (narrow piers, causal detail clusters, night framing)
+        run: python tools/survival/worldgen/author_region_scenes.py | tee "$ARTIFACT_DIR/region_scene_authoring.json"
+      - name: Bake A1 survival world art atlas (original + pinned inherited frames)
+        run: python tools/survival/worldgen/build_region_art.py | tee "$ARTIFACT_DIR/world_art_bake.json"
+      - name: Compile visual-only world art treatments
+        run: python tools/survival/worldgen/compile_world_art.py | tee "$ARTIFACT_DIR/world_art_compile.json"
+      - name: Compile A8 compact-shell visual skins (derived atlas pin)
+        run: python tools/survival/worldgen/compile_a8_shell_visuals.py | tee "$ARTIFACT_DIR/a8_shell_compile.json"
+      - name: Compile objective first-hour walkability proof
+        run: python tools/survival/worldgen/compile_first_hour_route.py | tee "$ARTIFACT_DIR/first_hour_route.json"
+      - name: AVFX lighting contract + measured effect/ground contrast study
+        run: python tools/survival/worldgen/study_avfx_contrast.py | tee "$ARTIFACT_DIR/avfx_contrast.json"
+      - name: Compile consumable A0/A8 mount bundle
+        run: python tools/survival/worldgen/compile_mount_bundle.py | tee "$ARTIFACT_DIR/mount_bundle_compile.json"
+      - name: Compile A1 review of A8 territory + endpoint placements
+        run: python tools/survival/worldgen/compile_placement_review.py --out artifacts/a1-placement/placement_native_inputs.json | tee "$ARTIFACT_DIR/placement_compile.json"
+      - name: Compile Round 11 exact-source continuity / hazard / socket packet
+        run: python tools/survival/worldgen/compile_round11_continuity.py --out artifacts/a1-continuity/continuity_native_inputs.json | tee "$ARTIFACT_DIR/continuity_compile.json"
+      - name: Validate world art grammar, atlas, presentations and A8 visual contract
+        run: python tools/survival/worldgen/validate_world_art.py | tee "$ARTIFACT_DIR/world_art_validation.json"
+      - name: A0/A8 consumer validation of mount bundle
+        run: python tools/survival/worldgen/validate_mount_bundle.py | tee "$ARTIFACT_DIR/mount_bundle_validation.json"
+      - name: Source-to-scene region coverage + window navigation audit
+        run: python tools/survival/worldgen/compile_region_coverage.py | tee "$ARTIFACT_DIR/region_coverage.json"
+      - name: Render Pillow/atlas composition previews (not native evidence)
+        run: python tools/survival/worldgen/preview_world_art.py | tee "$ARTIFACT_DIR/world_art_preview.json"
+      - name: Render A8 shell + AVFX contrast previews (not native evidence)
+        run: |
+          python tools/survival/worldgen/preview_a8_shells.py | tee "$ARTIFACT_DIR/a8_shell_preview.json"
+      - name: Negative / acceptance tests
+        run: python -m pytest tests/survival/world -q | tee "$ARTIFACT_DIR/pytest.txt"
+      - name: Double-compile determinism
+        run: python tools/survival/worldgen/check_determinism.py | tee "$ARTIFACT_DIR/determinism.json"
+      - name: Upload Python evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a1-world-python-evidence
+          path: |
+            artifacts/a1-world/
+            artifacts/a1-connector/
+            artifacts/a1-continuity/
+            docs/survival/world/evidence/world_art_*.png
+            docs/survival/world/evidence/quality_uplift/*.png
+          if-no-files-found: warn
+          retention-days: 14
+
+  godot-reader:
+    name: A1 GODOT 4.7 ISOLATED CHUNK + SLICE READER
+    needs: python-authoring
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import isolated reader fixture only
+        run: |
+          mkdir -p "$ARTIFACT_DIR" artifacts/ud_a1_import
+          timeout --signal=TERM --kill-after=10s 180s godot --headless \
+            --path tests/survival/world/godot --user-data-dir artifacts/ud_a1_import \
+            --import >"$ARTIFACT_DIR/godot-import.log" 2>&1
+          rc=$?
+          echo "fixture import exit_code=$rc"
+          tail -40 "$ARTIFACT_DIR/godot-import.log"
+          exit $rc
+      - name: Run read-only chunk/RLE/build-contract tests
+        run: |
+          mkdir -p artifacts/ud_a1_reader
+          timeout --signal=TERM --kill-after=15s 300s godot --headless \
+            --path tests/survival/world/godot --user-data-dir artifacts/ud_a1_reader \
+            --script res://reader_test.gd -- --world-root="$GITHUB_WORKSPACE/data/survival/world" \
+            >"$ARTIFACT_DIR/godot-reader.log" 2>&1
+          rc=$?
+          echo "reader exit_code=$rc"
+          cat "$ARTIFACT_DIR/godot-reader.log"
+          echo "$rc" >"$ARTIFACT_DIR/reader-exit-code"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/godot-reader.log" \
+            "A1WorldReader" "SURVIVAL WORLD READER PASSED"
+          exit $rc
+      - name: Anti-vacuity gate
+        if: always()
+        run: |
+          log="$ARTIFACT_DIR/godot-reader.log"
+          [ -f "$log" ] || { echo "::error::no A1 reader log"; exit 1; }
+          checks=$(grep -cE '^  (ok|FAIL) ' "$log" || true)
+          echo "A1 reader assertions reported: ${checks}"
+          [ "${checks:-0}" -ge 50 ] || { echo "::error::A1 reader ran fewer than 50 assertions"; exit 1; }
+          grep -q 'SURVIVAL WORLD READER PASSED' "$log" || { echo "::error::A1 reader did not reach PASS summary"; exit 1; }
+      - name: Run isolated vertical-slice contract vectors
+        run: |
+          mkdir -p artifacts/ud_a1_slice
+          timeout --signal=TERM --kill-after=15s 300s godot --headless \
+            --path tests/survival/world/godot --user-data-dir artifacts/ud_a1_slice \
+            --script res://slice_test.gd -- --world-root="$GITHUB_WORKSPACE/data/survival/world" \
+            >"$ARTIFACT_DIR/godot-slice.log" 2>&1
+          rc=$?
+          echo "slice exit_code=$rc"
+          cat "$ARTIFACT_DIR/godot-slice.log"
+          echo "$rc" >"$ARTIFACT_DIR/slice-exit-code"
+          if [ "$rc" -ne 0 ]; then
+            echo "::error::A1 slice log tail: $(tail -c 1800 "$ARTIFACT_DIR/godot-slice.log" | tr '\n' ' ')"
+          fi
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/godot-slice.log" \
+            "A1WorldSlice" "SURVIVAL SLICE CONTRACT PASSED"
+          exit $rc
+      - name: Slice anti-vacuity gate
+        if: always()
+        run: |
+          log="$ARTIFACT_DIR/godot-slice.log"
+          [ -f "$log" ] || { echo "::error::no A1 slice log"; exit 1; }
+          checks=$(grep -cE '^  (ok|FAIL) ' "$log" || true)
+          echo "A1 slice assertions reported: ${checks}"
+          [ "${checks:-0}" -ge 120 ] || { echo "::error::A1 slice ran fewer than 120 assertions"; exit 1; }
+          grep -q 'SURVIVAL SLICE CONTRACT PASSED' "$log" || { echo "::error::A1 slice did not reach PASS summary"; exit 1; }
+      - name: Upload Godot reader evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a1-world-godot-reader-evidence
+          path: artifacts/a1-world/
+          if-no-files-found: warn
+          retention-days: 14
+
+  godot-connector-native:
+    name: A1 GODOT 4.7 CONNECTOR NATIVE FIXTURE (NOT PRODUCTION)
+    needs: python-authoring
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Derive bounded annex pilot inputs (read-only legacy sources)
+        run: |
+          mkdir -p artifacts/a1-connector
+          python tools/survival/worldgen/compile_connector.py --out artifacts/a1-connector --no-contract
+      - name: Import root project for real Knight / OverworldWorld fixture
+        run: |
+          mkdir -p artifacts/ud_connector_import
+          timeout --signal=TERM --kill-after=10s 300s godot --headless \
+            --path . --user-data-dir artifacts/ud_connector_import \
+            --import >artifacts/a1-connector/godot-import.log 2>&1
+          rc=$?
+          echo "connector import exit_code=$rc"
+          tail -40 artifacts/a1-connector/godot-import.log
+          exit $rc
+      - name: Run live-shape Refuge -> Waystation -> Relay -> Refuge fixture
+        run: |
+          mkdir -p artifacts/ud_connector_native
+          timeout --signal=TERM --kill-after=15s 360s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy \
+            --user-data-dir artifacts/ud_connector_native --resolution 960x540 --windowed \
+            --script res://tests/survival/world/connector_native_test.gd -- \
+            --connector-root="$GITHUB_WORKSPACE/artifacts/a1-connector" \
+            --report=artifacts/a1-connector/connector_native_report.json \
+            >artifacts/a1-connector/godot-connector.log 2>&1
+          rc=$?
+          echo "connector fixture exit_code=$rc"
+          cat artifacts/a1-connector/godot-connector.log
+          echo "$rc" >artifacts/a1-connector/connector-exit-code
+          if [ "$rc" -ne 0 ]; then
+            echo "::error::connector fixture tail: $(tail -c 1800 artifacts/a1-connector/godot-connector.log | paste -sd' ' -)"
+          fi
+          exit $rc
+      - name: Connector fixture anti-vacuity gate
+        if: always()
+        run: |
+          log=artifacts/a1-connector/godot-connector.log
+          [ -f "$log" ] || { echo "::error::no connector fixture log"; exit 1; }
+          checks=$(grep -cE '^CONNECTOR (PASS|FAIL): ' "$log" || true)
+          echo "connector fixture assertions reported: ${checks}"
+          if [ "${checks:-0}" -lt 20 ] || ! grep -q 'A1 CONNECTOR NATIVE FIXTURE PASSED' "$log" || ! grep -q 'production integration still A0-owned' "$log" || ! grep -q 'exact Waystation locker stand (408,199)' "$log" || ! grep -q 'adverse proof: original full-tile' "$log"; then
+            echo "::error::connector fixture gate failed (checks=${checks}, need >=20 + exact locker stand + adverse proof); log tail: $(tail -c 1800 "$log" | paste -sd' ' -)"
+            exit 1
+          fi
+      - name: Run first-hour roadside corridor native fixture
+        run: |
+          mkdir -p artifacts/a1-corridor artifacts/ud_corridor_native
+          timeout --signal=TERM --kill-after=15s 360s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy \
+            --user-data-dir artifacts/ud_corridor_native --resolution 960x540 --windowed \
+            --script res://tests/survival/world/corridor_native_test.gd -- \
+            --connector-root="$GITHUB_WORKSPACE/artifacts/a1-connector" \
+            --out-root="$GITHUB_WORKSPACE/artifacts/a1-corridor" \
+            >artifacts/a1-corridor/godot-corridor.log 2>&1
+          rc=$?
+          echo "corridor fixture exit_code=$rc"
+          cat artifacts/a1-corridor/godot-corridor.log
+          echo "$rc" >artifacts/a1-corridor/corridor-exit-code
+          if [ "$rc" -ne 0 ]; then
+            echo "::error::corridor fixture tail: $(tail -c 1800 artifacts/a1-corridor/godot-corridor.log | paste -sd' ' -)"
+          fi
+          exit $rc
+      - name: Corridor fixture anti-vacuity gate
+        if: always()
+        run: |
+          log=artifacts/a1-corridor/godot-corridor.log
+          [ -f "$log" ] || { echo "::error::no corridor fixture log"; exit 1; }
+          checks=$(grep -cE '^CORRIDOR (PASS|FAIL): ' "$log" || true)
+          revisits=$(grep -cE '^CORRIDOR PASS: revisit si:r_ashen_crown:roadside_supply:0[123] walked' "$log" || true)
+          revisit_caps=$(grep -c 'player-scale native capture si_r_ashen_crown_roadside_supply_0' "$log" || true)
+          echo "corridor fixture assertions reported: ${checks}; revisits=${revisits}; revisit captures=${revisit_caps}"
+          if [ "${checks:-0}" -lt 21 ] || [ "${revisits:-0}" -lt 3 ] || [ "${revisit_caps:-0}" -lt 3 ] || ! grep -q 'A1 CORRIDOR NATIVE FIXTURE PASSED' "$log" || ! grep -q 'production integration still A0-owned' "$log" || ! grep -q 'adverse proof: full-tile container' "$log" || ! grep -q 'three physical roadside containers mounted' "$log"; then
+            echo "::error::corridor fixture gate failed (checks=${checks}, revisits=${revisits}, captures=${revisit_caps}; need >=21 + three live-obstacle revisits + adverse container + three instances); log tail: $(tail -c 1800 "$log" | paste -sd' ' -)"
+            exit 1
+          fi
+      - name: Upload connector native fixture evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a1-connector-native-fixture-evidence
+          path: |
+            artifacts/a1-connector/
+            artifacts/a1-corridor/
+          if-no-files-found: warn
+          retention-days: 14
+
+  godot-world-art-native:
+    name: A1 GODOT 4.7 WORLD ART NATIVE VISUAL FIXTURE (NOT PRODUCTION)
+    needs: python-authoring
+    runs-on: ubuntu-latest
+    # The fallback below creates Git blobs only (no commit/branch/tag). It needs
+    # contents:write because Actions artifact storage is unreachable from some
+    # review sandboxes; the tested source tree is never modified by the mirror.
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Derive bounded annex inputs for driven corridor + art proof
+        run: |
+          mkdir -p artifacts/a1-connector-art
+          python tools/survival/worldgen/compile_connector.py --out artifacts/a1-connector-art --no-contract
+      - name: Compile A1 territory + endpoint placement native inputs
+        run: |
+          mkdir -p artifacts/a1-placement
+          python tools/survival/worldgen/compile_placement_review.py --out artifacts/a1-placement/placement_native_inputs.json
+      - name: Import root project for real Knight / OverworldOcclusion fixture
+        run: |
+          mkdir -p artifacts/a1-world-art artifacts/ud_world_art_import
+          timeout --signal=TERM --kill-after=10s 300s godot --headless             --path . --user-data-dir artifacts/ud_world_art_import             --import >artifacts/a1-world-art/godot-import.log 2>&1
+          rc=$?
+          echo "world art import exit_code=$rc"
+          tail -40 artifacts/a1-world-art/godot-import.log
+          exit $rc
+      - name: Capture native 720p / 1440p / 2160p world art frames
+        run: |
+          mkdir -p artifacts/ud_world_art_native
+          timeout --signal=TERM --kill-after=15s 600s xvfb-run -a -s "-screen 0 3840x2160x24" env LIBGL_ALWAYS_SOFTWARE=1             godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy             --user-data-dir artifacts/ud_world_art_native --windowed             --script res://tests/survival/world/world_art_native_test.gd --             --out-root="$GITHUB_WORKSPACE/artifacts/a1-world-art"             --resolutions=1280x720,2560x1440,3840x2160             >artifacts/a1-world-art/godot-world-art.log 2>&1
+          rc=$?
+          echo "world art fixture exit_code=$rc"
+          cat artifacts/a1-world-art/godot-world-art.log
+          echo "$rc" >artifacts/a1-world-art/world-art-exit-code
+          if [ "$rc" -ne 0 ]; then
+            echo "::error::world art fixture tail: $(tail -c 1800 artifacts/a1-world-art/godot-world-art.log | paste -sd' ' -)"
+          fi
+          exit $rc
+      - name: World art fixture anti-vacuity gate
+        if: always()
+        run: |
+          log=artifacts/a1-world-art/godot-world-art.log
+          [ -f "$log" ] || { echo "::error::no world art fixture log"; exit 1; }
+          checks=$(grep -cE '^WORLD_ART (PASS|FAIL): ' "$log" || true)
+          captures=$(grep -c 'native capture' "$log" || true)
+          echo "world art assertions reported: ${checks}; captures: ${captures}"
+          if [ "${checks:-0}" -lt 60 ] || [ "${captures:-0}" -lt 24 ] || ! grep -q 'WORLD_ART SUMMARY' "$log" || ! grep -q 'failures=0' "$log" || ! grep -q 'zero collision bodies' "$log" || ! grep -q 'static integer-downscaled logical pixels match' "$log" || ! grep -q 'day/night light state is resolution-independent' "$log" || ! grep -q 'inherited VFX keeps default light mask' "$log"; then
+            echo "::error::world art fixture gate failed (checks=${checks}, captures=${captures}); log tail: $(tail -c 1800 "$log" | paste -sd' ' -)"
+            exit 1
+          fi
+      - name: Drive real corridor collision with world-art overlay and capture 720p / 1440p / 2160p
+        run: |
+          mkdir -p artifacts/a1-world-art-corridor artifacts/ud_world_art_corridor
+          timeout --signal=TERM --kill-after=15s 420s xvfb-run -a -s "-screen 0 3840x2160x24" env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy \
+            --user-data-dir artifacts/ud_world_art_corridor --windowed \
+            --script res://tests/survival/world/corridor_native_test.gd -- \
+            --connector-root="$GITHUB_WORKSPACE/artifacts/a1-connector-art" \
+            --out-root="$GITHUB_WORKSPACE/artifacts/a1-world-art-corridor" \
+            --world-art --art-resolutions=1280x720,2560x1440,3840x2160 \
+            >artifacts/a1-world-art-corridor/godot-corridor-art.log 2>&1
+          rc=$?
+          echo "corridor art fixture exit_code=$rc"
+          cat artifacts/a1-world-art-corridor/godot-corridor-art.log
+          echo "$rc" >artifacts/a1-world-art-corridor/corridor-art-exit-code
+          exit $rc
+      - name: Corridor + art anti-vacuity gate
+        if: always()
+        run: |
+          log=artifacts/a1-world-art-corridor/godot-corridor-art.log
+          [ -f "$log" ] || { echo "::error::no corridor art fixture log"; exit 1; }
+          checks=$(grep -cE '^CORRIDOR (PASS|FAIL): ' "$log" || true)
+          echo "corridor art assertions reported: ${checks}"
+          if [ "${checks:-0}" -lt 30 ] || ! grep -q 'A1 CORRIDOR NATIVE FIXTURE PASSED' "$log" || ! grep -q 'world-art overlay adds zero collision bodies' "$log" || ! grep -q 'driven-position world-art capture' "$log"; then
+            echo "::error::corridor art fixture gate failed (checks=${checks}); log tail: $(tail -c 1800 "$log" | paste -sd' ' -)"
+            exit 1
+          fi
+      - name: Drive A1 territory + endpoint placements with real Hero shape
+        if: always()
+        run: |
+          mkdir -p artifacts/a1-placement artifacts/ud_a1_placement
+          timeout --signal=TERM --kill-after=15s 900s xvfb-run -a -s "-screen 0 3840x2160x24" env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy \
+            --user-data-dir artifacts/ud_a1_placement --windowed \
+            --script res://tests/survival/world/placement_native_test.gd -- \
+            --inputs="$GITHUB_WORKSPACE/artifacts/a1-placement/placement_native_inputs.json" \
+            --connector-root="$GITHUB_WORKSPACE/artifacts/a1-connector-art" \
+            --out-root="$GITHUB_WORKSPACE/artifacts/a1-placement" \
+            >artifacts/a1-placement/godot-placement.log 2>&1
+          rc=$?
+          echo "placement fixture exit_code=$rc"
+          cat artifacts/a1-placement/godot-placement.log
+          echo "$rc" >artifacts/a1-placement/placement-exit-code
+          exit $rc
+      - name: Placement native anti-vacuity gate
+        if: always()
+        run: |
+          log=artifacts/a1-placement/godot-placement.log
+          [ -f "$log" ] || { echo "::error::no placement fixture log"; exit 1; }
+          checks=$(grep -cE '^A1_PLACEMENT (PASS|FAIL): ' "$log" || true)
+          captures=$(grep -c 'native placement capture' "$log" || true)
+          echo "placement assertions reported: ${checks}; captures: ${captures}"
+          if [ "${checks:-0}" -lt 60 ] || [ "${captures:-0}" -lt 20 ] || ! grep -q 'A1_PLACEMENT SUMMARY' "$log" || ! grep -q 'failures=0' "$log" || ! grep -q 'Godot RGBA crop hashes match all 181' "$log" || ! grep -q 'swept corner/edge probes are non-vacuous' "$log" || ! grep -q 'return existing-cell Hero route' "$log"; then
+            echo "::error::placement fixture gate failed (checks=${checks}, captures=${captures}); log tail: $(tail -c 2400 "$log" | paste -sd' ' -)"
+            exit 1
+          fi
+      - name: Upload world art native evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a1-world-art-native-fixture-evidence
+          path: |
+            artifacts/a1-world-art/
+            artifacts/a1-world-art-corridor/
+            artifacts/a1-placement/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Mirror native evidence as Git blobs (artifact-host fallback)
+        if: always()
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python tools/ci/mirror_native_evidence.py \
+            --root artifacts/a1-world-art \
+            --root artifacts/a1-world-art-corridor \
+            --root artifacts/a1-placement
+
+  godot-round11-continuity-native:
+    name: A1 GODOT 4.7 ROUND 11 CONTINUITY / HAZARDS / SOCKETS (ISOLATED)
+    runs-on: ubuntu-latest
+    # Separate from the slower visual regression job so engine/static-analysis
+    # feedback and continuity evidence remain focused and independently gated.
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Derive bounded annex inputs for Round 11 source composition
+        run: |
+          mkdir -p artifacts/a1-connector-art
+          python tools/survival/worldgen/compile_connector.py --out artifacts/a1-connector-art --no-contract
+      - name: Compile Round 11 continuity native inputs
+        run: |
+          mkdir -p artifacts/a1-continuity
+          python tools/survival/worldgen/compile_round11_continuity.py --out artifacts/a1-continuity/continuity_native_inputs.json
+      - name: Import root project for Round 11 native fixture
+        run: |
+          mkdir -p artifacts/a1-continuity artifacts/ud_a1_continuity_import
+          timeout --signal=TERM --kill-after=10s 300s godot --headless \
+            --path . --user-data-dir artifacts/ud_a1_continuity_import \
+            --import >artifacts/a1-continuity/godot-import.log 2>&1
+          rc=$?
+          echo "continuity import exit_code=$rc"
+          tail -40 artifacts/a1-continuity/godot-import.log
+          exit $rc
+      - name: Drive Round 11 multi-region / hazards / combined sockets with real Hero
+        if: always()
+        run: |
+          mkdir -p artifacts/a1-continuity artifacts/ud_a1_continuity
+          timeout --signal=TERM --kill-after=15s 1500s xvfb-run -a -s "-screen 0 3840x2160x24" env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy \
+            --user-data-dir artifacts/ud_a1_continuity --windowed --fixed-fps 60 \
+            --script res://tests/survival/world/round11_continuity_native_test.gd -- \
+            --inputs="$GITHUB_WORKSPACE/artifacts/a1-continuity/continuity_native_inputs.json" \
+            --connector-root="$GITHUB_WORKSPACE/artifacts/a1-connector-art" \
+            --out-root="$GITHUB_WORKSPACE/artifacts/a1-continuity" \
+            --resolutions=1280x720,2560x1440,3840x2160 \
+            >artifacts/a1-continuity/godot-continuity.log 2>&1
+          rc=$?
+          echo "continuity fixture exit_code=$rc"
+          cat artifacts/a1-continuity/godot-continuity.log
+          echo "$rc" >artifacts/a1-continuity/continuity-exit-code
+          exit $rc
+      - name: Round 11 continuity native anti-vacuity gate
+        if: always()
+        run: |
+          log=artifacts/a1-continuity/godot-continuity.log
+          [ -f "$log" ] || { echo "::error::no continuity fixture log"; exit 1; }
+          checks=$(grep -cE '^A1_CONTINUITY (PASS|FAIL): ' "$log" || true)
+          captures=$(grep -c 'native source-window capture' "$log" || true)
+          spawns=$(grep -cE '^A1_CONTINUITY PASS: deterministic safe spawn seed' "$log" || true)
+          echo "continuity assertions=${checks}; captures=${captures}; spawn cases=${spawns}"
+          if [ "${checks:-0}" -lt 150 ] || [ "${captures:-0}" -lt 24 ] || [ "${spawns:-0}" -ne 18 ] || \
+            ! grep -q 'A1 CONTINUITY NATIVE FIXTURE PASSED' "$log" || \
+            ! grep -q 'production integration still A0-owned' "$log" || \
+            ! grep -q 'test-only marsh response measured 96 -> 62.4px/s' "$log" || \
+            ! grep -q 'simultaneous deposit+vendor 28x28 bodies' "$log" || \
+            ! grep -q 'combined crowd alternate route' "$log" || \
+            ! grep -q 'fixture stream never drained current/missing Hero chunk' "$log"; then
+            echo "::error::continuity fixture gate failed; log tail: $(tail -c 3000 "$log" | paste -sd' ' -)"
+            exit 1
+          fi
+      - name: Upload Round 11 continuity native evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a1-round11-continuity-native-evidence
+          path: artifacts/a1-continuity/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Mirror Round 11 evidence as Git blobs (artifact-host fallback)
+        if: always()
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python tools/ci/mirror_native_evidence.py --root artifacts/a1-continuity
+
+  godot-round12-deep-world-native:
+    name: A1 GODOT 4.7 ROUND 12 FULL SOURCE STREAM / REAL HERO (ISOLATED)
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Compile Round 12 full-continent runtime and verify committed spawn index
+        run: |
+          mkdir -p artifacts/a1-round12
+          python tools/survival/worldgen/compile_round12_runtime.py \
+            --out artifacts/a1-round12/round12_native_inputs.json \
+            | tee artifacts/a1-round12/compile.log
+          git diff --exit-code -- data/survival/world/a1_round12_spawn_index.v1.json
+      - name: Import root project for Round 12 native fixture
+        run: |
+          mkdir -p artifacts/ud_a1_round12_import
+          timeout --signal=TERM --kill-after=10s 300s godot --headless \
+            --path . --user-data-dir artifacts/ud_a1_round12_import \
+            --import >artifacts/a1-round12/godot-import.log 2>&1
+          rc=$?
+          echo "Round 12 import exit_code=$rc"
+          tail -60 artifacts/a1-round12/godot-import.log
+          exit $rc
+      - name: Measure short Round 12 drive + 720p/1440p/2160p budget probe
+        run: |
+          mkdir -p artifacts/a1-round12/probe artifacts/ud_a1_round12_probe
+          timeout --signal=TERM --kill-after=15s 300s xvfb-run -a -s "-screen 0 3840x2160x24" env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy \
+            --user-data-dir artifacts/ud_a1_round12_probe --windowed --fixed-fps 60 \
+            --script res://tests/survival/world/round12_deep_world_native_test.gd -- \
+            --inputs="$GITHUB_WORKSPACE/artifacts/a1-round12/round12_native_inputs.json" \
+            --out-root="$GITHUB_WORKSPACE/artifacts/a1-round12/probe" \
+            --resolutions=1280x720,2560x1440,3840x2160 --budget-probe \
+            >artifacts/a1-round12/probe/godot-probe.log 2>&1
+          rc=$?
+          echo "Round 12 budget probe exit_code=$rc"
+          cat artifacts/a1-round12/probe/godot-probe.log
+          exit $rc
+      - name: Budget probe anti-vacuity gate
+        if: always()
+        run: |
+          log=artifacts/a1-round12/probe/godot-probe.log
+          [ -f "$log" ] || { echo "::error::no Round 12 probe log"; exit 1; }
+          if grep -q 'SCRIPT ERROR' "$log"; then
+            echo "::error::Round 12 probe contains a Godot script error"; exit 1
+          fi
+          grep -q 'A1 ROUND12 BUDGET PROBE PASSED - not a full native fixture' "$log" || {
+            echo "::error::Round 12 probe failed; log tail: $(tail -c 3000 "$log" | paste -sd' ' -)"; exit 1; }
+          python - <<'PY'
+          import json
+          p=json.load(open('artifacts/a1-round12/probe/round12_native_report.json'))
+          assert p['budget_probe'] and p['dispositions']['NATIVE_FIXTURE_PASS']=='NOT_TESTED'
+          assert len(p['journeys'])==2 and sum(x['cells'] for x in p['journeys'])==64
+          assert len(p['captures'])==4 and all(x['capture_wall_ms']>0 for x in p['captures'])
+          assert len({tuple(x['resolution']) for x in p['captures']})==3
+          assert sum(bool(x.get('single_resolution_branch')) for x in p['captures'])==1
+          assert len(p['prepare_measurements'])==1 and p['prepare_measurements'][0]['wall_ms']>0
+          PY
+      - name: Calculate measured full-run timeout; refuse over-cap big-bang execution
+        run: |
+          python tools/survival/worldgen/estimate_round12_native_budget.py \
+            --probe artifacts/a1-round12/probe/round12_native_report.json \
+            --inputs artifacts/a1-round12/round12_native_inputs.json \
+            --out artifacts/a1-round12/native_budget.json \
+            --cap-seconds 1800 | tee artifacts/a1-round12/budget.log
+      - name: Drive complete Round 12 source/stream matrix within measured budget
+        run: |
+          budget=$(python -c "import json; print(json.load(open('artifacts/a1-round12/native_budget.json'))['timeout_seconds'])")
+          echo "Measured Round 12 full-run timeout: ${budget}s"
+          mkdir -p artifacts/a1-round12/full artifacts/ud_a1_round12
+          timeout --signal=TERM --kill-after=15s "${budget}s" xvfb-run -a -s "-screen 0 3840x2160x24" env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy \
+            --user-data-dir artifacts/ud_a1_round12 --windowed --fixed-fps 60 \
+            --script res://tests/survival/world/round12_deep_world_native_test.gd -- \
+            --inputs="$GITHUB_WORKSPACE/artifacts/a1-round12/round12_native_inputs.json" \
+            --out-root="$GITHUB_WORKSPACE/artifacts/a1-round12/full" \
+            --resolutions=1280x720,2560x1440,3840x2160 \
+            >artifacts/a1-round12/full/godot-round12.log 2>&1
+          rc=$?
+          echo "Round 12 full fixture exit_code=$rc"
+          cat artifacts/a1-round12/full/godot-round12.log
+          exit $rc
+      - name: Round 12 full native anti-vacuity gate
+        if: always()
+        run: |
+          log=artifacts/a1-round12/full/godot-round12.log
+          [ -f "$log" ] || { echo "::error::no Round 12 full fixture log"; exit 1; }
+          if grep -q 'SCRIPT ERROR' "$log"; then
+            echo "::error::Round 12 full fixture contains a Godot script error"; exit 1
+          fi
+          checks=$(grep -cE '^A1_R12 (PASS|FAIL): ' "$log" || true)
+          captures=$(grep -c 'nonblank native source capture' "$log" || true)
+          spawns=$(grep -c 'safe spawn/body/material seed' "$log" || true)
+          a8=$(grep -c 'physical A8 outer approach/return anchor' "$log" || true)
+          echo "Round 12 assertions=${checks}; captures=${captures}; spawns=${spawns}; A8 arrivals=${a8}"
+          if [ "${checks:-0}" -lt 220 ] || [ "${captures:-0}" -lt 69 ] || [ "${spawns:-0}" -ne 36 ] || [ "${a8:-0}" -ne 3 ] || \
+            ! grep -q 'A1 ROUND12 NATIVE FIXTURE PASSED' "$log" || \
+            ! grep -q 'production and visual acceptance remain separate' "$log" || \
+            ! grep -q 'tile carves open routes while original prop bodies still block' "$log" || \
+            ! grep -q 'asymmetric biome resources/climate/traversal proposals across all 11 regions' "$log" || \
+            ! grep -q 'real Hero physically refused by visible dynamic full-cell body after source reload' "$log" || \
+            ! grep -q 'reloaded dynamic detour physical return' "$log" || \
+            ! grep -q 'no-teleport inset -> salvage -> Quarry -> Orchard -> Mill -> inset return' "$log"; then
+            echo "::error::Round 12 full gate failed; log tail: $(tail -c 4000 "$log" | paste -sd' ' -)"
+            exit 1
+          fi
+      - name: Validate exact engine, source journeys, capture bytes and independent dispositions
+        if: always()
+        run: |
+          [ -f artifacts/a1-round12/full/round12_native_report.json ] || { echo "::error::missing Round 12 report"; exit 1; }
+          python tools/survival/worldgen/validate_round12_native.py \
+            --report artifacts/a1-round12/full/round12_native_report.json \
+            --inputs artifacts/a1-round12/round12_native_inputs.json \
+            --budget artifacts/a1-round12/native_budget.json \
+            --out artifacts/a1-round12/full/native_validation.json
+      - name: Upload Round 12 native evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a1-round12-deep-world-native-evidence
+          path: artifacts/a1-round12/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Mirror Round 12 evidence as Git blobs (artifact-host fallback)
+        if: always()
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python tools/ci/mirror_native_evidence.py --root artifacts/a1-round12

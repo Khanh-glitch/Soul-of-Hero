@@ -1,0 +1,124 @@
+{
+  "$id": "soh://world/poi_authoring.v1.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "alternate_approach": {
+      "type": "string"
+    },
+    "approach_topology": {
+      "required": [
+        "nodes",
+        "edges",
+        "retreat_path",
+        "safe_route_id"
+      ],
+      "type": "object"
+    },
+    "content_readiness": {
+      "const": "INTERACTION_SPEC_AUTHORED_NOT_NATIVE"
+    },
+    "failure_recovery": {
+      "type": "object"
+    },
+    "footprint_radius_tiles": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "interface_requirements": {
+      "items": {
+        "properties": {
+          "owner": {
+            "enum": [
+              "A0",
+              "A3",
+              "A6"
+            ]
+          }
+        },
+        "required": [
+          "owner",
+          "test_id",
+          "requirement"
+        ],
+        "type": "object"
+      },
+      "minItems": 3,
+      "type": "array"
+    },
+    "map_clues": {
+      "minItems": 1,
+      "type": "array"
+    },
+    "native_playable": {
+      "const": false
+    },
+    "persistence": {
+      "required": [
+        "save_owner",
+        "keys",
+        "one_time_flags",
+        "static_plan_mutation"
+      ],
+      "type": "object"
+    },
+    "poi_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "purpose": {
+      "type": "string"
+    },
+    "refresh_policy": {
+      "type": "string"
+    },
+    "rewards": {
+      "items": {
+        "required": [
+          "reward_id",
+          "policy",
+          "rarity"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "schema": {
+      "const": "soh.world.poi_authoring.v1"
+    },
+    "world_state_actions": {
+      "items": {
+        "required": [
+          "action_id",
+          "kind",
+          "requires_capabilities",
+          "one_time",
+          "effects",
+          "failure_recovery"
+        ],
+        "type": "object"
+      },
+      "minItems": 2,
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema",
+    "poi_id",
+    "content_readiness",
+    "native_playable",
+    "footprint_radius_tiles",
+    "purpose",
+    "approach_topology",
+    "world_state_actions",
+    "rewards",
+    "persistence",
+    "failure_recovery",
+    "map_clues",
+    "interface_requirements",
+    "alternate_approach",
+    "refresh_policy"
+  ],
+  "title": "poi_authoring",
+  "type": "object"
+}

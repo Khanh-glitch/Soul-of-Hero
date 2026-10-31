@@ -1,0 +1,61 @@
+{
+  "$id": "soh://world/resource.v1.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "biome_constraint": {
+      "type": "string"
+    },
+    "cause": {
+      "type": "string"
+    },
+    "cell": {
+      "items": {
+        "type": "integer"
+      },
+      "maxItems": 2,
+      "minItems": 2,
+      "type": "array"
+    },
+    "material_key": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "node_id": {
+      "pattern": "^res:[a-z0-9_]+:[0-9]{2}$",
+      "type": "string"
+    },
+    "region_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "renewal": {
+      "type": "string"
+    },
+    "required_capabilities": {
+      "items": {
+        "pattern": "^cap_[a-z0-9_]+$",
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "site_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "node_id",
+    "site_id",
+    "region_id",
+    "material_key",
+    "cell",
+    "cause",
+    "required_capabilities",
+    "renewal"
+  ],
+  "title": "resource",
+  "type": "object"
+}

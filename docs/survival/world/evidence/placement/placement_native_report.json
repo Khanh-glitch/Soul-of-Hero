@@ -1,0 +1,1052 @@
+{
+  "a8_commit": "02ad8b727298284c16ea7f469d43310021b40f20",
+  "checks": 70,
+  "failures": [],
+  "hazard_damage_and_ragnarok_projection_tested": false,
+  "ok": true,
+  "production_native_playable": false,
+  "production_world_traversable": false,
+  "provenance_debug": {
+    "matched": 181,
+    "mismatches": []
+  },
+  "reviews": [
+    {
+      "canonical_cell": [
+        30.0,
+        280.0
+      ],
+      "decision": "APPROVE_CANONICAL_LOCATION",
+      "forward_ok": true,
+      "goal_cell": [
+        30.0,
+        278.0
+      ],
+      "hazard_exposure_cells": 0.0,
+      "id": "elder.ashen_crown",
+      "kind": "territory",
+      "path_cell_count": 87.0,
+      "poi_id": "poi_crown_south_quarry",
+      "probes": {
+        "probes": [
+          {
+            "collision": false,
+            "delta": [
+              0.0,
+              -12.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              8.0,
+              -8.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              -8.0,
+              -8.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              12.0,
+              0.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              -12.0,
+              0.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              0.0,
+              12.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              8.0,
+              8.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              -8.0,
+              8.0
+            ]
+          }
+        ]
+      },
+      "production_status": "AUTHORED_SOURCE_WINDOW_NOT_PRODUCTION_MOUNTED",
+      "return_ok": true,
+      "start_cell": [
+        56.0,
+        218.0
+      ]
+    },
+    {
+      "canonical_cell": [
+        720.0,
+        180.0
+      ],
+      "decision": "APPROVE_CANONICAL_LOCATION",
+      "forward_ok": true,
+      "goal_cell": [
+        718.0,
+        178.0
+      ],
+      "hazard_exposure_cells": 0.0,
+      "id": "elder.frost_observatory",
+      "kind": "territory",
+      "path_cell_count": 161.0,
+      "poi_id": "poi_frost_observatory",
+      "probes": {
+        "probes": [
+          {
+            "collision": false,
+            "delta": [
+              0.0,
+              -12.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              8.0,
+              -8.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              -8.0,
+              -8.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              12.0,
+              0.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              -12.0,
+              0.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              0.0,
+              12.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              8.0,
+              8.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              -8.0,
+              8.0
+            ]
+          }
+        ]
+      },
+      "production_status": "AUTHORED_SOURCE_WINDOW_NOT_PRODUCTION_MOUNTED",
+      "return_ok": true,
+      "start_cell": [
+        800.0,
+        100.0
+      ]
+    },
+    {
+      "canonical_cell": [
+        930.0,
+        120.0
+      ],
+      "decision": "APPROVE_CANONICAL_LOCATION",
+      "forward_ok": true,
+      "goal_cell": [
+        928.0,
+        120.0
+      ],
+      "hazard_exposure_cells": 0.0,
+      "id": "elder.glasswind_light",
+      "kind": "territory",
+      "path_cell_count": 149.0,
+      "poi_id": "poi_glasswind_light",
+      "probes": {
+        "probes": [
+          {
+            "collision": false,
+            "delta": [
+              0.0,
+              -12.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              8.0,
+              -8.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              -8.0,
+              -8.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              12.0,
+              0.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              -12.0,
+              0.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              0.0,
+              12.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              8.0,
+              8.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              -8.0,
+              8.0
+            ]
+          }
+        ]
+      },
+      "production_status": "AUTHORED_SOURCE_WINDOW_NOT_PRODUCTION_MOUNTED",
+      "return_ok": true,
+      "start_cell": [
+        800.0,
+        100.0
+      ]
+    },
+    {
+      "canonical_cell": [
+        580.0,
+        320.0
+      ],
+      "decision": "APPROVE_WITH_SAFE_PERIMETER_CORRECTION",
+      "forward_ok": true,
+      "goal_cell": [
+        559.0,
+        322.0
+      ],
+      "hazard_exposure_cells": 0.0,
+      "id": "elder.ember_forge",
+      "kind": "territory",
+      "path_cell_count": 62.0,
+      "poi_id": "poi_ember_old_forge",
+      "probes": {
+        "probes": [
+          {
+            "collision": false,
+            "delta": [
+              0.0,
+              -12.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              8.0,
+              -8.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              -8.0,
+              -8.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              12.0,
+              0.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              -12.0,
+              0.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              0.0,
+              12.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              8.0,
+              8.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              -8.0,
+              8.0
+            ]
+          }
+        ]
+      },
+      "production_status": "AUTHORED_SOURCE_WINDOW_NOT_PRODUCTION_MOUNTED",
+      "return_ok": true,
+      "start_cell": [
+        540.0,
+        280.0
+      ]
+    },
+    {
+      "canonical_cell": [
+        640.0,
+        600.0
+      ],
+      "decision": "APPROVE_WITH_SAFE_PERIMETER_CORRECTION",
+      "forward_ok": true,
+      "goal_cell": [
+        633.0,
+        660.0
+      ],
+      "hazard_exposure_cells": 0.0,
+      "id": "elder.verdant_temple",
+      "kind": "territory",
+      "path_cell_count": 68.0,
+      "poi_id": "poi_verdant_canopy_temple",
+      "probes": {
+        "probes": [
+          {
+            "collision": false,
+            "delta": [
+              0.0,
+              -12.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              8.0,
+              -8.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              -8.0,
+              -8.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              12.0,
+              0.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              -12.0,
+              0.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              0.0,
+              12.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              8.0,
+              8.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              -8.0,
+              8.0
+            ]
+          }
+        ]
+      },
+      "production_status": "AUTHORED_SOURCE_WINDOW_NOT_PRODUCTION_MOUNTED",
+      "return_ok": true,
+      "start_cell": [
+        660.0,
+        700.0
+      ]
+    },
+    {
+      "canonical_cell": [
+        900.0,
+        660.0
+      ],
+      "decision": "APPROVE_WITH_SAFE_PERIMETER_CORRECTION",
+      "forward_ok": true,
+      "goal_cell": [
+        857.0,
+        690.0
+      ],
+      "hazard_exposure_cells": 0.0,
+      "id": "elder.pearl_grotto",
+      "kind": "territory",
+      "path_cell_count": 14.0,
+      "poi_id": "poi_pearl_grotto",
+      "probes": {
+        "probes": [
+          {
+            "collision": false,
+            "delta": [
+              0.0,
+              -12.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              8.0,
+              -8.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              -8.0,
+              -8.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              12.0,
+              0.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              -12.0,
+              0.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              0.0,
+              12.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              8.0,
+              8.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              -8.0,
+              8.0
+            ]
+          }
+        ]
+      },
+      "production_status": "AUTHORED_SOURCE_WINDOW_NOT_PRODUCTION_MOUNTED",
+      "return_ok": true,
+      "start_cell": [
+        860.0,
+        700.0
+      ]
+    },
+    {
+      "canonical_cell": [
+        408.0,
+        200.0
+      ],
+      "decision": "APPROVE_RELOCATED_WORLD_SOCKET_FOR_A0_TRIAL",
+      "forward_ok": true,
+      "goal_cell": [
+        404.0,
+        204.0
+      ],
+      "hazard_exposure_cells": 0.0,
+      "id": "endpoint.ragnarok.deposit",
+      "kind": "endpoint",
+      "path_cell_count": 4.0,
+      "poi_id": "poi_crown_waystation",
+      "probes": {
+        "probes": [
+          {
+            "collision": true,
+            "delta": [
+              0.0,
+              -12.0
+            ]
+          },
+          {
+            "collision": true,
+            "delta": [
+              8.0,
+              -8.0
+            ]
+          },
+          {
+            "collision": true,
+            "delta": [
+              -8.0,
+              -8.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              12.0,
+              0.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              -12.0,
+              0.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              0.0,
+              12.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              8.0,
+              8.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              -8.0,
+              8.0
+            ]
+          }
+        ]
+      },
+      "production_status": "AUTHORED_SOURCE_WINDOW_NOT_PRODUCTION_MOUNTED",
+      "return_ok": true,
+      "start_cell": [
+        404.0,
+        207.0
+      ]
+    },
+    {
+      "canonical_cell": [
+        408.0,
+        200.0
+      ],
+      "decision": "APPROVE_RELOCATED_WORLD_SOCKET_FOR_A0_TRIAL",
+      "forward_ok": true,
+      "goal_cell": [
+        412.0,
+        204.0
+      ],
+      "hazard_exposure_cells": 0.0,
+      "id": "endpoint.ragnarok.fixed_vendor",
+      "kind": "endpoint",
+      "path_cell_count": 4.0,
+      "poi_id": "poi_crown_waystation",
+      "probes": {
+        "probes": [
+          {
+            "collision": true,
+            "delta": [
+              0.0,
+              -12.0
+            ]
+          },
+          {
+            "collision": true,
+            "delta": [
+              8.0,
+              -8.0
+            ]
+          },
+          {
+            "collision": true,
+            "delta": [
+              -8.0,
+              -8.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              12.0,
+              0.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              -12.0,
+              0.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              0.0,
+              12.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              8.0,
+              8.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              -8.0,
+              8.0
+            ]
+          }
+        ]
+      },
+      "production_status": "AUTHORED_SOURCE_WINDOW_NOT_PRODUCTION_MOUNTED",
+      "return_ok": true,
+      "start_cell": [
+        412.0,
+        207.0
+      ]
+    },
+    {
+      "canonical_cell": [
+        120.0,
+        440.0
+      ],
+      "decision": "APPROVE_RELOCATED_WORLD_SOCKET_FOR_A0_TRIAL",
+      "forward_ok": true,
+      "goal_cell": [
+        126.0,
+        442.0
+      ],
+      "hazard_exposure_cells": 0.0,
+      "id": "endpoint.ragnarok.recycler",
+      "kind": "endpoint",
+      "path_cell_count": 4.0,
+      "poi_id": "poi_amberwood_mill",
+      "probes": {
+        "probes": [
+          {
+            "collision": true,
+            "delta": [
+              0.0,
+              -12.0
+            ]
+          },
+          {
+            "collision": true,
+            "delta": [
+              8.0,
+              -8.0
+            ]
+          },
+          {
+            "collision": true,
+            "delta": [
+              -8.0,
+              -8.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              12.0,
+              0.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              -12.0,
+              0.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              0.0,
+              12.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              8.0,
+              8.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              -8.0,
+              8.0
+            ]
+          }
+        ]
+      },
+      "production_status": "AUTHORED_SOURCE_WINDOW_NOT_PRODUCTION_MOUNTED",
+      "return_ok": true,
+      "start_cell": [
+        126.0,
+        445.0
+      ]
+    },
+    {
+      "canonical_cell": [
+        900.0,
+        420.0
+      ],
+      "decision": "APPROVE_RELOCATED_WORLD_SOCKET_FOR_A0_TRIAL",
+      "forward_ok": true,
+      "goal_cell": [
+        894.0,
+        424.0
+      ],
+      "hazard_exposure_cells": 0.0,
+      "id": "endpoint.ragnarok.evacuation",
+      "kind": "endpoint",
+      "path_cell_count": 4.0,
+      "poi_id": "poi_saffron_drydock",
+      "probes": {
+        "probes": [
+          {
+            "collision": true,
+            "delta": [
+              0.0,
+              -12.0
+            ]
+          },
+          {
+            "collision": true,
+            "delta": [
+              8.0,
+              -8.0
+            ]
+          },
+          {
+            "collision": true,
+            "delta": [
+              -8.0,
+              -8.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              12.0,
+              0.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              -12.0,
+              0.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              0.0,
+              12.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              8.0,
+              8.0
+            ]
+          },
+          {
+            "collision": false,
+            "delta": [
+              -8.0,
+              8.0
+            ]
+          }
+        ]
+      },
+      "production_status": "AUTHORED_SOURCE_WINDOW_NOT_PRODUCTION_MOUNTED",
+      "return_ok": true,
+      "start_cell": [
+        894.0,
+        427.0
+      ]
+    }
+  ],
+  "schema": "soh.world.a1_placement_native_report.v1",
+  "scope": "REAL_GODOT_HERO_SHAPE_SOURCE_WINDOWS_NOT_PRODUCTION_MOUNT",
+  "screenshots": [
+    "/home/runner/work/Soul-of-Hero/Soul-of-Hero/artifacts/a1-placement/elder_ashen_crown_goal_1280x720.png",
+    "/home/runner/work/Soul-of-Hero/Soul-of-Hero/artifacts/a1-placement/elder_ashen_crown_return_1280x720.png",
+    "/home/runner/work/Soul-of-Hero/Soul-of-Hero/artifacts/a1-placement/elder_frost_observatory_goal_1280x720.png",
+    "/home/runner/work/Soul-of-Hero/Soul-of-Hero/artifacts/a1-placement/elder_frost_observatory_return_1280x720.png",
+    "/home/runner/work/Soul-of-Hero/Soul-of-Hero/artifacts/a1-placement/elder_glasswind_light_goal_1280x720.png",
+    "/home/runner/work/Soul-of-Hero/Soul-of-Hero/artifacts/a1-placement/elder_glasswind_light_return_1280x720.png",
+    "/home/runner/work/Soul-of-Hero/Soul-of-Hero/artifacts/a1-placement/elder_ember_forge_goal_1280x720.png",
+    "/home/runner/work/Soul-of-Hero/Soul-of-Hero/artifacts/a1-placement/elder_ember_forge_return_1280x720.png",
+    "/home/runner/work/Soul-of-Hero/Soul-of-Hero/artifacts/a1-placement/elder_verdant_temple_goal_1280x720.png",
+    "/home/runner/work/Soul-of-Hero/Soul-of-Hero/artifacts/a1-placement/elder_verdant_temple_return_1280x720.png",
+    "/home/runner/work/Soul-of-Hero/Soul-of-Hero/artifacts/a1-placement/elder_pearl_grotto_goal_1280x720.png",
+    "/home/runner/work/Soul-of-Hero/Soul-of-Hero/artifacts/a1-placement/elder_pearl_grotto_return_1280x720.png",
+    "/home/runner/work/Soul-of-Hero/Soul-of-Hero/artifacts/a1-placement/endpoint_ragnarok_deposit_goal_1280x720.png",
+    "/home/runner/work/Soul-of-Hero/Soul-of-Hero/artifacts/a1-placement/endpoint_ragnarok_deposit_return_1280x720.png",
+    "/home/runner/work/Soul-of-Hero/Soul-of-Hero/artifacts/a1-placement/endpoint_ragnarok_fixed_vendor_goal_1280x720.png",
+    "/home/runner/work/Soul-of-Hero/Soul-of-Hero/artifacts/a1-placement/endpoint_ragnarok_fixed_vendor_return_1280x720.png",
+    "/home/runner/work/Soul-of-Hero/Soul-of-Hero/artifacts/a1-placement/endpoint_ragnarok_recycler_goal_1280x720.png",
+    "/home/runner/work/Soul-of-Hero/Soul-of-Hero/artifacts/a1-placement/endpoint_ragnarok_recycler_return_1280x720.png",
+    "/home/runner/work/Soul-of-Hero/Soul-of-Hero/artifacts/a1-placement/endpoint_ragnarok_evacuation_goal_1280x720.png",
+    "/home/runner/work/Soul-of-Hero/Soul-of-Hero/artifacts/a1-placement/endpoint_ragnarok_evacuation_return_1280x720.png"
+  ],
+  "source_contract_sha256": "ed5263e37dbbc40e8e9d3a293f9bf6a0420bca400314e46493c8455eae89b543",
+  "trace": [
+    {
+      "cells": 87,
+      "end_foot": [
+        488.244750976562,
+        4464.55908203125
+      ],
+      "leg": "forward existing-cell Hero route elder.ashen_crown",
+      "review_id": "elder.ashen_crown"
+    },
+    {
+      "cells": 87,
+      "end_foot": [
+        904.082336425781,
+        3501.47290039062
+      ],
+      "leg": "return existing-cell Hero route elder.ashen_crown",
+      "review_id": "elder.ashen_crown"
+    },
+    {
+      "cells": 161,
+      "end_foot": [
+        11495.58203125,
+        2864.48022460938
+      ],
+      "leg": "forward existing-cell Hero route elder.frost_observatory",
+      "review_id": "elder.frost_observatory"
+    },
+    {
+      "cells": 161,
+      "end_foot": [
+        12809.7607421875,
+        1614.77319335938
+      ],
+      "leg": "return existing-cell Hero route elder.frost_observatory",
+      "review_id": "elder.frost_observatory"
+    },
+    {
+      "cells": 149,
+      "end_foot": [
+        14855.916015625,
+        1937.61401367188
+      ],
+      "leg": "forward existing-cell Hero route elder.glasswind_light",
+      "review_id": "elder.glasswind_light"
+    },
+    {
+      "cells": 149,
+      "end_foot": [
+        12805.0615234375,
+        1614.79943847656
+      ],
+      "leg": "return existing-cell Hero route elder.glasswind_light",
+      "review_id": "elder.glasswind_light"
+    },
+    {
+      "cells": 62,
+      "end_foot": [
+        8952.171875,
+        5169.4013671875
+      ],
+      "leg": "forward existing-cell Hero route elder.ember_forge",
+      "review_id": "elder.ember_forge"
+    },
+    {
+      "cells": 62,
+      "end_foot": [
+        8645.458984375,
+        4494.923828125
+      ],
+      "leg": "return existing-cell Hero route elder.ember_forge",
+      "review_id": "elder.ember_forge"
+    },
+    {
+      "cells": 68,
+      "end_foot": [
+        10135.7861328125,
+        10573.2705078125
+      ],
+      "leg": "forward existing-cell Hero route elder.verdant_temple",
+      "review_id": "elder.verdant_temple"
+    },
+    {
+      "cells": 68,
+      "end_foot": [
+        10570.22265625,
+        11215.380859375
+      ],
+      "leg": "return existing-cell Hero route elder.verdant_temple",
+      "review_id": "elder.verdant_temple"
+    },
+    {
+      "cells": 14,
+      "end_foot": [
+        13719.763671875,
+        11051.8916015625
+      ],
+      "leg": "forward existing-cell Hero route elder.pearl_grotto",
+      "review_id": "elder.pearl_grotto"
+    },
+    {
+      "cells": 14,
+      "end_foot": [
+        13769.9140625,
+        11215.419921875
+      ],
+      "leg": "return existing-cell Hero route elder.pearl_grotto",
+      "review_id": "elder.pearl_grotto"
+    },
+    {
+      "cells": 4,
+      "end_foot": [
+        6472.0,
+        3276.83862304688
+      ],
+      "leg": "forward existing-cell Hero route endpoint.ragnarok.deposit",
+      "review_id": "endpoint.ragnarok.deposit"
+    },
+    {
+      "cells": 4,
+      "end_foot": [
+        6472.0,
+        3328.62719726562
+      ],
+      "leg": "return existing-cell Hero route endpoint.ragnarok.deposit",
+      "review_id": "endpoint.ragnarok.deposit"
+    },
+    {
+      "cells": 4,
+      "end_foot": [
+        6600.0,
+        3276.83862304688
+      ],
+      "leg": "forward existing-cell Hero route endpoint.ragnarok.fixed_vendor",
+      "review_id": "endpoint.ragnarok.fixed_vendor"
+    },
+    {
+      "cells": 4,
+      "end_foot": [
+        6600.0,
+        3328.92724609375
+      ],
+      "leg": "return existing-cell Hero route endpoint.ragnarok.fixed_vendor",
+      "review_id": "endpoint.ragnarok.fixed_vendor"
+    },
+    {
+      "cells": 4,
+      "end_foot": [
+        2024.0,
+        7084.8388671875
+      ],
+      "leg": "forward existing-cell Hero route endpoint.ragnarok.recycler",
+      "review_id": "endpoint.ragnarok.recycler"
+    },
+    {
+      "cells": 4,
+      "end_foot": [
+        2024.0,
+        7137.25927734375
+      ],
+      "leg": "return existing-cell Hero route endpoint.ragnarok.recycler",
+      "review_id": "endpoint.ragnarok.recycler"
+    },
+    {
+      "cells": 4,
+      "end_foot": [
+        14312.0,
+        6796.8388671875
+      ],
+      "leg": "forward existing-cell Hero route endpoint.ragnarok.evacuation",
+      "review_id": "endpoint.ragnarok.evacuation"
+    },
+    {
+      "cells": 4,
+      "end_foot": [
+        14312.0,
+        6849.25927734375
+      ],
+      "leg": "return existing-cell Hero route endpoint.ragnarok.evacuation",
+      "review_id": "endpoint.ragnarok.evacuation"
+    }
+  ]
+}

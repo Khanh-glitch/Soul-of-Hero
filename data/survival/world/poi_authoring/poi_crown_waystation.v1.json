@@ -1,0 +1,231 @@
+{
+  "alternate_approach": "Rear ditch from the forecourt returns to the postern road; it avoids the locker face but does not bypass cap_salvage teaching.",
+  "approach_topology": {
+    "edges": [
+      {
+        "from": "postern_road",
+        "hazard_exposure": [],
+        "mode": "foot",
+        "to": "forecourt"
+      },
+      {
+        "from": "forecourt",
+        "hazard_exposure": [],
+        "mode": "foot",
+        "to": "locker"
+      },
+      {
+        "from": "forecourt",
+        "hazard_exposure": [],
+        "mode": "foot",
+        "to": "ledger"
+      },
+      {
+        "from": "forecourt",
+        "hazard_exposure": [],
+        "mode": "foot",
+        "to": "rear_ditch"
+      },
+      {
+        "from": "rear_ditch",
+        "hazard_exposure": [],
+        "mode": "foot",
+        "to": "retreat_road"
+      }
+    ],
+    "nodes": [
+      {
+        "cell": [
+          392,
+          200
+        ],
+        "id": "postern_road",
+        "kind": "approach"
+      },
+      {
+        "cell": [
+          404,
+          200
+        ],
+        "id": "forecourt",
+        "kind": "safe_court"
+      },
+      {
+        "cell": [
+          408,
+          200
+        ],
+        "id": "locker",
+        "kind": "interaction"
+      },
+      {
+        "cell": [
+          410,
+          202
+        ],
+        "id": "ledger",
+        "kind": "interaction"
+      },
+      {
+        "cell": [
+          408,
+          206
+        ],
+        "id": "rear_ditch",
+        "kind": "alternate"
+      },
+      {
+        "cell": [
+          392,
+          200
+        ],
+        "id": "retreat_road",
+        "kind": "retreat"
+      }
+    ],
+    "retreat_path": [
+      "locker",
+      "forecourt",
+      "postern_road",
+      "retreat_road"
+    ],
+    "safe_route_id": "rt_crown_safe_approach"
+  },
+  "content_readiness": "INTERACTION_SPEC_AUTHORED_NOT_NATIVE",
+  "failure_recovery": {
+    "death": "A0 respawn owns recovery; opened locker/ledger flags persist.",
+    "missing_capability": "Environmental clue points to the locker, not an invisible wall.",
+    "reload": "One-time rewards are not re-granted; cache cooldown resumes."
+  },
+  "footprint_radius_tiles": 5,
+  "interface_requirements": [
+    {
+      "owner": "A0",
+      "requirement": "Spawn interactables at authored cells; commit pry_locker/seal_ledger atomically to SaveService; one-time flags survive reload.",
+      "test_id": "A1_POI_WAYSTATION_A0_SAVE"
+    },
+    {
+      "owner": "A3",
+      "requirement": "Resolve salvage material_key to approved iron_scrap/knowledge_spares outputs without renaming A1 source; cache restock uses A3-approved cooldown.",
+      "test_id": "A1_POI_WAYSTATION_A3_SALVAGE"
+    },
+    {
+      "owner": "A6",
+      "requirement": "Show lantern/seal map clue and locker/ledger prompts; missing cap_salvage points to locker, not a level wall.",
+      "test_id": "A1_POI_WAYSTATION_A6_CLUE"
+    }
+  ],
+  "map_clues": [
+    {
+      "clue_id": "waystation_lantern",
+      "kind": "environmental",
+      "text": "A lit lantern and painted green seal mark the postern road."
+    },
+    {
+      "clue_id": "waystation_locker",
+      "kind": "interaction",
+      "text": "Pried road locker; salvage tool grammar."
+    }
+  ],
+  "native_playable": false,
+  "persistence": {
+    "keys": [
+      "world_mutations[poi_crown_waystation]",
+      "capability_grants[cap_salvage]",
+      "capability_grants[cap_seal_1]"
+    ],
+    "one_time_flags": [
+      "waystation_locker_opened",
+      "waystation_seal_recorded"
+    ],
+    "save_owner": "A0",
+    "static_plan_mutation": false
+  },
+  "poi_id": "poi_crown_waystation",
+  "purpose": "First-hour roadside salvage station: teach salvage -> spares -> seal grammar and safe retreat.",
+  "refresh_policy": "Locker and seal ledger are one-time; roadside cache restocks on an A0/A3-approved cooldown.",
+  "rewards": [
+    {
+      "a3_item_hints": [
+        "iron_scrap",
+        "knowledge_spares"
+      ],
+      "capability_grants": [
+        "cap_salvage"
+      ],
+      "material_keys": [
+        "salvage"
+      ],
+      "policy": "ONE_TIME",
+      "rarity": "starter",
+      "reward_id": "locker_reward"
+    },
+    {
+      "capability_grants": [
+        "cap_seal_1"
+      ],
+      "material_keys": [],
+      "policy": "ONE_TIME",
+      "rarity": "credential",
+      "reward_id": "ledger_reward"
+    },
+    {
+      "a3_item_hints": [
+        "iron_scrap"
+      ],
+      "material_keys": [
+        "salvage",
+        "iron"
+      ],
+      "policy": "RENEWABLE_COOLDOWN",
+      "rarity": "common",
+      "reward_id": "cache_reward"
+    }
+  ],
+  "schema": "soh.world.poi_authoring.v1",
+  "world_state_actions": [
+    {
+      "action_id": "pry_locker",
+      "consumes": {},
+      "effects": [
+        "grant:cap_salvage",
+        "flag:waystation_locker_opened"
+      ],
+      "failure_recovery": "Interrupted interaction commits nothing; retry is idempotent by action_id + poi_id.",
+      "kind": "salvage",
+      "one_time": true,
+      "requires_capabilities": [],
+      "reward_ref": "locker_reward"
+    },
+    {
+      "action_id": "seal_ledger",
+      "consumes": {},
+      "effects": [
+        "grant:cap_seal_1",
+        "flag:waystation_seal_recorded"
+      ],
+      "failure_recovery": "If cap_salvage is missing, prompt points back to locker; no resource loss.",
+      "kind": "access",
+      "one_time": true,
+      "requires_capabilities": [
+        "cap_salvage"
+      ],
+      "reward_ref": "ledger_reward"
+    },
+    {
+      "action_id": "cache_restock",
+      "consumes": {},
+      "cooldown_seconds_proposal": 1800,
+      "effects": [
+        "restock:waystation_cache"
+      ],
+      "failure_recovery": "Cooldown is SaveService-keyed; reload does not duplicate restock.",
+      "kind": "salvage",
+      "one_time": false,
+      "requires_capabilities": [
+        "cap_salvage"
+      ],
+      "reward_ref": "cache_reward"
+    }
+  ]
+}

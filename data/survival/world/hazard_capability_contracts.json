@@ -1,0 +1,282 @@
+{
+  "capabilities": {
+    "cap_boat": {
+      "kind": "vehicle",
+      "materials": [
+        "hardwood",
+        "rubber_sap",
+        "fibre"
+      ],
+      "requires": [
+        "cap_power_1"
+      ],
+      "source": "poi_saffron_drydock"
+    },
+    "cap_climb": {
+      "kind": "equipment",
+      "materials": [
+        "iron",
+        "fibre"
+      ],
+      "requires": [
+        "cap_power_1"
+      ],
+      "source": "poi_ember_piton_works"
+    },
+    "cap_deepward": {
+      "kind": "equipment",
+      "materials": [
+        "glacial_iron",
+        "rubber_sap",
+        "aether_crystal"
+      ],
+      "requires": [
+        "cap_thermal",
+        "cap_filter",
+        "cap_climb"
+      ],
+      "source": "poi_verdant_root_lift"
+    },
+    "cap_filter": {
+      "kind": "equipment",
+      "materials": [
+        "rare_herb",
+        "fibre",
+        "venom_sac"
+      ],
+      "requires": [
+        "cap_salvage"
+      ],
+      "source": "poi_amberwood_apothecary"
+    },
+    "cap_power_1": {
+      "kind": "world_repair",
+      "note": "fuel + copper wire restores a local circuit",
+      "requires": [
+        "cap_salvage"
+      ],
+      "source": "poi_crown_relay_shed"
+    },
+    "cap_salvage": {
+      "kind": "knowledge",
+      "note": "road salvage -> spares -> basic research",
+      "requires": [],
+      "source": "poi_crown_waystation"
+    },
+    "cap_seal_1": {
+      "kind": "credential",
+      "note": "first green-seal grammar",
+      "requires": [
+        "cap_salvage"
+      ],
+      "source": "poi_crown_waystation"
+    },
+    "cap_seal_2": {
+      "kind": "credential",
+      "materials": [
+        "copper",
+        "sulfur"
+      ],
+      "requires": [
+        "cap_seal_1",
+        "cap_power_1"
+      ],
+      "source": "poi_ember_old_forge"
+    },
+    "cap_seal_3": {
+      "kind": "credential",
+      "materials": [
+        "abyssal_pearl",
+        "pearl"
+      ],
+      "requires": [
+        "cap_seal_2",
+        "cap_boat"
+      ],
+      "source": "poi_pearl_customs"
+    },
+    "cap_stormward": {
+      "kind": "equipment",
+      "materials": [
+        "storm_glass",
+        "copper"
+      ],
+      "requires": [
+        "cap_seal_2"
+      ],
+      "source": "poi_glasswind_signal"
+    },
+    "cap_thermal": {
+      "kind": "equipment",
+      "materials": [
+        "glacial_iron",
+        "frost_resin"
+      ],
+      "requires": [
+        "cap_seal_1"
+      ],
+      "source": "poi_frost_wardhouse"
+    },
+    "cap_tide_ward": {
+      "kind": "equipment",
+      "materials": [
+        "pearl",
+        "hardwood",
+        "rubber_sap"
+      ],
+      "requires": [
+        "cap_boat",
+        "cap_filter"
+      ],
+      "source": "poi_pearl_stilt_village"
+    }
+  },
+  "clue_policy": "environmental/gameplay clues before commitment; no arbitrary level walls",
+  "damage_mitigation_contract": "hazard_damage_contract.json",
+  "hazards": [
+    {
+      "clue": "legacy crucible basin",
+      "hazard_id": "hz_crown_heat",
+      "kind": "heat",
+      "rect": [
+        160,
+        184,
+        64,
+        40
+      ],
+      "region_id": "r_ashen_crown",
+      "requires": "cap_filter",
+      "severity": 2
+    },
+    {
+      "clue": "legacy fen rot",
+      "hazard_id": "hz_crown_rot",
+      "kind": "poison",
+      "rect": [
+        232,
+        196,
+        104,
+        48
+      ],
+      "region_id": "r_ashen_crown",
+      "requires": "cap_filter",
+      "severity": 2
+    },
+    {
+      "clue": "legacy conduit bleed",
+      "hazard_id": "hz_crown_cold",
+      "kind": "cold",
+      "rect": [
+        246,
+        122,
+        62,
+        34
+      ],
+      "region_id": "r_ashen_crown",
+      "requires": "cap_thermal",
+      "severity": 2
+    },
+    {
+      "clue": "exposed arête whiteout",
+      "hazard_id": "hz_frost_ridge",
+      "kind": "cold",
+      "rect": [
+        560,
+        40,
+        150,
+        120
+      ],
+      "region_id": "r_frost_crown",
+      "requires": "cap_thermal",
+      "severity": 3
+    },
+    {
+      "clue": "fumarole field, dead vegetation and yellow crust",
+      "hazard_id": "hz_ember_gas",
+      "kind": "acid_gas",
+      "rect": [
+        560,
+        300,
+        120,
+        90
+      ],
+      "region_id": "r_ember_steppe",
+      "requires": "cap_filter",
+      "severity": 3
+    },
+    {
+      "clue": "dry wadi, no shade, salt crust",
+      "hazard_id": "hz_saffron_heat",
+      "kind": "heat",
+      "rect": [
+        800,
+        280,
+        120,
+        80
+      ],
+      "region_id": "r_saffron_coast",
+      "requires": "cap_thermal",
+      "severity": 2
+    },
+    {
+      "clue": "spore hollow, discoloured leaves",
+      "hazard_id": "hz_verdant_spore",
+      "kind": "poison",
+      "rect": [
+        540,
+        540,
+        150,
+        120
+      ],
+      "region_id": "r_verdant_fold",
+      "requires": "cap_filter",
+      "severity": 3
+    },
+    {
+      "clue": "tidal channels, barnacle lines, drift wrack",
+      "hazard_id": "hz_pearl_tide",
+      "kind": "tide",
+      "rect": [
+        790,
+        540,
+        160,
+        150
+      ],
+      "region_id": "r_pearl_mangroves",
+      "requires": "cap_boat",
+      "severity": 3
+    },
+    {
+      "clue": "gas bubbles, bleached reeds, still water",
+      "hazard_id": "hz_ashwater_miasma",
+      "kind": "poison",
+      "rect": [
+        270,
+        600,
+        180,
+        120
+      ],
+      "region_id": "r_ashwater_fen",
+      "requires": "cap_filter",
+      "severity": 4
+    },
+    {
+      "clue": "cenote depth, cold water, no surface exit",
+      "hazard_id": "hz_sunken_pressure",
+      "kind": "pressure",
+      "rect": [
+        60,
+        620,
+        120,
+        100
+      ],
+      "region_id": "r_sunken_orchard",
+      "requires": "cap_deepward",
+      "severity": 4
+    }
+  ],
+  "note": "A6 owns UX/VFX presentation; A1 supplies stable labels, regions, rects, required capabilities and severity only.",
+  "novice_bootstrap_contract": "novice_bootstrap_contract.json",
+  "schema": "soh.world.hazard_capabilities.v1",
+  "status": "AUTHORED_CONTRACT_NOT_A6_INTEGRATED"
+}

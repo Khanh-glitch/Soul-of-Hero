@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "project": "Soul of Hero — Survival RPG",
+  "project": "Soul of Hero \u2014 Survival RPG",
   "issue": "https://github.com/Khanh-glitch/Soul-of-Hero/issues/9",
   "branch": "feature/survival-rpg-foundation-20261029",
   "base_branch": "arena/54306b59-soul-of-hero",
@@ -20,7 +20,7 @@
   "tasks": [
     {
       "id": "SURV-005",
-      "name": "2019–2020 Last Day Rules / Civilization Restart historical A–Z reconstruction, source catalog, replay design gates",
+      "name": "2019\u20132020 Last Day Rules / Civilization Restart historical A\u2013Z reconstruction, source catalog, replay design gates",
       "status": "verified",
       "evidence": [
         "docs/survival/LAST_DAY_RULES_2019_2020_RESEARCH_ATLAS.md",
@@ -60,7 +60,7 @@
       "name": "Harvest node -> real SOH inventory -> 2D build placement -> safe persistence slice",
       "status": "verified",
       "evidence": [
-        "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40845406213 — Survival A0 (Foundation) Runtime Validation, conclusion success: 125 checks, 12 named cases, exit 0",
+        "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40845406213 \u2014 Survival A0 (Foundation) Runtime Validation, conclusion success: 125 checks, 12 named cases, exit 0",
         "tests/survival_foundation_test.gd",
         "game/survival/survival_service.gd",
         "game/survival/survival_build_system.gd",
@@ -116,6 +116,125 @@
       "status": "not_started",
       "evidence": [],
       "next": "Run ACCEPTANCE.md with evidence across integrated systems"
+    },
+    {
+      "id": "SURV-050A-CONNECTOR",
+      "name": "A1 canonical geography connector blocker: exact legacy carve + bounded one-chunk annex contract for PR21",
+      "status": "implemented_unverified",
+      "evidence": [
+        "docs/survival/world/CANONICAL_GEOGRAPHY_CONNECTOR_HANDOFF.md",
+        "data/survival/world/connector/canonical_connector.v1.json",
+        "data/survival/world/connector/legacy_cell_delta.v1.json",
+        "tools/survival/worldgen/compile_connector.py",
+        "tools/survival/worldgen/validate_connector.py",
+        "tests/survival/world/test_connector.py",
+        "tests/survival/world/connector_native_test.gd",
+        "https://github.com/Khanh-glitch/Soul-of-Hero/pull/20",
+        "A0 negative prerequisite native run 40931599594",
+        "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40993737087",
+        "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40993742640",
+        "docs/survival/world/ci_evidence.json#connector_checkpoint"
+      ],
+      "next": "A0 apply owned world-source seam/delta/annex build guard and run production CN-07..10; CT accept/reject exact 46-solid-cell / 48-dressed-cell ridge-mouth tradeoff; A1 PAUSED_AWAITING_NATIVE_INTEGRATION; native_playable=false",
+      "verification_scope": "source_and_isolated_native_fixture_pass_pending_a0_production"
+    },
+    {
+      "id": "SURV-050A-LOCKER-STAND",
+      "name": "A1 exact Waystation locker stand native collision owner correction",
+      "status": "implemented_unverified",
+      "evidence": [
+        "docs/survival/world/A1_TO_A0_LOCKER_STAND_COLLISION_CORRECTION_20261030.md",
+        "data/survival/world/vertical_slice/poi_crown_waystation.slice.json",
+        "tools/survival/worldgen/compile_slice.py",
+        "tools/survival/worldgen/validate_slice.py",
+        "tests/survival/world/connector_native_test.gd",
+        "A0 native counterexample run 40996028162",
+        "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40999023888",
+        "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40999029445",
+        "docs/survival/world/ci_evidence.json#locker_stand_checkpoint"
+      ],
+      "next": "A0 PR21 mount collision_size_px/collision_offset_px and run production exact-stand/genuine-reward/save vectors; A1 PAUSED_AWAITING_A0_NATIVE; native_playable=false",
+      "verification_scope": "source_and_isolated_native_fixture_pass_pending_a0_production"
+    },
+    {
+      "id": "SURV-050A-CORRIDOR",
+      "name": "A1 first-hour roadside supply corridor, durable source-instance identity, art-backed native fixture, and A8 cell-to-native transform review",
+      "status": "in_progress",
+      "verification_scope": "source_validated_local_113_tests_pending_ci_native_and_a0_a3_binding",
+      "evidence": [
+        "data/survival/world/authoring/corridor/crown_roadside_sources.v1.json",
+        "data/survival/world/corridor/crown_roadside.corridor.v1.json",
+        "data/survival/world/corridor/a8_site_transforms.v1.json",
+        "tools/survival/worldgen/compile_corridor.py",
+        "tools/survival/worldgen/validate_corridor.py",
+        "tests/survival/world/test_corridor.py",
+        "tests/survival/world/corridor_native_test.gd",
+        "docs/survival/world/FIRST_HOUR_CORRIDOR_HANDOFF.md",
+        "https://github.com/Khanh-glitch/Soul-of-Hero/pull/20"
+      ],
+      "next": "Run corridor native CI; A3 bind si:* economics without A1 rates; A0 mount corridor overlay/containers in production seam; A8/A0 decide compact shell vs interior transform for southern POIs; native_playable=false"
+    },
+    {
+      "id": "SURV-050A-WORLD-ART",
+      "name": "A1 reusable survival world art system, first-hour visual treatment, two contrasting biome studies, and executable A8 visual contract",
+      "status": "implemented_unverified",
+      "verification_scope": "full_world_region_art_source_pillow_self_inspected_121_tests_native_pending_github_push_retry",
+      "evidence": [
+        "assets/environment/survival_world/terrain.png",
+        "assets/environment/survival_world/props.png",
+        "data/survival/world/art/atlas.v1.json",
+        "data/survival/world/art/world_art_grammar.v1.json",
+        "data/survival/world/art/crown_roadside.treatment.v1.json",
+        "data/survival/world/art/biome_studies.v1.json",
+        "data/survival/world/art/a8_visual_contract.v1.json",
+        "data/survival/world/art/presentations.v1.json",
+        "game/world_art/world_art_presentation.gd",
+        "tools/survival/worldgen/build_world_art.py",
+        "tools/survival/worldgen/compile_world_art.py",
+        "tools/survival/worldgen/validate_world_art.py",
+        "tools/survival/worldgen/preview_world_art.py",
+        "tests/survival/world/test_world_art.py",
+        "tests/survival/world/world_art_native_test.gd",
+        "docs/survival/world/WORLD_ART_HANDOFF.md",
+        "https://github.com/Khanh-glitch/Soul-of-Hero/pull/20",
+        "data/survival/world/art/a8_shell_visuals.v1.json",
+        "tools/survival/worldgen/preview_a8_shells.py",
+        "docs/survival/world/evidence/a8_shells_contact.png",
+        "docs/survival/world/ci_evidence.json#world_art_checkpoint",
+        "data/survival/world/art/mount_bundle.v1.json",
+        "data/survival/world/art/avfx_lighting_contract.v1.json",
+        "data/survival/world/corridor/first_hour_route.v1.json",
+        "tools/survival/worldgen/validate_mount_bundle.py",
+        "data/survival/world/art/region_coverage_matrix.v1.json",
+        "docs/survival/world/evidence/region_art_review_1x_5x.png",
+        "tools/survival/worldgen/build_region_art.py",
+        "tools/survival/worldgen/compile_region_coverage.py"
+      ],
+      "next": "Push 9e98ab6c+ when GitHub transport recovers; native CI inspect; A0 mount region bundle; A8 shell adoption; AVFX Gold parity; A6 body"
+    },
+    {
+      "id": "SURV-050A-A8-PLACEMENT",
+      "name": "A1 first-hour hash reconciliation and review of A8 existing six Elder/four endpoint placements",
+      "status": "verified",
+      "assigned_branch": "arena/e385312a-soul-of-hero",
+      "work_order": "docs/survival/tasks/A1_WORLD_INTEGRATION_HASH_AND_A8_PLACEMENT_WORK_ORDER.md",
+      "verification_scope": "native_source_windows_and_connector_fixture_only_not_production",
+      "evidence": [
+        "data/survival/world/art/first_hour_asset_provenance.v1.json",
+        "data/survival/world/a1_world_placement_contract.v1.json",
+        "tools/survival/worldgen/compile_placement_review.py",
+        "tests/survival/world/placement_native_test.gd",
+        "docs/survival/world/A1_WORLD_INTEGRATION_HANDOFF.md"
+      ],
+      "next": "A0/A8/A3/A7 consume approved IDs and socket/stand cells; no blind A0 repin or production acceptance",
+      "native_evidence": {
+        "run_id": 41105179623,
+        "head_sha": "90b6828791dddea4b42ab63a74490d420a952d7e",
+        "checks": 70,
+        "failures": 0,
+        "captures": 20,
+        "crop_matches": 181
+      }
     }
   ],
   "next_action": {
@@ -190,12 +309,24 @@
       "url": "https://github.com/Khanh-glitch/Soul-of-Hero/pull/10",
       "surv010_native": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40845406213"
     },
-    "surv020_status": "USER_REPORTED_STARTED; no commit, native test or independent agent execution verification"
+    "surv020_status": "USER_REPORTED_STARTED; no commit, native test or independent agent execution verification",
+    "a1_world_integration": {
+      "status": "NATIVE_SOURCE_WINDOWS_VERIFIED",
+      "first_hour_crops": "181/181 raw RGBA match ad39bde6; 145 terrain + 36 props; 8 moved rects only",
+      "placement_contract": "data/survival/world/a1_world_placement_contract.v1.json",
+      "production_native_playable": false,
+      "a0_repin": "NO_BLIND_REPIN",
+      "native_run": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41105179623",
+      "native_checks": 70,
+      "native_failures": 0,
+      "native_captures": 20,
+      "native_crop_matches": 181
+    }
   },
   "design_authority": {
     "user_delegated_binary_gates": true,
     "policy": "Gate F0-F5 in LAST_DAY_RULES_2019_2020_RESEARCH_ATLAS.md; approved design must never be reported as implemented gameplay",
-    "historical_scope": "2019–2020, H1/H2/H3 distinguished; 2025–2026 variants are not default",
+    "historical_scope": "2019\u20132020, H1/H2/H3 distinguished; 2025\u20132026 variants are not default",
     "notable_new_user_requirement": "14 days of gameplay with only a few valuable abilities unlocked and many POIs/recipes undiscovered must make replay enticing, without padding meaningless grind"
   },
   "mechanic_coverage": [

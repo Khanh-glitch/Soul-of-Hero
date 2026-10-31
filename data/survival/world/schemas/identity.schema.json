@@ -1,0 +1,39 @@
+{
+  "$id": "soh://world/identity.v1.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "chunk_id_pattern": {
+      "type": "string"
+    },
+    "dynamic_state": {
+      "type": "string"
+    },
+    "legacy_ids": {
+      "type": "string"
+    },
+    "poi_id_pattern": {
+      "type": "string"
+    },
+    "region_id_pattern": {
+      "type": "string"
+    },
+    "resource_node_id_pattern": {
+      "type": "string"
+    },
+    "world_id": {
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "world_id",
+    "region_id_pattern",
+    "poi_id_pattern",
+    "chunk_id_pattern",
+    "resource_node_id_pattern",
+    "legacy_ids",
+    "dynamic_state"
+  ],
+  "title": "identity",
+  "type": "object"
+}

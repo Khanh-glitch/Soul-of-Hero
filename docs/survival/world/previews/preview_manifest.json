@@ -1,0 +1,51 @@
+{
+  "files": [
+    {
+      "bytes": 189595,
+      "path": "docs/survival/world/previews/continent_biome.png",
+      "sha256": "bcb790fa085ba04c4b872306eb9ff341d711c9b79acd3d4e8b5fe3bdfda27de4"
+    },
+    {
+      "bytes": 104926,
+      "path": "docs/survival/world/previews/continent_elevation.png",
+      "sha256": "d3dded3c467847ebb8f5abb13b98b28b72bb28473996092ce0d788128fc27f80"
+    },
+    {
+      "bytes": 121536,
+      "path": "docs/survival/world/previews/continent_hydrology.png",
+      "sha256": "ad4cbc6b0f81070c9532651279f03cc5fddfa44624f630b7322c540b51de1111"
+    },
+    {
+      "bytes": 230148,
+      "path": "docs/survival/world/previews/continent_routes.png",
+      "sha256": "5c7bf4447478c82b6d91e09b6053601647822c32b7d4e7c71ee09e87e101a6c7"
+    },
+    {
+      "bytes": 248938,
+      "path": "docs/survival/world/previews/continent_pois.png",
+      "sha256": "164d5c128f87aacbf4962b3f4eeeda779717784606a9bdfe9b66ebafe5346725"
+    },
+    {
+      "bytes": 108876,
+      "path": "docs/survival/world/previews/starter_quarter_detail.png",
+      "sha256": "631233127aa9e8eedc8e44efd905f2e960033b088df0407f9266a0d421f75048"
+    },
+    {
+      "bytes": 67267,
+      "path": "docs/survival/world/previews/novice_bootstrap_detail.png",
+      "sha256": "76e78f96d9160792ea88fde6b817f76028aeaefaa8e80d16a3a8964c439da4c5"
+    },
+    {
+      "bytes": 195658,
+      "path": "docs/survival/world/previews/region_panels.png",
+      "sha256": "25fe84899f262bce4a2b0138f17323bd7d238331ec55e29eb34848d8959dfdc2"
+    },
+    {
+      "bytes": 52908,
+      "path": "docs/survival/world/previews/capability_graph.png",
+      "sha256": "6a9a671b93dc8120f58d17f45b0ab174462ea875a94a588dc5aaa527b9d2a332"
+    }
+  ],
+  "schema": "soh.world.previews.v1",
+  "status": "AUTHORED_PREVIEW_NOT_NATIVE_SCREENSHOT"
+}

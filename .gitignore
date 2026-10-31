@@ -1,5 +1,8 @@
 .godot/
 .tools/
+.arena/
+.venv/
+artifacts/
 .inspect_assets/
 .inspect_*.gd
 .artifacts/

@@ -1,0 +1,394 @@
+{
+  "schema": "SOH_WORLD_ART_TREATMENT_V1",
+  "treatment_id": "crown_roadside_visual_treatment",
+  "owner": "A1",
+  "biome_profile": "ashen_crown",
+  "lighting_profile": "overcast_frontier",
+  "pins": {
+    "corridor_id": "crown_roadside",
+    "vertical_slice_id": "crown_roadside_slice",
+    "chunk_id": "chunk:6:3",
+    "corridor_source_sha256": "9d3909b0625bdf6239a760fdf2ac982d0ede0314491cab315d7268d42ddc232f"
+  },
+  "window": {
+    "origin_cell": [
+      374,
+      186
+    ],
+    "size_cells": [
+      56,
+      48
+    ]
+  },
+  "authority": "VISUAL_ONLY_NO_COLLISION_STAND_ECONOMY_CHANGE",
+  "ground_rules": {
+    "base_from_source_surface": true,
+    "road_from_corridor_detail": "=",
+    "court_rects": [
+      {
+        "rect": [
+          403,
+          198,
+          10,
+          8
+        ],
+        "material": "stone_court"
+      }
+    ],
+    "layby_rects": [
+      {
+        "rect": [
+          393,
+          215,
+          11,
+          7
+        ],
+        "material": "soil"
+      }
+    ],
+    "blend_radius_cells": 2,
+    "landforms": [
+      {
+        "id": "caldera_ash_fan",
+        "material": "ash",
+        "shape": {
+          "type": "ellipse",
+          "center": [
+            402,
+            208
+          ],
+          "radii": [
+            28,
+            22
+          ]
+        },
+        "reason": "Well-drained ash loam on the caldera rim; the maintained road and court cut through the fan.",
+        "source_refs": [
+          "world_plan:r_ashen_crown.geology",
+          "world_plan:r_ashen_crown.soils"
+        ]
+      },
+      {
+        "id": "southwest_moor_drainage",
+        "material": "moor",
+        "shape": {
+          "type": "ellipse",
+          "center": [
+            384,
+            224
+          ],
+          "radii": [
+            10,
+            8
+          ]
+        },
+        "reason": "Rain-shadow drainage collects south-west of the supply layby; softer ground and reeds mark the wet margin.",
+        "source_refs": [
+          "world_plan:r_ashen_crown.climate"
+        ]
+      },
+      {
+        "id": "postern_ruin_shoulder",
+        "material": "basalt",
+        "shape": {
+          "type": "polygon",
+          "points": [
+            [
+              384,
+              188
+            ],
+            [
+              398,
+              188
+            ],
+            [
+              400,
+              198
+            ],
+            [
+              392,
+              204
+            ],
+            [
+              384,
+              200
+            ]
+          ]
+        },
+        "reason": "Broken caldera stone beside the postern return route; warning cairn and rock mass explain the old closure without a new blocker.",
+        "source_refs": [
+          "corridor:decor",
+          "world_plan:r_ashen_crown.identity"
+        ]
+      }
+    ],
+    "impassable_mass_material": "basalt"
+  },
+  "replace_corridor_decor": {
+    "393,201": "signpost",
+    "397,224": "handcart",
+    "394,214": "wall_stub",
+    "405,214": "column_broken",
+    "389,228": "tree_dead",
+    "396,215": "bush",
+    "401,223": "rock_a",
+    "398,219": "rock_c"
+  },
+  "add_props": [
+    {
+      "frame": "lm_waystation",
+      "cell": [
+        408,
+        198
+      ],
+      "role": "major_waystation"
+    },
+    {
+      "frame": "banner",
+      "cell": [
+        403,
+        199
+      ],
+      "role": "return_route"
+    },
+    {
+      "frame": "banner",
+      "cell": [
+        413,
+        199
+      ],
+      "role": "return_route"
+    },
+    {
+      "frame": "lamp",
+      "cell": [
+        404,
+        201
+      ],
+      "role": "major_waystation",
+      "light": "warm"
+    },
+    {
+      "frame": "lamp",
+      "cell": [
+        412,
+        200
+      ],
+      "role": "major_waystation",
+      "light": "warm"
+    },
+    {
+      "frame": "fence_h",
+      "cell": [
+        402,
+        194
+      ],
+      "role": "background_scenery"
+    },
+    {
+      "frame": "fence_h",
+      "cell": [
+        405,
+        194
+      ],
+      "role": "background_scenery"
+    },
+    {
+      "frame": "fence_h",
+      "cell": [
+        411,
+        194
+      ],
+      "role": "background_scenery"
+    },
+    {
+      "frame": "fence_h",
+      "cell": [
+        414,
+        194
+      ],
+      "role": "background_scenery"
+    },
+    {
+      "frame": "whetstone",
+      "cell": [
+        412,
+        201
+      ],
+      "role": "major_waystation"
+    },
+    {
+      "frame": "log_pile",
+      "cell": [
+        410,
+        204
+      ],
+      "role": "major_waystation"
+    },
+    {
+      "frame": "tarp_shelter",
+      "cell": [
+        394,
+        224
+      ],
+      "role": "background_scenery"
+    },
+    {
+      "frame": "cairn_warning",
+      "cell": [
+        391,
+        198
+      ],
+      "role": "physical_danger"
+    },
+    {
+      "frame": "rock_e",
+      "cell": [
+        390,
+        193
+      ],
+      "role": "physical_danger"
+    },
+    {
+      "frame": "tree_dead",
+      "cell": [
+        390,
+        205
+      ],
+      "role": "background_scenery"
+    },
+    {
+      "frame": "tree_dead",
+      "cell": [
+        414,
+        208
+      ],
+      "role": "background_scenery"
+    },
+    {
+      "frame": "bush",
+      "cell": [
+        397,
+        212
+      ],
+      "role": "background_scenery"
+    },
+    {
+      "frame": "cache_notes",
+      "cell": [
+        395,
+        219
+      ],
+      "role": "supply_cache",
+      "instance_id": "si:r_ashen_crown:roadside_supply:01"
+    },
+    {
+      "frame": "cache_closed",
+      "cell": [
+        400,
+        216
+      ],
+      "role": "supply_cache",
+      "instance_id": "si:r_ashen_crown:roadside_supply:02"
+    },
+    {
+      "frame": "cache_closed",
+      "cell": [
+        402,
+        220
+      ],
+      "role": "supply_cache",
+      "instance_id": "si:r_ashen_crown:roadside_supply:03"
+    },
+    {
+      "frame": "deadfall",
+      "cell": [
+        398,
+        222
+      ],
+      "role": "ordinary_harvestable"
+    },
+    {
+      "frame": "stump",
+      "cell": [
+        404,
+        222
+      ],
+      "role": "ordinary_harvestable"
+    },
+    {
+      "frame": "bush",
+      "cell": [
+        410,
+        214
+      ],
+      "role": "background_scenery"
+    },
+    {
+      "frame": "tree_dead",
+      "cell": [
+        418,
+        202
+      ],
+      "role": "background_scenery"
+    },
+    {
+      "frame": "rock_c",
+      "cell": [
+        388,
+        210
+      ],
+      "role": "background_scenery"
+    },
+    {
+      "frame": "reeds",
+      "cell": [
+        384,
+        224
+      ],
+      "role": "background_scenery"
+    },
+    {
+      "frame": "split_rail",
+      "cell": [
+        396,
+        226
+      ],
+      "role": "background_scenery"
+    }
+  ],
+  "capture_views": [
+    {
+      "id": "postern_return",
+      "center_cell": [
+        394,
+        201
+      ],
+      "time_of_day": 0.35
+    },
+    {
+      "id": "supply_layby",
+      "center_cell": [
+        399,
+        219
+      ],
+      "time_of_day": 0.35
+    },
+    {
+      "id": "waystation_day",
+      "center_cell": [
+        407,
+        201
+      ],
+      "time_of_day": 0.35
+    },
+    {
+      "id": "waystation_night",
+      "center_cell": [
+        407,
+        201
+      ],
+      "time_of_day": 0.85
+    }
+  ]
+}

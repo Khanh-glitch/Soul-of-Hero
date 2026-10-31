@@ -1,0 +1,64 @@
+{
+  "$id": "soh://world/route.v1.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "from": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "trunk",
+        "spur"
+      ]
+    },
+    "mode": {
+      "enum": [
+        "foot",
+        "pass",
+        "boat",
+        "legacy_path"
+      ]
+    },
+    "polyline": {
+      "items": {
+        "items": {
+          "type": "integer"
+        },
+        "maxItems": 2,
+        "minItems": 2,
+        "type": "array"
+      },
+      "minItems": 2,
+      "type": "array"
+    },
+    "required_capabilities": {
+      "items": {
+        "pattern": "^cap_[a-z0-9_]+$",
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "risk": {
+      "type": "string"
+    },
+    "route_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "to": {
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "route_id",
+    "from",
+    "to",
+    "polyline",
+    "mode",
+    "required_capabilities"
+  ],
+  "title": "route",
+  "type": "object"
+}

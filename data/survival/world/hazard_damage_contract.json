@@ -1,0 +1,331 @@
+{
+  "hazardous_shortcut": {
+    "purpose": "Prepared players may cross the legacy crucible/rot basin faster; danger is preserved, not disabled.",
+    "required_capability": "cap_filter",
+    "route_id": "rt_east_seam"
+  },
+  "hazards": [
+    {
+      "clue": "legacy crucible basin",
+      "hazard_id": "hz_crown_heat",
+      "kind": "heat",
+      "mitigation": {
+        "a3_current_status": "PARTIAL_REQUIRES_A3_EXTENSION",
+        "capability": "cap_filter",
+        "minimum_mitigation_fraction_proposal": 0.6,
+        "note": "A1 capability is preparation/access grammar; A3 owns the concrete gear/resistance values. Do not silently equate toxin_mask venom:60 with heat/acid_gas/poison coverage.",
+        "required_resistance_keys": [
+          "heat"
+        ]
+      },
+      "rect": [
+        160,
+        184,
+        64,
+        40
+      ],
+      "region_id": "r_ashen_crown",
+      "required_capability": "cap_filter",
+      "retreat_rule": "Leaving the authored rect stops exposure after a 1.0 s proposal grace; no permanent capability lock or invisible wall.",
+      "severity": 2,
+      "telegraph": {
+        "clue_before_entry": true,
+        "environmental_clue": "legacy crucible basin",
+        "map_label": "hz_crown_heat"
+      },
+      "unmitigated_hp_per_second_proposal": 2.0
+    },
+    {
+      "clue": "legacy fen rot",
+      "hazard_id": "hz_crown_rot",
+      "kind": "poison",
+      "mitigation": {
+        "a3_current_status": "PARTIAL_REQUIRES_A3_EXTENSION",
+        "capability": "cap_filter",
+        "minimum_mitigation_fraction_proposal": 0.6,
+        "note": "A1 capability is preparation/access grammar; A3 owns the concrete gear/resistance values. Do not silently equate toxin_mask venom:60 with heat/acid_gas/poison coverage.",
+        "required_resistance_keys": [
+          "poison"
+        ]
+      },
+      "rect": [
+        232,
+        196,
+        104,
+        48
+      ],
+      "region_id": "r_ashen_crown",
+      "required_capability": "cap_filter",
+      "retreat_rule": "Leaving the authored rect stops exposure after a 1.0 s proposal grace; no permanent capability lock or invisible wall.",
+      "severity": 2,
+      "telegraph": {
+        "clue_before_entry": true,
+        "environmental_clue": "legacy fen rot",
+        "map_label": "hz_crown_rot"
+      },
+      "unmitigated_hp_per_second_proposal": 2.0
+    },
+    {
+      "clue": "legacy conduit bleed",
+      "hazard_id": "hz_crown_cold",
+      "kind": "cold",
+      "mitigation": {
+        "a3_current_status": "PARTIAL_REQUIRES_A3_EXTENSION",
+        "capability": "cap_thermal",
+        "minimum_mitigation_fraction_proposal": 0.6,
+        "note": "A1 capability is preparation/access grammar; A3 owns the concrete gear/resistance values. Do not silently equate toxin_mask venom:60 with heat/acid_gas/poison coverage.",
+        "required_resistance_keys": [
+          "cold"
+        ]
+      },
+      "rect": [
+        246,
+        122,
+        62,
+        34
+      ],
+      "region_id": "r_ashen_crown",
+      "required_capability": "cap_thermal",
+      "retreat_rule": "Leaving the authored rect stops exposure after a 1.0 s proposal grace; no permanent capability lock or invisible wall.",
+      "severity": 2,
+      "telegraph": {
+        "clue_before_entry": true,
+        "environmental_clue": "legacy conduit bleed",
+        "map_label": "hz_crown_cold"
+      },
+      "unmitigated_hp_per_second_proposal": 2.0
+    },
+    {
+      "clue": "exposed arête whiteout",
+      "hazard_id": "hz_frost_ridge",
+      "kind": "cold",
+      "mitigation": {
+        "a3_current_status": "PARTIAL_REQUIRES_A3_EXTENSION",
+        "capability": "cap_thermal",
+        "minimum_mitigation_fraction_proposal": 0.6,
+        "note": "A1 capability is preparation/access grammar; A3 owns the concrete gear/resistance values. Do not silently equate toxin_mask venom:60 with heat/acid_gas/poison coverage.",
+        "required_resistance_keys": [
+          "cold"
+        ]
+      },
+      "rect": [
+        560,
+        40,
+        150,
+        120
+      ],
+      "region_id": "r_frost_crown",
+      "required_capability": "cap_thermal",
+      "retreat_rule": "Leaving the authored rect stops exposure after a 1.0 s proposal grace; no permanent capability lock or invisible wall.",
+      "severity": 3,
+      "telegraph": {
+        "clue_before_entry": true,
+        "environmental_clue": "exposed arête whiteout",
+        "map_label": "hz_frost_ridge"
+      },
+      "unmitigated_hp_per_second_proposal": 3.0
+    },
+    {
+      "clue": "fumarole field, dead vegetation and yellow crust",
+      "hazard_id": "hz_ember_gas",
+      "kind": "acid_gas",
+      "mitigation": {
+        "a3_current_status": "PARTIAL_REQUIRES_A3_EXTENSION",
+        "capability": "cap_filter",
+        "minimum_mitigation_fraction_proposal": 0.6,
+        "note": "A1 capability is preparation/access grammar; A3 owns the concrete gear/resistance values. Do not silently equate toxin_mask venom:60 with heat/acid_gas/poison coverage.",
+        "required_resistance_keys": [
+          "acid_gas"
+        ]
+      },
+      "rect": [
+        560,
+        300,
+        120,
+        90
+      ],
+      "region_id": "r_ember_steppe",
+      "required_capability": "cap_filter",
+      "retreat_rule": "Leaving the authored rect stops exposure after a 1.0 s proposal grace; no permanent capability lock or invisible wall.",
+      "severity": 3,
+      "telegraph": {
+        "clue_before_entry": true,
+        "environmental_clue": "fumarole field, dead vegetation and yellow crust",
+        "map_label": "hz_ember_gas"
+      },
+      "unmitigated_hp_per_second_proposal": 3.0
+    },
+    {
+      "clue": "dry wadi, no shade, salt crust",
+      "hazard_id": "hz_saffron_heat",
+      "kind": "heat",
+      "mitigation": {
+        "a3_current_status": "PARTIAL_REQUIRES_A3_EXTENSION",
+        "capability": "cap_thermal",
+        "minimum_mitigation_fraction_proposal": 0.6,
+        "note": "A1 capability is preparation/access grammar; A3 owns the concrete gear/resistance values. Do not silently equate toxin_mask venom:60 with heat/acid_gas/poison coverage.",
+        "required_resistance_keys": [
+          "heat"
+        ]
+      },
+      "rect": [
+        800,
+        280,
+        120,
+        80
+      ],
+      "region_id": "r_saffron_coast",
+      "required_capability": "cap_thermal",
+      "retreat_rule": "Leaving the authored rect stops exposure after a 1.0 s proposal grace; no permanent capability lock or invisible wall.",
+      "severity": 2,
+      "telegraph": {
+        "clue_before_entry": true,
+        "environmental_clue": "dry wadi, no shade, salt crust",
+        "map_label": "hz_saffron_heat"
+      },
+      "unmitigated_hp_per_second_proposal": 2.0
+    },
+    {
+      "clue": "spore hollow, discoloured leaves",
+      "hazard_id": "hz_verdant_spore",
+      "kind": "poison",
+      "mitigation": {
+        "a3_current_status": "PARTIAL_REQUIRES_A3_EXTENSION",
+        "capability": "cap_filter",
+        "minimum_mitigation_fraction_proposal": 0.6,
+        "note": "A1 capability is preparation/access grammar; A3 owns the concrete gear/resistance values. Do not silently equate toxin_mask venom:60 with heat/acid_gas/poison coverage.",
+        "required_resistance_keys": [
+          "poison"
+        ]
+      },
+      "rect": [
+        540,
+        540,
+        150,
+        120
+      ],
+      "region_id": "r_verdant_fold",
+      "required_capability": "cap_filter",
+      "retreat_rule": "Leaving the authored rect stops exposure after a 1.0 s proposal grace; no permanent capability lock or invisible wall.",
+      "severity": 3,
+      "telegraph": {
+        "clue_before_entry": true,
+        "environmental_clue": "spore hollow, discoloured leaves",
+        "map_label": "hz_verdant_spore"
+      },
+      "unmitigated_hp_per_second_proposal": 3.0
+    },
+    {
+      "clue": "tidal channels, barnacle lines, drift wrack",
+      "hazard_id": "hz_pearl_tide",
+      "kind": "tide",
+      "mitigation": {
+        "a3_current_status": "MISSING_A3_ITEM",
+        "capability": "cap_boat",
+        "minimum_mitigation_fraction_proposal": 0.6,
+        "note": "A1 capability is preparation/access grammar; A3 owns the concrete gear/resistance values. Do not silently equate toxin_mask venom:60 with heat/acid_gas/poison coverage.",
+        "required_resistance_keys": [
+          "tide"
+        ]
+      },
+      "rect": [
+        790,
+        540,
+        160,
+        150
+      ],
+      "region_id": "r_pearl_mangroves",
+      "required_capability": "cap_boat",
+      "retreat_rule": "Leaving the authored rect stops exposure after a 1.0 s proposal grace; no permanent capability lock or invisible wall.",
+      "severity": 3,
+      "telegraph": {
+        "clue_before_entry": true,
+        "environmental_clue": "tidal channels, barnacle lines, drift wrack",
+        "map_label": "hz_pearl_tide"
+      },
+      "unmitigated_hp_per_second_proposal": 3.0
+    },
+    {
+      "clue": "gas bubbles, bleached reeds, still water",
+      "hazard_id": "hz_ashwater_miasma",
+      "kind": "poison",
+      "mitigation": {
+        "a3_current_status": "PARTIAL_REQUIRES_A3_EXTENSION",
+        "capability": "cap_filter",
+        "minimum_mitigation_fraction_proposal": 0.6,
+        "note": "A1 capability is preparation/access grammar; A3 owns the concrete gear/resistance values. Do not silently equate toxin_mask venom:60 with heat/acid_gas/poison coverage.",
+        "required_resistance_keys": [
+          "poison"
+        ]
+      },
+      "rect": [
+        270,
+        600,
+        180,
+        120
+      ],
+      "region_id": "r_ashwater_fen",
+      "required_capability": "cap_filter",
+      "retreat_rule": "Leaving the authored rect stops exposure after a 1.0 s proposal grace; no permanent capability lock or invisible wall.",
+      "severity": 4,
+      "telegraph": {
+        "clue_before_entry": true,
+        "environmental_clue": "gas bubbles, bleached reeds, still water",
+        "map_label": "hz_ashwater_miasma"
+      },
+      "unmitigated_hp_per_second_proposal": 4.0
+    },
+    {
+      "clue": "cenote depth, cold water, no surface exit",
+      "hazard_id": "hz_sunken_pressure",
+      "kind": "pressure",
+      "mitigation": {
+        "a3_current_status": "MISSING_A3_ITEM",
+        "capability": "cap_deepward",
+        "minimum_mitigation_fraction_proposal": 0.6,
+        "note": "A1 capability is preparation/access grammar; A3 owns the concrete gear/resistance values. Do not silently equate toxin_mask venom:60 with heat/acid_gas/poison coverage.",
+        "required_resistance_keys": [
+          "pressure"
+        ]
+      },
+      "rect": [
+        60,
+        620,
+        120,
+        100
+      ],
+      "region_id": "r_sunken_orchard",
+      "required_capability": "cap_deepward",
+      "retreat_rule": "Leaving the authored rect stops exposure after a 1.0 s proposal grace; no permanent capability lock or invisible wall.",
+      "severity": 4,
+      "telegraph": {
+        "clue_before_entry": true,
+        "environmental_clue": "cenote depth, cold water, no surface exit",
+        "map_label": "hz_sunken_pressure"
+      },
+      "unmitigated_hp_per_second_proposal": 4.0
+    }
+  ],
+  "native_playable": false,
+  "novice_safe_route": {
+    "max_authored_hazard_tiles": 0,
+    "purpose": "First-hour salvage/power/filter preparation without heat/rot exposure.",
+    "retreat_route_id": "rt_crown_safe_approach",
+    "route_id": "rt_crown_safe_approach"
+  },
+  "owner_clues_ui": "A6",
+  "owner_damage_application": "A0",
+  "owner_gear_resistance": "A3",
+  "schema": "soh.world.hazard_damage.v1",
+  "status": "AUTHORED_PROPOSAL_NOT_NATIVE_BALANCED",
+  "tick_model_proposal": {
+    "exposure_grace_seconds": 1.0,
+    "fixed_tick_seconds": 1.0,
+    "stacking": "highest_severity_per_cell_not_additive"
+  },
+  "units": {
+    "damage": "hp_per_second",
+    "distance": "tiles",
+    "time": "seconds"
+  }
+}

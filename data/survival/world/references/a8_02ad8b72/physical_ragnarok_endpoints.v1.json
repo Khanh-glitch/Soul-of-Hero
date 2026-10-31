@@ -1,0 +1,142 @@
+{
+  "schema": "soh.a8.physical_ragnarok_endpoints.v1",
+  "schema_version": 1,
+  "world_id": "world:soh_continent_v1",
+  "status": "A8_PHYSICAL_INTENT_AUTHORING_NOT_PRODUCTION_MOUNTED",
+  "test_scene_status": "NATIVE_TEST_HARNESS_ONLY_NOT_WORLD_GEOGRAPHY",
+  "source_pins": {
+    "a1_pr": 20,
+    "a1_head": "61cd8d3730cef91fe061ac9cd7cfee9f6e013193",
+    "a1_world_plan_sha256": "fc5412822a12b4bed7be0954d9bc64e0abbca890e6a0e6ec0891610d7a198001",
+    "a3_pr": 19,
+    "a3_head": "a5d11141b12be16cc8d63957d0409169dbb79213",
+    "a0_pr": 21,
+    "a0_head": "5b932fd4bc6ae5966cd9662f262f70aa384c2f99"
+  },
+  "intent_contract": {
+    "contract_id": "soh.a8.physical_intent.v1",
+    "version": 1,
+    "emitter": "A8 physical endpoint only",
+    "required_context_owner": "A0.RunLifecycle",
+    "required_fields": [
+      "contract_id",
+      "contract_version",
+      "request_id",
+      "world_id",
+      "run_id",
+      "run_epoch",
+      "phase_id",
+      "observed_phase_projection_revision",
+      "poi_id",
+      "site_instance_id",
+      "endpoint_id",
+      "action_id",
+      "actor_local_position",
+      "actor_facing"
+    ],
+    "owner_responsibilities": {
+      "A0": ["validate active run and phase", "bind site instance", "deduplicate request", "authorize lifecycle/save outcome"],
+      "A3": ["validate rewards, prices, wallet rules, inventory, vendor stock, recycling and banking transaction policy"],
+      "AVFX": ["exact Gold content and any Gold presentation contract"]
+    },
+    "a8_prohibited_payload_fields": [
+      "currency_delta",
+      "item_delta",
+      "price",
+      "yield",
+      "reward",
+      "balance_after",
+      "transaction_receipt",
+      "save_patch",
+      "run_finalized",
+      "grant_capability"
+    ],
+    "unavailable_owner_endpoint": "do_not_emit_and_do_not_mutate",
+    "intent_is_neutral_and_not_authoritative": true
+  },
+  "canonical_placement_policy": {
+    "rule": "A1 POI anchors may be referenced, but new socket coordinates are proposals until A1 approves them.",
+    "A8_may_add_world_map_poi": false,
+    "physical_test_fixture_coordinates_are_not_world_cells": true
+  },
+  "endpoints": [
+    {
+      "endpoint_id": "endpoint.ragnarok.deposit",
+      "existing_poi_id": "poi_crown_waystation",
+      "a1_route_id": "sp_poi_crown_waystation",
+      "a1_anchor_cell": [408, 200],
+      "a1_geography_status": "AUTHORED_PLAN_NOT_NATIVE_INTEGRATED",
+      "placement_status": "A1_REVIEW_REQUIRED_SOCKET_NOT_CANONICAL",
+      "fixture_position_px": [296, 256],
+      "presentation_key": "world.endpoint.ragnarok.deposit.name",
+      "art_frame": "cache_closed",
+      "action_id": "wallet.deposit_request",
+      "available_phases": ["ragnarok_day12", "ragnarok_day13", "ragnarok_day14"],
+      "candidate_resource_slot": "wallet.ragnarok.unbanked",
+      "candidate_destination_slot": "profile.ragnarok.secured",
+      "candidate_display_name_key": "currency.ragnarok.unbanked.display_name",
+      "a3_authorization": "NOT_IMPLEMENTED_FAIL_CLOSED",
+      "a0_commit": "NOT_IMPLEMENTED_FAIL_CLOSED",
+      "no_local_balance_or_receipt": true
+    },
+    {
+      "endpoint_id": "endpoint.ragnarok.fixed_vendor",
+      "existing_poi_id": "poi_crown_waystation",
+      "a1_route_id": "sp_poi_crown_waystation",
+      "a1_anchor_cell": [408, 200],
+      "a1_geography_status": "AUTHORED_PLAN_NOT_NATIVE_INTEGRATED",
+      "placement_status": "A1_REVIEW_REQUIRED_SOCKET_NOT_CANONICAL",
+      "fixture_position_px": [432, 256],
+      "presentation_key": "world.endpoint.ragnarok.fixed_vendor.name",
+      "art_frame": "signpost",
+      "action_id": "vendor.stock_request",
+      "available_phases": ["ordinary", "ragnarok_day12", "ragnarok_day13", "ragnarok_day14"],
+      "stock_program_id": null,
+      "stock_and_prices": "A3_CATALOG_AUTHORIZATION_REQUIRED",
+      "candidate_currency_slot": "profile.ragnarok.secured",
+      "a3_authorization": "NOT_IMPLEMENTED_FAIL_CLOSED",
+      "a0_commit": "NOT_IMPLEMENTED_FAIL_CLOSED",
+      "no_local_inventory_or_balance_change": true
+    },
+    {
+      "endpoint_id": "endpoint.ragnarok.recycler",
+      "existing_poi_id": "poi_amberwood_mill",
+      "a1_route_id": "sp_poi_amberwood_mill",
+      "a1_anchor_cell": [120, 440],
+      "a1_geography_status": "AUTHORED_PLAN_NOT_NATIVE_INTEGRATED",
+      "placement_status": "A1_REVIEW_REQUIRED_SOCKET_NOT_CANONICAL",
+      "fixture_position_px": [568, 256],
+      "presentation_key": "world.endpoint.ragnarok.recycler.name",
+      "art_frame": "mill_wheel",
+      "action_id": "recycler.plan_request",
+      "available_phases": ["ordinary", "ragnarok_day12", "ragnarok_day13", "ragnarok_day14"],
+      "recycler_program_id": null,
+      "recycling_rules": "A3_CATALOG_AUTHORIZATION_REQUIRED",
+      "a3_authorization": "NOT_IMPLEMENTED_FAIL_CLOSED",
+      "a0_commit": "NOT_IMPLEMENTED_FAIL_CLOSED",
+      "no_local_inventory_or_balance_change": true
+    },
+    {
+      "endpoint_id": "endpoint.ragnarok.evacuation",
+      "existing_poi_id": "poi_saffron_drydock",
+      "a1_route_id": "sp_poi_saffron_drydock",
+      "a1_anchor_cell": [900, 420],
+      "a1_geography_status": "AUTHORED_PLAN_NOT_NATIVE_INTEGRATED",
+      "placement_status": "A1_REVIEW_REQUIRED_SOCKET_NOT_CANONICAL",
+      "fixture_position_px": [768, 256],
+      "presentation_key": "world.endpoint.ragnarok.evacuation.name",
+      "art_frame": "signpost",
+      "action_id": "evacuation.request",
+      "available_phases": ["ragnarok_day12", "ragnarok_day13", "ragnarok_day14"],
+      "a0_lifecycle_decision": "NOT_IMPLEMENTED_FAIL_CLOSED",
+      "a8_forced_run_finalization": false,
+      "no_local_save_or_run_mutation": true
+    }
+  ],
+  "route_and_lifecycle_intents": {
+    "site_revisit": {"action_id": "site.revisit_request", "owner": "A0", "a8_does_not_restore_or_persist_site_state": true},
+    "ordinary_exploration": {"action_id": "site.explore_request", "owner": "A0_A1_A3_AS_APPLICABLE", "a8_does_not_grant_rewards": true},
+    "death_or_cargo_loss": {"action_id": "run.death_state_observation", "owner": "A0", "a8_does_not_force_finalize": true},
+    "evacuation": {"action_id": "evacuation.request", "owner": "A0", "a8_emits_request_only": true}
+  }
+}

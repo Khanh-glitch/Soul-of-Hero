@@ -1,0 +1,47 @@
+{
+  "files": {
+    "handoff_contracts.json": {
+      "schema": "soh.world.slice_handoff.v1",
+      "sha256": "c4f0a453c8143bfae9db88b269cd5406d6e4ae1c8b80ad2c0e70f865de7f97a1"
+    },
+    "poi_crown_relay_shed.slice.json": {
+      "schema": "soh.world.poi_slice.v1",
+      "sha256": "5ab0042980a43e64f05aa73870b0d99f906fb95f70492daf2a6b6f7b585b77ad"
+    },
+    "poi_crown_waystation.slice.json": {
+      "schema": "soh.world.poi_slice.v1",
+      "sha256": "3a4981fd3e24580e2e7c2ee5d0929f76c432d785e142b67a222c6480af01e16f"
+    },
+    "test_vectors.json": {
+      "schema": "soh.world.slice_test_vectors.v1",
+      "sha256": "af197405dd70be3d5a5e1efcd6d662fabdc1c5682cecfc9544933b70d78379a1"
+    }
+  },
+  "integration_status": "NATIVE_READY_CONTRACT_NOT_MOUNTED",
+  "native_playable": false,
+  "owners": {
+    "geography_and_contracts": "A1",
+    "items_sources_reward_catalog": "A3",
+    "native_scene_collision_save": "A0",
+    "ux_projection": "A6"
+  },
+  "poi_ids": [
+    "poi_crown_waystation",
+    "poi_crown_relay_shed"
+  ],
+  "research_firewall": {
+    "existing_seams_documented_only": [
+      "poi_crown_relay_shed bus_powered flag is a future CT-08 power-bus seam; no Core-world mechanic is implemented here",
+      "hz_crown_heat / hz_crown_rot remain static authored hazard rects; no dynamic weather is implemented here",
+      "rt_crown_buffer and trunk roads remain 2-tile authored roads; no physical cart or road-width change is implemented here"
+    ],
+    "prototype_p1_core_world_interactions": "RESEARCH_ONLY_NOT_IMPLEMENTED",
+    "prototype_p2_dynamic_weather": "RESEARCH_ONLY_NOT_IMPLEMENTED",
+    "prototype_p3_physical_cart": "RESEARCH_ONLY_NOT_IMPLEMENTED",
+    "typescript_imported": false,
+    "world_regenerated": false
+  },
+  "schema": "soh.world.vertical_slice_manifest.v1",
+  "slice_id": "a1_crown_two_poi_native_ready_v1",
+  "world_plan_sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4"
+}

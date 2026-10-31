@@ -1,0 +1,151 @@
+{
+  "$id": "soh://world/poi_slice.v1.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "a6_projection": {
+      "required": [
+        "hidden_until_discovered",
+        "map_status_values",
+        "discovered_clues",
+        "hazard_telegraphs",
+        "missing_prerequisite_reasons"
+      ],
+      "type": "object"
+    },
+    "actions": {
+      "items": {
+        "required": [
+          "action_id",
+          "trigger_node_id",
+          "stand_cells",
+          "enabled",
+          "one_time",
+          "requires_capabilities",
+          "consumes_items",
+          "grants_capabilities",
+          "reward_items",
+          "reward_right_id",
+          "state_writes",
+          "transaction_key_template",
+          "cooldown_active_seconds",
+          "missing_prerequisite_reasons"
+        ],
+        "type": "object"
+      },
+      "minItems": 2,
+      "type": "array"
+    },
+    "chunk_ids": {
+      "items": {
+        "pattern": "^chunk:[0-9]+:[0-9]+$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "immutable_geography": {
+      "required": [
+        "anchor_cell",
+        "footprint_rect",
+        "tile_px",
+        "hero_body_px",
+        "entrances",
+        "approach_path",
+        "retreat_path",
+        "required_nav_cells",
+        "static_obstacles",
+        "dynamic_spawns",
+        "spawn_forbidden_cells",
+        "hero_spawn_cell",
+        "hero_return_cell",
+        "build_permission_delegation"
+      ],
+      "type": "object"
+    },
+    "initial_persistent_state": {
+      "required": [
+        "discovered",
+        "reward_receipts",
+        "last_transaction_key"
+      ],
+      "type": "object"
+    },
+    "integration_status": {
+      "const": "NATIVE_READY_CONTRACT_NOT_MOUNTED"
+    },
+    "interaction_nodes": {
+      "minItems": 1,
+      "type": "array"
+    },
+    "name": {
+      "type": "string"
+    },
+    "native_playable": {
+      "const": false
+    },
+    "persistence": {
+      "properties": {
+        "owner": {
+          "const": "A0"
+        }
+      },
+      "required": [
+        "owner",
+        "save_namespace",
+        "save_path",
+        "state_schema",
+        "transaction_key_prefix",
+        "atomic_commit",
+        "reward_atomicity",
+        "reload_policy",
+        "death_policy"
+      ],
+      "type": "object"
+    },
+    "poi_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "schema": {
+      "const": "soh.world.poi_slice.v1"
+    },
+    "source_spec_ref": {
+      "type": "string"
+    },
+    "source_spec_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "test_vector_refs": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "world_plan_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema",
+    "poi_id",
+    "name",
+    "native_playable",
+    "integration_status",
+    "world_plan_sha256",
+    "source_spec_ref",
+    "source_spec_sha256",
+    "chunk_ids",
+    "immutable_geography",
+    "interaction_nodes",
+    "actions",
+    "initial_persistent_state",
+    "persistence",
+    "a6_projection",
+    "test_vector_refs"
+  ],
+  "title": "poi_slice",
+  "type": "object"
+}

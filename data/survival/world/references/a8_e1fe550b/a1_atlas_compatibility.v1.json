@@ -1,0 +1,1517 @@
+{
+  "schema": "soh.a8.a1_atlas_compatibility.v1",
+  "decision": "KEEP_BASE_A8_PIN_AND_ADOPT_FIVE_SOURCE_VERIFIED_LOCAL_SURFACE_CROPS",
+  "a8_pin": {
+    "pr": 20,
+    "head": "939720d50a0b822ff9042d4104dc69ba78ffe0f8",
+    "terrain_sha256": "1de66aa8f9e078801bd163ef2e12c0c973fdb8a3b08ec61cd192846277c45dbf",
+    "props_sha256": "6c4cfd80c99ab0a430dfa7c67372043341d09f6b1bd25af13793429e0b9aa190",
+    "texture_dimensions": {
+      "terrain": [
+        512,
+        128
+      ],
+      "props": [
+        1024,
+        186
+      ]
+    }
+  },
+  "a1_current": {
+    "pr": 20,
+    "head": "9ca1453ccdd315c9de4aae01cf0e1e5b4e0a71cf",
+    "atlas_path": "data/survival/world/art/atlas.v1.json",
+    "terrain_sha256": "6128d8f41abe6962fe705431db20e762e0cca613ffc3eca29065727422737d1c",
+    "props_sha256": "8d4acf4028e0e065b901e78c59c65e5a68677fb75d46c04c7e5a029a76d27324",
+    "texture_dimensions": {
+      "terrain": [
+        512,
+        880
+      ],
+      "props": [
+        1024,
+        572
+      ]
+    },
+    "frame_counts": {
+      "terrain": 1759,
+      "props": 138
+    },
+    "atlas_sha256": "83d69373ca6c1258e8727800d0aa0c288851c34d25539c69c21ec9f5fc9d769a"
+  },
+  "compatibility_test_method": "For every terrain/prop frame actually used by the three A8 sites and shells, decode the pinned A8 PNG and compare the RGBA crop digest with the exact current A1 5aed8e86 atlas frame at its current coordinate. The five adopted Orchard surface frames are separately cropped into A8's 80x16 derivative strip and checked against current-A1 source-derived RGBA digests. The source atlas/texture hashes, dimensions, coordinates, and per-crop digests are recorded here; the stdlib test verifies non-vacuous site coverage and both retained/adopted crops.",
+  "matched_frame_counts": {
+    "terrain": 23,
+    "props": 25
+  },
+  "site_ground_families": {
+    "south_crown_mill.json": [
+      "ash",
+      "gravel",
+      "moor",
+      "soil",
+      "water"
+    ],
+    "south_orchard_ruin.json": [
+      "forest",
+      "gravel",
+      "moor",
+      "soil",
+      "water"
+    ],
+    "south_quarry.json": [
+      "ash",
+      "gravel",
+      "moor",
+      "soil"
+    ]
+  },
+  "matched_frames": {
+    "terrain": {
+      "ash_0": {
+        "a8_rect": [
+          0,
+          0,
+          16,
+          16
+        ],
+        "a1_current_rect": [
+          0,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "6085a329a2124b33a008e27795f50e332bc2566649cd57047344ad57be59274f"
+      },
+      "ash_1": {
+        "a8_rect": [
+          16,
+          0,
+          16,
+          16
+        ],
+        "a1_current_rect": [
+          16,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "7a80b251f6ec8c3a437c6e13271bc3706037d69b9082b990e39724756d9e6f91"
+      },
+      "ash_2": {
+        "a8_rect": [
+          32,
+          0,
+          16,
+          16
+        ],
+        "a1_current_rect": [
+          32,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "7259dbd6bdcda9d276978f190d722a2237e4f80d11cb795463a8c7440cf1e327"
+      },
+      "ash_3": {
+        "a8_rect": [
+          48,
+          0,
+          16,
+          16
+        ],
+        "a1_current_rect": [
+          48,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "4ba7dd698b8480afc9ef9d8a8cce7f73bc0bbd9e7f298d4ed2970a7a18b9719b"
+      },
+      "forest_0": {
+        "a8_rect": [
+          256,
+          0,
+          16,
+          16
+        ],
+        "a1_current_rect": [
+          256,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "a078df01ef865b04ea7ccb0e4f97b3cf201e2cbaea6436ef1f865ed2915022ec"
+      },
+      "forest_1": {
+        "a8_rect": [
+          272,
+          0,
+          16,
+          16
+        ],
+        "a1_current_rect": [
+          272,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "41e978901ef47900cd22ce9ec4de469b010506c95a6722b8d7808fc1b4548f66"
+      },
+      "forest_2": {
+        "a8_rect": [
+          288,
+          0,
+          16,
+          16
+        ],
+        "a1_current_rect": [
+          288,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "5f575611347757b959eccb68d47fd03283f5c5e4d39d00d15eda1823338140c2"
+      },
+      "forest_3": {
+        "a8_rect": [
+          304,
+          0,
+          16,
+          16
+        ],
+        "a1_current_rect": [
+          304,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "1e340b55e3726f9051b6f43bfed59ce05a461a3f27ffe2c4a8b29e84d7b94d95"
+      },
+      "gravel_0": {
+        "a8_rect": [
+          0,
+          16,
+          16,
+          16
+        ],
+        "a1_current_rect": [
+          0,
+          16,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "0dce03d5fe97679ef02b89a32fea9b503348e7939e9ce04dc6894d00d6add1eb"
+      },
+      "gravel_1": {
+        "a8_rect": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "a1_current_rect": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "82ee5d53f54dc8d3ee31bd9d4d05a7479b59b32bc594f1b97b480cd045481399"
+      },
+      "gravel_2": {
+        "a8_rect": [
+          32,
+          16,
+          16,
+          16
+        ],
+        "a1_current_rect": [
+          32,
+          16,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "0bd3c313e1b4dc024d0889267f2005babbb6b32c3435a9e8ca08b8337361af87"
+      },
+      "gravel_3": {
+        "a8_rect": [
+          48,
+          16,
+          16,
+          16
+        ],
+        "a1_current_rect": [
+          48,
+          16,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "1d29585476b74f5ff28ab0cd677a0e4a05d6323ca4e491cc50d235987d5b035d"
+      },
+      "moor_0": {
+        "a8_rect": [
+          64,
+          0,
+          16,
+          16
+        ],
+        "a1_current_rect": [
+          64,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "a614b825c1ee8f6175ed881500605ab52c697aff3fb35cfb7b3c509bcb1e6cbc"
+      },
+      "moor_1": {
+        "a8_rect": [
+          80,
+          0,
+          16,
+          16
+        ],
+        "a1_current_rect": [
+          80,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "0234894c4b3403fd05495dbd9ea65220d433694588ec0407fbc809ee1f481bf6"
+      },
+      "moor_2": {
+        "a8_rect": [
+          96,
+          0,
+          16,
+          16
+        ],
+        "a1_current_rect": [
+          96,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "416216c1ac90afd621b95a8c7a99841148f2f94c4f081711a27cf633c5aab6e2"
+      },
+      "moor_3": {
+        "a8_rect": [
+          112,
+          0,
+          16,
+          16
+        ],
+        "a1_current_rect": [
+          112,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "8d02c2bdfb433da8021ecc69a110a183c0159dcf266a9ba25f7f813d0fa45585"
+      },
+      "soil_0": {
+        "a8_rect": [
+          128,
+          0,
+          16,
+          16
+        ],
+        "a1_current_rect": [
+          128,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "7d0f9f14c8190979824a0779622fe38b7dc64d50f6114febae85bc74d1af1647"
+      },
+      "soil_1": {
+        "a8_rect": [
+          144,
+          0,
+          16,
+          16
+        ],
+        "a1_current_rect": [
+          144,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "186b22405307d53e1cdfa12e45ea0d7ddd175b6da1e5e640be3dc62946eaf9ea"
+      },
+      "soil_2": {
+        "a8_rect": [
+          160,
+          0,
+          16,
+          16
+        ],
+        "a1_current_rect": [
+          160,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "b83983257b1f578bea67b7aa00a03adf98184099e3e48a3970f1812907c065ea"
+      },
+      "soil_3": {
+        "a8_rect": [
+          176,
+          0,
+          16,
+          16
+        ],
+        "a1_current_rect": [
+          176,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "c87db42a440607f114509f210720984e88de5fe9045bb8ad79a78f5db587ab6a"
+      },
+      "water_0": {
+        "a8_rect": [
+          64,
+          16,
+          16,
+          16
+        ],
+        "a1_current_rect": [
+          64,
+          16,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "d7f4b2b30be640f76a49839f6329b71189e8fc9f0059ba85b11f8804b2587087"
+      },
+      "water_1": {
+        "a8_rect": [
+          80,
+          16,
+          16,
+          16
+        ],
+        "a1_current_rect": [
+          80,
+          16,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "dffc6ad51e1619522542d0eb7f08277c35aab6b063b12dba0a2bf1f31daac992"
+      },
+      "water_2": {
+        "a8_rect": [
+          96,
+          16,
+          16,
+          16
+        ],
+        "a1_current_rect": [
+          96,
+          16,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "e6130feddd57279a69ade593a280ee0b610bd2349d47cb875a3a7d4ef040d629"
+      }
+    },
+    "props": {
+      "beehive": {
+        "a8_rect": [
+          238,
+          108,
+          22,
+          24
+        ],
+        "a1_current_rect": [
+          320,
+          108,
+          22,
+          24
+        ],
+        "rgba_crop_sha256": "4a6433d52cc501c1b422e71efc7b1ad26b9acaa8b5679896479b84856ea4b0c1"
+      },
+      "bush": {
+        "a8_rect": [
+          668,
+          108,
+          26,
+          22
+        ],
+        "a1_current_rect": [
+          524,
+          512,
+          26,
+          22
+        ],
+        "rgba_crop_sha256": "5c902190550823ad99ab068af9f20a532909373d89bf319f5a9d252eaf780f52"
+      },
+      "cairn_warning": {
+        "a8_rect": [
+          760,
+          2,
+          24,
+          30
+        ],
+        "a1_current_rect": [
+          816,
+          2,
+          24,
+          30
+        ],
+        "rgba_crop_sha256": "6ecf561f304177780962e627617c0a99a4ee128b8be9848cc64829e1a1f15c4d"
+      },
+      "deadfall": {
+        "a8_rect": [
+          304,
+          2,
+          34,
+          22
+        ],
+        "a1_current_rect": [
+          360,
+          2,
+          34,
+          22
+        ],
+        "rgba_crop_sha256": "5c28984551ca604bf2c2970abae2515f26b2eeeb049c9ef045b46b06ed5966cc"
+      },
+      "drying_rack": {
+        "a8_rect": [
+          208,
+          108,
+          28,
+          30
+        ],
+        "a1_current_rect": [
+          290,
+          108,
+          28,
+          30
+        ],
+        "rgba_crop_sha256": "4ca54202185e6474ecc75006d2f4962e77635fdfce115d98b66d13d303ab4b7a"
+      },
+      "fence_h": {
+        "a8_rect": [
+          676,
+          2,
+          34,
+          20
+        ],
+        "a1_current_rect": [
+          732,
+          2,
+          34,
+          20
+        ],
+        "rgba_crop_sha256": "5e662892c79ed41c77163119d41b13303d8ddbbdb2c1c2bbd06ffaaf8b63c777"
+      },
+      "fence_v": {
+        "a8_rect": [
+          712,
+          2,
+          20,
+          34
+        ],
+        "a1_current_rect": [
+          768,
+          2,
+          20,
+          34
+        ],
+        "rgba_crop_sha256": "4ba39c60410a9ca99dfb234f4e9dcd29d54378f9ae95698ebe456368ab658e68"
+      },
+      "handcart": {
+        "a8_rect": [
+          362,
+          2,
+          46,
+          30
+        ],
+        "a1_current_rect": [
+          418,
+          2,
+          46,
+          30
+        ],
+        "rgba_crop_sha256": "41ae3a0969bbb1fd08e5d2755a62b1061c5980d25ed3c8e4556aff167f0b1985"
+      },
+      "herb_moonleaf": {
+        "a8_rect": [
+          820,
+          2,
+          18,
+          16
+        ],
+        "a1_current_rect": [
+          876,
+          2,
+          18,
+          16
+        ],
+        "rgba_crop_sha256": "d31cf449e23b973296436eb6dbcb30d67f5035c7a9a00c94c0372adbe62cfaaf"
+      },
+      "lamp": {
+        "a8_rect": [
+          658,
+          2,
+          16,
+          34
+        ],
+        "a1_current_rect": [
+          714,
+          2,
+          16,
+          34
+        ],
+        "rgba_crop_sha256": "0822182aac8aa3d20e6ffd100ffe4c89ba7dca71dc95154abe531e9814ae9399"
+      },
+      "lm_mill_house": {
+        "a8_rect": [
+          500,
+          108,
+          88,
+          76
+        ],
+        "a1_current_rect": [
+          582,
+          108,
+          88,
+          76
+        ],
+        "rgba_crop_sha256": "39edf4a381c40b13755e331fd06f1af754125dcb448531863b32ccea9a0b5622"
+      },
+      "lm_orchard_shed": {
+        "a8_rect": [
+          426,
+          108,
+          72,
+          60
+        ],
+        "a1_current_rect": [
+          508,
+          108,
+          72,
+          60
+        ],
+        "rgba_crop_sha256": "5cb57263fe3f81b5d3fb4e1e409697d091bec83183ca26f0c079e2e0ea4609ce"
+      },
+      "lm_quarry_workface": {
+        "a8_rect": [
+          336,
+          108,
+          88,
+          64
+        ],
+        "a1_current_rect": [
+          418,
+          108,
+          88,
+          64
+        ],
+        "rgba_crop_sha256": "a3d44bc37558350e4811a42ff19528af7362bbf5b0786d0952d8ee47cd47d3e4"
+      },
+      "log_pile": {
+        "a8_rect": [
+          840,
+          2,
+          30,
+          20
+        ],
+        "a1_current_rect": [
+          896,
+          2,
+          30,
+          20
+        ],
+        "rgba_crop_sha256": "c6cfe7eea0022d533abcc6cb97634c14498c353b8ea27b0625291449a706fdec"
+      },
+      "mill_wheel": {
+        "a8_rect": [
+          60,
+          108,
+          56,
+          56
+        ],
+        "a1_current_rect": [
+          142,
+          108,
+          56,
+          56
+        ],
+        "rgba_crop_sha256": "6ee3c6cffc539ed821132f8132937ce22bde66c21ce385f23c51a6cd7276c540"
+      },
+      "ore_skarn": {
+        "a8_rect": [
+          786,
+          2,
+          32,
+          26
+        ],
+        "a1_current_rect": [
+          842,
+          2,
+          32,
+          26
+        ],
+        "rgba_crop_sha256": "64d85a7d0d5b407cca678e7bc76db0d9a4c7bb6db7b02d62aa22c74d5a28c90f"
+      },
+      "reeds": {
+        "a8_rect": [
+          196,
+          2,
+          22,
+          24
+        ],
+        "a1_current_rect": [
+          196,
+          2,
+          22,
+          24
+        ],
+        "rgba_crop_sha256": "6c76b3b8127d1451768dc032499a8faac29cad8a1b6a9d01e648deac49d48a5c"
+      },
+      "rock_a": {
+        "a8_rect": [
+          696,
+          108,
+          26,
+          20
+        ],
+        "a1_current_rect": [
+          552,
+          512,
+          26,
+          20
+        ],
+        "rgba_crop_sha256": "4180405a332fad9ac5e799d00692146114389c98501f1aca95ea564747d33ad1"
+      },
+      "rock_c": {
+        "a8_rect": [
+          724,
+          108,
+          20,
+          15
+        ],
+        "a1_current_rect": [
+          580,
+          512,
+          20,
+          15
+        ],
+        "rgba_crop_sha256": "44b051357439df2b470ddf94c167af5874c493f49e8abec524bc27aee8288da3"
+      },
+      "signpost": {
+        "a8_rect": [
+          788,
+          108,
+          26,
+          26
+        ],
+        "a1_current_rect": [
+          644,
+          512,
+          26,
+          26
+        ],
+        "rgba_crop_sha256": "143d0007d9b7be54b7c40ef9a09e71d1dce480484ad81673b10557bad3f202c5"
+      },
+      "split_rail": {
+        "a8_rect": [
+          300,
+          108,
+          34,
+          18
+        ],
+        "a1_current_rect": [
+          382,
+          108,
+          34,
+          18
+        ],
+        "rgba_crop_sha256": "bd16c7a26460b2a244a7532932b0e6bf9bc2610768ba9e21505daf199385074f"
+      },
+      "tree_orchard": {
+        "a8_rect": [
+          52,
+          2,
+          48,
+          64
+        ],
+        "a1_current_rect": [
+          52,
+          2,
+          48,
+          64
+        ],
+        "rgba_crop_sha256": "be1fbf2f20203bb546b0d464b2e912a035639e4400b63955426e1f49fa1c4677"
+      },
+      "tree_pine": {
+        "a8_rect": [
+          632,
+          108,
+          34,
+          58
+        ],
+        "a1_current_rect": [
+          488,
+          512,
+          34,
+          58
+        ],
+        "rgba_crop_sha256": "40c20f76d7340b3667986e68925e9827f324b1c048b6d9b02759b84104485886"
+      },
+      "wall_stub": {
+        "a8_rect": [
+          816,
+          108,
+          36,
+          22
+        ],
+        "a1_current_rect": [
+          672,
+          512,
+          36,
+          22
+        ],
+        "rgba_crop_sha256": "bef1e1ccdc5d8218b97749585bad56fb285f02e6f6b133b87ff5c428cca12cd4"
+      },
+      "whetstone": {
+        "a8_rect": [
+          118,
+          108,
+          22,
+          18
+        ],
+        "a1_current_rect": [
+          200,
+          108,
+          22,
+          18
+        ],
+        "rgba_crop_sha256": "c59297936771581de02140360ba6a5f3a3d066f9e8a45bf7cec108d67e046024"
+      }
+    }
+  },
+  "potential_new_transition_frames": {
+    "south_quarry.json": {
+      "shore_ash_gravel_1": [
+        160,
+        112,
+        16,
+        16
+      ],
+      "shore_ash_gravel_2": [
+        176,
+        112,
+        16,
+        16
+      ],
+      "shore_ash_gravel_4": [
+        192,
+        112,
+        16,
+        16
+      ],
+      "shore_ash_gravel_8": [
+        208,
+        112,
+        16,
+        16
+      ],
+      "shore_gravel_ash_1": [
+        224,
+        112,
+        16,
+        16
+      ],
+      "shore_gravel_ash_2": [
+        240,
+        112,
+        16,
+        16
+      ],
+      "shore_gravel_ash_4": [
+        256,
+        112,
+        16,
+        16
+      ],
+      "shore_gravel_ash_8": [
+        272,
+        112,
+        16,
+        16
+      ],
+      "shore_ash_moor_1": [
+        96,
+        96,
+        16,
+        16
+      ],
+      "shore_ash_moor_2": [
+        112,
+        96,
+        16,
+        16
+      ],
+      "shore_ash_moor_4": [
+        128,
+        96,
+        16,
+        16
+      ],
+      "shore_ash_moor_8": [
+        144,
+        96,
+        16,
+        16
+      ],
+      "shore_moor_ash_1": [
+        32,
+        96,
+        16,
+        16
+      ],
+      "shore_moor_ash_2": [
+        48,
+        96,
+        16,
+        16
+      ],
+      "shore_moor_ash_4": [
+        64,
+        96,
+        16,
+        16
+      ],
+      "shore_moor_ash_8": [
+        80,
+        96,
+        16,
+        16
+      ],
+      "shore_gravel_soil_1": [
+        480,
+        96,
+        16,
+        16
+      ],
+      "shore_gravel_soil_2": [
+        496,
+        96,
+        16,
+        16
+      ],
+      "shore_gravel_soil_4": [
+        0,
+        112,
+        16,
+        16
+      ],
+      "shore_gravel_soil_8": [
+        16,
+        112,
+        16,
+        16
+      ],
+      "shore_soil_gravel_1": [
+        416,
+        96,
+        16,
+        16
+      ],
+      "shore_soil_gravel_2": [
+        432,
+        96,
+        16,
+        16
+      ],
+      "shore_soil_gravel_4": [
+        448,
+        96,
+        16,
+        16
+      ],
+      "shore_soil_gravel_8": [
+        464,
+        96,
+        16,
+        16
+      ],
+      "shore_moor_soil_1": [
+        32,
+        128,
+        16,
+        16
+      ],
+      "shore_moor_soil_2": [
+        48,
+        128,
+        16,
+        16
+      ],
+      "shore_moor_soil_4": [
+        64,
+        128,
+        16,
+        16
+      ],
+      "shore_moor_soil_8": [
+        80,
+        128,
+        16,
+        16
+      ],
+      "shore_soil_moor_1": [
+        96,
+        128,
+        16,
+        16
+      ],
+      "shore_soil_moor_2": [
+        112,
+        128,
+        16,
+        16
+      ],
+      "shore_soil_moor_4": [
+        128,
+        128,
+        16,
+        16
+      ],
+      "shore_soil_moor_8": [
+        144,
+        128,
+        16,
+        16
+      ]
+    },
+    "south_orchard_ruin.json": {
+      "shore_forest_soil_1": [
+        288,
+        112,
+        16,
+        16
+      ],
+      "shore_forest_soil_2": [
+        304,
+        112,
+        16,
+        16
+      ],
+      "shore_forest_soil_4": [
+        320,
+        112,
+        16,
+        16
+      ],
+      "shore_forest_soil_8": [
+        336,
+        112,
+        16,
+        16
+      ],
+      "shore_soil_forest_1": [
+        352,
+        112,
+        16,
+        16
+      ],
+      "shore_soil_forest_2": [
+        368,
+        112,
+        16,
+        16
+      ],
+      "shore_soil_forest_4": [
+        384,
+        112,
+        16,
+        16
+      ],
+      "shore_soil_forest_8": [
+        400,
+        112,
+        16,
+        16
+      ],
+      "shore_moor_soil_1": [
+        32,
+        128,
+        16,
+        16
+      ],
+      "shore_moor_soil_2": [
+        48,
+        128,
+        16,
+        16
+      ],
+      "shore_moor_soil_4": [
+        64,
+        128,
+        16,
+        16
+      ],
+      "shore_moor_soil_8": [
+        80,
+        128,
+        16,
+        16
+      ],
+      "shore_soil_moor_1": [
+        96,
+        128,
+        16,
+        16
+      ],
+      "shore_soil_moor_2": [
+        112,
+        128,
+        16,
+        16
+      ],
+      "shore_soil_moor_4": [
+        128,
+        128,
+        16,
+        16
+      ],
+      "shore_soil_moor_8": [
+        144,
+        128,
+        16,
+        16
+      ],
+      "shore_gravel_soil_1": [
+        480,
+        96,
+        16,
+        16
+      ],
+      "shore_gravel_soil_2": [
+        496,
+        96,
+        16,
+        16
+      ],
+      "shore_gravel_soil_4": [
+        0,
+        112,
+        16,
+        16
+      ],
+      "shore_gravel_soil_8": [
+        16,
+        112,
+        16,
+        16
+      ],
+      "shore_soil_gravel_1": [
+        416,
+        96,
+        16,
+        16
+      ],
+      "shore_soil_gravel_2": [
+        432,
+        96,
+        16,
+        16
+      ],
+      "shore_soil_gravel_4": [
+        448,
+        96,
+        16,
+        16
+      ],
+      "shore_soil_gravel_8": [
+        464,
+        96,
+        16,
+        16
+      ]
+    },
+    "south_crown_mill.json": {
+      "shore_ash_gravel_1": [
+        160,
+        112,
+        16,
+        16
+      ],
+      "shore_ash_gravel_2": [
+        176,
+        112,
+        16,
+        16
+      ],
+      "shore_ash_gravel_4": [
+        192,
+        112,
+        16,
+        16
+      ],
+      "shore_ash_gravel_8": [
+        208,
+        112,
+        16,
+        16
+      ],
+      "shore_gravel_ash_1": [
+        224,
+        112,
+        16,
+        16
+      ],
+      "shore_gravel_ash_2": [
+        240,
+        112,
+        16,
+        16
+      ],
+      "shore_gravel_ash_4": [
+        256,
+        112,
+        16,
+        16
+      ],
+      "shore_gravel_ash_8": [
+        272,
+        112,
+        16,
+        16
+      ],
+      "shore_ash_moor_1": [
+        96,
+        96,
+        16,
+        16
+      ],
+      "shore_ash_moor_2": [
+        112,
+        96,
+        16,
+        16
+      ],
+      "shore_ash_moor_4": [
+        128,
+        96,
+        16,
+        16
+      ],
+      "shore_ash_moor_8": [
+        144,
+        96,
+        16,
+        16
+      ],
+      "shore_moor_ash_1": [
+        32,
+        96,
+        16,
+        16
+      ],
+      "shore_moor_ash_2": [
+        48,
+        96,
+        16,
+        16
+      ],
+      "shore_moor_ash_4": [
+        64,
+        96,
+        16,
+        16
+      ],
+      "shore_moor_ash_8": [
+        80,
+        96,
+        16,
+        16
+      ],
+      "shore_gravel_soil_1": [
+        480,
+        96,
+        16,
+        16
+      ],
+      "shore_gravel_soil_2": [
+        496,
+        96,
+        16,
+        16
+      ],
+      "shore_gravel_soil_4": [
+        0,
+        112,
+        16,
+        16
+      ],
+      "shore_gravel_soil_8": [
+        16,
+        112,
+        16,
+        16
+      ],
+      "shore_soil_gravel_1": [
+        416,
+        96,
+        16,
+        16
+      ],
+      "shore_soil_gravel_2": [
+        432,
+        96,
+        16,
+        16
+      ],
+      "shore_soil_gravel_4": [
+        448,
+        96,
+        16,
+        16
+      ],
+      "shore_soil_gravel_8": [
+        464,
+        96,
+        16,
+        16
+      ],
+      "shore_moor_soil_1": [
+        32,
+        128,
+        16,
+        16
+      ],
+      "shore_moor_soil_2": [
+        48,
+        128,
+        16,
+        16
+      ],
+      "shore_moor_soil_4": [
+        64,
+        128,
+        16,
+        16
+      ],
+      "shore_moor_soil_8": [
+        80,
+        128,
+        16,
+        16
+      ],
+      "shore_soil_moor_1": [
+        96,
+        128,
+        16,
+        16
+      ],
+      "shore_soil_moor_2": [
+        112,
+        128,
+        16,
+        16
+      ],
+      "shore_soil_moor_4": [
+        128,
+        128,
+        16,
+        16
+      ],
+      "shore_soil_moor_8": [
+        144,
+        128,
+        16,
+        16
+      ]
+    }
+  },
+  "potential_new_props": {
+    "cache_notes": [
+      304,
+      2,
+      26,
+      24
+    ],
+    "cache_notes_open": [
+      332,
+      2,
+      26,
+      24
+    ]
+  },
+  "existing_surface_frames": {
+    "purpose": "A8 already-pinned snow frames available to the local surface contract; not currently applied to these three interiors because no A0 weather projection exists.",
+    "a1_head": "9ca1453ccdd315c9de4aae01cf0e1e5b4e0a71cf",
+    "frames": {
+      "snow_0": {
+        "a8_rect": [
+          320,
+          0,
+          16,
+          16
+        ],
+        "a1_rect": [
+          320,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "019e34ab6ea0c0ae27518058e4fc35e85fa2bd10bb92dee2ef93e2589e8882bb"
+      },
+      "snow_1": {
+        "a8_rect": [
+          336,
+          0,
+          16,
+          16
+        ],
+        "a1_rect": [
+          336,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "126efb02f9211763677c14550b311b0bac3c65af81cd0522d1b073cf8fbc388b"
+      },
+      "snow_2": {
+        "a8_rect": [
+          352,
+          0,
+          16,
+          16
+        ],
+        "a1_rect": [
+          352,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "96e571c367f8b4168e204a87c8348a06ea12a7c2eae24f77f289cacfd323f07d"
+      },
+      "snow_3": {
+        "a8_rect": [
+          368,
+          0,
+          16,
+          16
+        ],
+        "a1_rect": [
+          368,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "b0f2b4656c885e689da3ea25e3915d619d1afc6b52b689867673da14d9c52ffd"
+      }
+    }
+  },
+  "adopted_surface_frames": {
+    "source_a1_head": "9ca1453ccdd315c9de4aae01cf0e1e5b4e0a71cf",
+    "source_texture_sha256": "6128d8f41abe6962fe705431db20e762e0cca613ffc3eca29065727422737d1c",
+    "a8_surface_texture_sha256": "280342586563b2df63e325ea0e926f06027497dbd2f5fc86e6cd3d729a88068f",
+    "a8_surface_dimensions": [
+      80,
+      16
+    ],
+    "frames": {
+      "mud_0": {
+        "a1_rect": [
+          288,
+          160,
+          16,
+          16
+        ],
+        "a8_rect": [
+          0,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "acbb3bec70324ad3f533ba7c206cd9d400385d5432b6085beeff7519b8a6238b"
+      },
+      "mud_1": {
+        "a1_rect": [
+          304,
+          160,
+          16,
+          16
+        ],
+        "a8_rect": [
+          16,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "b7576829463e886d5b43e77d706053a568872df6157a8ab569b36d806787c267"
+      },
+      "mud_2": {
+        "a1_rect": [
+          320,
+          160,
+          16,
+          16
+        ],
+        "a8_rect": [
+          32,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "958d140c3feb896d4ca2ed5007ced18ddbeb38fce4fcfbea5c9972d136450e16"
+      },
+      "mud_3": {
+        "a1_rect": [
+          336,
+          160,
+          16,
+          16
+        ],
+        "a8_rect": [
+          48,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "2e3c4f575cb0ee156db6d8b6137fd1b819d6adecdd213f44727afed16a74d423"
+      },
+      "boardwalk_ns": {
+        "a1_rect": [
+          352,
+          816,
+          16,
+          16
+        ],
+        "a8_rect": [
+          64,
+          0,
+          16,
+          16
+        ],
+        "rgba_crop_sha256": "7891e3313e16d560f0005c972365cdb0619b2f02390adc5bb8a522873c533c06"
+      }
+    }
+  },
+  "decision_rationale": [
+    "All frames actually referenced by the three site shells/interiors remain pixel-identical at A1 current coordinates; the old A8 texture pin is internally compatible for those consumers.",
+    "The new land-to-land shore masks may improve ellipse/path transitions: ash↔gravel/moor and gravel/soil for Quarry/Mill; forest↔soil/moor and gravel↔soil for Orchard. No current A8 renderer composes neighbor-aware edge masks, so changing only atlas bytes/coords would not make these visible.",
+    "Adopting shore masks safely requires a neighbor-aware edge compositor plus native-size visual review; that is outside this local surface task. Do not perform a blind atlas repin or claim visual acceptance.",
+    "The two notes-crate prop frames do not serve the three site identities and would imply unrelated research-note rewards; do not add them."
+  ],
+  "not_equivalent_frames": {
+    "props": [
+      "lm_waystation"
+    ]
+  },
+  "native_visual_acceptance": "HOLD; this is a source-pixel compatibility check, not native render acceptance.",
+  "potential_new_transitions_source": {
+    "a1_head": "9ca1453ccdd315c9de4aae01cf0e1e5b4e0a71cf",
+    "atlas_sha256": "83d69373ca6c1258e8727800d0aa0c288851c34d25539c69c21ec9f5fc9d769a",
+    "terrain_png_sha256": "6128d8f41abe6962fe705431db20e762e0cca613ffc3eca29065727422737d1c",
+    "frame_count": 80,
+    "unique_candidate_count": 40,
+    "decision": "NOT_ADOPTED; A8 has no neighbor-aware edge compositor; source frames remain candidates only."
+  }
+}

@@ -1,0 +1,13 @@
+; SURV-050A isolated read-only world-reader fixture.
+; This is NOT the production project.godot. It has no autoloads, no overworld
+; controller, no SaveService, and no gameplay scenes. It exists only so Godot 4.7
+; can parse/run the A1 chunk reader and its negative tests in CI.
+config_version=5
+
+[application]
+config/name="SURV-050A World Reader Fixture"
+config/features=PackedStringArray("4.7")
+run/main_scene=""
+
+[rendering]
+renderer/rendering_method="gl_compatibility"

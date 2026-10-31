@@ -1,0 +1,901 @@
+{
+  "schema": "soh.world.a1_round11_continuity.v1",
+  "status": "EXACT_SOURCE_PACKET_NATIVE_GODOT_ADMISSION_REQUIRED",
+  "owner": "A1",
+  "scope": "ONE multi-region source-consumer slice plus targeted hazard/socket stress; not a new POI catalog or production mount",
+  "accepted_baseline": {
+    "commit": "439d5ef1f743da388883377c3e1d4c594e5e8101",
+    "placement_contract": {
+      "path": "data/survival/world/a1_world_placement_contract.v1.json",
+      "sha256": "b3ba37aa2dfe91b51689fdac0bab2ad44caa9059204332050c5322d6643f9969"
+    },
+    "preserved": [
+      "six existing Elder canonical locations",
+      "Ember/Verdant/Pearl safe-perimeter corrections",
+      "four TRIAL-only endpoint IDs and socket/stand cells",
+      "181/181 raw-RGBA crop parity",
+      "whole-file/payload-subset/raw-RGBA hash domains"
+    ],
+    "reopen_placement_or_hash_investigation": false
+  },
+  "source_pins": {
+    "world_id": "world:soh_continent_v1",
+    "world_plan": {
+      "path": "data/survival/world/world_plan.v1.json",
+      "sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4"
+    },
+    "route_graph": {
+      "path": "data/survival/world/poi_route_graph.json",
+      "sha256": "8e49506889149cde043ed69cf5007b219c9ba9464cb7d3eeb25f0eef108d24a9"
+    },
+    "hazard_capabilities": {
+      "path": "data/survival/world/hazard_capability_contracts.json",
+      "sha256": "88ffbc7cbfd3573b34f32f27af527b7a33c4b6b08b1bddacd064ba9988c8edf2"
+    },
+    "hazard_damage_proposal": {
+      "path": "data/survival/world/hazard_damage_contract.json",
+      "sha256": "18bfe51e30536bddee016c642afd652519fb80ca0f28a1ac8289864501543d35"
+    },
+    "atlas": {
+      "path": "data/survival/world/art/atlas.v1.json",
+      "sha256": "83d69373ca6c1258e8727800d0aa0c288851c34d25539c69c21ec9f5fc9d769a"
+    },
+    "asset_provenance": {
+      "path": "data/survival/world/art/first_hour_asset_provenance.v1.json",
+      "sha256": "892c60903b6434288964a0017d57e7db5fd453e9dddff64cdbd32d58f2b62618"
+    },
+    "terrain": {
+      "path": "assets/environment/survival_world/terrain.png",
+      "sha256": "6128d8f41abe6962fe705431db20e762e0cca613ffc3eca29065727422737d1c"
+    },
+    "props": {
+      "path": "assets/environment/survival_world/props.png",
+      "sha256": "8d4acf4028e0e065b901e78c59c65e5a68677fb75d46c04c7e5a029a76d27324"
+    },
+    "a8_shell_visuals": {
+      "path": "data/survival/world/art/a8_shell_visuals.v1.json",
+      "sha256": "f561d87483f52e42b775268ce4fb17a6f6439777a63a2fb9812db1660b00b251"
+    },
+    "a8_commit": "3a7ab4612f14038c6be1e66bbd41c948a342852f",
+    "a8_south_quarry": {
+      "path": "data/survival/world/references/a8_3a7ab461/south_quarry.json",
+      "sha256": "95e24c5bb2655439cb0b0780f1865a48df839af4292fbb5b0bef5c0582c3a447"
+    },
+    "a0_commit": "84ac9c1afe19627044c572f6f76794f4923334d6",
+    "a0_knight_scene": {
+      "path": "game/characters/knight/knight.tscn",
+      "sha256": "2b29011bf361ac7e5cdde97c1fc454c69684dcb6c08e1c23186c05910a52e195"
+    },
+    "a0_knight_script_sha256": "d5a573d1933f5693b696c8016a14268124de7e51a01a74b56f218fa0b7249f49",
+    "fixture_knight_script": {
+      "path": "game/characters/knight/knight.gd",
+      "sha256": "0f24ffdfeb13f180c12dedf4c93f5d9cf35183408299a478f84cc036c8202193"
+    },
+    "a3_commit": "35214ed8f555350b83bd8985e9bec7512f3181e8",
+    "a3_meta_policy": {
+      "path": "data/survival/recipes/meta_economy.v1.json",
+      "sha256": "bbe1095ca589a767742bf0a54ffd4f012d2135410713baa274bafee97cbf91bf",
+      "availability": "EXTERNAL_OWNER_PIN_NOT_MOUNTED"
+    },
+    "a3_source_bindings": {
+      "path": "data/survival/items/world_source_bindings.v3.json",
+      "sha256": "7b9670f4971d2f161138e0754cbbe66dfe2a239bf0d15d3079a766d729dd230b",
+      "availability": "EXTERNAL_OWNER_PIN_NOT_MOUNTED"
+    }
+  },
+  "consumer_slice": {
+    "slice_id": "a1_crown_amber_mirrormere_continuity_v1",
+    "world_extents_cells": [
+      0,
+      0,
+      1024,
+      768
+    ],
+    "slice_bounds_cells": [
+      0,
+      112,
+      384,
+      400
+    ],
+    "tile_px": 16,
+    "chunk_cells": 64,
+    "canonical_poi_ids": [
+      "poi_crown_south_quarry",
+      "poi_amberwood_mill",
+      "poi_mirrormere_piles"
+    ],
+    "new_poi_count": 0,
+    "new_region_count": 0,
+    "production_native_playable": false,
+    "source_mount_rule": "Verify world_plan and every required chunk whole-file SHA-256; mount global coordinates with no per-chunk rebasing; preserve stable region/POI/chunk IDs.",
+    "stream_rule": "TEST FIXTURE: current chunk plus one-chunk halo; mount before entry and never drain the Hero/current neighbor set. A0 owns production streaming.",
+    "hero": {
+      "scene": "res://game/characters/knight/knight.tscn",
+      "scene_sha256": "2b29011bf361ac7e5cdde97c1fc454c69684dcb6c08e1c23186c05910a52e195",
+      "technical_proxy_not_D051_identity": true,
+      "body_size_px": [
+        12,
+        16
+      ],
+      "body_offset_px": [
+        0,
+        -8
+      ],
+      "foot_cell_to_world_px": "[x*16+8,y*16+15]",
+      "move_speed_px_s": 96.0,
+      "acceleration_px_s2": 900.0,
+      "friction_px_s2": 1100.0,
+      "motion_mode": "FLOATING",
+      "collision_layer": 2,
+      "collision_mask": 5,
+      "camera_position_px": [
+        0,
+        -8
+      ],
+      "camera_smoothing_enabled": true,
+      "camera_smoothing_speed": 7.0,
+      "camera_zoom": 1.0,
+      "logical_viewport_px": [
+        640,
+        360
+      ],
+      "a0_script_comparison": "A0 84ac9c1a adds its input gate; fixture controller differs as a whole file, while scene/body/motion/camera constants are asserted comparable. No exact production-controller claim."
+    },
+    "a0_source_manifest_migration": {
+      "decision": "NO_BLIND_REPIN_ATOMIC_COHERENT_SET_ONLY",
+      "a0_commit": "84ac9c1afe19627044c572f6f76794f4923334d6",
+      "a0_candidate_path": "game/survival/a0_world_art_candidate.gd",
+      "old_pins": {
+        "res://game/overworld/overworld_occlusion.gd": "8fe91f6d33d7bd79269a00df3ef10501c93c653ae2adb5b241da6323823071fc",
+        "res://game/world_art/world_art_presentation.gd": "c6c9091509a1212953099cfd33af18fc859b7ca1341c6e93cf2fc411b042529d",
+        "res://game/world_art/world_art_ambient.gdshader": "34906d403dcad88116dc44efd79ec5c8b81c84f2cc622e81d14cc6171e12c92a",
+        "res://data/survival/world/art/atlas.v1.json": "617fc36d866653d67eb1b890ddcf5501b8660d87031ae04fefdb73941393326e",
+        "res://data/survival/world/art/compiled/crown_roadside_visual_treatment.presentation.v1.json": "3ad267e47a4d1d47980887fbf9b8d1547323c0b695b3696e499d2a246d2f387f",
+        "res://data/survival/world/art/mount_bundle.v1.json": "74588f13b1c7903fe335e4e5a8e7ba819a82348adf778ce74ae8a93a5d4acbd0",
+        "res://data/survival/world/corridor/first_hour_route.v1.json": "4e4c4eb9864dfc28aca4fcb4168cd856fc3f6be466b95e3ff6b7fb5b3784722c",
+        "res://assets/environment/survival_world/terrain.png": "fa8fb59c82ba7958d19aabeac66c04403b78bd1e9e9fb84fef312c657ad53c8f",
+        "res://assets/environment/survival_world/props.png": "ff88e06852af61c50019f85c3de2c54409a953624b952c1e11f538e8ccdd1279"
+      },
+      "hash_domains": {
+        "whole_file": "A0 PINS and SourceManifest file bytes",
+        "payload_subset": "individual authored visual payload entries",
+        "raw_rgba": "181 decoded crop bytes; accepted 181/181 parity is not a whole-file match"
+      },
+      "adoption_rule": "A0 must review and update the complete coherent pin set plus host foot-sort/collision/day-night tests. A1 does not overwrite A0 pins. Matching payload/raw crops never authorizes a partial whole-file repin."
+    }
+  },
+  "loadout": {
+    "weapon": "knife_only",
+    "gun": false,
+    "core": false,
+    "capabilities": [],
+    "bosses_required": 0,
+    "reward_grants_in_fixture": 0,
+    "save_mutation": false
+  },
+  "spawn_safety": {
+    "algorithm": "zone=seed%3; cell_index=first_u64(SHA256(world_id|seed|zone_id))%zone_cell_count; stable source cells only",
+    "seeds": [
+      1103,
+      9022,
+      16941,
+      24860,
+      32779,
+      40698,
+      48617,
+      56536,
+      64455,
+      72374,
+      80293,
+      88212,
+      96131,
+      104050,
+      111969,
+      119888,
+      127807,
+      135726
+    ],
+    "minimum_unique_cells": 15,
+    "zones": [
+      {
+        "zone_id": "safe_refuge_meadow",
+        "region_id": "r_ashen_crown",
+        "rect_cells": [
+          63,
+          194,
+          15,
+          15
+        ],
+        "rally_cell": [
+          70,
+          201
+        ],
+        "home_link_cell": [
+          56,
+          218
+        ]
+      },
+      {
+        "zone_id": "safe_quarry_rim",
+        "region_id": "r_ashen_crown",
+        "rect_cells": [
+          15,
+          256,
+          25,
+          20
+        ],
+        "rally_cell": [
+          27,
+          265
+        ],
+        "home_link_cell": [
+          56,
+          218
+        ]
+      },
+      {
+        "zone_id": "safe_amber_orchard",
+        "region_id": "r_amberwood",
+        "rect_cells": [
+          87,
+          384,
+          25,
+          25
+        ],
+        "rally_cell": [
+          99,
+          396
+        ],
+        "home_link_cell": [
+          56,
+          218
+        ]
+      }
+    ],
+    "production_spawn_approval": false
+  },
+  "ordinary_expedition": {
+    "journey_id": "days_1_11_knife_first_loop",
+    "phase": "ordinary",
+    "home_cell": [
+      56,
+      218
+    ],
+    "mounted_trial_bodies": [
+      "endpoint.ragnarok.recycler"
+    ],
+    "future_chest_mounted": false,
+    "legs": [
+      {
+        "leg_id": "home_to_quarry_outer",
+        "from_cell": [
+          56,
+          218
+        ],
+        "to_cell": [
+          30,
+          278
+        ],
+        "poi_id": "poi_crown_south_quarry",
+        "purpose": "existing outer stone/iron geography; no capability or boss gate"
+      },
+      {
+        "leg_id": "quarry_to_amber_mill",
+        "from_cell": [
+          30,
+          278
+        ],
+        "to_cell": [
+          126,
+          442
+        ],
+        "poi_id": "poi_amberwood_mill",
+        "purpose": "mill/plank revisit reason; recycler geometry is TRIAL-only"
+      },
+      {
+        "leg_id": "amber_mill_to_fishers_piles",
+        "from_cell": [
+          126,
+          442
+        ],
+        "to_cell": [
+          300,
+          420
+        ],
+        "poi_id": "poi_mirrormere_piles",
+        "purpose": "reed/clay settlement and later ferry/sluice revisit reason"
+      },
+      {
+        "leg_id": "fishers_piles_to_home",
+        "from_cell": [
+          300,
+          420
+        ],
+        "to_cell": [
+          56,
+          218
+        ],
+        "poi_id": null,
+        "purpose": "physical home return; no teleport or reward"
+      }
+    ],
+    "required_region_ids": [
+      "r_ashen_crown",
+      "r_amberwood",
+      "r_mirrormere"
+    ],
+    "route_alternative": "last72 expedition uses the marsh/Piles approach instead of duplicating this direct return; neither route requires a gun, Core or boss"
+  },
+  "last72_expedition": {
+    "journey_id": "last72_sealed_quarry_cache_route",
+    "phase": "ragnarok_day12",
+    "home_cell": [
+      56,
+      218
+    ],
+    "mounted_trial_bodies": [
+      "endpoint.ragnarok.recycler",
+      "a8_deep_chest_south_quarry_01"
+    ],
+    "future_chest_mounted": true,
+    "legs": [
+      {
+        "leg_id": "home_to_marsh_dry_control",
+        "from_cell": [
+          56,
+          218
+        ],
+        "to_cell": [
+          256,
+          375
+        ],
+        "poi_id": null
+      },
+      {
+        "leg_id": "dry_control_8_steps",
+        "from_cell": [
+          256,
+          375
+        ],
+        "to_cell": [
+          256,
+          383
+        ],
+        "poi_id": null
+      },
+      {
+        "leg_id": "marsh_enter_8_steps",
+        "from_cell": [
+          256,
+          383
+        ],
+        "to_cell": [
+          256,
+          391
+        ],
+        "poi_id": null
+      },
+      {
+        "leg_id": "marsh_safe_retreat",
+        "from_cell": [
+          256,
+          391
+        ],
+        "to_cell": [
+          256,
+          376
+        ],
+        "poi_id": null
+      },
+      {
+        "leg_id": "marsh_retreat_to_fishers_piles",
+        "from_cell": [
+          256,
+          376
+        ],
+        "to_cell": [
+          300,
+          420
+        ],
+        "poi_id": "poi_mirrormere_piles"
+      },
+      {
+        "leg_id": "fishers_piles_to_sealed_quarry_cache",
+        "from_cell": [
+          300,
+          420
+        ],
+        "to_cell": [
+          33,
+          282
+        ],
+        "poi_id": "poi_crown_south_quarry"
+      },
+      {
+        "leg_id": "sealed_quarry_cache_to_home",
+        "from_cell": [
+          33,
+          282
+        ],
+        "to_cell": [
+          56,
+          218
+        ],
+        "poi_id": null
+      }
+    ],
+    "interaction_enabled": false,
+    "profile_credit_on_chest_open": false,
+    "A0_run_phase_authority_required": true
+  },
+  "hazard_fields": {
+    "authority": {
+      "A1": "stable geographic region/biome/surface/hazard/source-readout signals and test-only movement proposal",
+      "A0": "health/status/run phase/production movement",
+      "A3": "gear resistance/final mitigation",
+      "A6": "context-sensitive warning presentation",
+      "A7": "independent movement measurement"
+    },
+    "damage_values_authored_here": false,
+    "health_or_status_mutation_in_fixture": false,
+    "darkness_response": "NOT_TESTED",
+    "D071_weather_cargo_pets": "SEPARATE_LATER_E2_NOT_COMPLETED",
+    "marsh": {
+      "field": "biome:freshwater_marsh",
+      "signal": "movement_context.soft_ground",
+      "test_only_speed_multiplier_proposal": 0.65,
+      "proposal_status": "A7_INDEPENDENT_MEASUREMENT_AND_A0_ADOPTION_REQUIRED_NOT_FINAL_BALANCE",
+      "dry_control_cells": [
+        [
+          256,
+          375
+        ],
+        [
+          256,
+          383
+        ]
+      ],
+      "entry_cells": [
+        [
+          256,
+          383
+        ],
+        [
+          256,
+          391
+        ]
+      ],
+      "retreat_cells": [
+        [
+          256,
+          391
+        ],
+        [
+          256,
+          376
+        ]
+      ]
+    },
+    "probes": [
+      {
+        "hazard_id": "hz_crown_heat",
+        "kind": "heat",
+        "required_capability": "cap_filter",
+        "safe_cell": [
+          162,
+          183
+        ],
+        "entry_cell": [
+          162,
+          184
+        ],
+        "inside_cell": [
+          162,
+          185
+        ],
+        "retreat_cell": [
+          162,
+          183
+        ],
+        "expected_rect": [
+          160,
+          184,
+          64,
+          40
+        ]
+      },
+      {
+        "hazard_id": "hz_crown_cold",
+        "kind": "cold",
+        "required_capability": "cap_thermal",
+        "safe_cell": [
+          246,
+          121
+        ],
+        "entry_cell": [
+          246,
+          122
+        ],
+        "inside_cell": [
+          246,
+          123
+        ],
+        "retreat_cell": [
+          246,
+          121
+        ],
+        "expected_rect": [
+          246,
+          122,
+          62,
+          34
+        ]
+      }
+    ]
+  },
+  "trial_endpoint_stress": {
+    "placement_contract": "data/survival/world/a1_world_placement_contract.v1.json",
+    "all_four_trial_only": true,
+    "combined": {
+      "endpoint_ids": [
+        "endpoint.ragnarok.deposit",
+        "endpoint.ragnarok.fixed_vendor"
+      ],
+      "poi_id": "poi_crown_waystation",
+      "seam_start_cell": [
+        382,
+        200
+      ],
+      "shared_approach_cell": [
+        408,
+        207
+      ],
+      "body_size_px": [
+        28,
+        28
+      ],
+      "interaction_radius_px": 62,
+      "large_hero_body_size_px": [
+        20,
+        24
+      ],
+      "diagonal_8_neighbor_with_corner_cut_rejection": true,
+      "crowd_proxy_body_size_px": [
+        12,
+        16
+      ],
+      "crowd_proxy_cells": [
+        [
+          408,
+          204
+        ],
+        [
+          408,
+          205
+        ]
+      ],
+      "dynamic_streaming_claim": false,
+      "seam_scope": "legacy/annex source composition seam; production streaming remains A0"
+    },
+    "source_cases": [
+      {
+        "endpoint_id": "endpoint.ragnarok.recycler",
+        "poi_id": "poi_amberwood_mill",
+        "socket_cell": [
+          126,
+          440
+        ],
+        "stand_cell": [
+          126,
+          442
+        ],
+        "approach_start_cell": [
+          126,
+          445
+        ],
+        "diagonal_start_cell": [
+          130,
+          445
+        ],
+        "body_size_px": [
+          28,
+          28
+        ],
+        "interaction_radius_px": 62
+      },
+      {
+        "endpoint_id": "endpoint.ragnarok.evacuation",
+        "poi_id": "poi_saffron_drydock",
+        "socket_cell": [
+          894,
+          422
+        ],
+        "stand_cell": [
+          894,
+          424
+        ],
+        "approach_start_cell": [
+          894,
+          427
+        ],
+        "diagonal_start_cell": [
+          898,
+          427
+        ],
+        "body_size_px": [
+          28,
+          28
+        ],
+        "interaction_radius_px": 62
+      }
+    ],
+    "six_elder_regression": "Run the accepted placement native test unchanged as regression at the new SHA; no reauthoring or renewed production approval."
+  },
+  "chest_source_proposal": {
+    "proposal_id": "a8_deep_chest_south_quarry_01",
+    "source_class": "CHEST_SOURCE",
+    "source_id_proposal": "ragnarok_deep_quarry_cache",
+    "source_instance_id": "si:r_ashen_crown:south_quarry:last72_cache:01",
+    "region_id": "r_ashen_crown",
+    "poi_id": "poi_crown_south_quarry",
+    "socket_cell": [
+      33,
+      280
+    ],
+    "stand_cell": [
+      33,
+      282
+    ],
+    "approach_start_cell": [
+      33,
+      285
+    ],
+    "return_cell": [
+      56,
+      218
+    ],
+    "socket_world_px": [
+      536,
+      4488
+    ],
+    "stand_world_px": [
+      536,
+      4527
+    ],
+    "collision_size_px": [
+      28,
+      28
+    ],
+    "interaction_radius_px": 62,
+    "available_phases": [
+      "ragnarok_day12",
+      "ragnarok_day13",
+      "ragnarok_day14"
+    ],
+    "max_claims_per_run_proposal": 1,
+    "finite_once_per_run": true,
+    "ordinary_elder_anchor_cell_unchanged": [
+      30,
+      280
+    ],
+    "ordinary_action_socket_cell": [
+      30,
+      280
+    ],
+    "a8_shell_origin_world_px": [
+      424,
+      4424
+    ],
+    "a8_entry_portal_world_px": [
+      488,
+      4532
+    ],
+    "a8_doorway_clear_world_rect_px": [
+      468,
+      4516,
+      40,
+      36
+    ],
+    "separation_reason": "Does not stack the chest on A8 ordinary action socket [30,280] or obstruct its south doorway; accepted Elder anchor is unchanged.",
+    "authorization": "PENDING_A3_EXACT_SOURCE_ID_ONCE_PER_RUN_POLICY_AND_A0_MOUNT",
+    "interaction_enabled": false,
+    "reward_items": [],
+    "drop_chance": null,
+    "units": null,
+    "prices": null,
+    "visual_frame": "cache_closed",
+    "visual_status": "SEALED_REFERENCE_ONLY_NOT_INTERACTIVE_NOT_FINAL_A8_ART"
+  },
+  "visual_identity_proposals": [
+    {
+      "endpoint_id": "endpoint.ragnarok.deposit",
+      "identity": "laminated preservation strongbox",
+      "frames": [
+        {
+          "frame": "cache_closed",
+          "offset_px": [
+            0,
+            8
+          ]
+        },
+        {
+          "frame": "lamp",
+          "offset_px": [
+            -18,
+            4
+          ]
+        }
+      ],
+      "status": "REFERENCE_COMPOSITE_A8_A6_REVIEW_NOT_FINAL"
+    },
+    {
+      "endpoint_id": "endpoint.ragnarok.fixed_vendor",
+      "identity": "covered fixed supply kiosk, not a signpost",
+      "frames": [
+        {
+          "frame": "handcart",
+          "offset_px": [
+            0,
+            8
+          ]
+        },
+        {
+          "frame": "awning",
+          "offset_px": [
+            0,
+            -10
+          ]
+        },
+        {
+          "frame": "lantern_post",
+          "offset_px": [
+            20,
+            6
+          ]
+        }
+      ],
+      "status": "REFERENCE_COMPOSITE_A8_A6_REVIEW_NOT_FINAL"
+    },
+    {
+      "endpoint_id": "endpoint.ragnarok.recycler",
+      "identity": "mill salvage bench with timber intake and handcart, not an oversized mill-wheel machine",
+      "frames": [
+        {
+          "frame": "whetstone",
+          "offset_px": [
+            0,
+            8
+          ]
+        },
+        {
+          "frame": "log_pile",
+          "offset_px": [
+            -20,
+            12
+          ]
+        },
+        {
+          "frame": "handcart",
+          "offset_px": [
+            20,
+            12
+          ]
+        }
+      ],
+      "status": "REFERENCE_COMPOSITE_A8_A6_REVIEW_NOT_FINAL"
+    },
+    {
+      "endpoint_id": "endpoint.ragnarok.evacuation",
+      "identity": "marked drydock mooring berth, not a generic signpost",
+      "frames": [
+        {
+          "frame": "mooring_post",
+          "offset_px": [
+            0,
+            8
+          ]
+        },
+        {
+          "frame": "dock_small",
+          "offset_px": [
+            0,
+            24
+          ]
+        },
+        {
+          "frame": "banner",
+          "offset_px": [
+            20,
+            4
+          ]
+        },
+        {
+          "frame": "tide_gauge",
+          "offset_px": [
+            -20,
+            4
+          ]
+        }
+      ],
+      "status": "REFERENCE_COMPOSITE_A8_A6_REVIEW_NOT_FINAL"
+    }
+  ],
+  "visual_asset_rule": "Only exact frames from the already verified current atlas; no recolor, private pack, raw ZIP, non-integer scale or new collision. Reference composites are not final A8/A6 art approval.",
+  "consumer_handoff": {
+    "A0": "Verify SourceManifest and exact chunk hashes; mount only after native production composition. Own Hero, run phase, streaming, health/status, interactions and SaveService. Keep chest sealed until A3+A0 authorization; update visual pins only as one reviewed coherent set.",
+    "A8": "Retain existing site/endpoint IDs and ordinary quarry action/doorway. Evaluate exactly one separate CHEST_SOURCE geometry proposal and distinct reference identities; own interactions/final machine art, emit no rewards here.",
+    "A3": "Current broad ragnarok_roadside_vault max_claims=12 is not approval for this source. Authorize or reject the proposed unique source ID/instance with a finite once-per-run last72 policy; A1 assigns no yield, chance, units or price.",
+    "A7": "Independently repeat real-Hero multi-region/stream seam, marsh 0.65 test-only response, diagonal/20x24 body and combined deposit+vendor/crowd probes; do not infer production acceptance from A1 fixtures."
+  },
+  "r5_gates": {
+    "RESEARCH_PROVENANCE": "PASS_SCOPED exact current A1/A8/A3/A0 pins and canonical cells; external owner adoption pending",
+    "ARCHITECTURE": "PASS_SCOPED one derived consumer packet; no competing geography/wallet/save system",
+    "CODE_RUNTIME": "NOT_TESTED until exact-SHA Godot 4.7 CI report",
+    "TEST_ORACLE": "PASS_SCOPED source negative/positive tests; native oracle pending",
+    "VISUAL_UX": "NOT_TESTED until native 720/1440/2160 reference-composite captures; final A8/A6 art and human review remain open",
+    "SYSTEM_VALUE": "PASS_SCOPED source-authored days1-11 destinations/revisit reasons; actual production play value NOT_TESTED",
+    "SAVE_MIGRATION": "NOT_APPLICABLE no save schema or mutation; A0 SourceManifest migration proposed only",
+    "INTEGRATION": "NOT_TESTED A0 production mount/A8 interaction/A3 authorization/A6 warning/A7 independent review",
+    "BALANCE_REPLAY": "NOT_TESTED no damage/reward/final friction/human pacing approval"
+  },
+  "site_visual_proposals": [
+    {
+      "poi_id": "poi_amberwood_mill",
+      "identity": "watermill repair and timber yard",
+      "frames": [
+        {
+          "frame": "lm_mill_house",
+          "offset_px": [
+            0,
+            -48
+          ]
+        },
+        {
+          "frame": "log_pile",
+          "offset_px": [
+            -28,
+            0
+          ]
+        },
+        {
+          "frame": "tree_amber",
+          "offset_px": [
+            34,
+            -8
+          ]
+        }
+      ],
+      "collision_change": false,
+      "status": "REFERENCE_COMPOSITE_NOT_FINAL_ART"
+    },
+    {
+      "poi_id": "poi_mirrormere_piles",
+      "identity": "stilt fishing settlement with reed and net work",
+      "frames": [
+        {
+          "frame": "stilt_walk",
+          "offset_px": [
+            0,
+            -32
+          ]
+        },
+        {
+          "frame": "net_rack",
+          "offset_px": [
+            32,
+            0
+          ]
+        },
+        {
+          "frame": "reed_bundle",
+          "offset_px": [
+            -32,
+            0
+          ]
+        }
+      ],
+      "collision_change": false,
+      "status": "REFERENCE_COMPOSITE_NOT_FINAL_ART"
+    }
+  ]
+}

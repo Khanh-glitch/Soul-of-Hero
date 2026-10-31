@@ -40,3 +40,9 @@ Design autonomy F0–F5 applies. Never copy unauthorized proprietary code/art. T
 **Decision:**  
 **Cross-system API/save/Gold/world effects:**  
 **Next action and reconsideration trigger:**  
+
+## 2026-10-30 — A1 placement/hash seam research
+
+- **REUSE_DIRECT:** existing SOH `OverworldWorld`, connector annex, real Knight 12×16 body, `PhysicsShapeQueryParameters2D`, `CharacterBody2D.test_move`, and ordinary movement actions. These match the production shape better than a new abstract actor; fixture still not production.
+- **BUILD_BESPOKE:** small A1-only compiler for existing-cell BFS with conservative three-row clearance and zero-hazard ordinary paths, plus merged source `walk=0` collision rectangles. Required because A8 fixture pixels and local-slice routes are not canonical world sockets.
+- **REJECT:** importing another navigation/world library, authoring a second six-territory model, treating A8 fixture coordinates as world cells, or equating payload-subset and whole-file hashes. No third-party code/art imported; approved atlas and licenses unchanged.

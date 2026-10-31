@@ -1,0 +1,578 @@
+{
+  "accepted_baseline": {
+    "commit": "439d5ef1f743da388883377c3e1d4c594e5e8101",
+    "preserve": [
+      "1024x768 frame and 192 64x64 chunks",
+      "384x256 legacy inset and ten dungeon identities",
+      "six Elder territories and four TRIAL endpoint IDs/cells",
+      "181/181 raw-RGBA crop parity and distinct hash domains",
+      "canonical world/region/POI/resource/chunk IDs"
+    ],
+    "reopen_geography": false
+  },
+  "authority": {
+    "A0": "production world/controller/mount/build validation/player/SaveService/timeline",
+    "A1": "source reader, derived indices, visual/stream fixture and geographic planning signals",
+    "A3": "items/costs/yields/loot/Ragnarok economic projection",
+    "A6": "HUD/avatar/warnings",
+    "A7": "independent adversarial/player/balance/visual acceptance",
+    "A8": "actual POI scenes/interiors/interactions/local state",
+    "AVFX": "Gold/source VFX"
+  },
+  "dynamic_fixture": {
+    "collision_size_px": [
+      16,
+      16
+    ],
+    "revision": 1,
+    "rules": [
+      "source build_permission=1 and preserved=0",
+      "walk overlay 1->0 with expected_base and stale-revision refusal",
+      "visible sprite matches full-cell collision",
+      "a real alternative path remains",
+      "not a paid construction or SaveService approval"
+    ],
+    "search_on_journey": "reload",
+    "source_id": "round12_a0_overlay_fixture",
+    "structure_id": "fixture:visible_palisade:01",
+    "visual_frame": "fence_h"
+  },
+  "journey_evaluation": {
+    "J01": "safe spawn -> ordinary nearby material -> physical route -> home return; no inventory grant claimed",
+    "J03": "home/outpost repeat-trip distance and source opportunity comparison; construction/activation remains A0",
+    "J04": "knife-first non-boss outer approaches and locked-POI discovery; combat/economy not evaluated by geography",
+    "J06": "hazard/climate signal, preparation identity and safe physical retreat; damage/mitigation remains A0/A3",
+    "J07": "alternative routes differ in measured time/effort/exposure/opportunities; player preference remains human/A7",
+    "J12": "source-stable run-local reload/reset and future last72 geography; 336h/Ragnarok production remains NOT_TESTED"
+  },
+  "native_journeys": {
+    "primary": [
+      "home",
+      "salvage",
+      "quarry",
+      "orchard",
+      "mill",
+      "home"
+    ],
+    "reload": [
+      "home",
+      "south_watch",
+      "orchard",
+      "quarry",
+      "home"
+    ],
+    "requirements": [
+      "continuous real-frame body movement; no position assignment inside a leg",
+      "visit all three exact A8 exterior approaches and return home",
+      "cross and drain/reload real chunk boundaries",
+      "primary journey before dynamic overlay; reload journey with overlay and detour",
+      "second stream/reader reconstruction at home with the same run-local fixture descriptor",
+      "no A8 interior entry, reward, capability or SaveService claim"
+    ]
+  },
+  "new_poi_count": 0,
+  "new_region_count": 0,
+  "owner": "A1",
+  "physical_sites": {
+    "mill": {
+      "canonical_cell": [
+        120,
+        300
+      ],
+      "pin": "a8_mill",
+      "poi_id": "poi_crown_south_mill"
+    },
+    "orchard": {
+      "canonical_cell": [
+        140,
+        360
+      ],
+      "pin": "a8_orchard",
+      "poi_id": "poi_crown_south_orchard"
+    },
+    "quarry": {
+      "canonical_cell": [
+        30,
+        280
+      ],
+      "pin": "a8_quarry",
+      "poi_id": "poi_crown_south_quarry"
+    }
+  },
+  "production_native_playable": false,
+  "reader_api": {
+    "a0_current_adapter": "game/survival/a1_authored_source.gd @ a6b57c36cf2bc79c6c75cf591a6f023b2f998e73 (READ ONLY; A0 owns adoption)",
+    "bounds_rule": "outside the authored frame is CELL_BOUNDS and is never painted or returned as traversable terrain",
+    "chunk_cells": 64,
+    "compatibility_methods": [
+      "configure",
+      "load_chunk",
+      "cell_layers",
+      "resolve_cell",
+      "resolve_build",
+      "check_seam",
+      "chunk_id_at"
+    ],
+    "expected_chunks": 192,
+    "extended_methods": [
+      "cell_identity",
+      "named_value",
+      "traversal_profile",
+      "poi_by_id",
+      "pois_near",
+      "resource_nodes_near",
+      "physical_site",
+      "choose_safe_spawn",
+      "spawn_candidates",
+      "source_report",
+      "temporal_context"
+    ],
+    "frame": [
+      1024,
+      768
+    ],
+    "legacy_rule": "OverworldWorld renders/collides preserved cells; build_permission=2 delegates to A0; no legacy overlay or build=0 denial",
+    "roadside_source": "corridor/crown_roadside.corridor.v1.json",
+    "script": "res://game/survival/world/a1_authored_world_reader.gd",
+    "spawn_index": "a1_round12_spawn_index.v1.json",
+    "stream_script": "res://game/survival/world/a1_authored_world_stream.gd",
+    "tile_px": 16,
+    "world_root": "res://data/survival/world"
+  },
+  "reward_items_granted": 0,
+  "route_alternatives": {
+    "mill": [
+      [
+        "home",
+        "mill"
+      ],
+      [
+        "home",
+        "quarry",
+        "mill"
+      ],
+      [
+        "home",
+        "south_watch",
+        "mill"
+      ]
+    ],
+    "orchard": [
+      [
+        "home",
+        "orchard"
+      ],
+      [
+        "home",
+        "south_watch",
+        "orchard"
+      ],
+      [
+        "home",
+        "amber_north",
+        "orchard"
+      ]
+    ],
+    "quarry": [
+      [
+        "home",
+        "quarry"
+      ],
+      [
+        "home",
+        "mill",
+        "quarry"
+      ],
+      [
+        "home",
+        "south_watch",
+        "quarry"
+      ]
+    ]
+  },
+  "route_policy": {
+    "alternative_road_penalty": 1.35,
+    "body_clearance_rows": 3,
+    "directions": "four-neighbour deterministic Dijkstra",
+    "discovery_radius_cells": 16,
+    "max_native_cell_deadline_frames": 45,
+    "offroad_cost_scale": 1.0,
+    "opportunity_radius_cells": 24,
+    "ordinary_allow_hazard": false,
+    "road_cost_bonus": 0.82
+  },
+  "save_mutation": false,
+  "schema": "soh.world.a1_round12_runtime.v1",
+  "scope": "A0-consumable reader/streamer and isolated native fixture over the unchanged authored continent; not a production mount, economy, hazard-damage, save, A8-scene or human-acceptance claim",
+  "source_pins": {
+    "a8_atlas_compatibility": {
+      "path": "data/survival/world/references/a8_e1fe550b/a1_atlas_compatibility.v1.json",
+      "sha256": "764025f83b331a3d39356fbf8360c9bf339e92541049794ae80f69913eec89d3"
+    },
+    "a8_commit": "e1fe550bfe7c969a2c131fbd0bd4a861c505fb80",
+    "a8_interaction_contract": {
+      "path": "data/survival/world/references/a8_e1fe550b/interaction_contract.v3.json",
+      "sha256": "3c3dcb70a22de56facf4f1a214d28c49a26ebb8b00d341616199609d93062841"
+    },
+    "a8_mill": {
+      "path": "data/survival/world/references/a8_e1fe550b/south_crown_mill.json",
+      "sha256": "cb404bd47f5776f3b0fa871fe104379144bf3490767580e3480ffbfd4d9f2cde"
+    },
+    "a8_mount_package": {
+      "path": "data/survival/world/references/a8_e1fe550b/a8_a0_mount_transition_package.v2.json",
+      "sha256": "2378ebd71a0057205839f88ae1b0aea6f9306f94bcbe749e7ec48bc672aacb03"
+    },
+    "a8_orchard": {
+      "path": "data/survival/world/references/a8_e1fe550b/south_orchard_ruin.json",
+      "sha256": "7a31d25a7315f8d32911a2f8600246df7ad72ef8e5d7c059866c02034adbb16c"
+    },
+    "a8_quarry": {
+      "path": "data/survival/world/references/a8_e1fe550b/south_quarry.json",
+      "sha256": "db9ea0c92c0ecd7cffadc3cb5ac3f1a8d6e669736085ef60000c480d1dbb535d"
+    },
+    "a8_surface_affordances": {
+      "path": "data/survival/world/references/a8_e1fe550b/surface_affordances.v1.json",
+      "sha256": "80d2cceda5229f3cb83a5d2bd3817e993118064856e531a3d55db86885c8f902"
+    },
+    "art_grammar": {
+      "path": "data/survival/world/art/world_art_grammar.v1.json",
+      "sha256": "a5cecea7d749b56d7e8b6508bd9e880b3a70a92a97f0a06ab11fe81de965b53a"
+    },
+    "atlas": {
+      "path": "data/survival/world/art/atlas.v1.json",
+      "sha256": "83d69373ca6c1258e8727800d0aa0c288851c34d25539c69c21ec9f5fc9d769a"
+    },
+    "fixture_knight_script": {
+      "path": "game/characters/knight/knight.gd",
+      "sha256": "0f24ffdfeb13f180c12dedf4c93f5d9cf35183408299a478f84cc036c8202193"
+    },
+    "knight_scene": {
+      "path": "game/characters/knight/knight.tscn",
+      "sha256": "2b29011bf361ac7e5cdde97c1fc454c69684dcb6c08e1c23186c05910a52e195"
+    },
+    "legacy_controller": {
+      "path": "game/overworld/chapter1_overworld.gd",
+      "sha256": "f2e3d29fe091473453d4eb062bac350f10109e89525ae3c502c787e25abb9f24"
+    },
+    "legacy_data": {
+      "path": "data/overworld/hollow_marches.json",
+      "sha256": "1d30ad27ba4408a4ec72d77dbc57c76bbddb214c89fd6d1309e97af742d51a19"
+    },
+    "legacy_layers": {
+      "path": "data/overworld/hollow_marches_layers.json",
+      "sha256": "2e7e3d9c07b4af54915d016bb826425e202346969bf8b928c0242b74f916a37d"
+    },
+    "legacy_props": {
+      "path": "data/overworld/hollow_marches_props.json",
+      "sha256": "ceafca1d4af01cf9b4dfff3e89de455935dc6ad0b3d1dd35d42c7230b7ffb180"
+    },
+    "legacy_props_index": {
+      "path": "data/overworld/overworld_props.json",
+      "sha256": "4289b46528b27e9a8a9644d4a9e6e6806f23ff55d9c30818f1341bebe86de166"
+    },
+    "legacy_props_texture": {
+      "path": "assets/environment/overworld/overworld_props.png",
+      "sha256": "6cb975589f869670432608d827ff6c58ccf81ab78e320ead1028a17565687e68"
+    },
+    "legacy_traversability": {
+      "path": "game/overworld/overworld_traversability.gd",
+      "sha256": "17ce43483c6e0a881a02b7b41b686cec4637a6d94d5be35b612f38fe78526464"
+    },
+    "legacy_world": {
+      "path": "game/overworld/overworld_world.gd",
+      "sha256": "6bd485ee433d5088882ffa0682ee815419c727ecc4c142dad4c3865891e46dbe"
+    },
+    "placement": {
+      "path": "data/survival/world/a1_world_placement_contract.v1.json",
+      "sha256": "b3ba37aa2dfe91b51689fdac0bab2ad44caa9059204332050c5322d6643f9969"
+    },
+    "presentations": {
+      "path": "data/survival/world/art/presentations.v1.json",
+      "sha256": "45af8278a959e5e3e1aa1fa697a4856d46e63237822cbee131c95bb60e98c1ee"
+    },
+    "props": {
+      "path": "assets/environment/survival_world/props.png",
+      "sha256": "8d4acf4028e0e065b901e78c59c65e5a68677fb75d46c04c7e5a029a76d27324"
+    },
+    "reader_contract": {
+      "path": "data/survival/world/reader_contract.json",
+      "sha256": "57f87c6c88ccf0c1ff0f47fc68bf4268dde82a27622fe223b5b2ee38ccbb871f"
+    },
+    "roadside_corridor": {
+      "path": "data/survival/world/corridor/crown_roadside.corridor.v1.json",
+      "sha256": "9d3909b0625bdf6239a760fdf2ac982d0ede0314491cab315d7268d42ddc232f"
+    },
+    "terrain": {
+      "path": "assets/environment/survival_world/terrain.png",
+      "sha256": "6128d8f41abe6962fe705431db20e762e0cca613ffc3eca29065727422737d1c"
+    },
+    "world_id": "world:soh_continent_v1",
+    "world_plan": {
+      "path": "data/survival/world/world_plan.v1.json",
+      "sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4"
+    }
+  },
+  "spawn_policy": {
+    "algorithm": "sorted eligible chunk = u64(SHA256(world_id|run_seed|round12-spawn-v1)[0:8]) mod chunk_count; local cell = next_u64 mod chunk_cell_count",
+    "basic_materials": [
+      "salvage",
+      "timber",
+      "stone",
+      "iron",
+      "fibre",
+      "reed_fibre",
+      "clay",
+      "rare_herb",
+      "honey",
+      "hardwood"
+    ],
+    "body_size_px": [
+      12,
+      16
+    ],
+    "clearance_cells": 3,
+    "home_cell": [
+      56,
+      218
+    ],
+    "minimum_candidate_cells": 20000,
+    "minimum_candidate_chunks": 18,
+    "minimum_material_families": 2,
+    "minimum_regions": 3,
+    "minimum_trial_chunks": 12,
+    "minimum_unique_trial_cells": 30,
+    "opportunity_radius_cells": 64,
+    "road_max_distance_cells": 32,
+    "rules": [
+      "same zero-hazard Hero-clear connected component as Refuge",
+      "exclude preserved inset because its original prop occupancy remains A0/OverworldWorld authority",
+      "3x3 source walk/hazard clearance",
+      "region entry_capabilities must be empty",
+      "outside every POI footprint plus two cells and outside exact A8 shell obstacle clearance",
+      "safe source road within 32 cells",
+      "at least two safe basic resource families within 64 cells",
+      "no fixed spawn rectangles or seed%3 zone picker"
+    ],
+    "seeds": [
+      1103,
+      9022,
+      16941,
+      24860,
+      32779,
+      40698,
+      48617,
+      56536,
+      64455,
+      72374,
+      80293,
+      88212,
+      96131,
+      104050,
+      111969,
+      119888,
+      127807,
+      135726,
+      144645,
+      153564,
+      162483,
+      171402,
+      180321,
+      189240,
+      198159,
+      207078,
+      215997,
+      224916,
+      233835,
+      242754,
+      251673,
+      260592,
+      269511,
+      278430,
+      287349,
+      296268
+    ],
+    "status": "BROAD_SOURCE_ELIGIBILITY_NOT_THREE_ZONES; A0 persists selected run-local cell"
+  },
+  "status": "DERIVED_SOURCE_RUNTIME_NATIVE_ADMISSION_REQUIRED",
+  "traversal": {
+    "base_speed_px_s": 96.0,
+    "climate_channels": {
+      "r_amberwood": "temperate_broadleaf",
+      "r_ashen_crown": "temperate",
+      "r_ashwater_fen": "miasma_humid",
+      "r_ember_steppe": "heat_dust",
+      "r_frost_crown": "cold",
+      "r_glasswind_coast": "wind_cold",
+      "r_mirrormere": "wet_temperate",
+      "r_pearl_mangroves": "tidal_humid",
+      "r_saffron_coast": "heat_dry",
+      "r_sunken_orchard": "humid_pressure",
+      "r_verdant_fold": "humid_spore"
+    },
+    "planning_effort_rule": "sum(cell_seconds) + sum(hazard_cell_seconds * severity); dimensionless route-comparison units, never item/health mutation",
+    "rules": [
+      "road/bridge overrides the underlying surface multiplier only when source walk=1",
+      "climate and hazard channels are separate asynchronous signals",
+      "no numeric health/status damage and no inventory cost is authorized here",
+      "A7 must independently measure; A0 owns production movement"
+    ],
+    "status": "A1_NATIVE_PROPOSAL_A7_INDEPENDENT_MEASUREMENT_AND_A0_ADOPTION_REQUIRED",
+    "surface_profiles": {
+      "ash": 0.92,
+      "badland": 0.82,
+      "bog": 0.62,
+      "bridge": 1.0,
+      "floor": 0.98,
+      "forest": 0.88,
+      "grass": 0.96,
+      "gravel": 1.0,
+      "jungle": 0.8,
+      "karst": 0.88,
+      "legacy": 1.0,
+      "mangrove": 0.72,
+      "marsh": 0.65,
+      "moor": 0.92,
+      "mud": 0.7,
+      "orchard": 0.94,
+      "road": 1.0,
+      "salt": 0.94,
+      "sand": 0.9,
+      "snow": 0.78,
+      "tundra": 0.86,
+      "water": 0.0
+    }
+  },
+  "visual": {
+    "atlas_path": "res://data/survival/world/art/atlas.v1.json",
+    "full_resolution_night_regions": [
+      "r_frost_crown",
+      "r_ember_steppe",
+      "r_pearl_mangroves"
+    ],
+    "grammar_path": "res://data/survival/world/art/world_art_grammar.v1.json",
+    "logical_viewport": [
+      640,
+      360
+    ],
+    "material_frames": {
+      "abyssal_pearl": "abyssal_pearl",
+      "aether_crystal": "ore_skarn",
+      "basalt": "basalt_chunk",
+      "bog_iron": "bog_iron",
+      "clay": "clay_lens",
+      "copper": "copper_vein",
+      "fibre": "reed_bundle",
+      "frost_resin": "tree_frost_small",
+      "glacial_iron": "ore_skarn",
+      "hardwood": "hardwood_log",
+      "honey": "beehive",
+      "iron": "ore_skarn",
+      "limestone": "limestone_chunk",
+      "obsidian": "obsidian_shard",
+      "pearl": "freshwater_pearl",
+      "peat": "peat_cut",
+      "rare_herb": "herb_moonleaf",
+      "reed_fibre": "reed_bundle",
+      "rubber_sap": "rubber_tap",
+      "salt": "salt_crust_prop",
+      "salvage": "deadfall",
+      "silica_sand": "silica_placer",
+      "stone": "rock_c",
+      "storm_glass": "storm_glass",
+      "sulfur": "sulfur_vent",
+      "timber": "log_pile",
+      "venom_sac": "venom_sac"
+    },
+    "poi_landmark_frames": {
+      "poi_amberwood_apothecary": "lm_amber_apothecary",
+      "poi_amberwood_watch": "lm_amber_watch",
+      "poi_ashwater_pump": "lm_ashwater_pump",
+      "poi_crown_south_mill": "lm_mill_house",
+      "poi_crown_south_orchard": "lm_orchard_shed",
+      "poi_crown_south_quarry": "lm_quarry_workface",
+      "poi_crown_waystation": "lm_waystation",
+      "poi_ember_old_forge": "lm_ember_forge",
+      "poi_frost_tarn_shrine": "lm_frost_shrine",
+      "poi_glasswind_light": "lm_glasswind_light",
+      "poi_mirrormere_causeway": "lm_mere_causeway",
+      "poi_mirrormere_ferry": "lm_mere_boathouse",
+      "poi_pearl_customs": "lm_pearl_customs",
+      "poi_saffron_salt_pan": "lm_saffron_salt_works",
+      "poi_sunken_cenote": "lm_sunken_cenote",
+      "poi_verdant_canopy_temple": "lm_verdant_temple"
+    },
+    "presentations_path": "res://data/survival/world/art/presentations.v1.json",
+    "resolutions": [
+      [
+        1280,
+        720
+      ],
+      [
+        2560,
+        1440
+      ],
+      [
+        3840,
+        2160
+      ]
+    ],
+    "rules": [
+      "source surface/biome/road/hazard IDs choose terrain; hash selects only variants inside the same material",
+      "resource and POI sprites retain canonical IDs/cells and add no unauthorized collision or reward",
+      "source water/walk=0 receives real merged collision; roads over water receive decks",
+      "A8 shell proxies use exact pinned ground/props/obstacles; they are not A8 scene instances",
+      "no CraftPix/private avatar/Gold repaint or generic approved identities"
+    ],
+    "unbound_poi_frame": "cairn",
+    "unbound_status": "SOURCE_SURVEY_MARKER_NOT_APPROVED_POI_IDENTITY"
+  },
+  "waypoints": {
+    "amber_north": [
+      80,
+      400
+    ],
+    "amber_watch": [
+      200,
+      500
+    ],
+    "home": [
+      56,
+      218
+    ],
+    "mere": [
+      300,
+      420
+    ],
+    "mill": [
+      120,
+      300
+    ],
+    "orchard": [
+      140,
+      360
+    ],
+    "quarry": [
+      30,
+      280
+    ],
+    "salvage": [
+      395,
+      220
+    ],
+    "south_watch": [
+      180,
+      340
+    ]
+  },
+  "world_state": {
+    "clock_owner": "A0",
+    "dynamic_overlays": "A0 run-local descriptors only; cleared on full run reset",
+    "geography": "immutable across online/offline and within run",
+    "native_claim": "PURE_TEMPORAL_CONTEXT_AND_SOURCE_RELOAD_ONLY; production 2PID/336h/Ragnarok NOT_TESTED",
+    "one_online_offline_timeline": true,
+    "ragnarok_projection_owner": "A3/A0",
+    "run_reset_hours": 336,
+    "save_owner": "A0",
+    "spawn_cell": "A0 run-local persisted value; same seed/query is deterministic"
+  }
+}

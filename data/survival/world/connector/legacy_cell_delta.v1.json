@@ -1,0 +1,1159 @@
+{
+  "carve_rect": [
+    368,
+    199,
+    16,
+    3
+  ],
+  "cell_deltas": [
+    {
+      "after": {
+        "detail": "=6",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": ".",
+        "ground": ";",
+        "solid": "."
+      },
+      "cell": [
+        368,
+        199
+      ]
+    },
+    {
+      "after": {
+        "detail": "=e",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": ".",
+        "ground": ";",
+        "solid": "#7"
+      },
+      "cell": [
+        369,
+        199
+      ]
+    },
+    {
+      "after": {
+        "detail": "=e",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": ".",
+        "ground": ";",
+        "solid": "#f"
+      },
+      "cell": [
+        370,
+        199
+      ]
+    },
+    {
+      "after": {
+        "detail": "=e",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "1",
+        "ground": ";",
+        "solid": "#f"
+      },
+      "cell": [
+        371,
+        199
+      ]
+    },
+    {
+      "after": {
+        "detail": "=e",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "1",
+        "ground": ";",
+        "solid": "#f"
+      },
+      "cell": [
+        372,
+        199
+      ]
+    },
+    {
+      "after": {
+        "detail": "=e",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "2",
+        "ground": ";",
+        "solid": "#f"
+      },
+      "cell": [
+        373,
+        199
+      ]
+    },
+    {
+      "after": {
+        "detail": "=e",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "2",
+        "ground": ";",
+        "solid": "#f"
+      },
+      "cell": [
+        374,
+        199
+      ]
+    },
+    {
+      "after": {
+        "detail": "=e",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "3",
+        "ground": ";",
+        "solid": "#f"
+      },
+      "cell": [
+        375,
+        199
+      ]
+    },
+    {
+      "after": {
+        "detail": "=e",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "4",
+        "ground": "b",
+        "solid": "#f"
+      },
+      "cell": [
+        376,
+        199
+      ]
+    },
+    {
+      "after": {
+        "detail": "=e",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "3",
+        "ground": "b",
+        "solid": "#f"
+      },
+      "cell": [
+        377,
+        199
+      ]
+    },
+    {
+      "after": {
+        "detail": "=e",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "2",
+        "ground": "b",
+        "solid": "#f"
+      },
+      "cell": [
+        378,
+        199
+      ]
+    },
+    {
+      "after": {
+        "detail": "=e",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "2",
+        "ground": "b",
+        "solid": "#f"
+      },
+      "cell": [
+        379,
+        199
+      ]
+    },
+    {
+      "after": {
+        "detail": "=e",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "1",
+        "ground": "b",
+        "solid": "#f"
+      },
+      "cell": [
+        380,
+        199
+      ]
+    },
+    {
+      "after": {
+        "detail": "=e",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "1",
+        "ground": "b",
+        "solid": "#f"
+      },
+      "cell": [
+        381,
+        199
+      ]
+    },
+    {
+      "after": {
+        "detail": "=e",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "1",
+        "ground": "b",
+        "solid": "#f"
+      },
+      "cell": [
+        382,
+        199
+      ]
+    },
+    {
+      "after": {
+        "detail": "=e",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": ".",
+        "ground": "b",
+        "solid": "#d"
+      },
+      "cell": [
+        383,
+        199
+      ]
+    },
+    {
+      "after": {
+        "detail": "=7",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": ".",
+        "ground": ";",
+        "solid": "."
+      },
+      "cell": [
+        368,
+        200
+      ]
+    },
+    {
+      "after": {
+        "detail": "=f",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": ".",
+        "ground": ";",
+        "solid": "#7"
+      },
+      "cell": [
+        369,
+        200
+      ]
+    },
+    {
+      "after": {
+        "detail": "=f",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "1",
+        "ground": ";",
+        "solid": "#f"
+      },
+      "cell": [
+        370,
+        200
+      ]
+    },
+    {
+      "after": {
+        "detail": "=f",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": ".",
+        "ground": ";",
+        "solid": "#f"
+      },
+      "cell": [
+        371,
+        200
+      ]
+    },
+    {
+      "after": {
+        "detail": "=f",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "1",
+        "ground": ";",
+        "solid": "#f"
+      },
+      "cell": [
+        372,
+        200
+      ]
+    },
+    {
+      "after": {
+        "detail": "=f",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "1",
+        "ground": ";",
+        "solid": "#f"
+      },
+      "cell": [
+        373,
+        200
+      ]
+    },
+    {
+      "after": {
+        "detail": "=f",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "2",
+        "ground": ";",
+        "solid": "#f"
+      },
+      "cell": [
+        374,
+        200
+      ]
+    },
+    {
+      "after": {
+        "detail": "=f",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "3",
+        "ground": "b",
+        "solid": "#f"
+      },
+      "cell": [
+        375,
+        200
+      ]
+    },
+    {
+      "after": {
+        "detail": "=f",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "3",
+        "ground": "b",
+        "solid": "#f"
+      },
+      "cell": [
+        376,
+        200
+      ]
+    },
+    {
+      "after": {
+        "detail": "=f",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "3",
+        "ground": "b",
+        "solid": "#f"
+      },
+      "cell": [
+        377,
+        200
+      ]
+    },
+    {
+      "after": {
+        "detail": "=f",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "2",
+        "ground": "b",
+        "solid": "#f"
+      },
+      "cell": [
+        378,
+        200
+      ]
+    },
+    {
+      "after": {
+        "detail": "=f",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "2",
+        "ground": "b",
+        "solid": "#f"
+      },
+      "cell": [
+        379,
+        200
+      ]
+    },
+    {
+      "after": {
+        "detail": "=f",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "1",
+        "ground": "b",
+        "solid": "#f"
+      },
+      "cell": [
+        380,
+        200
+      ]
+    },
+    {
+      "after": {
+        "detail": "=f",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "1",
+        "ground": "b",
+        "solid": "#f"
+      },
+      "cell": [
+        381,
+        200
+      ]
+    },
+    {
+      "after": {
+        "detail": "=f",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "1",
+        "ground": "b",
+        "solid": "#f"
+      },
+      "cell": [
+        382,
+        200
+      ]
+    },
+    {
+      "after": {
+        "detail": "=f",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": ".",
+        "ground": "b",
+        "solid": "#d"
+      },
+      "cell": [
+        383,
+        200
+      ]
+    },
+    {
+      "after": {
+        "detail": "=3",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": ".",
+        "ground": ";",
+        "solid": "#6"
+      },
+      "cell": [
+        368,
+        201
+      ]
+    },
+    {
+      "after": {
+        "detail": "=b",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "1",
+        "ground": ";",
+        "solid": "#f"
+      },
+      "cell": [
+        369,
+        201
+      ]
+    },
+    {
+      "after": {
+        "detail": "=b",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "1",
+        "ground": ";",
+        "solid": "#f"
+      },
+      "cell": [
+        370,
+        201
+      ]
+    },
+    {
+      "after": {
+        "detail": "=b",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "1",
+        "ground": ";",
+        "solid": "#f"
+      },
+      "cell": [
+        371,
+        201
+      ]
+    },
+    {
+      "after": {
+        "detail": "=b",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "2",
+        "ground": ";",
+        "solid": "#f"
+      },
+      "cell": [
+        372,
+        201
+      ]
+    },
+    {
+      "after": {
+        "detail": "=b",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "2",
+        "ground": ";",
+        "solid": "#f"
+      },
+      "cell": [
+        373,
+        201
+      ]
+    },
+    {
+      "after": {
+        "detail": "=b",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "3",
+        "ground": ";",
+        "solid": "#f"
+      },
+      "cell": [
+        374,
+        201
+      ]
+    },
+    {
+      "after": {
+        "detail": "=b",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "3",
+        "ground": "b",
+        "solid": "#f"
+      },
+      "cell": [
+        375,
+        201
+      ]
+    },
+    {
+      "after": {
+        "detail": "=b",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "3",
+        "ground": "b",
+        "solid": "#f"
+      },
+      "cell": [
+        376,
+        201
+      ]
+    },
+    {
+      "after": {
+        "detail": "=b",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "3",
+        "ground": "b",
+        "solid": "#f"
+      },
+      "cell": [
+        377,
+        201
+      ]
+    },
+    {
+      "after": {
+        "detail": "=b",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "2",
+        "ground": "b",
+        "solid": "#f"
+      },
+      "cell": [
+        378,
+        201
+      ]
+    },
+    {
+      "after": {
+        "detail": "=b",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "2",
+        "ground": "b",
+        "solid": "#f"
+      },
+      "cell": [
+        379,
+        201
+      ]
+    },
+    {
+      "after": {
+        "detail": "=b",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "1",
+        "ground": "b",
+        "solid": "#f"
+      },
+      "cell": [
+        380,
+        201
+      ]
+    },
+    {
+      "after": {
+        "detail": "=b",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "1",
+        "ground": "b",
+        "solid": "#f"
+      },
+      "cell": [
+        381,
+        201
+      ]
+    },
+    {
+      "after": {
+        "detail": "=b",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": "1",
+        "ground": "b",
+        "solid": "#f"
+      },
+      "cell": [
+        382,
+        201
+      ]
+    },
+    {
+      "after": {
+        "detail": "=b",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
+        "detail": ".",
+        "ground": "b",
+        "solid": "#d"
+      },
+      "cell": [
+        383,
+        201
+      ]
+    }
+  ],
+  "collision_cell_count": 46,
+  "connector_id": "a1_crown_canonical_seam_v1",
+  "dressed_cell_count": 48,
+  "prop_suppressions": [
+    {
+      "cell": [
+        374,
+        199
+      ],
+      "frame": "cliff_crack_b",
+      "index": 9523,
+      "x": 5992.0,
+      "y": 3192.0
+    },
+    {
+      "cell": [
+        381,
+        199
+      ],
+      "frame": "cliff_patch_a",
+      "index": 9524,
+      "x": 6110.7,
+      "y": 3190.7
+    },
+    {
+      "cell": [
+        369,
+        200
+      ],
+      "frame": "cliff_crack_a",
+      "index": 9532,
+      "x": 5912.0,
+      "y": 3208.0
+    },
+    {
+      "cell": [
+        370,
+        200
+      ],
+      "frame": "cliff_patch_a",
+      "index": 9533,
+      "x": 5928.1,
+      "y": 3204.2
+    },
+    {
+      "cell": [
+        373,
+        200
+      ],
+      "frame": "cliff_patch_a",
+      "index": 9534,
+      "x": 5971.4,
+      "y": 3205.6
+    },
+    {
+      "cell": [
+        378,
+        200
+      ],
+      "frame": "cliff_crack_b",
+      "index": 9535,
+      "x": 6056.0,
+      "y": 3208.0
+    },
+    {
+      "cell": [
+        379,
+        200
+      ],
+      "frame": "cliff_patch_a",
+      "index": 9536,
+      "x": 6069.5,
+      "y": 3205.7
+    },
+    {
+      "cell": [
+        382,
+        200
+      ],
+      "frame": "cliff_patch_c",
+      "index": 9537,
+      "x": 6126.7,
+      "y": 3207.7
+    },
+    {
+      "cell": [
+        370,
+        201
+      ],
+      "frame": "cliff_patch_d",
+      "index": 9547,
+      "x": 5925.1,
+      "y": 3226.4
+    },
+    {
+      "cell": [
+        371,
+        201
+      ],
+      "frame": "cliff_patch_a",
+      "index": 9548,
+      "x": 5950.7,
+      "y": 3231.1
+    },
+    {
+      "cell": [
+        372,
+        201
+      ],
+      "frame": "cliff_crack_a",
+      "index": 9549,
+      "x": 5960.0,
+      "y": 3224.0
+    },
+    {
+      "cell": [
+        373,
+        201
+      ],
+      "frame": "cliff_crack_b",
+      "index": 9550,
+      "x": 5976.0,
+      "y": 3224.0
+    },
+    {
+      "cell": [
+        374,
+        201
+      ],
+      "frame": "cliff_crack_a",
+      "index": 9551,
+      "x": 5992.0,
+      "y": 3224.0
+    },
+    {
+      "cell": [
+        368,
+        199
+      ],
+      "frame": "cliff_ledge_a",
+      "index": 13155,
+      "x": 5896.0,
+      "y": 3191.0
+    }
+  ],
+  "road_dressing_cells": [
+    [
+      368,
+      199
+    ],
+    [
+      369,
+      199
+    ],
+    [
+      370,
+      199
+    ],
+    [
+      371,
+      199
+    ],
+    [
+      372,
+      199
+    ],
+    [
+      373,
+      199
+    ],
+    [
+      374,
+      199
+    ],
+    [
+      375,
+      199
+    ],
+    [
+      376,
+      199
+    ],
+    [
+      377,
+      199
+    ],
+    [
+      378,
+      199
+    ],
+    [
+      379,
+      199
+    ],
+    [
+      380,
+      199
+    ],
+    [
+      381,
+      199
+    ],
+    [
+      382,
+      199
+    ],
+    [
+      383,
+      199
+    ],
+    [
+      368,
+      200
+    ],
+    [
+      369,
+      200
+    ],
+    [
+      370,
+      200
+    ],
+    [
+      371,
+      200
+    ],
+    [
+      372,
+      200
+    ],
+    [
+      373,
+      200
+    ],
+    [
+      374,
+      200
+    ],
+    [
+      375,
+      200
+    ],
+    [
+      376,
+      200
+    ],
+    [
+      377,
+      200
+    ],
+    [
+      378,
+      200
+    ],
+    [
+      379,
+      200
+    ],
+    [
+      380,
+      200
+    ],
+    [
+      381,
+      200
+    ],
+    [
+      382,
+      200
+    ],
+    [
+      383,
+      200
+    ],
+    [
+      368,
+      201
+    ],
+    [
+      369,
+      201
+    ],
+    [
+      370,
+      201
+    ],
+    [
+      371,
+      201
+    ],
+    [
+      372,
+      201
+    ],
+    [
+      373,
+      201
+    ],
+    [
+      374,
+      201
+    ],
+    [
+      375,
+      201
+    ],
+    [
+      376,
+      201
+    ],
+    [
+      377,
+      201
+    ],
+    [
+      378,
+      201
+    ],
+    [
+      379,
+      201
+    ],
+    [
+      380,
+      201
+    ],
+    [
+      381,
+      201
+    ],
+    [
+      382,
+      201
+    ],
+    [
+      383,
+      201
+    ]
+  ],
+  "road_dressing_rect": [
+    368,
+    199,
+    16,
+    3
+  ],
+  "rollback": "Restore pinned legacy files byte-for-byte or apply inverse cell_deltas and reinsert suppressed props at exact indices; remove derived annex inputs.",
+  "schema": "soh.world.connector_delta.v1",
+  "source_pins": {
+    "a1_chunk_5_3": {
+      "path": "data/survival/world/chunks/05_03.json",
+      "sha256": "66badecf8838507cadae0a819da4902d464111f28334d6cc6c1bdb31c46d4032"
+    },
+    "a1_chunk_6_3": {
+      "path": "data/survival/world/chunks/06_03.json",
+      "sha256": "8bb0d95f7588124c9781fd942521e23b80271ef666c8cec5ce8a951002400c07"
+    },
+    "a1_relay_slice": {
+      "path": "data/survival/world/vertical_slice/poi_crown_relay_shed.slice.json",
+      "sha256": "5ab0042980a43e64f05aa73870b0d99f906fb95f70492daf2a6b6f7b585b77ad"
+    },
+    "a1_waystation_slice": {
+      "path": "data/survival/world/vertical_slice/poi_crown_waystation.slice.json",
+      "sha256": "3a4981fd3e24580e2e7c2ee5d0929f76c432d785e142b67a222c6480af01e16f"
+    },
+    "knight_scene": {
+      "path": "game/characters/knight/knight.tscn",
+      "sha256": "2b29011bf361ac7e5cdde97c1fc454c69684dcb6c08e1c23186c05910a52e195"
+    },
+    "legacy_layers": {
+      "path": "data/overworld/hollow_marches_layers.json",
+      "sha256": "2e7e3d9c07b4af54915d016bb826425e202346969bf8b928c0242b74f916a37d"
+    },
+    "legacy_props": {
+      "path": "data/overworld/hollow_marches_props.json",
+      "sha256": "ceafca1d4af01cf9b4dfff3e89de455935dc6ad0b3d1dd35d42c7230b7ffb180"
+    },
+    "legacy_world": {
+      "path": "data/overworld/hollow_marches.json",
+      "sha256": "1d30ad27ba4408a4ec72d77dbc57c76bbddb214c89fd6d1309e97af742d51a19"
+    }
+  }
+}

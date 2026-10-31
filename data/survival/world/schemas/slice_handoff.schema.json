@@ -1,0 +1,88 @@
+{
+  "$id": "soh://world/slice_handoff.v1.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "a0": {
+      "properties": {
+        "owner": {
+          "const": "A0"
+        }
+      },
+      "required": [
+        "owner",
+        "save_service_ref",
+        "proposed_save_namespace",
+        "reader_contract",
+        "activation_contract",
+        "action_contract",
+        "payload_examples"
+      ],
+      "type": "object"
+    },
+    "a3": {
+      "properties": {
+        "owner": {
+          "const": "A3"
+        }
+      },
+      "required": [
+        "owner",
+        "model_ref",
+        "exact_item_ids",
+        "exact_source_ids",
+        "source_bindings",
+        "one_time_reward_rights",
+        "alias_decisions",
+        "atomic_reward_ownership",
+        "payload_examples"
+      ],
+      "type": "object"
+    },
+    "a6": {
+      "properties": {
+        "owner": {
+          "const": "A6"
+        }
+      },
+      "required": [
+        "owner",
+        "contract_ref",
+        "projection_schema",
+        "rules",
+        "payload_examples"
+      ],
+      "type": "object"
+    },
+    "native_playable": {
+      "const": false
+    },
+    "research_firewall": {
+      "required": [
+        "prototype_p1_core_world_interactions",
+        "prototype_p2_dynamic_weather",
+        "prototype_p3_physical_cart",
+        "typescript_imported",
+        "world_regenerated"
+      ],
+      "type": "object"
+    },
+    "schema": {
+      "const": "soh.world.slice_handoff.v1"
+    },
+    "world_plan_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema",
+    "native_playable",
+    "world_plan_sha256",
+    "research_firewall",
+    "a0",
+    "a3",
+    "a6"
+  ],
+  "title": "slice_handoff",
+  "type": "object"
+}

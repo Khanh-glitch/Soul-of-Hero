@@ -1,0 +1,98 @@
+{
+  "$id": "soh://world/masterplan.v1.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "biomes": {
+      "type": "object"
+    },
+    "capabilities": {
+      "type": "object"
+    },
+    "chunk_manifest": {
+      "type": "array"
+    },
+    "chunk_size": {
+      "type": "integer"
+    },
+    "frame": {
+      "type": "object"
+    },
+    "hazards": {
+      "type": "array"
+    },
+    "identity_contract": {
+      "type": "object"
+    },
+    "integration": {
+      "type": "object"
+    },
+    "lakes": {
+      "type": "array"
+    },
+    "layer_semantics": {
+      "type": "object"
+    },
+    "legacy_inset": {
+      "type": "object"
+    },
+    "long_run_goals": {
+      "type": "array"
+    },
+    "materials": {
+      "type": "object"
+    },
+    "metrics": {
+      "type": "object"
+    },
+    "pois": {
+      "type": "array"
+    },
+    "regions": {
+      "type": "array"
+    },
+    "resource_nodes": {
+      "type": "array"
+    },
+    "resource_sites": {
+      "type": "array"
+    },
+    "rivers": {
+      "type": "array"
+    },
+    "route_graph": {
+      "type": "object"
+    },
+    "schema": {
+      "const": "soh.world.masterplan.v1"
+    },
+    "starter_quarter": {
+      "type": "object"
+    },
+    "status": {
+      "type": "string"
+    },
+    "world_id": {
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema",
+    "world_id",
+    "status",
+    "frame",
+    "legacy_inset",
+    "starter_quarter",
+    "regions",
+    "pois",
+    "route_graph",
+    "resource_nodes",
+    "chunk_manifest",
+    "metrics",
+    "identity_contract",
+    "integration",
+    "layer_semantics"
+  ],
+  "title": "masterplan",
+  "type": "object"
+}

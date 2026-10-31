@@ -1,0 +1,720 @@
+{
+  "schema": "soh.world.a8_shell_visuals.v1",
+  "owner": "A1",
+  "consumer": "A8",
+  "status": "EXECUTABLE_VISUAL_SKIN_NOT_A_MOUNT",
+  "source_review": {
+    "pr": 26,
+    "head_sha": "5ccf7b3f",
+    "files": [
+      "native_poi_shell.gd",
+      "south_quarry.json",
+      "south_orchard_ruin.json",
+      "south_crown_mill.json"
+    ]
+  },
+  "atlas_sha256": "83d69373ca6c1258e8727800d0aa0c288851c34d25539c69c21ec9f5fc9d769a",
+  "requirements": {
+    "tile_px": 16,
+    "texture_filter": "nearest",
+    "prop_scale": 1.0,
+    "integer_scale_only": true,
+    "shared_palette_ramp": true,
+    "doorway_must_remain_clear": true
+  },
+  "sites": [
+    {
+      "poi_id": "poi_crown_south_quarry",
+      "a8_site_id": "crown_south_quarry",
+      "profile": "quarry",
+      "bounds_px": [
+        128,
+        128
+      ],
+      "tile_px": 16,
+      "action_socket_px": [
+        64,
+        64
+      ],
+      "entry_portal_px": [
+        64,
+        108
+      ],
+      "doorway_clear_rect_px": [
+        44,
+        92,
+        40,
+        36
+      ],
+      "ground_rows": [
+        [
+          "gravel_0",
+          "gravel_1",
+          "gravel_2",
+          "gravel_3",
+          "gravel_0",
+          "gravel_1",
+          "gravel_2",
+          "gravel_3"
+        ],
+        [
+          "gravel_1",
+          "gravel_2",
+          "gravel_3",
+          "gravel_0",
+          "gravel_1",
+          "gravel_2",
+          "gravel_3",
+          "gravel_0"
+        ],
+        [
+          "gravel_2",
+          "gravel_3",
+          "gravel_0",
+          "gravel_1",
+          "gravel_2",
+          "gravel_3",
+          "gravel_0",
+          "gravel_1"
+        ],
+        [
+          "gravel_3",
+          "gravel_0",
+          "gravel_1",
+          "gravel_2",
+          "gravel_3",
+          "gravel_0",
+          "gravel_1",
+          "gravel_2"
+        ],
+        [
+          "gravel_0",
+          "gravel_1",
+          "gravel_2",
+          "gravel_3",
+          "gravel_0",
+          "gravel_1",
+          "gravel_2",
+          "gravel_3"
+        ],
+        [
+          "gravel_1",
+          "gravel_2",
+          "gravel_3",
+          "gravel_0",
+          "gravel_1",
+          "gravel_2",
+          "gravel_3",
+          "gravel_0"
+        ],
+        [
+          "gravel_2",
+          "gravel_3",
+          "gravel_0",
+          "gravel_1",
+          "gravel_2",
+          "gravel_3",
+          "gravel_0",
+          "gravel_1"
+        ],
+        [
+          "gravel_3",
+          "gravel_0",
+          "gravel_1",
+          "gravel_2",
+          "gravel_3",
+          "gravel_0",
+          "gravel_1",
+          "gravel_2"
+        ]
+      ],
+      "overlays": [
+        {
+          "frame": "road_dirt_10",
+          "cell": [
+            3,
+            4
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_10",
+          "cell": [
+            4,
+            4
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_10",
+          "cell": [
+            3,
+            5
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_10",
+          "cell": [
+            4,
+            5
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_10",
+          "cell": [
+            3,
+            6
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_10",
+          "cell": [
+            4,
+            6
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_4",
+          "cell": [
+            3,
+            7
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_4",
+          "cell": [
+            4,
+            7
+          ],
+          "layer": "road"
+        }
+      ],
+      "props": [
+        {
+          "frame": "lm_quarry_workface",
+          "local_px": [
+            72,
+            64
+          ],
+          "role": "authored_landmark",
+          "collision_change": false
+        },
+        {
+          "frame": "rock_a",
+          "local_px": [
+            24,
+            80
+          ],
+          "role": "background_scenery",
+          "collision_change": false
+        },
+        {
+          "frame": "rock_c",
+          "local_px": [
+            104,
+            80
+          ],
+          "role": "background_scenery",
+          "collision_change": false
+        },
+        {
+          "frame": "handcart",
+          "local_px": [
+            40,
+            112
+          ],
+          "role": "background_scenery",
+          "collision_change": false
+        },
+        {
+          "frame": "fence_h",
+          "local_px": [
+            24,
+            48
+          ],
+          "role": "background_scenery",
+          "collision_change": false
+        },
+        {
+          "frame": "fence_h",
+          "local_px": [
+            104,
+            48
+          ],
+          "role": "background_scenery",
+          "collision_change": false
+        }
+      ],
+      "authority": "VISUAL_ONLY_A8_OWNS_INTERACTION_A0_OWNS_MOUNT",
+      "collision_change": false,
+      "new_poi_count": 0
+    },
+    {
+      "poi_id": "poi_crown_south_orchard",
+      "a8_site_id": "crown_south_orchard",
+      "profile": "orchard",
+      "bounds_px": [
+        128,
+        128
+      ],
+      "tile_px": 16,
+      "action_socket_px": [
+        64,
+        64
+      ],
+      "entry_portal_px": [
+        64,
+        108
+      ],
+      "doorway_clear_rect_px": [
+        44,
+        92,
+        40,
+        36
+      ],
+      "ground_rows": [
+        [
+          "grass_0",
+          "grass_1",
+          "grass_2",
+          "grass_3",
+          "grass_0",
+          "grass_1",
+          "grass_2",
+          "grass_3"
+        ],
+        [
+          "grass_1",
+          "grass_2",
+          "grass_3",
+          "grass_0",
+          "grass_1",
+          "grass_2",
+          "grass_3",
+          "grass_0"
+        ],
+        [
+          "grass_2",
+          "grass_3",
+          "grass_0",
+          "grass_1",
+          "grass_2",
+          "grass_3",
+          "grass_0",
+          "grass_1"
+        ],
+        [
+          "grass_3",
+          "grass_0",
+          "soil_1",
+          "soil_2",
+          "soil_3",
+          "soil_0",
+          "grass_1",
+          "grass_2"
+        ],
+        [
+          "grass_0",
+          "grass_1",
+          "soil_2",
+          "soil_3",
+          "soil_0",
+          "soil_1",
+          "grass_2",
+          "grass_3"
+        ],
+        [
+          "grass_1",
+          "grass_2",
+          "soil_3",
+          "soil_0",
+          "soil_1",
+          "soil_2",
+          "grass_3",
+          "grass_0"
+        ],
+        [
+          "grass_2",
+          "grass_3",
+          "grass_0",
+          "grass_1",
+          "grass_2",
+          "grass_3",
+          "grass_0",
+          "grass_1"
+        ],
+        [
+          "grass_3",
+          "grass_0",
+          "grass_1",
+          "grass_2",
+          "grass_3",
+          "grass_0",
+          "grass_1",
+          "grass_2"
+        ]
+      ],
+      "overlays": [
+        {
+          "frame": "road_dirt_10",
+          "cell": [
+            3,
+            4
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_10",
+          "cell": [
+            4,
+            4
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_10",
+          "cell": [
+            3,
+            5
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_10",
+          "cell": [
+            4,
+            5
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_10",
+          "cell": [
+            3,
+            6
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_10",
+          "cell": [
+            4,
+            6
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_4",
+          "cell": [
+            3,
+            7
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_4",
+          "cell": [
+            4,
+            7
+          ],
+          "layer": "road"
+        }
+      ],
+      "props": [
+        {
+          "frame": "lm_orchard_shed",
+          "local_px": [
+            72,
+            64
+          ],
+          "role": "authored_landmark",
+          "collision_change": false
+        },
+        {
+          "frame": "tree_orchard",
+          "local_px": [
+            24,
+            64
+          ],
+          "role": "ordinary_harvestable",
+          "collision_change": false
+        },
+        {
+          "frame": "tree_orchard",
+          "local_px": [
+            104,
+            64
+          ],
+          "role": "ordinary_harvestable",
+          "collision_change": false
+        },
+        {
+          "frame": "drying_rack",
+          "local_px": [
+            40,
+            96
+          ],
+          "role": "background_scenery",
+          "collision_change": false
+        },
+        {
+          "frame": "beehive",
+          "local_px": [
+            104,
+            96
+          ],
+          "role": "ordinary_harvestable",
+          "collision_change": false
+        },
+        {
+          "frame": "split_rail",
+          "local_px": [
+            24,
+            112
+          ],
+          "role": "background_scenery",
+          "collision_change": false
+        },
+        {
+          "frame": "split_rail",
+          "local_px": [
+            104,
+            112
+          ],
+          "role": "background_scenery",
+          "collision_change": false
+        }
+      ],
+      "authority": "VISUAL_ONLY_A8_OWNS_INTERACTION_A0_OWNS_MOUNT",
+      "collision_change": false,
+      "new_poi_count": 0
+    },
+    {
+      "poi_id": "poi_crown_south_mill",
+      "a8_site_id": "crown_south_mill",
+      "profile": "mill",
+      "bounds_px": [
+        128,
+        128
+      ],
+      "tile_px": 16,
+      "action_socket_px": [
+        64,
+        64
+      ],
+      "entry_portal_px": [
+        64,
+        108
+      ],
+      "doorway_clear_rect_px": [
+        44,
+        92,
+        40,
+        36
+      ],
+      "ground_rows": [
+        [
+          "gravel_0",
+          "gravel_1",
+          "gravel_2",
+          "gravel_3",
+          "gravel_0",
+          "gravel_1",
+          "gravel_2",
+          "gravel_3"
+        ],
+        [
+          "gravel_1",
+          "gravel_2",
+          "gravel_3",
+          "gravel_0",
+          "gravel_1",
+          "gravel_2",
+          "gravel_3",
+          "gravel_0"
+        ],
+        [
+          "gravel_2",
+          "gravel_3",
+          "gravel_0",
+          "gravel_1",
+          "gravel_2",
+          "gravel_3",
+          "gravel_0",
+          "gravel_1"
+        ],
+        [
+          "gravel_3",
+          "gravel_0",
+          "gravel_1",
+          "gravel_2",
+          "gravel_3",
+          "gravel_0",
+          "gravel_1",
+          "gravel_2"
+        ],
+        [
+          "gravel_0",
+          "gravel_1",
+          "gravel_2",
+          "gravel_3",
+          "gravel_0",
+          "gravel_1",
+          "gravel_2",
+          "gravel_3"
+        ],
+        [
+          "gravel_1",
+          "gravel_2",
+          "gravel_3",
+          "gravel_0",
+          "gravel_1",
+          "gravel_2",
+          "gravel_3",
+          "gravel_0"
+        ],
+        [
+          "gravel_2",
+          "gravel_3",
+          "gravel_0",
+          "gravel_1",
+          "gravel_2",
+          "gravel_3",
+          "gravel_0",
+          "gravel_1"
+        ],
+        [
+          "gravel_3",
+          "gravel_0",
+          "gravel_1",
+          "gravel_2",
+          "gravel_3",
+          "gravel_0",
+          "gravel_1",
+          "gravel_2"
+        ]
+      ],
+      "overlays": [
+        {
+          "frame": "road_dirt_10",
+          "cell": [
+            3,
+            4
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_10",
+          "cell": [
+            4,
+            4
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_10",
+          "cell": [
+            3,
+            5
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_10",
+          "cell": [
+            4,
+            5
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_10",
+          "cell": [
+            3,
+            6
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_10",
+          "cell": [
+            4,
+            6
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_4",
+          "cell": [
+            3,
+            7
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_4",
+          "cell": [
+            4,
+            7
+          ],
+          "layer": "road"
+        }
+      ],
+      "props": [
+        {
+          "frame": "lm_mill_house",
+          "local_px": [
+            72,
+            64
+          ],
+          "role": "authored_landmark",
+          "collision_change": false
+        },
+        {
+          "frame": "mill_wheel",
+          "local_px": [
+            104,
+            80
+          ],
+          "role": "background_scenery",
+          "collision_change": false
+        },
+        {
+          "frame": "handcart",
+          "local_px": [
+            40,
+            112
+          ],
+          "role": "background_scenery",
+          "collision_change": false
+        },
+        {
+          "frame": "fence_h",
+          "local_px": [
+            24,
+            48
+          ],
+          "role": "background_scenery",
+          "collision_change": false
+        },
+        {
+          "frame": "log_pile",
+          "local_px": [
+            104,
+            112
+          ],
+          "role": "background_scenery",
+          "collision_change": false
+        }
+      ],
+      "authority": "VISUAL_ONLY_A8_OWNS_INTERACTION_A0_OWNS_MOUNT",
+      "collision_change": false,
+      "new_poi_count": 0
+    }
+  ]
+}

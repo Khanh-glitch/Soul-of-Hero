@@ -1,0 +1,52 @@
+{
+  "$id": "soh://world/novice_bootstrap.v1.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "bootstrap": {
+      "type": "object"
+    },
+    "circularity_rule": {
+      "type": "string"
+    },
+    "native_playable": {
+      "const": false
+    },
+    "safe_route_ids": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "schema": {
+      "const": "soh.world.novice_bootstrap.v1"
+    },
+    "stages": {
+      "items": {
+        "required": [
+          "stage",
+          "poi",
+          "route_id",
+          "grants",
+          "retreat_route_id"
+        ],
+        "type": "object"
+      },
+      "minItems": 3,
+      "type": "array"
+    },
+    "status": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema",
+    "status",
+    "native_playable",
+    "stages",
+    "bootstrap",
+    "circularity_rule",
+    "safe_route_ids"
+  ],
+  "title": "novice_bootstrap",
+  "type": "object"
+}

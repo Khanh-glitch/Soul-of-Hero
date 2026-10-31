@@ -1,0 +1,506 @@
+{
+  "a0_pr21_compatibility": {
+    "chapter1_overworld_gd_sha256": "4fbcd789ee1317a2235fc171dbeeda9295111883fcc3b96024319a8723d174c7",
+    "head": "06e00e59905ac9dfd41e37a7ca0c0ea84e2445b7",
+    "native_blocker_head": "ef423ad",
+    "native_blocker_run": 40931599594,
+    "overworld_state_gd_sha256": "cde9ad81b5bb55a64023db0b4f156c6d6142054fe6d98fe546065ffee2545d07",
+    "ref": "origin/arena/dea2428e-soul-of-hero",
+    "save_service_gd_sha256": "940a8cc666138102488f2189f7b6071a49917566cbd8ccc1cfbabcb3d960801d",
+    "survival_build_system_gd_sha256": "ac908a97409dcdd7e78edf366844d9845dda2b71af78dee99d54923906184c2d"
+  },
+  "acceptance_vectors": [
+    {
+      "gate": "source pins and exact 46-cell collision / 48-cell dressing / 14-prop delta validate; rollback restores hashes",
+      "id": "CN-01"
+    },
+    {
+      "gate": "A0 native blocker remains reproduced on unmodified legacy: Hero stops before x369; run 40931599594",
+      "id": "CN-02"
+    },
+    {
+      "gate": "composed live-shape route Refuge -> border -> exact Waystation locker stand (408,199) without teleport; repaired locker-bank collision footprint, live-shape clearance and interaction range verified",
+      "id": "CN-03"
+    },
+    {
+      "gate": "composed live-shape route Waystation -> Relay stand around static slice obstacles",
+      "id": "CN-04"
+    },
+    {
+      "gate": "composed live-shape return Relay -> Refuge; camera right limit 7168 and Hero visible",
+      "id": "CN-05"
+    },
+    {
+      "gate": "all ten legacy dungeon thresholds, camps and discoveries remain reachable in composed nav",
+      "id": "CN-06"
+    },
+    {
+      "gate": "A0 production controller with source overrides repeats CN-03..06 on fresh save and reload; SaveService last_position round-trips global pixels",
+      "id": "CN-07"
+    },
+    {
+      "gate": "build placement rejected on connector road and disabled annex; legacy home/build tests unchanged",
+      "id": "CN-08"
+    },
+    {
+      "gate": "canonical rewards byte-locked; no A3 hypothetical locker/cache rewards; one receipt per entitlement",
+      "id": "CN-09"
+    },
+    {
+      "gate": "only chunk6:3 imported; 106 unmounted POIs not spawned; rollback/downgrade recovery explicit",
+      "id": "CN-10"
+    }
+  ],
+  "annex": {
+    "chunk_id": "chunk:6:3",
+    "contains_only_slice_pois": [
+      "poi_crown_waystation",
+      "poi_crown_relay_shed"
+    ],
+    "imported_chunk_count": 1,
+    "origin": [
+      384,
+      192
+    ],
+    "other_continent_chunks_imported": 0,
+    "path": "data/survival/world/chunks/06_03.json",
+    "sha256": "8bb0d95f7588124c9781fd942521e23b80271ef666c8cec5ce8a951002400c07",
+    "size": [
+      64,
+      64
+    ],
+    "static_slice_obstacles": "A0 must mount the two slice contracts' static_obstacles as layer-1 bodies before native acceptance; no dynamic spawns.",
+    "unmounted_pois_spawned": 0
+  },
+  "approach": {
+    "border_crossing": [
+      [
+        383,
+        200
+      ],
+      [
+        384,
+        200
+      ]
+    ],
+    "legacy_approach_goal": [
+      368,
+      200
+    ],
+    "refuge_cell": [
+      56,
+      218
+    ],
+    "relay_anchor": [
+      440,
+      236
+    ],
+    "relay_crank_stand": [
+      442,
+      234
+    ],
+    "return": "Reverse the same physical corridor to Refuge; no teleport, payload spawn or scene swap.",
+    "waystation_anchor": [
+      408,
+      200
+    ],
+    "waystation_locker_stand": [
+      408,
+      199
+    ]
+  },
+  "build_permissions": {
+    "annex_pilot": "DISABLED_PENDING_COMPOSITE_VALIDATOR; A0 must reject placement x>=384 with annex_build_not_enabled until composite build validation is implemented. Walking is allowed.",
+    "future": "Composite validator must consume A1 build_permission and protected slice nav/doorway cells; build=0 remains delegate-to-A0, not a blanket prohibition.",
+    "legacy_connector": "Road detail '=' makes A0 _on_route_detail reject placement; legacy build_permission=2 still delegates to A0 validator, never interpreted as forbidden by A1."
+  },
+  "camera": {
+    "limit_bottom_px": 4096,
+    "limit_left_px": 0,
+    "limit_right_px": 7168,
+    "limit_top_px": 0,
+    "source": "existing chapter1_overworld.gd uses world.width*16 and world.height*16; composed bounds extend right limit to 7168 without a camera teleport"
+  },
+  "connector_id": "a1_crown_canonical_seam_v1",
+  "coordinate_frame": {
+    "annex_bounds": {
+      "h": 64,
+      "w": 64,
+      "x": 384,
+      "y": 192
+    },
+    "composed_bounds": {
+      "h": 256,
+      "w": 448,
+      "x": 0,
+      "y": 0
+    },
+    "legacy_bounds": {
+      "h": 256,
+      "w": 384,
+      "x": 0,
+      "y": 0
+    },
+    "tile_px": 16,
+    "transform": "identity; global canonical pixels = cell * 16; no local inset offset",
+    "unsupported_new_cells": "SOLID_FAIL_CLOSED outside chunk6:3; no second playable world"
+  },
+  "legacy_carve": {
+    "centerline": [
+      [
+        368,
+        200
+      ],
+      [
+        384,
+        200
+      ]
+    ],
+    "clearance_rows": [
+      199,
+      200,
+      201
+    ],
+    "collision_cells": 46,
+    "collision_rect": [
+      368,
+      199,
+      16,
+      3
+    ],
+    "dressed_cells": 48,
+    "hero_body_offset_px": [
+      0,
+      -8
+    ],
+    "hero_body_px": [
+      12,
+      16
+    ],
+    "knight_collision_layer": 2,
+    "knight_collision_mask": 5,
+    "road_dressing_cells": [
+      [
+        368,
+        199
+      ],
+      [
+        369,
+        199
+      ],
+      [
+        370,
+        199
+      ],
+      [
+        371,
+        199
+      ],
+      [
+        372,
+        199
+      ],
+      [
+        373,
+        199
+      ],
+      [
+        374,
+        199
+      ],
+      [
+        375,
+        199
+      ],
+      [
+        376,
+        199
+      ],
+      [
+        377,
+        199
+      ],
+      [
+        378,
+        199
+      ],
+      [
+        379,
+        199
+      ],
+      [
+        380,
+        199
+      ],
+      [
+        381,
+        199
+      ],
+      [
+        382,
+        199
+      ],
+      [
+        383,
+        199
+      ],
+      [
+        368,
+        200
+      ],
+      [
+        369,
+        200
+      ],
+      [
+        370,
+        200
+      ],
+      [
+        371,
+        200
+      ],
+      [
+        372,
+        200
+      ],
+      [
+        373,
+        200
+      ],
+      [
+        374,
+        200
+      ],
+      [
+        375,
+        200
+      ],
+      [
+        376,
+        200
+      ],
+      [
+        377,
+        200
+      ],
+      [
+        378,
+        200
+      ],
+      [
+        379,
+        200
+      ],
+      [
+        380,
+        200
+      ],
+      [
+        381,
+        200
+      ],
+      [
+        382,
+        200
+      ],
+      [
+        383,
+        200
+      ],
+      [
+        368,
+        201
+      ],
+      [
+        369,
+        201
+      ],
+      [
+        370,
+        201
+      ],
+      [
+        371,
+        201
+      ],
+      [
+        372,
+        201
+      ],
+      [
+        373,
+        201
+      ],
+      [
+        374,
+        201
+      ],
+      [
+        375,
+        201
+      ],
+      [
+        376,
+        201
+      ],
+      [
+        377,
+        201
+      ],
+      [
+        378,
+        201
+      ],
+      [
+        379,
+        201
+      ],
+      [
+        380,
+        201
+      ],
+      [
+        381,
+        201
+      ],
+      [
+        382,
+        201
+      ],
+      [
+        383,
+        201
+      ]
+    ],
+    "road_dressing_rect": [
+      368,
+      199,
+      16,
+      3
+    ],
+    "suppressed_flat_cliff_props": 14,
+    "tradeoff": "Removes 46 solid cells in a 16x3 eastern-ridge mouth (x368..383,y199..201) and dresses all 48 cells; x368,y199/200 were already clear. Native return trace proved the leftover x368,y201 cliff corner catches the 12x16 body. Inside the already-authored A1 road allowance; does not move landmarks, dungeons, camps, shortcuts, POIs or rewards.",
+    "why_three_rows": "A0 live-shape probe uses foot anchor y*16+15 and BodyShape offset -8; the 12x16 body can overlap previous/current/next row. A one-tile centerline BFS is not sufficient."
+  },
+  "native_playable": false,
+  "navigation": {
+    "acceptance_method": "live PhysicsShapeQueryParameters2D with pinned Knight BodyShape plus ordinary held movement; tile-center BFS alone is insufficient",
+    "authority": "composed OverworldWorld + live prop/slice obstacle bodies, then OverworldTraversability",
+    "streaming": "none in pilot; one static annex loaded once. Future multi-chunk streaming must preserve the same global coordinates and invalidate nav/camera/build caches atomically."
+  },
+  "owners": {
+    "A0": "apply delta in owned legacy bake or temporary composition root; source-path injection; annex build guard; mount slice obstacles/POIs; production Hero/camera/save acceptance; rollback recovery",
+    "A1": "connector contract, exact delta, canonical chunk/slice pins, isolated geometry/native fixture, evidence gate",
+    "A3": "catalog/token verifier only; no reward quantity changes",
+    "A6": "discovered-only connector/POI clues after A0 activation"
+  },
+  "rejected_options": [
+    {
+      "option": "MOUNT_A1_UNCHANGED_ON_LEGACY_EDGE",
+      "reason": "A0 native run 40931599594 proved legacy x369 cliff stops Hero before x383; A1 border bit is not legacy collision permission."
+    },
+    {
+      "option": "DYNAMIC_STREAMING_CHUNK_MANAGER",
+      "reason": "Correct long-term continent seam, but unnecessary lifecycle/nav/camera/save risk for one 64x64 chunk; defer until multi-chunk expansion."
+    },
+    {
+      "option": "TELEPORT_OR_LOCAL_POI_INSET",
+      "reason": "Violates physical canonical journey and would move/duplicate POI identity."
+    }
+  ],
+  "rewards_lock": {
+    "a3_hypothetical_rewards_imported": false,
+    "cache": {
+      "active_seconds": 1800,
+      "items": {
+        "iron_scrap": 3,
+        "knowledge_spares": 2
+      }
+    },
+    "deadfall": {
+      "active_seconds": 300,
+      "items": {
+        "oak_wood": 2
+      }
+    },
+    "ledger": {
+      "grants": [
+        "cap_seal_1"
+      ],
+      "items": {}
+    },
+    "locker": {
+      "grants": [
+        "cap_salvage"
+      ],
+      "items": {}
+    },
+    "relay": {
+      "consumes": {
+        "iron_scrap": 2,
+        "oak_wood": 1
+      },
+      "grants": [
+        "cap_power_1"
+      ]
+    },
+    "relay_slice_sha256": "5ab0042980a43e64f05aa73870b0d99f906fb95f70492daf2a6b6f7b585b77ad",
+    "slice_manifest_sha256": "a6ba825fdc9cf6cbc977dbbe8f6a9768a98a9131879952f66bddee15d3ef06b4",
+    "waystation_slice_sha256": "3a4981fd3e24580e2e7c2ee5d0929f76c432d785e142b67a222c6480af01e16f"
+  },
+  "rollback": {
+    "a0_bake": "restore pinned legacy world/layers/props hashes or apply inverse delta; no A1 chunk mutation",
+    "a1_branch": "delete derived pilot inputs / disable source overrides; committed A1 contract/delta remain review evidence",
+    "save": "pre-adoption pilot saves discarded; post-adoption downgrade uses explicit annex-position recovery to camp/Refuge"
+  },
+  "save": {
+    "coordinate_space": "global canonical pixels, identity transform",
+    "migration": "No coordinate migration for existing saves with x<6144. Annex saves use the same global pixels.",
+    "resume_owner": "A0 OverworldState via SaveService.patch_state_path",
+    "resume_path": [
+      "overworld",
+      "hollow_marches",
+      "last_position"
+    ],
+    "reward_owner": "A0 SaveService.transact_once; A1 slice transaction keys and rewards unchanged",
+    "rollback_recovery": "If annex is disabled and saved last_position.x>=6144, A0 must recover to last_camp/Refuge through an explicit rollback path and log it; normal gameplay must never teleport."
+  },
+  "schema": "soh.world.canonical_connector.v1",
+  "selected_option": "STATIC_ONE_CHUNK_ANNEX_WITH_MINIMAL_LEGACY_CARVE",
+  "source_pins": {
+    "a1_chunk_5_3": {
+      "path": "data/survival/world/chunks/05_03.json",
+      "sha256": "66badecf8838507cadae0a819da4902d464111f28334d6cc6c1bdb31c46d4032"
+    },
+    "a1_chunk_6_3": {
+      "path": "data/survival/world/chunks/06_03.json",
+      "sha256": "8bb0d95f7588124c9781fd942521e23b80271ef666c8cec5ce8a951002400c07"
+    },
+    "a1_relay_slice": {
+      "path": "data/survival/world/vertical_slice/poi_crown_relay_shed.slice.json",
+      "sha256": "5ab0042980a43e64f05aa73870b0d99f906fb95f70492daf2a6b6f7b585b77ad"
+    },
+    "a1_waystation_slice": {
+      "path": "data/survival/world/vertical_slice/poi_crown_waystation.slice.json",
+      "sha256": "3a4981fd3e24580e2e7c2ee5d0929f76c432d785e142b67a222c6480af01e16f"
+    },
+    "knight_scene": {
+      "path": "game/characters/knight/knight.tscn",
+      "sha256": "2b29011bf361ac7e5cdde97c1fc454c69684dcb6c08e1c23186c05910a52e195"
+    },
+    "legacy_layers": {
+      "path": "data/overworld/hollow_marches_layers.json",
+      "sha256": "2e7e3d9c07b4af54915d016bb826425e202346969bf8b928c0242b74f916a37d"
+    },
+    "legacy_props": {
+      "path": "data/overworld/hollow_marches_props.json",
+      "sha256": "ceafca1d4af01cf9b4dfff3e89de455935dc6ad0b3d1dd35d42c7230b7ffb180"
+    },
+    "legacy_world": {
+      "path": "data/overworld/hollow_marches.json",
+      "sha256": "1d30ad27ba4408a4ec72d77dbc57c76bbddb214c89fd6d1309e97af742d51a19"
+    }
+  },
+  "status": "APPROVED_BY_A1_EVIDENCE_GATE_PENDING_A0_PRODUCTION_NATIVE"
+}

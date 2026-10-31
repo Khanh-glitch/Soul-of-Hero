@@ -1,0 +1,342 @@
+{
+  "bounds": {
+    "h": 256,
+    "w": 384,
+    "x": 0,
+    "y": 0
+  },
+  "camps": [
+    {
+      "id": "camp_refuge",
+      "initial": true,
+      "name": "Ashen Refuge",
+      "pos": [
+        56,
+        216
+      ]
+    },
+    {
+      "id": "camp_crossroads",
+      "initial": false,
+      "name": "Wayfarer Stones",
+      "pos": [
+        152,
+        188
+      ]
+    },
+    {
+      "id": "camp_relay_base",
+      "initial": false,
+      "name": "Relay Foot",
+      "pos": [
+        248,
+        158
+      ]
+    },
+    {
+      "id": "camp_ridge",
+      "initial": false,
+      "name": "Watch Ridge Camp",
+      "pos": [
+        208,
+        104
+      ]
+    }
+  ],
+  "collision_rule": "solid RLE != '.' OR lower-body prop rect; 4-neighbour planning flood",
+  "files": {
+    "data/overworld/hollow_marches.json": "1d30ad27ba4408a4ec72d77dbc57c76bbddb214c89fd6d1309e97af742d51a19",
+    "data/overworld/hollow_marches_layers.json": "2e7e3d9c07b4af54915d016bb826425e202346969bf8b928c0242b74f916a37d",
+    "data/overworld/hollow_marches_props.json": "ceafca1d4af01cf9b4dfff3e89de455935dc6ad0b3d1dd35d42c7230b7ffb180",
+    "data/overworld/overworld_props.json": "4289b46528b27e9a8a9644d4a9e6e6806f23ff55d9c30818f1341bebe86de166",
+    "data/overworld/overworld_tiles.json": "58e8bbe1cee87b4fb83209e093843087a8d392e0c3f1a7c4134c3071982d9d46",
+    "game/characters/knight/knight.gd": "0f24ffdfeb13f180c12dedf4c93f5d9cf35183408299a478f84cc036c8202193",
+    "game/overworld/chapter1_overworld.gd": "f2e3d29fe091473453d4eb062bac350f10109e89525ae3c502c787e25abb9f24",
+    "game/overworld/overworld_traversability.gd": "17ce43483c6e0a881a02b7b41b686cec4637a6d94d5be35b612f38fe78526464",
+    "game/overworld/overworld_world.gd": "6bd485ee433d5088882ffa0682ee815419c727ecc4c142dad4c3865891e46dbe",
+    "project.godot": "6d607b77469fb70d15877a7869d60d05c952dc3801e7e673e9595d39e7ac51e0"
+  },
+  "json_camera_zoom_stale": 2.0,
+  "knight_base_speed_px_s": 96.0,
+  "landmarks": [
+    {
+      "capture_offset": [
+        0,
+        1
+      ],
+      "facing": "up",
+      "id": "lm_crypt",
+      "level_id": "chapter_1_level_1",
+      "pos": [
+        88,
+        180
+      ],
+      "reachable_closed_shortcuts": true,
+      "threshold": [
+        88,
+        181
+      ],
+      "walking_tiles_from_spawn": 69
+    },
+    {
+      "capture_offset": [
+        0,
+        1
+      ],
+      "facing": "up",
+      "id": "lm_ossuary",
+      "level_id": "chapter_1_level_2",
+      "pos": [
+        64,
+        128
+      ],
+      "reachable_closed_shortcuts": true,
+      "threshold": [
+        64,
+        129
+      ],
+      "walking_tiles_from_spawn": 113
+    },
+    {
+      "capture_offset": [
+        0,
+        1
+      ],
+      "facing": "up",
+      "id": "lm_archive",
+      "level_id": "chapter_1_level_3",
+      "pos": [
+        132,
+        152
+      ],
+      "reachable_closed_shortcuts": true,
+      "threshold": [
+        132,
+        153
+      ],
+      "walking_tiles_from_spawn": 141
+    },
+    {
+      "capture_offset": [
+        0,
+        0
+      ],
+      "facing": "up",
+      "id": "lm_reliquary",
+      "level_id": "chapter_1_level_4",
+      "pos": [
+        200,
+        136
+      ],
+      "reachable_closed_shortcuts": true,
+      "threshold": [
+        200,
+        137
+      ],
+      "walking_tiles_from_spawn": 225
+    },
+    {
+      "capture_offset": [
+        0,
+        1
+      ],
+      "facing": "up",
+      "id": "lm_crucible",
+      "level_id": "chapter_1_level_5",
+      "pos": [
+        192,
+        192
+      ],
+      "reachable_closed_shortcuts": true,
+      "threshold": [
+        192,
+        193
+      ],
+      "walking_tiles_from_spawn": 161
+    },
+    {
+      "capture_offset": [
+        0,
+        -1
+      ],
+      "facing": "up",
+      "id": "lm_relay",
+      "level_id": "chapter_1_level_6",
+      "pos": [
+        288,
+        140
+      ],
+      "reachable_closed_shortcuts": true,
+      "threshold": [
+        288,
+        141
+      ],
+      "walking_tiles_from_spawn": 309
+    },
+    {
+      "capture_offset": [
+        0,
+        -3
+      ],
+      "facing": "up",
+      "id": "lm_beacon",
+      "level_id": "chapter_1_level_7",
+      "pos": [
+        208,
+        80
+      ],
+      "reachable_closed_shortcuts": true,
+      "threshold": [
+        208,
+        81
+      ],
+      "walking_tiles_from_spawn": 289
+    },
+    {
+      "capture_offset": [
+        0,
+        -1
+      ],
+      "facing": "up",
+      "id": "lm_divided",
+      "level_id": "chapter_1_level_8",
+      "pos": [
+        272,
+        72
+      ],
+      "reachable_closed_shortcuts": true,
+      "threshold": [
+        272,
+        73
+      ],
+      "walking_tiles_from_spawn": 361
+    },
+    {
+      "capture_offset": [
+        0,
+        -1
+      ],
+      "facing": "up",
+      "id": "lm_gate",
+      "level_id": "chapter_1_level_9",
+      "pos": [
+        208,
+        40
+      ],
+      "reachable_closed_shortcuts": true,
+      "threshold": [
+        208,
+        41
+      ],
+      "walking_tiles_from_spawn": 329
+    },
+    {
+      "capture_offset": [
+        0,
+        6
+      ],
+      "facing": "up",
+      "id": "lm_throne",
+      "level_id": "chapter_1_level_10",
+      "pos": [
+        280,
+        36
+      ],
+      "reachable_closed_shortcuts": true,
+      "threshold": [
+        280,
+        37
+      ],
+      "walking_tiles_from_spawn": 405
+    }
+  ],
+  "native_physics_proof": "NOT_TESTED_BY_THIS_MODULE",
+  "reachable_cells_fresh_save": 62201,
+  "runtime_camera_zoom": 1.0,
+  "schema": "soh.world.baseline_lock.v1",
+  "shortcuts": [
+    {
+      "carve": [
+        181,
+        209,
+        187,
+        211
+      ],
+      "granted_by": "chapter_1_level_5",
+      "id": "short_crucible_bridge",
+      "kind": "broken_bridge",
+      "label": "The old span is down. Relight the Crucible and its span returns.",
+      "pos": [
+        184,
+        210
+      ]
+    },
+    {
+      "carve": [
+        254,
+        122,
+        258,
+        128
+      ],
+      "granted_by": "chapter_1_level_6",
+      "id": "short_relay_power",
+      "kind": "powered_conduit",
+      "label": "The conduit is dark. Wake the Soul Anchor and it will carry you up the ridge.",
+      "pos": [
+        256,
+        125
+      ]
+    },
+    {
+      "carve": [
+        204,
+        93,
+        212,
+        98
+      ],
+      "granted_by": "chapter_1_level_7",
+      "id": "short_beacon_road",
+      "kind": "rubble_block",
+      "label": "A fall of stone blocks the ridge stair. Light the Beacon and the stair is cleared.",
+      "pos": [
+        208,
+        96
+      ]
+    },
+    {
+      "carve": [
+        232,
+        48,
+        234,
+        52
+      ],
+      "granted_by": "chapter_1_level_9",
+      "id": "short_gate_valve",
+      "kind": "gate_valve",
+      "label": "The valve is sealed. Hold the Crimson Gate and the inner postern opens.",
+      "pos": [
+        233,
+        50
+      ]
+    }
+  ],
+  "source_branch": "feature/survival-rpg-foundation-20261029",
+  "source_sha": "3dc787e83f16d643086a257b0746f992763ac2f2",
+  "spawn_authored": [
+    56,
+    218
+  ],
+  "spawn_resolved": [
+    56,
+    218
+  ],
+  "tile_px": 16,
+  "viewport_px": [
+    640,
+    360
+  ],
+  "visible_tiles_at_zoom1": [
+    40,
+    22.5
+  ]
+}

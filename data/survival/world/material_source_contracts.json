@@ -1,0 +1,4464 @@
+{
+  "a0_item_hints": {
+    "iron": "iron_scrap",
+    "salvage": "iron_scrap",
+    "stone": "stone_chunk",
+    "timber": "oak_wood"
+  },
+  "a1_a3_decision_contract": "a1_a3_material_decisions.json",
+  "materials": {
+    "abyssal_pearl": [
+      "ecological",
+      "tide-locked deep grotto mollusc",
+      "pressure polishing",
+      "tier-3 seal; abyssal core",
+      "tide-gated bed"
+    ],
+    "aether_crystal": [
+      "geological",
+      "hydrothermal vug in fractured limestone/granite",
+      "resonance cutting",
+      "core blanks; power nodes",
+      "finite vug"
+    ],
+    "basalt": [
+      "geological",
+      "cooled lava flow",
+      "kiln block",
+      "heat-proof construction",
+      "finite flow"
+    ],
+    "bog_iron": [
+      "geological",
+      "redox precipitation at peat margin",
+      "bloom furnace",
+      "filter frame; late tools",
+      "slow redox renewal"
+    ],
+    "clay": [
+      "geological",
+      "lacustrine silt lens",
+      "kiln brick",
+      "furnace lining; pottery",
+      "finite lens"
+    ],
+    "copper": [
+      "geological",
+      "basalt-hosted vein and wadi placer",
+      "smelt -> ingot",
+      "wire; power circuits; trade",
+      "finite vein"
+    ],
+    "fibre": [
+      "ecological",
+      "reed/oasis/forest understorey",
+      "retting and rope walk",
+      "cloth; rope; filter mesh",
+      "seasonal regrowth"
+    ],
+    "frost_resin": [
+      "ecological",
+      "boreal conifer cold stress exudate",
+      "alembic distillate",
+      "thermal ward; cold-seal core",
+      "tapped stand cooldown"
+    ],
+    "glacial_iron": [
+      "geological",
+      "magnetite skarn at granite contact",
+      "cold-crucible bloom",
+      "thermal ward; deep pressure frame",
+      "thaw-season vein"
+    ],
+    "hardwood": [
+      "ecological",
+      "monsoon canopy emergent trees",
+      "seasoned plank",
+      "boat hull; boardwalk; advanced frames",
+      "slow grove"
+    ],
+    "honey": [
+      "ecological",
+      "orchard and oasis pollinator hive",
+      "comb press",
+      "food; fermentation; trade",
+      "hive cooldown"
+    ],
+    "iron": [
+      "geological",
+      "weathered tuff and lateritic seam",
+      "bloom furnace",
+      "fasteners; tools; ward frames",
+      "finite vein"
+    ],
+    "limestone": [
+      "geological",
+      "karst tower and terrace",
+      "lime kiln",
+      "mortar; filter; grafting bed",
+      "finite quarry"
+    ],
+    "obsidian": [
+      "geological",
+      "rapid-cooled lava seam",
+      "knapping / anneal",
+      "precision cores; blades",
+      "fumarole-cycle exposure"
+    ],
+    "pearl": [
+      "ecological",
+      "freshwater/tidal mollusc bed",
+      "nacre polishing",
+      "seal inlay; trade; lens",
+      "bed cooldown"
+    ],
+    "peat": [
+      "ecological",
+      "waterlogged acid bog accumulation",
+      "drying / charcoal",
+      "fuel; filter carbon",
+      "very slow cut"
+    ],
+    "rare_herb": [
+      "ecological",
+      "niche understorey and orchard remnant",
+      "drying / essence",
+      "potions; filter; grafting",
+      "plot or wild patch"
+    ],
+    "reed_fibre": [
+      "ecological",
+      "lake-margin reed bed",
+      "retting",
+      "cloth; rope; thatch",
+      "seasonal bed"
+    ],
+    "rubber_sap": [
+      "ecological",
+      "tropical liana and sap tree",
+      "latex cure",
+      "seals; boat; insulation",
+      "tapped grove"
+    ],
+    "salt": [
+      "geological",
+      "evaporite pan and sea spray",
+      "pan raking / boiling",
+      "food preservation; flux; trade",
+      "dry-wind renewal"
+    ],
+    "salvage": [
+      "anthropic",
+      "road barrels and abandoned supply caches",
+      "recycler -> spares",
+      "research; station upgrades",
+      "road cache restock"
+    ],
+    "silica_sand": [
+      "geological",
+      "wave-sorted cliff sand",
+      "glass furnace",
+      "storm glass; lenses",
+      "tidal placer"
+    ],
+    "stone": [
+      "geological",
+      "moraine and caldera tuff outcrop",
+      "cut block",
+      "foundations; mill repair",
+      "finite outcrop, slow renewal"
+    ],
+    "storm_glass": [
+      "geological",
+      "fulgurite where lightning strikes silica",
+      "storm-ward anneal",
+      "signal tower; storm core",
+      "storm-event placer"
+    ],
+    "sulfur": [
+      "geological",
+      "fumarole sublimation",
+      "sublimation trap",
+      "acid resist; flux; core catalyst",
+      "fumarole cycle"
+    ],
+    "timber": [
+      "ecological",
+      "mixed/boreal forest canopy",
+      "sawmill plank",
+      "construction; tool hafts; fuel",
+      "regrowing stand"
+    ],
+    "venom_sac": [
+      "ecological",
+      "wetland predator and mangrove fauna",
+      "venom alembic",
+      "filter gear; venom core family",
+      "fauna respawn"
+    ]
+  },
+  "nodes": [
+    {
+      "biome_constraint": "ruin_field",
+      "cause": "quarry face beside buffer road",
+      "cell": [
+        432,
+        280
+      ],
+      "material_key": "stone",
+      "node_id": "res:src_crown_tuff:01",
+      "region_id": "r_ashen_crown",
+      "renewal": "finite outcrop, slow renewal",
+      "required_capabilities": [],
+      "site_id": "src_crown_tuff",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "ruin_field",
+      "cause": "quarry face beside buffer road",
+      "cell": [
+        427,
+        282
+      ],
+      "material_key": "stone",
+      "node_id": "res:src_crown_tuff:02",
+      "region_id": "r_ashen_crown",
+      "renewal": "finite outcrop, slow renewal",
+      "required_capabilities": [],
+      "site_id": "src_crown_tuff",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "ruin_field",
+      "cause": "quarry face beside buffer road",
+      "cell": [
+        430,
+        276
+      ],
+      "material_key": "stone",
+      "node_id": "res:src_crown_tuff:03",
+      "region_id": "r_ashen_crown",
+      "renewal": "finite outcrop, slow renewal",
+      "required_capabilities": [],
+      "site_id": "src_crown_tuff",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "ruin_field",
+      "cause": "quarry face beside buffer road",
+      "cell": [
+        433,
+        284
+      ],
+      "material_key": "stone",
+      "node_id": "res:src_crown_tuff:04",
+      "region_id": "r_ashen_crown",
+      "renewal": "finite outcrop, slow renewal",
+      "required_capabilities": [],
+      "site_id": "src_crown_tuff",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "ruin_field",
+      "cause": "quarry face beside buffer road",
+      "cell": [
+        425,
+        279
+      ],
+      "material_key": "stone",
+      "node_id": "res:src_crown_tuff:05",
+      "region_id": "r_ashen_crown",
+      "renewal": "finite outcrop, slow renewal",
+      "required_capabilities": [],
+      "site_id": "src_crown_tuff",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "ruin_field",
+      "cause": "quarry face beside buffer road",
+      "cell": [
+        435,
+        277
+      ],
+      "material_key": "stone",
+      "node_id": "res:src_crown_tuff:06",
+      "region_id": "r_ashen_crown",
+      "renewal": "finite outcrop, slow renewal",
+      "required_capabilities": [],
+      "site_id": "src_crown_tuff",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "moorland",
+      "cause": "weathered tuff seam",
+      "cell": [
+        452,
+        260
+      ],
+      "material_key": "iron",
+      "node_id": "res:src_crown_iron:01",
+      "region_id": "r_ashen_crown",
+      "renewal": "finite vein",
+      "required_capabilities": [],
+      "site_id": "src_crown_iron",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "moorland",
+      "cause": "weathered tuff seam",
+      "cell": [
+        447,
+        262
+      ],
+      "material_key": "iron",
+      "node_id": "res:src_crown_iron:02",
+      "region_id": "r_ashen_crown",
+      "renewal": "finite vein",
+      "required_capabilities": [],
+      "site_id": "src_crown_iron",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "moorland",
+      "cause": "weathered tuff seam",
+      "cell": [
+        450,
+        256
+      ],
+      "material_key": "iron",
+      "node_id": "res:src_crown_iron:03",
+      "region_id": "r_ashen_crown",
+      "renewal": "finite vein",
+      "required_capabilities": [],
+      "site_id": "src_crown_iron",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "moorland",
+      "cause": "weathered tuff seam",
+      "cell": [
+        453,
+        264
+      ],
+      "material_key": "iron",
+      "node_id": "res:src_crown_iron:04",
+      "region_id": "r_ashen_crown",
+      "renewal": "finite vein",
+      "required_capabilities": [],
+      "site_id": "src_crown_iron",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "moorland",
+      "cause": "weathered tuff seam",
+      "cell": [
+        445,
+        259
+      ],
+      "material_key": "iron",
+      "node_id": "res:src_crown_iron:05",
+      "region_id": "r_ashen_crown",
+      "renewal": "finite vein",
+      "required_capabilities": [],
+      "site_id": "src_crown_iron",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "riverine",
+      "cause": "river-margin reed bed",
+      "cell": [
+        272,
+        310
+      ],
+      "material_key": "fibre",
+      "node_id": "res:src_crown_reed:01",
+      "region_id": "r_ashen_crown",
+      "renewal": "seasonal regrowth",
+      "required_capabilities": [],
+      "site_id": "src_crown_reed",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "riverine",
+      "cause": "river-margin reed bed",
+      "cell": [
+        267,
+        312
+      ],
+      "material_key": "fibre",
+      "node_id": "res:src_crown_reed:02",
+      "region_id": "r_ashen_crown",
+      "renewal": "seasonal regrowth",
+      "required_capabilities": [],
+      "site_id": "src_crown_reed",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "riverine",
+      "cause": "river-margin reed bed",
+      "cell": [
+        270,
+        306
+      ],
+      "material_key": "fibre",
+      "node_id": "res:src_crown_reed:03",
+      "region_id": "r_ashen_crown",
+      "renewal": "seasonal regrowth",
+      "required_capabilities": [],
+      "site_id": "src_crown_reed",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "riverine",
+      "cause": "river-margin reed bed",
+      "cell": [
+        275,
+        307
+      ],
+      "material_key": "fibre",
+      "node_id": "res:src_crown_reed:04",
+      "region_id": "r_ashen_crown",
+      "renewal": "seasonal regrowth",
+      "required_capabilities": [],
+      "site_id": "src_crown_reed",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "riverine",
+      "cause": "river-margin reed bed",
+      "cell": [
+        268,
+        316
+      ],
+      "material_key": "fibre",
+      "node_id": "res:src_crown_reed:05",
+      "region_id": "r_ashen_crown",
+      "renewal": "seasonal regrowth",
+      "required_capabilities": [],
+      "site_id": "src_crown_reed",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "riverine",
+      "cause": "river-margin reed bed",
+      "cell": [
+        267,
+        304
+      ],
+      "material_key": "fibre",
+      "node_id": "res:src_crown_reed:06",
+      "region_id": "r_ashen_crown",
+      "renewal": "seasonal regrowth",
+      "required_capabilities": [],
+      "site_id": "src_crown_reed",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "ruin_field",
+      "cause": "postern road barrels",
+      "cell": [
+        402,
+        220
+      ],
+      "material_key": "salvage",
+      "node_id": "res:src_crown_salvage:01",
+      "region_id": "r_ashen_crown",
+      "renewal": "road cache restock",
+      "required_capabilities": [],
+      "site_id": "src_crown_salvage",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "ruin_field",
+      "cause": "postern road barrels",
+      "cell": [
+        397,
+        222
+      ],
+      "material_key": "salvage",
+      "node_id": "res:src_crown_salvage:02",
+      "region_id": "r_ashen_crown",
+      "renewal": "road cache restock",
+      "required_capabilities": [],
+      "site_id": "src_crown_salvage",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "ruin_field",
+      "cause": "postern road barrels",
+      "cell": [
+        400,
+        216
+      ],
+      "material_key": "salvage",
+      "node_id": "res:src_crown_salvage:03",
+      "region_id": "r_ashen_crown",
+      "renewal": "road cache restock",
+      "required_capabilities": [],
+      "site_id": "src_crown_salvage",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "ruin_field",
+      "cause": "postern road barrels",
+      "cell": [
+        403,
+        224
+      ],
+      "material_key": "salvage",
+      "node_id": "res:src_crown_salvage:04",
+      "region_id": "r_ashen_crown",
+      "renewal": "road cache restock",
+      "required_capabilities": [],
+      "site_id": "src_crown_salvage",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "ruin_field",
+      "cause": "postern road barrels",
+      "cell": [
+        395,
+        219
+      ],
+      "material_key": "salvage",
+      "node_id": "res:src_crown_salvage:05",
+      "region_id": "r_ashen_crown",
+      "renewal": "road cache restock",
+      "required_capabilities": [],
+      "site_id": "src_crown_salvage",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "ruin_field",
+      "cause": "postern road barrels",
+      "cell": [
+        405,
+        217
+      ],
+      "material_key": "salvage",
+      "node_id": "res:src_crown_salvage:06",
+      "region_id": "r_ashen_crown",
+      "renewal": "road cache restock",
+      "required_capabilities": [],
+      "site_id": "src_crown_salvage",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "alpine_snow",
+      "cause": "granite contact skarn",
+      "cell": [
+        602,
+        160
+      ],
+      "material_key": "glacial_iron",
+      "node_id": "res:src_frost_skarn:01",
+      "region_id": "r_frost_crown",
+      "renewal": "thaw-season vein",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_frost_skarn",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "alpine_snow",
+      "cause": "granite contact skarn",
+      "cell": [
+        600,
+        156
+      ],
+      "material_key": "glacial_iron",
+      "node_id": "res:src_frost_skarn:02",
+      "region_id": "r_frost_crown",
+      "renewal": "thaw-season vein",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_frost_skarn",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "alpine_snow",
+      "cause": "granite contact skarn",
+      "cell": [
+        603,
+        164
+      ],
+      "material_key": "glacial_iron",
+      "node_id": "res:src_frost_skarn:03",
+      "region_id": "r_frost_crown",
+      "renewal": "thaw-season vein",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_frost_skarn",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "alpine_snow",
+      "cause": "granite contact skarn",
+      "cell": [
+        605,
+        157
+      ],
+      "material_key": "glacial_iron",
+      "node_id": "res:src_frost_skarn:04",
+      "region_id": "r_frost_crown",
+      "renewal": "thaw-season vein",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_frost_skarn",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "alpine_snow",
+      "cause": "granite contact skarn",
+      "cell": [
+        598,
+        166
+      ],
+      "material_key": "glacial_iron",
+      "node_id": "res:src_frost_skarn:05",
+      "region_id": "r_frost_crown",
+      "renewal": "thaw-season vein",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_frost_skarn",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "alpine_snow",
+      "cause": "granite contact skarn",
+      "cell": [
+        606,
+        162
+      ],
+      "material_key": "glacial_iron",
+      "node_id": "res:src_frost_skarn:06",
+      "region_id": "r_frost_crown",
+      "renewal": "thaw-season vein",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_frost_skarn",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "boreal_forest",
+      "cause": "cold-stressed conifer stand",
+      "cell": [
+        562,
+        220
+      ],
+      "material_key": "frost_resin",
+      "node_id": "res:src_frost_resin:01",
+      "region_id": "r_frost_crown",
+      "renewal": "tapped stand cooldown",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_frost_resin",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "boreal_forest",
+      "cause": "cold-stressed conifer stand",
+      "cell": [
+        557,
+        222
+      ],
+      "material_key": "frost_resin",
+      "node_id": "res:src_frost_resin:02",
+      "region_id": "r_frost_crown",
+      "renewal": "tapped stand cooldown",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_frost_resin",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "boreal_forest",
+      "cause": "cold-stressed conifer stand",
+      "cell": [
+        560,
+        216
+      ],
+      "material_key": "frost_resin",
+      "node_id": "res:src_frost_resin:03",
+      "region_id": "r_frost_crown",
+      "renewal": "tapped stand cooldown",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_frost_resin",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "boreal_forest",
+      "cause": "cold-stressed conifer stand",
+      "cell": [
+        563,
+        224
+      ],
+      "material_key": "frost_resin",
+      "node_id": "res:src_frost_resin:04",
+      "region_id": "r_frost_crown",
+      "renewal": "tapped stand cooldown",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_frost_resin",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "boreal_forest",
+      "cause": "cold-stressed conifer stand",
+      "cell": [
+        555,
+        219
+      ],
+      "material_key": "frost_resin",
+      "node_id": "res:src_frost_resin:05",
+      "region_id": "r_frost_crown",
+      "renewal": "tapped stand cooldown",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_frost_resin",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "boreal_forest",
+      "cause": "cold-stressed conifer stand",
+      "cell": [
+        565,
+        217
+      ],
+      "material_key": "frost_resin",
+      "node_id": "res:src_frost_resin:06",
+      "region_id": "r_frost_crown",
+      "renewal": "tapped stand cooldown",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_frost_resin",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "alpine_snow",
+      "cause": "hydrothermal vug",
+      "cell": [
+        682,
+        120
+      ],
+      "material_key": "aether_crystal",
+      "node_id": "res:src_frost_vug:01",
+      "region_id": "r_frost_crown",
+      "renewal": "finite vug",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_frost_vug",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "alpine_snow",
+      "cause": "hydrothermal vug",
+      "cell": [
+        677,
+        122
+      ],
+      "material_key": "aether_crystal",
+      "node_id": "res:src_frost_vug:02",
+      "region_id": "r_frost_crown",
+      "renewal": "finite vug",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_frost_vug",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "alpine_snow",
+      "cause": "hydrothermal vug",
+      "cell": [
+        680,
+        116
+      ],
+      "material_key": "aether_crystal",
+      "node_id": "res:src_frost_vug:03",
+      "region_id": "r_frost_crown",
+      "renewal": "finite vug",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_frost_vug",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "alpine_snow",
+      "cause": "hydrothermal vug",
+      "cell": [
+        683,
+        124
+      ],
+      "material_key": "aether_crystal",
+      "node_id": "res:src_frost_vug:04",
+      "region_id": "r_frost_crown",
+      "renewal": "finite vug",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_frost_vug",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "coastal_scrub",
+      "cause": "wave-sorted cliff placer",
+      "cell": [
+        922,
+        80
+      ],
+      "material_key": "silica_sand",
+      "node_id": "res:src_glass_silica:01",
+      "region_id": "r_glasswind_coast",
+      "renewal": "tidal placer",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_glass_silica",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "coastal_scrub",
+      "cause": "wave-sorted cliff placer",
+      "cell": [
+        917,
+        82
+      ],
+      "material_key": "silica_sand",
+      "node_id": "res:src_glass_silica:02",
+      "region_id": "r_glasswind_coast",
+      "renewal": "tidal placer",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_glass_silica",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "coastal_scrub",
+      "cause": "wave-sorted cliff placer",
+      "cell": [
+        920,
+        76
+      ],
+      "material_key": "silica_sand",
+      "node_id": "res:src_glass_silica:03",
+      "region_id": "r_glasswind_coast",
+      "renewal": "tidal placer",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_glass_silica",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "coastal_scrub",
+      "cause": "wave-sorted cliff placer",
+      "cell": [
+        923,
+        84
+      ],
+      "material_key": "silica_sand",
+      "node_id": "res:src_glass_silica:04",
+      "region_id": "r_glasswind_coast",
+      "renewal": "tidal placer",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_glass_silica",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "coastal_scrub",
+      "cause": "wave-sorted cliff placer",
+      "cell": [
+        915,
+        79
+      ],
+      "material_key": "silica_sand",
+      "node_id": "res:src_glass_silica:05",
+      "region_id": "r_glasswind_coast",
+      "renewal": "tidal placer",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_glass_silica",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "coastal_scrub",
+      "cause": "wave-sorted cliff placer",
+      "cell": [
+        925,
+        77
+      ],
+      "material_key": "silica_sand",
+      "node_id": "res:src_glass_silica:06",
+      "region_id": "r_glasswind_coast",
+      "renewal": "tidal placer",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_glass_silica",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "coastal_scrub",
+      "cause": "fulgurite field",
+      "cell": [
+        880,
+        36
+      ],
+      "material_key": "storm_glass",
+      "node_id": "res:src_glass_storm:01",
+      "region_id": "r_glasswind_coast",
+      "renewal": "storm-event placer",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_glass_storm",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "coastal_scrub",
+      "cause": "fulgurite field",
+      "cell": [
+        883,
+        44
+      ],
+      "material_key": "storm_glass",
+      "node_id": "res:src_glass_storm:02",
+      "region_id": "r_glasswind_coast",
+      "renewal": "storm-event placer",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_glass_storm",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "coastal_scrub",
+      "cause": "fulgurite field",
+      "cell": [
+        875,
+        39
+      ],
+      "material_key": "storm_glass",
+      "node_id": "res:src_glass_storm:03",
+      "region_id": "r_glasswind_coast",
+      "renewal": "storm-event placer",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_glass_storm",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "coastal_scrub",
+      "cause": "fulgurite field",
+      "cell": [
+        885,
+        37
+      ],
+      "material_key": "storm_glass",
+      "node_id": "res:src_glass_storm:04",
+      "region_id": "r_glasswind_coast",
+      "renewal": "storm-event placer",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_glass_storm",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "boreal_forest",
+      "cause": "windward conifer stand",
+      "cell": [
+        822,
+        140
+      ],
+      "material_key": "timber",
+      "node_id": "res:src_glass_timber:01",
+      "region_id": "r_glasswind_coast",
+      "renewal": "regrowing stand",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_glass_timber",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "boreal_forest",
+      "cause": "windward conifer stand",
+      "cell": [
+        817,
+        142
+      ],
+      "material_key": "timber",
+      "node_id": "res:src_glass_timber:02",
+      "region_id": "r_glasswind_coast",
+      "renewal": "regrowing stand",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_glass_timber",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "boreal_forest",
+      "cause": "windward conifer stand",
+      "cell": [
+        820,
+        136
+      ],
+      "material_key": "timber",
+      "node_id": "res:src_glass_timber:03",
+      "region_id": "r_glasswind_coast",
+      "renewal": "regrowing stand",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_glass_timber",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "boreal_forest",
+      "cause": "windward conifer stand",
+      "cell": [
+        823,
+        144
+      ],
+      "material_key": "timber",
+      "node_id": "res:src_glass_timber:04",
+      "region_id": "r_glasswind_coast",
+      "renewal": "regrowing stand",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_glass_timber",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "boreal_forest",
+      "cause": "windward conifer stand",
+      "cell": [
+        815,
+        139
+      ],
+      "material_key": "timber",
+      "node_id": "res:src_glass_timber:05",
+      "region_id": "r_glasswind_coast",
+      "renewal": "regrowing stand",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_glass_timber",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "boreal_forest",
+      "cause": "windward conifer stand",
+      "cell": [
+        825,
+        137
+      ],
+      "material_key": "timber",
+      "node_id": "res:src_glass_timber:06",
+      "region_id": "r_glasswind_coast",
+      "renewal": "regrowing stand",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_glass_timber",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "volcanic_steppe",
+      "cause": "fumarole sublimation",
+      "cell": [
+        612,
+        380
+      ],
+      "material_key": "sulfur",
+      "node_id": "res:src_ember_sulfur:01",
+      "region_id": "r_ember_steppe",
+      "renewal": "fumarole cycle",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_ember_sulfur",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "volcanic_steppe",
+      "cause": "fumarole sublimation",
+      "cell": [
+        607,
+        382
+      ],
+      "material_key": "sulfur",
+      "node_id": "res:src_ember_sulfur:02",
+      "region_id": "r_ember_steppe",
+      "renewal": "fumarole cycle",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_ember_sulfur",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "volcanic_steppe",
+      "cause": "fumarole sublimation",
+      "cell": [
+        610,
+        376
+      ],
+      "material_key": "sulfur",
+      "node_id": "res:src_ember_sulfur:03",
+      "region_id": "r_ember_steppe",
+      "renewal": "fumarole cycle",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_ember_sulfur",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "volcanic_steppe",
+      "cause": "fumarole sublimation",
+      "cell": [
+        613,
+        384
+      ],
+      "material_key": "sulfur",
+      "node_id": "res:src_ember_sulfur:04",
+      "region_id": "r_ember_steppe",
+      "renewal": "fumarole cycle",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_ember_sulfur",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "volcanic_steppe",
+      "cause": "fumarole sublimation",
+      "cell": [
+        605,
+        379
+      ],
+      "material_key": "sulfur",
+      "node_id": "res:src_ember_sulfur:05",
+      "region_id": "r_ember_steppe",
+      "renewal": "fumarole cycle",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_ember_sulfur",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "volcanic_steppe",
+      "cause": "fumarole sublimation",
+      "cell": [
+        615,
+        377
+      ],
+      "material_key": "sulfur",
+      "node_id": "res:src_ember_sulfur:06",
+      "region_id": "r_ember_steppe",
+      "renewal": "fumarole cycle",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_ember_sulfur",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "volcanic_steppe",
+      "cause": "basalt-hosted vein",
+      "cell": [
+        652,
+        340
+      ],
+      "material_key": "copper",
+      "node_id": "res:src_ember_copper:01",
+      "region_id": "r_ember_steppe",
+      "renewal": "finite vein",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_ember_copper",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "volcanic_steppe",
+      "cause": "basalt-hosted vein",
+      "cell": [
+        647,
+        342
+      ],
+      "material_key": "copper",
+      "node_id": "res:src_ember_copper:02",
+      "region_id": "r_ember_steppe",
+      "renewal": "finite vein",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_ember_copper",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "volcanic_steppe",
+      "cause": "basalt-hosted vein",
+      "cell": [
+        650,
+        336
+      ],
+      "material_key": "copper",
+      "node_id": "res:src_ember_copper:03",
+      "region_id": "r_ember_steppe",
+      "renewal": "finite vein",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_ember_copper",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "volcanic_steppe",
+      "cause": "basalt-hosted vein",
+      "cell": [
+        653,
+        344
+      ],
+      "material_key": "copper",
+      "node_id": "res:src_ember_copper:04",
+      "region_id": "r_ember_steppe",
+      "renewal": "finite vein",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_ember_copper",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "volcanic_steppe",
+      "cause": "basalt-hosted vein",
+      "cell": [
+        645,
+        339
+      ],
+      "material_key": "copper",
+      "node_id": "res:src_ember_copper:05",
+      "region_id": "r_ember_steppe",
+      "renewal": "finite vein",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_ember_copper",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "volcanic_steppe",
+      "cause": "basalt-hosted vein",
+      "cell": [
+        655,
+        337
+      ],
+      "material_key": "copper",
+      "node_id": "res:src_ember_copper:06",
+      "region_id": "r_ember_steppe",
+      "renewal": "finite vein",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_ember_copper",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "ash_badland",
+      "cause": "rapid-cooled flow",
+      "cell": [
+        622,
+        440
+      ],
+      "material_key": "obsidian",
+      "node_id": "res:src_ember_obsidian:01",
+      "region_id": "r_ember_steppe",
+      "renewal": "fumarole-cycle exposure",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_ember_obsidian",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "ash_badland",
+      "cause": "rapid-cooled flow",
+      "cell": [
+        617,
+        442
+      ],
+      "material_key": "obsidian",
+      "node_id": "res:src_ember_obsidian:02",
+      "region_id": "r_ember_steppe",
+      "renewal": "fumarole-cycle exposure",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_ember_obsidian",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "ash_badland",
+      "cause": "rapid-cooled flow",
+      "cell": [
+        620,
+        436
+      ],
+      "material_key": "obsidian",
+      "node_id": "res:src_ember_obsidian:03",
+      "region_id": "r_ember_steppe",
+      "renewal": "fumarole-cycle exposure",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_ember_obsidian",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "ash_badland",
+      "cause": "rapid-cooled flow",
+      "cell": [
+        623,
+        444
+      ],
+      "material_key": "obsidian",
+      "node_id": "res:src_ember_obsidian:04",
+      "region_id": "r_ember_steppe",
+      "renewal": "fumarole-cycle exposure",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_ember_obsidian",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "salt_flat",
+      "cause": "evaporite pan crust",
+      "cell": [
+        880,
+        336
+      ],
+      "material_key": "salt",
+      "node_id": "res:src_saffron_salt:01",
+      "region_id": "r_saffron_coast",
+      "renewal": "dry-wind renewal",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_saffron_salt",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "salt_flat",
+      "cause": "evaporite pan crust",
+      "cell": [
+        885,
+        337
+      ],
+      "material_key": "salt",
+      "node_id": "res:src_saffron_salt:02",
+      "region_id": "r_saffron_coast",
+      "renewal": "dry-wind renewal",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_saffron_salt",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "salt_flat",
+      "cause": "evaporite pan crust",
+      "cell": [
+        877,
+        334
+      ],
+      "material_key": "salt",
+      "node_id": "res:src_saffron_salt:03",
+      "region_id": "r_saffron_coast",
+      "renewal": "dry-wind renewal",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_saffron_salt",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "salt_flat",
+      "cause": "evaporite pan crust",
+      "cell": [
+        883,
+        334
+      ],
+      "material_key": "salt",
+      "node_id": "res:src_saffron_salt:04",
+      "region_id": "r_saffron_coast",
+      "renewal": "dry-wind renewal",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_saffron_salt",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "salt_flat",
+      "cause": "evaporite pan crust",
+      "cell": [
+        873,
+        336
+      ],
+      "material_key": "salt",
+      "node_id": "res:src_saffron_salt:05",
+      "region_id": "r_saffron_coast",
+      "renewal": "dry-wind renewal",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_saffron_salt",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "salt_flat",
+      "cause": "evaporite pan crust",
+      "cell": [
+        888,
+        338
+      ],
+      "material_key": "salt",
+      "node_id": "res:src_saffron_salt:06",
+      "region_id": "r_saffron_coast",
+      "renewal": "dry-wind renewal",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_saffron_salt",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "arid_coast",
+      "cause": "wadi placer",
+      "cell": [
+        802,
+        320
+      ],
+      "material_key": "copper",
+      "node_id": "res:src_saffron_copper:01",
+      "region_id": "r_saffron_coast",
+      "renewal": "finite vein",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_saffron_copper",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "arid_coast",
+      "cause": "wadi placer",
+      "cell": [
+        797,
+        322
+      ],
+      "material_key": "copper",
+      "node_id": "res:src_saffron_copper:02",
+      "region_id": "r_saffron_coast",
+      "renewal": "finite vein",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_saffron_copper",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "arid_coast",
+      "cause": "wadi placer",
+      "cell": [
+        800,
+        316
+      ],
+      "material_key": "copper",
+      "node_id": "res:src_saffron_copper:03",
+      "region_id": "r_saffron_coast",
+      "renewal": "finite vein",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_saffron_copper",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "arid_coast",
+      "cause": "wadi placer",
+      "cell": [
+        803,
+        324
+      ],
+      "material_key": "copper",
+      "node_id": "res:src_saffron_copper:04",
+      "region_id": "r_saffron_coast",
+      "renewal": "finite vein",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_saffron_copper",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "arid_coast",
+      "cause": "wadi placer",
+      "cell": [
+        795,
+        319
+      ],
+      "material_key": "copper",
+      "node_id": "res:src_saffron_copper:05",
+      "region_id": "r_saffron_coast",
+      "renewal": "finite vein",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_saffron_copper",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "oasis",
+      "cause": "wadi well oasis",
+      "cell": [
+        782,
+        340
+      ],
+      "material_key": "fibre",
+      "node_id": "res:src_saffron_fibre:01",
+      "region_id": "r_saffron_coast",
+      "renewal": "seasonal regrowth",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_saffron_fibre",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "oasis",
+      "cause": "wadi well oasis",
+      "cell": [
+        777,
+        342
+      ],
+      "material_key": "fibre",
+      "node_id": "res:src_saffron_fibre:02",
+      "region_id": "r_saffron_coast",
+      "renewal": "seasonal regrowth",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_saffron_fibre",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "oasis",
+      "cause": "wadi well oasis",
+      "cell": [
+        780,
+        336
+      ],
+      "material_key": "fibre",
+      "node_id": "res:src_saffron_fibre:03",
+      "region_id": "r_saffron_coast",
+      "renewal": "seasonal regrowth",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_saffron_fibre",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "oasis",
+      "cause": "wadi well oasis",
+      "cell": [
+        783,
+        344
+      ],
+      "material_key": "fibre",
+      "node_id": "res:src_saffron_fibre:04",
+      "region_id": "r_saffron_coast",
+      "renewal": "seasonal regrowth",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_saffron_fibre",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "oasis",
+      "cause": "wadi well oasis",
+      "cell": [
+        775,
+        339
+      ],
+      "material_key": "fibre",
+      "node_id": "res:src_saffron_fibre:05",
+      "region_id": "r_saffron_coast",
+      "renewal": "seasonal regrowth",
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_saffron_fibre",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "tropical_forest",
+      "cause": "monsoon emergent grove",
+      "cell": [
+        602,
+        580
+      ],
+      "material_key": "hardwood",
+      "node_id": "res:src_verdant_hardwood:01",
+      "region_id": "r_verdant_fold",
+      "renewal": "slow grove",
+      "required_capabilities": [
+        "cap_filter",
+        "cap_climb"
+      ],
+      "site_id": "src_verdant_hardwood",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "tropical_forest",
+      "cause": "monsoon emergent grove",
+      "cell": [
+        597,
+        582
+      ],
+      "material_key": "hardwood",
+      "node_id": "res:src_verdant_hardwood:02",
+      "region_id": "r_verdant_fold",
+      "renewal": "slow grove",
+      "required_capabilities": [
+        "cap_filter",
+        "cap_climb"
+      ],
+      "site_id": "src_verdant_hardwood",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "tropical_forest",
+      "cause": "monsoon emergent grove",
+      "cell": [
+        600,
+        576
+      ],
+      "material_key": "hardwood",
+      "node_id": "res:src_verdant_hardwood:03",
+      "region_id": "r_verdant_fold",
+      "renewal": "slow grove",
+      "required_capabilities": [
+        "cap_filter",
+        "cap_climb"
+      ],
+      "site_id": "src_verdant_hardwood",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "tropical_forest",
+      "cause": "monsoon emergent grove",
+      "cell": [
+        603,
+        584
+      ],
+      "material_key": "hardwood",
+      "node_id": "res:src_verdant_hardwood:04",
+      "region_id": "r_verdant_fold",
+      "renewal": "slow grove",
+      "required_capabilities": [
+        "cap_filter",
+        "cap_climb"
+      ],
+      "site_id": "src_verdant_hardwood",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "tropical_forest",
+      "cause": "monsoon emergent grove",
+      "cell": [
+        595,
+        579
+      ],
+      "material_key": "hardwood",
+      "node_id": "res:src_verdant_hardwood:05",
+      "region_id": "r_verdant_fold",
+      "renewal": "slow grove",
+      "required_capabilities": [
+        "cap_filter",
+        "cap_climb"
+      ],
+      "site_id": "src_verdant_hardwood",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "tropical_forest",
+      "cause": "monsoon emergent grove",
+      "cell": [
+        605,
+        577
+      ],
+      "material_key": "hardwood",
+      "node_id": "res:src_verdant_hardwood:06",
+      "region_id": "r_verdant_fold",
+      "renewal": "slow grove",
+      "required_capabilities": [
+        "cap_filter",
+        "cap_climb"
+      ],
+      "site_id": "src_verdant_hardwood",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "tropical_forest",
+      "cause": "spore-hollow fauna",
+      "cell": [
+        622,
+        640
+      ],
+      "material_key": "venom_sac",
+      "node_id": "res:src_verdant_venom:01",
+      "region_id": "r_verdant_fold",
+      "renewal": "fauna respawn",
+      "required_capabilities": [
+        "cap_filter",
+        "cap_climb"
+      ],
+      "site_id": "src_verdant_venom",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "tropical_forest",
+      "cause": "spore-hollow fauna",
+      "cell": [
+        617,
+        642
+      ],
+      "material_key": "venom_sac",
+      "node_id": "res:src_verdant_venom:02",
+      "region_id": "r_verdant_fold",
+      "renewal": "fauna respawn",
+      "required_capabilities": [
+        "cap_filter",
+        "cap_climb"
+      ],
+      "site_id": "src_verdant_venom",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "tropical_forest",
+      "cause": "spore-hollow fauna",
+      "cell": [
+        620,
+        636
+      ],
+      "material_key": "venom_sac",
+      "node_id": "res:src_verdant_venom:03",
+      "region_id": "r_verdant_fold",
+      "renewal": "fauna respawn",
+      "required_capabilities": [
+        "cap_filter",
+        "cap_climb"
+      ],
+      "site_id": "src_verdant_venom",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "tropical_forest",
+      "cause": "spore-hollow fauna",
+      "cell": [
+        623,
+        644
+      ],
+      "material_key": "venom_sac",
+      "node_id": "res:src_verdant_venom:04",
+      "region_id": "r_verdant_fold",
+      "renewal": "fauna respawn",
+      "required_capabilities": [
+        "cap_filter",
+        "cap_climb"
+      ],
+      "site_id": "src_verdant_venom",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "tropical_forest",
+      "cause": "spore-hollow fauna",
+      "cell": [
+        615,
+        639
+      ],
+      "material_key": "venom_sac",
+      "node_id": "res:src_verdant_venom:05",
+      "region_id": "r_verdant_fold",
+      "renewal": "fauna respawn",
+      "required_capabilities": [
+        "cap_filter",
+        "cap_climb"
+      ],
+      "site_id": "src_verdant_venom",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "tropical_forest",
+      "cause": "liana belt",
+      "cell": [
+        562,
+        620
+      ],
+      "material_key": "rubber_sap",
+      "node_id": "res:src_verdant_sap:01",
+      "region_id": "r_verdant_fold",
+      "renewal": "tapped grove",
+      "required_capabilities": [
+        "cap_filter",
+        "cap_climb"
+      ],
+      "site_id": "src_verdant_sap",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "tropical_forest",
+      "cause": "liana belt",
+      "cell": [
+        557,
+        622
+      ],
+      "material_key": "rubber_sap",
+      "node_id": "res:src_verdant_sap:02",
+      "region_id": "r_verdant_fold",
+      "renewal": "tapped grove",
+      "required_capabilities": [
+        "cap_filter",
+        "cap_climb"
+      ],
+      "site_id": "src_verdant_sap",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "tropical_forest",
+      "cause": "liana belt",
+      "cell": [
+        560,
+        616
+      ],
+      "material_key": "rubber_sap",
+      "node_id": "res:src_verdant_sap:03",
+      "region_id": "r_verdant_fold",
+      "renewal": "tapped grove",
+      "required_capabilities": [
+        "cap_filter",
+        "cap_climb"
+      ],
+      "site_id": "src_verdant_sap",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "tropical_forest",
+      "cause": "liana belt",
+      "cell": [
+        563,
+        624
+      ],
+      "material_key": "rubber_sap",
+      "node_id": "res:src_verdant_sap:04",
+      "region_id": "r_verdant_fold",
+      "renewal": "tapped grove",
+      "required_capabilities": [
+        "cap_filter",
+        "cap_climb"
+      ],
+      "site_id": "src_verdant_sap",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "tropical_forest",
+      "cause": "liana belt",
+      "cell": [
+        555,
+        619
+      ],
+      "material_key": "rubber_sap",
+      "node_id": "res:src_verdant_sap:05",
+      "region_id": "r_verdant_fold",
+      "renewal": "tapped grove",
+      "required_capabilities": [
+        "cap_filter",
+        "cap_climb"
+      ],
+      "site_id": "src_verdant_sap",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "mangrove",
+      "cause": "mollusc nursery",
+      "cell": [
+        822,
+        620
+      ],
+      "material_key": "pearl",
+      "node_id": "res:src_pearl_bed:01",
+      "region_id": "r_pearl_mangroves",
+      "renewal": "bed cooldown",
+      "required_capabilities": [
+        "cap_boat"
+      ],
+      "site_id": "src_pearl_bed",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "mangrove",
+      "cause": "mollusc nursery",
+      "cell": [
+        817,
+        622
+      ],
+      "material_key": "pearl",
+      "node_id": "res:src_pearl_bed:02",
+      "region_id": "r_pearl_mangroves",
+      "renewal": "bed cooldown",
+      "required_capabilities": [
+        "cap_boat"
+      ],
+      "site_id": "src_pearl_bed",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "mangrove",
+      "cause": "mollusc nursery",
+      "cell": [
+        820,
+        616
+      ],
+      "material_key": "pearl",
+      "node_id": "res:src_pearl_bed:03",
+      "region_id": "r_pearl_mangroves",
+      "renewal": "bed cooldown",
+      "required_capabilities": [
+        "cap_boat"
+      ],
+      "site_id": "src_pearl_bed",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "mangrove",
+      "cause": "mollusc nursery",
+      "cell": [
+        823,
+        624
+      ],
+      "material_key": "pearl",
+      "node_id": "res:src_pearl_bed:04",
+      "region_id": "r_pearl_mangroves",
+      "renewal": "bed cooldown",
+      "required_capabilities": [
+        "cap_boat"
+      ],
+      "site_id": "src_pearl_bed",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "mangrove",
+      "cause": "mollusc nursery",
+      "cell": [
+        815,
+        619
+      ],
+      "material_key": "pearl",
+      "node_id": "res:src_pearl_bed:05",
+      "region_id": "r_pearl_mangroves",
+      "renewal": "bed cooldown",
+      "required_capabilities": [
+        "cap_boat"
+      ],
+      "site_id": "src_pearl_bed",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "mangrove",
+      "cause": "mollusc nursery",
+      "cell": [
+        825,
+        617
+      ],
+      "material_key": "pearl",
+      "node_id": "res:src_pearl_bed:06",
+      "region_id": "r_pearl_mangroves",
+      "renewal": "bed cooldown",
+      "required_capabilities": [
+        "cap_boat"
+      ],
+      "site_id": "src_pearl_bed",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "tidal_flat",
+      "cause": "tide-locked grotto bed",
+      "cell": [
+        902,
+        680
+      ],
+      "material_key": "abyssal_pearl",
+      "node_id": "res:src_pearl_abyss:01",
+      "region_id": "r_pearl_mangroves",
+      "renewal": "tide-gated bed",
+      "required_capabilities": [
+        "cap_boat"
+      ],
+      "site_id": "src_pearl_abyss",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "tidal_flat",
+      "cause": "tide-locked grotto bed",
+      "cell": [
+        897,
+        682
+      ],
+      "material_key": "abyssal_pearl",
+      "node_id": "res:src_pearl_abyss:02",
+      "region_id": "r_pearl_mangroves",
+      "renewal": "tide-gated bed",
+      "required_capabilities": [
+        "cap_boat"
+      ],
+      "site_id": "src_pearl_abyss",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "tidal_flat",
+      "cause": "tide-locked grotto bed",
+      "cell": [
+        900,
+        676
+      ],
+      "material_key": "abyssal_pearl",
+      "node_id": "res:src_pearl_abyss:03",
+      "region_id": "r_pearl_mangroves",
+      "renewal": "tide-gated bed",
+      "required_capabilities": [
+        "cap_boat"
+      ],
+      "site_id": "src_pearl_abyss",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "temperate_mixed",
+      "cause": "old moraine oak stand",
+      "cell": [
+        142,
+        460
+      ],
+      "material_key": "timber",
+      "node_id": "res:src_amber_timber:01",
+      "region_id": "r_amberwood",
+      "renewal": "regrowing stand",
+      "required_capabilities": [],
+      "site_id": "src_amber_timber",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "temperate_mixed",
+      "cause": "old moraine oak stand",
+      "cell": [
+        140,
+        456
+      ],
+      "material_key": "timber",
+      "node_id": "res:src_amber_timber:02",
+      "region_id": "r_amberwood",
+      "renewal": "regrowing stand",
+      "required_capabilities": [],
+      "site_id": "src_amber_timber",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "temperate_mixed",
+      "cause": "old moraine oak stand",
+      "cell": [
+        143,
+        464
+      ],
+      "material_key": "timber",
+      "node_id": "res:src_amber_timber:03",
+      "region_id": "r_amberwood",
+      "renewal": "regrowing stand",
+      "required_capabilities": [],
+      "site_id": "src_amber_timber",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "temperate_mixed",
+      "cause": "old moraine oak stand",
+      "cell": [
+        135,
+        459
+      ],
+      "material_key": "timber",
+      "node_id": "res:src_amber_timber:04",
+      "region_id": "r_amberwood",
+      "renewal": "regrowing stand",
+      "required_capabilities": [],
+      "site_id": "src_amber_timber",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "temperate_mixed",
+      "cause": "old moraine oak stand",
+      "cell": [
+        145,
+        457
+      ],
+      "material_key": "timber",
+      "node_id": "res:src_amber_timber:05",
+      "region_id": "r_amberwood",
+      "renewal": "regrowing stand",
+      "required_capabilities": [],
+      "site_id": "src_amber_timber",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "temperate_mixed",
+      "cause": "old moraine oak stand",
+      "cell": [
+        137,
+        454
+      ],
+      "material_key": "timber",
+      "node_id": "res:src_amber_timber:06",
+      "region_id": "r_amberwood",
+      "renewal": "regrowing stand",
+      "required_capabilities": [],
+      "site_id": "src_amber_timber",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "temperate_mixed",
+      "cause": "old moraine oak stand",
+      "cell": [
+        146,
+        462
+      ],
+      "material_key": "timber",
+      "node_id": "res:src_amber_timber:07",
+      "region_id": "r_amberwood",
+      "renewal": "regrowing stand",
+      "required_capabilities": [],
+      "site_id": "src_amber_timber",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "orchard",
+      "cause": "orchard understorey",
+      "cell": [
+        102,
+        500
+      ],
+      "material_key": "rare_herb",
+      "node_id": "res:src_amber_herb:01",
+      "region_id": "r_amberwood",
+      "renewal": "plot or wild patch",
+      "required_capabilities": [],
+      "site_id": "src_amber_herb",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "orchard",
+      "cause": "orchard understorey",
+      "cell": [
+        97,
+        502
+      ],
+      "material_key": "rare_herb",
+      "node_id": "res:src_amber_herb:02",
+      "region_id": "r_amberwood",
+      "renewal": "plot or wild patch",
+      "required_capabilities": [],
+      "site_id": "src_amber_herb",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "orchard",
+      "cause": "orchard understorey",
+      "cell": [
+        100,
+        496
+      ],
+      "material_key": "rare_herb",
+      "node_id": "res:src_amber_herb:03",
+      "region_id": "r_amberwood",
+      "renewal": "plot or wild patch",
+      "required_capabilities": [],
+      "site_id": "src_amber_herb",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "orchard",
+      "cause": "orchard understorey",
+      "cell": [
+        103,
+        504
+      ],
+      "material_key": "rare_herb",
+      "node_id": "res:src_amber_herb:04",
+      "region_id": "r_amberwood",
+      "renewal": "plot or wild patch",
+      "required_capabilities": [],
+      "site_id": "src_amber_herb",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "orchard",
+      "cause": "orchard understorey",
+      "cell": [
+        95,
+        499
+      ],
+      "material_key": "rare_herb",
+      "node_id": "res:src_amber_herb:05",
+      "region_id": "r_amberwood",
+      "renewal": "plot or wild patch",
+      "required_capabilities": [],
+      "site_id": "src_amber_herb",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "orchard",
+      "cause": "orchard understorey",
+      "cell": [
+        105,
+        497
+      ],
+      "material_key": "rare_herb",
+      "node_id": "res:src_amber_herb:06",
+      "region_id": "r_amberwood",
+      "renewal": "plot or wild patch",
+      "required_capabilities": [],
+      "site_id": "src_amber_herb",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "orchard",
+      "cause": "orchard pollinator hives",
+      "cell": [
+        182,
+        440
+      ],
+      "material_key": "honey",
+      "node_id": "res:src_amber_honey:01",
+      "region_id": "r_amberwood",
+      "renewal": "hive cooldown",
+      "required_capabilities": [],
+      "site_id": "src_amber_honey",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "orchard",
+      "cause": "orchard pollinator hives",
+      "cell": [
+        177,
+        442
+      ],
+      "material_key": "honey",
+      "node_id": "res:src_amber_honey:02",
+      "region_id": "r_amberwood",
+      "renewal": "hive cooldown",
+      "required_capabilities": [],
+      "site_id": "src_amber_honey",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "orchard",
+      "cause": "orchard pollinator hives",
+      "cell": [
+        180,
+        436
+      ],
+      "material_key": "honey",
+      "node_id": "res:src_amber_honey:03",
+      "region_id": "r_amberwood",
+      "renewal": "hive cooldown",
+      "required_capabilities": [],
+      "site_id": "src_amber_honey",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "orchard",
+      "cause": "orchard pollinator hives",
+      "cell": [
+        183,
+        444
+      ],
+      "material_key": "honey",
+      "node_id": "res:src_amber_honey:04",
+      "region_id": "r_amberwood",
+      "renewal": "hive cooldown",
+      "required_capabilities": [],
+      "site_id": "src_amber_honey",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "freshwater_marsh",
+      "cause": "lake-margin reed bed",
+      "cell": [
+        322,
+        520
+      ],
+      "material_key": "reed_fibre",
+      "node_id": "res:src_mere_reed:01",
+      "region_id": "r_mirrormere",
+      "renewal": "seasonal bed",
+      "required_capabilities": [],
+      "site_id": "src_mere_reed",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "freshwater_marsh",
+      "cause": "lake-margin reed bed",
+      "cell": [
+        317,
+        522
+      ],
+      "material_key": "reed_fibre",
+      "node_id": "res:src_mere_reed:02",
+      "region_id": "r_mirrormere",
+      "renewal": "seasonal bed",
+      "required_capabilities": [],
+      "site_id": "src_mere_reed",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "freshwater_marsh",
+      "cause": "lake-margin reed bed",
+      "cell": [
+        320,
+        516
+      ],
+      "material_key": "reed_fibre",
+      "node_id": "res:src_mere_reed:03",
+      "region_id": "r_mirrormere",
+      "renewal": "seasonal bed",
+      "required_capabilities": [],
+      "site_id": "src_mere_reed",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "freshwater_marsh",
+      "cause": "lake-margin reed bed",
+      "cell": [
+        323,
+        524
+      ],
+      "material_key": "reed_fibre",
+      "node_id": "res:src_mere_reed:04",
+      "region_id": "r_mirrormere",
+      "renewal": "seasonal bed",
+      "required_capabilities": [],
+      "site_id": "src_mere_reed",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "freshwater_marsh",
+      "cause": "lake-margin reed bed",
+      "cell": [
+        315,
+        519
+      ],
+      "material_key": "reed_fibre",
+      "node_id": "res:src_mere_reed:05",
+      "region_id": "r_mirrormere",
+      "renewal": "seasonal bed",
+      "required_capabilities": [],
+      "site_id": "src_mere_reed",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "freshwater_marsh",
+      "cause": "lake-margin reed bed",
+      "cell": [
+        325,
+        517
+      ],
+      "material_key": "reed_fibre",
+      "node_id": "res:src_mere_reed:06",
+      "region_id": "r_mirrormere",
+      "renewal": "seasonal bed",
+      "required_capabilities": [],
+      "site_id": "src_mere_reed",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "freshwater_marsh",
+      "cause": "lake-margin reed bed",
+      "cell": [
+        318,
+        526
+      ],
+      "material_key": "reed_fibre",
+      "node_id": "res:src_mere_reed:07",
+      "region_id": "r_mirrormere",
+      "renewal": "seasonal bed",
+      "required_capabilities": [],
+      "site_id": "src_mere_reed",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "riverine",
+      "cause": "lacustrine silt lens",
+      "cell": [
+        380,
+        514
+      ],
+      "material_key": "clay",
+      "node_id": "res:src_mere_clay:01",
+      "region_id": "r_mirrormere",
+      "renewal": "finite lens",
+      "required_capabilities": [],
+      "site_id": "src_mere_clay",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "riverine",
+      "cause": "lacustrine silt lens",
+      "cell": [
+        388,
+        512
+      ],
+      "material_key": "clay",
+      "node_id": "res:src_mere_clay:02",
+      "region_id": "r_mirrormere",
+      "renewal": "finite lens",
+      "required_capabilities": [],
+      "site_id": "src_mere_clay",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "riverine",
+      "cause": "lacustrine silt lens",
+      "cell": [
+        376,
+        514
+      ],
+      "material_key": "clay",
+      "node_id": "res:src_mere_clay:03",
+      "region_id": "r_mirrormere",
+      "renewal": "finite lens",
+      "required_capabilities": [],
+      "site_id": "src_mere_clay",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "riverine",
+      "cause": "lacustrine silt lens",
+      "cell": [
+        384,
+        515
+      ],
+      "material_key": "clay",
+      "node_id": "res:src_mere_clay:04",
+      "region_id": "r_mirrormere",
+      "renewal": "finite lens",
+      "required_capabilities": [],
+      "site_id": "src_mere_clay",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "riverine",
+      "cause": "lacustrine silt lens",
+      "cell": [
+        391,
+        511
+      ],
+      "material_key": "clay",
+      "node_id": "res:src_mere_clay:05",
+      "region_id": "r_mirrormere",
+      "renewal": "finite lens",
+      "required_capabilities": [],
+      "site_id": "src_mere_clay",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "lake",
+      "cause": "freshwater mollusc bed",
+      "cell": [
+        312,
+        435
+      ],
+      "material_key": "pearl",
+      "node_id": "res:src_mere_pearl:01",
+      "region_id": "r_mirrormere",
+      "renewal": "bed cooldown",
+      "required_capabilities": [],
+      "site_id": "src_mere_pearl",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "lake",
+      "cause": "freshwater mollusc bed",
+      "cell": [
+        307,
+        437
+      ],
+      "material_key": "pearl",
+      "node_id": "res:src_mere_pearl:02",
+      "region_id": "r_mirrormere",
+      "renewal": "bed cooldown",
+      "required_capabilities": [],
+      "site_id": "src_mere_pearl",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "lake",
+      "cause": "freshwater mollusc bed",
+      "cell": [
+        310,
+        431
+      ],
+      "material_key": "pearl",
+      "node_id": "res:src_mere_pearl:03",
+      "region_id": "r_mirrormere",
+      "renewal": "bed cooldown",
+      "required_capabilities": [],
+      "site_id": "src_mere_pearl",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "lake",
+      "cause": "freshwater mollusc bed",
+      "cell": [
+        305,
+        434
+      ],
+      "material_key": "pearl",
+      "node_id": "res:src_mere_pearl:04",
+      "region_id": "r_mirrormere",
+      "renewal": "bed cooldown",
+      "required_capabilities": [],
+      "site_id": "src_mere_pearl",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "karst_orchard",
+      "cause": "tower karst quarry",
+      "cell": [
+        162,
+        620
+      ],
+      "material_key": "limestone",
+      "node_id": "res:src_sunken_lime:01",
+      "region_id": "r_sunken_orchard",
+      "renewal": "finite quarry",
+      "required_capabilities": [
+        "cap_deepward"
+      ],
+      "site_id": "src_sunken_lime",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "karst_orchard",
+      "cause": "tower karst quarry",
+      "cell": [
+        157,
+        622
+      ],
+      "material_key": "limestone",
+      "node_id": "res:src_sunken_lime:02",
+      "region_id": "r_sunken_orchard",
+      "renewal": "finite quarry",
+      "required_capabilities": [
+        "cap_deepward"
+      ],
+      "site_id": "src_sunken_lime",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "karst_orchard",
+      "cause": "tower karst quarry",
+      "cell": [
+        160,
+        616
+      ],
+      "material_key": "limestone",
+      "node_id": "res:src_sunken_lime:03",
+      "region_id": "r_sunken_orchard",
+      "renewal": "finite quarry",
+      "required_capabilities": [
+        "cap_deepward"
+      ],
+      "site_id": "src_sunken_lime",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "karst_orchard",
+      "cause": "tower karst quarry",
+      "cell": [
+        163,
+        624
+      ],
+      "material_key": "limestone",
+      "node_id": "res:src_sunken_lime:04",
+      "region_id": "r_sunken_orchard",
+      "renewal": "finite quarry",
+      "required_capabilities": [
+        "cap_deepward"
+      ],
+      "site_id": "src_sunken_lime",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "karst_orchard",
+      "cause": "tower karst quarry",
+      "cell": [
+        155,
+        619
+      ],
+      "material_key": "limestone",
+      "node_id": "res:src_sunken_lime:05",
+      "region_id": "r_sunken_orchard",
+      "renewal": "finite quarry",
+      "required_capabilities": [
+        "cap_deepward"
+      ],
+      "site_id": "src_sunken_lime",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "karst_orchard",
+      "cause": "tower karst quarry",
+      "cell": [
+        165,
+        617
+      ],
+      "material_key": "limestone",
+      "node_id": "res:src_sunken_lime:06",
+      "region_id": "r_sunken_orchard",
+      "renewal": "finite quarry",
+      "required_capabilities": [
+        "cap_deepward"
+      ],
+      "site_id": "src_sunken_lime",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "karst_orchard",
+      "cause": "cenote rim understorey",
+      "cell": [
+        82,
+        620
+      ],
+      "material_key": "rare_herb",
+      "node_id": "res:src_sunken_herb:01",
+      "region_id": "r_sunken_orchard",
+      "renewal": "plot or wild patch",
+      "required_capabilities": [
+        "cap_deepward"
+      ],
+      "site_id": "src_sunken_herb",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "karst_orchard",
+      "cause": "cenote rim understorey",
+      "cell": [
+        77,
+        622
+      ],
+      "material_key": "rare_herb",
+      "node_id": "res:src_sunken_herb:02",
+      "region_id": "r_sunken_orchard",
+      "renewal": "plot or wild patch",
+      "required_capabilities": [
+        "cap_deepward"
+      ],
+      "site_id": "src_sunken_herb",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "karst_orchard",
+      "cause": "cenote rim understorey",
+      "cell": [
+        80,
+        616
+      ],
+      "material_key": "rare_herb",
+      "node_id": "res:src_sunken_herb:03",
+      "region_id": "r_sunken_orchard",
+      "renewal": "plot or wild patch",
+      "required_capabilities": [
+        "cap_deepward"
+      ],
+      "site_id": "src_sunken_herb",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "karst_orchard",
+      "cause": "cenote rim understorey",
+      "cell": [
+        83,
+        624
+      ],
+      "material_key": "rare_herb",
+      "node_id": "res:src_sunken_herb:04",
+      "region_id": "r_sunken_orchard",
+      "renewal": "plot or wild patch",
+      "required_capabilities": [
+        "cap_deepward"
+      ],
+      "site_id": "src_sunken_herb",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "karst_orchard",
+      "cause": "cenote rim understorey",
+      "cell": [
+        75,
+        619
+      ],
+      "material_key": "rare_herb",
+      "node_id": "res:src_sunken_herb:05",
+      "region_id": "r_sunken_orchard",
+      "renewal": "plot or wild patch",
+      "required_capabilities": [
+        "cap_deepward"
+      ],
+      "site_id": "src_sunken_herb",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "peat_bog",
+      "cause": "acid peat accumulation",
+      "cell": [
+        362,
+        660
+      ],
+      "material_key": "peat",
+      "node_id": "res:src_fen_peat:01",
+      "region_id": "r_ashwater_fen",
+      "renewal": "very slow cut",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_fen_peat",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "peat_bog",
+      "cause": "acid peat accumulation",
+      "cell": [
+        357,
+        662
+      ],
+      "material_key": "peat",
+      "node_id": "res:src_fen_peat:02",
+      "region_id": "r_ashwater_fen",
+      "renewal": "very slow cut",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_fen_peat",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "peat_bog",
+      "cause": "acid peat accumulation",
+      "cell": [
+        360,
+        656
+      ],
+      "material_key": "peat",
+      "node_id": "res:src_fen_peat:03",
+      "region_id": "r_ashwater_fen",
+      "renewal": "very slow cut",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_fen_peat",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "peat_bog",
+      "cause": "acid peat accumulation",
+      "cell": [
+        363,
+        664
+      ],
+      "material_key": "peat",
+      "node_id": "res:src_fen_peat:04",
+      "region_id": "r_ashwater_fen",
+      "renewal": "very slow cut",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_fen_peat",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "peat_bog",
+      "cause": "acid peat accumulation",
+      "cell": [
+        355,
+        659
+      ],
+      "material_key": "peat",
+      "node_id": "res:src_fen_peat:05",
+      "region_id": "r_ashwater_fen",
+      "renewal": "very slow cut",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_fen_peat",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "peat_bog",
+      "cause": "acid peat accumulation",
+      "cell": [
+        365,
+        657
+      ],
+      "material_key": "peat",
+      "node_id": "res:src_fen_peat:06",
+      "region_id": "r_ashwater_fen",
+      "renewal": "very slow cut",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_fen_peat",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "peat_bog",
+      "cause": "redox margin precipitation",
+      "cell": [
+        317,
+        622
+      ],
+      "material_key": "bog_iron",
+      "node_id": "res:src_fen_bogiron:01",
+      "region_id": "r_ashwater_fen",
+      "renewal": "slow redox renewal",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_fen_bogiron",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "peat_bog",
+      "cause": "redox margin precipitation",
+      "cell": [
+        320,
+        616
+      ],
+      "material_key": "bog_iron",
+      "node_id": "res:src_fen_bogiron:02",
+      "region_id": "r_ashwater_fen",
+      "renewal": "slow redox renewal",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_fen_bogiron",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "peat_bog",
+      "cause": "redox margin precipitation",
+      "cell": [
+        315,
+        619
+      ],
+      "material_key": "bog_iron",
+      "node_id": "res:src_fen_bogiron:03",
+      "region_id": "r_ashwater_fen",
+      "renewal": "slow redox renewal",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_fen_bogiron",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "peat_bog",
+      "cause": "redox margin precipitation",
+      "cell": [
+        318,
+        626
+      ],
+      "material_key": "bog_iron",
+      "node_id": "res:src_fen_bogiron:04",
+      "region_id": "r_ashwater_fen",
+      "renewal": "slow redox renewal",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_fen_bogiron",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "peat_bog",
+      "cause": "redox margin precipitation",
+      "cell": [
+        317,
+        614
+      ],
+      "material_key": "bog_iron",
+      "node_id": "res:src_fen_bogiron:05",
+      "region_id": "r_ashwater_fen",
+      "renewal": "slow redox renewal",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_fen_bogiron",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "freshwater_marsh",
+      "cause": "fen predator habitat",
+      "cell": [
+        402,
+        640
+      ],
+      "material_key": "venom_sac",
+      "node_id": "res:src_fen_venom:01",
+      "region_id": "r_ashwater_fen",
+      "renewal": "fauna respawn",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_fen_venom",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "freshwater_marsh",
+      "cause": "fen predator habitat",
+      "cell": [
+        397,
+        642
+      ],
+      "material_key": "venom_sac",
+      "node_id": "res:src_fen_venom:02",
+      "region_id": "r_ashwater_fen",
+      "renewal": "fauna respawn",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_fen_venom",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "freshwater_marsh",
+      "cause": "fen predator habitat",
+      "cell": [
+        400,
+        636
+      ],
+      "material_key": "venom_sac",
+      "node_id": "res:src_fen_venom:03",
+      "region_id": "r_ashwater_fen",
+      "renewal": "fauna respawn",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_fen_venom",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "freshwater_marsh",
+      "cause": "fen predator habitat",
+      "cell": [
+        403,
+        644
+      ],
+      "material_key": "venom_sac",
+      "node_id": "res:src_fen_venom:04",
+      "region_id": "r_ashwater_fen",
+      "renewal": "fauna respawn",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_fen_venom",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "freshwater_marsh",
+      "cause": "fen predator habitat",
+      "cell": [
+        395,
+        639
+      ],
+      "material_key": "venom_sac",
+      "node_id": "res:src_fen_venom:05",
+      "region_id": "r_ashwater_fen",
+      "renewal": "fauna respawn",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_fen_venom",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "volcanic_steppe",
+      "cause": "cooled lava flow beside the caravan road",
+      "cell": [
+        702,
+        400
+      ],
+      "material_key": "basalt",
+      "node_id": "res:src_ember_basalt:01",
+      "region_id": "r_ember_steppe",
+      "renewal": "finite flow",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_ember_basalt",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "volcanic_steppe",
+      "cause": "cooled lava flow beside the caravan road",
+      "cell": [
+        697,
+        402
+      ],
+      "material_key": "basalt",
+      "node_id": "res:src_ember_basalt:02",
+      "region_id": "r_ember_steppe",
+      "renewal": "finite flow",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_ember_basalt",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "volcanic_steppe",
+      "cause": "cooled lava flow beside the caravan road",
+      "cell": [
+        700,
+        396
+      ],
+      "material_key": "basalt",
+      "node_id": "res:src_ember_basalt:03",
+      "region_id": "r_ember_steppe",
+      "renewal": "finite flow",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_ember_basalt",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "volcanic_steppe",
+      "cause": "cooled lava flow beside the caravan road",
+      "cell": [
+        703,
+        404
+      ],
+      "material_key": "basalt",
+      "node_id": "res:src_ember_basalt:04",
+      "region_id": "r_ember_steppe",
+      "renewal": "finite flow",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_ember_basalt",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "volcanic_steppe",
+      "cause": "cooled lava flow beside the caravan road",
+      "cell": [
+        695,
+        399
+      ],
+      "material_key": "basalt",
+      "node_id": "res:src_ember_basalt:05",
+      "region_id": "r_ember_steppe",
+      "renewal": "finite flow",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_ember_basalt",
+      "status": "CONTRACT_NOT_SPAWNED"
+    },
+    {
+      "biome_constraint": "volcanic_steppe",
+      "cause": "cooled lava flow beside the caravan road",
+      "cell": [
+        705,
+        397
+      ],
+      "material_key": "basalt",
+      "node_id": "res:src_ember_basalt:06",
+      "region_id": "r_ember_steppe",
+      "renewal": "finite flow",
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_ember_basalt",
+      "status": "CONTRACT_NOT_SPAWNED"
+    }
+  ],
+  "note": "material_key is a contract, not a final A3 item_id. a0_item_hints are legacy survival aliases only; fibre/rare_herb/venom_sac/frost_resin/peat/hardwood/bog_iron/glacial_iron require the explicit A1/A3 decision contract. A3 owns final mapping, yields, recipes and prices.",
+  "poi_consumers": [
+    {
+      "material_keys": [
+        "salvage",
+        "iron"
+      ],
+      "poi_id": "poi_crown_waystation"
+    },
+    {
+      "material_keys": [
+        "copper",
+        "salvage"
+      ],
+      "poi_id": "poi_crown_relay_shed"
+    },
+    {
+      "material_keys": [
+        "stone",
+        "iron"
+      ],
+      "poi_id": "poi_crown_quarry"
+    },
+    {
+      "material_keys": [
+        "timber",
+        "salvage"
+      ],
+      "poi_id": "poi_crown_orchard_gate"
+    },
+    {
+      "material_keys": [
+        "reed_fibre",
+        "clay"
+      ],
+      "poi_id": "poi_crown_ferry_pile"
+    },
+    {
+      "material_keys": [
+        "salvage",
+        "stone"
+      ],
+      "poi_id": "poi_crown_barrow_field"
+    },
+    {
+      "material_keys": [
+        "glacial_iron",
+        "frost_resin"
+      ],
+      "poi_id": "poi_frost_wardhouse"
+    },
+    {
+      "material_keys": [
+        "aether_crystal",
+        "glacial_iron"
+      ],
+      "poi_id": "poi_frost_ice_cave"
+    },
+    {
+      "material_keys": [
+        "aether_crystal",
+        "storm_glass"
+      ],
+      "poi_id": "poi_frost_observatory"
+    },
+    {
+      "material_keys": [
+        "stone",
+        "frost_resin"
+      ],
+      "poi_id": "poi_frost_goat_pass"
+    },
+    {
+      "material_keys": [
+        "salvage",
+        "glacial_iron"
+      ],
+      "poi_id": "poi_frost_miners_hut"
+    },
+    {
+      "material_keys": [
+        "frost_resin",
+        "pearl"
+      ],
+      "poi_id": "poi_frost_tarn_shrine"
+    },
+    {
+      "material_keys": [
+        "storm_glass",
+        "silica_sand"
+      ],
+      "poi_id": "poi_glasswind_light"
+    },
+    {
+      "material_keys": [
+        "storm_glass",
+        "copper"
+      ],
+      "poi_id": "poi_glasswind_signal"
+    },
+    {
+      "material_keys": [
+        "salvage",
+        "iron",
+        "pearl"
+      ],
+      "poi_id": "poi_glasswind_wreck"
+    },
+    {
+      "material_keys": [
+        "salvage",
+        "silica_sand"
+      ],
+      "poi_id": "poi_glasswind_smuggler"
+    },
+    {
+      "material_keys": [
+        "silica_sand",
+        "salt"
+      ],
+      "poi_id": "poi_glasswind_gullery"
+    },
+    {
+      "material_keys": [
+        "timber",
+        "stone"
+      ],
+      "poi_id": "poi_glasswind_watch"
+    },
+    {
+      "material_keys": [
+        "copper",
+        "sulfur",
+        "salvage"
+      ],
+      "poi_id": "poi_ember_old_forge"
+    },
+    {
+      "material_keys": [
+        "iron",
+        "fibre"
+      ],
+      "poi_id": "poi_ember_piton_works"
+    },
+    {
+      "material_keys": [
+        "obsidian",
+        "copper",
+        "sulfur"
+      ],
+      "poi_id": "poi_ember_convict_mine"
+    },
+    {
+      "material_keys": [
+        "salvage",
+        "sulfur"
+      ],
+      "poi_id": "poi_ember_cinder_camp"
+    },
+    {
+      "material_keys": [
+        "sulfur",
+        "obsidian"
+      ],
+      "poi_id": "poi_ember_fumarole"
+    },
+    {
+      "material_keys": [
+        "basalt",
+        "stone"
+      ],
+      "poi_id": "poi_ember_basalt_gate"
+    },
+    {
+      "material_keys": [
+        "salt",
+        "copper",
+        "salvage"
+      ],
+      "poi_id": "poi_ember_caravan_serai"
+    },
+    {
+      "material_keys": [
+        "hardwood",
+        "rubber_sap",
+        "salvage"
+      ],
+      "poi_id": "poi_saffron_drydock"
+    },
+    {
+      "material_keys": [
+        "salt",
+        "copper"
+      ],
+      "poi_id": "poi_saffron_salt_pan"
+    },
+    {
+      "material_keys": [
+        "salt",
+        "fibre",
+        "salvage"
+      ],
+      "poi_id": "poi_saffron_caravan"
+    },
+    {
+      "material_keys": [
+        "fibre",
+        "rare_herb"
+      ],
+      "poi_id": "poi_saffron_wadi_well"
+    },
+    {
+      "material_keys": [
+        "pearl",
+        "limestone"
+      ],
+      "poi_id": "poi_saffron_coral_tomb"
+    },
+    {
+      "material_keys": [
+        "salvage",
+        "pearl"
+      ],
+      "poi_id": "poi_saffron_customs"
+    },
+    {
+      "material_keys": [
+        "hardwood",
+        "rubber_sap",
+        "aether_crystal"
+      ],
+      "poi_id": "poi_verdant_root_lift"
+    },
+    {
+      "material_keys": [
+        "venom_sac",
+        "aether_crystal"
+      ],
+      "poi_id": "poi_verdant_canopy_temple"
+    },
+    {
+      "material_keys": [
+        "rare_herb",
+        "venom_sac"
+      ],
+      "poi_id": "poi_verdant_spore_hollow"
+    },
+    {
+      "material_keys": [
+        "hardwood",
+        "rare_herb",
+        "honey"
+      ],
+      "poi_id": "poi_verdant_terraces"
+    },
+    {
+      "material_keys": [
+        "timber",
+        "venom_sac"
+      ],
+      "poi_id": "poi_verdant_hunter_camp"
+    },
+    {
+      "material_keys": [
+        "copper",
+        "aether_crystal"
+      ],
+      "poi_id": "poi_verdant_river_gate"
+    },
+    {
+      "material_keys": [
+        "abyssal_pearl",
+        "pearl",
+        "salvage"
+      ],
+      "poi_id": "poi_pearl_customs"
+    },
+    {
+      "material_keys": [
+        "pearl",
+        "hardwood",
+        "salt"
+      ],
+      "poi_id": "poi_pearl_stilt_village"
+    },
+    {
+      "material_keys": [
+        "abyssal_pearl",
+        "pearl"
+      ],
+      "poi_id": "poi_pearl_grotto"
+    },
+    {
+      "material_keys": [
+        "salvage",
+        "pearl"
+      ],
+      "poi_id": "poi_pearl_smuggler"
+    },
+    {
+      "material_keys": [
+        "timber",
+        "salt"
+      ],
+      "poi_id": "poi_pearl_beacon"
+    },
+    {
+      "material_keys": [
+        "pearl",
+        "abyssal_pearl"
+      ],
+      "poi_id": "poi_pearl_nursery"
+    },
+    {
+      "material_keys": [
+        "timber",
+        "stone",
+        "iron"
+      ],
+      "poi_id": "poi_amberwood_mill"
+    },
+    {
+      "material_keys": [
+        "rare_herb",
+        "fibre",
+        "honey"
+      ],
+      "poi_id": "poi_amberwood_apothecary"
+    },
+    {
+      "material_keys": [
+        "timber",
+        "honey",
+        "rare_herb"
+      ],
+      "poi_id": "poi_amberwood_orchard"
+    },
+    {
+      "material_keys": [
+        "salvage",
+        "stone"
+      ],
+      "poi_id": "poi_amberwood_barrow"
+    },
+    {
+      "material_keys": [
+        "reed_fibre",
+        "clay"
+      ],
+      "poi_id": "poi_amberwood_ferry"
+    },
+    {
+      "material_keys": [
+        "timber",
+        "stone"
+      ],
+      "poi_id": "poi_amberwood_watch"
+    },
+    {
+      "material_keys": [
+        "reed_fibre",
+        "clay",
+        "pearl"
+      ],
+      "poi_id": "poi_mirrormere_piles"
+    },
+    {
+      "material_keys": [
+        "stone",
+        "pearl",
+        "salvage"
+      ],
+      "poi_id": "poi_mirrormere_causeway"
+    },
+    {
+      "material_keys": [
+        "aether_crystal",
+        "clay"
+      ],
+      "poi_id": "poi_mirrormere_observatory"
+    },
+    {
+      "material_keys": [
+        "reed_fibre",
+        "rare_herb"
+      ],
+      "poi_id": "poi_mirrormere_reed_holt"
+    },
+    {
+      "material_keys": [
+        "hardwood",
+        "fibre"
+      ],
+      "poi_id": "poi_mirrormere_ferry"
+    },
+    {
+      "material_keys": [
+        "salvage",
+        "pearl"
+      ],
+      "poi_id": "poi_mirrormere_smuggler"
+    },
+    {
+      "material_keys": [
+        "aether_crystal",
+        "limestone"
+      ],
+      "poi_id": "poi_sunken_cenote"
+    },
+    {
+      "material_keys": [
+        "hardwood",
+        "rare_herb"
+      ],
+      "poi_id": "poi_sunken_graft"
+    },
+    {
+      "material_keys": [
+        "limestone",
+        "aether_crystal"
+      ],
+      "poi_id": "poi_sunken_tower"
+    },
+    {
+      "material_keys": [
+        "pearl",
+        "limestone"
+      ],
+      "poi_id": "poi_sunken_subspring"
+    },
+    {
+      "material_keys": [
+        "timber",
+        "stone"
+      ],
+      "poi_id": "poi_sunken_watch"
+    },
+    {
+      "material_keys": [
+        "salvage",
+        "hardwood"
+      ],
+      "poi_id": "poi_sunken_wreck"
+    },
+    {
+      "material_keys": [
+        "copper",
+        "bog_iron",
+        "salvage"
+      ],
+      "poi_id": "poi_ashwater_pump"
+    },
+    {
+      "material_keys": [
+        "venom_sac",
+        "aether_crystal"
+      ],
+      "poi_id": "poi_ashwater_shrine"
+    },
+    {
+      "material_keys": [
+        "hardwood",
+        "bog_iron"
+      ],
+      "poi_id": "poi_ashwater_boardwalk"
+    },
+    {
+      "material_keys": [
+        "bog_iron",
+        "rare_herb"
+      ],
+      "poi_id": "poi_ashwater_resurgence"
+    },
+    {
+      "material_keys": [
+        "salvage",
+        "venom_sac"
+      ],
+      "poi_id": "poi_ashwater_bog_camp"
+    },
+    {
+      "material_keys": [
+        "timber",
+        "peat"
+      ],
+      "poi_id": "poi_ashwater_watch"
+    },
+    {
+      "material_keys": [
+        "stone",
+        "salvage"
+      ],
+      "poi_id": "poi_crown_north_watch"
+    },
+    {
+      "material_keys": [
+        "stone",
+        "fibre"
+      ],
+      "poi_id": "poi_crown_rim_shrine"
+    },
+    {
+      "material_keys": [
+        "copper",
+        "salvage"
+      ],
+      "poi_id": "poi_crown_old_signal"
+    },
+    {
+      "material_keys": [
+        "stone",
+        "iron"
+      ],
+      "poi_id": "poi_crown_tuff_terrace"
+    },
+    {
+      "material_keys": [
+        "salvage",
+        "fibre"
+      ],
+      "poi_id": "poi_crown_herder_camp"
+    },
+    {
+      "material_keys": [
+        "stone",
+        "glacial_iron"
+      ],
+      "poi_id": "poi_frost_north_gate"
+    },
+    {
+      "material_keys": [
+        "frost_resin",
+        "stone"
+      ],
+      "poi_id": "poi_frost_rime_cairn"
+    },
+    {
+      "material_keys": [
+        "glacial_iron",
+        "timber"
+      ],
+      "poi_id": "poi_frost_glacier_mill"
+    },
+    {
+      "material_keys": [
+        "salvage",
+        "frost_resin"
+      ],
+      "poi_id": "poi_frost_avalanche_hut"
+    },
+    {
+      "material_keys": [
+        "silica_sand",
+        "stone"
+      ],
+      "poi_id": "poi_glass_north_cliff"
+    },
+    {
+      "material_keys": [
+        "silica_sand",
+        "salt"
+      ],
+      "poi_id": "poi_glass_aukery"
+    },
+    {
+      "material_keys": [
+        "basalt",
+        "salvage"
+      ],
+      "poi_id": "poi_ember_east_watch"
+    },
+    {
+      "material_keys": [
+        "basalt",
+        "sulfur"
+      ],
+      "poi_id": "poi_ember_ash_quarry"
+    },
+    {
+      "material_keys": [
+        "salt",
+        "copper"
+      ],
+      "poi_id": "poi_saffron_south_pan"
+    },
+    {
+      "material_keys": [
+        "timber",
+        "salt"
+      ],
+      "poi_id": "poi_saffron_south_watch"
+    },
+    {
+      "material_keys": [
+        "timber",
+        "rare_herb"
+      ],
+      "poi_id": "poi_amber_west_holt"
+    },
+    {
+      "material_keys": [
+        "salvage",
+        "stone"
+      ],
+      "poi_id": "poi_amber_west_barrow"
+    },
+    {
+      "material_keys": [
+        "reed_fibre",
+        "clay"
+      ],
+      "poi_id": "poi_mere_east_pile"
+    },
+    {
+      "material_keys": [
+        "limestone",
+        "hardwood"
+      ],
+      "poi_id": "poi_verdant_south_gate"
+    },
+    {
+      "material_keys": [
+        "rare_herb",
+        "aether_crystal"
+      ],
+      "poi_id": "poi_verdant_south_shrine"
+    },
+    {
+      "material_keys": [
+        "timber",
+        "salt"
+      ],
+      "poi_id": "poi_pearl_east_beacon"
+    },
+    {
+      "material_keys": [
+        "pearl",
+        "salt"
+      ],
+      "poi_id": "poi_pearl_east_nursery"
+    },
+    {
+      "material_keys": [
+        "limestone",
+        "pearl"
+      ],
+      "poi_id": "poi_sunken_south_spring"
+    },
+    {
+      "material_keys": [
+        "copper",
+        "bog_iron"
+      ],
+      "poi_id": "poi_ashwater_south_pump"
+    },
+    {
+      "material_keys": [
+        "venom_sac",
+        "peat"
+      ],
+      "poi_id": "poi_ashwater_south_shrine"
+    },
+    {
+      "material_keys": [
+        "hardwood",
+        "bog_iron"
+      ],
+      "poi_id": "poi_ashwater_west_boardwalk"
+    },
+    {
+      "material_keys": [
+        "timber",
+        "stone",
+        "salvage"
+      ],
+      "poi_id": "poi_crown_south_mill"
+    },
+    {
+      "material_keys": [
+        "salvage",
+        "stone"
+      ],
+      "poi_id": "poi_crown_south_barrow"
+    },
+    {
+      "material_keys": [
+        "timber",
+        "stone"
+      ],
+      "poi_id": "poi_crown_south_watch"
+    },
+    {
+      "material_keys": [
+        "stone",
+        "iron"
+      ],
+      "poi_id": "poi_crown_south_quarry"
+    },
+    {
+      "material_keys": [
+        "timber",
+        "honey",
+        "rare_herb"
+      ],
+      "poi_id": "poi_crown_south_orchard"
+    },
+    {
+      "material_keys": [
+        "silica_sand",
+        "salt"
+      ],
+      "poi_id": "poi_glass_tide_watch"
+    },
+    {
+      "material_keys": [
+        "salt",
+        "stone"
+      ],
+      "poi_id": "poi_saffron_tide_watch"
+    },
+    {
+      "material_keys": [
+        "hardwood",
+        "venom_sac"
+      ],
+      "poi_id": "poi_verdant_east_blind"
+    },
+    {
+      "material_keys": [
+        "stone",
+        "frost_resin"
+      ],
+      "poi_id": "poi_frost_south_watch"
+    },
+    {
+      "material_keys": [
+        "basalt",
+        "salvage"
+      ],
+      "poi_id": "poi_ember_south_watch"
+    },
+    {
+      "material_keys": [
+        "hardwood",
+        "bog_iron"
+      ],
+      "poi_id": "poi_ashwater_south_boardwalk"
+    },
+    {
+      "material_keys": [
+        "timber",
+        "stone"
+      ],
+      "poi_id": "poi_amber_edge_watch"
+    },
+    {
+      "material_keys": [
+        "reed_fibre",
+        "clay"
+      ],
+      "poi_id": "poi_mere_south_pile"
+    },
+    {
+      "material_keys": [
+        "limestone",
+        "pearl"
+      ],
+      "poi_id": "poi_sunken_west_spring"
+    },
+    {
+      "material_keys": [
+        "timber",
+        "salt"
+      ],
+      "poi_id": "poi_pearl_north_beacon"
+    },
+    {
+      "material_keys": [],
+      "poi_id": "legacy_lm_crypt"
+    },
+    {
+      "material_keys": [],
+      "poi_id": "legacy_lm_ossuary"
+    },
+    {
+      "material_keys": [],
+      "poi_id": "legacy_lm_archive"
+    },
+    {
+      "material_keys": [],
+      "poi_id": "legacy_lm_reliquary"
+    },
+    {
+      "material_keys": [],
+      "poi_id": "legacy_lm_crucible"
+    },
+    {
+      "material_keys": [],
+      "poi_id": "legacy_lm_relay"
+    },
+    {
+      "material_keys": [],
+      "poi_id": "legacy_lm_beacon"
+    },
+    {
+      "material_keys": [],
+      "poi_id": "legacy_lm_divided"
+    },
+    {
+      "material_keys": [],
+      "poi_id": "legacy_lm_gate"
+    },
+    {
+      "material_keys": [],
+      "poi_id": "legacy_lm_throne"
+    }
+  ],
+  "schema": "soh.world.material_sources.v1",
+  "sites": [
+    {
+      "biome_constraint": "ruin_field",
+      "cause": "quarry face beside buffer road",
+      "center": [
+        430,
+        280
+      ],
+      "material_key": "stone",
+      "placed_count": 6,
+      "region_id": "r_ashen_crown",
+      "requested_count": 6,
+      "required_capabilities": [],
+      "site_id": "src_crown_tuff"
+    },
+    {
+      "biome_constraint": "moorland",
+      "cause": "weathered tuff seam",
+      "center": [
+        450,
+        260
+      ],
+      "material_key": "iron",
+      "placed_count": 5,
+      "region_id": "r_ashen_crown",
+      "requested_count": 5,
+      "required_capabilities": [],
+      "site_id": "src_crown_iron"
+    },
+    {
+      "biome_constraint": "riverine",
+      "cause": "river-margin reed bed",
+      "center": [
+        270,
+        310
+      ],
+      "material_key": "fibre",
+      "placed_count": 6,
+      "region_id": "r_ashen_crown",
+      "requested_count": 6,
+      "required_capabilities": [],
+      "site_id": "src_crown_reed"
+    },
+    {
+      "biome_constraint": "ruin_field",
+      "cause": "postern road barrels",
+      "center": [
+        400,
+        220
+      ],
+      "material_key": "salvage",
+      "placed_count": 6,
+      "region_id": "r_ashen_crown",
+      "requested_count": 6,
+      "required_capabilities": [],
+      "site_id": "src_crown_salvage"
+    },
+    {
+      "biome_constraint": "alpine_snow",
+      "cause": "granite contact skarn",
+      "center": [
+        600,
+        160
+      ],
+      "material_key": "glacial_iron",
+      "placed_count": 6,
+      "region_id": "r_frost_crown",
+      "requested_count": 6,
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_frost_skarn"
+    },
+    {
+      "biome_constraint": "boreal_forest",
+      "cause": "cold-stressed conifer stand",
+      "center": [
+        560,
+        220
+      ],
+      "material_key": "frost_resin",
+      "placed_count": 6,
+      "region_id": "r_frost_crown",
+      "requested_count": 6,
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_frost_resin"
+    },
+    {
+      "biome_constraint": "alpine_snow",
+      "cause": "hydrothermal vug",
+      "center": [
+        680,
+        120
+      ],
+      "material_key": "aether_crystal",
+      "placed_count": 4,
+      "region_id": "r_frost_crown",
+      "requested_count": 4,
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_frost_vug"
+    },
+    {
+      "biome_constraint": "coastal_scrub",
+      "cause": "wave-sorted cliff placer",
+      "center": [
+        920,
+        80
+      ],
+      "material_key": "silica_sand",
+      "placed_count": 6,
+      "region_id": "r_glasswind_coast",
+      "requested_count": 6,
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_glass_silica"
+    },
+    {
+      "biome_constraint": "coastal_scrub",
+      "cause": "fulgurite field",
+      "center": [
+        880,
+        40
+      ],
+      "material_key": "storm_glass",
+      "placed_count": 4,
+      "region_id": "r_glasswind_coast",
+      "requested_count": 4,
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_glass_storm"
+    },
+    {
+      "biome_constraint": "boreal_forest",
+      "cause": "windward conifer stand",
+      "center": [
+        820,
+        140
+      ],
+      "material_key": "timber",
+      "placed_count": 6,
+      "region_id": "r_glasswind_coast",
+      "requested_count": 6,
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_glass_timber"
+    },
+    {
+      "biome_constraint": "volcanic_steppe",
+      "cause": "fumarole sublimation",
+      "center": [
+        610,
+        380
+      ],
+      "material_key": "sulfur",
+      "placed_count": 6,
+      "region_id": "r_ember_steppe",
+      "requested_count": 6,
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_ember_sulfur"
+    },
+    {
+      "biome_constraint": "volcanic_steppe",
+      "cause": "basalt-hosted vein",
+      "center": [
+        650,
+        340
+      ],
+      "material_key": "copper",
+      "placed_count": 6,
+      "region_id": "r_ember_steppe",
+      "requested_count": 6,
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_ember_copper"
+    },
+    {
+      "biome_constraint": "ash_badland",
+      "cause": "rapid-cooled flow",
+      "center": [
+        620,
+        440
+      ],
+      "material_key": "obsidian",
+      "placed_count": 4,
+      "region_id": "r_ember_steppe",
+      "requested_count": 4,
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_ember_obsidian"
+    },
+    {
+      "biome_constraint": "salt_flat",
+      "cause": "evaporite pan crust",
+      "center": [
+        880,
+        340
+      ],
+      "material_key": "salt",
+      "placed_count": 6,
+      "region_id": "r_saffron_coast",
+      "requested_count": 6,
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_saffron_salt"
+    },
+    {
+      "biome_constraint": "arid_coast",
+      "cause": "wadi placer",
+      "center": [
+        800,
+        320
+      ],
+      "material_key": "copper",
+      "placed_count": 5,
+      "region_id": "r_saffron_coast",
+      "requested_count": 5,
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_saffron_copper"
+    },
+    {
+      "biome_constraint": "oasis",
+      "cause": "wadi well oasis",
+      "center": [
+        780,
+        340
+      ],
+      "material_key": "fibre",
+      "placed_count": 5,
+      "region_id": "r_saffron_coast",
+      "requested_count": 5,
+      "required_capabilities": [
+        "cap_thermal"
+      ],
+      "site_id": "src_saffron_fibre"
+    },
+    {
+      "biome_constraint": "tropical_forest",
+      "cause": "monsoon emergent grove",
+      "center": [
+        600,
+        580
+      ],
+      "material_key": "hardwood",
+      "placed_count": 6,
+      "region_id": "r_verdant_fold",
+      "requested_count": 6,
+      "required_capabilities": [
+        "cap_filter",
+        "cap_climb"
+      ],
+      "site_id": "src_verdant_hardwood"
+    },
+    {
+      "biome_constraint": "tropical_forest",
+      "cause": "spore-hollow fauna",
+      "center": [
+        620,
+        640
+      ],
+      "material_key": "venom_sac",
+      "placed_count": 5,
+      "region_id": "r_verdant_fold",
+      "requested_count": 5,
+      "required_capabilities": [
+        "cap_filter",
+        "cap_climb"
+      ],
+      "site_id": "src_verdant_venom"
+    },
+    {
+      "biome_constraint": "tropical_forest",
+      "cause": "liana belt",
+      "center": [
+        560,
+        620
+      ],
+      "material_key": "rubber_sap",
+      "placed_count": 5,
+      "region_id": "r_verdant_fold",
+      "requested_count": 5,
+      "required_capabilities": [
+        "cap_filter",
+        "cap_climb"
+      ],
+      "site_id": "src_verdant_sap"
+    },
+    {
+      "biome_constraint": "mangrove",
+      "cause": "mollusc nursery",
+      "center": [
+        820,
+        620
+      ],
+      "material_key": "pearl",
+      "placed_count": 6,
+      "region_id": "r_pearl_mangroves",
+      "requested_count": 6,
+      "required_capabilities": [
+        "cap_boat"
+      ],
+      "site_id": "src_pearl_bed"
+    },
+    {
+      "biome_constraint": "tidal_flat",
+      "cause": "tide-locked grotto bed",
+      "center": [
+        900,
+        680
+      ],
+      "material_key": "abyssal_pearl",
+      "placed_count": 3,
+      "region_id": "r_pearl_mangroves",
+      "requested_count": 3,
+      "required_capabilities": [
+        "cap_boat"
+      ],
+      "site_id": "src_pearl_abyss"
+    },
+    {
+      "biome_constraint": "temperate_mixed",
+      "cause": "old moraine oak stand",
+      "center": [
+        140,
+        460
+      ],
+      "material_key": "timber",
+      "placed_count": 7,
+      "region_id": "r_amberwood",
+      "requested_count": 7,
+      "required_capabilities": [],
+      "site_id": "src_amber_timber"
+    },
+    {
+      "biome_constraint": "orchard",
+      "cause": "orchard understorey",
+      "center": [
+        100,
+        500
+      ],
+      "material_key": "rare_herb",
+      "placed_count": 6,
+      "region_id": "r_amberwood",
+      "requested_count": 6,
+      "required_capabilities": [],
+      "site_id": "src_amber_herb"
+    },
+    {
+      "biome_constraint": "orchard",
+      "cause": "orchard pollinator hives",
+      "center": [
+        180,
+        440
+      ],
+      "material_key": "honey",
+      "placed_count": 4,
+      "region_id": "r_amberwood",
+      "requested_count": 4,
+      "required_capabilities": [],
+      "site_id": "src_amber_honey"
+    },
+    {
+      "biome_constraint": "freshwater_marsh",
+      "cause": "lake-margin reed bed",
+      "center": [
+        320,
+        520
+      ],
+      "material_key": "reed_fibre",
+      "placed_count": 7,
+      "region_id": "r_mirrormere",
+      "requested_count": 7,
+      "required_capabilities": [],
+      "site_id": "src_mere_reed"
+    },
+    {
+      "biome_constraint": "riverine",
+      "cause": "lacustrine silt lens",
+      "center": [
+        380,
+        500
+      ],
+      "material_key": "clay",
+      "placed_count": 5,
+      "region_id": "r_mirrormere",
+      "requested_count": 6,
+      "required_capabilities": [],
+      "site_id": "src_mere_clay"
+    },
+    {
+      "biome_constraint": "lake",
+      "cause": "freshwater mollusc bed",
+      "center": [
+        310,
+        435
+      ],
+      "material_key": "pearl",
+      "placed_count": 4,
+      "region_id": "r_mirrormere",
+      "requested_count": 4,
+      "required_capabilities": [],
+      "site_id": "src_mere_pearl"
+    },
+    {
+      "biome_constraint": "karst_orchard",
+      "cause": "tower karst quarry",
+      "center": [
+        160,
+        620
+      ],
+      "material_key": "limestone",
+      "placed_count": 6,
+      "region_id": "r_sunken_orchard",
+      "requested_count": 6,
+      "required_capabilities": [
+        "cap_deepward"
+      ],
+      "site_id": "src_sunken_lime"
+    },
+    {
+      "biome_constraint": "karst_orchard",
+      "cause": "cenote rim understorey",
+      "center": [
+        80,
+        620
+      ],
+      "material_key": "rare_herb",
+      "placed_count": 5,
+      "region_id": "r_sunken_orchard",
+      "requested_count": 5,
+      "required_capabilities": [
+        "cap_deepward"
+      ],
+      "site_id": "src_sunken_herb"
+    },
+    {
+      "biome_constraint": "peat_bog",
+      "cause": "acid peat accumulation",
+      "center": [
+        360,
+        660
+      ],
+      "material_key": "peat",
+      "placed_count": 6,
+      "region_id": "r_ashwater_fen",
+      "requested_count": 6,
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_fen_peat"
+    },
+    {
+      "biome_constraint": "peat_bog",
+      "cause": "redox margin precipitation",
+      "center": [
+        320,
+        620
+      ],
+      "material_key": "bog_iron",
+      "placed_count": 5,
+      "region_id": "r_ashwater_fen",
+      "requested_count": 5,
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_fen_bogiron"
+    },
+    {
+      "biome_constraint": "freshwater_marsh",
+      "cause": "fen predator habitat",
+      "center": [
+        400,
+        640
+      ],
+      "material_key": "venom_sac",
+      "placed_count": 5,
+      "region_id": "r_ashwater_fen",
+      "requested_count": 5,
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_fen_venom"
+    },
+    {
+      "biome_constraint": "volcanic_steppe",
+      "cause": "cooled lava flow beside the caravan road",
+      "center": [
+        700,
+        400
+      ],
+      "material_key": "basalt",
+      "placed_count": 6,
+      "region_id": "r_ember_steppe",
+      "requested_count": 6,
+      "required_capabilities": [
+        "cap_filter"
+      ],
+      "site_id": "src_ember_basalt"
+    }
+  ],
+  "status": "AUTHORED_CONTRACT_NOT_A3_INTEGRATED"
+}

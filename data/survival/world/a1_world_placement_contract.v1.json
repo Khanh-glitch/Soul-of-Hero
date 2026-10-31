@@ -1,0 +1,422 @@
+{
+  "schema": "soh.world.a1_placement_review.v1",
+  "status": "GEOGRAPHY_REVIEW_NATIVE_SOURCE_WINDOWS_PASS",
+  "authority": "A1 geography review of existing A8 proposals; not a competing six-territory system",
+  "source_pins": {
+    "a1_review_base_commit": "7d2b017c8a90b7d5e24ff85f065ff1b18548cd29",
+    "a8_commit": "02ad8b727298284c16ea7f469d43310021b40f20",
+    "a0_commit": "4b4b63f56b92c2f7b50d770554afd96d5d0a098b",
+    "world_plan_sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4",
+    "route_graph_sha256": "8bd03b27a794250dcdff365d908e2bbddf0fd3b01cca0d36d9b03cb6f0bac7e0",
+    "a8_territories": {
+      "path": "data/survival/world/references/a8_02ad8b72/ragnarok_six_territories.v1.json",
+      "sha256": "32856a7751ce395bdf9e70b4b0fe99b0224b1335207782e498839d4269f87797"
+    },
+    "a8_endpoints": {
+      "path": "data/survival/world/references/a8_02ad8b72/physical_ragnarok_endpoints.v1.json",
+      "sha256": "15746f9f0151b65e64df7e4aab44d346accef9087698382889395248c9cea47b"
+    }
+  },
+  "global_decisions": {
+    "six_territory_count_preserved": true,
+    "new_poi_count": 0,
+    "new_regions": 0,
+    "fixture_pixels_are_not_world_cells": true,
+    "all_placements_are_source_windows_until_A0_mounts_production": true,
+    "hazard_damage_and_Ragnarok_projection_NOT_TESTED": true,
+    "economy_rewards_bosses_stones_and_SaveService_untouched": true
+  },
+  "territory_reviews": [
+    {
+      "elder_id": "elder.ashen_crown",
+      "canonical_poi_id": "poi_crown_south_quarry",
+      "canonical_cell": [
+        30,
+        280
+      ],
+      "location_decision": "APPROVE_CANONICAL_LOCATION",
+      "ordinary_safe_threshold_cell": [
+        30,
+        278
+      ],
+      "approach_start_cell": [
+        56,
+        218
+      ],
+      "return_cell": [
+        56,
+        218
+      ],
+      "days_1_11_use": "early open stone/iron perimeter; no capability gate",
+      "route_review": "existing spur is valid; east/west phase reversal is A8 local-slice only, not a second world route",
+      "inner_access_status": "GATED_BY_EXISTING_POI_CAPABILITIES_NOT_NATIVE_DAMAGE_TESTED",
+      "production_status": "AUTHORED_SOURCE_WINDOW_NOT_PRODUCTION_MOUNTED"
+    },
+    {
+      "elder_id": "elder.frost_observatory",
+      "canonical_poi_id": "poi_frost_observatory",
+      "canonical_cell": [
+        720,
+        180
+      ],
+      "location_decision": "APPROVE_CANONICAL_LOCATION",
+      "ordinary_safe_threshold_cell": [
+        718,
+        178
+      ],
+      "approach_start_cell": [
+        800,
+        100
+      ],
+      "return_cell": [
+        800,
+        100
+      ],
+      "days_1_11_use": "mid lens/storm-glass perimeter; inner requires cap_power_1 + cap_thermal",
+      "route_review": "existing spur is valid; named ramps/ladders/gully are not present in A1 layers",
+      "inner_access_status": "GATED_BY_EXISTING_POI_CAPABILITIES_NOT_NATIVE_DAMAGE_TESTED",
+      "production_status": "AUTHORED_SOURCE_WINDOW_NOT_PRODUCTION_MOUNTED"
+    },
+    {
+      "elder_id": "elder.glasswind_light",
+      "canonical_poi_id": "poi_glasswind_light",
+      "canonical_cell": [
+        930,
+        120
+      ],
+      "location_decision": "APPROVE_CANONICAL_LOCATION",
+      "ordinary_safe_threshold_cell": [
+        928,
+        120
+      ],
+      "approach_start_cell": [
+        800,
+        100
+      ],
+      "return_cell": [
+        800,
+        100
+      ],
+      "days_1_11_use": "mid signal/storm-glass perimeter; inner requires cap_seal_2",
+      "route_review": "existing spur is valid; breakwater/tide-beach alternatives are not present in A1 layers",
+      "inner_access_status": "GATED_BY_EXISTING_POI_CAPABILITIES_NOT_NATIVE_DAMAGE_TESTED",
+      "production_status": "AUTHORED_SOURCE_WINDOW_NOT_PRODUCTION_MOUNTED"
+    },
+    {
+      "elder_id": "elder.ember_forge",
+      "canonical_poi_id": "poi_ember_old_forge",
+      "canonical_cell": [
+        580,
+        320
+      ],
+      "location_decision": "APPROVE_WITH_SAFE_PERIMETER_CORRECTION",
+      "ordinary_safe_threshold_cell": [
+        559,
+        322
+      ],
+      "approach_start_cell": [
+        540,
+        280
+      ],
+      "return_cell": [
+        540,
+        280
+      ],
+      "days_1_11_use": "mid forge/slag perimeter; inner acid gas requires cap_filter + cap_power_1 + cap_seal_1",
+      "route_review": "reject degenerate same-cell spur as approach proof; safe west threshold is the approved ordinary alternative",
+      "inner_access_status": "GATED_BY_EXISTING_POI_CAPABILITIES_NOT_NATIVE_DAMAGE_TESTED",
+      "production_status": "AUTHORED_SOURCE_WINDOW_NOT_PRODUCTION_MOUNTED"
+    },
+    {
+      "elder_id": "elder.verdant_temple",
+      "canonical_poi_id": "poi_verdant_canopy_temple",
+      "canonical_cell": [
+        640,
+        600
+      ],
+      "location_decision": "APPROVE_WITH_SAFE_PERIMETER_CORRECTION",
+      "ordinary_safe_threshold_cell": [
+        633,
+        660
+      ],
+      "approach_start_cell": [
+        660,
+        700
+      ],
+      "return_cell": [
+        660,
+        700
+      ],
+      "days_1_11_use": "late canopy/spore perimeter; inner requires cap_climb + cap_filter + cap_seal_3",
+      "route_review": "root ladders/ramps/bridges are not present in A1 layers; safe south threshold is the approved ordinary alternative",
+      "inner_access_status": "GATED_BY_EXISTING_POI_CAPABILITIES_NOT_NATIVE_DAMAGE_TESTED",
+      "production_status": "AUTHORED_SOURCE_WINDOW_NOT_PRODUCTION_MOUNTED"
+    },
+    {
+      "elder_id": "elder.pearl_grotto",
+      "canonical_poi_id": "poi_pearl_grotto",
+      "canonical_cell": [
+        900,
+        660
+      ],
+      "location_decision": "APPROVE_WITH_SAFE_PERIMETER_CORRECTION",
+      "ordinary_safe_threshold_cell": [
+        857,
+        690
+      ],
+      "approach_start_cell": [
+        860,
+        700
+      ],
+      "return_cell": [
+        860,
+        700
+      ],
+      "days_1_11_use": "late tide/pearl perimeter; inner tide requires cap_boat + cap_tide_ward",
+      "route_review": "north boat channel/tide paths are not present in A1 layers; safe south threshold is the approved ordinary alternative",
+      "inner_access_status": "GATED_BY_EXISTING_POI_CAPABILITIES_NOT_NATIVE_DAMAGE_TESTED",
+      "production_status": "AUTHORED_SOURCE_WINDOW_NOT_PRODUCTION_MOUNTED"
+    }
+  ],
+  "endpoint_reviews": [
+    {
+      "endpoint_id": "endpoint.ragnarok.deposit",
+      "existing_poi_id": "poi_crown_waystation",
+      "fixture_position_px_decision": "REJECT_AS_WORLD_COORDINATES",
+      "placement_decision": "APPROVE_RELOCATED_WORLD_SOCKET_FOR_A0_TRIAL",
+      "approved_socket_cell": [
+        404,
+        202
+      ],
+      "approved_stand_cell": [
+        404,
+        204
+      ],
+      "approach_start_cell": [
+        404,
+        207
+      ],
+      "return_cell": [
+        404,
+        207
+      ],
+      "socket_world_px": [
+        6472,
+        3240
+      ],
+      "stand_world_px": [
+        6472,
+        3279
+      ],
+      "stand_offset_px": [
+        0,
+        39
+      ],
+      "collision_size_px": [
+        28,
+        28
+      ],
+      "interaction_radius_px": 62,
+      "reserved_cells": [
+        [
+          404,
+          202
+        ],
+        [
+          404,
+          204
+        ]
+      ],
+      "collision_mode": "connector_annex",
+      "native_marker_frame": "cache_closed",
+      "native_marker_is_final_art": false,
+      "art_review": "secure cache chest frame is coherent for deposit; no wallet authority",
+      "production_status": "AUTHORED_SOURCE_WINDOW_NOT_PRODUCTION_MOUNTED"
+    },
+    {
+      "endpoint_id": "endpoint.ragnarok.fixed_vendor",
+      "existing_poi_id": "poi_crown_waystation",
+      "fixture_position_px_decision": "REJECT_AS_WORLD_COORDINATES",
+      "placement_decision": "APPROVE_RELOCATED_WORLD_SOCKET_FOR_A0_TRIAL",
+      "approved_socket_cell": [
+        412,
+        202
+      ],
+      "approved_stand_cell": [
+        412,
+        204
+      ],
+      "approach_start_cell": [
+        412,
+        207
+      ],
+      "return_cell": [
+        412,
+        207
+      ],
+      "socket_world_px": [
+        6600,
+        3240
+      ],
+      "stand_world_px": [
+        6600,
+        3279
+      ],
+      "stand_offset_px": [
+        0,
+        39
+      ],
+      "collision_size_px": [
+        28,
+        28
+      ],
+      "interaction_radius_px": 62,
+      "reserved_cells": [
+        [
+          412,
+          202
+        ],
+        [
+          412,
+          204
+        ]
+      ],
+      "collision_mode": "connector_annex",
+      "native_marker_frame": "signpost",
+      "native_marker_is_final_art": false,
+      "art_review": "generic signpost rejected as final vendor identity; A8 machine art required",
+      "production_status": "AUTHORED_SOURCE_WINDOW_NOT_PRODUCTION_MOUNTED"
+    },
+    {
+      "endpoint_id": "endpoint.ragnarok.recycler",
+      "existing_poi_id": "poi_amberwood_mill",
+      "fixture_position_px_decision": "REJECT_AS_WORLD_COORDINATES",
+      "placement_decision": "APPROVE_RELOCATED_WORLD_SOCKET_FOR_A0_TRIAL",
+      "approved_socket_cell": [
+        126,
+        440
+      ],
+      "approved_stand_cell": [
+        126,
+        442
+      ],
+      "approach_start_cell": [
+        126,
+        445
+      ],
+      "return_cell": [
+        126,
+        445
+      ],
+      "socket_world_px": [
+        2024,
+        7048
+      ],
+      "stand_world_px": [
+        2024,
+        7087
+      ],
+      "stand_offset_px": [
+        0,
+        39
+      ],
+      "collision_size_px": [
+        28,
+        28
+      ],
+      "interaction_radius_px": 62,
+      "reserved_cells": [
+        [
+          126,
+          440
+        ],
+        [
+          126,
+          442
+        ]
+      ],
+      "collision_mode": "a1_source_walk",
+      "native_marker_frame": null,
+      "native_marker_is_final_art": false,
+      "art_review": "56x56 mill_wheel at 1.5x is rejected as a 28px machine footprint; A8 recycler art required",
+      "production_status": "AUTHORED_SOURCE_WINDOW_NOT_PRODUCTION_MOUNTED"
+    },
+    {
+      "endpoint_id": "endpoint.ragnarok.evacuation",
+      "existing_poi_id": "poi_saffron_drydock",
+      "fixture_position_px_decision": "REJECT_AS_WORLD_COORDINATES",
+      "placement_decision": "APPROVE_RELOCATED_WORLD_SOCKET_FOR_A0_TRIAL",
+      "approved_socket_cell": [
+        894,
+        422
+      ],
+      "approved_stand_cell": [
+        894,
+        424
+      ],
+      "approach_start_cell": [
+        894,
+        427
+      ],
+      "return_cell": [
+        894,
+        427
+      ],
+      "socket_world_px": [
+        14312,
+        6760
+      ],
+      "stand_world_px": [
+        14312,
+        6799
+      ],
+      "stand_offset_px": [
+        0,
+        39
+      ],
+      "collision_size_px": [
+        28,
+        28
+      ],
+      "interaction_radius_px": 62,
+      "reserved_cells": [
+        [
+          894,
+          422
+        ],
+        [
+          894,
+          424
+        ]
+      ],
+      "collision_mode": "a1_source_walk",
+      "native_marker_frame": "signpost",
+      "native_marker_is_final_art": false,
+      "art_review": "generic signpost rejected as final evacuation identity; A8 drydock berth art required",
+      "production_status": "AUTHORED_SOURCE_WINDOW_NOT_PRODUCTION_MOUNTED"
+    }
+  ],
+  "consumer_handoff": {
+    "A0": "Mount only approved socket/stand cells with reserved collision; keep Hero and SaveService authority. All six territory entries remain unmounted source geography.",
+    "A8": "Keep existing elder/endpoint IDs. Replace fixture-only world assumptions with approved socket/stand offsets; provide distinct vendor/recycler/drydock visuals; do not emit rewards.",
+    "A3": "Use canonical POI/source IDs for later authorized economy. No quantity, price, chest yield or wallet mutation is approved here.",
+    "A7": "Independently compose these source windows with real Hero shape, forward/return and corner probes; do not infer production continent access from this fixture."
+  },
+  "native_evidence": {
+    "captured_on_sha": "90b6828791dddea4b42ab63a74490d420a952d7e",
+    "run_id": 41105179623,
+    "run_url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41105179623",
+    "job_id": 124239110476,
+    "checks": 70,
+    "failures": 0,
+    "captures": 20,
+    "reviews": 10,
+    "godot_crop_hashes": {
+      "matched": 181,
+      "mismatches": 0
+    },
+    "report": "docs/survival/world/evidence/placement/placement_native_report.json",
+    "contact_sheet": "docs/survival/world/evidence/placement/placement_goals_contact.png",
+    "scope": "REAL_GODOT_HERO_SHAPE_SOURCE_WINDOWS_NOT_PRODUCTION_MOUNT"
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "schema": "soh.world.a8_visual_contract.v1",
+  "owner": "A1",
+  "consumer": "A8",
+  "status": "EXECUTABLE_CONFORMANCE_TARGET_A8_KEEPS_CREATIVE_CONTROL",
+  "source_review": {
+    "pr": 26,
+    "head_sha": "5ccf7b3f",
+    "files": [
+      "A8_QUARRY_INTEGRATION_HANDOFF.md",
+      "quarry_integration_candidate.v1.json",
+      "native_poi_site.gd",
+      "native_poi_shell.gd",
+      "player_probe.gd",
+      "south_quarry.json",
+      "south_orchard_ruin.json",
+      "south_crown_mill.json"
+    ],
+    "latest_observed_pr26_head": "0e22d5f00532cf5e079b540e30a54281606fc757",
+    "latest_observation": "PR26 closeout states no A1 source change requested; 128x128 shell / doorway / canonical geometry preserved; exact RGBA crop compatibility reported against ad39bde6. File-level diff re-verification pending GitHub git transport recovery."
+  },
+  "requirements": {
+    "tile_px": 16,
+    "viewport_px": [
+      640,
+      360
+    ],
+    "camera_zoom": 1.0,
+    "texture_filter": "nearest",
+    "prop_scale": 1.0,
+    "integer_scale_only": true,
+    "perspective": "top-down three-quarter, feet anchor bottom-center",
+    "shared_palette_ramp": true,
+    "per_site_palette_swaps_allowed": false,
+    "ground_grid_px": 16,
+    "site_dimensions_divisible_by_tile": true,
+    "minimum_readable_feature_px": 4,
+    "collision_readability": "visual mass must not imply a new blocker; physical blockers remain source walk/collision/POI obstacles",
+    "blending": "stepped 2 px material transitions on the shared ramp; no smooth gradient stickers",
+    "lighting": "shared ambient profiles + warm shelter pockets; reserved soul/fire accents; no per-site arbitrary glow"
+  },
+  "observed_divergences": [
+    {
+      "id": "A8-VIS-01",
+      "rule": "integer_scale_only",
+      "observed": "rock_a drawn at 1.615x, rock_e at 2.4x, cart/crate at 3x, barrel at 2.75x",
+      "impact": "pixel density and outline weight drift between sites",
+      "decision": "REPLACE_WITH_UNSCALED_ATLAS_FRAMES"
+    },
+    {
+      "id": "A8-VIS-02",
+      "rule": "integer_scale_only",
+      "observed": "Cainos tree source 132x160 drawn into 122x153 (~0.92x / 0.96x)",
+      "impact": "non-integer resampling and incompatible bright fantasy palette",
+      "decision": "REJECT_IMPORT_LICENSE_UNPROVEN_AND_SCALE_MISMATCH"
+    },
+    {
+      "id": "A8-VIS-03",
+      "rule": "ground_grid_px",
+      "observed": "flat ground rects and a 48 px layout grid",
+      "impact": "ground does not blend with 16 px world tiles",
+      "decision": "USE_TILEMAPLAYER_16PX"
+    },
+    {
+      "id": "A8-VIS-04",
+      "rule": "shared_palette_ramp",
+      "observed": "per-site palettes",
+      "impact": "biomes read as unrelated sticker packs",
+      "decision": "USE_SHARED_MATERIAL_CULTURE"
+    },
+    {
+      "id": "A8-VIS-05",
+      "rule": "site_dimensions_divisible_by_tile",
+      "observed": "960x600 site; 600 / 16 = 37.5",
+      "impact": "local scene cannot seam into chunk grid without a crop/pad",
+      "decision": "A8_LOCAL_ART_MAY_KEEP_CANVAS_BUT_EXPORT_MUST_ALIGN_16PX"
+    },
+    {
+      "id": "A8-VIS-06",
+      "rule": "collision_readability",
+      "observed": "player_probe is an invisible circle; props are draw-only",
+      "impact": "fine for isolated interaction prototype, not production spatial proof",
+      "decision": "A0/A1_MOUNT_WITH_SOURCE_COLLISION_ONLY"
+    },
+    {
+      "id": "A8-VIS-07",
+      "rule": "shared_palette_ramp",
+      "observed": "compact 128x128 overworld shells still draw flat rects/circles and per-site palette accents",
+      "impact": "shell art does not yet share the survival atlas material culture",
+      "decision": "ADOPT_A1_SHELL_VISUALS_V1_KEEP_A8_COLLISION_AND_ENTRY"
+    }
+  ],
+  "conformance_evidence": {
+    "atlas": "data/survival/world/art/atlas.v1.json",
+    "grammar": "data/survival/world/art/world_art_grammar.v1.json",
+    "presentations": "data/survival/world/art/presentations.v1.json",
+    "native_fixture": "tests/survival/world/world_art_native_test.gd",
+    "a8_shell_visuals": "data/survival/world/art/a8_shell_visuals.v1.json"
+  },
+  "authority_boundary": "A1 supplies visual/spatial conformance data only. A8 keeps its interaction engine, local creative control and reward actions; A0 alone mounts production. No A3 economy or A8 gameplay code is changed here.",
+  "compact_shell_note": "A8 now supplies 128x128 overworld shells with 64,64 action socket and 64,108 entry portal. A1 supplies a visual skin only; A0 must still approve mount mode and preserve global coordinates. The 960x600 worksites remain interior/local."
+}

@@ -1,0 +1,106 @@
+{
+  "chunk_size": 64,
+  "frame": {
+    "h": 768,
+    "tile_px": 16,
+    "w": 1024
+  },
+  "layer_semantics": {
+    "build": {
+      "legacy_inset": "build=0 is preserved verbatim and MUST NOT be interpreted as construction forbidden",
+      "role": "historical_hint_not_final_authority",
+      "values": {
+        "0": "not_an_a1_candidate_or_legacy_non_authoritative",
+        "1": "a1_candidate_hint"
+      }
+    },
+    "build_permission": {
+      "final_authority": "A0 SurvivalBuildSystem.validate_cell plus live occupancy/physics",
+      "legacy_inset_value": 2,
+      "missing_delegate": "error_legacy_build_delegate_required_not_deny",
+      "role": "machine_readable_build_authority",
+      "values": {
+        "0": "deny_a1_candidate",
+        "1": "a1_candidate_requires_a0_validation",
+        "2": "delegate_to_a0_validate_cell"
+      }
+    },
+    "immutable_layers": [
+      "region",
+      "biome",
+      "surface",
+      "build",
+      "build_permission",
+      "hazard",
+      "preserved",
+      "elevation_band"
+    ],
+    "mutable_overlay_layers": [
+      "road",
+      "walk"
+    ],
+    "overlay_precedence": [
+      "static_chunk_layers",
+      "authored_world_repair_overlay_walk_road_only",
+      "legacy_dynamic_child_and_a0_occupancy_final_veto"
+    ],
+    "overlay_rules": [
+      "overlay may target walk or road only",
+      "overlay must not target preserved legacy cells",
+      "overlay must declare source_id, revision, cell, layer, value, expected_base",
+      "expected_base must match the currently resolved static/overlay value",
+      "overlays cannot grant capabilities, change hazards, or authorize construction",
+      "dynamic child collision and A0 occupancy always win over static/overlay hints"
+    ],
+    "preserved": {
+      "1": "legacy_inset_static_hint_only_build_and_dynamic_collision_delegate_to_a0"
+    }
+  },
+  "legacy_delegate_contract": {
+    "adapter_wrapper": "return {ok: reason.is_empty(), reason: reason}",
+    "build_zero_in_legacy_means": "delegate_not_deny",
+    "callable": "A0 SurvivalBuildSystem.validate_cell(cell) -> String",
+    "empty_reason_means": "allow",
+    "missing_delegate_means": "error_legacy_build_delegate_required"
+  },
+  "legacy_inset": {
+    "h": 256,
+    "w": 384,
+    "x": 0,
+    "y": 0
+  },
+  "native_playable": false,
+  "plan_sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4",
+  "required_layers": [
+    "region",
+    "biome",
+    "surface",
+    "walk",
+    "build",
+    "build_permission",
+    "hazard",
+    "road",
+    "preserved",
+    "elevation_band"
+  ],
+  "sample_cells": {
+    "legacy_legal_home": [
+      54,
+      222
+    ],
+    "legacy_protected_camp": [
+      56,
+      216
+    ],
+    "new_build_candidate": [
+      480,
+      240
+    ],
+    "new_road_no_build": [
+      400,
+      200
+    ]
+  },
+  "schema": "soh.world.reader_contract.v1",
+  "world_id": "world:soh_continent_v1"
+}

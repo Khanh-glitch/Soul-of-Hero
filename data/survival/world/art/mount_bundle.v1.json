@@ -1,0 +1,309 @@
+{
+  "memory_estimate": {
+    "scope": "RGBA8 atlas textures only; excludes TileMap/sprite instances",
+    "terrain": {
+      "size_px": [
+        512,
+        880
+      ],
+      "rgba8_bytes": 1802240,
+      "gpu_estimate_bytes": 1802240
+    },
+    "props": {
+      "size_px": [
+        1024,
+        572
+      ],
+      "rgba8_bytes": 2342912,
+      "gpu_estimate_bytes": 2342912
+    }
+  },
+  "schema": "soh.world.art_mount_bundle.v1",
+  "owner": "A1",
+  "status": "MOUNT_READY_DATA_A0_ALONE_MOUNTS_PRODUCTION",
+  "renderer": {
+    "script": "res://game/world_art/world_art_presentation.gd",
+    "shader": "res://game/world_art/world_art_ambient.gdshader",
+    "class": "WorldArtPresentation"
+  },
+  "atlas": {
+    "manifest": "data/survival/world/art/atlas.v1.json",
+    "manifest_sha256": "83d69373ca6c1258e8727800d0aa0c288851c34d25539c69c21ec9f5fc9d769a",
+    "terrain": "res://assets/environment/survival_world/terrain.png",
+    "props": "res://assets/environment/survival_world/props.png",
+    "terrain_sha256": "6128d8f41abe6962fe705431db20e762e0cca613ffc3eca29065727422737d1c",
+    "props_sha256": "8d4acf4028e0e065b901e78c59c65e5a68677fb75d46c04c7e5a029a76d27324"
+  },
+  "presentations_index": {
+    "path": "data/survival/world/art/presentations.v1.json",
+    "sha256": "45af8278a959e5e3e1aa1fa697a4856d46e63237822cbee131c95bb60e98c1ee"
+  },
+  "treatments": [
+    {
+      "treatment_id": "crown_roadside_visual_treatment",
+      "path": "data/survival/world/art/compiled/crown_roadside_visual_treatment.presentation.v1.json",
+      "sha256": "39f1a9a91614430c573aedf5bfd148808cd630422f7be3d04024d57de9b7b4c1",
+      "biome_profile": "ashen_crown",
+      "window_origin_cell": [
+        374,
+        186
+      ],
+      "window_size_cells": [
+        56,
+        48
+      ],
+      "placement_origin_px": [
+        0,
+        0
+      ],
+      "note": "Cells are absolute overworld cells; add the node at global (0,0)."
+    },
+    {
+      "treatment_id": "amberwood_apothecary_herb_margin",
+      "path": "data/survival/world/art/compiled/amberwood_apothecary_herb_margin.presentation.v1.json",
+      "sha256": "3857836c5bf389b59bed4f6b6448545e73e4b86839d22bb9cacf1c319a377cdf",
+      "biome_profile": "amberwood",
+      "window_origin_cell": [
+        64,
+        468
+      ],
+      "window_size_cells": [
+        56,
+        48
+      ],
+      "placement_origin_px": [
+        0,
+        0
+      ],
+      "note": "Cells are absolute overworld cells; add the node at global (0,0)."
+    },
+    {
+      "treatment_id": "frost_crown_shrine_skarn",
+      "path": "data/survival/world/art/compiled/frost_crown_shrine_skarn.presentation.v1.json",
+      "sha256": "28d602242b7c9deb40c77f985334771ab425233687b45d09befb361bb74e7792",
+      "biome_profile": "frost_crown",
+      "window_origin_cell": [
+        580,
+        112
+      ],
+      "window_size_cells": [
+        64,
+        60
+      ],
+      "placement_origin_px": [
+        0,
+        0
+      ],
+      "note": "Cells are absolute overworld cells; add the node at global (0,0)."
+    },
+    {
+      "treatment_id": "mirrormere_region_window",
+      "path": "data/survival/world/art/compiled/mirrormere_region_window.presentation.v1.json",
+      "sha256": "026fffbbea6f9f3a0858e155345e6e46c5a00595708a6848e340a7eb36d6d603",
+      "biome_profile": "mirrormere",
+      "window_origin_cell": [
+        336,
+        452
+      ],
+      "window_size_cells": [
+        80,
+        56
+      ],
+      "placement_origin_px": [
+        0,
+        0
+      ],
+      "note": "Cells are absolute overworld cells; add the node at global (0,0)."
+    },
+    {
+      "treatment_id": "glasswind_coast_region_window",
+      "path": "data/survival/world/art/compiled/glasswind_coast_region_window.presentation.v1.json",
+      "sha256": "311c2205d8856c368430e4300c1889aa67ba497ac0eb0fbeb8d0e66653d3b42e",
+      "biome_profile": "glasswind_coast",
+      "window_origin_cell": [
+        880,
+        64
+      ],
+      "window_size_cells": [
+        80,
+        64
+      ],
+      "placement_origin_px": [
+        0,
+        0
+      ],
+      "note": "Cells are absolute overworld cells; add the node at global (0,0)."
+    },
+    {
+      "treatment_id": "ember_steppe_region_window",
+      "path": "data/survival/world/art/compiled/ember_steppe_region_window.presentation.v1.json",
+      "sha256": "b2cc4aae5e43925e78f4e5c6b95ec7d1a32302f703f3655598024296127052b5",
+      "biome_profile": "ember_steppe",
+      "window_origin_cell": [
+        560,
+        304
+      ],
+      "window_size_cells": [
+        104,
+        88
+      ],
+      "placement_origin_px": [
+        0,
+        0
+      ],
+      "note": "Cells are absolute overworld cells; add the node at global (0,0)."
+    },
+    {
+      "treatment_id": "saffron_coast_region_window",
+      "path": "data/survival/world/art/compiled/saffron_coast_region_window.presentation.v1.json",
+      "sha256": "7a9e0ef1beb4f0f0b8a374b5a5dd41811be50c7062b04a80fa418c16986aa070",
+      "biome_profile": "saffron_coast",
+      "window_origin_cell": [
+        848,
+        320
+      ],
+      "window_size_cells": [
+        64,
+        56
+      ],
+      "placement_origin_px": [
+        0,
+        0
+      ],
+      "note": "Cells are absolute overworld cells; add the node at global (0,0)."
+    },
+    {
+      "treatment_id": "verdant_fold_region_window",
+      "path": "data/survival/world/art/compiled/verdant_fold_region_window.presentation.v1.json",
+      "sha256": "884cd1f3886da92cc745668a8cc0c1fc3b1582fe50eda0b16a6846858f758371",
+      "biome_profile": "verdant_fold",
+      "window_origin_cell": [
+        584,
+        560
+      ],
+      "window_size_cells": [
+        80,
+        88
+      ],
+      "placement_origin_px": [
+        0,
+        0
+      ],
+      "note": "Cells are absolute overworld cells; add the node at global (0,0)."
+    },
+    {
+      "treatment_id": "pearl_mangroves_region_window",
+      "path": "data/survival/world/art/compiled/pearl_mangroves_region_window.presentation.v1.json",
+      "sha256": "ea46810ca0c7def66121fc76da128d3fc7c97fef91b48245706f3262402c42bd",
+      "biome_profile": "pearl_mangroves",
+      "window_origin_cell": [
+        800,
+        560
+      ],
+      "window_size_cells": [
+        72,
+        80
+      ],
+      "placement_origin_px": [
+        0,
+        0
+      ],
+      "note": "Cells are absolute overworld cells; add the node at global (0,0)."
+    },
+    {
+      "treatment_id": "sunken_orchard_region_window",
+      "path": "data/survival/world/art/compiled/sunken_orchard_region_window.presentation.v1.json",
+      "sha256": "6364a235aedc15f2027b4f49cc813cbb47e7a5feceac0ddb17a6697bff4abeeb",
+      "biome_profile": "sunken_orchard",
+      "window_origin_cell": [
+        72,
+        600
+      ],
+      "window_size_cells": [
+        104,
+        72
+      ],
+      "placement_origin_px": [
+        0,
+        0
+      ],
+      "note": "Cells are absolute overworld cells; add the node at global (0,0)."
+    },
+    {
+      "treatment_id": "ashwater_fen_region_window",
+      "path": "data/survival/world/art/compiled/ashwater_fen_region_window.presentation.v1.json",
+      "sha256": "ba06dd3c24a58e56f620794a03319631eaabd803c24e3bca4e2cee984fbbf37f",
+      "biome_profile": "ashwater_fen",
+      "window_origin_cell": [
+        304,
+        592
+      ],
+      "window_size_cells": [
+        104,
+        88
+      ],
+      "placement_origin_px": [
+        0,
+        0
+      ],
+      "note": "Cells are absolute overworld cells; add the node at global (0,0)."
+    }
+  ],
+  "a8_shells": {
+    "path": "data/survival/world/art/a8_shell_visuals.v1.json",
+    "sha256": "f561d87483f52e42b775268ce4fb17a6f6439777a63a2fb9812db1660b00b251"
+  },
+  "avfx_lighting_contract": {
+    "path": "data/survival/world/art/avfx_lighting_contract.v1.json",
+    "sha256": "ce352d11e60f823e26a5fafd107a4bc34138d1a242b2b7e5ec4c855c0f7843dc"
+  },
+  "first_hour_route": {
+    "path": "data/survival/world/corridor/first_hour_route.v1.json",
+    "sha256": "4e4c4eb9864dfc28aca4fcb4168cd856fc3f6be466b95e3ff6b7fb5b3784722c"
+  },
+  "grammar": {
+    "path": "data/survival/world/art/world_art_grammar.v1.json",
+    "sha256": "a5cecea7d749b56d7e8b6508bd9e880b3a70a92a97f0a06ab11fe81de965b53a"
+  },
+  "lighting": {
+    "world_light_mask": 2,
+    "inherited_vfx_mask": 1,
+    "rule": "A1 lamps range_item_cull_mask=2; Gold/Hero VFX remain mask 1, never tinted by A1."
+  },
+  "zero_collision_contract": {
+    "collision_change": false,
+    "stand_change": false,
+    "economy_change": false,
+    "new_poi_count": 0,
+    "tile_physics_layers": 0,
+    "focus_binding": "build(hero) then reparent hero into props_root and bind_focus(hero); occlusion excludes the focus subtree."
+  },
+  "baseline_compatibility": {
+    "world_plan_sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4",
+    "baseline_lock_sha256": "4974ef579881c156683f554e6de57506ff8f381c1b4187de48f992101dd6d4a6",
+    "corridor_sha256": "9d3909b0625bdf6239a760fdf2ac982d0ede0314491cab315d7268d42ddc232f",
+    "ten_thresholds_preserved": true
+  },
+  "a0_mount_instructions": [
+    "1. Add WorldArtPresentation as a child of the overworld at global_position Vector2.ZERO.",
+    "2. load_presentation(<treatment path>, res://data/survival/world/art/atlas.v1.json); abort if false.",
+    "3. build(hero); then hero.reparent(pres.props_root); pres.bind_focus(hero).",
+    "4. Drive set_time_of_day(t) from the A0 world clock; occlusion steps automatically.",
+    "5. Do NOT add collision/stands/rewards from art; A3 binds si:* grants; A0 SaveService unchanged.",
+    "6. For A8 shells, adopt a8_shell_visuals.v1.json as the shell skin; A8 keeps collision/entry; A0 approves mount transform."
+  ],
+  "import_check_commands": [
+    "godot --headless --path . --import",
+    ".venv/bin/python tools/survival/worldgen/validate_mount_bundle.py",
+    ".venv/bin/python tools/survival/worldgen/validate_world_art.py",
+    ".venv/bin/python tools/survival/worldgen/check_determinism.py"
+  ],
+  "consumer_validator": "tools/survival/worldgen/validate_mount_bundle.py",
+  "pending": [
+    "native on-screen inspection",
+    "A0 production mount",
+    "A8 shell adoption",
+    "A6 D051 human-body composition",
+    "exact Gold parity"
+  ]
+}
