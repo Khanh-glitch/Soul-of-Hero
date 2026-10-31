@@ -172,25 +172,33 @@ func _grant(item_id: String, kind: String, quantity: int) -> void:
 
 
 func _find_plot(hero_cell: Vector2i, radius: int) -> Vector2i:
-	for r in range(1, 7):
+	# The r12 home probe built at (49,213) from a (56,218) spawn: seven cells out,
+	# so a six-cell search is too small to see the ground a player can actually use.
+	var selected := bool(build.call(&"select_piece", "wall_wood"))
+	facts["select_piece_wall_wood"] = selected
+	facts["validate_at_hero_cell"] = String(build.call(&"validate_cell", hero_cell))
+	if not selected:
+		print("A7CAPTURE NOTE select_piece(wall_wood) refused; cannot attempt a house")
+		return Vector2i(-1, -1)
+	for r in range(1, 17):
 		for dy in range(-r, r + 1):
 			for dx in range(-r, r + 1):
 				if maxi(absi(dx), absi(dy)) != r:
 					continue
 				var center := hero_cell + Vector2i(dx, dy)
-				if bool(build.call(&"select_piece", "wall_wood")):
-					var all_ok := true
-					for wy in range(-radius, radius + 1):
-						for wx in range(-radius, radius + 1):
-							if maxi(absi(wx), absi(wy)) != radius:
-								continue
-							if not String(build.call(&"validate_cell", center + Vector2i(wx, wy))).is_empty():
-								all_ok = false
-								break
-						if not all_ok:
+				var all_ok := true
+				for wy in range(-radius, radius + 1):
+					for wx in range(-radius, radius + 1):
+						if maxi(absi(wx), absi(wy)) != radius:
+							continue
+						if not String(build.call(&"validate_cell", center + Vector2i(wx, wy))).is_empty():
+							all_ok = false
 							break
-					if all_ok:
-						return center
+					if not all_ok:
+						break
+				if all_ok:
+					print("A7CAPTURE plot found at %s (chebyshev %d from the hero)" % [str(center), r])
+					return center
 	return Vector2i(-1, -1)
 
 
