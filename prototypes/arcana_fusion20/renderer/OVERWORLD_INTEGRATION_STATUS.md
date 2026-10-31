@@ -482,6 +482,15 @@ SOH world source parity and creator review remain separate.
   clear fragment dirty for unrelated ink; black ink always marks the ink
   field, and overdraw of an actual fragment marks fragment coverage dirty.
   The intermediate `2bab675b` accidentally dropped the ink dirty bit and is
-  invalid; it was corrected before acceptance. Latest source/world and
-  three-resolution regressions are pending. Do not treat either optimization
-  as a demonstrated target-device win.
+  invalid; it was corrected before acceptance. Source regression
+  [41218563663](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41218563663),
+  historical-world JOIN [41218563692](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41218563692)
+  and all-20 lifecycle [41218563634](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41218563634)
+  passed at `f8d86501`. These do not prove visual parity.
+  New [overlap 41218563612](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41218563612)
+  recorded #20 source ticks **23–463** at 720p and 2K, 256,177,152 raw
+  C upload bytes, with p50/p95/p99 **489.845/713.600/754.724 ms** and
+  **629.420/868.191/914.720 ms** respectively; 4K is pending. Thus these
+  frames span more than the opening, but do not include full OUT. The upload
+  count was unchanged versus the preceding run in this sample. Do not treat
+  either optimization as a demonstrated target-device win.
