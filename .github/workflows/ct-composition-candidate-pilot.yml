@@ -141,6 +141,25 @@ jobs:
               }
           done
           echo "CT_NATIVE_IMPORT_PARSE_PASS; THIS IS NOT GAMEPLAY ACCEPTANCE"
+      - name: Isolate A1 direct-script input bootstrap error (diagnostic only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp ct-tools/tests/survival/ct_input_bootstrap_probe.gd product/.composition/tests/ct_input_bootstrap_probe.gd
+          cd product/.composition
+          set +e
+          timeout --signal=TERM --kill-after=10s 360s bash tools/ci/godot_isolated.sh \
+            --headless --path . --script res://tests/ct_input_bootstrap_probe.gd \
+            > ../../artifacts/input_bootstrap_probe.log 2>&1
+          rc=$?
+          set -e
+          cat ../../artifacts/input_bootstrap_probe.log
+          # Diagnostic probe is not a product gate. Preserve every failure with its
+          # actual reason, rather than falsely assigning it to the A1 owner.
+          echo "CT_INPUT_BOOTSTRAP_PROBE_EXIT=$rc"
+          if [ "$rc" -ne 0 ]; then
+            echo "::warning::CT input bootstrap hypothesis NOT fully confirmed; see artifact"
+          fi
       - name: Native player-world/POI boundary probes on SAME composed tree
         shell: bash
         run: |
