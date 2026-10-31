@@ -348,12 +348,27 @@ jobs:
           rc=$?
           set -e
           cat "$ARTIFACT_DIR/r13_phase1.log"
-          if [ "$rc" -ne 0 ]; then
-            bash tools/ci/annotate_log.sh "$ARTIFACT_DIR/r13_phase1.log" "R13 phase1 engine exit $rc" 60 || true
-            echo "::warning::R13 phase1: godot exited $rc; the log gate and the PASS marker decide"
+          # Two independent obligations, never conflated:
+          #   1. the process must exit 0 (this gate; TIMEOUT/SHUTDOWN_ONLY/ABNORMAL fail);
+          #   2. the log must be clean and must carry the PASS marker (gate_log.sh).
+          # Run the exit gate first: GitHub caps annotations per step, and this one
+          # is the decisive single line if the summary below is ever truncated.
+          exit_rc=0
+          python3 tools/ci/godot_exit_gate.py \
+            --phase "R13 phase1" --rc "$rc" --log "$ARTIFACT_DIR/r13_phase1.log" || exit_rc=$?
+          gate_rc=0
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/r13_phase1.log" "R13 phase1" "P1 PASSED" || gate_rc=$?
+          if [ "$exit_rc" -ne 0 ] || [ "$gate_rc" -ne 0 ]; then
+            if grep -q '^\[FAIL\]' "$ARTIFACT_DIR/r13_phase1.log"; then
+              grep '^\[FAIL\]' "$ARTIFACT_DIR/r13_phase1.log" | head -3 | while IFS= read -r line; do
+                echo "::error::R13 phase1 assertion ${line}"
+              done
+            fi
+            bash tools/ci/annotate_log.sh "$ARTIFACT_DIR/r13_phase1.log" "R13 phase1 tail" 20 || true
+            echo "::error::R13 phase1 FAILED: engine rc=$rc exit_gate=$exit_rc log_gate=$gate_rc"
+            exit 1
           fi
-          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/r13_phase1.log" "R13 phase1" "P1 PASSED" || exit 1
-          echo "R13 phase1 PASSED (pid recorded in receipt)" >> "$GITHUB_STEP_SUMMARY"
+          echo "R13 phase1 PASSED (engine rc=0, log gate clean, pid recorded in receipt)" >> "$GITHUB_STEP_SUMMARY"
       - name: R13 process 2 — reload, mature, claim once, refuse duplicate, exit
         # Independent Godot OS process 2 against the SAME isolated durable save.
         run: |
@@ -368,12 +383,22 @@ jobs:
           rc=$?
           set -e
           cat "$ARTIFACT_DIR/r13_phase2.log"
-          if [ "$rc" -ne 0 ]; then
-            bash tools/ci/annotate_log.sh "$ARTIFACT_DIR/r13_phase2.log" "R13 phase2 engine exit $rc" 60 || true
-            echo "::warning::R13 phase2: godot exited $rc; the log gate and the PASS marker decide"
+          exit_rc=0
+          python3 tools/ci/godot_exit_gate.py \
+            --phase "R13 phase2" --rc "$rc" --log "$ARTIFACT_DIR/r13_phase2.log" || exit_rc=$?
+          gate_rc=0
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/r13_phase2.log" "R13 phase2" "P2 PASSED" || gate_rc=$?
+          if [ "$exit_rc" -ne 0 ] || [ "$gate_rc" -ne 0 ]; then
+            if grep -q '^\[FAIL\]' "$ARTIFACT_DIR/r13_phase2.log"; then
+              grep '^\[FAIL\]' "$ARTIFACT_DIR/r13_phase2.log" | head -3 | while IFS= read -r line; do
+                echo "::error::R13 phase2 assertion ${line}"
+              done
+            fi
+            bash tools/ci/annotate_log.sh "$ARTIFACT_DIR/r13_phase2.log" "R13 phase2 tail" 20 || true
+            echo "::error::R13 phase2 FAILED: engine rc=$rc exit_gate=$exit_rc log_gate=$gate_rc"
+            exit 1
           fi
-          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/r13_phase2.log" "R13 phase2" "P2 PASSED" || exit 1
-          echo "R13 phase2 PASSED (distinct pid recorded in receipt)" >> "$GITHUB_STEP_SUMMARY"
+          echo "R13 phase2 PASSED (engine rc=0, log gate clean, distinct pid in receipt)" >> "$GITHUB_STEP_SUMMARY"
       - name: Two-process receipt verification (one paid settlement, duplicate refused)
         # The receipts are the evidence; no shell state crosses the steps above.
         run: |
@@ -416,19 +441,23 @@ jobs:
             "$ARTIFACT_DIR/r13_single.log" > "$ARTIFACT_DIR/r13_single.gate.log"
           # Gate FIRST so its summary and engine-error annotations survive the
           # per-step annotation cap; detail follows only when it fails.
+          # Exit-code obligation for the negative suite too. The gate copy is
+          # passed on purpose: it is the raw log with exactly the deliberately
+          # obstructed save write removed, so an intentional failed transaction
+          # is never counted as a broken engine, and no other line is filtered.
+          exit_rc=0
+          python3 tools/ci/godot_exit_gate.py \
+            --phase "R13 single-process" --rc "$rc" --log "$ARTIFACT_DIR/r13_single.gate.log" || exit_rc=$?
           gate_rc=0
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/r13_single.gate.log" "R13 single-process" "R13 NATIVE PASSED" || gate_rc=$?
-          if [ "$gate_rc" -ne 0 ]; then
+          if [ "$exit_rc" -ne 0 ] || [ "$gate_rc" -ne 0 ]; then
             if grep -q '^\[FAIL\]' "$ARTIFACT_DIR/r13_single.log"; then
               grep '^\[FAIL\]' "$ARTIFACT_DIR/r13_single.log" | head -3 | while IFS= read -r line; do
                 echo "::error::R13 assertion ${line}"
               done
             fi
-            echo "::error::R13 single-process engine exit $rc, gate exit $gate_rc"
+            echo "::error::R13 single-process engine exit $rc, exit gate $exit_rc, log gate $gate_rc"
             exit 1
-          fi
-          if [ "$rc" -ne 0 ]; then
-            echo "::warning::R13 single-process: godot exited $rc after a clean log gate and the PASS marker"
           fi
           summary="$(grep 'R13 NATIVE PASSED' "$ARTIFACT_DIR/r13_single.log" | tail -1)"
           echo "::notice title=R13 single-process negatives::${summary}"

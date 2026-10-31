@@ -643,6 +643,29 @@ func research_targeted(recipe_id: String, station_id: String, event_id: String) 
 		return {"ok": false, "reason": "CANONICAL_ECONOMY_REQUIRED"}
 	return economy.research_recipe(recipe_id, station_id, "targeted", event_id, "")
 
+## Mechanism 1 of 3: bounded random Spares research. The canonical service owns
+## the pool, the price and the draw; A3 only exposes it, so there is no second
+## learned-recipe store and no A3-side random roll.
+func research_spares(station_id: String, event_id: String) -> Dictionary:
+	if economy == null:
+		return {"ok": false, "reason": "CANONICAL_ECONOMY_REQUIRED"}
+	return economy.research_spares(station_id, event_id)
+
+func spares_research_pool() -> Array[String]:
+	if economy == null:
+		return []
+	return economy.spares_research_pool()
+
+func researchable_recipe_ids() -> Array[String]:
+	if economy == null:
+		return []
+	return economy.researchable_recipe_ids()
+
+func spares_research_policy() -> Dictionary:
+	if economy == null:
+		return {}
+	return economy.spares_research_policy()
+
 func is_recipe_known(recipe_id: String) -> bool:
 	if economy == null:
 		return false
@@ -891,6 +914,13 @@ func get_projections() -> Dictionary:
 		"queue_authority": "canonical_economy_service",
 		"knowledge_authority": "canonical_economy_service",
 		"clock_authority": "a0_active_session_receipt",
+		"research_mechanisms": {
+			"bounded_random_spares": spares_research_policy(),
+			"directed_targeted": {"method": "targeted", "cost": "recipe research_cost, Spares + Notes"},
+			"destructive_specimen": {"method": "specimen", "cost": "the studied instance is consumed"},
+			"blueprint_directed": {"method": "blueprint", "cost": "the physical plan item"},
+		},
+		"spares_research_pool_size": spares_research_pool().size(),
 	}
 
 ## --- Internal helpers ---

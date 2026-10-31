@@ -38,6 +38,7 @@ const RECIPE_SORT := "sort_core_fragments"
 var a3: A3EconomyService
 var eco
 var save_service: Node
+var created_save_service: bool = false
 var save_path: String = DEFAULT_SAVE_PATH
 var receipt_dir: String = RECEIPT_DIR_DEFAULT
 
@@ -74,6 +75,7 @@ func _run() -> void:
 	print("role=%s pid=%d save=%s" % [role, OS.get_process_id(), save_path])
 	if not _setup():
 		print("R13 SETUP FAILED")
+		_teardown_hosts()
 		quit(1)
 		return
 	if role == "process_1":
@@ -131,6 +133,7 @@ func _setup_save() -> bool:
 		save_service = SaveService.new()
 		save_service.name = "SaveService"
 		root.add_child(save_service)
+		created_save_service = true
 	if not bool(save_service.call(&"configure_storage", save_path, true)):
 		push_error("Failed to configure isolated SaveService storage at %s" % [save_path])
 		return false
@@ -257,6 +260,23 @@ func _replace_inventory(stacks: Dictionary, tag: String) -> bool:
 		return true
 	return bool(save_service.call(&"transact_once", "r13:replace:%s:%d" % [tag, Time.get_ticks_usec()], mutator, {"kind": "r13_fixture_inventory"}))
 
+## Test fixture only: writes canonical `survival.knowledge.recipes` through the
+## real SaveService transaction so the production pool computation runs on real
+## state. Used to prove known-recipe exclusion and the empty-pool refusal.
+func _learn_recipes_via_fixture(ids: Array[String], tag: String) -> bool:
+	var mutator := func(candidate: Dictionary) -> bool:
+		var survival: Dictionary = candidate.get("survival", {})
+		var knowledge: Dictionary = survival.get("knowledge", {})
+		var recipes: Dictionary = knowledge.get("recipes", {})
+		for recipe_id: String in ids:
+			recipes[recipe_id] = {"source": "fixture:%s" % [tag], "learned_at": 0}
+		knowledge["recipes"] = recipes
+		survival["knowledge"] = knowledge
+		candidate["survival"] = survival
+		return true
+	return bool(save_service.call(&"transact_once",
+		"r13:fixture:learn:%s:%d" % [tag, Time.get_ticks_usec()], mutator, {"kind": "r13_fixture_knowledge"}))
+
 func _mastery() -> Dictionary:
 	var snapshot: Dictionary = _snapshot()
 	var raw: Variant = snapshot.get("mastery", {})
@@ -320,6 +340,8 @@ func _run_full_suite() -> void:
 	_test_production_lifecycle()
 	_header("KNOWLEDGE_MECHANISMS")
 	_test_knowledge_mechanisms()
+	_header("BOUNDED_RANDOM_SPARES_RESEARCH")
+	_test_bounded_random_spares_research()
 	_header("RUN_RESET_CLEANUP")
 	_test_run_reset_cleanup()
 	_header("ROUTES_AND_CORE_DISTINCTION")
@@ -654,6 +676,116 @@ func _test_knowledge_mechanisms() -> void:
 	_expect(a3.is_recipe_known("craft_core_ember"), "destructive specimen research teaches the Core recipe")
 	_expect_equal(_count("core_ember"), 0, "the studied Skill Core was destroyed, not duplicated")
 
+## Mechanism 1 of 3 from CURRENT_PRODUCT_CONTRACT / CT-GATE: bounded random
+## Spares research. The pool, price, draw and learning all live in the canonical
+## service; these assertions prove the pool is bounded, unknown-only, learnable,
+## paid in physical Spares, and that refusal/empty/known cases spend nothing.
+func _test_bounded_random_spares_research() -> void:
+	_begin_group("spares_research")
+	_install_station("research", "research", 1)
+	var researchable: Array[String] = a3.researchable_recipe_ids()
+	_expect(researchable.size() > 0, "catalog defines researchable recipes: %d" % [researchable.size()])
+
+	## --- refusal cases: nothing is spent and no job is created ---
+	var empty_hand: Dictionary = a3.research_spares("research", "r13.spares.unaffordable")
+	_expect(not bool(empty_hand.get("ok", true)), "an unaffordable draw is refused")
+	_expect_equal(String(empty_hand.get("reason", "")), "insufficient_inputs", "unaffordable reason is insufficient_inputs")
+	_expect_equal(a3.jobs().size(), 0, "a refused draw creates no job")
+	_expect_equal(_count("knowledge_spares"), 0, "a refused draw consumes nothing")
+
+	_give("knowledge_spares", 30, "spares")
+	var start_spares := _count("knowledge_spares")
+	var wrong_station: Dictionary = a3.research_spares("workbench", "r13.spares.wrongstation")
+	_expect(not bool(wrong_station.get("ok", true)), "a non-research station is refused")
+	_expect_equal(String(wrong_station.get("reason", "")), "station_unavailable", "wrong station reason is station_unavailable")
+	_expect_equal(_count("knowledge_spares"), start_spares, "a wrong station spends no Spares")
+	_expect_equal(a3.jobs().size(), 0, "a wrong station creates no job")
+
+	## --- the draw itself ---
+	var pool: Array[String] = a3.spares_research_pool()
+	_expect(pool.size() > 0, "bounded eligible pool is non-empty (%d of %d researchable)" % [pool.size(), researchable.size()])
+	_expect(pool.size() <= researchable.size(), "the pool can never exceed the catalog's researchable set")
+	var before_draw := _count("knowledge_spares")
+	var draw: Dictionary = a3.research_spares("research", "r13.spares.draw")
+	_expect(bool(draw.get("ok", false)), "paid random Spares research enqueues: %s" % [draw.get("reason", "")])
+	var draw_job_id := String(draw.get("job_id", ""))
+	var draw_job: Dictionary = a3.job(draw_job_id)
+	var drawn := String(draw_job.get("target", ""))
+	_expect(pool.has(drawn), "the drawn recipe comes from the bounded eligible pool (%s)" % [drawn])
+	_expect_equal(String(draw_job.get("method", "")), "spares", "the job records the random-Spares method")
+	_expect_equal(int(draw_job.get("duration", 0)), 40, "the draw needs real research processing time")
+	_expect_equal(String(draw_job.get("status", "")), "queued", "the draw is not resolved at enqueue")
+	_expect(not a3.is_recipe_known(drawn), "no knowledge is granted at enqueue")
+	_expect_equal(_count("knowledge_spares"), before_draw - 4, "exactly 4 physical Spares are escrowed")
+	_expect_equal(int(draw.get("pool_size", -1)), pool.size(), "the receipt names the bounded pool size")
+	_expect_equal(_mastery().get("a3_learned_recipes", null), null, "no parallel A3 learned-recipe store exists")
+
+	## --- replay and restart safety ---
+	var replay: Dictionary = a3.research_spares("research", "r13.spares.draw")
+	_expect(bool(replay.get("ok", false)) and bool(replay.get("duplicate", false)), "replaying the same event id is idempotent")
+	_expect_equal(_count("knowledge_spares"), before_draw - 4, "a replay charges no second time")
+	_expect_equal(String(a3.job(draw_job_id).get("target", "")), drawn, "a replay does not reroll the draw")
+	_expect_equal(a3.jobs().size(), 1, "a replay creates no second job")
+	_expect(not a3.spares_research_pool().has(drawn), "a pending draw is excluded from the eligible pool")
+
+	## --- cancel cannot buy a free reroll of the same offer ---
+	var cancel: Dictionary = a3.cancel_production(draw_job_id, "r13.spares.cancel")
+	_expect(bool(cancel.get("ok", false)), "a queued draw can be cancelled")
+	_expect_equal(_count("knowledge_spares"), before_draw - 4, "cancel moves the Spares escrow into the job, not the bag")
+	var refund: Dictionary = a3.claim_production(draw_job_id, "r13.spares.collect.cancelled")
+	_expect(bool(refund.get("ok", false)), "the cancelled escrow is collectable")
+	_expect_equal(_count("knowledge_spares"), before_draw, "the cancelled draw returns its Spares")
+	_expect(not a3.is_recipe_known(drawn), "a cancelled draw learns nothing")
+	var second: Dictionary = a3.research_spares("research", "r13.spares.draw.second")
+	_expect(bool(second.get("ok", false)), "a fresh draw is allowed after the cancel")
+	var second_job_id := String(second.get("job_id", ""))
+	var second_target := String(a3.job(second_job_id).get("target", ""))
+	_expect(String(a3.job(second_job_id).get("draw_digest", "")) != String(draw_job.get("draw_digest", "")), "a new attempt uses a new draw identity, never the discarded one")
+	_expect(pool.has(second_target), "the second draw still comes from the bounded pool")
+
+	## --- maturity learns exactly the drawn recipe, once ---
+	var spares_before_tick := _count("knowledge_spares")
+	var tick: Dictionary = _tick_station("research", 40, "r13.spares.tick")
+	_expect(bool(tick.get("ok", false)), "the draw matures on the A0 active clock: %s" % [tick.get("reason", "")])
+	_expect(a3.is_recipe_known(second_target), "maturity learns the drawn recipe (%s)" % [second_target])
+	_expect(not a3.is_recipe_known(drawn) or drawn == second_target, "only the matured draw is learned")
+	_expect_equal(_count("knowledge_spares"), spares_before_tick, "maturity charges nothing extra")
+	var collected: Dictionary = a3.claim_production(second_job_id, "r13.spares.collect")
+	_expect(bool(collected.get("ok", false)), "the resolved draw is collectable")
+	_expect(not a3.spares_research_pool().has(second_target), "learned recipes leave the eligible pool")
+
+	## --- reload: no reroll, no duplicate knowledge, no duplicate charge ---
+	save_service.call(&"reload_save")
+	_expect(a3.is_recipe_known(second_target), "the learned draw survives a reload")
+	_expect_equal(_count("knowledge_spares"), spares_before_tick, "the Spares charge survives a reload")
+	var after_reload: Array[String] = a3.spares_research_pool()
+	_expect(not after_reload.has(second_target), "a reloaded run cannot redraw the learned recipe")
+	_expect(a3.jobs().size() == 0, "the collected draw is gone after reload")
+
+	## --- stale run: a new run cannot collect or learn the old draw ---
+	var stale: Dictionary = a3.research_spares("research", "r13.spares.stale")
+	_expect(bool(stale.get("ok", false)), "a pending draw exists before the reset")
+	var stale_job_id := String(stale.get("job_id", ""))
+	var stale_target := String(a3.job(stale_job_id).get("target", ""))
+	save_service.call(&"reset_to_defaults", "RESET_SOUL_OF_HERO_SAVE")
+	_expect_equal(String(a3.claim_production(stale_job_id, "r13.spares.stale.collect").get("reason", "")), "nothing_to_collect", "a stale draw cannot be collected after a new run")
+	_expect(not a3.is_recipe_known(stale_target), "a stale run cannot grant the old draw's knowledge")
+	_expect_equal(_count("knowledge_spares"), 0, "a new run starts with no Spares")
+	_expect(a3.spares_research_pool().size() > 0, "a new run restores a non-empty eligible pool")
+	_expect(not a3.spares_research_pool().has("craft_core_ember"), "technology-gated recipes stay out of the pool until their technology is researched")
+
+	## --- empty pool: refusal spends nothing ---
+	_give("knowledge_spares", 12, "sparesempty")
+	var all_researchable: Array[String] = a3.researchable_recipe_ids()
+	_expect(_learn_recipes_via_fixture(all_researchable, "all"), "fixture fills the canonical knowledge store with every researchable recipe")
+	_expect_equal(a3.spares_research_pool().size(), 0, "the eligible pool is empty when every recipe is known")
+	var spendable := _count("knowledge_spares")
+	var no_pool: Dictionary = a3.research_spares("research", "r13.spares.emptypool")
+	_expect(not bool(no_pool.get("ok", true)), "an empty pool refuses the draw")
+	_expect_equal(String(no_pool.get("reason", "")), "no_eligible_recipe", "empty pool reason is no_eligible_recipe")
+	_expect_equal(_count("knowledge_spares"), spendable, "an empty pool spends no Spares")
+	_expect_equal(a3.jobs().size(), 0, "an empty pool creates no job")
+
 func _test_run_reset_cleanup() -> void:
 	_begin_group("reset")
 	a3.authenticate_source(_receipt_for(SOURCE_NOTES))
@@ -744,6 +876,26 @@ func _run_process_1() -> void:
 	if not a3.is_recipe_known(RECIPE_MATERIAL):
 		_fail_process("P1", "recipe not learned after research")
 		return
+	## 3b. Bounded random Spares draw: paid now, resolved only on maturity and
+	## only once, even though process 2 is a fresh OS process.
+	var spares_before := _count("knowledge_spares")
+	var spares_pool: Array[String] = a3.spares_research_pool()
+	var spares_draw: Dictionary = a3.research_spares("research", "r13.p1.spares")
+	if not bool(spares_draw.get("ok", false)):
+		_fail_process("P1", "spares draw failed: %s" % [spares_draw.get("reason", "")])
+		return
+	var spares_job_id := String(spares_draw.get("job_id", ""))
+	var spares_target := String(a3.job(spares_job_id).get("target", ""))
+	if not spares_pool.has(spares_target):
+		_fail_process("P1", "drawn recipe %s is outside the bounded pool" % [spares_target])
+		return
+	if a3.is_recipe_known(spares_target):
+		_fail_process("P1", "the draw learned knowledge at enqueue")
+		return
+	if _count("knowledge_spares") != spares_before - 4:
+		_fail_process("P1", "the draw did not escrow exactly 4 Spares")
+		return
+
 	## 4. Paid production: escrow at enqueue, output deferred.
 	var oak_before := _count("oak_wood")
 	var iron_before := _count("iron_scrap")
@@ -770,6 +922,12 @@ func _run_process_1() -> void:
 		"harvest_rewards": harvest.get("rewards", []),
 		"tool_condition_after_harvest": int(harvest.get("tool_condition_remaining", -1)),
 		"recipe_learned": RECIPE_MATERIAL,
+		"spares_job_id": spares_job_id,
+		"spares_target": spares_target,
+		"spares_draw_digest": String(a3.job(spares_job_id).get("draw_digest", "")),
+		"spares_pool_size": spares_pool.size(),
+		"spares_before": spares_before,
+		"spares_after": _count("knowledge_spares"),
 		"job_id": job_id,
 		"recipe": RECIPE_MATERIAL,
 		"station": "workbench",
@@ -785,6 +943,7 @@ func _run_process_1() -> void:
 		_fail_process("P1", "could not write receipt")
 		return
 	print("P1 PASSED - pid=%d job=%s bindings=%s" % [OS.get_process_id(), job_id, a3.bindings_document_sha256().left(12)])
+	_teardown_hosts()
 	quit(0)
 
 ## --- process 2 ---
@@ -832,6 +991,31 @@ func _run_process_2() -> void:
 		checks_failed += 1
 		print("P2 FAIL output appeared before maturity")
 
+	## 1b. Bounded random Spares draw survived the OS boundary without a reroll.
+	var spares_job_id := String(receipt.get("spares_job_id", ""))
+	var spares_target := String(receipt.get("spares_target", ""))
+	var spares_after := int(receipt.get("spares_after", -1))
+	if not spares_job_id.is_empty() and a3.jobs().has(spares_job_id):
+		checks_passed += 1
+	else:
+		checks_failed += 1
+		print("P2 FAIL pending Spares draw lost across reload")
+	if not spares_target.is_empty() and String(a3.job(spares_job_id).get("target", "")) == spares_target:
+		checks_passed += 1
+	else:
+		checks_failed += 1
+		print("P2 FAIL the reloaded process rerolled the Spares draw")
+	if _count("knowledge_spares") == spares_after:
+		checks_passed += 1
+	else:
+		checks_failed += 1
+		print("P2 FAIL the Spares charge changed across reload")
+	if not a3.is_recipe_known(spares_target):
+		checks_passed += 1
+	else:
+		checks_failed += 1
+		print("P2 FAIL the Spares draw granted knowledge before maturity")
+
 	## 2. Refusal before maturity — no clock, no output.
 	var early: Dictionary = a3.claim_production(job_id, "r13.p2.collect.early")
 	if not bool(early.get("ok", true)) and String(early.get("reason", "")) == "nothing_to_collect":
@@ -862,6 +1046,35 @@ func _run_process_2() -> void:
 		checks_failed += 1
 		print("P2 FAIL output quantity %d != %d" % [_count("quarry_core_fragment"), expected_output])
 	var after_first := _count("quarry_core_fragment")
+
+	## 3b. Mature the Spares draw in THIS process and prove single, unchanged learning.
+	var spares_tick: Dictionary = _tick_station("research", 40, "r13.p2.tick.spares")
+	if bool(spares_tick.get("ok", false)):
+		checks_passed += 1
+	else:
+		checks_failed += 1
+		print("P2 FAIL the pending Spares draw could not mature: %s" % [spares_tick])
+	var spares_collect: Dictionary = a3.claim_production(spares_job_id, "r13.p2.collect.spares")
+	if bool(spares_collect.get("ok", false)):
+		checks_passed += 1
+	else:
+		checks_failed += 1
+		print("P2 FAIL the matured Spares draw was not collectable: %s" % [spares_collect])
+	if a3.is_recipe_known(spares_target):
+		checks_passed += 1
+	else:
+		checks_failed += 1
+		print("P2 FAIL the Spares draw did not learn its committed recipe")
+	if _count("knowledge_spares") == spares_after:
+		checks_passed += 1
+	else:
+		checks_failed += 1
+		print("P2 FAIL collecting the Spares draw charged or refunded Spares")
+	if a3.spares_research_pool().has(spares_target):
+		checks_failed += 1
+		print("P2 FAIL the learned draw is still in the eligible pool")
+	else:
+		checks_passed += 1
 
 	## 4. Duplicate claim refused, inventory conserved.
 	var duplicate: Dictionary = a3.claim_production(job_id, "r13.p2.collect.duplicate")
@@ -901,6 +1114,14 @@ func _run_process_2() -> void:
 	out["output_after_first_claim"] = after_first
 	out["output_after_duplicate"] = _count("quarry_core_fragment")
 	out["conservation"] = conservation
+	out["spares_job_id"] = spares_job_id
+	out["spares_target_p1"] = spares_target
+	out["spares_target_p2"] = String(a3.job(spares_job_id).get("target", "")) if a3.jobs().has(spares_job_id) else spares_target
+	out["spares_learned"] = a3.is_recipe_known(spares_target)
+	out["spares_after_p2"] = _count("knowledge_spares")
+	out["spares_pool_excludes_target"] = not a3.spares_research_pool().has(spares_target)
+	out["spares_tick"] = spares_tick
+	out["spares_collect"] = spares_collect
 	out["checks"] = {"checks_passed": checks_passed, "checks_failed": checks_failed}
 	if not _write_receipt("r13_p2_receipt.json", out):
 		_fail_process("P2", "could not write receipt")
@@ -908,6 +1129,7 @@ func _run_process_2() -> void:
 	print("P2 PASSED - pid=%d job=%s granted=%d duplicate_refused=%s checks=%d/%d" % [
 		OS.get_process_id(), job_id, after_first, str(duplicate.get("reason", "")), checks_passed, checks_passed + checks_failed,
 	])
+	_teardown_hosts()
 	quit(0 if checks_failed == 0 else 1)
 
 ## Conservation over the durable document: no item is created by a refusal and
@@ -935,7 +1157,30 @@ func _conservation(p1_receipt: Dictionary) -> Dictionary:
 
 func _fail_process(label: String, message: String) -> void:
 	print("%s FAILED - %s" % [label, message])
+	_teardown_hosts()
 	quit(1)
+
+## A headless SceneTree that leaves the injected hosts alive reports ObjectDB and
+## resource leaks at exit, and `godot` then returns a non-zero code even after a
+## complete PASS. CI requires a real exit code of 0 for both R13 phases and for
+## the negative suite, so the suite releases exactly what it created - it never
+## suppresses the engine's accounting and never frees an autoload it does not own.
+func _teardown_hosts() -> void:
+	a3 = null
+	eco = null
+	if save_service != null and created_save_service:
+		if save_service.get_parent() != null:
+			save_service.get_parent().remove_child(save_service)
+		if not save_service.is_queued_for_deletion():
+			save_service.free()
+	save_service = null
+	created_save_service = false
+	stations.clear()
+	station_ticks.clear()
+	station_revisions.clear()
+	world_cells.clear()
+	world_discovered.clear()
+	world_sequences.clear()
 
 func _write_receipt(file_name: String, payload: Dictionary) -> bool:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(receipt_dir))
@@ -965,7 +1210,9 @@ func _emit_results() -> void:
 			print("  [FAIL] %s - %s" % [entry.get("group", ""), entry.get("message", "")])
 	if failed_count == 0:
 		print("R13 NATIVE PASSED - %d checks" % [passed_count])
+		_teardown_hosts()
 		quit(0)
 		return
 	print("R13 NATIVE FAILED")
+	_teardown_hosts()
 	quit(1)

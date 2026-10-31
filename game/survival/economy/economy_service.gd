@@ -35,6 +35,18 @@ const MAX_TICK_QUANTUM := 600
 const MAX_TIME_STATIONS := 256
 const UNRESOLVED_JOB_STATES := ["queued", "running", "paused", "ready", "cancelled"]
 
+## Bounded random Spares research (third canonical knowledge mechanism).
+## The pool, the price and the draw rule are canonical data here; A3 exposes them
+## read-only and never keeps its own recipe store.
+const SPARES_RESEARCH_METHOD := "spares"
+const SPARES_RESEARCH_SPARES_COST := 4
+const SPARES_RESEARCH_DURATION_TICKS := 40
+const SPARES_RESEARCH_MIN_TIER := 1
+const SPARES_RESEARCH_STATION_KIND := "research"
+const SPARES_RESEARCH_PENDING_STATES := ["queued", "running", "paused"]
+const SPARES_RESEARCH_SALT_KEY := "research_salt"
+const SPARES_RESEARCH_DRAWS_KEY := "research_draws"
+
 var _save: Node
 var _station_resolver: Callable
 var _time_host: Callable
@@ -1603,6 +1615,138 @@ func research_recipe(recipe_id: String, station_id: String, method: String, even
 			_capture_time_baseline(state, station_id)
 			result["job_id"] = id
 			return true)
+
+## --- Bounded random Spares research -----------------------------------------
+## Spend physical Spares for ONE recipe drawn from a bounded pool of genuinely
+## unknown, immediately learnable recipes. The draw is decided INSIDE the paid
+## transaction and stored on the job, so a replay, a crash or a fresh OS process
+## cannot reroll it; the recipe is learned when the job matures, never at enqueue.
+##
+## Nothing is spent when the station is wrong, the queue is full, the pool is
+## empty or the Spares are missing: every one of those returns before _take_inputs
+## and the mutator's candidate is discarded by SaveService.
+func spares_research_policy() -> Dictionary:
+	return {
+		"method": SPARES_RESEARCH_METHOD,
+		"station_kind": SPARES_RESEARCH_STATION_KIND,
+		"min_tier": SPARES_RESEARCH_MIN_TIER,
+		"cost": {"knowledge_spares": SPARES_RESEARCH_SPARES_COST},
+		"duration_ticks": SPARES_RESEARCH_DURATION_TICKS,
+		"pool_rule": "knowledge=='recipe' AND not known AND required technologies researched AND not already drawn by a pending research job",
+		"outcome": "exactly one unknown learnable recipe, committed at enqueue and learned at maturity",
+		"refund_rule": "no outcome is refunded; cancelling returns the Spares escrow and discards the draw",
+		"replay_rule": "durable salt + per-run draw index + job-stored target; replay/crash/restart never reroll",
+		"bounded_by": "catalog recipes (finite), not a UI list",
+	}
+
+## Every recipe the random pool can ever contain (catalog truth, not a UI list).
+func researchable_recipe_ids() -> Array[String]:
+	var recipes: Dictionary = catalog.get("recipes", {})
+	var keys: Array = recipes.keys()
+	keys.sort()
+	var out: Array[String] = []
+	for raw: Variant in keys:
+		if str((recipes[raw] as Dictionary).get("knowledge", "")) == "recipe":
+			out.append(str(raw))
+	return out
+
+func spares_research_pool() -> Array[String]:
+	if _save == null:
+		return []
+	var snapshot: Dictionary = _save.call(&"get_snapshot")
+	var state := _state(snapshot)
+	return _eligible_recipe_ids(_known_ids_in(snapshot), state.get("technologies", {}), _pending_research_targets(state))
+
+func research_spares(station_id: String, event_id: String) -> Dictionary:
+	return _transact("research_spares", event_id, {"station": station_id, "method": SPARES_RESEARCH_METHOD},
+		func(candidate: Dictionary, state: Dictionary, result: Dictionary) -> bool:
+			var station := _station(station_id, SPARES_RESEARCH_STATION_KIND, SPARES_RESEARCH_MIN_TIER)
+			if station.is_empty():
+				result["reason"] = "station_unavailable"; return false
+			if _queue_count(state, station_id) >= int(station.get("queue_capacity", 1)):
+				result["reason"] = "queue_full"; return false
+			var pool := _eligible_recipe_ids(
+				_known_ids_in(candidate), state.get("technologies", {}), _pending_research_targets(state),
+			)
+			if pool.is_empty():
+				result["reason"] = "no_eligible_recipe"; return false
+			var reserved := {}
+			if not _take_inputs(candidate, state, {"knowledge_spares": SPARES_RESEARCH_SPARES_COST}, reserved):
+				result["reason"] = "insufficient_inputs"; return false
+			var salt := str(state.get(SPARES_RESEARCH_SALT_KEY, ""))
+			if salt.is_empty():
+				salt = _new_research_salt()
+			state[SPARES_RESEARCH_SALT_KEY] = salt
+			var draw_index := int(state.get(SPARES_RESEARCH_DRAWS_KEY, 0)) + 1
+			state[SPARES_RESEARCH_DRAWS_KEY] = draw_index
+			var digest := (salt + ":" + station_id + ":" + str(draw_index)).sha256_text()
+			var pick := int(digest.substr(0, 12).hex_to_int()) % pool.size()
+			var drawn: String = pool[pick]
+			state["counter"] = int(state["counter"]) + 1
+			var id := "job_%06d" % int(state["counter"])
+			state["jobs"][id] = {"job_id": id, "kind": "research", "target": drawn,
+				"method": SPARES_RESEARCH_METHOD, "draw_index": draw_index, "draw_digest": digest,
+				"station_id": station_id, "station_kind": SPARES_RESEARCH_STATION_KIND, "tier": SPARES_RESEARCH_MIN_TIER,
+				"status": "queued", "elapsed": 0, "duration": SPARES_RESEARCH_DURATION_TICKS,
+				"reserved": reserved, "reserved_fuel": {}, "reserved_instances": {}, "outputs": {}, "output_instances": {}}
+			_capture_time_baseline(state, station_id)
+			result["job_id"] = id
+			result["pool_size"] = pool.size()
+			return true)
+
+## Draw composition: a durable per-run salt plus a monotonic draw index, so a
+## cancel cannot reproduce the offer it discarded and a player cannot steer the
+## pool by choosing the event id.
+func _new_research_salt() -> String:
+	var crypto := Crypto.new()
+	return crypto.generate_random_bytes(16).hex_encode()
+
+func _known_ids_in(candidate: Dictionary) -> Dictionary:
+	var out: Dictionary = {}
+	var survival: Dictionary = candidate.get("survival", {})
+	var knowledge: Dictionary = survival.get("knowledge", {})
+	var learned: Dictionary = knowledge.get("recipes", {})
+	for id: Variant in learned.keys():
+		out[str(id)] = true
+	var recipes: Dictionary = catalog.get("recipes", {})
+	for id: Variant in recipes.keys():
+		if str((recipes[id] as Dictionary).get("knowledge", "")) == "starter":
+			out[str(id)] = true
+	return out
+
+func _pending_research_targets(state: Dictionary) -> Array[String]:
+	var out: Array[String] = []
+	for job: Variant in (state.get("jobs", {}) as Dictionary).values():
+		if not job is Dictionary:
+			continue
+		var record: Dictionary = job
+		if str(record.get("kind", "")) != "research":
+			continue
+		if not (str(record.get("status", "")) in SPARES_RESEARCH_PENDING_STATES):
+			continue
+		out.append(str(record.get("target", "")))
+	return out
+
+func _eligible_recipe_ids(known_ids: Dictionary, technologies: Dictionary, pending: Array) -> Array[String]:
+	var recipes: Dictionary = catalog.get("recipes", {})
+	var keys: Array = recipes.keys()
+	keys.sort()
+	var out: Array[String] = []
+	for raw: Variant in keys:
+		var id := str(raw)
+		var r: Dictionary = recipes[raw]
+		if str(r.get("knowledge", "")) != "recipe":
+			continue
+		if known_ids.has(id) or pending.has(id):
+			continue
+		var learnable := true
+		for tech: Variant in (r.get("required_technologies", []) as Array):
+			if not technologies.has(str(tech)):
+				learnable = false
+				break
+		if learnable:
+			out.append(id)
+	return out
 
 func dismantle_stack(item_id: String, amount: int, station_id: String, event_id: String) -> Dictionary:
 	var definition := item(item_id)

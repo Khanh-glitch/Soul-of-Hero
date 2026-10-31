@@ -126,6 +126,45 @@ def main() -> int:
             "P2 duplicate claim changed inventory",
             findings,
         )
+        # Bounded random Spares research: the draw committed by P1 must be the
+        # draw P2 resolves - no reroll, no second charge, exactly one learning.
+        require(bool(p1.get("spares_job_id")), "P1 receipt has no bounded-random Spares draw", findings)
+        require(bool(p1.get("spares_target")), "P1 receipt has no drawn recipe", findings)
+        require(
+            int(p1.get("spares_pool_size", 0)) > 0,
+            "P1 reports an empty bounded pool for a draw that succeeded",
+            findings,
+        )
+        require(
+            int(p1.get("spares_after", -1)) == int(p1.get("spares_before", -2)) - 4,
+            f"P1 did not escrow exactly 4 Spares for the draw "
+            f"({p1.get('spares_before')} -> {p1.get('spares_after')})",
+            findings,
+        )
+        require(
+            str(p2.get("spares_job_id", "")) == str(p1.get("spares_job_id", "")),
+            "P2 does not report the same Spares draw job",
+            findings,
+        )
+        require(
+            str(p2.get("spares_target_p2", "")) == str(p1.get("spares_target", "")),
+            "the reloaded OS process rerolled the Spares draw",
+            findings,
+        )
+        require(bool(p2.get("spares_learned", False)), "the drawn recipe was never learned", findings)
+        require(
+            int(p2.get("spares_after_p2", -1)) == int(p1.get("spares_after", -2)),
+            "resolving the draw charged or refunded Spares",
+            findings,
+        )
+        require(
+            bool(p2.get("spares_pool_excludes_target", False)),
+            "the learned draw is still inside the eligible pool",
+            findings,
+        )
+        require(bool((p2.get("spares_tick") or {}).get("ok", False)), "P2 could not mature the draw", findings)
+        require(bool((p2.get("spares_collect") or {}).get("ok", False)), "P2 could not collect the draw", findings)
+
         conservation = p2.get("conservation") or {}
         require(bool(conservation.get("ok", False)), f"P2 conservation failed: {conservation.get('problems')}", findings)
         for label, receipt in (("P1", p1), ("P2", p2)):
@@ -147,6 +186,16 @@ def main() -> int:
         "granted_output": p2.get("output_after_first_claim"),
         "duplicate_reason": (p2.get("duplicate") or {}).get("reason"),
         "conservation": p2.get("conservation"),
+        "spares_draw": {
+            "job_id": p1.get("spares_job_id"),
+            "target_p1": p1.get("spares_target"),
+            "target_p2": p2.get("spares_target_p2"),
+            "pool_size": p1.get("spares_pool_size"),
+            "spares_before": p1.get("spares_before"),
+            "spares_after": p1.get("spares_after"),
+            "learned": p2.get("spares_learned"),
+            "pool_excludes_target": p2.get("spares_pool_excludes_target"),
+        },
         "findings": findings,
         "ok": not findings,
     }
