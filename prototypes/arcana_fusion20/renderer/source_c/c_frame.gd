@@ -161,7 +161,7 @@ func I(x: float, y: float, r: float, g: float, b: float, a: float = 1.0) -> void
         a = 1.0
     var i := (yi * W + xi) * 4
     var ia := 1.0 - a
-    field_activity |= FIELD_INK | FIELD_FRAGMENT | FIELD_INFLUENCE
+    field_activity |= FIELD_FRAGMENT | FIELD_INFLUENCE
     if track_world_fragments:
         world_influence[yi * W + xi] = 1
         # Subsequent ink is source-over the already-mapped live fragment.
@@ -186,7 +186,7 @@ func blit_world_fragment(sx: int, sy: int, w: int, h: int, dx: int, dy: int) -> 
                 I(float(x), float(y), 0.0, 0.0, 0.0, 1.0)
                 continue
             var i := (y * W + x) * 4
-            field_activity |= FIELD_INK | FIELD_FRAGMENT | FIELD_INFLUENCE
+            field_activity |= FIELD_FRAGMENT | FIELD_INFLUENCE
             ink[i] = 0.0
             ink[i + 1] = 0.0
             ink[i + 2] = 0.0
@@ -231,7 +231,7 @@ func inverted_live_fragment(x: int, y: int, sx: float, sy: float) -> void:
         I(x, y, 0.65, 0.2, 0.65, 1.0)
         return
     var i := (y * W + x) * 4
-    field_activity |= FIELD_INK | FIELD_FRAGMENT | FIELD_INFLUENCE
+    field_activity |= FIELD_FRAGMENT | FIELD_INFLUENCE
     ink[i] = 0.0
     ink[i + 1] = 0.0
     ink[i + 2] = 0.0
@@ -250,7 +250,7 @@ func ripper_remainder_fragment(x: int, y: int, sx: int, sy: int) -> void:
         I(x, y, 1.0, 1.0, 1.0, 1.0)
         return
     var i := (y * W + x) * 4
-    field_activity |= FIELD_INK | FIELD_FRAGMENT | FIELD_INFLUENCE
+    field_activity |= FIELD_FRAGMENT | FIELD_INFLUENCE
     ink[i] = 0.0
     ink[i + 1] = 0.0
     ink[i + 2] = 0.0

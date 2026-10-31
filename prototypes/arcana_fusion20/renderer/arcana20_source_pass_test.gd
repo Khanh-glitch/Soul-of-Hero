@@ -68,6 +68,7 @@ func _run() -> void:
     viewer.consume(cframe)
     check(int(viewer.upload_counts.get("ink", 0)) == 1 and int(viewer.upload_counts.get("ground", 0)) == 1 and int(viewer.upload_counts.get("disp", 0)) == 1, "C inactive fields are uploaded only once")
     c.I(3, 3, 0.0, 0.0, 0.0, 0.5)
+    check((c.field_activity & CFrame.FIELD_FRAGMENT) == 0, "C black ink on clear fragment does not dirty fragment texture")
     cframe.c_field_activity = c.field_activity
     viewer.consume(cframe)
     check(int(viewer.upload_counts.get("ink", 0)) == 2 and int(viewer.upload_counts.get("ground", 0)) == 1, "C explicit black ink uploads even without RGB brightness")
@@ -76,6 +77,10 @@ func _run() -> void:
     viewer.consume(cframe)
     viewer.consume(cframe)
     check(int(viewer.upload_counts.get("ink", 0)) == 3, "C active to inactive clears texture once and then reuses it")
+    c.inverted_live_fragment(3, 3, 7, 8)
+    c.I(3, 3, 0.0, 0.0, 0.0, 0.5)
+    check((c.field_activity & CFrame.FIELD_FRAGMENT) != 0 and is_equal_approx(c.world_fragment[(3 * CFrame.W + 3) * 4 + 2], 0.5), "C black overdraw dirties and attenuates authored world fragment")
+    c.clear()
     cframe.c_field_activity = -1
     viewer.consume(cframe)
     check(int(viewer.upload_counts.get("ink", 0)) == 4 and int(viewer.upload_counts.get("ground", 0)) == 2, "C unknown source activity uploads conservatively")
