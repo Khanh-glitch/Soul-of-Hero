@@ -1,0 +1,58 @@
+name: CT workflow pin guard PILOT (isolated; no production acceptance)
+on:
+  push:
+    branches:
+      - coordination/ct-pin-guard-pilot-20261031
+    paths:
+      - tools/survival/ct_pin_guard.py
+      - tests/survival/test_ct_pin_guard.py
+      - .github/workflows/ct-pin-guard-pilot.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  negative-controls-and-baseline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      HISTORICAL_A0_SHA: ee5f9f5160c8e4385f35a63b355ddda957f93d10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Oracle negative controls
+        run: python3 -m unittest discover -s tests/survival -p test_ct_pin_guard.py -v
+      - name: Reproduce the observed current-workflow pin split at fixed A0 HEAD
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/ct
+          git fetch --no-tags origin "$HISTORICAL_A0_SHA"
+          git show "$HISTORICAL_A0_SHA:.github/workflows/a0-connected-journey.yml" > artifacts/ct/connected.yml
+          git show "$HISTORICAL_A0_SHA:.github/workflows/a0-round12-composition.yml" > artifacts/ct/round12.yml
+          set +e
+          python3 tools/survival/ct_pin_guard.py \
+            --pin a1=a030cb89a5033ba5faba39995762b4bea1332cec \
+            --pin a3=b44e22df3af40939069189be14afc23ee1ce21c4 \
+            --pin a6=6d1e8bcee0bbb09be0ff04f14de1f7e59f06cfb8 \
+            --pin a8=0f885df862d7d34f18ca456e80b1aaac05b23de0 \
+            --json-out artifacts/ct/pin_violations.json \
+            artifacts/ct/connected.yml artifacts/ct/round12.yml > artifacts/ct/report.txt
+          rc=$?
+          set -e
+          test "$rc" -eq 1
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          obj=json.loads(Path('artifacts/ct/pin_violations.json').read_text())
+          assert obj['verdict']=='FAIL_CLOSED', obj
+          assert len([e for e in obj['errors'] if 'STALE_PIN' in e])==6, obj['errors']
+          assert len([e for e in obj['errors'] if 'CURRENT_WORKFLOW_SPLIT' in e])==3, obj['errors']
+          print('PILOT_PROVED: 6 stale owner pin declarations; 3 workflow splits. This is a HISTORICAL snapshot, NOT live workflow acceptance.')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ct-pin-guard-pilot-evidence
+          path: artifacts/ct/pin_violations.json
+          if-no-files-found: warn
