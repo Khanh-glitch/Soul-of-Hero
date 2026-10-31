@@ -646,6 +646,16 @@ SOH world source parity and creator review remain separate.
   visually buried the selected inner C bloom/gold. `8cb686529` changes only the
   C-material candidate's painter order to match C's inner-over-outer priority;
   the A-only original source draw order is retained. A16 source and actual-world
-  reruns are pending; full-quality paired source/native creator review remains
-  required. The source-debris and temporal/cleanup checks do not establish
+  reruns [A16 source 41226665755](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41226665755),
+  [same-family quick 41226665793](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41226665793)
+  passed; [real-world JOIN 41226665782](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41226665782)
+  has completed its diagnostic step and is uploading. Full-quality paired
+  source/native creator review remains required. The source-debris and temporal/cleanup checks do not establish
   correct visual appearance.
+
+- Painter-order commit `8cb686529` initially caused Godot parse errors for
+  inferred `radius`, `x`, `y` because the new loop index was Variant
+  ([source quick 41225617589](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41225617589)).
+  `ac11476b1` explicitly types the index; source quick and A16 original-source
+  comparison passed afterward. `gdparse` alone did not catch this; no threshold
+  was changed.
