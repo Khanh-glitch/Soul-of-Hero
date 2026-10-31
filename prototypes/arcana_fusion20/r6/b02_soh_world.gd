@@ -8,6 +8,7 @@ const WORLD_SCENE := preload("res://game/overworld/chapter1_overworld.tscn")
 const SKELETON_SCENE := preload("res://game/characters/enemies/skeleton_enemy.tscn")
 const R4 := preload("res://prototypes/arcana_fusion20/r4/arcana20_soh_native_hit_bridge.gd")
 const R5 := preload("res://prototypes/arcana_fusion20/r6/original_b02_runtime.gd")
+const A_FIRE := preload("res://prototypes/arcana_fusion20/r6/source_a_fire_on_soh_sprite.gd")
 
 var overworld: Chapter1Overworld
 var skeleton: SkeletonEnemy
@@ -15,6 +16,7 @@ var port: Node
 var fx: ArcanaB02Runtime
 var selection := 2
 var hud: Label
+var a_fire: ArcanaAOnBodyFire
 var _ready_for_cast := false
 
 
@@ -44,9 +46,15 @@ func _on_world_ready() -> void:
     skeleton.global_position = starting_point
     add_child(skeleton)
     skeleton.set_physics_process(false)
+    a_fire = A_FIRE.new()
+    a_fire.name = "ArcanaSourceAOnBodyBurn"
+    skeleton.add_child(a_fire)
+    if not a_fire.bind_actor(skeleton):
+        push_error("Original A burn: real SOH skeleton animation missing")
     port = R4.new()
     port.name = "ConfirmedSOHCombatPort"
     add_child(port)
+    port.source_a_hit_confirmed.connect(_on_source_a_hit_confirmed)
     fx = R5.new()
     fx.name = "OriginalSourcePassPlayback"
     add_child(fx)
@@ -80,3 +88,13 @@ func _unhandled_input(event: InputEvent) -> void:
     if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
         # Existing SOH camera transform resolves this to actual map world coordinates.
         fx.cast(selection,get_global_mouse_position())
+
+## Only a REAL CombatDamage receipt can ignite A's source-authored body fire.
+func _on_source_a_hit_confirmed(target: Node2D, _before: PackedByteArray,
+        _after: PackedByteArray, details: Dictionary) -> void:
+    if target != skeleton or not is_instance_valid(a_fire):
+        return
+    if String(details.get("element","")) != "fire":
+        return
+    a_fire.ignite(int(details.get("actual_damage",0)),
+        details.get("hit_world",skeleton.global_position))
