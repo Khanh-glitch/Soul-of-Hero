@@ -76,7 +76,7 @@ failed; this historical pin is not an endorsement of the latest route.
 | 17 | C world pass diagnostic incl. live-screen fragment mapping | [run 41207915157](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41207915157), one frozen frame only |
 | 18 | A candidate fields available; REDESIGN_CANDIDATE | Real actors, full-cast and world review missing |
 | 19 | D additive and persistent warp consumer, frozen-world/cancel [JOIN 41209511506](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41209511506) | D bloom/post, OUT review, depth and original parity missing |
-| 20 | C seeded contour + A real-world pull candidate; [contour parity 41211396186](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211396186), [world JOIN 41211301091](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211301091) | Polygons, blocks, particles, full fusion parity, OUT and review missing |
+| 20 | C seeded contour/polygons + A real-world pull candidate; [contour 41211396186](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41211396186), [isolated polygons 41212119457](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41212119457) | New actual-world JOIN pending; C blocks/particles, full fusion parity, OUT and review missing |
 
 Run-level pass does not override a failing check annotation. No thresholds have
 been relaxed. Only CT owns `soh_binding/**`; no production mount, merge, fake
@@ -186,8 +186,13 @@ first-contour field comparison [41211396186](https://github.com/Khanh-glitch/Sou
 at ticks 270/324/396/450/540 produced authored ink coverage IoU 1.0, ink MAE/max
 0, and light MAE <= 2.1e-11 / max 5.96e-8 on a zero base. It excludes A warp
 and all other C geometry, so it is NOT whole-source/composite parity. Original
-C polygons/blocks/particles and A debris remain missing, as do full-source
-parity, OUT and visual approval. The all-20 sweep at `c6fb12ba` exercised the
+C blocks/particles and A debris remain missing, as do full-source parity, OUT
+and visual approval. `006c0073` adds C original clipped wireframe geometry and
+passage; [isolated polygon comparison 41212119457](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41212119457)
+at ticks 270/324/378 has light-support IoU 1.0 and light max <= 2.38e-7 on zero
+base, excluding contour, blocks, particles, A warp and actual world. The older
+world JOIN predates those additions. `4da30c26` also adds original early glitch
+fields; source comparison and new JOIN remain pending. The all-20 sweep at `c6fb12ba` exercised the
 older #20 candidate.
 
 ## Actual-overworld overlap frame probe
@@ -244,3 +249,14 @@ modifying source logic: at all six ticks ink coverage IoU was 1.0, ink max
 <= 5.96e-8, light max <= 5.96e-8 and displacement max 0. This explains the
 previous light difference but does not prove uncontrolled random seeds match
 or cover t < 6.2, original full fusion, world composition, post, OUT or review.
+
+The updated [overlap run 41212007763](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41212007763)
+verified that both source viewers were active across the physical screenshot,
+checked 720p/2K/4K viewport, window and X11 sizes, and then measured 52
+post-draw overlapping intervals per resolution: p50/p95/p99 were
+444.659/466.964/493.019 ms (720p), 645.000/675.498/697.919 ms (2K) and
+652.600/676.249/702.701 ms (4K). Live-object delta was 33 while overlapping
+and 0 after cancel relative to baseline in these probes. Static-byte deltas
+were negative at higher resolutions as viewport/capture resources changed, so
+they are **not reliable cast-allocation measurements**. These software-CI
+results are not device budgets, full lifecycle or visual approval.
