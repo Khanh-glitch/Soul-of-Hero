@@ -40,14 +40,15 @@ with Image.open(source) as image:
     windows = [
         # Where the player stands: ground plus whatever represents the avatar.
         ("centre", (width // 2 - 160, height // 2 - 90, width // 2 + 160, height // 2 + 90)),
-        # The HUD band along the bottom of the real game screen.
-        ("hud", (0, height - 110, width // 2, height)),
+        # The HUD band along the bottom of the real game screen. Kept narrow so the
+        # text-heavy band still fits its chunk cap at 1:1.
+        ("hud", (0, height - 100, 480, height)),
         # Authored scenery away from the centre, so terrain is not the only witness.
         ("north_east", (width - 400, height // 4, width - 80, height // 4 + 180)),
     ]
     for name, box in windows:
         if spent_chunks >= BUDGET or spent_notices >= NOTICE_CAP:
-            print(f"A0_FRAME_PROBE_SKIPPED {name} budget_exhausted chunks={spent_chunks} notices={spent_notices}")
+            print(f"::notice::A0_FRAME_PROBE_SKIPPED {name} budget_exhausted chunks={spent_chunks} notices={spent_notices}")
             continue
         crop = image.crop(box).convert("RGB")
         data = b""
@@ -58,14 +59,14 @@ with Image.open(source) as image:
             parts = (len(base64.b64encode(data)) + CHUNK - 1) // CHUNK
             if parts <= CROP_CAP:
                 break
-            half = max(64, crop.size[0] // 2)
-            crop = crop.crop((0, 0, half, crop.size[1]))
-            print(f"A0_FRAME_PROBE_SHRANK {name} attempts={attempt + 1} to={crop.size} reasons=chunks")
+            # Narrow the window rather than resample it: pixels stay 1:1.
+            crop = crop.crop((0, 0, max(96, crop.size[0] * 3 // 4), crop.size[1]))
+            print(f"::notice::A0_FRAME_PROBE_SHRANK {name} attempt={attempt + 1} to={crop.size} chunks={parts}")
         if parts > CROP_CAP:
-            print(f"A0_FRAME_PROBE_SKIPPED {name} chunks={parts} cap={CROP_CAP}")
+            print(f"::notice::A0_FRAME_PROBE_SKIPPED {name} chunks={parts} cap={CROP_CAP}")
             continue
         if spent_chunks + parts > BUDGET:
-            print(f"A0_FRAME_PROBE_SKIPPED {name} chunks={parts} would_exceed_budget={BUDGET}")
+            print(f"::notice::A0_FRAME_PROBE_SKIPPED {name} chunks={parts} budget={BUDGET}")
             continue
         digest = hashlib.sha256(data).hexdigest()
         encoded = base64.b64encode(data).decode("ascii")
