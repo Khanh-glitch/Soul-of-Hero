@@ -354,5 +354,7 @@ linear RGB MAE **0.000631/0.000797/0.001959/0.010781/0.012465** at ticks
 **1.0/0.894/1.0/0.983/0.986**: this is not parity or acceptance. Latest
 viewport-clipped optimization `743688b2` has a separate
 [diagnostic 41213639184](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41213639184)
-in progress. Ribbons/poly, GPU rounding, coverage, bloom/post, actual SOH world
-and creator review remain separate.
+completed with the same reported summary metrics, and
+[world JOIN 41213605315](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41213605315)
+passed at `c2882d5a`. Ribbons/poly, GPU rounding, coverage, bloom/post, actual
+SOH world source parity and creator review remain separate.
