@@ -7,6 +7,8 @@ with the engine built from source in this sandbox._
 
 **Verdict: `HOLD_PRODUCTION` / `ACCEPT_DIAGNOSTIC_EVIDENCE` / `NO_MERGE` /
 one structural root dependency named, one content-reachability root dependency named.**
+Visual status amended below from `VISUAL_NOT_TESTED` to `VISUAL_TESTED` (§4): the product
+was rendered and its pixels inspected, and the pixels show defects, not a pass.
 
 ---
 
@@ -38,6 +40,13 @@ stacks into **exactly one bag**, a second death reuses `death_1` rather than min
 `death_2`, recovery is refused while the death is pending, and the **physical bag node
 in the world** returns the stack when interacted with at the death spot.
 
+The same build door is also **brittle in a way a player will hit**: in the fresh-capture
+run the Hero stood inside one perimeter cell, that wall was refused `hero_in_footprint`,
+the room therefore never sealed, and the bed was then refused `bed_requires_room` — one
+refused cell silently costs the whole room, and nothing on screen shows which cell is
+missing (§4.1.5). The run's own HUD also dropped from `PROVISIONS 80` to `78` while the
+capture sat still.
+
 **What a player cannot do, and this is the headline of the round.**
 
 * **They cannot be anybody.** There is no male/female Adventurer to select, no
@@ -68,13 +77,20 @@ in the world** returns the stack when interacted with at the death spot.
 * **They cannot choose the finale.** `a0_run_lifecycle.abandon_run` has **0 callers in
   `game/`**; the last-72 h claim is refused as `source_identity_forgery`; no physical
   elder chest is bound in the world.
-* **They cannot be seen.** No pixel was inspected at 720p, 1440p or 2160p. §4 is
-  `VISUAL_NOT_TESTED` with measured substitutes, not a visual pass.
+* **They cannot be seen as themselves.** Three 1× PNGs at 720p/1440p/2160p now exist
+  and were inspected (§4): the world reads clearly at 1×, but every frame shows the same
+  one default body, there is no wayfinding on screen at all, and a house built through
+  the product's door photographs as a windowless slab. Pixels that show a defect are
+  evidence, not a pass.
 
 **Two promises are not "almost there"; they are set by a number nobody has reconciled
 (384×256 vs 1024×768) and a method nobody has written (the identity projection).**
 Both are single-owner, dependency-ordered fixes. Everything else in this report is
-secondary to them.
+secondary to them. A third one became visible only when the pixels arrived: a player who
+is told `WAYS 0/4` has **nothing on screen to walk toward** — no map, no compass, no
+off-screen marker — and the game never renders above a 640×360 canvas, so a 1440p or 4K
+player is buying magnification, not clarity (§4.2). Neither is expensive; both are A0
+surface.
 
 ---
 
@@ -112,6 +128,10 @@ secondary to them.
   preserved as `native_runs.r12_sweep.v1.json` (PASS 7 · FAIL 8 · BLOCKED 9 · RED 26);
   §9 explains why three of those FAILs are an oracle/environment artifact and not
   product defects. Round 11's payload is preserved as `native_runs.r11_full.v1.json`.
+* Visual evidence: `.github/workflows/a7-r12-survival-visual.yml` (A7-owned, test-only),
+  run **`41184551136`**, rendering the same pinned composition in a real X11 window; it
+  produced the four 1× PNGs in `docs/survival/balance/visual/r12/` that §4 inspects. The
+  sandbox itself remains rasteriser-free (`DisplayServerHeadless`, adapter `""`).
 * Probes: `tests/survival/balance_native_r12/` (9 files + harness). Six are round-11
   bodies **carried forward unchanged except the probe id**, so a surviving defect is a
   fact about this tree; three are new and target the round-12 mission
@@ -143,7 +163,7 @@ EV8 enjoyment. Nothing below is raised above its rung.
 | A Core can be found/charged/used | **0 LIVE sources**, `skill_gate_unavailable`, no damage producer | EV5 |
 | Offline work settles once | 2 charcoal after 12 s absence in a **second PID**, second claim `nothing_to_collect` | EV5 |
 | The finale can be chosen | `abandon_run` callers in `game/`: **0**; last-72 h claim `source_identity_forgery` | EV5 |
-| The product looks right at 1× | **VISUAL_NOT_TESTED** — 3/3 capture attempts returned no image | none |
+| The product looks right at 1× | **VISUAL_TESTED — and it does not**: four 1× PNGs (720p/1440p/2160p + house) inspected; no wayfinding, one unseen avatar, house reads as a slab, 4K is a 6× blow-up of 640×360 (§4) | EV7 (visual) |
 | The first hour is enjoyable | **not claimed**; needs a human (EV8) | none |
 
 ---
@@ -213,39 +233,107 @@ may "fix" this by moving a site to a made-up cell.
 
 ---
 
-## 4. Visual evidence — `VISUAL_NOT_TESTED`
+## 4. Visual evidence — `VISUAL_TESTED` at 1× 720p/1440p/2160p, and what it falsified
 
-Three real capture attempts were made at exactly the requested framings, at 1×, on the
-mounted production world:
+**Amendment, 2026-10-31 08:35Z.** §4 as first published said `VISUAL_NOT_TESTED` because
+this sandbox has no rasteriser (`DisplayServerHeadless`, no libGL/dri) and cannot
+download an artifact from the blob host. That was true of the sandbox, not of the
+product, so A7 built its own render path instead of inheriting the verdict:
+`.github/workflows/a7-r12-survival-visual.yml` (A7-owned, shipped nowhere) rebuilds the
+**pinned composition `663a83ede523`** with `compose.py --pin`, hard-asserts the resulting
+`refs/comp/r12_full` equals that SHA *before* it claims a capture, then renders in a real
+X11 window at 1280×720, 2560×1440 and 3840×2160 (`xvfb-run`, llvmpipe, 1× — no scaling in
+the harness), verifies each PNG's signature, dimensions and that the frame is not flat,
+and commits the images back to this branch. Run `41184551136` succeeded; the pixels below
+were **opened one by one at 1× in this session and inspected**, not read from metadata.
 
-| framing | root texture | image | PNG bytes | result |
+| file (in `docs/survival/balance/visual/r12/`) | framing | image | bytes | distinct sampled colours |
 |---|---|---|---|---|
-| 1280×720 | present | `get_image()` → **no image** | 0 | no pixels |
-| 2560×1440 | present | **no image** | 0 | no pixels |
-| 3840×2160 | present | **no image** | 0 | no pixels |
+| `r12_overworld_1280x720.png` | 720p 1× | 1280×720 | 306,989 | 366 |
+| `r12_overworld_2560x1440.png` | 1440p 1× | 2560×1440 | 452,863 | 361 |
+| `r12_overworld_3840x2160.png` | 2160p 1× | 3840×2160 | 568,487 | 362 |
+| `r12_home_1280x720.png` | 720p 1×, at the house | 1280×720 | 295,320 | 344 |
 
-`DisplayServerHeadless`, adapter `""`, no libGL/libEGL/libvulkan/dri in this sandbox
-and none installable from the hosts it can reach. **No pixel was inspected at 1× 720p,
-1440p or 2160p, so no visual verdict is claimed.** The repository's own CI does run
-`xvfb-run … --resolution 1280x720` "Xvfb rendered gameplay captures" (it passed on PR
-#25's run `41174942408`), but that job captures **campaign/dungeon levels at 720p
-only**, never the survival overworld and never 1440p/2160p; and this sandbox cannot
-download the 15 MB artifact (its blob host is outside the allowlist). An artifact that
-A7 has not opened is not visual evidence.
+Engine `4.7.stable.official.5b4e0cb0f`, display server `X11`, adapter `llvmpipe (LLVM
+20.1.2)`, scene `res://game/overworld/chapter1_overworld.tscn`, `is_world_ready` true,
+Hero spawn `(904, 3496)` world px = cell `(56, 218)`, camera zoom `(1.00, 1.00)`. The
+transcript and every measurement are committed beside the images
+(`r12_visual_measurements.json`, `render_output.txt`).
 
-What *is* CPU-observable, and matters on its own:
+### 4.1 What the pixels actually show
 
-| framing | world shown at 1× | share of the 384×256 world | 32 px Hero as % of screen height | camera zoom | HUD font sizes |
-|---|---|---|---|---|---|
-| 1280×720 | 80×45 tiles | 3.7 % | 4.44 % | 1.00 | 8, 8, 8, 11, 11 |
-| 2560×1440 | 160×90 tiles | 14.6 % | 2.22 % | 1.00 | 8, 8, 8, 11, 11 |
-| 3840×2160 | 240×135 tiles | 33.0 % | 1.48 % | 1.00 | 8, 8, 8, 11, 11 |
+1. **One avatar, and no selection seam.** A single humanoid in white cloth with an
+   orange chest and a dark head covering stands centre-frame in all four captures. There
+   is no picker, no name, no gender marker, and nothing on screen changes with an
+   identity — consistent with the census (`0` avatar assets in Git, `save_declares_method:
+   false`, presenter absent from `r12_full`).
+2. **The HUD is real and legible at 1×:** `THE HOLLOW MARCHES · WESTERN FUNERARY
+   QUARTER`, a `PROVISIONS 80` bar, then `CAMPS 0/4`, `FINDS 0/8`, `WAYS 0/4`, and the
+   control legend `WASD move · CLICK interact · B build · C craft · ESC retreat`. The
+   three counters are quarter-scoped, which is the same extent seam §3.2 measures — a
+   player who clears this quarter sees `4/8/4` and nothing on screen says what lies past
+   the quarter line.
+3. **There is no wayfinding at all.** No minimap, no compass, no off-screen marker, no
+   waypoint arrow, no "press M". `WAYS 0/4` is a promise with no in-world pointer to a
+   way. This is a separate, cheaper defect than the extent seam: it survives even after
+   A1 reconciles the world.
+4. **Interaction is discoverable where an object is under the cursor:** the home frame
+   shows `[CLICK] Oak Tree 3/3` over a harvestable tree, i.e. a remaining-harvest count is
+   surfaced in the world and reads clearly at 1×.
+5. **A house built through the product's own doors reads as a wall slab, not a room.**
+   From a legal plot the capture placed **15 of 16** perimeter walls and 9 foundations
+   with `select_piece`/`validate_cell`/`try_place`; the 16th was refused
+   `hero_in_footprint` (the Hero stood in that cell), the bed was then refused
+   `bed_requires_room`, and `room_at()` returned nothing — one missing wall is enough to
+   void the room. The photograph shows what that produces: a solid wainscot mass with
+   **no door opening, no roof, no readable interior, no bed**, over brick floor. Nothing
+   on screen marks the one cell that is missing, and the only feedback is the refusal
+   string. (The round-12 `R12HOME` probe reached `PASS 18` with a sealed `r=1` plot seven
+   cells away and bed `b10` activated — the mechanic works, the *path* is brittle and the
+   result is not visually a home.)
+6. **Provisions moved in the frames:** `PROVISIONS 80` in the three world frames,
+   `PROVISIONS 78` in the home frame taken seconds later with no gathering in between.
+   The capture did not measure the drain rate, so this is recorded as observed, not
+   claimed.
 
-`Camera2D.zoom` is pinned to `Vector2.ONE` and the HUD keeps fixed pixel font sizes, so
-the three "1×" framings are **three different world-to-screen scales**, not one design
-scaled three ways. At 4K the Hero is a third of his 720p size relative to the screen and
-the HUD text is 8–11 px physical. That is a design fact a human reviewer must judge —
-and a reason a resized window is not a substitute for the three requested captures.
+### 4.2 What the pixels falsify — including my own round-12 arithmetic
+
+The table published earlier in §4 (80×45 / 160×90 / 240×135 visible tiles; Hero at
+4.44 % / 2.22 % / 1.48 % of screen height; HUD text 8–11 *physical* px at 4K) was
+**arithmetic on window pixels that ignored the project's content scale, and it is wrong.**
+Measured, from the committed PNGs and the runtime facts recorded beside them:
+
+- root `content_scale_size = 640×360`, `content_scale_mode = 1` (CANVAS_ITEMS),
+  `content_scale_factor = 1.0`, `Camera2D.zoom = (1, 1)`; in `project.godot`
+  (`663a83ede523`) that is `window/size/viewport_width=640`, `viewport_height=360`,
+  `window/stretch/mode="canvas_items"`, `window/stretch/aspect="expand"`.
+- The HUD's dark panel measures **610 / 1220 / 1830 px** long at 720p / 1440p / 2160p —
+  **49.0 % of frame width at all three**, i.e. exactly 2× / 4× / 6× of one 305-logical-px
+  layout.
+- Sampling the 2160p frame at exact 3× offsets reproduces **92.5 %** of 5,238 probe
+  pixels of the 720p frame; at 2× or 4× the match collapses to **1.2 % / 1.6 %**. The
+  4K capture is a 3× magnification of the 720p view, not a wider view.
+- Therefore, for the three **16:9** framings that were requested, the visible world is
+  **40 × 22.5 tiles** (16 px cells) at *every* window size — 4.9 % of the 384×256 runtime
+  extent, not 3.7 / 14.6 / 33.0 % — the Hero keeps a constant screen-relative size instead
+  of shrinking to a third, and HUD text is drawn at 8/11 logical px and rasterised at
+  16–22 px (720p) up to 48–66 px (2160p). `aspect="expand"` means only a non-16:9 window
+  would reveal extra world on one axis; all three inspected captures are 16:9.
+
+The consequence is worse for a pixel-art game, and it is *A0's*: **the game never renders
+at native resolution.** A 1440p or 4K monitor receives a 4× / 6× blow-up of 640×360 tile
+art, and buying a bigger screen never reveals more of the world or more detail. `VISUAL_UX`
+fails on that, on the missing wayfinding, and on the house reading as a slab.
+
+### 4.3 What the pixels still cannot settle
+
+`VISUAL_TESTED` covers exactly what was photographed: the overworld at three framings and
+one house attempt. **No frame exists** of a chosen avatar, a roof closing over a sealed
+room, a knife gather that credits an item, a threat that damages the Hero, a death bag
+recovered, a funded offline homecoming, the Core in use, or the Ragnarok window — so P1,
+P4, P5, P7 and P8 keep their `FAIL`/`NOT_TESTED` status on the evidence of §2, and the
+house in the frame was paid with `FIXTURE_GRANT` materials, so the pixels prove the build
+door, **not** that a player can afford it.
 
 ---
 
@@ -310,8 +398,9 @@ unplayable end-to-end**, and no amount of probe time can fix that without S10 an
   (`TOOL_REVISION_STALE`), depleted node, stale offline proposal, duplicate chest
   claim (`premature_ragnarok_claim`), and a second death before recovery.
 * **R3 — execute and look.** Real engine, real composition, real input, second OS
-  process. **No pixels** — §4. Distinguish: import (pass) · headless native (pass) ·
-  full composition (pass) · Xvfb pointer (NOT_TESTED) · human session (none).
+  process, and **four 1× PNGs opened** (§4). Distinguish: import (pass) · headless
+  native (pass) · full composition (pass) · rendered 1× at 720p/1440p/2160p (pass, CI
+  Xvfb) · Xvfb pointer (NOT_TESTED) · human session (none).
 * **R4 — play value.** §5. Home-first is real and cheap; explore-first has no
   destination; threat is off; Core is unreachable; finale has no door. Model-feel
   observations are hypotheses, not playtests.
@@ -325,7 +414,7 @@ unplayable end-to-end**, and no amount of probe time can fix that without S10 an
 | ARCHITECTURE | **FAIL** | identity slice exists only as a cross-owner edit of A0's `save_service.gd`; geography authored at an extent A0 cannot load |
 | CODE_RUNTIME | **PASS (scoped)** | import exit 0; 200 checks; 0 parse errors after the const-collision fix |
 | TEST_ORACLE | **FAIL** | success surfaces `reason: "rejected"` on `collect` and `queue_recipe`; legacy headless pointer clause misclassified as a defect (now labelled) |
-| VISUAL_UX | **NOT_TESTED** | §4: 0/3 capture attempts returned an image |
+| VISUAL_UX | **FAIL** | §4: four 1× PNGs opened; no wayfinding, one avatar, house is a windowless slab, and 1440p/2160p are 4×/6× magnifications of a 640×360 canvas |
 | SYSTEM_VALUE | **FAIL** | no Core use, no damage producer, no reachable POI, no finale |
 | SAVE_MIGRATION | **PASS (scoped)** | second-PID settlement, one bag, pending-death refusal, idempotent receipts; instance-token loss rule absent (S9) |
 | INTEGRATION | **FAIL** | 0 A8 sites mounted; A6 scenes excluded; endpoints unauthorised |
@@ -337,7 +426,7 @@ unplayable end-to-end**, and no amount of probe time can fix that without S10 an
 |---|---|
 | ENGINEERING | **PASS (scoped)** — the pieces do what they claim; placeholders are labelled as placeholders |
 | NORMAL_PLAYER_REACHABILITY | **FAIL** — avatar, POIs, threat, Core, finale unreachable |
-| ACTUAL_VISUAL_CRAFT | **NOT_TESTED** — no pixels |
+| ACTUAL_VISUAL_CRAFT | **FAIL (scoped)** — pixels exist and were inspected; craft is coherent at 1× but the game never renders at native resolution (§4.2) |
 | GAMEPLAY_DEPTH / ECONOMIC VALUE | **FAIL** — one-sided economy; no decision changes |
 | CREATOR_FIDELITY | **FAIL** — P1/P5/P6/P7/P8 all blocked on named owners |
 | HUMAN_ENJOYMENT | **NOT_TESTED** — no human session this round |
@@ -437,6 +526,9 @@ not upgrade a missing feature to a pass.
 | 7 | A8 `e1fe550b` | differentiate Orchard vs Mill; bind a physical Core/elder chest; authorise kiosk endpoints | `R12J04` 3 distinct signatures; `plan_meta_source_claim` ok |
 | 8 | A0 `a6b57c36` | a player-reachable abandon/evacuation door | `abandon_run` callers in `game/` ≥ 1 |
 | 9 | A0 `a6b57c36` | allow a unique A3 instance to be lost on death (or state it never is) | a `soh_i_` token can appear in a bag record |
+| 10 | A0 `a6b57c36` | decide the 640×360 canvas: either render the world at native resolution above 720p, or declare the fixed logical view a design choice in the contract | a 2160p capture that is **not** a 3× magnification of the 720p one (probe: < 40 % pixel identity at 3× offsets), or a contract line that says it is |
+| 11 | A0 `a6b57c36` | wayfinding on screen: a minimap or off-screen markers for `CAMPS`/`FINDS`/`WAYS`, so a counter of 0/4 is actionable | a 1× 720p frame in which a player can point at the nearest unmet POI without reading a log |
+| 12 | A0 `a6b57c36` | a house that reads as a home: a door opening in the wall ring, a roof that closes, and a visible marker for the one refused cell | a house frame like §4.1(5) in which the interior is visible and the bed is placed |
 
 ### 10.3 The next verifiable acceptance gate
 
@@ -446,8 +538,9 @@ and no A7 overlay, all of the following must hold **in one run**:
 1. a male and a female body are both selectable through a shipped screen, and the
    choice survives a **second OS process** (`R12ID`/`J08`);
 2. the presenter reaches `STATUS_READY` and a rendered body differs between the two
-   choices — inspected as a **real 1× PNG at 720p, 1440p and 2160p** or the gate is
-   `VISUAL_NOT_TESTED` and cannot pass;
+   choices — inspected as **real 1× PNGs at 720p, 1440p and 2160p**, produced the way §4's
+   were (`a7-r12-survival-visual.yml` pattern: pinned composition, Xvfb, 1×), or the gate
+   is `VISUAL_NOT_TESTED` and cannot pass;
 3. `R12ID`'s extent `MISSING` is replaced by a **standing** A8 site whose `probe()`
    returns ok, and a player can walk to it and retreat (`J09`);
 4. no A6 file appears outside its overlay prefix, and no second SaveService exists.
@@ -482,6 +575,17 @@ python3 tools/survival/balance/run_native.py \
   --composition refs/comp/r12_wired \
   --probe balance_native_r12/r12_identity_probe.gd
 ```
+
+### 11.1 Action receipt (Git evidence, not a dispatch)
+
+| action | evidence |
+|---|---|
+| composition pinned and rebuilt on the exact refs | `refs/comp/r12_full` = `663a83ede523…`; the capture job asserts this SHA before it renders |
+| ledger written on that composition | `data/survival/balance/results/native_runs.v1.json` (10 rows, 200 checks) |
+| report + scoreboard published | commits `6698cfc`, `d28369c` on `arena/353cf120-soul-of-hero` |
+| pixels rendered by an A7-owned job, not by an owner's | `.github/workflows/a7-r12-survival-visual.yml`, runs `41183323197` (failed at fetch: missing AVFX ref), `41183534595`, `41183848452`, `41184197051`, **`41184551136` (green)** |
+| pixels opened and inspected | this report, §4; four PNGs under `docs/survival/balance/visual/r12/` |
+| nothing merged, nothing dispatched | A7 has not merged PR #25 and has no Arena dispatch to show; a Git document is not a dispatch |
 
 **Mode-A reentry for the next auditor:** the first thing to re-measure is
 `R12ID`'s identity census. If `save_declares_method` is still `false`, nothing in the

@@ -22,7 +22,7 @@ sweep is preserved as `native_runs.r12_sweep.v1.json`, round 11's as
 | `r12_j04_probe` | 11 | 1 | 2 | `RED_NOT_IMPLEMENTED` |
 | `r12_j06_j07_probe` | 41 | 0 | 2 | `RED_NOT_IMPLEMENTED` |
 | `r12_threat_death_probe` | 13 | 0 | 1 | `RED_NOT_IMPLEMENTED` |
-| `r12_visual_probe` | 8 | 0 | 0 | `BLOCKED` (VISUAL_NOT_TESTED) |
+| `r12_visual_probe` | 8 | 0 | 0 | `BLOCKED` (headless harness; pixels obtained out-of-band, §4) |
 | **total** | **200** | **1** | **18** | **PASS 2 / RED 7 / FAIL 0 / BLOCKED 1** |
 
 * **The paid physical home is real.** 8/8 paid walls → a room id → roof footprint 1 at
@@ -41,9 +41,18 @@ sweep is preserved as `native_runs.r12_sweep.v1.json`, round 11's as
   `game/overworld` + `game/survival`; `survival/a0_optional_threat` false. The
   counterfactual mount is fair-shaped (443 px from spawn, 14 damage vs 1100 HP) and
   unreachable.
-* **`VISUAL_NOT_TESTED` at 1× 720p/1440p/2160p.** 3/3 real capture attempts returned no
-  image (headless, no rasterizer). Measured substitutes: camera zoom 1.00 at all three,
-  HUD fonts fixed at 8–11 px, Hero at 4.44 % / 2.22 % / 1.48 % of screen height.
+* **`VISUAL_TESTED` — four 1× PNGs opened and inspected** (`docs/survival/balance/visual/
+  r12/`, run `41184551136` on the pinned composition): 720p 306,989 B / 1440p 452,863 B /
+  2160p 568,487 B / house 295,320 B. What they show: no wayfinding at all (`WAYS 0/4` and
+  no map, compass or marker), one default body in every frame, and a house built through
+  the product's door as a windowless slab (15/16 walls, one refused `hero_in_footprint`,
+  bed then `bed_requires_room`).
+* **The old resolution arithmetic was mine and it was wrong.** The project renders one
+  **640×360 canvas** (`viewport 640×360`, `stretch mode canvas_items`): the HUD panel is
+  49.0 % of frame width at all three framings (610/1220/1830 px), and the 2160p frame
+  matches the 720p frame at exact 3× offsets for 92.5 % of probe pixels (1.2 % at 2×).
+  So the world is **40×22.5 tiles at every window size**, the Hero does not shrink, and
+  4K is a 6× blow-up of 640×360 — not 80×45 → 240×135 tiles and a Hero at 4.44 % → 1.48 %.
 * **Adversarial paths hold**: full bag (29 records), stale tool revision, depleted node,
   stale offline proposal, duplicate chest claim, second death before recovery — 17/17.
 * **Next action (single):** A0 authors the identity projection and mounts A6's
