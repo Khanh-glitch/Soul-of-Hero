@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [arena/c7b0c4e8-soul-of-hero]
-    paths: ['tools/arcana19_ribbon_compare/**', 'prototypes/arcana_fusion20/renderer/d19_ribbon_compare.gd', 'prototypes/arcana_fusion20/renderer/source_d/d_fx.gd', 'prototypes/arcana_fusion20/renderer/source_d/d_ribbon_triangles.gd', '.github/workflows/arcana19-ribbon-compare.yml']
+    paths: ['tools/arcana19_ribbon_compare/**', 'prototypes/arcana_fusion20/renderer/d19_ribbon_compare.gd', 'prototypes/arcana_fusion20/renderer/d19_ribbon_gpu_compare.gd', 'prototypes/arcana_fusion20/renderer/source_d/d_ribbon_gpu.gd', 'prototypes/arcana_fusion20/renderer/source_d/d_ribbon_gpu.gdshader', 'prototypes/arcana_fusion20/renderer/source_d/d_fx.gd', 'prototypes/arcana_fusion20/renderer/source_d/d_ribbon_triangles.gd', '.github/workflows/arcana19-ribbon-compare.yml']
 permissions:
   contents: read
 jobs:
@@ -40,6 +40,12 @@ jobs:
           timeout 300s godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/d19_ribbon_compare.gd 2>&1 | tee native.log
           grep -Fq 'D19_RIBBON_CAPTURE_COMPLETE' native.log
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:' native.log
+      - name: Capture native GPU ribbon cases and actual fragment coverage
+        run: |
+          set -o pipefail
+          timeout 300s xvfb-run -a -s '-screen 0 1024x768x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script res://prototypes/arcana_fusion20/renderer/d19_ribbon_gpu_compare.gd 2>&1 | tee gpu.log
+          grep -Fq 'D19_RIBBON_GPU_COMPLETE' gpu.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Shader compilation failed|ERROR:' gpu.log
       - name: Compare spatial metrics without tolerance gates
         run: |
           set -o pipefail
@@ -53,5 +59,6 @@ jobs:
             artifacts/arcana19-ribbon/
             original.log
             native.log
+            gpu.log
             import.log
             compare.log
