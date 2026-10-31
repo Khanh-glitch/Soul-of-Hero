@@ -218,6 +218,60 @@ blackletter headline. Fixing it means changing the type system — face or size 
 re-inspecting every screen, so it is recorded with evidence rather than changed
 silently in the middle of another fix.
 
+## 4.7 Round 12 continuation — WP1 field card and WP5 typography
+
+Implementation `5a85ef4a`; frames published from it in `43cb0f66`. Both items were
+built in the production scenes, not in a mockup, and inspected at 720p and 2160p.
+
+**WP5 — the type system.** Every bundled face carries all 50 Vietnamese codepoints, so
+the `Đấu vết / Có tiếng đống / Tính đầy` readings were a rendering failure, not a copy
+error (confirmed earlier: source strings are NFC-correct). Rasterising the four real
+strings in all three faces at 9, 11, 13 and 16 px shows the cause plainly: Handjet
+merges the stacked marks — circumflex plus acute on `ấ`, hook above on `ỉ` — so `Dấu`
+turns into a letter that reads as `Đấu`, while VT323 keeps both marks distinct from
+9 px upward and Grenze Gotisch stays loose below 16 px.
+
+So body, captions, numbers, warnings and headings are now VT323; the return panels —
+which render the words CT inspected — were pointing at the shared
+`living_arsenal_theme`, and since Godot themes do not inherit, A6 now owns
+`game/survival/ui/return/a6_return_theme.tres`, a copy of that theme with the same
+functional body face, and the four return scenes point at it. The decorative
+blackletter survives only as `A6Wordmark`, used for the Latin `SOUL OF HERO` wordmark
+where no accent can be lost. No correctly spelled string was edited to hide anything.
+
+**WP1 — the field card.** The old card pinned itself to 214x46 and drew a
+45-character region name past its own parchment (visible in the before frame as a
+heading running into the border with a dead parchment band underneath). It now pins
+only its width and grows to its rows; the region line is trimmed with an ellipsis
+instead of widening the card; vitals join provisions as an icon + bar + number row;
+the three `0/0` counters are hidden until the world has something left to find; and
+the key legend is Vietnamese and legible over a bright sand tile.
+
+Vitals needed a real seam rather than a placeholder: the character emits
+`GameEvents.player_health_changed` only when health *changes*, so a fresh session
+showed nothing until the first hit. The overworld now pushes the character's own
+health at the same 250 ms sampled cadence it already uses for the pack snapshot, and
+the signal keeps it current afterwards. A player without a health property leaves the
+row hidden; an empty bar would be invented and a full one would be a lie.
+
+The bar fill was inset two units inside a seven-unit track, which left a three-unit
+band that read as a scratched line rather than a gauge; it now sits one unit in.
+
+**Evidence, inspected by eye:**
+
+| frame | what it shows |
+| --- | --- |
+| `world_fresh_world_1280x720.png` | the real overworld after the change: health 100/100 and provisions 80/100 as filled gauges, `TÚI 1/50`, live counters, Vietnamese legend, nothing clipped |
+| `survival_ui_hud_field_3840x2160_half.png` | the shipped HUD close-up at maximum resolution: accents resolve correctly (`chuyển`, `tác`, `dựng`, `chế tạo`, `rút lui`) |
+| `world_fresh_world_*` before (`11bc3a15` set) vs after (`43cb0f66` set) | before: heading clipped by its own card, dead parchment band, `0/0 0/0 0/0`, English legend, no health |
+
+**Still absent, and why.** Season/day guidance and equipment/Core have no owner
+projection to read, so they are not drawn at all rather than approximated — *handoff
+A0: a season projection the overworld can read; A3: equipped-item state*. Threat
+information stays out by D061 (no omniscient radar); the HUD shows an engagement line
+only if the world ever emits one. Prompt copy in the world is still English
+(`Stand near a chest to choose items.`) because it is A0-owned copy, not HUD copy.
+
 ## 5. Gates
 
 Exact commit at the time of writing: `452d4d74` (frames and results are added as they
@@ -225,13 +279,27 @@ arrive; the commit that a result belongs to is stated with it).
 
 | gate | what it checks | status |
 | --- | --- | --- |
-| R0 source provenance | fetch script asserts commits + SHA-256; receipt re-hashed | **PASS** (local, `29 assets, 0 problems`) |
-| R1 art fidelity | nine-slice stress sheet at 2–3× inspected by eye; two bad crops and two bad icon bindings found and fixed | **PASS** (local) |
-| R2 project integrity | `tools/review/scene_lint.py` over 315 scenes/resources/scripts: 0 problems, 4 notes (all pre-existing); gdtoolkit syntax pass over every changed script; semantic duplicate-declaration pass added this round | **PASS** (local, `340af5c7`) |
-| R2b UI layer test | `tests/survival/ui/a6_ui_layer_test.tscn` | **PASS** — `A6 UI LAYER PASSED`, in the render job on `a81fe20f` |
-| R3 native gameplay suites | A0/A3/A6 headless suites | **PARTIAL** — `A6 native avatar validation` **PASS** on `a81fe20f`; `Import and headless runtime tests` and `Xvfb rendered gameplay captures` pass; only the pre-existing "original main baseline comparison" job fails |
-| R4 native renders 720/1440/2160 | both render workflows | **PASS** — survival set published from `a81fe20f` (`fae6ca7c`), 15 frames, dimensions asserted per frame; return set: **all twelve frames verified**, `A6 return UI renderer captures` green on `a81fe20f` |
-| R5 visual acceptance by eye | inspection of R4 frames at each resolution | **PARTIAL** — inspected: avatar 720/2160 (no clipping), title 720 (real title screen, not the boot screen), return digest 720 on `a81fe20f` (cards separated, run card no longer clipped). Found and fixed three real defects this way. Still open: the avatar frames show the fail-closed no-art state because the render job stages no private art; and small-size Vietnamese text below |
+| R0 source provenance | fetch script asserts commits + SHA-256; receipt re-hashed | **PASS** (`29 assets, 0 problems`); no new art this round, fonts already pinned |
+| R1 art fidelity | nine-slice stress sheet inspected by eye; two bad crops and two bad icon bindings found and fixed | **PASS** (local) |
+| R2 project integrity | `scene_lint.py` over 316 files: 0 problems, 4 pre-existing notes; gdtoolkit syntax pass on every changed script; duplicate-declaration and undefined-helper rules | **PASS** (`5a85ef4a`) |
+| R2b UI layer test | `a6_ui_layer_test.tscn` incl. the field card building without owner state | **PASS** — `A6 UI LAYER PASSED` in the render job on `5a85ef4a` |
+| R3 native gameplay suites | A0/A3/A6 headless and Xvfb suites | **PARTIAL** — `A6 native avatar validation` **PASS**, `Import and headless runtime tests` **PASS**, `Xvfb rendered gameplay captures` **PASS**; only the pre-existing "original main baseline comparison" job fails (`5a85ef4a`) |
+| R4 native renders 720/1440/2160 | both render workflows publish into `docs/survival/reviews/native/` | **PASS** — survival set published from `5a85ef4a` (`43cb0f66`), 18 frames, dimensions asserted per frame; return set all twelve verified |
+| R5 visual acceptance by eye | inspection of R4 frames at each resolution | **PARTIAL** — WP1/WP5 inspected at 720 and 2160 (before/after above). WP2 inventory, WP3 crafting, WP4 homecoming, WP6 locomotion remain |
+
+### Nine-gate verdict, this round
+
+| gate | verdict | evidence / why |
+| --- | --- | --- |
+| RESEARCH_PROVENANCE | **PASS** | type decision measured on real rasters of the four strings CT named; D045/D046 avatars and animation repertoire untouched |
+| ARCHITECTURE | **PASS** | vitals travel over the existing `GameEvents` signal plus the same sampled seam the pack uses; no second inventory or save authority, no A0/A3 file rewritten |
+| CODE_RUNTIME | **PASS** | parse-clean plus hosted `Import and headless runtime tests` and `Xvfb rendered gameplay captures` on `5a85ef4a` |
+| TEST_ORACLE | **PARTIAL** | `scene_lint` proves the duplicate/undefined-helper classes; the HUD frame is a component render, not a played session, and is labelled as such |
+| VISUAL_UX | **PARTIAL** | WP1/WP5 accepted by eye at 720/2160 with before/after; WP7's full set (bag, crafting, POI, death, Gold occlusion) not yet captured |
+| SYSTEM_VALUE | **PARTIAL** | health is visible before the first hit and the counter strip stops lying with 0/0; season, equipment and Core possession still have no owner projection to show |
+| SAVE_MIGRATION | **NOT_APPLICABLE** | no persisted schema or save field changed this round |
+| INTEGRATION | **PARTIAL** | the HUD is production-mounted and the world pushes into it; the new type has not been re-inspected on every legacy screen that shares the A6 theme |
+| BALANCE_REPLAY | **NOT_TESTED** | no balance claim; nothing here changes costs, durations or rewards |
 
 Frames are now committed into the repository and were read by eye, so they are
 usable evidence. They are still not a claim that a *player* did anything: the
@@ -305,3 +373,5 @@ each screen's own layout to fit the window it was drawn in.
 | `abf0f49a` | restore a helper a refactor deleted; linter flags undefined private calls and no longer misses `static func` |
 | `36a97453` | guidance card body scrolls, so the card can be given a height that fits |
 | `a81fe20f` | run card measures itself by its content; native test asserts it |
+| `744db254` | functional Vietnamese type (VT323) with A6-owned return theme; field card rebuilt; HUD close-up capture |
+| `5a85ef4a` | vitals pushed from the character at a sampled cadence; bar fill reads as a gauge |
