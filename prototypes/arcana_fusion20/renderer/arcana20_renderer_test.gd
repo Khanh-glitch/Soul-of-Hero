@@ -50,6 +50,8 @@ func _init() -> void:
                 node._process(1.0 / 60.0)
             if not renderer.is_active(cid):
                 break
+        if id == 2:
+            print("::notice::P2DBG node=", node, " diag=", node.diagnostics() if is_instance_valid(node) and node.has_method("diagnostics") else "freed")
         if int(_contacts[cid]) != 1:
             _fail("contact count %s = %d (want 1)" % [cid, int(_contacts[cid])])
         if not _finished.has(cid):
