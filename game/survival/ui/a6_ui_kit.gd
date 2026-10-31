@@ -305,6 +305,12 @@ const STATE_OFFLINE := "offline"
 const STATE_DONE := "done"
 const STATE_KNOWN := "known"
 
+## The survival theme deliberately sets no global Label shadow. Behind 11-13 unit text a
+## 1x2-pixel offset does not read as depth, it reads as a doubled glyph - measured on the
+## R13 workshop at 1x, where the verdict word "CHẾ" carried a black ghost one pixel right
+## and two pixels below, which is what the creator called muddy. Text that floats over the
+## world keeps an outline (`world_label`); the display variations keep their own shadow.
+
 const BOARD_INK := Color(0.16, 0.108, 0.078)
 const BOARD_EDGE := Color(0.52, 0.4, 0.2, 0.9)
 const LEDGER_PLATE := Color(0.945, 0.9, 0.78, 0.92)
