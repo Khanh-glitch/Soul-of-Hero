@@ -250,7 +250,9 @@ func _death_card() -> CanvasItem:
 		overworld = _current_screen()
 	if overworld == null:
 		return null
-	return overworld.get_node_or_null("OverworldDeath") as CanvasItem
+	# The card is a child of the HUD CanvasLayer, not of the overworld root, so this
+	# has to search rather than take a direct path.
+	return overworld.find_child("OverworldDeath", true, false) as CanvasItem
 
 
 ## The overworld that owns this actor, found by walking up to the node that carries
