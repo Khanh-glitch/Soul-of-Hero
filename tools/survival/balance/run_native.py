@@ -84,6 +84,10 @@ PROBE_FAMILIES = (
     # round-13 world/input probes, so a round-12 → round-13 difference is a fact
     # about the product rather than about the probe.
     ("balance_native_r13", REPO / "tests" / "survival" / "balance_native_r13"),
+    # Round 14. The same body carried forward once more, against the heads the
+    # owners advanced to after the round-13 review. Identical probes, new ids:
+    # a difference between r13 and r14 rows is a fact about the product.
+    ("balance_native_r14", REPO / "tests" / "survival" / "balance_native_r14"),
 )
 #: A7-owned data the round-8 probes read. These are test configuration, not game
 #: data: the game never loads them. They are copied into the worktree next to the

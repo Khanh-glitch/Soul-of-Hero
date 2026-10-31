@@ -1,7 +1,7 @@
 {
   "composition": {
-    "ref": "refs/comp/r13_heads",
-    "sha": "3d8630f5b1adfa6c5b50c56fa506524e0ce71f6b"
+    "ref": "refs/comp/r14_heads",
+    "sha": "d75bcd41f131b3dca25ae61b6da809591e614230"
   },
   "display": "headless (DisplayServerHeadless): no GPU, no rendered frame, no human review",
   "engine": "4.7.stable.custom_build.5b4e0cb0f",
@@ -61,8 +61,21 @@
     "balance_native_r13/r13_j04_probe.gd": "e8f8b502ac375c6cf6f5b1ae459fa625d701471e17b9b7f929e435736dfe8588",
     "balance_native_r13/r13_j06_j07_probe.gd": "379e3726d268618309c90d6027d76afd3f0a621beed39433b28a42a6011e6b5a",
     "balance_native_r13/r13_threat_death_probe.gd": "bc1ec871a63ca5fd0f3f52ee3388190e2cee65eadefcbf0cc8929eb0971e8ba3",
-    "balance_native_r13/r13_visual_capture.gd": "67ee12e2d5ba7569750611452eaec06114adee7176648905b10ac94eac16b7b4",
+    "balance_native_r13/r13_visual_capture.gd": "3b0260acbe0136caaf15e1f004f2e074d8d748b581ae76c1ea4fd7aca27337b9",
     "balance_native_r13/r13_visual_probe.gd": "b92a001e60c5d4575e9755a76915929ee0e866aa104e5b63e2dceb55a25f6e7c",
+    "balance_native_r14/r14_adversarial_probe.gd": "a6333c3d142da64e79bd5d7901902e36b6e674afc8adbe304cd5d44412e874ab",
+    "balance_native_r14/r14_extent_probe.gd": "917b9466dd904957e9b0da65dba51107a9c00f7ef3991647169c7e1c7f5e6af2",
+    "balance_native_r14/r14_harness.gd": "6e050c5dbb49faa0dc684968030365c057c1d4dbad080b21a5f0635fa4cb33d6",
+    "balance_native_r14/r14_home_probe.gd": "3f475dc94ac00532b3ae1b56c809af8d7974a92ecbba991bafa837856ca032c5",
+    "balance_native_r14/r14_identity_probe.gd": "f0b51f43b6ae8f66f69ea2bc2623f66cefc983191ccc561fecd882153b1778ac",
+    "balance_native_r14/r14_j01_probe.gd": "500a12d958cba42f6ca9ede165b376efd1cb38454e634feeca700e259be5d5cd",
+    "balance_native_r14/r14_j02_j05_probe.gd": "b7349f2bd52bd15f3b7ccf3450b067a8762eabaccf15e31a16c2f0276c97c15d",
+    "balance_native_r14/r14_j03_probe.gd": "3b971e199d471fed327dab53f364f0ff64df32feaf2cd2f4e762eb4ed150769c",
+    "balance_native_r14/r14_j04_probe.gd": "197b74fcee6ffbe3f57e18c4c3a76dbe00c6bbdb59584ba16c69f90f91e5a87c",
+    "balance_native_r14/r14_j06_j07_probe.gd": "7ec6ae1d3361b0523c5440827f0e7f7540e120adc325a7c72ca024ab03fa148d",
+    "balance_native_r14/r14_threat_death_probe.gd": "b4c8ec5fe8af9d4aaf8ce3b1a5d847090ee4c34863df03d423c592e21e3a72c8",
+    "balance_native_r14/r14_visual_capture.gd": "1b7e4d8684bf04a003225c2ca8b69911df98f102a2300a816ea102153f619677",
+    "balance_native_r14/r14_visual_probe.gd": "6e8a086a86605da35b36c4309c2d70b867929d00721d9413cc64aa7c781523ce",
     "balance_native_r9/r9_economy_custody_probe.gd": "9b9b0a2588f8e46c4daacf94e661e5eeed5be7b79b8207622e529bed4db7fc8e",
     "balance_native_r9/r9_economy_seam_probe.gd": "0f6b36d1228bf85134877b9403343223f89d40fb23d34145db15b3c54e0c9cb4",
     "balance_native_r9/r9_harness.gd": "b35ee5d452d713128734df97ae25045d1cbe10058c874ad147d3440b7bae8a55",
@@ -91,13 +104,13 @@
       ],
       "exit_code": 0,
       "failed": [],
-      "family": "balance_native_r13",
-      "log": ".artifacts/native_runs/3d8630f5b1ad/balance_native_r13__r13_adversarial_probe.gd.log",
+      "family": "balance_native_r14",
+      "log": ".artifacts/native_runs/d75bcd41f131/balance_native_r14__r14_adversarial_probe.gd.log",
       "log_lines": 25,
-      "log_sha256": "499a5a76418a9a4e119aa44036a1875407c0722f476dedfd2c1b9e9dfdef431a",
+      "log_sha256": "21d0869894610d0dc2ee92173d424219c742646ef43d2145b4f29b2bad9f02d9",
       "mismatch": "",
       "missing": [],
-      "probe": "r13_adversarial_probe.gd",
+      "probe": "r14_adversarial_probe.gd",
       "verdict": "PASS"
     },
     {
@@ -111,13 +124,13 @@
       "failed": [
         "the default world contains the authored continent (10 of 118 POIs standable)"
       ],
-      "family": "balance_native_r13",
-      "log": ".artifacts/native_runs/3d8630f5b1ad/balance_native_r13__r13_extent_probe.gd.log",
+      "family": "balance_native_r14",
+      "log": ".artifacts/native_runs/d75bcd41f131/balance_native_r14__r14_extent_probe.gd.log",
       "log_lines": 18,
-      "log_sha256": "102d604113be5b7ebb4658d63d36ffa3ba463a8f93589cc3c09b5fefd1173586",
+      "log_sha256": "6fa0f1aeebfe83fdd328c9287b0a8a7a055e7f2f26894dc7e8e7a5cc7274cbf9",
       "mismatch": "",
       "missing": [],
-      "probe": "r13_extent_probe.gd",
+      "probe": "r14_extent_probe.gd",
       "verdict": "FAIL"
     },
     {
@@ -129,13 +142,13 @@
       ],
       "exit_code": 0,
       "failed": [],
-      "family": "balance_native_r13",
-      "log": ".artifacts/native_runs/3d8630f5b1ad/balance_native_r13__r13_home_probe.gd.log",
+      "family": "balance_native_r14",
+      "log": ".artifacts/native_runs/d75bcd41f131/balance_native_r14__r14_home_probe.gd.log",
       "log_lines": 27,
-      "log_sha256": "7b31d4bb1f71f1bd96f4c0af1b904efa1c47c667dd79b270524c3c11c50fbaa6",
+      "log_sha256": "faad0f92b983a77fe6924a44313bc6299f931dcea3527b8d1e57e58785866e9d",
       "mismatch": "",
       "missing": [],
-      "probe": "r13_home_probe.gd",
+      "probe": "r14_home_probe.gd",
       "verdict": "PASS"
     },
     {
@@ -147,10 +160,10 @@
       ],
       "exit_code": 3,
       "failed": [],
-      "family": "balance_native_r13",
-      "log": ".artifacts/native_runs/3d8630f5b1ad/balance_native_r13__r13_identity_probe.gd.log",
+      "family": "balance_native_r14",
+      "log": ".artifacts/native_runs/d75bcd41f131/balance_native_r14__r14_identity_probe.gd.log",
       "log_lines": 30,
-      "log_sha256": "7da903fcd609c64e190b4dcbf7928caaa3d180f4ed5ec6f12debff73e1b3732f",
+      "log_sha256": "c7affe5ad98a5fd22e5a7ed200c69605285d6809ed4717a8dd2706a4e849afdf",
       "mismatch": "",
       "missing": [
         "get_player_appearance_projection() on SaveService (expected in res://game/autoload/save_service.gd)",
@@ -160,7 +173,7 @@
         "a runtime world whose extent contains A1's authored geography (expected in A1 authors [1024.0, 768.0] cells, A0's only runtime document is 384x256 -> 108 of 118 POIs are unstandable)",
         "a walkable A8 site (P5 layered POIs) (expected in all 3 sites refused: A1_RUNTIME_WORLD_EXTENT_ABSENT)"
       ],
-      "probe": "r13_identity_probe.gd",
+      "probe": "r14_identity_probe.gd",
       "verdict": "RED_NOT_IMPLEMENTED"
     },
     {
@@ -172,16 +185,16 @@
       ],
       "exit_code": 3,
       "failed": [],
-      "family": "balance_native_r13",
-      "log": ".artifacts/native_runs/3d8630f5b1ad/balance_native_r13__r13_j01_probe.gd.log",
+      "family": "balance_native_r14",
+      "log": ".artifacts/native_runs/d75bcd41f131/balance_native_r14__r14_j01_probe.gd.log",
       "log_lines": 26,
-      "log_sha256": "a1033b989b448b26b5100bf07a4d443adf6a4dcd6c5602054d5f1baf833b3d80",
+      "log_sha256": "6bcf22a89617e18e01da22ffb9d130e20befc4baded258d947d2073ec7d1b3c7",
       "mismatch": "",
       "missing": [
         "a selected male/female avatar bound to the player body (A6_SOURCE_UNAVAILABLE) (expected in res://game/characters/knight/knight.tscn never references the presenter and SaveService publishes no appearance projection)",
         "a starting knife item in the survival catalogue (expected in data/survival/items/items.json (57 ids, none is a knife or blade))"
       ],
-      "probe": "r13_j01_probe.gd",
+      "probe": "r14_j01_probe.gd",
       "verdict": "RED_NOT_IMPLEMENTED"
     },
     {
@@ -193,10 +206,10 @@
       ],
       "exit_code": 3,
       "failed": [],
-      "family": "balance_native_r13",
-      "log": ".artifacts/native_runs/3d8630f5b1ad/balance_native_r13__r13_j02_j05_probe.gd.log",
+      "family": "balance_native_r14",
+      "log": ".artifacts/native_runs/d75bcd41f131/balance_native_r14__r14_j02_j05_probe.gd.log",
       "log_lines": 27,
-      "log_sha256": "a1a5c8f291898c7b02c8766da0334339efafa8b43d49076ea1bb0bf3b90aee3f",
+      "log_sha256": "d49b200159e3518aafe089f264b0f966ca910cd2185957c13b99b3dd94fc6ce5",
       "mismatch": "",
       "missing": [
         "a physical Skill Core a player can find (A1/A8 source) (expected in source specimen_venom is PROPOSED_A1 at poi poi:specimen_vault_venom with requirements [{ \"kind\": \"access_tier\", \"value\": 2.0 }, { \"kind\": \"power\", \"value\": true }]; no mounted world node binds it)",
@@ -204,7 +217,7 @@
         "an authentic damage producer in the survival world (A1 hazards or A8 enemies) (expected in no call site of take_damage/take_resolved_damage exists under game/overworld or game/survival)",
         "a death rule that can lose a unique A3 instance token (expected in survival_service.begin_overworld_death keeps every `soh_i_` stack in the bag and puts only ordinary stacks in the bag record, so a unique token cannot be lost)"
       ],
-      "probe": "r13_j02_j05_probe.gd",
+      "probe": "r14_j02_j05_probe.gd",
       "verdict": "RED_NOT_IMPLEMENTED"
     },
     {
@@ -216,15 +229,15 @@
       ],
       "exit_code": 3,
       "failed": [],
-      "family": "balance_native_r13",
-      "log": ".artifacts/native_runs/3d8630f5b1ad/balance_native_r13__r13_j03_probe.gd.log",
+      "family": "balance_native_r14",
+      "log": ".artifacts/native_runs/d75bcd41f131/balance_native_r14__r14_j03_probe.gd.log",
       "log_lines": 19,
-      "log_sha256": "9b3e048480e2e7a9ecc179c6b3f91745d432be379e607c1e6dd3cfef356ee220",
+      "log_sha256": "5ebcdab4b415ac1a0cdfa29e58104d83321281490f16c3ce13551802df7a7cb0",
       "mismatch": "",
       "missing": [
         "an owner-published A6 return projection (A6_SOURCE_UNAVAILABLE) (expected in a6_owner_projection_source.gd resolves six accessors by name on the composed autoloads; 6 of 6 read an empty contract (absent: [\"season_clock\", \"run_facts\", \"return_digest\", \"digest_acknowledgements:absent\", \"run_history\", \"site_cue:absent\"]))"
       ],
-      "probe": "r13_j03_probe.gd",
+      "probe": "r14_j03_probe.gd",
       "verdict": "RED_NOT_IMPLEMENTED"
     },
     {
@@ -238,16 +251,16 @@
       "failed": [
         "the three sites differ in their authored cost/risk/action shape (2 distinct of 3)"
       ],
-      "family": "balance_native_r13",
-      "log": ".artifacts/native_runs/3d8630f5b1ad/balance_native_r13__r13_j04_probe.gd.log",
+      "family": "balance_native_r14",
+      "log": ".artifacts/native_runs/d75bcd41f131/balance_native_r14__r14_j04_probe.gd.log",
       "log_lines": 22,
-      "log_sha256": "2b9faaef78563f5ffc3e4e0b48f8c4368c13bd5ba27e1eca9ea9dd8f3bb9ddd7",
+      "log_sha256": "b6d2230fd7c09b6b1a4d432d63ac5dea7506b9ed89204b669df3d470c94f34a2",
       "mismatch": "",
       "missing": [
         "an A8 POI mounted inside the shipped overworld (expected in chapter1_overworld.gd instantiates landmarks/camps/resources only; [\"south_quarry\", \"south_orchard_ruin\", \"south_crown_mill\"] exist as standalone scenes)",
         "an A3-authorized ordinary reward for any of the three POIs (expected in world_action refused every site ([\"south_quarry:unknown_world_poi\", \"south_orchard_ruin:unknown_world_poi\", \"south_crown_mill:unknown_world_poi\"]); A3 is fail-closed by design until an owner supplies evidence)"
       ],
-      "probe": "r13_j04_probe.gd",
+      "probe": "r14_j04_probe.gd",
       "verdict": "RED_NOT_IMPLEMENTED"
     },
     {
@@ -259,16 +272,16 @@
       ],
       "exit_code": 3,
       "failed": [],
-      "family": "balance_native_r13",
-      "log": ".artifacts/native_runs/3d8630f5b1ad/balance_native_r13__r13_j06_j07_probe.gd.log",
+      "family": "balance_native_r14",
+      "log": ".artifacts/native_runs/d75bcd41f131/balance_native_r14__r14_j06_j07_probe.gd.log",
       "log_lines": 20,
-      "log_sha256": "0554abc9beda4fc089479a3765054503b63d54f6ab5aeff140441c695dd41f10",
+      "log_sha256": "7e9761475b4b7d8b90b8dc8693754b0dc10e50b890bfb88bf8a0beebc40c6958",
       "mismatch": "",
       "missing": [
         "a physical awakened-elder chest the player can open in the last 72 h (A8 source, A1 geometry) (expected in plan_meta_source_claim(elder_ashen_vault) -> source_identity_forgery; the world binds no instance of it)",
         "a player-facing voluntary abandon / physical evacuation door (expected in a0_run_lifecycle.abandon_run has no caller in game/ (0 hits); the finale cannot be chosen by a player)"
       ],
-      "probe": "r13_j06_j07_probe.gd",
+      "probe": "r14_j06_j07_probe.gd",
       "verdict": "RED_NOT_IMPLEMENTED"
     },
     {
@@ -280,15 +293,15 @@
       ],
       "exit_code": 3,
       "failed": [],
-      "family": "balance_native_r13",
-      "log": ".artifacts/native_runs/3d8630f5b1ad/balance_native_r13__r13_threat_death_probe.gd.log",
+      "family": "balance_native_r14",
+      "log": ".artifacts/native_runs/d75bcd41f131/balance_native_r14__r14_threat_death_probe.gd.log",
       "log_lines": 18,
-      "log_sha256": "c5313b7fd8097641135fcc04f7b2299f4dfdaf49b9ca04130867b7390b3cfded",
+      "log_sha256": "30c1863c8253c13f0efc3e102b97235a10fc874ab9450fb6d83b79aeef0df013",
       "mismatch": "",
       "missing": [
         "a threat a player can meet in the shipped run (P4 fair threats) (expected in survival/a0_optional_threat is absent/false, so OptionalSkeletonEncounter is never created)"
       ],
-      "probe": "r13_threat_death_probe.gd",
+      "probe": "r14_threat_death_probe.gd",
       "verdict": "RED_NOT_IMPLEMENTED"
     },
     {
@@ -300,13 +313,13 @@
       ],
       "exit_code": 2,
       "failed": [],
-      "family": "balance_native_r13",
-      "log": ".artifacts/native_runs/3d8630f5b1ad/balance_native_r13__r13_visual_probe.gd.log",
+      "family": "balance_native_r14",
+      "log": ".artifacts/native_runs/d75bcd41f131/balance_native_r14__r14_visual_probe.gd.log",
       "log_lines": 33,
-      "log_sha256": "7a7d82e15800bc77723f7b7179e45d2db75b1ad1005de37259fd187c2badc4b3",
+      "log_sha256": "7e84be662a60abd3d5a7c1f41e2ff627f99d5ac71f6c915af862140617936168",
       "mismatch": "",
       "missing": [],
-      "probe": "r13_visual_probe.gd",
+      "probe": "r14_visual_probe.gd",
       "verdict": "BLOCKED"
     }
   ],

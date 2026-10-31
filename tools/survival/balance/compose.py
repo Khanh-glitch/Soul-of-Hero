@@ -207,6 +207,20 @@ PROFILES: Dict[str, Dict[str, object]] = {
         "scope_source": "a0_manifest",
         "question": "the product at the round-13 owner heads, joined by the scopes A0 itself publishes",
     },
+    # Round 14: the same policies at the heads the owners advanced to during the
+    # round-13 review. `r14_heads` is A0's own manifest join (the product A0's CI
+    # builds); `r14_full` is A7's narrower map, kept for comparison.
+    "r14_heads": {
+        "base": "a0",
+        "overlays": ["a1", "a3", "a8", "a6"],
+        "scope_source": "a0_manifest",
+        "question": "the product at the round-14 owner heads, joined by the scopes A0 itself publishes",
+    },
+    "r14_full": {
+        "base": "a0",
+        "overlays": ["a1", "a3", "a6", "a8"],
+        "question": "the product at the round-14 owner heads under A7's narrower map",
+    },
     "r13_full": {
         "base": "a0",
         "overlays": ["a1", "a3", "a6", "a8"],
