@@ -298,6 +298,7 @@ func source_pass_frame() -> Arcana20SourcePassFrame:
     result.c_disp = _frame.disp
     result.c_world_fragment = _frame.world_fragment
     result.c_influence = _frame.world_influence
+    result.c_field_activity = _frame.field_activity
     if _kind == "rift_fusion" and not _frame.live_light_buckets.is_empty():
         var live_light := _frame.live_light_fields()
         result.c_live_light_index = live_light.index

@@ -49,7 +49,37 @@ func _run() -> void:
     c.I(30, 41, 0.0, 0.0, 0.0, 0.25)
     check(is_equal_approx(c.world_fragment[out_i + 2], 0.75) and is_equal_approx(c.ink[out_i + 3], 0.25), "C20 OUT fragment respects black authored ink overdraw")
     c.clear()
-    check(c.world_fragment[fi + 2] == 0.0 and c.ground_coverage[2 * CFrame.W + 2] == 0.0, "C world fields clear")
+    check(c.world_fragment[fi + 2] == 0.0 and c.ground_coverage[2 * CFrame.W + 2] == 0.0 and c.field_activity == 0, "C world fields clear")
+    var cframe := Arcana20SourcePassFrame.new()
+    cframe.family = &"C"
+    cframe.source_size = Vector2i(CFrame.W, CFrame.H)
+    cframe.source_to_world = Transform2D.IDENTITY
+    cframe.c_ground = c.ground
+    cframe.c_ground_coverage = c.ground_coverage
+    cframe.c_ink = c.ink
+    cframe.c_light = c.light
+    cframe.c_disp = c.disp
+    cframe.c_world_fragment = c.world_fragment
+    cframe.c_influence = c.world_influence
+    cframe.c_field_activity = c.field_activity
+    var viewer := Arcana20CWorldPass.new()
+    root.add_child(viewer)
+    viewer.consume(cframe)
+    viewer.consume(cframe)
+    check(int(viewer.upload_counts.get("ink", 0)) == 1 and int(viewer.upload_counts.get("ground", 0)) == 1 and int(viewer.upload_counts.get("disp", 0)) == 1, "C inactive fields are uploaded only once")
+    c.I(3, 3, 0.0, 0.0, 0.0, 0.5)
+    cframe.c_field_activity = c.field_activity
+    viewer.consume(cframe)
+    check(int(viewer.upload_counts.get("ink", 0)) == 2 and int(viewer.upload_counts.get("ground", 0)) == 1, "C explicit black ink uploads even without RGB brightness")
+    c.clear()
+    cframe.c_field_activity = c.field_activity
+    viewer.consume(cframe)
+    viewer.consume(cframe)
+    check(int(viewer.upload_counts.get("ink", 0)) == 3, "C active to inactive clears texture once and then reuses it")
+    cframe.c_field_activity = -1
+    viewer.consume(cframe)
+    check(int(viewer.upload_counts.get("ink", 0)) == 4 and int(viewer.upload_counts.get("ground", 0)) == 2, "C unknown source activity uploads conservatively")
+    viewer.free()
 
     var b := BRenderer.new()
     b.track_world_coverage = true

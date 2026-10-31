@@ -16,6 +16,15 @@ class_name CFrame
 const W := 384
 const H := 216
 const N := W * H
+# Conservative authored-operation activity, never inferred from RGB. A clear
+# resets it; consumers may reuse an already-clear texture on inactive frames.
+const FIELD_GROUND := 1
+const FIELD_INK := 2
+const FIELD_LIGHT := 4
+const FIELD_DISP := 8
+const FIELD_FRAGMENT := 16
+const FIELD_INFLUENCE := 32
+var field_activity := 0
 
 var ground := PackedByteArray()
 # Source ground is painted over an external base. Track authored decal
@@ -57,6 +66,7 @@ func _init() -> void:
     clear()
 
 func clear() -> void:
+    field_activity = 0
     ground.fill(0)
     ground_coverage.fill(0.0)
     if track_world_fragments:
@@ -77,6 +87,7 @@ func L(x: float, y: float, r: float, g: float, b: float) -> void:
     if xi < 0 or yi < 0 or xi >= W or yi >= H:
         return
     var i := (yi * W + xi) * 4
+    field_activity |= FIELD_LIGHT | FIELD_INFLUENCE
     if track_world_fragments:
         world_influence[yi * W + xi] = 1
     light[i] += r
@@ -106,6 +117,7 @@ func _record_live_light(x: int, y: int, sx: int, sy: int, gain: float) -> void:
     if not live_light_buckets.has(p): live_light_buckets[p] = []
     (live_light_buckets[p] as Array).append(Vector3(sx, sy, gain))
     world_influence[p] = 1
+    field_activity |= FIELD_INFLUENCE
 
 func add_bilinear_light(x: float, y: float, c: Vector3) -> void:
     var x0 := floori(x); var y0 := floori(y)
@@ -149,6 +161,7 @@ func I(x: float, y: float, r: float, g: float, b: float, a: float = 1.0) -> void
         a = 1.0
     var i := (yi * W + xi) * 4
     var ia := 1.0 - a
+    field_activity |= FIELD_INK | FIELD_FRAGMENT | FIELD_INFLUENCE
     if track_world_fragments:
         world_influence[yi * W + xi] = 1
         # Subsequent ink is source-over the already-mapped live fragment.
@@ -173,6 +186,7 @@ func blit_world_fragment(sx: int, sy: int, w: int, h: int, dx: int, dy: int) -> 
                 I(float(x), float(y), 0.0, 0.0, 0.0, 1.0)
                 continue
             var i := (y * W + x) * 4
+            field_activity |= FIELD_INK | FIELD_FRAGMENT | FIELD_INFLUENCE
             ink[i] = 0.0
             ink[i + 1] = 0.0
             ink[i + 2] = 0.0
@@ -197,6 +211,7 @@ func G(x: float, y: float, r: float, g: float, b: float, a: float = 1.0) -> void
         return
     var i := (yi * W + xi) * 4
     var ia := 1.0 - a
+    field_activity |= FIELD_GROUND | FIELD_INFLUENCE
     ground_coverage[yi * W + xi] = a + ground_coverage[yi * W + xi] * ia
     if track_world_fragments:
         world_influence[yi * W + xi] = 1
@@ -216,6 +231,7 @@ func inverted_live_fragment(x: int, y: int, sx: float, sy: float) -> void:
         I(x, y, 0.65, 0.2, 0.65, 1.0)
         return
     var i := (y * W + x) * 4
+    field_activity |= FIELD_INK | FIELD_FRAGMENT | FIELD_INFLUENCE
     ink[i] = 0.0
     ink[i + 1] = 0.0
     ink[i + 2] = 0.0
@@ -234,6 +250,7 @@ func ripper_remainder_fragment(x: int, y: int, sx: int, sy: int) -> void:
         I(x, y, 1.0, 1.0, 1.0, 1.0)
         return
     var i := (y * W + x) * 4
+    field_activity |= FIELD_INK | FIELD_FRAGMENT | FIELD_INFLUENCE
     ink[i] = 0.0
     ink[i + 1] = 0.0
     ink[i + 2] = 0.0
@@ -250,6 +267,7 @@ func D(x: float, y: float, dx: float, dy: float) -> void:
     if xi < 0 or yi < 0 or xi >= W or yi >= H:
         return
     var i := (yi * W + xi) * 4
+    field_activity |= FIELD_DISP | FIELD_INFLUENCE
     if track_world_fragments:
         world_influence[yi * W + xi] = 1
     disp[i] += dx
@@ -260,6 +278,7 @@ func S(x: float, y: float, m: float) -> void:
     var yi := int(y)
     if xi < 0 or yi < 0 or xi >= W or yi >= H:
         return
+    field_activity |= FIELD_DISP | FIELD_INFLUENCE
     if track_world_fragments:
         world_influence[yi * W + xi] = 1
     disp[(yi * W + xi) * 4 + 2] *= m
@@ -269,6 +288,7 @@ func C(x: float, y: float, v: float) -> void:
     var yi := int(y)
     if xi < 0 or yi < 0 or xi >= W or yi >= H:
         return
+    field_activity |= FIELD_DISP | FIELD_INFLUENCE
     if track_world_fragments:
         world_influence[yi * W + xi] = 1
     disp[(yi * W + xi) * 4 + 3] += v

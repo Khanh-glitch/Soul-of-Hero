@@ -29,6 +29,8 @@ var c_light: PackedFloat32Array
 var c_disp: PackedFloat32Array
 var c_world_fragment: PackedFloat32Array
 var c_influence: PackedByteArray
+# -1 means unknown producer; consumers must conservatively upload all fields.
+var c_field_activity := -1
 # Optional A20 additive live-world sample mapping, independent of C ink.
 var c_live_light_index: PackedFloat32Array
 var c_live_light_operations: PackedFloat32Array
