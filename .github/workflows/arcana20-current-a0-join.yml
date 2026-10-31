@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      A0_SHA: be81b58cfc5b7ba0207804797e31019aaffecf47
+      A0_SHA: 9eaa1936682d3941282185249a7ae37d21abf328
       CT_SHA: e505173edd119fdd955cf6249511b575a5468440
     steps:
       - uses: actions/checkout@v4
