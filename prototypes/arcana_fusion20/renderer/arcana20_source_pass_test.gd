@@ -95,6 +95,20 @@ func _run() -> void:
         if rift_frame.disp[i * 4] != 0.0 or rift_frame.disp[i * 4 + 1] != 0.0: rift_warp += 1
     check(rift_ink > 0 and rift_inverted > 0 and rift_warp > 0, "C20 original contour, real-world inversion and A warp fields coexist")
 
+    var graph_bolts := AChainVerdictGraph.new()
+    var plain_bolt := AFramebuffer.new()
+    plain_bolt.track_audit_writes = true
+    plain_bolt.clear()
+    graph_bolts._bolt(plain_bolt, Vector2(130, 60), Vector2(260, 135), 3.0, 1234, 1.5, 1.0, 0.32, 0)
+    var branched_bolt := AFramebuffer.new()
+    branched_bolt.track_audit_writes = true
+    branched_bolt.clear()
+    graph_bolts._bolt(branched_bolt, Vector2(130, 60), Vector2(260, 135), 3.0, 1234, 1.5, 1.0, 0.32, 5)
+    var new_branch_pixels := 0
+    for i in range(AFramebuffer.W * AFramebuffer.H):
+        if branched_bolt.audit_writes[i] != 0 and plain_bolt.audit_writes[i] == 0: new_branch_pixels += 1
+    check(new_branch_pixels > 0, "A09 C channel tree contributes source-branch writes")
+
     var rotor := AVoltCarouselFusion.new()
     rotor.setup()
     check(rotor.source_seeds() == PackedInt32Array([0xc0de]) and rotor.rings.size() == 6, "A11 original seeded six-ring rotor")
