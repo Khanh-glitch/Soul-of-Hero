@@ -36,7 +36,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 tools/survival/balance/a7_certify.py --self-test | tee selftest.txt
-          grep -q "A7_CERT_SELFTEST 35/35" selftest.txt
+          grep -q "A7_CERT_SELFTEST 37/37" selftest.txt
 
       - name: Compose the exact five-owner tree (read-only)
         run: |

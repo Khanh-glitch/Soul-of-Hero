@@ -216,7 +216,7 @@ def _read_json(path: Path) -> dict:
         return {}
 
 
-_PROBE_CASE = re.compile(r"A7C\s+([A-Z0-9.]{3,10})\s+(\{.*\})\s*$")
+_PROBE_CASE = re.compile(r"A7C\s+([A-Z0-9_.]{3,24})\s+(\{.*\})\s*$")
 
 
 def read_probe(text: str) -> Dict[str, dict]:
@@ -1067,6 +1067,14 @@ def self_test(verbose: bool = True) -> int:
     check("T1.1 tree reproduces → PASS", case(facts, "T1.1").verdict, PASS)
     facts.expected_tree = "f" * 40
     check("T1.1 tree diverges → FAIL", case(facts, "T1.1").verdict, FAIL)
+
+    # probe parsing: underscore-suffixed markers (T1.5_BEFORE) must survive
+    parsed = read_probe('A7C T1.5_BEFORE {"reader_ok": true, "reason": ""}\n'
+                        'A7C T1.3 {"ok": true, "cell": [1, 2]}\n'
+                        'noise A7C T9.9 {}\n')
+    check("probe parser keeps underscore markers", ",".join(sorted(parsed)), "T1.3,T1.5_BEFORE")
+    check("probe parser reads the bootstrap pair",
+          str(parsed.get("T1.5_BEFORE", {}).get("reader_ok")), "True")
 
     # roll-up semantics
     good = [c for c in track1(fresh(one_world=True)) if c.id in ("T1.1",)]
