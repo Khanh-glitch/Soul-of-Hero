@@ -164,7 +164,11 @@ jobs:
             label="$2"
             log_path="$3"
             if [ "$outcome" != success ] && [ -f "$log_path" ]; then
-              excerpt="$(grep -E 'ERROR: Assertion failed:|SCRIPT ERROR:|A8_HERO_AXIS_RESULT|A8_HERO_ROUTE_MEASURE' "$log_path" | tail -n 60 | tr '\n' ' ' | tail -c 5000)"
+              if [ "$label" = input-journey ]; then
+                excerpt="$(grep -E 'A8_POINT|ERROR: Assertion failed:|A8_NATIVE_POI_INPUT_JOURNEY_(PASS|FAIL)' "$log_path" | tail -n 80 | tr '\n' ' ' | tail -c 5000)"
+              else
+                excerpt="$(grep -E 'ERROR: Assertion failed:|SCRIPT ERROR:|A8_HERO_AXIS_RESULT|A8_HERO_ROUTE_MEASURE' "$log_path" | tail -n 60 | tr '\n' ' ' | tail -c 5000)"
+              fi
               echo "::warning title=A8 ${label} failure excerpt::${excerpt}"
             fi
           }
