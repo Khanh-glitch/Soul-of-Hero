@@ -367,12 +367,28 @@ func line(pts: Array, width: Variant, col: Variant, o: Dictionary = {}) -> void:
             var al := best_col.a * alpha_mul * a
             _add_px(pxx, py, cr * al, cg * al, cb * al)
 
+# RibbonBatch's fragment shader uses a one-dimensional h11 lattice with
+# row stride 57, unlike the two-dimensional h21 used by other D shapes.
+# Keep this separate: the two hashes are not interchangeable.
+static func _ribbon_noise(px: float, py: float) -> float:
+    var ix := floorf(px)
+    var iy := floorf(py)
+    var fx := px - ix
+    var fy := py - iy
+    fx = fx * fx * (3.0 - 2.0 * fx)
+    fy = fy * fy * (3.0 - 2.0 * fy)
+    var a := _h11(ix + iy * 57.0)
+    var b := _h11(ix + 1.0 + iy * 57.0)
+    var c := _h11(ix + (iy + 1.0) * 57.0)
+    var d := _h11(ix + 1.0 + (iy + 1.0) * 57.0)
+    return lerpf(lerpf(a, b, fx), lerpf(c, d, fx), fy)
+
 static func _fbm2(px: float, py: float) -> float:
     var s := 0.0
     var a := 0.5
     var f := 1.0
     for i in range(3):
-        s += a * _vnoise(px * f, py * f)
+        s += a * _ribbon_noise(px * f, py * f)
         f *= 2.1
         a *= 0.5
     return s
