@@ -38,6 +38,7 @@ jobs:
               res://prototypes/arcana_fusion20/renderer/arcana20_renderer_test.gd \
             2>&1 | tee renderer-test.log
           grep -Fq 'ARCANA20_RENDER_RESULT PASS' renderer-test.log
+          grep -E 'SCRIPT ERROR:|Parse Error:|ERROR:' renderer-test.log | head -8 | while IFS= read -r l; do echo "::error::$l"; done || true
           if grep -Eq 'SCRIPT ERROR:|Parse Error:|ARCANA20_RENDER_FAIL' renderer-test.log; then
             echo 'renderer parse/runtime/assertion failure' >&2
             exit 1
