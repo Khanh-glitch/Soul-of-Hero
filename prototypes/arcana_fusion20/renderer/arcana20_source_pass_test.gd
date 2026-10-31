@@ -66,6 +66,19 @@ func _run() -> void:
         marked += int(value)
     check(marked > 0, "A05 selected opening writes source-operation footprint")
 
+    var bloom_late := CAbyssalBloomLate.new()
+    bloom_late.setup()
+    check(bloom_late.pets.size() == 24, "C05 source petal input to eruption")
+    for tick in range(1, 361): bloom_late.update(STEP, float(tick) * STEP)
+    check(bloom_late.erupted and bloom_late.particles.size() > 0, "C05 column eruption spawns original gravity particles")
+    var late_frame := CFrame.new()
+    late_frame.track_world_fragments = true
+    late_frame.clear()
+    bloom_late.render(late_frame, 6.0)
+    var late_marked := 0
+    for value in late_frame.world_influence: late_marked += int(value)
+    check(late_marked > 0, "C05 late source column/pool fields")
+
     var graph := AChainVerdictGraph.new()
     graph.setup()
     check(graph.events.size() == 23, "A09 original graph seeded probe count")
@@ -184,8 +197,8 @@ func _run() -> void:
             dp._render_frame()
             check(not dp._sprite.visible, "D legacy sprite suppressed %d" % num)
         check(families.has(id), "all-world source frame %d" % num)
-        if num == 1:
-            check(families.has(id) and (families[id] as Array).has(&"A") and (families[id] as Array).has(&"C"), "fusion publishes both unapproved candidate layers")
+        if num == 1 or num == 5:
+            check(families.has(id) and (families[id] as Array).has(&"A") and (families[id] as Array).has(&"C"), "fusion publishes both unapproved candidate layers %d" % num)
         all_host.cancel_skill(id)
     all_host.free()
     print("ARCANA20_SOURCE_PASS_RESULT ", "PASS" if failures.is_empty() else "FAIL", " ", JSON.stringify(failures))

@@ -82,7 +82,7 @@ func _a_cast(canonical_id: StringName, id: int, caster_world: Vector2, target_wo
     add_child(ap)
     ap.visual_contact.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
         visual_contact.emit(canonical_id, pos, kind)
-        body_event_cue.emit(canonical_id, pos, &"astral"))
+        body_event_cue.emit(canonical_id, pos, StringName(Arcana20SourceCatalog.slot(id).school)))
     ap.visual_event.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
         visual_event.emit(canonical_id, kind, pos, st))
     ap.finished.connect(func() -> void: _on_finished(canonical_id))
@@ -96,7 +96,35 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
     if id < 1:
         return false
     cancel_skill(canonical_id)
-    if _a_cast(canonical_id, id, caster_world, target_world):
+    if not (world_pass_mode and id == 5) and _a_cast(canonical_id, id, caster_world, target_world):
+        return true
+    if id == 5 and world_pass_mode:
+        # Selected source roles, still experimental: A owns opening/peak;
+        # C owns release shock, water column, particles and pool. C's 5.6s
+        # eruption is aligned to A's 5.0s impact via shared-clock offset.
+        var fp := FusionPlayer.new()
+        var ap := ASourcePlayer.new()
+        ap.world_pass_mode = true
+        ap.source_variant = &"abyssal_lead"
+        ap.configure(AAbyssalBloomLead.new(), AAbyssalBloomLead.DURATION)
+        var cp := CSourcePlayer.new()
+        cp.world_pass_mode = true
+        fp.source_pass_ready.connect(func(frame: Arcana20SourcePassFrame) -> void: source_pass_ready.emit(canonical_id, frame))
+        fp.screen_post.connect(func(state: Dictionary) -> void: screen_post.emit(canonical_id, state))
+        fp.configure([
+            {"node": cp, "layer": -1, "offset": 0.6, "begin_call": func(n: Node, cw: Vector2, tw: Vector2) -> void: n.call("begin", cw, tw, "bloom_late")},
+            {"node": ap, "layer": 1, "offset": 0.0, "begin_call": func(n: Node, cw: Vector2, tw: Vector2) -> void: n.call("begin", cw, tw)},
+        ], AAbyssalBloomLead.DURATION)
+        add_child(fp)
+        fp.visual_contact.connect(func(kind: StringName, pos: Vector2, _st: float) -> void:
+            visual_contact.emit(canonical_id, pos, kind)
+            body_event_cue.emit(canonical_id, pos, &"water"))
+        fp.visual_event.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
+            visual_event.emit(canonical_id, kind, pos, st))
+        fp.finished.connect(func() -> void: _on_finished(canonical_id))
+        _casts[canonical_id] = fp
+        cast_started.emit(canonical_id)
+        fp.begin(caster_world, target_world)
         return true
     if id == 1:
         # FUSION #01 Cinder Crown (vote A+C, FUSION_DECISIONS §01):
@@ -122,7 +150,7 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
         add_child(fp)
         fp.visual_contact.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
             visual_contact.emit(canonical_id, pos, kind)
-            body_event_cue.emit(canonical_id, pos, &"pyre"))
+            body_event_cue.emit(canonical_id, pos, &"fire"))
         fp.visual_event.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
             visual_event.emit(canonical_id, kind, pos, st))
         fp.finished.connect(func() -> void: _on_finished(canonical_id))
@@ -157,7 +185,7 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
         add_child(cp)
         cp.visual_contact.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
             visual_contact.emit(canonical_id, pos, kind)
-            body_event_cue.emit(canonical_id, pos, &"astral" if id == 17 else (&"ice" if id == 7 else (&"volt" if id == 10 else &"leaf"))))
+            body_event_cue.emit(canonical_id, pos, &"astral" if id == 17 else (&"ice" if id == 7 else (&"volt" if id == 10 else &"verdant"))))
         cp.visual_event.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
             visual_event.emit(canonical_id, kind, pos, st))
         cp.finished.connect(func() -> void: _on_finished(canonical_id))

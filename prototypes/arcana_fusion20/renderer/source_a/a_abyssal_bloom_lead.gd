@@ -87,7 +87,9 @@ func render(fb: AFramebuffer, t: float) -> void:
     var burst := AMath.seg(t, BURST, BURST + 1.9)
     var open := 1.0 + AMath.ease_out(burst, 2.0) * 0.9 if burst > 0 else 1.0
     var fade := 1.0 - AMath.cl01(burst * 1.5)
-    if fade > 0.0 or burst > 0.0:
+    # At the shared release the C late role owns pool/ripples/shock; do not
+    # draw A's competing ring or A's rejected eruption tails afterwards.
+    if t < BURST:
         var rr := lerpf(10.0, 40.0, AMath.ease_out(ring, 2.0)) * (1.0 + burst * 2.2)
         var k := (0.8 - burst * 0.5) * (1.0 if ring > 0.0 else 0.0)
         if k > 0.0:

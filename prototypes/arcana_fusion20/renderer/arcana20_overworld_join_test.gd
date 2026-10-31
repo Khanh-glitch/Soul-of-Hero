@@ -351,6 +351,26 @@ func _run() -> void:
     await process_frame
     await process_frame
     check(images_equal(baseline, await save_frame("overlap_all_cancelled")), "overlap cancellation restores frozen world")
+    var id5 := Arcana20SourceCatalog.canonical_id(5)
+    multi.cast_skill(id5, player.global_position, enemy.global_position)
+    var bloom := multi._casts[id5] as FusionPlayer
+    bloom.set_process(false)
+    for part in bloom._pending:
+        var child: Node = part.node
+        child.set("render_enabled", false)
+    for tick in range(330): bloom.advance(STEP)
+    for part in bloom._pending:
+        var child: Node = part.node
+        child.set("render_enabled", true)
+        child.call("_render_frame")
+    await process_frame
+    await process_frame
+    var bloom_img := await save_frame("fusion_05_candidate_tick330")
+    check(mount.active_viewers(id5) == 2 and not images_equal(baseline, bloom_img), "A05 lead and C05 column fields share actual world")
+    multi.cancel_skill(id5)
+    await process_frame
+    await process_frame
+    check(mount.active_viewers(id5) == 0 and images_equal(baseline, await save_frame("fusion_05_cancelled")), "A05 C05 candidate cleanup restores frozen world")
     mount.detach()
     mount.queue_free()
     multi.queue_free()
