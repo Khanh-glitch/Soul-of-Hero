@@ -56,6 +56,8 @@ jobs:
           git fetch --depth=1 origin \
             e1fe550bfe7c969a2c131fbd0bd4a861c505fb80:refs/live12/arena_2d7e6d7a-soul-of-hero
           git fetch --depth=1 origin \
+            8dd4f3e921a2b90fc68b5335dc012ea2976a7e5f:refs/live12/arena_c7b0c4e8-soul-of-hero
+          git fetch --depth=1 origin \
             971e0b95e1ea1c5f579f57f53fb35f3a6c3845e8:refs/live12/docs_ct-loot-discovery-gate-20261030
           echo "--- fetched heads"
           git for-each-ref refs/live12 --format='%(refname) %(objectname)'
@@ -64,7 +66,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 tools/survival/balance/compose.py --profile r12_full --pin
+          if ! python3 tools/survival/balance/compose.py --profile r12_full --pin > /tmp/compose.log 2>&1; then
+            echo "::error::compose failed: $(tail -4 /tmp/compose.log | tr '\n' ' ' | cut -c1-900)"
+            cat /tmp/compose.log
+            exit 1
+          fi
+          tail -5 /tmp/compose.log
           actual=$(git rev-parse refs/comp/r12_full)
           echo "composition ${actual}"
           if [ "${actual}" != "${COMPOSITION}" ]; then
@@ -105,6 +112,10 @@ jobs:
           result=${PIPESTATUS[0]}
           set -e
           echo "capture exit ${result}"
+          echo "::notice::capture tail: $(tail -6 /tmp/capture.log | tr '\n' ' ' | cut -c1-900)"
+          if [ "${result}" != "0" ]; then
+            echo "::error::capture failed: $(tail -8 /tmp/capture.log | tr '\n' ' ' | cut -c1-900)"
+          fi
           ls -l /tmp/captures || true
           exit "${result}"
 
