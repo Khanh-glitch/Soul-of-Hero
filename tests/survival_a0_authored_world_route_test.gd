@@ -497,8 +497,15 @@ func _site_journey(hero: CharacterBody2D, authority: Node, poi_id: String) -> Di
 		return report
 	var start_position := hero.global_position
 	var reached := await _walk_to(hero, approach)
+	# The last metres belong to the building, not to the map. A doorway is a gap in
+	# the shell's own collision, and A0's walkability marks the shell's walls as
+	# blocked — so the final approach is steered by physics rays, which is the same
+	# law the body is moved under. Walking to the published approach point is not
+	# enough: A8 opens on being within 22 px of the door, facing it.
+	if hero.global_position.distance_to(door) > 20.0:
+		reached = await _walk_to_door(hero, door) or reached
 	report["walk_px"] = hero.global_position.distance_to(start_position)
-	report["reached"] = reached and hero.global_position.distance_to(door) <= 40.0
+	report["reached"] = reached and hero.global_position.distance_to(door) <= 26.0
 	report["at_door_px"] = hero.global_position.distance_to(door)
 	if not bool(report["reached"]):
 		report["error"] = "WALK_INCOMPLETE"
@@ -717,6 +724,62 @@ func _heap_pop(heap: Array[Vector2i], key: Dictionary) -> Vector2i:
 	return top
 
 
+## Steers the body into a doorway on physics rays alone.
+##
+## The grid is a map of what is walkable in general; the shell's collision is what
+## the body is actually stopped by. Where the two disagree — a door gap narrower than
+## the map's idea of a step — the body must win, or the gate would be testing the
+## map instead of the building.
+func _walk_to_door(hero: CharacterBody2D, door: Vector2, budget := 2400) -> bool:
+	if _authority == null:
+		return false
+	var frames := 0
+	var stalled := 0
+	var last := hero.global_position
+	var escape_until := -1
+	var escape_sign := 1.0
+	var escapes := 0
+	while frames < budget:
+		frames += 1
+		if hero.global_position.distance_to(door) <= 14.0:
+			_release_moves()
+			return true
+		var bearing := (door - hero.global_position).angle()
+		var chosen := Vector2.ZERO
+		if frames < escape_until:
+			chosen = Vector2.RIGHT.rotated(bearing + PI * 0.5 * escape_sign)
+			if not _ray_clear(hero.global_position, hero.global_position + chosen * 16.0):
+				chosen = Vector2.RIGHT.rotated(bearing - PI * 0.5 * escape_sign)
+		else:
+			# Wider sweep than a field walk: a doorway sits inside a facade, so the
+			# free direction can be almost behind the body.
+			for offset: float in [0.0, 0.25, -0.25, 0.5, -0.5, 0.75, -0.75, 1.0, -1.0,
+					1.3, -1.3, 1.6, -1.6, 1.9, -1.9, 2.2, -2.2, 2.5, -2.5, 2.8, -2.8]:
+				var candidate := Vector2.RIGHT.rotated(bearing + offset)
+				if _ray_clear(hero.global_position, hero.global_position + candidate * 16.0):
+					chosen = candidate
+					break
+		if chosen == Vector2.ZERO:
+			break
+		_press_direction(chosen)
+		await physics_frame
+		if frames % 20 == 0:
+			if hero.global_position.distance_to(last) < 2.5:
+				stalled += 1
+				if stalled >= 2 and escapes < 8:
+					# Walk along the wall for a while, then look at the door again.
+					escapes += 1
+					escape_sign = -escape_sign
+					escape_until = frames + 40
+				elif escapes >= 8:
+					break
+			else:
+				stalled = 0
+			last = hero.global_position
+	_release_moves()
+	return hero.global_position.distance_to(door) <= 16.0
+
+
 func _waypoint(cell: Vector2i) -> Vector2:
 	return Vector2(cell.x * 16.0 + 8.0, cell.y * 16.0 + 8.0)
 
@@ -753,7 +816,11 @@ func _staging_cell(goal: Vector2i, from: Vector2i) -> Vector2i:
 				var candidate := goal + Vector2i(dx, dy)
 				if not _coarse_free(candidate):
 					continue
-				var score := Vector2(candidate - from).length()
+				# Stay as close to the *goal* as possible: a staging cell that is
+				# merely convenient for the body can sit on the far side of the
+				# building, and the route then walks to the wrong face.
+				var score := Vector2(candidate - goal).length() * 1000.0 \
+					+ Vector2(candidate - from).length()
 				if score < best_score:
 					best_score = score
 					best = candidate

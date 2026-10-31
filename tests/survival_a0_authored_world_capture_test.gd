@@ -81,7 +81,7 @@ func _play() -> void:
 		"the captured world exposes body, walkability and authority")
 	if _hero == null or _traversability == null or authority == null:
 		return
-	var mode := String(_ow.call(&"world_authority_report").get("mode", ""))
+	var mode: String = String(_ow.call(&"world_authority_report").get("mode", ""))
 	_expect(mode == "authored", "the captured world is the authored continent (%s)" % mode)
 	var spawn: Dictionary = authority.call(&"spawn_record")
 	print("A0_CAPTURE_SPAWN ", JSON.stringify(spawn))
@@ -97,7 +97,7 @@ func _play() -> void:
 
 	# The nearest authored source, approached on foot. If the walk cannot reach it,
 	# the frame is still captured and the miss is named — never assumed.
-	var source := await _walk_to_source(authority)
+	var source: Dictionary = await _walk_to_source(authority)
 	if not source.is_empty():
 		await _capture("source")
 		await _press_key(KEY_G)
@@ -106,9 +106,9 @@ func _play() -> void:
 		_note("no authored source was reached on foot in this capture run")
 
 	# The HUD is part of what a player reads: prove it is painted and legible.
-	var hud := _ow.get(&"hud")
-	if hud != null and hud is CanvasLayer:
-		var label := _first_label_text(hud)
+	var hud: CanvasLayer = _ow.get(&"hud") as CanvasLayer
+	if hud != null:
+		var label: String = _first_label_text(hud)
 		_expect(not label.is_empty(), "the HUD paints readable text (%s)" % label)
 	_ow.call(&"apply_hud")
 
@@ -141,16 +141,16 @@ func _finish() -> void:
 func _capture(name: String) -> void:
 	await process_frame
 	await RenderingServer.frame_post_draw
-	var image := root.get_texture().get_image()
+	var image: Image = root.get_texture().get_image()
 	_expect(image != null and not image.is_empty(), "a native frame exists for %s" % name)
 	if image == null or image.is_empty():
 		return
-	var expected := OS.get_environment("A0_VISUAL_RESOLUTION").split("x")
+	var expected: PackedStringArray = OS.get_environment("A0_VISUAL_RESOLUTION").split("x")
 	if expected.size() == 2:
 		_expect(image.get_width() == int(expected[0]) and image.get_height() == int(expected[1]),
 			"the %s frame is the full %s resolution (%dx%d)"
 				% [name, OS.get_environment("A0_VISUAL_RESOLUTION"), image.get_width(), image.get_height()])
-	var stats := _frame_stats(image)
+	var stats: Dictionary = _frame_stats(image)
 	print("A0_AUTHORED_FRAME name=%s width=%d height=%d distinct=%d luma_sd=%.2f"
 		% [name, image.get_width(), image.get_height(), int(stats.get("distinct", 0)),
 			float(stats.get("luma_sd", 0.0))])
@@ -160,7 +160,7 @@ func _capture(name: String) -> void:
 		% [name, float(stats.get("luma_sd", 0.0))])
 	# The resolution is part of the file name: three runs write into one artifact
 	# directory, and "which frame is which" must not depend on upload order.
-	var suffix := OS.get_environment("A0_VISUAL_RESOLUTION")
+	var suffix: String = OS.get_environment("A0_VISUAL_RESOLUTION")
 	var path := "%s/visual_authored_%s.png" % [ARTIFACT_DIR, name if suffix.is_empty() else "%s_%s" % [name, suffix]]
 	_expect(image.save_png(path) == OK, "the %s frame saved" % name)
 	_frames.append(path)
@@ -193,7 +193,7 @@ func _first_label_text(node: Node) -> String:
 	if node is Label and not (node as Label).text.strip_edges().is_empty():
 		return (node as Label).text.strip_edges()
 	for child: Node in node.get_children():
-		var found := _first_label_text(child)
+		var found: String = _first_label_text(child)
 		if not found.is_empty():
 			return found
 	return ""
@@ -243,7 +243,7 @@ func _walk_to_source(authority: Node) -> Dictionary:
 		return {}
 	sources.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
 		return int(a.get("distance_cells", 0)) < int(b.get("distance_cells", 0)))
-	var resources := _ow.get_node_or_null("Resources")
+	var resources: Node = _ow.get_node_or_null("Resources")
 	if resources == null:
 		return {}
 	for raw: Variant in sources.slice(0, 4):
