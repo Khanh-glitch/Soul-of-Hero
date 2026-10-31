@@ -1,0 +1,871 @@
+{
+  "schema": "soh.a7.certification.v2",
+  "engine": "Godot 4.7 (declared; runtime markers prove it ran)",
+  "composition": {
+    "tree": "f6d5cf789995ccd775cfab9b2f3c98a7ecc667b0",
+    "declared": "f6d5cf789995ccd775cfab9b2f3c98a7ecc667b0",
+    "method": "git-write-tree",
+    "pins": {
+      "A0": "a6e3797879915510b2e86be0d2ee521f53967c94",
+      "A1": "e1e4e9a4d4a0f7f0d38360d638715a0c9f144208",
+      "A3": "80fe8ceca6de02523985a6eb53e9567639885f0e",
+      "A6": "816cc22ab532f297dd7c480fccf34e84f482957a",
+      "A8": "5bf5c8f93e5905db96f98e2f20e716e0bffbce68"
+    }
+  },
+  "policy": {
+    "score": "none \u2014 no percentage, no average",
+    "pass": "positive evidence at the required stage only",
+    "missing": "BLOCKED, never PASS",
+    "levels": [
+      "TEST_HARNESS_VALID",
+      "OWNER_SOURCE_VALID",
+      "PRODUCT_COMPOSED",
+      "HUMAN_ACCEPTED"
+    ]
+  },
+  "maturity": {
+    "reached": [
+      "TEST_HARNESS_VALID"
+    ],
+    "max": "TEST_HARNESS_VALID",
+    "human_accepted": false,
+    "note": "HUMAN_ACCEPTED can only be granted by a recorded human session; this harness never claims it."
+  },
+  "overall": "FAIL",
+  "tracks": {
+    "T1": {
+      "verdict": "FAIL",
+      "cases": {
+        "T1.1": "PASS",
+        "T1.2": "FAIL",
+        "T1.3": "BLOCKED",
+        "T1.4": "FAIL",
+        "T1.5": "BLOCKED",
+        "T1.6": "BLOCKED"
+      },
+      "titles": {
+        "T1.1": "one exact immutable composition",
+        "T1.2": "one authoritative world (no rendered sidecar)",
+        "T1.3": "player spawns safely on the authored continent",
+        "T1.4": "canonical POI approaches lie inside the playable world",
+        "T1.5": "input bootstrap is diagnosed as harness config, not A1 fault",
+        "T1.6": "physical movement and collision with normal input"
+      }
+    },
+    "T2": {
+      "verdict": "FAIL",
+      "cases": {
+        "T2.1": "BLOCKED",
+        "T2.2": "BLOCKED",
+        "T2.3": "FAIL",
+        "T2.4": "BLOCKED",
+        "T2.5": "BLOCKED",
+        "T2.6": "BLOCKED"
+      },
+      "titles": {
+        "T2.1": "two canonical sites ship real scenes",
+        "T2.2": "ordinary route from spawn to each site",
+        "T2.3": "knife-first exploration is possible",
+        "T2.4": "no fixture credential counts as player-earned capability",
+        "T2.5": "safe retreat and durable revisit with the same identity",
+        "T2.6": "deeper access is genuinely blocked before preparation"
+      }
+    },
+    "T3": {
+      "verdict": "FAIL",
+      "cases": {
+        "T3.1": "BLOCKED",
+        "T3.2": "FAIL",
+        "T3.3": "BLOCKED",
+        "T3.4": "BLOCKED",
+        "T3.5": "PASS",
+        "T3.6": "PASS",
+        "T3.7": "PASS",
+        "T3.8": "PASS",
+        "T3.9": "BLOCKED",
+        "T3.10": "BLOCKED"
+      },
+      "titles": {
+        "T3.1": "authentic finite source \u2192 inventory",
+        "T3.2": "tool wear and inventory limits are enforced",
+        "T3.3": "three distinct research methods are real and distinguishable",
+        "T3.4": "recipe sinks exist for what the sources produce",
+        "T3.5": "owner-string-only source authentication is refused",
+        "T3.6": "missing physical fuel fails a job",
+        "T3.7": "duplicate job ids and early claims are refused",
+        "T3.8": "stale run and expired window are refused",
+        "T3.9": "funded job completes in a separate process, exactly once",
+        "T3.10": "the payoff changes a later choice"
+      }
+    },
+    "T4": {
+      "verdict": "BLOCKED",
+      "cases": {
+        "T4.1": "NOT_IMPLEMENTED",
+        "T4.2": "NOT_IMPLEMENTED",
+        "T4.3": "NOT_IMPLEMENTED",
+        "T4.4": "BLOCKED",
+        "T4.5": "NOT_IMPLEMENTED",
+        "T4.6": "BLOCKED",
+        "T4.7": "NOT_IMPLEMENTED",
+        "T4.8": "BLOCKED"
+      },
+      "titles": {
+        "T4.1": "Core can be carried, used and stored",
+        "T4.2": "a physical Core gates research",
+        "T4.3": "trace-based threat and bag recovery",
+        "T4.4": "the 336-hour run ends and resets",
+        "T4.5": "last72 Elder territory transformation",
+        "T4.6": "physical chest-sourced Ragnarok cash",
+        "T4.7": "multiple fixed-site deposits",
+        "T4.8": "evacuation and complete run-local wipe"
+      }
+    }
+  },
+  "first_failure": {
+    "id": "T1.2",
+    "track": "T1",
+    "title": "one authoritative world (no rendered sidecar)",
+    "owner": "A0",
+    "kind": "source-contract",
+    "required_stage": "source",
+    "verdict": "FAIL",
+    "code": "SIDECAR_WORLD",
+    "detail": "runtime 384x256 != authored 1024x768; A0's mount declares the authored stream runs beside the legacy world; 3 A8 site(s) outside the live world: poi_crown_south_quarry(30, 280), poi_crown_south_orchard(140, 360), poi_crown_south_mill(120, 300)",
+    "repro": "game/survival/a0_authored_world_mount.gd:12,29",
+    "stages": {
+      "source": "VALID"
+    },
+    "evidence": [
+      "live runtime world bounds (384, 256) (data/overworld/hollow_marches.json)",
+      "A1 authored frame (1024, 768) (game/survival/a1_authored_source.gd:30)",
+      "sidecar markers ['render_legacy := true']",
+      "A0 poi-mount refusal `A0_WORLD_ABSENT` (game/survival/a0_poi_mount.gd:69)"
+    ],
+    "measurements": {
+      "live": [
+        384,
+        256
+      ],
+      "authored": [
+        1024,
+        768
+      ],
+      "sites_outside": [
+        [
+          "poi_crown_south_quarry",
+          [
+            30,
+            280
+          ]
+        ],
+        [
+          "poi_crown_south_orchard",
+          [
+            140,
+            360
+          ]
+        ],
+        [
+          "poi_crown_south_mill",
+          [
+            120,
+            300
+          ]
+        ]
+      ],
+      "sidecar_markers": [
+        "render_legacy := true"
+      ],
+      "poi_refusal": "A0_WORLD_ABSENT"
+    }
+  },
+  "first_blocker": {
+    "id": "T1.3",
+    "track": "T1",
+    "title": "player spawns safely on the authored continent",
+    "owner": "A0",
+    "kind": "runtime",
+    "required_stage": "runtime",
+    "verdict": "BLOCKED",
+    "code": "BLOCKED_NO_SPAWN_EVIDENCE",
+    "detail": "requires `A7C T1.3 {\u2026}` from tests/survival/a7_certification_probe.gd",
+    "repro": "godot --headless --script res://tests/survival/a7_certification_probe.gd",
+    "stages": {
+      "source": "VALID"
+    },
+    "evidence": [
+      "game/survival/world/a1_authored_world_reader.gd:1011: func choose_safe_spawn(run_seed: int) -> Dictionary:"
+    ],
+    "measurements": {}
+  },
+  "cases": [
+    {
+      "id": "T1.1",
+      "track": "T1",
+      "title": "one exact immutable composition",
+      "owner": "A7",
+      "kind": "source",
+      "required_stage": "source",
+      "verdict": "PASS",
+      "code": "COMPOSITION_IDENTITY",
+      "detail": "the declared tree reproduces byte for byte",
+      "repro": "",
+      "stages": {
+        "source": "VALID",
+        "contract": "VALID"
+      },
+      "evidence": [
+        "declared tree=f6d5cf789995",
+        "recomputed tree=f6d5cf789995 (git-write-tree)"
+      ],
+      "measurements": {}
+    },
+    {
+      "id": "T1.2",
+      "track": "T1",
+      "title": "one authoritative world (no rendered sidecar)",
+      "owner": "A0",
+      "kind": "source-contract",
+      "required_stage": "source",
+      "verdict": "FAIL",
+      "code": "SIDECAR_WORLD",
+      "detail": "runtime 384x256 != authored 1024x768; A0's mount declares the authored stream runs beside the legacy world; 3 A8 site(s) outside the live world: poi_crown_south_quarry(30, 280), poi_crown_south_orchard(140, 360), poi_crown_south_mill(120, 300)",
+      "repro": "game/survival/a0_authored_world_mount.gd:12,29",
+      "stages": {
+        "source": "VALID"
+      },
+      "evidence": [
+        "live runtime world bounds (384, 256) (data/overworld/hollow_marches.json)",
+        "A1 authored frame (1024, 768) (game/survival/a1_authored_source.gd:30)",
+        "sidecar markers ['render_legacy := true']",
+        "A0 poi-mount refusal `A0_WORLD_ABSENT` (game/survival/a0_poi_mount.gd:69)"
+      ],
+      "measurements": {
+        "live": [
+          384,
+          256
+        ],
+        "authored": [
+          1024,
+          768
+        ],
+        "sites_outside": [
+          [
+            "poi_crown_south_quarry",
+            [
+              30,
+              280
+            ]
+          ],
+          [
+            "poi_crown_south_orchard",
+            [
+              140,
+              360
+            ]
+          ],
+          [
+            "poi_crown_south_mill",
+            [
+              120,
+              300
+            ]
+          ]
+        ],
+        "sidecar_markers": [
+          "render_legacy := true"
+        ],
+        "poi_refusal": "A0_WORLD_ABSENT"
+      }
+    },
+    {
+      "id": "T1.3",
+      "track": "T1",
+      "title": "player spawns safely on the authored continent",
+      "owner": "A0",
+      "kind": "runtime",
+      "required_stage": "runtime",
+      "verdict": "BLOCKED",
+      "code": "BLOCKED_NO_SPAWN_EVIDENCE",
+      "detail": "requires `A7C T1.3 {\u2026}` from tests/survival/a7_certification_probe.gd",
+      "repro": "godot --headless --script res://tests/survival/a7_certification_probe.gd",
+      "stages": {
+        "source": "VALID"
+      },
+      "evidence": [
+        "game/survival/world/a1_authored_world_reader.gd:1011: func choose_safe_spawn(run_seed: int) -> Dictionary:"
+      ],
+      "measurements": {}
+    },
+    {
+      "id": "T1.4",
+      "track": "T1",
+      "title": "canonical POI approaches lie inside the playable world",
+      "owner": "A0",
+      "kind": "source-contract",
+      "required_stage": "source",
+      "verdict": "FAIL",
+      "code": "SITE_OUTSIDE_LIVE_WORLD",
+      "detail": "3/3 canonical sites cannot be approached; package_status=A8_OWNER_CONTRACT_REFRESH_READY_FOR_A0_REVIEW_NOT_MOUNTED",
+      "repro": "game/survival/a0_poi_mount.gd:69",
+      "stages": {
+        "source": "VALID"
+      },
+      "evidence": [
+        "poi_crown_south_quarry (30, 280) scene=res://game/survival/world_content/scenes/south_quarry.tscn",
+        "poi_crown_south_orchard (140, 360) scene=res://game/survival/world_content/scenes/south_orchard_ruin.tscn",
+        "poi_crown_south_mill (120, 300) scene=res://game/survival/world_content/scenes/south_crown_mill.tscn"
+      ],
+      "measurements": {
+        "outside": [
+          [
+            "poi_crown_south_quarry",
+            [
+              30,
+              280
+            ]
+          ],
+          [
+            "poi_crown_south_orchard",
+            [
+              140,
+              360
+            ]
+          ],
+          [
+            "poi_crown_south_mill",
+            [
+              120,
+              300
+            ]
+          ]
+        ],
+        "package_status": "A8_OWNER_CONTRACT_REFRESH_READY_FOR_A0_REVIEW_NOT_MOUNTED"
+      }
+    },
+    {
+      "id": "T1.5",
+      "track": "T1",
+      "title": "input bootstrap is diagnosed as harness config, not A1 fault",
+      "owner": "A7",
+      "kind": "test-only",
+      "required_stage": "runtime",
+      "verdict": "BLOCKED",
+      "code": "BLOCKED_MISSING_BOOTSTRAP_CONTROL",
+      "detail": "both a pre-bootstrap and a bootstrapped run must be recorded",
+      "repro": "",
+      "stages": {},
+      "evidence": [
+        "before={}",
+        "after={}"
+      ],
+      "measurements": {}
+    },
+    {
+      "id": "T1.6",
+      "track": "T1",
+      "title": "physical movement and collision with normal input",
+      "owner": "A0",
+      "kind": "real-gameplay",
+      "required_stage": "runtime",
+      "verdict": "BLOCKED",
+      "code": "BLOCKED_NO_MOVEMENT_RUN",
+      "detail": "requires `A7C T1.6 {\"input_moves\":true,\"collision_blocks\":true}` from a real player walk on the composed tree",
+      "repro": "must be run by A0's journey harness in CI",
+      "stages": {},
+      "evidence": [
+        "game/survival/gameplay_input_gate.gd:92: var result := Input.get_vector(\"move_left\", \"move_right\", \"move_up\", \"move_down\")"
+      ],
+      "measurements": {}
+    },
+    {
+      "id": "T2.1",
+      "track": "T2",
+      "title": "two canonical sites ship real scenes",
+      "owner": "A8",
+      "kind": "source",
+      "required_stage": "source",
+      "verdict": "BLOCKED",
+      "code": "BLOCKED_NO_ENTRY_RUN",
+      "detail": "scenes exist; nobody has physically entered them",
+      "repro": "",
+      "stages": {
+        "source": "VALID",
+        "contract": "VALID"
+      },
+      "evidence": [
+        "scenes: ['fourth_salt_lookout_test.tscn', 'native_poi_shell_template.tscn', 'native_poi_template.tscn', 'poi_pilot.tscn', 'south_crown_mill.tscn', 'south_crown_mill_overworld.tscn', 'south_orchard_ruin.tscn', 'south_orchard_ruin_overworld.tscn', 'south_quarry.tscn', 'south_quarry_overworld.tscn']",
+        "present for ['south_orchard', 'south_quarry'] of ['south_orchard', 'south_quarry']"
+      ],
+      "measurements": {}
+    },
+    {
+      "id": "T2.2",
+      "track": "T2",
+      "title": "ordinary route from spawn to each site",
+      "owner": "A0",
+      "kind": "real-gameplay",
+      "required_stage": "runtime",
+      "verdict": "BLOCKED",
+      "code": "BLOCKED_NO_ROUTE_RUN",
+      "detail": "requires a walked route marker per site; a teleport into a POI interior is not a route and is rejected by this harness",
+      "repro": "T2.2 needs `A7C T2.2 {\u2026}`",
+      "stages": {
+        "source": "VALID"
+      },
+      "evidence": [
+        "poi_crown_south_quarry cell=(30, 280)",
+        "poi_crown_south_orchard cell=(140, 360)",
+        "poi_crown_south_mill cell=(120, 300)"
+      ],
+      "measurements": {}
+    },
+    {
+      "id": "T2.3",
+      "track": "T2",
+      "title": "knife-first exploration is possible",
+      "owner": "A3",
+      "kind": "source",
+      "required_stage": "source",
+      "verdict": "FAIL",
+      "code": "NO_KNIFE_ITEM",
+      "detail": "P3 (knife-first) cannot be played: no knife exists in the item catalog",
+      "repro": "",
+      "stages": {
+        "source": "VALID"
+      },
+      "evidence": [
+        "57 item ids; knife-like=[]"
+      ],
+      "measurements": {}
+    },
+    {
+      "id": "T2.4",
+      "track": "T2",
+      "title": "no fixture credential counts as player-earned capability",
+      "owner": "A7",
+      "kind": "test-only",
+      "required_stage": "receipt",
+      "verdict": "BLOCKED",
+      "code": "BLOCKED_NO_EARNED_EVIDENCE",
+      "detail": "requires `A7C T2.4 {\"fixture_grants\":0,\"player_earned\":true}` from the run that claims the capability",
+      "repro": "",
+      "stages": {},
+      "evidence": [
+        "marker={}"
+      ],
+      "measurements": {}
+    },
+    {
+      "id": "T2.5",
+      "track": "T2",
+      "title": "safe retreat and durable revisit with the same identity",
+      "owner": "A8",
+      "kind": "real-gameplay",
+      "required_stage": "receipt",
+      "verdict": "BLOCKED",
+      "code": "BLOCKED_NO_REVISIT_RECEIPT",
+      "detail": "requires an exit+return receipt for the same site_instance_id in a second process",
+      "repro": "",
+      "stages": {
+        "source": "VALID"
+      },
+      "evidence": [
+        "game/survival/a0_poi_mount.gd:158: func finish_transition(save: Node, site_instance_id: String) -> Dictionary:",
+        "game/survival/a0_poi_mount.gd:168: return {\"ok\": false, \"reason\": \"A0_RUN_IDENTITY_MISMATCH\"}"
+      ],
+      "measurements": {}
+    },
+    {
+      "id": "T2.6",
+      "track": "T2",
+      "title": "deeper access is genuinely blocked before preparation",
+      "owner": "A8",
+      "kind": "source-contract",
+      "required_stage": "contract",
+      "verdict": "BLOCKED",
+      "code": "BLOCKED_NO_BLOCKED_ACCESS_RUN",
+      "detail": "gates are declared; no run shows the player actually refused at the threshold",
+      "repro": "",
+      "stages": {
+        "source": "VALID"
+      },
+      "evidence": [
+        "7 production_mount_gates declared",
+        "package_status=A8_OWNER_CONTRACT_REFRESH_READY_FOR_A0_REVIEW_NOT_MOUNTED"
+      ],
+      "measurements": {}
+    },
+    {
+      "id": "T3.1",
+      "track": "T3",
+      "title": "authentic finite source \u2192 inventory",
+      "owner": "A3",
+      "kind": "source-contract",
+      "required_stage": "source",
+      "verdict": "BLOCKED",
+      "code": "BLOCKED_NO_HARVEST_RUN",
+      "detail": "bindings exist; no real harvest receipt in this composition",
+      "repro": "",
+      "stages": {
+        "source": "VALID",
+        "contract": "VALID"
+      },
+      "evidence": [
+        "world_source_bindings.v3.json declares 5 entries",
+        "data/survival/items/world_source_bindings.v3.json:85: \"source_id\": \"road_scrap\",",
+        "data/survival/items/world_source_bindings.v3.json:95: \"source_id\": \"road_supplies\","
+      ],
+      "measurements": {
+        "owner_string_only": true
+      }
+    },
+    {
+      "id": "T3.2",
+      "track": "T3",
+      "title": "tool wear and inventory limits are enforced",
+      "owner": "A0",
+      "kind": "source-contract",
+      "required_stage": "source",
+      "verdict": "FAIL",
+      "code": "TOOL_WEAR_ABSENT",
+      "detail": "no wear model exists to certify",
+      "repro": "",
+      "stages": {
+        "source": "MISSING"
+      },
+      "evidence": [
+        "no durability/tool-wear symbol in game/survival"
+      ],
+      "measurements": {}
+    },
+    {
+      "id": "T3.3",
+      "track": "T3",
+      "title": "three distinct research methods are real and distinguishable",
+      "owner": "A3",
+      "kind": "source-contract",
+      "required_stage": "source",
+      "verdict": "BLOCKED",
+      "code": "BLOCKED_NO_RESEARCH_RUN",
+      "detail": "three escrow shapes exist; no player has spent them",
+      "repro": "",
+      "stages": {
+        "source": "VALID",
+        "contract": "VALID"
+      },
+      "evidence": [
+        "blueprint -> game/survival/economy/offline_operation_planner.gd:279",
+        "specimen -> game/survival/economy/offline_operation_planner.gd:280",
+        "targeted -> game/survival/economy/offline_operation_planner.gd:278"
+      ],
+      "measurements": {}
+    },
+    {
+      "id": "T3.4",
+      "track": "T3",
+      "title": "recipe sinks exist for what the sources produce",
+      "owner": "A3",
+      "kind": "source",
+      "required_stage": "source",
+      "verdict": "BLOCKED",
+      "code": "BLOCKED_NO_CRAFT_RUN",
+      "detail": "sinks are declared; nothing has been crafted from a real source",
+      "repro": "",
+      "stages": {
+        "source": "VALID",
+        "contract": "VALID"
+      },
+      "evidence": [
+        "progression_model keys=['assumptions', 'capability_bootstrap', 'capability_grant_policy', 'capability_pois', 'explicit_bootstrap_pois', 'hazard_mitigation', 'hazards', 'late_goals', 'novice_bootstrap', 'product_sources', 'purpose', 'route_network']",
+        "sink sections=['capability_bootstrap', 'capability_pois', 'hazards', 'late_goals', 'route_network', 'shelter']"
+      ],
+      "measurements": {}
+    },
+    {
+      "id": "T3.5",
+      "track": "T3",
+      "title": "owner-string-only source authentication is refused",
+      "owner": "A3",
+      "kind": "source-contract",
+      "required_stage": "contract",
+      "verdict": "PASS",
+      "code": "ESCROW_MISMATCH_REFUSED",
+      "detail": "the planner refuses mismatched escrow by name",
+      "repro": "",
+      "stages": {
+        "source": "VALID",
+        "contract": "VALID"
+      },
+      "evidence": [
+        "`arm_job_id_mismatch` at game/survival/economy/offline_operation_planner.gd:138",
+        "`escrow_mismatch` at game/survival/economy/offline_operation_planner.gd:498",
+        "`fuel_escrow_mismatch` at game/survival/economy/offline_operation_planner.gd:257",
+        "`input_escrow_mismatch` at game/survival/economy/offline_operation_planner.gd:255",
+        "`invalid_recipe_escrow` at game/survival/economy/offline_operation_planner.gd:253",
+        "`invalid_research_escrow` at game/survival/economy/offline_operation_planner.gd:271",
+        "`offline_contract_mismatch` at game/survival/economy/offline_operation_planner.gd:175",
+        "`offline_time_receipt_mismatch` at game/survival/economy/offline_operation_planner.gd:162"
+      ],
+      "measurements": {}
+    },
+    {
+      "id": "T3.6",
+      "track": "T3",
+      "title": "missing physical fuel fails a job",
+      "owner": "A3",
+      "kind": "source-contract",
+      "required_stage": "contract",
+      "verdict": "PASS",
+      "code": "FUEL_REQUIRED",
+      "detail": "fuel escrow is enforced by name",
+      "repro": "",
+      "stages": {
+        "source": "VALID"
+      },
+      "evidence": [
+        "game/survival/economy/offline_operation_planner.gd:257"
+      ],
+      "measurements": {}
+    },
+    {
+      "id": "T3.7",
+      "track": "T3",
+      "title": "duplicate job ids and early claims are refused",
+      "owner": "A0",
+      "kind": "source-contract",
+      "required_stage": "contract",
+      "verdict": "PASS",
+      "code": "DUPLICATE_REFUSED",
+      "detail": "duplicate/once-only path present",
+      "repro": "",
+      "stages": {
+        "source": "VALID"
+      },
+      "evidence": [
+        "game/survival/economy/a0_offline_host.gd:17: ##     SaveService idempotency key, so a second process, a replay or an",
+        "game/survival/economy/offline_operation_planner.gd:521: ## must first use proposal_id as the idempotent transaction key and re-check the",
+        "game/survival/economy/a0_economy_adapter.gd:21: return {\"ok\": false, \"reason\": \"untrusted_economy_mutator\", \"duplicate\": false}"
+      ],
+      "measurements": {}
+    },
+    {
+      "id": "T3.8",
+      "track": "T3",
+      "title": "stale run and expired window are refused",
+      "owner": "A0",
+      "kind": "source-contract",
+      "required_stage": "contract",
+      "verdict": "PASS",
+      "code": "STALE_RUN_REFUSED",
+      "detail": "expiry/identity guards present",
+      "repro": "",
+      "stages": {
+        "source": "VALID"
+      },
+      "evidence": [
+        "game/survival/economy/offline_operation_planner.gd:316: result[\"reason\"] = \"run_id_mismatch\"; return false",
+        "game/survival/economy/a0_economy_composition.gd:93: if bool(_last_settle.get(\"run_expired\", false)):"
+      ],
+      "measurements": {}
+    },
+    {
+      "id": "T3.9",
+      "track": "T3",
+      "title": "funded job completes in a separate process, exactly once",
+      "owner": "A0",
+      "kind": "real-gameplay",
+      "required_stage": "receipt",
+      "verdict": "BLOCKED",
+      "code": "BLOCKED_NO_2PID_RECEIPT",
+      "detail": "requires a second-OS-process settlement receipt with a duplicate refusal; the R13 O4 oracle rules apply unchanged",
+      "repro": "",
+      "stages": {},
+      "evidence": [
+        "game/survival/economy/a0_offline_host.gd:175: last_settle = {\"ok\": true, \"reason\": \"nothing_to_settle\", \"duplicate\": false,"
+      ],
+      "measurements": {}
+    },
+    {
+      "id": "T3.10",
+      "track": "T3",
+      "title": "the payoff changes a later choice",
+      "owner": "A3",
+      "kind": "real-gameplay",
+      "required_stage": "outcome",
+      "verdict": "BLOCKED",
+      "code": "BLOCKED_NO_OUTCOME_RUN",
+      "detail": "requires a recorded before/after choice that the new material unlocked",
+      "repro": "",
+      "stages": {
+        "source": "VALID"
+      },
+      "evidence": [
+        "data/survival/recipes/progression_model.json:80: \"route_network\": {",
+        "data/survival/recipes/progression_model.json:1758: \"capability_pois\": ["
+      ],
+      "measurements": {}
+    },
+    {
+      "id": "T4.1",
+      "track": "T4",
+      "title": "Core can be carried, used and stored",
+      "owner": "A0",
+      "kind": "forward-gate",
+      "required_stage": "runtime",
+      "verdict": "NOT_IMPLEMENTED",
+      "code": "FEATURE_ABSENT",
+      "detail": "`core_use` does not exist in this composition, so the gate cannot run and nothing may be claimed for it",
+      "repro": "",
+      "stages": {
+        "source": "MISSING"
+      },
+      "evidence": [
+        "no `core_use` symbol in game/survival"
+      ],
+      "measurements": {}
+    },
+    {
+      "id": "T4.2",
+      "track": "T4",
+      "title": "a physical Core gates research",
+      "owner": "AVFX",
+      "kind": "forward-gate",
+      "required_stage": "runtime",
+      "verdict": "NOT_IMPLEMENTED",
+      "code": "FEATURE_ABSENT",
+      "detail": "`core_research` does not exist in this composition, so the gate cannot run and nothing may be claimed for it",
+      "repro": "",
+      "stages": {
+        "source": "MISSING"
+      },
+      "evidence": [
+        "no `core_research` symbol in game/survival"
+      ],
+      "measurements": {}
+    },
+    {
+      "id": "T4.3",
+      "track": "T4",
+      "title": "trace-based threat and bag recovery",
+      "owner": "A0",
+      "kind": "forward-gate",
+      "required_stage": "runtime",
+      "verdict": "NOT_IMPLEMENTED",
+      "code": "FEATURE_ABSENT",
+      "detail": "`threat` does not exist in this composition, so the gate cannot run and nothing may be claimed for it",
+      "repro": "",
+      "stages": {
+        "source": "MISSING"
+      },
+      "evidence": [
+        "no `threat` symbol in game/survival"
+      ],
+      "measurements": {}
+    },
+    {
+      "id": "T4.4",
+      "track": "T4",
+      "title": "the 336-hour run ends and resets",
+      "owner": "A0",
+      "kind": "forward-gate",
+      "required_stage": "runtime",
+      "verdict": "BLOCKED",
+      "code": "BLOCKED_NO_FEATURE_RUN",
+      "detail": "`run_reset` symbols exist (game/survival/economy/a0_run_lifecycle.gd:58: or not save.has_method(&\"get_snapshot\") or not save.has_method(&\"reset_run_preserving_profile\"):); no runtime evidence",
+      "repro": "",
+      "stages": {
+        "source": "VALID"
+      },
+      "evidence": [
+        "game/survival/economy/a0_run_lifecycle.gd:58: or not save.has_method(&\"get_snapshot\") or not save.has_method(&\"reset_run_preserving_profile\"):"
+      ],
+      "measurements": {}
+    },
+    {
+      "id": "T4.5",
+      "track": "T4",
+      "title": "last72 Elder territory transformation",
+      "owner": "A0",
+      "kind": "forward-gate",
+      "required_stage": "runtime",
+      "verdict": "NOT_IMPLEMENTED",
+      "code": "FEATURE_ABSENT",
+      "detail": "`last72_elders` does not exist in this composition, so the gate cannot run and nothing may be claimed for it",
+      "repro": "",
+      "stages": {
+        "source": "MISSING"
+      },
+      "evidence": [
+        "no `last72_elders` symbol in game/survival"
+      ],
+      "measurements": {}
+    },
+    {
+      "id": "T4.6",
+      "track": "T4",
+      "title": "physical chest-sourced Ragnarok cash",
+      "owner": "A0",
+      "kind": "forward-gate",
+      "required_stage": "runtime",
+      "verdict": "BLOCKED",
+      "code": "BLOCKED_NO_FEATURE_RUN",
+      "detail": "`chest_currency` symbols exist (game/survival/chest_inventory_panel.gd:113: func open_chest(chest: SurvivalStructure, hero: Node2D, service: Node) -> bool:); no runtime evidence",
+      "repro": "",
+      "stages": {
+        "source": "VALID"
+      },
+      "evidence": [
+        "game/survival/chest_inventory_panel.gd:113: func open_chest(chest: SurvivalStructure, hero: Node2D, service: Node) -> bool:"
+      ],
+      "measurements": {}
+    },
+    {
+      "id": "T4.7",
+      "track": "T4",
+      "title": "multiple fixed-site deposits",
+      "owner": "A3",
+      "kind": "forward-gate",
+      "required_stage": "runtime",
+      "verdict": "NOT_IMPLEMENTED",
+      "code": "FEATURE_ABSENT",
+      "detail": "`fixed_deposit` does not exist in this composition, so the gate cannot run and nothing may be claimed for it",
+      "repro": "",
+      "stages": {
+        "source": "MISSING"
+      },
+      "evidence": [
+        "no `fixed_deposit` symbol in game/survival"
+      ],
+      "measurements": {}
+    },
+    {
+      "id": "T4.8",
+      "track": "T4",
+      "title": "evacuation and complete run-local wipe",
+      "owner": "A0",
+      "kind": "forward-gate",
+      "required_stage": "runtime",
+      "verdict": "BLOCKED",
+      "code": "BLOCKED_NO_FEATURE_RUN",
+      "detail": "`evacuation` symbols exist (game/survival/economy/a0_run_lifecycle.gd:224: if reason not in [\"expired\", \"voluntary_exit\", \"evacuation\"]:); no runtime evidence",
+      "repro": "",
+      "stages": {
+        "source": "VALID"
+      },
+      "evidence": [
+        "game/survival/economy/a0_run_lifecycle.gd:224: if reason not in [\"expired\", \"voluntary_exit\", \"evacuation\"]:"
+      ],
+      "measurements": {}
+    }
+  ],
+  "counts": {
+    "cases": 30,
+    "pass": 5,
+    "fail": 4,
+    "blocked": 16,
+    "not_implemented": 5
+  }
+}

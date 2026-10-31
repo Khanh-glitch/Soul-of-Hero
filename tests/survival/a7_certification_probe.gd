@@ -1,0 +1,213 @@
+extends SceneTree
+## A7 R14 certification probe — runtime markers for `tools/survival/balance/a7_certify.py`.
+##
+## A7-owned verification code. It never mutates an owner file, never grants an item,
+## never teleports an actor and never writes a save. It reads the composed tree the
+## way the game reads it and prints one machine-readable line per certified question:
+##
+##     A7C <case_id> {"...": ...}
+##
+## Anything it cannot prove it reports as `ok=false` with a reason; the harness turns
+## that into FAIL or BLOCKED rather than a silent pass.
+##
+## Run (CI, Godot 4.7, headless):
+##     godot --headless --path <composition> --script res://tests/survival/a7_certification_probe.gd
+##
+## Exit code is always 0 when the probe itself ran: the harness, not the probe, decides
+## the verdict, so a product failure cannot be mistaken for a broken test runner.
+
+const READER_PATH := "res://game/survival/world/a1_authored_world_reader.gd"
+const BOOTSTRAP_PATH := "res://game/autoload/input_bootstrap.gd"
+const LEGACY_WORLD := "res://data/overworld/hollow_marches.json"
+const A8_PACKAGE := "res://data/survival/world_content/a8_a0_mount_transition_package.v2.json"
+const COMPAT_PATH := "res://game/survival/world/a1_runtime_compatibility.gd"
+
+var _reader: Variant = null
+
+
+func _initialize() -> void:
+	# A direct `--script` SceneTree enters before root is active; defer so autoloads
+	# and the root window exist. This ordering is the whole point of case T1.5.
+	call_deferred("_run")
+
+
+func _run() -> void:
+	print("A7C_ENGINE {\"version\": \"%s\"}" % str(Engine.get_version_info().get("string", "")))
+	_case_t1_5_bootstrap()
+	_case_t1_1_world()
+	_case_t1_3_spawn()
+	_case_t1_4_sites()
+	_case_t2_1_sites()
+	_case_t2_6_gates()
+	_case_t3_9_receipt_absent()
+	_finish()
+
+
+# --------------------------------------------------------------------------- #
+# helpers
+# --------------------------------------------------------------------------- #
+func _emit(case_id: String, payload: Dictionary) -> void:
+	print("A7C %s %s" % [case_id, JSON.stringify(payload)])
+
+
+func _load_reader() -> Variant:
+	if _reader == null:
+		var script: Variant = load(READER_PATH)
+		if script is Script:
+			_reader = (script as Script).new()
+	return _reader
+
+
+func _legacy_bounds() -> Vector2i:
+	var file := FileAccess.open(LEGACY_WORLD, FileAccess.READ)
+	if file == null:
+		return Vector2i.ZERO
+	var parsed: Variant = JSON.parse_string(file.get_as_text())
+	if not (parsed is Dictionary):
+		return Vector2i.ZERO
+	var bounds: Variant = (parsed as Dictionary).get("world_bounds", {})
+	if not (bounds is Dictionary):
+		return Vector2i.ZERO
+	return Vector2i(int((bounds as Dictionary).get("w", 0)), int((bounds as Dictionary).get("h", 0)))
+
+
+# --------------------------------------------------------------------------- #
+# T1.5 — is a reader refusal a harness artefact or the owner's contract?
+# --------------------------------------------------------------------------- #
+func _case_t1_5_bootstrap() -> void:
+	var had_action := InputMap.has_action(&"move_left")
+	var before: Variant = _load_reader()
+	var before_ok := false
+	var before_reason := "READER_UNAVAILABLE"
+	if before != null:
+		before_ok = bool(before.call(&"configure"))
+		before_reason = String(before.get(&"last_error"))
+	_emit("T1.5_BEFORE", {"input_action_present": had_action, "reader_ok": before_ok,
+		"reason": before_reason})
+
+	# Install the application's own bootstrap through the same path the game uses.
+	if not had_action:
+		var bootstrap_script: Variant = load(BOOTSTRAP_PATH)
+		if bootstrap_script is Script:
+			var node: Node = (bootstrap_script as Script).new()
+			get_root().add_child(node)
+			await process_frame
+	var after: Variant = _load_reader()
+	var after_ok := false
+	var after_reason := "READER_UNAVAILABLE"
+	if after != null:
+		after_ok = bool(after.call(&"configure"))
+		after_reason = String(after.get(&"last_error"))
+	_emit("T1.5_AFTER", {"input_action_present": InputMap.has_action(&"move_left"),
+		"reader_ok": after_ok, "reason": after_reason})
+
+
+# --------------------------------------------------------------------------- #
+# T1.1 — world facts, measured in the engine from the composed data
+# --------------------------------------------------------------------------- #
+func _case_t1_1_world() -> void:
+	var live := _legacy_bounds()
+	var reader: Variant = _load_reader()
+	var authored := Vector2i.ZERO
+	var reader_ok := false
+	if reader != null:
+		reader_ok = bool(reader.call(&"configure"))
+		if reader_ok:
+			authored = reader.call(&"world_frame")
+	_emit("T1.1", {"live": [live.x, live.y], "authored": [authored.x, authored.y],
+		"reader_ok": reader_ok, "same_document": reader_ok and live == authored})
+
+
+# --------------------------------------------------------------------------- #
+# T1.3 — a safe spawn, and whether it is inside the world the player can walk
+# --------------------------------------------------------------------------- #
+func _case_t1_3_spawn() -> void:
+	var reader: Variant = _load_reader()
+	if reader == null or not bool(reader.call(&"configure")):
+		_emit("T1.3", {"ok": false, "error": "READER_UNAVAILABLE"})
+		return
+	var spawn: Dictionary = reader.call(&"choose_safe_spawn", 20261031)
+	if not bool(spawn.get("ok", false)):
+		_emit("T1.3", {"ok": false, "error": String(spawn.get("error", "SPAWN_FAILED"))})
+		return
+	var cell := Vector2i(int(spawn.cell_array[0]), int(spawn.cell_array[1]))
+	var live := _legacy_bounds()
+	var profile: Dictionary = reader.call(&"traversal_profile", cell)
+	_emit("T1.3", {
+		"ok": true, "cell": [cell.x, cell.y], "chunk_id": String(spawn.get("chunk_id", "")),
+		"in_live_world": cell.x >= 0 and cell.y >= 0 and cell.x < live.x and cell.y < live.y,
+		"standable": bool(profile.get("ok", false)) and bool(profile.get("walkable", false)),
+		"traversal": String(profile.get("profile", profile.get("reason", ""))),
+		"region": String(spawn.get("region_id", "")),
+		"production_spawn_approval": bool(spawn.get("production_spawn_approval", false)),
+	})
+
+
+# --------------------------------------------------------------------------- #
+# T1.4 / T2.1 — canonical sites: A8 cells versus the live world, and their scenes
+# --------------------------------------------------------------------------- #
+func _case_t1_4_sites() -> void:
+	var package := _read_json(A8_PACKAGE)
+	var live := _legacy_bounds()
+	var rows: Array = []
+	var outside := 0
+	for raw: Variant in package.get("existing_a8_sites", []):
+		if not (raw is Dictionary):
+			continue
+		var site: Dictionary = raw
+		var cell: Array = site.get("canonical_cell", [])
+		if cell.size() != 2:
+			continue
+		var x := int(cell[0])
+		var y := int(cell[1])
+		var inside := x >= 0 and y >= 0 and x < live.x and y < live.y
+		if not inside:
+			outside += 1
+		rows.append({"poi_id": String(site.get("poi_id", "")), "cell": [x, y],
+			"inside_live_world": inside, "scene": String(site.get("scene", ""))})
+	_emit("T1.4", {"live": [live.x, live.y], "sites": rows, "outside": outside})
+
+
+func _case_t2_1_sites() -> void:
+	var package := _read_json(A8_PACKAGE)
+	var declared: Array = []
+	for raw: Variant in package.get("existing_a8_sites", []):
+		if raw is Dictionary:
+			var path := String((raw as Dictionary).get("scene", ""))
+			declared.append({"poi_id": String((raw as Dictionary).get("poi_id", "")),
+				"scene": path, "exists": path != "" and ResourceLoader.exists(path)})
+	_emit("T2.1", {"sites": declared,
+		"package_status": String(package.get("package_status", ""))})
+
+
+func _case_t2_6_gates() -> void:
+	var package := _read_json(A8_PACKAGE)
+	var gates: Array = package.get("production_mount_gates", [])
+	_emit("T2.6", {"declared_gates": gates.size(), "refused": null,
+		"note": "declaration only: no runtime threshold refusal is recorded by this probe"})
+
+
+# --------------------------------------------------------------------------- #
+# T3.9 — deliberately absent: this probe does not own a factory receipt
+# --------------------------------------------------------------------------- #
+func _case_t3_9_receipt_absent() -> void:
+	# The paid two-process receipt is A0's journey harness; inventing one here would be
+	# exactly the fabricated custody proof the R13 oracle pack refuses. State it plainly.
+	_emit("T3.9", {"settled": false, "granted": 0, "duplicate_refused": false,
+		"second_granted": null, "reason": "NOT_THIS_PROBE",
+		"note": "requires A0's normal-input two-process journey; A7 never fabricates it"})
+
+
+func _finish() -> void:
+	_emit("SUMMARY", {"probe": "a7_certification_probe", "engine": Engine.get_version_info().get("string", ""),
+		"completed": true})
+	print("A7C_DONE")
+	quit(0)
+
+
+func _read_json(path: String) -> Dictionary:
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		return {}
+	var parsed: Variant = JSON.parse_string(file.get_as_text())
+	return parsed if parsed is Dictionary else {}

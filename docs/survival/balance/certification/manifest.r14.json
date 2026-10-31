@@ -1,0 +1,18 @@
+{
+  "schema": "soh.a7.certification.manifest.v2",
+  "round": "R14",
+  "purpose": "cross-system player-capability certification on one exact immutable composition",
+  "composition_tree": "f6d5cf789995ccd775cfab9b2f3c98a7ecc667b0",
+  "pins": {
+    "A0": "a6e3797879915510b2e86be0d2ee521f53967c94",
+    "A1": "e1e4e9a4d4a0f7f0d38360d638715a0c9f144208",
+    "A3": "80fe8ceca6de02523985a6eb53e9567639885f0e",
+    "A6": "816cc22ab532f297dd7c480fccf34e84f482957a",
+    "A8": "5bf5c8f93e5905db96f98e2f20e716e0bffbce68"
+  },
+  "engine": "Godot 4.7.0",
+  "tracks": ["T1 world/player/geography", "T2 discovery/preparation/revisit",
+             "T3 material/knowledge/offline", "T4 forward-compatibility gates"],
+  "levels": ["TEST_HARNESS_VALID", "OWNER_SOURCE_VALID", "PRODUCT_COMPOSED", "HUMAN_ACCEPTED"],
+  "self_test_ok": true
+}
