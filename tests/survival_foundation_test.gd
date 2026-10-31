@@ -103,7 +103,12 @@ func _boot() -> Node:
 	root.add_child(_host)
 	var ow := scene.instantiate()
 	_host.add_child(ow)
-	ow.configure({})
+	# This suite plays A0's retained Chapter-1 route world: the ten landmark
+	# thresholds, the camps and the discoveries live there, and R13 keeps them
+	# reusable without letting them compete with A1's continent for the player's
+	# main world. The authored continent has its own production gate
+	# (survival_a0_authored_world_route_test.gd), which plays it with real input.
+	ow.configure({"world_authority": "annex"})
 	var deadline := Time.get_ticks_msec() + BUILD_TIMEOUT_MS
 	while Time.get_ticks_msec() < deadline:
 		await process_frame

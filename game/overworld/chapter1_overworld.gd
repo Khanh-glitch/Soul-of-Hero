@@ -108,6 +108,9 @@ var state: OverworldState
 var player: CharacterBody2D
 var camera: Camera2D
 var hud: OverworldHud
+## How often the HUD re-reads A0's pack snapshot (4 Hz).
+const CARRY_SAMPLE_MS := 250
+var _carry_sampled_at := -100000
 ## Runtime walkability that includes prop bodies, and the fade that keeps the
 ## Knight visible behind architecture. Both are built from the live scene, not
 ## from the authored document, so they describe the world the player has.
@@ -191,7 +194,25 @@ func depart_world(now_unix: int = -1) -> Dictionary:
 	report["stamp"] = offline.call(&"settle", stamp)
 	# Leaving the world is the last thing this process does, so the departure must
 	# be durable before the process can die. Relying on a later autosave would make
-	# "close the game" and "the game lost my furnace" the same event.
+	# "close the game" and "the game lost my furnace" the same event — and the
+	# position is part of that: a player who leaves standing at a doorway and comes
+	# back must not be standing twenty pixels away from where they left.
+	if state != null and is_instance_valid(player):
+		# A save must not record a place the loader will refuse. If the player quit
+		# standing on scenery, the durable position is the nearest standable cell of
+		# that footprint, and the body itself is not moved: leaving the game is not a
+		# teleport. Reloading then lands exactly where the save says, every time.
+		var stored_position := player.global_position
+		if traversability != null and is_instance_valid(camera) \
+				and (world_authority == null or String(world_authority.inside_site()).is_empty()):
+			var settled := traversability.nearest_free_position(stored_position, 12)
+			if settled.distance_to(stored_position) > 0.5:
+				push_warning("A0 departure: position %s is not standable; saving %s instead"
+					% [str(stored_position), str(settled)])
+			stored_position = settled
+		state.set_world_position(stored_position, true)
+		report["position"] = [stored_position.x, stored_position.y]
+		report["body_position"] = [player.global_position.x, player.global_position.y]
 	var save := get_node_or_null("/root/SaveService")
 	if save != null and save.has_method(&"save_now"):
 		report["persisted"] = bool(save.call(&"save_now"))
@@ -260,6 +281,13 @@ func _mount_world_extensions() -> void:
 
 
 func _world_authority_mode() -> String:
+	# A caller may ask for the retained Chapter-1 route world explicitly. That is how
+	# the legacy landmark/camp/discovery suites keep playing the world they were
+	# written for: the old content is reusable, it is simply not the main world any
+	# more. Only the annex is selectable this way — asking for "authored" is the same
+	# as saying nothing, so there is no second switch to keep in sync.
+	if String(_pending_payload.get("world_authority", "")) == WORLD_AUTHORITY_ANNEX:
+		return WORLD_AUTHORITY_ANNEX
 	var mode := String(ProjectSettings.get_setting(WORLD_AUTHORITY_SETTING, WORLD_AUTHORITY_AUTHORED))
 	if mode == WORLD_AUTHORITY_ANNEX:
 		return WORLD_AUTHORITY_ANNEX
@@ -1033,6 +1061,10 @@ func _process(delta: float) -> void:
 		var screen := get_viewport_rect().size
 		var view := Rect2(camera.get_screen_center_position() - screen * 0.5, screen)
 		var streamed: Dictionary = world_authority.advance(player.global_position, view)
+		# New chunk bodies are new collision. Walkability is a cache of what is really
+		# mounted, so it learns them before the next frame's movement is judged.
+		if traversability != null and traversability.has_method(&"refresh_bodies"):
+			traversability.call(&"refresh_bodies")
 		if not bool(streamed.get("ok", false)) and _frame_count % 120 == 0:
 			push_warning("A0 authored stream: " + String(streamed.get("error", "")))
 	if _perf_trace_enabled and _perf_trace_usec.size() < 240:
@@ -1259,6 +1291,26 @@ func _apply_hud() -> void:
 		_lit_camp_count(), camps.size(),
 		state.discoveries.size(), discoveries.size(),
 		_open_shortcut_count(), int((world_data.get("shortcuts", []) as Array).size())
+	)
+	_refresh_carry()
+
+
+## Pack capacity is an A0 projection, not a HUD guess: SaveService owns the slot count
+## and reports both used and capacity in one snapshot. `_apply_hud` runs every frame,
+## so the snapshot is sampled at 4 Hz instead of per frame — the number changes when
+## the player picks something up, not 60 times a second.
+func _refresh_carry() -> void:
+	var now := Time.get_ticks_msec()
+	if now - _carry_sampled_at < CARRY_SAMPLE_MS:
+		return
+	_carry_sampled_at = now
+	var save_service := get_node_or_null("/root/SaveService")
+	if save_service == null or not save_service.has_method(&"get_inventory_capacity_snapshot"):
+		return
+	var snapshot: Dictionary = save_service.call(&"get_inventory_capacity_snapshot")
+	hud.set_carry(
+		int(snapshot.get("bag_used", 0)),
+		int(snapshot.get("bag_capacity", 0)),
 	)
 
 

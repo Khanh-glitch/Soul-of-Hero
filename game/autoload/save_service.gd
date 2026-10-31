@@ -2783,6 +2783,9 @@ func _sanitize_and_validate(document: Dictionary) -> String:
 	var transition_error := _sanitize_site_transition(document)
 	if not transition_error.is_empty():
 		return transition_error
+	var authored_error := _sanitize_authored_world(document)
+	if not authored_error.is_empty():
+		return authored_error
 	return ""
 
 
@@ -4504,6 +4507,12 @@ func _default_data() -> Dictionary:
 		# A0 Round 12: the only durable place a site transition may leave an
 		# entry record. Optional, so older profiles load unchanged.
 		"site_transition": {},
+		# A0 R13: the authored world's own durable identity — which continent, and
+		# the one spawn commit this run is standing in. Top-level on purpose: the
+		# `survival` namespace belongs to the survival economy's sanitizer, which
+		# rebuilds the document from a fixed key list and would drop a section it
+		# does not know. A0 owns this section and sanitizes it here.
+		"authored_world": {},
 		"legacy_audit": _default_legacy_audit(),
 	}
 
@@ -4592,6 +4601,57 @@ func _sanitize_site_transition(document: Dictionary) -> String:
 			"run_epoch": int((record as Dictionary).get("run_epoch", 0)),
 		}
 	document["site_transition"] = clean
+	return ""
+
+
+## The authored world block is read back by gameplay, so it is external input like
+## any other save section: an unreadable record is dropped, never repaired into a
+## position the player did not stand in. Dropping it is safe — the authority then
+## cannot resume and must choose a fresh safe spawn, which is the fail-closed
+## behaviour, and the reason is reported by A0 rather than hidden here.
+func _sanitize_authored_world(document: Dictionary) -> String:
+	if not document.has("authored_world"):
+		document["authored_world"] = {}
+		return ""
+	var raw: Variant = document["authored_world"]
+	if not raw is Dictionary:
+		return "Authored world section must be a Dictionary."
+	var source: Dictionary = raw
+	var clean := {}
+	var world_id := String(source.get("world_id", "")).strip_edges()
+	if not world_id.is_empty() and world_id.length() <= 96:
+		clean["world_id"] = world_id
+	var spawn_value: Variant = source.get("spawn", {})
+	if spawn_value is Dictionary:
+		var spawn: Dictionary = spawn_value
+		var cell: Variant = spawn.get("cell", [])
+		var stored_world := String(spawn.get("world_id", ""))
+		if (
+				cell is Array and (cell as Array).size() == 2
+				and not stored_world.is_empty() and stored_world.length() <= 96
+				and String(spawn.get("schema", "")) == "soh.a0.authored_spawn.v1"
+		):
+			var cell_x := int((cell as Array)[0])
+			var cell_y := int((cell as Array)[1])
+			var run_id := String(spawn.get("run_id", ""))
+			var seed := int(spawn.get("seed", 0))
+			if cell_x >= 0 and cell_y >= 0 and cell_x <= 4096 and cell_y <= 4096 \
+					and run_id.length() <= 96 \
+					and String(spawn.get("chunk_id", "")).length() <= 96 \
+					and String(spawn.get("region_id", "")).length() <= 96:
+				clean["spawn"] = {
+					"schema": "soh.a0.authored_spawn.v1",
+					"world_id": stored_world,
+					"run_id": run_id,
+					"run_epoch": int(spawn.get("run_epoch", 0)),
+					"seed": seed,
+					"cell": [cell_x, cell_y],
+					"chunk_id": String(spawn.get("chunk_id", "")),
+					"region_id": String(spawn.get("region_id", "")),
+					"candidates": int(spawn.get("candidates", 0)),
+					"candidate_chunks": int(spawn.get("candidate_chunks", 0)),
+				}
+	document["authored_world"] = clean
 	return ""
 
 

@@ -41,6 +41,9 @@ var _phase := "play"
 var _keep := false
 var _body_complete := false
 var _notes: Array[String] = []
+var _traversability: OverworldTraversability = null
+var _authority: Node = null
+var _hero: CharacterBody2D = null
 
 
 func _initialize() -> void:
@@ -56,7 +59,9 @@ func _console() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("user://tests"))
 	var save := root.get_node_or_null("SaveService")
 	if save != null:
-		save.call(&"configure_storage", SAVE, false)
+		# Process 2 must read what process 1 wrote; process 1 starts from a clean
+		# profile so the run it saves is the run it played.
+		save.call(&"configure_storage", SAVE, _phase == "verify")
 		if _phase == "play":
 			# A fresh profile with no run: the world is what opens the run, exactly as
 			# it does for a player who has just chosen an Adventurer.
@@ -95,6 +100,11 @@ func _normalize_headless_window() -> void:
 
 func _boot() -> void:
 	_normalize_headless_window()
+	# A cross-continent trek is thousands of pixels. Time scale is a *test* speed
+	# control: physics still runs the same rules per step, the body still walks, and
+	# collision, streaming and input are untouched. It only stops the gate from
+	# spending a real hour on a journey the player would take in twenty minutes.
+	Engine.time_scale = 3.0
 	var scene: PackedScene = load(OW_SCENE_PATH) as PackedScene
 	if scene == null:
 		_expect(false, "the production overworld scene loads")
@@ -141,6 +151,7 @@ func _note(text: String) -> void:
 
 
 func _finish() -> void:
+	Engine.time_scale = 1.0
 	_release_moves()
 	if _phase == "verify":
 		print("A0_AUTHORED_ROUTE_VERIFY checks=%d failures=%d" % [checks, failures.size()])
@@ -165,6 +176,9 @@ func _play_body() -> void:
 	var authority: Node = _ow.get(&"world_authority")
 	var world: OverworldWorld = _ow.get(&"world")
 	var traversability: OverworldTraversability = _ow.get(&"traversability")
+	_traversability = traversability
+	_authority = authority
+	_hero = hero
 	_expect(hero != null and camera != null and authority != null and world != null and traversability != null,
 		"the authored world exposes its seats (body, camera, authority, view, walkability)")
 	if hero == null or camera == null or authority == null or world == null or traversability == null:
@@ -188,19 +202,11 @@ func _play_body() -> void:
 	_expect(camera.limit_right == 1024 * 16 and camera.limit_bottom == 768 * 16,
 		"the camera is bounded by the continent, not the legacy inset (%d,%d)"
 			% [camera.limit_right, camera.limit_bottom])
-	var collision_root: Node = authority.call(&"collision_root")
-	var bodies := 0
-	if collision_root != null:
-		for child: Node in collision_root.get_children():
-			for body_node: Node in child.get_children():
-				if body_node is StaticBody2D:
-					bodies += 1
-	_expect(bodies > 0, "A1's streamed collision bodies are mounted (%d StaticBody2D)" % bodies)
 
 	# --- 2. the chosen Adventurer is the body that moves --------------------
 	var presenter: Node = hero.get_node_or_null("AvatarPresenter")
 	_expect(presenter != null, "the shipped player scene carries A6's avatar presenter")
-	var avatar: Dictionary = root.get_node(&"SaveService").call(&"get_player_avatar")
+	var avatar: Dictionary = root.get_node("SaveService").call(&"get_player_avatar")
 	print("A0_AUTHORED_AVATAR ", JSON.stringify(avatar))
 	_expect(String(avatar.get("gender", "")) == "male",
 		"the saved identity is the Adventurer the player chose (%s)" % String(avatar.get("gender", "")))
@@ -233,14 +239,14 @@ func _play_body() -> void:
 	var spawn_vector := Vector2i(int(spawn_cell[0]), int(spawn_cell[1])) if spawn_cell.size() == 2 else Vector2i(-1, -1)
 	_expect(bool(traversability.call(&"is_free", spawn_vector)),
 		"the spawn cell is walkable in the running world (%s)" % str(spawn_vector))
-	var saved_path: Array[String] = ["survival", "authored_world"]
-	var stored: Variant = root.get_node(&"SaveService").call(&"get_value", saved_path, {})
+	var saved_path: Array[String] = ["authored_world"]
+	var stored: Variant = root.get_node("SaveService").call(&"get_value", saved_path, {})
 	_expect(stored is Dictionary and not (stored as Dictionary).is_empty(),
 		"the spawn is committed to A0's one SaveService, not to a second store")
 	_expect(spawn_vector == traversability.call(&"cell_of", hero.global_position),
 		"the body starts on the stored spawn cell (%s vs %s)"
 			% [str(spawn_vector), str(traversability.call(&"cell_of", hero.global_position))])
-	var run_phase: Dictionary = root.get_node(&"RunLifecycle").call(&"phase")
+	var run_phase: Dictionary = root.get_node("RunLifecycle").call(&"phase")
 	_expect(String(run_phase.get("run_id", "")) == String(spawn.get("run_id", "")),
 		"the spawn is bound to the run standing in it (%s)" % String(run_phase.get("run_id", "")))
 
@@ -266,8 +272,10 @@ func _play_body() -> void:
 		_note("no blocked neighbour within 7 cells of this spawn; that case is NOT_APPLICABLE here")
 	var refused := _stale_spawn_probe(authority)
 	_expect(String(refused.get("reason", "")) == "refused",
-		"a spawn stored for a foreign run is not resumed (%s at %s)"
-			% [String(refused.get("reason", "")), str(refused.get("foreign_cell", []))])
+		"a foreign, cel-less or unwalkable spawn record is never resumed, and the run's own record is (%s)"
+			% String(refused.get("reason", "")))
+	_expect(bool(refused.get("positive_control", false)),
+		"the positive control resumes: this run's own stored record is resumable")
 
 	# --- 5. real movement, real collision, real camera ---------------------
 	var start_position: Vector2 = hero.global_position
@@ -280,6 +288,17 @@ func _play_body() -> void:
 		"the body stands on walkable authored ground after the walk")
 	_expect(camera.get_screen_center_position().distance_to(start_position) > 8.0,
 		"the camera follows the body through the continent")
+	# Collision that is really mounted: measured after the walk, because chunks are
+	# streamed as the player moves and the count at t=0 is a timing fact, not a fact
+	# about the world.
+	var bodies := 0
+	for root_var: Variant in authority.call(&"collision_roots"):
+		bodies += _count_static_bodies(root_var)
+	var marked := int(traversability.call(&"prop_blocked_cells"))
+	print("A0_AUTHORED_COLLISION bodies=%d marked_cells=%d chunks=%d"
+		% [bodies, marked, int((authority.call(&"stream_status") as Dictionary).get("chunks_loaded", 0))])
+	_expect(bodies > 0 or marked > 0,
+		"collision the player can hit is mounted (bodies=%d, walkability cells=%d)" % [bodies, marked])
 	# Collision is physical, not a rule: walk into a blocked cell and be stopped.
 	var before_wall := hero.global_position
 	if blocked != Vector2i(-1, -1):
@@ -326,18 +345,23 @@ func _play_body() -> void:
 	_expect(returned or hero.global_position.distance_to(home) < 120.0,
 		"the player walks back toward shelter after the expedition")
 	print("A0_AUTHORED_RETURN walked=%s at=%s" % [str(returned), str(hero.global_position)])
-	var save := root.get_node(&"SaveService")
+	var save := root.get_node("SaveService")
 	_expect(bool(save.call(&"save_now")), "the run's world state commits before the process can die")
+	var departure: Dictionary = {}
 	if _ow.has_method(&"depart_world"):
-		var departure: Dictionary = _ow.call(&"depart_world")
+		departure = _ow.call(&"depart_world")
 		print("A0_AUTHORED_DEPARTURE ", JSON.stringify(departure))
 		_expect(bool(departure.get("persisted", false)), "the departure flush is durable")
 	var audit := {
 		"schema": "soh.a0.authored_route.v1",
-		"run_id": String((root.get_node(&"RunLifecycle").call(&"phase") as Dictionary).get("run_id", "")),
+		"run_id": String((root.get_node("RunLifecycle").call(&"phase") as Dictionary).get("run_id", "")),
 		"spawn": spawn.duplicate(true),
 		"world": [world.width, world.height],
-		"position": [hero.global_position.x, hero.global_position.y],
+		# The durable position the save holds — the same value the second process must
+		# land on. A quit that leaves the body on scenery saves the nearest standable
+		# cell of that footprint, and the departure report says which.
+		"position": departure.get("position", [hero.global_position.x, hero.global_position.y]),
+		"body_position": departure.get("body_position", [hero.global_position.x, hero.global_position.y]),
 		"inventory": _inventory_snapshot(),
 		"avatar": avatar.duplicate(true),
 		"sites": authority.call(&"site_summary"),
@@ -359,16 +383,23 @@ func _play_body() -> void:
 func _verify_body() -> void:
 	var audit := _read_audit()
 	_expect(not audit.is_empty(), "the second process reads the first process's audit")
+	var debug_world: Array[String] = ["authored_world"]
+	print("A0_VERIFY_STORED ", JSON.stringify(root.get_node("SaveService").call(&"get_value", debug_world, {})))
+	var debug_profile: Array[String] = ["profile", "run"]
+	print("A0_VERIFY_RUN ", JSON.stringify(root.get_node("SaveService").call(&"get_value", debug_profile, {})))
 	if audit.is_empty():
 		return
 	var hero: CharacterBody2D = _ow.get(&"player")
 	var authority: Node = _ow.get(&"world_authority")
 	var world: OverworldWorld = _ow.get(&"world")
-	var save := root.get_node(&"SaveService")
+	_traversability = _ow.get(&"traversability")
+	_authority = authority
+	_hero = hero
+	var save := root.get_node("SaveService")
 	_expect(hero != null and authority != null and world != null, "the relaunched world exposes its seats")
 	if hero == null or authority == null or world == null:
 		return
-	var phase: Dictionary = root.get_node(&"RunLifecycle").call(&"phase")
+	var phase: Dictionary = root.get_node("RunLifecycle").call(&"phase")
 	var run_id := String(phase.get("run_id", ""))
 	_expect(run_id == String(audit.get("run_id", "")),
 		"the same run resumed (audit %s, relaunch %s)" % [String(audit.get("run_id", "")), run_id])
@@ -376,7 +407,7 @@ func _verify_body() -> void:
 	var spawn: Dictionary = authority.call(&"spawn_record")
 	print("A0_AUTHORED_SPAWN_VERIFY ", JSON.stringify(spawn))
 	_expect(bool(spawn.get("resumed", false)), "the saved spawn was resumed, not re-rolled")
-	_expect(str(spawn.get("cell", [])) == str((audit.get("spawn", {}) as Dictionary).get("cell", [])),
+	_expect(_cell_of(spawn.get("cell", [])) == _cell_of((audit.get("spawn", {}) as Dictionary).get("cell", [])),
 		"the spawn cell is identical across processes (%s vs %s)"
 			% [str(spawn.get("cell", [])), str((audit.get("spawn", {}) as Dictionary).get("cell", []))])
 	var expected := _vector(audit.get("position", []))
@@ -402,10 +433,15 @@ func _verify_body() -> void:
 		_expect(String(presentation.get("gender", "")) in ["", "male"],
 			"the same chosen Adventurer is presented after the relaunch (%s)" % String(presentation.get("gender", "")))
 	var before := hero.global_position
-	var moved := await _walk_input(hero, before + Vector2(0, 64), 240)
+	var moved := false
+	for direction: Vector2 in [Vector2.DOWN, Vector2.UP, Vector2.LEFT, Vector2.RIGHT]:
+		moved = await _walk_input(hero, before + direction * 64.0, 200, 16.0)
+		if moved and hero.global_position.distance_to(before) > 8.0:
+			break
 	_expect(moved and hero.global_position.distance_to(before) > 8.0,
-		"the player can still walk authored terrain after the relaunch")
-	var verify_path: Array[String] = ["survival", "authored_world"]
+		"the player can still walk authored terrain after the relaunch (%.1f px)"
+			% hero.global_position.distance_to(before))
+	var verify_path: Array[String] = ["authored_world"]
 	_expect(save.call(&"get_value", verify_path, {}) is Dictionary,
 		"the spawned world record is still in the one save")
 
@@ -424,7 +460,7 @@ func _harvest_journey(hero: CharacterBody2D) -> Dictionary:
 		return int(a.get("distance_cells", 0)) < int(b.get("distance_cells", 0)))
 	var tried := 0
 	for raw: Variant in candidates:
-		if tried >= 4:
+		if tried >= 8:
 			break
 		tried += 1
 		var entry: Dictionary = raw
@@ -432,7 +468,7 @@ func _harvest_journey(hero: CharacterBody2D) -> Dictionary:
 			% String(entry.get("node_id", "")).replace(":", "_").replace(",", "_")) as Node2D
 		if node == null:
 			continue
-		var reached := await _walk_input(hero, node.global_position, 2400, 30.0)
+		var reached := await _walk_to(hero, node.global_position)
 		if not reached:
 			_note("source %s at %s was not reached on foot in this run" % [String(entry.get("node_id", "")), str(node.global_position)])
 			continue
@@ -460,7 +496,7 @@ func _site_journey(hero: CharacterBody2D, authority: Node, poi_id: String) -> Di
 		report["error"] = "SITE_NOT_MOUNTED"
 		return report
 	var start_position := hero.global_position
-	var reached := await _walk_input(hero, approach, 6000, 26.0)
+	var reached := await _walk_to(hero, approach)
 	report["walk_px"] = hero.global_position.distance_to(start_position)
 	report["reached"] = reached and hero.global_position.distance_to(door) <= 40.0
 	report["at_door_px"] = hero.global_position.distance_to(door)
@@ -468,13 +504,19 @@ func _site_journey(hero: CharacterBody2D, authority: Node, poi_id: String) -> Di
 		report["error"] = "WALK_INCOMPLETE"
 		report["stopped_at"] = [hero.global_position.x, hero.global_position.y]
 		return report
-	# Face into the doorway the way a player does, then press the interact key.
-	await _face(hero, Vector2.UP)
-	await _press_key(G)
-	for _i: int in range(20):
-		await process_frame
+	# Face into the doorway the way a player does and press the interact key.
+	for attempt: int in range(3):
+		if hero.global_position.distance_to(door) > 18.0:
+			await _walk_to(hero, approach)
+		await _interact_facing(Vector2.UP)
+		for _i: int in range(12):
+			await process_frame
+			if not String(authority.call(&"inside_site")).is_empty():
+				break
 		if not String(authority.call(&"inside_site")).is_empty():
 			break
+		_note("doorway attempt %d refused at %s (%.1f px from the door)"
+			% [attempt + 1, str(hero.global_position), hero.global_position.distance_to(door)])
 	report["entered"] = String(authority.call(&"inside_site")) == poi_id
 	report["interior_spawn"] = [hero.global_position.x, hero.global_position.y]
 	if not bool(report["entered"]):
@@ -490,17 +532,38 @@ func _site_journey(hero: CharacterBody2D, authority: Node, poi_id: String) -> Di
 		var socket: Vector2 = origin + (site_node.call(&"get_action_socket") as Vector2)
 		var state_before: Dictionary = site_node.call(&"get_site_state")
 		var bag_before := _inventory_snapshot()
-		var at_stand := await _walk_input(hero, stand, 900, 18.0)
+		var at_stand := await _approach(hero, stand)
 		report["reached_stand"] = at_stand
 		if at_stand:
-			await _face(hero, (socket - stand).normalized())
-			await _press_key(G)
-			for _i: int in range(20):
-				await process_frame
-			report["worked"] = not bool(site_node.call(&"has_pending_intent"))
+			var receipts_before: int = (authority.call(&"site_events_for", poi_id) as Array).size()
+			for attempt: int in range(3):
+				if hero.global_position.distance_to(stand) > 20.0:
+					await _approach(hero, stand)
+				await _interact_facing((socket - hero.global_position).normalized())
+				for _i: int in range(12):
+					await process_frame
+				# An answered intent is a receipt in A0's own log; a refused one lands
+				# there too, which is exactly the fact this step is testing.
+				if (authority.call(&"site_events_for", poi_id) as Array).size() > receipts_before:
+					break
+				if attempt == 2:
+					_note("socket press never reached A8 (%s)" % str(hero.global_position))
+			# The receipt, not the absence of a pending action: A0 records what it
+			# answered, so "nothing happened" cannot be mistaken for "refused".
+			var receipts: Array = authority.call(&"site_events_for", poi_id)
 			var state_after: Dictionary = site_node.call(&"get_site_state")
 			var bag_after := _inventory_snapshot()
-			report["reward_refused"] = str(state_before) == str(state_after) and str(bag_before) == str(bag_after)
+			report["blocked_at"] = hero.global_position
+			report["receipts"] = receipts
+			report["worked"] = not receipts.is_empty()
+			var refused_cleanly := false
+			for raw_receipt: Variant in receipts:
+				var receipt: Dictionary = raw_receipt
+				if String(receipt.get("status", "")) == "rejected" \
+						and String(receipt.get("reason", "")).begins_with("A3_SOURCE_AUTHORIZATION_ABSENT"):
+					refused_cleanly = true
+			report["reward_refused"] = refused_cleanly \
+				and str(state_before) == str(state_after) and str(bag_before) == str(bag_after)
 			if not bool(report["reward_refused"]):
 				report["state_before"] = state_before
 				report["state_after"] = state_after
@@ -509,65 +572,386 @@ func _site_journey(hero: CharacterBody2D, authority: Node, poi_id: String) -> Di
 		# Leave through the marked doorway: stand on the exit portal, face out, G.
 		var exit_portal: Vector2 = origin + (site_node.call(&"get_exit_position") as Vector2)
 		await _walk_input(hero, exit_portal, 900, 14.0)
-		await _face(hero, Vector2.DOWN)
-		await _press_key(G)
-		for _i: int in range(20):
-			await process_frame
+		for attempt: int in range(3):
+			if hero.global_position.distance_to(exit_portal) > 16.0:
+				await _walk_input(hero, exit_portal, 600, 12.0)
+			await _interact_facing(Vector2.DOWN)
+			for _i: int in range(12):
+				await process_frame
+				if String(authority.call(&"inside_site")).is_empty():
+					break
 			if String(authority.call(&"inside_site")).is_empty():
 				break
+			_note("exit attempt %d refused at %s" % [attempt + 1, str(hero.global_position)])
 	report["retreated"] = String(authority.call(&"inside_site")).is_empty()
 	report["return_position"] = [hero.global_position.x, hero.global_position.y]
-	report["return_at_door"] = hero.global_position.distance_to(door + Vector2(0, 18)) < 48.0
+	report["return_at_door"] = hero.global_position.distance_to(approach) < 48.0
 	return report
 
 
 # ---------------------------------------------------------------------------
 # real input
 # ---------------------------------------------------------------------------
-## Walks the body toward `target` by pressing the four directional actions, one
-## physics frame at a time. Godot's move_and_slide turns a pressed direction into a
-## slide along real collision, so a wall is met by physics, not by a rule. If the
-## body stops making progress (a concave corner), it tries a perpendicular nudge for
-## a few frames and then resumes — the same thing a player does.
+## A route across the continent: a coarse A* over A0's own walkability, exactly the
+## grid the game uses to decide what is ground. It is a *test* navigation aid (the
+## player would look at the screen); the body still has to be walked there by input,
+## through real collision, at real speed.
+## Two planning scales, because a continent is not a room: a fine plan near the
+## player (stride 4) and a whole-map plan (stride 8) when geography forces a detour
+## outside the straight box. A* over A0's own walkability, with a real priority
+## queue — a whole-continent plan needs it, and a linear scan is quadratic.
+const PLAN_LADDER := [[96, 4], [320, 6], [9999, 4]]
+const PLAN_MAX_EXPANSIONS := 90_000
+
+
+func _plan(start_cell: Vector2i, goal_cell: Vector2i, margin: int, stride: int) -> Array[Vector2i]:
+	if _traversability == null:
+		return []
+	var lo := Vector2i(mini(start_cell.x, goal_cell.x) - margin, mini(start_cell.y, goal_cell.y) - margin)
+	var hi := Vector2i(maxi(start_cell.x, goal_cell.x) + margin, maxi(start_cell.y, goal_cell.y) + margin)
+	lo = Vector2i(maxi(0, lo.x), maxi(0, lo.y))
+	hi = Vector2i(mini(_traversability.width - 1, hi.x), mini(_traversability.height - 1, hi.y))
+	var origin := lo
+	var cols := int((hi.x - lo.x) / stride) + 1
+	var rows := int((hi.y - lo.y) / stride) + 1
+	var start_node := Vector2i((start_cell.x - origin.x) / stride, (start_cell.y - origin.y) / stride)
+	var goal_node := Vector2i((goal_cell.x - origin.x) / stride, (goal_cell.y - origin.y) / stride)
+	if start_node == goal_node:
+		return [goal_cell]
+	var open: Array[Vector2i] = [start_node]
+	var estimate: Dictionary = {start_node: _heuristic(start_node, goal_node)}
+	var came: Dictionary = {}
+	var cost: Dictionary = {start_node: 0}
+	var closed: Dictionary = {}
+	var expansions := 0
+	var found := false
+	while not open.is_empty() and expansions < PLAN_MAX_EXPANSIONS:
+		var current: Vector2i = _heap_pop(open, estimate)
+		if closed.has(current):
+			continue
+		closed[current] = true
+		expansions += 1
+		if current == goal_node:
+			found = true
+			break
+		for step: Vector2i in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1),
+				Vector2i(1, 1), Vector2i(1, -1), Vector2i(-1, 1), Vector2i(-1, -1)]:
+			var next := current + step
+			if next.x < 0 or next.y < 0 or next.x >= cols or next.y >= rows:
+				continue
+			if closed.has(next):
+				continue
+			# A diagonal shortcut is only a move if both shoulders are open ground.
+			if step.x != 0 and step.y != 0:
+				if not _node_free(origin, stride, current + Vector2i(step.x, 0)) \
+						or not _node_free(origin, stride, current + Vector2i(0, step.y)):
+					continue
+			if not _node_free(origin, stride, next):
+				continue
+			var step_cost := 1.4142 if step.x != 0 and step.y != 0 else 1.0
+			var candidate := float(cost.get(current, INF)) + step_cost
+			if candidate >= float(cost.get(next, INF)):
+				continue
+			came[next] = current
+			cost[next] = candidate
+			estimate[next] = candidate + _heuristic(next, goal_node)
+			open.append(next)
+			_heap_sift_up(open, estimate, open.size() - 1)
+	if not found:
+		print("A0_ROUTE_PLAN start=%s goal=%s stride=%d expansions=%d found=false goal_free=%s goal_kind=%d"
+			% [str(start_cell), str(goal_cell), stride, expansions,
+				str(_node_free(origin, stride, goal_node)), int(_traversability.call(&"blocked_kind", goal_cell))])
+		return []
+	# Rebuild, then insert the real goal cell at the end: the coarse node is where a
+	# body can stand, the goal cell is where the door is.
+	var cells: Array[Vector2i] = []
+	var node: Vector2i = goal_node
+	while came.has(node):
+		cells.push_front(Vector2i(origin.x + node.x * stride, origin.y + node.y * stride))
+		node = came[node]
+	cells.push_front(start_cell)
+	cells.append(goal_cell)
+	print("A0_ROUTE_PLAN start=%s goal=%s stride=%d expansions=%d waypoints=%d"
+		% [str(start_cell), str(goal_cell), stride, expansions, cells.size()])
+	return cells
+
+
+func _heap_sift_up(heap: Array[Vector2i], key: Dictionary, index: int) -> void:
+	while index > 0:
+		var parent := (index - 1) / 2
+		if float(key.get(heap[parent], INF)) <= float(key.get(heap[index], INF)):
+			return
+		var swap := heap[parent]
+		heap[parent] = heap[index]
+		heap[index] = swap
+		index = parent
+
+
+func _heap_pop(heap: Array[Vector2i], key: Dictionary) -> Vector2i:
+	var top: Vector2i = heap[0]
+	var last: Vector2i = heap.pop_back()
+	if not heap.is_empty():
+		heap[0] = last
+		var index := 0
+		while true:
+			var left := index * 2 + 1
+			var right := left + 1
+			var best := index
+			if left < heap.size() and float(key.get(heap[left], INF)) < float(key.get(heap[best], INF)):
+				best = left
+			if right < heap.size() and float(key.get(heap[right], INF)) < float(key.get(heap[best], INF)):
+				best = right
+			if best == index:
+				break
+			var swap := heap[best]
+			heap[best] = heap[index]
+			heap[index] = swap
+			index = best
+	return top
+
+
+func _waypoint(cell: Vector2i) -> Vector2:
+	return Vector2(cell.x * 16.0 + 8.0, cell.y * 16.0 + 8.0)
+
+
+## Is the straight line between two points entirely on walkable authored ground?
+## Sampled every 8 px on A0's own walkability, which is the same grid the game uses.
+func _line_clear(from: Vector2, to: Vector2) -> bool:
+	if _traversability == null:
+		return false
+	var span := from.distance_to(to)
+	if span < 1.0:
+		return true
+	var steps := int(span / 8.0) + 1
+	for index: int in range(1, steps + 1):
+		var point := from.lerp(to, float(index) / float(steps))
+		if not _traversability.call(&"is_free", _traversability.call(&"cell_of", point)):
+			return false
+	return true
+
+
+## The nearest cell to `goal` that a coarse planning node can actually occupy,
+## preferring the side the player is coming from so the route does not loop around
+## a building to reach the same doorway.
+func _staging_cell(goal: Vector2i, from: Vector2i) -> Vector2i:
+	if _coarse_free(goal):
+		return goal
+	var best := goal
+	var best_score := INF
+	for radius: int in [1, 2, 3, 4, 5, 6]:
+		for dy: int in range(-radius, radius + 1):
+			for dx: int in range(-radius, radius + 1):
+				if maxi(absi(dx), absi(dy)) != radius:
+					continue
+				var candidate := goal + Vector2i(dx, dy)
+				if not _coarse_free(candidate):
+					continue
+				var score := Vector2(candidate - from).length()
+				if score < best_score:
+					best_score = score
+					best = candidate
+		if best != goal:
+			return best
+	return goal
+
+
+func _coarse_free(cell: Vector2i) -> bool:
+	for offset: Vector2i in [Vector2i.ZERO, Vector2i(1, 0), Vector2i(-1, 0),
+			Vector2i(0, 1), Vector2i(0, -1)]:
+		var probe := cell + offset
+		if not _traversability.in_bounds(probe) or not _traversability.is_free(probe):
+			return false
+	return true
+
+
+## A coarse node is walkable only if its own cell and its four neighbours are: a
+## route that squeezes along a one-cell ledge is not a route a body can follow.
+func _node_free(origin: Vector2i, stride: int, node: Vector2i) -> bool:
+	var cell := Vector2i(origin.x + node.x * stride, origin.y + node.y * stride)
+	for offset: Vector2i in [Vector2i.ZERO, Vector2i(1, 0), Vector2i(-1, 0),
+			Vector2i(0, 1), Vector2i(0, -1)]:
+		var probe := cell + offset
+		if not _traversability.in_bounds(probe) or not _traversability.is_free(probe):
+			return false
+	return true
+
+
+func _heuristic(node: Vector2i, goal: Vector2i) -> float:
+	var dx := absi(node.x - goal.x)
+	var dy := absi(node.y - goal.y)
+	return float(maxi(dx, dy)) + 0.4142 * float(mini(dx, dy))
+
+
+## How a player reaches a place: on the continent a planned route, inside a worksite
+## (which is not a continent cell) the same ray-navigated walk the gate uses indoors.
+func _approach(hero: CharacterBody2D, target: Vector2) -> bool:
+	var interior := _authority != null and String(_authority.call(&"inside_site")).is_empty() == false
+	if interior:
+		return await _walk_input(hero, target, 900, 16.0)
+	return await _walk_to(hero, target)
+
+
+## Walks the planned route with real input. A waypoint that cannot be reached within
+## its budget triggers one replan from where the body actually stands; after that the
+## journey reports the stall instead of pretending to have arrived.
+func _walk_to(hero: CharacterBody2D, target: Vector2, budget_frames := 4000) -> bool:
+	if _traversability == null:
+		return false
+	var goal_cell := _traversability.cell_of(target)
+	# A coarse grid node needs one cell of clearance on every side, so a doorway
+	# between two walls is never a node: the plan goes to the nearest cell that
+	# *does* have clearance, and the last few metres are walked by eye (rays and
+	# input), which is exactly how a player threads a door frame.
+	var staging := _staging_cell(goal_cell, _traversability.cell_of(hero.global_position))
+	var attempts := 0
+	while attempts < 4:
+		attempts += 1
+		var start_cell := _traversability.cell_of(hero.global_position)
+		var route: Array[Vector2i] = []
+		# Close to the goal, plan on a fine stride in a small window: the last stretch
+		# of a route is where terrain narrows to a ledge and a coarse node cannot see
+		# the gap a body fits through.
+		var ladder: Array = PLAN_LADDER.duplicate()
+		if hero.global_position.distance_to(target) < 640.0:
+			ladder.push_front([64, 2])
+		for rung: Array in ladder:
+			route = _plan(start_cell, staging, int(rung[0]), int(rung[1]))
+			if not route.is_empty():
+				break
+		if route.is_empty():
+			print("A0_ROUTE_NO_PATH from=%s to=%s" % [str(start_cell), str(goal_cell)])
+			return false
+		var ok := true
+		# String-pulled route: aim at the furthest waypoint the body can already see
+		# in a straight line, instead of stopping at every grid node. A player walks
+		# to the far corner of the field, not to a lattice.
+		var index := 0
+		while index < route.size():
+			var far := index
+			while far + 1 < route.size():
+				var ahead := _waypoint(route[far + 1])
+				if not _line_clear(hero.global_position, ahead):
+					break
+				far += 1
+			var waypoint := _waypoint(route[far])
+			index = far + 1
+			if hero.global_position.distance_to(waypoint) <= 12.0:
+				continue
+			if not await _walk_input(hero, waypoint, mini(budget_frames, 900), 14.0):
+				ok = false
+				break
+		if ok and hero.global_position.distance_to(target) <= 40.0:
+			return true
+		if ok:
+			# Close enough for sight, not for touch: walk the leftover gap.
+			if await _walk_input(hero, target, 600, 12.0):
+				return true
+		if attempts >= 2:
+			return hero.global_position.distance_to(target) <= 40.0
+		_note("replanning at %s toward %s" % [str(hero.global_position), str(target)])
+	return false
+
+
+## Walks the body toward `target` by pressing the four directional actions.
+##
+## Steering, not teleporting: each frame picks the free direction closest to the
+## bearing to the target, where "free" is A0's own walkability for the cell a few
+## pixels ahead (A1's walk layer plus the collision bodies that are really mounted).
+## That is what a player does with their eyes — it just never writes a position and
+## never skips collision: the body still has to be pushed there by move_and_slide.
 func _walk_input(hero: CharacterBody2D, target: Vector2, max_frames: int, tolerance := 24.0) -> bool:
+	if _traversability == null:
+		return false
 	var frames := 0
 	var last := hero.global_position
 	var stalled := 0
-	var nudge := 0
+	var escape := 0
+	var escape_until := 0
 	while frames < max_frames:
 		frames += 1
 		if hero.global_position.distance_to(target) <= tolerance:
 			_release_moves()
 			return true
-		var to_target := target - hero.global_position
-		var direction := to_target.normalized()
-		if nudge != 0:
-			direction = direction.rotated(deg_to_rad(80.0 * float(nudge)))
+		var bearing := (target - hero.global_position).angle()
+		var direction := Vector2.ZERO
+		if frames < escape_until:
+			direction = Vector2.RIGHT.rotated(bearing + PI * 0.5)
+		else:
+			direction = _free_direction(hero.global_position, bearing)
+		if direction == Vector2.ZERO:
+			# Nowhere free at all: back out the way a player would, then try again.
+			escape = 1
+			escape_until = frames + 25
+			_press_direction(Vector2.RIGHT.rotated(bearing + PI))
+			await physics_frame
+			continue
 		_press_direction(direction)
 		await physics_frame
 		if frames % 15 == 0:
-			if hero.global_position.distance_to(last) < 2.0:
+			if hero.global_position.distance_to(last) < 3.0:
 				stalled += 1
-				nudge = -nudge if nudge != 0 else 1
-				if stalled >= 8:
+				if stalled == 3:
+					# Wedged: step sideways along the obstacle for a moment.
+					escape = -escape if escape != 0 else 1
+					escape_until = frames + 30
+				elif stalled >= 10:
+					print("A0_ROUTE_STALL at=%s target=%s bearing_deg=%.1f walkable_here=%s"
+						% [str(hero.global_position), str(target), rad_to_deg(bearing),
+							str(_traversability.is_free(_traversability.cell_of(hero.global_position)))])
 					_release_moves()
 					return false
 			else:
 				stalled = 0
-				nudge = 0
 			last = hero.global_position
 	_release_moves()
 	return hero.global_position.distance_to(target) <= tolerance
 
 
-## Presses a direction for a moment so the controller's facing follows it, which is
-## what A8's doorway and socket rules read. No position is written.
-func _face(_hero: CharacterBody2D, direction: Vector2) -> void:
+## The free direction closest to `bearing`, nearest angle first, probing the space
+## the body would enter. On the continent the probe is A0's walkability; inside a
+## worksite the body stands at the interior origin, which is not a continent cell, so
+## the probe is a real physics ray against the interior's own collision.
+func _free_direction(position: Vector2, bearing: float) -> Vector2:
+	var offsets: Array[float] = [0.0, 0.4, -0.4, 0.8, -0.8, 1.2, -1.2, 1.6, -1.6, 2.0, -2.0, 2.4, -2.4, PI]
+	for offset: float in offsets:
+		var candidate := Vector2.RIGHT.rotated(bearing + offset)
+		if _probe_free(position, candidate, 14.0):
+			return candidate
+	return Vector2.ZERO
+
+
+func _probe_free(position: Vector2, direction: Vector2, distance: float) -> bool:
+	var probe := position + direction * distance
+	var interior := _authority != null and not String(_authority.call(&"inside_site")).is_empty()
+	if _traversability != null and not interior \
+			and _traversability.in_bounds(_traversability.cell_of(probe)):
+		return _traversability.is_free(_traversability.cell_of(probe))
+	return _ray_clear(position, probe)
+
+
+func _ray_clear(from: Vector2, to: Vector2) -> bool:
+	if _ow == null or _hero == null:
+		return false
+	var world: World2D = (_ow as Node2D).get_world_2d()
+	if world == null:
+		return false
+	var query := PhysicsRayQueryParameters2D.create(from, to, 1)
+	query.exclude = [_hero.get_rid()]
+	query.collide_with_areas = false
+	return world.direct_space_state.intersect_ray(query).is_empty()
+
+
+## Holds a direction and presses the interact key while it is still held — which is
+## what a player does ("face the door and press G"). Holding it for many frames would
+## walk straight through the doorway the gate is measuring, so the press happens after
+## two frames and the body is released immediately afterwards.
+func _interact_facing(direction: Vector2) -> void:
 	_press_direction(direction)
-	for _i: int in range(8):
-		await physics_frame
-	_release_moves()
 	await physics_frame
+	await physics_frame
+	await _press_key(G)
+	_release_moves()
+	await process_frame
 
 
 func _press_direction(direction: Vector2) -> void:
@@ -615,6 +999,17 @@ func _press_key(keycode: Key) -> void:
 # ---------------------------------------------------------------------------
 # small helpers
 # ---------------------------------------------------------------------------
+func _count_static_bodies(root: Variant) -> int:
+	if not root is Node:
+		return 0
+	var total := 0
+	for child: Node in (root as Node).get_children():
+		if child is StaticBody2D:
+			total += 1
+		total += _count_static_bodies(child)
+	return total
+
+
 func _count(item_id: String) -> int:
 	if item_id.is_empty():
 		return 0
@@ -669,29 +1064,40 @@ func _find_blocked_neighbour(origin: Vector2, traversability: OverworldTraversab
 	return Vector2i(-1, -1)
 
 
-## Writes a spawn record that names a *different* run, re-runs the real resume path,
-## and restores the true record. It never leaves the save in a state a later step
-## could misread — and it fails closed if the authority resumed it anyway.
+## The negative spawn cases, asked of A0 as pure questions so a gate never has to
+## forge anything into the player's save: a record for another world, another run, a
+## missing cell, an unwalkable cell, and the real record as the positive control.
 func _stale_spawn_probe(authority: Node) -> Dictionary:
-	var save := root.get_node(&"SaveService")
-	var path: Array[String] = ["survival", "authored_world"]
-	var original: Variant = save.call(&"get_value", path, {})
-	var forged := {"schema": "soh.a0.authored_world.v1", "world_id": "world:not_this_one",
-		"spawn": {"schema": "soh.a0.authored_spawn.v1", "world_id": "world:not_this_one",
-			"run_id": "run-foreign-probe", "run_epoch": 0, "seed": 1, "cell": [1, 1], "resumed": false}}
-	save.call(&"patch_state_path", path, forged)
-	var result: Dictionary = authority.call(&"ensure_spawn")
-	var probe: Dictionary = result.get("spawn", {})
-	print("A0_AUTHORED_STALE_SPAWN ", JSON.stringify({"result": result, "resumed": probe.get("resumed", false)}))
-	save.call(&"patch_state_path", path, original if original is Dictionary else {})
-	# Put the in-memory spawn back to the true record, so the run continues in the
-	# world it started in.
-	authority.call(&"ensure_spawn")
-	var outcome := {"reason": "resumed" if bool(probe.get("resumed", false)) else String(result.get("reason", "refused")),
-		"foreign_cell": probe.get("cell", []), "foreign_run": probe.get("run_id", "")}
-	if not bool(probe.get("resumed", false)):
-		outcome["reason"] = "refused"
-	return outcome
+	var world_id := String((authority.call(&"source_report") as Dictionary).get("reader", ""))
+	var run: Dictionary = root.get_node("RunLifecycle").call(&"phase")
+	var current_run := String(run.get("run_id", ""))
+	var cell: Array = (authority.call(&"spawn_record") as Dictionary).get("cell", [])
+	var cases := {
+		"foreign_world": {"schema": "soh.a0.authored_spawn.v1", "world_id": "world:not_this_one",
+			"run_id": current_run, "cell": cell},
+		"foreign_run": {"schema": "soh.a0.authored_spawn.v1", "world_id": world_id,
+			"run_id": "run-foreign-probe", "cell": cell},
+		"no_cell": {"schema": "soh.a0.authored_spawn.v1", "world_id": world_id,
+			"run_id": current_run, "cell": []},
+		"unwalkable": {"schema": "soh.a0.authored_spawn.v1", "world_id": world_id,
+			"run_id": current_run, "cell": [0, 0]},
+	}
+	var outcomes := {}
+	for name: String in cases.keys():
+		outcomes[name] = authority.call(&"spawn_resume_decision", cases[name])
+	# The positive control: the record this run is actually standing in must resume.
+	outcomes["own_record"] = authority.call(&"spawn_resume_decision", authority.call(&"spawn_record"))
+	print("A0_AUTHORED_SPAWN_DECISIONS ", JSON.stringify(outcomes))
+	var refused_all := true
+	for name: String in cases.keys():
+		if bool((outcomes[name] as Dictionary).get("resumed", true)):
+			refused_all = false
+	var own := bool((outcomes.get("own_record", {}) as Dictionary).get("resumed", false))
+	return {"resumed": "" if refused_all and own else "resumed",
+		"reason": "refused" if refused_all and own else "WRONG_DECISION",
+		"decisions": outcomes,
+		"foreign_cell": cell,
+		"positive_control": own}
 
 
 func _read_audit() -> Dictionary:
@@ -699,6 +1105,12 @@ func _read_audit() -> Dictionary:
 		return {}
 	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(AUDIT))
 	return parsed as Dictionary if parsed is Dictionary else {}
+
+
+func _cell_of(raw: Variant) -> Vector2i:
+	if raw is Array and (raw as Array).size() == 2:
+		return Vector2i(int((raw as Array)[0]), int((raw as Array)[1]))
+	return Vector2i(-9999, -9999)
 
 
 func _vector(raw: Variant) -> Vector2:

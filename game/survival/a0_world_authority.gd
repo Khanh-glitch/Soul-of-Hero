@@ -31,8 +31,11 @@ const WORLD_ROOT := "res://data/survival/world"
 const TILE := 16
 const CHUNK := 64
 const PHASE_CONTRACT := "soh.a0.run_phase_projection.v1"
-const SAVE_ROOT := "survival"
-const SAVE_KEY := "authored_world"
+## A0's own top-level save section (sanitized by SaveService._sanitize_authored_world).
+## It is not inside `survival`: that namespace is rebuilt from the survival
+## economy's fixed key list, so a section stored there is silently dropped on the
+## next commit — which is exactly how a spawn commit disappeared between processes.
+const SAVE_ROOT := "authored_world"
 ## How many chunk walk tables A0 keeps decoded. A flood fill spends its time in a
 ## handful of chunks; keeping all 192 would be hundreds of megabytes for nothing.
 const WALK_CACHE_CHUNKS := 24
@@ -70,6 +73,9 @@ var _phase_revision := 0
 var _projection_cache: Dictionary = {}
 var _time_of_day := 0.35
 var _transitions: Array[Dictionary] = []
+## Every site intent A0 answered, in order: the receipt the gate and the review read
+## instead of trusting a print line.
+var site_events: Array[Dictionary] = []
 
 
 # ---------------------------------------------------------------------------
@@ -131,6 +137,21 @@ func collision_root() -> Node2D:
 	return stream.get(&"collision_root") as Node2D if stream != null else null
 
 
+## Every root that holds collision the player can hit: A1's streamed terrain and
+## A8's mounted site shells. Walkability that knew only about terrain would plan a
+## route straight through a quarry shell.
+func collision_roots() -> Array:
+	var roots: Array = []
+	var terrain := collision_root()
+	if terrain != null:
+		roots.append(terrain)
+	if sites_root != null and is_instance_valid(sites_root):
+		roots.append(sites_root)
+	if interior_root != null and is_instance_valid(interior_root):
+		roots.append(interior_root)
+	return roots
+
+
 func world_cells() -> Vector2i:
 	if reader == null:
 		return Vector2i.ZERO
@@ -154,7 +175,7 @@ func world_document() -> Dictionary:
 		"landmarks": [],
 		"camps": [],
 		"discoveries": [],
-		"start_position": [_spawn_cell().x, _spawn_cell().y],
+		"start_position": [spawn_cell().x, spawn_cell().y],
 	}
 
 
@@ -283,15 +304,8 @@ func ensure_spawn(now_unix: int = -1) -> Dictionary:
 	var stored := _stored_spawn()
 	var current_run := String(run.get("run_id", ""))
 	var stored_run := String(stored.get("run_id", ""))
-	# A spawn can be chosen before the run record exists (the world needs a body
-	# before the economy composition opens the run). Such a spawn is unbound, not
-	# foreign: it belongs to the world it was drawn from, and the run it is standing
-	# in adopts it on the first frame the run identity is known. A spawn that names
-	# a *different*, non-empty run is foreign and is never resumed.
-	var run_matches := stored_run == current_run or stored_run.is_empty() or current_run.is_empty()
-	var same_run := not stored.is_empty() \
-		and String(stored.get("world_id", "")) == world_id \
-		and run_matches
+	var decision := spawn_resume_decision(stored)
+	var same_run := bool(decision.get("resumed", false))
 	if same_run:
 		var cell: Array = stored.get("cell", [])
 		if cell.size() == 2 and cell_is_walkable(Vector2i(int(cell[0]), int(cell[1]))):
@@ -304,16 +318,26 @@ func ensure_spawn(now_unix: int = -1) -> Dictionary:
 				if not _write_spawn(_spawn):
 					last_error = "SPAWN_ADOPTION_NOT_PERSISTED"
 			print("A0_SPAWN_RESUMED ", JSON.stringify(_spawn))
-			return _spawn
+			# One return shape for both paths: a caller must not have to know whether
+			# the spawn was resumed or chosen to read the answer.
+			return {"ok": true, "reason": "", "resumed": true, "spawn": _spawn.duplicate(true)}
 		# A stored spawn that is no longer walkable is reported, not silently
 		# replaced by a different one: that would hide a world/run mismatch.
-		last_error = "STORED_SPAWN_NOT_WALKABLE"
+		last_error = "STORED_SPAWN_NOT_WALKABLE:" + String(decision.get("reason", ""))
 		print("A0_SPAWN_REFUSED stale_cell=%s world=%s run=%s" % [str(cell), world_id, String(stored.get("run_id", ""))])
+	if not stored.is_empty() and not same_run:
+		# A stored spawn that is not resumed must say why: "chose a new one" and
+		# "found the same one" must never look the same in a log.
+		print("A0_SPAWN_NOT_RESUMED reason=%s stored_world=%s current_world=%s stored_run=%s current_run=%s"
+			% [String(decision.get("reason", "")), String(stored.get("world_id", "")), world_id,
+				stored_run, current_run])
+	elif stored.is_empty():
+		print("A0_SPAWN_NOT_RESUMED stored_record_absent world=%s run=%s" % [world_id, current_run])
 	var seed := _run_seed(run, now_unix)
 	var choice: Dictionary = reader.choose_safe_spawn(seed)
 	if not bool(choice.get("ok", false)):
 		last_error = "SPAWN_UNSAFE:" + String(choice.get("error", ""))
-		return {"ok": false, "reason": last_error}
+		return {"ok": false, "reason": last_error, "spawn": {}}
 	var chosen: Array = choice.get("cell_array", [])
 	_spawn = {
 		"schema": "soh.a0.authored_spawn.v1", "world_id": world_id,
@@ -330,7 +354,36 @@ func ensure_spawn(now_unix: int = -1) -> Dictionary:
 	print("A0_SPAWN_CHOSEN ", JSON.stringify(_spawn))
 	if not saved:
 		last_error = "SPAWN_NOT_PERSISTED"
-	return {"ok": saved, "reason": "" if saved else last_error, "spawn": _spawn.duplicate(true)}
+	return {"ok": saved, "reason": "" if saved else last_error, "resumed": false,
+		"spawn": _spawn.duplicate(true)}
+
+
+## Would this stored record be resumed? A pure question, so a gate can ask it about
+## a forged record without writing anything into the player's save.
+##
+## A spawn can be chosen before the run record exists (the world needs a body before
+## the economy composition opens the run). Such a spawn is unbound, not foreign: it
+## belongs to the world it was drawn from, and the run standing in it adopts it on
+## the first frame the run identity is known. A spawn that names a *different*,
+## non-empty run is foreign and is never resumed.
+func spawn_resume_decision(record: Dictionary) -> Dictionary:
+	var world_id := String(reader.plan.get("world_id", "")) if reader != null else ""
+	if record.is_empty():
+		return {"resumed": false, "reason": "RECORD_ABSENT"}
+	if String(record.get("world_id", "")) != world_id:
+		return {"resumed": false, "reason": "FOREIGN_WORLD", "world_id": String(record.get("world_id", ""))}
+	var run: Dictionary = _run_phase()
+	var stored_run := String(record.get("run_id", ""))
+	var current_run := String(run.get("run_id", ""))
+	if not (stored_run == current_run or stored_run.is_empty() or current_run.is_empty()):
+		return {"resumed": false, "reason": "FOREIGN_RUN", "stored_run": stored_run, "current_run": current_run}
+	var cell: Array = record.get("cell", [])
+	if cell.size() != 2:
+		return {"resumed": false, "reason": "NO_CELL"}
+	if not cell_is_walkable(Vector2i(int(cell[0]), int(cell[1]))):
+		return {"resumed": false, "reason": "CELL_NOT_WALKABLE", "cell": cell}
+	return {"resumed": true, "reason": "", "cell": cell,
+		"adopts_run": stored_run.is_empty() and not current_run.is_empty()}
 
 
 func refresh_spawn_after_load() -> Dictionary:
@@ -342,7 +395,7 @@ func refresh_spawn_after_load() -> Dictionary:
 func _stored_spawn() -> Dictionary:
 	if _save == null:
 		return {}
-	var path: Array[String] = [SAVE_ROOT, SAVE_KEY]
+	var path: Array[String] = [SAVE_ROOT]
 	var raw: Variant = _save.call(&"get_value", path, {})
 	if not raw is Dictionary:
 		return {}
@@ -354,10 +407,9 @@ func _stored_spawn() -> Dictionary:
 func _write_spawn(record: Dictionary) -> bool:
 	if _save == null or not _save.has_method(&"patch_state_path"):
 		return false
-	var path: Array[String] = [SAVE_ROOT, SAVE_KEY]
-	var payload := {"schema": "soh.a0.authored_world.v1", "spawn": record.duplicate(true),
+	var payload := {"spawn": record.duplicate(true),
 		"world_id": String(record.get("world_id", ""))}
-	return bool(_save.call(&"patch_state_path", path, payload))
+	return bool(_save.call(&"patch_state_path", [SAVE_ROOT] as Array[String], payload))
 
 
 func _run_seed(run: Dictionary, now_unix: int) -> int:
@@ -511,6 +563,15 @@ func site_approach_world(poi_id: String) -> Vector2:
 	return door + Vector2(0, 16)
 
 
+## The receipts for one site, oldest first.
+func site_events_for(poi_id: String) -> Array:
+	var out: Array = []
+	for event: Dictionary in site_events:
+		if String(event.get("poi_id", "")) == poi_id:
+			out.append(event.duplicate(true))
+	return out
+
+
 func site_summary() -> Array:
 	var out: Array = []
 	for poi_id: String in sites.keys():
@@ -603,10 +664,13 @@ func exit_site() -> Dictionary:
 	sites_root.visible = true
 	if stream != null:
 		stream.visible = true
-	# The return anchor is A8's shell doorway at A1's canonical cell, so a return
-	# is a physical place, not a spawn point of convenience.
+	# The return anchor is A1's published approach foot at the shell's canonical cell:
+	# a cell the player can actually stand on. A point closer to the door looked
+	# tidier and left the body overlapping the shell's own collision, so physics
+	# pushed it out on the next frame and "resume where you left" was off by 25 px.
 	var door := site_door_world(poi_id)
-	var back := door + Vector2(0, 18)
+	var approach := site_approach_world(poi_id)
+	var back := approach if approach.x >= 0.0 else door + Vector2(0, 18)
 	_place_player(back)
 	var cells := world_cells()
 	_apply_camera_limits(Rect2(Vector2.ZERO, Vector2(cells) * TILE))
@@ -653,7 +717,11 @@ func _on_site_intent(intent: Dictionary) -> void:
 		"reason": "A3_SOURCE_AUTHORIZATION_ABSENT: R13-A3-VALUE has not authorized this source yet, so A0 will not mint a reward.",
 	}
 	interior_site.call(&"receive_authoritative_result", intent_id, refusal, {})
-	print("A0_SITE_INTENT_REFUSED ", JSON.stringify({"poi_id": interior_host_poi, "intent": intent.get("action_id", intent.get("intent_id", ""))}))
+	site_events.append({"poi_id": interior_host_poi, "intent_id": intent_id,
+		"action_id": String(intent.get("action_id", "")), "status": "rejected",
+		"reason": String(refusal.get("reason", "")), "run_revision": _phase_revision})
+	print("A0_SITE_INTENT_REFUSED ", JSON.stringify({"poi_id": interior_host_poi,
+		"intent": intent.get("action_id", intent.get("intent_id", ""))}))
 
 
 ## Everything the player can do at a site with the ordinary interact key.

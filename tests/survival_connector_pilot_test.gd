@@ -22,7 +22,10 @@ func _boot() -> Node:
 			return null
 		ow.set_script(pilot_script)
 	_host.add_child(ow)
-	ow.configure({})
+	# R13: this suite plays A0's retained Chapter-1 route world (the pilot one-chunk
+	# fixture and the legacy annex). The authored continent is the production world
+	# and has its own gate; asking for the annex here is explicit, not a fallback.
+	ow.configure({"world_authority": "annex"})
 	var deadline := Time.get_ticks_msec() + BUILD_TIMEOUT_MS
 	while Time.get_ticks_msec() < deadline:
 		await process_frame

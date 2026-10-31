@@ -16,6 +16,7 @@ extends OverworldTraversability
 var _host: Node = null
 ## Cells already resolved from A1 (0 free, 1 terrain). Grows only where the player
 ## or a flood actually goes.
+var _seen_bodies: Dictionary = {}
 var _terrain_resolved := PackedByteArray()
 var _terrain_resolved_any := false
 
@@ -33,19 +34,42 @@ func build_authored(host: Node) -> void:
 	_terrain_resolved_any = false
 	_terrain_cells = 0
 	_prop_cells = 0
-	var blockers: Node = host.call(&"collision_root") as Node
-	if blockers != null:
-		for child: Node in blockers.get_children():
-			# Chunk roots are containers; every real body sits under one of them.
+	_seen_bodies.clear()
+	refresh_bodies()
+	_version += 1
+
+
+## Streaming adds collision bodies while the player walks — A1's chunk terrain and
+## A8's site shells both. The grid is a cache of what is really mounted, so it has to
+## learn the new bodies or it will tell a walker that a streamed cliff, or a quarry
+## wall, is open ground. Only bodies it has not seen are marked, so the counters stay
+## honest across refreshes.
+func refresh_bodies() -> int:
+	if _host == null:
+		return 0
+	var added := 0
+	for root: Variant in _host.call(&"collision_roots"):
+		if not root is Node:
+			continue
+		for child: Node in (root as Node).get_children():
+			var bodies: Array[Node] = []
 			for body_node: Node in child.get_children():
 				if body_node is StaticBody2D:
-					var body := body_node as StaticBody2D
-					if body.collision_layer == 0 or body.is_queued_for_deletion():
-						continue
-					_mark_body(body)
+					bodies.append(body_node)
 			if child is StaticBody2D:
-				_mark_body(child as StaticBody2D)
-	_version += 1
+				bodies.append(child)
+			for body_node: Node in bodies:
+				var body := body_node as StaticBody2D
+				if body.collision_layer == 0 or body.is_queued_for_deletion():
+					continue
+				if _seen_bodies.has(body.get_instance_id()):
+					continue
+				_seen_bodies[body.get_instance_id()] = true
+				_mark_body(body)
+				added += 1
+	if added > 0:
+		_version += 1
+	return added
 
 
 ## 0 free, 1 terrain, 2 prop body — the same contract the legacy grid answers.
