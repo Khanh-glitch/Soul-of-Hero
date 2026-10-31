@@ -21,8 +21,8 @@ jobs:
           fetch-depth: 0
       - name: Assemble isolated current owner composition
         run: |
-          git fetch --no-tags origin f518e795c8bc6aba7f9cfb8808fc6c981bc2dc2a 6b801554a6af95424b4e39dd29f43c146aa13848 2cb1a3c5f093724eb9fecbdf45909ccb611f7b32 18e7afcbd576bbd9bfbcc509b2ee13216186a522 e505173edd119fdd955cf6249511b575a5468440
-          python3 tools/arcana20_join/assemble.py --out "$RUNNER_TEMP/arcana20-phases" --avfx-sha "$GITHUB_SHA" --a0-sha f518e795c8bc6aba7f9cfb8808fc6c981bc2dc2a
+          git fetch --no-tags origin be81b58cfc5b7ba0207804797e31019aaffecf47 6b801554a6af95424b4e39dd29f43c146aa13848 2cb1a3c5f093724eb9fecbdf45909ccb611f7b32 18e7afcbd576bbd9bfbcc509b2ee13216186a522 e505173edd119fdd955cf6249511b575a5468440
+          python3 tools/arcana20_join/assemble.py --out "$RUNNER_TEMP/arcana20-phases" --avfx-sha "$GITHUB_SHA" --a0-sha be81b58cfc5b7ba0207804797e31019aaffecf47
       - uses: chickensoft-games/setup-godot@v2
         with:
           version: 4.7.0
