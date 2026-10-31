@@ -1,21 +1,28 @@
 extends Control
 
-## New Game's one authored identity step. The player picks one of the two authentic
-## staged survivors; the choice is written to A0's
-## SaveService exactly once, and every later screen reads it back as the single
-## source of truth. This screen never invents a character, never falls back to
+## New Game's one authored identity step.
+##
+## The player picks one of the two authentic staged survivors; the choice is written
+## to A0's SaveService exactly once, and every later screen reads it back as the
+## single source of truth. This screen never invents a character, never falls back to
 ## the Knight, and never grants items.
+##
+## Layout budget: the viewport is 640x360 *layout* units (it stretches to 720p/1440p/
+## 2160p by whole multiples), so everything here has to fit 360 units tall. The first
+## version stacked an emblem, two headings, an explanatory paragraph, 192-unit cards
+## and a footer, and at 720p the headline was clipped at the top while the NAM/NỮ
+## captions fell below the viewport. The budget below is explicit and the capture
+## driver asserts `.name`/`Title` style nodes stay inside the screen rect.
 
 const PRIVATE_MANIFEST_PATH := "res://private_art/a6_avatar/avatar_art_private_runtime.json"
 const PUBLIC_MANIFEST_PATH := "res://game/survival/ui/avatar_art_manifest.json"
-const SOURCE_FRAME := Vector2(64.0, 64.0)
 const SUPPORTED_GENDERS := ["male", "female"]
 
 @onready var male_button: Button = %MaleButton
 @onready var female_button: Button = %FemaleButton
 @onready var back_button: Button = %BackButton
-@onready var male_preview: TextureRect = %MalePreview
-@onready var female_preview: TextureRect = %FemalePreview
+@onready var male_preview: A6AvatarPreview = %MalePreview
+@onready var female_preview: A6AvatarPreview = %FemalePreview
 @onready var male_caption: Label = %MaleCaption
 @onready var female_caption: Label = %FemaleCaption
 @onready var status_label: Label = %StatusLabel
@@ -36,46 +43,31 @@ func configure(_payload: Dictionary = {}) -> void:
 
 func _apply_previews() -> void:
 	var manifest := _load_manifest()
-	var staged := _manifest_has_staged_art(manifest)
-	if not staged:
+	if not _manifest_has_staged_art(manifest):
 		# Straight talk instead of a stand-in character: the player can still choose,
-		# but they are told the preview art is not staged yet.
+		# but they are told the preview art is not staged in this build.
 		status_label.text = "Chưa có hình nhân vật trong bản cài này. Bạn vẫn chọn được danh tính."
 		status_label.show()
-	# The previews animate the real authored sheets; when nothing is staged they say
-	# so instead of showing a stand-in character.
 	_start_preview(male_preview, "male", "idle")
 	_start_preview(female_preview, "female", "walk")
-	var male_missing := _preview_missing(male_preview)
-	if male_missing.is_empty():
-		male_caption.text = "NAM\nNgười sống sót"
-	else:
-		male_caption.text = "NAM\n(chưa có hình nhân vật)"
-	var female_missing := _preview_missing(female_preview)
-	if female_missing.is_empty():
-		female_caption.text = "NỮ\nNgười sống sót"
-	else:
-		female_caption.text = "NỮ\n(chưa có hình nhân vật)"
+	male_caption.text = "NAM" if _preview_missing(male_preview).is_empty() else "NAM\n(chưa có hình)"
+	female_caption.text = "NỮ" if _preview_missing(female_preview).is_empty() else "NỮ\n(chưa có hình)"
 
 
-func _start_preview(preview: TextureRect, gender: String, action: String) -> void:
+func _start_preview(preview: A6AvatarPreview, gender: String, action: String) -> void:
 	if preview == null:
 		return
-	var animated := preview as A6AvatarPreview
-	if animated == null:
-		return
-	animated.gender = gender
-	animated.action = action
-	animated.direction = "front"
-	if animated.is_inside_tree():
-		animated.play(action, "front")
+	preview.gender = gender
+	preview.action = action
+	preview.direction = "front"
+	if preview.is_inside_tree():
+		preview.play(action, "front")
 
 
-func _preview_missing(preview: TextureRect) -> String:
-	var animated := preview as A6AvatarPreview
-	if animated == null:
-		return "preview node is not an A6AvatarPreview"
-	return animated.missing_reason()
+func _preview_missing(preview: A6AvatarPreview) -> String:
+	if preview == null:
+		return "preview node missing"
+	return preview.missing_reason()
 
 
 func _choose(gender: String) -> void:
@@ -119,6 +111,9 @@ func _load_manifest() -> Dictionary:
 	return {}
 
 
+## Whether the private staging manifest actually carries grade-0 action sheets for
+## at least one identity. Kept as one function: the previous revision of this file had
+## it twice (a bad edit), which is a hard parse error and stopped the game booting.
 func _manifest_has_staged_art(manifest: Dictionary) -> bool:
 	var characters: Variant = manifest.get("characters", {})
 	if not characters is Dictionary:
@@ -131,50 +126,7 @@ func _manifest_has_staged_art(manifest: Dictionary) -> bool:
 		if not grades is Dictionary:
 			continue
 		var grade_zero: Variant = (grades as Dictionary).get("0", {})
-		if grade_zero is Dictionary and not ((grade_zero as Dictionary).get("runtime_action_sheets", {}) as Dictionary).is_empty():
+		if grade_zero is Dictionary \
+				and not ((grade_zero as Dictionary).get("runtime_action_sheets", {}) as Dictionary).is_empty():
 			return true
 	return false
-
-
-func _manifest_has_staged_art(manifest: Dictionary) -> bool:
-	var characters: Variant = manifest.get("characters", {})
-	if not characters is Dictionary:
-		return false
-	for gender: String in SUPPORTED_GENDERS:
-		var record: Variant = (characters as Dictionary).get(gender, {})
-		if not record is Dictionary:
-			continue
-		var grades: Variant = (record as Dictionary).get("armor_grades", {})
-		if not grades is Dictionary:
-			continue
-		var grade_zero: Variant = (grades as Dictionary).get("0", {})
-		if grade_zero is Dictionary and not ((grade_zero as Dictionary).get("runtime_action_sheets", {}) as Dictionary).is_empty():
-			return true
-	return false
-
-
-## Preview uses the staged idle sheet's front row, first cell. Preview textures
-## are read-only and never exported or offered as downloadable art.
-func _idle_texture(manifest: Dictionary, gender: String) -> Texture2D:
-	var characters: Variant = manifest.get("characters", {})
-	if not characters is Dictionary:
-		return null
-	var record: Variant = (characters as Dictionary).get(gender, {})
-	if not record is Dictionary:
-		return null
-	var grades: Variant = (record as Dictionary).get("armor_grades", {})
-	if not grades is Dictionary:
-		return null
-	var grade_zero: Variant = (grades as Dictionary).get("0", {})
-	if not grade_zero is Dictionary:
-		return null
-	var sheet_path := String((grade_zero as Dictionary).get("idle_sheet", ""))
-	if sheet_path.is_empty() or not ResourceLoader.exists(sheet_path):
-		return null
-	var texture := load(sheet_path) as Texture2D
-	if texture == null:
-		return null
-	var preview := AtlasTexture.new()
-	preview.atlas = texture
-	preview.region = Rect2(Vector2.ZERO, SOURCE_FRAME)
-	return preview

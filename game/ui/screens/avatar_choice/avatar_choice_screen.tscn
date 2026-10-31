@@ -1,12 +1,19 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Theme" path="res://game/ui/theme/a6_survival_theme.tres" id="1_theme"]
 [ext_resource type="Script" path="res://game/ui/screens/avatar_choice/avatar_choice_screen.gd" id="2_script"]
 [ext_resource type="PackedScene" path="res://game/ui/theme/dungeon_backdrop.tscn" id="3_backdrop"]
-[ext_resource type="Texture2D" path="res://assets/branding/soul_hero_emblem_imagen.png" id="4_emblem"]
 [ext_resource type="Script" path="res://game/ui/screens/avatar_choice/a6_avatar_preview.gd" id="5_preview"]
 [ext_resource type="Texture2D" path="res://assets/a6_ui/icons/time_dawn.png" id="7_time"]
 
+; New Game's identity step.
+;
+; Layout budget, in the 640x360 layout units the whole UI is authored in (the window
+; stretches to 720p/1440p/2160p by whole multiples):
+;   12 margin + 11 kicker + 30 headline + 186 cards + 12 status + 24 footer + 4*6 separation
+;   = 299 of the 324 usable units. The previous revision spent 400+ and clipped the
+; headline off the top of a 720p window while the NAM/NU captions fell below the
+; bottom edge; that is why every band here has an explicit size.
 
 [node name="AvatarChoiceScreen" type="Control"]
 layout_mode = 3
@@ -29,36 +36,23 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.05, 0.04, 0.03, 0.35)
+color = Color(0.05, 0.04, 0.03, 0.4)
 
 [node name="SafeMargin" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 28.0
-offset_top = 18.0
-offset_right = -28.0
-offset_bottom = -18.0
+offset_left = 24.0
+offset_top = 10.0
+offset_right = -24.0
+offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Column" type="VBoxContainer" parent="SafeMargin"]
 layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="Header" type="HBoxContainer" parent="SafeMargin/Column"]
-layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="Emblem" type="TextureRect" parent="SafeMargin/Column/Header"]
-custom_minimum_size = Vector2(0, 34)
-layout_mode = 2
-size_flags_horizontal = 3
-mouse_filter = 2
-texture = ExtResource("4_emblem")
-expand_mode = 1
-stretch_mode = 5
+theme_override_constants/separation = 6
 
 [node name="Kicker" type="Label" parent="SafeMargin/Column"]
 layout_mode = 2
@@ -69,44 +63,45 @@ text = "MƯỜI BỐN NGÀY ĐỂ SỐNG SÓT"
 [node name="Headline" type="Label" parent="SafeMargin/Column"]
 layout_mode = 2
 theme_type_variation = &"A6Title"
+theme_override_font_sizes/font_size = 26
 text = "BẠN LÀ AI?"
 
-[node name="Subhead" type="Label" parent="SafeMargin/Column"]
-layout_mode = 2
-theme_type_variation = &"A6Body"
-theme_override_colors/font_color = Color(0.94, 0.89, 0.78, 1)
-text = "Bắt đầu tay không, dựng chỗ trú trước khi màn đêm kéo tới."
-
 [node name="Cards" type="HBoxContainer" parent="SafeMargin/Column"]
+custom_minimum_size = Vector2(0, 186)
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 18
+alignment = 1
+theme_override_constants/separation = 16
 
 [node name="MaleCard" type="PanelContainer" parent="SafeMargin/Column/Cards"]
+custom_minimum_size = Vector2(178, 186)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_vertical = 4
 theme_type_variation = &"A6Window"
 
 [node name="MaleBox" type="VBoxContainer" parent="SafeMargin/Column/Cards/MaleCard"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 2
 
 [node name="MalePreview" type="TextureRect" parent="SafeMargin/Column/Cards/MaleCard/MaleBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(192, 192)
+custom_minimum_size = Vector2(128, 128)
 layout_mode = 2
+size_flags_horizontal = 4
 size_flags_vertical = 3
 mouse_filter = 2
 texture_filter = 1
 script = ExtResource("5_preview")
 gender = "male"
 action = "idle"
+pixel_scale = 2
 
 [node name="MaleButton" type="Button" parent="SafeMargin/Column/Cards/MaleCard/MaleBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 26)
 layout_mode = 2
-text = "CHỌN NHÂN VẬT NÀY"
+theme_override_font_sizes/font_size = 13
+text = "CHỌN"
 
 [node name="MaleCaption" type="Label" parent="SafeMargin/Column/Cards/MaleCard/MaleBox"]
 unique_name_in_owner = true
@@ -116,30 +111,34 @@ horizontal_alignment = 1
 text = "NAM"
 
 [node name="FemaleCard" type="PanelContainer" parent="SafeMargin/Column/Cards"]
+custom_minimum_size = Vector2(178, 186)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_vertical = 4
 theme_type_variation = &"A6Window"
 
 [node name="FemaleBox" type="VBoxContainer" parent="SafeMargin/Column/Cards/FemaleCard"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 2
 
 [node name="FemalePreview" type="TextureRect" parent="SafeMargin/Column/Cards/FemaleCard/FemaleBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(192, 192)
+custom_minimum_size = Vector2(128, 128)
 layout_mode = 2
+size_flags_horizontal = 4
 size_flags_vertical = 3
 mouse_filter = 2
 texture_filter = 1
 script = ExtResource("5_preview")
 gender = "female"
 action = "walk"
+pixel_scale = 2
 
 [node name="FemaleButton" type="Button" parent="SafeMargin/Column/Cards/FemaleCard/FemaleBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 26)
 layout_mode = 2
-text = "CHỌN NHÂN VẬT NÀY"
+theme_override_font_sizes/font_size = 13
+text = "CHỌN"
 
 [node name="FemaleCaption" type="Label" parent="SafeMargin/Column/Cards/FemaleCard/FemaleBox"]
 unique_name_in_owner = true
@@ -152,29 +151,33 @@ text = "NỮ"
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"A6Warning"
+theme_override_font_sizes/font_size = 11
+autowrap_mode = 3
 text = ""
 
 [node name="Footer" type="HBoxContainer" parent="SafeMargin/Column"]
 layout_mode = 2
-alignment = 2
-theme_override_constants/separation = 12
-
-[node name="Note" type="Label" parent="SafeMargin/Column/Footer"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_type_variation = &"A6Caption"
-text = "Danh tính được lưu vào hồ sơ và khôi phục ở lần chơi sau."
+theme_override_constants/separation = 8
 
 [node name="DawnIcon" type="TextureRect" parent="SafeMargin/Column/Footer"]
-custom_minimum_size = Vector2(16, 16)
+custom_minimum_size = Vector2(14, 14)
 layout_mode = 2
+size_flags_vertical = 4
 mouse_filter = 2
 texture = ExtResource("7_time")
 texture_filter = 1
 stretch_mode = 5
 
+[node name="Note" type="Label" parent="SafeMargin/Column/Footer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_type_variation = &"A6Caption"
+text = "Danh tính được lưu vào hồ sơ và khôi phục ở lần chơi sau."
+
 [node name="BackButton" type="Button" parent="SafeMargin/Column/Footer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(120, 36)
+custom_minimum_size = Vector2(96, 24)
 layout_mode = 2
+theme_override_font_sizes/font_size = 12
 text = "QUAY LẠI"

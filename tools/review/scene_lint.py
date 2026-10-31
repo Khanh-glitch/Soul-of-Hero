@@ -15,6 +15,8 @@ Checks
   5. every `theme_type_variation = &"X"` is a declared variation or a real type in
      the theme the scene uses (when that theme is a repo .tres)
   6. no duplicate node paths in one scene
+  7. no duplicate function / const / member declarations in one script (a hard
+     Godot parse error that gdtoolkit's grammar happily accepts)
 
 Exit code is 1 when anything fails, so CI can gate on it.
 """
@@ -136,6 +138,33 @@ def check_scene(path: Path, problems: list[str], notes: list[str]) -> None:
                 notes.append(f"{rel}: theme_type_variation '{used}' is not declared in {theme_paths} (falls back to the base type)")
 
 
+FUNC_RE = re.compile(r"^func\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(", re.MULTILINE)
+CONST_RE = re.compile(r"^const\s+([A-Za-z_][A-Za-z0-9_]*)", re.MULTILINE)
+MEMBER_VAR_RE = re.compile(r"^(?:@export[^\n]*\s)?var\s+([A-Za-z_][A-Za-z0-9_]*)", re.MULTILINE)
+
+
+def check_script(path: Path, problems: list[str]) -> None:
+    """Duplicate declarations in one script are a hard Godot parse error.
+
+    gdtoolkit's grammar accepts them (it is a *grammar*, not a semantic check), so a
+    duplicated `func` slipped through the parse sweep and shipped a screen the engine
+    refused to load. This catches the class of bug that the parser cannot.
+    """
+    source = path.read_text(encoding="utf-8")
+    rel = path.relative_to(ROOT)
+    for pattern, kind in ((FUNC_RE, "function"), (CONST_RE, "const"), (MEMBER_VAR_RE, "member")):
+        seen: dict[str, int] = {}
+        for match in pattern.finditer(source):
+            name = match.group(1)
+            line = source.count("\n", 0, match.start()) + 1
+            if name in seen:
+                problems.append(
+                    f"{rel}:{line}: duplicate {kind} '{name}' (first declared on line {seen[name]})"
+                )
+            else:
+                seen[name] = line
+
+
 def check_theme(path: Path, problems: list[str], notes: list[str]) -> None:
     """A theme file is only checked for dangling texture and font paths."""
     text = path.read_text(encoding="utf-8")
@@ -147,7 +176,11 @@ def check_theme(path: Path, problems: list[str], notes: list[str]) -> None:
 def main(argv: list[str]) -> int:
     targets = [Path(arg) for arg in argv[1:]]
     if not targets:
-        targets = sorted(ROOT.glob("game/**/*.tscn")) + sorted(ROOT.glob("game/**/*.tres"))
+        targets = (
+            sorted(ROOT.glob("game/**/*.tscn"))
+            + sorted(ROOT.glob("game/**/*.tres"))
+            + sorted(ROOT.glob("tests/**/*.gd"))
+        )
     problems: list[str] = []
     notes: list[str] = []
     for path in targets:
@@ -157,6 +190,8 @@ def main(argv: list[str]) -> int:
             check_scene(path, problems, notes)
         elif suffix == ".tres":
             check_theme(path, problems, notes)
+        elif suffix == ".gd":
+            check_script(path, problems)
     for problem in problems:
         print(f"FAIL {problem}")
     for note in notes:
