@@ -1,5 +1,7 @@
 extends Node2D
-## Experimental opt-in encounter seam, NOT mounted by the production world.
+## Optional encounter seam. Mounted in production ONLY through
+## `game/survival/a0_threat_mount.gd` behind `survival/a0_optional_threat`
+## (default off); every site rule lives in `validate_site`.
 ## One existing SkeletonEnemy, no kill bonus, no dungeon changes or new loot.
 ## Normal Hero damage score still applies; this seam is not production-ready.
 ## Caller must choose a shape/nav-validated site; configure fails closed if the
@@ -33,6 +35,61 @@ var _reservation_active := false
 var _cooldown := 0.0
 var _configured := false
 
+## A0 Round 12: the site rules are now a pure, reusable oracle. The production
+## mount searches for a site with this function and `configure` calls it again,
+## so there is exactly ONE definition of "a fair place for the encounter" and a
+## caller can never place something configure would refuse.
+static func validate_site(hero: CharacterBody2D, build: SurvivalBuildSystem, nav: OverworldTraversability, site: Vector2i) -> Dictionary:
+	if hero == null or build == null or nav == null or build.world == null:
+		return {"ok": false, "reason": "seats_absent"}
+	var world := build.world
+	var center := Vector2(site.x * 16 + 8, site.y * 16 + 15)
+	if hero.global_position.distance_to(center) <= SAFE_SPAWN_DISTANCE:
+		return {"ok": false, "reason": "inside_safe_ring"}
+	if not nav.in_bounds(site):
+		return {"ok": false, "reason": "out_of_bounds"}
+	for endpoint: Dictionary in nav.endpoints(world.data):
+		var protected: Vector2i = endpoint["cell"]
+		if maxi(absi(site.x - protected.x), absi(site.y - protected.y)) <= RADIUS + 10:
+			return {"ok": false, "reason": "protected_endpoint"}
+	if build._near_shortcut(site, RADIUS + 10):
+		return {"ok": false, "reason": "near_shortcut"}
+	var area := Rect2i(site - Vector2i(RADIUS, RADIUS), Vector2i(2 * RADIUS + 1, 2 * RADIUS + 1))
+	if area.position.x < 0 or area.position.y < 0 or area.end.x > world.width or area.end.y > world.height:
+		return {"ok": false, "reason": "area_outside_world"}
+	for y in range(area.position.y, area.end.y):
+		for x in range(area.position.x, area.end.x):
+			if build._on_route_detail(Vector2i(x, y)):
+				return {"ok": false, "reason": "on_route_detail"}
+	for value: Variant in build._placed.values():
+		var structure := value as SurvivalStructure
+		if is_instance_valid(structure) and area.has_point(structure.cell):
+			return {"ok": false, "reason": "structure_overlap"}
+	var reach := nav.reachable_from(nav.origin_cell())
+	if reach[site.y * nav.width + site.x] < 0:
+		return {"ok": false, "reason": "unreachable"}
+	var packed := load(ENEMY_SCENE) as PackedScene
+	if packed == null:
+		return {"ok": false, "reason": "enemy_scene_missing"}
+	var probe := packed.instantiate() as CharacterBody2D
+	if probe == null:
+		return {"ok": false, "reason": "enemy_scene_empty"}
+	var shape := probe.get_node_or_null("BodyCollision") as CollisionShape2D
+	if shape == null or shape.shape == null:
+		probe.free()
+		return {"ok": false, "reason": "enemy_shape_missing"}
+	var query := PhysicsShapeQueryParameters2D.new()
+	query.shape = shape.shape
+	query.transform = Transform2D(0.0, center + shape.position)
+	query.collision_mask = probe.collision_mask
+	query.exclude = [hero.get_rid()]
+	var clear := hero.get_world_2d().direct_space_state.intersect_shape(query, 1).is_empty()
+	probe.free()
+	if not clear:
+		return {"ok": false, "reason": "site_occupied"}
+	return {"ok": true, "reason": "", "center": center, "area": area, "enemy_mask": 0}
+
+
 func configure(hero: CharacterBody2D, build: SurvivalBuildSystem, nav: OverworldTraversability, site: Vector2i) -> bool:
 	if _configured or not is_inside_tree() or hero == null or build == null or nav == null or build.world == null:
 		return false
@@ -42,48 +99,11 @@ func configure(hero: CharacterBody2D, build: SurvivalBuildSystem, nav: Overworld
 	if save == null or not save.has_method(&"is_transaction_applied") or not save.has_method(&"transact_once"):
 		return false
 	var world := build.world
+	var validated: Dictionary = validate_site(hero, build, nav, site)
+	if not bool(validated.get("ok", false)):
+		return false
 	var center := Vector2(site.x * 16 + 8, site.y * 16 + 15)
-	if hero.global_position.distance_to(center) <= SAFE_SPAWN_DISTANCE or not nav.in_bounds(site):
-		return false
-	for endpoint: Dictionary in nav.endpoints(world.data):
-		var protected: Vector2i = endpoint["cell"]
-		if maxi(absi(site.x - protected.x), absi(site.y - protected.y)) <= RADIUS + 10:
-			return false
-	if build._near_shortcut(site, RADIUS + 10):
-		return false
-	var area := Rect2i(site - Vector2i(RADIUS, RADIUS), Vector2i(2 * RADIUS + 1, 2 * RADIUS + 1))
-	if area.position.x < 0 or area.position.y < 0 or area.end.x > world.width or area.end.y > world.height:
-		return false
-	for y in range(area.position.y, area.end.y):
-		for x in range(area.position.x, area.end.x):
-			if build._on_route_detail(Vector2i(x, y)):
-				return false
-	for value: Variant in build._placed.values():
-		var structure := value as SurvivalStructure
-		if is_instance_valid(structure) and area.has_point(structure.cell):
-			return false
-	var reach := nav.reachable_from(nav.origin_cell())
-	if reach[site.y * nav.width + site.x] < 0:
-		return false
-	var packed := load(ENEMY_SCENE) as PackedScene
-	if packed == null:
-		return false
-	var probe := packed.instantiate() as CharacterBody2D
-	if probe == null:
-		return false
-	var shape := probe.get_node_or_null("BodyCollision") as CollisionShape2D
-	var query := PhysicsShapeQueryParameters2D.new()
-	if shape == null or shape.shape == null:
-		probe.free()
-		return false
-	query.shape = shape.shape
-	query.transform = Transform2D(0.0, center + shape.position)
-	query.collision_mask = probe.collision_mask
-	query.exclude = [hero.get_rid()]
-	var clear := hero.get_world_2d().direct_space_state.intersect_shape(query, 1).is_empty()
-	probe.free()
-	if not clear:
-		return false
+	var area: Rect2i = validated["area"]
 	_hero = hero
 	_build = build
 	_world = world

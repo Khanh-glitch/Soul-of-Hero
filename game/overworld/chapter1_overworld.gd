@@ -56,6 +56,9 @@ const SURVIVAL_RESOURCE_PLAN_PATH := "res://data/survival/hollow_marches_resourc
 # until native input/restart and owner gates are independently reviewed.
 const WORLD_ART_CANDIDATE_SETTING := "survival/a0_world_art_candidate"
 const A0_WORLD_ART_CANDIDATE := preload("res://game/survival/a0_world_art_candidate.gd")
+## A0 Round 12 production threat (CT decision T1). Off by default; when on, it is
+## the ONE way the survival world ever exposes an enemy.
+const A0_THREAT_MOUNT := preload("res://game/survival/a0_threat_mount.gd")
 const WAYSTATION_CANDIDATE_SETTING := "survival/a0_waystation_candidate"
 const WAYSTATION_ROOT := "res://data/survival/connector/a0_candidate/"
 const A0_WAYSTATION_GEOMETRY := preload("res://game/survival/waystation_geometry.gd")
@@ -90,6 +93,7 @@ var traversability_failures: Array[Dictionary] = []
 var survival_build: SurvivalBuildSystem
 var economy_session: Node
 var economy_composition: Node
+var threat_mount: Node
 var economy_panel: CanvasLayer
 var chest_panel: CanvasLayer
 var _death_bags: Dictionary = {}
@@ -239,6 +243,7 @@ func _build_world() -> void:
 		if not bool(art_result.get("ok", false)):
 			_fail("A1 roadside art candidate refused: " + String(art_result.get("reason", "unknown")))
 			return
+	_mount_optional_threat()
 	_build_economy_panel()
 	chest_panel = CHEST_PANEL_SCRIPT.new()
 	chest_panel.name = "ChestInventoryPanel"
@@ -284,6 +289,22 @@ func _build_economy_composition() -> void:
 		composition.queue_free()
 		return
 	economy_composition = composition
+
+
+## A0 WP-A0.3: the guarded production threat. Placement is validated against the
+## live world by the encounter seam itself; a refusal is a build failure, never a
+## silent "no danger today", so a player can never be told one thing while the
+## world holds another.
+func _mount_optional_threat() -> void:
+	var mount := A0_THREAT_MOUNT.new()
+	mount.name = "A0ThreatMount"
+	add_child(mount)
+	var report: Dictionary = mount.call(&"mount", self, player, traversability, survival_build)
+	threat_mount = mount
+	if not bool(report.get("enabled", false)):
+		return
+	if not bool(report.get("mounted", false)):
+		_fail("A0 production threat refused: " + str(report.get("last_error", "unknown")))
 
 
 func _build_economy_panel() -> void:
