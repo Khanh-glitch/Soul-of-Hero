@@ -1,0 +1,34 @@
+name: ARCANA20 inspect JOIN diagnostic
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-join-triage.yml']
+permissions:
+  actions: read
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcana20-overworld-join-diagnostic
+          run-id: 41207667189
+          github-token: ${{ github.token }}
+          path: review
+      - name: Log tail and failure context
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=next(Path('review').rglob('join.log'),None)
+          if not p: raise SystemExit('join.log missing')
+          lines=p.read_text(errors='replace').splitlines()
+          keys=('JOIN_FAIL','SCRIPT ERROR','ERROR:', 'SHADER', 'ARCANA20_JOIN_DIAGNOSTIC')
+          hits=[i for i,l in enumerate(lines) if any(k in l for k in keys)]
+          for i in hits[-12:]:
+              msg=' | '.join(lines[max(0,i-1):i+6]).replace('%','%25').replace('\n',' ')
+              print('::notice::JOIN_CONTEXT '+msg[:3600])
+          print('::notice::JOIN_END '+ ' | '.join(lines[-12:])[:3600].replace('%','%25'))
+          print('::notice::JOIN_FILES '+str([str(p) for p in Path('review').rglob('*') if p.is_file()])[:3500])
+          PY
