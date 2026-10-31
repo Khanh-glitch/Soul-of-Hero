@@ -1,3 +1,61 @@
+# A7 acceptance scoreboard — round 13 (the joined product, at the owners' own heads)
+
+_2026-10-31. **Supersedes round 12 for status questions.** Composition
+**`r13_heads` = `3d8630f5b1adfa6c5b50c56fa506524e0ce71f6b`** (6119 files), built by
+`compose.py --profile r13_heads --ref-root refs/live13` from A0 `53dcda29`, A1 `c2ba1f0f`,
+A3 `b44e22df`, A6 `6d71410a`, A8 `0f885df862`, AVFX `7e74cadd`, CT `971e0b95`. It is the
+join **A0's own `tools/a0/ownership.json` declares**, i.e. what A0's CI composes, not A7's
+opinion of it. Round 12's `663a83ede523` stays immutable historical evidence; its ledger is
+preserved as `native_runs.r12_full.v1.json`. Full report:
+[`ROUND13_JOINED_PRODUCT_ACCEPTANCE.md`](ROUND13_JOINED_PRODUCT_ACCEPTANCE.md).
+
+| probe | checks | failed | missing | verdict |
+|---|---|---|---|---|
+| `r13_adversarial_probe` | 17 | 0 | 0 | **PASS** |
+| `r13_home_probe` | 18 | 0 | 0 | **PASS** |
+| `r13_extent_probe` (new) | 3 | 1 | 0 | **FAIL** — default world 384×256 holds 10/118 POIs, 0 standable |
+| `r13_identity_probe` | 10 | 0 | 6 | `RED_NOT_IMPLEMENTED` |
+| `r13_j01_probe` | 33 | 0 | 2 | `RED_NOT_IMPLEMENTED` |
+| `r13_j02_j05_probe` | 28 | 0 | 4 | `RED_NOT_IMPLEMENTED` |
+| `r13_j03_probe` | 21 | 0 | 1 | `RED_NOT_IMPLEMENTED` |
+| `r13_j04_probe` | 11 | 1 | 2 | `RED_NOT_IMPLEMENTED` |
+| `r13_j06_j07_probe` | 41 | 0 | 2 | `RED_NOT_IMPLEMENTED` |
+| `r13_threat_death_probe` | 13 | 0 | 1 | `RED_NOT_IMPLEMENTED` |
+| `r13_visual_probe` | 8 | 0 | 0 | `BLOCKED` (headless; pixels obtained out-of-band, §4) |
+| **total** | **203** | **2** | **18** | **PASS 2 / FAIL 1 / RED 7 / BLOCKED 1** |
+
+* **A0's own normal-input journey runs and its prefix PASSES.** Unmodified
+  `survival_normal_connected_journey_test.gd` on this composition:
+  `prefix_complete=true checks=29 failures=0` — gather → craft → place bench → weave cloth
+  with real keys and clicks. Then it dies at `available_stations()`, a method **A0's own test
+  calls and A0's own `economy_session.gd` never defines**: `2/46`, both processes exit 1.
+  J01 is now `TRUE_INPUT_PREFIX_ACCEPTED / NORMAL_INPUT_END_TO_END_NOT_ACCEPTED`.
+* **The product's own world gate is not the continent.** `survival/a0_waystation_candidate`
+  (off by default) loads 448×256 instead of 384×256 and mounts a `WaystationRuntime`; it
+  buys **+5 POIs inside** and **+2 standable**, and A0's mount authority still refuses all
+  three A8 sites. A1's 1024×768 continent is authored, readable, and **not mounted**.
+* **The avatar seam did not move.** `game/autoload/save_service.gd` at A0 `53dcda29`
+  contains the string `avatar` **zero times**; A6's `avatar_choice_screen.gd` (now placed at
+  `game/ui/screens/avatar_choice/` by A0's own manifest) calls `set_player_avatar` and
+  cannot succeed. No policy variant fixes it: the file is A0's in every one.
+* **`VISUAL_INSPECTED` at 1×, and the home is a roofed slab.** Four PNGs opened
+  (`docs/survival/balance/visual/r13/`, run `41188548451`): 720p 297,599 B / 1440p 436,221 B
+  / 2160p 546,805 B / house 301,871 B. It reads as an SOH pixel survival RPG at 720p
+  (mortuary brick, birch/pine, Ashen Refuge, legible HUD, `[CLICK] Oak Tree 3/3`). Three
+  defects: **no wayfinding at all** for `CAMPS/FINDS/WAYS`; **2160p is a 3× blow-up of a
+  640×360 canvas** (HUD 49.0 % of width at all three framings; 92.5 % pixel identity at
+  exact 3×, 1.2 % at 2×); and the built house places `door_wood` yet **the roof covers the
+  door, the floor and the interior and draws over world-space labels**.
+* **Offline custody still settles exactly once.** 2 charcoal after a 12 s real closure in a
+  second PID, second claim `nothing_to_collect`; A6's return projection still 6/6 absent.
+* **Adversarial paths hold 17/17**: full bag, stale tool revision, depleted node, stale
+  offline proposal, duplicate chest claim, second death before recovery.
+* **Next action (single):** A0 defines `economy_session.available_stations()` and makes
+  A0's own journey test green in two processes; dependencies = A0's identity projection,
+  and A1+A0's extent decision.
+
+---
+
 # A7 acceptance scoreboard — round 12 (identity seam, paid home, reachable geography)
 
 _2026-10-31. **Supersedes round 11 for status questions.** Engine

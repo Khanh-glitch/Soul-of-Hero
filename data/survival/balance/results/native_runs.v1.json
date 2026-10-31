@@ -51,6 +51,7 @@
     "balance_native_r12/r12_visual_capture.gd": "95d7b318427756e79461cc17cd0773ea78d3195b937c9ed2b3ee6e4fe5955a63",
     "balance_native_r12/r12_visual_probe.gd": "b0aff7892ee72e420ab270d9023f3e04488393c772c372ad21811c7922f2d20f",
     "balance_native_r13/r13_adversarial_probe.gd": "7b27d58079704dc9d2c20b1c77e2ef6a44861ff7c14ed3e097c139f4f5222d3c",
+    "balance_native_r13/r13_extent_probe.gd": "5f3511ac65d1a24d27b4510351cd3442c23a251e39bc244039d7dec08b7faede",
     "balance_native_r13/r13_harness.gd": "b08d3f12d1d932e7e4f5babc224944801c7b23db3241b58215356dcca0556a86",
     "balance_native_r13/r13_home_probe.gd": "1b7749a16999ce54617bf1495cd1f6f25c6194ad8889786e4dffe3e225d2ff36",
     "balance_native_r13/r13_identity_probe.gd": "6da03b87fcc336db918d66e560d26e4f40e9210ba4a5a8b164d73f57e5f196bb",
@@ -60,6 +61,7 @@
     "balance_native_r13/r13_j04_probe.gd": "e8f8b502ac375c6cf6f5b1ae459fa625d701471e17b9b7f929e435736dfe8588",
     "balance_native_r13/r13_j06_j07_probe.gd": "379e3726d268618309c90d6027d76afd3f0a621beed39433b28a42a6011e6b5a",
     "balance_native_r13/r13_threat_death_probe.gd": "bc1ec871a63ca5fd0f3f52ee3388190e2cee65eadefcbf0cc8929eb0971e8ba3",
+    "balance_native_r13/r13_visual_capture.gd": "67ee12e2d5ba7569750611452eaec06114adee7176648905b10ac94eac16b7b4",
     "balance_native_r13/r13_visual_probe.gd": "b92a001e60c5d4575e9755a76915929ee0e866aa104e5b63e2dceb55a25f6e7c",
     "balance_native_r9/r9_economy_custody_probe.gd": "9b9b0a2588f8e46c4daacf94e661e5eeed5be7b79b8207622e529bed4db7fc8e",
     "balance_native_r9/r9_economy_seam_probe.gd": "0f6b36d1228bf85134877b9403343223f89d40fb23d34145db15b3c54e0c9cb4",
@@ -97,6 +99,26 @@
       "missing": [],
       "probe": "r13_adversarial_probe.gd",
       "verdict": "PASS"
+    },
+    {
+      "blocked_reason": "",
+      "checks": 3,
+      "claimed": "FAIL",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build.5b4e0cb0f (2026-06-17 18:46:02 UTC) - https://godotengine.org"
+      ],
+      "exit_code": 1,
+      "failed": [
+        "the default world contains the authored continent (10 of 118 POIs standable)"
+      ],
+      "family": "balance_native_r13",
+      "log": ".artifacts/native_runs/3d8630f5b1ad/balance_native_r13__r13_extent_probe.gd.log",
+      "log_lines": 18,
+      "log_sha256": "102d604113be5b7ebb4658d63d36ffa3ba463a8f93589cc3c09b5fefd1173586",
+      "mismatch": "",
+      "missing": [],
+      "probe": "r13_extent_probe.gd",
+      "verdict": "FAIL"
     },
     {
       "blocked_reason": "",
@@ -197,7 +219,7 @@
       "family": "balance_native_r13",
       "log": ".artifacts/native_runs/3d8630f5b1ad/balance_native_r13__r13_j03_probe.gd.log",
       "log_lines": 19,
-      "log_sha256": "f09a377620654735739be5e145cfa1d73fbc84d2a9f881d9e7064450cb5c2533",
+      "log_sha256": "9b3e048480e2e7a9ecc179c6b3f91745d432be379e607c1e6dd3cfef356ee220",
       "mismatch": "",
       "missing": [
         "an owner-published A6 return projection (A6_SOURCE_UNAVAILABLE) (expected in a6_owner_projection_source.gd resolves six accessors by name on the composed autoloads; 6 of 6 read an empty contract (absent: [\"season_clock\", \"run_facts\", \"return_digest\", \"digest_acknowledgements:absent\", \"run_history\", \"site_cue:absent\"]))"
@@ -240,7 +262,7 @@
       "family": "balance_native_r13",
       "log": ".artifacts/native_runs/3d8630f5b1ad/balance_native_r13__r13_j06_j07_probe.gd.log",
       "log_lines": 20,
-      "log_sha256": "2eab9fcbb0f1ac07c07f3351dfebd1d208e18f2303974c5e608b4f3d1a54ad31",
+      "log_sha256": "0554abc9beda4fc089479a3765054503b63d54f6ab5aeff140441c695dd41f10",
       "mismatch": "",
       "missing": [
         "a physical awakened-elder chest the player can open in the last 72 h (A8 source, A1 geometry) (expected in plan_meta_source_claim(elder_ashen_vault) -> source_identity_forgery; the world binds no instance of it)",
@@ -292,7 +314,7 @@
   "schema": "soh.balance.native_runs.v1",
   "summary": {
     "BLOCKED": 1,
-    "FAIL": 0,
+    "FAIL": 1,
     "PASS": 2,
     "RED_NOT_IMPLEMENTED": 7
   },
