@@ -529,7 +529,7 @@ lowered, not retried into, and not called green.
 
 ## 5. Gates
 
-Exact commit at the time of writing: `452d4d74` (frames and results are added as they
+Exact commit at the time of writing: `b4129dd8` (frames and results are added as they
 arrive; the commit that a result belongs to is stated with it).
 
 | gate | what it checks | status |
@@ -541,6 +541,34 @@ arrive; the commit that a result belongs to is stated with it).
 | R3 native gameplay suites | avatar identity journeys, headless runtime, Xvfb captures | **PARTIAL** — staged-art identities, public-clone fail-closed, return UI, import/headless and Xvfb all **PASS**; the Continue *home* walk **FAILS** with a measured collision-bound cause owned by A0 |
 | R4 native renders 720/1440/2160 | both render workflows publish into the repo | **PASS** — 68 staged-art frames published across male/female at 720p, female at 1440p and male at 2160p, plus the survival and return sets |
 | R5 visual acceptance by eye | inspection at each resolution | **PARTIAL** — inspected: male + female overworld, death prompt, HUD close-up, return digest. The home walk frame is published and labelled as a measured failure rather than accepted |
+
+### 5.1 Round 12 continuation — scoped verdicts
+
+Evidence used here is only from runs on this branch: `A6 survival UI native renders`
+41203903195 (`baa9a8c9`), `A6 native avatar validation` 41205423802 (`b4129dd8`), and
+`Godot 4.7 Runtime Validation` (whose only red job is the pre-existing `Original main
+baseline comparison`, not an A6 surface).
+
+| gate | what was checked this round | verdict |
+| --- | --- | --- |
+| R0 source provenance | no new art; no licence boundary crossed; `git ls-files private_art` still empty | **PASS** |
+| R1 art fidelity | grade-0 Adventurers unchanged and still the authentic 555940/419402; grade 1/2 remain `SOURCE_BLOCKED` with no substitute | **PASS (grade 0) / SOURCE_BLOCKED (grade 1–2)** |
+| R2 project integrity | `scene_lint.py` 319 files, 0 problems, 4 pre-existing notes; `script_symbols.py` 441 scripts, 0 undefined helper calls; gdtoolkit parse on every changed script; both workflow YAMLs parsed | **PASS** |
+| R2b headless contracts | recipe identity, data authority and the avatar consumer contract all green on the real engine; the consumer contract passes on a public clone with no licensed art | **PASS** |
+| R3 native gameplay suites | A0's own workshop economy session and research clock UI now run on this branch and pass with real input | **PASS for workshop/research; FAIL for the Continue home walk (A0)** |
+| R4 native renders | 720p, 1440p and 2160p rendered and published; every frame asserted at its native size | **PASS** |
+| R5 visual acceptance by eye | workshop inspected at 720p and 1440p this round; death prompt, HUD and return digest inspected earlier from the same job family | **PARTIAL** — the 2160p workshop frame was not yet inspected at the time of writing, and the home-walk frame is a measured failure, not an accepted frame |
+
+| principle (ACCEPTANCE.md) | scope for A6 | verdict |
+| --- | --- | --- |
+| P1 world as a causal network | A6 shows only projected cues; no world claim | **NOT_TESTED (not A6-owned)** |
+| P2 a home worth returning to | home UI, return digest and home actor all exist; **the home actor does not move after Continue** | **PARTIAL — blocked by A0 locomotion** |
+| P3 scarcity, crafting, knowledge | workshop renders real A3 costs, queue state and shortfalls; controls are now keyed by recipe, so two recipes making one item can no longer merge; research controls verified by A0's native test | **PARTIAL** — no durability/equipment projection to show |
+| P4 fair danger, death, recovery | death prompt is a real authored card with a working action; bag and durability have no projection and are drawn as absent, not as zero | **PARTIAL — blocked on A0/A3 projections** |
+| P5 layered POIs | not an A6 surface this round | **NOT_TESTED** |
+| P6 Cores and Gold | Core charges and the secured wallet have contracts but no owner projection and no row yet | **BLOCKED (contract delivered)** |
+| P7 character and interface are the game | two authentic Adventurers, real HUD, real workshop, real return digest, Vietnamese UI at all three resolutions; the only placeholder left is the explicitly labelled private-staging diagnostic on a public clone | **PARTIAL** — grade 1/2 appearance stays a source-approval gate |
+| P8 long-term aspiration | nothing here changes pacing, rewards or run structure | **NOT_TESTED** |
 
 ### Nine-gate verdict, this round
 

@@ -247,7 +247,7 @@
     "web_gameplay": "survival_specific_fixture_boot_and_input_pass_40927588129_at_2a60d11_not_full_journey",
     "gold_visual_parity": "not_run",
     "historical_mechanic_research": "source_audited_doc_05_and_git_atlas_2019_2020_not_runtime",
-    "docs_sync": "new CT continuation + pilot pending tab04 append/readback",
+    "docs_sync": "tab04 append pending this round; readback required before claiming sync",
     "historical_source_audit_ci": "success_40830754794_at_bb86778666012081cdf411b6d791b8798c374281; handoff validator only",
     "source_archive_integrity": "PASS SHA256 b958de0fc413cc200b35b0938760228c2ebd3a8ef4aa2f52c1051c52cca59157",
     "atlas_ci": "PASS run_40838554299 sha_d64c299866e3220ff97f43226eed63932d67b596; docs validator only",
@@ -328,7 +328,8 @@
       "stand_geometry": "analytic, not native: centered Hero 12x16 overlaps locker at 408,198 by 12x1 px at required 408,199; exact interaction stand requires physics test and owner-compatible resolution",
       "status": "NO_PRODUCTION_MOUNT; CT RIDGE DECISION REQUIRED"
     },
-    "ct_20261030_authority": "CT_RIDGE_ISOLATED_PILOT_APPROVED exact 46/48/14; CT_THREAT_A0_NARROW_IMPLEMENTATION_APPROVED one optional skeleton; no new worker, no default production mount or merge"
+    "ct_20261030_authority": "CT_RIDGE_ISOLATED_PILOT_APPROVED exact 46/48/14; CT_THREAT_A0_NARROW_IMPLEMENTATION_APPROVED one optional skeleton; no new worker, no default production mount or merge",
+    "a6_round12_continuation": "A6-only readback at b4129dd8: recipe controls keyed by recipe id (23/36 catalog ids differ from their output, 5 outputs shared) with a real-catalog negative control; D062 evacuation, D065 last-72h window and D056/D064 wallet sanitizer added; wallet row still owed. A0 workshop+research native controls PASS 41203903195; avatar consumer contract PASS on public clone 41205423802; home Continue walk FAIL (A0-owned, measured). Frames: world_economy 720/1440/2160 published from the localised panel."
   },
   "design_authority": {
     "user_delegated_binary_gates": true,
