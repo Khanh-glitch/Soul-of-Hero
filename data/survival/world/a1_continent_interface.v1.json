@@ -1,0 +1,1097 @@
+{
+  "authority": {
+    "A0": "GameRoot, run/save identity, camera, dynamic occupancy, final build permission, production mounting and movement adoption",
+    "A1": "world identity, source geography, transforms, source reachability and candidate semantics",
+    "A3": "items, loot, costs and yields",
+    "A6": "D051 presentation over the semantically validated physical controller",
+    "A8": "local POI scenes, shell/interior transitions and local collision bodies"
+  },
+  "chunk_stream": {
+    "acquire": "acquire_for_actor(actor_origin_px, camera_world_rect)",
+    "query": "physics_sample_cell(cell) refuses CHUNK_NOT_ACQUIRED",
+    "rect_units": "world pixels; non-empty and contains actor origin",
+    "release": "release_chunks()",
+    "source_queries_remain_available_while_unmounted": true
+  },
+  "interface_version": 1,
+  "movement": {
+    "application_status": "A1_NATIVE_PROPOSAL_A7_INDEPENDENT_MEASUREMENT_AND_A0_ADOPTION_REQUIRED",
+    "base_speed_px_s": 96.0,
+    "river_bank_road": "sample_cell().environment exposes source water/river/bank-transition/road/bridge IDs without inventing new terrain",
+    "rules": [
+      "road/bridge overrides the underlying surface multiplier only when source walk=1",
+      "climate and hazard channels are separate asynchronous signals",
+      "no numeric health/status damage and no inventory cost is authorized here",
+      "A7 must independently measure; A0 owns production movement"
+    ],
+    "surface_profiles": {
+      "ash": 0.92,
+      "badland": 0.82,
+      "bog": 0.62,
+      "bridge": 1.0,
+      "floor": 0.98,
+      "forest": 0.88,
+      "grass": 0.96,
+      "gravel": 1.0,
+      "jungle": 0.8,
+      "karst": 0.88,
+      "legacy": 1.0,
+      "mangrove": 0.72,
+      "marsh": 0.65,
+      "moor": 0.92,
+      "mud": 0.7,
+      "orchard": 0.94,
+      "road": 1.0,
+      "salt": 0.94,
+      "sand": 0.9,
+      "snow": 0.78,
+      "tundra": 0.86,
+      "water": 0.0
+    }
+  },
+  "production": {
+    "a8_interior_or_loot_accepted": false,
+    "d051_visual_accepted": false,
+    "player_playable": false,
+    "production_mounted": false,
+    "reward_items_granted": 0,
+    "save_mutation_authorized": false,
+    "visually_accepted": false
+  },
+  "runtime": {
+    "body_offset_px": [
+      0,
+      -8
+    ],
+    "body_shape_node": "BodyShape",
+    "body_size_px": [
+      12,
+      16
+    ],
+    "camera_node": "Camera",
+    "camera_offset_px": [
+      0,
+      -8
+    ],
+    "consumer_sample": "res://game/survival/world/a1_continent_consumer_sample.gd",
+    "input_bootstrap": "res://game/autoload/input_bootstrap.gd",
+    "input_initialization": "InputBootstrap autoload must enter the tree before input/body diagnosis",
+    "interface_script": "res://game/survival/world/a1_continent_interface.gd",
+    "logical_viewport_px": [
+      640,
+      360
+    ],
+    "movement_input_actions": [
+      "move_left",
+      "move_right",
+      "move_up",
+      "move_down"
+    ],
+    "mutable_runtime_policy": "SEMANTIC_INTERFACE_ONLY; no A0/A6/Knight byte pins",
+    "player_scene": "res://game/characters/knight/knight.tscn",
+    "reader_script": "res://game/survival/world/a1_authored_world_reader.gd",
+    "required_collision_layer": 2,
+    "required_collision_mask": 5,
+    "required_input_actions": [
+      "move_left",
+      "move_right",
+      "move_up",
+      "move_down",
+      "interact"
+    ],
+    "stream_script": "res://game/survival/world/a1_authored_world_stream.gd"
+  },
+  "schema": "soh.world.a1_continent_interface.v1",
+  "sites": {
+    "mill": {
+      "anchor_world_px": [
+        1928,
+        4808
+      ],
+      "canonical_cell": [
+        120,
+        300
+      ],
+      "collision": {
+        "approach_body_clear": true,
+        "body_offset_px": [
+          0,
+          -8
+        ],
+        "body_size_px": [
+          12,
+          16
+        ],
+        "door_body_clear": true,
+        "doorway_clear_world_rect_px": [
+          1908,
+          4836,
+          40,
+          36
+        ],
+        "exclusions": [
+          {
+            "authority": "A8_SCENE_ALREADY_OWNS_BODY_DO_NOT_DUPLICATE",
+            "center_px": [
+              1928.0,
+              4748.0
+            ],
+            "id": "a8:mill:boundary:north",
+            "kind": "shell_boundary",
+            "rect_px": [
+              1864,
+              4744,
+              128,
+              8
+            ],
+            "size_px": [
+              128,
+              8
+            ]
+          },
+          {
+            "authority": "A8_SCENE_ALREADY_OWNS_BODY_DO_NOT_DUPLICATE",
+            "center_px": [
+              1868.0,
+              4804.0
+            ],
+            "id": "a8:mill:boundary:west",
+            "kind": "shell_boundary",
+            "rect_px": [
+              1864,
+              4744,
+              8,
+              120
+            ],
+            "size_px": [
+              8,
+              120
+            ]
+          },
+          {
+            "authority": "A8_SCENE_ALREADY_OWNS_BODY_DO_NOT_DUPLICATE",
+            "center_px": [
+              1988.0,
+              4804.0
+            ],
+            "id": "a8:mill:boundary:east",
+            "kind": "shell_boundary",
+            "rect_px": [
+              1984,
+              4744,
+              8,
+              120
+            ],
+            "size_px": [
+              8,
+              120
+            ]
+          },
+          {
+            "authority": "A8_SCENE_ALREADY_OWNS_BODY_DO_NOT_DUPLICATE",
+            "center_px": [
+              1886.0,
+              4868.0
+            ],
+            "id": "a8:mill:boundary:south_west",
+            "kind": "shell_boundary",
+            "rect_px": [
+              1864,
+              4864,
+              44,
+              8
+            ],
+            "size_px": [
+              44,
+              8
+            ]
+          },
+          {
+            "authority": "A8_SCENE_ALREADY_OWNS_BODY_DO_NOT_DUPLICATE",
+            "center_px": [
+              1970.0,
+              4868.0
+            ],
+            "id": "a8:mill:boundary:south_east",
+            "kind": "shell_boundary",
+            "rect_px": [
+              1948,
+              4864,
+              44,
+              8
+            ],
+            "size_px": [
+              44,
+              8
+            ]
+          },
+          {
+            "authority": "A8_SCENE_ALREADY_OWNS_BODY_DO_NOT_DUPLICATE",
+            "id": "a8:mill:obstacle:00",
+            "kind": "authored_obstacle",
+            "rect_px": [
+              1872,
+              4812,
+              32,
+              12
+            ]
+          },
+          {
+            "authority": "A8_SCENE_ALREADY_OWNS_BODY_DO_NOT_DUPLICATE",
+            "id": "a8:mill:obstacle:01",
+            "kind": "authored_obstacle",
+            "rect_px": [
+              1952,
+              4812,
+              32,
+              12
+            ]
+          },
+          {
+            "authority": "A8_SCENE_ALREADY_OWNS_BODY_DO_NOT_DUPLICATE",
+            "id": "a8:mill:obstacle:02",
+            "kind": "authored_obstacle",
+            "rect_px": [
+              1944,
+              4796,
+              16,
+              14
+            ]
+          }
+        ],
+        "retreat_body_clear": true,
+        "source_walk_required": true,
+        "usage": "CLEARANCE_EVIDENCE_ONLY; instantiate the A8 shell once, never duplicate these bodies"
+      },
+      "door_target": {
+        "area_radius_px": 22.0,
+        "consumer_call": "NativePoiShell.try_enter(actor) after A0 run-phase projection",
+        "facing": [
+          0,
+          -1
+        ],
+        "shell_local_position": [
+          64,
+          108
+        ],
+        "transition_contract_id": "soh.native_poi.transition.v2",
+        "transition_contract_version": 2,
+        "world_px": [
+          1928,
+          4852
+        ]
+      },
+      "instance_identity": {
+        "poi_id": "poi_crown_south_mill",
+        "region_id": "r_ashen_crown",
+        "run_id": null,
+        "run_local_identity_owner": "A0",
+        "site_id": "crown_south_mill",
+        "site_instance_id": "world:soh_continent_v1/site:crown_south_mill",
+        "world_id": "world:soh_continent_v1"
+      },
+      "interior_or_loot_accepted": false,
+      "physical_approach": {
+        "actor_anchor": "CELL_BOTTOM_CENTER_MINUS_ONE_Y",
+        "actor_origin_px": [
+          1928.0,
+          4863.0
+        ],
+        "cell": [
+          120,
+          303
+        ],
+        "tolerance_px": 4.5
+      },
+      "production_scene_mounted": false,
+      "reachability": {
+        "approach_to_retreat": {
+          "cell_count": 7,
+          "cells_published": false,
+          "sha256": "06aaa68980c0fc9b54d45028e762343e7ff9a9c338ba312d22463fae2ad13366"
+        },
+        "from_home_cell": [
+          56,
+          218
+        ],
+        "home_to_approach": {
+          "cell_count": 154,
+          "cells_published": false,
+          "sha256": "51611ceb310e512e8767c86be0540344520e06c4372882fa8065eb59b1ced27e"
+        },
+        "kind": "SOURCE_ASTAR_WITH_12x16_BODY_AND_A8_EXCLUSIONS_NOT_NATIVE_OR_PRODUCTION",
+        "native_evidence": "PENDING_EXACT_HEAD_R13_NATIVE_REPORT",
+        "safe_source_component_cells": 497997,
+        "safe_source_component_sha256": "4a69ecac58b821e8d8f04d3f318535af138d5199adec01fe9d3cf24d3671cd39",
+        "to_approach_cell": [
+          120,
+          303
+        ]
+      },
+      "required_capabilities": {
+        "grant_or_interaction_authority": "A0_WITH_A3_BINDINGS_NOT_A1",
+        "inner": [
+          "cap_salvage"
+        ],
+        "outer": [
+          "cap_salvage"
+        ]
+      },
+      "required_inputs": [
+        "move_left",
+        "move_right",
+        "move_up",
+        "move_down",
+        "interact"
+      ],
+      "retreat_target": {
+        "actor_anchor": "CELL_BOTTOM_CENTER_MINUS_ONE_Y",
+        "actor_origin_px": [
+          1928.0,
+          4959.0
+        ],
+        "cell": [
+          120,
+          309
+        ],
+        "tolerance_px": 4.5
+      },
+      "return_anchor": {
+        "canonical_cell": [
+          120,
+          300
+        ],
+        "shell_local_position": [
+          64,
+          108
+        ],
+        "world_target_px": [
+          1928,
+          4852
+        ]
+      },
+      "shell": {
+        "bounds_px": [
+          128,
+          128
+        ],
+        "mount_authority": "A0",
+        "origin_world_px": [
+          1864,
+          4744
+        ],
+        "rotation_degrees": 0,
+        "scale": [
+          1,
+          1
+        ],
+        "scene": "res://game/survival/world_content/scenes/south_crown_mill_overworld.tscn",
+        "scene_authority": "A8"
+      },
+      "site_key": "mill",
+      "source_reference": {
+        "commit": "e1fe550bfe7c969a2c131fbd0bd4a861c505fb80",
+        "path": "data/survival/world/references/a8_e1fe550b/south_crown_mill.json",
+        "sha256": "cb404bd47f5776f3b0fa871fe104379144bf3490767580e3480ffbfd4d9f2cde"
+      }
+    },
+    "orchard": {
+      "anchor_world_px": [
+        2248,
+        5768
+      ],
+      "canonical_cell": [
+        140,
+        360
+      ],
+      "collision": {
+        "approach_body_clear": true,
+        "body_offset_px": [
+          0,
+          -8
+        ],
+        "body_size_px": [
+          12,
+          16
+        ],
+        "door_body_clear": true,
+        "doorway_clear_world_rect_px": [
+          2228,
+          5796,
+          40,
+          36
+        ],
+        "exclusions": [
+          {
+            "authority": "A8_SCENE_ALREADY_OWNS_BODY_DO_NOT_DUPLICATE",
+            "center_px": [
+              2248.0,
+              5708.0
+            ],
+            "id": "a8:orchard:boundary:north",
+            "kind": "shell_boundary",
+            "rect_px": [
+              2184,
+              5704,
+              128,
+              8
+            ],
+            "size_px": [
+              128,
+              8
+            ]
+          },
+          {
+            "authority": "A8_SCENE_ALREADY_OWNS_BODY_DO_NOT_DUPLICATE",
+            "center_px": [
+              2188.0,
+              5764.0
+            ],
+            "id": "a8:orchard:boundary:west",
+            "kind": "shell_boundary",
+            "rect_px": [
+              2184,
+              5704,
+              8,
+              120
+            ],
+            "size_px": [
+              8,
+              120
+            ]
+          },
+          {
+            "authority": "A8_SCENE_ALREADY_OWNS_BODY_DO_NOT_DUPLICATE",
+            "center_px": [
+              2308.0,
+              5764.0
+            ],
+            "id": "a8:orchard:boundary:east",
+            "kind": "shell_boundary",
+            "rect_px": [
+              2304,
+              5704,
+              8,
+              120
+            ],
+            "size_px": [
+              8,
+              120
+            ]
+          },
+          {
+            "authority": "A8_SCENE_ALREADY_OWNS_BODY_DO_NOT_DUPLICATE",
+            "center_px": [
+              2206.0,
+              5828.0
+            ],
+            "id": "a8:orchard:boundary:south_west",
+            "kind": "shell_boundary",
+            "rect_px": [
+              2184,
+              5824,
+              44,
+              8
+            ],
+            "size_px": [
+              44,
+              8
+            ]
+          },
+          {
+            "authority": "A8_SCENE_ALREADY_OWNS_BODY_DO_NOT_DUPLICATE",
+            "center_px": [
+              2290.0,
+              5828.0
+            ],
+            "id": "a8:orchard:boundary:south_east",
+            "kind": "shell_boundary",
+            "rect_px": [
+              2268,
+              5824,
+              44,
+              8
+            ],
+            "size_px": [
+              44,
+              8
+            ]
+          },
+          {
+            "authority": "A8_SCENE_ALREADY_OWNS_BODY_DO_NOT_DUPLICATE",
+            "id": "a8:orchard:obstacle:00",
+            "kind": "authored_obstacle",
+            "rect_px": [
+              2202,
+              5772,
+              12,
+              12
+            ]
+          },
+          {
+            "authority": "A8_SCENE_ALREADY_OWNS_BODY_DO_NOT_DUPLICATE",
+            "id": "a8:orchard:obstacle:01",
+            "kind": "authored_obstacle",
+            "rect_px": [
+              2282,
+              5772,
+              12,
+              12
+            ]
+          }
+        ],
+        "retreat_body_clear": true,
+        "source_walk_required": true,
+        "usage": "CLEARANCE_EVIDENCE_ONLY; instantiate the A8 shell once, never duplicate these bodies"
+      },
+      "door_target": {
+        "area_radius_px": 22.0,
+        "consumer_call": "NativePoiShell.try_enter(actor) after A0 run-phase projection",
+        "facing": [
+          0,
+          -1
+        ],
+        "shell_local_position": [
+          64,
+          108
+        ],
+        "transition_contract_id": "soh.native_poi.transition.v2",
+        "transition_contract_version": 2,
+        "world_px": [
+          2248,
+          5812
+        ]
+      },
+      "instance_identity": {
+        "poi_id": "poi_crown_south_orchard",
+        "region_id": "r_ashen_crown",
+        "run_id": null,
+        "run_local_identity_owner": "A0",
+        "site_id": "crown_south_orchard",
+        "site_instance_id": "world:soh_continent_v1/site:crown_south_orchard",
+        "world_id": "world:soh_continent_v1"
+      },
+      "interior_or_loot_accepted": false,
+      "physical_approach": {
+        "actor_anchor": "CELL_BOTTOM_CENTER_MINUS_ONE_Y",
+        "actor_origin_px": [
+          2248.0,
+          5823.0
+        ],
+        "cell": [
+          140,
+          363
+        ],
+        "tolerance_px": 4.5
+      },
+      "production_scene_mounted": false,
+      "reachability": {
+        "approach_to_retreat": {
+          "cell_count": 7,
+          "cells_published": false,
+          "sha256": "7bd518de4d5af7fccdaf190de0a2c6b0ebc24933daee7c728d72f91e2b54a796"
+        },
+        "from_home_cell": [
+          56,
+          218
+        ],
+        "home_to_approach": {
+          "cell_count": 242,
+          "cells_published": false,
+          "sha256": "d4ed1b6f8e05193f01dedf53255add7c8db361271cfc518880a167c8d6b7e55e"
+        },
+        "kind": "SOURCE_ASTAR_WITH_12x16_BODY_AND_A8_EXCLUSIONS_NOT_NATIVE_OR_PRODUCTION",
+        "native_evidence": "PENDING_EXACT_HEAD_R13_NATIVE_REPORT",
+        "safe_source_component_cells": 497997,
+        "safe_source_component_sha256": "4a69ecac58b821e8d8f04d3f318535af138d5199adec01fe9d3cf24d3671cd39",
+        "to_approach_cell": [
+          140,
+          363
+        ]
+      },
+      "required_capabilities": {
+        "grant_or_interaction_authority": "A0_WITH_A3_BINDINGS_NOT_A1",
+        "inner": [],
+        "outer": []
+      },
+      "required_inputs": [
+        "move_left",
+        "move_right",
+        "move_up",
+        "move_down",
+        "interact"
+      ],
+      "retreat_target": {
+        "actor_anchor": "CELL_BOTTOM_CENTER_MINUS_ONE_Y",
+        "actor_origin_px": [
+          2248.0,
+          5919.0
+        ],
+        "cell": [
+          140,
+          369
+        ],
+        "tolerance_px": 4.5
+      },
+      "return_anchor": {
+        "canonical_cell": [
+          140,
+          360
+        ],
+        "shell_local_position": [
+          64,
+          108
+        ],
+        "world_target_px": [
+          2248,
+          5812
+        ]
+      },
+      "shell": {
+        "bounds_px": [
+          128,
+          128
+        ],
+        "mount_authority": "A0",
+        "origin_world_px": [
+          2184,
+          5704
+        ],
+        "rotation_degrees": 0,
+        "scale": [
+          1,
+          1
+        ],
+        "scene": "res://game/survival/world_content/scenes/south_orchard_ruin_overworld.tscn",
+        "scene_authority": "A8"
+      },
+      "site_key": "orchard",
+      "source_reference": {
+        "commit": "e1fe550bfe7c969a2c131fbd0bd4a861c505fb80",
+        "path": "data/survival/world/references/a8_e1fe550b/south_orchard_ruin.json",
+        "sha256": "7a31d25a7315f8d32911a2f8600246df7ad72ef8e5d7c059866c02034adbb16c"
+      }
+    },
+    "quarry": {
+      "anchor_world_px": [
+        488,
+        4488
+      ],
+      "canonical_cell": [
+        30,
+        280
+      ],
+      "collision": {
+        "approach_body_clear": true,
+        "body_offset_px": [
+          0,
+          -8
+        ],
+        "body_size_px": [
+          12,
+          16
+        ],
+        "door_body_clear": true,
+        "doorway_clear_world_rect_px": [
+          468,
+          4516,
+          40,
+          36
+        ],
+        "exclusions": [
+          {
+            "authority": "A8_SCENE_ALREADY_OWNS_BODY_DO_NOT_DUPLICATE",
+            "center_px": [
+              488.0,
+              4428.0
+            ],
+            "id": "a8:quarry:boundary:north",
+            "kind": "shell_boundary",
+            "rect_px": [
+              424,
+              4424,
+              128,
+              8
+            ],
+            "size_px": [
+              128,
+              8
+            ]
+          },
+          {
+            "authority": "A8_SCENE_ALREADY_OWNS_BODY_DO_NOT_DUPLICATE",
+            "center_px": [
+              428.0,
+              4484.0
+            ],
+            "id": "a8:quarry:boundary:west",
+            "kind": "shell_boundary",
+            "rect_px": [
+              424,
+              4424,
+              8,
+              120
+            ],
+            "size_px": [
+              8,
+              120
+            ]
+          },
+          {
+            "authority": "A8_SCENE_ALREADY_OWNS_BODY_DO_NOT_DUPLICATE",
+            "center_px": [
+              548.0,
+              4484.0
+            ],
+            "id": "a8:quarry:boundary:east",
+            "kind": "shell_boundary",
+            "rect_px": [
+              544,
+              4424,
+              8,
+              120
+            ],
+            "size_px": [
+              8,
+              120
+            ]
+          },
+          {
+            "authority": "A8_SCENE_ALREADY_OWNS_BODY_DO_NOT_DUPLICATE",
+            "center_px": [
+              446.0,
+              4548.0
+            ],
+            "id": "a8:quarry:boundary:south_west",
+            "kind": "shell_boundary",
+            "rect_px": [
+              424,
+              4544,
+              44,
+              8
+            ],
+            "size_px": [
+              44,
+              8
+            ]
+          },
+          {
+            "authority": "A8_SCENE_ALREADY_OWNS_BODY_DO_NOT_DUPLICATE",
+            "center_px": [
+              530.0,
+              4548.0
+            ],
+            "id": "a8:quarry:boundary:south_east",
+            "kind": "shell_boundary",
+            "rect_px": [
+              508,
+              4544,
+              44,
+              8
+            ],
+            "size_px": [
+              44,
+              8
+            ]
+          }
+        ],
+        "retreat_body_clear": true,
+        "source_walk_required": true,
+        "usage": "CLEARANCE_EVIDENCE_ONLY; instantiate the A8 shell once, never duplicate these bodies"
+      },
+      "door_target": {
+        "area_radius_px": 22.0,
+        "consumer_call": "NativePoiShell.try_enter(actor) after A0 run-phase projection",
+        "facing": [
+          0,
+          -1
+        ],
+        "shell_local_position": [
+          64,
+          108
+        ],
+        "transition_contract_id": "soh.native_poi.transition.v2",
+        "transition_contract_version": 2,
+        "world_px": [
+          488,
+          4532
+        ]
+      },
+      "instance_identity": {
+        "poi_id": "poi_crown_south_quarry",
+        "region_id": "r_ashen_crown",
+        "run_id": null,
+        "run_local_identity_owner": "A0",
+        "site_id": "crown_south_quarry",
+        "site_instance_id": "world:soh_continent_v1/site:crown_south_quarry",
+        "world_id": "world:soh_continent_v1"
+      },
+      "interior_or_loot_accepted": false,
+      "physical_approach": {
+        "actor_anchor": "CELL_BOTTOM_CENTER_MINUS_ONE_Y",
+        "actor_origin_px": [
+          488.0,
+          4543.0
+        ],
+        "cell": [
+          30,
+          283
+        ],
+        "tolerance_px": 4.5
+      },
+      "production_scene_mounted": false,
+      "reachability": {
+        "approach_to_retreat": {
+          "cell_count": 7,
+          "cells_published": false,
+          "sha256": "f0cb465a0f8fda01e961dcee869160979872ffb0d78ef47006423ce47ffe39eb"
+        },
+        "from_home_cell": [
+          56,
+          218
+        ],
+        "home_to_approach": {
+          "cell_count": 96,
+          "cells_published": false,
+          "sha256": "8d6779904b89ac3823acce63036a5fa1601a11e48a854f73b1106c6c2ab7a3c0"
+        },
+        "kind": "SOURCE_ASTAR_WITH_12x16_BODY_AND_A8_EXCLUSIONS_NOT_NATIVE_OR_PRODUCTION",
+        "native_evidence": "PENDING_EXACT_HEAD_R13_NATIVE_REPORT",
+        "safe_source_component_cells": 497997,
+        "safe_source_component_sha256": "4a69ecac58b821e8d8f04d3f318535af138d5199adec01fe9d3cf24d3671cd39",
+        "to_approach_cell": [
+          30,
+          283
+        ]
+      },
+      "required_capabilities": {
+        "grant_or_interaction_authority": "A0_WITH_A3_BINDINGS_NOT_A1",
+        "inner": [],
+        "outer": []
+      },
+      "required_inputs": [
+        "move_left",
+        "move_right",
+        "move_up",
+        "move_down",
+        "interact"
+      ],
+      "retreat_target": {
+        "actor_anchor": "CELL_BOTTOM_CENTER_MINUS_ONE_Y",
+        "actor_origin_px": [
+          488.0,
+          4639.0
+        ],
+        "cell": [
+          30,
+          289
+        ],
+        "tolerance_px": 4.5
+      },
+      "return_anchor": {
+        "canonical_cell": [
+          30,
+          280
+        ],
+        "shell_local_position": [
+          64,
+          108
+        ],
+        "world_target_px": [
+          488,
+          4532
+        ]
+      },
+      "shell": {
+        "bounds_px": [
+          128,
+          128
+        ],
+        "mount_authority": "A0",
+        "origin_world_px": [
+          424,
+          4424
+        ],
+        "rotation_degrees": 0,
+        "scale": [
+          1,
+          1
+        ],
+        "scene": "res://game/survival/world_content/scenes/south_quarry_overworld.tscn",
+        "scene_authority": "A8"
+      },
+      "site_key": "quarry",
+      "source_reference": {
+        "commit": "e1fe550bfe7c969a2c131fbd0bd4a861c505fb80",
+        "path": "data/survival/world/references/a8_e1fe550b/south_quarry.json",
+        "sha256": "db9ea0c92c0ecd7cffadc3cb5ac3f1a8d6e669736085ef60000c480d1dbb535d"
+      }
+    }
+  },
+  "source_pins": {
+    "a8_mill": {
+      "path": "data/survival/world/references/a8_e1fe550b/south_crown_mill.json",
+      "sha256": "cb404bd47f5776f3b0fa871fe104379144bf3490767580e3480ffbfd4d9f2cde"
+    },
+    "a8_orchard": {
+      "path": "data/survival/world/references/a8_e1fe550b/south_orchard_ruin.json",
+      "sha256": "7a31d25a7315f8d32911a2f8600246df7ad72ef8e5d7c059866c02034adbb16c"
+    },
+    "a8_quarry": {
+      "path": "data/survival/world/references/a8_e1fe550b/south_quarry.json",
+      "sha256": "db9ea0c92c0ecd7cffadc3cb5ac3f1a8d6e669736085ef60000c480d1dbb535d"
+    },
+    "runtime_contract": {
+      "path": "data/survival/world/a1_round12_runtime_contract.v1.json",
+      "sha256": "a1a5b736aec8c459fe56714f87f3ce17f37704e4790a18eb4b38d198b29a13ca"
+    },
+    "spawn_index": {
+      "path": "data/survival/world/a1_round12_spawn_index.v1.json",
+      "sha256": "22435ac8645d56f00569f2241a47cc7e5970122127781870dab2cb252ee9de0a"
+    },
+    "world_plan": {
+      "path": "data/survival/world/world_plan.v1.json",
+      "sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4"
+    }
+  },
+  "spawn": {
+    "algorithm": "sorted eligible chunk = u64(SHA256(world_id|run_seed|round12-spawn-v1)[0:8]) mod chunk_count; local cell = next_u64 mod chunk_cell_count",
+    "candidate_cells": 27445,
+    "candidate_chunks": 20,
+    "criteria": {
+      "algorithm": "sorted eligible chunk = u64(SHA256(world_id|run_seed|round12-spawn-v1)[0:8]) mod chunk_count; local cell = next_u64 mod chunk_cell_count",
+      "basic_materials": [
+        "salvage",
+        "timber",
+        "stone",
+        "iron",
+        "fibre",
+        "reed_fibre",
+        "clay",
+        "rare_herb",
+        "honey",
+        "hardwood"
+      ],
+      "body_size_px": [
+        12,
+        16
+      ],
+      "clearance_cells": 3,
+      "home_cell": [
+        56,
+        218
+      ],
+      "minimum_candidate_cells": 20000,
+      "minimum_candidate_chunks": 18,
+      "minimum_material_families": 2,
+      "minimum_regions": 3,
+      "minimum_trial_chunks": 12,
+      "minimum_unique_trial_cells": 30,
+      "opportunity_radius_cells": 64,
+      "road_max_distance_cells": 32,
+      "rules": [
+        "same zero-hazard Hero-clear connected component as Refuge",
+        "exclude preserved inset because its original prop occupancy remains A0/OverworldWorld authority",
+        "3x3 source walk/hazard clearance",
+        "region entry_capabilities must be empty",
+        "outside every POI footprint plus two cells and outside exact A8 shell obstacle clearance",
+        "safe source road within 32 cells",
+        "at least two safe basic resource families within 64 cells",
+        "no fixed spawn rectangles or seed%3 zone picker"
+      ],
+      "seeds": [
+        1103,
+        9022,
+        16941,
+        24860,
+        32779,
+        40698,
+        48617,
+        56536,
+        64455,
+        72374,
+        80293,
+        88212,
+        96131,
+        104050,
+        111969,
+        119888,
+        127807,
+        135726,
+        144645,
+        153564,
+        162483,
+        171402,
+        180321,
+        189240,
+        198159,
+        207078,
+        215997,
+        224916,
+        233835,
+        242754,
+        251673,
+        260592,
+        269511,
+        278430,
+        287349,
+        296268
+      ],
+      "status": "BROAD_SOURCE_ELIGIBILITY_NOT_THREE_ZONES; A0 persists selected run-local cell"
+    },
+    "dynamic_occupancy_authority": "A0_REQUIRED_ON_LOAD",
+    "persisted_validation": "validate_spawn_cell(cell)",
+    "production_spawn_approval": false,
+    "region_counts": {
+      "r_amberwood": 13319,
+      "r_ashen_crown": 11039,
+      "r_mirrormere": 3087
+    },
+    "selection": "choose_safe_spawn(run_seed)"
+  },
+  "status": "SOURCE_READY_NOT_PRODUCTION_MOUNTED",
+  "world": {
+    "actor_origin": "CELL_BOTTOM_CENTER_MINUS_ONE_Y = [x*16+8,y*16+15]",
+    "axes": {
+      "x": "EAST_RIGHT",
+      "y": "SOUTH_DOWN"
+    },
+    "cell_bounds": "HALF_OPEN [cell*16,(cell+1)*16); negative and right/bottom edges reject",
+    "cell_origin_px": [
+      0,
+      0
+    ],
+    "cell_size_px": [
+      16,
+      16
+    ],
+    "chunk_cells": [
+      64,
+      64
+    ],
+    "chunk_count": 192,
+    "chunk_grid": [
+      16,
+      12
+    ],
+    "chunk_size_px": [
+      1024,
+      1024
+    ],
+    "geography_instance_id": "continent:soh_continent_v1",
+    "world_id": "world:soh_continent_v1",
+    "world_origin_cell": [
+      0,
+      0
+    ],
+    "world_pixel_units": "UNSCALED_WORLD_PIXELS; camera zoom is A0-owned and remains 1x in R13 evidence",
+    "world_size_cells": [
+      1024,
+      768
+    ],
+    "world_size_px": [
+      16384,
+      12288
+    ]
+  }
+}
