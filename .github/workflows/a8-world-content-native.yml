@@ -94,6 +94,24 @@ jobs:
             { echo '### A8 input-journey failure'; echo '```text'; tail -n 140 .artifacts/a8-world-content/input-journey-failures.log; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
           fi
           exit "$status"
+      - name: Run focused Quarry credential, power, retreat and return journey
+        id: native_r13_quarry
+        if: always()
+        continue-on-error: true
+        run: |
+          set +e
+          status=0
+          for size in 1280x720 2560x1440 3840x2160; do
+            SOH_A8_CAPTURE_SUBDIR="$size" xvfb-run -a godot --path . --resolution "$size" \
+              --rendering-method gl_compatibility \
+              --script tests/survival/world_content/native_poi_r13_quarry_journey_test.gd \
+              > ".artifacts/a8-world-content/native-r13-quarry-${size}.log" 2>&1
+            run_status=$?
+            cat ".artifacts/a8-world-content/native-r13-quarry-${size}.log"
+            if [ "$run_status" -ne 0 ]; then status=$run_status; fi
+          done
+          set -e
+          exit "$status"
       - name: Run source-backed visual state and context presentation contract
         id: native_visual_presentation
         if: always()
@@ -155,6 +173,7 @@ jobs:
           NATIVE_CONTRACT_OUTCOME: ${{ steps.native_contract.outcome }}
           NATIVE_TRANSITION_OUTCOME: ${{ steps.native_transition.outcome }}
           NATIVE_INPUT_JOURNEY_OUTCOME: ${{ steps.native_input_journey.outcome }}
+          NATIVE_R13_QUARRY_OUTCOME: ${{ steps.native_r13_quarry.outcome }}
           NATIVE_VISUAL_PRESENTATION_OUTCOME: ${{ steps.native_visual_presentation.outcome }}
           NATIVE_SURFACE_OUTCOME: ${{ steps.native_surface.outcome }}
           NATIVE_RAGNAROK_OUTCOME: ${{ steps.native_ragnarok.outcome }}
@@ -175,6 +194,7 @@ jobs:
           publish_excerpt "$NATIVE_CONTRACT_OUTCOME" "contract" .artifacts/a8-world-content/native-contract.log
           publish_excerpt "$NATIVE_TRANSITION_OUTCOME" "transition" .artifacts/a8-world-content/native-transition.log
           publish_excerpt "$NATIVE_INPUT_JOURNEY_OUTCOME" "input-journey" .artifacts/a8-world-content/native-input-journeys.log
+          publish_excerpt "$NATIVE_R13_QUARRY_OUTCOME" "r13-quarry" .artifacts/a8-world-content/native-r13-quarry-1280x720.log
           publish_excerpt "$NATIVE_VISUAL_PRESENTATION_OUTCOME" "visual-presentation" .artifacts/a8-world-content/native-visual-presentation.log
           publish_excerpt "$NATIVE_SURFACE_OUTCOME" "surface" .artifacts/a8-world-content/native-surface.log
           publish_excerpt "$NATIVE_RAGNAROK_OUTCOME" "ragnarok" .artifacts/a8-world-content/native-ragnarok.log
@@ -184,12 +204,13 @@ jobs:
           NATIVE_CONTRACT_OUTCOME: ${{ steps.native_contract.outcome }}
           NATIVE_TRANSITION_OUTCOME: ${{ steps.native_transition.outcome }}
           NATIVE_INPUT_JOURNEY_OUTCOME: ${{ steps.native_input_journey.outcome }}
+          NATIVE_R13_QUARRY_OUTCOME: ${{ steps.native_r13_quarry.outcome }}
           NATIVE_VISUAL_PRESENTATION_OUTCOME: ${{ steps.native_visual_presentation.outcome }}
           NATIVE_SURFACE_OUTCOME: ${{ steps.native_surface.outcome }}
           NATIVE_RAGNAROK_OUTCOME: ${{ steps.native_ragnarok.outcome }}
           NATIVE_CAPTURE_OUTCOME: ${{ steps.native_capture.outcome }}
         run: |
-          outcome_report="contract=$NATIVE_CONTRACT_OUTCOME transition=$NATIVE_TRANSITION_OUTCOME input_journey=$NATIVE_INPUT_JOURNEY_OUTCOME visual_presentation=$NATIVE_VISUAL_PRESENTATION_OUTCOME surface=$NATIVE_SURFACE_OUTCOME ragnarok=$NATIVE_RAGNAROK_OUTCOME capture=$NATIVE_CAPTURE_OUTCOME"
+          outcome_report="contract=$NATIVE_CONTRACT_OUTCOME transition=$NATIVE_TRANSITION_OUTCOME input_journey=$NATIVE_INPUT_JOURNEY_OUTCOME r13_quarry=$NATIVE_R13_QUARRY_OUTCOME visual_presentation=$NATIVE_VISUAL_PRESENTATION_OUTCOME surface=$NATIVE_SURFACE_OUTCOME ragnarok=$NATIVE_RAGNAROK_OUTCOME capture=$NATIVE_CAPTURE_OUTCOME"
           printf '%s\n' "$outcome_report" | tee .artifacts/a8-world-content/outcomes.txt
           {
             echo '### A8 native evidence outcomes'
@@ -201,6 +222,7 @@ jobs:
           if [ "$NATIVE_CONTRACT_OUTCOME" != success ] || \
             [ "$NATIVE_TRANSITION_OUTCOME" != success ] || \
             [ "$NATIVE_INPUT_JOURNEY_OUTCOME" != success ] || \
+            [ "$NATIVE_R13_QUARRY_OUTCOME" != success ] || \
             [ "$NATIVE_VISUAL_PRESENTATION_OUTCOME" != success ] || \
             [ "$NATIVE_SURFACE_OUTCOME" != success ] || \
             [ "$NATIVE_RAGNAROK_OUTCOME" != success ] || \
@@ -210,6 +232,7 @@ jobs:
           test "$NATIVE_CONTRACT_OUTCOME" = success
           test "$NATIVE_TRANSITION_OUTCOME" = success
           test "$NATIVE_INPUT_JOURNEY_OUTCOME" = success
+          test "$NATIVE_R13_QUARRY_OUTCOME" = success
           test "$NATIVE_VISUAL_PRESENTATION_OUTCOME" = success
           test "$NATIVE_SURFACE_OUTCOME" = success
           test "$NATIVE_RAGNAROK_OUTCOME" = success

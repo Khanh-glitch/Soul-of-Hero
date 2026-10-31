@@ -1,5 +1,15 @@
 # A8 Integration Package — 2026-10-31
 
+## R13-A8-POI2 continuation overlay
+
+**Assignment:** PR #26 only; build distinct South Quarry and South Orchard physical destinations while preserving A1's canonical `[30,280]` and `[140,360]` anchors. Do not relocate either POI to fit A0's legacy-sized host. The new A8-owned mount/identity/collision handoff is [`a8_physical_destinations_r13.v1.json`](../../../data/survival/world_content/a8_physical_destinations_r13.v1.json); round evidence is in [`A8_R13_POI2_WORKLOG_20261031.md`](A8_R13_POI2_WORKLOG_20261031.md).
+
+PR #26 remains **OPEN / UNMERGED**. Refreshed owner references: A0 PR #21 `ee5f9f5160c8e4385f35a63b355ddda957f93d10`, A1 PR #20 `a030cb89a5033ba5faba39995762b4bea1332cec`, A3 PR #19 `b44e22df3af40939069189be14afc23ee1ce21c4`. A1's current runtime contract retains the 1024×768 authored geography and canonical anchors; A8 shell roots computed from the 16px cell-center transform are Quarry `[424,4424]` and Orchard `[2184,5704]`. The Quarry safe threshold is A1 `[30,278]`; Orchard approach `[140,362]` is explicitly an A8 proposal requiring A1 review. The current A0 owner still controls production composition, route reachability, transitions, durable instance IDs, and SaveService. Neither site is production-mounted by this PR.
+
+A3's exact current Quarry authorization `379573cc54475b9901b63378d8bbf67edf5462cfc757859ae15f0c208f12191c` is `REJECTED_PENDING_EVIDENCE_FAIL_CLOSED`: no Quarry binding, cost, yield, cooldown, source allocation, or capability grant is authorized. The new Quarry deep section requires only existing owner-projected `cap_salvage` + `cap_power_1`, a prepared route, and an A0-projected open gate; A8 grants nothing. The scene's marked scree is a collision/route challenge only—damage/exposure authority remains unproven. Orchard stays a separate water/graft geography with a physical sluice/boardwalk route and owner-ready graft-mark information action; there is no Orchard item/yield binding. New neutral test actions add empty fixture costs/rewards and no cooldown or receipt.
+
+Current verdict remains **`PARTIAL_WITH_BLOCKERS`**. Exact implementation SHA, hosted CI, image eye-review, and owner handoff must be updated in the R13 worklog before any stronger claim. A8 fixture results do not establish an A0 mount, durable SaveService restart, production economic action, human acceptance, or product completion.
+
 **Historical Round 9 decision:** `ACCEPTED_SCOPED` for the A8-owned native pilot only; `HOLD_PRODUCTION`; PR #26 stays open and unmerged. This did not accept production gameplay, economy, human play, or visuals.
 
 ## Round 12 A8 continuation overlay (2026-10-31; supersedes Round 10 code-status wording)

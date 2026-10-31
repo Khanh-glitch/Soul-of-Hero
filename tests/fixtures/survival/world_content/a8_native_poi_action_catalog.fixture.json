@@ -290,6 +290,76 @@
         "unlock_actions": {},
         "choice_group": "",
         "unlock_after_state_seconds": 0
+      },
+      "inspect_cut_marks": {
+        "object_id": "quarry_cut_line_marks",
+        "claim_policy": "once",
+        "costs": {},
+        "rewards": {},
+        "cooldown_seconds": 0,
+        "requires_capabilities": [],
+        "required_state": [],
+        "required_state_values": {},
+        "state_delta": {
+          "quarry_clue": "read"
+        },
+        "unlock_actions": {},
+        "choice_group": "quarry_clue",
+        "unlock_after_state_seconds": 0,
+        "test_only_non_economic_projection": true
+      },
+      "open_quarry_deep_gate": {
+        "object_id": "deep_cut_counterweight_lock",
+        "claim_policy": "once",
+        "costs": {},
+        "rewards": {},
+        "cooldown_seconds": 0,
+        "requires_capabilities": [
+          "cap_salvage",
+          "cap_power_1"
+        ],
+        "required_state": [
+          "quarry_route"
+        ],
+        "required_state_values": {
+          "quarry_route": [
+            "east_braced",
+            "west_chocked"
+          ]
+        },
+        "state_delta": {
+          "quarry_deep_gate": "open"
+        },
+        "unlock_actions": {},
+        "choice_group": "quarry_deep_gate",
+        "unlock_after_state_seconds": 0,
+        "test_only_non_economic_projection": true
+      },
+      "survey_deep_cut": {
+        "object_id": "deep_seam_inscription",
+        "claim_policy": "once",
+        "costs": {},
+        "rewards": {},
+        "cooldown_seconds": 0,
+        "requires_capabilities": [
+          "cap_salvage",
+          "cap_power_1"
+        ],
+        "required_state": [
+          "quarry_deep_gate"
+        ],
+        "required_state_values": {
+          "quarry_deep_gate": [
+            "open"
+          ]
+        },
+        "state_delta": {
+          "deep_seam_note": "read"
+        },
+        "unlock_actions": {},
+        "choice_group": "deep_seam_note",
+        "unlock_after_state_seconds": 0,
+        "test_only_non_economic_projection": true
       }
     }
   }

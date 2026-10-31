@@ -128,6 +128,12 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event.is_action_pressed("poi_action_1") and is_instance_valid(_site):
 		_site.try_interact(_hero, 1)
 		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("poi_action_2") and is_instance_valid(_site):
+		_site.try_interact(_hero, 2)
+		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("poi_action_3") and is_instance_valid(_site):
+		_site.try_interact(_hero, 3)
+		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("poi_choice_prev") and is_instance_valid(_site):
 		_site.cycle_choice(-1)
 		get_viewport().set_input_as_handled()
@@ -422,13 +428,27 @@ func _on_intent_requested(intent: Dictionary) -> void:
 			{
 				"kind": "intent",
 				"source_id": source_id,
+				"object_id": str(intent.get("object_id", "")),
 				"action_id": str(intent.get("action_id", "")),
+				"intent_id": str(intent.get("intent_id", "")),
+				"site_instance_id": str(intent.get("site_instance_id", "")),
+				"claim_id": str(intent.get("claim_id", "")),
 				"result": str(result.get("status", "")),
 				"position": _hero.global_position,
 				"phase_id": str(intent.get("phase_id", "")),
 				"run_id": str(intent.get("run_id", "")),
 				"run_epoch": int(intent.get("run_epoch", -1)),
 				"observed_projection_revision": int(intent.get("observed_projection_revision", -1)),
+				"contains_reward_fields":
+				(
+					intent.has("currency_delta")
+					or intent.has("item_delta")
+					or intent.has("receipt")
+					or intent.has("cooldown_seconds")
+					or intent.has("state_delta")
+				),
+				"fixture_snapshot_has_inventory":
+				_journey_authority.snapshot().has("inventory") if journey_test_mode else false
 			}
 		)
 	else:
@@ -444,6 +464,18 @@ func _projection_feedback(action_id: String) -> String:
 			consequence = "The west ramp is chocked; the east shelf remains blocked."
 		"leave_seam_unworked":
 			consequence = "You leave the unstable seam alone; the south retreat stays open."
+		"inspect_cut_marks":
+			consequence = (
+				"Cut marks point to the braced east shelf; "
+				+ "the powered lower seam is a later return."
+			)
+		"open_quarry_deep_gate":
+			consequence = (
+				"The owner-projected counterweight lock releases; "
+				+ "the marked scree remains a slow, careful route."
+			)
+		"survey_deep_cut":
+			consequence = "The deep marks reveal a partial route clue; no material is taken."
 		"clear_irrigation":
 			consequence = "Water now runs through the sluice; the fixed boardwalk stays safe."
 		"leave_for_safety":
@@ -650,6 +682,8 @@ func _install_fixture_inputs() -> void:
 	_add_key_action("poi_interact", KEY_G)
 	_add_key_action("poi_action_0", KEY_H)
 	_add_key_action("poi_action_1", KEY_Y)
+	_add_key_action("poi_action_2", KEY_T)
+	_add_key_action("poi_action_3", KEY_V)
 	_add_key_action("poi_choice_prev", KEY_BRACKETLEFT)
 	_add_key_action("poi_choice_next", KEY_BRACKETRIGHT)
 	_add_key_action("poi_site_1", KEY_F1)

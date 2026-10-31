@@ -43,7 +43,20 @@
   "interaction_radius": 86,
   "access": {
     "outer_requires": [],
-    "inner_requires": []
+    "deep_requires_capabilities": [
+      "cap_salvage",
+      "cap_power_1"
+    ],
+    "deep_requires_state_values": {
+      "quarry_route": [
+        "east_braced",
+        "west_chocked"
+      ],
+      "quarry_deep_gate": [
+        "open"
+      ]
+    },
+    "note": "Existing owner-issued capabilities only; no capability or item is granted by A8."
   },
   "walls": [
     [
@@ -87,6 +100,30 @@
       170,
       130,
       38
+    ],
+    [
+      22,
+      194,
+      446,
+      14
+    ],
+    [
+      572,
+      194,
+      366,
+      14
+    ],
+    [
+      392,
+      80,
+      64,
+      48
+    ],
+    [
+      504,
+      80,
+      64,
+      48
     ]
   ],
   "choice_blockers": {
@@ -157,6 +194,87 @@
           "west_chocked"
         ]
       },
+      "owner_ready_required": true
+    },
+    {
+      "action_id": "inspect_cut_marks",
+      "object_id": "quarry_cut_line_marks",
+      "label": "Read the old cut-line marks",
+      "stand_position": [
+        506,
+        378
+      ],
+      "socket_position": [
+        506,
+        302
+      ],
+      "requires_capabilities": [],
+      "requires_state": [],
+      "set_state": {
+        "quarry_clue": "read"
+      },
+      "choice_group": "quarry_clue",
+      "owner_ready_required": true
+    },
+    {
+      "action_id": "open_quarry_deep_gate",
+      "object_id": "deep_cut_counterweight_lock",
+      "label": "Release the powered counterweight lock",
+      "stand_position": [
+        520,
+        220
+      ],
+      "socket_position": [
+        520,
+        196
+      ],
+      "requires_capabilities": [
+        "cap_salvage",
+        "cap_power_1"
+      ],
+      "requires_state": [
+        "quarry_route"
+      ],
+      "requires_state_values": {
+        "quarry_route": [
+          "east_braced",
+          "west_chocked"
+        ]
+      },
+      "set_state": {
+        "quarry_deep_gate": "open"
+      },
+      "choice_group": "quarry_deep_gate",
+      "owner_ready_required": true
+    },
+    {
+      "action_id": "survey_deep_cut",
+      "object_id": "deep_seam_inscription",
+      "label": "Read the deep seam inscription",
+      "stand_position": [
+        480,
+        138
+      ],
+      "socket_position": [
+        480,
+        96
+      ],
+      "requires_capabilities": [
+        "cap_salvage",
+        "cap_power_1"
+      ],
+      "requires_state": [
+        "quarry_deep_gate"
+      ],
+      "requires_state_values": {
+        "quarry_deep_gate": [
+          "open"
+        ]
+      },
+      "set_state": {
+        "deep_seam_note": "read"
+      },
+      "choice_group": "deep_seam_note",
       "owner_ready_required": true
     }
   ],
@@ -410,6 +528,16 @@
           ],
           "role": "background_scenery",
           "collision_change": false
+        },
+        {
+          "frame": "signpost",
+          "local_px": [
+            36,
+            76
+          ],
+          "role": "exterior_clue_marker",
+          "collision_change": false,
+          "id": "quarry_cut_line_notice"
         }
       ],
       "doorway_clear_rect_px": [
@@ -781,6 +909,70 @@
           18
         ],
         "id": "unstable_seam_warning"
+      },
+      {
+        "frame": "cairn_warning",
+        "cell": [
+          30,
+          7
+        ],
+        "id": "deep_roof_scree_warning"
+      },
+      {
+        "frame": "ore_skarn",
+        "cell": [
+          30,
+          6
+        ],
+        "id": "deep_seam_inscription"
+      },
+      {
+        "frame": "fence_h",
+        "cell": [
+          29,
+          12
+        ],
+        "id": "deep_gate_bar_0"
+      },
+      {
+        "frame": "fence_h",
+        "cell": [
+          30,
+          12
+        ],
+        "id": "deep_gate_bar_1"
+      },
+      {
+        "frame": "fence_h",
+        "cell": [
+          31,
+          12
+        ],
+        "id": "deep_gate_bar_2"
+      },
+      {
+        "frame": "fence_h",
+        "cell": [
+          32,
+          12
+        ],
+        "id": "deep_gate_bar_3"
+      },
+      {
+        "frame": "fence_h",
+        "cell": [
+          33,
+          12
+        ],
+        "id": "deep_gate_bar_4"
+      },
+      {
+        "frame": "fence_h",
+        "cell": [
+          34,
+          12
+        ],
+        "id": "deep_gate_bar_5"
       }
     ],
     "state_props": [
@@ -847,6 +1039,42 @@
             "id": "seam_left_untouched"
           }
         ]
+      },
+      {
+        "key": "quarry_deep_gate",
+        "equals": "open",
+        "props": [
+          {
+            "frame": "lamp",
+            "cell": [
+              30,
+              12
+            ],
+            "id": "counterweight_live_lamp"
+          }
+        ],
+        "hide_ids": [
+          "deep_gate_bar_0",
+          "deep_gate_bar_1",
+          "deep_gate_bar_2",
+          "deep_gate_bar_3",
+          "deep_gate_bar_4",
+          "deep_gate_bar_5"
+        ]
+      },
+      {
+        "key": "deep_seam_note",
+        "equals": "read",
+        "props": [
+          {
+            "frame": "signpost",
+            "cell": [
+              30,
+              5
+            ],
+            "id": "deep_route_marks_read"
+          }
+        ]
       }
     ],
     "lighting_profile": "overcast_frontier",
@@ -862,5 +1090,35 @@
       "ground_family": "ash",
       "purpose": "source-backed local terrain outside the 960x608 worksite bounds; decorative only, no collision or world extension"
     }
+  },
+  "gates": [
+    {
+      "rect": [
+        468,
+        194,
+        104,
+        14
+      ],
+      "requires_capabilities": [
+        "cap_salvage",
+        "cap_power_1"
+      ],
+      "requires_state_values": {
+        "quarry_route": [
+          "east_braced",
+          "west_chocked"
+        ],
+        "quarry_deep_gate": [
+          "open"
+        ]
+      },
+      "zone": "deep_cut_counterweight_gate",
+      "retreat_one_way": true
+    }
+  ],
+  "approach_clue": {
+    "object_id": "quarry_cut_line_marks",
+    "text": "Old cut marks point toward the east brace; the lower seam needs both an owner-issued credential and power.",
+    "presentation": "scene feedback after neutral physical inspection; no inventory or persistent reward"
   }
 }

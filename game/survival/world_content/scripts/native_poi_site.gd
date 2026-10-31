@@ -361,7 +361,8 @@ func get_context_hint(actor: Node2D) -> String:
 			action.get("socket_position", definition.get("action_socket", [0, 0]))
 		)
 		if is_inside_interaction_radius(actor, stand, socket):
-			var key := "H" if index == 0 else "Y"
+			var action_keys := ["H", "Y", "T", "V"]
+			var key := str(action_keys[index]) if index < action_keys.size() else "—"
 			var remaining := _cooldown_remaining(action)
 			if remaining > 0.0:
 				prompts.append(
@@ -735,8 +736,12 @@ func _add_solid_rect(at: Vector2, size: Vector2, label: String) -> StaticBody2D:
 
 
 func _gate_is_blocked(gate: Dictionary) -> bool:
-	if not projection.get("capabilities", []).has(str(gate.get("requires", "cap_salvage"))):
-		return true
+	var required_capabilities: Array = gate.get("requires_capabilities", [])
+	if required_capabilities.is_empty():
+		required_capabilities = [str(gate.get("requires", "cap_salvage"))]
+	for capability: Variant in required_capabilities:
+		if not projection.get("capabilities", []).has(str(capability)):
+			return true
 	var state_values: Dictionary = gate.get("requires_state_values", {})
 	var site_state: Dictionary = projection.get("site_state", {})
 	for state_key: String in state_values:

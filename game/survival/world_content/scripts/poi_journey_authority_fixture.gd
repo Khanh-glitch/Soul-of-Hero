@@ -78,6 +78,15 @@ func replace_capabilities(owner_projected_capabilities: Array) -> void:
 	_projection_revision += 1
 
 
+## Test driver supplies a newer site-state projection; this changes no inventory,
+## currency, save data, clock, or production authority.
+func replace_site_state(source_id: String, owner_projected_state: Dictionary) -> void:
+	if source_id.is_empty():
+		return
+	_site_states[source_id] = owner_projected_state.duplicate(true)
+	_projection_revision += 1
+
+
 func project_state(source_id: String) -> Dictionary:
 	return {
 		"schema_version": 1,
