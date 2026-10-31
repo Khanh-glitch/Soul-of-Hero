@@ -403,17 +403,6 @@ jobs:
           rc=$?
           set -e
           cat "$ARTIFACT_DIR/r13_single.log"
-          if [ "$rc" -ne 0 ]; then
-            bash tools/ci/annotate_log.sh "$ARTIFACT_DIR/r13_single.log" "R13 single-process engine exit $rc" 40 || true
-            echo "::warning::R13 single-process: godot exited $rc; the log gate and the PASS marker decide"
-          fi
-          # Name every failed assertion explicitly: the raw log is not readable
-          # through the API, annotations are.
-          if grep -q '^\[FAIL\]' "$ARTIFACT_DIR/r13_single.log"; then
-            grep '^\[FAIL\]' "$ARTIFACT_DIR/r13_single.log" | head -8 | while IFS= read -r line; do
-              echo "::error::R13 assertion ${line}"
-            done
-          fi
           # The suite deliberately obstructs the atomic temporary write and then
           # repairs it, so the SaveService failure line is EXPECTED. Gate a copy
           # with exactly that line removed (same convention as the V5/V6 steps),
@@ -425,7 +414,22 @@ jobs:
           fi
           grep -vE '^(USER )?ERROR: SaveService: Could not write the temporary save file[.]$' \
             "$ARTIFACT_DIR/r13_single.log" > "$ARTIFACT_DIR/r13_single.gate.log"
-          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/r13_single.gate.log" "R13 single-process" "R13 NATIVE PASSED" || exit 1
+          # Gate FIRST so its summary and engine-error annotations survive the
+          # per-step annotation cap; detail follows only when it fails.
+          gate_rc=0
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/r13_single.gate.log" "R13 single-process" "R13 NATIVE PASSED" || gate_rc=$?
+          if [ "$gate_rc" -ne 0 ]; then
+            if grep -q '^\[FAIL\]' "$ARTIFACT_DIR/r13_single.log"; then
+              grep '^\[FAIL\]' "$ARTIFACT_DIR/r13_single.log" | head -3 | while IFS= read -r line; do
+                echo "::error::R13 assertion ${line}"
+              done
+            fi
+            echo "::error::R13 single-process engine exit $rc, gate exit $gate_rc"
+            exit 1
+          fi
+          if [ "$rc" -ne 0 ]; then
+            echo "::warning::R13 single-process: godot exited $rc after a clean log gate and the PASS marker"
+          fi
           summary="$(grep 'R13 NATIVE PASSED' "$ARTIFACT_DIR/r13_single.log" | tail -1)"
           echo "::notice title=R13 single-process negatives::${summary}"
           echo "$summary" >> "$GITHUB_STEP_SUMMARY"

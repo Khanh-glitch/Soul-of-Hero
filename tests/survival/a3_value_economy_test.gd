@@ -667,10 +667,14 @@ func _test_run_reset_cleanup() -> void:
 func _test_routes_and_core_distinction() -> void:
 	_begin_group("routes")
 	## The reset test wiped the run, so this group creates its own material state.
+	print("routes: begin")
 	_give("quarry_core_fragment", 10, "routes")
+	print("routes: fragments held=%d" % [_count("quarry_core_fragment")])
 	var core_instance := _give_instance("core_ember", "r13:routes:core", 100)
+	print("routes: core instance=%s" % [core_instance])
 	_expect(not core_instance.is_empty(), "routes group owns a physical Skill Core instance")
 	var routes: Dictionary = a3.route_comparison()
+	print("routes: comparison keys=%s" % [routes.keys()])
 	var raw_routes: Variant = routes.get("routes", {})
 	_expect(raw_routes is Dictionary, "route comparison returns named routes")
 	if raw_routes is Dictionary:
@@ -689,6 +693,7 @@ func _test_routes_and_core_distinction() -> void:
 		_expect(not (knowledge.get("finite_supply", []) as Array).is_empty(), "knowledge route is limited by finite A1 supply")
 
 	var distinction: Dictionary = a3.skill_core_distinction()
+	print("routes: distinction keys=%s cores=%d" % [distinction.keys(), (distinction.get("physical_skill_cores", []) as Array).size()])
 	var ordinary: Dictionary = distinction.get("ordinary_material", {})
 	_expect_equal(String(ordinary.get("storage", "")), "stack", "quarry_core_fragment is an ordinary stack material")
 	_expect(not bool(ordinary.get("has_instance_identity", true)), "ordinary fragments have no instance identity")
