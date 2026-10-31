@@ -76,7 +76,7 @@ failed; this historical pin is not an endorsement of the latest route.
 | 17 | C world pass diagnostic incl. live-screen fragment mapping | [run 41207915157](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41207915157), one frozen frame only |
 | 18 | A candidate fields available; REDESIGN_CANDIDATE | Real actors, full-cast and world review missing |
 | 19 | D additive and persistent warp consumer, frozen-world/cancel [JOIN 41209511506](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41209511506) | D bloom/post, OUT review, depth and original parity missing |
-| 20 | C contour/polygons/blocks/particles/OUT + A world pull candidate; [source diagnostics below](#experimental-c-viewport-impulses-and-20-rift) | Latest actual-world OUT JOIN pending; A debris, full fusion/source/world parity, gameplay depth and review missing |
+| 20 | C contour/polygons/blocks/particles/OUT + A world pull candidate; [source and world diagnostics below](#experimental-c-viewport-impulses-and-20-rift) | A debris, complete fusion/world fidelity, gameplay depth and review missing |
 
 Run-level pass does not override a failing check annotation. No thresholds have
 been relaxed. Only CT owns `soh_binding/**`; no production mount, merge, fake
@@ -212,8 +212,7 @@ not unrestricted-random or complete-cast parity. `aa0ff825` adds source C's
 final live-world inversion and glint; [neutral source-only OUT comparison
 41212515806](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41212515806)
 at ticks 570/582/591/593/594 recorded zero ink/light/displacement errors, but
-live-world and post fidelity are separate and latest OUT JOIN is pending. A
-original ground-sample additive debris, full-source/world fidelity, motion,
+live-world and post fidelity are separate. [Actual-world JOIN 41212486419](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41212486419) and [assertions 41212683037](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41212683037) confirmed 30 live-world OUT inversion fragments and 1,104 changed pixels inside influence, zero outside, at tick 570, followed by exact frozen-world cancel. This is one frame, not a natural full OUT or a visual-accuracy review. A original ground-sample additive debris, full-source/world fidelity, motion,
 depth, owner review and production readiness all remain open. The all-20 sweep at `c6fb12ba` exercised the
 older #20 candidate.
 
