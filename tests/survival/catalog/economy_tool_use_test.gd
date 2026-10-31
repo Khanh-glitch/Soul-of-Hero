@@ -131,7 +131,7 @@ func _run() -> void:
 	_expect(tool_before == 98, "tool condition recorded before capacity test")
 	var save_before: Dictionary = save.call(&"get_snapshot")
 	var full_bag_plan: Dictionary = eco.plan_tool_use(_request(tool_id, 2))
-	_expect(bool(full_bag_plan.ok), "fresh plan for full-bag harvest")
+	_expect(not bool(full_bag_plan.ok), "full-bag plan fails closed when inventory is full")
 	var full_bag_mut: Callable = func(candidate: Dictionary) -> bool:
 		if not bool(save.call(&"add_items_to_candidate", candidate, "stone_chunk", "material", 1, {"source": "native_fixture_full_bag"})):
 			return false
