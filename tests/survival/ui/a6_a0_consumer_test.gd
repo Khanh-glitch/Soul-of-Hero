@@ -115,8 +115,12 @@ func _read_as_restart() -> void:
 	_expect(not bool(clock.get("available", true)), "no season clock is published, so A6 reports it unavailable")
 	var facts: Dictionary = source.run_facts()
 	_expect(not bool(facts.get("available", true)), "no durable run facts are published, so A6 reports them unavailable")
+	# `make_unavailable_digest` carries no `visible` key at all, so "available" plus an
+	# empty production list is the honest test: refused, and nothing invented.
 	var digest: Dictionary = source.return_digest()
-	_expect(not bool(digest.get("visible", true)), "no return digest is published, so nothing is shown as earned")
+	_expect(not bool(digest.get("available", true)), "no return digest is published, so the digest is refused")
+	_expect((digest.get("production", []) as Array).is_empty(), "the refused digest invents no production rows")
+	_expect(not String(digest.get("reason", "")).is_empty(), "the refusal names its reason (%s)" % String(digest.get("reason", "")))
 
 	var history: Dictionary = source.run_history()
 	var rows: Array = history.get("runs", [])
