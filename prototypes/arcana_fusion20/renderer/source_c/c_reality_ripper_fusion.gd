@@ -46,6 +46,10 @@ var tnx := PackedFloat32Array()
 var tny := PackedFloat32Array()
 var ttx := PackedFloat32Array()
 var tty := PackedFloat32Array()
+# This nearest-contour field depends only on the fixed original seed, source
+# resolution and immutable waypoints. Share its packed, copy-on-write result
+# across casts instead of recomputing ~70k x 8 segment projections per cast.
+static var _contour_cache: Dictionary = {}
 var collided := false
 var blocks: Array = []
 var rng: CMath.CRng
@@ -70,43 +74,52 @@ func setup() -> void:
         var dy := float(way[i].y) - float(way[i - 1].y)
         cum.append(cum[i - 1] + sqrt(dx * dx + dy * dy))
     path_len = cum[-1]
-    var n := W * H
-    ts.resize(n); td.resize(n); tnx.resize(n); tny.resize(n); ttx.resize(n); tty.resize(n)
-    ts.fill(-1.0)
-    for y in range(16, 215):
-        for x in range(40, 381):
-            var best := 1.0e9
-            var bs := 0.0
-            var bd := 0.0
-            var bnx := 0.0
-            var bny := 0.0
-            var btx := 0.0
-            var bty := 0.0
-            for i in range(8):
-                var a: Dictionary = way[i]
-                var b: Dictionary = way[i + 1]
-                var dx := float(b.x) - float(a.x)
-                var dy := float(b.y) - float(a.y)
-                var l2 := dx * dx + dy * dy
-                var length := sqrt(l2)
-                var px := float(x) + 0.5 - float(a.x)
-                var py := float(y) + 0.5 - float(a.y)
-                var u := clampf((px * dx + py * dy) / l2, 0.0, 1.0)
-                var qx := px - dx * u
-                var qy := py - dy * u
-                var d := sqrt(qx * qx + qy * qy)
-                if d < best:
-                    best = d
-                    bs = (cum[i] + u * length) / path_len
-                    var side := 1.0 if dx * py - dy * px >= 0.0 else -1.0
-                    bd = d * side
-                    bnx = -dy / length * side
-                    bny = dx / length * side
-                    btx = dx / length
-                    bty = dy / length
-            if best < 46.0:
-                var k := y * W + x
-                ts[k] = bs; td[k] = bd; tnx[k] = bnx; tny[k] = bny; ttx[k] = btx; tty[k] = bty
+    if _contour_cache.is_empty():
+        var n := W * H
+        ts.resize(n); td.resize(n); tnx.resize(n); tny.resize(n); ttx.resize(n); tty.resize(n)
+        ts.fill(-1.0)
+        for y in range(16, 215):
+            for x in range(40, 381):
+                var best := 1.0e9
+                var bs := 0.0
+                var bd := 0.0
+                var bnx := 0.0
+                var bny := 0.0
+                var btx := 0.0
+                var bty := 0.0
+                for i in range(8):
+                    var a: Dictionary = way[i]
+                    var b: Dictionary = way[i + 1]
+                    var dx := float(b.x) - float(a.x)
+                    var dy := float(b.y) - float(a.y)
+                    var l2 := dx * dx + dy * dy
+                    var length := sqrt(l2)
+                    var px := float(x) + 0.5 - float(a.x)
+                    var py := float(y) + 0.5 - float(a.y)
+                    var u := clampf((px * dx + py * dy) / l2, 0.0, 1.0)
+                    var qx := px - dx * u
+                    var qy := py - dy * u
+                    var d := sqrt(qx * qx + qy * qy)
+                    if d < best:
+                        best = d
+                        bs = (cum[i] + u * length) / path_len
+                        var side := 1.0 if dx * py - dy * px >= 0.0 else -1.0
+                        bd = d * side
+                        bnx = -dy / length * side
+                        bny = dx / length * side
+                        btx = dx / length
+                        bty = dy / length
+                if best < 46.0:
+                    var k := y * W + x
+                    ts[k] = bs; td[k] = bd; tnx[k] = bnx; tny[k] = bny; ttx[k] = btx; tty[k] = bty
+        _contour_cache = {"ts": ts, "td": td, "tnx": tnx, "tny": tny, "ttx": ttx, "tty": tty}
+    else:
+        ts = _contour_cache.ts
+        td = _contour_cache.td
+        tnx = _contour_cache.tnx
+        tny = _contour_cache.tny
+        ttx = _contour_cache.ttx
+        tty = _contour_cache.tty
     # Original V8 sort for this seed consumed 29 RNG draws after the seven
     # waypoints. The permutation itself is fixed above; preserve the resulting
     # RNG state for C's 56 original world-fragment blocks.

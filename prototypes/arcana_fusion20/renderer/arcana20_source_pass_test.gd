@@ -97,6 +97,12 @@ func _run() -> void:
 
     var rift := CRealityRipperFusion.new()
     rift.setup()
+    var rift_cached := CRealityRipperFusion.new()
+    rift_cached.setup()
+    check(rift.ts == rift_cached.ts and rift.td == rift_cached.td and rift.tnx == rift_cached.tnx and rift.tny == rift_cached.tny and rift.ttx == rift_cached.ttx and rift.tty == rift_cached.tty and rift.blocks == rift_cached.blocks, "C20 cached immutable contour retains exact source fields and seeded blocks")
+    var old_ts := rift.ts[0]
+    rift_cached.ts[0] = old_ts + 1.0
+    check(rift.ts[0] == old_ts and (CRealityRipperFusion._contour_cache.ts as PackedFloat32Array)[0] == old_ts, "C20 cached contour snapshots are copy-on-write")
     var rift_frame := CFrame.new()
     rift_frame.track_world_fragments = true
     rift_frame.clear()
