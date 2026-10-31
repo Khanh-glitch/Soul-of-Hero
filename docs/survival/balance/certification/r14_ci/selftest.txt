@@ -1,0 +1,69 @@
+ok   T1.2 sidecar world → FAIL                            
+ok   T1.2 one world, no run → BLOCKED                     
+ok   T1.2 composed tree drops A0's authority → COMPOSITION_DROPS_OWNER_WORK 
+ok   T1.2 authority missing in both trees → SIDECAR_WORLD (source defect) 
+ok   T1.2 legacy document cannot overrule an authored controller 
+ok   T1.2 live frame is the authority frame, not the legacy file 
+ok   evidence split keeps the product marker              
+ok   evidence split keeps the control marker              
+ok   T1.2 dead control still names the composition artifact 
+ok   T1.2 dead control is not quoted as a working world   
+ok   T1.7 authority cannot load → FAIL AUTHORITY_SCRIPT_DOES_NOT_RUN 
+ok   T1.7 authority runs → PASS RUNTIME_AUTHORITY_VERIFIED 
+ok   T1.7 loader itself broken → FAIL HARNESS_LOADER_BROKEN 
+ok   T1.7 engine errors beat every source claim → FAIL    
+ok   T1.7 no native marker → BLOCKED                      
+ok   T1.3 unknown live world → BLOCKED                    
+ok   T1.4 unknown live world → BLOCKED                    
+ok   T1.3 spawn outside live world → FAIL                 
+ok   T1.3 standable spawn → PASS                          
+ok   T1.3 unstandable spawn → FAIL                        
+ok   T1.4 engine-measured sites outside world → FAIL      
+ok   T1.4 source inference never overrules an unresolved engine measurement 
+ok   T1.4 no placement marker at all → BLOCKED            
+ok   T1.5 harness false negative → FAIL                   
+ok   T1.5 both halves clean → PASS                        
+ok   T1.5 half pair → BLOCKED                             
+ok   T1.6 no collision → FAIL                             
+ok   T1.6 moves and collides → PASS                       
+ok   T2.3 no knife id → BLOCKED, not FAIL                 
+ok   T2.3 knife gap says the melee verdict is NOT decided here 
+ok   T2.3 knife present → BLOCKED (no craft run)          
+ok   T2.2 teleport is not a route → FAIL                  
+ok   T2.2 walked route → PASS                             
+ok   T2.4 fixture grant → FAIL                            
+ok   T2.4 player earned → PASS                            
+ok   T3.11 submitted service composed → PASS              
+ok   T3.11 submitted service refused by scope → FAIL      
+ok   T3.11 no composition report → BLOCKED                
+ok   T3.5 escrow codes alone never PASS                   
+ok   T3.5 missing provenance run → BLOCKED_NO_PROVENANCE_REJECTION 
+ok   T3.5 owner string accepted → FAIL                    
+ok   T3.5 owner string refused in a run → PASS            
+ok   T3.2 contract present, no run → BLOCKED              
+ok   T3.2 wear run missing → BLOCKED_NO_TOOL_WEAR_RUN     
+ok   T3.2 no contract at all → FAIL                       
+ok   T3.2 run without wear → FAIL                         
+ok   T3.2 run loses condition → PASS                      
+ok   T3.3 two research methods → FAIL                     
+ok   T3.3 three methods, no run → BLOCKED                 
+ok   T3.6 no fuel escrow → FAIL                           
+ok   T3.6 fuel escrow → PASS                              
+ok   T3.9 two granted → FAIL                              
+ok   T3.9 not exactly once → FAIL                         
+ok   T3.9 exact once → PASS                               
+ok   T2.6 refused=null → BLOCKED                          
+ok   T2.6 refused=false → FAIL                            
+ok   T3.9 not-this-probe → BLOCKED                        
+ok   T4.1 core absent → NOT_IMPLEMENTED                   
+ok   T4.1 core present + gate passes → PASS               
+ok   T4.1 core present, no run → BLOCKED                  
+ok   T4.1 core present, gate fails → FAIL                 
+ok   T1.1 tree reproduces → PASS                          
+ok   T1.1 tree diverges → FAIL                            
+ok   probe parser keeps underscore markers                
+ok   probe parser reads the bootstrap pair                
+ok   maturity never grants HUMAN_ACCEPTED                 
+ok   maturity grants TEST_HARNESS_VALID first             
+
+A7_CERT_SELFTEST 67/67

@@ -1,0 +1,267 @@
+{
+  "schema": "soh.a7.r12.visual_capture.v1",
+  "engine": "4.7-stable (official)",
+  "display_server": "X11",
+  "adapter": "llvmpipe (LLVM 20.1.2, 256 bits)",
+  "out_dir": "/tmp/captures",
+  "facts": {
+    "world_scene": "res://game/overworld/chapter1_overworld.tscn",
+    "hero_spawn": [
+      904.0,
+      3496.0
+    ],
+    "has_survival_build": true,
+    "has_room_topology": true,
+    "world_children": [
+      "Backdrop",
+      "WorldTint",
+      "Entities",
+      "Places",
+      "World",
+      "Resources",
+      "SurvivalBuild",
+      "DeathBags",
+      "EconomySession",
+      "EconomyComposition",
+      "Occlusion",
+      "HUD",
+      "A0ThreatMount",
+      "EconomyPanel",
+      "ChestInventoryPanel"
+    ],
+    "viewport": [
+      1280,
+      720
+    ],
+    "camera_zoom": [
+      1.0,
+      1.0
+    ],
+    "content_scale_factor": 1.0,
+    "content_scale_mode": 1,
+    "content_scale_size": [
+      640,
+      360
+    ],
+    "reason_census_at_spawn": {
+      "protected_place": 75,
+      "on_route": 46,
+      "world_blocker": 1,
+      "<ok>": 4,
+      "out_of_range": 122
+    },
+    "select_piece_wall_wood": true,
+    "validate_at_hero_cell": "",
+    "reason_census_after_walk_0": {
+      "<ok>": 75,
+      "world_blocker": 13,
+      "out_of_range": 152,
+      "on_route": 8
+    },
+    "walks": [
+      {
+        "attempt": 0,
+        "direction": "move_down",
+        "hero_cell": [
+          56,
+          237
+        ]
+      }
+    ],
+    "house": {
+      "built": true,
+      "origin": [
+        54,
+        235
+      ],
+      "radius": 2,
+      "walls": 15,
+      "room": "",
+      "attempts": [
+        [
+          "wall_wood",
+          52,
+          233,
+          true
+        ],
+        [
+          "wall_wood",
+          53,
+          233,
+          true
+        ],
+        [
+          "wall_wood",
+          54,
+          233,
+          true
+        ],
+        [
+          "wall_wood",
+          55,
+          233,
+          true
+        ],
+        [
+          "wall_wood",
+          56,
+          233,
+          true
+        ],
+        [
+          "wall_wood",
+          52,
+          234,
+          true
+        ],
+        [
+          "wall_wood",
+          56,
+          234,
+          true
+        ],
+        [
+          "wall_wood",
+          52,
+          235,
+          true
+        ],
+        [
+          "wall_wood",
+          56,
+          235,
+          true
+        ],
+        [
+          "wall_wood",
+          52,
+          236,
+          true
+        ],
+        [
+          "wall_wood",
+          56,
+          236,
+          true
+        ],
+        [
+          "wall_wood",
+          52,
+          237,
+          true
+        ],
+        [
+          "wall_wood",
+          53,
+          237,
+          true
+        ],
+        [
+          "wall_wood",
+          54,
+          237,
+          true
+        ],
+        [
+          "wall_wood",
+          55,
+          237,
+          true
+        ],
+        [
+          "wall_wood",
+          56,
+          237,
+          false
+        ]
+      ]
+    },
+    "home_shot_cell": [
+      54,
+      239
+    ],
+    "home_shot_pending": true,
+    "home_shot_hero": [
+      872.0,
+      3832.0
+    ]
+  },
+  "rows": [
+    {
+      "file": "r12_overworld_1280x720.png",
+      "viewport": [
+        1280,
+        720
+      ],
+      "size": [
+        1280,
+        720
+      ],
+      "image_size": [
+        1280,
+        720
+      ],
+      "save_result": 0,
+      "png_bytes": 306989,
+      "sampled_colours": 366,
+      "path": "/tmp/captures/r12_overworld_1280x720.png"
+    },
+    {
+      "file": "r12_overworld_2560x1440.png",
+      "viewport": [
+        2560,
+        1440
+      ],
+      "size": [
+        2560,
+        1440
+      ],
+      "image_size": [
+        2560,
+        1440
+      ],
+      "save_result": 0,
+      "png_bytes": 452863,
+      "sampled_colours": 361,
+      "path": "/tmp/captures/r12_overworld_2560x1440.png"
+    },
+    {
+      "file": "r12_overworld_3840x2160.png",
+      "viewport": [
+        3840,
+        2160
+      ],
+      "size": [
+        3840,
+        2160
+      ],
+      "image_size": [
+        3840,
+        2160
+      ],
+      "save_result": 0,
+      "png_bytes": 568487,
+      "sampled_colours": 362,
+      "path": "/tmp/captures/r12_overworld_3840x2160.png"
+    },
+    {
+      "file": "r12_home_1280x720.png",
+      "viewport": [
+        1280,
+        720
+      ],
+      "size": [
+        1280,
+        720
+      ],
+      "image_size": [
+        1280,
+        720
+      ],
+      "save_result": 0,
+      "png_bytes": 295320,
+      "sampled_colours": 344,
+      "path": "/tmp/captures/r12_home_1280x720.png"
+    }
+  ]
+}

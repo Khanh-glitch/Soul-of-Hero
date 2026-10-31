@@ -1,0 +1,4 @@
+SCRIPT ERROR: Parse Error: Function "_spawn_cell()" not found in base self.
+SCRIPT ERROR: Parse Error: Function "_spawn_cell()" not found in base self.
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+ERROR: Failed to load script "res://game/overworld/chapter1_overworld.gd" with error "Compilation failed".

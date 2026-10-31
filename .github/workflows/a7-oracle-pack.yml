@@ -1,0 +1,123 @@
+name: A7 oracle pack (fail-closed, self-test + baseline)
+
+# Reusable, cheap, and deliberately not a product review. It proves the oracles
+# discriminate and then judges one exact composed tree. It never runs a Godot
+# binary, never writes an owner branch and never merges.
+on:
+  workflow_dispatch:
+    inputs:
+      a0_sha:
+        description: "A0 40-hex SHA (base of the composition)"
+        required: false
+        default: "ee5f9f5160c8e4385f35a63b355ddda957f93d10"
+      a1_sha:
+        required: false
+        default: "a030cb89a5033ba5faba39995762b4bea1332cec"
+      a3_sha:
+        required: false
+        default: "b44e22df3af40939069189be14afc23ee1ce21c4"
+      a6_sha:
+        required: false
+        default: "6d1e8bcee0bbb09be0ff04f14de1f7e59f06cfb8"
+      a8_sha:
+        required: false
+        default: "0f885df862d7d34f18ca456e80b1aaac05b23de0"
+      expected_tree:
+        description: "Declared composed tree SHA; the run fails if it does not reproduce"
+        required: false
+        default: "fbe54383881c6cc29c30874782721ea63155e661"
+      evidence_dir:
+        description: "Repo-relative directory holding the run logs and PNGs"
+        required: false
+        default: "docs/survival/balance/visual/r14"
+  push:
+    branches: [arena/353cf120-soul-of-hero]
+    paths:
+      - "tools/survival/balance/a7_oracle_pack.py"
+      - ".github/workflows/a7-oracle-pack.yml"
+permissions:
+  contents: read
+
+jobs:
+  oracle-pack:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout with full history (composition needs real commits)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # Blob-less partial clone: composition needs real commits (merge-base),
+          # but not every historical blob up front; git fetches files on demand.
+          filter: blob:none
+
+      - name: Oracle self-test (proves the pack rejects known-bad evidence)
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet pillow
+          python3 tools/survival/balance/a7_oracle_pack.py --self-test | tee oracle_selftest.txt
+          grep -q "31/31" oracle_selftest.txt
+
+      - name: Compose the exact owner matrix (read-only)
+        env:
+          A0_SHA: ${{ github.event.inputs.a0_sha || 'ee5f9f5160c8e4385f35a63b355ddda957f93d10' }}
+          A1_SHA: ${{ github.event.inputs.a1_sha || 'a030cb89a5033ba5faba39995762b4bea1332cec' }}
+          A3_SHA: ${{ github.event.inputs.a3_sha || 'b44e22df3af40939069189be14afc23ee1ce21c4' }}
+          A6_SHA: ${{ github.event.inputs.a6_sha || '6d1e8bcee0bbb09be0ff04f14de1f7e59f06cfb8' }}
+          A8_SHA: ${{ github.event.inputs.a8_sha || '0f885df862d7d34f18ca456e80b1aaac05b23de0' }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/work"
+          git worktree add --detach "$RUNNER_TEMP/base" "$A0_SHA"
+          cd "$RUNNER_TEMP/base"
+          git fetch --no-tags origin "$A1_SHA" "$A3_SHA" "$A6_SHA" "$A8_SHA"
+          python3 tools/a0/compose_owners.py --repo . --out .composition --copy-base \
+            --owner "a1=$A1_SHA" --owner "a3=$A3_SHA" \
+            --owner "a8=$A8_SHA" --owner "a6=$A6_SHA" | tee "$RUNNER_TEMP/compose.log"
+          test -f .composition/composition.json
+
+      - name: Run the pack against that tree and the recorded evidence
+        env:
+          EXPECTED_TREE: ${{ github.event.inputs.expected_tree || 'fbe54383881c6cc29c30874782721ea63155e661' }}
+          EVIDENCE_DIR: ${{ github.event.inputs.evidence_dir || 'docs/survival/balance/visual/r14' }}
+        run: |
+          set -euo pipefail
+          set +e
+          python3 "$GITHUB_WORKSPACE/tools/survival/balance/a7_oracle_pack.py" \
+            --composition "$RUNNER_TEMP/base/.composition" \
+            --evidence "$GITHUB_WORKSPACE/$EVIDENCE_DIR" \
+            --pins "$GITHUB_WORKSPACE/docs/survival/balance/oracles/pins.r13.json" \
+            --pin-policy "$GITHUB_WORKSPACE/docs/survival/balance/oracles/workflow_pin_policy.json" \
+            --expected-tree "$EXPECTED_TREE" \
+            --out "$RUNNER_TEMP/pack.json" --markdown "$RUNNER_TEMP/pack.md" \
+            | tee "$RUNNER_TEMP/pack.txt"
+          rc=$?
+          set -e
+          # The pack is expected to FAIL on the current baseline; what must not happen
+          # is a missing artefact or a composition identity that did not reproduce.
+          cat "$RUNNER_TEMP/pack.md" >> "$GITHUB_STEP_SUMMARY"
+          python3 - <<'PY'
+          import json, os
+          pack = json.load(open(os.path.join(os.environ["RUNNER_TEMP"], "pack.json")))
+          o6 = [r for r in pack["results"] if r["oracle"] == "O6"][0]
+          comp = o6["measurements"].get("composition") or {}
+          if comp.get("expected") and comp.get("actual") and comp["expected"] != comp["actual"]:
+              raise SystemExit("COMPOSITION_IDENTITY_MISMATCH " + json.dumps(comp))
+          print("PACK_OVERALL", pack["overall"])
+          print("PACK_FIRST_BLOCKER", (pack.get("first_blocker") or {}).get("code"))
+          PY
+          exit 0
+
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a7-oracle-pack
+          path: |
+            oracle_selftest.txt
+            ${{ runner.temp }}/pack.json
+            ${{ runner.temp }}/pack.md
+            ${{ runner.temp }}/pack.txt
+            ${{ runner.temp }}/compose.log
+          if-no-files-found: warn
+          retention-days: 14

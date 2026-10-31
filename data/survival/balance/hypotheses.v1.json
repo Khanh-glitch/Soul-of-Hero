@@ -1,0 +1,131 @@
+{
+  "schema": "soh.balance.hypotheses.v1",
+  "owner": "A7",
+  "status": "HYPOTHESIS_NOT_GAMEPLAY_TUNING",
+  "statement": "Every value in this file is a labelled assumption used to compute an answer. None of it is an authored drop rate, a balance recommendation, a tuning change or a playtest result. A3's own progression_model.assumptions are cited separately and are also SOH design proposals. If an assumption is wrong, the sensitivity output changes; the authored data does not.",
+  "session": {
+    "active_seconds": 2700,
+    "label": "45 active minutes per session",
+    "provenance": "A3 progression model session length (design choice). A3 also states its 14-session run is a SPARSE_SCENARIO_MODEL, not a human playtest, so this is a unit of comparison, not a measured session."
+  },
+  "time_model": {
+    "walk_px_per_second": 96.0,
+    "tile_px": 16.0,
+    "gather_seconds_per_claim_source": "A3 progression_model.assumptions.gather_seconds_per_claim",
+    "poi_interaction_seconds_source": "A3 progression_model.assumptions.poi_interaction_seconds",
+    "search_seconds_source": "A3 progression_model.assumptions.search_seconds",
+    "unmodelled": [
+      "combat",
+      "player reading/planning/deciding",
+      "UI frames and menus",
+      "death and recovery",
+      "terrain collision detours outside graded corridors",
+      "boat speed (A1 marks it NOT_AUTHORED)"
+    ]
+  },
+  "route_beliefs": {
+    "SAFE_BELIEF": {
+      "label": "Player avoids authored high/combat-risk corridors",
+      "avoid_risks": ["high", "combat"]
+    },
+    "FASTEST_PATH": {
+      "label": "Player minimises distance and ignores risk labels",
+      "avoid_risks": []
+    }
+  },
+  "patterns": [
+    {
+      "pattern_id": "P1_SAFE_BOOTSTRAP_LOOP",
+      "label": "Authored first-hour loop: Refuge - Waystation - Relay - Refuge - Apothecary - Refuge, safe corridors only",
+      "status": "AUTHORED_CONTRACT_NOT_NATIVE",
+      "capabilities": [],
+      "avoid_risks": ["high", "combat"],
+      "stops": ["poi_crown_waystation", "poi_crown_relay_shed", "poi_amberwood_apothecary"],
+      "claims": [
+        {"source_id": "waystation_locker", "times": 1, "kind": "material", "poi_id": "poi_crown_waystation"},
+        {"source_id": "a1_crown_salvage", "times": 1, "kind": "material", "poi_id": "poi_crown_waystation"},
+        {"source_id": "a1_amber_herb", "times": 2, "kind": "material", "poi_id": "poi_amberwood_apothecary"},
+        {"source_id": "waystation_locker", "times": 1, "kind": "material", "poi_id": "poi_crown_waystation"}
+      ],
+      "notes": "The duplicated locker claim is deliberate: it exercises the one-time policy and must be blocked, not counted twice."
+    },
+    {
+      "pattern_id": "P2_FILTERED_MATERIAL_RUN",
+      "label": "After cap_filter: Refuge - Quarry - Ferry Pile - Refuge material run",
+      "status": "AUTHORED_CONTRACT_NOT_NATIVE",
+      "capabilities": ["cap_salvage", "cap_seal_1", "cap_power_1", "cap_filter"],
+      "avoid_risks": ["high", "combat"],
+      "stops": ["poi_crown_quarry", "poi_crown_ferry_pile"],
+      "claims": [
+        {"source_id": "a1_crown_tuff", "times": 1, "kind": "material", "poi_id": "poi_crown_quarry"},
+        {"source_id": "a1_crown_iron", "times": 1, "kind": "material", "poi_id": "poi_crown_quarry"},
+        {"source_id": "a1_crown_reed", "times": 2, "kind": "material", "poi_id": "poi_crown_ferry_pile"}
+      ],
+      "notes": "Requires stone_pick for quarry claims (A3 requires_items) which is craftable from native sources; the tool does not model tool durability because none is authored."
+    },
+    {
+      "pattern_id": "P3_UNDERPREPARED_SHORTCUT",
+      "label": "Underprepared player insists on the east seam shortcut without cap_filter",
+      "status": "AUTHORED_CONTRACT_NOT_NATIVE",
+      "capabilities": [],
+      "avoid_risks": [],
+      "intended_route_ids": ["rt_east_seam"],
+      "stops": ["poi_crown_waystation"],
+      "claims": [
+        {"source_id": "a1_crown_salvage", "times": 1, "kind": "material", "poi_id": "poi_crown_waystation"}
+      ],
+      "notes": "The route requires cap_filter, so the intended trip is not passable; the model reports the lock and the fallback route instead of an invented unmitigated crossing."
+    },
+    {
+      "pattern_id": "P4_ROADSIDE_CONTAINER_SEARCH",
+      "label": "Player searches for roadside supply crates using A3's only authored table",
+      "status": "HYPOTHESIS_SOURCE_UNBOUND",
+      "capabilities": ["cap_salvage"],
+      "avoid_risks": ["high", "combat"],
+      "stops": ["poi_crown_quarry", "poi_crown_ferry_pile"],
+      "claims": [
+        {"source_id": "road_supplies", "times": 3, "kind": "container", "table_id": "roadside_cache"}
+      ],
+      "notes": "roadside_cache is the only existing loot table and its A3 source POI is unresolved against A1. This pattern measures what three claims would be worth IF a container existed; it is not evidence that one exists."
+    },
+    {
+      "pattern_id": "P5_FIRST_CORE_DETERMINISTIC",
+      "label": "First Core attempt at the ember barrow field (provisional binding, one-time)",
+      "status": "PROVISIONAL_BINDING_NOT_NATIVE",
+      "capabilities": ["cap_salvage", "cap_seal_1"],
+      "avoid_risks": ["high", "combat"],
+      "stops": ["poi_crown_barrow_field"],
+      "claims": [
+        {"source_id": "specimen_ember", "times": 1, "kind": "material", "poi_id": "poi_crown_barrow_field"}
+      ],
+      "notes": "A3 declares discovery_chance 1.0 for this source. The Core is therefore an access/distance problem under the current data, not a probability problem; the POI is still contract-only."
+    }
+  ],
+  "core_probability": {
+    "status": "HYPOTHETICAL_NOT_A3_TUNING",
+    "why": "The current loot tables exclude the 'core' tag and no roadside Core source is authored. No Core drop rate exists to measure. The grid below only shows how the answer would move IF a future L1-S supply-container class existed; it is Control-Tower-style illustration, not a proposal.",
+    "eligible_container_counts": [0, 1, 2, 4, 8, 16],
+    "per_container_probabilities": [0.0, 0.002, 0.005, 0.01, 0.02],
+    "trips_per_measure": [1, 10, 20],
+    "actual_eligible_roadside_containers_today": 0,
+    "note": "The 'actual' value is derived from the pinned data (tables that can emit a core-tagged item = 0), not asserted here."
+  },
+  "death_and_recovery": {
+    "status": "HYPOTHESIS",
+    "base_death_chance_source": "A3 progression_model.assumptions.base_death_chance (SOH proposal)",
+    "cargo_recovery_probability_values": [0.0, 0.5, 1.0],
+    "unprepared_hazard_death_chance_source": "A3 progression_model.assumptions.unprepared_hazard_death_chance",
+    "note": "A0's death-bag implementation is not native-accepted, so both extremes are reported instead of one chosen number."
+  },
+  "monte_carlo": {
+    "seed": 20261030,
+    "runs": 4000,
+    "sessions_per_run": 14,
+    "label": "Seeded resampling of the authored roadside_cache table only. It measures the spread of material outcomes for a fixed number of claims; it does not prove pacing, fun or engagement."
+  },
+  "capacity": {
+    "bag_slots_source": "A3 progression_model.assumptions.bag_slots",
+    "stack_limit_source": "A3 items.json stack_limit per item",
+    "note": "One distinct item type occupies one slot regardless of unit count; unique-instance items occupy one slot each."
+  }
+}

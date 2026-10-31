@@ -1,0 +1,135 @@
+# A7 — Independent systems QA & balance (survival / early-game exploration & loot discovery)
+
+**Owner:** A7. **Owned paths only:** `docs/survival/balance/**`, `tools/survival/balance/**`,
+`tests/survival/balance/**`, `data/survival/balance/**`.
+**Status of this checkpoint:** executable analysis + deterministic tests + machine-readable results +
+independent review, corrected and triaged. `ANALYSIS_COMPLETE / NATIVE_NOT_TESTED / HUMAN_NOT_TESTED /
+NO_GAMEPLAY_EDIT`. The numerical gate that failed review (expected hitting time off by one) is fixed and
+oracle-proven; the deliverable is now **five player-facing blockers**, not a finding list.
+
+This is a *measurement and challenge* tool. It reads A1's authored world and A3's authored economy as
+pinned snapshots, recomputes what they imply, and refuses to state numbers the data does not contain.
+It changes no loot table, no rate, no world file and no other agent's code.
+
+## Read this first
+
+**[`PLAYER_BLOCKERS.md`](PLAYER_BLOCKERS.md)** — five owned blockers (guarded mount, cross-owner identity,
+unproven save fix, fixture-only success, avatar), each with the smallest safe correction and a test that flips
+from FAIL to PASS. Generated from `results/blockers.json`; 54 raw observations collapse into it.
+
+**[`B0_ACCEPTANCE_MATRIX.md`](B0_ACCEPTANCE_MATRIX.md)** — the living matrix: six gaps, each with the exact SHA,
+the owner, the minimum fix and the proof level it would reach. Generated from `results/matrix.json`.
+
+**[`NATIVE_ROUTE_PLAN.md`](NATIVE_ROUTE_PLAN.md)** — the three Godot 4.7 probes (first-hour route, death
+recovery, avatar interface), with the exact commands, the exit-code contract, the L0–L5 evidence ladder,
+and what each probe refuses to fake.
+Audited `NATIVE_UNEXECUTED`; A7 has no engine binary.
+
+```bash
+python3 tools/survival/balance/run_analysis.py --print-blockers
+```
+
+## What it answers
+
+1. **Which authored POIs can actually be played or looted today?** (Spoiler: 0 of 118 hand out A3 loot.)
+2. **Do A3's loot sources exist at A1's places?** A3 writes 16 loot *records* naming 10 class-style targets
+   (`poi:roadside_cache`); A1 publishes `poi_*` instances and `r_*` regions, and authors **no container
+   vocabulary at all**. So this is one missing identifier contract plus unmounted instances — not 10 missing
+   POIs and not 16 tickets. See `results/access.json → loot_identity`.
+3. **What is one expedition worth, split into travel / gathering / interaction time and non-Core loot?**
+4. **How do the authored material sinks (recipes, technologies) line up with what a trip actually yields?**
+5. **What would have to be true for a "first Core" to be a luck event, and is it one today?**
+6. **What breaks under absent sources, unlucky rolls, locked routes, bag limits, repeated claims and
+   wrong item ownership?** — with fault-injection cases that prove the checks fire.
+
+## Commands
+
+```bash
+# 1. Rebuild every artifact (writes data/survival/balance/results/*.json)
+python3 tools/survival/balance/run_analysis.py
+
+# 2. Fail if the committed artifacts are stale (CI-friendly)
+python3 tools/survival/balance/run_analysis.py --check
+
+# 3. Run the full deterministic test suite (stdlib unittest, no third-party deps)
+python3 tools/survival/balance/run_tests.py
+
+# Equivalent, without the wrapper:
+python3 -m unittest discover -s tests/survival/balance -p "test_*.py"
+
+# 4. Print the headline numbers
+python3 tools/survival/balance/run_analysis.py --print-summary
+
+# 5. Live upstream drift check (needs the A1/A3 commits fetched; exits 1 on drift)
+python3 tools/survival/balance/run_analysis.py --check-upstream
+
+# 6. Print only the five player-facing blockers
+python3 tools/survival/balance/run_analysis.py --print-blockers
+```
+
+Python 3.11+, standard library only. `pytest` also collects the test files if it is installed; it is not
+required and the tool does not import it.
+
+## Layout
+
+```
+data/survival/balance/
+  snapshot_manifest.json         # SHA-256 pin for every upstream file this analysis read
+  snapshot/*.json                # verbatim read-only copies of A1/A3 authored data
+  hypotheses.v1.json             # the ONLY place a non-authored number may appear
+  results/                       # generated: provenance, findings, access, opportunity, sensitivity,
+                                 # adversarial, gate, quality, oracle, adversary, blockers, matrix,
+                                 # native_probes, summary
+tools/survival/balance/
+  run_analysis.py                # CLI
+  run_tests.py                   # test runner
+  sohbalance/
+    provenance.py   snapshot hashes, upstream drift, cross-owner pin comparison
+    model.py        typed read-only view over the snapshots
+    findings.py     finding codes / severities / assertions
+    gate.py         integration gate: 4 claims, 2 chains, S4 as a conjunction
+    oracle.py       answers from outside the judged file (engine API, JSON contract, A3 bytes)
+    adversary.py    15 named spoof probes run against the gate's own functions
+    blockers.py     five owned blockers + the triage of every observation
+    matrix.py       the living B0 acceptance matrix
+    probes.py       static audit of the Godot probes A7 cannot execute
+    geo.py          authored polylines, capability-gated routing, travel time
+    loot.py         exact loot mathematics (distribution, expectation, hitting time, sinks)
+    access.py       source<->POI<->region bindings, ownership integrity, craft ladders, hazards
+    routes.py       expedition patterns, claim policy engine, capacity, risk
+    sensitivity.py  labelled probability sensitivity + seeded resampling
+    adversarial.py  fault injection + behaviour cases
+    checks.py       single aggregation used by both the report and the tests
+    report.py       deterministic artifact writer
+tests/survival/balance/          # 127 unittest cases across 8 modules
+docs/survival/balance/           # this file + METHOD + INDEPENDENT_REVIEW + LIMITATIONS
+```
+
+## Status vocabulary used everywhere
+
+| Label | Meaning |
+|---|---|
+| `NATIVE_TESTED` | not used by this checkpoint for gameplay; nothing here runs Godot |
+| `AUTHORED_CONTRACT_NOT_NATIVE` | the data exists; no build executes it |
+| `HYPOTHESIS_NOT_GAMEPLAY_TUNING` | an assumption needed to produce an answer; not a rate, not a proposal |
+| `UNMODELLED_*` | the model explicitly has no number (e.g. death chance for a band-only risk label) |
+| `NOT_TESTED` | no evidence either way; see `LIMITATIONS.md` |
+
+## Hard rules encoded in the tool
+
+- **Planned ≠ playable.** A1's `content_readiness` is respected; `Model.is_loot_bearing_natively()` returns
+  `False` for every POI today, so no report can accidentally claim otherwise.
+- **Resource nodes ≠ supply crates.** The 178 `resource_nodes` stay on the harvest axis; eligible
+  roadside containers are counted separately and currently evaluate to `0`.
+- **A3's 14-session model ≠ human playtest.** It is cited only as a conservation/scenario model.
+- **Gold-blocked Cores ≠ usable skills.** Cores remain `BLOCKED_PENDING_A4`; the tool never assigns them a cast.
+- **No invented Core rates, no table edits.** The only loot table that exists (`roadside_cache`) excludes the
+  `core` tag; the probability grid in `sensitivity.json` is labelled hypothetical and its "eligible containers
+  today" input is derived as `0`, not assumed.
+
+## Reading order for a reviewer
+
+1. `INDEPENDENT_REVIEW_20261030.md` — what was measured, what is broken, what it means.
+2. `METHOD.md` — the formulas, so the numbers can be re-derived by hand.
+3. `LIMITATIONS.md` — everything this checkpoint does *not* prove.
+4. `data/survival/balance/results/summary.json` — machine-readable headline + assertions.

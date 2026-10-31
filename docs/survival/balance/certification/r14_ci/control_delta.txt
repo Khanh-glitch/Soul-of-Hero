@@ -1,0 +1,2 @@
+53f3dac2380977cb4a21842ac433d015356b94605083c78288291ad6ca69e09f  game/overworld/chapter1_overworld.gd
+control = certified composition + A0's committed game/overworld/chapter1_overworld.gd

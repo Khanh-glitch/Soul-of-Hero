@@ -1,0 +1,2852 @@
+{
+  "schema": "soh.economy.progression_model.v1",
+  "status": "SOH_DESIGN_PROPOSAL_SIMULATION_ONLY_NOT_HUMAN_PLAYTEST",
+  "purpose": "Separate product-facing scarcity/progression model. Does not replace or relabel simulate_economy.py technical conservation fixture.",
+  "source_refs": {
+    "atlas_sha256": "b958de0fc413cc200b35b0938760228c2ebd3a8ef4aa2f52c1051c52cca59157",
+    "a1_pr": 20,
+    "a1_commit": "91a3544983ff2712e66fd77997df24f59efb3a44",
+    "a1_files": {
+      "world_plan.v1.json": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4",
+      "poi_route_graph.json": "8e49506889149cde043ed69cf5007b219c9ba9464cb7d3eeb25f0eef108d24a9",
+      "material_source_contracts.json": "c4277b0aeab503cc4f6e817e5d36c89b6ce741aba0b6cc277f95bc04534b7c5e",
+      "hazard_capability_contracts.json": "88ffbc7cbfd3573b34f32f27af527b7a33c4b6b08b1bddacd064ba9988c8edf2",
+      "pacing_analysis.json": "d09245bc67b221b97e8d077e637d7187644639c04b7f7f8bf2310223750d4c09",
+      "novice_bootstrap_contract.json": "b98466943b2f49fe6c4b74b728b642851db15e611cf7af372b2d05bcdd6f049a",
+      "hazard_damage_contract.json": "18bfe51e30536bddee016c642afd652519fb80ca0f28a1ac8289864501543d35",
+      "a1_a3_material_decisions.json": "28b94d48a2fb9eade4b9aca29478bac3d6212f4862441fe83cc61c82de5a15a0",
+      "poi_authoring/poi_crown_waystation.v1.json": "8f2e437a9c4200f737e1b048be70030e4affde37012f1f05421efe7a2e8064cf",
+      "poi_authoring/poi_crown_relay_shed.v1.json": "ce450be63c341011fe1d472f3194f9cbe128e4b5e36f2bb9ef207c6818bfda22"
+    },
+    "a0_build_catalog_sha256": "42c64cf7f37b2e6fdfa1d6d19c71f2bcd9455a42e8e8033241e663d2ece66974",
+    "preserved_technical_fixture": {
+      "simulate_economy.py": "1528ec792d690b998f9d1b40fd1a5a8ec6e7469ebdd32e06d4741eaacb6c106f",
+      "balance_report.json": "45bceb2d6f9e190c9fd89b540cc11d088d98ebb6efcef36bb0f977cadc437e71"
+    },
+    "hardening_code_commit": "17e0358bf388680312789caecc7d26f3779aafb1",
+    "starting_head": "86dc21954fd0a1a4aa9f98b6ec7d1e6782cc800e",
+    "a1_product_corrections_sha256": "8c28ee6092f1c84f7d05669306c09e3266af3ac59d8cf9372c71515a1db9162d",
+    "a3_source_adoption_contract": "data/survival/items/a1_source_adoption.v2.json",
+    "a3_source_adoption_sha256": "43ce9681a120be47274770e1c96f90fdc488cfc5f198627d807b9f1325718ed0",
+    "reviewed_a3_head": "08711ea7fdf887f8cb0b4df2c352220d9dbc4a78",
+    "product_model_v1_code": "9b6b7771a3160e7c55b2935e3811cb26bb1137e4"
+  },
+  "assumptions": {
+    "active_tick_seconds": 1,
+    "tile_px": 16,
+    "walk_px_per_second": 96,
+    "bag_slots": 30,
+    "home_storage_slots_per_chest": 12,
+    "gather_seconds_per_claim": 6,
+    "poi_interaction_seconds": 45,
+    "search_seconds": 20,
+    "craft_handle_seconds": 2,
+    "research_handle_seconds": 3,
+    "build_piece_seconds": 6,
+    "station_install_seconds": 20,
+    "station_upgrade_seconds": 30,
+    "hazard_exposure_abort_tiles": 80,
+    "unprepared_hazard_death_chance": 0.35,
+    "base_death_chance": {
+      "low": 0.0,
+      "medium": 0.03,
+      "high": 0.08,
+      "combat": 0.1
+    },
+    "expedition_supply_cost": {
+      "field_meal": 1
+    },
+    "salve_on_death_recovery": 1,
+    "max_expeditions_per_session": 3,
+    "max_gather_claims_per_source_per_session": 2,
+    "note": "All seconds/chances/quantities here are SOH design proposals, not original 2019 drop rates or native measurements.",
+    "max_claims_per_session_default": 2
+  },
+  "shelter": {
+    "pieces": {
+      "foundation_wood": 4,
+      "wall_wood": 11,
+      "door_wood": 1,
+      "chest_wood": 1
+    },
+    "required_before_stations": true,
+    "source": "A1 pacing early_legacy_home 4x4 room; costs derived from A0 survival_catalog pieces"
+  },
+  "capability_bootstrap": {
+    "craft_grants": {},
+    "source_grants": {},
+    "note": "V2: cap_salvage/cap_seal_1/cap_power_1/cap_filter are granted only by the reconciled A1 novice world actions, not by make_spares or an invented safe roadside cache."
+  },
+  "route_network": {
+    "source": "A1 PR20 world_plan.v1.json route_graph subset @91a35449",
+    "sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4",
+    "nodes": [
+      {
+        "cell": [
+          56,
+          218
+        ],
+        "kind": "hub",
+        "node_id": "node_refuge"
+      },
+      {
+        "cell": [
+          392,
+          200
+        ],
+        "kind": "hub",
+        "node_id": "node_crown_east"
+      },
+      {
+        "cell": [
+          300,
+          330
+        ],
+        "kind": "hub",
+        "node_id": "node_crown_south"
+      },
+      {
+        "cell": [
+          80,
+          400
+        ],
+        "kind": "hub",
+        "node_id": "node_amber_north"
+      },
+      {
+        "cell": [
+          170,
+          540
+        ],
+        "kind": "hub",
+        "node_id": "node_amber_south"
+      },
+      {
+        "cell": [
+          360,
+          430
+        ],
+        "kind": "hub",
+        "node_id": "node_mirrormere"
+      },
+      {
+        "cell": [
+          380,
+          600
+        ],
+        "kind": "hub",
+        "node_id": "node_mere_south"
+      },
+      {
+        "cell": [
+          560,
+          180
+        ],
+        "kind": "hub",
+        "node_id": "node_frost"
+      },
+      {
+        "cell": [
+          800,
+          100
+        ],
+        "kind": "hub",
+        "node_id": "node_glasswind"
+      },
+      {
+        "cell": [
+          580,
+          320
+        ],
+        "kind": "hub",
+        "node_id": "node_ember"
+      },
+      {
+        "cell": [
+          900,
+          420
+        ],
+        "kind": "hub",
+        "node_id": "node_saffron"
+      },
+      {
+        "cell": [
+          560,
+          560
+        ],
+        "kind": "hub",
+        "node_id": "node_verdant"
+      },
+      {
+        "cell": [
+          800,
+          560
+        ],
+        "kind": "hub",
+        "node_id": "node_pearl"
+      },
+      {
+        "cell": [
+          120,
+          640
+        ],
+        "kind": "hub",
+        "node_id": "node_sunken"
+      },
+      {
+        "cell": [
+          340,
+          620
+        ],
+        "kind": "hub",
+        "node_id": "node_ashwater"
+      },
+      {
+        "cell": [
+          408,
+          200
+        ],
+        "kind": "poi",
+        "node_id": "poi_crown_waystation"
+      },
+      {
+        "cell": [
+          440,
+          236
+        ],
+        "kind": "poi",
+        "node_id": "poi_crown_relay_shed"
+      },
+      {
+        "cell": [
+          420,
+          300
+        ],
+        "kind": "poi",
+        "node_id": "poi_crown_quarry"
+      },
+      {
+        "cell": [
+          260,
+          300
+        ],
+        "kind": "poi",
+        "node_id": "poi_crown_ferry_pile"
+      },
+      {
+        "cell": [
+          470,
+          150
+        ],
+        "kind": "poi",
+        "node_id": "poi_crown_barrow_field"
+      },
+      {
+        "cell": [
+          560,
+          180
+        ],
+        "kind": "poi",
+        "node_id": "poi_frost_wardhouse"
+      },
+      {
+        "cell": [
+          660,
+          80
+        ],
+        "kind": "poi",
+        "node_id": "poi_frost_ice_cave"
+      },
+      {
+        "cell": [
+          930,
+          120
+        ],
+        "kind": "poi",
+        "node_id": "poi_glasswind_light"
+      },
+      {
+        "cell": [
+          580,
+          320
+        ],
+        "kind": "poi",
+        "node_id": "poi_ember_old_forge"
+      },
+      {
+        "cell": [
+          540,
+          280
+        ],
+        "kind": "poi",
+        "node_id": "poi_ember_piton_works"
+      },
+      {
+        "cell": [
+          640,
+          380
+        ],
+        "kind": "poi",
+        "node_id": "poi_ember_convict_mine"
+      },
+      {
+        "cell": [
+          600,
+          420
+        ],
+        "kind": "poi",
+        "node_id": "poi_ember_fumarole"
+      },
+      {
+        "cell": [
+          900,
+          420
+        ],
+        "kind": "poi",
+        "node_id": "poi_saffron_drydock"
+      },
+      {
+        "cell": [
+          560,
+          560
+        ],
+        "kind": "poi",
+        "node_id": "poi_verdant_root_lift"
+      },
+      {
+        "cell": [
+          640,
+          600
+        ],
+        "kind": "poi",
+        "node_id": "poi_verdant_canopy_temple"
+      },
+      {
+        "cell": [
+          840,
+          600
+        ],
+        "kind": "poi",
+        "node_id": "poi_pearl_customs"
+      },
+      {
+        "cell": [
+          800,
+          560
+        ],
+        "kind": "poi",
+        "node_id": "poi_pearl_stilt_village"
+      },
+      {
+        "cell": [
+          80,
+          480
+        ],
+        "kind": "poi",
+        "node_id": "poi_amberwood_apothecary"
+      },
+      {
+        "cell": [
+          300,
+          420
+        ],
+        "kind": "poi",
+        "node_id": "poi_mirrormere_piles"
+      },
+      {
+        "cell": [
+          420,
+          440
+        ],
+        "kind": "poi",
+        "node_id": "poi_mirrormere_observatory"
+      },
+      {
+        "cell": [
+          320,
+          540
+        ],
+        "kind": "poi",
+        "node_id": "poi_mirrormere_reed_holt"
+      },
+      {
+        "cell": [
+          120,
+          640
+        ],
+        "kind": "poi",
+        "node_id": "poi_sunken_cenote"
+      },
+      {
+        "cell": [
+          340,
+          620
+        ],
+        "kind": "poi",
+        "node_id": "poi_ashwater_pump"
+      }
+    ],
+    "edges": [
+      {
+        "from": "node_refuge",
+        "kind": "trunk",
+        "mode": "foot",
+        "polyline": [
+          [
+            56,
+            218
+          ],
+          [
+            200,
+            210
+          ],
+          [
+            368,
+            200
+          ],
+          [
+            392,
+            200
+          ]
+        ],
+        "required_capabilities": [
+          "cap_filter"
+        ],
+        "risk": "high",
+        "route_id": "rt_east_seam",
+        "to": "node_crown_east"
+      },
+      {
+        "from": "node_refuge",
+        "kind": "trunk",
+        "mode": "foot",
+        "polyline": [
+          [
+            56,
+            218
+          ],
+          [
+            98,
+            218
+          ],
+          [
+            98,
+            221
+          ],
+          [
+            113,
+            221
+          ],
+          [
+            113,
+            225
+          ],
+          [
+            115,
+            225
+          ],
+          [
+            115,
+            226
+          ],
+          [
+            120,
+            226
+          ],
+          [
+            120,
+            230
+          ],
+          [
+            123,
+            230
+          ],
+          [
+            123,
+            233
+          ],
+          [
+            126,
+            233
+          ],
+          [
+            126,
+            238
+          ],
+          [
+            127,
+            238
+          ],
+          [
+            127,
+            240
+          ],
+          [
+            134,
+            240
+          ],
+          [
+            134,
+            243
+          ],
+          [
+            144,
+            243
+          ],
+          [
+            144,
+            245
+          ],
+          [
+            152,
+            245
+          ],
+          [
+            152,
+            248
+          ],
+          [
+            153,
+            248
+          ],
+          [
+            153,
+            249
+          ],
+          [
+            189,
+            249
+          ],
+          [
+            189,
+            252
+          ],
+          [
+            229,
+            252
+          ],
+          [
+            229,
+            253
+          ],
+          [
+            230,
+            253
+          ],
+          [
+            230,
+            254
+          ],
+          [
+            231,
+            254
+          ],
+          [
+            231,
+            255
+          ],
+          [
+            240,
+            255
+          ],
+          [
+            240,
+            256
+          ],
+          [
+            392,
+            256
+          ],
+          [
+            392,
+            200
+          ]
+        ],
+        "required_capabilities": [],
+        "risk": "low",
+        "route_id": "rt_crown_safe_approach",
+        "to": "node_crown_east"
+      },
+      {
+        "from": "node_refuge",
+        "kind": "trunk",
+        "mode": "foot",
+        "polyline": [
+          [
+            56,
+            218
+          ],
+          [
+            53,
+            240
+          ],
+          [
+            53,
+            264
+          ],
+          [
+            80,
+            400
+          ]
+        ],
+        "required_capabilities": [],
+        "risk": "low",
+        "route_id": "rt_south_seam",
+        "to": "node_amber_north"
+      },
+      {
+        "from": "node_crown_east",
+        "kind": "trunk",
+        "mode": "foot",
+        "polyline": [
+          [
+            392,
+            200
+          ],
+          [
+            440,
+            236
+          ],
+          [
+            420,
+            300
+          ],
+          [
+            300,
+            330
+          ]
+        ],
+        "required_capabilities": [],
+        "risk": "low",
+        "route_id": "rt_crown_buffer",
+        "to": "node_crown_south"
+      },
+      {
+        "from": "node_crown_south",
+        "kind": "trunk",
+        "mode": "foot",
+        "polyline": [
+          [
+            300,
+            330
+          ],
+          [
+            260,
+            300
+          ],
+          [
+            330,
+            360
+          ],
+          [
+            360,
+            430
+          ]
+        ],
+        "required_capabilities": [],
+        "risk": "low",
+        "route_id": "rt_crown_mere",
+        "to": "node_mirrormere"
+      },
+      {
+        "from": "node_amber_north",
+        "kind": "trunk",
+        "mode": "foot",
+        "polyline": [
+          [
+            80,
+            400
+          ],
+          [
+            120,
+            440
+          ],
+          [
+            200,
+            500
+          ],
+          [
+            300,
+            420
+          ],
+          [
+            360,
+            430
+          ]
+        ],
+        "required_capabilities": [],
+        "risk": "low",
+        "route_id": "rt_amber_mere",
+        "to": "node_mirrormere"
+      },
+      {
+        "from": "node_crown_east",
+        "kind": "trunk",
+        "mode": "pass",
+        "polyline": [
+          [
+            392,
+            200
+          ],
+          [
+            470,
+            180
+          ],
+          [
+            540,
+            120
+          ],
+          [
+            560,
+            180
+          ]
+        ],
+        "required_capabilities": [
+          "cap_climb"
+        ],
+        "risk": "mid",
+        "route_id": "rt_crown_frost",
+        "to": "node_frost"
+      },
+      {
+        "from": "node_frost",
+        "kind": "trunk",
+        "mode": "foot",
+        "polyline": [
+          [
+            560,
+            180
+          ],
+          [
+            660,
+            80
+          ],
+          [
+            720,
+            180
+          ],
+          [
+            800,
+            100
+          ]
+        ],
+        "required_capabilities": [
+          "cap_thermal"
+        ],
+        "risk": "mid",
+        "route_id": "rt_frost_coast",
+        "to": "node_glasswind"
+      },
+      {
+        "from": "node_frost",
+        "kind": "trunk",
+        "mode": "foot",
+        "polyline": [
+          [
+            560,
+            180
+          ],
+          [
+            580,
+            210
+          ],
+          [
+            560,
+            270
+          ],
+          [
+            580,
+            320
+          ]
+        ],
+        "required_capabilities": [
+          "cap_thermal"
+        ],
+        "risk": "mid",
+        "route_id": "rt_frost_ember",
+        "to": "node_ember"
+      },
+      {
+        "from": "node_ember",
+        "kind": "trunk",
+        "mode": "foot",
+        "polyline": [
+          [
+            580,
+            320
+          ],
+          [
+            520,
+            330
+          ],
+          [
+            470,
+            390
+          ],
+          [
+            420,
+            440
+          ]
+        ],
+        "required_capabilities": [
+          "cap_filter"
+        ],
+        "risk": "mid",
+        "route_id": "rt_ember_mere",
+        "to": "node_mirrormere"
+      },
+      {
+        "from": "node_ember",
+        "kind": "trunk",
+        "mode": "foot",
+        "polyline": [
+          [
+            580,
+            320
+          ],
+          [
+            660,
+            460
+          ],
+          [
+            800,
+            300
+          ]
+        ],
+        "required_capabilities": [
+          "cap_seal_1"
+        ],
+        "risk": "mid",
+        "route_id": "rt_ember_coast",
+        "to": "node_saffron"
+      },
+      {
+        "from": "node_glasswind",
+        "kind": "trunk",
+        "mode": "foot",
+        "polyline": [
+          [
+            800,
+            100
+          ],
+          [
+            860,
+            160
+          ],
+          [
+            900,
+            300
+          ],
+          [
+            900,
+            420
+          ]
+        ],
+        "required_capabilities": [
+          "cap_stormward"
+        ],
+        "risk": "mid",
+        "route_id": "rt_coast_harbor",
+        "to": "node_saffron"
+      },
+      {
+        "from": "node_saffron",
+        "kind": "trunk",
+        "mode": "boat",
+        "polyline": [
+          [
+            900,
+            420
+          ],
+          [
+            920,
+            460
+          ],
+          [
+            860,
+            540
+          ],
+          [
+            800,
+            560
+          ]
+        ],
+        "required_capabilities": [
+          "cap_boat"
+        ],
+        "risk": "late",
+        "route_id": "rt_saffron_pearl",
+        "to": "node_pearl"
+      },
+      {
+        "from": "node_ember",
+        "kind": "trunk",
+        "mode": "foot",
+        "polyline": [
+          [
+            580,
+            320
+          ],
+          [
+            600,
+            420
+          ],
+          [
+            640,
+            480
+          ],
+          [
+            560,
+            560
+          ]
+        ],
+        "required_capabilities": [
+          "cap_filter",
+          "cap_climb"
+        ],
+        "risk": "late",
+        "route_id": "rt_ember_verdant",
+        "to": "node_verdant"
+      },
+      {
+        "from": "node_verdant",
+        "kind": "trunk",
+        "mode": "foot",
+        "polyline": [
+          [
+            560,
+            560
+          ],
+          [
+            640,
+            600
+          ],
+          [
+            700,
+            660
+          ],
+          [
+            800,
+            560
+          ]
+        ],
+        "required_capabilities": [
+          "cap_seal_2",
+          "cap_filter"
+        ],
+        "risk": "late",
+        "route_id": "rt_verdant_pearl",
+        "to": "node_pearl"
+      },
+      {
+        "from": "node_mirrormere",
+        "kind": "trunk",
+        "mode": "foot",
+        "polyline": [
+          [
+            360,
+            430
+          ],
+          [
+            360,
+            515
+          ],
+          [
+            340,
+            570
+          ],
+          [
+            340,
+            620
+          ]
+        ],
+        "required_capabilities": [
+          "cap_filter"
+        ],
+        "risk": "late",
+        "route_id": "rt_mere_fen",
+        "to": "node_ashwater"
+      },
+      {
+        "from": "node_amber_north",
+        "kind": "trunk",
+        "mode": "foot",
+        "polyline": [
+          [
+            80,
+            400
+          ],
+          [
+            60,
+            480
+          ],
+          [
+            60,
+            600
+          ],
+          [
+            120,
+            640
+          ]
+        ],
+        "required_capabilities": [
+          "cap_filter"
+        ],
+        "risk": "late",
+        "route_id": "rt_amber_sunken",
+        "to": "node_sunken"
+      },
+      {
+        "from": "node_sunken",
+        "kind": "trunk",
+        "mode": "foot",
+        "polyline": [
+          [
+            120,
+            640
+          ],
+          [
+            200,
+            660
+          ],
+          [
+            300,
+            640
+          ]
+        ],
+        "required_capabilities": [
+          "cap_deepward"
+        ],
+        "risk": "late",
+        "route_id": "rt_sunken_fen",
+        "to": "node_ashwater"
+      },
+      {
+        "from": "node_amber_north",
+        "kind": "trunk",
+        "mode": "foot",
+        "polyline": [
+          [
+            80,
+            400
+          ],
+          [
+            180,
+            420
+          ],
+          [
+            200,
+            500
+          ],
+          [
+            170,
+            540
+          ]
+        ],
+        "required_capabilities": [],
+        "risk": "early",
+        "route_id": "rt_amber_loop",
+        "to": "node_amber_south"
+      },
+      {
+        "from": "node_mirrormere",
+        "kind": "trunk",
+        "mode": "foot",
+        "polyline": [
+          [
+            360,
+            430
+          ],
+          [
+            420,
+            440
+          ],
+          [
+            440,
+            520
+          ],
+          [
+            380,
+            600
+          ]
+        ],
+        "required_capabilities": [
+          "cap_boat"
+        ],
+        "risk": "mid",
+        "route_id": "rt_mere_loop",
+        "to": "node_mere_south"
+      },
+      {
+        "from": "node_amber_south",
+        "kind": "trunk",
+        "mode": "foot",
+        "polyline": [
+          [
+            170,
+            540
+          ],
+          [
+            180,
+            600
+          ],
+          [
+            60,
+            600
+          ],
+          [
+            120,
+            640
+          ]
+        ],
+        "required_capabilities": [
+          "cap_filter"
+        ],
+        "risk": "late",
+        "route_id": "rt_amber_sunken_south",
+        "to": "node_sunken"
+      },
+      {
+        "from": "node_mere_south",
+        "kind": "trunk",
+        "mode": "foot",
+        "polyline": [
+          [
+            380,
+            600
+          ],
+          [
+            340,
+            620
+          ]
+        ],
+        "required_capabilities": [
+          "cap_filter"
+        ],
+        "risk": "late",
+        "route_id": "rt_mere_fen_south",
+        "to": "node_ashwater"
+      },
+      {
+        "from": "node_crown_east",
+        "kind": "spur",
+        "mode": "foot",
+        "polyline": [
+          [
+            392,
+            200
+          ],
+          [
+            408,
+            200
+          ]
+        ],
+        "required_capabilities": [],
+        "risk": "early",
+        "route_id": "sp_poi_crown_waystation",
+        "to": "poi_crown_waystation"
+      },
+      {
+        "from": "node_crown_east",
+        "kind": "spur",
+        "mode": "foot",
+        "polyline": [
+          [
+            392,
+            200
+          ],
+          [
+            440,
+            236
+          ]
+        ],
+        "required_capabilities": [
+          "cap_salvage"
+        ],
+        "risk": "early",
+        "route_id": "sp_poi_crown_relay_shed",
+        "to": "poi_crown_relay_shed"
+      },
+      {
+        "from": "node_crown_east",
+        "kind": "spur",
+        "mode": "foot",
+        "polyline": [
+          [
+            392,
+            200
+          ],
+          [
+            420,
+            300
+          ]
+        ],
+        "required_capabilities": [],
+        "risk": "early",
+        "route_id": "sp_poi_crown_quarry",
+        "to": "poi_crown_quarry"
+      },
+      {
+        "from": "node_crown_south",
+        "kind": "spur",
+        "mode": "foot",
+        "polyline": [
+          [
+            300,
+            330
+          ],
+          [
+            260,
+            300
+          ]
+        ],
+        "required_capabilities": [],
+        "risk": "early",
+        "route_id": "sp_poi_crown_ferry_pile",
+        "to": "poi_crown_ferry_pile"
+      },
+      {
+        "from": "node_crown_east",
+        "kind": "spur",
+        "mode": "foot",
+        "polyline": [
+          [
+            392,
+            200
+          ],
+          [
+            470,
+            150
+          ]
+        ],
+        "required_capabilities": [
+          "cap_seal_1"
+        ],
+        "risk": "early",
+        "route_id": "sp_poi_crown_barrow_field",
+        "to": "poi_crown_barrow_field"
+      },
+      {
+        "from": "node_frost",
+        "kind": "spur",
+        "mode": "foot",
+        "polyline": [
+          [
+            560,
+            180
+          ],
+          [
+            560,
+            180
+          ]
+        ],
+        "required_capabilities": [
+          "cap_seal_1"
+        ],
+        "risk": "mid",
+        "route_id": "sp_poi_frost_wardhouse",
+        "to": "poi_frost_wardhouse"
+      },
+      {
+        "from": "node_frost",
+        "kind": "spur",
+        "mode": "foot",
+        "polyline": [
+          [
+            560,
+            180
+          ],
+          [
+            660,
+            80
+          ]
+        ],
+        "required_capabilities": [
+          "cap_thermal"
+        ],
+        "risk": "mid",
+        "route_id": "sp_poi_frost_ice_cave",
+        "to": "poi_frost_ice_cave"
+      },
+      {
+        "from": "node_glasswind",
+        "kind": "spur",
+        "mode": "foot",
+        "polyline": [
+          [
+            800,
+            100
+          ],
+          [
+            930,
+            120
+          ]
+        ],
+        "required_capabilities": [
+          "cap_seal_2"
+        ],
+        "risk": "mid",
+        "route_id": "sp_poi_glasswind_light",
+        "to": "poi_glasswind_light"
+      },
+      {
+        "from": "node_ember",
+        "kind": "spur",
+        "mode": "foot",
+        "polyline": [
+          [
+            580,
+            320
+          ],
+          [
+            580,
+            320
+          ]
+        ],
+        "required_capabilities": [
+          "cap_filter",
+          "cap_power_1",
+          "cap_seal_1"
+        ],
+        "risk": "mid",
+        "route_id": "sp_poi_ember_old_forge",
+        "to": "poi_ember_old_forge"
+      },
+      {
+        "from": "node_ember",
+        "kind": "spur",
+        "mode": "foot",
+        "polyline": [
+          [
+            580,
+            320
+          ],
+          [
+            540,
+            280
+          ]
+        ],
+        "required_capabilities": [
+          "cap_power_1"
+        ],
+        "risk": "mid",
+        "route_id": "sp_poi_ember_piton_works",
+        "to": "poi_ember_piton_works"
+      },
+      {
+        "from": "node_ember",
+        "kind": "spur",
+        "mode": "foot",
+        "polyline": [
+          [
+            580,
+            320
+          ],
+          [
+            640,
+            380
+          ]
+        ],
+        "required_capabilities": [
+          "cap_filter",
+          "cap_seal_2"
+        ],
+        "risk": "mid",
+        "route_id": "sp_poi_ember_convict_mine",
+        "to": "poi_ember_convict_mine"
+      },
+      {
+        "from": "node_ember",
+        "kind": "spur",
+        "mode": "foot",
+        "polyline": [
+          [
+            580,
+            320
+          ],
+          [
+            600,
+            420
+          ]
+        ],
+        "required_capabilities": [
+          "cap_filter"
+        ],
+        "risk": "mid",
+        "route_id": "sp_poi_ember_fumarole",
+        "to": "poi_ember_fumarole"
+      },
+      {
+        "from": "node_saffron",
+        "kind": "spur",
+        "mode": "foot",
+        "polyline": [
+          [
+            900,
+            420
+          ],
+          [
+            900,
+            420
+          ]
+        ],
+        "required_capabilities": [
+          "cap_power_1"
+        ],
+        "risk": "mid",
+        "route_id": "sp_poi_saffron_drydock",
+        "to": "poi_saffron_drydock"
+      },
+      {
+        "from": "node_verdant",
+        "kind": "spur",
+        "mode": "foot",
+        "polyline": [
+          [
+            560,
+            560
+          ],
+          [
+            560,
+            560
+          ]
+        ],
+        "required_capabilities": [
+          "cap_climb",
+          "cap_filter",
+          "cap_thermal"
+        ],
+        "risk": "late",
+        "route_id": "sp_poi_verdant_root_lift",
+        "to": "poi_verdant_root_lift"
+      },
+      {
+        "from": "node_verdant",
+        "kind": "spur",
+        "mode": "foot",
+        "polyline": [
+          [
+            560,
+            560
+          ],
+          [
+            640,
+            600
+          ]
+        ],
+        "required_capabilities": [
+          "cap_climb",
+          "cap_filter",
+          "cap_seal_3"
+        ],
+        "risk": "late",
+        "route_id": "sp_poi_verdant_canopy_temple",
+        "to": "poi_verdant_canopy_temple"
+      },
+      {
+        "from": "node_pearl",
+        "kind": "spur",
+        "mode": "foot",
+        "polyline": [
+          [
+            800,
+            560
+          ],
+          [
+            840,
+            600
+          ]
+        ],
+        "required_capabilities": [
+          "cap_boat",
+          "cap_seal_2",
+          "cap_tide_ward"
+        ],
+        "risk": "late",
+        "route_id": "sp_poi_pearl_customs",
+        "to": "poi_pearl_customs"
+      },
+      {
+        "from": "node_pearl",
+        "kind": "spur",
+        "mode": "foot",
+        "polyline": [
+          [
+            800,
+            560
+          ],
+          [
+            800,
+            560
+          ]
+        ],
+        "required_capabilities": [
+          "cap_boat"
+        ],
+        "risk": "late",
+        "route_id": "sp_poi_pearl_stilt_village",
+        "to": "poi_pearl_stilt_village"
+      },
+      {
+        "from": "node_amber_north",
+        "kind": "spur",
+        "mode": "foot",
+        "polyline": [
+          [
+            80,
+            400
+          ],
+          [
+            80,
+            480
+          ]
+        ],
+        "required_capabilities": [
+          "cap_salvage"
+        ],
+        "risk": "early",
+        "route_id": "sp_poi_amberwood_apothecary",
+        "to": "poi_amberwood_apothecary"
+      },
+      {
+        "from": "node_mirrormere",
+        "kind": "spur",
+        "mode": "foot",
+        "polyline": [
+          [
+            360,
+            430
+          ],
+          [
+            300,
+            420
+          ]
+        ],
+        "required_capabilities": [],
+        "risk": "early",
+        "route_id": "sp_poi_mirrormere_piles",
+        "to": "poi_mirrormere_piles"
+      },
+      {
+        "from": "node_mirrormere",
+        "kind": "spur",
+        "mode": "foot",
+        "polyline": [
+          [
+            360,
+            430
+          ],
+          [
+            420,
+            440
+          ]
+        ],
+        "required_capabilities": [
+          "cap_seal_2"
+        ],
+        "risk": "mid",
+        "route_id": "sp_poi_mirrormere_observatory",
+        "to": "poi_mirrormere_observatory"
+      },
+      {
+        "from": "node_ashwater",
+        "kind": "spur",
+        "mode": "foot",
+        "polyline": [
+          [
+            340,
+            620
+          ],
+          [
+            320,
+            540
+          ]
+        ],
+        "required_capabilities": [],
+        "risk": "early",
+        "route_id": "sp_poi_mirrormere_reed_holt",
+        "to": "poi_mirrormere_reed_holt"
+      },
+      {
+        "from": "node_sunken",
+        "kind": "spur",
+        "mode": "foot",
+        "polyline": [
+          [
+            120,
+            640
+          ],
+          [
+            120,
+            640
+          ]
+        ],
+        "required_capabilities": [
+          "cap_deepward"
+        ],
+        "risk": "late",
+        "route_id": "sp_poi_sunken_cenote",
+        "to": "poi_sunken_cenote"
+      },
+      {
+        "from": "node_ashwater",
+        "kind": "spur",
+        "mode": "foot",
+        "polyline": [
+          [
+            340,
+            620
+          ],
+          [
+            340,
+            620
+          ]
+        ],
+        "required_capabilities": [
+          "cap_filter",
+          "cap_power_1",
+          "cap_seal_2"
+        ],
+        "risk": "late",
+        "route_id": "sp_poi_ashwater_pump",
+        "to": "poi_ashwater_pump"
+      }
+    ]
+  },
+  "hazards": [
+    {
+      "clue": "legacy crucible basin",
+      "hazard_id": "hz_crown_heat",
+      "kind": "heat",
+      "rect": [
+        160,
+        184,
+        64,
+        40
+      ],
+      "region_id": "r_ashen_crown",
+      "requires": "cap_filter",
+      "severity": 2
+    },
+    {
+      "clue": "legacy fen rot",
+      "hazard_id": "hz_crown_rot",
+      "kind": "poison",
+      "rect": [
+        232,
+        196,
+        104,
+        48
+      ],
+      "region_id": "r_ashen_crown",
+      "requires": "cap_filter",
+      "severity": 2
+    },
+    {
+      "clue": "legacy conduit bleed",
+      "hazard_id": "hz_crown_cold",
+      "kind": "cold",
+      "rect": [
+        246,
+        122,
+        62,
+        34
+      ],
+      "region_id": "r_ashen_crown",
+      "requires": "cap_thermal",
+      "severity": 2
+    },
+    {
+      "clue": "exposed ar\u00eate whiteout",
+      "hazard_id": "hz_frost_ridge",
+      "kind": "cold",
+      "rect": [
+        560,
+        40,
+        150,
+        120
+      ],
+      "region_id": "r_frost_crown",
+      "requires": "cap_thermal",
+      "severity": 3
+    },
+    {
+      "clue": "fumarole field, dead vegetation and yellow crust",
+      "hazard_id": "hz_ember_gas",
+      "kind": "acid_gas",
+      "rect": [
+        560,
+        300,
+        120,
+        90
+      ],
+      "region_id": "r_ember_steppe",
+      "requires": "cap_filter",
+      "severity": 3
+    },
+    {
+      "clue": "dry wadi, no shade, salt crust",
+      "hazard_id": "hz_saffron_heat",
+      "kind": "heat",
+      "rect": [
+        800,
+        280,
+        120,
+        80
+      ],
+      "region_id": "r_saffron_coast",
+      "requires": "cap_thermal",
+      "severity": 2
+    },
+    {
+      "clue": "spore hollow, discoloured leaves",
+      "hazard_id": "hz_verdant_spore",
+      "kind": "poison",
+      "rect": [
+        540,
+        540,
+        150,
+        120
+      ],
+      "region_id": "r_verdant_fold",
+      "requires": "cap_filter",
+      "severity": 3
+    },
+    {
+      "clue": "tidal channels, barnacle lines, drift wrack",
+      "hazard_id": "hz_pearl_tide",
+      "kind": "tide",
+      "rect": [
+        790,
+        540,
+        160,
+        150
+      ],
+      "region_id": "r_pearl_mangroves",
+      "requires": "cap_boat",
+      "severity": 3
+    },
+    {
+      "clue": "gas bubbles, bleached reeds, still water",
+      "hazard_id": "hz_ashwater_miasma",
+      "kind": "poison",
+      "rect": [
+        270,
+        600,
+        180,
+        120
+      ],
+      "region_id": "r_ashwater_fen",
+      "requires": "cap_filter",
+      "severity": 4
+    },
+    {
+      "clue": "cenote depth, cold water, no surface exit",
+      "hazard_id": "hz_sunken_pressure",
+      "kind": "pressure",
+      "rect": [
+        60,
+        620,
+        120,
+        100
+      ],
+      "region_id": "r_sunken_orchard",
+      "requires": "cap_deepward",
+      "severity": 4
+    }
+  ],
+  "capability_pois": [
+    {
+      "poi_id": "poi_amberwood_apothecary",
+      "name": "Orchard Apothecary",
+      "region_id": "r_amberwood",
+      "cell": [
+        80,
+        480
+      ],
+      "required_capabilities": [
+        "cap_salvage"
+      ],
+      "grants_capabilities": [
+        "cap_filter"
+      ],
+      "hazard_id": null,
+      "material_keys": [
+        "rare_herb",
+        "fibre",
+        "honey"
+      ],
+      "purpose": "Filter gear recipe from herb, fibre and a venom sample."
+    },
+    {
+      "poi_id": "poi_crown_relay_shed",
+      "name": "Crown Relay Shed",
+      "region_id": "r_ashen_crown",
+      "cell": [
+        440,
+        236
+      ],
+      "required_capabilities": [
+        "cap_salvage"
+      ],
+      "grants_capabilities": [
+        "cap_power_1"
+      ],
+      "hazard_id": null,
+      "material_keys": [
+        "copper",
+        "salvage"
+      ],
+      "purpose": "A dead copper circuit; restoring it teaches fuel+switch+door."
+    },
+    {
+      "poi_id": "poi_crown_waystation",
+      "name": "Ashen Waystation",
+      "region_id": "r_ashen_crown",
+      "cell": [
+        408,
+        200
+      ],
+      "required_capabilities": [],
+      "grants_capabilities": [
+        "cap_salvage",
+        "cap_seal_1"
+      ],
+      "hazard_id": null,
+      "material_keys": [
+        "salvage",
+        "iron"
+      ],
+      "purpose": "Teach salvage->spares->seal grammar at the new east postern."
+    },
+    {
+      "poi_id": "poi_ember_old_forge",
+      "name": "The Old Forge",
+      "region_id": "r_ember_steppe",
+      "cell": [
+        580,
+        320
+      ],
+      "required_capabilities": [
+        "cap_filter",
+        "cap_power_1",
+        "cap_seal_1"
+      ],
+      "grants_capabilities": [
+        "cap_seal_2"
+      ],
+      "hazard_id": "hz_ember_gas",
+      "material_keys": [
+        "copper",
+        "sulfur",
+        "salvage"
+      ],
+      "purpose": "Tier-2 seal forging; sulfur and copper share a furnace."
+    },
+    {
+      "poi_id": "poi_ember_piton_works",
+      "name": "Piton Works",
+      "region_id": "r_ember_steppe",
+      "cell": [
+        540,
+        280
+      ],
+      "required_capabilities": [
+        "cap_power_1"
+      ],
+      "grants_capabilities": [
+        "cap_climb"
+      ],
+      "hazard_id": null,
+      "material_keys": [
+        "iron",
+        "fibre"
+      ],
+      "purpose": "Rope and pitons open climb alternates."
+    },
+    {
+      "poi_id": "poi_frost_wardhouse",
+      "name": "Wardhouse of Rime",
+      "region_id": "r_frost_crown",
+      "cell": [
+        560,
+        180
+      ],
+      "required_capabilities": [
+        "cap_seal_1"
+      ],
+      "grants_capabilities": [
+        "cap_thermal"
+      ],
+      "hazard_id": "hz_frost_ridge",
+      "material_keys": [
+        "glacial_iron",
+        "frost_resin"
+      ],
+      "purpose": "Thermal ward recipe from glacial iron and frost resin."
+    },
+    {
+      "poi_id": "poi_glasswind_light",
+      "name": "Glasswind Light",
+      "region_id": "r_glasswind_coast",
+      "cell": [
+        930,
+        120
+      ],
+      "required_capabilities": [
+        "cap_seal_2"
+      ],
+      "grants_capabilities": [
+        "cap_stormward"
+      ],
+      "hazard_id": null,
+      "material_keys": [
+        "storm_glass",
+        "silica_sand"
+      ],
+      "purpose": "Storm-warded signal reveals wrecks and a coastal shortcut."
+    },
+    {
+      "poi_id": "poi_pearl_customs",
+      "name": "Drowned Customs House",
+      "region_id": "r_pearl_mangroves",
+      "cell": [
+        840,
+        600
+      ],
+      "required_capabilities": [
+        "cap_boat",
+        "cap_seal_2",
+        "cap_tide_ward"
+      ],
+      "grants_capabilities": [
+        "cap_seal_3"
+      ],
+      "hazard_id": "hz_pearl_tide",
+      "material_keys": [
+        "abyssal_pearl",
+        "pearl",
+        "salvage"
+      ],
+      "purpose": "Tier-3 seal from abyssal pearl; boat-dependent layered vault."
+    },
+    {
+      "poi_id": "poi_pearl_stilt_village",
+      "name": "Stilt Village",
+      "region_id": "r_pearl_mangroves",
+      "cell": [
+        800,
+        560
+      ],
+      "required_capabilities": [
+        "cap_boat"
+      ],
+      "grants_capabilities": [
+        "cap_tide_ward"
+      ],
+      "hazard_id": null,
+      "material_keys": [
+        "pearl",
+        "hardwood",
+        "salt"
+      ],
+      "purpose": "NPC trade and a floating outpost site; tide-ward recipe."
+    },
+    {
+      "poi_id": "poi_saffron_drydock",
+      "name": "Saffron Drydock",
+      "region_id": "r_saffron_coast",
+      "cell": [
+        900,
+        420
+      ],
+      "required_capabilities": [
+        "cap_power_1"
+      ],
+      "grants_capabilities": [
+        "cap_boat"
+      ],
+      "hazard_id": null,
+      "material_keys": [
+        "hardwood",
+        "rubber_sap",
+        "salvage"
+      ],
+      "purpose": "Boat hull and tar; opens lake and delta logistics."
+    },
+    {
+      "poi_id": "poi_verdant_root_lift",
+      "name": "Root Lift Terrace",
+      "region_id": "r_verdant_fold",
+      "cell": [
+        560,
+        560
+      ],
+      "required_capabilities": [
+        "cap_climb",
+        "cap_filter",
+        "cap_thermal"
+      ],
+      "grants_capabilities": [
+        "cap_deepward"
+      ],
+      "hazard_id": "hz_verdant_spore",
+      "material_keys": [
+        "hardwood",
+        "rubber_sap",
+        "aether_crystal"
+      ],
+      "purpose": "Living-wood elevator; combines thermal, filter and climb prep."
+    }
+  ],
+  "product_sources": [
+    {
+      "source_id": "live_oak_wood",
+      "binding_status": "CONFIRMED_LIVE_SURV_010",
+      "item_id": "oak_wood",
+      "yield_per_claim": 2,
+      "restock_active_seconds": 0,
+      "route_node": "node_refuge",
+      "round_trip_tiles": 32,
+      "risk": "low",
+      "requires_capabilities": [],
+      "requires_items": [],
+      "one_time": false,
+      "a1_material_key": null,
+      "max_claims_per_session": 20
+    },
+    {
+      "source_id": "live_stone_chunk",
+      "binding_status": "CONFIRMED_LIVE_SURV_010",
+      "item_id": "stone_chunk",
+      "yield_per_claim": 2,
+      "restock_active_seconds": 0,
+      "route_node": "node_refuge",
+      "round_trip_tiles": 32,
+      "risk": "low",
+      "requires_capabilities": [],
+      "requires_items": [],
+      "one_time": false,
+      "a1_material_key": null,
+      "max_claims_per_session": 20
+    },
+    {
+      "source_id": "live_iron_scrap",
+      "binding_status": "CONFIRMED_LIVE_SURV_010",
+      "item_id": "iron_scrap",
+      "yield_per_claim": 2,
+      "restock_active_seconds": 0,
+      "route_node": "node_refuge",
+      "round_trip_tiles": 32,
+      "risk": "low",
+      "requires_capabilities": [],
+      "requires_items": [],
+      "one_time": false,
+      "a1_material_key": null,
+      "max_claims_per_session": 20
+    },
+    {
+      "source_id": "live_reed_fibre",
+      "binding_status": "CONFIRMED_LIVE_SURV_010",
+      "item_id": "reed_fibre",
+      "yield_per_claim": 2,
+      "restock_active_seconds": 0,
+      "route_node": "node_refuge",
+      "round_trip_tiles": 32,
+      "risk": "low",
+      "requires_capabilities": [],
+      "requires_items": [],
+      "one_time": false,
+      "a1_material_key": null,
+      "max_claims_per_session": 20
+    },
+    {
+      "source_id": "early_roadside_salvage",
+      "binding_status": "SUPERSEDED_BY_A1_NOVICE_BOOTSTRAP_NOT_USED",
+      "loot_table": "roadside_cache",
+      "restock_active_seconds": 0,
+      "route_node": "node_refuge",
+      "round_trip_tiles": 24,
+      "risk": "low",
+      "requires_capabilities": [],
+      "requires_items": [],
+      "one_time": false,
+      "a1_material_key": "salvage",
+      "note": "Historical V1 provisional bootstrap; V2 uses A1 Ashen Waystation locker/ledger and safe approach. Not claimed in baseline.",
+      "max_claims_per_session": 2
+    },
+    {
+      "source_id": "a1_crown_salvage",
+      "binding_status": "A1_PINNED_A3_BOUND",
+      "world_binding_id": "a1_waystation_roadside_cache_v3",
+      "source_class": "roadside_cache",
+      "instance_id": "node_waystation_cache",
+      "poi_id": "poi_crown_waystation",
+      "a1_material_key": "salvage",
+      "outputs": {
+        "iron_scrap": 3,
+        "knowledge_spares": 2
+      },
+      "restock_active_seconds": 1800,
+      "risk": "low",
+      "requires_capabilities": [
+        "cap_salvage"
+      ],
+      "requires_items": [],
+      "one_time": false,
+      "max_claims_per_session": 1,
+      "note": "Canonical A1 outside Waystation cache: deterministic 3 iron_scrap + 2 knowledge_spares per 1800 ACTIVE seconds. The locker itself grants cap_salvage and ZERO items. This is the no-Gold/no-Core bootstrap for relay, research_kit and make_spares; it does not replace make_spares sustain."
+    },
+    {
+      "source_id": "a1_crown_tuff",
+      "binding_status": "A1_AUTHORED_PROPOSAL_A3_DIRECT_MAPPING",
+      "poi_id": "poi_crown_quarry",
+      "a1_material_key": "stone",
+      "item_id": "stone_chunk",
+      "yield_per_claim": 2,
+      "restock_active_seconds": 600,
+      "risk": "low",
+      "requires_capabilities": [
+        "cap_filter"
+      ],
+      "requires_items": [
+        "stone_pick"
+      ],
+      "one_time": false,
+      "max_claims_per_session": 1
+    },
+    {
+      "source_id": "a1_crown_iron",
+      "binding_status": "A1_AUTHORED_PROPOSAL_A3_DIRECT_MAPPING",
+      "poi_id": "poi_crown_quarry",
+      "a1_material_key": "iron",
+      "item_id": "iron_ore",
+      "yield_per_claim": 2,
+      "restock_active_seconds": 600,
+      "risk": "low",
+      "requires_capabilities": [
+        "cap_filter"
+      ],
+      "requires_items": [
+        "stone_pick"
+      ],
+      "one_time": false,
+      "max_claims_per_session": 1
+    },
+    {
+      "source_id": "a1_mere_reed",
+      "binding_status": "A1_AUTHORED_PROPOSAL_A3_DIRECT_MAPPING",
+      "poi_id": "poi_mirrormere_reed_holt",
+      "a1_material_key": "reed_fibre",
+      "item_id": "reed_fibre",
+      "yield_per_claim": 2,
+      "restock_active_seconds": 600,
+      "risk": "low",
+      "requires_capabilities": [],
+      "requires_items": [],
+      "one_time": false,
+      "max_claims_per_session": 1
+    },
+    {
+      "source_id": "a1_mere_clay",
+      "binding_status": "A1_AUTHORED_PROPOSAL_A3_DIRECT_MAPPING",
+      "poi_id": "poi_mirrormere_piles",
+      "a1_material_key": "clay",
+      "item_id": "clay",
+      "yield_per_claim": 2,
+      "restock_active_seconds": 600,
+      "risk": "low",
+      "requires_capabilities": [],
+      "requires_items": [],
+      "one_time": false,
+      "max_claims_per_session": 1
+    },
+    {
+      "source_id": "a1_ember_sulfur",
+      "binding_status": "A1_AUTHORED_PROPOSAL_A3_DIRECT_MAPPING",
+      "poi_id": "poi_ember_fumarole",
+      "a1_material_key": "sulfur",
+      "item_id": "sulfur",
+      "yield_per_claim": 2,
+      "restock_active_seconds": 600,
+      "risk": "medium",
+      "requires_capabilities": [
+        "cap_filter"
+      ],
+      "requires_items": [],
+      "one_time": false,
+      "max_claims_per_session": 1
+    },
+    {
+      "source_id": "legacy_chapter1_rewards",
+      "binding_status": "LIVE_EXISTING_REWARDS_PRODUCT_TIMING_PROPOSAL",
+      "route_node": "node_refuge",
+      "round_trip_tiles": 64,
+      "risk": "combat",
+      "requires_capabilities": [],
+      "requires_items": [],
+      "one_time": true,
+      "outputs": {
+        "crypt_bone_shard": 30,
+        "soul_ember": 20,
+        "venom_spine": 3,
+        "reaper_essence": 2,
+        "predator_jaw": 1,
+        "fractured_axe_insignia": 1
+      },
+      "note": "One-time chapter-1 reward cluster; quantities/timing are SOH proposals, not repeatable farm."
+    },
+    {
+      "source_id": "specimen_ember",
+      "binding_status": "PROVISIONAL_A3_BINDING_TO_A1_POI",
+      "poi_id": "poi_crown_barrow_field",
+      "a1_core_family": "ember",
+      "item_id": "core_ember",
+      "risk": "medium",
+      "requires_capabilities": [
+        "cap_seal_1"
+      ],
+      "requires_items": [],
+      "one_time": true,
+      "discovery_chance": 1.0,
+      "note": "A1 outer barrow damaged-core clue; runtime condition/uses remain catalog max until A0/A4 verify."
+    },
+    {
+      "source_id": "specimen_frost",
+      "binding_status": "PROVISIONAL_A3_BINDING_TO_A1_POI",
+      "poi_id": "poi_frost_ice_cave",
+      "a1_core_family": "frost",
+      "item_id": "core_frost",
+      "risk": "high",
+      "requires_capabilities": [
+        "cap_thermal",
+        "cap_seal_2"
+      ],
+      "requires_items": [],
+      "one_time": true,
+      "discovery_chance": 1.0
+    },
+    {
+      "source_id": "specimen_venom",
+      "binding_status": "PROVISIONAL_A3_BINDING_TO_A1_POI",
+      "poi_id": "poi_verdant_canopy_temple",
+      "a1_core_family": "venom",
+      "item_id": "core_venom",
+      "risk": "high",
+      "requires_capabilities": [
+        "cap_climb",
+        "cap_filter",
+        "cap_seal_3"
+      ],
+      "requires_items": [],
+      "one_time": true,
+      "discovery_chance": 1.0
+    },
+    {
+      "source_id": "catalyst_vault",
+      "binding_status": "PROVISIONAL_A3_BINDING_NOT_A1_APPROVED",
+      "poi_id": "poi_ember_convict_mine",
+      "item_id": "ancient_catalyst",
+      "risk": "high",
+      "requires_capabilities": [
+        "cap_filter",
+        "cap_seal_2"
+      ],
+      "requires_items": [],
+      "one_time": true,
+      "discovery_chance": 0.7,
+      "note": "A3 sealed-archive catalyst bound provisionally to A1 acid-gas vault; A1 has not approved this loot identity."
+    },
+    {
+      "source_id": "waystation_locker",
+      "binding_status": "CANONICAL_A1_CAPABILITY_ONLY",
+      "poi_id": "poi_crown_waystation",
+      "a1_material_key": "salvage",
+      "outputs": {},
+      "risk": "low",
+      "requires_capabilities": [],
+      "requires_items": [],
+      "one_time": true,
+      "note": "A1 canonical locker grants cap_salvage and ZERO physical items. The old A3 2 scrap + 2 spares hint is superseded; materials come from the distinct outside cache and approach deadfall."
+    },
+    {
+      "source_id": "a1_crown_reed",
+      "binding_status": "ADOPTED_SOURCE_SPECIFIC",
+      "poi_id": "poi_crown_ferry_pile",
+      "a1_material_key": "fibre",
+      "a1_site_id": "src_crown_reed",
+      "item_id": "reed_fibre",
+      "yield_per_claim": 2,
+      "restock_active_seconds": 600,
+      "risk": "low",
+      "requires_capabilities": [],
+      "requires_items": [],
+      "one_time": false,
+      "max_claims_per_session": 2,
+      "provenance": "river-margin reed bed; seasonal regrowth",
+      "adoption_ref": "a1_fibre_src_crown_reed_to_a3_reed_fibre"
+    },
+    {
+      "source_id": "a1_amber_herb",
+      "binding_status": "ADOPTED_SOURCE_SPECIFIC_CONDITIONAL_SINK_VERIFIED",
+      "poi_id": "poi_amberwood_apothecary",
+      "a1_material_key": "rare_herb",
+      "a1_site_id": "src_amber_herb",
+      "item_id": "moonleaf",
+      "yield_per_claim": 1,
+      "restock_active_seconds": 600,
+      "risk": "low",
+      "requires_capabilities": [
+        "cap_salvage"
+      ],
+      "requires_items": [],
+      "one_time": false,
+      "max_claims_per_session": 2,
+      "provenance": "orchard understorey; plot or wild patch",
+      "adoption_ref": "a1_rare_herb_src_amber_herb_to_a3_moonleaf"
+    }
+  ],
+  "late_goals": [
+    {
+      "after_day_equivalent": 14,
+      "id": "goal_tide_customs",
+      "poi": "poi_pearl_customs",
+      "systems": [
+        "exploration",
+        "research"
+      ],
+      "text": "Open the tier-3 customs vault with an abyssal pearl and a restored boat; the seal unlocks a new core family, not just a bigger chest.",
+      "missing_or_unresolved_materials": [
+        "abyssal_pearl",
+        "pearl",
+        "rubber_sap",
+        "hardwood"
+      ],
+      "product_status": "REMAINING_GOAL_NOT_NATIVE_INTEGRATED",
+      "required_capabilities": [
+        "cap_boat",
+        "cap_seal_2",
+        "cap_tide_ward"
+      ]
+    },
+    {
+      "after_day_equivalent": 14,
+      "id": "goal_karst_dive",
+      "poi": "poi_sunken_cenote",
+      "systems": [
+        "exploration",
+        "building"
+      ],
+      "text": "Dive the Great Cenote after combining thermal, filter and climb preparation; map the subsurface conduit to the Ashwater resurgence.",
+      "missing_or_unresolved_materials": [
+        "aether_crystal",
+        "rubber_sap",
+        "glacial_iron"
+      ],
+      "product_status": "REMAINING_GOAL_NOT_NATIVE_INTEGRATED",
+      "required_capabilities": [
+        "cap_deepward"
+      ]
+    },
+    {
+      "after_day_equivalent": 14,
+      "id": "goal_fen_purification",
+      "poi": "poi_ashwater_pump",
+      "systems": [
+        "building",
+        "economy",
+        "exploration"
+      ],
+      "text": "Restore the buried pump station to change safe fen channels, then run a purification/venom-core loop that revalues bog iron and peat.",
+      "missing_or_unresolved_materials": [
+        "copper",
+        "bog_iron",
+        "peat"
+      ],
+      "product_status": "REMAINING_GOAL_NOT_NATIVE_INTEGRATED",
+      "required_capabilities": [
+        "cap_filter",
+        "cap_power_1",
+        "cap_seal_2"
+      ]
+    },
+    {
+      "after_day_equivalent": 14,
+      "id": "goal_storm_signal",
+      "poi": "poi_glasswind_light",
+      "systems": [
+        "exploration",
+        "research"
+      ],
+      "text": "Anneal storm glass and power the Glasswind light to reveal tide-gated wrecks and a coastal shortcut.",
+      "missing_or_unresolved_materials": [
+        "storm_glass",
+        "silica_sand",
+        "copper"
+      ],
+      "product_status": "REMAINING_GOAL_NOT_NATIVE_INTEGRATED",
+      "required_capabilities": [
+        "cap_seal_2",
+        "cap_stormward"
+      ]
+    },
+    {
+      "after_day_equivalent": 14,
+      "id": "goal_canopy_lift",
+      "poi": "poi_verdant_root_lift",
+      "systems": [
+        "exploration",
+        "combat",
+        "research"
+      ],
+      "text": "Solve the living-wood root lift to reach the canopy temple and a venom-core specimen without a boss-only gate.",
+      "missing_or_unresolved_materials": [
+        "venom_sac",
+        "aether_crystal",
+        "hardwood",
+        "rubber_sap"
+      ],
+      "product_status": "REMAINING_GOAL_NOT_NATIVE_INTEGRATED",
+      "required_capabilities": [
+        "cap_climb",
+        "cap_filter",
+        "cap_thermal"
+      ]
+    }
+  ],
+  "unresolved_a1_aliases": [
+    "bog_iron",
+    "fibre",
+    "frost_resin",
+    "glacial_iron",
+    "hardwood",
+    "peat",
+    "rare_herb",
+    "venom_sac"
+  ],
+  "unresolved_a1_missing": [
+    "abyssal_pearl",
+    "aether_crystal",
+    "basalt",
+    "copper",
+    "honey",
+    "limestone",
+    "obsidian",
+    "pearl",
+    "rubber_sap",
+    "salt",
+    "silica_sand",
+    "storm_glass"
+  ],
+  "scenarios": {
+    "baseline": {
+      "seed": 31,
+      "sessions": 14,
+      "minutes": 45,
+      "core_policy": "store_until_ready_then_sacrifice_ember",
+      "route_policy": "safe_preparation",
+      "seed_note": "V2 recalibrated representative non-adversarial seed after A1 first-hour actions changed RNG consumption; adversity scenarios retain explicit bad-luck seeds."
+    },
+    "poor_loot": {
+      "seed": 31,
+      "sessions": 14,
+      "minutes": 45,
+      "yield_scale": 0.6,
+      "rare_chance_scale": 0.5,
+      "core_policy": "store_until_ready_then_sacrifice_ember",
+      "route_policy": "safe_preparation"
+    },
+    "lost_specimen": {
+      "seed": 32,
+      "sessions": 14,
+      "minutes": 45,
+      "core_policy": "store_until_ready_then_sacrifice_ember",
+      "route_policy": "safe_preparation",
+      "lose_specimen_source": "specimen_frost"
+    },
+    "material_shortage": {
+      "seed": 33,
+      "sessions": 14,
+      "minutes": 45,
+      "source_yield_scale": {
+        "a1_ember_sulfur": 0.25,
+        "live_reed_fibre": 0.5,
+        "a1_crown_salvage": 0.5,
+        "a1_amber_herb": 0.5,
+        "legacy_chapter1_rewards": 0.0
+      },
+      "core_policy": "store_until_ready_then_sacrifice_ember",
+      "route_policy": "safe_preparation"
+    },
+    "failed_expeditions": {
+      "seed": 34,
+      "sessions": 14,
+      "minutes": 45,
+      "death_scale": 2.5,
+      "core_policy": "store_until_ready_then_sacrifice_ember",
+      "route_policy": "safe_preparation"
+    },
+    "limited_playtime": {
+      "seed": 30,
+      "sessions": 14,
+      "minutes": 20,
+      "core_policy": "store_until_ready_then_sacrifice_ember",
+      "route_policy": "safe_preparation"
+    },
+    "use_now": {
+      "seed": 31,
+      "sessions": 14,
+      "minutes": 45,
+      "core_policy": "keep_all_for_field_use",
+      "route_policy": "safe_preparation"
+    },
+    "research_first": {
+      "seed": 31,
+      "sessions": 14,
+      "minutes": 45,
+      "core_policy": "sacrifice_first_specimen",
+      "route_policy": "safe_preparation"
+    },
+    "store_all": {
+      "seed": 31,
+      "sessions": 14,
+      "minutes": 45,
+      "core_policy": "store_all",
+      "route_policy": "safe_preparation"
+    },
+    "rush_east_unprepared": {
+      "seed": 35,
+      "sessions": 4,
+      "minutes": 45,
+      "core_policy": "store_until_ready_then_sacrifice_ember",
+      "route_policy": "rush_east_unprepared"
+    },
+    "early_loss_no_fallback": {
+      "seed": 36,
+      "sessions": 14,
+      "minutes": 45,
+      "core_policy": "store_until_ready_then_sacrifice_ember",
+      "route_policy": "safe_preparation",
+      "lose_specimen_source": "specimen_ember"
+    },
+    "early_loss_targeted_fallback": {
+      "seed": 36,
+      "sessions": 14,
+      "minutes": 45,
+      "core_policy": "targeted_after_loss",
+      "route_policy": "safe_preparation",
+      "lose_specimen_source": "specimen_ember"
+    },
+    "safe_route_blocked": {
+      "seed": 37,
+      "sessions": 14,
+      "minutes": 45,
+      "core_policy": "store_until_ready_then_sacrifice_ember",
+      "route_policy": "safe_preparation",
+      "blocked_routes": [
+        "rt_crown_safe_approach"
+      ]
+    },
+    "catalyst_drought": {
+      "seed": 38,
+      "sessions": 14,
+      "minutes": 45,
+      "core_policy": "store_until_ready_then_sacrifice_ember",
+      "route_policy": "safe_preparation",
+      "rare_chance_scale": 0.0
+    },
+    "queue_interruption": {
+      "seed": 39,
+      "sessions": 14,
+      "minutes": 45,
+      "core_policy": "store_until_ready_then_sacrifice_ember",
+      "route_policy": "safe_preparation",
+      "pause_stations": {
+        "workbench": [
+          3,
+          4,
+          5
+        ]
+      }
+    }
+  },
+  "capability_grant_policy": {
+    "bootstrap_first_visit_caps": [
+      "cap_salvage",
+      "cap_filter",
+      "cap_seal_1",
+      "cap_power_1",
+      "cap_seal_2",
+      "cap_climb",
+      "cap_thermal"
+    ],
+    "material_gates": {
+      "cap_boat": [
+        "hardwood",
+        "rubber_sap"
+      ],
+      "cap_tide_ward": [
+        "pearl",
+        "hardwood",
+        "rubber_sap"
+      ],
+      "cap_seal_3": [
+        "abyssal_pearl",
+        "pearl"
+      ],
+      "cap_deepward": [
+        "glacial_iron",
+        "rubber_sap",
+        "aether_crystal"
+      ],
+      "cap_stormward": [
+        "storm_glass",
+        "copper"
+      ]
+    },
+    "note": "A1 first-visit bootstrap grants are allowed only for sheltered early capability sources. Late capabilities require A1 material approval and A3/A0 sinks; unresolved/missing materials block the grant in this product model."
+  },
+  "explicit_bootstrap_pois": [
+    "poi_crown_waystation",
+    "poi_crown_relay_shed",
+    "poi_amberwood_apothecary"
+  ],
+  "novice_bootstrap": {
+    "sequence": [
+      "node_refuge",
+      "poi_crown_waystation",
+      "poi_crown_relay_shed",
+      "node_refuge",
+      "poi_amberwood_apothecary",
+      "node_refuge"
+    ],
+    "safe_route_ids": [
+      "rt_crown_safe_approach",
+      "rt_south_seam",
+      "rt_crown_buffer"
+    ],
+    "hazardous_shortcut": "rt_east_seam",
+    "a1_contract_status": "AUTHORED_CONTRACT_NOT_NATIVE_PLAYTESTED",
+    "a3_world_action_proposals": {
+      "waystation_locker": {
+        "poi_id": "poi_crown_waystation",
+        "requires_capabilities": [],
+        "grants": [
+          "cap_salvage"
+        ],
+        "reward_proposal": {},
+        "policy": "ONE_TIME",
+        "status": "CANONICAL_A1_CAPABILITY_ONLY_ZERO_ITEMS"
+      },
+      "waystation_ledger": {
+        "poi_id": "poi_crown_waystation",
+        "requires_capabilities": [
+          "cap_salvage"
+        ],
+        "grants": [
+          "cap_seal_1"
+        ],
+        "policy": "ONE_TIME",
+        "status": "A1_AUTHORED_PROPOSAL"
+      },
+      "relay_hand_crank": {
+        "poi_id": "poi_crown_relay_shed",
+        "requires_capabilities": [
+          "cap_salvage"
+        ],
+        "cost_a3_items": {
+          "iron_scrap": 2,
+          "oak_wood": 1
+        },
+        "cost_material_keys": {
+          "salvage": 2,
+          "timber": 1
+        },
+        "grants": [
+          "cap_power_1"
+        ],
+        "policy": "ONE_TIME",
+        "status": "A1_AUTHORED_PROPOSAL_A3_ITEM_RESOLUTION"
+      },
+      "apothecary_filter_lesson": {
+        "poi_id": "poi_amberwood_apothecary",
+        "requires_capabilities": [
+          "cap_salvage"
+        ],
+        "cost_a3_items": {
+          "moonleaf": 1,
+          "reed_fibre": 1
+        },
+        "cost_material_keys": {
+          "rare_herb": 1,
+          "fibre": 1
+        },
+        "grants": [
+          "cap_filter"
+        ],
+        "policy": "ONE_TIME",
+        "status": "A3_DESIGN_PROPOSAL_A1_BOOTSTRAP_MATERIAL_KEYS"
+      },
+      "relay_copper_upgrade": {
+        "poi_id": "poi_crown_relay_shed",
+        "requires_capabilities": [
+          "cap_power_1"
+        ],
+        "cost_material_keys": {
+          "copper": 2,
+          "salvage": 1
+        },
+        "status": "BLOCKED_MISSING_A3_COPPER",
+        "first_hour_blocking": false
+      }
+    }
+  },
+  "hazard_mitigation": {
+    "hz_crown_heat": {
+      "hazard_id": "hz_crown_heat",
+      "kind": "heat",
+      "required_capability": "cap_filter",
+      "minimum_mitigation_fraction_proposal": 0.6,
+      "required_resistance_keys": [
+        "heat"
+      ],
+      "a3_current_status": "PARTIAL_REQUIRES_A3_EXTENSION",
+      "note": "A1 capability is preparation/access grammar; A3 owns the concrete gear/resistance values. Do not silently equate toxin_mask venom:60 with heat/acid_gas/poison coverage.",
+      "status": "A3_DESIGN_PROPOSAL_CAPABILITY_MITIGATION_NOT_NATIVE"
+    },
+    "hz_crown_rot": {
+      "hazard_id": "hz_crown_rot",
+      "kind": "poison",
+      "required_capability": "cap_filter",
+      "minimum_mitigation_fraction_proposal": 0.6,
+      "required_resistance_keys": [
+        "poison"
+      ],
+      "a3_current_status": "PARTIAL_REQUIRES_A3_EXTENSION",
+      "note": "A1 capability is preparation/access grammar; A3 owns the concrete gear/resistance values. Do not silently equate toxin_mask venom:60 with heat/acid_gas/poison coverage.",
+      "status": "A3_DESIGN_PROPOSAL_CAPABILITY_MITIGATION_NOT_NATIVE"
+    },
+    "hz_crown_cold": {
+      "hazard_id": "hz_crown_cold",
+      "kind": "cold",
+      "required_capability": "cap_thermal",
+      "minimum_mitigation_fraction_proposal": 0.6,
+      "required_resistance_keys": [
+        "cold"
+      ],
+      "a3_current_status": "PARTIAL_REQUIRES_A3_EXTENSION",
+      "note": "A1 capability is preparation/access grammar; A3 owns the concrete gear/resistance values. Do not silently equate toxin_mask venom:60 with heat/acid_gas/poison coverage.",
+      "status": "A3_DESIGN_PROPOSAL_CAPABILITY_MITIGATION_NOT_NATIVE"
+    },
+    "hz_frost_ridge": {
+      "hazard_id": "hz_frost_ridge",
+      "kind": "cold",
+      "required_capability": "cap_thermal",
+      "minimum_mitigation_fraction_proposal": 0.6,
+      "required_resistance_keys": [
+        "cold"
+      ],
+      "a3_current_status": "PARTIAL_REQUIRES_A3_EXTENSION",
+      "note": "A1 capability is preparation/access grammar; A3 owns the concrete gear/resistance values. Do not silently equate toxin_mask venom:60 with heat/acid_gas/poison coverage.",
+      "status": "A3_DESIGN_PROPOSAL_CAPABILITY_MITIGATION_NOT_NATIVE"
+    },
+    "hz_ember_gas": {
+      "hazard_id": "hz_ember_gas",
+      "kind": "acid_gas",
+      "required_capability": "cap_filter",
+      "minimum_mitigation_fraction_proposal": 0.6,
+      "required_resistance_keys": [
+        "acid_gas"
+      ],
+      "a3_current_status": "PARTIAL_REQUIRES_A3_EXTENSION",
+      "note": "A1 capability is preparation/access grammar; A3 owns the concrete gear/resistance values. Do not silently equate toxin_mask venom:60 with heat/acid_gas/poison coverage.",
+      "status": "A3_DESIGN_PROPOSAL_CAPABILITY_MITIGATION_NOT_NATIVE"
+    },
+    "hz_saffron_heat": {
+      "hazard_id": "hz_saffron_heat",
+      "kind": "heat",
+      "required_capability": "cap_thermal",
+      "minimum_mitigation_fraction_proposal": 0.6,
+      "required_resistance_keys": [
+        "heat"
+      ],
+      "a3_current_status": "PARTIAL_REQUIRES_A3_EXTENSION",
+      "note": "A1 capability is preparation/access grammar; A3 owns the concrete gear/resistance values. Do not silently equate toxin_mask venom:60 with heat/acid_gas/poison coverage.",
+      "status": "A3_DESIGN_PROPOSAL_CAPABILITY_MITIGATION_NOT_NATIVE"
+    },
+    "hz_verdant_spore": {
+      "hazard_id": "hz_verdant_spore",
+      "kind": "poison",
+      "required_capability": "cap_filter",
+      "minimum_mitigation_fraction_proposal": 0.6,
+      "required_resistance_keys": [
+        "poison"
+      ],
+      "a3_current_status": "PARTIAL_REQUIRES_A3_EXTENSION",
+      "note": "A1 capability is preparation/access grammar; A3 owns the concrete gear/resistance values. Do not silently equate toxin_mask venom:60 with heat/acid_gas/poison coverage.",
+      "status": "A3_DESIGN_PROPOSAL_CAPABILITY_MITIGATION_NOT_NATIVE"
+    },
+    "hz_pearl_tide": {
+      "hazard_id": "hz_pearl_tide",
+      "kind": "tide",
+      "required_capability": "cap_boat",
+      "minimum_mitigation_fraction_proposal": 0.6,
+      "required_resistance_keys": [
+        "tide"
+      ],
+      "a3_current_status": "MISSING_A3_ITEM",
+      "note": "A1 capability is preparation/access grammar; A3 owns the concrete gear/resistance values. Do not silently equate toxin_mask venom:60 with heat/acid_gas/poison coverage.",
+      "status": "A3_DESIGN_PROPOSAL_CAPABILITY_MITIGATION_NOT_NATIVE"
+    },
+    "hz_ashwater_miasma": {
+      "hazard_id": "hz_ashwater_miasma",
+      "kind": "poison",
+      "required_capability": "cap_filter",
+      "minimum_mitigation_fraction_proposal": 0.6,
+      "required_resistance_keys": [
+        "poison"
+      ],
+      "a3_current_status": "PARTIAL_REQUIRES_A3_EXTENSION",
+      "note": "A1 capability is preparation/access grammar; A3 owns the concrete gear/resistance values. Do not silently equate toxin_mask venom:60 with heat/acid_gas/poison coverage.",
+      "status": "A3_DESIGN_PROPOSAL_CAPABILITY_MITIGATION_NOT_NATIVE"
+    },
+    "hz_sunken_pressure": {
+      "hazard_id": "hz_sunken_pressure",
+      "kind": "pressure",
+      "required_capability": "cap_deepward",
+      "minimum_mitigation_fraction_proposal": 0.6,
+      "required_resistance_keys": [
+        "pressure"
+      ],
+      "a3_current_status": "MISSING_A3_ITEM",
+      "note": "A1 capability is preparation/access grammar; A3 owns the concrete gear/resistance values. Do not silently equate toxin_mask venom:60 with heat/acid_gas/poison coverage.",
+      "status": "A3_DESIGN_PROPOSAL_CAPABILITY_MITIGATION_NOT_NATIVE"
+    }
+  },
+  "time_accounting": {
+    "scheduled_budget_is_engagement": false,
+    "sparse_scenario_model": true,
+    "player_categories": [
+      "travel",
+      "gathering",
+      "exploration_interaction",
+      "crafting_handling",
+      "research_handling",
+      "construction",
+      "station_wait",
+      "combat",
+      "player_decision"
+    ],
+    "station_work_may_overlap_player_actions": true,
+    "unmodeled_time": [
+      "combat encounter duration",
+      "POI room/puzzle traversal",
+      "hazard damage/retreat recovery",
+      "inventory management UI",
+      "human read/plan/decide time",
+      "base defense/NPC/bounty/farming maturation",
+      "save/reload interruption friction"
+    ],
+    "note": "Unused scheduled budget is reported as unused, not padded with repeated actions or claimed as engagement."
+  }
+}

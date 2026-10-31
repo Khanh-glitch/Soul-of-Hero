@@ -1,0 +1,115 @@
+{
+  "schema": "soh.a6.avatar_art_sources.v1",
+  "status": "SOURCE_BYTES_INSPECTED; BASE_ART_NOT_IMPORTED; RUNTIME_APPEARANCE_BLOCKED",
+  "authority": "D051-D054; user-provided Drive folder and file IDs; archive bytes retrieved and inspected through the enabled Google Drive connector on 2026-10-30. No source sprites are included in Git.",
+  "drive_folder_id": "1pRNobw2FrKWQmelMdGpGnh3PUHPijjA0",
+  "license_review": {
+    "status": "NOT_VERIFIED",
+    "archive_member": "License.txt",
+    "member_text": "https://craftpix.net/file-licenses/",
+    "note": "The ZIPs contain only a URL; license and redistribution terms were not independently reviewed. Do not include source ZIPs or sprites in the public repository."
+  },
+  "characters": {
+    "male": {
+      "source_pack": "craftpix-net-555940-free-base-4-direction-male-character-pixel-art.zip",
+      "craftpix_id": "555940",
+      "drive_file_id": "1CuSQ3pr75U1l1Ep8FIDexQlMr8fO3qGb",
+      "archive_size_bytes": 6439805,
+      "archive_md5": "b4910c4dd86a5193e5e0640751a20abd",
+      "png_member_count": 350,
+      "png_crc_failures": 0,
+      "base_description": "Bald, unarmored male; preserve this identity in all equipment appearances.",
+      "inspected_actions": [
+        "idle",
+        "walk",
+        "run"
+      ],
+      "inspection_status": "TEMPORARY_PREVIEWS_VISUALLY_INSPECTED; NO_PROJECT_IMPORT",
+      "armor_grades": {
+        "0": {
+          "source_pack": "craftpix-net-555940-free-base-4-direction-male-character-pixel-art.zip",
+          "source_member": "PNG/Unarmed/Without_shadow/Unarmed_Idle_without_shadow.png",
+          "dimensions": [
+            768,
+            256
+          ],
+          "directions": 4,
+          "idle_sheet": "",
+          "runtime_status": "NOT_IMPORTED",
+          "runtime_action_sheets": {}
+        },
+        "1": null,
+        "2": null
+      },
+      "archive_sha256": "b5579a3cc6006ef8c9d55c9ca0388575d75c987382b6cb504e2c7519e6c1e795"
+    },
+    "female": {
+      "source_pack": "craftpix-net-419402-free-base-4-direction-female-character-pixel-art.zip",
+      "craftpix_id": "419402",
+      "drive_file_id": "1o5hRVbPZjZxcPGwP5coPDHZARbAej75o",
+      "archive_size_bytes": 6419098,
+      "archive_md5": "cf6ffa60ef922e4703dc6b27c3b5bac2",
+      "png_member_count": 316,
+      "png_crc_failures": 0,
+      "base_description": "Bald, unarmored female; preserve this identity in all equipment appearances.",
+      "inspected_actions": [
+        "idle",
+        "walk",
+        "run"
+      ],
+      "inspection_status": "TEMPORARY_PREVIEWS_VISUALLY_INSPECTED; NO_PROJECT_IMPORT",
+      "armor_grades": {
+        "0": {
+          "source_pack": "craftpix-net-419402-free-base-4-direction-female-character-pixel-art.zip",
+          "source_member": "PNG/Unarmed/Without_shadow/Unarmed_Idle_without_shadow.png",
+          "dimensions": [
+            768,
+            256
+          ],
+          "directions": 4,
+          "idle_sheet": "",
+          "runtime_status": "NOT_IMPORTED",
+          "runtime_action_sheets": {}
+        },
+        "1": null,
+        "2": null
+      },
+      "archive_sha256": "f704e7852273d5f0111435ae86975fa981354d699dff1f594934f6a32d9821ad"
+    }
+  },
+  "armor_search": {
+    "status": "NO_MATCHING_SOURCE_SELECTED_OR_INSPECTED",
+    "scope": "Targeted filename metadata searches only; not a full inspection of the 43 approved archives.",
+    "note": "No armor, human, or hero filename match was returned. Five character-named results included the canonical bases plus the rejected Swordsman 180537, Orc, and Vampire packs. This does not prove that compatible layers are absent from other packs."
+  },
+  "explicitly_rejected_substitutions": [
+    {
+      "craftpix_id": "180537",
+      "reason": "Three tiers of a different Swordsman character; not verified as matching male and female armor art."
+    },
+    {
+      "source": "Knight protagonist sprite",
+      "reason": "Not the D051 canonical player avatar."
+    }
+  ],
+  "release_gates": [
+    "Do not include source ZIPs or sprites in the public repository; review license/attribution and redistribution permissions before any project import.",
+    "Inspect and test a compatible male/female visual for armor grade 1 and grade 2; until then those stages remain SOURCE_BLOCKED.",
+    "A0 supplies selected identity and saved equipped armor grade; the adapter never selects, equips, persists, or falls back to another character.",
+    "The base idle_sheet paths remain empty, so the current adapter correctly returns SOURCE_BLOCKED until an authorized, distributable runtime asset handoff exists.",
+    "Store runtime action sheets under the exact selected gender and armor-grade record; never share or fall back across identities or tiers."
+  ],
+  "runtime_presentation_pipeline": {
+    "script": "res://game/survival/ui/avatar_sprite_pipeline.gd",
+    "status": "IMPLEMENTED; SOURCE_LICENSE_BLOCKED",
+    "directions": [
+      "front",
+      "side_left",
+      "side_right",
+      "back"
+    ],
+    "runtime_action_sheets": {},
+    "note": "A6 builds directional SpriteFrames from the exact A0-selected gender and equipped-grade record. Each missing action or direction fails closed; no identity or pose fallback. Actual Craftpix sources remain absent until the external license and exact sheet row mapping are verified.",
+    "schema": "soh.a6.avatar_sprite_pipeline.v1"
+  }
+}

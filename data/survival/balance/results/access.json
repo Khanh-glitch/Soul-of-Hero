@@ -1,0 +1,4281 @@
+{
+  "capability_reachability": {
+    "AFTER_APOTHECARY": {
+      "capabilities": [
+        "cap_filter",
+        "cap_power_1",
+        "cap_salvage",
+        "cap_seal_1"
+      ],
+      "enterable_poi_ids": [
+        "poi_amber_edge_watch",
+        "poi_amber_west_barrow",
+        "poi_amber_west_holt",
+        "poi_amberwood_apothecary",
+        "poi_amberwood_barrow",
+        "poi_amberwood_ferry",
+        "poi_amberwood_mill",
+        "poi_amberwood_orchard",
+        "poi_amberwood_watch",
+        "poi_ashwater_resurgence",
+        "poi_ashwater_south_pump",
+        "poi_ashwater_south_shrine",
+        "poi_ashwater_watch",
+        "poi_crown_barrow_field",
+        "poi_crown_ferry_pile",
+        "poi_crown_herder_camp",
+        "poi_crown_north_watch",
+        "poi_crown_old_signal",
+        "poi_crown_orchard_gate",
+        "poi_crown_quarry",
+        "poi_crown_relay_shed",
+        "poi_crown_south_barrow",
+        "poi_crown_south_mill",
+        "poi_crown_south_orchard",
+        "poi_crown_south_quarry",
+        "poi_crown_south_watch",
+        "poi_crown_waystation",
+        "poi_ember_cinder_camp",
+        "poi_ember_fumarole",
+        "poi_ember_old_forge",
+        "poi_ember_piton_works",
+        "poi_mere_south_pile",
+        "poi_mirrormere_causeway",
+        "poi_mirrormere_piles",
+        "poi_mirrormere_reed_holt",
+        "poi_saffron_caravan",
+        "poi_saffron_drydock",
+        "poi_saffron_wadi_well",
+        "poi_sunken_watch"
+      ],
+      "enterable_pois": 39,
+      "entry_locked_pois": 0,
+      "loot_bearing_reachable_pois": 0,
+      "playable_reachable_pois": 2,
+      "reachable_nodes": 50,
+      "reachable_poi_bands": {
+        "early": 26,
+        "late": 5,
+        "mid": 8
+      },
+      "reachable_pois": 39
+    },
+    "AFTER_RELAY": {
+      "capabilities": [
+        "cap_power_1",
+        "cap_salvage",
+        "cap_seal_1"
+      ],
+      "enterable_poi_ids": [
+        "poi_amber_edge_watch",
+        "poi_amber_west_barrow",
+        "poi_amber_west_holt",
+        "poi_amberwood_apothecary",
+        "poi_amberwood_barrow",
+        "poi_amberwood_ferry",
+        "poi_amberwood_mill",
+        "poi_amberwood_orchard",
+        "poi_amberwood_watch",
+        "poi_crown_barrow_field",
+        "poi_crown_ferry_pile",
+        "poi_crown_herder_camp",
+        "poi_crown_north_watch",
+        "poi_crown_old_signal",
+        "poi_crown_orchard_gate",
+        "poi_crown_quarry",
+        "poi_crown_relay_shed",
+        "poi_crown_south_barrow",
+        "poi_crown_south_mill",
+        "poi_crown_south_orchard",
+        "poi_crown_south_quarry",
+        "poi_crown_south_watch",
+        "poi_crown_waystation",
+        "poi_mirrormere_causeway",
+        "poi_mirrormere_piles"
+      ],
+      "enterable_pois": 25,
+      "entry_locked_pois": 0,
+      "loot_bearing_reachable_pois": 0,
+      "playable_reachable_pois": 2,
+      "reachable_nodes": 31,
+      "reachable_poi_bands": {
+        "early": 24,
+        "mid": 1
+      },
+      "reachable_pois": 25
+    },
+    "AFTER_WAYSTATION": {
+      "capabilities": [
+        "cap_salvage",
+        "cap_seal_1"
+      ],
+      "enterable_poi_ids": [
+        "poi_amber_edge_watch",
+        "poi_amber_west_barrow",
+        "poi_amber_west_holt",
+        "poi_amberwood_apothecary",
+        "poi_amberwood_barrow",
+        "poi_amberwood_ferry",
+        "poi_amberwood_mill",
+        "poi_amberwood_orchard",
+        "poi_amberwood_watch",
+        "poi_crown_barrow_field",
+        "poi_crown_ferry_pile",
+        "poi_crown_herder_camp",
+        "poi_crown_north_watch",
+        "poi_crown_old_signal",
+        "poi_crown_orchard_gate",
+        "poi_crown_quarry",
+        "poi_crown_relay_shed",
+        "poi_crown_south_barrow",
+        "poi_crown_south_mill",
+        "poi_crown_south_orchard",
+        "poi_crown_south_quarry",
+        "poi_crown_south_watch",
+        "poi_crown_waystation",
+        "poi_mirrormere_piles"
+      ],
+      "enterable_pois": 24,
+      "entry_locked_pois": 0,
+      "loot_bearing_reachable_pois": 0,
+      "playable_reachable_pois": 2,
+      "reachable_nodes": 30,
+      "reachable_poi_bands": {
+        "early": 24
+      },
+      "reachable_pois": 24
+    },
+    "ALL_AUTHORED_CAPABILITIES": {
+      "capabilities": [
+        "cap_boat",
+        "cap_climb",
+        "cap_deepward",
+        "cap_filter",
+        "cap_power_1",
+        "cap_salvage",
+        "cap_seal_1",
+        "cap_seal_2",
+        "cap_seal_3",
+        "cap_stormward",
+        "cap_thermal",
+        "cap_tide_ward"
+      ],
+      "enterable_poi_ids": [
+        "poi_amber_edge_watch",
+        "poi_amber_west_barrow",
+        "poi_amber_west_holt",
+        "poi_amberwood_apothecary",
+        "poi_amberwood_barrow",
+        "poi_amberwood_ferry",
+        "poi_amberwood_mill",
+        "poi_amberwood_orchard",
+        "poi_amberwood_watch",
+        "poi_ashwater_boardwalk",
+        "poi_ashwater_bog_camp",
+        "poi_ashwater_pump",
+        "poi_ashwater_resurgence",
+        "poi_ashwater_shrine",
+        "poi_ashwater_south_boardwalk",
+        "poi_ashwater_south_pump",
+        "poi_ashwater_south_shrine",
+        "poi_ashwater_watch",
+        "poi_ashwater_west_boardwalk",
+        "poi_crown_barrow_field",
+        "poi_crown_ferry_pile",
+        "poi_crown_herder_camp",
+        "poi_crown_north_watch",
+        "poi_crown_old_signal",
+        "poi_crown_orchard_gate",
+        "poi_crown_quarry",
+        "poi_crown_relay_shed",
+        "poi_crown_rim_shrine",
+        "poi_crown_south_barrow",
+        "poi_crown_south_mill",
+        "poi_crown_south_orchard",
+        "poi_crown_south_quarry",
+        "poi_crown_south_watch",
+        "poi_crown_tuff_terrace",
+        "poi_crown_waystation",
+        "poi_ember_ash_quarry",
+        "poi_ember_basalt_gate",
+        "poi_ember_caravan_serai",
+        "poi_ember_cinder_camp",
+        "poi_ember_convict_mine",
+        "poi_ember_east_watch",
+        "poi_ember_fumarole",
+        "poi_ember_old_forge",
+        "poi_ember_piton_works",
+        "poi_ember_south_watch",
+        "poi_frost_avalanche_hut",
+        "poi_frost_glacier_mill",
+        "poi_frost_goat_pass",
+        "poi_frost_ice_cave",
+        "poi_frost_miners_hut",
+        "poi_frost_north_gate",
+        "poi_frost_observatory",
+        "poi_frost_rime_cairn",
+        "poi_frost_south_watch",
+        "poi_frost_tarn_shrine",
+        "poi_frost_wardhouse",
+        "poi_glass_aukery",
+        "poi_glass_north_cliff",
+        "poi_glass_tide_watch",
+        "poi_glasswind_gullery",
+        "poi_glasswind_light",
+        "poi_glasswind_signal",
+        "poi_glasswind_smuggler",
+        "poi_glasswind_watch",
+        "poi_glasswind_wreck",
+        "poi_mere_east_pile",
+        "poi_mere_south_pile",
+        "poi_mirrormere_causeway",
+        "poi_mirrormere_ferry",
+        "poi_mirrormere_observatory",
+        "poi_mirrormere_piles",
+        "poi_mirrormere_reed_holt",
+        "poi_mirrormere_smuggler",
+        "poi_pearl_beacon",
+        "poi_pearl_customs",
+        "poi_pearl_east_beacon",
+        "poi_pearl_east_nursery",
+        "poi_pearl_grotto",
+        "poi_pearl_north_beacon",
+        "poi_pearl_nursery",
+        "poi_pearl_smuggler",
+        "poi_pearl_stilt_village",
+        "poi_saffron_caravan",
+        "poi_saffron_coral_tomb",
+        "poi_saffron_customs",
+        "poi_saffron_drydock",
+        "poi_saffron_salt_pan",
+        "poi_saffron_south_pan",
+        "poi_saffron_south_watch",
+        "poi_saffron_tide_watch",
+        "poi_saffron_wadi_well",
+        "poi_sunken_cenote",
+        "poi_sunken_graft",
+        "poi_sunken_south_spring",
+        "poi_sunken_subspring",
+        "poi_sunken_tower",
+        "poi_sunken_watch",
+        "poi_sunken_west_spring",
+        "poi_sunken_wreck",
+        "poi_verdant_canopy_temple",
+        "poi_verdant_east_blind",
+        "poi_verdant_hunter_camp",
+        "poi_verdant_river_gate",
+        "poi_verdant_root_lift",
+        "poi_verdant_south_gate",
+        "poi_verdant_south_shrine",
+        "poi_verdant_spore_hollow",
+        "poi_verdant_terraces"
+      ],
+      "enterable_pois": 108,
+      "entry_locked_pois": 0,
+      "loot_bearing_reachable_pois": 0,
+      "playable_reachable_pois": 2,
+      "reachable_nodes": 123,
+      "reachable_poi_bands": {
+        "early": 29,
+        "late": 36,
+        "mid": 43
+      },
+      "reachable_pois": 108
+    },
+    "EMPTY_HANDED": {
+      "capabilities": [],
+      "enterable_poi_ids": [
+        "poi_amber_edge_watch",
+        "poi_amber_west_holt",
+        "poi_amberwood_ferry",
+        "poi_amberwood_orchard",
+        "poi_amberwood_watch",
+        "poi_crown_ferry_pile",
+        "poi_crown_herder_camp",
+        "poi_crown_north_watch",
+        "poi_crown_orchard_gate",
+        "poi_crown_quarry",
+        "poi_crown_south_orchard",
+        "poi_crown_south_quarry",
+        "poi_crown_south_watch",
+        "poi_crown_waystation",
+        "poi_mirrormere_piles"
+      ],
+      "enterable_pois": 15,
+      "entry_locked_pois": 0,
+      "loot_bearing_reachable_pois": 0,
+      "playable_reachable_pois": 1,
+      "reachable_nodes": 21,
+      "reachable_poi_bands": {
+        "early": 15
+      },
+      "reachable_pois": 15
+    }
+  },
+  "craft_ladder": {
+    "AUTHORED_PLAN_INCLUDING_LOOT": {
+      "blocked_count": 0,
+      "blocked_sample": [],
+      "craftable_recipe_count": 36,
+      "craftable_recipes": [
+        "advanced_furnace_kit",
+        "alloy_steel",
+        "burn_charcoal",
+        "charge_blank",
+        "core_blank",
+        "craft_core_ember",
+        "craft_core_frost",
+        "craft_core_venom",
+        "extract_frost",
+        "extract_venom",
+        "field_meal",
+        "frost_cloak",
+        "furnace_kit",
+        "garden_kit",
+        "grow_grain",
+        "grow_moonleaf",
+        "iron_pick",
+        "make_compost",
+        "make_notes",
+        "make_parts",
+        "make_spares",
+        "make_spring",
+        "minor_salve",
+        "rebuild_core_ember",
+        "rebuild_core_frost",
+        "rebuild_core_venom",
+        "research_kit",
+        "salvage_hammer",
+        "smelt_iron",
+        "smelt_ore",
+        "stone_pick",
+        "study_axe_insignia",
+        "study_predator_jaw",
+        "toxin_mask",
+        "weave_cloth",
+        "workbench_kit"
+      ],
+      "obtainable": [
+        "advanced_furnace_kit",
+        "ancient_catalyst",
+        "binding_cloth",
+        "blood_crucible_blueprint",
+        "blue_seal",
+        "charcoal",
+        "charged_blank",
+        "clay",
+        "coal",
+        "compost",
+        "core_blank",
+        "core_ember",
+        "core_frost",
+        "core_venom",
+        "crypt_bone_shard",
+        "field_meal",
+        "fractured_axe_insignia",
+        "frost_cloak",
+        "frost_extract",
+        "frost_shard",
+        "furnace_kit",
+        "garden_kit",
+        "grain",
+        "grain_seed",
+        "green_seal",
+        "iron_ingot",
+        "iron_ore",
+        "iron_parts",
+        "iron_pick",
+        "iron_scrap",
+        "knowledge_spares",
+        "minor_salve",
+        "moonleaf",
+        "moonleaf_seed",
+        "oak_wood",
+        "plan_ember_core",
+        "plan_frost_core",
+        "plan_venom_core",
+        "predator_jaw",
+        "purple_seal",
+        "reaper_essence",
+        "reed_fibre",
+        "research_kit",
+        "research_notes",
+        "salvage_hammer",
+        "soul_ember",
+        "spring",
+        "steel_ingot",
+        "stone_chunk",
+        "stone_pick",
+        "sulfur",
+        "toxin_mask",
+        "venom_extract",
+        "venom_spine",
+        "wild_berries",
+        "workbench_kit"
+      ],
+      "obtainable_count": 56,
+      "seeds": [
+        "ancient_catalyst",
+        "blood_crucible_blueprint",
+        "blue_seal",
+        "clay",
+        "coal",
+        "core_ember",
+        "core_frost",
+        "core_venom",
+        "crypt_bone_shard",
+        "fractured_axe_insignia",
+        "frost_shard",
+        "grain",
+        "grain_seed",
+        "green_seal",
+        "iron_ore",
+        "iron_scrap",
+        "knowledge_spares",
+        "moonleaf",
+        "moonleaf_seed",
+        "oak_wood",
+        "plan_ember_core",
+        "plan_frost_core",
+        "plan_venom_core",
+        "predator_jaw",
+        "purple_seal",
+        "reaper_essence",
+        "reed_fibre",
+        "soul_ember",
+        "stone_chunk",
+        "sulfur",
+        "venom_spine",
+        "wild_berries"
+      ],
+      "stations": [
+        "advanced_furnace",
+        "advanced_workbench",
+        "furnace",
+        "garden",
+        "hand",
+        "research",
+        "workbench"
+      ],
+      "technologies": [
+        "tech_core_binding",
+        "tech_frost",
+        "tech_precision",
+        "tech_smelting",
+        "tech_toxin"
+      ]
+    },
+    "NATIVE_PLUS_LEGACY_REWARDS": {
+      "blocked_count": 27,
+      "blocked_sample": [
+        {
+          "missing": [
+            "steel_ingot"
+          ],
+          "reason": "technology",
+          "recipe_id": "advanced_furnace_kit"
+        },
+        {
+          "missing": [
+            "coal"
+          ],
+          "reason": "technology",
+          "recipe_id": "alloy_steel"
+        },
+        {
+          "missing": [
+            "core_blank",
+            "ancient_catalyst"
+          ],
+          "reason": "technology",
+          "recipe_id": "charge_blank"
+        },
+        {
+          "missing": [
+            "knowledge_spares"
+          ],
+          "reason": "technology",
+          "recipe_id": "core_blank"
+        },
+        {
+          "missing": [
+            "charged_blank"
+          ],
+          "reason": "technology",
+          "recipe_id": "craft_core_ember"
+        },
+        {
+          "missing": [
+            "charged_blank",
+            "frost_extract",
+            "frost_shard"
+          ],
+          "reason": "technology",
+          "recipe_id": "craft_core_frost"
+        },
+        {
+          "missing": [
+            "charged_blank",
+            "venom_extract"
+          ],
+          "reason": "technology",
+          "recipe_id": "craft_core_venom"
+        },
+        {
+          "missing": [
+            "moonleaf",
+            "frost_shard"
+          ],
+          "reason": "station",
+          "recipe_id": "extract_frost"
+        },
+        {
+          "missing": [
+            "moonleaf",
+            "sulfur"
+          ],
+          "reason": "station",
+          "recipe_id": "extract_venom"
+        },
+        {
+          "missing": [
+            "grain",
+            "wild_berries"
+          ],
+          "reason": "material",
+          "recipe_id": "field_meal"
+        },
+        {
+          "missing": [
+            "frost_extract",
+            "spring"
+          ],
+          "reason": "material",
+          "recipe_id": "frost_cloak"
+        },
+        {
+          "missing": [
+            "clay"
+          ],
+          "reason": "material",
+          "recipe_id": "garden_kit"
+        },
+        {
+          "missing": [
+            "grain_seed",
+            "compost"
+          ],
+          "reason": "station",
+          "recipe_id": "grow_grain"
+        },
+        {
+          "missing": [
+            "moonleaf_seed",
+            "compost"
+          ],
+          "reason": "station",
+          "recipe_id": "grow_moonleaf"
+        },
+        {
+          "missing": [
+            "wild_berries"
+          ],
+          "reason": "station",
+          "recipe_id": "make_compost"
+        },
+        {
+          "missing": [
+            "knowledge_spares"
+          ],
+          "reason": "station",
+          "recipe_id": "make_notes"
+        },
+        {
+          "missing": [],
+          "reason": "station",
+          "recipe_id": "make_spares"
+        },
+        {
+          "missing": [],
+          "reason": "technology",
+          "recipe_id": "make_spring"
+        },
+        {
+          "missing": [
+            "moonleaf"
+          ],
+          "reason": "material",
+          "recipe_id": "minor_salve"
+        },
+        {
+          "missing": [
+            "core_blank",
+            "knowledge_spares"
+          ],
+          "reason": "technology",
+          "recipe_id": "rebuild_core_ember"
+        },
+        {
+          "missing": [
+            "core_blank",
+            "frost_extract",
+            "knowledge_spares"
+          ],
+          "reason": "technology",
+          "recipe_id": "rebuild_core_frost"
+        },
+        {
+          "missing": [
+            "core_blank",
+            "venom_extract",
+            "knowledge_spares"
+          ],
+          "reason": "technology",
+          "recipe_id": "rebuild_core_venom"
+        },
+        {
+          "missing": [
+            "knowledge_spares"
+          ],
+          "reason": "material",
+          "recipe_id": "research_kit"
+        },
+        {
+          "missing": [
+            "iron_ore"
+          ],
+          "reason": "technology",
+          "recipe_id": "smelt_ore"
+        },
+        {
+          "missing": [],
+          "reason": "station",
+          "recipe_id": "study_axe_insignia"
+        },
+        {
+          "missing": [],
+          "reason": "station",
+          "recipe_id": "study_predator_jaw"
+        },
+        {
+          "missing": [
+            "venom_extract"
+          ],
+          "reason": "material",
+          "recipe_id": "toxin_mask"
+        }
+      ],
+      "craftable_recipe_count": 9,
+      "craftable_recipes": [
+        "burn_charcoal",
+        "furnace_kit",
+        "iron_pick",
+        "make_parts",
+        "salvage_hammer",
+        "smelt_iron",
+        "stone_pick",
+        "weave_cloth",
+        "workbench_kit"
+      ],
+      "obtainable": [
+        "binding_cloth",
+        "blood_crucible_blueprint",
+        "charcoal",
+        "crypt_bone_shard",
+        "fractured_axe_insignia",
+        "furnace_kit",
+        "iron_ingot",
+        "iron_parts",
+        "iron_pick",
+        "iron_scrap",
+        "oak_wood",
+        "predator_jaw",
+        "reaper_essence",
+        "reed_fibre",
+        "salvage_hammer",
+        "soul_ember",
+        "stone_chunk",
+        "stone_pick",
+        "venom_spine",
+        "workbench_kit"
+      ],
+      "obtainable_count": 20,
+      "seeds": [
+        "blood_crucible_blueprint",
+        "crypt_bone_shard",
+        "fractured_axe_insignia",
+        "iron_scrap",
+        "oak_wood",
+        "predator_jaw",
+        "reaper_essence",
+        "reed_fibre",
+        "soul_ember",
+        "stone_chunk",
+        "venom_spine"
+      ],
+      "stations": [
+        "advanced_workbench",
+        "furnace",
+        "hand",
+        "workbench"
+      ],
+      "technologies": []
+    },
+    "NATIVE_PROVEN": {
+      "blocked_count": 27,
+      "blocked_sample": [
+        {
+          "missing": [
+            "steel_ingot"
+          ],
+          "reason": "technology",
+          "recipe_id": "advanced_furnace_kit"
+        },
+        {
+          "missing": [
+            "coal"
+          ],
+          "reason": "technology",
+          "recipe_id": "alloy_steel"
+        },
+        {
+          "missing": [
+            "core_blank",
+            "soul_ember",
+            "ancient_catalyst"
+          ],
+          "reason": "technology",
+          "recipe_id": "charge_blank"
+        },
+        {
+          "missing": [
+            "crypt_bone_shard",
+            "knowledge_spares"
+          ],
+          "reason": "technology",
+          "recipe_id": "core_blank"
+        },
+        {
+          "missing": [
+            "charged_blank",
+            "soul_ember",
+            "reaper_essence"
+          ],
+          "reason": "technology",
+          "recipe_id": "craft_core_ember"
+        },
+        {
+          "missing": [
+            "charged_blank",
+            "frost_extract",
+            "frost_shard"
+          ],
+          "reason": "technology",
+          "recipe_id": "craft_core_frost"
+        },
+        {
+          "missing": [
+            "charged_blank",
+            "venom_extract",
+            "venom_spine"
+          ],
+          "reason": "technology",
+          "recipe_id": "craft_core_venom"
+        },
+        {
+          "missing": [
+            "moonleaf",
+            "frost_shard"
+          ],
+          "reason": "station",
+          "recipe_id": "extract_frost"
+        },
+        {
+          "missing": [
+            "moonleaf",
+            "venom_spine",
+            "sulfur"
+          ],
+          "reason": "station",
+          "recipe_id": "extract_venom"
+        },
+        {
+          "missing": [
+            "grain",
+            "wild_berries"
+          ],
+          "reason": "material",
+          "recipe_id": "field_meal"
+        },
+        {
+          "missing": [
+            "frost_extract",
+            "spring"
+          ],
+          "reason": "material",
+          "recipe_id": "frost_cloak"
+        },
+        {
+          "missing": [
+            "clay"
+          ],
+          "reason": "material",
+          "recipe_id": "garden_kit"
+        },
+        {
+          "missing": [
+            "grain_seed",
+            "compost"
+          ],
+          "reason": "station",
+          "recipe_id": "grow_grain"
+        },
+        {
+          "missing": [
+            "moonleaf_seed",
+            "compost"
+          ],
+          "reason": "station",
+          "recipe_id": "grow_moonleaf"
+        },
+        {
+          "missing": [
+            "wild_berries"
+          ],
+          "reason": "station",
+          "recipe_id": "make_compost"
+        },
+        {
+          "missing": [
+            "knowledge_spares",
+            "soul_ember"
+          ],
+          "reason": "station",
+          "recipe_id": "make_notes"
+        },
+        {
+          "missing": [
+            "crypt_bone_shard"
+          ],
+          "reason": "station",
+          "recipe_id": "make_spares"
+        },
+        {
+          "missing": [],
+          "reason": "technology",
+          "recipe_id": "make_spring"
+        },
+        {
+          "missing": [
+            "moonleaf"
+          ],
+          "reason": "material",
+          "recipe_id": "minor_salve"
+        },
+        {
+          "missing": [
+            "core_blank",
+            "soul_ember",
+            "knowledge_spares"
+          ],
+          "reason": "technology",
+          "recipe_id": "rebuild_core_ember"
+        },
+        {
+          "missing": [
+            "core_blank",
+            "frost_extract",
+            "knowledge_spares"
+          ],
+          "reason": "technology",
+          "recipe_id": "rebuild_core_frost"
+        },
+        {
+          "missing": [
+            "core_blank",
+            "venom_extract",
+            "knowledge_spares"
+          ],
+          "reason": "technology",
+          "recipe_id": "rebuild_core_venom"
+        },
+        {
+          "missing": [
+            "knowledge_spares"
+          ],
+          "reason": "material",
+          "recipe_id": "research_kit"
+        },
+        {
+          "missing": [
+            "iron_ore"
+          ],
+          "reason": "technology",
+          "recipe_id": "smelt_ore"
+        },
+        {
+          "missing": [
+            "fractured_axe_insignia"
+          ],
+          "reason": "station",
+          "recipe_id": "study_axe_insignia"
+        },
+        {
+          "missing": [
+            "predator_jaw"
+          ],
+          "reason": "station",
+          "recipe_id": "study_predator_jaw"
+        },
+        {
+          "missing": [
+            "venom_extract"
+          ],
+          "reason": "material",
+          "recipe_id": "toxin_mask"
+        }
+      ],
+      "craftable_recipe_count": 9,
+      "craftable_recipes": [
+        "burn_charcoal",
+        "furnace_kit",
+        "iron_pick",
+        "make_parts",
+        "salvage_hammer",
+        "smelt_iron",
+        "stone_pick",
+        "weave_cloth",
+        "workbench_kit"
+      ],
+      "obtainable": [
+        "binding_cloth",
+        "charcoal",
+        "furnace_kit",
+        "iron_ingot",
+        "iron_parts",
+        "iron_pick",
+        "iron_scrap",
+        "oak_wood",
+        "reed_fibre",
+        "salvage_hammer",
+        "stone_chunk",
+        "stone_pick",
+        "workbench_kit"
+      ],
+      "obtainable_count": 13,
+      "seeds": [
+        "iron_scrap",
+        "oak_wood",
+        "reed_fibre",
+        "stone_chunk"
+      ],
+      "stations": [
+        "advanced_workbench",
+        "furnace",
+        "hand",
+        "workbench"
+      ],
+      "technologies": []
+    }
+  },
+  "hazard_mitigation": [
+    {
+      "access_capability_for_hazard": "cap_filter",
+      "bound_hazard_id": "hz_ember_gas",
+      "bound_hazard_kind": "acid_gas",
+      "bound_poi_id": "poi_ember_convict_mine",
+      "covering_items": [
+        "toxin_mask"
+      ],
+      "required_resistance": "venom:60",
+      "source_id": "vault_catalyst",
+      "status": "COVERED"
+    },
+    {
+      "access_capability_for_hazard": null,
+      "bound_hazard_id": null,
+      "bound_hazard_kind": null,
+      "bound_poi_id": null,
+      "covering_items": [
+        "toxin_mask"
+      ],
+      "required_resistance": "venom:30",
+      "source_id": "venom_cache",
+      "status": "COVERED"
+    }
+  ],
+  "loot_identity": {
+    "a1_container_class_vocabulary": [],
+    "class_namespaced_targets": [
+      "poi:abandoned_institute",
+      "poi:blue_archive",
+      "poi:green_archive",
+      "poi:roadside_cache",
+      "poi:roadside_station",
+      "poi:sealed_archive",
+      "poi:specimen_vault_ember",
+      "poi:specimen_vault_frost",
+      "poi:specimen_vault_venom",
+      "poi:toxin_laboratory"
+    ],
+    "distinct_targets": 11,
+    "finding": "A3 loot records name class targets in a ':' namespace and regions in a bare vocabulary; A1 publishes 'poi_*' instance ids and 'r_*' regions. The gap is one missing shared identifier contract plus the physical instances it would imply - not 16 missing individual POIs.",
+    "instance_namespaced_targets": [
+      "poi_crown_waystation"
+    ],
+    "physical_container_instances_authored_by_a1": 1,
+    "record_count": 16,
+    "records": [
+      {
+        "declared_poi_id": "poi:abandoned_institute",
+        "declared_region_id": "opening_marches",
+        "item_id": "plan_ember_core",
+        "source_id": "plan_drop_ember",
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "abandoned_institute"
+      },
+      {
+        "declared_poi_id": "poi:abandoned_institute",
+        "declared_region_id": "opening_marches",
+        "item_id": "plan_frost_core",
+        "source_id": "plan_drop_frost",
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "abandoned_institute"
+      },
+      {
+        "declared_poi_id": "poi:abandoned_institute",
+        "declared_region_id": "opening_marches",
+        "item_id": "plan_venom_core",
+        "source_id": "plan_drop_venom",
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "abandoned_institute"
+      },
+      {
+        "declared_poi_id": "poi:roadside_cache",
+        "declared_region_id": "opening_marches",
+        "item_id": "grain_seed",
+        "source_id": "road_grain_seed",
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "roadside_cache"
+      },
+      {
+        "declared_poi_id": "poi_crown_waystation",
+        "declared_region_id": "r_ashen_crown",
+        "item_id": "research_notes",
+        "source_id": "road_notes",
+        "target_kind": "INSTANCE_PREFIX",
+        "target_name": "crown_waystation"
+      },
+      {
+        "declared_poi_id": "poi_crown_waystation",
+        "declared_region_id": "r_ashen_crown",
+        "item_id": "iron_scrap",
+        "source_id": "road_scrap",
+        "target_kind": "INSTANCE_PREFIX",
+        "target_name": "crown_waystation"
+      },
+      {
+        "declared_poi_id": "poi:roadside_cache",
+        "declared_region_id": "opening_marches",
+        "item_id": "moonleaf_seed",
+        "source_id": "road_seed",
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "roadside_cache"
+      },
+      {
+        "declared_poi_id": "poi_crown_waystation",
+        "declared_region_id": "r_ashen_crown",
+        "item_id": "knowledge_spares",
+        "source_id": "road_supplies",
+        "target_kind": "INSTANCE_PREFIX",
+        "target_name": "crown_waystation"
+      },
+      {
+        "declared_poi_id": "poi:green_archive",
+        "declared_region_id": "opening_marches",
+        "item_id": "blue_seal",
+        "source_id": "seal_blue_seal",
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "green_archive"
+      },
+      {
+        "declared_poi_id": "poi:roadside_station",
+        "declared_region_id": "opening_marches",
+        "item_id": "green_seal",
+        "source_id": "seal_green_seal",
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "roadside_station"
+      },
+      {
+        "declared_poi_id": "poi:blue_archive",
+        "declared_region_id": "opening_marches",
+        "item_id": "purple_seal",
+        "source_id": "seal_purple_seal",
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "blue_archive"
+      },
+      {
+        "declared_poi_id": "poi:specimen_vault_ember",
+        "declared_region_id": "sealed_archive",
+        "item_id": "core_ember",
+        "source_id": "specimen_ember",
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "specimen_vault_ember"
+      },
+      {
+        "declared_poi_id": "poi:specimen_vault_frost",
+        "declared_region_id": "sealed_archive",
+        "item_id": "core_frost",
+        "source_id": "specimen_frost",
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "specimen_vault_frost"
+      },
+      {
+        "declared_poi_id": "poi:specimen_vault_venom",
+        "declared_region_id": "sealed_archive",
+        "item_id": "core_venom",
+        "source_id": "specimen_venom",
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "specimen_vault_venom"
+      },
+      {
+        "declared_poi_id": "poi:sealed_archive",
+        "declared_region_id": "sealed_archive",
+        "item_id": "ancient_catalyst",
+        "source_id": "vault_catalyst",
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "sealed_archive"
+      },
+      {
+        "declared_poi_id": "poi:toxin_laboratory",
+        "declared_region_id": "mire_wetlands",
+        "item_id": "venom_spine",
+        "source_id": "venom_cache",
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "toxin_laboratory"
+      }
+    ],
+    "regions": [
+      {
+        "a1_region_example": "r_amberwood",
+        "declared_region_id": "mire_wetlands",
+        "resolves_to_a1_region": false
+      },
+      {
+        "a1_region_example": "r_amberwood",
+        "declared_region_id": "opening_marches",
+        "resolves_to_a1_region": false
+      },
+      {
+        "a1_region_example": "r_amberwood",
+        "declared_region_id": "r_ashen_crown",
+        "resolves_to_a1_region": true
+      },
+      {
+        "a1_region_example": "r_amberwood",
+        "declared_region_id": "sealed_archive",
+        "resolves_to_a1_region": false
+      }
+    ],
+    "regions_unresolved": [
+      "mire_wetlands",
+      "opening_marches",
+      "sealed_archive"
+    ],
+    "targets": {
+      "poi:abandoned_institute": {
+        "declared_poi_id": "poi:abandoned_institute",
+        "physical_instances_in_a1": 0,
+        "record_count": 3,
+        "regions": [
+          "opening_marches"
+        ],
+        "resolves_to_a1_instance": false,
+        "source_ids": [
+          "plan_drop_ember",
+          "plan_drop_frost",
+          "plan_drop_venom"
+        ],
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "abandoned_institute"
+      },
+      "poi:blue_archive": {
+        "declared_poi_id": "poi:blue_archive",
+        "physical_instances_in_a1": 0,
+        "record_count": 1,
+        "regions": [
+          "opening_marches"
+        ],
+        "resolves_to_a1_instance": false,
+        "source_ids": [
+          "seal_purple_seal"
+        ],
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "blue_archive"
+      },
+      "poi:green_archive": {
+        "declared_poi_id": "poi:green_archive",
+        "physical_instances_in_a1": 0,
+        "record_count": 1,
+        "regions": [
+          "opening_marches"
+        ],
+        "resolves_to_a1_instance": false,
+        "source_ids": [
+          "seal_blue_seal"
+        ],
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "green_archive"
+      },
+      "poi:roadside_cache": {
+        "declared_poi_id": "poi:roadside_cache",
+        "physical_instances_in_a1": 0,
+        "record_count": 2,
+        "regions": [
+          "opening_marches"
+        ],
+        "resolves_to_a1_instance": false,
+        "source_ids": [
+          "road_grain_seed",
+          "road_seed"
+        ],
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "roadside_cache"
+      },
+      "poi:roadside_station": {
+        "declared_poi_id": "poi:roadside_station",
+        "physical_instances_in_a1": 0,
+        "record_count": 1,
+        "regions": [
+          "opening_marches"
+        ],
+        "resolves_to_a1_instance": false,
+        "source_ids": [
+          "seal_green_seal"
+        ],
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "roadside_station"
+      },
+      "poi:sealed_archive": {
+        "declared_poi_id": "poi:sealed_archive",
+        "physical_instances_in_a1": 0,
+        "record_count": 1,
+        "regions": [
+          "sealed_archive"
+        ],
+        "resolves_to_a1_instance": false,
+        "source_ids": [
+          "vault_catalyst"
+        ],
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "sealed_archive"
+      },
+      "poi:specimen_vault_ember": {
+        "declared_poi_id": "poi:specimen_vault_ember",
+        "physical_instances_in_a1": 0,
+        "record_count": 1,
+        "regions": [
+          "sealed_archive"
+        ],
+        "resolves_to_a1_instance": false,
+        "source_ids": [
+          "specimen_ember"
+        ],
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "specimen_vault_ember"
+      },
+      "poi:specimen_vault_frost": {
+        "declared_poi_id": "poi:specimen_vault_frost",
+        "physical_instances_in_a1": 0,
+        "record_count": 1,
+        "regions": [
+          "sealed_archive"
+        ],
+        "resolves_to_a1_instance": false,
+        "source_ids": [
+          "specimen_frost"
+        ],
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "specimen_vault_frost"
+      },
+      "poi:specimen_vault_venom": {
+        "declared_poi_id": "poi:specimen_vault_venom",
+        "physical_instances_in_a1": 0,
+        "record_count": 1,
+        "regions": [
+          "sealed_archive"
+        ],
+        "resolves_to_a1_instance": false,
+        "source_ids": [
+          "specimen_venom"
+        ],
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "specimen_vault_venom"
+      },
+      "poi:toxin_laboratory": {
+        "declared_poi_id": "poi:toxin_laboratory",
+        "physical_instances_in_a1": 0,
+        "record_count": 1,
+        "regions": [
+          "mire_wetlands"
+        ],
+        "resolves_to_a1_instance": false,
+        "source_ids": [
+          "venom_cache"
+        ],
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "toxin_laboratory"
+      },
+      "poi_crown_waystation": {
+        "declared_poi_id": "poi_crown_waystation",
+        "physical_instances_in_a1": 1,
+        "record_count": 3,
+        "regions": [
+          "r_ashen_crown"
+        ],
+        "resolves_to_a1_instance": true,
+        "source_ids": [
+          "road_notes",
+          "road_scrap",
+          "road_supplies"
+        ],
+        "target_kind": "INSTANCE_PREFIX",
+        "target_name": "crown_waystation"
+      }
+    },
+    "targets_resolving_to_a1_instance": [
+      "poi_crown_waystation"
+    ]
+  },
+  "loot_identity_legend": {
+    "physical instance": "a placed copy of a class in the world (A1 authors 0)",
+    "poi id": "identifier scheme: A3 'poi:name' vs A1 'poi_name'",
+    "region": "A3 names 3 bare regions; A1 publishes 11 'r_*' regions, disjoint vocabularies",
+    "source class": "the kind of container that yields it, e.g. 'roadside_cache' (10 distinct)",
+    "source record": "one item-yield row in A3 sources.json (16 of them)"
+  },
+  "loot_source_summary": {
+    "loot_sources_total": 16,
+    "loot_sources_unresolved": [
+      "plan_drop_ember",
+      "plan_drop_frost",
+      "plan_drop_venom",
+      "road_grain_seed",
+      "road_notes",
+      "road_scrap",
+      "road_seed",
+      "road_supplies",
+      "seal_blue_seal",
+      "seal_green_seal",
+      "seal_purple_seal",
+      "specimen_ember",
+      "specimen_frost",
+      "specimen_venom",
+      "vault_catalyst",
+      "venom_cache"
+    ],
+    "loot_sources_with_resolved_a1_poi": 0,
+    "loot_sources_with_resolved_a1_region": 3
+  },
+  "mitigation_craft_chain": [
+    {
+      "covering_item": "toxin_mask",
+      "reachable_from": {
+        "AUTHORED_PLAN_INCLUDING_LOOT": true,
+        "NATIVE_PLUS_LEGACY_REWARDS": false,
+        "NATIVE_PROVEN": false
+      },
+      "recipes": [
+        "toxin_mask"
+      ],
+      "required_technologies": [],
+      "source_id": "vault_catalyst"
+    },
+    {
+      "covering_item": "toxin_mask",
+      "reachable_from": {
+        "AUTHORED_PLAN_INCLUDING_LOOT": true,
+        "NATIVE_PLUS_LEGACY_REWARDS": false,
+        "NATIVE_PROVEN": false
+      },
+      "recipes": [
+        "toxin_mask"
+      ],
+      "required_technologies": [],
+      "source_id": "venom_cache"
+    }
+  ],
+  "poi_readiness": {
+    "by_playability": {
+      "AUTHORED_SPEC_NATIVE_NOT_INTEGRATED": 2,
+      "CONTRACT_ONLY_NOT_PLAYABLE": 106,
+      "SHIPPED_LEGACY_SCENE_NO_A3_LOOT": 10
+    },
+    "by_readiness": {
+      "INTERACTION_SPEC_AUTHORED_NOT_NATIVE": 2,
+      "PRESERVED_BASELINE": 10,
+      "WORLD_SITE_CONTRACT_ONLY": 106
+    },
+    "rows": [
+      {
+        "archetype": "roadside_station",
+        "band": "early",
+        "content_readiness": "INTERACTION_SPEC_AUTHORED_NOT_NATIVE",
+        "grants": [
+          "cap_salvage",
+          "cap_seal_1"
+        ],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "AUTHORED_SPEC_NATIVE_NOT_INTEGRATED",
+        "poi_id": "poi_crown_waystation",
+        "requires": [],
+        "route_node": true
+      },
+      {
+        "archetype": "power_substation",
+        "band": "early",
+        "content_readiness": "INTERACTION_SPEC_AUTHORED_NOT_NATIVE",
+        "grants": [
+          "cap_power_1"
+        ],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "AUTHORED_SPEC_NATIVE_NOT_INTEGRATED",
+        "poi_id": "poi_crown_relay_shed",
+        "requires": [
+          "cap_salvage"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "quarry",
+        "band": "early",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_crown_quarry",
+        "requires": [],
+        "route_node": true
+      },
+      {
+        "archetype": "abandoned_gatehouse",
+        "band": "early",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_crown_orchard_gate",
+        "requires": [],
+        "route_node": true
+      },
+      {
+        "archetype": "river_crossing",
+        "band": "early",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_crown_ferry_pile",
+        "requires": [],
+        "route_node": true
+      },
+      {
+        "archetype": "burial_field",
+        "band": "early",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_crown_barrow_field",
+        "requires": [
+          "cap_seal_1"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "outpost_forge",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [
+          "cap_thermal"
+        ],
+        "hazard_id": "hz_frost_ridge",
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_frost_wardhouse",
+        "requires": [
+          "cap_seal_1"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "hidden_cave",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": "hz_frost_ridge",
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_frost_ice_cave",
+        "requires": [
+          "cap_thermal"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "research_ruin",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": "hz_frost_ridge",
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_frost_observatory",
+        "requires": [
+          "cap_power_1",
+          "cap_thermal"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "mountain_pass",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_frost_goat_pass",
+        "requires": [
+          "cap_climb"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "abandoned_camp",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": "hz_frost_ridge",
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_frost_miners_hut",
+        "requires": [
+          "cap_thermal"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "shrine",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_frost_tarn_shrine",
+        "requires": [
+          "cap_thermal"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "lighthouse",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [
+          "cap_stormward"
+        ],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_glasswind_light",
+        "requires": [
+          "cap_seal_2"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "power_substation",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [
+          "cap_stormward"
+        ],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_glasswind_signal",
+        "requires": [
+          "cap_seal_2"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "shipwreck",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_glasswind_wreck",
+        "requires": [
+          "cap_boat"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "hidden_cave",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_glasswind_smuggler",
+        "requires": [
+          "cap_climb"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "ecological_site",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_glasswind_gullery",
+        "requires": [],
+        "route_node": true
+      },
+      {
+        "archetype": "outpost",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_glasswind_watch",
+        "requires": [
+          "cap_thermal"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "abandoned_factory",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [
+          "cap_seal_2"
+        ],
+        "hazard_id": "hz_ember_gas",
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_ember_old_forge",
+        "requires": [
+          "cap_filter",
+          "cap_power_1",
+          "cap_seal_1"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "workshop",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [
+          "cap_climb"
+        ],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_ember_piton_works",
+        "requires": [
+          "cap_power_1"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "mine",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": "hz_ember_gas",
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_ember_convict_mine",
+        "requires": [
+          "cap_filter",
+          "cap_seal_2"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "bandit_camp",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_ember_cinder_camp",
+        "requires": [
+          "cap_seal_1"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "geothermal_site",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": "hz_ember_gas",
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_ember_fumarole",
+        "requires": [
+          "cap_filter"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "fortified_pass",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_ember_basalt_gate",
+        "requires": [
+          "cap_climb"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "trading_post",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_ember_caravan_serai",
+        "requires": [
+          "cap_seal_1"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "harbor",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [
+          "cap_boat"
+        ],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_saffron_drydock",
+        "requires": [
+          "cap_power_1"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "evaporite_works",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": "hz_saffron_heat",
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_saffron_salt_pan",
+        "requires": [
+          "cap_thermal"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "trading_post",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_saffron_caravan",
+        "requires": [
+          "cap_seal_1"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "oasis",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_saffron_wadi_well",
+        "requires": [],
+        "route_node": true
+      },
+      {
+        "archetype": "burial_field",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_saffron_coral_tomb",
+        "requires": [
+          "cap_seal_2"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "warehouse",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_saffron_customs",
+        "requires": [
+          "cap_boat"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "puzzle_ruin",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [
+          "cap_deepward"
+        ],
+        "hazard_id": "hz_verdant_spore",
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_verdant_root_lift",
+        "requires": [
+          "cap_climb",
+          "cap_filter",
+          "cap_thermal"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "temple",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": "hz_verdant_spore",
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_verdant_canopy_temple",
+        "requires": [
+          "cap_climb",
+          "cap_filter",
+          "cap_seal_3"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "ecological_site",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": "hz_verdant_spore",
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_verdant_spore_hollow",
+        "requires": [
+          "cap_filter"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "abandoned_settlement",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_verdant_terraces",
+        "requires": [
+          "cap_seal_2"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "outpost",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_verdant_hunter_camp",
+        "requires": [
+          "cap_filter"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "power_substation",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_verdant_river_gate",
+        "requires": [
+          "cap_power_1",
+          "cap_seal_2"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "layered_vault",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [
+          "cap_seal_3"
+        ],
+        "hazard_id": "hz_pearl_tide",
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_pearl_customs",
+        "requires": [
+          "cap_boat",
+          "cap_seal_2",
+          "cap_tide_ward"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "settlement",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [
+          "cap_tide_ward"
+        ],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_pearl_stilt_village",
+        "requires": [
+          "cap_boat"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "hidden_cave",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": "hz_pearl_tide",
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_pearl_grotto",
+        "requires": [
+          "cap_boat",
+          "cap_tide_ward"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "bandit_camp",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_pearl_smuggler",
+        "requires": [
+          "cap_boat",
+          "cap_seal_2"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "outpost",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_pearl_beacon",
+        "requires": [
+          "cap_boat"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "ecological_site",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_pearl_nursery",
+        "requires": [
+          "cap_filter"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "watermill",
+        "band": "early",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_amberwood_mill",
+        "requires": [
+          "cap_salvage"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "workshop",
+        "band": "early",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [
+          "cap_filter"
+        ],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_amberwood_apothecary",
+        "requires": [
+          "cap_salvage"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "farm_ruin",
+        "band": "early",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_amberwood_orchard",
+        "requires": [],
+        "route_node": true
+      },
+      {
+        "archetype": "burial_field",
+        "band": "early",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_amberwood_barrow",
+        "requires": [
+          "cap_seal_1"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "river_crossing",
+        "band": "early",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_amberwood_ferry",
+        "requires": [],
+        "route_node": true
+      },
+      {
+        "archetype": "outpost",
+        "band": "early",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_amberwood_watch",
+        "requires": [],
+        "route_node": true
+      },
+      {
+        "archetype": "settlement",
+        "band": "early",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_mirrormere_piles",
+        "requires": [],
+        "route_node": true
+      },
+      {
+        "archetype": "ruin_crossing",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_mirrormere_causeway",
+        "requires": [
+          "cap_power_1"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "research_ruin",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_mirrormere_observatory",
+        "requires": [
+          "cap_seal_2"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "ecological_site",
+        "band": "early",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_mirrormere_reed_holt",
+        "requires": [],
+        "route_node": true
+      },
+      {
+        "archetype": "river_crossing",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_mirrormere_ferry",
+        "requires": [
+          "cap_boat"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "hidden_cave",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_mirrormere_smuggler",
+        "requires": [
+          "cap_climb"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "hidden_cave",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": "hz_sunken_pressure",
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_sunken_cenote",
+        "requires": [
+          "cap_deepward"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "puzzle_ruin",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_sunken_graft",
+        "requires": [
+          "cap_seal_2"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "shrine",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_sunken_tower",
+        "requires": [
+          "cap_deepward"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "ecological_site",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": "hz_sunken_pressure",
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_sunken_subspring",
+        "requires": [
+          "cap_deepward"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "outpost",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_sunken_watch",
+        "requires": [
+          "cap_filter"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "shipwreck",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_sunken_wreck",
+        "requires": [
+          "cap_boat"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "power_substation",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": "hz_ashwater_miasma",
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_ashwater_pump",
+        "requires": [
+          "cap_filter",
+          "cap_power_1",
+          "cap_seal_2"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "shrine",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": "hz_ashwater_miasma",
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_ashwater_shrine",
+        "requires": [
+          "cap_filter",
+          "cap_seal_3"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "route_works",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_ashwater_boardwalk",
+        "requires": [
+          "cap_climb"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "ecological_site",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_ashwater_resurgence",
+        "requires": [
+          "cap_filter"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "bandit_camp",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": "hz_ashwater_miasma",
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_ashwater_bog_camp",
+        "requires": [
+          "cap_filter",
+          "cap_seal_2"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "outpost",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_ashwater_watch",
+        "requires": [
+          "cap_filter"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "outpost",
+        "band": "early",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_crown_north_watch",
+        "requires": [],
+        "route_node": true
+      },
+      {
+        "archetype": "shrine",
+        "band": "early",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_crown_rim_shrine",
+        "requires": [
+          "cap_seal_1"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "power_substation",
+        "band": "early",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_crown_old_signal",
+        "requires": [
+          "cap_salvage"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "quarry",
+        "band": "early",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_crown_tuff_terrace",
+        "requires": [],
+        "route_node": true
+      },
+      {
+        "archetype": "abandoned_camp",
+        "band": "early",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_crown_herder_camp",
+        "requires": [],
+        "route_node": true
+      },
+      {
+        "archetype": "fortified_pass",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_frost_north_gate",
+        "requires": [
+          "cap_climb"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "shrine",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_frost_rime_cairn",
+        "requires": [
+          "cap_thermal"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "watermill",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_frost_glacier_mill",
+        "requires": [
+          "cap_power_1",
+          "cap_thermal"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "abandoned_camp",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_frost_avalanche_hut",
+        "requires": [
+          "cap_thermal"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "outpost",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_glass_north_cliff",
+        "requires": [
+          "cap_thermal"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "ecological_site",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_glass_aukery",
+        "requires": [],
+        "route_node": true
+      },
+      {
+        "archetype": "outpost",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_ember_east_watch",
+        "requires": [
+          "cap_filter"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "quarry",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_ember_ash_quarry",
+        "requires": [
+          "cap_filter"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "evaporite_works",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_saffron_south_pan",
+        "requires": [
+          "cap_thermal"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "outpost",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_saffron_south_watch",
+        "requires": [
+          "cap_boat"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "ecological_site",
+        "band": "early",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_amber_west_holt",
+        "requires": [],
+        "route_node": true
+      },
+      {
+        "archetype": "burial_field",
+        "band": "early",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_amber_west_barrow",
+        "requires": [
+          "cap_seal_1"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "settlement",
+        "band": "early",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_mere_east_pile",
+        "requires": [],
+        "route_node": true
+      },
+      {
+        "archetype": "fortified_pass",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_verdant_south_gate",
+        "requires": [
+          "cap_climb",
+          "cap_filter"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "shrine",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_verdant_south_shrine",
+        "requires": [
+          "cap_filter"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "outpost",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_pearl_east_beacon",
+        "requires": [
+          "cap_boat"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "ecological_site",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_pearl_east_nursery",
+        "requires": [
+          "cap_boat",
+          "cap_filter"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "ecological_site",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_sunken_south_spring",
+        "requires": [
+          "cap_deepward"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "power_substation",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_ashwater_south_pump",
+        "requires": [
+          "cap_filter",
+          "cap_power_1"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "shrine",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_ashwater_south_shrine",
+        "requires": [
+          "cap_filter"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "route_works",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_ashwater_west_boardwalk",
+        "requires": [
+          "cap_climb",
+          "cap_filter"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "watermill",
+        "band": "early",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_crown_south_mill",
+        "requires": [
+          "cap_salvage"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "burial_field",
+        "band": "early",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_crown_south_barrow",
+        "requires": [
+          "cap_seal_1"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "outpost",
+        "band": "early",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_crown_south_watch",
+        "requires": [],
+        "route_node": true
+      },
+      {
+        "archetype": "quarry",
+        "band": "early",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_crown_south_quarry",
+        "requires": [],
+        "route_node": true
+      },
+      {
+        "archetype": "farm_ruin",
+        "band": "early",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_crown_south_orchard",
+        "requires": [],
+        "route_node": true
+      },
+      {
+        "archetype": "outpost",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_glass_tide_watch",
+        "requires": [
+          "cap_thermal"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "outpost",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_saffron_tide_watch",
+        "requires": [
+          "cap_thermal"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "outpost",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_verdant_east_blind",
+        "requires": [
+          "cap_filter"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "outpost",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_frost_south_watch",
+        "requires": [
+          "cap_thermal"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "outpost",
+        "band": "mid",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_ember_south_watch",
+        "requires": [
+          "cap_filter"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "route_works",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_ashwater_south_boardwalk",
+        "requires": [
+          "cap_climb",
+          "cap_filter"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "outpost",
+        "band": "early",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_amber_edge_watch",
+        "requires": [],
+        "route_node": true
+      },
+      {
+        "archetype": "settlement",
+        "band": "early",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_mere_south_pile",
+        "requires": [],
+        "route_node": true
+      },
+      {
+        "archetype": "ecological_site",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_sunken_west_spring",
+        "requires": [
+          "cap_deepward"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "outpost",
+        "band": "late",
+        "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
+        "poi_id": "poi_pearl_north_beacon",
+        "requires": [
+          "cap_boat"
+        ],
+        "route_node": true
+      },
+      {
+        "archetype": "chapter1_dungeon_entrance",
+        "band": "early",
+        "content_readiness": "PRESERVED_BASELINE",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "SHIPPED_LEGACY_SCENE_NO_A3_LOOT",
+        "poi_id": "legacy_lm_crypt",
+        "requires": [],
+        "route_node": false
+      },
+      {
+        "archetype": "chapter1_dungeon_entrance",
+        "band": "early",
+        "content_readiness": "PRESERVED_BASELINE",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "SHIPPED_LEGACY_SCENE_NO_A3_LOOT",
+        "poi_id": "legacy_lm_ossuary",
+        "requires": [],
+        "route_node": false
+      },
+      {
+        "archetype": "chapter1_dungeon_entrance",
+        "band": "early",
+        "content_readiness": "PRESERVED_BASELINE",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "SHIPPED_LEGACY_SCENE_NO_A3_LOOT",
+        "poi_id": "legacy_lm_archive",
+        "requires": [],
+        "route_node": false
+      },
+      {
+        "archetype": "chapter1_dungeon_entrance",
+        "band": "early",
+        "content_readiness": "PRESERVED_BASELINE",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "SHIPPED_LEGACY_SCENE_NO_A3_LOOT",
+        "poi_id": "legacy_lm_reliquary",
+        "requires": [],
+        "route_node": false
+      },
+      {
+        "archetype": "chapter1_dungeon_entrance",
+        "band": "early",
+        "content_readiness": "PRESERVED_BASELINE",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "SHIPPED_LEGACY_SCENE_NO_A3_LOOT",
+        "poi_id": "legacy_lm_crucible",
+        "requires": [],
+        "route_node": false
+      },
+      {
+        "archetype": "chapter1_dungeon_entrance",
+        "band": "early",
+        "content_readiness": "PRESERVED_BASELINE",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "SHIPPED_LEGACY_SCENE_NO_A3_LOOT",
+        "poi_id": "legacy_lm_relay",
+        "requires": [],
+        "route_node": false
+      },
+      {
+        "archetype": "chapter1_dungeon_entrance",
+        "band": "early",
+        "content_readiness": "PRESERVED_BASELINE",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "SHIPPED_LEGACY_SCENE_NO_A3_LOOT",
+        "poi_id": "legacy_lm_beacon",
+        "requires": [],
+        "route_node": false
+      },
+      {
+        "archetype": "chapter1_dungeon_entrance",
+        "band": "early",
+        "content_readiness": "PRESERVED_BASELINE",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "SHIPPED_LEGACY_SCENE_NO_A3_LOOT",
+        "poi_id": "legacy_lm_divided",
+        "requires": [],
+        "route_node": false
+      },
+      {
+        "archetype": "chapter1_dungeon_entrance",
+        "band": "early",
+        "content_readiness": "PRESERVED_BASELINE",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "SHIPPED_LEGACY_SCENE_NO_A3_LOOT",
+        "poi_id": "legacy_lm_gate",
+        "requires": [],
+        "route_node": false
+      },
+      {
+        "archetype": "chapter1_dungeon_entrance",
+        "band": "early",
+        "content_readiness": "PRESERVED_BASELINE",
+        "grants": [],
+        "hazard_id": null,
+        "loot_bearing_in_authored_contract": false,
+        "playability": "SHIPPED_LEGACY_SCENE_NO_A3_LOOT",
+        "poi_id": "legacy_lm_throne",
+        "requires": [],
+        "route_node": false
+      }
+    ],
+    "total": 118,
+    "without_route_node": [
+      "legacy_lm_archive",
+      "legacy_lm_beacon",
+      "legacy_lm_crucible",
+      "legacy_lm_crypt",
+      "legacy_lm_divided",
+      "legacy_lm_gate",
+      "legacy_lm_ossuary",
+      "legacy_lm_relay",
+      "legacy_lm_reliquary",
+      "legacy_lm_throne"
+    ]
+  },
+  "product_source_summary": {
+    "binding_status_counts": {
+      "A1_AUTHORED_PROPOSAL_A3_DIRECT_MAPPING": 5,
+      "A1_PINNED_A3_BOUND": 1,
+      "ADOPTED_SOURCE_SPECIFIC": 1,
+      "ADOPTED_SOURCE_SPECIFIC_CONDITIONAL_SINK_VERIFIED": 1,
+      "CANONICAL_A1_CAPABILITY_ONLY": 1,
+      "CONFIRMED_LIVE_SURV_010": 4,
+      "LIVE_EXISTING_REWARDS_PRODUCT_TIMING_PROPOSAL": 1,
+      "PROVISIONAL_A3_BINDING_NOT_A1_APPROVED": 1,
+      "PROVISIONAL_A3_BINDING_TO_A1_POI": 3,
+      "SUPERSEDED_BY_A1_NOVICE_BOOTSTRAP_NOT_USED": 1
+    },
+    "route_locked_with_novice_capabilities": [
+      "catalyst_vault",
+      "specimen_frost",
+      "specimen_venom"
+    ],
+    "total": 19,
+    "with_resolved_a1_poi": 13
+  },
+  "product_sources": [
+    {
+      "a1_poi_readiness": null,
+      "a1_poi_resolved": null,
+      "binding_status": "CONFIRMED_LIVE_SURV_010",
+      "item_id": "oak_wood",
+      "one_time": false,
+      "outputs": null,
+      "path_seconds": 0.0,
+      "path_tiles": 0.0,
+      "poi_id": null,
+      "requires_capabilities": [],
+      "risk": "low",
+      "route_locked": false,
+      "route_node": "node_refuge",
+      "source_id": "live_oak_wood"
+    },
+    {
+      "a1_poi_readiness": null,
+      "a1_poi_resolved": null,
+      "binding_status": "CONFIRMED_LIVE_SURV_010",
+      "item_id": "stone_chunk",
+      "one_time": false,
+      "outputs": null,
+      "path_seconds": 0.0,
+      "path_tiles": 0.0,
+      "poi_id": null,
+      "requires_capabilities": [],
+      "risk": "low",
+      "route_locked": false,
+      "route_node": "node_refuge",
+      "source_id": "live_stone_chunk"
+    },
+    {
+      "a1_poi_readiness": null,
+      "a1_poi_resolved": null,
+      "binding_status": "CONFIRMED_LIVE_SURV_010",
+      "item_id": "iron_scrap",
+      "one_time": false,
+      "outputs": null,
+      "path_seconds": 0.0,
+      "path_tiles": 0.0,
+      "poi_id": null,
+      "requires_capabilities": [],
+      "risk": "low",
+      "route_locked": false,
+      "route_node": "node_refuge",
+      "source_id": "live_iron_scrap"
+    },
+    {
+      "a1_poi_readiness": null,
+      "a1_poi_resolved": null,
+      "binding_status": "CONFIRMED_LIVE_SURV_010",
+      "item_id": "reed_fibre",
+      "one_time": false,
+      "outputs": null,
+      "path_seconds": 0.0,
+      "path_tiles": 0.0,
+      "poi_id": null,
+      "requires_capabilities": [],
+      "risk": "low",
+      "route_locked": false,
+      "route_node": "node_refuge",
+      "source_id": "live_reed_fibre"
+    },
+    {
+      "a1_poi_readiness": null,
+      "a1_poi_resolved": null,
+      "binding_status": "SUPERSEDED_BY_A1_NOVICE_BOOTSTRAP_NOT_USED",
+      "item_id": null,
+      "one_time": false,
+      "outputs": null,
+      "path_seconds": 0.0,
+      "path_tiles": 0.0,
+      "poi_id": null,
+      "requires_capabilities": [],
+      "risk": "low",
+      "route_locked": false,
+      "route_node": "node_refuge",
+      "source_id": "early_roadside_salvage"
+    },
+    {
+      "a1_poi_readiness": "AUTHORED_SPEC_NATIVE_NOT_INTEGRATED",
+      "a1_poi_resolved": true,
+      "binding_status": "A1_PINNED_A3_BOUND",
+      "item_id": null,
+      "one_time": false,
+      "outputs": {
+        "iron_scrap": 3,
+        "knowledge_spares": 2
+      },
+      "path_seconds": 58.8,
+      "path_tiles": 352.52,
+      "poi_id": "poi_crown_waystation",
+      "requires_capabilities": [
+        "cap_salvage"
+      ],
+      "risk": "low",
+      "route_locked": false,
+      "route_node": null,
+      "source_id": "a1_crown_salvage"
+    },
+    {
+      "a1_poi_readiness": "CONTRACT_ONLY_NOT_PLAYABLE",
+      "a1_poi_resolved": true,
+      "binding_status": "A1_AUTHORED_PROPOSAL_A3_DIRECT_MAPPING",
+      "item_id": "stone_chunk",
+      "one_time": false,
+      "outputs": null,
+      "path_seconds": 73.4,
+      "path_tiles": 440.37,
+      "poi_id": "poi_crown_quarry",
+      "requires_capabilities": [
+        "cap_filter"
+      ],
+      "risk": "low",
+      "route_locked": false,
+      "route_node": null,
+      "source_id": "a1_crown_tuff"
+    },
+    {
+      "a1_poi_readiness": "CONTRACT_ONLY_NOT_PLAYABLE",
+      "a1_poi_resolved": true,
+      "binding_status": "A1_AUTHORED_PROPOSAL_A3_DIRECT_MAPPING",
+      "item_id": "iron_ore",
+      "one_time": false,
+      "outputs": null,
+      "path_seconds": 73.4,
+      "path_tiles": 440.37,
+      "poi_id": "poi_crown_quarry",
+      "requires_capabilities": [
+        "cap_filter"
+      ],
+      "risk": "low",
+      "route_locked": false,
+      "route_node": null,
+      "source_id": "a1_crown_iron"
+    },
+    {
+      "a1_poi_readiness": "CONTRACT_ONLY_NOT_PLAYABLE",
+      "a1_poi_resolved": true,
+      "binding_status": "A1_AUTHORED_PROPOSAL_A3_DIRECT_MAPPING",
+      "item_id": "reed_fibre",
+      "one_time": false,
+      "outputs": null,
+      "path_seconds": 134.4,
+      "path_tiles": 806.3,
+      "poi_id": "poi_mirrormere_reed_holt",
+      "requires_capabilities": [],
+      "risk": "low",
+      "route_locked": false,
+      "route_node": null,
+      "source_id": "a1_mere_reed"
+    },
+    {
+      "a1_poi_readiness": "CONTRACT_ONLY_NOT_PLAYABLE",
+      "a1_poi_resolved": true,
+      "binding_status": "A1_AUTHORED_PROPOSAL_A3_DIRECT_MAPPING",
+      "item_id": "clay",
+      "one_time": false,
+      "outputs": null,
+      "path_seconds": 98.5,
+      "path_tiles": 591.14,
+      "poi_id": "poi_mirrormere_piles",
+      "requires_capabilities": [],
+      "risk": "low",
+      "route_locked": false,
+      "route_node": null,
+      "source_id": "a1_mere_clay"
+    },
+    {
+      "a1_poi_readiness": "CONTRACT_ONLY_NOT_PLAYABLE",
+      "a1_poi_resolved": true,
+      "binding_status": "A1_AUTHORED_PROPOSAL_A3_DIRECT_MAPPING",
+      "item_id": "sulfur",
+      "one_time": false,
+      "outputs": null,
+      "path_seconds": 140.3,
+      "path_tiles": 841.94,
+      "poi_id": "poi_ember_fumarole",
+      "requires_capabilities": [
+        "cap_filter"
+      ],
+      "risk": "medium",
+      "route_locked": false,
+      "route_node": null,
+      "source_id": "a1_ember_sulfur"
+    },
+    {
+      "a1_poi_readiness": null,
+      "a1_poi_resolved": null,
+      "binding_status": "LIVE_EXISTING_REWARDS_PRODUCT_TIMING_PROPOSAL",
+      "item_id": null,
+      "one_time": true,
+      "outputs": {
+        "crypt_bone_shard": 30,
+        "fractured_axe_insignia": 1,
+        "predator_jaw": 1,
+        "reaper_essence": 2,
+        "soul_ember": 20,
+        "venom_spine": 3
+      },
+      "path_seconds": 0.0,
+      "path_tiles": 0.0,
+      "poi_id": null,
+      "requires_capabilities": [],
+      "risk": "combat",
+      "route_locked": false,
+      "route_node": "node_refuge",
+      "source_id": "legacy_chapter1_rewards"
+    },
+    {
+      "a1_poi_readiness": "CONTRACT_ONLY_NOT_PLAYABLE",
+      "a1_poi_resolved": true,
+      "binding_status": "PROVISIONAL_A3_BINDING_TO_A1_POI",
+      "item_id": "core_ember",
+      "one_time": true,
+      "outputs": null,
+      "path_seconds": 71.5,
+      "path_tiles": 429.17,
+      "poi_id": "poi_crown_barrow_field",
+      "requires_capabilities": [
+        "cap_seal_1"
+      ],
+      "risk": "medium",
+      "route_locked": false,
+      "route_node": null,
+      "source_id": "specimen_ember"
+    },
+    {
+      "a1_poi_readiness": "CONTRACT_ONLY_NOT_PLAYABLE",
+      "a1_poi_resolved": true,
+      "binding_status": "PROVISIONAL_A3_BINDING_TO_A1_POI",
+      "item_id": "core_frost",
+      "one_time": true,
+      "outputs": null,
+      "path_seconds": null,
+      "path_tiles": null,
+      "poi_id": "poi_frost_ice_cave",
+      "requires_capabilities": [
+        "cap_thermal",
+        "cap_seal_2"
+      ],
+      "risk": "high",
+      "route_locked": true,
+      "route_node": null,
+      "source_id": "specimen_frost"
+    },
+    {
+      "a1_poi_readiness": "CONTRACT_ONLY_NOT_PLAYABLE",
+      "a1_poi_resolved": true,
+      "binding_status": "PROVISIONAL_A3_BINDING_TO_A1_POI",
+      "item_id": "core_venom",
+      "one_time": true,
+      "outputs": null,
+      "path_seconds": null,
+      "path_tiles": null,
+      "poi_id": "poi_verdant_canopy_temple",
+      "requires_capabilities": [
+        "cap_climb",
+        "cap_filter",
+        "cap_seal_3"
+      ],
+      "risk": "high",
+      "route_locked": true,
+      "route_node": null,
+      "source_id": "specimen_venom"
+    },
+    {
+      "a1_poi_readiness": "CONTRACT_ONLY_NOT_PLAYABLE",
+      "a1_poi_resolved": true,
+      "binding_status": "PROVISIONAL_A3_BINDING_NOT_A1_APPROVED",
+      "item_id": "ancient_catalyst",
+      "one_time": true,
+      "outputs": null,
+      "path_seconds": null,
+      "path_tiles": null,
+      "poi_id": "poi_ember_convict_mine",
+      "requires_capabilities": [
+        "cap_filter",
+        "cap_seal_2"
+      ],
+      "risk": "high",
+      "route_locked": true,
+      "route_node": null,
+      "source_id": "catalyst_vault"
+    },
+    {
+      "a1_poi_readiness": "AUTHORED_SPEC_NATIVE_NOT_INTEGRATED",
+      "a1_poi_resolved": true,
+      "binding_status": "CANONICAL_A1_CAPABILITY_ONLY",
+      "item_id": null,
+      "one_time": true,
+      "outputs": {},
+      "path_seconds": 58.8,
+      "path_tiles": 352.52,
+      "poi_id": "poi_crown_waystation",
+      "requires_capabilities": [],
+      "risk": "low",
+      "route_locked": false,
+      "route_node": null,
+      "source_id": "waystation_locker"
+    },
+    {
+      "a1_poi_readiness": "CONTRACT_ONLY_NOT_PLAYABLE",
+      "a1_poi_resolved": true,
+      "binding_status": "ADOPTED_SOURCE_SPECIFIC",
+      "item_id": "reed_fibre",
+      "one_time": false,
+      "outputs": null,
+      "path_seconds": 106.2,
+      "path_tiles": 637.26,
+      "poi_id": "poi_crown_ferry_pile",
+      "requires_capabilities": [],
+      "risk": "low",
+      "route_locked": false,
+      "route_node": null,
+      "source_id": "a1_crown_reed"
+    },
+    {
+      "a1_poi_readiness": "CONTRACT_ONLY_NOT_PLAYABLE",
+      "a1_poi_resolved": true,
+      "binding_status": "ADOPTED_SOURCE_SPECIFIC_CONDITIONAL_SINK_VERIFIED",
+      "item_id": "moonleaf",
+      "one_time": false,
+      "outputs": null,
+      "path_seconds": 44.1,
+      "path_tiles": 264.86,
+      "poi_id": "poi_amberwood_apothecary",
+      "requires_capabilities": [
+        "cap_salvage"
+      ],
+      "risk": "low",
+      "route_locked": false,
+      "route_node": null,
+      "source_id": "a1_amber_herb"
+    }
+  ],
+  "risk_vocabulary": {
+    "a3_death_chance_keys": [
+      "combat",
+      "high",
+      "low",
+      "medium"
+    ],
+    "band_labels_used": [
+      "early",
+      "late",
+      "mid"
+    ],
+    "edges_total": 130,
+    "edges_with_death_model": 6,
+    "risk_label_counts": {
+      "early": 30,
+      "high": 1,
+      "late": 44,
+      "low": 5,
+      "mid": 50
+    },
+    "severity_labels_used": [
+      "high",
+      "low"
+    ]
+  },
+  "schema": "soh.balance.access.v1",
+  "sink_depth": {
+    "ancient_catalyst": {
+      "recipe_inputs": [
+        "charge_blank"
+      ],
+      "technology_inputs": [],
+      "total_units_per_cycle": 1
+    },
+    "binding_cloth": {
+      "recipe_inputs": [
+        "craft_core_ember",
+        "craft_core_frost",
+        "craft_core_venom",
+        "frost_cloak",
+        "iron_pick",
+        "minor_salve",
+        "salvage_hammer",
+        "toxin_mask"
+      ],
+      "technology_inputs": [],
+      "total_units_per_cycle": 12
+    },
+    "charged_blank": {
+      "recipe_inputs": [
+        "craft_core_ember",
+        "craft_core_frost",
+        "craft_core_venom"
+      ],
+      "technology_inputs": [],
+      "total_units_per_cycle": 3
+    },
+    "clay": {
+      "recipe_inputs": [
+        "garden_kit"
+      ],
+      "technology_inputs": [],
+      "total_units_per_cycle": 2
+    },
+    "coal": {
+      "recipe_inputs": [
+        "alloy_steel"
+      ],
+      "technology_inputs": [],
+      "total_units_per_cycle": 1
+    },
+    "compost": {
+      "recipe_inputs": [
+        "grow_grain",
+        "grow_moonleaf"
+      ],
+      "technology_inputs": [],
+      "total_units_per_cycle": 2
+    },
+    "core_blank": {
+      "recipe_inputs": [
+        "charge_blank",
+        "rebuild_core_ember",
+        "rebuild_core_frost",
+        "rebuild_core_venom"
+      ],
+      "technology_inputs": [],
+      "total_units_per_cycle": 4
+    },
+    "crypt_bone_shard": {
+      "recipe_inputs": [
+        "core_blank",
+        "make_spares"
+      ],
+      "technology_inputs": [
+        "tech_core_binding"
+      ],
+      "total_units_per_cycle": 5
+    },
+    "fractured_axe_insignia": {
+      "recipe_inputs": [
+        "study_axe_insignia"
+      ],
+      "technology_inputs": [],
+      "total_units_per_cycle": 1
+    },
+    "frost_extract": {
+      "recipe_inputs": [
+        "craft_core_frost",
+        "frost_cloak",
+        "rebuild_core_frost"
+      ],
+      "technology_inputs": [],
+      "total_units_per_cycle": 4
+    },
+    "frost_shard": {
+      "recipe_inputs": [
+        "craft_core_frost",
+        "extract_frost"
+      ],
+      "technology_inputs": [
+        "tech_frost"
+      ],
+      "total_units_per_cycle": 3
+    },
+    "grain": {
+      "recipe_inputs": [
+        "field_meal"
+      ],
+      "technology_inputs": [],
+      "total_units_per_cycle": 2
+    },
+    "grain_seed": {
+      "recipe_inputs": [
+        "grow_grain"
+      ],
+      "technology_inputs": [],
+      "total_units_per_cycle": 1
+    },
+    "iron_ingot": {
+      "recipe_inputs": [
+        "alloy_steel",
+        "core_blank",
+        "iron_pick",
+        "make_parts",
+        "make_spring",
+        "research_kit",
+        "salvage_hammer"
+      ],
+      "technology_inputs": [
+        "tech_precision"
+      ],
+      "total_units_per_cycle": 14
+    },
+    "iron_ore": {
+      "recipe_inputs": [
+        "smelt_ore"
+      ],
+      "technology_inputs": [],
+      "total_units_per_cycle": 4
+    },
+    "iron_parts": {
+      "recipe_inputs": [
+        "advanced_furnace_kit",
+        "toxin_mask"
+      ],
+      "technology_inputs": [],
+      "total_units_per_cycle": 3
+    },
+    "iron_scrap": {
+      "recipe_inputs": [
+        "furnace_kit",
+        "make_spares",
+        "smelt_iron",
+        "workbench_kit"
+      ],
+      "technology_inputs": [
+        "tech_smelting"
+      ],
+      "total_units_per_cycle": 13
+    },
+    "knowledge_spares": {
+      "recipe_inputs": [
+        "core_blank",
+        "make_notes",
+        "rebuild_core_ember",
+        "rebuild_core_frost",
+        "rebuild_core_venom",
+        "research_kit"
+      ],
+      "technology_inputs": [
+        "tech_precision",
+        "tech_smelting"
+      ],
+      "total_units_per_cycle": 20
+    },
+    "moonleaf": {
+      "recipe_inputs": [
+        "extract_frost",
+        "extract_venom",
+        "minor_salve"
+      ],
+      "technology_inputs": [],
+      "total_units_per_cycle": 6
+    },
+    "moonleaf_seed": {
+      "recipe_inputs": [
+        "grow_moonleaf"
+      ],
+      "technology_inputs": [],
+      "total_units_per_cycle": 1
+    },
+    "oak_wood": {
+      "recipe_inputs": [
+        "burn_charcoal",
+        "garden_kit",
+        "iron_pick",
+        "research_kit",
+        "salvage_hammer",
+        "stone_pick",
+        "workbench_kit"
+      ],
+      "technology_inputs": [],
+      "total_units_per_cycle": 22
+    },
+    "predator_jaw": {
+      "recipe_inputs": [
+        "study_predator_jaw"
+      ],
+      "technology_inputs": [],
+      "total_units_per_cycle": 1
+    },
+    "reaper_essence": {
+      "recipe_inputs": [
+        "craft_core_ember"
+      ],
+      "technology_inputs": [],
+      "total_units_per_cycle": 1
+    },
+    "reed_fibre": {
+      "recipe_inputs": [
+        "garden_kit",
+        "make_compost",
+        "weave_cloth"
+      ],
+      "technology_inputs": [],
+      "total_units_per_cycle": 7
+    },
+    "research_notes": {
+      "recipe_inputs": [],
+      "technology_inputs": [
+        "tech_core_binding",
+        "tech_frost",
+        "tech_toxin"
+      ],
+      "total_units_per_cycle": 7
+    },
+    "soul_ember": {
+      "recipe_inputs": [
+        "charge_blank",
+        "craft_core_ember",
+        "make_notes",
+        "rebuild_core_ember"
+      ],
+      "technology_inputs": [
+        "tech_core_binding"
+      ],
+      "total_units_per_cycle": 7
+    },
+    "spring": {
+      "recipe_inputs": [
+        "frost_cloak"
+      ],
+      "technology_inputs": [],
+      "total_units_per_cycle": 1
+    },
+    "steel_ingot": {
+      "recipe_inputs": [
+        "advanced_furnace_kit"
+      ],
+      "technology_inputs": [],
+      "total_units_per_cycle": 2
+    },
+    "stone_chunk": {
+      "recipe_inputs": [
+        "advanced_furnace_kit",
+        "furnace_kit",
+        "stone_pick"
+      ],
+      "technology_inputs": [],
+      "total_units_per_cycle": 19
+    },
+    "sulfur": {
+      "recipe_inputs": [
+        "extract_venom"
+      ],
+      "technology_inputs": [],
+      "total_units_per_cycle": 1
+    },
+    "venom_extract": {
+      "recipe_inputs": [
+        "craft_core_venom",
+        "rebuild_core_venom",
+        "toxin_mask"
+      ],
+      "technology_inputs": [],
+      "total_units_per_cycle": 4
+    },
+    "venom_spine": {
+      "recipe_inputs": [
+        "craft_core_venom",
+        "extract_venom"
+      ],
+      "technology_inputs": [
+        "tech_toxin"
+      ],
+      "total_units_per_cycle": 3
+    },
+    "wild_berries": {
+      "recipe_inputs": [
+        "field_meal",
+        "make_compost"
+      ],
+      "technology_inputs": [],
+      "total_units_per_cycle": 2
+    }
+  },
+  "source_bindings": [
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "chapter_1_2",
+      "acquisition": "existing_reward",
+      "integration_status": "LIVE_EXISTING_REWARDS",
+      "item_id": "blood_crucible_blueprint",
+      "requirements": [],
+      "source_id": "legacy_blood_crucible_blueprint"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "chapter_1_2",
+      "acquisition": "existing_reward",
+      "integration_status": "LIVE_EXISTING_REWARDS",
+      "item_id": "crypt_bone_shard",
+      "requirements": [],
+      "source_id": "legacy_crypt_bone_shard"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "chapter_1_2",
+      "acquisition": "existing_reward",
+      "integration_status": "LIVE_EXISTING_REWARDS",
+      "item_id": "fractured_axe_insignia",
+      "requirements": [],
+      "source_id": "legacy_fractured_axe_insignia"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "chapter_1_2",
+      "acquisition": "existing_reward",
+      "integration_status": "LIVE_EXISTING_REWARDS",
+      "item_id": "predator_jaw",
+      "requirements": [],
+      "source_id": "legacy_predator_jaw"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "chapter_1_2",
+      "acquisition": "existing_reward",
+      "integration_status": "LIVE_EXISTING_REWARDS",
+      "item_id": "reaper_essence",
+      "requirements": [],
+      "source_id": "legacy_reaper_essence"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "chapter_1_2",
+      "acquisition": "existing_reward",
+      "integration_status": "LIVE_EXISTING_REWARDS",
+      "item_id": "soul_ember",
+      "requirements": [],
+      "source_id": "legacy_soul_ember"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "chapter_1_2",
+      "acquisition": "existing_reward",
+      "integration_status": "LIVE_EXISTING_REWARDS",
+      "item_id": "venom_spine",
+      "requirements": [],
+      "source_id": "legacy_venom_spine"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "opening_marches",
+      "acquisition": "harvest",
+      "integration_status": "LIVE_SURV_010",
+      "item_id": "iron_scrap",
+      "requirements": [],
+      "source_id": "live_iron_scrap"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "opening_marches",
+      "acquisition": "harvest",
+      "integration_status": "LIVE_SURV_010",
+      "item_id": "oak_wood",
+      "requirements": [],
+      "source_id": "live_oak_wood"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "opening_marches",
+      "acquisition": "harvest",
+      "integration_status": "LIVE_SURV_010",
+      "item_id": "reed_fibre",
+      "requirements": [],
+      "source_id": "live_reed_fibre"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "opening_marches",
+      "acquisition": "harvest",
+      "integration_status": "LIVE_SURV_010",
+      "item_id": "stone_chunk",
+      "requirements": [],
+      "source_id": "live_stone_chunk"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "opening_marches",
+      "acquisition": "harvest",
+      "integration_status": "PROPOSED_A1",
+      "item_id": "clay",
+      "requirements": [],
+      "source_id": "node_clay"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "opening_marches",
+      "acquisition": "harvest",
+      "integration_status": "PROPOSED_A1",
+      "item_id": "coal",
+      "requirements": [
+        {
+          "kind": "tool_item",
+          "value": "stone_pick"
+        }
+      ],
+      "source_id": "node_coal"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "frost_ridge",
+      "acquisition": "harvest",
+      "integration_status": "PROPOSED_A1",
+      "item_id": "frost_shard",
+      "requirements": [
+        {
+          "kind": "tool_item",
+          "value": "stone_pick"
+        }
+      ],
+      "source_id": "node_frost_shard"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "opening_marches",
+      "acquisition": "harvest",
+      "integration_status": "PROPOSED_A1",
+      "item_id": "grain",
+      "requirements": [],
+      "source_id": "node_grain"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "opening_marches",
+      "acquisition": "harvest",
+      "integration_status": "PROPOSED_A1",
+      "item_id": "iron_ore",
+      "requirements": [
+        {
+          "kind": "tool_item",
+          "value": "stone_pick"
+        }
+      ],
+      "source_id": "node_iron_ore"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "opening_marches",
+      "acquisition": "harvest",
+      "integration_status": "PROPOSED_A1",
+      "item_id": "moonleaf",
+      "requirements": [],
+      "source_id": "node_moonleaf"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "opening_marches",
+      "acquisition": "harvest",
+      "integration_status": "PROPOSED_A1",
+      "item_id": "moonleaf_seed",
+      "requirements": [],
+      "source_id": "node_moonleaf_seed"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "opening_marches",
+      "acquisition": "harvest",
+      "integration_status": "PROPOSED_A1",
+      "item_id": "sulfur",
+      "requirements": [],
+      "source_id": "node_sulfur"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "opening_marches",
+      "acquisition": "harvest",
+      "integration_status": "PROPOSED_A1",
+      "item_id": "wild_berries",
+      "requirements": [],
+      "source_id": "node_wild_berries"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "opening_marches",
+      "acquisition": "loot",
+      "integration_status": "PROPOSED_A1",
+      "item_id": "plan_ember_core",
+      "requirements": [
+        {
+          "kind": "access_tier",
+          "value": 1
+        }
+      ],
+      "source_id": "plan_drop_ember"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "opening_marches",
+      "acquisition": "loot",
+      "integration_status": "PROPOSED_A1",
+      "item_id": "plan_frost_core",
+      "requirements": [
+        {
+          "kind": "access_tier",
+          "value": 1
+        }
+      ],
+      "source_id": "plan_drop_frost"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "opening_marches",
+      "acquisition": "loot",
+      "integration_status": "PROPOSED_A1",
+      "item_id": "plan_venom_core",
+      "requirements": [
+        {
+          "kind": "access_tier",
+          "value": 1
+        }
+      ],
+      "source_id": "plan_drop_venom"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "opening_marches",
+      "acquisition": "loot",
+      "integration_status": "PROPOSED_A1",
+      "item_id": "grain_seed",
+      "requirements": [],
+      "source_id": "road_grain_seed"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": true,
+      "a3_poi_reference": null,
+      "a3_region_reference": "r_ashen_crown",
+      "acquisition": "loot",
+      "integration_status": "A1_PINNED_A3_BOUND",
+      "item_id": "research_notes",
+      "requirements": [],
+      "source_id": "road_notes"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": true,
+      "a3_poi_reference": null,
+      "a3_region_reference": "r_ashen_crown",
+      "acquisition": "loot",
+      "integration_status": "A1_PINNED_A3_BOUND",
+      "item_id": "iron_scrap",
+      "requirements": [],
+      "source_id": "road_scrap"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "opening_marches",
+      "acquisition": "loot",
+      "integration_status": "PROPOSED_A1",
+      "item_id": "moonleaf_seed",
+      "requirements": [],
+      "source_id": "road_seed"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": true,
+      "a3_poi_reference": null,
+      "a3_region_reference": "r_ashen_crown",
+      "acquisition": "loot",
+      "integration_status": "A1_PINNED_A3_BOUND",
+      "item_id": "knowledge_spares",
+      "requirements": [],
+      "source_id": "road_supplies"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "opening_marches",
+      "acquisition": "loot",
+      "integration_status": "PROPOSED_A1",
+      "item_id": "blue_seal",
+      "requirements": [
+        {
+          "kind": "access_tier",
+          "value": 1
+        }
+      ],
+      "source_id": "seal_blue_seal"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "opening_marches",
+      "acquisition": "loot",
+      "integration_status": "PROPOSED_A1",
+      "item_id": "green_seal",
+      "requirements": [],
+      "source_id": "seal_green_seal"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "opening_marches",
+      "acquisition": "loot",
+      "integration_status": "PROPOSED_A1",
+      "item_id": "purple_seal",
+      "requirements": [
+        {
+          "kind": "access_tier",
+          "value": 2
+        },
+        {
+          "kind": "power",
+          "value": true
+        }
+      ],
+      "source_id": "seal_purple_seal"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "sealed_archive",
+      "acquisition": "loot",
+      "integration_status": "PROPOSED_A1",
+      "item_id": "core_ember",
+      "requirements": [
+        {
+          "kind": "access_tier",
+          "value": 2
+        },
+        {
+          "kind": "power",
+          "value": true
+        }
+      ],
+      "source_id": "specimen_ember"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "sealed_archive",
+      "acquisition": "loot",
+      "integration_status": "PROPOSED_A1",
+      "item_id": "core_frost",
+      "requirements": [
+        {
+          "kind": "access_tier",
+          "value": 2
+        },
+        {
+          "kind": "power",
+          "value": true
+        }
+      ],
+      "source_id": "specimen_frost"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "sealed_archive",
+      "acquisition": "loot",
+      "integration_status": "PROPOSED_A1",
+      "item_id": "core_venom",
+      "requirements": [
+        {
+          "kind": "access_tier",
+          "value": 2
+        },
+        {
+          "kind": "power",
+          "value": true
+        }
+      ],
+      "source_id": "specimen_venom"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "sealed_archive",
+      "acquisition": "loot",
+      "integration_status": "PROPOSED_A1",
+      "item_id": "ancient_catalyst",
+      "requirements": [
+        {
+          "kind": "access_tier",
+          "value": 2
+        },
+        {
+          "kind": "power",
+          "value": true
+        },
+        {
+          "kind": "resistance",
+          "value": "venom:60"
+        }
+      ],
+      "source_id": "vault_catalyst"
+    },
+    {
+      "a1_poi_id": null,
+      "a1_poi_resolved": false,
+      "a1_region_resolved": false,
+      "a3_poi_reference": null,
+      "a3_region_reference": "mire_wetlands",
+      "acquisition": "loot",
+      "integration_status": "PROPOSED_A1",
+      "item_id": "venom_spine",
+      "requirements": [
+        {
+          "kind": "resistance",
+          "value": "venom:30"
+        }
+      ],
+      "source_id": "venom_cache"
+    }
+  ]
+}

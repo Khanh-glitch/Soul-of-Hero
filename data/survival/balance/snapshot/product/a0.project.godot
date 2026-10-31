@@ -1,0 +1,61 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="SOUL OF HERO"
+run/main_scene="res://game/app/app_root.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+config/icon="res://assets/branding/soul_hero_emblem_imagen.png"
+
+[autoload]
+
+InputBootstrap="*res://game/autoload/input_bootstrap.gd"
+GameEvents="*res://game/autoload/game_events.gd"
+GameSession="*res://game/autoload/game_session.gd"
+SaveService="*res://game/autoload/save_service.gd"
+SurvivalService="*res://game/survival/survival_service.gd"
+UnlockService="*res://game/autoload/unlock_service.gd"
+LootDirector="*res://game/loot/loot_director.gd"
+CampaignProgression="*res://game/content/progression/campaign_progression_service.gd"
+RealtimeBridge="*res://game/autoload/realtime_bridge.gd"
+UiAudioFeedback="*res://game/feedback/ui_audio_feedback.gd"
+AppFlow="*res://game/app/app_flow.gd"
+
+[display]
+
+window/size/viewport_width=640
+window/size/viewport_height=360
+window/size/window_width_override=1280
+window/size/window_height_override=720
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/handheld/orientation=1
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/designer_suite/plugin.cfg", "res://addons/live_sync/plugin.cfg")
+
+[layer_names]
+
+2d_physics/layer_1="World"
+2d_physics/layer_2="Player"
+2d_physics/layer_3="Enemy"
+2d_physics/layer_4="PlayerHitbox"
+2d_physics/layer_5="EnemyHitbox"
+2d_physics/layer_6="Interactable"
+2d_physics/layer_7="Hazard"
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+environment/defaults/default_clear_color=Color(0.025, 0.016, 0.04, 1)

@@ -1,0 +1,601 @@
+{
+  "checks": [
+    {
+      "check_id": "Q-01",
+      "closure_signal": "no effect-free option survives unless its label says it changes nothing, and no unmounted POI appears in a content list",
+      "evidence": [
+        {
+          "fact": "contract-only POIs",
+          "value": 106
+        },
+        {
+          "fact": "effect-free site options",
+          "value": []
+        },
+        {
+          "fact": "native POI scenes captured",
+          "value": [
+            "a8.poi_pilot.tscn",
+            "a8.south_crown_mill.tscn",
+            "a8.south_orchard_ruin.tscn",
+            "a8.south_quarry.tscn"
+          ]
+        }
+      ],
+      "owner": "A1 + A8",
+      "player_impact": "106 of 118 A1 POIs are contract-only and none of them is mounted, so no player can meet an empty POI yet; the risk is any screen that lists them as content. 0 authored site option(s) have no cost, reward or state change (deliberate 'do nothing' choices are allowed only when labelled as such).",
+      "scope": "STATIC_READ_OF_PINNED_BYTES",
+      "status": "PASS",
+      "title": "No POI is presented as finished while offering nothing"
+    },
+    {
+      "check_id": "Q-02",
+      "closure_signal": "keep one owner per job and keep the debug flag off in release; mounting a fixture demo screen fails this check",
+      "evidence": [
+        {
+          "fact": "surfaces and jobs",
+          "value": {
+            "a0.hud.gd": [
+              "health"
+            ],
+            "a0.overworld_hud.gd": [
+              "provisions"
+            ],
+            "a6.player_first_hud.gd": [
+              "context",
+              "core",
+              "feedback"
+            ]
+          }
+        },
+        {
+          "fact": "jobs owned twice",
+          "value": {}
+        },
+        {
+          "fact": "developer diagnostics defaults off",
+          "value": true
+        }
+      ],
+      "owner": "A6 (+A0 mount)",
+      "player_impact": "Jobs: {'a0.hud.gd': ['health'], 'a0.overworld_hud.gd': ['provisions'], 'a6.player_first_hud.gd': ['context', 'core', 'feedback']}. No job is owned twice, so the earlier duplicate-status concern is resolved by splitting context/Core/feedback away from health/provisions. Developer provenance text is gated behind `_developer_diagnostics` defaulting off: True. The remaining risk is that the fixture demo screens are mounted as if they were the game.",
+      "scope": "STATIC_READ_OF_PINNED_BYTES",
+      "status": "PASS",
+      "title": "One owner per HUD job, and developer text behind an opt-in flag"
+    },
+    {
+      "check_id": "Q-03",
+      "closure_signal": "no cost, reward or source names an item outside items.json",
+      "evidence": [
+        {
+          "fact": "sources naming unknown items",
+          "value": []
+        },
+        {
+          "fact": "site costs/rewards outside the catalog",
+          "value": []
+        },
+        {
+          "fact": "items in catalog",
+          "value": 56
+        },
+        {
+          "fact": "unmapped source rows (traceability)",
+          "value": []
+        },
+        {
+          "fact": "A0 mirror of the A3 catalog",
+          "value": {
+            "a3_rows": 36,
+            "divergent": [
+              "road_notes",
+              "road_scrap",
+              "road_supplies"
+            ],
+            "identical_rows": 33,
+            "mirror_rows": 36,
+            "only_in_a3": [],
+            "only_in_mirror": [],
+            "status": "DRIFT"
+          }
+        }
+      ],
+      "owner": "A3 + A8",
+      "player_impact": "0 A3 source record(s) name an item that is not in the catalog; 0 A8 site cost/reward(s) name a non-catalog item; A0's mirrored copy of the A3 catalog is `DRIFT` (33/36 rows identical). A player would see a reward that cannot be stored, or a cost that one owner can pay and another cannot.",
+      "scope": "STATIC_READ_OF_PINNED_BYTES",
+      "status": "FAIL",
+      "title": "Every authored cost, reward and source points at a real item"
+    },
+    {
+      "check_id": "Q-04",
+      "closure_signal": "mounted scene is canonical AND every claimed sheet exists in the tree AND no substitute code path",
+      "evidence": [
+        {
+          "fact": "armour grade availability",
+          "value": {
+            "female": {
+              "0": "PRESENT",
+              "1": "NULL_SOURCE_BLOCKED",
+              "2": "NULL_SOURCE_BLOCKED"
+            },
+            "male": {
+              "0": "PRESENT",
+              "1": "NULL_SOURCE_BLOCKED",
+              "2": "NULL_SOURCE_BLOCKED"
+            }
+          }
+        },
+        {
+          "fact": "claimed sheets",
+          "value": [
+            {
+              "exists_in_tree": false,
+              "gender": "male",
+              "grade": "0",
+              "sheet": ""
+            },
+            {
+              "exists_in_tree": false,
+              "gender": "female",
+              "grade": "0",
+              "sheet": ""
+            }
+          ]
+        },
+        {
+          "fact": "invented sheet claims",
+          "value": []
+        },
+        {
+          "fact": "adapter blocks instead of substituting",
+          "value": true
+        },
+        {
+          "fact": "adapter substitutes Knight/Swordsman code path",
+          "value": false
+        },
+        {
+          "fact": "mounted player scene",
+          "value": "game/characters/knight/knight.tscn"
+        }
+      ],
+      "owner": "A6 (art import + adapter) with A0 (mount)",
+      "player_impact": "The locked identities are Craftpix 555940 (male) and 419402 (female). The mounted body is `game/characters/knight/knight.tscn`. Every claimed sheet is checked against the pinned tree: 0 installed, 0 invented, 2 empty. Armour grades 1-2 are allowed to stay NULL_SOURCE_BLOCKED (other armour art is the owner's choice, gender-matched) but a NULL grade is never counted as ready. Static state is `WRONG_MOUNTED_IDENTITY`; a player still sees the wrong character today because the mounted body is not canonical.",
+      "release_state": "NOT_ACCEPTED",
+      "scope": "STATIC_READ_OF_PINNED_BYTES",
+      "static_verdict": "WRONG_MOUNTED_IDENTITY",
+      "status": "FAIL",
+      "title": "Player avatar identity and armour state are correct or explicitly blocked",
+      "visual_evidence_required": [
+        "the scene loads in native Godot and the sprite node has a texture",
+        "4-direction idle animation plays on the mounted body",
+        "equipping armour swaps to the matching grade, and unequipping reverses it",
+        "rendered frames at 1280x720 and 1920x1080 inspected by a human"
+      ],
+      "visual_state": "NOT_TESTED"
+    },
+    {
+      "check_id": "Q-05",
+      "closure_signal": "every produced non-terminal item appears as a recipe/technology input, fuel, station kit or upgrade cost",
+      "evidence": [
+        {
+          "fact": "orphaned outputs",
+          "value": []
+        },
+        {
+          "fact": "terminal outputs (expected)",
+          "value": [
+            "core_ember",
+            "core_frost",
+            "core_venom",
+            "field_meal",
+            "frost_cloak",
+            "iron_pick",
+            "minor_salve",
+            "salvage_hammer",
+            "stone_pick",
+            "toxin_mask"
+          ]
+        }
+      ],
+      "owner": "A3",
+      "player_impact": "0 produced item(s) are consumed by nothing and are not terminal gear: a player can craft them and then has no use for them. 10 other outputs are terminal items (tools/cores/food) and are correctly not consumed.",
+      "scope": "STATIC_READ_OF_PINNED_BYTES",
+      "status": "PASS",
+      "title": "No crafting/research output is orphaned"
+    },
+    {
+      "check_id": "Q-06",
+      "closure_signal": "a control with no host stays disabled and labelled; a mounted host makes the same control commit through A0",
+      "evidence": [
+        {
+          "fact": "action-host guards",
+          "value": 8
+        },
+        {
+          "fact": "intent emissions",
+          "value": 2
+        },
+        {
+          "fact": "workspace forwards intent",
+          "value": true
+        },
+        {
+          "fact": "adapter avoids owner calls",
+          "value": true
+        },
+        {
+          "fact": "emissions with no host guard",
+          "value": 0
+        }
+      ],
+      "owner": "A6 + A0",
+      "player_impact": "The planner guards actions on a connected host (8 guard site(s)) and the workspace forwards intent upward (True). The storage adapter normalises intent and explicitly does not call SaveService (True), so nothing is silently faked. Until A0 connects a host, the controls are unavailable rather than pretending to work.",
+      "scope": "STATIC_READ_OF_PINNED_BYTES",
+      "status": "PASS",
+      "title": "Every actionable control is either backed by an owner action or plainly unavailable"
+    },
+    {
+      "check_id": "Q-07",
+      "closure_signal": "a fixture may never import SaveService; a production path must, and its receipt must be testable",
+      "evidence": [
+        {
+          "fact": "a6_journeys_are_read_only_fixtures",
+          "value": true
+        },
+        {
+          "fact": "a8_authority_is_fixture",
+          "value": true
+        },
+        {
+          "fact": "a8_fixture_never_uses_save_service",
+          "value": true
+        },
+        {
+          "fact": "a8_pilot_wires_fixture",
+          "value": true
+        },
+        {
+          "fact": "no_verified_claim_inside_a_fixture_path",
+          "value": true
+        },
+        {
+          "fact": "overclaim tokens found",
+          "value": []
+        }
+      ],
+      "owner": "A8 + A6",
+      "player_impact": "Every scene that demonstrates a loot or save outcome declares itself a fixture, keeps its state in memory and never calls SaveService. That is correct labelling, not working persistence: a reader must not mistake it for a committed save.",
+      "scope": "STATIC_READ_OF_PINNED_BYTES",
+      "status": "PASS",
+      "title": "Save/loot claims are honest about fixture authority"
+    },
+    {
+      "a1_corridor": {
+        "cells": 103,
+        "inside_annex": 103,
+        "inside_world": 103,
+        "production_native_playable": false,
+        "required_nav_cells": 77,
+        "status": "INSIDE_MOUNTED_WORLD"
+      },
+      "annex": [
+        384,
+        192,
+        448,
+        256
+      ],
+      "check_id": "Q-08",
+      "closure_signal": "every site anchor satisfies 0 <= cell < world_bounds and its mount decision is not REJECT",
+      "evidence": [
+        {
+          "canonical_cell": [
+            30,
+            280
+          ],
+          "decision": "REJECT_FOOTPRINT_MISMATCH",
+          "fits_authored_footprint_1_to_1": false,
+          "inside_imported_annex": false,
+          "inside_mounted_world": false,
+          "site_id": "crown_south_quarry",
+          "site_root_position_px": [
+            -18,
+            4186
+          ]
+        },
+        {
+          "canonical_cell": [
+            140,
+            360
+          ],
+          "decision": "REJECT_FOOTPRINT_MISMATCH",
+          "fits_authored_footprint_1_to_1": false,
+          "inside_imported_annex": false,
+          "inside_mounted_world": false,
+          "site_id": "crown_south_orchard",
+          "site_root_position_px": [
+            1738,
+            5476
+          ]
+        },
+        {
+          "canonical_cell": [
+            120,
+            300
+          ],
+          "decision": "REJECT_FOOTPRINT_MISMATCH",
+          "fits_authored_footprint_1_to_1": false,
+          "inside_imported_annex": false,
+          "inside_mounted_world": false,
+          "site_id": "crown_south_mill",
+          "site_root_position_px": [
+            1400,
+            4514
+          ]
+        }
+      ],
+      "owner": "A1 (anchors) + A0 (mount mode) + A8 (shell footprint)",
+      "player_impact": "3 of 3 A8 site anchors sit outside the mounted world (448x256 tiles, annex (384, 192, 448, 256)): crown_south_quarry at [30, 280], crown_south_orchard at [140, 360], crown_south_mill at [120, 300]. A player cannot walk to an anchor past the world edge, so the site's local scene quality cannot reach them until A1 re-anchors it or A0 mounts a contiguous extension or an explicit interior transition. By contrast A1's roadside corridor keeps all 103 authored cells inside the mounted world and the annex (INSIDE_MOUNTED_WORLD), so the geometry standard is met one owner down the line.",
+      "scope": "STATIC_READ_OF_PINNED_BYTES",
+      "status": "FAIL",
+      "title": "Every A8 site anchor is inside the world A0 mounts",
+      "world_bounds": {
+        "h": 256,
+        "w": 448
+      }
+    },
+    {
+      "check_id": "Q-09",
+      "closure_signal": "a production surface offers male/female, A0 references the adapter, and the mounted body is the canonical sheet",
+      "evidence": {
+        "adapter_references_from_a0": [],
+        "adapter_references_in_production": [
+          {
+            "file": "a6.avatar_appearance_adapter.gd",
+            "line": 5,
+            "path": "game/survival/ui/avatar_appearance_adapter.gd"
+          }
+        ],
+        "missing": [
+          "no A0 production file references A6's avatar adapter or art manifest (1 reference(s) exist inside A6's own layer, which mounts nothing)",
+          "no production UI offers a male/female choice",
+          "the mounted body is game/characters/knight/knight.tscn"
+        ],
+        "mounted_player_scene": "game/characters/knight/knight.tscn",
+        "selection_surfaces_in_production": []
+      },
+      "interface_contract": "tests/survival/balance_native/avatar_body_probe.gd",
+      "owner": "A0 (selection + mount) with A6 (adapter + art)",
+      "player_impact": "A player cannot choose a body and cannot see the locked one: no A0 production file references A6's avatar adapter or art manifest (1 reference(s) exist inside A6's own layer, which mounts nothing); no production UI offers a male/female choice; the mounted body is game/characters/knight/knight.tscn. The interface A0 and A6 are being asked to accept does not exist yet, so an avatar test would be measuring an intention.",
+      "scope": "STATIC_READ_OF_PINNED_BYTES",
+      "status": "FAIL",
+      "title": "The locked avatar is a wired seam, not an intention"
+    }
+  ],
+  "counts": {
+    "FAIL": 4,
+    "PASS": 5
+  },
+  "failures": [
+    {
+      "check_id": "Q-03",
+      "closure_signal": "no cost, reward or source names an item outside items.json",
+      "evidence": [
+        {
+          "fact": "sources naming unknown items",
+          "value": []
+        },
+        {
+          "fact": "site costs/rewards outside the catalog",
+          "value": []
+        },
+        {
+          "fact": "items in catalog",
+          "value": 56
+        },
+        {
+          "fact": "unmapped source rows (traceability)",
+          "value": []
+        },
+        {
+          "fact": "A0 mirror of the A3 catalog",
+          "value": {
+            "a3_rows": 36,
+            "divergent": [
+              "road_notes",
+              "road_scrap",
+              "road_supplies"
+            ],
+            "identical_rows": 33,
+            "mirror_rows": 36,
+            "only_in_a3": [],
+            "only_in_mirror": [],
+            "status": "DRIFT"
+          }
+        }
+      ],
+      "owner": "A3 + A8",
+      "player_impact": "0 A3 source record(s) name an item that is not in the catalog; 0 A8 site cost/reward(s) name a non-catalog item; A0's mirrored copy of the A3 catalog is `DRIFT` (33/36 rows identical). A player would see a reward that cannot be stored, or a cost that one owner can pay and another cannot.",
+      "scope": "STATIC_READ_OF_PINNED_BYTES",
+      "status": "FAIL",
+      "title": "Every authored cost, reward and source points at a real item"
+    },
+    {
+      "check_id": "Q-04",
+      "closure_signal": "mounted scene is canonical AND every claimed sheet exists in the tree AND no substitute code path",
+      "evidence": [
+        {
+          "fact": "armour grade availability",
+          "value": {
+            "female": {
+              "0": "PRESENT",
+              "1": "NULL_SOURCE_BLOCKED",
+              "2": "NULL_SOURCE_BLOCKED"
+            },
+            "male": {
+              "0": "PRESENT",
+              "1": "NULL_SOURCE_BLOCKED",
+              "2": "NULL_SOURCE_BLOCKED"
+            }
+          }
+        },
+        {
+          "fact": "claimed sheets",
+          "value": [
+            {
+              "exists_in_tree": false,
+              "gender": "male",
+              "grade": "0",
+              "sheet": ""
+            },
+            {
+              "exists_in_tree": false,
+              "gender": "female",
+              "grade": "0",
+              "sheet": ""
+            }
+          ]
+        },
+        {
+          "fact": "invented sheet claims",
+          "value": []
+        },
+        {
+          "fact": "adapter blocks instead of substituting",
+          "value": true
+        },
+        {
+          "fact": "adapter substitutes Knight/Swordsman code path",
+          "value": false
+        },
+        {
+          "fact": "mounted player scene",
+          "value": "game/characters/knight/knight.tscn"
+        }
+      ],
+      "owner": "A6 (art import + adapter) with A0 (mount)",
+      "player_impact": "The locked identities are Craftpix 555940 (male) and 419402 (female). The mounted body is `game/characters/knight/knight.tscn`. Every claimed sheet is checked against the pinned tree: 0 installed, 0 invented, 2 empty. Armour grades 1-2 are allowed to stay NULL_SOURCE_BLOCKED (other armour art is the owner's choice, gender-matched) but a NULL grade is never counted as ready. Static state is `WRONG_MOUNTED_IDENTITY`; a player still sees the wrong character today because the mounted body is not canonical.",
+      "release_state": "NOT_ACCEPTED",
+      "scope": "STATIC_READ_OF_PINNED_BYTES",
+      "static_verdict": "WRONG_MOUNTED_IDENTITY",
+      "status": "FAIL",
+      "title": "Player avatar identity and armour state are correct or explicitly blocked",
+      "visual_evidence_required": [
+        "the scene loads in native Godot and the sprite node has a texture",
+        "4-direction idle animation plays on the mounted body",
+        "equipping armour swaps to the matching grade, and unequipping reverses it",
+        "rendered frames at 1280x720 and 1920x1080 inspected by a human"
+      ],
+      "visual_state": "NOT_TESTED"
+    },
+    {
+      "a1_corridor": {
+        "cells": 103,
+        "inside_annex": 103,
+        "inside_world": 103,
+        "production_native_playable": false,
+        "required_nav_cells": 77,
+        "status": "INSIDE_MOUNTED_WORLD"
+      },
+      "annex": [
+        384,
+        192,
+        448,
+        256
+      ],
+      "check_id": "Q-08",
+      "closure_signal": "every site anchor satisfies 0 <= cell < world_bounds and its mount decision is not REJECT",
+      "evidence": [
+        {
+          "canonical_cell": [
+            30,
+            280
+          ],
+          "decision": "REJECT_FOOTPRINT_MISMATCH",
+          "fits_authored_footprint_1_to_1": false,
+          "inside_imported_annex": false,
+          "inside_mounted_world": false,
+          "site_id": "crown_south_quarry",
+          "site_root_position_px": [
+            -18,
+            4186
+          ]
+        },
+        {
+          "canonical_cell": [
+            140,
+            360
+          ],
+          "decision": "REJECT_FOOTPRINT_MISMATCH",
+          "fits_authored_footprint_1_to_1": false,
+          "inside_imported_annex": false,
+          "inside_mounted_world": false,
+          "site_id": "crown_south_orchard",
+          "site_root_position_px": [
+            1738,
+            5476
+          ]
+        },
+        {
+          "canonical_cell": [
+            120,
+            300
+          ],
+          "decision": "REJECT_FOOTPRINT_MISMATCH",
+          "fits_authored_footprint_1_to_1": false,
+          "inside_imported_annex": false,
+          "inside_mounted_world": false,
+          "site_id": "crown_south_mill",
+          "site_root_position_px": [
+            1400,
+            4514
+          ]
+        }
+      ],
+      "owner": "A1 (anchors) + A0 (mount mode) + A8 (shell footprint)",
+      "player_impact": "3 of 3 A8 site anchors sit outside the mounted world (448x256 tiles, annex (384, 192, 448, 256)): crown_south_quarry at [30, 280], crown_south_orchard at [140, 360], crown_south_mill at [120, 300]. A player cannot walk to an anchor past the world edge, so the site's local scene quality cannot reach them until A1 re-anchors it or A0 mounts a contiguous extension or an explicit interior transition. By contrast A1's roadside corridor keeps all 103 authored cells inside the mounted world and the annex (INSIDE_MOUNTED_WORLD), so the geometry standard is met one owner down the line.",
+      "scope": "STATIC_READ_OF_PINNED_BYTES",
+      "status": "FAIL",
+      "title": "Every A8 site anchor is inside the world A0 mounts",
+      "world_bounds": {
+        "h": 256,
+        "w": 448
+      }
+    },
+    {
+      "check_id": "Q-09",
+      "closure_signal": "a production surface offers male/female, A0 references the adapter, and the mounted body is the canonical sheet",
+      "evidence": {
+        "adapter_references_from_a0": [],
+        "adapter_references_in_production": [
+          {
+            "file": "a6.avatar_appearance_adapter.gd",
+            "line": 5,
+            "path": "game/survival/ui/avatar_appearance_adapter.gd"
+          }
+        ],
+        "missing": [
+          "no A0 production file references A6's avatar adapter or art manifest (1 reference(s) exist inside A6's own layer, which mounts nothing)",
+          "no production UI offers a male/female choice",
+          "the mounted body is game/characters/knight/knight.tscn"
+        ],
+        "mounted_player_scene": "game/characters/knight/knight.tscn",
+        "selection_surfaces_in_production": []
+      },
+      "interface_contract": "tests/survival/balance_native/avatar_body_probe.gd",
+      "owner": "A0 (selection + mount) with A6 (adapter + art)",
+      "player_impact": "A player cannot choose a body and cannot see the locked one: no A0 production file references A6's avatar adapter or art manifest (1 reference(s) exist inside A6's own layer, which mounts nothing); no production UI offers a male/female choice; the mounted body is game/characters/knight/knight.tscn. The interface A0 and A6 are being asked to accept does not exist yet, so an avatar test would be measuring an intention.",
+      "scope": "STATIC_READ_OF_PINNED_BYTES",
+      "status": "FAIL",
+      "title": "The locked avatar is a wired seam, not an intention"
+    }
+  ],
+  "read_this_first": "Seven checks for the ways a half-built feature is mistaken for real gameplay. Every verdict is a static read of pinned bytes; a PASS means the pinned bytes do not show the defect, not that the feature runs.",
+  "schema": "soh.balance.quality.v1",
+  "snapshot_heads": {
+    "a0": "9269739ebd35ed8ab83987b6bf53f560a59954af",
+    "a1": "939720d50a0b822ff9042d4104dc69ba78ffe0f8",
+    "a6": "08ccb8348f2e7a75e09af47a1741c158fc46e794",
+    "a8": "c8b4bc881d6744bac0f0826a639624ee1434e534"
+  }
+}

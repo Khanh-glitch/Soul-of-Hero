@@ -1,0 +1,324 @@
+{
+  "composition": {
+    "ref": "refs/comp/r13_heads",
+    "sha": "3d8630f5b1adfa6c5b50c56fa506524e0ce71f6b"
+  },
+  "display": "headless (DisplayServerHeadless): no GPU, no rendered frame, no human review",
+  "engine": "4.7.stable.custom_build.5b4e0cb0f",
+  "engine_path": "/tmp/godot/bin/godot.linuxbsd.editor.x86_64",
+  "engine_version_exact": "4.7.stable.custom_build.5b4e0cb0f",
+  "probe_source": {
+    "balance_native/avatar_body_probe.gd": "b910feccd40f87c71b3f822623ccf0b11c4359a9ec1be3c24bdb87be365db3cb",
+    "balance_native/bed_death_bag_probe.gd": "e9e8fa774c34642f603b17b8a89136071675b2e536417ace0c1a900ba5e5bb8b",
+    "balance_native/first_hour_route_probe.gd": "7c5b4250387a04ab388a23ad73c031e078e39701849d0a3d10aab888a86ecdc1",
+    "balance_native_decisions/d055_d057_season_probe.gd": "a6f37ed87686654e80acdda87b5aa0c18a64989be1a2995662715324ae8b58de",
+    "balance_native_decisions/d058_random_spawn_probe.gd": "4518906bff663a1b37840f1eed70106ebfdf31c7a5ebcf45543334f1de0ce80c",
+    "balance_native_decisions/d059_offline_hunger_probe.gd": "ef31b8d2ac7c4c333708f6dc94db92297fc8f437c6c22e93a5dac7a8c751c568",
+    "balance_native_decisions/d060_world_time_probe.gd": "86061b10dd7cf450db79a75ee474f3f49ed5b879213ecf6bb8ddd5a50e9224e6",
+    "balance_native_decisions/d061_trail_probe.gd": "331dd064d94f3a3eab88bd9185279db1a8acfa3b95983881da51e59e6e21eed0",
+    "balance_native_decisions/d_harness.gd": "b1aa8ab937c852eba3a0a5ed186ae76674c82f7b87a1f1187d2f35e01984f246",
+    "balance_native_decisions/oracle_corruption_probe.gd": "c11488558f27e6b1f9da5fc2cf66bd6cdda539652a880f559dfb8c69d84d56cb",
+    "balance_native_r10/r10_a6_projection_probe.gd": "5ae5754bb077ba80247f11b0bf5c7882ffd792aa15ba8fb32737142465c64f3e",
+    "balance_native_r10/r10_a8_differential_probe.gd": "b9e38a937bdc500fea9cbd96e0a0ae2d42f751eedfaded55ca33145ede4b6a1b",
+    "balance_native_r10/r10_field_probe.gd": "419ca2c0306551ffeab4084d22666247e44e9c333ee12efeff71205596fd53a2",
+    "balance_native_r10/r10_harness.gd": "c6723c5d6248ce62d2ac4eadbd20c0480f390923e8beee49d8b3b81b6ed35d18",
+    "balance_native_r10/r10_journey_probe.gd": "cf527922329d01a953f1e0f3f469da430acbb4481b48273769efc7e929658c10",
+    "balance_native_r10/r10_port_lifecycle_probe.gd": "ebc53fc0988a50548bfef5320e6550d17ea1d8c1405cd99f43ac4fbfcdd6eb2e",
+    "balance_native_r10/r10_restart_probe.gd": "fac0e96fba01a0a163288cc00f0120021706f5ae3bde244462977066b86a546a",
+    "balance_native_r10/r10_run_boundary_probe.gd": "ada3e97e8b76963ec4964d65b8fe1c85b0d4de008cbcea1dbc927e09ecc7d185",
+    "balance_native_r10/r10_seam_probe.gd": "0cd8f1cc2077b1654105584ed4e1f20576d3271babc467458f21bc432499ee03",
+    "balance_native_r10/r10_v7_custody_probe.gd": "25b2e34b3108a6d11956907f3ede25d7bd71c3ecf2b95c002f5d92a4ef58ca75",
+    "balance_native_r10/r10_waystation_probe.gd": "c4bcd1570ed4b914b60e02662d3ddc864eed590f5c5db9029c37cdb479810e0f",
+    "balance_native_r11/r11_adversarial_probe.gd": "c30c6ca07f1a6d8570e282adf8c027792e9c47a4beaf23ee8b36e40aaec9d3a8",
+    "balance_native_r11/r11_harness.gd": "06a545be1edaac349ca5ba332177921414df03d7dac47651915e7e90289638a9",
+    "balance_native_r11/r11_j01_probe.gd": "ea251a17002fd98a563f6f5af58f71a20eb367cc2dfe83f7cff5ee69f05da9f2",
+    "balance_native_r11/r11_j02_j05_probe.gd": "96807ec04583c69917f73eec92546519074cdbf98d9f62fdd9db9c2f18e6deb2",
+    "balance_native_r11/r11_j03_probe.gd": "d9a9801f4c54c558f5bf65fe5ccbe97009fdc6f2c8452034b90742a6eb8b2bee",
+    "balance_native_r11/r11_j04_probe.gd": "65c457e94a5d68528709faf01e64bc0cf1f275157dcdb2ebfe3f9e4baa42bbd8",
+    "balance_native_r11/r11_j06_j07_probe.gd": "c07d66eacc12443db56e7433b1cf2d853f2191d786f568a5c7a2e4f67654dfef",
+    "balance_native_r11/r11_seam_probe.gd": "f27fc0e1befa4038c86650caf79786658896a88231c57ec393669f5b8ef38956",
+    "balance_native_r11/r11_visual_probe.gd": "7d08b8e5dca6e3f661f3f041da1453717dbacd97c1bb42a47b2bf6f828919ac2",
+    "balance_native_r12/r12_adversarial_probe.gd": "083418918f3a1ff77f3765dbcbbf3a1b9a564d283aa7453d5d01c72b55329b2b",
+    "balance_native_r12/r12_harness.gd": "68e8cd659eea817dbf09f677e56b731f30fdeffdbff24d6faeec8bcbd8970c36",
+    "balance_native_r12/r12_home_probe.gd": "fc3828967e3a7ed277a99823e1703e78655358a3c61a8a33e34635bcb69f0ce2",
+    "balance_native_r12/r12_identity_probe.gd": "421319abaf4e671b43e18f23eaaf1ad57e99040db02c01348dc58171509cabd5",
+    "balance_native_r12/r12_j01_probe.gd": "6e87a6115e4ed5b0e1ad4bd84b6d3eb3210064fbb8c6bb65af383d65bd77abb5",
+    "balance_native_r12/r12_j02_j05_probe.gd": "b002d670af08f60e2302778232c3be49aee420617ea5f36c02ed58a4815ee324",
+    "balance_native_r12/r12_j03_probe.gd": "d6322af896537df188018b25504884fcc23b8347958782206d510c7974a0f9d9",
+    "balance_native_r12/r12_j04_probe.gd": "9744de0d467ad9baa3f1fc3253cc2de2f261810ebb5b04b49987c61cac9e24dc",
+    "balance_native_r12/r12_j06_j07_probe.gd": "eb56c8a77e0de2b8e49f92b8fae02936c4064d96f1ff9defe70591ade8ba7da5",
+    "balance_native_r12/r12_threat_death_probe.gd": "50093be1679743ed61bc9f17ceee8de9d936b65b9594cf1db76fb82db645e85a",
+    "balance_native_r12/r12_visual_capture.gd": "95d7b318427756e79461cc17cd0773ea78d3195b937c9ed2b3ee6e4fe5955a63",
+    "balance_native_r12/r12_visual_probe.gd": "b0aff7892ee72e420ab270d9023f3e04488393c772c372ad21811c7922f2d20f",
+    "balance_native_r13/r13_adversarial_probe.gd": "7b27d58079704dc9d2c20b1c77e2ef6a44861ff7c14ed3e097c139f4f5222d3c",
+    "balance_native_r13/r13_extent_probe.gd": "5f3511ac65d1a24d27b4510351cd3442c23a251e39bc244039d7dec08b7faede",
+    "balance_native_r13/r13_harness.gd": "b08d3f12d1d932e7e4f5babc224944801c7b23db3241b58215356dcca0556a86",
+    "balance_native_r13/r13_home_probe.gd": "1b7749a16999ce54617bf1495cd1f6f25c6194ad8889786e4dffe3e225d2ff36",
+    "balance_native_r13/r13_identity_probe.gd": "6da03b87fcc336db918d66e560d26e4f40e9210ba4a5a8b164d73f57e5f196bb",
+    "balance_native_r13/r13_j01_probe.gd": "b95064954e1160ab5e2aa86e330970b54c60e33900033d35a17d69939d37fbf0",
+    "balance_native_r13/r13_j02_j05_probe.gd": "a05009a77d47676289f7ed5fa7d9252affd9d52e631837cb7515c8354d2665c9",
+    "balance_native_r13/r13_j03_probe.gd": "2a160e8368285d6e6e37805f1a32d43a2c777ad4fff00a265bf06ebb7788fb71",
+    "balance_native_r13/r13_j04_probe.gd": "e8f8b502ac375c6cf6f5b1ae459fa625d701471e17b9b7f929e435736dfe8588",
+    "balance_native_r13/r13_j06_j07_probe.gd": "379e3726d268618309c90d6027d76afd3f0a621beed39433b28a42a6011e6b5a",
+    "balance_native_r13/r13_threat_death_probe.gd": "bc1ec871a63ca5fd0f3f52ee3388190e2cee65eadefcbf0cc8929eb0971e8ba3",
+    "balance_native_r13/r13_visual_capture.gd": "67ee12e2d5ba7569750611452eaec06114adee7176648905b10ac94eac16b7b4",
+    "balance_native_r13/r13_visual_probe.gd": "b92a001e60c5d4575e9755a76915929ee0e866aa104e5b63e2dceb55a25f6e7c",
+    "balance_native_r9/r9_economy_custody_probe.gd": "9b9b0a2588f8e46c4daacf94e661e5eeed5be7b79b8207622e529bed4db7fc8e",
+    "balance_native_r9/r9_economy_seam_probe.gd": "0f6b36d1228bf85134877b9403343223f89d40fb23d34145db15b3c54e0c9cb4",
+    "balance_native_r9/r9_harness.gd": "b35ee5d452d713128734df97ae25045d1cbe10058c874ad147d3440b7bae8a55",
+    "balance_native_r9/r9_placement_cursor_probe.gd": "73eebd05dc882b27bd12c8b7efc0bbe1e883e0220043ca5fc835bdfa027883fd",
+    "balance_native_r9/r9_profile_port_double.gd": "675b3ee9c1090722e925cf8184d123f617bedba091b772f6823720b10aef5cdb",
+    "balance_native_r9/r9_restart_replay_probe.gd": "eb804b81c9c4b688479bc44d2c5837d6016ef8ca210ce3668245c8e663ef1099",
+    "balance_native_r9/r9_run_clock_probe.gd": "0c7160fba6c5731973b159c9ee4b84fbafea04743f79f5dd1a87736df97060da",
+    "balance_native_r9/r9_shadow_mover.gd": "90b84788a7a61bcf012d4ae6105a8d45d916da9eb4c62c0fda6710e75a1f7149",
+    "balance_native_r9/r9_shadow_physics_probe.gd": "dae67be44b82d5d2f9ed616d4cf457cdbc353f83dc771fb0aacea12b4f752774",
+    "balance_native_r9/r9_waystation_walk_probe.gd": "efc678134b86c83bd872f179da25667541b3b8042f099dc5cb031f185eeaaa5e",
+    "balance_native_ragnarok/r055_season_probe.gd": "6bf481de682e68a9bdd5d4171662a479b44e027adef778acef41211d97f28819",
+    "balance_native_ragnarok/r060_offline_time_probe.gd": "d41ca86cf873e5e8687de4e1a991d1fcce00b80faaaf140a3beda524f0656170",
+    "balance_native_ragnarok/r062_stones_probe.gd": "d91b009ec44b8c26ad1ac4b9e99f573f350d09979056956c68a0d146f84af2f6",
+    "balance_native_ragnarok/r063_currency_custody_probe.gd": "8a204c98590d4a50d7d9a1d8858ed3a5259c2a4cd6f9c36d20fcdb193f859878",
+    "balance_native_ragnarok/r_goals_counterfactuals_probe.gd": "d57a3883453d47610e186b06e0b50960b73a9d2873c7a2f4d698820a0663fc0a",
+    "balance_native_ragnarok/r_harness.gd": "d7cd12029148df537c1acfad2c607474eeaf264842ade1d827a4f34a053ed8dc",
+    "balance_native_ragnarok/r_persistence_probe.gd": "6d4cc9dd8f2a86b533ece4325f69bf363bb07f52156ebfa9ff694d879ffe841a"
+  },
+  "results": [
+    {
+      "blocked_reason": "",
+      "checks": 17,
+      "claimed": "PASS",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build.5b4e0cb0f (2026-06-17 18:46:02 UTC) - https://godotengine.org"
+      ],
+      "exit_code": 0,
+      "failed": [],
+      "family": "balance_native_r13",
+      "log": ".artifacts/native_runs/3d8630f5b1ad/balance_native_r13__r13_adversarial_probe.gd.log",
+      "log_lines": 25,
+      "log_sha256": "499a5a76418a9a4e119aa44036a1875407c0722f476dedfd2c1b9e9dfdef431a",
+      "mismatch": "",
+      "missing": [],
+      "probe": "r13_adversarial_probe.gd",
+      "verdict": "PASS"
+    },
+    {
+      "blocked_reason": "",
+      "checks": 3,
+      "claimed": "FAIL",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build.5b4e0cb0f (2026-06-17 18:46:02 UTC) - https://godotengine.org"
+      ],
+      "exit_code": 1,
+      "failed": [
+        "the default world contains the authored continent (10 of 118 POIs standable)"
+      ],
+      "family": "balance_native_r13",
+      "log": ".artifacts/native_runs/3d8630f5b1ad/balance_native_r13__r13_extent_probe.gd.log",
+      "log_lines": 18,
+      "log_sha256": "102d604113be5b7ebb4658d63d36ffa3ba463a8f93589cc3c09b5fefd1173586",
+      "mismatch": "",
+      "missing": [],
+      "probe": "r13_extent_probe.gd",
+      "verdict": "FAIL"
+    },
+    {
+      "blocked_reason": "",
+      "checks": 18,
+      "claimed": "PASS",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build.5b4e0cb0f (2026-06-17 18:46:02 UTC) - https://godotengine.org"
+      ],
+      "exit_code": 0,
+      "failed": [],
+      "family": "balance_native_r13",
+      "log": ".artifacts/native_runs/3d8630f5b1ad/balance_native_r13__r13_home_probe.gd.log",
+      "log_lines": 27,
+      "log_sha256": "7b31d4bb1f71f1bd96f4c0af1b904efa1c47c667dd79b270524c3c11c50fbaa6",
+      "mismatch": "",
+      "missing": [],
+      "probe": "r13_home_probe.gd",
+      "verdict": "PASS"
+    },
+    {
+      "blocked_reason": "",
+      "checks": 10,
+      "claimed": "RED_NOT_IMPLEMENTED",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build.5b4e0cb0f (2026-06-17 18:46:02 UTC) - https://godotengine.org"
+      ],
+      "exit_code": 3,
+      "failed": [],
+      "family": "balance_native_r13",
+      "log": ".artifacts/native_runs/3d8630f5b1ad/balance_native_r13__r13_identity_probe.gd.log",
+      "log_lines": 30,
+      "log_sha256": "7da903fcd609c64e190b4dcbf7928caaa3d180f4ed5ec6f12debff73e1b3732f",
+      "mismatch": "",
+      "missing": [
+        "get_player_appearance_projection() on SaveService (expected in res://game/autoload/save_service.gd)",
+        "player_avatar_changed signal on SaveService (expected in res://game/autoload/save_service.gd)",
+        "a shipped scene that mounts A6's player_avatar_presenter (expected in res://game/characters/knight/knight.tscn)",
+        "any in-world avatar selection or presentation node (expected in the live overworld subtree contains none (A6's presenter is not mounted))",
+        "a runtime world whose extent contains A1's authored geography (expected in A1 authors [1024.0, 768.0] cells, A0's only runtime document is 384x256 -> 108 of 118 POIs are unstandable)",
+        "a walkable A8 site (P5 layered POIs) (expected in all 3 sites refused: A1_RUNTIME_WORLD_EXTENT_ABSENT)"
+      ],
+      "probe": "r13_identity_probe.gd",
+      "verdict": "RED_NOT_IMPLEMENTED"
+    },
+    {
+      "blocked_reason": "",
+      "checks": 33,
+      "claimed": "RED_NOT_IMPLEMENTED",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build.5b4e0cb0f (2026-06-17 18:46:02 UTC) - https://godotengine.org"
+      ],
+      "exit_code": 3,
+      "failed": [],
+      "family": "balance_native_r13",
+      "log": ".artifacts/native_runs/3d8630f5b1ad/balance_native_r13__r13_j01_probe.gd.log",
+      "log_lines": 26,
+      "log_sha256": "a1033b989b448b26b5100bf07a4d443adf6a4dcd6c5602054d5f1baf833b3d80",
+      "mismatch": "",
+      "missing": [
+        "a selected male/female avatar bound to the player body (A6_SOURCE_UNAVAILABLE) (expected in res://game/characters/knight/knight.tscn never references the presenter and SaveService publishes no appearance projection)",
+        "a starting knife item in the survival catalogue (expected in data/survival/items/items.json (57 ids, none is a knife or blade))"
+      ],
+      "probe": "r13_j01_probe.gd",
+      "verdict": "RED_NOT_IMPLEMENTED"
+    },
+    {
+      "blocked_reason": "",
+      "checks": 28,
+      "claimed": "RED_NOT_IMPLEMENTED",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build.5b4e0cb0f (2026-06-17 18:46:02 UTC) - https://godotengine.org"
+      ],
+      "exit_code": 3,
+      "failed": [],
+      "family": "balance_native_r13",
+      "log": ".artifacts/native_runs/3d8630f5b1ad/balance_native_r13__r13_j02_j05_probe.gd.log",
+      "log_lines": 27,
+      "log_sha256": "a1a5c8f291898c7b02c8766da0334339efafa8b43d49076ea1bb0bf3b90aee3f",
+      "mismatch": "",
+      "missing": [
+        "a physical Skill Core a player can find (A1/A8 source) (expected in source specimen_venom is PROPOSED_A1 at poi poi:specimen_vault_venom with requirements [{ \"kind\": \"access_tier\", \"value\": 2.0 }, { \"kind\": \"power\", \"value\": true }]; no mounted world node binds it)",
+        "a charge/use authority for a found Core (immediate USE) (expected in economy_service._skill_attestor is an invalid Callable in the composition and no code calls configure_skill_attestor, so commit_cast refuses with skill_gate_unavailable)",
+        "an authentic damage producer in the survival world (A1 hazards or A8 enemies) (expected in no call site of take_damage/take_resolved_damage exists under game/overworld or game/survival)",
+        "a death rule that can lose a unique A3 instance token (expected in survival_service.begin_overworld_death keeps every `soh_i_` stack in the bag and puts only ordinary stacks in the bag record, so a unique token cannot be lost)"
+      ],
+      "probe": "r13_j02_j05_probe.gd",
+      "verdict": "RED_NOT_IMPLEMENTED"
+    },
+    {
+      "blocked_reason": "",
+      "checks": 21,
+      "claimed": "RED_NOT_IMPLEMENTED",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build.5b4e0cb0f (2026-06-17 18:46:02 UTC) - https://godotengine.org"
+      ],
+      "exit_code": 3,
+      "failed": [],
+      "family": "balance_native_r13",
+      "log": ".artifacts/native_runs/3d8630f5b1ad/balance_native_r13__r13_j03_probe.gd.log",
+      "log_lines": 19,
+      "log_sha256": "9b3e048480e2e7a9ecc179c6b3f91745d432be379e607c1e6dd3cfef356ee220",
+      "mismatch": "",
+      "missing": [
+        "an owner-published A6 return projection (A6_SOURCE_UNAVAILABLE) (expected in a6_owner_projection_source.gd resolves six accessors by name on the composed autoloads; 6 of 6 read an empty contract (absent: [\"season_clock\", \"run_facts\", \"return_digest\", \"digest_acknowledgements:absent\", \"run_history\", \"site_cue:absent\"]))"
+      ],
+      "probe": "r13_j03_probe.gd",
+      "verdict": "RED_NOT_IMPLEMENTED"
+    },
+    {
+      "blocked_reason": "",
+      "checks": 11,
+      "claimed": "RED_NOT_IMPLEMENTED",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build.5b4e0cb0f (2026-06-17 18:46:02 UTC) - https://godotengine.org"
+      ],
+      "exit_code": 3,
+      "failed": [
+        "the three sites differ in their authored cost/risk/action shape (2 distinct of 3)"
+      ],
+      "family": "balance_native_r13",
+      "log": ".artifacts/native_runs/3d8630f5b1ad/balance_native_r13__r13_j04_probe.gd.log",
+      "log_lines": 22,
+      "log_sha256": "2b9faaef78563f5ffc3e4e0b48f8c4368c13bd5ba27e1eca9ea9dd8f3bb9ddd7",
+      "mismatch": "",
+      "missing": [
+        "an A8 POI mounted inside the shipped overworld (expected in chapter1_overworld.gd instantiates landmarks/camps/resources only; [\"south_quarry\", \"south_orchard_ruin\", \"south_crown_mill\"] exist as standalone scenes)",
+        "an A3-authorized ordinary reward for any of the three POIs (expected in world_action refused every site ([\"south_quarry:unknown_world_poi\", \"south_orchard_ruin:unknown_world_poi\", \"south_crown_mill:unknown_world_poi\"]); A3 is fail-closed by design until an owner supplies evidence)"
+      ],
+      "probe": "r13_j04_probe.gd",
+      "verdict": "RED_NOT_IMPLEMENTED"
+    },
+    {
+      "blocked_reason": "",
+      "checks": 41,
+      "claimed": "RED_NOT_IMPLEMENTED",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build.5b4e0cb0f (2026-06-17 18:46:02 UTC) - https://godotengine.org"
+      ],
+      "exit_code": 3,
+      "failed": [],
+      "family": "balance_native_r13",
+      "log": ".artifacts/native_runs/3d8630f5b1ad/balance_native_r13__r13_j06_j07_probe.gd.log",
+      "log_lines": 20,
+      "log_sha256": "0554abc9beda4fc089479a3765054503b63d54f6ab5aeff140441c695dd41f10",
+      "mismatch": "",
+      "missing": [
+        "a physical awakened-elder chest the player can open in the last 72 h (A8 source, A1 geometry) (expected in plan_meta_source_claim(elder_ashen_vault) -> source_identity_forgery; the world binds no instance of it)",
+        "a player-facing voluntary abandon / physical evacuation door (expected in a0_run_lifecycle.abandon_run has no caller in game/ (0 hits); the finale cannot be chosen by a player)"
+      ],
+      "probe": "r13_j06_j07_probe.gd",
+      "verdict": "RED_NOT_IMPLEMENTED"
+    },
+    {
+      "blocked_reason": "",
+      "checks": 13,
+      "claimed": "RED_NOT_IMPLEMENTED",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build.5b4e0cb0f (2026-06-17 18:46:02 UTC) - https://godotengine.org"
+      ],
+      "exit_code": 3,
+      "failed": [],
+      "family": "balance_native_r13",
+      "log": ".artifacts/native_runs/3d8630f5b1ad/balance_native_r13__r13_threat_death_probe.gd.log",
+      "log_lines": 18,
+      "log_sha256": "c5313b7fd8097641135fcc04f7b2299f4dfdaf49b9ca04130867b7390b3cfded",
+      "mismatch": "",
+      "missing": [
+        "a threat a player can meet in the shipped run (P4 fair threats) (expected in survival/a0_optional_threat is absent/false, so OptionalSkeletonEncounter is never created)"
+      ],
+      "probe": "r13_threat_death_probe.gd",
+      "verdict": "RED_NOT_IMPLEMENTED"
+    },
+    {
+      "blocked_reason": "VISUAL_NOT_TESTED: 3/3 capture attempts returned no image (display=headless, adapter=''); no pixel was inspected at 720p, 1440p or 2160p and no visual verdict is claimed",
+      "checks": 8,
+      "claimed": "BLOCKED",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build.5b4e0cb0f (2026-06-17 18:46:02 UTC) - https://godotengine.org"
+      ],
+      "exit_code": 2,
+      "failed": [],
+      "family": "balance_native_r13",
+      "log": ".artifacts/native_runs/3d8630f5b1ad/balance_native_r13__r13_visual_probe.gd.log",
+      "log_lines": 33,
+      "log_sha256": "7a7d82e15800bc77723f7b7179e45d2db75b1ad1005de37259fd187c2badc4b3",
+      "mismatch": "",
+      "missing": [],
+      "probe": "r13_visual_probe.gd",
+      "verdict": "BLOCKED"
+    }
+  ],
+  "rule": "A probe counts only for the composition SHA it ran on. BLOCKED and RED_NOT_IMPLEMENTED are recorded, never converted into a pass. A probe that exits 0 without its verdict line is BLOCKED_NO_VERDICT.",
+  "schema": "soh.balance.native_runs.v1",
+  "summary": {
+    "BLOCKED": 1,
+    "FAIL": 1,
+    "PASS": 2,
+    "RED_NOT_IMPLEMENTED": 7
+  },
+  "support_source": {
+    "data/survival/balance/ragnarok_tuning.v1.json": "28ca40544d9de36411caf77cc30b81f54f9a64071f97d4e36d6b1447714fd94b"
+  }
+}

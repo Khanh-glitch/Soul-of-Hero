@@ -1,0 +1,104 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/ui/screens/hub/tabs/campaign_tab.gd" id="1_script"]
+
+[node name="CampaignTab" type="VBoxContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 5
+script = ExtResource("1_script")
+
+[node name="Header" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="ChapterButtons" type="HBoxContainer" parent="Header"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="ChapterSummary" type="Label" parent="Header"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "CHƯƠNG 1  •  0/10"
+vertical_alignment = 1
+horizontal_alignment = 2
+
+[node name="SlotsGrid" type="GridContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+columns = 5
+theme_override_constants/h_separation = 5
+theme_override_constants/v_separation = 5
+
+[node name="TrainingPanel" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(0, 55)
+layout_mode = 2
+theme_type_variation = &"CardPanel"
+
+[node name="TrainingRow" type="HBoxContainer" parent="TrainingPanel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TrainingInfo" type="VBoxContainer" parent="TrainingPanel/TrainingRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="TrainingPanel/TrainingRow/TrainingInfo"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.72, 0.37, 1)
+text = "SÂN TẬP • HẦM MỘ"
+
+[node name="Description" type="Label" parent="TrainingPanel/TrainingRow/TrainingInfo"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+text = "Khu luyện tập hiện có; không tính vào 100 màn chiến dịch và không cấp phần thưởng."
+
+[node name="TrainingDetailsButton" type="Button" parent="TrainingPanel/TrainingRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(105, 38)
+layout_mode = 2
+text = "CHI TIẾT"
+
+[node name="StartTrainingButton" type="Button" parent="TrainingPanel/TrainingRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 38)
+layout_mode = 2
+theme_type_variation = &"PrimaryButton"
+text = "VÀO SÂN TẬP"
+
+[node name="OverworldPanel" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(0, 55)
+layout_mode = 2
+theme_type_variation = &"CardPanel"
+
+[node name="Row" type="HBoxContainer" parent="OverworldPanel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Info" type="VBoxContainer" parent="OverworldPanel/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="OverworldPanel/Row/Info"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.55, 0.85, 0.95, 1)
+text = "THE HOLLOW MARCHES"
+
+[node name="Description" type="Label" parent="OverworldPanel/Row/Info"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+text = "Vùng biên cương Chương 1 — khám phá, trại nghỉ và tiến vào 10 địa điểm chiến dịch."
+
+[node name="EnterOverworldButton" type="Button" parent="OverworldPanel/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 38)
+layout_mode = 2
+theme_type_variation = &"PrimaryButton"
+text = "BƯỚC VÀO VÙNG BIÊN"

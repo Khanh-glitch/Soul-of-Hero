@@ -1,0 +1,271 @@
+"""Quality tests: each check must fail for the defect it names and pass without it.
+
+A check that only ever returns PASS is decoration. Each test below builds the
+defective input by hand and requires the verdict to move, so the suite is a
+detector rather than a status board.
+"""
+from __future__ import annotations
+
+import copy
+import json
+import unittest
+
+import _support as support
+
+from sohbalance import product, quality
+
+
+def _inputs():
+    texts, manifest = product.load_snapshot(support.REPO_ROOT)
+    model = support.model()
+    facts = product.build_facts(
+        texts, manifest, loot_tables=sorted(model.loot_tables), station_ids=sorted(model.stations)
+    )
+    facts.update(product.model_facts(model))
+    return model, texts, manifest, facts
+
+
+def _by_id(checks, check_id):
+    return next(check for check in checks if check["check_id"] == check_id)
+
+
+class QualityPinTests(unittest.TestCase):
+    """What the pinned owner bytes actually say at this commit."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.model, cls.texts, cls.manifest, cls.facts = _inputs()
+        cls.checks = quality.run_all(cls.model, cls.texts, cls.facts, cls.manifest)
+
+    def test_nine_checks_run(self) -> None:
+        self.assertEqual(
+            [check["check_id"] for check in self.checks],
+            ["Q-01", "Q-02", "Q-03", "Q-04", "Q-05", "Q-06", "Q-07", "Q-08", "Q-09"],
+        )
+
+    def test_four_checks_fail_at_this_pin(self) -> None:
+        failing = [check["check_id"] for check in self.checks if check["status"] == "FAIL"]
+        # Q-03 reopened on its own evidence: A3 c5e80922 recanonicalised three source
+        # rows to the si: identity and A0's mirror still carries the old names.
+        # Q-04 (Knight mounted instead of the D051 avatar) was never closed.
+        # Q-08 and Q-09 are round 6: every A8 site anchor sits past the mounted
+        # world edge, and the avatar seam A0/A6 are being asked to accept does not
+        # exist yet (no chooser, no adapter reference from A0).
+        self.assertEqual(failing, ["Q-03", "Q-04", "Q-08", "Q-09"])
+
+    def test_every_verdict_names_an_owner_and_a_closure_signal(self) -> None:
+        for check in self.checks:
+            self.assertIn(check["status"], {"PASS", "FAIL", "WARN", "UNKNOWN"})
+            self.assertTrue(check["owner"], check["check_id"])
+            self.assertTrue(check["closure_signal"], check["check_id"])
+            self.assertTrue(check["evidence"], check["check_id"])
+
+    def test_no_check_claims_a_native_pass(self) -> None:
+        banned = ("verified in game", "verified at runtime", "proven in play")
+        for check in self.checks:
+            haystack = (check["player_impact"] + " " + check["closure_signal"]).lower()
+            for phrase in banned:
+                self.assertNotIn(phrase, haystack, check["check_id"])
+            # Evidence must be plain data so it can be diffed between commits.
+            json.dumps(check["evidence"], sort_keys=True)
+
+
+class QualityClosureTests(unittest.TestCase):
+    """Reconstruct each defect and require the verdict to flip."""
+
+    def setUp(self) -> None:
+        self.model, self.texts, self.manifest, self.facts = _inputs()
+
+    def _status(self, checks, check_id):
+        return _by_id(checks, check_id)["status"]
+
+    # ---------------------------------------------------------------- Q-04
+    def test_blk5_closes_when_the_mounted_body_and_grade0_sheet_are_canonical(self) -> None:
+        self.assertEqual(self._status(quality.run_all(self.model, self.texts, self.facts, self.manifest), "Q-04"), "FAIL")
+
+        texts = dict(self.texts)
+        manifest = json.loads(texts["a6.avatar_art_manifest.json"])
+        gender = "female"
+        manifest["characters"][gender]["armor_grades"]["0"]["idle_sheet"] = (
+            f"res://art/characters/{manifest['characters'][gender]['craftpix_id']}/idle.png"
+        )
+        texts["a6.avatar_art_manifest.json"] = json.dumps(manifest)
+        facts = copy.deepcopy(self.facts)
+        # Round-4 rule: a sheet string only counts if the file is in the pinned
+        # tree, so the simulation installs the bytes rather than the path alone.
+        installed = manifest["characters"][gender]["armor_grades"]["0"]["idle_sheet"][len("res://") :]
+        patched_manifest = copy.deepcopy(self.manifest)
+        patched_manifest["_tree"] = list(patched_manifest.get("_tree", [])) + [["a6", installed]]
+        facts["mounted_player_scene"] = (
+            f"game/characters/{manifest['characters'][gender]['craftpix_id']}/adventurer_female.tscn"
+        )
+        self.assertEqual(
+            self._status(quality.run_all(self.model, texts, facts, patched_manifest), "Q-04"), "PASS"
+        )
+
+    def test_blk5_does_not_close_with_a_swordsman_or_knight_body(self) -> None:
+        texts = dict(self.texts)
+        manifest = json.loads(texts["a6.avatar_art_manifest.json"])
+        manifest["characters"]["male"]["armor_grades"]["0"]["idle_sheet"] = "res://art/male_idle.png"
+        texts["a6.avatar_art_manifest.json"] = json.dumps(manifest)
+        for wrong in (
+            "game/characters/swordsman_180537/swordsman.tscn",
+            "game/characters/knight/knight.tscn",
+        ):
+            facts = copy.deepcopy(self.facts)
+            facts["mounted_player_scene"] = wrong
+            self.assertEqual(
+                self._status(quality.run_all(self.model, texts, facts, self.manifest), "Q-04"),
+                "FAIL",
+                wrong,
+            )
+
+    def test_blk5_fails_when_the_adapter_silently_falls_back(self) -> None:
+        texts = dict(self.texts)
+        texts["a6.avatar_appearance_adapter.gd"] += "\n# fallback: knight\n"
+        checks = quality.run_all(self.model, texts, self.facts, self.manifest)
+        self.assertEqual(self._status(checks, "Q-04"), "FAIL")
+
+    # ---------------------------------------------------------------- Q-03
+    def test_q03_reports_the_three_rows_a3_recanonicalised(self) -> None:
+        # Live owner change, not a test edit: A3 moved these rows to the si:
+        # identity and A0's vendored mirror did not follow, so the pin is DRIFT and
+        # the check names the rows instead of summarising them.
+        checks = quality.run_all(self.model, self.texts, self.facts, self.manifest)
+        self.assertEqual(self._status(checks, "Q-03"), "FAIL")
+        drift = quality.mirror_drift(self.model, self.texts)
+        self.assertEqual(drift["status"], "DRIFT")
+        self.assertEqual(drift["divergent"], ["road_notes", "road_scrap", "road_supplies"])
+        self.assertEqual(drift["identical_rows"], 33)
+        self.assertEqual(drift["mirror_rows"], drift["a3_rows"])
+
+        texts = dict(self.texts)
+        mirror = json.loads(texts["a0.sources.json"])
+        mirror["sources"]["road_scrap"] = dict(mirror["sources"]["road_scrap"], yield_per_claim=99)
+        texts["a0.sources.json"] = json.dumps(mirror)
+        self.assertEqual(quality.mirror_drift(self.model, texts)["status"], "DRIFT")
+        self.assertEqual(self._status(quality.run_all(self.model, texts, self.facts, self.manifest), "Q-03"), "FAIL")
+
+    def test_blk2_does_not_close_when_only_the_poi_id_is_renamed(self) -> None:
+        # Renaming the poi key without adopting the bound instance would leave the
+        # mirror disagreeing in a new way; the check compares whole rows.
+        texts = dict(self.texts)
+        mirror = json.loads(texts["a0.sources.json"])
+        row = mirror["sources"]["road_scrap"]
+        row["poi"] = "poi_crown_waystation"
+        texts["a0.sources.json"] = json.dumps(mirror)
+        self.assertEqual(quality.mirror_drift(self.model, texts)["status"], "DRIFT")
+
+    # ---------------------------------------------------------------- Q-02
+    def test_q02_fails_when_two_scripts_own_the_same_hud_job(self) -> None:
+        texts = dict(self.texts)
+        texts["a6.player_first_hud.gd"] += "\n# draws the health bar too\n"
+        original = dict(quality.HUD_JOBS)
+        patched = dict(original)
+        patched["a6.player_first_hud.gd"] = list(patched["a6.player_first_hud.gd"]) + ["health"]
+        try:
+            quality.HUD_JOBS.clear()
+            quality.HUD_JOBS.update(patched)
+            checks = quality.run_all(self.model, texts, self.facts, self.manifest)
+            self.assertEqual(self._status(checks, "Q-02"), "FAIL")
+        finally:
+            quality.HUD_JOBS.clear()
+            quality.HUD_JOBS.update(original)
+
+    def test_q02_warns_when_developer_diagnostics_defaults_on(self) -> None:
+        texts = dict(self.texts)
+        texts["a6.player_first_hud.gd"] = texts["a6.player_first_hud.gd"].replace(
+            "var _developer_diagnostics := false", "var _developer_diagnostics := true"
+        )
+        checks = quality.run_all(self.model, texts, self.facts, self.manifest)
+        self.assertEqual(self._status(checks, "Q-02"), "WARN")
+
+    # ---------------------------------------------------------------- Q-07
+    def test_q07_fails_when_a_claim_is_asserted_without_a_commit(self) -> None:
+        texts = dict(self.texts)
+        texts["a8.poi_pilot.gd"] += '\nconst CLAIM := "SAVE_VERIFIED_NO_DUPLICATE"\n'
+        checks = quality.run_all(self.model, texts, self.facts, self.manifest)
+        self.assertEqual(self._status(checks, "Q-07"), "FAIL")
+
+    # ---------------------------------------------------------------- Q-08
+    def _transforms_with(self, cells, decisions=None):
+        document = json.loads(self.texts["a1.a8_site_transforms.v1.json"])
+        for index, site in enumerate(document["sites"]):
+            site["canonical_cell"] = cells[index]
+            if decisions is not None:
+                site["direct_overworld_mount_decision"] = decisions[index]
+        texts = dict(self.texts)
+        texts["a1.a8_site_transforms.v1.json"] = json.dumps(document)
+        return texts
+
+    def test_q08_fails_because_all_three_anchors_are_past_the_world_edge(self) -> None:
+        check = _by_id(quality.run_all(self.model, self.texts, self.facts, self.manifest), "Q-08")
+        self.assertEqual(check["status"], "FAIL")
+        self.assertEqual(
+            [row["site_id"] for row in check["evidence"] if not row["inside_mounted_world"]],
+            ["crown_south_quarry", "crown_south_orchard", "crown_south_mill"],
+        )
+        # The world is 448x256; y=280 is not a corner of it, it is outside it.
+        self.assertEqual(check["world_bounds"], {"w": 448, "h": 256})
+
+    def test_q08_shows_a1_meeting_the_geometry_standard_a8_misses(self) -> None:
+        check = _by_id(quality.run_all(self.model, self.texts, self.facts, self.manifest), "Q-08")
+        corridor = check["a1_corridor"]
+        self.assertEqual(corridor["status"], "INSIDE_MOUNTED_WORLD")
+        self.assertGreater(corridor["cells"], 0)
+        self.assertEqual(corridor["inside_world"], corridor["cells"])
+        # Geometrically sound and still not a playable build: the corridor is not
+        # mounted either, which is why Q-08 reports geometry and not reachability.
+        self.assertFalse(corridor["production_native_playable"])
+        self.assertIn("A1's roadside corridor", check["player_impact"])
+
+    def test_q08_warns_when_anchors_are_inside_but_still_rejected_for_footprint(self) -> None:
+        texts = self._transforms_with([[30, 200], [140, 200], [120, 200]])
+        check = _by_id(quality.run_all(self.model, texts, self.facts, self.manifest), "Q-08")
+        self.assertEqual(check["status"], "WARN")
+
+    def test_q08_passes_when_anchors_are_inside_and_the_mount_decision_is_not_reject(self) -> None:
+        texts = self._transforms_with(
+            [[30, 200], [140, 200], [120, 200]], ["MOUNT", "MOUNT", "MOUNT"]
+        )
+        check = _by_id(quality.run_all(self.model, texts, self.facts, self.manifest), "Q-08")
+        self.assertEqual(check["status"], "PASS")
+
+    # ---------------------------------------------------------------- Q-09
+    def test_q09_names_the_three_things_that_are_missing(self) -> None:
+        check = _by_id(quality.run_all(self.model, self.texts, self.facts, self.manifest), "Q-09")
+        self.assertEqual(check["status"], "FAIL")
+        missing = " ; ".join(check["evidence"]["missing"])
+        self.assertIn("no A0 production file references", missing)
+        self.assertIn("no production UI offers", missing)
+        self.assertIn("knight.tscn", missing)
+        self.assertEqual(check["evidence"]["adapter_references_from_a0"], [])
+
+    def test_q09_passes_when_the_seam_exists_end_to_end(self) -> None:
+        texts = dict(self.texts)
+        texts["a0.profile_screen.gd"] = (
+            "extends Control\n"
+            "const ADAPTER := preload(\"res://game/avatar/avatar_appearance_adapter.gd\")\n"
+            "func _add_options() -> void:\n"
+            "\tfor gender in [\"male\", \"female\"]:\n"
+            "\t\tvar button := Button.new()\n"
+            "\t\tbutton.text = gender\n"
+        )
+        facts = dict(self.facts)
+        facts["mounted_player_scene"] = "res://game/avatar/555940_grade0.tscn"
+        check = _by_id(quality.run_all(self.model, texts, facts, self.manifest), "Q-09")
+        self.assertEqual(check["status"], "PASS")
+        self.assertEqual(len(check["evidence"]["adapter_references_from_a0"]), 1)
+
+    # ---------------------------------------------------------------- Q-06
+    def test_q06_fails_when_a_button_has_no_action_host(self) -> None:
+        texts = dict(self.texts)
+        texts["a6.expedition_planner.gd"] = texts["a6.expedition_planner.gd"].replace(
+            "_has_action_host()", "true"
+        )
+        checks = quality.run_all(self.model, texts, self.facts, self.manifest)
+        self.assertEqual(self._status(checks, "Q-06"), "FAIL")
+
+
+if __name__ == "__main__":
+    unittest.main()

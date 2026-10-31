@@ -1,0 +1,211 @@
+name: A7 cross-system certification (exact composition)
+
+# One immutable composition, four connected tracks, engine 4.7 runtime markers.
+# It refuses to grade anything it cannot tie to a declared tree, and it never
+# edits an owner file.
+on:
+  push:
+    branches: [arena/353cf120-soul-of-hero]
+    paths:
+      - "tools/survival/balance/a7_certify.py"
+      - "tests/survival/a7_certification_probe.gd"
+      - ".github/workflows/a7-certification.yml"
+  workflow_dispatch:
+permissions:
+  contents: write   # only to commit the run's own evidence back to the A7 branch
+
+env:
+  A0_SHA: a6e3797879915510b2e86be0d2ee521f53967c94
+  A1_SHA: e1e4e9a4d4a0f7f0d38360d638715a0c9f144208
+  A3_SHA: 80fe8ceca6de02523985a6eb53e9567639885f0e
+  A6_SHA: 816cc22ab532f297dd7c480fccf34e84f482957a
+  A8_SHA: 5bf5c8f93e5905db96f98e2f20e716e0bffbce68
+  EXPECTED_TREE: f6d5cf789995ccd775cfab9b2f3c98a7ecc667b0
+
+jobs:
+  certify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout A7 harness (full history for composition)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Harness self-test (must reject every known-bad control)
+        run: |
+          set -euo pipefail
+          python3 tools/survival/balance/a7_certify.py --self-test | tee selftest.txt
+          grep -qE "A7_CERT_SELFTEST ([0-9]+)/\1" selftest.txt   # N/N and consistent, whatever N is
+
+      - name: Compose the exact five-owner tree (read-only)
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/work"
+          git worktree add --detach "$RUNNER_TEMP/base" "$A0_SHA"
+          cd "$RUNNER_TEMP/base"
+          git fetch --no-tags origin "$A1_SHA" "$A3_SHA" "$A6_SHA" "$A8_SHA"
+          python3 tools/a0/compose_owners.py --repo . --out .composition --copy-base \
+            --owner "a1=$A1_SHA" --owner "a3=$A3_SHA" \
+            --owner "a8=$A8_SHA" --owner "a6=$A6_SHA" | tee "$RUNNER_TEMP/compose.log"
+          test -f .composition/composition.json
+
+      - name: Setup Godot 4.7
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+
+      - name: Run the certification probe on the composed tree
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/evidence"
+          # The probe is A7's own file and must not be part of the certified tree, or
+          # the composition identity would change underneath the certification. Run it
+          # on a copy that differs from the certified tree by exactly that one file, and
+          # record the delta explicitly.
+          cp -a "$RUNNER_TEMP/base/.composition" "$RUNNER_TEMP/probe_tree"
+          mkdir -p "$RUNNER_TEMP/probe_tree/tests/survival"
+          cp "$GITHUB_WORKSPACE/tests/survival/a7_certification_probe.gd" \
+             "$RUNNER_TEMP/probe_tree/tests/survival/a7_certification_probe.gd"
+          ( cd "$RUNNER_TEMP/probe_tree" && find . -type f | sort | sha256sum ) \
+            > "$RUNNER_TEMP/evidence/probe_tree_files.sha256"
+          echo "probe tree = certified composition + tests/survival/a7_certification_probe.gd" \
+            > "$RUNNER_TEMP/evidence/probe_tree_delta.txt"
+          cd "$RUNNER_TEMP/probe_tree"
+          # A raw composed tree has never been imported, so global script classes and
+          # .ctex resources are unresolved. Import first: otherwise a missing class is
+          # misread as an owner contract failure, which is exactly the class of defect
+          # this round exists to stop.
+          set +e
+          timeout 900 godot --headless --path . --import > "$RUNNER_TEMP/evidence/import.txt" 2>&1
+          echo "import exit=$?" >> "$RUNNER_TEMP/evidence/import.txt"
+          timeout 600 godot --headless --path . --script res://tests/survival/a7_certification_probe.gd \
+            > "$RUNNER_TEMP/evidence/probe.txt" 2>&1
+          rc=$?
+          set -e
+          echo "probe exit=$rc" | tee -a "$RUNNER_TEMP/evidence/probe.txt"
+          tail -40 "$RUNNER_TEMP/evidence/probe.txt"
+          # Engine-level failures are evidence, not noise. A tree that cannot compile must never
+          # be promoted by a probe that only read its text.
+          grep -E "SCRIPT ERROR|Parse Error|Compile Error|Failed to load script" \
+            "$RUNNER_TEMP/evidence/probe.txt" > "$RUNNER_TEMP/evidence/composed.native.txt" || true
+          echo "composed engine errors: $(wc -l < "$RUNNER_TEMP/evidence/composed.native.txt")"
+          # A probe crash is a harness failure; a product refusal is not.
+          grep -q "A7C_DONE" "$RUNNER_TEMP/evidence/probe.txt"
+
+      - name: Reconciled control — does the composition drop work A0 already committed?
+        run: |
+          set -euo pipefail
+          # One variable changes: A0's *own committed* controller replaces the version the
+          # composition installed from A0's declared "resolution". If the composed tree fails
+          # and this control does not, the defect is the resolution artifact, not the game.
+          cp -a "$RUNNER_TEMP/base/.composition" "$RUNNER_TEMP/control_tree"
+          cp "$RUNNER_TEMP/base/game/overworld/chapter1_overworld.gd" \
+             "$RUNNER_TEMP/control_tree/game/overworld/chapter1_overworld.gd"
+          mkdir -p "$RUNNER_TEMP/control_tree/tests/survival"
+          cp "$GITHUB_WORKSPACE/tests/survival/a7_certification_probe.gd" \
+             "$RUNNER_TEMP/control_tree/tests/survival/a7_certification_probe.gd"
+          ( cd "$RUNNER_TEMP/control_tree" && sha256sum game/overworld/chapter1_overworld.gd ) \
+            > "$RUNNER_TEMP/evidence/control_delta.txt"
+          echo "control = certified composition + A0's committed game/overworld/chapter1_overworld.gd" \
+            >> "$RUNNER_TEMP/evidence/control_delta.txt"
+          cd "$RUNNER_TEMP/control_tree"
+          set +e
+          timeout 900 godot --headless --path . --import > "$RUNNER_TEMP/evidence/import_control.txt" 2>&1
+          timeout 600 godot --headless --path . --script res://tests/survival/a7_certification_probe.gd \
+            > "$RUNNER_TEMP/evidence/probe_control.txt" 2>&1
+          rc=$?
+          set -e
+          echo "control probe exit=$rc" >> "$RUNNER_TEMP/evidence/probe_control.txt"
+          grep -E "SCRIPT ERROR|Parse Error|Compile Error|Failed to load script" \
+            "$RUNNER_TEMP/evidence/probe_control.txt" > "$RUNNER_TEMP/evidence/control.native.txt" || true
+          echo "control engine errors: $(wc -l < "$RUNNER_TEMP/evidence/control.native.txt")"
+          grep -q "A7C_DONE" "$RUNNER_TEMP/evidence/probe_control.txt"
+          grep "^A7C AUTHORITY" "$RUNNER_TEMP/evidence/probe_control.txt" || true
+
+      - name: Certify the four tracks against that tree
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/manifest.json" <<JSON
+          {"schema": "soh.a7.certification.manifest.v2",
+           "composition_tree": "$EXPECTED_TREE",
+           "pins": {"A0": "$A0_SHA", "A1": "$A1_SHA", "A3": "$A3_SHA",
+                    "A6": "$A6_SHA", "A8": "$A8_SHA"},
+           "self_test_ok": true}
+          JSON
+          set +e
+          python3 "$GITHUB_WORKSPACE/tools/survival/balance/a7_certify.py" --certify \
+            --composition "$RUNNER_TEMP/base/.composition" \
+            --evidence "$RUNNER_TEMP/evidence" \
+            --manifest "$RUNNER_TEMP/manifest.json" \
+            --out "$RUNNER_TEMP/report.json" --markdown "$RUNNER_TEMP/report.md" \
+            | tee "$RUNNER_TEMP/certify.txt"
+          rc=$?
+          set -e
+          cat "$RUNNER_TEMP/report.md" >> "$GITHUB_STEP_SUMMARY" || true
+          python3 - <<'PY'
+          import json, os
+          base = os.environ["RUNNER_TEMP"]
+          report = json.load(open(os.path.join(base, "report.json")))
+          comp = report["composition"]
+          if comp["declared"] and comp["tree"] and comp["declared"] != comp["tree"]:
+              raise SystemExit("STALE_COMPOSITION " + json.dumps(comp))
+          print("CERT_OVERALL", report["overall"])
+          print("CERT_MATURITY", report["maturity"]["max"])
+          print("CERT_COUNTS", json.dumps(report["counts"]))
+          first = report.get("first_failure") or report.get("first_blocker") or {}
+          print("CERT_FIRST", first.get("id"), first.get("code"), first.get("owner"))
+          PY
+          # The product is expected to be short of PASS today; the run fails only if
+          # the harness produced no report at all.
+          test -s "$RUNNER_TEMP/report.json"
+          exit 0
+
+      - name: Commit the evidence into the A7 branch (readable without blob storage)
+        if: always()
+        run: |
+          set -euo pipefail
+          cd "$GITHUB_WORKSPACE"
+          OUT="docs/survival/balance/certification/r14_ci"
+          mkdir -p "$OUT"
+          test -f "$RUNNER_TEMP/evidence/composed.native.txt"
+          test -f "$RUNNER_TEMP/evidence/control.native.txt"
+          for f in report.json report.md certify.txt; do
+            [ -f "$RUNNER_TEMP/$f" ] && cp "$RUNNER_TEMP/$f" "$OUT/$f"
+          done
+          [ -f "$RUNNER_TEMP/evidence/probe.txt" ] && cp "$RUNNER_TEMP/evidence/probe.txt" "$OUT/probe.txt"
+          [ -f "$RUNNER_TEMP/evidence/import.txt" ] && cp "$RUNNER_TEMP/evidence/import.txt" "$OUT/import.txt"
+          [ -f "$RUNNER_TEMP/evidence/probe_control.txt" ] && cp "$RUNNER_TEMP/evidence/probe_control.txt" "$OUT/probe_control.txt"
+          [ -f "$RUNNER_TEMP/evidence/import_control.txt" ] && cp "$RUNNER_TEMP/evidence/import_control.txt" "$OUT/import_control.txt"
+          [ -f "$RUNNER_TEMP/evidence/control_delta.txt" ] && cp "$RUNNER_TEMP/evidence/control_delta.txt" "$OUT/control_delta.txt"
+          for n in composed control; do
+            [ -f "$RUNNER_TEMP/evidence/$n.native.txt" ] && cp "$RUNNER_TEMP/evidence/$n.native.txt" "$OUT/$n.native.txt"
+          done
+          cp selftest.txt "$OUT/selftest.txt" 2>/dev/null || true
+          git config user.name "a7-certification"
+          git config user.email "a7-certification@users.noreply.github.com"
+          git add "$OUT"
+          if git diff --cached --quiet; then
+            echo "no evidence change"
+          else
+            git commit -q -m "A7 R14 CI evidence: certification run $GITHUB_RUN_ID on $EXPECTED_TREE"
+            git pull --rebase --autostash -q origin "$GITHUB_REF_NAME" || true
+            git push -q origin "HEAD:$GITHUB_REF_NAME"
+          fi
+
+      - name: Upload certification artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a7-certification
+          path: |
+            selftest.txt
+            ${{ runner.temp }}/certify.txt
+            ${{ runner.temp }}/report.json
+            ${{ runner.temp }}/report.md
+            ${{ runner.temp }}/evidence/probe.txt
+            ${{ runner.temp }}/compose.log
+          if-no-files-found: warn
+          retention-days: 14

@@ -1,0 +1,358 @@
+{
+  "assertions": [
+    {
+      "assertion_id": "A01_roadside_expectation_reproduces_review",
+      "detail": "exact per-claim expectation 3.6 scrap / 1.35 spares / 0.45 notes / 0.45 seeds",
+      "holds": true,
+      "tags": [
+        "loot"
+      ]
+    },
+    {
+      "assertion_id": "A02_no_authored_core_drop_table",
+      "detail": "no existing table can emit a core-tagged item, and the junk table excludes the tag explicitly",
+      "holds": true,
+      "tags": [
+        "core"
+      ]
+    },
+    {
+      "assertion_id": "A03_zero_native_loot_bearing_pois",
+      "detail": "118 authored POIs, 0 with native A3 loot",
+      "holds": true,
+      "tags": [
+        "world"
+      ]
+    },
+    {
+      "assertion_id": "A04_loot_source_pois_unresolved",
+      "detail": "all 16 A3 loot sources fail A1 POI resolution",
+      "holds": true,
+      "tags": [
+        "access"
+      ]
+    },
+    {
+      "assertion_id": "A05_resource_nodes_not_counted_as_containers",
+      "detail": "178 resource nodes stay on the harvest axis; eligible roadside containers counted separately = 0",
+      "holds": true,
+      "tags": [
+        "world"
+      ]
+    },
+    {
+      "assertion_id": "A06_first_hour_route_reproduced",
+      "detail": "the tool's own route length matches A1's published 1541.72 tiles within 1 tile",
+      "holds": true,
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "assertion_id": "A07_no_capability_self_dependency_in_authored_data",
+      "detail": "no authored capability gate requires the capability it is the only source of",
+      "holds": true,
+      "tags": [
+        "world"
+      ]
+    },
+    {
+      "assertion_id": "A08_research_bootstrap_cycle_detected",
+      "detail": "knowledge_spares <-> research station cycle is present and reported",
+      "holds": true,
+      "tags": [
+        "economy"
+      ]
+    },
+    {
+      "assertion_id": "A09_one_time_claims_not_double_counted",
+      "detail": "the duplicated locker claim in P1 is blocked by the one-time policy",
+      "holds": true,
+      "tags": [
+        "claims"
+      ]
+    },
+    {
+      "assertion_id": "A10_adversarial_suite_complete",
+      "detail": "24/24 adversarial cases pass",
+      "holds": true,
+      "tags": [
+        "adversarial"
+      ]
+    },
+    {
+      "assertion_id": "A11_owner_pins_consistent",
+      "detail": "A3's pinned A1 hashes agree with the pinned A1 snapshot",
+      "holds": true,
+      "tags": [
+        "provenance"
+      ]
+    },
+    {
+      "assertion_id": "A12_underprepared_shortcut_not_invented",
+      "detail": "the east-seam shortcut is reported as capability-locked, not as an unmitigated crossing",
+      "holds": true,
+      "tags": [
+        "routes"
+      ]
+    },
+    {
+      "assertion_id": "A13_expected_claims_includes_the_t0_survival_term",
+      "detail": "E[T] for 4 knowledge_spares is 3.525289745 claims (was reported as 2.525289745 before the t=0 fix)",
+      "holds": true,
+      "tags": [
+        "loot",
+        "math_correction"
+      ]
+    },
+    {
+      "assertion_id": "A14_blockers_are_few_owned_and_closable",
+      "detail": "the raw observation list is consolidated into 5 owned blockers, each with an executable closure test",
+      "holds": true,
+      "tags": [
+        "blockers",
+        "delivery"
+      ]
+    },
+    {
+      "assertion_id": "A15_product_checks_read_only_pinned_bytes",
+      "detail": "the product audit runs on sha256-pinned copies and reproduces the missing survival entry point",
+      "holds": true,
+      "tags": [
+        "product"
+      ]
+    },
+    {
+      "assertion_id": "A16_gate_separates_source_mount_native_and_visual",
+      "detail": "every link reports a source state, a native evidence state and a level; static evidence never exceeds S3",
+      "holds": true,
+      "tags": [
+        "gate",
+        "delivery"
+      ]
+    },
+    {
+      "assertion_id": "A17_entry_claim_A_is_separated_from_B_C_D",
+      "detail": "the normal menu route exists in source, its native run is unverified, and content is only counted as mounted when a normal player can reach it",
+      "holds": true,
+      "tags": [
+        "gate",
+        "entry"
+      ]
+    },
+    {
+      "assertion_id": "A18_commit_seam_is_classified_not_substring_matched",
+      "detail": "raw transact_once tokens exceed the mounted callers, and every rejected match carries a reason",
+      "holds": true,
+      "tags": [
+        "gate",
+        "commit"
+      ]
+    },
+    {
+      "assertion_id": "A19_native_claims_require_a_green_run_on_the_pinned_commit",
+      "detail": "no pinned head has a verified native run, so no link is reported above S3",
+      "holds": true,
+      "tags": [
+        "gate",
+        "native"
+      ]
+    },
+    {
+      "assertion_id": "A20_a1_bindings_adopted_without_any_rate_change",
+      "detail": "A3 adopted both instance rebinds with A1's own yields (3 iron_scrap / 2 knowledge_spares) and no rate moved",
+      "holds": true,
+      "tags": [
+        "gate",
+        "bindings"
+      ]
+    },
+    {
+      "assertion_id": "A21_quality_fails_only_where_an_owner_has_not_acted",
+      "detail": "four checks fail and each names an owner action: Q-03 because A0's vendored catalog drifted when A3 canonicalised the instance id, Q-04 because the canonical avatar is still not imported, Q-08 because all three A8 site anchors sit past the mounted world edge, and Q-09 because the avatar seam A0 and A6 are being asked to accept does not exist yet",
+      "holds": true,
+      "tags": [
+        "quality"
+      ]
+    },
+    {
+      "assertion_id": "A22_self_corrections_are_recorded",
+      "detail": "every claim the owners' source contradicted is recorded with what is actually true",
+      "holds": true,
+      "tags": [
+        "blockers",
+        "delivery"
+      ]
+    },
+    {
+      "assertion_id": "A23_engine_api_audit_is_independent_of_owner_prose",
+      "detail": "every flagged static call really is absent from the pinned engine class list",
+      "holds": true,
+      "tags": [
+        "oracle",
+        "engine"
+      ]
+    },
+    {
+      "assertion_id": "A24_float_round_trip_is_a_computed_condition",
+      "detail": "the save-fidelity verdict is the negation of the recorded lossy writers, not a separate claim",
+      "holds": true,
+      "tags": [
+        "oracle",
+        "durability"
+      ]
+    },
+    {
+      "assertion_id": "A25_knowledge_ladder_is_computed_not_asserted",
+      "detail": "the first research station has exactly one non-circular seed, and that seed is loot",
+      "holds": true,
+      "tags": [
+        "oracle",
+        "balance"
+      ]
+    },
+    {
+      "assertion_id": "A26_authorization_claim_needs_a3_bytes",
+      "detail": "no file claims an A3 authorization that A3's pinned catalog does not carry",
+      "holds": true,
+      "tags": [
+        "oracle",
+        "authorization"
+      ]
+    },
+    {
+      "assertion_id": "A27_s4_is_a_five_clause_conjunction",
+      "detail": "S4 needs all five clauses and none holds at this pin; S5 is never granted by static work",
+      "holds": true,
+      "tags": [
+        "gate",
+        "native"
+      ]
+    },
+    {
+      "assertion_id": "A28_a_guarded_mount_is_never_called_mounted",
+      "detail": "a production path behind a project setting the shipped game does not enable is recorded as a guarded candidate, never as a mount a player can reach",
+      "holds": true,
+      "tags": [
+        "gate",
+        "entry"
+      ]
+    },
+    {
+      "assertion_id": "A29_the_shipped_host_request_is_replayed_against_the_loaded_catalog",
+      "detail": "every instance-bearing interaction the host can send is resolved with the runtime's own exact-match rule; an unresolved request is reported instead of assumed to work",
+      "holds": true,
+      "tags": [
+        "oracle",
+        "identity"
+      ]
+    },
+    {
+      "assertion_id": "A30_a_source_fix_is_not_a_native_pass",
+      "detail": "when the engine-API defect is gone from source but no native run verifies it, the blocker is SOURCE_FIXED_PENDING_NATIVE and stays open",
+      "holds": true,
+      "tags": [
+        "blockers",
+        "native"
+      ]
+    },
+    {
+      "assertion_id": "A31_both_catalogs_are_actually_loaded_and_drift_is_enumerated",
+      "detail": "A0's vendored table and A3's canonical table are both non-empty and every differing row is named individually; an empty catalog can no longer read as agreement",
+      "holds": true,
+      "tags": [
+        "oracle",
+        "identity"
+      ]
+    },
+    {
+      "assertion_id": "A32_the_a3_catalog_is_resolved_by_upstream_path",
+      "detail": "A3's catalog is found through the manifest's source_path, so a snapshot-key spelling change cannot silently empty the authorization table",
+      "holds": true,
+      "tags": [
+        "oracle",
+        "identity"
+      ]
+    },
+    {
+      "assertion_id": "A33_the_native_probes_are_audited_and_never_claimed_as_run",
+      "detail": "Phase-3 probes extend the shipped chain, name only symbols the owners ship, and are labelled NATIVE_UNEXECUTED rather than passed",
+      "holds": true,
+      "tags": [
+        "oracle",
+        "native"
+      ]
+    },
+    {
+      "assertion_id": "A34_the_adversary_must_not_pass_a_known_spoof",
+      "detail": "Fifteen named disguises (comment mounts, fixtures, phantom sheets, wrong-sha runs, mocked reach, empty artifacts, unbacked success claims) were executed against the real classifiers and every one was rejected; a surviving spoof would surface here as GATE_HOLE_FOUND",
+      "holds": true,
+      "tags": [
+        "gate",
+        "adversary"
+      ]
+    }
+  ],
+  "assertions_all_hold": true,
+  "explicit_non_claims": [
+    "This is not a playtest and not native gameplay acceptance.",
+    "No Core drop rate is derived, chosen or recommended.",
+    "No existing loot table or A1/A3 file is modified by this tool.",
+    "A1's 118 POIs are authored contracts; 0 of them hand out A3 loot natively today.",
+    "A3's 14-session model is a conservation/scenario model, not human pacing evidence.",
+    "Gold-blocked Cores remain BLOCKED_PENDING_A4 and are not treated as usable skills."
+  ],
+  "headline": {
+    "a3_loot_sources_total": 16,
+    "a3_loot_sources_with_unresolved_a1_poi": 16,
+    "adversarial_cases_passed": "24/24",
+    "binding_adoption": "3/3 A1-authorized source bindings are adopted by A3 (2/2 instance rebinds, 1 live-source reuse).",
+    "canonical_avatar_production_refs": {
+      "180537": 0,
+      "419402": 0,
+      "555940": 0
+    },
+    "closed_by_measurement": 2,
+    "findings_by_severity": {
+      "BLOCKER": 0,
+      "INFO": 9,
+      "MAJOR": 20,
+      "MINOR": 25
+    },
+    "integration_gate_levels": {
+      "a8_quarry": "S0_ABSENT",
+      "waystation_cache": "S1_AUTHORED_ONLY"
+    },
+    "loot_tables_authored": 2,
+    "loot_tables_that_can_emit_a_core": 0,
+    "mounted_survival_ui_scenes": 0,
+    "native_verified": false,
+    "observation_reduction": "54 observations -> 5 blockers (2 earlier claims closed, 5 A7 self-corrections, 6 observations traceability only)",
+    "player_facing_blockers": 5,
+    "poi_playability": {
+      "AUTHORED_SPEC_NATIVE_NOT_INTEGRATED": 2,
+      "CONTRACT_ONLY_NOT_PLAYABLE": 106,
+      "SHIPPED_LEGACY_SCENE_NO_A3_LOOT": 10
+    },
+    "pois_authored": 118,
+    "pois_loot_bearing_in_authored_contract": 0,
+    "product_checks": {
+      "FAIL": 3,
+      "PASS": 1,
+      "WARN": 3
+    },
+    "quality_checks": {
+      "FAIL": 4,
+      "PASS": 5
+    },
+    "resource_nodes_authored_not_crates": 178
+  },
+  "schema": "soh.balance.summary.v1",
+  "source_basis": {
+    "a1_commit": "2951bf8559b2e289ce99fd4d394d44c46fdd91b1",
+    "a3_commit": "18e7afcbd576bbd9bfbcc509b2ee13216186a522,c23292be095903c67e3d6e6e4fbd310b6649da12,c5e80922132ca9cf89ea15c480e1a4be465ba0b7",
+    "hypothesis_file": "data/survival/balance/hypotheses.v1.json"
+  },
+  "status": "ANALYSIS_COMPLETE_NOT_NATIVE_NOT_HUMAN",
+  "tool": "A7 independent balance / loot-discovery inspector"
+}

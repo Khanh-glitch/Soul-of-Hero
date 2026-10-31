@@ -1,0 +1,680 @@
+{
+  "schema_version": 1,
+  "source": {
+    "authority": "A1 POI anchor supplied in CT_A8_NATIVE_WORLD_CONTENT_FACTORY_PROPOSED_20261030.md",
+    "poi_id": "poi_crown_south_mill",
+    "canonical_cell": [
+      120,
+      300
+    ],
+    "work_order_commit": "b19b5ef305229b7b3ee8477f15ca2ac9f679e2b2",
+    "avatar_policy_commit": "9332cb9ba25da3026ede0cad578a90f0e4b5a2b6",
+    "world_id": "world:soh_continent_v1",
+    "a1_source_commit": "7fd000e1c017830a088749b965e651fafb501b98",
+    "a3_source_commit": "c23292be095903c67e3d6e6e4fbd310b6649da12",
+    "a0_source_commit": "122294f2237c1836d6f04561e090fe6aa6c6c0cf",
+    "a6_source_commit": "bed3fc81ced4505eac6cfc3ddec5c07aeef8019e",
+    "integration_base_commit": "86831332324428c7623ad431a577d101b7af5c9c",
+    "fixture_policy": "S2_ONLY_NOT_A3_PRICE_OR_REWARD_AUTHORIZATION",
+    "a3_binding_schema": "soh.economy.world_source_bindings.v3",
+    "a3_binding_commit": "c23292be095903c67e3d6e6e4fbd310b6649da12",
+    "a3_binding_status": "NO_A8_SITE_BINDING_COSTS_AND_YIELDS_REMAIN_FIXTURE_ONLY"
+  },
+  "site_id": "crown_south_mill",
+  "display_name": "South Crown Mill",
+  "template_id": "salvage_mill",
+  "visual_profile": "mill",
+  "world_bounds": [
+    960,
+    608
+  ],
+  "spawn": [
+    526,
+    548
+  ],
+  "action_socket": [
+    528,
+    370
+  ],
+  "approach_stand": [
+    528,
+    410
+  ],
+  "interaction_radius": 86,
+  "access": {
+    "outer_requires": [
+      "cap_salvage"
+    ],
+    "inner_requires": [
+      "cap_salvage"
+    ]
+  },
+  "walls": [
+    [
+      0,
+      0,
+      960,
+      22
+    ],
+    [
+      0,
+      586,
+      486,
+      22
+    ],
+    [
+      566,
+      586,
+      394,
+      22
+    ],
+    [
+      0,
+      22,
+      22,
+      564
+    ],
+    [
+      938,
+      22,
+      22,
+      564
+    ],
+    [
+      246,
+      150,
+      34,
+      94
+    ],
+    [
+      774,
+      150,
+      34,
+      94
+    ],
+    [
+      246,
+      354,
+      34,
+      94
+    ],
+    [
+      774,
+      354,
+      34,
+      94
+    ],
+    [
+      376,
+      132,
+      36,
+      66
+    ],
+    [
+      632,
+      394,
+      36,
+      72
+    ],
+    [
+      22,
+      314,
+      466,
+      16
+    ],
+    [
+      564,
+      314,
+      374,
+      16
+    ],
+    [
+      22,
+      472,
+      466,
+      16
+    ],
+    [
+      564,
+      472,
+      374,
+      16
+    ]
+  ],
+  "choice_blockers": {},
+  "choices": [
+    {
+      "action_id": "repair_waterwheel",
+      "option_id": "repair",
+      "label": "Re-seat the wheel \u00b7 1 Oak Wood + 1 Iron Scrap",
+      "requires_capabilities": [
+        "cap_salvage"
+      ],
+      "requires_state": [],
+      "costs": {
+        "oak_wood": 1,
+        "iron_scrap": 1
+      },
+      "rewards": {},
+      "set_state": {
+        "mill_wheel": "turning",
+        "mill_route": "open"
+      },
+      "claim_policy": "once",
+      "catalog_source": "data/survival/items/items.json#items.oak_wood @ c23292be095903c67e3d6e6e4fbd310b6649da12 (SOH_PROPOSAL; fixture-only cost; no action-price approval)",
+      "choice_group": "mill_wheel"
+    },
+    {
+      "action_id": "leave_wheel",
+      "option_id": "leave",
+      "label": "Leave the wheel seized",
+      "requires_capabilities": [],
+      "requires_state": [],
+      "costs": {},
+      "rewards": {},
+      "set_state": {
+        "mill_wheel": "seized"
+      },
+      "claim_policy": "once",
+      "catalog_source": "world-state-only; no item transaction",
+      "choice_group": "mill_wheel"
+    }
+  ],
+  "actions": [
+    {
+      "action_id": "observe_race",
+      "object_id": "mill_race_marks",
+      "label": "Read the stopped race marks from outside",
+      "stand_position": [
+        528,
+        536
+      ],
+      "requires_capabilities": [],
+      "requires_state": [],
+      "costs": {},
+      "rewards": {},
+      "set_state": {
+        "mill_race_observed": true
+      },
+      "claim_policy": "once",
+      "catalog_source": "world-state-only; no item transaction",
+      "socket_position": [
+        528,
+        452
+      ]
+    },
+    {
+      "action_id": "recover_fastener",
+      "object_id": "mill_scrap_pile",
+      "label": "Recover a sound fastener \u00b7 1 Iron Scrap",
+      "requires_capabilities": [
+        "cap_salvage"
+      ],
+      "requires_state": [
+        "mill_wheel"
+      ],
+      "costs": {},
+      "rewards": {
+        "iron_scrap": 1
+      },
+      "set_state": {},
+      "claim_policy": "replenishable",
+      "cooldown_seconds": 90,
+      "catalog_source": "data/survival/items/sources.json#sources.live_iron_scrap @ c23292be095903c67e3d6e6e4fbd310b6649da12 (SOH_PROPOSAL; poi_id=null; not Mill-authorized)",
+      "stand_position": [
+        678,
+        278
+      ],
+      "socket_position": [
+        678,
+        238
+      ],
+      "requires_state_values": {
+        "mill_wheel": [
+          "turning"
+        ]
+      }
+    }
+  ],
+  "return_hook": "Once admitted, restoring the wheel opens the maintenance walk; the fastener pile is finite per cycle and returns on its real timer.",
+  "visual_notes": "Mill race, square timber housing, raised wheel and a physically gated maintenance walk. Outer race can be observed without the salvage capability.",
+  "gates": [
+    {
+      "rect": [
+        488,
+        472,
+        76,
+        16
+      ],
+      "requires": "cap_salvage",
+      "zone": "outer_access"
+    },
+    {
+      "rect": [
+        488,
+        314,
+        76,
+        14
+      ],
+      "requires": "cap_salvage",
+      "zone": "maintenance_walk",
+      "requires_state_values": {
+        "mill_wheel": [
+          "turning"
+        ]
+      }
+    }
+  ],
+  "scene_role": "local_worksite",
+  "local_transition": {
+    "contract_id": "soh.native_poi.transition.v1",
+    "contract_version": 1,
+    "worksite_scene": "res://game/survival/world_content/scenes/south_crown_mill.tscn",
+    "shell_scene": "res://game/survival/world_content/scenes/south_crown_mill_overworld.tscn",
+    "interior_entry": [
+      526,
+      548
+    ],
+    "exit_portal": [
+      526,
+      560
+    ],
+    "return_anchor": {
+      "world_id": "world:soh_continent_v1",
+      "poi_id": "poi_crown_south_mill",
+      "canonical_cell": [
+        120,
+        300
+      ],
+      "shell_scene": "res://game/survival/world_content/scenes/south_crown_mill_overworld.tscn",
+      "shell_local_position": [
+        64,
+        108
+      ]
+    }
+  },
+  "overworld_shell": {
+    "scene": "res://game/survival/world_content/scenes/south_crown_mill_overworld.tscn",
+    "bounds_px": [
+      128,
+      128
+    ],
+    "action_socket": [
+      64,
+      64
+    ],
+    "canonical_cell": [
+      120,
+      300
+    ],
+    "rotation_degrees": 0,
+    "scale": [
+      1,
+      1
+    ],
+    "footprint_radius_tiles": 4,
+    "entry_portal": [
+      64,
+      108
+    ],
+    "profile": "mill",
+    "visual_layout": {
+      "ground_family": "ash",
+      "ground_areas": [
+        {
+          "center": [
+            4,
+            1
+          ],
+          "radius": [
+            4,
+            2
+          ],
+          "family": "moor"
+        }
+      ],
+      "paths": [
+        {
+          "family": "gravel",
+          "width": 2,
+          "points": [
+            [
+              3,
+              7
+            ],
+            [
+              3,
+              6
+            ],
+            [
+              4,
+              5
+            ]
+          ]
+        }
+      ],
+      "props": [
+        {
+          "frame": "mill_wheel",
+          "cell": [
+            5,
+            3
+          ],
+          "id": "waterwheel"
+        },
+        {
+          "frame": "wall_stub",
+          "cell": [
+            1,
+            4
+          ],
+          "id": "race_wall"
+        },
+        {
+          "frame": "wall_stub",
+          "cell": [
+            6,
+            4
+          ],
+          "id": "race_wall_east"
+        },
+        {
+          "frame": "handcart",
+          "cell": [
+            3,
+            6
+          ],
+          "id": "haul_cart"
+        }
+      ],
+      "lighting_profile": "overcast_frontier"
+    },
+    "obstacles_px": [
+      [
+        8,
+        68,
+        32,
+        12
+      ],
+      [
+        88,
+        68,
+        32,
+        12
+      ],
+      [
+        80,
+        52,
+        16,
+        14
+      ]
+    ]
+  },
+  "visual_layout": {
+    "ground_family": "ash",
+    "ground_areas": [
+      {
+        "center": [
+          1,
+          13
+        ],
+        "radius": [
+          2,
+          20
+        ],
+        "family": "moor"
+      },
+      {
+        "center": [
+          58,
+          13
+        ],
+        "radius": [
+          2,
+          20
+        ],
+        "family": "moor"
+      },
+      {
+        "center": [
+          31,
+          18
+        ],
+        "radius": [
+          12,
+          8
+        ],
+        "family": "gravel"
+      },
+      {
+        "center": [
+          44,
+          9
+        ],
+        "radius": [
+          8,
+          5
+        ],
+        "family": "soil"
+      }
+    ],
+    "paths": [
+      {
+        "family": "gravel",
+        "width": 3,
+        "points": [
+          [
+            32,
+            37
+          ],
+          [
+            32,
+            33
+          ],
+          [
+            32,
+            29
+          ],
+          [
+            33,
+            24
+          ],
+          [
+            33,
+            20
+          ]
+        ]
+      },
+      {
+        "family": "gravel",
+        "width": 2,
+        "points": [
+          [
+            33,
+            24
+          ],
+          [
+            26,
+            22
+          ],
+          [
+            20,
+            20
+          ]
+        ]
+      },
+      {
+        "family": "gravel",
+        "width": 2,
+        "points": [
+          [
+            33,
+            24
+          ],
+          [
+            40,
+            22
+          ],
+          [
+            46,
+            20
+          ]
+        ]
+      }
+    ],
+    "state_paths": {
+      "mill_wheel": {
+        "turning": [
+          {
+            "family": "water",
+            "width": 2,
+            "points": [
+              [
+                18,
+                18
+              ],
+              [
+                24,
+                18
+              ],
+              [
+                31,
+                18
+              ],
+              [
+                38,
+                18
+              ],
+              [
+                46,
+                18
+              ]
+            ]
+          }
+        ],
+        "seized": []
+      }
+    },
+    "props": [
+      {
+        "frame": "mill_wheel",
+        "cell": [
+          33,
+          14
+        ],
+        "id": "race_wheel"
+      },
+      {
+        "frame": "wall_stub",
+        "cell": [
+          24,
+          11
+        ],
+        "id": "race_wall_west"
+      },
+      {
+        "frame": "wall_stub",
+        "cell": [
+          40,
+          25
+        ],
+        "id": "race_wall_east"
+      },
+      {
+        "frame": "handcart",
+        "cell": [
+          13,
+          31
+        ],
+        "id": "fastener_haul_cart"
+      },
+      {
+        "frame": "log_pile",
+        "cell": [
+          17,
+          27
+        ],
+        "id": "maintenance_timber"
+      },
+      {
+        "frame": "lamp",
+        "cell": [
+          35,
+          12
+        ],
+        "id": "race_work_lamp"
+      },
+      {
+        "frame": "signpost",
+        "cell": [
+          32,
+          34
+        ],
+        "id": "mill_return_marker"
+      },
+      {
+        "frame": "rock_a",
+        "cell": [
+          4,
+          9
+        ],
+        "id": "west_quarry_rim"
+      },
+      {
+        "frame": "rock_a",
+        "cell": [
+          55,
+          9
+        ],
+        "id": "east_quarry_rim"
+      },
+      {
+        "frame": "whetstone",
+        "cell": [
+          43,
+          24
+        ],
+        "id": "maintenance_stone"
+      }
+    ],
+    "state_props": [
+      {
+        "key": "mill_wheel",
+        "equals": "turning",
+        "props": [
+          {
+            "frame": "lamp",
+            "cell": [
+              34,
+              12
+            ],
+            "id": "lit_race_lamp"
+          },
+          {
+            "frame": "log_pile",
+            "cell": [
+              30,
+              20
+            ],
+            "id": "repaired_race_bearing"
+          }
+        ]
+      },
+      {
+        "key": "mill_wheel",
+        "equals": "seized",
+        "props": [
+          {
+            "frame": "cairn_warning",
+            "cell": [
+              31,
+              20
+            ],
+            "id": "seized_race_warning"
+          }
+        ]
+      }
+    ],
+    "lighting_profile": "overcast_frontier"
+  }
+}

@@ -1,0 +1,166 @@
+name: A7 round-12 survival visual capture
+
+# A7-owned evidence job. It renders the *pinned composition* `r12_full`
+# (663a83ede523) — not this branch's tree — in a real Xvfb window, at 1x, at
+# 1280x720 / 2560x1440 / 3840x2160, and commits the PNGs back to this branch so an
+# auditor can open them. It is not a product gate and it never edits owner code.
+
+on:
+  push:
+    branches:
+      - arena/353cf120-soul-of-hero
+    paths:
+      - ".github/workflows/a7-r12-survival-visual.yml"
+      - "tests/survival/balance_native_r12/r12_visual_capture.gd"
+      - "tests/survival/balance_native_r12/r12_visual_capture.tscn"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: a7-r12-visual-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  capture:
+    # A bot push of the captures must not retrigger the renderer.
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      COMPOSITION: 663a83ede5239baaf372a907d7e138ab31f4f70d
+    steps:
+      - name: Check out this branch
+        uses: actions/checkout@v4
+
+      - name: Install Godot 4.7 stable
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+
+      - name: Fetch the exact owner commits the composition pins
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --depth=1 origin \
+            a6b57c36cf2bc79c6c75cf591a6f023b2f998e73:refs/live12/arena_dea2428e-soul-of-hero
+          git fetch --depth=1 origin \
+            9ca1453ccdd315c9de4aae01cf0e1e5b4e0a71cf:refs/live12/arena_e385312a-soul-of-hero
+          git fetch --depth=1 origin \
+            b44e22df3af40939069189be14afc23ee1ce21c4:refs/live12/arena_7a12b27e-soul-of-hero
+          git fetch --depth=1 origin \
+            6d71410a370df805f8b29a018b61380d6c233b65:refs/live12/arena_05e0328d-soul-of-hero
+          git fetch --depth=1 origin \
+            e1fe550bfe7c969a2c131fbd0bd4a861c505fb80:refs/live12/arena_2d7e6d7a-soul-of-hero
+          git fetch --depth=1 origin \
+            8dd4f3e921a2b90fc68b5335dc012ea2976a7e5f:refs/live12/arena_c7b0c4e8-soul-of-hero
+          git fetch --depth=1 origin \
+            971e0b95e1ea1c5f579f57f53fb35f3a6c3845e8:refs/live12/docs_ct-loot-discovery-gate-20261030
+          echo "--- fetched heads"
+          git for-each-ref refs/live12 --format='%(refname) %(objectname)'
+
+      - name: Rebuild the pinned composition and prove it is the same commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! python3 tools/survival/balance/compose.py --profile r12_full --pin > /tmp/compose.log 2>&1; then
+            echo "::error::compose failed: $(tail -4 /tmp/compose.log | tr '\n' ' ' | cut -c1-900)"
+            cat /tmp/compose.log
+            exit 1
+          fi
+          tail -5 /tmp/compose.log
+          actual=$(git rev-parse refs/comp/r12_full)
+          echo "composition ${actual}"
+          if [ "${actual}" != "${COMPOSITION}" ]; then
+            echo "::error::composition is ${actual}, expected ${COMPOSITION} — the pin is stale, no captures are claimed"
+            exit 1
+          fi
+          git worktree add --detach /tmp/comp "${actual}"
+          echo "worktree $(git -C /tmp/comp rev-parse HEAD)"
+
+      - name: Install the A7 capture scene into the composed tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/comp/tests/survival/balance_native_r12
+          cp tests/survival/balance_native_r12/r12_visual_capture.gd /tmp/comp/tests/survival/balance_native_r12/
+          cp tests/survival/balance_native_r12/r12_visual_capture.tscn /tmp/comp/tests/survival/balance_native_r12/
+
+      - name: Import the composed project
+        shell: bash
+        run: |
+          set -uo pipefail
+          timeout 900 godot --headless --path /tmp/comp --import --quit 2>&1 | tail -40
+          test -d /tmp/comp/.godot
+
+      - name: Render 1x captures in a real window
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install --yes --no-install-recommends xvfb libgl1-mesa-dri mesa-utils
+          mkdir -p /tmp/captures
+          set +e
+          xvfb-run -a -s "-screen 0 3840x2160x24" \
+            env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
+            timeout 900 godot --path /tmp/comp --resolution 1280x720 \
+              res://tests/survival/balance_native_r12/r12_visual_capture.tscn -- \
+              --out=/tmp/captures 2>&1 | tee /tmp/capture.log
+          result=${PIPESTATUS[0]}
+          set -e
+          echo "capture exit ${result}"
+          echo "::notice::capture tail: $(tail -6 /tmp/capture.log | tr '\n' ' ' | cut -c1-900)"
+          if [ "${result}" != "0" ]; then
+            echo "::error::capture failed: $(tail -8 /tmp/capture.log | tr '\n' ' ' | cut -c1-900)"
+          fi
+          ls -l /tmp/captures || true
+          exit "${result}"
+
+      - name: Verify the PNGs are the requested sizes and not blank
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, struct, sys
+          from pathlib import Path
+          rows = json.loads(Path('/tmp/captures/r12_visual_measurements.json').read_text())['rows']
+          expected = {1280: 720, 2560: 1440, 3840: 2160}
+          bad = []
+          for row in rows:
+              w, h = row['size']
+              path = Path(row['path'])
+              if not path.exists() or row['png_bytes'] <= 0:
+                  bad.append(f"{w}x{h}: no PNG"); continue
+              data = path.read_bytes()[:33]
+              if data[:8] != b'\x89PNG\r\n\x1a\n':
+                  bad.append(f"{w}x{h}: not a PNG"); continue
+              pw, ph = struct.unpack('>II', data[16:24])
+              if (pw, ph) != (w, h):
+                  bad.append(f"{w}x{h}: PNG is {pw}x{ph}")
+              if row['sampled_colours'] < 4:
+                  bad.append(f"{w}x{h}: only {row['sampled_colours']} sampled colours (blank frame?)")
+              print(f"{path.name}: {pw}x{ph}, {row['png_bytes']} bytes, {row['sampled_colours']} sampled colours")
+          if bad:
+              print("::error::" + "; ".join(bad)); sys.exit(1)
+          PY
+          cat /tmp/captures/r12_visual_measurements.json
+
+      - name: Commit the captures back to this branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p docs/survival/balance/visual/r12
+          cp /tmp/captures/*.png docs/survival/balance/visual/r12/
+          cp /tmp/captures/r12_visual_measurements.json docs/survival/balance/visual/r12/
+          # .gitignore drops *.log, so the render transcript is kept as .txt: it is the
+          # only place the per-piece placement decisions are recorded.
+          cp /tmp/capture.log docs/survival/balance/visual/r12/render_output.txt || true
+          git config user.name "a7-capture-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A docs/survival/balance/visual/r12
+          git commit -m "docs(a7): round-12 rendered captures of ${COMPOSITION} at 720p/1440p/2160p [skip ci]" \
+            -m "Rendered by .github/workflows/a7-r12-survival-visual.yml on composition ${COMPOSITION}."
+          git push origin "HEAD:${GITHUB_REF_NAME}"

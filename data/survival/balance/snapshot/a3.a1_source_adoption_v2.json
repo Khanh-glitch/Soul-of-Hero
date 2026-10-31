@@ -1,0 +1,620 @@
+{
+  "schema": "soh.economy.a1_source_adoption.v2",
+  "status": "A3_ADOPTION_CONTRACT_SIMULATION_ONLY_NOT_NATIVE_INTEGRATED",
+  "owner": "A3",
+  "a1_source": {
+    "pr": 20,
+    "commit": "91a3544983ff2712e66fd77997df24f59efb3a44",
+    "file_sha256": {
+      "PRODUCT_CORRECTIONS.md": "8c28ee6092f1c84f7d05669306c09e3266af3ac59d8cf9372c71515a1db9162d",
+      "novice_bootstrap_contract.json": "b98466943b2f49fe6c4b74b728b642851db15e611cf7af372b2d05bcdd6f049a",
+      "hazard_damage_contract.json": "18bfe51e30536bddee016c642afd652519fb80ca0f28a1ac8289864501543d35",
+      "a1_a3_material_decisions.json": "28b94d48a2fb9eade4b9aca29478bac3d6212f4862441fe83cc61c82de5a15a0",
+      "world_plan.v1.json": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4",
+      "poi_route_graph.json": "8e49506889149cde043ed69cf5007b219c9ba9464cb7d3eeb25f0eef108d24a9",
+      "material_source_contracts.json": "c4277b0aeab503cc4f6e817e5d36c89b6ce741aba0b6cc277f95bc04534b7c5e",
+      "hazard_capability_contracts.json": "88ffbc7cbfd3573b34f32f27af527b7a33c4b6b08b1bddacd064ba9988c8edf2",
+      "pacing_analysis.json": "d09245bc67b221b97e8d077e637d7187644639c04b7f7f8bf2310223750d4c09",
+      "poi_authoring/poi_crown_waystation.v1.json": "8f2e437a9c4200f737e1b048be70030e4affde37012f1f05421efe7a2e8064cf",
+      "poi_authoring/poi_crown_relay_shed.v1.json": "ce450be63c341011fe1d472f3194f9cbe128e4b5e36f2bb9ef207c6818bfda22"
+    }
+  },
+  "decision_summary": {
+    "alias_decisions": 8,
+    "split": 7,
+    "reject": 1,
+    "source_specific_adoptions": 2,
+    "missing_items": 12,
+    "proposed_catalog_additions": 8
+  },
+  "principles": [
+    "material_key remains A1 world-source truth; A3 owns item ids, recipes, yields, prices and migration.",
+    "No alias is provenance-equivalent unless explicitly approved; source/renewal/sink/rarity must survive adoption.",
+    "MISSING_A3_ITEM remains explicit; do not manufacture filler items to reduce the count.",
+    "First-hour bootstrap may not depend on a downstream-gated sustain material.",
+    "A3 adopts only source-specific transformations; no global material_key rename.",
+    "Proposed catalog additions remain PROPOSED_NOT_CATALOGGED until versioned item/recipe/source/migration contracts and owner approval."
+  ],
+  "adopted_source_transformations": [
+    {
+      "transformation_id": "a1_fibre_src_crown_reed_to_a3_reed_fibre",
+      "material_key": "fibre",
+      "site_id": "src_crown_reed",
+      "a3_item_id": "reed_fibre",
+      "status": "ADOPTED_SOURCE_SPECIFIC",
+      "a1_decision": "SPLIT",
+      "a1_site_status": "APPROVE_SOURCE_SPECIFIC",
+      "provenance": {
+        "cause": "river-margin reed bed",
+        "biome": "riverine",
+        "region_id": "r_ashen_crown",
+        "renewal": "seasonal regrowth"
+      },
+      "a3_sinks": [
+        "weave_cloth",
+        "filter_lesson_bootstrap"
+      ],
+      "native_status": "CONTRACT_NOT_SPAWNED",
+      "note": "Only river/lake reed morphs map to reed_fibre; oasis/forest fibre remains a distinct missing dry-fibre decision."
+    },
+    {
+      "transformation_id": "a1_rare_herb_src_amber_herb_to_a3_moonleaf",
+      "material_key": "rare_herb",
+      "site_id": "src_amber_herb",
+      "a3_item_id": "moonleaf",
+      "status": "ADOPTED_SOURCE_SPECIFIC_CONDITIONAL_SINK_VERIFIED",
+      "a1_decision": "SPLIT",
+      "a1_site_status": "APPROVE_SOURCE_SPECIFIC_CONDITIONAL_ON_SINK",
+      "provenance": {
+        "cause": "orchard understorey",
+        "biome": "orchard",
+        "region_id": "r_amberwood",
+        "renewal": "plot or wild patch"
+      },
+      "a3_sinks": [
+        "minor_salve",
+        "filter_lesson_bootstrap"
+      ],
+      "sink_evidence": {
+        "minor_salve": "existing A3 recipe consumes moonleaf x2 + binding_cloth x1",
+        "filter_lesson_bootstrap": "A3-design proposal consumes moonleaf x1 + reed_fibre x1 at Orchard Apothecary"
+      },
+      "native_status": "CONTRACT_NOT_SPAWNED",
+      "note": "Karst/cenote rare_herb (src_sunken_herb) remains distinct and is not mapped to moonleaf."
+    }
+  ],
+  "rejected_global_aliases": [
+    {
+      "material_key": "bog_iron",
+      "proposed_a3_ids": [
+        "iron_ore"
+      ],
+      "decision": "SPLIT",
+      "reason": "Slow redox renewal at peat margins is not A3 finite-vein iron_ore. Keep bog_iron provenance for pump/filter-frame and late-tool sinks; do not collapse renewal/rarity into generic ore."
+    },
+    {
+      "material_key": "glacial_iron",
+      "proposed_a3_ids": [
+        "iron_ore"
+      ],
+      "decision": "SPLIT",
+      "reason": "Thaw-season magnetite skarn is a high-grade thermal/pressure feedstock, not generic iron_ore. Collapsing it removes the Frostcrown preparation identity."
+    },
+    {
+      "material_key": "fibre",
+      "proposed_a3_ids": [
+        "reed_fibre"
+      ],
+      "decision": "SPLIT",
+      "reason": "A1 fibre spans river-margin reed and oasis/forest understorey. A3 reed_fibre is wetland-specific. First-hour filter mesh needs an explicit source-side split, not a global rename."
+    },
+    {
+      "material_key": "hardwood",
+      "proposed_a3_ids": [
+        "oak_wood"
+      ],
+      "decision": "REJECT",
+      "reason": "Monsoon emergent hardwood is a slow-grove boat hull/boardwalk/advanced-frame material. oak_wood is generic structural timber; aliasing would erase boat logistics and rarity."
+    },
+    {
+      "material_key": "frost_resin",
+      "proposed_a3_ids": [
+        "frost_shard"
+      ],
+      "decision": "SPLIT",
+      "reason": "Tapped conifer cold-stress exudate is ecological, not mineral frost_shard. Approve the smallest A3 split because thermal ward/cold-seal core is a real sink."
+    },
+    {
+      "material_key": "peat",
+      "proposed_a3_ids": [
+        "coal"
+      ],
+      "decision": "SPLIT",
+      "reason": "Cut acid-bog peat is a very slow renewable fuel/filter carbon, not geological coal. Approve split only with a real peat_charcoal/furnace-fuel or filter-carbon sink."
+    },
+    {
+      "material_key": "rare_herb",
+      "proposed_a3_ids": [
+        "moonleaf"
+      ],
+      "decision": "SPLIT",
+      "reason": "A1 rare_herb is broader than A3 moonleaf. First-hour filter preparation needs an explicit orchard-understorey mapping; cenote/karst herbs must not collapse into moonleaf."
+    },
+    {
+      "material_key": "venom_sac",
+      "proposed_a3_ids": [
+        "venom_spine"
+      ],
+      "decision": "SPLIT",
+      "reason": "Fauna venom sac is not A3 venom_spine reward. Approve split because extract_venom/toxin_mask/venom-core are real sinks; bootstrap filter must not require venom_sac before cap_filter exists."
+    }
+  ],
+  "proposed_catalog_additions": [
+    {
+      "proposed_item_id": "frost_resin",
+      "material_key": "frost_resin",
+      "status": "PROPOSED_NOT_CATALOGGED",
+      "priority": "P1",
+      "a1_sites": [
+        "src_frost_resin"
+      ],
+      "provenance": "boreal conifer cold stress exudate",
+      "renewal": "tapped stand cooldown",
+      "required_real_sinks": [
+        "thermal_ward",
+        "frost_extract_variant"
+      ],
+      "required_owners": [
+        "A3 recipe/item contract",
+        "A1 source spawn/renewal",
+        "A0 SaveService/placement where relevant"
+      ],
+      "do_not_alias": "frost_shard",
+      "migration": "NONE_NEW_ID_REQUIRES_EXPLICIT_MIGRATION_CONTRACT"
+    },
+    {
+      "proposed_item_id": "venom_sac",
+      "material_key": "venom_sac",
+      "status": "PROPOSED_NOT_CATALOGGED",
+      "priority": "P1",
+      "a1_sites": [
+        "src_fen_venom",
+        "src_verdant_venom"
+      ],
+      "provenance": "wetland predator and mangrove fauna",
+      "renewal": "fauna respawn",
+      "required_real_sinks": [
+        "extract_venom_variant",
+        "toxin_mask_sustain",
+        "venom_core_family"
+      ],
+      "required_owners": [
+        "A3 recipe/item contract",
+        "A1 source spawn/renewal",
+        "A0 SaveService/placement where relevant"
+      ],
+      "do_not_alias": "venom_spine",
+      "migration": "NONE_NEW_ID_REQUIRES_EXPLICIT_MIGRATION_CONTRACT"
+    },
+    {
+      "proposed_item_id": "peat",
+      "material_key": "peat",
+      "status": "PROPOSED_NOT_CATALOGGED",
+      "priority": "P2",
+      "a1_sites": [
+        "src_fen_peat"
+      ],
+      "provenance": "waterlogged acid bog accumulation",
+      "renewal": "very slow cut",
+      "required_real_sinks": [
+        "peat_charcoal",
+        "filter_carbon"
+      ],
+      "required_owners": [
+        "A3 recipe/item contract",
+        "A1 source spawn/renewal",
+        "A0 SaveService/placement where relevant"
+      ],
+      "do_not_alias": "coal",
+      "migration": "NONE_NEW_ID_REQUIRES_EXPLICIT_MIGRATION_CONTRACT"
+    },
+    {
+      "proposed_item_id": "bog_iron",
+      "material_key": "bog_iron",
+      "status": "PROPOSED_NOT_CATALOGGED",
+      "priority": "P2",
+      "a1_sites": [
+        "src_fen_bogiron"
+      ],
+      "provenance": "redox precipitation at peat margin",
+      "renewal": "slow redox renewal",
+      "required_real_sinks": [
+        "filter_frame",
+        "late_tools",
+        "source_tagged_smelting"
+      ],
+      "required_owners": [
+        "A3 recipe/item contract",
+        "A1 source spawn/renewal",
+        "A0 SaveService/placement where relevant"
+      ],
+      "do_not_alias": "iron_ore",
+      "migration": "NONE_NEW_ID_REQUIRES_EXPLICIT_MIGRATION_CONTRACT"
+    },
+    {
+      "proposed_item_id": "glacial_iron",
+      "material_key": "glacial_iron",
+      "status": "PROPOSED_NOT_CATALOGGED",
+      "priority": "P1",
+      "a1_sites": [
+        "src_frost_skarn"
+      ],
+      "provenance": "magnetite skarn at granite contact",
+      "renewal": "thaw-season vein",
+      "required_real_sinks": [
+        "thermal_ward",
+        "deep_pressure_frame",
+        "cold_crucible_bloom"
+      ],
+      "required_owners": [
+        "A3 recipe/item contract",
+        "A1 source spawn/renewal",
+        "A0 SaveService/placement where relevant"
+      ],
+      "do_not_alias": "iron_ore",
+      "migration": "NONE_NEW_ID_REQUIRES_EXPLICIT_MIGRATION_CONTRACT"
+    },
+    {
+      "proposed_item_id": "dry_fibre",
+      "material_key": "dry_fibre",
+      "status": "PROPOSED_NOT_CATALOGGED",
+      "priority": "P0",
+      "a1_sites": [
+        "src_saffron_fibre"
+      ],
+      "provenance": "wadi well oasis / forest understorey",
+      "renewal": "seasonal regrowth",
+      "required_real_sinks": [
+        "rope",
+        "filter_mesh",
+        "saffron_logistics"
+      ],
+      "required_owners": [
+        "A3 recipe/item contract",
+        "A1 source spawn/renewal",
+        "A0 SaveService/placement where relevant"
+      ],
+      "do_not_alias": null,
+      "migration": "NONE_NEW_ID_REQUIRES_EXPLICIT_MIGRATION_CONTRACT"
+    },
+    {
+      "proposed_item_id": "karst_herb",
+      "material_key": "karst_herb",
+      "status": "PROPOSED_NOT_CATALOGGED",
+      "priority": "P0",
+      "a1_sites": [
+        "src_sunken_herb"
+      ],
+      "provenance": "cenote rim understorey",
+      "renewal": "plot or wild patch",
+      "required_real_sinks": [
+        "deepward_preparation",
+        "grafting"
+      ],
+      "required_owners": [
+        "A3 recipe/item contract",
+        "A1 source spawn/renewal",
+        "A0 SaveService/placement where relevant"
+      ],
+      "do_not_alias": null,
+      "migration": "NONE_NEW_ID_REQUIRES_EXPLICIT_MIGRATION_CONTRACT"
+    },
+    {
+      "proposed_item_id": "hardwood",
+      "material_key": "hardwood",
+      "status": "PROPOSED_NOT_CATALOGGED",
+      "priority": "P1",
+      "a1_sites": [
+        "src_verdant_hardwood"
+      ],
+      "provenance": "monsoon canopy emergent trees",
+      "renewal": "slow grove",
+      "required_real_sinks": [
+        "boat_hull",
+        "boardwalk",
+        "advanced_frames"
+      ],
+      "required_owners": [
+        "A3 recipe/item contract",
+        "A1 source spawn/renewal",
+        "A0 SaveService/placement where relevant"
+      ],
+      "do_not_alias": "oak_wood",
+      "migration": "NONE_NEW_ID_REQUIRES_EXPLICIT_MIGRATION_CONTRACT"
+    }
+  ],
+  "missing_items": [
+    {
+      "dependency": "Power circuits, seal-2 forge, storm signal, pumps; first-hour relay uses a salvage/timber hand-crank bypass, so copper is not a first-hour softlock.",
+      "first_hour_blocking": false,
+      "material_key": "copper",
+      "priority": "P1"
+    },
+    {
+      "dependency": "Boat hull seals, deepward/tide-ward insulation; mid-game traversal preparation.",
+      "first_hour_blocking": false,
+      "material_key": "rubber_sap",
+      "priority": "P1"
+    },
+    {
+      "dependency": "Mortar, filter bed, grafting bed; A0 construction/A1 preparation gap.",
+      "first_hour_blocking": false,
+      "material_key": "limestone",
+      "priority": "P1"
+    },
+    {
+      "dependency": "Food/fermentation/trade; not required for the first-hour filter lesson.",
+      "first_hour_blocking": false,
+      "material_key": "honey",
+      "priority": "P2"
+    },
+    {
+      "dependency": "Food preservation, flux, trade; Saffron logistics.",
+      "first_hour_blocking": false,
+      "material_key": "salt",
+      "priority": "P2"
+    },
+    {
+      "dependency": "Seal inlay, trade, lens; access seals are credentials, not pearl crafts by default.",
+      "first_hour_blocking": false,
+      "material_key": "pearl",
+      "priority": "P2"
+    },
+    {
+      "dependency": "Glass furnace/lens path; prerequisite for storm_glass identity.",
+      "first_hour_blocking": false,
+      "material_key": "silica_sand",
+      "priority": "P2"
+    },
+    {
+      "dependency": "Signal tower/storm core; late Glasswind objective.",
+      "first_hour_blocking": false,
+      "material_key": "storm_glass",
+      "priority": "P2"
+    },
+    {
+      "dependency": "Precision cores/blades; late Embersteppe specialization.",
+      "first_hour_blocking": false,
+      "material_key": "obsidian",
+      "priority": "P3"
+    },
+    {
+      "dependency": "Heat-proof construction; primarily A0 construction material.",
+      "first_hour_blocking": false,
+      "material_key": "basalt",
+      "priority": "P3"
+    },
+    {
+      "dependency": "Tier-3 seal/abyssal core; late Pearl objective.",
+      "first_hour_blocking": false,
+      "material_key": "abyssal_pearl",
+      "priority": "P3"
+    },
+    {
+      "dependency": "Core blanks/power nodes; not interchangeable with ancient_catalyst without a design decision.",
+      "first_hour_blocking": false,
+      "material_key": "aether_crystal",
+      "priority": "P3"
+    }
+  ],
+  "novice_bootstrap_adoption": {
+    "sequence": [
+      "node_refuge",
+      "poi_crown_waystation",
+      "poi_crown_relay_shed",
+      "node_refuge",
+      "poi_amberwood_apothecary",
+      "node_refuge"
+    ],
+    "safe_route_ids": [
+      "rt_crown_safe_approach",
+      "rt_south_seam",
+      "rt_crown_buffer"
+    ],
+    "hazardous_shortcut": "rt_east_seam",
+    "a1_contract_status": "AUTHORED_CONTRACT_NOT_NATIVE_PLAYTESTED",
+    "a3_world_action_proposals": {
+      "waystation_locker": {
+        "poi_id": "poi_crown_waystation",
+        "requires_capabilities": [],
+        "grants": [
+          "cap_salvage"
+        ],
+        "reward_proposal": {},
+        "policy": "ONE_TIME",
+        "status": "CANONICAL_A1_CAPABILITY_ONLY_ZERO_ITEMS"
+      },
+      "waystation_ledger": {
+        "poi_id": "poi_crown_waystation",
+        "requires_capabilities": [
+          "cap_salvage"
+        ],
+        "grants": [
+          "cap_seal_1"
+        ],
+        "policy": "ONE_TIME",
+        "status": "A1_AUTHORED_PROPOSAL"
+      },
+      "relay_hand_crank": {
+        "poi_id": "poi_crown_relay_shed",
+        "requires_capabilities": [
+          "cap_salvage"
+        ],
+        "cost_a3_items": {
+          "iron_scrap": 2,
+          "oak_wood": 1
+        },
+        "cost_material_keys": {
+          "salvage": 2,
+          "timber": 1
+        },
+        "grants": [
+          "cap_power_1"
+        ],
+        "policy": "ONE_TIME",
+        "status": "A1_AUTHORED_PROPOSAL_A3_ITEM_RESOLUTION"
+      },
+      "apothecary_filter_lesson": {
+        "poi_id": "poi_amberwood_apothecary",
+        "requires_capabilities": [
+          "cap_salvage"
+        ],
+        "cost_a3_items": {
+          "moonleaf": 1,
+          "reed_fibre": 1
+        },
+        "cost_material_keys": {
+          "rare_herb": 1,
+          "fibre": 1
+        },
+        "grants": [
+          "cap_filter"
+        ],
+        "policy": "ONE_TIME",
+        "status": "A3_DESIGN_PROPOSAL_A1_BOOTSTRAP_MATERIAL_KEYS"
+      },
+      "relay_copper_upgrade": {
+        "poi_id": "poi_crown_relay_shed",
+        "requires_capabilities": [
+          "cap_power_1"
+        ],
+        "cost_material_keys": {
+          "copper": 2,
+          "salvage": 1
+        },
+        "status": "BLOCKED_MISSING_A3_COPPER",
+        "first_hour_blocking": false
+      }
+    }
+  },
+  "hazard_resistance_gaps": {
+    "source": "hazard_damage_contract.json",
+    "owner_damage_application": "A0",
+    "owner_gear_resistance": "A3",
+    "owner_clues_ui": "A6",
+    "hazards": [
+      {
+        "hazard_id": "hz_crown_heat",
+        "kind": "heat",
+        "required_capability": "cap_filter",
+        "unmitigated_hp_per_second_proposal": 2.0,
+        "severity": 2,
+        "required_resistance_keys": [
+          "heat"
+        ],
+        "a3_current_status": "PARTIAL_REQUIRES_A3_EXTENSION"
+      },
+      {
+        "hazard_id": "hz_crown_rot",
+        "kind": "poison",
+        "required_capability": "cap_filter",
+        "unmitigated_hp_per_second_proposal": 2.0,
+        "severity": 2,
+        "required_resistance_keys": [
+          "poison"
+        ],
+        "a3_current_status": "PARTIAL_REQUIRES_A3_EXTENSION"
+      },
+      {
+        "hazard_id": "hz_crown_cold",
+        "kind": "cold",
+        "required_capability": "cap_thermal",
+        "unmitigated_hp_per_second_proposal": 2.0,
+        "severity": 2,
+        "required_resistance_keys": [
+          "cold"
+        ],
+        "a3_current_status": "PARTIAL_REQUIRES_A3_EXTENSION"
+      },
+      {
+        "hazard_id": "hz_frost_ridge",
+        "kind": "cold",
+        "required_capability": "cap_thermal",
+        "unmitigated_hp_per_second_proposal": 3.0,
+        "severity": 3,
+        "required_resistance_keys": [
+          "cold"
+        ],
+        "a3_current_status": "PARTIAL_REQUIRES_A3_EXTENSION"
+      },
+      {
+        "hazard_id": "hz_ember_gas",
+        "kind": "acid_gas",
+        "required_capability": "cap_filter",
+        "unmitigated_hp_per_second_proposal": 3.0,
+        "severity": 3,
+        "required_resistance_keys": [
+          "acid_gas"
+        ],
+        "a3_current_status": "PARTIAL_REQUIRES_A3_EXTENSION"
+      },
+      {
+        "hazard_id": "hz_saffron_heat",
+        "kind": "heat",
+        "required_capability": "cap_thermal",
+        "unmitigated_hp_per_second_proposal": 2.0,
+        "severity": 2,
+        "required_resistance_keys": [
+          "heat"
+        ],
+        "a3_current_status": "PARTIAL_REQUIRES_A3_EXTENSION"
+      },
+      {
+        "hazard_id": "hz_verdant_spore",
+        "kind": "poison",
+        "required_capability": "cap_filter",
+        "unmitigated_hp_per_second_proposal": 3.0,
+        "severity": 3,
+        "required_resistance_keys": [
+          "poison"
+        ],
+        "a3_current_status": "PARTIAL_REQUIRES_A3_EXTENSION"
+      },
+      {
+        "hazard_id": "hz_pearl_tide",
+        "kind": "tide",
+        "required_capability": "cap_boat",
+        "unmitigated_hp_per_second_proposal": 3.0,
+        "severity": 3,
+        "required_resistance_keys": [
+          "tide"
+        ],
+        "a3_current_status": "MISSING_A3_ITEM"
+      },
+      {
+        "hazard_id": "hz_ashwater_miasma",
+        "kind": "poison",
+        "required_capability": "cap_filter",
+        "unmitigated_hp_per_second_proposal": 4.0,
+        "severity": 4,
+        "required_resistance_keys": [
+          "poison"
+        ],
+        "a3_current_status": "PARTIAL_REQUIRES_A3_EXTENSION"
+      },
+      {
+        "hazard_id": "hz_sunken_pressure",
+        "kind": "pressure",
+        "required_capability": "cap_deepward",
+        "unmitigated_hp_per_second_proposal": 4.0,
+        "severity": 4,
+        "required_resistance_keys": [
+          "pressure"
+        ],
+        "a3_current_status": "MISSING_A3_ITEM"
+      }
+    ],
+    "note": "cap_filter is route/access preparation, not automatic heat/acid_gas/poison resistance. A3 toxin_mask venom:60 and frost_cloak frost:60 are not silently equated to A1 resistance keys."
+  },
+  "preserved_historical_mapping": "data/survival/items/a1_material_mapping.json remains the PR19 proposal record; this v2 adoption contract supersedes it for current model decisions without rewriting history."
+}

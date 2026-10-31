@@ -1,0 +1,239 @@
+name: A7 round-13 joined product evidence
+
+# A7-owned evidence job (test-only; ships nowhere). It answers two questions this
+# sandbox cannot, because it has no rasteriser:
+#
+#   1. what does the round-13 product look like at 1x 720p / 1440p / 2160p, and
+#      does a house built through the product's own build door read as a home?
+#   2. does the owner-authored TRUE-INPUT two-process journey pass on the
+#      composition A7 pinned, on a machine that has a window?
+#
+# ONE job, one commit at the end. Two jobs raced on `git push` in the first two
+# runs and lost exactly the artifacts that explain a failure.
+#
+# It rebuilds the composition from exact owner SHAs with A7's own composer and
+# fails *before* claiming anything if the result is not the pinned commit. It
+# never edits owner code and never merges.
+
+on:
+  push:
+    branches:
+      - arena/353cf120-soul-of-hero
+    paths:
+      - ".github/workflows/a7-r13-joined-evidence.yml"
+      - "tests/survival/balance_native_r13/r13_visual_capture.gd"
+      - "tests/survival/balance_native_r13/r13_visual_capture.tscn"
+      - "tools/survival/balance/compose.py"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: a7-r13-evidence-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  A0_SHA: 53dcda29c900e85f5053f3756603ec1a95f3171d
+  A1_SHA: c2ba1f0f01e5c43ac731283298dc661a8625ce4e
+  A3_SHA: b44e22df3af40939069189be14afc23ee1ce21c4
+  A6_SHA: 6d71410a370df805f8b29a018b61380d6c233b65
+  A8_SHA: 0f885df862d7d34f18ca456e80b1aaac05b23de0
+  AVFX_SHA: 7e74cadd6705e1100564e288aa0713b7e2adf3a9
+  CT_SHA: 971e0b95e1ea1c5f579f57f53fb35f3a6c3845e8
+  COMPOSITION: 3d8630f5b1adfa6c5b50c56fa506524e0ce71f6b
+  GODOT_VERSION: "4.7.0"
+
+jobs:
+  evidence:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Check out this branch
+        uses: actions/checkout@v4
+
+      - name: Install Godot 4.7 stable
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: ${{ env.GODOT_VERSION }}
+          use-dotnet: false
+          include-templates: false
+
+      - name: Install the tools the journey and the renderer need
+        shell: bash
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install --yes --no-install-recommends xvfb libgl1-mesa-dri
+
+      - name: Fetch the exact owner commits
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --depth=1 origin "$A0_SHA:refs/live13/arena_dea2428e-soul-of-hero"
+          git fetch --depth=1 origin "$A1_SHA:refs/live13/arena_e385312a-soul-of-hero"
+          git fetch --depth=1 origin "$A3_SHA:refs/live13/arena_7a12b27e-soul-of-hero"
+          git fetch --depth=1 origin "$A6_SHA:refs/live13/arena_05e0328d-soul-of-hero"
+          git fetch --depth=1 origin "$A8_SHA:refs/live13/arena_2d7e6d7a-soul-of-hero"
+          git fetch --depth=1 origin "$AVFX_SHA:refs/live13/arena_c7b0c4e8-soul-of-hero"
+          git fetch --depth=1 origin "$CT_SHA:refs/live13/docs_ct-loot-discovery-gate-20261030"
+
+      - name: Rebuild the pinned composition and prove it is the same commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! python3 tools/survival/balance/compose.py --profile r13_heads --pin \
+                --ref-root refs/live13 > /tmp/compose.log 2>&1; then
+            echo "::error::compose failed: $(tail -4 /tmp/compose.log | tr '\n' ' ' | cut -c1-900)"
+            cat /tmp/compose.log; exit 1
+          fi
+          cat /tmp/compose.log
+          built="$(git rev-parse refs/comp/r13_heads)"
+          if [ "${built}" != "${COMPOSITION}" ]; then
+            echo "::error::composition drifted: built ${built}, pinned ${COMPOSITION}"; exit 1
+          fi
+          rm -rf /tmp/comp && git worktree add --detach /tmp/comp "${COMPOSITION}"
+
+      - name: Import the composed project
+        shell: bash
+        run: |
+          set -uo pipefail
+          timeout 900 godot --headless --path /tmp/comp --import --quit 2>&1 | tail -20
+          test -f /tmp/comp/.godot/global_script_class_cache.cfg
+
+      - name: Render 1x captures in a real window
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/comp/tests/survival/balance_native_r13 /tmp/captures
+          cp tests/survival/balance_native_r13/r13_visual_capture.gd tests/survival/balance_native_r13/r13_visual_capture.tscn \
+             /tmp/comp/tests/survival/balance_native_r13/
+          set +e
+          xvfb-run -a -s "-screen 0 3840x2160x24" \
+            env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
+            timeout 1500 godot --path /tmp/comp --resolution 1280x720 \
+              res://tests/survival/balance_native_r13/r13_visual_capture.tscn -- \
+              --out=/tmp/captures 2>&1 | tee /tmp/capture.log
+          rc=${PIPESTATUS[0]}
+          set -e
+          echo "capture exit ${rc}"
+          echo "::notice::capture tail: $(grep -a A7CAPTURE13 /tmp/capture.log | tail -4 | tr '\n' ' ' | cut -c1-900)"
+          if [ "${rc}" != "0" ]; then
+            echo "::error::capture failed: $(tail -8 /tmp/capture.log | tr '\n' ' ' | cut -c1-900)"
+            exit 1
+          fi
+          python3 - <<'PY'
+          import json, struct, sys
+          from pathlib import Path
+          doc = json.loads(Path('/tmp/captures/r13_visual_measurements.json').read_text())
+          bad, seen = [], []
+          for row in doc['rows']:
+              w, h = row['size']
+              path = Path(row['path'])
+              if not path.exists() or row['png_bytes'] <= 0:
+                  bad.append(f"{w}x{h}: no PNG"); continue
+              data = path.read_bytes()[:33]
+              if data[:8] != b'\x89PNG\r\n\x1a\n':
+                  bad.append(f"{w}x{h}: not a PNG"); continue
+              pw, ph = struct.unpack('>II', data[16:24])
+              if (pw, ph) != (w, h):
+                  bad.append(f"{w}x{h}: PNG is {pw}x{ph}")
+              if row['sampled_colours'] < 4:
+                  bad.append(f"{w}x{h}: only {row['sampled_colours']} sampled colours")
+              seen.append((w, h))
+              print(f"{path.name}: {pw}x{ph}, {row['png_bytes']} bytes, {row['sampled_colours']} colours")
+          for want in ((1280, 720), (2560, 1440), (3840, 2160)):
+              if want not in seen:
+                  bad.append(f"{want[0]}x{want[1]}: no capture row")
+          print("facts:", json.dumps(doc.get('facts', {}))[:1200])
+          if bad:
+              print("::error::" + "; ".join(bad)); sys.exit(1)
+          PY
+
+      - name: Run the owner's normal-input two-process journey on this composition
+        shell: bash
+        run: |
+          # Always exits 0: the exit codes are recorded, committed, and judged by a
+          # later step, so a failing journey can never take its own log down with it.
+          set +e
+          mkdir -p /tmp/journey
+          cd /tmp/comp
+          xvfb-run -a -s "-screen 0 1920x1080x24" \
+            env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
+            timeout 1800 godot --path . --resolution 1280x720 --windowed \
+              --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy \
+              --script res://tests/survival_normal_connected_journey_test.gd -- --keep-connected \
+              > /tmp/journey/process1.log 2>&1
+          first=$?
+          sleep 25
+          xvfb-run -a -s "-screen 0 1920x1080x24" \
+            env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
+            timeout 1800 godot --path . --resolution 1280x720 --windowed \
+              --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy \
+              --script res://tests/survival_normal_connected_journey_test.gd -- --verify-connected --keep-connected \
+              > /tmp/journey/process2.log 2>&1
+          second=$?
+          echo "${first}" > /tmp/journey/process1.exit
+          echo "${second}" > /tmp/journey/process2.exit
+          godot --version > /tmp/journey/engine.txt 2>&1
+          git -C /tmp/comp rev-parse HEAD > /tmp/journey/composition.txt 2>&1
+          echo "process1=${first} process2=${second}"
+          grep -aE "^A0_CONNECTED|A0 CONNECTED|  FAIL  |SCRIPT ERROR" /tmp/journey/process1.log | head -40
+          grep -aE "^A0_CONNECTED|A0 CONNECTED|  FAIL  |SCRIPT ERROR" /tmp/journey/process2.log | head -40
+          echo "::notice::connected journey process1=${first} process2=${second} $(grep -acE '  PASS  ' /tmp/journey/process1.log) pass-lines p1 / $(grep -acE '  PASS  ' /tmp/journey/process2.log) pass-lines p2"
+          # Surface the first concrete failures as annotations, so the reason is
+          # readable even if the artifact commit ever fails again.
+          for line in $(grep -aE '  FAIL  |SCRIPT ERROR|NOT_TESTED' /tmp/journey/process1.log | head -4 | tr ' ' '~'); do
+            echo "::error title=journey-p1::${line//\~/ }"
+          done
+          mkdir -p /tmp/journey/captures
+          find /tmp -maxdepth 4 -name 'capture_*.png' -exec cp {} /tmp/journey/captures/ \; 2>/dev/null
+          exit 0
+
+      - name: Commit every artifact of this run
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p docs/survival/balance/visual/r13/journey
+          if [ -d /tmp/captures ]; then
+            cp /tmp/captures/*.png docs/survival/balance/visual/r13/ 2>/dev/null || true
+            cp /tmp/captures/r13_visual_measurements.json docs/survival/balance/visual/r13/ 2>/dev/null || true
+          fi
+          cp /tmp/capture.log docs/survival/balance/visual/r13/render_output.txt 2>/dev/null || true
+          # .gitignore drops *.log, and losing these once already cost a whole run.
+          cp /tmp/journey/process1.log docs/survival/balance/visual/r13/journey/process1.txt 2>/dev/null || true
+          cp /tmp/journey/process2.log docs/survival/balance/visual/r13/journey/process2.txt 2>/dev/null || true
+          for f in process1.exit process2.exit engine.txt composition.txt; do
+            cp "/tmp/journey/${f}" docs/survival/balance/visual/r13/journey/ 2>/dev/null || true
+          done
+          cp /tmp/journey/captures/*.png docs/survival/balance/visual/r13/journey/ 2>/dev/null || true
+          git config user.name "a7-capture-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A docs/survival/balance/visual/r13
+          if git diff --cached --quiet; then
+            echo "nothing new to commit"
+          else
+            git commit -m "docs(a7): round-13 evidence on ${COMPOSITION} [skip ci]" \
+              -m "Rendered 1x captures and the owner normal-input journey log, produced by .github/workflows/a7-r13-joined-evidence.yml."
+            for attempt in 1 2 3; do
+              if git pull --rebase --autostash origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}"; then
+                echo "pushed on attempt ${attempt}"; break
+              fi
+              sleep 5
+            done
+          fi
+
+      - name: Verdict from the recorded exit codes
+        if: always()
+        shell: bash
+        run: |
+          first="$(cat /tmp/journey/process1.exit 2>/dev/null || echo missing)"
+          second="$(cat /tmp/journey/process2.exit 2>/dev/null || echo missing)"
+          echo "process1=${first} process2=${second}"
+          if [ "${first}" = "0" ] && [ "${second}" = "0" ]; then
+            echo "::notice::A0's normal-input two-process journey PASSED on ${COMPOSITION}"
+            exit 0
+          fi
+          echo "::error::A0's normal-input two-process journey did NOT pass on ${COMPOSITION} (${first}/${second}); logs are committed under docs/survival/balance/visual/r13/journey"
+          exit 1

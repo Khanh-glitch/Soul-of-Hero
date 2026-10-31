@@ -1,0 +1,2215 @@
+{
+  "note": "Recorded from the GitHub API by tools/survival/balance/record_ci_evidence.py. A run only counts for the commit it ran on. Job steps and failure labels are verbatim, so a passing step and a failing assertion cannot be confused.",
+  "runs": [
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T10:27:30Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "7f3ca17e90948c20e0355622d3960bf31f5455c7",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "composed-native",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41040890968,
+      "status": "queued",
+      "workflow": "a0-a6-v4-latest-composition.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T10:26:19Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "27ef93078d4af21bf25acaf8571cfa6f8685170e",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "composed-native",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41040747851,
+      "status": "queued",
+      "workflow": "a0-a6-v4-latest-composition.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T09:37:08Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "9269739ebd35ed8ab83987b6bf53f560a59954af",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "composed-native",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41034743895,
+      "status": "queued",
+      "workflow": "a0-a6-v4-latest-composition.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T09:35:42Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "2203ea9ff33df2cba48f313355e31e4a43f87607",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "composed-native",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41034571807,
+      "status": "queued",
+      "workflow": "a0-a6-v4-latest-composition.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T09:34:27Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "4fbafec4aff1cc8684b7c6d21c91e57985ddbd76",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "composed-native",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41034417311,
+      "status": "queued",
+      "workflow": "a0-a6-v4-latest-composition.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T09:32:43Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "7460f40f28b2d05a02d60389e7e6d6c5150cff6d",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "composed-native",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41034207659,
+      "status": "queued",
+      "workflow": "a0-a6-v4-latest-composition.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T09:28:25Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "34f5e27ed5c144a7155c857990a5ff29d31fe24e",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "composed-native",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41033677644,
+      "status": "queued",
+      "workflow": "a0-a6-v4-latest-composition.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T08:58:50Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "55c2cc8db59d6a79f97e94d2b1b561bd063cca94",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "composed-native",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41030089053,
+      "status": "queued",
+      "workflow": "a0-a6-v4-latest-composition.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T08:54:30Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "composed-native",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41029607447,
+      "status": "queued",
+      "workflow": "a0-a6-v4-latest-composition.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T08:51:16Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "8a0dbd4943b9a909373f32c578d3d242000dae8d",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "composed-native",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41029252797,
+      "status": "queued",
+      "workflow": "a0-a6-v4-latest-composition.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T10:27:30Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "7f3ca17e90948c20e0355622d3960bf31f5455c7",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "native-entry-restart",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41040890904,
+      "status": "queued",
+      "workflow": "a0-normal-entry-home-restart.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T09:35:43Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "2203ea9ff33df2cba48f313355e31e4a43f87607",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "native-entry-restart",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41034571991,
+      "status": "queued",
+      "workflow": "a0-normal-entry-home-restart.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T09:32:43Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "7460f40f28b2d05a02d60389e7e6d6c5150cff6d",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "native-entry-restart",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41034207749,
+      "status": "queued",
+      "workflow": "a0-normal-entry-home-restart.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T09:28:25Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "34f5e27ed5c144a7155c857990a5ff29d31fe24e",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "native-entry-restart",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41033678046,
+      "status": "queued",
+      "workflow": "a0-normal-entry-home-restart.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T08:54:30Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "native-entry-restart",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41029607430,
+      "status": "queued",
+      "workflow": "a0-normal-entry-home-restart.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T08:51:16Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "8a0dbd4943b9a909373f32c578d3d242000dae8d",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "native-entry-restart",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41029252684,
+      "status": "queued",
+      "workflow": "a0-normal-entry-home-restart.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T08:49:17Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "cdbcffcdeae2e1dced5e27b89d0d7e713158fbb9",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "native-entry-restart",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41029028350,
+      "status": "queued",
+      "workflow": "a0-normal-entry-home-restart.yml"
+    },
+    {
+      "annotations": [
+        {
+          "level": "warning",
+          "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+        },
+        {
+          "level": "failure",
+          "message": "Process completed with exit code 1."
+        },
+        {
+          "level": "failure",
+          "message": "A0 independent restart: tail: NORMAL ENTRY HOME RESTART FAILED - 9 checks"
+        },
+        {
+          "level": "failure",
+          "message": "A0 independent restart: tail: ENTRY_HOME_SECOND_PROCESS inventory={ \"oak_wood\": 2 } receipts=78 structures=19"
+        },
+        {
+          "level": "failure",
+          "message": "A0 independent restart: tail:   FAIL  world reconstruction does not duplicate carried items"
+        },
+        {
+          "level": "failure",
+          "message": "A0 independent restart: tail:   ok    all paid structure identities reconstruct after a genuine process restart"
+        },
+        {
+          "level": "failure",
+          "message": "A0 independent restart: tail:   ok    separate process reconstructs the actual production overworld"
+        },
+        {
+          "level": "failure",
+          "message": "A0 independent restart: tail:   ok    separate process preserves all durable receipts without duplicates"
+        },
+        {
+          "level": "failure",
+          "message": "A0 independent restart: never reported \"NORMAL ENTRY HOME RESTART PASSED\" :: tail:   ok    separate process preserves all durable receipts without duplicates~  ok    separate process reconstructs the actual production overworld~  ok    all paid structure identities reconstruct after a genuine process restart~  FAIL  world reconstruction does not duplicate carried items~ENTRY_HOME_SECOND_PROCESS inven"
+        },
+        {
+          "level": "notice",
+          "message": "entry process 2 exit=1   FAIL  separate process restores exact ordinary and unique inventory~  FAIL  separate process restores exact structures, chests and permanent knowledge~  FAIL  world reconstruction does not duplicate carried items~ENTRY_HOME_SECOND_PROCESS inventory={ \"oak_wood\": 2 } receipts=78 structures=19~NORMAL ENTRY HOME RESTART FAILED - 9 checks~"
+        },
+        {
+          "level": "warning",
+          "message": "A0 entry home: engine shutdown notice: WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details)."
+        },
+        {
+          "level": "notice",
+          "message": "entry process 1 exit=0 ENTRY_HOME_FIRST_PROCESS inventory={ \"oak_wood\": 2 } receipts=78 structures=19~NORMAL ENTRY HOME RESTART PASSED - 106 checks~"
+        },
+        {
+          "level": "notice",
+          "message": "\"The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748\""
+        }
+      ],
+      "conclusion": "failure",
+      "created_at": "2026-10-30T07:54:41Z",
+      "event": "push",
+      "failed_checks": [
+        "separate process restores exact ordinary and unique inventory",
+        "separate process restores exact structures, chests and permanent knowledge",
+        "world reconstruction does not duplicate carried items"
+      ],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "594730ea15a3e6db8d620fb89aef94e97fd6db11",
+      "jobs": [
+        {
+          "conclusion": "failure",
+          "name": "native-entry-restart",
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run chickensoft-games/setup-godot@v2"
+            },
+            {
+              "conclusion": "success",
+              "name": "Import"
+            },
+            {
+              "conclusion": "success",
+              "name": "New profile through actual menus and full home journey"
+            },
+            {
+              "conclusion": "failure",
+              "name": "Independent new Godot process and actual save recovery"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job"
+            }
+          ]
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41022975300,
+      "status": "completed",
+      "workflow": "a0-normal-entry-home-restart.yml"
+    },
+    {
+      "annotations": [
+        {
+          "level": "warning",
+          "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+        },
+        {
+          "level": "failure",
+          "message": "Process completed with exit code 1."
+        },
+        {
+          "level": "failure",
+          "message": "A0 independent restart: tail: NORMAL ENTRY HOME RESTART FAILED - 9 checks"
+        },
+        {
+          "level": "failure",
+          "message": "A0 independent restart: tail: ENTRY_HOME_SECOND_PROCESS inventory={ \"oak_wood\": 2 } receipts=78 structures=19"
+        },
+        {
+          "level": "failure",
+          "message": "A0 independent restart: tail:   FAIL  world reconstruction does not duplicate carried items"
+        },
+        {
+          "level": "failure",
+          "message": "A0 independent restart: tail:   ok    all paid structure identities reconstruct after a genuine process restart"
+        },
+        {
+          "level": "failure",
+          "message": "A0 independent restart: tail:   ok    separate process reconstructs the actual production overworld"
+        },
+        {
+          "level": "failure",
+          "message": "A0 independent restart: tail:   ok    separate process preserves all durable receipts without duplicates"
+        },
+        {
+          "level": "failure",
+          "message": "A0 independent restart: never reported \"NORMAL ENTRY HOME RESTART PASSED\" :: tail:   ok    separate process preserves all durable receipts without duplicates~  ok    separate process reconstructs the actual production overworld~  ok    all paid structure identities reconstruct after a genuine process restart~  FAIL  world reconstruction does not duplicate carried items~ENTRY_HOME_SECOND_PROCESS inven"
+        },
+        {
+          "level": "notice",
+          "message": "entry process 2 exit=1   FAIL  separate process restores exact ordinary and unique inventory~  FAIL  separate process restores exact structures, chests and permanent knowledge~  FAIL  world reconstruction does not duplicate carried items~ENTRY_HOME_SECOND_PROCESS inventory={ \"oak_wood\": 2 } receipts=78 structures=19~NORMAL ENTRY HOME RESTART FAILED - 9 checks~"
+        },
+        {
+          "level": "warning",
+          "message": "A0 entry home: engine shutdown notice: WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details)."
+        },
+        {
+          "level": "notice",
+          "message": "entry process 1 exit=0 ENTRY_HOME_FIRST_PROCESS inventory={ \"oak_wood\": 2 } receipts=78 structures=19~NORMAL ENTRY HOME RESTART PASSED - 106 checks~"
+        },
+        {
+          "level": "notice",
+          "message": "\"The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748\""
+        }
+      ],
+      "conclusion": "failure",
+      "created_at": "2026-10-30T07:50:26Z",
+      "event": "push",
+      "failed_checks": [
+        "separate process restores exact ordinary and unique inventory",
+        "separate process restores exact structures, chests and permanent knowledge",
+        "world reconstruction does not duplicate carried items"
+      ],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "f61afa23132ec5890834fa2cd0476d0edc8a51b1",
+      "jobs": [
+        {
+          "conclusion": "failure",
+          "name": "native-entry-restart",
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run chickensoft-games/setup-godot@v2"
+            },
+            {
+              "conclusion": "success",
+              "name": "Import"
+            },
+            {
+              "conclusion": "success",
+              "name": "New profile through actual menus and full home journey"
+            },
+            {
+              "conclusion": "failure",
+              "name": "Independent new Godot process and actual save recovery"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job"
+            }
+          ]
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41022547918,
+      "status": "completed",
+      "workflow": "a0-normal-entry-home-restart.yml"
+    },
+    {
+      "annotations": [
+        {
+          "level": "warning",
+          "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+        },
+        {
+          "level": "failure",
+          "message": "Process completed with exit code 1."
+        },
+        {
+          "level": "failure",
+          "message": "A0 independent restart: tail: NORMAL ENTRY HOME RESTART FAILED - 9 checks"
+        },
+        {
+          "level": "failure",
+          "message": "A0 independent restart: tail: ENTRY_HOME_SECOND_PROCESS inventory={ \"oak_wood\": 2 } receipts=78 structures=19"
+        },
+        {
+          "level": "failure",
+          "message": "A0 independent restart: tail:   FAIL  world reconstruction does not duplicate carried items"
+        },
+        {
+          "level": "failure",
+          "message": "A0 independent restart: tail:   ok    all paid structure identities reconstruct after a genuine process restart"
+        },
+        {
+          "level": "failure",
+          "message": "A0 independent restart: tail:   ok    separate process reconstructs the actual production overworld"
+        },
+        {
+          "level": "failure",
+          "message": "A0 independent restart: tail:   ok    separate process preserves all durable receipts without duplicates"
+        },
+        {
+          "level": "failure",
+          "message": "A0 independent restart: never reported \"NORMAL ENTRY HOME RESTART PASSED\" :: tail:   ok    separate process preserves all durable receipts without duplicates~  ok    separate process reconstructs the actual production overworld~  ok    all paid structure identities reconstruct after a genuine process restart~  FAIL  world reconstruction does not duplicate carried items~ENTRY_HOME_SECOND_PROCESS inven"
+        },
+        {
+          "level": "notice",
+          "message": "entry process 2 exit=1   FAIL  separate process restores exact ordinary and unique inventory~  FAIL  separate process restores exact structures, chests and permanent knowledge~  FAIL  world reconstruction does not duplicate carried items~ENTRY_HOME_SECOND_PROCESS inventory={ \"oak_wood\": 2 } receipts=78 structures=19~NORMAL ENTRY HOME RESTART FAILED - 9 checks~"
+        },
+        {
+          "level": "warning",
+          "message": "A0 entry home: engine shutdown notice: WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details)."
+        },
+        {
+          "level": "notice",
+          "message": "entry process 1 exit=0 ENTRY_HOME_FIRST_PROCESS inventory={ \"oak_wood\": 2 } receipts=78 structures=19~NORMAL ENTRY HOME RESTART PASSED - 106 checks~"
+        },
+        {
+          "level": "notice",
+          "message": "\"The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748\""
+        }
+      ],
+      "conclusion": "failure",
+      "created_at": "2026-10-30T07:47:12Z",
+      "event": "push",
+      "failed_checks": [
+        "separate process restores exact ordinary and unique inventory",
+        "separate process restores exact structures, chests and permanent knowledge",
+        "world reconstruction does not duplicate carried items"
+      ],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "122294f2237c1836d6f04561e090fe6aa6c6c0cf",
+      "jobs": [
+        {
+          "conclusion": "failure",
+          "name": "native-entry-restart",
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run chickensoft-games/setup-godot@v2"
+            },
+            {
+              "conclusion": "success",
+              "name": "Import"
+            },
+            {
+              "conclusion": "success",
+              "name": "New profile through actual menus and full home journey"
+            },
+            {
+              "conclusion": "failure",
+              "name": "Independent new Godot process and actual save recovery"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job"
+            }
+          ]
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41022220148,
+      "status": "completed",
+      "workflow": "a0-normal-entry-home-restart.yml"
+    },
+    {
+      "annotations": [
+        {
+          "level": "warning",
+          "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+        },
+        {
+          "level": "failure",
+          "message": "Process completed with exit code 1."
+        },
+        {
+          "level": "failure",
+          "message": "A0 independent restart: tail: NORMAL ENTRY HOME RESTART FAILED - 9 checks"
+        },
+        {
+          "level": "failure",
+          "message": "A0 independent restart: tail: ENTRY_HOME_SECOND_PROCESS inventory={ \"oak_wood\": 2 } receipts=78 structures=19"
+        },
+        {
+          "level": "failure",
+          "message": "A0 independent restart: tail:   FAIL  world reconstruction does not duplicate carried items"
+        },
+        {
+          "level": "failure",
+          "message": "A0 independent restart: tail:   ok    all paid structure identities reconstruct after a genuine process restart"
+        },
+        {
+          "level": "failure",
+          "message": "A0 independent restart: tail:   ok    separate process reconstructs the actual production overworld"
+        },
+        {
+          "level": "failure",
+          "message": "A0 independent restart: tail:   ok    separate process preserves all durable receipts without duplicates"
+        },
+        {
+          "level": "failure",
+          "message": "A0 independent restart: never reported \"NORMAL ENTRY HOME RESTART PASSED\" :: tail:   ok    separate process preserves all durable receipts without duplicates~  ok    separate process reconstructs the actual production overworld~  ok    all paid structure identities reconstruct after a genuine process restart~  FAIL  world reconstruction does not duplicate carried items~ENTRY_HOME_SECOND_PROCESS inven"
+        },
+        {
+          "level": "notice",
+          "message": "entry process 2 exit=1   FAIL  separate process restores exact ordinary and unique inventory~  FAIL  separate process restores exact structures, chests and permanent knowledge~  FAIL  world reconstruction does not duplicate carried items~ENTRY_HOME_SECOND_PROCESS inventory={ \"oak_wood\": 2 } receipts=78 structures=19~NORMAL ENTRY HOME RESTART FAILED - 9 checks~"
+        },
+        {
+          "level": "warning",
+          "message": "A0 entry home: engine shutdown notice: WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details)."
+        },
+        {
+          "level": "notice",
+          "message": "entry process 1 exit=0 ENTRY_HOME_FIRST_PROCESS inventory={ \"oak_wood\": 2 } receipts=78 structures=19~NORMAL ENTRY HOME RESTART PASSED - 106 checks~"
+        },
+        {
+          "level": "notice",
+          "message": "\"The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748\""
+        }
+      ],
+      "conclusion": "failure",
+      "created_at": "2026-10-30T07:09:39Z",
+      "event": "push",
+      "failed_checks": [
+        "separate process restores exact ordinary and unique inventory",
+        "separate process restores exact structures, chests and permanent knowledge",
+        "world reconstruction does not duplicate carried items"
+      ],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "a3d0255ab09ba59ec5f9212243619f69d85d2948",
+      "jobs": [
+        {
+          "conclusion": "failure",
+          "name": "native-entry-restart",
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run chickensoft-games/setup-godot@v2"
+            },
+            {
+              "conclusion": "success",
+              "name": "Import"
+            },
+            {
+              "conclusion": "success",
+              "name": "New profile through actual menus and full home journey"
+            },
+            {
+              "conclusion": "failure",
+              "name": "Independent new Godot process and actual save recovery"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job"
+            }
+          ]
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41018366655,
+      "status": "completed",
+      "workflow": "a0-normal-entry-home-restart.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T10:26:19Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "27ef93078d4af21bf25acaf8571cfa6f8685170e",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "native-save",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41040747812,
+      "status": "queued",
+      "workflow": "a0-save-precision.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T09:35:42Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "2203ea9ff33df2cba48f313355e31e4a43f87607",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "native-save",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41034571755,
+      "status": "queued",
+      "workflow": "a0-save-precision.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T09:32:43Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "7460f40f28b2d05a02d60389e7e6d6c5150cff6d",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "native-save",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41034207682,
+      "status": "queued",
+      "workflow": "a0-save-precision.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T09:28:25Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "34f5e27ed5c144a7155c857990a5ff29d31fe24e",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "native-save",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41033677690,
+      "status": "queued",
+      "workflow": "a0-save-precision.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T08:58:50Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "55c2cc8db59d6a79f97e94d2b1b561bd063cca94",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "native-save",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41030089074,
+      "status": "queued",
+      "workflow": "a0-save-precision.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T08:54:30Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "native-save",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41029607557,
+      "status": "queued",
+      "workflow": "a0-save-precision.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T10:27:30Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "7f3ca17e90948c20e0355622d3960bf31f5455c7",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "native-pilot",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41040890950,
+      "status": "queued",
+      "workflow": "a0-waystation-input-restart.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T09:35:42Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "2203ea9ff33df2cba48f313355e31e4a43f87607",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "native-pilot",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41034571757,
+      "status": "queued",
+      "workflow": "a0-waystation-input-restart.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T09:32:43Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "7460f40f28b2d05a02d60389e7e6d6c5150cff6d",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "native-pilot",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41034207772,
+      "status": "queued",
+      "workflow": "a0-waystation-input-restart.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T09:28:25Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "34f5e27ed5c144a7155c857990a5ff29d31fe24e",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "native-pilot",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41033677607,
+      "status": "queued",
+      "workflow": "a0-waystation-input-restart.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T08:54:30Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "native-pilot",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41029607304,
+      "status": "queued",
+      "workflow": "a0-waystation-input-restart.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T08:51:16Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "8a0dbd4943b9a909373f32c578d3d242000dae8d",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "native-pilot",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41029252575,
+      "status": "queued",
+      "workflow": "a0-waystation-input-restart.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T08:49:17Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "cdbcffcdeae2e1dced5e27b89d0d7e713158fbb9",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "native-pilot",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41029028422,
+      "status": "queued",
+      "workflow": "a0-waystation-input-restart.yml"
+    },
+    {
+      "annotations": [
+        {
+          "level": "warning",
+          "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+        },
+        {
+          "level": "failure",
+          "message": "Process completed with exit code 1."
+        },
+        {
+          "level": "failure",
+          "message": "Waystation authority fixture: tail: A0 WAYSTATION AUTHORITY FAILED - 35 checks (FIXTURE)"
+        },
+        {
+          "level": "failure",
+          "message": "Waystation authority fixture: tail:   ok    post-rename retry cannot grant the same reward twice"
+        },
+        {
+          "level": "failure",
+          "message": "Waystation authority fixture: tail:   ok    post-rename disk contains exactly one committed reward"
+        },
+        {
+          "level": "failure",
+          "message": "Waystation authority fixture: tail:   ok    authoritative disk reload resolves post-rename result"
+        },
+        {
+          "level": "failure",
+          "message": "Waystation authority fixture: tail:   ok    ambiguous post-rename call does not report success"
+        },
+        {
+          "level": "failure",
+          "message": "Waystation authority fixture: tail:   ok    debug-only post-rename interruption armed"
+        },
+        {
+          "level": "failure",
+          "message": "Waystation authority fixture: never reported \"A0 WAYSTATION AUTHORITY PASSED\" :: tail:   ok    debug-only post-rename interruption armed~  ok    ambiguous post-rename call does not report success~  ok    authoritative disk reload resolves post-rename result~  ok    post-rename disk contains exactly one committed reward~  ok    post-rename retry cannot grant the same reward twice~A0 WAYSTATION AUTHORITY F"
+        },
+        {
+          "level": "notice",
+          "message": "Waystation authority exit=1   FAIL  same-process disk reload preserves custody and rights~  FAIL  interrupted candidate leaves disk unchanged~A0 WAYSTATION AUTHORITY FAILED - 35 checks (FIXTURE)~"
+        },
+        {
+          "level": "notice",
+          "message": "\"The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748\""
+        }
+      ],
+      "conclusion": "failure",
+      "created_at": "2026-10-30T07:54:41Z",
+      "event": "push",
+      "failed_checks": [
+        "interrupted candidate leaves disk unchanged",
+        "same-process disk reload preserves custody and rights"
+      ],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "594730ea15a3e6db8d620fb89aef94e97fd6db11",
+      "jobs": [
+        {
+          "conclusion": "failure",
+          "name": "native-pilot",
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5"
+            },
+            {
+              "conclusion": "success",
+              "name": "Verify exact legacy and canonical source pins; derive one chunk"
+            },
+            {
+              "conclusion": "success",
+              "name": "Verify exact reviewed A3 source and catalog bytes"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run chickensoft-games/setup-godot@v2"
+            },
+            {
+              "conclusion": "success",
+              "name": "Import exact A0 project"
+            },
+            {
+              "conclusion": "failure",
+              "name": "A3 V3 authority and anti-replay fixture on real SaveService"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Real Hero input, canonical receipt, and separate process replay"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Post Run actions/setup-python@v5"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job"
+            }
+          ]
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41022975283,
+      "status": "completed",
+      "workflow": "a0-waystation-input-restart.yml"
+    },
+    {
+      "annotations": [
+        {
+          "level": "warning",
+          "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+        },
+        {
+          "level": "failure",
+          "message": "Process completed with exit code 1."
+        },
+        {
+          "level": "failure",
+          "message": "Waystation authority fixture: tail: A0 WAYSTATION AUTHORITY FAILED - 35 checks (FIXTURE)"
+        },
+        {
+          "level": "failure",
+          "message": "Waystation authority fixture: tail:   ok    post-rename retry cannot grant the same reward twice"
+        },
+        {
+          "level": "failure",
+          "message": "Waystation authority fixture: tail:   ok    post-rename disk contains exactly one committed reward"
+        },
+        {
+          "level": "failure",
+          "message": "Waystation authority fixture: tail:   ok    authoritative disk reload resolves post-rename result"
+        },
+        {
+          "level": "failure",
+          "message": "Waystation authority fixture: tail:   ok    ambiguous post-rename call does not report success"
+        },
+        {
+          "level": "failure",
+          "message": "Waystation authority fixture: tail:   ok    debug-only post-rename interruption armed"
+        },
+        {
+          "level": "failure",
+          "message": "Waystation authority fixture: never reported \"A0 WAYSTATION AUTHORITY PASSED\" :: tail:   ok    debug-only post-rename interruption armed~  ok    ambiguous post-rename call does not report success~  ok    authoritative disk reload resolves post-rename result~  ok    post-rename disk contains exactly one committed reward~  ok    post-rename retry cannot grant the same reward twice~A0 WAYSTATION AUTHORITY F"
+        },
+        {
+          "level": "notice",
+          "message": "Waystation authority exit=1   FAIL  same-process disk reload preserves custody and rights~  FAIL  interrupted candidate leaves disk unchanged~A0 WAYSTATION AUTHORITY FAILED - 35 checks (FIXTURE)~"
+        },
+        {
+          "level": "notice",
+          "message": "\"The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748\""
+        }
+      ],
+      "conclusion": "failure",
+      "created_at": "2026-10-30T07:50:26Z",
+      "event": "push",
+      "failed_checks": [
+        "interrupted candidate leaves disk unchanged",
+        "same-process disk reload preserves custody and rights"
+      ],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "f61afa23132ec5890834fa2cd0476d0edc8a51b1",
+      "jobs": [
+        {
+          "conclusion": "failure",
+          "name": "native-pilot",
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5"
+            },
+            {
+              "conclusion": "success",
+              "name": "Verify exact legacy and canonical source pins; derive one chunk"
+            },
+            {
+              "conclusion": "success",
+              "name": "Verify exact reviewed A3 source and catalog bytes"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run chickensoft-games/setup-godot@v2"
+            },
+            {
+              "conclusion": "success",
+              "name": "Import exact A0 project"
+            },
+            {
+              "conclusion": "failure",
+              "name": "A3 V3 authority and anti-replay fixture on real SaveService"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Real Hero input, canonical receipt, and separate process replay"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Post Run actions/setup-python@v5"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job"
+            }
+          ]
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41022547962,
+      "status": "completed",
+      "workflow": "a0-waystation-input-restart.yml"
+    },
+    {
+      "annotations": [
+        {
+          "level": "warning",
+          "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+        },
+        {
+          "level": "failure",
+          "message": "Process completed with exit code 1."
+        },
+        {
+          "level": "failure",
+          "message": "Waystation authority fixture: tail: A0 WAYSTATION AUTHORITY FAILED - 16 checks (FIXTURE)"
+        },
+        {
+          "level": "failure",
+          "message": "Waystation authority fixture: tail:   ok    new session grants no offline cooldown"
+        },
+        {
+          "level": "failure",
+          "message": "Waystation authority fixture: tail:   FAIL  same-process disk reload preserves custody and rights"
+        },
+        {
+          "level": "failure",
+          "message": "Waystation authority fixture: tail:   ok    disk reload succeeds"
+        },
+        {
+          "level": "failure",
+          "message": "Waystation authority fixture: tail:   ok    new event cannot bypass cooldown"
+        },
+        {
+          "level": "failure",
+          "message": "Waystation authority fixture: tail:   ok    replayed original event grants nothing"
+        },
+        {
+          "level": "failure",
+          "message": "Waystation authority fixture: never reported \"A0 WAYSTATION AUTHORITY PASSED\" :: tail:   ok    replayed original event grants nothing~  ok    new event cannot bypass cooldown~  ok    disk reload succeeds~  FAIL  same-process disk reload preserves custody and rights~  ok    new session grants no offline cooldown~A0 WAYSTATION AUTHORITY FAILED - 16 checks (FIXTURE)~"
+        },
+        {
+          "level": "notice",
+          "message": "Waystation authority exit=1   FAIL  same-process disk reload preserves custody and rights~A0 WAYSTATION AUTHORITY FAILED - 16 checks (FIXTURE)~"
+        },
+        {
+          "level": "notice",
+          "message": "\"The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748\""
+        }
+      ],
+      "conclusion": "failure",
+      "created_at": "2026-10-30T07:47:12Z",
+      "event": "push",
+      "failed_checks": [
+        "same-process disk reload preserves custody and rights"
+      ],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "122294f2237c1836d6f04561e090fe6aa6c6c0cf",
+      "jobs": [
+        {
+          "conclusion": "failure",
+          "name": "native-pilot",
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5"
+            },
+            {
+              "conclusion": "success",
+              "name": "Verify exact legacy and canonical source pins; derive one chunk"
+            },
+            {
+              "conclusion": "success",
+              "name": "Verify exact reviewed A3 source and catalog bytes"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run chickensoft-games/setup-godot@v2"
+            },
+            {
+              "conclusion": "success",
+              "name": "Import exact A0 project"
+            },
+            {
+              "conclusion": "failure",
+              "name": "A3 V3 authority and anti-replay fixture on real SaveService"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Real Hero input, canonical receipt, and separate process replay"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Post Run actions/setup-python@v5"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job"
+            }
+          ]
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41022220324,
+      "status": "completed",
+      "workflow": "a0-waystation-input-restart.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T10:23:33Z",
+      "event": "pull_request",
+      "failed_checks": [],
+      "head_branch": "arena/2d7e6d7a-soul-of-hero",
+      "head_sha": "1426a0eb250a0a680081c2dfabfe4eb339f61f5d",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "godot-native",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41040398338,
+      "status": "queued",
+      "workflow": "a8-world-content-native.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T10:02:48Z",
+      "event": "pull_request",
+      "failed_checks": [],
+      "head_branch": "arena/2d7e6d7a-soul-of-hero",
+      "head_sha": "6223a02ccb3822d5d397ed185af048f7159687fc",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "godot-native",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41037830473,
+      "status": "queued",
+      "workflow": "a8-world-content-native.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T09:29:52Z",
+      "event": "pull_request",
+      "failed_checks": [],
+      "head_branch": "arena/2d7e6d7a-soul-of-hero",
+      "head_sha": "c8b4bc881d6744bac0f0826a639624ee1434e534",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "godot-native",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41033849972,
+      "status": "queued",
+      "workflow": "a8-world-content-native.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T09:25:29Z",
+      "event": "pull_request",
+      "failed_checks": [],
+      "head_branch": "arena/2d7e6d7a-soul-of-hero",
+      "head_sha": "d6f1172846881b7d3992e5120350643eac53a8c3",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "godot-native",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41033322405,
+      "status": "queued",
+      "workflow": "a8-world-content-native.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T09:19:12Z",
+      "event": "pull_request",
+      "failed_checks": [],
+      "head_branch": "arena/2d7e6d7a-soul-of-hero",
+      "head_sha": "f54d8f1776b091b6e7e0b9344c51f18e4330e711",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "godot-native",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41032553904,
+      "status": "queued",
+      "workflow": "a8-world-content-native.yml"
+    },
+    {
+      "annotations": [
+        {
+          "level": "warning",
+          "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+        },
+        {
+          "level": "warning",
+          "message": "No files were found with the provided path: .artifacts/a8-world-content/. No artifacts will be uploaded."
+        },
+        {
+          "level": "failure",
+          "message": "Process completed with exit code 1."
+        },
+        {
+          "level": "notice",
+          "message": "\"The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748\""
+        }
+      ],
+      "conclusion": "failure",
+      "created_at": "2026-10-30T08:09:08Z",
+      "event": "pull_request",
+      "failed_checks": [],
+      "head_branch": "arena/2d7e6d7a-soul-of-hero",
+      "head_sha": "5ccf7b3f9824daa138b5d98106b74a2899c7592b",
+      "jobs": [
+        {
+          "conclusion": "failure",
+          "name": "godot-native",
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run chickensoft-games/setup-godot@v2"
+            },
+            {
+              "conclusion": "success",
+              "name": "Validate authoring data and adversarial path cases"
+            },
+            {
+              "conclusion": "success",
+              "name": "Import native project resources"
+            },
+            {
+              "conclusion": "failure",
+              "name": "Run native physics and interaction contracts"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Run exterior entry, return and revisit physics"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Capture native scenes at 720p, 2K and 4K"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job"
+            }
+          ]
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41024526858,
+      "status": "completed",
+      "workflow": "a8-world-content-native.yml"
+    },
+    {
+      "annotations": [
+        {
+          "level": "warning",
+          "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+        },
+        {
+          "level": "warning",
+          "message": "No files were found with the provided path: .artifacts/a8-world-content/. No artifacts will be uploaded."
+        },
+        {
+          "level": "failure",
+          "message": "Process completed with exit code 1."
+        },
+        {
+          "level": "notice",
+          "message": "\"The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748\""
+        }
+      ],
+      "conclusion": "failure",
+      "created_at": "2026-10-30T08:08:23Z",
+      "event": "pull_request",
+      "failed_checks": [],
+      "head_branch": "arena/2d7e6d7a-soul-of-hero",
+      "head_sha": "9c180ef115bc53b1aa48e39a46a1a8fa7426c602",
+      "jobs": [
+        {
+          "conclusion": "failure",
+          "name": "godot-native",
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run chickensoft-games/setup-godot@v2"
+            },
+            {
+              "conclusion": "success",
+              "name": "Validate authoring data and adversarial path cases"
+            },
+            {
+              "conclusion": "success",
+              "name": "Import native project resources"
+            },
+            {
+              "conclusion": "failure",
+              "name": "Run native physics and interaction contracts"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Run exterior entry, return and revisit physics"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Capture native scenes at 720p, 2K and 4K"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job"
+            }
+          ]
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41024442152,
+      "status": "completed",
+      "workflow": "a8-world-content-native.yml"
+    },
+    {
+      "annotations": [
+        {
+          "level": "warning",
+          "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+        },
+        {
+          "level": "warning",
+          "message": "No files were found with the provided path: .artifacts/a8-world-content/. No artifacts will be uploaded."
+        },
+        {
+          "level": "failure",
+          "message": "Process completed with exit code 1."
+        },
+        {
+          "level": "notice",
+          "message": "\"The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748\""
+        }
+      ],
+      "conclusion": "failure",
+      "created_at": "2026-10-30T07:22:28Z",
+      "event": "pull_request",
+      "failed_checks": [],
+      "head_branch": "arena/2d7e6d7a-soul-of-hero",
+      "head_sha": "2d7f10d355cb57692a321f3ca633550d31385157",
+      "jobs": [
+        {
+          "conclusion": "failure",
+          "name": "godot-native",
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run chickensoft-games/setup-godot@v2"
+            },
+            {
+              "conclusion": "success",
+              "name": "Validate authoring data"
+            },
+            {
+              "conclusion": "success",
+              "name": "Import native project resources"
+            },
+            {
+              "conclusion": "failure",
+              "name": "Run native physics, intent and persistence contracts"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Capture native scenes at 720p, 2K and 4K"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job"
+            }
+          ]
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41019689728,
+      "status": "completed",
+      "workflow": "a8-world-content-native.yml"
+    },
+    {
+      "annotations": [
+        {
+          "level": "warning",
+          "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+        },
+        {
+          "level": "warning",
+          "message": "No files were found with the provided path: .artifacts/a8-world-content/. No artifacts will be uploaded."
+        },
+        {
+          "level": "failure",
+          "message": "Process completed with exit code 1."
+        },
+        {
+          "level": "notice",
+          "message": "\"The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748\""
+        }
+      ],
+      "conclusion": "failure",
+      "created_at": "2026-10-30T07:17:30Z",
+      "event": "pull_request",
+      "failed_checks": [],
+      "head_branch": "arena/2d7e6d7a-soul-of-hero",
+      "head_sha": "2ad531f9e099cc3a29709da176e7a34b05a9a15b",
+      "jobs": [
+        {
+          "conclusion": "failure",
+          "name": "godot-native",
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run chickensoft-games/setup-godot@v2"
+            },
+            {
+              "conclusion": "success",
+              "name": "Validate authoring data"
+            },
+            {
+              "conclusion": "success",
+              "name": "Import native project resources"
+            },
+            {
+              "conclusion": "failure",
+              "name": "Run native physics, intent and persistence contracts"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Capture native scenes at 720p, 2K and 4K"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job"
+            }
+          ]
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41019182407,
+      "status": "completed",
+      "workflow": "a8-world-content-native.yml"
+    },
+    {
+      "annotations": [
+        {
+          "level": "warning",
+          "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+        },
+        {
+          "level": "warning",
+          "message": "No files were found with the provided path: .artifacts/a8-world-content/. No artifacts will be uploaded."
+        },
+        {
+          "level": "failure",
+          "message": "Process completed with exit code 1."
+        },
+        {
+          "level": "notice",
+          "message": "\"The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748\""
+        }
+      ],
+      "conclusion": "failure",
+      "created_at": "2026-10-30T07:16:02Z",
+      "event": "pull_request",
+      "failed_checks": [],
+      "head_branch": "arena/2d7e6d7a-soul-of-hero",
+      "head_sha": "c0ae902542a31c37bdfdc8f72d452cbf430e6747",
+      "jobs": [
+        {
+          "conclusion": "failure",
+          "name": "godot-native",
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run chickensoft-games/setup-godot@v2"
+            },
+            {
+              "conclusion": "success",
+              "name": "Validate authoring data"
+            },
+            {
+              "conclusion": "success",
+              "name": "Import native project resources"
+            },
+            {
+              "conclusion": "failure",
+              "name": "Run native physics, intent and persistence contracts"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Capture native scenes at 720p, 2K and 4K"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job"
+            }
+          ]
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41019032228,
+      "status": "completed",
+      "workflow": "a8-world-content-native.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T10:27:30Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "7f3ca17e90948c20e0355622d3960bf31f5455c7",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "SURVIVAL STATIC CONTRACTS",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41040890930,
+      "status": "queued",
+      "workflow": "survival-runtime-validation.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T10:26:19Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "27ef93078d4af21bf25acaf8571cfa6f8685170e",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "SURVIVAL STATIC CONTRACTS",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41040747759,
+      "status": "queued",
+      "workflow": "survival-runtime-validation.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T09:37:08Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "9269739ebd35ed8ab83987b6bf53f560a59954af",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "SURVIVAL STATIC CONTRACTS",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41034743993,
+      "status": "queued",
+      "workflow": "survival-runtime-validation.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T09:35:42Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "2203ea9ff33df2cba48f313355e31e4a43f87607",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "SURVIVAL STATIC CONTRACTS",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41034571559,
+      "status": "queued",
+      "workflow": "survival-runtime-validation.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T09:34:27Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "4fbafec4aff1cc8684b7c6d21c91e57985ddbd76",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "SURVIVAL STATIC CONTRACTS",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41034417288,
+      "status": "queued",
+      "workflow": "survival-runtime-validation.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T09:32:43Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "7460f40f28b2d05a02d60389e7e6d6c5150cff6d",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "SURVIVAL STATIC CONTRACTS",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41034207865,
+      "status": "queued",
+      "workflow": "survival-runtime-validation.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T09:28:25Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "34f5e27ed5c144a7155c857990a5ff29d31fe24e",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "SURVIVAL STATIC CONTRACTS",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41033677523,
+      "status": "queued",
+      "workflow": "survival-runtime-validation.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T08:58:50Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "55c2cc8db59d6a79f97e94d2b1b561bd063cca94",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "SURVIVAL STATIC CONTRACTS",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41030089218,
+      "status": "queued",
+      "workflow": "survival-runtime-validation.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T08:54:30Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "SURVIVAL STATIC CONTRACTS",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41029607641,
+      "status": "queued",
+      "workflow": "survival-runtime-validation.yml"
+    },
+    {
+      "annotations": [],
+      "conclusion": "",
+      "created_at": "2026-10-30T08:51:16Z",
+      "event": "push",
+      "failed_checks": [],
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "8a0dbd4943b9a909373f32c578d3d242000dae8d",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "SURVIVAL STATIC CONTRACTS",
+          "status": "queued",
+          "steps": []
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41029252628,
+      "status": "queued",
+      "workflow": "survival-runtime-validation.yml"
+    }
+  ],
+  "schema": "soh.balance.ci_evidence.v2",
+  "window": {
+    "limit_per_workflow": 10,
+    "runs_recorded": 57
+  },
+  "workflows": [
+    "a0-normal-entry-home-restart.yml",
+    "a0-waystation-input-restart.yml",
+    "a0-save-precision.yml",
+    "a8-world-content-native.yml",
+    "survival-runtime-validation.yml",
+    "a0-a6-v4-latest-composition.yml"
+  ]
+}

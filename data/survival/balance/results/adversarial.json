@@ -1,0 +1,330 @@
+{
+  "cases": [
+    {
+      "also_in_baseline": [],
+      "case_id": "D01_absent_source_item",
+      "description": "loot table gains an entry whose item does not exist",
+      "detail": "all expected codes present",
+      "expected_codes": [
+        "LOOT_ITEM_UNKNOWN"
+      ],
+      "kind": "DATA_FAULT",
+      "observed_codes": [
+        "LOOT_ITEM_UNKNOWN"
+      ],
+      "passed": true
+    },
+    {
+      "also_in_baseline": [],
+      "case_id": "D02_core_in_roadside_junk",
+      "description": "a Core-tagged unique item is injected into the roadside junk table",
+      "detail": "all expected codes present",
+      "expected_codes": [
+        "LOOT_EXCLUDED_TAG_VIOLATION"
+      ],
+      "kind": "DATA_FAULT",
+      "observed_codes": [
+        "LOOT_EXCLUDED_TAG_VIOLATION"
+      ],
+      "passed": true
+    },
+    {
+      "also_in_baseline": [],
+      "case_id": "D03_zero_weight_table",
+      "description": "every entry weight is zeroed",
+      "detail": "all expected codes present",
+      "expected_codes": [
+        "LOOT_TABLE_DEGENERATE"
+      ],
+      "kind": "DATA_FAULT",
+      "observed_codes": [
+        "LOOT_TABLE_DEGENERATE"
+      ],
+      "passed": true
+    },
+    {
+      "also_in_baseline": [],
+      "case_id": "D04_inverted_quantity",
+      "description": "quantity range runs backwards",
+      "detail": "all expected codes present",
+      "expected_codes": [
+        "LOOT_QUANTITY_RANGE_INVALID"
+      ],
+      "kind": "DATA_FAULT",
+      "observed_codes": [
+        "LOOT_QUANTITY_RANGE_INVALID"
+      ],
+      "passed": true
+    },
+    {
+      "also_in_baseline": [],
+      "case_id": "D05_zero_rolls",
+      "description": "table declares zero rolls",
+      "detail": "all expected codes present",
+      "expected_codes": [
+        "LOOT_ROLLS_INVALID"
+      ],
+      "kind": "DATA_FAULT",
+      "observed_codes": [
+        "LOOT_ROLLS_INVALID"
+      ],
+      "passed": true
+    },
+    {
+      "also_in_baseline": [],
+      "case_id": "D06_source_item_unknown",
+      "description": "a live source points at a nonexistent item",
+      "detail": "all expected codes present",
+      "expected_codes": [
+        "SOURCE_ITEM_UNKNOWN"
+      ],
+      "kind": "DATA_FAULT",
+      "observed_codes": [
+        "SOURCE_ITEM_UNKNOWN"
+      ],
+      "passed": true
+    },
+    {
+      "also_in_baseline": [],
+      "case_id": "D07_item_orphan_source",
+      "description": "an item claims a source that does not exist",
+      "detail": "all expected codes present",
+      "expected_codes": [
+        "ITEM_ORPHAN_SOURCE"
+      ],
+      "kind": "DATA_FAULT",
+      "observed_codes": [
+        "ITEM_ORPHAN_SOURCE"
+      ],
+      "passed": true
+    },
+    {
+      "also_in_baseline": [],
+      "case_id": "D08_recipe_unknown_item",
+      "description": "a recipe consumes a nonexistent item",
+      "detail": "all expected codes present",
+      "expected_codes": [
+        "RECIPE_ITEM_UNKNOWN"
+      ],
+      "kind": "DATA_FAULT",
+      "observed_codes": [
+        "RECIPE_ITEM_UNKNOWN"
+      ],
+      "passed": true
+    },
+    {
+      "also_in_baseline": [],
+      "case_id": "D09_recipe_unknown_station",
+      "description": "a recipe references a station that does not exist",
+      "detail": "all expected codes present",
+      "expected_codes": [
+        "RECIPE_UNKNOWN_STATION"
+      ],
+      "kind": "DATA_FAULT",
+      "observed_codes": [
+        "RECIPE_UNKNOWN_STATION"
+      ],
+      "passed": true
+    },
+    {
+      "also_in_baseline": [],
+      "case_id": "D10_capability_self_dependency",
+      "description": "the only POI granting cap_salvage also requires cap_salvage",
+      "detail": "all expected codes present",
+      "expected_codes": [
+        "CAPABILITY_SELF_DEPENDENCY"
+      ],
+      "kind": "DATA_FAULT",
+      "observed_codes": [
+        "CAPABILITY_SELF_DEPENDENCY"
+      ],
+      "passed": true
+    },
+    {
+      "also_in_baseline": [
+        "ROUTE_LOCKED_FOR_CAPABILITIES"
+      ],
+      "case_id": "D11_inaccessible_site",
+      "description": "every edge into the quarry demands a capability that is never granted",
+      "detail": "all expected codes present",
+      "expected_codes": [
+        "POI_ROUTE_UNREACHABLE",
+        "ROUTE_UNREACHABLE",
+        "ROUTE_LOCKED_FOR_CAPABILITIES"
+      ],
+      "kind": "DATA_FAULT",
+      "observed_codes": [
+        "ROUTE_LOCKED_FOR_CAPABILITIES"
+      ],
+      "passed": true
+    },
+    {
+      "also_in_baseline": [
+        "QUANTITY_OWNERSHIP_UNRESOLVED"
+      ],
+      "case_id": "D12_invented_a1_quantity",
+      "description": "A1's authored reward gains a quantity it never authored",
+      "detail": "all expected codes present",
+      "expected_codes": [
+        "QUANTITY_OWNERSHIP_UNRESOLVED"
+      ],
+      "kind": "DATA_FAULT",
+      "observed_codes": [
+        "QUANTITY_OWNERSHIP_UNRESOLVED"
+      ],
+      "passed": true
+    },
+    {
+      "also_in_baseline": [],
+      "case_id": "B01_no_route_returns_none",
+      "description": "a trip that needs capabilities the actor lacks yields no path, not a fake path",
+      "detail": "no capability-permitting path -> None",
+      "expected_codes": [
+        "ROUTE_UNREACHABLE"
+      ],
+      "kind": "BEHAVIOUR",
+      "observed_codes": [
+        "ROUTE_UNREACHABLE"
+      ],
+      "passed": true
+    },
+    {
+      "also_in_baseline": [],
+      "case_id": "B02_zero_eligible_containers",
+      "description": "a table with no legal entries yields zero loot and does not crash",
+      "detail": "empty claim distribution handled without raising",
+      "expected_codes": [],
+      "kind": "BEHAVIOUR",
+      "observed_codes": [],
+      "passed": true
+    },
+    {
+      "also_in_baseline": [],
+      "case_id": "B03_repeated_one_time_claim",
+      "description": "a one-time locker reward cannot be claimed twice",
+      "detail": "first=1 second=0 reasons=['one_time_already_claimed']",
+      "expected_codes": [
+        "REPEATED_ONE_TIME_CLAIM_BLOCKED"
+      ],
+      "kind": "BEHAVIOUR",
+      "observed_codes": [
+        "REPEATED_ONE_TIME_CLAIM_BLOCKED"
+      ],
+      "passed": true
+    },
+    {
+      "also_in_baseline": [],
+      "case_id": "B04_reload_does_not_regrant",
+      "description": "starting a new session (reload) does not re-grant a one-time reward",
+      "detail": "after reload allowed=0 reasons=['one_time_already_claimed']",
+      "expected_codes": [
+        "REPEATED_ONE_TIME_CLAIM_BLOCKED"
+      ],
+      "kind": "BEHAVIOUR",
+      "observed_codes": [
+        "REPEATED_ONE_TIME_CLAIM_BLOCKED"
+      ],
+      "passed": true
+    },
+    {
+      "also_in_baseline": [],
+      "case_id": "B05_session_claim_cap",
+      "description": "a source capped at one claim per session cannot be farmed",
+      "detail": "allowed=1 reasons=['session_claim_cap']",
+      "expected_codes": [],
+      "kind": "BEHAVIOUR",
+      "observed_codes": [],
+      "passed": true
+    },
+    {
+      "also_in_baseline": [],
+      "case_id": "B06_zero_restock_not_renewable",
+      "description": "a non-one-time source with zero restock seconds cannot be farmed inside one session",
+      "detail": "allowed=1 reasons=['zero_restock_not_renewable']",
+      "expected_codes": [
+        "ZERO_RESTOCK_NOT_RENEWABLE"
+      ],
+      "kind": "BEHAVIOUR",
+      "observed_codes": [
+        "ZERO_RESTOCK_NOT_RENEWABLE"
+      ],
+      "passed": true
+    },
+    {
+      "also_in_baseline": [],
+      "case_id": "B07_bag_capacity_overflow",
+      "description": "a trip that would need 45 slots in a 30-slot bag is reported as overflow",
+      "detail": "slots=45 overflow=15",
+      "expected_codes": [
+        "CAPACITY_TRUNCATED"
+      ],
+      "kind": "BEHAVIOUR",
+      "observed_codes": [
+        "CAPACITY_TRUNCATED"
+      ],
+      "passed": true
+    },
+    {
+      "also_in_baseline": [],
+      "case_id": "B08_unique_instance_duplication",
+      "description": "a unique-instance Core is never modelled as two physical units",
+      "detail": "clamped to one instance and flagged",
+      "expected_codes": [
+        "UNIQUE_INSTANCE_DUPLICATION_BLOCKED"
+      ],
+      "kind": "BEHAVIOUR",
+      "observed_codes": [
+        "UNIQUE_INSTANCE_DUPLICATION_BLOCKED"
+      ],
+      "passed": true
+    },
+    {
+      "also_in_baseline": [],
+      "case_id": "B09_unlucky_trip_is_possible",
+      "description": "a legitimate trip can return no knowledge items; the report quantifies it instead of hiding it",
+      "detail": "p(one claim yields no tracked item)=0.166375",
+      "expected_codes": [],
+      "kind": "BEHAVIOUR",
+      "observed_codes": [],
+      "passed": true
+    },
+    {
+      "also_in_baseline": [],
+      "case_id": "B10_death_cargo_recovery",
+      "description": "certain death retains 0/50/100% of cargo under the three recovery hypotheses",
+      "detail": "retained fractions=[0.0, 0.5, 1.0]",
+      "expected_codes": [],
+      "kind": "BEHAVIOUR",
+      "observed_codes": [],
+      "passed": true
+    },
+    {
+      "also_in_baseline": [],
+      "case_id": "B11_no_core_trip_utility",
+      "description": "the non-Core table still feeds an authored sink, so a Core-less trip is not automatically worthless",
+      "detail": "p(claim yields a sunk item)=0.996625 mean scrap=3.6",
+      "expected_codes": [],
+      "kind": "BEHAVIOUR",
+      "observed_codes": [],
+      "passed": true
+    },
+    {
+      "also_in_baseline": [],
+      "case_id": "B12_research_bootstrap_cycle",
+      "description": "the first research station cannot be funded from native sources alone",
+      "detail": "research_kit needs 3 knowledge_spares, whose only producer (make_spares, study_predator_jaw, study_axe_insignia) runs at the research station, and no LIVE source provides spares",
+      "expected_codes": [
+        "BOOTSTRAP_DEPENDENCY_CYCLE"
+      ],
+      "kind": "BEHAVIOUR",
+      "observed_codes": [
+        "BOOTSTRAP_DEPENDENCY_CYCLE"
+      ],
+      "passed": true
+    }
+  ],
+  "cases_passed": 24,
+  "cases_total": 24,
+  "interpretation": "DATA_FAULT cases prove the validator detects a defect rather than only describing clean data. BEHAVIOUR cases prove the claim model refuses the exploit/edge case instead of averaging it away.",
+  "schema": "soh.balance.adversarial.v1"
+}

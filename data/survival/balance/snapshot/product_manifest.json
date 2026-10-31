@@ -1,0 +1,1698 @@
+{
+ "a0_head": "9269739ebd35ed8ab83987b6bf53f560a59954af",
+ "a1_head": "939720d50a0b822ff9042d4104dc69ba78ffe0f8",
+ "a3_head": "c5e80922132ca9cf89ea15c480e1a4be465ba0b7",
+ "a6_head": "08ccb8348f2e7a75e09af47a1741c158fc46e794",
+ "a8_head": "c8b4bc881d6744bac0f0826a639624ee1434e534",
+ "a8_note": "A8 native POI scenes live on the PR26 branch; the A8 task branch carries docs only. Both heads are recorded so a reader cannot mistake the doc branch for the scene branch.",
+ "a8_task_head": "9332cb9ba25da3026ede0cad578a90f0e4b5a2b6",
+ "files": [
+  {
+   "key": "a0.home_map_screen.gd",
+   "owner": "a0",
+   "sha256": "6c593a97b8fcd791d42f26583a0f44c19e81a88e266c1888e287458c341e78ef",
+   "size_bytes": 21185,
+   "source_path": "game/ui/screens/home/home_map_screen.gd"
+  },
+  {
+   "key": "a0.app_root.gd",
+   "owner": "a0",
+   "sha256": "8619b14c52fe7d322bdd7197fee22e1cb3324efa72e1eb6aa8260c88ebc8880b",
+   "size_bytes": 20665,
+   "source_path": "game/app/app_root.gd"
+  },
+  {
+   "key": "a0.main.tscn",
+   "owner": "a0",
+   "sha256": "139ff870365de59cfc5cdf406049cf4ba4d1008d1be4857e60f10a3559c5d210",
+   "size_bytes": 1636,
+   "source_path": "game/main.tscn"
+  },
+  {
+   "key": "a0.project.godot",
+   "owner": "a0",
+   "sha256": "6d607b77469fb70d15877a7869d60d05c952dc3801e7e673e9595d39e7ac51e0",
+   "size_bytes": 1929,
+   "source_path": "project.godot"
+  },
+  {
+   "key": "a0.knight.tscn",
+   "owner": "a0",
+   "sha256": "2b29011bf361ac7e5cdde97c1fc454c69684dcb6c08e1c23186c05910a52e195",
+   "size_bytes": 2205,
+   "source_path": "game/characters/knight/knight.tscn"
+  },
+  {
+   "key": "a0.chapter1_overworld.tscn",
+   "owner": "a0",
+   "sha256": "ba575d77020f1ea129687f056a77331f10df4bf3103b02d0e2e730c45bdc5e1e",
+   "size_bytes": 684,
+   "source_path": "game/overworld/chapter1_overworld.tscn"
+  },
+  {
+   "key": "a0.chapter1_overworld.gd",
+   "owner": "a0",
+   "sha256": "6b6acc1cc0c09694e0ec758e27aab632c23db2f4684c77d7179e24262cebc552",
+   "size_bytes": 48315,
+   "source_path": "game/overworld/chapter1_overworld.gd"
+  },
+  {
+   "key": "a0.chest.gd",
+   "owner": "a0",
+   "sha256": "64546d57516f0eee068c1eba0638c9b1f6ce1cd818e5283277514b573933a997",
+   "size_bytes": 7878,
+   "source_path": "game/world/interactables/chest.gd"
+  },
+  {
+   "key": "a0.hud.gd",
+   "owner": "a0",
+   "sha256": "404580bd203648a51ca7770531704c4d839a2b176b626e46dbba9c1e8fa70c35",
+   "size_bytes": 38292,
+   "source_path": "game/ui/hud.gd"
+  },
+  {
+   "key": "a0.overworld_hud.gd",
+   "owner": "a0",
+   "sha256": "2ab49ba5f6ea26136de1bbed7e2a63ccfaed3e0a253cf277a88707bc3c4123a7",
+   "size_bytes": 5895,
+   "source_path": "game/overworld/overworld_hud.gd"
+  },
+  {
+   "key": "a0.chest_inventory_panel.gd",
+   "owner": "a0",
+   "sha256": "ce2ac1397c048ab64db997944365916626ca450db8e6700274894ba05ffd7519",
+   "size_bytes": 4735,
+   "source_path": "game/survival/chest_inventory_panel.gd"
+  },
+  {
+   "key": "a0.save_service.gd",
+   "owner": "a0",
+   "sha256": "be6f687393c9c3501e16cdc11d388269dfe3c3cf6880def291a7b37abef5770a",
+   "size_bytes": 212481,
+   "source_path": "game/autoload/save_service.gd"
+  },
+  {
+   "key": "a0.sources.json",
+   "owner": "a0",
+   "sha256": "28ff818a406de7d53d2c0e3e2fd7295baef0fcec9c086ceb0206d5a2251fdb87",
+   "size_bytes": 18769,
+   "source_path": "data/survival/items/sources.json"
+  },
+  {
+   "key": "a0.survival_service.gd",
+   "owner": "a0",
+   "sha256": "4a4a2962a14d990e4470a41a602ff4fed7afc03d8aad5a88baf029a57722ca5d",
+   "size_bytes": 40226,
+   "source_path": "game/survival/survival_service.gd"
+  },
+  {
+   "key": "a0.survival_resource_node.gd",
+   "owner": "a0",
+   "sha256": "db84497dca6874fa68277a3d0529f30b1ae23eb193701fa48ff1ad2d46cacddf",
+   "size_bytes": 6141,
+   "source_path": "game/survival/survival_resource_node.gd"
+  },
+  {
+   "key": "a0.app_flow.gd",
+   "owner": "a0",
+   "sha256": "0a787ddd8147c54d33718a81dce172c376b10a6d5a00130b51352ba3126d6114",
+   "size_bytes": 46709,
+   "source_path": "game/app/app_flow.gd"
+  },
+  {
+   "key": "a0.campaign_tab.gd",
+   "owner": "a0",
+   "sha256": "1e7faf23aacbc77e8b86382e8424847d4daa3cd128d777c60b5f6baee56f2609",
+   "size_bytes": 2620,
+   "source_path": "game/ui/screens/hub/tabs/campaign_tab.gd"
+  },
+  {
+   "key": "a0.campaign_tab.tscn",
+   "owner": "a0",
+   "sha256": "065ddfb9a06b1cdc904c570f4742cfa64d84c091515f1887c8306e891c2e1103",
+   "size_bytes": 3375,
+   "source_path": "game/ui/screens/hub/tabs/campaign_tab.tscn"
+  },
+  {
+   "key": "a0.home_map_screen.tscn",
+   "owner": "a0",
+   "sha256": "20c1d6e4b70ceb9000430ea4b7beacaca2d43e95197c810f41314dbe894b199f",
+   "size_bytes": 7572,
+   "source_path": "game/ui/screens/home/home_map_screen.tscn"
+  },
+  {
+   "key": "a0.survival_normal_entry_home_restart_test.gd",
+   "owner": "a0",
+   "sha256": "a4e768acea35759b5f28acc0061517805246a40cda0dc81fe9c61ae9b982f5af",
+   "size_bytes": 11411,
+   "source_path": "tests/survival_normal_entry_home_restart_test.gd"
+  },
+  {
+   "key": "a0.survival_normal_home_journey_test.gd",
+   "owner": "a0",
+   "sha256": "c16c34ea396af673b03105ea821c5069ad0d14e3887a99d4a706af022bf11c62",
+   "size_bytes": 26739,
+   "source_path": "tests/survival_normal_home_journey_test.gd"
+  },
+  {
+   "key": "a0.a0-normal-entry-home-restart.yml",
+   "owner": "a0",
+   "sha256": "955443e2d194c549e80bdc762762d76f56dc48b608cbb2e77042dc4bc00296bf",
+   "size_bytes": 3797,
+   "source_path": ".github/workflows/a0-normal-entry-home-restart.yml"
+  },
+  {
+   "key": "a0.survival_waystation_authority_test.gd",
+   "owner": "a0",
+   "sha256": "5c1821beb8b408e241feefc4dd1aae4d1331c114fca04d6917cc6438330395ba",
+   "size_bytes": 9842,
+   "source_path": "tests/survival_waystation_authority_test.gd"
+  },
+  {
+   "key": "a0.survival_waystation_input_restart_test.gd",
+   "owner": "a0",
+   "sha256": "898d69d18ccfec1fdc3c5b78e483af1c9d73276dd374c669a530ef699bd1587e",
+   "size_bytes": 9337,
+   "source_path": "tests/survival_waystation_input_restart_test.gd"
+  },
+  {
+   "key": "a0.a0-waystation-input-restart.yml",
+   "owner": "a0",
+   "sha256": "6f24e7f25a2958ee3834210cc484391393c20eb2e8841828c3931255b58ff455",
+   "size_bytes": 6211,
+   "source_path": ".github/workflows/a0-waystation-input-restart.yml"
+  },
+  {
+   "key": "a0.survival_catalog.json",
+   "owner": "a0",
+   "sha256": "c7118fb83718ede9b183b0771eac7ca482b52755fa0bf016d63b0099001b91c8",
+   "size_bytes": 5837,
+   "source_path": "data/survival/survival_catalog.json"
+  },
+  {
+   "key": "a0.unique_ownership_guard.gd",
+   "owner": "a0",
+   "sha256": "8445256e4ded547cec4ac873c18fd4900f3db9390093aebbe3366e7033a713b3",
+   "size_bytes": 9674,
+   "source_path": "game/survival/economy/unique_ownership_guard.gd"
+  },
+  {
+   "key": "a0.waystation_host.gd",
+   "owner": "a0",
+   "sha256": "c6bb450c72a58fa464e2f28292c125ea5c7a286a5a54d79ccc7d93d8a5227c96",
+   "size_bytes": 5785,
+   "source_path": "game/survival/waystation_host.gd"
+  },
+  {
+   "key": "a0.waystation_geometry.gd",
+   "owner": "a0",
+   "sha256": "68e31df558e0be1c63294b07270411ee0d4470486c90e44be4e7d41324c5c833",
+   "size_bytes": 3454,
+   "source_path": "game/survival/waystation_geometry.gd"
+  },
+  {
+   "key": "a0.waystation_interactable.gd",
+   "owner": "a0",
+   "sha256": "e6e4addfeae616d4b4a869e674631818fbf27b16997fb4092d5bac4152224adb",
+   "size_bytes": 595,
+   "source_path": "game/survival/waystation_interactable.gd"
+  },
+  {
+   "key": "a0.world_source_adapter.gd",
+   "owner": "a0",
+   "sha256": "689a9b89dba4d756387b6b5c5f09b54d90ff0a787395f5e2fb523da496836efe",
+   "size_bytes": 11408,
+   "source_path": "game/survival/economy/world_source_adapter.gd"
+  },
+  {
+   "key": "a0.a3_economy_service.gd",
+   "owner": "a0",
+   "sha256": "4f9165468cf98b557984c63168b84ace4dae264ef56e659ca7fe42c06802e82c",
+   "size_bytes": 69586,
+   "source_path": "game/survival/economy/vendor/a3_economy_service.gd"
+  },
+  {
+   "key": "a0.economy_session.gd",
+   "owner": "a0",
+   "sha256": "b7243cd8acb1fdae55ca2cc163b36f167d9c80977e7554598d732087325138ea",
+   "size_bytes": 18598,
+   "source_path": "game/survival/economy/economy_session.gd"
+  },
+  {
+   "key": "a0.world_source_bindings.v3.json",
+   "owner": "a0",
+   "sha256": "b1d291d035c9e543e69281da268b378c8e1bb498be561b2f15e67c840792b353",
+   "size_bytes": 8546,
+   "source_path": "data/survival/items/world_source_bindings.v3.json"
+  },
+  {
+   "key": "a0.annex_world.v1.json",
+   "owner": "a0",
+   "sha256": "8883a224f05372f7ad3afa5317da82268e624acfc76f9891ba9fc24a22f6e1c6",
+   "size_bytes": 11457,
+   "source_path": "data/survival/connector/a0_candidate/annex_world.v1.json"
+  },
+  {
+   "key": "a0.poi_crown_waystation.slice.json",
+   "owner": "a0",
+   "sha256": "3a4981fd3e24580e2e7c2ee5d0929f76c432d785e142b67a222c6480af01e16f",
+   "size_bytes": 17805,
+   "source_path": "data/survival/connector/a0_candidate/slices/poi_crown_waystation.slice.json"
+  },
+  {
+   "key": "a0.survival_save_precision_test.gd",
+   "owner": "a0",
+   "sha256": "88e80b77db273be6d92110b670becb080e45671c7aed3a871f58e8b6c7780df2",
+   "size_bytes": 3282,
+   "source_path": "tests/survival_save_precision_test.gd"
+  },
+  {
+   "key": "a0.a0-save-precision.yml",
+   "owner": "a0",
+   "sha256": "5e5f6b283980e5f36732ca14a73afb60345c616e986ed1e98a9d83f9adff4e59",
+   "size_bytes": 3379,
+   "source_path": ".github/workflows/a0-save-precision.yml"
+  },
+  {
+   "key": "a6.player_first_hud.gd",
+   "owner": "a6",
+   "sha256": "3ed644a1d352bf30e38589ddeeca1e50193f88b7db1807607569f24ff8e5b0b1",
+   "size_bytes": 13649,
+   "source_path": "game/survival/ui/player_first_hud.gd"
+  },
+  {
+   "key": "a6.acceptance_journeys.gd",
+   "owner": "a6",
+   "sha256": "a2042c8ceb822b74362036cf04cce68b96aa08105d7380a17cb4c28e2044f1d6",
+   "size_bytes": 28013,
+   "source_path": "game/survival/ui/acceptance_journeys.gd"
+  },
+  {
+   "key": "a6.expedition_workspace.gd",
+   "owner": "a6",
+   "sha256": "8573a48b84f753b997186c8b3c04580f77fe2e0387545a96f737b35e2bfc8222",
+   "size_bytes": 6397,
+   "source_path": "game/survival/ui/expedition_workspace.gd"
+  },
+  {
+   "key": "a6.expedition_planner.gd",
+   "owner": "a6",
+   "sha256": "1a641543d7b4b63803dd44d836ead6fe66b0929b89ccd26b0efc43a3a8301946",
+   "size_bytes": 35797,
+   "source_path": "game/survival/ui/expedition_planner.gd"
+  },
+  {
+   "key": "a6.expedition_map.gd",
+   "owner": "a6",
+   "sha256": "a09969ae293144f944f23d0b3dc2c4fcc5eb9faa87cd6625ffb65fa6e107b4f3",
+   "size_bytes": 2883,
+   "source_path": "game/survival/ui/expedition_map.gd"
+  },
+  {
+   "key": "a6.survival_journal.gd",
+   "owner": "a6",
+   "sha256": "d6e7e22263d7034fc899122498fa013773d6a35a45b2d2f447a1a8cdcc9d8ab1",
+   "size_bytes": 11975,
+   "source_path": "game/survival/ui/survival_journal.gd"
+  },
+  {
+   "key": "a6.survival_view_adapter.gd",
+   "owner": "a6",
+   "sha256": "b237e684794d916ed431a46af044f7b9f8f1a895f71fe1840f9d834a6ab728e6",
+   "size_bytes": 16843,
+   "source_path": "game/survival/ui/survival_view_adapter.gd"
+  },
+  {
+   "key": "a6.a0_storage_command_adapter.gd",
+   "owner": "a6",
+   "sha256": "928b650de125aeaa387ed33df1b58195851967b14833f54b67ab0cfa7b2a69f0",
+   "size_bytes": 4128,
+   "source_path": "game/survival/ui/a0_storage_command_adapter.gd"
+  },
+  {
+   "key": "a6.avatar_appearance_adapter.gd",
+   "owner": "a6",
+   "sha256": "763536255bed5e8ec4aee3c0c6145a9dc9f9a1b43000bf7fe055b00d72a6b55a",
+   "size_bytes": 3364,
+   "source_path": "game/survival/ui/avatar_appearance_adapter.gd"
+  },
+  {
+   "key": "a6.avatar_art_manifest.json",
+   "owner": "a6",
+   "sha256": "4da27829955fbf22d54d00c40a26cf7a7272d8cbb34b07f11263ff7912f9e717",
+   "size_bytes": 5374,
+   "source_path": "game/survival/ui/avatar_art_manifest.json"
+  },
+  {
+   "key": "a8.south_quarry.tscn",
+   "owner": "a8",
+   "sha256": "67ebc90c07c9ae82a03e42fc37e52b547e8318a9e8c71b70ea4485b40229d6d6",
+   "size_bytes": 306,
+   "source_path": "game/survival/world_content/scenes/south_quarry.tscn"
+  },
+  {
+   "key": "a8.south_orchard_ruin.tscn",
+   "owner": "a8",
+   "sha256": "3b7830dff98c5721002a2057505202eb0a3270ca9afaf9cf4a557694d058c002",
+   "size_bytes": 313,
+   "source_path": "game/survival/world_content/scenes/south_orchard_ruin.tscn"
+  },
+  {
+   "key": "a8.south_crown_mill.tscn",
+   "owner": "a8",
+   "sha256": "ae824d3c8b17414b3b3ab1b9766246d6ec4afd1630f58b640665270caea5daa3",
+   "size_bytes": 308,
+   "source_path": "game/survival/world_content/scenes/south_crown_mill.tscn"
+  },
+  {
+   "key": "a8.poi_pilot.tscn",
+   "owner": "a8",
+   "sha256": "754890682c469bbef90a37e4b80f7b66771b2f764803f110468681b860294dd7",
+   "size_bytes": 225,
+   "source_path": "game/survival/world_content/scenes/poi_pilot.tscn"
+  },
+  {
+   "key": "a8.native_poi_site.gd",
+   "owner": "a8",
+   "sha256": "e1924102c4e534a113d9d44190d0447fc1244d613de6ca8044666ef2e868d9df",
+   "size_bytes": 18091,
+   "source_path": "game/survival/world_content/scripts/native_poi_site.gd"
+  },
+  {
+   "key": "a8.native_poi_shell.gd",
+   "owner": "a8",
+   "sha256": "08dac59ae448c6d6997915fca20df97fc29f4299808cb60af07e8b35a41e8dfc",
+   "size_bytes": 6448,
+   "source_path": "game/survival/world_content/scripts/native_poi_shell.gd"
+  },
+  {
+   "key": "a8.poi_authority_fixture.gd",
+   "owner": "a8",
+   "sha256": "d265cc984788ddd06744766d953db3ed00b84ff500363db5e1f5f1432d966187",
+   "size_bytes": 9221,
+   "source_path": "game/survival/world_content/scripts/poi_authority_fixture.gd"
+  },
+  {
+   "key": "a8.poi_pilot.gd",
+   "owner": "a8",
+   "sha256": "99f45c310c225117f507c708bf6a4ef8b0696fb357ed5e920322befbd80ed0ae",
+   "size_bytes": 11848,
+   "source_path": "game/survival/world_content/scripts/poi_pilot.gd"
+  },
+  {
+   "key": "a8.south_quarry.json",
+   "owner": "a8",
+   "sha256": "241c6b371e6594e8127e4c3b58f8d2d3d66c4dc2c0b94c0795bfe3aca23dc783",
+   "size_bytes": 13623,
+   "source_path": "data/survival/world_content/sites/south_quarry.json"
+  },
+  {
+   "key": "a8.south_orchard_ruin.json",
+   "owner": "a8",
+   "sha256": "2df9d81122a74bd5375f1d4edd94d2c84a2a567708285e79e14b93f5ea7cb2a1",
+   "size_bytes": 12350,
+   "source_path": "data/survival/world_content/sites/south_orchard_ruin.json"
+  },
+  {
+   "key": "a8.south_crown_mill.json",
+   "owner": "a8",
+   "sha256": "cb3764057c53b1d63def5bde7c046795789c58213fa5dabc20fb6c647876b2be",
+   "size_bytes": 12559,
+   "source_path": "data/survival/world_content/sites/south_crown_mill.json"
+  },
+  {
+   "key": "a8.interaction_contract.v1.json",
+   "owner": "a8",
+   "sha256": "825d7faaf68fa416b71a3b112e4770f02af9718b4abc66210f98100bb6bee24b",
+   "size_bytes": 2864,
+   "source_path": "data/survival/world_content/interaction_contract.v1.json"
+  },
+  {
+   "key": "a8.quarry_integration_candidate.v1.json",
+   "owner": "a8",
+   "sha256": "c2dec0dfb9ca42422b4124e63b836f886ff32568fe859ba658127f59828ff1f4",
+   "size_bytes": 8556,
+   "source_path": "data/survival/world_content/quarry_integration_candidate.v1.json"
+  },
+  {
+   "key": "a8.native_poi_vectors.gd",
+   "owner": "a8",
+   "sha256": "a33bad3ccf1430c24ba83f9e79538c6e118d81a3a82d381cc001ec5cc85dd3ff",
+   "size_bytes": 1093,
+   "source_path": "game/survival/world_content/scripts/native_poi_vectors.gd"
+  },
+  {
+   "key": "a8.native_poi_art.gd",
+   "owner": "a8",
+   "sha256": "212db7aab4cec916306ed46b6e8c33f3c9bbd14b759a593cc428ecce7830c236",
+   "size_bytes": 9165,
+   "source_path": "game/survival/world_content/scripts/native_poi_art.gd"
+  },
+  {
+   "key": "a8.a8_art_manifest.v1.json",
+   "owner": "a8",
+   "sha256": "55f9084e3a1d005eb199f49f35ff2761bd97ec4698ecd3fc3b700523851c061e",
+   "size_bytes": 7269,
+   "source_path": "data/survival/world_content/a8_art_manifest.v1.json"
+  },
+  {
+   "key": "a8.a8-world-content-native.yml",
+   "owner": "a8",
+   "sha256": "738d23bc5fece35794ad273b2157d6e2d3990354df92071f3fc872b3abe07bd2",
+   "size_bytes": 3549,
+   "source_path": ".github/workflows/a8-world-content-native.yml"
+  },
+  {
+   "key": "a1.handoff_contracts.json",
+   "owner": "a1",
+   "sha256": "c4f0a453c8143bfae9db88b269cd5406d6e4ae1c8b80ad2c0e70f865de7f97a1",
+   "size_bytes": 16126,
+   "source_path": "data/survival/world/vertical_slice/handoff_contracts.json"
+  },
+  {
+   "key": "a1.poi_crown_waystation.v1.json",
+   "owner": "a1",
+   "sha256": "8f2e437a9c4200f737e1b048be70030e4affde37012f1f05421efe7a2e8064cf",
+   "size_bytes": 5885,
+   "source_path": "data/survival/world/poi_authoring/poi_crown_waystation.v1.json"
+  },
+  {
+   "key": "a1.crown_roadside.corridor.v1.json",
+   "owner": "a1",
+   "sha256": "9d3909b0625bdf6239a760fdf2ac982d0ede0314491cab315d7268d42ddc232f",
+   "size_bytes": 27545,
+   "source_path": "data/survival/world/corridor/crown_roadside.corridor.v1.json"
+  },
+  {
+   "key": "a1.poi_crown_waystation.slice.json",
+   "owner": "a1",
+   "sha256": "3a4981fd3e24580e2e7c2ee5d0929f76c432d785e142b67a222c6480af01e16f",
+   "size_bytes": 17805,
+   "source_path": "data/survival/world/vertical_slice/poi_crown_waystation.slice.json"
+  },
+  {
+   "key": "a1.a8_shell_visuals.v1.json",
+   "owner": "a1",
+   "sha256": "96ef8ada5eb78a7b025f6018ddaf0a2a8464639a0b7574cae58b956eff01dfd8",
+   "size_bytes": 14708,
+   "source_path": "data/survival/world/art/a8_shell_visuals.v1.json"
+  },
+  {
+   "key": "a1.a8_site_transforms.v1.json",
+   "owner": "a1",
+   "sha256": "3db1350b05b1657826caea7ab625e6a2b4513ef6f59072bbc53dbc728c72f66e",
+   "size_bytes": 8168,
+   "source_path": "data/survival/world/corridor/a8_site_transforms.v1.json"
+  },
+  {
+   "key": "a1.crown_roadside_sources.v1.json",
+   "owner": "a1",
+   "sha256": "6a87f4734227a68f279bb2eb45b06059c8fc07ab023f1abd46cd36d5f2be6f0a",
+   "size_bytes": 8609,
+   "source_path": "data/survival/world/authoring/corridor/crown_roadside_sources.v1.json"
+  },
+  {
+   "key": "a3.sources.json",
+   "owner": "a3",
+   "sha256": "941da92cdbe244f62a31862af8a8ab0ef549c6504cfbd6ef47cc591c50c58caf",
+   "size_bytes": 19164,
+   "source_path": "data/survival/items/sources.json"
+  },
+  {
+   "key": "a3.items.json",
+   "owner": "a3",
+   "sha256": "0dd502bb439a11657c10074e51a55d144ae6b9eb622afa55967207380ba85a2d",
+   "size_bytes": 28476,
+   "source_path": "data/survival/items/items.json"
+  },
+  {
+   "key": "a3.world_source_bindings.v3.json",
+   "owner": "a3",
+   "sha256": "622a277fd00cdbbf1d1a8ba505a2d2755b18b64e8ee4c6cce620429bdbda5dfb",
+   "size_bytes": 14033,
+   "source_path": "data/survival/items/world_source_bindings.v3.json"
+  }
+ ],
+ "index": {
+  "avatar_or_character_art": [
+   {
+    "line": 26,
+    "path": "docs/survival/ux/A6_V4_CONTINUATION_REVIEW_20261030.md",
+    "pattern": "555940",
+    "text": "| Male Craftpix 555940 | 6,439,805 | `b4910c4dd86a5193e5e0640751a20abd` | `b5579a3cc6006ef8c9d55c9ca0388575d75c987382b6cb504e2c7519e6c1e795` | 350 | 0 |"
+   },
+   {
+    "line": 27,
+    "path": "docs/survival/ux/A6_V4_CONTINUATION_REVIEW_20261030.md",
+    "pattern": "419402",
+    "text": "| Female Craftpix 419402 | 6,419,098 | `cf6ffa60ef922e4703dc6b27c3b5bac2` | `f704e7852273d5f0111435ae86975fa981354d699dff1f594934f6a32d9821ad` | 316 | 0 |"
+   },
+   {
+    "line": 29,
+    "path": "docs/survival/ux/A6_V4_CONTINUATION_REVIEW_20261030.md",
+    "pattern": "180537",
+    "text": "Temporary previews of both selected identities' unarmed idle, walk and run sheets were opened and visually inspected. Their idle sheets are each 768\u00d7256 with four directional rows. No source PNG or ZI"
+   },
+   {
+    "line": 9,
+    "path": "docs/survival/ux/AVATAR_SOURCE_AND_PRESENTATION_GATE_20261030.md",
+    "pattern": "555940",
+    "text": "| Bald, unarmored male | Craftpix 555940, `craftpix-net-555940-free-base-4-direction-male-character-pixel-art.zip` | `1CuSQ3pr75U1l1Ep8FIDexQlMr8fO3qGb` | `PNG/Unarmed/Without_shadow/Unarmed_Idle_with"
+   },
+   {
+    "line": 10,
+    "path": "docs/survival/ux/AVATAR_SOURCE_AND_PRESENTATION_GATE_20261030.md",
+    "pattern": "419402",
+    "text": "| Bald, unarmored female | Craftpix 419402, `craftpix-net-419402-free-base-4-direction-female-character-pixel-art.zip` | `1o5hRVbPZjZxcPGwP5coPDHZARbAej75o` | `PNG/Unarmed/Without_shadow/Unarmed_Idle_"
+   },
+   {
+    "line": 27,
+    "path": "docs/survival/ux/AVATAR_SOURCE_AND_PRESENTATION_GATE_20261030.md",
+    "pattern": "180537",
+    "text": "Source-byte inspection confirms the two bald/unarmored canonical sets and their four-direction idle, walk and run sheets. It does **not** establish compatible male and female grade-1/grade-2 armor spr"
+   },
+   {
+    "line": 6,
+    "path": "docs/survival/ux/CT_A6_PRE_FULL_PLAYTEST_LIVE_HOST_HANDOFF_20261030.md",
+    "pattern": "419402",
+    "text": "- Exactly two canonical starting player identities: bald, unarmored male, Craftpix 555940, Drive file `1CuSQ3pr75U1l1Ep8FIDexQlMr8fO3qGb`; bald, unarmored female, Craftpix 419402, Drive file `1o5hRVbP"
+   },
+   {
+    "line": 6,
+    "path": "docs/survival/ux/CT_A6_PRE_FULL_PLAYTEST_LIVE_HOST_HANDOFF_20261030.md",
+    "pattern": "555940",
+    "text": "- Exactly two canonical starting player identities: bald, unarmored male, Craftpix 555940, Drive file `1CuSQ3pr75U1l1Ep8FIDexQlMr8fO3qGb`; bald, unarmored female, Craftpix 419402, Drive file `1o5hRVbP"
+   },
+   {
+    "line": 8,
+    "path": "docs/survival/ux/CT_A6_PRE_FULL_PLAYTEST_LIVE_HOST_HANDOFF_20261030.md",
+    "pattern": "180537",
+    "text": "- Armor art: grade 1 and grade 2 male/female matching files have not been selected or inspected. D054 delegates compatible art/layer selection from approved sources; it does not lock particular armor "
+   },
+   {
+    "line": 23,
+    "path": "docs/survival/ux/CT_A6_PRE_FULL_PLAYTEST_LIVE_HOST_HANDOFF_20261030.md",
+    "pattern": "419402",
+    "text": "4. Use the exact private source ZIPs only through authorized project asset handoff. Current source record names are `craftpix-net-555940-free-base-4-direction-male-character-pixel-art.zip` and `craftp"
+   },
+   {
+    "line": 23,
+    "path": "docs/survival/ux/CT_A6_PRE_FULL_PLAYTEST_LIVE_HOST_HANDOFF_20261030.md",
+    "pattern": "555940",
+    "text": "4. Use the exact private source ZIPs only through authorized project asset handoff. Current source record names are `craftpix-net-555940-free-base-4-direction-male-character-pixel-art.zip` and `craftp"
+   },
+   {
+    "line": 6,
+    "path": "docs/survival/ux/CT_D051_D052_AVATAR_AND_PLAYER_UX_CORRECTION_20261030.md",
+    "pattern": "555940",
+    "text": "Male bald, no armor: Craftpix 555940 https://drive.google.com/file/d/1CuSQ3pr75U1l1Ep8FIDexQlMr8fO3qGb/view"
+   },
+   {
+    "line": 7,
+    "path": "docs/survival/ux/CT_D051_D052_AVATAR_AND_PLAYER_UX_CORRECTION_20261030.md",
+    "pattern": "419402",
+    "text": "Female bald, no armor: Craftpix 419402 https://drive.google.com/file/d/1o5hRVbPZjZxcPGwP5coPDHZARbAej75o/view"
+   },
+   {
+    "line": 8,
+    "path": "docs/survival/ux/CT_D051_D052_AVATAR_AND_PLAYER_UX_CORRECTION_20261030.md",
+    "pattern": "adventurer",
+    "text": "Both include PNG/Unarmed/Without_shadow/Unarmed_Idle_without_shadow.png 768x256, with actual unarmed male/female bodies. OLD advice saying these two Craftpix packs were not the canonical avatars is no"
+   },
+   {
+    "line": 10,
+    "path": "docs/survival/ux/CT_D051_D052_AVATAR_AND_PLAYER_UX_CORRECTION_20261030.md",
+    "pattern": "180537",
+    "text": "Equipment appearance contract: keep same chosen gender and identity; when actual armor grade 1 is equipped, use corresponding armor-1 visuals; armor grade 2 -> armor-2 visuals; unequip reverts bald un"
+   },
+   {
+    "line": 107,
+    "path": "docs/survival/ux/V3_SUSTAINED_PRODUCT_ACCEPTANCE.md",
+    "pattern": "game/characters/knight",
+    "text": "At the pinned A0 source, `chapter1_overworld.gd` checks visible `gameplay_modal` roots before its build-toggle/slot/place polling and prevents its Escape retreat path from running through a visible mo"
+   },
+   {
+    "line": 99,
+    "path": "docs/survival/ux/V4_PLAYER_FIRST_HUD_HANDOFF_20261030.md",
+    "pattern": "419402",
+    "text": "The latest user-locked decision and source correction supersede any earlier avatar art assumptions. The canonical bald/unarmored male is Craftpix 555940 (Drive `1CuSQ3pr75U1l1Ep8FIDexQlMr8fO3qGb`); th"
+   },
+   {
+    "line": 99,
+    "path": "docs/survival/ux/V4_PLAYER_FIRST_HUD_HANDOFF_20261030.md",
+    "pattern": "555940",
+    "text": "The latest user-locked decision and source correction supersede any earlier avatar art assumptions. The canonical bald/unarmored male is Craftpix 555940 (Drive `1CuSQ3pr75U1l1Ep8FIDexQlMr8fO3qGb`); th"
+   },
+   {
+    "line": 103,
+    "path": "docs/survival/ux/V4_PLAYER_FIRST_HUD_HANDOFF_20261030.md",
+    "pattern": "180537",
+    "text": "`avatar_appearance_adapter.gd` accepts only an A0-authoritative gender/equipped-grade snapshot and fails closed with `SOURCE_BLOCKED` unless that exact identity/tier asset is installed. No armor art i"
+   },
+   {
+    "line": 13,
+    "path": "game/autoload/realtime_bridge.gd",
+    "pattern": "game/characters/knight",
+    "text": "const TUNING_SCHEMA := preload(\"res://game/characters/knight/gameplay_tuning_schema.gd\")"
+   },
+   {
+    "line": 19,
+    "path": "game/characters/enemies/chapter_2_hero_boss.gd",
+    "pattern": "game/characters/knight",
+    "text": "const AxeAnimationLibrary := preload(\"res://game/characters/knight/axe_warrior_animation_library.gd\")"
+   },
+   {
+    "line": 20,
+    "path": "game/characters/enemies/chapter_2_hero_boss.gd",
+    "pattern": "game/characters/knight",
+    "text": "const WizardAnimationLibrary := preload(\"res://game/characters/knight/wizard_animation_library.gd\")"
+   },
+   {
+    "line": 27,
+    "path": "game/characters/enemies/hooded_archer_miniboss.gd",
+    "pattern": "game/characters/knight",
+    "text": "const ArcherAnimations := preload(\"res://game/characters/knight/archer_animation_library.gd\")"
+   },
+   {
+    "line": 20,
+    "path": "game/characters/knight/knight.gd",
+    "pattern": "game/characters/knight",
+    "text": "const KnightAnimations := preload(\"res://game/characters/knight/knight_animation_library.gd\")"
+   },
+   {
+    "line": 21,
+    "path": "game/characters/knight/knight.gd",
+    "pattern": "game/characters/knight",
+    "text": "const AxeWarriorAnimations := preload(\"res://game/characters/knight/axe_warrior_animation_library.gd\")"
+   },
+   {
+    "line": 22,
+    "path": "game/characters/knight/knight.gd",
+    "pattern": "game/characters/knight",
+    "text": "const ArcherAnimations := preload(\"res://game/characters/knight/archer_animation_library.gd\")"
+   },
+   {
+    "line": 23,
+    "path": "game/characters/knight/knight.gd",
+    "pattern": "game/characters/knight",
+    "text": "const WizardAnimations := preload(\"res://game/characters/knight/wizard_animation_library.gd\")"
+   },
+   {
+    "line": 24,
+    "path": "game/characters/knight/knight.gd",
+    "pattern": "game/characters/knight",
+    "text": "const WizardAnimations := preload(\"res://game/characters/knight/wizard_animation_library.gd\")"
+   },
+   {
+    "line": 32,
+    "path": "game/characters/knight/knight.gd",
+    "pattern": "game/characters/knight",
+    "text": "const TuningSchema := preload(\"res://game/characters/knight/gameplay_tuning_schema.gd\")"
+   },
+   {
+    "line": 33,
+    "path": "game/characters/knight/knight.gd",
+    "pattern": "game/characters/knight",
+    "text": "const TuningSchema := preload(\"res://game/characters/knight/gameplay_tuning_schema.gd\")"
+   },
+   {
+    "line": 3,
+    "path": "game/characters/knight/knight.tscn",
+    "pattern": "game/characters/knight",
+    "text": "[ext_resource type=\"Script\" path=\"res://game/characters/knight/knight.gd\" id=\"1_player\"]"
+   },
+   {
+    "line": 9,
+    "path": "game/content/tuning/gameplay_tuning_profile.gd",
+    "pattern": "game/characters/knight",
+    "text": "const TuningSchema := preload(\"res://game/characters/knight/gameplay_tuning_schema.gd\")"
+   },
+   {
+    "line": 8,
+    "path": "game/heroes/axe/axe_reaper_drop.gd",
+    "pattern": "game/characters/knight",
+    "text": "const AXE_ANIMATIONS := preload(\"res://game/characters/knight/axe_warrior_animation_library.gd\")"
+   },
+   {
+    "line": 7,
+    "path": "game/heroes/sword/k_night_vengeful_soul.gd",
+    "pattern": "game/characters/knight",
+    "text": "const KnightAnimations := preload(\"res://game/characters/knight/knight_animation_library.gd\")"
+   },
+   {
+    "line": 9,
+    "path": "game/heroes/sword/soul_interception.gd",
+    "pattern": "game/characters/knight",
+    "text": "const KnightAnimations := preload(\"res://game/characters/knight/knight_animation_library.gd\")"
+   },
+   {
+    "line": 252,
+    "path": "game/heroes/wizard/wizard_runtime.gd",
+    "pattern": "game/characters/knight",
+    "text": "var wizard_library := load(\"res://game/characters/knight/wizard_animation_library.gd\")"
+   },
+   {
+    "line": 5,
+    "path": "game/main.tscn",
+    "pattern": "game/characters/knight",
+    "text": "[ext_resource type=\"PackedScene\" path=\"res://game/characters/knight/knight.tscn\" id=\"3_knight\"]"
+   },
+   {
+    "line": 39,
+    "path": "game/overworld/chapter1_overworld.gd",
+    "pattern": "game/characters/knight",
+    "text": "const KNIGHT_SCENE: PackedScene = preload(\"res://game/characters/knight/knight.tscn\")"
+   },
+   {
+    "line": 14,
+    "path": "game/survival/ui/avatar_art_manifest.json",
+    "pattern": "555940",
+    "text": "\"source_pack\": \"craftpix-net-555940-free-base-4-direction-male-character-pixel-art.zip\","
+   },
+   {
+    "line": 15,
+    "path": "game/survival/ui/avatar_art_manifest.json",
+    "pattern": "555940",
+    "text": "\"craftpix_id\": \"555940\","
+   },
+   {
+    "line": 30,
+    "path": "game/survival/ui/avatar_art_manifest.json",
+    "pattern": "555940",
+    "text": "\"source_pack\": \"craftpix-net-555940-free-base-4-direction-male-character-pixel-art.zip\","
+   },
+   {
+    "line": 47,
+    "path": "game/survival/ui/avatar_art_manifest.json",
+    "pattern": "419402",
+    "text": "\"source_pack\": \"craftpix-net-419402-free-base-4-direction-female-character-pixel-art.zip\","
+   },
+   {
+    "line": 48,
+    "path": "game/survival/ui/avatar_art_manifest.json",
+    "pattern": "419402",
+    "text": "\"craftpix_id\": \"419402\","
+   },
+   {
+    "line": 63,
+    "path": "game/survival/ui/avatar_art_manifest.json",
+    "pattern": "419402",
+    "text": "\"source_pack\": \"craftpix-net-419402-free-base-4-direction-female-character-pixel-art.zip\","
+   },
+   {
+    "line": 83,
+    "path": "game/survival/ui/avatar_art_manifest.json",
+    "pattern": "180537",
+    "text": "\"note\": \"No armor, human, or hero filename match was returned. Five character-named results included the canonical bases plus the rejected Swordsman 180537, Orc, and Vampire packs. This does not prove"
+   },
+   {
+    "line": 87,
+    "path": "game/survival/ui/avatar_art_manifest.json",
+    "pattern": "180537",
+    "text": "\"craftpix_id\": \"180537\","
+   }
+  ],
+  "survival_ui_mounts": [
+   {
+    "line": 28,
+    "path": "docs/survival/ux/ASSET_AND_RESEARCH.md",
+    "pattern": "survival/ui/",
+    "text": "The V2 pass still imports no inventory system and no third-party artwork. Tiny icons are generated as 24\u00d724 logical-pixel `Image`/`ImageTexture` silhouettes in `game/survival/ui/pixel_ui.gd`; the angu"
+   },
+   {
+    "line": 23,
+    "path": "docs/survival/ux/AVATAR_SOURCE_AND_PRESENTATION_GATE_20261030.md",
+    "pattern": "survival/ui/",
+    "text": "`game/survival/ui/avatar_appearance_adapter.gd` is a read-only resolver for a versioned A0 owner projection and now refuses to load any texture unless `license_review.status` is `VERIFIED_GAME_USE`. T"
+   },
+   {
+    "line": 5,
+    "path": "docs/survival/ux/CONTINUATION_20261029.md",
+    "pattern": "survival/ui/",
+    "text": "**Status: WIP / HOLD PRODUCTION INTEGRATION.** Coordinator's `A6_UX_LOCAL_CHECKPOINT_0bf9151d_COORDINATION.md` decision is CONTINUE_WITH_CORRECTION. Existing journal retained; this checkpoint adds a s"
+   },
+   {
+    "line": 27,
+    "path": "docs/survival/ux/CONTINUATION_20261029.md",
+    "pattern": "survival/ui/",
+    "text": "godot --path . res://tests/survival/ui/planner_demo.tscn"
+   },
+   {
+    "line": 7,
+    "path": "docs/survival/ux/CT_A6_PRE_FULL_PLAYTEST_LIVE_HOST_HANDOFF_20261030.md",
+    "pattern": "survival/ui/",
+    "text": "- Equipment visuals must preserve selected gender across unarmored, armor grade 1 and grade 2; equip/unequip and save/reload/death/respawn must follow A0-authoritative equipped inventory state. The us"
+   },
+   {
+    "line": 28,
+    "path": "docs/survival/ux/CT_A6_PRE_FULL_PLAYTEST_LIVE_HOST_HANDOFF_20261030.md",
+    "pattern": "expedition_workspace",
+    "text": "A0 can integrate this package only after making an owner-authored host adapter and live journey. Preserve the existing A0 region/provisions/counter/prompt/death UI. Mount `res://game/survival/ui/playe"
+   },
+   {
+    "line": 28,
+    "path": "docs/survival/ux/CT_A6_PRE_FULL_PLAYTEST_LIVE_HOST_HANDOFF_20261030.md",
+    "pattern": "player_first_hud",
+    "text": "A0 can integrate this package only after making an owner-authored host adapter and live journey. Preserve the existing A0 region/provisions/counter/prompt/death UI. Mount `res://game/survival/ui/playe"
+   },
+   {
+    "line": 28,
+    "path": "docs/survival/ux/CT_A6_PRE_FULL_PLAYTEST_LIVE_HOST_HANDOFF_20261030.md",
+    "pattern": "survival/ui/",
+    "text": "A0 can integrate this package only after making an owner-authored host adapter and live journey. Preserve the existing A0 region/provisions/counter/prompt/death UI. Mount `res://game/survival/ui/playe"
+   },
+   {
+    "line": 28,
+    "path": "docs/survival/ux/CT_A6_PRE_FULL_PLAYTEST_LIVE_HOST_HANDOFF_20261030.md",
+    "pattern": "survival_journal",
+    "text": "A0 can integrate this package only after making an owner-authored host adapter and live journey. Preserve the existing A0 region/provisions/counter/prompt/death UI. Mount `res://game/survival/ui/playe"
+   },
+   {
+    "line": 47,
+    "path": "docs/survival/ux/CT_A6_PRE_FULL_PLAYTEST_LIVE_HOST_HANDOFF_20261030.md",
+    "pattern": "survival/ui/",
+    "text": "- The `godot`/`godot4` executable is not installed in this checkout. Native Godot 4.7 suites, 720p/2K/4K captures, and human review have **not** run here. The available `gdtoolkit` parser accepted all"
+   },
+   {
+    "line": 48,
+    "path": "docs/survival/ux/CT_A6_PRE_FULL_PLAYTEST_LIVE_HOST_HANDOFF_20261030.md",
+    "pattern": "survival/ui/",
+    "text": "- This checkout does not contain `game/survival/chest_inventory_panel.gd` or `game/overworld/chapter1_overworld.tscn`, both referenced by `tests/survival/ui/v4_storage_owner_integration_test.gd`; no l"
+   },
+   {
+    "line": 13,
+    "path": "docs/survival/ux/README.md",
+    "pattern": "survival/ui/",
+    "text": "- `game/survival/ui/survival_journal.tscn` and `.gd`: modal, keyboard-focusable tabbed satchel, inspection, scrollable stacks, placement advisor, and caller-filtered notes. Escape closes and restores "
+   },
+   {
+    "line": 13,
+    "path": "docs/survival/ux/README.md",
+    "pattern": "survival_journal",
+    "text": "- `game/survival/ui/survival_journal.tscn` and `.gd`: modal, keyboard-focusable tabbed satchel, inspection, scrollable stacks, placement advisor, and caller-filtered notes. Escape closes and restores "
+   },
+   {
+    "line": 15,
+    "path": "docs/survival/ux/README.md",
+    "pattern": "survival/ui/",
+    "text": "- `tests/survival/ui/demo.tscn`: interactive isolated fixture, **not the game**. Scroll to the end for the illustrative Core. Hazard, recovery, durability and Core records are labelled fixture and do "
+   },
+   {
+    "line": 21,
+    "path": "docs/survival/ux/README.md",
+    "pattern": "survival/ui/",
+    "text": "godot --path . res://tests/survival/ui/demo.tscn"
+   },
+   {
+    "line": 22,
+    "path": "docs/survival/ux/README.md",
+    "pattern": "survival/ui/",
+    "text": "godot --headless --path . --script res://tests/survival/ui/ui_test.gd"
+   },
+   {
+    "line": 25,
+    "path": "docs/survival/ux/README.md",
+    "pattern": "survival/ui/",
+    "text": "--script res://tests/survival/ui/ui_test.gd -- 1280"
+   },
+   {
+    "line": 5,
+    "path": "docs/survival/ux/SOURCE_REVIEW_20261029.md",
+    "pattern": "survival/ui/",
+    "text": "`SOURCE_COVERAGE_TRACE.json` was reviewed field-wise without relying on a truncated full dump: the 108 entry IDs, owner, decision, disposition, status, line ranges and refs were inspected; all 43 none"
+   },
+   {
+    "line": 11,
+    "path": "docs/survival/ux/TEST_EVIDENCE_0addc5f.md",
+    "pattern": "survival/ui/",
+    "text": "Numbers are checks; all failures **0**. Raw exact-SHA logs: `tests/survival/ui/evidence/v1-0addc5f-*.log` (12 files). Captures produced in these runs: `v1_workspace_map_{1280,1440,2160}.png`, `v1_work"
+   },
+   {
+    "line": 13,
+    "path": "docs/survival/ux/TEST_EVIDENCE_0addc5f.md",
+    "pattern": "survival/ui/",
+    "text": "Headless: `godot --headless --path . --script res://tests/survival/ui/{ui_test,planner_test,workspace_v1_test}.gd` **one script per invocation**. Native example:"
+   },
+   {
+    "line": 18,
+    "path": "docs/survival/ux/TEST_EVIDENCE_0addc5f.md",
+    "pattern": "survival/ui/",
+    "text": "--resolution 1280x720 --script res://tests/survival/ui/workspace_v1_test.gd -- 1280"
+   },
+   {
+    "line": 3,
+    "path": "docs/survival/ux/TEST_EVIDENCE_4971.md",
+    "pattern": "survival/ui/",
+    "text": "Code and fixture screenshots tested at **`4971c8f4df6219a2ceedb5e83c1272d089c712ec`**, clean working tree after tests. This evidence document and raw logs are added in subsequent evidence-only commits"
+   },
+   {
+    "line": 7,
+    "path": "docs/survival/ux/TEST_EVIDENCE_4971.md",
+    "pattern": "survival/ui/",
+    "text": "| Journal headless | `godot --headless --path . --script res://tests/survival/ui/ui_test.gd` | 21 checks, 0 failures | Isolated scene, fake stack records, real catalog, GUI input/focus/scroll/rejectio"
+   },
+   {
+    "line": 8,
+    "path": "docs/survival/ux/TEST_EVIDENCE_4971.md",
+    "pattern": "survival/ui/",
+    "text": "| Planner headless | `godot --headless --path . --script res://tests/survival/ui/planner_test.gd` | 28 checks, 0 failures | Fixture DTO, read-only aggregate item projection with real catalog, modal st"
+   },
+   {
+    "line": 17,
+    "path": "docs/survival/ux/TEST_EVIDENCE_4971.md",
+    "pattern": "survival/ui/",
+    "text": "--script res://tests/survival/ui/TEST.gd -- SUFFIX"
+   },
+   {
+    "line": 22,
+    "path": "docs/survival/ux/TEST_EVIDENCE_4971.md",
+    "pattern": "survival/ui/",
+    "text": "Native screenshot review: visually inspected journal and desk at 1280\u00d7720 and examples at 2560\u00d71440 and 3840\u00d72160, including workshop, Core, schematic map, recovery and storage. No actual world enviro"
+   },
+   {
+    "line": 13,
+    "path": "docs/survival/ux/TEST_EVIDENCE_bb5011a.md",
+    "pattern": "survival/ui/",
+    "text": "Raw logs: `tests/survival/ui/evidence/v1-bb5011a-*.log` (12 files). Reproduction commands, capture paths, fixture limitations and platform details: `TEST_EVIDENCE_0addc5f.md` and `V1_WORKSPACE_CONTRAC"
+   },
+   {
+    "line": 13,
+    "path": "docs/survival/ux/TEST_EVIDENCE_e467595.md",
+    "pattern": "survival/ui/",
+    "text": "All 12 test processes exited zero. No script errors or ObjectDB/resource leak errors; native logs contain VSync and missing `libxkbcommon.so.0` warnings. The independent read-only source-integrity scr"
+   },
+   {
+    "line": 5,
+    "path": "docs/survival/ux/V1_WORKSPACE_CONTRACT.md",
+    "pattern": "expedition_workspace",
+    "text": "**Status: OFFLINE FIXTURE / HOLD PRODUCTION INTEGRATION.** This is an A6-owned UI proposal, not an approved A0/A3 service contract or gameplay implementation. `expedition_workspace.tscn` composes the "
+   },
+   {
+    "line": 5,
+    "path": "docs/survival/ux/V1_WORKSPACE_CONTRACT.md",
+    "pattern": "survival/ui/",
+    "text": "**Status: OFFLINE FIXTURE / HOLD PRODUCTION INTEGRATION.** This is an A6-owned UI proposal, not an approved A0/A3 service contract or gameplay implementation. `expedition_workspace.tscn` composes the "
+   },
+   {
+    "line": 36,
+    "path": "docs/survival/ux/V1_WORKSPACE_CONTRACT.md",
+    "pattern": "survival/ui/",
+    "text": "godot --path . res://tests/survival/ui/workspace_demo.tscn"
+   },
+   {
+    "line": 37,
+    "path": "docs/survival/ux/V1_WORKSPACE_CONTRACT.md",
+    "pattern": "survival/ui/",
+    "text": "godot --headless --path . --script res://tests/survival/ui/workspace_v1_test.gd"
+   },
+   {
+    "line": 38,
+    "path": "docs/survival/ux/V1_WORKSPACE_CONTRACT.md",
+    "pattern": "survival/ui/",
+    "text": "godot --headless --path . --script res://tests/survival/ui/planner_test.gd"
+   },
+   {
+    "line": 39,
+    "path": "docs/survival/ux/V1_WORKSPACE_CONTRACT.md",
+    "pattern": "survival/ui/",
+    "text": "godot --headless --path . --script res://tests/survival/ui/ui_test.gd"
+   },
+   {
+    "line": 21,
+    "path": "docs/survival/ux/V2_VISUAL_SYSTEM.md",
+    "pattern": "survival/ui/",
+    "text": "`tests/survival/ui/visual_capture.gd` writes only to ignored `.artifacts/a6-ui/`. At 1280 it saves one composed Satchel frame and one Core detail frame; at 2560 and 3840 it saves only the Core detail "
+   },
+   {
+    "line": 25,
+    "path": "docs/survival/ux/V2_VISUAL_SYSTEM.md",
+    "pattern": "survival/ui/",
+    "text": "res://tests/survival/ui/visual_capture.tscn -- 1280"
+   },
+   {
+    "line": 27,
+    "path": "docs/survival/ux/V2_VISUAL_SYSTEM.md",
+    "pattern": "survival/ui/",
+    "text": "res://tests/survival/ui/visual_capture.tscn -- 2560"
+   },
+   {
+    "line": 29,
+    "path": "docs/survival/ux/V2_VISUAL_SYSTEM.md",
+    "pattern": "survival/ui/",
+    "text": "res://tests/survival/ui/visual_capture.tscn -- 3840"
+   },
+   {
+    "line": 9,
+    "path": "docs/survival/ux/V3_SUSTAINED_PRODUCT_ACCEPTANCE.md",
+    "pattern": "survival/ui/",
+    "text": "Allowed A6 edits remain confined to `game/survival/ui/`, `tests/survival/ui/`, `docs/survival/ux/`, and this A6-scoped workflow. No A0 Knight/overworld/SaveService, A1 world, A3 economy, A4 Gold, S6, "
+   },
+   {
+    "line": 109,
+    "path": "docs/survival/ux/V3_SUSTAINED_PRODUCT_ACCEPTANCE.md",
+    "pattern": "survival/ui/",
+    "text": "A6-owned executable regression: `tests/survival/ui/a0_modal_gameplay_input_regression.gd`. Run it against the pinned A0 composition:"
+   },
+   {
+    "line": 112,
+    "path": "docs/survival/ux/V3_SUSTAINED_PRODUCT_ACCEPTANCE.md",
+    "pattern": "survival/ui/",
+    "text": "godot --headless --path . res://tests/survival/ui/a0_modal_gameplay_input_regression.tscn"
+   },
+   {
+    "line": 7,
+    "path": "docs/survival/ux/V4_PLAYER_FIRST_HUD_HANDOFF_20261030.md",
+    "pattern": "survival/ui/",
+    "text": "**Dispatch source:** `docs/survival/tasks/A6_V4_PLAYER_FIRST_HUD_INVENTORY_CORE_UX_HANDOFF_20261030.md`, recovered from integration ref `feature/survival-rpg-foundation-20261029` at `303f39e7b824c8079"
+   },
+   {
+    "line": 32,
+    "path": "docs/survival/ux/V4_PLAYER_FIRST_HUD_HANDOFF_20261030.md",
+    "pattern": "survival_journal",
+    "text": "| A6 V3 `survival_journal` / `expedition_planner` | Stronger item inspection, the 640\u00d7360 logical pixel-fantasy visual system, scrollable details, exact displayed quantities, search, discovered-place/"
+   },
+   {
+    "line": 67,
+    "path": "docs/survival/ux/V4_PLAYER_FIRST_HUD_HANDOFF_20261030.md",
+    "pattern": "player_first_hud",
+    "text": "- `player_first_hud.gd`: safe-schema acceptance with monotonic owner revision/sequence, allowlisted provenance, bounded needs rows, unknown danger omission, explicit pack-full state, source-gated disc"
+   },
+   {
+    "line": 70,
+    "path": "docs/survival/ux/V4_PLAYER_FIRST_HUD_HANDOFF_20261030.md",
+    "pattern": "survival_journal",
+    "text": "- `expedition_planner.gd` / `survival_journal.gd`: preserve V3 surface; transfer requests distinguish canonical item ID from display stack key; unique Core has no generic amount control; Core status k"
+   },
+   {
+    "line": 71,
+    "path": "docs/survival/ux/V4_PLAYER_FIRST_HUD_HANDOFF_20261030.md",
+    "pattern": "player_first_hud",
+    "text": "- `player_first_hud_test.gd`: bad schema/provenance, monotonic/stale revisions, malformed needs, full bag, discovered-vs-hidden POI sanitization, station queue, death-bag capacity rejection, fixture l"
+   },
+   {
+    "line": 99,
+    "path": "docs/survival/ux/V4_PLAYER_FIRST_HUD_HANDOFF_20261030.md",
+    "pattern": "survival/ui/",
+    "text": "The latest user-locked decision and source correction supersede any earlier avatar art assumptions. The canonical bald/unarmored male is Craftpix 555940 (Drive `1CuSQ3pr75U1l1Ep8FIDexQlMr8fO3qGb`); th"
+   },
+   {
+    "line": 10,
+    "path": "game/survival/ui/acceptance_journeys.gd",
+    "pattern": "survival/ui/",
+    "text": "const PIXEL_UI := preload(\"res://game/survival/ui/pixel_ui.gd\")"
+   },
+   {
+    "line": 11,
+    "path": "game/survival/ui/acceptance_journeys.gd",
+    "pattern": "survival/ui/",
+    "text": "const PIXEL_PANEL := preload(\"res://game/survival/ui/pixel_panel.gd\")"
+   },
+   {
+    "line": 5,
+    "path": "game/survival/ui/avatar_appearance_adapter.gd",
+    "pattern": "survival/ui/",
+    "text": "const MANIFEST_PATH := \"res://game/survival/ui/avatar_art_manifest.json\""
+   },
+   {
+    "line": 103,
+    "path": "game/survival/ui/avatar_art_manifest.json",
+    "pattern": "survival/ui/",
+    "text": "\"script\": \"res://game/survival/ui/avatar_sprite_pipeline.gd\","
+   },
+   {
+    "line": 8,
+    "path": "game/survival/ui/avatar_sprite_pipeline.gd",
+    "pattern": "survival/ui/",
+    "text": "const MANIFEST_PATH := \"res://game/survival/ui/avatar_art_manifest.json\""
+   },
+   {
+    "line": 9,
+    "path": "game/survival/ui/avatar_sprite_pipeline.gd",
+    "pattern": "survival/ui/",
+    "text": "const APPEARANCE_ADAPTER := preload(\"res://game/survival/ui/avatar_appearance_adapter.gd\")"
+   },
+   {
+    "line": 11,
+    "path": "game/survival/ui/expedition_planner.gd",
+    "pattern": "survival/ui/",
+    "text": "const PIXEL_UI := preload(\"res://game/survival/ui/pixel_ui.gd\")"
+   },
+   {
+    "line": 12,
+    "path": "game/survival/ui/expedition_planner.gd",
+    "pattern": "survival/ui/",
+    "text": "const PIXEL_PANEL := preload(\"res://game/survival/ui/pixel_panel.gd\")"
+   },
+   {
+    "line": 20,
+    "path": "game/survival/ui/expedition_planner.gd",
+    "pattern": "survival/ui/",
+    "text": "const MAP := preload(\"res://game/survival/ui/expedition_map.gd\")"
+   },
+   {
+    "line": 21,
+    "path": "game/survival/ui/expedition_planner.gd",
+    "pattern": "survival/ui/",
+    "text": "const ADAPTER := preload(\"res://game/survival/ui/survival_view_adapter.gd\")"
+   },
+   {
+    "line": 2,
+    "path": "game/survival/ui/expedition_planner.tscn",
+    "pattern": "survival/ui/",
+    "text": "[ext_resource type=\"Script\" path=\"res://game/survival/ui/expedition_planner.gd\" id=\"1\"]"
+   },
+   {
+    "line": 6,
+    "path": "game/survival/ui/expedition_workspace.gd",
+    "pattern": "survival/ui/",
+    "text": "const JOURNAL := preload(\"res://game/survival/ui/survival_journal.tscn\")"
+   },
+   {
+    "line": 6,
+    "path": "game/survival/ui/expedition_workspace.gd",
+    "pattern": "survival_journal",
+    "text": "const JOURNAL := preload(\"res://game/survival/ui/survival_journal.tscn\")"
+   },
+   {
+    "line": 7,
+    "path": "game/survival/ui/expedition_workspace.gd",
+    "pattern": "survival/ui/",
+    "text": "const DESK := preload(\"res://game/survival/ui/expedition_planner.tscn\")"
+   },
+   {
+    "line": 8,
+    "path": "game/survival/ui/expedition_workspace.gd",
+    "pattern": "survival/ui/",
+    "text": "const JOURNEYS := preload(\"res://game/survival/ui/acceptance_journeys.gd\")"
+   },
+   {
+    "line": 2,
+    "path": "game/survival/ui/expedition_workspace.tscn",
+    "pattern": "expedition_workspace",
+    "text": "[ext_resource type=\"Script\" path=\"res://game/survival/ui/expedition_workspace.gd\" id=\"1\"]"
+   },
+   {
+    "line": 2,
+    "path": "game/survival/ui/expedition_workspace.tscn",
+    "pattern": "survival/ui/",
+    "text": "[ext_resource type=\"Script\" path=\"res://game/survival/ui/expedition_workspace.gd\" id=\"1\"]"
+   },
+   {
+    "line": 3,
+    "path": "game/survival/ui/pixel_panel.gd",
+    "pattern": "survival/ui/",
+    "text": "const PIXEL_UI := preload(\"res://game/survival/ui/pixel_ui.gd\")"
+   },
+   {
+    "line": 7,
+    "path": "game/survival/ui/player_first_hud.gd",
+    "pattern": "survival/ui/",
+    "text": "const PIXEL_UI := preload(\"res://game/survival/ui/pixel_ui.gd\")"
+   },
+   {
+    "line": 8,
+    "path": "game/survival/ui/player_first_hud.gd",
+    "pattern": "survival/ui/",
+    "text": "const PIXEL_PANEL := preload(\"res://game/survival/ui/pixel_panel.gd\")"
+   },
+   {
+    "line": 11,
+    "path": "game/survival/ui/survival_journal.gd",
+    "pattern": "survival/ui/",
+    "text": "const ADAPTER := preload(\"res://game/survival/ui/survival_view_adapter.gd\")"
+   },
+   {
+    "line": 12,
+    "path": "game/survival/ui/survival_journal.gd",
+    "pattern": "survival/ui/",
+    "text": "const PIXEL_UI := preload(\"res://game/survival/ui/pixel_ui.gd\")"
+   },
+   {
+    "line": 13,
+    "path": "game/survival/ui/survival_journal.gd",
+    "pattern": "survival/ui/",
+    "text": "const PIXEL_PANEL := preload(\"res://game/survival/ui/pixel_panel.gd\")"
+   },
+   {
+    "line": 3,
+    "path": "game/survival/ui/survival_journal.tscn",
+    "pattern": "survival/ui/",
+    "text": "[ext_resource type=\"Script\" path=\"res://game/survival/ui/survival_journal.gd\" id=\"1\"]"
+   },
+   {
+    "line": 3,
+    "path": "game/survival/ui/survival_journal.tscn",
+    "pattern": "survival_journal",
+    "text": "[ext_resource type=\"Script\" path=\"res://game/survival/ui/survival_journal.gd\" id=\"1\"]"
+   }
+  ]
+ },
+ "note": "Read-only copies of another owner's files, pinned by sha256. A7 never edits them; the audit asserts on these bytes only.",
+ "scene_mount_refs": {
+  "game/characters/enemies/archer_enemy_arrow.tscn": [
+   "game/characters/enemies/hooded_archer_miniboss.gd"
+  ],
+  "game/characters/enemies/spectral_disc.tscn": [
+   "game/characters/enemies/advanced_enemy.gd",
+   "game/characters/enemies/vampire_castellan.gd"
+  ],
+  "game/characters/knight/knight.tscn": [
+   "game/main.tscn",
+   "game/overworld/chapter1_overworld.gd"
+  ],
+  "game/feedback/combat_feedback.tscn": [
+   "game/main.tscn"
+  ],
+  "game/feedback/pixel_damage_number.tscn": [
+   "game/feedback/combat_feedback.gd"
+  ],
+  "game/heroes/axe/axe_last_orbit.tscn": [
+   "game/characters/knight/knight.gd"
+  ],
+  "game/heroes/axe/axe_reaper_drop.tscn": [
+   "game/characters/knight/knight.gd"
+  ],
+  "game/heroes/sword/returning_blade.tscn": [
+   "game/characters/knight/knight.gd"
+  ],
+  "game/heroes/sword/soul_interception.tscn": [
+   "game/characters/knight/knight.gd"
+  ],
+  "game/heroes/sword/sword_crescent_wave.tscn": [
+   "game/heroes/data/sword_hero.tres",
+   "game/characters/knight/knight.gd"
+  ],
+  "game/heroes/sword/sword_echo_wave.tscn": [
+   "game/heroes/data/sword_hero.tres",
+   "game/heroes/sword/sword_soul_echo.gd"
+  ],
+  "game/heroes/sword/sword_soul_echo.tscn": [
+   "game/heroes/data/sword_hero.tres"
+  ],
+  "game/levels/authoring/presets/checkpoint.tscn": [
+   "game/levels/crypt_entrance.tscn"
+  ],
+  "game/levels/authoring/presets/chest.tscn": [
+   "game/levels/crypt_entrance.tscn"
+  ],
+  "game/levels/authoring/presets/coin.tscn": [
+   "game/levels/crypt_entrance.tscn"
+  ],
+  "game/levels/authoring/presets/exit_gate.tscn": [
+   "game/levels/crypt_entrance.tscn"
+  ],
+  "game/levels/authoring/presets/floor_door.tscn": [
+   "game/levels/crypt_entrance.tscn"
+  ],
+  "game/levels/authoring/presets/player.tscn": [
+   "game/levels/crypt_entrance.tscn"
+  ],
+  "game/levels/authoring/presets/sigil.tscn": [
+   "game/levels/crypt_entrance.tscn"
+  ],
+  "game/levels/authoring/presets/skeleton.tscn": [
+   "game/levels/crypt_entrance.tscn"
+  ],
+  "game/levels/authoring/presets/skeleton_reaper.tscn": [
+   "game/levels/crypt_entrance.tscn"
+  ],
+  "game/levels/authoring/presets/spikes.tscn": [
+   "game/levels/crypt_entrance.tscn"
+  ],
+  "game/levels/authoring/presets/torch.tscn": [
+   "game/levels/crypt_entrance.tscn"
+  ],
+  "game/levels/authoring/presets/vampire.tscn": [
+   "game/levels/crypt_entrance.tscn"
+  ],
+  "game/levels/crypt_entrance.tscn": [
+   "game/levels/authoring/level_workbench.tscn",
+   "game/main.tscn"
+  ],
+  "game/loot/ground_loot.tscn": [
+   "game/loot/loot_director.gd"
+  ],
+  "game/survival/ui/expedition_planner.tscn": [
+   "game/survival/ui/expedition_workspace.gd"
+  ],
+  "game/survival/ui/survival_journal.tscn": [
+   "game/survival/ui/expedition_workspace.gd"
+  ],
+  "game/survival/world_content/scenes/native_poi_shell_template.tscn": [
+   "game/survival/world_content/scenes/south_crown_mill_overworld.tscn",
+   "game/survival/world_content/scenes/south_orchard_ruin_overworld.tscn",
+   "game/survival/world_content/scenes/south_quarry_overworld.tscn"
+  ],
+  "game/survival/world_content/scenes/native_poi_template.tscn": [
+   "game/survival/world_content/scenes/fourth_salt_lookout_test.tscn",
+   "game/survival/world_content/scenes/south_crown_mill.tscn",
+   "game/survival/world_content/scenes/south_orchard_ruin.tscn",
+   "game/survival/world_content/scenes/south_quarry.tscn"
+  ],
+  "game/tutorial/level_one_tutorial.tscn": [
+   "game/main.tscn"
+  ],
+  "game/ui/HUD.tscn": [
+   "game/main.tscn"
+  ],
+  "game/ui/completion_choice.tscn": [
+   "game/ui/hud.gd"
+  ],
+  "game/ui/components/settings_panel.tscn": [
+   "game/ui/screens/hub/tabs/settings_tab.tscn",
+   "game/ui/screens/settings/settings_screen.tscn"
+  ],
+  "game/ui/designer/components/action_deck.tscn": [
+   "game/ui/designer/templates/hud_overlay_template.tscn",
+   "game/ui/designer/workbench/ui_workbench.tscn"
+  ],
+  "game/ui/designer/components/brand_header.tscn": [
+   "game/ui/designer/templates/fullscreen_screen_template.tscn",
+   "game/ui/designer/workbench/ui_workbench.tscn"
+  ],
+  "game/ui/designer/components/content_card.tscn": [
+   "game/ui/designer/workbench/ui_workbench.tscn"
+  ],
+  "game/ui/designer/components/dialog_card.tscn": [
+   "game/ui/designer/workbench/ui_workbench.tscn"
+  ],
+  "game/ui/designer/components/inventory_slot.tscn": [
+   "game/ui/designer/workbench/ui_workbench.tscn"
+  ],
+  "game/ui/designer/components/navigation_bar.tscn": [
+   "game/ui/designer/templates/fullscreen_screen_template.tscn",
+   "game/ui/designer/workbench/ui_workbench.tscn"
+  ],
+  "game/ui/designer/components/prompt_toast.tscn": [
+   "game/ui/designer/templates/hud_overlay_template.tscn",
+   "game/ui/designer/workbench/ui_workbench.tscn"
+  ],
+  "game/ui/designer/components/stat_cluster.tscn": [
+   "game/ui/designer/templates/hud_overlay_template.tscn",
+   "game/ui/designer/workbench/ui_workbench.tscn"
+  ],
+  "game/ui/field_codex.tscn": [
+   "game/ui/hud.gd"
+  ],
+  "game/ui/field_codex_drag_preview.tscn": [
+   "game/ui/field_codex_entry.gd",
+   "game/ui/field_codex_equipment_slot.gd"
+  ],
+  "game/ui/field_codex_entry.tscn": [
+   "game/ui/completion_choice.gd",
+   "game/ui/field_codex.gd"
+  ],
+  "game/ui/field_codex_equipment_slot.tscn": [
+   "game/ui/field_codex.gd"
+  ],
+  "game/ui/field_codex_item_tile.tscn": [
+   "game/ui/field_codex.gd"
+  ],
+  "game/ui/objectives/level_10_castellan_hud.tscn": [
+   "game/levels/objectives/chapter_2_level_runtime.gd",
+   "game/levels/objectives/level_10_castellan_runtime.gd"
+  ],
+  "game/ui/objectives/level_7_beacon_hud.tscn": [
+   "game/levels/objectives/level_7_beacon_runtime.gd"
+  ],
+  "game/ui/objectives/level_8_reliquary_hud.tscn": [
+   "game/levels/objectives/level_8_reliquary_runtime.gd"
+  ],
+  "game/ui/objectives/level_9_crimson_gate_hud.tscn": [
+   "game/levels/objectives/level_9_crimson_gate_runtime.gd"
+  ],
+  "game/ui/progression_focus_hud.tscn": [
+   "game/ui/hud.gd"
+  ],
+  "game/ui/screens/home/home_actor.tscn": [
+   "game/ui/screens/home/home_map_screen.tscn"
+  ],
+  "game/ui/screens/home/home_destination.tscn": [
+   "game/ui/screens/home/home_map_screen.gd"
+  ],
+  "game/ui/screens/hub/tabs/arsenal_tab.tscn": [
+   "game/ui/screens/hub/hub_screen.gd"
+  ],
+  "game/ui/screens/hub/tabs/bestiary_tab.tscn": [
+   "game/ui/screens/hub/hub_screen.gd"
+  ],
+  "game/ui/screens/hub/tabs/campaign_tab.tscn": [
+   "game/ui/screens/hub/hub_screen.gd"
+  ],
+  "game/ui/screens/hub/tabs/components/arsenal_action_button.tscn": [
+   "game/ui/screens/hub/tabs/arsenal_tab.gd"
+  ],
+  "game/ui/screens/hub/tabs/components/arsenal_aux_item_icon.tscn": [
+   "game/ui/screens/hub/tabs/arsenal_tab.gd"
+  ],
+  "game/ui/screens/hub/tabs/components/arsenal_data_row.tscn": [
+   "game/ui/screens/hub/tabs/arsenal_tab.gd"
+  ],
+  "game/ui/screens/hub/tabs/components/arsenal_data_stack.tscn": [
+   "game/ui/screens/hub/tabs/arsenal_tab.gd"
+  ],
+  "game/ui/screens/hub/tabs/components/arsenal_runtime_text.tscn": [
+   "game/ui/screens/hub/tabs/arsenal_tab.gd"
+  ],
+  "game/ui/screens/hub/tabs/components/campaign_chapter_button.tscn": [
+   "game/ui/screens/hub/tabs/campaign_tab.gd"
+  ],
+  "game/ui/screens/hub/tabs/components/campaign_slot_card.tscn": [
+   "game/ui/screens/hub/tabs/campaign_tab.gd"
+  ],
+  "game/ui/screens/hub/tabs/components/hero_library_panel.tscn": [
+   "game/ui/screens/hub/tabs/arsenal_tab.tscn"
+  ],
+  "game/ui/screens/hub/tabs/modes_tab.tscn": [
+   "game/ui/screens/hub/hub_screen.gd"
+  ],
+  "game/ui/screens/hub/tabs/settings_tab.tscn": [
+   "game/ui/screens/hub/hub_screen.gd"
+  ],
+  "game/ui/theme/dungeon_backdrop.tscn": [
+   "game/ui/designer/templates/fullscreen_screen_template.tscn",
+   "game/ui/designer/workbench/ui_workbench.tscn",
+   "game/ui/screens/boot/boot_screen.tscn",
+   "game/ui/screens/credits/credits_screen.tscn",
+   "game/ui/screens/hub/hub_screen.tscn",
+   "game/ui/screens/level_details/training_details_screen.tscn",
+   "game/ui/screens/results/training_results_screen.tscn",
+   "game/ui/screens/settings/settings_screen.tscn",
+   "game/ui/screens/title/title_screen.tscn"
+  ],
+  "game/ui/xp_gain_popup.tscn": [
+   "game/ui/progression_focus_hud.gd"
+  ],
+  "game/weapons/effects/axe_follow_through.tscn": [
+   "game/weapons/data/axe.tres",
+   "game/characters/knight/knight.gd"
+  ],
+  "game/weapons/effects/axe_throw.tscn": [
+   "game/weapons/data/axe.tres",
+   "game/characters/knight/knight.gd"
+  ],
+  "game/weapons/effects/falling_arrow.tscn": [
+   "game/characters/knight/knight.gd"
+  ],
+  "game/weapons/effects/flying_sword.tscn": [
+   "game/characters/knight/knight.gd"
+  ],
+  "game/weapons/effects/piercing_arrow.tscn": [
+   "game/characters/knight/knight.gd"
+  ],
+  "game/weapons/weapon_visual_2d.tscn": [
+   "game/characters/knight/knight.tscn"
+  ],
+  "game/world/hazards/spikes.tscn": [
+   "game/main.gd"
+  ],
+  "game/world/interactables/bow_reward.tscn": [
+   "game/main.gd"
+  ],
+  "game/world/interactables/checkpoint.tscn": [
+   "game/main.gd"
+  ],
+  "game/world/interactables/chest.tscn": [
+   "game/main.gd"
+  ],
+  "game/world/interactables/coin.tscn": [
+   "game/main.gd"
+  ],
+  "game/world/interactables/exit_gate.tscn": [
+   "game/main.gd"
+  ],
+  "game/world/interactables/floor_door.tscn": [
+   "game/main.gd"
+  ],
+  "game/world/interactables/gate_seal.tscn": [
+   "game/main.gd"
+  ],
+  "game/world/interactables/reliquary_branch_seal.tscn": [
+   "game/main.gd"
+  ],
+  "game/world/interactables/sigil.tscn": [
+   "game/main.gd"
+  ],
+  "game/world/interactables/soul_beacon.tscn": [
+   "game/main.gd"
+  ],
+  "game/world/props/torch.tscn": [
+   "game/main.gd"
+  ]
+ },
+ "schema": "soh.balance.product_snapshot.v1",
+ "sources": {
+  "a0_ref": "refs/a0",
+  "a1_ref": "refs/a1",
+  "a3_ref": "refs/a3",
+  "a6_ref": "refs/a6",
+  "a8_ref": "refs/a8"
+ },
+ "tree_index": {
+  "lines": 6701,
+  "owners": [
+   "a0",
+   "a6"
+  ],
+  "path": "data/survival/balance/snapshot/product/tree_index.txt",
+  "sha256": "84be5f296aa655f55b2c61df7c20150e8c8e14ee47d05ac9bd1be0abbd2855dc",
+  "suffixes": [
+   ".tscn",
+   ".tres",
+   ".gd",
+   ".png",
+   ".import",
+   ".res"
+  ]
+ },
+ "ui_scenes": [
+  "game/app/app_root.tscn",
+  "game/characters/enemies/archer_enemy_arrow.tscn",
+  "game/characters/enemies/axe_soul_boss.tscn",
+  "game/characters/enemies/bone_reaper_captain.tscn",
+  "game/characters/enemies/coven_wraith_enemy.tscn",
+  "game/characters/enemies/crimson_reaper_enemy.tscn",
+  "game/characters/enemies/hooded_archer_miniboss.tscn",
+  "game/characters/enemies/skeleton_enemy.tscn",
+  "game/characters/enemies/skeleton_reaper.tscn",
+  "game/characters/enemies/spectral_disc.tscn",
+  "game/characters/enemies/vampire_castellan.tscn",
+  "game/characters/enemies/vampire_enemy.tscn",
+  "game/characters/enemies/wizard_hero_boss.tscn",
+  "game/characters/knight/knight.tscn",
+  "game/debug/soul_relay_debug_panel.tscn",
+  "game/feedback/combat_feedback.tscn",
+  "game/feedback/pixel_damage_number.tscn",
+  "game/heroes/axe/axe_last_orbit.tscn",
+  "game/heroes/axe/axe_reaper_drop.tscn",
+  "game/heroes/sword/returning_blade.tscn",
+  "game/heroes/sword/soul_interception.tscn",
+  "game/heroes/sword/sword_crescent_wave.tscn",
+  "game/heroes/sword/sword_echo_wave.tscn",
+  "game/heroes/sword/sword_soul_echo.tscn",
+  "game/heroes/ultimate/knight_cavalry_charge.tscn",
+  "game/levels/authoring/level_workbench.tscn",
+  "game/levels/authoring/presets/bone_reaper_captain.tscn",
+  "game/levels/authoring/presets/bow_reward.tscn",
+  "game/levels/authoring/presets/checkpoint.tscn",
+  "game/levels/authoring/presets/chest.tscn",
+  "game/levels/authoring/presets/coin.tscn",
+  "game/levels/authoring/presets/exit_gate.tscn",
+  "game/levels/authoring/presets/floor_door.tscn",
+  "game/levels/authoring/presets/hooded_archer_miniboss.tscn",
+  "game/levels/authoring/presets/player.tscn",
+  "game/levels/authoring/presets/sigil.tscn",
+  "game/levels/authoring/presets/skeleton.tscn",
+  "game/levels/authoring/presets/skeleton_reaper.tscn",
+  "game/levels/authoring/presets/spikes.tscn",
+  "game/levels/authoring/presets/torch.tscn",
+  "game/levels/authoring/presets/vampire.tscn",
+  "game/levels/crypt_entrance.tscn",
+  "game/loot/ground_loot.tscn",
+  "game/main.tscn",
+  "game/overworld/chapter1_overworld.tscn",
+  "game/survival/ui/expedition_planner.tscn",
+  "game/survival/ui/expedition_workspace.tscn",
+  "game/survival/ui/survival_journal.tscn",
+  "game/survival/world_content/scenes/fourth_salt_lookout_test.tscn",
+  "game/survival/world_content/scenes/native_poi_shell_template.tscn",
+  "game/survival/world_content/scenes/native_poi_template.tscn",
+  "game/survival/world_content/scenes/poi_pilot.tscn",
+  "game/survival/world_content/scenes/south_crown_mill.tscn",
+  "game/survival/world_content/scenes/south_crown_mill_overworld.tscn",
+  "game/survival/world_content/scenes/south_orchard_ruin.tscn",
+  "game/survival/world_content/scenes/south_orchard_ruin_overworld.tscn",
+  "game/survival/world_content/scenes/south_quarry.tscn",
+  "game/survival/world_content/scenes/south_quarry_overworld.tscn",
+  "game/tutorial/level_one_tutorial.tscn",
+  "game/ui/HUD.tscn",
+  "game/ui/completion_choice.tscn",
+  "game/ui/components/settings_panel.tscn",
+  "game/ui/designer/components/action_deck.tscn",
+  "game/ui/designer/components/brand_header.tscn",
+  "game/ui/designer/components/content_card.tscn",
+  "game/ui/designer/components/dialog_card.tscn",
+  "game/ui/designer/components/inventory_slot.tscn",
+  "game/ui/designer/components/navigation_bar.tscn",
+  "game/ui/designer/components/prompt_toast.tscn",
+  "game/ui/designer/components/stat_cluster.tscn",
+  "game/ui/designer/templates/fullscreen_screen_template.tscn",
+  "game/ui/designer/templates/hud_overlay_template.tscn",
+  "game/ui/designer/workbench/ui_workbench.tscn",
+  "game/ui/field_codex.tscn",
+  "game/ui/field_codex_drag_preview.tscn",
+  "game/ui/field_codex_entry.tscn",
+  "game/ui/field_codex_equipment_slot.tscn",
+  "game/ui/field_codex_item_tile.tscn",
+  "game/ui/objectives/level_10_castellan_hud.tscn",
+  "game/ui/objectives/level_5_kingdom_archer_hud.tscn",
+  "game/ui/objectives/level_7_beacon_hud.tscn",
+  "game/ui/objectives/level_8_reliquary_hud.tscn",
+  "game/ui/objectives/level_9_crimson_gate_hud.tscn",
+  "game/ui/progression_focus_hud.tscn",
+  "game/ui/screens/boot/boot_screen.tscn",
+  "game/ui/screens/credits/credits_screen.tscn",
+  "game/ui/screens/home/home_actor.tscn",
+  "game/ui/screens/home/home_destination.tscn",
+  "game/ui/screens/home/home_map_screen.tscn",
+  "game/ui/screens/home/home_storage_screen.tscn",
+  "game/ui/screens/hub/hub_screen.tscn",
+  "game/ui/screens/hub/tabs/arsenal_tab.tscn",
+  "game/ui/screens/hub/tabs/bestiary_tab.tscn",
+  "game/ui/screens/hub/tabs/campaign_tab.tscn",
+  "game/ui/screens/hub/tabs/components/arsenal_action_button.tscn",
+  "game/ui/screens/hub/tabs/components/arsenal_aux_item_icon.tscn",
+  "game/ui/screens/hub/tabs/components/arsenal_data_row.tscn",
+  "game/ui/screens/hub/tabs/components/arsenal_data_stack.tscn",
+  "game/ui/screens/hub/tabs/components/arsenal_runtime_text.tscn",
+  "game/ui/screens/hub/tabs/components/campaign_chapter_button.tscn",
+  "game/ui/screens/hub/tabs/components/campaign_slot_card.tscn",
+  "game/ui/screens/hub/tabs/components/hero_library_panel.tscn",
+  "game/ui/screens/hub/tabs/modes_tab.tscn",
+  "game/ui/screens/hub/tabs/settings_tab.tscn",
+  "game/ui/screens/level_details/training_details_screen.tscn",
+  "game/ui/screens/results/training_results_screen.tscn",
+  "game/ui/screens/settings/settings_screen.tscn",
+  "game/ui/screens/title/title_screen.tscn",
+  "game/ui/theme/dungeon_backdrop.tscn",
+  "game/ui/xp_gain_popup.tscn",
+  "game/weapons/effects/axe_follow_through.tscn",
+  "game/weapons/effects/axe_throw.tscn",
+  "game/weapons/effects/falling_arrow.tscn",
+  "game/weapons/effects/flying_sword.tscn",
+  "game/weapons/effects/piercing_arrow.tscn",
+  "game/weapons/weapon_visual_2d.tscn",
+  "game/world/hazards/spikes.tscn",
+  "game/world/interactables/bow_reward.tscn",
+  "game/world/interactables/checkpoint.tscn",
+  "game/world/interactables/chest.tscn",
+  "game/world/interactables/coin.tscn",
+  "game/world/interactables/exit_gate.tscn",
+  "game/world/interactables/floor_door.tscn",
+  "game/world/interactables/gate_seal.tscn",
+  "game/world/interactables/reliquary_branch_seal.tscn",
+  "game/world/interactables/sigil.tscn",
+  "game/world/interactables/soul_beacon.tscn",
+  "game/world/props/torch.tscn"
+ ]
+}

@@ -1,0 +1,142 @@
+{
+  "schema": "soh.world.corridor_source_authoring.v1",
+  "status": "A1_AUTHORED_NATIVE_FIXTURE_SCOPE_NOT_PRODUCTION_ECONOMY",
+  "world_id": "world:soh_continent_v1",
+  "region_id": "r_ashen_crown",
+  "chunk_id": "chunk:6:3",
+  "corridor_id": "corridor:crown_roadside_first_hour_v1",
+  "purpose": "One physically walkable postern supply loop using three already-authored roadside salvage nodes plus the canonical Waystation cache. No new POI, no drop-rate authorship, no continent redesign.",
+  "provenance": {
+    "atlas": ["POI-14 Roadside Crate", "DEP-01 road scrap -> Spares -> research", "USER-JOURNEY-01/02", "SYS-50 static terrain + independent furniture/inventory instances"],
+    "a3_pr": 19,
+    "a3_head": "18e7afcb",
+    "a3_sources_path": "data/survival/items/sources.json",
+    "a3_sources_sha256": "7c2cddcdbdb8f2dbb96564abf91fed7ff598a1c750d052302bef685bd112a602",
+    "a3_category": "poi:roadside_cache",
+    "a3_region_alias": "opening_marches",
+    "a3_alias_decision": "SPLIT: A3 opening_marches is an economy proposal region alias, not an A1 region_id. A1 binds it to r_ashen_crown for this corridor only; A3 must bind per-instance economics before production loot.",
+    "connector_contract": "a1_crown_canonical_seam_v1"
+  },
+  "source_classes": [
+    {
+      "source_class_id": "sc_roadside_supply_cache_v1",
+      "display_name": "Roadside supply cache",
+      "a1_material_key": "salvage",
+      "a3_poi_class": "poi:roadside_cache",
+      "a3_source_record_ids": ["road_scrap", "road_supplies"],
+      "acquisition": "loot",
+      "risk": "low",
+      "required_capabilities": [],
+      "is_poi": false,
+      "economy_authority": "A3",
+      "note": "A class is a reusable supply vocabulary. It is never a POI identity and never a single world object."
+    },
+    {
+      "source_class_id": "sc_waystation_timed_cache_v1",
+      "display_name": "Waystation external timed cache",
+      "a1_material_key": "salvage",
+      "a3_poi_class": "poi:roadside_cache",
+      "a3_source_record_ids": ["road_scrap", "road_supplies"],
+      "acquisition": "loot",
+      "risk": "low",
+      "required_capabilities": ["cap_salvage"],
+      "is_poi": false,
+      "economy_authority": "A3/A0 canonical slice reward lock",
+      "note": "Distinct physical instance inside poi_crown_waystation. Its existing canonical cache_restock reward/cooldown remains byte-locked; A1 does not re-author it."
+    }
+  ],
+  "instances": [
+    {
+      "instance_id": "si:r_ashen_crown:roadside_supply:01",
+      "source_class_id": "sc_roadside_supply_cache_v1",
+      "resource_node_id": "res:src_crown_salvage:05",
+      "site_id": "src_crown_salvage",
+      "label": "Postern verge crate",
+      "poi_binding": {"kind": "non_poi_roadside_instance", "canonical_poi_id": null, "context_poi_id": "poi_crown_waystation", "route_id": "rt_crown_safe_approach"},
+      "visual_frame": "camp_crate",
+      "stand_cell": [395, 220],
+      "interaction_radius_px": 24,
+      "collision_size_px": [16, 6],
+      "collision_offset_px": [0, 3],
+      "visual_anchor": "bottom_center_of_cell",
+      "economy_binding": {"status": "PENDING_A3_INSTANCE_BINDING", "reward_items": null, "replenishment_seconds": null, "yield_per_claim": null},
+      "revisit": "Return along the same gravel spur to the postern road; the container is not a one-way teleport or a new map marker."
+    },
+    {
+      "instance_id": "si:r_ashen_crown:roadside_supply:02",
+      "source_class_id": "sc_roadside_supply_cache_v1",
+      "resource_node_id": "res:src_crown_salvage:03",
+      "site_id": "src_crown_salvage",
+      "label": "Broken cart lay-by crate",
+      "poi_binding": {"kind": "non_poi_roadside_instance", "canonical_poi_id": null, "context_poi_id": "poi_crown_waystation", "route_id": "rt_crown_safe_approach"},
+      "visual_frame": "camp_crate",
+      "stand_cell": [400, 217],
+      "interaction_radius_px": 24,
+      "collision_size_px": [16, 6],
+      "collision_offset_px": [0, 3],
+      "visual_anchor": "bottom_center_of_cell",
+      "economy_binding": {"status": "PENDING_A3_INSTANCE_BINDING", "reward_items": null, "replenishment_seconds": null, "yield_per_claim": null},
+      "revisit": "The lay-by connects back to the verge path and the Waystation retreat lane."
+    },
+    {
+      "instance_id": "si:r_ashen_crown:roadside_supply:03",
+      "source_class_id": "sc_roadside_supply_cache_v1",
+      "resource_node_id": "res:src_crown_salvage:01",
+      "site_id": "src_crown_salvage",
+      "label": "East ditch crate",
+      "poi_binding": {"kind": "non_poi_roadside_instance", "canonical_poi_id": null, "context_poi_id": "poi_crown_waystation", "route_id": "rt_crown_safe_approach"},
+      "visual_frame": "camp_crate",
+      "stand_cell": [402, 221],
+      "interaction_radius_px": 24,
+      "collision_size_px": [16, 6],
+      "collision_offset_px": [0, 3],
+      "visual_anchor": "bottom_center_of_cell",
+      "economy_binding": {"status": "PENDING_A3_INSTANCE_BINDING", "reward_items": null, "replenishment_seconds": null, "yield_per_claim": null},
+      "revisit": "A side step east rejoins the northbound retreat lane without crossing the crate body."
+    },
+    {
+      "instance_id": "si:r_ashen_crown:waystation_cache:01",
+      "source_class_id": "sc_waystation_timed_cache_v1",
+      "resource_node_id": null,
+      "site_id": null,
+      "label": "Ashen Waystation external cache",
+      "poi_binding": {"kind": "poi_object", "canonical_poi_id": "poi_crown_waystation", "interaction_node_id": "node_waystation_cache", "action_id": "cache_restock"},
+      "visual_frame": "camp_crate",
+      "stand_cell": [406, 202],
+      "interaction_radius_px": 24,
+      "collision_source": "vertical_slice:obs_waystation_cache_crate",
+      "economy_binding": {"status": "CANONICAL_SLICE_LOCKED", "authority": "data/survival/world/vertical_slice/poi_crown_waystation.slice.json#cache_restock"},
+      "revisit": "Existing Waystation retreat loop returns to the postern; canonical restock remains A0/A3-owned."
+    }
+  ],
+  "route": {
+    "route_id": "a1_corridor:crown_roadside_local_v1",
+    "parent_route_id": "rt_crown_safe_approach",
+    "start_cell": [392, 200],
+    "outbound_waypoints": [[392, 200], [392, 220], [395, 220], [396, 220], [396, 217], [400, 217], [400, 221], [402, 221], [403, 221], [403, 206], [408, 206], [408, 200], [408, 199]],
+    "return_waypoints": [[408, 199], [408, 206], [392, 206], [392, 200]],
+    "required_capabilities": [],
+    "hazard_policy": "All required cells must be walkable and hazard-free in the authored chunk. Do not disable hazards to pass.",
+    "detail_code": "=",
+    "apron_code": "o"
+  },
+  "decor": [
+    {"frame": "signpost", "cell": [393, 201], "reason": "Readable postern turn clue; non-blocking small prop."},
+    {"frame": "cart", "cell": [397, 224], "reason": "Broken supply cart explains the lay-by; production solid lower-body rule."},
+    {"frame": "wall_stub", "cell": [394, 214], "reason": "Old road boundary ruin; off the walking lane."},
+    {"frame": "column_broken", "cell": [405, 214], "reason": "Crown ruin marker visible from the ditch crate; off lane."},
+    {"frame": "tree_dead", "cell": [389, 228], "reason": "Ashen Crown verge silhouette; outside the local route."},
+    {"frame": "bush", "cell": [396, 215], "reason": "Low verge vegetation; non-blocking, does not hide a stand."},
+    {"frame": "rock_a", "cell": [401, 223], "reason": "Small ground stone scatter; non-blocking."},
+    {"frame": "rock_c", "cell": [398, 219], "reason": "Small ground stone scatter; non-blocking."}
+  ],
+  "deferred_resource_nodes": ["res:src_crown_salvage:02", "res:src_crown_salvage:04", "res:src_crown_salvage:06"],
+  "deferred_reason": "Three physical containers are enough for the first-hour loop and avoid clutter. The other three authored salvage nodes remain contract-only; no POI or node was deleted.",
+  "native_scope": {
+    "production_native_playable": false,
+    "fixture": "tests/survival/world/corridor_native_test.gd",
+    "a0_mount": "Compose the existing 448x256 connector annex first; apply only this corridor detail overlay and props inside chunk:6:3; mount the three roadside container bodies and the existing slice obstacles; bind A3 instance economics separately; keep SaveService authority.",
+    "a3_mount": "Bind each si:* instance to approved source records/loot tables and atomic receipts. A1 supplies no rates, yields or timers for the three roadside instances.",
+    "a8_mount": "A8 site interaction engine is not imported by this corridor. See a8_site_transforms.v1.json for the separate southern POI transform review."
+  }
+}

@@ -1,0 +1,327 @@
+{
+  "authorization": {
+    "accepted": [
+      {
+        "a3_quantity": 2,
+        "file": "a8.quarry_integration_candidate.v1.json",
+        "marker": "authorization=BLOCKED: A3 PR19 source is generic and not bound to poi_crown_south_quarry; A3 m",
+        "quantity": null,
+        "source_id": "live_stone_chunk"
+      }
+    ],
+    "claim_count": 1,
+    "proves": "that an authorization marker on its own carries no weight: the quantity has to exist in the pinned A3 catalog for the same source id. It does not prove the price is sensible.",
+    "rejected": [],
+    "verdict": "NO_UNBACKED_AUTHORIZATION"
+  },
+  "engine_api": {
+    "audited_types": [
+      "Color",
+      "JSON",
+      "Vector2",
+      "Vector2i",
+      "Vector3"
+    ],
+    "proves": "that no audited built-in class is called through a method it does not expose. It does not prove the surrounding code runs, only that these calls cannot be the reason it fails.",
+    "static_call_count": 23,
+    "unknown_call_count": 0,
+    "unknown_calls": [],
+    "verdict": "ENGINE_API_CONSISTENT"
+  },
+  "holds": {
+    "authorization_backed_by_a3": true,
+    "float_round_trip_guaranteed": true,
+    "host_request_resolves_in_the_loaded_catalog": false,
+    "no_unknown_engine_static": true
+  },
+  "instance_identity": {
+    "a0_binding_count": 2,
+    "a0_only_bindings": [
+      "cache_restock@node_waystation_cache"
+    ],
+    "a3_binding_count": 3,
+    "a3_only_bindings": [
+      "cache_restock@si:r_ashen_crown:waystation_cache:01",
+      "salvage_roadside_notes@si:r_ashen_crown:roadside_supply:01"
+    ],
+    "divergent_bindings": [
+      {
+        "action_id": "gather_deadfall",
+        "fields": {
+          "canonical_poi_id": {
+            "a0": null,
+            "a3": "poi_crown_waystation"
+          },
+          "context_poi_id": {
+            "a0": null,
+            "a3": "poi_crown_waystation"
+          },
+          "identity_note": {
+            "a0": null,
+            "a3": "A1 vertical-slice interaction node; no separate si:* world instance is authored for deadfall at this pin."
+          },
+          "interaction_node_id": {
+            "a0": null,
+            "a3": "node_waystation_approach_deadfall"
+          }
+        },
+        "identity": "node_waystation_approach_deadfall"
+      }
+    ],
+    "fixture_ids_absent_from_host": [
+      "node_waystation_cache"
+    ],
+    "fixture_instance_ids": [
+      "node_waystation_cache"
+    ],
+    "host_instance_ids": [
+      "node_waystation_approach_deadfall",
+      "si:r_ashen_crown:waystation_cache:01"
+    ],
+    "host_requests": [
+      {
+        "action_id": "pry_locker",
+        "instance_id": "",
+        "poi_id": "poi_crown_waystation",
+        "point": "locker"
+      },
+      {
+        "action_id": "cache_restock",
+        "instance_id": "si:r_ashen_crown:waystation_cache:01",
+        "poi_id": "poi_crown_waystation",
+        "point": "cache"
+      },
+      {
+        "action_id": "seal_ledger",
+        "instance_id": "",
+        "poi_id": "poi_crown_waystation",
+        "point": "ledger"
+      },
+      {
+        "action_id": "gather_deadfall",
+        "instance_id": "node_waystation_approach_deadfall",
+        "poi_id": "poi_crown_waystation",
+        "point": "deadfall"
+      },
+      {
+        "action_id": "hand_crank_bypass",
+        "instance_id": "",
+        "poi_id": "poi_crown_relay_shed",
+        "point": "crank"
+      }
+    ],
+    "instance_requests": [
+      {
+        "a0_binding_id": null,
+        "a3_binding_id": null,
+        "action_id": "pry_locker",
+        "instance_id": "",
+        "poi_id": "poi_crown_waystation",
+        "point": "locker",
+        "resolved_in_a0_catalog": false,
+        "resolved_in_a3_catalog": false,
+        "via": "action_for"
+      },
+      {
+        "a0_binding_id": null,
+        "a3_binding_id": null,
+        "action_id": "seal_ledger",
+        "instance_id": "",
+        "poi_id": "poi_crown_waystation",
+        "point": "ledger",
+        "resolved_in_a0_catalog": false,
+        "resolved_in_a3_catalog": false,
+        "via": "action_for"
+      },
+      {
+        "a0_binding_id": "a1_waystation_approach_deadfall_v3",
+        "a3_binding_id": "a1_waystation_approach_deadfall_v3",
+        "action_id": "gather_deadfall",
+        "instance_id": "node_waystation_approach_deadfall",
+        "poi_id": "poi_crown_waystation",
+        "point": "deadfall",
+        "resolved_in_a0_catalog": true,
+        "resolved_in_a3_catalog": true
+      },
+      {
+        "a0_binding_id": null,
+        "a3_binding_id": null,
+        "action_id": "hand_crank_bypass",
+        "instance_id": "",
+        "poi_id": "poi_crown_relay_shed",
+        "point": "crank",
+        "resolved_in_a0_catalog": false,
+        "resolved_in_a3_catalog": false,
+        "via": "action_for"
+      }
+    ],
+    "rule": "A binding authorizes a physical interaction only when poi_id + action_id + instance_id match exactly. An alias is an alias: it cannot stand in for the world instance at runtime.",
+    "unresolved_host_requests": [
+      {
+        "a0_binding_id": null,
+        "a3_binding_id": "a1_waystation_roadside_cache_v3",
+        "action_id": "cache_restock",
+        "instance_id": "si:r_ashen_crown:waystation_cache:01",
+        "poi_id": "poi_crown_waystation",
+        "point": "cache",
+        "resolved_in_a0_catalog": false,
+        "resolved_in_a3_catalog": true
+      }
+    ],
+    "verdict": "HOST_ACTION_UNRESOLVED"
+  },
+  "knowledge_gate": {
+    "circular_spare_recipes": [
+      "make_spares",
+      "study_axe_insignia",
+      "study_predator_jaw"
+    ],
+    "claims_needed_for_first_station": 2,
+    "harvest_nodes_for_kit_inputs": {
+      "iron_ingot": [],
+      "knowledge_spares": [],
+      "oak_wood": [
+        {
+          "hits": 3,
+          "kind": "oak_tree",
+          "per_hit": 2,
+          "respawn_seconds": 300
+        }
+      ]
+    },
+    "kit_recipe": {
+      "id": "research_kit",
+      "inputs": {
+        "iron_ingot": 2,
+        "knowledge_spares": 3,
+        "oak_wood": 4
+      },
+      "station": "workbench"
+    },
+    "kit_spares_required": 3,
+    "non_circular_spare_recipes": [],
+    "proves": "which single edge the first research station depends on. It is a graph result over the pinned catalogs, so it does not care how many POIs or recipes exist.",
+    "spare_loot_sources": {
+      "road_supplies": {
+        "cooldown_seconds": 1800,
+        "poi_id": "poi_crown_waystation",
+        "region_id": "r_ashen_crown",
+        "yield_per_claim": 2
+      }
+    },
+    "spare_recipes": {
+      "make_spares": {
+        "inputs": {
+          "crypt_bone_shard": 1,
+          "iron_scrap": 2
+        },
+        "outputs": 2,
+        "station": "research"
+      },
+      "study_axe_insignia": {
+        "inputs": {
+          "fractured_axe_insignia": 1
+        },
+        "outputs": 4,
+        "station": "research"
+      },
+      "study_predator_jaw": {
+        "inputs": {
+          "predator_jaw": 1
+        },
+        "outputs": 3,
+        "station": "research"
+      }
+    },
+    "spares_per_claim": 2,
+    "station_cost": {
+      "research_kit": 1
+    },
+    "station_piece": "station_research",
+    "verdict": "SEEDED_ONLY_BY_LOOT"
+  },
+  "read_this_first": "Five checks that take their answer from outside the file under review: the engine's own class list, Godot's JSON contract, the recipe/source graph, A3's pinned catalog, and a replay of the shipped host request against the binding table A0 actually loads.",
+  "save_fidelity": {
+    "authoritative_writer_count": 1,
+    "formula": "decimals = max(1, 14 - floor(log10(abs(value)))) when full_precision is false",
+    "lossy_writer_count": 0,
+    "lossy_writers": [],
+    "proves": "whether a float written by the save writer is guaranteed to reload bit-identically. It cannot say which field drifted in a native run; it only says the writer allows drift.",
+    "verdict": "ROUND_TRIP_EXACT",
+    "writers": [
+      {
+        "argument_count": 1,
+        "authoritative": false,
+        "file": "a0.a3_economy_service.gd",
+        "full_precision": false,
+        "line": 713,
+        "text": "var signature := JSON.stringify(payload).sha256_text()"
+      },
+      {
+        "argument_count": 1,
+        "authoritative": false,
+        "file": "a0.a3_economy_service.gd",
+        "full_precision": false,
+        "line": 1423,
+        "text": "var context_sha256 := JSON.stringify(cast_context).sha256_text()"
+      },
+      {
+        "argument_count": 1,
+        "authoritative": false,
+        "file": "a0.app_root.gd",
+        "full_precision": false,
+        "line": 184,
+        "text": "JavaScriptBridge.eval(\"window.__soulHeroCiProbe = \" + JSON.stringify({"
+      },
+      {
+        "argument_count": 1,
+        "authoritative": false,
+        "file": "a0.app_root.gd",
+        "full_precision": false,
+        "line": 223,
+        "text": "JavaScriptBridge.eval(\"window.__soulHeroRoute = \" + JSON.stringify(String(route_id)) + \";\")"
+      },
+      {
+        "argument_count": 4,
+        "authoritative": true,
+        "file": "a0.save_service.gd",
+        "full_precision": true,
+        "line": 2459,
+        "text": "var payload := JSON.stringify(snapshot, \"\\t\", true, true) + \"\\n\""
+      },
+      {
+        "argument_count": 1,
+        "authoritative": false,
+        "file": "a0.save_service.gd",
+        "full_precision": false,
+        "line": 4972,
+        "text": "return JSON.stringify(signature)"
+      },
+      {
+        "argument_count": 4,
+        "authoritative": false,
+        "file": "a0.survival_normal_entry_home_restart_test.gd",
+        "full_precision": true,
+        "line": 155,
+        "text": "file.store_string(JSON.stringify(audit, \"\\t\", true, true))"
+      },
+      {
+        "argument_count": 4,
+        "authoritative": false,
+        "file": "a0.survival_waystation_input_restart_test.gd",
+        "full_precision": true,
+        "line": 77,
+        "text": "file.store_string(JSON.stringify(record, \"\\t\", true, true)); file.close()"
+      },
+      {
+        "argument_count": 2,
+        "authoritative": false,
+        "file": "a8.poi_pilot.gd",
+        "full_precision": false,
+        "line": 239,
+        "text": "print(\"S2 fixture authority: \", JSON.stringify({\"intent\": intent, \"result\": result}))"
+      }
+    ]
+  },
+  "schema": "soh.balance.oracle.v1"
+}

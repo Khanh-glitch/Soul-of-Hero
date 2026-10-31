@@ -1,0 +1,130 @@
+{
+  "holes": [],
+  "probe_count": 15,
+  "probes": [
+    {
+      "attempt": "a cache node written inside a `;` comment in the production overworld scene",
+      "defended_by": "gate.entry_content counts only live instance=/path=/preload( lines",
+      "detail": "mounted=False state=SOURCE_PRESENT_BEHIND_DISABLED_FLAG",
+      "probe_id": "P01",
+      "rejected": true,
+      "technique": "comment_mount"
+    },
+    {
+      "attempt": "A0's own authority fixture naming the node and the scene",
+      "defended_by": "gate.entry_content excludes non-production paths and reports them",
+      "detail": "excluded=['a0.survival_waystation_authority_test.gd', 'a0.survival_waystation_input_restart_test.gd'] mounted=False",
+      "probe_id": "P02",
+      "rejected": true,
+      "technique": "test_harness_mount"
+    },
+    {
+      "attempt": "every production file present, the ProjectSettings key removed from project.godot",
+      "defended_by": "gate._project_guard reads the shipped project file, not the code",
+      "detail": "declared=False enabled=False",
+      "probe_id": "P03",
+      "rejected": true,
+      "technique": "disabled_project_guard"
+    },
+    {
+      "attempt": "A0's authority fixture calling transact_once with funded inventory and clock",
+      "defended_by": "gate.commit_seam classifies harness callers below production",
+      "detail": "static_state=MOUNTED_SURVIVAL_SYSTEM_CALLER callers=11",
+      "probe_id": "P04",
+      "rejected": true,
+      "technique": "test_only_class"
+    },
+    {
+      "attempt": "A0 shipping an older binding table than A3's canonical one",
+      "defended_by": "oracle.instance_identity compares the two tables row by row",
+      "detail": "verdict=HOST_ACTION_UNRESOLVED a3_only=['cache_restock@si:r_ashen_crown:waystation_cache:01', 'salvage_roadside_notes@si:r_ashen_crown:roadside_supply:01']",
+      "probe_id": "P05",
+      "rejected": true,
+      "technique": "stale_vendored_copy"
+    },
+    {
+      "attempt": "resolving `node_waystation_cache` where the host sends `si:r_ashen_crown:waystation_cache:01`",
+      "defended_by": "the request is replayed against the catalog A0 actually loads",
+      "detail": "unresolved=['cache_restock']",
+      "probe_id": "P06",
+      "rejected": true,
+      "technique": "alias_for_instance"
+    },
+    {
+      "attempt": "an idle sheet filled in with a path that no owner ever committed",
+      "defended_by": "quality.avatar_check resolves every claimed sheet against the pinned tree",
+      "detail": "status=FAIL invented=n/a",
+      "probe_id": "P07",
+      "rejected": true,
+      "technique": "phantom_sheet"
+    },
+    {
+      "attempt": "citing a green authority fixture that funds its own inventory and advances its own clock",
+      "defended_by": "S4 clause C4 requires a0_waystation_player_input; a fixture run resolves to a3_authority_fixture",
+      "detail": "fixture VERIFIED but C4=NOT_HOLDS, s4_granted=False",
+      "probe_id": "P08",
+      "rejected": true,
+      "technique": "injected_cooldown"
+    },
+    {
+      "attempt": "a player-facing label saying the reward was verified, with no transaction",
+      "defended_by": "quality.fixture_claim_check requires a receipt for a completion claim",
+      "detail": "status=FAIL",
+      "probe_id": "P09",
+      "rejected": true,
+      "technique": "success_without_receipt"
+    },
+    {
+      "attempt": "a green run recorded on a different commit",
+      "defended_by": "evidence.state requires the exact sha, the phrase and a green proving step",
+      "detail": "state=STALE_HEAD",
+      "probe_id": "P10",
+      "rejected": true,
+      "technique": "wrong_sha_run"
+    },
+    {
+      "attempt": "a completed workflow with no assertion output",
+      "defended_by": "evidence.state requires the exact sha, the phrase and a green proving step",
+      "detail": "state=NOT_TESTED",
+      "probe_id": "P11",
+      "rejected": true,
+      "technique": "empty_artifact"
+    },
+    {
+      "attempt": "a green workflow whose proving step failed",
+      "defended_by": "evidence.state requires the exact sha, the phrase and a green proving step",
+      "detail": "state=FAILED",
+      "probe_id": "P12",
+      "rejected": true,
+      "technique": "failed_step"
+    },
+    {
+      "attempt": "a caller passing an invented point and a Hero standing anywhere",
+      "defended_by": "A0's host requires parent==world, the authored stand cell and <=24px",
+      "detail": "host enforces parent, stand cell and range before the session will act",
+      "probe_id": "P13",
+      "rejected": true,
+      "technique": "mocked_reach"
+    },
+    {
+      "attempt": "an A8 site scene sitting in the tree but never instanced by the mounted world",
+      "defended_by": "gate._instanced_scenes reads live instance= lines only",
+      "detail": "instanced=[] mounted=False",
+      "probe_id": "P14",
+      "rejected": true,
+      "technique": "unmounted_scene_content"
+    },
+    {
+      "attempt": "claiming restart durability from a same-process reload",
+      "defended_by": "S4 clause C3 needs a separate OS process with its own phrase",
+      "detail": "s4_granted=False C3=NOT_HOLDS",
+      "probe_id": "P15",
+      "rejected": true,
+      "technique": "second_process_absent"
+    }
+  ],
+  "proves": "that fifteen named disguises were executed against the real classifier and rejected. It does not prove that no disguise exists: a successful spoof shows up here as GATE_HOLE_FOUND with its technique named, which is the failure mode this module is built to expose.",
+  "rejected_count": 15,
+  "schema": "soh.balance.adversary.v1",
+  "verdict": "NO_KNOWN_SPOOF_SURVIVES"
+}

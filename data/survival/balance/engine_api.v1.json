@@ -1,0 +1,17 @@
+{
+  "schema": "soh.balance.engine_api.v1",
+  "purpose": "Static-call whitelist for the Godot built-in classes A7 audits. A static call is the only legal way to invoke a static method; a name that is absent here cannot be called as Type.name(...) at all.",
+  "provenance": {
+    "source": "Godot engine doc/classes/*.xml on the upstream master branch, fetched 2026-10-30",
+    "url_template": "https://github.com/godotengine/godot/blob/master/doc/classes/{type}.xml",
+    "extraction": "every <method ... qualifiers=\"static\"> per class",
+    "note": "Only audited classes are listed. A type absent from this map is not checked, so the audit never claims more than it read."
+  },
+  "static_methods": {
+    "Vector2": ["from_angle"],
+    "Vector2i": [],
+    "Vector3": ["octahedron_decode"],
+    "JSON": ["from_native", "parse_string", "stringify", "to_native"],
+    "Color": ["from_hsv", "from_ok_hsl", "from_rgba8", "from_rgbe9995", "from_string", "hex", "hex64", "html", "html_is_valid"]
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "schema": "soh.economy.loot.v1",
+  "tables": {
+    "roadside_cache": {
+      "source_id": "road_supplies",
+      "risk": "low",
+      "rolls": 3,
+      "replenishment_seconds": 1800,
+      "entries": [
+        {
+          "item_id": "iron_scrap",
+          "weight": 40,
+          "quantity": [
+            2,
+            4
+          ]
+        },
+        {
+          "item_id": "knowledge_spares",
+          "weight": 30,
+          "quantity": [
+            1,
+            2
+          ]
+        },
+        {
+          "item_id": "research_notes",
+          "weight": 15,
+          "quantity": [
+            1,
+            1
+          ]
+        },
+        {
+          "item_id": "grain_seed",
+          "weight": 15,
+          "quantity": [
+            1,
+            1
+          ]
+        }
+      ],
+      "excluded_tags": [
+        "rare",
+        "core",
+        "exploration_only"
+      ]
+    },
+    "specimen_vault": {
+      "source_id": "vault_catalyst",
+      "risk": "high",
+      "rolls": 2,
+      "replenishment_seconds": 7200,
+      "entries": [
+        {
+          "item_id": "ancient_catalyst",
+          "weight": 60,
+          "quantity": [
+            1,
+            1
+          ]
+        },
+        {
+          "item_id": "research_notes",
+          "weight": 30,
+          "quantity": [
+            2,
+            3
+          ]
+        },
+        {
+          "item_id": "soul_ember",
+          "weight": 10,
+          "quantity": [
+            2,
+            3
+          ]
+        }
+      ],
+      "required_access_tier": 2
+    }
+  }
+}

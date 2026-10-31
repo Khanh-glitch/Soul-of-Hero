@@ -1,0 +1,31 @@
+Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
+
+A7C_ENGINE {"version": "4.7-stable (official)"}
+A7C T1.5_BEFORE {"input_action_present":true,"reader_ok":true,"reason":""}
+A7C T1.5_AFTER {"input_action_present":true,"reader_ok":true,"reason":""}
+SCRIPT ERROR: Parse Error: Function "_spawn_cell()" not found in base self.
+          at: GDScript::reload (res://game/survival/a0_world_authority.gd:157)
+          GDScript backtrace (most recent call first):
+              [0] _case_native_load (res://tests/survival/a7_certification_probe.gd:115)
+              [1] _run (res://tests/survival/a7_certification_probe.gd:47)
+SCRIPT ERROR: Parse Error: Function "_spawn_cell()" not found in base self.
+          at: GDScript::reload (res://game/survival/a0_world_authority.gd:157)
+          GDScript backtrace (most recent call first):
+              [0] _case_native_load (res://tests/survival/a7_certification_probe.gd:115)
+              [1] _run (res://tests/survival/a7_certification_probe.gd:47)
+ERROR: Failed to load script "res://game/survival/a0_world_authority.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+   GDScript backtrace (most recent call first):
+       [0] _case_native_load (res://tests/survival/a7_certification_probe.gd:115)
+       [1] _run (res://tests/survival/a7_certification_probe.gd:47)
+A7C NATIVE_LOAD {"authority_can_instantiate":false,"authority_failing_preloads":[],"authority_instantiates":false,"authority_loads":true,"authority_sha256":"cc823725c3cba322d9d9c16079e884687bdf8b5870429a7f6b12b87cd0c1e307","controller_can_instantiate":true,"controller_error":"","controller_failing_preloads":[],"controller_instantiates":true,"controller_loads":true,"controller_mode":"","controller_sha256":"818cfe617b36d40cfacb88100f7338e0dfecf01dc2db4df022174f712ea6d9d3","known_good_loads":true}
+A7C AUTHORITY {"authored_frame":[1024,768],"authority_default_authored":false,"authority_runnable":false,"authority_setting_defined":false,"controller":"game/overworld/chapter1_overworld.gd","controller_lines":1367,"controller_mode_resolved":"","controller_present":true,"controller_runnable":true,"controller_sha256":"818cfe617b36d40cfacb88100f7338e0dfecf01dc2db4df022174f712ea6d9d3","legacy_frame":[384,256],"live_frame":[384,256],"live_source":"legacy_sidecar","mounts_authority":false,"mounts_sidecar":true,"runtime_authority_verified":false,"setting_value":"<unset>","source_authority_present":false,"source_mount":"sidecar"}
+A7C T1.1 {"authored":[1024,768],"live":[384,256],"live_resolved":true,"live_source":"legacy_sidecar","reader_ok":true,"same_document":false}
+A7C T1.3 {"cell":[389,291],"chunk_id":"chunk:6:4","in_live_world":false,"live_frame":[384,256],"live_resolved":true,"live_source":"legacy_sidecar","ok":true,"production_spawn_approval":false,"region":"r_ashen_crown","standable":true,"traversal":""}
+A7C T1.4 {"live":[384,256],"live_resolved":true,"live_source":"legacy_sidecar","outside":3,"sites":[{"cell":[30,280],"inside_live_world":false,"poi_id":"poi_crown_south_quarry","scene":"res://game/survival/world_content/scenes/south_quarry.tscn"},{"cell":[140,360],"inside_live_world":false,"poi_id":"poi_crown_south_orchard","scene":"res://game/survival/world_content/scenes/south_orchard_ruin.tscn"},{"cell":[120,300],"inside_live_world":false,"poi_id":"poi_crown_south_mill","scene":"res://game/survival/world_content/scenes/south_crown_mill.tscn"}]}
+A7C T2.1 {"package_status":"A8_OWNER_CONTRACT_REFRESH_READY_FOR_A0_REVIEW_NOT_MOUNTED","sites":[{"exists":true,"poi_id":"poi_crown_south_quarry","scene":"res://game/survival/world_content/scenes/south_quarry.tscn"},{"exists":true,"poi_id":"poi_crown_south_orchard","scene":"res://game/survival/world_content/scenes/south_orchard_ruin.tscn"},{"exists":true,"poi_id":"poi_crown_south_mill","scene":"res://game/survival/world_content/scenes/south_crown_mill.tscn"}]}
+A7C T2.6 {"declared_gates":7,"note":"declaration only: no runtime threshold refusal is recorded by this probe","refused":null}
+A7C T3.9 {"duplicate_refused":false,"granted":0,"note":"requires A0's normal-input two-process journey; A7 never fabricates it","reason":"NOT_THIS_PROBE","second_granted":null,"settled":false}
+A7C SUMMARY {"completed":true,"engine":"4.7-stable (official)","probe":"a7_certification_probe"}
+A7C_DONE
+probe exit=0

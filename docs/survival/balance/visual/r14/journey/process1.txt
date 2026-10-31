@@ -1,0 +1,63 @@
+Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
+OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
+
+A0_CAPTURE connected_entry /home/runner/.local/share/godot/app_userdata/SOUL OF HERO/tests/capture_connected_entry_1280x720.png error=0
+  ok    fresh spawn has a reachable planned scrap node
+  ok    ordinary movement reaches a scrap node from fresh spawn
+  ok    ordinary world pointer gathers actual nearby scrap
+  ok    second world click obtains the rest of the starter scrap
+  ok    ordinary movement reaches an oak without teleport
+  ok    ordinary world clicks collect starter wood
+  ok    ordinary movement reaches a harvestable reed node
+  ok    ordinary movement reaches a harvestable reed node
+  ok    ordinary world clicks collect the workbench's reed inputs
+  ok    ordinary C action exposes the starter kit
+  ok    ordinary wheel input reveals the starter kit recipe
+  ok    GUI reserves the resources gathered by ordinary input
+  ok    ordinary C action closes the panel to resume active work
+  ok    active ordinary gameplay completes the starter kit queue
+  ok    completed escrow exposes a GUI collect control inside its scroll owner
+  ok    ordinary wheel input reaches the collect control
+  ok    ordinary GUI pointer collects the manufactured kit
+  ok    ordinary build inputs select the workbench
+  ok    reachable ground supports the paid station footprint
+NORMAL_BUILD_TRACE target=(29, 185) world=(472.0, 2968.0) window=(545.9849, 265.9531) preview=(29, 185) mouse_view=(272.5, 132.5) final=[X: (2.0, 0.0), Y: (0.0, 2.0), O: (0.0, 0.0)] camera_canvas=[X: (1.0, 0.0), Y: (0.0, 1.0), O: (-199.0076, -2835.023)] hovered=ClickBlocker:<Control#585625527545> rejection= kit=0
+  ok    ordinary placement input pays for the physical workbench
+  ok    nearby paid bench exposes its real weave recipe inside its scroll owner
+  ok    ordinary wheel input reaches the workbench recipe
+  ok    workbench GUI reserves player-gathered reeds
+  ok    active ordinary gameplay completes workbench production
+  ok    produced cloth exposes a GUI collection control inside its scroll owner
+  ok    ordinary wheel input reaches produced cloth
+  ok    fresh journey has no cloth before collection
+  ok    ordinary GUI collects exactly two cloth with one committed receipt
+  ok    paid workbench, exact cloth and collection receipt survive reload
+A0_CONNECTED_DIAG after-prefix path=user://tests/a0_connected_journey.json exists=true size=16205 sha=f62e662305c17948 run_id=run-1793440265-6aba4331 epoch=1.0 state=active phase_state=active ltree=true
+A0_CAPTURE connected_home /home/runner/.local/share/godot/app_userdata/SOUL OF HERO/tests/capture_connected_home_1280x720.png error=0
+A0_CONNECTED prefix_complete=true checks=29 failures=0
+  ok    ordinary movement and clicks gather the furnace's 8 stone
+  ok    ordinary movement and clicks gather the charcoal's 2 oak
+  ok    ordinary movement and clicks gather the 6 iron scrap the kit and smelt need
+  ok    the hand station visibly offers the furnace kit
+SCRIPT ERROR: Invalid type in function '_owning_scroll' in base 'SceneTree (survival_normal_connected_journey_test.gd)'. The Object-derived class of argument 1 (previously freed) is not a subclass of the expected argument class.
+          at: _scroll_recipe (res://tests/survival_normal_connected_journey_test.gd:515)
+          GDScript backtrace (most recent call first):
+              [0] _scroll_recipe (res://tests/survival_normal_connected_journey_test.gd:515)
+  FAIL  ordinary wheel input reaches the furnace kit
+SCRIPT ERROR: Cannot call method 'get_global_transform_with_canvas' on a previously freed instance.
+          at: _continuation (res://tests/survival_normal_connected_journey_test.gd:145)
+          GDScript backtrace (most recent call first):
+              [0] _continuation (res://tests/survival_normal_connected_journey_test.gd:145)
+              [1] _scroll_recipe (res://tests/survival_normal_connected_journey_test.gd:515)
+  FAIL  test body ran to completion
+SCRIPT ERROR: Cannot call method 'call' on a previously freed instance.
+          at: _open_panel (res://tests/survival_normal_connected_journey_test.gd:559)
+          GDScript backtrace (most recent call first):
+              [0] _open_panel (res://tests/survival_normal_connected_journey_test.gd:559)
+A0 CONNECTED SURVIVAL JOURNEY FAILED - 2/35 (play)
+WARNING: 10 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2535)
+ERROR: 5 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

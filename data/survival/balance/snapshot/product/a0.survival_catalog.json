@@ -1,0 +1,288 @@
+{
+  "schema": 1,
+  "status": "SURV-010 first vertical slice. Costs, yields and respawn values are provisional balance and belong to A7; item ids and semantics belong to A0/A3.",
+  "items": {
+    "oak_wood": {
+      "kind": "material",
+      "label": "Oak Wood",
+      "tags": [
+        "wood",
+        "structural"
+      ],
+      "tier": 1
+    },
+    "stone_chunk": {
+      "kind": "material",
+      "label": "Stone Chunk",
+      "tags": [
+        "stone",
+        "structural"
+      ],
+      "tier": 1
+    },
+    "iron_scrap": {
+      "kind": "material",
+      "label": "Iron Scrap",
+      "tags": [
+        "metal",
+        "fastener"
+      ],
+      "tier": 1
+    },
+    "reed_fibre": {
+      "kind": "material",
+      "label": "Reed Fibre",
+      "tags": [
+        "fibre",
+        "binding"
+      ],
+      "tier": 1
+    },
+    "furnace_kit": {
+      "kind": "material",
+      "label": "Furnace Kit",
+      "tier": 2,
+      "tags": [
+        "station",
+        "kit"
+      ]
+    },
+    "workbench_kit": {
+      "kind": "material",
+      "label": "Workbench Kit",
+      "tier": 2,
+      "tags": [
+        "station",
+        "kit"
+      ]
+    },
+    "research_kit": {
+      "kind": "material",
+      "label": "Research Kit",
+      "tier": 2,
+      "tags": [
+        "station",
+        "kit"
+      ]
+    },
+    "garden_kit": {
+      "kind": "material",
+      "label": "Garden Kit",
+      "tier": 2,
+      "tags": [
+        "station",
+        "kit"
+      ]
+    }
+  },
+  "resources": {
+    "oak_tree": {
+      "label": "Oak Tree",
+      "item": "oak_wood",
+      "item_kind": "material",
+      "per_hit": 2,
+      "hits": 3,
+      "respawn_seconds": 300,
+      "prop_frame": "tree_dead",
+      "tags": [
+        "wood"
+      ],
+      "sources": [
+        "tree_dead",
+        "tree_pine"
+      ]
+    },
+    "stone_outcrop": {
+      "label": "Stone Outcrop",
+      "item": "stone_chunk",
+      "item_kind": "material",
+      "per_hit": 2,
+      "hits": 3,
+      "respawn_seconds": 480,
+      "prop_frame": "rock_b",
+      "tags": [
+        "stone"
+      ],
+      "sources": [
+        "rock_b",
+        "wall_stub"
+      ]
+    },
+    "iron_vein": {
+      "label": "Iron Vein",
+      "item": "iron_scrap",
+      "item_kind": "material",
+      "per_hit": 1,
+      "hits": 2,
+      "respawn_seconds": 720,
+      "prop_frame": "rock_d",
+      "tags": [
+        "metal"
+      ],
+      "sources": [
+        "rock_d",
+        "rock_f"
+      ]
+    },
+    "reed_clump": {
+      "label": "Reed Clump",
+      "item": "reed_fibre",
+      "item_kind": "material",
+      "per_hit": 1,
+      "hits": 2,
+      "respawn_seconds": 240,
+      "prop_frame": "bush",
+      "tags": [
+        "fibre"
+      ],
+      "sources": [
+        "bush"
+      ]
+    },
+    "scrap_pile": {
+      "label": "Abandoned Supplies",
+      "item": "iron_scrap",
+      "item_kind": "material",
+      "per_hit": 1,
+      "hits": 2,
+      "respawn_seconds": 600,
+      "prop_frame": "barrel",
+      "tags": [
+        "salvage"
+      ],
+      "sources": [
+        "barrel"
+      ]
+    }
+  },
+  "pieces": {
+    "foundation_wood": {
+      "label": "Wooden Foundation",
+      "cost": {
+        "oak_wood": 2
+      },
+      "kind": "floor",
+      "solid": false,
+      "placeholder_frame": "foundation_wood"
+    },
+    "wall_wood": {
+      "label": "Wooden Wall",
+      "cost": {
+        "oak_wood": 2
+      },
+      "kind": "wall",
+      "solid": true,
+      "placeholder_frame": "wall_wood"
+    },
+    "door_wood": {
+      "label": "Wooden Door",
+      "cost": {
+        "oak_wood": 2,
+        "iron_scrap": 1
+      },
+      "kind": "door",
+      "solid": true,
+      "interaction": "door",
+      "placeholder_frame": "door_wood"
+    },
+    "chest_wood": {
+      "label": "Storage Chest",
+      "cost": {
+        "oak_wood": 4,
+        "iron_scrap": 1
+      },
+      "kind": "container",
+      "solid": true,
+      "interaction": "container",
+      "slots": 12,
+      "placeholder_frame": "chest_wood"
+    },
+    "bed_wood": {
+      "label": "Wooden Bed",
+      "cost": {
+        "oak_wood": 4,
+        "iron_scrap": 1
+      },
+      "kind": "bed",
+      "solid": true,
+      "interaction": "bed",
+      "placeholder_frame": "bed_wood"
+    },
+    "station_furnace": {
+      "label": "Furnace Station",
+      "cost": {
+        "furnace_kit": 1
+      },
+      "kind": "station",
+      "solid": true,
+      "placeholder_frame": "station_furnace",
+      "footprint": [
+        2,
+        2
+      ],
+      "station_kind": "furnace",
+      "station_tier": 1,
+      "queue_capacity": 3
+    },
+    "station_workbench": {
+      "label": "Workbench Station",
+      "cost": {
+        "workbench_kit": 1
+      },
+      "kind": "station",
+      "solid": true,
+      "placeholder_frame": "station_workbench",
+      "footprint": [
+        2,
+        1
+      ],
+      "station_kind": "workbench",
+      "station_tier": 1,
+      "queue_capacity": 3
+    },
+    "station_research": {
+      "label": "Research Station",
+      "cost": {
+        "research_kit": 1
+      },
+      "kind": "station",
+      "solid": true,
+      "placeholder_frame": "station_research",
+      "footprint": [
+        2,
+        2
+      ],
+      "station_kind": "research",
+      "station_tier": 1,
+      "queue_capacity": 2
+    },
+    "station_garden": {
+      "label": "Garden Station",
+      "cost": {
+        "garden_kit": 1
+      },
+      "kind": "station",
+      "solid": true,
+      "placeholder_frame": "station_garden",
+      "footprint": [
+        2,
+        2
+      ],
+      "station_kind": "garden",
+      "station_tier": 1,
+      "queue_capacity": 2
+    }
+  },
+  "rules": {
+    "build_range_tiles": 6,
+    "landmark_clearance_tiles": 5,
+    "camp_clearance_tiles": 3,
+    "shortcut_clearance_tiles": 4,
+    "forbidden_detail_codes": [
+      "=",
+      "+",
+      ":"
+    ],
+    "resource_scatter_spacing_tiles": 7
+  }
+}
