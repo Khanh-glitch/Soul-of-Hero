@@ -145,15 +145,18 @@ static func bar(width: int, height: int) -> Dictionary:
 	fill.modulate = FILL_GOOD
 	fill.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	fill.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	fill.position = Vector2(2, 2)
-	fill.size = Vector2(maxf(0.0, float(width - 4)), maxf(0.0, float(height - 4)))
+	# A 2-unit inset inside a 7-unit track left a 3-unit band that read as a scratched
+	# line rather than a gauge. The fill sits one unit in from the socket edge so the
+	# authored border still shows and the bar reads as filled.
+	fill.position = Vector2(1, 1)
+	fill.size = Vector2(maxf(0.0, float(width - 2)), maxf(0.0, float(height - 2)))
 	root.add_child(fill)
 
 	return {
 		"root": root,
 		"fill": fill,
-		"width": float(width - 4),
-		"height": float(height - 4),
+		"width": float(width - 2),
+		"height": float(height - 2),
 	}
 
 

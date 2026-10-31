@@ -882,6 +882,7 @@ func _apply_hud() -> void:
 	if hud == null or state == null:
 		return
 	hud.set_region(_region_label())
+	_push_vitals()
 	hud.set_provisions(state.provisions, state.max_provisions)
 	hud.set_counts(
 		_lit_camp_count(), camps.size(),
@@ -889,6 +890,28 @@ func _apply_hud() -> void:
 		_open_shortcut_count(), int((world_data.get("shortcuts", []) as Array).size())
 	)
 	_refresh_carry()
+
+
+## Vitals belong to the character, not to the HUD. The HUD is told what they are so a
+## fresh session shows health before the first hit; `player_health_changed` keeps them
+## current afterwards. Nothing here is defaulted: a player without a health property
+## simply leaves the row hidden.
+func _push_vitals() -> void:
+	if not is_instance_valid(player):
+		return
+	var maximum := _read_health(player, &"max_health")
+	var current := _read_health(player, &"health")
+	if maximum > 0 and current >= 0:
+		hud.set_vitals(current, maximum)
+
+
+func _read_health(source: Object, property: StringName) -> int:
+	if source == null:
+		return -1
+	for entry: Dictionary in source.get_property_list():
+		if String(entry.get("name", "")) == String(property):
+			return int(source.get(property))
+	return -1
 
 
 ## Pack capacity is an A0 projection, not a HUD guess: SaveService owns the slot count
