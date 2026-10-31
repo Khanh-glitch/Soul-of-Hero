@@ -4,13 +4,17 @@ extends CanvasLayer
 ## This panel only *asks*: every button calls one session command, and time, stock,
 ## receipts and recipes stay owned by the A3 session and SaveService. Nothing is
 ## computed here except which costs you are currently short of, which is read from
-## A0's own inventory totals so the row can say "short 2 iron scrap" before the
+## A0's own inventory totals so the row can say "thiếu 2 × Iron Scrap" before the
 ## command is refused.
 ##
 ## Node names are part of the contract: `Recipe_<recipe>_<station>` and
 ## `Technology_<tech>_<station>` buttons stay in a ScrollContainer, and their text
 ## still ends in the exact cost list, because the runtime tests and the input gate
 ## find them by name.
+
+## The authored interface space, the same 640x360 the HUD uses.
+const VIRTUAL_WIDTH := 640
+const VIRTUAL_HEIGHT := 360
 
 const STATION_ICONS := {
 	"hand": "knife",
@@ -48,9 +52,15 @@ func _ready() -> void:
 
 	var window := A6UiKit.window()
 	window.name = "Window"
-	window.set_anchors_and_offsets_preset(Control.PRESET_CENTER, Control.PRESET_MODE_KEEP_SIZE)
-	window.position = Vector2(-230, -160)
-	window.custom_minimum_size = Vector2(460, 320)
+	# Pinned inside the 640x360 virtual screen rather than centred by offset. With the
+	# old KEEP_SIZE preset the column could grow taller than the panel, and the footer
+	# line ended up printed on the parchment's bottom border. A fixed rect forces the
+	# scroll list - the only flexible child - to absorb the difference instead.
+	var screen := Vector2(VIRTUAL_WIDTH, VIRTUAL_HEIGHT)
+	var window_size := Vector2(460, minf(320, screen.y - 24))
+	window.size = window_size
+	window.position = ((screen - window_size) * 0.5).round()
+	window.custom_minimum_size = window_size
 	_root.add_child(window)
 
 	var column := VBoxContainer.new()
@@ -61,7 +71,7 @@ func _ready() -> void:
 	var header := HBoxContainer.new()
 	header.name = "Header"
 	column.add_child(header)
-	var title := A6UiKit.label("WORKSHOP", "heading", 17)
+	var title := A6UiKit.label("XƯỞNG CHẾ TÁC", "heading", 17)
 	title.name = "Title"
 	title.add_theme_color_override("font_color", A6UiKit.GOLD)
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -72,13 +82,13 @@ func _ready() -> void:
 	header.add_child(_pack_label)
 	var close := Button.new()
 	close.name = "Close"
-	close.text = "CLOSE [C]"
+	close.text = "ĐÓNG [C]"
 	close.custom_minimum_size = Vector2(0, 20)
 	close.add_theme_font_size_override("font_size", 11)
 	close.pressed.connect(_close)
 	header.add_child(close)
 
-	_notice = A6UiKit.label("Hand kits work anywhere. Stand near a station for its recipes.", "caption", 10)
+	_notice = A6UiKit.label("Bộ đồ nghề dùng được ở mọi nơi. Đứng gần trạm để chế tạo.", "caption", 10)
 	_notice.name = "Notice"
 	_notice.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_notice.add_theme_color_override("font_color", A6UiKit.INK_SOFT)
@@ -95,7 +105,7 @@ func _ready() -> void:
 	_list.add_theme_constant_override("separation", 3)
 	scroll.add_child(_list)
 
-	var footer := A6UiKit.label("Active jobs only advance while this panel is closed.", "caption", 9)
+	var footer := A6UiKit.label("Việc đang chạy chỉ tiến triển khi bảng này đóng.", "caption", 9)
 	footer.name = "Footer"
 	footer.add_theme_color_override("font_color", A6UiKit.INK_SOFT)
 	column.add_child(footer)
@@ -136,7 +146,7 @@ func _item_label(item_id: String) -> String:
 		var definition: Dictionary = service.call(&"item_definition", item_id)
 		var label := String(definition.get("label", ""))
 		if not label.is_empty():
-			return label.to_lower()
+			return label
 	return item_id.replace("_", " ")
 
 
@@ -145,7 +155,7 @@ func _format_items(items: Dictionary) -> String:
 	var ids: Array = items.keys()
 	ids.sort()
 	for key: Variant in ids:
-		parts.append("%d %s" % [int(items[key]), _item_label(String(key))])
+		parts.append("%d × %s" % [int(items[key]), _item_label(String(key))])
 	return ", ".join(parts) if not parts.is_empty() else "nothing"
 
 
@@ -169,7 +179,7 @@ func _first_shortfall(items: Dictionary, owned: Dictionary) -> String:
 	for key: Variant in items.keys():
 		var short := int(items[key]) - int(owned.get(String(key), 0))
 		if short > 0:
-			return "short %d %s" % [short, _item_label(String(key))]
+			return "thiếu %d × %s" % [short, _item_label(String(key))]
 	return ""
 
 
@@ -199,10 +209,10 @@ func _refresh_pack() -> void:
 		return
 	var save := get_node_or_null("/root/SaveService")
 	if save == null or not save.has_method(&"get_inventory_capacity_snapshot"):
-		_pack_label.text = "PACK —"
+		_pack_label.text = "TÚI —"
 		return
 	var snapshot: Dictionary = save.call(&"get_inventory_capacity_snapshot")
-	_pack_label.text = "PACK %d/%d" % [
+	_pack_label.text = "TÚI %d/%d" % [
 		int(snapshot.get("bag_used", 0)), int(snapshot.get("bag_capacity", 0)),
 	]
 
@@ -275,7 +285,7 @@ func _add_recipes(station: Dictionary, owned: Dictionary) -> void:
 			inputs,
 			owned,
 			recipe.fuel,
-			"%ds" % int(recipe.duration_ticks),
+			"%d giây" % int(recipe.duration_ticks),
 			_state_of(operational, used >= capacity, shortfall),
 			_state_colour(operational, used >= capacity, shortfall),
 		)
@@ -473,7 +483,7 @@ func _state_of(operational: bool, queue_full: bool, shortfall: String) -> String
 		return "queue full"
 	if not shortfall.is_empty():
 		return shortfall
-	return "all materials"
+	return "đủ nguyên liệu"
 
 
 func _state_colour(operational: bool, queue_full: bool, shortfall: String) -> Color:
