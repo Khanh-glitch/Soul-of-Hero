@@ -144,6 +144,7 @@ class Facts:
     rejection_codes: Dict[str, str] = field(default_factory=dict)
     lifecycle: Dict[str, str] = field(default_factory=dict)
     feature_hits: Dict[str, List[str]] = field(default_factory=dict)
+    production_mount: Dict[str, object] = field(default_factory=dict)
     probe: Dict[str, dict] = field(default_factory=dict)
     probe_raw: str = ""
     errors: List[str] = field(default_factory=list)
@@ -296,6 +297,38 @@ def gather(root: Optional[Path], evidence: Optional[Path], expected_tree: str = 
             if hits:
                 facts.lifecycle[key] = hits[0]
 
+        # Which class does the *live scene* mount, and is the new authority wired in?
+        scene = root / "game/overworld/chapter1_overworld.gd"
+        scene_text = _text(scene)
+        facts.production_mount = {
+            "file": "game/overworld/chapter1_overworld.gd",
+            "uses_sidecar_mount": "A0AuthoredWorldMount.new()" in scene_text,
+            "off_by_default": bool(re.search(r'get_setting\(\s*AUTHORED_STREAM_SETTING\s*,\s*false\s*\)', scene_text)),
+            "setting": "survival/a0_authored_stream",
+            "setting_defined": "survival/a0_authored_stream" in _text(root / "project.godot"),
+            "authority_module": (root / "game/survival/a0_world_authority.gd").exists(),
+            "authority_referenced_by_production": False,
+            "authority_reference": "",
+        }
+        if facts.production_mount["authority_module"]:
+            # A reference from the authority's own companion view does not mean the game
+            # mounts it: require a scene or a controller that is not part of that pair.
+            skip = {"a0_world_authority.gd", "a0_authored_world_view.gd"}
+            candidates = [p for p in sorted((root / "game").rglob("*.gd")) if p.name not in skip]
+            candidates += sorted((root / "game").rglob("*.tscn"))
+            for file in candidates:
+                text = _text(file)
+                if "A0WorldAuthority" in text or "world_authority" in text:
+                    rel = str(file.relative_to(root))
+                    facts.production_mount["authority_referenced_by_production"] = True
+                    facts.production_mount["authority_reference"] = rel
+                    break
+            if not facts.production_mount["authority_referenced_by_production"]:
+                for file in sorted((root / "tests").rglob("*.gd")):
+                    if "world_authority" in _text(file):
+                        facts.production_mount["authority_reference"] = str(file.relative_to(root))
+                        break
+
         for feature, patterns in FEATURE_PROBES.items():
             hits: List[str] = []
             for pattern in patterns:
@@ -390,13 +423,24 @@ def track1(f: Facts) -> List[Case]:
     if f.live_bounds:
         outside = [(sid, cell) for sid, cell, _ in f.sites
                    if not (0 <= cell[0] < f.live_bounds[0] and 0 <= cell[1] < f.live_bounds[1])]
+    mount = f.production_mount or {}
     c.measurements = {"live": f.live_bounds, "authored": f.authored_frame,
                       "sites_outside": outside, "sidecar_markers": f.sidecar_markers,
-                      "poi_refusal": f.poi_refusal}
+                      "poi_refusal": f.poi_refusal, "production_mount": mount}
     c.evidence = [f"live runtime world bounds {f.live_bounds} (data/overworld/hollow_marches.json)",
                   f"A1 authored frame {f.authored_frame} (game/survival/a1_authored_source.gd:30)",
-                  f"sidecar markers {f.sidecar_markers or 'none'}",
+                  f"sidecar markers {f.sidecar_markers or 'none'} (game/survival/a0_authored_world_mount.gd:12,29)",
                   f"A0 poi-mount refusal `{f.poi_refusal or 'none'}` (game/survival/a0_poi_mount.gd:69)"]
+    if mount:
+        c.evidence += [
+            f"live scene mounts A0AuthoredWorldMount={mount.get('uses_sidecar_mount')} "
+            f"behind `{mount.get('setting')}` which defaults off={mount.get('off_by_default')} "
+            f"and is defined in project.godot={mount.get('setting_defined')} "
+            f"({mount.get('file')}:65,275-277)",
+            f"A0WorldAuthority present={mount.get('authority_module')}, "
+            f"referenced by production={mount.get('authority_referenced_by_production')} "
+            f"({mount.get('authority_reference') or 'no reference'})",
+        ]
     if not (f.live_bounds and f.authored_frame):
         c.settle(BLOCKED, "BLOCKED_WORLD_FACTS_UNREADABLE", f"errors={f.errors}")
     elif f.live_bounds != f.authored_frame or f.sidecar_markers or outside:
@@ -409,6 +453,12 @@ def track1(f: Facts) -> List[Case]:
         if outside:
             reasons.append(f"{len(outside)} A8 site(s) outside the live world: "
                            + ", ".join(f"{s}{c_}" for s, c_ in outside))
+        if mount.get("authority_module") and not mount.get("authority_referenced_by_production"):
+            reasons.append("A0 ships A0WorldAuthority but no production file references it "
+                           f"(only {mount.get('authority_reference') or 'nothing'} does)")
+        elif mount.get("uses_sidecar_mount") and mount.get("off_by_default"):
+            reasons.append(f"the live scene still mounts the sidecar behind "
+                           f"`{mount.get('setting')}`, which defaults off")
         c.settle(FAIL, "SIDECAR_WORLD", "; ".join(reasons),
                  "game/survival/a0_authored_world_mount.gd:12,29")
     else:
