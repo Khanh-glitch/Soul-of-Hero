@@ -1,0 +1,44 @@
+name: ARCANA Fusion20 Renderer - Native 20-skill lifecycle gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths:
+      - 'prototypes/arcana_fusion20/renderer/**'
+      - '.github/workflows/arcana-fusion20-renderer.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  renderer-lifecycle:
+    name: 20 canonical IDs cast/contact/finish/cancel on Godot 4.7
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import project
+        shell: bash
+        run: |
+          set -o pipefail
+          timeout --signal=TERM --kill-after=10s 240s \
+            godot --headless --path . --import 2>&1 | tee import.log
+      - name: Renderer lifecycle test (all 20 skills)
+        shell: bash
+        run: |
+          set -o pipefail
+          timeout --signal=TERM --kill-after=10s 180s \
+            godot --headless --path . --script \
+              res://prototypes/arcana_fusion20/renderer/arcana20_renderer_test.gd \
+            2>&1 | tee renderer-test.log
+          grep -Fq 'ARCANA20_RENDER_RESULT PASS' renderer-test.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|ARCANA20_RENDER_FAIL' renderer-test.log; then
+            echo 'renderer parse/runtime/assertion failure' >&2
+            exit 1
+          fi
