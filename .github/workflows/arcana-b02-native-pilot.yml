@@ -1,4 +1,4 @@
-name: ARCANA #02 original B source — Godot native pilot
+name: "ARCANA #02 original B source - Godot native pilot"
 on:
   workflow_dispatch:
   pull_request:
@@ -28,10 +28,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          timeout 150s xvfb-run -a -s '-screen 0 1280x720x24' godot --path . --rendering-method gl_compatibility --script \
-            res://prototypes/arcana_fusion20/r6/b02_native_visual_gate.gd 2>&1 | tee .artifacts/b02/native.log
+          timeout 150s xvfb-run -a -s '-screen 0 1280x720x24' godot --path . --audio-driver Dummy --rendering-method gl_compatibility \
+            res://prototypes/arcana_fusion20/r6/b02_native_visual_gate.tscn 2>&1 | tee .artifacts/b02/native.log
           grep -Fq 'B02_RESULT PASS failures=[]' .artifacts/b02/native.log
-          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|B02_FAIL' .artifacts/b02/native.log
+          ! grep -Eq 'SCRIPT ERROR:|SHADER ERROR:|Shader compilation failed|Parse Error:|B02_FAIL|Failed to load script' .artifacts/b02/native.log
           find ~/.local/share/godot -name 'B02_*.png' -exec cp {} .artifacts/b02/ \; || true
       - if: always()
         uses: actions/upload-artifact@v4
