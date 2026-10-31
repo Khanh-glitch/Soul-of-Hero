@@ -1,17 +1,20 @@
 ## Original D multi-resolution bright/blur chain operating on an explicit scene
 ## texture. This producer is not yet attached to the live SOH scene and does
-## not implement D post or constitute world/visual approval. A caller must pass
+## do not constitute world/visual approval. A caller must pass
 ## the actual world-composited scene, never a Gold/fake battlefield.
 extends Node
 class_name DOriginalBloom
 
 const STAGE = preload("res://prototypes/arcana_fusion20/renderer/source_d/d_bloom_stage.gdshader")
+const POST = preload("res://prototypes/arcana_fusion20/renderer/source_d/d_original_post.gdshader")
 const HALF := Vector2i(240, 135)
 const QUARTER := Vector2i(120, 67)
 var _stages: Array[SubViewport] = []
 var _first_material: ShaderMaterial
 var _small: SubViewport
 var _wide: SubViewport
+var _post: SubViewport
+var _post_material: ShaderMaterial
 
 func _stage(input: Texture2D, size: Vector2i, mode: int, dir: Vector2, nearest := false, threshold := 0.42, knee := 0.5) -> SubViewport:
     var vp := SubViewport.new()
@@ -49,13 +52,38 @@ func setup(scene: Texture2D) -> void:
     var v3 := _stage(h3.get_texture(), QUARTER, 1, Vector2(0.0, 2.4 / HALF.y))
     var h4 := _stage(v3.get_texture(), HALF, 1, Vector2(4.6 / QUARTER.x, 0.0))
     _wide = _stage(h4.get_texture(), QUARTER, 1, Vector2(0.0, 4.6 / HALF.y))
+    _post = SubViewport.new()
+    _post.size = Vector2i(480, 270)
+    _post.disable_3d = true
+    _post.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+    add_child(_post)
+    var post_rect := ColorRect.new()
+    post_rect.size = Vector2(_post.size)
+    _post_material = ShaderMaterial.new()
+    _post_material.shader = POST
+    _post_material.set_shader_parameter("scene_tex", scene)
+    _post_material.set_shader_parameter("bloom_tex", _small.get_texture())
+    _post_material.set_shader_parameter("bloom2_tex", _wide.get_texture())
+    post_rect.material = _post_material
+    _post.add_child(post_rect)
 
 func set_scene(scene: Texture2D) -> void:
     _first_material.set_shader_parameter("input_nearest", scene)
     _first_material.set_shader_parameter("input_linear", scene)
+    _post_material.set_shader_parameter("scene_tex", scene)
+
+func set_post_params(params: Dictionary) -> void:
+    for key in ["bloom_amount", "exposure", "levels", "flash_amount", "vignette", "saturation", "chromatic_aberration"]:
+        if params.has(key): _post_material.set_shader_parameter(key, params[key])
+    if params.has("flash_color"):
+        var c: Array = params.flash_color
+        _post_material.set_shader_parameter("flash_color", Vector3(float(c[0]), float(c[1]), float(c[2])))
 
 func small_texture() -> Texture2D:
     return _small.get_texture()
 
 func wide_texture() -> Texture2D:
     return _wide.get_texture()
+
+func post_texture() -> Texture2D:
+    return _post.get_texture()

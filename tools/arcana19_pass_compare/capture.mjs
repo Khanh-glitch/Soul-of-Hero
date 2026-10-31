@@ -44,9 +44,18 @@ try {
         for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,Math.min(i+8192,bytes.length)));
         result.buffers[name]={width:target.w,height:target.h,base64:btoa(binary)};
       }
-      gl.bindFramebuffer(gl.FRAMEBUFFER,null);return result;
+      gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+      const post=new Uint8Array(r.canvas.width*r.canvas.height*4);
+      gl.readPixels(0,0,r.canvas.width,r.canvas.height,gl.RGBA,gl.UNSIGNED_BYTE,post);
+      let binary='';for(let i=0;i<post.length;i+=8192)binary+=String.fromCharCode(...post.subarray(i,Math.min(i+8192,post.length)));
+      result.buffers.post={width:r.canvas.width,height:r.canvas.height,base64:btoa(binary)};
+      // Query actual GL uniform state, not intended values: the source's v4
+      // call for a vec3 may be rejected by WebGL, so preserve actual behavior.
+      const uniform=n=>gl.getUniform(r.compProg.prog,gl.getUniformLocation(r.compProg.prog,n));
+      result.postParams={bloom_amount:uniform('uBloomAmt'),exposure:uniform('uExposure'),levels:uniform('uLevels'),flash_amount:uniform('uFlash'),flash_color:Array.from(uniform('uFlashCol')),vignette:uniform('uVig'),saturation:uniform('uSat'),chromatic_aberration:uniform('uCA')};
+      return result;
     });
-    const record={tick,time:result.time,buffers:{}};
+    const record={tick,time:result.time,postParams:result.postParams,buffers:{}};
     for(const [name,v] of Object.entries(result.buffers)) {
       writeFileSync(path.join(out,`original_${tick}.${name}.rgba8`),Buffer.from(v.base64,'base64'));
       record.buffers[name]={width:v.width,height:v.height};

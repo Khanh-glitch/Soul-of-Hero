@@ -10,7 +10,15 @@ func _initialize() -> void:
 func _run() -> void:
     var bloom := DOriginalBloom.new()
     root.add_child(bloom)
+    var manifest_file := FileAccess.open(OUT + "/source_manifest.json", FileAccess.READ)
+    if manifest_file == null:
+        push_error("Missing original source manifest")
+        quit(1)
+        return
+    var manifest: Dictionary = JSON.parse_string(manifest_file.get_as_text())
+    var captures: Array = manifest.captures
     var first := true
+    var capture_index := 0
     for tick in [72, 192, 312, 489, 510]:
         var path := OUT + "/original_%d.scene.rgba8" % tick
         var file := FileAccess.open(path, FileAccess.READ)
@@ -31,7 +39,14 @@ func _run() -> void:
             first = false
         else:
             bloom.set_scene(tex)
-        # The chain consists of ten distinct viewport dependencies. Keep the
+        var capture: Dictionary = captures[capture_index]
+        if int(capture.tick) != tick:
+            push_error("Original post parameters do not match source tick")
+            quit(1)
+            return
+        bloom.set_post_params(capture.postParams)
+        capture_index += 1
+        # The chain consists of eleven distinct viewport dependencies. Keep the
         # input fixed long enough for the rendering graph to settle even on
         # backends that process dependent viewport textures one frame later.
         for frame in range(16):
@@ -39,13 +54,15 @@ func _run() -> void:
             await RenderingServer.frame_post_draw
         var small := bloom.small_texture().get_image()
         var wide := bloom.wide_texture().get_image()
-        if small.is_empty() or wide.is_empty() or small.get_size() != Vector2i(240, 135) or wide.get_size() != Vector2i(120, 67):
+        var post := bloom.post_texture().get_image()
+        if small.is_empty() or wide.is_empty() or post.is_empty() or small.get_size() != Vector2i(240, 135) or wide.get_size() != Vector2i(120, 67) or post.get_size() != Vector2i(480, 270):
             push_error("Native D bloom render targets unavailable or wrong size")
             quit(1)
             return
         small.convert(Image.FORMAT_RGBA8)
         wide.convert(Image.FORMAT_RGBA8)
-        for item in [["bloomSmall", small], ["bloom2", wide]]:
+        post.convert(Image.FORMAT_RGBA8)
+        for item in [["bloomSmall", small], ["bloom2", wide], ["post", post]]:
             var out := FileAccess.open(OUT + "/native_%d.%s.rgba8" % [tick, item[0]], FileAccess.WRITE)
             out.store_buffer((item[1] as Image).get_data())
             out.close()
