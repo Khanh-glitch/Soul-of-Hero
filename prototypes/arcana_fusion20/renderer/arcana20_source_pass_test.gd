@@ -58,7 +58,11 @@ func _run() -> void:
     check(AMath.hash2(1, 2) == 0.11692661442793906, "A hash2 JS signed/float 1,2")
     check(AMath.hash2(-5, 9) == 0.14582930994220078, "A hash2 JS signed/float -5,9")
     check(AMath.hash2(10, 20) == 0.24044638429768384, "A hash2 JS signed/float 10,20")
-    check(AMath.hash2(9000, 1244) == 0.008933292934671044, "A hash2 JS signed/float 9000,1244")
+    var hash_large := AMath.hash2(9000, 1244)
+    var debug_h := AMath._signed32(int(9000.0 * 374761393.0 + 1244.0 * 668265263.0))
+    var debug_mix := debug_h ^ (debug_h >> 13)
+    var debug_product := AMath._signed32(int(float(debug_mix) * 1274126177.0))
+    check(hash_large == 0.008933292934671044, "A hash2 JS signed/float 9000,1244 actual=%.17f h=%d mix=%d product=%d" % [hash_large, debug_h, debug_mix, debug_product])
     check(AMath.hash3(1, 2, 3) == 0.29924265178851783, "A hash3 JS signed/float 1,2,3")
     check(AMath.hash3(-3, 9, -4) == 0.4674732191488147, "A hash3 JS signed/float -3,9,-4")
 
