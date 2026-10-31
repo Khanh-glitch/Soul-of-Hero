@@ -876,6 +876,12 @@ func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D)
     var sampled_second: Node = renderer._casts.get(id10)
     if sampled_second is CSourcePlayer: source_tick_start = (sampled_second as CSourcePlayer)._tick
     elif sampled_second is FusionPlayer: source_tick_start = (sampled_second as FusionPlayer)._tick
+    var profiled_first_a: ASourcePlayer = sampled_first as ASourcePlayer if sampled_first is ASourcePlayer else null
+    var profiled_second_a: ASourcePlayer = null
+    if sampled_second is ASourcePlayer: profiled_second_a = sampled_second as ASourcePlayer
+    elif sampled_second is FusionPlayer:
+        for part in (sampled_second as FusionPlayer)._pending:
+            if part.node is ASourcePlayer: profiled_second_a = part.node as ASourcePlayer
     var profiled_c: CSourcePlayer = null
     if sampled_second is CSourcePlayer:
         profiled_c = sampled_second as CSourcePlayer
@@ -915,6 +921,16 @@ func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D)
         "live_object_delta": live_objects - before_objects,
         "allocation_count": "not exposed by this Godot diagnostic",
         "enemy_hp_before": hp, "enemy_hp_after": int(enemy.get("health"))}
+    for named in [{"label": "first_a", "node": profiled_first_a}, {"label": "second_a", "node": profiled_second_a}]:
+        var a_source: ASourcePlayer = named.node
+        if not is_instance_valid(a_source) or a_source.profile_clear_us.is_empty(): continue
+        var label: String = named.label
+        record[label + "_cpu_sample_count"] = a_source.profile_clear_us.size()
+        for stage in ["clear", "raster", "bloom", "submit"]:
+            var values: Array[float] = a_source.get("profile_" + stage + "_us").duplicate()
+            values.sort()
+            record[label + "_cpu_" + stage + "_p50_p95_p99_us"] = [_perf_percentile(values, 0.5), _perf_percentile(values, 0.95), _perf_percentile(values, 0.99)]
+        record[label + "_cpu_scope"] = "A source-side synchronous CPU in microseconds; submit is not GPU time; initial sample may precede overlap"
     if is_instance_valid(profiled_c):
         var cpu_source := profiled_c
         if cpu_source.profile_cpu and not cpu_source.profile_clear_us.is_empty():

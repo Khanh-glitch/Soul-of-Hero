@@ -18,6 +18,12 @@ const ARENA_LOCAL := Vector2(232, 124)
 var duration := 6.6
 var render_enabled := true
 var world_pass_mode := false
+# Opt-in wall-clock diagnostics; synchronous CPU only, not GPU time.
+var profile_cpu := OS.has_environment("ARCANA20_PROFILE_CPU")
+var profile_clear_us: Array[float] = []
+var profile_raster_us: Array[float] = []
+var profile_bloom_us: Array[float] = []
+var profile_submit_us: Array[float] = []
 var source_variant: StringName = &"candidate"
 var _spell: Variant
 var _fb: AFramebuffer
@@ -128,12 +134,22 @@ func _fire_events() -> void:
 func _render_frame() -> void:
     if _spell == null or not render_enabled:
         return
+    var profile_start := Time.get_ticks_usec() if profile_cpu else 0
     _fb.clear()
+    var profile_clear_done := Time.get_ticks_usec() if profile_cpu else 0
     _spell.call("render", _fb, source_time())
     if world_pass_mode:
+        var profile_raster_done := Time.get_ticks_usec() if profile_cpu else 0
         _fb.compute_bloom()
+        var profile_bloom_done := Time.get_ticks_usec() if profile_cpu else 0
         _sprite.visible = false
         source_pass_ready.emit(source_pass_frame())
+        if profile_cpu:
+            var profile_submit_done := Time.get_ticks_usec()
+            profile_clear_us.append(float(profile_clear_done - profile_start))
+            profile_raster_us.append(float(profile_raster_done - profile_clear_done))
+            profile_bloom_us.append(float(profile_bloom_done - profile_raster_done))
+            profile_submit_us.append(float(profile_submit_done - profile_bloom_done))
         return
     var img := Image.create_from_data(AFramebuffer.W, AFramebuffer.H, false, Image.FORMAT_RGBA8, _fb.present())
     _tex.update(img)
