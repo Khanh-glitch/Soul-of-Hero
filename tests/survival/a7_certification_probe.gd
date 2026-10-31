@@ -93,6 +93,22 @@ func _legacy_bounds() -> Vector2i:
 # and could not load the controller at all. Text is not a program. Every claim of
 # an active world must survive `load()` and `new()` in this engine build.
 # --------------------------------------------------------------------------- #
+func _failing_preloads(text: String) -> Array:
+	## Which of this script's own preloads cannot be loaded. A controller can look healthy
+	## and still die because one dependency does not compile; naming it is the difference
+	## between "the world is broken" and "the world is broken by this file".
+	var out: Array = []
+	var regex := RegEx.new()
+	regex.compile('preload\\("(res://[^"]+)"\\)')
+	for found: RegExMatch in regex.search_all(text):
+		var path := found.get_string(1)
+		if not ResourceLoader.exists(path) or load(path) == null:
+			out.append(path)
+		if out.size() >= 6:
+			break
+	return out
+
+
 func _case_native_load() -> void:
 	var known_good: Variant = load(KNOWN_GOOD_PATH)
 	var controller_script: Variant = load(CONTROLLER_PATH)
@@ -101,7 +117,9 @@ func _case_native_load() -> void:
 	var authority_inst := false
 	var controller_error := ""
 	var mode := ""
-	if controller_script is Script:
+	var controller_can := controller_script is Script and (controller_script as Script).can_instantiate()
+	var authority_can := authority_script is Script and (authority_script as Script).can_instantiate()
+	if controller_can:
 		var node: Variant = (controller_script as Script).new()
 		if node != null:
 			controller_inst = true
@@ -112,9 +130,11 @@ func _case_native_load() -> void:
 			(node as Node).free()
 		else:
 			controller_error = "NEW_RETURNED_NULL"
+	elif controller_script is Script:
+		controller_error = "CANNOT_INSTANTIATE"
 	else:
 		controller_error = "SCRIPT_DOES_NOT_LOAD"
-	if authority_script is Script:
+	if authority_can:
 		var authority: Variant = (authority_script as Script).new()
 		if authority != null:
 			authority_inst = true
@@ -122,11 +142,19 @@ func _case_native_load() -> void:
 	_native = {
 		"known_good_loads": known_good is Script,
 		"controller_loads": controller_script is Script,
+		"controller_can_instantiate": controller_can,
 		"controller_instantiates": controller_inst,
 		"authority_loads": authority_script is Script,
+		"authority_can_instantiate": authority_can,
 		"authority_instantiates": authority_inst,
 		"controller_mode": mode,
 		"controller_error": controller_error,
+		"controller_failing_preloads": _failing_preloads(
+			FileAccess.get_file_as_string(CONTROLLER_PATH)
+			if FileAccess.file_exists(CONTROLLER_PATH) else ""),
+		"authority_failing_preloads": _failing_preloads(
+			FileAccess.get_file_as_string(AUTHORITY_PATH)
+			if FileAccess.file_exists(AUTHORITY_PATH) else ""),
 		"controller_sha256": FileAccess.get_file_as_string(CONTROLLER_PATH).sha256_text() \
 			if FileAccess.file_exists(CONTROLLER_PATH) else "",
 		"authority_sha256": FileAccess.get_file_as_string(AUTHORITY_PATH).sha256_text() \
@@ -161,8 +189,10 @@ func _case_authority() -> void:
 	if reader != null and bool(reader.call(&"configure")):
 		authored = reader.call(&"world_frame")
 	var controller_runnable := bool(_native.get("controller_loads", false)) \
+		and bool(_native.get("controller_can_instantiate", false)) \
 		and bool(_native.get("controller_instantiates", false))
 	var authority_runnable := bool(_native.get("authority_loads", false)) \
+		and bool(_native.get("authority_can_instantiate", false)) \
 		and bool(_native.get("authority_instantiates", false))
 	var mode_resolved := String(_native.get("controller_mode", ""))
 	var source_mount := "authored" if mounts_authority else ("sidecar" if mounts_sidecar else "none")

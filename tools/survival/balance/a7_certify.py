@@ -628,8 +628,9 @@ def track1(f: Facts) -> List[Case]:
                  "the composed controller does not mount A0WorldAuthority although A0's own "
                  f"committed controller does ({control.get('controller_lines')} lines vs "
                  f"{auth.get('controller_lines')}); A0's declared resolution replaces it with a "
-                 "stale merge artifact, so the composed product runs the legacy sidecar "
-                 f"{f.legacy_bounds} while the authored continent is {f.authored_frame}. This is a "
+                 "stale merge artifact, so the composed product is configured for the legacy sidecar "
+                 f"{f.legacy_bounds} while the authored continent is {f.authored_frame} "
+                 f"(runtime live_source={auth.get('live_source')}). This is a "
                  "source/composition finding: it does not claim the control tree runs — see T1.7, "
                  f"where the control's authority script is graded ({'verified' if control_verified else 'NOT verified'})",
                  "python3 tools/a0/compose_owners.py --owner a1=… ; diff the composed "
@@ -695,17 +696,25 @@ def track1(f: Facts) -> List[Case]:
     cases.append(c)
 
     c = Case("T1.4", "T1", "canonical POI approaches lie inside the playable world", "A0",
-             "source-contract", "source")
-    c.stage("source", VALID if f.sites and f.live_bounds else MISSING)
+             "runtime", "runtime")
+    sites_probe = f.probe.get("T1.4", {})
+    c.stage("source", VALID if f.sites else MISSING)
     c.evidence = [f"{sid} {cell} scene={scene or '(none)'}" for sid, cell, scene in f.sites]
-    c.measurements = {"outside": outside, "package_status": f.package_status}
-    if not (f.sites and f.live_bounds):
-        c.settle(BLOCKED, "BLOCKED_NO_SITE_DATA", "A8 package or live bounds unreadable")
-    elif outside is None:
+    c.measurements = {"probe": sites_probe or None, "package_status": f.package_status}
+    if not f.sites:
+        c.settle(BLOCKED, "BLOCKED_NO_SITE_DATA", "A8 package unreadable")
+    elif not sites_probe:
+        # Without an engine measurement only the source inference exists, and inference is
+        # exactly what round 14 mistook for a verdict.
+        c.settle(BLOCKED, "BLOCKED_NO_SITE_PLACEMENT_EVIDENCE",
+                 "no `A7C T1.4` marker: the sites' world placement was never measured in the "
+                 "engine, and source inference is not a verdict")
+    elif sites_probe.get("outside") is None or sites_probe.get("live_resolved") is False:
         c.settle(BLOCKED, "BLOCKED_LIVE_WORLD_UNRESOLVED",
-                 "the probe could not resolve which world is live on this tree, so no site can be "
-                 "placed inside or outside it; T1.7 carries the native reason")
-    elif outside:
+                 "the engine could not resolve which world is live on this tree "
+                 f"(live_source={sites_probe.get('live_source')}), so no site can be placed inside "
+                 "or outside it; T1.7 carries the native reason")
+    elif sites_probe.get("outside"):
         note = ""
         control_sites = (f.control or {}).get("T1.4", {})
         if drops_owner_work(f) and control_sites.get("outside") == 0:
@@ -714,11 +723,12 @@ def track1(f: Facts) -> List[Case]:
                     f"{bool(control_sites.get('live_resolved'))})")
             c.evidence.append(f"reconciled control: {json.dumps(control_sites)[:240]}")
         c.settle(FAIL, "SITE_OUTSIDE_LIVE_WORLD",
-                 f"{len(outside)}/{len(f.sites)} canonical sites cannot be approached; "
+                 f"{sites_probe.get('outside')}/{len(f.sites)} canonical sites cannot be approached "
+                 f"in the measured live world {sites_probe.get('live')}; "
                  f"package_status={f.package_status}{note}", "game/survival/a0_poi_mount.gd:69")
     else:
         c.stage("contract", VALID).settle(BLOCKED, "BLOCKED_NO_APPROACH_RUN",
-                                         "sites are in bounds; no approach run recorded")
+                                         "sites are inside the measured live world; no approach run recorded")
     cases.append(c)
 
     c = Case("T1.5", "T1", "input bootstrap is diagnosed as harness config, not A1 fault",
@@ -780,13 +790,13 @@ def track1(f: Facts) -> List[Case]:
         c.settle(FAIL, "HARNESS_LOADER_BROKEN",
                  "the probe could not load a script it knows is good: the load check itself failed, "
                  "so no verdict about owner code can be drawn")
-    elif not native.get("controller_loads") or not native.get("controller_instantiates"):
+    elif not native.get("controller_loads") or not native.get("controller_can_instantiate"):
         c.settle(FAIL, "CONTROLLER_DOES_NOT_RUN",
                  f"chapter1_overworld.gd loads={native.get('controller_loads')} "
                  f"instantiates={native.get('controller_instantiates')} "
                  f"error={native.get('controller_error')}",
                  "godot --headless --path <tree> --script res://tests/survival/a7_certification_probe.gd")
-    elif not native.get("authority_loads") or not native.get("authority_instantiates"):
+    elif not native.get("authority_loads") or not native.get("authority_can_instantiate"):
         # The file is in the tree either way. If the engine cannot load it, no amount of
         # source reading ("mounts A0WorldAuthority") can make the authored world real.
         c.settle(FAIL, "AUTHORITY_SCRIPT_DOES_NOT_RUN",
@@ -795,6 +805,13 @@ def track1(f: Facts) -> List[Case]:
                  f"mounts it={authority.get('mounts_authority')}. Source presence is not a running "
                  f"world, and {parse_errors} engine error(s) were logged",
                  "grep -n '_spawn_cell' game/survival/a0_world_authority.gd")
+    elif not native.get("controller_instantiates") or not native.get("authority_instantiates"):
+        # Scripts compile, but `new()` failed. That is an environment/probe limitation until
+        # proven otherwise, so it is BLOCKED, never a source verdict.
+        c.settle(BLOCKED, "BLOCKED_INSTANTIATION_ERROR",
+                 "both scripts load and can instantiate, but `new()` failed in this headless "
+                 f"probe (controller_error={native.get('controller_error') or 'none'}); an "
+                 "environmental failure is not proof about the owner's code")
     elif parse_errors:
         c.settle(FAIL, "ENGINE_REPORTED_SCRIPT_ERRORS",
                  f"{parse_errors} engine error(s) while probing: the tree does not compile cleanly",
@@ -1466,7 +1483,8 @@ def self_test(verbose: bool = True) -> int:
     # T1.7 — engine truth beats source inference
     facts = fresh(one_world=True)
     facts.probe["NATIVE_LOAD"] = {"known_good_loads": True, "controller_loads": True,
-                                  "controller_instantiates": True, "authority_loads": False,
+                                  "controller_instantiates": True, "controller_can_instantiate": True,
+                                  "authority_loads": False, "authority_can_instantiate": False,
                                   "authority_instantiates": False, "controller_mode": "authored"}
     facts.probe["AUTHORITY"] = {"mounts_authority": True, "runtime_authority_verified": False}
     check("T1.7 authority cannot load → FAIL AUTHORITY_SCRIPT_DOES_NOT_RUN",
@@ -1474,7 +1492,8 @@ def self_test(verbose: bool = True) -> int:
 
     facts = fresh(one_world=True)
     facts.probe["NATIVE_LOAD"] = {"known_good_loads": True, "controller_loads": True,
-                                  "controller_instantiates": True, "authority_loads": True,
+                                  "controller_instantiates": True, "controller_can_instantiate": True,
+                                  "authority_loads": True, "authority_can_instantiate": True,
                                   "authority_instantiates": True, "controller_mode": "authored"}
     facts.probe["AUTHORITY"] = {"mounts_authority": True, "runtime_authority_verified": True}
     check("T1.7 authority runs → PASS RUNTIME_AUTHORITY_VERIFIED",
@@ -1482,14 +1501,16 @@ def self_test(verbose: bool = True) -> int:
 
     facts = fresh(one_world=True)
     facts.probe["NATIVE_LOAD"] = {"known_good_loads": False, "controller_loads": True,
-                                  "controller_instantiates": True, "authority_loads": True,
+                                  "controller_instantiates": True, "controller_can_instantiate": True,
+                                  "authority_loads": True, "authority_can_instantiate": True,
                                   "authority_instantiates": True, "controller_mode": "authored"}
     check("T1.7 loader itself broken → FAIL HARNESS_LOADER_BROKEN",
           case(facts, "T1.7").code, "HARNESS_LOADER_BROKEN")
 
     facts = fresh(one_world=True)
     facts.probe["NATIVE_LOAD"] = {"known_good_loads": True, "controller_loads": True,
-                                  "controller_instantiates": True, "authority_loads": True,
+                                  "controller_instantiates": True, "controller_can_instantiate": True,
+                                  "authority_loads": True, "authority_can_instantiate": True,
                                   "authority_instantiates": True, "controller_mode": "authored"}
     facts.probe["AUTHORITY"] = {"mounts_authority": True, "runtime_authority_verified": True}
     facts.native["composed"] = {"SCRIPT ERROR": 2, "Parse Error": 1, "Compile Error": 0,
@@ -1521,7 +1542,18 @@ def self_test(verbose: bool = True) -> int:
     check("T1.3 unstandable spawn → FAIL", case(facts, "T1.3").verdict, FAIL)
 
     # T1.4 / T1.5
-    check("T1.4 sites outside world → FAIL", case(fresh(one_world=False, sites_inside=False), "T1.4").verdict, FAIL)
+    facts = fresh(one_world=True)
+    facts.probe["T1.4"] = {"live": [1024, 768], "live_resolved": True, "outside": 2,
+                           "sites": [{"poi_id": "p", "cell": [1400, 900], "inside_live_world": False}]}
+    check("T1.4 engine-measured sites outside world → FAIL", case(facts, "T1.4").verdict, FAIL)
+    # The exact round-14 bug: source inference says "outside", the engine says "unknown".
+    facts = fresh(one_world=False, sites_inside=False)
+    facts.probe["T1.4"] = {"live": None, "live_resolved": False, "outside": None,
+                           "live_source": "UNRESOLVED_CONTROLLER_NOT_RUNNABLE", "sites": []}
+    check("T1.4 source inference never overrules an unresolved engine measurement",
+          case(facts, "T1.4").verdict, BLOCKED)
+    facts = fresh(one_world=False, sites_inside=False)
+    check("T1.4 no placement marker at all → BLOCKED", case(facts, "T1.4").verdict, BLOCKED)
     facts = fresh(one_world=True)
     facts.probe["T1.5_BEFORE"] = {"reader_ok": False, "reason": "PLAYER_INPUT_MOVE_LEFT"}
     facts.probe["T1.5_AFTER"] = {"reader_ok": True, "reason": ""}
