@@ -9,30 +9,37 @@ class_name A3EconomyService
 ## choice is atomic and idempotent.
 ##
 ## Source identities are fail-closed: an unauthenticated source ID yields
-## nothing and never grants inventory. A1/A8 physically authenticate sources
-## when they mount roadside/Quarry sites; this service records authentication
-## through SaveService's mastery section (A0's durable authority), not as a
-## bare string domain claim.
+## nothing and never grants inventory. A1 roadside sources authenticate through
+## A1's physical world bindings. A8 Quarry source `poi_crown_south_quarry` /
+## `south_seam_outcrop` / `extract_outcrop` is REJECTED until A8 grants genuine
+## approval; a bare string "A8" does NOT mint source entitlement.
 ##
 ## All run-local state (learned recipes, discoveries, run ID, authenticated
-## sources, station jobs) is persisted in SaveService so it survives process
-## shutdown and reload of the same run, and disappears on true new-run reset.
+## sources, station jobs) is persisted in SaveService mastery so it survives
+## process shutdown and reload of the same run, and disappears on true new-run
+## reset.
 
 const SaveServiceClass = preload("res://game/autoload/save_service.gd")
 const STACK_ITEM_CATALOG: StackItemCatalog = preload("res://data/content/items/item_catalog.tres")
 
 ## SaveService key namespaces (A3-owned sub-keys within SaveService sections).
-const NAMESPACE := "a3"
 const KEY_AUTHENTICATED_SOURCES := "a3_authenticated_sources"
 const KEY_LEARNED_RECIPES := "a3_learned_recipes"
 const KEY_DISCOVERIES := "a3_discoveries"
 const KEY_RUN_ID := "a3_run_id"
 const KEY_STATION_JOBS := "a3_station_jobs"
+const KEY_JOB_COUNTER := "a3_job_counter"
 
 ## Harvest transaction key namespace. One durable receipt namespace per
-## physical source instance. The prefix must match what _get_times_harvested
+## physical source instance. The prefix must match what _count_harvests
 ## counts, or exhaustion tracking silently breaks.
 const HARVEST_TX_PREFIX := "harvest"
+
+## A8 Quarry physical identity (per A8 specification).
+## AUTHORIZATION STATUS: REJECTED — fail-closed until A8 grants genuine approval.
+const A8_QUARRY_POI_ID := "poi_crown_south_quarry"
+const A8_QUARRY_INSTANCE_ID := "south_seam_outcrop"
+const A8_QUARRY_ACTION_ID := "extract_outcrop"
 
 ## Source contract definitions. Each source has finite yields keyed by
 ## transaction key so SaveService idempotency prevents double-harvest.
@@ -86,6 +93,11 @@ var source_contracts: Dictionary = {
 		"tool_wear": 10,
 		"risk": "high",
 		"availability": "expedition_only",
+		## A8 physical identity (REJECTED — fail-closed until A8 approval):
+		"poi_id": A8_QUARRY_POI_ID,
+		"instance_id": A8_QUARRY_INSTANCE_ID,
+		"action_id": A8_QUARRY_ACTION_ID,
+		"a8_authorized": false,
 	},
 }
 
@@ -108,6 +120,8 @@ var recipes: Dictionary = {
 		"outputs": {"salvage_kit_blueprint": 1},
 		"station": "salvage_station",
 		"fuel_cost": 5,
+		"fuel_item": "knowledge_spare",  ## physical fuel item, not account currency
+		"fuel_quantity": 1,
 		"queue_seconds": 300,
 		"knowledge_mechanism": "directed",
 	},
@@ -115,9 +129,11 @@ var recipes: Dictionary = {
 		"recipe_id": "process_roadside_materials",
 		"display_name": "Process Roadside Materials",
 		"inputs": {"roadside_oak_scrap": 5, "roadside_iron_scrap": 3},
-		"outputs": {"hero_materials": 10},
+		"outputs": {"quarry_core_fragment": 5},
 		"station": "salvage_station",
 		"fuel_cost": 10,
+		"fuel_item": "knowledge_spare",
+		"fuel_quantity": 2,
 		"queue_seconds": 600,
 		"knowledge_mechanism": "directed",
 	},
@@ -125,21 +141,15 @@ var recipes: Dictionary = {
 		"recipe_id": "process_quarry_sample",
 		"display_name": "Process Quarry Sample",
 		"inputs": {"quarry_sample": 3},
-		"outputs": {"quarry_core_fragment": 1, "hero_materials": 5},
+		"outputs": {"quarry_core_fragment": 6},
 		"station": "salvage_station",
 		"fuel_cost": 3,
+		"fuel_item": "knowledge_spare",
+		"fuel_quantity": 1,
 		"queue_seconds": 120,
 		"knowledge_mechanism": "destructive_specimen",
 	},
 }
-
-## Learned recipe IDs. Persisted in SaveService mastery.a3_learned_recipes.
-## Reset on true new-run reset (SaveService reset clears mastery).
-var learned_recipes: Dictionary = {}
-
-## Discovered material uses. Persisted in SaveService mastery.a3_discoveries.
-## Reset on true new-run reset.
-var run_discoveries: Dictionary = {}
 
 ## Specimen registry for destructive reverse engineering.
 ## specimen_id → {item_id, consumes_quantity, teaches_recipe_id, destroy_on_use}
@@ -154,6 +164,14 @@ var specimen_registry: Dictionary = {
 
 var save: Node
 
+## Optional time source for queue readiness. In tests this is simulated;
+## in production A0 injects the authoritative active-session time host.
+var time_source: Callable = Callable()
+
+## Expose SaveService node for test orchestration (A3-owned, no A0 edit).
+func get_save() -> Node:
+	return save
+
 func _ready() -> void:
 	save = root.get_node_or_null("SaveService")
 
@@ -163,7 +181,11 @@ func configure(save_node: Node) -> bool:
 		return false
 	save = save_node
 	return _ensure_run_id()
-	return true
+
+## Set an external time source for queue readiness checks.
+## production A0 injects the authoritative clock here.
+func set_time_source(source: Callable) -> void:
+	time_source = source
 
 ## Ensure a run ID exists in SaveService mastery. Not SaveService revision.
 func _ensure_run_id() -> bool:
@@ -178,6 +200,7 @@ func _ensure_run_id() -> bool:
 			m[KEY_LEARNED_RECIPES] = {}
 			m[KEY_DISCOVERIES] = {}
 			m[KEY_STATION_JOBS] = {}
+			m[KEY_JOB_COUNTER] = 0
 			candidate["mastery"] = m
 			return true
 		return bool(save.call("transact_once", "a3:init:run_id", mutator, {"kind": "a3_init_run"}))
@@ -190,7 +213,6 @@ func _ensure_run_id() -> bool:
 		run_discoveries = disc.duplicate(true)
 	var auth = mastery.get(KEY_AUTHENTICATED_SOURCES, {})
 	if auth is Dictionary:
-		## Rebuild authenticated_sources from SaveService
 		var new_auth = {}
 		for kind in ["roadside", "quarry"]:
 			new_auth[kind] = {}
@@ -216,10 +238,29 @@ func _get_mastery_section() -> Dictionary:
 		return {}
 	return mastery
 
+## Source IDs that A1 (roadside) and A8 (Quarry) have committed to physically
+## authenticate. Empty by default = fail-closed. Populated by A1/A8 at mount
+## time through SaveService mastery; this service never invents or mutates the
+## list except via authenticated_source() which persists through SaveService.
+var authenticated_sources: Dictionary = {
+	"roadside": {},
+	"quarry": {},
+}
+
+## Run-local discoveries: material_id → {use_description, recipe_id, discovered_at_run}.
+## Reset on run reset; persisted only through SaveService transaction receipts.
+var run_discoveries: Dictionary = {}
+
+## Learned recipe IDs (run-local). Reset on run reset.
+var learned_recipes: Dictionary = {}
+
 ## Authenticate a source ID for its owner domain through SaveService.
 ## Called by A1/A8 when they physically mount a site. The authentication is
 ## persisted in SaveService mastery.a3_authenticated_sources so it survives
 ## process reload and is verified through A0's durable authority.
+##
+## For A8 Quarry sources, requires a8_authorized == true in the source contract.
+## A bare string "A8" does not mint source entitlement.
 func authenticate_source(source_id: String, owner_domain: String) -> bool:
 	var contract = source_contracts.get(source_id, {})
 	if contract.is_empty():
@@ -227,6 +268,13 @@ func authenticate_source(source_id: String, owner_domain: String) -> bool:
 	var expected_owner = String(contract.get("owner", ""))
 	if expected_owner != owner_domain:
 		return false
+
+	## A8 Quarry sources require explicit A8 authorization.
+	## A bare string domain claim is insufficient for physical source entitlement.
+	if String(contract.get("kind", "")) == "quarry":
+		if not bool(contract.get("a8_authorized", false)):
+			return false
+
 	var kind = String(contract.get("kind", ""))
 
 	## Persist authentication through SaveService (A0 authority).
@@ -285,6 +333,30 @@ func is_source_authenticated(source_id: String) -> bool:
 	if not domain_map is Dictionary:
 		return false
 	return bool(domain_map.has(source_id))
+
+## Get the next unique job ID. Uses a counter in SaveService mastery so job
+## IDs are stable across reloads and unique per legitimate batch.
+func _next_job_id() -> String:
+	if save == null:
+		return "a3_job_0"
+	var mastery = _get_mastery_section()
+	var counter := int(mastery.get(KEY_JOB_COUNTER, 0)) + 1
+	return "a3_job_%06d" % counter
+
+## Increment the job counter in SaveService.
+func _increment_job_counter() -> bool:
+	if save == null:
+		return false
+	var tx_key := "a3:job_counter:%d" % Time.get_ticks_usec()
+	var mutator := func(candidate: Dictionary) -> bool:
+		var m = candidate.get("mastery", {}).duplicate(true)
+		var counter := int(m.get(KEY_JOB_COUNTER, 0)) + 1
+		m[KEY_JOB_COUNTER] = counter
+		candidate["mastery"] = m
+		return true
+	return bool(save.call("transact_once", tx_key, mutator, {"kind": "a3_job_counter"}))
+
+## --- Harvest ---
 
 ## Harvest from a roadside or Quarry source. Atomic: tool wear + yield grant
 ## commit in one SaveService transaction. Fails closed on any precondition
@@ -564,6 +636,10 @@ func reverse_engineer_specimen(specimen_id: String) -> Dictionary:
 ## starts a real job, persists station identity. Outputs are NOT granted at
 ## prepare time — they are granted only on valid collection after the queue
 ## completes. All through one SaveService transaction.
+##
+## Fuel is a physical item (recipe.fuel_item), not account currency.
+## Job ID is unique per legitimate batch (not just station+recipe), so
+## repeated production is possible without replay or duplicate payment.
 func prepare_at_station(recipe_id: String, station_id: String) -> Dictionary:
 	var recipe = recipes.get(recipe_id, {})
 	if recipe.is_empty():
@@ -577,9 +653,13 @@ func prepare_at_station(recipe_id: String, station_id: String) -> Dictionary:
 		return {"ok": false, "reason": "RECIPE_NOT_FOR_STATION"}
 
 	var fuel_cost := int(recipe.get("fuel_cost", 0))
-	var account_balance := _get_currency("account")
-	if account_balance < fuel_cost:
-		return {"ok": false, "reason": "INSUFFICIENT_ACCOUNT_CURRENCY"}
+	var fuel_item := String(recipe.get("fuel_item", "knowledge_spare"))
+	var fuel_quantity := int(recipe.get("fuel_quantity", 1))
+
+	## Pay fuel from physical fuel item, not account currency.
+	var fuel_available := _get_inventory_quantity(fuel_item)
+	if fuel_available < fuel_quantity:
+		return {"ok": false, "reason": "INSUFFICIENT_%s" % fuel_item.to_upper()}
 
 	var inputs = recipe.get("inputs", {})
 	for input_id: String in inputs.keys():
@@ -590,23 +670,36 @@ func prepare_at_station(recipe_id: String, station_id: String) -> Dictionary:
 
 	var queue_seconds := int(recipe.get("queue_seconds", 0))
 	var outputs = recipe.get("outputs", {}).duplicate(true)
-	var tx_key := "a3:station:prepare:%s:%s" % [station_id, recipe_id]
 
-	## Check if a job already exists for this station+recipe (idempotency).
+	## Unique job ID per legitimate batch — not just station+recipe.
+	var job_id := _next_job_id()
+	var job_key := "job:%s" % job_id
+
+	## Check idempotency: same job key cannot be prepared twice.
 	var existing_jobs = _get_station_jobs()
-	var job_key := "job:%s:%s" % [station_id, recipe_id]
 	if existing_jobs.has(job_key):
 		return {"ok": false, "reason": "JOB_ALREADY_QUEUED"}
 
-	var mutator := func(candidate: Dictionary) -> bool:
-		## Pay fuel from account currency.
-		var currencies = candidate.get("currencies", {}).duplicate(true)
-		currencies["account"] = int(currencies.get("account", 0)) - fuel_cost
-		candidate["currencies"] = currencies
+	var tx_key := "a3:station:prepare:%s" % job_id
 
-		## Consume inputs from inventory (escrowed at prepare time).
+	var mutator := func(candidate: Dictionary) -> bool:
+		## Pay fuel from physical fuel item (escrowed at prepare time).
 		var inventory = candidate.get("inventory", {}).duplicate(true)
 		var stacks = inventory.get("item_stacks", {}).duplicate(true)
+		var fuel_stack_key := _find_stack_key(stacks, fuel_item)
+		if fuel_stack_key.is_empty():
+			return false
+		var fuel_record = stacks[fuel_stack_key] as Dictionary
+		if int(fuel_record.get("quantity", 0)) < fuel_quantity:
+			return false
+		fuel_record["quantity"] = int(fuel_record.get("quantity", 0)) - fuel_quantity
+		if int(fuel_record.get("quantity", 0)) <= 0:
+			stacks.erase(fuel_stack_key)
+		inventory["item_stacks"] = stacks
+		candidate["inventory"] = inventory
+
+		## Consume inputs from inventory (escrowed at prepare time).
+		stacks = inventory.get("item_stacks", {}).duplicate(true)
 		for input_id: String in inputs.keys():
 			var required_qty := int(inputs[input_id])
 			var stack_key := _find_stack_key(stacks, input_id)
@@ -627,21 +720,26 @@ func prepare_at_station(recipe_id: String, station_id: String) -> Dictionary:
 		if not jobs is Dictionary:
 			jobs = {}
 		jobs[job_key] = {
+			"job_id": job_id,
 			"recipe_id": recipe_id,
 			"station_id": station_id,
-			"fuel_paid": fuel_cost,
+			"fuel_item": fuel_item,
+			"fuel_quantity": fuel_quantity,
 			"queued_at_unix": int(Time.get_unix_time_from_system()),
 			"queue_seconds": queue_seconds,
 			"outputs": outputs,
 			"claimed": false,
 		}
 		m[KEY_STATION_JOBS] = jobs
+		## Increment job counter for uniqueness.
+		var counter := int(m.get(KEY_JOB_COUNTER, 0)) + 1
+		m[KEY_JOB_COUNTER] = counter
 		candidate["mastery"] = m
 		return true
 
 	var applied := false
 	if save != null:
-		applied = bool(save.call("transact_once", tx_key, mutator, {"kind": "a3_station_prepare", "station": station_id, "recipe": recipe_id}))
+		applied = bool(save.call("transact_once", tx_key, mutator, {"kind": "a3_station_prepare", "station": station_id, "recipe": recipe_id, "job_id": job_id}))
 
 	if not applied:
 		return {"ok": false, "reason": "TRANSACTION_REJECTED"}
@@ -649,9 +747,11 @@ func prepare_at_station(recipe_id: String, station_id: String) -> Dictionary:
 	return {
 		"ok": true,
 		"reason": "",
+		"job_id": job_id,
 		"recipe": recipe_id,
 		"station": station_id,
-		"fuel_paid": fuel_cost,
+		"fuel_item": fuel_item,
+		"fuel_quantity": fuel_quantity,
 		"queue_seconds": queue_seconds,
 		"outputs": outputs,
 		"transaction_key": tx_key,
@@ -660,8 +760,8 @@ func prepare_at_station(recipe_id: String, station_id: String) -> Dictionary:
 
 ## Claim a completed offline production. Grants outputs exactly once on valid
 ## collection. Fails on duplicate, early claim, full bag, or wrong-run.
-func claim_offline_production(station_id: String, recipe_id: String) -> Dictionary:
-	var job_key := "job:%s:%s" % [station_id, recipe_id]
+func claim_offline_production(job_id: String) -> Dictionary:
+	var job_key := "job:%s" % job_id
 	var jobs = _get_station_jobs()
 	if not jobs.has(job_key):
 		return {"ok": false, "reason": "QUEUE_NOT_FOUND_OR_ALREADY_CLAIMED"}
@@ -672,15 +772,21 @@ func claim_offline_production(station_id: String, recipe_id: String) -> Dictiona
 	if bool(entry.get("claimed", false)):
 		return {"ok": false, "reason": "ALREADY_CLAIMED"}
 
-	## Verify queue time has elapsed (real-time gate).
+	## Verify queue time has elapsed (real-time gate via configurable time source).
 	var queued_at := int(entry.get("queued_at_unix", 0))
 	var queue_seconds := int(entry.get("queue_seconds", 0))
-	var now := int(Time.get_unix_time_from_system())
+	var now := 0
+	if time_source.is_valid():
+		var time_val := time_source.call()
+		if time_val is Dictionary:
+			now = int(time_val.get("now", 0))
+	if now == 0:
+		now = int(Time.get_unix_time_from_system())
 	if now - queued_at < queue_seconds:
 		return {"ok": false, "reason": "QUEUE_NOT_READY"}
 
 	var outputs = entry.get("outputs", {}).duplicate(true)
-	var tx_key := "a3:station:claim:%s:%s" % [station_id, recipe_id]
+	var tx_key := "a3:station:claim:%s" % job_id
 
 	var mutator := func(candidate: Dictionary) -> bool:
 		## Grant outputs exactly once. Check full bag.
@@ -709,7 +815,7 @@ func claim_offline_production(station_id: String, recipe_id: String) -> Dictiona
 
 	var applied := false
 	if save != null:
-		applied = bool(save.call("transact_once", tx_key, mutator, {"kind": "a3_station_claim", "station": station_id, "recipe": recipe_id}))
+		applied = bool(save.call("transact_once", tx_key, mutator, {"kind": "a3_station_claim", "job_id": job_id}))
 
 	if not applied:
 		return {"ok": false, "reason": "TRANSACTION_REJECTED"}
@@ -717,16 +823,17 @@ func claim_offline_production(station_id: String, recipe_id: String) -> Dictiona
 	return {
 		"ok": true,
 		"reason": "",
-		"recipe": recipe_id,
-		"station": station_id,
+		"job_id": job_id,
+		"recipe": String(entry.get("recipe_id", "")),
+		"station": String(entry.get("station_id", "")),
 		"outputs": outputs,
 		"transaction_key": tx_key,
 	}
 
 ## Cancel a queued job. Refunds fuel but NOT consumed inputs (inputs are
 ## spent at prepare time as production cost). Idempotent.
-func cancel_station_job(station_id: String, recipe_id: String) -> Dictionary:
-	var job_key := "job:%s:%s" % [station_id, recipe_id]
+func cancel_station_job(job_id: String) -> Dictionary:
+	var job_key := "job:%s" % job_id
 	var jobs = _get_station_jobs()
 	if not jobs.has(job_key):
 		return {"ok": false, "reason": "QUEUE_NOT_FOUND"}
@@ -735,14 +842,18 @@ func cancel_station_job(station_id: String, recipe_id: String) -> Dictionary:
 	if bool(entry.get("claimed", false)):
 		return {"ok": false, "reason": "ALREADY_CLAIMED"}
 
-	var fuel_paid := int(entry.get("fuel_paid", 0))
-	var tx_key := "a3:station:cancel:%s:%s" % [station_id, recipe_id]
+	var fuel_item := String(entry.get("fuel_item", "knowledge_spare"))
+	var fuel_quantity := int(entry.get("fuel_quantity", 0))
+	var tx_key := "a3:station:cancel:%s" % job_id
 
 	var mutator := func(candidate: Dictionary) -> bool:
-		## Refund fuel.
-		var currencies = candidate.get("currencies", {}).duplicate(true)
-		currencies["account"] = int(currencies.get("account", 0)) + fuel_paid
-		candidate["currencies"] = currencies
+		## Refund fuel to inventory.
+		var inventory = candidate.get("inventory", {}).duplicate(true)
+		var stacks = inventory.get("item_stacks", {}).duplicate(true)
+		if not _grant_to_candidate_stacks(candidate, stacks, fuel_item, fuel_quantity):
+			return false
+		inventory["item_stacks"] = stacks
+		candidate["inventory"] = inventory
 
 		## Remove job from queue.
 		var m = candidate.get("mastery", {}).duplicate(true)
@@ -755,7 +866,7 @@ func cancel_station_job(station_id: String, recipe_id: String) -> Dictionary:
 
 	var applied := false
 	if save != null:
-		applied = bool(save.call("transact_once", tx_key, mutator, {"kind": "a3_station_cancel", "station": station_id, "recipe": recipe_id}))
+		applied = bool(save.call("transact_once", tx_key, mutator, {"kind": "a3_station_cancel", "job_id": job_id}))
 
 	if not applied:
 		return {"ok": false, "reason": "TRANSACTION_REJECTED"}
@@ -763,9 +874,10 @@ func cancel_station_job(station_id: String, recipe_id: String) -> Dictionary:
 	return {
 		"ok": true,
 		"reason": "",
-		"recipe": recipe_id,
-		"station": station_id,
-		"fuel_refunded": fuel_paid,
+		"job_id": job_id,
+		"recipe": String(entry.get("recipe_id", "")),
+		"station": String(entry.get("station_id", "")),
+		"fuel_refunded": fuel_quantity,
 		"transaction_key": tx_key,
 	}
 
@@ -850,6 +962,10 @@ func get_projections() -> Dictionary:
 			"max_yields": int(contract.get("max_yields", 0)),
 			"yields_remaining": max(0, int(contract.get("max_yields", 0)) - _count_transactions_with_prefix("harvest:%s:" % source_id)),
 			"risk": String(contract.get("risk", "")),
+			"poi_id": String(contract.get("poi_id", "")),
+			"instance_id": String(contract.get("instance_id", "")),
+			"action_id": String(contract.get("action_id", "")),
+			"a8_authorized": bool(contract.get("a8_authorized", false)),
 		}
 
 	var recipe_projections := {}
@@ -859,6 +975,8 @@ func get_projections() -> Dictionary:
 			"display_name": String(recipe.get("display_name", "")),
 			"station": String(recipe.get("station", "")),
 			"fuel_cost": int(recipe.get("fuel_cost", 0)),
+			"fuel_item": String(recipe.get("fuel_item", "")),
+			"fuel_quantity": int(recipe.get("fuel_quantity", 0)),
 			"queue_seconds": int(recipe.get("queue_seconds", 0)),
 			"knowledge_mechanism": String(recipe.get("knowledge_mechanism", "")),
 			"learned": _is_recipe_known(recipe_id),
@@ -1184,7 +1302,7 @@ func _grant_tool_with_condition_for_test(tool_id: String, condition: int, transa
 	return _set_inventory_stacks_for_test(stacks, transaction_key)
 
 ## Grant a material directly to inventory via SaveService (tests only).
-func grant_material_for_test(item_id: String, quantity: Int, transaction_key: String) -> bool:
+func grant_material_for_test(item_id: String, quantity: int, transaction_key: String) -> bool:
 	if save == null:
 		return false
 	return bool(save.call("grant_inventory_item", item_id, "material", quantity, transaction_key, {}))
