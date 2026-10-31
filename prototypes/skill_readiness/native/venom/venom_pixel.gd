@@ -459,6 +459,11 @@ class Field extends RefCounted:
 	## outside the extents always have h == 0 and are skipped either way.
 	var row_lo: PackedInt32Array
 	var row_hi: PackedInt32Array
+	## Indices of pixels with h > 0 (written since last reset, duplicates
+	## from overlapping blobs included). shade/vapor iterate this list
+	## instead of scanning the whole bounding box; each listed pixel is
+	## shaded independently, so order/duplicates cannot change output.
+	var written: PackedInt32Array = PackedInt32Array()
 
 	func _init(w: int = 600, h_: int = 340, k_: float = 1.0) -> void:
 		W = w
@@ -476,9 +481,10 @@ class Field extends RefCounted:
 	func reset() -> void:
 		if x1 < 0:
 			return
-		# h is non-zero only inside the tracked bbox (all writers go through
-		# _box), so a whole-array native fill reaches the same end state.
-		self.h.fill(0.0)
+		# h is non-zero exactly at the written indices.
+		for wi in range(written.size()):
+			self.h[written[wi]] = 0.0
+		written.clear()
 		row_lo.fill(-1)
 		row_hi.fill(-1)
 		x0 = 1000000000
@@ -546,6 +552,7 @@ class Field extends RefCounted:
 				if v <= 0.0:
 					continue
 				var i: int = base + x
+				written.append(i)
 				var o: float = h[i]
 				if goo != 0.0 and o > 0.0:
 					h[i] = maxf(o, v) + goo * minf(o, v)
@@ -573,6 +580,7 @@ class Field extends RefCounted:
 				var v: float = (1.0 - q) * m + 0.5
 				if v > 0.0 and v > h[y * W + x]:
 					h[y * W + x] = v
+					written.append(y * W + x)
 
 	func capsule(ax: float, ay: float, bx: float, by: float, ra: float, rb: float = -1.0) -> void:
 		if rb < 0.0:
@@ -607,6 +615,7 @@ class Field extends RefCounted:
 				var v: float = gra + (grb - gra) * t - sqrt(dx * dx + dy * dy) + 0.5
 				if v > 0.0 and v > h[y * W + x]:
 					h[y * W + x] = v
+					written.append(y * W + x)
 
 	# -------------------------------------------------------------------------
 	# liquid shading (original Field.shade / Field.vapor)
@@ -643,54 +652,53 @@ class Field extends RefCounted:
 		var hi_w: float = float(m.get("hiW", 0.0)) * rk
 		var hi_t: float = float(m.get("hiT", 0.25))
 		var amp: float = float(m.get("amp", 0.5))
-		for y in range(self.y0, self.y1 + 1):
-			if row_lo[y] < 0:
+		for wi in range(written.size()):
+			var i: int = written[wi]
+			var y: int = i / W
+			var x: int = i - y * W
+			var v: float = h[i]
+			if v <= 0.0:
 				continue
-			for x in range(row_lo[y], row_hi[y] + 1):
-				var i: int = y * W + x
-				var v: float = h[i]
-				if v <= 0.0:
-					continue
-				var c: int
-				var sx: float = float(x) * sc + sd
-				var sy: float = float(y) * sc
-				if v < 1.0 * rk:
-					c = c_outline
+			var c: int
+			var sx: float = float(x) * sc + sd
+			var sy: float = float(y) * sc
+			if v < 1.0 * rk:
+				c = c_outline
+			else:
+				var lit: float = -((h[i + 1] - h[i - 1]) * -0.7
+						+ (h[i + W] - h[i - W]) * -0.7) * 0.5
+				if v < 2.0 * rk:
+					c = c_rimlit if lit > 0.25 else c_rim
 				else:
-					var lit: float = -((h[i + 1] - h[i - 1]) * -0.7
-							+ (h[i + W] - h[i - W]) * -0.7) * 0.5
-					if v < 2.0 * rk:
-						c = c_rimlit if lit > 0.25 else c_rim
-					else:
-						var wp: float = (float(RNG.NZ2[((int(floor(sy * 1.9 + fx * 0.6)) & 63) << 6) | (int(floor(sx * 1.9 - fy * 0.6)) & 63)])
-								- 128.0) * 0.05
-						var n: float = RNG.NZ1F[((int(floor(sy + fy + wp * 9.0)) & 63) << 6) | (int(floor(sx + fx + wp * 9.0)) & 63)]
-						var dn: float = M.clampf((v - 2.0 * rk) / dep, 0.0, 1.0)
-						var q: float = (1.0 - dn) * (1.0 - amp) + n * amp
-						var kk: int = int(floor(q * float(nR)
-								+ (float(M.BAYER[((y & 3) << 2) | (x & 3)]) - 7.5) * 0.05))
-						if kk < 0:
-							kk = 0
-						elif kk >= nR:
-							kk = nR - 1
-						c = int(ramp[kk])
-						if v < hi_w:
-							if lit > hi_t:
-								c = c_hi
-							elif lit < -hi_t:
-								c = c_sh
-					if float(m.get("vw", 0.0)) > 0.0:
-						var n2: int = RNG.NZ2[((int(floor(sy * 1.3 + fy * 1.5 + 5.0)) & 63) << 6) | (int(floor(sx * 1.3 + fx * 1.5)) & 63)]
-						if absf(float(n2) - 128.0) < vw_v and v > 3.0 * rk:
-							c = c_vein
-				if fast:
-					var o2: int = i * 4
-					lb[o2] = c & 255
-					lb[o2 + 1] = (c >> 8) & 255
-					lb[o2 + 2] = (c >> 16) & 255
-					lb[o2 + 3] = 255
-				else:
-					L.raw_px(x, y, c)
+					var wp: float = (float(RNG.NZ2[((int(floor(sy * 1.9 + fx * 0.6)) & 63) << 6) | (int(floor(sx * 1.9 - fy * 0.6)) & 63)])
+							- 128.0) * 0.05
+					var n: float = RNG.NZ1F[((int(floor(sy + fy + wp * 9.0)) & 63) << 6) | (int(floor(sx + fx + wp * 9.0)) & 63)]
+					var dn: float = M.clampf((v - 2.0 * rk) / dep, 0.0, 1.0)
+					var q: float = (1.0 - dn) * (1.0 - amp) + n * amp
+					var kk: int = int(floor(q * float(nR)
+							+ (float(M.BAYER[((y & 3) << 2) | (x & 3)]) - 7.5) * 0.05))
+					if kk < 0:
+						kk = 0
+					elif kk >= nR:
+						kk = nR - 1
+					c = int(ramp[kk])
+					if v < hi_w:
+						if lit > hi_t:
+							c = c_hi
+						elif lit < -hi_t:
+							c = c_sh
+				if float(m.get("vw", 0.0)) > 0.0:
+					var n2: int = RNG.NZ2[((int(floor(sy * 1.3 + fy * 1.5 + 5.0)) & 63) << 6) | (int(floor(sx * 1.3 + fx * 1.5)) & 63)]
+					if absf(float(n2) - 128.0) < vw_v and v > 3.0 * rk:
+						c = c_vein
+			if fast:
+				var o2: int = i * 4
+				lb[o2] = c & 255
+				lb[o2 + 1] = (c >> 8) & 255
+				lb[o2 + 2] = (c >> 16) & 255
+				lb[o2 + 3] = 255
+			else:
+				L.raw_px(x, y, c)
 		if fast:
 			L.bytes = lb
 		L.dl = sdl
@@ -712,33 +720,32 @@ class Field extends RefCounted:
 		var dens: float = float(o.get("dens", 1.0))
 		var sdl: int = L.dl
 		var sc: float = float(m.get("sc", 1.0)) / rk
-		for y in range(self.y0, self.y1 + 1):
-			if row_lo[y] < 0:
+		for wi in range(written.size()):
+			var i: int = written[wi]
+			var y: int = i / W
+			var x: int = i - y * W
+			var v: float = h[i]
+			if v <= 0.0:
 				continue
-			for x in range(row_lo[y], row_hi[y] + 1):
-				var i: int = y * W + x
-				var v: float = h[i]
-				if v <= 0.0:
-					continue
-				var sx: float = float(x) * sc + sd
-				var sy: float = float(y) * sc
-				var wp: float = (float(RNG.NZ2[((int(floor(sy * 1.7 - fx * 0.5)) & 63) << 6) | (int(floor(sx * 1.7 + fy * 0.5)) & 63)])
-						- 128.0) * 0.05
-				var n: float = RNG.NZ1F[((int(floor(sy + fy + wp * 8.0)) & 63) << 6) | (int(floor(sx + fx + wp * 8.0)) & 63)]
-				var n2: float = RNG.NZ2F[((int(floor(sy * 2.1 - fy * 0.7)) & 63) << 6) | (int(floor(sx * 2.1 - fx * 0.7)) & 63)]
-				var d: float = (M.clampf(v / dep_rk, 0.0, 1.0) * 0.55
-						+ n * 0.55 + (n2 - 0.5) * 0.25)
-				if d < 0.28:
-					continue
-				var lit: float = -((h[i + 1] - h[i - 1]) * -0.7
-						+ (h[i + W] - h[i - W]) * -0.7) * 0.5
-				var kk: int = int(floor(d * float(nR) * 0.95
-						+ (1.0 if lit > 0.3 else 0.0) - (1.0 if lit < -0.3 else 0.0)))
-				if kk < 0:
-					kk = 0
-				elif kk >= nR:
-					kk = nR - 1
-				L.dl = M.js_round(M.clampf((float(m.get("dl", 16)) - 4.0 + d * 8.0) * dens,
-						0.0, 16.0))
-				L.raw_px(x, y, c_rim_v if (v < 1.2 * rk and d > 0.45) else int(ramp[kk]))
+			var sx: float = float(x) * sc + sd
+			var sy: float = float(y) * sc
+			var wp: float = (float(RNG.NZ2[((int(floor(sy * 1.7 - fx * 0.5)) & 63) << 6) | (int(floor(sx * 1.7 + fy * 0.5)) & 63)])
+					- 128.0) * 0.05
+			var n: float = RNG.NZ1F[((int(floor(sy + fy + wp * 8.0)) & 63) << 6) | (int(floor(sx + fx + wp * 8.0)) & 63)]
+			var n2: float = RNG.NZ2F[((int(floor(sy * 2.1 - fy * 0.7)) & 63) << 6) | (int(floor(sx * 2.1 - fx * 0.7)) & 63)]
+			var d: float = (M.clampf(v / dep_rk, 0.0, 1.0) * 0.55
+					+ n * 0.55 + (n2 - 0.5) * 0.25)
+			if d < 0.28:
+				continue
+			var lit: float = -((h[i + 1] - h[i - 1]) * -0.7
+					+ (h[i + W] - h[i - W]) * -0.7) * 0.5
+			var kk: int = int(floor(d * float(nR) * 0.95
+					+ (1.0 if lit > 0.3 else 0.0) - (1.0 if lit < -0.3 else 0.0)))
+			if kk < 0:
+				kk = 0
+			elif kk >= nR:
+				kk = nR - 1
+			L.dl = M.js_round(M.clampf((float(m.get("dl", 16)) - 4.0 + d * 8.0) * dens,
+					0.0, 16.0))
+			L.raw_px(x, y, c_rim_v if (v < 1.2 * rk and d > 0.45) else int(ramp[kk]))
 		L.dl = sdl
