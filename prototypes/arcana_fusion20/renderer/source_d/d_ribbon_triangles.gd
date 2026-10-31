@@ -81,7 +81,8 @@ static func _draw_triangle(fx: Variant, v0: Dictionary, v1: Dictionary, v2: Dict
     var s1 := float(v1.across)
     var s2 := float(v2.across)
     # Across is affine within a GPU triangle. Derive its one-pixel gradient;
-    # fwidth(abs(across)) uses the actual 2x2 helper-quad finite differences.
+    # fwidth(abs(across)) uses the tested WebGL backend's coarse 2x2
+    # helper-quad differences; backend-specific rounding remains under test.
     var grad_x := ((b.y - c.y) * s0 + (c.y - a.y) * s1 + (a.y - b.y) * s2) / area
     var grad_y := ((c.x - b.x) * s0 + (a.x - c.x) * s1 + (b.x - a.x) * s2) / area
     for y in range(ymin, ymax + 1):
@@ -99,8 +100,12 @@ static func _draw_triangle(fx: Variant, v0: Dictionary, v1: Dictionary, v2: Dict
             var d := absf(across)
             var even_x := x & 1
             var even_y := y & 1
-            var x0 := across - float(even_x) * grad_x
-            var y0 := across - float(even_y) * grad_y
+            # GPU framebuffer y is inverted from our top-origin image. The
+            # coarse x derivative is shared from the framebuffer-even row;
+            # coarse y derivative is shared from the x-even column.
+            var quad_left := across - float(even_x) * grad_x
+            var x0 := quad_left + float(1 - even_y) * grad_y
+            var y0 := quad_left - float(even_y) * grad_y
             var fw := maxf(absf(absf(x0 + grad_x) - absf(x0)) + absf(absf(y0 + grad_y) - absf(y0)), 0.0001)
             var along := w0 * float(v0.along) + w1 * float(v1.along) + w2 * float(v2.along)
             var alpha := clampf((1.0 - d) / fw / maxf(0.8, hard), 0.0, 1.0)
