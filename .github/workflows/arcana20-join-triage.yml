@@ -14,7 +14,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: arcana20-overworld-join-diagnostic
-          run-id: 41217063693
+          run-id: 41223399432
           github-token: ${{ github.token }}
           path: review
       - name: Log tail and failure context
@@ -30,7 +30,7 @@ jobs:
               msg=' | '.join(lines[max(0,i-1):i+6]).replace('%','%25').replace('\n',' ')
               print('::notice::JOIN_CONTEXT '+msg[:3600])
           for l in lines:
-              if any(x in l for x in ('full visible real HUD', 'A20 mapped real-ground', 'A20 additive debris', 'scene transition', 'route change', 'overworld-to-Home', 'ARCANA20_JOIN_DIAGNOSTIC')): print('::notice title=KEY_JOIN::'+l.replace('%','%25'))
+              if any(x in l for x in ('full visible real HUD', 'A20 mapped real-ground', 'A20 additive debris', 'scene transition', 'route change', 'overworld-to-Home', 'early completion', 'full lifecycle naturally', 'full visual sequence', 'natural visual completion', 'ARCANA20_JOIN_DIAGNOSTIC')): print('::notice title=KEY_JOIN::'+l.replace('%','%25'))
           ok=[l for l in lines if l.startswith('JOIN_OK') or l.startswith('JOIN_FAIL')]
           print('::notice title=JOIN_ALL::'+ ' | '.join(ok)[:3800].replace('%','%25'))
           leaks=[l for l in lines if any(k in l for k in ('Leaked instance:', 'Resource still in use:', 'ObjectDB instances leaked', 'resources still in use'))]
