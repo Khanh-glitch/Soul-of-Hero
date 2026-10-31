@@ -33,7 +33,7 @@ jobs:
         run: |
           for file in import.log source.log; do
             if test -f "$file"; then
-              grep -E 'SCRIPT ERROR:|Parse Error:|SOURCE_PASS_FAIL|ARCANA20_SOURCE_PASS_RESULT' "$file" | tail -25 | while IFS= read -r line; do echo "::notice::$line"; done || true
+              grep -E 'SCRIPT ERROR:|Parse Error:|SOURCE_PASS_FAIL|ARCANA20_SOURCE_PASS_RESULT|C20_SETUP_COST' "$file" | tail -25 | while IFS= read -r line; do echo "::notice::$line"; done || true
             fi
           done
       - uses: actions/upload-artifact@v4
