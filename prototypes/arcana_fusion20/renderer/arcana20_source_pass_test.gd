@@ -347,9 +347,17 @@ func _run() -> void:
     root.add_child(preview_host)
     var preview_material := preview_host._sprite.material as CanvasItemMaterial
     check(preview_material != null and preview_material.blend_mode == CanvasItemMaterial.BLEND_MODE_ADD, "D legacy light preview uses additive blend")
+    preview_host.begin(Vector2(10, 20), Vector2(110, 40))
+    check(preview_host._eng.fx.rgba8_fragment_transfer and preview_host._eng.fx.rgba8_scene_blend, "D runtime uses source RGBA8 fragment and destination transfer")
+    preview_host.stop()
     preview_host.queue_free()
     d.track_world_fields = true
     d.clear()
+    d.rgba8_scene_blend = true
+    d._add_px(3, 3, 0.1, 0.2, 0.3)
+    d._add_px(3, 3, 0.1, 0.2, 0.3)
+    var d_index := (3 * DFx.W + 3) * 3
+    check(is_equal_approx(d.buf[d_index], 52.0 / 255.0) and is_equal_approx(d.buf[d_index + 1], 102.0 / 255.0), "D RGBA8 destination quantizes each blend")
     d._add_px(4, 4, 0.0, 0.0, 0.0)
     d.bend(10.0, 11.0, 12.0, 1.0, -2.0, 0.5, 0.8)
     check(d.world_influence[4 * DFx.W + 4] == 1, "D authored additive operation footprint")

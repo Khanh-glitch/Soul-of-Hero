@@ -778,6 +778,7 @@ func _run() -> void:
     var id19 := Arcana20SourceCatalog.canonical_id(19)
     multi.cast_skill(id19, player.global_position, enemy.global_position)
     var constellation := multi._casts[id19] as DSourcePlayer
+    check(constellation._eng.fx.rgba8_fragment_transfer and constellation._eng.fx.rgba8_scene_blend, "D19 current-world player uses source RGBA8 transfer")
     constellation.set_process(false)
     constellation.render_enabled = false
     for tick in range(120): constellation.advance(STEP)

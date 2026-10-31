@@ -30,10 +30,10 @@ const FLAKE := 18
 
 var buf := PackedFloat32Array()
 var track_world_fields := false
-# Diagnostic opt-in until sprite/ribbon fragment transfer is compared against
-# the original WebGL RGBA8 target; polygon path has its own validated handling.
+# Defaults retain a standalone baseline; DSourcePlayer opts into normalized
+# source transfer. Sprite/ribbon local errors and GPU backend differences remain.
 var rgba8_fragment_transfer := false
-# Diagnostic opt-in: original additive scene stores every blend in RGBA8.
+# D source option: original additive scene stores every blend in RGBA8.
 var rgba8_scene_blend := false
 var world_influence := PackedByteArray()
 var world_bends: Array[Dictionary] = []
