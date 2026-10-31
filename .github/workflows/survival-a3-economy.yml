@@ -104,6 +104,8 @@ jobs:
     name: A3 NATIVE SAVE ADAPTER
     needs: contracts-and-balance
     runs-on: ubuntu-latest
+    env:
+      ARTIFACT_DIR: artifacts/a3-economy
     steps:
       - uses: actions/checkout@v4
       - uses: chickensoft-games/setup-godot@v2
@@ -114,15 +116,18 @@ jobs:
       - run: mkdir -p "$ARTIFACT_DIR"
       - name: Import project (real engine parser)
         run: |
+          set +e
           timeout --signal=TERM --kill-after=10s 240s godot --headless --path . \
             --user-data-dir artifacts/a3-import --import >"$ARTIFACT_DIR/import.log" 2>&1
           rc=$?
+          set -e
           tail -60 "$ARTIFACT_DIR/import.log"
-          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/import.log" "A3 import" || exit 1
           if [ "$rc" -ne 0 ]; then
             bash tools/ci/annotate_log.sh "$ARTIFACT_DIR/import.log" "A3 import engine exit $rc" 20 || true
+            echo "::warning::A3 import: godot exited $rc; the log gate decides"
           fi
-          exit $rc
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/import.log" "A3 import" || exit 1
+          exit 0
       - name: Economy adapter against real SaveService
         run: |
           set +e
@@ -133,20 +138,15 @@ jobs:
           rc=$?
           set -e
           cat "$ARTIFACT_DIR/adapter.log"
-          # The V5 failed-save oracle intentionally obstructs the temporary write.
-          # Keep the full negative log in the artifact; gate the expected I/O line
-          # by name so it cannot mask unrelated script/engine errors.
-          grep -vE '^(USER )?ERROR: SaveService: Could not write the temporary save file[.]$' \
-            "$ARTIFACT_DIR/adapter.log" > "$ARTIFACT_DIR/adapter.gate.log"
-          # An exit code is not evidence in either direction: the log gate plus the
-          # PASS marker decide, and a nonzero engine exit is surfaced explicitly.
           if [ "$rc" -ne 0 ]; then
             bash tools/ci/annotate_log.sh "$ARTIFACT_DIR/adapter.log" "A3 adapter engine exit $rc" 30 || true
+            echo "::warning::A3 adapter: godot exited $rc; the log gate and the PASS marker decide"
           fi
+          # The V5 failed-save oracle intentionally obstructs the temporary write.
+          # Gate a copy with exactly that line removed, never a blanket filter.
+          grep -vE '^(USER )?ERROR: SaveService: Could not write the temporary save file[.]$' \
+            "$ARTIFACT_DIR/adapter.log" > "$ARTIFACT_DIR/adapter.gate.log"
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/adapter.gate.log" "A3 adapter" "A3 ECONOMY ADAPTER PASSED" || exit 1
-          if [ "$rc" -ne 0 ]; then
-            echo "::warning::A3 adapter: godot exited $rc after a clean log gate and the PASS marker; log is the oracle"
-          fi
           summary="$(grep 'A3 ECONOMY ADAPTER PASSED' "$ARTIFACT_DIR/adapter.log" | tail -1)"
           echo "::notice title=A3 native adapter::${summary}"
           echo "$summary" >> "$GITHUB_STEP_SUMMARY"
@@ -167,12 +167,14 @@ jobs:
           rc2=$?
           set -e
           cat "$ARTIFACT_DIR/restart_phase1.log" "$ARTIFACT_DIR/restart_phase2.log"
-          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/restart_phase1.log" "A3 restart phase1" "A3 WORLD RESTART PHASE 1 PASSED"
-          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/restart_phase2.log" "A3 restart phase2" "A3 WORLD RESTART PHASE 2 PASSED"
           if [ "$rc1" -ne 0 ] || [ "$rc2" -ne 0 ]; then
-            echo "::warning::engine exit codes rc1=$rc1 rc2=$rc2; both logs passed their gates"
+            bash tools/ci/annotate_log.sh "$ARTIFACT_DIR/restart_phase2.log" "A3 restart phase2 engine exit $rc2" 25 || true
+            echo "::warning::A3 world restart: rc1=$rc1 rc2=$rc2; both logs must pass their gates"
           fi
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/restart_phase1.log" "A3 restart phase1" "A3 WORLD RESTART PHASE 1 PASSED" || exit 1
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/restart_phase2.log" "A3 restart phase2" "A3 WORLD RESTART PHASE 2 PASSED" || exit 1
           echo "A3 two-process world restart PASSED" >> "$GITHUB_STEP_SUMMARY"
+          exit 0
       - name: V6 prepared offline operations against real SaveService
         run: |
           set +e
@@ -183,13 +185,15 @@ jobs:
           rc=$?
           set -e
           cat "$ARTIFACT_DIR/offline.log"
-          # The crash/replay case intentionally obstructs the temporary write.
-          grep -vE '^(USER )?ERROR: SaveService: Could not write the temporary save file[.]$' \
-          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/offline.gate.log" "A3 offline" "A3 OFFLINE OPERATIONS PASSED" || exit 1
           if [ "$rc" -ne 0 ]; then
+            bash tools/ci/annotate_log.sh "$ARTIFACT_DIR/offline.log" "A3 offline engine exit $rc" 30 || true
             echo "::warning::A3 offline: godot exited $rc; the log gate and PASS marker decide"
           fi
-          grep 'A3 OFFLINE OPERATIONS PASSED' "$ARTIFACT_DIR/offline.log" | tail -1 >> "$GITHUB_STEP_SUMMARY"
+          # The crash/replay case intentionally obstructs the temporary write.
+          grep -vE '^(USER )?ERROR: SaveService: Could not write the temporary save file[.]$' \
+            "$ARTIFACT_DIR/offline.log" > "$ARTIFACT_DIR/offline.gate.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/offline.gate.log" "A3 offline" "A3 OFFLINE OPERATIONS PASSED" || exit 1
+          grep 'A3 OFFLINE OPERATIONS PASSED' "$ARTIFACT_DIR/offline.log" | tail -1 >> "$GITHUB_STEP_SUMMARY" || true
           exit 0
       - name: V6 prepared offline settlement across two OS processes
         run: |
@@ -206,12 +210,14 @@ jobs:
           rc2=$?
           set -e
           cat "$ARTIFACT_DIR/offline_restart_phase1.log" "$ARTIFACT_DIR/offline_restart_phase2.log"
-          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/offline_restart_phase1.log" "A3 offline restart phase1" "A3 OFFLINE RESTART PHASE 1 PASSED"
-          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/offline_restart_phase2.log" "A3 offline restart phase2" "A3 OFFLINE RESTART PHASE 2 PASSED"
           if [ "$rc1" -ne 0 ] || [ "$rc2" -ne 0 ]; then
-            echo "::warning::engine exit codes rc1=$rc1 rc2=$rc2; both logs passed their gates"
+            bash tools/ci/annotate_log.sh "$ARTIFACT_DIR/offline_restart_phase2.log" "A3 offline restart phase2 engine exit $rc2" 25 || true
+            echo "::warning::A3 offline restart: rc1=$rc1 rc2=$rc2; both logs must pass their gates"
           fi
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/offline_restart_phase1.log" "A3 offline restart phase1" "A3 OFFLINE RESTART PHASE 1 PASSED" || exit 1
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/offline_restart_phase2.log" "A3 offline restart phase2" "A3 OFFLINE RESTART PHASE 2 PASSED" || exit 1
           echo "A3 two-process offline restart PASSED" >> "$GITHUB_STEP_SUMMARY"
+          exit 0
       - name: V5 tool-use callable read-only plan / atomic candidate transform
         run: |
           set +e
@@ -222,12 +228,14 @@ jobs:
           rc=$?
           set -e
           cat "$ARTIFACT_DIR/tool_use.log"
-          grep -vE '^(USER )?ERROR: SaveService: Could not write the temporary save file[.]$' \
-          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/tool_use.gate.log" "A3 tool use" "A3 TOOL USE CALLABLE PASSED" || exit 1
           if [ "$rc" -ne 0 ]; then
+            bash tools/ci/annotate_log.sh "$ARTIFACT_DIR/tool_use.log" "A3 tool use engine exit $rc" 30 || true
             echo "::warning::A3 tool use: godot exited $rc; the log gate and PASS marker decide"
           fi
-          grep 'A3 TOOL USE CALLABLE PASSED' "$ARTIFACT_DIR/tool_use.log" | tail -1 >> "$GITHUB_STEP_SUMMARY"
+          grep -vE '^(USER )?ERROR: SaveService: Could not write the temporary save file[.]$' \
+            "$ARTIFACT_DIR/tool_use.log" > "$ARTIFACT_DIR/tool_use.gate.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/tool_use.gate.log" "A3 tool use" "A3 TOOL USE CALLABLE PASSED" || exit 1
+          grep 'A3 TOOL USE CALLABLE PASSED' "$ARTIFACT_DIR/tool_use.log" | tail -1 >> "$GITHUB_STEP_SUMMARY" || true
           exit 0
       - name: V7 two-layer meta-economy owner-contract candidate tests
         run: |
@@ -239,12 +247,14 @@ jobs:
           rc=$?
           set -e
           cat "$ARTIFACT_DIR/meta.log"
-          grep -vE '^(USER )?ERROR: SaveService: Could not write the temporary save file[.]$' \
-          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/meta.gate.log" "A3 meta" "A3 META ECONOMY PASSED" || exit 1
           if [ "$rc" -ne 0 ]; then
+            bash tools/ci/annotate_log.sh "$ARTIFACT_DIR/meta.log" "A3 meta engine exit $rc" 30 || true
             echo "::warning::A3 meta: godot exited $rc; the log gate and PASS marker decide"
           fi
-          grep 'A3 META ECONOMY PASSED' "$ARTIFACT_DIR/meta.log" | tail -1 >> "$GITHUB_STEP_SUMMARY"
+          grep -vE '^(USER )?ERROR: SaveService: Could not write the temporary save file[.]$' \
+            "$ARTIFACT_DIR/meta.log" > "$ARTIFACT_DIR/meta.gate.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/meta.gate.log" "A3 meta" "A3 META ECONOMY PASSED" || exit 1
+          grep 'A3 META ECONOMY PASSED' "$ARTIFACT_DIR/meta.log" | tail -1 >> "$GITHUB_STEP_SUMMARY" || true
           exit 0
       - name: V7 meta deposit/purchase across two OS processes
         run: |
@@ -261,13 +271,14 @@ jobs:
           rc2=$?
           set -e
           cat "$ARTIFACT_DIR/meta_restart_phase1.log" "$ARTIFACT_DIR/meta_restart_phase2.log"
-          grep -vE '^(USER )?ERROR: SaveService: Could not write the temporary save file[.]$' \
-          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/meta_restart_phase1.log" "A3 meta restart phase1" "A3 META RESTART PHASE 1 PASSED"
-          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/meta_restart_phase2.gate.log" "A3 meta restart phase2" "A3 META RESTART PHASE 2 PASSED"
           if [ "$rc1" -ne 0 ] || [ "$rc2" -ne 0 ]; then
-            echo "::warning::engine exit codes rc1=$rc1 rc2=$rc2; both logs passed their gates"
+            bash tools/ci/annotate_log.sh "$ARTIFACT_DIR/meta_restart_phase2.log" "A3 meta restart phase2 engine exit $rc2" 25 || true
+            echo "::warning::A3 meta restart: rc1=$rc1 rc2=$rc2; both logs must pass their gates"
           fi
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/meta_restart_phase1.log" "A3 meta restart phase1" "A3 META RESTART PHASE 1 PASSED" || exit 1
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/meta_restart_phase2.log" "A3 meta restart phase2" "A3 META RESTART PHASE 2 PASSED" || exit 1
           echo "A3 two-process meta restart PASSED" >> "$GITHUB_STEP_SUMMARY"
+          exit 0
       - uses: actions/upload-artifact@v4
         if: always()
         with:

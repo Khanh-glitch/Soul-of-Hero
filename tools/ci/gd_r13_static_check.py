@@ -297,6 +297,32 @@ def check_undefined_calls(path: Path, findings: list[str]) -> None:
             )
 
 
+COMMAND_START = re.compile(r"^\s*(bash|python3?|sh|node|npx|godot|echo|exit|if|for|while)\b")
+
+
+def check_shell_continuations(path: Path, findings: list[str]) -> None:
+    """A line-continued command must not swallow the next command as arguments.
+
+    Observed while editing this workflow: a `grep -vE 'pattern' \` line lost its
+    `"file" > "out"` continuation, so `bash tools/ci/gate_log.sh ...` became grep
+    ARGUMENTS, grep exited 2 and the step failed with a clean test log. The gate
+    now refuses a continuation whose next line starts a new command.
+    """
+    lines = path.read_text(encoding="utf-8").splitlines()
+    for index, raw in enumerate(lines[:-1]):
+        stripped = raw.rstrip()
+        if not stripped.endswith("\\"):
+            continue
+        nextline = lines[index + 1].strip()
+        if not nextline or nextline.startswith("#"):
+            continue
+        if COMMAND_START.match(nextline) and not nextline.startswith(("then", "fi", "done")):
+            findings.append(
+                f"{path}:{index + 1}: line continuation swallows the next command "
+                f"({nextline.split()[0]!r}) as arguments; the previous command will fail on a bogus filename"
+            )
+
+
 def check_workflow(path: Path, findings: list[str]) -> None:
     """Two-process steps must not share shell state."""
     text = path.read_text(encoding="utf-8")
@@ -340,6 +366,7 @@ def main() -> int:
     workflow = root / args.workflow
     if workflow.exists():
         check_workflow(workflow, findings)
+        check_shell_continuations(workflow, findings)
     if findings:
         for finding in findings:
             print(f"::error::R13 static gate: {finding}")
