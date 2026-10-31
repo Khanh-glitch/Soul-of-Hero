@@ -1,3 +1,9 @@
+# CT LIVE DELTA AFTER TRIPLE-AUDIT: A7 R13 FAIL EXIT1/EXIT1 (2026-10-31)
+
+**Newest live A7 PR25 HEAD `0558cdfe4ad30e84c9d9417097c3b3b3c79f07eb`**, pushed after CT's initial triple-audit; prior pointer `0b9485db` below is HISTORICAL. In independently read Git files `docs/survival/balance/visual/r13/journey/process1.exit` and `process2.exit`, **both are `1` (FAIL)** for composition `3d8630f5b1adfa6c5b50c56fa506524e0ce71f6b`. This proves **neither normal-input process nor second-PID acceptance passed**. CI copied/pushed no `process1.log` or `process2.log` into the branch folder; the workflow's `git add -A` may leave ignored `*.log` out. DO NOT substitute green render capture for native player PASS; fix evidence retention and diagnose the two exits. R13 visual still documents 7/8 walls, `room=""`, refused bed: invalid fixture house, cannot certify complete-house art. New independent PR25 comment [6541577053](https://github.com/Khanh-glitch/Soul-of-Hero/pull/25#issuecomment-6541577053). A7 recommendation remains **TIẾP TỤC LÀM VIỆC**; A1/A8 Round12 scope successes and owner-dependency pauses unchanged. No Arena prompt was sent.
+
+---
+
 # 2026-10-31 CT TRIPLE OWNER A1/A7/A8 + INDEPENDENT GAMEPLAY ROOT (LATEST HANDOFF)
 
 **Authority:** CURRENT_PRODUCT_CONTRACT.md + DECISIONS D051–D074; CT-GATE-v2026-10-31. This is a status/QA handoff, NOT a second design canon. Source metadata must be refreshed if any branch moves. This checkpoint supersedes older A1/A7/A8 status snapshots below.
