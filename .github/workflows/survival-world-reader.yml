@@ -573,6 +573,9 @@ jobs:
         run: |
           log=artifacts/a1-round12/probe/godot-probe.log
           [ -f "$log" ] || { echo "::error::no Round 12 probe log"; exit 1; }
+          if grep -q 'SCRIPT ERROR' "$log"; then
+            echo "::error::Round 12 probe contains a Godot script error"; exit 1
+          fi
           grep -q 'A1 ROUND12 BUDGET PROBE PASSED - not a full native fixture' "$log" || {
             echo "::error::Round 12 probe failed; log tail: $(tail -c 3000 "$log" | paste -sd' ' -)"; exit 1; }
           python - <<'PY'
@@ -580,7 +583,9 @@ jobs:
           p=json.load(open('artifacts/a1-round12/probe/round12_native_report.json'))
           assert p['budget_probe'] and p['dispositions']['NATIVE_FIXTURE_PASS']=='NOT_TESTED'
           assert len(p['journeys'])==2 and sum(x['cells'] for x in p['journeys'])==64
-          assert len(p['captures'])==3 and all(x['capture_wall_ms']>0 for x in p['captures'])
+          assert len(p['captures'])==4 and all(x['capture_wall_ms']>0 for x in p['captures'])
+          assert len({tuple(x['resolution']) for x in p['captures']})==3
+          assert sum(bool(x.get('single_resolution_branch')) for x in p['captures'])==1
           assert len(p['prepare_measurements'])==1 and p['prepare_measurements'][0]['wall_ms']>0
           PY
       - name: Calculate measured full-run timeout; refuse over-cap big-bang execution
@@ -612,6 +617,9 @@ jobs:
         run: |
           log=artifacts/a1-round12/full/godot-round12.log
           [ -f "$log" ] || { echo "::error::no Round 12 full fixture log"; exit 1; }
+          if grep -q 'SCRIPT ERROR' "$log"; then
+            echo "::error::Round 12 full fixture contains a Godot script error"; exit 1
+          fi
           checks=$(grep -cE '^A1_R12 (PASS|FAIL): ' "$log" || true)
           captures=$(grep -c 'nonblank native source capture' "$log" || true)
           spawns=$(grep -c 'safe spawn/body/material seed' "$log" || true)

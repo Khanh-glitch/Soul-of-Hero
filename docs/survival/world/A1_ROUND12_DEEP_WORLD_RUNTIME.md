@@ -97,7 +97,7 @@ The isolated driver uses the real A0-comparable Knight scene, 12×16 body, 96/90
 
 Captures come from the live source stream at **1280×720, 2560×1440 and 3840×2160**, across all 11 regions, with paired day/night views. Hazard probe stands are labelled with their required preparation and are not called safe spawns. Pillow sheets remain supplementary only.
 
-CI first runs a 64-cell/three-resolution **budget probe**. The full process will not launch unless a measured, margined timeout fits the 1,800-second cap. A probe is always `NATIVE_FIXTURE_PASS=NOT_TESTED`.
+CI first runs a 64-cell **budget probe** with 720p/1440p/2160p captures plus one explicit single-resolution 720p branch capture. The full process will not launch unless a measured, margined timeout fits the 1,800-second cap. A probe is always `NATIVE_FIXTURE_PASS=NOT_TESTED`; any Godot `SCRIPT ERROR` fails the job even if later assertions continue.
 
 ## Dispositions
 

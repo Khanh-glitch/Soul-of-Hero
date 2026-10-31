@@ -222,7 +222,12 @@ def test_measured_native_budget_uses_real_probe_and_full_work(native_inputs: dic
             {"cells": 32, "frames": 320, "wall_ms": 5000},
             {"cells": 32, "frames": 320, "wall_ms": 5000},
         ],
-        "captures": [{"capture_wall_ms": 1000}] * 3,
+        "captures": [
+            {"capture_wall_ms": 1000, "resolution": [1280, 720]},
+            {"capture_wall_ms": 1000, "resolution": [2560, 1440]},
+            {"capture_wall_ms": 1000, "resolution": [3840, 2160]},
+            {"capture_wall_ms": 1000, "resolution": [1280, 720], "single_resolution_branch": True},
+        ],
         "prepare_measurements": [{"wall_ms": 1000}],
     }
     result = budget.estimate(probe, native_inputs)
@@ -241,11 +246,20 @@ def test_measured_native_budget_rejects_overcap_or_fake_probe(native_inputs: dic
             {"cells": 32, "frames": 320, "wall_ms": 500000},
             {"cells": 32, "frames": 320, "wall_ms": 500000},
         ],
-        "captures": [{"capture_wall_ms": 100000}] * 3,
+        "captures": [
+            {"capture_wall_ms": 100000, "resolution": [1280, 720]},
+            {"capture_wall_ms": 100000, "resolution": [2560, 1440]},
+            {"capture_wall_ms": 100000, "resolution": [3840, 2160]},
+            {"capture_wall_ms": 100000, "resolution": [1280, 720], "single_resolution_branch": True},
+        ],
         "prepare_measurements": [{"wall_ms": 100000}],
     }
     result = budget.estimate(probe, native_inputs)
     assert not result["ok"] and "exceeds cap" in result["error"]
     probe["dispositions"]["NATIVE_FIXTURE_PASS"] = "PASS"
     with pytest.raises(ValueError, match="must not claim"):
+        budget.estimate(probe, native_inputs)
+    probe["dispositions"]["NATIVE_FIXTURE_PASS"] = "NOT_TESTED"
+    probe["captures"] = probe["captures"][:3]
+    with pytest.raises(ValueError, match="single-resolution branch"):
         budget.estimate(probe, native_inputs)

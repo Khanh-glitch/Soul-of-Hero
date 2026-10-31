@@ -438,6 +438,9 @@ func _set_direction(delta: Vector2) -> void:
 
 
 func _drive_cells(label: String, cells: Array) -> Dictionary:
+	# Physical phases never depend on a prior capture having cleaned up correctly.
+	# In particular, a capture error must not leave thousands of route frames rendered.
+	RenderingServer.render_loop_enabled = false
 	current_drive_label = label
 	contact_mode = "journey"
 	if cells.is_empty():
@@ -743,7 +746,11 @@ func _run_hazards() -> void:
 
 func _capture(name: String, all_resolutions: bool, metadata: Dictionary = {}) -> void:
 	RenderingServer.render_loop_enabled = true
-	var selected: Array[Vector2i] = resolutions if all_resolutions else [Vector2i(1280, 720)]
+	var selected: Array[Vector2i] = []
+	if all_resolutions:
+		selected.assign(resolutions)
+	else:
+		selected.append(Vector2i(1280, 720))
 	for resolution: Vector2i in selected:
 		var capture_started := Time.get_ticks_msec()
 		root.size = resolution
@@ -822,6 +829,9 @@ func _run_budget_probe() -> void:
 	await physics_frame
 	prepare_measurements.append({"view_id": String(view.view_id), "wall_ms": Time.get_ticks_msec() - prepare_started})
 	await _capture("budget_probe", true, {"budget_probe": true, "view_id": String(view.view_id)})
+	# Exercise the single-resolution path too; all-resolution-only probes cannot
+	# catch typed-array or cleanup defects in the much more common 720p branch.
+	await _capture("budget_probe_single_branch", false, {"budget_probe": true, "single_resolution_branch": true})
 	_expect(not budget_probe or site_arrivals.is_empty(), "budget probe is not misreported as full native fixture")
 
 

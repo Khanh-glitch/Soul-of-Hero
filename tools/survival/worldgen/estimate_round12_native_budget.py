@@ -45,8 +45,11 @@ def estimate(probe: dict, inputs: dict, margin: float = 2.0, cap_seconds: int = 
     journeys = probe.get("journeys", [])
     captures = probe.get("captures", [])
     preparations = probe.get("prepare_measurements", [])
-    if len(journeys) != 2 or len(captures) != 3 or len(preparations) != 1:
-        raise ValueError("probe needs one forward/return route, one visual preparation and three resolution captures")
+    if len(journeys) != 2 or len(captures) != 4 or len(preparations) != 1:
+        raise ValueError("probe needs one forward/return route, one visual preparation, three resolutions and one single-resolution branch capture")
+    resolution_count = len({tuple(row["resolution"]) for row in captures})
+    if resolution_count != 3 or sum(bool(row.get("single_resolution_branch")) for row in captures) != 1:
+        raise ValueError("probe must cover three unique resolutions and exactly one single-resolution branch")
     probe_cells = sum(int(row["cells"]) for row in journeys)
     probe_frames = sum(int(row["frames"]) for row in journeys)
     drive_seconds = sum(int(row["wall_ms"]) for row in journeys) / 1000.0
@@ -56,7 +59,7 @@ def estimate(probe: dict, inputs: dict, margin: float = 2.0, cap_seconds: int = 
     if probe_cells < 32 or probe_frames <= 0 or drive_seconds <= 0 or capture_seconds <= 0 or prepare_seconds <= 0 or elapsed <= 0:
         raise ValueError("probe measurements are vacuous")
     setup_seconds = max(0.0, elapsed - drive_seconds - capture_seconds - prepare_seconds)
-    work = planned_work(inputs, len(captures))
+    work = planned_work(inputs, resolution_count)
     estimate_seconds = (
         setup_seconds * work["reader_stream_constructions"]
         + drive_seconds / probe_cells * work["drive_cells"]
@@ -72,6 +75,7 @@ def estimate(probe: dict, inputs: dict, margin: float = 2.0, cap_seconds: int = 
         "probe_drive_seconds": drive_seconds, "probe_capture_seconds": capture_seconds,
         "probe_prepare_seconds": prepare_seconds,
         "probe_setup_seconds": setup_seconds, "probe_cells": probe_cells, "probe_frames": probe_frames,
+        "probe_resolution_count": resolution_count, "probe_single_branch_captures": 1,
         "seconds_per_cell": drive_seconds / probe_cells,
         "seconds_per_capture": capture_seconds / len(captures),
         "planned": work, "estimated_full_seconds": estimate_seconds,
