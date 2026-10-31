@@ -191,7 +191,10 @@ func _continuation(ow: Node) -> void:
 		return
 
 	# --- 4. burn the fuel the smelting needs, at that furnace --------------
-	var reached := await _walk_to_cell(hero, nav, placed, "ordinary movement reaches the placed furnace")
+	# The furnace now occupies the cell it was built on, so the player walks to a
+	# free cell beside it and works from arm's length, exactly as a player would.
+	var stand := nav.nearest_reachable(nav.cell_of(hero.global_position), placed, 2)
+	var reached := await _walk_to_cell(hero, nav, stand, "ordinary movement reaches the placed furnace")
 	_expect(reached, "the player can stand at the furnace it just built")
 	if not reached:
 		_write_audit(ow, {})
