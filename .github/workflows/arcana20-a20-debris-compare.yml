@@ -1,0 +1,54 @@
+name: ARCANA20 A20 source debris motion diagnostic
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths:
+      - 'prototypes/arcana_fusion20/renderer/source_a/a_reality_ripper_debris.gd'
+      - 'prototypes/arcana_fusion20/renderer/a20_debris_source_compare.gd'
+      - 'tools/arcana20_source_compare/a20_debris_reference.ts'
+      - 'tools/arcana20_source_compare/compare_a20_debris.py'
+      - '.github/workflows/arcana20-a20-debris-compare.yml'
+permissions:
+  contents: read
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Capture original A20 motion
+        run: |
+          npm install --prefix "$RUNNER_TEMP/arcana-tools" esbuild@0.25.5
+          "$RUNNER_TEMP/arcana-tools/node_modules/.bin/esbuild" tools/arcana20_source_compare/a20_debris_reference.ts --bundle --platform=node --outfile="$RUNNER_TEMP/original.cjs"
+          node "$RUNNER_TEMP/original.cjs" artifacts/arcana20-a20-debris
+      - name: Capture native A20 motion
+        run: |
+          set -o pipefail
+          godot --headless --path . --import > import.log 2>&1
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' import.log
+          godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/a20_debris_source_compare.gd 2>&1 | tee native.log
+          grep -Fq 'A20_DEBRIS_NATIVE_CAPTURE_COMPLETE' native.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' native.log
+      - name: Compare every particle at six fixed ticks
+        run: |
+          set -o pipefail
+          python3 tools/arcana20_source_compare/compare_a20_debris.py artifacts/arcana20-a20-debris 2>&1 | tee comparison.log
+          sed 's/^/::notice::/' comparison.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcana20-a20-original-native-debris
+          path: |
+            artifacts/arcana20-a20-debris/
+            import.log
+            native.log
+            comparison.log
