@@ -151,7 +151,7 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
         var ap := ASourcePlayer.new()
         ap.world_pass_mode = true
         ap.source_variant = &"worldseed_a_growth_c_material"
-        ap.configure(AWorldseedGrowth.new(), AWorldseedGrowth.DURATION)
+        ap.configure(AWorldseedGrowth.new(), AWorldseedGrowth.FUSION_DURATION)
         var cp := CSourcePlayer.new()
         cp.world_pass_mode = true
         fp.source_pass_ready.connect(func(frame: Arcana20SourcePassFrame) -> void: source_pass_ready.emit(canonical_id, frame))
@@ -168,7 +168,7 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
                     var a_center_from_caster := AWorldseedGrowth.C - ASourcePlayer.CASTER_LOCAL
                     var c_center_from_caster := CWorldseedDebris.C - Vector2(112, 126)
                     c_player._origin = ap._origin + (a_center_from_caster - c_center_from_caster).rotated(ap._rot) * ap._scale},
-        ], AWorldseedGrowth.DURATION)
+        ], AWorldseedGrowth.FUSION_DURATION)
         add_child(fp)
         fp.visual_contact.connect(func(kind: StringName, pos: Vector2, _st: float) -> void:
             visual_contact.emit(canonical_id, pos, kind)

@@ -7,7 +7,11 @@
 extends RefCounted
 class_name AWorldseedGrowth
 
-const DURATION := 8.0
+const DURATION := 8.0 # Original A fold endpoint; source-only duration unchanged.
+# Fusion-only: the original A pollen can live up to 3 s after the burst
+# ends at BLOOM+0.7. Continue its authored simulation to 9 s instead of
+# cutting living pollen off at the original 8 s scene boundary.
+const FUSION_DURATION := 9.0
 const C := Vector2(232, 124)
 const SQ := 1.45
 const CRACK := 2.0

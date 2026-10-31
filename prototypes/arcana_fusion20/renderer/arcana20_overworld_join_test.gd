@@ -625,9 +625,17 @@ func _run() -> void:
     await process_frame
     var seed_layers: Dictionary = mount._passes.get(id16, {})
     check(seed_fusion._active and seed_layers.has(&"A") and not seed_layers.has(&"C") and not seed_post._states.has(id16), "C16 source completion retires debris and post while A16 remains active")
-    for tick in range(6): seed_fusion.advance(STEP)
+    # A's source fold still ends at 8 s, but its authored pollen particles
+    # can remain alive for three seconds after the 5.3–6.0 s burst. Verify
+    # the single fusion clock keeps them rather than cutting the tail at 8 s.
+    var growth_impl := seed_growth._spell as AWorldseedGrowth
+    seed_growth.render_enabled = false
+    for tick in range(30): seed_fusion.advance(STEP)
+    check(seed_fusion._active and seed_fusion.source_time() > AWorldseedGrowth.DURATION and growth_impl.pollen.count() > 0, "A16 authored pollen remains active after original fold endpoint")
+    for tick in range(36): seed_fusion.advance(STEP)
     await process_frame
     await process_frame
+    check(growth_impl.pollen.count() == 0, "A16 authored pollen finishes naturally before fusion exit")
     check(not multi._casts.has(id16) and mount.active_viewers(id16) == 0 and images_equal(baseline, await save_frame("fusion_16_naturally_finished")), "A16 C16 full fusion naturally finishes and restores world")
     check(int(enemy.get("health")) == seed_hp_before, "A16 C16 visual fusion never changes HP")
     seed_post.detach()
