@@ -348,6 +348,11 @@ Original D `SPRITE_VS` rasterizes a rotated quad and fragment centers are at
 half pixels; at `c2882d5a` the CPU sprite port was corrected to sample those
 centers and restrict rasterization to the quad. A new original-vs-native
 [diagnostic 41213605327](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41213605327)
-is pending; this implementation change must not be called a fidelity fix until
-the new measurements and regressions are checked. Ribbons/poly, GPU rounding,
-coverage, bloom/post, actual SOH world and creator review remain separate.
+measured improved light-support IoU **0.954/0.903/0.865/0.987/0.987** and
+linear RGB MAE **0.000631/0.000797/0.001959/0.010781/0.012465** at ticks
+72/192/312/489/510 respectively. Local maximum RGB error remains
+**1.0/0.894/1.0/0.983/0.986**: this is not parity or acceptance. Latest
+viewport-clipped optimization `743688b2` has a separate
+[diagnostic 41213639184](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41213639184)
+in progress. Ribbons/poly, GPU rounding, coverage, bloom/post, actual SOH world
+and creator review remain separate.
