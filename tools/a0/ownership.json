@@ -20,8 +20,9 @@
   "owners": {
     "a1": {
       "branch": "arena/e385312a-soul-of-hero",
-      "scopes": ["data/survival/world/", "data/overworld/", "assets/environment/"],
-      "note": "A1 owns geography, stands, hazard geometry and biome material references."
+      "scopes": ["data/survival/world/", "data/overworld/", "assets/environment/",
+        "tests/survival/world/"],
+      "note": "A1 owns geography, stands, hazard geometry and biome material references. A1's own reader and its tests live under tests/survival/world/ at the pinned SHA (SURV-050A: tests/survival/world/godot/chunk_reader.gd), so that tree is composed as A1's authoring surface: A0 mounts the reader from there by path instead of forking a second reader."
     },
     "a3": {
       "branch": "arena/7a12b27e-soul-of-hero",

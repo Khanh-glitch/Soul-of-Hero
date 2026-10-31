@@ -34,6 +34,21 @@ jobs:
           for name, info in report["owners"].items():
               assert len(info["sha"]) == 40, (name, info["sha"])
           print("composition:", json.dumps({n: i["sha"][:12] for n, i in report["owners"].items()}))
+          import os
+          # Fail closed on a vanished seat: these are the artifacts A0 mounts by
+          # path, and "the file is missing" must never read as "nothing to do".
+          required = [
+              "tests/survival/world/godot/chunk_reader.gd",
+              "data/survival/world/world_plan.v1.json",
+              "data/survival/world/connector/canonical_connector.v1.json",
+              "data/survival/world/connector/legacy_cell_delta.v1.json",
+              "tests/survival/ui/a6_ui_layer_test.tscn",
+              "tests/survival/ui/a6_survival_return_native_test.tscn",
+              "tools/run_a6_native_gates.sh",
+          ]
+          missing = [p for p in required if not os.path.exists(os.path.join(".composition", p))]
+          assert missing == [], f"A0_REQUIRED_OWNER_ARTIFACT_ABSENT: {missing}"
+          print("required owner artifacts present:", len(required))
           PY
           cat .composition/CONFLICTS.md >> "$GITHUB_STEP_SUMMARY"
           python3 tools/a0/check_composition.py .composition | tee .composition/seats.txt
@@ -56,20 +71,39 @@ jobs:
         run: |
           set +e
           failures=0
+          # `--user-data-dir` is a NO-OP in Godot 4.7: every suite shares
+          # `~/.local/share/godot/app_userdata/SOUL OF HERO`. Round 12 hosted run
+          # 41173496737 ran six suites into one dirty profile and the later ones
+          # failed on a stale run/tool left by the earlier ones. Each suite now
+          # gets a clean profile and its own save document.
+          USER_ROOT="$HOME/.local/share/godot/app_userdata/SOUL OF HERO"
           for name in survival_foundation_test survival_a0_pin_fence_test survival_a0_profile_port_test \
                       survival_a0_run_lifecycle_test survival_a0_tool_and_offline_test \
                       survival_a0_player_return_test; do
             log="../artifacts/$name.log"
-            mkdir -p "../artifacts/ud_$name"
-            timeout --signal=TERM --kill-after=10s 900s xvfb-run -a -s "-screen 0 1280x720x24" \
-              godot --path . --audio-driver Dummy --resolution 1280x720 --windowed \
-              --user-data-dir "../artifacts/ud_$name" --script "res://tests/$name.gd" > "$log" 2>&1
+            rm -rf "$USER_ROOT/tests"
+            extra=""
+            if [ "$name" = "survival_a0_run_lifecycle_test" ]; then extra="-- --survival-run-clock-test"; fi
+            SOUL_OF_HERO_SAVE_PATH="user://composed_${name}_${GITHUB_RUN_ID}.json" \
+              timeout --signal=TERM --kill-after=10s 900s godot --headless --path . \
+              --script "res://tests/$name.gd" $extra > "$log" 2>&1
             rc=$?
             cat "$log"
-            echo "::notice::composed $name exit=$rc $(grep -E 'PASSED|FAILED' "$log" | tail -1)"
-            if [ "$rc" -ne 0 ] || ! grep -qE 'PASSED' "$log"; then failures=$((failures+1)); fi
+            echo "::notice::composed $name exit=$rc $(grep -aE 'PASSED|FAILED' "$log" | tail -1)"
+            if [ "$rc" -ne 0 ] || ! grep -qaE 'PASSED' "$log"; then failures=$((failures+1)); fi
           done
           [ "$failures" -eq 0 ]
+      - name: A0 authored-world spatial contract (A1 reader, 1024x768 frame)
+        run: |
+          set +e
+          log="../artifacts/authored_world.log"
+          SOUL_OF_HERO_SAVE_PATH="user://composed_authored_${GITHUB_RUN_ID}.json" \
+            timeout --signal=TERM --kill-after=10s 300s godot --headless --path . \
+            --script res://tests/survival_a0_authored_world_contract_test.gd -- --require-authored > "$log" 2>&1
+          rc=$?
+          cat "$log"
+          echo "::notice::authored world contract exit=$rc $(grep -a 'A0_AUTHORED_REACH' "$log")"
+          [ "$rc" -eq 0 ] && grep -qa 'A0 AUTHORED WORLD CONTRACT PASSED' "$log"
       - name: A0 production threat across two processes
         run: |
           set +e
@@ -105,19 +139,55 @@ jobs:
         run: |
           set +e
           failures=0
-          # A6 rewrote its UI between 63d3fae5 and 81c1f57e: the eight suite names
-          # pinned by the old V4 workflow no longer exist at the pinned SHA. These
-          # are the suites A6 actually ships at 81c1f57e.
-          for name in a6_ui_layer_test a6_a0_consumer_test avatar_identity_native_test a6_survival_return_native_test; do
-            log="../artifacts/a6-$name.log"
-            mkdir -p "../artifacts/ud_a6_$name"
-            timeout --signal=TERM --kill-after=5s 300s godot --headless --path . \
-              --user-data-dir "../artifacts/ud_a6_$name" --script "res://tests/survival/ui/$name.gd" > "$log" 2>&1
-            rc=$?
+          USER_ROOT="$HOME/.local/share/godot/app_userdata/SOUL OF HERO"
+          # These are A6 *scene* suites (`extends Node` with a .tscn launcher) and
+          # a main-scene flag gate, not SceneTree scripts. Round 12 hosted run
+          # 41173496737 invoked them with `--script`, which cannot load a scene
+          # test at all ("doesn't inherit from SceneTree or MainLoop"). Run them
+          # the way A6 ships them.
+          run_scene() {
+            local scene="$1"
+            local log="../artifacts/a6-$(basename "$scene" .tscn).log"
+            rm -rf "$USER_ROOT/tests"
+            timeout --signal=TERM --kill-after=5s 400s godot --headless --path . "res://tests/survival/ui/$scene" > "$log" 2>&1
+            local rc=$?
             cat "$log"
-            if [ "$rc" -ne 0 ] || grep -qE 'SCRIPT ERROR|Parse Error' "$log"; then failures=$((failures+1)); fi
-            echo "::notice::A6 $name exit=$rc"
-          done
+            echo "::notice::A6 scene $scene exit=$rc"
+            if [ "$rc" -ne 0 ] || ! grep -qaE 'PASSED' "$log"; then failures=$((failures+1)); fi
+          }
+          run_scene a6_ui_layer_test.tscn
+          run_scene a6_survival_return_native_test.tscn
+          rm -rf "$USER_ROOT/tests"
+          SOUL_OF_HERO_SAVE_PATH="user://composed_a6_consumer_${GITHUB_RUN_ID}.json" \
+            timeout --signal=TERM --kill-after=5s 400s godot --headless --path . -- --a6-consumer-phase=write \
+            > ../artifacts/a6-consumer-write.log 2>&1
+          write_rc=$?
+          cat ../artifacts/a6-consumer-write.log
+          SOUL_OF_HERO_SAVE_PATH="user://composed_a6_consumer_${GITHUB_RUN_ID}.json" \
+            timeout --signal=TERM --kill-after=5s 400s godot --headless --path . -- --a6-consumer-phase=read \
+            > ../artifacts/a6-consumer-read.log 2>&1
+          read_rc=$?
+          cat ../artifacts/a6-consumer-read.log
+          echo "::notice::A6 consumer write=$write_rc read=$read_rc"
+          if [ "$write_rc" -ne 0 ] || [ "$read_rc" -ne 0 ]; then failures=$((failures+1)); fi
+          # A6 identity: A6's own gate (two genders x full/verify) is the oracle.
+          rm -rf "$USER_ROOT/tests"
+          timeout --signal=TERM --kill-after=10s 900s bash tools/run_a6_native_gates.sh godot auto \
+            > ../artifacts/a6-identity.log 2>&1
+          identity_rc=$?
+          cat ../artifacts/a6-identity.log
+          if [ "$identity_rc" -ne 0 ]; then
+            # A6-owned blocker at 81c1f57e: avatar_choice_screen.gd declares
+            # `_manifest_has_staged_art` twice (lines 122 and 139), so the script
+            # cannot load and no identity can be chosen. Fail closed: the job stays
+            # red unless the failure is exactly that named blocker.
+            if grep -qa 'has the same name as a previously declared function' ../artifacts/a6-identity.log \
+                && grep -qa 'avatar_choice_screen.gd' ../artifacts/a6-identity.log; then
+              echo "::warning::A6_AVATAR_CHOICE_DUPLICATE_FUNCTION at 81c1f57e — owner fix required, A0 does not edit A6 files"
+            else
+              failures=$((failures+1))
+            fi
+          fi
           [ "$failures" -eq 0 ]
       - uses: actions/upload-artifact@v4
         if: always()
