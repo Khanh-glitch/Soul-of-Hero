@@ -282,6 +282,27 @@
   },
   {
    "kind": "icon",
+   "id": "camp_light",
+   "output": "assets/a6_ui/icons/camp_light.png",
+   "source": {
+    "pack": "994534",
+    "repository": "Khanh-glitch/APEX-CHAOS",
+    "commit": "a960f0945b36614c9754d8dbf2d3e6ec367d449f",
+    "branch": "Khanh-glitch-patch-3",
+    "archive": "craftpix-net-994534-free-basic-pixel-art-fantasy-icons-16x16-for-ui.zip",
+    "product": "https://craftpix.net/freebies/free-basic-pixel-art-fantasy-icons-16x16-for-ui/",
+    "member": "PNG/Separately/Icon42_1.png",
+    "member_sha256": "7cc3495e6ab22fb5fb91976ed1a1f06b9d848c03cf8d024c3ea69b71c8a3d7a6"
+   },
+   "size": [
+    16,
+    16
+   ],
+   "note": "Icon42_1",
+   "output_sha256": "4e2fc38b6391e2effc9a55ee0b39b3da1f878337c43ba317af0488b43526d966"
+  },
+  {
+   "kind": "icon",
    "id": "capacity",
    "output": "assets/a6_ui/icons/capacity.png",
    "source": {
@@ -321,6 +342,27 @@
    ],
    "note": "Icon29_1",
    "output_sha256": "4f001ad70affca844705d070fbb8ff43d7fc0df5b64a2ceeb6341edd41df3b0f"
+  },
+  {
+   "kind": "icon",
+   "id": "field_meal",
+   "output": "assets/a6_ui/icons/field_meal.png",
+   "source": {
+    "pack": "994534",
+    "repository": "Khanh-glitch/APEX-CHAOS",
+    "commit": "a960f0945b36614c9754d8dbf2d3e6ec367d449f",
+    "branch": "Khanh-glitch-patch-3",
+    "archive": "craftpix-net-994534-free-basic-pixel-art-fantasy-icons-16x16-for-ui.zip",
+    "product": "https://craftpix.net/freebies/free-basic-pixel-art-fantasy-icons-16x16-for-ui/",
+    "member": "PNG/Separately/Icon92_1.png",
+    "member_sha256": "7e4aada03451ba6418fa0bac01d18513a55dde0308bce1a28e4c5a0f6ce26386"
+   },
+   "size": [
+    16,
+    16
+   ],
+   "note": "Icon92_1",
+   "output_sha256": "a348da0478d9ff57ad4db304e9c55c47284af2d872f3134026df96663459a306"
   },
   {
    "kind": "icon",
@@ -375,15 +417,15 @@
     "branch": "Khanh-glitch-patch-3",
     "archive": "craftpix-net-994534-free-basic-pixel-art-fantasy-icons-16x16-for-ui.zip",
     "product": "https://craftpix.net/freebies/free-basic-pixel-art-fantasy-icons-16x16-for-ui/",
-    "member": "PNG/Separately/Icon47_1.png",
-    "member_sha256": "96670d677e59118da444adc1b8d38206c5d8648107daac3bfab753ecfe02e0c6"
+    "member": "PNG/Separately/Icon102_1.png",
+    "member_sha256": "a62a24656e6993ad9262360f3a00aac2c40f5a699cbb31fff5f019189cc80a8b"
    },
    "size": [
     16,
     16
    ],
-   "note": "Icon47_1",
-   "output_sha256": "3adab3b6a0a33f2c54dccdf714b91ee23a29d0aa4db1e0b74bf94783054f5d1e"
+   "note": "Icon102_1",
+   "output_sha256": "c5f9f1e3eb4c54b4266934ebc2f74ffb54dcd7b09678dff209700c71813d03a4"
   },
   {
    "kind": "icon",
@@ -573,27 +615,6 @@
    ],
    "note": "Icon25_1",
    "output_sha256": "573f9a1a6c514bb728c9413b8c1326f9c11347d14c937de6b827eb0a3202d1e8"
-  },
-  {
-   "kind": "icon",
-   "id": "shelter",
-   "output": "assets/a6_ui/icons/shelter.png",
-   "source": {
-    "pack": "994534",
-    "repository": "Khanh-glitch/APEX-CHAOS",
-    "commit": "a960f0945b36614c9754d8dbf2d3e6ec367d449f",
-    "branch": "Khanh-glitch-patch-3",
-    "archive": "craftpix-net-994534-free-basic-pixel-art-fantasy-icons-16x16-for-ui.zip",
-    "product": "https://craftpix.net/freebies/free-basic-pixel-art-fantasy-icons-16x16-for-ui/",
-    "member": "PNG/Separately/Icon42_1.png",
-    "member_sha256": "7cc3495e6ab22fb5fb91976ed1a1f06b9d848c03cf8d024c3ea69b71c8a3d7a6"
-   },
-   "size": [
-    16,
-    16
-   ],
-   "note": "Icon42_1",
-   "output_sha256": "4e2fc38b6391e2effc9a55ee0b39b3da1f878337c43ba317af0488b43526d966"
   },
   {
    "kind": "icon",

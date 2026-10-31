@@ -103,7 +103,7 @@ func _build_field_card(root: Control) -> void:
 	counters.add_theme_constant_override("separation", 7)
 	counters.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	column.add_child(counters)
-	_chips["camps"] = A6UiKit.chip("shelter", "0/0", 11, 10)
+	_chips["camps"] = A6UiKit.chip("camp_light", "0/0", 11, 10)
 	_chips["camps"].name = "CampsChip"
 	counters.add_child(_chips["camps"])
 	_chips["finds"] = A6UiKit.chip("research_kit", "0/0", 11, 10)

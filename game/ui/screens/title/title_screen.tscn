@@ -1,11 +1,10 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Theme" path="res://game/ui/theme/a6_survival_theme.tres" id="1_theme"]
 [ext_resource type="Script" path="res://game/ui/screens/title/title_screen.gd" id="2_script"]
 [ext_resource type="PackedScene" path="res://game/ui/theme/dungeon_backdrop.tscn" id="3_backdrop"]
 [ext_resource type="Texture2D" path="res://assets/branding/chapter_1_key_art_imagen.png" id="5_key_art"]
 [ext_resource type="Texture2D" path="res://assets/branding/soul_hero_emblem_imagen.png" id="6_emblem"]
-[ext_resource type="Texture2D" path="res://assets/a6_ui/icons/shelter.png" id="7_shelter"]
 [ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites/UI_TravelBook_IconPlay01a.png" id="9_continue_icon"]
 [ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites/UI_TravelBook_IconRestart01a.png" id="10_new_game_icon"]
 [ext_resource type="Texture2D" path="res://assets/a6_ui/panels/panel.png" id="11_plate"]
@@ -124,24 +123,6 @@ Dựng chỗ trú trước khi trời tối."
 [node name="Promises" type="HBoxContainer" parent="SafeMargin/MainRow/Brand"]
 layout_mode = 2
 theme_override_constants/separation = 12
-
-[node name="ShelterRow" type="HBoxContainer" parent="SafeMargin/MainRow/Brand/Promises"]
-layout_mode = 2
-theme_override_constants/separation = 4
-
-[node name="ShelterIcon" type="TextureRect" parent="SafeMargin/MainRow/Brand/Promises/ShelterRow"]
-custom_minimum_size = Vector2(16, 16)
-layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("7_shelter")
-texture_filter = 1
-stretch_mode = 5
-
-[node name="ShelterText" type="Label" parent="SafeMargin/MainRow/Brand/Promises/ShelterRow"]
-layout_mode = 2
-theme_type_variation = &"A6Caption"
-theme_override_colors/font_color = Color(0.94, 0.89, 0.78, 1)
-text = "Dựng nơi trú ẩn"
 
 [node name="DawnRow" type="HBoxContainer" parent="SafeMargin/MainRow/Brand/Promises"]
 layout_mode = 2

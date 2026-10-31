@@ -181,18 +181,22 @@ ICON_BY_NAME = {
     "crystal_shard": "Icon29_1",      # blue crystal cluster
     "frost_shard": "Icon16_1",        # cold blue gem cluster
     "moonleaf_seed": "Icon73_1",      # sapling
-    "furnace_kit": "Icon47_1",        # iron cauldron
+    "furnace_kit": "Icon102_1",       # cauldron on hot coals
     "workbench_kit": "Icon54_1",      # hammer
-    "research_kit": "Icon25_1",       # glowing scroll
+    "research_kit": "Icon25_1",       # spark of insight (a glow, not a literal scroll)
     "garden_kit": "Icon74_1",         # potted plant
     "station_kit": "Icon53_1",        # pickaxe
     "knife": "Icon57_1",              # short blue blade
     # HUD and status
     "health": "Icon1_1",              # red cross
-    "shelter": "Icon42_1",            # roof
+    # The pack has no house, tent or roof. Icon42 is a lit lantern: it stands for a
+    # camp you can see from a distance, which is what the counter measures, and it is
+    # not called "shelter" so nothing in the UI claims it is a building.
+    "camp_light": "Icon42_1",         # lit lantern
     "time_dawn": "Icon49_1",          # hourglass
     "capacity": "Icon48_1",           # pouch
     "travel": "Icon44_1",             # compass
+    "field_meal": "Icon92_1",         # bowl of stew
 }
 
 
