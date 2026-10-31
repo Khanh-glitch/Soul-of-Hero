@@ -560,7 +560,7 @@ which are a review snapshot and were already stale for A0 (`ce77a1e8` is not the
 
 | owner | round 13 | **round 14** | what actually moved |
 |---|---|---|---|
-| A0 `arena/dea2428e` | `53dcda29` | **`ea6a7495d717`** | 3 files: its own journey test (+103/−30), its CI workflow (1 line), a corrective doc (+278). Its **product** files are byte-identical (§11.2) |
+| A0 `arena/dea2428e` | `53dcda29` | **`ea6a7495d717`** | 3 files: its own journey test (+103/−30), its CI workflow (1 line), a corrective doc (+278). Its **product** files are byte-identical (§11.3) |
 | A1 `arena/e385312a` | `c2ba1f0f` | **`8551a323e444`** | a **9-line documentation change** to its own round-12 report and nothing else — `git diff --stat` between the two A1 heads is one `.md`. Its code and data are identical to round 13, still 1024×768, still unmounted |
 | A3 `arena/7a12b27e` | `b44e22df` | `b44e22df` (unchanged) | — |
 | A6 `arena/05e0328d` | `6d71410a` | `6d71410a` (unchanged) | — |
@@ -601,12 +601,14 @@ about a continent a player can reach.
 | visual | BLOCKED | **BLOCKED** | headless, 3/3 captures empty, `VISUAL_NOT_TESTED` — no pixel verdict claimed from a probe |
 
 **11 probes / 203 checks / PASS 2 · FAIL 1 · BLOCKED 1 · RED 7**, ledger
-`data/survival/balance/results/native_runs.v1.json` on `d75bcd41f131`. Identical to round 13
-in every count, and identical in *which* checks fail. The owners' newer heads changed nothing
-a player meets: A0's diff is its own harness and a document, and the other heads did not move.
+`data/survival/balance/results/native_runs.v1.json` on `d75bcd41f131`; round 13's ledger is
+preserved as `native_runs.r13_full.v1.json`. Identical to round 13 in every count, and
+identical in *which* checks fail. Nothing a player meets moved: A0's diff is its own harness
+and a document, A1's diff is nine lines of its own report, AVFX's art is not in the
+composition, and the rest did not move.
 
-This is the round's first honest sentence: **between round 13 and round 14, the joined
-product did not change; only one owner's test file did — and that test file got worse.**
+So the round's first sentence has to be this one: **between round 13 and round 14 the joined
+product did not change, one owner's test file did, and that test file got worse.**
 
 ### 11.3 A0's normal-input journey at the new head: the first failure moved, and it moved into A0's own test
 
@@ -631,11 +633,16 @@ is deterministic, not a flake.
 **The first falsifiable source-level failure of round 14:**
 
 > `tests/survival_normal_connected_journey_test.gd:515` — `_scroll_recipe()` awaits a frame and
-> then hands the cached `Button` from `find_child` to `_owning_scroll(control: Control)`. The
-> `Button` (and, two frames later, the `EconomyPanel` itself) has already been freed by
-> `economy_panel._refresh()`, which tears the whole row list down with `remove_child` +
-> `queue_free` and rebuilds it. The typed parameter refuses a freed instance, which aborts
-> the coroutine and takes the rest of the journey with it.
+> then hands the cached `Button` from `find_child` to `_owning_scroll(control: Control)`. By
+> then the `Button` is a **previously freed instance**: `economy_panel._refresh()` tears the
+> whole row list down with `remove_child` + `queue_free` and rebuilds it, so a row looked up
+> before a refresh cannot survive one. The typed parameter refuses a freed instance, aborts
+> the coroutine, and takes the rest of the journey with it.
+>
+> Two frames later `_open_panel()` (line 559) reports the **`EconomyPanel` itself** as freed,
+> so whatever happened removed more than one row list. **A7 has not identified that trigger and
+> does not guess**: the verified statement is that A0's test holds a reference across a refresh
+> the panel performs, and that by the next frame both the row and the panel are gone.
 
 **Why this is a regression in the test and not in the product — the argument, not an opinion:**
 
