@@ -19,6 +19,10 @@ extends Node
 ## a screen's own minimum size no longer fits the window.
 
 const TITLE_SCENE := "res://game/ui/screens/title/title_screen.tscn"
+const RETURN_LAYER_SCENE := "res://game/survival/ui/return/a6_survival_return_layer.tscn"
+## The return gate's own fixture builder, reused rather than reimplemented: the
+## frames this driver publishes then show exactly the states that gate audits.
+const RETURN_FIXTURES := preload("res://tests/survival/ui/a6_return_ui_capture.gd")
 const AVATAR_SCENE := "res://game/ui/screens/avatar_choice/avatar_choice_screen.tscn"
 const WATCHDOG_SECONDS := 120.0
 
@@ -47,6 +51,8 @@ func _run() -> void:
 	await _capture_screen("title", TITLE_SCENE, "")
 	await _capture_screen("avatar_choice", AVATAR_SCENE, "MaleButton")
 	await _capture_screen("avatar_female", AVATAR_SCENE, "FemaleButton")
+	await _capture_return("return_digest", "digest")
+	await _capture_return("return_guidance", "guidance")
 	_write_manifest()
 	if not _failures.is_empty():
 		for message: String in _failures:
@@ -149,6 +155,51 @@ func _capture_screen(state: String, scene_path: String, focus_name: String) -> v
 		"texts": _audit_texts(screen),
 	})
 	screen.queue_free()
+	await _settle(2)
+
+
+## The survival return layer, driven by the same preview fixtures the return gate
+## audits. These are fixtures, not settled production: the frame proves layout and
+## art, and the return gate proves behaviour.
+func _capture_return(state: String, fixture_name: String) -> void:
+	if not ResourceLoader.exists(RETURN_LAYER_SCENE):
+		_failures.append("%s: return layer scene is missing" % state)
+		return
+	var builder := RETURN_FIXTURES.new()
+	var overrides := {}
+	var open_record := false
+	for fixture: Array in builder.call(&"_fixtures"):
+		if String(fixture[0]) == fixture_name:
+			overrides = fixture[1]
+			open_record = bool(fixture[2])
+			break
+	builder.free()
+	if overrides.is_empty():
+		_failures.append("%s: no such return fixture" % state)
+		return
+	# The fixtures are stamped against the return gate's fixed clock so a published
+	# frame and the audited fixture describe the same moment.
+	var now_unix := int(RETURN_FIXTURES.NOW)
+	var layer := (load(RETURN_LAYER_SCENE) as PackedScene).instantiate()
+	add_child(layer)
+	layer.call(&"configure", get_tree(), overrides, func() -> int: return now_unix)
+	await _settle(6)
+	if open_record and layer.has_method(&"open_record"):
+		layer.call(&"open_record")
+		await _settle(4)
+	await RenderingServer.frame_post_draw
+	var frame := get_viewport().get_texture().get_image()
+	if frame == null or frame.is_empty():
+		_failures.append("%s: no frame was drawn" % state)
+	elif not _is_non_blank(frame):
+		_failures.append("%s: frame is a flat colour" % state)
+	else:
+		var file := "%s/%s_%s_%dx%d.png" % [
+			_capture_dir, _tag, state, frame.get_width(), frame.get_height(),
+		]
+		await _save(frame, file, state)
+		print("A6 SURVIVAL UI CAPTURE: rendered ", state)
+	layer.queue_free()
 	await _settle(2)
 
 

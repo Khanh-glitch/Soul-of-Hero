@@ -14,10 +14,12 @@ extends Button
 
 signal activated
 
-const DEFAULT_CALM := Color(1, 0.91, 0.68, 1)
-const DEFAULT_WARNING := Color(1, 0.74, 0.42, 1)
-const DEFAULT_CRITICAL := Color(1, 0.45, 0.38, 1)
-const DEFAULT_SPENT := Color(0.62, 0.58, 0.6, 1)
+## Parchment ink. The card is a light authored plate now, so urgency is expressed by
+## darkening towards red rather than lightening towards white.
+const DEFAULT_CALM := Color(0.24, 0.14, 0.09, 1)
+const DEFAULT_WARNING := Color(0.55, 0.3, 0.06, 1)
+const DEFAULT_CRITICAL := Color(0.62, 0.13, 0.09, 1)
+const DEFAULT_SPENT := Color(0.36, 0.32, 0.3, 1)
 
 @onready var kicker_label: Label = %Kicker
 @onready var countdown_label: Label = %Countdown

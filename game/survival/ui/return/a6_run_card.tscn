@@ -1,67 +1,68 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://game/survival/ui/return/a6_run_card.gd" id="1_script"]
-[ext_resource type="Theme" path="res://game/ui/theme/living_arsenal_theme.tres" id="2_theme"]
+[ext_resource type="Theme" path="res://game/ui/theme/a6_survival_theme.tres" id="2_theme"]
+[ext_resource type="Texture2D" path="res://assets/a6_ui/panels/panel.png" id="3_plate"]
+[ext_resource type="Texture2D" path="res://assets/a6_ui/panels/button_hover.png" id="4_hover"]
 
-[sub_resource type="StyleBoxFlat" id="ShellNormal"]
-content_margin_left = 10.0
-content_margin_top = 7.0
-content_margin_right = 10.0
+[sub_resource type="StyleBoxTexture" id="ShellNormal"]
+texture = ExtResource("3_plate")
+texture_margin_left = 5.0
+texture_margin_top = 4.0
+texture_margin_right = 5.0
+texture_margin_bottom = 6.0
+content_margin_left = 11.0
+content_margin_top = 8.0
+content_margin_right = 11.0
+content_margin_bottom = 9.0
+modulate_color = Color(0.94, 0.9, 0.84, 1)
+
+[sub_resource type="StyleBoxTexture" id="ShellHover"]
+texture = ExtResource("3_plate")
+texture_margin_left = 5.0
+texture_margin_top = 4.0
+texture_margin_right = 5.0
+texture_margin_bottom = 6.0
+content_margin_left = 11.0
+content_margin_top = 8.0
+content_margin_right = 11.0
+content_margin_bottom = 9.0
+
+[sub_resource type="StyleBoxTexture" id="ShellPressed"]
+texture = ExtResource("3_plate")
+texture_margin_left = 5.0
+texture_margin_top = 4.0
+texture_margin_right = 5.0
+texture_margin_bottom = 6.0
+content_margin_left = 11.0
+content_margin_top = 9.0
+content_margin_right = 11.0
 content_margin_bottom = 8.0
-bg_color = Color(0.075, 0.062, 0.082, 0.82)
-border_width_left = 2
-border_color = Color(0.62, 0.46, 0.29, 0.62)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
+modulate_color = Color(0.82, 0.76, 0.68, 1)
 
-[sub_resource type="StyleBoxFlat" id="ShellHover"]
-content_margin_left = 10.0
-content_margin_top = 7.0
-content_margin_right = 10.0
-content_margin_bottom = 8.0
-bg_color = Color(0.13, 0.1, 0.13, 0.9)
-border_width_left = 2
-border_color = Color(0.86, 0.64, 0.36, 0.85)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
+[sub_resource type="StyleBoxTexture" id="ShellDisabled"]
+texture = ExtResource("3_plate")
+texture_margin_left = 5.0
+texture_margin_top = 4.0
+texture_margin_right = 5.0
+texture_margin_bottom = 6.0
+content_margin_left = 11.0
+content_margin_top = 8.0
+content_margin_right = 11.0
+content_margin_bottom = 9.0
+modulate_color = Color(0.55, 0.53, 0.5, 0.8)
 
-[sub_resource type="StyleBoxFlat" id="ShellPressed"]
-content_margin_left = 10.0
-content_margin_top = 7.0
-content_margin_right = 10.0
-content_margin_bottom = 8.0
-bg_color = Color(0.2, 0.12, 0.1, 0.92)
-border_width_left = 2
-border_color = Color(1, 0.76, 0.42, 1)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
-
-[sub_resource type="StyleBoxFlat" id="ShellFocus"]
-draw_center = false
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(1, 0.83, 0.45, 0.95)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-
-[sub_resource type="StyleBoxFlat" id="ShellDisabled"]
-content_margin_left = 10.0
-content_margin_top = 7.0
-content_margin_right = 10.0
-content_margin_bottom = 8.0
-bg_color = Color(0.06, 0.05, 0.07, 0.7)
-border_width_left = 2
-border_color = Color(0.4, 0.32, 0.24, 0.5)
+[sub_resource type="StyleBoxTexture" id="ShellFocus"]
+texture = ExtResource("4_hover")
+texture_margin_left = 7.0
+texture_margin_top = 7.0
+texture_margin_right = 7.0
+texture_margin_bottom = 7.0
+expand_margin_left = 2.0
+expand_margin_top = 2.0
+expand_margin_right = 2.0
+expand_margin_bottom = 2.0
+modulate_color = Color(1, 0.95, 0.72, 1)
 
 [node name="A6RunCard" type="Button"]
 custom_minimum_size = Vector2(228, 64)
@@ -103,7 +104,8 @@ theme_override_constants/separation = 4
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
-theme_type_variation = &"KickerLabel"
+theme_type_variation = &"A6Caption"
+theme_override_colors/font_color = Color(0.24, 0.15, 0.1, 1)
 text = "MÙA 01"
 
 [node name="Filler" type="Control" parent="Content/Stack/Head"]
@@ -114,14 +116,17 @@ mouse_filter = 2
 [node name="More" type="Label" parent="Content/Stack/Head"]
 layout_mode = 2
 mouse_filter = 2
-theme_type_variation = &"MutedLabel"
+theme_type_variation = &"A6Caption"
+theme_override_colors/font_color = Color(0.24, 0.15, 0.1, 1)
 text = "›"
 
 [node name="Countdown" type="Label" parent="Content/Stack"]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
-theme_type_variation = &"NumberLabel"
+theme_type_variation = &"A6Number"
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.24, 0.14, 0.09, 1)
 text = "—"
 
 [node name="RemainingBar" type="ProgressBar" parent="Content/Stack"]
@@ -137,5 +142,6 @@ show_percentage = false
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
-theme_type_variation = &"MutedLabel"
+theme_type_variation = &"A6Caption"
+theme_override_colors/font_color = Color(0.24, 0.15, 0.1, 1)
 text = ""
