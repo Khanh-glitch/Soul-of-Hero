@@ -141,8 +141,7 @@ func _continuation(ow: Node) -> void:
 	if kit_button == null:
 		_write_audit(ow, {})
 		return
-	var kit_scroll := _owning_scroll(kit_button)
-	_expect(kit_scroll != null and await _scroll_to(kit_scroll, kit_button), "ordinary wheel input reaches the furnace kit")
+	_expect(await _scroll_recipe(panel, kit_button), "ordinary wheel input reaches the furnace kit")
 	await _click_window(root.get_final_transform() * (kit_button.get_global_transform_with_canvas() * (kit_button.size * 0.5)))
 	var furnace_job := _job_for("furnace_kit")
 	_expect(not furnace_job.is_empty(), "the GUI queues the furnace kit (%s)" % furnace_job)
@@ -210,8 +209,7 @@ func _continuation(ow: Node) -> void:
 	if charcoal_button == null:
 		_write_audit(ow, {})
 		return
-	var charcoal_scroll := _owning_scroll(charcoal_button)
-	_expect(await _scroll_to(charcoal_scroll, charcoal_button), "ordinary wheel input reaches the charcoal recipe")
+	_expect(await _scroll_recipe(panel, charcoal_button), "ordinary wheel input reaches the charcoal recipe")
 	await _click_window(root.get_final_transform() * (charcoal_button.get_global_transform_with_canvas() * (charcoal_button.size * 0.5)))
 	var charcoal_job := _job_for("burn_charcoal")
 	_expect(not charcoal_job.is_empty(), "the GUI queues charcoal at the furnace (%s)" % charcoal_job)
@@ -244,7 +242,7 @@ func _continuation(ow: Node) -> void:
 	if smelt_button == null:
 		_write_audit(ow, {})
 		return
-	_expect(await _scroll_to(_owning_scroll(smelt_button), smelt_button), "ordinary wheel input reaches the smelt recipe")
+	_expect(await _scroll_recipe(panel, smelt_button), "ordinary wheel input reaches the smelt recipe")
 	await _click_window(root.get_final_transform() * (smelt_button.get_global_transform_with_canvas() * (smelt_button.size * 0.5)))
 	var smelt_job := _job_for("smelt_iron")
 	_expect(not smelt_job.is_empty(), "the GUI queues the fuelled smelt (%s)" % smelt_job)
@@ -498,6 +496,21 @@ func _close_panel(panel: Node) -> bool:
 		await _tap_action(&"economy_toggle")
 		await process_frame
 	return not bool(panel.call(&"is_open"))
+
+
+## Bring a row into view with ordinary wheel input. If the list was already open
+## with stale layout, a player closes and reopens the panel; the row is looked up
+## again in the rebuilt list rather than trusting a stale node.
+func _scroll_recipe(panel: Node, button: Button) -> bool:
+	var scroll := _owning_scroll(button)
+	if scroll != null and await _scroll_to(scroll, button):
+		return true
+	await _close_panel(panel)
+	await _open_panel(panel)
+	await process_frame
+	await process_frame
+	var rebuilt := _owning_scroll(button)
+	return rebuilt != null and await _scroll_to(rebuilt, button)
 
 
 func _open_panel(panel: Node) -> bool:
