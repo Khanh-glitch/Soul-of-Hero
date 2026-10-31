@@ -28,5 +28,5 @@ jobs:
             text=p.read_text(errors='replace').splitlines()
             matches=[(i,s) for i,s in enumerate(text) if re.search(r'ERROR|FAILED|FAIL |Assertion|timeout|EXIT|exit=',s,re.I)]
             for i,s in matches[:20]:
-              print('::notice::A0_TRIAGE '+str(p)+' line='+str(i+1)+' '+s[:1000])
+              print('::notice::A0_TRIAGE '+str(p)+' line='+str(i+1)+' '+ ' | '.join(text[max(0,i-1):i+4])[:2500])
           PY
