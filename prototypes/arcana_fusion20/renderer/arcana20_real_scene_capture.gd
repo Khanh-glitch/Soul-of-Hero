@@ -93,12 +93,19 @@ func _run() -> void:
     var a := Arcana20SourceCatalog.canonical_id(2)
     var b := Arcana20SourceCatalog.canonical_id(10)
     var overlap_times: Array[float] = []
+    var both_active_times: Array[float] = []
+    var static_memory_start := Performance.get_monitor(Performance.MEMORY_STATIC)
+    var static_memory_peak := static_memory_start
     if renderer.cast_skill(a, knight.global_position, enemy.global_position) and renderer.cast_skill(b, knight.global_position, enemy.global_position):
         var previous := Time.get_ticks_usec()
         for i in range(60):
             await process_frame
             var now := Time.get_ticks_usec()
-            overlap_times.append(float(now - previous) / 1000.0)
+            var frame_ms := float(now - previous) / 1000.0
+            overlap_times.append(frame_ms)
+            if renderer.is_active(a) and renderer.is_active(b):
+                both_active_times.append(frame_ms)
+            static_memory_peak = maxf(static_memory_peak, Performance.get_monitor(Performance.MEMORY_STATIC))
             previous = now
         await _save("overlap_02_10.png")
         renderer.cancel_skill(a)
@@ -111,13 +118,18 @@ func _run() -> void:
         _fail("overlap cleanup left active casts")
     var sorted_times := overlap_times.duplicate()
     sorted_times.sort()
+    var both_sorted := both_active_times.duplicate()
+    both_sorted.sort()
     var overlap_stats: Dictionary = {"samples": overlap_times.size(), "frame_ms": overlap_times,
         "p95_ms": sorted_times[mini(sorted_times.size() - 1, int(floor(float(sorted_times.size()) * 0.95)))] if not sorted_times.is_empty() else -1.0,
-        "note": "60-frame runner measurement with #02 and #10; diagnostic only, not a hardware acceptance budget"}
+        "both_active_samples": both_active_times.size(),
+        "both_active_p95_ms": both_sorted[mini(both_sorted.size() - 1, int(floor(float(both_sorted.size()) * 0.95)))] if not both_sorted.is_empty() else -1.0,
+        "static_memory_start_bytes": static_memory_start, "static_memory_peak_bytes": static_memory_peak,
+        "note": "60-frame shared software-renderer probe; static memory only, not GPU memory or target-hardware budget"}
     var f := FileAccess.open(OUTPUT + "/manifest.json", FileAccess.WRITE)
     f.store_string(JSON.stringify({"scene": "res://game/main.tscn", "level": "res://game/levels/crypt_entrance.tscn",
         "enemy": "res://game/characters/enemies/skeleton_enemy.tscn", "camera": "actual Knight/Camera with explicit offsets",
-        "limitations": "visual-only AVFX direct cast, not PR30 binding/combat, no overworld/bright scene, no measured real-time performance, not owner approved",
+        "limitations": "visual-only AVFX direct cast, not PR30 binding/combat; no overworld/bright scene or target-hardware benchmark; manual seek screenshots; not owner approved",
         "samples": times, "visual_events": visual_events, "overlap_probe": overlap_stats}, "  "))
     f.close()
     if _failures.is_empty():

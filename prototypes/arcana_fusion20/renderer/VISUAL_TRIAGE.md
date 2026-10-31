@@ -56,17 +56,21 @@ the real SOH framebuffer. Names below identify observed risks, not approvals.
 
 ## Real-crypt preliminary findings
 
-The 20 peak-ish real-scene thumbnails from run `41200912184` show the actual
+The 20 peak-ish real-scene thumbnails from runs `41200912184` and the
+later successful diagnostic `41201624379` show the actual
 crypt tilemap, but HUD/debug overlay coverage is substantial and #05/#16/#20
 can obscure a large portion of the play area. These reduced stills are not
 sufficient to judge actor readability or movement. The run logged four
-`CFrame.ribbon` callback-arity errors in Cinder Crown; a subsequent fix adds
-the missing fourth callback argument, pending new CI. Its #02+#10 overlap
+`CFrame.ribbon` callback-arity errors in Cinder Crown; the later run passed
+after adding the missing fourth callback argument. Its #02+#10 overlap
 probe measured runner p95 **3729.518 ms per frame** over 60 frames, on shared
 software-rendered CI, with casts ending during the window. This is a severe
 performance warning, not a target-device benchmark. Later work moves A/C
 rasterization out of the per-catch-up-tick loop; remeasure before claiming an
-improvement, and profile the D CPU raster path independently.
+improvement. The later `41201624379` software-rendered run recorded
+p95 **603.734 ms/frame** over 60 frames with the same limitations. This is
+still far from a playable frame budget; runner load and casts ending during
+measurement prevent a controlled benchmark comparison. Profile D independently.
 
 The sampled-source capture also revealed an A framebuffer error at the bottom
 two image rows: the original JS truncates the quarter-height bloom array and

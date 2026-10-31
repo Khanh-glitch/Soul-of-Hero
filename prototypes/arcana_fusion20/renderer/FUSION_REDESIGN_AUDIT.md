@@ -62,8 +62,10 @@ and per-stage visual review remain necessary.
 
 ## SOH integration and control authority
 
-No SOH screenshots, bright/dark real-scene captures, moving-camera or
-performance traces have been visually reviewed by this audit. A PR #30
-handoff comment requests them. No `soh_binding/**` files were changed. R4/CT
+A direct-render diagnostic using the actual crypt, knight, skeleton and
+camera completed in run `41201624379`; a thumbnail-only triage found major
+HUD/actor-occlusion risks. This is not PR #30 binding or combat integration.
+No actual overworld/bright-scene or target-hardware performance trace has been
+reviewed. PR #30 handoff comments request those. No `soh_binding/**` files were changed. R4/CT
 alone owns confirmed gameplay hits; visual cues are not damage. One contact
 per skill is not an invariant.
