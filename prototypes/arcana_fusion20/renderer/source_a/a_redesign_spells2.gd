@@ -32,6 +32,8 @@ class RootwakeR:
         ev.append({"t": 5.4, "kind": "thorn_snap_impact", "pos_local": C, "emitted": false})
         ev.append({"t": 7.2, "kind": "roots_retract", "pos_local": CASTER, "emitted": false})
         return ev
+    func _visible_growth(growth: float, t: float) -> float:
+        return growth * (1.0 - AMath.seg(t, 7.2, 8.4))
     func update(dt: float, t: float) -> void:
         for bs in _roots:
             ACommon.update_branches(bs, t - 0.8)
@@ -40,7 +42,8 @@ class RootwakeR:
         var tension := AMath.seg(t, 4.4, 5.4)
         for bs in _roots:
             for b in bs:
-                var bb: Dictionary = b
+                var bb: Dictionary = (b as Dictionary).duplicate()
+                bb.grow = _visible_growth(float(bb.grow), t)
                 ACommon.draw_branch(fb, bb,
                     func(u: float, edge: float, br: Dictionary) -> Variant:
                         var h := (1.0 - edge) * retract
@@ -142,10 +145,15 @@ class ChronoshardR:
         ev.append({"t": 6.2, "kind": "synchronized_impact", "pos_local": C, "emitted": false})
         ev.append({"t": 7.4, "kind": "fragments_resolve", "pos_local": C, "emitted": false})
         return ev
+    func _release(index: int, t: float) -> float:
+        var begin := 5.0 + float(_crystals.size() - 1 - index) * 0.2
+        return AMath.seg(t, begin, begin + 0.4)
+    func _resolve(index: int, t: float) -> float:
+        var begin := 7.4 + float(_crystals.size() - 1 - index) * 0.16
+        return 1.0 - AMath.seg(t, begin, begin + 0.36)
     func update(dt: float, t: float) -> void:
         pass
     func render(fb: AFramebuffer, t: float) -> void:
-        var resolve := 1.0 - AMath.seg(t, 7.4, 8.4)
         # pre-echo: ghost of the final convergence shown first (temporal logic)
         if t < 2.0:
             var gk := (1.0 - AMath.seg(t, 1.4, 2.0)) * 0.35
@@ -158,7 +166,8 @@ class ChronoshardR:
             if form <= 0.0:
                 continue
             var captured := AMath.seg(t, cap_t, cap_t + 0.4)
-            var rel := AMath.seg(t, 5.6, 6.2)
+            var rel := _release(i, t)
+            var resolve := _resolve(i, t)
             var cur: Vector2 = pos.lerp(C, AMath.ease_in(rel, 2.0))
             var sz: float = float(c.size) * form * (1.0 - rel * 0.55) * resolve
             if sz <= 0.5:

@@ -107,6 +107,32 @@ func _init() -> void:
         if pos.distance_to(calligraphy._stroke_pt(i, 0.98)) > 0.001:
             _fail("calligraphy stroke %d cue position wrong" % i)
 
+    # Temporal ordering regression checks for redesign OUT phases. These
+    # are structural checks, not visual acceptance or a motion-quality score.
+    var chain := AFusionSpells.ChainVerdict.new()
+    chain.setup()
+    if chain._link_visibility(0, 6.8) >= chain._link_visibility(9, 6.8) or chain._link_visibility(9, 7.2) > 0.001:
+        _fail("chain strands do not extinguish in order before cleanup")
+    var guillotine := ARedesignSpells.AshenGuillotineR.new()
+    guillotine.setup()
+    if guillotine._section_visibility(0, 7.4) >= guillotine._section_visibility(4, 7.4):
+        _fail("guillotine wound sections do not close in order")
+    var sky := ARedesignSpells.SkybreakerScriptR.new()
+    sky.setup()
+    if sky._stroke_remaining(3, 8.0) >= sky._stroke_remaining(0, 8.0):
+        _fail("sky glyph OUT does not reverse write order")
+    if sky._stroke_remaining(0, 8.6) > 0.001:
+        _fail("sky glyph remains after OUT")
+    var rootwake := ARedesignSpells2.RootwakeR.new()
+    if rootwake._visible_growth(1.0, 7.8) >= rootwake._visible_growth(1.0, 7.2):
+        _fail("root geometry does not retract during OUT")
+    var chrono := ARedesignSpells2.ChronoshardR.new()
+    chrono.setup()
+    if chrono._release(4, 5.3) <= chrono._release(0, 5.3):
+        _fail("crystal release is not reverse ordered")
+    if chrono._resolve(4, 7.7) >= chrono._resolve(0, 7.7):
+        _fail("crystal resolution is not ordered")
+
     # Cancel path: mid-cast cancel must finish + clean up with no contact leak.
     var cid5 := Arcana20SourceCatalog.canonical_id(5)
     _finished.erase(cid5)

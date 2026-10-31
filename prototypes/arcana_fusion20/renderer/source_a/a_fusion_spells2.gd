@@ -1,7 +1,7 @@
-## Authored FUSION_CANDIDATE choreographies (batch 2): #11 Volt Carousel
-## (A rotating spatial machine + C #09 bolt craft re-mapped to moving
-## connectors), #16 Worldseed (A smooth living unfolding + C verdant
-## palette), #20 Reality Ripper (C rift geometry + A external impact).
+## Authored FUSION_CANDIDATE interpretations on the A framebuffer.
+## #11/#16/#20 do not run the selected original A/C spell components;
+## source preservation, real actor/terrain interaction and visual quality
+## remain open. See FUSION_REDESIGN_AUDIT.md.
 extends RefCounted
 class_name AFusionSpells2
 

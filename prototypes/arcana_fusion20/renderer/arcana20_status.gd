@@ -9,26 +9,26 @@ extends RefCounted
 class_name Arcana20Status
 
 const ENTRIES := {
-    1: {"state": "FUSION_CANDIDATE", "source": "A+C", "visual": "VISUAL_NOT_VERIFIED", "note": "ONE choreography: ported A CinderCrown (lead) + ported C cinderCrown outer flame geometry on shared clock, C offset +0.69s aligning both bursts to one impact beat; C back layer / A front layer"},
+    1: {"state": "FUSION_CANDIDATE", "source": "A+C", "visual": "VISUAL_NOT_VERIFIED", "note": "A and C complete crown players on a shared clock; C offset +0.69s. Source components are not isolated; duplicated geometry and OUT still need visual review."},
     2: {"state": "SOURCE_PORTED_CANDIDATE", "source": "B", "visual": "VISUAL_NOT_VERIFIED", "note": "TRUE port: B engine (math/renderer/fx) + furnaceWyrm setup/render/post from pyre.ts seed 202 on native 384x216 HDR buffer; floor/actors excluded by design; spatial PNG parity PASS in CI (IoU>=0.99)"},
     3: {"state": "SOURCE_PORTED_CANDIDATE", "source": "B", "visual": "VISUAL_NOT_VERIFIED", "note": "TRUE port: meteorLoom (pyre.ts seed 303) — 8 authored meteors, per-impact events, sigil; spatial PNG parity PASS in CI; 8-contact ledger verified"},
     4: {"state": "REDESIGN_CANDIDATE", "source": "NEW", "visual": "VISUAL_NOT_VERIFIED", "note": "Diagonal guillotine: slit telegraph -> blade materialises -> one fast cut -> delayed crack rupture (decisions 04)"},
-    5: {"state": "FUSION_CANDIDATE", "source": "A+C", "visual": "VISUAL_NOT_VERIFIED", "note": "ONE choreography on ported A engine: A membrane opening/peak lead + C water column/rain/gravity replacing A tails (decisions 05)"},
-    6: {"state": "REDESIGN_CANDIDATE", "source": "NEW", "visual": "VISUAL_NOT_VERIFIED", "note": "Legible 3-stroke water glyph written by moving tip (tip contacts), then curved wave fronts (decisions 06)"},
+    5: {"state": "FUSION_CANDIDATE", "source": "A+C", "visual": "VISUAL_NOT_VERIFIED", "note": "Authored A-buffer interpretation, not original A bloom or C water-column source. Both selected components remain to be preserved."},
+    6: {"state": "REDESIGN_CANDIDATE", "source": "NEW", "visual": "VISUAL_NOT_VERIFIED", "note": "Three written strokes and wave fronts; visual legibility unverified. Discrete tip-end contacts, no continuous moving-tip sweep."},
     7: {"state": "SOURCE_PORTED_CANDIDATE", "source": "C", "visual": "VISUAL_NOT_VERIFIED", "note": "TRUE port: mirrorfrostBasilica (tide.ts seed 48514) facets/spires/sequential fracture; parity in CI"},
     8: {"state": "SOURCE_PORTED_CANDIDATE", "source": "B", "visual": "VISUAL_NOT_VERIFIED", "note": "TRUE port: undertowMaw (tide.ts seed 808) log-polar shaft + surge; pull/stillness/surge event ledger"},
-    9: {"state": "FUSION_CANDIDATE", "source": "A+B+C", "visual": "VISUAL_NOT_VERIFIED", "note": "ONE network: A chain conduction order + B two-colour bolts + C-density branches, per-link impacts (decisions 09)"},
+    9: {"state": "FUSION_CANDIDATE", "source": "A+B+C", "visual": "VISUAL_NOT_VERIFIED", "note": "Authored A-buffer network inspired by A/B/C; original selected source components not yet preserved; fixed rather than live actor anchors."},
     10: {"state": "SOURCE_PORTED_CANDIDATE", "source": "C", "visual": "VISUAL_NOT_VERIFIED", "note": "TRUE port: thunderloom (tempest.ts seed 72271); Math.random spark substituted deterministically (documented)"},
-    11: {"state": "FUSION_CANDIDATE", "source": "A+C#09", "visual": "VISUAL_NOT_VERIFIED", "note": "A rotating carousel machine; connectors use C-09-style bolt generator re-mapped to moving connectors (decisions 11)"},
-    12: {"state": "REDESIGN_CANDIDATE", "source": "NEW", "visual": "VISUAL_NOT_VERIFIED", "note": "Readable sky glyph written stroke-by-stroke, circuit pulses, ordered strikes, climactic strike, reverse disassembly (decisions 12)"},
-    13: {"state": "REDESIGN_CANDIDATE", "source": "NEW", "visual": "VISUAL_NOT_VERIFIED", "note": "Biomechanical roots: exploratory growth (grow_branches), thickening/tension, targeted thorn snap (decisions 13)"},
+    11: {"state": "FUSION_CANDIDATE", "source": "A+C#09", "visual": "VISUAL_NOT_VERIFIED", "note": "Authored A-buffer carousel and bolt paths; original A machine and C-09 bolt generator not preserved. Connector cues use authored moving positions."},
+    12: {"state": "REDESIGN_CANDIDATE", "source": "NEW", "visual": "VISUAL_NOT_VERIFIED", "note": "Glyph strokes, circuit and strikes with reverse-order OUT; readability and impact remain unverified."},
+    13: {"state": "REDESIGN_CANDIDATE", "source": "NEW", "visual": "VISUAL_NOT_VERIFIED", "note": "Authored branching roots, timed cues and geometric retraction; apparent tension, targeting and motion need visual review."},
     14: {"state": "REDESIGN_CANDIDATE", "source": "NEW", "visual": "VISUAL_NOT_VERIFIED", "note": "Causal fungal network: seed->colonies->hyphal links->signal pulses->synchronised sporulation (decisions 14)"},
     15: {"state": "SOURCE_PORTED_CANDIDATE", "source": "C", "visual": "VISUAL_NOT_VERIFIED", "note": "TRUE port: thornOpera (tempest.ts seed 111866) verlet tendrils/bloom/lashes; physics stored as float64 scalars (Godot Vector2 is float32; chaotic solver diverged) — spatial PNG parity PASS in CI (run 41197756655)"},
-    16: {"state": "FUSION_CANDIDATE", "source": "A+C", "visual": "VISUAL_NOT_VERIFIED", "note": "ONE choreography on ported A engine: A worldseed germination lead + C root/leaf growth systems sharing anchors and clock (decisions 16)"},
+    16: {"state": "FUSION_CANDIDATE", "source": "A+C", "visual": "VISUAL_NOT_VERIFIED", "note": "Authored A-buffer petal model; original A motion and C palette are not yet verified/preserved."},
     17: {"state": "SOURCE_PORTED_CANDIDATE", "source": "C", "visual": "VISUAL_NOT_VERIFIED", "note": "TRUE port: C frame/kit + eventHorizon (astral.ts seed 127704); spatial PNG parity PASS in CI; blitBase dark-fragment adaptation documented"},
-    18: {"state": "REDESIGN_CANDIDATE", "source": "NEW", "visual": "VISUAL_NOT_VERIFIED", "note": "Temporal sequence: pre-echo -> captured event crystals -> reverse release -> single synchronised impact (decisions 18)"},
-    19: {"state": "SOURCE_PORTED_CANDIDATE", "source": "D", "visual": "VISUAL_NOT_VERIFIED", "note": "TRUE port of D HTML constellation engine (CPU GLSL translation, 480x270, dur 9.8s, authored OUT 8.6-9.8 contraction/residual decay; unapproved OUT study NOT used). No reference PNGs: headless WebGL capture unavailable in sandbox — spatial parity NOT MEASURED, lifecycle only"},
-    20: {"state": "FUSION_CANDIDATE", "source": "A+C", "visual": "VISUAL_NOT_VERIFIED", "note": "C-style jagged rift + A external impact ring/shard ejection and return (decisions 20)"},
+    18: {"state": "REDESIGN_CANDIDATE", "source": "NEW", "visual": "VISUAL_NOT_VERIFIED", "note": "Authored pre-echo, capture and synchronized impact; reverse release and resolution now ordered, motion needs visual review."},
+    19: {"state": "SOURCE_PORTED_CANDIDATE", "source": "D", "visual": "VISUAL_NOT_VERIFIED", "note": "D CPU implementation, 480x270, dur 9.8s, authored OUT; original D browser diagnostic captured. Isolated WebGL/native compositor differences prevent a fair parity gate; no visual approval."},
+    20: {"state": "FUSION_CANDIDATE", "source": "A+C", "visual": "VISUAL_NOT_VERIFIED", "note": "Authored A-buffer interpretation; original C contour and real-world A environmental deformation not yet ported."},
 }
 
 static func entry(id: int) -> Dictionary:

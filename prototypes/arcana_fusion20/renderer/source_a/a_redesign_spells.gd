@@ -27,6 +27,9 @@ class AshenGuillotineR:
             {"t": 4.6, "kind": "rupture_impact", "pos_local": C + Vector2(40, 26), "emitted": false},
             {"t": 6.6, "kind": "wound_close", "pos_local": C, "emitted": false},
         ]
+    func _section_visibility(index: int, t: float) -> float:
+        var begin := 6.6 + float(index) * 0.22
+        return 1.0 - AMath.seg(t, begin, begin + 0.52)
     func update(dt: float, t: float) -> void:
         for bs in _cracks:
             ACommon.update_branches(bs, maxf(0.0, t - 4.6))
@@ -51,16 +54,18 @@ class AshenGuillotineR:
             ADraw.streak(fb, b0.x, b0.y, b1.x, b1.y, 1.2, 1.2, AMath.R("fire", 0.95), bk)
         if cut > 0.0:
             ADraw.streak(fb, p0.x, p0.y, p1.x, p1.y, 2.0, 2.0, AMath.R("fire", 0.9), (1.0 - AMath.seg(t, 3.5, 4.4)) * close_k)
-        # delayed rupture: cracks + fire column along the wound (C's column, redirected)
-        var rup := AMath.seg(t, 4.6, 5.4) * close_k
+        # Close the wound sections in order, not as one global fade.
+        var rup := AMath.seg(t, 4.6, 5.4)
         if rup > 0.0:
-            for bs in _cracks:
-                ACommon.scar_decal(fb, bs, rup * 0.9, t)
+            for section in range(_cracks.size()):
+                var bs: Array = _cracks[section]
+                ACommon.scar_decal(fb, bs, rup * _section_visibility(section, t) * 0.9, t)
             for k in range(9):
                 var s := float(k) / 8.0
                 var base_p: Vector2 = p0.lerp(p1, s)
-                var h := (14.0 + AMath.hash2(float(k), 2.0) * 22.0) * rup
-                ADraw.streak(fb, base_p.x, base_p.y + 14.0, base_p.x, base_p.y + 14.0 - h, 1.6, 0.5, ACommon.fire_col(0.5 + 0.4 * rup), rup * 0.8)
+                var section_fade := 1.0 - AMath.seg(t, 6.6 + float(k) * 0.1, 7.2 + float(k) * 0.1)
+                var h := (14.0 + AMath.hash2(float(k), 2.0) * 22.0) * rup * section_fade
+                ADraw.streak(fb, base_p.x, base_p.y + 14.0, base_p.x, base_p.y + 14.0 - h, 1.6, 0.5, ACommon.fire_col(0.5 + 0.4 * rup), rup * section_fade * 0.8)
 
 # ------------------------------------------- #06 riptide calligraphy
 class RiptideCalligraphyR:
@@ -131,12 +136,15 @@ class SkybreakerScriptR:
         ev.append({"t": 6.8, "kind": "skybreaker_impact", "pos_local": C, "emitted": false})
         ev.append({"t": 7.8, "kind": "glyph_disassemble", "pos_local": C, "emitted": false})
         return ev
+    func _stroke_remaining(index: int, t: float) -> float:
+        var begin := 7.8 + float(_glyph.size() - 1 - index) * 0.15
+        return 1.0 - AMath.seg(t, begin, begin + 0.25)
     func update(dt: float, t: float) -> void:
         pass
     func render(fb: AFramebuffer, t: float) -> void:
-        var dis := 1.0 - AMath.seg(t, 7.8, 8.6)
+        var dis := 1.0 - AMath.seg(t, 8.45, 8.6)
         for i in range(_glyph.size()):
-            var u := AMath.cl01(AMath.seg(t, 0.8 + float(i) * 0.55, 1.35 + float(i) * 0.55))
+            var u := AMath.cl01(AMath.seg(t, 0.8 + float(i) * 0.55, 1.35 + float(i) * 0.55)) * _stroke_remaining(i, t)
             if u <= 0.0:
                 continue
             var pts: Array = AMath.catmull_pt([Vector2.ZERO], 0.0) if false else []

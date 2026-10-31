@@ -13,7 +13,7 @@ is source-buffer evidence, not the actual SOH composite. See the CI artifact
 |---|---|---|
 | 01 | A crown formation/collapse; C outer flame; one shockwave, scorch, ash | `FusionPlayer` executes whole A and C crown engines on a shared clock. Both complete effects are overlaid; there is no geometry mask proving that their shockwaves are not duplicated. Each visual contact is now forwarded independently, not treated as damage. Source sprites use different anchors/transforms. Isolate selected geometry and inspect the actual composite; review OUT and impact. The #01 sheet uses the fusion clock and a nearest-neighbor software world-transform composite, but is not an in-game GPU screenshot and still needs verification against the real renderer. |
 | 05 | A opening/peak, replace A tails with actual C column/rain, no duplicate halo | `AFusionSpells.AbyssalBloom` is a new A-buffer interpretation. It does not execute either original A bloom choreography or C tide source. Port selected source components and compose them causally; verify actual rain, pooling and OUT. |
-| 09 | A chain logic/body shock, B two-color, C bolt branching/density; one network | A-buffer authored network, with two colors and authored `ADraw` bolts; not source A/B/C implementations. Link points are fixed, not live enemy anchors. Strand ribbon retains a nonzero baseline through OUT, then cuts off at cleanup. Port/reuse selected source algorithms, synchronize real anchors and implement sequential strand extinction. |
+| 09 | A chain logic/body shock, B two-color, C bolt branching/density; one network | A-buffer authored network, with two colors and authored `ADraw` bolts; not source A/B/C implementations. Link points are fixed, not live enemy anchors. Strand baseline now fades sequentially to zero before cleanup, with an ordering regression test. Port/reuse selected source algorithms, synchronize real anchors and review the resulting OUT. |
 | 11 | Original A rotating spatial machine and C #09 bolt generator mapped to moving connectors | Authored A-buffer carousel, not original A machine or C bolt algorithm. Conduction cue positions now use the rendered connector position at each authored beat, but do not track live actors. Port selected A and C components and verify rotor alignment/deceleration and grounded scorches. |
 | 16 | Smooth original A unfolding with C palette | Authored A-buffer petal model and `AMath.R` palettes, not original A motion or demonstrably original C palette. Port selected motion and palette; inspect saturation and folding. |
 | 20 | Original C contour/movement and A environmental deformation | Authored A-buffer rift; no ported C rift or real-world A terrain distortion. Port selected contour/motion and integrate a real-world distortion pass; inspect resealing, depth and actor occlusion. |
@@ -27,12 +27,12 @@ not separately routable terrain/behind/body/air/light/distortion passes.
 
 | ID | Code facts and gaps against the brief |
 |---|---|
-| 04 | Slit, diagonal blade, timed cut and delayed cracks are explicit. `close_k` fades the whole wound together, not section-by-section closing; contact is a point, not a real moving line. Needs animated silhouette, impact and OUT review. |
+| 04 | Slit, diagonal blade, timed cut and delayed cracks are explicit. Wound sections now fade in sequence, with an ordering regression test; contact remains a point, not a real moving line. Animated silhouette, impact and OUT are unverified. |
 | 06 | Three written strokes and wave arcs are explicit. Stroke-tip cues are emitted at each stroke's end, not continuously following the moving tip; inspect legibility and wave/foam transition. |
-| 12 | Four drawn glyph strokes, three timed circuit strikes and one final strike exist. All glyph strokes share `dis` fade, so **reverse-order disassembly is not implemented**. Targeted strike and C bolt craft remain unverified/unported. |
-| 13 | Generated branches and timed tip/central impact cues exist; `tension` thickens branches. `retract` reduces color, not branch geometry; targeted snap/tension and credible organic retraction require work and visual inspection. |
+| 12 | Four drawn glyph strokes, three timed circuit strikes and one final strike exist. Strokes now retract in reverse write order, with an ordering regression test; the visual quality of the OUT is unverified. Targeted strike and C bolt craft remain unverified/unported. |
+| 13 | Generated branches and timed tip/central impact cues exist; `tension` thickens branches. OUT now reduces visible branch growth as well as color, with an ordering regression test; targeted snap/tension and credibility of retraction still need work and visual inspection. |
 | 14 | Colonies and links have timed growth, moving glows and later particles. Fixed network and event cues are not connected to actual actors, and causal visual readability and OUT still need inspection. Colony contact cues now propagate as visual contacts. |
-| 18 | Five crystal formation/capture times, pre-echo and synchronized impact are authored. All crystals share one `rel` and one `resolve`; ordered reverse release and ordered fragment resolution are **not implemented**. B crystal art is not ported. |
+| 18 | Five crystal formation/capture times, pre-echo and synchronized impact are authored. Release and resolution are now sequenced in reverse capture order and structurally tested; motion/clarity still need review. B crystal art is not ported. |
 
 All remain `REDESIGN_CANDIDATE`. Structural phases are not evidence that the
 visual silhouettes or impact look good.
@@ -47,7 +47,12 @@ screenshots include simulated floor and markers and are reference-only.
 The isolated FX diagnostic suppresses these draw calls, but still retains
 WebGL bloom/post and produces opaque images. Native uses a CPU compositor with
 different post and alpha semantics. `compare.py` reports RGB/region/heatmap
-measurements against this diagnostic, not a valid alpha-parity PASS. Original D
+measurements against this diagnostic, not a valid alpha-parity PASS. Run
+`41200457628` measured RGB MAE 3.78–4.35 and nonblack-mask IoU 0.032–0.100
+for 0.5–5.2 s; at 7.9/8.15 s MAE was 7.78/8.72 and IoU 0.747/0.755.
+Max errors were 243–254. These differences are substantial and cannot be
+passed by adjusting tolerances. Diagnose geometry, timing, bloom and alpha
+against matching passes before setting a defensible regression gate. Original D
 continues after 8.6 s; it does not supply a gold reference for the authored
 native OUT extension. Matching isolated passes, proper alpha/bloom semantics,
 and per-stage visual review remain necessary.

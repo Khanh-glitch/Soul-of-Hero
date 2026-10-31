@@ -81,6 +81,13 @@ jobs:
             echo 'capture failure' >&2
             exit 1
           fi
+      - name: Summarize capture failures
+        if: always()
+        shell: bash
+        run: |
+          if [ -f capture.log ]; then
+            grep -E 'SCRIPT ERROR|Parse Error|ERROR:|ARCANA20_CAPTURE_FAIL|ARCANA20_CAPTURE_RESULT' capture.log | tail -20 | while IFS= read -r line; do echo "::notice::CAPTURE_LOG $line"; done || true
+          fi
       - name: Build animated previews (GIF) from capture frames
         shell: bash
         run: |

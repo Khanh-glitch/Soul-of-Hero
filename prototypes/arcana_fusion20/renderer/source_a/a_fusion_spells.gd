@@ -1,9 +1,7 @@
-## Authored FUSION_CANDIDATE choreographies built from the ported source
-## engines' own primitives/palettes (see FUSION_DECISIONS.md). Each is
-## ONE authored timeline with shared anchors and a typed event ledger —
-## not three layered casts. #05 Abyssal Bloom (A opening/peak lead +
-## C water column/rain replacing A's explosion tails), #09 Chain Verdict
-## (A chain logic + B two-colour lightning + C bolt density/impact).
+## Authored FUSION_CANDIDATE interpretations on the A framebuffer.
+## #05 and #09 do not run the selected original A/B/C spell implementations;
+## their preservation, real actor anchors, compositing and visual quality
+## remain open. See FUSION_REDESIGN_AUDIT.md.
 extends RefCounted
 class_name AFusionSpells
 
@@ -129,6 +127,9 @@ class ChainVerdict:
         ev.append({"t": 5.0, "kind": "verdict_impact", "pos_local": C, "emitted": false})
         ev.append({"t": 6.4, "kind": "strands_die", "pos_local": C, "emitted": false})
         return ev
+    func _link_visibility(index: int, t: float) -> float:
+        var begin := 6.4 + float(index) * 0.04
+        return 1.0 - AMath.seg(t, begin, begin + 0.44)
     func update(dt: float, t: float) -> void:
         pass
     func render(fb: AFramebuffer, t: float) -> void:
@@ -146,11 +147,14 @@ class ChainVerdict:
                 var p: Vector2 = a.lerp(b, s)
                 p.y += sin(s * PI) * 7.0
                 pts.append(p)
-            var age_k := exp(-lt * 0.55) * die
+            var link_fade := _link_visibility(i, t)
+            var age_k := exp(-lt * 0.55) * link_fade
             ADraw.ribbon(fb, pts,
                 func(s: float, _i: int) -> float: return 1.1,
                 func(s: float, _i: int, edge: float) -> Variant:
-                    var h := (1.0 - edge) * (0.25 + age_k * 0.6)
+                    var h := (1.0 - edge) * (0.25 * link_fade + age_k * 0.6)
+                    if h < 0.02:
+                        return null
                     return AMath.R("volt", 0.3 + h * 0.5))
             # bolt (B two-colour + C density): re-struck each 0.12s window
             var win: float = floor(lt / 0.12)

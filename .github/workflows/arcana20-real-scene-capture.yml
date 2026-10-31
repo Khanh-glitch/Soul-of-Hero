@@ -38,6 +38,13 @@ jobs:
             echo 'real scene capture failed' >&2
             exit 1
           fi
+      - name: Summarize scene-capture errors
+        if: always()
+        shell: bash
+        run: |
+          if [ -f real-scene.log ]; then
+            grep -E 'SCRIPT ERROR|Parse Error|ERROR:|ARCANA20_REAL_SCENE_FAIL|ARCANA20_REAL_SCENE_CAPTURE' real-scene.log | tail -20 | while IFS= read -r line; do echo "::notice::SCENE_LOG $line"; done || true
+          fi
       - name: Create browsable scene review index
         if: always()
         shell: bash
