@@ -113,8 +113,13 @@ jobs:
           echo "::notice::connected journey process1=$first process2=$second"
           for f in "$log1" "$log2"; do
             while IFS= read -r line; do echo "::error title=connected-$(basename "$f" .log)::$line"; done < <(grep -aE '  FAIL  |SCRIPT ERROR|Parse Error' "$f" | head -10)
-            while IFS= read -r line; do echo "::notice::$line"; done < <(grep -aE '^A0_CONNECTED' "$f" | head -30)
+            while IFS= read -r line; do echo "::notice::$line"; done < <(grep -aE '^A0_CONNECTED' "$f" | head -40)
+            # A gate whose log cannot be read is not a gate: publish the tail.
+            while IFS= read -r line; do echo "::notice title=tail-$(basename "$f" .log)::$line"; done < <(tail -n 60 "$f")
           done
+          # Exit codes alone would let a NOT_TESTED run read as a pass, so the
+          # composed gate also requires the exact PASS banner from both processes.
+          grep -qa 'A0 CONNECTED SURVIVAL JOURNEY PASSED' "$log2" || second=1
           [ "$first" -eq 0 ] && [ "$second" -eq 0 ]
       - name: Survival production captures at 1440p and 2160p
         if: ${{ !cancelled() }}

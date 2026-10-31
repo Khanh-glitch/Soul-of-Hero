@@ -49,6 +49,10 @@ func _console() -> void:
 	var save := root.get_node_or_null("SaveService")
 	if save != null:
 		save.call(&"configure_storage", save_path, true)
+	if not DisplayServer.has_feature(DisplayServer.FEATURE_MOUSE):
+		print("A0 CONNECTED NOT_TESTED - this environment exposes no mouse feature; build placement and the pointer half of the journey need a real window (CI Xvfb is the authority).")
+		quit(0)
+		return
 	if _phase == "verify":
 		await _boot()
 		if _host != null:
@@ -86,6 +90,8 @@ func _finish() -> void:
 func _body() -> void:
 	await _capture("connected_entry")
 	await super._body()
+	if _host != null and _host.get_child_count() > 0:
+		_diag("after-prefix", _host.get_child(0))
 	await _capture("connected_home")
 	_prefix_complete = _body_complete and failures.is_empty()
 	print("A0_CONNECTED prefix_complete=%s checks=%d failures=%d" % [str(_prefix_complete), checks, failures.size()])
@@ -243,7 +249,9 @@ func _continuation(ow: Node) -> void:
 	await _capture("connected_prepare")
 	var departure: Dictionary = ow.call(&"depart_world")
 	print("A0_CONNECTED_DEPARTURE ", JSON.stringify(departure))
+	_diag("after-departure", ow)
 	_expect(bool(departure.get("ok", false)), "the world records a real departure (%s)" % String(departure.get("reason", "")))
+	_expect(bool(departure.get("persisted", false)), "the departure is durable before the process can die")
 	_write_audit(ow, {
 		"furnace_id": furnace_id,
 		"furnace_cell": [placed.x, placed.y],
@@ -264,6 +272,7 @@ func _verify_body() -> void:
 	if audit.is_empty():
 		return
 	var ow := _host.get_child(0)
+	_diag("relaunch", ow)
 	await _capture("connected_return")
 	var hero: CharacterBody2D = ow.get(&"player")
 	var panel: Node = ow.get(&"economy_panel")
@@ -324,6 +333,43 @@ func _verify_body() -> void:
 		"the smelted ingot makes an ingot-dependent recipe visible in the real panel")
 	await _tap_action(&"economy_toggle")
 	_body_complete = true
+
+
+# ---------------------------------------------------------------------------
+# durable-state diagnostics: what the process actually left on disk
+# ---------------------------------------------------------------------------
+## A two-process gate that cannot say *what* the first process wrote is a gate
+## nobody can debug, so every phase prints the real save path, size, digest and
+## the durable run record it reads back from the one SaveService.
+func _diag(tag: String, ow: Node) -> void:
+	var save := root.get_node_or_null("SaveService")
+	var path := "absent"
+	var exists := false
+	var size := 0
+	var digest := "-"
+	var run: Dictionary = {}
+	var phase: Dictionary = {}
+	if save != null:
+		path = String(save.get(&"_save_path"))
+		exists = FileAccess.file_exists(path)
+		if exists:
+			var bytes := FileAccess.get_file_as_bytes(path)
+			size = bytes.size()
+			var hash := HashingContext.new()
+			hash.start(HashingContext.HASH_SHA256)
+			hash.update(bytes)
+			digest = hash.finish().hex_encode().substr(0, 16)
+		var snapshot: Dictionary = save.call(&"get_snapshot")
+		var profile: Dictionary = snapshot.get("profile", {}) if snapshot.get("profile") is Dictionary else {}
+		var raw: Variant = profile.get("run", {})
+		run = raw if raw is Dictionary else {}
+	var lifecycle := root.get_node_or_null("RunLifecycle")
+	if lifecycle != null:
+		phase = lifecycle.call(&"phase")
+	print("A0_CONNECTED_DIAG %s path=%s exists=%s size=%d sha=%s run_id=%s epoch=%s state=%s phase_state=%s ltree=%s" % [
+		tag, path, str(exists), size, digest,
+		String(run.get("run_id", "")), str(run.get("run_epoch", "")), String(run.get("state", "")),
+		String(phase.get("state", "")), str(lifecycle != null)])
 
 
 # ---------------------------------------------------------------------------
@@ -388,7 +434,7 @@ func _collect_button(label_prefix: String) -> Button:
 	var panel: Node = _host.get_child(0).get(&"economy_panel")
 	for value: Node in panel.find_children("*", "Button", true, false):
 		var candidate := value as Button
-		if candidate == null or candidate.text != "Collect":
+		if candidate == null or candidate.text.to_lower() != "collect":
 			continue
 		var row := candidate.get_parent()
 		var label := row.get_child(0) as Label if row != null and row.get_child_count() > 0 else null

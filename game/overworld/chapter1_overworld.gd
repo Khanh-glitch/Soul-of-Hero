@@ -143,7 +143,7 @@ func _ensure_prepare_work_binding() -> void:
 ##   3. stamp the departure again so the offline interval starts at this moment.
 ## Returns the exact report the world can show and a test can inspect.
 func depart_world(now_unix: int = -1) -> Dictionary:
-	var report := {"ok": false, "reason": "not_ready", "settle": {}, "prepared": {}, "stamp": {}}
+	var report := {"ok": false, "reason": "not_ready", "settle": {}, "prepared": {}, "stamp": {}, "persisted": false}
 	if build_stage != BuildStage.READY or economy_composition == null or not is_instance_valid(economy_composition):
 		return report
 	var offline: Node = economy_composition.get(&"_offline") as Node
@@ -155,6 +155,14 @@ func depart_world(now_unix: int = -1) -> Dictionary:
 	if economy_session != null and is_instance_valid(economy_session):
 		report["prepared"] = economy_session.call(&"prepare_work_away")
 	report["stamp"] = offline.call(&"settle", stamp)
+	# Leaving the world is the last thing this process does, so the departure must
+	# be durable before the process can die. Relying on a later autosave would make
+	# "close the game" and "the game lost my furnace" the same event.
+	var save := get_node_or_null("/root/SaveService")
+	if save != null and save.has_method(&"save_now"):
+		report["persisted"] = bool(save.call(&"save_now"))
+	else:
+		report["persisted"] = false
 	report["reason"] = ""
 	report["ok"] = true
 	return report

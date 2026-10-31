@@ -496,7 +496,7 @@ func _body() -> void:
 	await _tap_action(&"economy_toggle")
 	var collect_button: Button = null
 	for value: Node in panel.find_children("*", "Button", true, false):
-		if (value as Button).text == "Collect":
+		if (value as Button).text.to_lower() == "collect":
 			collect_button = value as Button
 			break
 	var scroll := _owning_scroll(collect_button)
@@ -592,7 +592,7 @@ func _body() -> void:
 		var candidate := value as Button
 		var row := candidate.get_parent()
 		var label := row.get_child(0) as Label if row != null and row.get_child_count() > 0 else null
-		if candidate.text == "Collect" and label != null and label.text.begins_with("weave cloth: ready"):
+		if candidate.text.to_lower() == "collect" and label != null and label.text.to_lower().begins_with("weave cloth: ready"):
 			output_button = candidate
 			break
 	var output_scroll := _owning_scroll(output_button)
