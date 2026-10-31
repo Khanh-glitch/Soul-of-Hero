@@ -43,10 +43,10 @@ static func hash2(a: float, b: float) -> float:
     return hash1(a * 12.9898 + b * 78.233)
 
 static func noise2(x: float, y: float) -> float:
-    var xi := floor(x)
-    var yi := floor(y)
-    var xf := x - xi
-    var yf := y - yi
+    var xi: float = floor(x)
+    var yi: float = floor(y)
+    var xf: float = x - xi
+    var yf: float = y - yi
     var u := xf * xf * (3.0 - 2.0 * xf)
     var v := yf * yf * (3.0 - 2.0 * yf)
     var a := hash2(xi, yi)
@@ -68,8 +68,8 @@ static func fbm(x: float, y: float, oct: int = 3) -> float:
     return s / n
 
 static func noise1(x: float) -> float:
-    var i := floor(x)
-    var f := x - i
+    var i: float = floor(x)
+    var f: float = x - i
     var u := f * f * (3.0 - 2.0 * f)
     return lerpf2(hash1(i), hash1(i + 1.0), u)
 
