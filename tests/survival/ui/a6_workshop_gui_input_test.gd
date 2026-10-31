@@ -124,7 +124,7 @@ func _run() -> void:
 ## freshly built button.
 func _case_single_click(catalog: Dictionary) -> void:
 	_enter("single_click")
-	var rig := _mount(catalog, {"oak_wood": 40, "stone_chunk": 40})
+	var rig := _mount(catalog, _rich_bag())
 	await _settle(3)
 	var button := _button(rig, "Recipe_workbench_kit_hand")
 	_expect(button != null, "the workbench recipe control is on screen")
@@ -143,7 +143,7 @@ func _case_single_click(catalog: Dictionary) -> void:
 ## click must be a fresh intention, not the remains of the previous gesture.
 func _case_click_across_rebuild(catalog: Dictionary) -> void:
 	_enter("click_across_rebuild")
-	var rig := _mount(catalog, {"oak_wood": 40, "stone_chunk": 40})
+	var rig := _mount(catalog, _rich_bag())
 	await _settle(3)
 	var first := _button(rig, "Recipe_workbench_kit_hand")
 	if first == null:
@@ -176,7 +176,7 @@ func _case_click_across_rebuild(catalog: Dictionary) -> void:
 ## Scrolling and then clicking must hit the row that is now under the pointer.
 func _case_scroll_then_click(catalog: Dictionary) -> void:
 	_enter("scroll_then_click")
-	var rig := _mount(catalog, {"oak_wood": 40, "stone_chunk": 40, "iron_scrap": 40, "grain": 40, "wild_berries": 40})
+	var rig := _mount(catalog, _rich_bag())
 	await _settle(3)
 	var scroll := rig.panel.find_child("Scroll", true, false) as ScrollContainer
 	_expect(scroll != null, "the list is scrollable")
@@ -195,9 +195,9 @@ func _case_scroll_then_click(catalog: Dictionary) -> void:
 		_teardown(rig)
 		return
 	var expected := _recipe_of(String(visible_button.name))
-	var calls_before := rig.host.queue_calls.size()
+	var calls_before: int = rig.host.queue_calls.size()
 	await _click(rig, visible_button)
-	var new_calls := rig.host.queue_calls.size() - calls_before
+	var new_calls: int = rig.host.queue_calls.size() - calls_before
 	_expect(new_calls == 1, "clicking after a scroll queues exactly one job (%d)" % new_calls)
 	if new_calls == 1:
 		_equals(rig.host.queue_calls[rig.host.queue_calls.size() - 1], expected,
@@ -228,7 +228,7 @@ func _case_unaffordable_does_not_queue(catalog: Dictionary) -> void:
 ## After the list rebuilds, keyboard focus must not be left on a freed node.
 func _case_focus_is_not_destroyed(catalog: Dictionary) -> void:
 	_enter("focus_lifetime")
-	var rig := _mount(catalog, {"oak_wood": 40, "stone_chunk": 40})
+	var rig := _mount(catalog, _rich_bag())
 	await _settle(3)
 	var button := _button(rig, "Recipe_workbench_kit_hand")
 	if button == null:
@@ -249,7 +249,7 @@ func _case_focus_is_not_destroyed(catalog: Dictionary) -> void:
 
 
 ## The word a player reads after a refusal must not be a completion claim.
-func expect_no_completion_claim(rig: Dictionary) -> void:
+func expect_no_completion_claim(rig: Rig) -> void:
 	var notice := rig.panel.find_child("Notice", true, false) as Label
 	_expect(notice != null, "the panel has a notice line")
 	if notice == null:
@@ -270,7 +270,20 @@ func expect_no_completion_claim(rig: Dictionary) -> void:
 # --- rig --------------------------------------------------------------------
 
 
-func _mount(catalog: Dictionary, owned: Dictionary) -> Dictionary:
+## Every item the catalog knows about, generously stocked. Hand-listing a bag is how
+## this test first became unwinnable: workbench_kit also costs iron scrap.
+func _rich_bag() -> Dictionary:
+	var bag: Dictionary = {}
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(ITEMS_PATH))
+	if parsed is Dictionary:
+		var items: Variant = (parsed as Dictionary).get("items", {})
+		if items is Dictionary:
+			for key: Variant in (items as Dictionary).keys():
+				bag[String(key)] = 40
+	return bag
+
+
+func _mount(catalog: Dictionary, owned: Dictionary) -> Rig:
 	var host := FakeHost.new()
 	host.name = "WorkshopHost"
 	add_child(host)
@@ -282,29 +295,29 @@ func _mount(catalog: Dictionary, owned: Dictionary) -> Dictionary:
 	add_child(panel)
 	panel.call(&"configure", host)
 	panel.call(&"toggle")
-	return {"panel": panel, "host": host}
+	var rig := Rig.new()
+	rig.panel = panel
+	rig.host = host
+	return rig
 
 
-func _teardown(rig: Dictionary) -> void:
-	if get_viewport().gui_get_focus_owner() != null:
-		get_viewport().gui_get_focus_owner().release_focus()
-	for key: String in ["panel", "host"]:
-		var node: Node = rig.get(key)
-		if node != null and is_instance_valid(node):
+func _teardown(rig: Rig) -> void:
+	var focused := get_viewport().gui_get_focus_owner()
+	if focused != null and is_instance_valid(focused):
+		focused.release_focus()
+	for node: Node in [rig.panel, rig.host]:
+		if node != null and is_instance_valid(node) and node.get_parent() != null:
 			node.get_parent().remove_child(node)
 			node.queue_free()
-	rig.clear()
 
 
-func _button(rig: Dictionary, node_name: String) -> Button:
-	var panel: Node = rig.get("panel")
-	return panel.find_child(node_name, true, false) as Button
+func _button(rig: Rig, node_name: String) -> Button:
+	return rig.panel.find_child(node_name, true, false) as Button
 
 
 ## The first button that is actually clickable right now, in list order.
-func _first_clickable(rig: Dictionary) -> Button:
-	var panel: Node = rig.get("panel")
-	for node: Node in panel.find_children("Recipe_*", "Button", true, false):
+func _first_clickable(rig: Rig) -> Button:
+	for node: Node in rig.panel.find_children("Recipe_*", "Button", true, false):
 		var button := node as Button
 		if button == null or not button.is_visible_in_tree():
 			continue
@@ -315,7 +328,7 @@ func _first_clickable(rig: Dictionary) -> Button:
 
 ## How much of the control is inside the scroll viewport's visible rectangle. A row
 ## half-hidden by the clip edge is not a fair click target and is skipped.
-func _visible_area(rig: Dictionary, control: Control) -> float:
+func _visible_area(rig: Rig, control: Control) -> float:
 	var scroll := rig.panel.find_child("Scroll", true, false) as Control
 	if scroll == null:
 		return 1.0
@@ -331,7 +344,7 @@ func _visible_area(rig: Dictionary, control: Control) -> float:
 
 
 ## Position a real pointer over the control, then press and release there.
-func _click(rig: Dictionary, control: Control) -> void:
+func _click(rig: Rig, control: Control) -> void:
 	var point := _centre(control)
 	await _move_pointer(point)
 	var press := InputEventMouseButton.new()
@@ -358,7 +371,7 @@ func _move_pointer(point: Vector2) -> void:
 	await _settle(1)
 
 
-func _wheel(rig: Dictionary, inside: Control, clicks: int) -> void:
+func _wheel(rig: Rig, inside: Control, clicks: int) -> void:
 	var point := _centre(inside)
 	await _move_pointer(point)
 	for _step in range(clicks):
