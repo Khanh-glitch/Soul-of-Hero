@@ -4,8 +4,61 @@
   "display_server": "X11",
   "adapter": "llvmpipe (LLVM 20.1.2, 256 bits)",
   "out_dir": "/tmp/captures",
+  "facts": {
+    "world_scene": "res://game/overworld/chapter1_overworld.tscn",
+    "hero_spawn": [
+      904.0,
+      3496.0
+    ],
+    "has_survival_build": true,
+    "has_room_topology": true,
+    "world_children": [
+      "Backdrop",
+      "WorldTint",
+      "Entities",
+      "Places",
+      "World",
+      "Resources",
+      "SurvivalBuild",
+      "DeathBags",
+      "EconomySession",
+      "EconomyComposition",
+      "Occlusion",
+      "HUD",
+      "A0ThreatMount",
+      "EconomyPanel",
+      "ChestInventoryPanel"
+    ],
+    "viewport": [
+      1280,
+      720
+    ],
+    "camera_zoom": [
+      1.0,
+      1.0
+    ],
+    "content_scale_factor": 1.0,
+    "content_scale_mode": 1,
+    "content_scale_size": [
+      640,
+      360
+    ],
+    "house": {
+      "built": false,
+      "reason": "no_legal_plot",
+      "hero_cell": [
+        56,
+        218
+      ]
+    }
+  },
   "rows": [
     {
+      "file": "r12_overworld_1280x720.png",
+      "viewport": [
+        1280,
+        720
+      ],
       "size": [
         1280,
         720
@@ -20,6 +73,11 @@
       "path": "/tmp/captures/r12_overworld_1280x720.png"
     },
     {
+      "file": "r12_overworld_2560x1440.png",
+      "viewport": [
+        2560,
+        1440
+      ],
       "size": [
         2560,
         1440
@@ -34,6 +92,11 @@
       "path": "/tmp/captures/r12_overworld_2560x1440.png"
     },
     {
+      "file": "r12_overworld_3840x2160.png",
+      "viewport": [
+        3840,
+        2160
+      ],
       "size": [
         3840,
         2160
