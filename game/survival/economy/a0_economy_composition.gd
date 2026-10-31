@@ -17,19 +17,13 @@ const Lifecycle = preload("res://game/survival/economy/a0_run_lifecycle.gd")
 const ProfilePort = preload("res://game/survival/economy/a0_profile_port.gd")
 const OfflineHost = preload("res://game/survival/economy/a0_offline_host.gd")
 const META_POLICY_PATH := "res://data/survival/recipes/meta_economy.v1.json"
-## A1/A8 physical owners of the A3 trial endpoints. A3 names the kiosks/kiosk
-## kinds; the crown Waystation is the only physical site that currently exists.
-const ENDPOINT_POI := {
-	"preservation_kiosk_01": "poi_crown_waystation",
-	"preservation_kiosk_02": "poi_crown_waystation",
-	"preservation_kiosk_03": "poi_crown_waystation",
-	"vending_kiosk_01": "poi_crown_waystation",
-	"vending_kiosk_02": "poi_crown_waystation",
-	"vending_kiosk_03": "poi_crown_waystation",
-	"recycler_01": "poi_crown_waystation",
-	"recycler_02": "poi_crown_waystation",
-	"recycler_03": "poi_crown_waystation",
-}
+## A1/A8 physical owners of the A3 trial endpoints. Nothing here is guessed: the
+## endpoint list comes from A3's policy file, and each endpoint is tied to a real
+## A1 interaction node only when one of that node's authored stand cells is
+## exactly the endpoint's stand cell. An endpoint with no such node is reported as
+## a physically absent site, and every endpoint keeps its own integration status,
+## so a *candidate* endpoint can never authorize a deposit.
+const SLICE_DIR := "res://data/survival/connector/a0_candidate/slices"
 
 var _world: Node
 var _hero: Node2D
@@ -75,9 +69,13 @@ func configure(world: Node, hero: Node2D, economy_session: Node) -> bool:
 	if _endpoints.is_empty():
 		last_error = "a3_endpoint_policy_absent"
 		return false
+	var poi_map := {}
+	for id: Variant in _endpoints.keys():
+		var owner: Dictionary = (_endpoints[id] as Dictionary).get("physical_owner", {})
+		poi_map[String(id)] = String(owner.get("poi_id", ""))
 	_port = ProfilePort.new()
 	var hero_cell := Callable(self, "_hero_cell")
-	if not bool(_port.call(&"configure", _save, _endpoints, ENDPOINT_POI, hero_cell)):
+	if not bool(_port.call(&"configure", _save, _endpoints, poi_map, hero_cell)):
 		last_error = "profile_port_refused:" + String(_port.get("last_error"))
 		return false
 	if not bool(_adapter.call(&"configure_meta_profile_port", _port)):
@@ -127,6 +125,7 @@ func _policy_endpoints() -> Dictionary:
 	if not parsed is Dictionary or not (parsed as Dictionary).get("policy") is Dictionary:
 		return {}
 	var policy: Dictionary = (parsed as Dictionary)["policy"]
+	var stands := _authored_stands()
 	var out := {}
 	for field: String in ["deposit_endpoints", "vending_machines", "recycler_machines"]:
 		for raw: Variant in (policy.get(field, []) as Array):
@@ -136,11 +135,76 @@ func _policy_endpoints() -> Dictionary:
 			var id := String(entry.get("endpoint_id", entry.get("machine_id", "")))
 			if id.is_empty():
 				continue
+			var cells: Array = (entry.get("stand_cells", []) as Array).duplicate(true)
 			out[id] = {
 				"kind": String(entry.get("kind", "")),
 				"endpoint_revision": String(entry.get("endpoint_revision", "")),
-				"stand_cells": (entry.get("stand_cells", []) as Array).duplicate(true),
+				"stand_cells": cells,
+				"integration_status": String(entry.get("integration_status", "")),
+				"region_id": String(entry.get("region_id", "")),
+				"physical_owner": _physical_owner(cells, stands),
 			}
+	return out
+
+
+## Every authored stand cell of every A1 POI slice, as `cell -> {poi_id, node_id}`.
+## A0 reads this file; it never invents a stand.
+func _authored_stands() -> Dictionary:
+	var out := {}
+	if not DirAccess.dir_exists_absolute(SLICE_DIR):
+		return out
+	var dir := DirAccess.open(SLICE_DIR)
+	if dir == null:
+		return out
+	dir.list_dir_begin()
+	var name := dir.get_next()
+	while not name.is_empty():
+		if name.ends_with(".slice.json"):
+			var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(SLICE_DIR + "/" + name))
+			if parsed is Dictionary:
+				var poi := String((parsed as Dictionary).get("poi_id", ""))
+				for node: Variant in ((parsed as Dictionary).get("interaction_nodes", []) as Array):
+					if not node is Dictionary:
+						continue
+					for cell: Variant in ((node as Dictionary).get("stand_cells", []) as Array):
+						if cell is Array and (cell as Array).size() == 2:
+							out[Vector2i(int(cell[0]), int(cell[1]))] = {
+								"poi_id": poi,
+								"node_id": String((node as Dictionary).get("node_id", "")),
+							}
+		name = dir.get_next()
+	dir.list_dir_end()
+	return out
+
+
+func _physical_owner(cells: Array, stands: Dictionary) -> Dictionary:
+	for raw: Variant in cells:
+		if not raw is Array or (raw as Array).size() != 2:
+			continue
+		var owner: Variant = stands.get(Vector2i(int(raw[0]), int(raw[1])), {})
+		if owner is Dictionary and not (owner as Dictionary).is_empty():
+			return (owner as Dictionary).duplicate(true)
+	return {}
+
+
+## Which A3 endpoints exist physically, who owns them and why they are blocked.
+## Read-only and honest: a candidate endpoint is listed as blocked, never as
+## available.
+func endpoint_report() -> Dictionary:
+	var out := {}
+	for id: Variant in _endpoints.keys():
+		var entry: Dictionary = _endpoints[id]
+		var reason := ""
+		if (entry.get("physical_owner", {}) as Dictionary).is_empty():
+			reason = "A1_A8_ENDPOINT_SITE_ABSENT:" + String(entry.get("region_id", ""))
+		elif _port != null:
+			var auth: Dictionary = _port.call(&"endpoint_authority", String(id))
+			reason = String(auth.get("blocked_reason", ""))
+		out[String(id)] = {
+			"integration_status": String(entry.get("integration_status", "")),
+			"physical_owner": entry.get("physical_owner", {}),
+			"blocked_reason": reason,
+		}
 	return out
 
 

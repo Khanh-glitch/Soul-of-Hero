@@ -8,15 +8,27 @@ const PROFILE_SAVE := "user://tests/a0_profile_port.json"
 const AUDIT := "user://tests/a0_profile_port_audit.json"
 const RUN_MAX_SECONDS := 1209600
 const CACHE_INSTANCE := "si:r_ashen_crown:waystation_cache:01"
+## Fixture endpoints only. Production data marks every A3 endpoint
+## `OWNER_CONTRACT_CANDIDATE_A1_A8`, which A0 refuses; the fixture declares its own
+## test-only authorization so the A3 deposit boundary itself can be exercised.
 const ENDPOINTS := {
-	"preservation_kiosk_01": {"kind": "deposit", "endpoint_revision": "rev-1", "stand_cells": [[408, 199]]},
-	"vending_kiosk_01": {"kind": "vending", "endpoint_revision": "rev-1", "stand_cells": [[410, 199]]},
-	"recycler_01": {"kind": "recycler", "endpoint_revision": "rev-1", "stand_cells": [[412, 199]]},
+	"preservation_kiosk_01": {"kind": "deposit", "endpoint_revision": "rev-1", "stand_cells": [[408, 199]],
+		"integration_status": "A0_TEST_ONLY_AUTHORIZED"},
+	"vending_kiosk_01": {"kind": "vending", "endpoint_revision": "rev-1", "stand_cells": [[410, 199]],
+		"integration_status": "A0_TEST_ONLY_AUTHORIZED"},
+	"recycler_01": {"kind": "recycler", "endpoint_revision": "rev-1", "stand_cells": [[412, 199]],
+		"integration_status": "A0_TEST_ONLY_AUTHORIZED"},
+	"preservation_kiosk_candidate": {"kind": "deposit", "endpoint_revision": "rev-1", "stand_cells": [[408, 199]],
+		"integration_status": "OWNER_CONTRACT_CANDIDATE_A1_A8"},
+	"preservation_kiosk_unsited": {"kind": "deposit", "endpoint_revision": "rev-1", "stand_cells": [[300, 410]],
+		"integration_status": "A1_A8_AUTHORIZED"},
 }
 const ENDPOINT_POI := {
 	"preservation_kiosk_01": "poi_crown_waystation",
 	"vending_kiosk_01": "poi_crown_waystation",
 	"recycler_01": "poi_crown_waystation",
+	"preservation_kiosk_candidate": "poi_crown_waystation",
+	"preservation_kiosk_unsited": "",
 }
 
 
@@ -173,6 +185,19 @@ func _first_process() -> void:
 	_expect((port.call(&"endpoint_authority", "preservation_kiosk_01") as Dictionary).get("hero_cell", [1]).is_empty(),
 		"a cell that is not the authored stand is refused")
 	hero[0] = Vector2i(-1, -1)
+
+	# A candidate endpoint is listed by A3 but NOT authorized by A1/A8, and an
+	# authorized endpoint with no authored physical stand has no site at all.
+	# Both must fail closed instead of quietly becoming "operational".
+	var candidate: Dictionary = port.call(&"endpoint_authority", "preservation_kiosk_candidate")
+	_expect(not bool(candidate.get("authorized", true)) and not bool(candidate.get("operational", true)),
+		"a candidate endpoint never authorizes a deposit")
+	_expect(String(candidate.get("blocked_reason", "")).begins_with("A1_A8_ENDPOINT_UNAUTHORIZED:"),
+		"the refusal names the owner boundary (%s)" % str(candidate.get("blocked_reason", "")))
+	var unsited: Dictionary = port.call(&"endpoint_authority", "preservation_kiosk_unsited")
+	_expect(not bool(unsited.get("operational", true)), "an endpoint with no authored stand is not operational")
+	_expect(String(unsited.get("blocked_reason", "")).begins_with("A1_A8_ENDPOINT_SITE_ABSENT:"),
+		"a missing physical site is named, not hidden (%s)" % str(unsited.get("blocked_reason", "")))
 
 	var source: Dictionary = port.call(&"source_authority", "roadside_cache", CACHE_INSTANCE)
 	_expect(String(source.get("contract", "")) == "soh.economy.meta_source_authority.v1", "source authority speaks the A3 contract")

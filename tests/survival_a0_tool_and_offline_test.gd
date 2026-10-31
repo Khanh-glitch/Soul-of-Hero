@@ -81,6 +81,38 @@ func _boot_and_run() -> void:
 			_expect(String(ctx.get("run_id", "")) == String((lifecycle.call(&"run_record") as Dictionary).get("run_id", "x")),
 				"the port and the lifecycle agree on the one run identity")
 
+	# --- physical meta endpoints -------------------------------------------
+	# The A3 policy lists nine endpoints in three regions. Only the ones whose
+	# stand cell is an authored A1 interaction stand have a physical owner, and
+	# every production endpoint is still `OWNER_CONTRACT_CANDIDATE_A1_A8`, so none
+	# of them may authorize a deposit yet.
+	if composition != null:
+		var report: Dictionary = composition.call(&"endpoint_report")
+		var kiosk: Dictionary = report.get("preservation_kiosk_01", {})
+		_expect(String(((kiosk.get("physical_owner", {}) as Dictionary)).get("node_id", "")) == "node_waystation_locker",
+			"the deposit kiosk is tied to the authored A1 Waystation locker stand")
+		_expect(String(kiosk.get("blocked_reason", "")).begins_with("A1_A8_ENDPOINT_UNAUTHORIZED:"),
+			"a candidate endpoint is reported blocked by its owner (%s)" % str(kiosk.get("blocked_reason", "")))
+		var distant: Dictionary = report.get("preservation_kiosk_02", {})
+		_expect(String(distant.get("blocked_reason", "")).begins_with("A1_A8_ENDPOINT_SITE_ABSENT:"),
+			"an endpoint with no authored stand is reported as an absent site (%s)" % str(distant.get("blocked_reason", "")))
+		# The A3 planner is the real gate: a deposit at an unauthorized endpoint is
+		# refused, and no currency is secured.
+		var run_authority: Node = root.get_node_or_null("RunLifecycle")
+		var lifecycle_run: Dictionary = run_authority.call(&"run_record") if run_authority != null else {}
+		var deposit_request := {
+			"contract": "soh.economy.meta_plan.v1",
+			"run_id": String(lifecycle_run.get("run_id", "")),
+			"endpoint_id": "preservation_kiosk_01",
+			"token_ids": ["soh_i_000000000001_deadbeef"],
+			"expected_policy_revision": 1,
+			"expected_endpoint_revision": "rev-1",
+			"event_id": "test.deposit.refused",
+		}
+		var planned: Dictionary = _adapter.call(&"plan_meta_deposit", deposit_request)
+		_expect(not bool(planned.get("ok", true)), "A3 refuses a deposit at an unauthorized endpoint (%s)" % str(planned.get("reason", "")))
+		_expect(int(_composition_balance(composition)) == 0, "a refused deposit secures no currency")
+
 	# --- tool use -----------------------------------------------------------
 	var granted: Dictionary = _adapter.call(&"grant_instance", "stone_pick", "test.authoring.tool", -1, -1)
 	_expect(bool(granted.get("ok", false)), "A3 mints one unique stone pick instance (%s)" % str(granted.get("reason", "")))
@@ -224,3 +256,11 @@ func _verify_process() -> void:
 	# A replay of the same swing from the relaunched process must not pay again.
 	var lifecycle: Node = root.get_node_or_null("RunLifecycle")
 	_expect(lifecycle != null, "the relaunched process has a lifecycle")
+
+
+## Secured profile balance through the A0 port inside the composition root.
+func _composition_balance(composition: Node) -> int:
+	var port: RefCounted = composition.get(&"_port")
+	if port == null:
+		return -1
+	return int(port.call(&"balance"))
