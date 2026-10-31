@@ -1,0 +1,62 @@
+name: ARCANA19 D isolated GPU and native source fields
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths:
+      - 'tools/arcana19_pass_compare/**'
+      - 'prototypes/arcana_fusion20/renderer/d19_pass_compare.gd'
+      - 'prototypes/arcana_fusion20/renderer/source_d/**'
+      - '.github/workflows/arcana19-pass-compare.yml'
+permissions:
+  contents: read
+jobs:
+  source-pass:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Install isolated tools
+        run: |
+          npm install --prefix "$RUNNER_TEMP/d19-node" playwright@1.57.0
+          "$RUNNER_TEMP/d19-node/node_modules/.bin/playwright" install --with-deps chromium
+          python3 -m pip install --quiet numpy pillow
+          ln -s "$RUNNER_TEMP/d19-node/node_modules" tools/arcana19_pass_compare/node_modules
+      - name: Capture original isolated WebGL scene and bloom intermediates
+        run: |
+          set -o pipefail
+          mkdir -p artifacts/arcana19-pass-source
+          node tools/arcana19_pass_compare/capture.mjs artifacts/arcana19-pass-source | tee source.log
+          grep -Fq 'D19_SOURCE_PASS' source.log
+      - name: Capture native D additive source field
+        run: |
+          set -o pipefail
+          godot --headless --path . --import > import.log 2>&1
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' import.log
+          timeout 1200s godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/d19_pass_compare.gd 2>&1 | tee native.log
+          grep -Fq 'D19_NATIVE_SOURCE_CAPTURE_COMPLETE' native.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' native.log
+      - name: Spatial comparison of HDR g fields
+        run: |
+          set -o pipefail
+          python3 tools/arcana19_pass_compare/compare.py artifacts/arcana19-pass-source | tee comparison.log
+          sed 's/^/::notice::/' comparison.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcana19-d-isolated-source-fields
+          path: |
+            artifacts/arcana19-pass-source/
+            source.log
+            import.log
+            native.log
+            comparison.log
+          if-no-files-found: warn
