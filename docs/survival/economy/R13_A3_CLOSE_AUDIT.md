@@ -116,3 +116,29 @@ on `ac148f877fffbc30ec66cbd5ac90cbb888717c31`:
 Evidence details and the unresolved owner seams are in
 [`R13_A3_CLOSE_HANDOFF.md`](R13_A3_CLOSE_HANDOFF.md). No product-composition,
 balance, human-playtest or acceptance claim is made from this branch.
+
+## 6. Review of the takeover (CT final contract) and what the correction round closed
+
+The review of `ee583123b` accepted the takeover's substance — one canonical authority,
+two genuinely distinct OS processes, receipt custody, and the V5–V7 regressions — and
+raised four corrections. Status after this round:
+
+| required | state | evidence |
+|---|---|---|
+| M1 bounded random Spares research, not blueprint-in-disguise, no new store/queue/wallet | done | `economy_service.spares_research()` draws inside the paid `transact_once`; `BOUNDED_RANDOM_SPARES_RESEARCH` native group; draw carried across P1/P2 and re-verified from the receipts |
+| M2 five pinned bindings = two one-time + three active-cooldown (1800/300/1800 s), no silent reward change | done | corrected contract doc + measured cost section; `data/survival/items/world_source_bindings.v3.json` unchanged |
+| M3 real exit code 0 for both phases and the negative suite, shutdown accounting classified separately | done | `tools/ci/godot_exit_gate.py` wired into all three steps; `_teardown_hosts()` in the suite |
+| M4 adoption contract refreshed on the final head, exact-SHA engine run, PR #19 fast-forward procedure | done | regenerated contract with run id; PR custody note below |
+
+Deliberately **not** done, because it is outside this owner: no A0/A1/A6/A8 source edit,
+no fabricated A8 authorization, no merge, no force-push, no second PR, no production or
+human self-acceptance, and no claim that PR #19 already contains this code.
+
+### 6.1 Residual risk named honestly
+
+The random draw is uniform over the *eligible* pool and is salted with `Crypto`; it is
+reproducible from the persisted salt, index and station id, which is what makes it
+crash-safe. It is not hidden information from a determined save-editor — the target is
+stored on the job so the process can resume — but the player-facing contract only needs
+"cannot reroll", which is enforced by the atomic charge plus A0 idempotency.
+

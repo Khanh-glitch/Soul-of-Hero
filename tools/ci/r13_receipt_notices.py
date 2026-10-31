@@ -67,6 +67,22 @@ def main() -> int:
         f"output_at_prepare={p1.get('fragment_after_prepare')}",
     )
     notice("R13 conservation", json.dumps(summary.get("conservation")))
+    # Bounded random Spares research: the draw committed by P1 must be the draw
+    # P2 resolves. Both targets are published so a reroll cannot hide behind a
+    # generic "ok" verdict.
+    draw = summary.get("spares_draw") or {}
+    if draw:
+        notice(
+            "R13 spares draw",
+            f"job={draw.get('job_id')} target_p1={draw.get('target_p1')} "
+            f"target_p2={draw.get('target_p2')} same={draw.get('target_p1') == draw.get('target_p2')} "
+            f"learned={draw.get('learned')} pool_excludes_target={draw.get('pool_excludes_target')}",
+        )
+        notice(
+            "R13 spares cost",
+            f"pool_size={draw.get('pool_size')} spares {draw.get('spares_before')}->{draw.get('spares_after')} "
+            f"(=4 escrowed at enqueue, unchanged at settlement)",
+        )
     notice(
         "R13 verdict",
         f"ok={summary.get('ok')} findings={summary.get('findings')} p2_checks={p2.get('checks')}",

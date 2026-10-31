@@ -318,6 +318,16 @@ jobs:
           use-dotnet: false
           include-templates: false
       - run: mkdir -p "$ARTIFACT_DIR"
+      - name: Adoption contract matches this tree
+        # A stale contract is how A0 ends up composing a file set no engine run
+        # validated. Fails on hash drift, a missing composed file, a rejected file
+        # that came back, or a composed edit after the tested head.
+        run: |
+          tested="$(python3 -c "import json;print((json.load(open('docs/survival/economy/A0_ADOPTION_CONTRACT_V2.json')).get('generated_from') or {}).get('tested_head',''))")"
+          if [ -n "$tested" ]; then
+            git fetch --depth=1 origin "$tested" >/dev/null 2>&1 || true
+          fi
+          python3 tools/ci/verify_adoption_contract.py
       - name: Static hazard gate (Variant inference, second authority, shell state)
         # This is not a substitute for the engine. It removes the exact defect
         # class that failed run 41228370691 before an engine minute is spent.

@@ -13,6 +13,7 @@ PRODUCT_COMPOSED_PASS: composition and product acceptance belong to A0/A7.
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import subprocess
@@ -106,7 +107,20 @@ def git(*args: str) -> str:
     return subprocess.check_output(["git", *args], cwd=ROOT, text=True).strip()
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--tested-head",
+        default="",
+        help="SHA the native R13 run actually validated (defaults to HEAD)",
+    )
+    parser.add_argument(
+        "--run-id",
+        default="",
+        help="GitHub Actions run id of that native pass; empty keeps the PENDING status",
+    )
+    args = parser.parse_args(argv)
+
     files = []
     missing = []
     for relative, role, action in COMPOSE:
@@ -115,17 +129,32 @@ def main() -> int:
             missing.append(relative)
             continue
         files.append({"path": relative, "role": role, "a0_action": action, "sha256": sha256(path), "bytes": path.stat().st_size})
+    head = git("rev-parse", "HEAD")
+    tested_head = args.tested_head or head
+    run_id = args.run_id
+    status = (
+        "OWNER_NATIVE_EXACT_HEAD_CI_PASSED"
+        if tested_head and run_id
+        else "OWNER_NATIVE_PENDING_EXACT_HEAD_CI"
+    )
     document = {
         "schema": "soh.economy.a0_adoption_contract.v2",
         "version": 2,
-        "status": "OWNER_NATIVE_PENDING_EXACT_HEAD_CI",
+        "status": status,
         "owner": "A3 (economy)",
         "consumer": "A0 (composition/save), A6 (read-only UI), A7 (balance/acceptance), A8 (Quarry authorization)",
         "generated_from": {
             "branch": git("rev-parse", "--abbrev-ref", "HEAD"),
-            "head": git("rev-parse", "HEAD"),
+            "head": head,
+            "tested_head": tested_head,
+            "native_run_id": run_id,
+            "native_run_url": f"https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/{run_id}" if run_id else "",
             "predecessor_head": "b751a29f213d3c934caa204eb8d2d86943f07b65",
             "generator": "tools/survival/economy/a3_adoption_contract.py",
+            "regeneration_command": (
+                f"python tools/survival/economy/a3_adoption_contract.py --tested-head {tested_head}"
+                + (f" --run-id {run_id}" if run_id else "")
+            ),
         },
         "claim_boundary": [
             "This contract is an A3 request. It does not assert A0 composition, product integration, human playtest or balance.",
@@ -178,6 +207,7 @@ def main() -> int:
                 "workflow": ".github/workflows/survival-a3-economy.yml",
                 "job": "r13-value-economy",
                 "steps": ["static hazard gate", "import", "process 1", "process 2", "receipt verification", "single-process negative controls"],
+                "engine_exit_contract": "tools/ci/godot_exit_gate.py requires a real Godot exit code 0 for phase 1, phase 2 and the negative suite; TIMEOUT/SHUTDOWN_ONLY/ABNORMAL all fail and shutdown accounting is classified, never tolerated",
             },
             "canonical_regression": ["tests/survival/catalog/economy_adapter_test.gd", "economy_offline_test.gd", "economy_meta_test.gd", "economy_tool_use_test.gd", "economy_world_restart_test.gd"],
             "contract_tests": "python -m unittest discover -s tests/survival/catalog -p 'test_*.py'",

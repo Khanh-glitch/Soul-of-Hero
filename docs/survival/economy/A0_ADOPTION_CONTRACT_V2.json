@@ -6,9 +6,13 @@
   "consumer": "A0 (composition/save), A6 (read-only UI), A7 (balance/acceptance), A8 (Quarry authorization)",
   "generated_from": {
     "branch": "arena/daadd745-soul-of-hero",
-    "head": "ac148f877fffbc30ec66cbd5ac90cbb888717c31",
+    "head": "26f3cf26ebf7518e92627693234b49e783159626",
+    "tested_head": "26f3cf26ebf7518e92627693234b49e783159626",
+    "native_run_id": "",
+    "native_run_url": "",
     "predecessor_head": "b751a29f213d3c934caa204eb8d2d86943f07b65",
-    "generator": "tools/survival/economy/a3_adoption_contract.py"
+    "generator": "tools/survival/economy/a3_adoption_contract.py",
+    "regeneration_command": "python tools/survival/economy/a3_adoption_contract.py --tested-head 26f3cf26ebf7518e92627693234b49e783159626"
   },
   "claim_boundary": [
     "This contract is an A3 request. It does not assert A0 composition, product integration, human playtest or balance.",
@@ -28,8 +32,8 @@
       "path": "game/survival/economy/economy_service.gd",
       "role": "canonical V5-V7 economy service: queue, escrow, time receipt, research, world_action, ownership audit",
       "a0_action": "REPLACE_ANY_A0_VENDORED_FORK",
-      "sha256": "109c268036bb92e5dcca2d23ec5f5c1664e1f8645c01abf189d6b5c90f06302c",
-      "bytes": 87096
+      "sha256": "98932d25b73a03b9412f0f72f82dc5c2b6451e3ba894a134fdff2d1924252ee0",
+      "bytes": 93824
     },
     {
       "path": "game/survival/economy/offline_operation_planner.gd",
@@ -56,8 +60,8 @@
       "path": "game/survival/economy/a3_economy_service.gd",
       "role": "R13 physical source custody + discovery + route projections; delegates queue/knowledge/clock",
       "a0_action": "INSTANTIATE_AFTER_CANONICAL",
-      "sha256": "7b62a10962e2cd751d5bd57c702f08c5ca43993b3c54d0af8c0934124bac671b",
-      "bytes": 36674
+      "sha256": "f0695cdd05c23490a42fa92cc6fb6de9d87a3ce2933e8563cc7d85fccde09e8b",
+      "bytes": 37885
     },
     {
       "path": "data/survival/items/items.json",
@@ -203,8 +207,8 @@
       "path": "tests/survival/a3_value_economy_test.gd",
       "role": "R13 native suite: two-process receipts + negative controls",
       "a0_action": "RUN_AS_GATE",
-      "sha256": "09751a1f620868a13d236ea9f14f3cf6297ae932e0fae4641e3090eb6a9e0ddf",
-      "bytes": 47899
+      "sha256": "c0a5d9a9a0d446169277c873c456909bba7c84cf10dfc3d15d480ddc49912c6a",
+      "bytes": 62061
     },
     {
       "path": "tests/survival/catalog/economy_adapter_test.gd",
@@ -224,8 +228,8 @@
       "path": "tools/ci/verify_r13_receipts.py",
       "role": "two-process receipt verifier",
       "a0_action": "RUN_AS_GATE",
-      "sha256": "9a329445835f030da936fe37b643fa99fd01b43177c2b372c9239bd185866a53",
-      "bytes": 6626
+      "sha256": "7e0b2e01f4516d34e7b52c059376c398cf4ff3b95710db8c4c8f9d3b99858756",
+      "bytes": 8987
     }
   ],
   "rejected_or_superseded": [
@@ -327,7 +331,8 @@
         "process 2",
         "receipt verification",
         "single-process negative controls"
-      ]
+      ],
+      "engine_exit_contract": "tools/ci/godot_exit_gate.py requires a real Godot exit code 0 for phase 1, phase 2 and the negative suite; TIMEOUT/SHUTDOWN_ONLY/ABNORMAL all fail and shutdown accounting is classified, never tolerated"
     },
     "canonical_regression": [
       "tests/survival/catalog/economy_adapter_test.gd",
