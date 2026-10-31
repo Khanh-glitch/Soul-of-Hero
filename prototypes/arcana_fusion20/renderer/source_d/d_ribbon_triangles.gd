@@ -23,7 +23,7 @@ static func _width_at(width: Variant, i: int) -> float:
         return float(widths[mini(i, widths.size() - 1)])
     return float(width)
 
-static func render(fx: DFx, pts: Array, width: Variant, col: Variant, opts: Dictionary = {}) -> void:
+static func render(fx: Variant, pts: Array, width: Variant, col: Variant, opts: Dictionary = {}) -> void:
     var count := int(pts.size() / 2)
     if count < 2: return
     var vertices: Array[Dictionary] = []
@@ -54,7 +54,7 @@ static func render(fx: DFx, pts: Array, width: Variant, col: Variant, opts: Dict
     for i in range(vertices.size() - 2):
         _draw_triangle(fx, vertices[i], vertices[i + 1], vertices[i + 2], opts)
 
-static func _draw_triangle(fx: DFx, v0: Dictionary, v1: Dictionary, v2: Dictionary, opts: Dictionary) -> void:
+static func _draw_triangle(fx: Variant, v0: Dictionary, v1: Dictionary, v2: Dictionary, opts: Dictionary) -> void:
     var a: Vector2 = v0.pos
     var b: Vector2 = v1.pos
     var c: Vector2 = v2.pos
@@ -68,9 +68,9 @@ static func _draw_triangle(fx: DFx, v0: Dictionary, v1: Dictionary, v2: Dictiona
         c = v2.pos
         area = -area
     var xmin := maxi(0, floori(minf(a.x, minf(b.x, c.x))))
-    var xmax := mini(DFx.W - 1, ceili(maxf(a.x, maxf(b.x, c.x))))
+    var xmax := mini(479, ceili(maxf(a.x, maxf(b.x, c.x))))
     var ymin := maxi(0, floori(minf(a.y, minf(b.y, c.y))))
-    var ymax := mini(DFx.H - 1, ceili(maxf(a.y, maxf(b.y, c.y))))
+    var ymax := mini(269, ceili(maxf(a.y, maxf(b.y, c.y))))
     var hard := float(opts.get("hard", 0.8))
     var glow := float(opts.get("glow", 0.0))
     var flow := float(opts.get("flow", 0.0))
@@ -106,10 +106,10 @@ static func _draw_triangle(fx: DFx, v0: Dictionary, v1: Dictionary, v2: Dictiona
             var fl := flags
             if fl >= 4.0:
                 fl -= 4.0
-                alpha *= 0.55 + 0.75 * DFx._fbm2(along * 26.0, fx.t * 2.4 - along * 9.0 + seed * 5.0)
+                alpha *= 0.55 + 0.75 * fx._fbm2(along * 26.0, float(fx.t) * 2.4 - along * 9.0 + seed * 5.0)
             if fl >= 2.0:
                 fl -= 2.0
-                d += (DFx._h11(floorf(along * 46.0) + floorf(fx.t * 22.0) * 0.37) - 0.5) * 0.8
+                d += (fx._h11(floorf(along * 46.0) + floorf(float(fx.t) * 22.0) * 0.37) - 0.5) * 0.8
                 alpha = maxf(alpha * 0.35, clampf((1.0 - d) / fw / 1.6, 0.0, 1.0))
             if alpha <= 0.003: continue
             var c0: Color = v0.color
@@ -124,7 +124,7 @@ static func _draw_triangle(fx: DFx, v0: Dictionary, v1: Dictionary, v2: Dictiona
             cg *= mult
             cb *= mult
             if flow > 0.0:
-                var phase := fposmod(along * seed * 0.06 - fx.t * flow, 1.0)
+                var phase := fposmod(along * seed * 0.06 - float(fx.t) * flow, 1.0)
                 var bump := pow(phase, 6.0)
                 cr += bump * (1.2 - d) * 1.5
                 cg += 0.97 * bump * (1.2 - d) * 1.5

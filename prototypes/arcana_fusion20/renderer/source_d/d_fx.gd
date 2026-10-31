@@ -271,6 +271,12 @@ func line(pts: Array, width: Variant, col: Variant, o: Dictionary = {}) -> void:
     var n := pts.size() / 2
     if n < 2:
         return
+    if n >= 3:
+        # The original batch emits an interpolated triangle strip, including
+        # overlapping fragments at self-crossings. Nearest-segment distance
+        # creates spurious rounded caps and fills bends not in that strip.
+        DRibbonTriangles.render(self, pts, width, col, o)
+        return
     var hard := float(o.get("hard", 0.8))
     var glow := float(o.get("glow", 0.0))
     var flow := float(o.get("flow", 0.0))
