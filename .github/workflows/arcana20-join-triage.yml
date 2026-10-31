@@ -14,7 +14,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: arcana20-overworld-join-diagnostic
-          run-id: 41207667189
+          run-id: 41207915157
           github-token: ${{ github.token }}
           path: review
       - name: Log tail and failure context
@@ -31,4 +31,27 @@ jobs:
               print('::notice::JOIN_CONTEXT '+msg[:3600])
           print('::notice::JOIN_END '+ ' | '.join(lines[-12:])[:3600].replace('%','%25'))
           print('::notice::JOIN_FILES '+str([str(p) for p in Path('review').rglob('*') if p.is_file()])[:3500])
+          PY
+      - name: Expose real-world stills for diagnostic inspection
+        run: |
+          python3 -m pip install --quiet pillow
+          python3 - <<'PY'
+          import base64,io
+          from pathlib import Path
+          from PIL import Image
+          files=['world_before','world_02_tick180','world_02_camera_plus_40_20','world_10_tick180','world_17_tick180','world_17_camera_plus_40_20','real_overworld_receipt']
+          root=next(Path('review').rglob('arcana20-join'))
+          for name in files:
+              p=root/(name+'.png')
+              if not p.exists(): raise SystemExit('missing '+str(p))
+              with Image.open(p) as im:
+                  im.thumbnail((240,135),Image.Resampling.NEAREST)
+                  im=im.convert('RGB').quantize(colors=16,method=Image.Quantize.MEDIANCUT)
+                  while True:
+                      f=io.BytesIO(); im.save(f,format='PNG',optimize=True)
+                      data=base64.b64encode(f.getvalue()).decode('ascii')
+                      if len(data)<=3900: break
+                      if im.width<=80: raise SystemExit('thumbnail too large: '+name)
+                      im=im.resize((int(im.width*.85),int(im.height*.85)),Image.Resampling.NEAREST)
+                  print(f'::notice title=JOIN_IMAGE_{name}::{data}',flush=True)
           PY
