@@ -111,6 +111,7 @@ jobs:
           echo "::notice::probe failures=$failures"
           [ "$failures" -eq 0 ]
       - name: Connected journey at 1280x720 (two independent processes)
+        if: ${{ !cancelled() }}
         run: |
           set +e
           cd .composition
