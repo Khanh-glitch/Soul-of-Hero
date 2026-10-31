@@ -804,6 +804,11 @@ func _walk_door(hero: CharacterBody2D, door: Vector2, stand_point := Vector2.INF
 	# and a door gap is about that wide, so "standing in the doorway" is not the
 	# player's pose — "standing in front of it, facing it" is, and that is the pose
 	# A8 opens on. The physical grid still decides how to get there.
+	# This is a *local* planner: the grid it builds is a few hundred pixels wide, so it
+	# is only meaningful once the body has already arrived. At range, the map walk is
+	# the authority and this returns without pretending otherwise.
+	if hero.global_position.distance_to(door) > 260.0:
+		return false
 	var aim := door
 	if stand_point != Vector2.INF and stand_point.distance_to(door) <= 60.0:
 		aim = stand_point
@@ -1171,21 +1176,12 @@ func _free_direction(position: Vector2, bearing: float) -> Vector2:
 	return Vector2.ZERO
 
 
-## Free to step toward? The map is a *hint*, physics is the truth.
-##
-## On open terrain both agree, and the map is cheaper. Next to a building they do not:
-## A0's walkability marks a shell's walls, and a doorway is a gap in that shell's own
-## collision — narrower than a map cell. Asking the map alone makes the player refuse
-## to walk through a door that is open, so a clear physics ray is accepted even where
-## the map is pessimistic. The body is still moved by `move_and_slide`, so a ray that
-## passed a prop only costs a frame of pushing, never a wall the player walks through.
 func _probe_free(position: Vector2, direction: Vector2, distance: float) -> bool:
 	var probe := position + direction * distance
 	var interior := _authority != null and not String(_authority.call(&"inside_site")).is_empty()
 	if _traversability != null and not interior \
-			and _traversability.in_bounds(_traversability.cell_of(probe)) \
-			and _traversability.is_free(_traversability.cell_of(probe)):
-		return true
+			and _traversability.in_bounds(_traversability.cell_of(probe)):
+		return _traversability.is_free(_traversability.cell_of(probe))
 	return _ray_clear(position, probe)
 
 
