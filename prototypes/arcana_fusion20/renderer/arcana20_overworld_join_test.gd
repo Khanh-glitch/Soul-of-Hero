@@ -588,6 +588,7 @@ func _run() -> void:
     await process_frame
     check(mount.active_viewers(id11) == 0 and images_equal(baseline, await save_frame("fusion_11_cancelled")), "A11 rotor candidate cleanup restores frozen world")
     var id16 := Arcana20SourceCatalog.canonical_id(16)
+    var seed_hp_before := int(enemy.get("health"))
     multi.cast_skill(id16, player.global_position, enemy.global_position)
     var seed_fusion := multi._casts[id16] as FusionPlayer
     seed_fusion.set_process(false)
@@ -609,10 +610,33 @@ func _run() -> void:
     var seed_pass := seed_debris.source_pass_frame()
     check(seed_pass.seeds == PackedInt32Array([119785]) and seed_pass.caster_world.is_equal_approx(player.global_position), "C16 source metadata retains original seed and real caster")
     check(mount.active_viewers(id16) == 2 and not images_equal(baseline, seed_img), "A16 source growth C material and C16 debris affect actual world")
+    var seed_post := Arcana20CViewportPost.new()
+    seed_post.process_mode = Node.PROCESS_MODE_ALWAYS
+    world.add_child(seed_post)
+    check(seed_post.attach(multi), "C16 viewport post diagnostic attaches")
+    seed_debris._render_frame()
+    check(seed_post._states.has(id16), "C16 original burst publishes post state")
+    seed_growth.render_enabled = false
+    seed_debris.render_enabled = false
+    for tick in range(145): seed_fusion.advance(STEP)
+    seed_growth.render_enabled = true
+    seed_growth._render_frame()
+    await process_frame
+    await process_frame
+    var seed_layers: Dictionary = mount._passes.get(id16, {})
+    check(seed_fusion._active and seed_layers.has(&"A") and not seed_layers.has(&"C") and not seed_post._states.has(id16), "C16 source completion retires debris and post while A16 remains active")
+    for tick in range(6): seed_fusion.advance(STEP)
+    await process_frame
+    await process_frame
+    check(not multi._casts.has(id16) and mount.active_viewers(id16) == 0 and images_equal(baseline, await save_frame("fusion_16_naturally_finished")), "A16 C16 full fusion naturally finishes and restores world")
+    check(int(enemy.get("health")) == seed_hp_before, "A16 C16 visual fusion never changes HP")
+    seed_post.detach()
+    seed_post.queue_free()
+    check(multi.cast_skill(id16, player.global_position, enemy.global_position), "A16 C16 restart after natural finish")
     multi.cancel_skill(id16)
     await process_frame
     await process_frame
-    check(mount.active_viewers(id16) == 0 and images_equal(baseline, await save_frame("fusion_16_cancelled")), "A16 C material candidate cleanup restores frozen world")
+    check(mount.active_viewers(id16) == 0 and images_equal(baseline, await save_frame("fusion_16_cancelled")), "A16 C16 restart cancellation restores frozen world")
     var id20 := Arcana20SourceCatalog.canonical_id(20)
     multi.cast_skill(id20, player.global_position, enemy.global_position)
     var rift := multi._casts[id20] as CSourcePlayer
