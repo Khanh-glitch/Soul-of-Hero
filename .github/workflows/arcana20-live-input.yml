@@ -44,7 +44,7 @@ jobs:
         if: always()
         run: |
           if test -f "$RUNNER_TEMP/arcana20-live/artifacts/live.log"; then
-            grep -E 'JOIN_LIVE_INPUT|JOIN_FAIL|live input|SCRIPT ERROR|Parse Error|ARCANA20_JOIN_DIAGNOSTIC' "$RUNNER_TEMP/arcana20-live/artifacts/live.log" | head -30 | while IFS= read -r l; do echo "::notice::$l"; done || true
+            grep -E 'JOIN_LIVE_INPUT|JOIN_C20_LIVE|JOIN_FAIL|live input|SCRIPT ERROR|Parse Error|ARCANA20_JOIN_DIAGNOSTIC' "$RUNNER_TEMP/arcana20-live/artifacts/live.log" | head -30 | while IFS= read -r l; do echo "::notice::$l"; done || true
           fi
       - uses: actions/upload-artifact@v4
         if: always()

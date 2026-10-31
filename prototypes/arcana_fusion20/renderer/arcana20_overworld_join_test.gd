@@ -907,6 +907,34 @@ func _live_input_probe(app: Node, world: Node, player: CharacterBody2D, enemy: N
     file.close()
     await save_frame("live_input_02")
     renderer.cancel_skill(id)
+    await process_frame
+    # Separate real-time #20 motion probe: cast-local world transform is fixed
+    # at the selected aim, not homed to subsequently moving caster/enemy.
+    # This is visual-only: no collision volume or damage receipt is invented.
+    var rift_id := Arcana20SourceCatalog.canonical_id(20)
+    var rift_start := player.global_position
+    var rift_aim := rift_start + Vector2(160, 20)
+    var rift_enemy_start := enemy.global_position
+    var rift_hp := int(enemy.get("health"))
+    check(renderer.cast_skill(rift_id, rift_start, rift_aim), "live C20 visual cast accepts real-world direction")
+    var rift_source := renderer._casts[rift_id] as CSourcePlayer
+    var rift_transform := rift_source.source_pass_frame().source_to_world
+    check(rift_source.local_to_world(CRealityRipperFusion.CENTER).distance_to(rift_aim) < 0.1, "live C20 source axis matches selected world-space direction")
+    Input.action_press(action)
+    for frame in range(12): await physics_frame
+    Input.action_release(action)
+    await process_frame
+    await process_frame
+    var rift_player_distance := rift_start.distance_to(player.global_position)
+    var rift_enemy_distance := rift_enemy_start.distance_to(enemy.global_position)
+    var rift_stable := rift_source.source_pass_frame().source_to_world.is_equal_approx(rift_transform)
+    check(rift_player_distance > 0.1 and rift_enemy_distance > 0.1 and rift_stable, "live C20 keeps nonhoming world anchor while real player and enemy move")
+    check(int(enemy.get("health")) == rift_hp, "live C20 visual movement never changes enemy HP")
+    print("JOIN_C20_LIVE ", JSON.stringify({"scope": "real historical overworld; visual injection only, no hit-volume proof", "player_distance": rift_player_distance, "enemy_distance": rift_enemy_distance, "source_tick": rift_source._tick, "anchor_stable": rift_stable, "hp_before": rift_hp, "hp_after": int(enemy.get("health"))}))
+    await save_frame("live_input_20")
+    renderer.cancel_skill(rift_id)
+    await process_frame
+    check(mount.active_viewers(rift_id) == 0, "live C20 cancellation removes world viewer")
     mount.detach()
     app.queue_free()
     await process_frame
