@@ -1,0 +1,40 @@
+# ARCANA Fusion20 — AVFX renderer stream (PR #28 contract, Issue #29)
+
+Native Godot 4.7 renderer for all 20 `arcana_fusion20_NN` skills.
+Visual only: **no damage, HP, mana, cooldown** — combat authority is
+SOH/R4 via Control Tower's `soh_binding/**` (PR #30), never edited here.
+
+## Interface (for Control Tower)
+```gdscript
+var r := Arcana20Renderer.new()
+r.cast_skill(&"arcana_fusion20_02", caster_world, target_world, facing)
+r.cancel_skill(&"arcana_fusion20_02") / r.cancel_all()
+signals: cast_started, source_tick(id, tick, phase),
+         visual_contact(id, world_pos, kind), body_event_cue(id, world_pos, element),
+         cast_finished(id)
+```
+
+## Architecture (anti-Venomwright-pause)
+- Pass separation per cast: GROUND (z<actors, local crack/scorch/residue
+  only — never a pasted battlefield), AIR (authored FX geometry),
+  LIGHT (additive glow). No Gold actors/HUD/numerals, no baked 30 FPS
+  atlas as the default transport: runtime procedural 60 Hz source clock.
+- Timelines from `arcana20_source_catalog.gd` (PR #28, source-vote
+  routing, durations/climax from original A/B/C TS; D#19 override).
+- #02 regression: `arcana_b02_source_geometry.gd` hosted unchanged.
+- Fusions are choreography, not overlays (#09 chained nodes, #11 A+C09
+  rotating arcs, #01/#05/#16/#20 A+C combined motifs).
+- Six redesigns (#04/#06/#12/#13/#14/#18) follow the catalog briefs and
+  are labelled `REDESIGN_CANDIDATE` — never Gold, never approved.
+
+## Honest status
+See `arcana20_status.gd`: 14 NATIVE_RUNTIME_CANDIDATE + 6
+REDESIGN_CANDIDATE; Gold visual parity = VISUAL_NOT_VERIFIED x20 because
+the original A/B/C/D packages (ARCANA_FUSION_20SKILLS_HANDOFF.zip) are
+not in this repository. OWNER_VISUAL_APPROVED is owner-only.
+
+## Gate
+`arcana20_renderer_test.gd` (workflow `arcana-fusion20-renderer.yml`):
+all 20 IDs cast -> exactly 1 climax contact -> finish/cleanup, cancel
+cleanup, bad-ID rejection. PASS at the commit that introduced this file's
+CI (see PR #28 handoff comment). Lifecycle PASS != visual PASS.
