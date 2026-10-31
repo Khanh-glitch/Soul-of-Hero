@@ -3,7 +3,9 @@ on:
   workflow_dispatch:
   push:
     branches: [arena/c7b0c4e8-soul-of-hero]
-    paths: ['.github/workflows/arcana20-overlap-perf.yml']
+    paths:
+      - '.github/workflows/arcana20-overlap-perf.yml'
+      - 'prototypes/arcana_fusion20/renderer/arcana20_overworld_join_test.gd'
 permissions:
   contents: read
 jobs:

@@ -558,6 +558,9 @@ func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D)
         last = now
         if not renderer._casts.has(id2) or not renderer._casts.has(id10): break
     var perf_image := await save_frame("overlap_perf_live")
+    var expected_resolution := OS.get_environment("RESOLUTION").split("x")
+    if expected_resolution.size() == 2:
+        check(perf_image.get_width() == int(expected_resolution[0]) and perf_image.get_height() == int(expected_resolution[1]), "overlap capture matches requested physical resolution")
     samples.sort()
     check(samples.size() >= 2, "overlap perf produced multiple actually concurrent rendered frames")
     var percentiles := {}
