@@ -213,6 +213,21 @@ jobs:
             fi
           fi
           [ "$failures" -eq 0 ]
+      - name: R13 first-failure transcript (engine version, artifacts, one log)
+        if: always()
+        run: |
+          # A red job whose digest has no hits means the log itself is empty or the
+          # process never spoke. Print the evidence rather than guess at it.
+          echo "::error::godot=$(godot --version 2>&1 | tr '\n' ' ')"
+          echo "::error::artifacts=$(ls -la ./artifacts 2>&1 | tail -n +2 | tr '\n' '|')"
+          for probe in ./artifacts/survival_foundation_test.log ./artifacts/route_1.log; do
+            if [ -f "$probe" ]; then
+              body=$(tail -c 900 "$probe" | tr '\n' '~')
+              echo "::error::$(basename "$probe") bytes=$(wc -c < "$probe") body=$body"
+            else
+              echo "::error::$(basename "$probe") MISSING"
+            fi
+          done
       - name: R13 failure digest (annotations survive a blocked artifact host)
         if: always()
         run: |
