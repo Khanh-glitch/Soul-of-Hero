@@ -262,7 +262,6 @@ jobs:
     env:
       ARTIFACT_DIR: artifacts/r13-value-economy
       A3_TEST_SAVE: user://tests/r13_value_economy_p1.json
-      A3_RECEIPT_DIR: user://tests/receipts
     steps:
       - uses: actions/checkout@v4
       - uses: chickensoft-games/setup-godot@v2
@@ -290,7 +289,7 @@ jobs:
           set +e
           A3_TEST_ROLE=process_1 \
           SOUL_OF_HERO_SAVE_PATH="$A3_TEST_SAVE" \
-          A3_RECEIPT_DIR="$A3_RECEIPT_DIR" \
+          A3_RECEIPT_DIR="$PWD/$ARTIFACT_DIR/tests/receipts" \
           timeout --signal=TERM --kill-after=10s 120s godot --headless --path . \
             --user-data-dir "$ARTIFACT_DIR" \
             --script res://tests/survival/a3_value_economy_test.gd \
@@ -312,7 +311,7 @@ jobs:
           set +e
           A3_TEST_ROLE=process_2 \
           SOUL_OF_HERO_SAVE_PATH="$A3_TEST_SAVE" \
-          A3_RECEIPT_DIR="$A3_RECEIPT_DIR" \
+          A3_RECEIPT_DIR="$PWD/$ARTIFACT_DIR/tests/receipts" \
           timeout --signal=TERM --kill-after=10s 120s godot --headless --path . \
             --user-data-dir "$ARTIFACT_DIR" \
             --script res://tests/survival/a3_value_economy_test.gd \
@@ -331,27 +330,25 @@ jobs:
       - name: Two-process receipt verification (one paid settlement, duplicate refused)
         # The receipts are the evidence; no shell state crosses the steps above.
         run: |
+          set +e
           python3 tools/ci/verify_r13_receipts.py \
             --p1 "$ARTIFACT_DIR/tests/receipts/r13_p1_receipt.json" \
             --p2 "$ARTIFACT_DIR/tests/receipts/r13_p2_receipt.json" \
             --summary "$ARTIFACT_DIR/r13_two_process_summary.json"
-          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
-          import json, os
-          s = json.load(open(os.environ['ARTIFACT_DIR'] + '/r13_two_process_summary.json'))
-          print('### R13 two distinct OS processes, one durable save')
-          print(f"- P1 pid: `{s['p1_pid']}` | P2 pid: `{s['p2_pid']}` (distinct: {s['p1_pid'] != s['p2_pid']})")
-          print(f"- durable save: `{s['save_path']}`")
-          print(f"- job: `{s['job_id']}` | granted output: {s['granted_output']}")
-          print(f"- duplicate claim refused with: `{s['duplicate_reason']}`")
-          print(f"- A1 binding document sha256: `{s['bindings_sha256']}` | A8: `{s['a8_status']}`")
-          print(f"- conservation: {s['conservation']}")
-          PY
+          rc=$?
+          set -e
+          if [ -f "$ARTIFACT_DIR/r13_two_process_summary.json" ]; then
+            # Notices are readable through the check-run annotation API even
+            # when the raw job log is not retrievable.
+            python3 tools/ci/r13_receipt_notices.py || true
+          fi
+          exit $rc
       - name: R13 single-process negative controls (forgery, wear, cooldown, I/O, reset)
         run: |
           set +e
           A3_TEST_ROLE= \
           SOUL_OF_HERO_SAVE_PATH="user://tests/r13_value_economy_single.json" \
-          A3_RECEIPT_DIR="$A3_RECEIPT_DIR" \
+          A3_RECEIPT_DIR="$PWD/$ARTIFACT_DIR/tests/receipts" \
           timeout --signal=TERM --kill-after=10s 180s godot --headless --path . \
             --user-data-dir "$ARTIFACT_DIR" \
             --script res://tests/survival/a3_value_economy_test.gd \
@@ -365,12 +362,16 @@ jobs:
             echo "::error::R13 single-process exited $rc"
             exit 1
           fi
-          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/r13_single.log" "R13 single-process" "R13 NATIVE PASSED" || exit 1
-          if [ "$rc" -ne 0 ]; then
-            echo "::error::R13 single-process exited $rc"
-            exit 1
-          fi
-          grep 'R13 NATIVE PASSED' "$ARTIFACT_DIR/r13_single.log" | tail -1 >> "$GITHUB_STEP_SUMMARY"
+          # The suite deliberately obstructs the atomic temporary write and then
+          # repairs it, so the SaveService failure line is EXPECTED. Gate the log
+          # with exactly that line removed (same convention as the V5/V6 steps),
+          # never a blanket filter.
+          grep -vE '^(USER )?ERROR: SaveService: Could not write the temporary save file\.$' \
+            "$ARTIFACT_DIR/r13_single.log" > "$ARTIFACT_DIR/r13_single.gate.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/r13_single.gate.log" "R13 single-process" "R13 NATIVE PASSED" || exit 1
+          summary="$(grep 'R13 NATIVE PASSED' "$ARTIFACT_DIR/r13_single.log" | tail -1)"
+          echo "::notice title=R13 single-process negatives::${summary}"
+          echo "$summary" >> "$GITHUB_STEP_SUMMARY"
       - name: Record R13 SHA and evidence
         if: always()
         run: |
