@@ -693,10 +693,10 @@ func _run() -> void:
     await process_frame
     await process_frame
     check(mount.active_viewers(id20) == 1 and transition_post._rect.visible, "C20 world viewer and collision post active immediately before route change")
-    var old_world_ref := weakref(world)
-    var old_mount_ref := weakref(mount)
-    var old_renderer_ref := weakref(multi)
-    var old_post_ref := weakref(transition_post)
+    var old_world_ref: WeakRef = weakref(world)
+    var old_mount_ref: WeakRef = weakref(mount)
+    var old_renderer_ref: WeakRef = weakref(multi)
+    var old_post_ref: WeakRef = weakref(transition_post)
     var flow := root.get_node_or_null("AppFlow")
     if flow == null:
         check(false, "C20 route transition AppFlow missing")
