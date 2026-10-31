@@ -47,10 +47,11 @@ func _initialize() -> void:
     var after := AFramebuffer.new()
     var rng := DFx.source_rng(491701)
     var scenarios := ["empty", "sparse", "dense"]
-    for scenario in scenarios:
+    for scenario_value in scenarios:
+        var scenario: String = scenario_value
         before.buf.fill(0.0)
         for p in range(AFramebuffer.W * AFramebuffer.H):
-            var enable := scenario == "dense" or (scenario == "sparse" and p % 389 == 0)
+            var enable: bool = scenario == "dense" or (scenario == "sparse" and p % 389 == 0)
             if enable:
                 for c in range(3): before.buf[p * 3 + c] = rng.r(-0.2, 3.0)
         after.buf = before.buf.duplicate()
