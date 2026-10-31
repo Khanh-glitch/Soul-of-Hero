@@ -626,3 +626,22 @@ SOH world source parity and creator review remain separate.
   their [JOIN 41225009855](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41225009855)
   passed; assertion-level triage is pending. This validates lifecycle under the
   historical pinned world, not the selected primitive's appearance or current A0.
+- C20 `58ad22631` factors exact 32-bit hash inputs by source axis and current
+  time slot. It does not quantize coordinates, skip source samples or alter
+  geometry. [Controlled comparison 41225352803](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41225352803)
+  used the immediate `12b2a04e` implementation as baseline and matched all
+  source fields, post/activity and live-light operations at ticks 108/270/390/
+  444/510/570/590/600. Eight alternating same-host CPU samples p50 baseline→
+  optimized: 270 **171.663→145.336 ms**, 390 **212.320→180.755**, 444
+  **191.968→165.026**, 510 **82.518→72.987**; warm fixed-tick microbenchmark,
+  excludes clearing, scene, GPU and target hardware. Source quick, six C20
+  role diagnostics, historical JOIN and 720p/2K/4K overlap also passed at that
+  revision. These results remain far from evidence of playable performance.
+- Real-overworld #16 frame at tick 330 from historical JOIN `fa2ebdfcd` was
+  inspected as a 220px diagnostic crop (not approval); the green outer sheets
+  visually buried the selected inner C bloom/gold. `8cb686529` changes only the
+  C-material candidate's painter order to match C's inner-over-outer priority;
+  the A-only original source draw order is retained. A16 source and actual-world
+  reruns are pending; full-quality paired source/native creator review remains
+  required. The source-debris and temporal/cleanup checks do not establish
+  correct visual appearance.
