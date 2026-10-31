@@ -1,0 +1,89 @@
+{
+  "contract_id": "soh.native_poi.intent.v2",
+  "contract_version": 2,
+  "status": "SUPERSEDED_BY_V3; preserved for historical review only; never use for new A8 production requests",
+  "authority": {
+    "intent_sender": "NativePoiSite sends neutral canonical source/object/action identity and the revision it observed; it has no transaction authority",
+    "commit_owner": "A0 transaction boundary independently resolves canonical A1 identity and the exact A3-approved binding, then commits through the existing SaveService",
+    "save_owner": "A0 SaveService; A8 scene keeps no durable state"
+  },
+  "intent_required_fields": [
+    "contract_id",
+    "contract_version",
+    "intent_id",
+    "source_id",
+    "object_id",
+    "action_id",
+    "claim_id",
+    "observed_projection_revision"
+  ],
+  "intent_allowed_fields": [
+    "contract_id",
+    "contract_version",
+    "intent_id",
+    "source_id",
+    "object_id",
+    "action_id",
+    "claim_id",
+    "observed_projection_revision"
+  ],
+  "identity": "intent_id = source_id + \"|\" + object_id + \"|\" + action_id + \"|\" + claim_id. claim_id is only an expected identity derived from the last owner projection; A0 independently validates the canonical durable generation and may reject it.",
+  "request_rules": [
+    "A8 sends neutral action identity only. It sends no costs, rewards, cooldown duration, claim policy, capability grant, state delta, unlock duration, catalog_source, approval reference, provisional_test_only/client authority flag or receipt.",
+    "A0 independently resolves source identity, current actor/access, action eligibility, exact A3-approved binding, cost, reward, capability, active-time cooldown, generation, exclusive choice and durable transaction key from trusted owner data; it rejects unknown/foreign identities and all unrecognized request fields.",
+    "No A3-approved A8 site/action binding currently exists. A0 must reject all three sites\u2019 material transactions until A3 publishes and A0 validates a source-bound approval; a neutral request is not approval.",
+    "One atomic A0 SaveService transaction couples item debit/credit, claim ledger, cooldown/generation, site state, delayed action unlocks and receipt; no scene-supplied amount or client flag participates.",
+    "World state and visible results change only after A0 returns a committed receipt and a newer owner projection. Interrupted/rejected operations do not mutate the scene projection; retries remain owner-idempotent.",
+    "A0 verifies the received owner projection revision and canonical source identity; client-side prechecks are UX only.",
+    "Fixture economics and test receipts live only in tests/fixtures/survival/world_content/a8_native_poi_action_catalog.fixture.json and PoiAuthorityFixture; neither is a production binding or SaveService."
+  ],
+  "projection_required_fields": [
+    "schema_version",
+    "source_id",
+    "projection_revision",
+    "site_state",
+    "claim_generation",
+    "capabilities",
+    "ready_actions",
+    "resource_ready_at",
+    "clock_seconds"
+  ],
+  "projection_schema_version": 1,
+  "result_required_fields": [
+    "intent_id",
+    "status"
+  ],
+  "result_status": [
+    "committed",
+    "rejected",
+    "interrupted"
+  ],
+  "result_optional_fields": [
+    "feedback",
+    "reason"
+  ],
+  "integration_note": "A8 proposes intent v2, not a substitute A0 SaveService API. A0 must review this contract, map canonical A1 POIs and A3 authorizations independently, and reject intent v1 and test fixture authority. No A8 production owner adapter is included.",
+  "owner_projection_contract": {
+    "contract_id": "soh.native_poi.owner_projection.v1",
+    "contract_version": 1,
+    "status": "A8 test-fixture contract; A0 approval required before production",
+    "identity": "source_id must equal the canonical A1 POI ID for the receiving scene; no local scene ID or client-selected replacement identity is accepted.",
+    "revision": "projection_revision is a non-negative, monotonically increasing owner revision persisted through the existing A0 SaveService transaction. Equal revisions are idempotent only when projection payloads are identical; older or conflicting same-revision projections are rejected.",
+    "owner_only_fields": [
+      "source_id",
+      "projection_revision",
+      "site_state",
+      "claim_generation",
+      "capabilities",
+      "ready_actions",
+      "resource_ready_at",
+      "clock_seconds"
+    ],
+    "scene_rules": [
+      "A8 never increments revisions or synthesizes durable state.",
+      "A8 rejects projections for another POI, malformed required values, stale revisions, and conflicting payloads that reuse a revision.",
+      "After a committed result, a missing/stale projection is not rendered as success; the scene requests an owner refresh.",
+      "Fixture revision persistence is a serialized test harness only and is not evidence of production SaveService persistence."
+    ]
+  }
+}

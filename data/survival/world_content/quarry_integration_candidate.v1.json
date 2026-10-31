@@ -1,0 +1,7 @@
+{
+  "schema": "soh.a8.quarry.integration_candidate.v1",
+  "status": "SUPERSEDED_UNSAFE_CLIENT_AUTHORITY_FIELDS_DO_NOT_USE",
+  "superseded_by": "data/survival/world_content/quarry_integration_candidate.v2.json",
+  "reason": "V1 described client-supplied claim_policy/provisional_test_only and site-authored transaction amounts, despite A0 not having adopted the interface. V2 replaces it with neutral source/object/action identity only and explicitly requires A0 to resolve all A3 economics and durable receipts.",
+  "authorization": "No A3 Quarry/Orchard/Mill cost, yield, cooldown, binding or capability grant was approved by v1."
+}

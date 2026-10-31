@@ -1,0 +1,213 @@
+{
+  "schema": "soh.a8.ragnarok_six_territories.v1",
+  "schema_version": 1,
+  "status": "A8_SOURCE_GROUNDED_AUTHORING_MODEL_NOT_SIX_PLAYABLE_BOSSES",
+  "source_pins": {
+    "a1_pr": 20,
+    "a1_head": "9ca1453ccdd315c9de4aae01cf0e1e5b4e0a71cf",
+    "world_plan_sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4",
+    "route_graph_sha256": "8e49506889149cde043ed69cf5007b219c9ba9464cb7d3eeb25f0eef108d24a9",
+    "a3_pr": 19,
+    "a3_head": "b44e22df3af40939069189be14afc23ee1ce21c4",
+    "a3_bindings_sha256": "7b9670f4971d2f161138e0754cbbe66dfe2a239bf0d15d3079a766d729dd230b",
+    "a3_economy_policy_path": "data/survival/recipes/meta_economy.v1.json",
+    "a3_economy_policy_sha256": "bbe1095ca589a767742bf0a54ffd4f012d2135410713baa274bafee97cbf91bf",
+    "a3_meta_integration_contract_path": "docs/survival/economy/A0_META_ECONOMY_CONTRACT_V7.json",
+    "a3_meta_integration_contract_sha256": "69f52eac22cd15d66464a6b07fe2af2c157032f273b8e42a502715be0882b50b",
+    "a3_display_registry_path": "data/survival/items/meta_display_names.v1.json",
+    "a3_display_registry_sha256": "bc5dc5173a13ffcea691289c860baa5532c79b246ad4685ecc2572f75c707c59",
+    "a0_run_phase_owner": "A0.RunLifecycle",
+    "a3_reward_and_currency_owner": "A3 plus A0 transaction/save seam",
+    "a5_combat_owner": "A5/AVFX; no A8 boss implementation"
+  },
+  "system_contract": {
+    "ordinary_to_ragnarok_transform_is_data_driven": true,
+    "same_canonical_poi_and_site_instance_across_phases": true,
+    "ragnarok_window_hours": [264, 336],
+    "territories_are_authored_anchors_not_new_pois": true,
+    "actual_route_options_require_a1_authorship_and_native_collision_proof": true,
+    "rare_currency_source_requires_a3_authorization_and_a0_instance_receipt": true,
+    "one_stone_per_territory_is_identity_only_until_a3_approves_custody": true,
+    "boss_presence": "A5_AUTHORITY_REQUIRED_NOT_IMPLEMENTED_BY_A8",
+    "weather_and_tide": "A0_OR_WORLD_ENVIRONMENT_PROJECTION_ONLY_UNKNOWN_REMAINS_UNKNOWN"
+  },
+  "two_economies": {
+    "run_local": {
+      "technical_slot_candidate": "ragnarok_unbanked",
+      "display_name_key": "currency.ragnarok_unbanked",
+      "lifecycle_owner": "A0_ONLY",
+      "earn_spend_and_reset_authority": "A3_TRANSACTION_PLUS_A0_SAVE; NOT_IMPLEMENTED_HERE",
+      "a8_balance_or_item_grant": false
+    },
+    "profile_secured": {
+      "technical_slot_candidate": "profile.secured_ragnarok_currency",
+      "display_name_key": "profile.secured_ragnarok_currency",
+      "lifecycle_owner": "A0_ONLY",
+      "deposit_and_vendor_spend_authority": "A3_VALIDATION_PLUS_A0_ATOMIC_SAVE; NOT_IMPLEMENTED_HERE",
+      "a8_balance_or_item_grant": false
+    },
+    "cross_wallet_conversion": "ONLY_A3_PROPOSAL_AND_A0_COMMIT; NO_IMPLICIT_CONVERSION",
+    "candidate_ids_and_display_keys": "PROPOSAL_NOT_A3_OR_A0_SCHEMA_APPROVAL",
+    "prices_yields_caps_and_drop_rates": null
+  },
+  "shared_logistics": {
+    "refuge": {"poi_id": "poi_refuge", "status": "A1_AUTHORED_ANCHOR_NOT_A8_MOUNTED"},
+    "bank_and_fixed_vendor": {"poi_id": "poi_crown_waystation", "status": "A1_TRIAL_SOCKET_APPROVED_A8_NOT_PRODUCTION_MOUNTED"},
+    "recycler": {"poi_id": "poi_amberwood_mill", "status": "A1_TRIAL_SOCKET_APPROVED_A8_NOT_PRODUCTION_MOUNTED"},
+    "evacuation": {"poi_id": "poi_saffron_drydock", "status": "A1_TRIAL_SOCKET_APPROVED_A8_NOT_PRODUCTION_MOUNTED"},
+    "later_exploration": "RETURN_TO_EXISTING_A1_ROUTE_GRAPH; NO_NEW_SHORTCUT_OR_GEOGRAPHY_CLAIM"
+  },
+  "territories": [
+    {
+      "elder_id": "elder.ashen_crown",
+      "stone_id": "stone.elder.ashen_crown",
+      "milestone_id": "milestone.elder.ashen_crown",
+      "display_name_key": "territory.ashen_crown.elder.display_name",
+      "region_id": "r_ashen_crown",
+      "canonical_poi_id": "poi_crown_south_quarry",
+      "canonical_cell": [30, 280],
+      "ordinary_identity": {
+        "name": "South Quarry",
+        "purpose": "Readable stone source on the south rim stair.",
+        "material_keys": ["stone", "iron"],
+        "band": "early",
+        "entry_capabilities": [],
+        "a1_status": "AUTHORED_PLAN_NOT_NATIVE_INTEGRATED"
+      },
+      "a1_approach_route_id": "sp_poi_crown_south_quarry",
+      "awakened_identity": "Tuff-shear elder signal: the south stair fractures into one legible safe lane at a time.",
+      "environmental_counterplay": ["read the cairn warning", "use the alternate supported ramp", "retreat by the maintained access corridor"],
+      "local_route_variants": ["existing owner-projected east brace / west chock choices", "phase-driven east/west access reversal"],
+      "approach_and_retreat_status": "LOCAL_QUARRY_COLLISION_SLICE_IN_A8_TESTS; WORLD_APPROACH_AND_RETREAT_A1_A0_NOT_MOUNTED",
+      "rare_late_currency_source": {"source_slot": "source.ragnarok.ashen_crown.cache", "status": "A3_NOT_AUTHORIZED_FAIL_CLOSED", "quantity": null, "cooldown": null},
+      "boss_and_stone_grant": "A5_COMBAT_AND_A3_REWARD_NOT_IMPLEMENTED"
+    },
+    {
+      "elder_id": "elder.frost_observatory",
+      "stone_id": "stone.elder.frost_observatory",
+      "milestone_id": "milestone.elder.frost_observatory",
+      "display_name_key": "territory.frost_observatory.elder.display_name",
+      "region_id": "r_frost_crown",
+      "canonical_poi_id": "poi_frost_observatory",
+      "canonical_cell": [720, 180],
+      "ordinary_identity": {
+        "name": "High Meridian Observatory",
+        "purpose": "Power a lens array to reveal a late sea route.",
+        "material_keys": ["aether_crystal", "storm_glass"],
+        "band": "mid",
+        "entry_capabilities": ["cap_power_1", "cap_thermal"],
+        "a1_status": "AUTHORED_PLAN_NOT_NATIVE_INTEGRATED"
+      },
+      "a1_approach_route_id": "sp_poi_frost_observatory",
+      "awakened_identity": "Meridian ice elder: lens shadows sweep the platform and expose a temporary lee-side reading interval.",
+      "environmental_counterplay": ["follow lens-shadow markers", "shelter behind the instrument plinths", "retreat down the verified warm-side service stair"],
+      "approach_and_retreat_proposals": ["sunward_north_ramp", "glass_ladder_down", "lee_side_service_stair", "shuttered_south_gully"],
+      "approach_and_retreat_status": "A8_AUTHORING_PROPOSAL_REQUIRES_A1_ROUTE_AND_NATIVE_COLLISION_APPROVAL",
+      "rare_late_currency_source": {"source_slot": "source.ragnarok.frost_observatory.cache", "status": "A3_NOT_AUTHORIZED_FAIL_CLOSED", "quantity": null, "cooldown": null},
+      "boss_and_stone_grant": "A5_COMBAT_AND_A3_REWARD_NOT_IMPLEMENTED"
+    },
+    {
+      "elder_id": "elder.glasswind_light",
+      "stone_id": "stone.elder.glasswind_light",
+      "milestone_id": "milestone.elder.glasswind_light",
+      "display_name_key": "territory.glasswind_light.elder.display_name",
+      "region_id": "r_glasswind_coast",
+      "canonical_poi_id": "poi_glasswind_light",
+      "canonical_cell": [930, 120],
+      "ordinary_identity": {
+        "name": "Glasswind Light",
+        "purpose": "Storm-warded signal reveals wrecks and a coastal shortcut.",
+        "material_keys": ["storm_glass", "silica_sand"],
+        "band": "mid",
+        "entry_capabilities": ["cap_seal_2"],
+        "a1_status": "AUTHORED_PLAN_NOT_NATIVE_INTEGRATED"
+      },
+      "a1_approach_route_id": "sp_poi_glasswind_light",
+      "awakened_identity": "Glasswind beacon elder: rotating light reveals a safe lee sector while the seaward panes flare.",
+      "environmental_counterplay": ["read the beacon rotation", "cross behind the opaque windbreak", "retreat on the leeward stair; low-tide beach is an optional A1-gated alternative"],
+      "approach_and_retreat_proposals": ["wave_cut_breakwater", "upper_tide_stair", "lee_side_stair", "low_tide_beach"],
+      "approach_and_retreat_status": "A8_AUTHORING_PROPOSAL_REQUIRES_A1_ROUTE_AND_NATIVE_COLLISION_APPROVAL",
+      "rare_late_currency_source": {"source_slot": "source.ragnarok.glasswind_light.cache", "status": "A3_NOT_AUTHORIZED_FAIL_CLOSED", "quantity": null, "cooldown": null},
+      "boss_and_stone_grant": "A5_COMBAT_AND_A3_REWARD_NOT_IMPLEMENTED"
+    },
+    {
+      "elder_id": "elder.ember_forge",
+      "stone_id": "stone.elder.ember_forge",
+      "milestone_id": "milestone.elder.ember_forge",
+      "display_name_key": "territory.ember_forge.elder.display_name",
+      "region_id": "r_ember_steppe",
+      "canonical_poi_id": "poi_ember_old_forge",
+      "canonical_cell": [580, 320],
+      "ordinary_identity": {
+        "name": "The Old Forge",
+        "purpose": "Tier-2 seal forging; sulfur and copper share a furnace.",
+        "material_keys": ["copper", "sulfur", "salvage"],
+        "band": "mid",
+        "entry_capabilities": ["cap_filter", "cap_power_1", "cap_seal_1"],
+        "a1_status": "AUTHORED_PLAN_NOT_NATIVE_INTEGRATED"
+      },
+      "a1_approach_route_id": "sp_poi_ember_old_forge",
+      "awakened_identity": "Ember-shift elder: the casting floor alternates between a cooled foundry aisle and a visible hot channel.",
+      "environmental_counterplay": ["watch the vent pennants", "cross only on the cooled aisle", "retreat through the raised slag-service stair"],
+      "approach_and_retreat_proposals": ["sulfur_lee_tunnel", "east_slag_road", "raised_service_stair", "east_slag_road_return"],
+      "approach_and_retreat_status": "A8_AUTHORING_PROPOSAL_REQUIRES_A1_ROUTE_AND_NATIVE_COLLISION_APPROVAL",
+      "rare_late_currency_source": {"source_slot": "source.ragnarok.ember_forge.cache", "status": "A3_NOT_AUTHORIZED_FAIL_CLOSED", "quantity": null, "cooldown": null},
+      "boss_and_stone_grant": "A5_COMBAT_AND_A3_REWARD_NOT_IMPLEMENTED"
+    },
+    {
+      "elder_id": "elder.verdant_temple",
+      "stone_id": "stone.elder.verdant_temple",
+      "milestone_id": "milestone.elder.verdant_temple",
+      "display_name_key": "territory.verdant_temple.elder.display_name",
+      "region_id": "r_verdant_fold",
+      "canonical_poi_id": "poi_verdant_canopy_temple",
+      "canonical_cell": [640, 600],
+      "ordinary_identity": {
+        "name": "Canopy Temple",
+        "purpose": "Vertical temple with a venom-core specimen.",
+        "material_keys": ["venom_sac", "aether_crystal"],
+        "band": "late",
+        "entry_capabilities": ["cap_climb", "cap_filter", "cap_seal_3"],
+        "a1_status": "AUTHORED_PLAN_NOT_NATIVE_INTEGRATED"
+      },
+      "a1_approach_route_id": "sp_poi_verdant_canopy_temple",
+      "awakened_identity": "Canopy-root elder: upper boughs signal a stable climb while spore curtains shift away from the root gallery.",
+      "environmental_counterplay": ["follow the dry-root markers", "use a protected lower gallery", "retreat on the fixed root ladder before the spore curtain returns"],
+      "approach_and_retreat_proposals": ["root_ladder", "west_canopy_ramp", "windward_canopy_bridge", "root_ladder_return"],
+      "approach_and_retreat_status": "A8_AUTHORING_PROPOSAL_REQUIRES_A1_ROUTE_AND_NATIVE_COLLISION_APPROVAL",
+      "rare_late_currency_source": {"source_slot": "source.ragnarok.verdant_temple.cache", "status": "A3_NOT_AUTHORIZED_FAIL_CLOSED", "quantity": null, "cooldown": null},
+      "boss_and_stone_grant": "A5_COMBAT_AND_A3_REWARD_NOT_IMPLEMENTED"
+    },
+    {
+      "elder_id": "elder.pearl_grotto",
+      "stone_id": "stone.elder.pearl_grotto",
+      "milestone_id": "milestone.elder.pearl_grotto",
+      "display_name_key": "territory.pearl_grotto.elder.display_name",
+      "region_id": "r_pearl_mangroves",
+      "canonical_poi_id": "poi_pearl_grotto",
+      "canonical_cell": [900, 660],
+      "ordinary_identity": {
+        "name": "Tide-Locked Grotto",
+        "purpose": "Abyssal pearls only at low tide; deepward alternative.",
+        "material_keys": ["abyssal_pearl", "pearl"],
+        "band": "late",
+        "entry_capabilities": ["cap_boat", "cap_tide_ward"],
+        "a1_status": "AUTHORED_PLAN_NOT_NATIVE_INTEGRATED"
+      },
+      "a1_approach_route_id": "sp_poi_pearl_grotto",
+      "awakened_identity": "Pearl-depth elder: a bioluminescent pulse identifies the shallow return channel while the deep pool stays impassable without the authored ward.",
+      "environmental_counterplay": ["follow the pulse markers", "use the warded boat channel", "retreat via the raised mangrove causeway when tide projection is unknown"],
+      "approach_and_retreat_proposals": ["north_boat_channel", "low_tide_mangrove_path", "raised_mangrove_causeway", "north_channel_return"],
+      "approach_and_retreat_status": "A8_AUTHORING_PROPOSAL_REQUIRES_A1_ROUTE_AND_NATIVE_COLLISION_APPROVAL",
+      "rare_late_currency_source": {"source_slot": "source.ragnarok.pearl_grotto.cache", "status": "A3_NOT_AUTHORIZED_FAIL_CLOSED", "quantity": null, "cooldown": null},
+      "boss_and_stone_grant": "A5_COMBAT_AND_A3_REWARD_NOT_IMPLEMENTED"
+    }
+  ],
+  "acceptance_scope": {
+    "A8_native_playable_transformation_slices": ["poi_crown_south_quarry"],
+    "A8_owner_independent_cue_sites": ["poi_amberwood_mill", "poi_saffron_drydock"],
+    "six_territory_entries_are_playable_bosses": false,
+    "native_A0_A1_A3_AVFX_production_integration": false,
+    "prices_yields_or_drop_rates_authorized": false
+  }
+}

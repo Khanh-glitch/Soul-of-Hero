@@ -1,0 +1,52 @@
+{
+  "schema": "soh.a8.ragnarok_site_tuning.v1",
+  "schema_version": 1,
+  "status": "VERSIONED_AI_AUTHORED_PROPOSAL_NOT_CREATOR_APPROVED",
+  "design_rule": "Tuning can change without changing canonical poi_id, site_instance_id, elder_id, stone_id, phase projection identity, or save schema.",
+  "scope": "A8 presentation and route readability only; no combat, reward, currency, cooldown, or save behavior is implemented by these values.",
+  "presentation_profile_id": "ragnarok_site_presentation.v1",
+  "phase_values": {
+    "ordinary": {"cue_opacity": 0.0, "ambient_cue_budget_per_minute": 0.0},
+    "ragnarok_day12": {"cue_opacity": 0.35, "ambient_cue_budget_per_minute": 0.5},
+    "ragnarok_day13": {"cue_opacity": 0.65, "ambient_cue_budget_per_minute": 1.0},
+    "ragnarok_day14": {"cue_opacity": 0.9, "ambient_cue_budget_per_minute": 1.5},
+    "run_expired": {"cue_opacity": 0.0, "ambient_cue_budget_per_minute": 0.0}
+  },
+  "owner_owned_tunables": {
+    "combat": {
+      "authority": "A5_AND_AVFX",
+      "status": "NOT_SET_A8_MUST_NOT_INVENT_OR_EXECUTE_BOSS_COMBAT",
+      "values": {
+        "encounter_budget": null,
+        "enemy_health_scale": null,
+        "enemy_damage_scale": null,
+        "spawn_interval_seconds": null
+      }
+    },
+    "currency_and_economy": {
+      "authority": "A3_WITH_A0_TRANSACTION_AND_SAVE_COMMIT",
+      "status": "NOT_SET_A8_MUST_NOT_CREDIT_OR_PRICE_CURRENCY",
+      "values": {
+        "late_source_yield": null,
+        "deposit_fee": null,
+        "fixed_vendor_price_table": null,
+        "recycler_yield_table": null,
+        "source_replenishment_seconds": null
+      }
+    },
+    "run_lifecycle": {
+      "authority": "A0",
+      "status": "NOT_SET_A8_MUST_NOT_ADVANCE_OR_FINALIZE_CLOCK",
+      "values": {
+        "phase_boundaries_hours": "see_site_phase_transformations.v1.json; A0 remains the only runtime authority",
+        "evacuation_cutoff_hours": null,
+        "run_expiry_hours": null
+      }
+    }
+  },
+  "acceptance": {
+    "changing_presentation_values_requires_no_scene_identity_or_save_migration": true,
+    "numbers_are_ai_proposal_not_creator_approved_gameplay_rates": true,
+    "proposed_values_have_no_economic_or_combat_effect": true
+  }
+}

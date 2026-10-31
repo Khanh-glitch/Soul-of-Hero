@@ -1,0 +1,1239 @@
+{
+  "schema_version": 1,
+  "source": {
+    "authority": "A1 POI anchor supplied in CT_A8_NATIVE_WORLD_CONTENT_FACTORY_PROPOSED_20261030.md",
+    "poi_id": "poi_crown_south_orchard",
+    "canonical_cell": [
+      140,
+      360
+    ],
+    "work_order_commit": "b19b5ef305229b7b3ee8477f15ca2ac9f679e2b2",
+    "avatar_policy_commit": "9332cb9ba25da3026ede0cad578a90f0e4b5a2b6",
+    "world_id": "world:soh_continent_v1",
+    "a1_source_commit": "7fd000e1c017830a088749b965e651fafb501b98",
+    "a3_source_commit": "c23292be095903c67e3d6e6e4fbd310b6649da12",
+    "a0_source_commit": "122294f2237c1836d6f04561e090fe6aa6c6c0cf",
+    "a6_source_commit": "bed3fc81ced4505eac6cfc3ddec5c07aeef8019e",
+    "integration_base_commit": "86831332324428c7623ad431a577d101b7af5c9c",
+    "fixture_policy": "S2_ONLY_NOT_A3_PRICE_OR_REWARD_AUTHORIZATION",
+    "a3_binding_schema": "soh.economy.world_source_bindings.v3",
+    "a3_binding_commit": "c23292be095903c67e3d6e6e4fbd310b6649da12",
+    "a3_binding_status": "NO_A8_SITE_BINDING_COSTS_AND_YIELDS_REMAIN_FIXTURE_ONLY"
+  },
+  "site_id": "crown_south_orchard",
+  "display_name": "South Orchard Ruin",
+  "template_id": "cultivation",
+  "visual_profile": "orchard",
+  "world_bounds": [
+    960,
+    608
+  ],
+  "spawn": [
+    480,
+    548
+  ],
+  "action_socket": [
+    510,
+    292
+  ],
+  "approach_stand": [
+    510,
+    370
+  ],
+  "interaction_radius": 86,
+  "access": {
+    "outer_requires": [],
+    "inner_requires": []
+  },
+  "walls": [
+    [
+      0,
+      0,
+      960,
+      22
+    ],
+    [
+      0,
+      586,
+      440,
+      22
+    ],
+    [
+      520,
+      586,
+      440,
+      22
+    ],
+    [
+      0,
+      22,
+      22,
+      564
+    ],
+    [
+      938,
+      22,
+      22,
+      564
+    ],
+    [
+      230,
+      142,
+      30,
+      104
+    ],
+    [
+      700,
+      142,
+      30,
+      104
+    ],
+    [
+      230,
+      364,
+      30,
+      104
+    ],
+    [
+      700,
+      364,
+      30,
+      104
+    ],
+    [
+      396,
+      166,
+      22,
+      74
+    ],
+    [
+      570,
+      368,
+      22,
+      74
+    ],
+    [
+      162,
+      146,
+      12,
+      14
+    ],
+    [
+      354,
+      146,
+      12,
+      14
+    ],
+    [
+      626,
+      146,
+      12,
+      14
+    ],
+    [
+      818,
+      146,
+      12,
+      14
+    ],
+    [
+      162,
+      418,
+      12,
+      14
+    ],
+    [
+      354,
+      418,
+      12,
+      14
+    ],
+    [
+      626,
+      418,
+      12,
+      14
+    ],
+    [
+      818,
+      418,
+      12,
+      14
+    ]
+  ],
+  "choice_blockers": {},
+  "choices": [
+    {
+      "action_id": "clear_irrigation",
+      "option_id": "water",
+      "label": "Clear the fallen sluice",
+      "requires_state": [],
+      "set_state": {
+        "orchard_channel": "flowing"
+      },
+      "choice_group": "orchard_channel",
+      "object_id": "clear_irrigation"
+    },
+    {
+      "action_id": "leave_for_safety",
+      "option_id": "leave",
+      "label": "Leave the channel blocked",
+      "requires_state": [],
+      "set_state": {
+        "orchard_channel": "untouched"
+      },
+      "choice_group": "orchard_channel",
+      "object_id": "leave_for_safety"
+    }
+  ],
+  "actions": [
+    {
+      "action_id": "gather_reeds",
+      "object_id": "sluice_reeds",
+      "label": "Cut the bank reeds",
+      "requires_state": [],
+      "set_state": {}
+    },
+    {
+      "action_id": "read_water_marks",
+      "object_id": "old_graft_marks",
+      "label": "Read the graft marks",
+      "requires_state": [
+        "orchard_channel"
+      ],
+      "set_state": {
+        "graft_marks_read": true
+      },
+      "owner_ready_required": true,
+      "requires_state_values": {
+        "orchard_channel": [
+          "flowing"
+        ]
+      }
+    }
+  ],
+  "return_hook": "After the sluice is cleared, the water line reaches old graft marks; returning reveals how to revive the lower terrace. No honey or rare-herb grant is authored.",
+  "blocked_rewards": [
+    "honey",
+    "rare_herb"
+  ],
+  "visual_notes": "Four old grafted trees, broken low stone channels, windfallen limbs and a wet irrigation cut; orchard is a traversable garden, not a fetch-quest stage.",
+  "scene_role": "local_worksite",
+  "local_transition": {
+    "contract_id": "soh.native_poi.transition.v2",
+    "contract_version": 2,
+    "worksite_scene": "res://game/survival/world_content/scenes/south_orchard_ruin.tscn",
+    "shell_scene": "res://game/survival/world_content/scenes/south_orchard_ruin_overworld.tscn",
+    "interior_entry": [
+      480,
+      548
+    ],
+    "exit_portal": [
+      480,
+      560
+    ],
+    "return_anchor": {
+      "world_id": "world:soh_continent_v1",
+      "poi_id": "poi_crown_south_orchard",
+      "canonical_cell": [
+        140,
+        360
+      ],
+      "shell_scene": "res://game/survival/world_content/scenes/south_orchard_ruin_overworld.tscn",
+      "shell_local_position": [
+        64,
+        108
+      ]
+    }
+  },
+  "overworld_shell": {
+    "scene": "res://game/survival/world_content/scenes/south_orchard_ruin_overworld.tscn",
+    "bounds_px": [
+      128,
+      128
+    ],
+    "action_socket": [
+      64,
+      64
+    ],
+    "canonical_cell": [
+      140,
+      360
+    ],
+    "rotation_degrees": 0,
+    "scale": [
+      1,
+      1
+    ],
+    "footprint_radius_tiles": 4,
+    "entry_portal": [
+      64,
+      108
+    ],
+    "profile": "orchard",
+    "visual_layout": {
+      "lighting_profile": "amber_morning",
+      "ground_rows": [
+        [
+          "grass_0",
+          "grass_1",
+          "grass_2",
+          "grass_3",
+          "grass_0",
+          "grass_1",
+          "grass_2",
+          "grass_3"
+        ],
+        [
+          "grass_1",
+          "grass_2",
+          "grass_3",
+          "grass_0",
+          "grass_1",
+          "grass_2",
+          "grass_3",
+          "grass_0"
+        ],
+        [
+          "grass_2",
+          "grass_3",
+          "grass_0",
+          "grass_1",
+          "grass_2",
+          "grass_3",
+          "grass_0",
+          "grass_1"
+        ],
+        [
+          "grass_3",
+          "grass_0",
+          "soil_1",
+          "soil_2",
+          "soil_3",
+          "soil_0",
+          "grass_1",
+          "grass_2"
+        ],
+        [
+          "grass_0",
+          "grass_1",
+          "soil_2",
+          "soil_3",
+          "soil_0",
+          "soil_1",
+          "grass_2",
+          "grass_3"
+        ],
+        [
+          "grass_1",
+          "grass_2",
+          "soil_3",
+          "soil_0",
+          "soil_1",
+          "soil_2",
+          "grass_3",
+          "grass_0"
+        ],
+        [
+          "grass_2",
+          "grass_3",
+          "grass_0",
+          "grass_1",
+          "grass_2",
+          "grass_3",
+          "grass_0",
+          "grass_1"
+        ],
+        [
+          "grass_3",
+          "grass_0",
+          "grass_1",
+          "grass_2",
+          "grass_3",
+          "grass_0",
+          "grass_1",
+          "grass_2"
+        ]
+      ],
+      "overlays": [
+        {
+          "frame": "road_dirt_10",
+          "cell": [
+            3,
+            4
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_10",
+          "cell": [
+            4,
+            4
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_10",
+          "cell": [
+            3,
+            5
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_10",
+          "cell": [
+            4,
+            5
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_10",
+          "cell": [
+            3,
+            6
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_10",
+          "cell": [
+            4,
+            6
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_4",
+          "cell": [
+            3,
+            7
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_4",
+          "cell": [
+            4,
+            7
+          ],
+          "layer": "road"
+        }
+      ],
+      "props": [
+        {
+          "frame": "lm_orchard_shed",
+          "local_px": [
+            72,
+            64
+          ],
+          "role": "authored_landmark",
+          "collision_change": false
+        },
+        {
+          "frame": "tree_orchard",
+          "local_px": [
+            24,
+            64
+          ],
+          "role": "ordinary_harvestable",
+          "collision_change": false
+        },
+        {
+          "frame": "tree_orchard",
+          "local_px": [
+            104,
+            64
+          ],
+          "role": "ordinary_harvestable",
+          "collision_change": false
+        },
+        {
+          "frame": "drying_rack",
+          "local_px": [
+            24,
+            96
+          ],
+          "role": "background_scenery",
+          "collision_change": false
+        },
+        {
+          "frame": "beehive",
+          "local_px": [
+            104,
+            96
+          ],
+          "role": "ordinary_harvestable",
+          "collision_change": false
+        },
+        {
+          "frame": "split_rail",
+          "local_px": [
+            24,
+            112
+          ],
+          "role": "background_scenery",
+          "collision_change": false
+        },
+        {
+          "frame": "split_rail",
+          "local_px": [
+            104,
+            112
+          ],
+          "role": "background_scenery",
+          "collision_change": false
+        },
+        {
+          "frame": "signpost",
+          "local_px": [
+            88,
+            84
+          ],
+          "role": "exterior_clue_marker",
+          "collision_change": false,
+          "id": "orchard_graft_water_notice"
+        }
+      ],
+      "doorway_clear_rect_px": [
+        44,
+        92,
+        40,
+        36
+      ],
+      "context_ground": {
+        "size_px": [
+          1280,
+          736
+        ],
+        "origin_px": [
+          -576,
+          -304
+        ],
+        "ground_family": "grass",
+        "purpose": "source-backed local terrain outside the existing 128x128 shell; decorative only, no POI footprint or collision extension",
+        "paths": [
+          {
+            "family": "road_dirt",
+            "width": 3,
+            "points": [
+              [
+                4,
+                7
+              ],
+              [
+                4,
+                10
+              ],
+              [
+                4,
+                18
+              ],
+              [
+                4,
+                28
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    "obstacles_px": [
+      [
+        18,
+        68,
+        12,
+        12
+      ],
+      [
+        98,
+        68,
+        12,
+        12
+      ]
+    ]
+  },
+  "visual_layout": {
+    "ground_family": "forest",
+    "ground_areas": [
+      {
+        "center": [
+          4,
+          18
+        ],
+        "radius": [
+          4,
+          13
+        ],
+        "family": "grass"
+      },
+      {
+        "center": [
+          55,
+          18
+        ],
+        "radius": [
+          4,
+          13
+        ],
+        "family": "grass"
+      },
+      {
+        "center": [
+          11,
+          11
+        ],
+        "radius": [
+          6,
+          5
+        ],
+        "family": "soil"
+      },
+      {
+        "center": [
+          23,
+          10
+        ],
+        "radius": [
+          5,
+          4
+        ],
+        "family": "soil"
+      },
+      {
+        "center": [
+          40,
+          11
+        ],
+        "radius": [
+          6,
+          5
+        ],
+        "family": "soil"
+      },
+      {
+        "center": [
+          51,
+          11
+        ],
+        "radius": [
+          5,
+          5
+        ],
+        "family": "soil"
+      },
+      {
+        "center": [
+          11,
+          28
+        ],
+        "radius": [
+          6,
+          5
+        ],
+        "family": "soil"
+      },
+      {
+        "center": [
+          23,
+          27
+        ],
+        "radius": [
+          5,
+          5
+        ],
+        "family": "soil"
+      },
+      {
+        "center": [
+          40,
+          28
+        ],
+        "radius": [
+          6,
+          5
+        ],
+        "family": "soil"
+      },
+      {
+        "center": [
+          51,
+          27
+        ],
+        "radius": [
+          5,
+          5
+        ],
+        "family": "soil"
+      },
+      {
+        "center": [
+          30,
+          17
+        ],
+        "radius": [
+          18,
+          2
+        ],
+        "family": "grass"
+      }
+    ],
+    "paths": [
+      {
+        "family": "road_dirt",
+        "width": 2,
+        "points": [
+          [
+            30,
+            37
+          ],
+          [
+            30,
+            33
+          ],
+          [
+            30,
+            29
+          ],
+          [
+            30,
+            25
+          ],
+          [
+            31,
+            22
+          ],
+          [
+            31,
+            19
+          ]
+        ]
+      },
+      {
+        "family": "road_dirt",
+        "width": 2,
+        "points": [
+          [
+            31,
+            24
+          ],
+          [
+            26,
+            23
+          ],
+          [
+            22,
+            22
+          ],
+          [
+            18,
+            21
+          ]
+        ]
+      },
+      {
+        "family": "road_dirt",
+        "width": 2,
+        "points": [
+          [
+            31,
+            24
+          ],
+          [
+            36,
+            23
+          ],
+          [
+            40,
+            22
+          ],
+          [
+            44,
+            21
+          ]
+        ]
+      },
+      {
+        "family": "track_dirt",
+        "width": 1,
+        "points": [
+          [
+            9,
+            16
+          ],
+          [
+            14,
+            14
+          ],
+          [
+            19,
+            14
+          ],
+          [
+            24,
+            15
+          ]
+        ]
+      },
+      {
+        "family": "track_dirt",
+        "width": 1,
+        "points": [
+          [
+            36,
+            15
+          ],
+          [
+            41,
+            14
+          ],
+          [
+            47,
+            14
+          ],
+          [
+            52,
+            16
+          ]
+        ]
+      },
+      {
+        "family": "water",
+        "width": 1,
+        "points": [
+          [
+            14,
+            17
+          ],
+          [
+            21,
+            17
+          ],
+          [
+            30,
+            17
+          ],
+          [
+            39,
+            17
+          ],
+          [
+            45,
+            17
+          ]
+        ]
+      }
+    ],
+    "state_paths": {
+      "orchard_channel": {
+        "flowing": [
+          {
+            "family": "water",
+            "width": 2,
+            "points": [
+              [
+                14,
+                17
+              ],
+              [
+                21,
+                17
+              ],
+              [
+                30,
+                17
+              ],
+              [
+                39,
+                17
+              ],
+              [
+                45,
+                17
+              ]
+            ]
+          }
+        ],
+        "untouched": []
+      }
+    },
+    "overlays": [
+      {
+        "frame": "detail_orchard_grass_0",
+        "cell": [
+          6,
+          15
+        ],
+        "layer": "surface"
+      },
+      {
+        "frame": "detail_orchard_grass_2",
+        "cell": [
+          53,
+          15
+        ],
+        "layer": "surface"
+      },
+      {
+        "frame": "detail_mud_crack_0",
+        "cell": [
+          19,
+          16
+        ],
+        "layer": "surface"
+      },
+      {
+        "frame": "detail_mud_crack_1",
+        "cell": [
+          40,
+          19
+        ],
+        "layer": "surface"
+      },
+      {
+        "frame": "detail_mud_crack_2",
+        "cell": [
+          25,
+          20
+        ],
+        "layer": "surface"
+      },
+      {
+        "frame": "detail_reed_tuft_0",
+        "cell": [
+          14,
+          16
+        ],
+        "layer": "surface"
+      },
+      {
+        "frame": "detail_reed_tuft_2",
+        "cell": [
+          44,
+          16
+        ],
+        "layer": "surface"
+      }
+    ],
+    "state_overlays": [
+      {
+        "key": "orchard_channel",
+        "equals": "flowing",
+        "overlays": [
+          {
+            "frame": "detail_water_ripple_0",
+            "cell": [
+              19,
+              17
+            ],
+            "layer": "surface"
+          },
+          {
+            "frame": "detail_water_ripple_1",
+            "cell": [
+              25,
+              18
+            ],
+            "layer": "surface"
+          },
+          {
+            "frame": "detail_water_ripple_2",
+            "cell": [
+              37,
+              17
+            ],
+            "layer": "surface"
+          },
+          {
+            "frame": "detail_water_ripple_0",
+            "cell": [
+              42,
+              18
+            ],
+            "layer": "surface"
+          }
+        ]
+      },
+      {
+        "key": "graft_marks_read",
+        "equals": "true",
+        "overlays": [
+          {
+            "frame": "detail_orchard_grass_1",
+            "cell": [
+              39,
+              22
+            ],
+            "layer": "surface"
+          },
+          {
+            "frame": "detail_orchard_grass_2",
+            "cell": [
+              40,
+              22
+            ],
+            "layer": "surface"
+          }
+        ]
+      }
+    ],
+    "props": [
+      {
+        "frame": "canopy_tree",
+        "cell": [
+          7,
+          8
+        ],
+        "id": "northwest_canopy",
+        "occludes_actor": true
+      },
+      {
+        "frame": "tree_orchard",
+        "cell": [
+          18,
+          10
+        ],
+        "id": "north_grafted_tree",
+        "occludes_actor": true
+      },
+      {
+        "frame": "lm_orchard_shed",
+        "cell": [
+          30,
+          6
+        ],
+        "id": "orchard_shed_ruin"
+      },
+      {
+        "frame": "tree_orchard",
+        "cell": [
+          42,
+          10
+        ],
+        "id": "northeast_grafted_tree",
+        "occludes_actor": true
+      },
+      {
+        "frame": "canopy_tree",
+        "cell": [
+          53,
+          8
+        ],
+        "id": "northeast_canopy",
+        "occludes_actor": true
+      },
+      {
+        "frame": "orchard_wall",
+        "cell": [
+          13,
+          8
+        ],
+        "id": "west_garden_wall"
+      },
+      {
+        "frame": "orchard_wall",
+        "cell": [
+          46,
+          8
+        ],
+        "id": "east_garden_wall"
+      },
+      {
+        "frame": "tree_orchard",
+        "cell": [
+          10,
+          28
+        ],
+        "id": "southwest_grafted_tree",
+        "occludes_actor": true
+      },
+      {
+        "frame": "tree_orchard",
+        "cell": [
+          23,
+          28
+        ],
+        "id": "south_grafted_tree",
+        "occludes_actor": true
+      },
+      {
+        "frame": "tree_orchard",
+        "cell": [
+          40,
+          28
+        ],
+        "id": "southeast_grafted_tree",
+        "occludes_actor": true
+      },
+      {
+        "frame": "tree_dead",
+        "cell": [
+          54,
+          22
+        ],
+        "id": "storm_damaged_tree",
+        "occludes_actor": true
+      },
+      {
+        "frame": "reed_bed",
+        "cell": [
+          14,
+          17
+        ],
+        "id": "west_channel_reeds"
+      },
+      {
+        "frame": "reed_bed",
+        "cell": [
+          44,
+          17
+        ],
+        "id": "east_channel_reeds"
+      },
+      {
+        "frame": "pump_tank",
+        "cell": [
+          50,
+          15
+        ],
+        "id": "orchard_irrigation_tank"
+      },
+      {
+        "frame": "pipe_run",
+        "cell": [
+          46,
+          15
+        ],
+        "id": "irrigation_feed_line"
+      },
+      {
+        "frame": "pump_pipe",
+        "cell": [
+          49,
+          16
+        ],
+        "id": "irrigation_coupling"
+      },
+      {
+        "frame": "sluice_gate",
+        "cell": [
+          35,
+          16
+        ],
+        "id": "sluice_gear"
+      },
+      {
+        "frame": "boardwalk_post",
+        "cell": [
+          29,
+          16
+        ],
+        "id": "west_boardwalk_support"
+      },
+      {
+        "frame": "boardwalk_post",
+        "cell": [
+          32,
+          16
+        ],
+        "id": "east_boardwalk_support"
+      },
+      {
+        "frame": "split_rail",
+        "cell": [
+          34,
+          19
+        ],
+        "id": "broken_boardwalk_rail"
+      },
+      {
+        "frame": "handcart",
+        "cell": [
+          8,
+          32
+        ],
+        "id": "abandoned_garden_cart"
+      },
+      {
+        "frame": "bush",
+        "cell": [
+          4,
+          22
+        ],
+        "id": "wild_west_edge"
+      },
+      {
+        "frame": "bush",
+        "cell": [
+          55,
+          21
+        ],
+        "id": "wild_east_edge"
+      },
+      {
+        "frame": "deadfall",
+        "cell": [
+          30,
+          17
+        ],
+        "id": "sluice_blocking_deadfall"
+      }
+    ],
+    "state_props": [
+      {
+        "key": "orchard_channel",
+        "equals": "flowing",
+        "props": [
+          {
+            "frame": "reeds",
+            "cell": [
+              28,
+              16
+            ],
+            "id": "flowing_channel_reeds"
+          }
+        ],
+        "hide_ids": [
+          "sluice_blocking_deadfall"
+        ]
+      },
+      {
+        "key": "graft_marks_read",
+        "equals": "true",
+        "props": [
+          {
+            "frame": "herb_moonleaf",
+            "cell": [
+              44,
+              21
+            ],
+            "id": "graft_mark_herb"
+          }
+        ]
+      }
+    ],
+    "lighting_profile": "amber_morning",
+    "context_ground": {
+      "size_px": [
+        1280,
+        736
+      ],
+      "origin_px": [
+        -160,
+        -64
+      ],
+      "ground_family": "forest",
+      "purpose": "A1 source-backed capture-context forest beyond the 960x608 worksite bounds; decorative only, no collision or world extension"
+    }
+  },
+  "approach_clue": {
+    "object_id": "old_graft_marks",
+    "text": "Graft marks: follow flowing water to read the orchard route; depth unknown.",
+    "presentation": "scene feedback only when owner projection permits read_water_marks; no item grant",
+    "local_px": [
+      88,
+      84
+    ]
+  }
+}
