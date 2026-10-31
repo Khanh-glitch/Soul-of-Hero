@@ -4,7 +4,7 @@ extends SceneTree
 const OUT := "res://artifacts/arcana20-a16-source"
 func _initialize() -> void:
     DirAccess.make_dir_recursive_absolute(OUT)
-    for tick in [90, 180, 270]:
+    for tick in [90, 180, 270, 324, 378, 450, 479]:
         var source := AWorldseedGrowth.new()
         source.use_c_material = false
         source.setup()

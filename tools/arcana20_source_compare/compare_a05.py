@@ -4,7 +4,8 @@ import json, pathlib, struct, sys
 from PIL import Image
 root = pathlib.Path(sys.argv[1]); label=sys.argv[2] if len(sys.argv)>2 else 'A05'; w,h=416,234
 results=[]
-for tick in (90,180,270):
+ticks=(90,180,270,324,378,450,479) if label=='A16' else (90,180,270)
+for tick in ticks:
     a=(root/f'original_{tick}.rgba8').read_bytes()
     b=(root/f'native_{tick}.rgba8').read_bytes()
     if len(a)!=w*h*4 or len(b)!=len(a): raise SystemExit('unexpected frame bytes')

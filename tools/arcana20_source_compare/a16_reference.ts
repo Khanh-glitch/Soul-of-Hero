@@ -14,7 +14,7 @@ class ImageDataShim {
 const out = process.argv[2];
 if (!out) throw new Error('output directory required');
 mkdirSync(out, { recursive: true });
-for (const tick of [90, 180, 270]) {
+for (const tick of [90, 180, 270, 324, 378, 450, 479]) {
   const fb = new Framebuffer(416, 234);
   const source = new Worldseed();
   for (let i = 1; i <= tick; i++) source.update(1 / 60, i / 60);
