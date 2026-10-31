@@ -220,9 +220,30 @@ func _journey_orchard(choice_action: String, expected_channel: String, cross_ope
 		await _press_key(KEY_W)
 		await _press_key(KEY_Y)
 		await _settle()
+		var graft_attempt := _snapshot()
+		var graft_hero := _hero()
+		var graft_position := graft_hero.global_position if graft_hero != null else Vector2.ZERO
+		var graft_facing: Vector2 = (
+			graft_hero.call("get_facing_direction")
+			if graft_hero != null and graft_hero.has_method("get_facing_direction")
+			else Vector2.ZERO
+		)
+		var graft_diagnostic := (
+			"position=%s facing=%s stand_delta=%.2f socket_delta=%.2f feedback=%s"
+			% [
+				str(graft_position),
+				str(graft_facing),
+				graft_position.distance_to(Vector2(510.0, 370.0)),
+				graft_position.distance_to(Vector2(510.0, 292.0)),
+				str(graft_attempt.get("feedback", "")),
+			]
+		)
 		_check(
-			bool(_snapshot().get("site_state", {}).get("graft_marks_read", false)),
-			"owner-ready graft-mark action commits through the physical action socket"
+			bool(graft_attempt.get("site_state", {}).get("graft_marks_read", false)),
+			(
+				"owner-ready graft-mark action commits through the physical action socket; "
+				+ graft_diagnostic
+			)
 		)
 		_check(
 			_has_visual_prop("graft_mark_herb"),
@@ -847,27 +868,15 @@ func _walk_axis_to(action: String, keycode: Key, coordinate: float) -> bool:
 				str(_last_axis_collided),
 			]
 		)
-		var input_format := (
-			"input=%s velocity=%s actor_input=%s state=%s current_action=%s keys_wasd=%s/%s/%s/%s "
-			+ "site_state=%s colliders=%s"
-		)
-		var input_result := (
-			input_format
+		var context_result := (
+			"input=%s site_state=%s colliders=%s"
 			% [
 				str(Input.get_vector("move_left", "move_right", "move_up", "move_down")),
-				str(hero.velocity),
-				str(hero.get("move_input")),
-				str(hero.get("player_state")),
-				str(hero.get("current_action")),
-				str(Input.is_physical_key_pressed(KEY_W)),
-				str(Input.is_physical_key_pressed(KEY_A)),
-				str(Input.is_physical_key_pressed(KEY_S)),
-				str(Input.is_physical_key_pressed(KEY_D)),
 				str(_snapshot().get("site_state", {})),
 				str(observed_colliders),
 			]
 		)
-		print(axis_result + input_result)
+		print(axis_result + context_result)
 	_check(
 		hero.global_position.distance_to(starting_position) > 0.5 or _last_axis_collided,
 		"keyboard movement or collision is observed on %s" % action
