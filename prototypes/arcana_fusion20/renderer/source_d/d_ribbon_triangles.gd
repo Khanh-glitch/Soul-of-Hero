@@ -131,10 +131,10 @@ static func _draw_triangle(fx: Variant, v0: Dictionary, v1: Dictionary, v2: Dict
                 cg += 0.97 * bump * (1.2 - d) * 1.5
                 cb += 0.9 * bump * (1.2 - d) * 1.5
                 alpha = maxf(alpha, bump * (1.0 - d * 0.6))
-            var al := ca * alpha
             if clip_source:
-                al = clampf(al, 0.0, 1.0)
-                cr = clampf(cr, 0.0, 1.0)
-                cg = clampf(cg, 0.0, 1.0)
-                cb = clampf(cb, 0.0, 1.0)
-            fx._add_px(x, y, cr * al, cg * al, cb * al)
+                var al := clampf(ca * alpha, 0.0, 1.0)
+                fx._add_px(x, y, clampf(cr, 0.0, 1.0) * al, clampf(cg, 0.0, 1.0) * al, clampf(cb, 0.0, 1.0) * al)
+            else:
+                # Preserve the prior multiplication order until transfer is
+                # validated against the source and deliberately enabled.
+                fx._add_px(x, y, cr * ca * alpha, cg * ca * alpha, cb * ca * alpha)
