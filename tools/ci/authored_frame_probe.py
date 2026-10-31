@@ -21,9 +21,9 @@ import sys
 from PIL import Image
 
 CHUNK = 2800          # base64 characters per notice (GitHub caps notice length)
-CROP_CAP = 4          # chunks a single window may use
-BUDGET = 8            # chunks across all windows
-NOTICE_CAP = 5        # notices this step may spend
+CROP_CAP = 5          # chunks a single window may use
+BUDGET = 9            # chunks across all windows
+NOTICE_CAP = 9        # notices this step may spend
 
 root = pathlib.Path("artifacts")
 source = root / "visual_authored_spawn_1280x720.png"
