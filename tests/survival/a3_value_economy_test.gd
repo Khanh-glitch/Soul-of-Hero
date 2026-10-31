@@ -461,6 +461,10 @@ func _test_tool_condition() -> void:
 	var tool := _give_instance("iron_pick", "r13:tool:wear", 20)
 	a3.authenticate_source(_receipt_for(SOURCE_TIMBER))
 	a3.authenticate_source(_receipt_for(SOURCE_ONE_TIME))
+	## Authentication is proven separately; this group is about the TOOL gate, so
+	## the third source must be authenticated or harvest would stop earlier with
+	## SOURCE_NOT_AUTHENTICATED and the tool check would never be reached.
+	a3.authenticate_source(_receipt_for(SOURCE_NOTES))
 	var first: Dictionary = a3.harvest(SOURCE_ONE_TIME, tool, _receipt_for(SOURCE_ONE_TIME))
 	_expect(bool(first.get("ok", false)), "claim with a low-condition tool succeeds")
 	_expect_equal(int(first.get("tool_condition_remaining", -1)), 0, "tool condition reaches zero")
