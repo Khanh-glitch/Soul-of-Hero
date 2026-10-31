@@ -214,6 +214,11 @@ def native_hazard_cell(builder: compiler.RuntimeBuilder) -> tuple[int, int]:
 def test_measured_native_budget_uses_real_probe_and_full_work(native_inputs: dict) -> None:
     work = budget.planned_work(native_inputs)
     assert work["drive_cells"] > 2500
+    assert work["drive_segments"] == 37
+    assert work["expected_block_frames"] == 180
+    labels = budget.planned_journey_labels(native_inputs)
+    assert len(labels) == len(set(labels)) == 37
+    assert "reloaded dynamic detour physical return" in labels
     assert work["captures"] == 69
     probe = {
         "budget_probe": True, "ok": True, "abort": False, "elapsed_seconds": 20.0,

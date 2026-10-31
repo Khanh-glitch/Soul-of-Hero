@@ -87,7 +87,7 @@ The stream mounts only real chunk IDs intersecting the supplied rect plus the He
 stream.apply_structure(cell, "walk", 0, expected_base, revision, structure_id)
 ```
 
-It requires non-preserved `build_permission=1`, `walk=1`, `hazard=0`, a matching expected base and a newer revision. The fixture creates a visible `fence_h` and matching full-cell body. A stale revision is refused. The native test reconstructs reader/stream from a plain descriptor and drives a real detour and return.
+It requires non-preserved `build_permission=1`, `walk=1`, `hazard=0`, a matching expected base and a newer revision. The fixture creates a visible `fence_h` and matching full-cell body. A stale revision is refused. The native test reconstructs reader/stream from a plain descriptor, remounts the structure's chunk, repeats the real-Knight physical refusal after reload, captures the visible structure, and drives a real detour and return.
 
 This is **not SaveService**, A0 build validation, construction cost, inventory, health, or production persistence. `temporal_context(world_time_seconds, run_elapsed_seconds)` is pure: identical inputs produce identical online/offline context, and the 336-hour boundary never changes master geography. Production 2PID/save/reset/Ragnarok behavior remains `NOT_TESTED`.
 
@@ -95,7 +95,7 @@ This is **not SaveService**, A0 build validation, construction cost, inventory, 
 
 The isolated driver uses the real A0-comparable Knight scene, 12×16 body, 96/900/1100 movement constants and stand camera. It drives inset → existing roadside salvage → exact Quarry/Orchard/Mill outer approaches → inset, with no within-route teleport. It separately proves dynamic baseline/block/reload/detour and two warned hazard retreats. A8 interiors, interactions, rewards, damage and production mounting are not executed.
 
-Captures come from the live source stream at **1280×720, 2560×1440 and 3840×2160**, across all 11 regions, with paired day/night views. Hazard probe stands are labelled with their required preparation and are not called safe spawns. Pillow sheets remain supplementary only.
+Captures come from the live source stream at **1280×720, 2560×1440 and 3840×2160**, across all 11 regions, with paired day/night views. Hazard probe stands are labelled with their required preparation and are not called safe spawns. Pillow sheets remain supplementary only. Capture filenames are artifact-portable even when a logical day/night pair ID contains `:`. The automated nonblank check rejects solid/two-tone samples; it does not score art richness or grant visual acceptance.
 
 CI first runs a 64-cell **budget probe** with 720p/1440p/2160p captures plus one explicit single-resolution 720p branch capture. The full process will not launch unless a measured, margined timeout fits the 1,800-second cap. A probe is always `NATIVE_FIXTURE_PASS=NOT_TESTED`; any Godot `SCRIPT ERROR` fails the job even if later assertions continue.
 

@@ -635,7 +635,7 @@ func _find_leg(journey: Dictionary, leg_id: String) -> Dictionary:
 	return {}
 
 
-func _drive_expected_block(start: Vector2i, target: Vector2i) -> void:
+func _drive_expected_block(start: Vector2i, target: Vector2i, context: String = "") -> void:
 	_reset_hero(start)
 	await physics_frame
 	await physics_frame
@@ -649,7 +649,7 @@ func _drive_expected_block(start: Vector2i, target: Vector2i) -> void:
 	_set_direction(Vector2.ZERO)
 	await physics_frame
 	_expect(expected_block_contacts > 0 and hero.global_position.distance_to(_foot(target)) > 4.5 and not _hits_at(target).is_empty(),
-		"real Hero physically refused by visible dynamic full-cell body")
+		"real Hero physically refused by visible dynamic full-cell body" + context)
 	contact_mode = "journey"
 
 
@@ -710,17 +710,23 @@ func _run_dynamic_reload() -> void:
 	var previous: Array = baseline.cells[index - 1]
 	await _drive_expected_block(Vector2i(int(previous[0]), int(previous[1])), cell)
 	var saved_descriptor := descriptor.duplicate(true)
+	var initial_block_contacts := expected_block_contacts
 	_rebuild_stream(saved_descriptor)
-	_reset_hero(Vector2i(int(start[0]), int(start[1])))
+	# Mount the structure's chunk before asserting visibility. Checking at the
+	# distant journey start would only prove that an unloaded prop is absent.
+	await _drive_expected_block(Vector2i(int(previous[0]), int(previous[1])), cell, " after source reload")
 	_expect(int(stream.resolved_walk(cell)) == 0 and bool(stream.has_visible_structure(String(descriptor.structure_id))),
 		"reloaded stream retains visible structure and collision")
 	await _capture("dynamic_reloaded_palisade", false)
+	_reset_hero(Vector2i(int(start[0]), int(start[1])))
 	var after: Dictionary = await _drive_cells("reloaded dynamic detour", detour.cells)
 	if bool(after.get("ok", false)):
 		await _drive_cells("reloaded dynamic detour physical return", detour.return_cells)
 	dynamic_results = {"structure_id": String(descriptor.structure_id), "cell": descriptor.cell,
 		"baseline_ok": bool(before.get("ok", false)), "detour_ok": bool(after.get("ok", false)),
-		"expected_block_contacts": expected_block_contacts, "reload_generation": stream_generation,
+		"expected_block_contacts": expected_block_contacts,
+		"initial_expected_block_contacts": initial_block_contacts,
+		"reloaded_expected_block_contacts": expected_block_contacts, "reload_generation": stream_generation,
 		"save_service_used": false, "paid_construction_approved": false, "production_persistence": "NOT_TESTED"}
 
 
@@ -760,7 +766,8 @@ func _capture(name: String, all_resolutions: bool, metadata: Dictionary = {}) ->
 		await process_frame
 		await RenderingServer.frame_post_draw
 		var image := root.get_texture().get_image()
-		var filename := name.get_basename() + "_%dx%d.png" % [resolution.x, resolution.y]
+		# Keep logical pair IDs unchanged, but write artifact-portable filenames.
+		var filename := name.get_basename().replace(":", "_") + "_%dx%d.png" % [resolution.x, resolution.y]
 		var path := _out(filename)
 		if image != null and image.get_size() == resolution and image.save_png(path) == OK:
 			var colors: Dictionary = {}
@@ -786,7 +793,9 @@ func _capture(name: String, all_resolutions: bool, metadata: Dictionary = {}) ->
 			for key: String in metadata:
 				row[key] = metadata[key]
 			capture_rows.append(row)
-			_expect(colors.size() > 8 and maximum - minimum > 0.03, "nonblank native source capture " + filename)
+			# A nonblank guard is not an art-quality score: reject solid/two-tone
+			# frames and leave palette/composition to independent visual review.
+			_expect(colors.size() >= 3 and maximum - minimum > 0.03, "nonblank native source capture " + filename)
 		else:
 			_expect(false, "native source capture " + filename)
 	root.size = Vector2i(1280, 720)

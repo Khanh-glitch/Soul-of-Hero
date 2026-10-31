@@ -12,6 +12,26 @@ import math
 from pathlib import Path
 
 
+def planned_journey_labels(inputs: dict) -> list[str]:
+    """Enumerate every physical segment; never substitute a hard-coded count."""
+    labels: list[str] = []
+    for case in inputs["spawn_safety"]["cases"]:
+        if case["native_drive"]:
+            seed = int(case["seed"])
+            labels.extend([f"spawn seed {seed} to road rally", f"spawn seed {seed} road rally return"])
+    labels.extend("primary " + leg["leg_id"] for leg in inputs["primary_journey"]["legs"])
+    labels.extend([
+        "dynamic baseline passage", "dynamic baseline physical return",
+        "reloaded dynamic detour", "reloaded dynamic detour physical return",
+    ])
+    for probe in inputs["hazard_probes"]:
+        labels.extend([
+            "warned hazard approach " + probe["hazard_id"],
+            "hazard physical retreat " + probe["hazard_id"],
+        ])
+    return labels
+
+
 def planned_work(inputs: dict, resolutions: int = 3) -> dict:
     spawn_cells = sum(len(c["forward_cells"]) + len(c["return_cells"])
                       for c in inputs["spawn_safety"]["cases"] if c["native_drive"])
@@ -30,7 +50,9 @@ def planned_work(inputs: dict, resolutions: int = 3) -> dict:
         "spawn_cells": spawn_cells, "primary_cells": primary_cells,
         "dynamic_cells": dynamic_cells, "hazard_cells": hazard_cells,
         "drive_cells": spawn_cells + primary_cells + dynamic_cells + hazard_cells,
-        "expected_block_frames": 90, "visual_captures": visual_captures,
+        "drive_segments": len(planned_journey_labels(inputs)),
+        # The real Hero must refuse the dynamic body both before and after reload.
+        "expected_block_frames": 180, "visual_captures": visual_captures,
         "visual_preparations": len(inputs["visual_views"]), "journey_captures": journey_captures,
         "captures": visual_captures + journey_captures,
         "reader_stream_constructions": 3,
