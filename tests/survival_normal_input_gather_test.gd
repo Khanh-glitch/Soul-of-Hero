@@ -302,6 +302,46 @@ func _click_window(position: Vector2) -> void:
 ## The panel joins the target and the status word with its own separator ("weave
 ## cloth · ready 12/12"), so a gate must match the words, not one owner's
 ## punctuation: the recipe must be this target and the status must be ready.
+## Open the economy panel the way a player does - press until it is on screen. A
+## blind toggle at a panel that is already open closes it, which is how a real
+## recipe list can be read as "missing".
+func _close_panel(panel: Node) -> bool:
+	for _i: int in range(3):
+		if not bool(panel.call(&"is_open")):
+			return true
+		await _tap_action(&"economy_toggle")
+		await process_frame
+	return not bool(panel.call(&"is_open"))
+
+
+func _open_panel(panel: Node) -> bool:
+	for _i: int in range(3):
+		if bool(panel.call(&"is_open")):
+			return true
+		await _tap_action(&"economy_toggle")
+		await process_frame
+	return bool(panel.call(&"is_open"))
+
+
+## Print what the panel and the session actually contain when a row is missing, so
+## the failure is a fact rather than a guess.
+func _dump_panel(panel: Node, ow: Node, station_id: String) -> void:
+	var session: Node = ow.get(&"economy_session")
+	var rows: Array[String] = []
+	for value: Node in panel.find_children("*", "Button", true, false):
+		rows.append(String(value.name))
+	var stations: Array[String] = []
+	for entry: Variant in (session.call(&"nearby_stations") as Array):
+		var station: Dictionary = entry
+		stations.append("%s:%s:t%d" % [String(station.get("station_id", "")),
+			String(station.get("kind", "")), int(station.get("tier", 0))])
+	var recipes: Array[String] = []
+	for entry: Variant in (session.call(&"available_recipes", station_id) as Array):
+		recipes.append(String((entry as Dictionary).get("id", "")))
+	print("A0_GATHER_PANEL open=%s station=%s recipes=%s stations=%s buttons=%s" % [
+		str(bool(panel.call(&"is_open"))), station_id, str(recipes), str(stations), str(rows.slice(0, 20))])
+
+
 ## Walk up to a structure the player just built, with ordinary directional input,
 ## until the product's own station policy says it is in reach. A player who placed a
 ## bench three cells away has to walk to it; nothing here moves the body.
@@ -490,15 +530,8 @@ func _body() -> void:
 				await create_timer(0.3).timeout
 			await _click_window(root.get_final_transform() * (root.get_visible_rect().size * 0.5))
 	_expect(_count("reed_fibre") == fibre_before + 3, "ordinary world clicks collect the workbench's reed inputs")
-	var toggle := InputEventAction.new()
-	toggle.action = &"economy_toggle"
-	toggle.pressed = true
-	Input.parse_input_event(toggle)
-	await process_frame
-	toggle.pressed = false
-	Input.parse_input_event(toggle)
-	await process_frame
 	var panel: Node = ow.get(&"economy_panel")
+	_expect(await _open_panel(panel), "ordinary C action opens the economy panel")
 	var recipe_button := panel.find_child("Recipe_workbench_kit_hand", true, false) as Button
 	_expect(recipe_button != null and recipe_button.is_visible_in_tree(), "ordinary C action exposes the starter kit")
 	if recipe_button == null or not recipe_button.is_visible_in_tree():
@@ -524,12 +557,7 @@ func _body() -> void:
 	if job_id.is_empty():
 		_body_complete = true
 		return
-	toggle.pressed = true
-	Input.parse_input_event(toggle)
-	await process_frame
-	toggle.pressed = false
-	Input.parse_input_event(toggle)
-	await process_frame
+	await _close_panel(panel)
 	_expect(not bool(panel.call(&"is_open")), "ordinary C action closes the panel to resume active work")
 	if bool(panel.call(&"is_open")):
 		_body_complete = true
@@ -543,7 +571,7 @@ func _body() -> void:
 	if String(job.get("status", "")) != "ready":
 		_body_complete = true
 		return
-	await _tap_action(&"economy_toggle")
+	await _open_panel(panel)
 	var collect_button: Button = null
 	for value: Node in panel.find_children("*", "Button", true, false):
 		if (value as Button).text.to_lower() == "collect":
@@ -605,8 +633,10 @@ func _body() -> void:
 		_body_complete = true
 		return
 	_expect(await _stand_by(ow, hero, station_id), "ordinary movement brings the player to the bench it built")
-	await _tap_action(&"economy_toggle")
+	await _open_panel(panel)
 	var weave_button := panel.find_child("Recipe_weave_cloth_%s" % station_id, true, false) as Button
+	if weave_button == null:
+		_dump_panel(panel, ow, station_id)
 	var weave_scroll := _owning_scroll(weave_button)
 	_expect(weave_button != null and weave_scroll != null, "nearby paid bench exposes its real weave recipe inside its scroll owner")
 	if weave_button == null or weave_scroll == null:
@@ -627,7 +657,7 @@ func _body() -> void:
 	if weave_id.is_empty():
 		_body_complete = true
 		return
-	await _tap_action(&"economy_toggle")
+	await _close_panel(panel)
 	var weave_deadline := Time.get_ticks_msec() + 30000
 	var weave_job: Dictionary = (host.call(&"jobs") as Dictionary).get(weave_id, {})
 	while Time.get_ticks_msec() < weave_deadline and String(weave_job.get("status", "")) != "ready":
@@ -637,7 +667,7 @@ func _body() -> void:
 	if String(weave_job.get("status", "")) != "ready":
 		_body_complete = true
 		return
-	await _tap_action(&"economy_toggle")
+	await _open_panel(panel)
 	var output_button: Button = null
 	for value: Node in panel.find_children("*", "Button", true, false):
 		var candidate := value as Button

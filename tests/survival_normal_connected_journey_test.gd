@@ -610,7 +610,7 @@ func _dump_panel(panel: Node, host: Node, station_id: String) -> void:
 			String(station.get("kind", "")), int(station.get("tier", 0))])
 	print("A0_CONNECTED_PANEL open=%s station=%s anchor_ok=%s recipes=%s stations=%s buttons=%s" % [
 		str(bool(panel.call(&"is_open"))), station_id,
-		str(bool(host.call(&"station_in_reach", station_id, host.call(&"get_node_or_null", NodePath("/root/__none"))))),
+		str(host.call(&"station_in_reach", station_id, (panel.get_parent() as Node).get(&"survival_build").call(&"structure_node", station_id))),
 		str(recipes), str(stations), str(rows.slice(0, 24))])
 
 
