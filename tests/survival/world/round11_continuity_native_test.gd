@@ -645,7 +645,7 @@ func _run_spawn_matrix() -> void:
 		await physics_frame
 		var clear := _hits_at(cell).is_empty() and int(case.source.walk) == 1 and int(case.source.hazard) == 0
 		_expect(clear, "deterministic safe spawn seed %d at %s" % [int(case.seed), str(case.spawn_cell)])
-		var forward := await _drive_cells("spawn seed %d to regional rally" % int(case.seed), case.forward_cells)
+		var forward: Dictionary = await _drive_cells("spawn seed %d to regional rally" % int(case.seed), case.forward_cells)
 		var returned: Dictionary = {"ok": false}
 		if bool(forward.get("ok", false)):
 			returned = await _drive_cells("spawn seed %d physical rally return" % int(case.seed), case.return_cells)
@@ -661,7 +661,7 @@ func _run_spawn_matrix() -> void:
 		var start: Array = link.forward_cells[0]
 		_reset_hero(Vector2i(int(start[0]), int(start[1])))
 		await physics_frame
-		var forward := await _drive_cells("safe region home link " + String(link.zone_id), link.forward_cells)
+		var forward: Dictionary = await _drive_cells("safe region home link " + String(link.zone_id), link.forward_cells)
 		if bool(forward.get("ok", false)):
 			await _drive_cells("safe region home link physical return " + String(link.zone_id), link.return_cells)
 		if abort:
@@ -681,7 +681,7 @@ func _run_expeditions() -> void:
 	_expect(not trial_bodies.has("a8_deep_chest_south_quarry_01"), "days1-11 expedition has no future chest body")
 	for raw: Variant in inputs.ordinary_expedition.legs:
 		var leg: Dictionary = raw
-		var result := await _drive_cells("ordinary " + String(leg.leg_id), leg.cells)
+		var result: Dictionary = await _drive_cells("ordinary " + String(leg.leg_id), leg.cells)
 		if not bool(result.get("ok", false)):
 			abort = true
 			return
@@ -703,7 +703,7 @@ func _run_expeditions() -> void:
 	_expect(trial_bodies.has(String(chest.proposal_id)) and not bool(chest.interaction_enabled), "last72 chest is physical but sealed/non-interactive")
 	for raw: Variant in inputs.last72_expedition.legs:
 		var leg: Dictionary = raw
-		var result := await _drive_cells("last72 " + String(leg.leg_id), leg.cells)
+		var result: Dictionary = await _drive_cells("last72 " + String(leg.leg_id), leg.cells)
 		if not bool(result.get("ok", false)):
 			abort = true
 			return
@@ -735,15 +735,15 @@ func _run_hazard_probes() -> void:
 		capability_context.clear()
 		_reset_hero(Vector2i(int(probe.safe_cell[0]), int(probe.safe_cell[1])))
 		await physics_frame
-		var before := hero.health
-		var forward := await _drive_cells("hazard enter " + String(probe.hazard_id), probe.forward_cells)
+		var before: int = int(hero.health)
+		var forward: Dictionary = await _drive_cells("hazard enter " + String(probe.hazard_id), probe.forward_cells)
 		var active := _field_at_hero()
 		_expect(bool(forward.get("ok", false)) and String(active.get("hazard_id", "")) == String(probe.hazard_id), "real hazard field active inside " + String(probe.hazard_id))
 		if String(probe.hazard_id) == "hz_crown_heat":
 			await _capture("hazard_heat_edge")
 		else:
 			await _capture("hazard_cold_edge")
-		var returned := await _drive_cells("hazard safe retreat " + String(probe.hazard_id), probe.return_cells)
+		var returned: Dictionary = await _drive_cells("hazard safe retreat " + String(probe.hazard_id), probe.return_cells)
 		var cleared := _field_at_hero()
 		_expect(bool(returned.get("ok", false)) and String(cleared.get("hazard_id", "")).is_empty() and hero.health == before, "safe retreat clears geographic exposure without A0 health mutation " + String(probe.hazard_id))
 		capability_context.append(String(probe.required_capability))
@@ -770,11 +770,11 @@ func _run_endpoint_source_cases() -> void:
 		var goal := Vector2i(int(case.stand_cell[0]), int(case.stand_cell[1]))
 		var path := _live_path(start, goal, bounds)
 		_expect(not path.is_empty() and _has_diagonal(path), "diagonal live-shape approach exists " + endpoint_id)
-		var forward := await _drive_cells("endpoint diagonal approach " + endpoint_id, path)
+		var forward: Dictionary = await _drive_cells("endpoint diagonal approach " + endpoint_id, path)
 		_expect(bool(forward.get("ok", false)) and _endpoint_distance(Vector2i(int(case.socket_cell[0]), int(case.socket_cell[1]))) <= 62.0, "endpoint diagonal stand remains in 62px radius " + endpoint_id)
 		_expect(hero.test_move(hero.global_transform, Vector2(0, -12)), "endpoint body adverse north probe " + endpoint_id)
 		await _capture("endpoint_" + endpoint_id.replace(".", "_"), true)
-		var returned := await _drive_cells("endpoint physical retreat " + endpoint_id, case.return_cells)
+		var returned: Dictionary = await _drive_cells("endpoint physical retreat " + endpoint_id, case.return_cells)
 		# Larger-body proxy is an explicit stress variant, not a change to A0 Hero.
 		var body_shape := hero.get_node("BodyShape") as CollisionShape2D
 		var rectangle := body_shape.shape as RectangleShape2D
@@ -783,7 +783,7 @@ func _run_endpoint_source_cases() -> void:
 		await physics_frame
 		var large_path := _live_path(_cell_of(hero.global_position), goal, bounds)
 		_expect(not large_path.is_empty(), "20x24 larger-body path exists " + endpoint_id)
-		var large := await _drive_cells("endpoint 20x24 larger-body approach " + endpoint_id, large_path)
+		var large: Dictionary = await _drive_cells("endpoint 20x24 larger-body approach " + endpoint_id, large_path)
 		var large_return: Dictionary = {"ok": false}
 		if bool(large.get("ok", false)):
 			large_return = await _drive_cells("endpoint 20x24 larger-body retreat " + endpoint_id, _reverse_cells(large_path))
@@ -878,22 +878,22 @@ func _run_combined_waystation() -> void:
 	var shared := Vector2i(408, 207)
 	var path := _live_path(start, shared, bounds)
 	_expect(not path.is_empty(), "physical legacy/annex seam path exists with both machines")
-	var seam := await _drive_cells("combined static streaming-seam source composition", path)
+	var seam: Dictionary = await _drive_cells("combined static streaming-seam source composition", path)
 	_expect(bool(seam.get("ok", false)) and inputs.trial_endpoint_stress.combined.dynamic_streaming_claim == false, "static source seam crossed; dynamic production streaming not claimed")
 	await _capture("combined_waystation_seam")
 	var deposit := Vector2i(404, 204)
 	var vendor := Vector2i(412, 204)
 	var deposit_path := _live_path(shared, deposit, bounds)
-	var deposit_ok := await _drive_cells("combined diagonal deposit approach", deposit_path)
+	var deposit_ok: Dictionary = await _drive_cells("combined diagonal deposit approach", deposit_path)
 	_expect(bool(deposit_ok.get("ok", false)) and _endpoint_distance(Vector2i(404, 202)) <= 62.0, "combined deposit stand clear with vendor also mounted")
 	_expect(hero.test_move(hero.global_transform, Vector2(0, -12)), "combined deposit adverse north body probe")
 	await _capture("combined_deposit_and_vendor")
 	var vendor_path := _live_path(deposit, vendor, bounds)
-	var vendor_ok := await _drive_cells("combined diagonal vendor approach", vendor_path)
+	var vendor_ok: Dictionary = await _drive_cells("combined diagonal vendor approach", vendor_path)
 	_expect(bool(vendor_ok.get("ok", false)) and _endpoint_distance(Vector2i(412, 202)) <= 62.0, "combined vendor stand clear with deposit also mounted")
 	_expect(hero.test_move(hero.global_transform, Vector2(0, -12)), "combined vendor adverse north body probe")
 	await _capture("combined_vendor_and_deposit", true)
-	var returned := await _drive_cells("combined physical seam retreat", _live_path(vendor, start, bounds))
+	var returned: Dictionary = await _drive_cells("combined physical seam retreat", _live_path(vendor, start, bounds))
 	_expect(bool(returned.get("ok", false)), "combined deposit+vendor route physically retreats across seam")
 	# Larger Hero stress uses the same body offset/camera and both 28x28 machines.
 	var body_shape := hero.get_node("BodyShape") as CollisionShape2D
@@ -903,7 +903,7 @@ func _run_combined_waystation() -> void:
 	await physics_frame
 	var large_path := _live_path(shared, vendor, bounds)
 	_expect(not large_path.is_empty() and _has_diagonal(large_path), "combined 20x24 diagonal path with both machines")
-	var large := await _drive_cells("combined 20x24 larger-body approach", large_path)
+	var large: Dictionary = await _drive_cells("combined 20x24 larger-body approach", large_path)
 	var large_return: Dictionary = {"ok": false}
 	if bool(large.get("ok", false)):
 		large_return = await _drive_cells("combined 20x24 larger-body retreat", _reverse_cells(large_path))
@@ -929,7 +929,7 @@ func _run_combined_waystation() -> void:
 	_expect(hero.test_move(hero.global_transform, Vector2(0, -48)), "crowd proxy blocks direct central approach (adverse non-vacuity)")
 	contact_mode = "journey"
 	var crowd_path := _live_path(shared, vendor, bounds)
-	var crowd_ok := await _drive_cells("combined crowd alternate route", crowd_path)
+	var crowd_ok: Dictionary = await _drive_cells("combined crowd alternate route", crowd_path)
 	_expect(not crowd_path.is_empty() and bool(crowd_ok.get("ok", false)), "crowd occupancy preserves an alternate physical vendor approach")
 	for body: StaticBody2D in crowd_bodies:
 		body.queue_free()
@@ -944,7 +944,7 @@ func _run_combined_waystation() -> void:
 	layer.add_child(overlay)
 	root.add_child(layer)
 	var overlay_path := _live_path(vendor, deposit, bounds)
-	var overlay_ok := await _drive_cells("combined noninteractive overlay approach", overlay_path)
+	var overlay_ok: Dictionary = await _drive_cells("combined noninteractive overlay approach", overlay_path)
 	_expect(bool(overlay_ok.get("ok", false)) and overlay.mouse_filter == Control.MOUSE_FILTER_IGNORE, "screen overlay does not block physical endpoint approach")
 	layer.queue_free()
 	endpoint_results.append({"endpoint_id": "combined.deposit+vendor", "seam_ok": seam.get("ok", false),
