@@ -60,7 +60,7 @@ func _update_camera_basis() -> void:
     _material.set_shader_parameter("screen_dy", transform.y)
 
 func _set_texture(key: String, image: Image) -> ImageTexture:
-    if not _textures.has(key) or (_textures[key] as ImageTexture).get_size() != image.get_size():
+    if not _textures.has(key) or Vector2i((_textures[key] as ImageTexture).get_width(), (_textures[key] as ImageTexture).get_height()) != image.get_size():
         _textures[key] = ImageTexture.create_from_image(image)
     else:
         var tex: ImageTexture = _textures[key]
