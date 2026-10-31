@@ -76,6 +76,26 @@ static func style_scroll(scroll: ScrollContainer, width := 9) -> void:
 	var bar := scroll.get_v_scroll_bar()
 	if bar == null:
 		return
+	# A ScrollContainer always reserves its bar inside its own rect, and its stylebox
+	# paints behind both, so the grabber lands on the window's parchment border. The bar
+	# becomes a sibling column instead: the list scrolls, the bar sits in a gutter of its
+	# own and does not touch the frame.
+	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER
+	if scroll.get_parent() is VBoxContainer:
+		var column := scroll.get_parent() as VBoxContainer
+		var gutter := HBoxContainer.new()
+		gutter.name = "ScrollGutter"
+		gutter.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		gutter.add_theme_constant_override("separation", 2)
+		var index := scroll.get_index()
+		column.remove_child(scroll)
+		column.add_child(gutter)
+		column.move_child(gutter, index)
+		gutter.add_child(scroll)
+		scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		gutter.add_child(bar)
+		bar.custom_minimum_size = Vector2(float(width), 0.0)
+		bar.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	bar.custom_minimum_size.x = float(width)
 	# A wide, quiet track that the grabber sits on.
 	var track := StyleBoxFlat.new()

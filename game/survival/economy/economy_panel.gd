@@ -27,7 +27,6 @@ const STATION_ICONS := {
 var _host: Node
 var _root: Control
 var _list: VBoxContainer
-var _scroll: ScrollContainer
 var _notice: Label
 var _pack_label: Label
 
@@ -102,14 +101,10 @@ func _ready() -> void:
 	# The default grey engine bar on parchment reads as a rendering fault at 1x.
 	A6UiKit.style_scroll(scroll)
 	column.add_child(scroll)
-	_scroll = scroll
 	_list = VBoxContainer.new()
 	_list.name = "Jobs"
 	_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_list.add_theme_constant_override("separation", 3)
-	# Rows are added and removed on every refresh; refit whenever the list's size floor
-	# changes so the viewport never ends mid-card.
-	_list.minimum_size_changed.connect(func() -> void: _fit_list_to_whole_rows.call_deferred())
 	scroll.add_child(_list)
 
 	var footer := A6UiKit.label("Việc đang chạy chỉ tiến triển khi bảng này đóng.", "caption", 9)
@@ -223,65 +218,11 @@ func _refresh() -> void:
 		if String(station.get("kind", "")) == "research":
 			_add_technologies(station, owned)
 	_add_running_jobs(jobs)
-	# Cards are all one height, so the viewport can be trimmed to a whole number of
-	# them. Without this the last visible card is sliced through its ingredient chips
-	# by the clip edge, which reads as a rendering bug rather than as "scroll for more".
-	_fit_list_to_whole_rows.call_deferred()
 
 
 ## The two cards whose spacing IS the row pitch. The list starts with a station
 ## header, which is shorter than a recipe card; measuring from child 0 therefore
 ## produced the header pitch and trimmed to a height that still sliced a card.
-func _card_pair() -> Array[Control]:
-	var cards: Array[Control] = []
-	if _list == null:
-		return cards
-	for child: Node in _list.get_children():
-		if String(child.name).begins_with("Row_"):
-			var control := child as Control
-			if control != null:
-				cards.append(control)
-		if cards.size() == 2:
-			break
-	return cards
-
-
-func _pitch_is_measurable() -> bool:
-	var cards := _card_pair()
-	if cards.size() < 2:
-		return false
-	return cards[1].position.y - cards[0].position.y > 1.0
-
-
-## Trim the scroll viewport to whole recipe cards. Runs one frame later because the
-## card pitch is only known once the list has been laid out; when the panel is closed
-## the sizes are zero and this leaves the previous height alone.
-func _fit_list_to_whole_rows() -> void:
-	# A `call_deferred` lands before the new children have been laid out, so their
-	# positions are all 0 and the pitch reads as zero. Wait for the layout to settle,
-	# then measure; two frames is the floor VBoxContainer needs after an insert.
-	for _attempt in range(3):
-		await get_tree().process_frame
-		if _pitch_is_measurable():
-			break
-	if _scroll == null or _list == null or not is_instance_valid(_scroll):
-		return
-	if not is_open() or _list.get_child_count() < 2:
-		return
-	var cards := _card_pair()
-	if cards.size() < 2:
-		return
-	var pitch := cards[1].position.y - cards[0].position.y
-	var available := _scroll.size.y
-	if pitch <= 1.0 or available <= pitch:
-		return
-	var fitted := floorf(available / pitch) * pitch
-	if absf(_scroll.custom_minimum_size.y - fitted) < 0.5:
-		return
-	_scroll.custom_minimum_size.y = fitted
-	_scroll.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-
-
 func _refresh_pack() -> void:
 	if _pack_label == null:
 		return
