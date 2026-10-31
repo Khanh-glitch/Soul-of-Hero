@@ -125,7 +125,8 @@ func source_pass_frame() -> Arcana20SourcePassFrame:
     result.variant = &"constellation"
     result.tick = _tick
     result.source_time = source_time()
-    result.seeds = PackedInt32Array([97, 600 + floori(source_time() * 30.0)])
+    var renderer_time := maxf(0.0001, source_time() - STEP + 0.0001)
+    result.seeds = PackedInt32Array([97, 600 + floori(source_time() * 30.0), int(renderer_time * 977.0)])
     result.source_size = Vector2i(DFx.W, DFx.H)
     var bx := Vector2(cos(_rot), sin(_rot)) * _scale
     var by := Vector2(-sin(_rot), cos(_rot)) * _scale

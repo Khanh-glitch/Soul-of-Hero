@@ -148,6 +148,8 @@ func source_pass_frame() -> Arcana20SourcePassFrame:
     result.variant = source_variant
     result.tick = _tick
     result.source_time = source_time()
+    if _spell.has_method("source_seeds"):
+        result.seeds = _spell.call("source_seeds")
     result.source_size = Vector2i(AFramebuffer.W, AFramebuffer.H)
     var bx := Vector2(cos(_rot), sin(_rot)) * _scale
     var by := Vector2(-sin(_rot), cos(_rot)) * _scale

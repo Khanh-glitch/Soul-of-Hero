@@ -39,6 +39,9 @@ func setup() -> void:
             "fail": false, "seed": rng.intf(0, 9999)})
         tt += rng.rangef(0.22, 0.42)
 
+func source_seeds() -> PackedInt32Array:
+    return PackedInt32Array([0x9c4a])
+
 func bind_targets(player: ASourcePlayer, target_world: Vector2) -> void:
     host = player
     actor_refs.clear()
