@@ -948,3 +948,50 @@ SOH world source parity and creator review remain separate.
   **41235364824 / 41235364821** were queued at this entry. CT coordination comment
   [6548112267](https://github.com/Khanh-glitch/Soul-of-Hero/pull/30#issuecomment-6548112267)
   reiterates open pre-HUD and confirmed-hit responsibilities. No acceptance.
+
+### 2026-11-01 — latest A0 route and D fixed-step work
+
+- PR21 advanced to `018316b78f3454362a889acc4e1db66422cdec6d`, a one-commit
+  change to the authored-world **tests** relative to `9eaa1936`. At AVFX
+  `8b1284a5b`, no-FX [41236090393](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41236090393)
+  and current-world JOIN [41236090345](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41236090345)
+  passed with the same **17 ObjectDB / 5 resources** shutdown baseline. At
+  AVFX `fb624344d`, the current 018 phase run
+  [41236342067](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41236342067)
+  restored **40/40** normal/dimmed casts; #16 aftermath at tick 538 still did
+  not change the image and catalog-late tick 606 had expired. This is not Gold,
+  full-world fidelity or creator approval.
+- 018 + AVFX `fb624344d` #02+#19 software-CI overlap
+  [41236341972](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41236341972)
+  post-draw p50/p95/p99 was **452/628/719**, **738/1013/1128**,
+  **915/1180/1296 ms** at 720p/2K/4K; +27 objects while live, 0 after
+  cancellation, HP **69→69**. D per-fixed-tick source simulation+raster p95
+  **61.5/89.5/87.9 ms**, synchronous submit p95 **33.2/40.2/38.0 ms**; no GPU
+  timing or target-device allocation rate is exposed. These are sampled
+  overlap frames, not a full-cast budget, and negative static-byte deltas are
+  not reliable allocation estimates.
+- `4f12dc017` elides only additive rasters cleared before another fixed step
+  and before any observable draw; all 60 Hz simulation, pool, persistent warp,
+  RNG, post metadata and event-bearing tick rasters still execute. Exact
+  eager-vs-elided D source [41236319267](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41236319267)
+  compared all 582 simulation ticks and 76 full RGB/influence/warp snapshots,
+  taking **43.731 s eager vs 8.047 s elided** on that same software host; the
+  test's synthetic 8-step pattern is not a real-time/device performance claim.
+  Actual batched `DSourcePlayer` [41236893663](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41236893663)
+  matched exact state, fields and synchronous callback snapshots through 588
+  ticks, all **8 events / 1 visual contact**, plus callback-cancel at tick 72
+  and restart at tick 1. `d403402aa` stops processing subsequent fixed ticks
+  when an event listener cancels. Source-quick
+  [41236893683](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41236893683)
+  and current-world JOIN [41236893691](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41236893691)
+  passed at that SHA, still with the shared shutdown baseline.
+- After elision, 018 + AVFX `4f12dc017` #02+#19 overlap
+  [41236544991](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41236544991)
+  post-draw p50/p95/p99 **371/461/505**, **498/581/619**, **726/813/846 ms**;
+  +27 live objects, 0 after cancel, HP **69→69**. D tick CPU p50/p95/p99
+  **0.608/90.0/128.2**, **0.599/79.9/114.9**, **0.607/81.7/114.5 ms**;
+  p50 includes elided steps, p95 includes rendered steps. Different shared
+  hosts preclude direct cross-run speedup claims; still far from real time.
+  D bloom/post/world fidelity, shader hash/coverage at star, local ribbon
+  errors and creator-approved OUT remain open. Coordination:
+  [6548364942](https://github.com/Khanh-glitch/Soul-of-Hero/pull/30#issuecomment-6548364942).
