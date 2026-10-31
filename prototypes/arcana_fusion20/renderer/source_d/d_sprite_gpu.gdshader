@@ -116,7 +116,7 @@ float shapeAlpha(int id, vec2 p, float seed, float hard, out float rim){
     float arms = 0.0;
     for(int i=0;i<3;i++){
       float an = PI*float(i)/3.0;
-      vec2 q = mat2(cos(an), -sin(an), sin(an), cos(an)) * p;
+      vec2 q = mat2(vec2(cos(an), -sin(an)), vec2(sin(an), cos(an))) * p;
       arms = max(arms, 1.0 - (length(vec2(q.x*6.0, q.y*0.9)) - 0.85));
     }
     a = clamp(arms, 0.0, 1.0); a = smoothstep(0.1, 0.7, a);
