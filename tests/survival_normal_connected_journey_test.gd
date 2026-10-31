@@ -629,16 +629,25 @@ func _scroll_recipe(panel: Node, button: Button) -> Button:
 		_scroll_reason = "row_absent"
 		return null
 	var row_name := String(button.name)
-	# Two frames: the panel rebuilds its list on the toggle's frame and only then
-	# does the wrapped layout know how tall each row is.
 	await process_frame
 	await process_frame
-	var is_open := bool(panel.call(&"is_open"))
 	var scroll := _owning_scroll(button)
-	_scroll_reason = "open=%s scroll=%s" % [str(is_open), str(scroll != null)]
+	_scroll_reason = "open=%s scroll=%s" % [str(bool(panel.call(&"is_open"))), str(scroll != null)]
 	if scroll != null and await _wheel_until_visible(scroll, button):
 		_scroll_reason = "revealed"
 		return button
+	# The list is longer than one screenful once the bag is full (every station's
+	# recipes plus the jobs), so a fixed handful of notches is not a player action,
+	# it is a guess. Wheel patiently in the row's direction until it is on screen.
+	if scroll != null:
+		for _i: int in range(400):
+			if scroll.get_global_rect().has_point(button.get_global_rect().get_center()):
+				_scroll_reason = "revealed_patient"
+				return button
+			var rect := scroll.get_global_rect()
+			var down := button.get_global_rect().get_center().y > rect.get_center().y
+			await _notch_wheel(scroll, rect, down)
+		_scroll_reason += " | after_%d_notches=%d" % [400, scroll.scroll_vertical]
 	# Reopening rebuilds the list; the row must be looked up again by name, because
 	# the old node is gone once the panel is rebuilt.
 	await _close_panel(panel)
@@ -656,6 +665,29 @@ func _scroll_recipe(panel: Node, button: Button) -> Button:
 		rows.append(String(value.name))
 	_scroll_reason += " | rows=%d %s" % [rows.size(), str(rows.slice(0, 12))]
 	return null
+
+
+## One wheel notch over the list, pressed and released with their own events.
+func _notch_wheel(scroll: ScrollContainer, rect: Rect2, down: bool) -> void:
+	var point: Vector2 = root.get_final_transform() * (scroll.get_global_transform_with_canvas() * (rect.size * 0.5))
+	var motion := InputEventMouseMotion.new()
+	motion.position = point
+	motion.global_position = point
+	Input.parse_input_event(motion)
+	await process_frame
+	var button := MOUSE_BUTTON_WHEEL_DOWN if down else MOUSE_BUTTON_WHEEL_UP
+	var notch := InputEventMouseButton.new()
+	notch.position = point
+	notch.button_index = button
+	notch.pressed = true
+	Input.parse_input_event(notch)
+	await process_frame
+	var unpress := InputEventMouseButton.new()
+	unpress.position = point
+	unpress.button_index = button
+	unpress.pressed = false
+	Input.parse_input_event(unpress)
+	await process_frame
 
 
 ## Wheel a row into view. A long list needs more than a fixed handful of clicks, so
