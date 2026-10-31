@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [arena/c7b0c4e8-soul-of-hero]
-    paths: ['tools/arcana19_ribbon_compare/**', 'prototypes/arcana_fusion20/renderer/d19_ribbon_compare.gd', 'prototypes/arcana_fusion20/renderer/source_d/d_fx.gd', '.github/workflows/arcana19-ribbon-compare.yml']
+    paths: ['tools/arcana19_ribbon_compare/**', 'prototypes/arcana_fusion20/renderer/d19_ribbon_compare.gd', 'prototypes/arcana_fusion20/renderer/source_d/d_fx.gd', 'prototypes/arcana_fusion20/renderer/source_d/d_ribbon_triangles.gd', '.github/workflows/arcana19-ribbon-compare.yml']
 permissions:
   contents: read
 jobs:
