@@ -59,13 +59,12 @@ jobs:
           grep -q "17/17" oracle_selftest.txt
 
       - name: Compose the exact owner matrix (read-only)
-        if: github.event_name == 'workflow_dispatch'
         env:
-          A0_SHA: ${{ github.event.inputs.a0_sha }}
-          A1_SHA: ${{ github.event.inputs.a1_sha }}
-          A3_SHA: ${{ github.event.inputs.a3_sha }}
-          A6_SHA: ${{ github.event.inputs.a6_sha }}
-          A8_SHA: ${{ github.event.inputs.a8_sha }}
+          A0_SHA: ${{ github.event.inputs.a0_sha || 'ee5f9f5160c8e4385f35a63b355ddda957f93d10' }}
+          A1_SHA: ${{ github.event.inputs.a1_sha || 'a030cb89a5033ba5faba39995762b4bea1332cec' }}
+          A3_SHA: ${{ github.event.inputs.a3_sha || 'b44e22df3af40939069189be14afc23ee1ce21c4' }}
+          A6_SHA: ${{ github.event.inputs.a6_sha || '6d1e8bcee0bbb09be0ff04f14de1f7e59f06cfb8' }}
+          A8_SHA: ${{ github.event.inputs.a8_sha || '0f885df862d7d34f18ca456e80b1aaac05b23de0' }}
         run: |
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/work"
@@ -78,10 +77,9 @@ jobs:
           test -f .composition/composition.json
 
       - name: Run the pack against that tree and the recorded evidence
-        if: github.event_name == 'workflow_dispatch'
         env:
-          EXPECTED_TREE: ${{ github.event.inputs.expected_tree }}
-          EVIDENCE_DIR: ${{ github.event.inputs.evidence_dir }}
+          EXPECTED_TREE: ${{ github.event.inputs.expected_tree || 'fbe54383881c6cc29c30874782721ea63155e661' }}
+          EVIDENCE_DIR: ${{ github.event.inputs.evidence_dir || 'docs/survival/balance/visual/r14' }}
         run: |
           set -euo pipefail
           set +e
