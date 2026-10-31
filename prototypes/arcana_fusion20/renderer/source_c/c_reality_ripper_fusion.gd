@@ -1,7 +1,7 @@
 ## Selected #20 source-level candidate: C's seeded 9-point rift contour,
 ## timing/width/interior/edge, plus A Reality Ripper's bgWarp pull/fracture
 ## applied to the SAME real-world pixels relative to that C contour.
-## Original A debris and portions of original C OUT are not yet selected;
+## Original A debris and full source-world OUT fidelity are not yet selected;
 ## full cast, source comparisons, actor depth and owner approval remain open.
 extends RefCounted
 class_name CRealityRipperFusion
@@ -201,6 +201,9 @@ func render(f: CFrame, t: float) -> void:
     if t < 1.6: return
     if t >= 9.4:
         if include_blocks: _render_blocks(f, t)
+        if not audit_polygons_only and not audit_blocks_only and not audit_particles_only:
+            _render_remainder(f, t)
+            CKit.particles_render(f, particles)
         return
     var span := CMath.inv(1.6, TOPEN, t)
     var slot := floori(t * 12.0)
@@ -269,6 +272,7 @@ func render(f: CFrame, t: float) -> void:
     if include_blocks and not audit_polygons_only and not audit_particles_only:
         _render_blocks(f, t)
     if not audit_polygons_only and not audit_blocks_only:
+        if not audit_particles_only: _render_remainder(f, t)
         CKit.particles_render(f, particles)
 
 # Original source "at(s)" keeps scalar double precision until rasterization.
@@ -360,3 +364,20 @@ func _render_blocks(f: CFrame, t: float) -> void:
         for k in range(5):
             var p := _at(0.1 + k * 0.2)
             CKit.shock(f, float(p.x), float(p.y), age * 190.0, 14.0, 9.0 * (1.0 - age / 0.7), 1.0, 3.0)
+
+# Source-C's stubborn closing region samples actual live world, not Gold
+# background pixels; a short final glint remains as in original astral.ts.
+func _render_remainder(f: CFrame, t: float) -> void:
+    if t > 9.3 and t < 9.85:
+        var p := _at(0.62)
+        var bx := floori(float(p.x) + float(p.nx) * 7.0 + 0.5)
+        var by := floori(float(p.y) + float(p.ny) * 7.0 + 0.5)
+        var slot := floori(t * 20.0)
+        for y in range(5):
+            for x in range(7):
+                if CMath.hash1(slot + x) > 0.2:
+                    f.ripper_remainder_fragment(bx + x, by + y, bx + x + 2, by + y)
+                f.C(bx + x, by + y, 2.0)
+    if t >= 9.85 and t < 9.9:
+        var p := _at(0.62)
+        f.L(float(p.x) + float(p.nx) * 7.0 + 3.0, float(p.y) + float(p.ny) * 7.0 + 2.0, 2.0, 2.0, 2.0)

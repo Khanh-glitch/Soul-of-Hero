@@ -168,6 +168,24 @@ func inverted_live_fragment(x: int, y: int, sx: float, sy: float) -> void:
     world_fragment[i + 3] = 1.0
     world_influence[y * W + x] = 1
 
+## C20 closing region: source samples a neighboring live-world pixel and
+## applies its authored channel-specific inversion. This must not key by RGB.
+func ripper_remainder_fragment(x: int, y: int, sx: int, sy: int) -> void:
+    if x < 0 or y < 0 or x >= W or y >= H: return
+    if not track_world_fragments:
+        I(x, y, 1.0, 1.0, 1.0, 1.0)
+        return
+    var i := (y * W + x) * 4
+    ink[i] = 0.0
+    ink[i + 1] = 0.0
+    ink[i + 2] = 0.0
+    ink[i + 3] = 0.0
+    world_fragment[i] = clampi(sx, 0, W - 1)
+    world_fragment[i + 1] = clampi(sy, 0, H - 1)
+    world_fragment[i + 2] = 1.0
+    world_fragment[i + 3] = 2.0
+    world_influence[y * W + x] = 1
+
 func D(x: float, y: float, dx: float, dy: float) -> void:
     var xi := int(x)
     var yi := int(y)

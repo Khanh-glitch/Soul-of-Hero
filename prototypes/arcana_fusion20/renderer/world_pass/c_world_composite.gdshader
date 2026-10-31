@@ -59,7 +59,9 @@ void fragment() {
     vec4 frag = texelFetch(fragment_tex, q, 0);
     vec3 fragment_world = world_at(frag.xy - vec2(q), SCREEN_UV, SCREEN_PIXEL_SIZE);
     // Authored C Reality Ripper inverted baseAt fragment; no RGB keying.
-    if (frag.w > 0.5) {
+    if (frag.w > 1.5) {
+        fragment_world = vec3(1.0) - fragment_world * vec3(2.5, 3.0, 2.0);
+    } else if (frag.w > 0.5) {
         vec3 inv_world = clamp(vec3(1.0) - fragment_world * 3.0, 0.0, 1.0);
         fragment_world = inv_world * vec3(0.45, 0.2, 0.5) + vec3(0.2, 0.0, 0.15);
     }

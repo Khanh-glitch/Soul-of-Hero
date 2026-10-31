@@ -21,7 +21,7 @@ var target_world: Vector2
 # ink premultiplied RGBA float, signed HDR light RGBA float, displacement
 # RGBA float = dx,dy,shade,chroma, and optional live-world fragment mapping
 # RGBA float = source x, source y, remaining coverage, transform mode
-# (0 = direct live-world sample, 1 = C20 authored inverted sample).
+# (0 = direct live-world sample, 1 = C20 inverted space, 2 = C20 OUT inversion).
 var c_ground: PackedByteArray
 var c_ground_coverage: PackedFloat32Array
 var c_ink: PackedFloat32Array

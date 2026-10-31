@@ -525,6 +525,19 @@ func _run() -> void:
     var block_image := await save_frame("fusion_20_blocks_tick420")
     var block_result := contamination(baseline, block_image, rift_viewers.get(&"C"), block_frame)
     check(world_blocks > 0 and int(block_result.get("inside_changed", 0)) > 0 and int(block_result.get("outside_changed", -1)) == 0, "C20 collision blocks sample actual world within source influence: fragments=" + str(world_blocks) + " " + str(block_result))
+    rift.render_enabled = false
+    for tick in range(150): rift.advance(STEP, false)
+    rift.render_enabled = true
+    rift._render_frame()
+    await process_frame
+    await process_frame
+    var out_frame := rift.source_pass_frame()
+    var out_fragments := 0
+    for p in range(CFrame.N):
+        if out_frame.c_world_fragment[p * 4 + 2] > 0.0 and out_frame.c_world_fragment[p * 4 + 3] == 2.0: out_fragments += 1
+    var out_image := await save_frame("fusion_20_out_tick570")
+    var out_result := contamination(baseline, out_image, rift_viewers.get(&"C"), out_frame)
+    check(out_fragments > 0 and int(out_result.get("inside_changed", 0)) > 0 and int(out_result.get("outside_changed", -1)) == 0, "C20 source OUT inversion affects actual world only inside influence: fragments=" + str(out_fragments) + " " + str(out_result))
     multi.cancel_skill(id20)
     await process_frame
     await process_frame
