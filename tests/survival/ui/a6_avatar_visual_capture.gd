@@ -365,6 +365,10 @@ func _argument_value(args: PackedStringArray, key: String, fallback: String) -> 
 func _fail(label: String) -> void:
 	_failures.append(label)
 	push_error("A6 CAPTURE FAIL: %s" % label)
+	# GitHub renders `::error::` lines from stdout as annotations. Job logs cannot be
+	# downloaded from the review sandbox, so a failure that only reaches stderr is a
+	# failure nobody can read; this puts the reason where it can be seen.
+	print("::error::A6 CAPTURE FAIL: %s" % label)
 
 
 func _finish() -> void:
