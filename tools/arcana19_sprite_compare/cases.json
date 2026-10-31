@@ -1,6 +1,97 @@
 [
- {"name":"disc_glow","x":220,"y":110,"size":25,"shape":0,"color":[0.4,0.25,0.8,0.6],"opts":{"glow":1.0,"edge":0.6},"time":3.25},
- {"name":"star_rotated","x":241,"y":131,"size":33,"shape":4,"color":[0.65,0.3,0.85,0.7],"opts":{"sx":41,"sy":20,"rot":0.43,"glow":0.7,"edge":0.7},"time":4.5},
- {"name":"flare","x":242,"y":129,"size":31,"shape":13,"color":[0.2,0.45,0.75,0.8],"opts":{"glow":0.5,"edge":0.3},"time":5.2},
- {"name":"flake_small","x":239,"y":130,"size":7,"shape":18,"color":[0.6,0.4,0.8,0.45],"opts":{"glow":0.8,"edge":0.2,"rot":0.67},"time":8.15}
+ {
+  "name": "disc_glow",
+  "x": 220,
+  "y": 110,
+  "size": 25,
+  "shape": 0,
+  "color": [
+   0.4,
+   0.25,
+   0.8,
+   0.6
+  ],
+  "opts": {
+   "glow": 1.0,
+   "edge": 0.6
+  },
+  "time": 3.25
+ },
+ {
+  "name": "star_rotated",
+  "x": 241,
+  "y": 131,
+  "size": 33,
+  "shape": 4,
+  "color": [
+   0.65,
+   0.3,
+   0.85,
+   0.7
+  ],
+  "opts": {
+   "sx": 41,
+   "sy": 20,
+   "rot": 0.43,
+   "glow": 0.7,
+   "edge": 0.7
+  },
+  "time": 4.5
+ },
+ {
+  "name": "flare",
+  "x": 242,
+  "y": 129,
+  "size": 31,
+  "shape": 13,
+  "color": [
+   0.2,
+   0.45,
+   0.75,
+   0.8
+  ],
+  "opts": {
+   "glow": 0.5,
+   "edge": 0.3
+  },
+  "time": 5.2
+ },
+ {
+  "name": "flake_small",
+  "x": 239,
+  "y": 130,
+  "size": 7,
+  "shape": 18,
+  "color": [
+   0.6,
+   0.4,
+   0.8,
+   0.45
+  ],
+  "opts": {
+   "glow": 0.8,
+   "edge": 0.2,
+   "rot": 0.67
+  },
+  "time": 8.15
+ },
+ {
+  "name": "disc_overlap",
+  "x": 220,
+  "y": 110,
+  "size": 25,
+  "shape": 0,
+  "color": [
+   0.4,
+   0.25,
+   0.8,
+   0.25
+  ],
+  "opts": {
+   "glow": 1.0,
+   "edge": 0.6
+  },
+  "time": 3.25,
+  "repeat": 3
+ }
 ]

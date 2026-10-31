@@ -33,6 +33,8 @@ var track_world_fields := false
 # Diagnostic opt-in until sprite/ribbon fragment transfer is compared against
 # the original WebGL RGBA8 target; polygon path has its own validated handling.
 var rgba8_fragment_transfer := false
+# Diagnostic opt-in: original additive scene stores every blend in RGBA8.
+var rgba8_scene_blend := false
 var world_influence := PackedByteArray()
 var world_bends: Array[Dictionary] = []
 var world_warp := PackedFloat32Array()
@@ -210,9 +212,14 @@ func _add_px(x: int, y: int, r: float, g: float, b: float) -> void:
     var i := (y * W + x) * 3
     if track_world_fields:
         world_influence[y * W + x] = 1
-    buf[i] += r
-    buf[i + 1] += g
-    buf[i + 2] += b
+    if rgba8_scene_blend:
+        buf[i] = roundf(clampf(buf[i] + r, 0.0, 1.0) * 255.0) / 255.0
+        buf[i + 1] = roundf(clampf(buf[i + 1] + g, 0.0, 1.0) * 255.0) / 255.0
+        buf[i + 2] = roundf(clampf(buf[i + 2] + b, 0.0, 1.0) * 255.0) / 255.0
+    else:
+        buf[i] += r
+        buf[i + 1] += g
+        buf[i + 2] += b
 
 ## fx.sp — additive sprite (SpriteBatch + SPRITE_FS).
 func sp(x: float, y: float, size: float, col: Color, shape: int = DISC, o: Dictionary = {}) -> void:

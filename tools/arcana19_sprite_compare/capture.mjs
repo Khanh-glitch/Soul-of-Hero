@@ -33,7 +33,7 @@ try {
     if(coverage&&!window.__spriteCoverageShaderInstrumented)throw Error('sprite fragment coverage instrumentation not installed');
     const r=window.__vfxDebug.state.renderer,gl=r.gl;
     r.scene.bind(true);gl.disable(gl.DEPTH_TEST);gl.disable(gl.CULL_FACE);gl.enable(gl.BLEND);gl.blendEquation(gl.FUNC_ADD);gl.blendFunc(gl.SRC_ALPHA,gl.ONE);
-    r.fx.g.sp.reset();r.fx.sp(c.x,c.y,c.size,c.color,c.shape,c.opts);r.fx.g.sp.draw([480,270],[0,0],c.time);
+    r.fx.g.sp.reset();for(let i=0;i<(c.repeat??1);i++)r.fx.sp(c.x,c.y,c.size,c.color,c.shape,c.opts);r.fx.g.sp.draw([480,270],[0,0],c.time);
     const pixels=new Uint8Array(480*270*4);gl.readPixels(0,0,480,270,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
     const error=gl.getError();if(error!==gl.NO_ERROR)throw Error(`WebGL error ${error}`);
     let binary='';for(let i=0;i<pixels.length;i+=8192)binary+=String.fromCharCode(...pixels.subarray(i,Math.min(i+8192,pixels.length)));

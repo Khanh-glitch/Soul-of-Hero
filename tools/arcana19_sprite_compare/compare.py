@@ -7,7 +7,7 @@ out=pathlib.Path(sys.argv[1]); cases=json.loads(pathlib.Path('tools/arcana19_spr
 for c in cases:
  name=c['name'];a=np.fromfile(out/f'{name}.original.rgba8',dtype=np.uint8).reshape(270,480,4)[::-1,:,:3].astype(np.float32)/255
  coverage=np.fromfile(out/f'{name}.original.coverage.rgba8',dtype=np.uint8).reshape(270,480,4)[::-1,:,0]!=0
- for variant in ('native','native_ldr'):
+ for variant in ('native','native_ldr','native_ldr8'):
   b=np.clip(np.fromfile(out/f'{name}.{variant}.rgb32f',dtype='<f4').reshape(270,480,3),0,1)
   native_coverage=np.fromfile(out/f'{name}.{variant}.coverage.u8',dtype=np.uint8).reshape(270,480)!=0
   if not np.isfinite(b).all():raise SystemExit('nonfinite native ribbon')

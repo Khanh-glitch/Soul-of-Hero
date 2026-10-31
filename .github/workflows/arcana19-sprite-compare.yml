@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [arena/c7b0c4e8-soul-of-hero]
-    paths: ['tools/arcana19_sprite_compare/**', 'prototypes/arcana_fusion20/renderer/d19_sprite_compare.gd', 'prototypes/arcana_fusion20/renderer/source_d/d_sprite_triangles.gd', 'prototypes/arcana_fusion20/renderer/source_d/d_fx.gd', 'prototypes/arcana_fusion20/renderer/source_d/d_ribbon_triangles.gd', '.github/workflows/arcana19-sprite-compare.yml']
+    paths: ['tools/arcana19_sprite_compare/**', 'prototypes/arcana_fusion20/renderer/d19_sprite_compare.gd', 'prototypes/arcana_fusion20/renderer/source_d/d_fx.gd', '.github/workflows/arcana19-sprite-compare.yml']
 permissions:
   contents: read
 jobs:
@@ -31,7 +31,7 @@ jobs:
           set -o pipefail
           mkdir -p artifacts/arcana19-sprite
           node tools/arcana19_sprite_compare/capture.mjs artifacts/arcana19-sprite | tee original.log
-          test "$(grep -c D19_SPRITE_ORIGINAL_CAPTURE original.log)" -eq 8
+          test "$(grep -c D19_SPRITE_ORIGINAL_CAPTURE original.log)" -eq 10
       - name: Capture native sprite cases
         run: |
           set -o pipefail
@@ -45,6 +45,10 @@ jobs:
           set -o pipefail
           python3 tools/arcana19_sprite_compare/compare.py artifacts/arcana19-sprite | tee compare.log
           sed 's/^/::notice::/' compare.log
+      - name: Surface all sprite transfer candidates
+        if: always()
+        run: |
+          if test -f compare.log; then grep 'native_ldr8' compare.log | sed 's/^/::notice title=D19_SPRITE_LDR8::/' || true; fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:

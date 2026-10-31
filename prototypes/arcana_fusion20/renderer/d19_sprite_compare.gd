@@ -6,14 +6,16 @@ func _initialize() -> void:
     var cases: Array = JSON.parse_string(FileAccess.get_file_as_string("res://tools/arcana19_sprite_compare/cases.json"))
     for item in cases:
         var c: Dictionary = item
-        for mode in ["native", "native_ldr"]:
+        for mode in ["native", "native_ldr", "native_ldr8"]:
             var fx := DFx.new()
             fx.t = float(c.time)
             fx.track_world_fields = true
-            fx.rgba8_fragment_transfer = mode == "native_ldr"
+            fx.rgba8_fragment_transfer = mode != "native"
+            fx.rgba8_scene_blend = mode == "native_ldr8"
             var rgba: Array = c.color
             var color := Color(float(rgba[0]), float(rgba[1]), float(rgba[2]), float(rgba[3]))
-            fx.sp(float(c.x), float(c.y), float(c.size), color, int(c.shape), c.opts)
+            for _repeat in range(int(c.get("repeat", 1))):
+                fx.sp(float(c.x), float(c.y), float(c.size), color, int(c.shape), c.opts)
             var file := FileAccess.open(OUT + "/%s.%s.rgb32f" % [c.name, mode], FileAccess.WRITE)
             file.store_buffer(fx.buf.to_byte_array())
             file.close()
