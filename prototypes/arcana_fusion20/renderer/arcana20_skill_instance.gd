@@ -29,17 +29,6 @@ var _nodes: Array = []      # authored choreography nodes (per-skill build)
 var _strokes: Array = []    # calligraphy / script paths
 var _max_draw_ms := 0.0
 
-class _Painter extends Node2D:
-    var owner_instance: Arcana20SkillInstance
-    var pass_kind: int = 0 # 0 ground, 1 light
-    func _draw() -> void:
-        if owner_instance == null:
-            return
-        if pass_kind == 0:
-            owner_instance.draw_ground_pass()
-        else:
-            owner_instance.draw_light_pass()
-
 func setup(id: int, caster_world: Vector2, target_world: Vector2, face: float) -> void:
     skill_id = id
     var slot := Arcana20SourceCatalog.slot(id)
@@ -60,14 +49,14 @@ func setup(id: int, caster_world: Vector2, target_world: Vector2, face: float) -
     facing = face
     _rng.seed = 1000 + id * 77
     _build()
-    _ground = _Painter.new()
-    _ground.owner_instance = self
+    _ground = Arcana20PassPainter.new()
+    _ground.host = self
     _ground.pass_kind = 0
     _ground.z_index = -5
     _ground.z_as_relative = true
     add_child(_ground)
-    _light = _Painter.new()
-    _light.owner_instance = self
+    _light = Arcana20PassPainter.new()
+    _light.host = self
     _light.pass_kind = 1
     _light.z_index = 10
     _light.z_as_relative = true
@@ -197,7 +186,13 @@ func _build() -> void:
 # ---------------------------------------------------------------------------
 # Passes
 # ---------------------------------------------------------------------------
-func draw_ground_pass() -> void:
+func draw_pass(kind: int, cv: Arcana20Primitives) -> void:
+    if kind == 0:
+        draw_ground_pass(cv)
+    else:
+        draw_light_pass(cv)
+
+func draw_ground_pass(cv: Arcana20Primitives) -> void:
     if not active:
         return
     var t := elapsed
@@ -206,25 +201,25 @@ func draw_ground_pass() -> void:
     if after <= 0.0:
         return
     # Scorched/cracked local ground scar (never a pasted arena).
-    disc(local_target, 15.0 + 8.0 * after, Color(0.02, 0.015, 0.015, 0.55 * after))
+    cv.disc(local_target, 15.0 + 8.0 * after, Color(0.02, 0.015, 0.015, 0.55 * after))
     var crack_rng := RandomNumberGenerator.new()
     crack_rng.seed = 5000 + skill_id
     for k in range(7):
         var a := TAU * float(k) / 7.0 + crack_rng.randf_range(-0.2, 0.2)
         var end := local_target + Vector2(cos(a), sin(a) * 0.6) * (18.0 + 22.0 * after + crack_rng.randf_range(0.0, 10.0))
-        stroke(local_target, end, 1.0, Color(0.05, 0.03, 0.02, 0.6 * after))
-        stroke(local_target, end, 1.0, ramp_color(element, 0.35 + 0.5 * after, 0.5 * after * (1.0 - smooth(climax + 1.5, duration, t))))
+        cv.stroke(local_target, end, 1.0, Color(0.05, 0.03, 0.02, 0.6 * after))
+        cv.stroke(local_target, end, 1.0, ramp_color(element, 0.35 + 0.5 * after, 0.5 * after * (1.0 - smooth(climax + 1.5, duration, t))))
 
-func draw_light_pass() -> void:
+func draw_light_pass(cv: Arcana20Primitives) -> void:
     if not active:
         return
     var t := elapsed
     var lt := to_local(target)
     var lo := to_local(origin)
     var pulse := 0.25 + 0.75 * smooth(climax - 0.4, climax + 0.15, t) * (1.0 - smooth(duration - 0.8, duration, t))
-    disc(lt, 26.0, ramp_color(element, 0.75, 0.20 * pulse))
-    disc(lt, 13.0, ramp_color(element, 0.95, 0.30 * pulse))
-    disc(lo, 10.0, ramp_color(element, 0.6, 0.18 * pulse))
+    cv.disc(lt, 26.0, ramp_color(element, 0.75, 0.20 * pulse))
+    cv.disc(lt, 13.0, ramp_color(element, 0.95, 0.30 * pulse))
+    cv.disc(lo, 10.0, ramp_color(element, 0.6, 0.18 * pulse))
 
 func _draw() -> void:
     if not active:
