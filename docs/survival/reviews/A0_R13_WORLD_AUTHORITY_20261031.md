@@ -131,16 +131,30 @@ Every item below was found by a red gate, not by reading code.
 
 ## 5. Native frames
 
-`A0 AUTHORED CAPTURE PASSED` at **1280×720 (29 checks)**, **2560×1440 (19)** and
-**3840×2160 (29)** in run 41244927885, from the same production scene: spawn, after
+`A0 AUTHORED CAPTURE PASSED` at **1280×720**, **2560×1440** and **3840×2160** (19 checks
+each) in run 41246899354, from the same production scene: spawn, after
 walking, terrain, source, source-after-`G`. Each frame is accepted only if it is the
 size it claims, has ≥24 distinct sampled colours, real luminance spread (sd ≥ 2) and a
 HUD that paints text; the untouched PNGs are in the run artifact
 (`artifacts/visual_authored_*.png`).
 
 The sandbox this review was written in **cannot reach the artifact host**, so the
-full-resolution originals were not opened at 1× here — see §8 for what that does and
-does not mean.
+full-resolution originals could not be downloaded. They were therefore not merely
+described: a 160×90 window was cut at the camera centre of the 1280×720 frame **at
+the original pixel scale, with no resampling**, and published through the CI
+annotation channel (`A0_FRAME_PROBE_PNG`, one base64 chunk, self-certifying
+`sha256 f1a8f38b…ec55`, 791 bytes, decoded and hash-verified before it was looked at).
+
+What that window actually shows, at 1×:
+
+* **terrain is painted, not flat-filled** — an olive ground field carrying lighter
+  and darker tufts on a regular scatter, i.e. real authored sprites, not one colour;
+* **the player at the camera centre is a dark featureless capsule**, roughly 52×14 px
+  in frame. That is exactly what the presenter reports (`has_avatar_sprite: false`,
+  *“Identity-specific runtime action sheets are not installed”*) — the *identity* is
+  the Adventurer the player chose, but its *art* is not in this build. The avatar
+  silhouette is therefore honest placeholder, not an Adventurer sprite, and no
+  Adventurer artwork is claimed.
 
 ---
 
