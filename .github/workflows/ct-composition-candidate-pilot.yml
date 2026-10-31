@@ -2,7 +2,7 @@ name: CT candidate composition PILOT (read-only owner branches)
 on:
   push:
     branches: [coordination/ct-pin-guard-pilot-20261031]
-    paths: [.github/workflows/ct-composition-candidate-pilot.yml]
+    paths: [.github/workflows/ct-composition-candidate-pilot.yml, tests/survival/ct_input_bootstrap_probe.gd]
   workflow_dispatch:
 permissions:
   contents: read
