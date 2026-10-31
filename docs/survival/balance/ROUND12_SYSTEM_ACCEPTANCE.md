@@ -18,7 +18,7 @@ than the audit.
 **What works, and that a player can do today with their own hands.**
 
 A player enters the shipped overworld (`Hub → Campaign → Enter Overworld`), walks with
-ordinary keys (**17.9 px** of the slowest tested burst), chops a real oak with a bare
+ordinary keys (largest displacement over four 12-frame bursts: **17.9 px**), chops a real oak with a bare
 hand (**2 oak wood per swing, hits 3 → 2**), mines stone (**4 chunks in 2 swings**),
 queues the shipped hand recipe, waits **6 s** of the game's own clock, collects a
 **real A3 tool instance** (`soh_i_000000000002_d3346167`), and wears it out on a
