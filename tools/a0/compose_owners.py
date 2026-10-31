@@ -147,6 +147,27 @@ def main() -> int:
             dest.write_bytes(blob.stdout)
             copied.append(path)
             touched.setdefault(path, set()).add(name)
+        # A ruling may accept an owner file that sits outside its declared scope
+        # (shared integration surface). Without this the composition would keep
+        # A0's version and the caller's method would not exist at runtime — which
+        # is exactly how a missing `missing_summary()` broke the first real run.
+        for path, ruling in rulings.items():
+            if ruling.get("kind") != "accept_owner" or ruling.get("owner") != name:
+                continue
+            if path in copied or path in deleted:
+                continue
+            blob = subprocess.run(["git", "-C", str(repo), "show", f"{sha}:{path}"],
+                                  capture_output=True)
+            if blob.returncode != 0:
+                continue
+            dest = out / path
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            dest.write_bytes(blob.stdout)
+            copied.append(path)
+            touched.setdefault(path, set()).add(name)
+            refused_list = report["refused_out_of_scope"].setdefault(name, [])
+            if path in refused_list:
+                refused_list.remove(path)
         report["owners"][name] = {
             "sha": sha,
             "branch": info.get("branch", ""),

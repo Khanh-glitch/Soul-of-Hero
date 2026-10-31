@@ -74,7 +74,26 @@ func _console() -> void:
 # ---------------------------------------------------------------------------
 # harness
 # ---------------------------------------------------------------------------
+## A headless DisplayServer reports a 0x0 window, so Godot's stretch transform
+## collapses to 0.1 and every screen->world pointer conversion is wrong: a build
+## click landed 400 px away and was refused as solid terrain even though the same
+## gesture works in a real 720p window. Declaring the window size the run is
+## meant to represent (1280x720 with the project's 640x360 content scale) gives
+## the identical 2x transform a windowed 720p run uses. Test harness only: no
+## product setting is changed, and nothing is skipped.
+const HARNESS_WINDOW := Vector2i(1280, 720)
+
+
+func _normalize_headless_window() -> void:
+	if DisplayServer.get_name() != "headless":
+		return
+	if root.size == HARNESS_WINDOW:
+		return
+	root.size = HARNESS_WINDOW
+
+
 func _boot() -> Node:
+	_normalize_headless_window()
 	var scene: PackedScene = load(OW_SCENE_PATH) as PackedScene
 	if scene == null:
 		_expect(false, "the production overworld scene loads")

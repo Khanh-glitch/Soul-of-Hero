@@ -62,9 +62,11 @@ func mount(world: Node, hero: Node2D, navigation: OverworldTraversability, build
 	var node := ENCOUNTER_SCRIPT.new()
 	node.name = "OptionalSkeletonEncounter"
 	world.add_child(node)
-	var configured: Dictionary = node.call(&"configure", hero, build, navigation, site_cell)
-	if not bool(configured.get("ok", false)):
-		last_error = "encounter_refused:" + String(configured.get("reason", "unknown"))
+	# `configure` returns a bool and fails closed without a reason string; the
+	# mount's validator is the reason authority, so re-run it for a truthful error.
+	if not bool(node.call(&"configure", hero, build, navigation, site_cell)):
+		var refused: Dictionary = ENCOUNTER_SCRIPT.validate_site(hero, build, navigation, site_cell)
+		last_error = "encounter_refused:" + String(refused.get("reason", "unknown"))
 		node.queue_free()
 		return snapshot()
 	encounter = node

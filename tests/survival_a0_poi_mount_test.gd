@@ -137,20 +137,38 @@ func _body() -> void:
 	_expect(((_save().call(&"get_snapshot") as Dictionary).get("site_transition", {}) as Dictionary).is_empty(),
 		"the entry record is cleared by its own return")
 
-	# A return from a different run must fail closed.
+	# A return carrying another run's identity must fail closed. The stale record
+	# is written through the same public commit path a real transition uses; only
+	# the run id is wrong, which is exactly the attack this check exists for.
+	var injected := bool(save.call(&"transact_once", "test.inject.stale.site.%d" % Time.get_ticks_usec(),
+		func(candidate: Dictionary) -> bool:
+			candidate["site_transition"] = {site_id: {"site_instance_id": site_id,
+				"position": [start.x, start.y], "run_id": "run-from-a-previous-run", "run_epoch": 0}}
+			return true,
+		{"kind": "test_inject_stale_site_identity"}))
+	_expect(injected, "a stale entry record can be placed through the public commit path")
+	var stale: Dictionary = _mount.call(&"finish_transition", save, site_id)
+	_expect(not bool(stale.get("ok", true))
+		and String(stale.get("reason", "")) == "A0_RUN_IDENTITY_MISMATCH",
+		"a return from a previous run is refused (A0_RUN_IDENTITY_MISMATCH)")
+
+	# The run boundary itself clears every entry record: a new run cannot inherit a
+	# position or a site claim from the run that ended.
 	var lifecycle := root.get_node_or_null("RunLifecycle")
 	_expect(lifecycle != null, "the run lifecycle is the one run identity")
 	if lifecycle != null:
-		_mount.call(&"begin_transition", save, site_id, start)
 		var ended: Dictionary = lifecycle.call(&"end_run", "voluntary_exit", "")
 		_expect(bool(ended.get("ok", false)), "the run can be ended for a new epoch")
 		var started: Dictionary = lifecycle.call(&"start_run", "run-a0-poi-epoch")
 		_expect(bool(started.get("ok", false)), "a new run opens a new epoch")
-		var stale: Dictionary = _mount.call(&"finish_transition", save, site_id)
-		_expect(String(stale.get("reason", "")) == "A0_RUN_IDENTITY_MISMATCH",
-			"a return from a previous run is refused (A0_RUN_IDENTITY_MISMATCH)")
+		var after_boundary: Dictionary = _mount.call(&"finish_transition", save, site_id)
+		_expect(not bool(after_boundary.get("ok", true)),
+			"no return can be replayed into a new run")
+		_expect(((_save().call(&"get_snapshot") as Dictionary).get("site_transition", {}) as Dictionary).is_empty(),
+			"the run boundary leaves no entry record behind")
 		print("A0_POI_TRANSITION ", JSON.stringify({"entry": first.get("key", ""),
-			"stored": stored, "return_reason": stale.get("reason", "")}))
+			"stored": stored, "return_reason": stale.get("reason", ""),
+			"after_boundary": after_boundary.get("reason", "")}))
 	print("A0_POI_MOUNT_PHYSICAL_NOT_TESTED no A8 site is reachable in A1's 384x256 runtime world")
 
 
