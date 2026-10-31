@@ -8,7 +8,7 @@ import {pathToFileURL} from 'node:url';
 const out=process.argv[2];if(!out)throw Error('output path required');mkdirSync(out,{recursive:true});
 const cases=JSON.parse(readFileSync('tools/arcana19_poly_compare/cases.json','utf8'));
 const html=path.resolve('prototypes/arcana_fusion20/original_source/package/handoff/reference/Elemental_VFX_Lab_FIXED_Standalone.html');
-const browser=await chromium.launch({args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||undefined,args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 try {
  for(const coverage of [false,true]) {
   const page=await browser.newPage({viewport:{width:900,height:700},deviceScaleFactor:1});

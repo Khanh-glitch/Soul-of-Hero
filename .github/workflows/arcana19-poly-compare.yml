@@ -26,13 +26,13 @@ jobs:
           "$RUNNER_TEMP/d19-ribbon/node_modules/.bin/playwright" install --with-deps chromium
           python3 -m pip install --quiet numpy pillow
           ln -s "$RUNNER_TEMP/d19-ribbon/node_modules" tools/arcana19_poly_compare/node_modules
-      - name: Capture original isolated WebGL ribbon cases
+      - name: Capture original isolated WebGL polygon cases
         run: |
           set -o pipefail
           mkdir -p artifacts/arcana19-poly
           node tools/arcana19_poly_compare/capture.mjs artifacts/arcana19-poly | tee original.log
           test "$(grep -c D19_POLY_ORIGINAL_CAPTURE original.log)" -eq 8
-      - name: Capture native ribbon cases
+      - name: Capture native polygon cases
         run: |
           set -o pipefail
           godot --headless --path . --import > import.log 2>&1
