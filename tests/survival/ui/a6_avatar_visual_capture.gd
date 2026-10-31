@@ -354,17 +354,49 @@ func _walk_and_capture(label: String, host: Node) -> bool:
 			print("A6 CAPTURE: %s displaced %.1f px via %s" % [label, moved, action])
 			return true
 		last_detail += " [%s moved %.2f px]" % [action, moved]
+		# Read-only: what A0's own actor says about why it cannot move. A failed
+		# walk is worth nothing to the owner without these four facts.
+		last_detail += " {%s}" % _actor_diagnosis(host)
 		await _wait_frames(6)
-	_fail("%s: the actor did not walk in either direction (needs %.1f px)%s "
-		% [label, MIN_WALK_DISPLACEMENT, last_detail]
-		+ "permitted=%s modals=%s velocity=%s route=%s dead=%s" % [
+	_fail("%s: walked neither direction (needs %.1f px)%s permitted=%s modals=%s "
+		+ "velocity=%s route=%s dead=%s"
+		% [label, MIN_WALK_DISPLACEMENT, last_detail,
 			str(_gate_permits()),
 			str(_visible_modals()),
 			str((host as CharacterBody2D).velocity) if host is CharacterBody2D else "n/a",
 			str(_app_root.call(&"get_current_route")) if is_instance_valid(_app_root) else "",
-			str(host.get(&"dead")),
-		])
+			str(host.get(&"dead"))])
 	return false
+
+
+## Dense, decisive state of A0's home actor, read without changing it. The four
+## candidates for "velocity set, position pinned" are a collapsed movement bound, a
+## refused walkability candidate, a disabled control set, and a live slide collision.
+## Naming which ones are actually true is the difference between a handoff and a guess.
+func _actor_diagnosis(host: Node) -> String:
+	var bounds: Variant = host.get(&"_movement_bounds")
+	var bounds_text := "none"
+	if bounds is Rect2:
+		var rect: Rect2 = bounds
+		bounds_text = "%d,%d %dx%d%s" % [int(rect.position.x), int(rect.position.y),
+			int(rect.size.x), int(rect.size.y), " collapsed" if rect.size.x <= 1.0 else ""]
+	var test: Variant = host.get(&"_walkability_test")
+	var walkability := "none"
+	if test is Callable:
+		walkability = "on" if (test as Callable).is_valid() else "dead"
+	var collisions := "0"
+	if host is CharacterBody2D:
+		var body: CharacterBody2D = host
+		var count := body.get_slide_collision_count()
+		if count > 0:
+			var first := body.get_slide_collision(0)
+			var collider := first.get_collider()
+			collisions = "%d:%s" % [count, String(collider.name) if collider else "?"]
+	return "bounds=%s controls=%s walkable=%s auto=%s slides=%s" % [
+		bounds_text, str(host.get(&"controls_enabled")), walkability,
+		str(host.call(&"is_auto_moving")) if host.has_method(&"is_auto_moving") else "?",
+		collisions,
+	]
 
 
 ## Whether A0's gameplay gate would let a movement action through right now. A gate
