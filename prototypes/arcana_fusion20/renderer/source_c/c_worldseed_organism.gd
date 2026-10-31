@@ -57,8 +57,14 @@ func render(f: CFrame, t: float) -> void:
             var u := r/length
             var hw := float(l.wd)*pow(sin(PI*minf(1.0,u)),0.8)*(1.0-0.25*u)
             var angles: PackedFloat64Array = l.angles
+            var denominator := maxf(hw,0.3)
             for k in range(int(l.n)):
-                var v := CMath.ang_diff(angles[k],pa)*r/maxf(hw,0.3)
+                # Inline CMath.ang_diff verbatim to avoid a call for every
+                # petal/pixel; preserve signed fmod and both wrap branches.
+                var delta := fmod(pa - angles[k], CMath.TAU)
+                if delta > PI: delta -= CMath.TAU
+                if delta < -PI: delta += CMath.TAU
+                var v := delta*r/denominator
                 if absf(v)>=1.0: continue
                 var th := CMath.bayer(x,y)
                 var av := absf(v)
