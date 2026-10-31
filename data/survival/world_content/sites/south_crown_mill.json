@@ -168,7 +168,15 @@
         "mill_wheel": "seized"
       },
       "choice_group": "mill_wheel",
-      "object_id": "leave_wheel"
+      "object_id": "leave_wheel",
+      "stand_position": [
+        528,
+        520
+      ],
+      "socket_position": [
+        528,
+        504
+      ]
     }
   ],
   "actions": [

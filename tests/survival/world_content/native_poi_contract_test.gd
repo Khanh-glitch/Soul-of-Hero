@@ -1040,7 +1040,7 @@ func _physical_mill_gate_and_retreat() -> void:
 	var leave_authority: PoiAuthorityFixture = leave_pair.authority
 	leave_authority.set_capabilities(["cap_salvage"])
 	leave_site.set_projection(leave_authority.project_state(leave_site.get_source_id()))
-	leave_actor.global_position = Vector2(528, 410)
+	leave_actor.global_position = Vector2(528, 520)
 	leave_actor.set("facing", Vector2.UP)
 	leave_site.cycle_choice(1)
 	_check(leave_site.try_interact(leave_actor), "mill offers a real leave-wheel alternative")
@@ -1063,10 +1063,17 @@ func _physical_mill_gate_and_retreat() -> void:
 		leave_actor.last_collision != null and leave_actor.global_position.y > 314.0,
 		"leaving the wheel seized keeps the inner salvage gate closed"
 	)
-	leave_actor.request_test_motion(Vector2(0, 126))
+	var no_repair_exit := leave_site.get_exit_position()
+	var retreat_delta := no_repair_exit - leave_actor.global_position
+	leave_actor.request_test_motion(retreat_delta)
 	await leave_actor.await_test_motion()
-	leave_actor.request_test_motion(Vector2(0, 96))
-	await leave_actor.await_test_motion()
+	_check(
+		leave_actor.last_collision == null and leave_site.is_at_exit(leave_actor),
+		(
+			"unrepaired Mill route remains physically walkable to its doorway; position=%s "
+			% str(leave_actor.global_position)
+		)
+	)
 	leave_actor.set("facing", Vector2.DOWN)
 	_check(
 		leave_site.try_exit(leave_actor), "safe no-repair branch keeps the return doorway usable"

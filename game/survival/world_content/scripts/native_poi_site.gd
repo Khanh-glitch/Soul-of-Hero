@@ -338,15 +338,17 @@ func get_context_hint(actor: Node2D) -> String:
 	var prompts: Array[String] = []
 	if is_at_exit(actor):
 		prompts.append("G · Return to the exterior")
-	if is_inside_interaction_radius(actor, get_stand_position(), get_action_socket()):
-		var choices: Array = definition.get("choices", [])
-		if not choices.is_empty():
-			prompts.append(
-				(
-					"G · %s ([ ] change)"
-					% str(choices[_choice_index % choices.size()].get("label", ""))
-				)
-			)
+	var choices: Array = definition.get("choices", [])
+	if not choices.is_empty():
+		var selected_choice: Dictionary = choices[_choice_index % choices.size()]
+		var choice_stand := VECTOR_UTIL.from_pair(
+			selected_choice.get("stand_position", definition.get("approach_stand", [0, 0]))
+		)
+		var choice_socket := VECTOR_UTIL.from_pair(
+			selected_choice.get("socket_position", definition.get("action_socket", [0, 0]))
+		)
+		if is_inside_interaction_radius(actor, choice_stand, choice_socket):
+			prompts.append("G · %s ([ ] change)" % str(selected_choice.get("label", "")))
 	var actions: Array = definition.get("actions", [])
 	for index: int in range(actions.size()):
 		var action: Dictionary = actions[index]

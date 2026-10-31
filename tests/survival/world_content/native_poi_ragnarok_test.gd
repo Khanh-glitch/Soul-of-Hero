@@ -556,9 +556,9 @@ func _physical_endpoint_intents_and_owner_fail_closed() -> void:
 		(
 			placement_policy.get("a1_trial_contract_commit")
 			== "439d5ef1f743da388883377c3e1d4c594e5e8101"
-			and placement_policy.get("trial_socket_dimensions_px") == [28, 28]
+			and _numeric_pair_matches(placement_policy.get("trial_socket_dimensions_px", []), [28, 28])
 			and int(placement_policy.get("trial_interaction_radius_px", -1)) == 62
-			and placement_policy.get("trial_stand_offset_px") == [0, 39]
+			and _numeric_pair_matches(placement_policy.get("trial_stand_offset_px", []), [0, 39])
 			and not bool(placement_policy.get("production_mount_authorized", true))
 			and not bool(placement_policy.get("economy_or_reward_authorized", true))
 		),
@@ -587,8 +587,12 @@ func _physical_endpoint_intents_and_owner_fail_closed() -> void:
 		_check(
 			(
 				expected_cells.size() == 2
-				and endpoint_definition.get("a1_trial_socket_cell", []) == expected_cells[0]
-				and endpoint_definition.get("a1_trial_stand_cell", []) == expected_cells[1]
+				and _numeric_pair_matches(
+					endpoint_definition.get("a1_trial_socket_cell", []), expected_cells[0]
+				)
+				and _numeric_pair_matches(
+					endpoint_definition.get("a1_trial_stand_cell", []), expected_cells[1]
+				)
 				and endpoint_definition.get("placement_status", "")
 				== "A1_APPROVED_TRIAL_ONLY_NOT_PRODUCTION_MOUNT"
 			),
@@ -851,6 +855,18 @@ func _count_named(node: Node, prefix: String) -> int:
 			count += 1
 		count += _count_named(child, prefix)
 	return count
+
+
+func _numeric_pair_matches(value: Variant, expected: Array) -> bool:
+	if not value is Array or value.size() != 2 or expected.size() != 2:
+		return false
+	for index: int in range(2):
+		if typeof(value[index]) != TYPE_INT and typeof(value[index]) != TYPE_FLOAT:
+			return false
+		var observed := float(value[index])
+		if not is_finite(observed) or observed != float(expected[index]):
+			return false
+	return true
 
 
 func _check(condition: bool, message: String) -> void:

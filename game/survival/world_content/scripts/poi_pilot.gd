@@ -255,9 +255,12 @@ func _on_transition_requested(request: Dictionary) -> void:
 			return
 		var return_anchor: Dictionary = request.get("return_anchor", {})
 		var shell_cell := _shell.get_canonical_cell()
+		var anchor_cell := VECTOR_UTIL.from_int_pair(
+			return_anchor.get("canonical_cell", []), Vector2i(-1, -1)
+		)
 		var expected_worksite := str(_shell.definition.local_transition.worksite_scene)
 		if (
-			return_anchor.get("canonical_cell", []) != [shell_cell.x, shell_cell.y]
+			anchor_cell != shell_cell
 			or str(return_anchor.get("poi_id", "")) != _shell.get_source_id()
 			or destination != expected_worksite
 		):
@@ -289,12 +292,18 @@ func _on_transition_requested(request: Dictionary) -> void:
 			_reject_transition("This return request does not match the active site.", request)
 			return
 		var return_to: Dictionary = request.get("return_anchor", {})
+		var site_cell := VECTOR_UTIL.from_int_pair(
+			_site.definition.get("source", {}).get("canonical_cell", []), Vector2i(-1, -1)
+		)
+		var return_cell := VECTOR_UTIL.from_int_pair(
+			return_to.get("canonical_cell", []), Vector2i(-1, -1)
+		)
 		var packed_shell := load(destination) as PackedScene
 		if (
 			packed_shell == null
 			or destination != str(return_to.get("shell_scene", ""))
 			or str(return_to.get("poi_id", "")) != _site.get_source_id()
-			or return_to.get("canonical_cell", []) != _site.definition.source.canonical_cell
+			or return_cell != site_cell
 		):
 			_reject_transition("The canonical exterior return point could not be restored.", request)
 			return

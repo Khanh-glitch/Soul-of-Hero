@@ -10,7 +10,7 @@ const CAPTURE_DIR := "res://.artifacts/a8-world-content/input-journeys"
 const QUARRY_ID := "poi_crown_south_quarry"
 const ORCHARD_ID := "poi_crown_south_orchard"
 const MILL_ID := "poi_crown_south_mill"
-const EXPECTED_CAPTURE_COUNT := 23
+const EXPECTED_CAPTURE_COUNT := 27
 
 var _pilot: Node
 var _failures: Array[String] = []
@@ -29,6 +29,7 @@ func _run() -> void:
 	await _journey_orchard("leave_for_safety", "untouched", false)
 	await _journey_orchard("clear_irrigation", "flowing", true)
 	await _journey_mill_without_capability()
+	await _journey_mill_leave_wheel()
 	await _journey_mill_revocation_race()
 	await _journey_mill_owner_projected_repair()
 	_check(
@@ -272,6 +273,56 @@ func _journey_mill_without_capability() -> void:
 		str(_snapshot().get("active_kind", "")) == "shell",
 		"owner-projected capability loss does not trap the pilot behind the Mill gate"
 	)
+	await _stop_pilot()
+
+
+func _journey_mill_leave_wheel() -> void:
+	await _start_pilot({})
+	await _capture("mill-shell-leave-wheel-baseline")
+	if not await _enter_worksite(MILL_ID):
+		await _stop_pilot()
+		return
+	await _capture("mill-interior-leave-wheel-baseline")
+	_check(
+		await _walk_to(Vector2(528.0, 520.0)),
+		"Mill leave-wheel alternative is approached physically on the safe exterior side"
+	)
+	await _press_key(KEY_BRACKETRIGHT)
+	_check(
+		str(_pilot.get("_feedback").text).contains("Leave the wheel seized"),
+		"Mill keyboard choice selects the safe leave-wheel alternative"
+	)
+	await _press_key(KEY_G)
+	await _settle()
+	_check(
+		str(_snapshot().get("site_state", {}).get("mill_wheel", "")) == "seized",
+		"owner projection records the no-repair Mill alternative"
+	)
+	await _capture("mill-wheel-left-seized")
+	var crossed_closed_gate := await _walk_axis_to("move_up", KEY_W, 420.0)
+	var blocked_position: Vector2 = _snapshot().get("position", Vector2.ZERO)
+	_check(
+		not crossed_closed_gate and _last_axis_collided and blocked_position.y > 480.0,
+		"leave-wheel alternative keeps unauthorized physical entry behind the closed gate"
+	)
+	await _walk_axis_to("move_down", KEY_S, 560.0)
+	await _press_key(KEY_G)
+	await _settle()
+	_check(
+		str(_snapshot().get("active_kind", "")) == "shell",
+		"leave-wheel decision retains a safe physical retreat to the exterior"
+	)
+	if not await _enter_worksite(MILL_ID):
+		await _stop_pilot()
+		return
+	_check(
+		str(_snapshot().get("site_state", {}).get("mill_wheel", "")) == "seized",
+		"Mill revisit preserves the owner-projected seized-wheel state"
+	)
+	await _capture("mill-wheel-seized-revisit")
+	await _walk_axis_to("move_down", KEY_S, 560.0)
+	await _press_key(KEY_G)
+	await _settle()
 	await _stop_pilot()
 
 
