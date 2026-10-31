@@ -513,6 +513,16 @@ func _scroll_recipe(panel: Node, button: Button) -> bool:
 	var row_name := String(button.name)
 	await process_frame
 	var scroll := _owning_scroll(button)
+	if scroll == null:
+		# A row with no scroll ancestor is not in the list the panel scrolls, so
+		# wheeling can never reveal it. Print the ancestry instead of guessing.
+		var chain: Array[String] = []
+		var walk: Node = button
+		while walk != null and chain.size() < 8:
+			chain.append("%s(%s)" % [String(walk.name), walk.get_class()])
+			walk = walk.get_parent()
+		print("A0_CONNECTED_SCROLL row=%s no_scroll_ancestor chain=%s in_panel=%s" % [
+			row_name, str(chain), str(button.get_parent() != null and panel.is_ancestor_of(button))])
 	if scroll != null and await _wheel_until_visible(scroll, button):
 		return true
 	# Reopening rebuilds the list; the row must be looked up again by name, because

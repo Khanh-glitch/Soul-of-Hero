@@ -107,7 +107,10 @@ Two distinct causes were found for the furnace step, one product and one harness
   inside the viewport or the list stops moving, re-finds the row by name after a rebuild, and
   prints `A0_CONNECTED_SCROLL row=… offset=… viewport=… row_center=…` so the next run states the
   offset it stopped at instead of only that the row was "missing". A hosted run at `757359cb`
-  still fails at this step, so the step remains unclaimed.
+  still fails at this step, so the step remains unclaimed. The next hosted run at `ea6a7495`
+  printed no scroll diagnostic at all, which says the failure happens **before** any wheeling:
+  the row it finds has no `ScrollContainer` ancestor, i.e. it is not inside the list the panel
+  scrolls (the gate now prints that row's ancestry and whether the panel is its ancestor).
 
 `tools/probe` (local, headless) shows the placed piece resolves as
 `station_kind=furnace, station_tier=1, queue_capacity=3`, and A3's own `recipes.json` at
