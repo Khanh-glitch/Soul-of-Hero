@@ -19,7 +19,20 @@ for (const tick of [90, 180, 270]) {
   const source = new AbyssalBloom();
   for (let i = 1; i <= tick; i++) source.update(1 / 60, i / 60);
   fb.clear();
+  // Record actual indexed buffer writes from the original operations. This
+  // trace is diagnostic only; never derive world transparency from RGB.
+  const writes = new Uint8Array(416 * 234);
+  const rawBuffer = fb.buf;
+  fb.buf = new Proxy(rawBuffer, {
+    get(target, key) { const v = Reflect.get(target, key, target); return typeof v === 'function' ? v.bind(target) : v; },
+    set(target, key, value) {
+      if (typeof key === 'string' && /^\d+$/.test(key)) writes[Math.floor(Number(key) / 3)] = 1;
+      return Reflect.set(target, key, value, target);
+    }
+  });
   source.render(fb, tick / 60);
+  fb.buf = rawBuffer;
+  writeFileSync(`${out}/original_${tick}.writes.u8`, writes);
   writeFileSync(`${out}/original_${tick}.rgb32f`, Buffer.from(fb.buf.buffer));
   fb.present({putImageData() {}} as any);
   writeFileSync(`${out}/original_${tick}.rgba8`, Buffer.from(fb.out.data.buffer));

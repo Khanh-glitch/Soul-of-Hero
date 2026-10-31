@@ -20,6 +20,9 @@ var trail := PackedFloat32Array()
 var bloom_a := PackedFloat32Array()
 var bloom_b := PackedFloat32Array()
 var track_world_fields := false
+# Optional test-only trace of actual source buffer writes, never alpha.
+var track_audit_writes := false
+var audit_writes := PackedByteArray()
 var world_coverage := PackedFloat32Array()
 var world_multiplier := PackedFloat32Array()
 var world_warp := PackedFloat32Array()
@@ -37,6 +40,7 @@ var impact_tint := Vector3.ONE
 func _init() -> void:
     var n := W * H * 3
     buf.resize(n)
+    audit_writes.resize(W * H)
     world_coverage.resize(W * H)
     world_multiplier.resize(W * H)
     world_warp.resize(W * H * 2)
@@ -50,6 +54,7 @@ func _init() -> void:
 
 func clear() -> void:
     buf.fill(0.0)
+    if track_audit_writes: audit_writes.fill(0)
     if track_world_fields:
         world_coverage.fill(0.0)
         world_multiplier.fill(1.0)
@@ -69,6 +74,7 @@ func add(x: float, y: float, r: float, g: float, b: float, a: float = 1.0) -> vo
         if x0 < 0 or y0 < 0 or x0 >= W or y0 >= H:
             return
         var i := (y0 * W + x0) * 3
+        if track_audit_writes: audit_writes[y0 * W + x0] = 1
         if track_world_fields and a != 0.0:
             world_influence[y0 * W + x0] = 1
         buf[i] += r * a
@@ -84,6 +90,7 @@ func _splat(x: int, y: int, r: float, g: float, b: float, wgt: float) -> void:
     if x < 0 or y < 0 or x >= W or y >= H:
         return
     var i := (y * W + x) * 3
+    if track_audit_writes: audit_writes[y * W + x] = 1
     if track_world_fields and wgt != 0.0:
         world_influence[y * W + x] = 1
     buf[i] += r * wgt
@@ -94,6 +101,7 @@ func add_px(x: int, y: int, r: float, g: float, b: float, a: float = 1.0) -> voi
     if x < 0 or y < 0 or x >= W or y >= H:
         return
     var i := (y * W + x) * 3
+    if track_audit_writes: audit_writes[y * W + x] = 1
     if track_world_fields and a != 0.0:
         world_influence[y * W + x] = 1
     buf[i] += r * a

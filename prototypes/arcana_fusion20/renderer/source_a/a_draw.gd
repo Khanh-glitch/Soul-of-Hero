@@ -21,6 +21,7 @@ static func field(fb: AFramebuffer, x0: float, y0: float, x1: float, y1: float, 
             if fb.track_world_fields:
                 fb.world_influence[y * AFramebuffer.W + x] = 1
             if float(out[0]) != 0.0 or float(out[1]) != 0.0 or float(out[2]) != 0.0:
+                if fb.track_audit_writes: fb.audit_writes[y * AFramebuffer.W + x] = 1
                 fb.buf[i] += float(out[0])
                 fb.buf[i + 1] += float(out[1])
                 fb.buf[i + 2] += float(out[2])

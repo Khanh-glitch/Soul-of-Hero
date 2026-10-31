@@ -9,8 +9,12 @@ func _initialize() -> void:
         source.setup()
         for i in range(1, tick + 1): source.update(1.0 / 60.0, float(i) / 60.0)
         var fb := AFramebuffer.new()
+        fb.track_audit_writes = true
         fb.clear()
         source.render(fb, float(tick) / 60.0)
+        var trace := FileAccess.open(OUT + "/native_%d.writes.u8" % tick, FileAccess.WRITE)
+        trace.store_buffer(fb.audit_writes)
+        trace.close()
         var raw := FileAccess.open(OUT + "/native_%d.rgb32f" % tick, FileAccess.WRITE)
         raw.store_buffer(fb.buf.to_byte_array())
         raw.close()
