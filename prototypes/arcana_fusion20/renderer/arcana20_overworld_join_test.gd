@@ -464,6 +464,24 @@ func _run() -> void:
     check(not post._rect.visible and post._states.is_empty() and images_equal(baseline, await save_frame("c17_viewport_post_cancelled")), "C viewport post cancel restores exact frozen world")
     post.detach()
     post.queue_free()
+    var id11 := Arcana20SourceCatalog.canonical_id(11)
+    multi.cast_skill(id11, player.global_position, enemy.global_position)
+    var rotor := multi._casts[id11] as ASourcePlayer
+    rotor.set_process(false)
+    rotor.render_enabled = false
+    for tick in range(180): rotor.advance(STEP, false)
+    rotor.render_enabled = true
+    rotor._render_frame()
+    await process_frame
+    await process_frame
+    var rotor_img := await save_frame("fusion_11_candidate_tick180")
+    var rotor_viewers: Dictionary = mount._passes.get(id11, {})
+    var rotor_result := contamination(baseline, rotor_img, rotor_viewers.get(&"A"), rotor.source_pass_frame()) if rotor_viewers.has(&"A") else {"inside_changed": 0, "outside_changed": -1}
+    check(mount.active_viewers(id11) == 1 and int(rotor_result.get("inside_changed", 0)) > 0 and int(rotor_result.get("outside_changed", -1)) == 0, "A11 rotor C bolt candidate affects real world inside source influence: " + str(rotor_result))
+    multi.cancel_skill(id11)
+    await process_frame
+    await process_frame
+    check(mount.active_viewers(id11) == 0 and images_equal(baseline, await save_frame("fusion_11_cancelled")), "A11 rotor candidate cleanup restores frozen world")
     var id16 := Arcana20SourceCatalog.canonical_id(16)
     multi.cast_skill(id16, player.global_position, enemy.global_position)
     var seed_growth := multi._casts[id16] as ASourcePlayer

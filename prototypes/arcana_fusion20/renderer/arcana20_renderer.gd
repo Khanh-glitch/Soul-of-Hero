@@ -81,6 +81,12 @@ func _a_cast(canonical_id: StringName, id: int, caster_world: Vector2, target_wo
     var spell_duration := _a_spell_dur(id)
     if world_pass_mode and id == 9:
         spell = AChainVerdictGraph.new()
+    elif world_pass_mode and id == 11:
+        # A's seeded rotor, sync and fragment lifecycle; C #09 bolt-tree
+        # generator replaces A bridge/flash bolts. Still a fusion candidate.
+        spell = AVoltCarouselFusion.new()
+        spell_duration = AVoltCarouselFusion.DURATION
+        ap.source_variant = &"carousel_a_rotor_c_bolts"
     elif world_pass_mode and id == 16:
         spell = AWorldseedGrowth.new()
         spell_duration = AWorldseedGrowth.DURATION

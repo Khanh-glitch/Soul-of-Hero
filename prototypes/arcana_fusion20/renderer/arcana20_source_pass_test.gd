@@ -95,6 +95,19 @@ func _run() -> void:
         if rift_frame.disp[i * 4] != 0.0 or rift_frame.disp[i * 4 + 1] != 0.0: rift_warp += 1
     check(rift_ink > 0 and rift_inverted > 0 and rift_warp > 0, "C20 original contour, real-world inversion and A warp fields coexist")
 
+    var rotor := AVoltCarouselFusion.new()
+    rotor.setup()
+    check(rotor.source_seeds() == PackedInt32Array([0xc0de]) and rotor.rings.size() == 6, "A11 original seeded six-ring rotor")
+    var rotor_fb := AFramebuffer.new()
+    rotor_fb.track_world_fields = true
+    rotor_fb.clear()
+    rotor.render(rotor_fb, 3.0)
+    var rotor_light := 0.0
+    for value in rotor_fb.buf: rotor_light += absf(value)
+    check(rotor_light > 0.0, "A11 seeded rotor with C bolt-tree produces HDR fields")
+    for tick in range(1, 349): rotor.update(STEP, float(tick) * STEP)
+    check(rotor.frags.count() > 0, "A11 synchronized fragment lifecycle")
+
     var growth := AWorldseedGrowth.new()
     growth.setup()
     var growth_fb := AFramebuffer.new()
