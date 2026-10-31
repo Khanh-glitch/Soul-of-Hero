@@ -23,7 +23,7 @@ func _initialize() -> void:
     var b := CFrame.new()
     a.track_world_fragments = true
     b.track_world_fragments = true
-    var ticks := [108, 270, 390, 444, 510]
+    var ticks := [108, 270, 390, 444, 510, 570, 590, 600]
     for tick in range(1, ticks[-1] + 1):
         var t := float(tick) / 60.0
         # C particles without an explicit seed use a global deterministic
@@ -65,7 +65,8 @@ func _initialize() -> void:
             if live_a.index != live_b.index: mismatches.append("live_index")
             if live_a.operations != live_b.operations: mismatches.append("live_operations")
             if live_a.count != live_b.count or live_a.height != live_b.height: mismatches.append("live_dimensions")
-            if a.invert != b.invert: mismatches.append("invert")
+            if a.invert != b.invert or a.desat != b.desat or a.chroma != b.chroma or a.flash != b.flash or a.shake != b.shake: mismatches.append("post_state")
+            if a.field_activity != b.field_activity: mismatches.append("field_activity")
             if not mismatches.is_empty():
                 push_error("C20 optimized source fields diverged from immutable baseline at tick %d, repetition %d: %s" % [tick, rep, str(mismatches)])
                 quit(1)
