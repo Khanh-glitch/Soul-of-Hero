@@ -9,7 +9,7 @@ class_name Arcana20Status
 
 const ENTRIES := {
     1: {"state": "NATIVE_RUNTIME_CANDIDATE", "source": "A+C", "visual": "VISUAL_NOT_VERIFIED", "note": "Authored A+C crown choreography on catalog timeline; Gold A/C packages absent from repo"},
-    2: {"state": "NATIVE_RUNTIME_CANDIDATE", "source": "B", "visual": "VISUAL_NOT_VERIFIED", "note": "PR#28 source-ported B geometry (seed 202) hosted unchanged; parity PARTIAL per its own header (no full post/exact crack tree)"},
+    2: {"state": "SOURCE_PORTED_CANDIDATE", "source": "B", "visual": "VISUAL_NOT_VERIFIED", "note": "TRUE port: B engine (math/renderer/fx) + furnaceWyrm setup/render/post from pyre.ts seed 202 on native 384x216 HDR buffer; floor/actors excluded by design; Gold frame comparison pending"},
     3: {"state": "NATIVE_RUNTIME_CANDIDATE", "source": "B", "visual": "VISUAL_NOT_VERIFIED", "note": "B-family meteor/loom driver; original B:03 source not in repo"},
     4: {"state": "REDESIGN_CANDIDATE", "source": "NEW", "visual": "VISUAL_NOT_VERIFIED", "note": "Brief: diagonal slit > blade > one cut > delayed cracks. NOT Gold, NOT approved"},
     5: {"state": "NATIVE_RUNTIME_CANDIDATE", "source": "A+C", "visual": "VISUAL_NOT_VERIFIED", "note": "A+C bloom fusion driver; sources absent from repo"},

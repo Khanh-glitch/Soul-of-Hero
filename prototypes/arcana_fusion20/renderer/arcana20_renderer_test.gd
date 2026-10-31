@@ -76,6 +76,38 @@ func _init() -> void:
     if renderer.cast_skill(&"venomwright_001", Vector2.ZERO, Vector2.ZERO):
         _fail("foreign id accepted")
 
+    # --- Source-B furnaceWyrm frame parity vs the ORIGINAL TS engine ---
+    # Reference PNGs/meta were produced by running the unmodified B
+    # sources in Node (floor zeroed, same alpha transport). Tolerances
+    # absorb sin/hash last-ulp platform differences only.
+    var meta_text := FileAccess.get_file_as_string("res://prototypes/arcana_fusion20/renderer/source_b/reference/wyrm_meta.json")
+    var meta: Dictionary = JSON.parse_string(meta_text)
+    var br := BRenderer.new()
+    br.caster = Vector2(104, 132)
+    br.target = Vector2(262, 104)
+    var wyrm := BPyreWyrm.new()
+    wyrm.setup(br)
+    for key in ["t030", "t200", "t460", "t498", "t530", "t650"]:
+        var t: float = float(meta[key].t)
+        br.begin()
+        wyrm.render(br, t)
+        wyrm.post(br, t)
+        br.lighting()
+        var bytes := br.finalize()
+        var sum := 0
+        var nonzero := 0
+        for i in range(0, bytes.size(), 4):
+            sum = (sum + bytes[i] * 3 + bytes[i + 1] * 5 + bytes[i + 2] * 7) & 0xFFFFFFFF
+            if bytes[i + 3] != 0:
+                nonzero += 1
+        var exp_sum := int(meta[key].sum)
+        var exp_nz := int(meta[key].nonzero)
+        var sum_rel := absf(float(sum - exp_sum)) / maxf(1.0, float(exp_sum))
+        var nz_rel := absf(float(nonzero - exp_nz)) / maxf(1.0, float(exp_nz))
+        print("::notice::WYRM_PARITY ", key, " t=", t, " sum_rel=", snappedf(sum_rel, 0.0001), " nz_rel=", snappedf(nz_rel, 0.0001), " nz=", nonzero, "/", exp_nz)
+        if nz_rel > 0.05 or sum_rel > 0.10:
+            _fail("wyrm parity %s nz_rel=%f sum_rel=%f" % [key, nz_rel, sum_rel])
+
     var st := Arcana20Status.summary()
     print("::notice::ARCANA20_DBG stages=", JSON.stringify(renderer.stage_counts), " contacts=", JSON.stringify(_contacts), " finished=", _finished.size(), " started=", _started.size())
     print("ARCANA20_RENDER_STATUS ", JSON.stringify(st))

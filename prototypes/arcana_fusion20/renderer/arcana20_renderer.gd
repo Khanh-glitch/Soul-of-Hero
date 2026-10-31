@@ -26,11 +26,13 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
         return false
     cancel_skill(canonical_id)
     if id == 2:
-        # Regression fixture: the source-ported B geometry class, unchanged.
-        var b02 := ArcanaB02SourceGeometry.new()
+        # TRUE source port: B furnaceWyrm (pyre.ts seed 202) on the ported
+        # B HDR renderer. Supersedes the earlier reinterpreted geometry
+        # (arcana_b02_source_geometry.gd, kept for reference only).
+        var b02 := BSourcePlayer.new()
         add_child(b02)
-        b02.visual_contact_cue.connect(func(pos: Vector2) -> void:
-            visual_contact.emit(canonical_id, pos, &"source_climax")
+        b02.visual_contact.connect(func(pos: Vector2) -> void:
+            visual_contact.emit(canonical_id, pos, &"source_impact_4.98")
             body_event_cue.emit(canonical_id, pos, &"fire"))
         b02.finished.connect(func() -> void: _on_finished(canonical_id))
         _casts[canonical_id] = b02
