@@ -117,6 +117,10 @@ jobs:
             # A gate whose log cannot be read is not a gate: publish the tail.
             while IFS= read -r line; do echo "::notice title=tail-$(basename "$f" .log)::$line"; done < <(tail -n 60 "$f")
           done
+          # The journey's own 1280x720 pixels are evidence too: collect them from
+          # the shared profile so the return image comes from a real second process.
+          mkdir -p ../artifacts/captures
+          find ../artifacts/ud_connected -name 'capture_*.png' -exec cp {} ../artifacts/captures/ \;
           # Exit codes alone would let a NOT_TESTED run read as a pass, so the
           # composed gate also requires the exact PASS banner from both processes.
           grep -qa 'A0 CONNECTED SURVIVAL JOURNEY PASSED' "$log2" || second=1
