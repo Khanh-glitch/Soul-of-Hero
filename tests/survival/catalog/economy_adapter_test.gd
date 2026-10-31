@@ -564,7 +564,25 @@ func _run() -> void:
 	_case_24_world_adversarial_clock_identity_and_conservation()
 	_case_25_quarry_fail_closed_and_hidden_projection()
 	_case_26_one_time_crates_and_basic_tool_research_policy()
+	_case_27_orchard_and_mill_fail_closed()
 	# End-to-end report.
+
+func _case_27_orchard_and_mill_fail_closed() -> void:
+	_begin_live("A8 Orchard and Mill fail-closed until source authorization")
+	_move("poi_crown_waystation", Vector2i(408, 199))
+	_expect(bool(_world_act("pry_locker", "", "w27.locker").ok), "locker discovers Waystation")
+	var orchard: Dictionary = eco.world_action({"poi_id": "poi_crown_south_orchard_ruin", "action_id": "gather_reeds"}, "w27.orchard.gather")
+	_expect(not bool(orchard.ok) and str(orchard.reason) == "unknown_world_poi", "unauthorized Orchard POI rejected")
+	var mill: Dictionary = eco.world_action({"poi_id": "poi_crown_south_crown_mill", "action_id": "repair_waterwheel"}, "w27.mill.repair")
+	_expect(not bool(mill.ok) and str(mill.reason) == "unknown_world_poi", "unauthorized Mill POI rejected")
+	var priced: Dictionary = eco.world_action({"poi_id": "poi_crown_south_orchard_ruin", "action_id": "gather_reeds", "cost_quantity": 1, "reward_quantity": 1}, "w27.orchard.priced")
+	_expect(not bool(priced.ok) and str(priced.reason).begins_with("invalid_world_request_field"), "caller cannot price or authorize Orchard through request fields")
+	var mill_priced: Dictionary = eco.world_action({"poi_id": "poi_crown_south_crown_mill", "action_id": "repair_waterwheel", "cost_quantity": 1, "reward_quantity": 1}, "w27.mill.priced")
+	_expect(not bool(mill_priced.ok) and str(mill_priced.reason).begins_with("invalid_world_request_field"), "caller cannot price or authorize Mill through request fields")
+	var mill_projection: Dictionary = eco.world_projection("poi_crown_south_crown_mill")
+	_expect(mill_projection.is_empty(), "Mill has no read-only economy projection until authorized")
+	var orchard_projection: Dictionary = eco.world_projection("poi_crown_south_orchard_ruin")
+	_expect(orchard_projection.is_empty(), "Orchard has no read-only economy projection until authorized")
 	if failures.is_empty():
 		print("A3 ECONOMY ADAPTER PASSED - %d checks / %d cases" % [checks, case_id])
 		quit(0)

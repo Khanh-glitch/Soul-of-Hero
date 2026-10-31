@@ -78,6 +78,48 @@ func _run() -> void:
 	_expect(bool(broken.ok), "fixture broken iron pick")
 	var broken_plan: Dictionary = eco.plan_tool_use(_request(str(broken.instance_id), 0, "iron_vein"))
 	_expect(not bool(broken_plan.ok) and str(broken_plan.reason) == "TOOL_BROKEN", "broken tool cannot authorize a swing")
+	# WP2 interrupted write: real SaveService I/O failure rolls back tool wear AND yield.
+	var tmp_abs := ProjectSettings.globalize_path(path + ".tmp")
+	_expect(DirAccess.make_dir_recursive_absolute(tmp_abs) == OK, "fixture obstructs temporary save write")
+	var fresh_plan := eco.plan_tool_use(_request(tool_id, 1))
+	_expect(bool(fresh_plan.ok), "fresh plan after committed wear")
+	var interrupted := func(candidate: Dictionary) -> bool:
+		if not bool(save.call(&"add_items_to_candidate", candidate, "stone_chunk", "material", 1, {"source": "native_fixture_interrupted"})):
+			return false
+		var result := eco.apply_tool_use_plan(candidate, fresh_plan)
+		return bool(result.get("ok", false))
+	var blocked := bool(save.call(&"transact_once", "fixture.tool_use.interrupted.1", interrupted, {"kind": "native_fixture_interrupted"}))
+	_expect(not blocked, "obstructed write fails closed")
+	_expect(int(eco.instance(tool_id).get("condition", -1)) == 99, "tool not worn on interrupted write")
+	_expect(int(eco.inventory_totals().get("stone_chunk", 0)) == 1, "interrupted write grants no yield")
+	DirAccess.remove_absolute(tmp_abs)
+	var recovered := bool(save.call(&"transact_once", "fixture.tool_use.interrupted.1", func(candidate: Dictionary) -> bool:
+		var result := eco.apply_tool_use_plan(candidate, fresh_plan)
+		return bool(result.get("ok", false)), {"kind": "native_fixture_recovered"}))
+	_expect(recovered, "retry after I/O repair commits once")
+	_expect(int(eco.instance(tool_id).get("condition", -1)) == 98, "retry wears tool exactly once more")
+	_expect(int(eco.inventory_totals().get("stone_chunk", 0)) == 2, "retry grants exact yield")
+
+	# WP2 full inventory: full bag rejects harvest before tool wear and before any yield.
+	var clear_sc := func(candidate: Dictionary) -> bool:
+		var inventory := candidate.get("inventory", {}).duplicate(true)
+		var stacks := inventory.get("item_stacks", {}).duplicate(true)
+		stacks.erase("stone_chunk")
+		inventory["item_stacks"] = stacks
+		candidate["inventory"] = inventory
+		return true
+	_expect(bool(save.call(&"transact_once", "fixture.tool_use.empty_stone_chunk", clear_sc)), "fixture empties stone_chunk stack")
+	var full_bag_plan := eco.plan_tool_use(_request(tool_id, 2))
+	_expect(bool(full_bag_plan.ok), "fresh plan for full-bag harvest")
+	var full_bag_mut := func(candidate: Dictionary) -> bool:
+		if not bool(save.call(&"add_items_to_candidate", candidate, "stone_chunk", "material", 1, {"source": "native_fixture_full_bag"})):
+			return false
+		var result := eco.apply_tool_use_plan(candidate, full_bag_plan)
+		return bool(result.get("ok", false))
+	var full_bag_res := bool(save.call(&"transact_once", "fixture.tool_use.full_bag_harvest", full_bag_mut, {"kind": "native_fixture_full_bag"}))
+	_expect(not full_bag_res, "full-bag harvest fails closed")
+	_expect(int(eco.instance(tool_id).get("condition", -1)) == 98, "full-bag harvest does not wear tool")
+	_expect(int(eco.inventory_totals().get("stone_chunk", 0)) == 2, "full-bag harvest grants no yield")
 	# Full bag: A0-style atomic harvest must reject before tool wear.
 	var fill := func(candidate: Dictionary) -> bool:
 		var inventory: Dictionary = candidate.get("inventory", {}).duplicate(true)
