@@ -165,29 +165,19 @@ func _run_continue_phase() -> void:
 	# directly leaves that card on screen, and because it is registered as a gameplay
 	# modal, A0's input gate then suppresses every movement press for the rest of the
 	# run - the frame looks like a broken character when the harness is what is wrong.
-	# Recover through the card the player would actually press.
-	var overworld := _overworld_of(_knight)
-	if overworld != null:
-		var death_card := overworld.get_node_or_null("OverworldDeath") as CanvasItem
-		if death_card != null and death_card.is_visible_in_tree():
-			print("A6 CAPTURE: reload restored A0's pending-death card; answering it through the card")
-			var answer := death_card.find_child("Respawn", true, false) as Button
-			if answer == null:
-				_fail("pending-death card has no answer button")
-				return _finish()
-			answer.pressed.emit()
-			await _wait_frames(20)
-			if death_card.is_visible_in_tree():
-				_fail("pending-death card stayed visible after the player answered it")
-				return _finish()
+	await _answer_death_card()
 	if bool(_knight.get("dead")):
 		var survival := get_tree().root.get_node_or_null(^"SurvivalService")
 		if survival != null and survival.has_method(&"finish_overworld_death"):
 			survival.call(&"finish_overworld_death", _knight.get(&"global_position"))
 		_knight.call(&"respawn", _knight.get(&"global_position"))
 		await _wait_frames(14)
+		await _answer_death_card()
 	var player_state := _presenter_state(_knight)
 	await _capture("22_continue_overworld_idle")
+	# The card can appear one or two frames after the route settles, so settle again
+	# immediately before the press rather than trusting an earlier look.
+	await _answer_death_card()
 	var world_start := _actor_position()
 	Input.action_press(&"move_right")
 	await _wait_frames(14)
@@ -228,6 +218,39 @@ func _find_avatar_host(root: Node) -> Node:
 		if candidate.get_node_or_null(^"AvatarPresenter") != null:
 			return candidate
 	return null
+
+
+## Answers A0's pending-death card if it is up, through the card's own button. Waits
+## for the card to settle first, because A0 opens it a frame or two after the route
+## appears and checking once is how a harness lies to itself.
+## Returns true when no card is left on screen.
+func _answer_death_card() -> bool:
+	for _attempt in range(3):
+		await _wait_frames(6)
+		var death_card := _death_card()
+		if death_card == null or not death_card.is_visible_in_tree():
+			return true
+		print("A6 CAPTURE: A0's pending-death card is up; answering it through the card")
+		var answer := death_card.find_child("Respawn", true, false) as Button
+		if answer == null:
+			_fail("pending-death card has no answer button")
+			return false
+		answer.pressed.emit()
+		await _wait_frames(20)
+	var remaining := _death_card()
+	if remaining != null and remaining.is_visible_in_tree():
+		_fail("pending-death card stayed visible after the player answered it")
+		return false
+	return true
+
+
+func _death_card() -> CanvasItem:
+	var overworld := _overworld_of(_knight) if is_instance_valid(_knight) else null
+	if overworld == null:
+		overworld = _current_screen()
+	if overworld == null:
+		return null
+	return overworld.get_node_or_null("OverworldDeath") as CanvasItem
 
 
 ## The overworld that owns this actor, found by walking up to the node that carries
