@@ -278,9 +278,9 @@ func _draw() -> void:
                 total += pts[i].distance_to(pts[i + 1])
             var draw_len := total * clampf(t / maxf(0.1, climax), 0.0, 1.0)
             var acc := 0.0
-            var tip := pts[0]
+            var tip: Vector2 = pts[0]
             for i in range(pts.size() - 1):
-                var seg := pts[i].distance_to(pts[i + 1])
+                var seg: float = pts[i].distance_to(pts[i + 1])
                 if acc + seg <= draw_len:
                     stroke(pts[i], pts[i + 1], 2.0, ramp_color(element, 0.8, fade))
                     tip = pts[i + 1]
