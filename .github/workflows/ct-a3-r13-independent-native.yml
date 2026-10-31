@@ -1,0 +1,85 @@
+name: CT A3 R13 independent native audit (read-only frozen owner)
+on:
+  push:
+    branches: [coordination/ct-pin-guard-pilot-20261031]
+    paths: [.github/workflows/ct-a3-r13-independent-native.yml]
+permissions:
+  contents: read
+jobs:
+  a3-r13-frozen-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - name: Checkout EXACT submitted A3 head; no owner write
+        uses: actions/checkout@v4
+        with:
+          ref: 6672b476b55d7bca8ad711e2945f6cc8a60cff69
+          fetch-depth: 0
+      - name: Freeze SHA and prepare evidence folder
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/ct-a3-r13
+          test "$(git rev-parse HEAD)" = "6672b476b55d7bca8ad711e2945f6cc8a60cff69"
+          git rev-parse HEAD > artifacts/ct-a3-r13/owner_sha.txt
+          test -f tests/survival/a3_value_economy_test.gd
+          test -f game/survival/economy/a3_economy_service.gd
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import in real Godot engine
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 300 godot --headless --path . --user-data-dir artifacts/ct-a3-r13/import --import > artifacts/ct-a3-r13/import.log 2>&1
+          tail -75 artifacts/ct-a3-r13/import.log
+      - name: Run the actual R13 new native value test and preserve actual exit
+        shell: bash
+        run: |
+          set +e
+          timeout --signal=TERM --kill-after=10s 390 godot --headless --path . \
+            --user-data-dir artifacts/ct-a3-r13/user \
+            --script res://tests/survival/a3_value_economy_test.gd \
+            > artifacts/ct-a3-r13/r13_native.log 2>&1
+          rc=$?
+          set -e
+          cat artifacts/ct-a3-r13/r13_native.log | tail -180
+          printf '%s\n' "$rc" > artifacts/ct-a3-r13/native_exit.txt
+          if grep -aE '(^|[[:space:]])FAIL|SCRIPT ERROR|Parse Error|GDScript::reload' artifacts/ct-a3-r13/r13_native.log; then
+            echo '::error::A3 R13 native emitted failures/errors'
+            exit 1
+          fi
+          test "$rc" -eq 0
+          # A Godot exit code without explicit assertion marker is NOT proof.
+          grep -aEq 'A3 VALUE ECONOMY.*PASSED|A3_VALUE.*PASSED' artifacts/ct-a3-r13/r13_native.log || {
+            echo '::error::NO_R13_SUITE_PASS_MARKER'
+            exit 1
+          }
+      - name: Record source-level causal-risk evidence (not a substitute for native test)
+        if: always()
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          s=Path("game/survival/economy/a3_economy_service.gd").read_text()
+          data={
+            "owner":"A3",
+            "source_sha":Path("artifacts/ct-a3-r13/owner_sha.txt").read_text().strip(),
+            "prepare_grants_output_immediately":"Grant outputs immediately" in s,
+            "counter_reads_wrong_transaction_prefix": 'key.begins_with("harvest:%s:"' in s and '"a3_harvest:%s:%d"' in s,
+            "knowledge_in_memory":"learned_recipes[recipe_id] = true" in s,
+            "tested_new_r13_script":"tests/survival/a3_value_economy_test.gd",
+            "interpretation":"static risk flags are reviewed against authoritative game contract; actual native test exit separately required"
+          }
+          Path("artifacts/ct-a3-r13/static_risks.json").write_text(json.dumps(data,indent=2)+"\n")
+          print(json.dumps(data,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ct-a3-r13-frozen-native-evidence
+          path: artifacts/ct-a3-r13
+          if-no-files-found: warn
