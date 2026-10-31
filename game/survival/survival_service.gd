@@ -299,7 +299,8 @@ func harvest_with_tool(
 	tool_instance_id: String,
 	world_revision: String,
 	active_seconds: int,
-	now_unix: int = -1
+	now_unix: int = -1,
+	expected_tool_revision: int = -1
 ) -> Dictionary:
 	var definition := resource_definition(kind)
 	if definition.is_empty():
@@ -326,7 +327,11 @@ func harvest_with_tool(
 		"node_id": node_id,
 		"resource_kind": kind,
 		"tool_instance_id": tool_instance_id,
-		"expected_tool_revision": int((instances[tool_instance_id] as Dictionary).get("revision", -1)),
+		# A caller that planned ahead passes the revision it planned with, so A3 can
+		# refuse a plan that went stale. -1 means "commit against the live tool",
+		# which is only safe for a caller that holds the single write path.
+		"expected_tool_revision": expected_tool_revision if expected_tool_revision >= 0 \
+			else int((instances[tool_instance_id] as Dictionary).get("revision", -1)),
 		"world_revision": world_revision,
 		"active_seconds": active_seconds,
 	}

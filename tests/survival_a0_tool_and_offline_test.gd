@@ -69,14 +69,14 @@ func _boot_and_run() -> void:
 	_expect(composition != null and is_instance_valid(composition),
 		"the A0 composition root (run lifecycle + profile port + offline host) is mounted")
 	if composition != null:
-		var lifecycle: Node = get_node_or_null("/root/RunLifecycle")
+		var lifecycle: Node = root.get_node_or_null("RunLifecycle")
 		_expect(lifecycle != null and not (lifecycle.call(&"run_record") as Dictionary).is_empty(),
 			"the mounted world belongs to a durable run")
 		var port: RefCounted = composition.get("_port")
 		_expect(port != null, "the A3 V7 profile port is bound to real SaveService")
 		if port != null:
 			var ctx: Dictionary = port.call(&"run_context")
-			_expect(String(ctx.get("contract", "")) == "soh.economy.a0_profile_port.v1",
+			_expect(String(ctx.get("contract", "")) == "soh.economy.a0_run_context.v1",
 				"the bound port speaks the A3 profile contract")
 			_expect(String(ctx.get("run_id", "")) == String((lifecycle.call(&"run_record") as Dictionary).get("run_id", "x")),
 				"the port and the lifecycle agree on the one run identity")
@@ -112,13 +112,21 @@ func _boot_and_run() -> void:
 			tool_receipts += 1
 	_expect(tool_receipts == 1, "exactly one tool-use receipt exists (%d)" % tool_receipts)
 
-	# A stale revision (the pre-swing one) must be refused, and a refusal must not
-	# cost condition or pay an item.
+	# A stale plan (the revision before the swing) must be refused, and a refusal
+	# must not cost condition or pay an item.
+	var stale_revision := revision
 	var stale: Dictionary = _survival().call(&"harvest_with_tool", node_id, "iron_vein", _economy,
-		tool_id, "world:0:0", 0)
+		tool_id, "world:0:0", 0, -1, stale_revision)
 	var after_stale: Dictionary = (_adapter.call(&"document") as Dictionary).get("instances", {}).get(tool_id, {})
+	_expect(not bool(stale.get("ok", true)) and String(stale.get("reason", "")) == "TOOL_REVISION_STALE",
+		"a plan made against an older tool revision is refused (%s)" % str(stale.get("reason", "")))
 	_expect(int(after_stale.get("condition", -2)) == int(worn.get("condition", -3)),
-		"a refused swing costs no tool condition")
+		"a refused stale swing costs no tool condition")
+	_expect(_count("iron_scrap") == iron_after, "a refused stale swing pays no item")
+	# The physical path plans first and commits the planned revision.
+	var plan: Dictionary = _economy.call(&"tool_plan_for_node", node_id, "iron_vein")
+	_expect(String(plan.get("tool_id", "")) == tool_id and int(plan.get("expected_tool_revision", -1)) == int(after_stale.get("revision", -2)),
+		"the mounted node path plans against the live tool revision (%s)" % str(plan.get("tool_id", "")))
 	# A tool that cannot work this kind must be refused by A3, not by A0.
 	var wrong_kind: Dictionary = _survival().call(&"harvest_with_tool", _first_node_of_kind("oak_tree"),
 		"oak_tree", _economy, tool_id, "world:0:0", 0)
@@ -128,32 +136,29 @@ func _boot_and_run() -> void:
 		"soh_i_000000000999_foreign", "world:0:0", 0)
 	_expect(not bool(foreign.get("ok", true)) and String(foreign.get("reason", "")) == "TOOL_NOT_OWNED",
 		"a foreign tool identity is refused")
-	# A broken tool is refused by A3 and pays nothing.
-	var broken_result := {"ok": false}
-	var broken := _save().call(&"transact_once", "soh.a0.test.break_tool", func(candidate: Dictionary) -> bool:
-		var economy: Dictionary = candidate.get("survival_economy", {})
-		var instances: Dictionary = economy.get("instances", {})
-		if not instances.has(tool_id):
-			return false
-		instances[tool_id]["condition"] = 0
-		instances[tool_id]["revision"] = int(instances[tool_id].get("revision", 0)) + 1
-		economy["instances"] = instances
-		candidate["survival_economy"] = economy
-		return true, {"kind": "test_break_tool"})
-	_expect(bool(broken), "the tool can be broken for the negative case")
+	# A broken tool is refused by A3 and pays nothing. The tool is worn out
+	# through A3's own `wear` API, so this is the owner's state transition and
+	# not a test poking at the economy document.
+	var wear_out: Dictionary = _adapter.call(&"wear", tool_id, 100, "test.authoring.wear_out")
+	_expect(bool(wear_out.get("ok", false)), "A3 wears the tool out through its own API (%s)" % str(wear_out.get("reason", "")))
+	var worn_record: Dictionary = _adapter.call(&"instance", tool_id)
+	_expect(int(worn_record.get("condition", -1)) == 0, "the tool really is at condition 0")
 	var iron_broken := _count("iron_scrap")
+	var broken_revision := int(worn_record.get("revision", 0))
 	var broken_swing: Dictionary = _survival().call(&"harvest_with_tool", node_id, "iron_vein", _economy,
-		tool_id, "world:0:0", 0)
+		tool_id, "world:0:0", broken_revision, 0)
 	_expect(not bool(broken_swing.get("ok", true)) and String(broken_swing.get("reason", "")) == "TOOL_BROKEN",
 		"a broken tool is refused by A3 (%s)" % str(broken_swing.get("reason", "")))
 	_expect(_count("iron_scrap") == iron_broken, "a refused broken-tool swing pays nothing")
+	_expect(int((_adapter.call(&"instance", tool_id) as Dictionary).get("revision", 0)) == broken_revision,
+		"a refused swing does not advance the tool revision")
 
 	# --- prepared offline operation ----------------------------------------
 	var offline: Node = composition.get("_offline") if composition != null else null
 	_expect(offline != null, "the A0 offline host is mounted")
 	if offline == null:
 		return
-	var lifecycle: Node = get_node_or_null("/root/RunLifecycle")
+	var lifecycle: Node = root.get_node_or_null("RunLifecycle")
 	var run: Dictionary = lifecycle.call(&"phase")
 	_expect(String(run.get("state", "")) == "active", "the offline host works inside a live run")
 	# No armed job yet: the plan must be honest about that, not invent work.
@@ -217,5 +222,5 @@ func _verify_process() -> void:
 			tool_receipts += 1
 	_expect(tool_receipts == 1, "the tool-use receipt is still exactly one after relaunch")
 	# A replay of the same swing from the relaunched process must not pay again.
-	var lifecycle: Node = get_node_or_null("/root/RunLifecycle")
+	var lifecycle: Node = root.get_node_or_null("RunLifecycle")
 	_expect(lifecycle != null, "the relaunched process has a lifecycle")

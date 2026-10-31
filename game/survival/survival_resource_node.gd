@@ -137,11 +137,13 @@ func interact(player: Node2D) -> bool:
 	# swing is one atomic harvest+wear. Otherwise it stays the bare-handed swing:
 	# no tool, no wear, and the same yields as before.
 	var economy := _economy()
-	var tool_id := String(economy.call(&"tool_for_node", node_id, resource_kind)) if economy != null else ""
+	var plan: Dictionary = economy.call(&"tool_plan_for_node", node_id, resource_kind) if economy != null else {}
+	var tool_id := String(plan.get("tool_id", ""))
 	var result: Dictionary
 	if not tool_id.is_empty():
 		result = svc.call(&"harvest_with_tool", node_id, resource_kind, economy, tool_id,
-			String(economy.call(&"world_revision")), int(economy.call(&"world_active_seconds")))
+			String(plan.get("world_revision", "")), int(plan.get("active_seconds", 0)), -1,
+			int(plan.get("expected_tool_revision", -1)))
 	else:
 		result = svc.call(&"harvest", node_id, resource_kind)
 	_last_result = result

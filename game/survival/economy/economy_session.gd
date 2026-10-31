@@ -178,9 +178,14 @@ func world_revision() -> String:
 ## is A3's: A0 only enumerates the tools the player physically owns and asks the
 ## pinned adapter's read-only planner. An empty string means bare hands, which is
 ## still the ordinary knife-first path and pays no tool wear.
-func tool_for_node(node_id: String, resource_kind: String) -> String:
-	if _adapter == null:
-		return ""
+## Read-only plan: which owned A3 tool (if any) may work this node right now, and
+## the exact revision/world tick the decision was made with. Nothing is written.
+## The caller commits with THIS revision, so a plan that went stale between the
+## read and the swing is refused by A3 (`TOOL_REVISION_STALE`) instead of
+## silently wearing a newer tool state.
+func tool_plan_for_node(node_id: String, resource_kind: String) -> Dictionary:
+	if _adapter == null or node_id.is_empty() or resource_kind.is_empty():
+		return {}
 	var candidate: Dictionary = _save.call(&"get_snapshot")
 	var instances: Dictionary = (_adapter.call(&"document") as Dictionary).get("instances", {})
 	var ids: Array = instances.keys()
@@ -189,19 +194,30 @@ func tool_for_node(node_id: String, resource_kind: String) -> String:
 	var active := world_active_seconds()
 	for raw_id: Variant in ids:
 		var tool_id := String(raw_id)
+		var tool_revision := int((instances[raw_id] as Dictionary).get("revision", -1))
 		var request := {
 			"contract": "soh.economy.tool_use.v1",
 			"node_id": node_id,
 			"resource_kind": resource_kind,
 			"tool_instance_id": tool_id,
-			"expected_tool_revision": int((instances[raw_id] as Dictionary).get("revision", -1)),
+			"expected_tool_revision": tool_revision,
 			"world_revision": revision,
 			"active_seconds": active,
 		}
 		var plan: Dictionary = _adapter.call(&"plan_tool_use_candidate", candidate, request)
 		if bool(plan.get("ok", false)) and bool(plan.get("allowed", false)):
-			return tool_id
-	return ""
+			return {
+				"tool_id": tool_id,
+				"expected_tool_revision": tool_revision,
+				"world_revision": revision,
+				"active_seconds": active,
+			}
+	return {}
+
+
+## Convenience read for callers that only need to know whether a tool applies.
+func tool_for_node(node_id: String, resource_kind: String) -> String:
+	return String(tool_plan_for_node(node_id, resource_kind).get("tool_id", ""))
 
 
 ## Pure read, called synchronously by the A3 adapter when verifying an advance.

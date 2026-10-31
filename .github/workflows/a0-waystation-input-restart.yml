@@ -45,7 +45,7 @@ jobs:
         run: |
           set -euo pipefail
           printf '%s  %s\n' \
-            2261047e99f9b85e3e3e3b4999e93afba62cbb9923b33743546d181d9f0c96a3 game/survival/economy/a0_economy_adapter.gd \
+            edf62b0aab6dd0dee5acd36e129286a553dd1234a96bd20455a782a31246b8ba game/survival/economy/a0_economy_adapter.gd \
             109c268036bb92e5dcca2d23ec5f5c1664e1f8645c01abf189d6b5c90f06302c game/survival/economy/vendor/a3_economy_service.gd \
             8bab244159e17acc34d51a22ab05112090e4f08f146511aa5c61683c7d999a47 game/survival/economy/world_source_adapter.gd \
             7b9670f4971d2f161138e0754cbbe66dfe2a239bf0d15d3079a766d729dd230b data/survival/items/world_source_bindings.v3.json \
