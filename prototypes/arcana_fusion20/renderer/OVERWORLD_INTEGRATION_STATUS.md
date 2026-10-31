@@ -397,8 +397,11 @@ SOH world source parity and creator review remain separate.
   bloom, full post and full-cast comparison are still missing and tests pending.
 - `e0965930` caches the immutable seed-151461 nearest-contour fields to avoid
   recomputation for repeated #20 casts; approximately 1,990,656 packed bytes
-  remain intentionally resident as a shared static cache. Cold/cached timing,
-  copy-on-write, allocation and world regression are pending. This does not
+  remain intentionally resident as a static master. The initial sharing test
+  [41216341845](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41216341845)
+  exposed mutable packed-array aliasing (cold/cached setup 495.4/1.14 ms); the
+  implementation was corrected to explicitly duplicate each cast's arrays.
+  Revised timing, allocation and world regression are pending. This does not
   establish frame-rate performance or target-device memory budget.
 - Latest A0 inspected is `a6e3797879915510b2e86be0d2ee521f53967c94`:
   [A0+A6 composition 41215828924](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41215828924/job/124580025221)

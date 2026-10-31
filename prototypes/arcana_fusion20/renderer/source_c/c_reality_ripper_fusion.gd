@@ -47,8 +47,9 @@ var tny := PackedFloat32Array()
 var ttx := PackedFloat32Array()
 var tty := PackedFloat32Array()
 # This nearest-contour field depends only on the fixed original seed, source
-# resolution and immutable waypoints. Share its packed, copy-on-write result
-# across casts instead of recomputing ~70k x 8 segment projections per cast.
+# resolution and immutable waypoints. Cache an independent master and clone
+# packed arrays per cast instead of recomputing ~70k x 8 projections per cast.
+# Godot packed arrays can share mutable storage; never expose the master.
 static var _contour_cache: Dictionary = {}
 var collided := false
 var blocks: Array = []
@@ -112,14 +113,14 @@ func setup() -> void:
                 if best < 46.0:
                     var k := y * W + x
                     ts[k] = bs; td[k] = bd; tnx[k] = bnx; tny[k] = bny; ttx[k] = btx; tty[k] = bty
-        _contour_cache = {"ts": ts, "td": td, "tnx": tnx, "tny": tny, "ttx": ttx, "tty": tty}
+        _contour_cache = {"ts": ts.duplicate(), "td": td.duplicate(), "tnx": tnx.duplicate(), "tny": tny.duplicate(), "ttx": ttx.duplicate(), "tty": tty.duplicate()}
     else:
-        ts = _contour_cache.ts
-        td = _contour_cache.td
-        tnx = _contour_cache.tnx
-        tny = _contour_cache.tny
-        ttx = _contour_cache.ttx
-        tty = _contour_cache.tty
+        ts = (_contour_cache.ts as PackedFloat32Array).duplicate()
+        td = (_contour_cache.td as PackedFloat32Array).duplicate()
+        tnx = (_contour_cache.tnx as PackedFloat32Array).duplicate()
+        tny = (_contour_cache.tny as PackedFloat32Array).duplicate()
+        ttx = (_contour_cache.ttx as PackedFloat32Array).duplicate()
+        tty = (_contour_cache.tty as PackedFloat32Array).duplicate()
     # Original V8 sort for this seed consumed 29 RNG draws after the seven
     # waypoints. The permutation itself is fixed above; preserve the resulting
     # RNG state for C's 56 original world-fragment blocks.
