@@ -36,7 +36,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 tools/survival/balance/a7_certify.py --self-test | tee selftest.txt
-          grep -q "A7_CERT_SELFTEST 32/32" selftest.txt
+          grep -q "A7_CERT_SELFTEST 35/35" selftest.txt
 
       - name: Compose the exact five-owner tree (read-only)
         run: |
@@ -74,7 +74,13 @@ jobs:
           echo "probe tree = certified composition + tests/survival/a7_certification_probe.gd" \
             > "$RUNNER_TEMP/evidence/probe_tree_delta.txt"
           cd "$RUNNER_TEMP/probe_tree"
+          # A raw composed tree has never been imported, so global script classes and
+          # .ctex resources are unresolved. Import first: otherwise a missing class is
+          # misread as an owner contract failure, which is exactly the class of defect
+          # this round exists to stop.
           set +e
+          timeout 900 godot --headless --path . --import > "$RUNNER_TEMP/evidence/import.txt" 2>&1
+          echo "import exit=$?" >> "$RUNNER_TEMP/evidence/import.txt"
           timeout 600 godot --headless --path . --script res://tests/survival/a7_certification_probe.gd \
             > "$RUNNER_TEMP/evidence/probe.txt" 2>&1
           rc=$?
@@ -133,6 +139,7 @@ jobs:
             [ -f "$RUNNER_TEMP/$f" ] && cp "$RUNNER_TEMP/$f" "$OUT/$f"
           done
           [ -f "$RUNNER_TEMP/evidence/probe.txt" ] && cp "$RUNNER_TEMP/evidence/probe.txt" "$OUT/probe.txt"
+          [ -f "$RUNNER_TEMP/evidence/import.txt" ] && cp "$RUNNER_TEMP/evidence/import.txt" "$OUT/import.txt"
           cp selftest.txt "$OUT/selftest.txt" 2>/dev/null || true
           git config user.name "a7-certification"
           git config user.email "a7-certification@users.noreply.github.com"

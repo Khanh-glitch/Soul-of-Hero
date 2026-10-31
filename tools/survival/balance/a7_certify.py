@@ -588,7 +588,9 @@ def track2(f: Facts) -> List[Case]:
     blocked_marker = f.probe.get("T2.6", {})
     if not declared:
         c.settle(BLOCKED, "BLOCKED_NO_GATE_DECLARATION")
-    elif not blocked_marker:
+    elif not blocked_marker or blocked_marker.get("refused") is None:
+        # `refused: null` means the probe observed nothing, which is missing evidence.
+        # Only an explicit `refused: false` is a product failure.
         c.settle(BLOCKED, "BLOCKED_NO_BLOCKED_ACCESS_RUN",
                  "gates are declared; no run shows the player actually refused at the threshold")
     elif not blocked_marker.get("refused"):
@@ -702,6 +704,8 @@ def track3(f: Facts) -> List[Case]:
              "real-gameplay", "receipt")
     receipt = f.probe.get("T3.9", {})
     c.evidence = f.hit("game/survival/economy/a0_offline_host.gd", r"nothing_to_settle", 1)
+    if receipt and str(receipt.get("reason", "")) == "NOT_THIS_PROBE":
+        receipt = {}
     if not receipt:
         c.settle(BLOCKED, "BLOCKED_NO_2PID_RECEIPT",
                  "requires a second-OS-process settlement receipt with a duplicate refusal; "
@@ -1031,6 +1035,17 @@ def self_test(verbose: bool = True) -> int:
     facts = fresh(one_world=True)
     facts.probe["T3.9"] = {"settled": True, "granted": 1, "duplicate_refused": True, "second_granted": 0}
     check("T3.9 exact once → PASS", case(facts, "T3.9").verdict, PASS)
+
+    # missing observation must never be read as product failure
+    facts = fresh(one_world=True)
+    facts.probe["T2.6"] = {"declared_gates": 7, "refused": None}
+    check("T2.6 refused=null → BLOCKED", case(facts, "T2.6").verdict, BLOCKED)
+    facts = fresh(one_world=True)
+    facts.probe["T2.6"] = {"declared_gates": 7, "refused": False}
+    check("T2.6 refused=false → FAIL", case(facts, "T2.6").verdict, FAIL)
+    facts = fresh(one_world=True)
+    facts.probe["T3.9"] = {"settled": False, "reason": "NOT_THIS_PROBE"}
+    check("T3.9 not-this-probe → BLOCKED", case(facts, "T3.9").verdict, BLOCKED)
 
     # T4 — absent features are NOT_IMPLEMENTED, present + passing is PASS
     check("T4.1 core absent → NOT_IMPLEMENTED", case(fresh(one_world=True), "T4.1").verdict, NOT_IMPLEMENTED)
