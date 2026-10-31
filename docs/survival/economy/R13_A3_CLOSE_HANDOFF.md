@@ -163,6 +163,16 @@ single-process negative-control suite (135 executed assertions).
 4. **A7** owns the composed-tree verdict, balance and acceptance. `PRODUCT_COMPOSED_PASS`
    must not be written from this branch.
 
+## 5b. Durable records updated and read back
+
+| Record | State |
+|---|---|
+| PR #19 comment | posted: `#issuecomment-6548445380` (SHA, run link, notices, seams, no self-merge) and read back via the API |
+| `docs/survival/WORKLOG.md` | appended twice (takeover entry, green-SHA entry) |
+| `docs/survival/economy/A0_ADOPTION_CONTRACT_V2.json` | regenerated from the tested tree (29 files, 0 missing) |
+| Google Docs tab `04 · Nhật ký LIVE & bàn giao` (`t.h4haqfdoyzzn`) | appended the R13-A3-CLOSE entry and verified the readback (`find_text` match at index 508610) — **not** `DOCS_SYNC_PENDING` |
+| Tabs 1, 2, 03, 05 | read (tab list + tab 04 text); no requirement/decision change was needed, so tab 03 was not rewritten |
+
 ## 6. Next actionable integration gate
 
 1. A0 composes the tree from `A0_ADOPTION_CONTRACT_V2.json` and mounts
