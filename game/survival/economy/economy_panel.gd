@@ -27,6 +27,7 @@ const STATION_ICONS := {
 var _host: Node
 var _root: Control
 var _list: VBoxContainer
+var _scroll: ScrollContainer
 var _notice: Label
 var _pack_label: Label
 
@@ -99,6 +100,7 @@ func _ready() -> void:
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	column.add_child(scroll)
+	_scroll = scroll
 	_list = VBoxContainer.new()
 	_list.name = "Jobs"
 	_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -205,6 +207,33 @@ func _refresh() -> void:
 		if String(station.get("kind", "")) == "research":
 			_add_technologies(station, owned)
 	_add_running_jobs(jobs)
+	# Cards are all one height, so the viewport can be trimmed to a whole number of
+	# them. Without this the last visible card is sliced through its ingredient chips
+	# by the clip edge, which reads as a rendering bug rather than as "scroll for more".
+	_fit_list_to_whole_rows.call_deferred()
+
+
+## Trim the scroll viewport to whole recipe cards. Runs one frame later because the
+## card pitch is only known once the list has been laid out; when the panel is closed
+## the sizes are zero and this leaves the previous height alone.
+func _fit_list_to_whole_rows() -> void:
+	if _scroll == null or _list == null or not is_instance_valid(_scroll):
+		return
+	if not is_open() or _list.get_child_count() < 2:
+		return
+	var first := _list.get_child(0) as Control
+	var second := _list.get_child(1) as Control
+	if first == null or second == null:
+		return
+	var pitch := second.position.y - first.position.y
+	var available := _scroll.size.y
+	if pitch <= 1.0 or available <= pitch:
+		return
+	var fitted := floorf(available / pitch) * pitch
+	if absf(_scroll.custom_minimum_size.y - fitted) < 0.5:
+		return
+	_scroll.custom_minimum_size.y = fitted
+	_scroll.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 
 
 func _refresh_pack() -> void:
