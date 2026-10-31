@@ -995,3 +995,29 @@ SOH world source parity and creator review remain separate.
   D bloom/post/world fidelity, shader hash/coverage at star, local ribbon
   errors and creator-approved OUT remain open. Coordination:
   [6548364942](https://github.com/Khanh-glitch/Soul-of-Hero/pull/30#issuecomment-6548364942).
+
+### 2026-11-01 — D star CPU hoist and PR21 5a refresh
+
+- `19a60da88` reuses the two hash phases that are constant within each STAR
+  sprite, retaining the same arithmetic and source colors; this does **not**
+  solve WebGL-vs-Godot hash precision or modify the authored shape. Five mixed
+  STAR cases, including wobble/quantization flags, matched RGB fields and
+  operation coverage exactly in
+  [41237455327](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41237455327).
+  A same-host alternating single-sprite mixed-case median was **5350→4529 µs**
+  [41237442614](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41237442614);
+  this is not a target-device or full-world budget. To ensure broader source
+  preservation, disposable immediate-pre-hoist source `6fd259e5110d67600e658583c5c7b311249d7ff2`
+  and post-hoist source `9d28d0718` emitted **byte-identical** native, LDR and
+  LDR8 RGB fields at each of ticks **72/192/312/489/510** in
+  [41237760419](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41237760419).
+  This is old/new equality, not Gold parity or actual world review.
+- PR21 advanced to `5a173ff7d5da08c617e6a5a11e97b0808f5584cc`: relative to
+  018 the compare lists authored-world route test, its capture CI workflow and
+  CI annotation helper, not production files. AVFX `2ee28d03e` current-world
+  JOIN [41237784846](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41237784846)
+  passed with the same no-FX **17 ObjectDB / 5 resources** shutdown baseline;
+  independent no-FX [41237784844](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41237784844)
+  was still running at this entry. Latest 5a was repinned for JOIN and no-FX;
+  018 phase/performance evidence remains explicitly historical until repinned
+  and rerun. No acceptance granted.
