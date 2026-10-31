@@ -823,3 +823,29 @@ SOH world source parity and creator review remain separate.
   fixed in `9d5b7895e`, whose [JOIN 41231244050](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41231244050)
   and [overlap 41231244040](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41231244040)
   passed. `gdparse` alone did not catch the missing identifier.
+- The follow-on A16 optimization `4a62a6e1f` caches identical double-precision
+  transverse samples across each petal layer. Immediate pre-optimization
+  reference [41232296561](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41232296561)
+  matched A world fields exactly at nine ticks through 539. On that shared CI,
+  single-sample old→new raster times were **425.135→395.948 ms** at tick 330
+  and **524.677→437.302 ms** at tick 390; not a statistical/device budget.
+  Original A-only source [41232296536](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41232296536),
+  A05/A11 source comparisons, lifecycle, quick and current-world JOIN
+  [41232296622](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41232296622)
+  also passed at that revision, without changing tolerances.
+- Exact owner A0 `be81b58cfc5b7ba0207804797e31019aaffecf47`, AVFX `c8a40ad4d`,
+  CT `e505173edd119fdd955cf6249511b575a5468440`: [no-AVFX entry 41232610375](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41232610375),
+  [JOIN 41232610373](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41232610373),
+  and [all-20 phase sweep 41232610343](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41232610343)
+  passed. All 40 normal/dimmed casts restored frozen world/post. The #16 sample
+  at tick 538 is now within its 9-second fusion but showed **no changed world
+  image**; the catalog's 10.2-second late sample still expired. This confirms
+  cleanup/capture only, not visible tail, complete C OUT, motion or approval.
+  A0 owner head subsequently moved to `9eaa1936682d3941282185249a7ae37d21abf328`,
+  changing a route test and CI workflow only; that exact SHA is not yet tested.
+- Same be81/c8 current-world #02+#16 overlap [41232610391](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41232610391)
+  completed 720p/2K/4K, with post-draw p50/p95/p99 **437/975/1029**,
+  **430/814/845**, **885/1497/1552 ms**, respectively. Each has 54 overlapping
+  samples, +47 live objects, zero after cancel and HP 69→69. Different shared
+  software runners yielded non-monotonic results; do not interpret cross-run
+  timing differences as speedup, target-device budget, allocations or GPU time.
