@@ -1022,3 +1022,46 @@ SOH world source parity and creator review remain separate.
   repinned for JOIN, no-FX, phase and overlap; 018 phase/performance evidence
   remains explicitly historical until the refreshed runs complete. No
   acceptance granted.
+
+### 2026-11-01 — #16 original C living membranes added to fusion
+
+- The selected C16 seed/spore/petal burst alone did not satisfy the decision's
+  **C living growth** role. `CWorldseedMembranes` ports the original seven
+  luminous wedge polygons and seeded branching vein trees, their source fold
+  and pulse; `CWorldseedFusion` renders these and the already-validated
+  original debris on the same C clock. `CWorldseedDebris` retains its original
+  seven seeded trees rather than generating them twice; its particle RNG and
+  pure debris render remain unchanged. Original debris comparison
+  [41238618479](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41238618479)
+  still passed. The isolated original/native membrane comparison
+  [41238421148](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41238421148)
+  instrumented **actual light-write coverage**, not RGB support: IoU **1.0**
+  at local C ticks **210/240/300/381/456/510/558**, light max error
+  **≤2.3842e-7**, ink and displacement exact. Matched source/native tick381
+  light crops were inspected in
+  [41238667207](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41238667207);
+  they show the same seven green-teal membrane sectors and branching veins.
+  This is one selected original C role, not the full organism or Gold review.
+- At A0 `5a173ff7d5da08c617e6a5a11e97b0808f5584cc`, AVFX `2bef8f88f`,
+  native JOIN [41238978803](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41238978803)
+  passed a pre-burst A+C check with the C viewer independently hidden/shown;
+  its actual frozen overworld screenshots at fusion tick 120 differed at
+  **1290 pixels** within C's authored influence. The paired cropped real-world
+  outputs were inspected: the C turquoise vein/light form is visible alongside
+  the A growth over the real terrain and player; this is not human/creator
+  visual acceptance and does not prove actor occlusion or full gameplay.
+- A0 5a + AVFX `615d00a71` multi-phase run
+  [41238667170](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41238667170)
+  restored **40/40** normal/dim casts; #16 aftermath tick538 still produced no
+  changed image and catalog-late tick606 had already expired. #16 native
+  duration remains **9.0 s vs catalog 10.2 s**: full C cellular petals/leaflets,
+  authored palette fusion, full OUT, bright/dark Gold comparisons, moving
+  targets and creator review are still open. No labels changed to approved.
+- #02+#16 overlap at A0 5a + AVFX `01e142d2b`
+  [41238618515](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41238618515)
+  on software CI at 720p/2K/4K showed post-draw p50/p95/p99
+  **492/848/880**, **653/1012/1048**, **891/1245/1286 ms**, C child raster p95
+  **9.906/10.817/10.417 ms**, +48 objects while active and zero after cancel,
+  HP **69→69**. These sample frames and shared-host timings do not establish
+  target-device budgets or full-cast gameplay. Current no-FX economy baseline
+  still shows **17 ObjectDB / 5 resources**; no conclusion about every leak.
