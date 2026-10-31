@@ -1,0 +1,57 @@
+name: ARCANA19 isolated polygon primitive comparison
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['tools/arcana19_poly_compare/**', 'prototypes/arcana_fusion20/renderer/d19_poly_compare.gd', 'prototypes/arcana_fusion20/renderer/source_d/d_poly_triangles.gd', 'prototypes/arcana_fusion20/renderer/source_d/d_fx.gd', 'prototypes/arcana_fusion20/renderer/source_d/d_ribbon_triangles.gd', '.github/workflows/arcana19-poly-compare.yml']
+permissions:
+  contents: read
+jobs:
+  primitive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Install comparison tools
+        run: |
+          npm install --prefix "$RUNNER_TEMP/d19-ribbon" playwright@1.57.0
+          "$RUNNER_TEMP/d19-ribbon/node_modules/.bin/playwright" install --with-deps chromium
+          python3 -m pip install --quiet numpy pillow
+          ln -s "$RUNNER_TEMP/d19-ribbon/node_modules" tools/arcana19_poly_compare/node_modules
+      - name: Capture original isolated WebGL ribbon cases
+        run: |
+          set -o pipefail
+          mkdir -p artifacts/arcana19-poly
+          node tools/arcana19_poly_compare/capture.mjs artifacts/arcana19-poly | tee original.log
+          test "$(grep -c D19_POLY_ORIGINAL_CAPTURE original.log)" -eq 8
+      - name: Capture native ribbon cases
+        run: |
+          set -o pipefail
+          godot --headless --path . --import > import.log 2>&1
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' import.log
+          timeout 300s godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/d19_poly_compare.gd 2>&1 | tee native.log
+          grep -Fq 'D19_POLY_CAPTURE_COMPLETE' native.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' native.log
+      - name: Compare spatial metrics without tolerance gates
+        run: |
+          set -o pipefail
+          python3 tools/arcana19_poly_compare/compare.py artifacts/arcana19-poly | tee compare.log
+          sed 's/^/::notice::/' compare.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: d19-poly-source-primitive-diagnostic
+          path: |
+            artifacts/arcana19-poly/
+            original.log
+            native.log
+            import.log
+            compare.log
