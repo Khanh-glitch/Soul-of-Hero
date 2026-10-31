@@ -579,12 +579,12 @@ func _live_input_probe(app: Node, world: Node, player: CharacterBody2D, enemy: N
     var samples := {"count": count, "p50_ms": elapsed_frames[mini(count - 1, floori((count - 1) * 0.50))],
         "p95_ms": elapsed_frames[mini(count - 1, floori((count - 1) * 0.95))],
         "p99_ms": elapsed_frames[mini(count - 1, floori((count - 1) * 0.99))]}
-    var record := {"scope": "real historical world live input, injected #02 visual, shared software CI, not target-device budget or gameplay cast binding",
+    var record := {"scope": "real historical world live input, injected #02 visual; intervals between physics signals on shared software CI, not rendered frame latency, target budget, allocation count or gameplay binding",
         "action": String(action), "player_before": str(before_player), "player_after": str(after_player),
         "player_distance": before_player.distance_to(after_player), "enemy_distance": before_enemy.distance_to(after_enemy),
         "camera_distance": before_camera.distance_to(after_camera), "aimed_world": str(aimed), "source_tick": source.source_tick,
         "actor_hp_before": hp, "actor_hp_after": int(enemy.get("health")), "source_anchor_consistent": stable_anchor,
-        "frame_samples": samples, "static_memory_delta_bytes": Performance.get_monitor(Performance.MEMORY_STATIC) - before_memory}
+        "physics_signal_intervals": samples, "static_memory_delta_bytes": Performance.get_monitor(Performance.MEMORY_STATIC) - before_memory}
     check(aim_valid and aimed.distance_to(world_anchor + Vector2(90, -20)) < 5.0, "live input pointer maps to real world aim")
     check(before_player.distance_to(after_player) > 1.0, "live input moves actual SOH player during active cast")
     check(before_enemy.distance_to(after_enemy) > 0.1, "live input observes natural real enemy movement")
