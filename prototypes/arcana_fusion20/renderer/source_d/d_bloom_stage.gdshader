@@ -11,10 +11,16 @@ uniform float knee = 0.5;
 uniform vec2 direction = vec2(0.0);
 
 vec3 sample_input(vec2 uv) {
-    // WebGL reads bottom-up, whereas the supplied Godot image is top-down.
-    // At 2:1 downsampling a nearest sample lies on a texel boundary; reverse
-    // the Y tie-break by selecting the matching source texel centre.
-    if (nearest_input) return texture(input_nearest, uv - vec2(0.0, 0.5 / float(textureSize(input_nearest, 0).y))).rgb;
+    // The original nearest-filtered 2:1 bright pass samples on texel
+    // boundaries. Source readback analysis shows its dominant top-down
+    // sample is (2*x, 2*y+1); choose that texel explicitly instead of
+    // relying on Godot's backend-dependent nearest-filter tie breaking.
+    if (nearest_input) {
+        ivec2 source_size = textureSize(input_nearest, 0);
+        ivec2 dst_pixel = ivec2(floor(uv * vec2(source_size) * 0.5));
+        ivec2 source_pixel = clamp(dst_pixel * 2 + ivec2(0, 1), ivec2(0), source_size - ivec2(1));
+        return texelFetch(input_nearest, source_pixel, 0).rgb;
+    }
     return texture(input_linear, uv).rgb;
 }
 
