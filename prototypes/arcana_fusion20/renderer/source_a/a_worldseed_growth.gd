@@ -105,26 +105,18 @@ func _c_surface(layer: int, petal: int, u: float, v: float, x: float, y: float, 
 # is changed. Petal index <= 15, u <= 1, and lacunarity is exactly 2.
 const NOISE_WIDTH := 151
 
-static func _cached_fbm(x: float, y: float, lattice: PackedFloat64Array, min_y: int) -> float:
+static func _cached_fbm_grid(x_indices: Array[int], x_weights: Array[float], y_indices: Array[int], y_weights: Array[float], j: int, lattice: PackedFloat64Array) -> float:
     var a := 0.5
     var total := 0.0
     var norm := 0.0
-    var xx := x
-    var yy := y
     for octave in range(3):
-        var xi := floori(xx)
-        var yi := floori(yy)
-        var xf := xx - float(xi)
-        var yf := yy - float(yi)
-        var u := xf * xf * (3.0 - 2.0 * xf)
-        var v := yf * yf * (3.0 - 2.0 * yf)
-        var at := (yi - min_y) * NOISE_WIDTH + xi
+        var at := y_indices[j * 3 + octave] + x_indices[octave]
+        var u := x_weights[octave]
+        var v := y_weights[j * 3 + octave]
         var h0 := lerpf(lattice[at], lattice[at + 1], u)
         var h1 := lerpf(lattice[at + NOISE_WIDTH], lattice[at + NOISE_WIDTH + 1], u)
         total += a * lerpf(h0, h1, v)
         norm += a
-        xx *= 2.0
-        yy *= 2.0
         a *= 0.5
     return total / norm
 
@@ -189,6 +181,8 @@ func render(fb: AFramebuffer, t: float) -> void:
         var abs_transverse: Array[float] = []
         var veins: Array[float] = []
         var edges: Array[float] = []
+        var noise_y_indices: Array[int] = []
+        var noise_y_weights: Array[float] = []
         for jj in range(vs + 1):
             var v := float(jj) / float(vs) * 2.0 - 1.0
             var av := absf(v)
@@ -196,6 +190,13 @@ func render(fb: AFramebuffer, t: float) -> void:
             abs_transverse.append(av)
             veins.append(exp(-pow(av * 4.0, 2.0)) * 0.3)
             edges.append(pow(av, 4.0) * 0.5)
+            var yy := av * 5.0 - t * 1.1
+            for octave in range(3):
+                var yi := floori(yy)
+                var yf := yy - float(yi)
+                noise_y_indices.append((yi - min_y) * NOISE_WIDTH)
+                noise_y_weights.append(yf * yf * (3.0 - 2.0 * yf))
+                yy *= 2.0
         for petal in range(int(layer.count)):
             var a0 := float(layer.tilt) + float(petal) / float(layer.count) * AMath.TAU
             var tremble := sin(t * (3.0 + float(layer.tremble) * 3.0) + petal) * float(layer.tremble) * 0.02
@@ -212,10 +213,19 @@ func render(fb: AFramebuffer, t: float) -> void:
                 var sa := sin(a)
                 var radius := (5.0 + li * 5.0) * u + length * uu
                 var width := length * float(layer.w) * sin(pow(uu, 0.6) * PI)
+                var noise_x_indices: Array[int] = []
+                var noise_x_weights: Array[float] = []
+                var xx := uu * 7.0 + petal * 2.0
+                for octave in range(3):
+                    var xi := floori(xx)
+                    var xf := xx - float(xi)
+                    noise_x_indices.append(xi)
+                    noise_x_weights.append(xf * xf * (3.0 - 2.0 * xf))
+                    xx *= 2.0
                 for jj in range(vs + 1):
                     var v: float = transverse[jj]
                     var av: float = abs_transverse[jj]
-                    var cell := _cached_fbm(uu * 7.0 + petal * 2.0, av * 5.0 - t * 1.1, lattice, min_y)
+                    var cell := _cached_fbm_grid(noise_x_indices, noise_x_weights, noise_y_indices, noise_y_weights, jj, lattice)
                     var h := 0.16 + cell * 0.26 + veins[jj] + edges[jj]
                     h += wave_add
                     h *= taper
