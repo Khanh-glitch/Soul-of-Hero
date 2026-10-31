@@ -53,6 +53,14 @@ jobs:
           sed 's/^/::notice title=D19_CAST_LINE_CALLS::/' calls.log
       - name: Surface local maximum-error pixel crops
         run: python3 tools/arcana19_cast_ribbons/surface_crop.py artifacts/arcana19-cast-ribbons
+      - name: Surface candidate fragment-transfer results
+        if: always()
+        run: |
+          if test -f compare.log; then grep '"variant": "ldr"' compare.log | sed 's/^/::notice title=D19_CAST_RIBBON_LDR::/' || true; fi
+      - name: Surface candidate RGBA8 blend results
+        if: always()
+        run: |
+          if test -f compare.log; then grep '"variant": "ldr8"' compare.log | sed 's/^/::notice title=D19_CAST_RIBBON_LDR8::/' || true; fi
       - name: Surface native GPU cases separately
         if: always()
         run: |

@@ -51,6 +51,20 @@ func _run() -> void:
         file = FileAccess.open(OUT + "/tick%d.native.coverage.u8" % tick, FileAccess.WRITE)
         file.store_buffer(fx.world_influence)
         file.close()
+        for mode in ["ldr", "ldr8"]:
+            var clipped := DFx.new()
+            clipped.track_world_fields = true
+            clipped.t = fx.t
+            clipped.rgba8_fragment_transfer = true
+            clipped.rgba8_scene_blend = mode == "ldr8"
+            for command in fx.commands:
+                clipped.line(command.pts, command.width, command.color, command.opts)
+            file = FileAccess.open(OUT + "/tick%d.%s.rgb32f" % [tick, mode], FileAccess.WRITE)
+            file.store_buffer(clipped.buf.to_byte_array())
+            file.close()
+            file = FileAccess.open(OUT + "/tick%d.%s.coverage.u8" % [tick, mode], FileAccess.WRITE)
+            file.store_buffer(clipped.world_influence)
+            file.close()
         for coverage in [false, true]:
             var vp := SubViewport.new()
             vp.size = Vector2i(DFx.W, DFx.H)

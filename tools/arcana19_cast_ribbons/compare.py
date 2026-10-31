@@ -1,5 +1,5 @@
-"""Compare primitive-level D WebGL RGBA8 and clipped native RGB, not coverage
-or world/creator acceptance. Include spatial region and error PNG evidence."""
+"""Compare D cast ribbon color and post-discard coverage on a neutral base.
+This is not world, full scene or creator acceptance."""
 import json, pathlib, sys
 import numpy as np
 from PIL import Image
@@ -7,7 +7,7 @@ out=pathlib.Path(sys.argv[1]); cases=[{'name': f'tick{tick}'} for tick in [72,19
 for c in cases:
  name=c['name'];a=np.fromfile(out/f'{name}.original.rgba8',dtype=np.uint8).reshape(270,480,4)[::-1,:,:3].astype(np.float32)/255
  coverage=np.fromfile(out/f'{name}.original.coverage.rgba8',dtype=np.uint8).reshape(270,480,4)[::-1,:,0]!=0
- for variant in ('native','gpu'):
+ for variant in ('native','gpu','ldr','ldr8'):
   if variant=='gpu':
    b=np.fromfile(out/f'{name}.gpu.rgba8',dtype=np.uint8).reshape(270,480,4)[:,:,:3].astype(np.float32)/255
    native_coverage=np.fromfile(out/f'{name}.gpu.coverage.rgba8',dtype=np.uint8).reshape(270,480,4)[:,:,0]!=0
