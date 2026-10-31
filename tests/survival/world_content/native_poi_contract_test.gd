@@ -1057,18 +1057,29 @@ func _physical_mill_gate_and_retreat() -> void:
 		"the leave choice preserves the visibly stopped machinery state"
 	)
 	leave_actor.global_position = Vector2(528, 410)
-	leave_actor.request_test_motion(Vector2(0, -260))
-	await leave_actor.await_test_motion()
+	await physics_frame
+	var inner_gate_blocked := false
+	for _step: int in range(20):
+		leave_actor.request_test_motion(Vector2(0, -16))
+		await leave_actor.await_test_motion()
+		if leave_actor.last_collision != null:
+			inner_gate_blocked = true
+			break
 	_check(
-		leave_actor.last_collision != null and leave_actor.global_position.y > 314.0,
-		"leaving the wheel seized keeps the inner salvage gate closed"
+		inner_gate_blocked and leave_actor.global_position.y > 314.0,
+		"leaving the wheel seized keeps the inner salvage gate closed under physical motion"
 	)
-	var no_repair_exit := leave_site.get_exit_position()
-	var retreat_delta := no_repair_exit - leave_actor.global_position
-	leave_actor.request_test_motion(retreat_delta)
-	await leave_actor.await_test_motion()
+	var retreat_collided := false
+	for _step: int in range(40):
+		if leave_site.is_at_exit(leave_actor):
+			break
+		leave_actor.request_test_motion(Vector2(0, 12))
+		await leave_actor.await_test_motion()
+		if leave_actor.last_collision != null:
+			retreat_collided = true
+			break
 	_check(
-		leave_actor.last_collision == null and leave_site.is_at_exit(leave_actor),
+		not retreat_collided and leave_site.is_at_exit(leave_actor),
 		(
 			"unrepaired Mill route remains physically walkable to its doorway; position=%s "
 			% str(leave_actor.global_position)

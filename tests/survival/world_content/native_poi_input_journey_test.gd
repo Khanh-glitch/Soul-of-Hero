@@ -17,6 +17,7 @@ var _failures: Array[String] = []
 var _assertions := 0
 var _last_axis_collided := false
 var _capture_index := 0
+var _headless_visual_capture_skipped := false
 
 
 func _initialize() -> void:
@@ -40,6 +41,8 @@ func _run() -> void:
 		)
 	)
 	if _failures.is_empty():
+		if _headless_visual_capture_skipped:
+			print("A8_NATIVE_POI_INPUT_JOURNEY_CAPTURE_SKIPPED renderer=headless")
 		print("A8_NATIVE_POI_INPUT_JOURNEY_PASS assertions=%d" % _assertions)
 		quit(0)
 	else:
@@ -124,7 +127,7 @@ func _journey_quarry(
 
 func _journey_orchard(choice_action: String, expected_channel: String, cross_open: bool) -> void:
 	var seed := {"ready_actions": ["read_water_marks"]} if cross_open else {}
-	await _start_pilot(seed)
+	await _start_pilot(seed, 1)
 	if cross_open:
 		await _capture("orchard-shell-baseline")
 	if not await _enter_worksite(ORCHARD_ID):
@@ -192,7 +195,7 @@ func _journey_orchard(choice_action: String, expected_channel: String, cross_ope
 
 
 func _journey_mill_without_capability() -> void:
-	await _start_pilot({})
+	await _start_pilot({}, 2)
 	await _capture("mill-shell-without-capability")
 	if not await _enter_worksite(MILL_ID):
 		await _stop_pilot()
@@ -235,6 +238,7 @@ func _journey_mill_without_capability() -> void:
 		_check(false, "Mill exterior is available for the gate falsification probe")
 		await _stop_pilot()
 		return
+	await _walk_axis_to("move_down", KEY_S, shell.get_entry_position().y + 32.0)
 	await _walk_axis_to("move_up", KEY_W, shell.get_entry_position().y - 3.0)
 	await _press_key(KEY_G)
 	await _settle()
@@ -277,7 +281,7 @@ func _journey_mill_without_capability() -> void:
 
 
 func _journey_mill_leave_wheel() -> void:
-	await _start_pilot({})
+	await _start_pilot({}, 2)
 	await _capture("mill-shell-leave-wheel-baseline")
 	if not await _enter_worksite(MILL_ID):
 		await _stop_pilot()
@@ -329,7 +333,7 @@ func _journey_mill_leave_wheel() -> void:
 func _journey_mill_revocation_race() -> void:
 	# The physical input creates a pending neutral request. The fixture owner
 	# revokes its projection before validation, so the old revision must reject.
-	await _start_pilot({"capabilities": ["cap_salvage"]})
+	await _start_pilot({"capabilities": ["cap_salvage"]}, 2)
 	await _capture("mill-shell-pending-revocation")
 	if not await _enter_worksite(MILL_ID):
 		await _stop_pilot()
@@ -401,7 +405,7 @@ func _journey_mill_revocation_race() -> void:
 
 func _journey_mill_owner_projected_repair() -> void:
 	# This seed is an explicit A8 test projection, not an A3 binding or live grant.
-	await _start_pilot({"capabilities": ["cap_salvage"]})
+	await _start_pilot({"capabilities": ["cap_salvage"]}, 2)
 	await _capture("mill-shell-owner-projection-seed")
 	if not await _enter_worksite(MILL_ID):
 		await _stop_pilot()
@@ -445,11 +449,17 @@ func _journey_mill_owner_projected_repair() -> void:
 		"mill repair updates its source-authored presentation"
 	)
 	await _capture("mill-owner-projected-wheel-repair")
-	await _walk_axis_to("move_up", KEY_W, 278.0)
+	# Cross the unknown-depth race above the fixed plank bridge, then approach
+	# the bank-side fastener from its authored safe stand.
+	await _walk_axis_to("move_up", KEY_W, 270.0)
 	await _walk_axis_to("move_right", KEY_D, 678.0)
+	await _press_key(KEY_W)
 	_check(
 		_probe().global_position.distance_to(Vector2(678.0, 278.0)) <= 14.0,
-		"repaired mill route physically reaches the fastener source"
+		(
+			"repaired mill route physically reaches the fastener source; position=%s "
+			% str(_probe().global_position)
+		)
 	)
 	var intent_count_before := _intent_count()
 	await _press_key(KEY_Y)
@@ -490,7 +500,7 @@ func _journey_mill_owner_projected_repair() -> void:
 	await _stop_pilot()
 
 
-func _start_pilot(owner_seed: Dictionary) -> void:
+func _start_pilot(owner_seed: Dictionary, site_index: int = 0) -> void:
 	await _stop_pilot()
 	var packed := load(PILOT_SCENE) as PackedScene
 	if packed == null:
@@ -508,6 +518,19 @@ func _start_pilot(owner_seed: Dictionary) -> void:
 		str(_snapshot().get("active_kind", "")) == "shell",
 		"journey begins at the authored exterior spawn"
 	)
+	match site_index:
+		1:
+			await _press_key(KEY_F2)
+		2:
+			await _press_key(KEY_F3)
+	_check(
+		(
+			str(_snapshot().get("active_kind", "")) == "shell"
+			and str(_snapshot().get("source_id", ""))
+			== [QUARRY_ID, ORCHARD_ID, MILL_ID][site_index]
+		),
+		"keyboard POI selection keeps the journey at the requested authored exterior"
+	)
 
 
 func _enter_worksite(expected_source: String) -> bool:
@@ -520,6 +543,8 @@ func _enter_worksite(expected_source: String) -> bool:
 		_check(false, "pilot starts in the source-backed exterior shell")
 		return false
 	var entry := shell.get_entry_position()
+	if probe.global_position.y < entry.y + 32.0:
+		await _walk_axis_to("move_down", KEY_S, entry.y + 32.0)
 	var before := probe.global_position
 	var reached := await _walk_axis_to("move_up", KEY_W, entry.y)
 	_check(reached, "exterior doorway is physically approached using keyboard input")
@@ -599,6 +624,7 @@ func _exit_and_revisit(expected_source: String, state_key: String, expected_valu
 		_check(false, "exterior return shell remains available for revisit")
 		return
 	var entry := shell.get_entry_position()
+	await _walk_axis_to("move_down", KEY_S, entry.y + 32.0)
 	await _walk_axis_to("move_up", KEY_W, entry.y - 3.0)
 	await _press_key(KEY_G)
 	await _settle()
@@ -756,6 +782,9 @@ func _capture(label: String) -> void:
 	await process_frame
 	_capture_index += 1
 	DirAccess.make_dir_recursive_absolute(absolute_dir)
+	if DisplayServer.get_name() == "headless":
+		_headless_visual_capture_skipped = true
+		return
 	var image := root.get_texture().get_image()
 	if expected_size != Vector2i.ZERO:
 		_check(
