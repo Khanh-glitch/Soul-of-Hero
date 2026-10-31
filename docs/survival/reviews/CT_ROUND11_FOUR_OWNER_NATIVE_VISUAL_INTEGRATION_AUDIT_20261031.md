@@ -1,3 +1,39 @@
+## CT A6 follow-up independent R0–R5 — 2026-10-31 ~12:15 ICT (2026-10-31 Round12)
+
+**Verdict**: `A6_R12_DEFECT_FIX_ACCEPT_SCOPED / A6_VISUAL_UX_PARTIAL / A6_PRODUCTION_RETURN_HOLD / NO_MERGE`. Do not reuse the old `b32f347e NATIVE_FAIL` as current state. **This addendum supersedes A6 older-SHA findings below, not the A0/A1/A8 original source evidence.** Verified current A6 HEAD `8a8571d956cb3e2e2ecac966ed4561857c844838`, code tested `a81fe20f574a`, output evidence commit `fae6ca7c`. New HEAD is 2 commits ahead, **docs+PNG evidence only**; check exact manifest before claiming same runtime.
+
+### Real CI rechecked
+
+- [A6 staged native avatar run 41170582280](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41170582280): all 4 jobs SUCCESS, private grade0 male/female loaded, 720/1440/2160 native captures, two-OS-process Continue route, return UI, public missing art fail-closed. [Head followup run 41171379819](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41171379819) also SUCCESS for all 4 jobs.
+- [Survival UI native render 41170582244](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41170582244): all 4 jobs SUCCESS including actual Xvfb llvmpipe 720/1440/2160, UI layer, fixed render assets, frame publication.
+- [Return UI native 41170582269](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41170582269): PASS 12 native frames at 3 resolutions.
+- [Godot Runtime 41170582255](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41170582255): full workflow conclusion FAILURE due **original main baseline comparison job** (baseline original main campaign 20/949 failed and smoke 3/89 failed); A6-branch import/headless runtime and rendered gameplay jobs SUCCESS. Treat as separate baseline red, not a new A6-branch failure; don't claim full workflow green.
+
+### Code fixes verified
+
+- `game/ui/screens/avatar_choice/avatar_choice_screen.gd` duplicate declaration removed; staged art source and selection path parse through real Godot.
+- Return shared-column guidance/season/digest no longer overlap in direct 720 captures, oversized panel body now scrolls; run card custom minimum accounts for its line3. Its native test covers both card geometry and partial visibility. Scene lint now catches repeated declarations and undefined private helpers even when grammar-only GDToolkit parse falsely passes.
+- Full source chain remains authentic CraftPix UI 255216 + icons 994534 (29 output cut assets / receipt) plus real source male 555940 and female 419402. Do not re-fetch from Drive or redraw.
+
+### CT actual visual evidence, not source sheet
+
+CT downloaded hosted artifact `a6-survival-ui-1280x720-41170582244` id 13030737038, opened actual 6 Godot scenes (title, identity public fail-closed, overworld HUD, workshop on world, return guidance, return digest). CT separately downloaded latest *authentic art-staged* avatar native artifact id 13031282669 (20MB) from 41171379819, inspected male and female choice and Overworld side-by-side. Owner caveat verified: no-art avatar in generic public capture is **not** absence of art in product when pinned source staging is present. Actual art-staged choice shows male/female distinct, both actors in real native world.
+- **UI still not ready as human-facing gameplay:** HUD top-left typography/stacks overlap visually, opaque long mixed/English legacy labels look like debug, current player condition and time are not readily interpretable; world capture still contains legacy world/art identity in other routes. Workshop shows orange/tan compact English sentence-length recipe prices against saturated green selectable rows, weak hierarchy/color contrast and no quick recognition of funded/locked/claimable. This is not just 'tweak font' but an overall action hierarchy and information architecture issue.
+- Return 720 image **solved the overlap/cutline**, but guidance at left and digest at right float over huge black negative space; card skin and typography don't yet create emotionally meaningful 'I returned home and my farm/forge paid off' experience. The image tests use **A6 fixture-projected numbers**, not a fully funded A0/A3 owner SaveService production receipt.
+- Multiple rendered Vietnamese words misread: expected `Dấu vết`, `Có tiếng động`, `Tỉnh dậy` look like `Đấu vết`, `Có tiếng đống`, `Tính đầy`. Source strings/Unicode coverage alone insufficient: blackletter font and marks at actual 720p size are visually unreadable; require full typography system (specific body/label fallback) and inspect by eye every screen.
+- Season chip shows 13 ngày 22 giờ and "Hết mùa 12/11" in the injected layout/capture scenario; not an assertion that run timing itself wrong, but low readability and season number/date affordance need label clarity.
+- Reinspect the title as survival-first; current parchment Soul of Hero title over dark combat illustration and oversized ribbon appears aesthetically distinct from simple survival/homecoming experience, though previous legacy LOADING screenshot issue is fixed.
+- **Continue remains NOT PROVEN movement**. Directly inspected both male and female `*_720p_continue_frames.json` in latest art-staged run: frame `23_continue_overworld_walk` has `avatar.action="idle"`, frame 22 idle and 24 idle; no actor position or velocity in manifest. Capture filenames are not evidence of actual movement. A6/A0 must pin input/camera/collision and action projection to establish whether harness or production routing bug.
+- A6 UI has 21 truthful icon bindings / 49 item catalog IDs; missing 28 isn't an A3 economic blocker by itself. Do not silently let empty slots masquerade as actual equipment, or put internal 'no art' terminology in final product UI. Existing input I/TAB conflicts with `field_codex`, defer exact input mapping to A0 but still implement useful bag UI behind owner-authorized action.
+
+### Nine gate verdict, A6 only
+
+RESEARCH_PROVENANCE PASS scoped; ARCHITECTURE PASS scoped/read-only; CODE_RUNTIME PASS for own tested head; TEST_ORACLE PASS scoped for newly added geometry/semantics but insufficient normal-player UX, false-positive Continue; VISUAL_UX PARTIAL — fixed former hard clipping, current contrast/hierarchy/Vietnamese rendering/redesign NOT ACCEPTED; SYSTEM_VALUE HOLD — no real funds→job→production return payload rendered; SAVE_MIGRATION PASS SCOPED via art-staged Continue identity and read-only refresh, new actual movement NOT_TESTED; INTEGRATION FAIL/HOLD newest A0+A3+A6 actual UI gameplay, especially older composed V4 failures and owner state; BALANCE_REPLAY NOT_TESTED. `HUMAN_PLAYTESTED=NO`.
+
+**Next:** Keep A6 in existing session/branch, one cohesive long-form UI/UX implementation **not more tiny fixes**: real full gameplay HUD, inventory/equip/quick-use, living crafting/research, death/bed/return owner-backed experience, Vietnamese type system, Continue actual motion and full multi-res actual screenshots; A0 owner binding, A3 paused unless precise new economic contract defect, A7 independent newest composition. Full owner work-order corrected immediately below.
+
+---
+
 # Control Tower R0–R5 — A0/A1/A6/A8 Round 11: native, visual, product and joined evidence
 
 Date: 2026-10-31 ICT. Authority: CURRENT_PRODUCT_CONTRACT; D062–D074; immutable Atlas with SOURCE_COVERAGE_TRACE; INDEPENDENT_DEEP_REVIEW_PROTOCOL; EVERY_REPLY_HANDOFF_PROTOCOL. **Exact refs are snapshots, refresh before execution.** This is a scoped *independent* CT review, not self-merge or player acceptance.
