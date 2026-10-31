@@ -1,4 +1,98 @@
-# A7 acceptance scoreboard — round 13 (the joined product, at the owners' own heads)
+# A7 acceptance scoreboard — round 14 (the same product, at the owners' newer heads)
+
+_2026-10-31. **Supersedes round 13 for status questions.** Composition
+**`r14_heads` = `d75bcd41f131b3dca25ae61b6da809591e614230`** (6,120 files), built by
+`compose.py --profile r14_heads --ref-root refs/live14` from A0 `ea6a7495`, A1 `8551a323`,
+A3 `b44e22df`, A6 `6d71410a`, A8 `0f885df862`, AVFX `83bd398d`, CT `971e0b95` — heads resolved
+with `gh api .../branches/<b>`, not from remembered SHAs. Round 13's `3d8630f5b1ad` and round
+12's `663a83ede523` stay immutable; both ledgers are preserved. Full report, with the round-14
+sections appended: [`ROUND13_JOINED_PRODUCT_ACCEPTANCE.md`](ROUND13_JOINED_PRODUCT_ACCEPTANCE.md)
+(§11).
+
+| probe | checks | failed | missing | verdict |
+|---|---|---|---|---|
+| `r14_adversarial_probe` | 17 | 0 | 0 | **PASS** |
+| `r14_home_probe` | 18 | 0 | 0 | **PASS** |
+| `r14_extent_probe` | 3 | 1 | 0 | **FAIL** — default 384×256 holds 10/118 POIs, 0 standable; the product's own gate buys 15/118 with 2 standable |
+| `r14_identity_probe` | 10 | 0 | 6 | `RED_NOT_IMPLEMENTED` |
+| `r14_j01_probe` | 33 | 0 | 2 | `RED_NOT_IMPLEMENTED` |
+| `r14_j02_j05_probe` | 28 | 0 | 4 | `RED_NOT_IMPLEMENTED` |
+| `r14_j03_probe` | 21 | 0 | 1 | `RED_NOT_IMPLEMENTED` |
+| `r14_j04_probe` | 11 | 1 | 2 | `RED_NOT_IMPLEMENTED` — 2 distinct site shapes of 3 |
+| `r14_j06_j07_probe` | 41 | 0 | 2 | `RED_NOT_IMPLEMENTED` |
+| `r14_threat_death_probe` | 13 | 0 | 1 | `RED_NOT_IMPLEMENTED` |
+| `r14_visual_probe` | 8 | 0 | 0 | `BLOCKED` (headless; pixels obtained in CI, §11.4–§11.5) |
+| **total** | **203** | **2** | **18** | **PASS 2 / FAIL 1 / RED 7 / BLOCKED 1** |
+
+**The number is identical to round 13, and that is the finding.** `git diff --stat` between
+`r13_heads` (`3d8630f5b1ad`) and `r14_heads` (`d75bcd41f131`) is **three files**: A0's journey
+test, A0's CI workflow, A0's corrective document. **No product file changed** — not the world,
+the build system, the economy panel, the catalogue or the UI. Every count above is a
+re-measurement of round 13.
+
+* **A0's journey got worse, and the regression is in A0's test, not the game.** Two independent
+  CI runs (`41189630987`, `41190252538`), X11 + llvmpipe, two real processes, test unmodified:
+  `prefix_complete=true checks=29 failures=0`, then
+  **`FAIL  ordinary wheel input reaches the furnace kit`** with
+  `Invalid type in function '_owning_scroll' … argument 1 (previously freed)` at
+  `survival_normal_connected_journey_test.gd:515` → `2/35 (play)`, and the second process dies
+  at its **first** check because process 1 never wrote the audit → `1/1 (verify)`. Both exit 1.
+  Round 13 passed that same step (`ok  ordinary wheel input reaches the furnace kit`) and died
+  two checks later at `available_stations()`. `economy_panel.gd`, `survival_build_system.gd`
+  and `chapter1_overworld.gd` are **byte-identical** between the two A0 heads, so the product
+  is unchanged and the harness now fails before it reaches the part that matters.
+  `available_stations` is still undefined and still called from `_dump_panel()` — parked, not
+  fixed.
+* **Offline payoff stays `NOT_ACCEPTED`.** Neither process reached charcoal, `smelt_iron`,
+  KEY_P or the second-process ingot. Round 14 adds **no** evidence for EV4 and must not be
+  cited as if it did.
+* **The house oracle is fixed and now has two controls.** Control A: a **5×5 house, 16/16 ring
+  pieces, `door_wood` at `(54,237)`, room `room_9714e2c8…`, bed `b26` activated `{"ok": true}`,
+  chest and workbench placed** — materials `FIXTURE_GRANT`ed and printed as such, every piece
+  through the product's own build door, photographed from the door **and from inside at 720p,
+  1440p and 2160p**. Control B: the same door's exact refusals — `hero_in_footprint` for a wall
+  on the Hero's cell *while the preview calls that cell legal*, `bed_requires_room`,
+  `station_recipe_mismatch` at 24 px, `station_not_reachable` at 400 px.
+* **What the pixels still say, at 1×.** A complete house reads as an **opaque lavender slab**:
+  the door exists and is invisible from outside; the reveal only happens when the Hero is
+  inside. Inside, two prompts collide (`[CLICKy open`) and the floor is the same brick as the
+  walls, so a furnished room needs hovering to be understood. Provisions drain
+  **79 → 78 → 78 → 77 → 77 → 77** with no player input.
+* **The pixel policy is correct and the round-13 demand is withdrawn.** One **640×360** canvas,
+  integer **2× / 4× / 6×** nearest-neighbour, best offset `(0,0)`, sampled identity 0.934 /
+  0.939. `content_scale_size 640×360`, `Camera2D.zoom (1,1)`, llvmpipe. The real UI defects are
+  named instead: the HUD is drawn *inside* the canvas and magnified with it (neighbour-pair
+  ratio 0.616 → 0.869, exactly the 3× prediction), and it permanently takes 49 % of frame
+  width.
+* **The Atlas's twelve journeys are a separate matrix** (§11.6). No Atlas row reaches EV6, EV7
+  or EV8; one (`J05`) reaches a real native home, one (`J01`) an EV4 prefix; four are EV1 data
+  with no producer; `J10` is out of scope by contract. **Label counts are not coverage.**
+* **A8's sites: the shape equality reproduces, the story does not.** Orchard and Mill are both
+  "2 actions, 0 with a cost, 0 risk", one productive and one leave — measured on
+  `0f885df862`. The "Orchard water = Mill wheel" *cause* is **withdrawn**; three sites, two
+  designs, no prices, no risks, none mounted stands.
+* **`BLOCKED_BY_A0` is unchanged and is a composition fact.** A1's
+  `a1_authored_world_reader.gd` and `…_stream.gd` are **absent** from `r14_heads` and
+  unreferenced anywhere under `game/`; A1's 1,283-cell native route proves A1 only.
+
+**Verdict: `HOLD_PRODUCTION` / `ACCEPT_DIAGNOSTIC_EVIDENCE` / `NO_MERGE` · `CONTINUE_CORRECT`.**
+
+**NEXT ACTION (one).** A0 `ea6a7495`: re-resolve the row inside `_scroll_recipe` (or look it up
+after every `economy_panel._refresh()`), delete the last `available_stations` call in
+`_dump_panel`, and make the two-process journey exit 0 on A0's own composed tree — the six
+steps that have never run (charcoal → `smelt_iron` → KEY_P → `depart_world` → second process →
+exactly-once ingot) are the only route to EV4.
+
+**Dependencies (two).** A1 `8551a323` + A0: reconcile 384×256 loaded against 1024×768 authored
+(10/118 POIs inside, 0 standable). A0: publish the three avatar methods on `SaveService` and
+mount A6's presenter.
+
+_A Git comment or a Docs edit does not dispatch an Arena prompt: this is a record, not a
+request to an owner agent._
+
+---
+
+# Round 13 (retained: the joined product at `3d8630f5b1ad`)
 
 _2026-10-31. **Supersedes round 12 for status questions.** Composition
 **`r13_heads` = `3d8630f5b1adfa6c5b50c56fa506524e0ce71f6b`** (6119 files), built by

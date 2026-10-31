@@ -1,4 +1,4 @@
-# Round 13 — A7 independent acceptance of the joined product (CT-GATE-v2026-10-31)
+# Rounds 13–14 — A7 independent acceptance of the joined product (CT-GATE-v2026-10-31)
 
 _2026-10-31. **Supersedes round 12 for status questions.** Round 12's composition
 `663a83ede523` is retained as immutable historical evidence and is not inherited: every
@@ -13,6 +13,20 @@ in the *economy and input* layer (A0 published `depart_world` / `prepare_work_aw
 1,000-line normal-input journey test; A8 published a native POI input test), and **none of
 it is yet a journey a player can complete**, because the world they would walk in is still
 the 384×256 Marches and the owners' own journey test fails on this tree.
+
+---
+
+> **ROUND 14 UPDATE (read §11 first if you are asking "what is true now").** The owners moved;
+> the product did not. Composition **`d75bcd41f131`** built from A0 `ea6a7495`, A1 `8551a323`,
+> A3 `b44e22df`, A6 `6d71410a`, A8 `0f885df862`; the same **11 probes / 203 checks / PASS 2 ·
+> FAIL 1 · BLOCKED 1 · RED 7**, failing the same checks. A0's *product* files are byte-identical
+> to round 13; A0's *journey test* was rewritten and now dies one step earlier, on a freed UI
+> node inside `_scroll_recipe` — the first falsifiable failure of the round, and it is in the
+> harness, not the game. The house oracle is now two controls (§11.4); round 13's "4K must show
+> more terrain" framing is **withdrawn** — the fixed 640×360 canvas with integer 2×/4×/6×
+> scaling is correct pixel-art policy (§11.5). The Atlas journeys are a separate matrix (§11.6).
+> Verdict unchanged: **`HOLD_PRODUCTION` / `ACCEPT_DIAGNOSTIC_EVIDENCE` / `NO_MERGE`**,
+> action **`CONTINUE_CORRECT`**. NEXT ACTION is §11.8, not §9.1.
 
 ---
 
@@ -38,8 +52,12 @@ roof drawn at alpha 1.00, a bed placed and activated as the spawn anchor, a ches
 moves 34 oak + 28 iron + 1 kit out and back, and a workbench whose recipe is refused
 `station_not_reachable` at 195 px and accepted at the bench** (`FIXTURE` materials +
 `NATIVE_COMPONENT_PATH` doors — see §1.1). In the round-13 capture this house finally
-**seals and roofs** — and it is a **doorless box**: the product's own guard only refuses to
-seal the *Hero* into a doorless room, not to build one (§4.3).
+**seals and roofs** — and the roof hides the door the capture placed: what a player sees is a
+slab (§4.1(6)). *Corrected in round 14:* this paragraph called it a **doorless box**; it was
+not. `door_wood` was placed at `[54,236]` and is invisible under the roof. The narrower
+source claim that survives is that the product's guard only refuses to seal the *Hero* into a
+room with no exit — it never requires a door, so a doorless box *is* legal to build. Round 14
+reproduced the occlusion on a 5×5 fixture that asked for a door on purpose (§11.4).
 
 **What a player cannot do.**
 
@@ -214,14 +232,16 @@ All four were **opened at original resolution in this session** and inspected.
 2. **Interaction is discoverable by contrast, not by a prompt:** `[CLICK] Oak Tree 3/3` sits
    in a dark plate with a white label directly over the node under the cursor. At 1× it is
    unambiguous.
-3. **The 4K frame is the 720p frame magnified.** The HUD panel measures 610 / 1220 / 1830 px
-   at the three framings — **49.0 % of frame width at all three** — and the 2160p frame
-   matches the 720p frame at exact 3× offsets for **92.5 %** of probe pixels, against
-   **1.2 %** at 2× and **1.6 %** at 4×. The project renders one **640×360 canvas**
-   (`viewport 640×360`, `stretch mode canvas_items`): the visible world is **40 × 22.5
-   tiles at every window size**, and a 4K monitor gets a **6× blow-up** of 640×360 art, not
-   more world or more detail. This is a design decision A0 has never stated, and it is the
-   single cheapest visual-quality lift available.
+3. **The 4K frame is the 640×360 frame magnified — and that is the correct policy, not a
+   defect.** *Corrected in round 14 (§11.5):* the HUD panel measures 610 / 1220 / 1830 px at
+   the three framings — **49.0 % of frame width at all three** — and round 14 measured the
+   scaling as **exact**: 1440p = 720p × 2 and 2160p = 720p × 3 nearest-neighbour with a best
+   offset of (0,0) and 93–94 % sampled identity, the residual being the HUD's re-rasterised
+   text and a changing provisions digit. A fixed 640×360 logical viewport with integer 2×/4×/6×
+   presentation is a legitimate pixel-art choice; the world shows 40 × 22.5 tiles at every
+   window size *by design*. The defects that do exist are named instead: the HUD scales with
+   the canvas, so at 2160p the UI is a 6× blow-up of 640×360 glyphs; and the HUD permanently
+   occupies half the frame width with counters a player cannot act on.
 4. **No wayfinding exists.** `WAYS 0/4` is a counter with no map, no compass, no
    off-screen marker and no legend entry. A player who wants to raise that number has
    nothing on screen to walk toward.
@@ -233,8 +253,13 @@ All four were **opened at original resolution in this session** and inspected.
    **`door_wood` at `[54,236]`** (confirmed by reading the product's structure table:
    `door_placed=true`), got room `room_7a5fecea…`, and the roof drew over the footprint.
    Inspected at 1× and in a 3× crop: a **purple-slate roof slab covers the whole footprint**
-   and there is **no visible door, no interior, no floor** from outside — the door exists in
-   the data and is invisible in the frame.
+   and there is **no visible door, no interior, no floor** from outside — the door was placed
+   and is invisible in the frame. *Round 14 corrected this paragraph's neighbour (§1): the
+   capture is **not** a doorless box; it placed `door_wood` and the roof hides it. What is
+   source-true is narrower — the product's `_hero_exit_rejection` refuses to seal the **Hero**
+   into a room without an exit and never requires a door, so a sealed doorless box is legal.
+   Round 14 reproduced the roof occlusion on a deliberately door-requesting 5×5 fixture
+   (§11.4).*
 7. **The roof is drawn over world-space UI.** In the same frame the interaction label behind
    the house renders as `[CLIC…` + `…or`, i.e. **the roof sprite occludes the prompt text**.
    Whatever the label is, a player cannot read it while standing at the south face of a
@@ -246,14 +271,9 @@ All four were **opened at original resolution in this session** and inspected.
    quarter** — the bone-white body over pale mortuary brick is the weakest pairing in the
    frame, and it is the pairing the spawn uses.
 10. **So P2's "a physical paid home you can enter" fails on readability, not on
-   transactions**: the build door, the room topology, the roof derivation, the bed anchor
-   and the chest round trip are all real (R13HOME PASS 18); what a player sees is a sealed
-   roofed slab.
-7. **Provisions move while nothing happens:** 79 → 78 in the frames taken seconds apart with
-   no gathering between. Observed, not yet characterised; the drain rate is not measured.
-8. **Contrast at 1× holds for the HUD; it does not hold for the Hero against the brick
-   quarter** — the bone-white body over pale mortuary brick is the weakest pairing in the
-   frame, and it is the pairing the spawn uses.
+    transactions**: the build door, the room topology, the roof derivation, the bed anchor
+    and the chest round trip are all real (R13HOME PASS 18); what a player sees is a sealed
+    roofed slab.
 
 ### 4.2 What the pixels still cannot settle
 
@@ -267,6 +287,12 @@ pointer. `HUMAN_NOT_TESTED` for enjoyment (EV8).
 ---
 
 ## 5. A0's own normal-input journey, run on this composition
+
+> **Round 14 re-ran this at A0 `ea6a7495` and the first failure moved into A0's own test
+> (§11.3).** The round-13 failure below (`available_stations`) is no longer on the executed
+> path; a `_scroll_recipe` use-after-free now kills the same step earlier, at `2/35`, and the
+> second process fails its first check because process 1 never wrote the audit. Read §11.3
+> before quoting this section as current.
 
 A0 published `tests/survival_normal_connected_journey_test.gd` after round 12 was pinned:
 gather → craft `furnace_kit` through the GUI → place it with the build pointer → burn
@@ -449,7 +475,7 @@ merge, does not edit owner code, and does not upgrade a missing feature to a pas
 | 3 | **A0 `53dcda29`** | mount A6's presenter in `knight.tscn` | a live `AvatarPresenter` node in the world |
 | 4 | **A0 `53dcda29`** | make the roof layer reveal the door and interior (fade/cutaway as the camera approaches, or draw world labels above the roof) | a 1× frame in which a door is visible and `[CLICK]` text is not cut in half |
 | 5 | **A1 `c2ba1f0f` + A0** | reconcile 384×256 / 448×256 / 1024×768 and mount the reader | R13EXT `pois_inside ≥ 100`, `pois_standable > 0` |
-| 6 | **A0 `53dcda29`** | state the 640×360 canvas decision (render at native resolution, or declare it) | a 2160p capture that is not a 3× copy of the 720p one |
+| 6 | **A0 `ea6a7495`** | **withdrawn in round 14 and replaced**: the 640×360 canvas is legitimate (§11.5). The real item is the HUD: it scales with the canvas, so at 2160p the UI is a 6× glyph blow-up, and it permanently takes 49 % of the frame width | a 2160p frame whose text is legible at UI scale rather than magnified 6× |
 | 7 | **A0 `53dcda29`** | wayfinding for `CAMPS`/`FINDS`/`WAYS` | a 1× frame in which the nearest unmet POI is findable |
 | 8 | **A0 `53dcda29`** | widen `INVENTORY_ITEM_KIND_IDS` (13/57 refused) | 57/57 storable |
 | 9 | **A3 `b44e22df`** | a knife in the survival catalogue (no kind work — that is A0's) | a knife id obtainable at spawn |
@@ -464,8 +490,11 @@ one CI run, two OS processes**, with no A7 overlay and no fixture materials:
 
 1. A0's `survival_normal_connected_journey_test.gd` exits **0** in both processes and prints
    its own `PASSED` banner;
-2. the same run's frames are **opened at 1× 720p and 2160p**, and the 2160p frame is **not**
-   a 3× copy of the 720p one (probe: pixel identity at exact 3× offsets **< 40 %**);
+2. **withdrawn in round 14 (§11.5).** The requirement that a 2160p frame must not be a
+   multiple of 720p was unsupported: a fixed 640×360 canvas with integer scaling is a valid
+   pixel-art policy. It is replaced by: the 2160p frame **is** an exact integer multiple
+   (identity ≥ 0.93 at offset `(0,0)`), and the UI text is legible at its own scale rather
+   than magnified six times;
 3. the built house's door **and** interior are visible in a 1× frame, the roof does not
    occlude world-space labels, and the Hero can walk through the doorway;
 4. `R13ID`'s identity `MISSING` lines are gone and a selected body survives the second
@@ -510,3 +539,401 @@ world, then `R13HOME` for the regression. Do not treat `663a83ede523` or this ro
 | pixels rendered and opened | run `41188036958`, four PNGs under `docs/survival/balance/visual/r13/` |
 | A0's journey executed, unmodified | `docs/survival/balance/visual/r13/journey/` (both transcripts, both exit codes) |
 | nothing merged, nothing dispatched | PR #25 open; A7 has no Arena dispatch to show, and a Git document is not a dispatch |
+
+---
+
+# Round 14 — the same product at the owners' newer heads
+
+_Round 14 continues this file rather than starting a second one: it re-asks the same
+questions on a newer composition, and a reader who opens one document should see both the
+round-13 measurement and what replaced it. **Nothing in §0–§10 has been deleted**; where a
+round-14 measurement contradicts a round-13 sentence, the contradiction is written next to
+it and the corrected reading is here._
+
+## 11. Round 14: what changed, and what did not
+
+### 11.1 The composition (rebuilt, not inherited)
+
+`refs/live14/*` was resolved with `gh api .../branches/<b>` — not from CT's remembered SHAs,
+which are a review snapshot and were already stale for A0 (`ce77a1e8` is not the head of
+`arena/dea2428e`).
+
+| owner | round 13 | **round 14** | what actually moved |
+|---|---|---|---|
+| A0 `arena/dea2428e` | `53dcda29` | **`ea6a7495d717`** | 3 files: its own journey test (+103/−30), its CI workflow (1 line), a corrective doc (+278). Its **product** files are byte-identical (§11.2) |
+| A1 `arena/e385312a` | `c2ba1f0f` | **`8551a323e444`** | a **9-line documentation change** to its own round-12 report and nothing else — `git diff --stat` between the two A1 heads is one `.md`. Its code and data are identical to round 13, still 1024×768, still unmounted |
+| A3 `arena/7a12b27e` | `b44e22df` | `b44e22df` (unchanged) | — |
+| A6 `arena/05e0328d` | `6d71410a` | `6d71410a` (unchanged) | — |
+| A8 `arena/2d7e6d7a` | `0f885df862` | `0f885df862` (unchanged) | — |
+| AVFX `arena/c7b0c4e8` | `7e74cadd` | `83bd398d08` | 115 reference-art files (46.6 k insertions) that are **not in this composition at all** |
+| CT `docs/ct-loot-discovery-gate` | `971e0b95` | `971e0b95` (unchanged) | — |
+
+`r14_heads` = **`d75bcd41f131b3dca25ae61b6da809591e614230`**, 6,120 files, built twice from
+the same refs with the same composer (pin stable, `--profile r14_heads --ref-root refs/live14`).
+
+**The product did not move, measured at the composition level.** `git diff --stat` between
+`r13_heads` (`3d8630f5b1ad`) and `r14_heads` (`d75bcd41f131`) is **three files**: A0's journey
+test (+103/−30), A0's CI workflow (1 line), A0's corrective document (+278). **No file a
+player's session touches changed** — not the world, not the build system, not the economy
+panel, not the item catalogue, not the UI. Every number in §11.2 is therefore a *re-measurement*
+of round 13, not a new product state, and the round's news is entirely in the harness.
+
+**`BLOCKED_BY_A0` still holds, and it is a composition fact, not a reading of A1's report.**
+A1 ships `game/survival/world/a1_authored_world_reader.gd` and `…_stream.gd`; both are
+**absent** from `r14_heads`, and `git grep` over `game/*` finds **zero** references to either
+name. A1's 1,283-cell native route to Quarry/Orchard/Mill is evidence about A1's own test, not
+about a continent a player can reach.
+
+### 11.2 The 11-probe family is unchanged — and that is the finding
+
+| probe | r13 | r14 | exact r14 result |
+|---|---|---|---|
+| adversarial | PASS 17 | **PASS 17** | same 17 checks |
+| home | PASS 18 | **PASS 18** | same 18 checks |
+| extent | FAIL | **FAIL** | default 384×256 → **10/118** POIs in bounds, **0** standable; counterfactual annex 448×256 → 15/118, **2** standable |
+| identity | RED (6 missing) | **RED (6 missing)** | `get_player_appearance_projection`, `player_avatar_changed`, a mounting scene, an in-world avatar node, A1's extent, a walkable A8 site |
+| J01 | RED (2 missing) | **RED (2 missing)** | no avatar binding (`A6_SOURCE_UNAVAILABLE`); no knife in 57 catalogue ids |
+| J02/J05 | RED (4 missing) | **RED (4 missing)** | no physical Core, no skill attestor, no damage producer, unique tokens never lost |
+| J03 offline | RED (1 missing) | **RED (1 missing)** | job arms, settles once, claims once; A6's return card 6/6 empty |
+| J04 POIs | RED, 1 fail | **RED, 1 fail** | 0 site nodes mounted; 3/3 `unknown_world_poi`; **2 distinct shapes of 3** |
+| J06/J07 | RED (2 missing) | **RED (2 missing)** | elder chest `source_identity_forgery`; `abandon_run` 0 callers |
+| threat/death | RED (1 missing) | **RED (1 missing)** | `survival/a0_optional_threat` false → no encounter ever created |
+| visual | BLOCKED | **BLOCKED** | headless, 3/3 captures empty, `VISUAL_NOT_TESTED` — no pixel verdict claimed from a probe |
+
+**11 probes / 203 checks / PASS 2 · FAIL 1 · BLOCKED 1 · RED 7**, ledger
+`data/survival/balance/results/native_runs.v1.json` on `d75bcd41f131`. Identical to round 13
+in every count, and identical in *which* checks fail. The owners' newer heads changed nothing
+a player meets: A0's diff is its own harness and a document, and the other heads did not move.
+
+This is the round's first honest sentence: **between round 13 and round 14, the joined
+product did not change; only one owner's test file did — and that test file got worse.**
+
+### 11.3 A0's normal-input journey at the new head: the first failure moved, and it moved into A0's own test
+
+Run **`41189630987`** (`.github/workflows/a7-r14-joined-evidence.yml`), X11 + llvmpipe,
+`--resolution 1280x720`, two real OS processes, A0's test **unmodified**, composition
+`d75bcd41f131`, engine `4.7.stable.official.5b4e0cb0f`.
+
+| stage | round 13 (`53dcda29`) | round 14 (`ea6a7495`) |
+|---|---|---|
+| prefix (`gather → craft → bench → weave cloth`) | `prefix_complete=true checks=29 failures=0` | `prefix_complete=true checks=29 failures=0` |
+| hand-station furnace kit | `ok  the hand station visibly offers the furnace kit` → **`ok  ordinary wheel input reaches the furnace kit`** → kit queued, collected | `ok  the hand station visibly offers the furnace kit` → **`FAIL  ordinary wheel input reaches the furnace kit`** |
+| first `SCRIPT ERROR` | `Nonexistent function 'available_stations (via call)' in base 'Node (economy_session.gd)'` | `Invalid type in function '_owning_scroll' … argument 1 (previously freed)`, at `tests/survival_normal_connected_journey_test.gd:515` |
+| cascade | `the physical furnace offers its own charcoal recipe` → `2/46 (play)` | `_continuation:145` and `_open_panel:559` on freed instances → `the … body ran to completion` → **`2/35 (play)`** |
+| second process | reads process 1's audit, then fails the offline half (`2/6 (verify)`) | **fails at its first check** `the second process reads the first process's audit`, `1/1 (verify)` — because process 1 aborted before writing it |
+| exit codes | 1 / 1 | **1 / 1** |
+
+*Two independent CI runs* — `41189630987` (first pass) and `41190252538` (corrected capture,
+unchanged journey) — produced the **same** first `SCRIPT ERROR`, the same `FAIL  ordinary wheel
+input reaches the furnace kit`, the same `2/35 (play)` and the same `1/1 (verify)`. The failure
+is deterministic, not a flake.
+
+**The first falsifiable source-level failure of round 14:**
+
+> `tests/survival_normal_connected_journey_test.gd:515` — `_scroll_recipe()` awaits a frame and
+> then hands the cached `Button` from `find_child` to `_owning_scroll(control: Control)`. The
+> `Button` (and, two frames later, the `EconomyPanel` itself) has already been freed by
+> `economy_panel._refresh()`, which tears the whole row list down with `remove_child` +
+> `queue_free` and rebuilds it. The typed parameter refuses a freed instance, which aborts
+> the coroutine and takes the rest of the journey with it.
+
+**Why this is a regression in the test and not in the product — the argument, not an opinion:**
+
+1. A0's round-13 form of the same step resolved the scroll container **before** any `await`
+   and passed (`process1.txt` line 44, `ok  ordinary wheel input reaches the furnace kit`).
+   Round 14's form resolves it **after** an `await`.
+2. A0's diff between the two heads is **3 files**, and none of them is product code:
+   `git diff --stat 53dcda29 ea6a7495` → the journey test (+103/−30), its workflow (1 line),
+   a document (+278). `economy_panel.gd`, `survival_build_system.gd` and
+   `chapter1_overworld.gd` are **the same blob** at both heads, so the panel, the build door
+   and the world are unchanged between the two runs.
+3. Therefore the product's kit path is **not shown to be worse**; the harness that measures it
+   became unreliable, and round 14's `2/35` must not be read as a product regression.
+
+Two further facts, both A0's and both latent:
+
+- **`available_stations` is still undefined.** The round-13 blocker was removed from the
+  *flow* — the panel now uses `nearby_stations` — but `_dump_panel()` still calls
+  `host.call(&"available_stations")` (line ~589). The next time a panel dump is needed, the
+  diagnostic itself throws. This is the same self-inconsistency inside one owner's two files,
+  parked rather than fixed.
+- **A player-visible corollary exists but is not proven.** If a row can be recycled between a
+  pointer press and its release, a real click could be dropped. Round 14 did not measure a
+  dropped click, so this is reported as a **question for A0**, not a defect.
+
+**Consequence for EV4.** The offline payoff — funded smelt → KEY_P → close → second process →
+exactly-once ingot — is **not reached**, by either process, in this round. Round 13 reached the
+furnace and died at the charcoal recipe; round 14 dies before the kit is even queued. Offline
+payoff stays `NOT_ACCEPTED`; nothing in this round may be cited as evidence for it.
+
+### 11.4 The house: two controls instead of one malformed one
+
+The round-13 capture answered "does a home look like a home" with a single fixture that had
+already been rebuilt twice after breaking. Round 14 replaces it with **two deliberately
+different controls**, both rendered in a real X11 window by run `41189630987`, both recorded
+in `docs/survival/balance/visual/r14/r14_visual_controls.json`:
+
+**Control A — a complete, paid home.** Materials `FIXTURE_GRANT`ed and printed as such
+(`A7CTRL FIXTURE_GRANT …`); every piece placed through the product's own
+`select_piece → validate_cell → try_place` door; the bed activated through
+`activate_bed(entity_id, validator)`, where the validator answers the product's own three
+questions (a derived room, the Hero 24 px away) instead of a bare `true`. Result on the second,
+corrected run: a **5×5 footprint, radius 2, 16/16 ring pieces**, `door_wood` at `(54,237)`,
+room `room_9714e2c8…`, bed `b26` **activated `{"ok": true}`** as the spawn anchor, chest at
+`(52,232)`, workbench at `(53,232)`. Photographed from the door **and from inside at 720p,
+1440p and 2160p** (six frames).
+
+*First run vs second run:* the first pass looked the service up on the world instead of
+`/root/SurvivalService`, so the bed was never activated, and it stood 125 px from the bench, so
+the "wrong kind" refusal never fired. Both were **A7's harness**, both are fixed, and the second
+run is the one this section reports. That is the same rule round 13 applied to the house, now
+applied to me.
+
+**Control B — the same door refusing the things a player gets wrong**, kept separate so a
+refusal can never be mistaken for the home's appearance:
+
+| case | preview said | commit said |
+|---|---|---|
+| wall on the Hero's own cell `(58,238)` | **legal** (`""`) | **`hero_in_footprint`** |
+| bed outside any room `(61,238)` | `bed_requires_room` | `bed_requires_room` |
+| furnace recipe at the workbench, 24 px away | — | **`station_recipe_mismatch`** |
+| workbench recipe from 400 px away | — | `station_not_reachable` |
+
+The first row is the one worth reading twice: **the build preview calls the Hero's own cell
+legal and the commit refuses it.** A player selecting a wall and hovering their own feet is
+told yes, and then nothing happens.
+
+**Findings, each from a frame opened at original resolution in this session**
+(`docs/survival/balance/visual/r14/`: exterior 720p/1440p/2160p, interior 720p/1440p/2160p,
+plus a 5× nearest-neighbour crop of the interior label band to read the text):
+
+1. **A complete house reads as an opaque slab.** `r14_home_1280x720.png`: the roof is a flat
+   lavender rectangle covering the entire footprint. The door exists in the save
+   (`door_placed=true`) and is **invisible**; no floor, no interior, no door frame is drawn
+   from outside. This reproduces round 13's finding on a *correct* fixture and with a
+   deliberately requested door, so it is now a product property, not a harness artifact.
+2. **From inside, the house is real and furnished.** `r14_home_interior_1280x720.png`: plank
+   floor, wall band, a pale lilac bed, the interaction prompts for it. The roof reveal works
+   when the Hero is inside, and **only** when he is inside.
+3. **Two interactables in one small room collide at 1×.** In the 720p interior frame the bed
+   prompt reads `[CLICK] Set respawn bed` with a second label's glyphs bleeding through it
+   (a dark duplicate trailing the text), and the chest prompt reads **`[CLICKy open`** — the
+   `[CLICK]` of one label overlapping the text of another anchored at the same place. In a
+   5×5 room with a bed and a chest, that is the *normal* case, not an edge case. At 2160p the
+   same two prompts are decipherable, which is exactly what makes it a 1× legibility defect
+   rather than a rendering failure.
+4. **The interior is legible as a room only by inference.** The floor and the walls are the
+   same brick/plank band at the same scale, and the bed is a pale lilac 16 px square with a
+   white bar: at 1× it reads as a rug or a chest, and the only thing that says "bed" is the
+   prompt that is itself colliding (§11.4 item 3). A player standing *inside* their finished
+   house cannot tell what they are standing on or what they are looking at without hovering.
+5. **A label is clipped by the roof.** `r14_home_1280x720.png` shows `[C` at the roof's left
+   edge — the round-13 z-order defect, reproduced on a correct fixture.
+6. **Provisions drain while nothing happens.** In capture order the six frames read
+   **79 → 78 → 78 → 77 → 77 → 77** — one unit per roughly thirty seconds, with no gathering
+   between any two frames and no player input at all. Round 13 observed a single 79 → 78; this
+   is now a rate, not an anecdote. The rule behind it has not been read in source, so it is
+   reported as an observation.
+7. **The 2160p frame is crisp.** See §11.5 — this is the one visual claim that round 13 got
+   wrong in its *framing*, not in its measurement.
+
+**What control A still does not prove.** It is a **fixture**: the materials were granted, and
+no player built this with a pointer. It proves what a complete home *is and looks like*
+(`EV4` transactions + `VISUAL_INSPECTED`), not that a beginner can fund one. The ordinary
+mouse/keyboard build with **no grants** remains unmeasured, and it stays `NOT_TESTED`.
+
+### 11.5 Pixel art: the 640×360 canvas is legitimate — the round-13 framing was wrong
+
+Round 13 wrote that a 4K frame "gets a 6× blow-up … not more world or more detail" and ranked
+"state the 640×360 canvas decision" as a corrective. **That demand is withdrawn.** A fixed
+logical viewport with integer scaling is a normal, defensible pixel-art policy; the defect
+would be *non-integer* scaling, filtered sampling, or shimmer, and none of those is present.
+
+Measured on the round-14 frames (`content_scale_size 640×360`, `stretch mode canvas_items`,
+`Camera2D.zoom (1,1)`, adapter llvmpipe):
+
+| comparison | sampled pixel identity |
+|---|---|
+| 1440p vs 720p scaled ×2 (nearest) | **0.934** |
+| 2160p vs 720p scaled ×3 (nearest) | **0.939**, best offset `(0,0)` |
+| horizontally-equal neighbour pairs, world region | 720p **0.827** → 2160p **0.940** (integer-3× predicts 0.942) |
+| horizontally-equal neighbour pairs, HUD title | 720p **0.616** → 2160p **0.869** (integer-3× predicts 0.872) |
+
+So: 720p is exactly **2×**, 1440p exactly **4×** and 2160p exactly **6×** of one 640×360
+canvas, nearest-neighbour, no filtering, and no sub-pixel drift between framings (best offset
+`(0,0)`). The residual ~6 % is content that genuinely changes between captures, not a scaling
+fault: region-wise identity at 2160p vs 720p×3 is **0.979** in a static world region with no
+HUD and no labels, **0.950** over animated terrain, and **0.772** across the interaction-label
+band, where the prompts differ from frame to frame. The neighbour-pair measurement also settles
+a question by arithmetic rather than by eye: the HUD title's ratio rises **0.616 → 0.869**
+exactly as a 3× magnification of the same glyphs predicts (0.872), so **the UI is drawn inside
+the 640×360 canvas and magnified with it** — it is not re-rendered at window resolution.
+**Crispness, sampling and integer density: PASS.**
+
+What is actually wrong at 1×, stated as specific defects and nothing more:
+
+1. **The HUD scales with the canvas, so at 2160p the UI is a 6× blow-up of 640×360 glyphs** —
+   legible, and visibly coarse. A player on a 4K display gets 1990s text at six times the
+   size. That is a UI-layer choice (a `CanvasLayer` that does not opt out of `canvas_items`
+   scaling or a larger font atlas), not a world-rendering defect.
+2. **The HUD occupies 49.0 % of frame width at every framing** (610 / 1220 / 1830 px),
+   including the two counter rows that are always `0/4`, `0/8`, `0/4` and carry no
+   information a player can act on.
+3. **Labels clip and collide** (§11.4 items 3–4) at the exact place a player stands most: the
+   door of their own house.
+4. **No wayfinding** remains: `WAYS 0/4` with no map, compass or marker.
+
+Terrain/art direction are untouched by this round's corrections: the palette is coherent, the
+16 px tile grammar holds across terrain, props and structures, and the Hero's dark outline
+keeps him legible on both brick and grass. Human enjoyment stays `NOT_TESTED` (EV8).
+
+### 11.6 The Atlas's twelve journeys, as a matrix separate from the test ids
+
+§7.3's table is A7's own twelve probes and is **not** the Atlas taxonomy; CT's correction
+stands — the count of passes is not coverage. The matrix below is the Atlas's own
+`USER-JOURNEY 01–12` (`Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md`, lines
+1064–1186), each mapped to what this composition actually contains. Columns: what a player
+**does**; what the composition **has**, with the file that says so; the **real price/risk**;
+the **physical consequence and the authoritative receipt**; what **changes later**; the rung;
+the **owner**.
+
+| id | Atlas journey | what exists in `d75bcd41f131` | real price / risk | consequence · receipt | later change | EV | owner |
+|---|---|---|---|---|---|---|---|
+| **ATLAS_J01** | first empty-handed day | bare-hand gather (2 oak/swing, 4 stone in 2 swings), hand recipes, paid storage, second process — `r14_j01` 33 checks / 0 failed; A0 journey prefix 29/29 | **price** real (recipes cost inputs); **risk ≈ 0** — no damage producer under `game/` (0 `take_damage` call sites); provisions drain 1 per ~30 s (three observations) | items and builds commit through `SaveService.transact_once`; the prefix save is 16,206 bytes with a live `run_id` | no recipe revalues what is already found | **EV4** (prefix only) | A0; A3 for a knife (0 of 57 items) |
+| **ATLAS_J02** | chest → knowledge surprise (Core *or* blueprint) | `core_venom`, `plan_venom_core`, `blood_crucible_blueprint` exist as **items**; no `loot_table` in `game/` (world bindings are all `null`); `specimen_venom` is PROPOSED at an unmounted POI wanting `access_tier 2` + power | unpriceable — no encounter, no container roll | nothing grants a Core or a blueprint; `unique_ownership_guard.gd` lists ids no producer creates | `tech_*` recipes gate on `knowledge`; nothing supplies it | **EV1** | A1 (POI) · A8 (site) · A3 (attestation) |
+| **ATLAS_J03** | first green room: locked wing, key card, power circuit | research station + 5 priced technologies (`tech_smelting` 4 knowledge_spares + 3 iron_scrap …); `cap_power_1` "fuel + copper wire restores a local circuit" exists **as data**; **0** `key_card`/`keycard`/`circuit` tokens in `game/` | research is really paid; **access is free** — there is no lock to open | research commits through the economy session; A6's return card reads 6/6 empty | research unlocks recipes (real) | **EV3** (research path) · **EV1** (access grammar) | A1 · A3 · A6 |
+| **ATLAS_J04** | failed poison-zone attempt → mask resistance | `hazard_damage_contract.json` (hz_crown_heat at rect `160,184,64,40`, requires `cap_filter`, 1.0 s retreat grace), `hazard_capability_contracts.json` (`cap_filter ← rare_herb + fibre + venom_sac`), `toxin_mask` recipe (3 binding_cloth + 2 venom_extract + 1 iron_parts) | the mask's price is real; **the hazard it protects against applies nothing** — no `game/` file loads either contract, and no `cap_*` token is read in `game/` | none: exposure cannot happen, so no attempt can fail | — | **EV1** | A1 (grammar) · A3 (values) · A0 (damage producer) |
+| **ATLAS_J05** | home redesigned around a production loop | build door for 9 pieces, room topology, roof derivation, bed anchor, chest storage, station-reach gating; control A sealed **16/16** with a real door, a room id and furniture (§11.4) | pieces cost oak/iron; a smelt costs 3 scrap + 1 charcoal; paid from inventory | `survival_build` and `survival_bed_activation` transactions; round-13 `R13HOME` PASS 18 | a built station changes what can be crafted; no later recipe revalues stored goods | **EV4** (bench by pointer in the prefix) · **EV5** | A0 |
+| **ATLAS_J06** | far trip with an outpost | **0** `outpost` tokens in `game/survival`; the world is 384×256 with 10/118 POIs in bounds and **0** standable; `abandon_run` has **0** callers | unpriceable — there is no route to price | none | — | **EV1** / **EV3** as a measured refusal | A0 · A1 · A8 |
+| **ATLAS_J07** | profitable-but-inefficient loot run (net gain) | A3 is fail-closed: all three sites answer `unknown_world_poi`; no `V = output − inputs − repair − transport − expected loss` computation exists in the composition (Atlas §46 defines V as an *analytic* function, not a shipped formula) | unreachable | none | — | **EV1** | A3 · A1/A8 |
+| **ATLAS_J08** | a new recipe revalues old storage | a learned `tech_*` genuinely changes which recipes exist, so stored materials do change worth; nothing computes or displays the change, and no item is re-priced | research's real cost is the price; no displayed risk | research receipts exist; no valuation event exists | the revaluation itself is what is missing | **EV3** (mechanism) | A3 |
+| **ATLAS_J09** | defend the base from an announced attack | `survival/a0_optional_threat` default false → `OptionalSkeletonEncounter` is never created; no announcement, no siege, no structural damage | numbers exist nowhere; risk is 0 by configuration | none | — | **EV1**; a `COUNTERFACTUAL_SETTING` run shows a skeleton body exists | A0 (+A3 numbers) |
+| **ATLAS_J10** | shared recipes are not personal | no shared storage, no trade, no second player anywhere in the composition | out of scope by the product contract | — | — | **not applicable** — stated, not tested | CT/contract |
+| **ATLAS_J11** | boss loot with several functions | **0** boss loot tables under `game/survival`; world-bindings loot entries are `null`; `core_*` and `plan_*` are data only | unpriceable | none | — | **EV1** | A8 · A3 |
+| **ATLAS_J12** | endgame: ≥3 non-dungeon sessions, then a prepared dungeon | A8's Ragnarok endpoint package is data (`physical_ragnarok_endpoints.v1.json`); **0** mounted; no session or objective concept; `abandon_run` unreachable | unpriceable | none | — | **EV1** | A8 · A0 |
+
+**SOH-native rows the contract asks about, kept separate from the Atlas** (these are not Atlas
+journeys and must not be counted as coverage of them):
+
+| id | native promise | verdict on `d75bcd41f131` | evidence |
+|---|---|---|---|
+| **N1** | Gold as currency | **does not exist.** No `gold`/`coin`/`currency` item among 57 ids; the only `gold` string in survival code is a colour in `player_avatar_presenter.gd`. The "knife → Core → Gold" chain's last link is a **name in a document** | `data/survival/items/items.json`; `git grep -l gold -- game/survival` |
+| **N2** | a genuinely funded offline return | **PASS at the transaction layer** (`r14_j03`: armed job, real closure, one settlement, one claim, second claim refused) and **absent for the player**: A6's return card reads 0 of 9 projections | `r14_j03` log; `A6_SOURCE_UNAVAILABLE` |
+| **N3** | a 336-hour closure | `MUTATION_RUN_CLOCK` reaches `last72` and `expired` and refuses claims. That is architecture, **not** a played 336 h | `r14_j06_j07`; forged clock labelled |
+| **N4** | the last-72-hour currency | `ragnarok_unbanked` exists as a `key_item`; its physical source (elder chest) answers `source_identity_forgery`; **0** kiosks mounted | `r14_j06_j07` |
+| **N5** | multi-deposit | the panel shows a real per-station queue (`queue N/capacity`) and the session enforces capacity; **one** armed job was exercised, never two deposits in one session | `r14_home`, `r14_j03` |
+| **N6** | evacuation | `abandon_run` has **0** callers under `game/`: the door exists as an API and nowhere a player can press | `r14_j06_j07` |
+| **N7** | clean next run | run reset, history and the deposit guards behave (41 checks, 0 failed on the J06/J07 probe), but a player cannot *enter* the next run for the same reason as N6 | `r14_j06_j07` |
+
+**Label counts are not coverage.** Twelve Atlas rows: 0 at `EV6`, 0 at `EV7`, 0 at `EV8`; one
+row (`J05`) reaches a real native home; one (`J01`) reaches an `EV4` prefix; four (`J02`,
+`J09`, `J11`, `J12`) are `EV1` data with no producer; `J10` is out of scope by contract. The
+rest are `EV3`-or-lower refusals.
+
+### 11.7 The A8 equality claim, re-tested on the head that matters
+
+Round 13 said the Orchard and the Mill are "identical". On `0f885df862` the measured signatures
+are:
+
+```
+south_quarry       -> 3 actions, 0 with a cost, risk=   [brace_east_shelf, chock_west_ramp, leave_seam_unworked]
+south_orchard_ruin -> 2 actions, 0 with a cost, risk=   [clear_irrigation, leave_for_safety]
+south_crown_mill   -> 2 actions, 0 with a cost, risk=   [repair_waterwheel, leave_wheel]
+```
+
+**The shape equality reproduces** — Orchard and Mill are two actions with no authored cost and
+no authored risk, one productive and one "leave". **The narrative that produced it does not:**
+the frames and data say nothing about water, wheels or irrigation beyond the action names, so
+"Orchard water = Mill wheel" as a *cause* is **withdrawn**. The finding that stands is the one
+the metric supports: **three A8 sites, two distinguishable designs, zero prices, zero risks,
+and none of them mounted.**
+
+### 11.8 Decision and owner actions
+
+**Decision: `HOLD_PRODUCTION` / `ACCEPT_DIAGNOSTIC_EVIDENCE` / `NO_MERGE` · action
+`CONTINUE_CORRECT`.** Round 14 did not find a new product defect; it found that the product is
+unchanged and that **the owner's own acceptance harness regressed**, which is the more urgent
+fact because it is the instrument everyone else is reading.
+
+#### NEXT ACTION (one primary outcome)
+
+> **A0 (`arena/dea2428e`, `ea6a7495`): stop caching UI rows across frames, and make the
+> continuation reach the furnace again.** Re-resolve the row inside `_scroll_recipe` (or look
+> it up after every `_refresh()`), delete the last `available_stations` call in `_dump_panel`,
+> and make `tests/survival_normal_connected_journey_test.gd` exit 0 in both processes on the
+> composition A0's own CI builds. The measurable step is concrete: the round-13 run reached
+> `ok ordinary wheel input reaches the furnace kit` and died at the charcoal recipe 2 checks
+> later; round 14 must at least return to that point, and then the six steps that have never
+> run — charcoal, `smelt_iron`, KEY_P, `depart_world`, second process, exactly-once ingot —
+> become measurable. **That is the only path to EV4 in this product, and it is in A0's files.**
+
+Two dependencies, and no more:
+
+1. **A1 `8551a323e4` + A0**: reconcile the world extent. 10/118 POIs are inside the loaded
+   document and **0** are standable; the product's own gate buys 5 more and 2 standable. Until
+   this moves, `ATLAS_J03`, `J04`, `J06`, `J07`, `J09`, `J11` and `J12` cannot be evaluated by
+   anyone, whatever their data says.
+2. **A0 `ea6a7495`**: publish `get_player_appearance_projection`, `player_avatar_changed` and
+   `set_player_avatar`, and mount A6's presenter. This is one file and it gates P1, P7 and the
+   avatar half of `ATLAS_J01`.
+
+#### Split of responsibility for everything found this round
+
+| who | defects that are mine (A7) | defects that are an owner's |
+|---|---|---|
+| **A7 (me)** | round-13's single house control (now replaced by two, §11.4); the first round-14 capture's `SurvivalService` lookup and its out-of-reach bench row (both fixed and re-run); round 13's "4K must show more" framing (withdrawn, §11.5); round 13's "doorless box" description of a capture that had placed a door (corrected, §4.1(6)) | — |
+| **A0** | — | `_scroll_recipe` use-after-free (§11.3); `available_stations` still called in `_dump_panel`; preview says legal / commit says `hero_in_footprint` (§11.4 B); roof hides door and interior from outside; two labels drawn at one position; a label clipped by the roof; 384×256 world; avatar API absent; `abandon_run` unreachable; threat off by default |
+| **A1** | — | hazard and capability contracts with no consumer; 1024×768 authored, 384×256 loaded; A8 site ids 1 of 3 declared |
+| **A3** | — | no knife in 57 ids; no Gold; A3 rewards fail-closed at every POI; no V computation |
+| **A6** | — | 0 of 9 return projections published; no presenter mount point from A0's side |
+| **A8** | — | three sites, two designs, no prices or risks, none mounted |
+
+#### The next verifiable acceptance gate (`R14-G1`)
+
+Same shape as `R13-G1`, with the pixel clause **replaced** because it was wrong:
+
+1. A0's `survival_normal_connected_journey_test.gd` exits **0** in both processes and prints
+   its own `PASSED` banner; the first process must reach the offline arm (`KEY_P` →
+   `depart_world`) and the second must settle exactly one ingot and refuse a second claim.
+2. The built house's **door and interior are visible from outside at 1×**, no two interaction
+   labels share a position, and no label is clipped by the roof.
+3. The 2160p frame is an **exact integer multiple** of the 640×360 canvas (measured identity
+   ≥ 0.93 at `(0,0)`), and the HUD is legible at 2160p without being a 6× glyph blow-up.
+4. `R14ID`'s identity `MISSING` lines are gone and a selected body survives the second process.
+5. `R14EXT` reports `pois_inside ≥ 100` and `pois_standable > 0` on the **default**
+   configuration.
+
+### 11.9 Reentry for round 15
+
+```bash
+# owner heads (never CT's remembered SHAs)
+gh api repos/Khanh-glitch/Soul-of-Hero/branches/<branch> --jq .commit.sha
+git fetch --depth=1 origin <sha>:refs/live15/<branch>
+
+# composition
+python3 tools/survival/balance/compose.py --profile r14_heads --pin --ref-root refs/live15
+git rev-parse refs/comp/r14_heads     # if it moved, the profile name is stale: add r15_heads
+
+# the family (11 probes) — import first, never --skip-import
+python3 tools/survival/balance/run_native.py --godot <godot> \
+  --composition refs/comp/r14_heads \
+  --probe balance_native_r14/r14_extent_probe.gd --write
+
+# pixels + the owner's journey (CI: this sandbox has no rasteriser and no X server)
+gh workflow run a7-r14-joined-evidence.yml
+```
+
+Read the **journey's** exit codes and its first `SCRIPT ERROR` before anything else: in round
+14 that one line determined the whole round. Then `r14_identity_probe`; then `r14_extent_probe`.
+
+### 11.10 Action receipt (Git evidence, not a dispatch)
+
+| action | evidence |
+|---|---|
+| owner heads resolved and fetched | `refs/live14/*` for seven branches, full SHAs in §11.1 |
+| composition pinned and rebuilt twice | `refs/comp/r14_heads` = `d75bcd41f131` |
+| 11-probe family run on it | `native_runs.v1.json`, 203 checks |
+| two house controls rendered at 720p/1440p/2160p | runs `41189630987` then `41190252538` (corrected harness, authoritative); `docs/survival/balance/visual/r14/` — **six** PNGs (3 exterior, 3 interior), `r14_visual_controls.json`, `render_output.txt` |
+| A0's journey executed, unmodified, two processes | `docs/survival/balance/visual/r14/journey/` (`process1.txt`, `process2.txt`, both `.exit` = 1, engine, composition) |
+| the capture harness corrected and re-dispatched | commit `36b5961`; second run's artifacts replace the first's |
+| nothing merged, nothing dispatched | PR #25 open; **a Git comment or a Docs edit does not dispatch an Arena prompt**, and A7 has no dispatch to show |
