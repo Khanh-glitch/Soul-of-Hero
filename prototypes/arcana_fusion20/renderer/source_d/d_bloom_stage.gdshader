@@ -11,7 +11,10 @@ uniform float knee = 0.5;
 uniform vec2 direction = vec2(0.0);
 
 vec3 sample_input(vec2 uv) {
-    if (nearest_input) return texture(input_nearest, uv).rgb;
+    // WebGL reads bottom-up, whereas the supplied Godot image is top-down.
+    // At 2:1 downsampling a nearest sample lies on a texel boundary; reverse
+    // the Y tie-break by selecting the matching source texel centre.
+    if (nearest_input) return texture(input_nearest, uv - vec2(0.0, 0.5 / float(textureSize(input_nearest, 0).y))).rgb;
     return texture(input_linear, uv).rgb;
 }
 
