@@ -61,6 +61,31 @@ if grep -q "SCRIPT ERROR" "$LOG"; then
 	failures=$((failures + 1))
 fi
 
+echo "== A0 consumer: return UI reads a real save across two processes =="
+# Two separate engine launches sharing one save file. Phase one plays the player
+# through A0's own API; phase two is a fresh process that must show exactly what A0
+# saved and must not invent the durable history A0 has not published.
+export SOUL_OF_HERO_SAVE_PATH="user://a6_consumer_restart.json"
+CONSUMER_LOG="${TMPDIR:-/tmp}/a6_a0_consumer.log"
+: >"$CONSUMER_LOG"
+consumer_status=0
+for phase in write read; do
+	timeout --signal=TERM --kill-after=15s 180s "$ENGINE" --headless --path . \
+		"res://tests/survival/ui/a6_a0_consumer_test.tscn" -- "--a6-consumer-phase=${phase}" \
+		2>&1 | tee -a "$CONSUMER_LOG"
+	phase_status=${PIPESTATUS[0]}
+	if [ "$phase_status" -ne 0 ]; then
+		echo "FAILED: the A0 consumer ${phase} phase exited ${phase_status}" >&2
+		consumer_status=1
+	elif ! grep -q "A6 A0 CONSUMER PASSED (${phase}" "$CONSUMER_LOG"; then
+		echo "FAILED: the A0 consumer ${phase} phase did not print its pass line" >&2
+		consumer_status=1
+	fi
+done
+if [ "$consumer_status" -ne 0 ]; then
+	failures=$((failures + 1))
+fi
+
 echo "== preview fixtures (no framebuffer needed) =="
 # The render job builds these same four fixtures under Xvfb. Checking the card and
 # the text boxes headlessly here means a drifted fixture fails in two seconds instead

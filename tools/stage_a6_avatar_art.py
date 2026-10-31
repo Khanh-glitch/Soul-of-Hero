@@ -23,13 +23,27 @@ EXPECTED = {
         "craftpix_id": "555940",
         "sha256": "b5579a3cc6006ef8c9d55c9ca0388575d75c987382b6cb504e2c7519e6c1e795",
         "archive": "craftpix-net-555940-free-base-4-direction-male-character-pixel-art.zip",
+        # Historical: the Drive upload the workflow used to curl. Kept only as
+        # provenance, never fetched. The Git identity below is the live source.
         "drive_id": "1CuSQ3pr75U1l1Ep8FIDexQlMr8fO3qGb",
+        "git": {
+            "repository": "Khanh-glitch/APEX-CHAOS",
+            "commit": "bf11a0cecfda43beca510062bd5d9dc1a8573cc5",
+            "path": "craftpix-net-555940-free-base-4-direction-male-character-pixel-art.zip",
+            "blob": "ce3e032df5b67ef6c25ae4dcb0562bb3b7e545c0",
+        },
     },
     "female": {
         "craftpix_id": "419402",
         "sha256": "f704e7852273d5f0111435ae86975fa981354d699dff1f594934f6a32d9821ad",
         "archive": "craftpix-net-419402-free-base-4-direction-female-character-pixel-art.zip",
         "drive_id": "1o5hRVbPZjZxcPGwP5coPDHZARbAej75o",
+        "git": {
+            "repository": "Khanh-glitch/APEX-CHAOS",
+            "commit": "b75dfc0ffa98c25059d67f655be14e419e63430b",
+            "path": "craftpix-net-419402-free-base-4-direction-female-character-pixel-art.zip",
+            "blob": "854be998896252479a678aef6f4b7b09d809a6b4",
+        },
     },
 }
 DIRECTIONS = {"front": 0, "side_left": 1, "side_right": 2, "back": 3}
@@ -238,6 +252,10 @@ def stage_one(gender: str, archive_path: Path, out_root: Path) -> dict:
 
     return {
         "craftpix_id": identity["craftpix_id"],
+        # Where these bytes actually came from. fetch_a6_avatar_sources.sh pulls the
+        # blob at this commit and checks the archive digest before staging.
+        "source_transport": "git-pinned",
+        "source_git": identity["git"],
         "drive_file_id": identity["drive_id"],
         "source_pack": identity["archive"],
         "archive_sha256": actual_sha,
