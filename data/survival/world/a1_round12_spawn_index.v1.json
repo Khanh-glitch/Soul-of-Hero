@@ -27743,7 +27743,7 @@
     "r_ashen_crown": 11039,
     "r_mirrormere": 3087
   },
-  "runtime_contract_sha256": "211dda4ac0c47fb4b4f02a061a98a71361df122822ce88be59dfa01fdee2555d",
+  "runtime_contract_sha256": "a1a5b736aec8c459fe56714f87f3ce17f37704e4790a18eb4b38d198b29a13ca",
   "schema": "soh.world.a1_round12_spawn_index.v1",
   "world_id": "world:soh_continent_v1",
   "world_plan_sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4"

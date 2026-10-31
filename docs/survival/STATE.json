@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
-  "project": "Soul of Hero \u2014 Survival RPG",
+  "project": "Soul of Hero — Survival RPG",
   "issue": "https://github.com/Khanh-glitch/Soul-of-Hero/issues/9",
   "branch": "feature/survival-rpg-foundation-20261029",
   "base_branch": "arena/54306b59-soul-of-hero",
   "immutable_fork_sha": "c1925d8d17a78da22c64b2c0fc249711eed536ac",
   "audited_gold_branch": "feature/gold-93-skill-readiness-20261028",
   "audited_gold_sha": "6c58ecf6f7c2350ee49f3a82e3cef42bf80afaf7",
-  "updated_date": "2026-10-30",
+  "updated_date": "2026-10-31",
   "phase": "SURV_010_MERGED_SURV_020_USER_REPORTED_IN_PROGRESS",
   "scope": "Offline open-world survival RPG; preserve dungeon/Gold; full-world plan upfront, 10 Chapter 1 dungeons in opening quarter",
   "code_claims": {
@@ -20,7 +20,7 @@
   "tasks": [
     {
       "id": "SURV-005",
-      "name": "2019\u20132020 Last Day Rules / Civilization Restart historical A\u2013Z reconstruction, source catalog, replay design gates",
+      "name": "2019–2020 Last Day Rules / Civilization Restart historical A–Z reconstruction, source catalog, replay design gates",
       "status": "verified",
       "evidence": [
         "docs/survival/LAST_DAY_RULES_2019_2020_RESEARCH_ATLAS.md",
@@ -60,7 +60,7 @@
       "name": "Harvest node -> real SOH inventory -> 2D build placement -> safe persistence slice",
       "status": "verified",
       "evidence": [
-        "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40845406213 \u2014 Survival A0 (Foundation) Runtime Validation, conclusion success: 125 checks, 12 named cases, exit 0",
+        "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40845406213 — Survival A0 (Foundation) Runtime Validation, conclusion success: 125 checks, 12 named cases, exit 0",
         "tests/survival_foundation_test.gd",
         "game/survival/survival_service.gd",
         "game/survival/survival_build_system.gd",
@@ -235,6 +235,22 @@
         "captures": 20,
         "crop_matches": 181
       }
+    },
+    {
+      "id": "SURV-050A-ROUND12-RUNTIME-CONTRACT",
+      "name": "A1 immutable world-data integrity versus mutable A0/A6 semantic runtime compatibility",
+      "status": "in_progress",
+      "assigned_branch": "arena/e385312a-soul-of-hero",
+      "work_order": "docs/survival/tasks/A1_ROUND12_RUNTIME_CONTRACT_WORK_ORDER.md",
+      "verification_scope": "17_round12_pytest_gdparse_yaml_and_deterministic_source_gates_passed_native_isolated_reproduction_forward_pending_first_push",
+      "evidence": [
+        "game/survival/world/a1_runtime_compatibility.gd",
+        "game/survival/world/a1_authored_world_reader.gd",
+        "data/survival/world/a1_round12_runtime_contract.v1.json",
+        "tests/survival/world/round12_deep_world_native_test.gd",
+        ".github/workflows/survival-world-reader.yml"
+      ],
+      "next": "Push new exact A1 SHA; run isolated plus frozen A0 62f6a32d/A6 6d71410a and forward A0 86ac20ba/A6 6518c098 Godot matrices; inspect eight native refusals and composed trees before final evidence handoff"
     }
   ],
   "next_action": {
@@ -326,7 +342,7 @@
   "design_authority": {
     "user_delegated_binary_gates": true,
     "policy": "Gate F0-F5 in LAST_DAY_RULES_2019_2020_RESEARCH_ATLAS.md; approved design must never be reported as implemented gameplay",
-    "historical_scope": "2019\u20132020, H1/H2/H3 distinguished; 2025\u20132026 variants are not default",
+    "historical_scope": "2019–2020, H1/H2/H3 distinguished; 2025–2026 variants are not default",
     "notable_new_user_requirement": "14 days of gameplay with only a few valuable abilities unlocked and many POIs/recipes undiscovered must make replay enticing, without padding meaningless grind"
   },
   "mechanic_coverage": [

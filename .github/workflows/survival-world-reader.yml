@@ -659,3 +659,272 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: python tools/ci/mirror_native_evidence.py --root artifacts/a1-round12
+
+  godot-round12-composed-runtime-native:
+    name: A1+A0+A6 EXACT-SHA RUNTIME CONTRACT / ${{ matrix.profile }} (ISOLATED)
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - profile: reproduction
+            a0_sha: 62f6a32d08d319bfdcd28235786558f54f49b420
+            a6_sha: 6d71410a370df805f8b29a018b61380d6c233b65
+          - profile: forward-86ac20ba-6518c098
+            a0_sha: 86ac20ba6ad6e80e964ef15af8f1fe48f11ee020
+            a6_sha: 6518c09835a273ac1e7b91dc5e6712d6a4c3863e
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: write
+    env:
+      A1_REPRO_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      A0_REPRO_SHA: ${{ matrix.a0_sha }}
+      A6_REPRO_SHA: ${{ matrix.a6_sha }}
+      COMPOSE_PROFILE: ${{ matrix.profile }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compose exact A1 head with reproduction A0/A6 through A0 owner fences
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/a1-round12-composed
+          printf '%s\n' "$A1_REPRO_SHA" "$A0_REPRO_SHA" "$A6_REPRO_SHA" | tee artifacts/a1-round12-composed/exact-owner-shas.txt
+          git fetch --no-tags origin "$A1_REPRO_SHA" "$A0_REPRO_SHA" "$A6_REPRO_SHA"
+          git worktree add --detach "$RUNNER_TEMP/a0-repro" "$A0_REPRO_SHA"
+          python3 "$RUNNER_TEMP/a0-repro/tools/a0/compose_owners.py" \
+            --repo "$RUNNER_TEMP/a0-repro" --out "$GITHUB_WORKSPACE/.composition" --copy-base \
+            --base-ref "$A0_REPRO_SHA" --owner a1="$A1_REPRO_SHA" --owner a6="$A6_REPRO_SHA"
+          python3 "$RUNNER_TEMP/a0-repro/tools/a0/check_composition.py" .composition \
+            | tee artifacts/a1-round12-composed/composition-seats.log
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib, re, subprocess
+          root = pathlib.Path('.composition')
+          report = json.loads((root / 'composition.json').read_text())
+          assert report['base']['sha'] == os.environ['A0_REPRO_SHA']
+          assert report['owners']['a1']['sha'] == os.environ['A1_REPRO_SHA']
+          assert report['owners']['a6']['sha'] == os.environ['A6_REPRO_SHA']
+          assert not [c for c in report['conflicts'] if not c.get('resolved')], report['conflicts']
+          def git_bytes(sha, path):
+              return subprocess.check_output(['git', 'show', f'{sha}:{path}'])
+          a1_paths = subprocess.check_output([
+              'git', 'ls-tree', '-r', '--name-only', os.environ['A1_REPRO_SHA'], '--',
+              'data/survival/world', 'game/survival/world'], text=True).splitlines()
+          a1_paths.append('tests/survival/world/round12_deep_world_native_test.gd')
+          for path in a1_paths:
+              assert (root / path).is_file(), f'A1_OWNER_FILE_ABSENT:{path}'
+              assert (root / path).read_bytes() == git_bytes(os.environ['A1_REPRO_SHA'], path), f'A1_OWNER_FILE_DRIFT:{path}'
+          assert len(a1_paths) >= 190, len(a1_paths)
+          required_copied = {
+              'data/survival/world/a1_round12_runtime_contract.v1.json',
+              'data/survival/world/a1_round12_spawn_index.v1.json',
+              'game/survival/world/a1_authored_world_reader.gd',
+              'game/survival/world/a1_authored_world_stream.gd',
+              'game/survival/world/a1_runtime_compatibility.gd',
+              'tests/survival/world/round12_deep_world_native_test.gd',
+          }
+          assert required_copied.issubset(set(report['copied']['a1'])), report['copied']['a1']
+          manifest_text = re.sub(r'^\s*#.*$', '', (root / 'tools/a0/ownership.json').read_text(), flags=re.M)
+          manifest = json.loads(manifest_text)
+          rulings = manifest.get('rulings', {})
+          for owner, rows in report['copied'].items():
+              scopes = report['owners'][owner]['scopes']
+              for path in rows:
+                  in_scope = any(path == scope.rstrip('/') or path.startswith(scope) for scope in scopes)
+                  ruling = rulings.get(path, {})
+                  accepted = ruling.get('kind') == 'accept_owner' and ruling.get('owner') == owner
+                  assert in_scope or accepted, f'OUT_OF_SCOPE_SOURCE_MUTATION:{owner}:{path}'
+          pathlib.Path('artifacts/a1-round12-composed/owner-file-validation.json').write_text(json.dumps({
+              'ok': True, 'a1_exact_files': len(a1_paths), 'required_copied': sorted(required_copied),
+              'copied': report['copied'], 'out_of_scope_source_mutation': False,
+          }, indent=2, sort_keys=True) + '\n')
+          provenance = {
+              'fixture_knight_script': {'owner': 'a0', 'sha': os.environ['A0_REPRO_SHA'],
+                  'path': 'game/characters/knight/knight.gd'},
+              'knight_scene': {'owner': 'a6', 'sha': os.environ['A6_REPRO_SHA'],
+                  'path': 'game/characters/knight/knight.tscn'},
+              'legacy_world': {'owner': 'a0', 'sha': os.environ['A0_REPRO_SHA'],
+                  'path': 'game/overworld/overworld_world.gd'},
+              'legacy_traversability': {'owner': 'a0', 'sha': os.environ['A0_REPRO_SHA'],
+                  'path': 'game/overworld/overworld_traversability.gd'},
+              'project_settings': {'owner': 'a0', 'sha': os.environ['A0_REPRO_SHA'],
+                  'path': 'project.godot'},
+          }
+          for name, row in provenance.items():
+              expected = hashlib.sha256(git_bytes(row['sha'], row['path'])).hexdigest()
+              actual = hashlib.sha256((root / row['path']).read_bytes()).hexdigest()
+              assert actual == expected, (name, actual, expected)
+              row['sha256'] = actual
+          controller = root / 'game/overworld/chapter1_overworld.gd'
+          merged = root / 'tools/a0/merges/chapter1_overworld.gd.merged'
+          assert controller.read_bytes() == merged.read_bytes()
+          provenance['legacy_controller'] = {'owner': 'a0_reviewed_merge',
+              'sha256': hashlib.sha256(controller.read_bytes()).hexdigest()}
+          pathlib.Path('artifacts/a1-round12-composed/runtime-provenance.json').write_text(
+              json.dumps(provenance, indent=2, sort_keys=True) + '\n')
+          PY
+          git -C .composition init -q
+          git -C .composition add -A
+          composed_tree=$(git -C .composition write-tree)
+          python3 - "$composed_tree" <<'PY'
+          import json, os, pathlib, sys
+          value = {
+              'schema': 'soh.a1.composed_source_identity.v1',
+              'composed_tree_sha1': sys.argv[1], 'algorithm': 'git write-tree over A0 composer output before Godot import',
+              'base_a0': os.environ['A0_REPRO_SHA'], 'owner_a1': os.environ['A1_REPRO_SHA'],
+              'owner_a6': os.environ['A6_REPRO_SHA'], 'profile': os.environ['COMPOSE_PROFILE'],
+              'scope': 'A0+A1+A6 source composition; isolated A1 native fixture only; not production activation',
+          }
+          pathlib.Path('artifacts/a1-round12-composed/composed-source.json').write_text(
+              json.dumps(value, indent=2, sort_keys=True) + '\n')
+          print('COMPOSED_SOURCE', json.dumps(value, sort_keys=True))
+          PY
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Compile exact A1 inputs for the byte-identical composed world data
+        run: |
+          set -euo pipefail
+          python3 tools/survival/worldgen/compile_round12_runtime.py --check \
+            --out "$GITHUB_WORKSPACE/artifacts/a1-round12-composed/round12_native_inputs.json" \
+            | tee "$GITHUB_WORKSPACE/artifacts/a1-round12-composed/compile.log"
+      - name: Import exact composed project for the isolated A1 native fixture
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/ud_a1_round12_composed_import
+          timeout --signal=TERM --kill-after=10s 300s godot --headless \
+            --path .composition --user-data-dir artifacts/ud_a1_round12_composed_import \
+            --import >artifacts/a1-round12-composed/godot-import.log 2>&1
+          rc=$?
+          echo "composed Round 12 import exit_code=$rc"
+          tail -60 artifacts/a1-round12-composed/godot-import.log
+          exit $rc
+      - name: Measure composed Round 12 drive and capture budget
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/a1-round12-composed/probe artifacts/ud_a1_round12_composed_probe
+          timeout --signal=TERM --kill-after=15s 300s xvfb-run -a -s "-screen 0 3840x2160x24" env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path .composition --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy \
+            --user-data-dir artifacts/ud_a1_round12_composed_probe --windowed --fixed-fps 60 \
+            --script res://tests/survival/world/round12_deep_world_native_test.gd -- \
+            --inputs="$GITHUB_WORKSPACE/artifacts/a1-round12-composed/round12_native_inputs.json" \
+            --out-root="$GITHUB_WORKSPACE/artifacts/a1-round12-composed/probe" \
+            --resolutions=1280x720,2560x1440,3840x2160 --budget-probe \
+            >artifacts/a1-round12-composed/probe/godot-probe.log 2>&1
+          rc=$?
+          echo "composed Round 12 budget probe exit_code=$rc"
+          cat artifacts/a1-round12-composed/probe/godot-probe.log
+          exit $rc
+      - name: Composed budget probe anti-vacuity gate
+        if: always()
+        run: |
+          log=artifacts/a1-round12-composed/probe/godot-probe.log
+          [ -f "$log" ] || { echo "::error::no composed Round 12 probe log"; exit 1; }
+          ! grep -q 'SCRIPT ERROR' "$log"
+          grep -q 'A1 ROUND12 BUDGET PROBE PASSED - not a full native fixture' "$log"
+          python3 - <<'PY'
+          import json
+          p=json.load(open('artifacts/a1-round12-composed/probe/round12_native_report.json'))
+          assert p['budget_probe'] and p['dispositions']['NATIVE_FIXTURE_PASS']=='NOT_TESTED'
+          assert p['source_report']['runtime_compatibility']['ok']
+          assert len(p['journeys'])==2 and sum(x['cells'] for x in p['journeys'])==64
+          assert len(p['captures'])==4 and len({tuple(x['resolution']) for x in p['captures']})==3
+          PY
+      - name: Calculate composed measured full-run timeout
+        run: |
+          python3 tools/survival/worldgen/estimate_round12_native_budget.py \
+            --probe artifacts/a1-round12-composed/probe/round12_native_report.json \
+            --inputs artifacts/a1-round12-composed/round12_native_inputs.json \
+            --out artifacts/a1-round12-composed/native_budget.json \
+            --cap-seconds 1800 | tee artifacts/a1-round12-composed/budget.log
+      - name: Drive complete Round 12 matrix against real composed A0/A6 runtime
+        run: |
+          budget=$(python3 -c "import json; print(json.load(open('artifacts/a1-round12-composed/native_budget.json'))['timeout_seconds'])")
+          echo "Measured composed Round 12 full-run timeout: ${budget}s"
+          mkdir -p artifacts/a1-round12-composed/full artifacts/ud_a1_round12_composed
+          timeout --signal=TERM --kill-after=15s "${budget}s" xvfb-run -a -s "-screen 0 3840x2160x24" env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path .composition --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy \
+            --user-data-dir artifacts/ud_a1_round12_composed --windowed --fixed-fps 60 \
+            --script res://tests/survival/world/round12_deep_world_native_test.gd -- \
+            --inputs="$GITHUB_WORKSPACE/artifacts/a1-round12-composed/round12_native_inputs.json" \
+            --out-root="$GITHUB_WORKSPACE/artifacts/a1-round12-composed/full" \
+            --resolutions=1280x720,2560x1440,3840x2160 \
+            >artifacts/a1-round12-composed/full/godot-round12.log 2>&1
+          rc=$?
+          echo "composed Round 12 full fixture exit_code=$rc"
+          cat artifacts/a1-round12-composed/full/godot-round12.log
+          exit $rc
+      - name: Composed native integrity / interface / provenance anti-vacuity gate
+        if: always()
+        run: |
+          log=artifacts/a1-round12-composed/full/godot-round12.log
+          [ -f "$log" ] || { echo "::error::no composed Round 12 full log"; exit 1; }
+          ! grep -q 'SCRIPT ERROR' "$log"
+          checks=$(grep -cE '^A1_R12 (PASS|FAIL): ' "$log" || true)
+          captures=$(grep -c 'nonblank native source capture' "$log" || true)
+          echo "composed Round 12 assertions=${checks}; captures=${captures}"
+          [ "${checks:-0}" -ge 230 ] && [ "${captures:-0}" -ge 69 ]
+          grep -q 'A1 ROUND12 NATIVE FIXTURE PASSED' "$log"
+          grep -q 'strict reader and live stream configure' "$log"
+          grep -q 'real Hero and legacy runtime semantic interfaces pass' "$log"
+          grep -q 'D051 consumer scene override requires physical behavior, never Knight visual/script identity' "$log"
+          grep -q 'no-teleport inset -> salvage -> Quarry -> Orchard -> Mill -> inset return' "$log"
+          grep -q 'reloaded dynamic detour physical return' "$log"
+          for named in \
+            'fail-closed plan_identity -> runtime_plan_hash' \
+            'fail-closed chunk_integrity -> source_chunk_hash' \
+            'fail-closed a8_source_identity -> dependency_hash:a8_quarry' \
+            'fail-closed legacy_tile_art_integrity -> dependency_hash:legacy_tiles_texture' \
+            'fail-closed spawn_index_semantics -> spawn_cells_hash' \
+            'fail-closed spawn_index_binding -> spawn_index_stale' \
+            'fail-closed player_shape_interface -> runtime_interface:PLAYER_BODY_SHAPE_SIZE' \
+            'fail-closed legacy_world_interface -> runtime_interface:LEGACY_WORLD_METHOD_IS_WALKABLE'; do
+            grep -q "$named" "$log" || { echo "::error::missing negative control: $named"; exit 1; }
+          done
+          python3 - <<'PY'
+          import hashlib, json, pathlib
+          report=json.load(open('artifacts/a1-round12-composed/full/round12_native_report.json'))
+          provenance=json.load(open('artifacts/a1-round12-composed/runtime-provenance.json'))
+          observed=report['runtime_observed_sha256']
+          for key, row in provenance.items():
+              assert observed[key]['sha256'] == row['sha256'], (key, observed[key], row)
+          assert len(report['runtime_negative_controls']) == 8
+          assert all(row['pass'] and row['refused'] for row in report['runtime_negative_controls'])
+          assert report['source_report']['ok'] and report['source_report']['verified_chunks'] == 192
+          assert report['source_report']['runtime_compatibility']['interfaces']['player']['identity_policy'] == 'PHYSICAL_INTERFACE_ONLY_NO_VISUAL_OR_SCRIPT_IDENTITY'
+          assert len(report['journeys']) == 37 and all(row['ok'] for row in report['journeys'])
+          assert report['dispositions']['PRODUCTION_MOUNTED']=='NOT_TESTED'
+          assert report['dispositions']['PLAYER_PLAYABLE']=='NOT_TESTED'
+          PY
+      - name: Validate composed native report and capture bytes independently
+        if: always()
+        run: |
+          [ -f artifacts/a1-round12-composed/full/round12_native_report.json ] || { echo "::error::missing composed Round 12 report"; exit 1; }
+          python3 tools/survival/worldgen/validate_round12_native.py \
+            --report artifacts/a1-round12-composed/full/round12_native_report.json \
+            --inputs artifacts/a1-round12-composed/round12_native_inputs.json \
+            --budget artifacts/a1-round12-composed/native_budget.json \
+            --out artifacts/a1-round12-composed/full/native_validation.json
+      - name: Upload exact-SHA composed Round 12 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a1-round12-composed-runtime-native-evidence-${{ matrix.profile }}
+          path: |
+            artifacts/a1-round12-composed/
+            .composition/composition.json
+            .composition/CONFLICTS.md
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Mirror exact-SHA composed evidence as Git blobs
+        if: always()
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python tools/ci/mirror_native_evidence.py --root artifacts/a1-round12-composed

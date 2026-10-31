@@ -28,6 +28,7 @@ CONTRACT = WORLD / "a1_round12_runtime_contract.v1.json"
 SPAWN_INDEX = WORLD / "a1_round12_spawn_index.v1.json"
 TILE = 16
 DIRECTIONS = ((1, 0), (-1, 0), (0, 1), (0, -1))
+RUNTIME_INTERFACE_SCHEMA = "soh.world.a1_runtime_interfaces.v1"
 
 
 def sha_file(path: Path) -> str:
@@ -63,6 +64,61 @@ def validate_pin(contract: dict, key: str) -> dict:
     if not path.is_file() or sha_file(path) != pin["sha256"]:
         raise ValueError(f"source pin mismatch: {key}")
     return pin
+
+
+def _contains_runtime_hash(value) -> bool:
+    if isinstance(value, dict):
+        return any(key == "sha256" or key.endswith("_sha256") or _contains_runtime_hash(entry)
+                   for key, entry in value.items())
+    if isinstance(value, list):
+        return any(_contains_runtime_hash(entry) for entry in value)
+    return False
+
+
+def validate_runtime_interface_contract(contract: dict) -> dict:
+    """Validate the semantic contract shape, never mutable source bytes."""
+    runtime = contract.get("runtime_interfaces")
+    if not isinstance(runtime, dict) or runtime.get("schema") != RUNTIME_INTERFACE_SCHEMA:
+        raise ValueError("runtime interface contract schema missing")
+    if _contains_runtime_hash(runtime):
+        raise ValueError("mutable runtime interfaces cannot contain byte pins")
+    observed = runtime.get("observed_paths")
+    player = runtime.get("player")
+    scripts = runtime.get("scripts")
+    if not isinstance(observed, dict) or not isinstance(player, dict) or not isinstance(scripts, dict):
+        raise ValueError("runtime interface observations/player/scripts are required")
+    if not observed or not all(isinstance(key, str) and isinstance(path, str) and path
+                               for key, path in observed.items()):
+        raise ValueError("runtime interface observed paths must be named relative resources")
+    pinned_paths = {pin.get("path") for pin in contract.get("source_pins", {}).values()
+                    if isinstance(pin, dict)}
+    overlap = pinned_paths.intersection(observed.values())
+    if overlap:
+        raise ValueError(f"mutable runtime resources cannot remain source-pinned: {sorted(overlap)}")
+    required = {"player": player.get("scene")}
+    required.update({key: spec.get("path") for key, spec in scripts.items() if isinstance(spec, dict)})
+    if len(required) != 4 or any(not isinstance(path, str) or not path for path in required.values()):
+        raise ValueError("player plus three legacy script interfaces are required")
+    if not set(required.values()).issubset(set(observed.values())):
+        raise ValueError("every required runtime interface must have a named observation")
+    for key, spec in scripts.items():
+        if not spec.get("base_type") or not spec.get("required_methods"):
+            raise ValueError(f"runtime script interface incomplete: {key}")
+    if player.get("scene_role") != "DEFAULT_A0_A6_TECHNICAL_BODY_ONLY_NOT_D051_VISUAL_IDENTITY" \
+            or player.get("allow_consumer_scene_override") is not True:
+        raise ValueError("player scene must be an overridable physical proxy, not D051 identity")
+    for forbidden in ("script", "visual", "sprite", "appearance"):
+        if forbidden in player:
+            raise ValueError(f"player visual/script identity is not a runtime interface: {forbidden}")
+    for field in ("body_shape_node", "body_shape_size_px", "body_shape_offset_px", "camera_node",
+                  "camera_offset_px", "require_position_smoothing", "minimum_position_smoothing_speed",
+                  "required_collision_mask", "required_collision_layer", "numeric_properties", "required_input_actions"):
+        if field not in player:
+            raise ValueError(f"player runtime interface incomplete: {field}")
+    for path in required.values():
+        if not (ROOT / path).is_file():
+            raise ValueError(f"runtime interface resource missing: {path}")
+    return runtime
 
 
 def named_value(layers: cwa.Layers, cell: list[int], layer: str) -> str:
@@ -128,6 +184,8 @@ class RuntimeBuilder:
 
     def validate_sources(self) -> None:
         c = self.contract
+        runtime_interfaces = validate_runtime_interface_contract(c)
+        observed_paths = set(runtime_interfaces["observed_paths"].values())
         for key, pin in c["source_pins"].items():
             if isinstance(pin, dict) and "path" in pin and "sha256" in pin:
                 validate_pin(c, key)
@@ -141,6 +199,10 @@ class RuntimeBuilder:
             raise ValueError("Round 12 contract exceeds authority")
         baseline_lock = load(WORLD / "baseline_lock.json")
         for relative, expected in baseline_lock["files"].items():
+            # The historical lock mixes immutable world data with owner-managed
+            # scripts/project settings. Only the former remain byte identity.
+            if relative in observed_paths:
+                continue
             if sha_file(ROOT / relative) != expected:
                 raise ValueError(f"legacy baseline hash drift: {relative}")
         atlas = load(ROOT / c["source_pins"]["atlas"]["path"])
@@ -159,6 +221,15 @@ class RuntimeBuilder:
             raise ValueError("accepted six/four placement scope changed")
         self._compile_sites()
         self._compile_roadside()
+
+    def runtime_observations(self) -> dict:
+        """Current mutable bytes for diagnostics; deliberately not acceptance pins."""
+        observed = {}
+        for key, relative in self.contract["runtime_interfaces"]["observed_paths"].items():
+            path = ROOT / relative
+            if path.is_file():
+                observed[key] = {"path": relative, "sha256": sha_file(path)}
+        return observed
 
     def _compile_roadside(self) -> None:
         source = load(ROOT / self.contract["source_pins"]["roadside_corridor"]["path"])
@@ -766,9 +837,12 @@ class RuntimeBuilder:
             "atlas_path": self.contract["visual"]["atlas_path"],
             "terrain_path": "res://assets/environment/survival_world/terrain.png",
             "props_path": "res://assets/environment/survival_world/props.png",
-            "hero": {"scene": "res://game/characters/knight/knight.tscn", "body_size_px": [12, 16],
-                     "body_offset_px": [0, -8], "move_speed_px_s": 96.0, "acceleration_px_s2": 900.0,
+            "hero": {"scene": "res://" + self.contract["runtime_interfaces"]["player"]["scene"],
+                     "body_size_px": [12, 16], "body_offset_px": [0, -8],
+                     "move_speed_px_s": 96.0, "acceleration_px_s2": 900.0,
                      "friction_px_s2": 1100.0, "technical_proxy_not_D051_identity": True},
+            "runtime_interfaces": self.contract["runtime_interfaces"],
+            "runtime_observed_sha256": self.runtime_observations(),
             "legacy": {"world_data": "res://data/overworld/hollow_marches.json",
                        "layers": "res://data/overworld/hollow_marches_layers.json",
                        "props": "res://data/overworld/hollow_marches_props.json",

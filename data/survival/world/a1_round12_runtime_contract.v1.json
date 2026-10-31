@@ -37,6 +37,10 @@
     "structure_id": "fixture:visible_palisade:01",
     "visual_frame": "fence_h"
   },
+  "integrity_policy": {
+    "immutable": "source_pins, world plan, all 192 chunk manifests/files, A8/source data, art and derived spawn-index bindings remain exact SHA-256 gates.",
+    "mutable": "runtime_interfaces are semantic fail-closed checks; runtime_observed_sha256 in generated native inputs is diagnostic evidence only."
+  },
   "journey_evaluation": {
     "J01": "safe spawn -> ordinary nearby material -> physical route -> home return; no inventory grant claimed",
     "J03": "home/outpost repeat-trip distance and source opportunity comparison; construction/activation remains A0",
@@ -201,6 +205,92 @@
     "ordinary_allow_hazard": false,
     "road_cost_bonus": 0.82
   },
+  "runtime_interfaces": {
+    "observed_paths": {
+      "fixture_knight_script": "game/characters/knight/knight.gd",
+      "knight_scene": "game/characters/knight/knight.tscn",
+      "legacy_controller": "game/overworld/chapter1_overworld.gd",
+      "legacy_traversability": "game/overworld/overworld_traversability.gd",
+      "legacy_world": "game/overworld/overworld_world.gd",
+      "project_settings": "project.godot"
+    },
+    "player": {
+      "allow_consumer_scene_override": true,
+      "body_shape_node": "BodyShape",
+      "body_shape_offset_px": [
+        0,
+        -8
+      ],
+      "body_shape_size_px": [
+        12,
+        16
+      ],
+      "camera_node": "Camera",
+      "camera_offset_px": [
+        0,
+        -8
+      ],
+      "minimum_position_smoothing_speed": 1.0,
+      "motion_mode": "FLOATING",
+      "numeric_properties": [
+        "move_speed",
+        "acceleration",
+        "friction",
+        "health"
+      ],
+      "require_position_smoothing": true,
+      "required_collision_layer": 2,
+      "required_collision_mask": 5,
+      "required_input_actions": [
+        "move_left",
+        "move_right",
+        "move_up",
+        "move_down"
+      ],
+      "scene": "game/characters/knight/knight.tscn",
+      "scene_role": "DEFAULT_A0_A6_TECHNICAL_BODY_ONLY_NOT_D051_VISUAL_IDENTITY"
+    },
+    "policy": "Mutable A0/A6 runtime bytes are observed, never pinned. Compatibility is checked against the real scene/scripts and required physics/interface surface.",
+    "production_mount_acceptance": "A0_SEPARATE_GATE",
+    "schema": "soh.world.a1_runtime_interfaces.v1",
+    "scripts": {
+      "LEGACY_CONTROLLER": {
+        "base_type": "Node2D",
+        "path": "game/overworld/chapter1_overworld.gd",
+        "required_methods": [
+          "configure",
+          "is_world_ready",
+          "walkable_at",
+          "teleport_to",
+          "frame_count"
+        ]
+      },
+      "LEGACY_TRAVERSABILITY": {
+        "base_type": "RefCounted",
+        "path": "game/overworld/overworld_traversability.gd",
+        "required_methods": [
+          "build",
+          "invalidate",
+          "is_free",
+          "reachable_from",
+          "unreachable_endpoints"
+        ]
+      },
+      "LEGACY_WORLD": {
+        "base_type": "Node2D",
+        "path": "game/overworld/overworld_world.gd",
+        "required_methods": [
+          "build",
+          "set_shortcut_open",
+          "shortcut_carve_boxes",
+          "is_walkable",
+          "is_solid_cell",
+          "tile_of",
+          "world_of"
+        ]
+      }
+    }
+  },
   "save_mutation": false,
   "schema": "soh.world.a1_round12_runtime.v1",
   "scope": "A0-consumable reader/streamer and isolated native fixture over the unchanged authored continent; not a production mount, economy, hazard-damage, save, A8-scene or human-acceptance claim",
@@ -242,18 +332,6 @@
       "path": "data/survival/world/art/atlas.v1.json",
       "sha256": "83d69373ca6c1258e8727800d0aa0c288851c34d25539c69c21ec9f5fc9d769a"
     },
-    "fixture_knight_script": {
-      "path": "game/characters/knight/knight.gd",
-      "sha256": "0f24ffdfeb13f180c12dedf4c93f5d9cf35183408299a478f84cc036c8202193"
-    },
-    "knight_scene": {
-      "path": "game/characters/knight/knight.tscn",
-      "sha256": "2b29011bf361ac7e5cdde97c1fc454c69684dcb6c08e1c23186c05910a52e195"
-    },
-    "legacy_controller": {
-      "path": "game/overworld/chapter1_overworld.gd",
-      "sha256": "f2e3d29fe091473453d4eb062bac350f10109e89525ae3c502c787e25abb9f24"
-    },
     "legacy_data": {
       "path": "data/overworld/hollow_marches.json",
       "sha256": "1d30ad27ba4408a4ec72d77dbc57c76bbddb214c89fd6d1309e97af742d51a19"
@@ -274,13 +352,13 @@
       "path": "assets/environment/overworld/overworld_props.png",
       "sha256": "6cb975589f869670432608d827ff6c58ccf81ab78e320ead1028a17565687e68"
     },
-    "legacy_traversability": {
-      "path": "game/overworld/overworld_traversability.gd",
-      "sha256": "17ce43483c6e0a881a02b7b41b686cec4637a6d94d5be35b612f38fe78526464"
+    "legacy_tiles_index": {
+      "path": "data/overworld/overworld_tiles.json",
+      "sha256": "58e8bbe1cee87b4fb83209e093843087a8d392e0c3f1a7c4134c3071982d9d46"
     },
-    "legacy_world": {
-      "path": "game/overworld/overworld_world.gd",
-      "sha256": "6bd485ee433d5088882ffa0682ee815419c727ecc4c142dad4c3865891e46dbe"
+    "legacy_tiles_texture": {
+      "path": "assets/environment/overworld/overworld_tiles.png",
+      "sha256": "cef87705e73693feb2af3a60430e4ce94ef6223f51d43d6418ace018c861ed61"
     },
     "placement": {
       "path": "data/survival/world/a1_world_placement_contract.v1.json",

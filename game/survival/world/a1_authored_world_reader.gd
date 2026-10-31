@@ -18,6 +18,7 @@ const PLAN_SCHEMA := "soh.world.masterplan.v1"
 const RUNTIME_SCHEMA := "soh.world.a1_round12_runtime.v1"
 const SPAWN_SCHEMA := "soh.world.a1_round12_spawn_index.v1"
 const DEFAULT_WORLD_ROOT := "res://data/survival/world"
+const RUNTIME_COMPATIBILITY := preload("res://game/survival/world/a1_runtime_compatibility.gd")
 
 var root_path := ""
 var plan: Dictionary = {}
@@ -29,6 +30,7 @@ var cache: Dictionary = {}
 var last_error := ""
 var configure_ms := 0.0
 var dependency_hashes: Dictionary = {}
+var runtime_compatibility_report: Dictionary = {}
 var _spawn_chunks: Array = []
 var _spawn_by_chunk: Dictionary = {}
 var _pois_by_id: Dictionary = {}
@@ -40,12 +42,13 @@ var _physical_sites: Dictionary = {}
 var _physical_by_poi: Dictionary = {}
 
 
-func configure(world_root: String = DEFAULT_WORLD_ROOT) -> bool:
+func configure(world_root: String = DEFAULT_WORLD_ROOT, player_scene_override: String = "") -> bool:
 	var started := Time.get_ticks_usec()
 	root_path = world_root
 	cache.clear()
 	manifest_by_id.clear()
 	dependency_hashes.clear()
+	runtime_compatibility_report = {}
 	_spawn_chunks.clear()
 	_spawn_by_chunk.clear()
 	_pois_by_id.clear()
@@ -136,7 +139,7 @@ func configure(world_root: String = DEFAULT_WORLD_ROOT) -> bool:
 		if value == 0:
 			last_error = "manifest_gap"
 			return false
-	if not _configure_runtime():
+	if not _configure_runtime(player_scene_override):
 		return false
 	for raw: Variant in plan.get("chunk_manifest", []):
 		var chunk_id := String((raw as Dictionary).get("chunk_id", ""))
@@ -145,6 +148,26 @@ func configure(world_root: String = DEFAULT_WORLD_ROOT) -> bool:
 			last_error = "source_" + String(loaded.get("error", "chunk_unknown")).to_lower()
 			return false
 	configure_ms = float(Time.get_ticks_usec() - started) / 1000.0
+	return true
+
+
+static func _spawn_cells_sha256(cells: Array) -> String:
+	var parts := PackedStringArray()
+	for value: Variant in cells:
+		parts.append(str(int(value)))
+	var canonical := "[" + ",".join(parts) + "]"
+	var hashing := HashingContext.new()
+	hashing.start(HashingContext.HASH_SHA256)
+	hashing.update(canonical.to_utf8_buffer())
+	return hashing.finish().hex_encode()
+
+
+static func _counts_equal(actual: Dictionary, expected: Dictionary) -> bool:
+	if actual.size() != expected.size():
+		return false
+	for key: String in actual:
+		if not expected.has(key) or int(actual[key]) != int(expected[key]):
+			return false
 	return true
 
 
@@ -164,12 +187,19 @@ func _json_object(path: String) -> Dictionary:
 	return parsed as Dictionary if parsed is Dictionary else {}
 
 
-func _configure_runtime() -> bool:
+func _configure_runtime(player_scene_override: String = "") -> bool:
 	var contract_path := root_path.path_join("a1_round12_runtime_contract.v1.json")
 	runtime_contract = _json_object(contract_path)
 	if runtime_contract.is_empty() or String(runtime_contract.get("schema", "")) != RUNTIME_SCHEMA:
 		last_error = "runtime_contract_schema"
 		return false
+	var runtime_interfaces: Dictionary = runtime_contract.get("runtime_interfaces", {})
+	if String(runtime_interfaces.get("schema", "")) != RUNTIME_COMPATIBILITY.INTERFACE_SCHEMA:
+		last_error = "runtime_interface:CONTRACT_SCHEMA"
+		return false
+	var mutable_paths := {}
+	for key: String in runtime_interfaces.get("observed_paths", {}):
+		mutable_paths[String((runtime_interfaces.observed_paths as Dictionary)[key])] = key
 	var api: Dictionary = runtime_contract.get("reader_api", {})
 	var expected_frame: Array = api.get("frame", [])
 	var frame: Dictionary = plan.get("frame", {})
@@ -191,7 +221,10 @@ func _configure_runtime() -> bool:
 		if not pin.has("path") or not pin.has("sha256"):
 			continue
 		var relative := String(pin.path)
-		var path := relative if relative.begins_with("res://") else "res://" + relative
+		if mutable_paths.has(relative):
+			last_error = "mutable_byte_pin:" + String(mutable_paths[relative])
+			return false
+		var path := RUNTIME_COMPATIBILITY.source_path(relative)
 		if not FileAccess.file_exists(path):
 			last_error = "dependency_missing:" + key
 			return false
@@ -202,6 +235,11 @@ func _configure_runtime() -> bool:
 		dependency_hashes[key] = actual
 	dependency_hashes["world_plan"] = FileAccess.get_sha256(plan_path)
 	dependency_hashes["runtime_contract"] = FileAccess.get_sha256(contract_path)
+	var compatibility := RUNTIME_COMPATIBILITY.new()
+	runtime_compatibility_report = compatibility.validate(runtime_interfaces, player_scene_override)
+	if not bool(runtime_compatibility_report.get("ok", false)):
+		last_error = String(runtime_compatibility_report.get("error", compatibility.last_error))
+		return false
 	var spawn_path := root_path.path_join(String(api.get("spawn_index", "a1_round12_spawn_index.v1.json")))
 	spawn_index = _json_object(spawn_path)
 	if spawn_index.is_empty() or String(spawn_index.get("schema", "")) != SPAWN_SCHEMA:
@@ -211,10 +249,26 @@ func _configure_runtime() -> bool:
 			or String(spawn_index.get("runtime_contract_sha256", "")) != dependency_hashes.runtime_contract:
 		last_error = "spawn_index_stale"
 		return false
+	var spawn_policy: Dictionary = runtime_contract.get("spawn_policy", {})
+	if String(spawn_index.get("world_id", "")) != String(plan.get("world_id", "")) \
+			or not _int_array_equals(spawn_index.get("frame", []), expected_frame) or int(spawn_index.get("chunk_cells", 0)) != 64 \
+			or String(spawn_index.get("algorithm", "")) != String(spawn_policy.get("algorithm", "")) \
+			or JSON.stringify(spawn_index.get("criteria", {})) != JSON.stringify(spawn_policy) \
+			or bool(spawn_index.get("production_spawn_approval", true)):
+		last_error = "spawn_source_contract"
+		return false
 	_spawn_chunks = spawn_index.get("chunks", [])
 	if _spawn_chunks.size() < 18 or int(spawn_index.get("candidate_cells", 0)) < 20000:
 		last_error = "spawn_index_not_broad"
 		return false
+	if int(spawn_index.get("candidate_chunks", -1)) != _spawn_chunks.size():
+		last_error = "spawn_chunk_total"
+		return false
+	var regions: Dictionary = {}
+	for raw: Variant in plan.get("regions", []):
+		var region := raw as Dictionary
+		regions[String(region.get("region_id", ""))] = region
+	var actual_region_counts := {}
 	var total := 0
 	for raw: Variant in _spawn_chunks:
 		if not raw is Dictionary:
@@ -229,6 +283,10 @@ func _configure_runtime() -> bool:
 		if cells.is_empty() or int(entry.get("candidate_count", 0)) != cells.size():
 			last_error = "spawn_chunk_count"
 			return false
+		if _spawn_cells_sha256(cells) != String(entry.get("cells_sha256", "")):
+			last_error = "spawn_cells_hash"
+			return false
+		var chunk_region_counts := {}
 		var origin: Array = (manifest_by_id[cid] as Dictionary).origin
 		var previous := -1
 		for raw_local: Variant in cells:
@@ -246,10 +304,29 @@ func _configure_runtime() -> bool:
 			if int(values.walk) != 1 or int(values.hazard) != 0 or int(values.preserved) != 0:
 				last_error = "spawn_cell_unsafe"
 				return false
+			for dy: int in range(-1, 2):
+				for dx: int in range(-1, 2):
+					var neighbor := cell_layers(cell + Vector2i(dx, dy))
+					if not bool(neighbor.get("ok", false)) or int((neighbor.values as Dictionary).walk) != 1 \
+							or int((neighbor.values as Dictionary).hazard) != 0:
+						last_error = "spawn_cell_clearance"
+						return false
+			var region_id := named_value(cell, "region")
+			if not regions.has(region_id) or not ((regions[region_id] as Dictionary).get("entry_capabilities", []) as Array).is_empty():
+				last_error = "spawn_cell_region_gate"
+				return false
+			chunk_region_counts[region_id] = int(chunk_region_counts.get(region_id, 0)) + 1
+			actual_region_counts[region_id] = int(actual_region_counts.get(region_id, 0)) + 1
+		if not _counts_equal(chunk_region_counts, entry.get("region_counts", {}) as Dictionary):
+			last_error = "spawn_chunk_region_counts"
+			return false
 		total += cells.size()
 		_spawn_by_chunk[cid] = entry
 	if total != int(spawn_index.get("candidate_cells", -1)):
 		last_error = "spawn_total"
+		return false
+	if not _counts_equal(actual_region_counts, spawn_index.get("region_counts", {}) as Dictionary):
+		last_error = "spawn_region_counts"
 		return false
 	_index_plan_objects()
 	if not _compile_physical_sites():
@@ -673,7 +750,8 @@ func check_seam(seam: Dictionary) -> Dictionary:
 # Round 12 additive consumer API. Original reader methods above remain intact.
 # ---------------------------------------------------------------------------
 func is_ready() -> bool:
-	return not plan.is_empty() and not runtime_contract.is_empty() and cache.size() == 192
+	return not plan.is_empty() and not runtime_contract.is_empty() and cache.size() == 192 \
+		and bool(runtime_compatibility_report.get("ok", false))
 
 
 func world_frame() -> Vector2i:
@@ -960,6 +1038,7 @@ func source_report() -> Dictionary:
 		"ok": is_ready(), "world_id": String(plan.get("world_id", "")), "frame": [world_frame().x, world_frame().y],
 		"chunk_size": int(plan.get("chunk_size", 0)), "verified_chunks": cache.size(),
 		"configure_ms": configure_ms, "dependency_sha256": dependency_hashes.duplicate(true),
+		"runtime_compatibility": runtime_compatibility_report.duplicate(true),
 		"spawn_candidate_cells": int(spawn_index.get("candidate_cells", 0)),
 		"spawn_candidate_chunks": _spawn_chunks.size(),
 		"spawn_region_counts": (spawn_index.get("region_counts", {}) as Dictionary).duplicate(true),

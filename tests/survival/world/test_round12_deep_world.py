@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+from collections import Counter
 from copy import deepcopy
+import hashlib
 import json
 from pathlib import Path
 import subprocess
@@ -78,6 +80,45 @@ def test_broad_spawn_index_is_deterministic_and_non_fixture(native_inputs: dict)
         if case["native_drive"]:
             assert len(case["forward_cells"]) >= 2
         assert case["eligibility"]["material_families"]
+
+
+def test_spawn_index_binding_hashes_and_source_consistency(native_inputs: dict) -> None:
+    spawn = json.loads(compiler.SPAWN_INDEX.read_text())
+    contract = json.loads(CONTRACT.read_text())
+    plan = json.loads((compiler.WORLD / "world_plan.v1.json").read_text())
+    assert spawn["runtime_contract_sha256"] == compiler.sha_file(CONTRACT) == native_inputs["source_contract_sha256"]
+    assert spawn["world_plan_sha256"] == compiler.sha_file(compiler.WORLD / "world_plan.v1.json")
+    assert spawn["world_id"] == plan["world_id"] and spawn["frame"] == [1024, 768]
+    assert spawn["chunk_cells"] == 64 and spawn["criteria"] == contract["spawn_policy"]
+    assert spawn["algorithm"] == contract["spawn_policy"]["algorithm"]
+    assert spawn["production_spawn_approval"] is False
+    assert spawn["candidate_chunks"] == len(spawn["chunks"])
+    layers = compiler.cwa.Layers(plan)
+    regions = {row["region_id"]: row for row in plan["regions"]}
+    totals: Counter[str] = Counter()
+    manifest = {row["chunk_id"]: row for row in plan["chunk_manifest"]}
+    for chunk in spawn["chunks"]:
+        cells = chunk["cells"]
+        assert cells == sorted(set(cells)) and chunk["candidate_count"] == len(cells)
+        canonical = json.dumps(cells, separators=(",", ":")).encode()
+        assert chunk["cells_sha256"] == hashlib.sha256(canonical).hexdigest()
+        origin = manifest[chunk["chunk_id"]]["origin"]
+        chunk_regions: Counter[str] = Counter()
+        for local in cells:
+            cell = [origin[0] + local % 64, origin[1] + local // 64]
+            assert layers.value(cell, "walk") == 1 and layers.value(cell, "hazard") == 0
+            assert layers.value(cell, "preserved") == 0
+            for dy in (-1, 0, 1):
+                for dx in (-1, 0, 1):
+                    neighbor = [cell[0] + dx, cell[1] + dy]
+                    assert layers.value(neighbor, "walk") == 1 and layers.value(neighbor, "hazard") == 0
+            region = compiler.named_value(layers, cell, "region")
+            assert region in regions and not regions[region]["entry_capabilities"]
+            chunk_regions[region] += 1
+            totals[region] += 1
+        assert dict(chunk_regions) == chunk["region_counts"]
+    assert dict(totals) == spawn["region_counts"]
+    assert sum(totals.values()) == spawn["candidate_cells"]
 
 
 def test_routes_are_real_geographic_choices(native_inputs: dict) -> None:
@@ -181,6 +222,60 @@ def test_geography_asymmetry_is_source_derived(native_inputs: dict) -> None:
     assert len(climates) == len(regional_materials) == 11
     assert len({tuple(sorted(materials)) for materials in regional_materials.values()}) == 11
     assert len(surfaces) >= 8 and len(efforts) >= 4
+
+
+def test_mutable_runtime_interfaces_are_semantic_not_byte_identity(native_inputs: dict) -> None:
+    contract = json.loads(CONTRACT.read_text())
+    runtime = compiler.validate_runtime_interface_contract(contract)
+    observed_paths = set(runtime["observed_paths"].values())
+    pinned_paths = {pin["path"] for pin in contract["source_pins"].values() if isinstance(pin, dict)}
+    assert pinned_paths.isdisjoint(observed_paths)
+    assert not compiler._contains_runtime_hash(runtime)
+    assert runtime["player"]["allow_consumer_scene_override"] is True
+    assert runtime["player"]["scene_role"].endswith("NOT_D051_VISUAL_IDENTITY")
+    assert not {"script", "visual", "sprite", "appearance"}.intersection(runtime["player"])
+    assert set(native_inputs["runtime_observed_sha256"]) == set(runtime["observed_paths"])
+    assert set(native_inputs["source_manifest"]).isdisjoint(runtime["observed_paths"])
+    for key, row in native_inputs["runtime_observed_sha256"].items():
+        assert row["sha256"] == compiler.sha_file(ROOT / row["path"])
+    assert contract["source_pins"]["legacy_tiles_index"]["sha256"] == compiler.sha_file(
+        ROOT / "data/overworld/overworld_tiles.json")
+    assert contract["source_pins"]["legacy_tiles_texture"]["sha256"] == compiler.sha_file(
+        ROOT / "assets/environment/overworld/overworld_tiles.png")
+
+
+def test_compatible_mutable_runtime_drift_does_not_invalidate_world(monkeypatch: pytest.MonkeyPatch) -> None:
+    contract = json.loads(CONTRACT.read_text())
+    mutable = set(contract["runtime_interfaces"]["observed_paths"].values())
+    real_sha = compiler.sha_file
+
+    def compatible_drift(path: Path) -> str:
+        try:
+            relative = str(path.relative_to(ROOT))
+        except ValueError:
+            relative = ""
+        return "f" * 64 if relative in mutable else real_sha(path)
+
+    monkeypatch.setattr(compiler, "sha_file", compatible_drift)
+    compiler.RuntimeBuilder().validate_sources()
+
+
+def test_runtime_byte_pin_regression_fails_closed(tmp_path: Path) -> None:
+    source = json.loads(CONTRACT.read_text())
+    bad_hash = deepcopy(source)
+    bad_hash["runtime_interfaces"]["player"]["scene_sha256"] = "0" * 64
+    path = tmp_path / "bad-runtime-hash.json"
+    path.write_text(json.dumps(bad_hash))
+    with pytest.raises(ValueError, match="cannot contain byte pins"):
+        compiler.RuntimeBuilder(path).validate_sources()
+
+    repinned = deepcopy(source)
+    repinned["source_pins"]["fixture_knight_script"] = {
+        "path": "game/characters/knight/knight.gd", "sha256": "0" * 64}
+    path = tmp_path / "repinned-knight.json"
+    path.write_text(json.dumps(repinned))
+    with pytest.raises(ValueError, match="cannot remain source-pinned"):
+        compiler.RuntimeBuilder(path).validate_sources()
 
 
 def test_compiler_output_is_byte_deterministic(tmp_path: Path) -> None:

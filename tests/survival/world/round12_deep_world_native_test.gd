@@ -6,7 +6,7 @@ extends SceneTree
 
 const READER := preload("res://game/survival/world/a1_authored_world_reader.gd")
 const STREAM := preload("res://game/survival/world/a1_authored_world_stream.gd")
-const KNIGHT := "res://game/characters/knight/knight.tscn"
+const COMPATIBILITY := preload("res://game/survival/world/a1_runtime_compatibility.gd")
 const TILE := 16
 const LOGICAL := Vector2i(640, 360)
 const MOVE_ACTIONS: Array[String] = ["move_left", "move_right", "move_up", "move_down"]
@@ -69,6 +69,7 @@ var stream_generation := 0
 var salvage_arrival: Dictionary = {}
 var expected_block_contacts := 0
 var prepare_measurements: Array[Dictionary] = []
+var runtime_negative_controls: Array[Dictionary] = []
 var started_ticks := 0
 var budget_probe := false
 
@@ -138,17 +139,177 @@ func _verify_sources() -> void:
 	_expect(plan_ok, "master geography exact bytes")
 	if not contract_ok or not spawn_ok or not plan_ok:
 		abort = true
+	var observed_paths: Dictionary = (inputs.runtime_interfaces as Dictionary).get("observed_paths", {})
+	var mutable_paths: Dictionary = {}
+	for key: String in observed_paths:
+		mutable_paths[String(observed_paths[key])] = key
+	var runtime_pin_free := true
 	for key: String in (inputs.source_manifest as Dictionary):
 		var pin: Dictionary = inputs.source_manifest[key]
+		if mutable_paths.has(String(pin.path)):
+			runtime_pin_free = false
 		if FileAccess.get_sha256("res://" + String(pin.path)) != String(pin.sha256):
 			_expect(false, "source hash " + key)
 			abort = true
-	_expect(not abort, "all pinned A0/A8/A1/Hero/legacy source bytes match")
+	_expect(runtime_pin_free, "mutable actor/controller/project resources are not byte-pinned")
+	_expect(not abort, "all immutable A8/A1/world-data/art source bytes match")
 	_expect(int(inputs.reward_items_granted) == 0 and bool(inputs.save_mutation) == false, "derived packet has no reward or save mutation")
 	atlas = _json(String(inputs.atlas_path))
 	terrain_texture = load(String((atlas.textures as Dictionary).terrain)) as Texture2D
 	props_texture = load(String((atlas.textures as Dictionary).props)) as Texture2D
 	_expect(terrain_texture != null and props_texture != null, "accepted A1 atlas textures load in Godot")
+
+
+func _copy_control_file(source: String, target: String) -> bool:
+	if not FileAccess.file_exists(source):
+		return false
+	var file := FileAccess.open(target, FileAccess.WRITE)
+	if file == null:
+		return false
+	file.store_buffer(FileAccess.get_file_as_bytes(source))
+	file.close()
+	return true
+
+
+func _write_control_json(path: String, value: Dictionary) -> bool:
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if file == null:
+		return false
+	file.store_string(JSON.stringify(value, "  "))
+	file.close()
+	return true
+
+
+func _control_world(case_id: String) -> String:
+	var source := "res://data/survival/world"
+	var target := "user://a1_round12_contract_controls/" + case_id
+	if DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(target + "/chunks")) != OK:
+		return ""
+	var ok := true
+	for name: String in ["world_plan.v1.json", "reader_contract.json", "a1_round12_runtime_contract.v1.json", "a1_round12_spawn_index.v1.json"]:
+		ok = _copy_control_file(source + "/" + name, target + "/" + name) and ok
+	var plan := _json(source + "/world_plan.v1.json")
+	for raw: Variant in (plan.get("chunk_manifest", []) as Array):
+		var relative := String((raw as Dictionary).get("path", ""))
+		ok = _copy_control_file(source + "/" + relative, target + "/" + relative) and ok
+	return target if ok else ""
+
+
+func _incompatible_player_scene(path: String) -> bool:
+	var original := load(String(inputs.hero.scene)) as PackedScene
+	if original == null:
+		return false
+	var bad := original.instantiate() as CharacterBody2D
+	if bad == null:
+		return false
+	var collision := bad.get_node_or_null("BodyShape") as CollisionShape2D
+	if collision == null:
+		bad.free()
+		return false
+	var rectangle := collision.shape.duplicate() as RectangleShape2D
+	if rectangle == null:
+		bad.free()
+		return false
+	rectangle.size = Vector2(20, 16)
+	collision.shape = rectangle
+	var packed := PackedScene.new()
+	var pack_error := packed.pack(bad)
+	var save_error := ResourceSaver.save(packed, path) if pack_error == OK else ERR_CANT_CREATE
+	bad.free()
+	return pack_error == OK and save_error == OK
+
+
+func _run_runtime_negative_controls() -> void:
+	current_phase = "runtime_contract_negative_controls"
+	var original_plan_hash := FileAccess.get_sha256("res://data/survival/world/world_plan.v1.json")
+	for case_id: String in ["plan_identity", "chunk_integrity", "a8_source_identity", "legacy_tile_art_integrity", "spawn_index_semantics", "spawn_index_binding", "player_shape_interface", "legacy_world_interface"]:
+		var control_root := _control_world(case_id)
+		if control_root.is_empty():
+			_expect(false, "negative control setup " + case_id)
+			continue
+		var contract_path := control_root + "/a1_round12_runtime_contract.v1.json"
+		var contract := _json(contract_path)
+		var expected := ""
+		match case_id:
+			"plan_identity":
+				expected = "runtime_plan_hash"
+				var plan_path := control_root + "/world_plan.v1.json"
+				var plan := _json(plan_path)
+				for raw: Variant in (plan.pois as Array):
+					var poi := raw as Dictionary
+					if String(poi.get("poi_id", "")) == "poi_crown_south_quarry":
+						poi["cell"] = [30, 281]
+				_write_control_json(plan_path, plan)
+			"chunk_integrity":
+				expected = "source_chunk_hash"
+				var chunk_path := control_root + "/chunks/00_00.json"
+				var chunk := FileAccess.open(chunk_path, FileAccess.READ_WRITE)
+				if chunk != null:
+					chunk.seek_end()
+					chunk.store_string("\n")
+					chunk.close()
+			"a8_source_identity":
+				expected = "dependency_hash:a8_quarry"
+				var source_path := _source_path(String(contract.source_pins.a8_quarry.path))
+				var a8 := _json(source_path)
+				a8["source"]["canonical_cell"] = [30, 281]
+				var corrupted_path := control_root + "/corrupt_quarry.json"
+				_write_control_json(corrupted_path, a8)
+				contract["source_pins"]["a8_quarry"]["path"] = corrupted_path
+				_write_control_json(contract_path, contract)
+			"legacy_tile_art_integrity":
+				expected = "dependency_hash:legacy_tiles_texture"
+				var art_source := _source_path(String(contract.source_pins.legacy_tiles_texture.path))
+				var art_target := control_root + "/corrupt_overworld_tiles.png"
+				if _copy_control_file(art_source, art_target):
+					var art := FileAccess.open(art_target, FileAccess.READ_WRITE)
+					if art != null:
+						art.seek_end()
+						art.store_8(0)
+						art.close()
+				contract["source_pins"]["legacy_tiles_texture"]["path"] = art_target
+				_write_control_json(contract_path, contract)
+			"spawn_index_semantics":
+				expected = "spawn_cells_hash"
+				var spawn_path := control_root + "/a1_round12_spawn_index.v1.json"
+				var spawn := _json(spawn_path)
+				spawn["chunks"][0]["cells_sha256"] = "0000000000000000000000000000000000000000000000000000000000000000"
+				_write_control_json(spawn_path, spawn)
+			"spawn_index_binding":
+				expected = "spawn_index_stale"
+				contract["integrity_policy"]["mutable"] = String(contract["integrity_policy"]["mutable"]) + " binding mutation"
+				_write_control_json(contract_path, contract)
+			"player_shape_interface":
+				expected = "runtime_interface:PLAYER_BODY_SHAPE_SIZE"
+				var bad_scene := control_root + "/incompatible_player.tscn"
+				if not _incompatible_player_scene(bad_scene):
+					_expect(false, "incompatible Hero negative scene saves")
+					continue
+				contract["runtime_interfaces"]["player"]["scene"] = bad_scene
+				_write_control_json(contract_path, contract)
+			"legacy_world_interface":
+				expected = "runtime_interface:LEGACY_WORLD_METHOD_IS_WALKABLE"
+				var world_source := _source_path(String(contract.runtime_interfaces.scripts.LEGACY_WORLD.path))
+				var world_target := control_root + "/incompatible_overworld_world.gd"
+				var world_text := FileAccess.get_file_as_string(world_source)
+				world_text = world_text.replace("class_name OverworldWorld\n", "")
+				world_text = world_text.replace("func is_walkable(", "func incompatible_is_walkable(")
+				var world_file := FileAccess.open(world_target, FileAccess.WRITE)
+				if world_file != null:
+					world_file.store_string(world_text)
+					world_file.close()
+				contract["runtime_interfaces"]["scripts"]["LEGACY_WORLD"]["path"] = world_target
+				_write_control_json(contract_path, contract)
+		var probe := READER.new()
+		var accepted := bool(probe.configure(control_root))
+		var actual := String(probe.last_error)
+		runtime_negative_controls.append({"id": case_id, "expected_error": expected,
+			"actual_error": actual, "refused": not accepted, "pass": not accepted and actual == expected})
+		_expect(not accepted and actual == expected, "fail-closed %s -> %s (actual %s)" % [case_id, expected, actual])
+	_expect(FileAccess.get_sha256("res://data/survival/world/world_plan.v1.json") == original_plan_hash,
+		"negative controls never mutate authored world bytes")
+	_expect(bool(reader.source_report().ok) and int(reader.source_report().verified_chunks) == 192,
+		"primary reader remains valid after independent negative probes")
 
 
 func _build_host() -> void:
@@ -273,9 +434,9 @@ func _add_body(id: String, rect: Rect2, parent: Node2D) -> StaticBody2D:
 
 
 func _spawn_hero(start: Vector2i) -> void:
-	var scene := load(KNIGHT) as PackedScene
+	var scene := load(String(inputs.hero.scene)) as PackedScene
 	hero = scene.instantiate() as CharacterBody2D
-	hero.name = "RealA0ComparableKnight"
+	hero.name = "ComposedSemanticPlayerBody"
 	entities.add_child(hero)
 	hero.global_position = _foot(start)
 	hero.move_speed = float(inputs.hero.move_speed_px_s)
@@ -289,7 +450,7 @@ func _spawn_hero(start: Vector2i) -> void:
 	camera.make_current()
 	var body_shape := hero.get_node("BodyShape") as CollisionShape2D
 	var rectangle := body_shape.shape as RectangleShape2D
-	_expect(rectangle.size == Vector2(12, 16) and body_shape.position == Vector2(0, -8), "real Knight 12x16 body at (0,-8)")
+	_expect(rectangle.size == Vector2(12, 16) and body_shape.position == Vector2(0, -8), "real composed Hero 12x16 body at (0,-8)")
 	_expect(hero.motion_mode == CharacterBody2D.MOTION_MODE_FLOATING and hero.collision_mask == 5, "A0-comparable floating collision profile")
 	_expect(hero.move_speed == 96.0 and hero.acceleration == 900.0 and hero.friction == 1100.0, "A0-comparable 96/900/1100 motion constants")
 	_expect(camera.position == Vector2(0, -8) and camera.position_smoothing_enabled and camera.zoom == Vector2.ONE, "real Hero stand camera at logical player scale")
@@ -521,6 +682,19 @@ func _run_reader_checks() -> void:
 	current_phase = "reader_and_body_contracts"
 	var report: Dictionary = reader.source_report()
 	_expect(bool(report.ok) and int(report.verified_chunks) == 192 and int(report.poi_count) == 118, "full 1024x768 / 192-chunk / 118-POI source ready")
+	var compatibility: Dictionary = report.get("runtime_compatibility", {})
+	var observed: Dictionary = compatibility.get("observed_sha256", {})
+	_expect(bool(compatibility.get("ok", false)) and compatibility.get("policy", "") == "SEMANTIC_INTERFACE_NOT_MUTABLE_BYTE_IDENTITY"
+		and compatibility.get("interfaces", {}).size() == 4, "real Hero and legacy runtime semantic interfaces pass")
+	_expect(observed.has("fixture_knight_script") and observed.has("legacy_controller")
+		and String(observed.fixture_knight_script.sha256) == FileAccess.get_sha256("res://game/characters/knight/knight.gd")
+		and String(observed.legacy_controller.sha256) == FileAccess.get_sha256("res://game/overworld/chapter1_overworld.gd"),
+		"mutable A0/A6 actor/controller bytes are recorded as observations only")
+	var override_checker := COMPATIBILITY.new()
+	var override_report: Dictionary = override_checker.validate(inputs.runtime_interfaces, String(inputs.hero.scene))
+	_expect(bool(override_report.get("ok", false)) and override_report.observed_sha256.has("player_scene")
+		and String(override_report.interfaces.player.identity_policy) == "PHYSICAL_INTERFACE_ONLY_NO_VISUAL_OR_SCRIPT_IDENTITY",
+		"D051 consumer scene override requires physical behavior, never Knight visual/script identity")
 	_expect(reader.world_frame() == Vector2i(1024, 768) and reader.world_pixels().size == Vector2(16384, 12288), "reader bounds equal real authored terrain")
 	for cell: Vector2i in [Vector2i(-1, 0), Vector2i(1024, 0), Vector2i(0, 768), Vector2i(2000, 2000)]:
 		_expect(not bool(reader.cell_layers(cell).get("ok", false)), "outside frame has no manufactured terrain " + str(cell))
@@ -982,8 +1156,11 @@ func _finish() -> void:
 		"godot_version": Engine.get_version_info(),
 		"source_report": reader.source_report() if reader != null else {},
 		"source_hash_manifest": inputs.get("source_manifest", {}),
+		"runtime_observed_sha256": (reader.source_report().get("runtime_compatibility", {}) as Dictionary).get("observed_sha256", {}) if reader != null else {},
+		"runtime_negative_controls": runtime_negative_controls,
 		"runtime_script_hashes": {
 			"reader": FileAccess.get_sha256("res://game/survival/world/a1_authored_world_reader.gd"),
+			"runtime_compatibility": FileAccess.get_sha256("res://game/survival/world/a1_runtime_compatibility.gd"),
 			"stream": FileAccess.get_sha256("res://game/survival/world/a1_authored_world_stream.gd"),
 			"native_driver": FileAccess.get_sha256("res://tests/survival/world/round12_deep_world_native_test.gd"),
 		},
@@ -1049,6 +1226,8 @@ func _run() -> void:
 	await physics_frame
 	RenderingServer.render_loop_enabled = false
 	await _run_reader_checks()
+	if not budget_probe and not abort:
+		_run_runtime_negative_controls()
 	if budget_probe and not abort:
 		await _run_budget_probe()
 		_finish()

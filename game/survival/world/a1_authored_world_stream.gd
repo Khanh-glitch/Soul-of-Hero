@@ -71,11 +71,11 @@ func _ready() -> void:
 
 
 func configure(world_root: String = "res://data/survival/world", reader_instance: Variant = null,
-		render_legacy_inset: bool = false) -> bool:
+		render_legacy_inset: bool = false, player_scene_override: String = "") -> bool:
 	last_error = ""
 	render_legacy = render_legacy_inset
 	reader = reader_instance if reader_instance != null else READER.new()
-	if not bool(reader.is_ready()) and not bool(reader.configure(world_root)):
+	if not bool(reader.is_ready()) and not bool(reader.configure(world_root, player_scene_override)):
 		last_error = "reader:" + String(reader.last_error)
 		return false
 	plan = reader.plan

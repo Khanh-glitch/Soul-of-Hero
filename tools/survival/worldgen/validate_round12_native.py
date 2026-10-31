@@ -36,6 +36,62 @@ def validate(report: dict, inputs: dict, budget: dict | None = None) -> dict:
           and dispositions.get("NATIVE_FIXTURE_PASS") == "PASS"
           and all(dispositions.get(key) == "NOT_TESTED" for key in
                   ["PRODUCTION_MOUNTED", "PLAYER_PLAYABLE", "VISUALLY_ACCEPTED"]), dispositions)
+    compatibility = report.get("source_report", {}).get("runtime_compatibility", {})
+    observed = compatibility.get("observed_sha256", {})
+    expected_observations = inputs.get("runtime_interfaces", {}).get("observed_paths", {})
+    check("semantic_runtime_interfaces", compatibility.get("ok") is True
+          and compatibility.get("policy") == "SEMANTIC_INTERFACE_NOT_MUTABLE_BYTE_IDENTITY"
+          and set(compatibility.get("interfaces", {})) == {"player", "LEGACY_CONTROLLER", "LEGACY_TRAVERSABILITY", "LEGACY_WORLD"}
+          and compatibility.get("interfaces", {}).get("player", {}).get("identity_policy") == "PHYSICAL_INTERFACE_ONLY_NO_VISUAL_OR_SCRIPT_IDENTITY"
+          and set(observed) == set(expected_observations)
+          and all(row.get("path") == expected_observations.get(key) and len(str(row.get("sha256", ""))) == 64
+                  for key, row in observed.items())
+          and report.get("runtime_observed_sha256") == observed, compatibility)
+    pinned_paths = {row.get("path") for row in report.get("source_hash_manifest", {}).values()}
+    check("mutable_runtime_not_byte_pinned", pinned_paths.isdisjoint(expected_observations.values()))
+    expected_refusals = {
+        "plan_identity": "runtime_plan_hash", "chunk_integrity": "source_chunk_hash",
+        "a8_source_identity": "dependency_hash:a8_quarry",
+        "legacy_tile_art_integrity": "dependency_hash:legacy_tiles_texture",
+        "spawn_index_semantics": "spawn_cells_hash", "spawn_index_binding": "spawn_index_stale",
+        "player_shape_interface": "runtime_interface:PLAYER_BODY_SHAPE_SIZE",
+        "legacy_world_interface": "runtime_interface:LEGACY_WORLD_METHOD_IS_WALKABLE",
+    }
+    controls = {row.get("id"): row for row in report.get("runtime_negative_controls", [])}
+    check("named_integrity_and_interface_refusals", set(controls) == set(expected_refusals)
+          and all(row.get("pass") and row.get("refused") and row.get("actual_error") == expected_refusals[key]
+                  for key, row in controls.items()), controls)
+    spawn_path = Path(str(inputs["spawn_index_path"]).replace("res://", "", 1))
+    contract_path = Path(str(inputs["source_contract"]).replace("res://", "", 1))
+    plan_path = Path("data/survival/world/world_plan.v1.json")
+    spawn = json.loads(spawn_path.read_text())
+    contract = json.loads(contract_path.read_text())
+    plan = json.loads(plan_path.read_text())
+    spawn_binding = (
+        sha(spawn_path) == inputs["spawn_index_sha256"]
+        and spawn["world_plan_sha256"] == inputs["world_plan_sha256"] == sha(plan_path)
+        and spawn["runtime_contract_sha256"] == inputs["source_contract_sha256"] == sha(contract_path)
+        and spawn["world_id"] == plan["world_id"] and spawn["frame"] == inputs["world_extents_cells"][2:]
+        and spawn["chunk_cells"] == inputs["chunk_cells"]
+        and spawn["algorithm"] == contract["spawn_policy"]["algorithm"]
+        and spawn["criteria"] == contract["spawn_policy"] and spawn["production_spawn_approval"] is False
+    )
+    spawn_cells_ok = spawn["candidate_chunks"] == len(spawn["chunks"])
+    region_totals: Counter[str] = Counter()
+    for chunk in spawn["chunks"]:
+        cells = chunk["cells"]
+        canonical = json.dumps(cells, separators=(",", ":")).encode()
+        spawn_cells_ok = spawn_cells_ok and chunk["candidate_count"] == len(cells)
+        spawn_cells_ok = spawn_cells_ok and hashlib.sha256(canonical).hexdigest() == chunk["cells_sha256"]
+        spawn_cells_ok = spawn_cells_ok and cells == sorted(set(cells))
+        region_totals.update(chunk["region_counts"])
+        spawn_cells_ok = spawn_cells_ok and sum(chunk["region_counts"].values()) == len(cells)
+    spawn_cells_ok = spawn_cells_ok and dict(region_totals) == spawn["region_counts"]
+    spawn_cells_ok = spawn_cells_ok and sum(spawn["region_counts"].values()) == spawn["candidate_cells"]
+    spawn_cells_ok = spawn_cells_ok and report.get("source_report", {}).get("spawn_region_counts") == spawn["region_counts"]
+    check("spawn_binding_hashes_policy_and_region_accounting", spawn_binding and spawn_cells_ok, {
+        "binding": spawn_binding, "cells_and_regions": spawn_cells_ok,
+        "candidate_cells": spawn["candidate_cells"], "candidate_chunks": spawn["candidate_chunks"]})
     version = str(report.get("godot_version", {}))
     check("exact_godot_47", "5b4e0cb0f" in version, version)
     check("assertion_count", int(report.get("checks", 0)) >= 220, report.get("checks"))

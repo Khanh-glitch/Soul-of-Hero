@@ -5,8 +5,9 @@ Status: **SOURCE READY / ISOLATED NATIVE FIXTURE ACCEPTANCE EVIDENCE**. The exac
 ## Consumable files
 
 - `game/survival/world/a1_authored_world_reader.gd` — Godot 4.7 `RefCounted` reader.
+- `game/survival/world/a1_runtime_compatibility.gd` — fail-closed semantic player/legacy-interface checks; mutable hashes are observations, not pins.
 - `game/survival/world/a1_authored_world_stream.gd` — optional bounded `Node2D` source stream.
-- `data/survival/world/a1_round12_runtime_contract.v1.json` — coherent source pins, routes, spawn policy, A8 references, visual bindings and owner fences.
+- `data/survival/world/a1_round12_runtime_contract.v1.json` — immutable world/art/A8 source pins plus a separate semantic runtime-interface contract, routes, spawn policy and owner fences.
 - `data/survival/world/a1_round12_spawn_index.v1.json` — deterministic derived spawn candidates; contains no runtime inventory or player state.
 - `data/survival/world/references/a8_e1fe550b/` — byte-copied, hash-pinned A8 reference contracts only; no A8 scenes or mechanics are vendored as mounted production.
 - `tools/survival/worldgen/compile_round12_runtime.py` — read-only compiler for the spawn index and native packet.
@@ -40,7 +41,15 @@ The original adapter calls remain available with their existing result dictionar
 - `check_seam`
 - `chunk_id_at`
 
-`configure` verifies the complete coherent dependency set and all **192** chunks. The frame is exactly **1024×768 cells / 16 px / 64×64 chunks**. Out-of-frame queries return `CELL_BOUNDS`; the reader never fabricates water or walkable cells to satisfy a larger advertised bounds rectangle.
+`configure` verifies the complete immutable dependency set, semantic runtime interfaces and all **192** chunks. The frame is exactly **1024×768 cells / 16 px / 64×64 chunks**. Out-of-frame queries return `CELL_BOUNDS`; the reader never fabricates water or walkable cells to satisfy a larger advertised bounds rectangle.
+
+## Immutable integrity versus mutable runtime compatibility
+
+`source_pins` is restricted to authored world data, legacy data/art, A1 art/contracts and vendored A8 references. The plan and every chunk retain exact SHA-256 verification. The spawn index binds the whole world-plan and runtime-contract hashes and is additionally checked for world/frame/chunk/policy identity, per-chunk candidate-cell hashes, sorted source cells, 3×3 walk/hazard safety, region entry rules and chunk/global region accounting. Deterministic compiler `--check` independently rebuilds the complete index from source.
+
+Mutable Knight/controller/world-script/project bytes are **observations, not replacement pins**. `a1_runtime_compatibility.gd` instead validates the real composed player body and required legacy APIs. Player checks cover enabled 12×16 collision at (0,-8), floating motion, collision layer/mask, numeric motion/health properties, camera offset/smoothing and bound movement actions. They do not require Knight script, sprite or visual identity. `configure(world_root, player_scene_override)` and the corresponding optional stream argument allow a compatible D051 Male/Female Adventurer consumer scene; actual Adventurer visual/native acceptance remains an A0/A6/A7 gate.
+
+Failures are named, including `runtime_interface:PLAYER_BODY_SHAPE_SIZE` and `runtime_interface:LEGACY_WORLD_METHOD_IS_WALKABLE`. Native mutation probes cover plan, chunk, A8 source, legacy tile art, spawn cell hash, stale spawn binding, player shape and world API. Reintroducing a mutable byte pin is itself refused. A compatible actor change never relaxes chunk, route, POI, collision or art checks.
 
 Additive queries include:
 
@@ -93,7 +102,7 @@ This is **not SaveService**, A0 build validation, construction cost, inventory, 
 
 ## Physical and visual evidence scope
 
-The isolated driver uses the real A0-comparable Knight scene, 12×16 body, 96/900/1100 movement constants and stand camera. It drives inset → existing roadside salvage → exact Quarry/Orchard/Mill outer approaches → inset, with no within-route teleport. It separately proves dynamic baseline/block/reload/detour and two warned hazard retreats. A8 interiors, interactions, rewards, damage and production mounting are not executed.
+The isolated driver loads the exact composed consumer scene from the native packet (the current A0/A6 Knight-hosted technical body), with 12×16 collision, 96/900/1100 movement constants and stand camera; it does not treat legacy Knight artwork as D051 identity. It drives inset → existing roadside salvage → exact Quarry/Orchard/Mill outer approaches → inset, with no within-route teleport. It separately proves dynamic baseline/block/reload/detour and two warned hazard retreats. A8 interiors, interactions, rewards, damage and production mounting are not executed.
 
 The native reader also queries all 11 region viewpoints and requires 11 distinct climate channels and regional material signatures, plus multiple surface/effort proposals. These are source geography queries only: no A0 movement adoption, A3 inventory cost or hazard damage is applied.
 
@@ -105,16 +114,18 @@ CI first runs a 64-cell **budget probe** with 720p/1440p/2160p captures plus one
 
 ## Exact-head evidence and visual review
 
-The PR20 handoff is the authoritative pointer to the exact commit, World Reader run, Git-blob evidence manifest and fresh native report; this document deliberately does not duplicate a run ID that can become stale. The completed full-matrix oracle requires **249 native assertions / 0 failures**, an independent **128-check / 0-failure** report validation, **37 driven journeys**, **36 spawn cases**, **189 stream events** and **69 portable captures**. It also requires zero unexpected contacts, within-route teleports or stream violations. Capture dimensions and SHA-256 values are checked against the actual PNG bytes. Measured configure/mount/capture timings remain in the native report; headless CI software rendering is not a target-hardware performance certification.
+The PR20 handoff is the authoritative pointer to the exact commit, World Reader run, Git-blob evidence manifest and fresh native report. For this runtime-contract correction, evidence is required at the **new A1 event SHA** in three independent contexts: isolated A1, frozen A0 `62f6a32d` / A6 `6d71410a`, and forward A0 `86ac20ba` / A6 `6518c098`. Each composed profile records its pre-import Git tree ID and exact owner-file provenance. Historical `8551a323` results (249 native/128 oracle checks) are not evidence for the new patch.
 
-Fresh review of the actual Godot frames covers every region, the physical Quarry/Orchard/Mill approaches, the reloaded palisade, day/night variants and all three resolutions. The source windows are legible and the Knight remains at a consistent 1× world scale, but visual review is **HOLD/DEFECT**: repetitive or dead fields, crude banks/paths, weak night landmark contrast and staged proxy composition still prevent visual acceptance. Successful capture creation and physical traversal do not override that review.
+Every completed full matrix requires **37 driven journeys**, **36 spawn cases**, **69 portable captures**, all eight named integrity/interface refusals, complete reader/stream initialization and zero unexpected contacts, within-route teleports or stream violations. The independent oracle also validates runtime observations, spawn bindings and capture bytes; its exact check count is report-derived rather than hard-coded. Capture dimensions and SHA-256 values are checked against actual PNG bytes. Measured configure/mount/capture timings remain in the native report; headless CI software rendering is not a target-hardware performance certification. Current new-SHA native results are **PENDING** until the linked CI completes.
+
+Fresh review of the actual Godot frames covers every region, the physical Quarry/Orchard/Mill approaches, the reloaded palisade, day/night variants and all three resolutions. The source windows are legible and the technical body remains at a consistent 1× world scale, but visual review is **HOLD/DEFECT**: repetitive or dead fields, crude banks/paths, weak night landmark contrast and staged proxy composition still prevent visual acceptance. Successful capture creation and physical traversal do not override that review.
 
 ## Dispositions
 
 Each gate is independent:
 
-- `SOURCE_READY`: source pins, compiler and reader contract only.
-- `NATIVE_FIXTURE_PASS`: the completed isolated Godot matrix at the exact head cited in PR20 only.
+- `SOURCE_READY`: immutable source pins, deterministic derived data and semantic reader contract only.
+- `NATIVE_FIXTURE_PASS`: completed isolated or explicitly named composed Godot matrix at the exact head cited in PR20; each profile is reported separately.
 - `PRODUCTION_MOUNTED`: A0 production integration; not established by A1.
 - `PLAYER_PLAYABLE`: production player/E2 experience; not established by a fixture.
 - `VISUALLY_ACCEPTED`: separate visual acceptance; never inferred from successful capture creation. The current source-window review is HOLD/DEFECT.
