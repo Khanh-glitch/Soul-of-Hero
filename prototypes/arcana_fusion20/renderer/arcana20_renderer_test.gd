@@ -15,6 +15,9 @@ func _fail(msg: String) -> void:
     print("::error::ARCANA20_RENDER_FAIL ", msg)
 
 func _init() -> void:
+    for path in ["arcana20_primitives.gd", "arcana20_source_catalog.gd", "arcana20_skill_instance.gd", "arcana20_pass_painter.gd", "arcana20_renderer.gd", "arcana_b02_source_geometry.gd"]:
+        var res = load("res://prototypes/arcana_fusion20/renderer/" + path)
+        print("::notice::LOADPROBE ", path, " -> ", res)
     var root_node := Node2D.new()
     root.add_child(root_node)
     var renderer := Arcana20Renderer.new()
