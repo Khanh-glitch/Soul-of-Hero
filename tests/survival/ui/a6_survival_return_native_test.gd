@@ -658,15 +658,28 @@ func _test_layout() -> void:
 	# is not layout; the column has to be resolved.
 	var authored: Array = [
 		{"id": "run_card", "size": Vector2(228, 64)},
-		{"id": "guidance", "size": Vector2(292, 320)},
+		{"id": "guidance", "size": Vector2(292, 190)},
 		{"id": "digest", "size": Vector2(240, 190)},
 		{"id": "site_cue", "size": Vector2(150, 34)},
 	]
 	var authored_view := Vector2(640, 360)
+	var authored_screen := Rect2(Vector2.ZERO, authored_view)
 	var tight := A6SurvivalReturnLayer.layout_rects(authored_view, authored)
-	_expect(not (tight["guidance"] as Rect2).intersects(tight["run_card"] as Rect2), "a taller-than-viewport guidance panel no longer covers the run card")
-	_expect((tight["guidance"] as Rect2).size.y < 320.0, "the guidance panel shrinks into the room left below the run card")
-	_expect(Rect2(Vector2.ZERO, authored_view).encloses(tight["guidance"] as Rect2), "the shrunk guidance panel stays on the authored 640x360 screen")
+	_expect(not (tight["guidance"] as Rect2).intersects(tight["run_card"] as Rect2), "the guidance card and the run card share no pixels at 640x360")
+	_expect(authored_screen.encloses(tight["guidance"] as Rect2), "the guidance card stays on the authored 640x360 screen")
+
+	# A card must never be given less than its own minimum size. The engine clamps the
+	# rect back up and the text then runs off the window, which is what the capture
+	# harness reports as "text overflow ... leaves the viewport".
+	var pathological: Array = [
+		{"id": "run_card", "size": Vector2(228, 64)},
+		{"id": "guidance", "size": Vector2(292, 320)},
+	]
+	var squeezed := A6SurvivalReturnLayer.layout_rects(authored_view, pathological)
+	_expect((squeezed["guidance"] as Rect2).size.y == 320.0, "an oversized card keeps its own height instead of being clipped below its minimum")
+	_expect(authored_screen.encloses(squeezed["run_card"] as Rect2), "the lifted run card stays on screen")
+	_expect(authored_screen.encloses(squeezed["guidance"] as Rect2), "no card text is pushed outside the 640x360 screen")
+
 
 
 # --- ownership --------------------------------------------------------------
