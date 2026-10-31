@@ -11,6 +11,8 @@ const CORE := Vector3(3.2, 3.4, 3.6)
 var rng: AMath.ARng
 var rings: Array = []
 var frags: ADraw.APool
+# Test-only isolation of A rotor/aftermath from intentionally replaced bolts.
+var include_bolts := true
 
 func setup() -> void:
     rng = AMath.ARng.new(0xc0de)
@@ -54,7 +56,7 @@ func _volt(h: float) -> Vector3:
     return ACommon.ramp_step("volt", h, 8.0)
 
 func _bolt(fb: AFramebuffer, x0: float, y0: float, x1: float, y1: float, t: float, seed: float, width: float, k: float, chaos: float) -> void:
-    if k <= 0.01: return
+    if not include_bolts or k <= 0.01: return
     var frame := floori(t * 28.0)
     var tree := CKit.bolt_tree(seed * 131.0 + frame * 7919.0, x0, y0, x1, y1, 1, chaos)
     for branch in tree:

@@ -4,7 +4,7 @@ import json, pathlib, struct, sys
 from PIL import Image
 root = pathlib.Path(sys.argv[1]); label=sys.argv[2] if len(sys.argv)>2 else 'A05'; w,h=416,234
 results=[]
-ticks=(90,180,270,324,378,450,479) if label=='A16' else (90,180,270)
+ticks=(90,180,270,324,378,450,479) if label=='A16' else ((90,180,270,324,348,396,420) if label=='A11' else (90,180,270))
 for tick in ticks:
     a=(root/f'original_{tick}.rgba8').read_bytes()
     b=(root/f'native_{tick}.rgba8').read_bytes()
@@ -37,7 +37,7 @@ for tick in ticks:
       'write_trace_iou': intersection/union if union else 1.0,
       'write_trace_union': union,
       'coverage_iou':'not measured: write traces are not alpha or authored coverage',
-      'scope':f'{label} neutral-A component only, black source canvas, not live world'}
+      'scope':f'{label} neutral-A component only, black source canvas, not live world; A11 excludes intentionally replaced A/C bolts' if label=='A11' else f'{label} neutral-A component only, black source canvas, not live world'}
     results.append(result)
     print(f'{label}_SOURCE_COMPARE',json.dumps({k:v for k,v in result.items() if k!='regions'}),flush=True)
 (root/'comparison.json').write_text(json.dumps(results,indent=2))
