@@ -1,0 +1,193 @@
+{
+  "policy": "pilot",
+  "lighting": "day",
+  "art": [
+    {
+      "file": "overworld_tiles.png",
+      "sha256": "cef87705e73693feb2af3a60430e4ce94ef6223f51d43d6418ace018c861ed61",
+      "size": [
+        512,
+        144
+      ],
+      "pinned": "cef87705e73693feb2af3a60430e4ce94ef6223f51d43d6418ace018c861ed61"
+    },
+    {
+      "file": "overworld_props.png",
+      "sha256": "6cb975589f869670432608d827ff6c58ccf81ab78e320ead1028a17565687e68",
+      "size": [
+        512,
+        446
+      ],
+      "pinned": "6cb975589f869670432608d827ff6c58ccf81ab78e320ead1028a17565687e68"
+    },
+    {
+      "file": "light_radial.png",
+      "sha256": "8a294ed2bc843bec8372d2eff832bc6ed98d1ac2a8c7b3b0747ed34f731de2ef",
+      "size": [
+        256,
+        256
+      ],
+      "pinned": "8a294ed2bc843bec8372d2eff832bc6ed98d1ac2a8c7b3b0747ed34f731de2ef"
+    },
+    {
+      "file": "knight_idle_sheet.png",
+      "sha256": "ada93dd7fcfb574a7068d77a1c41413b17ce64d3a92f3c63eec2ab46d64b24c0",
+      "size": [
+        1200,
+        80
+      ],
+      "pinned": "ada93dd7fcfb574a7068d77a1c41413b17ce64d3a92f3c63eec2ab46d64b24c0"
+    }
+  ],
+  "captures": [
+    {
+      "station": "fen_edge",
+      "policy": "pilot",
+      "native": "evidence/pilot/pilot_day_fen_edge_640x360.png",
+      "eval": "evidence/pilot/pilot_day_fen_edge_1280x720.png",
+      "sha256_native": "710484736c2c0ec703952a9ccf8842aed010d913650dd3ab92bb88488ff92b5b",
+      "sha256_eval": "0c61d9f1436e1b3ac38cc95a000d0811564b38fb2f95cad4ec948be34e3bd59f",
+      "camera_center_cell": [
+        382,
+        199
+      ]
+    },
+    {
+      "station": "home_first",
+      "policy": "pilot",
+      "native": "evidence/pilot/pilot_day_home_first_640x360.png",
+      "eval": "evidence/pilot/pilot_day_home_first_1280x720.png",
+      "sha256_native": "7829cf8b942df98e9f32a65c4910b2a98f5c5b09cee2ca66b691236a031c7526",
+      "sha256_eval": "928560d7f6e5edb8e8db51ac01c58ba6a1e05c764b3c9ff6b62661f633a09b3c",
+      "camera_center_cell": [
+        397,
+        200
+      ]
+    },
+    {
+      "station": "waystation_west",
+      "policy": "pilot",
+      "native": "evidence/pilot/pilot_day_waystation_west_640x360.png",
+      "eval": "evidence/pilot/pilot_day_waystation_west_1280x720.png",
+      "sha256_native": "221015fbf7b1b05b66634c1e64c601d2ae36cf91a0eb7adf9a2084001c3aab8d",
+      "sha256_eval": "9ac1e9e2f7448720350b603d8ae5cadb885643ab7aba2232b613b3a703064836",
+      "camera_center_cell": [
+        406,
+        203
+      ]
+    },
+    {
+      "station": "return",
+      "policy": "pilot",
+      "native": "evidence/pilot/pilot_day_return_640x360.png",
+      "eval": "evidence/pilot/pilot_day_return_1280x720.png",
+      "sha256_native": "96ba3acb4f2bae6f7d2d4356061ef4aeb3d3835cac2a75d727b71ef8871d04fc",
+      "sha256_eval": "cc0ee1e3906f3438796995837204c53428bbd686fbe81b6063fd9017c52726f9",
+      "camera_center_cell": [
+        400,
+        210
+      ]
+    },
+    {
+      "station": "explore_first",
+      "policy": "pilot",
+      "native": "evidence/pilot/pilot_day_explore_first_640x360.png",
+      "eval": "evidence/pilot/pilot_day_explore_first_1280x720.png",
+      "sha256_native": "65a4ef5fb2d4e8611e23b44372d8a65b18832005ca8dba4154f7d64e142b151e",
+      "sha256_eval": "42ba8d81a84035249f5ee3960577164a8e1ac88ec5d8f0bf02dbe8316c27bbb9",
+      "camera_center_cell": [
+        399,
+        219
+      ]
+    },
+    {
+      "station": "marsh_water",
+      "policy": "pilot",
+      "native": "evidence/pilot/pilot_day_marsh_water_640x360.png",
+      "eval": "evidence/pilot/pilot_day_marsh_water_1280x720.png",
+      "sha256_native": "b32577cc5a1397a8864d58d17ec50bb3ad4fdbee662a146a8950b218973a2418",
+      "sha256_eval": "4827ac1225da74b02a4442e81afde087ca29d2c8ae0b177aa7d3f903cf2e1caa",
+      "camera_center_cell": [
+        357,
+        124
+      ]
+    }
+  ],
+  "sequence": {
+    "frames": 17,
+    "cells": [
+      [
+        392,
+        200
+      ],
+      [
+        393,
+        200
+      ],
+      [
+        394,
+        200
+      ],
+      [
+        395,
+        200
+      ],
+      [
+        396,
+        200
+      ],
+      [
+        397,
+        200
+      ],
+      [
+        398,
+        200
+      ],
+      [
+        399,
+        200
+      ],
+      [
+        400,
+        200
+      ],
+      [
+        401,
+        200
+      ],
+      [
+        402,
+        200
+      ],
+      [
+        403,
+        200
+      ],
+      [
+        404,
+        200
+      ],
+      [
+        405,
+        200
+      ],
+      [
+        406,
+        200
+      ],
+      [
+        407,
+        200
+      ],
+      [
+        408,
+        200
+      ]
+    ],
+    "filmstrip": "evidence/pilot/sequence/walk_filmstrip.png",
+    "gif": "evidence/pilot/sequence/walk_loop.gif"
+  },
+  "trace": "/home/user/Soul-of-Hero/prototypes/world_visual_pilot/data/placement_trace.pilot.day.json",
+  "trace_entries": 7463
+}

@@ -1,0 +1,92 @@
+{
+ "schema": "soh.world_visual_pilot.stations.v1",
+ "viewport": {
+  "native": [
+   640,
+   360
+  ],
+  "eval": [
+   1280,
+   720
+  ],
+  "zoom": 2.0,
+  "tile_px": 16,
+  "visible_world_px": [
+   320,
+   180
+  ],
+  "visible_cells": [
+   20,
+   11.25
+  ]
+ },
+ "notes": "home_first / explore_first / return are A1's own camera_landmark_states in first_hour_route.v1.json. fen_edge and waystation_west are added so the authored wet-ground margin and the authored POI yard are actually inside frame; A1's own home_first centre (394,201) stops 10 cells west of the Waystation anchor (408,200), so its stated 'roof+pennant visible down the road' cannot be true at that centre. All five centres sit inside the unchanged authored corridor window. home_first is nudged one cell east of A1's centre so the cliff face, the road and the waystation pennant share the frame; A1's own (394,201) framed 11 cells of empty carriageway.",
+ "stations": [
+  {
+   "id": "fen_edge",
+   "window": "corridor",
+   "camera_center_cell": [
+    382,
+    199
+   ],
+   "role": "wet-ground transition",
+   "authored_by": "pilot framing of authored cells",
+   "read": "walkable fen pools and bog on the left, road edge and cliff shelf on the right"
+  },
+  {
+   "id": "home_first",
+   "window": "corridor",
+   "camera_center_cell": [
+    397,
+    200
+   ],
+   "role": "road + waystation ahead",
+   "authored_by": "A1 camera_landmark_states",
+   "read": "maintained road underfoot, waystation camp ahead-right, no arrow clutter"
+  },
+  {
+   "id": "waystation_west",
+   "window": "corridor",
+   "camera_center_cell": [
+    406,
+    203
+   ],
+   "role": "waystation yard",
+   "authored_by": "pilot framing of authored POI cells",
+   "read": "pennant, lantern and fire read against the cliff cut; locker, ledger and cache legible"
+  },
+  {
+   "id": "return",
+   "window": "corridor",
+   "camera_center_cell": [
+    400,
+    210
+   ],
+   "role": "waystation recede",
+   "authored_by": "A1 camera_landmark_states",
+   "read": "warm lamps and banner recede toward the postern; road continuous"
+  },
+  {
+   "id": "explore_first",
+   "window": "corridor",
+   "camera_center_cell": [
+    399,
+    219
+   ],
+   "role": "roadside layby",
+   "authored_by": "A1 camera_landmark_states",
+   "read": "notes crate vs scrap cache, deadfall at the margin"
+  },
+  {
+   "id": "marsh_water",
+   "window": "water_test",
+   "camera_center_cell": [
+    357,
+    124
+   ],
+   "role": "walkable marsh -> impassable water",
+   "authored_by": "pinned cells, non-contiguous",
+   "read": "bog and shallow are walkable; deep water is blocked by the authored physics blocker"
+  }
+ ]
+}

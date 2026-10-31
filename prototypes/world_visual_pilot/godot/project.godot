@@ -1,0 +1,20 @@
+; Soul of Hero - world visual pilot (standalone reproduction project)
+; Open this folder in Godot 4.x and press F5. Nothing here is production code.
+config_version=5
+
+[application]
+config/name="Soul of Hero - world visual pilot"
+run/main_scene="res://scenes/Pilot.tscn"
+config/features=PackedStringArray("4.3", "GL Compatibility")
+
+[display]
+window/size/viewport_width=640
+window/size/viewport_height=360
+window/size/window_width_override=1280
+window/size/window_height_override=720
+window/stretch/mode="canvas_items"
+window/stretch/scale_mode="integer"
+
+[rendering]
+textures/canvas_textures/default_texture_filter=0
+renderer/rendering_method="gl_compatibility"

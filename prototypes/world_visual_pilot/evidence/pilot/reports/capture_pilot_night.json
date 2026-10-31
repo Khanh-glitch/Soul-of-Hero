@@ -1,0 +1,118 @@
+{
+  "policy": "pilot",
+  "lighting": "night",
+  "art": [
+    {
+      "file": "overworld_tiles.png",
+      "sha256": "cef87705e73693feb2af3a60430e4ce94ef6223f51d43d6418ace018c861ed61",
+      "size": [
+        512,
+        144
+      ],
+      "pinned": "cef87705e73693feb2af3a60430e4ce94ef6223f51d43d6418ace018c861ed61"
+    },
+    {
+      "file": "overworld_props.png",
+      "sha256": "6cb975589f869670432608d827ff6c58ccf81ab78e320ead1028a17565687e68",
+      "size": [
+        512,
+        446
+      ],
+      "pinned": "6cb975589f869670432608d827ff6c58ccf81ab78e320ead1028a17565687e68"
+    },
+    {
+      "file": "light_radial.png",
+      "sha256": "8a294ed2bc843bec8372d2eff832bc6ed98d1ac2a8c7b3b0747ed34f731de2ef",
+      "size": [
+        256,
+        256
+      ],
+      "pinned": "8a294ed2bc843bec8372d2eff832bc6ed98d1ac2a8c7b3b0747ed34f731de2ef"
+    },
+    {
+      "file": "knight_idle_sheet.png",
+      "sha256": "ada93dd7fcfb574a7068d77a1c41413b17ce64d3a92f3c63eec2ab46d64b24c0",
+      "size": [
+        1200,
+        80
+      ],
+      "pinned": "ada93dd7fcfb574a7068d77a1c41413b17ce64d3a92f3c63eec2ab46d64b24c0"
+    }
+  ],
+  "captures": [
+    {
+      "station": "fen_edge",
+      "policy": "pilot",
+      "native": "evidence/pilot/pilot_night_fen_edge_640x360.png",
+      "eval": "evidence/pilot/pilot_night_fen_edge_1280x720.png",
+      "sha256_native": "61852659703416f3ab13ac8dd91586f17c36cabe999979b66f7e4379691656fe",
+      "sha256_eval": "efe19c627155cd151c65e26f5a704ab9879f684beef191d3cf4d9aca677fc989",
+      "camera_center_cell": [
+        382,
+        199
+      ]
+    },
+    {
+      "station": "home_first",
+      "policy": "pilot",
+      "native": "evidence/pilot/pilot_night_home_first_640x360.png",
+      "eval": "evidence/pilot/pilot_night_home_first_1280x720.png",
+      "sha256_native": "1388937965beb20e45545beea1e73c9f3b1329263a0481730f975029cf0a7928",
+      "sha256_eval": "4aab2ca8dd9722319396c0dd1b61843c51839efa05db1e44db16554f837bc5d9",
+      "camera_center_cell": [
+        397,
+        200
+      ]
+    },
+    {
+      "station": "waystation_west",
+      "policy": "pilot",
+      "native": "evidence/pilot/pilot_night_waystation_west_640x360.png",
+      "eval": "evidence/pilot/pilot_night_waystation_west_1280x720.png",
+      "sha256_native": "c46245d66bc5d2aca1bfa38d59c8905a705dcd11266a755448ef0a788b3d8036",
+      "sha256_eval": "dc04ac1dff2547e45eb47f09a0f520e1db739d66d8ba2b2364635ef74904f17b",
+      "camera_center_cell": [
+        406,
+        203
+      ]
+    },
+    {
+      "station": "return",
+      "policy": "pilot",
+      "native": "evidence/pilot/pilot_night_return_640x360.png",
+      "eval": "evidence/pilot/pilot_night_return_1280x720.png",
+      "sha256_native": "8233a47a906a8cfe6e86bf99720e0cbb89af3e4f2dcc7075112a080352f1d888",
+      "sha256_eval": "5747838b38b80b3eb96ac12c1e55d0231b251d83038728d1e921969e806909ac",
+      "camera_center_cell": [
+        400,
+        210
+      ]
+    },
+    {
+      "station": "explore_first",
+      "policy": "pilot",
+      "native": "evidence/pilot/pilot_night_explore_first_640x360.png",
+      "eval": "evidence/pilot/pilot_night_explore_first_1280x720.png",
+      "sha256_native": "2ba56c11041d60706c713f58a69bb6b6713b81496bf51c416ce2e22514d06ba0",
+      "sha256_eval": "6205973fb28036f52ea6096ddc90ddc65c972c0008625f0ddad111dee3bbe7a9",
+      "camera_center_cell": [
+        399,
+        219
+      ]
+    },
+    {
+      "station": "marsh_water",
+      "policy": "pilot",
+      "native": "evidence/pilot/pilot_night_marsh_water_640x360.png",
+      "eval": "evidence/pilot/pilot_night_marsh_water_1280x720.png",
+      "sha256_native": "086d388339b12ac11ccb3b932faf6ad60724f5613bd3e9b27589a2d5353e919a",
+      "sha256_eval": "e6349061375b2af51f90c5dd93773495afed48b472f9253dc83f5b450850d9d9",
+      "camera_center_cell": [
+        357,
+        124
+      ]
+    }
+  ],
+  "trace": "/home/user/Soul-of-Hero/prototypes/world_visual_pilot/data/placement_trace.pilot.night.json",
+  "trace_entries": 7463
+}

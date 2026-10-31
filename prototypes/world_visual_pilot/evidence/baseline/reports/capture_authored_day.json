@@ -1,0 +1,118 @@
+{
+  "policy": "authored",
+  "lighting": "day",
+  "art": [
+    {
+      "file": "overworld_tiles.png",
+      "sha256": "cef87705e73693feb2af3a60430e4ce94ef6223f51d43d6418ace018c861ed61",
+      "size": [
+        512,
+        144
+      ],
+      "pinned": "cef87705e73693feb2af3a60430e4ce94ef6223f51d43d6418ace018c861ed61"
+    },
+    {
+      "file": "overworld_props.png",
+      "sha256": "6cb975589f869670432608d827ff6c58ccf81ab78e320ead1028a17565687e68",
+      "size": [
+        512,
+        446
+      ],
+      "pinned": "6cb975589f869670432608d827ff6c58ccf81ab78e320ead1028a17565687e68"
+    },
+    {
+      "file": "light_radial.png",
+      "sha256": "8a294ed2bc843bec8372d2eff832bc6ed98d1ac2a8c7b3b0747ed34f731de2ef",
+      "size": [
+        256,
+        256
+      ],
+      "pinned": "8a294ed2bc843bec8372d2eff832bc6ed98d1ac2a8c7b3b0747ed34f731de2ef"
+    },
+    {
+      "file": "knight_idle_sheet.png",
+      "sha256": "ada93dd7fcfb574a7068d77a1c41413b17ce64d3a92f3c63eec2ab46d64b24c0",
+      "size": [
+        1200,
+        80
+      ],
+      "pinned": "ada93dd7fcfb574a7068d77a1c41413b17ce64d3a92f3c63eec2ab46d64b24c0"
+    }
+  ],
+  "captures": [
+    {
+      "station": "fen_edge",
+      "policy": "authored",
+      "native": "evidence/baseline/authored_day_fen_edge_640x360.png",
+      "eval": "evidence/baseline/authored_day_fen_edge_1280x720.png",
+      "sha256_native": "b34244266ebb329d462b093e6ab79801e5624989e1fce3ecfc9a48a9d2cde354",
+      "sha256_eval": "aad522270a731cf498e5576c5347f6955d3ac5187a046a3f6f47b2d273dc3bf2",
+      "camera_center_cell": [
+        382,
+        199
+      ]
+    },
+    {
+      "station": "home_first",
+      "policy": "authored",
+      "native": "evidence/baseline/authored_day_home_first_640x360.png",
+      "eval": "evidence/baseline/authored_day_home_first_1280x720.png",
+      "sha256_native": "f90d2eff7e3e1362d15c0bf29dab7b59257fe5e151ed611ec18521d10902e14a",
+      "sha256_eval": "2d1dc21a8340d41925314421bd6d86274603c5349e67c2298d3a78911b05e875",
+      "camera_center_cell": [
+        397,
+        200
+      ]
+    },
+    {
+      "station": "waystation_west",
+      "policy": "authored",
+      "native": "evidence/baseline/authored_day_waystation_west_640x360.png",
+      "eval": "evidence/baseline/authored_day_waystation_west_1280x720.png",
+      "sha256_native": "94a5a8b8fdd35644a89e12fbe9ffea3711f66ff2ee0b0844b9a8d53d0ad6f78a",
+      "sha256_eval": "588d7b4c96ee7413ce45fb6e68a33e5fa68224f6bec57ea358af7fd924748d35",
+      "camera_center_cell": [
+        406,
+        203
+      ]
+    },
+    {
+      "station": "return",
+      "policy": "authored",
+      "native": "evidence/baseline/authored_day_return_640x360.png",
+      "eval": "evidence/baseline/authored_day_return_1280x720.png",
+      "sha256_native": "6411263fd211a3635638e6eb3f7472ebab6114023c348f09eb947defc4031123",
+      "sha256_eval": "56fb1b61425c0ccc4b9e7d75264d069337891392174b0eb3c2523842c3fc66cc",
+      "camera_center_cell": [
+        400,
+        210
+      ]
+    },
+    {
+      "station": "explore_first",
+      "policy": "authored",
+      "native": "evidence/baseline/authored_day_explore_first_640x360.png",
+      "eval": "evidence/baseline/authored_day_explore_first_1280x720.png",
+      "sha256_native": "0d30e19b01f7ccfb959d3bfb13c3156ac66f33a0d6bc9ef56c89799df06ecd10",
+      "sha256_eval": "f9dbfef58cdcdc291f0f19f8e5c21fd50a0eaad9eddf4061eed172e419c53c98",
+      "camera_center_cell": [
+        399,
+        219
+      ]
+    },
+    {
+      "station": "marsh_water",
+      "policy": "authored",
+      "native": "evidence/baseline/authored_day_marsh_water_640x360.png",
+      "eval": "evidence/baseline/authored_day_marsh_water_1280x720.png",
+      "sha256_native": "f16e338e8765fa589093ce73e9ee423fab2b269c935271cee2e4a4bf34d89f32",
+      "sha256_eval": "9d9a1af6aa12073620db891d64b525333646dd9b39176b92ce11305b57e92a63",
+      "camera_center_cell": [
+        357,
+        124
+      ]
+    }
+  ],
+  "trace": "/home/user/Soul-of-Hero/prototypes/world_visual_pilot/data/placement_trace.authored.day.json",
+  "trace_entries": 4359
+}

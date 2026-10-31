@@ -1,0 +1,337 @@
+{
+  "schema": "soh.world_visual_pilot.verify.v1",
+  "pins": {
+    "overworld_tiles.png": "cef87705e73693feb2af3a60430e4ce94ef6223f51d43d6418ace018c861ed61",
+    "overworld_props.png": "6cb975589f869670432608d827ff6c58ccf81ab78e320ead1028a17565687e68",
+    "light_radial.png": "8a294ed2bc843bec8372d2eff832bc6ed98d1ac2a8c7b3b0747ed34f731de2ef",
+    "knight_idle_sheet.png": "ada93dd7fcfb574a7068d77a1c41413b17ce64d3a92f3c63eec2ab46d64b24c0"
+  },
+  "checks": [
+    {
+      "check": "no placement prop collider covers a contract cell",
+      "ok": true,
+      "detail": {
+        "offenders": [],
+        "contract_cells": 109,
+        "colliding_props": 2
+      }
+    },
+    {
+      "check": "every route/nav/entrance/stand cell is reachable with pilot props",
+      "ok": true,
+      "detail": {
+        "missing": {},
+        "reachable_cells": 1196,
+        "spawn": [
+          392,
+          200
+        ],
+        "anchor": [
+          408,
+          200
+        ]
+      }
+    },
+    {
+      "check": "BFS route from hero spawn to the POI anchor is body-clear",
+      "ok": true,
+      "detail": {
+        "length_cells": 17,
+        "tight_cells": [],
+        "path_head": [
+          [
+            392,
+            200
+          ],
+          [
+            393,
+            200
+          ],
+          [
+            394,
+            200
+          ],
+          [
+            395,
+            200
+          ],
+          [
+            396,
+            200
+          ],
+          [
+            397,
+            200
+          ]
+        ],
+        "path_tail": [
+          [
+            403,
+            200
+          ],
+          [
+            404,
+            200
+          ],
+          [
+            405,
+            200
+          ],
+          [
+            406,
+            200
+          ],
+          [
+            407,
+            200
+          ],
+          [
+            408,
+            200
+          ]
+        ],
+        "body_px": [
+          12,
+          16
+        ],
+        "margin_px": 2
+      }
+    },
+    {
+      "check": "props do not lengthen the authored walking path",
+      "ok": true,
+      "detail": {
+        "with_props": 17,
+        "authored_only": 17
+      }
+    },
+    {
+      "check": "pilot props only claim their own footprint",
+      "ok": true,
+      "detail": {
+        "cells_added_by_props": 8,
+        "by_frame": {
+          "cart": 2,
+          "tree_dead": 6
+        },
+        "all_outside_contract": true
+      }
+    },
+    {
+      "check": "marsh is walkable and deep water is not",
+      "ok": true,
+      "detail": {
+        "walkable_marsh_cells": 313,
+        "reachable_marsh_cells": 351,
+        "deep_water_cells": 45,
+        "reachable_water_cells": 0,
+        "reached": [
+          [
+            344,
+            112
+          ],
+          [
+            344,
+            113
+          ],
+          [
+            344,
+            114
+          ],
+          [
+            344,
+            115
+          ]
+        ]
+      }
+    },
+    {
+      "check": "a marsh cell stands on the shore of the impassable water",
+      "ok": true,
+      "detail": {
+        "shore_cell": [
+          344,
+          127
+        ],
+        "note": "the last walkable cell before the water token blocks the flood"
+      }
+    },
+    {
+      "check": "every evaluation capture is an exact 2x NEAREST magnification",
+      "ok": true,
+      "detail": [
+        {
+          "native": "pilot_day_explore_first_640x360.png",
+          "native_size": [
+            640,
+            360
+          ],
+          "eval_size": [
+            1280,
+            720
+          ],
+          "eval_is_exact_2x": true,
+          "sha256_native": "65a4ef5fb2d4e8611e23b44372d8a65b18832005ca8dba4154f7d64e142b151e"
+        },
+        {
+          "native": "pilot_day_fen_edge_640x360.png",
+          "native_size": [
+            640,
+            360
+          ],
+          "eval_size": [
+            1280,
+            720
+          ],
+          "eval_is_exact_2x": true,
+          "sha256_native": "710484736c2c0ec703952a9ccf8842aed010d913650dd3ab92bb88488ff92b5b"
+        },
+        {
+          "native": "pilot_day_home_first_640x360.png",
+          "native_size": [
+            640,
+            360
+          ],
+          "eval_size": [
+            1280,
+            720
+          ],
+          "eval_is_exact_2x": true,
+          "sha256_native": "7829cf8b942df98e9f32a65c4910b2a98f5c5b09cee2ca66b691236a031c7526"
+        },
+        {
+          "native": "pilot_day_marsh_water_640x360.png",
+          "native_size": [
+            640,
+            360
+          ],
+          "eval_size": [
+            1280,
+            720
+          ],
+          "eval_is_exact_2x": true,
+          "sha256_native": "b32577cc5a1397a8864d58d17ec50bb3ad4fdbee662a146a8950b218973a2418"
+        },
+        {
+          "native": "pilot_day_return_640x360.png",
+          "native_size": [
+            640,
+            360
+          ],
+          "eval_size": [
+            1280,
+            720
+          ],
+          "eval_is_exact_2x": true,
+          "sha256_native": "96ba3acb4f2bae6f7d2d4356061ef4aeb3d3835cac2a75d727b71ef8871d04fc"
+        },
+        {
+          "native": "pilot_day_waystation_west_640x360.png",
+          "native_size": [
+            640,
+            360
+          ],
+          "eval_size": [
+            1280,
+            720
+          ],
+          "eval_is_exact_2x": true,
+          "sha256_native": "221015fbf7b1b05b66634c1e64c601d2ae36cf91a0eb7adf9a2084001c3aab8d"
+        },
+        {
+          "native": "pilot_night_explore_first_640x360.png",
+          "native_size": [
+            640,
+            360
+          ],
+          "eval_size": [
+            1280,
+            720
+          ],
+          "eval_is_exact_2x": true,
+          "sha256_native": "2ba56c11041d60706c713f58a69bb6b6713b81496bf51c416ce2e22514d06ba0"
+        },
+        {
+          "native": "pilot_night_fen_edge_640x360.png",
+          "native_size": [
+            640,
+            360
+          ],
+          "eval_size": [
+            1280,
+            720
+          ],
+          "eval_is_exact_2x": true,
+          "sha256_native": "61852659703416f3ab13ac8dd91586f17c36cabe999979b66f7e4379691656fe"
+        },
+        {
+          "native": "pilot_night_home_first_640x360.png",
+          "native_size": [
+            640,
+            360
+          ],
+          "eval_size": [
+            1280,
+            720
+          ],
+          "eval_is_exact_2x": true,
+          "sha256_native": "1388937965beb20e45545beea1e73c9f3b1329263a0481730f975029cf0a7928"
+        },
+        {
+          "native": "pilot_night_marsh_water_640x360.png",
+          "native_size": [
+            640,
+            360
+          ],
+          "eval_size": [
+            1280,
+            720
+          ],
+          "eval_is_exact_2x": true,
+          "sha256_native": "086d388339b12ac11ccb3b932faf6ad60724f5613bd3e9b27589a2d5353e919a"
+        },
+        {
+          "native": "pilot_night_return_640x360.png",
+          "native_size": [
+            640,
+            360
+          ],
+          "eval_size": [
+            1280,
+            720
+          ],
+          "eval_is_exact_2x": true,
+          "sha256_native": "8233a47a906a8cfe6e86bf99720e0cbb89af3e4f2dcc7075112a080352f1d888"
+        },
+        {
+          "native": "pilot_night_waystation_west_640x360.png",
+          "native_size": [
+            640,
+            360
+          ],
+          "eval_size": [
+            1280,
+            720
+          ],
+          "eval_is_exact_2x": true,
+          "sha256_native": "c46245d66bc5d2aca1bfa38d59c8905a705dcd11266a755448ef0a788b3d8036"
+        }
+      ]
+    },
+    {
+      "check": "every traced frame resolves to an atlas crop",
+      "ok": true,
+      "detail": {
+        "frames": 63,
+        "unresolved": []
+      }
+    }
+  ],
+  "summary": {
+    "checks": 9,
+    "failed": [],
+    "reachable_cells": 1196,
+    "walk_path_length": 17,
+    "trace_entries": 7463
+  }
+}

@@ -1,0 +1,1006 @@
+{
+ "schema": "soh.world_visual_pilot.source_manifest.v1",
+ "source_commit": "f6baaee0ad0ecc5162196e290ede9ccdf45982b1",
+ "source_repo": "Khanh-glitch/Soul-of-Hero",
+ "source_branches_tried": {
+  "Khanh-glitch/APEX-CHAOS@43-new-asset": "HTTPS 403 (no access) / codeload 404",
+  "Khanh-glitch/APEX-CHAOS@Khanh-glitch-patch-1..6": "HTTPS 403 (no access)"
+ },
+ "art": [
+  {
+   "file": "overworld_tiles.png",
+   "sha256": "cef87705e73693feb2af3a60430e4ce94ef6223f51d43d6418ace018c861ed61",
+   "size": [
+    512,
+    144
+   ]
+  },
+  {
+   "file": "overworld_props.png",
+   "sha256": "6cb975589f869670432608d827ff6c58ccf81ab78e320ead1028a17565687e68",
+   "size": [
+    512,
+    446
+   ]
+  },
+  {
+   "file": "light_radial.png",
+   "sha256": "8a294ed2bc843bec8372d2eff832bc6ed98d1ac2a8c7b3b0747ed34f731de2ef",
+   "size": [
+    256,
+    256
+   ]
+  },
+  {
+   "file": "knight_idle_sheet.png",
+   "sha256": "ada93dd7fcfb574a7068d77a1c41413b17ce64d3a92f3c63eec2ab46d64b24c0",
+   "size": [
+    1200,
+    80
+   ]
+  }
+ ],
+ "geography": {
+  "file": "data/corridor_cells.v1.json",
+  "sha256": "0896ac09acfd7018bf679017ad85349453b73af7477179475f6bdff759ec6c74",
+  "corridor_window": [
+   368,
+   192,
+   50,
+   34
+  ],
+  "water_window": [
+   344,
+   112,
+   28,
+   20
+  ],
+  "cells_touched": 0
+ },
+ "note": "cells_touched is 0: the pilot writes no geography. Every cell in the windows is A1's shipped token, copied by extract_slice.py under a SHA-256 pin.",
+ "frames": [
+  {
+   "frame": "1",
+   "source": null,
+   "crop": null,
+   "uses": 162,
+   "layers": [
+    "detail_dropped"
+   ],
+   "crop_matches_atlas_index": null
+  },
+  {
+   "frame": "2",
+   "source": null,
+   "crop": null,
+   "uses": 156,
+   "layers": [
+    "detail_dropped"
+   ],
+   "crop_matches_atlas_index": null
+  },
+  {
+   "frame": "3",
+   "source": null,
+   "crop": null,
+   "uses": 147,
+   "layers": [
+    "detail_dropped"
+   ],
+   "crop_matches_atlas_index": null
+  },
+  {
+   "frame": "4",
+   "source": null,
+   "crop": null,
+   "uses": 56,
+   "layers": [
+    "detail_dropped"
+   ],
+   "crop_matches_atlas_index": null
+  },
+  {
+   "frame": "knight_idle",
+   "source": "art/knight_idle_sheet.png",
+   "crop": [
+    44,
+    42,
+    21,
+    38
+   ],
+   "uses": 2,
+   "layers": [
+    "prop"
+   ],
+   "crop_matches_atlas_index": null
+  },
+  {
+   "frame": "ashdrift",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    448,
+    16,
+    16,
+    16
+   ],
+   "uses": 196,
+   "layers": [
+    "decal"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "bank#1",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    272,
+    32,
+    16,
+    16
+   ],
+   "uses": 10,
+   "layers": [
+    "detail"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "bank#2",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    288,
+    32,
+    16,
+    16
+   ],
+   "uses": 1,
+   "layers": [
+    "detail"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "bank#3",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    304,
+    32,
+    16,
+    16
+   ],
+   "uses": 2,
+   "layers": [
+    "detail"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "bank#4",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    320,
+    32,
+    16,
+    16
+   ],
+   "uses": 9,
+   "layers": [
+    "detail"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "bank#6",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    352,
+    32,
+    16,
+    16
+   ],
+   "uses": 9,
+   "layers": [
+    "detail"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "bank#9",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    400,
+    32,
+    16,
+    16
+   ],
+   "uses": 7,
+   "layers": [
+    "detail"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "canopy#15",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    240,
+    112,
+    16,
+    16
+   ],
+   "uses": 3,
+   "layers": [
+    "solid"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "cliff#13",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    208,
+    96,
+    16,
+    16
+   ],
+   "uses": 31,
+   "layers": [
+    "solid"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "cliff#15",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    240,
+    96,
+    16,
+    16
+   ],
+   "uses": 595,
+   "layers": [
+    "solid"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "cliff#3",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    48,
+    96,
+    16,
+    16
+   ],
+   "uses": 3,
+   "layers": [
+    "solid"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "cliff#6",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    96,
+    96,
+    16,
+    16
+   ],
+   "uses": 4,
+   "layers": [
+    "solid"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "cliff#7",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    112,
+    96,
+    16,
+    16
+   ],
+   "uses": 24,
+   "layers": [
+    "solid"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "cliff_shade5",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    176,
+    32,
+    16,
+    16
+   ],
+   "uses": 2,
+   "layers": [
+    "detail"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "crack",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    384,
+    16,
+    16,
+    16
+   ],
+   "uses": 232,
+   "layers": [
+    "decal"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "pebbles",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    416,
+    16,
+    16,
+    16
+   ],
+   "uses": 702,
+   "layers": [
+    "decal"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "pool0",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    464,
+    16,
+    16,
+    16
+   ],
+   "uses": 35,
+   "layers": [
+    "decal",
+    "detail"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "pool1",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    480,
+    16,
+    16,
+    16
+   ],
+   "uses": 35,
+   "layers": [
+    "decal",
+    "detail"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "pool2",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    496,
+    16,
+    16,
+    16
+   ],
+   "uses": 36,
+   "layers": [
+    "decal",
+    "detail"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "pool3",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    0,
+    32,
+    16,
+    16
+   ],
+   "uses": 39,
+   "layers": [
+    "decal",
+    "detail"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "pool4",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    16,
+    32,
+    16,
+    16
+   ],
+   "uses": 34,
+   "layers": [
+    "decal",
+    "detail"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "road_dirt#11",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    432,
+    64,
+    16,
+    16
+   ],
+   "uses": 49,
+   "layers": [
+    "detail"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "road_dirt#12",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    448,
+    64,
+    16,
+    16
+   ],
+   "uses": 23,
+   "layers": [
+    "detail"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "road_dirt#13",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    464,
+    64,
+    16,
+    16
+   ],
+   "uses": 31,
+   "layers": [
+    "detail"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "road_dirt#14",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    480,
+    64,
+    16,
+    16
+   ],
+   "uses": 49,
+   "layers": [
+    "detail"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "road_dirt#15",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    496,
+    64,
+    16,
+    16
+   ],
+   "uses": 305,
+   "layers": [
+    "detail"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "road_dirt#3",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    304,
+    64,
+    16,
+    16
+   ],
+   "uses": 21,
+   "layers": [
+    "detail"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "road_dirt#6",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    352,
+    64,
+    16,
+    16
+   ],
+   "uses": 9,
+   "layers": [
+    "detail"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "road_dirt#7",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    368,
+    64,
+    16,
+    16
+   ],
+   "uses": 38,
+   "layers": [
+    "detail"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "road_dirt#8",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    384,
+    64,
+    16,
+    16
+   ],
+   "uses": 1,
+   "layers": [
+    "detail"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "road_dirt#9",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    400,
+    64,
+    16,
+    16
+   ],
+   "uses": 5,
+   "layers": [
+    "detail"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "tuft",
+   "source": "art/overworld_tiles.png",
+   "crop": [
+    400,
+    16,
+    16,
+    16
+   ],
+   "uses": 922,
+   "layers": [
+    "decal"
+   ],
+   "crop_matches_atlas_index": true
+  },
+  {
+   "frame": "barrel",
+   "source": "placement.v1.json:props",
+   "crop": [
+    "h",
+    "w",
+    "x",
+    "y"
+   ],
+   "uses": 6,
+   "layers": [
+    "prop"
+   ],
+   "crop_matches_atlas_index": null
+  },
+  {
+   "frame": "brazier",
+   "source": "placement.v1.json:props",
+   "crop": [
+    "h",
+    "w",
+    "x",
+    "y"
+   ],
+   "uses": 2,
+   "layers": [
+    "prop"
+   ],
+   "crop_matches_atlas_index": null
+  },
+  {
+   "frame": "bush",
+   "source": "placement.v1.json:props",
+   "crop": [
+    "h",
+    "w",
+    "x",
+    "y"
+   ],
+   "uses": 206,
+   "layers": [
+    "prop"
+   ],
+   "crop_matches_atlas_index": null
+  },
+  {
+   "frame": "camp_banner",
+   "source": "placement.v1.json:props",
+   "crop": [
+    "h",
+    "w",
+    "x",
+    "y"
+   ],
+   "uses": 2,
+   "layers": [
+    "prop"
+   ],
+   "crop_matches_atlas_index": null
+  },
+  {
+   "frame": "camp_bedroll",
+   "source": "placement.v1.json:props",
+   "crop": [
+    "h",
+    "w",
+    "x",
+    "y"
+   ],
+   "uses": 4,
+   "layers": [
+    "prop_flat"
+   ],
+   "crop_matches_atlas_index": null
+  },
+  {
+   "frame": "camp_crate",
+   "source": "placement.v1.json:props",
+   "crop": [
+    "h",
+    "w",
+    "x",
+    "y"
+   ],
+   "uses": 8,
+   "layers": [
+    "prop"
+   ],
+   "crop_matches_atlas_index": null
+  },
+  {
+   "frame": "camp_fire",
+   "source": "placement.v1.json:props",
+   "crop": [
+    "h",
+    "w",
+    "x",
+    "y"
+   ],
+   "uses": 2,
+   "layers": [
+    "prop"
+   ],
+   "crop_matches_atlas_index": null
+  },
+  {
+   "frame": "cart",
+   "source": "placement.v1.json:props",
+   "crop": [
+    "h",
+    "w",
+    "x",
+    "y"
+   ],
+   "uses": 2,
+   "layers": [
+    "prop"
+   ],
+   "crop_matches_atlas_index": null
+  },
+  {
+   "frame": "cliff_crack_a",
+   "source": "placement.v1.json:props",
+   "crop": [
+    "h",
+    "w",
+    "x",
+    "y"
+   ],
+   "uses": 78,
+   "layers": [
+    "prop_flat"
+   ],
+   "crop_matches_atlas_index": null
+  },
+  {
+   "frame": "cliff_crack_b",
+   "source": "placement.v1.json:props",
+   "crop": [
+    "h",
+    "w",
+    "x",
+    "y"
+   ],
+   "uses": 98,
+   "layers": [
+    "prop_flat"
+   ],
+   "crop_matches_atlas_index": null
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "source": "placement.v1.json:props",
+   "crop": [
+    "h",
+    "w",
+    "x",
+    "y"
+   ],
+   "uses": 16,
+   "layers": [
+    "prop_flat"
+   ],
+   "crop_matches_atlas_index": null
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "source": "placement.v1.json:props",
+   "crop": [
+    "h",
+    "w",
+    "x",
+    "y"
+   ],
+   "uses": 18,
+   "layers": [
+    "prop_flat"
+   ],
+   "crop_matches_atlas_index": null
+  },
+  {
+   "frame": "cliff_patch_a",
+   "source": "placement.v1.json:props",
+   "crop": [
+    "h",
+    "w",
+    "x",
+    "y"
+   ],
+   "uses": 156,
+   "layers": [
+    "prop_flat"
+   ],
+   "crop_matches_atlas_index": null
+  },
+  {
+   "frame": "cliff_patch_b",
+   "source": "placement.v1.json:props",
+   "crop": [
+    "h",
+    "w",
+    "x",
+    "y"
+   ],
+   "uses": 136,
+   "layers": [
+    "prop_flat"
+   ],
+   "crop_matches_atlas_index": null
+  },
+  {
+   "frame": "cliff_patch_c",
+   "source": "placement.v1.json:props",
+   "crop": [
+    "h",
+    "w",
+    "x",
+    "y"
+   ],
+   "uses": 164,
+   "layers": [
+    "prop_flat"
+   ],
+   "crop_matches_atlas_index": null
+  },
+  {
+   "frame": "cliff_patch_d",
+   "source": "placement.v1.json:props",
+   "crop": [
+    "h",
+    "w",
+    "x",
+    "y"
+   ],
+   "uses": 146,
+   "layers": [
+    "prop_flat"
+   ],
+   "crop_matches_atlas_index": null
+  },
+  {
+   "frame": "disc_cache",
+   "source": "placement.v1.json:props",
+   "crop": [
+    "h",
+    "w",
+    "x",
+    "y"
+   ],
+   "uses": 4,
+   "layers": [
+    "prop_flat"
+   ],
+   "crop_matches_atlas_index": null
+  },
+  {
+   "frame": "fence",
+   "source": "placement.v1.json:props",
+   "crop": [
+    "h",
+    "w",
+    "x",
+    "y"
+   ],
+   "uses": 6,
+   "layers": [
+    "prop"
+   ],
+   "crop_matches_atlas_index": null
+  },
+  {
+   "frame": "lamp",
+   "source": "placement.v1.json:props",
+   "crop": [
+    "h",
+    "w",
+    "x",
+    "y"
+   ],
+   "uses": 4,
+   "layers": [
+    "prop"
+   ],
+   "crop_matches_atlas_index": null
+  },
+  {
+   "frame": "rock_a",
+   "source": "placement.v1.json:props",
+   "crop": [
+    "h",
+    "w",
+    "x",
+    "y"
+   ],
+   "uses": 60,
+   "layers": [
+    "prop"
+   ],
+   "crop_matches_atlas_index": null
+  },
+  {
+   "frame": "rock_b",
+   "source": "placement.v1.json:props",
+   "crop": [
+    "h",
+    "w",
+    "x",
+    "y"
+   ],
+   "uses": 4,
+   "layers": [
+    "prop"
+   ],
+   "crop_matches_atlas_index": null
+  },
+  {
+   "frame": "rock_d",
+   "source": "placement.v1.json:props",
+   "crop": [
+    "h",
+    "w",
+    "x",
+    "y"
+   ],
+   "uses": 14,
+   "layers": [
+    "prop"
+   ],
+   "crop_matches_atlas_index": null
+  },
+  {
+   "frame": "rock_e",
+   "source": "placement.v1.json:props",
+   "crop": [
+    "h",
+    "w",
+    "x",
+    "y"
+   ],
+   "uses": 32,
+   "layers": [
+    "prop"
+   ],
+   "crop_matches_atlas_index": null
+  },
+  {
+   "frame": "rock_f",
+   "source": "placement.v1.json:props",
+   "crop": [
+    "h",
+    "w",
+    "x",
+    "y"
+   ],
+   "uses": 44,
+   "layers": [
+    "prop"
+   ],
+   "crop_matches_atlas_index": null
+  },
+  {
+   "frame": "signpost",
+   "source": "placement.v1.json:props",
+   "crop": [
+    "h",
+    "w",
+    "x",
+    "y"
+   ],
+   "uses": 4,
+   "layers": [
+    "prop"
+   ],
+   "crop_matches_atlas_index": null
+  },
+  {
+   "frame": "tree_dead",
+   "source": "placement.v1.json:props",
+   "crop": [
+    "h",
+    "w",
+    "x",
+    "y"
+   ],
+   "uses": 2,
+   "layers": [
+    "prop"
+   ],
+   "crop_matches_atlas_index": null
+  }
+ ],
+ "trace": {
+  "file": "data/placement_trace.pilot.day.json",
+  "entries": 7463,
+  "fields": [
+   "layer",
+   "frame|token",
+   "cell|foot_px",
+   "crop",
+   "source",
+   "z",
+   "flip"
+  ]
+ }
+}
