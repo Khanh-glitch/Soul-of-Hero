@@ -54,6 +54,7 @@ func _build() -> void:
 ## Top-left: region, provisions, carry, and the three discovery counters.
 func _build_field_card(root: Control) -> void:
 	_card = A6UiKit.card()
+	_card.theme_type_variation = &"A6HudCard"
 	_card.name = "FieldCard"
 	_card.position = Vector2(6, 5)
 	_card.custom_minimum_size = Vector2(CARD_WIDTH, CARD_HEIGHT)
@@ -66,7 +67,7 @@ func _build_field_card(root: Control) -> void:
 	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_card.add_child(column)
 
-	_region_label = A6UiKit.label("THE HOLLOW MARCHES", "heading", 13)
+	_region_label = A6UiKit.label("THE HOLLOW MARCHES", "heading", 11)
 	_region_label.add_theme_color_override("font_color", A6UiKit.INK)
 	_region_label.name = "Region"
 	column.add_child(_region_label)
@@ -77,23 +78,23 @@ func _build_field_card(root: Control) -> void:
 	provisions_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	column.add_child(provisions_row)
 
-	var pack_icon := A6UiKit.icon("capacity", 14)
+	var pack_icon := A6UiKit.icon("capacity", 12)
 	if pack_icon != null:
 		pack_icon.name = "PackIcon"
 		provisions_row.add_child(pack_icon)
 
-	_provisions_bar = A6UiKit.bar(112, 9)
+	_provisions_bar = A6UiKit.bar(104, 8)
 	var bar_root: Control = _provisions_bar["root"]
 	bar_root.name = "ProvisionsBar"
 	bar_root.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	provisions_row.add_child(bar_root)
 
-	_provisions_number = A6UiKit.label("0", "number", 12)
+	_provisions_number = A6UiKit.label("0", "number", 11)
 	_provisions_number.add_theme_color_override("font_color", A6UiKit.INK)
 	_provisions_number.name = "ProvisionsNumber"
 	provisions_row.add_child(_provisions_number)
 
-	_carry_label = A6UiKit.label("", "caption", 10)
+	_carry_label = A6UiKit.label("", "caption", 9)
 	_carry_label.add_theme_color_override("font_color", A6UiKit.INK_SOFT)
 	_carry_label.name = "Carry"
 	column.add_child(_carry_label)
@@ -103,13 +104,13 @@ func _build_field_card(root: Control) -> void:
 	counters.add_theme_constant_override("separation", 7)
 	counters.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	column.add_child(counters)
-	_chips["camps"] = A6UiKit.chip("camp_light", "0/0", 11, 10)
+	_chips["camps"] = A6UiKit.chip("camp_light", "0/0", 10, 9)
 	_chips["camps"].name = "CampsChip"
 	counters.add_child(_chips["camps"])
-	_chips["finds"] = A6UiKit.chip("research_kit", "0/0", 11, 10)
+	_chips["finds"] = A6UiKit.chip("research_kit", "0/0", 10, 9)
 	_chips["finds"].name = "FindsChip"
 	counters.add_child(_chips["finds"])
-	_chips["ways"] = A6UiKit.chip("travel", "0/0", 11, 10)
+	_chips["ways"] = A6UiKit.chip("travel", "0/0", 10, 9)
 	_chips["ways"].name = "WaysChip"
 	counters.add_child(_chips["ways"])
 	for chip_name: String in _chips.keys():

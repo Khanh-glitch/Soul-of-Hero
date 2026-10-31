@@ -35,6 +35,17 @@ content_margin_top = 8.0
 content_margin_right = 12.0
 content_margin_bottom = 10.0
 
+[sub_resource type="StyleBoxTexture" id="HudCard"]
+texture = ExtResource("2_panel")
+texture_margin_left = 4.0
+texture_margin_top = 3.0
+texture_margin_right = 4.0
+texture_margin_bottom = 5.0
+content_margin_left = 8.0
+content_margin_top = 5.0
+content_margin_right = 8.0
+content_margin_bottom = 6.0
+
 [sub_resource type="StyleBoxTexture" id="Slot"]
 texture = ExtResource("3_slot")
 texture_margin_left = 4.0
@@ -175,6 +186,8 @@ A6Window/base_type = &"PanelContainer"
 A6Window/styles/panel = SubResource("Window")
 A6Card/base_type = &"PanelContainer"
 A6Card/styles/panel = SubResource("Panel")
+A6HudCard/base_type = &"PanelContainer"
+A6HudCard/styles/panel = SubResource("HudCard")
 A6Slot/base_type = &"PanelContainer"
 A6Slot/styles/panel = SubResource("Slot")
 A6HudBar/base_type = &"PanelContainer"

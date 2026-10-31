@@ -48,6 +48,37 @@ env:
   GODOT_ARCHIVE_SHA256: "0b1a6c54c2c619c12e169fe9241edda4b81080b519451cec2984bf0d2c6cb73c"
 
 jobs:
+  lint:
+    name: Scene and script integrity (no engine needed)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lint every scene and resource reference
+        run: python3 tools/review/scene_lint.py
+      - name: Parse every GDScript file
+        run: |
+          set -euo pipefail
+          python3 -m venv /tmp/gd
+          /tmp/gd/bin/pip install --quiet gdtoolkit
+          /tmp/gd/bin/python - <<'PY'
+          import pathlib, sys
+          from gdtoolkit.parser import parser
+          failures = []
+          for folder in ("game", "tests"):
+              for path in pathlib.Path(folder).rglob("*.gd"):
+                  if path.name == "intentionally_broken_parse_error.gd":
+                      continue
+                  try:
+                      parser.parse(path.read_text())
+                  except Exception as error:
+                      failures.append(f"{path}: {str(error).splitlines()[0][:160]}")
+          for failure in failures:
+              print(f"FAIL {failure}")
+          print(f"parsed {folder} scripts, {len(failures)} failures")
+          sys.exit(1 if failures else 0)
+          PY
+
   render:
     name: Render at ${{ matrix.resolution }} (Xvfb, llvmpipe)
     runs-on: ubuntu-latest
@@ -89,6 +120,19 @@ jobs:
             2>&1 | tee artifacts/import.log | tail -20
           if grep -E "SCRIPT ERROR|Parse Error" artifacts/import.log; then
             echo "::error::the project does not import cleanly"
+            exit 1
+          fi
+
+      - name: Mechanical A6 UI layer test (headless, no fixtures)
+        run: |
+          set -uo pipefail
+          timeout --signal=TERM --kill-after=15s 180s godot --headless --path . \
+            res://tests/survival/ui/a6_ui_layer_test.tscn > artifacts/ui-layer-test.log 2>&1
+          status=$?
+          cat artifacts/ui-layer-test.log
+          if [ "${status}" -ne 0 ] || ! grep -q "A6 UI LAYER PASSED" artifacts/ui-layer-test.log; then
+            tail -12 artifacts/ui-layer-test.log | sed 's/^/::error::/'
+            echo "::error::the A6 UI layer test failed"
             exit 1
           fi
 
@@ -209,7 +253,7 @@ jobs:
 
   publish:
     name: Publish the frames into docs/survival/reviews/native
-    needs: render
+    needs: [lint, render]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
