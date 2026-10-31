@@ -1,4 +1,6 @@
 <!-- CT_FINISHLINE_ACTIVE_START -->
+**A1 R13 four-owner composition pin limitation (checked 2026-11-01):** .github/workflows/a1-r13-continent-seam.yml at ce9d4ba2d still pins A0 ee5f9f5, A6 6d1e8bc, A8 0f885df, while separately observed current A0 a6e37978, A6 bf96b4ca and A8 2cebbf49 have moved. Thus 299 native checks prove a REPRODUCIBLE FROZEN A1 seam, not a fresh same-tree owner composition. A0 publishes the next current recomposed tree and A7 certifies; A1 must not silently repin frozen proof. CT addendum PR20 comment 6546977269.
+
 ## CT A1 R13 HANDOFF READBACK — 2026-11-01 · Docs sync confirmed
 
 Both canonical Google Docs tabs are now successfully updated and independently reread: tab04 contains the exact A1 R13 review checkpoint for ce9d4ba2d (native 299/0, 21 captured PNGs, visual marsh regression, D051 staged=false); tab12 contains the M1/M2 trigger and next A1/A0 contract. This supersedes the PRIOR generalized DOCS_SYNC_PENDING note only for this NEW A1 checkpoint; earlier blocked edits are historical and no claim of retroactive upload is made. PR20 review comment 6546947068 also posted. Git metadata observed after review: A3 PR19 head 9d751d574f5e... and A7 PR25 head a18b977f07b4... moved and are UNREVIEWED by this A1 audit; other owner statements are last-checked, not live Arena status. No Arena tasks have been dispatched or acknowledged.
