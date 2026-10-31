@@ -138,10 +138,12 @@ func update(dt: float, t: float) -> void:
         var P2: Array = td.pos
         var PV: Array = td.prev
         for j in range(1, M):
-            var vx := (P2[j].x - PV[j].x) * 0.93
-            var vy := (P2[j].y - PV[j].y) * 0.93
-            PV[j] = Vector2(P2[j])
-            P2[j] = Vector2(P2[j].x + vx, P2[j].y + vy)
+            var pj: Vector2 = P2[j]
+            var pvj: Vector2 = PV[j]
+            var vx := (pj.x - pvj.x) * 0.93
+            var vy := (pj.y - pvj.y) * 0.93
+            PV[j] = Vector2(pj)
+            P2[j] = Vector2(pj.x + vx, pj.y + vy)
         var tip_prev := Vector2(PV[M - 1])
         P2[M - 1] = Vector2(P2[M - 1].x + (tip.x - P2[M - 1].x) * 0.3, P2[M - 1].y + (tip.y - P2[M - 1].y) * 0.3)
         for it in range(10):

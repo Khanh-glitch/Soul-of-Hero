@@ -29,7 +29,7 @@ var _ps: Array = []
 var _burst := false
 var _hub := Vector2.ZERO
 
-static func fire(h: float) -> Array:
+static func fire(h: float) -> Vector3:
     return CPalette.ramp(CPalette.P["fire"], h)
 
 func setup() -> void:
@@ -71,7 +71,7 @@ func _angle(s: Dictionary, t: float) -> float:
     return float(s.a0) + float(s.sp) * tt + float(s.sp) * pow(maxf(0.0, tt - T_SW), 2.0) * 1.6
 
 func _asm(s: Dictionary, t: float) -> float:
-    return CMath.clampf((t - float(s.asm0)) / 0.8)
+    return CMath.cl01((t - float(s.asm0)) / 0.8)
 
 func _seg_pt(s: Dictionary, a: float, lift: float) -> Vector2:
     return Vector2(C.x + cos(a) * float(s.r), C.y - lift + float(s.z) + sin(a) * float(s.r) * SY)
