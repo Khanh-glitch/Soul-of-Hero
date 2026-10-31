@@ -525,7 +525,7 @@ func _run_spawn_matrix() -> void:
 		var seed := 1103 + index * 7919
 		var chosen: Dictionary = CONSUMER.select_run_spawn(continent, seed)
 		var repeat: Dictionary = continent.choose_safe_spawn(seed)
-		var valid := bool(chosen.get("ok", false)) and chosen.get("cell", Vector2i(-1, -1)) == repeat.get("cell", Vector2i(-2, -2))
+		var valid: bool = bool(chosen.get("ok", false)) and chosen.get("cell", Vector2i(-1, -1)) == repeat.get("cell", Vector2i(-2, -2))
 		if valid:
 			var cell: Vector2i = chosen.cell
 			var sample: Dictionary = continent.sample_cell(cell)
