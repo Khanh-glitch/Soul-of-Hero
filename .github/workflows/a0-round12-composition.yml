@@ -11,10 +11,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     env:
-      A1_SHA: 9ca1453ccdd315c9de4aae01cf0e1e5b4e0a71cf
+      # R13 pins: A1's authored continent, A3's economy, A8's physical sites and
+      # A6's presentation, all fetched and composed into the tree this round was
+      # developed against.
+      A1_SHA: a030cb89a5033ba5faba39995762b4bea1332cec
       A3_SHA: b44e22df3af40939069189be14afc23ee1ce21c4
-      A6_SHA: 81c1f57ea01396686eb155af5b36fe8a64921a52
-      A8_SHA: 6337533f7cc0d39487921e279d3967ac29a59297
+      A6_SHA: 6d1e8bcee0bbb09be0ff04f14de1f7e59f06cfb8
+      A8_SHA: 0f885df862d7d34f18ca456e80b1aaac05b23de0
       GODOT_SILENCE_ROOT_WARNING: 1
       LIBGL_ALWAYS_SOFTWARE: 1
     steps:
@@ -123,6 +126,27 @@ jobs:
           cat ../artifacts/threat_2.log
           echo "::notice::threat process1=$first process2=$second"
           [ "$first" -eq 0 ] && [ "$second" -eq 0 ]
+      - name: R13 A0 authored continent route — real player, two OS processes
+        if: ${{ !cancelled() }}
+        run: |
+          set +e
+          # Process 1 chooses the Adventurer, plays the continent, saves, and keeps
+          # the save. Process 2 is a different OS process that resumes it. Nothing
+          # here grants a position: the walking, the sockets and the doorways are
+          # real input, and the key is a real InputEventKey for `G`.
+          timeout --signal=TERM --kill-after=10s 1800s godot --headless --path . \
+            --script res://tests/survival_a0_authored_world_route_test.gd -- --keep-route \
+            > ../artifacts/route_1.log 2>&1
+          first=$?
+          cat ../artifacts/route_1.log
+          timeout --signal=TERM --kill-after=10s 900s godot --headless --path . \
+            --script res://tests/survival_a0_authored_world_route_test.gd -- --verify-route --keep-route \
+            > ../artifacts/route_2.log 2>&1
+          second=$?
+          cat ../artifacts/route_2.log
+          echo "::notice::authored route process1=$first process2=$second $(grep -a 'A0_AUTHORED_ROUTE_VERIFY' ../artifacts/route_2.log | tail -1)"
+          [ "$first" -eq 0 ] && grep -qa 'A0 AUTHORED WORLD ROUTE PASSED' ../artifacts/route_1.log \
+            && [ "$second" -eq 0 ] && grep -qa 'A0 AUTHORED WORLD ROUTE PASSED' ../artifacts/route_2.log
       - name: A0 site-mount authority against real A8/A1/A3 data
         run: |
           set +e

@@ -79,9 +79,12 @@ const KEYBOARD_BINDINGS := {
 	&"soul_relay_1": [KEY_Q],
 	# Slot two exists architecturally but has no player-facing binding yet.
 	&"soul_relay_2": [],
-	# Desktop world interaction is resolved from an unhandled left-click by the
-	# player controller so an accepted UI click can never leak into combat.
-	&"interact": [],
+	# A click remains the primary world interaction (resolved from an unhandled
+	# left-click by the player controller so an accepted UI click can never leak
+	# into combat). G is the *keyboard* interaction the physical sites advertise:
+	# A8's own prompt reads "G · Enter", and without a key a desktop player could
+	# not enter a worksite at all. E and F stay retired for this action.
+	&"interact": [KEY_G],
 	&"field_codex": [KEY_I, KEY_TAB],
 	&"pause": [KEY_ESCAPE],
 	# B toggles the build modal, 1-9 choose the piece, and placement is the

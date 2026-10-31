@@ -37,6 +37,10 @@ const WORLD_DATA_PATH := "res://data/overworld/hollow_marches.json"
 const LAYERS_PATH := "res://data/overworld/hollow_marches_layers.json"
 const PROPS_PATH := "res://data/overworld/hollow_marches_props.json"
 const KNIGHT_SCENE: PackedScene = preload("res://game/characters/knight/knight.tscn")
+## R13: the player controller the game really ships. A6's AvatarPresenter is a
+## child of this scene and reads A0's saved male/female identity, so the body the
+## player moves is the adventurer they chose — not a stand-in fixture body.
+const PLAYER_SCENE_PATH := "res://game/characters/knight/knight.tscn"
 const GATE_SCRIPT := preload("res://game/overworld/overworld_gate.gd")
 const CAMP_SCRIPT := preload("res://game/overworld/overworld_camp.gd")
 const DISCOVERY_SCRIPT := preload("res://game/overworld/overworld_discovery.gd")
@@ -60,9 +64,29 @@ const A0_WORLD_ART_CANDIDATE := preload("res://game/survival/a0_world_art_candid
 ## the ONE way the survival world ever exposes an enemy.
 const A0_THREAT_MOUNT := preload("res://game/survival/a0_threat_mount.gd")
 const WAYSTATION_CANDIDATE_SETTING := "survival/a0_waystation_candidate"
-## Off by default. A1's authored continent is mounted beside the legacy inset A0
-## already governs, never instead of it, and only when a caller explicitly asks.
-const AUTHORED_STREAM_SETTING := "survival/a0_authored_stream"
+## R13: which world is authoritative. "authored" is A1's 1024x768 continent and is
+## the default production world; "annex" is the retained 384x256 Hollow Marches
+## route world, kept reusable (component probes and the chapter-1 landmark route
+## still run on it) but no longer the main game.
+const WORLD_AUTHORITY_SETTING := "survival/a0_world_authority"
+const WORLD_AUTHORITY_AUTHORED := "authored"
+const WORLD_AUTHORITY_ANNEX := "annex"
+## A0's authored-world join: terrain, streamed collision, spawn, sites.
+const A0_WORLD_AUTHORITY := preload("res://game/survival/a0_world_authority.gd")
+const A0_AUTHORED_TRAVERSABILITY := preload("res://game/survival/a0_authored_traversability.gd")
+## A1 material keys -> A0's survival resource kinds. A0 does not invent sources:
+## each entry maps an authored material onto the resource the service already knows.
+## A1 publishes material keys, A3's catalog publishes harvestable kinds. The map is
+## A0's join between the two; anything A1 names that A3 has no kind for is not
+## mounted, and the count is printed so the gap is visible instead of silent.
+const AUTHORED_SOURCE_KINDS := {
+	"deadwood": "oak_tree", "timber": "oak_tree", "oak": "oak_tree", "hardwood": "oak_tree",
+	"stone": "stone_outcrop", "granite": "stone_outcrop", "slate": "stone_outcrop",
+	"limestone": "stone_outcrop", "basalt": "stone_outcrop",
+	"scrap": "scrap_pile", "salvage": "scrap_pile",
+	"iron": "iron_vein", "ore": "iron_vein", "glacial_iron": "iron_vein",
+	"reed": "reed_clump", "reed_fibre": "reed_clump", "fiber": "reed_clump", "fibre": "reed_clump",
+}
 const WAYSTATION_ROOT := "res://data/survival/connector/a0_candidate/"
 const A0_WAYSTATION_GEOMETRY := preload("res://game/survival/waystation_geometry.gd")
 const A0_WAYSTATION_HOST := preload("res://game/survival/waystation_host.gd")
@@ -95,10 +119,13 @@ var traversability_failures: Array[Dictionary] = []
 
 var survival_build: SurvivalBuildSystem
 var economy_session: Node
-## A1's authored continent, mounted by A0 when `survival/a0_authored_stream` is on.
-var authored_mount: A0AuthoredWorldMount
-## Why the authored mount refused, if it did. Named, never swallowed.
-var authored_stream_error := ""
+## R13: the authored-continent join. Present only in "authored" mode.
+var world_authority: A0WorldAuthority
+## Why the authored world could not be used, if it could not. Named, never hidden.
+var authored_world_error := ""
+## True when this build is the authored continent (as opposed to the annex route).
+var authored_world_active := false
+var authored_sources: Array = []
 var economy_composition: Node
 var threat_mount: Node
 var economy_panel: CanvasLayer
@@ -194,6 +221,19 @@ func is_world_ready() -> bool:
 	return build_stage == BuildStage.READY
 
 
+## The world this build is actually running. A gate reads this instead of assuming
+## which one was mounted.
+func world_authority_report() -> Dictionary:
+	if world_authority == null or not is_instance_valid(world_authority):
+		return {"mode": WORLD_AUTHORITY_ANNEX, "error": authored_world_error,
+			"frame": [world.width, world.height] if world != null else [0, 0]}
+	var report: Dictionary = world_authority.source_report()
+	report["mode"] = WORLD_AUTHORITY_AUTHORED
+	report["sources"] = authored_sources.duplicate(true)
+	report["error"] = authored_world_error
+	return report
+
+
 # The scene defaults to pinned legacy sources. A project-level candidate may
 # explicitly select the bounded source; payloads and saves cannot select files.
 func _waystation_candidate_enabled() -> bool:
@@ -219,10 +259,166 @@ func _mount_world_extensions() -> void:
 		_fail("Waystation candidate geometry refused: " + String(result.get("reason", "unknown")))
 
 
+func _world_authority_mode() -> String:
+	var mode := String(ProjectSettings.get_setting(WORLD_AUTHORITY_SETTING, WORLD_AUTHORITY_AUTHORED))
+	if mode == WORLD_AUTHORITY_ANNEX:
+		return WORLD_AUTHORITY_ANNEX
+	return WORLD_AUTHORITY_AUTHORED
+
+
 func _build_world() -> void:
 	if build_stage != BuildStage.IDLE:
 		return
 	build_stage = BuildStage.LOADING_DATA
+	if _world_authority_mode() == WORLD_AUTHORITY_AUTHORED:
+		_build_authored_world()
+		return
+	_build_annex_world()
+
+
+## The production world: A1's authored continent, mounted by A0 with A0's player,
+## collision, camera, spawn, save and sites. If A1's data cannot be mounted the
+## build fails by name — a silent fall back to the legacy inset is exactly the
+## "sidecar" behaviour this round removes.
+func _build_authored_world() -> void:
+	world_authority = A0_WORLD_AUTHORITY.new()
+	world_authority.name = "AuthoredWorld"
+	add_child(world_authority)
+	var player_scene := PLAYER_SCENE_PATH
+	if not world_authority.configure(self, null, null, player_scene):
+		authored_world_error = String(world_authority.last_error)
+		_fail("AUTHORED_WORLD_REFUSED: " + authored_world_error)
+		return
+	# The spawn is bound to the run that is standing in it, so the run must exist
+	# before it is chosen. That is the same RunLifecycle the economy composition
+	# opens a run through — A0 is one clock, not two, and a run that is already
+	# active refuses to be replaced.
+	var lifecycle := get_node_or_null("/root/RunLifecycle")
+	if lifecycle != null and lifecycle.has_method(&"phase"):
+		var run_state: Dictionary = lifecycle.call(&"phase")
+		# Only an empty profile is opened here. An expired or exited run is the
+		# economy composition's transition to make, with its settlement attached.
+		if String(run_state.get("state", "absent")) == "absent":
+			var opened: Dictionary = lifecycle.call(&"start_run")
+			if not bool(opened.get("ok", false)):
+				push_warning("A0 run open refused: " + String(opened.get("reason", "")))
+	var spawn := world_authority.ensure_spawn()
+	if not bool(spawn.get("ok", false)):
+		authored_world_error = String(spawn.get("reason", ""))
+		_fail("AUTHORED_SPAWN_REFUSED: " + authored_world_error)
+		return
+	world = world_authority.view
+	world.name = "World"
+	world_data = world_authority.world_document()
+	add_child(world)
+	authored_world_active = true
+
+	build_stage = BuildStage.SPAWNING_PLAYER
+	state = OverworldState.new()
+	state.state_saved.connect(_on_state_saved)
+	state.discovery_found.connect(_on_state_discovery)
+	state.shortcut_opened.connect(_on_state_shortcut_opened)
+	state.provisions_changed.connect(_on_provisions_changed)
+	state.configure(world_data, _authored_spawn_world(), StringName("camp_refuge"), _save_service())
+	_spawn_player()
+	_setup_camera()
+	# Hand the authority the real body and camera it will move between exterior and
+	# interior, and the same player scene the reader validated its spawn rules with.
+	world_authority.configure(self, player, camera, player_scene)
+	# The camera is the authored frame, so it cannot be dragged into empty space
+	# outside the continent by a fast player.
+	camera.limit_left = 0
+	camera.limit_top = 0
+	camera.limit_right = int(world_authority.world_pixels().size.x)
+	camera.limit_bottom = int(world_authority.world_pixels().size.y)
+
+	build_stage = BuildStage.RESTORING_PROGRESS
+	_apply_payload_spawn()
+	_restore_progress()
+	# Collision first, then the body is settled onto real ground.
+	_build_authored_traversability()
+	_settle_spawn_on_walkable_ground()
+	print("A0_AUTHORED_SPAWN_SETTLED cell=%s position=%s"
+		% [str(traversability.cell_of(player.position)), str(player.position)])
+	_build_authored_survival()
+	_build_economy_session()
+	_build_economy_composition()
+	_build_occlusion()
+	_build_hud()
+	_build_economy_panel()
+	chest_panel = CHEST_PANEL_SCRIPT.new()
+	chest_panel.name = "ChestInventoryPanel"
+	add_child(chest_panel)
+	_mount_optional_threat()
+	_mount_authored_sites()
+	_connect_run_events()
+	_apply_hud()
+	build_stage = BuildStage.READY
+	var advance := world_authority.advance(player.global_position, _stream_rect())
+	print("A0_AUTHORED_WORLD_READY ", JSON.stringify({
+		"spawn": world_authority.spawn_record(), "stream": world_authority.stream_status(),
+		"advance": advance.get("ok", false)}))
+	world_ready.emit()
+	var survival := get_node_or_null("/root/SurvivalService")
+	if survival != null and not String((survival.call(&"document") as Dictionary).get("pending_death", "")).is_empty():
+		player.call(&"_die")
+
+
+func _build_authored_traversability() -> void:
+	traversability = A0_AUTHORED_TRAVERSABILITY.new() as A0AuthoredTraversability
+	traversability.build_authored(world_authority)
+	# The authored continent has no legacy landmarks to seal off; the endpoints A0
+	# does care about are the two physical sites, and they are checked by the gate
+	# that walks to them.
+	traversability_failures = []
+
+
+func _build_authored_survival() -> void:
+	var root := _ensure_node("Resources")
+	authored_sources = world_authority.mount_authored_sources(root, AUTHORED_SOURCE_KINDS)
+	for entry: Variant in authored_sources:
+		var record: Dictionary = entry
+		var node := root.get_node_or_null("Authored_%s" % String(record.get("node_id", "")).replace(":", "_").replace(",", "_"))
+		if node != null:
+			survival_nodes[String(record.get("node_id", ""))] = node
+	survival_build = SURVIVAL_BUILD_SCRIPT.new() as SurvivalBuildSystem
+	survival_build.name = "SurvivalBuild"
+	add_child(survival_build)
+	survival_build.configure(world, player, camera, state)
+	_death_bag_root = Node2D.new()
+	_death_bag_root.name = "DeathBags"
+	add_child(_death_bag_root)
+	_sync_death_bags()
+	var svc2 := get_node_or_null("/root/SurvivalService")
+	if svc2 != null and svc2.has_signal(&"survival_state_changed"):
+		svc2.connect(&"survival_state_changed", _on_survival_state_changed)
+
+
+func _mount_authored_sites() -> void:
+	var report: Dictionary = world_authority.mount_physical_sites()
+	if not bool(report.get("ok", false)):
+		# Not fatal to the world, but it is named and it travels into the evidence:
+		# a player who cannot reach the quarry cannot be said to have reached it.
+		push_warning("A0 physical sites incomplete: " + JSON.stringify(report))
+	world_authority.bind_focus(player)
+
+
+func _stream_rect() -> Rect2:
+	if not is_inside_tree():
+		return Rect2(0, 0, 1280, 720)
+	var size := get_viewport_rect().size
+	return Rect2(player.global_position - size * 0.5, size)
+
+
+func _authored_spawn_world() -> Vector2:
+	var cell := world_authority.spawn_cell()
+	if cell.x < 0:
+		return Vector2(8, 8)
+	return Vector2(cell.x * OverworldWorld.TILE + OverworldWorld.TILE * 0.5,
+		cell.y * OverworldWorld.TILE + OverworldWorld.TILE * 0.5)
+
+
+func _build_annex_world() -> void:
 	var sources := _world_source_paths()
 	if build_stage == BuildStage.FAILED:
 		return
@@ -306,7 +502,6 @@ func _build_world() -> void:
 			_fail("A1 roadside art candidate refused: " + String(art_result.get("reason", "unknown")))
 			return
 	_mount_optional_threat()
-	_mount_authored_stream()
 	_build_economy_panel()
 	chest_panel = CHEST_PANEL_SCRIPT.new()
 	chest_panel.name = "ChestInventoryPanel"
@@ -322,22 +517,11 @@ func _build_world() -> void:
 		player.call(&"_die")
 
 
-## A1 owns the continent; A0 puts it on screen beside the world it already governs.
-## A refusal is recorded, never hidden: the legacy inset keeps playing either way.
-func _mount_authored_stream() -> void:
-	if not bool(ProjectSettings.get_setting(AUTHORED_STREAM_SETTING, false)):
-		return
-	var mount := A0AuthoredWorldMount.new()
-	mount.name = "AuthoredWorldMount"
-	add_child(mount)
-	if not mount.mount():
-		authored_stream_error = mount.last_error
-		print("A0_AUTHORED_STREAM_REFUSED ", mount.last_error)
-		mount.queue_free()
-		return
-	authored_mount = mount
-	var view := Rect2(Vector2.ZERO, get_viewport_rect().size) if is_inside_tree() else Rect2(0, 0, 1280, 720)
-	print("A0_AUTHORED_STREAM_MOUNTED ", JSON.stringify(mount.advance(player, view)))
+## The annex is a route world now: it is built only in "annex" mode, and the
+## continent is no longer *also* mounted beside whatever else is on screen. One
+## world, one authority — that is the whole point of the R13 change.
+func _annex_mode_note() -> String:
+	return "Hollow Marches annex route world (legacy 384x256 content, reusable)"
 
 
 func _build_economy_session() -> void:
@@ -573,6 +757,10 @@ func _app_flow() -> Node:
 # spawning
 # ---------------------------------------------------------------------------
 func _authored_spawn() -> Vector2:
+	# On the authored continent the spawn is A1's safe choice stored in A0's save,
+	# never the legacy refuge cell.
+	if world_authority != null and is_instance_valid(world_authority) and authored_world_active:
+		return _authored_spawn_world()
 	var start: Array = world_data.get("start_position", [56, 218])
 	if start.size() < 2:
 		return Vector2(56 * 16 + 8, 218 * 16 + 8)
@@ -835,9 +1023,18 @@ func _process(delta: float) -> void:
 	_apply_fatigue()
 	_apply_hud()
 	_handle_survival_input()
-	if authored_mount != null and is_instance_valid(authored_mount) and _frame_count % 15 == 0:
-		var camera_view := Rect2(camera.get_screen_center_position() - Vector2(640, 360), Vector2(1280, 720))
-		authored_mount.advance(player, camera_view)
+	if world_authority != null and is_instance_valid(world_authority) and _frame_count % 10 == 0 \
+			and String(world_authority.inside_site()).is_empty():
+		# Inside a worksite the body stands at the interior origin, which is not a
+		# cell of the continent; streaming there would ask A1 for a chunk that cannot
+		# exist. The exterior stays loaded and suspended until the player walks out.
+		# Stream around the real viewport the camera is showing, not a fixed
+		# 1280x720 guess: a 2160p player sees four times as much continent.
+		var screen := get_viewport_rect().size
+		var view := Rect2(camera.get_screen_center_position() - screen * 0.5, screen)
+		var streamed: Dictionary = world_authority.advance(player.global_position, view)
+		if not bool(streamed.get("ok", false)) and _frame_count % 120 == 0:
+			push_warning("A0 authored stream: " + String(streamed.get("error", "")))
 	if _perf_trace_enabled and _perf_trace_usec.size() < 240:
 		_perf_trace_usec.append(Time.get_ticks_usec() - perf_start)
 
@@ -953,6 +1150,15 @@ func _world_action_just_pressed(action: StringName) -> bool:
 ## touch the Knight's combat bindings, and the modal build tool is enterable and
 ## leavable with one key so an accidental press cannot trap the player.
 func _handle_survival_input() -> void:
+	# The ordinary interact key is how a player enters a worksite doorway, works at
+	# its socket, or walks back out. A0 remains the only code that moves the body.
+	if world_authority != null and is_instance_valid(world_authority) and not bool(player.get(&"dead")) \
+			and _world_action_just_pressed(&"interact") and not _has_gameplay_modal():
+		var result: Dictionary = world_authority.interact(player)
+		if bool(result.get("ok", false)) or String(result.get("action", "")) != "no_site_in_reach":
+			print("A0_SITE_INPUT ", JSON.stringify(result))
+			get_viewport().set_input_as_handled()
+			return
 	if _world_action_just_pressed(PREPARE_WORK_ACTION) and not bool(player.get(&"dead")):
 		_prepare_work_at_nearest_station()
 		return
@@ -1057,6 +1263,13 @@ func _apply_hud() -> void:
 
 
 func _region_label() -> String:
+	# On the authored continent A1 names the region; the legacy landmark table does
+	# not exist there, and an empty label would show the world id to the player.
+	if authored_world_active and world_authority != null and is_instance_valid(world_authority) \
+			and is_instance_valid(player):
+		var authored_label := String(world_authority.region_label_at(player.global_position))
+		if not authored_label.is_empty():
+			return authored_label
 	var region := _region_at(player.global_position) if is_instance_valid(player) else ""
 	if region.is_empty():
 		return "THE HOLLOW MARCHES"
