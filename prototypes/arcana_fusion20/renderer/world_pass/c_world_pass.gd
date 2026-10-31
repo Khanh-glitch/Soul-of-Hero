@@ -12,6 +12,7 @@ var _material: ShaderMaterial
 var _textures: Dictionary = {}
 var _previous_activity := -1
 var upload_counts: Dictionary = {} # diagnostic texture update/create counts
+var uploaded_bytes := 0 # raw input bytes; excludes driver/GPU allocation overhead
 
 func _init() -> void:
     z_index = -24 # A0 Hollow Marches terrain z=-30..-26, entities z=0.
@@ -92,6 +93,8 @@ func _field_needs_upload(key: String, activity: int, bit: int) -> bool:
 
 func _set_texture(key: String, image: Image) -> ImageTexture:
     upload_counts[key] = int(upload_counts.get(key, 0)) + 1
+    var bytes_per_pixel := 16 if image.get_format() == Image.FORMAT_RGBAF else (1 if image.get_format() == Image.FORMAT_R8 else 4)
+    uploaded_bytes += image.get_width() * image.get_height() * bytes_per_pixel
     if not _textures.has(key) or Vector2i((_textures[key] as ImageTexture).get_width(), (_textures[key] as ImageTexture).get_height()) != image.get_size():
         _textures[key] = ImageTexture.create_from_image(image)
     else:

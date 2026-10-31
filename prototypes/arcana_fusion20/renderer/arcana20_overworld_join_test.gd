@@ -788,6 +788,12 @@ func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D)
         "live_object_delta": live_objects - before_objects,
         "allocation_count": "not exposed by this Godot diagnostic",
         "enemy_hp_before": hp, "enemy_hp_after": int(enemy.get("health"))}
+    var second_viewers: Dictionary = mount._passes.get(id10, {})
+    if second_viewers.has(&"C"):
+        var c_viewer := second_viewers[&"C"] as Arcana20CWorldPass
+        record["c_field_upload_counts"] = c_viewer.upload_counts.duplicate()
+        record["c_field_raw_upload_bytes"] = c_viewer.uploaded_bytes
+        record["c_field_upload_scope"] = "raw Image bytes submitted to C viewer since cast start, not GPU allocations or bandwidth"
     check(int(enemy.get("health")) == hp, "overlap visuals have no damage authority")
     renderer.cancel_all()
     await process_frame
