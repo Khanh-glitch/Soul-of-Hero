@@ -164,6 +164,9 @@ func _run() -> void:
     check(binding.call(&"get_actor_visual", enemy) != null, "PR30 actual AnimatedSprite reaction bound")
     await process_frame
     await save_frame("real_overworld_receipt")
+    if OS.get_environment("ARCANA20_SWEEP") == "1":
+        await _sweep_all20(app, world, player, enemy, camera)
+        return
 
     # Freeze the actual world while comparing the same terrain at a single
     # source tick. This is an offline diagnostic, not normal-speed gameplay.
@@ -423,6 +426,132 @@ func _run() -> void:
     f.store_string(JSON.stringify({"stats": stats, "scope": "frozen actual overworld; one tick; experimental A/B/C terrain passes only; #04 is an unapproved redesign candidate; not source fidelity, gameplay, post, actor depth or approval"}, "  "))
     f.close()
     passes.clear()
+    app.queue_free()
+    await process_frame
+    await process_frame
+    _finish()
+
+## Frozen-world matrix: smoke/anchoring only. No production performance or
+## visual/source approval; all captures use the independently pinned route.
+func _sweep_all20(app: Node, world: Node, player: Node2D, enemy: Node2D, camera: Camera2D) -> void:
+    app.process_mode = Node.PROCESS_MODE_DISABLED
+    var renderer := Arcana20Renderer.new()
+    renderer.world_pass_mode = true
+    renderer.process_mode = Node.PROCESS_MODE_ALWAYS
+    world.add_child(renderer)
+    var mount := Arcana20WorldPassMount.new()
+    mount.process_mode = Node.PROCESS_MODE_ALWAYS
+    world.add_child(mount)
+    check(mount.attach(renderer), "all20 sweep opt-in world mount")
+    camera.force_update_scroll()
+    await process_frame
+    await process_frame
+    var baseline := await save_frame("sweep_baseline")
+    camera.offset += Vector2(40, 20)
+    camera.force_update_scroll()
+    await process_frame
+    await process_frame
+    await save_frame("sweep_baseline_shifted")
+    camera.offset -= Vector2(40, 20)
+    camera.force_update_scroll()
+    await process_frame
+    await process_frame
+    var records: Array = []
+    for num in range(1, 21):
+        var id := Arcana20SourceCatalog.canonical_id(num)
+        var memory_before := Performance.get_monitor(Performance.MEMORY_STATIC)
+        var started := Time.get_ticks_usec()
+        var accepted := renderer.cast_skill(id, player.global_position, enemy.global_position)
+        if not accepted or not renderer._casts.has(id):
+            check(false, "all20 cast available %d" % num)
+            records.append({"id": num, "failure": "cast rejected"})
+            continue
+        var source: Node = renderer._casts[id]
+        source.set_process(false)
+        if source is FusionPlayer:
+            for part in (source as FusionPlayer)._pending:
+                var child: Node = part.node
+                child.set("render_enabled", false)
+            for tick in range(120): (source as FusionPlayer).advance(STEP)
+            for part in (source as FusionPlayer)._pending:
+                var child: Node = part.node
+                child.set("render_enabled", true)
+                child.call("_render_frame")
+        elif source is ASourcePlayer:
+            var a := source as ASourcePlayer
+            a.render_enabled = false
+            for tick in range(120): a.advance(STEP, false)
+            a.render_enabled = true
+            a._render_frame()
+        elif source is CSourcePlayer:
+            var c := source as CSourcePlayer
+            c.render_enabled = false
+            for tick in range(120): c.advance(STEP, false)
+            c.render_enabled = true
+            c._render_frame()
+        elif source is DSourcePlayer:
+            var d := source as DSourcePlayer
+            d.render_enabled = false
+            for tick in range(120): d.advance(STEP)
+            d.render_enabled = true
+            d._render_frame()
+        elif source is BSourcePlayer:
+            var b := source as BSourcePlayer
+            b.advance(2.0)
+            b._render_frame()
+        else:
+            check(false, "all20 source pass producer %d" % num)
+        var source_snapshot_ms := float(Time.get_ticks_usec() - started) / 1000.0
+        await process_frame
+        await process_frame
+        var cast_image := await save_frame("sweep_%02d" % num)
+        var by_family: Dictionary = mount._passes.get(id, {})
+        var screen_positions := {}
+        var world_transforms := {}
+        for family in by_family:
+            var viewer: Node2D = by_family[family]
+            var sprite := viewer.get("_sprite") as Sprite2D
+            world_transforms[family] = sprite.global_transform
+            screen_positions[family] = root.get_final_transform() * (sprite.get_global_transform_with_canvas() * Vector2.ZERO)
+        camera.offset += Vector2(40, 20)
+        camera.force_update_scroll()
+        for viewer in by_family.values(): viewer.call("_update_camera_basis")
+        await process_frame
+        await process_frame
+        await save_frame("sweep_%02d_shifted" % num)
+        var world_fixed := true
+        var screen_delta := Vector2.ZERO
+        for family in by_family:
+            var sprite := (by_family[family] as Node).get("_sprite") as Sprite2D
+            var before_world: Transform2D = world_transforms[family]
+            var before_screen: Vector2 = screen_positions[family]
+            world_fixed = world_fixed and sprite.global_transform.is_equal_approx(before_world)
+            screen_delta = root.get_final_transform() * (sprite.get_global_transform_with_canvas() * Vector2.ZERO) - before_screen
+            # The logical canvas must move by -camera even if output scaling
+            # changes physical pixel size.
+            var logical_delta := root.get_final_transform().affine_inverse().basis_xform(screen_delta)
+            world_fixed = world_fixed and logical_delta.distance_to(Vector2(-40, -20)) < 0.1
+        camera.offset -= Vector2(40, 20)
+        camera.force_update_scroll()
+        for viewer in by_family.values(): viewer.call("_update_camera_basis")
+        check(not by_family.is_empty(), "all20 viewer exists %d" % num)
+        check(world_fixed and not by_family.is_empty(), "all20 field transform camera anchoring %d" % num)
+        renderer.cancel_skill(id)
+        await process_frame
+        await process_frame
+        var cleared := await save_frame("sweep_%02d_cleared" % num)
+        var restored := images_equal(baseline, cleared)
+        check(restored and mount.active_viewers(id) == 0, "all20 cancellation restores world %d" % num)
+        var record := {"id": num, "tick": 120, "families": by_family.keys(), "world_changed": not images_equal(baseline, cast_image),
+            "camera_pixel_delta": [screen_delta.x, screen_delta.y], "anchored": world_fixed,
+            "restored": restored, "single_source_snapshot_ms": source_snapshot_ms,
+            "static_memory_delta_bytes": Performance.get_monitor(Performance.MEMORY_STATIC) - memory_before}
+        records.append(record)
+        print("JOIN_SWEEP ", JSON.stringify(record))
+    var file := FileAccess.open(OUTPUT + "/all20_sweep.json", FileAccess.WRITE)
+    file.store_string(JSON.stringify({"scope": "frozen historical overworld; tick 120 only; not target performance or visual acceptance", "records": records}, "  "))
+    file.close()
+    mount.detach()
     app.queue_free()
     await process_frame
     await process_frame

@@ -1,0 +1,64 @@
+name: ARCANA20 all-20 actual-overworld frozen sweep
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths:
+      - '.github/workflows/arcana20-overworld-sweep.yml'
+      - 'tools/arcana20_world_sweep/**'
+permissions:
+  contents: read
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fetch pinned owner objects and assemble disposable overlay
+        run: |
+          git fetch --no-tags origin 62f6a32d08d319bfdcd28235786558f54f49b420 6b801554a6af95424b4e39dd29f43c146aa13848 2cb1a3c5f093724eb9fecbdf45909ccb611f7b32 18e7afcbd576bbd9bfbcc509b2ee13216186a522 e505173edd119fdd955cf6249511b575a5468440
+          python3 tools/arcana20_join/assemble.py --out "$RUNNER_TEMP/arcana20-sweep" --avfx-sha "$GITHUB_SHA"
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import pinned project
+        run: |
+          set -o pipefail
+          mkdir -p "$RUNNER_TEMP/arcana20-sweep/artifacts"
+          timeout 300s godot --headless --path "$RUNNER_TEMP/arcana20-sweep" --import 2>&1 | tee "$RUNNER_TEMP/arcana20-sweep/artifacts/import.log"
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/arcana20-sweep/artifacts/import.log"
+      - name: Run frozen tick-120 all-20 capture, anchoring and cancellation
+        run: |
+          set -o pipefail
+          timeout --signal=TERM --kill-after=10s 2100s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 ARCANA20_SWEEP=1 \
+            godot --verbose --path "$RUNNER_TEMP/arcana20-sweep" --rendering-method gl_compatibility --audio-driver Dummy --resolution 1280x720 --windowed \
+            --user-data-dir "$RUNNER_TEMP/arcana20-sweep-user" --script res://prototypes/arcana_fusion20/renderer/arcana20_overworld_join_test.gd \
+            2>&1 | tee "$RUNNER_TEMP/arcana20-sweep/artifacts/sweep.log"
+          grep -Fq 'ARCANA20_JOIN_DIAGNOSTIC PASS' "$RUNNER_TEMP/arcana20-sweep/artifacts/sweep.log"
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Shader compilation failed|JOIN_FAIL' "$RUNNER_TEMP/arcana20-sweep/artifacts/sweep.log"
+      - name: Compare actual changed screen pixels after camera movement
+        if: always()
+        run: |
+          if test -f "$RUNNER_TEMP/arcana20-sweep/artifacts/arcana20-join/all20_sweep.json"; then
+            python3 -m pip install --quiet pillow numpy
+            python3 tools/arcana20_world_sweep/compare_camera.py "$RUNNER_TEMP/arcana20-sweep/artifacts/arcana20-join" | tee "$RUNNER_TEMP/arcana20-sweep/artifacts/camera.log"
+            sed 's/^/::notice::/' "$RUNNER_TEMP/arcana20-sweep/artifacts/camera.log"
+          fi
+      - name: Report first runtime error and all cast results
+        if: always()
+        run: |
+          if test -f "$RUNNER_TEMP/arcana20-sweep/artifacts/sweep.log"; then
+            grep -E 'JOIN_SWEEP|JOIN_FAIL|SCRIPT ERROR|Parse Error|ARCANA20_JOIN_DIAGNOSTIC' "$RUNNER_TEMP/arcana20-sweep/artifacts/sweep.log" | head -30 | while IFS= read -r l; do echo "::notice::$l"; done || true
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcana20-frozen-overworld-all20-sweep
+          path: |
+            ${{ runner.temp }}/arcana20-sweep/arcana20_join_manifest.json
+            ${{ runner.temp }}/arcana20-sweep/artifacts/
+          if-no-files-found: warn
