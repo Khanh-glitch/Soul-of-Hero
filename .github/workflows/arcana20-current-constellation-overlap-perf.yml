@@ -1,0 +1,66 @@
+name: ARCANA20 current-A0 Constellation overlap frame diagnostic
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths:
+      - '.github/workflows/arcana20-current-constellation-overlap-perf.yml'
+      - 'prototypes/arcana_fusion20/renderer/source_d/**'
+      - 'prototypes/arcana_fusion20/renderer/arcana20_overworld_join_test.gd'
+permissions:
+  contents: read
+jobs:
+  frame-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        resolution: ['1280x720', '2560x1440', '3840x2160']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Assemble pinned disposable overworld
+        run: |
+          git fetch --no-tags origin 9eaa1936682d3941282185249a7ae37d21abf328 6b801554a6af95424b4e39dd29f43c146aa13848 2cb1a3c5f093724eb9fecbdf45909ccb611f7b32 18e7afcbd576bbd9bfbcc509b2ee13216186a522 e505173edd119fdd955cf6249511b575a5468440
+          python3 tools/arcana20_join/assemble.py --out "$RUNNER_TEMP/arcana20-perf" --avfx-sha "$GITHUB_SHA" --a0-sha 9eaa1936682d3941282185249a7ae37d21abf328
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import pinned project
+        run: |
+          set -o pipefail
+          mkdir -p "$RUNNER_TEMP/arcana20-perf/artifacts"
+          timeout 300s godot --headless --path "$RUNNER_TEMP/arcana20-perf" --import 2>&1 | tee "$RUNNER_TEMP/arcana20-perf/artifacts/import.log"
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/arcana20-perf/artifacts/import.log"
+      - name: Install physical X11 screenshot helper
+        run: python3 -m pip install --quiet mss
+      - name: Capture actual post-draw overlap intervals
+        env:
+          RESOLUTION: ${{ matrix.resolution }}
+          ARCANA20_PERF_SECOND: '19'
+        run: |
+          set -o pipefail
+          timeout --signal=TERM --kill-after=10s 1800s xvfb-run -a -s "-screen 0 ${RESOLUTION}x24" env LIBGL_ALWAYS_SOFTWARE=1 ARCANA20_PERF=1 ARCANA20_PROFILE_CPU=1 \
+            godot --verbose --path "$RUNNER_TEMP/arcana20-perf" --rendering-method gl_compatibility --audio-driver Dummy --resolution "$RESOLUTION" --windowed \
+            --user-data-dir "$RUNNER_TEMP/arcana20-perf-user" --script res://prototypes/arcana_fusion20/renderer/arcana20_overworld_join_test.gd \
+            2>&1 | tee "$RUNNER_TEMP/arcana20-perf/artifacts/perf.log"
+          grep -Fq 'ARCANA20_JOIN_DIAGNOSTIC PASS' "$RUNNER_TEMP/arcana20-perf/artifacts/perf.log"
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Shader compilation failed|JOIN_FAIL' "$RUNNER_TEMP/arcana20-perf/artifacts/perf.log"
+      - name: Report metrics
+        if: always()
+        run: |
+          if test -f "$RUNNER_TEMP/arcana20-perf/artifacts/perf.log"; then
+            grep -E 'JOIN_RENDERED_FRAME_PERF|JOIN_FAIL|SCRIPT ERROR|Parse Error|ARCANA20_JOIN_DIAGNOSTIC' "$RUNNER_TEMP/arcana20-perf/artifacts/perf.log" | head -20 | while IFS= read -r l; do echo "::notice::$l"; done || true
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcana20-current-constellation-overlap-perf-${{ matrix.resolution }}
+          path: |
+            ${{ runner.temp }}/arcana20-perf/arcana20_join_manifest.json
+            ${{ runner.temp }}/arcana20-perf/artifacts/
+          if-no-files-found: warn

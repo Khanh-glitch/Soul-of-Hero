@@ -24,6 +24,9 @@ var _origin := Vector2.ZERO
 var _target := Vector2.ZERO
 var _rot := 0.0
 var _scale := 1.0
+var profile_cpu := false
+var profile_update_us: Array[float] = []
+var profile_submit_us: Array[float] = []
 
 func _ready() -> void:
     _ensure()
@@ -45,6 +48,9 @@ func _ensure() -> void:
 
 func begin(caster_world: Vector2, target_world: Vector2) -> void:
     _ensure()
+    profile_cpu = OS.get_environment("ARCANA20_PROFILE_CPU") == "1"
+    profile_update_us.clear()
+    profile_submit_us.clear()
     _eng = DConstellationEngine.new()
     _eng.setup()
     # Original D's additive g scene is RGBA8, with normalized fragment
@@ -94,7 +100,9 @@ func advance(dt: float) -> void:
         _tick += 1
         # Original D's first browser frame after cast initializes with the
         # source reset delta (0.0001s); later simulation stays fixed 60 Hz.
+        var update_start := Time.get_ticks_usec() if profile_cpu else 0
         _eng.update(source_time(), 0.0001 if _tick == 1 else STEP)
+        if profile_cpu: profile_update_us.append(float(Time.get_ticks_usec() - update_start))
         _fire_events()
         if source_time() >= duration:
             _active = false
@@ -122,7 +130,9 @@ func _render_frame() -> void:
         return
     if world_pass_mode:
         _sprite.visible = false
+        var submit_start := Time.get_ticks_usec() if profile_cpu else 0
         source_pass_ready.emit(source_pass_frame())
+        if profile_cpu: profile_submit_us.append(float(Time.get_ticks_usec() - submit_start))
         return
     var bytes := _eng.frame_bytes()
     var img := Image.create_from_data(DFx.W, DFx.H, false, Image.FORMAT_RGBA8, bytes)

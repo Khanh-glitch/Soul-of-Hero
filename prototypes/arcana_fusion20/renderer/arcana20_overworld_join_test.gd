@@ -851,7 +851,7 @@ func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D)
     check(mount.attach(renderer), "overlap perf source mount")
     var id2 := Arcana20SourceCatalog.canonical_id(2)
     var requested_second := int(OS.get_environment("ARCANA20_PERF_SECOND"))
-    var second_skill := requested_second if requested_second in [16, 20] else 10
+    var second_skill := requested_second if requested_second in [16, 19, 20] else 10
     var id10 := Arcana20SourceCatalog.canonical_id(second_skill)
     var before_memory := Performance.get_monitor(Performance.MEMORY_STATIC)
     var before_objects := Performance.get_monitor(Performance.OBJECT_COUNT)
@@ -885,6 +885,7 @@ func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D)
     var sampled_second: Node = renderer._casts.get(id10)
     if sampled_second is CSourcePlayer: source_tick_start = (sampled_second as CSourcePlayer)._tick
     elif sampled_second is FusionPlayer: source_tick_start = (sampled_second as FusionPlayer)._tick
+    elif sampled_second is DSourcePlayer: source_tick_start = (sampled_second as DSourcePlayer)._tick
     var profiled_second_a: ASourcePlayer = null
     if sampled_second is ASourcePlayer: profiled_second_a = sampled_second as ASourcePlayer
     elif sampled_second is FusionPlayer:
@@ -919,7 +920,8 @@ func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D)
     if is_instance_valid(sampled_second):
         if sampled_second is CSourcePlayer: source_tick_end = (sampled_second as CSourcePlayer)._tick
         elif sampled_second is FusionPlayer: source_tick_end = (sampled_second as FusionPlayer)._tick
-    var record := {"scope": "concurrent #02+#%02d sampled frames on real historical overworld; shared software-rendered CI, not a target-device budget or full-cast measurement" % second_skill,
+        elif sampled_second is DSourcePlayer: source_tick_end = (sampled_second as DSourcePlayer)._tick
+    var record := {"scope": "concurrent #02+#%02d sampled frames on real assembled pinned overworld; shared software-rendered CI, not a target-device budget or full-cast measurement" % second_skill,
         "second_source_tick_start": source_tick_start, "second_source_tick_end": source_tick_end,
         "viewport_capture_size": [viewport_size.x, viewport_size.y],
         "physical_capture_size": [physical_size.x, physical_size.y],
@@ -929,6 +931,14 @@ func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D)
         "live_object_delta": live_objects - before_objects,
         "allocation_count": "not exposed by this Godot diagnostic",
         "enemy_hp_before": hp, "enemy_hp_after": int(enemy.get("health"))}
+    if is_instance_valid(sampled_second) and sampled_second is DSourcePlayer:
+        var d_profile := sampled_second as DSourcePlayer
+        if d_profile.profile_cpu and not d_profile.profile_update_us.is_empty():
+            record["d_cpu_scope"] = "D per-fixed-tick source simulation plus CPU raster in microseconds; synchronous source pass submission is not GPU time; initial samples may precede overlap"
+            record["d_cpu_update_sample_count"] = d_profile.profile_update_us.size()
+            record["d_cpu_update_p50_p95_p99_us"] = [_perf_percentile(d_profile.profile_update_us, 0.5), _perf_percentile(d_profile.profile_update_us, 0.95), _perf_percentile(d_profile.profile_update_us, 0.99)]
+            if not d_profile.profile_submit_us.is_empty():
+                record["d_cpu_submit_p50_p95_p99_us"] = [_perf_percentile(d_profile.profile_submit_us, 0.5), _perf_percentile(d_profile.profile_submit_us, 0.95), _perf_percentile(d_profile.profile_submit_us, 0.99)]
     if is_instance_valid(profiled_second_a) and not profiled_second_a.profile_clear_us.is_empty():
         record["second_a_cpu_sample_count"] = profiled_second_a.profile_clear_us.size()
         record["second_a_cpu_clear_p50_p95_p99_us"] = [_perf_percentile(profiled_second_a.profile_clear_us, 0.5), _perf_percentile(profiled_second_a.profile_clear_us, 0.95), _perf_percentile(profiled_second_a.profile_clear_us, 0.99)]
