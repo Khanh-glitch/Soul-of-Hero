@@ -36,6 +36,13 @@ failed; this historical pin is not an endorsement of the latest route.
   parity, phase, occlusion, native-size color or owner review. Raw screenshots
   and source fields are in the JOIN artifacts. No simulated arena screenshot is
   used as acceptance.
+- [JOIN 41209253992](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41209253992)
+  at `cb634486` additionally passed frozen #02+#10 cross-family and #02+#03
+  same-family overlap/cancel restoration and #05 A/C shared-world/cancel
+  checks. These exercise composition and cleanup only, not live play or full
+  source fidelity. #05 uses original A opening/peak and C late column/fall
+  candidates with a 0.6s offset and A eruption tails excluded; its full cast,
+  original-source pass comparison and owner review remain open.
 - #09 `e0cae48d` adds an experimental A graph schedule with actual actor
   references, B ARC colors and C `bolt_pts`. Its native JOIN and source tests
   [JOIN run 41208565813](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41208565813)
@@ -43,7 +50,7 @@ failed; this historical pin is not an endorsement of the latest route.
   diagnostics. This one-injected-actor test is not AI targeting or source
   fidelity. Source regression/full capture and later revisions remain pending.
   Legacy candidate remains separate. No effects engine mutates combat HP.
-- Screen flash/shake, D full bloom/warp, A body integration, world lighting,
+- Screen flash/shake, D full bloom/post fidelity, A body integration, world lighting,
   post overlap policy, occlusion layers, target-device performance and all
   same-seed original-vs-native full-cast comparisons remain open. Experimental
   per-frame CPU packing is not a production renderer.
@@ -54,7 +61,7 @@ failed; this historical pin is not an endorsement of the latest route.
 | 02 | B world pass diagnostic | [run 41207915157](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41207915157), one frozen frame only |
 | 03 | B world fields available | Actual-world comparison and lifecycle not checked |
 | 04 | A world pass diagnostic; REDESIGN_CANDIDATE | [run 41208517991](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41208517991); no visual approval |
-| 05 | A candidate fields available | Original A opening + C pillar/fall not integrated; one role owner |
+| 05 | World-mode A original opening/peak + C selected column/fall candidates, one frozen JOIN sample | [run 41209253992](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41209253992); source pass comparison, wet actor and whole-cast review missing |
 | 06 | A candidate fields available; REDESIGN_CANDIDATE | Moving-tip sweep, water and full world review missing |
 | 07 | C world fields available | Actual-world comparisons, occlusion, phases missing |
 | 08 | B world fields available | Actual-world comparisons, post, gameplay missing |
@@ -68,9 +75,20 @@ failed; this historical pin is not an endorsement of the latest route.
 | 16 | A candidate fields available | Original A growth and C palette/material not integrated |
 | 17 | C world pass diagnostic incl. live-screen fragment mapping | [run 41207915157](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41207915157), one frozen frame only |
 | 18 | A candidate fields available; REDESIGN_CANDIDATE | Real actors, full-cast and world review missing |
-| 19 | D additive source fields + recorded bend descriptors | Actual D warp raster, bloom/post/OUT, native consumer and original parity missing |
+| 19 | D additive and persistent warp field/world consumer added at `177f8228`; native test pending | D bloom/post, OUT review and original parity missing |
 | 20 | A candidate fields available | Original C rift and A real-world deformation not integrated |
 
 Run-level pass does not override a failing check annotation. No thresholds have
 been relaxed. Only CT owns `soh_binding/**`; no production mount, merge, fake
 battlefield composition, visual approval, or damage authority is claimed.
+
+## Known regression under investigation
+
+Run [41209339382](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41209339382)
+at `e45b1504` failed a **single JS-vs-Godot exact A hash** test at the large
+coordinate `(9000,1244)` after the signed-shift correction. Other listed hash
+vectors passed. Diagnostic `407afd03` prints native intermediates; do not mark
+A source math proven or weaken the expected value. The real-world JOIN was
+successful at that SHA, but that does not clear this independent source gate.
+The JOIN shutdown still reported 17 ObjectDB instances / 5 resources in use;
+verbose investigation is active.
