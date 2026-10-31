@@ -6,6 +6,7 @@ on:
     paths:
       - 'prototypes/arcana_fusion20/renderer/c20_raster_benchmark.gd'
       - 'prototypes/arcana_fusion20/renderer/source_c/c_reality_ripper_fusion.gd'
+      - 'prototypes/arcana_fusion20/renderer/source_c/c_math.gd'
       - '.github/workflows/arcana20-c20-raster-benchmark.yml'
 permissions:
   contents: read
@@ -25,7 +26,8 @@ jobs:
       - name: Materialize exact previous AVFX source as diagnostic baseline
         run: |
           mkdir -p artifacts/arcana20-c20-benchmark
-          git show 4f00b5d67bd46c2ae7d13e8fc5bb1dba7497d657:prototypes/arcana_fusion20/renderer/source_c/c_reality_ripper_fusion.gd | sed 's/^class_name CRealityRipperFusion$/class_name C20BenchmarkBaseline/' > artifacts/arcana20-c20-benchmark/baseline_rift.gd
+          git show 4f00b5d67bd46c2ae7d13e8fc5bb1dba7497d657:prototypes/arcana_fusion20/renderer/source_c/c_math.gd | sed 's/CMath/C20LegacyMath/g' > artifacts/arcana20-c20-benchmark/legacy_math.gd
+          git show 4f00b5d67bd46c2ae7d13e8fc5bb1dba7497d657:prototypes/arcana_fusion20/renderer/source_c/c_reality_ripper_fusion.gd | sed -e 's/^class_name CRealityRipperFusion$/class_name C20BenchmarkBaseline/' -e 's/CMath/C20LegacyMath/g' > artifacts/arcana20-c20-benchmark/baseline_rift.gd
       - name: Import project
         run: |
           set -o pipefail

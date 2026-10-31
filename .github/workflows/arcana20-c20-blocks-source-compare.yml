@@ -7,6 +7,7 @@ on:
       - 'tools/arcana20_source_compare/c20_blocks_reference.ts'
       - 'tools/arcana20_source_compare/compare_c20_blocks.py'
       - 'prototypes/arcana_fusion20/renderer/c20_blocks_source_compare.gd'
+      - 'prototypes/arcana_fusion20/renderer/source_c/c_math.gd'
       - 'prototypes/arcana_fusion20/renderer/source_c/c_reality_ripper_fusion.gd'
       - '.github/workflows/arcana20-c20-blocks-source-compare.yml'
 permissions:
