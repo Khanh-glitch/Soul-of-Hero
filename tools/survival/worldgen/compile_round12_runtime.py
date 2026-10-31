@@ -38,6 +38,11 @@ def canon(value) -> str:
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
 
 
+def json_bytes(value) -> bytes:
+    """The sole whole-file JSON serialization/hash domain for derived packets."""
+    return (json.dumps(value, indent=2, sort_keys=True) + "\n").encode("utf-8")
+
+
 def load(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -752,7 +757,7 @@ class RuntimeBuilder:
             "schema": "soh.world.a1_round12_native_inputs.v1",
             "source_contract": str(self.contract_path.relative_to(ROOT)),
             "source_contract_sha256": sha_file(self.contract_path),
-            "spawn_index_sha256": hashlib.sha256(canon(spawn_index).encode()).hexdigest(),
+            "spawn_index_sha256": hashlib.sha256(json_bytes(spawn_index)).hexdigest(),
             "world_id": self.plan["world_id"], "world_plan_sha256": sha_file(WORLD / "world_plan.v1.json"),
             "world_extents_cells": [0, 0, self.w, self.h], "chunk_cells": 64, "tile_px": 16,
             "reader_script": self.contract["reader_api"]["script"], "stream_script": self.contract["reader_api"]["stream_script"],
@@ -788,7 +793,7 @@ class RuntimeBuilder:
 
 def write_json(path: Path, value: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    path.write_bytes(json_bytes(value))
 
 
 def build(contract_path: Path = CONTRACT) -> dict:

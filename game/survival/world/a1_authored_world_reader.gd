@@ -148,6 +148,15 @@ func configure(world_root: String = DEFAULT_WORLD_ROOT) -> bool:
 	return true
 
 
+static func _int_array_equals(value: Variant, expected: Array) -> bool:
+	if not value is Array or (value as Array).size() != expected.size():
+		return false
+	for index: int in range(expected.size()):
+		if int((value as Array)[index]) != int(expected[index]):
+			return false
+	return true
+
+
 func _json_object(path: String) -> Dictionary:
 	if not FileAccess.file_exists(path):
 		return {}
@@ -164,7 +173,8 @@ func _configure_runtime() -> bool:
 	var api: Dictionary = runtime_contract.get("reader_api", {})
 	var expected_frame: Array = api.get("frame", [])
 	var frame: Dictionary = plan.get("frame", {})
-	if expected_frame != [1024, 768] or int(frame.get("w", 0)) != 1024 or int(frame.get("h", 0)) != 768:
+	if expected_frame.size() != 2 or int(expected_frame[0]) != 1024 or int(expected_frame[1]) != 768 \
+			or int(frame.get("w", 0)) != 1024 or int(frame.get("h", 0)) != 768:
 		last_error = "runtime_frame"
 		return false
 	var pins: Dictionary = runtime_contract.get("source_pins", {})
@@ -282,8 +292,8 @@ func _compile_physical_sites() -> bool:
 			return false
 		if String((source.get("source", {}) as Dictionary).get("poi_id", "")) != String(spec.poi_id) \
 				or (source.get("source", {}) as Dictionary).get("canonical_cell", []) != cell \
-				or shell.get("canonical_cell", []) != cell or shell.get("bounds_px", []) != [128, 128] \
-				or shell.get("scale", []) != [1, 1] or int(shell.get("rotation_degrees", -1)) != 0:
+				or shell.get("canonical_cell", []) != cell or not _int_array_equals(shell.get("bounds_px", []), [128, 128]) \
+				or not _int_array_equals(shell.get("scale", []), [1, 1]) or int(shell.get("rotation_degrees", -1)) != 0:
 			last_error = "a8_site_identity:" + key
 			return false
 		var poi: Dictionary = _pois_by_id.get(String(spec.poi_id), {})

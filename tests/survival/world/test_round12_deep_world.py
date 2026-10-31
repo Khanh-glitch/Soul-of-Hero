@@ -62,6 +62,7 @@ def test_exact_a8_transforms_and_physical_stands(native_inputs: dict) -> None:
 def test_broad_spawn_index_is_deterministic_and_non_fixture(native_inputs: dict) -> None:
     spawn = native_inputs["spawn_safety"]
     cases = spawn["cases"]
+    assert native_inputs["spawn_index_sha256"] == compiler.sha_file(compiler.SPAWN_INDEX)
     assert spawn["candidate_cells"] >= 20_000
     assert spawn["candidate_chunks"] >= 18
     assert set(spawn["region_counts"]) == {"r_ashen_crown", "r_amberwood", "r_mirrormere"}

@@ -128,9 +128,14 @@ func _verify_sources() -> void:
 	if inputs.is_empty():
 		abort = true
 		return
-	_expect(FileAccess.get_sha256(_source_path(String(inputs.source_contract))) == String(inputs.source_contract_sha256), "runtime contract exact bytes")
-	_expect(FileAccess.get_sha256(_source_path(String(inputs.spawn_index_path))) == String(inputs.spawn_index_sha256), "spawn index exact bytes")
-	_expect(FileAccess.get_sha256("res://data/survival/world/world_plan.v1.json") == String(inputs.world_plan_sha256), "master geography exact bytes")
+	var contract_ok := FileAccess.get_sha256(_source_path(String(inputs.source_contract))) == String(inputs.source_contract_sha256)
+	var spawn_ok := FileAccess.get_sha256(_source_path(String(inputs.spawn_index_path))) == String(inputs.spawn_index_sha256)
+	var plan_ok := FileAccess.get_sha256("res://data/survival/world/world_plan.v1.json") == String(inputs.world_plan_sha256)
+	_expect(contract_ok, "runtime contract exact bytes")
+	_expect(spawn_ok, "spawn index exact whole-file bytes")
+	_expect(plan_ok, "master geography exact bytes")
+	if not contract_ok or not spawn_ok or not plan_ok:
+		abort = true
 	for key: String in (inputs.source_manifest as Dictionary):
 		var pin: Dictionary = inputs.source_manifest[key]
 		if FileAccess.get_sha256("res://" + String(pin.path)) != String(pin.sha256):
@@ -165,7 +170,10 @@ func _build_host() -> void:
 	stream = STREAM.new()
 	stream.name = "Round12LiveSourceStream"
 	host.add_child(stream)
-	_expect(bool(stream.configure("res://data/survival/world", reader, false)), "strict reader and live stream configure: " + String(stream.last_error))
+	var stream_ok := bool(stream.configure("res://data/survival/world", reader, false))
+	_expect(stream_ok, "strict reader and live stream configure: " + String(stream.last_error))
+	if not stream_ok:
+		abort = true
 	if abort:
 		return
 	body_root = Node2D.new()
@@ -525,7 +533,7 @@ func _run_reader_checks() -> void:
 		var site: Dictionary = reader.physical_site(key)
 		var approach: Array = site.approach_cell
 		_expect(_hits_at(Vector2i(int(approach[0]), int(approach[1]))).is_empty(), "A8 approach Hero body clear " + key)
-		_expect(site.shell_bounds_px == [128, 128] and site.doorway_clear_world_rect_px.size() == 4, "A8 128px shell and doorway preserved " + key)
+		_expect(int(site.shell_bounds_px[0]) == 128 and int(site.shell_bounds_px[1]) == 128 and site.doorway_clear_world_rect_px.size() == 4, "A8 128px shell and doorway preserved " + key)
 	var temporal_a: Dictionary = reader.temporal_context(86400.0 * 14.0 + 3600.0, 335.5 * 3600.0)
 	var temporal_b: Dictionary = reader.temporal_context(86400.0 * 14.0 + 3600.0, 335.5 * 3600.0)
 	_expect(temporal_a == temporal_b and not bool(temporal_a.reset_required), "same online/offline time inputs produce identical world context")
@@ -934,6 +942,9 @@ func _run() -> void:
 		_finish()
 		return
 	_build_host()
+	if abort:
+		_finish()
+		return
 	await physics_frame
 	await physics_frame
 	RenderingServer.render_loop_enabled = false
