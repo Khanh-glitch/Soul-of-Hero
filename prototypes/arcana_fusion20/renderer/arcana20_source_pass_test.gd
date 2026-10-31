@@ -33,6 +33,11 @@ func _run() -> void:
     check(c.world_fragment[fi] == 10.0 and c.world_fragment[fi + 1] == 20.0 and is_equal_approx(c.world_fragment[fi + 2], 0.75), "C live fragment coordinates and subsequent ink")
     check(is_equal_approx(c.ink[fi + 3], 0.25), "C overdraw on live fragment")
     check(c.world_influence[40 * CFrame.W + 30] == 1 and c.world_influence[0] == 0, "C explicit authored influence")
+    c.ripper_remainder_fragment(30, 41, 32, 41)
+    var out_i := (41 * CFrame.W + 30) * 4
+    check(c.world_fragment[out_i] == 32.0 and c.world_fragment[out_i + 1] == 41.0 and c.world_fragment[out_i + 2] == 1.0 and c.world_fragment[out_i + 3] == 2.0, "C20 OUT inversion preserves explicit live-world source coordinates and mode")
+    c.I(30, 41, 0.0, 0.0, 0.0, 0.25)
+    check(is_equal_approx(c.world_fragment[out_i + 2], 0.75) and is_equal_approx(c.ink[out_i + 3], 0.25), "C20 OUT fragment respects black authored ink overdraw")
     c.clear()
     check(c.world_fragment[fi + 2] == 0.0 and c.ground_coverage[2 * CFrame.W + 2] == 0.0, "C world fields clear")
 
