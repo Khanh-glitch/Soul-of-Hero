@@ -202,43 +202,9 @@ func commit_meta_deposit(proposal_id: String, applier: Callable, payload: Dictio
 	return result
 
 
-## Run lifecycle: A0 owns the durable run record. `max_seconds` comes from the
-## A3 creator-locked policy at the composition root, never from UI or the clock.
-func ensure_run(max_seconds: int, run_id_override: String = "") -> Dictionary:
-	if max_seconds <= 0:
-		return {}
-	var current := run_context()
-	if not current.is_empty():
-		return current
-	var started := _now()
-	var run_id := run_id_override if not run_id_override.is_empty() \
-		else "run-%d-%s" % [started, str((_save.call(&"get_snapshot") as Dictionary).get("revision", 0))]
-	var created := {"ok": false}
-	var key := "soh.a0.run.start." + run_id.sha256_text()
-	if _save.call(&"is_transaction_applied", key):
-		return {}
-	var ok: bool = _save.call(&"transact_once", key, func(candidate: Dictionary) -> bool:
-		var existing: Variant = candidate.get(ROOT, {})
-		var existing_run: Variant = (existing as Dictionary).get("run", {}) if existing is Dictionary else {}
-		if existing_run is Dictionary and not (existing_run as Dictionary).is_empty():
-			created["ok"] = false
-			return false
-		var profile := read_profile(candidate)
-		profile["run"] = {
-			"run_id": run_id,
-			"run_epoch": 1,
-			"run_started_at_unix": started,
-			"max_seconds": max_seconds,
-			"expires_at_unix": started + max_seconds,
-		}
-		profile["run_history"] = profile.get("run_history", [])
-		candidate[ROOT] = profile
-		created["ok"] = true
-		return true,
-		{"kind": "a0_run_start", "run_id": run_id, "max_seconds": max_seconds})
-	return run_context() if ok else {}
-
-
+## Run lifecycle: A0 RunLifecycle is the ONE authority for run_id/epoch/deadline.
+## The port never creates a run; it only reports the durable record the lifecycle
+## wrote, so A3 can never mint a second run identity or extend a deadline.
 func run_context() -> Dictionary:
 	var profile := read_profile(_document())
 	var raw: Variant = profile.get("run", {})
@@ -246,19 +212,30 @@ func run_context() -> Dictionary:
 		return {}
 	var run: Dictionary = raw
 	var started := int(run.get("run_started_at_unix", 0))
-	var max_seconds := int(run.get("max_seconds", 0))
-	if started <= 0 or max_seconds <= 0 or String(run.get("run_id", "")).is_empty():
+	var expires := int(run.get("run_expires_at_unix", 0))
+	if started <= 0 or expires <= started or String(run.get("run_id", "")).is_empty():
 		return {}
+	if String(run.get("state", "active")) != "active":
+		# An ended run is never offered to A3 as a place to earn: the status is
+		# truthful and every meta plan fails closed on it.
+		return {
+			"contract": RUN_CONTEXT_CONTRACT,
+			"run_id": String(run["run_id"]),
+			"run_epoch": int(run.get("run_epoch", 1)),
+			"run_started_at_unix": started,
+			"now_unix": _now(),
+			"expires_at_unix": expires,
+			"status": String(run.get("state", "expired")),
+		}
 	var now := _now()
-	var expired := now - started >= max_seconds
 	return {
 		"contract": RUN_CONTEXT_CONTRACT,
 		"run_id": String(run["run_id"]),
 		"run_epoch": int(run.get("run_epoch", 1)),
 		"run_started_at_unix": started,
 		"now_unix": now,
-		"expires_at_unix": started + max_seconds,
-		"status": "expired" if expired else "active",
+		"expires_at_unix": expires,
+		"status": "expired" if now >= expires else "active",
 	}
 
 

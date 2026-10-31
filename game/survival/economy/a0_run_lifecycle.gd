@@ -29,6 +29,7 @@ const RUN_MAX_SECONDS := 1209600
 const LAST_PHASE_SECONDS := 259200
 const ENTRY_SECONDS := 950400
 const RUN_START_TOKEN := "RUN_SOUL_OF_HERO_START"
+const RUN_RESET_TOKEN := "RESET_SOUL_OF_HERO_RUN_KEEP_PROFILE"
 const RUN_END_TOKEN := "RUN_SOUL_OF_HERO_END"
 const PROFILE_ROOT := "profile"
 
@@ -53,13 +54,21 @@ func _ready() -> void:
 
 
 func configure(save: Node) -> bool:
-	if _configured or save == null or not save.has_method(&"transact_once") \
+	if save == null or not save.has_method(&"transact_once") \
 			or not save.has_method(&"get_snapshot") or not save.has_method(&"reset_run_preserving_profile"):
 		last_error = "incompatible_save_service"
 		return false
+	if _configured and _save == save:
+		return true
+	if _configured and _save != null and is_instance_valid(_save) and _save.is_connected(&"save_loaded", _on_save_loaded):
+		# An explicit rebind (test rig or a re-created composition) moves the
+		# authority; the durable run record still lives in the save document, so
+		# nothing is cached or duplicated across the swap.
+		_save.disconnect(&"save_loaded", _on_save_loaded)
 	_save = save
 	_configured = true
-	_save.connect(&"save_loaded", _on_save_loaded)
+	if not _save.is_connected(&"save_loaded", _on_save_loaded):
+		_save.connect(&"save_loaded", _on_save_loaded)
 	return true
 
 
@@ -238,7 +247,7 @@ func end_run(reason: String, run_id: String = "") -> Dictionary:
 		"elapsed_seconds": maxi(0, now - int(record.get("run_started_at_unix", 0))),
 	}
 	last_error = ""
-	var committed: bool = _save.call(&"reset_run_preserving_profile", _save.RUN_RESET_TOKEN, ended, entry)
+	var committed: bool = _save.call(&"reset_run_preserving_profile", RUN_RESET_TOKEN, ended, entry)
 	if not committed:
 		last_error = "run_reset_refused"
 		return {"ok": false, "reason": last_error}

@@ -75,6 +75,28 @@ func _first_process() -> void:
 	_expect(not bool(again.get("ok", true)) and String(again.get("reason", "")) == "run_already_active",
 		"a live run cannot be silently replaced")
 
+	# Reset keeps ONLY the secured profile; every run-local namespace is fresh.
+	var preserved := {"secured_ragnarok_currency": 12, "achievements": {"elder_stones": ["stone_a"]},
+		"currency_receipts": [{"receipt_id": "r1", "delta": 12}]}
+	var seeded: bool = bool(_save().call(&"transact_once", "soh.a0.test.profile.seed", func(candidate: Dictionary) -> bool:
+		var profile: Dictionary = preserved.duplicate(true)
+		profile["run"] = candidate["profile"]["run"]
+		profile["run_history"] = candidate["profile"]["run_history"]
+		candidate["profile"] = profile
+		# Real run-local state: carried items and survival progress. The reset must
+		# drop both while keeping the secured profile above.
+		var inventory: Dictionary = candidate.get("inventory", {})
+		inventory["item_stacks"] = {"iron_scrap": {"item_id": "iron_scrap", "kind": "material", "quantity": 7}}
+		candidate["inventory"] = inventory
+		var survival: Dictionary = candidate.get("survival", {})
+		survival["totals"] = {"harvests": 4}
+		candidate["survival"] = survival
+		return true, {"kind": "test_seed"}))
+	_expect(bool(seeded), "a secured profile and a dirty world are seeded through SaveService")
+	_expect(((_save().call(&"get_snapshot") as Dictionary).get("inventory", {}) as Dictionary).get("item_stacks", {}).has("iron_scrap"),
+		"the seeded run really carries items before the boundary")
+
+
 	# Phase boundaries: 264 h = entry -> last72, 336 h = deadline.
 	_set_clock(BASE + 950399)
 	_expect(String(_state().get("phase", "")) == "entry", "entry phase 1 s before the last-72 boundary")
@@ -100,20 +122,6 @@ func _first_process() -> void:
 	var history: Array = ((_save().call(&"get_snapshot") as Dictionary).get("profile", {}) as Dictionary).get("run_history", [])
 	_expect(history.size() == 1, "exactly one history record after one ended run (%d)" % history.size())
 
-	# Reset keeps ONLY the secured profile; every run-local namespace is fresh.
-	var preserved := {"secured_ragnarok_currency": 12, "achievements": {"elder_stones": ["stone_a"]},
-		"currency_receipts": [{"receipt_id": "r1", "delta": 12}]}
-	var seeded := _save().call(&"transact_once", "soh.a0.test.profile.seed", func(candidate: Dictionary) -> bool:
-		var profile: Dictionary = preserved.duplicate(true)
-		profile["run"] = candidate["profile"]["run"]
-		profile["run_history"] = candidate["profile"]["run_history"]
-		candidate["profile"] = profile
-		candidate["world_slice"] = {"schema": "soh.economy.world_source.v3", "capabilities": [],
-			"clock": {"latest_session_index": -1, "session_id": "", "sequence": -1, "active_seconds": 0, "host_active_seconds": 0},
-			"pois": {}}
-		return true, {"kind": "test_seed"})
-	_expect(bool(seeded), "a secured profile and a dirty world are seeded through SaveService")
-
 	_set_clock(BASE + 1209700)
 	var next_run: Dictionary = _lifecycle.call(&"start_run", "run-round11-b")
 	_expect(bool(next_run.get("ok", false)), "a new run opens after the old one ended (%s)" % str(next_run.get("reason", "")))
@@ -129,8 +137,10 @@ func _first_process() -> void:
 	_expect((profile.get("run_history", []) as Array).size() == 1, "run history survives the run boundary")
 	_expect(not document.has("world_slice") or (document.get("world_slice", {}) as Dictionary).is_empty(),
 		"the ended run's POI state does not leak into the new run")
-	_expect(((document.get("inventory", {}) as Dictionary).get("item_stacks", {}) as Dictionary).is_empty(),
-		"the ended run's items do not leak into the new run")
+	var stacks: Dictionary = (document.get("inventory", {}) as Dictionary).get("item_stacks", {})
+	_expect(not stacks.has("iron_scrap"), "the ended run's carried items do not leak into the new run")
+	_expect(int((document.get("survival", {}) as Dictionary).get("totals", {}).get("harvests", 0)) == 0,
+		"the ended run's survival progress does not leak into the new run")
 	_expect(not document.has("survival_economy") or (document.get("survival_economy", {}) as Dictionary).is_empty(),
 		"the ended run's stations/jobs/cooldowns do not leak into the new run")
 	var receipts: Dictionary = document.get("applied_transactions", {})

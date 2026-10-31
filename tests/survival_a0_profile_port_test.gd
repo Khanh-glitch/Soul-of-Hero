@@ -79,15 +79,30 @@ func _first_process() -> void:
 	_expect((port.call(&"read_profile", fresh) as Dictionary).get("achievements", {}).get("elder_stones", ["x"]) == [],
 		"fresh profile has no elder stones")
 
-	var ctx: Dictionary = port.call(&"ensure_run", RUN_MAX_SECONDS)
+	# The run identity has exactly one author: A0 RunLifecycle. The port only
+	# reports it, so A3 can never mint a second run or extend a deadline.
+	var started := int(Time.get_unix_time_from_system())
+	var seeded: bool = bool(_save().call(&"transact_once", "soh.a0.test.run.seed", func(candidate: Dictionary) -> bool:
+		candidate["profile"] = {
+			"schema": 1,
+			"secured_ragnarok_currency": 0,
+			"currency_receipts": [],
+			"achievements": {"elder_stones": []},
+			"run_history": [],
+			"run": {"run_id": "run-port-test", "run_epoch": 1, "run_started_at_unix": started,
+				"run_expires_at_unix": started + RUN_MAX_SECONDS, "run_max_seconds": RUN_MAX_SECONDS,
+				"state": "active", "ended_at_unix": 0, "end_reason": ""},
+		}
+		return true, {"kind": "test_seed_run"}))
+	_expect(bool(seeded), "a durable active run is seeded through SaveService")
+	var ctx: Dictionary = port.call(&"run_context")
 	_expect(String(ctx.get("contract", "")) == "soh.economy.a0_run_context.v1", "run context matches the A3 contract")
-	_expect(String(ctx.get("status", "")) == "active", "new run reports active")
+	_expect(String(ctx.get("status", "")) == "active", "a live run reports active")
 	_expect(int(ctx.get("expires_at_unix", 0)) - int(ctx.get("run_started_at_unix", 0)) == RUN_MAX_SECONDS,
 		"run expiry is the A3 creator-locked window, not a UI value")
 	_expect(int(ctx.get("now_unix", 0)) >= int(ctx.get("run_started_at_unix", 0)), "run clock never runs backwards")
-	var again: Dictionary = port.call(&"ensure_run", RUN_MAX_SECONDS)
-	_expect(String(again.get("run_id", "")) == String(ctx.get("run_id", "")), "a second launch does not open a second run")
-	_expect(not String(ctx.get("run_id", "")).is_empty(), "run identity is durable and non-empty")
+	_expect(String(ctx.get("run_id", "")) == "run-port-test", "the port reports the durable run identity")
+	_expect(not port.has_method(&"ensure_run"), "the port cannot create a run: the lifecycle is the one authority")
 
 	# Currency may only be minted inside an A0 commit boundary. A direct call
 	# from any other path (UI, chest, death, reset) must fail closed.
