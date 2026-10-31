@@ -75,6 +75,9 @@ var state: OverworldState
 var player: CharacterBody2D
 var camera: Camera2D
 var hud: OverworldHud
+## How often the HUD re-reads A0's pack snapshot (4 Hz).
+const CARRY_SAMPLE_MS := 250
+var _carry_sampled_at := -100000
 ## Runtime walkability that includes prop bodies, and the fade that keeps the
 ## Knight visible behind architecture. Both are built from the live scene, not
 ## from the authored document, so they describe the world the player has.
@@ -885,15 +888,26 @@ func _apply_hud() -> void:
 		state.discoveries.size(), discoveries.size(),
 		_open_shortcut_count(), int((world_data.get("shortcuts", []) as Array).size())
 	)
-	# Pack capacity is an A0 projection, not a HUD guess: SaveService owns the slot
-	# count and reports both used and capacity in one snapshot.
+	_refresh_carry()
+
+
+## Pack capacity is an A0 projection, not a HUD guess: SaveService owns the slot count
+## and reports both used and capacity in one snapshot. `_apply_hud` runs every frame,
+## so the snapshot is sampled at 4 Hz instead of per frame - the number changes when
+## the player picks something up, not 60 times a second.
+func _refresh_carry() -> void:
+	var now := Time.get_ticks_msec()
+	if now - _carry_sampled_at < CARRY_SAMPLE_MS:
+		return
+	_carry_sampled_at = now
 	var save_service := get_node_or_null("/root/SaveService")
-	if save_service != null and save_service.has_method(&"get_inventory_capacity_snapshot"):
-		var snapshot: Dictionary = save_service.call(&"get_inventory_capacity_snapshot")
-		hud.set_carry(
-			int(snapshot.get("bag_used", 0)),
-			int(snapshot.get("bag_capacity", 0)),
-		)
+	if save_service == null or not save_service.has_method(&"get_inventory_capacity_snapshot"):
+		return
+	var snapshot: Dictionary = save_service.call(&"get_inventory_capacity_snapshot")
+	hud.set_carry(
+		int(snapshot.get("bag_used", 0)),
+		int(snapshot.get("bag_capacity", 0)),
+	)
 
 
 func _region_label() -> String:
