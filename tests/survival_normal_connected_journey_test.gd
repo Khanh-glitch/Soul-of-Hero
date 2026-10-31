@@ -561,7 +561,12 @@ func _dump_panel(panel: Node, host: Node, station_id: String) -> void:
 func _approach_station(hero: CharacterBody2D, nav: OverworldTraversability, point: Vector2) -> bool:
 	var deadline := Time.get_ticks_msec() + 9000
 	var stalled := 0
-	while point.distance_to(hero.global_position) > SurvivalStructure.REACH - 6 and Time.get_ticks_msec() < deadline:
+	# A3's panel lists a station within 64 px of the *centre of its footprint*
+	# (origin + 16,16), while A0's interaction reach is 44 px from the origin cell.
+	# For a 2x2 furnace those two windows disagree, so a player standing at a legal
+	# interaction distance can be outside the panel's station window. Walk up close
+	# enough that both agree, which is also what a player does at a furnace.
+	while point.distance_to(hero.global_position) > 26.0 and Time.get_ticks_msec() < deadline:
 		var before := hero.global_position
 		_set_direction(point - before)
 		await physics_frame
@@ -569,10 +574,10 @@ func _approach_station(hero: CharacterBody2D, nav: OverworldTraversability, poin
 		if stalled > 40:
 			break
 	_set_direction(Vector2.ZERO)
-	var ok := point.distance_to(hero.global_position) <= SurvivalStructure.REACH
+	var ok := point.distance_to(hero.global_position) <= 30.0
 	if not ok:
-		print("A0_CONNECTED_APPROACH cell=%s hero=%s distance=%.2f reach=%.1f" % [
-			str(nav.cell_of(point)), str(hero.global_position), point.distance_to(hero.global_position), SurvivalStructure.REACH])
+		print("A0_CONNECTED_APPROACH cell=%s hero=%s distance=%.2f want=%.1f panel_window=64.0" % [
+			str(nav.cell_of(point)), str(hero.global_position), point.distance_to(hero.global_position), 26.0])
 	return ok
 
 
