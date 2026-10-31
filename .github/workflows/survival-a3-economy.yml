@@ -2,7 +2,9 @@ name: Survival A3 Economy Validation
 
 on:
   push:
-    branches: [arena/7a12b27e-soul-of-hero]
+    branches:
+      - arena/7a12b27e-soul-of-hero
+      - arena/daadd745-soul-of-hero
     paths:
       - '.github/workflows/survival-a3-economy.yml'
       - 'data/content/items/**'
@@ -14,7 +16,11 @@ on:
       - 'tests/survival/catalog/**'
       - 'docs/survival/economy/**'
   pull_request:
-    branches: [arena/7a12b27e-soul-of-hero]
+    branches:
+      - arena/7a12b27e-soul-of-hero
+      - arena/daadd745-soul-of-hero
+      - feature/survival-rpg-foundation-20261029
+      - main
     paths:
       - '.github/workflows/survival-a3-economy.yml'
       - 'data/content/items/**'
@@ -253,6 +259,10 @@ jobs:
     name: R13 A3 VALUE ECONOMY NATIVE (GODOT 4.7)
     needs: native-adapter
     runs-on: ubuntu-latest
+    env:
+      ARTIFACT_DIR: artifacts/r13-value-economy
+      A3_TEST_SAVE: user://tests/r13_value_economy_p1.json
+      A3_RECEIPT_DIR: user://tests/receipts
     steps:
       - uses: actions/checkout@v4
       - uses: chickensoft-games/setup-godot@v2
@@ -260,50 +270,103 @@ jobs:
           version: 4.7.0
           use-dotnet: false
           include-templates: false
-      - run: mkdir -p artifacts/r13-value-economy
+      - run: mkdir -p "$ARTIFACT_DIR"
+      - name: Static hazard gate (Variant inference, second authority, shell state)
+        # This is not a substitute for the engine. It removes the exact defect
+        # class that failed run 41228370691 before an engine minute is spent.
+        run: python3 tools/ci/gd_r13_static_check.py
       - name: Import project (real engine parser)
         run: |
           timeout --signal=TERM --kill-after=10s 240s godot --headless --path . \
-            --user-data-dir artifacts/r13-import --import >"artifacts/r13-value-economy/import.log" 2>&1
+            --user-data-dir "$ARTIFACT_DIR" --import >"$ARTIFACT_DIR/import.log" 2>&1
           rc=$?
-          tail -60 "artifacts/r13-value-economy/import.log"
-          bash tools/ci/gate_log.sh "artifacts/r13-value-economy/import.log" "R13 import" || exit $rc
+          tail -60 "$ARTIFACT_DIR/import.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/import.log" "R13 import" || exit $rc
           exit $rc
-      - name: R13 process 1 — authenticate, pay, learn, queue, exit
-        env:
-          A3_TEST_ROLE: process_1
-          SOUL_OF_HERO_SAVE_PATH: user://tests/r13_value_economy_p1.json
+      - name: R13 process 1 — authenticate, harvest, research, queue, exit
+        # Independent Godot OS process 1. Its exit code is captured and gated
+        # inside THIS step: GitHub Actions steps share no shell variables.
         run: |
           set +e
+          A3_TEST_ROLE=process_1 \
+          SOUL_OF_HERO_SAVE_PATH="$A3_TEST_SAVE" \
+          A3_RECEIPT_DIR="$A3_RECEIPT_DIR" \
           timeout --signal=TERM --kill-after=10s 120s godot --headless --path . \
-            --user-data-dir artifacts/r13-value-economy \
+            --user-data-dir "$ARTIFACT_DIR" \
             --script res://tests/survival/a3_value_economy_test.gd \
-            >"artifacts/r13-value-economy/r13_phase1.log" 2>&1
-          rc1=$?
+            >"$ARTIFACT_DIR/r13_phase1.log" 2>&1
+          rc=$?
           set -e
-          cat "artifacts/r13-value-economy/r13_phase1.log"
-          bash tools/ci/gate_log.sh "artifacts/r13-value-economy/r13_phase1.log" "R13 phase1" "P1 PASSED"
-          if [ "$rc1" -ne 0 ]; then exit 1; fi
-      - name: R13 process 2 — reload, claim once, refuse duplicate, exit
-        env:
-          A3_TEST_ROLE: process_2
-          SOUL_OF_HERO_SAVE_PATH: user://tests/r13_value_economy_p1.json
+          cat "$ARTIFACT_DIR/r13_phase1.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/r13_phase1.log" "R13 phase1" "P1 PASSED" || exit 1
+          if [ "$rc" -ne 0 ]; then
+            echo "::error::R13 phase1 exited $rc"
+            exit 1
+          fi
+          echo "R13 phase1 PASSED (pid recorded in receipt)" >> "$GITHUB_STEP_SUMMARY"
+      - name: R13 process 2 — reload, mature, claim once, refuse duplicate, exit
+        # Independent Godot OS process 2 against the SAME isolated durable save.
         run: |
           set +e
+          A3_TEST_ROLE=process_2 \
+          SOUL_OF_HERO_SAVE_PATH="$A3_TEST_SAVE" \
+          A3_RECEIPT_DIR="$A3_RECEIPT_DIR" \
           timeout --signal=TERM --kill-after=10s 120s godot --headless --path . \
-            --user-data-dir artifacts/r13-value-economy \
+            --user-data-dir "$ARTIFACT_DIR" \
             --script res://tests/survival/a3_value_economy_test.gd \
-            >"artifacts/r13-value-economy/r13_phase2.log" 2>&1
-          rc2=$?
+            >"$ARTIFACT_DIR/r13_phase2.log" 2>&1
+          rc=$?
           set -e
-          cat "artifacts/r13-value-economy/r13_phase2.log"
-          bash tools/ci/gate_log.sh "artifacts/r13-value-economy/r13_phase2.log" "R13 phase2" "P2 PASSED"
-          if [ "$rc2" -ne 0 ] || [ "$rc1" -ne 0 ]; then exit 1; fi
-      - name: Record R13 SHA and result
+          cat "$ARTIFACT_DIR/r13_phase2.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/r13_phase2.log" "R13 phase2" "P2 PASSED" || exit 1
+          if [ "$rc" -ne 0 ]; then
+            echo "::error::R13 phase2 exited $rc"
+            exit 1
+          fi
+          echo "R13 phase2 PASSED (distinct pid recorded in receipt)" >> "$GITHUB_STEP_SUMMARY"
+      - name: Two-process receipt verification (one paid settlement, duplicate refused)
+        # The receipts are the evidence; no shell state crosses the steps above.
+        run: |
+          python3 tools/ci/verify_r13_receipts.py \
+            --p1 "$ARTIFACT_DIR/tests/receipts/r13_p1_receipt.json" \
+            --p2 "$ARTIFACT_DIR/tests/receipts/r13_p2_receipt.json" \
+            --summary "$ARTIFACT_DIR/r13_two_process_summary.json"
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json, os
+          s = json.load(open(os.environ['ARTIFACT_DIR'] + '/r13_two_process_summary.json'))
+          print('### R13 two distinct OS processes, one durable save')
+          print(f"- P1 pid: `{s['p1_pid']}` | P2 pid: `{s['p2_pid']}` (distinct: {s['p1_pid'] != s['p2_pid']})")
+          print(f"- durable save: `{s['save_path']}`")
+          print(f"- job: `{s['job_id']}` | granted output: {s['granted_output']}")
+          print(f"- duplicate claim refused with: `{s['duplicate_reason']}`")
+          print(f"- A1 binding document sha256: `{s['bindings_sha256']}` | A8: `{s['a8_status']}`")
+          print(f"- conservation: {s['conservation']}")
+          PY
+      - name: R13 single-process negative controls (forgery, wear, cooldown, I/O, reset)
+        run: |
+          set +e
+          A3_TEST_ROLE= \
+          SOUL_OF_HERO_SAVE_PATH="user://tests/r13_value_economy_single.json" \
+          A3_RECEIPT_DIR="$A3_RECEIPT_DIR" \
+          timeout --signal=TERM --kill-after=10s 180s godot --headless --path . \
+            --user-data-dir "$ARTIFACT_DIR" \
+            --script res://tests/survival/a3_value_economy_test.gd \
+            >"$ARTIFACT_DIR/r13_single.log" 2>&1
+          rc=$?
+          set -e
+          cat "$ARTIFACT_DIR/r13_single.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/r13_single.log" "R13 single-process" "R13 NATIVE PASSED" || exit 1
+          if [ "$rc" -ne 0 ]; then
+            echo "::error::R13 single-process exited $rc"
+            exit 1
+          fi
+          grep 'R13 NATIVE PASSED' "$ARTIFACT_DIR/r13_single.log" | tail -1 >> "$GITHUB_STEP_SUMMARY"
+      - name: Record R13 SHA and evidence
+        if: always()
         run: |
           echo "R13 SHA: $(git rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"
-          echo "R13 test: tests/survival/a3_value_economy_test.gd" >> "$GITHUB_STEP_SUMMARY"
-          echo "R13 two-process: distinct Godot PIDs, same durable SaveService" >> "$GITHUB_STEP_SUMMARY"
+          echo "R13 suite: tests/survival/a3_value_economy_test.gd" >> "$GITHUB_STEP_SUMMARY"
+          echo "R13 receipts: $ARTIFACT_DIR/tests/receipts" >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
         if: always()
         with:

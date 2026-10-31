@@ -1,1170 +1,956 @@
 extends SceneTree
 
-## R13 CT Corrective Round — A3 Value Economy Test Suite
+## R13 A3 value-economy native suite (Godot 4.7, strict warnings-as-errors).
 ##
-## Verifies:
-##   • Source custody (roadside + Quarry through SaveService mastery auth)
-##   • A8 Quarry physical identity fail-closed (bare "A8" does not mint entitlement)
-##   • Atomic + durable research across process reload simulation
-##   • Paid production with physical station fuel via V6 queue/escrow model
-##   • Unique job identity per batch, exactly-once collection
-##   • True two-process persistence (distinct Godot PIDs, same durable save)
-##   • Roadside salvage → learning → paid processing → future expedition choice chain
-##   • Negative controls: premature claim, capacity overflow, canceled work,
-##     stale run, replay, failed write
+## Scope after the R13-A3-CLOSE takeover:
+##   * physical source custody keyed to A1 pinned bindings and an injected
+##     A0/A1 source receipt (no owner strings, no fabricated source ids);
+##   * canonical V5-V7 EconomyService owns the ONLY station queue, the ONLY
+##     recipe-knowledge store and the ONLY clock (A0 active-session receipt);
+##   * tool wear, finite one-time sources and active-time cooldowns are real;
+##   * two competitive routes with measurable, catalog-derived costs;
+##   * ordinary stack material vs scarce physical finite-use Skill Core.
 ##
-## Godot 4.7 compatible. No `Int` annotations (use `int`). No `//` floor division.
-## Format operator `% [...]` is always INSIDE the formatted string / call,
-## never applied to a void return value.
-##
-## Two-process mode: set A3_TEST_ROLE=process_1 or process_2 and run two
-## distinct Godot invocations against the same isolated save path.
-## Default (single process) runs the full suite including a simulated 2P test.
+## Two processes, one durable save, machine-readable receipts:
+##   A3_TEST_ROLE=process_1  -> authenticate, harvest, research, queue, exit
+##   A3_TEST_ROLE=process_2  -> reload, mature, collect once, refuse duplicate
+## Both write JSON receipts under A3_RECEIPT_DIR; tools/ci/verify_r13_receipts.py
+## validates them so CI does not depend on shell variables leaking between steps.
 
-const ServicePath := "res://game/survival/economy/a3_economy_service.gd"
-const SaveServicePath := "res://game/autoload/save_service.gd"
-const TEST_SAVE_PATH := "user://tests/a3_value_economy_test.json"
+const A3Service = preload("res://game/survival/economy/a3_economy_service.gd")
+const EconomyService = preload("res://game/survival/economy/economy_service.gd")
+const SaveService = preload("res://game/autoload/save_service.gd")
+const SOURCE_RECEIPT_CONTRACT := "soh.economy.source_receipt.v1"
+const A8_QUARRY_POI_ID := "poi_crown_south_quarry"
 
-var service: A3EconomyService
+const TIME_CONTRACT := "soh.economy.active_tick.v1"
+const DEFAULT_SAVE_PATH := "user://tests/r13_value_economy.json"
+const RECEIPT_DIR_DEFAULT := "user://tests"
+
+const SOURCE_CACHE := "a1_waystation_roadside_cache_v3"
+const SOURCE_ONE_TIME := "a1_roadside_salvage_02_v5"
+const SOURCE_TIMBER := "a1_roadside_timber_03_v5"
+const SOURCE_NOTES := "a1_roadside_notes_01_v4"
+
+const RECIPE_MATERIAL := "process_roadside_materials"
+const RECIPE_SORT := "sort_core_fragments"
+
+var a3: A3EconomyService
+var eco
 var save_service: Node
+var save_path: String = DEFAULT_SAVE_PATH
+var receipt_dir: String = RECEIPT_DIR_DEFAULT
+
+var stations: Dictionary = {}
+var station_ticks: Dictionary = {}
+var station_revisions: Dictionary = {}
+var active_seconds: int = 0
+var clock_sequence: int = 0
+var session_id: String = "r13_session"
+
+var world_cells: Dictionary = {}
+var world_discovered: Dictionary = {}
+var world_sequences: Dictionary = {}
+
 var test_results: Array[Dictionary] = []
-var failed_tests: Array[Dictionary] = []
 var passed_count: int = 0
 var failed_count: int = 0
 var test_group: String = ""
 
-## --- Test lifecycle ---
+## --- lifecycle ---
 
 func _initialize() -> void:
 	_run.call_deferred()
 
 func _run() -> void:
-	var test_role := OS.get_environment("A3_TEST_ROLE")
-	print("=== R13 A3 Value Economy Test Suite ===")
-	print("Test role: %s" % [test_role])
-
-	if test_role == "process_1":
-		_setup_service()
-		_setup_save_service()
-		_service_configure(save_service)
+	save_path = OS.get_environment("SOUL_OF_HERO_SAVE_PATH")
+	if save_path.is_empty():
+		save_path = DEFAULT_SAVE_PATH
+	receipt_dir = OS.get_environment("A3_RECEIPT_DIR")
+	if receipt_dir.is_empty():
+		receipt_dir = RECEIPT_DIR_DEFAULT
+	var role := OS.get_environment("A3_TEST_ROLE")
+	print("=== R13 A3 VALUE ECONOMY (canonical queue/clock) ===")
+	print("role=%s pid=%d save=%s" % [role, OS.get_process_id(), save_path])
+	if not _setup():
+		print("R13 SETUP FAILED")
+		quit(1)
+		return
+	if role == "process_1":
 		_run_process_1()
 		return
-	elif test_role == "process_2":
-		_setup_service()
-		_setup_save_service()
-		_service_configure(save_service)
+	if role == "process_2":
 		_run_process_2()
 		return
+	_run_full_suite()
 
-	## Single-process mode: run the full suite.
-	_print_header("SETUP")
-	_setup_service()
-	_setup_save_service()
-	_service_configure(save_service)
-	_run_all_tests()
-	_emit_results()
+func _setup() -> bool:
+	if not _setup_save():
+		return false
+	eco = EconomyService.new()
+	if not bool(eco.configure(save_service, _resolve_station)):
+		print("canonical economy configure failed: %s" % [eco.last_error])
+		return false
+	eco.configure_time_host(_station_time_host)
+	a3 = A3Service.new()
+	if not bool(a3.configure(save_service, eco)):
+		print("A3 configure failed: %s" % [a3.last_error])
+		return false
+	a3.configure_source_host(_source_host)
+	_prepare_stations()
+	_resume_clock_from_save()
+	return true
 
-func _setup_service() -> void:
-	var script = load(ServicePath)
-	service = script.new()
-	## NOTE: A3EconomyService extends RefCounted — do NOT add_child.
-	## It is configured with the SaveService node via configure().
+## Two process mode: the second process is a genuinely new OS process, so its
+## fixture clock must resume from the durable canonical time document instead of
+## restarting at zero (which the canonical advance rightly rejects).
+func _resume_clock_from_save() -> void:
+	var document: Dictionary = eco.document()
+	if document.is_empty():
+		return
+	var raw_time: Variant = document.get("time", {})
+	if not raw_time is Dictionary:
+		return
+	var time: Dictionary = raw_time
+	clock_sequence = maxi(clock_sequence, int(time.get("sequence", -1)) + 1)
+	var raw_stations: Variant = time.get("stations", {})
+	if not raw_stations is Dictionary:
+		return
+	var station_map: Dictionary = raw_stations
+	for key: Variant in station_map.keys():
+		var raw_entry: Variant = station_map[key]
+		if not raw_entry is Dictionary:
+			continue
+		var entry: Dictionary = raw_entry
+		var ticks := int(entry.get("active_ticks", 0))
+		station_ticks[String(key)] = maxi(int(station_ticks.get(String(key), 0)), ticks)
 
-func _setup_save_service() -> void:
-	## Reuse the A0 SaveService autoload (single authority). Never create
-	## a second SaveService instance.
+func _setup_save() -> bool:
 	save_service = root.get_node_or_null("SaveService")
 	if save_service == null:
-		## Fallback for standalone runs: create and add the autoload.
-		var save_script = load(SaveServicePath)
-		save_service = save_script.new()
+		save_service = SaveService.new()
 		save_service.name = "SaveService"
 		root.add_child(save_service)
-	var ok := save_service.call("configure_storage", TEST_SAVE_PATH, true)
-	if not ok:
-		push_error("Failed to configure isolated SaveService storage")
-		_emit_results()
-		return
+	if not bool(save_service.call(&"configure_storage", save_path, true)):
+		push_error("Failed to configure isolated SaveService storage at %s" % [save_path])
+		return false
+	return true
 
-func _service_configure(save_node: Node) -> void:
-	var ok := service.configure(save_node)
-	_expect(ok, "Service must configure with SaveService node", "SETUP")
+## --- A0/A1 fixture hosts (test composition root only) ---
 
-## --- Assertion helpers ---
+func _prepare_stations() -> void:
+	_install_station("workbench", "workbench", 1)
+	_install_station("research", "research", 1)
+	_install_station("furnace", "furnace", 1)
 
-func _print_header(group: String) -> void:
+func _install_station(station_id: String, kind: String, tier: int) -> void:
+	stations[station_id] = {
+		"ok": true,
+		"station_id": station_id,
+		"kind": kind,
+		"tier": tier,
+		"queue_capacity": 3,
+		"operational": true,
+		"condition": 100,
+		"station_revision": "rev-%s-1" % [station_id],
+	}
+	if not station_revisions.has(station_id):
+		station_revisions[station_id] = "rev-%s-1" % [station_id]
+	if not station_ticks.has(station_id):
+		station_ticks[station_id] = 0
+
+func _resolve_station(station_id: String) -> Dictionary:
+	var raw: Variant = stations.get(station_id, {})
+	if not raw is Dictionary:
+		return {}
+	var copy: Dictionary = (raw as Dictionary).duplicate(true)
+	copy["station_revision"] = String(station_revisions.get(station_id, "rev-unknown"))
+	return copy
+
+func _station_time_host(station_id: String) -> Dictionary:
+	return {
+		"contract": TIME_CONTRACT,
+		"station_id": station_id,
+		"session_id": session_id,
+		"session_index": 1,
+		"sequence": clock_sequence,
+		"active_ticks": int(station_ticks.get(station_id, 0)),
+		"station_revision": String(station_revisions.get(station_id, "rev-unknown")),
+	}
+
+func _bindings_known(source_id: String) -> bool:
+	var binding: Dictionary = a3.binding_for(source_id)
+	return not binding.is_empty()
+
+## The only producer of a physical source receipt in this fixture. It is
+## deliberately a composition-root callable: nothing in the gameplay layer can
+## reach it, and a3 re-calls it to detect caller-built dictionaries.
+func _source_host(source_id: String) -> Dictionary:
+	var binding: Dictionary = a3.binding_for(source_id)
+	if binding.is_empty():
+		return {}
+	if not world_cells.has(source_id):
+		var raw_cells: Variant = binding.get("stand_cells", [])
+		if raw_cells is Array and not (raw_cells as Array).is_empty():
+			world_cells[source_id] = (raw_cells as Array)[0]
+		else:
+			world_cells[source_id] = [0, 0]
+	if not world_discovered.has(source_id):
+		world_discovered[source_id] = true
+	if not world_sequences.has(source_id):
+		world_sequences[source_id] = 0
+	return {
+		"contract": SOURCE_RECEIPT_CONTRACT,
+		"source_id": source_id,
+		"owner": "A1",
+		"poi_id": String(binding.get("poi_id", "")),
+		"instance_id": String(binding.get("instance_id", "")),
+		"action_id": String(binding.get("action_id", "")),
+		"binding_identity": String(binding.get("identity", "")),
+		"host_session_id": session_id,
+		"host_sequence": int(world_sequences.get(source_id, 0)),
+		"hero_cell": (world_cells[source_id] as Array).duplicate(),
+		"discovered": bool(world_discovered.get(source_id, false)),
+		"active_seconds": active_seconds,
+		"a8_authorization_sha256": String(a3.a8_authorization().get("sha256", "")),
+	}
+
+func _receipt_for(source_id: String) -> Dictionary:
+	return _source_host(source_id)
+
+## --- clock helpers ---
+
+func _advance_active_seconds(seconds: int) -> void:
+	active_seconds += seconds
+	clock_sequence += 1
+
+func _tick_station(station_id: String, ticks: int, event_id: String) -> Dictionary:
+	station_ticks[station_id] = int(station_ticks.get(station_id, 0)) + ticks
+	advance_active_seconds(ticks)
+	return eco.advance(station_id, _station_time_host(station_id), event_id)
+
+## --- inventory helpers ---
+
+func _count(item_id: String) -> int:
+	return int(save_service.call(&"inventory_total", item_id))
+
+func _stacks() -> Dictionary:
+	var raw: Variant = save_service.call(&"get_inventory_stacks")
+	if raw is Dictionary:
+		return (raw as Dictionary).duplicate(true)
+	return {}
+
+func _give(item_id: String, quantity: int, tag: String) -> bool:
+	return bool(save_service.call(&"grant_inventory_item", item_id, "material", quantity, "r13:give:%s:%s" % [tag, item_id]))
+
+func _give_instance(item_id: String, source_event: String, condition: int) -> String:
+	var result: Dictionary = eco.grant_instance(item_id, source_event, -1, condition)
+	if not bool(result.get("ok", false)):
+		return ""
+	return String(result.get("instance_id", ""))
+
+func _replace_inventory(stacks: Dictionary, tag: String) -> bool:
+	var mutator := func(candidate: Dictionary) -> bool:
+		var inventory: Dictionary = candidate.get("inventory", {}).duplicate(true)
+		inventory["item_stacks"] = stacks.duplicate(true)
+		candidate["inventory"] = inventory
+		return true
+	return bool(save_service.call(&"transact_once", "r13:replace:%s:%d" % [tag, Time.get_ticks_usec()], mutator, {"kind": "r13_fixture_inventory"}))
+
+func _mastery() -> Dictionary:
+	var snapshot: Dictionary = _snapshot()
+	var raw: Variant = snapshot.get("mastery", {})
+	if raw is Dictionary:
+		return raw as Dictionary
+	return {}
+
+func _snapshot() -> Dictionary:
+	var raw: Variant = save_service.call(&"get_snapshot")
+	if raw is Dictionary:
+		return raw as Dictionary
+	return {}
+
+func _transaction_count_prefix(prefix: String) -> int:
+	var snapshot: Dictionary = _snapshot()
+	var raw: Variant = snapshot.get("applied_transactions", {})
+	if not raw is Dictionary:
+		return 0
+	var transactions: Dictionary = raw
+	var count := 0
+	for key: Variant in transactions.keys():
+		if String(key).begins_with(prefix):
+			count += 1
+	return count
+
+## --- assertions ---
+
+func _header(group: String) -> void:
 	test_group = group
 	print("=== %s ===" % [group])
 
-func _expect(condition: bool, message: String, group: String = "") -> void:
-	if group.is_empty():
-		group = test_group
-	var passed := bool(condition)
-	var entry := {
-		"group": group,
-		"passed": passed,
-		"message": message,
-	}
+func _expect(condition: bool, message: String) -> void:
+	var entry := {"group": test_group, "passed": condition, "message": message}
 	test_results.append(entry)
-	if passed:
+	if condition:
 		passed_count += 1
-		print("[PASS] %s — %s" % [group, message])
+		print("[PASS] %s - %s" % [test_group, message])
 	else:
 		failed_count += 1
-		failed_tests.append(entry)
-		print("[FAIL] %s — %s" % [group, message])
+		print("[FAIL] %s - %s" % [test_group, message])
 
-func _expect_equal(actual: Variant, expected: Variant, message: String, group: String = "") -> void:
-	if group.is_empty():
-		group = test_group
-	_expect(actual == expected, "%s — expected: %s, actual: %s" % [message, str(expected), str(actual)], group)
+func _expect_equal(actual: Variant, expected: Variant, message: String) -> void:
+	_expect(actual == expected, "%s (expected=%s actual=%s)" % [message, str(expected), str(actual)])
 
-func _expect_not_equal(actual: Variant, expected: Variant, message: String, group: String = "") -> void:
-	if group.is_empty():
-		group = test_group
-	_expect(actual != expected, "%s — values must differ: %s == %s" % [message, str(actual), str(expected)], group)
+## --- full single-process suite ---
 
-## --- Test runner (single process) ---
+func _run_full_suite() -> void:
+	_header("CANONICAL_AUTHORITY")
+	_test_canonical_authority()
+	_header("SOURCE_CUSTODY")
+	_test_source_custody()
+	_header("SOURCE_FORGERY_FAIL_CLOSED")
+	_test_source_forgery()
+	_header("COOLDOWN_AND_SCARCITY")
+	_test_cooldown_and_scarcity()
+	_header("TOOL_CONDITION")
+	_test_tool_condition()
+	_header("BAG_AND_IO_FAILURE")
+	_test_bag_and_io_failure()
+	_header("CANONICAL_PRODUCTION_LIFECYCLE")
+	_test_production_lifecycle()
+	_header("KNOWLEDGE_MECHANISMS")
+	_test_knowledge_mechanisms()
+	_header("RUN_RESET_CLEANUP")
+	_test_run_reset_cleanup()
+	_header("ROUTES_AND_CORE_DISTINCTION")
+	_test_routes_and_core_distinction()
+	_emit_results()
 
-func _run_all_tests() -> void:
-	_print_header("SOURCE_CUSTODY_ROADSIDE")
-	_test_source_authentication_and_harvest()
-	_test_source_not_authenticated_harvest_fails()
-	_test_source_exhausted_after_max_yields()
-	_test_tool_wear_and_breakage()
-	_test_tool_broken_blocks_harvest()
-	_test_inventory_full_blocks_harvest()
+## Every group starts from a fresh run so durable A1 supply, cooldowns and
+## claim counters from an earlier group cannot leak into the next one.
+func _begin_group(tag: String) -> void:
+	print("--- group: %s" % [tag])
+	save_service.call(&"reset_to_defaults", "RESET_SOUL_OF_HERO_SAVE")
+	stations = {}
+	station_ticks = {}
+	station_revisions = {}
+	active_seconds = 0
+	clock_sequence = 0
+	_prepare_stations()
 
-	_print_header("QUARRY_SOURCE_FAIL_CLOSED")
-	_test_quarry_physical_identity_fail_closed()
-	_test_quarry_authenticated_when_authorized()
-	_test_bare_a8_string_does_not_mint_entitlement()
+func _test_canonical_authority() -> void:
+	_begin_group("canonical_authority")
+	_expect(a3.get_economy() == eco, "A3 delegates to the canonical EconomyService instance")
+	_expect_equal(a3.get_projections().get("queue_authority", ""), "canonical_economy_service", "queue authority is canonical")
+	_expect_equal(a3.get_projections().get("clock_authority", ""), "a0_active_session_receipt", "clock authority is A0 receipt")
+	_expect_equal(a3.get_projections().get("knowledge_authority", ""), "canonical_economy_service", "knowledge authority is canonical")
+	_expect(not a3.has_method("set_time_source"), "A3 exposes no caller-supplied clock")
+	var ids: Array[String] = a3.source_ids()
+	_expect(ids.size() == 5, "exactly the five pinned A1 bindings exist: %d" % [ids.size()])
+	_expect(not ids.has("quarry_deep_1"), "fabricated quarry_deep_1 source id does not exist")
+	var a8: Dictionary = a3.a8_authorization()
+	_expect_equal(a8.get("approved", true), false, "A8 Quarry authorization is not APPROVED (fail closed)")
+	_expect(String(a8.get("status", "")).begins_with("REJECTED"), "A8 status stays REJECTED_PENDING_EVIDENCE")
+	_expect(not String(a3.bindings_document_sha256()).is_empty(), "A1 binding document hash is pinned")
 
-	_print_header("RESEARCH_MODEL")
-	_test_bounded_random_research_spends_spares_and_learns()
-	_test_directed_research_consumes_inputs_and_learns()
-	_test_duplicate_research_rejected()
-	_test_research_persists_across_reload_simulation()
-	_test_reverse_engineer_specimen_destructive()
-	_test_only_learn_craftable_recipes()
+func _test_source_custody() -> void:
+	_begin_group("source_custody")
+	_install_station("workbench", "workbench", 1)
+	var tool := _give_instance("iron_pick", "r13:tool:custody", 100)
+	_expect(not tool.is_empty(), "iron_pick instance granted")
+	_expect(not a3.is_source_authenticated(SOURCE_CACHE), "source is unauthenticated before a receipt")
+	var auth: Dictionary = a3.authenticate_source(_receipt_for(SOURCE_CACHE))
+	_expect(bool(auth.get("ok", false)), "valid A1 host receipt authenticates the source: %s" % [auth.get("reason", "")])
+	_expect(a3.is_source_authenticated(SOURCE_CACHE), "authentication is durable in SaveService mastery")
+	var record: Dictionary = a3.source_auth_record(SOURCE_CACHE)
+	_expect_equal(String(record.get("binding_identity", "")), String(a3.binding_for(SOURCE_CACHE).get("identity", "")), "durable record pins the A1 binding identity")
+	var iron_before := _count("iron_scrap")
+	var spares_before := _count("knowledge_spares")
+	var harvest: Dictionary = a3.harvest(SOURCE_CACHE, tool, _receipt_for(SOURCE_CACHE))
+	_expect(bool(harvest.get("ok", false)), "harvest from an authenticated source succeeds: %s" % [harvest.get("reason", "")])
+	_expect_equal(_count("iron_scrap"), iron_before + 3, "A1 binding reward iron_scrap x3 granted")
+	_expect_equal(_count("knowledge_spares"), spares_before + 2, "A1 binding reward knowledge_spares x2 granted")
+	_expect_equal(int(harvest.get("tool_condition_remaining", -1)), 80, "tool wear applied inside the same transaction")
+	_expect_equal(_transaction_count_prefix("soh.a3.source_claim."), 1, "one durable source claim receipt exists")
 
-	_print_header("PAID_PRODUCTION")
-	_test_prepare_escarows_fuel_and_inputs_no_outputs_at_prepare()
-	_test_claim_after_queue_completion_exactly_once()
-	_test_duplicate_claim_rejected()
-	_test_early_claim_rejected()
-	_test_cancel_refunds_fuel_keeps_inputs_spent()
-	_test_unique_job_id_per_batch()
-	_test_wrong_run_job_not_visible()
-	_test_full_bag_blocks_claim()
+func _test_source_forgery() -> void:
+	_begin_group("source_forgery")
+	var forged := {}
+	var result: Dictionary = a3.authenticate_source(forged)
+	_expect(not bool(result.get("ok", true)), "empty dictionary cannot authenticate")
+	_expect_equal(String(result.get("reason", "")), "SOURCE_RECEIPT_MISSING_FIELD", "shape check fires before any owner string")
 
-	_print_header("NEGATIVE_CONTROLS")
-	_test_premature_claim_rejected()
-	_test_capacity_overflow_blocks_claim()
-	_test_canceled_job_no_output()
-	_test_stale_run_job_rejected()
-	_test_replay_after_claim_rejected()
+	var owner_string_only := {"source_id": SOURCE_CACHE, "owner": "A1"}
+	result = a3.authenticate_source(owner_string_only)
+	_expect(not bool(result.get("ok", true)), "supplying owner=\"A1\" alone mints nothing")
+	_expect_equal(String(result.get("reason", "")), "SOURCE_RECEIPT_MISSING_FIELD", "owner string is not authentication")
 
-	_print_header("TWO_PROCESS_PERSISTENCE_SIMULATED")
-	_test_two_process_persistence_proof_simulated()
+	var valid: Dictionary = _receipt_for(SOURCE_CACHE)
+	var mismatch: Dictionary = valid.duplicate(true)
+	mismatch["active_seconds"] = int(mismatch["active_seconds"]) + 600
+	result = a3.authenticate_source(mismatch)
+	_expect(not bool(result.get("ok", true)), "caller-raised active_seconds is rejected")
+	_expect(String(result.get("reason", "")).begins_with("SOURCE_RECEIPT_MISMATCH"), "mismatch names the field: %s" % [result.get("reason", "")])
 
-	_print_header("STRATEGIC_ROADSIDE_CHAIN")
-	_test_roadside_salvage_learning_paid_processing_expedition_chain()
+	var out_of_range: Dictionary = valid.duplicate(true)
+	out_of_range["hero_cell"] = [1, 1]
+	result = a3.authenticate_source(out_of_range)
+	_expect(not bool(result.get("ok", true)), "hero outside A1 stand cells is rejected")
 
-## =============================================================================
-## TWO-PROCESS MODE — PROCESS 1
-##
-## Authenticates a lawful source, harvests, spends materials/fuel, learns,
-## queues paid production, writes a receipt marker, then exits.
-## =============================================================================
+	var undiscovered: Dictionary = valid.duplicate(true)
+	undiscovered["discovered"] = false
+	result = a3.authenticate_source(undiscovered)
+	_expect(not bool(result.get("ok", true)), "undiscovered POI cannot authenticate")
+
+	var swapped: Dictionary = _receipt_for(SOURCE_CACHE).duplicate(true)
+	var other: Dictionary = _receipt_for(SOURCE_ONE_TIME)
+	swapped["instance_id"] = String(other.get("instance_id", ""))
+	result = a3.authenticate_source(swapped)
+	_expect(not bool(result.get("ok", true)), "identity swapped from another binding is rejected")
+
+	var quarry: Dictionary = _receipt_for(SOURCE_CACHE).duplicate(true)
+	quarry["source_id"] = "quarry_deep_1"
+	result = a3.authenticate_source(quarry)
+	_expect(not bool(result.get("ok", true)), "fabricated quarry source id is rejected")
+	_expect_equal(String(result.get("reason", "")), "UNKNOWN_SOURCE_BINDING", "only pinned A1 bindings are sources")
+
+	var quarry_poi: Dictionary = _receipt_for(SOURCE_CACHE).duplicate(true)
+	quarry_poi["poi_id"] = A8_QUARRY_POI_ID
+	result = a3.authenticate_source(quarry_poi)
+	_expect(not bool(result.get("ok", true)), "claiming the Quarry POI id on a roadside binding is rejected")
+
+	a3.configure_source_host(Callable())
+	result = a3.authenticate_source(valid)
+	_expect(not bool(result.get("ok", true)), "absent source host fails closed")
+	_expect_equal(String(result.get("reason", "")), "SOURCE_HOST_UNAVAILABLE", "no host means no receipt")
+	a3.configure_source_host(_source_host)
+
+func _test_cooldown_and_scarcity() -> void:
+	_begin_group("cooldown_scarcity")
+	var tool := _give_instance("iron_pick", "r13:tool:cooldown", 100)
+	a3.authenticate_source(_receipt_for(SOURCE_CACHE))
+	## Break the cooldown precondition deliberately: claim once at the current
+	## active second, then immediately again with the same A0 clock.
+	var first: Dictionary = a3.harvest(SOURCE_CACHE, tool, _receipt_for(SOURCE_CACHE))
+	_expect(bool(first.get("ok", false)), "first renewable claim succeeds")
+	var second: Dictionary = a3.harvest(SOURCE_CACHE, tool, _receipt_for(SOURCE_CACHE))
+	_expect(not bool(second.get("ok", true)), "second claim before the active-time cooldown is refused")
+	_expect_equal(String(second.get("reason", "")), "SOURCE_COOLDOWN", "refusal reason is SOURCE_COOLDOWN")
+	_expect_equal(int(second.get("remaining_active_seconds", 0)), 1800, "cooldown remaining is the A1 binding value")
+	_advance_active_seconds(1800)
+	var third: Dictionary = a3.harvest(SOURCE_CACHE, tool, _receipt_for(SOURCE_CACHE))
+	_expect(bool(third.get("ok", false)), "claim after the cooldown succeeds: %s" % [third.get("reason", "")])
+
+	## One-time source: finite, no cooldown, exhausted after max_claims=1.
+	a3.authenticate_source(_receipt_for(SOURCE_ONE_TIME))
+	var one: Dictionary = a3.harvest(SOURCE_ONE_TIME, tool, _receipt_for(SOURCE_ONE_TIME))
+	_expect(bool(one.get("ok", false)), "one-time source claim succeeds once")
+	_expect_equal(int(one.get("claims_remaining", -1)), 0, "one-time source has no claims left")
+	var twice: Dictionary = a3.harvest(SOURCE_ONE_TIME, tool, _receipt_for(SOURCE_ONE_TIME))
+	_expect(not bool(twice.get("ok", true)), "exhausted one-time source refuses a second claim")
+	_expect_equal(String(twice.get("reason", "")), "SOURCE_EXHAUSTED", "refusal reason is SOURCE_EXHAUSTED")
+
+func _test_tool_condition() -> void:
+	_begin_group("tool_condition")
+	var tool := _give_instance("iron_pick", "r13:tool:wear", 20)
+	a3.authenticate_source(_receipt_for(SOURCE_TIMBER))
+	a3.authenticate_source(_receipt_for(SOURCE_ONE_TIME))
+	var first: Dictionary = a3.harvest(SOURCE_ONE_TIME, tool, _receipt_for(SOURCE_ONE_TIME))
+	_expect(bool(first.get("ok", false)), "claim with a low-condition tool succeeds")
+	_expect_equal(int(first.get("tool_condition_remaining", -1)), 0, "tool condition reaches zero")
+	## A second, untouched one-time source isolates wear from supply limits.
+	var second: Dictionary = a3.harvest(SOURCE_TIMBER, tool, _receipt_for(SOURCE_TIMBER))
+	_expect(not bool(second.get("ok", true)), "worn-out tool cannot claim a different source")
+	_expect_equal(String(second.get("reason", "")), "TOOL_BROKEN", "refusal reason is TOOL_BROKEN")
+	var absent: Dictionary = a3.harvest(SOURCE_NOTES, "soh_i_does_not_exist", _receipt_for(SOURCE_NOTES))
+	_expect_equal(String(absent.get("reason", "")), "TOOL_NOT_OWNED", "unknown tool instance fails closed")
+
+func _test_bag_and_io_failure() -> void:
+	_begin_group("bag_io")
+	var tool := _give_instance("iron_pick", "r13:tool:bag", 100)
+	a3.authenticate_source(_receipt_for(SOURCE_NOTES))
+	## Fill the bag to capacity with distinct stacks.
+	var stacks: Dictionary = _stacks()
+	var filler := 0
+	while stacks.size() < 30:
+		var item_id := "r13_filler_%d" % [filler]
+		stacks[item_id] = {"item_id": item_id, "kind": "material", "quantity": 1}
+		filler += 1
+	_expect(_replace_inventory(stacks, "full"), "fixture fills the bag to capacity")
+	var full: Dictionary = a3.harvest(SOURCE_NOTES, tool, _receipt_for(SOURCE_NOTES))
+	_expect(not bool(full.get("ok", true)), "full bag refuses the claim")
+	_expect_equal(String(full.get("reason", "")), "TRANSACTION_REJECTED", "full bag surfaces as a rejected transaction")
+	_expect_equal(_transaction_count_prefix("soh.a3.source_claim.%s." % [SOURCE_NOTES]), 0, "no claim receipt was written by the refused claim")
+
+	## Obstruct the atomic temporary write: durability failure must roll back.
+	var stacks_after: Dictionary = _stacks()
+	var open_stacks: Dictionary = {}
+	var removed := 0
+	for key: Variant in stacks_after.keys():
+		var record: Variant = stacks_after[key]
+		var item_id := String((record as Dictionary).get("item_id", String(key))) if record is Dictionary else String(key)
+		if removed < 3 and item_id.begins_with("r13_filler_"):
+			removed += 1
+			continue
+		open_stacks[key] = record
+	_expect_equal(removed, 3, "fixture removed three filler stacks, never an instance token")
+	_expect(_replace_inventory(open_stacks, "space"), "fixture frees three bag slots")
+	var tmp_abs := ProjectSettings.globalize_path(save_path + ".tmp")
+	_expect(DirAccess.make_dir_recursive_absolute(tmp_abs) == OK, "fixture obstructs the temporary save write")
+	var before_rewards := _count("research_notes")
+	var io_failure: Dictionary = a3.harvest(SOURCE_NOTES, tool, _receipt_for(SOURCE_NOTES))
+	_expect(not bool(io_failure.get("ok", true)), "failed disk write refuses the claim")
+	_expect_equal(_count("research_notes"), before_rewards, "refused claim granted no reward")
+	_expect_equal(_transaction_count_prefix("soh.a3.source_claim.%s." % [SOURCE_NOTES]), 0, "refused claim wrote no receipt")
+	DirAccess.remove_absolute(tmp_abs)
+	var retry: Dictionary = a3.harvest(SOURCE_NOTES, tool, _receipt_for(SOURCE_NOTES))
+	_expect(bool(retry.get("ok", false)), "retry after the I/O repair succeeds: %s" % [retry.get("reason", "")])
+	_expect_equal(_count("research_notes"), before_rewards + 1, "retry grants exactly one research note")
+
+func _test_production_lifecycle() -> void:
+	_begin_group("production")
+	_install_station("workbench", "workbench", 1)
+	_install_station("research", "research", 1)
+	_give("oak_wood", 20, "production")
+	_give("iron_scrap", 20, "production")
+	_give("charcoal", 5, "production")
+	_give("knowledge_spares", 20, "production")
+	_give("research_notes", 6, "production")
+
+	## Recipe knowledge is required first, through the canonical research queue.
+	var research: Dictionary = a3.research_targeted(RECIPE_MATERIAL, "research", "r13.research.material")
+	_expect(bool(research.get("ok", false)), "targeted research enqueues on the canonical research station: %s" % [research.get("reason", "")])
+	_expect(not a3.is_recipe_known(RECIPE_MATERIAL), "recipe is not known before research matures")
+	var research_job_id := String(research.get("job_id", ""))
+	var research_tick: Dictionary = _tick_station("research", 40, "r13.tick.research")
+	_expect(bool(research_tick.get("ok", false)), "research job matures on the A0 active clock: %s" % [research_tick.get("reason", "")])
+	_expect(a3.is_recipe_known(RECIPE_MATERIAL), "recipe becomes known after maturity")
+	var collected_research: Dictionary = a3.claim_production(research_job_id, "r13.collect.research")
+	_expect(bool(collected_research.get("ok", false)), "research escrow is collected")
+	var survival_raw: Variant = _snapshot().get("survival", {})
+	var knowledge_ok := false
+	if survival_raw is Dictionary:
+		var knowledge_raw: Variant = (survival_raw as Dictionary).get("knowledge", {})
+		if knowledge_raw is Dictionary:
+			var recipes_raw: Variant = (knowledge_raw as Dictionary).get("recipes", {})
+			if recipes_raw is Dictionary:
+				knowledge_ok = (recipes_raw as Dictionary).has(RECIPE_MATERIAL)
+	_expect(knowledge_ok, "knowledge lives in the canonical survival.knowledge.recipes store")
+	_expect(not _mastery().has("a3_learned_recipes"), "no parallel A3 learned-recipe map exists")
+	_expect(not _mastery().has("a3_station_jobs"), "no parallel A3 station queue exists")
+
+	## Paid production: escrow at enqueue, output only after maturity.
+	var oak_before := _count("oak_wood")
+	var prepare: Dictionary = a3.prepare_at_station(RECIPE_MATERIAL, "workbench", "r13.prepare.1")
+	_expect(bool(prepare.get("ok", false)), "paid production enqueues on the canonical workbench: %s" % [prepare.get("reason", "")])
+	var job_id := String(prepare.get("job_id", ""))
+	_expect_equal(_count("oak_wood"), oak_before - 5, "inputs are escrowed at enqueue")
+	_expect_equal(_count("quarry_core_fragment"), 0, "no output is granted at enqueue")
+	_expect(a3.jobs().has(job_id), "job is visible through the canonical queue")
+	var queued_job: Dictionary = a3.job(job_id)
+	_expect_equal(String(queued_job.get("status", "")), "queued", "job starts queued")
+
+	var early: Dictionary = a3.claim_production(job_id, "r13.collect.early")
+	_expect(not bool(early.get("ok", true)), "claim before maturity is refused")
+	_expect_equal(String(early.get("reason", "")), "nothing_to_collect", "early claim reason is nothing_to_collect")
+
+	var tick: Dictionary = _tick_station("workbench", 20, "r13.tick.workbench")
+	_expect(bool(tick.get("ok", false)), "workbench maturity uses the A0 receipt: %s" % [tick.get("reason", "")])
+	var ready_job: Dictionary = a3.job(job_id)
+	_expect_equal(String(ready_job.get("status", "")), "ready", "job is ready after maturity")
+
+	var collect: Dictionary = a3.claim_production(job_id, "r13.collect.1")
+	_expect(bool(collect.get("ok", false)), "collection after maturity succeeds")
+	_expect_equal(_count("quarry_core_fragment"), 4, "exactly one output batch granted")
+	var duplicate: Dictionary = a3.claim_production(job_id, "r13.collect.1")
+	_expect(bool(duplicate.get("ok", false)), "replaying the same collection event is idempotent, not a second grant")
+	_expect_equal(_count("quarry_core_fragment"), 4, "replay grants nothing extra")
+	var second_claim: Dictionary = a3.claim_production(job_id, "r13.collect.2")
+	_expect(not bool(second_claim.get("ok", true)), "a different event id on a collected job is refused")
+	_expect_equal(String(second_claim.get("reason", "")), "nothing_to_collect", "collected job has nothing left to collect")
+
+	## Cancel returns escrow instead of silently destroying it.
+	var prepare_cancel: Dictionary = a3.prepare_at_station(RECIPE_MATERIAL, "workbench", "r13.prepare.cancel")
+	_expect(bool(prepare_cancel.get("ok", false)), "second production enqueues")
+	var cancel_id := String(prepare_cancel.get("job_id", ""))
+	var oak_at_cancel := _count("oak_wood")
+	var cancel: Dictionary = a3.cancel_production(cancel_id, "r13.cancel.1")
+	_expect(bool(cancel.get("ok", false)), "cancel succeeds")
+	_expect_equal(_count("oak_wood"), oak_at_cancel, "cancel moves escrow back into the job, not straight into the bag")
+	var cancelled_collect: Dictionary = a3.claim_production(cancel_id, "r13.collect.cancelled")
+	_expect(bool(cancelled_collect.get("ok", false)), "cancelled escrow is collectable exactly once")
+	_expect_equal(_count("oak_wood"), oak_at_cancel + 5, "collecting a cancelled job returns the inputs")
+	var cancelled_again: Dictionary = a3.claim_production(cancel_id, "r13.collect.cancelled.again")
+	_expect(not bool(cancelled_again.get("ok", true)), "cancelled escrow cannot be collected twice")
+
+	## Absent A0 time host: no clock, no progress.
+	eco.configure_time_host(Callable())
+	var no_host: Dictionary = eco.advance("workbench", _station_time_host("workbench"), "r13.tick.nohost")
+	_expect(not bool(no_host.get("ok", true)), "advance without an A0 time host fails closed")
+	eco.configure_time_host(_station_time_host)
+
+func _test_knowledge_mechanisms() -> void:
+	_begin_group("knowledge")
+	_give("knowledge_spares", 20, "knowledge")
+	_give("research_notes", 6, "knowledge")
+	_give("moonleaf", 10, "knowledge")
+	_give("binding_cloth", 5, "knowledge")
+	_install_station("research", "research", 1)
+	## Mechanism 2: targeted research (paid in physical knowledge materials).
+	var targeted: Dictionary = a3.research_targeted("minor_salve", "research", "r13.research.targeted")
+	_expect(bool(targeted.get("ok", false)), "targeted research is one of three canonical mechanisms: %s" % [targeted.get("reason", "")])
+	_tick_station("research", 40, "r13.tick.targeted")
+	a3.claim_production(String(targeted.get("job_id", "")), "r13.collect.targeted")
+	_expect(a3.is_recipe_known("minor_salve"), "targeted research teaches the recipe")
+	var again: Dictionary = a3.research_targeted("minor_salve", "research", "r13.research.targeted.again")
+	_expect(not bool(again.get("ok", true)), "re-researching a known recipe is refused")
+	_expect_equal(String(again.get("reason", "")), "already_known", "refusal reason is already_known")
+
+	## Mechanism 3: destructive specimen research consumes a physical instance.
+	## The canonical gate is genuine: Core re-crafting needs the technology chain
+	## first, so this path proves both the fail-closed prerequisite and the
+	## destructive consumption of a scarce physical Skill Core.
+	_give("iron_scrap", 10, "tech")
+	_give("soul_ember", 10, "tech")
+	_give("crypt_bone_shard", 5, "tech")
+	_give("research_notes", 10, "tech")
+	_give("iron_ingot", 5, "tech")
+	var specimen := _give_instance("core_ember", "r13:specimen:ember", 100)
+	_expect(not specimen.is_empty(), "physical Skill Core specimen instance granted")
+
+	var blocked: Dictionary = a3.research_specimen("craft_core_ember", specimen, "research", "r13.research.specimen.blocked")
+	_expect(not bool(blocked.get("ok", true)), "specimen research fails closed without the technology chain")
+	_expect_equal(String(blocked.get("reason", "")), "technology_missing", "missing technology is named, not silently allowed")
+	_expect(a3.instance_record(specimen).get("location", "") == "bag", "refused research does not destroy the specimen")
+
+	var tech_one: Dictionary = a3.research_technology("tech_smelting", "research", "r13.tech.smelting")
+	_expect(bool(tech_one.get("ok", false)), "tech_smelting research enqueues: %s" % [tech_one.get("reason", "")])
+	_tick_station("research", 40, "r13.tick.tech.smelting")
+	a3.claim_production(String(tech_one.get("job_id", "")), "r13.collect.tech.smelting")
+	var tech_two: Dictionary = a3.research_technology("tech_precision", "research", "r13.tech.precision")
+	_expect(bool(tech_two.get("ok", false)), "tech_precision research enqueues: %s" % [tech_two.get("reason", "")])
+	_tick_station("research", 40, "r13.tick.tech.precision")
+	a3.claim_production(String(tech_two.get("job_id", "")), "r13.collect.tech.precision")
+	var tech_three: Dictionary = a3.research_technology("tech_core_binding", "research", "r13.tech.binding")
+	_expect(bool(tech_three.get("ok", false)), "tech_core_binding research enqueues: %s" % [tech_three.get("reason", "")])
+	_tick_station("research", 40, "r13.tick.tech.binding")
+	a3.claim_production(String(tech_three.get("job_id", "")), "r13.collect.tech.binding")
+
+	var specimen_research: Dictionary = a3.research_specimen("craft_core_ember", specimen, "research", "r13.research.specimen")
+	_expect(bool(specimen_research.get("ok", false)), "authorised specimen research enqueues: %s" % [specimen_research.get("reason", "")])
+	_expect(String(a3.instance_record(specimen).get("location", "")).begins_with("research:"), "specimen instance is consumed into research custody at enqueue")
+	_tick_station("research", 40, "r13.tick.specimen")
+	a3.claim_production(String(specimen_research.get("job_id", "")), "r13.collect.specimen")
+	_expect(a3.is_recipe_known("craft_core_ember"), "destructive specimen research teaches the Core recipe")
+	_expect_equal(_count("core_ember"), 0, "the studied Skill Core was destroyed, not duplicated")
+
+func _test_run_reset_cleanup() -> void:
+	_begin_group("reset")
+	a3.authenticate_source(_receipt_for(SOURCE_NOTES))
+	_expect(not _mastery().get("a3_source_receipts", {}).is_empty(), "source receipts persisted before reset")
+	var reset_ok: bool = bool(save_service.call(&"reset_to_defaults", "RESET_SOUL_OF_HERO_SAVE"))
+	_expect(reset_ok, "new-run reset applies")
+	var mastery := _mastery()
+	_expect(not mastery.has("a3_source_receipts"), "new run clears A3 source custody")
+	_expect(not mastery.has("a3_discoveries"), "new run clears A3 discoveries")
+	_expect(not a3.is_source_authenticated(SOURCE_CACHE), "no source stays authenticated across a new run")
+	var stale_claim: Dictionary = a3.claim_production("job_000001", "r13.collect.stale")
+	_expect(not bool(stale_claim.get("ok", true)), "stale job id cannot be claimed after a new run")
+	_expect_equal(String(stale_claim.get("reason", "")), "nothing_to_collect", "stale claim reason is nothing_to_collect")
+
+func _test_routes_and_core_distinction() -> void:
+	_begin_group("routes")
+	## The reset test wiped the run, so this group creates its own material state.
+	_give("quarry_core_fragment", 10, "routes")
+	var core := _give_instance("core_ember", "r13:routes:core", 100)
+	_expect(not core.is_empty(), "routes group owns a physical Skill Core instance")
+	var routes: Dictionary = a3.route_comparison()
+	var raw_routes: Variant = routes.get("routes", {})
+	_expect(raw_routes is Dictionary, "route comparison returns named routes")
+	if raw_routes is Dictionary:
+		var named: Dictionary = raw_routes
+		_expect(named.has("MATERIAL_ROUTE") and named.has("KNOWLEDGE_ROUTE"), "two genuinely different routes exist")
+		var material: Dictionary = named.get("MATERIAL_ROUTE", {})
+		var knowledge: Dictionary = named.get("KNOWLEDGE_ROUTE", {})
+		_expect(int(material.get("total_duration_ticks", 0)) > 0, "material route has measurable production time")
+		_expect(int(knowledge.get("total_duration_ticks", 0)) > 0, "knowledge route has measurable production time")
+		_expect(not (material.get("total_inputs", {}) as Dictionary).is_empty(), "material route has measurable input costs")
+		_expect(not (knowledge.get("total_inputs", {}) as Dictionary).is_empty(), "knowledge route has measurable input costs")
+		_expect(String(material.get("next_player_opportunity", "")) != String(knowledge.get("next_player_opportunity", "")), "routes unlock different next-player opportunities")
+		_expect(String(material.get("payoff_class", "")) != String(knowledge.get("payoff_class", "")), "routes pay off in different asset classes")
+		_expect(int(knowledge.get("recipes_requiring_research", 0)) >= 1, "knowledge route requires research")
+		_expect(not (material.get("finite_supply", []) as Array).is_empty(), "material route is limited by finite A1 supply")
+		_expect(not (knowledge.get("finite_supply", []) as Array).is_empty(), "knowledge route is limited by finite A1 supply")
+
+	var distinction: Dictionary = a3.skill_core_distinction()
+	var ordinary: Dictionary = distinction.get("ordinary_material", {})
+	_expect_equal(String(ordinary.get("storage", "")), "stack", "quarry_core_fragment is an ordinary stack material")
+	_expect(not bool(ordinary.get("has_instance_identity", true)), "ordinary fragments have no instance identity")
+	_expect(not bool(ordinary.get("can_cast", true)), "ordinary fragments cannot be cast")
+	_expect(not bool(ordinary.get("has_finite_uses", true)), "ordinary fragments have no finite-use cast budget")
+	_expect_equal(_count("quarry_core_fragment") > 0, true, "ordinary fragments are held as counts")
+	var cores: Array = distinction.get("physical_skill_cores", [])
+	_expect(cores.size() >= 1, "a physical Skill Core instance is distinguishable from a fragment")
+	if cores.size() >= 1:
+		var core: Dictionary = cores[0]
+		_expect(not String(core.get("instance_id", "")).is_empty(), "Skill Core has a durable instance id")
+		_expect(int(core.get("max_uses", 0)) >= 1, "Skill Core has finite uses")
+		_expect_equal(String(core.get("item_id", "")).begins_with("core_"), true, "Skill Core item id is a core_* instance")
+
+## --- process 1 ---
 
 func _run_process_1() -> void:
-	var tx := "a3:p1:init:%d" % [Time.get_ticks_usec()]
-	service._set_inventory_stacks_for_test(
-		{
-			"iron_pick": {"item_id": "iron_pick", "kind": "material", "quantity": 1, "condition": 200},
-			"knowledge_spare": {"item_id": "knowledge_spare", "kind": "material", "quantity": 20},
-			"roadside_oak_scrap": {"item_id": "roadside_oak_scrap", "kind": "material", "quantity": 10},
-			"roadside_iron_scrap": {"item_id": "roadside_iron_scrap", "kind": "material", "quantity": 10},
-		},
-		tx
-	)
-	service.clear_learned_recipes()
-	service.clear_discoveries()
+	_install_station("workbench", "workbench", 1)
+	_install_station("research", "research", 1)
+	_give("oak_wood", 20, "p1")
+	_give("iron_scrap", 20, "p1")
+	_give("charcoal", 5, "p1")
+	_give("knowledge_spares", 20, "p1")
+	_give("research_notes", 6, "p1")
+	var tool := _give_instance("iron_pick", "r13:p1:tool", 100)
 
-	## P1: Authenticate lawful roadside source (A1 physical binding).
-	var auth_ok := service.authenticate_source("roadside_oak_1", "A1")
-	print("P1 authenticate roadside_oak_1 under A1: %s" % [auth_ok])
-	if not auth_ok:
-		print("P1 FAILED - source authentication rejected")
-		quit(1)
+	## 1. Physical source authentication through the A0/A1 receipt.
+	var auth: Dictionary = a3.authenticate_source(_receipt_for(SOURCE_CACHE))
+	if not bool(auth.get("ok", false)):
+		_fail_process("P1", "authenticate failed: %s" % [auth.get("reason", "")])
 		return
-
-	## P1: Harvest roadside oak (carrying + tool cost).
-	var harvest := service.harvest("roadside_oak_1", "iron_pick")
-	print("P1 harvest ok=%s yield=%s tool_condition=%d" % [harvest["ok"], harvest["yield"], harvest["tool_condition_remaining"]])
-	if not harvest["ok"]:
-		print("P1 FAILED - harvest rejected: %s" % [harvest["reason"]])
-		quit(1)
+	## 2. Finite physical harvest with tool wear.
+	var harvest: Dictionary = a3.harvest(SOURCE_CACHE, tool, _receipt_for(SOURCE_CACHE))
+	if not bool(harvest.get("ok", false)):
+		_fail_process("P1", "harvest failed: %s" % [harvest.get("reason", "")])
 		return
-	if not harvest["yield"].has("roadside_oak_scrap"):
-		print("P1 FAILED - no oak scrap yielded")
-		quit(1)
+	## 3. Research gating (canonical research queue).
+	var research: Dictionary = a3.research_targeted(RECIPE_MATERIAL, "research", "r13.p1.research")
+	if not bool(research.get("ok", false)):
+		_fail_process("P1", "research enqueue failed: %s" % [research.get("reason", "")])
 		return
-
-	## P1: Learn process_roadside_materials via directed research.
-	service.directed_research("process_roadside_materials")
-	var knows := service._is_recipe_known("process_roadside_materials")
-	print("P1 process_roadside_materials learned: %s" % [knows])
-	if not knows:
-		print("P1 FAILED - recipe not learned")
-		quit(1)
+	_tick_station("research", 40, "r13.p1.tick.research")
+	a3.claim_production(String(research.get("job_id", "")), "r13.p1.collect.research")
+	if not a3.is_recipe_known(RECIPE_MATERIAL):
+		_fail_process("P1", "recipe not learned after research")
 		return
-
-	## P1: Record pre-prepare inventory quantities.
-	var fuel_before := service._get_inventory_quantity("knowledge_spare")
-	var oak_before := service._get_inventory_quantity("roadside_oak_scrap")
-	var iron_before := service._get_inventory_quantity("roadside_iron_scrap")
-	print("P1 before prepare: fuel=%d oak=%d iron=%d" % [fuel_before, oak_before, iron_before])
-
-	## P1: Prepare paid production (escrows fuel + inputs, defers output).
-	var prepare := service.prepare_at_station("process_roadside_materials", "salvage_station")
-	print("P1 prepare ok=%s job_id=%s status=%s" % [prepare["ok"], prepare["job_id"], prepare["status"]])
-	if not prepare["ok"]:
-		print("P1 FAILED - prepare rejected: %s" % [prepare["reason"]])
-		quit(1)
+	## 4. Paid production: escrow at enqueue, output deferred.
+	var oak_before := _count("oak_wood")
+	var iron_before := _count("iron_scrap")
+	var prepare: Dictionary = a3.prepare_at_station(RECIPE_MATERIAL, "workbench", "r13.p1.prepare")
+	if not bool(prepare.get("ok", false)):
+		_fail_process("P1", "prepare failed: %s" % [prepare.get("reason", "")])
 		return
-
-	## Record receipt identity and quantities before exit.
+	var job_id := String(prepare.get("job_id", ""))
+	if _count("quarry_core_fragment") != 0:
+		_fail_process("P1", "output granted at enqueue")
+		return
 	var receipt := {
-		"job_id": prepare["job_id"],
-		"recipe": prepare["recipe"],
-		"station": prepare["station"],
-		"fuel_item": prepare["fuel_item"],
-		"fuel_quantity": prepare["fuel_quantity"],
-		"queue_seconds": prepare["queue_seconds"],
-		"outputs": prepare["outputs"],
-		"transaction_key": prepare["transaction_key"],
-		"fuel_before": fuel_before,
+		"role": "process_1",
+		"pid": OS.get_process_id(),
+		"save_path": save_path,
+		"session_id": session_id,
+		"active_seconds": active_seconds,
+		"source_id": SOURCE_CACHE,
+		"binding_identity": String(auth.get("binding_identity", "")),
+		"bindings_sha256": a3.bindings_document_sha256(),
+		"a8_status": String(a3.a8_authorization().get("status", "")),
+		"auth_tx": String(auth.get("transaction_key", "")),
+		"harvest_tx": String(harvest.get("transaction_key", "")),
+		"harvest_rewards": harvest.get("rewards", []),
+		"tool_condition_after_harvest": int(harvest.get("tool_condition_remaining", -1)),
+		"recipe_learned": RECIPE_MATERIAL,
+		"job_id": job_id,
+		"recipe": RECIPE_MATERIAL,
+		"station": "workbench",
 		"oak_before": oak_before,
 		"iron_before": iron_before,
-		"oak_consumed": 5,
-		"iron_consumed": 3,
+		"oak_after": _count("oak_wood"),
+		"iron_after": _count("iron_scrap"),
+		"fragment_after_prepare": _count("quarry_core_fragment"),
+		"expected_outputs": {"quarry_core_fragment": 4},
+		"checks": {"checks_passed": 0, "checks_failed": 0},
 	}
-
-	## Write receipt marker to disk so P2 can verify against it.
-	var file := FileAccess.open("user://tests/a3_p1_receipt.json", FileAccess.WRITE)
-	if file == null:
-		print("P1 FAILED - cannot write receipt marker")
-		quit(1)
+	if not _write_receipt("r13_p1_receipt.json", receipt):
+		_fail_process("P1", "could not write receipt")
 		return
-	file.store_string(JSON.stringify(receipt))
-	file.close()
-
-	var fuel_after := service._get_inventory_quantity("knowledge_spare")
-	var oak_after := service._get_inventory_quantity("roadside_oak_scrap")
-	var iron_after := service._get_inventory_quantity("roadside_iron_scrap")
-	print("P1 after prepare: fuel=%d oak=%d iron=%d (fuel escrowed=%d oak spent=%d iron spent=%d)" % [fuel_after, oak_after, iron_after, fuel_before - fuel_after, oak_before - oak_after, iron_before - iron_after])
-
-	if fuel_after != fuel_before - 2:
-		print("P1 FAILED - fuel not escrowed: before=%d after=%d" % [fuel_before, fuel_after])
-		quit(1)
-		return
-	if oak_after != oak_before - 5:
-		print("P1 FAILED - oak not spent: before=%d after=%d" % [oak_before, oak_after])
-		quit(1)
-		return
-	if iron_after != iron_before - 3:
-		print("P1 FAILED - iron not spent: before=%d after=%d" % [iron_before, iron_after])
-		quit(1)
-		return
-
-	## P1: Output must NOT be granted at prepare time.
-	var qcf_before := service._get_inventory_quantity("quarry_core_fragment")
-	if qcf_before != 0:
-		print("P1 FAILED - output granted at prepare: %d" % [qcf_before])
-		quit(1)
-		return
-
-	print("P1 PASSED - receipt written, ready for process 2")
+	print("P1 PASSED - pid=%d job=%s bindings=%s" % [OS.get_process_id(), job_id, a3.bindings_document_sha256().left(12)])
 	quit(0)
 
-## =============================================================================
-## TWO-PROCESS MODE — PROCESS 2
-##
-## Freshly opens the same durable save, verifies P1 state, matures the queue,
-## claims exactly once, refuses duplicate claim, verifies inventory/knowledge
-## preservation.
-## =============================================================================
+## --- process 2 ---
 
 func _run_process_2() -> void:
-	## P2: Fresh process reloads the same SaveService file. No re-init of
-	## run-local state — it must come from the durable save.
-	var receipt_file := FileAccess.open("user://tests/a3_p1_receipt.json", FileAccess.READ)
-	if receipt_file == null:
-		print("P2 FAILED - no receipt marker from process 1")
-		quit(1)
+	var p1: Variant = _read_receipt("r13_p1_receipt.json")
+	if not p1 is Dictionary:
+		_fail_process("P2", "missing or invalid P1 receipt")
 		return
-	var receipt: Dictionary = JSON.parse_string(receipt_file.get_as_text())
-	receipt_file.close()
-	var p1_job_id := String(receipt.get("job_id", ""))
-	print("P2 loaded receipt for job: %s" % [p1_job_id])
+	var receipt: Dictionary = p1
+	var job_id := String(receipt.get("job_id", ""))
+	var expected_output := int((receipt.get("expected_outputs", {}) as Dictionary).get("quarry_core_fragment", 0))
+	var checks_passed := 0
+	var checks_failed := 0
 
-	## P2: Verify durable inventory from P1.
-	var fuel_p2 := service._get_inventory_quantity("knowledge_spare")
-	var oak_p2 := service._get_inventory_quantity("roadside_oak_scrap")
-	var iron_p2 := service._get_inventory_quantity("roadside_iron_scrap")
-	var expected_fuel := int(receipt.get("fuel_before", 0)) - 2
-	var expected_oak := int(receipt.get("oak_before", 0)) - 5
-	var expected_iron := int(receipt.get("iron_before", 0)) - 3
-	print("P2 inventory: fuel=%d (expected %d) oak=%d (expected %d) iron=%d (expected %d)" % [fuel_p2, expected_fuel, oak_p2, expected_oak, iron_p2, expected_iron])
-	if fuel_p2 != expected_fuel:
-		print("P2 FAILED - fuel not preserved across process boundary")
-		quit(1)
-		return
-	if oak_p2 != expected_oak:
-		print("P2 FAILED - oak not preserved across process boundary")
-		quit(1)
-		return
-	if iron_p2 != expected_iron:
-		print("P2 FAILED - iron not preserved across process boundary")
-		quit(1)
-		return
-
-	## P2: Verify learned knowledge persisted.
-	var knows := service._is_recipe_known("process_roadside_materials")
-	print("P2 process_roadside_materials known: %s" % [knows])
-	if not knows:
-		print("P2 FAILED - learned recipe not preserved across process boundary")
-		quit(1)
-		return
-
-	## P2: Verify job persists in SaveService mastery.
-	var mastery := service._get_mastery_section()
-	var jobs := mastery.get("a3_station_jobs", {})
-	var job_key := "job:%s" % [p1_job_id]
-	print("P2 job persisted in mastery: %s" % [jobs.has(job_key)])
-	if not jobs.has(job_key):
-		print("P2 FAILED - job not persisted in SaveService mastery")
-		quit(1)
-		return
-	var job_entry := jobs[job_key] as Dictionary
-	if not bool(job_entry.get("claimed", false)):
-		print("P2 job not yet claimed (expected before P2 claim)")
+	## 1. Durable custody and inventory survived the process boundary.
+	if a3.is_source_authenticated(SOURCE_CACHE):
+		checks_passed += 1
 	else:
-		print("P2 job already claimed before P2 attempt (unexpected)")
-		quit(1)
+		checks_failed += 1
+		print("P2 FAIL source custody lost across reload")
+	if String(a3.source_auth_record(SOURCE_CACHE).get("bindings_sha256", "")) == a3.bindings_document_sha256():
+		checks_passed += 1
+	else:
+		checks_failed += 1
+		print("P2 FAIL binding hash changed across reload")
+	if a3.is_recipe_known(RECIPE_MATERIAL):
+		checks_passed += 1
+	else:
+		checks_failed += 1
+		print("P2 FAIL learned recipe lost across reload")
+	if a3.jobs().has(job_id):
+		checks_passed += 1
+	else:
+		checks_failed += 1
+		print("P2 FAIL job lost across reload")
+	if _count("oak_wood") == int(receipt.get("oak_after", -1)) and _count("iron_scrap") == int(receipt.get("iron_after", -1)):
+		checks_passed += 1
+	else:
+		checks_failed += 1
+		print("P2 FAIL prepaid inventory changed across reload")
+	if _count("quarry_core_fragment") == 0:
+		checks_passed += 1
+	else:
+		checks_failed += 1
+		print("P2 FAIL output appeared before maturity")
+
+	## 2. Refusal before maturity — no clock, no output.
+	var early: Dictionary = a3.claim_production(job_id, "r13.p2.collect.early")
+	if not bool(early.get("ok", true)) and String(early.get("reason", "")) == "nothing_to_collect":
+		checks_passed += 1
+	else:
+		checks_failed += 1
+		print("P2 FAIL early claim was not refused: %s" % [early])
+	if _count("quarry_core_fragment") == 0:
+		checks_passed += 1
+	else:
+		checks_failed += 1
+		print("P2 FAIL early refusal granted output")
+
+	## 3. Mature through the canonical A0 time receipt, then grant exactly once.
+	var tick: Dictionary = _tick_station("workbench", 20, "r13.p2.tick.workbench")
+	if bool(tick.get("ok", false)):
+		checks_passed += 1
+	else:
+		checks_failed += 1
+		print("P2 FAIL maturity advance refused: %s" % [tick])
+	var collect: Dictionary = a3.claim_production(job_id, "r13.p2.collect.1")
+	if not bool(collect.get("ok", false)):
+		_fail_process("P2", "first collection refused: %s" % [collect.get("reason", "")])
 		return
+	if _count("quarry_core_fragment") == expected_output:
+		checks_passed += 1
+	else:
+		checks_failed += 1
+		print("P2 FAIL output quantity %d != %d" % [_count("quarry_core_fragment"), expected_output])
+	var after_first := _count("quarry_core_fragment")
 
-	## P2: Mature the queue and claim exactly once.
-	service.set_time_source(func(): var now := int(Time.get_unix_time_from_system()) + 800; return {"now": now})
-	var claim1 := service.claim_offline_production(p1_job_id)
-	print("P2 claim1 ok=%s reason=%s" % [claim1["ok"], claim1["reason"]])
-	if not claim1["ok"]:
-		print("P2 FAILED - first claim rejected: %s" % [claim1["reason"]])
-		quit(1)
+	## 4. Duplicate claim refused, inventory conserved.
+	var duplicate: Dictionary = a3.claim_production(job_id, "r13.p2.collect.duplicate")
+	if not bool(duplicate.get("ok", true)) and String(duplicate.get("reason", "")) == "nothing_to_collect":
+		checks_passed += 1
+	else:
+		checks_failed += 1
+		print("P2 FAIL duplicate claim was accepted: %s" % [duplicate])
+	if _count("quarry_core_fragment") == after_first:
+		checks_passed += 1
+	else:
+		checks_failed += 1
+		print("P2 FAIL duplicate claim changed inventory")
+
+	## 5. Conservation across the whole chain: outputs + inputs + escrow.
+	var conservation: Dictionary = _conservation(receipt)
+	if bool(conservation.get("ok", false)):
+		checks_passed += 1
+	else:
+		checks_failed += 1
+		print("P2 FAIL conservation: %s" % [conservation])
+
+	var out: Dictionary = receipt.duplicate(true)
+	out["role"] = "process_2"
+	out["pid"] = OS.get_process_id()
+	out["p1_pid"] = int(receipt.get("pid", 0))
+	out["save_path"] = save_path
+	out["reload"] = {
+		"source_authenticated": a3.is_source_authenticated(SOURCE_CACHE),
+		"recipe_known": a3.is_recipe_known(RECIPE_MATERIAL),
+		"job_present": a3.jobs().has(job_id),
+		"job_status_after_maturity": String(a3.job(job_id).get("status", "")),
+	}
+	out["early_refusal"] = early
+	out["collect"] = collect
+	out["duplicate"] = duplicate
+	out["output_after_first_claim"] = after_first
+	out["output_after_duplicate"] = _count("quarry_core_fragment")
+	out["conservation"] = conservation
+	out["checks"] = {"checks_passed": checks_passed, "checks_failed": checks_failed}
+	if not _write_receipt("r13_p2_receipt.json", out):
+		_fail_process("P2", "could not write receipt")
 		return
-	if not claim1["outputs"].has("quarry_core_fragment"):
-		print("P2 FAILED - no quarry_core_fragment on claim")
-		quit(1)
-		return
-
-	## P2: Verify output quantity matches receipt.
-	var qcf_after := service._get_inventory_quantity("quarry_core_fragment")
-	var expected_qcf := int(receipt.get("outputs", {}).get("quarry_core_fragment", 0))
-	print("P2 quarry_core_fragment after claim: %d (expected %d)" % [qcf_after, expected_qcf])
-	if qcf_after != expected_qcf:
-		print("P2 FAILED - output quantity mismatch")
-		quit(1)
-		return
-
-	## P2: Duplicate claim must be refused.
-	var claim2 := service.claim_offline_production(p1_job_id)
-	print("P2 claim2 ok=%s reason=%s" % [claim2["ok"], claim2["reason"]])
-	if claim2["ok"]:
-		print("P2 FAILED - duplicate claim accepted")
-		quit(1)
-		return
-	if claim2["reason"] != "ALREADY_CLAIMED":
-		print("P2 FAILED - wrong reason for duplicate: %s" % [claim2["reason"]])
-		quit(1)
-		return
-
-	## P2: Inventory must be unchanged after rejected duplicate.
-	var qcf_after_dup := service._get_inventory_quantity("quarry_core_fragment")
-	if qcf_after_dup != expected_qcf:
-		print("P2 FAILED - inventory changed after rejected duplicate claim")
-		quit(1)
-		return
-
-	## P2: Learned knowledge still preserved after claim.
-	var still_knows := service._is_recipe_known("process_roadside_materials")
-	if not still_knows:
-		print("P2 FAILED - learned knowledge lost after claim")
-		quit(1)
-		return
-
-	print("P2 PASSED - claim exactly once, duplicate refused, inventory and knowledge preserved")
-	quit(0)
-
-## =============================================================================
-## SOURCE CUSTODY — ROADSIDE
-## =============================================================================
-
-func _test_source_authentication_and_harvest() -> void:
-	var tx := "a3:test:setup:roadside_harvest:%d" % [Time.get_ticks_usec()]
-	service._set_inventory_stacks_for_test(
-		{"stone_pick": {"item_id": "stone_pick", "kind": "material", "quantity": 1, "condition": 100}},
-		tx
-	)
-
-	var ok := service.authenticate_source("roadside_oak_1", "A1")
-	_expect(ok, "roadside_oak_1 authenticates under A1 ownership")
-
-	var harvested := service.harvest("roadside_oak_1", "stone_pick")
-	_expect(harvested["ok"], "Harvest succeeds after authentication: %s" % [harvested["reason"]])
-	_expect(harvested["yield"].has("roadside_oak_scrap"), "Oak scrap yielded")
-	_expect_equal(harvested["tool_condition_remaining"], 75, "Tool wear applied: %d remaining" % [harvested["tool_condition_remaining"]])
-	_expect_equal(harvested["source_yields_remaining"], 2, "3 max yields, 1 used → 2 remaining: %d" % [harvested["source_yields_remaining"]])
-
-	## Second harvest with new transaction key succeeds (finite-yield counter is separate).
-	var idempotent := service.harvest("roadside_oak_1", "stone_pick")
-	_expect(idempotent["ok"], "Second harvest with new transaction key succeeds")
-
-func _test_source_not_authenticated_harvest_fails() -> void:
-	var result := service.harvest("roadside_stone_1", "stone_pick")
-	_expect(not result["ok"], "Unauthenticated harvest must fail")
-	_expect_equal(result["reason"], "SOURCE_NOT_AUTHENTICATED", "Reason must be SOURCE_NOT_AUTHENTICATED")
-
-func _test_source_exhausted_after_max_yields() -> void:
-	var tx := "a3:test:setup:exhausted:%d" % [Time.get_ticks_usec()]
-	service._set_inventory_stacks_for_test(
-		{"stone_pick": {"item_id": "stone_pick", "kind": "material", "quantity": 1, "condition": 100}},
-		tx
-	)
-	service.authenticate_source("roadside_iron_1", "A1")
-
-	## roadside_iron_1 has max_yields = 2
-	var r1 := service.harvest("roadside_iron_1", "stone_pick")
-	_expect(r1["ok"], "First harvest succeeds")
-	var r2 := service.harvest("roadside_iron_1", "stone_pick")
-	_expect(r2["ok"], "Second harvest succeeds (max 2)")
-	var r3 := service.harvest("roadside_iron_1", "stone_pick")
-	_expect(not r3["ok"], "Third harvest must fail — source exhausted")
-	_expect_equal(r3["reason"], "SOURCE_EXHAUSTED", "Reason must be SOURCE_EXHAUSTED")
-
-func _test_tool_wear_and_breakage() -> void:
-	var tx := "a3:test:setup:wear:%d" % [Time.get_ticks_usec()]
-	service._set_inventory_stacks_for_test(
-		{"stone_pick": {"item_id": "stone_pick", "kind": "material", "quantity": 1, "condition": 25}},
-		tx
-	)
-	service.authenticate_source("roadside_oak_1", "A1")
-
-	var r := service.harvest("roadside_oak_1", "stone_pick")
-	_expect(r["ok"], "Harvest succeeds with low-condition tool")
-	_expect_equal(r["tool_condition_remaining"], 0, "Tool breaks at condition 0")
-
-	var r2 := service.harvest("roadside_oak_1", "stone_pick")
-	_expect(not r2["ok"], "Harvest with broken tool fails")
-	_expect_equal(r2["reason"], "TOOL_BROKEN", "Reason must be TOOL_BROKEN")
-
-func _test_tool_broken_blocks_harvest() -> void:
-	var tx := "a3:test:setup:broken:%d" % [Time.get_ticks_usec()]
-	service._set_inventory_stacks_for_test(
-		{"stone_pick": {"item_id": "stone_pick", "kind": "material", "quantity": 1, "condition": 0}},
-		tx
-	)
-	service.authenticate_source("roadside_oak_1", "A1")
-
-	var r := service.harvest("roadside_oak_1", "stone_pick")
-	_expect(not r["ok"], "Broken tool harvest fails")
-	_expect_equal(r["reason"], "TOOL_BROKEN", "Reason must be TOOL_BROKEN")
-
-func _test_inventory_full_blocks_harvest() -> void:
-	## Fill all 30 inventory slots with unique items.
-	var stacks := {}
-	var i := 0
-	while i < 30:
-		var item_id := "test_item_%d" % [i]
-		stacks[item_id] = {"item_id": item_id, "kind": "material", "quantity": 1}
-		i += 1
-	var tx := "a3:test:setup:full:%d" % [Time.get_ticks_usec()]
-	service._set_inventory_stacks_for_test(stacks, tx)
-	service.authenticate_source("roadside_oak_1", "A1")
-
-	var r := service.harvest("roadside_oak_1", "stone_pick")
-	_expect(not r["ok"], "Full inventory blocks harvest")
-	_expect_equal(r["reason"], "INVENTORY_FULL", "Reason must be INVENTORY_FULL")
-
-## =============================================================================
-## QUARRY SOURCE — FAIL CLOSED
-## =============================================================================
-
-func _test_quarry_physical_identity_fail_closed() -> void:
-	## Quarry contract keys must use A8 physical identity.
-	var contract := service.source_contracts.get("quarry_deep_1", {})
-	_expect_equal(String(contract.get("poi_id", "")), "poi_crown_south_quarry", "POI ID must be poi_crown_south_quarry")
-	_expect_equal(String(contract.get("instance_id", "")), "south_seam_outcrop", "Instance ID must be south_seam_outcrop")
-	_expect_equal(String(contract.get("action_id", "")), "extract_outcrop", "Action ID must be extract_outcrop")
-
-	## Without A8 authorization, quarry harvest must fail.
-	var r := service.harvest("quarry_deep_1", "iron_pick")
-	_expect(not r["ok"], "Quarry harvest must fail when not A8-authorized")
-	_expect_equal(r["reason"], "SOURCE_NOT_AUTHENTICATED", "Reason must be SOURCE_NOT_AUTHENTICATED")
-
-	## Authenticating under "A8" domain claim must fail because a8_authorized == false.
-	var auth_result := service.authenticate_source("quarry_deep_1", "A8")
-	_expect(not auth_result, "A8 domain claim must be rejected when quarry not authorized")
-
-func _test_quarry_authenticated_when_authorized() -> void:
-	## Temporarily flip authorization to verify authorized quarry harvest works.
-	var contract := service.source_contracts.get("quarry_deep_1", {})
-	var tx := "a3:test:setup:quarry_auth:%d" % [Time.get_ticks_usec()]
-	service._set_inventory_stacks_for_test(
-		{"iron_pick": {"item_id": "iron_pick", "kind": "material", "quantity": 1, "condition": 200}},
-		tx
-	)
-
-	## This helper directly sets the contract flag (simulating A8 approval).
-	contract["a8_authorized"] = true
-	var auth_result := service.authenticate_source("quarry_deep_1", "A8")
-	_expect(auth_result, "Authorized quarry authenticates under A8")
-
-	var r := service.harvest("quarry_deep_1", "iron_pick")
-	_expect(r["ok"], "Authorized quarry harvest succeeds: %s" % [r["reason"]])
-	_expect(r["yield"].has("quarry_sample"), "Quarry sample yielded")
-
-	## Restore fail-closed state.
-	contract["a8_authorized"] = false
-
-func _test_bare_a8_string_does_not_mint_entitlement() -> void:
-	## The bare string "A8" alone must NOT mint source entitlement.
-	_expect(not service.is_source_authenticated("quarry_deep_1"), "Quarry must not be authenticated via bare A8 string")
-
-## =============================================================================
-## RESEARCH MODEL
-## =============================================================================
-
-func _test_bounded_random_research_spends_spares_and_learns() -> void:
-	var tx := "a3:test:setup:bounded:%d" % [Time.get_ticks_usec()]
-	service._set_inventory_stacks_for_test(
-		{"knowledge_spare": {"item_id": "knowledge_spare", "kind": "material", "quantity": 5}},
-		tx
-	)
-
-	var r := service.bounded_random_research(3)
-	_expect(r["ok"], "Bounded random research succeeds: %s" % [r["reason"]])
-	_expect(r.has("recipe_learned"), "A recipe must be learned")
-	_expect_equal(r["spares_consumed"], 3, "3 spares consumed: %d" % [r["spares_consumed"]])
-
-	_expect(service._is_recipe_known(r["recipe_learned"]), "Service must know %s after research" % [r["recipe_learned"]])
-
-func _test_directed_research_consumes_inputs_and_learns() -> void:
-	var tx := "a3:test:setup:directed:%d" % [Time.get_ticks_usec()]
-	service._set_inventory_stacks_for_test(
-		{
-			"roadside_oak_scrap": {"item_id": "roadside_oak_scrap", "kind": "material", "quantity": 3},
-			"roadside_stone_chip": {"item_id": "roadside_stone_chip", "kind": "material", "quantity": 2},
-			"knowledge_spare": {"item_id": "knowledge_spare", "kind": "material", "quantity": 1},
-		},
-		tx
-	)
-
-	var r := service.directed_research("salvage_kit")
-	_expect(r["ok"], "Directed research succeeds: %s" % [r["reason"]])
-	_expect_equal(r["recipe_learned"], "salvage_kit", "salvage_kit recipe learned")
-	_expect(service._is_recipe_known("salvage_kit"), "Service knows salvage_kit")
-
-func _test_duplicate_research_rejected() -> void:
-	var tx := "a3:test:setup:dup:%d" % [Time.get_ticks_usec()]
-	service._set_inventory_stacks_for_test(
-		{
-			"roadside_oak_scrap": {"item_id": "roadside_oak_scrap", "kind": "material", "quantity": 3},
-			"roadside_stone_chip": {"item_id": "roadside_stone_chip", "kind": "material", "quantity": 2},
-			"knowledge_spare": {"item_id": "knowledge_spare", "kind": "material", "quantity": 1},
-		},
-		tx
-	)
-
-	service.directed_research("salvage_kit")
-	var r2 := service.directed_research("salvage_kit")
-	_expect(not r2["ok"], "Duplicate research must be rejected")
-	_expect_equal(r2["reason"], "RECIPE_ALREADY_KNOWN", "Reason must be RECIPE_ALREADY_KNOWN")
-
-func _test_research_persists_across_reload_simulation() -> void:
-	var tx := "a3:test:setup:persist:%d" % [Time.get_ticks_usec()]
-	service._set_inventory_stacks_for_test(
-		{"roadside_oak_scrap": {"item_id": "roadside_oak_scrap", "kind": "material", "quantity": 5}},
-		tx
-	)
-	service.clear_learned_recipes()
-
-	service.directed_research("salvage_kit")
-	_expect(service._is_recipe_known("salvage_kit"), "salvage_kit known before simulated reload")
-
-	## Simulate reload: re-ingest mastery from SaveService.
-	var mastery_before := service._get_mastery_section()
-	var lr_before := mastery_before.get("a3_learned_recipes", {})
-	_expect(bool(lr_before.get("salvage_kit", false)), "salvage_kit persisted in SaveService mastery")
-
-func _test_reverse_engineer_specimen_destructive() -> void:
-	var tx := "a3:test:setup:specimen:%d" % [Time.get_ticks_usec()]
-	service._set_inventory_stacks_for_test(
-		{"quarry_sample": {"item_id": "quarry_sample", "kind": "material", "quantity": 3}},
-		tx
-	)
-	service.clear_learned_recipes()
-
-	var r := service.reverse_engineer_specimen("quarry_sample_specimen")
-	_expect(r["ok"], "Specimen reverse engineering succeeds: %s" % [r["reason"]])
-	_expect_equal(r["recipe_learned"], "process_quarry_sample", "process_quarry_sample recipe learned")
-	_expect(service._is_recipe_known("process_quarry_sample"), "Service knows process_quarry_sample")
-
-	## Specimen consumed (destroyed).
-	var qty := service._get_inventory_quantity("quarry_sample")
-	_expect_equal(qty, 2, "1 quarry_sample consumed: %d remaining" % [qty])
-
-	## Duplicate reverse engineering rejected.
-	var r2 := service.reverse_engineer_specimen("quarry_sample_specimen")
-	_expect(not r2["ok"], "Duplicate specimen research rejected")
-	_expect_equal(r2["reason"], "RECIPE_ALREADY_KNOWN", "Reason must be RECIPE_ALREADY_KNOWN")
-
-func _test_only_learn_craftable_recipes() -> void:
-	## Reverse-engineering a specimen that teaches a non-registered recipe must fail.
-	## quarry_sample_specimen teaches process_quarry_sample (registered) — verify
-	## there's no path to learn an unregistered recipe through this service.
-	_expect(service.recipes.has("process_quarry_sample"), "process_quarry_sample is a registered craftable recipe")
-
-## =============================================================================
-## PAID PRODUCTION
-## =============================================================================
-
-func _test_prepare_escarows_fuel_and_inputs_no_outputs_at_prepare() -> void:
-	var tx := "a3:test:setup:prepare:%d" % [Time.get_ticks_usec()]
-	service._set_inventory_stacks_for_test(
-		{
-			"knowledge_spare": {"item_id": "knowledge_spare", "kind": "material", "quantity": 10},
-			"roadside_oak_scrap": {"item_id": "roadside_oak_scrap", "kind": "material", "quantity": 5},
-			"roadside_iron_scrap": {"item_id": "roadside_iron_scrap", "kind": "material", "quantity": 5},
-		},
-		tx
-	)
-	service.clear_learned_recipes()
-	service.directed_research("process_roadside_materials")
-
-	var inventory_before := service._get_inventory_quantity("knowledge_spare")
-	var r := service.prepare_at_station("process_roadside_materials", "salvage_station")
-	_expect(r["ok"], "Prepare succeeds: %s" % [r["reason"]])
-	_expect(r.has("job_id"), "Job ID returned")
-	_expect(r["outputs"].has("quarry_core_fragment"), "Outputs declared but NOT yet granted")
-	_expect_equal(r["status"], "queued", "Job status is queued")
-
-	## Fuel escrowed at prepare time.
-	var inventory_after := service._get_inventory_quantity("knowledge_spare")
-	_expect_equal(inventory_after, inventory_before - 2, "2 fuel knowledge_spare escrowed at prepare: before=%d after=%d" % [inventory_before, inventory_after])
-
-	## quarry_core_fragment NOT yet in inventory (deferred output).
-	_expect_equal(service._get_inventory_quantity("quarry_core_fragment"), 0, "No quarry_core_fragment granted at prepare time")
-
-func _test_claim_after_queue_completion_exactly_once() -> void:
-	var tx := "a3:test:setup:claim:%d" % [Time.get_ticks_usec()]
-	service._set_inventory_stacks_for_test(
-		{
-			"knowledge_spare": {"item_id": "knowledge_spare", "kind": "material", "quantity": 10},
-			"roadside_oak_scrap": {"item_id": "roadside_oak_scrap", "kind": "material", "quantity": 5},
-			"roadside_iron_scrap": {"item_id": "roadside_iron_scrap", "kind": "material", "quantity": 5},
-		},
-		tx
-	)
-	service.clear_learned_recipes()
-	service.directed_research("process_roadside_materials")
-
-	var prepare := service.prepare_at_station("process_roadside_materials", "salvage_station")
-	_expect(prepare["ok"], "Prepare succeeds")
-
-	## Advance time past queue_seconds (600s) via configurable time source.
-	service.set_time_source(func(): var now := int(Time.get_unix_time_from_system()) + 700; return {"now": now})
-
-	var claim1 := service.claim_offline_production(prepare["job_id"])
-	_expect(claim1["ok"], "First claim succeeds: %s" % [claim1["reason"]])
-	_expect(claim1["outputs"].has("quarry_core_fragment"), "quarry_core_fragment granted on claim")
-
-	var qcf_before := service._get_inventory_quantity("quarry_core_fragment")
-	var claim2 := service.claim_offline_production(prepare["job_id"])
-	_expect(not claim2["ok"], "Second claim must be rejected (exactly-once)")
-	_expect_equal(claim2["reason"], "ALREADY_CLAIMED", "Reason must be ALREADY_CLAIMED")
-	_expect_equal(service._get_inventory_quantity("quarry_core_fragment"), qcf_before, "No duplicate materials granted")
-
-func _test_duplicate_claim_rejected() -> void:
-	var tx := "a3:test:setup:dup_claim:%d" % [Time.get_ticks_usec()]
-	service._set_inventory_stacks_for_test(
-		{
-			"knowledge_spare": {"item_id": "knowledge_spare", "kind": "material", "quantity": 10},
-			"roadside_oak_scrap": {"item_id": "roadside_oak_scrap", "kind": "material", "quantity": 5},
-			"roadside_iron_scrap": {"item_id": "roadside_iron_scrap", "kind": "material", "quantity": 5},
-		},
-		tx
-	)
-	service.clear_learned_recipes()
-	service.directed_research("process_roadside_materials")
-
-	var prepare := service.prepare_at_station("process_roadside_materials", "salvage_station")
-	service.set_time_source(func(): var now := int(Time.get_unix_time_from_system()) + 700; return {"now": now})
-	service.claim_offline_production(prepare["job_id"])
-
-	var replay := service.claim_offline_production(prepare["job_id"])
-	_expect(not replay["ok"], "Replay claim rejected")
-	_expect_equal(replay["reason"], "ALREADY_CLAIMED", "Reason must be ALREADY_CLAIMED")
-
-func _test_early_claim_rejected() -> void:
-	var tx := "a3:test:setup:early:%d" % [Time.get_ticks_usec()]
-	service._set_inventory_stacks_for_test(
-		{
-			"knowledge_spare": {"item_id": "knowledge_spare", "kind": "material", "quantity": 10},
-			"roadside_oak_scrap": {"item_id": "roadside_oak_scrap", "kind": "material", "quantity": 5},
-			"roadside_iron_scrap": {"item_id": "roadside_iron_scrap", "kind": "material", "quantity": 5},
-		},
-		tx
-	)
-	service.clear_learned_recipes()
-	service.directed_research("process_roadside_materials")
-
-	var prepare := service.prepare_at_station("process_roadside_materials", "salvage_station")
-	## Queue is 600s; claim at 100s → not ready.
-	service.set_time_source(func(): var now := int(Time.get_unix_time_from_system()) + 100; return {"now": now})
-
-	var claim := service.claim_offline_production(prepare["job_id"])
-	_expect(not claim["ok"], "Early claim must be rejected")
-	_expect_equal(claim["reason"], "QUEUE_NOT_READY", "Reason must be QUEUE_NOT_READY")
-
-func _test_cancel_refunds_fuel_keeps_inputs_spent() -> void:
-	var tx := "a3:test:setup:cancel:%d" % [Time.get_ticks_usec()]
-	service._set_inventory_stacks_for_test(
-		{
-			"knowledge_spare": {"item_id": "knowledge_spare", "kind": "material", "quantity": 10},
-			"roadside_oak_scrap": {"item_id": "roadside_oak_scrap", "kind": "material", "quantity": 5},
-			"roadside_iron_scrap": {"item_id": "roadside_iron_scrap", "kind": "material", "quantity": 5},
-		},
-		tx
-	)
-	service.clear_learned_recipes()
-	service.directed_research("process_roadside_materials")
-
-	var fuel_before := service._get_inventory_quantity("knowledge_spare")
-	var oak_before := service._get_inventory_quantity("roadside_oak_scrap")
-
-	var prepare := service.prepare_at_station("process_roadside_materials", "salvage_station")
-	_expect(prepare["ok"], "Prepare succeeds")
-
-	var cancel := service.cancel_station_job(prepare["job_id"])
-	_expect(cancel["ok"], "Cancel succeeds: %s" % [cancel["reason"]])
-	_expect_equal(cancel["fuel_refunded"], 2, "2 fuel refunded: %d" % [cancel["fuel_refunded"]])
-
-	var fuel_after := service._get_inventory_quantity("knowledge_spare")
-	_expect_equal(fuel_after, fuel_before, "Fuel refunded: before=%d after=%d" % [fuel_before, fuel_after])
-
-	## Inputs remain spent (production cost at prepare time).
-	var oak_after := service._get_inventory_quantity("roadside_oak_scrap")
-	_expect_equal(oak_after, oak_before - 5, "Inputs remain spent after cancel: before=%d after=%d" % [oak_before, oak_after])
-
-func _test_unique_job_id_per_batch() -> void:
-	var tx := "a3:test:setup:unique:%d" % [Time.get_ticks_usec()]
-	service._set_inventory_stacks_for_test(
-		{
-			"knowledge_spare": {"item_id": "knowledge_spare", "kind": "material", "quantity": 20},
-			"roadside_oak_scrap": {"item_id": "roadside_oak_scrap", "kind": "material", "quantity": 10},
-			"roadside_iron_scrap": {"item_id": "roadside_iron_scrap", "kind": "material", "quantity": 10},
-		},
-		tx
-	)
-	service.clear_learned_recipes()
-	service.directed_research("process_roadside_materials")
-
-	var p1 := service.prepare_at_station("process_roadside_materials", "salvage_station")
-	_expect(p1["ok"], "First prepare succeeds")
-	var p2 := service.prepare_at_station("process_roadside_materials", "salvage_station")
-	_expect(p2["ok"], "Second prepare succeeds")
-	_expect_not_equal(p1["job_id"], p2["job_id"], "Job IDs differ per batch: %s vs %s" % [p1["job_id"], p2["job_id"]])
-
-	## Claim both (advance time).
-	service.set_time_source(func(): var now := int(Time.get_unix_time_from_system()) + 700; return {"now": now})
-	_expect(service.claim_offline_production(p1["job_id"])["ok"], "First claim succeeds")
-	_expect(service.claim_offline_production(p2["job_id"])["ok"], "Second claim succeeds")
-
-func _test_wrong_run_job_not_visible() -> void:
-	var tx := "a3:test:setup:wrong_run:%d" % [Time.get_ticks_usec()]
-	service._set_inventory_stacks_for_test(
-		{
-			"knowledge_spare": {"item_id": "knowledge_spare", "kind": "material", "quantity": 10},
-			"roadside_oak_scrap": {"item_id": "roadside_oak_scrap", "kind": "material", "quantity": 5},
-			"roadside_iron_scrap": {"item_id": "roadside_iron_scrap", "kind": "material", "quantity": 5},
-		},
-		tx
-	)
-	service.clear_learned_recipes()
-	service.directed_research("process_roadside_materials")
-
-	var prepare := service.prepare_at_station("process_roadside_materials", "salvage_station")
-	_expect(prepare["ok"], "Prepare succeeds")
-
-	## Simulate new run: wipe mastery (new run ID).
-	var wipe_tx := "a3:test:wipe:%d" % [Time.get_ticks_usec()]
-	var wipe_ok := service.get_save().call("transact_once", wipe_tx, func(candidate: Dictionary) -> bool:
-		var m = candidate.get("mastery", {}).duplicate(true)
-		m["a3_run_id"] = "run_different"
-		m["a3_station_jobs"] = {}
-		m["a3_job_counter"] = 0
-		candidate["mastery"] = m
-		return true
-	, {"kind": "a3_test_wipe_run"})
-	_expect(wipe_ok, "Run wipe applied")
-
-	service.set_time_source(func(): var now := int(Time.get_unix_time_from_system()) + 700; return {"now": now})
-	var claim := service.claim_offline_production(prepare["job_id"])
-	_expect(not claim["ok"], "Wrong-run claim must fail")
-	_expect_equal(claim["reason"], "QUEUE_NOT_FOUND_OR_ALREADY_CLAIMED", "Reason must be QUEUE_NOT_FOUND_OR_ALREADY_CLAIMED")
-
-func _test_full_bag_blocks_claim() -> void:
-	## Fill bag to 30 stacks AFTER prepare so claim cannot add output.
-	var tx := "a3:test:setup:full_bag:%d" % [Time.get_ticks_usec()]
-	service._set_inventory_stacks_for_test(
-		{
-			"knowledge_spare": {"item_id": "knowledge_spare", "kind": "material", "quantity": 5},
-			"roadside_oak_scrap": {"item_id": "roadside_oak_scrap", "kind": "material", "quantity": 5},
-			"roadside_iron_scrap": {"item_id": "roadside_iron_scrap", "kind": "material", "quantity": 5},
-		},
-		tx
-	)
-	service.clear_learned_recipes()
-	service.directed_research("process_roadside_materials")
-
-	var prepare := service.prepare_at_station("process_roadside_materials", "salvage_station")
-	_expect(prepare["ok"], "Prepare succeeds")
-
-	## After prepare: knowledge_spare(5→3), oak(5→0 removed), iron(5→2) = 2 stacks remain.
-	## Add 28 filler stacks to reach 30 total.
-	var filler := {}
-	var j := 0
-	while j < 28:
-		var item_id := "full_bag_item_%d" % [j]
-		filler[item_id] = {"item_id": item_id, "kind": "material", "quantity": 1}
-		j += 1
-
-	var current_stacks := _get_inventory_stacks_raw()
-	var merged := current_stacks.duplicate(true)
-	for key: Variant in filler.keys():
-		merged[key] = filler[key]
-	var fill_tx := "a3:test:fill_bag:%d" % [Time.get_ticks_usec()]
-	service._set_inventory_stacks_for_test(merged, fill_tx)
-
-	## Bag now has 30 stacks. Claim adds quarry_core_fragment (new item) → 31 → full bag.
-	service.set_time_source(func(): var now := int(Time.get_unix_time_from_system()) + 700; return {"now": now})
-	var claim := service.claim_offline_production(prepare["job_id"])
-	_expect(not claim["ok"], "Claim with full bag must fail")
-	_expect_equal(claim["reason"], "TRANSACTION_REJECTED", "Reason must be TRANSACTION_REJECTED (bag full)")
-
-## =============================================================================
-## NEGATIVE CONTROLS
-## =============================================================================
-
-func _test_premature_claim_rejected() -> void:
-	## Already covered by _test_early_claim_rejected but re-asserted as a
-	## distinct negative control with its own setup.
-	var tx := "a3:test:setup:premature:%d" % [Time.get_ticks_usec()]
-	service._set_inventory_stacks_for_test(
-		{
-			"knowledge_spare": {"item_id": "knowledge_spare", "kind": "material", "quantity": 10},
-			"roadside_oak_scrap": {"item_id": "roadside_oak_scrap", "kind": "material", "quantity": 5},
-			"roadside_iron_scrap": {"item_id": "roadside_iron_scrap", "kind": "material", "quantity": 5},
-		},
-		tx
-	)
-	service.clear_learned_recipes()
-	service.directed_research("process_roadside_materials")
-
-	var prepare := service.prepare_at_station("process_roadside_materials", "salvage_station")
-	_expect(prepare["ok"], "Prepare succeeds")
-
-	## Claim at 1 second — queue is 600s.
-	service.set_time_source(func(): var now := int(Time.get_unix_time_from_system()) + 1; return {"now": now})
-	var claim := service.claim_offline_production(prepare["job_id"])
-	_expect(not claim["ok"], "Premature claim (1s) must be rejected")
-	_expect_equal(claim["reason"], "QUEUE_NOT_READY", "Reason must be QUEUE_NOT_READY")
-
-func _test_capacity_overflow_blocks_claim() -> void:
-	## Already covered by _test_full_bag_blocks_claim but re-asserted with
-	## explicit before/after quantity recording.
-	var tx := "a3:test:setup:cap_overflow:%d" % [Time.get_ticks_usec()]
-	service._set_inventory_stacks_for_test(
-		{
-			"knowledge_spare": {"item_id": "knowledge_spare", "kind": "material", "quantity": 5},
-			"roadside_oak_scrap": {"item_id": "roadside_oak_scrap", "kind": "material", "quantity": 5},
-			"roadside_iron_scrap": {"item_id": "roadside_iron_scrap", "kind": "material", "quantity": 5},
-		},
-		tx
-	)
-	service.clear_learned_recipes()
-	service.directed_research("process_roadside_materials")
-
-	var prepare := service.prepare_at_station("process_roadside_materials", "salvage_station")
-	_expect(prepare["ok"], "Prepare succeeds")
-
-	var qcf_before := service._get_inventory_quantity("quarry_core_fragment")
-	_expect_equal(qcf_before, 0, "No quarry_core_fragment before claim")
-
-	## Fill bag to 30 stacks.
-	var filler := {}
-	var j := 0
-	while j < 28:
-		var item_id := "cap_item_%d" % [j]
-		filler[item_id] = {"item_id": item_id, "kind": "material", "quantity": 1}
-		j += 1
-
-	var current_stacks := _get_inventory_stacks_raw()
-	var merged := current_stacks.duplicate(true)
-	for key: Variant in filler.keys():
-		merged[key] = filler[key]
-	var fill_tx := "a3:test:fill_cap:%d" % [Time.get_ticks_usec()]
-	service._set_inventory_stacks_for_test(merged, fill_tx)
-
-	service.set_time_source(func(): var now := int(Time.get_unix_time_from_system()) + 700; return {"now": now})
-	var claim := service.claim_offline_production(prepare["job_id"])
-	_expect(not claim["ok"], "Capacity overflow claim must be rejected")
-	_expect_equal(claim["reason"], "TRANSACTION_REJECTED", "Reason must be TRANSACTION_REJECTED")
-	_expect_equal(service._get_inventory_quantity("quarry_core_fragment"), qcf_before, "No output granted after rejected claim")
-
-func _test_canceled_job_no_output() -> void:
-	var tx := "a3:test:setup:canceled:%d" % [Time.get_ticks_usec()]
-	service._set_inventory_stacks_for_test(
-		{
-			"knowledge_spare": {"item_id": "knowledge_spare", "kind": "material", "quantity": 10},
-			"roadside_oak_scrap": {"item_id": "roadside_oak_scrap", "kind": "material", "quantity": 5},
-			"roadside_iron_scrap": {"item_id": "roadside_iron_scrap", "kind": "material", "quantity": 5},
-		},
-		tx
-	)
-	service.clear_learned_recipes()
-	service.directed_research("process_roadside_materials")
-
-	var prepare := service.prepare_at_station("process_roadside_materials", "salvage_station")
-	_expect(prepare["ok"], "Prepare succeeds")
-
-	var cancel := service.cancel_station_job(prepare["job_id"])
-	_expect(cancel["ok"], "Cancel succeeds: %s" % [cancel["reason"]])
-
-	## Canceled job cannot be claimed.
-	service.set_time_source(func(): var now := int(Time.get_unix_time_from_system()) + 700; return {"now": now})
-	var claim := service.claim_offline_production(prepare["job_id"])
-	_expect(not claim["ok"], "Claim on canceled job must be rejected")
-	_expect_equal(claim["reason"], "QUEUE_NOT_FOUND_OR_ALREADY_CLAIMED", "Reason must be QUEUE_NOT_FOUND_OR_ALREADY_CLAIMED")
-
-	## No output was ever granted.
-	_expect_equal(service._get_inventory_quantity("quarry_core_fragment"), 0, "No quarry_core_fragment from canceled job")
-
-func _test_stale_run_job_rejected() -> void:
-	## Job prepared under run A must not be claimable after run ID changes
-	## (stale run / new run boundary).
-	var tx := "a3:test:setup:stale:%d" % [Time.get_ticks_usec()]
-	service._set_inventory_stacks_for_test(
-		{
-			"knowledge_spare": {"item_id": "knowledge_spare", "kind": "material", "quantity": 10},
-			"roadside_oak_scrap": {"item_id": "roadside_oak_scrap", "kind": "material", "quantity": 5},
-			"roadside_iron_scrap": {"item_id": "roadside_iron_scrap", "kind": "material", "quantity": 5},
-		},
-		tx
-	)
-	service.clear_learned_recipes()
-	service.directed_research("process_roadside_materials")
-
-	var prepare := service.prepare_at_station("process_roadside_materials", "salvage_station")
-	_expect(prepare["ok"], "Prepare succeeds")
-
-	## Change the run ID — stale run boundary.
-	var wipe_tx := "a3:test:wipe_stale:%d" % [Time.get_ticks_usec()]
-	var wipe_ok := service.get_save().call("transact_once", wipe_tx, func(candidate: Dictionary) -> bool:
-		var m = candidate.get("mastery", {}).duplicate(true)
-		m["a3_run_id"] = "stale_run_boundary"
-		m["a3_station_jobs"] = {}
-		m["a3_job_counter"] = 0
-		candidate["mastery"] = m
-		return true
-	, {"kind": "a3_test_wipe_stale_run"})
-	_expect(wipe_ok, "Stale run wipe applied")
-
-	service.set_time_source(func(): var now := int(Time.get_unix_time_from_system()) + 700; return {"now": now})
-	var claim := service.claim_offline_production(prepare["job_id"])
-	_expect(not claim["ok"], "Stale run claim must be rejected")
-	_expect_equal(claim["reason"], "QUEUE_NOT_FOUND_OR_ALREADY_CLAIMED", "Reason must be QUEUE_NOT_FOUND_OR_ALREADY_CLAIMED")
-
-func _test_replay_after_claim_rejected() -> void:
-	## After a successful claim, any replay (same job ID, matured clock) must
-	## be refused — the job is already claimed.
-	var tx := "a3:test:setup:replay:%d" % [Time.get_ticks_usec()]
-	service._set_inventory_stacks_for_test(
-		{
-			"knowledge_spare": {"item_id": "knowledge_spare", "kind": "material", "quantity": 10},
-			"roadside_oak_scrap": {"item_id": "roadside_oak_scrap", "kind": "material", "quantity": 5},
-			"roadside_iron_scrap": {"item_id": "roadside_iron_scrap", "kind": "material", "quantity": 5},
-		},
-		tx
-	)
-	service.clear_learned_recipes()
-	service.directed_research("process_roadside_materials")
-
-	var prepare := service.prepare_at_station("process_roadside_materials", "salvage_station")
-	_expect(prepare["ok"], "Prepare succeeds")
-
-	service.set_time_source(func(): var now := int(Time.get_unix_time_from_system()) + 700; return {"now": now})
-	var claim1 := service.claim_offline_production(prepare["job_id"])
-	_expect(claim1["ok"], "First claim succeeds")
-
-	var qcf_after_claim1 := service._get_inventory_quantity("quarry_core_fragment")
-
-	## Replay with even more elapsed time — still must refuse.
-	service.set_time_source(func(): var now := int(Time.get_unix_time_from_system()) + 3600; return {"now": now})
-	var claim2 := service.claim_offline_production(prepare["job_id"])
-	_expect(not claim2["ok"], "Replay after claim (matured clock) must be rejected")
-	_expect_equal(claim2["reason"], "ALREADY_CLAIMED", "Reason must be ALREADY_CLAIMED")
-	_expect_equal(service._get_inventory_quantity("quarry_core_fragment"), qcf_after_claim1, "No duplicate output on replay")
-
-func _test_two_process_persistence_proof_simulated() -> void:
-	## Simulated two-process persistence within a single process: P1 actions
-	## commit to SaveService, then the service re-ingests mastery (simulating
-	## a fresh process) and P2 verification runs against the same durable save.
-	var tx := "a3:test:sim2p:init:%d" % [Time.get_ticks_usec()]
-	service._set_inventory_stacks_for_test(
-		{
-			"iron_pick": {"item_id": "iron_pick", "kind": "material", "quantity": 1, "condition": 200},
-			"knowledge_spare": {"item_id": "knowledge_spare", "kind": "material", "quantity": 20},
-			"roadside_oak_scrap": {"item_id": "roadside_oak_scrap", "kind": "material", "quantity": 10},
-			"roadside_iron_scrap": {"item_id": "roadside_iron_scrap", "kind": "material", "quantity": 10},
-		},
-		tx
-	)
-	service.clear_learned_recipes()
-	service.clear_discoveries()
-
-	## ---- Simulated Process 1 ----
-	service.authenticate_source("roadside_oak_1", "A1")
-	var harvest := service.harvest("roadside_oak_1", "iron_pick")
-	_expect(harvest["ok"], "SimP1: roadside harvest succeeds")
-	_expect(harvest["yield"].has("roadside_oak_scrap"), "SimP1: oak scrap yielded")
-
-	service.directed_research("process_roadside_materials")
-	_expect(service._is_recipe_known("process_roadside_materials"), "SimP1: process_roadside_materials learned")
-
-	var prepare := service.prepare_at_station("process_roadside_materials", "salvage_station")
-	_expect(prepare["ok"], "SimP1: prepare succeeds: %s" % [prepare["reason"]])
-
-	service.set_time_source(func(): var now := int(Time.get_unix_time_from_system()) + 700; return {"now": now})
-	var claim1 := service.claim_offline_production(prepare["job_id"])
-	_expect(claim1["ok"], "SimP1: first claim succeeds")
-
-	## ---- Simulated Process 2: re-ingest mastery from SaveService ----
-	var mastery_after_p1 := service._get_mastery_section()
-	var jobs_after_p1 := mastery_after_p1.get("a3_station_jobs", {})
-	var job_key := "job:%s" % [prepare["job_id"]]
-	_expect(bool(jobs_after_p1.has(job_key)), "SimP2: job persists in SaveService mastery")
-	_expect(bool(jobs_after_p1[job_key].get("claimed", false)), "SimP2: job marked claimed")
-
-	var lr_after_p1 := mastery_after_p1.get("a3_learned_recipes", {})
-	_expect(bool(lr_after_p1.get("process_roadside_materials", false)), "SimP2: learned recipe persists")
-
-	## process_roadside_materials outputs 5 quarry_core_fragment.
-	var inventory_after_p1 := service._get_inventory_quantity("quarry_core_fragment")
-	_expect_equal(inventory_after_p1, 5, "SimP1: 5 quarry_core_fragment granted: %d" % [inventory_after_p1])
-
-	## SimP2 attempts duplicate collection → rejected.
-	service.set_time_source(func(): var now := int(Time.get_unix_time_from_system()) + 800; return {"now": now})
-	var claim2 := service.claim_offline_production(prepare["job_id"])
-	_expect(not claim2["ok"], "SimP2: duplicate claim rejected")
-	_expect_equal(claim2["reason"], "ALREADY_CLAIMED", "SimP2: reason ALREADY_CLAIMED")
-
-	## SimP2 inventory preserved.
-	var inventory_p2 := service._get_inventory_quantity("quarry_core_fragment")
-	_expect_equal(inventory_p2, 5, "SimP2: inventory preserved: %d quarry_core_fragment" % [inventory_p2])
-
-	## SimP2 learned knowledge preserved.
-	_expect(service._is_recipe_known("process_roadside_materials"), "SimP2: learned knowledge preserved")
-
-## =============================================================================
-## STRATEGIC ROADSIDE CHAIN
-## =============================================================================
-
-func _test_roadside_salvage_learning_paid_processing_expedition_chain() -> void:
-	## roadside scrap → discover use → research → paid processing → expedition choice.
-	var tx := "a3:test:setup:chain:%d" % [Time.get_ticks_usec()]
-	service._set_inventory_stacks_for_test(
-		{
-			"stone_pick": {"item_id": "stone_pick", "kind": "material", "quantity": 1, "condition": 100},
-			"roadside_oak_scrap": {"item_id": "roadside_oak_scrap", "kind": "material", "quantity": 20},
-			"knowledge_spare": {"item_id": "knowledge_spare", "kind": "material", "quantity": 10},
-		},
-		tx
-	)
-	service.clear_learned_recipes()
-	service.clear_discoveries()
-
-	## Step 1: Harvest roadside oak (carrying + tool cost).
-	service.authenticate_source("roadside_oak_1", "A1")
-	var harvest := service.harvest("roadside_oak_1", "stone_pick")
-	_expect(harvest["ok"], "Chain step 1: harvest oak scrap")
-	_expect(harvest["yield"].has("roadside_oak_scrap"), "Chain step 1: oak scrap yielded")
-
-	## Step 2: Register discovery (roadside oak scrap becomes useful).
-	var discovery_ok := service.register_discovery("roadside_oak_scrap", "Can be processed into quarry core fragments at salvage station", "process_roadside_materials")
-	_expect(discovery_ok, "Chain step 2: discovery registered")
-	_expect(service.is_discovered("roadside_oak_scrap"), "Chain step 2: roadside_oak_scrap discovered")
-
-	## Step 3: Directed research to learn the processing recipe.
-	var research := service.directed_research("process_roadside_materials")
-	_expect(research["ok"], "Chain step 3: directed research learns process_roadside_materials")
-
-	## Step 4: Paid processing at station (fuel + inputs cost, deferred output).
-	var prepare := service.prepare_at_station("process_roadside_materials", "salvage_station")
-	_expect(prepare["ok"], "Chain step 4: prepare paid processing")
-	_expect_equal(prepare["fuel_item"], "knowledge_spare", "Chain step 4: physical fuel item (not account currency)")
-	_expect_equal(prepare["fuel_quantity"], 2, "Chain step 4: 2 knowledge_spare fuel cost")
-
-	## Step 5: Advance time, collect outputs → expedition choice unlocked.
-	service.set_time_source(func(): var now := int(Time.get_unix_time_from_system()) + 700; return {"now": now})
-	var claim := service.claim_offline_production(prepare["job_id"])
-	_expect(claim["ok"], "Chain step 5: collect processed outputs")
-	_expect(claim["outputs"].has("quarry_core_fragment"), "Chain step 5: quarry_core_fragment granted")
-
-	## Future expedition choice: quarry_core_fragment now available for expedition gearing.
-	## process_roadside_materials outputs 5 quarry_core_fragment.
-	var qcf := service._get_inventory_quantity("quarry_core_fragment")
-	_expect_equal(qcf, 5, "Chain step 5: 5 quarry_core_fragment available for future expedition: %d" % [qcf])
-
-## =============================================================================
-## Helpers
-## =============================================================================
-
-func _get_inventory_stacks_raw() -> Dictionary:
-	if save_service == null:
-		return {}
-	var snapshot = save_service.call("get_snapshot") as Dictionary
-	var inventory = snapshot.get("inventory", {}) as Dictionary
-	var stacks = inventory.get("item_stacks", {}) as Dictionary
-	return stacks.duplicate(true)
-
-## =============================================================================
-## Results emission
-## =============================================================================
+	print("P2 PASSED - pid=%d job=%s granted=%d duplicate_refused=%s checks=%d/%d" % [
+		OS.get_process_id(), job_id, after_first, str(duplicate.get("reason", "")), checks_passed, checks_passed + checks_failed,
+	])
+	quit(0 if checks_failed == 0 else 1)
+
+## Conservation over the durable document: no item is created by a refusal and
+## the prepaid inputs are exactly the ones the receipt recorded.
+func _conservation(p1_receipt: Dictionary) -> Dictionary:
+	var problems: Array[String] = []
+	if _count("quarry_core_fragment") != int((p1_receipt.get("expected_outputs", {}) as Dictionary).get("quarry_core_fragment", -1)):
+		problems.append("output_batch_mismatch")
+	if _count("oak_wood") != int(p1_receipt.get("oak_after", -2)):
+		problems.append("oak_input_drift")
+	if _count("iron_scrap") != int(p1_receipt.get("iron_after", -2)):
+		problems.append("iron_input_drift")
+	if _transaction_count_prefix("soh.a3.source_claim.") != 1:
+		problems.append("source_claim_receipt_count")
+	if _mastery().has("a3_station_jobs"):
+		problems.append("ghost_a3_queue")
+	return {
+		"ok": problems.is_empty(),
+		"problems": problems,
+		"output": _count("quarry_core_fragment"),
+		"source_claim_receipts": _transaction_count_prefix("soh.a3.source_claim."),
+	}
+
+## --- process helpers ---
+
+func _fail_process(label: String, message: String) -> void:
+	print("%s FAILED - %s" % [label, message])
+	quit(1)
+
+func _write_receipt(file_name: String, payload: Dictionary) -> bool:
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(receipt_dir))
+	var file := FileAccess.open(receipt_dir + "/" + file_name, FileAccess.WRITE)
+	if file == null:
+		return false
+	file.store_string(JSON.stringify(payload, "\t"))
+	file.close()
+	return true
+
+func _read_receipt(file_name: String) -> Variant:
+	var file := FileAccess.open(receipt_dir + "/" + file_name, FileAccess.READ)
+	if file == null:
+		return null
+	var text := file.get_as_text()
+	file.close()
+	return JSON.parse_string(text)
+
+## --- results ---
 
 func _emit_results() -> void:
 	print("")
-	print("=== R13 A3 Value Economy Test Results ===")
-	print("Passed: %d" % [passed_count])
-	print("Failed: %d" % [failed_count])
-	print("Total:  %d" % [passed_count + failed_count])
-	for f: Dictionary in failed_tests:
-		print("  [FAIL] %s — %s" % [f["group"], f["message"]])
+	print("=== R13 Native Results ===")
+	print("passed=%d failed=%d total=%d" % [passed_count, failed_count, passed_count + failed_count])
+	for entry: Dictionary in test_results:
+		if not bool(entry.get("passed", false)):
+			print("  [FAIL] %s - %s" % [entry.get("group", ""), entry.get("message", "")])
 	if failed_count == 0:
-		print("ALL TESTS PASSED")
+		print("R13 NATIVE PASSED - %d checks" % [passed_count])
 		quit(0)
-	else:
-		print("SOME TESTS FAILED — see above")
-		quit(1)
+		return
+	print("R13 NATIVE FAILED")
+	quit(1)
