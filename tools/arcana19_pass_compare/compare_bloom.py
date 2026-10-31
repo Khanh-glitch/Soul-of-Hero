@@ -7,7 +7,9 @@ from PIL import Image
 p = pathlib.Path(sys.argv[1])
 results = []
 for tick in (72, 192, 312, 489, 510):
-    for name, (w, h) in {'bloomSmall': (240, 135), 'bloom2': (120, 67), 'post': (480, 270)}.items():
+    sizes = {'bloomSmall': (240, 135), 'bloom2': (120, 67), 'post': (480, 270)}
+    sizes.update({f'stage{i}': ((120, 67) if i in (5, 7, 9) else (240, 135)) for i in range(10)})
+    for name, (w, h) in sizes.items():
         a = np.fromfile(p / f'original_{tick}.{name}.rgba8', dtype=np.uint8).reshape(h, w, 4)[::-1]
         b = np.fromfile(p / f'native_{tick}.{name}.rgba8', dtype=np.uint8).reshape(h, w, 4)
         diff = np.abs(a.astype(np.int16) - b.astype(np.int16))
@@ -26,3 +28,5 @@ for tick in (72, 192, 312, 489, 510):
         print('D19_BLOOM_COMPARE', json.dumps({k: v for k, v in row.items() if k != 'regions'}), flush=True)
         results.append(row)
 (p / 'bloom_comparison.json').write_text(json.dumps(results, indent=2))
+
+print('D19_BLOOM_STAGE_SUMMARY', json.dumps([{'tick': row['tick'], 'pass': row['pass'], 'mae_255': round(row['mae_255'], 4), 'max_255': row['max_255']} for row in results], separators=(',', ':')), flush=True)

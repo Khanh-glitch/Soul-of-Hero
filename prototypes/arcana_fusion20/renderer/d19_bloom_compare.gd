@@ -66,6 +66,16 @@ func _run() -> void:
             var out := FileAccess.open(OUT + "/native_%d.%s.rgba8" % [tick, item[0]], FileAccess.WRITE)
             out.store_buffer((item[1] as Image).get_data())
             out.close()
+        for i in range(10):
+            var stage := bloom.stage_texture(i).get_image()
+            if stage.is_empty():
+                push_error("Native bloom intermediate unavailable: " + str(i))
+                quit(1)
+                return
+            stage.convert(Image.FORMAT_RGBA8)
+            var stage_file := FileAccess.open(OUT + "/native_%d.stage%d.rgba8" % [tick, i], FileAccess.WRITE)
+            stage_file.store_buffer(stage.get_data())
+            stage_file.close()
         print("D19_NATIVE_BLOOM_CAPTURE ", tick)
     bloom.free()
     print("D19_NATIVE_BLOOM_CAPTURE_COMPLETE")

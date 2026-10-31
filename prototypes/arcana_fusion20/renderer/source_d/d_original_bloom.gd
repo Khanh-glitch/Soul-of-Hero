@@ -87,3 +87,6 @@ func wide_texture() -> Texture2D:
 
 func post_texture() -> Texture2D:
     return _post.get_texture()
+
+func stage_texture(index: int) -> Texture2D:
+    return _stages[index].get_texture()

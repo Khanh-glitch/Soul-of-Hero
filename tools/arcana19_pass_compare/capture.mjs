@@ -19,7 +19,16 @@ try {
     if(window.__vfxError)throw Error(window.__vfxError);
     const d=window.__vfxDebug,r=d.state.renderer,c=document.getElementById('stage');
     c.style.width='480px';c.style.height='270px';r.resize();
-    const quad=r.quad.bind(r);r.quad=p=>{if(p!==r.floorProg)quad(p)};r.drawMarkers=()=>{};
+    const quad=r.quad.bind(r);r.quad=p=>{
+      if(p===r.floorProg)return;
+      quad(p);
+      if(window.__capturePass && (p===r.brightProg || p===r.blurProg)) {
+        const gl=r.gl, vp=gl.getParameter(gl.VIEWPORT), bytes=new Uint8Array(vp[2]*vp[3]*4);
+        gl.readPixels(0,0,vp[2],vp[3],gl.RGBA,gl.UNSIGNED_BYTE,bytes);
+        let b='';for(let i=0;i<bytes.length;i+=8192)b+=String.fromCharCode(...bytes.subarray(i,Math.min(i+8192,bytes.length)));
+        window.__capturedPasses.push({width:vp[2],height:vp[3],base64:btoa(b)});
+      }
+    };r.drawMarkers=()=>{};
     const idx=d.ALL.findIndex(s=>s.id===19&&s.name==='Constellation Engine');if(idx<0)throw Error('D19 missing');
     d.cast(idx);d.state.playing=true;d.state.speed=1;
     return {width:c.width,height:c.height,floatOK:r.floatOK,renderer:r.gl.getParameter(r.gl.RENDERER)};
@@ -29,9 +38,11 @@ try {
   const manifest={setup,scope:'source D WebGL RGBA8 scene and bloom targets on neutral base; no floor, actors or SOH world; not HDR',captures:[]};
   let last=0;
   for(const tick of [72,192,312,489,510]) {
-    await page.evaluate(n=>window.__advance(n),tick-last);last=tick;
+    await page.evaluate(n=>{window.__capturePass=false;if(n>1)window.__advance(n-1);window.__capturedPasses=[];window.__capturePass=true;window.__advance(1);window.__capturePass=false},tick-last);last=tick;
     const result=await page.evaluate(()=>{
       const r=window.__vfxDebug.state.renderer,gl=r.gl, result={time:window.__vfxDebug.state.t,buffers:{}};
+      if(window.__capturedPasses.length!==10)throw Error(`unexpected bloom-stage count ${window.__capturedPasses.length}`);
+      window.__capturedPasses.forEach((pass,i)=>result.buffers[`stage${i}`]=pass);
       for(const name of ['scene','bloomSmall','bloom2']) {
         const target=r[name];gl.bindFramebuffer(gl.FRAMEBUFFER,target.fbo);
         while(gl.getError()!==gl.NO_ERROR){};
