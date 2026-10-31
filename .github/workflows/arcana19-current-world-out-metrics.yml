@@ -24,7 +24,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: arcana20-current-phase-sweep-16-normal
-          run-id: 41242339723
+          run-id: 41242740910
           github-token: ${{ github.token }}
           path: phase-after
       - run: python3 -m pip install --quiet pillow numpy
