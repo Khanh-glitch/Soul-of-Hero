@@ -45,6 +45,9 @@ jobs:
           set -o pipefail
           python3 tools/arcana19_poly_compare/compare.py artifacts/arcana19-poly | tee compare.log
           sed 's/^/::notice::/' compare.log
+      - name: Surface worst local polygon discrepancies
+        if: always()
+        run: python3 tools/arcana19_poly_compare/surface_crop.py artifacts/arcana19-poly
       - uses: actions/upload-artifact@v4
         if: always()
         with:
