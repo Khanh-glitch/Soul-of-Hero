@@ -32,6 +32,7 @@ func attach(renderer: Arcana20Renderer) -> bool:
     _renderer = renderer
     renderer.source_pass_ready.connect(_on_frame)
     renderer.cast_finished.connect(_on_finished)
+    renderer.source_layer_finished.connect(_on_layer_finished)
     return true
 
 func _on_frame(id: StringName, frame: Arcana20SourcePassFrame) -> void:
@@ -45,6 +46,9 @@ func _on_frame(id: StringName, frame: Arcana20SourcePassFrame) -> void:
     _states[id] = {"flash": frame.flash, "shake": shake, "chroma": frame.chroma * pixel_x,
         "invert": frame.invert, "desat": frame.desat}
     _apply()
+
+func _on_layer_finished(id: StringName, family: StringName) -> void:
+    if family == &"C": _on_finished(id)
 
 func _on_finished(id: StringName) -> void:
     _states.erase(id)
@@ -79,6 +83,7 @@ func detach() -> void:
     if is_instance_valid(_renderer):
         if _renderer.source_pass_ready.is_connected(_on_frame): _renderer.source_pass_ready.disconnect(_on_frame)
         if _renderer.cast_finished.is_connected(_on_finished): _renderer.cast_finished.disconnect(_on_finished)
+        if _renderer.source_layer_finished.is_connected(_on_layer_finished): _renderer.source_layer_finished.disconnect(_on_layer_finished)
     _renderer = null
     _states.clear()
     _apply()

@@ -456,6 +456,35 @@ func _run() -> void:
     await process_frame
     var bloom_img := await save_frame("fusion_05_candidate_tick330")
     check(mount.active_viewers(id5) == 2 and not images_equal(baseline, bloom_img), "A05 lead and C05 column fields share actual world")
+    # C05's +0.6s fusion offset causes its source layer to finish before the
+    # shared A05 timeline. Retire its world/post state without touching A05 or
+    # another concurrent C-family cast.
+    var bloom_post := Arcana20CViewportPost.new()
+    bloom_post.process_mode = Node.PROCESS_MODE_ALWAYS
+    world.add_child(bloom_post)
+    check(bloom_post.attach(multi), "C05 early-layer post diagnostic attaches")
+    var bloom_c := bloom._pending[0].node as CSourcePlayer
+    bloom_c._render_frame()
+    check(bloom_post._states.has(id5), "C05 live layer publishes post state")
+    check(multi.cast_skill(id10, player.global_position, enemy.global_position), "overlapping C10 remains active during C05 retirement")
+    var overlap_c := multi._casts[id10] as CSourcePlayer
+    overlap_c.set_process(false)
+    for part in bloom._pending:
+        var child: Node = part.node
+        child.set("render_enabled", false)
+    for tick in range(155): bloom.advance(STEP)
+    for part in bloom._pending:
+        var child: Node = part.node
+        child.set("render_enabled", true)
+        if bool(child.get("_active")): child.call("_render_frame")
+    await process_frame
+    await process_frame
+    var live_bloom_layers: Dictionary = mount._passes.get(id5, {})
+    check(bloom._active and live_bloom_layers.has(&"A") and not live_bloom_layers.has(&"C") and mount.active_viewers(id10) == 1, "C05 early completion removes only its layer while A05 and independent C10 remain")
+    check(not bloom_post._states.has(id5) and not bloom_c._sprite.visible and not bloom_c._light_sprite.visible, "C05 early completion clears C post and legacy sprites")
+    multi.cancel_skill(id10)
+    bloom_post.detach()
+    bloom_post.queue_free()
     multi.cancel_skill(id5)
     await process_frame
     await process_frame

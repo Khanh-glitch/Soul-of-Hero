@@ -16,6 +16,7 @@ func attach(renderer: Arcana20Renderer) -> bool:
     _renderer = renderer
     _renderer.source_pass_ready.connect(_on_frame)
     _renderer.cast_finished.connect(_on_finished)
+    _renderer.source_layer_finished.connect(_on_layer_finished)
     return true
 
 func _on_frame(id: StringName, frame: Arcana20SourcePassFrame) -> void:
@@ -41,6 +42,16 @@ func _on_frame(id: StringName, frame: Arcana20SourcePassFrame) -> void:
         _passes[id] = by_family
     viewer.call(&"consume", frame)
 
+func _on_layer_finished(id: StringName, family: StringName) -> void:
+    var by_family: Dictionary = _passes.get(id, {})
+    var viewer: Node = by_family.get(family)
+    if is_instance_valid(viewer):
+        viewer.call(&"clear")
+        viewer.queue_free()
+    by_family.erase(family)
+    if by_family.is_empty(): _passes.erase(id)
+    else: _passes[id] = by_family
+
 func _on_finished(id: StringName) -> void:
     var by_family: Dictionary = _passes.get(id, {})
     for viewer in by_family.values():
@@ -60,6 +71,8 @@ func detach() -> void:
             _renderer.source_pass_ready.disconnect(_on_frame)
         if _renderer.cast_finished.is_connected(_on_finished):
             _renderer.cast_finished.disconnect(_on_finished)
+        if _renderer.source_layer_finished.is_connected(_on_layer_finished):
+            _renderer.source_layer_finished.disconnect(_on_layer_finished)
     _renderer = null
     for id in _passes.keys():
         _on_finished(id)

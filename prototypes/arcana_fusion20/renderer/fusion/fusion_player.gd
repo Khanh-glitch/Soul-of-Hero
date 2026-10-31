@@ -11,6 +11,9 @@ signal visual_contact(kind: StringName, world_pos: Vector2, source_time: float)
 signal finished()
 signal screen_post(state: Dictionary)
 signal source_pass_ready(frame: Arcana20SourcePassFrame)
+# A source family can finish before the shared fusion timeline. Owners must
+# remove that family's last visual field/post without ending the other part.
+signal source_layer_finished(family: StringName)
 
 const STEP := 1.0 / 60.0
 
@@ -23,6 +26,7 @@ var _tick := 0
 var _acc := 0.0
 var _active := false
 var _pending: Array = []
+var _retired_families: Dictionary = {}
 
 ## parts: Array of {node, offset, layer} — node must implement
 ## begin(caster,target[,kind]) variants handled by caller before add.
@@ -31,6 +35,7 @@ func configure(parts: Array, dur: float) -> void:
     _pending = parts
 
 func begin(caster_world: Vector2, target_world: Vector2) -> void:
+    _retired_families.clear()
     for part in _pending:
         var node: Node2D = part.node
         add_child(node)
@@ -61,10 +66,31 @@ func begin(caster_world: Vector2, target_world: Vector2) -> void:
             node.connect("source_pass_ready", func(frame: Arcana20SourcePassFrame) -> void:
                 source_pass_ready.emit(frame))
         node.finished.connect(func() -> void:
-            pass)
+            _on_child_finished(node))
     _tick = 0
     _acc = 0.0
     _active = true
+
+func _source_family(node: Node) -> StringName:
+    if node is ASourcePlayer: return &"A"
+    if node is BSourcePlayer: return &"B"
+    if node is CSourcePlayer: return &"C"
+    if node is DSourcePlayer: return &"D"
+    return &""
+
+func _on_child_finished(child: Node) -> void:
+    # stop() also hides the legacy sprite when advance() naturally finished;
+    # its own _active flag is already false, so it does not re-emit finished.
+    if child.has_method("stop"): child.call("stop")
+    if not _active: return # parent cancellation will remove every viewer
+    var family := _source_family(child)
+    if family == &"" or _retired_families.has(family): return
+    for part in _pending:
+        var other: Node = part.node
+        if other != child and is_instance_valid(other) and _source_family(other) == family and bool(other.get("_active")):
+            return
+    _retired_families[family] = true
+    source_layer_finished.emit(family)
 
 func stop() -> void:
     var was := _active

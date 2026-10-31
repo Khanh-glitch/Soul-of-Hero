@@ -19,6 +19,7 @@ signal cast_finished(canonical_id: StringName)
 # Experimental C post state; the scene owner decides whether/how to apply it.
 signal screen_post(canonical_id: StringName, state: Dictionary)
 signal source_pass_ready(canonical_id: StringName, frame: Arcana20SourcePassFrame)
+signal source_layer_finished(canonical_id: StringName, family: StringName)
 signal unbound_source_contact(canonical_id: StringName, kind: StringName, node_index: int, source_time: float)
 # Producer mode suppresses source quads for A/B/C/D. It is not an integrated
 # world compositor: the scene owner must consume every emitted field.
@@ -123,6 +124,7 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
         var cp := CSourcePlayer.new()
         cp.world_pass_mode = true
         fp.source_pass_ready.connect(func(frame: Arcana20SourcePassFrame) -> void: source_pass_ready.emit(canonical_id, frame))
+        fp.source_layer_finished.connect(func(family: StringName) -> void: source_layer_finished.emit(canonical_id, family))
         fp.screen_post.connect(func(state: Dictionary) -> void: screen_post.emit(canonical_id, state))
         fp.configure([
             {"node": cp, "layer": -1, "offset": 0.6, "begin_call": func(n: Node, cw: Vector2, tw: Vector2) -> void: n.call("begin", cw, tw, "bloom_late")},
@@ -154,6 +156,7 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
         cp.experimental_separate_passes = experimental_c_separate_passes
         cp.world_pass_mode = world_pass_mode
         fp.source_pass_ready.connect(func(frame: Arcana20SourcePassFrame) -> void: source_pass_ready.emit(canonical_id, frame))
+        fp.source_layer_finished.connect(func(family: StringName) -> void: source_layer_finished.emit(canonical_id, family))
         fp.screen_post.connect(func(state: Dictionary) -> void: screen_post.emit(canonical_id, state))
         fp.configure([
             {"node": cp, "layer": -1, "offset": 0.69, "begin_call": func(n: Node, cw: Vector2, tw: Vector2) -> void: n.call("begin", cw, tw, "crown_outer" if world_pass_mode else "crown")},
