@@ -126,10 +126,31 @@ func update(dt: float, t: float) -> void:
     sparks.each(func(p: Dictionary) -> void: p.vy = float(p.vy) + 60.0 * dt)
     sparks.step(dt, 2.4)
 
-func _bolt(fb: AFramebuffer, a: Vector2, b: Vector2, t: float, seed: int, width: float, k: float, rough: float) -> void:
-    var frame := floori(t * 28.0)
-    var pts := CKit.bolt_pts(float(seed * 131 + frame * 7919), a.x, a.y, b.x, b.y, rough, 3.0)
-    ADraw.bolt_draw(fb, pts, width, B_MID, B_CORE, k)
+# C #09 channel generator adapted to A's live actor graph: C's three
+# time-slotted variants and deterministic branch placement stay in charge of
+# geometry; B owns colors. Recompute endpoints as real actors move. This is
+# still a candidate, not full C raster/slot-source parity.
+func _bolt(fb: AFramebuffer, a: Vector2, b: Vector2, t: float, seed: int, width: float, k: float, rough: float, branch_count: int = 5) -> void:
+    var pts := CKit.bolt_pts(float(seed), a.x, a.y, b.x, b.y, rough, 3.0)
+    var variant := posmod(floori(t * 30.0), 3)
+    var varied: Array = []
+    for j in range(pts.size()):
+        var point: Vector2 = pts[j]
+        if j != 0 and j != pts.size() - 1:
+            point.x += (CMath.hash1(seed + variant * 31 + j) - 0.5) * 3.0
+            point.y += (CMath.hash1(seed + variant * 17 + j * 3) - 0.5) * 3.0
+        varied.append(point)
+    ADraw.bolt_draw(fb, varied, width, B_MID, B_CORE, k)
+    for branch_index in range(branch_count):
+        var index := floori(CMath.hash1(seed + variant * 7 + branch_index * 13) * float(pts.size() - 2)) + 1
+        var point: Vector2 = pts[clampi(index, 0, pts.size() - 1)]
+        var angle := CMath.hash1(seed + branch_index * 5 + variant) * CMath.TAU
+        var length := 6.0 + CMath.hash1(seed + branch_index) * 18.0
+        var tree := CKit.bolt_tree(float(seed + variant * 100 + branch_index), point.x, point.y,
+            point.x + cos(angle) * length, point.y + sin(angle) * length, 1, 0.35, 1)
+        for branch in tree:
+            var branch_width := float(branch.w)
+            ADraw.bolt_draw(fb, branch.pts, width * branch_width, B_MID, B_CORE, k * branch_width)
     ADraw.glow(fb, (a.x + b.x) * 0.5, (a.y + b.y) * 0.5, minf(16.0, a.distance_to(b) * 0.25), B_MID, 0.07 * k)
 
 func render(fb: AFramebuffer, t: float) -> void:
@@ -145,7 +166,7 @@ func render(fb: AFramebuffer, t: float) -> void:
         for j in range(3):
             var angle := r.angle()
             var length := r.rangef(3, 11) * base
-            _bolt(fb, n, n + Vector2(cos(angle), sin(angle)) * length, t, r.intf(0, 999), 0.9, base * 0.8, 0.6)
+            _bolt(fb, n, n + Vector2(cos(angle), sin(angle)) * length, t, r.intf(0, 999), 0.9, base * 0.8, 0.6, 1)
         ADraw.glow(fb, n.x, n.y, 4 + base * 5, B_MID, 0.2 + base * 0.3)
         fb.add(n.x, n.y, B_CORE.x, B_CORE.y, B_CORE.z, 0.5 * base)
     var success_index := 0
@@ -168,7 +189,7 @@ func render(fb: AFramebuffer, t: float) -> void:
                     ADraw.line(fb, p.x, p.y, q.x, q.y, B_VIOLET, ghost * (0.7 + 0.3 * sin(t * 9 + j)))
         if fail and age >= 0 and age <= 0.16:
             var u := 1.0 - age / 0.16
-            _bolt(fb, a, a.lerp(b, 0.45 * u), t, seed, 0.9, u * 0.55, 0.45)
+            _bolt(fb, a, a.lerp(b, 0.45 * u), t, seed, 0.9, u * 0.55, 0.45, 3)
         elif not fail and age >= 0 and age <= 0.26:
             var k := pow(1.0 - age / 0.26, 1.5)
             if seed % 3 == 0:
