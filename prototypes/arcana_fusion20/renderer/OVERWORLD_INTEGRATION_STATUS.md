@@ -490,7 +490,14 @@ SOH world source parity and creator review remain separate.
   New [overlap 41218563612](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41218563612)
   recorded #20 source ticks **23–463** at 720p and 2K, 256,177,152 raw
   C upload bytes, with p50/p95/p99 **489.845/713.600/754.724 ms** and
-  **629.420/868.191/914.720 ms** respectively; 4K is pending. Thus these
-  frames span more than the opening, but do not include full OUT. The upload
+  **629.420/868.191/914.720 ms** respectively; 4K sampled ticks **24–464**
+  at **881.643/1150.895/1196.608 ms**, with 254,899,200 raw upload bytes.
+  Thus these frames span more than the opening, but do not include full OUT. The upload
   count was unchanged versus the preceding run in this sample. Do not treat
   either optimization as a demonstrated target-device win.
+
+- Opt-in CPU wall-time phase instrumentation (`ARCANA20_PROFILE_CPU=1`) at
+  `62476fa4` separately records C clear, authored raster, source-field packing,
+  and world-viewer submission p50/p95/p99. It does not measure asynchronous GPU
+  execution or target hardware. New [overlap run 41219131053](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41219131053)
+  and source/world regressions are pending.
