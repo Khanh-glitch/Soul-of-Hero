@@ -19,7 +19,7 @@ signal cast_finished(canonical_id: StringName)
 # Experimental C post state; the scene owner decides whether/how to apply it.
 signal screen_post(canonical_id: StringName, state: Dictionary)
 signal source_pass_ready(canonical_id: StringName, frame: Arcana20SourcePassFrame)
-# Producer mode suppresses source quads for B/C. It is not an integrated
+# Producer mode suppresses source quads for A/B/C/D. It is not an integrated
 # world compositor: the scene owner must consume every emitted field.
 @export var world_pass_mode := false
 @export var experimental_c_separate_passes := false
@@ -68,6 +68,9 @@ func _a_cast(canonical_id: StringName, id: int, caster_world: Vector2, target_wo
     if not _A_SPELLS.has(id):
         return false
     var ap := ASourcePlayer.new()
+    ap.world_pass_mode = world_pass_mode
+    ap.source_variant = StringName(_A_SPELLS[id])
+    ap.source_pass_ready.connect(func(frame: Arcana20SourcePassFrame) -> void: source_pass_ready.emit(canonical_id, frame))
     ap.configure(_make_a_spell(id), _a_spell_dur(id))
     add_child(ap)
     ap.visual_contact.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
@@ -97,6 +100,8 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
         # (outer geometry/scar), A owns the front (crown body/petals).
         var fp := FusionPlayer.new()
         var ap := ASourcePlayer.new()
+        ap.world_pass_mode = world_pass_mode
+        ap.source_variant = &"crown"
         ap.configure(ACinderCrown.new(), ACinderCrown.DURATION)
         var cp := CSourcePlayer.new()
         cp.experimental_separate_passes = experimental_c_separate_passes
@@ -122,6 +127,8 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
         # TRUE source translation: D Constellation Engine (standalone
         # HTML WebGL -> CPU DFx; see source_d headers for differences).
         var dp := DSourcePlayer.new()
+        dp.world_pass_mode = world_pass_mode
+        dp.source_pass_ready.connect(func(frame: Arcana20SourcePassFrame) -> void: source_pass_ready.emit(canonical_id, frame))
         add_child(dp)
         dp.visual_contact.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
             visual_contact.emit(canonical_id, pos, kind)

@@ -42,6 +42,26 @@ var b_influence: PackedByteArray
 var b_ambient: float
 var b_tint: Vector3
 
+# A: additive HDR and blend coverage produced by the existing A framebuffer;
+# these omit unported original terrain/refraction and bloom world passes.
+var a_rgb: PackedFloat32Array
+var a_coverage: PackedFloat32Array
+var a_multiplier: PackedFloat32Array
+var a_influence: PackedByteArray
+var a_exposure: float
+var a_bloom: float
+var a_bloom_rgb: PackedFloat32Array
+var a_bloom_size: Vector2i
+var a_impact_frames: int
+var a_impact_tint: Vector3
+
+# D: the currently ported additive layer and recorded authored bend calls;
+# bloom, decal and full WebGL post remain unresolved, not source parity.
+var d_rgb: PackedFloat32Array
+var d_influence: PackedByteArray
+var d_bends: Array[Dictionary]
+var d_bloom_gain: float
+
 # Presentation state is per cast; consumer arbitrates overlap and cleanup and
 # must keep HUD outside the world post. C-local vs B-local ticks are explicit.
 var flash: Vector3

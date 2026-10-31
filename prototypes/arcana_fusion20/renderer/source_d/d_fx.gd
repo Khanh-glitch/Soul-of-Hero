@@ -28,6 +28,9 @@ const FLARE := 13
 const FLAKE := 18
 
 var buf := PackedFloat32Array()
+var track_world_fields := false
+var world_influence := PackedByteArray()
+var world_bends: Array[Dictionary] = []
 var t := 0.0
 var flash_amt := 0.0
 var flash_col := Vector3.ONE
@@ -49,10 +52,14 @@ static func source_rng(seed: int) -> BMath.BRng:
 
 func _init() -> void:
     buf.resize(N * 3)
+    world_influence.resize(N)
     rng = source_rng(1337)
 
 func clear() -> void:
     buf.fill(0.0)
+    if track_world_fields:
+        world_influence.fill(0)
+        world_bends.clear()
     flash_amt = 0.0
     shake = 0.0
     bloom_gain = 1.0
@@ -67,8 +74,12 @@ func flash(a: float, col := Vector3.ONE) -> void:
 func kick(p: float) -> void:
     shake = maxf(shake, p)
 
-func bend(_x: float, _y: float, _size: float, _ox: float, _oy: float, _absorb: float = 0.0, _chroma: float = 0.0) -> void:
-    pass # floor-only in the original; see header
+func bend(x: float, y: float, size: float, ox: float, oy: float, absorb: float = 0.0, chroma: float = 0.0) -> void:
+    # Preserve the authored call for a world-field implementation; no fake
+    # floor or assumed bend raster. The old source-reference path remains a
+    # no-op until the actual original D warp batch is ported and validated.
+    if track_world_fields:
+        world_bends.append({"x": x, "y": y, "size": size, "ox": ox, "oy": oy, "absorb": absorb, "chroma": chroma})
 
 static func _h11(n: float) -> float:
     var s := sin(n * 127.1) * 43758.5453
@@ -163,6 +174,8 @@ func _add_px(x: int, y: int, r: float, g: float, b: float) -> void:
     if x < 0 or y < 0 or x >= W or y >= H:
         return
     var i := (y * W + x) * 3
+    if track_world_fields:
+        world_influence[y * W + x] = 1
     buf[i] += r
     buf[i + 1] += g
     buf[i + 2] += b

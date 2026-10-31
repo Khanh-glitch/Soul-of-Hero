@@ -167,19 +167,26 @@ func _run() -> void:
     world.add_child(renderer)
     var c_world := Arcana20CWorldPass.new()
     var b_world := Arcana20BWorldPass.new()
+    var a_world := Arcana20AWorldPass.new()
+    a_world.process_mode = Node.PROCESS_MODE_ALWAYS
     c_world.process_mode = Node.PROCESS_MODE_ALWAYS
     b_world.process_mode = Node.PROCESS_MODE_ALWAYS
     world.add_child(c_world)
     world.add_child(b_world)
+    world.add_child(a_world)
     renderer.source_pass_ready.connect(func(id: StringName, frame: Arcana20SourcePassFrame) -> void:
         passes[id] = frame
         if frame.family == &"C":
             c_world.consume(frame)
         elif frame.family == &"B":
-            b_world.consume(frame))
+            b_world.consume(frame)
+        elif frame.family == &"A":
+            a_world.consume(frame))
     renderer.cast_finished.connect(func(id: StringName) -> void:
         if String(id).ends_with("_02"):
             b_world.clear()
+        elif String(id).ends_with("_04"):
+            a_world.clear()
         else:
             c_world.clear())
     camera.force_update_scroll()
@@ -187,13 +194,20 @@ func _run() -> void:
     await process_frame
     var baseline := await save_frame("world_before")
     var stats: Array = []
-    for num in [2, 10, 17]:
+    for num in [2, 4, 10, 17]:
         var id := Arcana20SourceCatalog.canonical_id(num)
         renderer.cast_skill(id, player.global_position, enemy.global_position)
         var source: Node = renderer._casts[id]
         source.set_process(false)
-        var viewer: Node2D = b_world if num == 2 else c_world
-        if source is CSourcePlayer:
+        var viewer: Node2D = b_world if num == 2 else (a_world if num == 4 else c_world)
+        if source is ASourcePlayer:
+            var ap := source as ASourcePlayer
+            ap.render_enabled = false
+            for tick in range(180):
+                ap.advance(STEP, false)
+            ap.render_enabled = true
+            ap._render_frame()
+        elif source is CSourcePlayer:
             var cp := source as CSourcePlayer
             cp.render_enabled = false
             for tick in range(180):
@@ -237,7 +251,7 @@ func _run() -> void:
         var clear_img := await save_frame("world_%02d_cancelled" % num)
         check(images_equal(baseline, clear_img), "cast cancel restores frozen world %d" % num)
     var f := FileAccess.open(OUTPUT + "/contamination.json", FileAccess.WRITE)
-    f.store_string(JSON.stringify({"stats": stats, "scope": "frozen actual overworld; one tick; experimental B/C terrain passes only; not source fidelity, gameplay, post, actor depth or approval"}, "  "))
+    f.store_string(JSON.stringify({"stats": stats, "scope": "frozen actual overworld; one tick; experimental A/B/C terrain passes only; #04 is an unapproved redesign candidate; not source fidelity, gameplay, post, actor depth or approval"}, "  "))
     f.close()
     _finish()
 
@@ -246,7 +260,11 @@ func save_fields(id: StringName, frame: Arcana20SourcePassFrame) -> void:
         return
     var prefix := OUTPUT + "/" + String(id)
     var fields := {}
-    if frame.family == &"C":
+    if frame.family == &"A":
+        fields = {"ink.rgb32f": frame.a_rgb.to_byte_array(), "ink_coverage.f32": frame.a_coverage.to_byte_array(),
+            "multiplier.f32": frame.a_multiplier.to_byte_array(), "influence.u8": frame.a_influence,
+            "bloom.rgb32f": frame.a_bloom_rgb.to_byte_array()}
+    elif frame.family == &"C":
         fields = {"ground.rgba8": frame.c_ground, "ground_coverage.f32": frame.c_ground_coverage.to_byte_array(),
             "ink.rgba32f": frame.c_ink.to_byte_array(), "light.rgba32f": frame.c_light.to_byte_array(),
             "displacement.rgba32f": frame.c_disp.to_byte_array(), "fragment.rgba32f": frame.c_world_fragment.to_byte_array(),
@@ -277,7 +295,13 @@ func contamination(before: Image, after: Image, viewer: Node2D, frame: Arcana20S
     if before == null or after == null or frame == null or before.get_size() != after.get_size():
         return {"outside_changed": -1, "reason": "image/frame missing"}
     var sprite := viewer.get("_sprite") as Sprite2D
-    var influence: PackedByteArray = frame.b_influence if frame.family == &"B" else frame.c_influence
+    var influence: PackedByteArray
+    if frame.family == &"A":
+        influence = (viewer as Arcana20AWorldPass)._bloom_influence(frame.a_influence)
+    elif frame.family == &"B":
+        influence = frame.b_influence
+    else:
+        influence = frame.c_influence
     var transform := root.get_final_transform() * sprite.get_global_transform_with_canvas()
     var inverse := transform.affine_inverse()
     var outside := 0
@@ -295,7 +319,7 @@ func contamination(before: Image, after: Image, viewer: Node2D, frame: Arcana20S
                 for ox in range(-2, 3):
                     var sx := floori(p.x) + ox
                     var sy := floori(p.y) + oy
-                    if sx >= 0 and sy >= 0 and sx < 384 and sy < 216 and influence[sy * 384 + sx] != 0:
+                    if sx >= 0 and sy >= 0 and sx < frame.source_size.x and sy < frame.source_size.y and influence[sy * frame.source_size.x + sx] != 0:
                         influenced = true
                         break
                 if influenced:

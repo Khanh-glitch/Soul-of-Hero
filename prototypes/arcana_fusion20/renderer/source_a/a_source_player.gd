@@ -6,6 +6,7 @@ class_name ASourcePlayer
 signal visual_event(kind: StringName, world_pos: Vector2, source_time: float)
 signal visual_contact(kind: StringName, world_pos: Vector2, source_time: float)
 signal finished()
+signal source_pass_ready(frame: Arcana20SourcePassFrame)
 
 const STEP := 1.0 / 60.0
 const CASTER_LOCAL := Vector2(104, 150)
@@ -13,6 +14,8 @@ const ARENA_LOCAL := Vector2(232, 124)
 
 var duration := 6.6
 var render_enabled := true
+var world_pass_mode := false
+var source_variant: StringName = &"candidate"
 var _spell: Variant
 var _fb: AFramebuffer
 var _sprite: Sprite2D
@@ -22,6 +25,7 @@ var _acc := 0.0
 var _active := false
 var _events: Array = []
 var _origin := Vector2.ZERO
+var _target := Vector2.ZERO
 var _rot := 0.0
 var _scale := 1.0
 
@@ -45,6 +49,7 @@ func _ensure() -> void:
 func begin(caster_world: Vector2, target_world: Vector2) -> void:
     _ensure()
     _fb = AFramebuffer.new()
+    _fb.track_world_fields = world_pass_mode
     _spell.call("setup")
     _events = _spell.call("authored_events")
     var axis := target_world - caster_world
@@ -52,6 +57,7 @@ func begin(caster_world: Vector2, target_world: Vector2) -> void:
     _rot = axis.angle() - src_axis.angle() if axis.length() > 1.0 else 0.0
     _scale = clampf(axis.length() / maxf(1.0, src_axis.length()), 0.6, 3.5) if axis.length() > 1.0 else 1.0
     _origin = caster_world
+    _target = target_world
     _tick = 0
     _acc = 0.0
     _active = true
@@ -114,12 +120,43 @@ func _render_frame() -> void:
         return
     _fb.clear()
     _spell.call("render", _fb, source_time())
+    if world_pass_mode:
+        _fb.compute_bloom()
+        _sprite.visible = false
+        source_pass_ready.emit(source_pass_frame())
+        return
     var img := Image.create_from_data(AFramebuffer.W, AFramebuffer.H, false, Image.FORMAT_RGBA8, _fb.present())
     _tex.update(img)
     _sprite.visible = true
     _sprite.position = local_to_world(Vector2(AFramebuffer.W / 2.0, AFramebuffer.H / 2.0))
     _sprite.rotation = _rot
     _sprite.scale = Vector2.ONE * _scale
+
+func source_pass_frame() -> Arcana20SourcePassFrame:
+    var result := Arcana20SourcePassFrame.new()
+    result.family = &"A"
+    result.variant = source_variant
+    result.tick = _tick
+    result.source_time = source_time()
+    result.source_size = Vector2i(AFramebuffer.W, AFramebuffer.H)
+    var bx := Vector2(cos(_rot), sin(_rot)) * _scale
+    var by := Vector2(-sin(_rot), cos(_rot)) * _scale
+    result.source_to_world = Transform2D(bx, by, _origin - bx * CASTER_LOCAL.x - by * CASTER_LOCAL.y)
+    result.caster_world = _origin
+    result.target_world = _target
+    result.a_rgb = _fb.buf
+    result.a_coverage = _fb.world_coverage
+    result.a_multiplier = _fb.world_multiplier
+    result.a_influence = _fb.world_influence
+    result.a_exposure = _fb.exposure
+    result.a_bloom = _fb.bloom_amt
+    result.a_bloom_rgb = _fb.bloom_a
+    result.a_bloom_size = Vector2i(_fb.bw, _fb.bh)
+    result.a_impact_frames = _fb.impact_frames
+    result.a_impact_tint = _fb.impact_tint
+    result.flash = _fb.flash
+    result.chroma = _fb.chroma
+    return result
 
 func diagnostics() -> Dictionary:
     return {"transport": "source_a_native_416x234_procedural", "tick": _tick, "active": _active}

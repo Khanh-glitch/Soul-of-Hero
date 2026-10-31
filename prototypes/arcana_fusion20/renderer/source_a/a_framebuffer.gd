@@ -19,6 +19,10 @@ var base := PackedFloat32Array()
 var trail := PackedFloat32Array()
 var bloom_a := PackedFloat32Array()
 var bloom_b := PackedFloat32Array()
+var track_world_fields := false
+var world_coverage := PackedFloat32Array()
+var world_multiplier := PackedFloat32Array()
+var world_influence := PackedByteArray()
 var bw: int
 var bh: int
 var exposure := 1.0
@@ -32,6 +36,9 @@ var impact_tint := Vector3.ONE
 func _init() -> void:
     var n := W * H * 3
     buf.resize(n)
+    world_coverage.resize(W * H)
+    world_multiplier.resize(W * H)
+    world_influence.resize(W * H)
     base.resize(n)
     trail.resize(n)
     bw = W >> 2
@@ -41,6 +48,10 @@ func _init() -> void:
 
 func clear() -> void:
     buf.fill(0.0)
+    if track_world_fields:
+        world_coverage.fill(0.0)
+        world_multiplier.fill(1.0)
+        world_influence.fill(0)
     exposure = 1.0
     flash = Vector3.ZERO
     bloom_amt = 0.75
@@ -55,6 +66,8 @@ func add(x: float, y: float, r: float, g: float, b: float, a: float = 1.0) -> vo
         if x0 < 0 or y0 < 0 or x0 >= W or y0 >= H:
             return
         var i := (y0 * W + x0) * 3
+        if track_world_fields and a != 0.0:
+            world_influence[y0 * W + x0] = 1
         buf[i] += r * a
         buf[i + 1] += g * a
         buf[i + 2] += b * a
@@ -68,6 +81,8 @@ func _splat(x: int, y: int, r: float, g: float, b: float, wgt: float) -> void:
     if x < 0 or y < 0 or x >= W or y >= H:
         return
     var i := (y * W + x) * 3
+    if track_world_fields and wgt != 0.0:
+        world_influence[y * W + x] = 1
     buf[i] += r * wgt
     buf[i + 1] += g * wgt
     buf[i + 2] += b * wgt
@@ -76,6 +91,8 @@ func add_px(x: int, y: int, r: float, g: float, b: float, a: float = 1.0) -> voi
     if x < 0 or y < 0 or x >= W or y >= H:
         return
     var i := (y * W + x) * 3
+    if track_world_fields and a != 0.0:
+        world_influence[y * W + x] = 1
     buf[i] += r * a
     buf[i + 1] += g * a
     buf[i + 2] += b * a
@@ -85,6 +102,10 @@ func blend(x: int, y: int, r: float, g: float, b: float, a: float) -> void:
         return
     var i := (y * W + x) * 3
     var ia := 1.0 - a
+    if track_world_fields:
+        var p := y * W + x
+        world_coverage[p] = a + world_coverage[p] * ia
+        world_influence[p] = 1
     buf[i] = buf[i] * ia + r * a
     buf[i + 1] = buf[i + 1] * ia + g * a
     buf[i + 2] = buf[i + 2] * ia + b * a
@@ -93,6 +114,9 @@ func mul(x: int, y: int, m: float) -> void:
     if x < 0 or y < 0 or x >= W or y >= H:
         return
     var i := (y * W + x) * 3
+    if track_world_fields:
+        world_multiplier[y * W + x] *= m
+        world_influence[y * W + x] = 1
     buf[i] *= m
     buf[i + 1] *= m
     buf[i + 2] *= m
@@ -128,7 +152,9 @@ static func _tm(x: float) -> float:
     var v := (x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14)
     return minf(1.0, pow(v, 1.0 / 1.42))
 
-func present() -> PackedByteArray:
+func compute_bloom() -> void:
+    # Original threshold/downsample and two separable blur passes. Shared by
+    # the reference composite and the separate live-world source field.
     # bloom threshold + downsample
     bloom_a.fill(0.0)
     for y in range(H):
@@ -166,6 +192,9 @@ func present() -> PackedByteArray:
                         var yy: int = clampi(y + k, 0, bh - 1)
                         s += bloom_b[(yy * bw + x) * 3 + c] * float(WK[k + 3])
                     bloom_a[o + c] = s
+
+func present() -> PackedByteArray:
+    compute_bloom()
     var bytes := PackedByteArray()
     bytes.resize(W * H * 4)
     var q := float(levels - 1)
