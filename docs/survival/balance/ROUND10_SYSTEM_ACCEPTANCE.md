@@ -63,7 +63,7 @@ bytes alone**, which is the tree A0's own CI actually runs.
 | PASS | 3 | executed and asserted on these bytes |
 | FAIL | 3 | implemented and violated — a real defect with an owner |
 | BLOCKED | 1 | genuinely unmeasurable here, cause named |
-| RED_NOT_IMPLEMENTED | 1 | the journey has no door to walk through |
+| RED_NOT_IMPLEMENTED | 3 | three clauses have no door to walk through (journeys, run end, partial construction) |
 
 | probe | verdict | checks | what it established |
 |---|---|---|---|
@@ -75,6 +75,8 @@ bytes alone**, which is the tree A0's own CI actually runs.
 | `r10_a8_differential_probe` | PASS | 8 | A8's mover versus the production Hero, quantified, and the Mill's gate data |
 | `r10_a6_projection_probe` | FAIL | 5, 1 failed | A6 mounts and shows nothing, because no owner publishes anything |
 | `r10_journey_probe` | RED_NOT_IMPLEMENTED | 10, 8 missing | the four CT journeys, clause by clause, with the exact missing symbol |
+| `r10_run_boundary_probe` | RED_NOT_IMPLEMENTED | 30, 2 failed, 1 missing | the 0/264/288/312/336 h sweep, the expiry write door, four real interrupted commits, and the missing run-end API |
+| `r10_field_probe` | RED_NOT_IMPLEMENTED | 20, 0 failed, 1 missing | nonvacuity: three walked routes, nineteen structures through the player door, the 50-per-slot edge |
 
 The same eight probes were re-run on `r10_a0` and `r10_core` where the question
 changes meaning, and those runs are quoted in §3, §5 and §6.
@@ -271,7 +273,100 @@ symbol, and the assertions that *could* be measured all passed.
 | **PLAYER_RETURN_S1** | **PARTIAL_WITH_BLOCKERS** | avatar `A6_SOURCE_UNAVAILABLE`; paid home **PASS**; three caches **BLOCKED** (A3 settlement needs the session); A6 return UI **RED**; continuation/claim **RED**; visual **VISUAL_NOT_REVIEWED** |
 | **PLAYER_POI_S1** (secondary) | **BLOCKED** | A8's own red (§7) precedes it; the differential is quantified in §7 but no journey claim is made |
 
-## 10. Gameplay-missing gate report
+## 10. The run boundary and the crash boundary (WP4)
+
+`r10_run_boundary_probe`: 30 checks, 2 failed, 1 missing. Everything below is at
+`1d39e92e75d8`, driving A0's own port against the real `SaveService`.
+
+**10.1 The clock, measured at CT's own numbers.** `run_context()` is read after
+forging the durable start backwards (`MUTATION_`, and `_forge_run_start` only
+returns when the document carries the forged value):
+
+| elapsed | status | A3's claim refusal |
+|---|---|---|
+| 0 h | `active` | `premature_ragnarok_claim` |
+| 264 h (950 400 s) | `active` | past the time gate (`source_not_openable`) |
+| 288 h | `active` | past the time gate |
+| 312 h | `active` | past the time gate |
+| 335 h 59 m 59 s | `active` | past the time gate |
+| 336 h (1 209 600 s) | **`expired`** | `run_not_active` |
+
+Two details worth keeping. The boundary is **exact**: one second short is active,
+the second it reaches 1 209 600 s it is expired. And A3's own `run_expired` branch
+is **unreachable** while A0 reports the status, because `_run_active` checks
+`status != "active"` before it checks the arithmetic — the player sees the same
+refusal either way, but the reason string is `run_not_active`.
+
+The clock is also not this process's uptime: a second OS process (`pid` reported in
+the log) reads the same `run_id`, the same `run_started_at_unix`, and an elapsed
+time that only grows with OS wall time (`parent 0 s → child 2 s`).
+
+**10.2 The write door does not obey the clock.** With `status == "expired"`
+provably measured first, both A0 doors still commit:
+
+* `commit_profile_delta("a7.r10.expired.write", 5)` → `ok=true`, balance `0 → 5`;
+* `commit_meta_deposit(...)` with an applier that returns `{"ok": true}` →
+  `ok=true`.
+
+So the refusal CT asked about is missing at the **A0** layer, not the A3 one
+(A3's planner does refuse). This is the same defect the lifecycle probe found, now
+stated as a gate: a run can expire and a player can keep banking.
+
+**10.3 A run cannot end, so 336 h cannot roll into a new run.** The port declares
+none of `end_run`, `abandon_run`, `close_run`, `start_run`, `reset_run`;
+`ensure_run` after expiry returns the **same** expired `run_id`; `run_history` stays
+empty. Logout, death, abandon and terminal expiry are therefore not distinguishable
+states — there is one status and it is derived, not recorded. This is the missing
+symbol in the ledger, and it is what makes "run-local reset vs only profile
+achievements/history/banked currency" untestable rather than passing.
+
+**10.4 Four real interrupted commits, each reopened by a new PID.** A0 ships a
+one-shot fault hook (`configure_test_save_interruption`, armed for this run with
+`--survival-save-fault-test`). Each boundary was fired on its own isolated save,
+then a **separate process** reopened the file:
+
+| boundary | what the next process found | recovery |
+|---|---|---|
+| `after_temporary` | balance 5, base receipt applied, crash receipt absent | none needed |
+| `after_backup` | balance 5, same | none needed |
+| `after_primary_removed` | balance 5, same | **`save_recovered("backup")`** |
+| `after_primary_renamed` | balance 8, **both** receipts applied | none needed |
+
+Every one is whole: no half-applied transaction, and the wallet matches the receipt
+list. Then the fresh process **retries the same receipt**: after the three lost
+writes it lands (balance 8), and after the landed write it is refused
+`already_applied` (balance stays 8). That is "exactly once" measured across a crash,
+not asserted.
+
+## 11. Nonvacuity of A0's green (WP2)
+
+`r10_field_probe`: 20 checks, 0 failed, 1 missing. A0's CI says the first hour
+works; this asks whether it works *because of the product* rather than because of a
+short journey.
+
+* **Three genuinely different routes**, each walked with real key events from the
+  real spawn: `east` `(56,218) → (59,218)`, `south` `(59,218) → (59,221)`,
+  `east-then-south` `(59,221) → (62,224)` via `(62,221)`. Every leg moved along the
+  axis its keys asked for and ended on a cell the map graph also reaches.
+* **Nineteen structures through the player's own door.** `try_place` — not the
+  service — placed all 19 foundations; refusals were `on_route` ×14 and
+  `protected_place` ×2, which is the world validator doing its job. The document
+  counts 19, each cost exactly its catalogue price (40 granted, 38 spent, 2 left),
+  the twentieth (the last affordable one) commits, and the twenty-first is refused
+  `cannot_afford` with the exact shortfall `{"oak_wood": 2}`. No infinite build, no
+  free structure, no silent over-spend.
+* **The 50-per-slot edge.** With oak at exactly 50, a real harvest of a real node
+  adds a second stack (`oak_wood_stack_2` = 2, total 52) instead of silently
+  dropping the swing. The node's 0.18 s interaction cooldown was waited out, so the
+  measurement is the bag and not the cooldown.
+* **Not testable, said plainly.** A half-built structure cannot exist:
+  `place_structure` pays and creates in one commit and no progress field exists, so
+  "partial construction, abandoned or resumed" is unreachable (the missing symbol in
+  this probe). A 30-slot full bag is also unreachable — the survival catalogue ships
+  **8 item kinds**, so a player can occupy at most 8 of 30 slots; the per-stack limit
+  above is the boundary that can actually be reached.
+
+## 12. Gameplay-missing gate report
 
 Measured against **player action**, not inferred from a catalogue or a document.
 
@@ -286,7 +381,7 @@ Measured against **player action**, not inferred from a catalogue or a document.
 | 2K/4K actual screenshots, human look | **NOT_TESTED** | headless; nothing was rasterised |
 | fun / pacing judgement | **NOT_TESTED** | not a machine-verifiable claim, and no human ran it |
 
-## 11. Nine gates, binary
+## 13. Nine gates, binary
 
 | gate | statement | verdict |
 |---|---|---|
@@ -295,34 +390,38 @@ Measured against **player action**, not inferred from a catalogue or a document.
 | G3 | a committed action survives a genuine second OS process | **PASS** |
 | G4 | a player has the survival economy (crafting + meta actions) | **FAIL** — `economy_session=null` once A3 is composed |
 | G5 | A0's profile port is reachable from the ordinary player path | **FAIL** — 0 production callers |
-| G6 | an expired run refuses further mutation | **FAIL** — deposit accepted after `status=expired` |
+| G6 | the run clock ends the run: no mutation after expiry, and 336 h can start a new run | **FAIL** — the wallet write and the deposit boundary both commit after `status=expired`, and no run-end API exists (`ensure_run` returns the expired run forever) |
 | G7 | A6 shows the return state the run actually produced | **FAIL** — all 5 projections `empty` |
 | G8 | A8's POIs are playable (approved source, retreat, doorway) | **FAIL** — candidates only, plus §7.1/§7.2/§7.3 |
 | G9 | the late-72 h bank/evac exists as a physical player action | **FAIL** — endpoints `NOT_CANONICAL`, no deposit caller |
 
-## 12. R0–R5
+## 14. R0–R5
 
 | level | state |
 |---|---|
-| **R0** compiles and boots | **yes** — real Godot 4.7 on three pinned compositions, 8 round-10 probes plus A8's five suites |
+| **R0** compiles and boots | **yes** — real Godot 4.7 on three pinned compositions, 10 round-10 probes plus A8's five suites |
 | **R1** the journey runs | **partly** — first hour, harvest, paid build, restart; no crafting, no POI, no death |
 | **R2** the run exists | **yes in source and on the port's own door, no for a player** — `ensure_run`/`run_context` work when driven, 0 production callers |
 | **R3** the finale exists | **no** — endpoints are authored plans, not native sockets |
 | **R4** the two economies hold | **no** — V7 custody is proven (16/16) and unreachable (0 callers, expired-write hole) |
 | **R5** the 14-day experience is coherent | **no** — gated on R2–R4 |
 
-## 13. Owner corrections, ranked
+## 15. Owner corrections, ranked
 
 1. **A0 — re-pin one hash, in the open.** `a0_v5_source_pins.DATA["res://data/survival/items/items.json"]`
    `cc3c1165… → cd1a27c4…`, with A3's approval reference recorded in the fence.
    One item (`ragnarok_unbanked`) is the whole difference. This single line turns
    on crafting, the meta economy and the Waystation candidate. *Impact: G4, J03,
    PLAYER_RETURN_S1 caches.* Nothing else in this round unlocks as much.
-2. **A0 — wire the port it already owns.** Call `configure_meta_profile_port` and
-   `ensure_run` from the composition root (the same place that builds the
-   `EconomySession`), and make `commit_profile_delta`/`commit_meta_deposit` refuse
-   when `run_context().status == "expired"`. *Impact: G5, G6, J06/J07, and every
-   14-day consequence.*
+2. **A0 — wire the port it already owns, gate it on its own clock, and let a run
+   end.** Call `configure_meta_profile_port` and `ensure_run` from the composition
+   root (the same place that builds the `EconomySession`); make
+   `commit_profile_delta`/`commit_meta_deposit` refuse when
+   `run_context().status == "expired"`; and add `end_run(reason)` +
+   `start_run()` so 336 h rolls into a new run and `run_history` can record it.
+   *Impact: G5, G6, G6b, J06/J07, and every 14-day consequence.* The good news the
+   same probe establishes: the `SaveService` boundary underneath is already
+   atomic and crash-safe at all four disk boundaries (§10.4).
 3. **A6 — publish five projections and stage the avatar, or say it cannot.** The
    return layer is mounted and honest; it is blind because `game/` declares 0 of 12
    candidate producers. Stage the D051–D054 sprite bytes privately and call
@@ -341,19 +440,21 @@ Measured against **player action**, not inferred from a catalogue or a document.
    has no damage path at all, while the death bag and the bed already exist.
    *Impact: J04/J05's "same death bag and bed" cannot be attempted.*
 
-## 14. What the player can actually do on `1d39e92e75d8`
+## 16. What the player can actually do on `1d39e92e75d8`
 
 | The player can | The player cannot |
 |---|---|
 | boot, load a save, walk the overworld with real input, gather and build for exact cost | craft, forge, research or bank anything — the economy session never configures |
 | see a Hero with A0's own 34-animation sprite and a camera that follows | choose or see an A6 avatar (`A6_SOURCE_UNAVAILABLE`) |
-| place a paid structure and find it intact after quitting and relaunching the game (second OS process, verified) | see a run clock, a season, an expiry, or any consequence of a restart being a *new* run — the port exists and nothing calls it |
+| place a paid structure and find it intact after quitting and relaunching the game (second OS process, verified) | see a run clock, a season, an expiry, or any consequence of a restart being a *new* run — the port exists and nothing calls it, and no run can end |
 | harvest, hold a bag, reach a bed and a death-bag root in the world | be hurt, die, be fought, or lose a bag: no damage source exists in `game/survival/` |
 | enter an A8 POI exterior in A8's own pilot | enter one as a player: the doorway request is rejected at `poi_pilot.gd:242`, and the Mill cannot be repaired |
 | see A6's return layer mount | see a single number on it — all five projections are empty |
 
 What is real at the end of round 10: three immutable compositions at current owner
-bytes, eight independently executed Godot 4.7 probes plus A8's five suites, a
+bytes, ten independently executed Godot 4.7 probes plus A8's five suites, a
+measured 0/264/288/312/335:59:59/336 h boundary with four real interrupted commits
+that never half-apply, nineteen structures placed through the player's own door, a
 one-hash/one-item diagnosis that replaces a two-round-old guess, an attribution
 method (`r10_a0`) that separates a base defect from a composition artefact, four A8
 root causes with file:line repairs, and a journey ledger that says RED per clause

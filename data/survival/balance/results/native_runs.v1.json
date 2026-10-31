@@ -20,10 +20,12 @@
     "balance_native_decisions/oracle_corruption_probe.gd": "c11488558f27e6b1f9da5fc2cf66bd6cdda539652a880f559dfb8c69d84d56cb",
     "balance_native_r10/r10_a6_projection_probe.gd": "5ae5754bb077ba80247f11b0bf5c7882ffd792aa15ba8fb32737142465c64f3e",
     "balance_native_r10/r10_a8_differential_probe.gd": "b9e38a937bdc500fea9cbd96e0a0ae2d42f751eedfaded55ca33145ede4b6a1b",
+    "balance_native_r10/r10_field_probe.gd": "419ca2c0306551ffeab4084d22666247e44e9c333ee12efeff71205596fd53a2",
     "balance_native_r10/r10_harness.gd": "c6723c5d6248ce62d2ac4eadbd20c0480f390923e8beee49d8b3b81b6ed35d18",
     "balance_native_r10/r10_journey_probe.gd": "cf527922329d01a953f1e0f3f469da430acbb4481b48273769efc7e929658c10",
     "balance_native_r10/r10_port_lifecycle_probe.gd": "ebc53fc0988a50548bfef5320e6550d17ea1d8c1405cd99f43ac4fbfcdd6eb2e",
     "balance_native_r10/r10_restart_probe.gd": "fac0e96fba01a0a163288cc00f0120021706f5ae3bde244462977066b86a546a",
+    "balance_native_r10/r10_run_boundary_probe.gd": "ada3e97e8b76963ec4964d65b8fe1c85b0d4de008cbcea1dbc927e09ecc7d185",
     "balance_native_r10/r10_seam_probe.gd": "0cd8f1cc2077b1654105584ed4e1f20576d3271babc467458f21bc432499ee03",
     "balance_native_r10/r10_v7_custody_probe.gd": "25b2e34b3108a6d11956907f3ede25d7bd71c3ecf2b95c002f5d92a4ef58ca75",
     "balance_native_r10/r10_waystation_probe.gd": "c4bcd1570ed4b914b60e02662d3ddc864eed590f5c5db9029c37cdb479810e0f",
@@ -85,7 +87,7 @@
       "family": "balance_native_r10",
       "log": ".artifacts/native_runs/1d39e92e75d8/balance_native_r10__r10_port_lifecycle_probe.gd.log",
       "log_lines": 15,
-      "log_sha256": "59a4892947fd7971d80c0fceebbf1e8aad9db195e556ce8f2acf72c72f4f12af",
+      "log_sha256": "12d7a36f5bd6814caf87002e4ce35de300435e1997a947728ba59c8874f39112",
       "mismatch": "",
       "missing": [],
       "probe": "r10_port_lifecycle_probe.gd",
@@ -103,7 +105,7 @@
       "family": "balance_native_r10",
       "log": ".artifacts/native_runs/1d39e92e75d8/balance_native_r10__r10_v7_custody_probe.gd.log",
       "log_lines": 36,
-      "log_sha256": "c14d7abdde20e5c2e5d8c7527e73231a519e36ee2dcb98825afc0eb87ff83211",
+      "log_sha256": "ec6118d8e75adcfe3d98844e1db91e1424c4cb430a6b7838130f3dd2c9624ae6",
       "mismatch": "",
       "missing": [],
       "probe": "r10_v7_custody_probe.gd",
@@ -139,7 +141,7 @@
       "family": "balance_native_r10",
       "log": ".artifacts/native_runs/1d39e92e75d8/balance_native_r10__r10_restart_probe.gd.log",
       "log_lines": 19,
-      "log_sha256": "edca3012c6a79df9b0df9b307f6ac8aab10f15d57674fb019440eeae998b246c",
+      "log_sha256": "51564c2c5111505b0c27c205c9d45f457f9ddfa9ee1669a2bf5573212b1e1e30",
       "mismatch": "",
       "missing": [],
       "probe": "r10_restart_probe.gd",
@@ -195,7 +197,7 @@
       "family": "balance_native_r10",
       "log": ".artifacts/native_runs/1d39e92e75d8/balance_native_r10__r10_journey_probe.gd.log",
       "log_lines": 58,
-      "log_sha256": "7b892f9b339e876a1d9c2c3083439a6c3c73ffd15d4c1ea1eb34c5036b1cf236",
+      "log_sha256": "5bc57e7221c0185d406887702fdc0d373f9c3afbc7e382e2789126cea8397c41",
       "mismatch": "",
       "missing": [
         "A6_SOURCE_UNAVAILABLE: an avatar a player can select and see (manifest staged 0 sprite files; nothing in game/ calls avatar_sprite_pipeline.gd, so no selected avatar can reach the Hero)",
@@ -209,6 +211,49 @@
       ],
       "probe": "r10_journey_probe.gd",
       "verdict": "RED_NOT_IMPLEMENTED"
+    },
+    {
+      "blocked_reason": "",
+      "checks": 30,
+      "claimed": "RED_NOT_IMPLEMENTED",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
+      ],
+      "exit_code": 3,
+      "failed": [
+        "an expired run refuses a wallet write (ok=true, balance=5)",
+        "an expired run refuses a deposit boundary commit (ok=true)"
+      ],
+      "family": "balance_native_r10",
+      "log": ".artifacts/native_runs/1d39e92e75d8/balance_native_r10__r10_run_boundary_probe.gd.log",
+      "log_lines": 49,
+      "log_sha256": "5b283b88e622aa10a5ee9d67f6b9380a99cc890adb866179d676ef893689b0b0",
+      "mismatch": "",
+      "missing": [
+        "a way to end a run and start the next one: the port declares none of end_run/abandon_run/close_run/start_run/reset_run, and `ensure_run` returns the expired run forever, so 336 h can never roll into a new run, and logout/death/abandon/terminal expiry cannot be distinguished (only active|expired)"
+      ],
+      "probe": "r10_run_boundary_probe.gd",
+      "verdict": "RED_NOT_IMPLEMENTED"
+    },
+    {
+      "blocked_reason": "",
+      "checks": 20,
+      "claimed": "RED_NOT_IMPLEMENTED",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
+      ],
+      "exit_code": 3,
+      "failed": [],
+      "family": "balance_native_r10",
+      "log": ".artifacts/native_runs/1d39e92e75d8/balance_native_r10__r10_field_probe.gd.log",
+      "log_lines": 35,
+      "log_sha256": "f9d384ac6514ae354427b2879cd15cc6307881462b3e3a94f39de031b82f5ee9",
+      "mismatch": "",
+      "missing": [
+        "a partial construction state: `place_structure` pays and creates in one commit and no progress field exists, so 'a half-built structure' cannot be produced, abandoned or resumed \u2014 the clause is unreachable rather than passing"
+      ],
+      "probe": "r10_field_probe.gd",
+      "verdict": "RED_NOT_IMPLEMENTED"
     }
   ],
   "rule": "A probe counts only for the composition SHA it ran on. BLOCKED and RED_NOT_IMPLEMENTED are recorded, never converted into a pass. A probe that exits 0 without its verdict line is BLOCKED_NO_VERDICT.",
@@ -217,7 +262,7 @@
     "BLOCKED": 1,
     "FAIL": 3,
     "PASS": 3,
-    "RED_NOT_IMPLEMENTED": 1
+    "RED_NOT_IMPLEMENTED": 3
   },
   "support_source": {
     "data/survival/balance/ragnarok_tuning.v1.json": "28ca40544d9de36411caf77cc30b81f54f9a64071f97d4e36d6b1447714fd94b"

@@ -13,7 +13,7 @@ as `native_runs.r9_full.v1.json` and no historical row was rewritten._
 | PASS | 3 |
 | FAIL | 3 |
 | BLOCKED | 1 |
-| RED_NOT_IMPLEMENTED | 1 |
+| RED_NOT_IMPLEMENTED | 3 |
 
 * **It is one item in one file, and it is now attributable.** `r10_a0` (A0's own
   bytes) boots with `economy_session` **non-null** and a clean fence
@@ -44,6 +44,23 @@ as `native_runs.r9_full.v1.json` and no historical row was rewritten._
   `A6_SOURCE_UNAVAILABLE` (no sprite bytes in Git, no caller of
   `avatar_sprite_pipeline.gd`). The Hero the player sees is A0's own
   `AnimatedSprite2D` with 34 animations.
+* **The run clock is exact and the write door ignores it.** `run_context()` is
+  `active` at 0/264/288/312/335:59:59 h and `expired` at exactly 1 209 600 s, and a
+  second OS process reads the same start with a clock that only grows. But with
+  `status=expired` measured first, `commit_profile_delta` still commits
+  (`balance 0 → 5`) and so does the deposit boundary. And no run can end at all:
+  the port declares no `end_run`/`start_run`, `ensure_run` returns the expired run
+  forever, and `run_history` stays empty.
+* **A crash never half-applies.** A0's own one-shot fault hook was fired at all
+  four disk boundaries and each save was reopened by a new PID: three recovered to
+  balance 5 (one via `save_recovered("backup")`), the fourth landed whole at
+  balance 8, and a retry in the fresh process is `already_applied`.
+* **The green is nonvacuous.** Three different routes walked with real keys,
+  **nineteen structures placed through the player's own `try_place`** (exact
+  catalogue cost, the 21st refused `cannot_afford` with `{"oak_wood": 2}`), and a
+  stack at the 50-per-slot limit opens a second slot instead of eating the swing.
+  A half-built structure and a 30-slot bag stay `NOT_TESTED` with reasons: the
+  catalogue ships 8 item kinds and `place_structure` is atomic.
 * **The four CT journeys are RED, per clause.** `r10_journey_probe`: 10 checks, 0
   failed, 8 missing — every missing symbol named (funded job, Core cast, A3-approved
   source, hazard, A1-native late-chest socket, kiosk deposit, A6 return display,
