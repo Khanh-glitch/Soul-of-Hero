@@ -47,6 +47,7 @@ static func _flick(seed: float, t: float, fps: float = 30.0) -> float:
     return CMath.hash1(int(seed * 97.0) + floori(t * fps))
 
 func setup() -> void:
+    CPalette._ensure()
     _rng = CMath.CRng.new(72271)
     _spark_rng = CMath.CRng.new(999)
     _ps.clear()

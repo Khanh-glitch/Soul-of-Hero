@@ -30,6 +30,7 @@ var _tick := 0
 var _acc := 0.0
 var _events: Array = []
 var _active := false
+var render_enabled := true
 var _steps := 0
 var _shake_k := 0.0
 var _flash_k := 0.0
@@ -169,7 +170,7 @@ func _fire_due_events() -> void:
                 visual_contact.emit(kind, wp, t)
 
 func _render_frame() -> void:
-    if _fx == null:
+    if _fx == null or not render_enabled:
         return
     _frame.clear()
     _frame.t = source_time()

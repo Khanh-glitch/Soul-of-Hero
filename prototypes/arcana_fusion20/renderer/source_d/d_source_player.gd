@@ -16,6 +16,7 @@ var _tex: ImageTexture
 var _tick := 0
 var _acc := 0.0
 var _active := false
+var render_enabled := true
 var _events: Array = []
 var _origin := Vector2.ZERO
 var _rot := 0.0
@@ -98,7 +99,7 @@ func _fire_events() -> void:
                 visual_contact.emit(kind, wp, t)
 
 func _render_frame() -> void:
-    if _eng == null:
+    if _eng == null or not render_enabled:
         return
     var bytes := _eng.frame_bytes()
     var img := Image.create_from_data(DFx.W, DFx.H, false, Image.FORMAT_RGBA8, bytes)

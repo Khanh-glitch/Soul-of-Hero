@@ -37,8 +37,11 @@ func setup(r: BRenderer) -> void:
     _mets[2]["split"] = [3, 4]
     _cracks.clear()
     _debris.clear()
+    # TS consumes RNG in two separate mets.map passes (cracks, then
+    # debris); interleaving them corrupts both streams.
     for i in range(_mets.size()):
         _cracks.append(BFx.crack_tree(rng, 0.0, 0.0, 5 + (i % 3), 34.0 + float(_mets[i].size) * 2.0, 0.45, 3.0))
+    for i in range(_mets.size()):
         var deb: Array = []
         for k in range(16):
             deb.append({"a": rng.r(0.0, BMath.TAU), "v": rng.r(20.0, 90.0), "vz": rng.r(40.0, 150.0), "s": rng.r(0.6, 2.0)})

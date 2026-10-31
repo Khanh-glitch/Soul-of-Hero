@@ -43,6 +43,8 @@ func _init() -> void:
             _fail("not active after cast %s" % cid)
         # Fixed-step the source clock deterministically.
         var node: Node = renderer._casts[cid]
+        if node is CSourcePlayer or node is DSourcePlayer:
+            node.set("render_enabled", false)
         var slot := Arcana20SourceCatalog.slot(id)
         var dur := float(slot.get("duration", 8.0))
         if dur <= 0.0:

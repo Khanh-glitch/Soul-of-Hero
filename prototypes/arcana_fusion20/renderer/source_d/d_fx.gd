@@ -381,8 +381,9 @@ static func quad_c(cx: float, cy: float, hw: float, hh: float, rot: float = 0.0)
     var s := sin(rot)
     var out: Array = []
     for lc in [Vector2(-1, -1), Vector2(1, -1), Vector2(-1, 1), Vector2(1, 1)]:
-        var lx := lc.x * hw
-        var ly := lc.y * hh
+        var lc2: Vector2 = lc
+        var lx := lc2.x * hw
+        var ly := lc2.y * hh
         out.append(cx + lx * c - ly * s)
         out.append(cy + lx * s + ly * c)
     return out

@@ -40,6 +40,7 @@ static func flower(f: CFrame, x: float, y: float, g: float, rot: float, size: fl
     f.glow(x, y, size * 2.5, CPalette.ramp(pal, 0.7), 0.25 * g, 3.0)
 
 func setup() -> void:
+    CPalette._ensure()
     _rng = CMath.CRng.new(111866)
     _ps.clear()
     _bloomed = false

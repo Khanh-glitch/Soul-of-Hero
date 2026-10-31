@@ -43,6 +43,7 @@ static func _ring_scale(k: float, t: float) -> float:
     return 1.0 - CMath.ease_in(CMath.inv(5.25 + k * 0.14, 5.45 + k * 0.14, t))
 
 func setup() -> void:
+    CPalette._ensure()
     _rng = CMath.CRng.new(127704)
     _frs.clear()
     _ps.clear()

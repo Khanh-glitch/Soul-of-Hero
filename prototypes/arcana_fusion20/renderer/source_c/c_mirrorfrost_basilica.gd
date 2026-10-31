@@ -49,6 +49,7 @@ func _add(pts: Array, shade: float, birth: float, extra: Dictionary = {}) -> voi
     _fcts.append(fc)
 
 func setup() -> void:
+    CPalette._ensure()
     _rng = CMath.CRng.new(48514)
     _fcts.clear()
     _shards.clear()

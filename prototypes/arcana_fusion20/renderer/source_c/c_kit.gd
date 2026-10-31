@@ -9,6 +9,7 @@ class_name CKit
 static var _auto_seed := 0
 
 static func pt_defaults(o: Dictionary) -> Dictionary:
+    CPalette._ensure()
     _auto_seed += 1
     var p := {
         "x": 0.0, "y": 0.0, "z": 0.0, "vx": 0.0, "vy": 0.0, "vz": 0.0,
