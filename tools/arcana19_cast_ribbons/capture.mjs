@@ -41,7 +41,7 @@ try {
   console.log('D19_ORIGINAL_GL',JSON.stringify(setup));
   const manifest={setup,scope:'source D WebGL RGBA8 scene and bloom targets on neutral base; no floor, actors or SOH world; not HDR',captures:[]};
   let last=0;
-  for(const tick of [72,192,312,489,510]) {
+  for(const tick of [72,192,312,489,510,528,558,582]) {
     await page.evaluate(n=>{window.__capturePass=false;if(n>1)window.__advance(n-1);window.__capturedPasses=[];window.__lineCalls=[];window.__capturePass=true;window.__advance(1);window.__capturePass=false},tick-last);last=tick;
     const result=await page.evaluate(()=>{
       const r=window.__vfxDebug.state.renderer,gl=r.gl;

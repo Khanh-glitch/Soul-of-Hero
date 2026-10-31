@@ -1,7 +1,7 @@
 """Report authored line call divergence independently of raster/color errors."""
 import json, pathlib, sys
 out=pathlib.Path(sys.argv[1])
-for tick in (72,192,312,489,510):
+for tick in (72,192,312,489,510,528,558,582):
     a=json.loads((out/f'tick{tick}.original.calls.json').read_text())
     b=json.loads((out/f'tick{tick}.native.calls.json').read_text())
     diffs=[]

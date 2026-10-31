@@ -32,7 +32,7 @@ jobs:
           mkdir -p artifacts/arcana19-cast-ribbons
           node tools/arcana19_cast_ribbons/capture.mjs artifacts/arcana19-cast-ribbons color | tee original.log
           node tools/arcana19_cast_ribbons/capture.mjs artifacts/arcana19-cast-ribbons coverage | tee -a original.log
-          test "$(grep -c D19_CAST_RIBBON_ORIGINAL original.log)" -eq 10
+          test "$(grep -c D19_CAST_RIBBON_ORIGINAL original.log)" -eq 16
       - name: Capture native cast ribbons on CPU and GPU
         run: |
           set -o pipefail
