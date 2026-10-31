@@ -161,14 +161,22 @@ func _build_house() -> void:
 		_cell_of(hero.global_position).x, _cell_of(hero.global_position).y]
 	var attempts: Array = []
 	var placed := 0
+	# A home has a door. The product has `door_wood` in BUILD_SLOTS and refuses to
+	# seal the *Hero* in, but it accepts a doorless box when he stands outside, so
+	# the capture asks for the seam a player would want: one south-facing door.
+	var door_cell := plot + Vector2i(0, radius)
 	for dy in range(-radius, radius + 1):
 		for dx in range(-radius, radius + 1):
 			if maxi(absi(dx), absi(dy)) != radius:
 				continue
-			var wall_ok := _place("wall_wood", plot + Vector2i(dx, dy))
-			attempts.append(["wall_wood", plot.x + dx, plot.y + dy, wall_ok])
+			var cell := plot + Vector2i(dx, dy)
+			var piece := "door_wood" if cell == door_cell else "wall_wood"
+			var wall_ok := _place(piece, cell)
+			attempts.append([piece, cell.x, cell.y, wall_ok])
 			if wall_ok:
 				placed += 1
+	facts["door_cell"] = [door_cell.x, door_cell.y]
+	facts["door_placed"] = bool(_piece_at(door_cell) == "door_wood")
 	for dy in range(-radius + 1, radius):
 		for dx in range(-radius + 1, radius):
 			_place("foundation_wood", plot + Vector2i(dx, dy))
@@ -191,6 +199,23 @@ func _build_house() -> void:
 	if placed > 0 and hero != null:
 		facts["home_shot_cell"] = [plot.x, plot.y + radius + 2]
 		facts["home_shot_pending"] = true
+
+
+## What the product says stands on a cell, by its own record.
+func _piece_at(cell: Vector2i) -> String:
+	if build == null or build.get(&"_placed") == null:
+		return ""
+	var table: Dictionary = build.get(&"_placed") as Dictionary
+	var key := "%d,%d" % [cell.x, cell.y]
+	if table.has(key):
+		var structure := table[key] as Node
+		if structure != null:
+			return String(structure.get(&"piece_id"))
+	for value: Variant in table.values():
+		var structure := value as Node
+		if structure != null and Vector2i(roundi(structure.global_position.x / 16.0), roundi(structure.global_position.y / 16.0)) == cell:
+			return String(structure.get(&"piece_id"))
+	return ""
 
 
 func _inside_ring(cell: Vector2i, center: Vector2i, radius: int) -> bool:
