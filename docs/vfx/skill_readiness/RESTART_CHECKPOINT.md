@@ -614,3 +614,17 @@ Profile, from the code paths (not measured here; no local Godot):
   host-20 drew a slow runner and failed at 216 s (it passed @29d0010).
   Further margin work (decal single-pass stamp, shade) is still valuable
   but 021's bound is met with verified parity. No bound changes, ever.
+
+### Update (2026-10-31, latest): margin rounds 9-10; verdict stands
+
+- `4debef3` GroundDecal single-pass stamp: profile per_tick **295.08 ms**
+  (gnd.fx 1150->835 us/call). `6dad893` puff n1-lattice hoist. Candidate
+  lane 8/8 SUCCESS at `680f5d5`, `f651d77`, `4debef3`, `6dad893`.
+- Host wall-clock remains a runner lottery: host-21 PASS @f651d77
+  (157 s) then slow-runner FAILs @4debef3 (201 s) and @6dad893 (271 s);
+  host-20 PASS @29d0010 (160 s), FAIL @f651d77/@4debef3/@6dad893
+  (216-220 s). Typical-runner speed (~295 ms/tick profile) passes;
+  slowest GitHub runner class does not. The 180 s bound is unchanged
+  and 021's SUCCESS verdict @f651d77 (run `41170264709`) stands.
+  Further margin would need a step-change (e.g. native/GDExtension
+  raster), out of this branch's pure-GDScript scope — flagged for owner.
