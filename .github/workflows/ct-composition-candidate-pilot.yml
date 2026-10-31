@@ -141,6 +141,35 @@ jobs:
               }
           done
           echo "CT_NATIVE_IMPORT_PARSE_PASS; THIS IS NOT GAMEPLAY ACCEPTANCE"
+      - name: Native player-world/POI boundary probes on SAME composed tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd product/.composition
+          failures=0
+          probe () {
+            local name="$1" script="$2" option="$3"
+            local log="../../artifacts/probe-$name.log"
+            set +e
+            timeout --signal=TERM --kill-after=10s 420s bash tools/ci/godot_isolated.sh \
+              --headless --path . --script "res://tests/$script.gd" -- "$option" > "$log" 2>&1
+            local rc=$?
+            set -e
+            echo "CT_NATIVE_PROBE=$name EXIT=$rc"
+            grep -aE 'PASSED|FAILED|A0_AUTHORED|A0_POI_MOUNT|NOT_TESTED|BLOCKED|SCRIPT ERROR|Parse Error|FAIL' "$log" | tail -45 || true
+            if [ "$rc" -ne 0 ]; then
+              echo "::error::CT_NATIVE_PROBE $name FAILED: native exit=$rc"
+              failures=$((failures + 1))
+            fi
+            if grep -qaE 'A0_POI_MOUNT_PHYSICAL_NOT_TESTED|A0_AUTHORED_SOURCE_.*REFUSED|SCRIPT ERROR|Parse Error' "$log"; then
+              echo "::error::CT_NATIVE_PROBE $name NON_PRODUCT_OR_BROKEN: no actual production acceptance"
+              failures=$((failures + 1))
+            fi
+          }
+          probe authored survival_a0_authored_world_contract_test --require-authored
+          probe poi survival_a0_poi_mount_test --require-a8
+          echo "CT_NATIVE_PROBE_FAILURE_COUNT=$failures"
+          test "$failures" -eq 0
       - name: Preserve source + native diagnostics
         if: always()
         uses: actions/upload-artifact@v4
