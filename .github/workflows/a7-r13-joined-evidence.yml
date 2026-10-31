@@ -220,7 +220,10 @@ jobs:
       - name: Run the owner's normal-input two-process journey on this composition
         shell: bash
         run: |
-          set -uo pipefail
+          # Never let a failing run hide its own log: this step always exits 0 and
+          # the exit codes are recorded and committed, then the job verdict is
+          # decided in the next step from those files.
+          set +e +o pipefail
           sudo apt-get update -qq
           sudo apt-get install --yes --no-install-recommends xvfb libgl1-mesa-dri
           mkdir -p /tmp/journey
@@ -254,11 +257,15 @@ jobs:
           fi
           echo "${first}" > /tmp/journey/process1.exit
           echo "${second}" > /tmp/journey/process2.exit
+          godot --version > /tmp/journey/engine.txt 2>&1
+          git -C /tmp/comp rev-parse HEAD > /tmp/journey/composition.txt 2>&1
+          exit 0
           mkdir -p /tmp/journey/captures
           find /tmp -maxdepth 3 -name 'capture_*.png' -newer /tmp/compose.log -exec cp {} /tmp/journey/captures/ \; 2>/dev/null || true
           ls -l /tmp/journey/captures || true
 
       - name: Commit the journey logs and any owner-rendered frames
+        if: always()
         shell: bash
         run: |
           set -euo pipefail
@@ -273,3 +280,17 @@ jobs:
           git commit -m "docs(a7): round-13 owner normal-input journey log on ${COMPOSITION} [skip ci]" \
             -m "Executed by .github/workflows/a7-r13-joined-evidence.yml; the test is A0's, the composition is A7's."
           git push origin "HEAD:${GITHUB_REF_NAME}"
+
+      - name: Verdict from the recorded exit codes
+        if: always()
+        shell: bash
+        run: |
+          first="$(cat /tmp/journey/process1.exit 2>/dev/null || echo missing)"
+          second="$(cat /tmp/journey/process2.exit 2>/dev/null || echo missing)"
+          echo "process1=${first} process2=${second}"
+          if [ "${first}" = "0" ] && [ "${second}" = "0" ]; then
+            echo "::notice::A0's normal-input two-process journey PASSED on ${COMPOSITION}"
+            exit 0
+          fi
+          echo "::error::A0's normal-input two-process journey did NOT pass on ${COMPOSITION} (${first}/${second}); logs committed under docs/survival/balance/visual/r13/journey"
+          exit 1

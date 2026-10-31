@@ -10,6 +10,19 @@ one structural root dependency named, one content-reachability root dependency n
 Visual status amended below from `VISUAL_NOT_TESTED` to `VISUAL_TESTED` (§4): the product
 was rendered and its pixels inspected, and the pixels show defects, not a pass.
 
+**Amendment log (this document is the single round-12 report; nothing here is a new one):**
+
+| when | change | why |
+|---|---|---|
+| 08:14–08:30Z | §4 rewritten: four 1× PNGs rendered by an A7-owned CI job and opened | `VISUAL_NOT_TESTED` described the sandbox, not the build |
+| 08:33Z | §4.2 added: my own tile/Hero arithmetic corrected against the pixels | the committed images falsified it |
+| **CT review `#6541013653`** | §1 rewritten into component-vs-input rungs; §0.2 sweep separated (8 `FAIL`s, only 3 attributed); J01 classified; §10.2 rank 5 split into A0 (vocabulary) and A3 (catalogue) | A7 claimed more than the oracle performed, and crossed two owners on one correction |
+
+**Evidence rungs used throughout (`SOURCE_ONLY` < `FIXTURE` < `NATIVE_COMPOSED` /
+`NATIVE_COMPONENT_PATH` < `TRUE_INPUT` < `VISUAL_INSPECTED` < `HUMAN_NOT_TESTED`).** A
+claim never borrows a rung from a different claim; "the code exists" (`SOURCE_ONLY`) and
+"a player did it" (`TRUE_INPUT`) are never the same sentence.
+
 ---
 
 ## 1. What a player gets, in player language
@@ -17,28 +30,37 @@ was rendered and its pixels inspected, and the pixels show defects, not a pass.
 Read this before any table. It is the only section that describes the product rather
 than the audit.
 
-**What works, and that a player can do today with their own hands.**
+**What works — and in which sense.** Read the rung beside each sentence. This round's
+strongest evidence is **`NATIVE_COMPOSED`**: the real composed product, driven through its
+own APIs, inside a real engine. Only the movement and the modal keys are
+**`TRUE_INPUT`**, and the home journey is **not** input-only (CT's corrective review,
+`#6541013653`, is right about that; the wording below is corrected accordingly).
 
-A player enters the shipped overworld (`Hub → Campaign → Enter Overworld`), walks with
-ordinary keys (largest displacement over four 12-frame bursts: **17.9 px**), chops a real oak with a bare
-hand (**2 oak wood per swing, hits 3 → 2**), mines stone (**4 chunks in 2 swings**),
-queues the shipped hand recipe, waits **6 s** of the game's own clock, collects a
-**real A3 tool instance** (`soh_i_000000000002_d3346167`), and wears it out on a
-mining node until the node depletes and the next swing is refused with
-`harvest_grant_refused`.
+| claim | rung | what was actually done |
+|---|---|---|
+| the Hero walks | **TRUE_INPUT** | four 12-frame bursts of `Input.action_press("move_*")`; largest displacement **17.9 px**; no teleport |
+| bare-hand oak / stone harvest, recipe, tool instance, wear-out | **NATIVE_COMPONENT_PATH** | `node.interact(hero)` on a mounted node plus `economy.queue_recipe/collect` — the product's own doors, **not** a pointer/HUD click; the J01 row is classified `PLAYABLE_NATIVE_COMPONENT_PATH / NORMAL_INPUT_END_TO_END_NOT_ACCEPTED` |
+| a paid, physical home; chest; bed; workbench reach | **FIXTURE + NATIVE_COMPONENT_PATH** | materials arrive from **`FIXTURE_GRANT`** (printed as such), and `build.select_piece/validate_cell/try_place`, `SurvivalService.activate_bed/deposit_all/withdraw_all`, `economy_session.queue_recipe` are **called directly**; this proves the transactions, topology, shelter, storage and station reach — it does **not** prove a player builds a home through pointer/HUD |
+| one death bag | **NATIVE_COMPONENT_PATH** | `begin_overworld_death` called directly; one bag, second death `already_pending`, pending recovery refused |
 
-They can then **build a house that is physically real**: 8 paid walls enclose a room
-(`room_e1512500…`, 1 interior cell), the roof layer derives a **footprint over that
-room and draws it at alpha 1.00 while the player stands outside**, the floor is a paid
-piece, the **bed places inside the room and becomes the run's spawn anchor through its
-own transaction**, a **chest is placed and moves real stacks** (deposit 34 oak + 28
-iron + 1 kit, then a full withdrawal that empties it), and a **workbench must be
-walked up to**: the same `weave_cloth` queue is refused at 195 px with
-`station_not_reachable` and accepted at the bench. Placing the bench **consumes the
-kit** (1 → 0). The death path is real too: `begin_overworld_death` drops the ordinary
-stacks into **exactly one bag**, a second death reuses `death_1` rather than minting
-`death_2`, recovery is refused while the death is pending, and the **physical bag node
-in the world** returns the stack when interacted with at the death spot.
+What that buys, with the numbers kept: **8** paid walls enclose a room
+(`room_e1512500…`, 1 interior cell); the roof layer derives a **footprint over that room
+and draws it at alpha 1.00** while the Hero stands outside; the floor is a paid piece;
+the **bed places inside the room and becomes the run's spawn anchor through its own
+transaction**; a **chest moves real stacks** (deposit 34 oak + 28 iron + 1 kit, then a
+full withdrawal that empties it); a **workbench must be walked up to** — the same
+`weave_cloth` queue is refused at **195 px** with `station_not_reachable` and accepted at
+the bench, and placing the bench **consumes the kit** (1 → 0). The death path drops the
+ordinary stacks into **exactly one bag** (`death_1`), a second death reports
+`already_pending`, recovery is refused while the death is pending, and the **physical bag
+node** returns the stack when interacted with at the death spot.
+
+**What is still missing is the input layer over these transactions.** There is no
+pointer-driven home journey in this round's evidence: no click-to-place, no chest panel
+opened by a click, no workbench panel row pressed by a mouse. A0's own
+`survival_normal_connected_journey_test.gd` (published after this composition was pinned)
+is the first owner artifact aimed exactly at that gap; it is executed on the round-13
+composition in `ROUND13_JOINED_PRODUCT_ACCEPTANCE.md`, not retrofitted into this one.
 
 The same build door is also **brittle in a way a player will hit**: in the fresh-capture
 run the Hero stood inside one perimeter cell, that wall was refused `hero_in_footprint`,
@@ -124,10 +146,13 @@ surface.
   Display: `DisplayServerHeadless`, adapter `""` — no rasterizer, no window.
 * Ledger: `data/survival/balance/results/native_runs.v1.json`, **composition
   `663a83ede523`**, **10 probes / 200 checks / PASS 2 · FAIL 0 · BLOCKED 1 · RED 7**.
-* A same-composition **50-probe sweep across every A7 family** (rounds 8–12) is
-  preserved as `native_runs.r12_sweep.v1.json` (PASS 7 · FAIL 8 · BLOCKED 9 · RED 26);
-  §9 explains why three of those FAILs are an oracle/environment artifact and not
-  product defects. Round 11's payload is preserved as `native_runs.r11_full.v1.json`.
+* The **50-probe sweep across every A7 family** (rounds 8–12) is a **separate artifact**,
+  `native_runs.r12_sweep.v1.json`: **PASS 7 · FAIL 8 · BLOCKED 9 · RED 26**. It is not the
+  round-12 family result (2/0/1/7) and it must not be read as one: its members were
+  written for older compositions and older questions. **Three** of its eight `FAIL`s are
+  attributable to the headless pointer limitation (`Input.warp_mouse`); the other **five**
+  are unexplained by that and stay `FAIL` — they are neither converted into passes nor
+  generalised away. Round 11's payload is preserved as `native_runs.r11_full.v1.json`.
 * The only red CI job on this branch is **"Original main baseline comparison"**, and it is
   red on `main`'s own commit `52147889`, not on this branch: the job copies this branch's
   test scripts into original main and runs them there, where
@@ -288,6 +313,10 @@ transcript and every measurement are committed beside the images
    shows `[CLICK] Oak Tree 3/3` over a harvestable tree, i.e. a remaining-harvest count is
    surfaced in the world and reads clearly at 1×.
 5. **A house built through the product's own doors reads as a wall slab, not a room.**
+   (`FIXTURE + NATIVE_COMPONENT_PATH`: the materials are `FIXTURE_GRANT`ed by the capture
+   harness and the pieces are placed by direct `select_piece`/`validate_cell`/`try_place`
+   calls. The frame proves what the build door *renders*; it is not evidence that a player
+   builds a home with the pointer.)
    From a legal plot the capture placed **15 of 16** perimeter walls and 9 foundations
    with `select_piece`/`validate_cell`/`try_place`; the 16th was refused
    `hero_in_footprint` (the Hero stood in that cell), the bed was then refused
@@ -462,7 +491,7 @@ asks that have no subject in this composition. "Adapted" = adapted to what exist
 
 | # | journey | status |
 |---|---|---|
-| J01 | first hour: spawn → scavenge → tool → storage → second process | **playable**, avatar clause missing, no knife item, `collect` reports `rejected` |
+| J01 | first hour: spawn → scavenge → tool → storage → second process | **`PLAYABLE_NATIVE_COMPONENT_PATH / NORMAL_INPUT_END_TO_END_NOT_ACCEPTED`** — real movement, but gathering/crafting go through `node.interact` and direct economy calls; avatar clause missing, no knife item, `collect` reports `rejected` |
 | J02 | rare Core: find → charge → USE → store → research | **unplayable**: 0 LIVE sources, `skill_gate_unavailable` |
 | J03 | funded station work, offline, one settlement, one claim | **playable**, A6 return projection absent (6/6 accessors) |
 | J04 | Quarry / Orchard / Mill route + retreat | **unreachable**: 0 mounted, `unknown_world_poi`, 1/3 ids declared |
@@ -528,7 +557,8 @@ not upgrade a missing feature to a pass.
 | 2 | A1 `9ca1453c` + A0 | reconcile extent; move or re-author the 108 POIs | `R12ID` extent `MISSING` clears; `a0_poi_mount.probe` returns ok |
 | 3 | A6 `6d71410a` | publish the licensed sheets where the manifest says | `_avatar_bytes().count > 0`; presenter reaches `STATUS_READY` |
 | 4 | A0 `a6b57c36` | a damage producer in the survival world, and decide the threat default | `R12TD` loses its `MISSING`; a Hero can be hurt without a script |
-| 5 | A3 `b44e22df` | a knife item and kind-mapping for `skill_core`/`equipment`/`station_kit` | 57/57 ids storable; knife present at spawn |
+| 5a | **A0** `a6b57c36` | widen `INVENTORY_ITEM_KIND_IDS` so the vocabulary can hold `station_kit`, `equipment` and `skill_core` (13 of 57 ids are refused today) | 57/57 catalogue ids storable through `SaveService` |
+| 5b | **A3** `b44e22df` | a knife item in the survival catalogue and its source semantics (no `kind-mapping` work: the vocabulary is A0's) | a knife id exists and is obtainable at spawn |
 | 6 | A3 `b44e22df` | clear `reason` on success (`collect`, `queue_recipe`) | success returns `reason: ""` |
 | 7 | A8 `e1fe550b` | differentiate Orchard vs Mill; bind a physical Core/elder chest; authorise kiosk endpoints | `R12J04` 3 distinct signatures; `plan_meta_source_claim` ok |
 | 8 | A0 `a6b57c36` | a player-reachable abandon/evacuation door | `abandon_run` callers in `game/` ≥ 1 |
