@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/arcana20-redesign-motion-smoke.yml'
       - 'prototypes/arcana_fusion20/renderer/redesign_motion_smoke.gd'
+      - 'prototypes/arcana_fusion20/renderer/redesign_source_bench.gd'
       - 'prototypes/arcana_fusion20/renderer/source_a/a_redesign_spells.gd'
       - 'prototypes/arcana_fusion20/renderer/source_a/a_redesign_spells2.gd'
 permissions:
@@ -49,3 +50,35 @@ jobs:
             import.log
             result.log
             result-alternate.log
+  phase-matched-cpu:
+    # Phase matched, isolated CPU field render; not GPU/composition/device FPS.
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Prepare independent pinned baseline
+        run: |
+          set -euo pipefail
+          git fetch --depth=1 --no-tags origin ffbcbdd7ec7974bb2529fb230cb0d492286b1093
+          mkdir "$RUNNER_TEMP/baseline"
+          git archive ffbcbdd7ec7974bb2529fb230cb0d492286b1093 | tar -x -C "$RUNNER_TEMP/baseline"
+          cp prototypes/arcana_fusion20/renderer/redesign_source_bench.gd "$RUNNER_TEMP/baseline/prototypes/arcana_fusion20/renderer/"
+      - name: Import and benchmark matched source beats
+        run: |
+          set -euo pipefail
+          for WHICH in baseline candidate; do
+            PROJECT="$RUNNER_TEMP/baseline"; if [ "$WHICH" = candidate ]; then PROJECT="$GITHUB_WORKSPACE"; fi
+            godot --headless --path "$PROJECT" --import > "$RUNNER_TEMP/import-$WHICH.log" 2>&1
+            if grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/import-$WHICH.log"; then cat "$RUNNER_TEMP/import-$WHICH.log"; exit 1; fi
+            timeout 360s godot --headless --path "$PROJECT" --script res://prototypes/arcana_fusion20/renderer/redesign_source_bench.gd > "$RUNNER_TEMP/bench-$WHICH.log" 2>&1
+            grep -Fq REDESIGN_BENCH_PASS "$RUNNER_TEMP/bench-$WHICH.log"
+            if grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/bench-$WHICH.log"; then cat "$RUNNER_TEMP/bench-$WHICH.log"; exit 1; fi
+            grep 'REDESIGN_BENCH id=' "$RUNNER_TEMP/bench-$WHICH.log" | while IFS= read -r line; do echo "::notice title=PHASE_BENCH::$WHICH $line"; done
+          done
