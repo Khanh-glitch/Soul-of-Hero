@@ -13,9 +13,10 @@ source `e9008a58fd0cd7827a9a04006b6afbba5b17ab51`. The
 [build and full-motion smoke run](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41295327487)
 completed successfully: Linux and the same-run Windows x64 executable exercised
 the real route; Windows used the **headless** backend. The new #14/#18 visuals
-were captured on the real moving overworld, with three independently moving real
-Skeletons, player/camera movement, natural completion and restart/cancel. #14
-recorded 67 software-rendered frames and last-observed tick 511. Videos and
+were captured on the real moving overworld, with three real Skeletons (at
+least two independently moving), player/camera movement, natural completion
+and restart/cancel. #14 had all three Skeletons moving and recorded 67
+software-rendered frames and last-observed tick 511. Videos and
 metadata are [#14](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41295327487/artifacts/13078473706)
 and [#18](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41295327487/artifacts/13078383839).
 They are sparse software captures, not 60-Hz or target-device evidence; the
