@@ -82,7 +82,15 @@ jobs:
             if grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/import-$WHICH.log"; then cat "$RUNNER_TEMP/import-$WHICH.log"; exit 1; fi
             for ART in A B; do
               LOG="$RUNNER_TEMP/bench-$WHICH-$ART.log"
+              set +e
               timeout 360s env ARCANA20_ART14="$ART" ARCANA20_ART18="$ART" godot --headless --path "$PROJECT" --script res://prototypes/arcana_fusion20/renderer/redesign_source_bench.gd > "$LOG" 2>&1
+              RESULT=$?
+              set -e
+              if [ "$RESULT" -ne 0 ]; then
+                tail -30 "$LOG" | while IFS= read -r line; do echo "::notice title=BENCH_FAILURE::$line"; done
+                echo "::error::Benchmark $WHICH/$ART exited $RESULT"
+                exit "$RESULT"
+              fi
               grep -Fq REDESIGN_BENCH_PASS "$LOG"
               if grep -Eq 'SCRIPT ERROR:|Parse Error:' "$LOG"; then cat "$LOG"; exit 1; fi
               echo "::notice title=PHASE_BENCH::$WHICH-$ART $(grep 'REDESIGN_BENCH id=' "$LOG" | tr '\n' '|')"
