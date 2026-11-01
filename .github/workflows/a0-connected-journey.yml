@@ -8,11 +8,15 @@ permissions:
   contents: read
   pull-requests: write
 env:
-  # Round 12 corrective pins. Refresh from the Control Tower before reusing.
-  A1_SHA: 8551a323e444f755d7a29b1ad518aa29aeb039cb
+  # R13 pins — the same composition the authored-world gate runs, so one SHA set
+  # describes every A0 gate this branch publishes. Refreshing these is what fixed
+  # two stale-seam artifacts: A1's authored reader is *present* here now (it was
+  # reported absent at the Round 12 pins) and A6 no longer calls
+  # `a1_authored_world_reader.configure()` with the wrong arity.
+  A1_SHA: a030cb89a5033ba5faba39995762b4bea1332cec
   A3_SHA: b44e22df3af40939069189be14afc23ee1ce21c4
-  A6_SHA: 6d71410a370df805f8b29a018b61380d6c233b65
-  A8_SHA: 06d1758e2cf7e44c588d158745359d7617fe32d6
+  A6_SHA: 6d1e8bcee0bbb09be0ff04f14de1f7e59f06cfb8
+  A8_SHA: 0f885df862d7d34f18ca456e80b1aaac05b23de0
   GODOT_SILENCE_ROOT_WARNING: 1
   LIBGL_ALWAYS_SOFTWARE: 1
 jobs:
@@ -136,12 +140,22 @@ jobs:
           second=$?
           cat "$log2"
           echo "::notice::connected journey process1=$first process2=$second"
+          # GitHub keeps ~10 annotations per step and silently drops the rest, so the
+          # order here is the reviewer's priority order: first the single summary
+          # sentence that names the phase, the step and the bag, then the failures,
+          # then the two or three lines that explain them. A gate whose own
+          # diagnosis is the thing that gets truncated is not a gate.
           for f in "$log1" "$log2"; do
-            while IFS= read -r line; do echo "::error title=connected-$(basename "$f" .log)::$line"; done < <(grep -aE '  FAIL  |SCRIPT ERROR|Parse Error' "$f" | head -10)
-            while IFS= read -r line; do echo "::notice::$line"; done < <(grep -aE '^A0_CONNECTED' "$f" | head -60)
-            # A gate whose log cannot be read is not a gate: publish the
-            # diagnostic lines that explain a failure, not just the failure.
-            while IFS= read -r line; do echo "::error title=diag-$(basename "$f" .log)::$line"; done < <(grep -aE 'A0_CONNECTED_(STATIONS|ROWLOOKUP|PANEL|PRESS_POINT|INPUT_PATH|WEAVE_CLICK|SCROLL_GEOM|APPROACH|GATHER|RUNID|OFFLINE_SETTLE|RESETTLE|PARTS|DEPARTURE|DIAG)|NORMAL_GATHER_TRACE|HOME_ROUTE_FAIL' "$f" | head -14)
+            while IFS= read -r line; do echo "::error title=summary-$(basename "$f" .log)::$line"; done < <(grep -aE '^A0_CONNECTED_SUMMARY' "$f" | head -2)
+          done
+          for f in "$log1" "$log2"; do
+            while IFS= read -r line; do echo "::error title=stopped-$(basename "$f" .log)::$line"; done < <(grep -aE '^A0_GATHER_STOPPED|^A0_CONNECTED_HALT|^A0_CLICK_MISS' "$f" | head -2)
+          done
+          for f in "$log1" "$log2"; do
+            while IFS= read -r line; do echo "::error title=connected-$(basename "$f" .log)::$line"; done < <(grep -aE '  FAIL  |SCRIPT ERROR|Parse Error' "$f" | head -3)
+          done
+          for f in "$log1" "$log2"; do
+            while IFS= read -r line; do echo "::notice title=step-$(basename "$f" .log)::$line"; done < <(grep -aE '^A0_CONNECTED_(STAGE|PRESS_RESULT|INPUT_PATH|WEAVE_CLICK|OFFLINE_SETTLE|DEPARTURE)' "$f" | tail -3)
           done
           # A gate nobody can read is not a gate: publish the whole tail of each
           # process log so a failure is diagnosable from the run page itself.

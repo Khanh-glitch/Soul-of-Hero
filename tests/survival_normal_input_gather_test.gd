@@ -3,6 +3,37 @@ extends "res://tests/survival_foundation_test.gd"
 ## No fixture grants, actor teleports, direct harvest calls or mocked time. This
 ## does not yet establish the larger shelter/production/death journey.
 
+## Where the prefix is, and the one word for why it stopped.
+##
+## A stop that only says "the body did not finish" is not evidence. Every early
+## return in `_body` therefore names the step it gave up at and prints the bag at
+## that instant, so a red run is a diagnosis rather than a hunt.
+var _stage := "boot"
+var _stop_reason := ""
+
+
+func _stage_at(name: String) -> void:
+	_stage = name
+
+
+func _stop(reason: String) -> void:
+	_stop_reason = reason
+	print("A0_GATHER_STOPPED stage=%s reason=%s bag=%s checks=%d failures=%d" % [
+		_stage, reason, _bag_json(), checks, failures.size()])
+	_body_complete = true
+
+
+## The bag the run actually holds, in one line, read from the same service the HUD
+## reads — so "nothing was gathered" and "the counters were read from a dead node"
+## cannot be mistaken for one another.
+func _bag_json() -> String:
+	var out: Dictionary = {}
+	for item: String in [WOOD, STONE, IRON, "reed_fibre", "binding_cloth", "workbench_kit",
+			"furnace_kit", "charcoal", "iron_ingot", "iron_parts"]:
+		out[item] = _count(item)
+	return JSON.stringify(out)
+
+
 func _console() -> void:
 	_deadline_msec = Time.get_ticks_msec() + int(BUILD_TIMEOUT_MS * 4)
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("user://tests"))
@@ -361,38 +392,112 @@ func _row_notice(panel: Node) -> String:
 	return ""
 
 
+## Press a recipe row the way a player would, and never touch it again afterwards.
+##
+## The panel rebuilds its rows when a recipe is queued, so **the press frees the
+## very Button it was delivered to**. Reading `row.pressed`, `row.disabled` or
+## `row.is_connected(...)` after that press is the "previously freed instance" bug
+## that used to abort this journey at check 24 with zero failed checks: the gate
+## died inside its own oracle and reported nothing. Everything after an input is
+## therefore looked up by name, and every touch of a captured control is guarded.
 func _queue_row(row: Button, target: String) -> Dictionary:
+	var row_name := ""
+	if row != null and is_instance_valid(row):
+		row_name = String(row.name)
 	var job_id := ""
 	var path := "mouse"
-	if row != null and is_instance_valid(row):
+	if not row_name.is_empty():
 		var fired := [false]
 		var probe := func() -> void: fired[0] = true
-		row.pressed.connect(probe)
-		var point: Vector2 = root.get_final_transform() * _visible_point(_owning_scroll(row), row)
-		# Say what the engine thinks is under the pointer before pressing: "the click
-		# was dropped" and "the click was aimed at a different control" are different
-		# facts and only one of them is a product problem.
+		(row.pressed as Signal).connect(probe)
+		var scroll := _owning_scroll(row)
+		var point := _row_window_point(scroll, row)
 		await _move_pointer(point)
 		await process_frame
 		var hovered: Node = root.gui_get_hovered_control()
-		print("A0_CONNECTED_PRESS_POINT target=%s point=%s row=%s hovered=%s" % [
+		var landing := _landing(row, hovered)
+		print("A0_CONNECTED_PRESS_POINT target=%s point=%s row=%s hovered=%s landing=%s" % [
 			target, str(point), str(row.get_global_rect()),
-			String(hovered.get_path()) if hovered != null else "none"])
+			String(hovered.get_path()) if hovered != null else "none", landing])
 		await _click_window(point)
 		job_id = _job_target(target)
-		if row.pressed.is_connected(probe):
-			row.pressed.disconnect(probe)
-		var panel: Node = _host.get_child(0).get(&"economy_panel")
-		print("A0_CONNECTED_PRESS_RESULT target=%s fired=%s job=%s notice=%s" % [
-			target, str(fired[0]), job_id, _row_notice(panel)])
+		print("A0_CONNECTED_PRESS_RESULT target=%s fired=%s job=%s notice=%s row_freed=%s" % [
+			target, str(fired[0]), job_id, _row_notice(_panel()), str(not is_instance_valid(row))])
+		# A press that the row itself never saw is a dropped input, not a queued job.
+		# Say it plainly: the annotation then distinguishes "the click missed" from
+		# "the product refused the job".
+		if not fired[0] and job_id.is_empty():
+			print("A0_CLICK_MISS target=%s landing=%s point=%s row=%s" % [
+				target, landing, str(point), str(row.get_global_rect()) if is_instance_valid(row) else "freed"])
 	if job_id.is_empty():
 		await create_timer(0.3).timeout
-		if await _focus_and_accept(row):
+		# The row may be a rebuilt node now: press the live one, not the ghost.
+		if await _focus_and_accept(_live_button(row_name, row)):
 			path = "keyboard"
 			await process_frame
 			job_id = _job_target(target)
 	print("A0_CONNECTED_INPUT_PATH target=%s path=%s job=%s" % [target, path, job_id])
 	return {"job": job_id, "path": path}
+
+
+## What the engine thinks is under the pointer, in words a reader can act on.
+func _landing(row: Control, hovered: Node) -> String:
+	if hovered == null:
+		return "none"
+	if hovered == row:
+		return "row"
+	if row != null and is_instance_valid(row) and hovered is Node and row.is_ancestor_of(hovered):
+		return "row_child"
+	if hovered is Control and row != null and is_instance_valid(row) and (hovered as Control).is_ancestor_of(row):
+		return "row_ancestor"
+	return "other"
+
+
+## A live Button by name: the panel frees its rows when it rebuilds, so a caller
+## that captured a node earlier must ask for the current one.
+func _live_button(control_name: String, fallback: Button) -> Button:
+	if control_name.is_empty():
+		return fallback if fallback != null and is_instance_valid(fallback) else null
+	var panel: Node = _panel()
+	if panel != null:
+		var found := panel.find_child(control_name, true, false) as Button
+		if found != null:
+			return found
+	return fallback if fallback != null and is_instance_valid(fallback) else null
+
+
+func _panel() -> Node:
+	if _host == null or _host.get_child_count() == 0:
+		return null
+	return _host.get_child(0).get(&"economy_panel")
+
+
+## One place that turns a control into the window-space point a mouse event needs.
+## Two spaces meet here: a Control's rect is in canvas coordinates, and
+## `InputEventMouse*.position` is in window pixels. Multiplying by the root's final
+## transform is that conversion, and doing it in one helper keeps a caller from
+## mixing the two (aiming a press at 2x the row's position is not a player action).
+func _row_window_point(scroll: ScrollContainer, row: Control) -> Vector2:
+	return root.get_final_transform() * _visible_point(scroll, row)
+
+
+## Click a control by its live geometry: valid, on screen, and inside its scroll
+## clip. Everything that presses a GUI control goes through here.
+func _click_control(control: Control, label := "") -> bool:
+	if control == null or not is_instance_valid(control):
+		print("A0_CLICK_INVALID control=%s label=%s" % [str(control), label])
+		return false
+	var scroll := _owning_scroll(control)
+	var point := _row_window_point(scroll, control)
+	await _move_pointer(point)
+	await process_frame
+	var hovered: Node = root.gui_get_hovered_control()
+	var landing := _landing(control, hovered)
+	await _click_window(point)
+	print("A0_CLICK control=%s label=%s point=%s landing=%s hovered=%s" % [
+		String(control.name), label, str(point), landing,
+		String(hovered.get_path()) if hovered != null else "none"])
+	return landing != "other" and landing != "none"
 
 
 func _click_window(position: Vector2) -> void:
@@ -585,9 +690,10 @@ func _body() -> void:
 				best = distance
 				goal = cell
 				target = node
+	_stage_at("find_scrap_node")
 	_expect(target != null, "fresh spawn has a reachable planned scrap node")
 	if target == null:
-		_body_complete = true
+		_stop("find_scrap_node")
 		return
 	var path: Array[Vector2i] = []
 	var cursor := goal
@@ -601,8 +707,9 @@ func _body() -> void:
 				previous = neighbour
 				break
 		if previous == cursor:
+			_stage_at("reconstruct_path")
 			_expect(false, "reachable path can be reconstructed")
-			_body_complete = true
+			_stop("reconstruct_path")
 			return
 		cursor = previous
 	var travelled := true
@@ -617,9 +724,10 @@ func _body() -> void:
 			print("NORMAL_GATHER_TRACE stuck at %s target %s" % [str(hero.global_position), str(point)])
 			break
 	_set_direction(Vector2.ZERO)
+	_stage_at("walk_to_scrap")
 	_expect(travelled and not bool(hero.get(&"dead")) and target.can_interact(hero), "ordinary movement reaches a scrap node from fresh spawn")
 	if not travelled or not target.can_interact(hero):
-		_body_complete = true
+		_stop("walk_to_scrap")
 		return
 	var before := _count(IRON)
 	var camera: Camera2D = ow.get(&"camera")
@@ -642,9 +750,10 @@ func _body() -> void:
 	_expect(_count(IRON) == before + 2, "second world click obtains the rest of the starter scrap")
 	var wood_before := _count(WOOD)
 	var oak := await _walk_to_kind(ow, hero, navigation, "oak_tree")
+	_stage_at("walk_to_oak")
 	_expect(oak != null and not bool(hero.get(&"dead")), "ordinary movement reaches an oak without teleport")
 	if oak == null:
-		_body_complete = true
+		_stop("walk_to_oak")
 		return
 	camera.reset_smoothing()
 	camera.force_update_scroll()
@@ -657,9 +766,10 @@ func _body() -> void:
 	var fibre_before := _count("reed_fibre")
 	for group_index: int in range(2):
 		var reed := await _walk_to_kind(ow, hero, navigation, "reed_clump")
+		_stage_at("walk_to_reed")
 		_expect(reed != null and not bool(hero.get(&"dead")), "ordinary movement reaches a harvestable reed node")
 		if reed == null:
-			_body_complete = true
+			_stop("walk_to_reed")
 			return
 		camera.reset_smoothing()
 		camera.force_update_scroll()
@@ -673,17 +783,19 @@ func _body() -> void:
 	var panel: Node = ow.get(&"economy_panel")
 	_expect(await _open_panel(panel), "ordinary C action opens the economy panel")
 	var recipe_button := panel.find_child("Recipe_workbench_kit_hand", true, false) as Button
+	_stage_at("open_panel")
 	_expect(recipe_button != null and recipe_button.is_visible_in_tree(), "ordinary C action exposes the starter kit")
 	if recipe_button == null or not recipe_button.is_visible_in_tree():
-		_body_complete = true
+		_stop("open_panel")
 		return
 	# The starter list is longer than one 640x360 panel page on a fresh save, so
 	# an ordinary player has to wheel the row into view before it can be clicked.
 	var recipe_scroll := _owning_scroll(recipe_button)
 	var revealed := recipe_scroll != null and await _scroll_to(recipe_scroll, recipe_button)
+	_stage_at("reveal_kit_row")
 	_expect(revealed, "ordinary wheel input reveals the starter kit recipe")
 	if not revealed:
-		_body_complete = true
+		_stop("reveal_kit_row")
 		return
 	var button_position := root.get_final_transform() * (recipe_button.get_global_transform_with_canvas() * (recipe_button.size * 0.5))
 	await _click_window(button_position)
@@ -693,23 +805,26 @@ func _body() -> void:
 		var job: Dictionary = (host.call(&"jobs") as Dictionary)[key]
 		if String(job.get("target", "")) == "workbench_kit":
 			job_id = String(key)
+	_stage_at("queue_kit")
 	_expect(not job_id.is_empty() and _count(WOOD) == wood_before and _count(IRON) == before, "GUI reserves the resources gathered by ordinary input")
 	if job_id.is_empty():
-		_body_complete = true
+		_stop("queue_kit")
 		return
 	await _close_panel(panel)
+	_stage_at("close_panel")
 	_expect(not bool(panel.call(&"is_open")), "ordinary C action closes the panel to resume active work")
 	if bool(panel.call(&"is_open")):
-		_body_complete = true
+		_stop("close_panel")
 		return
 	var deadline := Time.get_ticks_msec() + 35000
 	var job: Dictionary = (host.call(&"jobs") as Dictionary).get(job_id, {})
 	while Time.get_ticks_msec() < deadline and String(job.get("status", "")) != "ready":
 		await process_frame
 		job = (host.call(&"jobs") as Dictionary).get(job_id, {})
+	_stage_at("wait_kit_ready")
 	_expect(String(job.get("status", "")) == "ready", "active ordinary gameplay completes the starter kit queue")
 	if String(job.get("status", "")) != "ready":
-		_body_complete = true
+		_stop("wait_kit_ready")
 		return
 	await _open_panel(panel)
 	var collect_button: Button = null
@@ -718,24 +833,27 @@ func _body() -> void:
 			collect_button = value as Button
 			break
 	var scroll := _owning_scroll(collect_button)
+	_stage_at("kit_collect_control")
 	_expect(collect_button != null and scroll != null, "completed escrow exposes a GUI collect control inside its scroll owner")
 	if collect_button == null or scroll == null:
-		_body_complete = true
+		_stop("kit_collect_control")
 		return
 	var collect_visible := await _scroll_to(scroll, collect_button)
+	_stage_at("reveal_kit_collect")
 	_expect(collect_visible, "ordinary wheel input reaches the collect control")
 	if not collect_visible:
-		_body_complete = true
+		_stop("reveal_kit_collect")
 		return
-	await _click_window(root.get_final_transform() * (collect_button.get_global_transform_with_canvas() * (collect_button.size * 0.5)))
+	await _click_control(collect_button, "collect_button")
 	_expect(_count("workbench_kit") == 1, "ordinary GUI pointer collects the manufactured kit")
 	await _tap_action(&"economy_toggle")
 	await _tap_action(&"build_toggle")
 	await _tap_action(&"build_slot_7")
 	var build: SurvivalBuildSystem = ow.get(&"survival_build")
+	_stage_at("select_build_piece")
 	_expect(build.active and build.selected_piece == "station_workbench", "ordinary build inputs select the workbench")
 	if not build.active or build.selected_piece != "station_workbench":
-		_body_complete = true
+		_stop("select_build_piece")
 		return
 	var centre := navigation.cell_of(hero.global_position)
 	var placement := Vector2i(-1, -1)
@@ -747,9 +865,10 @@ func _body() -> void:
 			if build.validate_cell(candidate).is_empty():
 				placement = candidate
 				break
+	_stage_at("bench_footprint")
 	_expect(placement.x >= 0, "reachable ground supports the paid station footprint")
 	if placement.x < 0:
-		_body_complete = true
+		_stop("bench_footprint")
 		return
 	camera.reset_smoothing()
 	camera.force_update_scroll()
@@ -768,9 +887,10 @@ func _body() -> void:
 	for key: Variant in structures.keys():
 		if String((structures[key] as Dictionary).get("piece", "")) == "station_workbench":
 			station_id = String(key)
+	_stage_at("place_bench")
 	_expect(not station_id.is_empty() and _count("workbench_kit") == 0, "ordinary placement input pays for the physical workbench")
 	if station_id.is_empty():
-		_body_complete = true
+		_stop("place_bench")
 		return
 	_expect(await _stand_by(ow, hero, station_id), "ordinary movement brings the player to the bench it built")
 	await _open_panel(panel)
@@ -778,35 +898,43 @@ func _body() -> void:
 	if weave_button == null:
 		_dump_panel(panel, ow, station_id)
 	var weave_scroll := _owning_scroll(weave_button)
+	_stage_at("weave_recipe")
 	_expect(weave_button != null and weave_scroll != null, "nearby paid bench exposes its real weave recipe inside its scroll owner")
 	if weave_button == null or weave_scroll == null:
-		_body_complete = true
+		_stop("weave_recipe")
 		return
 	var weave_visible := await _scroll_to(weave_scroll, weave_button)
+	_stage_at("reveal_weave_row")
 	_expect(weave_visible, "ordinary wheel input reaches the workbench recipe")
 	if not weave_visible:
-		_body_complete = true
+		_stop("reveal_weave_row")
 		return
-	var weave_live := panel.find_child(String(weave_button.name), true, false) as Button
-	if weave_live == null:
-		weave_live = weave_button
-	var queued := await _queue_row(weave_live, "weave_cloth")
+	var weave_name := String(weave_button.name)
+	var weave_live := _live_button(weave_name, weave_button)
+	var queued: Dictionary = await _queue_row(weave_live, "weave_cloth")
 	var weave_id := String(queued.get("job", ""))
 	# The panel tells the player why a press did not take; print that sentence, the
 	# button's real state and both rects so the next run is diagnosis, not guesswork.
+	# The row is looked up again *after* the press: queuing a job rebuilds the list
+	# and frees the node the press was delivered to, and reading a freed Button is
+	# how this gate used to die at check 24 with nothing failed.
+	var after_press := _live_button(weave_name, null)
 	var texts: Array[String] = []
 	for value: Node in panel.find_children("*", "Label", true, false):
 		texts.append(String((value as Label).text).substr(0, 60))
 	print("A0_CONNECTED_WEAVE_CLICK job=%s disabled=%s row=%s scroll=%s focus=%s labels=%s" % [
-		weave_id, str(weave_live.disabled), str(weave_live.get_global_rect()),
-		str(weave_scroll.get_global_rect()), str(root.gui_get_focus_owner()), str(texts.slice(0, 4))])
+		weave_id, str(after_press.disabled) if after_press != null else "freed",
+		str(after_press.get_global_rect()) if after_press != null else "freed",
+		str(weave_scroll.get_global_rect()) if is_instance_valid(weave_scroll) else "freed",
+		str(root.gui_get_focus_owner()), str(texts.slice(0, 4))])
 	# Two facts, two labels: a missing job and an unchanged reed count are different
 	# failures and must not share one sentence.
 	_expect(not weave_id.is_empty(), "workbench GUI queues the weave job (%s)" % weave_id)
+	_stage_at("queue_weave")
 	_expect(_count("reed_fibre") == fibre_before,
 		"workbench GUI reserves player-gathered reeds (reed_fibre %d->%d)" % [fibre_before, _count("reed_fibre")])
 	if weave_id.is_empty():
-		_body_complete = true
+		_stop("queue_weave")
 		return
 	await _close_panel(panel)
 	var weave_deadline := Time.get_ticks_msec() + 30000
@@ -814,9 +942,10 @@ func _body() -> void:
 	while Time.get_ticks_msec() < weave_deadline and String(weave_job.get("status", "")) != "ready":
 		await process_frame
 		weave_job = (host.call(&"jobs") as Dictionary).get(weave_id, {})
+	_stage_at("wait_weave_ready")
 	_expect(String(weave_job.get("status", "")) == "ready", "active ordinary gameplay completes workbench production")
 	if String(weave_job.get("status", "")) != "ready":
-		_body_complete = true
+		_stop("wait_weave_ready")
 		return
 	await _open_panel(panel)
 	var output_button: Button = null
@@ -827,20 +956,23 @@ func _body() -> void:
 			output_button = candidate
 			break
 	var output_scroll := _owning_scroll(output_button)
+	_stage_at("cloth_collect_control")
 	_expect(output_button != null and output_scroll != null, "produced cloth exposes a GUI collection control inside its scroll owner")
 	if output_button == null or output_scroll == null:
-		_body_complete = true
+		_stop("cloth_collect_control")
 		return
 	var output_visible := await _scroll_to(output_scroll, output_button)
+	_stage_at("reveal_cloth_collect")
 	_expect(output_visible, "ordinary wheel input reaches produced cloth")
 	if not output_visible:
-		_body_complete = true
+		_stop("reveal_cloth_collect")
 		return
 	var cloth_before := _count("binding_cloth")
 	var receipts_before := _collect_receipt_count()
 	_expect(cloth_before == 0, "fresh journey has no cloth before collection")
-	await _click_window(root.get_final_transform() * (output_button.get_global_transform_with_canvas() * (output_button.size * 0.5)))
+	await _click_control(output_button, "output_button")
 	_expect(_count("binding_cloth") == 2 and _collect_receipt_count() == receipts_before + 1, "ordinary GUI collects exactly two cloth with one committed receipt")
 	await _tap_action(&"economy_toggle")
 	_expect(bool(_save().call(&"reload_save")) and not (_survival().call(&"resolve_station", station_id) as Dictionary).is_empty() and _count("binding_cloth") == cloth_before + 2 and _collect_receipt_count() == receipts_before + 1, "paid workbench, exact cloth and collection receipt survive reload")
+	_stage_at("complete")
 	_body_complete = true

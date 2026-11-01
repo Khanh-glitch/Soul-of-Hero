@@ -30,12 +30,32 @@ extends "res://tests/survival_normal_input_gather_test.gd"
 const AUDIT := "user://tests/a0_connected_audit.json"
 const FURNACE_SLOT := "6"   # SurvivalBuildSystem.BUILD_SLOTS index 5 -> build_slot_6
 
+## Which step of the connected half is running, and why it stopped. A red run must
+## be readable from one line: GitHub keeps roughly ten annotations per step, so the
+## gate publishes a single summary sentence instead of hoping a tail survives.
+var _conn_stage := "entry"
+var _conn_stop := ""
+
 var _phase := "play"
 ## Why the last recipe row could not be revealed. The failure label carries it, so
 ## the annotation itself says what happened instead of only that it did.
 var _scroll_reason := ""
 var _keep := false
 var _prefix_complete := false
+
+
+func _stage(name: String) -> void:
+	_conn_stage = name
+	print("A0_CONNECTED_STAGE stage=%s bag=%s" % [name, _bag_json()])
+
+
+## The connected half gave up here. The failing check already exists where there is
+## one; this names the step and the bag so the annotation says *where*, not just that
+## something did not finish.
+func _conn_halt(reason: String) -> void:
+	_conn_stop = reason
+	print("A0_CONNECTED_HALT stage=%s reason=%s bag=%s" % [_conn_stage, reason, _bag_json()])
+	_body_complete = false
 
 
 func _console() -> void:
@@ -91,6 +111,12 @@ func _finish() -> void:
 		Input.action_release(action)
 	if not _keep and FileAccess.file_exists(save_path):
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(save_path))
+	# One sentence that survives an annotation cap: phase, how far the run got, why it
+	# stopped, and the bag it actually holds.
+	print("A0_CONNECTED_SUMMARY phase=%s prefix=%s stage=%s reason=%s bag=%s checks=%d failures=%d" % [
+		_phase, str(_prefix_complete), _conn_stage,
+		_conn_stop if not _conn_stop.is_empty() else _stop_reason,
+		_bag_json(), checks, failures.size()])
 	if failures.is_empty():
 		print("A0 CONNECTED SURVIVAL JOURNEY PASSED - %d checks (%s)" % [checks, _phase])
 		quit(0)
@@ -127,6 +153,7 @@ func _continuation(ow: Node) -> void:
 		_expect(false, "the world exposes every seat the connected journey needs")
 		return
 
+	_stage("gather_furnace_inputs")
 	# --- 1. the furnace's own inputs, from the world ------------------------
 	# The furnace kit costs 8 stone + 3 scrap; the fuelled smelt costs 3 scrap and
 	# 1 charcoal, and the charcoal itself costs 2 oak. Everything is walked to and
@@ -138,27 +165,32 @@ func _continuation(ow: Node) -> void:
 	var scrap := await _gather_until(ow, hero, nav, camera, "scrap_pile", IRON, 6, 12)
 	_expect(scrap, "ordinary movement and clicks gather the 6 iron scrap the kit and smelt need")
 	if not stone or not wood or not scrap:
+		_conn_halt("gather_furnace_inputs")
 		_write_audit(ow, {})
 		return
 	var stone_before := _count(STONE)
 	var scrap_before := _count(IRON)
 
+	_stage("craft_furnace_kit")
 	# --- 2. craft the furnace kit through the visible panel -----------------
 	await _open_panel(panel)
 	var kit_button := panel.find_child("Recipe_furnace_kit_hand", true, false) as Button
 	_expect(kit_button != null, "the hand station visibly offers the furnace kit")
 	if kit_button == null:
+		_conn_halt("kit_recipe_absent")
 		_write_audit(ow, {})
 		return
 	var kit_row := await _scroll_recipe(panel, kit_button)
 	_expect(kit_row != null, "ordinary wheel input reaches the furnace kit (%s)" % _scroll_reason)
 	if kit_row == null:
+		_conn_halt("reveal_kit_row")
 		_write_audit(ow, {})
 		return
 	var kit_queue := await _queue_row(kit_row, "furnace_kit")
 	var furnace_job := String(kit_queue.get("job", ""))
 	_expect(not furnace_job.is_empty(), "the GUI queues the furnace kit (%s)" % furnace_job)
 	if furnace_job.is_empty():
+		_conn_halt("queue_kit")
 		_write_audit(ow, {})
 		return
 	_expect(_count(STONE) == stone_before - 8 and _count(IRON) == scrap_before - 3,
@@ -168,22 +200,26 @@ func _continuation(ow: Node) -> void:
 	var kit_ready := await _wait_job(furnace_job, 30000)
 	_expect(kit_ready, "active gameplay completes the furnace kit")
 	if not kit_ready:
+		_conn_halt("wait_kit_ready")
 		_write_audit(ow, {})
 		return
 	await _open_panel(panel)
 	var kit_collect := _collect_button("furnace kit")
 	_expect(kit_collect != null, "the finished furnace kit exposes a Collect control")
 	if kit_collect == null:
+		_conn_halt("kit_collect_control")
 		_write_audit(ow, {})
 		return
 	var kit_scroll2 := _owning_scroll(kit_collect)
 	_expect(await _scroll_to(kit_scroll2, kit_collect), "ordinary wheel input reaches the furnace kit collect control")
-	await _click_window(root.get_final_transform() * (kit_collect.get_global_transform_with_canvas() * (kit_collect.size * 0.5)))
+	await _click_control(kit_collect, "kit_collect")
 	_expect(_count("furnace_kit") == 1, "ordinary GUI click collects exactly one furnace kit")
 	await _close_panel(panel)
 
+	_stage("place_furnace")
 	# --- 3. place the furnace with the build pointer ------------------------
 	if _count("furnace_kit") != 1:
+		_conn_halt("furnace_kit_not_collected")
 		_write_audit(ow, {})
 		return
 	await _tap_action(&"build_toggle")
@@ -192,14 +228,17 @@ func _continuation(ow: Node) -> void:
 	var placed := await _place_piece(ow, hero, nav, camera, build, "station_furnace")
 	_expect(placed.x >= 0 and _count("furnace_kit") == 0, "ordinary placement input pays for a physical furnace")
 	if placed.x < 0:
+		_conn_halt("place_furnace")
 		_write_audit(ow, {})
 		return
 	var furnace_id := _station_id("station_furnace")
 	_expect(not furnace_id.is_empty(), "the placed furnace is a real station (%s)" % furnace_id)
 	if furnace_id.is_empty():
+		_conn_halt("furnace_station_absent")
 		_write_audit(ow, {})
 		return
 
+	_stage("burn_charcoal")
 	# --- 4. burn the fuel the smelting needs, at that furnace --------------
 	# The furnace now occupies the cell it was built on, so the player cannot stand
 	# on it. They walk up to it with ordinary directional input until the station is
@@ -207,6 +246,7 @@ func _continuation(ow: Node) -> void:
 	var reached := await _approach_station(hero, nav, _station_point(furnace_id, placed), "the built furnace")
 	_expect(reached, "the player can stand at the furnace it just built")
 	if not reached:
+		_conn_halt("stand_at_furnace")
 		_write_audit(ow, {})
 		return
 	var nearby: Array = host.call(&"nearby_stations")
@@ -232,11 +272,13 @@ func _continuation(ow: Node) -> void:
 		_dump_panel(panel, host, furnace_id)
 	_expect(charcoal_button != null, "the physical furnace offers its own charcoal recipe")
 	if charcoal_button == null:
+		_conn_halt("charcoal_recipe_absent")
 		_write_audit(ow, {})
 		return
 	var charcoal_row := await _scroll_recipe(panel, charcoal_button)
 	_expect(charcoal_row != null, "ordinary wheel input reaches the charcoal recipe (%s)" % _scroll_reason)
 	if charcoal_row == null:
+		_conn_halt("reveal_charcoal_row")
 		_write_audit(ow, {})
 		return
 	var charcoal_queue := await _queue_row(charcoal_row, "burn_charcoal")
@@ -245,6 +287,7 @@ func _continuation(ow: Node) -> void:
 	await _close_panel(panel)
 	if charcoal_job.is_empty() or not await _wait_job(charcoal_job, 40000):
 		_expect(false, "active gameplay completes the charcoal burn")
+		_conn_halt("wait_charcoal_ready")
 		_write_audit(ow, {})
 		return
 	await _open_panel(panel)
@@ -252,10 +295,11 @@ func _continuation(ow: Node) -> void:
 	_expect(charcoal_collect != null,
 		"the burned charcoal exposes a Collect control (%s)" % _job_rows(panel))
 	if charcoal_collect == null:
+		_conn_halt("charcoal_collect_control")
 		_write_audit(ow, {})
 		return
 	_expect(await _scroll_to(_owning_scroll(charcoal_collect), charcoal_collect), "ordinary wheel input reaches the charcoal control")
-	await _click_window(root.get_final_transform() * (charcoal_collect.get_global_transform_with_canvas() * (charcoal_collect.size * 0.5)))
+	await _click_control(charcoal_collect, "charcoal_collect")
 	_expect(_count("charcoal") == 2, "ordinary GUI click collects two charcoal")
 	await _close_panel(panel)
 
@@ -264,17 +308,20 @@ func _continuation(ow: Node) -> void:
 	var charcoal_for_smelt := _count("charcoal")
 	if charcoal_for_smelt < 1 or scrap_for_smelt < 3:
 		_expect(false, "the smelt has its fuelled inputs (scrap %d, charcoal %d)" % [scrap_for_smelt, charcoal_for_smelt])
+		_conn_halt("smelt_inputs_short")
 		_write_audit(ow, {})
 		return
 	await _open_panel(panel)
 	var smelt_button := _recipe_button(panel, "smelt_iron", furnace_id)
 	_expect(smelt_button != null, "the furnace offers the fuelled smelt recipe")
 	if smelt_button == null:
+		_conn_halt("smelt_recipe_absent")
 		_write_audit(ow, {})
 		return
 	var smelt_row := await _scroll_recipe(panel, smelt_button)
 	_expect(smelt_row != null, "ordinary wheel input reaches the smelt recipe (%s)" % _scroll_reason)
 	if smelt_row == null:
+		_conn_halt("reveal_smelt_row")
 		_write_audit(ow, {})
 		return
 	var smelt_queue := await _queue_row(smelt_row, "smelt_iron")
@@ -282,6 +329,7 @@ func _continuation(ow: Node) -> void:
 	_expect(not smelt_job.is_empty(), "the GUI queues the fuelled smelt (%s)" % smelt_job)
 	await _close_panel(panel)
 	if smelt_job.is_empty():
+		_conn_halt("queue_smelt")
 		_write_audit(ow, {})
 		return
 	_expect(_count(IRON) == scrap_for_smelt - 3 and _count("charcoal") == charcoal_for_smelt - 1,
@@ -314,6 +362,7 @@ func _continuation(ow: Node) -> void:
 # process 2: the same save, an independent process, and the offline payment
 # ---------------------------------------------------------------------------
 func _verify_body() -> void:
+	_stage("verify_read_audit")
 	var audit := _read_audit()
 	_expect(not audit.is_empty(), "the second process reads the first process's audit")
 	if audit.is_empty():
@@ -348,6 +397,7 @@ func _verify_body() -> void:
 		_expect(cell.size() == 2 and int(cell[0]) == int(audit_cell[0]) and int(cell[1]) == int(audit_cell[1]),
 			"the furnace is on the exact cell it was built on (%s vs %s)" % [str(cell), str(audit_cell)])
 	_expect(_count("binding_cloth") == int(audit.get("cloth", -1)), "the woven cloth survived the relaunch exactly")
+	_stage("verify_offline_settle")
 	var settle: Dictionary = composition.get(&"_last_settle")
 	print("A0_CONNECTED_OFFLINE_SETTLE ", JSON.stringify(settle))
 	var smelt_job := String(audit.get("smelt_job", ""))
@@ -364,11 +414,12 @@ func _verify_body() -> void:
 		return
 	_expect(await _scroll_to(_owning_scroll(collect), collect), "ordinary wheel input reaches the settled output")
 	var receipts_before := _collect_receipt_count()
-	await _click_window(root.get_final_transform() * (collect.get_global_transform_with_canvas() * (collect.size * 0.5)))
+	await _click_control(collect, "collect")
 	_expect(_count("iron_ingot") == 1, "the player collects exactly one smelted iron ingot")
 	_expect(_collect_receipt_count() == receipts_before + 1, "the collection is one committed receipt")
 	await _close_panel(panel)
 	# A second settlement must not pay again.
+	_stage("verify_no_double_payment")
 	var offline: Node = composition.get(&"_offline") as Node
 	_expect(offline != null, "the relaunched world exposes the one offline host")
 	if offline != null:
@@ -412,6 +463,7 @@ func _verify_body() -> void:
 	_expect(parts != null, "the bench the player paid for offers make_parts once an ingot exists")
 	if parts == null:
 		return
+	_stage("verify_parts_from_ingot")
 	var parts_live := await _scroll_recipe(panel, parts)
 	_expect(parts_live != null, "ordinary wheel input reaches the parts recipe (%s)" % _scroll_reason)
 	if parts_live == null:
