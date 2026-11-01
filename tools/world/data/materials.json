@@ -1,0 +1,897 @@
+{
+ "grass": [
+  {
+   "name": "road",
+   "file": "PNG_Tiled/Ground_grass.png",
+   "x": 30,
+   "y": 24,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 160.0,
+    "g": 179.0,
+    "b": 90.0,
+    "spread": 89.0,
+    "green": 1.0,
+    "warm": 1.0,
+    "cool": 0.0,
+    "lum": 143.0
+   }
+  },
+  {
+   "name": "road",
+   "file": "PNG_Tiled/Ground_grass.png",
+   "x": 26,
+   "y": 38,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 160.0,
+    "g": 179.0,
+    "b": 90.0,
+    "spread": 89.0,
+    "green": 1.0,
+    "warm": 1.0,
+    "cool": 0.0,
+    "lum": 143.0
+   }
+  },
+  {
+   "name": "road",
+   "file": "PNG_Tiled/Ground_grass.png",
+   "x": 46,
+   "y": 120,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 122.0,
+    "g": 173.0,
+    "b": 85.0,
+    "spread": 88.0,
+    "green": 1.0,
+    "warm": 1.0,
+    "cool": 0.0,
+    "lum": 126.66666666666667
+   }
+  },
+  {
+   "name": "road",
+   "file": "PNG_Tiled/Ground_grass.png",
+   "x": 42,
+   "y": 134,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 122.0,
+    "g": 173.0,
+    "b": 85.0,
+    "spread": 88.0,
+    "green": 1.0,
+    "warm": 1.0,
+    "cool": 0.0,
+    "lum": 126.66666666666667
+   }
+  },
+  {
+   "name": "road",
+   "file": "PNG_Tiled/Ground_grass.png",
+   "x": 46,
+   "y": 312,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 72.0,
+    "g": 148.0,
+    "b": 97.0,
+    "spread": 76.0,
+    "green": 1.0,
+    "warm": 0.0,
+    "cool": 1.0,
+    "lum": 105.66666666666667
+   }
+  },
+  {
+   "name": "road",
+   "file": "PNG_Tiled/Ground_grass.png",
+   "x": 42,
+   "y": 326,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 72.0,
+    "g": 148.0,
+    "b": 97.0,
+    "spread": 76.0,
+    "green": 1.0,
+    "warm": 0.0,
+    "cool": 1.0,
+    "lum": 105.66666666666667
+   }
+  },
+  {
+   "name": "road",
+   "file": "PNG_Tiled/Ground_grass.png",
+   "x": 46,
+   "y": 408,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 144.0,
+    "g": 163.0,
+    "b": 71.0,
+    "spread": 92.0,
+    "green": 1.0,
+    "warm": 1.0,
+    "cool": 0.0,
+    "lum": 126.0
+   }
+  },
+  {
+   "name": "road",
+   "file": "PNG_Tiled/Ground_grass.png",
+   "x": 42,
+   "y": 422,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 144.0,
+    "g": 163.0,
+    "b": 71.0,
+    "spread": 92.0,
+    "green": 1.0,
+    "warm": 1.0,
+    "cool": 0.0,
+    "lum": 126.0
+   }
+  }
+ ],
+ "grass_dark": [
+  {
+   "name": "road",
+   "file": "PNG_Tiled/Ground_grass.png",
+   "x": 46,
+   "y": 312,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 72.0,
+    "g": 148.0,
+    "b": 97.0,
+    "spread": 76.0,
+    "green": 1.0,
+    "warm": 0.0,
+    "cool": 1.0,
+    "lum": 105.66666666666667
+   }
+  },
+  {
+   "name": "road",
+   "file": "PNG_Tiled/Ground_grass.png",
+   "x": 42,
+   "y": 326,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 72.0,
+    "g": 148.0,
+    "b": 97.0,
+    "spread": 76.0,
+    "green": 1.0,
+    "warm": 0.0,
+    "cool": 1.0,
+    "lum": 105.66666666666667
+   }
+  }
+ ],
+ "road": [
+  {
+   "name": "road",
+   "file": "PNG_Tiled/Road1_grass.png",
+   "x": 26,
+   "y": 16,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 99.8125,
+    "g": 141.0625,
+    "b": 162.2578125,
+    "spread": 62.88671875,
+    "green": 0.00390625,
+    "warm": 0.00390625,
+    "cool": 0.99609375,
+    "lum": 134.37760416666666
+   }
+  },
+  {
+   "name": "road",
+   "file": "PNG_Tiled/Road1_grass.png",
+   "x": 40,
+   "y": 16,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 100.44140625,
+    "g": 140.54296875,
+    "b": 159.625,
+    "spread": 62.8671875,
+    "green": 0.01171875,
+    "warm": 0.01953125,
+    "cool": 0.9765625,
+    "lum": 133.53645833333334
+   }
+  },
+  {
+   "name": "road",
+   "file": "PNG_Tiled/Road1_grass.png",
+   "x": 102,
+   "y": 16,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 100.03125,
+    "g": 140.6171875,
+    "b": 161.265625,
+    "spread": 62.796875,
+    "green": 0.0,
+    "warm": 0.0078125,
+    "cool": 0.9921875,
+    "lum": 133.97135416666666
+   }
+  },
+  {
+   "name": "road",
+   "file": "PNG_Tiled/Road1_grass.png",
+   "x": 116,
+   "y": 16,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 98.57421875,
+    "g": 138.66015625,
+    "b": 160.40234375,
+    "spread": 61.828125,
+    "green": 0.0,
+    "warm": 0.0,
+    "cool": 1.0,
+    "lum": 132.54557291666666
+   }
+  },
+  {
+   "name": "road",
+   "file": "PNG_Tiled/Road1_grass.png",
+   "x": 182,
+   "y": 16,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 99.52734375,
+    "g": 139.8515625,
+    "b": 160.34375,
+    "spread": 62.35546875,
+    "green": 0.0078125,
+    "warm": 0.0078125,
+    "cool": 0.98828125,
+    "lum": 133.24088541666666
+   }
+  },
+  {
+   "name": "road",
+   "file": "PNG_Tiled/Road1_grass.png",
+   "x": 196,
+   "y": 16,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 99.07421875,
+    "g": 139.58203125,
+    "b": 161.23828125,
+    "spread": 62.1640625,
+    "green": 0.0,
+    "warm": 0.0,
+    "cool": 1.0,
+    "lum": 133.29817708333334
+   }
+  },
+  {
+   "name": "road",
+   "file": "PNG_Tiled/Road1_grass.png",
+   "x": 130,
+   "y": 26,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 99.34765625,
+    "g": 139.609375,
+    "b": 160.19140625,
+    "spread": 62.2578125,
+    "green": 0.0078125,
+    "warm": 0.00390625,
+    "cool": 0.98828125,
+    "lum": 133.04947916666666
+   }
+  },
+  {
+   "name": "road",
+   "file": "PNG_Tiled/Road1_grass.png",
+   "x": 16,
+   "y": 30,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 98.96875,
+    "g": 139.4140625,
+    "b": 161.09375,
+    "spread": 62.125,
+    "green": 0.0,
+    "warm": 0.0,
+    "cool": 1.0,
+    "lum": 133.15885416666666
+   }
+  }
+ ],
+ "soil": [
+  {
+   "name": "fields",
+   "file": "1 Tiles/FieldsTile_02.png",
+   "x": 0,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 229.9375,
+    "g": 144.23828125,
+    "b": 94.375,
+    "spread": 135.5625,
+    "green": 0.0,
+    "warm": 1.0,
+    "cool": 0.0,
+    "lum": 156.18359375
+   }
+  },
+  {
+   "name": "fields",
+   "file": "1 Tiles/FieldsTile_02.png",
+   "x": 14,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 226.7734375,
+    "g": 140.640625,
+    "b": 92.734375,
+    "spread": 134.0390625,
+    "green": 0.0,
+    "warm": 1.0,
+    "cool": 0.0,
+    "lum": 153.3828125
+   }
+  },
+  {
+   "name": "fields",
+   "file": "1 Tiles/FieldsTile_05.png",
+   "x": 0,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 229.9375,
+    "g": 144.23828125,
+    "b": 94.375,
+    "spread": 135.5625,
+    "green": 0.0,
+    "warm": 1.0,
+    "cool": 0.0,
+    "lum": 156.18359375
+   }
+  },
+  {
+   "name": "fields",
+   "file": "1 Tiles/FieldsTile_05.png",
+   "x": 14,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 226.7734375,
+    "g": 140.640625,
+    "b": 92.734375,
+    "spread": 134.0390625,
+    "green": 0.0,
+    "warm": 1.0,
+    "cool": 0.0,
+    "lum": 153.3828125
+   }
+  },
+  {
+   "name": "fields",
+   "file": "1 Tiles/FieldsTile_05.png",
+   "x": 0,
+   "y": 14,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 226.57421875,
+    "g": 143.25390625,
+    "b": 93.1171875,
+    "spread": 133.73046875,
+    "green": 0.02734375,
+    "warm": 1.0,
+    "cool": 0.0,
+    "lum": 154.31510416666666
+   }
+  },
+  {
+   "name": "fields",
+   "file": "1 Tiles/FieldsTile_05.png",
+   "x": 14,
+   "y": 14,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 231.625,
+    "g": 146.15625,
+    "b": 95.25,
+    "spread": 136.375,
+    "green": 0.0,
+    "warm": 1.0,
+    "cool": 0.0,
+    "lum": 157.67708333333334
+   }
+  }
+ ],
+ "sand": [
+  {
+   "name": "island",
+   "file": "Tileset/Tiled.png",
+   "x": -1,
+   "y": -1,
+   "w": 16,
+   "h": 16,
+   "flat": [
+    252,
+    247,
+    190
+   ],
+   "stats": {
+    "r": 252.0,
+    "g": 247.0,
+    "b": 190.0,
+    "spread": 0.0,
+    "green": 0.0,
+    "warm": 1.0,
+    "cool": 0.0,
+    "lum": 229.66666666666666
+   }
+  }
+ ],
+ "stone": [
+  {
+   "name": "island",
+   "file": "Tileset/Tiled.png",
+   "x": 438,
+   "y": 20,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 137.2890625,
+    "g": 135.38671875,
+    "b": 166.91796875,
+    "spread": 31.859375,
+    "green": 0.0,
+    "warm": 0.0,
+    "cool": 0.99609375,
+    "lum": 146.53125
+   }
+  },
+  {
+   "name": "island",
+   "file": "Tileset/Tiled.png",
+   "x": 452,
+   "y": 20,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 136.1875,
+    "g": 134.18359375,
+    "b": 165.90234375,
+    "spread": 32.0,
+    "green": 0.0,
+    "warm": 0.0,
+    "cool": 1.0,
+    "lum": 145.42447916666666
+   }
+  },
+  {
+   "name": "island",
+   "file": "Tileset/Tiled.png",
+   "x": 466,
+   "y": 20,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 141.85546875,
+    "g": 139.48828125,
+    "b": 171.78125,
+    "spread": 32.484375,
+    "green": 0.0,
+    "warm": 0.0,
+    "cool": 0.99609375,
+    "lum": 151.04166666666666
+   }
+  },
+  {
+   "name": "island",
+   "file": "Tileset/Tiled.png",
+   "x": 434,
+   "y": 34,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 135.8984375,
+    "g": 133.484375,
+    "b": 165.24609375,
+    "spread": 31.9765625,
+    "green": 0.0,
+    "warm": 0.0,
+    "cool": 0.97265625,
+    "lum": 144.87630208333334
+   }
+  },
+  {
+   "name": "island",
+   "file": "Tileset/Tiled.png",
+   "x": 448,
+   "y": 34,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 148.640625,
+    "g": 145.640625,
+    "b": 178.984375,
+    "spread": 33.34375,
+    "green": 0.0,
+    "warm": 0.0,
+    "cool": 1.0,
+    "lum": 157.75520833333334
+   }
+  },
+  {
+   "name": "island",
+   "file": "Tileset/Tiled.png",
+   "x": 462,
+   "y": 34,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 149.59765625,
+    "g": 146.59765625,
+    "b": 180.05859375,
+    "spread": 33.4609375,
+    "green": 0.0,
+    "warm": 0.0,
+    "cool": 1.0,
+    "lum": 158.75130208333334
+   }
+  }
+ ],
+ "blight": [
+  {
+   "name": "cursed",
+   "file": "PNG/Ground.png",
+   "x": 496,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 175.12890625,
+    "g": 103.23046875,
+    "b": 82.609375,
+    "spread": 92.51953125,
+    "green": 0.0,
+    "warm": 1.0,
+    "cool": 0.0,
+    "lum": 120.32291666666667
+   }
+  },
+  {
+   "name": "cursed",
+   "file": "PNG/Ground.png",
+   "x": 510,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 178.48828125,
+    "g": 102.6640625,
+    "b": 81.46875,
+    "spread": 97.01953125,
+    "green": 0.0,
+    "warm": 1.0,
+    "cool": 0.0,
+    "lum": 120.87369791666667
+   }
+  },
+  {
+   "name": "cursed",
+   "file": "PNG/Ground.png",
+   "x": 524,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 198.83203125,
+    "g": 138.125,
+    "b": 106.66796875,
+    "spread": 92.1640625,
+    "green": 0.0,
+    "warm": 1.0,
+    "cool": 0.0,
+    "lum": 147.875
+   }
+  },
+  {
+   "name": "cursed",
+   "file": "PNG/Ground.png",
+   "x": 538,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 175.65625,
+    "g": 105.33984375,
+    "b": 83.95703125,
+    "spread": 91.69921875,
+    "green": 0.0,
+    "warm": 1.0,
+    "cool": 0.0,
+    "lum": 121.65104166666667
+   }
+  },
+  {
+   "name": "cursed",
+   "file": "PNG/Ground.png",
+   "x": 552,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 175.51171875,
+    "g": 105.0234375,
+    "b": 84.08984375,
+    "spread": 91.421875,
+    "green": 0.0,
+    "warm": 1.0,
+    "cool": 0.0,
+    "lum": 121.54166666666667
+   }
+  },
+  {
+   "name": "cursed",
+   "file": "PNG/Ground.png",
+   "x": 566,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 181.109375,
+    "g": 112.859375,
+    "b": 89.1484375,
+    "spread": 91.9609375,
+    "green": 0.0,
+    "warm": 1.0,
+    "cool": 0.0,
+    "lum": 127.70572916666667
+   }
+  }
+ ],
+ "water": [
+  {
+   "name": "island",
+   "file": "Tileset/Tiled.png",
+   "x": 276,
+   "y": 16,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 150.05078125,
+    "g": 219.7109375,
+    "b": 222.2734375,
+    "spread": 109.3046875,
+    "green": 0.0,
+    "warm": 0.22265625,
+    "cool": 0.77734375,
+    "lum": 197.34505208333334
+   }
+  },
+  {
+   "name": "island",
+   "file": "Tileset/Tiled.png",
+   "x": 290,
+   "y": 16,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 166.17578125,
+    "g": 221.984375,
+    "b": 215.42578125,
+    "spread": 102.8203125,
+    "green": 0.0,
+    "warm": 0.3203125,
+    "cool": 0.6796875,
+    "lum": 201.1953125
+   }
+  },
+  {
+   "name": "island",
+   "file": "Tileset/Tiled.png",
+   "x": 352,
+   "y": 16,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 172.5078125,
+    "g": 230.39453125,
+    "b": 219.74609375,
+    "spread": 94.5546875,
+    "green": 0.0,
+    "warm": 0.3359375,
+    "cool": 0.6640625,
+    "lum": 207.54947916666666
+   }
+  },
+  {
+   "name": "island",
+   "file": "Tileset/Tiled.png",
+   "x": 366,
+   "y": 16,
+   "w": 16,
+   "h": 16,
+   "stats": {
+    "r": 147.24609375,
+    "g": 221.7734375,
+    "b": 228.3203125,
+    "spread": 106.7890625,
+    "green": 0.0,
+    "warm": 0.19140625,
+    "cool": 0.80859375,
+    "lum": 199.11328125
+   }
+  }
+ ],
+ "_decor": {
+  "tuft": [
+   {
+    "file": "2 Objects/5 Grass/1.png",
+    "size": [
+     5,
+     6
+    ]
+   },
+   {
+    "file": "2 Objects/5 Grass/2.png",
+    "size": [
+     9,
+     6
+    ]
+   },
+   {
+    "file": "2 Objects/5 Grass/3.png",
+    "size": [
+     5,
+     7
+    ]
+   },
+   {
+    "file": "2 Objects/5 Grass/4.png",
+    "size": [
+     8,
+     5
+    ]
+   },
+   {
+    "file": "2 Objects/5 Grass/5.png",
+    "size": [
+     6,
+     10
+    ]
+   },
+   {
+    "file": "2 Objects/5 Grass/6.png",
+    "size": [
+     5,
+     8
+    ]
+   }
+  ],
+  "pebble": [
+   {
+    "file": "2 Objects/2 Stone/1.png",
+    "size": [
+     10,
+     9
+    ]
+   },
+   {
+    "file": "2 Objects/2 Stone/2.png",
+    "size": [
+     9,
+     7
+    ]
+   },
+   {
+    "file": "2 Objects/2 Stone/3.png",
+    "size": [
+     6,
+     5
+    ]
+   },
+   {
+    "file": "2 Objects/2 Stone/4.png",
+    "size": [
+     4,
+     3
+    ]
+   },
+   {
+    "file": "2 Objects/2 Stone/5.png",
+    "size": [
+     9,
+     8
+    ]
+   },
+   {
+    "file": "2 Objects/2 Stone/6.png",
+    "size": [
+     11,
+     9
+    ]
+   }
+  ],
+  "flower": [
+   {
+    "file": "PNG/Assets/Bush_blue_flowers2.png",
+    "size": [
+     28,
+     27
+    ]
+   },
+   {
+    "file": "PNG/Assets/Bush_orange_flowers2.png",
+    "size": [
+     26,
+     26
+    ]
+   },
+   {
+    "file": "PNG/Assets/Bush_pink_flowers2.png",
+    "size": [
+     22,
+     20
+    ]
+   },
+   {
+    "file": "PNG/Assets/Bush_red_flowers2.png",
+    "size": [
+     28,
+     25
+    ]
+   }
+  ],
+  "mushroom": [
+   {
+    "file": "PNG/Assets/Beige_green_mushroom3.png",
+    "size": [
+     23,
+     26
+    ]
+   },
+   {
+    "file": "PNG/Assets/White-red_mushroom3.png",
+    "size": [
+     25,
+     34
+    ]
+   }
+  ]
+ }
+}

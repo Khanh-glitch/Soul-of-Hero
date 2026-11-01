@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Veyra — walk test</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: #0b0d10; color: #d8dde6;
+               font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; }
+  #wrap { position: fixed; inset: 0; display: grid; grid-template-rows: auto 1fr auto; }
+  header, footer { padding: 6px 10px; background: #11151b; border-bottom: 1px solid #1e242e; }
+  footer { border-top: 1px solid #1e242e; border-bottom: 0; display: flex; gap: 18px;
+           flex-wrap: wrap; align-items: center; }
+  #stage { position: relative; overflow: hidden; display: grid; place-items: center; background: #0b0d10; }
+  canvas#view { image-rendering: pixelated; background: #0b0d10; box-shadow: 0 0 0 1px #232a35; }
+  #minimap { position: absolute; right: 12px; bottom: 12px; image-rendering: pixelated;
+             border: 1px solid #2b3442; background: #0b0d10; opacity: .92; }
+  b { color: #ffd479; font-weight: 600; }
+  .k { border: 1px solid #333c4a; border-radius: 4px; padding: 0 5px; color: #9fb0c6; }
+  #loading { position: absolute; inset: 0; display: grid; place-items: center; background: #0b0d10; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <header><b>VEYRA</b> — gold map, compiled to 16 px tiles · walk test ·
+    <span id="pos">…</span></header>
+  <div id="stage">
+    <canvas id="view" width="640" height="360"></canvas>
+    <canvas id="minimap" width="250" height="175"></canvas>
+    <div id="loading">compiling the coast…</div>
+  </div>
+  <footer>
+    <span><span class="k">WASD</span> / <span class="k">arrows</span> walk</span>
+    <span><span class="k">shift</span> run</span>
+    <span><span class="k">M</span> map</span>
+    <span><span class="k">1–4</span> spawn</span>
+    <span id="here"></span>
+  </footer>
+</div>
+<script src="game.js"></script>
+</body>
+</html>

@@ -43,3 +43,7 @@ vuvvu_lyric_video/
 # private CraftPix/Craftpix source archives - never commit
 /google_drive/
 /asset_vault/
+
+# Veyra overworld compiler build output (regenerate with tools/world/veyra_compile.py)
+/out/
+/tools/out/
