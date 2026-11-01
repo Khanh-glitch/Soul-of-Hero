@@ -16,6 +16,13 @@ func configure(_payload: Dictionary = {}) -> void:
 
 func _continue_profile() -> void:
 	_set_actions_enabled(false)
+	# Old profiles legitimately predate D051. Do not silently send them to a
+	# Knight-looking world; collect an A0-authoritative Adventurer choice first.
+	var save_service := get_node_or_null("/root/SaveService")
+	if save_service != null and save_service.has_method(&"has_player_avatar"):
+		if not bool(save_service.call(&"has_player_avatar")):
+			AppFlow.open_avatar_choice()
+			return
 	AppFlow.open_home()
 
 
