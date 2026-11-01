@@ -66,14 +66,14 @@ jobs:
             ${{ runner.temp }}/arcana20-spore/artifacts/
           if-no-files-found: warn
   full-motion:
-    # Full native source ticks, separately pinned before/after. The gameplay
-    # world is frozen; this is not real-combat footage or a visual verdict.
+    # Current revision full native source ticks; baseline is archived in
+    # run 41288691508. Frozen world, not combat or a visual verdict.
     strategy:
       fail-fast: false
       matrix:
         skill: [14, 18]
         lighting: [normal, dimmed]
-        revision: [baseline, candidate]
+        revision: [candidate]
     runs-on: ubuntu-latest
     timeout-minutes: 55
     steps:
