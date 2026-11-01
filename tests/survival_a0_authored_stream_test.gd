@@ -24,9 +24,11 @@ func _console() -> void:
 	_deadline_msec = Time.get_ticks_msec() + int(BUILD_TIMEOUT_MS * 4)
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("user://tests"))
 	save_path = "user://tests/survival_authored_stream_%d.json" % Time.get_ticks_usec()
+	print("A0_STREAM_PROBE stage=configure save=%s" % save_path)
 	var save := root.get_node_or_null("SaveService")
 	if save != null:
-		save.call(&"configure_storage", save_path, true)
+		var configured: Variant = save.call(&"configure_storage", save_path, true)
+		print("A0_STREAM_PROBE stage=configured ok=%s" % str(configured))
 	print("A0 AUTHORED STREAM PROBE (component, not a journey)")
 	if not FileAccess.file_exists(READER) or not FileAccess.file_exists(STREAM):
 		var missing := READER if not FileAccess.file_exists(READER) else STREAM
@@ -36,7 +38,9 @@ func _console() -> void:
 		quit(0)
 		return
 	ProjectSettings.set_setting(SETTING, true)
+	print("A0_STREAM_PROBE stage=boot_begin")
 	_ow = await _boot()
+	print("A0_STREAM_PROBE stage=boot_end ready=%s" % str(_ow != null))
 	ProjectSettings.set_setting(SETTING, false)
 	if _ow == null:
 		_expect(false, "the world boots with A1's authored stream enabled")
@@ -44,13 +48,14 @@ func _console() -> void:
 		return
 
 	var mount: Node = _ow.get(&"authored_mount")
+	print("A0_STREAM_PROBE stage=mount mounted=%s" % str(mount != null))
 	if mount == null:
 		# A refusal that names an A1 dependency is an owner blocker, not an A0
 		# defect: A1's runtime contract pins the bytes of files other owners edit, so
 		# the reader refuses to boot in a composition where those bytes moved. Say so
 		# with the owner and the artifact, keep A0's own world proven, and never call
 		# it a pass.
-		var refusal := String(_ow.get(&"authored_stream_error"))
+		var refusal := _text(_ow.get(&"authored_stream_error"))
 		var world_ok := (_ow.get(&"world") as OverworldWorld) != null
 		var player_ok: CharacterBody2D = _ow.get(&"player")
 		print("A0 AUTHORED STREAM BLOCKED owner=A1 reason=%s" % refusal)
@@ -64,12 +69,12 @@ func _console() -> void:
 		return
 	_expect(true, "A0 mounts A1's authored stream on the production controller")
 	var status: Dictionary = mount.call(&"status")
-	_expect(bool(status.get("configured", false)), "the mounted stream is configured (%s)" % String(status.get("last_error", "")))
-	_expect(String(status.get("last_error", "")) == "", "the mount reports no refusal reason")
+	_expect(bool(status.get("configured", false)), "the mounted stream is configured (%s)" % _text(status.get("last_error", "")))
+	_expect(_text(status.get("last_error", "")) == "", "the mount reports no refusal reason")
 	_expect(int(status.get("chunks_loaded", 0)) >= 1, "at least one authored chunk is mounted for the player (%d)" % int(status.get("chunks_loaded", 0)))
 	_expect(int(status.get("max_chunks", 0)) >= int(status.get("chunks_loaded", 0)),
 		"the stream stays inside its own bound (%d/%d)" % [int(status.get("chunks_loaded", 0)), int(status.get("max_chunks", 0))])
-	_expect(String(status.get("region", "")) != "", "the stream reports the region the player stands in (%s)" % String(status.get("region", "")))
+	_expect(_text(status.get("region", "")) != "", "the stream reports the region the player stands in (%s)" % _text(status.get("region", "")))
 
 	# A0's authority is unchanged by mounting A1's continent beside it.
 	var world: OverworldWorld = _ow.get(&"world")
@@ -98,6 +103,16 @@ func _console() -> void:
 	var covered := 384.0 * 256.0 / (1024.0 * 768.0)
 	print("A0 AUTHORED COVERAGE %.4f of the authored continent is A0-playable today" % covered)
 	_finish()
+
+
+## Text from a Variant that may be absent. `String(null)` is an engine error, not an
+## empty string, and an oracle that dies converting its own reading reports nothing.
+func _text(value: Variant) -> String:
+	if value is String:
+		return value
+	if value is StringName:
+		return String(value)
+	return ""
 
 
 func _cleanup() -> void:

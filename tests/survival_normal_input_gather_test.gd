@@ -8,18 +8,20 @@ extends "res://tests/survival_foundation_test.gd"
 ## A stop that only says "the body did not finish" is not evidence. Every early
 ## return in `_body` therefore names the step it gave up at and prints the bag at
 ## that instant, so a red run is a diagnosis rather than a hunt.
-var _stage := "boot"
+## The step the prefix is on. Named apart from the connected half's `_stage()`
+## function: a subclass may not declare a method with an inherited member's name.
+var _gather_stage := "boot"
 var _stop_reason := ""
 
 
 func _stage_at(name: String) -> void:
-	_stage = name
+	_gather_stage = name
 
 
 func _stop(reason: String) -> void:
 	_stop_reason = reason
 	print("A0_GATHER_STOPPED stage=%s reason=%s bag=%s checks=%d failures=%d" % [
-		_stage, reason, _bag_json(), checks, failures.size()])
+		_gather_stage, reason, _bag_json(), checks, failures.size()])
 	_body_complete = true
 
 

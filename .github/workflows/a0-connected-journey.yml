@@ -105,7 +105,10 @@ jobs:
             local rc=$?
             cat "$log"
             echo "::notice::probe $name exit=$rc"
-            while IFS= read -r line; do echo "::error title=probe-$name::$line"; done < <(grep -aE '  FAIL  |Parse Error|SCRIPT ERROR' "$log" | head -6)
+            # Where the probe stopped matters more than that it stopped: a 300 s
+            # timeout with no stage line costs another whole run to diagnose.
+            while IFS= read -r line; do echo "::error title=stage-$name::$line"; done < <(grep -aE 'A0_STREAM_PROBE' "$log" | tail -3)
+            while IFS= read -r line; do echo "::error title=probe-$name::$line"; done < <(grep -aE '  FAIL  |Parse Error|SCRIPT ERROR' "$log" | head -4)
             if [ "$rc" -ne 0 ]; then failures=$((failures+1)); fi
             if ! grep -qaE 'PASSED|NOT_APPLICABLE|BLOCKED' "$log"; then failures=$((failures+1)); fi
           }
