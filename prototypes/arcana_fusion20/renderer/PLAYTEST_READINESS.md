@@ -180,14 +180,31 @@ overlap runs also passed in this multi-actor setup.
 The `aa897d8` build's #14/#18 full casts above cover that later art in live motion,
 but the remaining 18 captures are from the earlier exact SHA.
 
+The timestamp-corrected all-20 rerun [41294874230](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41294874230)
+completed successfully at `924dc2522f9776d570c6e91118766d5fdc040fc4`.
+It retained separate live-motion artifacts for all 20 with three real moving
+Skeletons (seven for #09), player/camera movement, natural finish, restart and
+cancel, and unchanged enemy HP. The #09 [video + timeline](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41294874230/artifacts/13078279711)
+contains 57 captured frames, last-observed tick 431, all seven enemies moving,
+and zero unbound source-contact events. All captures remain sparse, software
+rendered and not comprehensively visually reviewed. Three overlap sessions and
+Windows headless smoke also passed. The later art edits below are not in this
+run; success is not parity, a hit receipt, or creator acceptance.
+
 Subsequent **unreviewed redesign candidates**: `75b44c5106020be85b474a961746e57dab95b62e`
 changes the #14 A clusters from tall stacked branching shapes to shorter,
 broader cap-and-stipe clusters and enlarges the spores. Frozen-world capture jobs (including a completed normal-A still job)
 are in [41294992386](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41294992386).
 `cfae6b1` arranges the five #18 A stored-event shards around the shared impact,
-with larger crystal windows; its runtime/art review is also pending. Neither
-change is validated in native gameplay or approved, and neither is in the
-artifacts above. A new build has been requested after these edits.
+with larger crystal windows; [41295029499](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41295029499) passed source-runtime and CPU benchmark, but not art review. A normal-light 1x crop of the #14 colony beat from
+[41295231056](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41295231056)
+shows low purple caps, but they read as thin parallel slats over dark green
+stems rather than a convincing outbreak. Follow-up `e9008a58fd0cd7827a9a04006b6afbba5b17ab51`
+gives the caps a deeper rounded profile; [41295327463](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41295327463)
+is capturing that revision, and [41295327487](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41295327487)
+is building it. Both were queued when recorded. These newer changes are not
+validated in native gameplay or approved, and are not in the downloadable
+artifacts above.
 
 [41293811919](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293811919)
 also compared complete no-PNG-I/O casts/overlap with fresh same-duration
