@@ -211,4 +211,8 @@ func source_pass_frame() -> Arcana20SourcePassFrame:
     return result
 
 func diagnostics() -> Dictionary:
-    return {"transport": "source_a_native_416x234_procedural", "tick": _tick, "active": _active}
+    var result := {"transport": "source_a_native_416x234_procedural", "tick": _tick, "active": _active}
+    if _spell != null and _spell.has_method("source_raster_uncontained_nodes"):
+        result["raster_offset"] = _raster_offset
+        result["uncontained_actor_nodes"] = _spell.call("source_raster_uncontained_nodes")
+    return result

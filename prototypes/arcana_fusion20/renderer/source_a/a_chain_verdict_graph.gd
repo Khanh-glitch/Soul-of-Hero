@@ -139,6 +139,15 @@ func source_raster_offset() -> Vector2:
     return Vector2(_window_axis(lo.x, hi.x, float(AFramebuffer.W), 32.0),
         _window_axis(lo.y, hi.y, float(AFramebuffer.H), 32.0))
 
+func source_raster_uncontained_nodes() -> int:
+    var count := 0
+    for value in nodes:
+        if value == null: continue
+        var point: Vector2 = value + raster_offset
+        if point.x < 0.0 or point.y < 0.0 or point.x >= AFramebuffer.W or point.y >= AFramebuffer.H:
+            count += 1
+    return count
+
 func _spawn_sparks(at: Vector2, count: int, lo: float, hi: float, life_lo: float, life_hi: float) -> void:
     for i in range(count):
         var a := rng.angle()

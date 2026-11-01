@@ -45,6 +45,11 @@ func _initialize() -> void:
         push_error("A09_WINDOW_FAIL noninteger translation")
         quit(1)
         return
+    spell.raster_offset = wide
+    if spell.source_raster_uncontained_nodes() == 0:
+        push_error("A09_WINDOW_FAIL oversized span was not reported")
+        quit(1)
+        return
     # Wider than the fixed field: report the unresolved case, don't rescale.
     print("A09_WINDOW_PASS actor world positions unchanged; fixed field can still clip oversized spans, offset=", offset)
     host.free()
