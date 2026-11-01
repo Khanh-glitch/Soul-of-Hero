@@ -52,6 +52,13 @@ func _petal(fb: AFramebuffer, t: float, burst: float, open: float, fade: float, 
     # subpixel coordinates into the source framebuffer, not a polygon proxy.
     for i in range(us + 1):
         var u := float(i) / float(us)
+        # These authored geometry terms do not depend on the cross-sheet
+        # coordinate v. Calculate them once per row without changing the
+        # sample order, noise function, seed, material, or geometry.
+        var angle := a0 + curl * u * u + sin(t * 1.3 + u * 3.0 + a0) * 0.08 * twist
+        var rr := size * u
+        var wid := size * width * sin(pow(u, 0.65) * PI) * (1.0 - burst * 0.2)
+        var rip := sin(u * 7.0 - t * 4.0 + a0 * 3.0) * 2.2 * u + AMath.fbm(u * 5.0 + a0, t * 0.9, 2) * 3.0 * u
         for j in range(vs + 1):
             var v := float(j) / float(vs) * 2.0 - 1.0
             var av := absf(v)
@@ -60,10 +67,6 @@ func _petal(fb: AFramebuffer, t: float, burst: float, open: float, fade: float, 
             if freeze > 0.0: h += freeze * 0.18
             if h < 0.04: continue
             var color := ACommon.ramp_step("water", AMath.cl01(h), 8.0) * 0.5
-            var angle := a0 + curl * u * u + sin(t * 1.3 + u * 3.0 + a0) * 0.08 * twist
-            var rr := size * u
-            var wid := size * width * sin(pow(u, 0.65) * PI) * (1.0 - burst * 0.2)
-            var rip := sin(u * 7.0 - t * 4.0 + a0 * 3.0) * 2.2 * u + AMath.fbm(u * 5.0 + a0, t * 0.9, 2) * 3.0 * u
             var lateral := v * wid + rip * v * 0.3
             var x := C.x + cos(angle) * rr - sin(angle) * lateral
             var y := C.y + (sin(angle) * rr + cos(angle) * lateral) / SQ - u * u * 6.0 * growth

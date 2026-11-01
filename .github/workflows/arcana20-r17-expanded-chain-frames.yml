@@ -23,7 +23,18 @@ jobs:
           run-id: 41315747505
           github-token: ${{ github.token }}
           path: capture
-      - run: python3 -m pip install --quiet pillow
+      - run: python3 -m pip install --quiet pillow numpy
+      - name: Recover paired full-cast encoding
+        run: |
+          set +e
+          python3 tools/arcana20_join/compare_controlled_chain.py capture > "$RUNNER_TEMP/controlled-encode.log" 2>&1
+          status=$?
+          tail -8 "$RUNNER_TEMP/controlled-encode.log" | while IFS= read -r line; do echo "::notice title=R18_ENCODE::$line"; done
+          echo "::notice title=R18_ENCODE_STATUS::$status"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: r18-controlled-encoded-${{ matrix.light }}
+          path: capture/controlled/
       - name: Compare restore drift at two decisive phases
         run: |
           python3 - <<'PY2'

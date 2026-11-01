@@ -28,11 +28,20 @@ jobs:
       - name: Import and capture exact source TS
         run: |
           set -o pipefail
+          git fetch --depth=1 --no-tags origin 3526b2f9d4eea11dd31e30a5ccfffbcbbb96294f
+          git show 3526b2f9d4eea11dd31e30a5ccfffbcbbb96294f:prototypes/arcana_fusion20/renderer/source_a/a_abyssal_bloom_lead.gd | sed 's/class_name AAbyssalBloomLead/class_name AAbyssalBloomLeadBaseline/' > prototypes/arcana_fusion20/renderer/a05_baseline_temp.gd
           godot --headless --path . --import > import.log 2>&1
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:' import.log
           mkdir -p artifacts/arcana20-a05-source
           "$RUNNER_TEMP/a05-node/node_modules/.bin/esbuild" tools/arcana20_source_compare/a05_reference.ts --bundle --platform=node --format=esm --outfile="$RUNNER_TEMP/a05-ref.mjs"
           node "$RUNNER_TEMP/a05-ref.mjs" artifacts/arcana20-a05-source
+      - name: Check exact native pre/post fields and CPU time
+        run: |
+          set -o pipefail
+          timeout 600s godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/a05_optimization_test.gd > optimization.log 2>&1
+          grep -Fq 'A05_OPT_PASS' optimization.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|A05_OPT_FAIL' optimization.log
+          grep '^A05_OPT_' optimization.log | while IFS= read -r line; do echo "::notice title=A05_OPT::$line"; done
       - name: Capture native selected source component
         run: |
           set -o pipefail
