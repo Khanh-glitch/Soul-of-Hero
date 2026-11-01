@@ -1,0 +1,55 @@
+"""Build bounded, genuine 1x evidence from a live capture already on the runner.
+
+Each contact sheet contains six unscaled 1280x720 viewport images. Captions
+occupy separate black bars; no overlays or fabricated pixels enter a frame.
+PNG originals and lossless recording are untouched. tick is last observed and
+can lag the displayed frame, exactly as disclosed in timeline.json.
+"""
+import json
+import pathlib
+import sys
+from PIL import Image, ImageDraw
+
+root = pathlib.Path(sys.argv[1])
+out = pathlib.Path(sys.argv[2])
+sha = sys.argv[3]
+record = json.loads((root / 'timeline.json').read_text())
+frames = record['frames']
+roles = {2:'B Pyre Wyrm', 3:'B Meteor Loom', 7:'C Mirrorfrost Basilica',
+         8:'B Undertow Maw', 10:'C Thunderloom', 15:'C Thorn Opera', 17:'C Event Horizon'}
+skill = int(record['skill'])
+if skill not in roles or len(frames) < 2:
+    raise SystemExit('Expected Batch S with at least two actual captured frames')
+light = record['lighting']
+# Baseline and OUT come from the actual first and last frames. Intermediate
+# ticks deliberately span the cast rather than selecting only pretty beats.
+# A given software-rendered capture may skip a requested tick.
+fractions = (0.16, 0.36, 0.60, 0.83)
+indices = [0] + [min(range(1, len(frames)-1), key=lambda i: abs(frames[i]['source_tick_last_observed'] - record['last_tick']*v)) for v in fractions] + [len(frames)-1]
+out.mkdir(parents=True, exist_ok=True)
+sheet = Image.new('RGB', (3840, 2*752), 'black')
+draw = ImageDraw.Draw(sheet)
+entries=[]
+for n, index in enumerate(indices):
+    frame = frames[index]
+    image = Image.open(root / frame['file']).convert('RGB')
+    if image.size != (1280,720):
+        raise SystemExit(f'Expected unscaled 1280x720 frame, got {image.size}')
+    label = ('start','early','middle','late','aftermath','OUT')[n]
+    name=f'{n:02d}_{label}_tick{frame["source_tick_last_observed"]}.jpg'
+    image.save(out / name, 'JPEG', quality=76, subsampling=0, optimize=True)
+    x, y = (n%3)*1280, (n//3)*752
+    sheet.paste(image,(x,y))
+    line=(f'#{skill:02d} {roles[skill]} {light} {label} | frame {index} '
+          f'tick~{frame["source_tick_last_observed"]} wall={frame["wall_s"]:.3f}s')
+    draw.text((x+5,y+725),line,fill='white')
+    entries.append({'label':label, 'index':index, 'file':name, **frame})
+sheet.save(out / f'sheet_{skill:02d}_{light}.jpg','JPEG',quality=43,optimize=True,progressive=True)
+meta={'avfx_sha':sha, 'skill':skill, 'source_role':roles[skill], 'lighting':light,
+      'scope':record['scope'], 'resolution':'1280x720 each, 1x pixels before JPEG encoding',
+      'source_tick_note':record['capture_timestamp_note'], 'cast_duration_s':record['cast_duration_s'],
+      'last_tick':record['last_tick'], 'entries':entries,
+      'cast_target_world':record.get('cast_target_world'),
+      'note':'OUT is captured after finish; no assumption of hit, actor depth or production HDR.'}
+(out / 'metadata.json').write_text(json.dumps(meta,indent=2)+'\n')
+print(f'BATCH_S_REVIEW skill={skill:02} lighting={light} frames={len(frames)} selected={indices} sheet_bytes={(out / f"sheet_{skill:02d}_{light}.jpg").stat().st_size}')

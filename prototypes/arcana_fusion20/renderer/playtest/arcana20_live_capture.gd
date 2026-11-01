@@ -129,11 +129,19 @@ func start(wrapper: Node) -> void:
     var overlap_completed := [false]
     renderer.cast_finished.connect(func(id: StringName) -> void:
         if id == overlap_id: overlap_completed[0] = true)
+    var cast_target_world = null
     var start_usec := Time.get_ticks_usec()
     capture_start_usec = start_usec
     if capture and not await _frame(folder, player, enemy, camera):
         _fail("baseline frame"); return
     if not no_fx:
+        var selected_target := host.get("target_selector") as OptionButton
+        if selected_target != null and selected_target.selected == 0:
+            var cast_enemy := host.call(&"_nearest_enemy") as Node2D
+            if is_instance_valid(cast_enemy): cast_target_world = [cast_enemy.global_position.x, cast_enemy.global_position.y]
+        else:
+            var mouse_world := player.get_global_mouse_position()
+            cast_target_world = [mouse_world.x, mouse_world.y]
         host.call(&"_cast_selected")
         if not renderer.is_active(cast_id):
             _fail("real-scene cast refused"); return
@@ -221,6 +229,7 @@ func start(wrapper: Node) -> void:
     var p99 := frame_times[mini(frame_times.size() - 1, int(ceil(frame_times.size() * 0.99)) - 1)] if not frame_times.is_empty() else 0.0
     var record := {"scope": "actual game route, visual-only; automatic real player input and unmodified Skeleton AI; not combat receipts or device FPS",
         "skill": skill, "lighting": OS.get_environment("AVFX_LIVE_LIGHT"), "captured": capture, "frames": samples,
+        "cast_target_world": cast_target_world,
         "no_fx": no_fx, "overlap_skill": overlap_skill, "cast_duration_s": cast_duration_s,
         "last_tick": ticks_seen[-1] if not ticks_seen.is_empty() else 0, "events": contacts, "unbound_events": unbound_contacts,
         "enemy_count": enemy_count, "spawn_formation": "ring" if formation != null and formation.selected == 1 else "line",

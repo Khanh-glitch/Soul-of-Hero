@@ -151,6 +151,11 @@ jobs:
     # Newest art receives live moving-world full-cast capture; the earlier
     # all-20 single-enemy and multi-enemy matrix runs remain separate evidence.
     needs: build
+    # Only publish generated, bounded visual evidence as detached Git blobs;
+    # the agent reviews and commits them on the owned branch. No ref writes.
+    permissions:
+      contents: write
+      actions: read
     strategy:
       fail-fast: false
       matrix:
@@ -227,6 +232,54 @@ jobs:
           set -euo pipefail
           if ! command -v ffmpeg; then sudo apt-get update -qq && sudo apt-get install -y ffmpeg; fi
           python3 tools/arcana20_join/encode_live_capture.py "$RUNNER_TEMP/live-output" 2>&1 | tee "$RUNNER_TEMP/encode.log"
+      - name: Make native Batch S review evidence
+        if: matrix.skill != 5
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          review="$RUNNER_TEMP/batch-s-review"
+          python3 tools/arcana20_join/batch_s_review_pack.py "$RUNNER_TEMP/live-output" "$review" "$GITHUB_SHA"
+          # Put bounded 1x sheets and metadata in detached Git blobs. This is
+          # a transport fallback when the artifact CDN is inaccessible; it
+          # never changes a branch or labels a picture visually approved.
+          for file in "$review"/sheet_*.jpg "$review"/metadata.json; do
+            python3 - "$file" "$RUNNER_TEMP/git-blob.json" <<'PY'
+          import base64,json,pathlib,sys
+          data=base64.b64encode(pathlib.Path(sys.argv[1]).read_bytes()).decode('ascii')
+          pathlib.Path(sys.argv[2]).write_text(json.dumps({'content':data,'encoding':'base64'}))
+          PY
+            if blob=$(gh api --method POST "repos/$GITHUB_REPOSITORY/git/blobs" --input "$RUNNER_TEMP/git-blob.json" --jq .sha); then
+              echo "::notice title=BATCH_S_GIT_BLOB_$(basename "$file")::$blob"
+            else
+              echo "::warning::Git blob transport unavailable; use the small review artifact"
+            fi
+          done
+      - name: Upload separate native Batch S frames and sheet
+        if: matrix.skill != 5
+        uses: actions/upload-artifact@v4
+        with:
+          name: batch-s-review-${{ matrix.variant }}-${{ matrix.lighting }}
+          path: ${{ runner.temp }}/batch-s-review/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Encode compact 720p native-cadence motion
+        if: matrix.skill == 3 || matrix.skill == 15
+        run: |
+          set -euo pipefail
+          ffmpeg -hide_banner -loglevel error -y -f concat -safe 0 -i "$RUNNER_TEMP/live-output/frames.txt" \
+            -fps_mode vfr -c:v libx264 -preset medium -crf 30 -pix_fmt yuv420p -movflags +faststart "$RUNNER_TEMP/native-review-720p.mp4"
+          cp "$RUNNER_TEMP/live-output/timeline.json" "$RUNNER_TEMP/native-review-timeline.json"
+      - name: Upload separate 720p motion and original timing
+        if: matrix.skill == 3 || matrix.skill == 15
+        uses: actions/upload-artifact@v4
+        with:
+          name: batch-s-motion-${{ matrix.variant }}-${{ matrix.lighting }}
+          path: |
+            ${{ runner.temp }}/native-review-720p.mp4
+            ${{ runner.temp }}/native-review-timeline.json
+          if-no-files-found: error
+          retention-days: 14
       # The sandbox can read GitHub check annotations but not the Actions
       # artifact blob host. Surface a tiny motion proxy so the complete cast
       # can be inspected there; the full-resolution lossless video is retained
@@ -431,7 +484,32 @@ jobs:
         run: for i in $(seq 18 26); do [ ! -f "$RUNNER_TEMP/full-chunks/$i" ] || echo "::notice title=R20_FULL_3_b_$i::$(cat "$RUNNER_TEMP/full-chunks/$i")"; done
       - name: Full frame chunks 27-35
         run: for i in $(seq 27 35); do [ ! -f "$RUNNER_TEMP/full-chunks/$i" ] || echo "::notice title=R20_FULL_3_b_$i::$(cat "$RUNNER_TEMP/full-chunks/$i")"; done
+  batch-s-small-review:
+    # Only the small 1x images and JSON; no lossless or MP4 copied here.
+    needs: live-motion
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: batch-s-review-*
+          path: review
+      - name: Check evidence count and bounded size
+        run: |
+          set -euo pipefail
+          test "$(find review -name 'sheet_*.jpg' | wc -l)" -eq 14
+          test "$(find review -name 'metadata.json' | wc -l)" -eq 14
+          test "$(find review -name '0*_tick*.jpg' | wc -l)" -eq 84
+          bytes=$(du -sb review | cut -f1)
+          echo "Small review pack: $bytes bytes"
+          test "$bytes" -lt 20000000
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ARCANA20_BATCH_S_1X_REVIEW_SMALL
+          path: review/
+          if-no-files-found: error
+          retention-days: 14
   creator-package:
+    if: ${{ false }} # Evidence transport iteration; 51f aggregate is retained.
     # One download, only when the same-run runtime and evidence jobs succeed.
     needs: [build, windows-current-runtime, live-motion, source-review, full-frame-review]
     runs-on: ubuntu-latest
