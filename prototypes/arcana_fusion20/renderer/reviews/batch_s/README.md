@@ -1,15 +1,9 @@
-# Batch S native gameplay sheets — baseline 853ab121
+# Batch S — current native-size still evidence, not acceptance
 
-Each sheet contains six actual 1280×720 viewport frames at native pixel size,
-arranged in a 3×2 grid with caption bars. JPEG is lossy. The frames come from
-real AppRoot → Home → Overworld natural captures with a moving player, moving
-Skeletons and camera in [run 41340095946](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41340095946),
-AVFX SHA `853ab12164d0dba5d6e3b337926647e6b8b10657`. Labels report last-observed
-source ticks (which may lag presentation), not guaranteed precise timestamps.
-These are stills, not full native motion, creator Gold or combat receipts.
+These fourteen JPEG contact sheets and metadata were produced by real game-route capture [run 41342302519](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41342302519), AVFX code `8c260d9d`. The directory is below 8 MB. Each sheet is a 3×2 grid of actual 1280×720 viewport screenshots, with separate caption bars; view or crop at 1×. JPEG encoding is lossy and the selected six frames are sparse. Camera/caster/target/clock data and source role are in the adjacent JSON. Last-observed source tick is not guaranteed to be the exact presentation tick. These sheets replace the pre-dither `853ab121` sheets (still in Git history).
 
-#03 is **before** `c60d3328`'s B screen-post ordered-dither correction; it
-visibly washes out actors at flash. #15 is after the live-caster/clamped-focus
-change but is one natural target/range, not a four-bearing long-range test.
-See the small same-run frame and motion artifacts for higher-quality individual
-images and timing, and `R21_EXECUTION_CHECKPOINT.md` for current status.
+The separately downloadable [small review artifact](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41342302519/artifacts/13097793089) is 14,659,085 bytes and contains six individual JPEGs plus each sheet and metadata for all seven skills, normal and dim. The same run includes the raw lossless real-world recordings; the screenshots do not certify full motion. Real-time performance is not established by software rendering or PNG-I/O-throttled capture.
+
+#03 and #15 true 720p H.264, variable-frame-time clips exist in this run. They preserve recorded capture wall timing, not an invented 60 fps; some software captures are slow and sparse. Native decoding and examination of sequential frame sheets plus selected full-size frames were performed, not an assertion of smooth 60 fps playback. Original timing JSON is in each artifact. See the PR report for artifact hashes and the open issues. The original source and CT-owned linear HDR final-world pass are separate from the diagnostic LDR preview. Nothing here asserts combat, body/depth parity, Gold, or creator approval.
+
+#15 has an independent extreme moving-caster/fixed-bloom separation issue; see `../thorn_range_2852/README.md`. #02/#07/#08/#10/#17 still require complete 1× motion/art review. Thus the current artifact is a partial candidate, not seven approved skills.

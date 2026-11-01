@@ -1,0 +1,138 @@
+{
+  "avfx_sha": "8c260d9d595d33f96bc333d860851dcaaae12cac",
+  "skill": 17,
+  "source_role": "C Event Horizon",
+  "lighting": "dimmed",
+  "scope": "actual game route, visual-only; automatic real player input and unmodified Skeleton AI; not combat receipts or device FPS",
+  "resolution": "1280x720 each, 1x pixels before JPEG encoding",
+  "source_tick_note": "frame_post_draw before PNG encoding; last-observed source tick can lag displayed state",
+  "cast_duration_s": 16.131714,
+  "last_tick": 522,
+  "entries": [
+    {
+      "camera": [
+        904.0,
+        3488.0
+      ],
+      "enemy": [
+        1004.0,
+        3496.0
+      ],
+      "file": "00_start_tick0.jpg",
+      "player": [
+        904.0,
+        3496.0
+      ],
+      "source_tick_last_observed": 0,
+      "wall_s": 0.255882,
+      "source_png": "frame_00000.png",
+      "label": "start",
+      "index": 0
+    },
+    {
+      "camera": [
+        877.035827636719,
+        3525.56713867188
+      ],
+      "enemy": [
+        923.9404296875,
+        3531.64453125
+      ],
+      "file": "01_early_tick87.jpg",
+      "player": [
+        877.010986328125,
+        3534.81103515625
+      ],
+      "source_tick_last_observed": 87,
+      "wall_s": 2.706989,
+      "source_png": "frame_00012.png",
+      "label": "early",
+      "index": 12
+    },
+    {
+      "camera": [
+        918.116027832031,
+        3426.82397460938
+      ],
+      "enemy": [
+        894.381103515625,
+        3471.90258789062
+      ],
+      "file": "02_middle_tick263.jpg",
+      "player": [
+        918.130310058594,
+        3436.998046875
+      ],
+      "source_tick_last_observed": 263,
+      "wall_s": 8.993648,
+      "source_png": "frame_00034.png",
+      "label": "middle",
+      "index": 34
+    },
+    {
+      "camera": [
+        974.35400390625,
+        3389.16040039062
+      ],
+      "enemy": [
+        925.780578613281,
+        3446.638671875
+      ],
+      "file": "03_late_tick367.jpg",
+      "player": [
+        976.739318847656,
+        3397.19897460938
+      ],
+      "source_tick_last_observed": 367,
+      "wall_s": 12.156091,
+      "source_png": "frame_00047.png",
+      "label": "late",
+      "index": 47
+    },
+    {
+      "camera": [
+        1008.26843261719,
+        3412.79565429688
+      ],
+      "enemy": [
+        966.577514648438,
+        3433.32397460938
+      ],
+      "file": "04_aftermath_tick458.jpg",
+      "player": [
+        1008.26843261719,
+        3421.00048828125
+      ],
+      "source_tick_last_observed": 458,
+      "wall_s": 14.978017,
+      "source_png": "frame_00059.png",
+      "label": "aftermath",
+      "index": 59
+    },
+    {
+      "camera": [
+        1097.86938476562,
+        3429.7607421875
+      ],
+      "enemy": [
+        1039.36865234375,
+        3424.62548828125
+      ],
+      "file": "05_OUT_tick522.jpg",
+      "player": [
+        1097.86938476562,
+        3437.76293945312
+      ],
+      "source_tick_last_observed": 522,
+      "wall_s": 16.271772,
+      "source_png": "frame_00068.png",
+      "label": "OUT",
+      "index": 68
+    }
+  ],
+  "cast_target_world": [
+    1004.0,
+    3496.0
+  ],
+  "note": "OUT is captured after finish; no assumption of hit, actor depth or production HDR."
+}

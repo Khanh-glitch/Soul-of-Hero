@@ -1,0 +1,3 @@
+# F01 — first F-batch real-route evidence
+
+Two 3×2 sheets and metadata from [run 41342302519](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41342302519) at AVFX `8c260d9d`. Each JPEG cell is the captured 1280×720 viewport (1× before compression), not generated art. #01 uses the A crown lead and the selected C outer-flame primitives; `7169f048` aligns their center and similarity basis, including clamped cast distances. Samples show formation, the selected red C flame geometry around A burst, aftermath and OUT in normal and dim. Six samples cannot certify full motion, source appearance, depth, HDR or creator acceptance. This is not completion of batch F.

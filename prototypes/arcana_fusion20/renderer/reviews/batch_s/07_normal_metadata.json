@@ -1,0 +1,138 @@
+{
+  "avfx_sha": "8c260d9d595d33f96bc333d860851dcaaae12cac",
+  "skill": 7,
+  "source_role": "C Mirrorfrost Basilica",
+  "lighting": "normal",
+  "scope": "actual game route, visual-only; automatic real player input and unmodified Skeleton AI; not combat receipts or device FPS",
+  "resolution": "1280x720 each, 1x pixels before JPEG encoding",
+  "source_tick_note": "frame_post_draw before PNG encoding; last-observed source tick can lag displayed state",
+  "cast_duration_s": 12.607441,
+  "last_tick": 550,
+  "entries": [
+    {
+      "camera": [
+        904.0,
+        3488.0
+      ],
+      "enemy": [
+        1004.0,
+        3496.0
+      ],
+      "file": "00_start_tick0.jpg",
+      "player": [
+        904.0,
+        3496.0
+      ],
+      "source_tick_last_observed": 0,
+      "wall_s": 0.259422,
+      "source_png": "frame_00000.png",
+      "label": "start",
+      "index": 0
+    },
+    {
+      "camera": [
+        862.055236816406,
+        3555.9736328125
+      ],
+      "enemy": [
+        922.515319824219,
+        3542.5009765625
+      ],
+      "file": "01_early_tick95.jpg",
+      "player": [
+        862.452453613281,
+        3564.3037109375
+      ],
+      "source_tick_last_observed": 95,
+      "wall_s": 2.499097,
+      "source_png": "frame_00013.png",
+      "label": "early",
+      "index": 13
+    },
+    {
+      "camera": [
+        939.07763671875,
+        3436.98291015625
+      ],
+      "enemy": [
+        906.244079589844,
+        3499.87255859375
+      ],
+      "file": "02_middle_tick271.jpg",
+      "player": [
+        937.678405761719,
+        3444.97192382812
+      ],
+      "source_tick_last_observed": 271,
+      "wall_s": 6.284263,
+      "source_png": "frame_00035.png",
+      "label": "middle",
+      "index": 35
+    },
+    {
+      "camera": [
+        938.074523925781,
+        3415.42797851562
+      ],
+      "enemy": [
+        928.845031738281,
+        3447.70581054688
+      ],
+      "file": "03_late_tick383.jpg",
+      "player": [
+        938.075561523438,
+        3424.82568359375
+      ],
+      "source_tick_last_observed": 383,
+      "wall_s": 8.861347,
+      "source_png": "frame_00049.png",
+      "label": "late",
+      "index": 49
+    },
+    {
+      "camera": [
+        1012.45483398438,
+        3440.95043945312
+      ],
+      "enemy": [
+        954.109313964844,
+        3433.20361328125
+      ],
+      "file": "04_aftermath_tick487.jpg",
+      "player": [
+        1012.38684082031,
+        3449.35375976562
+      ],
+      "source_tick_last_observed": 487,
+      "wall_s": 11.478477,
+      "source_png": "frame_00062.png",
+      "label": "aftermath",
+      "index": 62
+    },
+    {
+      "camera": [
+        1066.03771972656,
+        3372.705078125
+      ],
+      "enemy": [
+        1015.70776367188,
+        3400.9013671875
+      ],
+      "file": "05_OUT_tick550.jpg",
+      "player": [
+        1066.09643554688,
+        3380.705078125
+      ],
+      "source_tick_last_observed": 550,
+      "wall_s": 12.734659,
+      "source_png": "frame_00071.png",
+      "label": "OUT",
+      "index": 71
+    }
+  ],
+  "cast_target_world": [
+    1004.0,
+    3496.0
+  ],
+  "note": "OUT is captured after finish; no assumption of hit, actor depth or production HDR."
+}

@@ -74,3 +74,20 @@ F bắt đầu bằng #01 A lead + hình ngọn lửa C: 7169f048 đồng bộ t
 hai nguồn kể cả khi clamp khoảng cách; không thay nguồn hay tự duyệt mỹ thuật.
 Nếu workflow chạy thêm F01 normal/dim, ảnh đó là evidence mới, không phải
 chấp thuận cho toàn batch F.
+
+KẾT QUẢ run 41342302519 tại 8c260d9d: creator package MỘT PHẦN thành công,
+bao gồm Windows/Linux cùng run, #05 A/B khóa cảnh, 14 bộ ảnh 1x và metadata,
+clip 720p #03/#15 normal/dim, PNG matrix nguyên bản, guide và SHA256SUMS.
+Small review artifact 13097793089: 14,659,085 byte (<20 MB). Ảnh trực tiếp
+reviews/batch_s/ là ảnh 8c260d9d, không còn là bộ 853ab121 cũ.
+
+Giải mã toàn bộ frame trong bốn clip 720p thành chuỗi thumbnail theo thứ tự,
+kiểm thêm các frame 1280x720 tại flash/hoa. #03 có các đợt chớp xám rất mạnh
+ngắn xen giữa các điểm thiên thạch, sau đó xuất hiện mạng phù văn và OUT;
+nhân vật/cảnh vẫn nhìn được ở các frame flash đã xem nhưng tương phản giảm.
+Source gốc thật có dither xám toàn sân; cách lượng tử hóa hiện tại là xấp xỉ
+LDR và chưa chứng minh HDR hay độ đọc tối ưu. #15 ở cảnh thường có tua xanh,
+hoa hồng, hạt và OUT; matrix 35 đơn vị vẫn cho thấy tách tua/hoa khi actor chạy
+xa (vấn đề mở). Không khẳng định xem video mượt 60 fps: clip ghi cadence thực
+của capture software/PNG và có bỏ qua tick; chuỗi thumbnail không phải duyệt
+chuyển động 1x liên tục. Các skill còn lại mới có mẫu 1x/proxy, chưa duyệt hết.

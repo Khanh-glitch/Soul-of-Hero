@@ -1,0 +1,218 @@
+{
+  "avfx_sha": "8c260d9d595d33f96bc333d860851dcaaae12cac",
+  "skill": 15,
+  "source_role": "C Thorn Opera",
+  "lighting": "dimmed",
+  "scope": "actual game route, visual-only; automatic real player input and unmodified Skeleton AI; not combat receipts or device FPS",
+  "resolution": "1280x720 each, 1x pixels before JPEG encoding",
+  "source_tick_note": "frame_post_draw before PNG encoding; last-observed source tick can lag displayed state",
+  "cast_duration_s": 9.581124,
+  "last_tick": 501,
+  "entries": [
+    {
+      "camera": [
+        904.0,
+        3488.0
+      ],
+      "enemy": [
+        1004.0,
+        3496.0
+      ],
+      "file": "00_start_tick0.jpg",
+      "player": [
+        904.0,
+        3496.0
+      ],
+      "source_tick_last_observed": 0,
+      "wall_s": 0.209012,
+      "source_png": "frame_00000.png",
+      "label": "start",
+      "index": 0
+    },
+    {
+      "camera": [
+        915.93359375,
+        3530.20751953125
+      ],
+      "enemy": [
+        966.476928710938,
+        3503.48706054688
+      ],
+      "file": "01_early_tick82.jpg",
+      "player": [
+        916.336853027344,
+        3538.20703125
+      ],
+      "source_tick_last_observed": 82,
+      "wall_s": 1.895654,
+      "source_png": "frame_00012.png",
+      "label": "early",
+      "index": 12
+    },
+    {
+      "camera": [
+        929.381591796875,
+        3504.71044921875
+      ],
+      "enemy": [
+        913.505432128906,
+        3504.10107421875
+      ],
+      "file": "02_middle_tick253.jpg",
+      "player": [
+        930.706848144531,
+        3512.69970703125
+      ],
+      "source_tick_last_observed": 253,
+      "wall_s": 4.812246,
+      "source_png": "frame_00034.png",
+      "label": "middle",
+      "index": 34
+    },
+    {
+      "camera": [
+        927.559387207031,
+        3505.3359375
+      ],
+      "enemy": [
+        914.382690429688,
+        3514.51416015625
+      ],
+      "file": "03_late_tick349.jpg",
+      "player": [
+        927.56640625,
+        3513.34594726562
+      ],
+      "source_tick_last_observed": 349,
+      "wall_s": 6.537407,
+      "source_png": "frame_00046.png",
+      "label": "late",
+      "index": 46
+    },
+    {
+      "camera": [
+        854.149963378906,
+        3556.68237304688
+      ],
+      "enemy": [
+        895.99755859375,
+        3535.02880859375
+      ],
+      "file": "04_aftermath_tick437.jpg",
+      "player": [
+        855.171997070312,
+        3565.47021484375
+      ],
+      "source_tick_last_observed": 437,
+      "wall_s": 8.43938,
+      "source_png": "frame_00057.png",
+      "label": "aftermath",
+      "index": 57
+    },
+    {
+      "camera": [
+        908.14404296875,
+        3489.16650390625
+      ],
+      "enemy": [
+        877.670959472656,
+        3529.93701171875
+      ],
+      "file": "05_OUT_tick501.jpg",
+      "player": [
+        908.502868652344,
+        3497.16650390625
+      ],
+      "source_tick_last_observed": 501,
+      "wall_s": 9.713039,
+      "source_png": "frame_00066.png",
+      "label": "OUT",
+      "index": 66
+    }
+  ],
+  "cast_target_world": [
+    1004.0,
+    3496.0
+  ],
+  "note": "OUT is captured after finish; no assumption of hit, actor depth or production HDR.",
+  "thorn_raster_geometry": {
+    "source_size": [
+      384,
+      216
+    ],
+    "cast_caster_world_approx": [
+      904.0,
+      3496.0
+    ],
+    "cast_target_world": [
+      1004.0,
+      3496.0
+    ],
+    "source_to_world_scale": 0.7107408501499922,
+    "source_to_world_rotation_radians": 0.09966865249116202,
+    "source_focus": [
+      252.0,
+      112.0
+    ],
+    "focus_margin_px": 104.0,
+    "source_targets": [
+      [
+        262.0,
+        106.0
+      ],
+      [
+        306.0,
+        156.0
+      ],
+      [
+        214.0,
+        164.0
+      ],
+      [
+        312.0,
+        62.0
+      ]
+    ],
+    "target_margin_px": [
+      106.0,
+      60.0,
+      52.0,
+      62.0
+    ],
+    "selected_caster_source_positions": [
+      [
+        112.0,
+        126.0
+      ],
+      [
+        135.18057861328157,
+        183.36268432617186
+      ],
+      [
+        151.72754638671844,
+        145.64063110351566
+      ],
+      [
+        147.42140136718677,
+        146.985029296868
+      ],
+      [
+        53.36662597656186,
+        230.09422119140632
+      ],
+      [
+        118.46732666015656,
+        127.00270385742185
+      ]
+    ],
+    "selected_caster_margin_px": [
+      90.0,
+      32.63731567382814,
+      70.35936889648434,
+      69.01497070313201,
+      -14.09422119140632,
+      88.99729614257815
+    ],
+    "limitations": "Baseline caster is sampled just before the cast, not a presentation fence. Points only; not root width, lash, flower, petal or actual rendered-edge coverage."
+  }
+}
