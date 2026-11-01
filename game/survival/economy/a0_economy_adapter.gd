@@ -1,6 +1,6 @@
-extends "res://game/survival/economy/vendor/a3_economy_service.gd"
-## A0-owned production composition shim over the unmodified A3 V7 service
-## (owner head 35214ed8). A3's generic _transact accepts an arbitrary callable, so
+extends "res://game/survival/economy/economy_service.gd"
+## A0-owned production composition shim over canonical A3 R13 EconomyService.
+## The separate A3EconomyService handles physical-source custody, not a second queue. A3's generic _transact accepts an arbitrary callable, so
 ## only callbacks authored by the pinned adapter itself may cross into the
 ## SaveService capability port.
 ##
@@ -12,7 +12,7 @@ extends "res://game/survival/economy/vendor/a3_economy_service.gd"
 ## Both are authored here (never by UI, a test lambda or a caller-supplied
 ## script), so the facade's "mutator must belong to the pinned adapter" rule
 ## still holds.
-const PINNED_BASE = preload("res://game/survival/economy/vendor/a3_economy_service.gd")
+const PINNED_BASE = preload("res://game/survival/economy/economy_service.gd")
 
 
 func _transact(operation: String, event_id: String, payload: Dictionary, mutator: Callable) -> Dictionary:
