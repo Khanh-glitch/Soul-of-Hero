@@ -1,0 +1,39 @@
+name: ARCANA20 Skybreaker and Chronoshard event review
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-skybreaker-chronoshard-review.yml']
+permissions:
+  actions: read
+  contents: read
+jobs:
+  surface:
+    strategy:
+      fail-fast: false
+      matrix:
+        lighting: [normal, dimmed]
+        skill: [12, 18]
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcana20-current-phase-sweep-${{ matrix.skill == 12 && '11' || '16' }}-${{ matrix.lighting }}
+          run-id: 41277610553
+          github-token: ${{ github.token }}
+          path: phases
+      - run: python3 -m pip install --quiet pillow
+      - name: Surface first event
+        env:
+          SKILL: ${{ matrix.skill }}
+        run: |
+          if [ "$SKILL" = 12 ]; then LABEL=phase_12_candidate_A_circuit_strike_impact_01_tick264; else LABEL=phase_18_candidate_A_event_captured_03_tick192; fi
+          python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py phases "$LABEL"
+      - name: Surface climax event
+        env:
+          SKILL: ${{ matrix.skill }}
+        run: |
+          if [ "$SKILL" = 12 ]; then LABEL=phase_12_candidate_A_skybreaker_impact_04_tick408; else LABEL=phase_18_candidate_A_synchronized_impact_06_tick372; fi
+          python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py phases "$LABEL"
