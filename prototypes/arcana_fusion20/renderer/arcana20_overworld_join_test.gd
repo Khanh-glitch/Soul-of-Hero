@@ -761,6 +761,7 @@ func _run() -> void:
     var tail_layers: Dictionary = mount._passes.get(id16, {})
     check(growth_impl.pollen.count() == 0 and not tail_layers.has(&"A") and tail_layers.has(&"C") and seed_fx.particles.size() > 0, "A16 pollen completes while original C16 seed tail remains alive")
     var seed_tail_img := await save_frame("fusion_16_extended_seed_tail_tick541")
+    print("C16_TAIL_STAGE_DEBUG ", JSON.stringify({"stage_visible":mount._c_stage.visible,"stage_states":mount._c_stage._states.keys(),"post_visible":seed_post._rect.visible,"post_states":seed_post._states.keys(),"post_flash":str(seed_debris.source_pass_frame().flash),"camera":str(camera.get_global_transform_with_canvas()),"camera_offset":str(camera.offset),"player":str(player.global_position),"enemy":str(enemy.global_position)}))
     var seed_tail_contamination := contamination(baseline, seed_tail_img, tail_layers.get(&"C"), seed_debris.source_pass_frame()) if tail_layers.has(&"C") else {"inside_changed":0,"outside_changed":-1}
     check(int(seed_tail_contamination.get("inside_changed",0)) > 0 and int(seed_tail_contamination.get("outside_changed",-1)) == 0, "C16 original seed tail visibly affects real world within authored influence: " + str(seed_tail_contamination))
     seed_debris.render_enabled = false

@@ -52,6 +52,12 @@ jobs:
             2>&1 | tee "$RUNNER_TEMP/arcana20-join/artifacts/join.log"
           grep -Fq 'ARCANA20_JOIN_DIAGNOSTIC PASS' "$RUNNER_TEMP/arcana20-join/artifacts/join.log"
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Shader compilation failed|JOIN_FAIL' "$RUNNER_TEMP/arcana20-join/artifacts/join.log"
+      - name: Surface C10 impact, motion and cleanup assertions
+        if: always()
+        run: |
+          if test -f "$RUNNER_TEMP/arcana20-join/artifacts/join.log"; then
+            grep -E 'JOIN_(OK|FAIL).*C10|JOIN_(OK|FAIL).*overlap cancellation|C16_TAIL_STAGE_DEBUG' "$RUNNER_TEMP/arcana20-join/artifacts/join.log" | sed 's/^/::notice title=C10_STAGE_JOIN::/' || true
+          fi
       - name: Surface C16 living-growth world assertions
         if: always()
         run: |
