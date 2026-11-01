@@ -421,6 +421,38 @@ func _run() -> void:
     await process_frame
     var both := await save_frame("overlap_02_10")
     check(mount.active_viewers(id2) == 1 and mount.active_viewers(id10) == 1 and not images_equal(only_b, both), "B and C simultaneous world viewers both active")
+    # R14: exercise Thunderloom's true spear impact with an overlapping cast.
+    # Its full-stage shade and scanlines must be viewport-aligned, while the
+    # separate source geometry remains world-anchored. This is not combat AI.
+    c10.render_enabled = false
+    for tick in range(110): c10.advance(STEP, false)
+    c10.render_enabled = true
+    c10._render_frame()
+    await process_frame
+    await process_frame
+    var stage := mount._c_stage
+    check(is_instance_valid(stage) and stage.visible and stage._states.has(id10) and absf(float(stage._states[id10].shade) - 0.4) < 0.000001, "C10 impact routes authored 0.4 stage shade to viewport consumer")
+    var before_stage_transform := stage.get_global_transform_with_canvas()
+    check(before_stage_transform.is_equal_approx(Transform2D.IDENTITY) and stage._rect.size.is_equal_approx(root.get_visible_rect().size), "C10 stage covers viewport instead of transformed source rectangle")
+    await save_frame("c10_impact_overlapping_02")
+    var old_player_position := player.global_position
+    var old_enemy_position := enemy.global_position
+    player.global_position += Vector2(15, 8)
+    enemy.global_position += Vector2(-12, 6)
+    camera.offset += Vector2(40, 20)
+    camera.force_update_scroll()
+    stage._sync_view()
+    await process_frame
+    await process_frame
+    check(stage.get_global_transform_with_canvas().is_equal_approx(Transform2D.IDENTITY), "C10 stage remains viewport-aligned after real camera and actor movement")
+    await save_frame("c10_impact_camera_and_actors_moved")
+    player.global_position = old_player_position
+    enemy.global_position = old_enemy_position
+    camera.offset -= Vector2(40, 20)
+    camera.force_update_scroll()
+    stage._sync_view()
+    await process_frame
+    await process_frame
     multi.cancel_skill(id10)
     await process_frame
     await process_frame
