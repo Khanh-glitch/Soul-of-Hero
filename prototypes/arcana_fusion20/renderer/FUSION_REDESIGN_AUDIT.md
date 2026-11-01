@@ -1,5 +1,10 @@
 # ARCANA visual acceptance audit — code inspection, not approval
 
+> **Historical material:** implementation and older source-only observations below
+> may be superseded. The canonical current-world evidence, owner pins, R14
+> regressions and acceptance state are in [OVERWORLD_INTEGRATION_STATUS.md](OVERWORLD_INTEGRATION_STATUS.md).
+> Nothing here is creator or Gold approval.
+
 Authority: `original_source/package/handoff/FUSION_DECISIONS.md` and the
 creator's manifest. These findings are **static code inspection**, not a claim
 that animation, silhouette, impact, OUT or in-game quality have been reviewed.

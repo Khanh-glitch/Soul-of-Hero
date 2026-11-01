@@ -1,5 +1,10 @@
 # ARCANA Fusion20 — AVFX renderer stream (PR #28 contract, Issue #29)
 
+> **Historical material:** implementation and older source-only observations below
+> may be superseded. The canonical current-world evidence, owner pins, R14
+> regressions and acceptance state are in [OVERWORLD_INTEGRATION_STATUS.md](OVERWORLD_INTEGRATION_STATUS.md).
+> Nothing here is creator or Gold approval.
+
 Native Godot 4.7 renderer for all 20 `arcana_fusion20_NN` skills.
 Visual only: **no damage, HP, mana, cooldown** — combat authority is
 SOH/R4 via Control Tower's `soh_binding/**` (PR #30), never edited here.

@@ -1,5 +1,10 @@
 # ARCANA 20 — visual triage, not acceptance
 
+> **Historical material:** implementation and older source-only observations below
+> may be superseded. The canonical current-world evidence, owner pins, R14
+> regressions and acceptance state are in [OVERWORLD_INTEGRATION_STATUS.md](OVERWORLD_INTEGRATION_STATUS.md).
+> Nothing here is creator or Gold approval.
+
 The following are observations of the **low-resolution, 16-color, six-frame
 thumbnails** recovered from the source-buffer review artifact of run
 [41200681217](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41200681217)

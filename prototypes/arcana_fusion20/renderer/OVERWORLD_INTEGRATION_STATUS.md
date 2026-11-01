@@ -4,6 +4,95 @@ This is a current-world overlay on `ACCEPTANCE_MATRIX.md`, not a replacement for
 original-source comparison or the creator's approvals. All 20 remain active;
 all are `VISUAL_NOT_VERIFIED`, and `OWNER_VISUAL_APPROVED = 0`.
 
+## R14 current verdict — visual and product acceptance blocked
+
+This section supersedes older pin/status summaries and tables below. The
+Hollow Marches route is `AppRoot → New Game → Home → AppFlow → world_ready`.
+The currently reviewed same-world #10 pair uses A0 `e5529c13335d5da8272d7b9d2cfb74897dcaf7e2`,
+A6 `6b801554a6af95424b4e39dd29f43c146aa13848`, CT
+`e505173edd119fdd955cf6249511b575a5468440` and AVFX `7b609efb2`.
+A1 `2cb1a3c5f093724eb9fecbdf45909ccb611f7b32` and A3
+`18e7afcbd576bbd9bfbcc509b2ee13216186a522` are contract inputs only; A8
+is not mounted. The generated manifest records mounted roles and observed
+owner PR heads separately. No-FX entry on newer A0 `932b7deed42d7e6be9270d3948c19ac071d1d221`
+passed [41269613602](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41269613602),
+but A0/AVFX JOIN failed and its motion-fixture regression is being retested;
+that does **not** validate the full owner journey. A0 advanced to
+`e1e5d778f294a3bb18333c80df8710206907317b`; a separate no-FX probe is queued.
+A1/A3/A6/A8 current PR heads have not been mounted or validated here.
+
+- #10: the two original full-source shade calls and full-width scanline
+  displacement/chroma are separately transported as viewport-aligned stage
+  operations; localized shadow, ink, sparks and bolts remain world-space.
+  The original source buffer path remains unchanged. Source decomposition
+  [41269613550](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41269613550)
+  reconstructed source fields with max error ≤4.77e-7 at selected ticks.
+  At exact climax tick290, rejected and corrected full-resolution actual-world
+  PNGs are in [old phase run 41243020418](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41243020418)
+  and [paired review 41269852550](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41269852550).
+  Normal and dim previews were inspected: the rotated dark rectangle is gone,
+  while the stage darkening, lightning and horizontal scanlines remain. The
+  current implementation applies shade to terrain below local geometry/actors,
+  but original full-post order, motion, screen safety, overlap and owner review
+  are not yet accepted. Historical images are not current-product acceptance.
+- The first motion JOIN [41269709045](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41269709045)
+  failed #16 tail image containment; a later A0 932 JOIN
+  [41269928178](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41269928178)
+  also failed frozen overlap restoration. Both are real failures, not passes.
+  The added test forced the actual smoothing-enabled Camera2D mid-suite; the
+  motion experiment has been isolated to the end and now compares cleanup to
+  the **same moved camera and actor state**. The fix is not verified until the
+  rerun passes and its full frames are inspected.
+- #17 source `information loss` explicitly paints the *whole source stage*
+  black before adding one source light. Its new world route uses an under-HUD
+  global blackout and retains the original light, while source-buffer behavior
+  remains unchanged ([41270259582](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41270259582)).
+  Native full-HUD isolation, full-world screenshot, overlap/ordering and
+  reappearance are pending; do not call the new route visually accepted.
+  #07 frost shadows/holes and #15 thorn/flower geometry examined in C source
+  are shape-bounded, not automatically global stage effects. Their large-world
+  mutations, clipping, actor/foreground depth and readability remain open.
+  #01 full C source has an explicit global shade, but world fusion deliberately
+  uses its selected `crown_outer` role without the duplicate stage/post; this
+  does not prove the whole fusion is complete. A/B/D global effects and all
+  source-frame boundary interactions remain under audit.
+
+### Per-skill acceptance ledger (R14)
+
+`PARTIAL` means a limited source-field or world diagnostic exists; it is not
+full-cast parity or visual acceptance. `OPEN` means not demonstrated.
+Every cell under creator approval is **not approved**. Performance remains
+blocked by shared software-CI p95 hundreds of ms and missing target hardware.
+
+| Skill | ORIGINAL_SOURCE_PARITY | NATIVE_WORLD_COMPOSITE | ENVIRONMENT_AND_ACTOR_INTERACTION | FULL_MOTION_AND_OUT | PERFORMANCE | CREATOR_VISUAL_APPROVAL |
+|---|---|---|---|---|---|---|
+| 01 | PARTIAL | PARTIAL | OPEN | OPEN | BLOCKED | NOT APPROVED |
+| 02 | PARTIAL | PARTIAL | OPEN | OPEN | BLOCKED | NOT APPROVED |
+| 03 | PARTIAL | PARTIAL | OPEN | OPEN | BLOCKED | NOT APPROVED |
+| 04 | PARTIAL | PARTIAL | OPEN | OPEN | BLOCKED | NOT APPROVED |
+| 05 | PARTIAL | PARTIAL | OPEN | OPEN | BLOCKED | NOT APPROVED |
+| 06 | PARTIAL | PARTIAL | OPEN | OPEN | BLOCKED | NOT APPROVED |
+| 07 | PARTIAL | PARTIAL | OPEN | OPEN | BLOCKED | NOT APPROVED |
+| 08 | PARTIAL | PARTIAL | OPEN | OPEN | BLOCKED | NOT APPROVED |
+| 09 | PARTIAL | PARTIAL | OPEN | OPEN | BLOCKED | NOT APPROVED |
+| 10 | PARTIAL | PARTIAL — stage candidate | OPEN | OPEN | BLOCKED | NOT APPROVED |
+| 11 | PARTIAL | PARTIAL | OPEN | OPEN | BLOCKED | NOT APPROVED |
+| 12 | PARTIAL | PARTIAL | OPEN | OPEN | BLOCKED | NOT APPROVED |
+| 13 | PARTIAL | PARTIAL | OPEN | OPEN | BLOCKED | NOT APPROVED |
+| 14 | PARTIAL | PARTIAL | OPEN | OPEN | BLOCKED | NOT APPROVED |
+| 15 | PARTIAL | PARTIAL | OPEN | OPEN | BLOCKED | NOT APPROVED |
+| 16 | PARTIAL | REGRESSION RETEST | OPEN | OPEN | BLOCKED | NOT APPROVED |
+| 17 | PARTIAL | PARTIAL — stage candidate | OPEN | OPEN | BLOCKED | NOT APPROVED |
+| 18 | PARTIAL | PARTIAL | OPEN | OPEN | BLOCKED | NOT APPROVED |
+| 19 | PARTIAL | PARTIAL | OPEN | OPEN | BLOCKED | NOT APPROVED |
+| 20 | PARTIAL | PARTIAL | OPEN | OPEN | BLOCKED | NOT APPROVED |
+
+
+Six fusion candidates and redesigns #04/#06/#12/#13/#14/#18 remain unapproved.
+A green lifecycle or frozen-world sweep does not close any column.
+
+## Historical evidence (superseded pin summaries)
+
 **Reproducible isolated join:** `tools/arcana20_join/assemble.py` and
 `.github/workflows/arcana20-overworld-join.yml`; archives overlay exact owner
 objects without merge/checkout. Tested pin: historical A0
