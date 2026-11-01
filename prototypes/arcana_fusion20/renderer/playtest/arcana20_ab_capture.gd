@@ -36,7 +36,7 @@ func _frame(path: String, player: Node2D, enemy: Node2D, camera: Camera2D) -> bo
     var names: Array[String] = []
     var ok := true
     for mode in ["a", "b", "restore"]:
-        var directed := mode == "b"
+        var directed: bool = String(mode) == "b"
         layer.visible = directed
         layer.queue_redraw()
         viewer.z_index = -23 if directed else -24

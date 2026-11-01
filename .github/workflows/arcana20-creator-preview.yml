@@ -1,4 +1,4 @@
-# R20: package two #05 art directions and real-world comparison evidence.
+# R20: package two #05 art directions with locked-scene and natural-motion evidence.
 name: ARCANA20 R20 Abyssal Bloom A-B creator package
 on:
   workflow_dispatch:
