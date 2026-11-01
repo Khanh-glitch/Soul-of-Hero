@@ -27,10 +27,12 @@ const ECONOMY_SAVE_FACADE := preload("res://game/survival/economy/economy_save_f
 # source bytes are independently SHA-pinned in native and export CI.
 const PRODUCTION_ECONOMY_ADAPTER := preload("res://game/survival/economy/a0_economy_adapter.gd")
 const PRODUCTION_ECONOMY_BASE := preload("res://game/survival/economy/economy_service.gd")
+const PRODUCTION_SOURCE_CUSTODY := preload("res://game/survival/economy/a3_economy_service.gd")
 # Immutable, first-party A3 integration fixture. Production composition must
 # explicitly review/re-pin future adapter revisions; a caller label is never
 # evidence of authority.
 const PINNED_A3_SCRIPT_SHA256 := "98932d25b73a03b9412f0f72f82dc5c2b6451e3ba894a134fdff2d1924252ee0"
+const PINNED_A3_CUSTODY_SHA256 := "f0695cdd05c23490a42fa92cc6fb6de9d87a3ce293e8563cc7d85fccde09e8b"
 # The independently pinned 86dc2195 regression adapter remains supported.
 const PINNED_A3_FIXTURE_SHA256 := "b1ee9792b4460e956ec6c59437269078e4f6767f76d35145e680dcc03ba3806c"
 const PINNED_A0_ADAPTER_SHA256 := "2b539f3320828c2fa850b6057c735e032153d5a1e8fa1b8ade63d2e3380ed2ce"
@@ -119,6 +121,8 @@ var _economy_capability := RefCounted.new()
 var _disk_commit_capability := RefCounted.new()
 var _economy_adapter: RefCounted
 var _economy_facade: Node
+var _economy_custody: RefCounted
+var _economy_custody_facade: Node
 var _economy_mutation_active := false
 var _transaction_mutation_active := false
 var _economy_quarantine_reason := ""
@@ -1337,12 +1341,44 @@ func create_pinned_economy_port(adapter: RefCounted) -> Node:
 		return null
 	if _economy_facade != null and is_instance_valid(_economy_facade):
 		_economy_facade.queue_free()
+	# Invalidate any previous source-custody port when replacing canonical service.
+	if _economy_custody_facade != null and is_instance_valid(_economy_custody_facade):
+		_economy_custody_facade.queue_free()
+	_economy_custody = null
 	_economy_capability = RefCounted.new()
 	_economy_adapter = adapter
 	_economy_facade = ECONOMY_SAVE_FACADE.new()
 	_economy_facade.bind(self, adapter, _economy_capability)
 	add_child(_economy_facade)
 	return _economy_facade
+
+
+## GP-B: a second trusted writer for the R13 physical-source custody layer.
+## It shares the ONE A0 SaveService capability, inventory and atomic ledger;
+## a caller-built object, UI script or unpinned adapter cannot obtain this port.
+## This does not expose an unrestricted mutation API.
+func create_pinned_source_custody_port(custody: RefCounted) -> Node:
+	if custody == null or _economy_adapter == null or not _is_pinned_economy_adapter(_economy_adapter):
+		return null
+	if not _is_pinned_source_custody(custody):
+		return null
+	if _economy_custody_facade != null and is_instance_valid(_economy_custody_facade):
+		_economy_custody_facade.queue_free()
+	_economy_custody = custody
+	_economy_custody_facade = ECONOMY_SAVE_FACADE.new()
+	_economy_custody_facade.bind(self, custody, _economy_capability)
+	add_child(_economy_custody_facade)
+	return _economy_custody_facade
+
+
+func _is_pinned_source_custody(custody: RefCounted) -> bool:
+	if custody == null:
+		return false
+	var script: Variant = custody.get_script()
+	if not script is Script or script != PRODUCTION_SOURCE_CUSTODY:
+		return false
+	var source := String(script.source_code)
+	return source.is_empty() or source.sha256_text() == PINNED_A3_CUSTODY_SHA256
 
 
 func _is_pinned_economy_adapter(adapter: RefCounted) -> bool:
@@ -1367,9 +1403,11 @@ func _is_pinned_economy_adapter(adapter: RefCounted) -> bool:
 
 
 func _economy_transact_once(capability: RefCounted, adapter: RefCounted, key: String, mutator: Callable, metadata: Dictionary) -> bool:
-	if capability != _economy_capability or adapter != _economy_adapter or mutator.get_object() != adapter:
+	if capability != _economy_capability or not mutator.is_valid() or mutator.get_object() != adapter:
 		return false
-	if not _is_pinned_economy_adapter(adapter):
+	var canonical := adapter == _economy_adapter and _is_pinned_economy_adapter(adapter)
+	var source_custody := adapter == _economy_custody and _is_pinned_source_custody(adapter)
+	if not canonical and not source_custody:
 		return false
 	return _transact_once_internal(key, mutator, metadata, capability)
 
