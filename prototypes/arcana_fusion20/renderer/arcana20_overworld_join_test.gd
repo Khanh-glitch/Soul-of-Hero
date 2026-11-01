@@ -1436,6 +1436,26 @@ func _phase_sweep(app: Node, world: Node, player: Node2D, enemy: Node2D, camera:
         var source: Node = renderer._casts[id]
         source.set_process(false)
         var native_duration := float(source.get("duration"))
+        # Catalog climax is not necessarily this candidate's authored impact:
+        # e.g. #04 cuts at 3.4s while its catalog climax is 4.25s. Capture
+        # candidate event beats too, in chronological source-tick order. These
+        # are unapproved designs and event frames don't prove motion quality.
+        if Arcana20SourceCatalog.REDESIGN_IDS.has(num) and source is ASourcePlayer:
+            var ordered: Array = []
+            for index in range(targets.size()):
+                ordered.append({"tick": int(targets[index]), "label": labels[index]})
+            var event_index := 0
+            for event in (source as ASourcePlayer)._events:
+                var event_tick := roundi(float(event.t) * 60.0)
+                if event_tick > 0 and float(event.t) < native_duration:
+                    ordered.append({"tick": event_tick, "label": "candidate_%s_%02d" % [String(event.kind), event_index]})
+                    event_index += 1
+            ordered.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return int(a.tick) < int(b.tick))
+            targets.clear()
+            labels.clear()
+            for sample in ordered:
+                targets.append(sample.tick)
+                labels.append(sample.label)
         _phase_set_render(source, false)
         var previous := 0
         var samples: Array = []
