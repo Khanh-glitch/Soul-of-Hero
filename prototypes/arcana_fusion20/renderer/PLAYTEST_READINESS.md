@@ -63,6 +63,15 @@ bridge are **not mounted**. The artifact contains the exact join manifest.
   captures: [normal](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41313521348/artifacts/13085832877),
   [dim](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41313521348/artifacts/13085802942);
   AI and camera trajectories differ. This is not visual closure or approval.
+  [41313738760](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41313738760)
+  records the entire expanded native float field/coverage and reconstructs
+  original C light/ink/ground/distortion/screen operations from the observed
+  actor anchors/tick alongside actual world: [normal](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41313738760/artifacts/13085469250),
+  [dim](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41313738760/artifacts/13086557763).
+  The separate fixed-size C reference clips actor anchors in 3/54 normal and
+  13/54 dim frames, explicitly labeled; it uses different graph/timing, is
+  recreated per frame, and omits browser floor/post. Observed source tick can
+  lag presentation. It is not full Gold, same-frame world HDR or parity proof.
 - #11 full-five-branch `d310436`, scaled `0ebc44b`, original-A-width `f58c2a8`
   and C-length-density `1039869` were rejected as visual closures. Native 1×
   tick 327 normal/dim [41301954960](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41301954960)
@@ -212,6 +221,14 @@ object delta +1 in both rounds. Incremental static bytes round 1/2 were
 on every cancel and old world/renderer WeakRefs cleared on scene change. These
 are sampled engine counters including cache variation, not allocation tracing,
 full natural-cast stress, a no-leak proof, or hardware GPU measurements.
+The expanded-source rerun [41313465731](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41313465731)
+([counter review 41313816674](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41313816674))
+found #09 incremental nodes/resources 0 in both rounds, objects +3/+1, static
+bytes +172044/+6240 and texture/video bytes +174762/+0 per counter, respectively.
+#11/#14 each had object +1/+1, static +52304/+6240 and +52320/+6240 bytes,
+respectively, with zero node/resource/texture/video delta. This first-round
+#09 texture counter increase warrants further investigation; it is not proof
+of a leak or of actual VRAM allocation. WeakRef cleanup passed in this run.
 Two earlier harness runs failed due lazy script typing and collection path,
 not test failures hidden as passes.
 
@@ -231,7 +248,9 @@ with three real enemies per spell (seven for #09), natural finish, restart/
 cancel and unchanged enemy HP. Current moving-window and connected-seam
 candidates also passed all 26 jobs of the all-20 suite
 [41310117499](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41310117499),
-source `92d3e07eac1ac0f5d22a925bcdba2bcb54470b5b`. Prior all-20 run
+source `92d3e07eac1ac0f5d22a925bcdba2bcb54470b5b`. With the expanded #09
+source, all 26 jobs also passed [41313465900](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41313465900)
+at `f5ede1480d4f6d2c7be25199df76ab4607a1389f`. Prior all-20 run
 [41305402482](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41305402482)
 used `ffecce687e146d20088560ffffd0ebc8b3ed4a18`. These are not complete visual review, genuine
 combat receipts or source/post/actor-depth parity.
