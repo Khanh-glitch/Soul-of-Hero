@@ -1,0 +1,44 @@
+name: ARCANA20 shifted chain moving-world before and after
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-r17-chain-window-before-after.yml']
+permissions:
+  actions: read
+  contents: read
+jobs:
+  compare:
+    strategy:
+      fail-fast: false
+      matrix:
+        skill: [9]
+        lighting: [normal, dimmed]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: r17-chain-full-${{ matrix.skill }}-${{ matrix.lighting }}
+          run-id: 41304892316
+          github-token: ${{ github.token }}
+          path: before
+      - uses: actions/download-artifact@v4
+        with:
+          name: r17-chain-window-${{ matrix.skill }}-${{ matrix.lighting }}
+          run-id: 41309929169
+          github-token: ${{ github.token }}
+          path: after
+      - name: Pair real full native frames, preserving skips and source-clock labels
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet pillow
+          if ! command -v ffmpeg; then sudo apt-get update -qq && sudo apt-get install -y ffmpeg; fi
+          python3 tools/arcana20_join/pair_live_source_ticks.py before after output
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: r17-window-paired-${{ matrix.skill }}-${{ matrix.lighting }}
+          path: output/
+          if-no-files-found: warn

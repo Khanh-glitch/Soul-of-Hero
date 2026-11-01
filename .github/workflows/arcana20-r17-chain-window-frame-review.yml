@@ -1,0 +1,42 @@
+name: ARCANA20 shifted chain before and after native detail review
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-r17-chain-window-frame-review.yml']
+permissions:
+  actions: read
+  contents: read
+jobs:
+  review:
+    strategy:
+      fail-fast: false
+      matrix:
+        skill: [9]
+        lighting: [normal, dimmed]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: r17-chain-full-${{ matrix.skill }}-${{ matrix.lighting }}
+          run-id: 41304892316
+          github-token: ${{ github.token }}
+          path: before
+      - uses: actions/download-artifact@v4
+        with:
+          name: r17-chain-window-${{ matrix.skill }}-${{ matrix.lighting }}
+          run-id: 41309929169
+          github-token: ${{ github.token }}
+          path: after
+      - run: python3 -m pip install --quiet pillow
+      # Separate steps respect GitHub's ten-annotation-per-step limit.
+      - name: Before connector first decisive tick
+        run: python3 tools/arcana20_join/surface_r17_snapshot.py before 246 before246
+      - name: After connector first decisive tick
+        run: python3 tools/arcana20_join/surface_r17_snapshot.py after 246 after246
+      - name: Before late synchronization tick
+        run: python3 tools/arcana20_join/surface_r17_snapshot.py before 324 before324
+      - name: After late synchronization tick
+        run: python3 tools/arcana20_join/surface_r17_snapshot.py after 324 after324

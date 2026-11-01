@@ -1,0 +1,28 @@
+name: ARCANA20 R17 shifted chain source and actor extents
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-r17-chain-window-extent.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  extent:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        light: [normal, dimmed]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: r17-chain-window-9-${{ matrix.light }}
+          run-id: 41309929169
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/capture
+      - run: python3 -m pip install --quiet numpy
+      - name: Full source extents and out-of-field moving actors, not world HDR
+        run: python3 tools/arcana20_source_compare/inspect_full_chain_extent.py "$RUNNER_TEMP/capture"
