@@ -8,11 +8,11 @@ historical methods, caveats and source-comparison references.
 ## R17 status and experimental build
 
 **NOT PLAYTEST_READY.** The newest downloadable, visual-only build is
-[Windows x64 + Linux x64 artifact 13084835609](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41308842474/artifacts/13084835609),
-source `3bb43f3b6c27835e4ec32a1f67c38b436e4c5963`.
-[Run 41308842474](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41308842474)
-passed Linux real-route motion for [#14](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41308842474/artifacts/13084397189)
-and [#18](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41308842474/artifacts/13085030225)
+[Windows x64 + Linux x64 artifact 13084024453](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41310103360/artifacts/13084024453),
+source `dd5e76dc47087ccdff3278907fd0eb616dc35f23`.
+[Run 41310103360](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41310103360)
+passed Linux real-route motion for [#14](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41310103360/artifacts/13084609932)
+and [#18](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41310103360/artifacts/13084753557)
 and Windows **headless** smoke. It is available for early feedback, not a
 creator-approved build or a Windows GPU/display test. Its #11 is still an
 unreadable white cloud at peak. #14's meandering hyphae have only been
@@ -33,7 +33,7 @@ bridge are **not mounted**. The artifact contains the exact join manifest.
 - #09's A graph now receives the live caster reference, fixing the measured
   85.443-world-unit origin detachment in the earlier capture. B-like two-color
   palette and C branching are candidates, not full original B/C parity. A new
-  visual-test UI formation (`a74d7b2`, in the 3bb43f3 build) can spawn real
+  visual-test UI formation (`a74d7b2`, in the dd5e76d build) can spawn real
   Skeletons in a ring; [41303697476](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41303697476)
   exercised it with normal AI, seven moving enemies and both lights. The AI
   converges around the player and the sampled #09 still remains hard to read.
@@ -43,10 +43,18 @@ bridge are **not mounted**. The artifact contains the exact join manifest.
   source field touched x=0; 3 anchors were outside at tick 183, 2 at tick 327.
   `e649273` tests a whole-pixel raster-window translation with inverse world
   transform, preserving actor positions, graph, events and physical scale;
-  unit transform test 41309929157 passed, full moving-world review is pending.
-  If the actor span exceeds 416×234 source pixels, the translated window still
-  clips; `d2508fc` exposes uncontained-node counts. Branches/particles and bloom
-  may also extend past the edges. This is not the same as a complete fix.
+  unit transform tests 41309929157/41310030667 passed. Full live capture
+  [41309929169](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41309929169)
+  passed both lights; source-clock matched independent world casts are
+  [normal](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41310155937/artifacts/13085132038)
+  and [dim](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41310155937/artifacts/13084748254).
+  [41310155934](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41310155934)
+  found zero uncontained anchors at ticks 183/247/327 in both captures, but two
+  outside at tick 87 in the normal capture (actor height span 242.31 > 234).
+  The independent AI motion differs between before/after, and the normal
+  late source also touches an edge. Branches, particles and bloom may extend
+  outside even when anchors fit. `d2508fc` exposes uncontained-node counts;
+  this fixed-size window is a partial mitigation, not a complete fix or approval.
 - #11 full-five-branch `d310436`, scaled `0ebc44b`, original-A-width `f58c2a8`
   and C-length-density `1039869` were rejected as visual closures. Native 1×
   tick 327 normal/dim [41301954960](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41301954960)
