@@ -27,8 +27,10 @@ and eleven consecutive local iterations (five play/verify pairs) after the final
 three fixes.
 
 **Not claimed:** the A8/A3 award path still refuses to pay (by design — A3 has not
-authorized either source), Factory 2PID debt stays UNACCEPTED, and the avatar's
-*art* is A6/A1 source-blocked, so avatar pixels are NOT_TESTED.
+authorized either source), and the avatar's *art* is A6/A1 source-blocked, so avatar
+pixels are NOT_TESTED. Factory 2PID debt, still UNACCEPTED when this document was
+written, was closed the next day in run `41269852926` —
+see `A0_R13_FACTORY_2PID_CLOSURE_20261101.md`.
 
 ---
 
@@ -182,7 +184,7 @@ What this establishes, and what it does not:
 | R4 site entry/exit | PASS (entry, work, retreat) | both shells entered through doorways, sockets answered |
 | R5 reward | **FAIL by design** | A3 has not authorized; A0 refuses and records why |
 | nine gates | unchanged from Round 12C except R13 rows above | no B0/E2/HUMAN PLAY/Gold claim |
-| Factory 2PID | UNACCEPTED, existing failed evidence kept | not re-litigated this round |
+| Factory 2PID | **PASS** (closed 2026-11-01) | run `41269852926`: 62 checks / 0 failures, `process1=0 process2=0`, key-armed job prepared then settled offline (`applied_ticks=12`, `completed=["job_000005"]`). See `A0_R13_FACTORY_2PID_CLOSURE_20261101.md` |
 | avatar pixels | NOT_TESTED | presenter `SOURCE_BLOCKED`, “Identity-specific runtime action sheets are not installed” |
 
 ---
@@ -223,7 +225,9 @@ identity is chosen, stored, presented as the same gender, and moves the body.
 
 ## 9. Next primary capability
 
-**A0: close the Factory 2PID debt** (freed-Control reference and input-event lifecycle
-— both A0 oracle bugs), then re-run the paid-factory two-process journey against the
-one SaveService. External dependencies: A3 must authorize at least one source so the
-receipt path can be exercised end to end, and A1 must publish a matching byte lock.
+~~**A0: close the Factory 2PID debt**~~ — **closed 2026-11-01**, see
+`A0_R13_FACTORY_2PID_CLOSURE_20261101.md`. The next primary capability is again the
+authored-continent route gate at native 720p/1440p/2160p with both POIs reached on foot
+through the physical doorway. External dependencies: A1 must publish a byte lock whose
+hashes match the payloads it ships, and A3 must authorize at least one source before
+any reward may be claimed.
