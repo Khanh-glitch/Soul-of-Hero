@@ -1,0 +1,35 @@
+# Surface already-completed matched retention results without rerunning them.
+name: ARCANA20 R17 retention counter review
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-r17-retention-review.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  review:
+    strategy:
+      fail-fast: false
+      matrix:
+        skill: [9, 11, 14]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: r17-retention-${{ matrix.skill }}
+          run-id: 41302085450
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: ${{ runner.temp }}/retention
+      - name: Surface measured per-round differences
+        run: |
+          python3 - "$RUNNER_TEMP/retention/comparison.json" <<'PY'
+          import json, pathlib, sys
+          d=json.loads(pathlib.Path(sys.argv[1]).read_text())
+          print('::notice title=R17_RETENTION_DIFFERENCE::'+json.dumps(d['comparison'],separators=(',',':')))
+          for mode in ('no_fx','fx'):
+              for s in d[mode]['samples']:
+                  if s['label'] in ('round1_baseline','round1_after_3','round2_baseline','round2_after_3'):
+                      print('::notice title=R17_RETENTION_SAMPLE::'+json.dumps({'mode':mode,**s},separators=(',',':')))
+          PY
