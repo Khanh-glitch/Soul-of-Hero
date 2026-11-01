@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [arena/c7b0c4e8-soul-of-hero]
-    # Explicitly requested capture: the shared redesign file also contains #13/#18.
+    # Explicitly requested capture: wider, brighter crystalline shard revision.
     paths: ['.github/workflows/arcana20-chronoshard-current-review.yml']
 permissions:
   contents: read

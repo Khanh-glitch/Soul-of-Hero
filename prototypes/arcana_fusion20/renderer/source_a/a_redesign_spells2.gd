@@ -327,18 +327,18 @@ class ChronoshardR:
                 var axis := Vector2(cos(angle), sin(angle) * 0.75)
                 var across := Vector2(-sin(angle), cos(angle) * 0.75)
                 var center := C + axis * (15.0 + 72.0 * travel)
-                var long_side := (21.0 if art_direction == "A" else 13.0) * (1.0 - travel * 0.35)
-                var short_side := (7.0 if art_direction == "A" else 15.0) * (1.0 - travel * 0.25)
+                var long_side := (32.0 if art_direction == "A" else 18.0) * (1.0 - travel * 0.35)
+                var short_side := (12.0 if art_direction == "A" else 19.0) * (1.0 - travel * 0.25)
                 var front := center + axis * long_side
                 var rear := center - axis * long_side * 0.55
                 var left := center - across * short_side
                 var right := center + across * short_side
                 ADraw.poly_fill(fb, [front, right, rear, left],
-                    func(_x: int, _y: int) -> Variant: return Vector3(0.08, 0.07, 0.22), true, life * 0.9)
+                    func(_x: int, _y: int) -> Variant: return Vector3(0.10, 0.10, 0.28), true, life * 0.9)
                 ADraw.poly_fill(fb, [front, center, left],
-                    func(_x: int, _y: int) -> Variant: return Vector3(0.19, 0.28, 0.55), true, life * 0.8)
-                ADraw.line(fb, front.x, front.y, left.x, left.y, Vector3(1.4, 1.6, 2.4), life)
-                ADraw.line(fb, front.x, front.y, right.x, right.y, Vector3(1.0, 1.2, 2.0), life * 0.85)
+                    func(_x: int, _y: int) -> Variant: return Vector3(0.34, 0.46, 0.85), true, life * 0.9)
+                ADraw.streak(fb, front.x, front.y, left.x, left.y, 1.8, 1.0, Vector3(1.4, 1.6, 2.4), life)
+                ADraw.streak(fb, front.x, front.y, right.x, right.y, 1.6, 0.9, Vector3(1.0, 1.2, 2.0), life * 0.85)
                 ADraw.line(fb, left.x, left.y, rear.x, rear.y, Vector3(0.6, 0.7, 1.5), life * 0.75)
             if art_direction == "B":
                 # A broken clock face reads as one temporal device, rather

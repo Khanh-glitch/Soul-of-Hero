@@ -2,8 +2,8 @@
 ## visual-only controls. This is not a combat integration or production mount.
 extends Node
 
-const APP := preload("res://game/app/app_root.tscn")
-const ENEMY := preload("res://game/characters/enemies/skeleton_enemy.tscn")
+const APP_PATH := "res://game/app/app_root.tscn"
+const ENEMY_PATH := "res://game/characters/enemies/skeleton_enemy.tscn"
 var app: Node
 var world: Node
 var player: Node2D
@@ -27,7 +27,12 @@ func _ready() -> void:
         push_error("AVFX_PLAYTEST_FAIL isolated save unavailable")
         if _smoke(): get_tree().quit(1)
         return
-    app = APP.instantiate()
+    var app_scene := load(APP_PATH) as PackedScene
+    if app_scene == null:
+        push_error("AVFX_PLAYTEST_FAIL app scene unavailable")
+        if _smoke(): get_tree().quit(1)
+        return
+    app = app_scene.instantiate()
     add_child(app)
     _make_ui()
     if _smoke(): _run_smoke.call_deferred()
@@ -155,7 +160,11 @@ func _spawn_enemy() -> void:
     if entities == null:
         status.text = "Không tìm thấy lớp thực thể của bản đồ."
         return
-    var enemy := ENEMY.instantiate() as Node2D
+    var enemy_scene := load(ENEMY_PATH) as PackedScene
+    if enemy_scene == null:
+        status.text = "Không tải được bộ xương thật."
+        return
+    var enemy := enemy_scene.instantiate() as Node2D
     enemy.position = entities.to_local(player.global_position + Vector2(100 + spawned.size() * 20, 0))
     entities.add_child(enemy)
     enemy.set_physics_process(mobile_enemies)
@@ -242,6 +251,20 @@ func _run_smoke() -> void:
         await get_tree().process_frame
     if not is_instance_valid(renderer) or not is_instance_valid(player) or not panel.visible:
         _smoke_fail("world ready and mount"); return
+    # Exercise the actual player's normal movement input; try cardinal
+    # directions because the spawned location may have real collision.
+    var moved := false
+    for action in [&"move_right", &"move_down", &"move_left", &"move_up"]:
+        var start := player.global_position
+        Input.action_press(action)
+        for tick in range(30): await get_tree().physics_frame
+        Input.action_release(action)
+        await get_tree().physics_frame
+        if player.global_position.distance_to(start) > 2.0:
+            moved = true
+            break
+    if not moved:
+        _smoke_fail("real player movement"); return
     _spawn_enemy()
     if spawned.is_empty():
         _smoke_fail("real enemy spawn"); return
