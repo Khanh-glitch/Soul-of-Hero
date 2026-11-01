@@ -479,6 +479,37 @@ func _panel() -> Node:
 ## `InputEventMouse*.position` is in window pixels. Multiplying by the root's final
 ## transform is that conversion, and doing it in one helper keeps a caller from
 ## mixing the two (aiming a press at 2x the row's position is not a player action).
+## Wait for a paid job to finish by watching the job, not the clock.
+##
+## A wall-clock deadline assumes the game earns time at the speed the renderer paints.
+## It does not: Godot steps a bounded number of physics ticks per frame, so a software
+## renderer at 3840x2160 runs game time several times slower than real time, and a
+## six-second kit simply cannot finish inside a thirty-five second stopwatch. The wait
+## ends when the job is ready, when it stops making progress for twenty seconds (a real
+## stall, reported with the numbers that show it), or at an absolute cap. It never
+## accepts anything except status=="ready".
+func _wait_job_ready(host: Node, job_id: String, label: String, cap_msec := 240000) -> Dictionary:
+	var started := Time.get_ticks_msec()
+	var last_progress := started
+	var best_elapsed := -1
+	var frames := 0
+	var job: Dictionary = (host.call(&"jobs") as Dictionary).get(job_id, {})
+	while Time.get_ticks_msec() - started < cap_msec and String(job.get("status", "")) != "ready":
+		await process_frame
+		frames += 1
+		job = (host.call(&"jobs") as Dictionary).get(job_id, {})
+		var elapsed := int(job.get("elapsed", 0))
+		if elapsed > best_elapsed:
+			best_elapsed = elapsed
+			last_progress = Time.get_ticks_msec()
+		elif Time.get_ticks_msec() - last_progress > 20000:
+			break
+	print("A0_JOB_WAIT stage=%s job=%s status=%s elapsed=%d/%d wall_ms=%d frames=%d" % [
+		label, job_id, String(job.get("status", "")), int(job.get("elapsed", 0)),
+		int(job.get("duration", 0)), Time.get_ticks_msec() - started, frames])
+	return job
+
+
 func _row_window_point(scroll: ScrollContainer, row: Control) -> Vector2:
 	return root.get_final_transform() * _visible_point(scroll, row)
 
@@ -903,11 +934,7 @@ func _body() -> void:
 	if bool(panel.call(&"is_open")):
 		_stop("close_panel")
 		return
-	var deadline := Time.get_ticks_msec() + 35000
-	var job: Dictionary = (host.call(&"jobs") as Dictionary).get(job_id, {})
-	while Time.get_ticks_msec() < deadline and String(job.get("status", "")) != "ready":
-		await process_frame
-		job = (host.call(&"jobs") as Dictionary).get(job_id, {})
+	var job: Dictionary = await _wait_job_ready(host, job_id, "wait_kit_ready")
 	_stage_at("wait_kit_ready")
 	_expect(String(job.get("status", "")) == "ready", "active ordinary gameplay completes the starter kit queue")
 	if String(job.get("status", "")) != "ready":
@@ -1020,11 +1047,7 @@ func _body() -> void:
 		_stop("queue_weave")
 		return
 	await _close_panel(panel)
-	var weave_deadline := Time.get_ticks_msec() + 30000
-	var weave_job: Dictionary = (host.call(&"jobs") as Dictionary).get(weave_id, {})
-	while Time.get_ticks_msec() < weave_deadline and String(weave_job.get("status", "")) != "ready":
-		await process_frame
-		weave_job = (host.call(&"jobs") as Dictionary).get(weave_id, {})
+	var weave_job: Dictionary = await _wait_job_ready(host, weave_id, "wait_weave_ready")
 	_stage_at("wait_weave_ready")
 	_expect(String(weave_job.get("status", "")) == "ready", "active ordinary gameplay completes workbench production")
 	if String(weave_job.get("status", "")) != "ready":
