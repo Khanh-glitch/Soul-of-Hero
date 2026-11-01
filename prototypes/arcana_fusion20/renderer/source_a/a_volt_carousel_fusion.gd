@@ -13,6 +13,7 @@ var rings: Array = []
 var frags: ADraw.APool
 # Test-only isolation of A rotor/aftermath from intentionally replaced bolts.
 var include_bolts := true
+var c_bolt_raster := CBoltARaster.new()
 
 func setup() -> void:
     rng = AMath.ARng.new(0xc0de)
@@ -60,7 +61,8 @@ func _bolt(fb: AFramebuffer, x0: float, y0: float, x1: float, y1: float, t: floa
     var frame := floori(t * 28.0)
     var tree := CKit.bolt_tree(seed * 131.0 + frame * 7919.0, x0, y0, x1, y1, 1, chaos)
     for branch in tree:
-        ADraw.bolt_draw(fb, branch.pts, width * float(branch.w), _volt(0.62), CORE, k * float(branch.w))
+        var branch_width := width if int(branch.depth) == 0 else 1.0
+        c_bolt_raster.draw(fb, branch.pts, k * float(branch.w), CORE, _volt(0.62), branch_width)
     var dx := x1 - x0
     var dy := y1 - y0
     ADraw.glow(fb, (x0 + x1) * 0.5, (y0 + y1) * 0.5, minf(16.0, sqrt(dx * dx + dy * dy) * 0.25), _volt(0.45), 0.07 * k)

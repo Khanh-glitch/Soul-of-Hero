@@ -20,6 +20,7 @@ var events: Array = []
 var sparks: ADraw.APool
 var actor_refs: Array = []
 var host: ASourcePlayer
+var c_bolt_raster := CBoltARaster.new()
 
 func setup() -> void:
     rng = AMath.ARng.new(0x9c4a)
@@ -140,7 +141,7 @@ func _bolt(fb: AFramebuffer, a: Vector2, b: Vector2, t: float, seed: int, width:
             point.x += (CMath.hash1(seed + variant * 31 + j) - 0.5) * 3.0
             point.y += (CMath.hash1(seed + variant * 17 + j * 3) - 0.5) * 3.0
         varied.append(point)
-    ADraw.bolt_draw(fb, varied, width, B_MID, B_CORE, k)
+    c_bolt_raster.draw(fb, varied, k, B_CORE, B_MID, width)
     for branch_index in range(branch_count):
         var index := floori(CMath.hash1(seed + variant * 7 + branch_index * 13) * float(pts.size() - 2)) + 1
         var point: Vector2 = pts[clampi(index, 0, pts.size() - 1)]
@@ -150,7 +151,7 @@ func _bolt(fb: AFramebuffer, a: Vector2, b: Vector2, t: float, seed: int, width:
             point.x + cos(angle) * length, point.y + sin(angle) * length, 1, 0.35, 1)
         for branch in tree:
             var branch_width := float(branch.w)
-            ADraw.bolt_draw(fb, branch.pts, width * branch_width, B_MID, B_CORE, k * branch_width)
+            c_bolt_raster.draw(fb, branch.pts, k * branch_width, B_CORE, B_MID, 1.0)
     ADraw.glow(fb, (a.x + b.x) * 0.5, (a.y + b.y) * 0.5, minf(16.0, a.distance_to(b) * 0.25), B_MID, 0.07 * k)
 
 func render(fb: AFramebuffer, t: float) -> void:
