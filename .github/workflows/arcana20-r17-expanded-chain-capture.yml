@@ -1,5 +1,5 @@
 # R17 #09 real enemy ring-formation world diagnostic; normal AI remains enabled.
-name: ARCANA20 R17 expanded chain raster moving-world test
+name: ARCANA20 R18 controlled chain occlusion comparison
 on:
   workflow_dispatch:
   push:
@@ -26,7 +26,12 @@ jobs:
           AVFX="$GITHUB_SHA"
           git fetch --depth=1 --no-tags origin "$AVFX" 04eacf62f1a3740a57e08691c3a9006d454aaa2c 6b801554a6af95424b4e39dd29f43c146aa13848 2cb1a3c5f093724eb9fecbdf45909ccb611f7b32 18e7afcbd576bbd9bfbcc509b2ee13216186a522 e505173edd119fdd955cf6249511b575a5468440
           python3 tools/arcana20_join/assemble.py --out "$RUNNER_TEMP/r17" --avfx-sha "$AVFX" --a0-sha 04eacf62f1a3740a57e08691c3a9006d454aaa2c
-          python3 tools/arcana20_join/inject_chain_window_probe.py "$RUNNER_TEMP/r17"
+          cp tools/arcana20_join/controlled_chain_probe.gd "$RUNNER_TEMP/r17/prototypes/arcana_fusion20/renderer/playtest/arcana20_controlled_chain_probe.gd"
+          python3 - "$RUNNER_TEMP/r17" <<'PY'
+          import pathlib,sys
+          p=pathlib.Path(sys.argv[1])/'prototypes/arcana_fusion20/renderer/playtest/arcana20_playtest.gd'; s=p.read_text(); old='res://prototypes/arcana_fusion20/renderer/playtest/arcana20_live_capture.gd'; assert s.count(old)==1
+          p.write_text(s.replace(old,'res://prototypes/arcana_fusion20/renderer/playtest/arcana20_controlled_chain_probe.gd'))
+          PY
           python3 - "$RUNNER_TEMP/r17/project.godot" <<'PY'
           import pathlib,sys
           p=pathlib.Path(sys.argv[1]); s=p.read_text()
@@ -50,6 +55,11 @@ jobs:
           godot --headless --path "$RUNNER_TEMP/r17" --import > "$RUNNER_TEMP/import.log" 2>&1
           if grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/import.log"; then grep -E 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/import.log" | head -10 | while IFS= read -r line; do echo "::error title=R17_IMPORT::$line"; done; exit 1; fi
           set +e
+          godot --headless --path "$RUNNER_TEMP/r17" --check-only --script res://prototypes/arcana_fusion20/renderer/playtest/arcana20_controlled_chain_probe.gd > "$RUNNER_TEMP/probe-check.log" 2>&1
+          check=$?
+          set -e
+          if [ "$check" -ne 0 ] || grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/probe-check.log"; then tail -15 "$RUNNER_TEMP/probe-check.log" | while IFS= read -r line; do echo "::error title=R18_PROBE_COMPILE::$line"; done; exit 1; fi
+          set +e
           timeout --signal=TERM --kill-after=10s 780s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --path "$RUNNER_TEMP/r17" --audio-driver Dummy --rendering-method gl_compatibility --resolution 1280x720 --user-data-dir "$RUNNER_TEMP/r17-user" -- --avfx-live-capture > "$RUNNER_TEMP/live.log" 2>&1
           result=$?
           set -e
@@ -66,8 +76,10 @@ jobs:
           if [ -n "$file" ]; then cp -a "$(dirname "$file")"/. "$RUNNER_TEMP/output/"; fi
           cp "$RUNNER_TEMP/r17/arcana20_join_manifest.json" "$RUNNER_TEMP/output/" || true
           cp "$RUNNER_TEMP/live.log" "$RUNNER_TEMP/output/" || true
-      - name: Inspect real moving anchors and finite source extent
-        run: python3 tools/arcana20_join/inspect_chain_window_capture.py "$RUNNER_TEMP/output"
+      - name: Check controlled viewport pairs
+        run: |
+          python3 -m pip install --quiet numpy pillow
+          python3 tools/arcana20_join/compare_controlled_chain.py "$RUNNER_TEMP/output"
       - name: Encode genuine capture using recorded wall-time PTS
         run: |
           set -euo pipefail
@@ -76,6 +88,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: r17-expanded-chain-${{ matrix.skill }}-${{ matrix.lighting }}
+          name: r18-controlled-chain-${{ matrix.skill }}-${{ matrix.lighting }}
           path: ${{ runner.temp }}/output/
           if-no-files-found: warn
