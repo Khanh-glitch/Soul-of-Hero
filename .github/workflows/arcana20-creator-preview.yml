@@ -147,6 +147,9 @@ jobs:
             ${{ runner.temp }}/avfx-windows-err.log
           if-no-files-found: warn
   live-motion:
+    # Range-only iteration reuses the same export but does not recapture the
+    # 20 existing natural runs; normal final creator runs do run the matrix.
+    if: ${{ !contains(github.event.head_commit.message, '[range-only]') }}
     # Corrected presentation timestamps are sampled before PNG write I/O.
     # Newest art receives live moving-world full-cast capture; the earlier
     # all-20 single-enemy and multi-enemy matrix runs remain separate evidence.
@@ -417,6 +420,65 @@ jobs:
             ${{ runner.temp }}/live.log
             ${{ runner.temp }}/encode.log
           if-no-files-found: warn
+  thorn-range-review:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: write
+      actions: read
+    strategy:
+      fail-fast: false
+      matrix:
+        lighting: [normal, dimmed]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: SOH-AVFX-EXPERIMENTAL-NOT-PLAYTEST-READY
+          path: bundle
+      - name: Unpack same-run Linux build
+        run: |
+          set -euo pipefail
+          unzip -q "$(find bundle -name SOH_AVFX_EXPERIMENTAL_linux.zip -print -quit)" -d release
+          chmod +x release/SOH_AVFX_Playtest.x86_64
+      - name: Capture eight real-world ranges and bearings
+        env:
+          AVFX_C15_MATRIX: '1'
+          AVFX_LIVE_LIGHT: ${{ matrix.lighting }}
+        run: |
+          set -o pipefail
+          timeout --signal=TERM --kill-after=10s 2100s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 \
+            "$GITHUB_WORKSPACE/release/SOH_AVFX_Playtest.x86_64" --audio-driver Dummy --rendering-method gl_compatibility --resolution 1280x720 \
+            --user-data-dir "$RUNNER_TEMP/range-user" -- --avfx-live-capture 2>&1 | tee "$RUNNER_TEMP/range.log"
+          grep -Fq 'AVFX_THORN_MATRIX_PASS' "$RUNNER_TEMP/range.log"
+          ! grep -Eq 'AVFX_LIVE_FAIL|SCRIPT ERROR:|Parse Error:|Shader compilation failed' "$RUNNER_TEMP/range.log"
+      - name: Produce real-pixel image sheet and geometry metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet pillow
+          matrix_file=$(find "$RUNNER_TEMP" "$HOME/.local/share/godot/app_userdata" -name matrix.json -path '*/avfx_thorn_matrix/*' -print -quit 2>/dev/null)
+          test -n "$matrix_file"
+          python3 tools/arcana20_join/thorn_matrix_review_pack.py "$(dirname "$matrix_file")" "$RUNNER_TEMP/range-review" "$GITHUB_SHA"
+          for file in "$RUNNER_TEMP"/range-review/thorn_matrix_*.jpg "$RUNNER_TEMP"/range-review/matrix.json; do
+            python3 - "$file" "$RUNNER_TEMP/git-blob.json" <<'PY'
+          import base64,json,pathlib,sys
+          pathlib.Path(sys.argv[2]).write_text(json.dumps({'content':base64.b64encode(pathlib.Path(sys.argv[1]).read_bytes()).decode(),'encoding':'base64'}))
+          PY
+            if blob=$(gh api --method POST "repos/$GITHUB_REPOSITORY/git/blobs" --input "$RUNNER_TEMP/git-blob.json" --jq .sha); then
+              echo "::notice title=THORN_RANGE_GIT_BLOB_$(basename "$file")::$blob"
+            else
+              echo "::warning::Git blob transport unavailable; use range artifact"
+            fi
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: batch-s-thorn-ranges-${{ matrix.lighting }}
+          path: ${{ runner.temp }}/range-review/
+          if-no-files-found: error
+          retention-days: 14
   source-review:
     # Independent reference artifacts, pinned to their exact capture SHAs.
     # These are neutral source-only diagnostics, not a fake battlefield.

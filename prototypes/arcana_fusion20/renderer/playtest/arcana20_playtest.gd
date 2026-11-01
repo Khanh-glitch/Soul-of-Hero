@@ -40,6 +40,8 @@ func _ready() -> void:
     if _smoke(): _run_smoke.call_deferred()
     elif OS.get_cmdline_user_args().has("--avfx-live-capture"):
         var capture_path := "res://prototypes/arcana_fusion20/renderer/playtest/arcana20_ab_capture.gd" if OS.get_environment("AVFX_AB_LOCK") == "1" else "res://prototypes/arcana_fusion20/renderer/playtest/arcana20_live_capture.gd"
+        if OS.get_environment("AVFX_C15_MATRIX") == "1":
+            capture_path = "res://prototypes/arcana_fusion20/renderer/playtest/arcana20_thorn_matrix_capture.gd"
         var script := load(capture_path) as Script
         if script == null:
             push_error("AVFX_LIVE_FAIL capture script missing")

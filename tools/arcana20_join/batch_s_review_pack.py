@@ -24,7 +24,7 @@ light = record['lighting']
 # Baseline and OUT come from the actual first and last frames. Intermediate
 # ticks deliberately span the cast rather than selecting only pretty beats.
 # A given software-rendered capture may skip a requested tick.
-fractions = (0.16, 0.36, 0.60, 0.83)
+fractions = (0.17, 0.50, 0.70, 0.88)
 indices = [0] + [min(range(1, len(frames)-1), key=lambda i: abs(frames[i]['source_tick_last_observed'] - record['last_tick']*v)) for v in fractions] + [len(frames)-1]
 out.mkdir(parents=True, exist_ok=True)
 sheet = Image.new('RGB', (3840, 2*752), 'black')
@@ -37,13 +37,13 @@ for n, index in enumerate(indices):
         raise SystemExit(f'Expected unscaled 1280x720 frame, got {image.size}')
     label = ('start','early','middle','late','aftermath','OUT')[n]
     name=f'{n:02d}_{label}_tick{frame["source_tick_last_observed"]}.jpg'
-    image.save(out / name, 'JPEG', quality=76, subsampling=0, optimize=True)
+    image.save(out / name, 'JPEG', quality=58, subsampling=2, optimize=True)
     x, y = (n%3)*1280, (n//3)*752
     sheet.paste(image,(x,y))
     line=(f'#{skill:02d} {roles[skill]} {light} {label} | frame {index} '
           f'tick~{frame["source_tick_last_observed"]} wall={frame["wall_s"]:.3f}s')
     draw.text((x+5,y+725),line,fill='white')
-    entries.append({'label':label, 'index':index, 'file':name, **frame})
+    entries.append({**frame, 'source_png':frame['file'], 'label':label, 'index':index, 'file':name})
 sheet.save(out / f'sheet_{skill:02d}_{light}.jpg','JPEG',quality=43,optimize=True,progressive=True)
 meta={'avfx_sha':sha, 'skill':skill, 'source_role':roles[skill], 'lighting':light,
       'scope':record['scope'], 'resolution':'1280x720 each, 1x pixels before JPEG encoding',
@@ -53,3 +53,37 @@ meta={'avfx_sha':sha, 'skill':skill, 'source_role':roles[skill], 'lighting':ligh
       'note':'OUT is captured after finish; no assumption of hit, actor depth or production HDR.'}
 (out / 'metadata.json').write_text(json.dumps(meta,indent=2)+'\n')
 print(f'BATCH_S_REVIEW skill={skill:02} lighting={light} frames={len(frames)} selected={indices} sheet_bytes={(out / f"sheet_{skill:02d}_{light}.jpg").stat().st_size}')
+
+# #15 source-to-world mount as implemented by CSourcePlayer. This records
+# cast-point and moving-caster coordinates, not synthetic enemy contacts.
+# Recompute from the actual recorded target/initial caster; roots/tips/petals
+# are time-dependent so these bounds do not claim the entire art was visible.
+if skill == 15 and record.get('cast_target_world') is not None:
+    import math
+    initial = frames[0]['player']
+    target = record['cast_target_world']
+    dx, dy = target[0]-initial[0], target[1]-initial[1]
+    length = math.hypot(dx,dy)
+    source_axis = (140.0,-14.0)
+    angle = math.atan2(dy,dx)-math.atan2(source_axis[1],source_axis[0]) if length > 1 else 0.0
+    scale = min(3.5,max(0.6,length/math.hypot(*source_axis))) if length > 1 else 1.0
+    co,si=math.cos(angle),math.sin(angle)
+    def local(world):
+        vx=(world[0]-initial[0])/scale; vy=(world[1]-initial[1])/scale
+        return [112.0+vx*co+vy*si, 126.0-vx*si+vy*co]
+    def edge(point):
+        x,y=point
+        return min(x,y,384.0-x,216.0-y)
+    focus=local(target)
+    shift=(focus[0]-252.0,focus[1]-112.0)
+    # Tiny shifts under the actual 0.001 threshold are deliberately ignored.
+    if math.hypot(*shift) <= 0.001: shift=(0.0,0.0)
+    targets=[[x+shift[0],y+shift[1]] for x,y in ((262,106),(306,156),(214,164),(312,62))]
+    meta['thorn_raster_geometry']={'source_size':[384,216], 'cast_caster_world_approx':initial,
+        'cast_target_world':target, 'source_to_world_scale':scale,'source_to_world_rotation_radians':angle,
+        'source_focus':focus,'focus_margin_px':edge(focus), 'source_targets':targets,
+        'target_margin_px':[edge(t) for t in targets],
+        'selected_caster_source_positions':[local(e['player']) for e in entries],
+        'selected_caster_margin_px':[edge(local(e['player'])) for e in entries],
+        'limitations':'Baseline caster is sampled just before the cast, not a presentation fence. Points only; not root width, lash, flower, petal or actual rendered-edge coverage.'}
+    (out / 'metadata.json').write_text(json.dumps(meta,indent=2)+'\n')
