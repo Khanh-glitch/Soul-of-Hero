@@ -8,11 +8,11 @@ historical methods, caveats and source-comparison references.
 ## R17 status and experimental build
 
 **NOT PLAYTEST_READY.** The newest downloadable, visual-only build is
-[Windows x64 + Linux x64 artifact 13082581843](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41304159336/artifacts/13082581843),
-source `9db0c3eba36c7866a96fc86f330e68edc482d047`.
-[Run 41304159336](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41304159336)
-passed Linux real-route motion for [#14](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41304159336/artifacts/13083145848)
-and [#18](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41304159336/artifacts/13083070427)
+[Windows x64 + Linux x64 artifact 13083091739](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41304565779/artifacts/13083091739),
+source `7737ec67a896b7478e7f003aed2e0cd878d0890a`.
+[Run 41304565779](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41304565779)
+passed Linux real-route motion for [#14](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41304565779/artifacts/13082952335)
+and [#18](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41304565779/artifacts/13082547958)
 and Windows **headless** smoke. It is available for early feedback, not a
 creator-approved build or a Windows GPU/display test. Its #11 is still an
 unreadable white cloud at peak. #14's meandering hyphae have only been
@@ -33,7 +33,7 @@ bridge are **not mounted**. The artifact contains the exact join manifest.
 - #09's A graph now receives the live caster reference, fixing the measured
   85.443-world-unit origin detachment in the earlier capture. B-like two-color
   palette and C branching are candidates, not full original B/C parity. A new
-  visual-test UI formation (`a74d7b2`, in the 9db0c3e build) can spawn real
+  visual-test UI formation (`a74d7b2`, in the 7737ec6 build) can spawn real
   Skeletons in a ring; [41303697476](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41303697476)
   exercised it with normal AI, seven moving enemies and both lights. The AI
   converges around the player and the sampled #09 still remains hard to read.
@@ -90,14 +90,22 @@ look more organic but some links still read as wires. Full-motion and creator
 review remain open. #18's sequence remains weak as capture/suspension/release,
 with no real combat receipts. `c73adea` enlarges stored moments to source B's
 0.42 clip transform and adds its four-vertex projectile head in the A raster;
-clipping/order runtime checks passed in 41304136832. This is not B raster/post
-parity or a genuine combat capture; normal/dim world review is still pending.
+clipping/order runtime checks passed in 41304136832. Normal/dim 1× snapshots
+[41304404181](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41304404181)
+and [41304404342](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41304404342)
+still do not make stored events clear. `63bada3` tests small released projectile
+heads traveling ahead of the shards toward a common impact; it is a visual-only
+unreviewed candidate, not B raster/post parity or a genuine combat capture.
 
 The remaining four redesigns have real full-cast videos and native-scale phase
 samples in [normal](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41303590845)
 and [dim](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41303590819).
-#04's thin blade/aftermath and #06's broad translucent ribbons need further
-motion/meaning review; #12's sampled glyph is partly outside the detail region.
+#04's older full-viewport blade [41304356189](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41304356189)
+reads as a dark rectangular slab. `b6504d3` tapers the same single covered
+blade to a point without glow camouflage; structural/world probe 41304554325
+passed but full moving-world visual review remains open. #06's broad translucent
+ribbons need motion/meaning review; #12's sampled glyph is partly outside the
+detail region.
 #13's previous roots read as oversized straight black/green wires. `aa02f0b`
 grows toward the contact anchors with shorter child branches. In the native
 normal/dim samples [41304147187](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41304147187)
@@ -544,7 +552,7 @@ combat.
 | 01 | A+C | A crown + selected C outer flame; full fusion/post and depth unverified. |
 | 02 | B | B wyrm source runtime; full world/post and body contact unverified. |
 | 03 | B | B meteor runtime; per-impact actual gameplay and OUT unverified. |
-| 04 | NEW | Diagonal blade and linked wound candidate; dim wound and complete motion quality remain weak. |
+| 04 | NEW | Single dark-metal diagonal blade + linked wound; earlier full view was slab-like, tapered-point candidate still needs full motion and creator review. |
 | 05 | A+C | A opening + C late water candidate; full source composition and real wet/body response unverified. |
 | 06 | NEW | A ribbon/foam adaptation, glyph and wave; C physical writing and full motion remain incomplete. |
 | 07 | C | C source and local ice effects; world/actor ordering, post and full parity open. |
@@ -558,7 +566,7 @@ combat.
 | 15 | C | C thorn source with local shade; full world/actor/post parity open. |
 | 16 | A+C | A growth, selected C organism/material/debris; complete C environment and fusion/OUT parity open. |
 | 17 | C | C stage blackout/light; overlapping post/cancel tested, actor/source ordering open. |
-| 18 | NEW | B-inspired frames and retimed impact, two shatter directions; B miniature contents/post, motion and body reaction open. |
+| 18 | NEW | B-inspired frozen moments remain visually ambiguous; new projectile-release cue unreviewed, B post and real receipt/body reaction open. |
 | 19 | D+A combat | D partial geometry/warp, separate OUT study; D core, bloom/linear pre-HUD post and actual A receipt binding missing. |
 | 20 | A+C | C rift + partial A world warp/debris; full source fusion and real hit/miss/occlusion remain open. |
 
