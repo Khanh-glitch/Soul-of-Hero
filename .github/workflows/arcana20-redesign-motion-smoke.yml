@@ -78,7 +78,15 @@ jobs:
           set -euo pipefail
           for WHICH in baseline optimized current; do
             PROJECT="$RUNNER_TEMP/$WHICH"; if [ "$WHICH" = current ]; then PROJECT="$GITHUB_WORKSPACE"; fi
+            set +e
             godot --headless --path "$PROJECT" --import > "$RUNNER_TEMP/import-$WHICH.log" 2>&1
+            IMPORT_RESULT=$?
+            set -e
+            if [ "$IMPORT_RESULT" -ne 0 ]; then
+              tail -30 "$RUNNER_TEMP/import-$WHICH.log" | while IFS= read -r line; do echo "::notice title=BENCH_IMPORT_FAILURE::$line"; done
+              echo "::error::Import $WHICH exited $IMPORT_RESULT"
+              exit "$IMPORT_RESULT"
+            fi
             if grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/import-$WHICH.log"; then cat "$RUNNER_TEMP/import-$WHICH.log"; exit 1; fi
             for ART in A B; do
               LOG="$RUNNER_TEMP/bench-$WHICH-$ART.log"
