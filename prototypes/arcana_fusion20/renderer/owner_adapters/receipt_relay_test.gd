@@ -25,8 +25,8 @@ func _run() -> void:
     var hit := {"receipt_id": "fixture-1", "cast_id": "fixture-cast", "outcome": &"hit", "target_ref": weakref(actor), "position": Vector2(12, 8), "nested": {"values": [1, 2]}}
     _check(not relay.forward(hit, Callable()), "no decoder must fail closed")
     _check(relay.forward(hit, decode), "owner-decoded fixture hit")
-    hit.nested.values[0] = 99
-    _check(int(observations[0].nested.values[0]) == 1 and int(bodies[0][0].nested.values[0]) == 1, "snapshot isolates caller mutation")
+    hit["nested"]["values"][0] = 99
+    _check(int(observations[0]["nested"]["values"][0]) == 1 and int(bodies[0][0]["nested"]["values"][0]) == 1, "snapshot isolates caller mutation")
     _check(bodies.size() == 1 and bodies[0][1] == actor, "body cue uses actual target node")
     var miss := {"receipt_id": "fixture-2", "cast_id": "fixture-cast", "outcome": &"miss", "target_ref": weakref(actor)}
     _check(relay.forward(miss, decode), "miss forwarded")

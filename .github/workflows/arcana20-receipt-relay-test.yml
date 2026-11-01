@@ -22,8 +22,12 @@ jobs:
       - name: Import and test synthetic fixtures only
         run: |
           set -o pipefail
+          set +e
           godot --headless --path . --import 2>&1 | tee import.log
+          import_result=${PIPESTATUS[0]}
+          set -e
           grep -E 'SCRIPT ERROR|Parse Error' import.log | head -20 | while IFS= read -r x; do echo "::notice title=RECEIPT_IMPORT::$x"; done || true
+          if [ "$import_result" -ne 0 ]; then echo "::error::Import exit $import_result"; exit "$import_result"; fi
           ! grep -Eq 'SCRIPT ERROR|Parse Error' import.log
           set +e
           godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/owner_adapters/receipt_relay_test.gd 2>&1 | tee result.log
