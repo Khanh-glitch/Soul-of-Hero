@@ -1439,8 +1439,9 @@ func _phase_sweep(app: Node, world: Node, player: Node2D, enemy: Node2D, camera:
         # Catalog climax is not necessarily this candidate's authored impact:
         # e.g. #04 cuts at 3.4s while its catalog climax is 4.25s. Capture
         # candidate event beats too, in chronological source-tick order. These
-        # are unapproved designs and event frames don't prove motion quality.
-        if Arcana20SourceCatalog.REDESIGN_IDS.has(num) and source is ASourcePlayer:
+        # include the #09/#11 fusion candidates. Event frames don't prove
+        # source parity, full motion quality, or creator approval.
+        if source is ASourcePlayer:
             var ordered: Array = []
             for index in range(targets.size()):
                 ordered.append({"tick": int(targets[index]), "label": labels[index]})
@@ -1488,7 +1489,7 @@ func _phase_sweep(app: Node, world: Node, player: Node2D, enemy: Node2D, camera:
         records.append(row)
         print("JOIN_PHASE ", JSON.stringify(row))
     var out := FileAccess.open(OUTPUT + "/phase_sweep_%02d.json" % first, FileAccess.WRITE)
-    out.store_string(JSON.stringify({"scope": "frozen historical real overworld; normal or test-dimmed WorldTint; experimental C viewport post; six catalog-relative ticks; no source parity, gameplay, target-device, or creator approval", "records": records}, "  "))
+    out.store_string(JSON.stringify({"scope": "frozen historical real overworld; normal or test-dimmed WorldTint; experimental C viewport post; catalog-relative ticks plus A candidate event beats; no source parity, gameplay, target-device, or creator approval", "records": records}, "  "))
     out.close()
     post.detach()
     mount.detach()
