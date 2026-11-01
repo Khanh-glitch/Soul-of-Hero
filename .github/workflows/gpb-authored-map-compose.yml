@@ -81,19 +81,35 @@ jobs:
           test "$rc" -eq 0
           grep -q 'A0 AUTHORED WORLD CONTRACT PASSED' artifacts/authored-contract.log
           ! grep -Ea 'SCRIPT ERROR|Parse Error|  FAIL  |A0_AUTHORED_WORLD_BLOCKED|A0_AUTHORED_WORLD_NOT_READ' artifacts/authored-contract.log
-      - name: Production-controller stream probe must really mount A1
+      - name: Player walks, harvests, visits A8 sites and saves (process 1)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/route_userdata
+          set +e
+          timeout --signal=TERM --kill-after=15s 780s bash .gpb_composition/tools/ci/godot_isolated.sh \
+            --headless --path .gpb_composition --user-data-dir "$PWD/artifacts/route_userdata" \
+            --script res://tests/survival_a0_authored_world_route_test.gd -- --keep-route > artifacts/route-p1.log 2>&1
+          rc=$?
+          set -e
+          tail -125 artifacts/route-p1.log
+          test "$rc" -eq 0
+          grep -q 'A0 AUTHORED WORLD ROUTE PASSED' artifacts/route-p1.log
+          ! grep -Ea 'SCRIPT ERROR|Parse Error|  FAIL  |A0_AUTHORED_WORLD_BLOCKED' artifacts/route-p1.log
+      - name: Separate Godot process resumes exact authored run and inventory
         shell: bash
         run: |
           set -euo pipefail
           set +e
-          timeout --signal=TERM --kill-after=10s 180s godot --headless --path .gpb_composition \
-            --script res://tests/survival_a0_authored_stream_test.gd > artifacts/stream.log 2>&1
+          timeout --signal=TERM --kill-after=15s 360s bash .gpb_composition/tools/ci/godot_isolated.sh \
+            --headless --path .gpb_composition --user-data-dir "$PWD/artifacts/route_userdata" \
+            --script res://tests/survival_a0_authored_world_route_test.gd -- --verify-route > artifacts/route-p2.log 2>&1
           rc=$?
           set -e
-          tail -110 artifacts/stream.log
+          tail -125 artifacts/route-p2.log
           test "$rc" -eq 0
-          grep -q 'A0 AUTHORED STREAM COMPONENT PROBE PASSED' artifacts/stream.log
-          ! grep -Ea 'SCRIPT ERROR|Parse Error|  FAIL  |NOT_APPLICABLE|BLOCKED' artifacts/stream.log
+          grep -q 'A0 AUTHORED WORLD ROUTE PASSED' artifacts/route-p2.log
+          ! grep -Ea 'SCRIPT ERROR|Parse Error|  FAIL  |A0_AUTHORED_WORLD_BLOCKED' artifacts/route-p2.log
       - name: Publish source composition and native evidence
         if: always()
         uses: actions/upload-artifact@v4
