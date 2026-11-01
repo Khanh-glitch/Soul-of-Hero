@@ -1,4 +1,15 @@
 <!-- CT_FINISHLINE_ACTIVE_START -->
+## CT 2026-11-01 — V2 LAST ISLAND H1 GAMEPLAY REDLINE; V3 PROPOSED, NOT DRAWN (LATEST)
+
+Creator requested critical correction based on 2019-20 Last Island actual map/player mechanics and complete SOH gameplay. Direct local V2 source measured: 28/30 named POIs exactly on road lines; all 6 deep sites are Elder (zero deep nonboss); 13 routes make one drawn graph with overlapping segments; V2's 7 road×river pairs are actually 12 geometric crossing occurrences/11 exact points, including FIVE crossings of Nhánh Mưa by the forest timber road. This contradicts physical freight and Last Island's dispersed roadside barrels/offroad huts/caves/keys/power/hazard multi-site economy. A colored/labelled square map with POI icons does NOT constitute useful nonboss survival or authored native camera.
+
+Historically sourced: 2019-07-30 guide on distributed broken crates; 2019-08-02 rare roadside weapon chance; 2019-08-07 official green/blue/purple power/chest sources and harbor neighborhood base route; 2019-10-31 airport 4–5× physical expansion, vegetation/roads overhaul. Exact original H1 map raster/XY unavailable; a 2023 map image CANNOT be used as 2019 coordinates.
+
+**Design verdict REJECT V2 AS FINAL but KEEP IT AS PAPER BASELINE.** Next new V3 (NOT YET DRAWN/PRODUCTION) must redesign: baseline safe ordinary resources across distributed random spawns + geographically uneven rare rewards; separate old-cart road salvage, foot shortcuts, offroad hidden POI/sources, independent true freight/deposit routes; multi-depth NONBOSS facilities and item/key/power/hazard/research graph; reroute nonsensical forest road/real grade/crossings; true 640×360 source art camera day/night, D051 hero, Gold, low clutter. Preserve 336h/last72 source cash, actual carry/bag/bank/optional evac, six Elder optional, Atlas scene+sea and Aion forest with no clock abuse.
+
+Full current chat-only review created: SOH_WORLD_V2_LAST_ISLAND_CRITIQUE_20261101/V2_REDLINE_SOURCE_AUDIT.png and WORLD_V2_LAST_ISLAND_GAMEPLAY_REDLINE.md. Not in Arena or Git. Existing in-place World Formation Bible updated/readback at commit 35aeb8eb361d3c4d3258a627e1005848226f5086. **NO V3 world image, No Arena prompt, no A1/AVFX source modification, no merge, no native/gameplay pass, no Google Docs 04/12 sync.** Next action is creator review of critique and corrective world graph, not another random POI layout.
+
+
 ## CT 2026-11-01 — TRIPLE-AXIS WORLD V2 PAPER REBALANCE AFTER CREATOR VETO (LATEST MAP DIRECTION)
 
 **Creator veto V1:** horizontal map ratio 1.588 (land bbox 1.631), artificially separated Elder/color ecology partitions and overly centered route/site network. Creator demands balanced width/depth and broadly available but **intentionally geographically unequal** opportunities, Last Island-like in player choice, not an even POI grid or forced 6-zone map. User's text ends at “giống”; do NOT claim a precise comparative original image was selected. This overrides the unapproved V1 map design only, not D062–D074 or owner implementations.
