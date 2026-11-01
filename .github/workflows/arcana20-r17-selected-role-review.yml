@@ -56,8 +56,12 @@ jobs:
           grep -Fq AVFX_LIVE_PASS "$RUNNER_TEMP/live.log"
           ! grep -Eq 'AVFX_LIVE_FAIL|SCRIPT ERROR:|Parse Error:|Shader compilation failed' "$RUNNER_TEMP/live.log"
           mkdir "$RUNNER_TEMP/output"
-          timeline=$(find "$RUNNER_TEMP/live-user" -name timeline.json -path '*/avfx_live_capture/*' -print -quit)
-          test -n "$timeline"; cp -a "$(dirname "$timeline")"/. "$RUNNER_TEMP/output/"
+          # Godot may fall back to its standard app_userdata directory even
+          # when --user-data-dir is supplied. Match the creator workflow's
+          # search and report the collection failure explicitly.
+          timeline=$(find "$RUNNER_TEMP" "$HOME/.local/share/godot/app_userdata" -type f -name timeline.json -path '*/avfx_live_capture/*' -print -quit 2>/dev/null || true)
+          if [ -z "$timeline" ]; then echo '::error title=R17_ROLE_COLLECTION::No captured timeline found'; exit 1; fi
+          cp -a "$(dirname "$timeline")"/. "$RUNNER_TEMP/output/"
           cp "$RUNNER_TEMP/live.log" "$RUNNER_TEMP/output/"
       - name: Encode actual native frame times
         run: |
