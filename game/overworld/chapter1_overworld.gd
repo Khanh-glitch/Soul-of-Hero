@@ -63,6 +63,9 @@ const A0_WORLD_ART_CANDIDATE := preload("res://game/survival/a0_world_art_candid
 ## A0 Round 12 production threat (CT decision T1). Off by default; when on, it is
 ## the ONE way the survival world ever exposes an enemy.
 const A0_THREAT_MOUNT := preload("res://game/survival/a0_threat_mount.gd")
+const ECOLOGY_TRACE_STORE := preload("res://game/survival/ecology/trace_store.gd")
+const ECOLOGY_SETTING := "survival/lw1_c08"
+const ECOLOGY_DEBUG_OVERLAY := preload("res://game/survival/ecology/debug_overlay.gd")
 const WAYSTATION_CANDIDATE_SETTING := "survival/a0_waystation_candidate"
 ## R13: which world is authoritative. "authored" is A1's 1024x768 continent and is
 ## the default production world; "annex" is the retained 384x256 Hollow Marches
@@ -134,6 +137,7 @@ var authored_world_active := false
 var authored_sources: Array = []
 var economy_composition: Node
 var threat_mount: Node
+var ecology: Node
 var economy_panel: CanvasLayer
 var chest_panel: CanvasLayer
 var _death_bags: Dictionary = {}
@@ -222,6 +226,8 @@ func depart_world(now_unix: int = -1) -> Dictionary:
 		state.set_world_position(stored_position, true)
 		report["position"] = [stored_position.x, stored_position.y]
 		report["body_position"] = [player.global_position.x, player.global_position.y]
+	if ecology != null and is_instance_valid(ecology) and ecology.has_method(&"flush"):
+		report["ecology_persisted"] = bool(ecology.call(&"flush"))
 	var save := get_node_or_null("/root/SaveService")
 	if save != null and save.has_method(&"save_now"):
 		report["persisted"] = bool(save.call(&"save_now"))
@@ -402,6 +408,7 @@ func _build_authored_world() -> void:
 	chest_panel = CHEST_PANEL_SCRIPT.new()
 	chest_panel.name = "ChestInventoryPanel"
 	add_child(chest_panel)
+	_mount_ecology()
 	_mount_optional_threat()
 	_mount_authored_sites()
 	_connect_run_events()
@@ -554,6 +561,7 @@ func _build_annex_world() -> void:
 		if not bool(art_result.get("ok", false)):
 			_fail("A1 roadside art candidate refused: " + String(art_result.get("reason", "unknown")))
 			return
+	_mount_ecology()
 	_mount_optional_threat()
 	_build_economy_panel()
 	chest_panel = CHEST_PANEL_SCRIPT.new()
@@ -613,11 +621,34 @@ func _build_economy_composition() -> void:
 ## live world by the encounter seam itself; a refusal is a build failure, never a
 ## silent "no danger today", so a player can never be told one thing while the
 ## world holds another.
+## LW1 C08 candidate: default OFF. The trace store is mounted into the same
+## production world, beside the existing optional threat, and reads the live
+## player body / A0 SaveService / RunLifecycle. No map, POI, catalog, avatar or
+## second save authority is introduced. A0_REVIEW_REQUIRED for this wiring.
+func _mount_ecology() -> void:
+	if not bool(ProjectSettings.get_setting(ECOLOGY_SETTING, false)):
+		return
+	var store := ECOLOGY_TRACE_STORE.new()
+	store.name = "EcologyTraceStore"
+	add_child(store)
+	var save := get_node_or_null("/root/SaveService")
+	var lifecycle := get_node_or_null("/root/RunLifecycle")
+	if not bool(store.call(&"configure", self, player, traversability, survival_build, world_authority, save, lifecycle)):
+		_fail("C08 ecology refused: " + String(store.get(&"last_error")))
+		return
+	ecology = store
+	if OS.is_debug_build() and OS.get_cmdline_user_args().has("--lw1-c08-debug"):
+		var overlay := ECOLOGY_DEBUG_OVERLAY.new()
+		overlay.name = "EcologyDebugOverlay"
+		add_child(overlay)
+		overlay.configure(store, self)
+
+
 func _mount_optional_threat() -> void:
 	var mount := A0_THREAT_MOUNT.new()
 	mount.name = "A0ThreatMount"
 	add_child(mount)
-	var report: Dictionary = mount.call(&"mount", self, player, traversability, survival_build)
+	var report: Dictionary = mount.call(&"mount", self, player, traversability, survival_build, ecology)
 	threat_mount = mount
 	if not bool(report.get("enabled", false)):
 		return

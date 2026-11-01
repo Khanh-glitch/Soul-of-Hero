@@ -2,12 +2,16 @@ name: GP-B gameplay — physical station output custody (real player, two proces
 
 on:
   push:
-    branches: [integration/gameplay-gpb-a3-20261101]
+    branches: [integration/gameplay-gpb-a3-20261101, arena/7f90cea6-soul-of-hero]
     paths:
       - game/survival/economy/economy_session.gd
       - game/survival/economy/economy_panel.gd
       - tests/survival_normal_connected_journey_test.gd
       - .github/workflows/gpb-physical-job-custody.yml
+      - game/survival/ecology/**
+      - game/characters/enemies/**
+      - game/overworld/**
+      - tests/survival/ecology/**
   workflow_dispatch:
 
 permissions:
@@ -73,4 +77,45 @@ jobs:
           path: |
             artifacts/*.log
             artifacts/user_data/**/capture_*.png
+          if-no-files-found: warn
+
+  lw1-c08-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      GODOT_SILENCE_ROOT_WARNING: "1"
+      LIBGL_ALWAYS_SOFTWARE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Verify native engine
+        run: godot --version
+      - name: Strict import — LW1 C08 ecology adapter
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          timeout --signal=TERM --kill-after=10s 300s godot --headless --path . --import > artifacts/lw1-import.log 2>&1
+          tail -65 artifacts/lw1-import.log
+          ! grep -Ea 'SCRIPT ERROR|Parse Error|Compilation failed' artifacts/lw1-import.log
+      - name: C08 unit negative oracles (fixture, not player acceptance)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/lw1_unit_ud
+          timeout --signal=TERM --kill-after=10s 180s bash tools/ci/godot_isolated.sh --headless --path . \
+            --user-data-dir "$PWD/artifacts/lw1_unit_ud" \
+            --script res://tests/survival/ecology/c08_unit_test.gd > artifacts/lw1-unit.log 2>&1
+          tail -80 artifacts/lw1-unit.log
+          grep -q 'LW1 C08 UNIT PASSED' artifacts/lw1-unit.log
+          ! grep -Ea 'SCRIPT ERROR|Parse Error|  FAIL  ' artifacts/lw1-unit.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lw1-c08-native
+          path: artifacts/lw1-*.log
           if-no-files-found: warn

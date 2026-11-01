@@ -5,6 +5,8 @@ const VfxCatalog := preload("res://game/vfx/vfx_catalog.gd")
 const EnemyDifficultyScalerScript := preload(
 	"res://game/characters/enemies/enemy_difficulty_scaler.gd"
 )
+const EcologyNavigatorScript := preload("res://game/survival/ecology/local_navigator.gd")
+const EcologyPolicy := preload("res://game/survival/ecology/trace_policy.gd")
 
 signal health_changed(current: int, maximum: int)
 signal died(enemy: SkeletonEnemy)
@@ -15,6 +17,9 @@ enum State {
 	ATTACK,
 	HURT,
 	DEAD,
+	INVESTIGATE,
+	FOLLOW_TRACE,
+	RETURN_HABITAT,
 }
 
 const FRAME_SIZE := Vector2i(32, 32)
@@ -64,6 +69,24 @@ var _attack_cooldown_left := 0.0
 var _hurt_lock_left := 0.0
 var _obstacle_repath_left := 0.0
 var _melee_threat_serial := 0
+# C08 ecology adapter. Null keeps every campaign/dungeon behavior unchanged.
+var _ecology: Node
+var _ecology_nav: RefCounted
+var _ecology_query_left := 0.0
+var _ecology_stall := 0.0
+var _ecology_before_move := Vector2.ZERO
+var _trace_id := ""
+var _trace_goal := Vector2.ZERO
+var _trace_visited := {}
+var _trace_path: Array[Vector2i] = []
+var _trace_path_index := 0
+var _has_last_known := false
+var _last_known_position := Vector2.ZERO
+var _investigate_left := 0.0
+var _knowledge_reason := "none"
+var _habitat_position := Vector2.ZERO
+var _return_path: Array[Vector2i] = []
+var _return_path_index := 0
 
 
 func configure_from_definition(snapshot: EnemyRuntimeSnapshot) -> bool:
@@ -109,20 +132,303 @@ func _physics_process(delta: float) -> void:
 		return
 
 	_target = _find_player()
+	_ecology_before_move = global_position
+	if _ecology != null:
+		_physics_ecology(delta)
+	else:
+		match _state:
+			State.PATROL:
+				_update_patrol()
+			State.CHASE:
+				_update_chase()
+			State.ATTACK:
+				_update_attack(delta)
+			State.HURT:
+				velocity = velocity.move_toward(Vector2.ZERO, 360.0 * delta)
+
+	move_and_slide()
+	if _ecology != null:
+		_ecology_after_move(delta)
+	elif _state == State.PATROL and get_slide_collision_count() > 0 and _obstacle_repath_left <= 0.0:
+		_choose_patrol_target()
+		_obstacle_repath_left = 0.35
+
+
+## C08 adapter: the existing Skeleton keeps its combat, animation, damage and
+## collision. Only its knowledge source and local movement goals are extended.
+func configure_ecology(store: Node, navigation: OverworldTraversability) -> bool:
+	if store == null or navigation == null or not store.has_method(&"sense_near"):
+		return false
+	var navigator := EcologyNavigatorScript.new()
+	if not navigator.configure(self, navigation):
+		return false
+	_ecology = store
+	_ecology_nav = navigator
+	_habitat_position = _spawn_position
+	_knowledge_reason = "ecology_configured"
+	_enter_state(State.PATROL)
+	return true
+
+
+func ecology_enabled() -> bool:
+	return _ecology != null
+
+
+func ecology_snapshot() -> Dictionary:
+	var state_name := "none"
+	match _state:
+		State.PATROL: state_name = "PATROL"
+		State.CHASE: state_name = "CHASE"
+		State.ATTACK: state_name = "ATTACK"
+		State.HURT: state_name = "HURT"
+		State.DEAD: state_name = "DEAD"
+		State.INVESTIGATE: state_name = "INVESTIGATE"
+		State.FOLLOW_TRACE: state_name = "FOLLOW_TRACE"
+		State.RETURN_HABITAT: state_name = "RETURN_HABITAT"
+	return {
+		"enemy_id": str(get_instance_id()),
+		"state": state_name,
+		"position": [global_position.x, global_position.y],
+		"knowledge_reason": _knowledge_reason,
+		"trace_id": _trace_id,
+		"trace_visited": _trace_visited.size(),
+		"last_known_position": [(_last_known_position.x if _has_last_known else 0.0), (_last_known_position.y if _has_last_known else 0.0)] if _has_last_known else [],
+		"habitat_position": [_habitat_position.x, _habitat_position.y],
+		"path_remaining": maxi(0, _trace_path.size() - _trace_path_index) if _state == State.FOLLOW_TRACE else maxi(0, _return_path.size() - _return_path_index),
+		"navigator_reason": _ecology_nav.get(&"last_reason") if _ecology_nav != null else "",
+	}
+
+
+func _physics_ecology(delta: float) -> void:
+	_ecology_query_left = maxf(0.0, _ecology_query_left - delta)
+	var sees_player := is_instance_valid(_target) and _target.is_in_group(&"player") and _can_detect_target(detection_range)
+	if sees_player:
+		_last_known_position = _target.global_position
+		_has_last_known = true
+		if _state == State.FOLLOW_TRACE:
+			_clear_trace_knowledge("direct_sight")
+		if _state != State.ATTACK and _state != State.HURT:
+			_knowledge_reason = "direct_sight"
+			_enter_state(State.CHASE)
 	match _state:
 		State.PATROL:
-			_update_patrol()
+			_update_patrol_ecology(delta)
 		State.CHASE:
-			_update_chase()
+			if not sees_player:
+				_begin_investigate("lost_direct_sight")
+			else:
+				_update_chase_ecology()
 		State.ATTACK:
 			_update_attack(delta)
 		State.HURT:
 			velocity = velocity.move_toward(Vector2.ZERO, 360.0 * delta)
+		State.INVESTIGATE:
+			_update_investigate_ecology(delta)
+		State.FOLLOW_TRACE:
+			_update_follow_trace(delta)
+		State.RETURN_HABITAT:
+			_update_return_habitat()
 
-	move_and_slide()
-	if _state == State.PATROL and get_slide_collision_count() > 0 and _obstacle_repath_left <= 0.0:
+
+func _update_patrol_ecology(delta: float) -> void:
+	if _ecology_query_left <= 0.0:
+		_ecology_query_left = EcologyPolicy.SENSE_INTERVAL
+		var candidates: Array = _ecology.call(&"sense_near", global_position, EcologyPolicy.SENSE_RADIUS)
+		for raw: Variant in candidates:
+			var record: Dictionary = raw
+			var id := String(record.get("id", ""))
+			if id.is_empty() or _trace_visited.has(id):
+				continue
+			if float(_ecology.call(&"clarity", id)) <= 0.0:
+				continue
+			_begin_trace(record, "local_trace_sensed")
+			return
+	_update_patrol()
+
+
+func _begin_trace(record: Dictionary, reason: String) -> void:
+	var id := String(record.get("id", ""))
+	var pos := _record_position(record)
+	_trace_id = id
+	_trace_goal = pos
+	_knowledge_reason = reason
+	_trace_path = _ecology_nav.call(&"plan", pos)
+	_trace_path_index = 0
+	if _trace_path.is_empty() and global_position.distance_to(pos) > EcologyPolicy.ARRIVE_DISTANCE:
+		_lose_trace("trace_path_blocked")
+		return
+	_enter_state(State.FOLLOW_TRACE)
+
+
+func _update_follow_trace(_delta: float) -> void:
+	if _trace_id.is_empty() or float(_ecology.call(&"clarity", _trace_id)) <= 0.0:
+		_lose_trace("trace_expired")
+		return
+	var record: Dictionary = _ecology.call(&"trace_record", _trace_id)
+	if record.is_empty():
+		_lose_trace("trace_missing")
+		return
+	_trace_goal = _record_position(record)
+	if global_position.distance_to(_trace_goal) <= EcologyPolicy.ARRIVE_DISTANCE:
+		_trace_visited[_trace_id] = true
+		var next: Dictionary = _ecology.call(&"successor", _trace_id)
+		var status := String(next.get("status", ""))
+		if status == "ok":
+			var next_record: Dictionary = next.get("record", {})
+			var next_id := String(next_record.get("id", ""))
+			if _trace_visited.has(next_id):
+				_lose_trace("trace_cycle")
+				return
+			_begin_trace(next_record, "contiguous_trace")
+			return
+		_lose_trace("trace_" + status)
+		return
+	velocity = _path_velocity(_trace_path, _trace_path_index, patrol_speed)
+	if _trace_path_index >= _trace_path.size() and global_position.distance_to(_trace_goal) > EcologyPolicy.ARRIVE_DISTANCE:
+		_trace_path = _ecology_nav.call(&"plan", _trace_goal)
+		_trace_path_index = 0
+		if _trace_path.is_empty():
+			_lose_trace("trace_path_blocked")
+			return
+	_set_facing(velocity)
+
+
+func _begin_investigate(reason: String) -> void:
+	if not _has_last_known:
+		_begin_return_habitat(reason)
+		return
+	_knowledge_reason = reason
+	_investigate_left = EcologyPolicy.INVESTIGATE_TIMEOUT
+	_trace_path = _ecology_nav.call(&"plan", _last_known_position)
+	_trace_path_index = 0
+	_enter_state(State.INVESTIGATE)
+
+
+func _update_investigate_ecology(delta: float) -> void:
+	_investigate_left -= delta
+	if not _has_last_known or _investigate_left <= 0.0:
+		_has_last_known = false
+		_begin_return_habitat("investigation_timeout")
+		return
+	if global_position.distance_to(_last_known_position) <= EcologyPolicy.ARRIVE_DISTANCE:
+		_has_last_known = false
+		_begin_return_habitat("last_known_reached")
+		return
+	velocity = _path_velocity(_trace_path, _trace_path_index, patrol_speed)
+	if _trace_path_index >= _trace_path.size():
+		_has_last_known = false
+		_begin_return_habitat("last_known_path_blocked")
+		return
+	_set_facing(velocity)
+
+
+func _begin_return_habitat(reason: String) -> void:
+	_clear_trace_knowledge(reason)
+	_has_last_known = false
+	_return_path = _ecology_nav.call(&"plan", _habitat_position)
+	_return_path_index = 0
+	_knowledge_reason = reason
+	_enter_state(State.RETURN_HABITAT)
+
+
+func _update_return_habitat() -> void:
+	if global_position.distance_to(_habitat_position) <= EcologyPolicy.ARRIVE_DISTANCE:
+		_knowledge_reason = "habitat_reached"
 		_choose_patrol_target()
-		_obstacle_repath_left = 0.35
+		_enter_state(State.PATROL)
+		return
+	if _return_path_index >= _return_path.size():
+		velocity = Vector2.ZERO
+		_knowledge_reason = "habitat_path_blocked"
+		_patrol_target = global_position
+		_enter_state(State.PATROL)
+		return
+	velocity = _path_velocity(_return_path, _return_path_index, patrol_speed)
+	_set_facing(velocity)
+
+
+func _path_velocity(path: Array[Vector2i], index: int, speed: float) -> Vector2:
+	# GDScript cannot mutate the caller's int through this signature; the caller
+	# advances its own index below via the shared helper.
+	return _path_velocity_state(path, speed)
+
+
+func _path_velocity_state(path: Array[Vector2i], speed: float) -> Vector2:
+	var is_return := _state == State.RETURN_HABITAT
+	var index := _return_path_index if is_return else _trace_path_index
+	while index < path.size() and global_position.distance_to(_ecology_nav.call(&"point", path[index])) <= 4.0:
+		index += 1
+	if is_return:
+		_return_path_index = index
+	else:
+		_trace_path_index = index
+	if index >= path.size():
+		return Vector2.ZERO
+	var point: Vector2 = _ecology_nav.call(&"point", path[index])
+	return _steer_velocity(global_position.direction_to(point) * speed, speed)
+
+
+func _update_chase_ecology() -> void:
+	var target_offset := _target.global_position - global_position
+	if target_offset.length() <= attack_range and _attack_cooldown_left <= 0.0:
+		_set_facing(target_offset)
+		_enter_state(State.ATTACK)
+		return
+	velocity = _steer_velocity(target_offset.normalized() * chase_speed, chase_speed)
+	_set_facing(velocity)
+
+
+func _ecology_after_move(delta: float) -> void:
+	if _state not in [State.INVESTIGATE, State.FOLLOW_TRACE, State.RETURN_HABITAT]:
+		_ecology_stall = 0.0
+		return
+	var moved := global_position.distance_to(_ecology_before_move)
+	if velocity.length() > 1.0 and moved < 0.05:
+		_ecology_stall += delta
+	else:
+		_ecology_stall = 0.0
+	if _ecology_stall < EcologyPolicy.STALL_TIMEOUT:
+		return
+	_ecology_stall = 0.0
+	if _state == State.FOLLOW_TRACE:
+		_lose_trace("physical_path_stalled")
+	elif _state == State.INVESTIGATE:
+		_has_last_known = false
+		_begin_return_habitat("investigation_stalled")
+	else:
+		velocity = Vector2.ZERO
+		_knowledge_reason = "habitat_path_stalled"
+		_patrol_target = global_position
+		_enter_state(State.PATROL)
+
+
+func _lose_trace(reason: String) -> void:
+	_clear_trace_knowledge(reason)
+	_begin_return_habitat(reason)
+
+
+func _clear_trace_knowledge(reason: String) -> void:
+	_trace_id = ""
+	_trace_path.clear()
+	_trace_path_index = 0
+	_knowledge_reason = reason
+
+
+func _post_combat_state() -> State:
+	if _ecology == null:
+		return State.CHASE if _can_detect_target(disengage_range) else State.PATROL
+	if _can_detect_target(detection_range):
+		return State.CHASE
+	if _has_last_known:
+		return State.INVESTIGATE
+	return State.RETURN_HABITAT
+
+
+func _record_position(record: Dictionary) -> Vector2:
+	var value: Variant = record.get("position", [0.0, 0.0])
+	if value is Array and (value as Array).size() >= 2:
+		return Vector2(float((value as Array)[0]), float((value as Array)[1]))
+	return global_position
 
 
 func take_damage(amount: int, source_position: Vector2 = Vector2.ZERO) -> void:
@@ -318,6 +624,9 @@ func _enter_state(next_state: State) -> void:
 		State.HURT:
 			attack_collision.set_deferred(&"disabled", true)
 			animated_sprite.play(&"hurt")
+		State.INVESTIGATE, State.FOLLOW_TRACE, State.RETURN_HABITAT:
+			attack_collision.set_deferred(&"disabled", true)
+			animated_sprite.play(&"move")
 		State.DEAD:
 			velocity = Vector2.ZERO
 			VfxCatalog.spawn(get_parent(), &"skeleton_death", global_position + Vector2(0.0, -8.0), 0.0, 1.0, Color(0.76, 0.86, 0.80, 0.84), 7)
@@ -342,9 +651,9 @@ func _on_animation_finished() -> void:
 		&"attack":
 			attack_collision.set_deferred(&"disabled", true)
 			_attack_cooldown_left = attack_cooldown
-			_enter_state(State.CHASE if _can_detect_target(disengage_range) else State.PATROL)
+			_enter_state(_post_combat_state())
 		&"hurt":
-			_enter_state(State.CHASE if _can_detect_target(disengage_range) else State.PATROL)
+			_enter_state(_post_combat_state())
 		&"death":
 			queue_free()
 

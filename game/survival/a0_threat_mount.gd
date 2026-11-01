@@ -42,7 +42,7 @@ var _nav: OverworldTraversability
 var _build: Node
 
 
-func mount(world: Node, hero: Node2D, navigation: OverworldTraversability, build: Node) -> Dictionary:
+func mount(world: Node, hero: Node2D, navigation: OverworldTraversability, build: Node, ecology: Node = null) -> Dictionary:
 	_world = world
 	_hero = hero
 	_nav = navigation
@@ -69,6 +69,11 @@ func mount(world: Node, hero: Node2D, navigation: OverworldTraversability, build
 		last_error = "encounter_refused:" + String(refused.get("reason", "unknown"))
 		node.queue_free()
 		return snapshot()
+	if ecology != null:
+		if not bool(node.call(&"configure_ecology", ecology, navigation)):
+			last_error = "ecology_adapter_refused"
+			node.queue_free()
+			return snapshot()
 	encounter = node
 	mounted = true
 	return snapshot()
@@ -111,5 +116,6 @@ func snapshot() -> Dictionary:
 		"attempts": attempts,
 		"site_cell": [site_cell.x, site_cell.y],
 		"reward_free": true,
+		"ecology_adapter": ecology != null,
 		"last_error": last_error,
 	}

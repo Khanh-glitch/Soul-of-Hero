@@ -34,6 +34,9 @@ var _spent := false
 var _reservation_active := false
 var _cooldown := 0.0
 var _configured := false
+var _ecology_store: Node
+var _ecology_nav: OverworldTraversability
+var _ecology_enabled := false
 
 ## A0 Round 12: the site rules are now a pure, reusable oracle. The production
 ## mount searches for a site with this function and `configure` calls it again,
@@ -132,6 +135,21 @@ func configure(hero: CharacterBody2D, build: SurvivalBuildSystem, nav: Overworld
 	_spawn()
 	return true
 
+## C08 candidate adapter. The encounter remains one-use, reward-free and default
+## OFF; ecology only changes how that same Skeleton acquires local knowledge and
+## removes the old 160 px despawn leash so a lawful trace can be followed to its
+## physical end. It does not grant wall/door damage or offline simulation.
+func configure_ecology(store: Node, nav: OverworldTraversability) -> bool:
+	if not _configured or store == null or nav == null:
+		return false
+	_ecology_store = store
+	_ecology_nav = nav
+	_ecology_enabled = true
+	if is_instance_valid(_enemy) and _enemy.has_method(&"configure_ecology"):
+		return bool(_enemy.call(&"configure_ecology", store, nav))
+	return true
+
+
 func _spawn() -> void:
 	if not _configured or _spent or is_instance_valid(_enemy) or not is_instance_valid(_hero) \
 			or _hero.global_position.distance_to(global_position) <= SAFE_SPAWN_DISTANCE:
@@ -171,6 +189,9 @@ func _spawn() -> void:
 	_enemy.set("global_position", global_position)
 	_enemy.connect("health_changed", _on_enemy_health_changed)
 	_enemy.connect("died", _on_enemy_died)
+	if _ecology_enabled and _ecology_store != null and _ecology_nav != null and _enemy.has_method(&"configure_ecology"):
+		if not bool(_enemy.call(&"configure_ecology", _ecology_store, _ecology_nav)):
+			_ecology_enabled = false
 
 func _on_enemy_health_changed(current: int, maximum: int) -> void:
 	if _spent or current >= maximum or not _configured:
@@ -199,7 +220,7 @@ func _physics_process(delta: float) -> void:
 	if _cooldown > 0.0:
 		_cooldown = maxf(0.0, _cooldown - delta)
 	if is_instance_valid(_enemy) and not _enemy.is_queued_for_deletion():
-		if bool(_hero.get("dead")) or _enemy.global_position.distance_to(global_position) > MAX_LEASH:
+		if bool(_hero.get("dead")) or (not _ecology_enabled and _enemy.global_position.distance_to(global_position) > MAX_LEASH):
 			_enemy.queue_free()
 			_enemy = null
 			_cooldown = REARM_SECONDS
