@@ -14,10 +14,13 @@ frames in each light. Source-clock-retimed 1× paired viewport videos of
 those active captured frames recovered from the same frozen-scene captures: [normal](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41316350255/artifacts/13087252036),
 [dim](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41316350255/artifacts/13086789644).
 These are sparse real observed frames, not a production before/after fix.
-Raising the whole pass reveals obscured bolts but also washes over the actors,
-so that foreground experiment is rejected and not mounted. Occlusion is
-demonstrated; correcting it without painting through actors/obstacles requires
-the owner's depth/composition interface. #11 remains
+Raising the whole pass reveals bolts over the actors but also washes out their
+sprites, so that foreground experiment is rejected and not mounted. The draw
+order is implicated, but this also changes the captured screen-texture input
+from terrain to terrain plus actors, so the experiment cannot separate pure
+occlusion from backdrop/color-composite effects. Correcting both without
+painting through actors/obstacles requires the owner's depth/composition
+interface. #11 remains
 HOLD; do not infer approval from its raw field or adjust bolt counts without a
 new compositor hypothesis.
 
@@ -36,8 +39,8 @@ continues. [41316525652](https://github.com/Khanh-glitch/Soul-of-Hero/actions/ru
 confirmed the same native fields exactly at six phases including ticks 390
 and 480, with single isolated software source samples 508351→45 µs and
 528525→40 µs at those OUT ticks. This does not measure the rest of the fusion,
-the actual GPU, visual quality, or real-device frame rate. Full moving-world
-motion and the refreshed export still require review.
+the actual GPU, visual quality, or real-device frame rate. A full #05 moving-world
+capture is available in run 41316630018; visual motion review remains open.
 
 The bounded matched #09 retention run [41315535779](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41315535779)
 uses six rounds × four casts/cancels, five actual Home reloads and independent
@@ -63,12 +66,19 @@ historical methods, caveats and source-comparison references.
 ## R17 status and experimental build
 
 **NOT PLAYTEST_READY.** The newest downloadable, visual-only build is
-[Windows x64 + Linux x64 artifact 13086651403](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41313445186/artifacts/13086651403),
-source `247f9b5a993fb8c9aa83e5a3f1f2a29033fc9adc`.
-[Run 41313445186](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41313445186)
-passed Linux real-route motion for [#14](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41313445186/artifacts/13085658141)
-and [#18](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41313445186/artifacts/13086417892)
-and Windows **headless** smoke. It is available for early feedback, not a
+[Windows x64 + Linux x64 artifact 13087538091](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41316630018/artifacts/13087538091),
+source `55c327fbce6b9dd65133a38e59412a0eafd3c977`.
+[Run 41316630018](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41316630018)
+passed Linux export/real-route smoke, Windows **headless** smoke and natural
+real-world motion captures for [#05](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41316630018/artifacts/13087244338),
+[#14](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41316630018/artifacts/13088010307),
+and [#18](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41316630018/artifacts/13087851953).
+The #05 capture has 67 sparse software-CI frames and is not visual approval.
+The prior verified build [41316350244](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41316350244)
+passed Windows headless and Linux real-route #05/#14/#18 motion;
+[#05 video](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41316350244/artifacts/13087766331)
+is from `4c3a2e8`, before the later empty-OUT optimization. The newest preview
+is available for early feedback, not a
 creator-approved build or a Windows GPU/display test. Its #11 is still an
 unreadable white cloud at peak. #14's meandering hyphae have only been
 inspected in selected native normal/dim frames; some links still look wire-like
