@@ -1,0 +1,45 @@
+name: ARCANA19 isolated pre-HUD bloom pipeline prototype
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths:
+      - '.github/workflows/arcana19-prehud-prototype.yml'
+      - 'prototypes/arcana_fusion20/renderer/d_prehud_prototype_test.gd'
+      - 'prototypes/arcana_fusion20/renderer/world_pass/d_post_prototype/**'
+permissions:
+  contents: read
+jobs:
+  synthetic-pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import project
+        run: |
+          set -o pipefail
+          godot --headless --path . --import 2>&1 | tee import.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' import.log
+      - name: Exercise separate-input GPU pipeline and teardown
+        run: |
+          set -o pipefail
+          timeout 240s xvfb-run -a -s '-screen 0 480x270x24' env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --audio-driver Dummy --resolution 480x270 --windowed \
+            --script res://prototypes/arcana_fusion20/renderer/d_prehud_prototype_test.gd 2>&1 | tee result.log
+          grep -Fq 'D_PREHUD_PASS' result.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Shader compilation failed|D_PREHUD_FAIL' result.log
+      - name: Surface assertions
+        if: always()
+        run: grep -E 'D_PREHUD_|SCRIPT ERROR|Parse Error|Shader compilation failed' result.log | sed 's/^/::notice title=D_PREHUD::/' || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: d-prehud-prototype-synthetic
+          path: |
+            import.log
+            result.log
