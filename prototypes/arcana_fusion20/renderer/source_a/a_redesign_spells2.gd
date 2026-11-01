@@ -147,10 +147,12 @@ class SporeNebulaR:
         ADraw.line(fb, origin.x - width * 0.11, origin.y - height * 0.06,
             neck.x - width * 0.09, neck.y, Vector3(0.86, 0.75, 0.53), opacity * 0.7)
         var cap := neck + Vector2(0, -height * 0.20)
-        ADraw.poly_fill_solid(fb, [cap + Vector2(-width, 0), cap + Vector2(-width * 0.90, -height * 0.18),
-            cap + Vector2(-width * 0.60, -height * 0.34), cap + Vector2(-width * 0.20, -height * 0.40),
-            cap + Vector2(width * 0.35, -height * 0.38), cap + Vector2(width * 0.72, -height * 0.27),
-            cap + Vector2(width * 0.95, -height * 0.12), cap + Vector2(width, 0)], Vector3(0.36, 0.16, 0.38), true, opacity)
+        # A deeper rounded cap prevents the earlier silhouette collapsing
+        # into a thin purple slat at native overworld scale.
+        ADraw.poly_fill_solid(fb, [cap + Vector2(-width, 0), cap + Vector2(-width * 0.90, -height * 0.34),
+            cap + Vector2(-width * 0.60, -height * 0.75), cap + Vector2(-width * 0.20, -height * 0.90),
+            cap + Vector2(width * 0.35, -height * 0.86), cap + Vector2(width * 0.72, -height * 0.60),
+            cap + Vector2(width * 0.95, -height * 0.24), cap + Vector2(width, 0)], Vector3(0.36, 0.16, 0.38), true, opacity)
         ADraw.poly_fill_solid(fb, [cap + Vector2(-width, 0), cap + Vector2(-width * 0.72, height * 0.16),
             cap + Vector2(0, height * 0.25), cap + Vector2(width * 0.72, height * 0.16), cap + Vector2(width, 0)], Vector3(0.82, 0.67, 0.40), true, opacity * 0.94)
         ADraw.line(fb, cap.x - width, cap.y, cap.x + width, cap.y, Vector3(1.1, 0.72, 0.64), opacity)
@@ -161,7 +163,7 @@ class SporeNebulaR:
         # Sparse cap freckles remain tangible pixels rather than luminous fog.
         for spot in [-0.48, 0.0, 0.43]:
             var offset := float(spot)
-            fb.add_px(roundi(cap.x + width * offset), roundi(cap.y - height * (0.22 + 0.07 * (1.0 - absf(offset)))),
+            fb.add_px(roundi(cap.x + width * offset), roundi(cap.y - height * (0.44 + 0.14 * (1.0 - absf(offset)))),
                 0.95, 0.58, 1.1, opacity * 0.8)
 
     func render(fb: AFramebuffer, t: float) -> void:
