@@ -14,8 +14,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - {light: normal, run_id: 41297739352, artifact: live-motion-4-normal}
-          - {light: dimmed, run_id: 41303590819, artifact: r17-redesign-4-dimmed}
+          - {light: normal, run_id: 41305028262, artifact: r17-tapered-4-normal}
+          - {light: dimmed, run_id: 41305028262, artifact: r17-tapered-4-dimmed}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
