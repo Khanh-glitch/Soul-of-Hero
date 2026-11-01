@@ -67,11 +67,15 @@ func _init() -> void:
                 node._process(1.0 / 60.0)
             if not renderer.is_active(cid):
                 break
-        var want_contacts: int = int({1: 2, 4: 2, 6: 4, 9: 11, 11: 7, 12: 4, 13: 4, 14: 6}.get(_skill_num(cid), 1))
+        var want_contacts: int = int({1: 2, 4: 6, 6: 4, 9: 11, 11: 7, 12: 4, 13: 4, 14: 6}.get(_skill_num(cid), 1))
         if id == 3:
             want_contacts = 8 # authored per-meteor impacts (fusion decisions #03)
         if int(_contacts[cid]) != want_contacts:
             _fail("contact count %s = %d (want %d)" % [cid, int(_contacts[cid]), want_contacts])
+        if id == 4:
+            var kinds4: Array = _events.get(cid, [])
+            if kinds4.count("guillotine_impact") != 1 or kinds4.count("rupture_impact") != 5:
+                _fail("guillotine event ledger must retain one cut and five distinct rupture contacts: %s" % str(kinds4))
         if id == 2:
             var kinds: Array = _events.get(cid, [])
             if not kinds.has("bite") or kinds.count("sweep") < 3:

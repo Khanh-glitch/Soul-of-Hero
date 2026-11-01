@@ -204,8 +204,8 @@ class SkybreakerScriptR:
     func authored_events() -> Array:
         var ev: Array = [{"t": 0.8, "kind": "glyph_write", "pos_local": C, "emitted": false}]
         for i in range(3):
-            ev.append({"t": 4.4 + float(i) * 0.7, "kind": "circuit_strike_impact", "pos_local": Vector2(200 + i * 34, 96), "emitted": false})
-        ev.append({"t": 6.8, "kind": "skybreaker_impact", "pos_local": C, "emitted": false})
+            ev.append({"t": 4.4 + float(i) * 0.7, "kind": "circuit_strike_impact", "pos_local": Vector2(200 + i * 34, 118), "emitted": false})
+        ev.append({"t": 6.8, "kind": "skybreaker_impact", "pos_local": C + Vector2(0, 26), "emitted": false})
         ev.append({"t": 7.8, "kind": "glyph_disassemble", "pos_local": C, "emitted": false})
         return ev
     func _stroke_remaining(index: int, t: float) -> float:
@@ -237,7 +237,8 @@ class SkybreakerScriptR:
                 var pu := fmod(t * 0.7 + float(i) * 0.23, 1.0)
                 var pp: Vector2 = pts[mini(pts.size() - 1, int(pu * float(pts.size())))]
                 ADraw.glow(fb, pp.x, pp.y, 6.0, AMath.R("volt", 0.9), dis)
-        # ordered circuit strikes, then climactic strike (C #09 bolt craft)
+        # Ordered circuit strikes and final strike use the current A helper.
+        # C #09 branch-generator fidelity is still an explicit open gap.
         for i in range(3):
             var lt := t - (4.4 + float(i) * 0.7)
             if lt < 0.0 or lt > 0.3:
