@@ -113,9 +113,54 @@ jobs:
           tail -80 artifacts/lw1-unit.log
           grep -q 'LW1 C08 UNIT PASSED' artifacts/lw1-unit.log
           ! grep -Ea 'SCRIPT ERROR|Parse Error|  FAIL  ' artifacts/lw1-unit.log
+      - name: Real paid home built by ordinary input (process 1)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/lw1_ud
+          timeout --signal=TERM --kill-after=15s 1500s xvfb-run -a -s "-screen 0 1600x900x24" \
+            bash tools/ci/godot_isolated.sh --path . --windowed --resolution 1280x720 \
+            --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy \
+            --user-data-dir "$PWD/artifacts/lw1_ud" \
+            --script res://tests/survival/ecology/c08_home_setup_test.gd \
+            > artifacts/lw1-home.log 2>&1 || { tail -125 artifacts/lw1-home.log; exit 1; }
+          tail -90 artifacts/lw1-home.log
+          grep -q 'LW1 C08 HOME SETUP PASSED' artifacts/lw1-home.log
+          test -f "$PWD/artifacts/lw1_ud/XDG_DATA_HOME/tests/lw1_c08_home.json" || find "$PWD/artifacts/lw1_ud" -name 'lw1_c08_home.json' -print -quit | grep -q .
+          ! grep -Ea 'SCRIPT ERROR|Parse Error|  FAIL  ' artifacts/lw1-home.log
+      - name: CASE A zero valid trace; loaded home must not be approached (process 2)
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout --signal=TERM --kill-after=15s 900s xvfb-run -a -s "-screen 0 1600x900x24" \
+            bash tools/ci/godot_isolated.sh --path . --windowed --resolution 1280x720 \
+            --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy \
+            --user-data-dir "$PWD/artifacts/lw1_ud" \
+            --script res://tests/survival/ecology/c08_real_input_test.gd -- --case-a \
+            > artifacts/lw1-case-a.log 2>&1 || { tail -125 artifacts/lw1-case-a.log; exit 1; }
+          tail -120 artifacts/lw1-case-a.log
+          grep -q 'LW1 C08 REAL_INPUT CASE_A PASSED' artifacts/lw1-case-a.log
+          ! grep -Ea 'SCRIPT ERROR|Parse Error|  FAIL  ' artifacts/lw1-case-a.log
+      - name: CASE B/C real lure, paid-door retreat, expired evidence loss (process 3)
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout --signal=TERM --kill-after=15s 1200s xvfb-run -a -s "-screen 0 1600x900x24" \
+            bash tools/ci/godot_isolated.sh --path . --windowed --resolution 1280x720 \
+            --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy \
+            --user-data-dir "$PWD/artifacts/lw1_ud" \
+            --script res://tests/survival/ecology/c08_real_input_test.gd -- --case-bc --survival-run-clock-test --keep-c08 \
+            > artifacts/lw1-case-bc.log 2>&1 || { tail -160 artifacts/lw1-case-bc.log; exit 1; }
+          tail -160 artifacts/lw1-case-bc.log
+          grep -q 'LW1 C08 REAL_INPUT CASE_BC PASSED' artifacts/lw1-case-bc.log
+          grep -q 'LW1_C08_STATE tag=after_approach' artifacts/lw1-case-bc.log
+          grep -q 'LW1_C08_STATE tag=after_expiry' artifacts/lw1-case-bc.log
+          ! grep -Ea 'SCRIPT ERROR|Parse Error|  FAIL  ' artifacts/lw1-case-bc.log
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: lw1-c08-native
-          path: artifacts/lw1-*.log
+          path: |
+            artifacts/lw1-*.log
+            artifacts/lw1_ud/**/lw1_c08_*.png
           if-no-files-found: warn
