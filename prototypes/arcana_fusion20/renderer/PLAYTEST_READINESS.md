@@ -50,9 +50,11 @@
   correctly detected the newly added A displacement against its pre-change
   baseline. `e3b7bcf` updates the diagnostic to apply that same source role
   independently to the immutable baseline and still compare every field; the
-  revised benchmark is pending. The new creator package and #20 real-world
-  captures are pending. Do not attribute the #20 addition to the earlier
-  `5aab036` package.
+  revised benchmark is pending. The refreshed code `189d62d` has an exported
+  [Windows/Linux package](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41325799138/artifacts/13091022926)
+  and successful Linux launch; its Windows headless and #05/#20 normal/dim,
+  #01/#16 normal captures remain queued or running. Do not attribute the #20
+  addition to the earlier `5aab036` package.
 - #01 C outer tongues and #16 A growth/C organism/debris remain mounted, but
   no new source role or creator visual approval is claimed for them here.
   #09/#11 remain the R18 protected baselines. CT world-linear HDR/depth/post
