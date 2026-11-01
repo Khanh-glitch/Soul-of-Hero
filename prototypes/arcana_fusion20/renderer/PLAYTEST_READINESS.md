@@ -51,16 +51,19 @@
   baseline. `e3b7bcf` updates the diagnostic to apply that same source role
   independently to the immutable baseline and still compare every field. The
   adjusted [41326213986](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41326213986)
-  comparison passed; the hash-factor baseline run remains pending. The refreshed code `189d62d` has an exported
+  comparison and [41326214034](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41326214034)
+  hash-factor baseline comparison both passed. The refreshed code `189d62d` has an exported
   [Windows/Linux package](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41325799138/artifacts/13091022926)
   and successful Linux launch and Windows headless checks. Actual-route #05
   [normal](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41325799138/artifacts/13091571605)
   and [dim](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41325799138/artifacts/13091895421)
   full-motion captures succeeded. #20 [normal](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41325799138/artifacts/13091950147)
   and [dim](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41325799138/artifacts/13091540912),
-  plus #01 [normal](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41325799138/artifacts/13091068891),
-  also completed but have not been visually reviewed here; #16 normal remains
-  running. Do not attribute the #20
+  plus #01 [normal](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41325799138/artifacts/13091068891)
+  and #16 [normal](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41325799138/artifacts/13091402387),
+  also completed but have not been visually reviewed here. The full
+  [41325799138](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41325799138)
+  matrix succeeded; no dim #01/#16 capture was requested in that matrix. Do not attribute the #20
   addition to the earlier `5aab036` package.
 - #01 C outer tongues and #16 A growth/C organism/debris remain mounted, but
   no new source role or creator visual approval is claimed for them here.
