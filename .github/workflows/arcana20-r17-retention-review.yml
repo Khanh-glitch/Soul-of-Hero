@@ -13,13 +13,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        skill: [9, 11, 14]
+        skill: [9]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
         with:
           name: r17-retention-${{ matrix.skill }}
-          run-id: 41313465731
+          run-id: 41315535779
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path: ${{ runner.temp }}/retention
       - name: Surface measured per-round differences
@@ -29,7 +29,6 @@ jobs:
           d=json.loads(pathlib.Path(sys.argv[1]).read_text())
           print('::notice title=R17_RETENTION_DIFFERENCE::'+json.dumps(d['comparison'],separators=(',',':')))
           for mode in ('no_fx','fx'):
-              for s in d[mode]['samples']:
-                  if s['label'] in ('round1_baseline','round1_after_3','round2_baseline','round2_after_3'):
-                      print('::notice title=R17_RETENTION_SAMPLE::'+json.dumps({'mode':mode,**s},separators=(',',':')))
+              s=[r for r in d[mode]['samples'] if r['label'].startswith('home_after_unload_')]
+              print('::notice title=R18_HOME_RETENTION_'+mode.upper()+'::'+json.dumps(s,separators=(',',':')))
           PY
