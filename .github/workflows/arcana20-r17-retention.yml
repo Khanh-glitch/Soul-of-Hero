@@ -43,6 +43,14 @@ jobs:
           set -euo pipefail
           godot --headless --path "$RUNNER_TEMP/r17" --import > "$RUNNER_TEMP/import.log" 2>&1
           if grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/import.log"; then grep -E 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/import.log" | head -10 | while IFS= read -r line; do echo "::error title=RETENTION_IMPORT::$line"; done; exit 1; fi
+          # The wrapper loads the probe dynamically, so import alone does not
+          # compile it. Fail at the first compiler error instead of waiting for
+          # the graphical capture's timeout.
+          set +e
+          godot --headless --path "$RUNNER_TEMP/r17" --check-only --script res://prototypes/arcana_fusion20/renderer/playtest/arcana20_retention_probe.gd > "$RUNNER_TEMP/probe-check.log" 2>&1
+          check_status=$?
+          set -e
+          if [ "$check_status" -ne 0 ] || grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/probe-check.log"; then tail -15 "$RUNNER_TEMP/probe-check.log" | while IFS= read -r line; do echo "::error title=RETENTION_COMPILE::$line"; done; exit 1; fi
           mkdir -p "$RUNNER_TEMP/results"
           for mode in nofx fx; do
             nofx=0; [ "$mode" != nofx ] || nofx=1

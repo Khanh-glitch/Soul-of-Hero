@@ -77,8 +77,8 @@ func start(wrapper: Node) -> void:
     if skill not in [9, 11, 14]: _fail("invalid retention skill"); return
     if not await _route(): _fail("retention initial actual route"); return
     if not await _exercise_round(skill, no_fx, 1): _fail("retention first round"); return
-    var world_ref := weakref(host.get("world"))
-    var renderer_ref := weakref(host.get("renderer"))
+    var world_ref: WeakRef = weakref(host.get("world"))
+    var renderer_ref: WeakRef = weakref(host.get("renderer"))
     get_tree().root.get_node("AppFlow").call(&"open_home")
     var app: Node = host.get("app")
     if not await host.call(&"_wait_route", &"home", 30000): _fail("retention Home transition"); return
