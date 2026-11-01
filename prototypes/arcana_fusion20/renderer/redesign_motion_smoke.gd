@@ -8,7 +8,7 @@ func _initialize() -> void:
         {"id": 12, "spell": ARedesignSpells.SkybreakerScriptR.new(), "times": [4.4, 6.8]},
         {"id": 13, "spell": ARedesignSpells2.RootwakeR.new(), "times": [3.0, 5.4]},
         {"id": 14, "spell": ARedesignSpells2.SporeNebulaR.new(), "times": [3.6, 5.4]},
-        {"id": 18, "spell": ARedesignSpells2.ChronoshardR.new(), "times": [3.4, 6.2]},
+        {"id": 18, "spell": ARedesignSpells2.ChronoshardR.new(), "times": [3.4, 6.2, 6.4]},
     ]
     for item in candidates:
         var spell: Variant = item.spell

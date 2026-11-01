@@ -277,3 +277,20 @@ class ChronoshardR:
         if it >= 0.0 and it < 0.7:
             ADraw.disc(fb, C.x, C.y, 5.0 * (1.0 - it / 0.7), AMath.R("frost", 1.0), 1.0 - it / 0.7)
             ADraw.pulse_ring(fb, C.x, C.y, 6.0 + it * 150.0, 3.0, AMath.R("frost", 0.8), 0.65 * (1.0 - it / 0.7), 1.35)
+        # B astral.ts synchronization wave: its alternating 14-point,
+        # elliptical crystal boundary, cubic expansion and 1.4s fade are
+        # retained here on the candidate's retimed 6.2s single impact.
+        # This adapts B's shape to A raster; B's post and clipped miniature
+        # attacks remain separate, unimplemented source operations.
+        if it > 0.0 and it < 1.4:
+            var radius := AMath.ease_out(it / 1.4, 3.0) * 260.0
+            var vertices: Array = []
+            for q in range(14):
+                var angle := float(q) / 14.0 * TAU + it
+                var rr := radius * (0.94 if q % 2 == 1 else 1.0)
+                vertices.append(C + Vector2(cos(angle) * rr, sin(angle) * rr * 0.75))
+            var strength := 1.6 * (1.0 - AMath.cl01(it / 1.4))
+            for q in range(14):
+                var a: Vector2 = vertices[q]
+                var b: Vector2 = vertices[(q + 1) % 14]
+                ADraw.line(fb, a.x, a.y, b.x, b.y, Vector3(1.4, 1.6, 2.4), strength)
