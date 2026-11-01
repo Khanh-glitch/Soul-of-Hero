@@ -260,8 +260,11 @@ class ChronoshardR:
         var rng := AMath.ARng.new(18181)
         _crystals.clear()
         for i in range(5):
-            var a := -1.9 + float(i) * 0.62
-            _crystals.append({"pos": Vector2(C.x + cos(a) * (58.0 + float(i % 2) * 22.0), C.y - 26.0 + sin(a) * 44.0), "size": rng.rangef(7, 13), "seed": rng.intf(0, 999), "cap": 2.2 + float(i) * 0.5})
+            # Five retained moments surround the event rather than forming an
+            # unrelated off-to-one-side row. Their staggered reverse release
+            # still converges on the single authored impact at C.
+            var a := -PI * 0.5 + float(i) * TAU / 5.0
+            _crystals.append({"pos": Vector2(C.x + cos(a) * 76.0, C.y - 8.0 + sin(a) * 55.0), "size": rng.rangef(7, 13), "seed": rng.intf(0, 999), "cap": 2.2 + float(i) * 0.5})
     func authored_events() -> Array:
         var ev: Array = [{"t": 0.9, "kind": "pre_echo", "pos_local": C, "emitted": false}]
         for i in range(_crystals.size()):
@@ -358,7 +361,7 @@ class ChronoshardR:
             # covered face, violet faceted frame. This is not the complete B
             # clipped attack contents or a claim of B raster/source parity.
             var impact_fold := 1.0 - 0.8 * AMath.seg(t, 6.2, 6.8)
-            var sz: float = 24.0 * form * (1.0 - rel * 0.5) * resolve * impact_fold
+            var sz: float = 28.0 * form * (1.0 - rel * 0.5) * resolve * impact_fold
             if sz <= 0.5:
                 continue
             var rotation := t * (0.4 + float(i) * 0.15) * (-1.0 if i % 2 == 0 else 1.0)
