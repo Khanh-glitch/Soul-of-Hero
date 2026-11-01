@@ -8,6 +8,11 @@ on:
       - game/survival/**
       - game/overworld/**
       - game/autoload/**
+      - game/ui/screens/avatar_choice/**
+      - game/characters/knight/knight.tscn
+      - assets/a6_ui/**
+      - tools/fetch_a6_avatar_sources.sh
+      - tools/stage_a6_avatar_art.py
       - tools/a0/compose_owners.py
 jobs:
   real-display-capture:
@@ -39,6 +44,20 @@ jobs:
           assert (p/"game/autoload/save_service.gd").read_bytes()==Path("game/autoload/save_service.gd").read_bytes()
           assert (p/"game/survival/economy/economy_session.gd").read_bytes()==Path("game/survival/economy/economy_session.gd").read_bytes()
           PY
+      - name: Fetch pinned licensed A6 source and stage sheets inside composed project
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/a6_source" visual_evidence
+          # Both archives are identified by immutable APEX-CHAOS commit/blob/SHA256.
+          # Never commit or upload the ZIPs or derived private sprite sheets.
+          bash tools/fetch_a6_avatar_sources.sh "$RUNNER_TEMP/a6_source" > visual_evidence/a6-source.log 2>&1
+          grep -q "A6 ASSET SOURCES VERIFIED" visual_evidence/a6-source.log
+          python3 tools/stage_a6_avatar_art.py --repo-root .visual \
+            --male-zip "$RUNNER_TEMP/a6_source/male.zip" \
+            --female-zip "$RUNNER_TEMP/a6_source/female.zip"
+          rm -f "$RUNNER_TEMP/a6_source/male.zip" "$RUNNER_TEMP/a6_source/female.zip"
+          test -f .visual/private_art/a6_avatar/avatar_art_private_runtime.json
       - uses: chickensoft-games/setup-godot@v2
         with:
           version: 4.7.0
@@ -77,6 +96,7 @@ jobs:
         with:
           name: gpb-real-godot-1280x720
           path: |
-            visual_evidence/
+            visual_evidence/import.log
+            visual_evidence/capture.log
             .visual/artifacts/*.png
             .visual/composition.json
