@@ -13,6 +13,20 @@ func _initialize() -> void:
     for item in candidates:
         var spell: Variant = item.spell
         spell.setup()
+        if int(item.id) == 18:
+            # Verify capture order represents progressively later moments and
+            # reverse release actually converges together; not art approval.
+            var previous_tau := -1.0
+            var previous_release := -1.0
+            for i in range(5):
+                var tau: float = float(ARedesignSpells2.ChronoshardR.STORED_TAU[i])
+                var rel: float = spell._release(i, 5.9)
+                if tau <= previous_tau or rel <= previous_release or not is_equal_approx(spell._release(i, 6.2), 1.0):
+                    push_error("REDESIGN_SMOKE_FAIL #18 capture/release order")
+                    quit(1)
+                    return
+                previous_tau = tau
+                previous_release = rel
         for value in item.times:
             var t: float = value
             var frame := AFramebuffer.new()

@@ -255,6 +255,7 @@ class SporeNebulaR:
 class ChronoshardR:
     extends RefCounted
     const DUR := 8.4
+    const STORED_TAU := [0.15, 0.35, 0.60, 0.82, 1.15]
     var _crystals: Array = []
     var art_direction := "A"
     func setup() -> void:
@@ -386,8 +387,7 @@ class ChronoshardR:
                 # Five sequential snapshots of one amber event, in capture
                 # order around the ring; release travels in reverse order.
                 var mark := Vector3(2.0, 1.2, 0.45)
-                var stored_tau := [0.15, 0.35, 0.60, 0.82, 1.15]
-                _mini_attack(fb, PackedVector2Array(hex), cur, float(stored_tau[i]), mark, captured * resolve)
+                _mini_attack(fb, PackedVector2Array(hex), cur, float(STORED_TAU[i]), mark, captured * resolve)
             ADraw.glow(fb, cur.x, cur.y, sz * 1.4, AMath.R("frost", 0.75), captured * resolve * 0.35)
             if captured > 0.0 and rel < 1.0:
                 ADraw.streak(fb, cur.x, cur.y, C.x, C.y, 0.7, 0.3, AMath.R("frost", 0.6), captured * 0.4 * resolve)
