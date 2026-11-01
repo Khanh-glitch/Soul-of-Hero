@@ -3,7 +3,8 @@ on:
   workflow_dispatch:
   push:
     branches: [arena/c7b0c4e8-soul-of-hero]
-    paths: ['.github/workflows/arcana20-spore-current-review.yml', 'prototypes/arcana_fusion20/renderer/source_a/a_redesign_spells2.gd']
+    # Explicitly requested capture: the shared redesign file also contains #13/#18.
+    paths: ['.github/workflows/arcana20-spore-current-review.yml']
 permissions:
   contents: read
 jobs:

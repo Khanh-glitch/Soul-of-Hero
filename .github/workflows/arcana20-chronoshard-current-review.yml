@@ -1,0 +1,63 @@
+name: ARCANA20 current Chronoshard world review
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    # Explicitly requested capture: the shared redesign file also contains #13/#18.
+    paths: ['.github/workflows/arcana20-chronoshard-current-review.yml']
+permissions:
+  contents: read
+jobs:
+  capture:
+    strategy:
+      fail-fast: false
+      matrix:
+        lighting: [normal, dimmed]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assemble isolated current owner composition
+        run: |
+          git fetch --depth=1 --no-tags origin 04eacf62f1a3740a57e08691c3a9006d454aaa2c 6b801554a6af95424b4e39dd29f43c146aa13848 2cb1a3c5f093724eb9fecbdf45909ccb611f7b32 18e7afcbd576bbd9bfbcc509b2ee13216186a522 e505173edd119fdd955cf6249511b575a5468440
+          python3 tools/arcana20_join/assemble.py --out "$RUNNER_TEMP/arcana20-chronoshard" --avfx-sha "$GITHUB_SHA" --a0-sha 04eacf62f1a3740a57e08691c3a9006d454aaa2c
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Add 6.4-second post-impact review beat to disposable harness
+        run: |
+          python3 -c 'import pathlib; p=pathlib.Path("'"$RUNNER_TEMP"'/arcana20-chronoshard/prototypes/arcana_fusion20/renderer/arcana20_overworld_join_test.gd"); s=p.read_text(); old="        if num == 16:\n            # Natural seeded C tail"; assert s.count(old)==1; p.write_text(s.replace(old,"        if num == 18:\n            targets.append(384)\n            labels.append(\"sync_wave\")\n"+old))'
+      - name: Import disposable project
+        run: |
+          set -o pipefail
+          mkdir -p "$RUNNER_TEMP/arcana20-chronoshard/artifacts"
+          timeout 300s godot --headless --path "$RUNNER_TEMP/arcana20-chronoshard" --import 2>&1 | tee "$RUNNER_TEMP/arcana20-chronoshard/artifacts/import.log"
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/arcana20-chronoshard/artifacts/import.log"
+      - name: Capture candidate authored event beats on actual frozen overworld
+        env:
+          ARCANA20_PHASE_LIGHT: ${{ matrix.lighting }}
+          ARCANA20_PHASE_FIRST: '18'
+          ARCANA20_PHASE_LAST: '18'
+        run: |
+          set -o pipefail
+          timeout --signal=TERM --kill-after=10s 1000s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --verbose --path "$RUNNER_TEMP/arcana20-chronoshard" --rendering-method gl_compatibility --audio-driver Dummy --resolution 1280x720 --windowed \
+            --user-data-dir "$RUNNER_TEMP/arcana20-chronoshard-user" --script res://prototypes/arcana_fusion20/renderer/arcana20_overworld_join_test.gd \
+            2>&1 | tee "$RUNNER_TEMP/arcana20-chronoshard/artifacts/phases.log"
+          grep -Fq 'ARCANA20_JOIN_DIAGNOSTIC PASS' "$RUNNER_TEMP/arcana20-chronoshard/artifacts/phases.log"
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Shader compilation failed|JOIN_FAIL' "$RUNNER_TEMP/arcana20-chronoshard/artifacts/phases.log"
+      - run: python3 -m pip install --quiet pillow
+      - name: Surface captured shard preview
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py "$RUNNER_TEMP/arcana20-chronoshard/artifacts" phase_18_candidate_A_event_captured_03_tick192
+      - name: Surface synchronization wave preview
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py "$RUNNER_TEMP/arcana20-chronoshard/artifacts" phase_18_sync_wave_tick384
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcana20-chronoshard-current-${{ matrix.lighting }}
+          path: |
+            ${{ runner.temp }}/arcana20-chronoshard/arcana20_join_manifest.json
+            ${{ runner.temp }}/arcana20-chronoshard/artifacts/
+          if-no-files-found: warn
