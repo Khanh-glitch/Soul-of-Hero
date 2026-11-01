@@ -18,6 +18,8 @@ const HALO := Vector3(0.28, 0.4, 1.0)
 const GHOST := Vector3(0.34, 0.2, 0.7)
 const VIO := Vector3(0.6, 0.4, 1.0)
 
+# Diagnostic switch preserves an independently rendered unoptimized reference.
+var use_cloud_noise_cache := true
 var _rng: CMath.CRng
 var _spark_rng: CMath.CRng
 var _threads: Array = []
@@ -134,8 +136,9 @@ func render(f: CFrame, t: float) -> void:
     f.shade_disc(TG.x, TG.y, 46.0 * dark + 2.0, 1.0 - 0.55 * dark, 0.55, 4.0)
     if t < TSP:
         var cl := dark * (0.75 + 0.25 * CMath.inv(4.3, 4.75, t))
+        var cloud_noise: CCloudNoiseCache = CCloudNoiseCache.new(t * 0.4) if use_cloud_noise_cache else null
         f.disc(_sc.x, _sc.y, 92.0 * maxf(_scale, 0.3), func(x: int, y: int, d: float) -> void:
-            var n := CMath.noise3(float(x) * 0.08, float(y) * 0.12, t * 0.4)
+            var n := cloud_noise.value(x, y) if cloud_noise != null else CMath.noise3(float(x) * 0.08, float(y) * 0.12, t * 0.4)
             if CMath.cl01((1.0 - d) * 1.6) * (0.5 + n * 0.6) * cl > CMath.bayer(x, y):
                 f.I(x, y, 0.025, 0.025, 0.06, 0.9), 0.6)
         if t > 4.38:

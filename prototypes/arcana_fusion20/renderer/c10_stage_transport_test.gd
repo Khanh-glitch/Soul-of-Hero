@@ -9,7 +9,7 @@ func _run() -> void:
     var original := CFrame.new()
     var world := CFrame.new()
     world.track_world_fragments = true
-    var targets := [260, 264, 275, 285, 288, 290, 294, 300, 310, 330]
+    var targets := [60, 120, 180, 240, 260, 264, 275, 285, 288, 290, 294, 300, 310, 330]
     for tick in range(1, 331):
         var t := float(tick) / 60.0
         fx.update(1.0 / 60.0, t)
@@ -37,6 +37,32 @@ func _run() -> void:
             push_error("Thunderloom stage transport reconstruction failed tick %d max %g" % [tick, maxerr])
             quit(1)
             return
+        if t < CThunderloom.TSP:
+            var legacy_cloud := CFrame.new()
+            fx.use_cloud_noise_cache = false
+            fx.render(legacy_cloud, t)
+            fx.use_cloud_noise_cache = true
+            if legacy_cloud.ink != original.ink or legacy_cloud.light != original.light or legacy_cloud.ground != original.ground or legacy_cloud.disp != original.disp:
+                push_error("Thunderloom optimized cloud changed original source buffers at tick %d" % tick)
+                quit(1)
+                return
+            print("C10_CLOUD_PARITY tick=%d bit-exact source fields" % tick)
+        if tick == 120:
+            var legacy_cloud_us: Array[float] = []
+            var cached_cloud_us: Array[float] = []
+            for sample in range(6):
+                world.clear()
+                fx.use_cloud_noise_cache = false
+                var begin := Time.get_ticks_usec()
+                fx.render(world, t)
+                legacy_cloud_us.append(float(Time.get_ticks_usec() - begin))
+                world.clear()
+                fx.use_cloud_noise_cache = true
+                begin = Time.get_ticks_usec()
+                fx.render(world, t)
+                cached_cloud_us.append(float(Time.get_ticks_usec() - begin))
+            legacy_cloud_us.sort(); cached_cloud_us.sort()
+            print("C10_CLOUD_CPU ", JSON.stringify({"tick":tick, "samples":6, "legacy_render_median_us":legacy_cloud_us[3], "cached_render_median_us":cached_cloud_us[3], "scope":"same source state and C real-world field bookkeeping, cache construction included; source render only"}))
         if tick >= 264 and tick <= 294:
             for corner in [0, CFrame.W - 1, CFrame.N - CFrame.W, CFrame.N - 1]:
                 if world.world_influence[corner] != 0:
