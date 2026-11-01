@@ -37,6 +37,16 @@ bridge are **not mounted**. The artifact contains the exact join manifest.
   Skeletons in a ring; [41303697476](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41303697476)
   exercised it with normal AI, seven moving enemies and both lights. The AI
   converges around the player and the sampled #09 still remains hard to read.
+  [41309742410](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41309742410)
+  found a concrete source clipping problem in that normal ring capture: 3 of
+  8 caster/target anchors at tick 247 lay at negative A-local x, and the live
+  source field touched x=0; 3 anchors were outside at tick 183, 2 at tick 327.
+  `e649273` tests a whole-pixel raster-window translation with inverse world
+  transform, preserving actor positions, graph, events and physical scale;
+  unit transform test 41309929157 passed, full moving-world review is pending.
+  If the actor span exceeds 416×234 source pixels, the translated window still
+  clips; `d2508fc` exposes uncontained-node counts. Branches/particles and bloom
+  may also extend past the edges. This is not the same as a complete fix.
 - #11 full-five-branch `d310436`, scaled `0ebc44b`, original-A-width `f58c2a8`
   and C-length-density `1039869` were rejected as visual closures. Native 1×
   tick 327 normal/dim [41301954960](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41301954960)
@@ -153,7 +163,9 @@ blade to a point without glow camouflage; full-viewport review
 still looked slab-like. A narrower, longer-taper single blade is visible in
 [41309286541](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41309286541);
 the opening still looks like separated black diamonds. A physical connecting
-seam is under test. First structural run 41309560255 failed on a test-script
+seam passed structural/normal/dim world-capture run 41309676675, but the late
+rupture annotation was truncated by the job annotation limit; full moving-world
+review is still required. First structural run 41309560255 failed on a test-script
 parse error (reused local `y`); it did not reach the world capture. No creator
 approval. #06's broad translucent ribbons need motion/meaning review; #12's
 sampled glyph is partly outside the detail region.
