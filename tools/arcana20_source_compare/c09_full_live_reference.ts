@@ -45,7 +45,8 @@ for (let i = 0; i < timeline.frames.length; ++i) {
   const stem = `${dir}/r17_full_${String(i).padStart(5, '0')}.c`;
   for (const [name, data] of [['light32f',f.light],['ink32f',f.ink],['disp32f',f.disp],['ground8',f.ground]] as const)
     writeFileSync(`${stem}.${name}`, Buffer.from(data.buffer));
-  rows.push({frame_index:i, tick, source_scale:k, actor_nodes:nodes.slice(0,5), screen_ops:screenOps});
+  const outside = nodes.slice(0,5).filter((p: number[]) => p[0] * k < 0 || p[0] * k >= 384 || p[1] * k < 0 || p[1] * k >= 216).length;
+  rows.push({frame_index:i, tick, source_scale:k, actor_nodes:nodes.slice(0,5), reference_nodes_outside:outside, screen_ops:screenOps});
 }
 Math.random = savedRandom;
 writeFileSync(`${dir}/c09_full_reference_manifest.json`, JSON.stringify({
