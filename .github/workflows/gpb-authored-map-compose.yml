@@ -23,7 +23,7 @@ jobs:
         run: |
           set -euo pipefail
           git fetch --no-tags origin "$A1_SHA" "$A8_SHA"
-          python3 tools/a0/compose_owners.py --repo . --out .gpb_composition --copy-base \
+          python3 tools/a0/compose_owners.py --repo . --out .gpb_composition --copy-base --selected-owner-rulings-only \
             --owner a1="$A1_SHA" --owner a8="$A8_SHA"
           python3 - <<'PY'
           import json
@@ -37,6 +37,9 @@ jobs:
             'out_of_scope':{name:len(v) for name,v in report['refused_out_of_scope'].items()}
           }))
           assert not report['conflicts'], report['conflicts']
+          # Guard existing GP-B source rights from accidental A6 merge reversion.
+          assert (root/'game/autoload/save_service.gd').read_bytes() == Path('game/autoload/save_service.gd').read_bytes(), 'GPB_SAVE_SERVICE_OVERRIDDEN_BY_STALE_MERGE'
+          assert (root/'game/survival/economy/economy_session.gd').read_bytes() == Path('game/survival/economy/economy_session.gd').read_bytes(), 'GPB_ECONOMY_SESSION_OVERRIDDEN'
           for path in (
             'game/survival/world/a1_authored_world_reader.gd',
             'game/survival/world/a1_authored_world_stream.gd',
