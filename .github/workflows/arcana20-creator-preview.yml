@@ -39,8 +39,8 @@ jobs:
           grep -E 'SCRIPT ERROR:|Parse Error:|ERROR:' "$RUNNER_TEMP/import.log" | head -20 | while IFS= read -r line; do echo "::notice title=IMPORT_DIAGNOSTIC::$line"; done || true
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/import.log"
       # R17 refresh includes moving #09 caster tracking, density-adapted C
-      # channels on #11, and a #14 meandering-mycelium candidate. None are
-      # approved; no complete lifecycle or source parity is claimed.
+      # #11 channels, meandering #14, target-directed #13 and real-enemy ring
+      # controls. All art remains unapproved and no source parity is claimed.
       - name: Export self-contained Linux and Windows builds
         run: |
           set -euo pipefail
