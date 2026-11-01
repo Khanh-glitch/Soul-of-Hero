@@ -157,27 +157,39 @@ class RiptideCalligraphyR:
         var ev: Array = []
         for i in range(3):
             ev.append({"t": 2.0 + float(i) * 1.1, "kind": "stroke_tip_contact", "pos_local": _stroke_pt(i, 0.98), "emitted": false})
-        ev.append({"t": 4.6, "kind": "wave_release_impact", "pos_local": C + Vector2(60, 10), "emitted": false})
+        # First visible wavefront starts at the first written stroke's
+        # midpoint, not an unrelated point beyond the glyph.
+        ev.append({"t": 4.6, "kind": "wave_release_impact", "pos_local": _stroke_pt(0, 0.5) + Vector2(8, 0), "emitted": false})
         ev.append({"t": 6.8, "kind": "strokes_dissolve", "pos_local": C, "emitted": false})
         return ev
     func update(dt: float, t: float) -> void:
         pass
     func render(fb: AFramebuffer, t: float) -> void:
-        var diss := 1.0 - AMath.seg(t, 6.8, 8.4)
+        var diss := (1.0 - 0.45 * AMath.seg(t, 4.6, 6.4)) * (1.0 - AMath.seg(t, 6.8, 8.4))
         for i in range(_strokes.size()):
             var u := AMath.cl01(AMath.seg(t, 1.0 + float(i) * 1.1, 2.0 + float(i) * 1.1))
             if u <= 0.0:
                 continue
             var pts: Array = []
             for k in range(25):
-                pts.append(_stroke_pt(i, u * float(k) / 24.0))
+                var progress := u * float(k) / 24.0
+                var point := _stroke_pt(i, progress)
+                # Original A tide.ts stroke inertia, adapted to the new
+                # three-stroke glyph, not the rejected A choreography.
+                point.y += sin(progress * 9.0 - t * 5.0 + float(i)) * 1.6 * (1.0 - progress)
+                pts.append(point)
+            var charge := AMath.seg(t, 4.2, 4.6)
             ADraw.ribbon(fb, pts,
-                func(s: float, _i: int) -> float: return 2.6 * (0.4 + 0.6 * sin(s * PI)),
+                func(s: float, _i: int) -> float:
+                    return 5.0 * (0.35 + sin(pow(s, 0.8) * PI) * 0.95) * (1.0 + charge * 0.4),
                 func(s: float, _i: int, edge: float) -> Variant:
-                    var h := (1.0 - edge) * diss
-                    if h < 0.05:
-                        return null
-                    return AMath.R("water", 0.35 + h * 0.6))
+                    # A source foam/flow logic; this is an A-buffer candidate,
+                    # not a complete A/C source-fusion parity claim.
+                    var flow := AMath.fbm(s * 14.0 - t * 2.4 + float(i) * 9.0, edge * 3.0, 3)
+                    var h := (0.24 + flow * 0.3 + pow(edge, 2.6) * 0.65 + maxf(0.0, sin(s * 18.0 - t * 26.0 + i * 2.0)) * charge * 0.7) * diss
+                    if h < 0.05: return null
+                    var c := ACommon.ramp_step("water", AMath.cl01(h), 8.0)
+                    return Vector3(c.x * 0.55, c.y * 0.55, c.z * 0.6))
             if u < 1.0:
                 var tip := _stroke_pt(i, u)
                 ADraw.disc(fb, tip.x, tip.y, 2.2, AMath.R("water", 0.95), diss)
