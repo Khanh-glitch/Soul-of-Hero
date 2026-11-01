@@ -1,0 +1,39 @@
+name: ARCANA20 R17 restored original A rotor source diagnostic
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-r17-a11-mixed-a-reference.yml']
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import and render diagnostic A-only path
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/out"
+          godot --headless --path . --import > "$RUNNER_TEMP/import.log" 2>&1
+          A11_REFERENCE_OUT="$RUNNER_TEMP/out" godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/a11_restored_a_diagnostic.gd
+      - name: Render unmodified original A and compare source pixels
+        run: |
+          set -euo pipefail
+          npx --yes esbuild@0.25.12 tools/arcana20_source_compare/a11_full_reference.ts --bundle --platform=node --format=cjs --outfile="$RUNNER_TEMP/a11.cjs"
+          node "$RUNNER_TEMP/a11.cjs" "$RUNNER_TEMP/out" 87 183 247 327
+          python3 -m pip install --quiet numpy pillow
+          python3 tools/arcana20_source_compare/compare_a11_restored_source.py "$RUNNER_TEMP/out"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: r17-a11-restored-a-source-only
+          path: |
+            ${{ runner.temp }}/out
+            ${{ runner.temp }}/import.log

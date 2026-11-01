@@ -1,6 +1,7 @@
 ## #11 selected fusion candidate: original A seeded rotor rings, timing,
-## synchronization and fragments, with C #09 bolt-tree geometry replacing A
-## bridge/flash bolt generators. Not source-composite or owner approval.
+## synchronization and fragments. C #09 channels replace six stable selected
+## bridge bolts; other A bolts retain their source algorithm. This adapts C's
+## six successful channels to A's moving graph, not source-composite or approval.
 extends RefCounted
 class_name AVoltCarouselFusion
 
@@ -8,11 +9,17 @@ const DURATION := 7.2
 const C := Vector2(232, 124)
 const SYNC := 5.3
 const CORE := Vector3(3.2, 3.4, 3.6)
+# Original C #09 defines six successful channels; this is a count-based
+# assignment to A connectors, not the original C channel schedule/composite.
+const C_SELECTED_CHANNELS := 6
 var rng: AMath.ARng
 var rings: Array = []
 var frags: ADraw.APool
 # Test-only isolation of A rotor/aftermath from intentionally replaced bolts.
 var include_bolts := true
+# Isolated source-reference tests can disable C replacement; never exposed in
+# the creator preview and not a replacement for reviewing the fusion.
+var include_c_role := true
 var c_channel := CChainChannel.new()
 
 func setup() -> void:
@@ -56,32 +63,40 @@ func update(dt: float, t: float) -> void:
 func _volt(h: float) -> Vector3:
     return ACommon.ramp_step("volt", h, 8.0)
 
-# C #09's first successful channel is (118,110)->(262,98), with five
-# branches. A's carousel has hundreds of much shorter connectors. Applying
-# all five to every connector flooded the machine with a white web. Allocate
-# C branches at that source-space density, using C's stable integer hash for
-# the fractional branch (some short connectors therefore have only a spine).
-# This is a disclosed fusion adaptation, not full C spell/source parity.
-static func _c_branch_count(length: float, seed: float) -> int:
-    var expected := minf(5.0, length * 5.0 / sqrt(144.0 * 144.0 + 12.0 * 12.0))
-    var count := floori(expected)
-    if CMath.hash1(int(seed)) < expected - float(count): count += 1
-    return clampi(count, 0, 5)
+# Stable source-seed ranking; the original six-channel C count bounds how
+# many A bridges receive a C variant. This does not copy C's own event times.
+static func _selected_c_bridge_seeds(bridges: Array[Dictionary]) -> Dictionary:
+    var ranked := bridges.duplicate()
+    ranked.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+        return float(a.rank) < float(b.rank) if a.rank != b.rank else float(a.seed) < float(b.seed))
+    var selected := {}
+    for i in range(mini(C_SELECTED_CHANNELS, ranked.size())):
+        selected[ranked[i].seed] = true
+    return selected
 
-func _bolt(fb: AFramebuffer, x0: float, y0: float, x1: float, y1: float, t: float, seed: float, width: float, k: float, chaos: float) -> void:
+func _bolt(fb: AFramebuffer, x0: float, y0: float, x1: float, y1: float, t: float, seed: float, width: float, k: float, chaos: float, use_c: bool = false) -> void:
     if not include_bolts or k <= 0.01: return
-    # A owns moving endpoints, timing, intensity and the original connector
-    # width; C owns the stable three-slot spine and branch construction.
-    # C's 1.6px main width on every short overlapping connector washed out
-    # the machine in native review, so this is an explicit hybrid adaptation,
-    # not exact full C raster parity. C branch strokes retain their width 1.
     var a := Vector2(x0, y0)
     var b := Vector2(x1, y1)
-    c_channel.draw(fb, a, b, t, seed * 131.0, k, CORE, _volt(0.62),
-        width, 0.32, _c_branch_count(a.distance_to(b), seed * 131.0))
-    var dx := x1 - x0
-    var dy := y1 - y0
-    ADraw.glow(fb, (x0 + x1) * 0.5, (y0 + y1) * 0.5, minf(16.0, sqrt(dx * dx + dy * dy) * 0.25), _volt(0.45), 0.07 * k)
+    var distance := a.distance_to(b)
+    if use_c:
+        # C's five-branch successful channel on this moving A connector.
+        # A still supplies the endpoint, time envelope, color and width.
+        c_channel.draw(fb, a, b, t, seed * 131.0, k, CORE, _volt(0.62), width, 0.32, 5)
+    else:
+        # Unmodified A tempest bolt algorithm for the remaining A connectors.
+        var slot := floori(t * 28.0)
+        var pts := ADraw.bolt_path(x0, y0, x1, y1, distance * chaos, int(seed * 131.0) + slot * 7919, 5)
+        ADraw.bolt_draw(fb, pts, width, _volt(0.62), CORE, k)
+        var r := AMath.ARng.new(int(seed * 31.0) + slot)
+        var count := maxi(1, floori(distance / 40.0))
+        for i in range(count):
+            var p: Vector2 = pts[r.intf(3, pts.size() - 3)]
+            var angle := r.angle()
+            var length := distance * r.rangef(0.07, 0.24)
+            var sub := ADraw.bolt_path(p.x, p.y, p.x + cos(angle) * length, p.y + sin(angle) * length, length * 0.5, r.intf(0, 9999), 3)
+            ADraw.bolt_draw(fb, sub, width * 0.55, _volt(0.5), _volt(0.92), k * 0.6)
+    ADraw.glow(fb, (x0 + x1) * 0.5, (y0 + y1) * 0.5, minf(16.0, distance * 0.25), _volt(0.45), 0.07 * k)
 
 func render(fb: AFramebuffer, t: float) -> void:
     var build := AMath.seg(t, 0.15, 1.8)
@@ -124,6 +139,7 @@ func render(fb: AFramebuffer, t: float) -> void:
                 all.append({"x": p.x, "y": p.y, "ri": ri})
         var threshold := 70.0 if sync > 0.0 else 26.0 + energy * 24.0
         var bi := 0
+        var bridges: Array[Dictionary] = []
         for i in range(all.size()):
             for j in range(i + 1, all.size()):
                 if int(all[i].ri) == int(all[j].ri): continue
@@ -132,8 +148,17 @@ func render(fb: AFramebuffer, t: float) -> void:
                 var d := sqrt(dx * dx + dy * dy)
                 if d > threshold: continue
                 var k := sin(AMath.cl01(sync * 1.4) * PI) * 0.8 if sync > 0.0 else AMath.cl01(1.0 - d / threshold) * (0.4 + energy)
-                _bolt(fb, float(all[i].x), float(all[i].y), float(all[j].x), float(all[j].y), t, bi * 97.0, 1.0, k * vis, 0.22)
+                bridges.append({"a": Vector2(all[i].x, all[i].y), "b": Vector2(all[j].x, all[j].y),
+                    "k": k * vis, "seed": bi * 97.0, "rank": CMath.hash1(bi * 97 * 131)})
                 bi += 1
+        # C #09 authored six successful paths, not hundreds. Select at most
+        # six moving A connectors deterministically; preserve every other A
+        # connector with its original A bolt, rather than suppressing it.
+        var c_seeds := _selected_c_bridge_seeds(bridges) if include_c_role else {}
+        for bridge in bridges:
+            var a: Vector2 = bridge.a
+            var b: Vector2 = bridge.b
+            _bolt(fb, a.x, a.y, b.x, b.y, t, float(bridge.seed), 1.0, float(bridge.k), 0.22, c_seeds.has(bridge.seed))
         ADraw.glow(fb, C.x, C.y, 6.0 + energy * 14.0 + sync * 26.0, _volt(0.6), (0.3 + energy * 0.6 + sync * 0.7) * vis)
     if sync > 0.0:
         var intensity := sin(AMath.cl01(sync) * PI)

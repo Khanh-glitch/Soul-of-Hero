@@ -36,9 +36,10 @@ elif 'static func _c_branch_count(' in s:
     branch_expression = '_c_branch_count(Vector2(x0, y0).distance_to(Vector2(x1, y1)))'
 else:
     branch_expression = '1'
-trace = '''    if OS.get_environment("AVFX_R17_TRACE") == "1":
+is_mixed = 'use_c: bool = false' in s
+trace = '''    if OS.get_environment("AVFX_R17_TRACE") == "1"%s:
         _r17_trace.append({"a": [x0, y0], "b": [x1, y1], "t": t, "seed": seed, "width": width, "k": k, "rough": chaos, "branch_count": %s})
-''' % branch_expression
+''' % (' and use_c' if is_mixed else '', '5' if is_mixed else branch_expression)
 s = s.replace(needle, needle + trace, 1)
 needle = 'func render(fb: AFramebuffer, t: float) -> void:\n'
 assert s.count(needle) == 1
