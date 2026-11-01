@@ -455,6 +455,13 @@ func _run() -> void:
         thorn_host.cancel_skill(thorn_id)
     live_caster.free()
     thorn_host.free()
+    var petal_frame := CFrame.new()
+    petal_frame.track_world_fragments = true
+    petal_frame.clear()
+    var test_petal := CKit.pt_defaults({"x": 100.0, "y": 100.0, "z": 10.0, "kind": "petal", "col": CPalette.P["bloom"], "max": 1.0, "rot": PI / 2.0})
+    CKit.draw_pt(petal_frame, test_petal, Vector2.RIGHT)
+    check(petal_frame.ink[(100 * CFrame.W + 110) * 4 + 3] > 0.0, "C15 petal ink uses supplied world-up height direction")
+    check(petal_frame.disp[(100 * CFrame.W + 100) * 4 + 2] < 1.0, "C15 petal shadow stays at ground coordinate")
 
     # A and B must execute identical elected sources. The directed variant is
     # only a separate presentation canvas and pass ordering; compare the actual

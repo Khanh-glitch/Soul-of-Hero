@@ -9,26 +9,26 @@ extends RefCounted
 class_name Arcana20Status
 
 const ENTRIES := {
-    1: {"state": "FUSION_CANDIDATE", "source": "A+C", "visual": "VISUAL_NOT_VERIFIED", "note": "A and C complete crown players on a shared clock; C offset +0.69s. Source components are not isolated; duplicated geometry and OUT still need visual review."},
+    1: {"state": "FUSION_CANDIDATE", "source": "A+C", "visual": "VISUAL_NOT_VERIFIED", "note": "World mode uses A crown lead and only C outer flames at a shared-clock offset. Full source-role/world compositing and natural OUT need visual review."},
     2: {"state": "SOURCE_PORTED_CANDIDATE", "source": "B", "visual": "VISUAL_NOT_VERIFIED", "note": "TRUE port: B engine (math/renderer/fx) + furnaceWyrm setup/render/post from pyre.ts seed 202 on native 384x216 HDR buffer; floor/actors excluded by design; spatial PNG parity PASS in CI (IoU>=0.99)"},
     3: {"state": "SOURCE_PORTED_CANDIDATE", "source": "B", "visual": "VISUAL_NOT_VERIFIED", "note": "TRUE port: meteorLoom (pyre.ts seed 303) — 8 authored meteors, per-impact events, sigil; spatial PNG parity PASS in CI; 8-contact ledger verified"},
     4: {"state": "REDESIGN_CANDIDATE", "source": "NEW", "visual": "VISUAL_NOT_VERIFIED", "note": "Diagonal guillotine: slit telegraph -> blade materialises -> one fast cut -> delayed crack rupture (decisions 04)"},
-    5: {"state": "FUSION_CANDIDATE", "source": "A+C", "visual": "VISUAL_NOT_VERIFIED", "note": "Authored A-buffer interpretation, not original A bloom or C water-column source. Both selected components remain to be preserved."},
+    5: {"state": "FUSION_CANDIDATE", "source": "A+C", "visual": "VISUAL_NOT_VERIFIED", "note": "Original A opening/peak and C target-upright release; optional B-directed water is a separate presentation layer. A/B creator choice remains open; not Gold."},
     6: {"state": "REDESIGN_CANDIDATE", "source": "NEW", "visual": "VISUAL_NOT_VERIFIED", "note": "Three written strokes and wave fronts; visual legibility unverified. Discrete tip-end contacts, no continuous moving-tip sweep."},
     7: {"state": "SOURCE_PORTED_CANDIDATE", "source": "C", "visual": "VISUAL_NOT_VERIFIED", "note": "TRUE port: mirrorfrostBasilica (tide.ts seed 48514) facets/spires/sequential fracture; parity in CI"},
     8: {"state": "SOURCE_PORTED_CANDIDATE", "source": "B", "visual": "VISUAL_NOT_VERIFIED", "note": "TRUE port: undertowMaw (tide.ts seed 808) log-polar shaft + surge; pull/stillness/surge event ledger"},
-    9: {"state": "FUSION_CANDIDATE", "source": "A+B+C", "visual": "VISUAL_NOT_VERIFIED", "note": "Authored A-buffer network with CKit bolt paths; A/B source algorithms and C branch/raster remain missing; fixed rather than live actor anchors."},
+    9: {"state": "FUSION_CANDIDATE", "source": "A+B+C", "visual": "VISUAL_NOT_VERIFIED", "note": "World mode has A graph schedule, explicit live caster/actor anchors, B palettes and C bolt/ribbon raster; complete source composition, real actor shock receipts and readable links remain open."},
     10: {"state": "SOURCE_PORTED_CANDIDATE", "source": "C", "visual": "VISUAL_NOT_VERIFIED", "note": "TRUE port: thunderloom (tempest.ts seed 72271); Math.random spark substituted deterministically (documented)"},
-    11: {"state": "FUSION_CANDIDATE", "source": "A+C#09", "visual": "VISUAL_NOT_VERIFIED", "note": "Authored A-buffer carousel; connector paths reuse CKit midpoint displacement, but original A machine and C raster/branch behavior remain missing."},
+    11: {"state": "FUSION_CANDIDATE", "source": "A+C#09", "visual": "VISUAL_NOT_VERIFIED", "note": "World mode uses A seeded rotor and C #09 bolt-tree/raster on connectors; sampled branching is hard to distinguish and the complete fusion is not visually accepted."},
     12: {"state": "REDESIGN_CANDIDATE", "source": "NEW", "visual": "VISUAL_NOT_VERIFIED", "note": "Glyph strokes, circuit and strikes with reverse-order OUT; readability and impact remain unverified."},
     13: {"state": "REDESIGN_CANDIDATE", "source": "NEW", "visual": "VISUAL_NOT_VERIFIED", "note": "Authored branching roots, timed cues and geometric retraction; apparent tension, targeting and motion need visual review."},
     14: {"state": "REDESIGN_CANDIDATE", "source": "NEW", "visual": "VISUAL_NOT_VERIFIED", "note": "Causal fungal network: seed->colonies->hyphal links->signal pulses->synchronised sporulation (decisions 14)"},
-    15: {"state": "SOURCE_PORTED_CANDIDATE", "source": "C", "visual": "VISUAL_NOT_VERIFIED", "note": "TRUE port: thornOpera (tempest.ts seed 111866) verlet tendrils/bloom/lashes; physics stored as float64 scalars (Godot Vector2 is float32; chaotic solver diverged) — spatial PNG parity PASS in CI (run 41197756655)"},
-    16: {"state": "FUSION_CANDIDATE", "source": "A+C", "visual": "VISUAL_NOT_VERIFIED", "note": "Authored A-buffer petal model; original A motion and C palette are not yet verified/preserved."},
+    15: {"state": "SOURCE_PORTED_CANDIDATE", "source": "C", "visual": "VISUAL_NOT_VERIFIED", "note": "thornOpera (verdant.ts seed 111866) verlet tendrils/bloom/lashes; source-only spatial parity predates live-caster attachment and world-up petal adaptation. Current moving-world candidate requires visual review."},
+    16: {"state": "FUSION_CANDIDATE", "source": "A+C", "visual": "VISUAL_NOT_VERIFIED", "note": "World mode mounts A growth with C material and a time-aligned C organism/membrane/debris layer; full combined source and gameplay visual parity remain unverified."},
     17: {"state": "SOURCE_PORTED_CANDIDATE", "source": "C", "visual": "VISUAL_NOT_VERIFIED", "note": "TRUE port: C frame/kit + eventHorizon (astral.ts seed 127704); spatial PNG parity PASS in CI; blitBase dark-fragment adaptation documented"},
     18: {"state": "REDESIGN_CANDIDATE", "source": "NEW", "visual": "VISUAL_NOT_VERIFIED", "note": "Authored pre-echo, capture and synchronized impact; reverse release and resolution now ordered, motion needs visual review."},
     19: {"state": "SOURCE_PORTED_CANDIDATE", "source": "D", "visual": "VISUAL_NOT_VERIFIED", "note": "D CPU implementation, 480x270, dur 9.8s, authored OUT; original D browser diagnostic captured. Isolated WebGL/native compositor differences prevent a fair parity gate; no visual approval."},
-    20: {"state": "FUSION_CANDIDATE", "source": "A+C", "visual": "VISUAL_NOT_VERIFIED", "note": "Authored A-buffer interpretation; original C contour and real-world A environmental deformation not yet ported."},
+    20: {"state": "FUSION_CANDIDATE", "source": "A+C", "visual": "VISUAL_NOT_VERIFIED", "note": "World mode mounts C rift contour/interior with an A-derived live-ground displacement/debris preview; remaining source roles and true HDR/depth integration are incomplete."},
 }
 
 static func entry(id: int) -> Dictionary:
