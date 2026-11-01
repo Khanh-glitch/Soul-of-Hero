@@ -174,6 +174,16 @@ func _choose(gender: String) -> void:
 	if not bool(save_service.call(&"set_player_avatar", gender, "avatar_choice")):
 		_show_error("Không thể lưu nhân vật đã chọn. Hồ sơ cũ vẫn được giữ nguyên.")
 		return
+	# A0 owns the 336-hour clock. Start this run only after the chosen identity
+	# is durable; returning to the title without choosing does not consume run time.
+	var lifecycle := get_node_or_null("/root/RunLifecycle")
+	if lifecycle != null and lifecycle.has_method(&"phase") and lifecycle.has_method(&"start_run"):
+		var phase: Dictionary = lifecycle.call(&"phase")
+		if String(phase.get("state", "absent")) == "absent":
+			var started: Dictionary = lifecycle.call(&"start_run")
+			if not bool(started.get("ok", false)):
+				_show_error("Không thể bắt đầu lượt chơi sau khi chọn nhân vật.")
+				return
 	AppFlow.open_home()
 
 
