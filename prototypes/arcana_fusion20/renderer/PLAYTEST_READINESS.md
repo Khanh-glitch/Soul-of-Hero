@@ -7,15 +7,29 @@ historical methods, caveats and source-comparison references.
 
 ## Experimental downloadable build
 
+**Newer visual-preview candidate:** [Windows x64 + Linux x64 artifact
+13078291976](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293502803/artifacts/13078291976),
+run [41293502803](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293502803),
+source `8f102d2687c0c10abb18ac40f741d0cc08e1c5a2`. It has the same owner pins
+listed below and includes the newer #14/#18 working designs. The exported Linux
+application passed the real-route start/cancel smoke; the same-run Windows x64
+binary passed that smoke on a Windows Actions runner **headlessly**. The build
+is still visual-only, `VISUAL_NOT_VERIFIED` and **not PLAYTEST_READY**; no
+Windows presentation/GPU, confirmed combat or target-hardware performance test.
+The following older artifact remains the rollback/early-feedback build.
+
 [Windows x64 + Linux x64 experimental artifact (14-day retention)](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41290366274/artifacts/13077490714).
 It is **not** a playtest-ready build. Run
 [41290366274](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41290366274)
 exported both platforms and launched the **Linux** binary through the actual
 AppRoot → New Game → Home → Chapter1Overworld route. Smoke verified real
 player movement, real Skeleton spawn, start/cancel for all 20 slots, #10+#17
-overlap, world-tint toggle and unchanged test-enemy HP. Windows was exported
-but has **not** been launched on Windows. These quick starts are not complete
-cast motion, real combat, performance or quality validation. The artifact
+overlap, world-tint toggle and unchanged test-enemy HP. The same Windows
+rollback executable also ran that route and smoke on a native Windows Actions
+runner in [41293267800](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293267800),
+using Godot's **headless** backend. This is not a Windows GPU/presentation or
+target-hardware test. These quick starts are not complete cast motion, real
+combat, performance or quality validation. The artifact
 contains the manifest and [Vietnamese controls](playtest/HUONG_DAN_THU_NGHIEM.txt).
 The wrapper's cast buttons deliberately produce visuals only, **no combat hit**.
 The default #14/#18 art direction is A; B alternatives are experimental.
@@ -30,6 +44,59 @@ not mounted. **The wrapper does not mount the copied R4/CT receipt bridge** and
 cannot produce or consume a confirmed skill hit. Owner-head observations are
 not claims of combined runtime validation. A0 04e had a narrow no-FX/entry
 validation, not full campaign acceptance.
+
+
+## R16 live-motion pilot (not accepted as complete evidence)
+
+[41293267800](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293267800)
+ran #10 and #14 to natural finish on the exported Linux application, with
+actual player input, Skeleton AI, and follow camera, then restarted/cancelled
+and checked viewer/post cleanup and unchanged enemy HP. #10 observed tick 439
+and 58 captured frames, player/enemy/camera displacement 94.57/125.96/94.98;
+#14 observed tick 511 and 67 frames, displacement 85.01/129.64/84.95. The
+source simulation advanced more ticks than the software-rendered frames: this
+is not native 60 FPS or complete per-tick visual review. Capture I/O and software
+CI produced wall-frame p50/p95 204.76/346.43 ms (#10) and 310.35/360.83 ms
+(#14), not device performance. **Both video-encoding steps failed**: the
+workflow looked for timeline files only in the requested user-dir; the failure
+was not conclusively diagnosed from the inaccessible log. The artifacts therefore do not retain the images or
+video. A follow-up locates and retains the capture by searching the actual user
+data roots; its result is pending. These observations are no visual approval,
+combat verification, overlap test, or all-20 coverage. The live pilot also
+logged the existing five-resource shutdown warning and player disconnect errors;
+separate AVFX versus no-FX leak attribution is still required.
+
+The new #14 cap/stipe/gill material and #18 clipped stored-event miniatures are
+unverified working candidates, not creator-approved or complete B-source/post
+parity. Previous native images in the art section below show the earlier
+candidate, not those new shapes.
+
+The follow-up [41293502803](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293502803)
+**passed all three actual-motion capture jobs**, produced native FFV1, MP4 and
+per-frame timestamps, and uploaded [#10](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293502803/artifacts/13078311296),
+[#14](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293502803/artifacts/13078347175)
+and [#18](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293502803/artifacts/13078506862).
+The real user data folder differed from the requested command-line path; the
+new search found the frames. #10/#14/#18 recorded 64/67/66 rendered frames
+and last observed source ticks 443/511/503. These are actual software-rendered
+frames over the complete runtime, not one image per 60 Hz simulation tick.
+All three had moving real actors/camera and natural completion plus restart/
+cancel cleanup. Two full-frame preview stills and one center 1x crop per
+skill were inspected, **not the complete videos**. In those stills #10 is
+small and easy to lose as the camera moves; #14's brighter caps are more
+contrasting but clusters still read as green trees, not an unmistakable fungal
+outbreak; #18's small blue crystals move away from the actors, and their stored
+moments and temporal causality remain difficult to read. The panel covers a
+large part of the frame in these three captures; the next harness hides it as
+F4 would. These are actionable visual failures, not creator approval. A later
+all-20 capture and matched no-cast/leak/overlap measurement are pending.
+
+The `8f102d2` source-event smoke passed, but its phase-benchmark job
+[41293502840](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293502840)
+failed because it compared an intentionally changed redesign against the
+pre-optimization image hashes. The optimization equality proof is being pinned
+to its exact historical before/after revisions, while current art is measured
+separately; this is not a relaxed image-parity threshold.
 
 ## Source-role and visual status
 
@@ -64,7 +131,7 @@ wrapper, but the quick smoke does not establish full life-cycle gameplay.
 
 ## Art direction and review
 
-#14 A clusters form an outbreak; B upright cups read more like isolated
+Earlier #14 A clusters formed an outbreak; B upright cups read more like isolated
 umbrellas. #18 A pointed fragments read as a shatter; B broad fragments and
 dial read as a tidy ring. Selected **internal working direction A only**, not
 creator acceptance: inspection was of selected full-viewport downscaled stills

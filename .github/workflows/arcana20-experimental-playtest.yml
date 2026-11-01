@@ -187,12 +187,12 @@ jobs:
             ${{ runner.temp }}/avfx-windows-err.log
           if-no-files-found: warn
   live-motion:
-    # Pilot representative source C and redesign A before running all 20.
+    # Every skill is an independent real-time job; no frozen-source sweep.
     needs: build
     strategy:
       fail-fast: false
       matrix:
-        skill: [10, 14, 18]
+        skill: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -257,4 +257,79 @@ jobs:
             ${{ runner.temp }}/live-output/*.mp4
             ${{ runner.temp }}/live.log
             ${{ runner.temp }}/encode.log
+          if-no-files-found: warn
+  live-perf-and-leaks:
+    # Real software-rendered game frames, no PNG I/O. Each FX run is followed
+    # by a fresh same-duration no-cast wrapper session and an overlap session.
+    # This is not a target-device GPU or absolute FPS benchmark.
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { skill: 10, overlap: 17 }
+          - { skill: 14, overlap: 18 }
+          - { skill: 18, overlap: 10 }
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: SOH-AVFX-EXPERIMENTAL-NOT-PLAYTEST-READY
+          path: bundle
+      - name: Unpack exported Linux application
+        run: |
+          set -euo pipefail
+          zip=$(find bundle -name SOH_AVFX_EXPERIMENTAL_linux.zip -print -quit)
+          test -n "$zip"
+          mkdir release output
+          unzip -q "$zip" -d release
+          chmod +x release/SOH_AVFX_Playtest.x86_64
+      - name: Full cast, matched no-cast baseline, and live overlap
+        env:
+          SKILL: ${{ matrix.skill }}
+          OVERLAP: ${{ matrix.overlap }}
+        run: |
+          set -euo pipefail
+          run_case() {
+            local case="$1" nofx="$2" wait_s="$3" overlap="$4"
+            local home="$RUNNER_TEMP/home-$case" data="$RUNNER_TEMP/data-$case"
+            mkdir -p "$home" "$data"
+            set +e
+            timeout --signal=TERM --kill-after=10s 780s xvfb-run -a -s '-screen 0 1280x720x24' env \
+              HOME="$home" XDG_DATA_HOME="$data" LIBGL_ALWAYS_SOFTWARE=1 AVFX_LIVE_SKILL="$SKILL" AVFX_LIVE_LIGHT=normal \
+              AVFX_LIVE_CAPTURE=0 AVFX_LIVE_NO_FX="$nofx" AVFX_LIVE_WAIT_S="$wait_s" AVFX_LIVE_OVERLAP="$overlap" \
+              "$GITHUB_WORKSPACE/release/SOH_AVFX_Playtest.x86_64" --verbose --audio-driver Dummy --rendering-method gl_compatibility \
+              --resolution 1280x720 -- --avfx-live-capture 2>&1 | tee "output/$case.log"
+            local result=${PIPESTATUS[0]}
+            set -e
+            grep -E 'AVFX_LIVE_(FAIL|RESULT|PASS)' "output/$case.log" | sed "s/^/::notice title=LIVE_${case}::/" || true
+            if [ "$result" -ne 0 ]; then echo "::error::$case exited $result"; return "$result"; fi
+            grep -Fq AVFX_LIVE_PASS "output/$case.log"
+            ! grep -Eq 'AVFX_LIVE_FAIL|SCRIPT ERROR:|Parse Error:|Shader compilation failed' "output/$case.log"
+            local timeline
+            timeline=$(find "$data" "$home" -name timeline.json -path '*/avfx_live_capture/*' -print -quit)
+            test -n "$timeline"
+            cp "$timeline" "output/$case.json"
+          }
+          run_case fx 0 0 0
+          duration=$(python3 -c 'import json; print(json.load(open("output/fx.json"))["cast_duration_s"])')
+          run_case baseline 1 "$duration" 0
+          run_case overlap 0 0 "$OVERLAP"
+          python3 - <<'PY'
+          import json, re
+          from pathlib import Path
+          for name in ('baseline', 'fx', 'overlap'):
+              log = Path(f'output/{name}.log').read_text(errors='replace')
+              info = json.loads(Path(f'output/{name}.json').read_text())
+              leaks = len(re.findall(r'Leaked instance:', log))
+              resources = len(re.findall(r'Resource still in use:', log))
+              warnings = re.findall(r'^.*(?:ObjectDB instances leaked|resources still in use at exit).*$' , log, re.M)
+              print(f'::notice title=SHUTDOWN_{name}::leaked_instance_lines={leaks} resource_lines={resources} warnings={warnings} frame_ms={info["observed_wall_frame_ms"]}')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: live-measure-${{ matrix.skill }}-overlap-${{ matrix.overlap }}
+          path: output/
           if-no-files-found: warn
