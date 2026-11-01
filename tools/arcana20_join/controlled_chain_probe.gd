@@ -16,14 +16,17 @@ func _frame(path: String, player: Node2D, enemy: Node2D, camera: Camera2D) -> bo
     var original_z := viewer.z_index
     var old_scale := Engine.time_scale
     var old_pause := get_tree().paused
+    get_tree().paused = true
+    Engine.time_scale = 0.0
+    # Synchronize the frozen camera/render tree before recording the lock.
+    await RenderingServer.frame_post_draw
+    await RenderingServer.frame_post_draw
     var tick := source._tick
     var position_before := player.global_position
     var camera_before := camera.get_screen_center_position()
     var actors: Array = []
     for actor in host.get("spawned"):
         actors.append([actor.global_position.x, actor.global_position.y])
-    get_tree().paused = true
-    Engine.time_scale = 0.0
     var i := samples.size() - 1
     var files: Array[String] = []
     for z in [original_z, 1, original_z]:
@@ -41,8 +44,12 @@ func _frame(path: String, player: Node2D, enemy: Node2D, camera: Camera2D) -> bo
         files.append(name)
     var unchanged := source._tick == tick and player.global_position == position_before and camera.get_screen_center_position() == camera_before
     var spawned: Array = host.get("spawned")
+    var actor_after: Array = []
     for n in range(spawned.size()):
+        actor_after.append([spawned[n].global_position.x, spawned[n].global_position.y])
         unchanged = unchanged and spawned[n].global_position == Vector2(actors[n][0], actors[n][1])
+    if not unchanged:
+        print("R18_STATE_MISMATCH ", JSON.stringify({"tick_before":tick,"tick_after":source._tick,"player_before":str(position_before),"player_after":str(player.global_position),"camera_before":str(camera_before),"camera_after":str(camera.get_screen_center_position()),"actors_before":actors,"actors_after":actor_after}))
     viewer.z_index = original_z
     get_tree().paused = old_pause
     Engine.time_scale = old_scale

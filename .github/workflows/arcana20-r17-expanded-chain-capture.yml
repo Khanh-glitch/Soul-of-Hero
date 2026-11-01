@@ -1,4 +1,4 @@
-# R17 #09 real enemy ring-formation world diagnostic; normal AI remains enabled.
+# R18 #09 real enemy ring; normal AI moves between frozen paired comparisons.
 name: ARCANA20 R18 controlled chain occlusion comparison
 on:
   workflow_dispatch:
