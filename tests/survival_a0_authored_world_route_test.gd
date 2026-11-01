@@ -32,6 +32,7 @@ const ORCHARD := "poi_crown_south_orchard"
 const AUDIT := "user://tests/a0_authored_route_audit.json"
 const SAVE := "user://tests/a0_authored_route.json"
 const G := KEY_G
+const GPB_INPUT_BOOTSTRAP = preload("res://game/autoload/input_bootstrap.gd")
 
 var failures: Array[String] = []
 var checks := 0
@@ -51,6 +52,10 @@ func _initialize() -> void:
 
 
 func _console() -> void:
+	# Register the exact production movement / interact bindings in SceneTree CI.
+	var input_boot := GPB_INPUT_BOOTSTRAP.new()
+	input_boot.call(&"_install_actions")
+	input_boot.free()
 	for arg: String in OS.get_cmdline_user_args():
 		if arg == "--verify-route":
 			_phase = "verify"
