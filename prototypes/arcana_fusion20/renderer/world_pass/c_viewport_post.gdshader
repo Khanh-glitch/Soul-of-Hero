@@ -11,6 +11,15 @@ uniform vec2 shake_pixels = vec2(0.0);
 uniform float chroma_pixels = 0.0;
 uniform vec3 flash = vec3(0.0);
 uniform vec3 b_flash = vec3(0.0);
+// Inverse of the actual B source-to-viewport basis, including camera/zoom.
+// B's final quantization pattern is in source pixels, not display pixels.
+uniform vec2 b_dither_x = vec2(1.0, 0.0);
+uniform vec2 b_dither_y = vec2(0.0, 1.0);
+uniform vec2 b_dither_origin = vec2(0.0);
+float bayer_b(ivec2 p) {
+    int m[16] = int[16](0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5);
+    return (float(m[(p.y & 3) * 4 + (p.x & 3)]) + 0.5) / 16.0;
+}
 uniform float invert = 0.0;
 uniform float desat = 0.0;
 void fragment() {
@@ -29,6 +38,11 @@ void fragment() {
     // and source B also uses HDR highlight spread and ordered dithering.
     if (any(greaterThan(b_flash, vec3(0.0)))) {
         c = vec3(1.0) - (vec3(1.0) - c) * exp(-1.05 * max(b_flash, vec3(0.0)));
+        // Preserve B finalize()'s actual 20-level ordered quantization during
+        // its screen flash. This does not recover clipped HDR or reduce F.
+        vec2 src = b_dither_origin + b_dither_x * FRAGCOORD.x + b_dither_y * FRAGCOORD.y;
+        float d = bayer_b(ivec2(floor(src))) - 0.5;
+        c = floor(clamp(c * 20.0 + vec3(d), 0.0, 20.0)) / 20.0;
     }
     COLOR = vec4(clamp(c + flash, 0.0, 1.0), 1.0);
 }

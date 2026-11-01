@@ -74,6 +74,14 @@ func _run() -> void:
         check(flash_value.distance_to(b_player._r.flash_col * b_player._r.flash) < 0.00001, "B flash RGB remains source-authored")
         var material_b_flash: Vector3 = b_post._material.get_shader_parameter("b_flash")
         check(material_b_flash.is_equal_approx(flash_value), "B flash reaches its tone-aware shader channel")
+        var inverse: Transform2D = state.dither_basis
+        var source_map := b_post.get_viewport().get_final_transform() * b_post.get_viewport().canvas_transform * b_player.source_pass_frame().source_to_world
+        var probe := Vector2(213.0, 109.0)
+        check((inverse * (source_map * probe)).distance_to(probe) < 0.001, "B post dither follows source pixels through camera basis")
+        var actual_dither_x: Vector2 = b_post._material.get_shader_parameter("b_dither_x")
+        var actual_dither_y: Vector2 = b_post._material.get_shader_parameter("b_dither_y")
+        check(actual_dither_x.is_equal_approx(inverse.x), "B post supplies inverse dither x")
+        check(actual_dither_y.is_equal_approx(inverse.y), "B post supplies inverse dither y")
         check(b_post._rect.visible, "B authored bite flash is visible")
     b_post_host.cancel_skill(b_id)
     var retired_b_flash: Vector3 = b_post._material.get_shader_parameter("b_flash")
