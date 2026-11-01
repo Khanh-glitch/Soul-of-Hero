@@ -72,6 +72,12 @@ bridge are **not mounted**. The artifact contains the exact join manifest.
   13/54 dim frames, explicitly labeled; it uses different graph/timing, is
   recreated per frame, and omits browser floor/post. Observed source tick can
   lag presentation. It is not full Gold, same-frame world HDR or parity proof.
+  Complete unresized field quicklooks [41313983105](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41313983105)
+  passed in both lights: at tick 247 the normal C reference is a horizontally
+  spread chain while native is a compact angled chain; at dim tick 327 the C
+  reference retains faint extended branches while native clusters around
+  luminous nodes. Different graph/timing and lossy JPEG quicklooks limit this
+  observation; neither image proves a raster defect or visual acceptance.
 - #11 full-five-branch `d310436`, scaled `0ebc44b`, original-A-width `f58c2a8`
   and C-length-density `1039869` were rejected as visual closures. Native 1×
   tick 327 normal/dim [41301954960](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41301954960)
