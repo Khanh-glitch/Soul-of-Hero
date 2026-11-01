@@ -1,0 +1,39 @@
+name: ARCANA20 temporal frozen-world timeline inspection
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-frozen-timeline-review.yml']
+permissions:
+  actions: read
+  contents: read
+jobs:
+  inspect:
+    strategy:
+      fail-fast: false
+      matrix:
+        group: [0, 1, 2, 3]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: redesign-motion-18-candidate-normal
+          run-id: 41297073989
+          github-token: ${{ github.token }}
+          path: motion
+      - name: Install review dependencies
+        run: |
+          python3 -m pip install --quiet pillow
+          if ! command -v ffmpeg; then sudo apt-get update -qq && sudo apt-get install -y ffmpeg; fi
+      # Each step has its own annotation budget. Frames are direct lossless
+      # video extracts at exact ticks; no invented scene or pixel compositing.
+      - name: Inspect first frozen-world beat
+        run: bash tools/arcana20_join/surface_frozen_tick.sh motion $(((${{ matrix.group }} * 4 + 0) * 32))
+      - name: Inspect second frozen-world beat
+        run: bash tools/arcana20_join/surface_frozen_tick.sh motion $(((${{ matrix.group }} * 4 + 1) * 32))
+      - name: Inspect third frozen-world beat
+        run: bash tools/arcana20_join/surface_frozen_tick.sh motion $(((${{ matrix.group }} * 4 + 2) * 32))
+      - name: Inspect fourth frozen-world beat
+        run: bash tools/arcana20_join/surface_frozen_tick.sh motion $(((${{ matrix.group }} * 4 + 3) * 32))
