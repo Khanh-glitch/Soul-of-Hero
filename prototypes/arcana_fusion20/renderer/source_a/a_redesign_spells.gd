@@ -66,12 +66,13 @@ class AshenGuillotineR:
                     var longitudinal := q.dot(_dir)
                     var grain := AMath.hash2(floor(longitudinal * 0.22), floor(transverse * 7.0))
                     var bevel := AMath.cl01((0.30 - transverse) * 1.8)
-                    var metal := 0.035 + 0.11 * bevel + 0.035 * grain
+                    var facet := 0.08 if int(floor((longitudinal + transverse * 8.0) / 17.0)) % 2 == 0 else 0.0
+                    var metal := 0.04 + 0.42 * bevel + 0.035 * grain + facet * bevel
                     return Vector3(metal * 0.82, metal * 0.87, metal), true, bk)
             ADraw.streak(fb, edge0.x, edge0.y, edge1.x, edge1.y, 1.1, 0.7, AMath.R("ash", 0.9), bk * 0.85)
             var seam0 := b0 + n * width * 0.22
             var seam1 := b1 + n * width * 0.22
-            ADraw.streak(fb, seam0.x, seam0.y, seam1.x, seam1.y, 0.55, 0.45, AMath.R("fire", 0.95), bk * 0.65)
+            ADraw.streak(fb, seam0.x, seam0.y, seam1.x, seam1.y, 1.0, 0.75, AMath.R("fire", 0.95), bk * 0.85)
         if cut > 0.0:
             ADraw.streak(fb, p0.x, p0.y, p1.x, p1.y, 2.0, 2.0, AMath.R("fire", 0.9), (1.0 - AMath.seg(t, 3.5, 4.4)) * close_k)
         # Close the wound sections in order, not as one global fade.
