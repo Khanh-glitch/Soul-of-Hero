@@ -1375,10 +1375,16 @@ func _is_pinned_source_custody(custody: RefCounted) -> bool:
 	if custody == null:
 		return false
 	var script: Variant = custody.get_script()
-	if not script is Script or script != PRODUCTION_SOURCE_CUSTODY:
+	if not script is Script:
 		return false
 	var source := String(script.source_code)
-	return source.is_empty() or source.sha256_text() == PINNED_A3_CUSTODY_SHA256
+	# Source runs may materialize separate Script resource handles; require BOTH
+	# the canonical res:// path and independently pinned exact source bytes.
+	# Tokenized exports retain only the exact preloaded resource identity gate.
+	if source.is_empty():
+		return script == PRODUCTION_SOURCE_CUSTODY
+	return String(script.resource_path) == "res://game/survival/economy/a3_economy_service.gd" \
+		and source.sha256_text() == PINNED_A3_CUSTODY_SHA256
 
 
 func _is_pinned_economy_adapter(adapter: RefCounted) -> bool:
