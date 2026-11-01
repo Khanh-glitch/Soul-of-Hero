@@ -1,4 +1,4 @@
-# Package the chain raster-window and connected blade seam candidates; never approval.
+# Package the expanded chain field and connected blade seam; never approval.
 name: ARCANA20 refreshed creator visual-preview build
 on:
   workflow_dispatch:
