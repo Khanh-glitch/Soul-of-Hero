@@ -80,5 +80,5 @@ jobs:
             timeout 360s godot --headless --path "$PROJECT" --script res://prototypes/arcana_fusion20/renderer/redesign_source_bench.gd > "$RUNNER_TEMP/bench-$WHICH.log" 2>&1
             grep -Fq REDESIGN_BENCH_PASS "$RUNNER_TEMP/bench-$WHICH.log"
             if grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/bench-$WHICH.log"; then cat "$RUNNER_TEMP/bench-$WHICH.log"; exit 1; fi
-            grep 'REDESIGN_BENCH id=' "$RUNNER_TEMP/bench-$WHICH.log" | while IFS= read -r line; do echo "::notice title=PHASE_BENCH::$WHICH $line"; done
+            echo "::notice title=PHASE_BENCH::$WHICH $(grep 'REDESIGN_BENCH id=' "$RUNNER_TEMP/bench-$WHICH.log" | tr '\n' '|')"
           done
