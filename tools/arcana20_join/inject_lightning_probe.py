@@ -94,5 +94,31 @@ s = s.replace(needle, '''    if OS.get_environment("AVFX_R17_TRACE") == "1" and 
             print("R17_SOURCE_SNAPSHOT ", JSON.stringify(report))
             _r17_next += 1
 ''' + needle, 1)
+needle = '''        "camera": [camera.get_screen_center_position().x, camera.get_screen_center_position().y]})
+    return true
+'''
+assert s.count(needle) == 1
+s = s.replace(needle, '''        "camera": [camera.get_screen_center_position().x, camera.get_screen_center_position().y]})
+    # Record one real connector at every displayed frame for the explicitly
+    # isolated C-vs-native-vs-world sequence. No source frames are invented.
+    if OS.get_environment("AVFX_R17_TRACE") == "1":
+        var render_host := host.get("renderer") as Arcana20Renderer
+        var live_source := render_host._casts.get(cast_id) as ASourcePlayer if render_host != null else null
+        if is_instance_valid(live_source):
+            var all_bolts: Array = live_source._spell.get("_r17_trace")
+            var selected_bolt: Dictionary = {}
+            var selected_score := -1.0
+            for item in all_bolts:
+                var bolt: Dictionary = item
+                var a := Vector2(float(bolt.a[0]), float(bolt.a[1]))
+                var b := Vector2(float(bolt.b[0]), float(bolt.b[1]))
+                var score := a.distance_to(b) * maxf(0.0, float(bolt.k))
+                if score > selected_score:
+                    selected_score = score
+                    selected_bolt = bolt
+            samples[-1]["r17_source_tick"] = live_source._tick
+            samples[-1]["r17_chosen_bolt"] = selected_bolt
+    return true
+''', 1)
 p.write_text(s)
 print('R17 disposable diagnostic instrumentation installed')
