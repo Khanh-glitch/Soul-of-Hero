@@ -1,0 +1,102 @@
+name: ARCANA20 experimental real-world playable build
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths:
+      - '.github/workflows/arcana20-experimental-playtest.yml'
+      - 'prototypes/arcana_fusion20/renderer/playtest/**'
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Assemble exact owner composition in disposable directory
+        run: |
+          set -euo pipefail
+          git fetch --depth=1 --no-tags origin 04eacf62f1a3740a57e08691c3a9006d454aaa2c 6b801554a6af95424b4e39dd29f43c146aa13848 2cb1a3c5f093724eb9fecbdf45909ccb611f7b32 18e7afcbd576bbd9bfbcc509b2ee13216186a522 e505173edd119fdd955cf6249511b575a5468440
+          python3 tools/arcana20_join/assemble.py --out "$RUNNER_TEMP/avfx-playtest" --avfx-sha "$GITHUB_SHA" --a0-sha 04eacf62f1a3740a57e08691c3a9006d454aaa2c
+          python3 - "$RUNNER_TEMP/avfx-playtest/project.godot" <<'PY'
+          import pathlib, sys
+          p = pathlib.Path(sys.argv[1]); s = p.read_text()
+          assert 'config/name="SOUL OF HERO"' in s
+          s = s.replace('config/name="SOUL OF HERO"', 'config/name="SOH AVFX experimental playtest"')
+          s = s.replace('run/main_scene="res://game/app/app_root.tscn"', 'run/main_scene="res://prototypes/arcana_fusion20/renderer/playtest/arcana20_playtest.tscn"')
+          p.write_text(s)
+          PY
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: true
+      - name: Import disposable project
+        run: |
+          set -o pipefail
+          timeout 300s godot --headless --editor --path "$RUNNER_TEMP/avfx-playtest" --import --quit 2>&1 | tee "$RUNNER_TEMP/import.log"
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/import.log"
+      - name: Export self-contained Linux and Windows builds
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/avfx-playtest/export_presets.cfg" <<'PRESETS'
+          [preset.0]
+          name="Linux"
+          platform="Linux"
+          runnable=true
+          export_filter="all_resources"
+          include_filter="*.json,*.txt"
+          exclude_filter=""
+          [preset.0.options]
+          binary_format/embed_pck=true
+          texture_format/s3tc_bptc=true
+          texture_format/etc2_astc=false
+          [preset.1]
+          name="Windows"
+          platform="Windows Desktop"
+          runnable=false
+          export_filter="all_resources"
+          include_filter="*.json,*.txt"
+          exclude_filter=""
+          [preset.1.options]
+          binary_format/embed_pck=true
+          texture_format/s3tc_bptc=true
+          texture_format/etc2_astc=false
+          codesign/enable=false
+          application/modify_resources=false
+          PRESETS
+          mkdir -p "$RUNNER_TEMP/release/linux" "$RUNNER_TEMP/release/windows"
+          godot --headless --path "$RUNNER_TEMP/avfx-playtest" --export-release Linux "$RUNNER_TEMP/release/linux/SOH_AVFX_Playtest.x86_64"
+          godot --headless --path "$RUNNER_TEMP/avfx-playtest" --export-release Windows "$RUNNER_TEMP/release/windows/SOH_AVFX_Playtest.exe"
+          test -s "$RUNNER_TEMP/release/linux/SOH_AVFX_Playtest.x86_64"
+          test -s "$RUNNER_TEMP/release/windows/SOH_AVFX_Playtest.exe"
+      - name: Launch exported Linux application and exercise real route
+        run: |
+          set -o pipefail
+          timeout 480s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 "$RUNNER_TEMP/release/linux/SOH_AVFX_Playtest.x86_64" --audio-driver Dummy --rendering-method gl_compatibility --resolution 1280x720 --user-data-dir "$RUNNER_TEMP/playtest-user" -- --avfx-playtest-smoke 2>&1 | tee "$RUNNER_TEMP/playtest.log"
+          grep -Fq 'AVFX_PLAYTEST_SMOKE PASS' "$RUNNER_TEMP/playtest.log"
+          ! grep -Eq 'AVFX_PLAYTEST_FAIL|SCRIPT ERROR:|Parse Error:|Shader compilation failed' "$RUNNER_TEMP/playtest.log"
+      - name: Package experimental builds and manifest
+        run: |
+          set -euo pipefail
+          for os in linux windows; do
+            cp prototypes/arcana_fusion20/renderer/playtest/HUONG_DAN_THU_NGHIEM.txt "$RUNNER_TEMP/release/$os/"
+            cp "$RUNNER_TEMP/avfx-playtest/arcana20_join_manifest.json" "$RUNNER_TEMP/release/$os/"
+            (cd "$RUNNER_TEMP/release/$os" && zip -q -r "../SOH_AVFX_EXPERIMENTAL_${os}.zip" .)
+          done
+          sha256sum "$RUNNER_TEMP/release/"*.zip > "$RUNNER_TEMP/release/SHA256SUMS.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: SOH-AVFX-EXPERIMENTAL-NOT-PLAYTEST-READY
+          path: |
+            ${{ runner.temp }}/release/*.zip
+            ${{ runner.temp }}/release/SHA256SUMS.txt
+            ${{ runner.temp }}/avfx-playtest/arcana20_join_manifest.json
+            ${{ runner.temp }}/import.log
+            ${{ runner.temp }}/playtest.log
+          if-no-files-found: warn
+          retention-days: 14
