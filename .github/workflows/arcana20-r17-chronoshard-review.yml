@@ -1,0 +1,81 @@
+name: ARCANA20 Chronoshard detail candidate dim-world review
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-r17-chronoshard-review.yml']
+permissions:
+  actions: read
+  contents: read
+jobs:
+  capture:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {skill: 18, lighting: dimmed}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: SOH-AVFX-EXPERIMENTAL-NOT-PLAYTEST-READY
+          run-id: 41304159336
+          github-token: ${{ github.token }}
+          path: bundle
+      - name: Unpack exact experimental Linux build
+        run: |
+          set -euo pipefail
+          zip=$(find bundle -name SOH_AVFX_EXPERIMENTAL_linux.zip -print -quit)
+          test -n "$zip"; mkdir release
+          unzip -q "$zip" -d release
+          chmod +x release/SOH_AVFX_Playtest.x86_64
+      - name: Record natural visual cast on actual overworld route
+        env:
+          AVFX_LIVE_SKILL: ${{ matrix.skill }}
+          AVFX_LIVE_LIGHT: ${{ matrix.lighting }}
+          AVFX_LIVE_CAPTURE: '1'
+        run: |
+          set -euo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=10s 780s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 "$GITHUB_WORKSPACE/release/SOH_AVFX_Playtest.x86_64" --audio-driver Dummy --rendering-method gl_compatibility --resolution 1280x720 --user-data-dir "$RUNNER_TEMP/live-user" -- --avfx-live-capture > "$RUNNER_TEMP/live.log" 2>&1
+          status=$?
+          set -e
+          grep -E 'AVFX_LIVE_(FAIL|RESULT|PASS)|SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/live.log" | head -10 | while IFS= read -r line; do echo "::notice title=R17_ROLE_CAPTURE::$line"; done || true
+          if [ "$status" -ne 0 ]; then tail -20 "$RUNNER_TEMP/live.log" | while IFS= read -r line; do echo "::error title=R17_ROLE_FAILURE::$line"; done; exit "$status"; fi
+          grep -Fq AVFX_LIVE_PASS "$RUNNER_TEMP/live.log"
+          ! grep -Eq 'AVFX_LIVE_FAIL|SCRIPT ERROR:|Parse Error:|Shader compilation failed' "$RUNNER_TEMP/live.log"
+          mkdir "$RUNNER_TEMP/output"
+          # Godot may fall back to its standard app_userdata directory even
+          # when --user-data-dir is supplied. Match the creator workflow's
+          # search and report the collection failure explicitly.
+          timeline=$(find "$RUNNER_TEMP" "$HOME/.local/share/godot/app_userdata" -type f -name timeline.json -path '*/avfx_live_capture/*' -print -quit 2>/dev/null || true)
+          if [ -z "$timeline" ]; then echo '::error title=R17_ROLE_COLLECTION::No captured timeline found'; exit 1; fi
+          cp -a "$(dirname "$timeline")"/. "$RUNNER_TEMP/output/"
+          cp "$RUNNER_TEMP/live.log" "$RUNNER_TEMP/output/"
+      - name: Encode actual native frame times
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet pillow
+          if ! command -v ffmpeg; then sudo apt-get update -qq && sudo apt-get install -y ffmpeg; fi
+          python3 tools/arcana20_join/encode_live_capture.py "$RUNNER_TEMP/output"
+      # Separate steps respect the GitHub annotation cap; clips retain full viewport.
+      - name: Opening native detail
+        run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/output" 0.20 opening
+      - name: Mid native detail
+        run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/output" 0.50 mid
+      - name: Peak native detail
+        run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/output" 0.72 peak
+      - name: Aftermath native detail
+        run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/output" 0.90 aftermath
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: r17-chronoshard-${{ matrix.skill }}-${{ matrix.lighting }}
+          path: |
+            ${{ runner.temp }}/output/*.json
+            ${{ runner.temp }}/output/*.mkv
+            ${{ runner.temp }}/output/*.mp4
+            ${{ runner.temp }}/live.log
+          if-no-files-found: warn
