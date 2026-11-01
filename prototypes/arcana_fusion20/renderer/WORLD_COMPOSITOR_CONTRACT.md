@@ -53,7 +53,9 @@ integration; post, depth and source comparisons must all be tested separately.
 
 | Selection | Source routing (catalog) | Diagnostic today / mandatory unresolved work |
 |---|---|---|
-| 01 A+C, 05 A+C, 09 A+B+C, 11 A+C09, 16 A+C, 20 A+C | creator-selected fusions | Separate per-family world consumers and lifecycle; #01/#16 ordering is approximate, actor/foreground occlusion and full fusion parity remain open. #20 needs owner-confirmed moving-hit/miss/receipt contract. |
+| 01 A+C, 05 A+C, 16 A+C | creator-selected fusions | Separate A/C source-role players and per-family world consumers/lifecycle; #01/#16 ordering is approximate, actor/foreground occlusion and full fusion parity remain open. |
+| 09 A+B+C, 11 A+C09 | creator-selected fusions | Current world path mounts A-buffer candidate implementations, not separate original B/C source players; moving anchors have diagnostic coverage but source-selected branch, color and motion parity are not proven. |
+| 20 A+C | creator-selected fusion | Current world path mounts a C player containing selected A live-world warp/debris operations, not separate full A/C players; other roles and complete fidelity remain open. Needs owner-confirmed moving-hit/miss/receipt contract. |
 | 02 B, 03 B, 08 B | B | B ink/coverage, ground, shade/light and warp routes are diagnostic, not complete depth, post or owner-world parity. |
 | 07 C, 15 C | C | Direct source-operation audit: #07 `tide.ts:303` shade calls occur on spire-shadow polygons, facet holes and individual airborne-shard ground points; #15 `verdant.ts:317` shade occurs in shifted thorn ribbons and the bloom field is geometrically bounded. These remain local, unlike #10 stage shade. Both also author `fx.flash`/shake at their climax, which are viewport presentation state, not evidence that their local geometry is global. Full parity, real HUD/actor ordering, moving actors and bright/dark visual review remain open. |
 | 10 C | C Thunderloom | Authored full-stage shade/scanlines route to a viewport-aligned consumer; local cloud/shade/bolt remain local. Depth and multiple global-effect ordering remain approximations. |
