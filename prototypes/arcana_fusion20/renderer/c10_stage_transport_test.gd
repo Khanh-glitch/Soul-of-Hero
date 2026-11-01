@@ -43,6 +43,25 @@ func _run() -> void:
                     push_error("Whole source border incorrectly transported as local geometry at tick %d" % tick)
                     quit(1)
                     return
+        if tick == 290:
+            # Same authored source state, same runner. Legacy non-world mode
+            # has cheaper bookkeeping than the rejected real-world path, so
+            # this conservatively measures the removed stage loops; it is not
+            # an end-to-end frame, GPU or target-device measurement.
+            var baseline_us: Array[float] = []
+            var routed_us: Array[float] = []
+            for sample in range(8):
+                original.clear()
+                var t0 := Time.get_ticks_usec()
+                fx.render(original, t)
+                baseline_us.append(float(Time.get_ticks_usec() - t0))
+                world.clear()
+                t0 = Time.get_ticks_usec()
+                fx.render(world, t)
+                routed_us.append(float(Time.get_ticks_usec() - t0))
+            baseline_us.sort()
+            routed_us.sort()
+            print("C10_STAGE_CPU ", JSON.stringify({"tick":tick,"samples":8,"legacy_nonworld_median_us":baseline_us[4],"world_routed_median_us":routed_us[4],"legacy_nonworld_max_us":baseline_us[7],"world_routed_max_us":routed_us[7],"scope":"same source state and shared CPU host; legacy omits world influence bookkeeping, excludes clear, submission and GPU"}))
         print("C10_STAGE_TRANSPORT ", JSON.stringify({"tick":tick,"shade":world.stage_shade,"local_pixels":world.world_influence.count(1),"max_reconstruction_error":maxerr}))
     print("C10_STAGE_TRANSPORT_PASS source buffers preserved; separate explicit viewport-stage contract")
     quit()
