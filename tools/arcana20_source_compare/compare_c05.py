@@ -4,7 +4,7 @@ import json, pathlib, sys
 import numpy as np
 from PIL import Image
 p=pathlib.Path(sys.argv[1]); w,h=384,216; rows=[]
-for tick in (372,396,420,450,480,510):
+for tick in (336,342,348,354,360,366,372,396,420,450,480,510):
     fields={}
     for who in ('original','native'):
         for kind in ('ink','light','disp'):
@@ -30,6 +30,6 @@ for tick in (372,396,420,450,480,510):
     mask[:,:,0]=np.where(bm & ~am,255,0); mask[:,:,1]=np.where(am & bm,255,0); mask[:,:,2]=np.where(am & ~bm,255,0)
     Image.fromarray(mask,'RGB').save(p/f'{tick}_coverage_iou.png')
     row={'tick':tick,'authored_ink_coverage_iou':float(inter/union) if union else None,'coverage_union':int(union),
-         **metrics,'regions':regions,'scope':'C05 late source fields at t>=6.2; source Math.random particle seed sequence controlled to match native; zero base; no A lead, post or live world'}
+         **metrics,'regions':regions,'scope':'C05 release and late source fields at t>=5.6; source Math.random particle seed sequence controlled to match native; zero base; no A lead, post or live world'}
     rows.append(row); print('C05_LATE_COMPARE',json.dumps({k:v for k,v in row.items() if k!='regions'}),flush=True)
 (p/'comparison.json').write_text(json.dumps(rows,indent=2))

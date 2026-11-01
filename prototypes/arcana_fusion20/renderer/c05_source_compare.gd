@@ -4,7 +4,7 @@ extends SceneTree
 const OUT := "res://artifacts/arcana20-c05-source"
 func _initialize() -> void:
     DirAccess.make_dir_recursive_absolute(OUT)
-    for tick in [372, 396, 420, 450, 480, 510]:
+    for tick in [336, 342, 348, 354, 360, 366, 372, 396, 420, 450, 480, 510]:
         var effect := CAbyssalBloomLate.new()
         effect.setup()
         for i in range(1, tick + 1): effect.update(1.0 / 60.0, float(i) / 60.0)

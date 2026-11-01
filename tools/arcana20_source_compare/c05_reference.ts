@@ -11,7 +11,7 @@ mkdirSync(dir, {recursive:true});
 // controlled comparison; source geometry and update logic remain untouched.
 let autoSeed = 0;
 Math.random = () => ((++autoSeed * 7919 % 1000000) + 0.25) / 1000000;
-for (const tick of [372,396,420,450,480,510]) {
+for (const tick of [336,342,348,354,360,366,372,396,420,450,480,510]) {
   const f = new Frame(); f.clear();
   const fx = {shake() {}, flash() {}, kick() {}, invert:0, desat:0, chroma:0, bloom:1, ambient:1, ambientEcho:0};
   const spell = TIDE.find(x => x.id === 5)!.make(new Rng(32676), fx as any);
