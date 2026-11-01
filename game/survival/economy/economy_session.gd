@@ -7,6 +7,7 @@ extends Node
 
 const V5_PINS = preload("res://game/survival/economy/a0_v5_source_pins.gd")
 const ADAPTER = preload("res://game/survival/economy/a0_economy_adapter.gd")
+const A3_CUSTODY = preload("res://game/survival/economy/a3_economy_service.gd")
 const WAYSTATION_HOST = preload("res://game/survival/waystation_host.gd")
 const CONTRACT := "soh.economy.active_tick.v1"
 const TICKS_PER_SECOND := 60
@@ -18,6 +19,8 @@ var _world: Node
 var _build: Node
 var _hero: Node2D
 var _adapter: RefCounted
+var _custody: RefCounted
+var _source_host: Callable = Callable()
 var _port: Node
 var _session_id := ""
 var _session_index := 0
@@ -57,6 +60,12 @@ func configure(save: Node, survival: Node, world: Node, build: Node, hero: Node2
 		return false
 	_adapter.call(&"configure_time_host", Callable(self, "_snapshot"))
 	_adapter.call(&"configure_world_host", Callable(self, "_world_snapshot"))
+	# A3 R13 custody shares the exact A0 SaveService and this canonical queue.
+	# It is NEVER exposed to UI and grants nothing until a trusted A1 source host is bound.
+	_custody = A3_CUSTODY.new()
+	if not bool(_custody.call(&"configure", _save, _adapter)):
+		push_error("A3 custody refused: " + String(_custody.get("last_error")))
+		return false
 	_save.connect(&"save_loaded", _on_save_loaded)
 	_save.connect(&"save_committed", _on_save_committed)
 	_save.connect(&"save_reset", _on_save_reset)
@@ -64,6 +73,38 @@ func configure(save: Node, survival: Node, world: Node, build: Node, hero: Node2
 	process_mode = Node.PROCESS_MODE_PAUSABLE
 	set_physics_process(_configured)
 	return _configured
+
+
+
+## A1/A0 composition only: inject a live source authority after a real authored
+## world has mounted. No string-domain/owner claims or UI dictionary authority.
+func bind_authored_source_host(host: Callable) -> bool:
+	if not _configured or not host.is_valid() or _custody == null:
+		return false
+	_source_host = host
+	return bool(_custody.call(&"configure_source_host", Callable(self, "_authoritative_source_receipt")))
+
+
+func _authoritative_source_receipt(source_id: String) -> Dictionary:
+	if not _gameplay_active() or not _source_host.is_valid() or source_id.is_empty():
+		return {}
+	var value: Variant = _source_host.call(source_id)
+	return value if value is Dictionary else {}
+
+
+## Gameplay calls this with a source ID, not a caller-built receipt.
+## A3 re-reads the current host receipt and rejects wrong stand/cooldown/replay.
+## No fallback loot is emitted by this method.
+func harvest_authenticated_source(source_id: String, tool_instance_id: String) -> Dictionary:
+	if not _gameplay_active() or _custody == null or not _source_host.is_valid():
+		return {"ok": false, "reason": "A1_SOURCE_HOST_NOT_BOUND"}
+	var receipt: Dictionary = _authoritative_source_receipt(source_id)
+	if receipt.is_empty():
+		return {"ok": false, "reason": "NO_AUTHORITATIVE_SOURCE_RECEIPT"}
+	var verdict: Dictionary = _custody.call(&"authenticate_source", receipt)
+	if not bool(verdict.get("ok", false)):
+		return verdict
+	return _custody.call(&"harvest", source_id, tool_instance_id, receipt)
 
 
 func _exit_tree() -> void:
