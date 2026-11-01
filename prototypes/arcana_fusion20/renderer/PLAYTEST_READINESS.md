@@ -49,8 +49,9 @@
   also passed. The old exact raster benchmark [41325799253](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41325799253)
   correctly detected the newly added A displacement against its pre-change
   baseline. `e3b7bcf` updates the diagnostic to apply that same source role
-  independently to the immutable baseline and still compare every field; the
-  revised benchmark is pending. The refreshed code `189d62d` has an exported
+  independently to the immutable baseline and still compare every field. The
+  adjusted [41326213986](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41326213986)
+  comparison passed; the hash-factor baseline run remains pending. The refreshed code `189d62d` has an exported
   [Windows/Linux package](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41325799138/artifacts/13091022926)
   and successful Linux launch and Windows headless checks. #20 normal
   [full-motion capture](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41325799138/artifacts/13091950147)
