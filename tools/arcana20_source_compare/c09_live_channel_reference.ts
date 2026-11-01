@@ -5,7 +5,7 @@
 import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
 import { Frame } from '../../prototypes/arcana_fusion20/original_source/package/handoff/sources/C/src/engine/frame';
 import { hash, TAU } from '../../prototypes/arcana_fusion20/original_source/package/handoff/sources/C/src/engine/math';
-import { boltPts, boltTree, drawBoltTree, type Branch } from '../../prototypes/arcana_fusion20/original_source/package/handoff/sources/C/src/engine/kit';
+import { boltPts, boltTree, drawBolt, drawBoltTree, type Branch } from '../../prototypes/arcana_fusion20/original_source/package/handoff/sources/C/src/engine/kit';
 
 const dir = process.argv[2];
 for (const filename of readdirSync(dir).filter(n => /^r17_\d+\.json$/.test(n))) {
@@ -29,7 +29,12 @@ for (const filename of readdirSync(dir).filter(n => /^r17_\d+\.json$/.test(n))) 
       br.push(...boltTree(seed + v * 100 + b, p.x, p.y, p.x + Math.cos(a) * l, p.y + Math.sin(a) * l, 1, 0.35, 1));
     }
     const f = new Frame(); f.clear();
-    drawBoltTree(f, br, 1, [0.92,0.96,1], [0.28,0.4,1], 1);
+    if (label === 'c-adapted' && r.skill === 11) {
+      // Explicit hybrid: C geometry/branch depth, A rotor's source width.
+      for (const b of br) drawBolt(f, b.pts, b.w, [0.92,0.96,1], [0.28,0.4,1], b.depth ? 1 : q.width, 1);
+    } else {
+      drawBoltTree(f, br, 1, [0.92,0.96,1], [0.28,0.4,1], 1);
+    }
     writeFileSync(`${dir}/${filename.replace('.json', '.' + label + '.rgba32f')}`, Buffer.from(f.light.buffer));
   }
 }

@@ -1,3 +1,4 @@
+# R17 second candidate: A rotor connector width + C09 branch construction.
 name: ARCANA20 R17 moving-world lightning diagnosis
 on:
   workflow_dispatch:

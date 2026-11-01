@@ -67,12 +67,15 @@ static func _c_branch_count(length: float) -> int:
 
 func _bolt(fb: AFramebuffer, x0: float, y0: float, x1: float, y1: float, t: float, seed: float, width: float, k: float, chaos: float) -> void:
     if not include_bolts or k <= 0.01: return
-    # A owns moving endpoints, timing and intensity; C's stable three-slot
-    # channel, branch construction and widths replace the old C generic tree.
+    # A owns moving endpoints, timing, intensity and the original connector
+    # width; C owns the stable three-slot spine and branch construction.
+    # C's 1.6px main width on every short overlapping connector washed out
+    # the machine in native review, so this is an explicit hybrid adaptation,
+    # not exact full C raster parity. C branch strokes retain their width 1.
     var a := Vector2(x0, y0)
     var b := Vector2(x1, y1)
     c_channel.draw(fb, a, b, t, seed * 131.0, k, CORE, _volt(0.62),
-        1.6, 0.32, _c_branch_count(a.distance_to(b)))
+        width, 0.32, _c_branch_count(a.distance_to(b)))
     var dx := x1 - x0
     var dy := y1 - y0
     ADraw.glow(fb, (x0 + x1) * 0.5, (y0 + y1) * 0.5, minf(16.0, sqrt(dx * dx + dy * dy) * 0.25), _volt(0.45), 0.07 * k)

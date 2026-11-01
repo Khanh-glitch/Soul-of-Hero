@@ -20,8 +20,9 @@ func _initialize() -> void:
         var seed := float(q.seed) * 131.0 if int(report.skill) == 11 else float(q.seed)
         var branch_count := int(q.branch_count)
         var frame := AFramebuffer.new()
+        var main_width := float(q.width) if int(report.skill) == 11 else 1.6
         CChainChannel.new().draw(frame, a, b, float(q.t), seed, 1.0,
-            Vector3(0.92, 0.96, 1.0), Vector3(0.28, 0.4, 1.0), 1.6, 0.32, branch_count)
+            Vector3(0.92, 0.96, 1.0), Vector3(0.28, 0.4, 1.0), main_width, 0.32, branch_count)
         var out := FileAccess.open(dir.path_join(filename.trim_suffix(".json") + ".native.rgb32f"), FileAccess.WRITE)
         if out == null:
             push_error("R17_CHANNEL_FAIL cannot write %s" % filename)
