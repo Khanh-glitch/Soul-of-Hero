@@ -44,7 +44,7 @@ bridge are **not mounted**. The artifact contains the exact join manifest.
   distributes C's branches proportionally across A's many short connectors;
   this is a disclosed adaptation, not exact C/full-spell parity. Earlier f58
   native review is [41301516790](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41301516790).
-  `f101aaf` is a new unverified experiment: restore A's actual bolt algorithm
+  `f101aaf` tested an unapproved alternative: restore A's actual bolt algorithm
   on the other moving connectors and assign C's five-branch channels to at most
   six deterministically ranked A bridges, based on C #09's six successful
   channels. The original C timing/graph is **not** reproduced by this mapping.
@@ -53,8 +53,17 @@ bridge are **not mounted**. The artifact contains the exact join manifest.
   compared full unmodified A fields at ticks 87/183/247/327: support IoU
   1.000/0.9966/0.9979/1.000, full-field RGB MAE 1.83e-8/2.38e-5/1.10e-5/8.03e-7;
   max error 0.000041/0.0964/0.0269/0.000206. It excludes source base/trail/post
-  and is not fusion/world parity. Native normal/dim motion is still pending;
-  this is not in the current download or an acceptance claim.
+  and is not fusion/world parity. Native comparison
+  [41309311503](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41309311503)
+  still shows an overexposed white center at peak in both lights; normal CI
+  capture p50/p95/p99 531.606/970.516/1114.268 ms versus the prior normal
+  capture 286.805/476.267/572.690 ms (independent CI processes/actors, not
+  matched hardware or device FPS).
+  The experiment is therefore unmounted, preserved only for diagnostics, and
+  the prior already-HOLD candidate remains mounted. First run 41309090053
+  replayed the selected C helper using the default A path by mistake: its
+  world captures are real but its current-connector replay panel is invalid;
+  corrected run 41309260938 uses the explicit C flag.
 - Actual moving-world source-clock-retimed before/after videos, baseline vs
   1039869: [#09 normal](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41301955052/artifacts/13081387454),
   [#09 dim](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41301955052/artifacts/13082155888),

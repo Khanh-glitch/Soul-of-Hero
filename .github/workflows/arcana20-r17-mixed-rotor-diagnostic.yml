@@ -23,7 +23,7 @@ jobs:
       - name: Assemble candidate and insert disposable probe
         run: |
           set -euo pipefail
-          AVFX="$GITHUB_SHA"
+          AVFX=a38feb2f0cafe895ebc089feb725d7e4aea63960
           git fetch --depth=1 --no-tags origin "$AVFX" 04eacf62f1a3740a57e08691c3a9006d454aaa2c 6b801554a6af95424b4e39dd29f43c146aa13848 2cb1a3c5f093724eb9fecbdf45909ccb611f7b32 18e7afcbd576bbd9bfbcc509b2ee13216186a522 e505173edd119fdd955cf6249511b575a5468440
           python3 tools/arcana20_join/assemble.py --out "$RUNNER_TEMP/r17" --avfx-sha "$AVFX" --a0-sha 04eacf62f1a3740a57e08691c3a9006d454aaa2c
           python3 tools/arcana20_join/inject_lightning_probe.py "$RUNNER_TEMP/r17"

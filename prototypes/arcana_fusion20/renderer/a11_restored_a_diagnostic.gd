@@ -7,7 +7,7 @@ func _initialize() -> void:
         push_error("A11_A_REFERENCE_FAIL output directory is required")
         quit(1)
         return
-    var spell := AVoltCarouselFusion.new()
+    var spell := AVoltCarouselMixedExperiment.new()
     spell.setup()
     spell.include_c_role = false
     var targets := [87, 183, 247, 327]

@@ -3,20 +3,32 @@
 extends SceneTree
 
 func _initialize() -> void:
-    # The candidate assigns the six successful C channels to distinct moving
+    # The mounted candidate remains the previous length-density variant;
+    # the restored-A/six-channel candidate is unmounted after world review.
+    if AVoltCarouselFusion._c_branch_count(0.0, 1.0) != 0 or AVoltCarouselFusion._c_branch_count(200.0, 1.0) != 5:
+        push_error("C_BOLT_A_FAIL mounted branch density bounds")
+        quit(1)
+        return
+    for seed in range(100):
+        var count := AVoltCarouselFusion._c_branch_count(20.0, float(seed))
+        if count < 0 or count > 1 or count != AVoltCarouselFusion._c_branch_count(20.0, float(seed)):
+            push_error("C_BOLT_A_FAIL mounted branch density determinism")
+            quit(1)
+            return
+    # The unmounted experiment assigns six successful C channels to distinct
     # A connectors. Unit-only synthetic descriptors; no fake world actors.
     var candidates: Array[Dictionary] = []
     for i in range(215):
         candidates.append({"seed": float(i * 97), "rank": CMath.hash1(i * 97 * 131)})
-    var chosen := AVoltCarouselFusion._selected_c_bridge_seeds(candidates)
+    var chosen := AVoltCarouselMixedExperiment._selected_c_bridge_seeds(candidates)
     candidates.reverse()
-    var reordered := AVoltCarouselFusion._selected_c_bridge_seeds(candidates)
+    var reordered := AVoltCarouselMixedExperiment._selected_c_bridge_seeds(candidates)
     if chosen.size() != 6 or chosen != reordered:
         push_error("C_BOLT_A_FAIL six-channel selection count or determinism")
         quit(1)
         return
     var short: Array[Dictionary] = candidates.slice(0, 3)
-    if AVoltCarouselFusion._selected_c_bridge_seeds(short).size() != 3:
+    if AVoltCarouselMixedExperiment._selected_c_bridge_seeds(short).size() != 3:
         push_error("C_BOLT_A_FAIL short channel selection")
         quit(1)
         return
