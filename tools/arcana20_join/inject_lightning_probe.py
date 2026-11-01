@@ -12,11 +12,14 @@ a = root / 'prototypes/arcana_fusion20/renderer/source_a'
 p = a / 'a_chain_verdict_graph.gd'
 s = p.read_text()
 s = s.replace('var host: ASourcePlayer\n', 'var host: ASourcePlayer\nvar _r17_trace: Array = []\n', 1)
-needle = 'func _bolt(fb: AFramebuffer, a: Vector2, b: Vector2, t: float, seed: int, width: float, k: float, rough: float, branch_count: int = 5) -> void:\n'
+old_sig = 'func _bolt(fb: AFramebuffer, a: Vector2, b: Vector2, t: float, seed: int, width: float, k: float, rough: float, branch_count: int = 5) -> void:\n'
+new_sig = old_sig.replace('branch_count: int = 5)', 'branch_count: int = 5, glow_k: float = -1.0)')
+needle = new_sig if new_sig in s else old_sig
 assert s.count(needle) == 1
-s = s.replace(needle, needle + '''    if OS.get_environment("AVFX_R17_TRACE") == "1":
-        _r17_trace.append({"a": [a.x, a.y], "b": [b.x, b.y], "t": t, "seed": seed, "width": width, "k": k, "rough": rough, "branch_count": branch_count})
-''', 1)
+trace = '''    if OS.get_environment("AVFX_R17_TRACE") == "1":
+        _r17_trace.append({"a": [a.x, a.y], "b": [b.x, b.y], "t": t, "seed": seed, "width": width, "k": k, "rough": rough, "branch_count": branch_count%s})
+''' % (', "glow_k": glow_k' if needle == new_sig else '')
+s = s.replace(needle, needle + trace, 1)
 needle = 'func render(fb: AFramebuffer, t: float) -> void:\n'
 assert s.count(needle) == 1
 s = s.replace(needle, needle + '    _r17_trace.clear()\n', 1)
@@ -27,9 +30,10 @@ s = p.read_text()
 s = s.replace('var include_bolts := true\n', 'var include_bolts := true\nvar _r17_trace: Array = []\n', 1)
 needle = '    if not include_bolts or k <= 0.01: return\n'
 assert s.count(needle) == 1
-s = s.replace(needle, needle + '''    if OS.get_environment("AVFX_R17_TRACE") == "1":
-        _r17_trace.append({"a": [x0, y0], "b": [x1, y1], "t": t, "seed": seed, "width": width, "k": k, "rough": chaos})
-''', 1)
+trace = '''    if OS.get_environment("AVFX_R17_TRACE") == "1":
+        _r17_trace.append({"a": [x0, y0], "b": [x1, y1], "t": t, "seed": seed, "width": width, "k": k, "rough": chaos, "branch_count": %s})
+''' % ('_c_branch_count(Vector2(x0, y0).distance_to(Vector2(x1, y1)))' if 'static func _c_branch_count(' in s else '1')
+s = s.replace(needle, needle + trace, 1)
 needle = 'func render(fb: AFramebuffer, t: float) -> void:\n'
 assert s.count(needle) == 1
 s = s.replace(needle, needle + '    _r17_trace.clear()\n', 1)

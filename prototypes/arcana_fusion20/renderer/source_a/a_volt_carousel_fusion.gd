@@ -56,14 +56,23 @@ func update(dt: float, t: float) -> void:
 func _volt(h: float) -> Vector3:
     return ACommon.ramp_step("volt", h, 8.0)
 
+# C #09's first successful channel is (118,110)->(262,98), with five
+# branches. A's carousel has hundreds of much shorter connectors. Applying
+# all five to every connector flooded the machine with a white web. Scale the
+# number of C branches by source-space length at that authored density; retain
+# at least one branch, and never exceed the original five. This is an explicit
+# fusion adaptation, not a claim that C authored the A rotor.
+static func _c_branch_count(length: float) -> int:
+    return clampi(ceili(length * 5.0 / sqrt(144.0 * 144.0 + 12.0 * 12.0)), 1, 5)
+
 func _bolt(fb: AFramebuffer, x0: float, y0: float, x1: float, y1: float, t: float, seed: float, width: float, k: float, chaos: float) -> void:
     if not include_bolts or k <= 0.01: return
-    # Adapt C #09's stable three-slot channel and five authored branches to
-    # each A rotor connector. The A machine still owns endpoint motion,
-    # timing and intensity; C owns the channel construction and widths.
-    # A-derived seed stays stable across frames; the C slot supplies flicker.
-    c_channel.draw(fb, Vector2(x0, y0), Vector2(x1, y1), t, seed * 131.0,
-        k, CORE, _volt(0.62), 1.6, 0.32, 5)
+    # A owns moving endpoints, timing and intensity; C's stable three-slot
+    # channel, branch construction and widths replace the old C generic tree.
+    var a := Vector2(x0, y0)
+    var b := Vector2(x1, y1)
+    c_channel.draw(fb, a, b, t, seed * 131.0, k, CORE, _volt(0.62),
+        1.6, 0.32, _c_branch_count(a.distance_to(b)))
     var dx := x1 - x0
     var dy := y1 - y0
     ADraw.glow(fb, (x0 + x1) * 0.5, (y0 + y1) * 0.5, minf(16.0, sqrt(dx * dx + dy * dy) * 0.25), _volt(0.45), 0.07 * k)

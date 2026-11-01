@@ -131,9 +131,9 @@ func update(dt: float, t: float) -> void:
 # time-slotted variants and deterministic branch placement stay in charge of
 # geometry; B owns colors. Recompute endpoints as real actors move. This is
 # still a candidate, not full C raster/slot-source parity.
-func _bolt(fb: AFramebuffer, a: Vector2, b: Vector2, t: float, seed: int, width: float, k: float, rough: float, branch_count: int = 5) -> void:
+func _bolt(fb: AFramebuffer, a: Vector2, b: Vector2, t: float, seed: int, width: float, k: float, rough: float, branch_count: int = 5, glow_k: float = -1.0) -> void:
     c_channel.draw(fb, a, b, t, float(seed), k, B_CORE, B_MID, width, rough, branch_count)
-    ADraw.glow(fb, (a.x + b.x) * 0.5, (a.y + b.y) * 0.5, minf(16.0, a.distance_to(b) * 0.25), B_MID, 0.07 * k)
+    ADraw.glow(fb, (a.x + b.x) * 0.5, (a.y + b.y) * 0.5, minf(16.0, a.distance_to(b) * 0.25), B_MID, 0.07 * (k if glow_k < 0.0 else glow_k))
 
 func render(fb: AFramebuffer, t: float) -> void:
     var final := AMath.seg(t, FINAL, FINAL + 1.0)
@@ -173,16 +173,21 @@ func render(fb: AFramebuffer, t: float) -> void:
             var u := 1.0 - age / 0.16
             _bolt(fb, a, a.lerp(b, 0.45 * u), t, seed, 0.9, u * 0.55, 0.45, 3)
         elif not fail and age >= 0 and age <= 0.26:
+            # A owns this 0.26 s success window and actor/event graph. Use
+            # the original C #09 channel's discharge energy on its C ribbon;
+            # retain A's own envelope for the separate impact glow/flash.
+            # B's elected HDR core/halo colors are still applied unchanged.
             var k := pow(1.0 - age / 0.26, 1.5)
+            var discharge := 2.6 * exp(-age * 7.0) + 0.5 * CMath.hash1(seed * 97 + floori(t * 30.0))
             if seed % 3 == 0:
                 var mid: Vector2 = (a + b) * 0.5
                 var normal := Vector2(-(b.y - a.y) * 0.3, (b.x - a.x) * 0.3)
-                _bolt(fb, a, mid + normal, t, seed, 1.4, k, 0.2)
-                _bolt(fb, mid + normal, b, t, seed + 1, 1.4, k, 0.2)
-                _bolt(fb, a, mid - normal, t, seed + 2, 1.2, k * 0.8, 0.2)
-                _bolt(fb, mid - normal, b, t, seed + 3, 1.2, k * 0.8, 0.2)
+                _bolt(fb, a, mid + normal, t, seed, 1.4, discharge, 0.2, 5, k)
+                _bolt(fb, mid + normal, b, t, seed + 1, 1.4, discharge, 0.2, 5, k)
+                _bolt(fb, a, mid - normal, t, seed + 2, 1.2, discharge * 0.8, 0.2, 5, k * 0.8)
+                _bolt(fb, mid - normal, b, t, seed + 3, 1.2, discharge * 0.8, 0.2, 5, k * 0.8)
             else:
-                _bolt(fb, a, b, t, seed, 1.6, k, 0.32)
+                _bolt(fb, a, b, t, seed, 1.6, discharge, 0.32, 5, k)
             ADraw.glow(fb, b.x, b.y, 14 * k, B_MID, k)
             fb.flash.z += 0.05 * k
         if not fail:

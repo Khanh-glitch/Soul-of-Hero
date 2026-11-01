@@ -15,17 +15,21 @@ for (const filename of readdirSync(dir).filter(n => /^r17_\d+\.json$/.test(n))) 
   // #11 seed mapping is the candidate's adaptation from A connector identity;
   // #09 uses A's graph seed. C source has its own different spell/event seeds.
   const seed = r.skill === 11 ? q.seed * 131 : q.seed;
-  const t = q.t, count = r.skill === 9 ? q.branch_count : 5;
+  const t = q.t;
   const pts = boltPts(seed, q.a[0], q.a[1], q.b[0], q.b[1], 0.32, 3);
   const v = Math.floor(t * 30) % 3;
-  const br: Branch[] = [{pts: pts.map((p,j) => j === 0 || j === pts.length - 1 ? p :
-    {x:p.x+(hash(seed+v*31+j)-0.5)*3,y:p.y+(hash(seed+v*17+j*3)-0.5)*3}), w:1, depth:0}];
-  for (let b = 0; b < count; b++) {
-    const j = Math.floor(hash(seed + v * 7 + b * 13) * (pts.length - 2)) + 1, p = pts[j];
-    const a = hash(seed + b * 5 + v) * TAU, l = 6 + hash(seed + b) * 18;
-    br.push(...boltTree(seed + v * 100 + b, p.x, p.y, p.x + Math.cos(a) * l, p.y + Math.sin(a) * l, 1, 0.35, 1));
+  // Emit original five-branch successful C channel AND the explicitly
+  // density-adapted prefix used by the rotor. Do not call the latter Gold.
+  for (const [label, count] of [['c-original', r.skill === 11 ? 5 : q.branch_count], ['c-adapted', q.branch_count]] as const) {
+    const br: Branch[] = [{pts: pts.map((p,j) => j === 0 || j === pts.length - 1 ? p :
+      {x:p.x+(hash(seed+v*31+j)-0.5)*3,y:p.y+(hash(seed+v*17+j*3)-0.5)*3}), w:1, depth:0}];
+    for (let b = 0; b < count; b++) {
+      const j = Math.floor(hash(seed + v * 7 + b * 13) * (pts.length - 2)) + 1, p = pts[j];
+      const a = hash(seed + b * 5 + v) * TAU, l = 6 + hash(seed + b) * 18;
+      br.push(...boltTree(seed + v * 100 + b, p.x, p.y, p.x + Math.cos(a) * l, p.y + Math.sin(a) * l, 1, 0.35, 1));
+    }
+    const f = new Frame(); f.clear();
+    drawBoltTree(f, br, 1, [0.92,0.96,1], [0.28,0.4,1], 1);
+    writeFileSync(`${dir}/${filename.replace('.json', '.' + label + '.rgba32f')}`, Buffer.from(f.light.buffer));
   }
-  const f = new Frame(); f.clear();
-  drawBoltTree(f, br, 1, [0.92,0.96,1], [0.28,0.4,1], 1);
-  writeFileSync(`${dir}/${filename.replace('.json', '.c-original.rgba32f')}`, Buffer.from(f.light.buffer));
 }
