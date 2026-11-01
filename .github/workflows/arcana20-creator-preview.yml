@@ -38,8 +38,9 @@ jobs:
           timeout 300s godot --headless --editor --path "$RUNNER_TEMP/avfx-playtest" --import --quit 2>&1 | tee "$RUNNER_TEMP/import.log"
           grep -E 'SCRIPT ERROR:|Parse Error:|ERROR:' "$RUNNER_TEMP/import.log" | head -20 | while IFS= read -r line; do echo "::notice title=IMPORT_DIAGNOSTIC::$line"; done || true
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/import.log"
-      # Explicit rebuild includes C-raster chain/rotor arcs and visual-only temporal echoes; scoped
-      # source-field equality checks do not prove complete lifecycle parity.
+      # R17 refresh includes the explicit moving #09 caster anchor and adapted
+      # C-channel #11 connectors. These remain unapproved visual candidates;
+      # scoped source-field checks do not prove complete lifecycle parity.
       - name: Export self-contained Linux and Windows builds
         run: |
           set -euo pipefail
