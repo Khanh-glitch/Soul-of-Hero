@@ -275,6 +275,22 @@ func _init() -> void:
         var at: float = rootwake._roots[i][0].grow
         if before >= 1.0 or at < 0.99999:
             _fail("root tip %d arrival does not coincide with authored contact" % i)
+    var spores := ARedesignSpells2.SporeNebulaR.new()
+    spores.setup()
+    var first_arrival := [0.8, INF, INF, INF, INF, INF]
+    for i in range(spores._links.size()):
+        var edge: Array = spores._links[i]
+        var timing: Array = spores._link_times[i]
+        var a := int(edge[0])
+        var b := int(edge[1])
+        var start: float = timing[0]
+        var end: float = timing[1]
+        if start < float(spores._births[a]) or end <= start or 4.15 + (end - 1.2) * 0.35 > 5.4:
+            _fail("spore link %d precedes its source or signal misses sporulation" % i)
+        first_arrival[b] = minf(float(first_arrival[b]), end)
+    for i in range(1, spores._births.size()):
+        if absf(float(spores._births[i]) - float(first_arrival[i])) > 0.00001:
+            _fail("spore colony %d does not begin at incoming link arrival" % i)
     var chrono := ARedesignSpells2.ChronoshardR.new()
     chrono.setup()
     if chrono._release(4, 5.3) <= chrono._release(0, 5.3):

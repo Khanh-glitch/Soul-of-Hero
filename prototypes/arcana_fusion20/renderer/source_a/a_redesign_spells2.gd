@@ -111,6 +111,10 @@ class SporeNebulaR:
     const DUR := 8.6
     var _colonies: Array = []
     var _links: Array = []
+    # Each link grows from an already-founded colony; birth happens at the
+    # first incoming link arrival. Later links are meaningful reconnections.
+    var _births := [0.8, 2.2, 3.0, 3.6, 4.2, 2.9]
+    var _link_times := [[1.2, 2.2], [2.2, 2.9], [2.9, 3.6], [3.6, 4.2], [2.2, 3.0], [3.0, 4.2], [2.9, 3.4]]
     var _ps: ADraw.APool
     func setup() -> void:
         var rng := AMath.ARng.new(14141)
@@ -120,7 +124,7 @@ class SporeNebulaR:
     func authored_events() -> Array:
         var ev: Array = [{"t": 0.8, "kind": "seed_plant", "pos_local": _colonies[0], "emitted": false}]
         for i in range(1, _colonies.size()):
-            ev.append({"t": 1.4 + float(i) * 0.5, "kind": "colony_contact", "pos_local": _colonies[i], "emitted": false})
+            ev.append({"t": float(_births[i]), "kind": "colony_contact", "pos_local": _colonies[i], "emitted": false})
         ev.append({"t": 5.4, "kind": "sporulation_impact", "pos_local": C, "emitted": false})
         ev.append({"t": 7.4, "kind": "spores_drift", "pos_local": C, "emitted": false})
         return ev
@@ -135,7 +139,10 @@ class SporeNebulaR:
         var fade := 1.0 - AMath.seg(t, 7.6, 8.6)
         # hyphal links grow colony-to-colony (causal propagation)
         for i in range(_links.size()):
-            var u := AMath.cl01(AMath.seg(t, 1.2 + float(i) * 0.42, 2.2 + float(i) * 0.42))
+            var timing: Array = _link_times[i]
+            var start: float = timing[0]
+            var end: float = timing[1]
+            var u := AMath.cl01(AMath.seg(t, start, end))
             if u <= 0.0:
                 continue
             var a: Vector2 = _colonies[int(_links[i][0])]
@@ -153,19 +160,34 @@ class SporeNebulaR:
                     if h < 0.05:
                         return null
                     return AMath.R("bio", 0.3 + h * 0.5))
-            # signal pulse travelling the finished link
-            if u >= 1.0 and t > 4.2:
-                var pu := fmod(t * 0.55 + float(i) * 0.31, 1.0)
+            # One legible signal propagates along completed links in the
+            # same graph order, reaching the network before sporulation.
+            var pulse_start := 4.15 + (start - 1.2) * 0.35
+            var pulse_end := 4.15 + (end - 1.2) * 0.35
+            if t >= pulse_start and t < pulse_end:
+                var pu := AMath.seg(t, pulse_start, pulse_end)
                 var pp: Vector2 = a.lerp(b, pu)
-                ADraw.glow(fb, pp.x, pp.y, 5.0, AMath.R("bio", 0.9), fade)
+                pp.y += sin(pu * PI) * 5.0 + (AMath.hash2(floor(pu * 12.0), float(i)) - 0.5) * 3.0
+                ADraw.disc(fb, pp.x, pp.y, 2.2, AMath.R("bio", 0.9), fade)
+                ADraw.glow(fb, pp.x, pp.y, 5.0, AMath.R("bio", 0.7), fade * 0.6)
         for i in range(_colonies.size()):
-            var g := AMath.seg(t, 0.8 + float(i) * 0.5, 1.8 + float(i) * 0.5)
+            var g := AMath.seg(t, float(_births[i]), float(_births[i]) + 0.75)
             if g <= 0.0:
                 continue
             var c: Vector2 = _colonies[i]
             var pul := 1.0 + 0.18 * sin(t * 2.4 + float(i) * 1.7)
-            ADraw.disc(fb, c.x, c.y, (3.0 + g * 5.0) * pul, AMath.R("bio", 0.45 + g * 0.3), fade)
-            ADraw.glow(fb, c.x, c.y, 12.0 * g, AMath.R("bio", 0.7), 0.7 * g * fade)
+            # A small anchored fungal cap and stem, not an anonymous point
+            # light: covered dark material supports the bioluminescent rim.
+            var size := (4.0 + g * 6.0) * pul
+            var cap_y := c.y - size * 0.35
+            ADraw.poly_fill(fb, [c + Vector2(-size * 0.14, 1.0), c + Vector2(size * 0.14, 1.0),
+                Vector2(c.x + size * 0.18, cap_y), Vector2(c.x - size * 0.18, cap_y)],
+                func(_x: int, _y: int) -> Variant: return Vector3(0.06, 0.16, 0.10), true, g * fade)
+            ADraw.poly_fill(fb, [Vector2(c.x - size, cap_y), Vector2(c.x - size * 0.6, cap_y - size * 0.45),
+                Vector2(c.x, cap_y - size * 0.65), Vector2(c.x + size * 0.6, cap_y - size * 0.45), Vector2(c.x + size, cap_y)],
+                func(_x: int, _y: int) -> Variant: return Vector3(0.045, 0.14, 0.11), true, g * fade)
+            ADraw.streak(fb, c.x - size, cap_y, c.x + size, cap_y, 0.9, 0.6, AMath.R("bio", 0.75), g * fade * 0.8)
+            ADraw.glow(fb, c.x, cap_y, 10.0 * g, AMath.R("bio", 0.7), 0.45 * g * fade)
         if t > 5.4 and t < 6.2:
             ADraw.pulse_ring(fb, C.x, C.y, 8.0 + AMath.seg(t, 5.4, 6.2) * 110.0, 2.8, AMath.R("bio", 0.75), 0.55 * (1.0 - AMath.seg(t, 5.4, 6.2)), 1.4)
         _ps.each(func(p: Dictionary) -> void:
