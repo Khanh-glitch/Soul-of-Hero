@@ -1,0 +1,29 @@
+name: ARCANA20 inspect failed C16 tail capture
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-c16-tail-failure-review.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcana20-current-overworld-join-diagnostic
+          run-id: 41269709045
+          github-token: ${{ github.token }}
+          path: failed
+      - run: python3 -m pip install --quiet pillow
+      - name: Surface original frozen baseline
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py failed world_before
+      - name: Surface C16 failing tail frame
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py failed fusion_16_extended_seed_tail_tick541
+      - name: Surface camera, post and failure assertions
+        run: |
+          find failed -name join.log -exec grep -E 'JOIN_(OK|FAIL).*(C10|overlap cancellation|seed tail|pollen finishes|pollen completes)' {} \; | sed 's/^/::notice title=C16_FAIL_DIAGNOSTIC::/'

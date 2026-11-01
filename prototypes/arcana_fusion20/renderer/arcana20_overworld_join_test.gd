@@ -1334,6 +1334,11 @@ func _phase_sweep(app: Node, world: Node, player: Node2D, enemy: Node2D, camera:
             # its final active tick as well as the earlier sparse withdrawal.
             targets.append_array([630, 642, 647])
             labels.append_array(["seed_out", "seed_last", "fusion_last"])
+        if num == 17:
+            # Original information-loss is 5.9..6.25s, preceding the
+            # catalog climax. Inspect the actual authored full-stage blackout.
+            targets = [30, targets[1], 354, 360, 374, 375, targets[2], targets[3], targets[4], targets[5]]
+            labels = ["early", "build", "blackout_start", "blackout", "blackout_last", "rebound", "pre_catalog_climax", "catalog_climax", "aftermath", "late"]
         if num == 19:
             # Independently inspect the authored D OUT on real terrain at
             # start, withdrawal, convergence and the final active tick.
