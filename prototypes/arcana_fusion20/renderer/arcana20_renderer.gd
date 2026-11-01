@@ -126,6 +126,9 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
         ap.configure(AAbyssalBloomLead.new(), AAbyssalBloomLead.DURATION)
         var cp := CSourcePlayer.new()
         cp.world_pass_mode = true
+        # C05 uses z as screen-up height and gravity. Its release is entirely
+        # target-centered, so keep column and rain upright in every direction.
+        cp.target_upright = true
         fp.source_pass_ready.connect(func(frame: Arcana20SourcePassFrame) -> void: source_pass_ready.emit(canonical_id, frame))
         fp.source_layer_finished.connect(func(family: StringName) -> void: source_layer_finished.emit(canonical_id, family))
         fp.screen_post.connect(func(state: Dictionary) -> void: screen_post.emit(canonical_id, state))

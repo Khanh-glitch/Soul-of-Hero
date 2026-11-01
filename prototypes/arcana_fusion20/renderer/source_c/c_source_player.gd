@@ -40,6 +40,10 @@ var experimental_separate_passes := false
 # World-field mode suppresses all legacy quads. A real-world owner must
 # consume source_pass_ready, including all environmental fields and post.
 var world_pass_mode := false
+# Opt-in for target-centered C roles whose authored z is screen-up gravity.
+# Do not rotate that gravity with the cast direction; other C roles retain
+# their original caster-to-target similarity basis.
+var target_upright := false
 var _bytes := PackedByteArray()
 var _origin := Vector2.ZERO
 # Kept separately because a selected source layer may align its visual basis
@@ -129,6 +133,11 @@ func begin(caster_world: Vector2, target_world: Vector2, kind: String) -> void:
     _rot = axis.angle() - source_axis.angle() if axis.length() > 1.0 else 0.0
     _scale = clampf(axis.length() / maxf(1.0, source_axis.length()), 0.6, 3.5) if axis.length() > 1.0 else 1.0
     _origin = caster_world
+    if target_upright:
+        # Pin the authored target, not its notional source caster, while
+        # retaining the same uniform scale. Local -Y is always world-up.
+        _rot = 0.0
+        _origin = target_world - source_axis * _scale
     _cast_caster = caster_world
     _target = target_world
     _frame.track_world_fragments = world_pass_mode

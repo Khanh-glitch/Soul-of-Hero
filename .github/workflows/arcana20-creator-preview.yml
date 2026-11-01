@@ -1,4 +1,4 @@
-# Package the experimental candidate, including #05 source and empty-OUT optimization; never approval.
+# Package the R19 experimental water-release candidate; never approval.
 name: ARCANA20 refreshed creator visual-preview build
 on:
   workflow_dispatch:
@@ -152,7 +152,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        skill: [5, 14, 18]
+        include:
+          - {skill: 5, lighting: normal}
+          - {skill: 5, lighting: dimmed}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -174,7 +176,7 @@ jobs:
       - name: Run actual game with moving player, Skeleton and camera
         env:
           AVFX_LIVE_SKILL: ${{ matrix.skill }}
-          AVFX_LIVE_LIGHT: normal
+          AVFX_LIVE_LIGHT: ${{ matrix.lighting }}
           AVFX_LIVE_CAPTURE: '1'
         run: |
           set +e
@@ -207,10 +209,19 @@ jobs:
           set -euo pipefail
           if ! command -v ffmpeg; then sudo apt-get update -qq && sudo apt-get install -y ffmpeg; fi
           python3 tools/arcana20_join/encode_live_capture.py "$RUNNER_TEMP/live-output" 2>&1 | tee "$RUNNER_TEMP/encode.log"
+      # Actual source-clock beats; stills supplement, never replace full videos.
+      - name: A opening and peak native detail
+        run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.50 a_peak
+      - name: C eruption native detail
+        run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.58 c_release
+      - name: C column native detail
+        run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.65 c_column
+      - name: C rain and aftermath native detail
+        run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.78 c_rain
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: live-motion-${{ matrix.skill }}-normal
+          name: live-motion-${{ matrix.skill }}-${{ matrix.lighting }}
           path: |
             ${{ runner.temp }}/live-output/*.json
             ${{ runner.temp }}/live-output/*.mkv

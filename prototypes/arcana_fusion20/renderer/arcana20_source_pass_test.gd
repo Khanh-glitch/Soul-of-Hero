@@ -312,6 +312,26 @@ func _run() -> void:
     for value in late_frame.world_influence: late_marked += int(value)
     check(late_marked > 0, "C05 late source column/pool fields")
 
+    # C05 release is target-centered; source -Y is height, not cast-facing.
+    # Test the actual host transform, including metadata, at four bearings.
+    var upright := CSourcePlayer.new()
+    upright.world_pass_mode = true
+    upright.target_upright = true
+    root.add_child(upright)
+    var base := Vector2(300, 200)
+    for delta in [Vector2(140, 0), Vector2(-140, 0), Vector2(0, 140), Vector2(0, -140)]:
+        var dst: Vector2 = base + delta
+        upright.begin(base, dst, "bloom_late")
+        upright.set_process(false)
+        var pass_frame := upright.source_pass_frame()
+        var basis := pass_frame.source_to_world
+        check((basis * CAbyssalBloomLate.C).distance_to(dst) < 0.001, "C05 target stays pinned at bearing %s" % delta)
+        check(basis.x.x > 0.0 and absf(basis.x.y) < 0.0001 and basis.y.y > 0.0 and absf(basis.y.x) < 0.0001, "C05 gravity stays world-up at bearing %s" % delta)
+        check(is_equal_approx(basis.x.length(), basis.y.length()) and absf(basis.x.dot(basis.y)) < 0.0001, "C05 similarity scale at bearing %s" % delta)
+        check(pass_frame.caster_world == base and pass_frame.target_world == dst, "C05 actual actor metadata preserved")
+        upright.stop()
+    upright.free()
+
     var graph := AChainVerdictGraph.new()
     graph.setup()
     check(graph.events.size() == 23, "A09 original graph seeded probe count")
