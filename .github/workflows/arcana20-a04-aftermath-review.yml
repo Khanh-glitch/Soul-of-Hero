@@ -1,0 +1,39 @@
+name: ARCANA20 A04 connected rupture and OUT review
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-a04-aftermath-review.yml']
+permissions:
+  actions: read
+  contents: read
+jobs:
+  surface:
+    strategy:
+      fail-fast: false
+      matrix:
+        lighting: [normal, dimmed]
+        beat: [rupture, out]
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcana20-a04-candidate-${{ matrix.lighting }}
+          run-id: 41276632197
+          github-token: ${{ github.token }}
+          path: capture
+      - run: python3 -m pip install --quiet pillow
+      - name: Surface first native-world beat
+        env:
+          BEAT: ${{ matrix.beat }}
+        run: |
+          if [ "$BEAT" = rupture ]; then NAME=phase_04_candidate_A_rupture_impact_05_tick286; else NAME=phase_04_aftermath_tick368; fi
+          python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py capture "$NAME"
+      - name: Surface second native-world beat
+        env:
+          BEAT: ${{ matrix.beat }}
+        run: |
+          if [ "$BEAT" = rupture ]; then NAME=phase_04_candidate_A_rupture_impact_07_tick295; else NAME=phase_04_late_tick474; fi
+          python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py capture "$NAME"
