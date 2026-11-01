@@ -102,3 +102,43 @@ jobs:
             ${{ runner.temp }}/playtest.log
           if-no-files-found: warn
           retention-days: 14
+  windows-baseline-runtime:
+    # Native Windows OS executes the previously exported rollback baseline.
+    # Headless startup verifies platform/runtime, not GPU or visual quality.
+    runs-on: windows-latest
+    timeout-minutes: 15
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: SOH-AVFX-EXPERIMENTAL-NOT-PLAYTEST-READY
+          run-id: 41290366274
+          github-token: ${{ github.token }}
+          path: bundle
+      - name: Run exported Windows binary on Windows
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Expand-Archive -Path bundle/SOH_AVFX_EXPERIMENTAL_windows.zip -DestinationPath win
+          $exe = (Get-ChildItem -Path win -Filter SOH_AVFX_Playtest.exe -Recurse | Select-Object -First 1).FullName
+          if (-not $exe) { throw 'Windows binary missing' }
+          $out = Join-Path $env:RUNNER_TEMP 'avfx-windows-out.log'
+          $err = Join-Path $env:RUNNER_TEMP 'avfx-windows-err.log'
+          $save = Join-Path $env:RUNNER_TEMP 'avfx-windows-user'
+          $p = Start-Process -FilePath $exe -ArgumentList @('--headless','--audio-driver','Dummy','--resolution','1280x720','--user-data-dir', $save, '--','--avfx-playtest-smoke') -RedirectStandardOutput $out -RedirectStandardError $err -PassThru
+          if (-not $p.WaitForExit(420000)) { $p.Kill(); throw 'Windows smoke timed out' }
+          Get-Content $out; Get-Content $err
+          if ($p.ExitCode -ne 0) { throw "Windows executable exited $($p.ExitCode)" }
+          if (-not (Select-String -Path $out -SimpleMatch 'AVFX_PLAYTEST_SMOKE PASS' -Quiet)) { throw 'Windows PASS marker missing' }
+          if (Select-String -Path $out,$err -Pattern 'AVFX_PLAYTEST_FAIL|SCRIPT ERROR:|Parse Error:' -Quiet) { throw 'Windows runtime script error' }
+          Write-Output '::notice title=WINDOWS_RUNTIME::Windows x64 exported baseline ran real route and smoke; headless, no GPU or visual acceptance.'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcana20-windows-baseline-runtime-logs
+          path: |
+            ${{ runner.temp }}/avfx-windows-out.log
+            ${{ runner.temp }}/avfx-windows-err.log
+          if-no-files-found: warn
