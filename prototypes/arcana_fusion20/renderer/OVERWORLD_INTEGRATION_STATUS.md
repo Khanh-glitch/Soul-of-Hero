@@ -157,7 +157,13 @@ and [PR30](https://github.com/Khanh-glitch/Soul-of-Hero/pull/30#issuecomment-655
   The six full-grid isolated noise tests had exact float equality and median
   **776.2 → 46.8 ms** including cache construction on that shared runner; this
   is a full-grid microbenchmark, not the disc's end-to-end cost or target FPS.
-  Real-world JOIN and same-host overlap performance retests are pending.
+  Same-state tick 120 **complete C source render** (including cache build and
+  real-world field bookkeeping) measured median **219.9 → 37.3 ms** over six
+  shared-runner samples [41274025718](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41274025718).
+  The current 04e/`2912110` real-world JOIN [41274009623](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41274009623)
+  passed including #10/#17/HUD and cancellation. Same-host multi-resolution
+  rendered-overlap retest [41274092592](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41274092592)
+  remains pending. Neither microbenchmark nor JOIN is a target FPS claim.
 
 ### Per-skill acceptance ledger (R14)
 
