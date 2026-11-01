@@ -1159,10 +1159,10 @@ func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D)
             record["cpu_pack_p50_p95_p99_us"] = [_perf_percentile(cpu_source.profile_pack_us, 0.50), _perf_percentile(cpu_source.profile_pack_us, 0.95), _perf_percentile(cpu_source.profile_pack_us, 0.99)]
             record["cpu_submit_p50_p95_p99_us"] = [_perf_percentile(cpu_source.profile_submit_us, 0.50), _perf_percentile(cpu_source.profile_submit_us, 0.95), _perf_percentile(cpu_source.profile_submit_us, 0.99)]
     if not record.has("cpu_scope") and not last_c_profile.is_empty():
-        var clear_values: Array[float] = last_c_profile.clear
-        var raster_values: Array[float] = last_c_profile.raster
-        var pack_values: Array[float] = last_c_profile.pack
-        var submit_values: Array[float] = last_c_profile.submit
+        var clear_values: Array[float] = last_c_profile["clear"]
+        var raster_values: Array[float] = last_c_profile["raster"]
+        var pack_values: Array[float] = last_c_profile["pack"]
+        var submit_values: Array[float] = last_c_profile["submit"]
         if not clear_values.is_empty():
             record["cpu_scope"] = "last retained C CPU snapshot while source was alive; texture submission is asynchronous, not GPU time"
             record["cpu_sample_count"] = clear_values.size()

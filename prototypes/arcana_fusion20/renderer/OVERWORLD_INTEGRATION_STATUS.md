@@ -82,6 +82,13 @@ full journey. A1/A3/A6/A8 current PR heads have not been mounted or validated he
   the **−4** object delta after cancel are unreliable, not proof of savings or
   no leaks. HP remained 69→69. Product performance remains blocked.
 
+- In a same-state tick-290 CPU microbenchmark, source-render-only median fell
+  **75.10 ms → 22.45 ms** across 8 samples
+  ([41271854674](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41271854674)).
+  The legacy non-world baseline skips influence bookkeeping, making this a
+  conservative estimate of eliminating stage loops, not an end-to-end or GPU
+  result. Full-cast and target-hardware budgets remain open.
+
 ### Per-skill acceptance ledger (R14)
 
 `PARTIAL` means a limited source-field or world diagnostic exists; it is not
