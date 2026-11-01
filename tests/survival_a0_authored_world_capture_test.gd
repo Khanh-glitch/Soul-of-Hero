@@ -17,6 +17,7 @@ const OW_SCENE_PATH := "res://game/overworld/chapter1_overworld.tscn"
 const SAVE := "user://tests/a0_authored_capture.json"
 const BUILD_TIMEOUT_MS := 120_000
 const ARTIFACT_DIR := "res://artifacts"
+const GPB_INPUT_BOOTSTRAP = preload("res://game/autoload/input_bootstrap.gd")
 
 var failures: Array[String] = []
 var checks := 0
@@ -32,6 +33,9 @@ func _initialize() -> void:
 
 
 func _run() -> void:
+	var input_boot := GPB_INPUT_BOOTSTRAP.new()
+	input_boot.call(&"_install_actions")
+	input_boot.free()
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("user://tests"))
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(ARTIFACT_DIR))
 	var save := root.get_node_or_null("SaveService")
