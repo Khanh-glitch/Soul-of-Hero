@@ -88,6 +88,7 @@ func start(wrapper: Node) -> void:
         if id == cast_id: contacts.append({"kind": String(kind), "position": [pos.x, pos.y]}))
     var folder := "user://avfx_live_capture"
     DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(folder))
+    print("AVFX_LIVE_OUTPUT ", ProjectSettings.globalize_path(folder))
     var capture := OS.get_environment("AVFX_LIVE_CAPTURE") != "0"
     var start_usec := Time.get_ticks_usec()
     capture_start_usec = start_usec

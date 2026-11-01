@@ -138,25 +138,31 @@ class SporeNebulaR:
                 _ps.spawn({"x": c.x, "y": c.y, "vx": rng.rangef(-16, 22), "vy": rng.rangef(-30, -8), "life": rng.rangef(1.0, 2.2), "size": rng.rangef(0.7, 1.6), "k": 0.9, "seed": rng.next() * 80.0})
         _ps.step(dt, 0.0)
     func _draw_cap(fb: AFramebuffer, origin: Vector2, width: float, height: float, opacity: float) -> void:
+        # Deliberately broad, low dome + pale stipe and visible underside.
+        # The previous all-green tapered canopy read as trees at 1x. These
+        # are opaque source shapes, not bloom or an RGB transparency key.
         var neck := origin + Vector2(0, -height * 0.65)
-        ADraw.poly_fill_solid(fb, [origin + Vector2(-width * 0.22, 0), origin + Vector2(width * 0.22, 0),
-            neck + Vector2(width * 0.18, 0), neck + Vector2(-width * 0.18, 0)], Vector3(0.14, 0.23, 0.12), true, opacity)
+        ADraw.poly_fill_solid(fb, [origin + Vector2(-width * 0.25, 0), origin + Vector2(width * 0.25, 0),
+            neck + Vector2(width * 0.18, 0), neck + Vector2(-width * 0.18, 0)], Vector3(0.34, 0.38, 0.22), true, opacity)
+        ADraw.line(fb, origin.x - width * 0.11, origin.y - height * 0.06,
+            neck.x - width * 0.09, neck.y, Vector3(0.58, 0.62, 0.35), opacity * 0.7)
         var cap := neck + Vector2(0, -height * 0.20)
-        ADraw.poly_fill_solid(fb, [cap + Vector2(-width, 0), cap + Vector2(-width * 0.72, -height * 0.25),
-            cap + Vector2(-width * 0.25, -height * 0.38), cap + Vector2(width * 0.38, -height * 0.34),
-            cap + Vector2(width * 0.83, -height * 0.18), cap + Vector2(width, 0),
-            cap + Vector2(width * 0.45, height * 0.10), cap + Vector2(-width * 0.48, height * 0.10)], Vector3(0.055, 0.20, 0.10), true, opacity)
-        # A contrasting underside and radial gills distinguish a mushroom
-        # cap from a small tree canopy at the real game's pixel scale.
-        ADraw.poly_fill_solid(fb, [cap + Vector2(-width, 0), cap + Vector2(-width * 0.65, height * 0.16),
-            cap + Vector2(0, height * 0.25), cap + Vector2(width * 0.65, height * 0.16), cap + Vector2(width, 0)], Vector3(0.27, 0.32, 0.14), true, opacity * 0.9)
-        ADraw.streak(fb, cap.x - width, cap.y, cap.x + width, cap.y, 1.6, 1.0,
-            AMath.R("bio", 0.8), opacity)
+        ADraw.poly_fill_solid(fb, [cap + Vector2(-width, 0), cap + Vector2(-width * 0.90, -height * 0.18),
+            cap + Vector2(-width * 0.60, -height * 0.34), cap + Vector2(-width * 0.20, -height * 0.40),
+            cap + Vector2(width * 0.35, -height * 0.38), cap + Vector2(width * 0.72, -height * 0.27),
+            cap + Vector2(width * 0.95, -height * 0.12), cap + Vector2(width, 0)], Vector3(0.10, 0.29, 0.30), true, opacity)
+        ADraw.poly_fill_solid(fb, [cap + Vector2(-width, 0), cap + Vector2(-width * 0.72, height * 0.16),
+            cap + Vector2(0, height * 0.25), cap + Vector2(width * 0.72, height * 0.16), cap + Vector2(width, 0)], Vector3(0.46, 0.48, 0.27), true, opacity * 0.94)
+        ADraw.line(fb, cap.x - width, cap.y, cap.x + width, cap.y, Vector3(0.65, 0.85, 0.55), opacity)
         for side in [-0.7, -0.35, 0.0, 0.35, 0.7]:
             var offset := float(side)
-            ADraw.streak(fb, cap.x + offset * width * 0.15, cap.y + height * 0.03,
-                cap.x + offset * width, cap.y + height * 0.14, 0.8, 0.45,
-                Vector3(0.58, 0.76, 0.28), opacity * 0.8)
+            ADraw.line(fb, cap.x + offset * width * 0.12, cap.y + height * 0.03,
+                cap.x + offset * width, cap.y + height * 0.15, Vector3(0.78, 0.77, 0.45), opacity * 0.8)
+        # Sparse cap freckles remain tangible pixels rather than luminous fog.
+        for spot in [-0.48, 0.0, 0.43]:
+            var offset := float(spot)
+            fb.add_px(roundi(cap.x + width * offset), roundi(cap.y - height * (0.22 + 0.07 * (1.0 - absf(offset)))),
+                0.5, 0.8, 0.62, opacity * 0.8)
 
     func render(fb: AFramebuffer, t: float) -> void:
         var fade := 1.0 - AMath.seg(t, 7.6, 8.6)
@@ -225,16 +231,16 @@ class SporeNebulaR:
             # random battlefield locations. Their two-part flight and fade
             # remain visible through the biological OUT.
             var release := t - 5.4 - float(i) * 0.055
-            if release >= 0.0 and release < 1.3:
-                var bloom := AMath.ease_out(AMath.cl01(release / 0.55), 2.0)
-                var alive := (1.0 - AMath.seg(release, 0.65, 1.3)) * fade
-                for spore in range(7):
-                    var angle := -PI * 0.88 + float(spore) * PI * 0.13
-                    var distance := (12.0 + float(spore % 3) * 8.0) * bloom
+            if release >= 0.0 and release < 1.5:
+                var bloom := AMath.ease_out(AMath.cl01(release / 0.85), 2.0)
+                var alive := (1.0 - AMath.seg(release, 0.85, 1.5)) * fade
+                for spore in range(11):
+                    var angle := -PI * 0.92 + float(spore) * PI * 0.084
+                    var distance := (18.0 + float(spore % 4) * 8.0) * bloom
                     var tip := c + Vector2(cos(angle) * distance, sin(angle) * distance - 12.0 * spread)
-                    ADraw.streak(fb, tip.x, tip.y + 3.0, tip.x, tip.y - 2.0,
-                        1.0, 0.5, AMath.R("bio", 0.85), alive * 0.8)
-                    ADraw.disc(fb, tip.x, tip.y, 1.5, AMath.R("bio", 0.95), alive)
+                    ADraw.streak(fb, tip.x, tip.y + 4.0, tip.x, tip.y - 2.0,
+                        1.1, 0.6, Vector3(0.55, 1.05, 0.65), alive * 0.9)
+                    ADraw.disc(fb, tip.x, tip.y, 1.5, Vector3(0.70, 1.3, 0.8), alive)
         if t > 5.4 and t < 6.2:
             ADraw.pulse_ring(fb, C.x, C.y, 8.0 + AMath.seg(t, 5.4, 6.2) * 110.0, 2.8, AMath.R("bio", 0.75), 0.55 * (1.0 - AMath.seg(t, 5.4, 6.2)), 1.4)
         _ps.each(func(p: Dictionary) -> void:
@@ -270,11 +276,61 @@ class ChronoshardR:
         return 1.0 - AMath.seg(t, begin, begin + 0.36)
     func update(dt: float, t: float) -> void:
         pass
+    # B #18 stores the same projectile/impact at several distinct tau values
+    # inside clipped crystal frames (astral.ts:163-240). This adapts its
+    # miniature geometry to A's raster and our retimed causal sequence; it is
+    # not the full B renderer/post or a parity claim.
+    func _mini_disc(fb: AFramebuffer, p: Vector2, radius: float, hex: PackedVector2Array, color: Vector3, intensity: float) -> void:
+        var rr := maxf(0.7, radius)
+        for yy in range(floori(p.y - rr), ceili(p.y + rr) + 1):
+            for xx in range(floori(p.x - rr), ceili(p.x + rr) + 1):
+                var sample := Vector2(float(xx) + 0.5, float(yy) + 0.5)
+                if sample.distance_squared_to(p) <= rr * rr and Geometry2D.is_point_in_polygon(sample, hex):
+                    fb.add_px(xx, yy, color.x, color.y, color.z, intensity)
+
+    func _mini_attack(fb: AFramebuffer, hex: PackedVector2Array, center: Vector2, tau: float, color: Vector3, intensity: float) -> void:
+        if tau < 0.0 or tau > 2.2:
+            return
+        var a := CASTER + Vector2(6, -14)
+        var b := C + Vector2(0, -4)
+        var middle := (a + b) * 0.5 + Vector2(0, -6)
+        var scale := 0.42
+        if tau <= 1.0:
+            # Original B arc and nine trailing discs at the stored instant.
+            for m in range(9, -1, -1):
+                var u := maxf(0.0, tau - float(m) * 0.025)
+                var p := a.lerp(b, u) + Vector2(0, -sin(u * PI) * 24.0)
+                var at := center + (p - middle) * scale
+                _mini_disc(fb, at, (3.0 - float(m) * 0.25) * scale, hex,
+                    color, intensity * (1.0 - float(m) / 10.0) * 0.7)
+            var head := a.lerp(b, tau) + Vector2(0, -sin(tau * PI) * 24.0)
+            _mini_disc(fb, center + (head - middle) * scale, 1.0, hex, Vector3(1.4, 1.4, 2.0), intensity)
+        else:
+            var e := tau - 1.0
+            var target := center + (b - middle) * scale
+            var radius := AMath.ease_out(e / 1.2) * 34.0 * scale
+            for q in range(36):
+                var angle := float(q) * TAU / 36.0
+                var point := target + Vector2(cos(angle), sin(angle) * 0.7) * radius
+                _mini_disc(fb, point, 0.7, hex, color, intensity * maxf(0.0, 1.0 - e / 1.2))
+            for q in range(24):
+                var angle := AMath.hash2(float(q), 18.0) * TAU
+                var velocity := 30.0 + AMath.hash2(float(q + 1), 18.0) * 50.0
+                var point := target + Vector2(cos(angle) * velocity * e, (sin(angle) * velocity * 0.7 - 20.0) * e + 30.0 * e * e) * scale
+                _mini_disc(fb, point, 0.7, hex, color, intensity * AMath.cl01(1.4 - e))
+
     func render(fb: AFramebuffer, t: float) -> void:
-        # pre-echo: ghost of the final convergence shown first (temporal logic)
+        # The same recognizable event appears as a pre-echo before its
+        # frozen stages are stored: a projectile travels caster -> target.
         if t < 2.0:
-            var gk := AMath.seg(t, 0.9, 1.05) * (1.0 - AMath.seg(t, 1.4, 2.0)) * 0.35
-            ADraw.ring_shape(fb, C.x, C.y, 30.0, 1.4, AMath.R("frost", 0.7), gk)
+            var gk := AMath.seg(t, 0.9, 1.05) * (1.0 - AMath.seg(t, 1.4, 2.0)) * 0.7
+            var u := AMath.seg(t, 0.9, 1.45)
+            var from_point := CASTER + Vector2(6, -14)
+            var ghost := from_point.lerp(C, u) + Vector2(0, -sin(u * PI) * 24.0)
+            var tail := from_point.lerp(C, maxf(0.0, u - 0.18)) + Vector2(0, -sin(maxf(0.0, u - 0.18) * PI) * 24.0)
+            ADraw.streak(fb, tail.x, tail.y, ghost.x, ghost.y, 1.1, 2.0, Vector3(0.55, 0.9, 1.8), gk)
+            ADraw.disc(fb, ghost.x, ghost.y, 2.0, Vector3(1.4, 1.3, 2.0), gk)
+            ADraw.ring_shape(fb, C.x, C.y, 30.0, 1.4, AMath.R("frost", 0.7), gk * 0.5)
         for i in range(_crystals.size()):
             var c: Dictionary = _crystals[i]
             var pos: Vector2 = c.pos
@@ -305,11 +361,12 @@ class ChronoshardR:
                 ADraw.line(fb, a.x, a.y, b.x, b.y, Vector3(1.2, 1.4, 2.0), resolve * 0.75)
                 if q % 2 == 0:
                     ADraw.line(fb, cur.x, cur.y, a.x, a.y, Vector3(0.6, 0.6, 1.2), resolve * 0.35)
-            # An explicit temporal mark within the frame, not a substitute
-            # for B's still-unported clipped miniature attack.
+            # Each fragment visibly contains a different frozen moment of
+            # the same projectile/impact, clipped to the moving crystal face.
             if captured > 0.0:
                 var mark := Vector3(1.8, 1.3, 0.5) if i % 2 == 0 else Vector3(0.5, 0.9, 2.0)
-                ADraw.streak(fb, cur.x - sz * 0.35, cur.y, cur.x + sz * 0.35, cur.y - sz * 0.15, 0.7, 0.3, mark, captured * resolve * 0.7)
+                var stored_tau := [0.3, 1.45, 1.15, 0.65, 0.9]
+                _mini_attack(fb, PackedVector2Array(hex), cur, float(stored_tau[i]), mark, captured * resolve)
             ADraw.glow(fb, cur.x, cur.y, sz * 1.4, AMath.R("frost", 0.75), captured * resolve * 0.35)
             if captured > 0.0 and rel < 1.0:
                 ADraw.streak(fb, cur.x, cur.y, C.x, C.y, 0.7, 0.3, AMath.R("frost", 0.6), captured * 0.4 * resolve)

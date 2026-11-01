@@ -145,13 +145,54 @@ jobs:
             ${{ runner.temp }}/avfx-windows-out.log
             ${{ runner.temp }}/avfx-windows-err.log
           if-no-files-found: warn
+  windows-current-runtime:
+    needs: build
+    # Native Windows OS executes the same-run exported candidate.
+    # Headless startup verifies platform/runtime, not GPU or visual quality.
+    runs-on: windows-latest
+    timeout-minutes: 15
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: SOH-AVFX-EXPERIMENTAL-NOT-PLAYTEST-READY
+          path: bundle
+      - name: Run exported Windows binary on Windows
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $zip = Get-ChildItem -Path bundle -Filter SOH_AVFX_EXPERIMENTAL_windows.zip -Recurse | Select-Object -First 1
+          if (-not $zip) { Write-Host '::error::Windows zip missing from same-run artifact'; exit 1 }
+          Expand-Archive -Path $zip.FullName -DestinationPath win
+          $exe = (Get-ChildItem -Path win -Filter SOH_AVFX_Playtest.exe -Recurse | Select-Object -First 1).FullName
+          if (-not $exe) { throw 'Windows binary missing' }
+          $out = Join-Path $env:RUNNER_TEMP 'avfx-windows-out.log'
+          $err = Join-Path $env:RUNNER_TEMP 'avfx-windows-err.log'
+          $save = Join-Path $env:RUNNER_TEMP 'avfx-windows-user'
+          $p = Start-Process -FilePath $exe -ArgumentList @('--headless','--audio-driver','Dummy','--resolution','1280x720','--user-data-dir', $save, '--','--avfx-playtest-smoke') -RedirectStandardOutput $out -RedirectStandardError $err -PassThru
+          if (-not $p.WaitForExit(420000)) { $p.Kill(); throw 'Windows smoke timed out' }
+          Get-Content $out; Get-Content $err
+          if ($p.ExitCode -ne 0) { throw "Windows executable exited $($p.ExitCode)" }
+          if (-not (Select-String -Path $out -SimpleMatch 'AVFX_PLAYTEST_SMOKE PASS' -Quiet)) { throw 'Windows PASS marker missing' }
+          if (Select-String -Path $out,$err -Pattern 'AVFX_PLAYTEST_FAIL|SCRIPT ERROR:|Parse Error:' -Quiet) { throw 'Windows runtime script error' }
+          Write-Output '::notice title=WINDOWS_RUNTIME::Windows x64 exported current build ran real route and smoke; headless, no GPU or visual acceptance.'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcana20-windows-current-runtime-logs
+          path: |
+            ${{ runner.temp }}/avfx-windows-out.log
+            ${{ runner.temp }}/avfx-windows-err.log
+          if-no-files-found: warn
   live-motion:
     # Pilot representative source C and redesign A before running all 20.
     needs: build
     strategy:
       fail-fast: false
       matrix:
-        skill: [10, 14]
+        skill: [10, 14, 18]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -186,17 +227,34 @@ jobs:
           if [ "$result" -ne 0 ]; then echo "::error::Live capture failed exit=$result"; exit "$result"; fi
           grep -Fq 'AVFX_LIVE_PASS' "$RUNNER_TEMP/live.log" || exit 1
           ! grep -Eq 'AVFX_LIVE_FAIL|SCRIPT ERROR:|Parse Error:|Shader compilation failed' "$RUNNER_TEMP/live.log"
+      - name: Collect native gameplay frames and metadata
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/live-output"
+          folder=$(find "$RUNNER_TEMP" "$HOME/.local/share/godot/app_userdata" -type f -name timeline.json -path '*/avfx_live_capture/*' -print -quit 2>/dev/null || true)
+          if [ -n "$folder" ]; then cp -a "$(dirname "$folder")"/. "$RUNNER_TEMP/live-output/"; else echo '::warning::No timeline.json found'; fi
+      - name: Install image preview dependency
+        run: python3 -m pip install --quiet pillow
+      - name: Surface full-frame mid timeline
+        run: python3 tools/arcana20_join/surface_live_capture.py "$RUNNER_TEMP/live-output" 0.5 full
+      - name: Surface full-frame late timeline
+        run: python3 tools/arcana20_join/surface_live_capture.py "$RUNNER_TEMP/live-output" 0.72 full
+      - name: Surface native detail late timeline
+        run: python3 tools/arcana20_join/surface_live_capture.py "$RUNNER_TEMP/live-output" 0.72 detail
       - name: Encode native wall-time capture
         run: |
           set -euo pipefail
-          python3 tools/arcana20_join/encode_live_capture.py "$RUNNER_TEMP/live-user/avfx_live_capture"
+          if ! command -v ffmpeg; then sudo apt-get update -qq && sudo apt-get install -y ffmpeg; fi
+          python3 tools/arcana20_join/encode_live_capture.py "$RUNNER_TEMP/live-output" 2>&1 | tee "$RUNNER_TEMP/encode.log"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: live-motion-${{ matrix.skill }}-normal
           path: |
-            ${{ runner.temp }}/live-user/avfx_live_capture/*.json
-            ${{ runner.temp }}/live-user/avfx_live_capture/*.mkv
-            ${{ runner.temp }}/live-user/avfx_live_capture/*.mp4
+            ${{ runner.temp }}/live-output/*.json
+            ${{ runner.temp }}/live-output/*.mkv
+            ${{ runner.temp }}/live-output/*.mp4
             ${{ runner.temp }}/live.log
+            ${{ runner.temp }}/encode.log
           if-no-files-found: warn
