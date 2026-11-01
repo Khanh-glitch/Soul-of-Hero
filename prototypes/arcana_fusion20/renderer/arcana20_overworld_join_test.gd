@@ -1743,7 +1743,7 @@ func contamination(before: Image, after: Image, viewer: Node2D, frame: Arcana20S
     var sprite := viewer.get("_sprite") as Sprite2D
     var influence: PackedByteArray
     if frame.family == &"A":
-        influence = (viewer as Arcana20AWorldPass)._bloom_influence(frame.a_influence)
+        influence = (viewer as Arcana20AWorldPass)._bloom_influence(frame.a_influence, frame.source_size.x, frame.source_size.y)
     elif frame.family == &"B":
         influence = frame.b_influence
     else:

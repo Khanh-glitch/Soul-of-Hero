@@ -24,6 +24,12 @@ var c_channel := CChainChannel.new()
 # Integer raster-window translation only; simulation/events stay in original
 # actor-local coordinates. The host applies its inverse to the world pass.
 var raster_offset := Vector2.ZERO
+var raster_size := Vector2i(AFramebuffer.W, AFramebuffer.H)
+
+func source_raster_size() -> Vector2i:
+    # More world-space coverage without magnifying or rescaling the authored
+    # source pixels. It is still finite; out-of-window nodes are reported.
+    return Vector2i(624, 352)
 
 func setup() -> void:
     rng = AMath.ARng.new(0x9c4a)
@@ -136,15 +142,15 @@ func source_raster_offset() -> Vector2:
     if not found: return Vector2.ZERO
     # Room for authored channel branches and node glows where possible. If
     # actor span exceeds a frame, a translated window alone cannot fix it.
-    return Vector2(_window_axis(lo.x, hi.x, float(AFramebuffer.W), 32.0),
-        _window_axis(lo.y, hi.y, float(AFramebuffer.H), 32.0))
+    return Vector2(_window_axis(lo.x, hi.x, float(raster_size.x), 32.0),
+        _window_axis(lo.y, hi.y, float(raster_size.y), 32.0))
 
 func source_raster_uncontained_nodes() -> int:
     var count := 0
     for value in nodes:
         if value == null: continue
         var point: Vector2 = value + raster_offset
-        if point.x < 0.0 or point.y < 0.0 or point.x >= AFramebuffer.W or point.y >= AFramebuffer.H:
+        if point.x < 0.0 or point.y < 0.0 or point.x >= raster_size.x or point.y >= raster_size.y:
             count += 1
     return count
 

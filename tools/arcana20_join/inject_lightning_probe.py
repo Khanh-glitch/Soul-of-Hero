@@ -128,6 +128,9 @@ s = s.replace(needle, '''        "camera": [camera.get_screen_center_position().
         var render_host := host.get("renderer") as Arcana20Renderer
         var live_source := render_host._casts.get(cast_id) as ASourcePlayer if render_host != null else null
         if is_instance_valid(live_source):
+            if live_source._fb.width != AFramebuffer.W or live_source._fb.height != AFramebuffer.H:
+                push_error("R17_TRACE_UNSUPPORTED variable-size source; use expanded-window capture, not fixed-size reference")
+                return false
             var all_bolts: Array = live_source._spell.get("_r17_trace")
             var selected_bolt: Dictionary = {}
             var selected_score := -1.0

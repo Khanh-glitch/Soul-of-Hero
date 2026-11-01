@@ -220,9 +220,12 @@ and [#18](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297739439/
 The C lightning raster is included; all-20 moving-world lifecycle/capture jobs
 including #09/#11 passed in [41297739352](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297739352),
 with three real enemies per spell (seven for #09), natural finish, restart/
-cancel and unchanged enemy HP. Current pre-narrowing R17 candidates also
-passed the all-20 suite [41305402482](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41305402482),
-source `ffecce687e146d20088560ffffd0ebc8b3ed4a18`. These are not complete visual review, genuine
+cancel and unchanged enemy HP. Current moving-window and connected-seam
+candidates also passed all 26 jobs of the all-20 suite
+[41310117499](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41310117499),
+source `92d3e07eac1ac0f5d22a925bcdba2bcb54470b5b`. Prior all-20 run
+[41305402482](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41305402482)
+used `ffecce687e146d20088560ffffd0ebc8b3ed4a18`. These are not complete visual review, genuine
 combat receipts or source/post/actor-depth parity.
 The build is visual-only, not a confirmed combat or Windows GPU test, and
 **NOT PLAYTEST_READY**. All 20 remain `VISUAL_NOT_VERIFIED`.

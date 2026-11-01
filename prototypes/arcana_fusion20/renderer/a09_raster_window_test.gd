@@ -50,7 +50,35 @@ func _initialize() -> void:
         push_error("A09_WINDOW_FAIL oversized span was not reported")
         quit(1)
         return
-    # Wider than the fixed field: report the unresolved case, don't rescale.
-    print("A09_WINDOW_PASS actor world positions unchanged; fixed field can still clip oversized spans, offset=", offset)
+    # The 242-pixel observed vertical span now fits the larger candidate,
+    # without scaling source pixels or moving actor coordinates.
+    spell.raster_size = spell.source_raster_size()
+    spell.nodes = [Vector2(118, 142), Vector2(18, -4), Vector2(80, 238)]
+    spell.raster_offset = spell.source_raster_offset()
+    if spell.source_raster_uncontained_nodes() != 0:
+        push_error("A09_WINDOW_FAIL observed tall actor span did not fit")
+        quit(1)
+        return
+    host._fb = AFramebuffer.new(spell.raster_size.x, spell.raster_size.y)
+    host._raster_offset = spell.raster_offset
+    var wide_frame := host.source_pass_frame()
+    if wide_frame.source_size != Vector2i(624, 352):
+        push_error("A09_WINDOW_FAIL expanded source size was lost")
+        quit(1)
+        return
+    for anchor in spell.nodes:
+        var expanded_point: Vector2 = anchor
+        if host.local_to_world(expanded_point).distance_to(wide_frame.source_to_world * (expanded_point + spell.raster_offset)) > 0.001:
+            push_error("A09_WINDOW_FAIL expanded field changed a world anchor")
+            quit(1)
+            return
+    # Even a larger finite field cannot fit arbitrarily separated actors.
+    spell.nodes = [Vector2(-1000, 0), Vector2(1000, 0)]
+    spell.raster_offset = spell.source_raster_offset()
+    if spell.source_raster_uncontained_nodes() == 0:
+        push_error("A09_WINDOW_FAIL oversized expanded span was not reported")
+        quit(1)
+        return
+    print("A09_WINDOW_PASS actor world positions unchanged; enlarged field remains finite, offset=", offset)
     host.free()
     quit(0)

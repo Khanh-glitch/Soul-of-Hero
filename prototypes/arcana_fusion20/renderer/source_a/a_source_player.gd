@@ -75,8 +75,15 @@ func _sync_caster_origin() -> void:
 
 func begin(caster_world: Vector2, target_world: Vector2) -> void:
     _ensure()
-    _fb = AFramebuffer.new()
+    var raster_size := Vector2i(AFramebuffer.W, AFramebuffer.H)
+    if _spell.has_method("source_raster_size"):
+        raster_size = _spell.call("source_raster_size")
+        _spell.set("raster_size", raster_size)
+    _fb = AFramebuffer.new(raster_size.x, raster_size.y)
     _fb.track_world_fields = world_pass_mode
+    if Vector2i(_tex.get_width(), _tex.get_height()) != raster_size:
+        _tex = ImageTexture.create_from_image(Image.create(raster_size.x, raster_size.y, false, Image.FORMAT_RGBA8))
+        _sprite.texture = _tex
     _spell.call("setup")
     _events = _spell.call("authored_events")
     var axis := target_world - caster_world
@@ -174,10 +181,10 @@ func _render_frame() -> void:
             profile_bloom_us.append(float(profile_bloom_done - profile_raster_done))
             profile_submit_us.append(float(profile_submit_done - profile_bloom_done))
         return
-    var img := Image.create_from_data(AFramebuffer.W, AFramebuffer.H, false, Image.FORMAT_RGBA8, _fb.present())
+    var img := Image.create_from_data(_fb.width, _fb.height, false, Image.FORMAT_RGBA8, _fb.present())
     _tex.update(img)
     _sprite.visible = true
-    _sprite.position = local_to_world(Vector2(AFramebuffer.W / 2.0, AFramebuffer.H / 2.0) - _raster_offset)
+    _sprite.position = local_to_world(Vector2(_fb.width / 2.0, _fb.height / 2.0) - _raster_offset)
     _sprite.rotation = _rot
     _sprite.scale = Vector2.ONE * _scale
 
@@ -189,7 +196,7 @@ func source_pass_frame() -> Arcana20SourcePassFrame:
     result.source_time = source_time()
     if _spell.has_method("source_seeds"):
         result.seeds = _spell.call("source_seeds")
-    result.source_size = Vector2i(AFramebuffer.W, AFramebuffer.H)
+    result.source_size = Vector2i(_fb.width, _fb.height)
     var bx := Vector2(cos(_rot), sin(_rot)) * _scale
     var by := Vector2(-sin(_rot), cos(_rot)) * _scale
     result.source_to_world = Transform2D(bx, by, _origin - bx * (CASTER_LOCAL.x + _raster_offset.x) - by * (CASTER_LOCAL.y + _raster_offset.y))
@@ -211,7 +218,9 @@ func source_pass_frame() -> Arcana20SourcePassFrame:
     return result
 
 func diagnostics() -> Dictionary:
-    var result := {"transport": "source_a_native_416x234_procedural", "tick": _tick, "active": _active}
+    var result := {"transport": "source_a_native_procedural", "tick": _tick, "active": _active}
+    if _fb != null:
+        result["source_size"] = Vector2i(_fb.width, _fb.height)
     if _spell != null and _spell.has_method("source_raster_uncontained_nodes"):
         result["raster_offset"] = _raster_offset
         result["uncontained_actor_nodes"] = _spell.call("source_raster_uncontained_nodes")
