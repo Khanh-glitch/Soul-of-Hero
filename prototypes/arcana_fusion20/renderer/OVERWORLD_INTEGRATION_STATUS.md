@@ -131,6 +131,19 @@ and [PR30](https://github.com/Khanh-glitch/Soul-of-Hero/pull/30#issuecomment-655
   bloom/post and OUT need full-resolution reference/motion review; a peak
   still does not establish that fidelity. All 20 remain VISUAL_NOT_VERIFIED.
 
+- Original D browser **FX-only** source-reference previews at 5.2, 7.4,
+  8.15, 8.8 and 9.3 seconds were inspected from
+  [41272414087](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41272414087).
+  The original peak at 8.15 shows a compact, strongly bloomed white core
+  and star lattice; the actual-world native 8.15 catalog frame in the e552
+  sweep shows pale diagonal lattice lines without a comparable concentrated
+  bloom core. This is an actionable fidelity gap consistent with unimplemented
+  D bloom/post; the source is an isolated reference, not a same-background
+  pixel gate, and source/world transforms differ. The original reference still
+  has an intense core at 8.8 and 9.3; the native fade is separately authored,
+  not an original OUT. Full-resolution motion, pre-HUD bloom, and creator
+  review are still required.
+
 ### Per-skill acceptance ledger (R14)
 
 `PARTIAL` means a limited source-field or world diagnostic exists; it is not
