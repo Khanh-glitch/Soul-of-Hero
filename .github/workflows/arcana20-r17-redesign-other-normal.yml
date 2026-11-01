@@ -1,0 +1,38 @@
+# Existing full-cast normal-light real-world videos of the other redesigns.
+name: ARCANA20 redesigns normal-world phase review
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-r17-redesign-other-normal.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  review:
+    strategy:
+      fail-fast: false
+      matrix:
+        skill: [4, 6, 12, 13]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: live-motion-${{ matrix.skill }}-normal
+          run-id: 41297739352
+          github-token: ${{ github.token }}
+          path: live
+      - name: Install review dependencies
+        run: |
+          python3 -m pip install --quiet pillow
+          if ! command -v ffmpeg; then sudo apt-get update -qq && sudo apt-get install -y ffmpeg; fi
+      - name: Opening
+        run: python3 tools/arcana20_join/surface_encoded_phase.py live 0.20 opening
+      - name: Mid
+        run: python3 tools/arcana20_join/surface_encoded_phase.py live 0.50 mid
+      - name: Peak
+        run: python3 tools/arcana20_join/surface_encoded_phase.py live 0.72 peak
+      - name: Aftermath
+        run: python3 tools/arcana20_join/surface_encoded_phase.py live 0.90 aftermath
