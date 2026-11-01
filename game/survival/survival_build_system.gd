@@ -19,7 +19,7 @@ extends Node2D
 ##
 ## ## Input
 ##
-## The build tool is modal and explicit: `B` toggles build mode, `1`-`4` select the
+## The build tool is modal and explicit: `B` toggles build mode, `1`-`5` select the
 ## piece, left-click places, right-click or `ESC` leaves. Nothing here is wired into
 ## the Knight's combat input, so no existing control path changes meaning.
 
@@ -28,10 +28,14 @@ signal placement_rejected(reason: String)
 signal placement_committed(entity_id: String, piece_id: String, cell: Vector2i)
 signal build_mode_changed(active: bool)
 
+const ROOM_TOPOLOGY = preload("res://game/survival/survival_room_topology.gd")
+const ROOF_LAYER = preload("res://game/survival/survival_roof_layer.gd")
 const TILE := 16
 const BUILD_ART_PATH := "res://assets/survival/build/placeholder_build.png"
 const BUILD_ART_META := "res://data/survival/placeholder_build.json"
 const SOLID_LAYER_MASK := 1
+const BUILD_SLOTS: Array[String] = ["foundation_wood", "wall_wood", "door_wood", "chest_wood", "bed_wood",
+	"station_furnace", "station_workbench", "station_research", "station_garden"]
 
 var active := false
 var selected_piece := "foundation_wood"
@@ -40,6 +44,11 @@ var world: OverworldWorld
 var player: Node2D
 var camera: Camera2D
 var state: OverworldState
+## Optional composition guard. Negative means ordinary legacy world; a bounded
+## annex pilot sets the first excluded column before accepting placement input.
+var annex_disabled_from_x := -1
+## Explicit optional encounter reservations. Empty in the default world.
+var encounter_exclusions: Array[Rect2i] = []
 
 var _structures_root: Node2D
 var _preview: Sprite2D
@@ -47,7 +56,9 @@ var _preview_frame: Sprite2D
 var _texture: Texture2D
 var _frames: Dictionary = {}
 var _placed: Dictionary = {}          # entity_id -> SurvivalStructure
-var _occupied: Dictionary = {}        # "x,y" -> entity_id
+var _occupied: Dictionary = {}        # "x,y" -> {floor/object: entity_id}
+var room_topology = ROOM_TOPOLOGY.new()
+var roof_layer: Node2D
 var _last_rejection := ""
 var _ready_built := false
 var _hud_layer: CanvasLayer
@@ -71,6 +82,11 @@ func configure(world_ref: OverworldWorld, player_ref: Node2D, camera_ref: Camera
 			and not svc.is_connected(&"survival_state_changed", _refresh_hud):
 		svc.connect(&"survival_state_changed", _refresh_hud)
 	rebuild_from_save()
+	if roof_layer == null:
+		roof_layer = ROOF_LAYER.new()
+		roof_layer.name = "RoomRoofs"
+		add_child(roof_layer)
+	roof_layer.call(&"configure", self, player, room_topology)
 
 
 func _ensure_roots() -> void:
@@ -169,6 +185,7 @@ func rebuild_from_save() -> void:
 			continue
 		_materialize(entity_id, String(entry.get("piece", "")),
 			Vector2i(int(raw_cell[0]), int(raw_cell[1])))
+	room_topology.rebuild(structures)
 	_ready_built = true
 
 
@@ -191,11 +208,14 @@ func reconcile_from_save() -> void:
 	if svc == null:
 		return
 	var structures: Dictionary = (svc.call(&"document") as Dictionary).get("structures", {})
+	var topology_changed := false
 	for entity_id: Variant in _placed.keys():
 		if structures.has(entity_id):
 			continue
 		var doomed: SurvivalStructure = _placed[entity_id]
-		_occupied.erase(_cell_key(doomed.cell))
+		_erase_occupancy(doomed)
+		if doomed.piece_id in ["wall_wood", "door_wood"]:
+			topology_changed = true
 		_placed.erase(entity_id)
 		if is_instance_valid(doomed):
 			doomed.queue_free()
@@ -218,10 +238,16 @@ func reconcile_from_save() -> void:
 				if existing.has_method(&"refresh_prompt"):
 					existing.call(&"refresh_prompt")
 				continue
-			_occupied.erase(_cell_key(existing.cell))
+			_erase_occupancy(existing)
+			if existing.piece_id in ["wall_wood", "door_wood"]:
+				topology_changed = true
 			_placed.erase(entity_id)
 			existing.queue_free()
 		_materialize(entity_id, piece_id, cell)
+		if piece_id in ["wall_wood", "door_wood"]:
+			topology_changed = true
+	if topology_changed:
+		room_topology.rebuild(structures)
 	_ready_built = true
 
 
@@ -246,12 +272,18 @@ func _materialize(entity_id: String, piece_id: String, cell: Vector2i) -> Surviv
 		sprite.region_rect = Rect2(
 			int(frame.get("x", 0)), int(frame.get("y", 0)),
 			int(frame.get("w", TILE)), int(frame.get("h", TILE)))
+	var svc := service()
+	var cells: Array[Vector2i] = svc.call(&"footprint_cells", piece_id, cell) if svc != null else [cell]
+	var footprint := Vector2i.ONE
+	for occupied: Vector2i in cells:
+		footprint.x = maxi(footprint.x, occupied.x - cell.x + 1)
+		footprint.y = maxi(footprint.y, occupied.y - cell.y + 1)
 	# Anchor the sprite by its foot: the catalog frame is drawn as a 16-wide cell
 	# whose base sits on the cell's south edge, which is what makes a wall read as
 	# standing in front of the floor it sits on.
-	sprite.position = Vector2(0, TILE - int(frame.get("h", TILE)))
+	sprite.position = Vector2(0, TILE * footprint.y - int(frame.get("h", TILE)))
 	node.add_child(sprite)
-	if SurvivalStructure.is_solid_piece(piece_id):
+	if SurvivalStructure.is_solid_piece(piece_id) or String((svc.call(&"piece_definition", piece_id) as Dictionary).get("kind", "")) == "station":
 		var body := StaticBody2D.new()
 		body.name = "Solid"
 		body.collision_layer = SOLID_LAYER_MASK
@@ -260,18 +292,39 @@ func _materialize(entity_id: String, piece_id: String, cell: Vector2i) -> Surviv
 		# two pixels are its shadow, and the player must be able to stand against
 		# the wall without being pushed off the floor in front of it.
 		var shape := CollisionShape2D.new()
+		shape.name = "CollisionShape2D"
 		var rect := RectangleShape2D.new()
-		rect.size = Vector2(TILE - 2, TILE - 6)
+		rect.size = Vector2(TILE * footprint.x - 2, TILE * footprint.y - 6)
 		shape.shape = rect
-		shape.position = Vector2(TILE * 0.5, TILE * 0.5 - 3.0)
+		shape.position = Vector2(TILE * footprint.x * 0.5, TILE * footprint.y * 0.5 - 3.0)
 		body.add_child(shape)
 		node.add_child(body)
 	# A chest joins `player_interactable` from inside SurvivalStructure._ready, so
 	# the behaviour belongs to the piece rather than to this call site.
 	_structures_root.add_child(node)
 	_placed[entity_id] = node
-	_occupied[_cell_key(cell)] = entity_id
+	var layer := String(svc.call(&"occupancy_layer", piece_id)) if svc != null else "object"
+	for occupied: Vector2i in cells:
+		var key := _cell_key(occupied)
+		var slots: Dictionary = _occupied.get(key, {})
+		slots[layer] = entity_id
+		_occupied[key] = slots
 	return node
+
+
+func _erase_occupancy(node: SurvivalStructure) -> void:
+	var svc := service()
+	var layer := String(svc.call(&"occupancy_layer", node.piece_id)) if svc != null else "object"
+	var cells: Array[Vector2i] = svc.call(&"footprint_cells", node.piece_id, node.cell) if svc != null else [node.cell]
+	for occupied: Vector2i in cells:
+		var key := _cell_key(occupied)
+		var slots: Dictionary = _occupied.get(key, {})
+		if String(slots.get(layer, "")) == node.entity_id:
+			slots.erase(layer)
+		if slots.is_empty():
+			_occupied.erase(key)
+		else:
+			_occupied[key] = slots
 
 
 func _cell_key(cell: Vector2i) -> String:
@@ -287,7 +340,123 @@ func placed_count() -> int:
 
 
 func entity_at(cell: Vector2i) -> String:
-	return String(_occupied.get(_cell_key(cell), ""))
+	var slots: Dictionary = _occupied.get(_cell_key(cell), {})
+	return String(slots.get("object", slots.get("floor", "")))
+
+
+func entity_at_layer(cell: Vector2i, layer: String) -> String:
+	var slots: Dictionary = _occupied.get(_cell_key(cell), {})
+	return String(slots.get(layer, ""))
+
+
+# Wake positions are evaluated against the live Hero collision shape, not just
+# the terrain grid. Returned coordinates are foot positions in world space.
+func _wake_cell_clear(cell: Vector2i, ignore_body: RID = RID()) -> bool:
+	if world == null or player == null or not is_instance_valid(player) or not is_inside_tree():
+		return false
+	if cell.x < 0 or cell.y < 0 or cell.x >= world.width or cell.y >= world.height:
+		return false
+	if world.is_solid_cell(cell.x, cell.y) or world.is_water_cell(cell.x, cell.y):
+		return false
+	var foot := Vector2(cell.x * TILE + 8, cell.y * TILE + TILE - 1)
+	var owner := get_parent()
+	if owner != null and owner.has_method(&"_in_hazard") and bool(owner.call(&"_in_hazard", foot)):
+		return false
+	var hero := player as CharacterBody2D
+	if hero == null:
+		return false
+	var body_shape := hero.get_node_or_null("BodyShape") as CollisionShape2D
+	if body_shape == null or body_shape.shape == null or body_shape.disabled:
+		return false
+	var query := PhysicsShapeQueryParameters2D.new()
+	query.shape = body_shape.shape
+	query.transform = Transform2D(0.0, foot + body_shape.position)
+	query.collision_mask = hero.collision_mask | 4
+	query.collide_with_areas = false
+	query.collide_with_bodies = true
+	var exclusions: Array[RID] = [hero.get_rid()]
+	if ignore_body.is_valid():
+		exclusions.append(ignore_body)
+	query.exclude = exclusions
+	if not get_world_2d().direct_space_state.intersect_shape(query, 1).is_empty():
+		return false
+	# Do not wake beside a live enemy merely because its exact body rectangle
+	# misses the Hero's. Layer 4 is shared, so only moving actor bodies count.
+	var danger := PhysicsShapeQueryParameters2D.new()
+	var radius := CircleShape2D.new()
+	radius.radius = 48.0
+	danger.shape = radius
+	danger.transform = Transform2D(0.0, foot + body_shape.position)
+	danger.collision_mask = 4
+	danger.collide_with_areas = false
+	danger.collide_with_bodies = true
+	for hit: Dictionary in get_world_2d().direct_space_state.intersect_shape(danger, 64):
+		var collider: Variant = hit.get("collider")
+		if collider is CharacterBody2D or collider is RigidBody2D:
+			return false
+	return true
+
+
+func _wake_has_exit(start: Vector2i, room_id: String) -> bool:
+	var queue: Array[Vector2i] = [start]
+	var seen: Dictionary = {start: true}
+	var steps := [Vector2i.UP, Vector2i.LEFT, Vector2i.RIGHT, Vector2i.DOWN]
+	var cursor := 0
+	while cursor < queue.size() and cursor < 16384:
+		var cell: Vector2i = queue[cursor]
+		cursor += 1
+		for step: Vector2i in steps:
+			var next := cell + step
+			var entity := entity_at_layer(next, "object")
+			var piece := structure_node(entity) if not entity.is_empty() else null
+			if piece != null and piece.piece_id == "door_wood":
+				var body := piece.get_node_or_null("Solid") as StaticBody2D
+				if body != null and _wake_cell_clear(next, body.get_rid()) \
+						and room_topology.room_at(next + step) != room_id \
+						and _wake_cell_clear(next + step):
+					return true
+			if seen.has(next) or room_topology.room_at(next) != room_id:
+				continue
+			seen[next] = true
+			if _wake_cell_clear(next):
+				queue.append(next)
+	return false
+
+
+## Called both on activation and immediately before overworld respawn. Nothing
+## trusts a saved coordinate: the live owned bed and room are revalidated.
+func bed_wake_position(entity_id: String) -> Dictionary:
+	var bed := structure_node(entity_id)
+	if bed == null or not is_instance_valid(bed) or bed.is_queued_for_deletion() or bed.piece_id != "bed_wood":
+		return {"ok": false, "reason": "missing_bed"}
+	var svc := service()
+	var records: Dictionary = svc.call(&"structures") if svc != null else {}
+	if String((records.get(entity_id, {}) as Dictionary).get("piece", "")) != "bed_wood":
+		return {"ok": false, "reason": "stale_bed"}
+	var room_id: String = room_topology.room_at(bed.cell)
+	if room_id.is_empty():
+		return {"ok": false, "reason": "no_room"}
+	for offset: Vector2i in [Vector2i.DOWN, Vector2i.RIGHT, Vector2i.LEFT, Vector2i.UP]:
+		var cell := bed.cell + offset
+		if room_topology.room_at(cell) == room_id and _wake_cell_clear(cell) and _wake_has_exit(cell, room_id):
+			return {"ok": true, "position": Vector2(cell.x * TILE + 8, cell.y * TILE + TILE - 1), "room_id": room_id}
+	return {"ok": false, "reason": "no_safe_exit"}
+
+
+func activate_bed(entity_id: String, actor: Node2D) -> Dictionary:
+	var bed := structure_node(entity_id)
+	if bed == null or actor == null or not is_instance_valid(actor) or actor != player:
+		return {"ok": false, "reason": "not_owned"}
+	if actor.global_position.distance_to(bed.global_position) > SurvivalStructure.REACH:
+		return {"ok": false, "reason": "out_of_reach"}
+	var room_id: String = room_topology.room_at(bed.cell)
+	if room_id.is_empty() or room_topology.room_at(world.tile_of(actor.global_position)) != room_id:
+		return {"ok": false, "reason": "not_in_room"}
+	var svc := service()
+	if svc == null:
+		return {"ok": false, "reason": "service_unavailable"}
+	return svc.call(&"activate_bed", entity_id, func() -> bool:
+		return bool(bed_wake_position(entity_id).get("ok", false)))
 
 
 # ---------------------------------------------------------------------------
@@ -310,10 +479,25 @@ func entity_at(cell: Vector2i) -> String:
 ## * **within `build_range_tiles` of the player** — placement is a physical act;
 ## * **cell unoccupied** — one structure per cell.
 func validate_cell(cell: Vector2i) -> String:
+	var svc := service()
+	var cells: Array[Vector2i] = svc.call(&"footprint_cells", selected_piece, cell) if svc != null else [cell]
+	for occupied: Vector2i in cells:
+		var reason := _validate_footprint_cell(occupied)
+		if not reason.is_empty():
+			return reason
+	return ""
+
+
+func _validate_footprint_cell(cell: Vector2i) -> String:
 	if world == null:
 		return "no_world"
 	if cell.x < 0 or cell.y < 0 or cell.x >= world.width or cell.y >= world.height:
 		return "outside_world"
+	if annex_disabled_from_x >= 0 and cell.x >= annex_disabled_from_x:
+		return "annex_build_not_enabled"
+	for excluded: Rect2i in encounter_exclusions:
+		if excluded.has_point(cell):
+			return "encounter_exclusion"
 	if world.is_solid_cell(cell.x, cell.y):
 		return "solid_terrain"
 	if world.is_water_cell(cell.x, cell.y):
@@ -335,9 +519,36 @@ func validate_cell(cell: Vector2i) -> String:
 		var reach := reach_default
 		if absi(cell.x - origin.x) > reach or absi(cell.y - origin.y) > reach:
 			return "out_of_range"
-	if not entity_at(cell).is_empty():
+	if selected_piece == "bed_wood" and room_topology.room_at(cell).is_empty():
+		return "bed_requires_room"
+	var layer := String(svc.call(&"occupancy_layer", selected_piece)) if svc != null else "object"
+	if not entity_at_layer(cell, layer).is_empty():
 		return "cell_occupied"
+	if _world_blocker_in_cell(cell):
+		return "world_blocker"
 	return ""
+
+
+## Terrain data alone omits physical props. Query the live world collision layer
+## and exclude our own build objects by ownership, so a floor can still coexist
+## with its wall or furniture while authored prop/terrain bodies remain protected.
+func _world_blocker_in_cell(cell: Vector2i) -> bool:
+	if not is_inside_tree() or get_world_2d() == null:
+		return false
+	var query := PhysicsShapeQueryParameters2D.new()
+	var rect := RectangleShape2D.new()
+	rect.size = Vector2(TILE - 2, TILE - 2)
+	query.shape = rect
+	query.transform = Transform2D(0.0, Vector2(cell.x * TILE + 8, cell.y * TILE + 8))
+	query.collision_mask = SOLID_LAYER_MASK
+	query.collide_with_areas = false
+	query.collide_with_bodies = true
+	for hit: Dictionary in get_world_2d().direct_space_state.intersect_shape(query, 64):
+		var collider: Variant = hit.get("collider")
+		if collider is Node and (collider as Node).get_parent() is SurvivalStructure:
+			continue
+		return true
+	return false
 
 
 func _near_authored_place(cell: Vector2i, clearance: int) -> bool:
@@ -382,6 +593,117 @@ func _near_shortcut(cell: Vector2i, clearance: int) -> bool:
 	return false
 
 
+# Wall/door placement must not seal the actual Hero into a doorless room. This
+# is checked at commit time (including the transaction validator), not on every
+# preview frame. Examine only the connected proposed seal cluster and its bounded
+# local box; never flood the world-sized rectangle between unrelated houses.
+func _hero_exit_rejection(cell: Vector2i) -> String:
+	if selected_piece not in ["wall_wood", "door_wood", "chest_wood", "bed_wood"]:
+		return ""
+	var hero := player as CharacterBody2D
+	if hero == null or not is_instance_valid(hero):
+		return "hero_unavailable"
+	var hero_shape := hero.get_node_or_null("BodyShape") as CollisionShape2D
+	if hero_shape == null or hero_shape.shape == null:
+		return "hero_unavailable"
+	var projected_shape := RectangleShape2D.new()
+	projected_shape.size = Vector2(TILE - 2, TILE - 6)
+	if hero_shape.shape.collide(hero_shape.global_transform, projected_shape,
+			Transform2D(0.0, Vector2(cell.x * TILE + 8, cell.y * TILE + 5))):
+		return "hero_in_footprint"
+	if selected_piece in ["chest_wood", "bed_wood"]:
+		# Existing enclosed rooms already have a bounded topology. Treat this
+		# proposed one-cell object as blocked during the same live-shape exit
+		# search, including the door's outside cell. This does not purport to
+		# cover terrain-only enclosures, multi-cell stations or every trap.
+		var actor_cell := world.tile_of(hero.global_position)
+		var room_id: String = room_topology.room_at(actor_cell)
+		if not room_id.is_empty() and room_topology.room_at(cell) == room_id \
+				and not _projected_room_has_door_exit(actor_cell, room_id, room_topology, cell):
+			return "no_hero_exit"
+		return ""
+	var seals: Dictionary = {cell: {"piece": selected_piece, "cell": [cell.x, cell.y]}}
+	var queue: Array[Vector2i] = [cell]
+	var seen: Dictionary = {cell: true}
+	var cursor := 0
+	var lo := cell
+	var hi := cell
+	while cursor < queue.size():
+		if cursor >= 16384:
+			return "exit_check_limit"
+		var current := queue[cursor]
+		cursor += 1
+		lo = Vector2i(mini(lo.x, current.x), mini(lo.y, current.y))
+		hi = Vector2i(maxi(hi.x, current.x), maxi(hi.y, current.y))
+		for offset: Vector2i in ROOM_TOPOLOGY.NEIGHBOURS:
+			var next := current + offset
+			if seen.has(next):
+				continue
+			var piece := structure_node(entity_at_layer(next, "object"))
+			if piece == null or piece.piece_id not in ["wall_wood", "door_wood"]:
+				continue
+			seen[next] = true
+			seals[next] = {"piece": piece.piece_id, "cell": [next.x, next.y]}
+			queue.append(next)
+	var actor_cell := world.tile_of(hero.global_position)
+	if actor_cell.x < lo.x or actor_cell.y < lo.y or actor_cell.x > hi.x or actor_cell.y > hi.y:
+		return ""
+	lo -= Vector2i.ONE
+	hi += Vector2i.ONE
+	var width := hi.x - lo.x + 1
+	var height := hi.y - lo.y + 1
+	if width > 16384 or height > 16384 or width * height > 16384:
+		return "exit_check_limit"
+	# Include disconnected nested boundaries in the same bounded box, just as
+	# the real room model does; do not iterate every structure on the map.
+	for y in range(lo.y, hi.y + 1):
+		for x in range(lo.x, hi.x + 1):
+			var probe := Vector2i(x, y)
+			if seals.has(probe):
+				continue
+			var piece := structure_node(entity_at_layer(probe, "object"))
+			if piece != null and piece.piece_id in ["wall_wood", "door_wood"]:
+				seals[probe] = {"piece": piece.piece_id, "cell": [x, y]}
+	var predicted = ROOM_TOPOLOGY.new()
+	predicted.rebuild(seals)
+	if predicted.overflow_clusters > 0:
+		return "exit_check_limit"
+	var room_id: String = predicted.room_at(actor_cell)
+	if room_id.is_empty():
+		return ""
+	if _projected_room_has_door_exit(actor_cell, room_id, predicted, cell):
+		return ""
+	return "no_hero_exit"
+
+
+func _projected_room_has_door_exit(start: Vector2i, room_id: String, predicted,
+		projected_cell: Vector2i) -> bool:
+	var queue: Array[Vector2i] = [start]
+	var seen: Dictionary = {start: true}
+	var cursor := 0
+	while cursor < queue.size() and cursor < 16384:
+		var current := queue[cursor]
+		cursor += 1
+		for step: Vector2i in [Vector2i.UP, Vector2i.LEFT, Vector2i.RIGHT, Vector2i.DOWN]:
+			var next := current + step
+			var piece := structure_node(entity_at_layer(next, "object"))
+			var is_projected_door := next == projected_cell and selected_piece == "door_wood"
+			if is_projected_door or (piece != null and piece.piece_id == "door_wood"):
+				var body: StaticBody2D = null
+				if piece != null:
+					body = piece.get_node_or_null("Solid") as StaticBody2D
+				var ignored: RID = body.get_rid() if body != null else RID()
+				if _wake_cell_clear(next, ignored) and predicted.room_at(next + step) != room_id \
+						and _wake_cell_clear(next + step):
+					return true
+			if seen.has(next) or next == projected_cell or predicted.room_at(next) != room_id:
+				continue
+			seen[next] = true
+			if _wake_cell_clear(next):
+				queue.append(next)
+	return false
+
+
 # ---------------------------------------------------------------------------
 # placement
 # ---------------------------------------------------------------------------
@@ -393,6 +715,8 @@ func try_place(cell: Vector2i, transaction_key := "") -> Dictionary:
 		# placing now would commit a structure that nothing on screen represents.
 		return {"ok": false, "reason": "not_configured"}
 	var local_reason := validate_cell(cell)
+	if local_reason.is_empty():
+		local_reason = _hero_exit_rejection(cell)
 	if not local_reason.is_empty():
 		_last_rejection = local_reason
 		placement_rejected.emit(local_reason)
@@ -405,7 +729,9 @@ func try_place(cell: Vector2i, transaction_key := "") -> Dictionary:
 		key = "%s%d,%d" % [String(svc.call(&"build_transaction_key")), cell.x, cell.y]
 	var result: Dictionary = svc.call(
 		&"place_structure", selected_piece, cell, key,
-		func() -> String: return validate_cell(cell),
+		func() -> String:
+			var reason := validate_cell(cell)
+			return _hero_exit_rejection(cell) if reason.is_empty() else reason,
 	)
 	if not bool(result.get("ok", false)):
 		_last_rejection = String(result.get("reason", "rejected"))
@@ -476,8 +802,8 @@ func _build_hud() -> void:
 	panel.anchor_top = 1.0
 	panel.anchor_right = 1.0
 	panel.anchor_bottom = 1.0
-	panel.offset_top = -34.0
-	panel.offset_bottom = -4.0
+	panel.offset_top = -128.0
+	panel.offset_bottom = -18.0
 	panel.offset_left = 8.0
 	panel.offset_right = -8.0
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -487,6 +813,7 @@ func _build_hud() -> void:
 	_hud_label.name = "Text"
 	_hud_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_hud_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_hud_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_hud_label.add_theme_font_size_override("font_size", 10)
 	_hud_label.add_theme_color_override("font_color", Color(0.94, 0.92, 0.84))
 	_hud_label.add_theme_color_override("font_outline_color", Color(0.04, 0.03, 0.06))
@@ -512,7 +839,7 @@ func _refresh_hud() -> void:
 		return
 	var parts: Array[String] = []
 	var svc := service()
-	var ids: Array[String] = ["foundation_wood", "wall_wood", "door_wood", "chest_wood"]
+	var ids := BUILD_SLOTS
 	for index: int in ids.size():
 		var piece_id := ids[index]
 		var marker := ">" if piece_id == selected_piece else " "
@@ -525,7 +852,8 @@ func _refresh_hud() -> void:
 				cost_text = "%s (short)" % cost_text
 		parts.append("%s[%d] %s %s" % [marker, index + 1,
 			piece_id.replace("_wood", "").capitalize(), cost_text])
-	_hud_label.text = "BUILD   %s   —   left click to place, B to close" % "   ".join(parts)
+	_hud_label.text = "BUILD — click to place, B to close\n%s\n%s\n%s" % [
+		"   ".join(parts.slice(0, 3)), "   ".join(parts.slice(3, 6)), "   ".join(parts.slice(6, 9))]
 
 
 func _cost_text(cost: Dictionary) -> String:
@@ -536,6 +864,12 @@ func _cost_text(cost: Dictionary) -> String:
 
 
 ## Test/UI surface: what the build strip is showing right now.
+## The full-screen build blocker deliberately consumes world combat clicks;
+## it must not suppress the build tool's own polled placement input.
+func is_build_click_blocker(control: Control) -> bool:
+	return _hud_root != null and control != null and control == _hud_root.get_node_or_null("ClickBlocker")
+
+
 func build_hud_status() -> Dictionary:
 	var blocker: Node = null
 	if _hud_root != null:
@@ -575,7 +909,12 @@ func _update_preview() -> void:
 	var frame: Dictionary = _frames.get(selected_piece, {})
 	_apply_frame(_preview, frame)
 	_preview.visible = _texture != null
-	_preview.position = Vector2(cell.x * TILE, cell.y * TILE + TILE - int(frame.get("h", TILE)))
+	var svc := service()
+	var cells: Array[Vector2i] = svc.call(&"footprint_cells", selected_piece, cell) if svc != null else [cell]
+	var height := 1
+	for occupied: Vector2i in cells:
+		height = maxi(height, occupied.y - cell.y + 1)
+	_preview.position = Vector2(cell.x * TILE, cell.y * TILE + TILE * height - int(frame.get("h", TILE)))
 	if _preview_frame != null:
 		var footprint: Dictionary = _frames.get("foundation_wood", {})
 		_apply_frame(_preview_frame, footprint)

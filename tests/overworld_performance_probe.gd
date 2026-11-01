@@ -39,10 +39,23 @@ func _test_name() -> String:
 ## Median frame script time over `count` frames.
 func _median_frame_ms(count: int) -> float:
 	var samples: Array[float] = []
+	var started := Time.get_ticks_usec()
+	var transitions := 0
+	var last := -1.0
 	for i in range(count):
 		await _frames(1)
-		samples.append(Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0)
+		var value := Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0
+		if last >= 0.0 and not is_equal_approx(value, last):
+			transitions += 1
+		last = value
+		samples.append(value)
 	samples.sort()
+	# Diagnostic only: the existing 60-frame median and +45% gate are unchanged.
+	# TIME_PROCESS updates about once per second, so report how much of that
+	# window was actually observed and how many changes it contained.
+	print("PERF_MONITOR_WINDOW frames=%d duration_ms=%.1f changes=%d min=%.3f median=%.3f max=%.3f" % [
+		count, float(Time.get_ticks_usec() - started) / 1000.0, transitions,
+		samples[0], samples[samples.size() / 2], samples[-1]])
 	return samples[samples.size() / 2]
 
 
@@ -103,6 +116,32 @@ func _body() -> void:
 	_expect(share <= OCCLUSION_FRAME_SHARE,
 		"occlusion costs less than %.0f %% of the frame it is part of (%+.0f %%)"
 		% [OCCLUSION_FRAME_SHARE * 100.0, share * 100.0])
+
+	# Godot 4.7 TIME_PROCESS is a once-per-second maximum, not a live
+	# per-frame sample (main/main.cpp). Preserve the original gate but diagnose
+	# the overworld's own process chain separately with bounded per-frame timers.
+	for trial in range(3):
+		var samples := {}
+		var order := [false, true] if trial % 2 == 0 else [true, false]
+		for enabled: bool in order:
+			occlusion.enabled = enabled
+			occlusion.snap()
+			await _frames(6)
+			ow.call(&"_begin_perf_trace")
+			await _frames(60)
+			var values: Array = ow.call(&"_end_perf_trace")
+			values.sort()
+			if values.is_empty():
+				_expect(false, "overworld process trace produced samples")
+				return
+			samples[enabled] = [float(values[values.size() / 2]) / 1000.0, float(values[int(values.size() * 0.9)]) / 1000.0, values.size()]
+		var on: Array = samples[true]
+		var off: Array = samples[false]
+		print("PERF_DIAG trial=%d ow_on_p50=%.4f ow_off_p50=%.4f delta_ms=%+.4f on_p90=%.4f off_p90=%.4f samples=%d/%d" % [
+			trial + 1, on[0], off[0], on[0] - off[0], on[1], off[1], on[2], off[2]])
+	occlusion.enabled = true
+	occlusion.snap()
+	await _frames(2)
 
 	# --- 2. occlusion step, bounded by the bucket scan ----------------------
 	var per_step := _occlusion_step_ms(occlusion, 240)

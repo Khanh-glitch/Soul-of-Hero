@@ -1,0 +1,1329 @@
+{
+  "schema": "soh.economy.items.v1",
+  "items": {
+    "oak_wood": {
+      "id": "oak_wood",
+      "label": "Oak Wood",
+      "kind": "material",
+      "tier": 1,
+      "tags": [
+        "wood",
+        "fuel",
+        "structural"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [
+        "live_oak_wood",
+        "roadside_oak_03"
+      ],
+      "acquisition_status": "LIVE"
+    },
+    "stone_chunk": {
+      "id": "stone_chunk",
+      "label": "Stone Chunk",
+      "kind": "material",
+      "tier": 1,
+      "tags": [
+        "stone",
+        "structural"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [
+        "live_stone_chunk"
+      ],
+      "acquisition_status": "LIVE"
+    },
+    "iron_scrap": {
+      "id": "iron_scrap",
+      "label": "Iron Scrap",
+      "kind": "material",
+      "tier": 1,
+      "tags": [
+        "metal",
+        "salvage"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [
+        "live_iron_scrap",
+        "road_scrap",
+        "roadside_scrap_02"
+      ],
+      "acquisition_status": "LIVE"
+    },
+    "reed_fibre": {
+      "id": "reed_fibre",
+      "label": "Reed Fibre",
+      "kind": "material",
+      "tier": 1,
+      "tags": [
+        "fibre",
+        "binding"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [
+        "live_reed_fibre"
+      ],
+      "acquisition_status": "LIVE"
+    },
+    "crypt_bone_shard": {
+      "id": "crypt_bone_shard",
+      "label": "Crypt Bone Shard",
+      "kind": "material",
+      "tier": 1,
+      "tags": [
+        "bone",
+        "catalyst"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [
+        "legacy_crypt_bone_shard"
+      ],
+      "acquisition_status": "LIVE"
+    },
+    "reaper_essence": {
+      "id": "reaper_essence",
+      "label": "Reaper Essence",
+      "kind": "material",
+      "tier": 2,
+      "tags": [
+        "rare",
+        "shadow"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [
+        "legacy_reaper_essence"
+      ],
+      "acquisition_status": "LIVE"
+    },
+    "venom_spine": {
+      "id": "venom_spine",
+      "label": "Venom Spine",
+      "kind": "material",
+      "tier": 2,
+      "tags": [
+        "rare",
+        "venom"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [
+        "legacy_venom_spine",
+        "venom_cache"
+      ],
+      "acquisition_status": "LIVE"
+    },
+    "soul_ember": {
+      "id": "soul_ember",
+      "label": "Soul Ember",
+      "kind": "material",
+      "tier": 1,
+      "tags": [
+        "soul",
+        "energy"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [
+        "legacy_soul_ember"
+      ],
+      "acquisition_status": "LIVE"
+    },
+    "predator_jaw": {
+      "id": "predator_jaw",
+      "label": "Predator Jaw",
+      "kind": "material",
+      "tier": 2,
+      "tags": [
+        "rare",
+        "beast"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [
+        "legacy_predator_jaw"
+      ],
+      "acquisition_status": "LIVE",
+      "salvage": {
+        "outputs": {
+          "knowledge_spares": 2
+        },
+        "station": "research",
+        "min_tier": 1
+      }
+    },
+    "fractured_axe_insignia": {
+      "id": "fractured_axe_insignia",
+      "label": "Fractured Axe Insignia",
+      "kind": "material",
+      "tier": 2,
+      "tags": [
+        "rare",
+        "oath"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [
+        "legacy_fractured_axe_insignia"
+      ],
+      "acquisition_status": "LIVE",
+      "salvage": {
+        "outputs": {
+          "knowledge_spares": 3
+        },
+        "station": "research",
+        "min_tier": 1
+      }
+    },
+    "blood_crucible_blueprint": {
+      "id": "blood_crucible_blueprint",
+      "label": "Blood Crucible Blueprint",
+      "kind": "blueprint",
+      "tier": 1,
+      "tags": [],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "purpose": "Existing Chapter 1 story blueprint; no invented economy unlock.",
+      "legacy": true,
+      "source_ids": [
+        "legacy_blood_crucible_blueprint"
+      ],
+      "acquisition_status": "LIVE"
+    },
+    "iron_ore": {
+      "id": "iron_ore",
+      "label": "Iron Ore",
+      "kind": "material",
+      "tier": 1,
+      "tags": [
+        "raw"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [
+        "node_iron_ore"
+      ],
+      "acquisition_status": "PROPOSED_WORLD"
+    },
+    "coal": {
+      "id": "coal",
+      "label": "Coal",
+      "kind": "material",
+      "tier": 1,
+      "tags": [
+        "raw"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [
+        "node_coal"
+      ],
+      "acquisition_status": "PROPOSED_WORLD"
+    },
+    "clay": {
+      "id": "clay",
+      "label": "Clay",
+      "kind": "material",
+      "tier": 1,
+      "tags": [
+        "raw"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [
+        "node_clay"
+      ],
+      "acquisition_status": "PROPOSED_WORLD"
+    },
+    "sulfur": {
+      "id": "sulfur",
+      "label": "Sulfur Crystal",
+      "kind": "material",
+      "tier": 1,
+      "tags": [
+        "raw"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [
+        "node_sulfur"
+      ],
+      "acquisition_status": "PROPOSED_WORLD"
+    },
+    "frost_shard": {
+      "id": "frost_shard",
+      "label": "Frost Shard",
+      "kind": "material",
+      "tier": 1,
+      "tags": [
+        "raw"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [
+        "node_frost_shard"
+      ],
+      "acquisition_status": "PROPOSED_WORLD"
+    },
+    "ancient_catalyst": {
+      "id": "ancient_catalyst",
+      "label": "Ancient Catalyst",
+      "kind": "material",
+      "tier": 3,
+      "tags": [
+        "rare",
+        "catalyst",
+        "exploration_only"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [
+        "vault_catalyst"
+      ],
+      "acquisition_status": "PROPOSED_WORLD"
+    },
+    "moonleaf": {
+      "id": "moonleaf",
+      "label": "Moonleaf",
+      "kind": "material",
+      "tier": 1,
+      "tags": [
+        "raw",
+        "cultivable"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [
+        "node_moonleaf"
+      ],
+      "acquisition_status": "PROPOSED_WORLD"
+    },
+    "moonleaf_seed": {
+      "id": "moonleaf_seed",
+      "label": "Moonleaf Seed",
+      "kind": "material",
+      "tier": 1,
+      "tags": [
+        "raw",
+        "cultivable"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [
+        "node_moonleaf_seed",
+        "road_seed"
+      ],
+      "acquisition_status": "PROPOSED_WORLD"
+    },
+    "wild_berries": {
+      "id": "wild_berries",
+      "label": "Wild Berries",
+      "kind": "material",
+      "tier": 1,
+      "tags": [
+        "raw",
+        "cultivable"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [
+        "node_wild_berries"
+      ],
+      "acquisition_status": "PROPOSED_WORLD"
+    },
+    "grain": {
+      "id": "grain",
+      "label": "Grain",
+      "kind": "material",
+      "tier": 1,
+      "tags": [
+        "raw",
+        "cultivable"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [
+        "node_grain"
+      ],
+      "acquisition_status": "PROPOSED_WORLD"
+    },
+    "charcoal": {
+      "id": "charcoal",
+      "label": "Charcoal",
+      "kind": "material",
+      "tier": 1,
+      "tags": [
+        "intermediate"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [],
+      "acquisition_status": "CRAFT_ONLY"
+    },
+    "iron_ingot": {
+      "id": "iron_ingot",
+      "label": "Iron Ingot",
+      "kind": "material",
+      "tier": 1,
+      "tags": [
+        "intermediate"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "salvage": {
+        "outputs": {
+          "iron_scrap": 2
+        },
+        "station": "workbench",
+        "min_tier": 1
+      },
+      "source_ids": [],
+      "acquisition_status": "CRAFT_ONLY"
+    },
+    "steel_ingot": {
+      "id": "steel_ingot",
+      "label": "Steel Ingot",
+      "kind": "material",
+      "tier": 1,
+      "tags": [
+        "intermediate"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "salvage": {
+        "outputs": {
+          "iron_scrap": 2,
+          "coal": 1
+        },
+        "station": "workbench",
+        "min_tier": 1
+      },
+      "source_ids": [],
+      "acquisition_status": "CRAFT_ONLY"
+    },
+    "iron_parts": {
+      "id": "iron_parts",
+      "label": "Iron Parts",
+      "kind": "material",
+      "tier": 1,
+      "tags": [
+        "intermediate"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "salvage": {
+        "outputs": {
+          "iron_scrap": 1
+        },
+        "station": "workbench",
+        "min_tier": 1
+      },
+      "source_ids": [],
+      "acquisition_status": "CRAFT_ONLY"
+    },
+    "spring": {
+      "id": "spring",
+      "label": "Spring",
+      "kind": "material",
+      "tier": 1,
+      "tags": [
+        "intermediate"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "salvage": {
+        "outputs": {
+          "iron_scrap": 1
+        },
+        "station": "workbench",
+        "min_tier": 1
+      },
+      "source_ids": [],
+      "acquisition_status": "CRAFT_ONLY"
+    },
+    "binding_cloth": {
+      "id": "binding_cloth",
+      "label": "Binding Cloth",
+      "kind": "material",
+      "tier": 1,
+      "tags": [
+        "intermediate"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [],
+      "acquisition_status": "CRAFT_ONLY"
+    },
+    "venom_extract": {
+      "id": "venom_extract",
+      "label": "Venom Extract",
+      "kind": "material",
+      "tier": 1,
+      "tags": [
+        "intermediate"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "salvage": {
+        "outputs": {
+          "moonleaf": 1
+        },
+        "station": "workbench",
+        "min_tier": 1
+      },
+      "source_ids": [],
+      "acquisition_status": "CRAFT_ONLY"
+    },
+    "frost_extract": {
+      "id": "frost_extract",
+      "label": "Frost Extract",
+      "kind": "material",
+      "tier": 1,
+      "tags": [
+        "intermediate"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "salvage": {
+        "outputs": {
+          "moonleaf": 1
+        },
+        "station": "workbench",
+        "min_tier": 1
+      },
+      "source_ids": [],
+      "acquisition_status": "CRAFT_ONLY"
+    },
+    "core_blank": {
+      "id": "core_blank",
+      "label": "Core Blank",
+      "kind": "material",
+      "tier": 1,
+      "tags": [
+        "intermediate"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "salvage": {
+        "outputs": {
+          "iron_scrap": 2
+        },
+        "station": "workbench",
+        "min_tier": 1
+      },
+      "source_ids": [],
+      "acquisition_status": "CRAFT_ONLY"
+    },
+    "charged_blank": {
+      "id": "charged_blank",
+      "label": "Charged Core Blank",
+      "kind": "material",
+      "tier": 1,
+      "tags": [
+        "intermediate"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "salvage": {
+        "outputs": {
+          "iron_scrap": 2,
+          "soul_ember": 1
+        },
+        "station": "workbench",
+        "min_tier": 1
+      },
+      "source_ids": [],
+      "acquisition_status": "CRAFT_ONLY"
+    },
+    "knowledge_spares": {
+      "id": "knowledge_spares",
+      "label": "Knowledge Spares",
+      "kind": "material",
+      "tier": 1,
+      "tags": [
+        "intermediate"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [
+        "road_supplies",
+        "roadside_supplies_02"
+      ],
+      "acquisition_status": "PROPOSED_WORLD"
+    },
+    "research_notes": {
+      "id": "research_notes",
+      "label": "Research Notes",
+      "kind": "material",
+      "tier": 1,
+      "tags": [
+        "intermediate"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [
+        "road_notes",
+        "roadside_notes_03"
+      ],
+      "acquisition_status": "PROPOSED_WORLD"
+    },
+    "compost": {
+      "id": "compost",
+      "label": "Compost",
+      "kind": "material",
+      "tier": 1,
+      "tags": [
+        "intermediate"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [],
+      "acquisition_status": "CRAFT_ONLY"
+    },
+    "furnace_kit": {
+      "id": "furnace_kit",
+      "label": "Furnace Kit",
+      "kind": "station_kit",
+      "tier": 2,
+      "tags": [
+        "construction",
+        "station"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [],
+      "acquisition_status": "CRAFT_ONLY"
+    },
+    "workbench_kit": {
+      "id": "workbench_kit",
+      "label": "Workbench Kit",
+      "kind": "station_kit",
+      "tier": 2,
+      "tags": [
+        "construction",
+        "station"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [],
+      "acquisition_status": "CRAFT_ONLY"
+    },
+    "research_kit": {
+      "id": "research_kit",
+      "label": "Research Bench Kit",
+      "kind": "station_kit",
+      "tier": 2,
+      "tags": [
+        "construction",
+        "station"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [],
+      "acquisition_status": "CRAFT_ONLY"
+    },
+    "garden_kit": {
+      "id": "garden_kit",
+      "label": "Garden Plot Kit",
+      "kind": "station_kit",
+      "tier": 2,
+      "tags": [
+        "construction",
+        "station"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [],
+      "acquisition_status": "CRAFT_ONLY"
+    },
+    "advanced_furnace_kit": {
+      "id": "advanced_furnace_kit",
+      "label": "Advanced Furnace Kit",
+      "kind": "station_kit",
+      "tier": 2,
+      "tags": [
+        "construction",
+        "station"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [],
+      "acquisition_status": "CRAFT_ONLY"
+    },
+    "core_venom": {
+      "id": "core_venom",
+      "label": "Venom Core",
+      "kind": "skill_core",
+      "tier": 3,
+      "tags": [
+        "core",
+        "unique"
+      ],
+      "storage": "instance",
+      "stack_limit": 1,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "max_uses": 12,
+      "max_condition": 100,
+      "abstract_skill_id": "soh.core.venom_burst",
+      "skill_readiness": "BLOCKED_PENDING_A4",
+      "repair_policy": "reconstruct_only",
+      "source_ids": [
+        "specimen_venom"
+      ],
+      "acquisition_status": "PROPOSED_WORLD",
+      "salvage": {
+        "outputs": {
+          "iron_scrap": 2,
+          "soul_ember": 1
+        },
+        "station": "workbench",
+        "min_tier": 1
+      }
+    },
+    "plan_venom_core": {
+      "id": "plan_venom_core",
+      "label": "Venom Core Blueprint",
+      "kind": "blueprint",
+      "tier": 2,
+      "tags": [
+        "physical_plan"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "unlocks_recipe": "craft_core_venom",
+      "salvage": {
+        "outputs": {
+          "research_notes": 1
+        },
+        "station": "research",
+        "min_tier": 1
+      },
+      "source_ids": [
+        "plan_drop_venom"
+      ],
+      "acquisition_status": "PROPOSED_WORLD"
+    },
+    "core_frost": {
+      "id": "core_frost",
+      "label": "Frost Core",
+      "kind": "skill_core",
+      "tier": 3,
+      "tags": [
+        "core",
+        "unique"
+      ],
+      "storage": "instance",
+      "stack_limit": 1,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "max_uses": 8,
+      "max_condition": 100,
+      "abstract_skill_id": "soh.core.frost_ward",
+      "skill_readiness": "BLOCKED_PENDING_A4",
+      "repair_policy": "reconstruct_only",
+      "source_ids": [
+        "specimen_frost"
+      ],
+      "acquisition_status": "PROPOSED_WORLD",
+      "salvage": {
+        "outputs": {
+          "iron_scrap": 2,
+          "soul_ember": 1
+        },
+        "station": "workbench",
+        "min_tier": 1
+      }
+    },
+    "plan_frost_core": {
+      "id": "plan_frost_core",
+      "label": "Frost Core Blueprint",
+      "kind": "blueprint",
+      "tier": 2,
+      "tags": [
+        "physical_plan"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "unlocks_recipe": "craft_core_frost",
+      "salvage": {
+        "outputs": {
+          "research_notes": 1
+        },
+        "station": "research",
+        "min_tier": 1
+      },
+      "source_ids": [
+        "plan_drop_frost"
+      ],
+      "acquisition_status": "PROPOSED_WORLD"
+    },
+    "core_ember": {
+      "id": "core_ember",
+      "label": "Ember Core",
+      "kind": "skill_core",
+      "tier": 3,
+      "tags": [
+        "core",
+        "unique"
+      ],
+      "storage": "instance",
+      "stack_limit": 1,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "max_uses": 8,
+      "max_condition": 100,
+      "abstract_skill_id": "soh.core.ember_dash",
+      "skill_readiness": "BLOCKED_PENDING_A4",
+      "repair_policy": "reconstruct_only",
+      "source_ids": [
+        "specimen_ember"
+      ],
+      "acquisition_status": "PROPOSED_WORLD",
+      "salvage": {
+        "outputs": {
+          "iron_scrap": 2,
+          "soul_ember": 1
+        },
+        "station": "workbench",
+        "min_tier": 1
+      }
+    },
+    "plan_ember_core": {
+      "id": "plan_ember_core",
+      "label": "Ember Core Blueprint",
+      "kind": "blueprint",
+      "tier": 2,
+      "tags": [
+        "physical_plan"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "unlocks_recipe": "craft_core_ember",
+      "salvage": {
+        "outputs": {
+          "research_notes": 1
+        },
+        "station": "research",
+        "min_tier": 1
+      },
+      "source_ids": [
+        "plan_drop_ember"
+      ],
+      "acquisition_status": "PROPOSED_WORLD"
+    },
+    "toxin_mask": {
+      "id": "toxin_mask",
+      "label": "Toxin Filter Mask",
+      "kind": "equipment",
+      "tier": 2,
+      "tags": [
+        "protective",
+        "unique"
+      ],
+      "storage": "instance",
+      "stack_limit": 1,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "slot": "face",
+      "max_condition": 100,
+      "resistances": {
+        "venom": 60
+      },
+      "repair_policy": "material_repair",
+      "source_ids": [],
+      "acquisition_status": "CRAFT_ONLY",
+      "salvage": {
+        "outputs": {
+          "binding_cloth": 1
+        },
+        "station": "workbench",
+        "min_tier": 1
+      }
+    },
+    "frost_cloak": {
+      "id": "frost_cloak",
+      "label": "Frostweave Cloak",
+      "kind": "equipment",
+      "tier": 2,
+      "tags": [
+        "protective",
+        "unique"
+      ],
+      "storage": "instance",
+      "stack_limit": 1,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "slot": "body",
+      "max_condition": 100,
+      "resistances": {
+        "frost": 60
+      },
+      "repair_policy": "material_repair",
+      "source_ids": [],
+      "acquisition_status": "CRAFT_ONLY",
+      "salvage": {
+        "outputs": {
+          "binding_cloth": 1
+        },
+        "station": "workbench",
+        "min_tier": 1
+      }
+    },
+    "stone_pick": {
+      "id": "stone_pick",
+      "label": "Stone Pick",
+      "kind": "equipment",
+      "tier": 1,
+      "tags": [
+        "tool",
+        "unique"
+      ],
+      "storage": "instance",
+      "stack_limit": 1,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "slot": "tool",
+      "max_condition": 100,
+      "repair_policy": "material_repair",
+      "source_ids": [],
+      "acquisition_status": "CRAFT_ONLY",
+      "salvage": {
+        "outputs": {
+          "binding_cloth": 1
+        },
+        "station": "workbench",
+        "min_tier": 1
+      }
+    },
+    "iron_pick": {
+      "id": "iron_pick",
+      "label": "Iron Pick",
+      "kind": "equipment",
+      "tier": 2,
+      "tags": [
+        "tool",
+        "unique"
+      ],
+      "storage": "instance",
+      "stack_limit": 1,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "slot": "tool",
+      "max_condition": 100,
+      "repair_policy": "material_repair",
+      "source_ids": [],
+      "acquisition_status": "CRAFT_ONLY",
+      "salvage": {
+        "outputs": {
+          "binding_cloth": 1
+        },
+        "station": "workbench",
+        "min_tier": 1
+      }
+    },
+    "salvage_hammer": {
+      "id": "salvage_hammer",
+      "label": "Salvage Hammer",
+      "kind": "equipment",
+      "tier": 2,
+      "tags": [
+        "tool",
+        "unique"
+      ],
+      "storage": "instance",
+      "stack_limit": 1,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "slot": "tool",
+      "max_condition": 100,
+      "repair_policy": "material_repair",
+      "source_ids": [],
+      "acquisition_status": "CRAFT_ONLY",
+      "salvage": {
+        "outputs": {
+          "binding_cloth": 1
+        },
+        "station": "workbench",
+        "min_tier": 1
+      }
+    },
+    "field_meal": {
+      "id": "field_meal",
+      "label": "Field Meal",
+      "kind": "consumable",
+      "tier": 1,
+      "tags": [
+        "food"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [],
+      "acquisition_status": "CRAFT_ONLY"
+    },
+    "minor_salve": {
+      "id": "minor_salve",
+      "label": "Minor Salve",
+      "kind": "consumable",
+      "tier": 1,
+      "tags": [
+        "medicine"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-11",
+        "SYS-15"
+      ],
+      "source_ids": [],
+      "acquisition_status": "CRAFT_ONLY"
+    },
+    "grain_seed": {
+      "id": "grain_seed",
+      "label": "Grain Seed",
+      "kind": "material",
+      "tier": 1,
+      "tags": [
+        "raw",
+        "cultivable"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-30"
+      ],
+      "source_ids": [
+        "road_grain_seed"
+      ],
+      "acquisition_status": "PROPOSED_WORLD"
+    },
+    "green_seal": {
+      "id": "green_seal",
+      "label": "Green Seal",
+      "kind": "key_item",
+      "tier": 1,
+      "tags": [
+        "access",
+        "reusable"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-08"
+      ],
+      "source_ids": [
+        "seal_green_seal"
+      ],
+      "acquisition_status": "PROPOSED_WORLD"
+    },
+    "blue_seal": {
+      "id": "blue_seal",
+      "label": "Blue Seal",
+      "kind": "key_item",
+      "tier": 1,
+      "tags": [
+        "access",
+        "reusable"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-08"
+      ],
+      "source_ids": [
+        "seal_blue_seal"
+      ],
+      "acquisition_status": "PROPOSED_WORLD"
+    },
+    "purple_seal": {
+      "id": "purple_seal",
+      "label": "Purple Seal",
+      "kind": "key_item",
+      "tier": 1,
+      "tags": [
+        "access",
+        "reusable"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-08"
+      ],
+      "source_ids": [
+        "seal_purple_seal"
+      ],
+      "acquisition_status": "PROPOSED_WORLD"
+    },
+    "ragnarok_unbanked": {
+      "id": "ragnarok_unbanked",
+      "label": "Ragnarok Unbanked Currency",
+      "kind": "key_item",
+      "tier": 5,
+      "tags": [
+        "meta_currency",
+        "physical",
+        "losable",
+        "last72"
+      ],
+      "storage": "instance",
+      "stack_limit": 1,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-25",
+        "SYS-30"
+      ],
+      "source_ids": [],
+      "acquisition_status": "PROPOSED_WORLD",
+      "purpose": "Physical late-Ragnarok cross-season currency token. One token equals one secured unit only after legitimate A0 deposit. Never profile money while carried, chest-stored, death-bagged or expired."
+    }
+  }
+}

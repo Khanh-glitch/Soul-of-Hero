@@ -1,0 +1,18 @@
+{
+  "connector_id": "a1_crown_canonical_seam_v1",
+  "contract_sha256": "1516e23bda93ba3fd6bb3b729699c08527e1addf2fac0706300940e566df620c",
+  "delta_sha256": "03acafe2f679c104312e7e4b66f911636e182b0cf42ce0b6743d1fae07b27eb3",
+  "files": {
+    "annex_layers.v1.json": {
+      "sha256": "674643e862168ab52b00fe7f8038fcf6be8c6aa66cb6666c28ca752394ca2d00"
+    },
+    "annex_props.v1.json": {
+      "sha256": "dc80877a0425ceac546fbed2dcc352c14fb6548e67c346d9f1226ef914440cd2"
+    },
+    "annex_world.v1.json": {
+      "sha256": "8883a224f05372f7ad3afa5317da82268e624acfc76f9891ba9fc24a22f6e1c6"
+    }
+  },
+  "native_playable": false,
+  "schema": "soh.world.connector_pilot.v1"
+}

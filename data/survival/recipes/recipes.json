@@ -1,0 +1,959 @@
+{
+  "schema": "soh.economy.recipes.v1",
+  "recipes": {
+    "burn_charcoal": {
+      "id": "burn_charcoal",
+      "category": "refine",
+      "outputs": {
+        "charcoal": 2
+      },
+      "inputs": {
+        "oak_wood": 2
+      },
+      "station": "furnace",
+      "min_tier": 1,
+      "duration_ticks": 8,
+      "knowledge": "starter",
+      "fuel": {},
+      "required_technologies": [],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ]
+    },
+    "smelt_iron": {
+      "id": "smelt_iron",
+      "category": "manufacture",
+      "outputs": {
+        "iron_ingot": 1
+      },
+      "inputs": {
+        "iron_scrap": 3
+      },
+      "station": "furnace",
+      "min_tier": 1,
+      "duration_ticks": 12,
+      "knowledge": "starter",
+      "fuel": {
+        "charcoal": 1
+      },
+      "required_technologies": [],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ]
+    },
+    "smelt_ore": {
+      "id": "smelt_ore",
+      "category": "manufacture",
+      "outputs": {
+        "iron_ingot": 2
+      },
+      "inputs": {
+        "iron_ore": 4
+      },
+      "station": "furnace",
+      "min_tier": 1,
+      "duration_ticks": 16,
+      "knowledge": "recipe",
+      "fuel": {
+        "charcoal": 1
+      },
+      "required_technologies": [
+        "tech_smelting"
+      ],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ]
+    },
+    "alloy_steel": {
+      "id": "alloy_steel",
+      "category": "manufacture",
+      "outputs": {
+        "steel_ingot": 1
+      },
+      "inputs": {
+        "iron_ingot": 2,
+        "coal": 1
+      },
+      "station": "furnace",
+      "min_tier": 1,
+      "duration_ticks": 24,
+      "knowledge": "recipe",
+      "fuel": {
+        "charcoal": 2
+      },
+      "required_technologies": [
+        "tech_smelting"
+      ],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ]
+    },
+    "make_parts": {
+      "id": "make_parts",
+      "category": "manufacture",
+      "outputs": {
+        "iron_parts": 2
+      },
+      "inputs": {
+        "iron_ingot": 1
+      },
+      "station": "workbench",
+      "min_tier": 1,
+      "duration_ticks": 8,
+      "knowledge": "starter",
+      "fuel": {},
+      "required_technologies": [],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ]
+    },
+    "make_spring": {
+      "id": "make_spring",
+      "category": "manufacture",
+      "outputs": {
+        "spring": 1
+      },
+      "inputs": {
+        "iron_ingot": 1
+      },
+      "station": "workbench",
+      "min_tier": 1,
+      "duration_ticks": 10,
+      "knowledge": "recipe",
+      "fuel": {},
+      "required_technologies": [
+        "tech_precision"
+      ],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ]
+    },
+    "weave_cloth": {
+      "id": "weave_cloth",
+      "category": "manufacture",
+      "outputs": {
+        "binding_cloth": 2
+      },
+      "inputs": {
+        "reed_fibre": 3
+      },
+      "station": "workbench",
+      "min_tier": 1,
+      "duration_ticks": 6,
+      "knowledge": "starter",
+      "fuel": {},
+      "required_technologies": [],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ]
+    },
+    "make_spares": {
+      "id": "make_spares",
+      "category": "manufacture",
+      "outputs": {
+        "knowledge_spares": 2
+      },
+      "inputs": {
+        "iron_scrap": 2,
+        "crypt_bone_shard": 1
+      },
+      "station": "research",
+      "min_tier": 1,
+      "duration_ticks": 8,
+      "knowledge": "starter",
+      "fuel": {},
+      "required_technologies": [],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ]
+    },
+    "make_notes": {
+      "id": "make_notes",
+      "category": "manufacture",
+      "outputs": {
+        "research_notes": 1
+      },
+      "inputs": {
+        "knowledge_spares": 2,
+        "soul_ember": 1
+      },
+      "station": "research",
+      "min_tier": 1,
+      "duration_ticks": 10,
+      "knowledge": "starter",
+      "fuel": {},
+      "required_technologies": [],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ]
+    },
+    "make_compost": {
+      "id": "make_compost",
+      "category": "manufacture",
+      "outputs": {
+        "compost": 2
+      },
+      "inputs": {
+        "reed_fibre": 2,
+        "wild_berries": 1
+      },
+      "station": "garden",
+      "min_tier": 1,
+      "duration_ticks": 12,
+      "knowledge": "starter",
+      "fuel": {},
+      "required_technologies": [],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ]
+    },
+    "furnace_kit": {
+      "id": "furnace_kit",
+      "category": "manufacture",
+      "outputs": {
+        "furnace_kit": 1
+      },
+      "inputs": {
+        "stone_chunk": 8,
+        "iron_scrap": 3
+      },
+      "station": "hand",
+      "min_tier": 0,
+      "duration_ticks": 12,
+      "knowledge": "starter",
+      "fuel": {},
+      "required_technologies": [],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ]
+    },
+    "workbench_kit": {
+      "id": "workbench_kit",
+      "category": "manufacture",
+      "outputs": {
+        "workbench_kit": 1
+      },
+      "inputs": {
+        "oak_wood": 6,
+        "iron_scrap": 2
+      },
+      "station": "hand",
+      "min_tier": 0,
+      "duration_ticks": 8,
+      "knowledge": "starter",
+      "fuel": {},
+      "required_technologies": [],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ]
+    },
+    "research_kit": {
+      "id": "research_kit",
+      "category": "manufacture",
+      "outputs": {
+        "research_kit": 1
+      },
+      "inputs": {
+        "oak_wood": 4,
+        "iron_ingot": 2,
+        "knowledge_spares": 3
+      },
+      "station": "workbench",
+      "min_tier": 1,
+      "duration_ticks": 16,
+      "knowledge": "starter",
+      "fuel": {},
+      "required_technologies": [],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ]
+    },
+    "garden_kit": {
+      "id": "garden_kit",
+      "category": "manufacture",
+      "outputs": {
+        "garden_kit": 1
+      },
+      "inputs": {
+        "oak_wood": 4,
+        "clay": 2,
+        "reed_fibre": 2
+      },
+      "station": "workbench",
+      "min_tier": 1,
+      "duration_ticks": 12,
+      "knowledge": "recipe",
+      "fuel": {},
+      "required_technologies": [],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ]
+    },
+    "advanced_furnace_kit": {
+      "id": "advanced_furnace_kit",
+      "category": "manufacture",
+      "outputs": {
+        "advanced_furnace_kit": 1
+      },
+      "inputs": {
+        "stone_chunk": 8,
+        "steel_ingot": 2,
+        "iron_parts": 2
+      },
+      "station": "workbench",
+      "min_tier": 1,
+      "duration_ticks": 24,
+      "knowledge": "recipe",
+      "fuel": {},
+      "required_technologies": [
+        "tech_smelting"
+      ],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ]
+    },
+    "stone_pick": {
+      "id": "stone_pick",
+      "category": "manufacture",
+      "outputs": {
+        "stone_pick": 1
+      },
+      "inputs": {
+        "oak_wood": 2,
+        "stone_chunk": 3
+      },
+      "station": "hand",
+      "min_tier": 0,
+      "duration_ticks": 6,
+      "knowledge": "starter",
+      "fuel": {},
+      "required_technologies": [],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ]
+    },
+    "iron_pick": {
+      "id": "iron_pick",
+      "category": "manufacture",
+      "outputs": {
+        "iron_pick": 1
+      },
+      "inputs": {
+        "oak_wood": 2,
+        "iron_ingot": 2,
+        "binding_cloth": 1
+      },
+      "station": "workbench",
+      "min_tier": 1,
+      "duration_ticks": 14,
+      "knowledge": "recipe",
+      "fuel": {},
+      "required_technologies": [],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ],
+      "research_cost": {
+        "knowledge_spares": 3,
+        "research_notes": 1
+      }
+    },
+    "salvage_hammer": {
+      "id": "salvage_hammer",
+      "category": "manufacture",
+      "outputs": {
+        "salvage_hammer": 1
+      },
+      "inputs": {
+        "iron_ingot": 2,
+        "oak_wood": 2,
+        "binding_cloth": 1
+      },
+      "station": "workbench",
+      "min_tier": 1,
+      "duration_ticks": 14,
+      "knowledge": "recipe",
+      "fuel": {},
+      "required_technologies": [],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ]
+    },
+    "extract_venom": {
+      "id": "extract_venom",
+      "category": "manufacture",
+      "outputs": {
+        "venom_extract": 2
+      },
+      "inputs": {
+        "moonleaf": 2,
+        "venom_spine": 1,
+        "sulfur": 1
+      },
+      "station": "research",
+      "min_tier": 1,
+      "duration_ticks": 16,
+      "knowledge": "recipe",
+      "fuel": {},
+      "required_technologies": [
+        "tech_toxin"
+      ],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ]
+    },
+    "extract_frost": {
+      "id": "extract_frost",
+      "category": "manufacture",
+      "outputs": {
+        "frost_extract": 2
+      },
+      "inputs": {
+        "moonleaf": 2,
+        "frost_shard": 1
+      },
+      "station": "research",
+      "min_tier": 1,
+      "duration_ticks": 16,
+      "knowledge": "recipe",
+      "fuel": {},
+      "required_technologies": [
+        "tech_frost"
+      ],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ]
+    },
+    "core_blank": {
+      "id": "core_blank",
+      "category": "manufacture",
+      "outputs": {
+        "core_blank": 1
+      },
+      "inputs": {
+        "iron_ingot": 2,
+        "crypt_bone_shard": 2,
+        "knowledge_spares": 1
+      },
+      "station": "workbench",
+      "min_tier": 1,
+      "duration_ticks": 16,
+      "knowledge": "recipe",
+      "fuel": {},
+      "required_technologies": [
+        "tech_core_binding"
+      ],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ]
+    },
+    "charge_blank": {
+      "id": "charge_blank",
+      "category": "manufacture",
+      "outputs": {
+        "charged_blank": 1
+      },
+      "inputs": {
+        "core_blank": 1,
+        "soul_ember": 2,
+        "ancient_catalyst": 1
+      },
+      "station": "workbench",
+      "min_tier": 2,
+      "duration_ticks": 20,
+      "knowledge": "recipe",
+      "fuel": {
+        "charcoal": 1
+      },
+      "required_technologies": [
+        "tech_core_binding"
+      ],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ]
+    },
+    "craft_core_venom": {
+      "id": "craft_core_venom",
+      "category": "core",
+      "outputs": {
+        "core_venom": 1
+      },
+      "inputs": {
+        "charged_blank": 1,
+        "binding_cloth": 1,
+        "venom_extract": 1,
+        "venom_spine": 1
+      },
+      "station": "workbench",
+      "min_tier": 2,
+      "duration_ticks": 30,
+      "knowledge": "recipe",
+      "fuel": {},
+      "required_technologies": [
+        "tech_core_binding"
+      ],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ]
+    },
+    "craft_core_frost": {
+      "id": "craft_core_frost",
+      "category": "core",
+      "outputs": {
+        "core_frost": 1
+      },
+      "inputs": {
+        "charged_blank": 1,
+        "binding_cloth": 1,
+        "frost_extract": 1,
+        "frost_shard": 1
+      },
+      "station": "workbench",
+      "min_tier": 2,
+      "duration_ticks": 30,
+      "knowledge": "recipe",
+      "fuel": {},
+      "required_technologies": [
+        "tech_core_binding"
+      ],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ]
+    },
+    "craft_core_ember": {
+      "id": "craft_core_ember",
+      "category": "core",
+      "outputs": {
+        "core_ember": 1
+      },
+      "inputs": {
+        "charged_blank": 1,
+        "binding_cloth": 1,
+        "soul_ember": 1,
+        "reaper_essence": 1
+      },
+      "station": "workbench",
+      "min_tier": 2,
+      "duration_ticks": 30,
+      "knowledge": "recipe",
+      "fuel": {},
+      "required_technologies": [
+        "tech_core_binding"
+      ],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ]
+    },
+    "toxin_mask": {
+      "id": "toxin_mask",
+      "category": "manufacture",
+      "outputs": {
+        "toxin_mask": 1
+      },
+      "inputs": {
+        "binding_cloth": 3,
+        "venom_extract": 2,
+        "iron_parts": 1
+      },
+      "station": "workbench",
+      "min_tier": 1,
+      "duration_ticks": 20,
+      "knowledge": "recipe",
+      "fuel": {},
+      "required_technologies": [],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ]
+    },
+    "frost_cloak": {
+      "id": "frost_cloak",
+      "category": "manufacture",
+      "outputs": {
+        "frost_cloak": 1
+      },
+      "inputs": {
+        "binding_cloth": 3,
+        "frost_extract": 2,
+        "spring": 1
+      },
+      "station": "workbench",
+      "min_tier": 1,
+      "duration_ticks": 20,
+      "knowledge": "recipe",
+      "fuel": {},
+      "required_technologies": [],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ]
+    },
+    "field_meal": {
+      "id": "field_meal",
+      "category": "cooking",
+      "outputs": {
+        "field_meal": 2
+      },
+      "inputs": {
+        "grain": 2,
+        "wild_berries": 1
+      },
+      "station": "hand",
+      "min_tier": 0,
+      "duration_ticks": 6,
+      "knowledge": "starter",
+      "fuel": {},
+      "required_technologies": [],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ]
+    },
+    "minor_salve": {
+      "id": "minor_salve",
+      "category": "medicine",
+      "outputs": {
+        "minor_salve": 1
+      },
+      "inputs": {
+        "moonleaf": 2,
+        "binding_cloth": 1
+      },
+      "station": "workbench",
+      "min_tier": 1,
+      "duration_ticks": 10,
+      "knowledge": "recipe",
+      "fuel": {},
+      "required_technologies": [],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ]
+    },
+    "grow_moonleaf": {
+      "id": "grow_moonleaf",
+      "category": "cultivation",
+      "outputs": {
+        "moonleaf": 3,
+        "moonleaf_seed": 1
+      },
+      "inputs": {
+        "moonleaf_seed": 1,
+        "compost": 1
+      },
+      "station": "garden",
+      "min_tier": 1,
+      "duration_ticks": 600,
+      "knowledge": "starter",
+      "fuel": {},
+      "required_technologies": [],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ]
+    },
+    "grow_grain": {
+      "id": "grow_grain",
+      "category": "cultivation",
+      "outputs": {
+        "grain": 4,
+        "grain_seed": 1
+      },
+      "inputs": {
+        "grain_seed": 1,
+        "compost": 1
+      },
+      "station": "garden",
+      "min_tier": 1,
+      "duration_ticks": 480,
+      "knowledge": "recipe",
+      "fuel": {},
+      "required_technologies": [],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ]
+    },
+    "rebuild_core_venom": {
+      "id": "rebuild_core_venom",
+      "category": "reconstruction",
+      "outputs": {
+        "core_venom": 1
+      },
+      "inputs": {
+        "core_blank": 1,
+        "venom_extract": 1,
+        "knowledge_spares": 2
+      },
+      "station": "workbench",
+      "min_tier": 2,
+      "duration_ticks": 24,
+      "knowledge": "recipe",
+      "fuel": {},
+      "required_technologies": [
+        "tech_core_binding"
+      ],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ],
+      "consumes_specimen": "core_venom"
+    },
+    "rebuild_core_frost": {
+      "id": "rebuild_core_frost",
+      "category": "reconstruction",
+      "outputs": {
+        "core_frost": 1
+      },
+      "inputs": {
+        "core_blank": 1,
+        "frost_extract": 1,
+        "knowledge_spares": 2
+      },
+      "station": "workbench",
+      "min_tier": 2,
+      "duration_ticks": 24,
+      "knowledge": "recipe",
+      "fuel": {},
+      "required_technologies": [
+        "tech_core_binding"
+      ],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ],
+      "consumes_specimen": "core_frost"
+    },
+    "rebuild_core_ember": {
+      "id": "rebuild_core_ember",
+      "category": "reconstruction",
+      "outputs": {
+        "core_ember": 1
+      },
+      "inputs": {
+        "core_blank": 1,
+        "soul_ember": 1,
+        "knowledge_spares": 2
+      },
+      "station": "workbench",
+      "min_tier": 2,
+      "duration_ticks": 24,
+      "knowledge": "recipe",
+      "fuel": {},
+      "required_technologies": [
+        "tech_core_binding"
+      ],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ],
+      "consumes_specimen": "core_ember"
+    },
+    "study_predator_jaw": {
+      "id": "study_predator_jaw",
+      "category": "refine",
+      "outputs": {
+        "knowledge_spares": 3
+      },
+      "inputs": {
+        "predator_jaw": 1
+      },
+      "station": "research",
+      "min_tier": 1,
+      "duration_ticks": 16,
+      "knowledge": "starter",
+      "fuel": {},
+      "required_technologies": [],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-12"
+      ]
+    },
+    "study_axe_insignia": {
+      "id": "study_axe_insignia",
+      "category": "refine",
+      "outputs": {
+        "knowledge_spares": 4
+      },
+      "inputs": {
+        "fractured_axe_insignia": 1
+      },
+      "station": "research",
+      "min_tier": 1,
+      "duration_ticks": 16,
+      "knowledge": "starter",
+      "fuel": {},
+      "required_technologies": [],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-12"
+      ]
+    }
+  }
+}

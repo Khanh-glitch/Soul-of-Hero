@@ -1,0 +1,705 @@
+{
+  "schema": "soh.economy.sources.v1",
+  "sources": {
+    "live_oak_wood": {
+      "id": "live_oak_wood",
+      "item_id": "oak_wood",
+      "acquisition": "harvest",
+      "region_id": "opening_marches",
+      "poi_id": null,
+      "yield_per_claim": 2,
+      "replenishment_seconds": 300,
+      "risk": "low",
+      "requirements": [],
+      "integration_status": "LIVE_SURV_010",
+      "provenance": [
+        "SYS-03",
+        "SYS-04"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "live_stone_chunk": {
+      "id": "live_stone_chunk",
+      "item_id": "stone_chunk",
+      "acquisition": "harvest",
+      "region_id": "opening_marches",
+      "poi_id": null,
+      "yield_per_claim": 2,
+      "replenishment_seconds": 480,
+      "risk": "low",
+      "requirements": [],
+      "integration_status": "LIVE_SURV_010",
+      "provenance": [
+        "SYS-03",
+        "SYS-04"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "live_iron_scrap": {
+      "id": "live_iron_scrap",
+      "item_id": "iron_scrap",
+      "acquisition": "harvest",
+      "region_id": "opening_marches",
+      "poi_id": null,
+      "yield_per_claim": 2,
+      "replenishment_seconds": 600,
+      "risk": "low",
+      "requirements": [],
+      "integration_status": "LIVE_SURV_010",
+      "provenance": [
+        "SYS-03",
+        "SYS-04"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "live_reed_fibre": {
+      "id": "live_reed_fibre",
+      "item_id": "reed_fibre",
+      "acquisition": "harvest",
+      "region_id": "opening_marches",
+      "poi_id": null,
+      "yield_per_claim": 2,
+      "replenishment_seconds": 240,
+      "risk": "low",
+      "requirements": [],
+      "integration_status": "LIVE_SURV_010",
+      "provenance": [
+        "SYS-03",
+        "SYS-04"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "legacy_crypt_bone_shard": {
+      "id": "legacy_crypt_bone_shard",
+      "item_id": "crypt_bone_shard",
+      "acquisition": "existing_reward",
+      "region_id": "chapter_1_2",
+      "poi_id": null,
+      "yield_per_claim": 1,
+      "replenishment_seconds": 0,
+      "risk": "combat",
+      "requirements": [],
+      "integration_status": "LIVE_EXISTING_REWARDS",
+      "provenance": [
+        "SYS-03",
+        "SYS-04"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "legacy_reaper_essence": {
+      "id": "legacy_reaper_essence",
+      "item_id": "reaper_essence",
+      "acquisition": "existing_reward",
+      "region_id": "chapter_1_2",
+      "poi_id": null,
+      "yield_per_claim": 1,
+      "replenishment_seconds": 0,
+      "risk": "combat",
+      "requirements": [],
+      "integration_status": "LIVE_EXISTING_REWARDS",
+      "provenance": [
+        "SYS-03",
+        "SYS-04"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "legacy_venom_spine": {
+      "id": "legacy_venom_spine",
+      "item_id": "venom_spine",
+      "acquisition": "existing_reward",
+      "region_id": "chapter_1_2",
+      "poi_id": null,
+      "yield_per_claim": 1,
+      "replenishment_seconds": 0,
+      "risk": "combat",
+      "requirements": [],
+      "integration_status": "LIVE_EXISTING_REWARDS",
+      "provenance": [
+        "SYS-03",
+        "SYS-04"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "legacy_soul_ember": {
+      "id": "legacy_soul_ember",
+      "item_id": "soul_ember",
+      "acquisition": "existing_reward",
+      "region_id": "chapter_1_2",
+      "poi_id": null,
+      "yield_per_claim": 1,
+      "replenishment_seconds": 0,
+      "risk": "combat",
+      "requirements": [],
+      "integration_status": "LIVE_EXISTING_REWARDS",
+      "provenance": [
+        "SYS-03",
+        "SYS-04"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "legacy_predator_jaw": {
+      "id": "legacy_predator_jaw",
+      "item_id": "predator_jaw",
+      "acquisition": "existing_reward",
+      "region_id": "chapter_1_2",
+      "poi_id": null,
+      "yield_per_claim": 1,
+      "replenishment_seconds": 0,
+      "risk": "combat",
+      "requirements": [],
+      "integration_status": "LIVE_EXISTING_REWARDS",
+      "provenance": [
+        "SYS-03",
+        "SYS-04"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "legacy_fractured_axe_insignia": {
+      "id": "legacy_fractured_axe_insignia",
+      "item_id": "fractured_axe_insignia",
+      "acquisition": "existing_reward",
+      "region_id": "chapter_1_2",
+      "poi_id": null,
+      "yield_per_claim": 1,
+      "replenishment_seconds": 0,
+      "risk": "combat",
+      "requirements": [],
+      "integration_status": "LIVE_EXISTING_REWARDS",
+      "provenance": [
+        "SYS-03",
+        "SYS-04"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "legacy_blood_crucible_blueprint": {
+      "id": "legacy_blood_crucible_blueprint",
+      "item_id": "blood_crucible_blueprint",
+      "acquisition": "existing_reward",
+      "region_id": "chapter_1_2",
+      "poi_id": null,
+      "yield_per_claim": 1,
+      "replenishment_seconds": 0,
+      "risk": "combat",
+      "requirements": [],
+      "integration_status": "LIVE_EXISTING_REWARDS",
+      "provenance": [
+        "SYS-03",
+        "SYS-04"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "node_iron_ore": {
+      "id": "node_iron_ore",
+      "item_id": "iron_ore",
+      "acquisition": "harvest",
+      "region_id": "opening_marches",
+      "poi_id": null,
+      "yield_per_claim": 2,
+      "replenishment_seconds": 600,
+      "risk": "low",
+      "requirements": [
+        {
+          "kind": "tool_item",
+          "value": "stone_pick"
+        }
+      ],
+      "integration_status": "PROPOSED_A1",
+      "provenance": [
+        "SYS-03",
+        "SYS-04"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "node_coal": {
+      "id": "node_coal",
+      "item_id": "coal",
+      "acquisition": "harvest",
+      "region_id": "opening_marches",
+      "poi_id": null,
+      "yield_per_claim": 2,
+      "replenishment_seconds": 600,
+      "risk": "low",
+      "requirements": [
+        {
+          "kind": "tool_item",
+          "value": "stone_pick"
+        }
+      ],
+      "integration_status": "PROPOSED_A1",
+      "provenance": [
+        "SYS-03",
+        "SYS-04"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "node_clay": {
+      "id": "node_clay",
+      "item_id": "clay",
+      "acquisition": "harvest",
+      "region_id": "opening_marches",
+      "poi_id": null,
+      "yield_per_claim": 2,
+      "replenishment_seconds": 600,
+      "risk": "low",
+      "requirements": [],
+      "integration_status": "PROPOSED_A1",
+      "provenance": [
+        "SYS-03",
+        "SYS-04"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "node_sulfur": {
+      "id": "node_sulfur",
+      "item_id": "sulfur",
+      "acquisition": "harvest",
+      "region_id": "opening_marches",
+      "poi_id": null,
+      "yield_per_claim": 2,
+      "replenishment_seconds": 600,
+      "risk": "low",
+      "requirements": [],
+      "integration_status": "PROPOSED_A1",
+      "provenance": [
+        "SYS-03",
+        "SYS-04"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "node_frost_shard": {
+      "id": "node_frost_shard",
+      "item_id": "frost_shard",
+      "acquisition": "harvest",
+      "region_id": "frost_ridge",
+      "poi_id": null,
+      "yield_per_claim": 2,
+      "replenishment_seconds": 600,
+      "risk": "medium",
+      "requirements": [
+        {
+          "kind": "tool_item",
+          "value": "stone_pick"
+        }
+      ],
+      "integration_status": "PROPOSED_A1",
+      "provenance": [
+        "SYS-03",
+        "SYS-04"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "node_moonleaf": {
+      "id": "node_moonleaf",
+      "item_id": "moonleaf",
+      "acquisition": "harvest",
+      "region_id": "opening_marches",
+      "poi_id": null,
+      "yield_per_claim": 2,
+      "replenishment_seconds": 600,
+      "risk": "low",
+      "requirements": [],
+      "integration_status": "PROPOSED_A1",
+      "provenance": [
+        "SYS-03",
+        "SYS-04"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "node_moonleaf_seed": {
+      "id": "node_moonleaf_seed",
+      "item_id": "moonleaf_seed",
+      "acquisition": "harvest",
+      "region_id": "opening_marches",
+      "poi_id": null,
+      "yield_per_claim": 2,
+      "replenishment_seconds": 600,
+      "risk": "low",
+      "requirements": [],
+      "integration_status": "PROPOSED_A1",
+      "provenance": [
+        "SYS-03",
+        "SYS-04"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "node_wild_berries": {
+      "id": "node_wild_berries",
+      "item_id": "wild_berries",
+      "acquisition": "harvest",
+      "region_id": "opening_marches",
+      "poi_id": null,
+      "yield_per_claim": 2,
+      "replenishment_seconds": 600,
+      "risk": "low",
+      "requirements": [],
+      "integration_status": "PROPOSED_A1",
+      "provenance": [
+        "SYS-03",
+        "SYS-04"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "node_grain": {
+      "id": "node_grain",
+      "item_id": "grain",
+      "acquisition": "harvest",
+      "region_id": "opening_marches",
+      "poi_id": null,
+      "yield_per_claim": 2,
+      "replenishment_seconds": 600,
+      "risk": "low",
+      "requirements": [],
+      "integration_status": "PROPOSED_A1",
+      "provenance": [
+        "SYS-03",
+        "SYS-04"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "road_supplies": {
+      "id": "road_supplies",
+      "item_id": "knowledge_spares",
+      "acquisition": "loot",
+      "region_id": "opening_marches",
+      "poi_id": "poi:roadside_cache",
+      "yield_per_claim": 2,
+      "replenishment_seconds": 1800,
+      "risk": "low",
+      "requirements": [],
+      "integration_status": "PROPOSED_A1",
+      "provenance": [
+        "SYS-03",
+        "SYS-04"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "road_notes": {
+      "id": "road_notes",
+      "item_id": "research_notes",
+      "acquisition": "loot",
+      "region_id": "opening_marches",
+      "poi_id": "poi:roadside_cache",
+      "yield_per_claim": 1,
+      "replenishment_seconds": 1800,
+      "risk": "low",
+      "requirements": [],
+      "integration_status": "PROPOSED_A1",
+      "provenance": [
+        "SYS-03",
+        "SYS-04"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "road_scrap": {
+      "id": "road_scrap",
+      "item_id": "iron_scrap",
+      "acquisition": "loot",
+      "region_id": "opening_marches",
+      "poi_id": "poi:roadside_cache",
+      "yield_per_claim": 3,
+      "replenishment_seconds": 1800,
+      "risk": "low",
+      "requirements": [],
+      "integration_status": "PROPOSED_A1",
+      "provenance": [
+        "SYS-03",
+        "SYS-04"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "road_seed": {
+      "id": "road_seed",
+      "item_id": "moonleaf_seed",
+      "acquisition": "loot",
+      "region_id": "opening_marches",
+      "poi_id": "poi:roadside_cache",
+      "yield_per_claim": 1,
+      "replenishment_seconds": 1800,
+      "risk": "low",
+      "requirements": [],
+      "integration_status": "PROPOSED_A1",
+      "provenance": [
+        "SYS-03",
+        "SYS-04"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "vault_catalyst": {
+      "id": "vault_catalyst",
+      "item_id": "ancient_catalyst",
+      "acquisition": "loot",
+      "region_id": "sealed_archive",
+      "poi_id": "poi:sealed_archive",
+      "yield_per_claim": 1,
+      "replenishment_seconds": 7200,
+      "risk": "high",
+      "requirements": [
+        {
+          "kind": "access_tier",
+          "value": 2
+        },
+        {
+          "kind": "power",
+          "value": true
+        },
+        {
+          "kind": "resistance",
+          "value": "venom:60"
+        }
+      ],
+      "integration_status": "PROPOSED_A1",
+      "provenance": [
+        "SYS-03",
+        "SYS-04"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "venom_cache": {
+      "id": "venom_cache",
+      "item_id": "venom_spine",
+      "acquisition": "loot",
+      "region_id": "mire_wetlands",
+      "poi_id": "poi:toxin_laboratory",
+      "yield_per_claim": 1,
+      "replenishment_seconds": 3600,
+      "risk": "medium",
+      "requirements": [
+        {
+          "kind": "resistance",
+          "value": "venom:30"
+        }
+      ],
+      "integration_status": "PROPOSED_A1",
+      "provenance": [
+        "SYS-03",
+        "SYS-04"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "specimen_venom": {
+      "id": "specimen_venom",
+      "item_id": "core_venom",
+      "acquisition": "loot",
+      "region_id": "sealed_archive",
+      "poi_id": "poi:specimen_vault_venom",
+      "yield_per_claim": 1,
+      "replenishment_seconds": 0,
+      "risk": "high",
+      "requirements": [
+        {
+          "kind": "access_tier",
+          "value": 2
+        },
+        {
+          "kind": "power",
+          "value": true
+        }
+      ],
+      "integration_status": "PROPOSED_A1",
+      "provenance": [
+        "SYS-03",
+        "SYS-04"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "specimen_frost": {
+      "id": "specimen_frost",
+      "item_id": "core_frost",
+      "acquisition": "loot",
+      "region_id": "sealed_archive",
+      "poi_id": "poi:specimen_vault_frost",
+      "yield_per_claim": 1,
+      "replenishment_seconds": 0,
+      "risk": "high",
+      "requirements": [
+        {
+          "kind": "access_tier",
+          "value": 2
+        },
+        {
+          "kind": "power",
+          "value": true
+        }
+      ],
+      "integration_status": "PROPOSED_A1",
+      "provenance": [
+        "SYS-03",
+        "SYS-04"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "specimen_ember": {
+      "id": "specimen_ember",
+      "item_id": "core_ember",
+      "acquisition": "loot",
+      "region_id": "sealed_archive",
+      "poi_id": "poi:specimen_vault_ember",
+      "yield_per_claim": 1,
+      "replenishment_seconds": 0,
+      "risk": "high",
+      "requirements": [
+        {
+          "kind": "access_tier",
+          "value": 2
+        },
+        {
+          "kind": "power",
+          "value": true
+        }
+      ],
+      "integration_status": "PROPOSED_A1",
+      "provenance": [
+        "SYS-03",
+        "SYS-04"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "road_grain_seed": {
+      "id": "road_grain_seed",
+      "item_id": "grain_seed",
+      "acquisition": "loot",
+      "region_id": "opening_marches",
+      "poi_id": "poi:roadside_cache",
+      "yield_per_claim": 1,
+      "replenishment_seconds": 1800,
+      "risk": "low",
+      "requirements": [],
+      "integration_status": "PROPOSED_A1",
+      "provenance": [
+        "SYS-30"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "plan_drop_venom": {
+      "id": "plan_drop_venom",
+      "item_id": "plan_venom_core",
+      "acquisition": "loot",
+      "region_id": "opening_marches",
+      "poi_id": "poi:abandoned_institute",
+      "yield_per_claim": 1,
+      "replenishment_seconds": 7200,
+      "risk": "medium",
+      "requirements": [
+        {
+          "kind": "access_tier",
+          "value": 1
+        }
+      ],
+      "integration_status": "PROPOSED_A1",
+      "provenance": [
+        "SYS-04",
+        "SYS-11"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "plan_drop_frost": {
+      "id": "plan_drop_frost",
+      "item_id": "plan_frost_core",
+      "acquisition": "loot",
+      "region_id": "opening_marches",
+      "poi_id": "poi:abandoned_institute",
+      "yield_per_claim": 1,
+      "replenishment_seconds": 7200,
+      "risk": "medium",
+      "requirements": [
+        {
+          "kind": "access_tier",
+          "value": 1
+        }
+      ],
+      "integration_status": "PROPOSED_A1",
+      "provenance": [
+        "SYS-04",
+        "SYS-11"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "plan_drop_ember": {
+      "id": "plan_drop_ember",
+      "item_id": "plan_ember_core",
+      "acquisition": "loot",
+      "region_id": "opening_marches",
+      "poi_id": "poi:abandoned_institute",
+      "yield_per_claim": 1,
+      "replenishment_seconds": 7200,
+      "risk": "medium",
+      "requirements": [
+        {
+          "kind": "access_tier",
+          "value": 1
+        }
+      ],
+      "integration_status": "PROPOSED_A1",
+      "provenance": [
+        "SYS-04",
+        "SYS-11"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "seal_green_seal": {
+      "id": "seal_green_seal",
+      "item_id": "green_seal",
+      "acquisition": "loot",
+      "region_id": "opening_marches",
+      "poi_id": "poi:roadside_station",
+      "yield_per_claim": 1,
+      "replenishment_seconds": 3600,
+      "risk": "low",
+      "requirements": [],
+      "integration_status": "PROPOSED_A1",
+      "provenance": [
+        "SYS-08"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "seal_blue_seal": {
+      "id": "seal_blue_seal",
+      "item_id": "blue_seal",
+      "acquisition": "loot",
+      "region_id": "opening_marches",
+      "poi_id": "poi:green_archive",
+      "yield_per_claim": 1,
+      "replenishment_seconds": 3600,
+      "risk": "medium",
+      "requirements": [
+        {
+          "kind": "access_tier",
+          "value": 1
+        }
+      ],
+      "integration_status": "PROPOSED_A1",
+      "provenance": [
+        "SYS-08"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    },
+    "seal_purple_seal": {
+      "id": "seal_purple_seal",
+      "item_id": "purple_seal",
+      "acquisition": "loot",
+      "region_id": "opening_marches",
+      "poi_id": "poi:blue_archive",
+      "yield_per_claim": 1,
+      "replenishment_seconds": 3600,
+      "risk": "high",
+      "requirements": [
+        {
+          "kind": "access_tier",
+          "value": 2
+        },
+        {
+          "kind": "power",
+          "value": true
+        }
+      ],
+      "integration_status": "PROPOSED_A1",
+      "provenance": [
+        "SYS-08"
+      ],
+      "balance_status": "SOH_PROPOSAL"
+    }
+  },
+  "world_contract_status": "A1_NOT_INTEGRATED",
+  "live_harvest_authority": "res://game/survival/survival_service.gd",
+  "note": "Proposed sources are requirements, not spawned loot. Existing reward sources do not imply renewable world nodes."
+}

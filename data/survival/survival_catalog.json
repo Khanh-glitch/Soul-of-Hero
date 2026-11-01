@@ -37,6 +37,42 @@
         "binding"
       ],
       "tier": 1
+    },
+    "furnace_kit": {
+      "kind": "material",
+      "label": "Furnace Kit",
+      "tier": 2,
+      "tags": [
+        "station",
+        "kit"
+      ]
+    },
+    "workbench_kit": {
+      "kind": "material",
+      "label": "Workbench Kit",
+      "tier": 2,
+      "tags": [
+        "station",
+        "kit"
+      ]
+    },
+    "research_kit": {
+      "kind": "material",
+      "label": "Research Kit",
+      "tier": 2,
+      "tags": [
+        "station",
+        "kit"
+      ]
+    },
+    "garden_kit": {
+      "kind": "material",
+      "label": "Garden Kit",
+      "tier": 2,
+      "tags": [
+        "station",
+        "kit"
+      ]
     }
   },
   "resources": {
@@ -160,6 +196,81 @@
       "interaction": "container",
       "slots": 12,
       "placeholder_frame": "chest_wood"
+    },
+    "bed_wood": {
+      "label": "Wooden Bed",
+      "cost": {
+        "oak_wood": 4,
+        "iron_scrap": 1
+      },
+      "kind": "bed",
+      "solid": true,
+      "interaction": "bed",
+      "placeholder_frame": "bed_wood"
+    },
+    "station_furnace": {
+      "label": "Furnace Station",
+      "cost": {
+        "furnace_kit": 1
+      },
+      "kind": "station",
+      "solid": true,
+      "placeholder_frame": "station_furnace",
+      "footprint": [
+        2,
+        2
+      ],
+      "station_kind": "furnace",
+      "station_tier": 1,
+      "queue_capacity": 3
+    },
+    "station_workbench": {
+      "label": "Workbench Station",
+      "cost": {
+        "workbench_kit": 1
+      },
+      "kind": "station",
+      "solid": true,
+      "placeholder_frame": "station_workbench",
+      "footprint": [
+        2,
+        1
+      ],
+      "station_kind": "workbench",
+      "station_tier": 1,
+      "queue_capacity": 3
+    },
+    "station_research": {
+      "label": "Research Station",
+      "cost": {
+        "research_kit": 1
+      },
+      "kind": "station",
+      "solid": true,
+      "placeholder_frame": "station_research",
+      "footprint": [
+        2,
+        2
+      ],
+      "station_kind": "research",
+      "station_tier": 1,
+      "queue_capacity": 2
+    },
+    "station_garden": {
+      "label": "Garden Station",
+      "cost": {
+        "garden_kit": 1
+      },
+      "kind": "station",
+      "solid": true,
+      "placeholder_frame": "station_garden",
+      "footprint": [
+        2,
+        2
+      ],
+      "station_kind": "garden",
+      "station_tier": 1,
+      "queue_capacity": 2
     }
   },
   "rules": {

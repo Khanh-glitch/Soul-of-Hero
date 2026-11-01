@@ -55,6 +55,9 @@ The user experienced roughly 14 days of Last Day Rules and had only a handful of
 - [ ] `ATLAS-IMPL-09`: Parallel agents used as warranted with one owned path each; every merge includes parent SHA, tests, ownership compatibility and fail list; no unrelated branch overwritten.
 **Documentation CI PASS only checks research integrity/coverage. The above are NOT RUN until real Godot gameplay is implemented.**
 
+### SURV-020 topology checkpoint — partial, not product acceptance
+
+Godot 4.7 Xvfb [run 40862246794](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40862246794) at `4afe3d94cea92be9cc2355f3fb8362ab358907f4`: 132 existing foundation and 50 topology/storage checks. Bounded independent rooms, diagonal gap, split/merge, distant houses, local caching, production-world paid placements, floor/chest co-occupancy, two independent chests, full bag refusal, keyed transfer replay, disk reload and wall deletion were exercised. The native run does not demonstrate walking through doors, render a roof, activate a bed, respawn, use a browser, or complete the playable sequence; all relevant acceptance boxes above remain unchecked.
 ## Coordinator acceptance rule — product reality outranks green CI (2026-10-29, user reaffirmed)
 
 **Binding review instruction.** Neither passing CI, a large file/POI/recipe/skill count, an agent-written completion report, nor even correct isolated native fixtures are sufficient by themselves to approve a Soul of Hero gameplay milestone. Every independent coordinator verdict must read and trace the relevant locked user decisions in `DECISIONS.md`, the original immutable Atlas and `SOURCE_COVERAGE_TRACE.json`, the approved but not necessarily implemented `SYSTEM_FUSION_BLUEPRINT.md`, prior user/agent design discussions as captured in Control Tower/Google Docs, and this acceptance ledger. **Do not substitute a generic survival-game design checklist for the actual SOH design intent.**

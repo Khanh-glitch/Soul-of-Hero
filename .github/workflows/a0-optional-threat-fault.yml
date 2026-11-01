@@ -1,0 +1,39 @@
+name: A0 optional threat first-hit save-fault gate
+on:
+  push:
+    branches: [arena/dea2428e-soul-of-hero]
+    paths: ['game/overworld/**', 'game/survival/**', 'game/characters/knight/**', 'game/characters/enemies/**', 'game/autoload/**', 'tests/survival_optional_threat_fault_test.gd', 'tests/survival_optional_threat_journey_test.gd', 'tests/survival_normal_home_journey_test.gd', 'tests/survival_normal_input_gather_test.gd', 'tests/survival_foundation_test.gd', '.github/workflows/a0-optional-threat-fault.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-fault:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import
+        run: |
+          mkdir -p artifacts/ud_import artifacts/ud_fault
+          timeout 180s godot --headless --path . --user-data-dir artifacts/ud_import --import > artifacts/fault-import.log 2>&1
+      - name: Real first hit, interrupted write and fresh world
+        shell: bash
+        run: |
+          set +e
+          timeout --signal=TERM --kill-after=15s 1200s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_fault --resolution 960x540 --windowed --script res://tests/survival_optional_threat_fault_test.gd -- --survival-save-fault-test > artifacts/fault.log 2>&1
+          rc=$?
+          cat artifacts/fault.log
+          echo "::notice::fault exit=$rc $(grep -E 'FAULT_TRACE|OPTIONAL THREAT FAULT|  FAIL  |SCRIPT ERROR|Parse Error' artifacts/fault.log | tail -20 | tr '\n' '~')"
+          bash tools/ci/gate_log.sh artifacts/fault.log 'A0 first-hit save fault' 'OPTIONAL THREAT FAULT PASSED'
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a0-threat-fault-logs
+          path: artifacts/*fault*.log

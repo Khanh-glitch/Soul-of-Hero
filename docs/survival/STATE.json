@@ -7,8 +7,8 @@
   "immutable_fork_sha": "c1925d8d17a78da22c64b2c0fc249711eed536ac",
   "audited_gold_branch": "feature/gold-93-skill-readiness-20261028",
   "audited_gold_sha": "6c58ecf6f7c2350ee49f3a82e3cef42bf80afaf7",
-  "updated_date": "2026-10-30",
-  "phase": "SURV_010_MERGED_SURV_020_USER_REPORTED_IN_PROGRESS",
+  "updated_date": "2026-10-31",
+  "phase": "SURV_020_A0_NORMAL_ROUTE_AND_TWO_PROCESS_CUSTODY_GREEN",
   "scope": "CURRENT PRODUCT AUTHORITY: max 14 real-day season or voluntary earlier restart, full run-local reset, account achievements/results/SECURED Ragnarok currency; final72h six bosses/stones, loot-to-repeat-deposit, independent physical evacuation, stable world with safe random spawn, authentic Gold; actual implementation separately gated",
   "code_claims": {
     "survival_system_integrated": false,
@@ -120,16 +120,15 @@
   ],
   "next_action": {
     "task_id": "SURV-020",
-    "owner": "A0+A2",
+    "owner": "A0",
     "entrypoints": [
-      "game/survival/survival_build_system.gd",
-      "game/survival/survival_service.gd",
-      "game/survival/survival_structure.gd",
-      "docs/survival/tasks/SURV-020_WORK_ORDER.md"
+      "tests/survival_normal_entry_home_restart_test.gd",
+      "tests/survival_a0_profile_port_test.gd",
+      "game/survival/economy/a0_profile_port.gd",
+      ".github/workflows/a0-production-waystation-candidate.yml"
     ],
-    "first_test": "Build enclosed two-room house, enter door, fade only occupied room's roof, activate bed, die/respawn, reload; preserve SURV-010 125 checks",
-    "parallel_start": "Other agents only on owned branches; no overwrite of in-flight A0/A2 work",
-    "design_gate": "Full Godot 4.7 native visual/physics/respawn evidence and regression CI required; user-reported working != Verified"
+    "first_test": "Read the queued candidate-matrix result at b012385: normal-entry first process + separate-process custody, controller, roadside, ridge probe, and the new A0 profile port pair",
+    "design_gate": "No B0 acceptance, no merge, no human-played claim from synthetic input; rendered 720p/1440p/2160p and Gold parity remain NOT_TESTED"
   },
   "blockers": [
     {
@@ -143,6 +142,30 @@
       "scope": "final production building art only",
       "status": "needs_asset_selection_and_license",
       "details": "Cainos and existing packs need 2D modular fit review; use clearly labeled placeholders for mechanics"
+    },
+    {
+      "id": "A3_TOOL_PLAN",
+      "owner": "A3",
+      "state": "UNWIRED_A0",
+      "detail": "No soh.economy.tool_use.v1 implementation in 4bfba38d; asked in PR19 comment 6522130262. The owner contract also still pins A0 at the stale 69070a11."
+    },
+    {
+      "id": "RENDERED_RUN",
+      "owner": "A0/environment",
+      "state": "RENDERED_ROUTE_GREEN",
+      "detail": "Rendered Xvfb matrix green at 4c52e42c for all four legs: controller, roadside, normal-entry (Home -> real Overworld -> three A1 crates -> home, 122 checks) and normal-entry-roadside, plus the independent-process legs and the new headless A0 profile port pair (44 + 15). The home-only restart workflow (107 + 13) is green for the first time since 8eda2a8. Remaining red: Godot 4.7 'Original main baseline comparison' (fails on original main too), Survival A0 Foundation native runtime (no log produced; same script passes locally at 144 checks), and A6-owned test failures in the V4 composition workflow."
+    },
+    {
+      "id": "A1_VISUAL_LOCK",
+      "owner": "A1",
+      "state": "OWNER_NEEDS_FIX",
+      "detail": "PR20 09c20061 first_hour_visual_payload_lock.v1.json names source_commit ad39bde6 while describing newer props/atlas/treatment bytes, and none of its three payload_hashes matches a committed payload at 09c20061 (actual: props 8d4acf40, atlas 83d69373, treatment 39f1a9a9). Cache cells are unchanged so a remount stays compatible; A0 keeps the ad39bde6 byte-pinned mount (PR20 comment 6524971216)."
+    },
+    {
+      "id": "A3_V7_MOUNT",
+      "owner": "A3+A8",
+      "state": "A0_PORT_READY_CURRENCY_UNOBTAINABLE",
+      "detail": "A0 now implements soh.economy.a0_profile_port.v1 at b012385 (one wallet inside the SAME SaveService document, apply_profile_delta only inside an A0 commit boundary, one transact_once per deposit proposal, durable run record with A3's creator-locked 1209600 s window, endpoint/source authority from the A3 policy directory + pinned A1 bindings + the real hero stand cell). Evidence: 44 checks first process + 15 checks second process on the same disk profile; a tampered audit fails the restart comparison. Mounting A3 V7 into gameplay still has nothing to deposit: every currency_source in meta_economy.v1.json is an A8 elder vault marked OWNER_CONTRACT_CANDIDATE_A8, so ragnarok_unbanked does not exist in the world. A0 will not invent a source."
     }
   ],
   "cross_agent_rules": {

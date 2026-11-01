@@ -138,11 +138,48 @@ def chest() -> Image.Image:
     return img
 
 
+def bed() -> Image.Image:
+    """Temporary single-cell bed, drawn in-house; not production art."""
+    img = new(TILE, 18)
+    rect(img, 1, 2, 14, 13, WOOD_DK)
+    rect(img, 2, 3, 12, 10, (105, 84, 83, 255))
+    rect(img, 3, 4, 10, 3, (206, 194, 167, 255))
+    rect(img, 3, 8, 10, 5, (113, 95, 122, 255))
+    hline(img, 1, 2, 14, WOOD_HI)
+    hline(img, 1, 14, 14, WOOD)
+    rect(img, 1, 15, 14, 2, SHADOW)
+    return img
+
+
+def station(kind: str, height_cells: int) -> Image.Image:
+    """In-house schematic placeholder; the real station art is not approved."""
+    img = new(TILE * 2, TILE * height_cells)
+    base = {"furnace": STONE, "workbench": WOOD, "research": (91, 78, 112, 255),
+            "garden": (76, 91, 55, 255)}[kind]
+    rect(img, 1, 1, img.width - 2, img.height - 2, WOOD_DK)
+    rect(img, 2, 2, img.width - 4, img.height - 4, base)
+    hline(img, 3, 3, img.width - 6, IRON_HI if kind == "furnace" else WOOD_HI)
+    if kind == "furnace":
+        rect(img, 10, 10, 12, 12, IRON_DK)
+        rect(img, 13, 13, 6, 6, (200, 103, 45, 255))
+    elif kind == "garden":
+        for x in (7, 15, 23):
+            vline(img, x, 9, 13, (119, 151, 77, 255))
+    else:
+        rect(img, 9, 6, 14, 5, IRON if kind == "workbench" else (197, 185, 153, 255))
+    return img
+
+
 FRAMES = {
     "foundation_wood": foundation,
     "wall_wood": wall,
     "door_wood": door,
     "chest_wood": chest,
+    "bed_wood": bed,
+    "station_furnace": lambda: station("furnace", 2),
+    "station_workbench": lambda: station("workbench", 1),
+    "station_research": lambda: station("research", 2),
+    "station_garden": lambda: station("garden", 2),
 }
 
 

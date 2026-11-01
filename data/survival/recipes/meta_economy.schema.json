@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "policy"],
+  "properties": {
+    "schema": {"const": "soh.economy.meta_economy.v1"},
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy_id", "policy_revision", "content_rev", "rate_approval", "creator_locked", "technical_ids", "source_authority_contract", "endpoint_authority_contract", "profile_port_contract", "run_context_contract", "currency_sources", "elder_stones", "deposit_endpoints", "vending_machines", "recycler_machines", "recycler_salvage", "forbidden_meta_effects", "balance_targets"],
+      "properties": {
+        "policy_id": {"type": "string", "minLength": 1},
+        "policy_revision": {"type": "integer", "minimum": 1},
+        "content_rev": {"type": "string"},
+        "rate_approval": {"const": "AI_TUNABLE_NOT_CREATOR_LOCKED"},
+        "creator_locked": {
+          "type": "object", "additionalProperties": false,
+          "required": ["run_max_seconds", "ragnarok_last_seconds", "ragnarok_start_elapsed_seconds", "elder_region_count", "physical_deposit_required", "profile_persistence_only_after_deposit", "fixed_physical_vending", "no_automatic_starting_kit", "no_core_vendor"],
+          "properties": {
+            "run_max_seconds": {"const": 1209600}, "ragnarok_last_seconds": {"const": 259200}, "ragnarok_start_elapsed_seconds": {"const": 950400}, "elder_region_count": {"const": 6},
+            "physical_deposit_required": {"const": true}, "profile_persistence_only_after_deposit": {"const": true}, "fixed_physical_vending": {"const": true}, "no_automatic_starting_kit": {"const": true}, "no_core_vendor": {"const": true}
+          }
+        },
+        "technical_ids": {"type": "object"},
+        "source_authority_contract": {"const": "soh.economy.meta_source_authority.v1"},
+        "endpoint_authority_contract": {"const": "soh.economy.meta_endpoint_authority.v1"},
+        "profile_port_contract": {"const": "soh.economy.a0_profile_port.v1"},
+        "run_context_contract": {"const": "soh.economy.a0_run_context.v1"},
+        "currency_sources": {"type": "array", "minItems": 7, "items": {"type": "object", "required": ["source_id", "region_id", "kind", "max_claims_per_run", "drop_chance", "min_units", "max_units", "travel_round_trip_hours", "risk_tier", "integration_status"], "properties": {"drop_chance": {"type": "number", "minimum": 0, "maximum": 1}, "min_units": {"type": "integer", "minimum": 0}, "max_units": {"type": "integer", "minimum": 0}, "max_claims_per_run": {"type": "integer", "minimum": 1}}}},
+        "elder_stones": {"type": "array", "minItems": 6, "maxItems": 6, "items": {"type": "object", "required": ["stone_id", "elder_id", "region_id", "profile_achievement", "currency_value", "vendor_purchasable"], "properties": {"currency_value": {"const": 0}, "vendor_purchasable": {"const": false}, "profile_achievement": {"const": true}}}},
+        "deposit_endpoints": {"type": "array", "minItems": 1},
+        "vending_machines": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["machine_id", "kind", "stock"], "properties": {"kind": {"const": "vending"}, "stock": {"type": "object", "additionalProperties": {"type": "object", "required": ["quantity", "unit_price"], "properties": {"quantity": {"type": "integer", "minimum": 0}, "unit_price": {"type": "integer", "minimum": 1}}}}}}},
+        "recycler_machines": {"type": "array", "minItems": 1},
+        "recycler_salvage": {"type": "object", "additionalProperties": {"type": "object", "required": ["outputs", "profile_currency_delta"], "properties": {"profile_currency_delta": {"const": 0}, "outputs": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 1}}}}},
+        "forbidden_meta_effects": {"type": "array", "minItems": 10, "items": {"type": "string"}},
+        "balance_targets": {"type": "object"}
+      }
+    }
+  }
+}

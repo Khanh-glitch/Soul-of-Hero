@@ -1,0 +1,368 @@
+extends "res://tests/survival_foundation_test.gd"
+## Actual mounted overworld, production A0 clock/port and byte-pinned A3 service.
+## Starting materials are collected from mounted nodes by test-driven interaction
+## with a teleported, physics-disabled Hero and cleared inventory. Later fault
+## cases use fixture grants. This is NOT a normal-input fresh-save journey.
+
+class InteractionProbe extends Node2D:
+	var used := false
+	func can_interact(_player: Node2D) -> bool:
+		return true
+	func interact(_player: Node2D) -> bool:
+		used = true
+		return true
+
+func _finish() -> void:
+	paused = false
+	if FileAccess.file_exists(save_path):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(save_path))
+	if failures.is_empty():
+		print("SURVIVAL ECONOMY SESSION PASSED - %d checks" % checks)
+		quit(0)
+	else:
+		print("SURVIVAL ECONOMY SESSION FAILED - %d/%d" % [failures.size(), checks])
+		quit(1)
+
+func _wait_job(host: Node, id: String, status: String, seconds: float) -> bool:
+	var deadline := Time.get_ticks_msec() + int(seconds * 1000.0)
+	while Time.get_ticks_msec() < deadline:
+		var job: Dictionary = (host.call(&"jobs") as Dictionary).get(id, {})
+		if String(job.get("status", "")) == status:
+			return true
+		await process_frame
+	return false
+
+# Test drives actual spawned resource nodes and transaction service, not player
+# navigation or pointer dispatch. Inventory was explicitly cleared by harness.
+func _harvest_mounted(ow: Node, hero: Node2D, kind: String, item: String, target: int) -> bool:
+	var nodes: Dictionary = ow.get(&"survival_nodes")
+	for value: Variant in nodes.values():
+		var node := value as SurvivalResourceNode
+		if node == null or node.resource_kind != kind:
+			continue
+		hero.global_position = node.global_position
+		while _count(item) < target and node.can_interact(hero):
+			node.interact(hero)
+			if not bool(node.last_result().get("ok", false)):
+				return false
+			await create_timer(0.25).timeout
+		if _count(item) >= target:
+			return true
+	return false
+
+func _body() -> void:
+	var ow := _host.get_child(0)
+	var host: Node = ow.get(&"economy_session")
+	var build: SurvivalBuildSystem = ow.get(&"survival_build")
+	var hero: CharacterBody2D = ow.get(&"player")
+	var world: OverworldWorld = ow.get(&"world")
+	var svc := _survival()
+	_expect(host != null, "production overworld mounts actual economy session")
+	if host == null:
+		_body_complete = true
+		return
+	hero.set_physics_process(false)
+	_clear_inventory()
+	var sample_tree: SurvivalResourceNode = null
+	for value: Variant in (ow.get(&"survival_nodes") as Dictionary).values():
+		var candidate := value as SurvivalResourceNode
+		if candidate != null and candidate.resource_kind == "oak_tree":
+			sample_tree = candidate
+			break
+	_expect(sample_tree != null, "production world mounts an oak resource")
+	if sample_tree == null:
+		_body_complete = true
+		return
+	hero.global_position = sample_tree.global_position + Vector2(300, 0)
+	_expect(not sample_tree.can_interact(hero) and not sample_tree.interact(hero) and _count(WOOD) == 0, "distant direct resource interaction cannot harvest")
+	# Isolate an always-available interactable to cover the Knight's own range
+	# guard, independently of the resource's additional per-node check.
+	var temporarily_removed: Array[Node] = []
+	for existing: Node in get_nodes_in_group(&"player_interactable"):
+		existing.remove_from_group(&"player_interactable")
+		temporarily_removed.append(existing)
+	var probe := InteractionProbe.new()
+	ow.add_child(probe)
+	probe.global_position = hero.global_position + Vector2(300, 0)
+	probe.add_to_group(&"player_interactable")
+	_expect(not bool(hero.call(&"_try_interact")) and not probe.used, "Knight refuses an available distant world interaction")
+	hero.global_position = probe.global_position
+	_expect(bool(hero.call(&"_try_interact")) and probe.used, "Knight accepts the same available interaction nearby")
+	probe.remove_from_group(&"player_interactable")
+	probe.queue_free()
+	for existing: Node in temporarily_removed:
+		existing.add_to_group(&"player_interactable")
+	# One actual unhandled world click at a teleported node; this checks input
+	# routing and proximity but is not navigation or a fresh-save playthrough.
+	hero.global_position = sample_tree.global_position
+	var camera: Camera2D = ow.get(&"camera")
+	camera.reset_smoothing()
+	camera.force_update_scroll()
+	hero.set_physics_process(true)
+	await process_frame
+	var world_click := InputEventMouseButton.new()
+	world_click.position = root.get_final_transform() * (root.get_visible_rect().size * 0.5)
+	world_click.button_index = MOUSE_BUTTON_LEFT
+	world_click.pressed = true
+	Input.parse_input_event(world_click)
+	await physics_frame
+	await process_frame
+	world_click.pressed = false
+	Input.parse_input_event(world_click)
+	await process_frame
+	hero.set_physics_process(false)
+	_expect(_count(WOOD) == 2, "nearby mounted tree is harvested through real world pointer dispatch")
+	_expect(await _harvest_mounted(ow, hero, "oak_tree", WOOD, 8), "mounted oak nodes transact sufficient wood without material grant")
+	_expect(await _harvest_mounted(ow, hero, "scrap_pile", IRON, 2), "mounted scrap node transacts iron without material grant")
+	_expect(await _harvest_mounted(ow, hero, "reed_clump", "reed_fibre", 6), "mounted reed nodes transact fibre without material grant")
+	# Open the actual A0 production panel through its normal action and click a
+	# visible recipe button; resource interactions above are test-driven.
+	var toggle_event := InputEventAction.new()
+	toggle_event.action = &"economy_toggle"
+	toggle_event.pressed = true
+	Input.parse_input_event(toggle_event)
+	await process_frame
+	toggle_event.pressed = false
+	Input.parse_input_event(toggle_event)
+	await process_frame
+	await process_frame
+	var panel: Node = ow.get(&"economy_panel")
+	var button := panel.find_child("Recipe_workbench_kit_hand", true, false) as Button
+	print("ECONOMY_GUI_TRACE action=%s panel=%s visible=%s button=%s" % [str(InputMap.has_action(&"economy_toggle")), str(panel != null), str((panel.get_node_or_null("EconomyOverlay") as Control).visible if panel != null else false), str(button != null)])
+	_expect(button != null and button.is_visible_in_tree(), "normal economy input exposes hand-kit button")
+	if button == null or not button.is_visible_in_tree():
+		_body_complete = true
+		return
+	if button != null:
+		var click_position := root.get_final_transform() * (button.get_global_transform_with_canvas() * (button.size * 0.5))
+		var motion := InputEventMouseMotion.new()
+		motion.position = click_position
+		Input.parse_input_event(motion)
+		var click := InputEventMouseButton.new()
+		click.position = click_position
+		click.button_index = MOUSE_BUTTON_LEFT
+		click.pressed = true
+		Input.parse_input_event(click)
+		await process_frame
+		click.pressed = false
+		Input.parse_input_event(click)
+		await process_frame
+	var hand_job := ""
+	for key: Variant in (host.call(&"jobs") as Dictionary).keys():
+		var job: Dictionary = (host.call(&"jobs") as Dictionary)[key]
+		if String(job.get("target", "")) == "workbench_kit":
+			hand_job = String(key)
+	_expect(not hand_job.is_empty() and _count(WOOD) == 2 and _count(IRON) == 0, "player GUI click reserves actual A3 hand recipe inputs atomically")
+	var modal_before: Dictionary = (host.call(&"jobs") as Dictionary).get(hand_job, {})
+	await create_timer(1.2).timeout
+	var modal_after: Dictionary = (host.call(&"jobs") as Dictionary).get(hand_job, {})
+	_expect(int(modal_before.get("elapsed", -1)) == int(modal_after.get("elapsed", -2)), "visible gameplay modal grants no active production")
+	panel.call(&"close_panel")
+	await process_frame
+	# A representative foreign modal must prevent opening our panel. This is a
+	# generic A0 contract check, not an integration test of the real A6 UI.
+	var other_modal := Control.new()
+	other_modal.add_to_group(&"gameplay_modal")
+	ow.add_child(other_modal)
+	var blocked_toggle := InputEventAction.new()
+	blocked_toggle.action = &"economy_toggle"
+	blocked_toggle.pressed = true
+	Input.parse_input_event(blocked_toggle)
+	await process_frame
+	blocked_toggle.pressed = false
+	Input.parse_input_event(blocked_toggle)
+	await process_frame
+	_expect(not bool(panel.call(&"is_open")), "crafting panel cannot open over another gameplay modal")
+	other_modal.queue_free()
+	await process_frame
+	var adapter: RefCounted = host.get(&"_adapter")
+	var snapshot: Dictionary = host.call(&"_snapshot", "hand")
+	var forged := snapshot.duplicate(true)
+	forged["active_ticks"] = int(forged.active_ticks) + 9
+	var denied: Dictionary = adapter.call(&"advance", "hand", forged, "native.forged")
+	_expect(not bool(denied.get("ok", false)) and String(denied.get("reason", "")).begins_with("time_receipt_mismatch"), "actual A3 rejects forged UI tick receipt")
+	var zero: Dictionary = adapter.call(&"advance", "hand", snapshot, "native.zero")
+	_expect(not bool(zero.get("ok", false)) and String(zero.get("reason", "")) == "no_elapsed_time", "new receipt with zero elapsed time rejected")
+	var partial_deadline := Time.get_ticks_msec() + 3000
+	while Time.get_ticks_msec() < partial_deadline:
+		var records: Dictionary = host.get(&"_stations")
+		if int((records.get("hand", {}) as Dictionary).get("steps", 0)) >= 5:
+			break
+		await physics_frame
+	var partial_records: Dictionary = host.get(&"_stations")
+	_expect(int((partial_records.get("hand", {}) as Dictionary).get("steps", 0)) >= 5, "active callbacks accumulate a partial second before pause")
+	paused = true
+	_expect(int(((host.get(&"_stations") as Dictionary).get("hand", {}) as Dictionary).get("steps", -1)) == 0, "tree pause immediately discards partial active steps")
+	var before: Dictionary = (host.call(&"jobs") as Dictionary).get(hand_job, {})
+	await create_timer(0.5, true).timeout
+	var after: Dictionary = (host.call(&"jobs") as Dictionary).get(hand_job, {})
+	_expect(int(before.get("elapsed", -1)) == int(after.get("elapsed", -2)), "paused tree cannot grant production ticks")
+	paused = false
+	host.notification(Node.NOTIFICATION_APPLICATION_FOCUS_OUT)
+	var focus_before: Dictionary = (host.call(&"jobs") as Dictionary).get(hand_job, {})
+	await create_timer(1.2).timeout
+	var focus_after: Dictionary = (host.call(&"jobs") as Dictionary).get(hand_job, {})
+	_expect(int(focus_before.get("elapsed", -1)) == int(focus_after.get("elapsed", -2)), "focus-out notification prevents production while inactive")
+	host.notification(Node.NOTIFICATION_APPLICATION_FOCUS_IN)
+	_expect(bool(_save().call(&"reload_save")), "reload save while hand job reserved")
+	var reload_job: Dictionary = (host.call(&"jobs") as Dictionary).get(hand_job, {})
+	_expect(int(reload_job.get("elapsed", -1)) == int(before.get("elapsed", -2)), "reload preserves job without offline accrual")
+	_expect(await _wait_job(host, hand_job, "ready", 35.0), "actual physics-driven active session completes hand kit")
+	var current_receipt: Dictionary = host.call(&"_snapshot", "hand")
+	var tick_event := "a0tick.%s.hand.%d" % [String(current_receipt.get("session_id", "")), int(current_receipt.get("sequence", -1))]
+	var replay_tick: Dictionary = adapter.call(&"advance", "hand", current_receipt, tick_event)
+	var stale_tick: Dictionary = adapter.call(&"advance", "hand", snapshot, "native.stale")
+	var conflicting := current_receipt.duplicate(true)
+	conflicting["active_ticks"] = int(conflicting.active_ticks) + 1
+	var conflicting_tick: Dictionary = adapter.call(&"advance", "hand", conflicting, tick_event)
+	_expect(bool(replay_tick.get("duplicate", false)) and not bool(stale_tick.get("ok", false)) and String(conflicting_tick.get("reason", "")) == "event_id_conflict", "real host receipt replay is idempotent, stale receipt and changed replay rejected")
+	var collected: Dictionary = host.call(&"collect", hand_job)
+	_expect(bool(collected.get("ok", false)) and _count("workbench_kit") == 1, "A3 collects manufactured kit into sole inventory")
+	_expect(not bool((host.call(&"collect", hand_job) as Dictionary).get("ok", false)) and _count("workbench_kit") == 1, "duplicate collection cannot mint another kit")
+	build.select_piece("station_workbench")
+	var origin := Vector2i(-1, -1)
+	for y in range(6, world.height - 7, 4):
+		if origin.x >= 0:
+			break
+		for x in range(6, world.width - 7, 4):
+			hero.global_position = Vector2(x * 16 + 8, y * 16 + 8)
+			if build.validate_cell(Vector2i(x, y)).is_empty():
+				origin = Vector2i(x, y)
+				break
+	_expect(origin.x >= 0, "real world supports workbench footprint")
+	if origin.x < 0:
+		_body_complete = true
+		return
+	var placed := build.try_place(origin, "native.economy.bench")
+	var bench := String(placed.get("entity_id", ""))
+	_expect(bool(placed.get("ok", false)) and _count("workbench_kit") == 0, "manufactured kit pays for physically placed workbench")
+	var wrong_hand: Dictionary = host.call(&"queue_recipe", "workbench_kit", bench)
+	var wrong_bench: Dictionary = host.call(&"queue_recipe", "weave_cloth", "hand")
+	_expect(String(wrong_hand.get("reason", "")) == "station_recipe_mismatch" and String(wrong_bench.get("reason", "")) == "station_recipe_mismatch" and _count("reed_fibre") == 6, "intent cannot bind hand jobs to bench or bench jobs to hand")
+	var weave: Dictionary = host.call(&"queue_recipe", "weave_cloth", bench)
+	var weave_id := String(weave.get("job_id", ""))
+	_expect(bool(weave.get("ok", false)) and _count("reed_fibre") == 3, "real placed workbench reserves fibre in actual A3 queue")
+	_expect(await _wait_job(host, weave_id, "ready", 30.0), "active gameplay clock completes actual workbench queue")
+	# Adversary: the finished A3 job owns its output while every bag slot is
+	# full. This is fixture-funded and does not claim a normal-input B0 journey.
+	var capacity_fillers: Array[String] = []
+	for index in range(35):
+		var item := "output_capacity_%02d" % index
+		if not _give(item, 50):
+			break
+		capacity_fillers.append(item)
+	var capacity: Dictionary = _save().call(&"get_inventory_capacity_snapshot")
+	_expect(not capacity_fillers.is_empty() and int(capacity.get("bag_used", -1)) == int(capacity.get("bag_capacity", -2)), "finished output adversary fills every real bag slot")
+	var before_full_output: Dictionary = _save().call(&"get_snapshot")
+	var job_before_full: Dictionary = (host.call(&"jobs") as Dictionary).get(weave_id, {}).duplicate(true)
+	var refused_output: Dictionary = host.call(&"collect", weave_id)
+	_expect(not bool(refused_output.get("ok", true)) and String(refused_output.get("reason", "")) == "inventory_full" and _count("binding_cloth") == 0, "full bag refuses finished A3 output without false success")
+	_expect((_save().call(&"get_snapshot") as Dictionary) == before_full_output and (host.call(&"jobs") as Dictionary).get(weave_id, {}) == job_before_full, "failed collect retains exact output custody and makes no receipt")
+	var refused_again: Dictionary = host.call(&"collect", weave_id)
+	_expect(not bool(refused_again.get("ok", true)) and (_save().call(&"get_snapshot") as Dictionary) == before_full_output, "repeated full collect is a no-op")
+	var output_reloaded := bool(_save().call(&"reload_save"))
+	var reloaded_job: Dictionary = (host.call(&"jobs") as Dictionary).get(weave_id, {})
+	print("OUTPUT_RELOAD_TRACE loaded=%s before=%s after=%s carried=%d" % [str(output_reloaded), JSON.stringify(job_before_full), JSON.stringify(reloaded_job), _count("binding_cloth")])
+	_expect(output_reloaded and String(reloaded_job.get("status", "")) == "ready" \
+		and int((reloaded_job.get("outputs", {}) as Dictionary).get("binding_cloth", 0)) == 2 \
+		and (reloaded_job.get("outputs", {}) as Dictionary).size() == 1 and _count("binding_cloth") == 0,
+		"full output custody persists after reload")
+	if not capacity_fillers.is_empty():
+		_expect(bool(_save().call(&"consume_inventory_item", capacity_fillers[0], 50, "fixture.output.free")), "free one real bag slot for output retry")
+	var output: Dictionary = host.call(&"collect", weave_id)
+	_expect(bool(output.get("ok", false)) and _count("binding_cloth") == 2, "real workbench produces and collects useful crafting material")
+	for index in range(1, capacity_fillers.size()):
+		_expect(bool(_save().call(&"consume_inventory_item", capacity_fillers[index], 50, "fixture.output.cleanup.%02d" % index)), "cleanup output-capacity fixture %d" % index)
+	_expect(not bool((host.call(&"collect", weave_id) as Dictionary).get("ok", true)) and _count("binding_cloth") == 2, "successful output retry cannot be collected twice")
+	var cancel_start: Dictionary = host.call(&"queue_recipe", "weave_cloth", bench)
+	var cancel_id := String(cancel_start.get("job_id", ""))
+	_expect(bool(cancel_start.get("ok", false)) and _count("reed_fibre") == 0, "second job reserves remaining inputs")
+	# Extra fibre is a test fixture for the multi-job capacity/FIFO adversary.
+	_expect(_give("reed_fibre", 9), "fixture fibre for queue capacity and fairness")
+	var queued_two: Dictionary = host.call(&"queue_recipe", "weave_cloth", bench)
+	var queued_three: Dictionary = host.call(&"queue_recipe", "weave_cloth", bench)
+	var id_two := String(queued_two.get("job_id", ""))
+	var id_three := String(queued_three.get("job_id", ""))
+	var rejected_four: Dictionary = host.call(&"queue_recipe", "weave_cloth", bench)
+	_expect(bool(queued_two.get("ok", false)) and bool(queued_three.get("ok", false)) and String(rejected_four.get("reason", "")) == "queue_full" and _count("reed_fibre") == 3, "physical workbench enforces capacity without consuming rejected inputs")
+	var fairness_deadline := Time.get_ticks_msec() + 10000
+	var queued_jobs: Dictionary = host.call(&"jobs")
+	while Time.get_ticks_msec() < fairness_deadline and int((queued_jobs.get(cancel_id, {}) as Dictionary).get("elapsed", 0)) == 0:
+		await process_frame
+		queued_jobs = host.call(&"jobs")
+	_expect(int((queued_jobs.get(cancel_id, {}) as Dictionary).get("elapsed", 0)) > 0 and int((queued_jobs.get(id_two, {}) as Dictionary).get("elapsed", -1)) == 0 and int((queued_jobs.get(id_three, {}) as Dictionary).get("elapsed", -1)) == 0, "active ticks serve oldest job first, not every job simultaneously")
+	for queued_id: String in [id_two, id_three]:
+		_expect(bool((host.call(&"cancel", queued_id) as Dictionary).get("ok", false)) and bool((host.call(&"collect", queued_id) as Dictionary).get("ok", false)), "cancel queued capacity fixture and recover reserved fibre")
+	_expect(_count("reed_fibre") == 9, "capacity-test refunds conserve both reserved inputs")
+	_expect(bool(_save().call(&"patch_state_path", ["survival", "structures", bench, "station_enabled"], false)), "disable persisted placed station")
+	_expect(await _wait_job(host, cancel_id, "paused", 5.0), "disabled station pauses actual queued job")
+	var disabled_before: Dictionary = (host.call(&"jobs") as Dictionary).get(cancel_id, {})
+	await create_timer(1.2).timeout
+	var disabled_after: Dictionary = (host.call(&"jobs") as Dictionary).get(cancel_id, {})
+	_expect(int(disabled_before.get("elapsed", -1)) == int(disabled_after.get("elapsed", -2)), "disabled time cannot be banked as production")
+	_expect(bool(_save().call(&"patch_state_path", ["survival", "structures", bench, "station_condition"], 0)) and bool(_save().call(&"patch_state_path", ["survival", "structures", bench, "station_enabled"], true)), "zero condition remains inoperative even when enabled")
+	await create_timer(1.2).timeout
+	var broken: Dictionary = (host.call(&"jobs") as Dictionary).get(cancel_id, {})
+	_expect(String(broken.get("status", "")) == "paused" and int(broken.get("elapsed", -1)) == int(disabled_after.get("elapsed", -2)), "broken station does not grant work")
+	_expect(bool(svc.call(&"remove_structure", bench)), "station can be removed with escrow preserved")
+	await process_frame
+	# A replacement consumes a separate fixture kit. A job reserved for the old
+	# receipt-bound identity must never silently retarget to this new station.
+	_expect(_give("workbench_kit", 1), "fixture replacement kit is separately paid")
+	var replacement: Dictionary = build.try_place(origin, "native.economy.replacement")
+	var new_bench := String(replacement.get("entity_id", ""))
+	_expect(bool(replacement.get("ok", false)) and not new_bench.is_empty() and new_bench != bench and _count("workbench_kit") == 0, "replacement at same footprint has a new paid identity")
+	if new_bench.is_empty():
+		_body_complete = true
+		return
+	var new_job_result: Dictionary = host.call(&"queue_recipe", "weave_cloth", new_bench)
+	var new_job := String(new_job_result.get("job_id", ""))
+	_expect(bool(new_job_result.get("ok", false)) and _count("reed_fibre") == 6, "new station owns a distinct newly reserved job")
+	_expect(await _wait_job(host, new_job, "ready", 30.0), "replacement earns its own active work")
+	var orphan: Dictionary = (host.call(&"jobs") as Dictionary).get(cancel_id, {})
+	_expect(String(orphan.get("station_id", "")) == bench and String(orphan.get("status", "")) == "paused" and int(orphan.get("elapsed", -1)) == int(broken.get("elapsed", -2)), "old job cannot advance or retarget to replacement")
+	_expect(bool((host.call(&"collect", new_job) as Dictionary).get("ok", false)) and _count("binding_cloth") == 4, "new station collects only its own output")
+	_expect(bool((host.call(&"cancel", cancel_id) as Dictionary).get("ok", false)), "removed station job can be cancelled")
+	_expect(bool((host.call(&"collect", cancel_id) as Dictionary).get("ok", false)) and _count("reed_fibre") == 9, "cancelled removed-station escrow returns once")
+	_expect(bool(_save().call(&"reload_save")) and _count("binding_cloth") == 4 and _count("reed_fibre") == 9, "production and returned inputs survive save reload")
+	# One-process simulated interruption, not an OS kill or a power-loss test.
+	for boundary: String in ["after_temporary", "after_backup", "after_primary_removed", "after_primary_renamed"]:
+		_expect(_give(WOOD, 6) and _give(IRON, 2), "prepare fault case " + boundary)
+		var wood_before := _count(WOOD)
+		var iron_before := _count(IRON)
+		var ids_before := (host.call(&"jobs") as Dictionary).keys()
+		_expect(bool(_save().call(&"configure_test_save_interruption", boundary)), "arm explicit debug interruption " + boundary)
+		var interrupted: Dictionary = host.call(&"queue_recipe", "workbench_kit", "hand")
+		_expect(not bool(interrupted.get("ok", false)), "interrupted enqueue reports no success " + boundary)
+		_expect(bool(_save().call(&"reload_save")), "reload durable generation " + boundary)
+		var fresh_id := ""
+		for key: Variant in (host.call(&"jobs") as Dictionary).keys():
+			if key not in ids_before:
+				fresh_id = String(key)
+		if fresh_id.is_empty():
+			_expect(_count(WOOD) == wood_before and _count(IRON) == iron_before, "no committed job means inputs remain " + boundary)
+		else:
+			_expect(_count(WOOD) == wood_before - 6 and _count(IRON) == iron_before - 2, "committed job owns exact reserved inputs " + boundary)
+			_expect(bool((host.call(&"cancel", fresh_id) as Dictionary).get("ok", false)) and bool((host.call(&"collect", fresh_id) as Dictionary).get("ok", false)), "recover interrupted escrow " + boundary)
+			_expect(_count(WOOD) == wood_before and _count(IRON) == iron_before, "returned escrow conserved " + boundary)
+		_expect(bool((adapter.call(&"ownership_audit") as Dictionary).get("ok", false)), "ownership audit survives interruption " + boundary)
+	# Explicit trusted-memory fault injection: demonstrate A3's independent
+	# quantum limit even if the host itself were corrupted. No elapsed wall time
+	# or player-facing clock API is introduced, and state is restored immediately.
+	_expect(_give(WOOD, 6) and _give(IRON, 2), "fixture inputs for overquantum adversary")
+	var quantum_job: Dictionary = host.call(&"queue_recipe", "workbench_kit", "hand")
+	var quantum_id := String(quantum_job.get("job_id", ""))
+	_expect(bool(quantum_job.get("ok", false)), "real hand job establishes a time baseline")
+	var original_records: Dictionary = (host.get(&"_stations") as Dictionary).duplicate(true)
+	var original_sequence := int(host.get(&"_sequence"))
+	var base_receipt: Dictionary = host.call(&"_snapshot", "hand")
+	var tampered_records: Dictionary = original_records.duplicate(true)
+	tampered_records["hand"] = {"ticks": int(base_receipt.active_ticks) + 601, "ack": int(base_receipt.active_ticks), "steps": 0, "revision": "hand", "was_operational": true}
+	host.set(&"_stations", tampered_records)
+	host.set(&"_sequence", original_sequence + 1)
+	var too_large: Dictionary = adapter.call(&"advance", "hand", host.call(&"_snapshot", "hand"), "native.overquantum")
+	host.set(&"_stations", original_records)
+	host.set(&"_sequence", original_sequence)
+	_expect(String(too_large.get("reason", "")) == "time_quantum_exceeded", "actual A3 rejects even host-matching overquantum fault")
+	_expect(bool((host.call(&"cancel", quantum_id) as Dictionary).get("ok", false)) and bool((host.call(&"collect", quantum_id) as Dictionary).get("ok", false)), "overquantum rejection preserves refundable inputs")
+	_body_complete = true
