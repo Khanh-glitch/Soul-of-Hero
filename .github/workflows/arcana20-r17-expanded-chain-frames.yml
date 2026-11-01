@@ -1,0 +1,34 @@
+name: ARCANA20 expanded chain native-scale real-world frames
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-r17-expanded-chain-frames.yml']
+permissions:
+  actions: read
+  contents: read
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        light: [normal, dimmed]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: r17-expanded-chain-9-${{ matrix.light }}
+          run-id: 41310764888
+          github-token: ${{ github.token }}
+          path: capture
+      - run: python3 -m pip install --quiet pillow
+      - name: Opening, native-scale center crop
+        run: python3 tools/arcana20_join/surface_chain_tick.py capture 87 opening
+      - name: Development, native-scale center crop
+        run: python3 tools/arcana20_join/surface_chain_tick.py capture 183 development
+      - name: Midpoint, native-scale center crop
+        run: python3 tools/arcana20_join/surface_chain_tick.py capture 247 midpoint
+      - name: Cascade, native-scale center crop
+        run: python3 tools/arcana20_join/surface_chain_tick.py capture 327 cascade
