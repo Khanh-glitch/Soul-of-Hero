@@ -1,0 +1,77 @@
+name: ARCANA20 Thunderloom same-host before after overlap performance
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-c10-same-host-perf.yml']
+permissions:
+  contents: read
+jobs:
+  compare:
+    strategy:
+      fail-fast: false
+      matrix:
+        resolution: ['1280x720', '2560x1440', '3840x2160']
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    env:
+      RESOLUTION: ${{ matrix.resolution }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Assemble exact same A0, CT and environment with before and after AVFX
+        run: |
+          git fetch --depth=1 --no-tags origin 13df6c9934014b820e569d05daec8612814c4263 e5529c13335d5da8272d7b9d2cfb74897dcaf7e2 6b801554a6af95424b4e39dd29f43c146aa13848 2cb1a3c5f093724eb9fecbdf45909ccb611f7b32 18e7afcbd576bbd9bfbcc509b2ee13216186a522 e505173edd119fdd955cf6249511b575a5468440
+          python3 tools/arcana20_join/assemble.py --out "$RUNNER_TEMP/before" --avfx-sha 13df6c9934014b820e569d05daec8612814c4263 --a0-sha e5529c13335d5da8272d7b9d2cfb74897dcaf7e2
+          python3 tools/arcana20_join/assemble.py --out "$RUNNER_TEMP/after" --avfx-sha "$GITHUB_SHA" --a0-sha e5529c13335d5da8272d7b9d2cfb74897dcaf7e2
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - run: python3 -m pip install --quiet mss
+      - name: Import both exact compositions
+        run: |
+          set -euo pipefail
+          for label in before after; do
+            mkdir -p "$RUNNER_TEMP/$label/artifacts"
+            godot --headless --path "$RUNNER_TEMP/$label" --import > "$RUNNER_TEMP/$label/artifacts/import.log" 2>&1
+            ! grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/$label/artifacts/import.log"
+          done
+      - name: Measure before on this runner
+        run: |
+          set -o pipefail
+          timeout --signal=TERM --kill-after=10s 1800s xvfb-run -a -s "-screen 0 ${RESOLUTION}x24" env LIBGL_ALWAYS_SOFTWARE=1 ARCANA20_PERF=1 ARCANA20_PROFILE_CPU=1 ARCANA20_PERF_SECOND=10 \
+            godot --verbose --path "$RUNNER_TEMP/before" --rendering-method gl_compatibility --audio-driver Dummy --resolution "$RESOLUTION" --windowed \
+            --user-data-dir "$RUNNER_TEMP/before-user" --script res://prototypes/arcana_fusion20/renderer/arcana20_overworld_join_test.gd \
+            2>&1 | tee "$RUNNER_TEMP/before/artifacts/perf.log"
+          grep -Fq 'ARCANA20_JOIN_DIAGNOSTIC PASS' "$RUNNER_TEMP/before/artifacts/perf.log"
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Shader compilation failed|JOIN_FAIL' "$RUNNER_TEMP/before/artifacts/perf.log"
+      - name: Measure after on the same runner
+        run: |
+          set -o pipefail
+          timeout --signal=TERM --kill-after=10s 1800s xvfb-run -a -s "-screen 0 ${RESOLUTION}x24" env LIBGL_ALWAYS_SOFTWARE=1 ARCANA20_PERF=1 ARCANA20_PROFILE_CPU=1 ARCANA20_PERF_SECOND=10 \
+            godot --verbose --path "$RUNNER_TEMP/after" --rendering-method gl_compatibility --audio-driver Dummy --resolution "$RESOLUTION" --windowed \
+            --user-data-dir "$RUNNER_TEMP/after-user" --script res://prototypes/arcana_fusion20/renderer/arcana20_overworld_join_test.gd \
+            2>&1 | tee "$RUNNER_TEMP/after/artifacts/perf.log"
+          grep -Fq 'ARCANA20_JOIN_DIAGNOSTIC PASS' "$RUNNER_TEMP/after/artifacts/perf.log"
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Shader compilation failed|JOIN_FAIL' "$RUNNER_TEMP/after/artifacts/perf.log"
+      - name: Surface measured before and after
+        if: always()
+        run: |
+          for label in before after; do
+            if test -f "$RUNNER_TEMP/$label/artifacts/perf.log"; then
+              grep -E 'JOIN_RENDERED_FRAME_PERF|JOIN_FAIL|SCRIPT ERROR|Parse Error|ARCANA20_JOIN_DIAGNOSTIC' "$RUNNER_TEMP/$label/artifacts/perf.log" | sed "s/^/::notice title=C10_PERF_${label}::/" || true
+            fi
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcana20-c10-same-host-perf-${{ matrix.resolution }}
+          path: |
+            ${{ runner.temp }}/before/arcana20_join_manifest.json
+            ${{ runner.temp }}/before/artifacts/
+            ${{ runner.temp }}/after/arcana20_join_manifest.json
+            ${{ runner.temp }}/after/artifacts/
+          if-no-files-found: warn
