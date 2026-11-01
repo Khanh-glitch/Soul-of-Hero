@@ -926,7 +926,20 @@ func _walk_to_cell(hero: CharacterBody2D, nav: OverworldTraversability, cell: Ve
 
 
 ## A real KEY_P press through the engine's input pipeline, not a method call.
+##
+## The press is delivered on the world's next input pass, so arming is *polled*: read
+## once, immediately after the parse, and the answer is always "not armed yet" — which
+## is exactly how this gate used to lose a paid job that the departure then armed
+## behind its back. If the job never arms, the failure carries the distance to the
+## station and the session's own state, so the reader can tell "the key is not bound"
+## from "the player is not standing at the workstation".
 func _press_prepare_work() -> bool:
+	var ow: Node = _host.get_child(0)
+	var host: Node = ow.get(&"economy_session") if ow != null else null
+	if host == null:
+		print("A0_CONNECTED_PREPARE result=no_session")
+		return false
+	var before: Dictionary = host.call(&"prepared_work")
 	var press := InputEventKey.new()
 	press.physical_keycode = KEY_P
 	press.keycode = KEY_P
@@ -940,9 +953,57 @@ func _press_prepare_work() -> bool:
 	release.pressed = false
 	Input.parse_input_event(release)
 	await process_frame
-	var host: Node = _host.get_child(0).get(&"economy_session")
-	var state: Dictionary = host.call(&"prepared_work")
-	return (state.get("jobs", []) as Array).size() > 0
+	var state: Dictionary = {}
+	for frame: int in range(90):
+		state = host.call(&"prepared_work")
+		if (state.get("jobs", []) as Array).size() > 0:
+			print("A0_CONNECTED_PREPARE result=armed frames=%d jobs=%d" % [
+				frame, (state.get("jobs", []) as Array).size()])
+			return true
+		await process_frame
+	print("A0_CONNECTED_PREPARE result=not_armed bound=%s nearest=%s distance=%.1f before=%s after=%s" % [
+		str(InputMap.has_action(&"prepare_work")), _nearest_station(ow), _nearest_station_distance(ow),
+		JSON.stringify(before), JSON.stringify(state)])
+	return false
+
+
+## The station the world's own prepare handler would use: the nearest placed
+## `station_` structure, whatever its distance. Reported, not enforced.
+func _nearest_station(ow: Node) -> String:
+	var build: Node = ow.get(&"survival_build") if ow != null else null
+	var player: Node2D = ow.get(&"player") as Node2D if ow != null else null
+	if build == null or player == null:
+		return "none"
+	var nearest := ""
+	var best := 99999.0
+	for value: Variant in (build.get(&"_placed") as Dictionary).values():
+		var structure := value as Node2D
+		if structure == null or not is_instance_valid(structure):
+			continue
+		var piece := String(structure.get(&"piece_id"))
+		if not piece.begins_with("station_"):
+			continue
+		var distance := structure.global_position.distance_to(player.global_position)
+		if distance < best:
+			best = distance
+			nearest = piece
+	return nearest
+
+
+func _nearest_station_distance(ow: Node) -> float:
+	var build: Node = ow.get(&"survival_build") if ow != null else null
+	var player: Node2D = ow.get(&"player") as Node2D if ow != null else null
+	if build == null or player == null:
+		return -1.0
+	var best := 99999.0
+	for value: Variant in (build.get(&"_placed") as Dictionary).values():
+		var structure := value as Node2D
+		if structure == null or not is_instance_valid(structure):
+			continue
+		if not String(structure.get(&"piece_id")).begins_with("station_"):
+			continue
+		best = minf(best, structure.global_position.distance_to(player.global_position))
+	return best
 
 
 func _write_audit(ow: Node, extra: Dictionary) -> void:

@@ -206,7 +206,7 @@ func _report_wedge(hero: CharacterBody2D, cell: Vector2i, at: Vector2, attempt: 
 		var collision := hero.get_slide_collision(index)
 		var other := collision.get_collider()
 		contacts.append("%s normal=%s position=%s" % [
-			other.name if other is Node else str(other),
+			other.name if (other is Node and is_instance_valid(other)) else str(other),
 			str(collision.get_normal()), str(collision.get_position())])
 	print("A0_WALK_STALL cell=%s at=%s velocity=%s motion=%s attempt=%d contacts=%d [%s]" % [
 		str(cell), str(at), str(hero.velocity), str(hero.get_last_motion()), attempt,
