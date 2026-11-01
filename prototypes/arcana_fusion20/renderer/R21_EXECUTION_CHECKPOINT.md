@@ -121,6 +121,18 @@ and current-A0 JOIN [41334942898](https://github.com/Khanh-glitch/Soul-of-Hero/a
 passed. These are not visual sign-off, and later edits require new same-SHA
 runs.
 
+## Remaining S capture coverage
+
+The reused creator matrix now also requests #10, #15 and #17 natural moving
+world captures in normal/dim, with four surfaced phases and source references.
+This is **evidence collection**, not evidence those runs passed or those
+candidates meet the creator's visual bar. #15's original five-tendril
+choreography uses both fixed caster and multiple authored targets, and its
+petals use screen-up z: simply making its entire frame target-upright would
+break the caster attachment. Do not repeat the #03/#07/#08 transform blindly.
+#10 and #17 must retain their existing world-compositor work while reviewing
+same-frame capture, actors/terrain, source timing and natural OUT.
+
 ## Resume
 
 1. `git status --short; git rev-parse HEAD; gh run list --branch arena/c7b0c4e8-soul-of-hero --limit 20`.

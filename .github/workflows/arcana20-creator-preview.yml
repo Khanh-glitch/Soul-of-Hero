@@ -168,6 +168,12 @@ jobs:
           - {skill: 7, lighting: dimmed, variant: C07, lock: '0'}
           - {skill: 8, lighting: normal, variant: B08, lock: '0'}
           - {skill: 8, lighting: dimmed, variant: B08, lock: '0'}
+          - {skill: 10, lighting: normal, variant: C10, lock: '0'}
+          - {skill: 10, lighting: dimmed, variant: C10, lock: '0'}
+          - {skill: 15, lighting: normal, variant: C15, lock: '0'}
+          - {skill: 15, lighting: dimmed, variant: C15, lock: '0'}
+          - {skill: 17, lighting: normal, variant: C17, lock: '0'}
+          - {skill: 17, lighting: dimmed, variant: C17, lock: '0'}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -303,6 +309,20 @@ jobs:
       - name: Undertow aftermath
         if: matrix.skill == 8
         run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.83 maw_aftermath
+      # Remaining S selections: separately surfaced lifecycle phases from the
+      # exact same moving-world recording, in addition to the full video.
+      - name: C selection opening
+        if: matrix.skill == 10 || matrix.skill == 15 || matrix.skill == 17
+        run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.16 "${{ matrix.variant }}_opening"
+      - name: C selection buildup
+        if: matrix.skill == 10 || matrix.skill == 15 || matrix.skill == 17
+        run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.40 "${{ matrix.variant }}_buildup"
+      - name: C selection climax
+        if: matrix.skill == 10 || matrix.skill == 15 || matrix.skill == 17
+        run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.68 "${{ matrix.variant }}_climax"
+      - name: C selection aftermath
+        if: matrix.skill == 10 || matrix.skill == 15 || matrix.skill == 17
+        run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.86 "${{ matrix.variant }}_aftermath"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -406,10 +426,10 @@ jobs:
         run: |
           cp prototypes/arcana_fusion20/renderer/playtest/HUONG_DAN_THU_NGHIEM.txt deliverable/HUONG_DAN.txt
           printf 'AVFX code SHA: %s\nExperimental visual-only preview; not GOLD or PLAYTEST_READY.\n' "$GITHUB_SHA" > deliverable/CODE_SHA.txt
-          mkdir -p deliverable/source-comparisons/reference-02-03-07-08
-          cp prototypes/arcana_fusion20/renderer/source_b/reference/{wyrm,meteor,maw}_* deliverable/source-comparisons/reference-02-03-07-08/
-          cp prototypes/arcana_fusion20/renderer/source_c/reference/basilica_* deliverable/source-comparisons/reference-02-03-07-08/
-          printf '%s\n' 'Source-reference frames only; see real-world-evidence for actual SOH captures. They are not proof of complete world/post or body-effect parity.' > deliverable/source-comparisons/reference-02-03-07-08/README.txt
+          mkdir -p deliverable/source-comparisons/reference-batch-s
+          cp prototypes/arcana_fusion20/renderer/source_b/reference/{wyrm,meteor,maw}_* deliverable/source-comparisons/reference-batch-s/
+          cp prototypes/arcana_fusion20/renderer/source_c/reference/{basilica,thunderloom,thorn,horizon}_* deliverable/source-comparisons/reference-batch-s/
+          printf '%s\n' 'Source-reference frames only; see real-world-evidence for actual SOH captures. They are not proof of complete world/post or body-effect parity.' > deliverable/source-comparisons/reference-batch-s/README.txt
       - uses: actions/upload-artifact@v4
         with:
           name: ARCANA20_CREATOR_VISUAL_REVIEW_PARTIAL
