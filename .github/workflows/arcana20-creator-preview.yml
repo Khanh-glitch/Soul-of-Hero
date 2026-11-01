@@ -38,7 +38,7 @@ jobs:
           timeout 300s godot --headless --editor --path "$RUNNER_TEMP/avfx-playtest" --import --quit 2>&1 | tee "$RUNNER_TEMP/import.log"
           grep -E 'SCRIPT ERROR:|Parse Error:|ERROR:' "$RUNNER_TEMP/import.log" | head -20 | while IFS= read -r line; do echo "::notice title=IMPORT_DIAGNOSTIC::$line"; done || true
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/import.log"
-      # Explicit rebuild includes source-B-inspired temporal freeze/resume; scoped
+      # Explicit rebuild includes source-backed freeze/resume and visual-only echo markers; scoped
       # source-field equality checks do not prove complete lifecycle parity.
       - name: Export self-contained Linux and Windows builds
         run: |

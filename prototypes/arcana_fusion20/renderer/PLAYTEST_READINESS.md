@@ -8,6 +8,21 @@ historical methods, caveats and source-comparison references.
 ## Experimental downloadable build
 
 **Newest experimental visual-preview candidate:**
+[Windows x64 + Linux x64 artifact 13079428315](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297074032/artifacts/13079428315),
+source `33df4c94daba5b4c24c3d1f682ab6e0e289f793e`, from successful
+[run 41297074032](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297074032).
+The Linux executable passed the actual route; Windows exercised the same route
+headlessly. Real-moving-world full-cast videos are
+[#14](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297074032/artifacts/13079089190)
+and [#18](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297074032/artifacts/13079997057).
+For #18 all three real Skeletons moved, 66 software frames were captured and
+source tick 503 was last observed; source-frame tick may lag presentation.
+The selected full-frame stills still do not make temporal causality obvious;
+full motion has not been exhaustively reviewed. This build contains the visual
+freeze/resume/echoes, but not the later visual-event markers. It is visual-only
+and **NOT PLAYTEST_READY**; no receipts, device performance or art approval.
+
+**Previous chronological-shard preview:**
 [Windows x64 + Linux x64 artifact 13079547031](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41296591004/artifacts/13079547031),
 source `4f5887db73dfd43a966acba85f8dfe13cf959736`, from completed successful
 [run 41296591004](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41296591004).
@@ -290,8 +305,14 @@ beats as visual-only events, not confirmed contacts. Runtime regression
 [41297109728](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297109728),
 preview [41297074032](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297074032)
 and frozen motion [41297073989](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297073989)
-were running/queued at this ledger update. The preview is based on `33df4c9`
-and does not contain the later event markers; neither revision is approved.
+finished the 33df4c9 preview above; frozen motion remains in progress.
+The 4ed03a4 source-runtime, including freeze/release/event assertions, passed,
+but its independent historical CPU-benchmark job aborted with exit 134 during
+optimized-project import before comparison; cause unknown. The diagnostic rerun
+[41297306491](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297306491)
+passed both source-runtime and historical parity/CPU jobs at `0a97283`. The
+33df4c9 preview does not contain later visual-event markers; neither revision
+is approved. A new build including those markers is requested.
 
 [41293811919](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293811919)
 also compared complete no-PNG-I/O casts/overlap with fresh same-duration
