@@ -536,6 +536,25 @@ func _run() -> void:
     await process_frame
     await process_frame
     check(mount.active_viewers(id1) == 0 and images_equal(baseline, await save_frame("fusion_01_cancelled")), "A01 C01 candidate cleanup restores frozen world")
+    # #15 world-only sparse overscan: real source ink must be consumed on
+    # multiple non-overlapping raster tiles, then every tile must retire on
+    # cancel. This proves lifecycle, not final actor depth or art approval.
+    var thorn_id := Arcana20SourceCatalog.canonical_id(15)
+    multi.cast_skill(thorn_id, player.global_position, player.global_position + Vector2(900, 0), 1.0, player)
+    var thorn_cast := multi._casts[thorn_id] as CSourcePlayer
+    thorn_cast.set_process(false)
+    thorn_cast.render_enabled = false
+    for tick in range(360): thorn_cast.advance(STEP, false)
+    thorn_cast.render_enabled = true
+    thorn_cast._render_frame()
+    await process_frame
+    await process_frame
+    var thorn_layers: Dictionary = mount._passes.get(thorn_id, {})
+    check(thorn_layers.has(&"C") and thorn_layers.has(&"C@1,0") and mount.active_viewers(thorn_id) > 1, "C15 original and long-range adjacent tile are independently mounted")
+    multi.cancel_skill(thorn_id)
+    await process_frame
+    await process_frame
+    check(mount.active_viewers(thorn_id) == 0 and images_equal(baseline, await save_frame("thorn_overscan_cancelled")), "C15 overscan cancellation clears all world tiles")
     # Original C event horizon explicitly authors screen flash/shake/chroma.
     # The opt-in consumer affects the real world/actors before the real HUD;
     # disabled and cancel comparisons enforce no unrelated residual effects.

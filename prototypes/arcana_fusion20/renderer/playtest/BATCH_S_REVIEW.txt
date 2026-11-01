@@ -49,3 +49,20 @@ bại không rõ nguyên nhân; các run sau đã pass, chưa chứng minh nguy�
 Linux dùng Xvfb/software; Windows được smoke test headless, không phải bằng chứng
 GPU hoặc chạy đồ họa Windows. Một số log báo 5 tài nguyên còn dùng và lỗi
 ngắt kết nối; baseline không AVFX cũng có cảnh báo, chưa chứng minh không leak.
+
+CẬP NHẬT bằng chứng #15 — 2852addb, creator run 41341519966:
+Kiểm tra 35/900 đơn vị, bốn hướng, ba thời điểm, normal/dim; camera 0.32 chỉ
+để kiểm tra phạm vi. Raster tile mở rộng cho thế giới phục hồi các tua đã ra
+ngoài 384x216 khi actor di chuyển. 48 ảnh đo không có đỉnh tua nằm ngoài union
+các tile hoạt động, không chạm giới hạn 12 tile (tối đa 8/9); không chứng minh
+từng pixel/khung không crop. Xem reviews/thorn_range_2852. Ở khoảng cách 35,
+actor chạy xa làm năm tua hữu hạn tách khỏi hoa cố định; đây là lỗi độc lập
+còn mở, không thể nhận là đã hoàn thành hay tự kéo dài hình học gốc. Chủ sở
+hữu cần quyết định chính sách chuyển động/thời điểm cast, hoặc cho phép một
+diễn giải mới và ghi rõ. Thử thêm chuyển động 1x bình thường, độ sâu actor và
+đánh giá hiệu năng trước khi chấp nhận.
+
+CẬP NHẬT #03 — 8b2bfe2f dùng sai khác lượng tử hóa có flash/không flash để
+tránh posterize toàn cảnh lúc flash bằng 0; vẫn là xấp xỉ LDR, không chứng minh
+đã giải quyết washout hoặc tái hiện HDR gốc. Cần xem lại video native 720p
+bản hiện tại và pass HDR tuyến tính trước HUD do CT/A0 sở hữu.
