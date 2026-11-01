@@ -1,5 +1,30 @@
 # ARCANA20 — playtest readiness (current summary)
 
+## R18 focused work in progress
+
+#09 retains the 624×352 field, moving anchors and elected source roles. A
+controlled same-scene render-order experiment is running; its first attempt
+[41315617754](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41315617754)
+failed the actor/camera/tick lock and is **not valid comparative evidence**.
+#11 remains HOLD; do not infer approval from its raw field or adjust bolt
+counts without a new compositor hypothesis.
+
+The bounded matched #09 retention run [41315535779](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41315535779)
+uses six rounds × four casts/cancels, five actual Home reloads and independent
+no-FX control; [counter review 41315813832](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41315813832).
+The texture/video counters rose +174762 bytes in round 1 and +0 in each of
+rounds 2–6 relative to matched no-FX deltas; the post-unload FX-minus-control
+texture/video difference stayed +174762 across all five Home samples. 96/96
+tracked source/ink/mask/bloom texture weakrefs were dead after cancel; old
+world/renderer weakrefs cleared on each reload. This is consistent with a
+one-time engine/cache allocation rather than cumulative retained cast textures,
+but its exact allocation origin and hardware VRAM are not established. The
+probe's own retained observations add overhead; per-round object delta +7 then
++5 and static-byte trends cannot be attributed solely to the renderer. Both
+control and FX Home object/static counters rose over successive route reloads.
+This bounded sample is not a leak-free proof.
+
+
 **NOT PLAYTEST_READY.** All 20 are `VISUAL_NOT_VERIFIED`; no creator approval,
 Gold approval or production merge. This is the concise current ledger; the
 [world integration evidence](OVERWORLD_INTEGRATION_STATUS.md) contains detailed
