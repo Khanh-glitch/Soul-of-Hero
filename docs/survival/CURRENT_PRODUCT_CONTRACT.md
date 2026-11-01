@@ -243,6 +243,121 @@
 | **Chơi lại không nhàm** | Mọi spawn và tuyến giống hệt, tutorial cưỡng bức, vật quý mua dễ vô hạn, cash xoay không có sink | 2–3 run với quyết định khác, vẫn còn mục tiêu ngoài Elder và Core hiếm |
 
 
+## IV. ĐẶC TẢ MỐI NỐI LIÊN HỆ — CHỨC NĂNG PHẢI CÓ CHỨ KHÔNG PHẢI TÊN “FEATURE”
+
+| Interface | Contract có thể triển khai/kiểm thử | Hệ và owner |
+| --- | --- | --- |
+| **M01 Item ↔ target** | Không hardcode loại công cụ đơn chức năng. Mỗi action profile gửi `source instance + hit tick + geometry + target_id`, target trả `damage, harvest_yield, state_delta` hợp lệ. Ammo/charge/durability debit once tại mốc đúng. | K1+K2+K3+K5; A0/A3/Gameplay/Gold |
+| **M02 Item ↔ storage/death** | Mọi transfer là thay đổi chủ sở hữu/vị trí của cùng một item ID. Chest, cart, inventory, bag và placed-world chuyển giao theo giao dịch. | K1+K6+K7+K8; A0 |
+| **M03 Item ↔ recipe** | `study(specimen, recipe, cost)` trừ đúng mẫu và trả chi phí rồi mở run recipe một lần; không phụ thuộc item được phát từ loot hay tự chế. | K1+K3+K4; A3/A0 |
+| **M04 Recipe ↔ source** | Mỗi input có ít nhất một nguồn lấy hợp lệ trước điểm khóa; mỗi output là item có chức năng thật; công thức dùng nhiều loại nguyên liệu cần có nguồn và sink rõ. | K3+K4; A3/Map |
+| **M05 World ↔ spawn** | Mỗi spawn có bề mặt đi được, không có hostile hazard mặc định, nguồn nước/đồ cơ bản reachable, đường đi không softlock; địa lý nền ổn định giữa run. | K2+K3+K5; Map/A0 |
+| **M06 World ↔ traces ↔ monsters** | Dấu có loại nền, thời gian, weather decay; quái có vị trí/habitat giác quan độc lập; truy dấu phải đi dọc path hợp lệ. | K2+K5+K6+K8; Game/Map/A0 |
+| **M07 Weather ↔ livelihood** | Gió/mưa/ẩm/nhiệt tác động trên actor, đất/vườn/lò/mái/traces nếu rule xác nhận; forecast không biết quái chưa được phát hiện. | K2+K4+K5+K6+K8 |
+| **M08 Build ↔ inventory** | Đặt foundation/tường/trạm tiêu item/resources; tạo entity sở hữu, HP/collision/function; tháo/thu hồi phải giải quyết đồ trong trạm và không clone. | K1+K4+K6; A0 |
+| **M09 Workstation ↔ time** | Fuel/input/job/complete/interrupted/capacity xử lý theo event order; restart, pause, đứt điện và offline có cùng quy tắc. | K1+K4+K6+K8; A0/A3 |
+| **M10 POI ↔ access ↔ sources** | Cửa/khóa/điện/hazard cần đúng điều kiện, nguồn loot hợp lệ chỉ trao sau khi tương tác; lối ra hợp lệ theo trạng thái power. | K2+K3+K5+K6+K7; A8/A1/A3 |
+| **M11 Building ↔ defense** | Turret nếu dùng: hợp lệ khi thật sự có power/ammo/target trong tầm; bắn trừ nguồn; quái chỉ ở đây do hoạt động vật lý, không spawn raid từ công trình. | K1+K5+K6; Gameplay/Map |
+| **M12 Currency ↔ escrow** | Chỉ Ragnarok cash item cuối72 vào `Rương ký gửi`; active chest ở lãnh địa; chính vật phẩm tiền trừ và số dư profile cộng once; lần đầu có đường thanh toán cash vật lý khi balance 0. | K1+K3+K6+K7+K8; A0/A3 |
+| **M13 Run ↔ history** | Abandon/evacuate/expiry là ba lý do kết thúc khác nhau; chỉ một finalize, wipe toàn vật chất run, giữ history/achievements/secured cash. | K8+K1–K7; A0 |
+| **M14 Score ↔ verified events** | Per-`run_id+source_id+event_type` credit once; score không mint tiền; chỉ client tự báo điểm thì không đủ thành tích VERIFIED global. | K8+K3+K5; Gameplay/A0/A7 |
+| **M15 Gold ↔ environment** | Renderer nhận/ghi mốc authored event; gameplay source valid mechanics thay đổi tree/ground/monster/room; Map cung cấp vật thể nhận và dữ liệu tồn tại. | K1+K2+K3+K5+K8; Gold/Gameplay/Map |
+
+**Quy tắc xét thay đổi:** nếu một ý tưởng gameplay mới xuất hiện, tìm hành động trên **một trong K1–K8** và những cạnh M; chỉ thêm loại dữ liệu/capability/target mới khi đúng về vật lý. Không tạo hệ độc lập chỉ vì một khoảnh khắc có tên hấp dẫn. Nếu cần root thứ 9, phải chứng minh K1–K8 không thể diễn đạt logic đó và giá trị mang lại lớn hơn độ phức tạp.
+
+## V. HỢP ĐỒNG CẤP ĐỊA LÝ CHO MAP TOWER — TRÍCH XUẤT TỪ GAMEPLAY, KHÔNG TỰ TẠO LUẬT
+
+### 5.1. Những lớp dữ liệu thế giới bắt buộc
+
+**Địa hình:** coast mask, các vịnh/eo đất/đảo/hồ/sông có kiểm chứng hình học, độ cao/dốc/vách, bề mặt đất/đá/bùn/tuyết, phần đi được–đặt nhà được–đi xe được, khí hậu và các vùng thời tiết/hazard có biến thiên. Map tối thiểu phải diễn tả nguồn nước và terrain bằng tile/sprite pixel đúng tỷ lệ, không dùng một hình nền Gold tối pasted vào môi trường SOH.
+
+**Nền kinh tế không gian:** vị trí nguồn cây/đá/quặng/đồ ăn và nguồn nhân tạo ven đường/khu công nghiệp/POI; đường dây chuyền vật liệu từ nhà máy/mỏ/cảng, mạng phụ trợ công trình; nguồn phổ biến có khả năng tiếp cận rộng nhưng source hiếm/bảo hộ sâu có lý do địa lý. Ràng buộc **không quái/đồ hiếm chỉ vì POI marker**; vật thể và hành động thực mới là nguồn.
+
+**Mạng đi lại:** đường đi bộ, đường xe tải, cầu/phà, bến, độ rộng/độ dốc/vật cản, tuyến tiếp cận ngoại vi POI và đường rút, điểm đặt trạm/nhà; thử ba nơi ở có chi phí vận chuyển/footprint exposure khác nhau. Không đặt tất cả điểm thiết yếu trên một tuyến cứng, không lấy kết quả thuật toán buildability làm bằng chứng gameplay.
+
+**Công trình và POI:** địa điểm dân cư thường, trạm phụ, nhà kho, công nghiệp, khu độc/điện, tầng sâu, rương cuối72, điểm bán Rương ký gửi, máy bán/tái chế có stock, sáu địa điểm Elder có hai trạng thái, tuyến sơ tán không boss. Vị trí nhà **do người chơi chọn**, không tự bắt đầu ở một “home hub” duy nhất. Các POI gốc chỉ là archetype/hình học nguồn có thể tái dùng; không phải 21 chấm bắt buộc hay 10 dungeon mới trên một góc bản đồ.
+
+**Môi trường tiếp nhận chiêu:** cây/vật thể chịu hit với HP/material, bề mặt đất có tính chất cháy/rét/ẩm, hoạt động tái sinh của nguồn, dấu vết lan theo vật lý, camera và VFX 640×360 1×. Luật chính xác chiêu do gameplay+Gold quyết định, Map không quyết số damage.
+
+### 5.2. Phép kiểm Map không thể vượt bằng bản vẽ đẹp
+
+| Phép thử | Người chơi phải làm được | Bằng chứng không đủ |
+| --- | --- | --- |
+| **MAP-SPAWN-04** | Bốn điểm spawn ở các miền khác nhau, thử không Core vẫn có nước, thức ăn, nguồn làm công cụ, road/offroad, đường tới vùng có thể dựng nhà | Chỉ điểm spawn “an toàn” trên sơ đồ |
+| **MAP-HOME-03** | Ba nhà do người thử tự chọn từ đất hợp lệ; đúng collision, mái, vườn/lò, freight và các lần giao tuyến quái khác nhau | Chỉ tỉ lệ % diện tích buildable hoặc đặt ba HousePin |
+| **MAP-POI-02** | Hai POI nhiều tầng có ít nhất một lớp ngoại vi hữu ích, một điều kiện sâu thật và lối về; khóa/điện/hazard không softlock | POI là dấu chấm với nút “unlock” |
+| **MAP-LOG-03** | Một POI nguồn có đường người và đường xe khác biệt, một kho xa có giá trị tăng sau khi được xe, một tuyến bị thời tiết/địch làm thay đổi quyết định | Không có item/collision/xe thật |
+| **MAP-U1** | Quái ở habitat thật chỉ chạm dấu nếu tuyến giao nhau; so sánh nhà rừng/đá/ven đường mà không đổi tài nguyên cơ bản quá lớn | “Khu gần POI có 50% raid” |
+| **MAP-U2** | Người chơi có thể sửa nhà, nạp trạm, xét mưa và tình trạng dấu ở nơi đã chọn trước khi thoát | Thời tiết chỉ là màu overlay |
+| **MAP-U3** | Có vật liệu vật lý để một số kỹ năng Gold tương tác gây hậu quả hợp lệ; không bị nguồn cháy xóa mọi đường sống | Vết cháy nguồn Gold nhưng đất không có state |
+| **MAP-U4** | Không boss: kiếm tiền cuối72 → đến người bán rương mua bằng tiền vật lý → về căn cứ của mình → đặt rương → ký gửi số tiền dương → tùy chọn rời đảo | “Có chest icon và bank icon trong map” |
+| **MAP-U5** | Sáu Elder có vùng thật trước/sau thức tỉnh; các nguồn điểm khác nhau không phải một arena chung; ít nhất một lối sơ tán no-boss | Sáu vùng màu đối xứng hoặc boss phòng trống |
+| **MAP-CAMERA** | 640×360 1× đọc rõ đường, vách, dấu chân, vật liệu, cửa, nguy hiểm, nhân vật, khả năng đứng thao tác và điểm rút | Chỉ ảnh đẹp zoom 2K, nền tối che combat |
+
+**Trật tự làm của Map:** (a) chuẩn hóa bất biến gameplay và cost/risk; (b) tạo hai–ba cấu trúc địa hình có địa mạo thật; (c) với mỗi phương án gắn nguồn tự nhiên/đường/POI/nhà/lối xe/hazard/endgame; (d) chạy route cost + test U1/U4; (e) xem pixel 640×360; (f) sửa/đấu loại; (g) bàn giao masterplan có số liệu và trạng thái **PAPER / NATIVE / HUMAN**, không gọi bản A tốt nhất chỉ vì buildability 29,6%. Gameplay Tower chỉ phê hoặc từ chối hành động/nguồn; không tự vẽ map.
+
+### 5.3. Bảng dữ liệu Map → Gameplay phải nộp
+
+`WorldSource(source_id, kind:NATURAL|ROAD|INDUSTRIAL|RARE, region_id, world_position, required_action_tags, hazard_tags, access_id, respawn_policy)`
+
+`WorldTraversal(node_id, edge_id, travel_mode, slope, bridge_width, surface_type, load_validity, threat_exposure, alternate_edges)`
+
+`BuildSiteSample(site_id, walkable_footprint, roof/collision, shelter_temperature, nearest_source_routes, loaded_haul_cost, patrol_intersections, trace_surface, retreat_routes)`
+
+`POIAccessGraph(poi_id, exterior_source_ids, room_ids, key/power/hazard_conditions, door_state, energy_duration, stand_positions, exit_paths)`
+
+`WorldTimeHazard(region_id, season_state, next24h_forecast_class, day_night_visibility, world_events, valid_effect_source_ids)`
+
+`RagnarokRoute(chest_source_ids, vendor_id, arbitrary_owned_home_site, escrow_placement_receipt, deposit_path, optional_evac_path, elder_requirements=NONE for at least one route)`
+
+Các kiểu dữ liệu trên là **hợp đồng ngữ nghĩa**, không ép ngay tên class/file/schema chính xác; A0/A1/A3/A8 phải kiểm tra API hiện hữu trước khi lập migration. Map không được tự tạo loot reward số lượng để làm bản đồ qua gate.
+
+## VI. THÔNG SỐ: HỌC LAST ISLAND ĐÚNG PHẠM VI, TUNING SOH THEO MỐI QUAN HỆ
+
+### 6.1. Các mốc có bằng chứng và giới hạn chuyển giao
+
+| Nội dung tham chiếu | Dữ kiện từ tài liệu lịch sử | Cách đưa vào SOH |
+| --- | --- | --- |
+| 2019 chế độ thời gian | Last Island/文明重启 giai đoạn 2019 có mode khoảng 15 ngày, mode nhanh 7 ngày và đợt sự kiện cuối khoảng 3 ngày; từng có mô tả huy hiệu rơi khi còn ~76 giờ và mốc an toàn thay đổi ~71 giờ | **SOH riêng [CHỐT] 336h/72h;** chỉ học quan hệ “đầu chiến cuộc chuẩn bị, cuối có mục tiêu mới”, không copy mốc 15d/76h |
+| Bàn nghiên cứu và vật mẫu | Phân biệt vũ khí đã nhặt và công thức; Spares phục vụ R&D; Drawing Table có thể tiêu vật mẫu; các bản cập nhật khác mode/era có nghiên cứu định hướng | Một K4 duy nhất, không trộn 2019 với những tiện ích 2021/2023; chi phí SOH chưa chốt |
+| Phòng thẻ/sân bay 2019 | Nhiều thẻ cấp, bộ phát/điện/công tắc/nhiên liệu/thời hạn; một hướng dẫn ghi nguồn thẻ xanh lam khoảng 3 giờ ở địa điểm nhất định | Học **logic gate→rút lui→quay lại**, không áp “mọi POI hồi 3 giờ” |
+| 2020 nguồn nhiệt | Một bản cập nhật liệt kê comfort/heat cap khoảng 40 ở chế độ riêng | Chỉ làm mốc tham khảo quan hệ nguồn nhiệt và shelter; không copy threshold SOH |
+| 2020 trụ điện | Bản cập nhật mô tả trụ điện từ 1.200W, 20 giây/lượt, tối đa 10 trụ trong mode/build tương ứng | Tham khảo power→ammo/cooldown→defense, không mặc định 10/1200W/20s |
+| 2020 Operation Base | Một base ngoài chiến cuộc, có queue/upkeep/đói offline và cơ sở sản xuất; một số thiết bị giới hạn bốn | Học queue và hàng thật; **LOẠI nhà vĩnh viễn** SOH; không chuyển cap thiết bị do khác mode |
+| 2020 evacuate | Trực thăng vật lý cuối run trong một mode có cửa sổ giờ cụ thể | SOH sơ tán có đường thật và chốt run ngay, **không** lấy thời điểm 3h cuối như bắt buộc |
+| Nguồn thứ cấp nghiên cứu | Bài hướng dẫn không đủ khóa mode ghi 150/300/600 Spares cho ba tầng nghiên cứu | **Tham khảo độ lớn/tỷ lệ chi phí độ tin cậy thấp**, không đưa vào dữ liệu game khi chưa xác minh |
+| Nguồn thứ cấp 2021 về respawn | Một số bảng cộng đồng cho thùng ven đường 4h, POI 12h, vùng quặng 8h, resource thường 15–30 phút | **KHÁC GIAI ĐOẠN**; chỉ cho biết cách phân loại timer. Rương Ragnarok đặc biệt hữu hạn **không được dùng timer này** |
+| Bảng rank Last Island 2020 | Có mode/bảng chiến đấu, thợ mỏ, scavenger, skin và chu kỳ xếp hạng riêng | SOH bảng theo **thành tích một run**, không lấy hàng nghìn cuốc chặt gỗ tạo điểm hay tuần lễ PvP |
+| Bản đồ/POI số lượng từ nghiên cứu về sau | Có ví dụ map/POI/thiết bị 2021–2026 khác giai đoạn gốc | Không suy ra diện tích, POI count hay độ hiếm của bản 2019–2020 từ nguồn về sau |
+
+**Nguồn chứng cứ để mở khi cần:** tài liệu nghiên cứu Last Island gốc (archive), nguồn chính thức gắn theo ấn bản như `https://hero.yingxiong.com/info/2019/0730/6973.html`, `.../2019/0805/7010.html`, `.../2020/0108/8968.html`, `.../2020/0429/9792.html`, `.../2020/0826/10634.html`. Một số nguồn được trích tại phần Technical Appendix; các số từ nguồn cộng đồng/2021 được gắn cảnh báo rõ. **Không bịa bằng chứng gốc cho damage, HP boss, spawn %, mật độ tài nguyên, khoảng km, tầm vũ khí hoặc odds Core.**
+
+### 6.2. Các thông số bắt buộc phải được đo TOGETHER, không đặt rời rạc
+
+| Nhóm thông số | Cần đo và mối liên hệ; tránh giá trị giả |
+| --- | --- |
+| **Sống sót** | HP/đói/khát/hao thể lực/nhu cầu nước; nhiệt/độc/lạnh × đồ bảo hộ × thời tiết × khoảng thời gian rời nhà. Có khả năng nghỉ/chuẩn bị trước các thử thách; chưa chốt rate. |
+| **Tool/weapon** | Damage lên actor, damage lên cây/đá/thùng, yield vật liệu, độ bền hao/mỗi swing, ammo/charges, cast wind-up/đường bắn và chi phí sửa. Phải tính song song để không một công cụ rẻ khai thác/vô hiệu quá nhiều loại. |
+| **Nguồn và loot** | Tốc độ lấy Spares/phút, hữu dụng tài nguyên/expedition, thời gian hồi source tự nhiên/đường/POI theo loại, chance rare Core, nguồn cần đi xa; **tiền Ragnarok finite cuối72 không hồi theo timer thường**. |
+| **Nghiên cứu** | Cost Spares + vật mẫu + trạm + thời gian + nguyên liệu tái chế, tần suất vật mẫu nhặt và tác dụng item sau khi craft. Chỉ áp dụng tỷ lệ tham khảo khi trải nghiệm vẫn có nhiều lựa chọn đáng làm. |
+| **Nhà/công trình** | Chi phí nền/tường/cửa/mái, HP/vật liệu, độ ẩm/nhiệt, sửa chữa, điện/turret, chiều rộng đi xe, khả năng phòng thủ, giá lưu dấu chân và khả năng logout hợp lý. |
+| **Thời gian** | 336h real và 72h cuối là FIXED; in-world day/night/season ratio, dự báo 24h, thời gian lò/vườn nghiên cứu, thời gian lưu dấu, lịch hoạt động quái, event catch-up. |
+| **Vận tải** | Sức chứa slots/trọng lượng xe vs người, tốc độ có tải/không tải, độ dốc đi được, nhiên liệu/sửa, cost quãng đi nguồn→nhà và thời gian quay lại. |
+| **POI** | Điều kiện thẻ/điện/fuel/time, góc đứng mở, thời gian rút lui, PPE, enemy tier, nguồn vật liệu/loot, lựa chọn quay lại và trạng thái đã hoàn thành. |
+| **Ragnarok economy** | Nguồn tiền finite/no boss và deep boss, giá rương, đường tới seller, giá trị phải còn lại sau mua, số chuyến về nhà, rủi ro bảo quản, khả năng shop run2, số lần deposit. |
+| **Score** | Tập sự kiện unique, trọng số Elder so với nonboss và sơ tán, thứ bậc điểm, điều kiện VERIFIED, tỷ lệ fraud; đừng để 11 ngày đầu cày điểm bằng việc thường. |
+
+**Phương trình không thay gameplay bằng một scalar:** `net_trip = sum(usable_items + knowledge/access_gain) − consumables − wear/repair − travel_time_opportunity − loss_risk`; khám phá Core duy nhất có giá trị khác gỗ nhiều, vì vậy không nhét mọi thứ vào tiền. **Base value = freight_saving − patrol/track_exposure − defense/maintenance_spend + selected_environmental_utility**. **First escrow bootstrap:** phải có ít nhất một đường không boss trong đó `available_physical_cash >= chest_purchase_price + optional_positive_initial_deposit`; không được tự giả định mọi run chắc chắn có tiền. **Leader score:** `S_run=Σ(weight(event_type) × unique_legal_event)`, không cho `S_run→currency`. Các công thức là khung đo; từng hệ số phải ra từ nguồn/test, không giả số.
+
+### 6.3. Quy trình lựa thông số ba lần trước khi chốt cứng
+
+**P1 — Phân tích bản gốc:** nếu có số Last Island 2019–2020 đúng mode và nguồn chính thức, ghi giá trị + ngày + nơi áp dụng; nếu nguồn thứ cấp hoặc cập nhật sau 2020, ghi `LOW_CONFIDENCE/POST_2020`. Học quan hệ giữa rate chứ không copy vào SOH.
+
+**P2 — Tạo mô phỏng SOH:** A3/Game cùng Map đưa nguồn, hành động, chi phí và travel time vào một build; chạy blind novice / optimizer / knife-first / home-first / explorer / ranked Elder / no-boss cash route. Không giả lập drop cố định thay RNG rồi tuyên bố cân bằng.
+
+**P3 — Native + quan sát:** hỏi người chơi có tự biết làm gì kế, có cảm giác chuyến đi đáng công, việc chọn nhà khác đáng không, có muốn đăng nhập lại không, Core có khác biệt thật không; so sánh outcomes, chỉnh số. Sau đó mới khóa rate có version, code SHA và chứng cứ.
+
+
 <!-- MORE_GAMEPLAY_BIBLE_MODULES_INSERT_HERE -->
 
 ## PHỤ LỤC KỸ THUẬT A — 24 MỐI NỐI, 20 HÀNH TRÌNH, BÀI KIỂM TRA VÀ DỮ LIỆU THAM CHIẾU
