@@ -1,0 +1,56 @@
+name: ARCANA20 redesign authored event review surfaces
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-candidate-native-review.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  events:
+    strategy:
+      fail-fast: false
+      matrix:
+        lighting: [normal, dimmed]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcana20-current-phase-sweep-1-${{ matrix.lighting }}
+          run-id: 41272170686
+          github-token: ${{ github.token }}
+          path: captures/1
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcana20-current-phase-sweep-6-${{ matrix.lighting }}
+          run-id: 41272170686
+          github-token: ${{ github.token }}
+          path: captures/6
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcana20-current-phase-sweep-11-${{ matrix.lighting }}
+          run-id: 41272170686
+          github-token: ${{ github.token }}
+          path: captures/11
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcana20-current-phase-sweep-16-${{ matrix.lighting }}
+          run-id: 41272170686
+          github-token: ${{ github.token }}
+          path: captures/16
+      - run: python3 -m pip install --quiet pillow
+      - name: Ashen Guillotine authored cut
+        run: python3 prototypes/arcana_fusion20/renderer/arcana20_candidate_review_surface.py captures 4 guillotine_impact
+      - name: Riptide Calligraphy authored release
+        run: python3 prototypes/arcana_fusion20/renderer/arcana20_candidate_review_surface.py captures 6 wave_release_impact
+      - name: Skybreaker Script authored impact
+        run: python3 prototypes/arcana_fusion20/renderer/arcana20_candidate_review_surface.py captures 12 skybreaker_impact
+      - name: Rootwake authored snap
+        run: python3 prototypes/arcana_fusion20/renderer/arcana20_candidate_review_surface.py captures 13 thorn_snap_impact
+      - name: Spore Nebula authored sporulation
+        run: python3 prototypes/arcana_fusion20/renderer/arcana20_candidate_review_surface.py captures 14 sporulation_impact
+      - name: Chronoshard authored convergence
+        run: python3 prototypes/arcana_fusion20/renderer/arcana20_candidate_review_surface.py captures 18 synchronized_impact
