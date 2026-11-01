@@ -85,11 +85,18 @@ func _draw() -> void:
                 var tangent := path[mini(n + 1, 8)] - path[maxi(n - 1, 0)]
                 var normal := Vector2(-tangent.y, tangent.x).normalized()
                 var u := float(n) / 8.0
-                var width := (2.0 + (6.0 + b) * sin(PI * u)) * life
+                var width := (2.5 + (10.0 + 2.0 * b) * sin(PI * u)) * life
                 left.append(path[n] + normal * width)
                 right.push_front(path[n] - normal * width)
             var surface := PackedVector2Array(left + right)
-            draw_colored_polygon(surface, _ink(BLUE if band == 0 else WATER, life * (0.95 - b * 0.1)))
+            draw_colored_polygon(surface, _ink(BLUE, life * (1.0 - b * 0.08)))
+            # Broken bright edges follow the curved sheets, so the eruption
+            # reads as foam and flowing water rather than faint straight bars.
+            for n in range(1, 9):
+                if (n + band) % 4 != 0:
+                    draw_line(left[n - 1], left[n], _ink(FOAM, life * 0.92), 2.5, false)
+                if (n + band) % 3 != 0:
+                    draw_line(right[8 - n], right[9 - n], _ink(CREST, life * 0.86), 1.5, false)
             # Lighter inner water facets make the fan read as moving liquid,
             # while separated white squares define the splashing crest.
             for n in range(1, 8):
