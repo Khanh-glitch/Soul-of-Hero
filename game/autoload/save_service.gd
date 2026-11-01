@@ -32,7 +32,7 @@ const PRODUCTION_SOURCE_CUSTODY := preload("res://game/survival/economy/a3_econo
 # explicitly review/re-pin future adapter revisions; a caller label is never
 # evidence of authority.
 const PINNED_A3_SCRIPT_SHA256 := "98932d25b73a03b9412f0f72f82dc5c2b6451e3ba894a134fdff2d1924252ee0"
-const PINNED_A3_CUSTODY_SHA256 := "f0695cdd05c23490a42fa92cc6fb6de9d87a3ce293e8563cc7d85fccde09e8b"
+const PINNED_A3_CUSTODY_SHA256 := "f0695cdd05c23490a42fa92cc6fb6de9d87a3ce2933e8563cc7d85fccde09e8b"
 # The independently pinned 86dc2195 regression adapter remains supported.
 const PINNED_A3_FIXTURE_SHA256 := "b1ee9792b4460e956ec6c59437269078e4f6767f76d35145e680dcc03ba3806c"
 const PINNED_A0_ADAPTER_SHA256 := "2b539f3320828c2fa850b6057c735e032153d5a1e8fa1b8ade63d2e3380ed2ce"
@@ -1381,11 +1381,6 @@ func _is_pinned_source_custody(custody: RefCounted) -> bool:
 	# Source runs may materialize separate Script resource handles; require BOTH
 	# the canonical res:// path and independently pinned exact source bytes.
 	# Tokenized exports retain only the exact preloaded resource identity gate.
-	print("GPB_SOURCE_GATE source_len=%d path_ok=%s hash_ok=%s same_resource=%s" % [
-		source.length(),
-		str(String(script.resource_path) == "res://game/survival/economy/a3_economy_service.gd"),
-		str(source.sha256_text() == PINNED_A3_CUSTODY_SHA256),
-		str(script == PRODUCTION_SOURCE_CUSTODY)])
 	if source.is_empty():
 		return script == PRODUCTION_SOURCE_CUSTODY
 	return String(script.resource_path) == "res://game/survival/economy/a3_economy_service.gd" \
