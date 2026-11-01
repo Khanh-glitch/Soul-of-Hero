@@ -1,3 +1,5 @@
+> **STATUS UPDATE (2026-11-01): HISTORICAL V2.1, SUPERSEDED FOR PAPER GEOGRAPHY/DISTRIBUTION BY V2.2.** Creator veto: V2.1 POIs/roads too centralized and far regions lacking meaningful ecology. Source-grounded review and new actual draft in `docs/survival/research/SOH_WORLD_MASTERPLAN_V22_DISTRIBUTION_REVIEW_20261101.md` (commit `c81ebfd73ba75e212650eee4f54b524aff9f2b7a`). V2.1's river/bridge negative findings remain historical evidence; do not dispatch V2.1 source as final G2 reference. V2.2 is still NOT native/art accepted or authoritatively merged.
+
 # SOH World Masterplan V2.1 — Physical Geography and Access Correction
 
 **2026-11-01. Authoritative status: DRAFT PAPER RESEARCH, CREATOR VISUAL REVIEW NOT YET GIVEN.** The physical map must not be mounted in production or used as art direction without explicit user acceptance. Current SOH canonical authority: `CURRENT_PRODUCT_CONTRACT.md`, `DECISIONS.md` D051/D052/D055–D074 and historical Last Island source research. Old A1 geography code/CI remains pinned technical baseline, its dimensions are not a new V2 design constraint.
