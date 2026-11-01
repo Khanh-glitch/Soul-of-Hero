@@ -38,6 +38,10 @@ func _run() -> void:
 		String(custody_script.resource_path),
 		str(custody_script == Custody),
 		String(custody_script.source_code).sha256_text()])
+	print("GPB_PORT_DIAG prior_adapter=%s canonical_pin=%s custody_pin=%s" % [
+		str(save.get("_economy_adapter") == adapter),
+		str(save.call(&"_is_pinned_economy_adapter", adapter)),
+		str(save.call(&"_is_pinned_source_custody", custody))])
 	var custody_port: Node = save.call(&"create_pinned_source_custody_port", custody)
 	if not _check(custody_port != null, "PINNED_CUSTODY_CAPABILITY_PORT"): return
 	if not _check(bool(custody.configure(custody_port, adapter)), "A3_SOURCE_CUSTODY_CONFIGURATION"): return
