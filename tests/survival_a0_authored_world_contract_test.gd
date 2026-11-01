@@ -19,6 +19,7 @@ extends SceneTree
 
 const CONTRACT = preload("res://game/survival/a0_world_spatial_contract.gd")
 const AUTHORED = preload("res://game/survival/a1_authored_source.gd")
+const GPB_INPUT_BOOTSTRAP = preload("res://game/autoload/input_bootstrap.gd")
 
 var checks := 0
 var failures: Array[String] = []
@@ -31,6 +32,11 @@ func _initialize() -> void:
 	for arg: String in OS.get_cmdline_user_args():
 		if arg == "--require-authored":
 			require_authored = true
+	# SceneTree script tests do not necessarily enter project autoloads before _initialize.
+	# Mirror the real InputBootstrap before A1 checks the actual movement actions.
+	var input_boot := GPB_INPUT_BOOTSTRAP.new()
+	input_boot.call(&"_install_actions")
+	input_boot.free()
 	print("A0 AUTHORED WORLD CONTRACT (require_authored=%s)" % str(require_authored))
 	var authored := AUTHORED.new()
 	var ready := authored.configure()
