@@ -62,6 +62,17 @@ bearing tests assert target anchoring and world-up axes. Normal/dim #03 natural
 captures were added to the existing workflow. These are changes awaiting their
 own same-SHA native and visual results; do not mark #03 complete.
 
+## Batch S / #07 Mirrorfrost Basilica — world-up mount correction
+
+C's original `tide.ts` and `c_mirrorfrost_basilica.gd` use the fixed target
+centre Q=(244,112), raised spire height on screen Y and gravity-driven falling
+shards. The generic caster-direction mount rotated these into horizontal or
+upward gravity. The actual #07 renderer now requests the existing target-pinned
+upright C transform, with the original Q, algorithms, seeds and actor metadata
+unchanged. Four-bearing tests go through the actual Arcana20Renderer; normal
+and dim natural captures are added to the reused creator workflow. This is a
+partial mount fix, not proof of source/world/post fidelity or body effects.
+
 ## Resume
 
 1. `git status --short; git rev-parse HEAD; gh run list --branch arena/c7b0c4e8-soul-of-hero --limit 20`.

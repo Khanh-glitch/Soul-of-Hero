@@ -269,6 +269,9 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
         var cp := CSourcePlayer.new()
         cp.experimental_separate_passes = experimental_c_separate_passes
         cp.world_pass_mode = world_pass_mode
+        # C07 is target-centred architecture with screen-up shard gravity, not
+        # a directional projectile. Keep spires and falling shards upright.
+        cp.target_upright = id == 7
         cp.source_pass_ready.connect(func(frame: Arcana20SourcePassFrame) -> void: source_pass_ready.emit(canonical_id, frame))
         cp.screen_post.connect(func(state: Dictionary) -> void: screen_post.emit(canonical_id, state))
         add_child(cp)

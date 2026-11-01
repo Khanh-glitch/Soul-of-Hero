@@ -96,6 +96,24 @@ func _run() -> void:
         check(meteor_frame.caster_world == meteor_origin and meteor_frame.target_world == destination, "B03 actual actor metadata retained")
         meteor_mount.stop()
     meteor_mount.free()
+    # C07's authored spire height and falling shard z share the screen-up
+    # axis. Verify the real renderer mount, not just a manually set flag.
+    var ice_host := Arcana20Renderer.new()
+    ice_host.world_pass_mode = true
+    root.add_child(ice_host)
+    var ice_id := Arcana20SourceCatalog.canonical_id(7)
+    for delta in [Vector2(140, 0), Vector2(-140, 0), Vector2(0, 140), Vector2(0, -140)]:
+        var ice_destination: Vector2 = meteor_origin + delta
+        check(ice_host.cast_skill(ice_id, meteor_origin, ice_destination), "C07 real host cast %s" % delta)
+        var ice_player := ice_host._casts[ice_id] as CSourcePlayer
+        ice_player.set_process(false)
+        var ice_frame := ice_player.source_pass_frame()
+        var ice_basis := ice_frame.source_to_world
+        check((ice_basis * CMirrorfrostBasilica.Q).distance_to(ice_destination) < 0.001, "C07 authored centre stays at target %s" % delta)
+        check(ice_basis.x.x > 0.0 and absf(ice_basis.x.y) < 0.0001 and ice_basis.y.y > 0.0 and absf(ice_basis.y.x) < 0.0001, "C07 spires and shard gravity remain upright %s" % delta)
+        check(ice_frame.caster_world == meteor_origin and ice_frame.target_world == ice_destination, "C07 actor metadata retained")
+        ice_host.cancel_skill(ice_id)
+    ice_host.free()
     # Two children of the same source family must retire the shared family
     # only after the final active child; parent cancellation emits no redundant
     # layer-finished event. Exercise actual source nodes, including legacy sprite

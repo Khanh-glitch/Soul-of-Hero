@@ -164,6 +164,8 @@ jobs:
           - {skill: 2, lighting: dimmed, variant: B02, lock: '0'}
           - {skill: 3, lighting: normal, variant: B03, lock: '0'}
           - {skill: 3, lighting: dimmed, variant: B03, lock: '0'}
+          - {skill: 7, lighting: normal, variant: C07, lock: '0'}
+          - {skill: 7, lighting: dimmed, variant: C07, lock: '0'}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -273,6 +275,19 @@ jobs:
       - name: Meteor cooling and aftermath
         if: matrix.skill == 3
         run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.88 meteor_aftermath
+      # #07: crystalline growth, spires, fracture and falling shards.
+      - name: Basilica emergence
+        if: matrix.skill == 7
+        run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.20 basilica_emerge
+      - name: Basilica spires
+        if: matrix.skill == 7
+        run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.43 basilica_spires
+      - name: Basilica fracture
+        if: matrix.skill == 7
+        run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.72 basilica_fracture
+      - name: Basilica falling-shard aftermath
+        if: matrix.skill == 7
+        run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.87 basilica_aftermath
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -376,6 +391,10 @@ jobs:
         run: |
           cp prototypes/arcana_fusion20/renderer/playtest/HUONG_DAN_THU_NGHIEM.txt deliverable/HUONG_DAN.txt
           printf 'AVFX code SHA: %s\nExperimental visual-only preview; not GOLD or PLAYTEST_READY.\n' "$GITHUB_SHA" > deliverable/CODE_SHA.txt
+          mkdir -p deliverable/source-comparisons/reference-02-03-07
+          cp prototypes/arcana_fusion20/renderer/source_b/reference/{wyrm,meteor}_* deliverable/source-comparisons/reference-02-03-07/
+          cp prototypes/arcana_fusion20/renderer/source_c/reference/basilica_* deliverable/source-comparisons/reference-02-03-07/
+          printf '%s\n' 'Source-reference frames only; see real-world-evidence for actual SOH captures. They are not proof of complete world/post or body-effect parity.' > deliverable/source-comparisons/reference-02-03-07/README.txt
       - uses: actions/upload-artifact@v4
         with:
           name: ARCANA20_CREATOR_VISUAL_REVIEW_PARTIAL
