@@ -75,8 +75,13 @@ records this. Genuine moving hit/miss/confirmed receipts remain owner-provided.
   [41278110658](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41278110658)
   were inspected: the snap is directionally readable but still spindly and
   wire-like at gameplay scale, not an acceptance. #14 `3260f2d` schedules
-  colony births at incoming hyphal arrivals and propagation before sporulation;
-  #18 `863301b` synchronizes reverse shard arrivals and adapts B's dark-backed
+  colony births at incoming hyphal arrivals and propagation before sporulation.
+  Actual-world normal/dim event previews
+  [41278308406](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41278308406)
+  at `3260f2d` show thin links and barely discernible colonies, especially in
+  normal light; a later candidate enlarges the covered cap and stem, adds cap
+  gills and widens the existing hyphae without adding detached particles. Its
+  current world visuals and performance need independent review. #18 `863301b` synchronizes reverse shard arrivals and adapts B's dark-backed
   crystal frame, but B's clipped miniature attack is still missing. Lifecycles
   at `e31d9d7`, `3260f2d`, and `863301b` passed
   [41277430405](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41277430405),

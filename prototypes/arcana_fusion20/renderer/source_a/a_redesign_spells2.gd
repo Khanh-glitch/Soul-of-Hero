@@ -154,7 +154,7 @@ class SporeNebulaR:
                 p.y += sin(s * PI) * 5.0 + (AMath.hash2(float(k), float(i)) - 0.5) * 3.0
                 pts.append(p)
             ADraw.ribbon(fb, pts,
-                func(s: float, _i: int) -> float: return 1.0,
+                func(s: float, _i: int) -> float: return 2.0,
                 func(s: float, _i: int, edge: float) -> Variant:
                     var h := (1.0 - edge) * fade
                     if h < 0.05:
@@ -178,7 +178,9 @@ class SporeNebulaR:
             var pul := 1.0 + 0.18 * sin(t * 2.4 + float(i) * 1.7)
             # A small anchored fungal cap and stem, not an anonymous point
             # light: covered dark material supports the bioluminescent rim.
-            var size := (4.0 + g * 6.0) * pul
+            # Keep the cap and its stem legible at the actual world scale;
+            # growth still originates at the authored arrival, not a light.
+            var size := (6.0 + g * 10.0) * pul
             var cap_y := c.y - size * 0.35
             ADraw.poly_fill(fb, [c + Vector2(-size * 0.14, 1.0), c + Vector2(size * 0.14, 1.0),
                 Vector2(c.x + size * 0.18, cap_y), Vector2(c.x - size * 0.18, cap_y)],
@@ -186,7 +188,14 @@ class SporeNebulaR:
             ADraw.poly_fill(fb, [Vector2(c.x - size, cap_y), Vector2(c.x - size * 0.6, cap_y - size * 0.45),
                 Vector2(c.x, cap_y - size * 0.65), Vector2(c.x + size * 0.6, cap_y - size * 0.45), Vector2(c.x + size, cap_y)],
                 func(_x: int, _y: int) -> Variant: return Vector3(0.045, 0.14, 0.11), true, g * fade)
-            ADraw.streak(fb, c.x - size, cap_y, c.x + size, cap_y, 0.9, 0.6, AMath.R("bio", 0.75), g * fade * 0.8)
+            ADraw.streak(fb, c.x - size, cap_y, c.x + size, cap_y, 1.4, 1.0, AMath.R("bio", 0.75), g * fade * 0.8)
+            # Short radial gills describe the cap rather than adding a
+            # second detached particle or a screen-space halo.
+            for gill_value in [-0.5, 0.0, 0.5]:
+                var gill: float = gill_value
+                ADraw.streak(fb, c.x + size * gill * 0.45, cap_y - size * 0.34,
+                    c.x + size * gill, cap_y - size * 0.04, 0.8, 0.5,
+                    AMath.R("bio", 0.6), g * fade * 0.65)
             ADraw.glow(fb, c.x, cap_y, 10.0 * g, AMath.R("bio", 0.7), 0.45 * g * fade)
         if t > 5.4 and t < 6.2:
             ADraw.pulse_ring(fb, C.x, C.y, 8.0 + AMath.seg(t, 5.4, 6.2) * 110.0, 2.8, AMath.R("bio", 0.75), 0.55 * (1.0 - AMath.seg(t, 5.4, 6.2)), 1.4)
