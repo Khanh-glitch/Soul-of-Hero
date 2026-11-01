@@ -1,0 +1,33 @@
+name: ARCANA20 Spore Nebula event review
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-spore-review.yml']
+permissions:
+  actions: read
+  contents: read
+jobs:
+  surface:
+    strategy:
+      fail-fast: false
+      matrix:
+        lighting: [normal, dimmed]
+        beat: [colony, sporulation]
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcana20-current-phase-sweep-11-${{ matrix.lighting }}
+          run-id: 41277497113
+          github-token: ${{ github.token }}
+          path: phases
+      - run: python3 -m pip install --quiet pillow
+      - name: Surface actual frozen-world event preview
+        env:
+          BEAT: ${{ matrix.beat }}
+        run: |
+          if [ "$BEAT" = colony ]; then LABEL=phase_14_candidate_A_colony_contact_03_tick216; else LABEL=phase_14_candidate_A_sporulation_impact_06_tick324; fi
+          python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py phases "$LABEL"

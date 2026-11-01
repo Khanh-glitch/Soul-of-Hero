@@ -32,8 +32,9 @@ records this. Genuine moving hit/miss/confirmed receipts remain owner-provided.
   Motion is test-driven, not AI or combat. A full 444-tick, 1280×720
   normal/dim source-before `13df6c9` vs candidate `e9ad8f0` motion package
   [41277330808](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41277330808)
-  is in progress; candidate jobs succeeded, baseline jobs still running at
-  this writing. Camera and real actors are scripted; C10 still uses cast-time
+  completed successfully in all four jobs, with FFV1 and MP4. The native
+  frames have not all been individually human-reviewed. Camera and real actors
+  are scripted; C10 still uses cast-time
   anchors. It does not demonstrate natural target tracking or gameplay.
 - **#04:** candidate `bf8181f` uses a single asymmetric dark-metal blade,
   anticipation, accelerated contact at 3.4s, recoil and a connected five-section
@@ -53,20 +54,45 @@ records this. Genuine moving hit/miss/confirmed receipts remain owner-provided.
   absent; it is not a green run. [41277174411](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41277174411)
   encoded three archives and [41277407337](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41277407337)
   recovered the last dim candidate. These do not replace human frame review.
-- **#13:** `ac68fa8` maps branched root organisms to target-side anchors and
-  aligns each visible tip's arrival with its own visual contact. Event previews
-  [41277240518](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41277240518)
-  show coherent direction but sparse/thin silhouettes. `e31d9d7` then adds
-  thicker woody cores and target-directed barbs; current visuals/motion have
-  not yet been inspected. #12 `3a7d0c0` uses the actual C #09 bolt-tree
-  generator through A raster, and aligns visual cues with the strike endpoints;
-  complete C raster/fusion and motion remain unverified. #14 `3260f2d` schedules
-  births at incoming hyphal arrivals and signal propagation before sporulation;
-  #18 `863301b` synchronizes five reverse releases at the impact and adapts B's
-  six-sided, dark-backed crystal frame geometry. Neither is complete source
-  parity: #18's B clipped miniature attack remains missing. Current #12/#13/
-  #14/#18 runtime and normal/dim visual reviews remain pending. #06, #09 and
-  #11 remain open; no changes claim creator acceptance.
+  The later `ce4be6f` candidate widens true covered dark fissures and edge
+  geometry and enlarges debris after the earlier rupture was nearly invisible.
+  Normal/dim candidate test [41277785869](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41277785869)
+  passed, and [41278103330](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41278103330)
+  surfaced two full-viewport rupture beats per light. Selected tick-295 previews
+  show the diagonal dark wound more clearly in normal light, but it remains
+  thin/dark and difficult to separate from terrain in dim light; this is not a
+  premium-quality or full-motion verdict. One initially extracted tick-295
+  JPEG was incomplete due to annotation limits and was discarded, not reviewed.
+  The newer full-motion run [41277778594](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41277778594)
+  is separate from the completed `e7cc3fc` package and remains outstanding.
+- **#06/#12/#13/#14/#18:** `1a715e2` adapts the selected A water ribbon
+  inertia/width/flow/foam to the new #06 glyph; it does not implement full A/C
+  source parity. #12 `3a7d0c0` uses the actual C #09 bolt-tree generator through
+  A raster, with endpoint-aligned visual cues; complete C raster/fusion remains
+  unverified. #13 `ac68fa8` maps branched root organisms to target-side anchors
+  and aligns tip arrivals with contacts; `e31d9d7` thickens woody cores and adds
+  barbs. The normal/dim full-world first-tip/snap previews at that revision
+  [41278110658](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41278110658)
+  were inspected: the snap is directionally readable but still spindly and
+  wire-like at gameplay scale, not an acceptance. #14 `3260f2d` schedules
+  colony births at incoming hyphal arrivals and propagation before sporulation;
+  #18 `863301b` synchronizes reverse shard arrivals and adapts B's dark-backed
+  crystal frame, but B's clipped miniature attack is still missing. Lifecycles
+  at `e31d9d7`, `3260f2d`, and `863301b` passed
+  [41277430405](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41277430405),
+  [41277497139](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41277497139), and
+  [41277565813](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41277565813).
+  The #12 revision passed import and lifecycle in
+  [41277610544](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41277610544),
+  and its all-20 visual capture completed successfully; those images have not
+  all been reviewed. `849ca8c` actual-source
+  runtime smoke [41277852723](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41277852723)
+  passed #06/#12/#13/#14/#18 at two source times each. The full current-source
+  lifecycle [41277778580](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41277778580)
+  also completed; neither is source parity,
+  full motion, performance, or visual proof. Current normal/dim motion review
+  of #06/#12/#14/#18 remains open, as do #09/#11 selected-source fidelity,
+  real actor/terrain depth and creator acceptance.
 - **#19:** opt-in, separate-input prototype at `740c571` implements the D
   bright/blur pyramid structure and experimental COMP, not a production seam.
   Synthetic steady-state [41276740857](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41276740857)
