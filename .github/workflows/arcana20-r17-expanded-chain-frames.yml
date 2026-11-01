@@ -31,11 +31,12 @@ jobs:
           from PIL import Image,ImageChops
           p=pathlib.Path('capture');t=json.loads((p/'timeline.json').read_text());frames=[f for f in t['frames'] if 'controlled_files' in f]
           if not frames: raise SystemExit('no controlled frames')
-          rows=[]
-          for tick in (87,183,247,327):
-              frame=min(frames,key=lambda f:abs(f['controlled_tick']-tick));a,b,c=[Image.open(p/name).convert('RGB') for name in frame['controlled_files']]
-              drift=ImageChops.difference(a,c); change=ImageChops.difference(a,b)
-              rows.append({'tick':frame['controlled_tick'],'drift_bbox':drift.getbbox(),'drift_extrema':drift.getextrema(),'change_bbox':change.getbbox(),'change_extrema':change.getextrema()})
+          mismatches=[]
+          for frame in frames:
+              a,b,c=[Image.open(p/name).convert('RGB') for name in frame['controlled_files']]
+              drift=ImageChops.difference(a,c)
+              if drift.getbbox(): mismatches.append({'tick':frame['controlled_tick'],'bbox':drift.getbbox(),'extrema':drift.getextrema()})
+          rows={'frames':len(frames),'mismatch_count':len(mismatches),'mismatch_examples':mismatches[:4]}
           print('::notice title=R18_DRIFT::'+json.dumps(rows,separators=(',',':')))
           PY2
       - name: Midpoint baseline
