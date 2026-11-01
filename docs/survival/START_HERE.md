@@ -1,3 +1,9 @@
+# 01/11/2026 — Current reading route
+
+**Gameplay/Map/VFX single source:** [CURRENT_PRODUCT_CONTRACT.md](CURRENT_PRODUCT_CONTRACT.md). The dated content below is an archived historical snapshot in place for old links; do not treat it as a current second design contract. Source/review lookup: [_archive/READING_GUIDE.md](_archive/READING_GUIDE.md). Runtime status: CONTROL_TOWER_CURRENT.md and owner PR/CI.
+
+---
+
 # SOH Survival RPG — canonical context
 
 **CURRENT AUTHORITY:** `CURRENT_PRODUCT_CONTRACT.md` + D062–D074 of `DECISIONS.md`; the 2026-10-29 descriptions below were historical snapshots and are not executable where superseded.
