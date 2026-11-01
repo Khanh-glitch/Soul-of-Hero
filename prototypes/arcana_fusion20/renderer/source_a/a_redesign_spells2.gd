@@ -505,6 +505,23 @@ class ChronoshardR:
             ADraw.glow(fb, cur.x, cur.y, sz * 1.4, AMath.R("frost", 0.75), captured * resolve * 0.35)
             if captured > 0.0 and rel < 1.0:
                 ADraw.streak(fb, cur.x, cur.y, C.x, C.y, 0.7, 0.3, AMath.R("frost", 0.6), captured * 0.4 * resolve)
+            if rel > 0.0 and rel < 1.0:
+                # Release the retained projectile as a small physical mark
+                # travelling ahead of its own crystal toward the shared
+                # arrival. This is a visual-only continuation of B's attack,
+                # not a CT/R4 hit, actor snapshot, or large cover-up glow.
+                var head := cur.lerp(C, AMath.ease_out(rel, 2.0))
+                var prev_rel := maxf(0.0, rel - 0.16)
+                var previous_crystal := pos.lerp(C, AMath.ease_in(prev_rel, 2.0))
+                var tail := previous_crystal.lerp(C, AMath.ease_out(prev_rel, 2.0))
+                var k := captured * resolve * (1.0 - AMath.seg(rel, 0.84, 1.0))
+                ADraw.streak(fb, tail.x, tail.y, head.x, head.y, 1.4, 0.7, Vector3(1.8, 1.3, 0.5), k * 0.8)
+                var star: Array = []
+                for q in range(4):
+                    var a := float(STORED_TAU[i]) * 20.0 + float(q) * PI * 0.5
+                    var radius := 3.0 if q % 2 else 6.0
+                    star.append(head + Vector2(cos(a), sin(a)) * radius)
+                ADraw.poly_fill_solid(fb, star, Vector3(1.4, 1.4, 2.0), false, k)
         var it := t - 6.2
         if it >= 0.0 and it < 0.7:
             ADraw.disc(fb, C.x, C.y, 5.0 * (1.0 - it / 0.7), AMath.R("frost", 1.0), 1.0 - it / 0.7)
