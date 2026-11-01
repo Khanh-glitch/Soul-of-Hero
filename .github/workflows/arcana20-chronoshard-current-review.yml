@@ -13,6 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         lighting: [normal, dimmed]
+        direction: [A, B]
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -38,6 +39,7 @@ jobs:
       - name: Capture candidate authored event beats on actual frozen overworld
         env:
           ARCANA20_PHASE_LIGHT: ${{ matrix.lighting }}
+          ARCANA20_ART18: ${{ matrix.direction }}
           ARCANA20_PHASE_FIRST: '18'
           ARCANA20_PHASE_LAST: '18'
         run: |
@@ -56,7 +58,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: arcana20-chronoshard-current-${{ matrix.lighting }}
+          name: arcana20-chronoshard-current-${{ matrix.lighting }}-${{ matrix.direction }}
           path: |
             ${{ runner.temp }}/arcana20-chronoshard/arcana20_join_manifest.json
             ${{ runner.temp }}/arcana20-chronoshard/artifacts/

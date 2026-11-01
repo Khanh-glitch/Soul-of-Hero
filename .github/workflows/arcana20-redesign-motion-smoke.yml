@@ -32,6 +32,12 @@ jobs:
           timeout 240s godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/redesign_motion_smoke.gd 2>&1 | tee result.log
           grep -Fq REDESIGN_SMOKE_PASS result.log
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:|REDESIGN_SMOKE_FAIL' result.log
+      - name: Exercise alternate art directions
+        run: |
+          set -o pipefail
+          timeout 240s env ARCANA20_ART14=B ARCANA20_ART18=B godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/redesign_motion_smoke.gd 2>&1 | tee result-alternate.log
+          grep -Fq REDESIGN_SMOKE_PASS result-alternate.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|REDESIGN_SMOKE_FAIL' result-alternate.log
       - name: Surface runtime results
         if: always()
         run: grep -E 'REDESIGN_SMOKE|SCRIPT ERROR|Parse Error' result.log | sed 's/^/::notice title=REDESIGN_SMOKE::/' || true
@@ -42,3 +48,4 @@ jobs:
           path: |
             import.log
             result.log
+            result-alternate.log

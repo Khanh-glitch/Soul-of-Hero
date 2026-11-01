@@ -116,7 +116,9 @@ class SporeNebulaR:
     var _births := [0.8, 2.2, 3.0, 3.6, 4.2, 2.9]
     var _link_times := [[1.2, 2.2], [2.2, 2.9], [2.9, 3.6], [3.6, 4.2], [2.2, 3.0], [3.0, 4.2], [2.9, 3.4]]
     var _ps: ADraw.APool
+    var art_direction := "A"
     func setup() -> void:
+        art_direction = "B" if OS.get_environment("ARCANA20_ART14") == "B" else "A"
         var rng := AMath.ARng.new(14141)
         _ps = ADraw.APool.new()
         _colonies = [CASTER + Vector2(16, -6), Vector2(176, 96), Vector2(232, 142), Vector2(292, 92), Vector2(330, 146), Vector2(206, 66)]
@@ -135,6 +137,24 @@ class SporeNebulaR:
                 var c: Vector2 = _colonies[rng.intf(0, _colonies.size() - 1)]
                 _ps.spawn({"x": c.x, "y": c.y, "vx": rng.rangef(-16, 22), "vy": rng.rangef(-30, -8), "life": rng.rangef(1.0, 2.2), "size": rng.rangef(0.7, 1.6), "k": 0.9, "seed": rng.next() * 80.0})
         _ps.step(dt, 0.0)
+    func _draw_cap(fb: AFramebuffer, origin: Vector2, width: float, height: float, opacity: float) -> void:
+        var neck := origin + Vector2(0, -height * 0.65)
+        ADraw.poly_fill(fb, [origin + Vector2(-width * 0.22, 0), origin + Vector2(width * 0.22, 0),
+            neck + Vector2(width * 0.18, 0), neck + Vector2(-width * 0.18, 0)],
+            func(_x: int, _y: int) -> Variant: return Vector3(0.14, 0.23, 0.12), true, opacity)
+        var cap := neck + Vector2(0, -height * 0.20)
+        ADraw.poly_fill(fb, [cap + Vector2(-width, 0), cap + Vector2(-width * 0.72, -height * 0.25),
+            cap + Vector2(-width * 0.25, -height * 0.38), cap + Vector2(width * 0.38, -height * 0.34),
+            cap + Vector2(width * 0.83, -height * 0.18), cap + Vector2(width, 0),
+            cap + Vector2(width * 0.45, height * 0.10), cap + Vector2(-width * 0.48, height * 0.10)],
+            func(_x: int, _y: int) -> Variant: return Vector3(0.055, 0.20, 0.10), true, opacity)
+        ADraw.streak(fb, cap.x - width, cap.y, cap.x + width, cap.y, 1.6, 1.0,
+            AMath.R("bio", 0.8), opacity)
+        for side in [-1.0, 0.0, 1.0]:
+            var offset := float(side)
+            ADraw.streak(fb, cap.x + offset * width * 0.12, cap.y - height * 0.24,
+                cap.x + offset * width * 0.7, cap.y, 0.9, 0.55, AMath.R("bio", 0.7), opacity * 0.8)
+
     func render(fb: AFramebuffer, t: float) -> void:
         var fade := 1.0 - AMath.seg(t, 7.6, 8.6)
         # hyphal links grow colony-to-colony (causal propagation)
@@ -175,28 +195,44 @@ class SporeNebulaR:
             if g <= 0.0:
                 continue
             var c: Vector2 = _colonies[i]
-            var pul := 1.0 + 0.18 * sin(t * 2.4 + float(i) * 1.7)
-            # A small anchored fungal cap and stem, not an anonymous point
-            # light: covered dark material supports the bioluminescent rim.
-            # Keep the cap and its stem legible at the actual world scale;
-            # growth still originates at the authored arrival, not a light.
-            var size := (6.0 + g * 10.0) * pul
-            var cap_y := c.y - size * 0.35
-            ADraw.poly_fill(fb, [c + Vector2(-size * 0.14, 1.0), c + Vector2(size * 0.14, 1.0),
-                Vector2(c.x + size * 0.18, cap_y), Vector2(c.x - size * 0.18, cap_y)],
-                func(_x: int, _y: int) -> Variant: return Vector3(0.06, 0.16, 0.10), true, g * fade)
-            ADraw.poly_fill(fb, [Vector2(c.x - size, cap_y), Vector2(c.x - size * 0.6, cap_y - size * 0.45),
-                Vector2(c.x, cap_y - size * 0.65), Vector2(c.x + size * 0.6, cap_y - size * 0.45), Vector2(c.x + size, cap_y)],
-                func(_x: int, _y: int) -> Variant: return Vector3(0.045, 0.14, 0.11), true, g * fade)
-            ADraw.streak(fb, c.x - size, cap_y, c.x + size, cap_y, 1.4, 1.0, AMath.R("bio", 0.75), g * fade * 0.8)
-            # Short radial gills describe the cap rather than adding a
-            # second detached particle or a screen-space halo.
-            for gill_value in [-0.5, 0.0, 0.5]:
-                var gill: float = gill_value
-                ADraw.streak(fb, c.x + size * gill * 0.45, cap_y - size * 0.34,
-                    c.x + size * gill, cap_y - size * 0.04, 0.8, 0.5,
-                    AMath.R("bio", 0.6), g * fade * 0.65)
-            ADraw.glow(fb, c.x, cap_y, 10.0 * g, AMath.R("bio", 0.7), 0.45 * g * fade)
+            var pul := 1.0 + 0.08 * sin(t * 2.4 + float(i) * 1.7)
+            # Two deliberately different art directions share the same causal
+            # colony schedule: clustered shelf fungi vs. a single tall cup.
+            # Covered bodies affect the actual world, not a copied floor.
+            var k := g * fade
+            var spread := AMath.ease_out(g, 2.0)
+            var foot := 24.0 * spread
+            ADraw.poly_fill(fb, [c + Vector2(-foot, 0), c + Vector2(-foot * 0.6, -foot * 0.3),
+                c + Vector2(0, -foot * 0.43), c + Vector2(foot * 0.7, -foot * 0.22),
+                c + Vector2(foot, 0), c + Vector2(foot * 0.35, foot * 0.3),
+                c + Vector2(-foot * 0.5, foot * 0.25)],
+                func(_x: int, _y: int) -> Variant: return Vector3(0.026, 0.095, 0.055), true, k * 0.84)
+            if art_direction == "A":
+                # Three connected overlapping tiers make a branching fungal
+                # mass instead of isolated green dots.
+                _draw_cap(fb, c + Vector2(-12, -4) * spread, 14.0 * spread * pul, 15.0 * spread, k)
+                _draw_cap(fb, c + Vector2(11, -3) * spread, 12.0 * spread * pul, 12.0 * spread, k)
+                _draw_cap(fb, c + Vector2(0, -11) * spread, 17.0 * spread * pul, 19.0 * spread, k)
+            else:
+                # Alternate: one upright, hollow-looking fruiting body with
+                # a scalloped mouth; not simply a palette variation.
+                _draw_cap(fb, c, 23.0 * spread * pul, 31.0 * spread, k)
+                ADraw.arc_px(fb, c.x, c.y - 31.0 * spread, 13.0 * spread,
+                    0.1, PI - 0.1, AMath.R("bio", 0.8), k * 0.8, 1.6)
+            # Directional reproductive bursts start at each colony, not at
+            # random battlefield locations. Their two-part flight and fade
+            # remain visible through the biological OUT.
+            var release := t - 5.4 - float(i) * 0.055
+            if release >= 0.0 and release < 1.3:
+                var bloom := AMath.ease_out(AMath.cl01(release / 0.55), 2.0)
+                var alive := (1.0 - AMath.seg(release, 0.65, 1.3)) * fade
+                for spore in range(7):
+                    var angle := -PI * 0.88 + float(spore) * PI * 0.13
+                    var distance := (12.0 + float(spore % 3) * 8.0) * bloom
+                    var tip := c + Vector2(cos(angle) * distance, sin(angle) * distance - 12.0 * spread)
+                    ADraw.streak(fb, tip.x, tip.y + 3.0, tip.x, tip.y - 2.0,
+                        1.0, 0.5, AMath.R("bio", 0.85), alive * 0.8)
+                    ADraw.disc(fb, tip.x, tip.y, 1.5, AMath.R("bio", 0.95), alive)
         if t > 5.4 and t < 6.2:
             ADraw.pulse_ring(fb, C.x, C.y, 8.0 + AMath.seg(t, 5.4, 6.2) * 110.0, 2.8, AMath.R("bio", 0.75), 0.55 * (1.0 - AMath.seg(t, 5.4, 6.2)), 1.4)
         _ps.each(func(p: Dictionary) -> void:
@@ -208,7 +244,9 @@ class ChronoshardR:
     extends RefCounted
     const DUR := 8.4
     var _crystals: Array = []
+    var art_direction := "A"
     func setup() -> void:
+        art_direction = "B" if OS.get_environment("ARCANA20_ART18") == "B" else "A"
         var rng := AMath.ARng.new(18181)
         _crystals.clear()
         for i in range(5):
@@ -250,7 +288,7 @@ class ChronoshardR:
             # covered face, violet faceted frame. This is not the complete B
             # clipped attack contents or a claim of B raster/source parity.
             var impact_fold := 1.0 - 0.8 * AMath.seg(t, 6.2, 6.8)
-            var sz: float = 17.0 * form * (1.0 - rel * 0.5) * resolve * impact_fold
+            var sz: float = 24.0 * form * (1.0 - rel * 0.5) * resolve * impact_fold
             if sz <= 0.5:
                 continue
             var rotation := t * (0.4 + float(i) * 0.15) * (-1.0 if i % 2 == 0 else 1.0)
@@ -277,6 +315,39 @@ class ChronoshardR:
         if it >= 0.0 and it < 0.7:
             ADraw.disc(fb, C.x, C.y, 5.0 * (1.0 - it / 0.7), AMath.R("frost", 1.0), 1.0 - it / 0.7)
             ADraw.pulse_ring(fb, C.x, C.y, 6.0 + it * 150.0, 3.0, AMath.R("frost", 0.8), 0.65 * (1.0 - it / 0.7), 1.35)
+        # A shattering fan versus B a broken clock-face: both emerge from
+        # the same synchronized arrival, without changing the contact ledger.
+        # The covered violet faces and bright bevels create actual solid shards;
+        # they contract/fade rather than leaving a detached glow or particles.
+        if it >= 0.0 and it < 1.25:
+            var travel := AMath.ease_out(AMath.cl01(it / 0.8), 2.0)
+            var life := 1.0 - AMath.seg(it, 0.55, 1.25)
+            for fragment in range(8):
+                var angle := float(fragment) * TAU / 8.0 - PI * 0.5
+                var axis := Vector2(cos(angle), sin(angle) * 0.75)
+                var across := Vector2(-sin(angle), cos(angle) * 0.75)
+                var center := C + axis * (15.0 + 72.0 * travel)
+                var long_side := (21.0 if art_direction == "A" else 13.0) * (1.0 - travel * 0.35)
+                var short_side := (7.0 if art_direction == "A" else 15.0) * (1.0 - travel * 0.25)
+                var front := center + axis * long_side
+                var rear := center - axis * long_side * 0.55
+                var left := center - across * short_side
+                var right := center + across * short_side
+                ADraw.poly_fill(fb, [front, right, rear, left],
+                    func(_x: int, _y: int) -> Variant: return Vector3(0.08, 0.07, 0.22), true, life * 0.9)
+                ADraw.poly_fill(fb, [front, center, left],
+                    func(_x: int, _y: int) -> Variant: return Vector3(0.19, 0.28, 0.55), true, life * 0.8)
+                ADraw.line(fb, front.x, front.y, left.x, left.y, Vector3(1.4, 1.6, 2.4), life)
+                ADraw.line(fb, front.x, front.y, right.x, right.y, Vector3(1.0, 1.2, 2.0), life * 0.85)
+                ADraw.line(fb, left.x, left.y, rear.x, rear.y, Vector3(0.6, 0.7, 1.5), life * 0.75)
+            if art_direction == "B":
+                # A broken clock face reads as one temporal device, rather
+                # than the divergent pointed shards of direction A.
+                var dial := 30.0 + travel * 45.0
+                for arc in range(4):
+                    var start := float(arc) * PI * 0.5 + it * 0.4
+                    ADraw.arc_px(fb, C.x, C.y, dial, start, start + 1.0,
+                        Vector3(1.2, 1.4, 2.3), life, 0.75)
         # B astral.ts synchronization wave: its alternating 14-point,
         # elliptical crystal boundary, cubic expansion and 1.4s fade are
         # retained here on the candidate's retimed 6.2s single impact.

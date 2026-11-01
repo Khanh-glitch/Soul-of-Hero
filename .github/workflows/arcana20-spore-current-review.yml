@@ -13,6 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         lighting: [normal, dimmed]
+        direction: [A, B]
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -26,6 +27,9 @@ jobs:
           version: 4.7.0
           use-dotnet: false
           include-templates: false
+      - name: Add 5.7-second dispersal beat to disposable harness
+        run: |
+          python3 -c 'import pathlib; p=pathlib.Path("'"$RUNNER_TEMP"'/arcana20-spore/prototypes/arcana_fusion20/renderer/arcana20_overworld_join_test.gd"); s=p.read_text(); old="        if num == 16:\n            # Natural seeded C tail"; assert s.count(old)==1; p.write_text(s.replace(old,"        if num == 14:\n            targets.append(342)\n            labels.append(\"release_plume\")\n"+old))'
       - name: Import disposable project
         run: |
           set -o pipefail
@@ -35,6 +39,7 @@ jobs:
       - name: Capture candidate authored event beats on actual frozen overworld
         env:
           ARCANA20_PHASE_LIGHT: ${{ matrix.lighting }}
+          ARCANA20_ART14: ${{ matrix.direction }}
           ARCANA20_PHASE_FIRST: '14'
           ARCANA20_PHASE_LAST: '14'
         run: |
@@ -50,10 +55,12 @@ jobs:
         run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py "$RUNNER_TEMP/arcana20-spore/artifacts" phase_14_candidate_A_colony_contact_03_tick216
       - name: Surface sporulation preview
         run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py "$RUNNER_TEMP/arcana20-spore/artifacts" phase_14_candidate_A_sporulation_impact_06_tick324
+      - name: Surface dispersal preview
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py "$RUNNER_TEMP/arcana20-spore/artifacts" phase_14_release_plume_tick342
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: arcana20-spore-current-${{ matrix.lighting }}
+          name: arcana20-spore-current-${{ matrix.lighting }}-${{ matrix.direction }}
           path: |
             ${{ runner.temp }}/arcana20-spore/arcana20_join_manifest.json
             ${{ runner.temp }}/arcana20-spore/artifacts/
