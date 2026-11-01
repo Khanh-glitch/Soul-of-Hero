@@ -25,6 +25,20 @@ stored moments still look mostly blank and do not establish temporal causality.
 The complete videos have not been exhaustively human-reviewed. The build is
 visual-only, does not bind CT receipts and is **not PLAYTEST_READY**.
 
+[41296497754](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41296497754)
+inspected actual encoded lossless videos against the captured timestamps. #14
+has 67 captured frames, 20.602 s between first/last, median presentation
+interval 307.960 ms; #18 has 66, 13.774 s, median interval 209.728 ms.
+The lossless files have one deliberate final repeated frame and match the
+recorded timestamps within 0.465/0.497 ms respectively. These timings include
+software rendering and capture effects, not real-hardware frame rates.
+Unscaled lossless-detail crops at the actual effect area show #14's cap, pale
+stipe, connections and visible late spores; #18's internal event marks are
+very faint. Full-frame context remains in the videos; these selected crops
+are not full-motion approval. Inspection runs 41296426805 and 41296466869
+failed because ffprobe was not installed; 41296497754 installed ffmpeg and
+passed. No earlier timing claims were inferred from the failed attempts.
+
 **Prior timestamp-corrected candidate:**
 [Windows x64 + Linux x64 artifact 13078977612](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41294874261/artifacts/13078977612),
 source `924dc2522f9776d570c6e91118766d5fdc040fc4`;
@@ -225,8 +239,21 @@ completed the latest build and real-moving-world #14/#18 capture above. The
 source event runtime and historical parity/CPU diagnostics
 [41295327512](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41295327512)
 also passed; these checks do not establish art or full-source fidelity. Native
-1x crop inspection of the latest #14 candidate is in progress. No art is
-creator-approved.
+1x normal-light colony still from [41296331303](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41296331303)
+shows the deeper purple caps as much more recognizable mushroom profiles than
+the preceding slats; the clusters still appear small, and the still does not
+establish a convincing growing/sporulating outbreak throughout motion. The
+#18 mid-cast full view still shows largely blank crystal interiors. The two
+complete videos have not been exhaustively reviewed; no art is creator-approved.
+Follow-up `4f5887db73dfd43a966acba85f8dfe13cf959736` makes #18's five
+stored moments chronological with brighter, larger clipped marks; this is an
+intentional redesign adaptation, not B-source parity. Its build
+[41296591004](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41296591004)
+and frozen-motion captures [41296590948](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41296590948)
+were queued when recorded. `3dc4713193f120eae6fbb56b697637957b40af7c` adds
+a constant-backed sequence and checks ascending capture/reverse convergence;
+[41296611649](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41296611649)
+was queued. These changes are not in artifact 13078684701 and remain unreviewed.
 
 [41293811919](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293811919)
 also compared complete no-PNG-I/O casts/overlap with fresh same-duration
