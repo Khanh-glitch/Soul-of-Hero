@@ -1,0 +1,43 @@
+name: GP-B isolated canonical composition native smoke
+on:
+  push:
+    branches: [integration/gameplay-gpb-a3-20261101]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-canonical:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GODOT_SILENCE_ROOT_WARNING: "1"
+      LIBGL_ALWAYS_SOFTWARE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Native Godot import (strict parse gate)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          timeout --signal=TERM --kill-after=10s 300s godot --headless --path . --import > artifacts/import.log 2>&1
+          cat artifacts/import.log
+          if grep -Ei 'SCRIPT ERROR|Parse Error|Compilation failed' artifacts/import.log; then exit 1; fi
+      - name: Canonical A0↔A3 single service, hashes and fail-closed source
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout --signal=TERM --kill-after=10s 180s godot --headless --path . --script tests/survival/gpb_canonical_composition_smoke.gd > artifacts/composition.log 2>&1
+          cat artifacts/composition.log
+          grep -q 'GPB_NATIVE_SMOKE_PASS checks=10' artifacts/composition.log
+          if grep -Ei 'SCRIPT ERROR|Parse Error|GPB_NATIVE_FAIL' artifacts/composition.log; then exit 1; fi
+      - name: Publish native evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gpb-native-evidence
+          path: artifacts/
