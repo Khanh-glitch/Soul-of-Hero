@@ -186,8 +186,15 @@ and [PR30](https://github.com/Khanh-glitch/Soul-of-Hero/pull/30#issuecomment-655
   blade, bevel and molten seam while retaining its slit, single fast cut and
   later cracks; local dark material is not brightness-keyed. Structural test
   plus real normal/dim recapture [41274706640](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41274706640)
-  is pending. These changes are **not approved**; other candidate design,
-  event motion, actor depth and target-device reviews remain open.
+  passed, but the previews looked like a flat dark bar. A further `e46eb93`
+  revision adds brighter bevel/facets without removing the dark covered body;
+  [41274822322](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41274822322)
+  passed at A0 04e: 2,963 opaque source pixels and an independently dark
+  body probe. Normal/dim ready/cut previews were inspected and the blade edge
+  is more visible, particularly in dim light, but its appearance, fast cut,
+  occlusion, later rupture and full native motion are **not approved**. Other
+  candidate design, event motion, actor depth and target-device reviews remain
+  open.
 - The 04e + AVFX `898ad5c` full frozen normal/dim multi-phase capture with
   extra fusion-child event beats [41272440282](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41272440282)
   passed. It predates the later C performance and #04 candidate changes, and
