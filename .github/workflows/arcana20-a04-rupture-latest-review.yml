@@ -1,0 +1,31 @@
+name: ARCANA20 A04 current rupture review
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-a04-rupture-latest-review.yml']
+permissions:
+  actions: read
+  contents: read
+jobs:
+  surface:
+    strategy:
+      fail-fast: false
+      matrix:
+        lighting: [normal, dimmed]
+        event: ['05_tick286', '07_tick295']
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcana20-a04-candidate-${{ matrix.lighting }}
+          run-id: 41277785869
+          github-token: ${{ github.token }}
+          path: capture
+      - run: python3 -m pip install --quiet pillow
+      - name: Surface full-viewport candidate preview
+        env:
+          EVENT: ${{ matrix.event }}
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py capture "phase_04_candidate_A_rupture_impact_$EVENT"
