@@ -144,6 +144,15 @@ and [PR30](https://github.com/Khanh-glitch/Soul-of-Hero/pull/30#issuecomment-655
   not an original OUT. Full-resolution motion, pre-HUD bloom, and creator
   review are still required.
 
+- Shared C neutral displacement reset at `6d56937` now uses a native zero
+  fill plus shade-channel writes instead of four interpreted writes/pixel.
+  [41273528371](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41273528371)
+  checks bit-exact output for dirty inputs and reruns C10/C17 decompositions;
+  its same-host reset microbenchmark median was **2.686 → 0.854 ms**
+  (12 samples; reset only, not GPU, total frame, or target FPS). A separate
+  exact source-cloud noise cache is **not integrated**, pending parity and
+  performance [41273866583](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41273866583).
+
 ### Per-skill acceptance ledger (R14)
 
 `PARTIAL` means a limited source-field or world diagnostic exists; it is not
