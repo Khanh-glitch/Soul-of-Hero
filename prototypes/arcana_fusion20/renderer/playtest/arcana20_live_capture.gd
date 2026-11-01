@@ -74,6 +74,9 @@ func start(wrapper: Node) -> void:
     # #09's selected A actor graph needs seven real potential targets, not a
     # single disconnected node. Other spells still exercise multiple actors.
     var enemy_count := 7 if skill == 9 else 3
+    var formation := host.get("spawn_selector") as OptionButton
+    if formation != null and OS.get_environment("AVFX_LIVE_SPAWN_RING") == "1":
+        formation.select(1) # real scene enemies; normal AI/terrain still apply
     for i in range(enemy_count): host.call(&"_spawn_enemy")
     var spawned: Array = host.get("spawned")
     if spawned.size() != enemy_count:
@@ -215,7 +218,8 @@ func start(wrapper: Node) -> void:
         "skill": skill, "lighting": OS.get_environment("AVFX_LIVE_LIGHT"), "captured": capture, "frames": samples,
         "no_fx": no_fx, "overlap_skill": overlap_skill, "cast_duration_s": cast_duration_s,
         "last_tick": ticks_seen[-1] if not ticks_seen.is_empty() else 0, "events": contacts, "unbound_events": unbound_contacts,
-        "enemy_count": enemy_count, "enemy_max_displacements": enemy_moves,
+        "enemy_count": enemy_count, "spawn_formation": "ring" if formation != null and formation.selected == 1 else "line",
+        "enemy_max_displacements": enemy_moves,
         "player_max_displacement": max_player, "enemy_max_displacement": max_enemy, "camera_max_displacement": max_camera,
         "enemy_hp_before": enemy_hp, "enemy_hp_after": int(enemy.get("health")),
         "observed_wall_frame_ms": {"p50": p50, "p95": p95, "p99": p99, "count": frame_times.size()},

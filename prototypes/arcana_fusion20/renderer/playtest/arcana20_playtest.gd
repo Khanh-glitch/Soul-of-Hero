@@ -12,6 +12,7 @@ var mount: Arcana20WorldPassMount
 var post: Arcana20CViewportPost
 var selector: OptionButton
 var target_selector: OptionButton
+var spawn_selector: OptionButton
 var status: Label
 var panel: Control
 var tint: CanvasModulate
@@ -72,6 +73,10 @@ func _make_ui() -> void:
     target_selector.add_item("Mục tiêu: quái gần nhất", 0)
     target_selector.add_item("Mục tiêu: vị trí chuột", 1)
     box.add_child(target_selector)
+    spawn_selector = OptionButton.new()
+    spawn_selector.add_item("Thêm quái: theo hàng", 0)
+    spawn_selector.add_item("Thêm quái: vòng quanh người chơi", 1)
+    box.add_child(spawn_selector)
     _button(box, "Thi triển [F6]", _cast_selected)
     _button(box, "Thêm bộ xương [F7]", _spawn_enemy)
     _button(box, "Quái đứng yên / di chuyển [F8]", _toggle_enemies)
@@ -177,7 +182,14 @@ func _spawn_enemy() -> void:
         status.text = "Không tải được bộ xương thật."
         return
     var enemy := enemy_scene.instantiate() as Node2D
-    enemy.position = entities.to_local(player.global_position + Vector2(100 + spawned.size() * 20, 0))
+    var offset := Vector2(100 + spawned.size() * 20, 0)
+    if spawn_selector.selected == 1:
+        # Test-only formation of genuine scene instances; after spawning the
+        # normal enemy AI/collisions remain in charge of every actor movement.
+        var angle := TAU * float(spawned.size() % 7) / 7.0
+        var radius := 110.0 + 24.0 * floorf(float(spawned.size()) / 7.0)
+        offset = Vector2(cos(angle), sin(angle)) * radius
+    enemy.position = entities.to_local(player.global_position + offset)
     entities.add_child(enemy)
     enemy.set_physics_process(mobile_enemies)
     spawned.append(enemy)

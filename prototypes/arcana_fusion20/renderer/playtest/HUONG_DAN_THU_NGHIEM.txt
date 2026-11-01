@@ -8,7 +8,9 @@ Mở ứng dụng, chọn New Game, đi đến Campaign ở Home rồi vào Over
 AVFX xuất hiện khi thế giới thực đã tải xong. Di chuyển theo hướng dẫn của game.
 Chọn một trong 20 kỹ năng và chọn mục tiêu là bộ xương gần nhất hoặc vị trí chuột.
 F4 ẩn/hiện bảng; F6 thi triển, F7 thêm bộ xương thật, F8 bật/tắt AI của bộ xương thử,
-F9 đổi sáng/tối (chỉ là điều kiện thử), F10 hủy tất cả hiệu ứng. Có thể chọn
+F9 đổi sáng/tối (chỉ là điều kiện thử), F10 hủy tất cả hiệu ứng. Trong bảng,
+có thể chọn thêm quái theo hàng hoặc vòng quanh người chơi; đây là bộ xương
+thật, vẫn chịu địa hình và AI bình thường, không phải mục tiêu giả. Có thể chọn
 kỹ năng khác và thi triển chồng lên hiệu ứng đang chạy. Thi triển lại cùng kỹ
 năng sẽ hủy lần trước. AI bật có thể tấn công người chơi theo luật game.
 
