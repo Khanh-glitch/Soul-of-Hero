@@ -12,8 +12,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        revision: [baseline, candidate]
-        light: [normal, dimmed]
+        include:
+          # Other three already succeeded in 41277174411. The dim candidate
+          # artifact arrived after that job started, so recover only it.
+          - revision: candidate
+            light: dimmed
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
