@@ -195,23 +195,39 @@ jobs:
         run: |
           set +e
           cd .composition
+          failures=0
           for res in 2560x1440 3840x2160; do
+            w="${res%x*}"; h="${res#*x}"
             rm -rf "../artifacts/ud_capture_$res"
-            timeout --signal=TERM --kill-after=15s 1800s xvfb-run -a bash tools/ci/godot_isolated.sh \
+            # The virtual screen has to be at least as big as the window we ask for.
+            # xvfb-run's default is 1280x1024, so a "3840x2160" capture was a window
+            # clamped to the screen: a valid PNG at the wrong size, and a journey whose
+            # clicks landed somewhere else. Caught by the engine's own pixels.
+            timeout --signal=TERM --kill-after=15s 1800s xvfb-run -a -s "-screen 0 ${w}x${h}x24" \
+              bash tools/ci/godot_isolated.sh \
               --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
               --audio-driver Dummy --user-data-dir "../artifacts/ud_capture_$res" --resolution "$res" --windowed \
               --script res://tests/survival_normal_connected_journey_test.gd > "../artifacts/capture-$res.log" 2>&1
             rc=$?
             cat "../artifacts/capture-$res.log"
-            echo "::notice::capture $res exit=$rc $(grep -ac 'A0_CAPTURE ' "../artifacts/capture-$res.log") images"
-            mkdir -p "../artifacts/captures"
+            images=$(grep -ac 'A0_CAPTURE ' "../artifacts/capture-$res.log")
+            echo "::notice title=capture-$res::capture $res exit=$rc $images images"
+            grep -qa 'A0 CONNECTED SURVIVAL JOURNEY PASSED' "../artifacts/capture-$res.log" || { echo "::error title=capture-$res::no PASS banner at $res"; failures=$((failures+1)); }
+            [ "$rc" -eq 0 ] || { echo "::error title=capture-$res::engine exit $rc at $res"; failures=$((failures+1)); }
+            [ "$images" -ge 3 ] || { echo "::error title=capture-$res::only $images captures at $res"; failures=$((failures+1)); }
+            mkdir -p ../artifacts/captures
             find "../artifacts/ud_capture_$res" -name 'capture_*.png' -exec cp {} "../artifacts/captures/" \;
-            while IFS= read -r line; do echo "::notice::$line"; done < <(grep -a '^A0_CAPTURE' "../artifacts/capture-$res.log" | head -8)
-            while IFS= read -r line; do echo "::error title=capture-$res-$line::$line"; done < <(grep -aE '  FAIL  ' "../artifacts/capture-$res.log" | head -3)
-            while IFS= read -r line; do echo "::error title=capture-$res-err::$line"; done < <(grep -a 'SCRIPT ERROR' "../artifacts/capture-$res.log" | head -2)
-            while IFS= read -r line; do echo "::notice title=capture-$res tail::$line"; done < <(tail -n 6 "../artifacts/capture-$res.log")
+            for png in ../artifacts/captures/*_"$res".png; do
+              [ -e "$png" ] || continue
+              python3 tools/ci/validate_png.py --expect "$res" "$png" || failures=$((failures+1))
+            done
+            # The one line the run pages always keep.
+            while IFS= read -r line; do echo "::notice title=capture-$res summary::$line"; done < <(grep -a '^A0_CONNECTED_SUMMARY' "../artifacts/capture-$res.log" | tail -1)
+            while IFS= read -r line; do echo "::notice title=capture-$res step::$line"; done < <(grep -aE '^A0_GATHER_STOPPED|^A0_CONNECTED_HALT|^A0_CLICK_MISS' "../artifacts/capture-$res.log" | tail -2)
+            while IFS= read -r line; do echo "::error title=capture-$res::$line"; done < <(grep -aE '  FAIL  ' "../artifacts/capture-$res.log" | head -3)
           done
           ls -l ../artifacts/captures || true
+          [ "$failures" -eq 0 ]
       - uses: actions/upload-artifact@v4
         if: always()
         with:
