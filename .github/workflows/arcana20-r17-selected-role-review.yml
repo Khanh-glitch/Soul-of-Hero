@@ -1,4 +1,4 @@
-name: ARCANA20 selected source roles real-world motion review
+name: ARCANA20 R19 water release real-world motion review
 on:
   workflow_dispatch:
   push:
@@ -13,16 +13,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - {skill: 1, lighting: normal}
-          - {skill: 1, lighting: dimmed}
           - {skill: 5, lighting: normal}
           - {skill: 5, lighting: dimmed}
-          - {skill: 16, lighting: normal}
-          - {skill: 16, lighting: dimmed}
-          - {skill: 20, lighting: normal}
-          - {skill: 20, lighting: dimmed}
-          - {skill: 14, lighting: dimmed}
-          - {skill: 18, lighting: dimmed}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -30,7 +22,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: SOH-AVFX-EXPERIMENTAL-NOT-PLAYTEST-READY
-          run-id: 41301527667
+          run-id: 41316630018
           github-token: ${{ github.token }}
           path: bundle
       - name: Unpack exact experimental Linux build
