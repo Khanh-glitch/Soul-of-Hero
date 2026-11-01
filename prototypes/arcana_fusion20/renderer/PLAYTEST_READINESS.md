@@ -52,8 +52,8 @@
   independently to the immutable baseline and still compare every field; the
   revised benchmark is pending. The refreshed code `189d62d` has an exported
   [Windows/Linux package](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41325799138/artifacts/13091022926)
-  and successful Linux launch; its Windows headless and #05/#20 normal/dim,
-  #01/#16 normal captures remain queued or running. Do not attribute the #20
+  and successful Linux launch and Windows headless checks; its #05/#20
+  normal/dim and #01/#16 normal captures remain queued or running. Do not attribute the #20
   addition to the earlier `5aab036` package.
 - #01 C outer tongues and #16 A growth/C organism/debris remain mounted, but
   no new source role or creator visual approval is claimed for them here.
