@@ -18,6 +18,8 @@ signal settings_changed(settings: Dictionary)
 signal hero_progression_changed(hero_id: StringName, snapshot: Dictionary)
 signal hero_shards_changed(hero_id: StringName, amount: int)
 signal hero_identity_unlocked(hero_id: StringName)
+## A0-authoritative player choice; A6 is read-only after this commit.
+signal player_avatar_changed(snapshot: Dictionary)
 
 const UNIQUE_OWNERSHIP_GUARD := preload("res://game/survival/economy/unique_ownership_guard.gd")
 const A0_WORLD_V5_MIGRATION := preload("res://game/survival/economy/a0_world_slice_v5_migration.gd")
@@ -26,15 +28,17 @@ const ECONOMY_SAVE_FACADE := preload("res://game/survival/economy/economy_save_f
 # still binds to these exact preloaded Script resources and their base identity;
 # source bytes are independently SHA-pinned in native and export CI.
 const PRODUCTION_ECONOMY_ADAPTER := preload("res://game/survival/economy/a0_economy_adapter.gd")
-const PRODUCTION_ECONOMY_BASE := preload("res://game/survival/economy/vendor/a3_economy_service.gd")
+const PRODUCTION_ECONOMY_BASE := preload("res://game/survival/economy/economy_service.gd")
+const PRODUCTION_SOURCE_CUSTODY := preload("res://game/survival/economy/a3_economy_service.gd")
 # Immutable, first-party A3 integration fixture. Production composition must
 # explicitly review/re-pin future adapter revisions; a caller label is never
 # evidence of authority.
-const PINNED_A3_SCRIPT_SHA256 := "109c268036bb92e5dcca2d23ec5f5c1664e1f8645c01abf189d6b5c90f06302c"
+const PINNED_A3_SCRIPT_SHA256 := "98932d25b73a03b9412f0f72f82dc5c2b6451e3ba894a134fdff2d1924252ee0"
+const PINNED_A3_CUSTODY_SHA256 := "f0695cdd05c23490a42fa92cc6fb6de9d87a3ce2933e8563cc7d85fccde09e8b"
 # The independently pinned 86dc2195 regression adapter remains supported.
 const PINNED_A3_FIXTURE_SHA256 := "b1ee9792b4460e956ec6c59437269078e4f6767f76d35145e680dcc03ba3806c"
 const PINNED_A0_ADAPTER_SHA256 := "2b539f3320828c2fa850b6057c735e032153d5a1e8fa1b8ade63d2e3380ed2ce"
-const PINNED_A0_PRODUCTION_ADAPTER_SHA256 := "edf62b0aab6dd0dee5acd36e129286a553dd1234a96bd20455a782a31246b8ba"
+const PINNED_A0_PRODUCTION_ADAPTER_SHA256 := "25129902f9642b83d707dd814c14d1ca293e9b0630f521bec9fc518c6284529e"
 
 const CURRENT_SCHEMA_VERSION := 4
 const CURRENT_HERO_SOUL_RULES_VERSION := 4
@@ -81,6 +85,16 @@ const RESET_PROGRESSION_KEEP_SETTINGS_TOKEN := "RESET_SOUL_OF_HERO_PROGRESSION_K
 const LEGACY_RESET_PROGRESSION_KEEP_SETTINGS_TOKEN := "RESET_LIVING_ARSENAL_PROGRESSION_KEEP_SETTINGS"
 const RESET_ALL_TOKEN := "RESET_SOUL_OF_HERO_SAVE"
 const LEGACY_RESET_ALL_TOKEN := "RESET_LIVING_ARSENAL_SAVE"
+## Player identity (CraftPix base male 555940 / female 419402). The saved record
+## is deliberately tiny: it stores which authored identity the player chose, the
+## equipment appearance grade their gear maps to, and a monotonic revision that
+## presentation adapters must echo back before they may draw anything.
+const PLAYER_AVATAR_SCHEMA := "soh.player_avatar.v1"
+const PLAYER_AVATAR_APPEARANCE_SCHEMA := "soh.ui.avatar_appearance.v1"
+const PLAYER_AVATAR_GENDERS := ["male", "female"]
+const PLAYER_AVATAR_SOURCE_IDS := {"male": "555940", "female": "419402"}
+const PLAYER_AVATAR_GRADE_ZERO := 0
+const PLAYER_AVATAR_MAX_GRADE := 2
 const SETTINGS_NUMERIC_RANGES := {
 	"master_volume": [0.0, 1.0],
 	"music_volume": [0.0, 1.0],
@@ -119,6 +133,8 @@ var _economy_capability := RefCounted.new()
 var _disk_commit_capability := RefCounted.new()
 var _economy_adapter: RefCounted
 var _economy_facade: Node
+var _economy_custody: RefCounted
+var _economy_custody_facade: Node
 var _economy_mutation_active := false
 var _transaction_mutation_active := false
 var _economy_quarantine_reason := ""
@@ -328,6 +344,105 @@ func get_value(path: Array[String], fallback: Variant = null) -> Variant:
 	if cursor is Dictionary or cursor is Array:
 		return cursor.duplicate(true)
 	return cursor
+
+
+## A0-owned identity projection. Presentation adapters receive exactly this
+## dictionary; they may not invent, default or persist identity themselves.
+func get_player_appearance_projection() -> Dictionary:
+	var avatar := get_player_avatar()
+	var gender := String(avatar.get("gender", ""))
+	var grade := get_player_equipment_grade_request()
+	var revision := str(avatar.get("revision", 0))
+	return {
+		"schema": PLAYER_AVATAR_APPEARANCE_SCHEMA,
+		"provenance": "A0_OWNER_PROJECTION",
+		"gender": gender,
+		"armor_grade": grade,
+		"craftpix_id": String(PLAYER_AVATAR_SOURCE_IDS.get(gender, "")),
+		"source_revision": revision,
+		"revision": "player_avatar:%s:g%d:r%s" % [gender, grade, revision],
+	}
+
+
+## A0 owns what the player is wearing. This maps the equipped Vessel/Boots/Trace
+## loadout to the appearance grade presentation must attempt. It is a request,
+## not a claim: the art pipeline re-verifies that a licensed appearance record
+## exists for the grade, and grade 1/2 remain source-blocked until it does.
+func get_player_equipment_grade_request() -> int:
+	_ensure_loaded()
+	var raw: Variant = _data.get("auxiliary_loadout", {})
+	if not raw is Dictionary:
+		return PLAYER_AVATAR_GRADE_ZERO
+	var loadout: Dictionary = raw
+	var equipped := 0
+	for slot_id: String in ["soul_vessel", "soul_boots", "soul_trace"]:
+		if not String(loadout.get(slot_id, "")).strip_edges().is_empty():
+			equipped += 1
+	if equipped >= 3:
+		return 2
+	if equipped >= 1:
+		return 1
+	return PLAYER_AVATAR_GRADE_ZERO
+
+
+## Appearance identity of a save document: chosen character, the equipment grade
+## the loadout requests and the identity revision. Two documents with the same
+## key must present the same character, so a commit that does not change the key
+## must not disturb a playing animation.
+func _appearance_identity_of(document: Dictionary) -> String:
+	var avatar_value: Variant = document.get("player_avatar", {})
+	var avatar: Dictionary = avatar_value if avatar_value is Dictionary else {}
+	var gender := String(avatar.get("gender", ""))
+	if not PLAYER_AVATAR_GENDERS.has(gender):
+		return ""
+	var grade := PLAYER_AVATAR_GRADE_ZERO
+	var loadout_value: Variant = document.get("auxiliary_loadout", {})
+	if loadout_value is Dictionary:
+		var equipped := 0
+		for slot_id: String in ["soul_vessel", "soul_boots", "soul_trace"]:
+			if not String((loadout_value as Dictionary).get(slot_id, "")).strip_edges().is_empty():
+				equipped += 1
+		if equipped >= 3:
+			grade = 2
+		elif equipped >= 1:
+			grade = 1
+	return "%s:g%d:r%s" % [gender, grade, str(avatar.get("revision", 0))]
+
+
+func get_player_avatar() -> Dictionary:
+	_ensure_loaded()
+	var raw: Variant = _data.get("player_avatar", {})
+	if not raw is Dictionary:
+		return _default_player_avatar()
+	return (raw as Dictionary).duplicate(true)
+
+
+func has_player_avatar() -> bool:
+	return PLAYER_AVATAR_GENDERS.has(String(get_player_avatar().get("gender", "")))
+
+
+## Records the player's chosen authored identity. Identity is written through the
+## same crash-resistant commit path as every other authoritative field, so a
+## failed write leaves the previous character intact rather than a half state.
+func set_player_avatar(gender: String, source: String = "menu") -> bool:
+	_ensure_loaded()
+	var normalized := gender.strip_edges().to_lower()
+	if not PLAYER_AVATAR_GENDERS.has(normalized):
+		_push_failure("Unsupported player identity: %s" % gender)
+		return false
+	var candidate := _data.duplicate(true)
+	var current: Dictionary = candidate.get("player_avatar", _default_player_avatar())
+	candidate["player_avatar"] = {
+		"schema": PLAYER_AVATAR_SCHEMA,
+		"gender": normalized,
+		"equipment_grade": PLAYER_AVATAR_GRADE_ZERO,
+		"revision": maxi(0, int(current.get("revision", 0))) + 1,
+		"selected_at_unix": int(Time.get_unix_time_from_system()),
+		"selection_source": source.strip_edges().to_lower(),
+	}
+	if not _commit_candidate(candidate):
+		return false
+	return true
 
 
 ## Returns derived point totals, stat values and per-Identity skill ranks without
@@ -1337,12 +1452,50 @@ func create_pinned_economy_port(adapter: RefCounted) -> Node:
 		return null
 	if _economy_facade != null and is_instance_valid(_economy_facade):
 		_economy_facade.queue_free()
+	# Invalidate any previous source-custody port when replacing canonical service.
+	if _economy_custody_facade != null and is_instance_valid(_economy_custody_facade):
+		_economy_custody_facade.queue_free()
+	_economy_custody = null
 	_economy_capability = RefCounted.new()
 	_economy_adapter = adapter
 	_economy_facade = ECONOMY_SAVE_FACADE.new()
 	_economy_facade.bind(self, adapter, _economy_capability)
 	add_child(_economy_facade)
 	return _economy_facade
+
+
+## GP-B: a second trusted writer for the R13 physical-source custody layer.
+## It shares the ONE A0 SaveService capability, inventory and atomic ledger;
+## a caller-built object, UI script or unpinned adapter cannot obtain this port.
+## This does not expose an unrestricted mutation API.
+func create_pinned_source_custody_port(custody: RefCounted) -> Node:
+	if custody == null or _economy_adapter == null or not _is_pinned_economy_adapter(_economy_adapter):
+		return null
+	if not _is_pinned_source_custody(custody):
+		return null
+	if _economy_custody_facade != null and is_instance_valid(_economy_custody_facade):
+		_economy_custody_facade.queue_free()
+	_economy_custody = custody
+	_economy_custody_facade = ECONOMY_SAVE_FACADE.new()
+	_economy_custody_facade.bind(self, custody, _economy_capability)
+	add_child(_economy_custody_facade)
+	return _economy_custody_facade
+
+
+func _is_pinned_source_custody(custody: RefCounted) -> bool:
+	if custody == null:
+		return false
+	var script: Variant = custody.get_script()
+	if not script is Script:
+		return false
+	var source := String(script.source_code)
+	# Source runs may materialize separate Script resource handles; require BOTH
+	# the canonical res:// path and independently pinned exact source bytes.
+	# Tokenized exports retain only the exact preloaded resource identity gate.
+	if source.is_empty():
+		return script == PRODUCTION_SOURCE_CUSTODY
+	return String(script.resource_path) == "res://game/survival/economy/a3_economy_service.gd" \
+		and source.sha256_text() == PINNED_A3_CUSTODY_SHA256
 
 
 func _is_pinned_economy_adapter(adapter: RefCounted) -> bool:
@@ -1367,9 +1520,11 @@ func _is_pinned_economy_adapter(adapter: RefCounted) -> bool:
 
 
 func _economy_transact_once(capability: RefCounted, adapter: RefCounted, key: String, mutator: Callable, metadata: Dictionary) -> bool:
-	if capability != _economy_capability or adapter != _economy_adapter or mutator.get_object() != adapter:
+	if capability != _economy_capability or not mutator.is_valid() or mutator.get_object() != adapter:
 		return false
-	if not _is_pinned_economy_adapter(adapter):
+	var canonical := adapter == _economy_adapter and _is_pinned_economy_adapter(adapter)
+	var source_custody := adapter == _economy_custody and _is_pinned_source_custody(adapter)
+	if not canonical and not source_custody:
 		return false
 	return _transact_once_internal(key, mutator, metadata, capability)
 
@@ -2457,6 +2612,8 @@ func reset_to_defaults(confirmation: String) -> bool:
 
 
 func _commit_candidate(candidate: Dictionary, capability: RefCounted = null) -> bool:
+	# Capture the projected identity BEFORE any canonical source/economy mutation.
+	var previous_appearance := _appearance_identity_of(_data)
 	if not _economy_quarantine_reason.is_empty():
 		return false
 	var economy_authorized := capability != null and capability == _economy_capability
@@ -2486,6 +2643,8 @@ func _commit_candidate(candidate: Dictionary, capability: RefCounted = null) -> 
 	_data = snapshot
 	_is_loaded = true
 	save_committed.emit(get_snapshot())
+	if _appearance_identity_of(snapshot) != previous_appearance:
+		player_avatar_changed.emit(get_player_avatar())
 	return true
 
 
@@ -2780,6 +2939,9 @@ func _sanitize_and_validate(document: Dictionary) -> String:
 		return soul_selection_error
 	_sanitize_legacy_audit(document["legacy_audit"])
 	_sanitize_settings(document["settings"])
+	var avatar_error := _sanitize_player_avatar(document)
+	if not avatar_error.is_empty():
+		return avatar_error
 	var transition_error := _sanitize_site_transition(document)
 	if not transition_error.is_empty():
 		return transition_error
@@ -4504,6 +4666,8 @@ func _default_data() -> Dictionary:
 		"bestiary": {"discovered": []},
 		"settings": _default_settings(),
 		"applied_transactions": {},
+		# A0 holds the sole durable identity; old saves are migrated without choosing a gender.
+		"player_avatar": _default_player_avatar(),
 		# A0 Round 12: the only durable place a site transition may leave an
 		# entry record. Optional, so older profiles load unchanged.
 		"site_transition": {},
@@ -4569,6 +4733,55 @@ func _default_campaign() -> Dictionary:
 		"selected_difficulties": {},
 		"average_enemy_level_cap": 5,
 	}
+
+
+func _default_player_avatar() -> Dictionary:
+	return {
+		"schema": PLAYER_AVATAR_SCHEMA,
+		"gender": "",
+		"equipment_grade": PLAYER_AVATAR_GRADE_ZERO,
+		"revision": 0,
+		"selected_at_unix": 0,
+		"selection_source": "",
+	}
+
+
+## Identity is player-facing truth, so an unreadable or hostile record degrades
+## to "no identity chosen" instead of silently asserting a character.
+func _sanitize_player_avatar(document: Dictionary) -> String:
+	var raw: Variant = document.get("player_avatar", {})
+	if not raw is Dictionary:
+		return "Player avatar section must be a Dictionary."
+	var avatar: Dictionary = raw
+	var gender := String(avatar.get("gender", "")).strip_edges().to_lower()
+	if not PLAYER_AVATAR_GENDERS.has(gender):
+		gender = ""
+	var grade_value: Variant = avatar.get("equipment_grade", PLAYER_AVATAR_GRADE_ZERO)
+	var grade := PLAYER_AVATAR_GRADE_ZERO
+	if grade_value is int or grade_value is float:
+		grade = int(grade_value)
+	if grade < PLAYER_AVATAR_GRADE_ZERO or grade > PLAYER_AVATAR_MAX_GRADE:
+		grade = PLAYER_AVATAR_GRADE_ZERO
+	var revision_value: Variant = avatar.get("revision", 0)
+	var revision := 0
+	if revision_value is int or revision_value is float:
+		revision = maxi(0, int(revision_value))
+	var selected_at_value: Variant = avatar.get("selected_at_unix", 0)
+	var selected_at := 0
+	if selected_at_value is int or selected_at_value is float:
+		selected_at = maxi(0, int(selected_at_value))
+	var source := String(avatar.get("selection_source", "")).strip_edges().to_lower()
+	if not source.is_empty() and not _is_valid_identifier(source):
+		source = ""
+	document["player_avatar"] = {
+		"schema": PLAYER_AVATAR_SCHEMA,
+		"gender": gender,
+		"equipment_grade": grade,
+		"revision": revision,
+		"selected_at_unix": selected_at,
+		"selection_source": source,
+	}
+	return ""
 
 
 ## A site transition record is an owner receipt, not player-facing state: it may

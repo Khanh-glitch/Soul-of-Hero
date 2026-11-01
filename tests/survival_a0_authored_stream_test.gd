@@ -16,11 +16,15 @@ extends "res://tests/survival_foundation_test.gd"
 const SETTING := "survival/a0_authored_stream"
 const READER := "res://game/survival/world/a1_authored_world_reader.gd"
 const STREAM := "res://game/survival/world/a1_authored_world_stream.gd"
+const GPB_INPUT_BOOTSTRAP = preload("res://game/autoload/input_bootstrap.gd")
 
 var _ow: Node
 
 
 func _console() -> void:
+	var input_boot := GPB_INPUT_BOOTSTRAP.new()
+	input_boot.call(&"_install_actions")
+	input_boot.free()
 	_deadline_msec = Time.get_ticks_msec() + int(BUILD_TIMEOUT_MS * 4)
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("user://tests"))
 	save_path = "user://tests/survival_authored_stream_%d.json" % Time.get_ticks_usec()

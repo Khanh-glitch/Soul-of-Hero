@@ -17,6 +17,7 @@ const OW_SCENE_PATH := "res://game/overworld/chapter1_overworld.tscn"
 const SAVE := "user://tests/a0_authored_capture.json"
 const BUILD_TIMEOUT_MS := 120_000
 const ARTIFACT_DIR := "res://artifacts"
+const GPB_INPUT_BOOTSTRAP = preload("res://game/autoload/input_bootstrap.gd")
 
 var failures: Array[String] = []
 var checks := 0
@@ -32,6 +33,9 @@ func _initialize() -> void:
 
 
 func _run() -> void:
+	var input_boot := GPB_INPUT_BOOTSTRAP.new()
+	input_boot.call(&"_install_actions")
+	input_boot.free()
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("user://tests"))
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(ARTIFACT_DIR))
 	var save := root.get_node_or_null("SaveService")
@@ -80,6 +84,21 @@ func _play() -> void:
 	_expect(_hero != null and _traversability != null and authority != null,
 		"the captured world exposes body, walkability and authority")
 	if _hero == null or _traversability == null or authority == null:
+		return
+	# A real framebuffer alone is insufficient: the source-authorized A6 Adventurer
+	# must actually be mounted on the player body at capture time.
+	var presenter: Node = _hero.get_node_or_null("AvatarPresenter")
+	_expect(presenter != null and presenter.has_method(&"get_presentation_state"),
+		"real player body includes A6's actual presentation source")
+	if presenter == null or not presenter.has_method(&"get_presentation_state"):
+		return
+	var appearance: Dictionary = presenter.call(&"get_presentation_state")
+	_expect(String(appearance.get("status", "")) == "READY",
+		"female A6 art is source-ready in the composed game (%s: %s)" %
+		[String(appearance.get("status", "")), String(appearance.get("reason", ""))])
+	_expect(String(appearance.get("gender", "")) == "female",
+		"the captured player is the selected female Adventurer")
+	if String(appearance.get("status", "")) != "READY":
 		return
 	var mode: String = String(_ow.call(&"world_authority_report").get("mode", ""))
 	_expect(mode == "authored", "the captured world is the authored continent (%s)" % mode)

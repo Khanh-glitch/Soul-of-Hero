@@ -407,6 +407,48 @@ func _verify_body() -> void:
 		"the prepared fuelled smelt completed while the application was closed (%s)" % String(job.get("status", "")))
 	if String(job.get("status", "")) != "ready":
 		return
+	# A paid furnace output must still be THERE when the player returns.
+	# Negative control: walk away normally, attempt a hostile direct API claim,
+	# inspect the player's disabled Collect control, then walk back. No teleport,
+	# no item injection; the positive claim remains a real GUI click below.
+	_stage("verify_no_remote_pickup")
+	var nav: OverworldTraversability = ow.get(&"traversability")
+	var furnace_node: Node2D = ow.get(&"survival_build").call(&"structure_node", furnace_id)
+	_expect(nav != null and furnace_node != null, "the furnace has a physical location to return to")
+	if nav == null or furnace_node == null:
+		return
+	var return_cell := nav.cell_of(hero.global_position)
+	var away_cell := _distant_walkable_cell(hero, nav, furnace_node, furnace_id)
+	_expect(away_cell != Vector2i(-1, -1),
+		"a real path exists to move beyond furnace output reach")
+	if away_cell == Vector2i(-1, -1):
+		return
+	if not await _walk_to_cell(hero, nav, away_cell, "ordinary movement takes player away from the furnace"):
+		return
+	var access_away: Dictionary = host.call(&"job_access", smelt_job)
+	_expect(not bool(access_away.get("ok", true))
+			and String(access_away.get("reason", "")) == "station_not_reachable",
+		"ready furnace ingot remains at the remote furnace, not in the backpack")
+	var ingots_away := _count("iron_ingot")
+	var receipts_away := _collect_receipt_count()
+	var denied: Dictionary = host.call(&"collect", smelt_job)
+	_expect(not bool(denied.get("ok", false))
+			and String(denied.get("reason", "")) == "station_not_reachable",
+		"direct remote collect cannot bypass station range")
+	_expect(_count("iron_ingot") == ingots_away
+			and _collect_receipt_count() == receipts_away
+			and String(((host.call(&"jobs") as Dictionary).get(smelt_job, {}) as Dictionary).get("status", "")) == "ready",
+		"refused remote pickup neither mints an ingot nor consumes the escrow")
+	await _open_panel(panel)
+	var disabled_claim := await _find_collect(panel, "smelt iron", smelt_job)
+	_expect(disabled_claim != null and disabled_claim.disabled,
+		"remote finished job stays visible but Collect is disabled and prompts a return")
+	await _close_panel(panel)
+	if not await _walk_to_cell(hero, nav, return_cell, "ordinary input returns player to the furnace"):
+		return
+	var access_home: Dictionary = host.call(&"job_access", smelt_job)
+	_expect(bool(access_home.get("ok", false)),
+		"the SAME saved furnace output becomes collectible after returning")
 	# Collecting is the player's act, through the visible panel.
 	await _open_panel(panel)
 	var collect := await _find_collect(panel, "smelt iron", smelt_job)
@@ -895,6 +937,29 @@ func _approach_station(hero: CharacterBody2D, nav: OverworldTraversability, poin
 			label, str(nav.cell_of(point)), str(hero.global_position),
 			point.distance_to(hero.global_position), SurvivalStationReach.RADIUS])
 	return ok
+
+
+## Finds a genuinely walkable, physically reachable cell outside a station's
+## output-pickup radius. The production movement controller walks the route later;
+## no test-only teleport is used to create the negative case.
+func _distant_walkable_cell(hero: CharacterBody2D, nav: OverworldTraversability,
+		station: Node2D, station_id: String) -> Vector2i:
+	var start := nav.cell_of(hero.global_position)
+	var structures: Dictionary = _survival().call(&"structures")
+	var record: Dictionary = structures.get(station_id, {})
+	var definition: Dictionary = _survival().call(&"piece_definition", String(record.get("piece", "")))
+	for distance: int in [8, 10, 12, 14]:
+		for direction: Vector2i in [Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT, Vector2i.UP,
+				Vector2i(1, 1), Vector2i(-1, 1), Vector2i(-1, -1), Vector2i(1, -1)]:
+			var cell := start + direction * distance
+			if not nav.in_bounds(cell) or not nav.is_free(cell):
+				continue
+			var point := Vector2(cell.x * 16 + 8, cell.y * 16 + 15)
+			if SurvivalStationReach.in_reach(point, station, definition):
+				continue
+			if not _route(start, cell, nav, hero).is_empty():
+				return cell
+	return Vector2i(-1, -1)
 
 
 ## Where a station physically stands, from the authoritative structure record.

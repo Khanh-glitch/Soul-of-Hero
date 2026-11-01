@@ -1,0 +1,66 @@
+{
+  "schema": "soh.economy.a8_quarry_authorization.v4",
+  "status": "REJECTED_PENDING_EVIDENCE_FAIL_CLOSED",
+  "a3_head": "692128aa",
+  "a8_pin": {
+    "pr": 26,
+    "commit": "c8b4bc881d6744bac0f0826a639624ee1434e534"
+  },
+  "a1_pin": {
+    "pr": 20,
+    "commit": "2f6edd3f1c45916fb1fd85b167c3f635bf11cc3b",
+    "current_head": "939720d50a0b822ff9042d4104dc69ba78ffe0f8"
+  },
+  "decision": "A3 does NOT authorize brace_east_shelf, chock_west_ramp, or extract_outcrop. No cost, yield, cooldown, source mapping, or capability grant is approved. The world adapter has no Quarry binding and rejects Quarry intents fail-closed.",
+  "actions": {
+    "brace_east_shelf": {
+      "item_id": "oak_wood",
+      "authorized_cost_quantity": null,
+      "verdict": "REJECT_PENDING_EVIDENCE",
+      "reason": "A8's 2-oak value is explicitly S2 fixture-only, not a price. No native collision/route proof shows the east brace creates a safe, materially distinct route; no A3 sink/source model compares this one-time investment against existing relay/station/tool costs."
+    },
+    "chock_west_ramp": {
+      "item_id": "stone_chunk",
+      "authorized_cost_quantity": null,
+      "verdict": "REJECT_PENDING_EVIDENCE",
+      "reason": "A8's 2-stone value is explicitly S2 fixture-only. No native proof shows the west chock is a real alternative rather than a duplicate toll; no durable A1/A0 physical instance id exists."
+    },
+    "extract_outcrop": {
+      "item_id": "stone_chunk",
+      "source_id": "live_stone_chunk",
+      "authorized_reward_quantity": null,
+      "authorized_replenishment_seconds": null,
+      "verdict": "REJECT_PENDING_EVIDENCE",
+      "reason": "live_stone_chunk is generic (poi_id null, SOH_PROPOSAL). A8's 2-stone/45s values are fixture-only. No site-bound source record, active-time replenishment authority, or net-yield model exists. A guessed 1-item price would not satisfy the gate."
+    }
+  },
+  "source_sink_graph_evidence": {
+    "existing_stone_sinks": [
+      "furnace_kit (8 stone_chunk)",
+      "advanced_furnace_kit (8 stone_chunk)"
+    ],
+    "existing_stone_sources": [
+      "live_stone_chunk generic harvest (2 per claim, 480 active s, LIVE_EXISTING_NODES)"
+    ],
+    "existing_oak_sinks": [
+      "workbench_kit (6)",
+      "research_kit (4)",
+      "burn_charcoal (2)",
+      "iron_pick (2)",
+      "relay hand_crank_bypass (1)"
+    ],
+    "existing_oak_sources": [
+      "live_oak_wood harvest",
+      "A1 waystation deadfall (2 / 300 active s)"
+    ],
+    "missing_for_quarry": [
+      "A1/A0 durable physical instance id for poi_crown_south_quarry",
+      "native collision/route proof for both paid alternatives and leave_unworked",
+      "A3 net-yield model: route cost + travel/exposure vs expected stone over replenishment cycles",
+      "active-time cooldown authority bound to the site, not wall-clock or fixture memory",
+      "human pacing evidence that the Quarry is a meaningful return trip, not a filler toll"
+    ]
+  },
+  "fail_closed_behavior": "world_action({poi_id:poi_crown_south_quarry,...}) returns unknown_world_poi/unknown_world_action. Caller-supplied costs/rewards/flags are rejected as invalid_world_request_field. A7 BLK-5 remains OPEN_BY_DESIGN until real evidence is supplied; it must not be closed by stamping a guessed quantity.",
+  "next_atomic_action": "A8/A1/A0 supply a durable site instance and native two-route collision/reload proof; A3 then models cost/yield/cooldown against the existing stone/oak graph and issues a new authorization SHA. No production grant before that."
+}

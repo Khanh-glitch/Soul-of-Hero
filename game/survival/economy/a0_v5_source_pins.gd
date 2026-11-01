@@ -1,7 +1,8 @@
 extends RefCounted
-## A0 composition fence: A3 owner files are copied byte-for-byte from A3 PR #19
-## head 35214ed8f555350b83bd8985e9bec7512f3181e8 (V7 two-layer economy, tool
-## use and prepared offline operations). No UI can select this manifest.
+## GP-B staged A3 R13 canonical source pins at owner commit 57577d0dff1a3e1ed7216d8cb538229a3cf305b1.
+## Historic V7 vendored source remains pinned for isolated migration tests only.
+## All 29 A3 adoption file blobs are audited by A0_ADOPTION_CONTRACT_V2.json;
+## the runtime gate pins production catalog bytes and both canonical scripts.
 ##
 ## Why this fence moved (Round 11 WP1): the previous fence pinned A3 4bfba38d
 ## (V5). A7 independently measured `items.json` at `cd1a27c4` on a composed A3
@@ -11,12 +12,12 @@ extends RefCounted
 ## planners. Nothing below is an A0 rewrite: every hash is the sha256 of the
 ## unmodified A3 file at that owner head, and the two planners are A3-authored
 ## files placed at their own canonical paths so their own preloads resolve.
-const A3_OWNER_COMMIT := "35214ed8f555350b83bd8985e9bec7512f3181e8"
+const A3_OWNER_COMMIT := "57577d0dff1a3e1ed7216d8cb538229a3cf305b1"
 const DATA := {
-	"res://data/survival/items/items.json": "cd1a27c48078a69489904e86182dc63750941d9fc296830f711dd5d574615520",
+	"res://data/survival/items/items.json": "24a5fbc2e7e9b9e22b3fd3c4ed369e737b9e32cc914dc2df2bbde3e0092b80f0",
 	"res://data/survival/items/sources.json": "bc88143efb61f2202ae37c96373e07a1643cc29b7fc9a38abc84e4958fe2b984",
 	"res://data/survival/items/world_source_bindings.v3.json": "7b9670f4971d2f161138e0754cbbe66dfe2a239bf0d15d3079a766d729dd230b",
-	"res://data/survival/recipes/recipes.json": "4dbf48da0dbb841bedd3333f0def33f328af4ed55c0e1f919b4a19cc3385539c",
+	"res://data/survival/recipes/recipes.json": "962fb9bb045ec25c77f7c4bdbaaca23a5a4d2ac832b9e3684ebe4142d715d975",
 	"res://data/survival/recipes/research.json": "6cca178ac00a99e4d2acfa441869331d325d9bb4d7d1637709b0692db5d512b2",
 	"res://data/survival/recipes/stations.json": "aa05487252b8064729252994954eb73007fe525d2201f8aa725065dd0ee01851",
 	"res://data/survival/recipes/offline_operations.v1.json": "222b0551754999bc6ee136ecfb81c4254531d393eca73a9fe5e3e5acaaaae94d",
@@ -30,6 +31,13 @@ const SCRIPTS := {
 	"res://game/survival/economy/vendor/a3_world_source_c23292be.gd": "689a9b89dba4d756387b6b5c5f09b54d90ff0a787395f5e2fb523da496836efe",
 	"res://game/survival/economy/offline_operation_planner.gd": "11ba4037cc08be1b3eb8839c541f9ee02b3a2e0c5dc4eaaa99ff379c47f433bc",
 	"res://game/survival/economy/meta_economy_planner.gd": "35e88cc0166c5cf154287583756838b40de9df0682a1ad423ccef5f0138429e3",
+}
+
+## A3 R13 canonical service custody pins (new authority). Retained V7 vendor
+## pins below apply to replay/migration regressions only, not a second runtime queue.
+const R13_SCRIPTS := {
+	"res://game/survival/economy/economy_service.gd": "98932d25b73a03b9412f0f72f82dc5c2b6451e3ba894a134fdff2d1924252ee0",
+	"res://game/survival/economy/a3_economy_service.gd": "f0695cdd05c23490a42fa92cc6fb6de9d87a3ce2933e8563cc7d85fccde09e8b",
 }
 
 static func verify() -> String:
@@ -46,8 +54,9 @@ static func verify_with(overrides: Dictionary) -> String:
 			return "a3_data_pin_mismatch:" + path
 		if FileAccess.get_sha256(path) != expected:
 			return "a3_data_pin_mismatch:" + path
-	for path: String in SCRIPTS:
-		var expected := String(overrides.get(path, SCRIPTS[path]))
+	var script_pins: Dictionary = SCRIPTS.merged(R13_SCRIPTS)
+	for path: String in script_pins:
+		var expected := String(overrides.get(path, script_pins[path]))
 		var script := load(path) as Script
 		if script == null: return "a3_script_missing:" + path
 		# Tokenized release scripts cannot expose source bytes. Export CI must

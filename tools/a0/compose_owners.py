@@ -70,6 +70,8 @@ def main() -> int:
     parser.add_argument("--out", default=".composed")
     parser.add_argument("--owner", action="append", default=[], metavar="NAME=REF")
     parser.add_argument("--base-ref", default="HEAD")
+    parser.add_argument("--selected-owner-rulings-only", action="store_true",
+                        help="For isolated partial-owner composition, ignore rulings whose contributor is absent; default behavior remains unchanged.")
     parser.add_argument("--copy-base", action="store_true",
                         help="copy the A0 base tree into --out before overlaying owners")
     args = parser.parse_args()
@@ -115,6 +117,16 @@ def main() -> int:
 
     touched: dict[str, set[str]] = {}
     rulings = manifest.get("rulings", {})
+    if args.selected_owner_rulings_only:
+        # A partial A1/A8 integration must NEVER apply stale A6 merge artifacts.
+        # This excludes only rulings for owners absent from this invocation;
+        # two present owners touching a file still require an explicit ruling.
+        rulings = {
+            path: ruling
+            for path, ruling in rulings.items()
+            if all(owner == "a0" or owner in owners for owner in ruling.get("owners", []))
+            and (not ruling.get("owner") or ruling.get("owner") in owners)
+        }
     rejected: list[str] = []
     for name, sha in owners.items():
         info = manifest["owners"][name]

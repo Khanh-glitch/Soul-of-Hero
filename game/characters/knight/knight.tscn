@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://game/characters/knight/knight.gd" id="1_player"]
 [ext_resource type="Script" path="res://game/weapons/weapon_manager.gd" id="2_weapon_manager"]
 [ext_resource type="PackedScene" path="res://game/weapons/weapon_visual_2d.tscn" id="3_weapon_visual"]
 [ext_resource type="Script" path="res://game/heroes/hero_soul_manager.gd" id="4_hero_soul_manager"]
+[ext_resource type="Script" path="res://game/survival/player/player_avatar_presenter.gd" id="5_avatar_presenter"]
 
 [sub_resource type="RectangleShape2D" id="BodyShape"]
 size = Vector2(12, 16)
@@ -42,6 +43,10 @@ orbiting = true
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -31)
 texture_filter = 1
+
+[node name="AvatarPresenter" type="Node2D" parent="."]
+script = ExtResource("5_avatar_presenter")
+host_visual_feet_y = 9.0
 
 [node name="BodyShape" type="CollisionShape2D" parent="."]
 position = Vector2(0, -8)
