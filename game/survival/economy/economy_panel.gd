@@ -133,11 +133,16 @@ func _refresh() -> void:
 		var label := Label.new()
 		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		label.text = "%s: %s %d/%d" % [String(job.get("target", "")).replace("_", " "), String(job.get("status", "")), int(job.get("elapsed", 0)), int(job.get("duration", 0))]
+		var access: Dictionary = _host.call(&"job_access", job_id)
+		var access_ok := bool(access.get("ok", false))
+		var distance_hint := "" if access_ok else " — return to station" if String(access.get("reason", "")) == "station_not_reachable" else " — station unavailable"
+		label.text = "%s: %s %d/%d%s" % [String(job.get("target", "")).replace("_", " "), String(job.get("status", "")), int(job.get("elapsed", 0)), int(job.get("duration", 0)), distance_hint]
 		row.add_child(label)
 		var action := Button.new()
 		var ready := String(job.get("status", "")) == "ready"
 		action.text = "Collect" if ready else "Cancel"
+		action.disabled = not access_ok
+		action.tooltip_text = "Return to your built station to manage its job." if not access_ok else ""
 		action.pressed.connect(_job_action.bind(job_id, ready))
 		row.add_child(action)
 
