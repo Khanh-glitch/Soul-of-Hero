@@ -7,7 +7,21 @@ historical methods, caveats and source-comparison references.
 
 ## Experimental downloadable build
 
-**Latest retained executable:** [Windows x64 + Linux x64 artifact 13077879778](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293811919/artifacts/13077879778),
+**Current creator visual-preview candidate:** [Windows x64 + Linux x64 artifact
+13078327548](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41294519115/artifacts/13078327548),
+source `aa897d8d7892efb61f8b574021b75f057d8576b2`,
+[run 41294519115](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41294519115).
+It includes the Vietnamese guide and exact join manifest. Linux ran real-route
+smoke; the exported Windows application ran the same smoke on a Windows Actions
+runner **headlessly**. Full live #14/#18 captures with three real moving
+Skeletons, player and camera passed and are available as
+[#14 video + timeline](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41294519115/artifacts/13079130370)
+and [#18 video + timeline](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41294519115/artifacts/13078122964).
+These are visual-only, software-rendered captures, not GPU presentation, real
+combat or target-hardware performance. All 20 remain `VISUAL_NOT_VERIFIED` and
+this candidate is **not PLAYTEST_READY**. Artifact retention is 14 days.
+
+**Prior rollback executable:** [Windows x64 + Linux x64 artifact 13077879778](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293811919/artifacts/13077879778),
 [run 41293811919](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293811919),
 source `3373c7a39a19d576be8ead42abfa5b24d32f567e`. Linux and
 Windows binaries passed real-route smoke; the Windows run is **headless**,
@@ -15,7 +29,7 @@ not GPU/presentation or real-device performance. The additional art and
 multi-enemy test changes on later commits are **not in this executable**.
 Visual-only; no combat receipts, creator approval, or PLAYTEST_READY claim.
 
-**Newer visual-preview candidate:** [Windows x64 + Linux x64 artifact
+**Earlier R16 preview:** [Windows x64 + Linux x64 artifact
 13078291976](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293502803/artifacts/13078291976),
 run [41293502803](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293502803),
 source `8f102d2687c0c10abb18ac40f741d0cc08e1c5a2`. It has the same owner pins
@@ -107,7 +121,7 @@ lossless/MP4 gameplay videos and timestamps per skill. The rendered frames are
 sparse on software CI (for example #05 had 67 frames over its cast and a
 capture-included wall-frame p50/p95 of 917/1583 ms): they are not 60-Hz motion,
 GPU profiles or target-device FPS. The single-enemy #09 image cannot validate
-its multi-target chain; additional multi-enemy jobs are in flight. Three
+its multi-target chain; a subsequent multi-enemy run is recorded below. Three
 natural overlap sessions #10+#17, #14+#18 and #18+#10 also completed (separate
 noncapturing measurements), but do not establish source parity or all overlap
 pairs. No full video has been exhaustively human-reviewed. Selected full-frame
@@ -115,8 +129,31 @@ normal-scale stills for the six redesigns were inspected: #04 is a thin line
 followed by detached dark rupture fragments; #06 has a readable water crescent
 but its writing is unclear; #12 is sparse/pale; #13 remains tangled/wire-like;
 #14 still reads as small trees; #18 looks like five small hexagons without
-clear temporal contents. None is accepted. A later purple-cap and sharper
-stored-event design revision `7a74a7e2b8b9b2745e91b19214fa87941b6f44af` is under review and is not in the build.
+clear temporal contents. None is accepted. The later purple-cap and sharper
+stored-event revision `7a74a7e2b8b9b2745e91b19214fa87941b6f44af` is included
+in the current candidate; full-frame and native 1x selected frozen-world stills
+[41294277111](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41294277111)
+and [41294485137](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41294485137)
+show more contrasting caps, but the colonies still read largely tree-like. Two
+selected full-viewport stills from each current live #14/#18 capture similarly
+show small clusters and mostly blank-looking crystals; the temporal cause is
+not clearly readable. The 516/504 native source-tick frozen-world videos in
+41294277111 passed capture in normal/dim light, but have not been fully
+human-reviewed. Neither art change is approved or established as finished.
+
+The follow-up [41294225391](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41294225391)
+completed **all 20** independent full-timeline gameplay captures with three
+real Skeletons per spell (seven for #09), real player input and camera, at
+least two independently moving enemies, natural finish, restart/cancel and
+viewer/post cleanup; the visual casts did not change enemy HP. Its exported
+source was `4eaf7f36c36fdbaa24d252086f79b8c03b8cd940`, **before** the final
+#14/#18 color/temporal refinements. #09 observed all seven enemies moving and
+zero unbound source-contact events; its two selected full-frame stills still
+make the lightning difficult to see. These are runtime/lifecycle observations,
+not full video review, elected-source parity, body reactions or true receipts.
+Three additional no-capture overlap runs also passed in this multi-actor setup.
+The final build's #14/#18 full casts above cover the later art in live motion,
+but the remaining 18 captures are from the earlier exact SHA.
 
 [41293811919](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293811919)
 also compared complete no-PNG-I/O casts/overlap with fresh same-duration
@@ -147,15 +184,22 @@ pre-optimization image hashes. The optimization equality proof is now pinned
 to its exact historical before/after revisions, while current art is measured
 separately; [41293811953](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293811953)
 passed the unchanged six-field equality checks in both A/B directions. This is
-not a relaxed image-parity threshold or proof of current art parity.
+not a relaxed image-parity threshold or proof of current art parity. A later benchmark run
+[41294277027](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41294277027)
+exited 134 before reporting the current benchmark; original logs were not
+surfaced. Subsequent reruns [41294411877](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41294411877)
+and [41294429733](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41294429733)
+passed. The earlier abort's cause remains unknown.
 
 ## Source-role and visual status
 
-All rows are partial candidates, not completed source roles; none has verified
-full-motion, actor/terrain depth, real confirmed gameplay or creator approval.
+All rows are partial candidates, not completed source roles; full visual motion has not been exhaustively
+reviewed, and actor/terrain depth, confirmed gameplay and creator approval
+remain unverified.
 The six NEW entries are redesigns, not rejected-source ports. Common GPU/device
-performance is unverified. The renderer can start all 20 in the experimental
-wrapper, but the quick smoke does not establish full life-cycle gameplay.
+performance is unverified. All 20 completed the multi-actor visual timeline diagnostic above at the
+stated earlier SHA; this does not establish complete source roles or gameplay
+combat.
 
 | ID | Decision | Executable role / specific remaining blocker |
 |---:|---|---|
