@@ -150,8 +150,14 @@ and [PR30](https://github.com/Khanh-glitch/Soul-of-Hero/pull/30#issuecomment-655
   checks bit-exact output for dirty inputs and reruns C10/C17 decompositions;
   its same-host reset microbenchmark median was **2.686 → 0.854 ms**
   (12 samples; reset only, not GPU, total frame, or target FPS). A separate
-  exact source-cloud noise cache is **not integrated**, pending parity and
-  performance [41273866583](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41273866583).
+  exact source-cloud noise cache was initially tested independently in [41273866583](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41273866583).
+  This has since been integrated in #10 at `2912110`: an independent legacy
+  source renderer matched all four complete source buffers across eight
+  pre-impact sampled ticks in [41274009644](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41274009644).
+  The six full-grid isolated noise tests had exact float equality and median
+  **776.2 → 46.8 ms** including cache construction on that shared runner; this
+  is a full-grid microbenchmark, not the disc's end-to-end cost or target FPS.
+  Real-world JOIN and same-host overlap performance retests are pending.
 
 ### Per-skill acceptance ledger (R14)
 
