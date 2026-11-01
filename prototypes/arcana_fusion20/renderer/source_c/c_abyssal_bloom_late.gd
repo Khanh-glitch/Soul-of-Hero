@@ -140,12 +140,12 @@ func update(dt: float, t: float) -> void:
 # petal tables frozen at TF, then clears them from the center at 240 px/s.
 # This is intentionally release-only: the creator chose A for the opening.
 func _render_release_membrane(f: CFrame, t: float, pulse_r: float) -> void:
-    var bound := 84.0
+    var bound := 82.0
     f.field(C.x - bound, C.y - bound * SY, C.x + bound, C.y + bound * SY, func(x: int, y: int) -> void:
-        var dx := float(x) - C.x
-        var dy := (float(y) - C.y) / SY
+        var dx := float(x) + 0.5 - C.x
+        var dy := (float(y) + 0.5 - C.y) / SY
         var radius := sqrt(dx * dx + dy * dy)
-        if radius < 4.0 or radius > 80.0 or pulse_r > radius: return
+        if radius > 80.0 or radius < pulse_r: return
         var angle := atan2(dy, dx)
         var ri := mini(83, roundi(radius))
         var coverage := 0
@@ -158,40 +158,47 @@ func _render_release_membrane(f: CFrame, t: float, pulse_r: float) -> void:
                 coverage += 1
                 edge = minf(edge, inside)
         if coverage == 0: return
-        var n := CMath.noise3(x * 0.1 + 0.6, y * 0.1, TF * 0.8)
-        var shade := 0.25 + minf(0.4, coverage * 0.12) + n * 0.25
-        f.Ic(x, y, CPalette.ramp_d(CPalette.P.water, shade, CMath.bayer(x, y)), minf(0.95, 0.5 + coverage * 0.15))
+        var n := CMath.noise3(radius * 0.11 - TF * 1.3, angle * 2.6, 1.0 + TF * 0.25)
+        var color := CPalette.ramp_d(CPalette.P.water, 0.3 + coverage * 0.11 + (1.0 - radius / 80.0) * 0.12, CMath.bayer(x, y))
+        var alpha := 0.32 + 0.12 * coverage
+        if n > 0.63:
+            color = CPalette.ramp(CPalette.P.deep, 0.6)
+            alpha = 0.55
+        f.Ic(x, y, color, alpha)
+        f.D(x, y, cos(angle) * coverage * 0.8, sin(angle) * coverage * 0.8)
+        # The original frozen glint is only for TF <= t < TP, not release.
         if edge < 1.15:
             f.Ic(x, y, FOAM, 0.7)
-            f.Lc(x, y, FOAM, 0.6)
+            f.Lc(x, y, FOAM, 0.3)
         elif CMath.hash3(x, y, floori(TF * 8.0)) > 0.987:
             f.Lc(x, y, Vector3.ONE, 0.6)
-        var glint := fposmod(float(x) + float(y) * 0.6 - (t - TF) * 420.0, 60.0)
-        if glint < 2.0: f.Lc(x, y, Vector3.ONE, 0.5)
-        if radius - pulse_r < 4.0: f.Lc(x, y, Vector3.ONE, 1.2)
-        f.D(x, y, dx / (radius + 1.0) * 1.6, dy / (radius + 1.0) * 1.6))
-    for i in range(8):
-        var a := float(i) / 8.0 * CMath.TAU + 0.2
-        var radius := 46.0
-        if pulse_r > radius: continue
+        if radius - pulse_r < 4.0: f.Lc(x, y, Vector3.ONE, 1.2))
+    for i in range(6):
+        var a := float(i) / 6.0 * CMath.TAU
+        var radius := 40.0
+        if radius < pulse_r: continue
         var cx := C.x + cos(a) * radius
         var cy := C.y + sin(a) * radius * SY
-        var growth := CMath.ease_out((TF - (3.6 + (i % 3) * 0.15)) / 0.9)
+        var growth := CMath.ease_out((TF - (2.6 + i * 0.06)) / 0.9)
         for j in range(5):
-            var b := a + float(j) / 5.0 * CMath.TAU
-            f.ribbon([Vector2(cx, cy), Vector2(cx + cos(b) * 8.0 * growth, cy + sin(b) * 8.0 * growth * SY)],
-                [2.0 * growth, 0.5], func(x: int, y: int, _s: float, _e: float) -> void:
-                    f.Ic(x, y, CPalette.P.water[4], 0.75))
-        f.disc_l(cx, cy, 1.5 * growth, FOAM, 0.8)
+            var b := float(j) / 5.0 * CMath.TAU + TF * 0.8
+            f.ribbon([Vector2(cx, cy), Vector2(cx + cos(b) * 8.0 * growth, cy + sin(b) * 6.0 * growth)],
+                [0.5, 2.4 * growth], func(x: int, y: int, _s: float, e: float) -> void:
+                    f.Ic(x, y, CPalette.ramp(CPalette.P.water, 0.62), 0.55)
+                    if absf(e) > 0.6: f.Lc(x, y, FOAM, 0.35))
+        f.Lc(cx, cy, Vector3.ONE, 0.8 * growth)
     for bubble in bubbles:
-        var radius := float(bubble.r) + sin(TF * float(bubble.speed) + float(bubble.phase)) * 3.0
-        if pulse_r > radius: continue
+        var radius := float(bubble.r) + sin(TF * 2.0 + float(bubble.phase)) * 3.0
+        if radius < pulse_r: continue
         var angle := float(bubble.ang) + TF * float(bubble.speed)
         var x := C.x + cos(angle) * radius
-        var y := C.y + sin(angle) * radius * SY
-        f.ring_l(x, y, 1.5, FOAM, 0.6)
-        f.Lc(x - 1.0, y - 1.0, Vector3.ONE, 0.7)
-    f.glow(C.x, C.y, 76.0, CPalette.P.water[4], 0.12, 4.0, SY)
+        var y := C.y + sin(angle) * radius * SY - fmod(TF * 6.0 + float(bubble.phase) * 3.0, 8.0)
+        f.Lc(x - 1.0, y, FOAM, 0.35)
+        f.Lc(x + 1.0, y, FOAM, 0.35)
+        f.Lc(x, y - 1.0, FOAM, 0.35)
+        f.Lc(x, y + 1.0, FOAM, 0.2)
+        f.Lc(x - 1.0, y - 1.0, Vector3.ONE, 0.4)
+    f.glow(C.x, C.y, 70.0, CPalette.ramp(CPalette.P.water, 0.6), 0.12, 4.0, SY)
 
 func render(f: CFrame, t: float) -> void:
     if t < TP: return
