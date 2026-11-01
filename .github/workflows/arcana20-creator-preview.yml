@@ -1,0 +1,217 @@
+name: ARCANA20 refreshed creator visual-preview build
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-creator-preview.yml']
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Assemble exact owner composition in disposable directory
+        run: |
+          set -euo pipefail
+          git fetch --depth=1 --no-tags origin 04eacf62f1a3740a57e08691c3a9006d454aaa2c 6b801554a6af95424b4e39dd29f43c146aa13848 2cb1a3c5f093724eb9fecbdf45909ccb611f7b32 18e7afcbd576bbd9bfbcc509b2ee13216186a522 e505173edd119fdd955cf6249511b575a5468440
+          python3 tools/arcana20_join/assemble.py --out "$RUNNER_TEMP/avfx-playtest" --avfx-sha "$GITHUB_SHA" --a0-sha 04eacf62f1a3740a57e08691c3a9006d454aaa2c
+          python3 - "$RUNNER_TEMP/avfx-playtest/project.godot" <<'PY'
+          import pathlib, sys
+          p = pathlib.Path(sys.argv[1]); s = p.read_text()
+          assert 'config/name="SOUL OF HERO"' in s
+          s = s.replace('config/name="SOUL OF HERO"', 'config/name="SOH AVFX experimental playtest"')
+          s = s.replace('run/main_scene="res://game/app/app_root.tscn"', 'run/main_scene="res://prototypes/arcana_fusion20/renderer/playtest/arcana20_playtest.tscn"')
+          p.write_text(s)
+          PY
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: true
+      - name: Import disposable project
+        run: |
+          set -o pipefail
+          timeout 300s godot --headless --editor --path "$RUNNER_TEMP/avfx-playtest" --import --quit 2>&1 | tee "$RUNNER_TEMP/import.log"
+          grep -E 'SCRIPT ERROR:|Parse Error:|ERROR:' "$RUNNER_TEMP/import.log" | head -20 | while IFS= read -r line; do echo "::notice title=IMPORT_DIAGNOSTIC::$line"; done || true
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/import.log"
+      # Explicit rebuild includes the constant-color raster path; its scoped
+      # source-field equality checks do not prove complete lifecycle parity.
+      - name: Export self-contained Linux and Windows builds
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/avfx-playtest/export_presets.cfg" <<'PRESETS'
+          [preset.0]
+          name="Linux"
+          platform="Linux"
+          runnable=true
+          export_filter="all_resources"
+          include_filter="*.json,*.txt"
+          exclude_filter=""
+          [preset.0.options]
+          binary_format/embed_pck=true
+          texture_format/s3tc_bptc=true
+          texture_format/etc2_astc=false
+          [preset.1]
+          name="Windows"
+          platform="Windows Desktop"
+          runnable=false
+          export_filter="all_resources"
+          include_filter="*.json,*.txt"
+          exclude_filter=""
+          [preset.1.options]
+          binary_format/embed_pck=true
+          texture_format/s3tc_bptc=true
+          texture_format/etc2_astc=false
+          codesign/enable=false
+          application/modify_resources=false
+          PRESETS
+          mkdir -p "$RUNNER_TEMP/release/linux" "$RUNNER_TEMP/release/windows"
+          godot --headless --path "$RUNNER_TEMP/avfx-playtest" --export-release Linux "$RUNNER_TEMP/release/linux/SOH_AVFX_Playtest.x86_64"
+          godot --headless --path "$RUNNER_TEMP/avfx-playtest" --export-release Windows "$RUNNER_TEMP/release/windows/SOH_AVFX_Playtest.exe"
+          test -s "$RUNNER_TEMP/release/linux/SOH_AVFX_Playtest.x86_64"
+          test -s "$RUNNER_TEMP/release/windows/SOH_AVFX_Playtest.exe"
+      - name: Launch exported Linux application and exercise real route
+        run: |
+          set -o pipefail
+          timeout 480s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 "$RUNNER_TEMP/release/linux/SOH_AVFX_Playtest.x86_64" --audio-driver Dummy --rendering-method gl_compatibility --resolution 1280x720 --user-data-dir "$RUNNER_TEMP/playtest-user" -- --avfx-playtest-smoke 2>&1 | tee "$RUNNER_TEMP/playtest.log"
+          grep -Fq 'AVFX_PLAYTEST_SMOKE PASS' "$RUNNER_TEMP/playtest.log"
+          ! grep -Eq 'AVFX_PLAYTEST_FAIL|SCRIPT ERROR:|Parse Error:|Shader compilation failed' "$RUNNER_TEMP/playtest.log"
+      - name: Package experimental builds and manifest
+        run: |
+          set -euo pipefail
+          for os in linux windows; do
+            cp prototypes/arcana_fusion20/renderer/playtest/HUONG_DAN_THU_NGHIEM.txt "$RUNNER_TEMP/release/$os/"
+            cp "$RUNNER_TEMP/avfx-playtest/arcana20_join_manifest.json" "$RUNNER_TEMP/release/$os/"
+            (cd "$RUNNER_TEMP/release/$os" && zip -q -r "../SOH_AVFX_EXPERIMENTAL_${os}.zip" .)
+          done
+          sha256sum "$RUNNER_TEMP/release/"*.zip > "$RUNNER_TEMP/release/SHA256SUMS.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: SOH-AVFX-EXPERIMENTAL-NOT-PLAYTEST-READY
+          path: |
+            ${{ runner.temp }}/release/*.zip
+            ${{ runner.temp }}/release/SHA256SUMS.txt
+            ${{ runner.temp }}/avfx-playtest/arcana20_join_manifest.json
+            ${{ runner.temp }}/import.log
+            ${{ runner.temp }}/playtest.log
+          if-no-files-found: warn
+          retention-days: 14
+  windows-current-runtime:
+    needs: build
+    # Native Windows OS executes the same-run exported candidate.
+    # Headless startup verifies platform/runtime, not GPU or visual quality.
+    runs-on: windows-latest
+    timeout-minutes: 15
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: SOH-AVFX-EXPERIMENTAL-NOT-PLAYTEST-READY
+          path: bundle
+      - name: Run exported Windows binary on Windows
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $zip = Get-ChildItem -Path bundle -Filter SOH_AVFX_EXPERIMENTAL_windows.zip -Recurse | Select-Object -First 1
+          if (-not $zip) { Write-Host '::error::Windows zip missing from same-run artifact'; exit 1 }
+          Expand-Archive -Path $zip.FullName -DestinationPath win
+          $exe = (Get-ChildItem -Path win -Filter SOH_AVFX_Playtest.exe -Recurse | Select-Object -First 1).FullName
+          if (-not $exe) { throw 'Windows binary missing' }
+          $out = Join-Path $env:RUNNER_TEMP 'avfx-windows-out.log'
+          $err = Join-Path $env:RUNNER_TEMP 'avfx-windows-err.log'
+          $save = Join-Path $env:RUNNER_TEMP 'avfx-windows-user'
+          $p = Start-Process -FilePath $exe -ArgumentList @('--headless','--audio-driver','Dummy','--resolution','1280x720','--user-data-dir', $save, '--','--avfx-playtest-smoke') -RedirectStandardOutput $out -RedirectStandardError $err -PassThru
+          if (-not $p.WaitForExit(420000)) { $p.Kill(); throw 'Windows smoke timed out' }
+          Get-Content $out; Get-Content $err
+          if ($p.ExitCode -ne 0) { throw "Windows executable exited $($p.ExitCode)" }
+          if (-not (Select-String -Path $out -SimpleMatch 'AVFX_PLAYTEST_SMOKE PASS' -Quiet)) { throw 'Windows PASS marker missing' }
+          if (Select-String -Path $out,$err -Pattern 'AVFX_PLAYTEST_FAIL|SCRIPT ERROR:|Parse Error:' -Quiet) { throw 'Windows runtime script error' }
+          Write-Output '::notice title=WINDOWS_RUNTIME::Windows x64 exported current build ran real route and smoke; headless, no GPU or visual acceptance.'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcana20-windows-current-runtime-logs
+          path: |
+            ${{ runner.temp }}/avfx-windows-out.log
+            ${{ runner.temp }}/avfx-windows-err.log
+          if-no-files-found: warn
+  live-motion:
+    # Newest art receives live moving-world full-cast capture; the earlier
+    # all-20 single-enemy and multi-enemy matrix runs remain separate evidence.
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        skill: [14, 18]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/download-artifact@v4
+        with:
+          name: SOH-AVFX-EXPERIMENTAL-NOT-PLAYTEST-READY
+          path: bundle
+      - name: Unpack same-run exported Linux application
+        run: |
+          set -euo pipefail
+          zip=$(find bundle -name SOH_AVFX_EXPERIMENTAL_linux.zip -print -quit)
+          test -n "$zip"
+          mkdir release
+          unzip -q "$zip" -d release
+          chmod +x release/SOH_AVFX_Playtest.x86_64
+      - name: Run actual game with moving player, Skeleton and camera
+        env:
+          AVFX_LIVE_SKILL: ${{ matrix.skill }}
+          AVFX_LIVE_LIGHT: normal
+          AVFX_LIVE_CAPTURE: '1'
+        run: |
+          set +e
+          set -o pipefail
+          timeout --signal=TERM --kill-after=10s 780s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 \
+            "$GITHUB_WORKSPACE/release/SOH_AVFX_Playtest.x86_64" --audio-driver Dummy --rendering-method gl_compatibility --resolution 1280x720 \
+            --user-data-dir "$RUNNER_TEMP/live-user" -- --avfx-live-capture 2>&1 | tee "$RUNNER_TEMP/live.log"
+          result=${PIPESTATUS[0]}
+          grep -E 'AVFX_LIVE_|SCRIPT ERROR|Parse Error|Shader compilation failed|ERROR:' "$RUNNER_TEMP/live.log" | head -20 | while IFS= read -r line; do echo "::notice title=LIVE_DIAGNOSTIC::$line"; done || true
+          if [ "$result" -ne 0 ]; then echo "::error::Live capture failed exit=$result"; exit "$result"; fi
+          grep -Fq 'AVFX_LIVE_PASS' "$RUNNER_TEMP/live.log" || exit 1
+          ! grep -Eq 'AVFX_LIVE_FAIL|SCRIPT ERROR:|Parse Error:|Shader compilation failed' "$RUNNER_TEMP/live.log"
+      - name: Collect native gameplay frames and metadata
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/live-output"
+          folder=$(find "$RUNNER_TEMP" "$HOME/.local/share/godot/app_userdata" -type f -name timeline.json -path '*/avfx_live_capture/*' -print -quit 2>/dev/null || true)
+          if [ -n "$folder" ]; then cp -a "$(dirname "$folder")"/. "$RUNNER_TEMP/live-output/"; else echo '::warning::No timeline.json found'; fi
+      - name: Install image preview dependency
+        run: python3 -m pip install --quiet pillow
+      - name: Surface full-frame mid timeline
+        run: python3 tools/arcana20_join/surface_live_capture.py "$RUNNER_TEMP/live-output" 0.5 full
+      - name: Surface full-frame late timeline
+        run: python3 tools/arcana20_join/surface_live_capture.py "$RUNNER_TEMP/live-output" 0.72 full
+      - name: Surface native detail late timeline
+        run: python3 tools/arcana20_join/surface_live_capture.py "$RUNNER_TEMP/live-output" 0.72 detail
+      - name: Encode native wall-time capture
+        run: |
+          set -euo pipefail
+          if ! command -v ffmpeg; then sudo apt-get update -qq && sudo apt-get install -y ffmpeg; fi
+          python3 tools/arcana20_join/encode_live_capture.py "$RUNNER_TEMP/live-output" 2>&1 | tee "$RUNNER_TEMP/encode.log"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: live-motion-${{ matrix.skill }}-normal
+          path: |
+            ${{ runner.temp }}/live-output/*.json
+            ${{ runner.temp }}/live-output/*.mkv
+            ${{ runner.temp }}/live-output/*.mp4
+            ${{ runner.temp }}/live.log
+            ${{ runner.temp }}/encode.log
+          if-no-files-found: warn

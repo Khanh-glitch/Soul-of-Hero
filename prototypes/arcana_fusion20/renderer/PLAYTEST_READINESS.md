@@ -7,6 +7,14 @@ historical methods, caveats and source-comparison references.
 
 ## Experimental downloadable build
 
+**Latest retained executable:** [Windows x64 + Linux x64 artifact 13077879778](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293811919/artifacts/13077879778),
+[run 41293811919](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293811919),
+source `3373c7a39a19d576be8ead42abfa5b24d32f567e`. Linux and
+Windows binaries passed real-route smoke; the Windows run is **headless**,
+not GPU/presentation or real-device performance. The additional art and
+multi-enemy test changes on later commits are **not in this executable**.
+Visual-only; no combat receipts, creator approval, or PLAYTEST_READY claim.
+
 **Newer visual-preview candidate:** [Windows x64 + Linux x64 artifact
 13078291976](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293502803/artifacts/13078291976),
 run [41293502803](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293502803),
@@ -91,12 +99,55 @@ large part of the frame in these three captures; the next harness hides it as
 F4 would. These are actionable visual failures, not creator approval. A later
 all-20 capture and matched no-cast/leak/overlap measurement are pending.
 
+The more recent run [41293811919](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293811919)
+recorded all 20 full natural visual timelines in independent live jobs, with
+one real, AI-moving Skeleton, real movement and camera, no fabricated damage,
+normal finish, restart/cancel and viewer/post cleanup. It retained native-size
+lossless/MP4 gameplay videos and timestamps per skill. The rendered frames are
+sparse on software CI (for example #05 had 67 frames over its cast and a
+capture-included wall-frame p50/p95 of 917/1583 ms): they are not 60-Hz motion,
+GPU profiles or target-device FPS. The single-enemy #09 image cannot validate
+its multi-target chain; additional multi-enemy jobs are in flight. Three
+natural overlap sessions #10+#17, #14+#18 and #18+#10 also completed (separate
+noncapturing measurements), but do not establish source parity or all overlap
+pairs. No full video has been exhaustively human-reviewed. Selected full-frame
+normal-scale stills for the six redesigns were inspected: #04 is a thin line
+followed by detached dark rupture fragments; #06 has a readable water crescent
+but its writing is unclear; #12 is sparse/pale; #13 remains tangled/wire-like;
+#14 still reads as small trees; #18 looks like five small hexagons without
+clear temporal contents. None is accepted. A later purple-cap and sharper
+stored-event design revision `7a74a7e2b8b9b2745e91b19214fa87941b6f44af` is under review and is not in the build.
+
+[41293811919](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293811919)
+also compared complete no-PNG-I/O casts/overlap with fresh same-duration
+no-cast wrapper sessions (which still mount the empty AVFX wrapper). For
+#10, baseline/single/#10+#17 wall-frame p50/p95 were
+59.17/64.96, 111.38/239.86 and 190.52/380.38 ms. For #14, baseline/single/
+#14+#18 were 62.30/69.02, 207.36/245.57 and 348.71/432.46 ms. For #18,
+baseline/single/#18+#10 were 68.37/74.23, 191.79/231.97 and 230.14/362.70 ms.
+Different live movement/AI and shared software CI make these approximate, not
+matched render-phase comparisons or hardware FPS. In all three cases verbose
+shutdown recorded 17 ObjectDB lines and 5 resource lines in each variant.
+[41294138791](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41294138791)
+compared ID-normalized leak text and the five survival/economy resource paths;
+the printed lines matched each no-cast baseline. Equal diagnostics do **not**
+prove zero AVFX leaks or rule out different instances, long-session retention,
+or native/GPU memory leaks. Player tree-entered/tree-exiting disconnect errors
+also remain for A0/AppFlow owner investigation.
+
+An [isolated provisional AVFX receipt relay](owner_adapters/README.md) and
+synthetic fixture tests [41294102470](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41294102470)
+are **unmounted**. The decoder must come from CT; this cannot authenticate
+receipts, provide owner lifecycle/replay policy, or establish real combat.
+
 The `8f102d2` source-event smoke passed, but its phase-benchmark job
 [41293502840](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293502840)
 failed because it compared an intentionally changed redesign against the
-pre-optimization image hashes. The optimization equality proof is being pinned
+pre-optimization image hashes. The optimization equality proof is now pinned
 to its exact historical before/after revisions, while current art is measured
-separately; this is not a relaxed image-parity threshold.
+separately; [41293811953](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293811953)
+passed the unchanged six-field equality checks in both A/B directions. This is
+not a relaxed image-parity threshold or proof of current art parity.
 
 ## Source-role and visual status
 
