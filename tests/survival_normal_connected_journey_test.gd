@@ -204,7 +204,7 @@ func _continuation(ow: Node) -> void:
 		_write_audit(ow, {})
 		return
 	await _open_panel(panel)
-	var kit_collect := await _find_collect(panel, "furnace kit")
+	var kit_collect := await _find_collect(panel, "furnace kit", furnace_job)
 	_expect(kit_collect != null, "the finished furnace kit exposes a Collect control")
 	if kit_collect == null:
 		_conn_halt("kit_collect_control")
@@ -291,7 +291,7 @@ func _continuation(ow: Node) -> void:
 		_write_audit(ow, {})
 		return
 	await _open_panel(panel)
-	var charcoal_collect := await _find_collect(panel, "burn charcoal")
+	var charcoal_collect := await _find_collect(panel, "burn charcoal", charcoal_job)
 	_expect(charcoal_collect != null,
 		"the burned charcoal exposes a Collect control (%s)" % _job_rows(panel))
 	if charcoal_collect == null:
@@ -408,7 +408,7 @@ func _verify_body() -> void:
 		return
 	# Collecting is the player's act, through the visible panel.
 	await _open_panel(panel)
-	var collect := await _find_collect(panel, "smelt iron")
+	var collect := await _find_collect(panel, "smelt iron", smelt_job)
 	_expect(collect != null, "the settled smelt exposes a Collect control")
 	if collect == null:
 		return

@@ -609,7 +609,7 @@ func _ready_label(label: Label, target: String) -> bool:
 ## is still absent it prints every row, so the next run is a diagnosis rather than a
 ## second guess. Matching is on the row's own words and the job's own status, not on
 ## a fixed node name, because node names are the panel's business.
-func _find_collect(panel: Node, target_words: String) -> Button:
+func _find_collect(panel: Node, target_words: String, job_id := "") -> Button:
 	for attempt: int in range(3):
 		if attempt > 0:
 			await _close_panel(panel)
@@ -617,29 +617,46 @@ func _find_collect(panel: Node, target_words: String) -> Button:
 		await _open_panel(panel)
 		await process_frame
 		await process_frame
-		var found := _collect_for(panel, target_words)
+		var found := _collect_for(panel, target_words, job_id)
 		if found != null:
 			if attempt > 0:
-				print("A0_CONNECTED_COLLECT target=%s after_reopen=%d row=%s" % [
-					target_words, attempt, String(found.name)])
+				print("A0_CONNECTED_COLLECT target=%s job=%s after_reopen=%d row=%s" % [
+					target_words, job_id, attempt, String(found.get_parent().name)])
 			return found
-		print("A0_CONNECTED_ROWS missing=%s attempt=%d open=%s rows=%s" % [
-			target_words, attempt, str(bool(panel.call(&"is_open"))), _rows_summary(panel)])
+		print("A0_CONNECTED_ROWS missing=%s job=%s attempt=%d open=%s rows=%s" % [
+			target_words, job_id, attempt, str(bool(panel.call(&"is_open"))), _rows_summary(panel)])
 	return null
 
 
-func _collect_for(panel: Node, target_words: String) -> Button:
+## The Collect control for one job, found by the job's own identity first and by the
+## row's words second. Two panels publish different shapes — one names its job row
+## `Job_<id>` with an `JobAction` button, the other writes `<target>: ready n/m` and
+## calls the button Collect — and both are legitimate: what the gate must not do is
+## depend on the *language* of a player-facing sentence, or on a stale list.
+func _collect_for(panel: Node, target_words: String, job_id := "") -> Button:
+	if not job_id.is_empty():
+		var row := panel.find_child("Job_%s" % job_id, true, false)
+		if row != null:
+			for value: Node in row.find_children("*", "Button", true, false):
+				var action := value as Button
+				if action != null and is_instance_valid(action) and action.text.strip_edges().to_lower() == "collect":
+					return action
 	for value: Node in panel.find_children("*", "Button", true, false):
 		var candidate := value as Button
 		if candidate == null or not is_instance_valid(candidate):
 			continue
 		if candidate.text.strip_edges().to_lower() != "collect":
 			continue
-		var label := _row_label(candidate.get_parent())
-		if label == null:
+		var row := candidate.get_parent()
+		if row == null:
 			continue
-		var text := label.text.to_lower()
-		if text.contains(target_words.to_lower()) and text.contains("ready"):
+		# A named job row is already unambiguous: its identity is the job, not a
+		# sentence a translator can change.
+		if String(row.name).begins_with("Job_"):
+			return candidate
+		var label := _row_label(row)
+		if label != null and label.text.to_lower().contains(target_words.to_lower()) \
+				and label.text.to_lower().contains("ready"):
 			return candidate
 	return null
 
@@ -653,8 +670,18 @@ func _rows_summary(panel: Node) -> String:
 		var text := label.text.replace("\n", " ").strip_edges()
 		if text.is_empty():
 			continue
-		rows.append(text.substr(0, 40))
-	return " | ".join(rows.slice(0, 8))
+		rows.append(text.substr(0, 32))
+	# The action words matter as much as the copy: "COLLECT present but disabled" and
+	# "no COLLECT row at all" are different product facts.
+	for value: Node in panel.find_children("*", "Button", true, false):
+		var button := value as Button
+		if button == null or not is_instance_valid(button):
+			continue
+		var text := button.text.replace("\n", " ").strip_edges()
+		if text.is_empty():
+			continue
+		rows.append("[%s%s]" % [text.substr(0, 24), " disabled" if button.disabled else ""])
+	return " | ".join(rows.slice(0, 12))
 
 
 func _owning_scroll(control: Control) -> ScrollContainer:
@@ -885,7 +912,7 @@ func _body() -> void:
 		_stop("wait_kit_ready")
 		return
 	await _open_panel(panel)
-	var collect_button := await _find_collect(panel, "workbench kit")
+	var collect_button := await _find_collect(panel, "workbench kit", job_id)
 	var scroll := _owning_scroll(collect_button)
 	_stage_at("kit_collect_control")
 	_expect(collect_button != null and scroll != null, "completed escrow exposes a GUI collect control inside its scroll owner")
@@ -1001,7 +1028,7 @@ func _body() -> void:
 	if String(weave_job.get("status", "")) != "ready":
 		_stop("wait_weave_ready")
 		return
-	var output_button := await _find_collect(panel, "weave cloth")
+	var output_button := await _find_collect(panel, "weave cloth", weave_id)
 	var output_scroll := _owning_scroll(output_button)
 	_stage_at("cloth_collect_control")
 	_expect(output_button != null and output_scroll != null, "produced cloth exposes a GUI collection control inside its scroll owner")
