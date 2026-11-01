@@ -27,7 +27,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: r17-candidate-${{ matrix.skill }}-${{ matrix.lighting }}
-          run-id: 41300736472
+          run-id: 41301223253
           github-token: ${{ github.token }}
           path: after
       - run: python3 -m pip install --quiet pillow

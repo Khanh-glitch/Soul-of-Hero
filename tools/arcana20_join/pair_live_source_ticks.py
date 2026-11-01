@@ -25,7 +25,7 @@ for i,tick in enumerate(ticks):
     if left.size!=(1280,720) or right.size!=left.size: raise SystemExit('unexpected native capture size')
     im=Image.new('RGB',(2560,780),(19,22,28)); im.paste(left,(0,60)); im.paste(right,(1280,60))
     d=ImageDraw.Draw(im); d.text((12,5),f'BEFORE  b33e2da  |  skill {b["skill"]}',font=font,fill='white')
-    d.text((1292,5),'CANDIDATE  0ebc44b',font=font,fill='white')
+    d.text((1292,5),'CANDIDATE  f58c2a8',font=font,fill='white')
     d.text((12,32),f'Last-observed source tick {tick}; independently moving actors, source-clock retimed, skipped frames not filled',font=font,fill=(220,220,220))
     p=output/f'pair_{i:04d}.png'; im.save(p); paths.append(p)
     if tick in {min(ticks,key=lambda x:abs(x-target)) for target in (87,143,247,327,351)}:
@@ -39,5 +39,5 @@ with concat.open('w') as f:
 subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-y','-f','concat','-safe','0','-i',str(concat),'-fps_mode','vfr','-c:v','libx264','-crf','16','-pix_fmt','yuv420p',str(output/'before-after-source-clock.mp4')],check=True)
 for p in paths: p.unlink()
 concat.unlink()
-(output/'comparison.json').write_text(json.dumps({'skill':b['skill'],'ticks':ticks,'pair_count':len(ticks),'before':'b33e2da349daa066ebf8867a0c2319b7ab49c7a0','candidate':'0ebc44bae013e9eed74cd41073af5a83bacfbf8b','scope':'Full unaltered 1280x720 world frames at 1x, paired by last-observed source tick and retimed to source clock; actor/camera positions differ; tick is not a presentation fence; no interpolation; not Gold parity or real-time FPS'},indent=2)+'\n')
+(output/'comparison.json').write_text(json.dumps({'skill':b['skill'],'ticks':ticks,'pair_count':len(ticks),'before':'b33e2da349daa066ebf8867a0c2319b7ab49c7a0','candidate':'f58c2a894a3d04fe476c4b4a559c1888f9ee40c3','scope':'Full unaltered 1280x720 world frames at 1x, paired by last-observed source tick and retimed to source clock; actor/camera positions differ; tick is not a presentation fence; no interpolation; not Gold parity or real-time FPS'},indent=2)+'\n')
 print('::notice title=R17_MATCHED_COMPARISON::'+json.dumps({'skill':b['skill'],'count':len(ticks),'first':ticks[0],'last':ticks[-1]}))
