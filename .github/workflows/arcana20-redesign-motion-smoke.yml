@@ -83,7 +83,10 @@ jobs:
             IMPORT_RESULT=$?
             set -e
             if [ "$IMPORT_RESULT" -ne 0 ]; then
-              tail -30 "$RUNNER_TEMP/import-$WHICH.log" | while IFS= read -r line; do echo "::notice title=BENCH_IMPORT_FAILURE::$line"; done
+              # Surface earlier fatal diagnostics before progress output, since
+              # runner artifacts/log redirects may be unavailable for analysis.
+              grep -Ein 'fatal|error|terminate|abort|assert|out of memory|pthread|resource temporarily unavailable|cannot allocate' "$RUNNER_TEMP/import-$WHICH.log" | head -20 | while IFS= read -r line; do echo "::notice title=BENCH_IMPORT_CAUSE::$line"; done || true
+              tail -8 "$RUNNER_TEMP/import-$WHICH.log" | while IFS= read -r line; do echo "::notice title=BENCH_IMPORT_FAILURE::$line"; done
               echo "::error::Import $WHICH exited $IMPORT_RESULT"
               exit "$IMPORT_RESULT"
             fi
