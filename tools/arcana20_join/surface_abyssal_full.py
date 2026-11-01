@@ -10,7 +10,11 @@ from PIL import Image
 root = pathlib.Path(sys.argv[1])
 index = int(sys.argv[2])
 mode = sys.argv[3]
-data = json.loads((root / 'timeline.json').read_text())
+timelines = list(root.rglob('timeline.json'))
+if len(timelines) != 1:
+    raise SystemExit(f'expected one locked timeline, found {len(timelines)}')
+root = timelines[0].parent
+data = json.loads(timelines[0].read_text())
 frames = [f for f in data['frames'] if 'ab_files' in f]
 frame = frames[index]
 image = Image.open(root / frame['ab_files'][0 if mode == 'a' else 1]).convert('RGB')
