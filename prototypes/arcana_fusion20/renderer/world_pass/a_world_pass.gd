@@ -28,52 +28,57 @@ func _ready() -> void:
 
 ## Conservative separable dilation of the source operation footprint, not
 ## color extraction. Bound the source bloom support without a giant texture.
-func _bloom_influence(source: PackedByteArray) -> PackedByteArray:
+func _bloom_influence(source: PackedByteArray, width: int = AFramebuffer.W, height: int = AFramebuffer.H) -> PackedByteArray:
     var horizontal := PackedByteArray()
     var result := PackedByteArray()
-    horizontal.resize(AFramebuffer.W * AFramebuffer.H)
-    result.resize(AFramebuffer.W * AFramebuffer.H)
-    for y in range(AFramebuffer.H):
+    horizontal.resize(width * height)
+    result.resize(width * height)
+    for y in range(height):
         var count := 0
-        for x in range(AFramebuffer.W):
+        for x in range(width):
             if x == 0:
                 for k in range(0, RADIUS + 1):
-                    count += int(source[y * AFramebuffer.W + k])
+                    count += int(source[y * width + k])
             else:
                 var add_x := x + RADIUS
                 var rem_x := x - RADIUS - 1
-                if add_x < AFramebuffer.W:
-                    count += int(source[y * AFramebuffer.W + add_x])
+                if add_x < width:
+                    count += int(source[y * width + add_x])
                 if rem_x >= 0:
-                    count -= int(source[y * AFramebuffer.W + rem_x])
-            horizontal[y * AFramebuffer.W + x] = 1 if count > 0 else 0
-    for x in range(AFramebuffer.W):
+                    count -= int(source[y * width + rem_x])
+            horizontal[y * width + x] = 1 if count > 0 else 0
+    for x in range(width):
         var count := 0
-        for y in range(AFramebuffer.H):
+        for y in range(height):
             if y == 0:
                 for k in range(0, RADIUS + 1):
-                    count += int(horizontal[k * AFramebuffer.W + x])
+                    count += int(horizontal[k * width + x])
             else:
                 var add_y := y + RADIUS
                 var rem_y := y - RADIUS - 1
-                if add_y < AFramebuffer.H:
-                    count += int(horizontal[add_y * AFramebuffer.W + x])
+                if add_y < height:
+                    count += int(horizontal[add_y * width + x])
                 if rem_y >= 0:
-                    count -= int(horizontal[rem_y * AFramebuffer.W + x])
-            result[y * AFramebuffer.W + x] = 1 if count > 0 else 0
+                    count -= int(horizontal[rem_y * width + x])
+            result[y * width + x] = 1 if count > 0 else 0
     return result
 
 func consume(frame: Arcana20SourcePassFrame) -> void:
-    if frame.family != &"A" or frame.source_size != Vector2i(AFramebuffer.W, AFramebuffer.H):
+    if frame.family != &"A" or frame.source_size.x < 64 or frame.source_size.y < 64:
         return
-    var count := AFramebuffer.W * AFramebuffer.H
+    var width := frame.source_size.x
+    var height := frame.source_size.y
+    var count := width * height
+    if frame.a_rgb.size() != count * 3 or frame.a_coverage.size() != count or frame.a_influence.size() != count or frame.a_multiplier.size() != count or frame.a_world_warp.size() != count * 2:
+        push_error("A_WORLD_PASS_FAIL invalid source field dimensions")
+        return
     var ink := PackedFloat32Array()
     var masks := PackedFloat32Array()
     var bloom := PackedFloat32Array()
     ink.resize(count * 4)
     masks.resize(count * 4)
     bloom.resize(frame.a_bloom_size.x * frame.a_bloom_size.y * 4)
-    var expanded := _bloom_influence(frame.a_influence)
+    var expanded := _bloom_influence(frame.a_influence, width, height)
     for p in range(count):
         var i := p * 4
         var j := p * 3
@@ -89,9 +94,9 @@ func consume(frame: Arcana20SourcePassFrame) -> void:
         bloom[p * 4] = frame.a_bloom_rgb[p * 3]
         bloom[p * 4 + 1] = frame.a_bloom_rgb[p * 3 + 1]
         bloom[p * 4 + 2] = frame.a_bloom_rgb[p * 3 + 2]
-    _sprite.texture = _set_texture("ink", Vector2i(AFramebuffer.W, AFramebuffer.H), ink)
+    _sprite.texture = _set_texture("ink", Vector2i(width, height), ink)
     _material.set_shader_parameter("source_ink", _sprite.texture)
-    _material.set_shader_parameter("influence_multiplier", _set_texture("mask", Vector2i(AFramebuffer.W, AFramebuffer.H), masks))
+    _material.set_shader_parameter("influence_multiplier", _set_texture("mask", Vector2i(width, height), masks))
     _material.set_shader_parameter("bloom_tex", _set_texture("bloom", frame.a_bloom_size, bloom))
     _material.set_shader_parameter("bloom_amount", frame.a_bloom)
     _material.set_shader_parameter("exposure", frame.a_exposure)
@@ -111,6 +116,10 @@ func _update_camera_basis() -> void:
 
 func _set_texture(key: String, size: Vector2i, data: PackedFloat32Array) -> ImageTexture:
     var image := Image.create_from_data(size.x, size.y, false, Image.FORMAT_RGBAF, data.to_byte_array())
+    if _textures.has(key):
+        var existing: ImageTexture = _textures[key]
+        if Vector2i(existing.get_width(), existing.get_height()) != size:
+            _textures.erase(key)
     if not _textures.has(key):
         _textures[key] = ImageTexture.create_from_image(image)
     else:

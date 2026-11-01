@@ -11,7 +11,6 @@ uniform float bloom_amount = 0.75;
 uniform float exposure = 1.0;
 uniform vec2 screen_dx = vec2(1.0, 0.0);
 uniform vec2 screen_dy = vec2(0.0, 1.0);
-const ivec2 SIZE = ivec2(416,234);
 
 float tone(float x) {
     if (x <= 0.0) { return 0.0; }
@@ -19,7 +18,8 @@ float tone(float x) {
     return min(1.0, pow(v, 1.0 / 1.42));
 }
 void fragment() {
-    ivec2 p = clamp(ivec2(floor(UV * vec2(SIZE))), ivec2(0), SIZE - ivec2(1));
+    ivec2 size = textureSize(source_ink, 0);
+    ivec2 p = clamp(ivec2(floor(UV * vec2(size))), ivec2(0), size - ivec2(1));
     vec4 mask = texelFetch(influence_multiplier, p, 0);
     // Mask derives from source raster operations, dilated only to bound the
     // original bloom kernel. It is not keyed from the color framebuffer.
