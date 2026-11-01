@@ -101,6 +101,27 @@ func _run() -> void:
     b_post.detach()
     b_post.free()
     b_post_host.free()
+    # F01: C outer tongues must share A's actual crown basis/center rather
+    # than independently deriving a visibly different transform. This checks
+    # unclamped and clamped ranges at four bearings through the real renderer;
+    # it is not a creator visual decision or a source-raster parity claim.
+    var crown_host := Arcana20Renderer.new()
+    crown_host.world_pass_mode = true
+    root.add_child(crown_host)
+    var crown_id := Arcana20SourceCatalog.canonical_id(1)
+    for range_px in [35.0, 140.0, 900.0]:
+        for dir in [Vector2.RIGHT, Vector2.DOWN, Vector2.LEFT, Vector2.UP]:
+            var origin := Vector2(1200.0, 800.0)
+            check(crown_host.cast_skill(crown_id, origin, origin + dir * range_px), "F01 actual fusion cast")
+            var fusion := crown_host._casts[crown_id] as FusionPlayer
+            var lead := fusion._front as ASourcePlayer
+            var outer := fusion._back as CSourcePlayer
+            check(lead != null and outer != null, "F01 A lead and C outer are mounted")
+            if lead != null and outer != null:
+                check(lead.local_to_world(ACinderCrown.C).distance_to(outer.local_to_world(CCinderCrown.C)) < 0.001, "F01 A/C center shared %s %s" % [range_px, dir])
+                check(absf(lead._scale - outer._scale) < 0.00001 and absf(lead._rot - outer._rot) < 0.00001, "F01 A/C rotation and scale shared")
+            crown_host.cancel_skill(crown_id)
+    crown_host.free()
     # B03 meteors use a fixed source sigil centre and screen-up ballistic z,
     # not the B02 caster-target axis. Test the actual mount at four bearings.
     var meteor_mount := BSourcePlayer.new()

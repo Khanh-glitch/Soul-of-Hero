@@ -216,7 +216,22 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
         fp.source_layer_finished.connect(func(family: StringName) -> void: source_layer_finished.emit(canonical_id, family))
         fp.screen_post.connect(func(state: Dictionary) -> void: screen_post.emit(canonical_id, state))
         fp.configure([
-            {"node": cp, "layer": -1, "offset": 0.69, "begin_call": func(n: Node, cw: Vector2, tw: Vector2) -> void: n.call("begin", cw, tw, "crown_outer" if world_pass_mode else "crown")},
+            {"node": cp, "layer": -1, "offset": 0.69, "begin_call": func(n: Node, cw: Vector2, tw: Vector2) -> void:
+                var c_player := n as CSourcePlayer
+                c_player.begin(cw, tw, "crown_outer" if world_pass_mode else "crown")
+                if world_pass_mode:
+                    # Share A's exact similarity basis and crown center. Two
+                    # independent A/C caster-anchor vectors differ, so merely
+                    # targeting the same point produced different rotation,
+                    # scale and (when clamped) divergent crown centers. The C
+                    # source's own lifted hub and flame geometry stay intact.
+                    var axis := tw - cw
+                    var a_axis := ASourcePlayer.ARENA_LOCAL - ASourcePlayer.CASTER_LOCAL
+                    c_player._rot = axis.angle() - a_axis.angle() if axis.length() > 1.0 else 0.0
+                    c_player._scale = clampf(axis.length() / a_axis.length(), 0.6, 3.5) if axis.length() > 1.0 else 1.0
+                    var a_centre := ACinderCrown.C - ASourcePlayer.CASTER_LOCAL
+                    var c_centre := CCinderCrown.C - Vector2(112, 126)
+                    c_player._origin = cw + (a_centre - c_centre).rotated(c_player._rot) * c_player._scale},
             {"node": ap, "layer": 1, "offset": 0.0, "begin_call": func(n: Node, cw: Vector2, tw: Vector2) -> void: n.call("begin", cw, tw)},
         ], ACinderCrown.DURATION)
         add_child(fp)
