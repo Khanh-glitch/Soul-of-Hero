@@ -52,6 +52,32 @@ func _run() -> void:
     check(bclock.source_tick == 2, "B source tick restarts and counts catch-up steps")
     bclock.stop()
     bclock.free()
+    # Exercise the real B producer through the preview post consumer: the
+    # source bite flash used to be dropped entirely in the world-pass path.
+    # This validates transport/retirement, not linear-HDR visual fidelity.
+    var b_post_host := Arcana20Renderer.new()
+    b_post_host.world_pass_mode = true
+    root.add_child(b_post_host)
+    var b_post := Arcana20CViewportPost.new()
+    root.add_child(b_post)
+    check(b_post.attach(b_post_host), "B viewport-post preview attaches")
+    var b_id := Arcana20SourceCatalog.canonical_id(2)
+    check(b_post_host.cast_skill(b_id, Vector2(100, 200), Vector2(240, 200)), "B wyrm post source cast")
+    var b_player := b_post_host._casts[b_id] as BSourcePlayer
+    b_player.set_process(false)
+    b_player.advance(5.0)
+    b_player._render_frame()
+    check(b_player._r.flash > 0.0 and b_post._states.has(b_id), "B authored bite flash reaches viewport consumer")
+    if b_post._states.has(b_id):
+        var state: Dictionary = b_post._states[b_id]
+        var flash_value: Vector3 = state.flash
+        check(flash_value.distance_to(b_player._r.flash_col * b_player._r.flash) < 0.00001, "B flash RGB remains source-authored")
+        check(b_post._rect.visible, "B authored bite flash is visible")
+    b_post_host.cancel_skill(b_id)
+    check(not b_post._states.has(b_id) and not b_post._rect.visible, "B cancel retires viewport flash and shake")
+    b_post.detach()
+    b_post.free()
+    b_post_host.free()
     # Two children of the same source family must retire the shared family
     # only after the final active child; parent cancellation emits no redundant
     # layer-finished event. Exercise actual source nodes, including legacy sprite

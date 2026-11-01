@@ -1,5 +1,7 @@
-## Optional source-C stage viewport consumer. Explicitly NOT production-ready:
-## no multiscale bloom, desat ordering differs from the original pre-ink ground
+## Optional source-B/C stage viewport consumer. Explicitly NOT production-ready:
+## B's authored global flash and shake are applied to the already tone-mapped
+## live viewport as an approximation, not the source's linear-HDR finalize.
+## No multiscale bloom, C desat ordering differs from the original pre-ink ground
 ## pass, and overlap arbitration is a deterministic diagnostic policy only.
 ## Canvas layer 10 is above the live world/actors but below A0 HUD layer 20.
 extends CanvasLayer
@@ -36,10 +38,10 @@ func attach(renderer: Arcana20Renderer) -> bool:
     return true
 
 func _on_frame(id: StringName, frame: Arcana20SourcePassFrame) -> void:
-    if frame.family != &"C":
+    if frame.family != &"C" and frame.family != &"B":
         return
     var viewport := get_viewport()
-    # C shake/chroma use source pixels; map them to physical viewport pixels.
+    # B and C shake/chroma use source pixels; map them to viewport pixels.
     var map := viewport.get_final_transform() * viewport.canvas_transform * frame.source_to_world
     var shake := map.basis_xform(Vector2(round(frame.shake.x), round(frame.shake.y)))
     var pixel_x := map.basis_xform(Vector2.RIGHT).length()
@@ -48,7 +50,7 @@ func _on_frame(id: StringName, frame: Arcana20SourcePassFrame) -> void:
     _apply()
 
 func _on_layer_finished(id: StringName, family: StringName) -> void:
-    if family == &"C": _on_finished(id)
+    if family == &"C" or family == &"B": _on_finished(id)
 
 func _on_finished(id: StringName) -> void:
     _states.erase(id)

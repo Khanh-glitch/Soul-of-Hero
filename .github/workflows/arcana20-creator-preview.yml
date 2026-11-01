@@ -160,6 +160,8 @@ jobs:
           - {skill: 5, lighting: dimmed, variant: B, lock: '0'}
           - {skill: 5, lighting: normal, variant: B, lock: '1'}
           - {skill: 5, lighting: dimmed, variant: B, lock: '1'}
+          - {skill: 2, lighting: normal, variant: B02, lock: '0'}
+          - {skill: 2, lighting: dimmed, variant: B02, lock: '0'}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -229,17 +231,33 @@ jobs:
         run: python3 tools/arcana20_join/surface_abyssal_ab.py "$RUNNER_TEMP/live-output" 3 b
       # Actual source-clock beats; stills supplement, never replace full videos.
       - name: A opening and peak native detail
-        if: matrix.lock == '0'
+        if: matrix.lock == '0' && matrix.skill == 5
         run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.50 a_peak
       - name: C eruption native detail
-        if: matrix.lock == '0'
+        if: matrix.lock == '0' && matrix.skill == 5
         run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.58 c_release
       - name: C column native detail
-        if: matrix.lock == '0'
+        if: matrix.lock == '0' && matrix.skill == 5
         run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.65 c_column
       - name: C rain and aftermath native detail
-        if: matrix.lock == '0'
+        if: matrix.lock == '0' && matrix.skill == 5
         run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.78 c_rain
+      # #02: actual moving-world frames across formation, flight, bite and OUT.
+      - name: Wyrm emergence
+        if: matrix.skill == 2
+        run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.12 wyrm_emerge
+      - name: Wyrm travel and orbit
+        if: matrix.skill == 2
+        run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.38 wyrm_travel
+      - name: Wyrm windup
+        if: matrix.skill == 2
+        run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.60 wyrm_windup
+      - name: Wyrm bite
+        if: matrix.skill == 2
+        run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.655 wyrm_bite
+      - name: Wyrm cooling and aftermath
+        if: matrix.skill == 2
+        run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.84 wyrm_aftermath
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -345,7 +363,7 @@ jobs:
           printf 'AVFX code SHA: %s\nExperimental visual-only preview; not GOLD or PLAYTEST_READY.\n' "$GITHUB_SHA" > deliverable/CODE_SHA.txt
       - uses: actions/upload-artifact@v4
         with:
-          name: R20-ABYSSAL-BLOOM-CREATOR-REVIEW
+          name: ARCANA20_CREATOR_VISUAL_REVIEW_PARTIAL
           path: deliverable/
           if-no-files-found: error
           retention-days: 14
