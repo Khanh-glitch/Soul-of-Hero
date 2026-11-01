@@ -36,14 +36,14 @@ authorized either source), Factory 2PID debt stays UNACCEPTED, and the avatar's
 
 | what | value |
 | --- | --- |
-| A0 branch head | `caf813d901a0abed6ab02faa3a96872154170d37` |
+| A0 code under test | `8a3751e7b53cf5fb853a0f5fb026cbccef8ee5b6` (green run 41253807768; later commits on this branch change only this document and CI probes) |
 | A0 base before R13 | `ee5f9f5160c8e4385f35a63b355ddda957f93d10` |
 | A1 pinned | `a030cb89a5033ba5faba39995762b4bea1332cec` |
 | A3 pinned | `b44e22df3af40939069189be14afc23ee1ce21c4` |
 | A6 pinned | `6d1e8bcee0bbb09be0ff04f14de1f7e59f06cfb8` |
 | A8 pinned | `0f885df862d7d34f18ca456e80b1aaac05b23de0` |
 | composed tree | the workflow’s `.composition` from those five refs; seat check `COMPOSITION SEATS PASSED` (2106 checks, 0 problems, 2 known-stale) |
-| hosted runs | 41244927885 (green route gate), 41243436165, 41240557613, 41237459493, 41235266282, 41233127002, 41232108976, 41230745072 |
+| hosted runs | **41253807768** (green: every A0 step), 41252267405, 41250452609, 41248556837, 41246899354, 41244927885, 41243436165, 41240557613, 41237459493, 41235266282, 41233127002, 41232108976, 41230745072 |
 
 ### A0-owned files changed
 
@@ -95,8 +95,8 @@ Every item below was found by a red gate, not by reading code.
 * spawn: `{"candidates":27445,"candidate_chunks":20,"cell":[81,437],"region_id":"r_amberwood","seed":…,"saved":true}` — drawn from A1's safe index, walkable in the running world, on the stored cell at t=0, bound to the run standing in it.
 * collision: `A0_AUTHORED_COLLISION bodies=23 marked_cells=155 chunks=1` measured **after** the walk (chunks stream in as the player moves).
 * harvest: `{"node_id":"res:src_crown_tuff:03","kind":"stone_outcrop","item":"stone_chunk","before":0,"after":2,"cell":[430,276]}` — reached on foot, `G` pressed as a real `InputEventKey`.
-* quarry: `walk_px 3212..6036`, `at_door_px 5.2..18.0`, `entered=true`, `reached_stand=true`, `retreated=true`.
-* orchard: `walk_px 2141..2156`, `at_door_px 15.1..17.4`, `entered=true`, `retreated=true`.
+* quarry: `walk_px 3212..6911`, `at_door_px 5.2..18.3`, `entered=true`, `reached_stand=true`, `retreated=true`.
+* orchard: `walk_px 2141..2177`, `at_door_px 14.1..17.6`, `entered=true`, `retreated=true`.
 * receipts (one per site, verbatim shape):
   `{"poi_id":"poi_crown_south_quarry","action_id":"brace_east_shelf","status":"rejected","reason":"A3_SOURCE_AUTHORIZATION_ABSENT: R13-A3-VALUE has not authorized this source yet, so A0 will not mint a reward.","run_revision":4,"intent_id":"…"}`
 * departure: `{"persisted":true,"position":[2248,5816],"body_position":[2248,5810.85],"settle":{"ok":true,"reason":"nothing_to_settle"},…}`
@@ -132,30 +132,42 @@ Every item below was found by a red gate, not by reading code.
 
 ## 5. Native frames
 
-`A0 AUTHORED CAPTURE PASSED` at **1280×720**, **2560×1440** and **3840×2160** (19 checks
-each) in run 41246899354, from the same production scene: spawn, after
-walking, terrain, source, source-after-`G`. Each frame is accepted only if it is the
-size it claims, has ≥24 distinct sampled colours, real luminance spread (sd ≥ 2) and a
-HUD that paints text; the untouched PNGs are in the run artifact
-(`artifacts/visual_authored_*.png`).
+`A0 AUTHORED CAPTURE PASSED - 31 checks` at **1280×720**, **2560×1440** and
+**3840×2160** in run 41253807768 (and 41252267405 before it), from the same production
+scene: spawn, after walking, terrain, source, source-after-`G`. Each frame is accepted
+only if it is the size it claims, has ≥24 distinct sampled colours, real luminance
+spread (sd ≥ 2) and a HUD that paints text; the untouched PNGs are in the run artifact (`artifacts/visual_authored_*.png`).
+The five frames (`spawn`, `walk`, `terrain`, `source`, `source_after_g`) are now also
+*required*: a run that cannot reach a source fails instead of quietly shipping three
+frames, which is what let the count wobble between 19 and 31.
 
 The sandbox this review was written in **cannot reach the artifact host**, so the
-full-resolution originals could not be downloaded. They were therefore not merely
-described: a 160×90 window was cut at the camera centre of the 1280×720 frame **at
-the original pixel scale, with no resampling**, and published through the CI
-annotation channel (`A0_FRAME_PROBE_PNG`, one base64 chunk, self-certifying
-`sha256 f1a8f38b…ec55`, 791 bytes, decoded and hash-verified before it was looked at).
+originals could not be downloaded and were not described from a caption. Instead the
+probe step cuts windows out of the untouched 1280×720 frame **at the original pixel
+scale, with no resampling**, and publishes each one through the CI annotation channel
+(`A0_FRAME_PROBE_PNG`, base64 chunks plus a self-certifying `sha256`). Every window
+below was decoded, its SHA-256 re-checked against the one printed beside it, and then
+opened at 1×. Final run: **41253807768**.
 
-What that window actually shows, at 1×:
+| window | box in the 1280×720 frame | what it shows at 1× |
+| --- | --- | --- |
+| `centre` 320×180 | camera centre | **an authored source**: a dark faceted Iron Vein rock standing on the painted ground, with its own prompt `[CLICK]  Iron Vein  2/2` lettered directly under it. `2/2` is the node's remaining capacity; the prompt is the node's, not the capture's. |
+| `hud` 360×100 (`SHRANK` from 480×100: 6 chunks would have overflowed the 5-chunk cap) | bottom-left of the frame | the game's own control hint, drawn by the HUD: `WASD di chuyển · Click tương tác · B xây dựng · C chế tạo` (outlined bitmap text, fully legible at 1×) |
+| `north_east` 320×180 | upper right quadrant | open authored ground: olive field with a dense, irregular scatter of darker and lighter tufts — sprites, not one flat fill |
 
-* **terrain is painted, not flat-filled** — an olive ground field carrying lighter
-  and darker tufts on a regular scatter, i.e. real authored sprites, not one colour;
-* **the player at the camera centre is a dark featureless capsule**, roughly 52×14 px
-  in frame. That is exactly what the presenter reports (`has_avatar_sprite: false`,
-  *“Identity-specific runtime action sheets are not installed”*) — the *identity* is
-  the Adventurer the player chose, but its *art* is not in this build. The avatar
-  silhouette is therefore honest placeholder, not an Adventurer sprite, and no
-  Adventurer artwork is claimed.
+What this establishes, and what it does not:
+
+* **established** — the frame is the real game screen: painted terrain, a placed
+  authored resource with its interaction prompt, and a HUD that names the controls.
+  The 31-check capture gate agrees and now asserts it at all three resolutions.
+* **established** — the player avatar in the *spawn* frame is a dark featureless
+  capsule. That matches the presenter's own report (`has_avatar_sprite: false`,
+  *"Identity-specific runtime action sheets are not installed"*): the **identity** is
+  the Adventurer the player chose, its **art** is not in this build. The silhouette is
+  honest placeholder; no Adventurer artwork is claimed.
+* **not established** — nothing about the 2160p framing, because that window was cut
+  from the 1280×720 frame on purpose (1 chunk instead of 8, and the seam question is
+  the same at every resolution). The untouched 2160p PNGs are in the artifact.
 
 ---
 
