@@ -34,7 +34,7 @@ func _run() -> void:
     var block := {"receipt_id": "fixture-3", "cast_id": "fixture-cast", "outcome": &"block", "target_ref": weakref(actor)}
     _check(relay.forward(block, decode), "block forwarded")
     _check(bodies.size() == 2, "block has distinct body visual outcome")
-    var stale_ref := weakref(actor)
+    var stale_ref: WeakRef = weakref(actor)
     actor.queue_free()
     await process_frame
     var late := {"receipt_id": "fixture-4", "cast_id": "fixture-cast", "outcome": &"hit", "target_ref": stale_ref}

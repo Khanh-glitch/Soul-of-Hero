@@ -33,7 +33,7 @@ jobs:
           godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/owner_adapters/receipt_relay_test.gd 2>&1 | tee result.log
           result=${PIPESTATUS[0]}
           set -e
-          grep -E 'RECEIPT_FIXTURE|SCRIPT ERROR|Parse Error|ERROR:' result.log | head -20 | while IFS= read -r x; do echo "::notice title=RECEIPT_FIXTURE::$x"; done || true
+          grep -E -A 2 'RECEIPT_FIXTURE|SCRIPT ERROR|Parse Error|ERROR:' result.log | head -24 | while IFS= read -r x; do echo "::notice title=RECEIPT_FIXTURE::$x"; done || true
           if [ "$result" -ne 0 ]; then echo "::error::Fixture exit $result"; exit "$result"; fi
           grep -Fq RECEIPT_FIXTURE_PASS result.log
           ! grep -Eq 'RECEIPT_FIXTURE_FAIL|SCRIPT ERROR|Parse Error' result.log
