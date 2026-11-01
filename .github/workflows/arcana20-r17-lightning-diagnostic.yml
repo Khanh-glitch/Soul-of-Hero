@@ -1,4 +1,4 @@
-# R17 per-frame selected C-channel replay; actual world frames remain unchanged.
+# R17 per-frame C-channel replay; density-adapted rotor candidate.
 name: ARCANA20 R17 moving-world lightning diagnosis
 on:
   workflow_dispatch:

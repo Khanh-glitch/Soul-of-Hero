@@ -30,9 +30,15 @@ s = p.read_text()
 s = s.replace('var include_bolts := true\n', 'var include_bolts := true\nvar _r17_trace: Array = []\n', 1)
 needle = '    if not include_bolts or k <= 0.01: return\n'
 assert s.count(needle) == 1
+if 'static func _c_branch_count(length: float, seed: float)' in s:
+    branch_expression = '_c_branch_count(Vector2(x0, y0).distance_to(Vector2(x1, y1)), seed * 131.0)'
+elif 'static func _c_branch_count(' in s:
+    branch_expression = '_c_branch_count(Vector2(x0, y0).distance_to(Vector2(x1, y1)))'
+else:
+    branch_expression = '1'
 trace = '''    if OS.get_environment("AVFX_R17_TRACE") == "1":
         _r17_trace.append({"a": [x0, y0], "b": [x1, y1], "t": t, "seed": seed, "width": width, "k": k, "rough": chaos, "branch_count": %s})
-''' % ('_c_branch_count(Vector2(x0, y0).distance_to(Vector2(x1, y1)))' if 'static func _c_branch_count(' in s else '1')
+''' % branch_expression
 s = s.replace(needle, needle + trace, 1)
 needle = 'func render(fb: AFramebuffer, t: float) -> void:\n'
 assert s.count(needle) == 1

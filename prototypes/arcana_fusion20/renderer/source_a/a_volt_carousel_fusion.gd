@@ -58,12 +58,15 @@ func _volt(h: float) -> Vector3:
 
 # C #09's first successful channel is (118,110)->(262,98), with five
 # branches. A's carousel has hundreds of much shorter connectors. Applying
-# all five to every connector flooded the machine with a white web. Scale the
-# number of C branches by source-space length at that authored density; retain
-# at least one branch, and never exceed the original five. This is an explicit
-# fusion adaptation, not a claim that C authored the A rotor.
-static func _c_branch_count(length: float) -> int:
-    return clampi(ceili(length * 5.0 / sqrt(144.0 * 144.0 + 12.0 * 12.0)), 1, 5)
+# all five to every connector flooded the machine with a white web. Allocate
+# C branches at that source-space density, using C's stable integer hash for
+# the fractional branch (some short connectors therefore have only a spine).
+# This is a disclosed fusion adaptation, not full C spell/source parity.
+static func _c_branch_count(length: float, seed: float) -> int:
+    var expected := minf(5.0, length * 5.0 / sqrt(144.0 * 144.0 + 12.0 * 12.0))
+    var count := floori(expected)
+    if CMath.hash1(int(seed)) < expected - float(count): count += 1
+    return clampi(count, 0, 5)
 
 func _bolt(fb: AFramebuffer, x0: float, y0: float, x1: float, y1: float, t: float, seed: float, width: float, k: float, chaos: float) -> void:
     if not include_bolts or k <= 0.01: return
@@ -75,7 +78,7 @@ func _bolt(fb: AFramebuffer, x0: float, y0: float, x1: float, y1: float, t: floa
     var a := Vector2(x0, y0)
     var b := Vector2(x1, y1)
     c_channel.draw(fb, a, b, t, seed * 131.0, k, CORE, _volt(0.62),
-        width, 0.32, _c_branch_count(a.distance_to(b)))
+        width, 0.32, _c_branch_count(a.distance_to(b), seed * 131.0))
     var dx := x1 - x0
     var dy := y1 - y0
     ADraw.glow(fb, (x0 + x1) * 0.5, (y0 + y1) * 0.5, minf(16.0, sqrt(dx * dx + dy * dy) * 0.25), _volt(0.45), 0.07 * k)
