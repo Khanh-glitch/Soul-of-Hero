@@ -1,0 +1,71 @@
+name: ARCANA20 Thunderloom before and after on Hollow Marches
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths:
+      - '.github/workflows/arcana20-c10-world-review.yml'
+      - 'prototypes/arcana_fusion20/renderer/c10_review_surface.py'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  impact:
+    strategy:
+      fail-fast: false
+      matrix:
+        lighting: [normal, dimmed]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Assemble exact historical A0 world for same-camera comparison
+        run: |
+          git fetch --depth=1 --no-tags origin e5529c13335d5da8272d7b9d2cfb74897dcaf7e2 6b801554a6af95424b4e39dd29f43c146aa13848 2cb1a3c5f093724eb9fecbdf45909ccb611f7b32 18e7afcbd576bbd9bfbcc509b2ee13216186a522 e505173edd119fdd955cf6249511b575a5468440
+          python3 tools/arcana20_join/assemble.py --out "$RUNNER_TEMP/c10-world" --avfx-sha "$GITHUB_SHA" --a0-sha e5529c13335d5da8272d7b9d2cfb74897dcaf7e2
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import and capture actual world at authored impact
+        env:
+          ARCANA20_PHASE_LIGHT: ${{ matrix.lighting }}
+        run: |
+          set -o pipefail
+          mkdir -p "$RUNNER_TEMP/c10-world/artifacts"
+          godot --headless --path "$RUNNER_TEMP/c10-world" --import > "$RUNNER_TEMP/c10-world/artifacts/import.log" 2>&1
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/c10-world/artifacts/import.log"
+          timeout --signal=TERM --kill-after=10s 900s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 ARCANA20_PHASE_FIRST=10 ARCANA20_PHASE_LAST=10 \
+            godot --verbose --path "$RUNNER_TEMP/c10-world" --rendering-method gl_compatibility --audio-driver Dummy --resolution 1280x720 --windowed \
+            --user-data-dir "$RUNNER_TEMP/c10-user" --script res://prototypes/arcana_fusion20/renderer/arcana20_overworld_join_test.gd \
+            2>&1 | tee "$RUNNER_TEMP/c10-world/artifacts/phases.log"
+          grep -Fq 'ARCANA20_JOIN_DIAGNOSTIC PASS' "$RUNNER_TEMP/c10-world/artifacts/phases.log"
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Shader compilation failed|JOIN_FAIL' "$RUNNER_TEMP/c10-world/artifacts/phases.log"
+      - name: Download original rejected native screenshots
+        uses: actions/download-artifact@v4
+        with:
+          name: arcana20-current-phase-sweep-6-${{ matrix.lighting }}
+          run-id: 41243020418
+          github-token: ${{ github.token }}
+          path: rejected
+      - run: python3 -m pip install --quiet pillow
+      - name: Review same-world no-cast baseline
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py "$RUNNER_TEMP/c10-world/artifacts" phase_baseline
+      - name: Review rejected same-time impact
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py rejected phase_10_catalog_climax_tick290
+      - name: Review corrected same-time impact
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py "$RUNNER_TEMP/c10-world/artifacts" phase_10_catalog_climax_tick290
+      - name: Surface phase diagnostics
+        if: always()
+        run: grep -E 'JOIN_PHASE|JOIN_FAIL|SCRIPT ERROR|Parse Error|ARCANA20_JOIN_DIAGNOSTIC' "$RUNNER_TEMP/c10-world/artifacts/phases.log" | sed 's/^/::notice title=C10_PHASE::/' || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcana20-c10-world-review-${{ matrix.lighting }}
+          path: |
+            ${{ runner.temp }}/c10-world/arcana20_join_manifest.json
+            ${{ runner.temp }}/c10-world/artifacts/
+          if-no-files-found: warn

@@ -1319,7 +1319,9 @@ func _phase_sweep(app: Node, world: Node, player: Node2D, enemy: Node2D, camera:
     var baseline := await save_frame("phase_baseline")
     var first := clampi(int(OS.get_environment("ARCANA20_PHASE_FIRST")), 1, 20)
     var records: Array = []
-    for num in range(first, mini(21, first + 5)):
+    var last_override := int(OS.get_environment("ARCANA20_PHASE_LAST"))
+    var end_exclusive := mini(21, first + 5) if last_override <= 0 else mini(21, maxi(first, last_override) + 1)
+    for num in range(first, end_exclusive):
         var id := Arcana20SourceCatalog.canonical_id(num)
         var slot := Arcana20SourceCatalog.slot(num)
         var climax := float(slot.climax)
