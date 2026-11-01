@@ -85,6 +85,21 @@ func _play() -> void:
 		"the captured world exposes body, walkability and authority")
 	if _hero == null or _traversability == null or authority == null:
 		return
+	# A real framebuffer alone is insufficient: the source-authorized A6 Adventurer
+	# must actually be mounted on the player body at capture time.
+	var presenter: Node = _hero.get_node_or_null("AvatarPresenter")
+	_expect(presenter != null and presenter.has_method(&"get_presentation_state"),
+		"real player body includes A6's actual presentation source")
+	if presenter == null or not presenter.has_method(&"get_presentation_state"):
+		return
+	var appearance: Dictionary = presenter.call(&"get_presentation_state")
+	_expect(String(appearance.get("status", "")) == "READY",
+		"female A6 art is source-ready in the composed game (%s: %s)" %
+		[String(appearance.get("status", "")), String(appearance.get("reason", ""))])
+	_expect(String(appearance.get("gender", "")) == "female",
+		"the captured player is the selected female Adventurer")
+	if String(appearance.get("status", "")) != "READY":
+		return
 	var mode: String = String(_ow.call(&"world_authority_report").get("mode", ""))
 	_expect(mode == "authored", "the captured world is the authored continent (%s)" % mode)
 	var spawn: Dictionary = authority.call(&"spawn_record")
