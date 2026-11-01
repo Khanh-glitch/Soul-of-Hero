@@ -139,20 +139,17 @@ class SporeNebulaR:
         _ps.step(dt, 0.0)
     func _draw_cap(fb: AFramebuffer, origin: Vector2, width: float, height: float, opacity: float) -> void:
         var neck := origin + Vector2(0, -height * 0.65)
-        ADraw.poly_fill(fb, [origin + Vector2(-width * 0.22, 0), origin + Vector2(width * 0.22, 0),
-            neck + Vector2(width * 0.18, 0), neck + Vector2(-width * 0.18, 0)],
-            func(_x: int, _y: int) -> Variant: return Vector3(0.14, 0.23, 0.12), true, opacity)
+        ADraw.poly_fill_solid(fb, [origin + Vector2(-width * 0.22, 0), origin + Vector2(width * 0.22, 0),
+            neck + Vector2(width * 0.18, 0), neck + Vector2(-width * 0.18, 0)], Vector3(0.14, 0.23, 0.12), true, opacity)
         var cap := neck + Vector2(0, -height * 0.20)
-        ADraw.poly_fill(fb, [cap + Vector2(-width, 0), cap + Vector2(-width * 0.72, -height * 0.25),
+        ADraw.poly_fill_solid(fb, [cap + Vector2(-width, 0), cap + Vector2(-width * 0.72, -height * 0.25),
             cap + Vector2(-width * 0.25, -height * 0.38), cap + Vector2(width * 0.38, -height * 0.34),
             cap + Vector2(width * 0.83, -height * 0.18), cap + Vector2(width, 0),
-            cap + Vector2(width * 0.45, height * 0.10), cap + Vector2(-width * 0.48, height * 0.10)],
-            func(_x: int, _y: int) -> Variant: return Vector3(0.055, 0.20, 0.10), true, opacity)
+            cap + Vector2(width * 0.45, height * 0.10), cap + Vector2(-width * 0.48, height * 0.10)], Vector3(0.055, 0.20, 0.10), true, opacity)
         # A contrasting underside and radial gills distinguish a mushroom
         # cap from a small tree canopy at the real game's pixel scale.
-        ADraw.poly_fill(fb, [cap + Vector2(-width, 0), cap + Vector2(-width * 0.65, height * 0.16),
-            cap + Vector2(0, height * 0.25), cap + Vector2(width * 0.65, height * 0.16), cap + Vector2(width, 0)],
-            func(_x: int, _y: int) -> Variant: return Vector3(0.27, 0.32, 0.14), true, opacity * 0.9)
+        ADraw.poly_fill_solid(fb, [cap + Vector2(-width, 0), cap + Vector2(-width * 0.65, height * 0.16),
+            cap + Vector2(0, height * 0.25), cap + Vector2(width * 0.65, height * 0.16), cap + Vector2(width, 0)], Vector3(0.27, 0.32, 0.14), true, opacity * 0.9)
         ADraw.streak(fb, cap.x - width, cap.y, cap.x + width, cap.y, 1.6, 1.0,
             AMath.R("bio", 0.8), opacity)
         for side in [-0.7, -0.35, 0.0, 0.35, 0.7]:
@@ -208,11 +205,10 @@ class SporeNebulaR:
             var k := g * fade
             var spread := AMath.ease_out(g, 2.0)
             var foot := 24.0 * spread
-            ADraw.poly_fill(fb, [c + Vector2(-foot, 0), c + Vector2(-foot * 0.6, -foot * 0.3),
+            ADraw.poly_fill_solid(fb, [c + Vector2(-foot, 0), c + Vector2(-foot * 0.6, -foot * 0.3),
                 c + Vector2(0, -foot * 0.43), c + Vector2(foot * 0.7, -foot * 0.22),
                 c + Vector2(foot, 0), c + Vector2(foot * 0.35, foot * 0.3),
-                c + Vector2(-foot * 0.5, foot * 0.25)],
-                func(_x: int, _y: int) -> Variant: return Vector3(0.026, 0.095, 0.055), true, k * 0.84)
+                c + Vector2(-foot * 0.5, foot * 0.25)], Vector3(0.026, 0.095, 0.055), true, k * 0.84)
             if art_direction == "A":
                 # Three connected overlapping tiers make a branching fungal
                 # mass instead of isolated green dots.
@@ -302,7 +298,7 @@ class ChronoshardR:
             for q in range(6):
                 var angle := rotation + float(q) / 6.0 * TAU
                 hex.append(cur + Vector2(cos(angle) * sz, sin(angle) * sz * 0.85))
-            ADraw.poly_fill(fb, hex, func(_x: int, _y: int) -> Variant: return Vector3(0.03, 0.02, 0.08), true, 0.75 * resolve)
+            ADraw.poly_fill_solid(fb, hex, Vector3(0.03, 0.02, 0.08), true, 0.75 * resolve)
             for q in range(6):
                 var a: Vector2 = hex[q]
                 var b: Vector2 = hex[(q + 1) % 6]
@@ -339,10 +335,8 @@ class ChronoshardR:
                 var rear := center - axis * long_side * 0.55
                 var left := center - across * short_side
                 var right := center + across * short_side
-                ADraw.poly_fill(fb, [front, right, rear, left],
-                    func(_x: int, _y: int) -> Variant: return Vector3(0.10, 0.10, 0.28), true, life * 0.9)
-                ADraw.poly_fill(fb, [front, center, left],
-                    func(_x: int, _y: int) -> Variant: return Vector3(0.34, 0.46, 0.85), true, life * 0.9)
+                ADraw.poly_fill_solid(fb, [front, right, rear, left], Vector3(0.10, 0.10, 0.28), true, life * 0.9)
+                ADraw.poly_fill_solid(fb, [front, center, left], Vector3(0.34, 0.46, 0.85), true, life * 0.9)
                 ADraw.streak(fb, front.x, front.y, left.x, left.y, 1.8, 1.0, Vector3(1.4, 1.6, 2.4), life)
                 ADraw.streak(fb, front.x, front.y, right.x, right.y, 1.6, 0.9, Vector3(1.0, 1.2, 2.0), life * 0.85)
                 ADraw.line(fb, left.x, left.y, rear.x, rear.y, Vector3(0.6, 0.7, 1.5), life * 0.75)

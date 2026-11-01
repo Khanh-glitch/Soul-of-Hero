@@ -66,9 +66,9 @@ jobs:
       - name: Prepare independent pinned baseline
         run: |
           set -euo pipefail
-          git fetch --depth=1 --no-tags origin ffbcbdd7ec7974bb2529fb230cb0d492286b1093
+          git fetch --depth=1 --no-tags origin 69719b10ec31bda34e7c7a3481394b02af58445d
           mkdir "$RUNNER_TEMP/baseline"
-          git archive ffbcbdd7ec7974bb2529fb230cb0d492286b1093 | tar -x -C "$RUNNER_TEMP/baseline"
+          git archive 69719b10ec31bda34e7c7a3481394b02af58445d | tar -x -C "$RUNNER_TEMP/baseline"
           cp prototypes/arcana_fusion20/renderer/redesign_source_bench.gd "$RUNNER_TEMP/baseline/prototypes/arcana_fusion20/renderer/"
       - name: Import and benchmark matched source beats
         run: |
@@ -82,3 +82,7 @@ jobs:
             if grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/bench-$WHICH.log"; then cat "$RUNNER_TEMP/bench-$WHICH.log"; exit 1; fi
             echo "::notice title=PHASE_BENCH::$WHICH $(grep 'REDESIGN_BENCH id=' "$RUNNER_TEMP/bench-$WHICH.log" | tr '\n' '|')"
           done
+          grep '^REDESIGN_FIELDS ' "$RUNNER_TEMP/bench-baseline.log" > "$RUNNER_TEMP/fields-baseline.txt"
+          grep '^REDESIGN_FIELDS ' "$RUNNER_TEMP/bench-candidate.log" > "$RUNNER_TEMP/fields-candidate.txt"
+          diff -u "$RUNNER_TEMP/fields-baseline.txt" "$RUNNER_TEMP/fields-candidate.txt"
+          echo "::notice title=PHASE_BENCH::Six matched source field SHA-256 digests equal; not full lifecycle/world parity"

@@ -255,6 +255,44 @@ static func poly_fill(fb: AFramebuffer, pts: Array, col_fn: Callable, blend: boo
                     fb.add(float(x), float(y), cc.x, cc.y, cc.z, alpha)
             k += 2
 
+# Exact scan conversion for constant colors; avoids a per-pixel Callable.
+static func poly_fill_solid(fb: AFramebuffer, pts: Array, color: Vector3, blend: bool = false, alpha: float = 1.0) -> void:
+    var n := pts.size()
+    if n < 3:
+        return
+    var min_y := 1e9
+    var max_y := -1e9
+    for p in pts:
+        var pv: Vector2 = p
+        min_y = minf(min_y, pv.y)
+        max_y = maxf(max_y, pv.y)
+    var y0: int = maxi(0, floori(min_y))
+    var y1: int = mini(AFramebuffer.H - 1, ceili(max_y))
+    var xs: Array = []
+    for y in range(y0, y1 + 1):
+        xs.clear()
+        var yc := float(y) + 0.5
+        for i in range(n):
+            var a: Vector2 = pts[i]
+            var b: Vector2 = pts[(i + 1) % n]
+            if a.y == b.y:
+                continue
+            if (yc >= a.y and yc < b.y) or (yc >= b.y and yc < a.y):
+                xs.append(a.x + ((yc - a.y) / (b.y - a.y)) * (b.x - a.x))
+        if xs.size() < 2:
+            continue
+        xs.sort()
+        var k := 0
+        while k + 1 < xs.size():
+            var xa: int = maxi(0, ceili(float(xs[k]) - 0.5))
+            var xb: int = mini(AFramebuffer.W - 1, floori(float(xs[k + 1]) - 0.5))
+            for x in range(xa, xb + 1):
+                if blend:
+                    fb.blend(x, y, color.x, color.y, color.z, alpha)
+                else:
+                    fb.add(float(x), float(y), color.x, color.y, color.z, alpha)
+            k += 2
+
 static func bolt_path(x0: float, y0: float, x1: float, y1: float, chaos: float, seed: int, depth: int = 5) -> Array:
     var pts: Array = [Vector2(x0, y0), Vector2(x1, y1)]
     var amp := chaos

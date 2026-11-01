@@ -13,13 +13,25 @@ func _initialize() -> void:
         for time in item.times:
             var t: float = time
             var elapsed: Array[float] = []
+            var frame: AFramebuffer
             for rep in range(11):
                 var started := Time.get_ticks_usec()
-                var frame := AFramebuffer.new()
+                frame = AFramebuffer.new()
                 frame.track_world_fields = true
                 spell.render(frame, t)
                 var ms := float(Time.get_ticks_usec() - started) / 1000.0
                 if rep > 0: elapsed.append(ms)
+            # Hash every authored source field after the timed render. The
+            # benchmark intentionally has no update history; this equality is
+            # per selected static time, not complete lifecycle parity.
+            var h := HashingContext.new()
+            h.start(HashingContext.HASH_SHA256)
+            h.update(frame.buf.to_byte_array())
+            h.update(frame.world_coverage.to_byte_array())
+            h.update(frame.world_multiplier.to_byte_array())
+            h.update(frame.world_warp.to_byte_array())
+            h.update(frame.world_influence)
+            print("REDESIGN_FIELDS id=%d t=%.1f sha256=%s" % [int(item.id), t, h.finish().hex_encode()])
             elapsed.sort()
             print("REDESIGN_BENCH id=%d t=%.1f samples=%d p50_ms=%.3f p95_ms=%.3f" % [int(item.id), t, elapsed.size(), elapsed[elapsed.size() / 2], elapsed[elapsed.size() - 1]])
     print("REDESIGN_BENCH_PASS isolated CPU only")
