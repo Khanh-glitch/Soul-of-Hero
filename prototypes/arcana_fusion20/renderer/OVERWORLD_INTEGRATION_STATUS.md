@@ -26,6 +26,17 @@ and joined entry [41271401968](https://github.com/Khanh-glitch/Soul-of-Hero/acti
 passed with AVFX `ae9551a`; these narrow tests do **not** validate the owner's
 full journey. A1/A3/A6/A8 current PR heads have not been mounted or validated here.
 
+A0's red [Original main baseline comparison](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41270762349/job/124742877827)
+is explicitly a no-AVFX checkout of **original main**, not a current PR21
+run: its annotations report campaign entry 20/949 failures (two signed roster
+and XP finalization checks per Chapter 2 Level 11–20), gameplay smoke 3/89
+failures (respawn combo reset, second light input, hot-tuned light projection),
+while Level 5 combat and Axe combat passed. This does not establish the root
+cause or prove the same failures on 04e. The 04e no-FX real survival entry is
+narrower and does not clear those tests. Details communicated to
+[PR21](https://github.com/Khanh-glitch/Soul-of-Hero/pull/21#issuecomment-6553291489)
+and [PR30](https://github.com/Khanh-glitch/Soul-of-Hero/pull/30#issuecomment-6553291675).
+
 - #10: the two original full-source shade calls and full-width scanline
   displacement/chroma are separately transported as viewport-aligned stage
   operations; localized shadow, ink, sparks and bolts remain world-space.
