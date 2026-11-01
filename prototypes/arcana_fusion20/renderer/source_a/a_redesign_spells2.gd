@@ -191,6 +191,28 @@ class SporeNebulaR:
                     if h < 0.05:
                         return null
                     return AMath.R("bio", 0.3 + h * 0.5))
+            # Fine, asymmetrical hyphae bud progressively from the same
+            # growing front. They branch from the real link geometry rather
+            # than appearing as a simultaneous geometric lattice. The
+            # existing link, bloom, colony births and event schedule remain.
+            var axis := (b - a).normalized()
+            var normal := Vector2(-axis.y, axis.x)
+            for junction in range(1, 6):
+                var s := float(junction) / 6.0
+                var grow := AMath.cl01((u - s) * 6.0)
+                if grow <= 0.0: continue
+                var point: Vector2 = a.lerp(b, s)
+                point.y += sin(s * PI) * 5.0 + (AMath.hash2(floor(s * 12.0), float(i)) - 0.5) * 3.0
+                var side := 1.0 if (junction + i) % 2 == 0 else -1.0
+                var reach := (7.0 + AMath.hash2(float(i * 19 + junction), 14.0) * 7.0) * grow
+                var bend := point + normal * side * reach * 0.55 + axis * reach * 0.2
+                var tip := point + normal * side * reach + axis * reach * 0.55
+                var hypha := AMath.R("bio", 0.52)
+                ADraw.line(fb, point.x, point.y, bend.x, bend.y, hypha, fade * 0.8)
+                ADraw.line(fb, bend.x, bend.y, tip.x, tip.y, hypha, fade * 0.8)
+                if grow > 0.45:
+                    var fork := bend + normal * side * reach * 0.16 - axis * reach * 0.35
+                    ADraw.line(fb, bend.x, bend.y, fork.x, fork.y, hypha, fade * 0.55)
             # One legible signal propagates along completed links in the
             # same graph order, reaching the network before sporulation.
             var pulse_start := 4.15 + (start - 1.2) * 0.35
