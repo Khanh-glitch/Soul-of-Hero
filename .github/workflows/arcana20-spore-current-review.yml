@@ -96,13 +96,15 @@ jobs:
           p=pathlib.Path(sys.argv[1]); s=p.read_text()
           old='        _phase_set_render(source, false)\n        var previous := 0'
           assert s.count(old)==1
-          extra='''        if num in [14, 18] and OS.get_environment("ARCANA20_REDESIGN_MOTION") == "1":
-              targets.clear()
-              labels.clear()
-              for motion_tick in range(ceili(native_duration * 60.0)):
-                  targets.append(motion_tick)
-                  labels.append("full_motion_%03d" % motion_tick)
-          '''
+          extra='\n'.join([
+              '        if num in [14, 18] and OS.get_environment("ARCANA20_REDESIGN_MOTION") == "1":',
+              '            targets.clear()',
+              '            labels.clear()',
+              '            for motion_tick in range(ceili(native_duration * 60.0)):',
+              '                targets.append(motion_tick)',
+              '                labels.append("full_motion_%03d" % motion_tick)',
+              '',
+          ])
           p.write_text(s.replace(old,extra+old))
           PY
           printf 'source_avfx=%s\ntest_harness=%s\na0=%s\ndirection=A\n' "$SHA" "$GITHUB_SHA" "$A0" > "$RUNNER_TEMP/redesign-motion/capture-revisions.txt"
@@ -126,11 +128,15 @@ jobs:
           ARCANA20_ART14: A
           ARCANA20_ART18: A
         run: |
+          set +e
           set -o pipefail
           timeout --signal=TERM --kill-after=10s 3000s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 \
             godot --path "$RUNNER_TEMP/redesign-motion" --rendering-method gl_compatibility --audio-driver Dummy --resolution 1280x720 --windowed \
             --user-data-dir "$RUNNER_TEMP/redesign-user" --script res://prototypes/arcana_fusion20/renderer/arcana20_overworld_join_test.gd \
             2>&1 | tee "$RUNNER_TEMP/redesign-motion/artifacts/world.log"
+          RESULT=${PIPESTATUS[0]}
+          grep -E 'JOIN_FAIL|SCRIPT ERROR|Parse Error|ERROR:|ARCANA20_JOIN_DIAGNOSTIC' "$RUNNER_TEMP/redesign-motion/artifacts/world.log" | head -20 | while IFS= read -r line; do echo "::notice title=MOTION_DIAGNOSTIC::$line"; done || true
+          if [ "$RESULT" -ne 0 ]; then echo "::error::Motion Godot exited $RESULT"; exit "$RESULT"; fi
           grep -Fq 'ARCANA20_JOIN_DIAGNOSTIC PASS' "$RUNNER_TEMP/redesign-motion/artifacts/world.log"
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Shader compilation failed|JOIN_FAIL' "$RUNNER_TEMP/redesign-motion/artifacts/world.log"
       - name: Encode lossless full resolution and playable review copy
