@@ -7,6 +7,7 @@ var cast_id: StringName
 var finished := false
 var ticks_seen: Array[int] = []
 var contacts: Array = []
+var unbound_contacts: Array = []
 var samples: Array = []
 var capture_start_usec := 0
 
@@ -67,13 +68,24 @@ func start(wrapper: Node) -> void:
     var camera := world.get("camera") as Camera2D
     if camera == null:
         _fail("real camera missing"); return
-    host.call(&"_spawn_enemy")
+    # #09's selected A actor graph needs seven real potential targets, not a
+    # single disconnected node. Other spells still exercise multiple actors.
+    var enemy_count := 7 if skill == 9 else 3
+    for i in range(enemy_count): host.call(&"_spawn_enemy")
     var spawned: Array = host.get("spawned")
-    if spawned.is_empty():
-        _fail("real Skeleton spawn"); return
+    if spawned.size() != enemy_count:
+        _fail("real Skeleton spawns"); return
     var enemy := spawned[0] as Node2D
-    enemy.set_physics_process(true) # actual Skeleton AI, not scripted transforms
-    var enemy_hp := int(enemy.get("health"))
+    var enemies_hp: Array[int] = []
+    var enemy_starts: Array[Vector2] = []
+    var enemy_moves: Array[float] = []
+    for actor in spawned:
+        var real_enemy := actor as Node2D
+        real_enemy.set_physics_process(true) # actual Skeleton AI, no scripted transforms
+        enemies_hp.append(int(real_enemy.get("health")))
+        enemy_starts.append(real_enemy.global_position)
+        enemy_moves.append(0.0)
+    var enemy_hp := enemies_hp[0]
     var player_start := player.global_position
     var enemy_start := enemy.global_position
     var camera_start := camera.get_screen_center_position()
@@ -90,6 +102,8 @@ func start(wrapper: Node) -> void:
         if id == cast_id: ticks_seen.append(tick))
     renderer.visual_contact.connect(func(id: StringName, pos: Vector2, kind: StringName) -> void:
         if id == cast_id: contacts.append({"kind": String(kind), "position": [pos.x, pos.y]}))
+    renderer.unbound_source_contact.connect(func(id: StringName, kind: StringName, index: int, time: float) -> void:
+        if id == cast_id: unbound_contacts.append({"kind": String(kind), "node_index": index, "source_time": time}))
     var folder := "user://avfx_live_capture"
     DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(folder))
     print("AVFX_LIVE_OUTPUT ", ProjectSettings.globalize_path(folder))
@@ -146,6 +160,11 @@ func start(wrapper: Node) -> void:
             _fail("actor or renderer left scene during cast"); return
         max_player = maxf(max_player, player.global_position.distance_to(player_start))
         max_enemy = maxf(max_enemy, enemy.global_position.distance_to(enemy_start))
+        for i in range(spawned.size()):
+            var real_enemy := spawned[i] as Node2D
+            if not is_instance_valid(real_enemy):
+                _fail("real Skeleton left scene"); return
+            enemy_moves[i] = maxf(enemy_moves[i], real_enemy.global_position.distance_to(enemy_starts[i]))
         max_camera = maxf(max_camera, camera.get_screen_center_position().distance_to(camera_start))
         var now := Time.get_ticks_usec()
         frame_times.append(float(now - previous_frame) / 1000.0)
@@ -163,8 +182,9 @@ func start(wrapper: Node) -> void:
         _fail("natural full cast did not complete before deadline"); return
     if not no_fx and overlap_id != &"" and (not overlap_started or not bool(overlap_completed[0]) or renderer.is_active(overlap_id)):
         _fail("overlap did not naturally complete"); return
-    if int(enemy.get("health")) != enemy_hp:
-        _fail("visual cast unexpectedly changed enemy HP"); return
+    for i in range(spawned.size()):
+        if not is_instance_valid(spawned[i]) or int(spawned[i].get("health")) != enemies_hp[i]:
+            _fail("visual cast unexpectedly changed or removed enemy HP"); return
     # Show a post-finish world frame before a separate restart/cancel check.
     for i in range(3): await get_tree().process_frame
     if capture and not await _frame(folder, player, enemy, camera):
@@ -191,7 +211,8 @@ func start(wrapper: Node) -> void:
     var record := {"scope": "actual game route, visual-only; automatic real player input and unmodified Skeleton AI; not combat receipts or device FPS",
         "skill": skill, "lighting": OS.get_environment("AVFX_LIVE_LIGHT"), "captured": capture, "frames": samples,
         "no_fx": no_fx, "overlap_skill": overlap_skill, "cast_duration_s": cast_duration_s,
-        "last_tick": ticks_seen[-1] if not ticks_seen.is_empty() else 0, "events": contacts,
+        "last_tick": ticks_seen[-1] if not ticks_seen.is_empty() else 0, "events": contacts, "unbound_events": unbound_contacts,
+        "enemy_count": enemy_count, "enemy_max_displacements": enemy_moves,
         "player_max_displacement": max_player, "enemy_max_displacement": max_enemy, "camera_max_displacement": max_camera,
         "enemy_hp_before": enemy_hp, "enemy_hp_after": int(enemy.get("health")),
         "observed_wall_frame_ms": {"p50": p50, "p95": p95, "p99": p99, "count": frame_times.size()},
@@ -201,10 +222,14 @@ func start(wrapper: Node) -> void:
         _fail("timeline output"); return
     out.store_string(JSON.stringify(record, "  "))
     out.close()
+    var moving_enemies := 0
+    for movement in enemy_moves:
+        if movement >= 1.0: moving_enemies += 1
     print("AVFX_LIVE_RESULT ", JSON.stringify({"id": skill, "frames": samples.size(), "last_tick": record.last_tick,
-        "player_move": max_player, "enemy_move": max_enemy, "camera_move": max_camera, "p50_ms": p50, "p95_ms": p95, "p99_ms": p99}))
-    if max_player < 1.0 or max_enemy < 1.0 or max_camera < 1.0:
-        _fail("real player/enemy/camera movement not observed"); return
+        "player_move": max_player, "enemy_move": max_enemy, "enemies": enemy_count, "moving_enemies": moving_enemies,
+        "unbound_events": unbound_contacts.size(), "camera_move": max_camera, "p50_ms": p50, "p95_ms": p95, "p99_ms": p99}))
+    if max_player < 1.0 or moving_enemies < 2 or max_camera < 1.0:
+        _fail("real player, multiple enemies and camera movement not observed"); return
     if no_fx:
         print("AVFX_LIVE_PASS no-FX wrapper baseline, real input/AI; no combat receipt")
     else:
