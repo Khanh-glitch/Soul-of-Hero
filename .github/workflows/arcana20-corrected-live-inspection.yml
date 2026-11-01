@@ -29,7 +29,10 @@ jobs:
           run-id: 41295327487
           github-token: ${{ github.token }}
           path: live
-      - run: python3 -m pip install --quiet pillow
+      - name: Install review dependencies
+        run: |
+          python3 -m pip install --quiet pillow
+          if ! command -v ffprobe || ! command -v ffmpeg; then sudo apt-get update -qq && sudo apt-get install -y ffmpeg; fi
       - name: Inspect timestamps and native midpoint
         run: |
           set +e
