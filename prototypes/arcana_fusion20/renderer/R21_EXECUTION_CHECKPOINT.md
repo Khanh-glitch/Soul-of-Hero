@@ -73,6 +73,28 @@ unchanged. Four-bearing tests go through the actual Arcana20Renderer; normal
 and dim natural captures are added to the reused creator workflow. This is a
 partial mount fix, not proof of source/world/post fidelity or body effects.
 
+## Batch S / #08 Undertow Maw — world-up vortex correction
+
+Original B `tide.ts` uses its own `(W/2+26,H/2+4)` centre and subtracts
+ballistic droplet height from screen Y. The prior common B transform pinned a
+separate caster-target anchor and rotated the vortex and gravity by cast
+bearing. #08 now uses its own target-pinned upright source mount, with source
+simulation, palette, seeds and actor metadata unchanged. Four-bearing tests and
+normal/dim moving-world captures are included; awaiting same-SHA CI and actual
+visual review. Real pull authority is still owner-dependent.
+
+## Earlier scoped evidence
+
+Source quick [41334566477](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41334566477)
+passed at `fc1d29d8adc8f9da303c245d4d35c291a1198f9e`. #02 normal and dim
+real-route moving-world jobs `124931943724` / `124931943777` passed natural
+finish, restart/cancel and visual-only health checks. Native 1x samples showed
+an orange curved traveling body, bright bite and a visible scorched aftermath;
+the head is small at gameplay scale. I sampled frames, not full uninterrupted
+video playback. The same runs reported five resources in use and player
+signal-disconnect errors on exit, so shutdown is not clean. This earlier SHA
+does not validate later #03/#07/#08 mount changes.
+
 ## Resume
 
 1. `git status --short; git rev-parse HEAD; gh run list --branch arena/c7b0c4e8-soul-of-hero --limit 20`.

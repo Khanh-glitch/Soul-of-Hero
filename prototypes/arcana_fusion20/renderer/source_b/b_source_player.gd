@@ -7,8 +7,8 @@
 ## (rendering still happens once per real frame). Transform: uniform
 ## scale + rotation aligning the authored caster->target axis onto the
 ## real world axis for directional effects (no stretching or flip hack).
-## Meteor Loom is target-centred and world-up: its authored sigil uses its
-## own fixed centre and ballistic height, not the source caster-target axis.
+## Meteor Loom and Undertow Maw are target-centred and world-up: their fixed
+## authored centres and ballistic height do not use the caster-target axis.
 extends Node2D
 class_name BSourcePlayer
 
@@ -75,14 +75,14 @@ func begin(caster_world: Vector2, target_world: Vector2, kind: String = "wyrm") 
     var world_axis := target_world - caster_world
     var s := clampf(world_axis.length() / src_axis.length(), 0.6, 3.5)
     _sprite.scale = Vector2(s, s)
-    if kind == "meteor":
-        # Meteor Loom authors its fixed sigil centre, not r.caster/r.target,
-        # and z is screen-up. Pin that actual centre to the chosen world target
-        # without rotating gravity with cast bearing. This changes only the
-        # source-to-world mount; the original source simulation stays intact.
-        var sigil_centre := Vector2(BRenderer.W / 2.0 + 16.0, BRenderer.H / 2.0 + 4.0)
+    if kind == "meteor" or kind == "maw":
+        # These B spells author fixed sigil/vortex centres, not r.target, and
+        # z is screen-up. Pin the actual centre without rotating gravity with
+        # cast bearing. This changes only the source-to-world mount; the
+        # original source simulation and seeds stay intact.
+        var source_centre := Vector2(BRenderer.W / 2.0 + (16.0 if kind == "meteor" else 26.0), BRenderer.H / 2.0 + 4.0)
         _sprite.rotation = 0.0
-        _sprite.position = target_world - (sigil_centre - Vector2(BRenderer.W / 2.0, BRenderer.H / 2.0)) * s
+        _sprite.position = target_world - (source_centre - Vector2(BRenderer.W / 2.0, BRenderer.H / 2.0)) * s
     else:
         _sprite.rotation = world_axis.angle() - src_axis.angle()
         _sprite.position = target_world - (SRC_TARGET - Vector2(BRenderer.W / 2.0, BRenderer.H / 2.0)).rotated(_sprite.rotation) * s

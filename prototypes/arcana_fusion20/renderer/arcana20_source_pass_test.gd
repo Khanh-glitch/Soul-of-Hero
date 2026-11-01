@@ -95,6 +95,18 @@ func _run() -> void:
         check(basis.x.x > 0.0 and absf(basis.x.y) < 0.0001 and basis.y.y > 0.0 and absf(basis.y.x) < 0.0001, "B03 meteors and gravity remain world-up %s" % delta)
         check(meteor_frame.caster_world == meteor_origin and meteor_frame.target_world == destination, "B03 actual actor metadata retained")
         meteor_mount.stop()
+    # B08 likewise has its own fixed vortex centre and vertical droplet z.
+    var maw_centre := Vector2(BRenderer.W / 2.0 + 26.0, BRenderer.H / 2.0 + 4.0)
+    for delta in [Vector2(140, 0), Vector2(-140, 0), Vector2(0, 140), Vector2(0, -140)]:
+        var maw_destination: Vector2 = meteor_origin + delta
+        meteor_mount.begin(meteor_origin, maw_destination, "maw")
+        meteor_mount.set_process(false)
+        var maw_frame := meteor_mount.source_pass_frame()
+        var maw_basis := maw_frame.source_to_world
+        check((maw_basis * maw_centre).distance_to(maw_destination) < 0.001, "B08 vortex centre stays at target %s" % delta)
+        check(maw_basis.x.x > 0.0 and absf(maw_basis.x.y) < 0.0001 and maw_basis.y.y > 0.0 and absf(maw_basis.y.x) < 0.0001, "B08 surge and droplet gravity remain upright %s" % delta)
+        check(maw_frame.caster_world == meteor_origin and maw_frame.target_world == maw_destination, "B08 actor metadata retained")
+        meteor_mount.stop()
     meteor_mount.free()
     # C07's authored spire height and falling shard z share the screen-up
     # axis. Verify the real renderer mount, not just a manually set flag.
