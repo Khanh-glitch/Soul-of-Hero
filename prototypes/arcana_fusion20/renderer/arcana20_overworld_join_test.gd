@@ -1084,6 +1084,12 @@ func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D)
         for part in (sampled_second as FusionPlayer)._pending:
             if part.node is CSourcePlayer: profiled_c = part.node as CSourcePlayer
     var overlapping_frames := 0
+    # Keep small profiling snapshots while the source is alive. A natural
+    # finish can free the Node before the end of the rendered-frame sample;
+    # querying it only afterward silently discarded the #10 CPU evidence.
+    var last_c_profile := {}
+    var last_c_uploads := {}
+    var last_second_tick := source_tick_start
     var live_memory := before_memory
     var live_objects := before_objects
     var last := Time.get_ticks_usec()
@@ -1091,6 +1097,16 @@ func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D)
         await RenderingServer.frame_post_draw
         var now := Time.get_ticks_usec()
         if mount.active_viewers(id2) > 0 and mount.active_viewers(id10) > 0:
+            if is_instance_valid(sampled_second):
+                if sampled_second is CSourcePlayer: last_second_tick = (sampled_second as CSourcePlayer)._tick
+                elif sampled_second is FusionPlayer: last_second_tick = (sampled_second as FusionPlayer)._tick
+                elif sampled_second is DSourcePlayer: last_second_tick = (sampled_second as DSourcePlayer)._tick
+            if is_instance_valid(profiled_c) and profiled_c.profile_cpu:
+                last_c_profile = {"clear":profiled_c.profile_clear_us.duplicate(), "raster":profiled_c.profile_raster_us.duplicate(), "pack":profiled_c.profile_pack_us.duplicate(), "submit":profiled_c.profile_submit_us.duplicate()}
+            var active_viewers: Dictionary = mount._passes.get(id10, {})
+            if active_viewers.has(&"C"):
+                var active_c := active_viewers[&"C"] as Arcana20CWorldPass
+                last_c_uploads = {"counts":active_c.upload_counts.duplicate(), "bytes":active_c.uploaded_bytes}
             samples.append(float(now - last) / 1000.0)
             overlapping_frames += 1
             live_memory = Performance.get_monitor(Performance.MEMORY_STATIC)
@@ -1107,6 +1123,7 @@ func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D)
         if sampled_second is CSourcePlayer: source_tick_end = (sampled_second as CSourcePlayer)._tick
         elif sampled_second is FusionPlayer: source_tick_end = (sampled_second as FusionPlayer)._tick
         elif sampled_second is DSourcePlayer: source_tick_end = (sampled_second as DSourcePlayer)._tick
+    if source_tick_end < 0: source_tick_end = last_second_tick
     var record := {"scope": "concurrent #02+#%02d sampled frames on real assembled pinned overworld; shared software-rendered CI, not a target-device budget or full-cast measurement" % second_skill,
         "second_source_tick_start": source_tick_start, "second_source_tick_end": source_tick_end,
         "viewport_capture_size": [viewport_size.x, viewport_size.y],
@@ -1141,12 +1158,28 @@ func _overlap_frame_probe(app: Node, world: Node, player: Node2D, enemy: Node2D)
             record["cpu_raster_p50_p95_p99_us"] = [_perf_percentile(cpu_source.profile_raster_us, 0.50), _perf_percentile(cpu_source.profile_raster_us, 0.95), _perf_percentile(cpu_source.profile_raster_us, 0.99)]
             record["cpu_pack_p50_p95_p99_us"] = [_perf_percentile(cpu_source.profile_pack_us, 0.50), _perf_percentile(cpu_source.profile_pack_us, 0.95), _perf_percentile(cpu_source.profile_pack_us, 0.99)]
             record["cpu_submit_p50_p95_p99_us"] = [_perf_percentile(cpu_source.profile_submit_us, 0.50), _perf_percentile(cpu_source.profile_submit_us, 0.95), _perf_percentile(cpu_source.profile_submit_us, 0.99)]
+    if not record.has("cpu_scope") and not last_c_profile.is_empty():
+        var clear_values: Array[float] = last_c_profile.clear
+        var raster_values: Array[float] = last_c_profile.raster
+        var pack_values: Array[float] = last_c_profile.pack
+        var submit_values: Array[float] = last_c_profile.submit
+        if not clear_values.is_empty():
+            record["cpu_scope"] = "last retained C CPU snapshot while source was alive; texture submission is asynchronous, not GPU time"
+            record["cpu_sample_count"] = clear_values.size()
+            record["cpu_clear_p50_p95_p99_us"] = [_perf_percentile(clear_values, 0.5), _perf_percentile(clear_values, 0.95), _perf_percentile(clear_values, 0.99)]
+            record["cpu_raster_p50_p95_p99_us"] = [_perf_percentile(raster_values, 0.5), _perf_percentile(raster_values, 0.95), _perf_percentile(raster_values, 0.99)]
+            record["cpu_pack_p50_p95_p99_us"] = [_perf_percentile(pack_values, 0.5), _perf_percentile(pack_values, 0.95), _perf_percentile(pack_values, 0.99)]
+            record["cpu_submit_p50_p95_p99_us"] = [_perf_percentile(submit_values, 0.5), _perf_percentile(submit_values, 0.95), _perf_percentile(submit_values, 0.99)]
     var second_viewers: Dictionary = mount._passes.get(id10, {})
     if second_viewers.has(&"C"):
         var c_viewer := second_viewers[&"C"] as Arcana20CWorldPass
         record["c_field_upload_counts"] = c_viewer.upload_counts.duplicate()
         record["c_field_raw_upload_bytes"] = c_viewer.uploaded_bytes
         record["c_field_upload_scope"] = "raw Image bytes submitted to C viewer since cast start, not GPU allocations or bandwidth"
+    if not record.has("c_field_upload_counts") and not last_c_uploads.is_empty():
+        record["c_field_upload_counts"] = last_c_uploads.counts
+        record["c_field_raw_upload_bytes"] = last_c_uploads.bytes
+        record["c_field_upload_scope"] = "last retained raw Image byte snapshot before source retirement; not GPU allocations or bandwidth"
     check(int(enemy.get("health")) == hp, "overlap visuals have no damage authority")
     renderer.cancel_all()
     await process_frame
