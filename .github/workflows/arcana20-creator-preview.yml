@@ -1,4 +1,4 @@
-# Package the R19 experimental water-release candidate; never approval.
+# Package the R19 experimental water and rift candidates; never approval.
 name: ARCANA20 refreshed creator visual-preview build
 on:
   workflow_dispatch:
@@ -6,6 +6,7 @@ on:
     branches: [arena/c7b0c4e8-soul-of-hero]
     paths: ['.github/workflows/arcana20-creator-preview.yml']
 permissions:
+  actions: read
   contents: read
 jobs:
   build:
@@ -155,6 +156,10 @@ jobs:
         include:
           - {skill: 5, lighting: normal}
           - {skill: 5, lighting: dimmed}
+          - {skill: 20, lighting: normal}
+          - {skill: 20, lighting: dimmed}
+          - {skill: 1, lighting: normal}
+          - {skill: 16, lighting: normal}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -211,12 +216,16 @@ jobs:
           python3 tools/arcana20_join/encode_live_capture.py "$RUNNER_TEMP/live-output" 2>&1 | tee "$RUNNER_TEMP/encode.log"
       # Actual source-clock beats; stills supplement, never replace full videos.
       - name: A opening and peak native detail
+        if: matrix.skill == 5
         run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.50 a_peak
       - name: C eruption native detail
+        if: matrix.skill == 5
         run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.58 c_release
       - name: C column native detail
+        if: matrix.skill == 5
         run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.65 c_column
       - name: C rain and aftermath native detail
+        if: matrix.skill == 5
         run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.78 c_rain
       - uses: actions/upload-artifact@v4
         if: always()
@@ -229,3 +238,46 @@ jobs:
             ${{ runner.temp }}/live.log
             ${{ runner.temp }}/encode.log
           if-no-files-found: warn
+  source-review:
+    # Independent reference artifacts, pinned to their exact capture SHAs.
+    # These are neutral source-only diagnostics, not a fake battlefield.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcana20-a05-original-native-diagnostic
+          run-id: 41325084491
+          github-token: ${{ github.token }}
+          path: source-a
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcana20-c05-original-late-release
+          run-id: 41325336921
+          github-token: ${{ github.token }}
+          path: source-c
+      - name: Construct neutral source-field previews
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet pillow
+          mkdir source-review
+          find source-a -name original_270.png -exec cp {} source-review/a_original_270.png \;
+          find source-a -name native_270.png -exec cp {} source-review/a_native_270.png \;
+          test -f source-review/a_original_270.png && test -f source-review/a_native_270.png
+          python3 tools/arcana20_join/surface_c05_source.py source-c source-review
+      - name: Original A peak source-only
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py source-review a_original_270
+      - name: Native A peak source-only
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py source-review a_native_270
+      - name: Original C release source-only
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py source-review c_original_336
+      - name: Native C release source-only
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py source-review c_native_336
+      - name: Original C column source-only
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py source-review c_original_372
+      - name: Native C column source-only
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py source-review c_native_372
+      - uses: actions/upload-artifact@v4
+        with:
+          name: r19-05-neutral-original-native-source-beats
+          path: source-review/

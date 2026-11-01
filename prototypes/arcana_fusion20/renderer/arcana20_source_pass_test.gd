@@ -238,6 +238,18 @@ func _run() -> void:
     var rift_frame := CFrame.new()
     rift_frame.track_world_fragments = true
     rift_frame.clear()
+    var pre_time := 2.0
+    var a_pre_time := rift._a_time(pre_time)
+    rift.render(rift_frame, pre_time)
+    var pre_warp_count := 0
+    for pixel in rift.contour_indices:
+        var expected := 0.0
+        if absf(float(rift.td[pixel])) < 1.2:
+            expected = round((AMath.hash2(float(floori(float(rift.ts[pixel]) * 120.0)), float(floori(a_pre_time * 18.0))) - 0.5) * 5.0)
+        check(is_equal_approx(rift_frame.disp[pixel * 4], expected), "A20 pre-open source warp on selected C contour")
+        if expected != 0.0: pre_warp_count += 1
+    check(pre_warp_count > 0, "A20 pre-open world displacement is present")
+    rift_frame.clear()
     rift.render(rift_frame, 4.5)
     var rift_ink := 0
     var rift_inverted := 0

@@ -310,14 +310,22 @@ func render(f: CFrame, t: float) -> void:
         var y := floori(float(k) / float(W))
         var x: int = int(k) - y * W
         var s := float(ts[k])
-        if s < 0.0 or absf(s - 0.5) > span * 0.5: continue
+        if s < 0.0: continue
         var d := float(td[k])
         var ad := absf(d)
-        var width := float(widths[roundi(s * 256.0)])
         if t < TOPEN:
-            if ad < 0.8: f.L(x, y, 1.6, 1.6, 1.8)
-            elif ad < 3.0: f.C(x, y, 2.0)
+            # A's original pre-open bgWarp displaces a narrow row along its
+            # tear. Use its time/hash/offset on the elected C spine rather
+            # than drawing a second tear or compositing a fake background.
+            if at > 0.35 and ad < 1.2:
+                var pre_offset := round((AMath.hash2(float(floori(s * 120.0)), float(floori(at * 18.0))) - 0.5) * 5.0)
+                f.D(x, y, pre_offset, 0.0)
+            if absf(s - 0.5) <= span * 0.5:
+                if ad < 0.8: f.L(x, y, 1.6, 1.6, 1.8)
+                elif ad < 3.0: f.C(x, y, 2.0)
             continue
+        if absf(s - 0.5) > span * 0.5: continue
+        var width := float(widths[roundi(s * 256.0)])
         var spatial_hash := _hash_x[x] + _hash_y[y]
         var wj := width + ((CMath.hash1(spatial_hash + slot_hash) - 0.5) * 3.2 if width > 1.0 else 0.0)
         if ad < wj:
