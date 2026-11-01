@@ -51,8 +51,16 @@ jobs:
           mkdir -p "$RUNNER_TEMP/a6_source" visual_evidence
           # Both archives are identified by immutable APEX-CHAOS commit/blob/SHA256.
           # Never commit or upload the ZIPs or derived private sprite sheets.
+          set +e
           bash tools/fetch_a6_avatar_sources.sh "$RUNNER_TEMP/a6_source" > visual_evidence/a6-source.log 2>&1
-          grep -q "A6 ASSET SOURCES VERIFIED" visual_evidence/a6-source.log
+          fetch_rc=$?
+          set -e
+          # This is transport/provenance diagnostics only; never upload raw packs.
+          sed -E 's#x-access-token:[^@ ]+@#x-access-token:[REDACTED]@#g' visual_evidence/a6-source.log | tail -35
+          if [ "$fetch_rc" -ne 0 ] || ! grep -q "A6 ASSET SOURCES VERIFIED" visual_evidence/a6-source.log; then
+            echo "::error::A6_PINNED_ART_TRANSPORT_FAILED rc=$fetch_rc; no visual PASS claimed"
+            exit 1
+          fi
           python3 tools/stage_a6_avatar_art.py --repo-root .visual \
             --male-zip "$RUNNER_TEMP/a6_source/male.zip" \
             --female-zip "$RUNNER_TEMP/a6_source/female.zip"
