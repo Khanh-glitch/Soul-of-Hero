@@ -112,10 +112,17 @@ class AshenGuillotineR:
                 var b: Vector2 = p0.lerp(p1, u1)
                 var open := AMath.ease_out(AMath.seg(t, 4.6 + float(section) * 0.08, 5.0 + float(section) * 0.08), 2.0) * _section_visibility(section, t)
                 var middle := a.lerp(b, 0.52) + n * (2.0 if section % 2 == 0 else -2.0)
-                var gap := 3.8 * open
-                ADraw.poly_fill(fb, [a, middle + n * gap, b, middle - n * gap],
+                # Physically parted ground edges widen from the blade line;
+                # the thin molten rim makes each fracture readable without
+                # replacing the actual dark cut with bloom.
+                var gap := 8.5 * open
+                var upper := middle + n * gap
+                var lower := middle - n * gap
+                ADraw.poly_fill(fb, [a, upper, b, lower],
                     func(_x: int, _y: int) -> Variant: return Vector3(0.018, 0.014, 0.014), true, open * 0.96)
-                ADraw.streak(fb, a.x, a.y, middle.x, middle.y, 1.0, 0.8, AMath.R("fire", 0.68), open * 0.55)
+                ADraw.streak(fb, a.x, a.y, upper.x, upper.y, 1.6, 1.0, AMath.R("fire", 0.72), open * 0.70)
+                ADraw.streak(fb, upper.x, upper.y, b.x, b.y, 1.0, 1.4, AMath.R("fire", 0.72), open * 0.70)
+                ADraw.streak(fb, a.x, a.y, lower.x, lower.y, 1.0, 0.7, AMath.R("ash", 0.55), open * 0.45)
                 var bs: Array = _cracks[section]
                 ACommon.scar_decal(fb, bs, open * 0.9, t)
             # Fragment trajectories begin on the actual cut and separate
@@ -129,7 +136,7 @@ class AshenGuillotineR:
                 var travel := (14.0 + 14.0 * AMath.hash2(seed, 3.0)) * age * side
                 var lift := -42.0 * age + 30.0 * age * age
                 var center := origin + n * travel + Vector2(0.0, lift)
-                var radius := 2.2 + 2.4 * AMath.hash2(seed, 7.0)
+                var radius := 3.5 + 3.5 * AMath.hash2(seed, 7.0)
                 var spin := age * (2.0 + AMath.hash2(seed, 9.0)) * side
                 var axis := Vector2(cos(spin), sin(spin)) * radius
                 var cross := Vector2(-axis.y, axis.x) * 0.65
