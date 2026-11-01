@@ -1,0 +1,85 @@
+name: ARCANA20 A04 full native motion before and after
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths:
+      - '.github/workflows/arcana20-a04-full-motion.yml'
+      - 'prototypes/arcana_fusion20/renderer/source_a/a_redesign_spells.gd'
+      - 'prototypes/arcana_fusion20/renderer/arcana20_overworld_join_test.gd'
+permissions:
+  contents: read
+jobs:
+  capture:
+    strategy:
+      fail-fast: false
+      matrix:
+        revision: [baseline, candidate]
+        light: [normal, dimmed]
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Assemble exact historical or candidate AVFX with current A0
+        env:
+          REVISION: ${{ matrix.revision }}
+        run: |
+          BASELINE=5d3fdebef475148e3560cfb98c1cf7c0cdc376a9
+          A0=04eacf62f1a3740a57e08691c3a9006d454aaa2c
+          git fetch --depth=1 --no-tags origin "$BASELINE" "$A0" 6b801554a6af95424b4e39dd29f43c146aa13848 2cb1a3c5f093724eb9fecbdf45909ccb611f7b32 18e7afcbd576bb9bfbcc509b2ee13216186a522 e505173edd119fdd955cf6249511b575a5468440
+          SHA="$GITHUB_SHA"; if [ "$REVISION" = baseline ]; then SHA="$BASELINE"; fi
+          python3 tools/arcana20_join/assemble.py --out "$RUNNER_TEMP/a04-full" --avfx-sha "$SHA" --a0-sha "$A0"
+          # Both versions use the same current diagnostic harness, not a source change.
+          cp prototypes/arcana_fusion20/renderer/arcana20_overworld_join_test.gd "$RUNNER_TEMP/a04-full/prototypes/arcana_fusion20/renderer/arcana20_overworld_join_test.gd"
+          printf 'source_avfx=%s\ntest_harness=%s\na0=%s\n' "$SHA" "$GITHUB_SHA" "$A0" > "$RUNNER_TEMP/a04-full/capture-revisions.txt"
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import
+        run: |
+          set -o pipefail
+          mkdir -p "$RUNNER_TEMP/a04-full/artifacts"
+          godot --headless --path "$RUNNER_TEMP/a04-full" --import 2>&1 | tee "$RUNNER_TEMP/a04-full/artifacts/import.log"
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/a04-full/artifacts/import.log"
+      - name: Capture every 60-Hz tick in actual frozen world
+        env:
+          ARCANA20_PHASE_LIGHT: ${{ matrix.light }}
+        run: |
+          set -o pipefail
+          timeout --signal=TERM --kill-after=10s 3000s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 ARCANA20_PHASE_FIRST=4 ARCANA20_PHASE_LAST=4 ARCANA20_A04_FULL_MOTION=1 \
+            godot --path "$RUNNER_TEMP/a04-full" --rendering-method gl_compatibility --audio-driver Dummy --resolution 1280x720 --windowed \
+            --user-data-dir "$RUNNER_TEMP/a04-full-user" --script res://prototypes/arcana_fusion20/renderer/arcana20_overworld_join_test.gd \
+            2>&1 | tee "$RUNNER_TEMP/a04-full/artifacts/world.log"
+          grep -Fq 'ARCANA20_JOIN_DIAGNOSTIC PASS' "$RUNNER_TEMP/a04-full/artifacts/world.log"
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Shader compilation failed|JOIN_FAIL' "$RUNNER_TEMP/a04-full/artifacts/world.log"
+      - name: Package lossless native RGB video and playable review copy
+        run: |
+          set -euo pipefail
+          command -v ffmpeg
+          ROOT="$RUNNER_TEMP/a04-full/artifacts/arcana20-join"
+          mkdir "$RUNNER_TEMP/frames"
+          python3 - "$ROOT" "$RUNNER_TEMP/frames" <<'PY'
+          import os, pathlib, sys
+          root=pathlib.Path(sys.argv[1]); out=pathlib.Path(sys.argv[2])
+          for i in range(480):
+              p=root / f'phase_04_full_motion_{i:03d}_tick{i}.png'
+              if not p.is_file(): raise SystemExit(f'missing native frame: {p}')
+              os.link(p,out / f'{i:03d}.png')
+          PY
+          ffmpeg -hide_banner -loglevel error -framerate 60 -i "$RUNNER_TEMP/frames/%03d.png" -frames:v 480 -c:v ffv1 -pix_fmt bgr0 "$RUNNER_TEMP/a04-full/artifacts/a04-native-lossless.mkv"
+          ffmpeg -hide_banner -loglevel error -framerate 60 -i "$RUNNER_TEMP/frames/%03d.png" -frames:v 480 -c:v libx264 -crf 16 -pix_fmt yuv420p "$RUNNER_TEMP/a04-full/artifacts/a04-review.mp4"
+          # Lossless RGB video is the native frame archive; avoid duplicating 480 PNGs.
+          rm "$ROOT"/phase_04_full_motion_*_tick*.png
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a04-full-${{ matrix.revision }}-${{ matrix.light }}
+          path: |
+            ${{ runner.temp }}/a04-full/capture-revisions.txt
+            ${{ runner.temp }}/a04-full/arcana20_join_manifest.json
+            ${{ runner.temp }}/a04-full/artifacts/
+          if-no-files-found: warn

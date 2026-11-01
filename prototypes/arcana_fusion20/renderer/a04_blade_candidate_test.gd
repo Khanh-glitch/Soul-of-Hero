@@ -18,6 +18,35 @@ func _initialize() -> void:
         push_error("A04_BLADE_FAIL coverage=%d probe_coverage=%f dark_material=%s" % [count, frame.world_coverage[y * AFramebuffer.W + x], str(material)])
         quit(1)
         return
+    # Test exact authored contact and acceleration, independent of the
+    # raster test; not a replacement for viewing the animation.
+    var ready: float = spell._blade_offset(3.35)
+    var first: float = ready - spell._blade_offset(3.35 + 1.0 / 60.0)
+    var second: float = spell._blade_offset(3.35 + 1.0 / 60.0) - spell._blade_offset(3.35 + 2.0 / 60.0)
+    var contact: float = spell._blade_offset(3.4)
+    if not (ready > 30.0 and second > first and absf(contact - 10.0) < 0.001 and spell._blade_offset(3.6) > contact):
+        push_error("A04_BLADE_FAIL anticipation/acceleration/contact/recoil")
+        quit(1)
+        return
+    for bs in spell._cracks:
+        var root: Vector2 = bs[0].pts[0]
+        if absf((root - ARedesignSpells.C).dot(normal)) > 0.001:
+            push_error("A04_BLADE_FAIL branch root is disconnected from cut")
+            quit(1)
+            return
+    var events: Array = spell.authored_events()
+    var impacts := 0
+    for event in events:
+        if event.kind == "rupture_impact":
+            if absf((event.pos_local - ARedesignSpells.C).dot(normal)) > 0.001 or absf(float(event.t) - (4.6 + impacts * 0.08)) > 0.001:
+                push_error("A04_BLADE_FAIL rupture cue outside the opening sequence")
+                quit(1)
+                return
+            impacts += 1
+    if impacts != 5:
+        push_error("A04_BLADE_FAIL missing rupture contacts")
+        quit(1)
+        return
     frame.clear()
     spell.render(frame, 4.45)
     if frame.world_coverage.count(1.0) != 0:

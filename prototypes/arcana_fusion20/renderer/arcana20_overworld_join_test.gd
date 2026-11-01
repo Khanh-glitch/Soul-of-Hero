@@ -1419,7 +1419,7 @@ func _phase_sweep(app: Node, world: Node, player: Node2D, enemy: Node2D, camera:
             # The test-driven world is frozen; this is not natural gameplay.
             targets.append(201)
             labels.append("blade_ready")
-            for cut_tick in range(204, 217):
+            for cut_tick in range(195, 217):
                 targets.append(cut_tick)
                 labels.append("cut_motion_%03d" % cut_tick)
         if num == 16:
@@ -1476,6 +1476,14 @@ func _phase_sweep(app: Node, world: Node, player: Node2D, enemy: Node2D, camera:
             for sample in ordered:
                 targets.append(sample.tick)
                 labels.append(sample.label)
+        if num == 4 and OS.get_environment("ARCANA20_A04_FULL_MOTION") == "1":
+            # Every native source tick over the complete 8-second candidate;
+            # a frozen actual-world diagnostic, not interactive gameplay.
+            targets.clear()
+            labels.clear()
+            for motion_tick in range(480):
+                targets.append(motion_tick)
+                labels.append("full_motion_%03d" % motion_tick)
         _phase_set_render(source, false)
         var previous := 0
         var samples: Array = []
