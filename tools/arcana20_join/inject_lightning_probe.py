@@ -90,6 +90,7 @@ s = s.replace(needle, '''    if OS.get_environment("AVFX_R17_TRACE") == "1" and 
                 source._spell.call("render", rotor_only, source.source_time())
                 source._spell.set("include_bolts", true)
                 source._spell.set("_r17_trace", saved_trace)
+                trace = saved_trace
                 var rotor_file := FileAccess.open(path + "/" + stamp + ".rotor_only32f", FileAccess.WRITE)
                 rotor_file.store_buffer(rotor_only.buf.to_byte_array())
                 rotor_file.close()
