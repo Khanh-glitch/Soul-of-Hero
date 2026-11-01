@@ -323,6 +323,8 @@ func source_pass_frame() -> Arcana20SourcePassFrame:
     result.c_ink = _frame.ink
     result.c_light = _frame.light
     result.c_disp = _frame.disp
+    result.c_stage_shade = _frame.stage_shade
+    result.c_stage_scanlines = _frame.stage_scanlines
     result.c_world_fragment = _frame.world_fragment
     result.c_influence = _frame.world_influence
     result.c_field_activity = _frame.field_activity

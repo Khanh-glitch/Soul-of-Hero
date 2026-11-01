@@ -25,6 +25,10 @@ const FIELD_DISP := 8
 const FIELD_FRAGMENT := 16
 const FIELD_INFLUENCE := 32
 var field_activity := 0
+# Explicit stage operations: source-wide shading/scanlines belong to the
+# viewport, not the transformed source canvas. Neutral for source parity.
+var stage_shade := 1.0
+var stage_scanlines := PackedFloat32Array()
 
 var ground := PackedByteArray()
 # Source ground is painted over an external base. Track authored decal
@@ -63,10 +67,13 @@ func _init() -> void:
     light.resize(N * 4)
     disp.resize(N * 4)
     _mark.resize(N)
+    stage_scanlines.resize(H * 2)
     clear()
 
 func clear() -> void:
     field_activity = 0
+    stage_shade = 1.0
+    stage_scanlines.fill(0.0)
     ground.fill(0)
     ground_coverage.fill(0.0)
     if track_world_fragments:
@@ -295,6 +302,25 @@ func C(x: float, y: float, v: float) -> void:
     if track_world_fragments:
         world_influence[yi * W + xi] = 1
     disp[(yi * W + xi) * 4 + 3] += v
+
+# Explicitly authored whole-stage operation. Legacy source buffers preserve
+# the identical per-pixel source computation; the real-world path transports
+# the stage operation separately and does not turn it into local influence.
+func shade_stage(m: float) -> void:
+    if track_world_fragments:
+        stage_shade *= m
+    else:
+        field(0, 0, W - 1, H - 1, func(x: int, y: int) -> void: S(x, y, m))
+
+func stage_scanline(y: int, dx: float, chroma_amount: float) -> void:
+    if y < 0 or y >= H: return
+    if track_world_fragments:
+        stage_scanlines[y * 2] += dx
+        stage_scanlines[y * 2 + 1] += chroma_amount
+    else:
+        for x in range(W):
+            D(x, y, dx, 0.0)
+            if chroma_amount != 0.0: C(x, y, chroma_amount)
 
 func field(x0: float, y0: float, x1: float, y1: float, fn: Callable) -> void:
     var ax := maxi(0, floori(x0))

@@ -1,0 +1,40 @@
+name: ARCANA20 Thunderloom source stage transport
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths:
+      - '.github/workflows/arcana20-c10-stage-transport.yml'
+      - 'prototypes/arcana_fusion20/renderer/source_c/c_frame.gd'
+      - 'prototypes/arcana_fusion20/renderer/source_c/c_thunderloom.gd'
+      - 'prototypes/arcana_fusion20/renderer/c10_stage_transport_test.gd'
+permissions:
+  contents: read
+jobs:
+  transport:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - run: godot --headless --path . --import > import.log 2>&1 && ! grep -Eq 'SCRIPT ERROR:|Parse Error:' import.log
+      - name: Compare original source with staged transport
+        run: |
+          set -o pipefail
+          timeout 600s godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/c10_stage_transport_test.gd 2>&1 | tee test.log
+          grep -Fq 'C10_STAGE_TRANSPORT_PASS' test.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' test.log
+      - name: Report results
+        if: always()
+        run: grep -E 'C10_STAGE_TRANSPORT|ERROR|SCRIPT ERROR|Parse Error' test.log | tail -10 | sed 's/^/::notice title=C10_STAGE_TRANSPORT::/' || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcana20-c10-stage-transport-log
+          path: |
+            import.log
+            test.log

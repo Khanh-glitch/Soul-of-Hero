@@ -8,12 +8,22 @@ class_name Arcana20WorldPassMount
 var _renderer: Arcana20Renderer
 var _passes: Dictionary = {} # canonical id -> {family: viewer}
 var unsupported: Dictionary = {}
+var _c_stage: Arcana20CStageWorld
+
+func _ready() -> void:
+    _ensure_c_stage()
+
+func _ensure_c_stage() -> void:
+    if not is_instance_valid(_c_stage):
+        _c_stage = Arcana20CStageWorld.new()
+        add_child(_c_stage)
 
 func attach(renderer: Arcana20Renderer) -> bool:
     if not is_instance_valid(renderer) or not renderer.world_pass_mode:
         return false
     detach()
     _renderer = renderer
+    _ensure_c_stage()
     _renderer.source_pass_ready.connect(_on_frame)
     _renderer.cast_finished.connect(_on_finished)
     _renderer.source_layer_finished.connect(_on_layer_finished)
@@ -23,6 +33,9 @@ func _on_frame(id: StringName, frame: Arcana20SourcePassFrame) -> void:
     if frame.family not in [&"A", &"B", &"C", &"D"]:
         unsupported[id] = frame.family
         return
+    if frame.family == &"C":
+        _ensure_c_stage()
+        _c_stage.consume(id, frame)
     var by_family: Dictionary = _passes.get(id, {})
     var viewer: Node2D = by_family.get(frame.family)
     if not is_instance_valid(viewer):
@@ -43,6 +56,7 @@ func _on_frame(id: StringName, frame: Arcana20SourcePassFrame) -> void:
     viewer.call(&"consume", frame)
 
 func _on_layer_finished(id: StringName, family: StringName) -> void:
+    if family == &"C" and is_instance_valid(_c_stage): _c_stage.retire(id)
     var by_family: Dictionary = _passes.get(id, {})
     var viewer: Node = by_family.get(family)
     if is_instance_valid(viewer):
@@ -53,6 +67,7 @@ func _on_layer_finished(id: StringName, family: StringName) -> void:
     else: _passes[id] = by_family
 
 func _on_finished(id: StringName) -> void:
+    if is_instance_valid(_c_stage): _c_stage.retire(id)
     var by_family: Dictionary = _passes.get(id, {})
     for viewer in by_family.values():
         if is_instance_valid(viewer):
@@ -77,6 +92,9 @@ func detach() -> void:
     for id in _passes.keys():
         _on_finished(id)
     unsupported.clear()
+    if is_instance_valid(_c_stage):
+        _c_stage.queue_free()
+        _c_stage = null
 
 func _exit_tree() -> void:
     detach()

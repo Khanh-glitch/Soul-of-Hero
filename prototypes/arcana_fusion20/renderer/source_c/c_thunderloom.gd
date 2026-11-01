@@ -139,7 +139,7 @@ func render(f: CFrame, t: float) -> void:
             if CMath.cl01((1.0 - d) * 1.6) * (0.5 + n * 0.6) * cl > CMath.bayer(x, y):
                 f.I(x, y, 0.025, 0.025, 0.06, 0.9), 0.6)
         if t > 4.38:
-            f.field(0, 0, CFrame.W - 1, CFrame.H - 1, func(x: int, y: int) -> void: f.S(x, y, 1.0 - 0.6 * CMath.inv(4.38, 4.75, t)))
+            f.shade_stage(1.0 - 0.6 * CMath.inv(4.38, 4.75, t))
         var slot := floori(t * 20.0)
         var disch := 1.0 if CMath.hash1(slot * 3) > 0.5 else 0.0
         for th in _threads:
@@ -191,7 +191,7 @@ func render(f: CFrame, t: float) -> void:
             var k := 5.0 if a < 0.08 else 4.0 * exp(-(a - 0.08) * 9.0)
             CKit.draw_bolt(f, CKit.bolt_pts(float(9 + floori(t * 30.0) % 2), TG.x, -4.0, TG.x, TG.y - 1.0, 0.035, 3.0), k, CORE, HALO, 2.4)
             if a < 0.1:
-                f.field(0, 0, CFrame.W - 1, CFrame.H - 1, func(x: int, y: int) -> void: f.S(x, y, 0.4))
+                f.shade_stage(0.4)
         if a < 0.15:
             f.disc_l(TG.x, TG.y, 8.0, CORE, 3.0)
         elif a < 0.6:
@@ -206,10 +206,7 @@ func render(f: CFrame, t: float) -> void:
                 var h := CMath.hash1((y >> 2) + slot * 57)
                 if h > 0.82:
                     var dx := (CMath.hash1(y * 3 + slot) - 0.5) * 16.0 * dec
-                    for x in range(CFrame.W):
-                        f.D(x, y, dx, 0.0)
-                        if h > 0.95:
-                            f.C(x, y, 3.0 * dec)
+                    f.stage_scanline(y, dx, 3.0 * dec if h > 0.95 else 0.0)
             CKit.shock(f, TG.x, TG.y, a * 220.0, 14.0, 7.0 * dec, 0.7, 2.0)
         var g := exp(-a * 1.1)
         for ch in _chans:
