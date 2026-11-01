@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [arena/c7b0c4e8-soul-of-hero]
-    # Capture the newer cap material and stored-event crystal candidate; frozen world, not acceptance.
+    # Capture the shorter clustered stipes, cap material and stored-event crystal; frozen world, not acceptance.
     paths: ['.github/workflows/arcana20-spore-current-review.yml']
 permissions:
   contents: read

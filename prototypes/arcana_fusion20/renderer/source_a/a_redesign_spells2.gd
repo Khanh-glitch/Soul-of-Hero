@@ -216,11 +216,13 @@ class SporeNebulaR:
                 c + Vector2(foot, 0), c + Vector2(foot * 0.35, foot * 0.3),
                 c + Vector2(-foot * 0.5, foot * 0.25)], Vector3(0.026, 0.095, 0.055), true, k * 0.84)
             if art_direction == "A":
-                # Three connected overlapping tiers make a branching fungal
-                # mass instead of isolated green dots.
-                _draw_cap(fb, c + Vector2(-12, -4) * spread, 14.0 * spread * pul, 15.0 * spread, k)
-                _draw_cap(fb, c + Vector2(11, -3) * spread, 12.0 * spread * pul, 12.0 * spread, k)
-                _draw_cap(fb, c + Vector2(0, -11) * spread, 17.0 * spread * pul, 19.0 * spread, k)
+                # Low, broad fruiting caps share one ground colony. The
+                # prior tall stacked silhouettes read as leafy little trees
+                # in the real overworld. Keep distinct short pale stipes and
+                # overlapping domes rather than a branching canopy.
+                _draw_cap(fb, c + Vector2(-13, 0) * spread, 15.0 * spread * pul, 10.0 * spread, k)
+                _draw_cap(fb, c + Vector2(13, 0) * spread, 15.0 * spread * pul, 12.0 * spread, k)
+                _draw_cap(fb, c + Vector2(0, 1) * spread, 20.0 * spread * pul, 14.0 * spread, k)
             else:
                 # Alternate: one upright, hollow-looking fruiting body with
                 # a scalloped mouth; not simply a palette variation.
@@ -240,7 +242,7 @@ class SporeNebulaR:
                     var tip := c + Vector2(cos(angle) * distance, sin(angle) * distance - 12.0 * spread)
                     ADraw.streak(fb, tip.x, tip.y + 4.0, tip.x, tip.y - 2.0,
                         1.1, 0.6, Vector3(0.55, 1.05, 0.65), alive * 0.9)
-                    ADraw.disc(fb, tip.x, tip.y, 1.5, Vector3(0.70, 1.3, 0.8), alive)
+                    ADraw.disc(fb, tip.x, tip.y, 2.2, Vector3(0.70, 1.3, 0.8), alive)
         if t > 5.4 and t < 6.2:
             ADraw.pulse_ring(fb, C.x, C.y, 8.0 + AMath.seg(t, 5.4, 6.2) * 110.0, 2.8, AMath.R("bio", 0.75), 0.55 * (1.0 - AMath.seg(t, 5.4, 6.2)), 1.4)
         _ps.each(func(p: Dictionary) -> void:
