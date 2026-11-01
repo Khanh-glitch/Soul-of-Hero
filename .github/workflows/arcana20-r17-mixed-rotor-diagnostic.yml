@@ -1,4 +1,4 @@
-# R17 per-frame C-channel replay for six selected moving rotor bridges.
+# R17 mixed rotor; replay the actual selected C role (not default A role).
 name: ARCANA20 R17 mixed A and six C channels moving-world diagnosis
 on:
   workflow_dispatch:

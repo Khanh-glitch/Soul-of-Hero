@@ -39,7 +39,15 @@ func _initialize() -> void:
             chain._bolt(actual, a, b, float(q.t), int(q.seed), float(q.width), float(q.k), float(q.rough), int(q.branch_count), float(q.get("glow_k", -1.0)))
         else:
             var rotor := AVoltCarouselFusion.new()
-            rotor._bolt(actual, float(q.a[0]), float(q.a[1]), float(q.b[0]), float(q.b[1]), float(q.t), float(q.seed), float(q.width), float(q.k), float(q.rough))
+            var args: Array = [actual, float(q.a[0]), float(q.a[1]), float(q.b[0]), float(q.b[1]), float(q.t), float(q.seed), float(q.width), float(q.k), float(q.rough)]
+            # New mixed-role candidates trace C-assigned connectors only. The
+            # extra flag must be explicit: the remaining bridge default is A.
+            # Historical C-only candidates have no such parameter.
+            for property in rotor.get_property_list():
+                if StringName(property.name) == &"include_c_role":
+                    args.append(true)
+                    break
+            rotor.callv("_bolt", args)
         var current := FileAccess.open(dir.path_join(filename.trim_suffix(".json") + ".current-connector.rgb32f"), FileAccess.WRITE)
         if current == null:
             push_error("R17_CHANNEL_FAIL cannot write current connector")

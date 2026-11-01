@@ -48,7 +48,12 @@ bridge are **not mounted**. The artifact contains the exact join manifest.
   on the other moving connectors and assign C's five-branch channels to at most
   six deterministically ranked A bridges, based on C #09's six successful
   channels. The original C timing/graph is **not** reproduced by this mapping.
-  Runtime, source-field comparison and native normal/dim motion are pending;
+  C primitive/selection tests passed in 41309089962. Isolated A-only source
+  restoration in [41309090038](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41309090038)
+  compared full unmodified A fields at ticks 87/183/247/327: support IoU
+  1.000/0.9966/0.9979/1.000, full-field RGB MAE 1.83e-8/2.38e-5/1.10e-5/8.03e-7;
+  max error 0.000041/0.0964/0.0269/0.000206. It excludes source base/trail/post
+  and is not fusion/world parity. Native normal/dim motion is still pending;
   this is not in the current download or an acceptance claim.
 - Actual moving-world source-clock-retimed before/after videos, baseline vs
   1039869: [#09 normal](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41301955052/artifacts/13081387454),
