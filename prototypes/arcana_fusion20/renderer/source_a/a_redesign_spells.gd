@@ -70,14 +70,14 @@ class AshenGuillotineR:
         var b1: Vector2 = p1 + n * off
         if blade > 0.0 and t < 4.4:
             var bk := blade * (1.0 - AMath.seg(t, 3.6, 4.4)) * close_k
-            var width := 42.0 * blade
-            # A single tapered steel point is part of the same covered
-            # blade polygon; the old parallel end read as a blunt slab in
-            # the full viewport despite its dark metal and bevel.
-            var spine1 := b1 - _dir * 18.0 + n * width * 0.90
+            var width := 30.0 * blade
+            # The earlier broad slab's short point was difficult to read at
+            # world scale. Taper both steel edges over a longer section while
+            # retaining one opaque blade, its edge, and the contact line.
+            var spine1 := b1 - _dir * 46.0 + n * width * 0.90
             var edge0 := b0 - n * width * 0.24
-            var edge1 := b1 - _dir * 18.0 - n * width * 0.24
-            var tip := b1 + _dir * 20.0 + n * width * 0.12
+            var edge1 := b1 - _dir * 46.0 - n * width * 0.24
+            var tip := b1 + _dir * 8.0 + n * width * 0.12
             var shoulder := b0 + _dir * 13.0 + n * width * 0.48
             var back := b0 + _dir * 42.0 + n * width * 0.58
             ADraw.poly_fill(fb, [b0 + n * width * 0.10, shoulder, back, spine1, tip, edge1, edge0],

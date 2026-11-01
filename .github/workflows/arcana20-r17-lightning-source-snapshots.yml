@@ -1,0 +1,32 @@
+name: ARCANA20 R17 original-role versus native full source snapshots
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-r17-lightning-source-snapshots.yml']
+permissions:
+  actions: read
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {skill: 9, light: normal, run_id: 41304892316, artifact: r17-chain-full-9-normal}
+          - {skill: 9, light: dimmed, run_id: 41304892316, artifact: r17-chain-full-9-dimmed}
+          - {skill: 11, light: normal, run_id: 41305186204, artifact: r17-rotor-full-11-normal}
+          - {skill: 11, light: dimmed, run_id: 41305186204, artifact: r17-rotor-full-11-dimmed}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          run-id: ${{ matrix.run_id }}
+          github-token: ${{ github.token }}
+          name: ${{ matrix.artifact }}
+          path: ${{ runner.temp }}/capture
+      - run: python3 -m pip install pillow numpy
+      - name: Source snapshot diagnostics, not Gold or world parity
+        run: python3 tools/arcana20_source_compare/surface_full_lightning_sources.py "$RUNNER_TEMP/capture" ${{ matrix.skill }}

@@ -11,11 +11,22 @@ func _initialize() -> void:
         if coverage > 0.99: count += 1
     var direction := Vector2(0.83, 0.55).normalized()
     var normal := Vector2(-direction.y, direction.x)
-    var probe := ARedesignSpells.C + normal * 35.0
+    var probe := ARedesignSpells.C + normal * 25.0
     var x := floori(probe.x); var y := floori(probe.y)
     var material := frame.get_px(x, y)
     if count < 1000 or frame.world_coverage[y * AFramebuffer.W + x] < 0.99 or material.length() > 0.4:
         push_error("A04_BLADE_FAIL coverage=%d probe_coverage=%f dark_material=%s" % [count, frame.world_coverage[y * AFramebuffer.W + x], str(material)])
+        quit(1)
+        return
+    # The tip and its exterior must be inside the authored source frame, so
+    # the tapered end is genuinely covered rather than cut off at its edge.
+    var tip: Vector2 = ARedesignSpells.C + direction * 100.0 + normal * 13.6
+    var tip_in := tip - direction * 9.0
+    var tip_out := tip + direction * 6.0
+    var inside_index := floori(tip_in.y) * AFramebuffer.W + floori(tip_in.x)
+    var outside_index := floori(tip_out.y) * AFramebuffer.W + floori(tip_out.x)
+    if frame.world_coverage[inside_index] < 0.99 or frame.world_coverage[outside_index] > 0.01:
+        push_error("A04_BLADE_FAIL tapered point is absent or outside-frame")
         quit(1)
         return
     # Test exact authored contact and acceleration, independent of the
