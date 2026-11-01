@@ -35,6 +35,26 @@ func _initialize() -> void:
                     quit(1)
                     return
         if int(item.id) == 18:
+            # The enlarged source-inspired projectile head remains clipped to
+            # its crystal face, including when the head crosses an edge.
+            var clip := PackedVector2Array([Vector2(194, 94), Vector2(204, 94), Vector2(204, 106), Vector2(194, 106)])
+            var clip_frame := AFramebuffer.new()
+            clip_frame.track_audit_writes = true
+            clip_frame.clear()
+            spell._mini_star(clip_frame, Vector2(203, 100), 0.35, 0.42, clip, 1.0)
+            var clipped_pixels := 0
+            for y in range(AFramebuffer.H):
+                for x in range(AFramebuffer.W):
+                    if clip_frame.audit_writes[y * AFramebuffer.W + x] == 0: continue
+                    clipped_pixels += 1
+                    if not Geometry2D.is_point_in_polygon(Vector2(float(x) + 0.5, float(y) + 0.5), clip):
+                        push_error("REDESIGN_SMOKE_FAIL #18 stored head escaped crystal")
+                        quit(1)
+                        return
+            if clipped_pixels == 0:
+                push_error("REDESIGN_SMOKE_FAIL #18 stored head invisible")
+                quit(1)
+                return
             # Verify capture order represents progressively later moments and
             # reverse release actually converges together; not art approval.
             var previous_tau := -1.0

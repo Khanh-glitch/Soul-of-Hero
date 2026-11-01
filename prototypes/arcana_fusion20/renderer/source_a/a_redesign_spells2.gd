@@ -335,13 +335,30 @@ class ChronoshardR:
                 if sample.distance_squared_to(p) <= rr * rr and Geometry2D.is_point_in_polygon(sample, hex):
                     fb.add_px(xx, yy, color.x, color.y, color.z, intensity)
 
+    func _mini_star(fb: AFramebuffer, center: Vector2, tau: float, scale: float, hex: PackedVector2Array, intensity: float) -> void:
+        # Original B's alternating 6/3-radius four-vertex projectile head,
+        # clipped to the crystal; this is still an adapted A raster, not B
+        # renderer/post parity and not a recorded gameplay hit.
+        var points := PackedVector2Array()
+        for q in range(4):
+            var angle := tau * 20.0 + float(q) * PI * 0.5
+            var radius := (3.0 if q % 2 else 6.0) * scale
+            points.append(center + Vector2(cos(angle), sin(angle)) * radius)
+        var reach := 6.0 * scale + 1.0
+        for y in range(floori(center.y - reach), ceili(center.y + reach) + 1):
+            for x in range(floori(center.x - reach), ceili(center.x + reach) + 1):
+                var sample := Vector2(float(x) + 0.5, float(y) + 0.5)
+                if Geometry2D.is_point_in_polygon(sample, hex) and Geometry2D.is_point_in_polygon(sample, points):
+                    fb.add_px(x, y, 1.4, 1.4, 2.0, intensity)
+
     func _mini_attack(fb: AFramebuffer, hex: PackedVector2Array, center: Vector2, tau: float, color: Vector3, intensity: float) -> void:
         if tau < 0.0 or tau > 2.2:
             return
         var a := CASTER + Vector2(6, -14)
         var b := C + Vector2(0, -4)
         var middle := (a + b) * 0.5 + Vector2(0, -6)
-        var scale := 0.30
+        # The original B clip transform is 0.42, not our earlier 0.30.
+        var scale := 0.42
         # A faint, clipped trajectory is a temporal reference, not a world
         # hit: the same stored event is visible at a different moment in each
         # crystal. Use hard pixels so the mark is readable without bloom.
@@ -360,7 +377,9 @@ class ChronoshardR:
                 _mini_disc(fb, at, (3.0 - float(m) * 0.25) * scale, hex,
                     color, intensity * (1.0 - float(m) / 10.0) * 0.7)
             var head := a.lerp(b, tau) + Vector2(0, -sin(tau * PI) * 24.0)
-            _mini_disc(fb, center + (head - middle) * scale, 2.0, hex, Vector3(2.0, 1.6, 0.8), intensity)
+            var stored_head := center + (head - middle) * scale
+            _mini_disc(fb, stored_head, 2.0, hex, Vector3(2.0, 1.6, 0.8), intensity)
+            _mini_star(fb, stored_head, tau, scale, hex, intensity)
         else:
             var e := tau - 1.0
             var target := center + (b - middle) * scale
