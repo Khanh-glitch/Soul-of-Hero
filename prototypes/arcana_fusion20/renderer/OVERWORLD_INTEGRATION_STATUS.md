@@ -117,9 +117,9 @@ records this. Genuine moving hit/miss/confirmed receipts remain owner-provided.
   also completed; neither is source parity,
   full motion, performance, or visual proof. `5d61aad` source smoke
   [41278543233](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41278543233)
-  passed including the new #18 wave time; its full lifecycle
+  passed including the new #18 wave time; the 20-skill lifecycle and capture
   [41278543249](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41278543249)
-  is still in progress. Current normal/dim full-motion review of #06/#12/#14/#18
+  also passed at `5d61aad`, without establishing visual or performance parity. Current normal/dim full-motion review of #06/#12/#14/#18
   remains open, as do #09/#11 selected-source fidelity,
   real actor/terrain depth and creator acceptance.
 - **#19:** opt-in, separate-input prototype at `740c571` implements the D
