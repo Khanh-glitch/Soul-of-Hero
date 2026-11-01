@@ -150,9 +150,13 @@ and [dim](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41303590819)
 reads as a dark rectangular slab. `b6504d3` tapers the same single covered
 blade to a point without glow camouflage; full-viewport review
 [41305323215](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41305323215)
-still looked slab-like. A narrower, longer-taper single blade is being tested;
-it remains unapproved. #06's broad translucent ribbons need motion/meaning
-review; #12's sampled glyph is partly outside the detail region.
+still looked slab-like. A narrower, longer-taper single blade is visible in
+[41309286541](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41309286541);
+the opening still looks like separated black diamonds. A physical connecting
+seam is under test. First structural run 41309560255 failed on a test-script
+parse error (reused local `y`); it did not reach the world capture. No creator
+approval. #06's broad translucent ribbons need motion/meaning review; #12's
+sampled glyph is partly outside the detail region.
 #13's previous roots read as oversized straight black/green wires. `aa02f0b`
 grows toward the contact anchors with shorter child branches. In the native
 normal/dim samples [41304147187](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41304147187)

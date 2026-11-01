@@ -69,9 +69,9 @@ func _initialize() -> void:
     for i in range(1, 5):
         var point := ARedesignSpells.C + direction * (-92.0 + 184.0 * float(i) / 5.0)
         var connected := false
-        for y in range(floori(point.y) - 1, floori(point.y) + 2):
-            for x in range(floori(point.x) - 1, floori(point.x) + 2):
-                if frame.world_coverage[y * AFramebuffer.W + x] > 0.5:
+        for probe_y in range(floori(point.y) - 1, floori(point.y) + 2):
+            for probe_x in range(floori(point.x) - 1, floori(point.x) + 2):
+                if frame.world_coverage[probe_y * AFramebuffer.W + probe_x] > 0.5:
                     connected = true
         if not connected:
             push_error("A04_BLADE_FAIL unconnected ground cut at section %d" % i)
