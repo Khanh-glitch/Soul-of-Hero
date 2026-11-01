@@ -64,5 +64,18 @@ func _initialize() -> void:
         push_error("A04_BLADE_FAIL physical blade persists after its authored fade")
         quit(1)
         return
+    frame.clear()
+    spell.render(frame, 5.4)
+    for i in range(1, 5):
+        var point := ARedesignSpells.C + direction * (-92.0 + 184.0 * float(i) / 5.0)
+        var connected := false
+        for y in range(floori(point.y) - 1, floori(point.y) + 2):
+            for x in range(floori(point.x) - 1, floori(point.x) + 2):
+                if frame.world_coverage[y * AFramebuffer.W + x] > 0.5:
+                    connected = true
+        if not connected:
+            push_error("A04_BLADE_FAIL unconnected ground cut at section %d" % i)
+            quit(1)
+            return
     print("A04_BLADE_PASS coverage=%d dark_material=%s; candidate only" % [count, str(material)])
     quit(0)

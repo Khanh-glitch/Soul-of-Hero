@@ -122,6 +122,12 @@ class AshenGuillotineR:
                 var gap := 8.5 * open
                 var upper := middle + n * gap
                 var lower := middle - n * gap
+                # Adjacent diamond-shaped openings used to meet at a single
+                # pixel and read as detached black plates. A narrow physical
+                # undercut connects each opened section along the strike.
+                var seam := 1.3 * open
+                ADraw.poly_fill(fb, [a - n * seam, b - n * seam, b + n * seam, a + n * seam],
+                    func(_x: int, _y: int) -> Variant: return Vector3(0.018, 0.014, 0.014), true, open * 0.96)
                 ADraw.poly_fill(fb, [a, upper, b, lower],
                     func(_x: int, _y: int) -> Variant: return Vector3(0.018, 0.014, 0.014), true, open * 0.96)
                 ADraw.streak(fb, a.x, a.y, upper.x, upper.y, 1.6, 1.0, AMath.R("fire", 0.72), open * 0.70)

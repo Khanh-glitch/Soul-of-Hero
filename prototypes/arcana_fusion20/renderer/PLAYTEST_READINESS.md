@@ -63,7 +63,10 @@ bridge are **not mounted**. The artifact contains the exact join manifest.
   the prior already-HOLD candidate remains mounted. First run 41309090053
   replayed the selected C helper using the default A path by mistake: its
   world captures are real but its current-connector replay panel is invalid;
-  corrected run 41309260938 uses the explicit C flag.
+  corrected run [41309260938](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41309260938)
+  uses the explicit C flag and passed. World before/after videos are [normal](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41309327455/artifacts/13084243013)
+  and [dim](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41309327455/artifacts/13084324156),
+  source-clock paired from independent moving casts; no interpolated frames.
 - Actual moving-world source-clock-retimed before/after videos, baseline vs
   1039869: [#09 normal](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41301955052/artifacts/13081387454),
   [#09 dim](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41301955052/artifacts/13082155888),
