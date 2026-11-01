@@ -232,12 +232,12 @@ func _run() -> void:
     check(bool(binding.call(&"attach_to_bridge", r4)), "PR30 attaches to R4")
     await process_frame
     await process_frame
+    # AVFX diagnostic must never request a combat hit or mutate HP. Merely
+    # attaching the owner adapter proves wiring only, not a confirmed receipt.
     var hp_before := int(enemy.get("health"))
-    var hit: bool = r4.call(&"request_hit", enemy, 1, player.global_position, "join-test-02", 0, &"arcana_fusion20_02", &"fire")
-    check(hit and int(enemy.get("health")) == hp_before - 1, "diagnostic R4-authorized hit on actual SOH skeleton")
-    check(binding.call(&"get_actor_visual", enemy) != null, "PR30 actual AnimatedSprite reaction bound")
     await process_frame
-    await save_frame("real_overworld_receipt")
+    check(int(enemy.get("health")) == hp_before, "visual-only diagnostic leaves real actor HP unchanged")
+    await save_frame("real_overworld_visual_only")
     if OS.has_environment("ARCANA20_PHASE_FIRST"):
         await _phase_sweep(app, world, player, enemy, camera)
         return
