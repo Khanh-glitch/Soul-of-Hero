@@ -46,7 +46,7 @@ jobs:
           export A3_RECEIPT_DIR="$PWD/artifacts/r13_receipts"
           timeout --signal=TERM --kill-after=10s 180s bash tools/ci/godot_isolated.sh \
             --headless --path . --user-data-dir "$PWD/artifacts/ud" \
-            --script res://tests/survival/a3_value_economy_test.gd > artifacts/r13_p1.log 2>&1
+            --script res://tests/survival/gpb_a0_r13_value_economy_test.gd > artifacts/r13_p1.log 2>&1
           cat artifacts/r13_p1.log
           grep -q 'P1 PASSED' artifacts/r13_p1.log
           if grep -Ei 'SCRIPT ERROR|Parse Error|^\\[FAIL\\]' artifacts/r13_p1.log; then exit 1; fi
@@ -60,7 +60,7 @@ jobs:
           export A3_RECEIPT_DIR="$PWD/artifacts/r13_receipts"
           timeout --signal=TERM --kill-after=10s 180s bash tools/ci/godot_isolated.sh \
             --headless --path . --user-data-dir "$PWD/artifacts/ud" \
-            --script res://tests/survival/a3_value_economy_test.gd > artifacts/r13_p2.log 2>&1
+            --script res://tests/survival/gpb_a0_r13_value_economy_test.gd > artifacts/r13_p2.log 2>&1
           cat artifacts/r13_p2.log
           grep -q 'P2 PASSED' artifacts/r13_p2.log
           if grep -Ei 'SCRIPT ERROR|Parse Error|^\\[FAIL\\]' artifacts/r13_p2.log; then exit 1; fi
