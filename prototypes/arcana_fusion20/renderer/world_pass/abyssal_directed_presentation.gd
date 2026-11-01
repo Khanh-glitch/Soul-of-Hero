@@ -47,41 +47,59 @@ func _draw() -> void:
         return
     var spread := 1.0 - exp(-age * 4.3)
     var wash_fade: float = 1.0 - smoothstep(1.7, 3.35, age)
-    var rx := 35.0 + 126.0 * spread
-    var ry := 12.0 + 47.0 * spread
+    var rx := 35.0 + 108.0 * spread
+    var ry := 12.0 + 39.0 * spread
     var water := PackedVector2Array()
     for i in range(32):
         var a := TAU * float(i) / 32.0
         water.append(Vector2(roundf(cos(a) * rx), roundf(sin(a) * ry)))
-    draw_colored_polygon(water, _ink(DEEP, wash_fade * 0.72))
+    draw_colored_polygon(water, _ink(DEEP, wash_fade * 0.38))
     _rings(rx, ry, age, wash_fade, BLUE, 2)
     _rings(rx * 0.79, ry * 0.79, age, wash_fade * 0.9, CREST, 3)
     _rings(rx * 0.56, ry * 0.56, age, wash_fade * 0.8, FOAM, 4)
-    # Breaking wave wings frame, rather than replace or thicken, the original
-    # C column. The tips travel outward and fall as the source eruption settles.
-    var wave := sin(PI * clampf(age / 1.35, 0.0, 1.0))
-    var flight := clampf(age / 0.55, 0.0, 1.0)
-    if wave > 0.001:
-        for side_value in [-1.0, 1.0]:
-            var side: float = float(side_value)
-            for band in range(3):
-                var b := float(band)
-                var x0 := side * (13.0 + b * 9.0)
-                var x1 := side * (45.0 + b * 14.0 + flight * (45.0 + b * 10.0))
-                var y0 := 2.0 + b * 3.0
-                var y1 := -wave * (39.0 + b * 13.0)
-                var ymid := -wave * (58.0 + b * 12.0)
-                var wing := PackedVector2Array([
-                    Vector2(x0, y0), Vector2(side * (32.0 + b * 12.0), ymid * 0.72),
-                    Vector2(x1, y1), Vector2(x1 - side * 7.0, y1 + 8.0),
-                    Vector2(side * (31.0 + b * 12.0), ymid * 0.72 + 9.0), Vector2(x0, y0 + 6.0)])
-                draw_colored_polygon(wing, _ink(WATER if band == 2 else BLUE, wave * (0.8 - b * 0.12)))
-                # Stepped crest marks on the outer edge, not a blurred glow.
-                for n in range(5):
-                    var u := float(n) / 5.0
-                    var x := roundf(lerpf(side * (32.0 + b * 12.0), x1, u))
-                    var y := roundf(lerpf(ymid * 0.72, y1, u))
-                    draw_rect(Rect2(x, y, 3.0 + float((n + band) % 3), 2.0), _ink(FOAM if band == 0 else CREST, wave))
+    # Water thrown up by the impact: curved, tapering sheets with a layered
+    # blue body and broken pale foam. These are a separate stage-facing
+    # presentation, not replacements or rescaling of C's authored column.
+    # The three staggered arcs on each side grow, crest and then collapse.
+    for side_value in [-1.0, 1.0]:
+        var side: float = float(side_value)
+        for band in range(3):
+            var b := float(band)
+            var phase := age - b * 0.075
+            if phase <= 0.0 or phase >= 1.55: continue
+            var grow := 1.0 - exp(-phase * 8.0)
+            var collapse: float = 1.0 - smoothstep(0.70, 1.55, phase)
+            var life: float = grow * collapse
+            var start_x := side * (10.0 + b * 8.0)
+            var tip_x := side * (42.0 + b * 19.0) * (0.5 + 0.5 * grow)
+            var height := (67.0 + b * 13.0) * life
+            var path: Array[Vector2] = []
+            for n in range(9):
+                var u := float(n) / 8.0
+                var x := lerpf(start_x, tip_x, u)
+                var y := -height * sin(u * PI * 0.56) + u * u * 5.0
+                path.append(Vector2(roundf(x), roundf(y)))
+            var left: Array[Vector2] = []
+            var right: Array[Vector2] = []
+            for n in range(path.size()):
+                var tangent := path[mini(n + 1, 8)] - path[maxi(n - 1, 0)]
+                var normal := Vector2(-tangent.y, tangent.x).normalized()
+                var u := float(n) / 8.0
+                var width := (2.0 + (6.0 + b) * sin(PI * u)) * life
+                left.append(path[n] + normal * width)
+                right.push_front(path[n] - normal * width)
+            var surface := PackedVector2Array(left + right)
+            draw_colored_polygon(surface, _ink(BLUE if band == 0 else WATER, life * (0.95 - b * 0.1)))
+            # Lighter inner water facets make the fan read as moving liquid,
+            # while separated white squares define the splashing crest.
+            for n in range(1, 8):
+                var point := path[n]
+                if (n + band) % 3 != 0:
+                    draw_rect(Rect2(roundf(point.x), roundf(point.y), 2.0 + float(band), 3.0), _ink(CREST, life))
+                if n > 4 and (n + band) % 2 == 0:
+                    draw_rect(Rect2(roundf(point.x + side * 2.0), roundf(point.y - 3.0), 3.0, 2.0), _ink(FOAM, life))
+            var tip := path[8]
+            draw_rect(Rect2(roundf(tip.x), roundf(tip.y - 1.0), 4.0, 3.0), _ink(WHITE, life))
     # Authored deterministic spray arcs; gravity is always world-down. Their
     # little square tips and short tails are visibly separate from C particles.
     if age < 2.4:

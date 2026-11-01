@@ -295,9 +295,33 @@ jobs:
         with:
           name: r20-05-neutral-original-native-source-beats
           path: source-review/
+  full-frame-review:
+    # Surface one genuine locked full 1280x720 frame for native-scale review;
+    # the artifact keeps the untouched lossless frames, not this JPEG transport.
+    needs: live-motion
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: r20-B-normal-lock1
+          path: locked
+      - run: python3 -m pip install --quiet pillow
+      - name: Prepare actual full-resolution directed eruption
+        run: python3 tools/arcana20_join/surface_abyssal_full.py locked 3 b "$RUNNER_TEMP/full-chunks"
+      # GitHub caps annotations per step; four groups preserve the complete
+      # 1280x720 image while the untouched PNG remains in the artifact.
+      - name: Full frame chunks 0-8
+        run: for i in $(seq 0 8); do [ ! -f "$RUNNER_TEMP/full-chunks/$i" ] || echo "::notice title=R20_FULL_3_b_$i::$(cat "$RUNNER_TEMP/full-chunks/$i")"; done
+      - name: Full frame chunks 9-17
+        run: for i in $(seq 9 17); do [ ! -f "$RUNNER_TEMP/full-chunks/$i" ] || echo "::notice title=R20_FULL_3_b_$i::$(cat "$RUNNER_TEMP/full-chunks/$i")"; done
+      - name: Full frame chunks 18-26
+        run: for i in $(seq 18 26); do [ ! -f "$RUNNER_TEMP/full-chunks/$i" ] || echo "::notice title=R20_FULL_3_b_$i::$(cat "$RUNNER_TEMP/full-chunks/$i")"; done
+      - name: Full frame chunks 27-35
+        run: for i in $(seq 27 35); do [ ! -f "$RUNNER_TEMP/full-chunks/$i" ] || echo "::notice title=R20_FULL_3_b_$i::$(cat "$RUNNER_TEMP/full-chunks/$i")"; done
   creator-package:
     # One download, only when the same-run runtime and evidence jobs succeed.
-    needs: [build, windows-current-runtime, live-motion, source-review]
+    needs: [build, windows-current-runtime, live-motion, source-review, full-frame-review]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
