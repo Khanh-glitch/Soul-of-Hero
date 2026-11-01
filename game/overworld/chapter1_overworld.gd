@@ -1196,6 +1196,12 @@ func _prepare_work_at_nearest_station() -> void:
 		print("A0_PREPARE_WORK result=no_station nearest=%s distance=%.1f" % [world_nearest, world_distance])
 		_say("Stand at a workstation to keep its work running while you are away.")
 		return
+	# A3 judges an arming against the run's latest projection, and that projection is
+	# built when a plan runs. A furnace the player placed after the last plan is a real
+	# station the player is standing at, so ask for a fresh read-only plan first rather
+	# than letting a stale projection answer "that station is not there". Nothing is
+	# committed here: settling is still the game's own business.
+	_refresh_offline_projection()
 	var report: Dictionary = economy_session.call(&"prepare_work_away", nearest)
 	print("A0_PREPARE_WORK result=%s station=%s distance=%.1f prepared=%s refused=%s" % [
 		str(report.get("ok", false)), nearest, nearest_distance,
@@ -1235,6 +1241,17 @@ func _station_in_reach(entity_id: String, structure: SurvivalStructure) -> bool:
 			and economy_session.has_method(&"station_in_reach"):
 		return bool(economy_session.call(&"station_in_reach", entity_id, structure))
 	return _station_distance(entity_id, structure) <= SurvivalStationReach.RADIUS
+
+
+## Read-only. A3 builds its bounded delta against a fresh projection; A0 commits
+## nothing, so this cannot settle, pay or advance a single tick.
+func _refresh_offline_projection() -> void:
+	if economy_composition == null or not is_instance_valid(economy_composition):
+		return
+	var offline: Node = economy_composition.get(&"_offline") as Node
+	if offline == null or not offline.has_method(&"plan"):
+		return
+	offline.call(&"plan", int(Time.get_unix_time_from_system()))
 
 
 func _has_gameplay_modal() -> bool:
