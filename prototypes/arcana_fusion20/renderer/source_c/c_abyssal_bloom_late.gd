@@ -1,7 +1,9 @@
 ## #05 selected C tide.ts late role: original C pool, radial shock,
 ## roaring column, seeded droplets/foam, ripples and water returning home.
-## Earlier C membranes are simulated only as particle RNG/input state, not
-## drawn; A owns the opening. This is an unverified fusion component.
+## A owns the opening. After release, C's authored remaining membrane,
+## mini-bloom, bubbles and glow are overtaken by its expanding shock; this
+## preserves the original transition rather than replacing it with generic
+## water. This is an unverified fusion component.
 extends RefCounted
 class_name CAbyssalBloomLate
 
@@ -17,6 +19,7 @@ var fx_flash_k := 0.0
 var fx_kick := 0.0
 var rng: CMath.CRng
 var pets: Array = []
+var bubbles: Array = []
 var particles: Array = []
 var ripples: Array = []
 var erupted := false
@@ -26,19 +29,18 @@ func setup() -> void:
     CPalette._ensure()
     rng = CMath.CRng.new(32676) # 1000 + source index 4 * 7919
     pets.clear()
+    bubbles.clear()
     particles.clear()
     ripples.clear()
     erupted = false
     for k in range(6): pets.append({"ang": float(k) / 6.0 * CMath.TAU, "L": 30.0, "w": 6.0, "t0": 0.9 + k * 0.05, "dur": 1.3, "twist": 0.9, "seed": k})
     for k in range(6): pets.append({"ang": (float(k) + 0.5) / 6.0 * CMath.TAU, "L": 56.0, "w": 14.0, "t0": 1.8 + k * 0.07, "dur": 1.7, "twist": -0.35, "seed": k + 10})
     for k in range(12): pets.append({"ang": (float(k) + 0.25) / 12.0 * CMath.TAU, "L": 76.0, "w": 3.4, "t0": 3.0 + (k % 3) * 0.08, "dur": 1.4, "twist": 0.25, "seed": k + 20})
-    # C's early 30 bubbles consume these same four source RNG draws each.
+    # Preserve source setup RNG order; these bubbles remain until the C shock
+    # reaches them during the release (they are not drawn in A's opening).
     for i in range(30):
-        rng.r(0, CMath.TAU)
-        rng.r(6, 40)
-        rng.r(0.6, 1.6)
-        rng.sign()
-        rng.r(0, CMath.TAU)
+        bubbles.append({"ang": rng.r(0, CMath.TAU), "r": rng.r(6, 40),
+            "speed": rng.r(0.6, 1.6) * rng.sign(), "phase": rng.r(0, CMath.TAU)})
     _tabs.clear()
     for p in pets:
         var angles := PackedFloat32Array()
@@ -134,6 +136,63 @@ func update(dt: float, t: float) -> void:
             "vx": -sin(angle) * 50.0, "vy": cos(angle) * 35.0, "home": C, "homeK": 2.4, "drag": 1.6,
             "kind": "spore", "col": CPalette.P.water, "c": Vector3(0.4, 0.8, 0.95), "k": 0.9, "max": rng.r(1.2, 1.8)}))
 
+# Original C tide.ts remaining membrane after TP. The source keeps the
+# petal tables frozen at TF, then clears them from the center at 240 px/s.
+# This is intentionally release-only: the creator chose A for the opening.
+func _render_release_membrane(f: CFrame, t: float, pulse_r: float) -> void:
+    var bound := 84.0
+    f.field(C.x - bound, C.y - bound * SY, C.x + bound, C.y + bound * SY, func(x: int, y: int) -> void:
+        var dx := float(x) - C.x
+        var dy := (float(y) - C.y) / SY
+        var radius := sqrt(dx * dx + dy * dy)
+        if radius < 4.0 or radius > 80.0 or pulse_r > radius: return
+        var angle := atan2(dy, dx)
+        var ri := mini(83, roundi(radius))
+        var coverage := 0
+        var edge := 99.0
+        for tab in _tabs:
+            if float(tab.len) < 1.0 or radius > float(tab.len): continue
+            var delta := absf(CMath.ang_diff(float(tab.ang[ri]), angle)) * radius
+            var inside := float(tab.hw[ri]) - delta
+            if inside > 0.0:
+                coverage += 1
+                edge = minf(edge, inside)
+        if coverage == 0: return
+        var n := CMath.noise3(x * 0.1 + 0.6, y * 0.1, TF * 0.8)
+        var shade := 0.25 + minf(0.4, coverage * 0.12) + n * 0.25
+        f.Ic(x, y, CPalette.ramp_d(CPalette.P.water, shade, CMath.bayer(x, y)), minf(0.95, 0.5 + coverage * 0.15))
+        if edge < 1.15:
+            f.Ic(x, y, FOAM, 0.7)
+            f.Lc(x, y, FOAM, 0.6)
+        elif CMath.hash3(x, y, floori(TF * 8.0)) > 0.987:
+            f.Lc(x, y, Vector3.ONE, 0.6)
+        var glint := fposmod(float(x) + float(y) * 0.6 - (t - TF) * 420.0, 60.0)
+        if glint < 2.0: f.Lc(x, y, Vector3.ONE, 0.5)
+        if radius - pulse_r < 4.0: f.Lc(x, y, Vector3.ONE, 1.2)
+        f.D(x, y, dx / (radius + 1.0) * 1.6, dy / (radius + 1.0) * 1.6))
+    for i in range(8):
+        var a := float(i) / 8.0 * CMath.TAU + 0.2
+        var radius := 46.0
+        if pulse_r > radius: continue
+        var cx := C.x + cos(a) * radius
+        var cy := C.y + sin(a) * radius * SY
+        var growth := CMath.ease_out((TF - (3.6 + (i % 3) * 0.15)) / 0.9)
+        for j in range(5):
+            var b := a + float(j) / 5.0 * CMath.TAU
+            f.ribbon([Vector2(cx, cy), Vector2(cx + cos(b) * 8.0 * growth, cy + sin(b) * 8.0 * growth * SY)],
+                [2.0 * growth, 0.5], func(x: int, y: int, _s: float, _e: float) -> void:
+                    f.Ic(x, y, CPalette.P.water[4], 0.75))
+        f.disc_l(cx, cy, 1.5 * growth, FOAM, 0.8)
+    for bubble in bubbles:
+        var radius := float(bubble.r) + sin(TF * float(bubble.speed) + float(bubble.phase)) * 3.0
+        if pulse_r > radius: continue
+        var angle := float(bubble.ang) + TF * float(bubble.speed)
+        var x := C.x + cos(angle) * radius
+        var y := C.y + sin(angle) * radius * SY
+        f.ring_l(x, y, 1.5, FOAM, 0.6)
+        f.Lc(x - 1.0, y - 1.0, Vector3.ONE, 0.7)
+    f.glow(C.x, C.y, 76.0, CPalette.P.water[4], 0.12, 4.0, SY)
+
 func render(f: CFrame, t: float) -> void:
     if t < TP: return
     var tp := minf(t, TF)
@@ -151,6 +210,8 @@ func render(f: CFrame, t: float) -> void:
         if wave > 0.85: f.Lc(x, y, FOAM, 0.25)
         if d > pr - 1.2: f.Lc(x, y, FOAM, 0.35), SY)
     var age := t - TP
+    if age < 0.5:
+        _render_release_membrane(f, t, age * 240.0)
     if age < 0.6:
         CKit.shock(f, C.x, C.y, age * 240.0, 14.0, 9.0 * (1.0 - age / 0.6), SY, 1.5)
         f.ring_l(C.x, C.y, age * 240.0, FOAM, 1.0 - age / 0.6, SY)
