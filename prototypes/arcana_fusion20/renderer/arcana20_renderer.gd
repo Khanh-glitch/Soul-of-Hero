@@ -247,7 +247,8 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
         return true
     if id == 20 and world_pass_mode:
         # C source contour/interior with A bgWarp deformation of those same
-        # world pixels. Other C/A roles remain explicitly unported.
+        # world pixels and A's seeded mapped-world debris. Full OUT, actor
+        # depth, combat and source/creator acceptance remain unverified.
         var cp := CSourcePlayer.new()
         cp.world_pass_mode = true
         cp.source_pass_ready.connect(func(frame: Arcana20SourcePassFrame) -> void: source_pass_ready.emit(canonical_id, frame))
