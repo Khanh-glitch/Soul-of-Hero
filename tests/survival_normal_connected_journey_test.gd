@@ -113,10 +113,11 @@ func _finish() -> void:
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(save_path))
 	# One sentence that survives an annotation cap: phase, how far the run got, why it
 	# stopped, and the bag it actually holds.
-	print("A0_CONNECTED_SUMMARY phase=%s prefix=%s stage=%s reason=%s bag=%s checks=%d failures=%d" % [
+	print("A0_CONNECTED_SUMMARY phase=%s prefix=%s stage=%s reason=%s bag=%s checks=%d failures=%d%s" % [
 		_phase, str(_prefix_complete), _conn_stage,
 		_conn_stop if not _conn_stop.is_empty() else _stop_reason,
-		_bag_json(), checks, failures.size()])
+		_bag_json(), checks, failures.size(),
+		("" if _prepare_note.is_empty() else " prepare=" + _prepare_note)])
 	if failures.is_empty():
 		print("A0 CONNECTED SURVIVAL JOURNEY PASSED - %d checks (%s)" % [checks, _phase])
 		quit(0)
@@ -933,6 +934,53 @@ func _walk_to_cell(hero: CharacterBody2D, nav: OverworldTraversability, cell: Ve
 ## behind its back. If the job never arms, the failure carries the distance to the
 ## station and the session's own state, so the reader can tell "the key is not bound"
 ## from "the player is not standing at the workstation".
+var _prepare_note := ""
+
+
+## Everything the press could have depended on, measured at the moment of the press:
+## the binding, the world's own reach answer, the session's reach answer, and the
+## distance each is measured from. Kept in one line because the workflow has room for
+## roughly one annotation per step and this is the line it keeps.
+func _prepare_probe(ow: Node, host: Node, prompt: String) -> String:
+	var build: Node = ow.get(&"survival_build") if ow != null else null
+	var nearest := ""
+	var best := 99999.0
+	var structure: Node2D = null
+	if build != null:
+		for value: Variant in (build.get(&"_placed") as Dictionary).values():
+			var candidate := value as Node2D
+			if candidate == null or not is_instance_valid(candidate):
+				continue
+			if not String(candidate.get(&"piece_id")).begins_with("station_"):
+				continue
+			var distance := _station_block_distance(ow, candidate)
+			if distance < best:
+				best = distance
+				nearest = String(candidate.get(&"entity_id"))
+				structure = candidate
+	var world_reach := "no_method"
+	if ow != null and structure != null and ow.has_method(&"_station_in_reach"):
+		world_reach = str(bool(ow.call(&"_station_in_reach", nearest, structure)))
+	var session_reach := "no_method"
+	if host != null and structure != null and host.has_method(&"station_in_reach"):
+		session_reach = str(bool(host.call(&"station_in_reach", nearest, structure)))
+	return '{"nearest":"%s","block_distance":%.1f,"radius":%.1f,"world_in_reach":%s,"session_in_reach":%s,"prompt":"%s"}' % [
+		nearest, best, SurvivalStationReach.RADIUS, world_reach, session_reach,
+		prompt.replace('"', "'")]
+
+
+## Distance to the block a station occupies, from the same rule the game uses.
+func _station_block_distance(ow: Node, structure: Node2D) -> float:
+	var service: Node = ow.get_node_or_null("/root/SurvivalService") if ow != null else null
+	var player: Node2D = ow.get(&"player") as Node2D if ow != null else null
+	if service == null or player == null:
+		return structure.global_position.distance_to(player.global_position) if player != null else 99999.0
+	var definition: Variant = service.call(&"piece_definition", String(structure.get(&"piece_id")))
+	if definition is Dictionary:
+		return SurvivalStationReach.distance_to(player.global_position, structure, definition)
+	return player.global_position.distance_to(structure.global_position)
+
+
 func _press_prepare_work() -> bool:
 	var ow: Node = _host.get_child(0)
 	print("A0_CONNECTED_PREPARE enter bound=%s events=%s ow=%s" % [
@@ -981,6 +1029,9 @@ func _press_prepare_work() -> bool:
 	var prompt := ""
 	if hud != null and is_instance_valid(hud) and hud.has_method(&"prompt_text"):
 		prompt = String(hud.call(&"prompt_text"))
+	_prepare_note = _prepare_probe(ow, host, prompt)
+	print("A0_CONNECTED_PREPARE result=not_armed %s before=%s after=%s" % [
+		_prepare_note, JSON.stringify(before), JSON.stringify(state)])
 	print("A0_CONNECTED_PREPARE result=not_armed bound=%s nearest=%s distance=%.1f prompt=%s before=%s after=%s" % [
 		str(InputMap.has_action(&"prepare_work")), _nearest_station(ow), _nearest_station_distance(ow),
 		prompt, JSON.stringify(before), JSON.stringify(state)])
