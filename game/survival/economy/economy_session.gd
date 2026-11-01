@@ -285,12 +285,18 @@ func _physics_process(_delta: float) -> void:
 		var now := Time.get_ticks_usec()
 		if _world_last_usec > 0:
 			var elapsed := now - _world_last_usec
-			if elapsed >= 0 and elapsed <= 250000:
-				_world_remainder_usec += elapsed
-			else:
-				# A suspension-like gap cannot carry an earlier partial second
-				# across the interruption into later active play.
+			if elapsed < 0:
+				# A clock that went backwards cannot carry an earlier partial second.
 				_world_remainder_usec = 0
+			else:
+				# A suspension-like gap cannot carry an earlier partial second across
+				# the interruption, so it is *capped* at a quarter second rather than
+				# discarded. Discarding it was right for a hitch and wrong for a machine
+				# that paints slowly: at 3840x2160 through a software renderer every
+				# honest frame takes longer than the suspension guard, and the world
+				# clock then never advances at all. Capping still cannot pay for the
+				# time the game was gone.
+				_world_remainder_usec += mini(elapsed, 250000)
 		_world_last_usec = now
 		if _world_remainder_usec >= 1000000:
 			_world_remainder_usec -= 1000000
@@ -335,15 +341,22 @@ func _physics_process(_delta: float) -> void:
 		# Fixed callback count is not elapsed time when the physics rate changes
 		# or a frame hitch reduces actual callbacks. Accumulate monotonic time
 		# only while this authoritative station is active. As for world sources,
-		# discard suspicious >250ms gaps rather than credit offline/focus time.
+		# cap a long gap at 250 ms instead of crediting offline/focus time - and
+		# instead of discarding an honest slow frame's whole contribution.
 		var now := Time.get_ticks_usec()
 		var last := int(record.get("last_usec", 0))
 		if last > 0:
 			var elapsed := now - last
-			if elapsed >= 0 and elapsed <= 250000 and int(record.ticks) - int(record.ack) < MAX_UNCOMMITTED_TICKS:
-				record["remainder_usec"] = int(record.get("remainder_usec", 0)) + elapsed
-			elif elapsed < 0 or elapsed > 250000:
+			if int(record.ticks) - int(record.ack) >= MAX_UNCOMMITTED_TICKS:
+				# The station already owes ticks to the host; do not pile up more.
+				pass
+			elif elapsed < 0:
 				record["remainder_usec"] = 0
+			else:
+				# Same rule as the world clock: cap a long gap at a quarter second
+				# instead of throwing it away, so an honest 3 fps frame still earns
+				# some of the time it took while a real suspension earns almost none.
+				record["remainder_usec"] = int(record.get("remainder_usec", 0)) + mini(elapsed, 250000)
 		record["last_usec"] = now
 		var remainder := int(record.get("remainder_usec", 0))
 		if remainder >= 1000000 and int(record.ticks) - int(record.ack) < MAX_UNCOMMITTED_TICKS:
