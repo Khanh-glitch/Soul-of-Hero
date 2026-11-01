@@ -225,6 +225,21 @@ and [PR30](https://github.com/Khanh-glitch/Soul-of-Hero/pull/30#issuecomment-655
   All controls report HP 69→69. GPU time, allocations, full-cast/target-device
   budgets and before-side retained CPU counters remain unresolved.
 
+- Refreshed all-20 frozen phase sweep on A0 `04e` / AVFX `5af66c7`:
+  [41275419496](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41275419496)
+  all eight normal/dim batches completed successfully after the #04 motion
+  change. This is structural/capture coverage, not review of every full-size
+  frame or natural gameplay. The #04 60-Hz candidate evidence remains separate.
+- Owner-head refresh 2026-11-01: PR21 A0 `04eacf62f1a3740a57e08691c3a9006d454aaa2c`,
+  PR30 CT `e505173edd119fdd955cf6249511b575a5468440`, PR19 A3
+  `b751a29f213d3c934caa204eb8d2d86943f07b65`, PR20 A1
+  `ce9d4ba2d3db153011874aa41b789fa8092be042`, PR22 recovery
+  `bb71bd059a8a70b2fe5121902c68f0864b7e8b68`, PR24 A6
+  `63d3fae54b1e204a84fced6a285bc969ed5bfdfe`, PR26 A8
+  `71e68f9c0b7844277139a489c316acea327699f9` (all open). These are
+  observed heads, not a claim that the newer contract-only dependencies or A8
+  are mounted/validated in the disposable composition.
+
 ### Per-skill acceptance ledger (R14)
 
 `PARTIAL` means a limited source-field or world diagnostic exists; it is not
