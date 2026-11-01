@@ -57,15 +57,16 @@ func save_frame(name: String) -> Image:
 # the post-on/post-off output difference must be that transmission times the
 # corresponding background difference. Two 8-bit render roundings justify a
 # fixed three-code-value error budget; this is not a visual-fidelity threshold.
-func check_hud_isolation(hud: CanvasLayer, post: Arcana20CViewportPost, with_post: Image, without_post: Image) -> void:
-    if hud == null or not hud.visible or hud.layer <= post.layer:
-        check(false, "C20 full HUD canvas must be visible and above viewport post")
+func check_hud_isolation(hud: CanvasLayer, post: CanvasLayer, with_post: Image, without_post: Image, label: String = "C20") -> void:
+    var post_rect := post.get("_rect") as ColorRect
+    if hud == null or not hud.visible or hud.layer <= post.layer or post_rect == null:
+        check(false, label + " full HUD canvas must be visible and above viewport post")
         return
     hud.visible = false
     await process_frame
     await process_frame
     var background_post := await save_frame("fusion_20_collision_post_without_hud")
-    post._rect.visible = false
+    post_rect.visible = false
     await process_frame
     await process_frame
     var background_plain := await save_frame("fusion_20_collision_plain_without_hud")
@@ -87,7 +88,7 @@ func check_hud_isolation(hud: CanvasLayer, post: Arcana20CViewportPost, with_pos
     await process_frame
     var white := await save_frame("fusion_20_actual_hud_on_white_diagnostic")
     reference.queue_free()
-    post._apply()
+    post_rect.visible = true
     await process_frame
     await process_frame
     var images: Array[Image] = [with_post, without_post, background_post, background_plain, black, white]
@@ -121,7 +122,7 @@ func check_hud_isolation(hud: CanvasLayer, post: Arcana20CViewportPost, with_pos
             else: partial += 1
             if pixel_bad: bad += 1
     check(covered > 0 and opaque > 0 and partial > 0 and bad == 0,
-        "C20 full visible real HUD excluded from post, including translucent pixels: covered=%d opaque=%d partial=%d mismatched=%d max_error=%.3f" % [covered, opaque, partial, bad, max_error])
+        "%s full visible real HUD excluded from post, including translucent pixels: covered=%d opaque=%d partial=%d mismatched=%d max_error=%.3f" % [label, covered, opaque, partial, bad, max_error])
 
 func _run() -> void:
     DirAccess.make_dir_recursive_absolute(OUTPUT)
@@ -908,6 +909,35 @@ func _run() -> void:
     await process_frame
     await process_frame
     check(mount.active_viewers(id19) == 0 and images_equal(baseline, await save_frame("world_19_cancelled")), "D19 candidate cleanup restores frozen world")
+    # C17 source information-loss is explicitly whole-screen opaque ink,
+    # followed by its original light, not a rotated source quad.
+    var id17 := Arcana20SourceCatalog.canonical_id(17)
+    check(multi.cast_skill(id17, player.global_position, enemy.global_position), "C17 blackout cast starts")
+    var horizon := multi._casts[id17] as CSourcePlayer
+    horizon.set_process(false)
+    horizon.render_enabled = false
+    for tick in range(360): horizon.advance(STEP, false)
+    horizon.render_enabled = true
+    horizon._render_frame()
+    await process_frame
+    await process_frame
+    var horizon_blackout := mount._blackouts.get(id17) as Arcana20CStageBlackout
+    check(is_instance_valid(horizon_blackout) and horizon.source_pass_frame().c_stage_blackout, "C17 authored blackout uses viewport stage not world quad")
+    var with_blackout := await save_frame("c17_stage_blackout_actual_world")
+    if is_instance_valid(horizon_blackout):
+        horizon_blackout._rect.visible = false
+        await process_frame
+        await process_frame
+        var without_blackout := await save_frame("c17_stage_blackout_disabled_diagnostic")
+        horizon_blackout._rect.visible = true
+        await process_frame
+        await process_frame
+        check(not images_equal(with_blackout, without_blackout), "C17 blackout changes actual world and actors")
+        await check_hud_isolation(world.get("hud") as CanvasLayer, horizon_blackout, with_blackout, without_blackout, "C17")
+    multi.cancel_skill(id17)
+    await process_frame
+    await process_frame
+    check(not mount._blackouts.has(id17) and images_equal(baseline, await save_frame("c17_stage_blackout_cancelled")), "C17 blackout cancellation restores world")
     # Keep camera/actor movement last: the real A0 Camera2D smooths movement,
     # so forcing scroll mid-suite changes its private smoothing history even
     # when positions are restored. Compare against the SAME moved world/camera,

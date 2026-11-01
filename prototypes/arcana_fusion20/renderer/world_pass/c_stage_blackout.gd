@@ -4,18 +4,19 @@
 extends CanvasLayer
 class_name Arcana20CStageBlackout
 const SHADER := preload("res://prototypes/arcana_fusion20/renderer/world_pass/c_stage_blackout.gdshader")
+var _rect: ColorRect
 var _material: ShaderMaterial
 var _texture: ImageTexture
 var _source_to_world := Transform2D.IDENTITY
 func _ready() -> void:
     layer = 9
-    var rect := ColorRect.new()
-    rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-    rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    _rect = ColorRect.new()
+    _rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    _rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
     _material = ShaderMaterial.new()
     _material.shader = SHADER
-    rect.material = _material
-    add_child(rect)
+    _rect.material = _material
+    add_child(_rect)
 func consume(frame: Arcana20SourcePassFrame) -> void:
     _source_to_world = frame.source_to_world
     var image := Image.create_from_data(CFrame.W, CFrame.H, false, Image.FORMAT_RGBAF, frame.c_light.to_byte_array())
