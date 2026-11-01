@@ -25,7 +25,10 @@ for desired in (87,183,247,327):
     # physical source scale projects native local units into world/screen.
     cb=bounds(c);ab=bounds(a)
     def size(b,s):return None if b is None else [(b[2]-b[0]+1)*s,(b[3]-b[1]+1)*s]
+    actor_bounds=[actor.min(axis=0).tolist(),actor.max(axis=0).tolist()] if len(actor) else None
+    outside=[p for p in positions if not (0 <= p[0] < 416 and 0 <= p[1] < 234)]
     report={'tick':r['tick'],'frame':idx,'actor_count':len(positions),'actor_spread_a_local':spread,
+      'actor_bounds_a_local':actor_bounds,'actors_outside_a_field':len(outside),'outside_positions_a_local':outside,
       'native_source_bounds':ab,'native_local_axis_extent_world_units':size(ab,scale),
       'original_c_light_bounds':cb,'original_c_local_axis_extent_world_units':size(cb,scale*416/384),
       'native_rgb_sum':a.sum(axis=(0,1),dtype=np.float64).tolist(),
