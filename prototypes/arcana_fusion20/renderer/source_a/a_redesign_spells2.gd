@@ -91,12 +91,13 @@ class RootwakeR:
                         return AMath.R("verdant", 0.35 + (1.0 - edge) * 0.4) * retract)
                 # Two tapered barbs grow out of the arched tendon itself;
                 # their bases follow its curve and point toward the target.
-                for barb in [0.36, 0.68]:
-                    var base := tp * (1.0 - barb) * (1.0 - barb) + control * 2.0 * (1.0 - barb) * barb + endpoint * barb * barb
-                    var tangent := ((control - tp) * (1.0 - barb) + (endpoint - control) * barb).normalized()
-                    var side := Vector2(-tangent.y, tangent.x) * (-1.0 if i % 2 == 0 else 1.0)
-                    var tip_point := base + (tangent * 6.0 + side * 8.0) * tension
-                    var foot := tangent * 2.2 * tension
+                for barb_value in [0.36, 0.68]:
+                    var barb: float = barb_value
+                    var base: Vector2 = tp * (1.0 - barb) * (1.0 - barb) + control * 2.0 * (1.0 - barb) * barb + endpoint * barb * barb
+                    var tangent: Vector2 = ((control - tp) * (1.0 - barb) + (endpoint - control) * barb).normalized()
+                    var side: Vector2 = Vector2(-tangent.y, tangent.x) * (-1.0 if i % 2 == 0 else 1.0)
+                    var tip_point: Vector2 = base + (tangent * 6.0 + side * 8.0) * tension
+                    var foot: Vector2 = tangent * 2.2 * tension
                     ADraw.poly_fill(fb, [base - foot, tip_point, base + foot],
                         func(_x: int, _y: int) -> Variant: return Vector3(0.12, 0.28, 0.07), true, tension * retract)
                     ADraw.streak(fb, base.x, base.y, tip_point.x, tip_point.y, 0.8, 0.4, AMath.R("verdant", 0.7), tension * retract * 0.5)
