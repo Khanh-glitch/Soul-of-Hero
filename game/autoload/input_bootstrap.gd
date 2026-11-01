@@ -23,6 +23,21 @@ const SEMANTIC_ACTIONS := [
 	&"interact",
 	&"field_codex",
 	&"pause",
+	# Survival build tool. Its own actions rather than reuse of `attack`, so the
+	# build modal can never fire a swing and combat input keeps its exact meaning.
+	&"build_toggle",
+	&"economy_toggle",
+	&"storage_toggle",
+	&"build_place",
+	&"build_slot_1",
+	&"build_slot_2",
+	&"build_slot_3",
+	&"build_slot_4",
+	&"build_slot_5",
+	&"build_slot_6",
+	&"build_slot_7",
+	&"build_slot_8",
+	&"build_slot_9",
 ]
 
 const LEGACY_ACTIONS := [
@@ -64,15 +79,37 @@ const KEYBOARD_BINDINGS := {
 	&"soul_relay_1": [KEY_Q],
 	# Slot two exists architecturally but has no player-facing binding yet.
 	&"soul_relay_2": [],
-	# Desktop world interaction is resolved from an unhandled left-click by the
-	# player controller so an accepted UI click can never leak into combat.
-	&"interact": [],
+	# A click remains the primary world interaction (resolved from an unhandled
+	# left-click by the player controller so an accepted UI click can never leak
+	# into combat). G is the *keyboard* interaction the physical sites advertise:
+	# A8's own prompt reads "G · Enter", and without a key a desktop player could
+	# not enter a worksite at all. E and F stay retired for this action.
+	&"interact": [KEY_G],
 	&"field_codex": [KEY_I, KEY_TAB],
 	&"pause": [KEY_ESCAPE],
+	# B toggles the build modal, 1-9 choose the piece, and placement is the
+	# ordinary left click (see MOUSE_BINDINGS below) resolved by the build layer
+	# only while the modal is open.
+	&"build_toggle": [KEY_B],
+	&"economy_toggle": [KEY_C],
+	&"storage_toggle": [KEY_V],
+	&"build_slot_1": [KEY_1],
+	&"build_slot_2": [KEY_2],
+	&"build_slot_3": [KEY_3],
+	&"build_slot_4": [KEY_4],
+	&"build_slot_5": [KEY_5],
+	&"build_slot_6": [KEY_6],
+	&"build_slot_7": [KEY_7],
+	&"build_slot_8": [KEY_8],
+	&"build_slot_9": [KEY_9],
 }
 
 const MOUSE_BINDINGS := {
 	&"attack": [MOUSE_BUTTON_LEFT],
+	# Placement shares the physical button with attack but is a distinct action:
+	# `SurvivalBuildSystem` is the only listener, and it only acts while the build
+	# modal is open, so the Knight's own click handling is unchanged.
+	&"build_place": [MOUSE_BUTTON_LEFT],
 }
 
 const JOYPAD_BINDINGS := {
@@ -85,6 +122,8 @@ const JOYPAD_BINDINGS := {
 	&"interact": [JOY_BUTTON_BACK],
 	&"field_codex": [JOY_BUTTON_RIGHT_SHOULDER],
 	&"pause": [JOY_BUTTON_START],
+	&"build_toggle": [JOY_BUTTON_DPAD_UP],
+	&"build_place": [JOY_BUTTON_X],
 }
 
 ## Defaults installed by the prototype bootstrap. Removing only these known

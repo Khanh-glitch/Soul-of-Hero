@@ -657,6 +657,9 @@ func begin_archer_dash_relay_opportunity(
 	state = RelayState.READY
 	readiness_count = get_effective_ready_requirement()
 	ready_seconds_left = duration_seconds
+	summon_elapsed = 0.0
+	summon_context = &"archer_dash"
+	takeover_open = false
 	soul_skill_armed = false
 	_emit_state()
 	return true

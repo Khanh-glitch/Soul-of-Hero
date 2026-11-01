@@ -86,6 +86,11 @@ var _completion_choice: CompletionChoice
 
 
 func _ready() -> void:
+	# Paused overlays still receive GUI input. Register their effective
+	# visibility so presses remain suppressed until release after resume.
+	pause_overlay.add_to_group(&"gameplay_modal")
+	death_overlay.add_to_group(&"gameplay_modal")
+	win_overlay.add_to_group(&"gameplay_modal")
 	_virtual_controls_enabled = _should_enable_virtual_controls()
 	keyboard_hint.visible = not _virtual_controls_enabled
 	# Combo/weapon state remains available to mobile action buttons and combat
@@ -152,6 +157,7 @@ func _install_continuous_progression_ui() -> void:
 		hud_root.move_child(_field_codex, pause_overlay.get_index())
 		_field_codex.closed.connect(_on_field_codex_closed)
 	if _completion_choice != null:
+		_completion_choice.add_to_group(&"gameplay_modal")
 		hud_root.add_child(_completion_choice)
 		hud_root.move_child(_completion_choice, pause_overlay.get_index())
 	# The permanent XP strip owns the bottom edge. The remaining raw weapon
@@ -217,6 +223,11 @@ func _sync_session_state() -> void:
 
 
 func _on_player_registered(player: Node) -> void:
+	# AppRoot keeps the outgoing route queued for deletion while the next Main
+	# initializes. Ignore that stale signal after this HUD has left the tree;
+	# child HUD refresh methods require active-SceneTree service lookups.
+	if not is_inside_tree():
+		return
 	_player = player
 	if is_instance_valid(_progression_focus_hud):
 		_progression_focus_hud.set_player(player)

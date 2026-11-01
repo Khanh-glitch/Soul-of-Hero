@@ -18,6 +18,27 @@ signal settings_changed(settings: Dictionary)
 signal hero_progression_changed(hero_id: StringName, snapshot: Dictionary)
 signal hero_shards_changed(hero_id: StringName, amount: int)
 signal hero_identity_unlocked(hero_id: StringName)
+## A0-authoritative player choice; A6 is read-only after this commit.
+signal player_avatar_changed(snapshot: Dictionary)
+
+const UNIQUE_OWNERSHIP_GUARD := preload("res://game/survival/economy/unique_ownership_guard.gd")
+const A0_WORLD_V5_MIGRATION := preload("res://game/survival/economy/a0_world_slice_v5_migration.gd")
+const ECONOMY_SAVE_FACADE := preload("res://game/survival/economy/economy_save_facade.gd")
+# Exported tokenized GDScript may not retain source_code. The production port
+# still binds to these exact preloaded Script resources and their base identity;
+# source bytes are independently SHA-pinned in native and export CI.
+const PRODUCTION_ECONOMY_ADAPTER := preload("res://game/survival/economy/a0_economy_adapter.gd")
+const PRODUCTION_ECONOMY_BASE := preload("res://game/survival/economy/economy_service.gd")
+const PRODUCTION_SOURCE_CUSTODY := preload("res://game/survival/economy/a3_economy_service.gd")
+# Immutable, first-party A3 integration fixture. Production composition must
+# explicitly review/re-pin future adapter revisions; a caller label is never
+# evidence of authority.
+const PINNED_A3_SCRIPT_SHA256 := "98932d25b73a03b9412f0f72f82dc5c2b6451e3ba894a134fdff2d1924252ee0"
+const PINNED_A3_CUSTODY_SHA256 := "f0695cdd05c23490a42fa92cc6fb6de9d87a3ce2933e8563cc7d85fccde09e8b"
+# The independently pinned 86dc2195 regression adapter remains supported.
+const PINNED_A3_FIXTURE_SHA256 := "b1ee9792b4460e956ec6c59437269078e4f6767f76d35145e680dcc03ba3806c"
+const PINNED_A0_ADAPTER_SHA256 := "2b539f3320828c2fa850b6057c735e032153d5a1e8fa1b8ade63d2e3380ed2ce"
+const PINNED_A0_PRODUCTION_ADAPTER_SHA256 := "25129902f9642b83d707dd814c14d1ca293e9b0630f521bec9fc518c6284529e"
 
 const CURRENT_SCHEMA_VERSION := 4
 const CURRENT_HERO_SOUL_RULES_VERSION := 4
@@ -64,6 +85,16 @@ const RESET_PROGRESSION_KEEP_SETTINGS_TOKEN := "RESET_SOUL_OF_HERO_PROGRESSION_K
 const LEGACY_RESET_PROGRESSION_KEEP_SETTINGS_TOKEN := "RESET_LIVING_ARSENAL_PROGRESSION_KEEP_SETTINGS"
 const RESET_ALL_TOKEN := "RESET_SOUL_OF_HERO_SAVE"
 const LEGACY_RESET_ALL_TOKEN := "RESET_LIVING_ARSENAL_SAVE"
+## Player identity (CraftPix base male 555940 / female 419402). The saved record
+## is deliberately tiny: it stores which authored identity the player chose, the
+## equipment appearance grade their gear maps to, and a monotonic revision that
+## presentation adapters must echo back before they may draw anything.
+const PLAYER_AVATAR_SCHEMA := "soh.player_avatar.v1"
+const PLAYER_AVATAR_APPEARANCE_SCHEMA := "soh.ui.avatar_appearance.v1"
+const PLAYER_AVATAR_GENDERS := ["male", "female"]
+const PLAYER_AVATAR_SOURCE_IDS := {"male": "555940", "female": "419402"}
+const PLAYER_AVATAR_GRADE_ZERO := 0
+const PLAYER_AVATAR_MAX_GRADE := 2
 const SETTINGS_NUMERIC_RANGES := {
 	"master_volume": [0.0, 1.0],
 	"music_volume": [0.0, 1.0],
@@ -98,6 +129,19 @@ var _data: Dictionary = {}
 var _is_loaded := false
 var _commit_in_progress := false
 var _migrations: Dictionary = {}
+var _economy_capability := RefCounted.new()
+var _disk_commit_capability := RefCounted.new()
+var _economy_adapter: RefCounted
+var _economy_facade: Node
+var _economy_custody: RefCounted
+var _economy_custody_facade: Node
+var _economy_mutation_active := false
+var _transaction_mutation_active := false
+var _economy_quarantine_reason := ""
+var _economy_quarantine_path := ""
+# Enabled only by the dedicated native fault test's explicit command-line flag.
+var _test_interruption_boundary := ""
+
 
 
 func _init() -> void:
@@ -133,6 +177,8 @@ func configure_storage(path: String, load_immediately := true) -> bool:
 	_legacy_import_path = ""
 	_data.clear()
 	_is_loaded = false
+	_economy_quarantine_reason = ""
+	_economy_quarantine_path = ""
 	if load_immediately:
 		return load_save()
 	return true
@@ -148,6 +194,9 @@ func register_migration(from_version: int, migration: Callable) -> bool:
 
 
 func load_save() -> bool:
+	# A manual retry may succeed after the user restores or repairs the file.
+	_economy_quarantine_reason = ""
+	_economy_quarantine_path = ""
 	if (
 			not FileAccess.file_exists(_save_path)
 			and not _legacy_import_path.is_empty()
@@ -156,22 +205,29 @@ func load_save() -> bool:
 		return _import_legacy_default_save()
 
 	var primary := _read_and_prepare(_save_path)
+	if bool(primary.get("economy_quarantine", false)):
+		return _quarantine_economy_save(_save_path, String(primary.get("error", "invalid_ownership")))
 	if bool(primary.get("ok", false)):
 		var primary_snapshot: Dictionary = primary.get("data", {}).duplicate(true)
 		if bool(primary.get("was_migrated", false)):
 			var source_version := int(primary.get("source_version", 0))
 			if not _preserve_pre_migration_backup(_save_path):
+				if bool(primary.get("world_slice_migrated", false)):
+					return _quarantine_economy_save(_save_path, "world_slice_backup_failed")
 				_accept_loaded_data(primary_snapshot, "")
 				_push_failure("Could not preserve the pre-v2 save; migration was not committed.")
 				return false
-			if not _commit_snapshot(primary_snapshot, false):
+			if not _commit_snapshot(primary_snapshot, false, _disk_commit_capability):
+				if bool(primary.get("world_slice_migrated", false)):
+					return _quarantine_economy_save(_save_path, "world_slice_migration_commit_failed")
 				_accept_loaded_data(primary_snapshot, "")
 				_push_failure("Prepared the current schema in memory, but could not commit the migrated save.")
 				return false
 			_accept_loaded_data(primary_snapshot, "")
 			save_migrated.emit(source_version, CURRENT_SCHEMA_VERSION, _migration_backup_path)
 			return true
-		if bool(primary.get("hero_soul_rules_migrated", false)) \
+		if bool(primary.get("world_slice_migrated", false)) \
+				or bool(primary.get("hero_soul_rules_migrated", false)) \
 				or bool(primary.get("hero_soul_selection_migrated", false)) \
 				or bool(primary.get("skill_economy_migrated", false)) \
 				or bool(primary.get("stat_economy_migrated", false)) \
@@ -179,7 +235,9 @@ func load_save() -> bool:
 			# Rules generations are independent from the outer save schema. Rotate
 			# the untouched profile to the ordinary backup, then persist the
 			# normalized inventory so a future load cannot reinterpret rarity 5.
-			if not _commit_snapshot(primary_snapshot, true):
+			if not _commit_snapshot(primary_snapshot, true, _disk_commit_capability):
+				if bool(primary.get("world_slice_migrated", false)):
+					return _quarantine_economy_save(_save_path, "world_slice_migration_commit_failed")
 				_accept_loaded_data(primary_snapshot, "")
 				_push_failure("Prepared a rules migration in memory, but could not commit the upgraded profile.")
 				return false
@@ -189,30 +247,42 @@ func load_save() -> bool:
 		return true
 
 	var backup := _read_and_prepare(_backup_path)
+	if bool(backup.get("economy_quarantine", false)):
+		return _quarantine_economy_save(_backup_path, String(backup.get("error", "invalid_ownership")))
 	if bool(backup.get("ok", false)):
 		var recovered: Dictionary = backup.get("data", {}).duplicate(true)
 		if bool(backup.get("was_migrated", false)):
 			if not _preserve_pre_migration_backup(_backup_path):
+				if bool(backup.get("world_slice_migrated", false)):
+					return _quarantine_economy_save(_backup_path, "world_slice_backup_failed")
 				_accept_loaded_data(recovered, "backup")
 				_push_failure("Recovered an old backup in memory, but could not preserve its pre-v2 generation.")
 				return false
 		_accept_loaded_data(recovered, "backup")
 		# Never rotate a corrupt primary over the known-good backup.
-		if not _commit_snapshot(recovered, false):
+		if not _commit_snapshot(recovered, false, _disk_commit_capability):
+			if bool(backup.get("world_slice_migrated", false)):
+				return _quarantine_economy_save(_backup_path, "world_slice_migration_commit_failed")
 			_push_failure("Recovered the backup in memory, but could not repair the primary save.")
 		if bool(backup.get("was_migrated", false)):
 			save_migrated.emit(int(backup.get("source_version", 0)), CURRENT_SCHEMA_VERSION, _migration_backup_path)
 		return true
 
 	var migration_backup := _read_and_prepare(_migration_backup_path)
+	if bool(migration_backup.get("economy_quarantine", false)):
+		return _quarantine_economy_save(_migration_backup_path, String(migration_backup.get("error", "invalid_ownership")))
 	if bool(migration_backup.get("ok", false)):
 		var migration_recovery: Dictionary = migration_backup.get("data", {}).duplicate(true)
 		if not _preserve_pre_migration_backup(_migration_backup_path):
+			if bool(migration_backup.get("world_slice_migrated", false)):
+				return _quarantine_economy_save(_migration_backup_path, "world_slice_backup_failed")
 			_accept_loaded_data(migration_recovery, "migration_backup")
 			_push_failure("Loaded the permanent migration backup in memory, but could not prepare rollback storage.")
 			return false
 		_accept_loaded_data(migration_recovery, "migration_backup")
-		if not _commit_snapshot(migration_recovery, false):
+		if not _commit_snapshot(migration_recovery, false, _disk_commit_capability):
+			if bool(migration_backup.get("world_slice_migrated", false)):
+				return _quarantine_economy_save(_migration_backup_path, "world_slice_migration_commit_failed")
 			_push_failure("Recovered the permanent migration backup in memory, but could not repair the primary save.")
 		if bool(migration_backup.get("was_migrated", false)):
 			save_migrated.emit(
@@ -224,10 +294,29 @@ func load_save() -> bool:
 
 	var defaults := _default_data()
 	_accept_loaded_data(defaults, "defaults" if FileAccess.file_exists(_save_path) else "")
-	if not _commit_snapshot(defaults, false):
+	if not _commit_snapshot(defaults, false, _disk_commit_capability):
 		_push_failure("Loaded safe defaults in memory, but could not create the save file.")
 		return false
 	return true
+
+
+## A quarantined file remains untouched on disk. No profile writes, resets or
+## fallback-overwrite are allowed until an explicit repair/reload or a different
+## development profile is selected. This is fail-closed, not a recovery UI.
+func get_economy_quarantine() -> Dictionary:
+	return {"active": not _economy_quarantine_reason.is_empty(),
+		"reason": _economy_quarantine_reason, "path": _economy_quarantine_path}
+
+
+func _quarantine_economy_save(path: String, reason: String) -> bool:
+	_economy_quarantine_reason = reason
+	_economy_quarantine_path = path
+	_data = _default_data()
+	_is_loaded = true
+	var message := "Save ownership requires recovery (%s); profile writes are disabled." % reason
+	push_warning(message)
+	save_failed.emit(message)
+	return false
 
 
 func reload_save() -> bool:
@@ -255,6 +344,105 @@ func get_value(path: Array[String], fallback: Variant = null) -> Variant:
 	if cursor is Dictionary or cursor is Array:
 		return cursor.duplicate(true)
 	return cursor
+
+
+## A0-owned identity projection. Presentation adapters receive exactly this
+## dictionary; they may not invent, default or persist identity themselves.
+func get_player_appearance_projection() -> Dictionary:
+	var avatar := get_player_avatar()
+	var gender := String(avatar.get("gender", ""))
+	var grade := get_player_equipment_grade_request()
+	var revision := str(avatar.get("revision", 0))
+	return {
+		"schema": PLAYER_AVATAR_APPEARANCE_SCHEMA,
+		"provenance": "A0_OWNER_PROJECTION",
+		"gender": gender,
+		"armor_grade": grade,
+		"craftpix_id": String(PLAYER_AVATAR_SOURCE_IDS.get(gender, "")),
+		"source_revision": revision,
+		"revision": "player_avatar:%s:g%d:r%s" % [gender, grade, revision],
+	}
+
+
+## A0 owns what the player is wearing. This maps the equipped Vessel/Boots/Trace
+## loadout to the appearance grade presentation must attempt. It is a request,
+## not a claim: the art pipeline re-verifies that a licensed appearance record
+## exists for the grade, and grade 1/2 remain source-blocked until it does.
+func get_player_equipment_grade_request() -> int:
+	_ensure_loaded()
+	var raw: Variant = _data.get("auxiliary_loadout", {})
+	if not raw is Dictionary:
+		return PLAYER_AVATAR_GRADE_ZERO
+	var loadout: Dictionary = raw
+	var equipped := 0
+	for slot_id: String in ["soul_vessel", "soul_boots", "soul_trace"]:
+		if not String(loadout.get(slot_id, "")).strip_edges().is_empty():
+			equipped += 1
+	if equipped >= 3:
+		return 2
+	if equipped >= 1:
+		return 1
+	return PLAYER_AVATAR_GRADE_ZERO
+
+
+## Appearance identity of a save document: chosen character, the equipment grade
+## the loadout requests and the identity revision. Two documents with the same
+## key must present the same character, so a commit that does not change the key
+## must not disturb a playing animation.
+func _appearance_identity_of(document: Dictionary) -> String:
+	var avatar_value: Variant = document.get("player_avatar", {})
+	var avatar: Dictionary = avatar_value if avatar_value is Dictionary else {}
+	var gender := String(avatar.get("gender", ""))
+	if not PLAYER_AVATAR_GENDERS.has(gender):
+		return ""
+	var grade := PLAYER_AVATAR_GRADE_ZERO
+	var loadout_value: Variant = document.get("auxiliary_loadout", {})
+	if loadout_value is Dictionary:
+		var equipped := 0
+		for slot_id: String in ["soul_vessel", "soul_boots", "soul_trace"]:
+			if not String((loadout_value as Dictionary).get(slot_id, "")).strip_edges().is_empty():
+				equipped += 1
+		if equipped >= 3:
+			grade = 2
+		elif equipped >= 1:
+			grade = 1
+	return "%s:g%d:r%s" % [gender, grade, str(avatar.get("revision", 0))]
+
+
+func get_player_avatar() -> Dictionary:
+	_ensure_loaded()
+	var raw: Variant = _data.get("player_avatar", {})
+	if not raw is Dictionary:
+		return _default_player_avatar()
+	return (raw as Dictionary).duplicate(true)
+
+
+func has_player_avatar() -> bool:
+	return PLAYER_AVATAR_GENDERS.has(String(get_player_avatar().get("gender", "")))
+
+
+## Records the player's chosen authored identity. Identity is written through the
+## same crash-resistant commit path as every other authoritative field, so a
+## failed write leaves the previous character intact rather than a half state.
+func set_player_avatar(gender: String, source: String = "menu") -> bool:
+	_ensure_loaded()
+	var normalized := gender.strip_edges().to_lower()
+	if not PLAYER_AVATAR_GENDERS.has(normalized):
+		_push_failure("Unsupported player identity: %s" % gender)
+		return false
+	var candidate := _data.duplicate(true)
+	var current: Dictionary = candidate.get("player_avatar", _default_player_avatar())
+	candidate["player_avatar"] = {
+		"schema": PLAYER_AVATAR_SCHEMA,
+		"gender": normalized,
+		"equipment_grade": PLAYER_AVATAR_GRADE_ZERO,
+		"revision": maxi(0, int(current.get("revision", 0))) + 1,
+		"selected_at_unix": int(Time.get_unix_time_from_system()),
+		"selection_source": source.strip_edges().to_lower(),
+	}
+	if not _commit_candidate(candidate):
+		return false
+	return true
 
 
 ## Returns derived point totals, stat values and per-Identity skill ranks without
@@ -718,41 +906,9 @@ func grant_inventory_item(
 	return transact_once(
 		transaction_key,
 		func(candidate: Dictionary) -> bool:
-			var inventory: Dictionary = candidate.get("inventory", {}).duplicate(true)
-			var stacks: Dictionary = inventory.get("item_stacks", {}).duplicate(true)
-			var remaining := quantity
-			var matching_keys := _matching_inventory_stack_keys(stacks, normalized_item)
-			for stack_key: String in matching_keys:
-				var existing_value: Variant = stacks.get(stack_key, {})
-				if not existing_value is Dictionary:
-					return false
-				var existing := (existing_value as Dictionary).duplicate(true)
-				if String(existing.get("kind", "")).strip_edges().to_lower() != normalized_kind:
-					return false
-				var current_quantity := int(existing.get("quantity", 0))
-				if current_quantity < 0 or current_quantity > MAX_INVENTORY_STACK_QUANTITY:
-					return false
-				var added := mini(remaining, MAX_INVENTORY_STACK_QUANTITY - current_quantity)
-				if added <= 0:
-					continue
-				stacks[stack_key] = _with_inventory_stack_metadata(
-					existing, normalized_item, stack_key, normalized_kind, current_quantity + added, source_metadata,
-				)
-				remaining -= added
-				if remaining <= 0:
-					break
-			while remaining > 0:
-				if _candidate_inventory_slot_count_for_stacks(inventory, stacks) >= INVENTORY_SLOT_CAPACITY:
-					return false
-				var stack_key := _next_inventory_stack_key(stacks, normalized_item)
-				var added := mini(remaining, MAX_INVENTORY_STACK_QUANTITY)
-				stacks[stack_key] = _with_inventory_stack_metadata(
-					{}, normalized_item, stack_key, normalized_kind, added, source_metadata,
-				)
-				remaining -= added
-			inventory["item_stacks"] = stacks
-			candidate["inventory"] = inventory
-			return true,
+			return add_items_to_candidate(
+				candidate, normalized_item, normalized_kind, quantity, source_metadata,
+			),
 		{
 			"kind": "inventory_item_grant",
 			"item_id": normalized_item,
@@ -761,6 +917,131 @@ func grant_inventory_item(
 			"source": source_metadata.duplicate(true),
 		},
 	)
+
+
+## The inventory's stack map as committed, as a copy.
+##
+## Callers that only want to read the bag should use this rather than
+## `get_value(["inventory", "item_stacks"], {})`. That path works from GDScript
+## source, but [method Object.call] passes variants and then rejects an untyped
+## array where `get_value` expects `Array[String]` — the failure is a runtime
+## error inside the reader, which shows up as "the bag is empty" everywhere
+## downstream. One accessor with no array to type is one fewer way to get that
+## wrong.
+## Total quantity of every item in the committed bag, merged across stacks.
+##
+## A stack is keyed by its item id when it is the item's first stack, and the
+## record then omits `item_id` entirely (see `_with_inventory_stack_metadata`).
+## Anything that counts by reading `record.item_id` alone therefore reports zero
+## for the *most common* stack shape — so the base id is resolved here, through
+## the same helper the mutation path uses, and no caller has to know the rule.
+func inventory_totals() -> Dictionary:
+	var stacks := get_inventory_stacks()
+	var totals: Dictionary = {}
+	for raw_key: Variant in stacks.keys():
+		var stack_key := String(raw_key).strip_edges().to_lower()
+		var raw_record: Variant = stacks[raw_key]
+		if not raw_record is Dictionary:
+			continue
+		var record: Dictionary = raw_record
+		var item_id := _inventory_stack_base_id(stack_key, record)
+		var quantity := int(record.get("quantity", 0))
+		if item_id.is_empty() or quantity <= 0:
+			continue
+		totals[item_id] = int(totals.get(item_id, 0)) + quantity
+	return totals
+
+
+## Total quantity of one item in the committed bag.
+func inventory_total(item_id: String) -> int:
+	return int(inventory_totals().get(item_id.strip_edges().to_lower(), 0))
+
+
+func get_inventory_stacks() -> Dictionary:
+	_ensure_loaded()
+	var inventory: Variant = _data.get("inventory", {})
+	if not inventory is Dictionary:
+		return {}
+	var stacks: Variant = (inventory as Dictionary).get("item_stacks", {})
+	if not stacks is Dictionary:
+		return {}
+	return (stacks as Dictionary).duplicate(true)
+
+
+## Adds items to the inventory of a *candidate* save document.
+##
+## This is the body of [method grant_inventory_item] without the transaction
+## wrapper, and it exists so that a composite action can pay or grant items in the
+## same commit as its own state change. Survival construction is the first user:
+## "consume the timber and create the wall" must be one commit, or a crash between
+## them either destroys the materials or hands out a free wall. Systems that own
+## their state inside the save document (CT-02, CT-03, CT-07) call this from inside
+## their own `transact_once` mutator; nothing else should call it directly, because
+## a candidate that is never committed silently discards the grant.
+##
+## Returns false when the grant cannot be applied at all (unknown kind, bad stack
+## contents, or a full bag). A `false` return must be treated as "the whole
+## transaction is rejected" — the caller returns false from its mutator, which
+## leaves the committed document untouched.
+func add_items_to_candidate(
+		candidate: Dictionary,
+		item_id: String,
+		kind_id: String,
+		quantity: int,
+		source_metadata: Dictionary = {},
+) -> bool:
+	if item_id.strip_edges().to_lower().begins_with("soh_i_"):
+		return false
+	return _add_items_to_candidate_internal(candidate, item_id, kind_id, quantity, source_metadata)
+
+
+func _add_items_to_candidate_internal(
+		candidate: Dictionary,
+		item_id: String,
+		kind_id: String,
+		quantity: int,
+		source_metadata: Dictionary = {},
+) -> bool:
+	var normalized_item := String(item_id).strip_edges().to_lower()
+	var normalized_kind := String(kind_id).strip_edges().to_lower()
+	if not _is_valid_identifier(normalized_item) or normalized_kind not in INVENTORY_ITEM_KIND_IDS \
+			or quantity < 1:
+		return false
+	var inventory: Dictionary = candidate.get("inventory", {}).duplicate(true)
+	var stacks: Dictionary = inventory.get("item_stacks", {}).duplicate(true)
+	var remaining := quantity
+	var matching_keys := _matching_inventory_stack_keys(stacks, normalized_item)
+	for stack_key: String in matching_keys:
+		var existing_value: Variant = stacks.get(stack_key, {})
+		if not existing_value is Dictionary:
+			return false
+		var existing := (existing_value as Dictionary).duplicate(true)
+		if String(existing.get("kind", "")).strip_edges().to_lower() != normalized_kind:
+			return false
+		var current_quantity := int(existing.get("quantity", 0))
+		if current_quantity < 0 or current_quantity > MAX_INVENTORY_STACK_QUANTITY:
+			return false
+		var added := mini(remaining, MAX_INVENTORY_STACK_QUANTITY - current_quantity)
+		if added <= 0:
+			continue
+		stacks[stack_key] = _with_inventory_stack_metadata(
+			existing, normalized_item, stack_key, normalized_kind, current_quantity + added, source_metadata,
+		)
+		remaining -= added
+		if remaining <= 0:
+			break
+	while remaining > 0:
+		if _candidate_inventory_slot_count_for_stacks(inventory, stacks) >= INVENTORY_SLOT_CAPACITY:
+			return false
+		var stack_key := _next_inventory_stack_key(stacks, normalized_item)
+		var added := mini(remaining, MAX_INVENTORY_STACK_QUANTITY)
+		stacks[stack_key] = _with_inventory_stack_metadata(
+			{}, normalized_item, stack_key, normalized_kind, added, source_metadata,
+		)
+		remaining -= added
+	inventory["item_stacks"] = stacks
+	candidate["inventory"] = inventory
+	return true
 
 
 func consume_inventory_item(
@@ -775,39 +1056,65 @@ func consume_inventory_item(
 	return transact_once(
 		transaction_key,
 		func(candidate: Dictionary) -> bool:
-			var inventory: Dictionary = candidate.get("inventory", {}).duplicate(true)
-			var stacks: Dictionary = inventory.get("item_stacks", {}).duplicate(true)
-			var matching_keys := _matching_inventory_stack_keys(stacks, normalized_item)
-			var available := 0
-			for stack_key: String in matching_keys:
-				var raw_record: Variant = stacks.get(stack_key, {})
-				if not raw_record is Dictionary:
-					return false
-				available += int((raw_record as Dictionary).get("quantity", 0))
-			if available < quantity:
-				return false
-			var remaining := quantity
-			for stack_key: String in matching_keys:
-				if remaining <= 0:
-					break
-				var record := (stacks[stack_key] as Dictionary).duplicate(true)
-				var current_quantity := int(record.get("quantity", 0))
-				var consumed := mini(remaining, current_quantity)
-				remaining -= consumed
-				if consumed >= current_quantity:
-					stacks.erase(stack_key)
-				else:
-					record["quantity"] = current_quantity - consumed
-					stacks[stack_key] = record
-			inventory["item_stacks"] = stacks
-			candidate["inventory"] = inventory
-			return true,
+			return remove_items_from_candidate(candidate, normalized_item, quantity),
 		{
 			"kind": "inventory_item_consume",
 			"item_id": normalized_item,
 			"quantity": quantity,
 		},
 	)
+
+
+## Removes items from the inventory of a *candidate* save document.
+##
+## The counterpart to [method add_items_to_candidate]. All-or-nothing: when the
+## candidate cannot cover `quantity`, nothing is removed and the caller must abort
+## its transaction. That is what stops a partially paid construction.
+func remove_items_from_candidate(
+		candidate: Dictionary,
+		item_id: String,
+		quantity: int,
+) -> bool:
+	if item_id.strip_edges().to_lower().begins_with("soh_i_"):
+		return false
+	return _remove_items_from_candidate_internal(candidate, item_id, quantity)
+
+
+func _remove_items_from_candidate_internal(
+		candidate: Dictionary,
+		item_id: String,
+		quantity: int,
+) -> bool:
+	var normalized_item := String(item_id).strip_edges().to_lower()
+	if not _is_valid_identifier(normalized_item) or quantity < 1:
+		return false
+	var inventory: Dictionary = candidate.get("inventory", {}).duplicate(true)
+	var stacks: Dictionary = inventory.get("item_stacks", {}).duplicate(true)
+	var matching_keys := _matching_inventory_stack_keys(stacks, normalized_item)
+	var available := 0
+	for stack_key: String in matching_keys:
+		var raw_record: Variant = stacks.get(stack_key, {})
+		if not raw_record is Dictionary:
+			return false
+		available += int((raw_record as Dictionary).get("quantity", 0))
+	if available < quantity:
+		return false
+	var remaining := quantity
+	for stack_key: String in matching_keys:
+		if remaining <= 0:
+			break
+		var record := (stacks[stack_key] as Dictionary).duplicate(true)
+		var current_quantity := int(record.get("quantity", 0))
+		var consumed := mini(remaining, current_quantity)
+		remaining -= consumed
+		if consumed >= current_quantity:
+			stacks.erase(stack_key)
+		else:
+			record["quantity"] = current_quantity - consumed
+			stacks[stack_key] = record
+	inventory["item_stacks"] = stacks
+	candidate["inventory"] = inventory
+	return true
 
 
 ## Removes an entire visible stack after the UI has successfully materialized a
@@ -831,6 +1138,10 @@ func drop_inventory_item(
 			if not raw_record is Dictionary:
 				return false
 			var record := (raw_record as Dictionary).duplicate(true)
+			# A3 tokens have coupled attribute records; plain GroundLoot does not
+			# yet provide an atomic transfer of that ownership.
+			if _inventory_stack_base_id(stack_key, record).begins_with("soh_i_"):
+				return false
 			var current_quantity := int(record.get("quantity", 0))
 			if current_quantity != quantity:
 				return false
@@ -1094,10 +1405,158 @@ func save_now() -> bool:
 	return _commit_candidate(_data.duplicate(true))
 
 
+## Overwrites a nested state path with a deep-copied value WITHOUT appending a
+## transaction receipt. Intended for throttled auto-saves (e.g. overworld
+## position/provisions state) where content-hash transaction keys would grow
+## unbounded. IMPORTANT: do NOT use this for first-clear rewards or other
+## one-shot entitlements — those must continue to use transact_once for
+## idempotent delivery. Returns false if the path is invalid or commit fails.
+func patch_state_path(path: Array, value: Variant) -> bool:
+	_ensure_loaded()
+	if path.is_empty():
+		_push_failure("patch_state_path requires a non-empty path.")
+		return false
+	for segment in path:
+		if not (segment is String or segment is StringName):
+			_push_failure("patch_state_path path segments must be strings.")
+			return false
+		if String(segment).is_empty():
+			_push_failure("patch_state_path path segment is empty.")
+			return false
+	var candidate := _data.duplicate(true)
+	var target: Dictionary = candidate
+	for i in range(path.size() - 1):
+		var segment := String(path[i])
+		var child: Variant = target.get(segment, {})
+		if not child is Dictionary:
+			child = {}
+		target[segment] = child
+		target = child
+	target[String(path[-1])] = value if not value is Dictionary else (value as Dictionary).duplicate(true)
+	return _commit_candidate(candidate)
+
+
 func is_transaction_applied(transaction_key: String) -> bool:
 	_ensure_loaded()
 	var transactions: Dictionary = _data.get("applied_transactions", {})
 	return transactions.has(transaction_key)
+
+
+## Bind only the reviewed A3 adapter, not arbitrary client-supplied metadata.
+## This is in-process code isolation, not a security boundary against hostile
+## scripts with reflection; production UI must not receive this facade.
+func create_pinned_economy_port(adapter: RefCounted) -> Node:
+	if adapter == null:
+		return null
+	if not _is_pinned_economy_adapter(adapter):
+		return null
+	if _economy_facade != null and is_instance_valid(_economy_facade):
+		_economy_facade.queue_free()
+	# Invalidate any previous source-custody port when replacing canonical service.
+	if _economy_custody_facade != null and is_instance_valid(_economy_custody_facade):
+		_economy_custody_facade.queue_free()
+	_economy_custody = null
+	_economy_capability = RefCounted.new()
+	_economy_adapter = adapter
+	_economy_facade = ECONOMY_SAVE_FACADE.new()
+	_economy_facade.bind(self, adapter, _economy_capability)
+	add_child(_economy_facade)
+	return _economy_facade
+
+
+## GP-B: a second trusted writer for the R13 physical-source custody layer.
+## It shares the ONE A0 SaveService capability, inventory and atomic ledger;
+## a caller-built object, UI script or unpinned adapter cannot obtain this port.
+## This does not expose an unrestricted mutation API.
+func create_pinned_source_custody_port(custody: RefCounted) -> Node:
+	if custody == null or _economy_adapter == null or not _is_pinned_economy_adapter(_economy_adapter):
+		return null
+	if not _is_pinned_source_custody(custody):
+		return null
+	if _economy_custody_facade != null and is_instance_valid(_economy_custody_facade):
+		_economy_custody_facade.queue_free()
+	_economy_custody = custody
+	_economy_custody_facade = ECONOMY_SAVE_FACADE.new()
+	_economy_custody_facade.bind(self, custody, _economy_capability)
+	add_child(_economy_custody_facade)
+	return _economy_custody_facade
+
+
+func _is_pinned_source_custody(custody: RefCounted) -> bool:
+	if custody == null:
+		return false
+	var script: Variant = custody.get_script()
+	if not script is Script:
+		return false
+	var source := String(script.source_code)
+	# Source runs may materialize separate Script resource handles; require BOTH
+	# the canonical res:// path and independently pinned exact source bytes.
+	# Tokenized exports retain only the exact preloaded resource identity gate.
+	if source.is_empty():
+		return script == PRODUCTION_SOURCE_CUSTODY
+	return String(script.resource_path) == "res://game/survival/economy/a3_economy_service.gd" \
+		and source.sha256_text() == PINNED_A3_CUSTODY_SHA256
+
+
+func _is_pinned_economy_adapter(adapter: RefCounted) -> bool:
+	if adapter == null:
+		return false
+	var script: Variant = adapter.get_script()
+	if not script is Script:
+		return false
+	var parent: Script = script.get_base_script()
+	if parent == null:
+		return false
+	var source := String(script.source_code)
+	var base_source := String(parent.source_code)
+	# Tokenized release exports strip source. Only the actual preloaded
+	# production script pair can take this branch, never a caller-provided path,
+	# label or generic script; CI verifies both pinned source byte hashes before
+	# export. This remains a trusted-code boundary, not an anti-tamper sandbox.
+	if source.is_empty() and base_source.is_empty():
+		return script == PRODUCTION_ECONOMY_ADAPTER and parent == PRODUCTION_ECONOMY_BASE
+	return source.sha256_text() in [PINNED_A0_ADAPTER_SHA256, PINNED_A0_PRODUCTION_ADAPTER_SHA256] \
+		and base_source.sha256_text() in [PINNED_A3_SCRIPT_SHA256, PINNED_A3_FIXTURE_SHA256]
+
+
+func _economy_transact_once(capability: RefCounted, adapter: RefCounted, key: String, mutator: Callable, metadata: Dictionary) -> bool:
+	if capability != _economy_capability or not mutator.is_valid() or mutator.get_object() != adapter:
+		return false
+	var canonical := adapter == _economy_adapter and _is_pinned_economy_adapter(adapter)
+	var source_custody := adapter == _economy_custody and _is_pinned_source_custody(adapter)
+	if not canonical and not source_custody:
+		return false
+	return _transact_once_internal(key, mutator, metadata, capability)
+
+
+func _economy_add_to_candidate(capability: RefCounted, candidate: Dictionary, item_id: String, kind: String, quantity: int, metadata: Dictionary) -> bool:
+	if capability != _economy_capability or not _economy_mutation_active:
+		return false
+	var id := item_id.strip_edges().to_lower()
+	if id.begins_with("soh_i_"):
+		if quantity != 1 or kind != "key_item":
+			return false
+		var inventory: Dictionary = candidate.get("inventory", {})
+		var stacks: Dictionary = inventory.get("item_stacks", {})
+		if not _matching_inventory_stack_keys(stacks, id).is_empty():
+			return false
+	return _add_items_to_candidate_internal(candidate, id, kind, quantity, metadata)
+
+
+func _economy_remove_from_candidate(capability: RefCounted, candidate: Dictionary, item_id: String, quantity: int) -> bool:
+	if capability != _economy_capability or not _economy_mutation_active:
+		return false
+	var id := item_id.strip_edges().to_lower()
+	if id.begins_with("soh_i_"):
+		var inventory: Dictionary = candidate.get("inventory", {})
+		var stacks: Dictionary = inventory.get("item_stacks", {})
+		var keys := _matching_inventory_stack_keys(stacks, id)
+		if quantity != 1 or keys.size() != 1 or keys[0] != id:
+			return false
+		var record: Variant = stacks[id]
+		if not record is Dictionary or String(record.get("kind", "")) != "key_item" or int(record.get("quantity", 0)) != 1:
+			return false
+	return _remove_items_from_candidate_internal(candidate, id, quantity)
 
 
 ## Applies a mutation and its transaction receipt as one durable snapshot.
@@ -1108,7 +1567,21 @@ func transact_once(
 	mutator: Callable,
 	metadata: Dictionary = {}
 ) -> bool:
+	return _transact_once_internal(transaction_key, mutator, metadata, null)
+
+
+func _transact_once_internal(
+	transaction_key: String,
+	mutator: Callable,
+	metadata: Dictionary,
+	capability: RefCounted,
+) -> bool:
 	_ensure_loaded()
+	var economy_authorized := capability != null and capability == _economy_capability
+	if capability != null and not economy_authorized:
+		return false
+	if _transaction_mutation_active or _commit_in_progress:
+		return false
 	if not _is_valid_transaction_key(transaction_key):
 		_push_failure("Invalid transaction key: %s" % transaction_key)
 		return false
@@ -1119,7 +1592,11 @@ func transact_once(
 		return false
 
 	var candidate := _data.duplicate(true)
+	_transaction_mutation_active = true
+	_economy_mutation_active = economy_authorized
 	var mutation_result: Variant = mutator.call(candidate)
+	_economy_mutation_active = false
+	_transaction_mutation_active = false
 	if mutation_result is bool and not bool(mutation_result):
 		return false
 
@@ -1129,7 +1606,8 @@ func transact_once(
 		"metadata": metadata.duplicate(true),
 	}
 	candidate["applied_transactions"] = transactions
-	if not _commit_candidate(candidate):
+	var committed := _commit_candidate(candidate, capability)
+	if not committed:
 		return false
 	transaction_applied.emit(transaction_key)
 	return true
@@ -1479,6 +1957,9 @@ func _home_transfer_item(
 			if item_kind == "item_stack":
 				var source_stacks: Dictionary = source.get(source_key, {}).duplicate(true)
 				if not source_stacks.has(item_id):
+					return false
+				var raw_stack: Variant = source_stacks[item_id]
+				if item_id.begins_with("soh_i_") or (raw_stack is Dictionary and _inventory_stack_base_id(item_id, raw_stack).begins_with("soh_i_")):
 					return false
 				var destination_stacks: Dictionary = destination.get(destination_key, {}).duplicate(true)
 				if destination_stacks.has(item_id):
@@ -2046,7 +2527,7 @@ func reset_progression_keep_settings(confirmation: String) -> bool:
 	if not bool(prepared.get("ok", false)):
 		return false
 	reset_snapshot = prepared.get("data", {})
-	if not _commit_snapshot(reset_snapshot, false):
+	if not _commit_snapshot(reset_snapshot, false, _disk_commit_capability):
 		return false
 	if not _copy_text_file(_save_path, _backup_path):
 		_remove_if_present(_backup_path)
@@ -2058,12 +2539,66 @@ func reset_progression_keep_settings(confirmation: String) -> bool:
 	return true
 
 
+const RUN_RESET_TOKEN := "RESET_SOUL_OF_HERO_RUN_KEEP_PROFILE"
+## A0 RunLifecycle owns run boundaries (D062-D067 / A3 V7 run_reset_rule). A run
+## transition clears every run-local namespace in ONE durable commit while
+## preserving only the secured profile: profile currency, its receipts, elder
+## stone achievements and run history. It is not reachable from Continue, death,
+## logout or any modal; the lifecycle passes the explicit token.
+func reset_run_preserving_profile(
+	confirmation: String,
+	run_record: Dictionary,
+	history_entry: Dictionary = {}
+) -> bool:
+	if confirmation != RUN_RESET_TOKEN:
+		return false
+	if run_record.is_empty() or not run_record.get("run_id") is String \
+			or String(run_record.get("run_id", "")).is_empty():
+		return false
+	_ensure_loaded()
+	var previous: Dictionary = _data.get("profile", {}) if _data.get("profile") is Dictionary else {}
+	var profile: Dictionary = previous.duplicate(true)
+	var history: Array = profile.get("run_history", []) if profile.get("run_history") is Array else []
+	if not history_entry.is_empty():
+		history.append(history_entry.duplicate(true))
+	# A durable log, not an unbounded one: the profile keeps the most recent 32
+	# run summaries and nothing else from an ended run.
+	profile["run_history"] = history.slice(maxi(0, history.size() - 32), history.size())
+	profile["run"] = run_record.duplicate(true)
+	profile["schema"] = 1
+	profile["secured_ragnarok_currency"] = maxi(0, int(profile.get("secured_ragnarok_currency", 0)))
+	if not profile.get("achievements") is Dictionary:
+		profile["achievements"] = {"elder_stones": []}
+	# Only the profile is mine to keep. Everything else is a fresh run: home,
+	# items, Core, stations, recipes, POI claims, wallet tokens and world clock.
+	var reset_snapshot := _default_data()
+	var kept_settings: Variant = _data.get("settings", {})
+	if kept_settings is Dictionary:
+		reset_snapshot["settings"] = (kept_settings as Dictionary).duplicate(true)
+	reset_snapshot["profile"] = profile
+	reset_snapshot["revision"] = int(_data.get("revision", 0)) + 1
+	var prepared := _prepare_document(reset_snapshot)
+	if not bool(prepared.get("ok", false)):
+		_push_failure(String(prepared.get("error", "Run reset validation failed.")))
+		return false
+	reset_snapshot = prepared.get("data", {})
+	if not _commit_snapshot(reset_snapshot, false, _disk_commit_capability):
+		return false
+	if not _copy_text_file(_save_path, _backup_path):
+		_remove_if_present(_backup_path)
+	_data = reset_snapshot
+	_is_loaded = true
+	save_reset.emit()
+	save_committed.emit(get_snapshot())
+	return true
+
+
 ## Debug/test reset. Callers must pass the explicit confirmation token.
 func reset_to_defaults(confirmation: String) -> bool:
 	if confirmation not in [RESET_ALL_TOKEN, LEGACY_RESET_ALL_TOKEN]:
 		return false
 	var defaults := _default_data()
-	if not _commit_snapshot(defaults, false):
+	if not _commit_snapshot(defaults, false, _disk_commit_capability):
 		return false
 	if not _copy_text_file(_save_path, _backup_path):
 		# A stale pre-reset backup is more dangerous than having no backup until
@@ -2076,25 +2611,67 @@ func reset_to_defaults(confirmation: String) -> bool:
 	return true
 
 
-func _commit_candidate(candidate: Dictionary) -> bool:
-	if _commit_in_progress:
+func _commit_candidate(candidate: Dictionary, capability: RefCounted = null) -> bool:
+	# Capture the projected identity BEFORE any canonical source/economy mutation.
+	var previous_appearance := _appearance_identity_of(_data)
+	if not _economy_quarantine_reason.is_empty():
+		return false
+	var economy_authorized := capability != null and capability == _economy_capability
+	if capability != null and not economy_authorized:
+		return false
+	if _commit_in_progress or _transaction_mutation_active:
 		_push_failure("Rejected a re-entrant save commit.")
+		return false
+	var original_error: String = UNIQUE_OWNERSHIP_GUARD.inspect(_data)
+	var candidate_error: String = UNIQUE_OWNERSHIP_GUARD.inspect(candidate)
+	if not original_error.is_empty() or not candidate_error.is_empty():
+		return false
+	if not economy_authorized and UNIQUE_OWNERSHIP_GUARD.changed_by_generic(_data, candidate):
 		return false
 	var prepared := _prepare_document(candidate)
 	if not bool(prepared.get("ok", false)):
 		_push_failure(String(prepared.get("error", "Save validation failed.")))
 		return false
 	var snapshot: Dictionary = prepared.get("data", {})
+	if not String(UNIQUE_OWNERSHIP_GUARD.inspect(snapshot)).is_empty():
+		return false
+	if not economy_authorized and UNIQUE_OWNERSHIP_GUARD.changed_by_generic(_data, snapshot):
+		return false
 	snapshot["revision"] = int(_data.get("revision", 0)) + 1
-	if not _commit_snapshot(snapshot, true):
+	if not _commit_snapshot(snapshot, true, _disk_commit_capability):
 		return false
 	_data = snapshot
 	_is_loaded = true
 	save_committed.emit(get_snapshot())
+	if _appearance_identity_of(snapshot) != previous_appearance:
+		player_avatar_changed.emit(get_player_avatar())
 	return true
 
 
-func _commit_snapshot(snapshot: Dictionary, rotate_primary_to_backup: bool) -> bool:
+## Controlled crash-boundary simulation for isolated native tests only. This is
+## unavailable to release builds and normal gameplay. Each failure is one-shot.
+func configure_test_save_interruption(boundary: String) -> bool:
+	if not OS.is_debug_build() or not OS.get_cmdline_user_args().has("--survival-save-fault-test"):
+		return false
+	if boundary not in ["after_temporary", "after_backup", "after_primary_removed", "after_primary_renamed"]:
+		return false
+	_test_interruption_boundary = boundary
+	return true
+
+
+func _test_interrupt_here(boundary: String) -> bool:
+	if _test_interruption_boundary != boundary:
+		return false
+	_test_interruption_boundary = ""
+	_commit_in_progress = false
+	return true
+
+
+func _commit_snapshot(snapshot: Dictionary, rotate_primary_to_backup: bool, capability: RefCounted = null) -> bool:
+	if capability != _disk_commit_capability:
+		return false
+	if not _economy_quarantine_reason.is_empty():
+		return false
 	_commit_in_progress = true
 	var result := false
 	var directory_error := DirAccess.make_dir_recursive_absolute(
@@ -2105,7 +2682,10 @@ func _commit_snapshot(snapshot: Dictionary, rotate_primary_to_backup: bool) -> b
 		_commit_in_progress = false
 		return false
 
-	var payload := JSON.stringify(snapshot, "\t") + "\n"
+	# JSON's default truncates floats to ~14 significant digits. Player position,
+	# settings and item attributes are save data too; request round-trip precision
+	# while retaining the existing JSON schema and sorted keys.
+	var payload := JSON.stringify(snapshot, "\t", true, true) + "\n"
 	if not _write_text(_temporary_path, payload):
 		_push_failure("Could not write the temporary save file.")
 		_commit_in_progress = false
@@ -2120,22 +2700,34 @@ func _commit_snapshot(snapshot: Dictionary, rotate_primary_to_backup: bool) -> b
 		_commit_in_progress = false
 		return false
 
+	if _test_interrupt_here("after_temporary"):
+		return false
 	if rotate_primary_to_backup and FileAccess.file_exists(_save_path):
 		# External edits or a partial disk write must not replace a known-good
 		# backup with corrupt bytes. A valid new primary can still be committed.
 		var current_verification := _read_and_prepare(_save_path)
+		if bool(current_verification.get("economy_quarantine", false)):
+			_remove_if_present(_temporary_path)
+			_commit_in_progress = false
+			return _quarantine_economy_save(_save_path, String(current_verification.get("error", "invalid_ownership")))
 		if bool(current_verification.get("ok", false)) and not _copy_text_file(_save_path, _backup_path):
 			_remove_if_present(_temporary_path)
 			_push_failure("Could not rotate the previous save into its backup.")
 			_commit_in_progress = false
 			return false
 
+	if _test_interrupt_here("after_backup"):
+		return false
 	_remove_if_present(_save_path)
+	if _test_interrupt_here("after_primary_removed"):
+		return false
 	var rename_error := DirAccess.rename_absolute(
 		ProjectSettings.globalize_path(_temporary_path),
 		ProjectSettings.globalize_path(_save_path)
 	)
 	if rename_error == OK:
+		if _test_interrupt_here("after_primary_renamed"):
+			return false
 		result = true
 	else:
 		# Best-effort rollback keeps the last known-good generation playable.
@@ -2159,6 +2751,11 @@ func _read_and_prepare(path: String) -> Dictionary:
 	if json.parse(payload) != OK or not json.data is Dictionary:
 		return {"ok": false, "error": "invalid_json"}
 	var raw_document: Dictionary = json.data
+	# Check before legacy sanitization or fallback. Otherwise a corrupt unique
+	# record could be normalized away, then a backup/default silently written.
+	var ownership_error: String = UNIQUE_OWNERSHIP_GUARD.inspect(raw_document)
+	if not ownership_error.is_empty():
+		return {"ok": false, "error": ownership_error, "economy_quarantine": true}
 	var version_variant: Variant = raw_document.get("schema_version", raw_document.get("version", 0))
 	var source_version := int(version_variant) if version_variant is int or version_variant is float else -1
 	var prepared := _prepare_document(raw_document)
@@ -2188,6 +2785,9 @@ func _prepare_document(raw_document: Dictionary) -> Dictionary:
 		version += 1
 		migrated["schema_version"] = version
 
+	var world_upgrade: Dictionary = A0_WORLD_V5_MIGRATION.migrate(migrated)
+	if not bool(world_upgrade.get("ok", false)):
+		return {"ok": false, "error": "world_slice_migration:" + str(world_upgrade.get("error", "invalid")), "economy_quarantine": true}
 	var auxiliary_equipment_migrated := _migrate_auxiliary_equipment_in_place(migrated)
 	var hero_soul_rules_migrated := _migrate_hero_soul_rules_in_place(migrated)
 	var skill_economy_migrated := _migrate_skill_economy_in_place(migrated)
@@ -2206,12 +2806,16 @@ func _prepare_document(raw_document: Dictionary) -> Dictionary:
 	var validation_error := _sanitize_and_validate(normalized)
 	if not validation_error.is_empty():
 		return {"ok": false, "error": validation_error}
+	var integer_error: String = A0_WORLD_V5_MIGRATION.normalize_numbers(normalized)
+	if not integer_error.is_empty():
+		return {"ok": false, "error": "non_integer_save_field:" + integer_error, "economy_quarantine": true}
 	var serialization_error := _validate_json_value(normalized, "save")
 	if not serialization_error.is_empty():
 		return {"ok": false, "error": serialization_error}
 	return {
 		"ok": true,
 		"data": normalized,
+		"world_slice_migrated": bool(world_upgrade.get("changed", false)),
 		"hero_soul_rules_migrated": hero_soul_rules_migrated,
 		"auxiliary_equipment_migrated": auxiliary_equipment_migrated,
 		"skill_economy_migrated": skill_economy_migrated,
@@ -2335,6 +2939,15 @@ func _sanitize_and_validate(document: Dictionary) -> String:
 		return soul_selection_error
 	_sanitize_legacy_audit(document["legacy_audit"])
 	_sanitize_settings(document["settings"])
+	var avatar_error := _sanitize_player_avatar(document)
+	if not avatar_error.is_empty():
+		return avatar_error
+	var transition_error := _sanitize_site_transition(document)
+	if not transition_error.is_empty():
+		return transition_error
+	var authored_error := _sanitize_authored_world(document)
+	if not authored_error.is_empty():
+		return authored_error
 	return ""
 
 
@@ -4053,6 +4666,17 @@ func _default_data() -> Dictionary:
 		"bestiary": {"discovered": []},
 		"settings": _default_settings(),
 		"applied_transactions": {},
+		# A0 holds the sole durable identity; old saves are migrated without choosing a gender.
+		"player_avatar": _default_player_avatar(),
+		# A0 Round 12: the only durable place a site transition may leave an
+		# entry record. Optional, so older profiles load unchanged.
+		"site_transition": {},
+		# A0 R13: the authored world's own durable identity — which continent, and
+		# the one spawn commit this run is standing in. Top-level on purpose: the
+		# `survival` namespace belongs to the survival economy's sanitizer, which
+		# rebuilds the document from a fixed key list and would drop a section it
+		# does not know. A0 owns this section and sanitizes it here.
+		"authored_world": {},
 		"legacy_audit": _default_legacy_audit(),
 	}
 
@@ -4109,6 +4733,139 @@ func _default_campaign() -> Dictionary:
 		"selected_difficulties": {},
 		"average_enemy_level_cap": 5,
 	}
+
+
+func _default_player_avatar() -> Dictionary:
+	return {
+		"schema": PLAYER_AVATAR_SCHEMA,
+		"gender": "",
+		"equipment_grade": PLAYER_AVATAR_GRADE_ZERO,
+		"revision": 0,
+		"selected_at_unix": 0,
+		"selection_source": "",
+	}
+
+
+## Identity is player-facing truth, so an unreadable or hostile record degrades
+## to "no identity chosen" instead of silently asserting a character.
+func _sanitize_player_avatar(document: Dictionary) -> String:
+	var raw: Variant = document.get("player_avatar", {})
+	if not raw is Dictionary:
+		return "Player avatar section must be a Dictionary."
+	var avatar: Dictionary = raw
+	var gender := String(avatar.get("gender", "")).strip_edges().to_lower()
+	if not PLAYER_AVATAR_GENDERS.has(gender):
+		gender = ""
+	var grade_value: Variant = avatar.get("equipment_grade", PLAYER_AVATAR_GRADE_ZERO)
+	var grade := PLAYER_AVATAR_GRADE_ZERO
+	if grade_value is int or grade_value is float:
+		grade = int(grade_value)
+	if grade < PLAYER_AVATAR_GRADE_ZERO or grade > PLAYER_AVATAR_MAX_GRADE:
+		grade = PLAYER_AVATAR_GRADE_ZERO
+	var revision_value: Variant = avatar.get("revision", 0)
+	var revision := 0
+	if revision_value is int or revision_value is float:
+		revision = maxi(0, int(revision_value))
+	var selected_at_value: Variant = avatar.get("selected_at_unix", 0)
+	var selected_at := 0
+	if selected_at_value is int or selected_at_value is float:
+		selected_at = maxi(0, int(selected_at_value))
+	var source := String(avatar.get("selection_source", "")).strip_edges().to_lower()
+	if not source.is_empty() and not _is_valid_identifier(source):
+		source = ""
+	document["player_avatar"] = {
+		"schema": PLAYER_AVATAR_SCHEMA,
+		"gender": gender,
+		"equipment_grade": grade,
+		"revision": revision,
+		"selected_at_unix": selected_at,
+		"selection_source": source,
+	}
+	return ""
+
+
+## A site transition record is an owner receipt, not player-facing state: it may
+## hold one entry per site, the exact overworld position, and the run that owns
+## it. Anything unreadable is dropped rather than repaired into a teleport.
+func _sanitize_site_transition(document: Dictionary) -> String:
+	if not document.has("site_transition"):
+		document["site_transition"] = {}
+		return ""
+	var raw: Variant = document["site_transition"]
+	if not raw is Dictionary:
+		return "Site transition section must be a Dictionary."
+	var clean := {}
+	for key: Variant in (raw as Dictionary).keys():
+		var site_id := String(key).strip_edges()
+		var record: Variant = (raw as Dictionary)[key]
+		if site_id.is_empty() or not record is Dictionary:
+			continue
+		var coords: Variant = (record as Dictionary).get("position", [])
+		if not coords is Array or (coords as Array).size() != 2:
+			continue
+		var x := float((coords as Array)[0])
+		var y := float((coords as Array)[1])
+		if not is_finite(x) or not is_finite(y):
+			continue
+		clean[site_id] = {
+			"site_instance_id": site_id,
+			"position": [x, y],
+			"run_id": String((record as Dictionary).get("run_id", "")),
+			"run_epoch": int((record as Dictionary).get("run_epoch", 0)),
+		}
+	document["site_transition"] = clean
+	return ""
+
+
+## The authored world block is read back by gameplay, so it is external input like
+## any other save section: an unreadable record is dropped, never repaired into a
+## position the player did not stand in. Dropping it is safe — the authority then
+## cannot resume and must choose a fresh safe spawn, which is the fail-closed
+## behaviour, and the reason is reported by A0 rather than hidden here.
+func _sanitize_authored_world(document: Dictionary) -> String:
+	if not document.has("authored_world"):
+		document["authored_world"] = {}
+		return ""
+	var raw: Variant = document["authored_world"]
+	if not raw is Dictionary:
+		return "Authored world section must be a Dictionary."
+	var source: Dictionary = raw
+	var clean := {}
+	var world_id := String(source.get("world_id", "")).strip_edges()
+	if not world_id.is_empty() and world_id.length() <= 96:
+		clean["world_id"] = world_id
+	var spawn_value: Variant = source.get("spawn", {})
+	if spawn_value is Dictionary:
+		var spawn: Dictionary = spawn_value
+		var cell: Variant = spawn.get("cell", [])
+		var stored_world := String(spawn.get("world_id", ""))
+		if (
+				cell is Array and (cell as Array).size() == 2
+				and not stored_world.is_empty() and stored_world.length() <= 96
+				and String(spawn.get("schema", "")) == "soh.a0.authored_spawn.v1"
+		):
+			var cell_x := int((cell as Array)[0])
+			var cell_y := int((cell as Array)[1])
+			var run_id := String(spawn.get("run_id", ""))
+			var seed := int(spawn.get("seed", 0))
+			if cell_x >= 0 and cell_y >= 0 and cell_x <= 4096 and cell_y <= 4096 \
+					and run_id.length() <= 96 \
+					and String(spawn.get("chunk_id", "")).length() <= 96 \
+					and String(spawn.get("region_id", "")).length() <= 96:
+				clean["spawn"] = {
+					"schema": "soh.a0.authored_spawn.v1",
+					"world_id": stored_world,
+					"run_id": run_id,
+					"run_epoch": int(spawn.get("run_epoch", 0)),
+					"seed": seed,
+					"cell": [cell_x, cell_y],
+					"chunk_id": String(spawn.get("chunk_id", "")),
+					"region_id": String(spawn.get("region_id", "")),
+					"candidates": int(spawn.get("candidates", 0)),
+					"candidate_chunks": int(spawn.get("candidate_chunks", 0)),
+				}
+	document["authored_world"] = clean
+	return ""
 
 
 func _default_auxiliary_loadout() -> Dictionary:
@@ -4356,6 +5113,8 @@ func _accept_loaded_data(snapshot: Dictionary, recovery_source: String) -> void:
 func _import_legacy_default_save() -> bool:
 	var source_path := _legacy_import_path
 	var imported := _read_and_prepare(source_path)
+	if bool(imported.get("economy_quarantine", false)):
+		return _quarantine_economy_save(source_path, String(imported.get("error", "invalid_ownership")))
 	if not bool(imported.get("ok", false)):
 		# Never alter an unreadable legacy profile. Create an independent safe v2
 		# profile and leave the old bytes available for manual recovery.
@@ -4364,10 +5123,14 @@ func _import_legacy_default_save() -> bool:
 		return load_save()
 	var snapshot: Dictionary = imported.get("data", {}).duplicate(true)
 	if not _preserve_pre_migration_backup(source_path):
+		if bool(imported.get("world_slice_migrated", false)):
+			return _quarantine_economy_save(source_path, "world_slice_backup_failed")
 		_accept_loaded_data(snapshot, "")
 		_push_failure("The legacy save was prepared in memory, but its migration backup could not be created.")
 		return false
-	if not _commit_snapshot(snapshot, false):
+	if not _commit_snapshot(snapshot, false, _disk_commit_capability):
+		if bool(imported.get("world_slice_migrated", false)):
+			return _quarantine_economy_save(source_path, "world_slice_migration_commit_failed")
 		_accept_loaded_data(snapshot, "")
 		_push_failure("The legacy save was prepared in memory, but the v2 profile could not be committed.")
 		return false

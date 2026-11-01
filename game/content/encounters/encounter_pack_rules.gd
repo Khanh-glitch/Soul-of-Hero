@@ -378,9 +378,9 @@ static func expected_bonus_count(
 ## run's realized population is counted from the same projected entities Main
 ## will materialize, so telemetry can prove the plan was actually realized.
 ##
-## Campaign callers fail closed when the pack model is absent or when the live
-## projection does not match its declared plan. This prevents a malformed map
-## from silently falling back to an unrelated three-floor XP divisor.
+## Campaign callers fail closed when a required population authority is absent
+## or the live pack projection does not match its plan. Chapter 2 instead uses
+## its complete stable Spawn Director queue as its authored population source.
 static func build_population_context(
 	metadata: Dictionary,
 	stage_level: int,
@@ -404,6 +404,12 @@ static func build_population_context(
 		"error": "",
 	}
 	if not uses_pack_model(metadata):
+		if bool(metadata.get("chapter_2_director", false)):
+			return _build_chapter_two_director_population_context(
+				base,
+				runtime_entities,
+				enemy_entity_types,
+		)
 		base["error"] = "Campaign XP population requires an enabled encounter_pack_model."
 		return base
 
@@ -449,6 +455,63 @@ static func build_population_context(
 		"active_packs_per_floor": int(active_plan.get("packs_per_floor", 0)),
 		"active_members_per_pack": int(active_plan.get("members_per_pack", 0)),
 	}
+	base["plan_signature"] = JSON.stringify(signature_payload).sha256_text()
+	base["valid"] = true
+	return base
+
+
+## Chapter 2 deliberately bypasses pack projection and queues its authored
+## enemy roster through ChapterTwoSpawnDirector. XP still needs a population
+## authority, so use that complete stable queue—not the current live batch—as
+## both the active and Easy reference population.
+static func _build_chapter_two_director_population_context(
+	base: Dictionary,
+	runtime_entities: Array,
+	enemy_entity_types: Array,
+) -> Dictionary:
+	var roster: Array[Dictionary] = []
+	var seen_ids: Dictionary = {}
+	for raw_entity: Variant in runtime_entities:
+		if not raw_entity is Dictionary:
+			continue
+		var entity: Dictionary = raw_entity
+		var entity_type := String(entity.get("type", ""))
+		if (
+			entity_type not in enemy_entity_types
+			or not bool(entity.get("chapter_2_directed", false))
+		):
+			continue
+		var entity_id := String(entity.get("id", "")).strip_edges()
+		if entity_id.is_empty() or seen_ids.has(entity_id):
+			base["error"] = "Chapter 2 XP roster requires unique, non-empty directed enemy IDs."
+			return base
+		seen_ids[entity_id] = true
+		roster.append({"id": entity_id, "type": entity_type})
+	roster.sort_custom(func(left: Dictionary, right: Dictionary) -> bool:
+		return String(left.get("id", "")) < String(right.get("id", ""))
+	)
+	if roster.is_empty():
+		base["error"] = "Chapter 2 XP roster requires at least one directed enemy."
+		return base
+
+	var stage := int(base["stage_level"])
+	var difficulty := String(base["difficulty"])
+	var population := roster.size()
+	var signature_payload := {
+		"revision": POPULATION_CONTEXT_REVISION,
+		"source": "chapter_2_director_queue",
+		"stage_level": stage,
+		"difficulty": difficulty,
+		"reference_easy_population": population,
+		"expected_population": population,
+		"realized_population": population,
+		"managed_enemy_roster": roster,
+	}
+	base["source"] = "chapter_2_director_queue"
+	base["reference_easy_population"] = population
+	base["expected_population"] = population
+	base["realized_population"] = population
+	base["managed_enemy_roster"] = roster.duplicate(true)
 	base["plan_signature"] = JSON.stringify(signature_payload).sha256_text()
 	base["valid"] = true
 	return base

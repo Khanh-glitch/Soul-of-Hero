@@ -61,7 +61,7 @@ func _apply_level_copy() -> void:
 		difficulty_section.visible = false
 		kicker.text = "LUYỆN TẬP • SÂN THỬ • KHÔNG TÍNH CHIẾN DỊCH"
 		title.text = "SÂN TẬP HẦM MỘ"
-		objective.text = "Thu thập đủ ấn ký, mở cổng và sống sót. Luyện lướt, chuỗi đòn Kiếm sĩ 1–4 và Soul Echo."
+		objective.text = "Luyện lướt, chuỗi đòn Kiếm sĩ 1–4 và Soul Echo với 5 Skeleton quanh sân vòng; có thể thoát qua cổng phía đông khi sẵn sàng."
 		reward.text = "Không có phần thưởng chiến dịch. Kết quả luyện tập không thay đổi tiến trình."
 		%StartButton.text = "BẮT ĐẦU LUYỆN TẬP"
 		%StartButton.disabled = false

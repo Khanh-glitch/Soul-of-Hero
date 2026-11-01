@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "technologies"
+  ],
+  "properties": {
+    "schema": {
+      "const": "soh.economy.research.v1"
+    },
+    "technologies": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]{0,63}$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "label",
+          "inputs",
+          "prerequisites",
+          "station",
+          "min_tier",
+          "duration_ticks",
+          "scope",
+          "balance_status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{0,63}$"
+          },
+          "label": {
+            "type": "string"
+          },
+          "inputs": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_]{0,63}$"
+            },
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10000
+            }
+          },
+          "prerequisites": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_]{0,63}$"
+            }
+          },
+          "station": {
+            "const": "research"
+          },
+          "min_tier": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3
+          },
+          "duration_ticks": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 86400
+          },
+          "scope": {
+            "const": "permanent_profile"
+          },
+          "balance_status": {
+            "const": "SOH_PROPOSAL"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,1 @@
+tiles: 40  props: 34  -> /home/runner/work/Soul-of-Hero/Soul-of-Hero/prototypes/environment_art/archive_audition/art

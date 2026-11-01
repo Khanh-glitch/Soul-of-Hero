@@ -191,6 +191,13 @@ powershell -ExecutionPolicy Bypass -File tools/regenerate_level.ps1
 
 Lệnh này **ghi đè** `data/levels/crypt_entrance.json` và bốn file `chapter_1_level_2.json` đến `chapter_1_level_5.json`. Chỉ chạy khi muốn tái tạo layout do code sinh. Nếu cố ý thay footprint/count, cập nhật generator, smoke expectations và tài liệu trong cùng thay đổi.
 
+Chapter 2 Lv11–20 được sinh bởi `tools/generators/generate_chapter_2_levels.gd`;
+per-level `_signature_pits()` là source of truth cho các lane, cover break và
+flank route. Sau khi chỉnh generator, chạy script Godot đó để cập nhật toàn bộ
+`data/levels/chapter_2_level_11.json` đến `data/levels/chapter_2_level_20.json`, rồi chạy
+`tools/run_chapter_2_map_design_tests.ps1`. Test kiểm tra walkability, marker safety,
+wall/floor separation và khác biệt silhouette giữa mọi cặp map.
+
 Để xem toàn bộ silhouette mà không bị HUD/entity che, mở và chạy riêng
 `tools/map_overview.tscn`. Scene này tự fit camera theo `camera_bounds`, ẩn
 `Entities` và không thay đổi JSON canonical.

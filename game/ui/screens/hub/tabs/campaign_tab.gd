@@ -14,6 +14,8 @@ func _ready() -> void:
 	_build_chapter_buttons()
 	%TrainingDetailsButton.pressed.connect(func() -> void: AppFlow.open_level_details(&"training_crypt"))
 	%StartTrainingButton.pressed.connect(func() -> void: AppFlow.start_training())
+	if has_node("%EnterOverworldButton"):
+		%EnterOverworldButton.pressed.connect(func() -> void: AppFlow.open_overworld({}))
 	LivingArsenalIcons.apply_to_button(%TrainingDetailsButton, LivingArsenalIcons.BOOK)
 	LivingArsenalIcons.apply_to_button(%StartTrainingButton, LivingArsenalIcons.PLAY)
 	_show_chapter(1)

@@ -1,0 +1,62 @@
+Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
+OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
+
+ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _finish_boot (res://game/app/app_root.gd:270)
+CHAPTER1 AUDIT: level=chapter_1_level_2 slot=2 art=on
+CHAPTER1 AUDIT PLAN: level=chapter_1_level_2 frames=48 bounds=[0, 0, 2624, 2208] content=[64, 32, 2624, 2096] world_view=(640.0, 360.0)
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=000 cell=(20, 11) rect=[8.0, 0.0, 648.0, 360.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=001 cell=(50, 11) rect=[488.0, 0.0, 1128.0, 360.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=002 cell=(80, 11) rect=[968.0, 0.0, 1608.0, 360.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=003 cell=(110, 11) rect=[1448.0, 0.0, 2088.0, 360.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=004 cell=(140, 11) rect=[1928.0, 0.0, 2568.0, 360.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=005 cell=(144, 11) rect=[1984.0, 0.0, 2624.0, 360.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=006 cell=(20, 28) rect=[8.0, 268.0, 648.0, 628.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=007 cell=(50, 28) rect=[488.0, 268.0, 1128.0, 628.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=008 cell=(80, 28) rect=[968.0, 268.0, 1608.0, 628.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=009 cell=(110, 28) rect=[1448.0, 268.0, 2088.0, 628.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=010 cell=(140, 28) rect=[1928.0, 268.0, 2568.0, 628.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=011 cell=(144, 28) rect=[1984.0, 268.0, 2624.0, 628.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=012 cell=(20, 45) rect=[8.0, 540.0, 648.0, 900.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=013 cell=(50, 45) rect=[488.0, 540.0, 1128.0, 900.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=014 cell=(80, 45) rect=[968.0, 540.0, 1608.0, 900.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=015 cell=(110, 45) rect=[1448.0, 540.0, 2088.0, 900.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=016 cell=(140, 45) rect=[1928.0, 540.0, 2568.0, 900.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=017 cell=(144, 45) rect=[1984.0, 540.0, 2624.0, 900.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=018 cell=(20, 61) rect=[8.0, 796.0, 648.0, 1156.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=019 cell=(50, 61) rect=[488.0, 796.0, 1128.0, 1156.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=020 cell=(80, 61) rect=[968.0, 796.0, 1608.0, 1156.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=021 cell=(110, 61) rect=[1448.0, 796.0, 2088.0, 1156.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=022 cell=(140, 61) rect=[1928.0, 796.0, 2568.0, 1156.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=023 cell=(144, 61) rect=[1984.0, 796.0, 2624.0, 1156.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=024 cell=(20, 78) rect=[8.0, 1068.0, 648.0, 1428.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=025 cell=(50, 78) rect=[488.0, 1068.0, 1128.0, 1428.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=026 cell=(80, 78) rect=[968.0, 1068.0, 1608.0, 1428.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=027 cell=(110, 78) rect=[1448.0, 1068.0, 2088.0, 1428.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=028 cell=(140, 78) rect=[1928.0, 1068.0, 2568.0, 1428.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=029 cell=(144, 78) rect=[1984.0, 1068.0, 2624.0, 1428.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=030 cell=(20, 95) rect=[8.0, 1340.0, 648.0, 1700.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=031 cell=(50, 95) rect=[488.0, 1340.0, 1128.0, 1700.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=032 cell=(80, 95) rect=[968.0, 1340.0, 1608.0, 1700.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=033 cell=(110, 95) rect=[1448.0, 1340.0, 2088.0, 1700.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=034 cell=(140, 95) rect=[1928.0, 1340.0, 2568.0, 1700.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=035 cell=(144, 95) rect=[1984.0, 1340.0, 2624.0, 1700.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=036 cell=(20, 112) rect=[8.0, 1612.0, 648.0, 1972.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=037 cell=(50, 112) rect=[488.0, 1612.0, 1128.0, 1972.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=038 cell=(80, 112) rect=[968.0, 1612.0, 1608.0, 1972.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=039 cell=(110, 112) rect=[1448.0, 1612.0, 2088.0, 1972.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=040 cell=(140, 112) rect=[1928.0, 1612.0, 2568.0, 1972.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=041 cell=(144, 112) rect=[1984.0, 1612.0, 2624.0, 1972.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=042 cell=(20, 126) rect=[8.0, 1836.0, 648.0, 2196.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=043 cell=(50, 126) rect=[488.0, 1836.0, 1128.0, 2196.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=044 cell=(80, 126) rect=[968.0, 1836.0, 1608.0, 2196.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=045 cell=(110, 126) rect=[1448.0, 1836.0, 2088.0, 2196.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=046 cell=(140, 126) rect=[1928.0, 1836.0, 2568.0, 2196.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=047 cell=(144, 126) rect=[1984.0, 1836.0, 2624.0, 2196.0] ok=true
+CHAPTER1 AUDIT DONE: level=chapter_1_level_2 frames=48 limits_applied=true
+WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2535)

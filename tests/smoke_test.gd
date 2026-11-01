@@ -142,11 +142,16 @@ func _run(game: Node2D) -> void:
 	for _frame: int in range(20):
 		await get_tree().physics_frame
 
-	# Realtime/MCP uses the exact same buffer as physical input. This guards the
-	# original failure where only the first remote slash played and later presses
-	# were discarded while its animation was still running.
+	# Realtime/MCP uses the exact same buffer as physical input. Keep a live,
+	# stationary target in the authored wave lane: Sword's fourth step is a
+	# pursuit finisher and correctly requires the third-step wave to mark a target.
+	var enemy := get_tree().get_nodes_in_group("enemies")[0] as SkeletonEnemy
+	enemy.set_physics_process(false)
+	enemy.health = 10000
 	player.global_position = Vector2(160.0, 160.0)
 	player.facing_direction = Vector2.RIGHT
+	enemy.global_position = player.global_position + Vector2.RIGHT * 20.0
+	await get_tree().physics_frame
 	player.trigger_remote_action("attack", true)
 	_expect(player.current_action == "sword_attack_1" and player.sprite.animation == &"sword_combo_1", "remote Attack starts fixed Sword combo frame strip 1")
 	player.trigger_remote_action("attack", true)
@@ -165,26 +170,46 @@ func _run(game: Node2D) -> void:
 	var remote_step_4 := await _wait_for_action(player, "sword_attack_4")
 	_expect(remote_step_4 and player.sprite.animation == &"sword_combo_4", "remote buffer advances into fixed Sword combo frame strip 4")
 	player.trigger_remote_action("skill", true)
-	await get_tree().process_frame
-	var mid_combo_echo_steps: Dictionary = player._soul_echo._queued_steps if player._is_soul_echo_active() else {}
-	_expect(mid_combo_echo_steps.has(4), "Soul Echo activated during combo 4 queues the still-running execution instead of wasting cooldown")
-	for _frame: int in range(42):
+	var echo_attack_key := "%d:4" % int(player._current_sword_attack_instance_id)
+	for _frame: int in range(30):
 		await get_tree().physics_frame
+		if player._is_soul_echo_active() and player._soul_echo._queued_steps.has(echo_attack_key):
+			break
+	var mid_combo_echo_steps: Dictionary = player._soul_echo._queued_steps if player._is_soul_echo_active() else {}
+	_expect(
+		player.current_action == "sword_attack_4" and mid_combo_echo_steps.has(echo_attack_key),
+		"Soul Echo queues the still-running fourth-step execution when its attack window opens"
+	)
+	# Simulate death during a buffered combo. The next life must not turn its
+	# first light input into a stale combo action or retain the old pursuit step.
+	player.combo_memory_remaining = 0.5
+	player.queued_combo = true
+	player._sword_combo_next_step = 4
+	player._sword_combo_buffered = true
 	player.respawn()
+	_expect(
+		is_zero_approx(player.combo_memory_remaining)
+			and not player.queued_combo
+			and player._sword_combo_next_step == 1
+			and not player._sword_combo_buffered,
+		"respawn clears stale legacy and Sword combo state before accepting new attacks"
+	)
 	for _frame: int in range(4):
 		await get_tree().physics_frame
 
-	var enemy := get_tree().get_nodes_in_group("enemies")[0] as SkeletonEnemy
-	enemy.set_physics_process(false)
 	enemy.health = enemy.max_health
 	enemy.global_position = player.global_position + player.facing_direction * 20.0
 	await get_tree().physics_frame
 	var enemy_health_before: int = enemy.health
 	player.light_damage = 27
+	var expected_light_hit_damage := player.hero_soul_manager.scale_active_damage(player.light_damage)
 	_expect(player.request_action("light_attack"), "light attack can start")
 	for _frame: int in range(15):
 		await get_tree().physics_frame
-	_expect(enemy_health_before - enemy.health == 27, "hot-tuned light damage reaches an overlapping enemy")
+	_expect(
+		enemy_health_before - enemy.health == expected_light_hit_damage,
+		"hot-tuned light damage reaches an overlapping enemy using the active Hero damage projection"
+	)
 	player.light_damage = 18
 	for _frame: int in range(10):
 		await get_tree().physics_frame

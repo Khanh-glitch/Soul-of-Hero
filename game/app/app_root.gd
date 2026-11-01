@@ -13,6 +13,8 @@ const FRESH_PLAYER_LOOP_ACCEPTANCE_TEST_ARGUMENT := "--fresh-player-loop-accepta
 const HERO_SKILL_LIVE_RUNTIME_TEST_ARGUMENT := "--hero-skill-live-runtime-test"
 const ARCHER_HERO_COMBAT_TEST_ARGUMENT := "--archer-hero-combat-test"
 const GAMEPLAY_CLICK_AUTO_PICKUP_TEST_ARGUMENT := "--gameplay-click-auto-pickup-test"
+const OVERWORLD_ACCEPTANCE_TEST_ARGUMENT := "--overworld-acceptance-test"
+const OVERWORLD_ROUNDTRIP_TEST_ARGUMENT := "--overworld-roundtrip-test"
 const STARTUP_PROFILE_CHOICE_TEST_ARGUMENT := "--startup-profile-choice-test"
 const DIRECT_GAME_ARGUMENTS := [
 	"--smoke-test",
@@ -31,11 +33,20 @@ var _current_route := &""
 var _is_switching := false
 var _boot_state := &"idle"
 var _preloaded_home_scene: PackedScene
+var _save_quarantine_layer: CanvasLayer
 
 
 func _ready() -> void:
+	# Browser-only boot visibility: a diagnostic marker, never an unlock/save action.
+	if OS.has_feature("web"):
+		JavaScriptBridge.eval("window.__soulHeroAppReady = true;")
 	_apply_persisted_runtime_settings()
 	var save_service := get_node_or_null("/root/SaveService")
+	if save_service != null and save_service.has_signal(&"save_failed"):
+		save_service.connect(&"save_failed", _on_save_failure)
+		if save_service.has_method(&"get_economy_quarantine") and bool((save_service.call(&"get_economy_quarantine") as Dictionary).get("active", false)):
+			_show_save_quarantine()
+			return
 	if save_service != null and save_service.has_signal(&"settings_changed"):
 		var settings_callback := Callable(self, "_apply_persisted_runtime_settings")
 		if not save_service.is_connected(&"settings_changed", settings_callback):
@@ -44,42 +55,55 @@ func _ready() -> void:
 		_direct_load_game.call_deferred()
 		return
 	AppFlow.attach_app_root(self)
+	if _web_local_gameplay_smoke_requested():
+		show_route(DIRECT_GAME_SCENE, {}, &"game")
+		return
 	if OS.get_cmdline_user_args().has(STARTUP_PROFILE_CHOICE_TEST_ARGUMENT):
-		var startup_choice_test := preload("res://tests/startup_profile_choice_test.gd").new()
+		var startup_choice_test: Node = (load("res://tests/startup_profile_choice_test.gd") as GDScript).new()
 		add_child(startup_choice_test)
 		startup_choice_test.start(self)
 		AppFlow.open_boot()
 		_finish_boot.call_deferred()
 		return
 	if OS.get_cmdline_user_args().has(ARCHER_HERO_COMBAT_TEST_ARGUMENT):
-		var archer_combat_test := preload("res://tests/archer_hero_combat_test.gd").new()
+		var archer_combat_test: Node = (load("res://tests/archer_hero_combat_test.gd") as GDScript).new()
 		add_child(archer_combat_test)
 		archer_combat_test.start(self)
 		return
 	if OS.get_cmdline_user_args().has(GAMEPLAY_CLICK_AUTO_PICKUP_TEST_ARGUMENT):
-		var click_pickup_test := preload("res://tests/gameplay_click_auto_pickup_test.gd").new()
+		var click_pickup_test: Node = (load("res://tests/gameplay_click_auto_pickup_test.gd") as GDScript).new()
 		add_child(click_pickup_test)
 		click_pickup_test.start(self)
 		return
 	if OS.get_cmdline_user_args().has(HERO_SKILL_LIVE_RUNTIME_TEST_ARGUMENT):
-		var hero_skill_test := preload("res://tests/hero_skill_live_runtime_test.gd").new()
+		var hero_skill_test: Node = (load("res://tests/hero_skill_live_runtime_test.gd") as GDScript).new()
 		add_child(hero_skill_test)
 		hero_skill_test.start(self)
 		return
 	if OS.get_cmdline_user_args().has(VISIBLE_REWARD_RUNTIME_TEST_ARGUMENT):
-		var visible_reward_test := preload("res://tests/visible_progression_reward_runtime_test.gd").new()
+		var visible_reward_test: Node = (load("res://tests/visible_progression_reward_runtime_test.gd") as GDScript).new()
 		add_child(visible_reward_test)
 		visible_reward_test.start(self)
 		return
 	if OS.get_cmdline_user_args().has(FRESH_PLAYER_LOOP_ACCEPTANCE_TEST_ARGUMENT):
-		var fresh_loop_test := preload("res://tests/fresh_player_loop_acceptance_test.gd").new()
+		var fresh_loop_test: Node = (load("res://tests/fresh_player_loop_acceptance_test.gd") as GDScript).new()
 		add_child(fresh_loop_test)
 		fresh_loop_test.start(self)
 		return
 	if OS.get_cmdline_user_args().has(CAMPAIGN_ENTRY_RUNTIME_TEST_ARGUMENT):
-		var campaign_entry_test := preload("res://tests/campaign_entry_runtime_test.gd").new()
+		var campaign_entry_test: Node = (load("res://tests/campaign_entry_runtime_test.gd") as GDScript).new()
 		add_child(campaign_entry_test)
 		campaign_entry_test.start(self)
+		return
+	if OS.get_cmdline_user_args().has(OVERWORLD_ROUNDTRIP_TEST_ARGUMENT):
+		var roundtrip_test: Node = (load("res://tests/overworld_roundtrip_runtime_test.gd") as GDScript).new()
+		add_child(roundtrip_test)
+		roundtrip_test.start(self)
+		return
+	if OS.get_cmdline_user_args().has(OVERWORLD_ACCEPTANCE_TEST_ARGUMENT):
+		var overworld_test: Node = (load("res://tests/overworld_acceptance_test.gd") as GDScript).new()
+		add_child(overworld_test)
+		overworld_test.start(self)
 		return
 	if AppFlow.has_active_run():
 		AppFlow.retry_active_run()
@@ -88,6 +112,81 @@ func _ready() -> void:
 		_finish_boot.call_deferred()
 		if OS.get_cmdline_user_args().has("--ui-shell-capture"):
 			_capture_ui_shell.call_deferred()
+
+
+## A damaged unique-item save is never silently replaced with an empty profile.
+## This is a fatal save-recovery overlay, independent of A6's survival UI.
+func _on_save_failure(_message: String) -> void:
+	var save := get_node_or_null("/root/SaveService")
+	if save != null and save.has_method(&"get_economy_quarantine") and bool((save.call(&"get_economy_quarantine") as Dictionary).get("active", false)):
+		_show_save_quarantine()
+
+
+func _show_save_quarantine() -> void:
+	if is_instance_valid(_save_quarantine_layer):
+		return
+	get_tree().paused = true
+	_save_quarantine_layer = CanvasLayer.new()
+	_save_quarantine_layer.name = "SaveRecoveryOverlay"
+	_save_quarantine_layer.process_mode = Node.PROCESS_MODE_ALWAYS
+	_save_quarantine_layer.layer = 100
+	add_child(_save_quarantine_layer)
+	var background := ColorRect.new()
+	background.color = Color(0.055, 0.045, 0.07, 0.98)
+	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_save_quarantine_layer.add_child(background)
+	var center := CenterContainer.new()
+	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_save_quarantine_layer.add_child(center)
+	var panel := VBoxContainer.new()
+	panel.custom_minimum_size = Vector2(360, 0)
+	panel.add_theme_constant_override("separation", 16)
+	center.add_child(panel)
+	var title := Label.new()
+	title.text = "Save needs recovery"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 22)
+	panel.add_child(title)
+	var body := Label.new()
+	body.text = "A unique item or its ownership record is invalid. Your original save has not been changed. Restore a valid backup, then retry."
+	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	body.custom_minimum_size = Vector2(360, 0)
+	body.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	panel.add_child(body)
+	var retry := Button.new()
+	retry.name = "RetrySaveRecovery"
+	retry.text = "Retry after restoring save"
+	retry.pressed.connect(_retry_quarantined_save)
+	panel.add_child(retry)
+
+
+func _retry_quarantined_save() -> void:
+	var save := get_node_or_null("/root/SaveService")
+	if save == null or not bool(save.call(&"reload_save")):
+		return
+	get_tree().paused = false
+	get_tree().reload_current_scene()
+
+
+## CI-only local Web browser route. Public Pages cannot activate this mode.
+## This exercises the production game scene without mutating campaign unlocks.
+func _web_local_gameplay_smoke_requested() -> bool:
+	if not OS.has_feature("web"):
+		return false
+	# Godot's JavaScriptBridge.eval() may return null for a JS expression
+	# evaluated in its isolated context. Read location via the real JS interface.
+	var location: JavaScriptObject = JavaScriptBridge.get_interface("location")
+	if location == null:
+		return false
+	var host := String(location.get("hostname"))
+	var query := String(location.get("search"))
+	var enabled := host == "127.0.0.1" and query.contains("ci_gameplay=1")
+	JavaScriptBridge.eval("window.__soulHeroCiProbe = " + JSON.stringify({
+		"hostname": host,
+		"search": query,
+		"enabled": enabled,
+	}) + ";")
+	return enabled
 
 
 func _exit_tree() -> void:
@@ -120,6 +219,8 @@ func show_route(scene_path: String, payload: Dictionary, route_id: StringName) -
 	if screen.has_method(&"configure"):
 		screen.call("configure", payload.duplicate(true))
 	_current_route = route_id
+	if OS.has_feature("web"):
+		JavaScriptBridge.eval("window.__soulHeroRoute = " + JSON.stringify(String(route_id)) + ";")
 	_publish_route_state(route_id, payload)
 	_is_switching = false
 

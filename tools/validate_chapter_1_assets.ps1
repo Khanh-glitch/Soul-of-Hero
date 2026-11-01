@@ -49,6 +49,19 @@ foreach ($asset in $manifest.assets) {
     }
 }
 
+# Every authored frame has to exist in the kit that draws it. A document can name a
+# frame the atlas does not have - a typo, a renamed prop - and the renderer will
+# simply draw nothing there, with no error anywhere. Level 7 lost twenty barrels and
+# Level 8 lost two banners to exactly that.
+$python = Get-Command python3 -ErrorAction SilentlyContinue
+if (-not $python) { $python = Get-Command python -ErrorAction SilentlyContinue }
+if (-not $python) {
+    $errors.Add("No Python interpreter found for the art reference check.")
+} else {
+    & $python.Source (Join-Path $root "tools\validate_chapter1_art_refs.py")
+    if ($LASTEXITCODE -ne 0) { $errors.Add("Art reference validation failed (see above).") }
+}
+
 $ready = @($manifest.assets | Where-Object status -eq 'production_ready').Count
 $placeholder = @($manifest.assets | Where-Object status -eq 'placeholder_only').Count
 Write-Output "Chapter 1 L06-L10 asset validation: $ready production-ready, $placeholder placeholder-only."

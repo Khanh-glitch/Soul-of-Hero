@@ -1,0 +1,970 @@
+class_name SurvivalBuildSystem
+extends Node2D
+
+## Placement preview, placement validation and the built-structure layer.
+##
+## ## Why this is a node in the overworld and not an autoload
+##
+## Placement legality is a question about the *world*: is this cell on solid
+## terrain, is it on a pilgrimage road, is it inside a landmark's clearance, is it
+## within arm's reach of the player. All of that is owned by the mounted overworld,
+## and there is no overworld on the home screen or inside a dungeon. So the spatial
+## half lives here, next to the world it interrogates, and the durable half lives in
+## `SurvivalService` inside SaveService. `SurvivalService.place_structure()` takes
+## this object's validator as a callable and re-runs the occupancy/affordability
+## half inside its own transaction.
+##
+## That split is the CT-07 contract: **no free placement, no blocked route, the
+## entity and the payment committed together.**
+##
+## ## Input
+##
+## The build tool is modal and explicit: `B` toggles build mode, `1`-`5` select the
+## piece, left-click places, right-click or `ESC` leaves. Nothing here is wired into
+## the Knight's combat input, so no existing control path changes meaning.
+
+signal piece_changed(piece_id: String)
+signal placement_rejected(reason: String)
+signal placement_committed(entity_id: String, piece_id: String, cell: Vector2i)
+signal build_mode_changed(active: bool)
+
+const ROOM_TOPOLOGY = preload("res://game/survival/survival_room_topology.gd")
+const ROOF_LAYER = preload("res://game/survival/survival_roof_layer.gd")
+const TILE := 16
+const BUILD_ART_PATH := "res://assets/survival/build/placeholder_build.png"
+const BUILD_ART_META := "res://data/survival/placeholder_build.json"
+const SOLID_LAYER_MASK := 1
+const BUILD_SLOTS: Array[String] = ["foundation_wood", "wall_wood", "door_wood", "chest_wood", "bed_wood",
+	"station_furnace", "station_workbench", "station_research", "station_garden"]
+
+var active := false
+var selected_piece := "foundation_wood"
+
+var world: OverworldWorld
+var player: Node2D
+var camera: Camera2D
+var state: OverworldState
+## Optional composition guard. Negative means ordinary legacy world; a bounded
+## annex pilot sets the first excluded column before accepting placement input.
+var annex_disabled_from_x := -1
+## Explicit optional encounter reservations. Empty in the default world.
+var encounter_exclusions: Array[Rect2i] = []
+
+var _structures_root: Node2D
+var _preview: Sprite2D
+var _preview_frame: Sprite2D
+var _texture: Texture2D
+var _frames: Dictionary = {}
+var _placed: Dictionary = {}          # entity_id -> SurvivalStructure
+var _occupied: Dictionary = {}        # "x,y" -> {floor/object: entity_id}
+var room_topology = ROOM_TOPOLOGY.new()
+var roof_layer: Node2D
+var _last_rejection := ""
+var _ready_built := false
+var _hud_layer: CanvasLayer
+var _hud_root: Control
+var _hud_label: Label
+
+
+func configure(world_ref: OverworldWorld, player_ref: Node2D, camera_ref: Camera2D,
+		state_ref: OverworldState) -> void:
+	world = world_ref
+	player = player_ref
+	camera = camera_ref
+	state = state_ref
+	_ensure_roots()
+	_load_art()
+	_build_hud()
+	# Affordability changes whenever the bag does; the strip is a read of the same
+	# document the transaction will read, not a cache.
+	var svc := service()
+	if svc != null and svc.has_signal(&"survival_state_changed") \
+			and not svc.is_connected(&"survival_state_changed", _refresh_hud):
+		svc.connect(&"survival_state_changed", _refresh_hud)
+	rebuild_from_save()
+	if roof_layer == null:
+		roof_layer = ROOF_LAYER.new()
+		roof_layer.name = "RoomRoofs"
+		add_child(roof_layer)
+	roof_layer.call(&"configure", self, player, room_topology)
+
+
+func _ensure_roots() -> void:
+	if _structures_root == null:
+		_structures_root = Node2D.new()
+		_structures_root.name = "BuiltStructures"
+		if not _structures_root.is_inside_tree():
+			add_child(_structures_root)
+	if _preview == null:
+		_preview = Sprite2D.new()
+		_preview.name = "PlacementPreview"
+		_preview.visible = false
+		_preview.modulate = Color(0.65, 1.0, 0.75, 0.62)
+		add_child(_preview)
+		# The footprint marker: a dim copy of the piece's base tile laid flat on the
+		# cell the build would occupy. The ghost above it is drawn with the piece's
+		# real height, which means it floats a few pixels north of its own cell —
+		# without the footprint the player cannot tell which tile is actually being
+		# bought. Solid pieces get one because they have a floor to align to.
+		_preview_frame = Sprite2D.new()
+		_preview_frame.name = "PlacementFootprint"
+		_preview_frame.visible = false
+		_preview_frame.modulate = Color(0.62, 0.58, 0.5, 0.34)
+		add_child(_preview_frame)
+
+
+func _load_art() -> void:
+	if not FileAccess.file_exists(BUILD_ART_PATH) or not FileAccess.file_exists(BUILD_ART_META):
+		return
+	_texture = load(BUILD_ART_PATH) as Texture2D
+	var file := FileAccess.open(BUILD_ART_META, FileAccess.READ)
+	if file == null:
+		return
+	var parsed: Variant = JSON.parse_string(file.get_as_text())
+	file.close()
+	if parsed is Dictionary:
+		_frames = (parsed as Dictionary).get("frames", {})
+
+
+func service() -> Node:
+	return get_node_or_null("/root/SurvivalService")
+
+
+# ---------------------------------------------------------------------------
+# mode
+# ---------------------------------------------------------------------------
+func set_active(value: bool) -> void:
+	if active == value:
+		return
+	active = value
+	if not active:
+		_hide_preview()
+	_refresh_hud()
+	build_mode_changed.emit(active)
+
+
+func select_piece(piece_id: String) -> bool:
+	var svc := service()
+	if svc == null:
+		return false
+	if (svc.call(&"piece_definition", piece_id) as Dictionary).is_empty():
+		return false
+	selected_piece = piece_id
+	_refresh_hud()
+	piece_changed.emit(piece_id)
+	return true
+
+
+# ---------------------------------------------------------------------------
+# rebuild from the document
+# ---------------------------------------------------------------------------
+## Rebuilds the visual/collision layer from the committed survival document.
+##
+## This is the single path by which structures exist in a scene: it runs on world
+## build, after a reload, and after every successful placement. Nothing else may
+## add a structure node, so a desync between save and screen has exactly one place
+## to be found.
+func rebuild_from_save() -> void:
+	_ensure_roots()
+	for child: Node in _structures_root.get_children():
+		child.queue_free()
+	_placed.clear()
+	_occupied.clear()
+	var svc := service()
+	if svc == null:
+		return
+	var document: Dictionary = svc.call(&"document")
+	var structures: Dictionary = document.get("structures", {})
+	var ids: Array = structures.keys()
+	ids.sort()
+	for raw_id: Variant in ids:
+		var entity_id := String(raw_id)
+		var entry: Dictionary = structures[raw_id]
+		var raw_cell: Array = entry.get("cell", [])
+		if raw_cell.size() < 2:
+			continue
+		_materialize(entity_id, String(entry.get("piece", "")),
+			Vector2i(int(raw_cell[0]), int(raw_cell[1])))
+	room_topology.rebuild(structures)
+	_ready_built = true
+
+
+## Brings the scene into agreement with the committed document without tearing the
+## existing nodes down.
+##
+## [method rebuild_from_save] is correct but total: it frees and re-materializes
+## every structure. That is the right thing on world build and on a reload, and the
+## wrong thing on a signal — `survival_state_changed` fires on every harvest and
+## every container transfer, and a full teardown there would destroy and recreate
+## colliders the player is standing against (and hand out fresh node identities
+## while old ones are still queued for deletion).
+##
+## Reconcile is idempotent and minimal: it adds what the document has and the scene
+## lacks, removes what the scene has and the document lost, and leaves everything
+## else untouched.
+func reconcile_from_save() -> void:
+	_ensure_roots()
+	var svc := service()
+	if svc == null:
+		return
+	var structures: Dictionary = (svc.call(&"document") as Dictionary).get("structures", {})
+	var topology_changed := false
+	for entity_id: Variant in _placed.keys():
+		if structures.has(entity_id):
+			continue
+		var doomed: SurvivalStructure = _placed[entity_id]
+		_erase_occupancy(doomed)
+		if doomed.piece_id in ["wall_wood", "door_wood"]:
+			topology_changed = true
+		_placed.erase(entity_id)
+		if is_instance_valid(doomed):
+			doomed.queue_free()
+	var ids: Array = structures.keys()
+	ids.sort()
+	for raw_id: Variant in ids:
+		var entity_id := String(raw_id)
+		var entry: Dictionary = structures[raw_id]
+		var raw_cell: Array = entry.get("cell", [])
+		if raw_cell.size() < 2:
+			continue
+		var cell := Vector2i(int(raw_cell[0]), int(raw_cell[1]))
+		var piece_id := String(entry.get("piece", ""))
+		var existing: SurvivalStructure = _placed.get(entity_id, null)
+		if existing != null and is_instance_valid(existing):
+			if existing.piece_id == piece_id and existing.cell == cell:
+				# Contents may have moved without the node changing; a chest that
+				# still advertises its pre-transfer count is the kind of small lie
+				# that makes a player distrust the stash.
+				if existing.has_method(&"refresh_prompt"):
+					existing.call(&"refresh_prompt")
+				continue
+			_erase_occupancy(existing)
+			if existing.piece_id in ["wall_wood", "door_wood"]:
+				topology_changed = true
+			_placed.erase(entity_id)
+			existing.queue_free()
+		_materialize(entity_id, piece_id, cell)
+		if piece_id in ["wall_wood", "door_wood"]:
+			topology_changed = true
+	if topology_changed:
+		room_topology.rebuild(structures)
+	_ready_built = true
+
+
+func _materialize(entity_id: String, piece_id: String, cell: Vector2i) -> SurvivalStructure:
+	var node := SurvivalStructure.new()
+	node.name = "B_%s" % entity_id
+	node.entity_id = entity_id
+	node.piece_id = piece_id
+	node.cell = cell
+	node.position = Vector2(cell.x * TILE, cell.y * TILE)
+	node.collision_layer = 0
+	node.collision_mask = 0
+	node.monitoring = false
+	node.monitorable = false
+	var sprite := Sprite2D.new()
+	sprite.name = "Sprite"
+	sprite.centered = false
+	sprite.texture = _texture
+	var frame: Dictionary = _frames.get(piece_id, {})
+	if not frame.is_empty():
+		sprite.region_enabled = true
+		sprite.region_rect = Rect2(
+			int(frame.get("x", 0)), int(frame.get("y", 0)),
+			int(frame.get("w", TILE)), int(frame.get("h", TILE)))
+	var svc := service()
+	var cells: Array[Vector2i] = svc.call(&"footprint_cells", piece_id, cell) if svc != null else [cell]
+	var footprint := Vector2i.ONE
+	for occupied: Vector2i in cells:
+		footprint.x = maxi(footprint.x, occupied.x - cell.x + 1)
+		footprint.y = maxi(footprint.y, occupied.y - cell.y + 1)
+	# Anchor the sprite by its foot: the catalog frame is drawn as a 16-wide cell
+	# whose base sits on the cell's south edge, which is what makes a wall read as
+	# standing in front of the floor it sits on.
+	sprite.position = Vector2(0, TILE * footprint.y - int(frame.get("h", TILE)))
+	node.add_child(sprite)
+	if SurvivalStructure.is_solid_piece(piece_id) or String((svc.call(&"piece_definition", piece_id) as Dictionary).get("kind", "")) == "station":
+		var body := StaticBody2D.new()
+		body.name = "Solid"
+		body.collision_layer = SOLID_LAYER_MASK
+		body.collision_mask = 0
+		# Block the standing part of the piece, not the whole tile: a wall's south
+		# two pixels are its shadow, and the player must be able to stand against
+		# the wall without being pushed off the floor in front of it.
+		var shape := CollisionShape2D.new()
+		shape.name = "CollisionShape2D"
+		var rect := RectangleShape2D.new()
+		rect.size = Vector2(TILE * footprint.x - 2, TILE * footprint.y - 6)
+		shape.shape = rect
+		shape.position = Vector2(TILE * footprint.x * 0.5, TILE * footprint.y * 0.5 - 3.0)
+		body.add_child(shape)
+		node.add_child(body)
+	# A chest joins `player_interactable` from inside SurvivalStructure._ready, so
+	# the behaviour belongs to the piece rather than to this call site.
+	_structures_root.add_child(node)
+	_placed[entity_id] = node
+	var layer := String(svc.call(&"occupancy_layer", piece_id)) if svc != null else "object"
+	for occupied: Vector2i in cells:
+		var key := _cell_key(occupied)
+		var slots: Dictionary = _occupied.get(key, {})
+		slots[layer] = entity_id
+		_occupied[key] = slots
+	return node
+
+
+func _erase_occupancy(node: SurvivalStructure) -> void:
+	var svc := service()
+	var layer := String(svc.call(&"occupancy_layer", node.piece_id)) if svc != null else "object"
+	var cells: Array[Vector2i] = svc.call(&"footprint_cells", node.piece_id, node.cell) if svc != null else [node.cell]
+	for occupied: Vector2i in cells:
+		var key := _cell_key(occupied)
+		var slots: Dictionary = _occupied.get(key, {})
+		if String(slots.get(layer, "")) == node.entity_id:
+			slots.erase(layer)
+		if slots.is_empty():
+			_occupied.erase(key)
+		else:
+			_occupied[key] = slots
+
+
+func _cell_key(cell: Vector2i) -> String:
+	return "%d,%d" % [cell.x, cell.y]
+
+
+func structure_node(entity_id: String) -> SurvivalStructure:
+	return _placed.get(entity_id, null)
+
+
+func placed_count() -> int:
+	return _placed.size()
+
+
+func entity_at(cell: Vector2i) -> String:
+	var slots: Dictionary = _occupied.get(_cell_key(cell), {})
+	return String(slots.get("object", slots.get("floor", "")))
+
+
+func entity_at_layer(cell: Vector2i, layer: String) -> String:
+	var slots: Dictionary = _occupied.get(_cell_key(cell), {})
+	return String(slots.get(layer, ""))
+
+
+# Wake positions are evaluated against the live Hero collision shape, not just
+# the terrain grid. Returned coordinates are foot positions in world space.
+func _wake_cell_clear(cell: Vector2i, ignore_body: RID = RID()) -> bool:
+	if world == null or player == null or not is_instance_valid(player) or not is_inside_tree():
+		return false
+	if cell.x < 0 or cell.y < 0 or cell.x >= world.width or cell.y >= world.height:
+		return false
+	if world.is_solid_cell(cell.x, cell.y) or world.is_water_cell(cell.x, cell.y):
+		return false
+	var foot := Vector2(cell.x * TILE + 8, cell.y * TILE + TILE - 1)
+	var owner := get_parent()
+	if owner != null and owner.has_method(&"_in_hazard") and bool(owner.call(&"_in_hazard", foot)):
+		return false
+	var hero := player as CharacterBody2D
+	if hero == null:
+		return false
+	var body_shape := hero.get_node_or_null("BodyShape") as CollisionShape2D
+	if body_shape == null or body_shape.shape == null or body_shape.disabled:
+		return false
+	var query := PhysicsShapeQueryParameters2D.new()
+	query.shape = body_shape.shape
+	query.transform = Transform2D(0.0, foot + body_shape.position)
+	query.collision_mask = hero.collision_mask | 4
+	query.collide_with_areas = false
+	query.collide_with_bodies = true
+	var exclusions: Array[RID] = [hero.get_rid()]
+	if ignore_body.is_valid():
+		exclusions.append(ignore_body)
+	query.exclude = exclusions
+	if not get_world_2d().direct_space_state.intersect_shape(query, 1).is_empty():
+		return false
+	# Do not wake beside a live enemy merely because its exact body rectangle
+	# misses the Hero's. Layer 4 is shared, so only moving actor bodies count.
+	var danger := PhysicsShapeQueryParameters2D.new()
+	var radius := CircleShape2D.new()
+	radius.radius = 48.0
+	danger.shape = radius
+	danger.transform = Transform2D(0.0, foot + body_shape.position)
+	danger.collision_mask = 4
+	danger.collide_with_areas = false
+	danger.collide_with_bodies = true
+	for hit: Dictionary in get_world_2d().direct_space_state.intersect_shape(danger, 64):
+		var collider: Variant = hit.get("collider")
+		if collider is CharacterBody2D or collider is RigidBody2D:
+			return false
+	return true
+
+
+func _wake_has_exit(start: Vector2i, room_id: String) -> bool:
+	var queue: Array[Vector2i] = [start]
+	var seen: Dictionary = {start: true}
+	var steps := [Vector2i.UP, Vector2i.LEFT, Vector2i.RIGHT, Vector2i.DOWN]
+	var cursor := 0
+	while cursor < queue.size() and cursor < 16384:
+		var cell: Vector2i = queue[cursor]
+		cursor += 1
+		for step: Vector2i in steps:
+			var next := cell + step
+			var entity := entity_at_layer(next, "object")
+			var piece := structure_node(entity) if not entity.is_empty() else null
+			if piece != null and piece.piece_id == "door_wood":
+				var body := piece.get_node_or_null("Solid") as StaticBody2D
+				if body != null and _wake_cell_clear(next, body.get_rid()) \
+						and room_topology.room_at(next + step) != room_id \
+						and _wake_cell_clear(next + step):
+					return true
+			if seen.has(next) or room_topology.room_at(next) != room_id:
+				continue
+			seen[next] = true
+			if _wake_cell_clear(next):
+				queue.append(next)
+	return false
+
+
+## Called both on activation and immediately before overworld respawn. Nothing
+## trusts a saved coordinate: the live owned bed and room are revalidated.
+func bed_wake_position(entity_id: String) -> Dictionary:
+	var bed := structure_node(entity_id)
+	if bed == null or not is_instance_valid(bed) or bed.is_queued_for_deletion() or bed.piece_id != "bed_wood":
+		return {"ok": false, "reason": "missing_bed"}
+	var svc := service()
+	var records: Dictionary = svc.call(&"structures") if svc != null else {}
+	if String((records.get(entity_id, {}) as Dictionary).get("piece", "")) != "bed_wood":
+		return {"ok": false, "reason": "stale_bed"}
+	var room_id: String = room_topology.room_at(bed.cell)
+	if room_id.is_empty():
+		return {"ok": false, "reason": "no_room"}
+	for offset: Vector2i in [Vector2i.DOWN, Vector2i.RIGHT, Vector2i.LEFT, Vector2i.UP]:
+		var cell := bed.cell + offset
+		if room_topology.room_at(cell) == room_id and _wake_cell_clear(cell) and _wake_has_exit(cell, room_id):
+			return {"ok": true, "position": Vector2(cell.x * TILE + 8, cell.y * TILE + TILE - 1), "room_id": room_id}
+	return {"ok": false, "reason": "no_safe_exit"}
+
+
+func activate_bed(entity_id: String, actor: Node2D) -> Dictionary:
+	var bed := structure_node(entity_id)
+	if bed == null or actor == null or not is_instance_valid(actor) or actor != player:
+		return {"ok": false, "reason": "not_owned"}
+	if actor.global_position.distance_to(bed.global_position) > SurvivalStructure.REACH:
+		return {"ok": false, "reason": "out_of_reach"}
+	var room_id: String = room_topology.room_at(bed.cell)
+	if room_id.is_empty() or room_topology.room_at(world.tile_of(actor.global_position)) != room_id:
+		return {"ok": false, "reason": "not_in_room"}
+	var svc := service()
+	if svc == null:
+		return {"ok": false, "reason": "service_unavailable"}
+	return svc.call(&"activate_bed", entity_id, func() -> bool:
+		return bool(bed_wake_position(entity_id).get("ok", false)))
+
+
+# ---------------------------------------------------------------------------
+# validation — CT-07 route safety
+# ---------------------------------------------------------------------------
+## Returns "" when the cell may be built on, or a short machine-readable reason.
+##
+## The rules, and why each exists:
+##
+## * **inside the world and on open ground** — a wall cannot be built into a cliff;
+## * **not on water** — the authored water is the map's geography;
+## * **not within `landmark_clearance_tiles` of a dungeon threshold or camp** — the
+##   ten Chapter 1 approaches and the four camps are the mandatory progression
+##   routes, and a player must not be able to seal one;
+## * **not on a road or path detail code** — the pilgrimage road is the world's
+##   readable navigation; blocking it with a wall would strand a player who has no
+##   demolition tool yet;
+## * **not within `shortcut_clearance_tiles` of a shortcut** — those are authored
+##   route decisions, not building land;
+## * **within `build_range_tiles` of the player** — placement is a physical act;
+## * **cell unoccupied** — one structure per cell.
+func validate_cell(cell: Vector2i) -> String:
+	var svc := service()
+	var cells: Array[Vector2i] = svc.call(&"footprint_cells", selected_piece, cell) if svc != null else [cell]
+	for occupied: Vector2i in cells:
+		var reason := _validate_footprint_cell(occupied)
+		if not reason.is_empty():
+			return reason
+	return ""
+
+
+func _validate_footprint_cell(cell: Vector2i) -> String:
+	if world == null:
+		return "no_world"
+	if cell.x < 0 or cell.y < 0 or cell.x >= world.width or cell.y >= world.height:
+		return "outside_world"
+	if annex_disabled_from_x >= 0 and cell.x >= annex_disabled_from_x:
+		return "annex_build_not_enabled"
+	for excluded: Rect2i in encounter_exclusions:
+		if excluded.has_point(cell):
+			return "encounter_exclusion"
+	if world.is_solid_cell(cell.x, cell.y):
+		return "solid_terrain"
+	if world.is_water_cell(cell.x, cell.y):
+		return "water"
+	var svc := service()
+	# Read the rules through the service's accessor: `catalog` is a field, not a
+	# method, and reading it directly is how a null reaches a clearance comparison.
+	var landmark_clear := int(svc.call(&"rule", "landmark_clearance_tiles", 5)) if svc != null else 5
+	var shortcut_clear := int(svc.call(&"rule", "shortcut_clearance_tiles", 4)) if svc != null else 4
+	var reach_default := int(svc.call(&"rule", "build_range_tiles", 6)) if svc != null else 6
+	if _near_authored_place(cell, landmark_clear):
+		return "protected_place"
+	if _on_route_detail(cell):
+		return "on_route"
+	if _near_shortcut(cell, shortcut_clear):
+		return "near_shortcut"
+	if player != null and is_instance_valid(player):
+		var origin := world.tile_of(player.global_position)
+		var reach := reach_default
+		if absi(cell.x - origin.x) > reach or absi(cell.y - origin.y) > reach:
+			return "out_of_range"
+	if selected_piece == "bed_wood" and room_topology.room_at(cell).is_empty():
+		return "bed_requires_room"
+	var layer := String(svc.call(&"occupancy_layer", selected_piece)) if svc != null else "object"
+	if not entity_at_layer(cell, layer).is_empty():
+		return "cell_occupied"
+	if _world_blocker_in_cell(cell):
+		return "world_blocker"
+	return ""
+
+
+## Terrain data alone omits physical props. Query the live world collision layer
+## and exclude our own build objects by ownership, so a floor can still coexist
+## with its wall or furniture while authored prop/terrain bodies remain protected.
+func _world_blocker_in_cell(cell: Vector2i) -> bool:
+	if not is_inside_tree() or get_world_2d() == null:
+		return false
+	var query := PhysicsShapeQueryParameters2D.new()
+	var rect := RectangleShape2D.new()
+	rect.size = Vector2(TILE - 2, TILE - 2)
+	query.shape = rect
+	query.transform = Transform2D(0.0, Vector2(cell.x * TILE + 8, cell.y * TILE + 8))
+	query.collision_mask = SOLID_LAYER_MASK
+	query.collide_with_areas = false
+	query.collide_with_bodies = true
+	for hit: Dictionary in get_world_2d().direct_space_state.intersect_shape(query, 64):
+		var collider: Variant = hit.get("collider")
+		if collider is Node and (collider as Node).get_parent() is SurvivalStructure:
+			continue
+		return true
+	return false
+
+
+func _near_authored_place(cell: Vector2i, clearance: int) -> bool:
+	if state == null:
+		return false
+	var data: Dictionary = world.data if world != null else {}
+	for raw: Variant in data.get("landmarks", []):
+		if not raw is Dictionary:
+			continue
+		var tile: Array = (raw as Dictionary).get("threshold", (raw as Dictionary).get("pos", []))
+		if tile.size() >= 2 and absi(cell.x - int(tile[0])) <= clearance \
+				and absi(cell.y - int(tile[1])) <= clearance:
+			return true
+	for raw: Variant in data.get("camps", []):
+		if not raw is Dictionary:
+			continue
+		var tile: Array = (raw as Dictionary).get("pos", [])
+		if tile.size() >= 2 and absi(cell.x - int(tile[0])) <= clearance \
+				and absi(cell.y - int(tile[1])) <= clearance:
+			return true
+	return false
+
+
+func _on_route_detail(cell: Vector2i) -> bool:
+	if world == null:
+		return false
+	var token: String = world.detail_code_at(Vector2(cell.x * TILE + 8, cell.y * TILE + 8))
+	return token in ["=", "+", ":"]
+
+
+func _near_shortcut(cell: Vector2i, clearance: int) -> bool:
+	if world == null:
+		return false
+	var data: Dictionary = world.data
+	for raw: Variant in data.get("shortcuts", []):
+		if not raw is Dictionary:
+			continue
+		var tile: Array = (raw as Dictionary).get("pos", [])
+		if tile.size() >= 2 and absi(cell.x - int(tile[0])) <= clearance \
+				and absi(cell.y - int(tile[1])) <= clearance:
+			return true
+	return false
+
+
+# Wall/door placement must not seal the actual Hero into a doorless room. This
+# is checked at commit time (including the transaction validator), not on every
+# preview frame. Examine only the connected proposed seal cluster and its bounded
+# local box; never flood the world-sized rectangle between unrelated houses.
+func _hero_exit_rejection(cell: Vector2i) -> String:
+	if selected_piece not in ["wall_wood", "door_wood", "chest_wood", "bed_wood"]:
+		return ""
+	var hero := player as CharacterBody2D
+	if hero == null or not is_instance_valid(hero):
+		return "hero_unavailable"
+	var hero_shape := hero.get_node_or_null("BodyShape") as CollisionShape2D
+	if hero_shape == null or hero_shape.shape == null:
+		return "hero_unavailable"
+	var projected_shape := RectangleShape2D.new()
+	projected_shape.size = Vector2(TILE - 2, TILE - 6)
+	if hero_shape.shape.collide(hero_shape.global_transform, projected_shape,
+			Transform2D(0.0, Vector2(cell.x * TILE + 8, cell.y * TILE + 5))):
+		return "hero_in_footprint"
+	if selected_piece in ["chest_wood", "bed_wood"]:
+		# Existing enclosed rooms already have a bounded topology. Treat this
+		# proposed one-cell object as blocked during the same live-shape exit
+		# search, including the door's outside cell. This does not purport to
+		# cover terrain-only enclosures, multi-cell stations or every trap.
+		var actor_cell := world.tile_of(hero.global_position)
+		var room_id: String = room_topology.room_at(actor_cell)
+		if not room_id.is_empty() and room_topology.room_at(cell) == room_id \
+				and not _projected_room_has_door_exit(actor_cell, room_id, room_topology, cell):
+			return "no_hero_exit"
+		return ""
+	var seals: Dictionary = {cell: {"piece": selected_piece, "cell": [cell.x, cell.y]}}
+	var queue: Array[Vector2i] = [cell]
+	var seen: Dictionary = {cell: true}
+	var cursor := 0
+	var lo := cell
+	var hi := cell
+	while cursor < queue.size():
+		if cursor >= 16384:
+			return "exit_check_limit"
+		var current := queue[cursor]
+		cursor += 1
+		lo = Vector2i(mini(lo.x, current.x), mini(lo.y, current.y))
+		hi = Vector2i(maxi(hi.x, current.x), maxi(hi.y, current.y))
+		for offset: Vector2i in ROOM_TOPOLOGY.NEIGHBOURS:
+			var next := current + offset
+			if seen.has(next):
+				continue
+			var piece := structure_node(entity_at_layer(next, "object"))
+			if piece == null or piece.piece_id not in ["wall_wood", "door_wood"]:
+				continue
+			seen[next] = true
+			seals[next] = {"piece": piece.piece_id, "cell": [next.x, next.y]}
+			queue.append(next)
+	var actor_cell := world.tile_of(hero.global_position)
+	if actor_cell.x < lo.x or actor_cell.y < lo.y or actor_cell.x > hi.x or actor_cell.y > hi.y:
+		return ""
+	lo -= Vector2i.ONE
+	hi += Vector2i.ONE
+	var width := hi.x - lo.x + 1
+	var height := hi.y - lo.y + 1
+	if width > 16384 or height > 16384 or width * height > 16384:
+		return "exit_check_limit"
+	# Include disconnected nested boundaries in the same bounded box, just as
+	# the real room model does; do not iterate every structure on the map.
+	for y in range(lo.y, hi.y + 1):
+		for x in range(lo.x, hi.x + 1):
+			var probe := Vector2i(x, y)
+			if seals.has(probe):
+				continue
+			var piece := structure_node(entity_at_layer(probe, "object"))
+			if piece != null and piece.piece_id in ["wall_wood", "door_wood"]:
+				seals[probe] = {"piece": piece.piece_id, "cell": [x, y]}
+	var predicted = ROOM_TOPOLOGY.new()
+	predicted.rebuild(seals)
+	if predicted.overflow_clusters > 0:
+		return "exit_check_limit"
+	var room_id: String = predicted.room_at(actor_cell)
+	if room_id.is_empty():
+		return ""
+	if _projected_room_has_door_exit(actor_cell, room_id, predicted, cell):
+		return ""
+	return "no_hero_exit"
+
+
+func _projected_room_has_door_exit(start: Vector2i, room_id: String, predicted,
+		projected_cell: Vector2i) -> bool:
+	var queue: Array[Vector2i] = [start]
+	var seen: Dictionary = {start: true}
+	var cursor := 0
+	while cursor < queue.size() and cursor < 16384:
+		var current := queue[cursor]
+		cursor += 1
+		for step: Vector2i in [Vector2i.UP, Vector2i.LEFT, Vector2i.RIGHT, Vector2i.DOWN]:
+			var next := current + step
+			var piece := structure_node(entity_at_layer(next, "object"))
+			var is_projected_door := next == projected_cell and selected_piece == "door_wood"
+			if is_projected_door or (piece != null and piece.piece_id == "door_wood"):
+				var body: StaticBody2D = null
+				if piece != null:
+					body = piece.get_node_or_null("Solid") as StaticBody2D
+				var ignored: RID = body.get_rid() if body != null else RID()
+				if _wake_cell_clear(next, ignored) and predicted.room_at(next + step) != room_id \
+						and _wake_cell_clear(next + step):
+					return true
+			if seen.has(next) or next == projected_cell or predicted.room_at(next) != room_id:
+				continue
+			seen[next] = true
+			if _wake_cell_clear(next):
+				queue.append(next)
+	return false
+
+
+# ---------------------------------------------------------------------------
+# placement
+# ---------------------------------------------------------------------------
+## The full placement action: validate, pay, create, and reflect.
+## Returns the service's result dictionary plus the human-readable reason.
+func try_place(cell: Vector2i, transaction_key := "") -> Dictionary:
+	if not _ready_built:
+		# No rebuilt layer means this system was never configured against a world:
+		# placing now would commit a structure that nothing on screen represents.
+		return {"ok": false, "reason": "not_configured"}
+	var local_reason := validate_cell(cell)
+	if local_reason.is_empty():
+		local_reason = _hero_exit_rejection(cell)
+	if not local_reason.is_empty():
+		_last_rejection = local_reason
+		placement_rejected.emit(local_reason)
+		return {"ok": false, "reason": local_reason}
+	var svc := service()
+	if svc == null:
+		return {"ok": false, "reason": "no_service"}
+	var key := transaction_key
+	if key.is_empty():
+		key = "%s%d,%d" % [String(svc.call(&"build_transaction_key")), cell.x, cell.y]
+	var result: Dictionary = svc.call(
+		&"place_structure", selected_piece, cell, key,
+		func() -> String:
+			var reason := validate_cell(cell)
+			return _hero_exit_rejection(cell) if reason.is_empty() else reason,
+	)
+	if not bool(result.get("ok", false)):
+		_last_rejection = String(result.get("reason", "rejected"))
+		placement_rejected.emit(_last_rejection)
+		return result
+	# `place_structure` emits `survival_state_changed`, and any world listening to
+	# it has already materialized this node by the time the call returns. Calling
+	# `_materialize` here would therefore create it twice — so the scene is brought
+	# in line through the one idempotent path instead, which also covers the case
+	# where nothing was listening.
+	reconcile_from_save()
+	placement_committed.emit(String(result.get("entity_id", "")), selected_piece, cell)
+	if state != null:
+		state.mark_dirty()
+	return result
+
+
+## Index of a piece's cost as a short readable string, e.g. "2 Oak Wood + 1 Iron Scrap".
+func cost_summary(piece_id: String) -> String:
+	var svc := service()
+	if svc == null:
+		return ""
+	var definition: Dictionary = svc.call(&"piece_definition", piece_id)
+	var cost: Dictionary = definition.get("cost", {})
+	var parts: Array[String] = []
+	for item_id: Variant in cost.keys():
+		var item: Dictionary = svc.call(&"item_definition", String(item_id))
+		parts.append("%d %s" % [int(cost[item_id]), String(item.get("label", item_id))])
+	return " + ".join(parts)
+
+
+# ---------------------------------------------------------------------------
+# build HUD
+# ---------------------------------------------------------------------------
+## The build modal's own surface: a full-screen click blocker plus a strip that
+## says what is being built and what it costs.
+##
+## Two things make this more than decoration:
+##
+## * The blocker is a [Control] that consumes the left click. The Knight resolves
+##   attacks from `_unhandled_input`, so a click that a Control consumed never
+##   becomes an attack — which is what lets placement and combat share one button
+##   without touching the player's input code.
+## * The costs are read from the catalog on every refresh, so the strip can never
+##   advertise a price the transaction will not charge.
+func _build_hud() -> void:
+	if _hud_layer != null:
+		return
+	_hud_layer = CanvasLayer.new()
+	_hud_layer.name = "BuildHud"
+	_hud_layer.layer = 6
+	add_child(_hud_layer)
+	_hud_root = Control.new()
+	_hud_root.name = "BuildRoot"
+	_hud_root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_hud_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_hud_layer.add_child(_hud_root)
+	var blocker := Control.new()
+	blocker.name = "ClickBlocker"
+	blocker.set_anchors_preset(Control.PRESET_FULL_RECT)
+	# STOP, not PASS: the point is to own the click while the modal is open.
+	blocker.mouse_filter = Control.MOUSE_FILTER_STOP
+	blocker.visible = false
+	_hud_root.add_child(blocker)
+	var panel := PanelContainer.new()
+	panel.name = "Strip"
+	panel.anchor_left = 0.0
+	panel.anchor_top = 1.0
+	panel.anchor_right = 1.0
+	panel.anchor_bottom = 1.0
+	panel.offset_top = -128.0
+	panel.offset_bottom = -18.0
+	panel.offset_left = 8.0
+	panel.offset_right = -8.0
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.visible = false
+	_hud_root.add_child(panel)
+	_hud_label = Label.new()
+	_hud_label.name = "Text"
+	_hud_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_hud_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_hud_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_hud_label.add_theme_font_size_override("font_size", 10)
+	_hud_label.add_theme_color_override("font_color", Color(0.94, 0.92, 0.84))
+	_hud_label.add_theme_color_override("font_outline_color", Color(0.04, 0.03, 0.06))
+	_hud_label.add_theme_constant_override("outline_size", 4)
+	_hud_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.add_child(_hud_label)
+	_refresh_hud()
+
+
+func _refresh_hud() -> void:
+	if _hud_root == null:
+		return
+	var blocker := _hud_root.get_node_or_null("ClickBlocker")
+	var panel := _hud_root.get_node_or_null("Strip") as Control
+	if blocker != null:
+		blocker.visible = active
+	if panel != null:
+		panel.visible = active
+	if _hud_label == null:
+		return
+	if not active:
+		_hud_label.text = ""
+		return
+	var parts: Array[String] = []
+	var svc := service()
+	var ids := BUILD_SLOTS
+	for index: int in ids.size():
+		var piece_id := ids[index]
+		var marker := ">" if piece_id == selected_piece else " "
+		var cost_text := ""
+		if svc != null:
+			var definition: Dictionary = svc.call(&"piece_definition", piece_id)
+			cost_text = _cost_text(definition.get("cost", {}))
+			var affordable := bool(svc.call(&"can_afford", definition.get("cost", {})))
+			if not affordable:
+				cost_text = "%s (short)" % cost_text
+		parts.append("%s[%d] %s %s" % [marker, index + 1,
+			piece_id.replace("_wood", "").capitalize(), cost_text])
+	_hud_label.text = "BUILD — click to place, B to close\n%s\n%s\n%s" % [
+		"   ".join(parts.slice(0, 3)), "   ".join(parts.slice(3, 6)), "   ".join(parts.slice(6, 9))]
+
+
+func _cost_text(cost: Dictionary) -> String:
+	var parts: Array[String] = []
+	for item_id: Variant in cost.keys():
+		parts.append("%d %s" % [int(cost[item_id]), String(item_id).replace("_", " ")])
+	return ", ".join(parts)
+
+
+## Test/UI surface: what the build strip is showing right now.
+## The full-screen build blocker deliberately consumes world combat clicks;
+## it must not suppress the build tool's own polled placement input.
+func is_build_click_blocker(control: Control) -> bool:
+	return _hud_root != null and control != null and control == _hud_root.get_node_or_null("ClickBlocker")
+
+
+func build_hud_status() -> Dictionary:
+	var blocker: Node = null
+	if _hud_root != null:
+		blocker = _hud_root.get_node_or_null("ClickBlocker")
+	return {
+		"active": active,
+		"blocker_visible": blocker != null and (blocker as Control).visible,
+		"text": _hud_label.text if _hud_label != null else "",
+	}
+
+
+# ---------------------------------------------------------------------------
+# preview
+# ---------------------------------------------------------------------------
+func _process(_delta: float) -> void:
+	if not active:
+		return
+	_update_preview()
+
+
+func _target_cell() -> Vector2i:
+	if world == null or player == null or not is_instance_valid(player):
+		return Vector2i(-1, -1)
+	var mouse := get_global_mouse_position()
+	if camera != null:
+		mouse = camera.get_global_mouse_position()
+	return Vector2i(int(floor(mouse.x / TILE)), int(floor(mouse.y / TILE)))
+
+
+func _update_preview() -> void:
+	if _preview == null:
+		return
+	var cell := _target_cell()
+	if cell.x < 0:
+		_hide_preview()
+		return
+	var frame: Dictionary = _frames.get(selected_piece, {})
+	_apply_frame(_preview, frame)
+	_preview.visible = _texture != null
+	var svc := service()
+	var cells: Array[Vector2i] = svc.call(&"footprint_cells", selected_piece, cell) if svc != null else [cell]
+	var height := 1
+	for occupied: Vector2i in cells:
+		height = maxi(height, occupied.y - cell.y + 1)
+	_preview.position = Vector2(cell.x * TILE, cell.y * TILE + TILE * height - int(frame.get("h", TILE)))
+	if _preview_frame != null:
+		var footprint: Dictionary = _frames.get("foundation_wood", {})
+		_apply_frame(_preview_frame, footprint)
+		_preview_frame.visible = _texture != null and not footprint.is_empty()
+		_preview_frame.position = Vector2(cell.x * TILE, cell.y * TILE)
+	var reason := validate_cell(cell)
+	# A ghost is tinted by legality: green where it would be paid for, red where the
+	# cell is refused. This is the readable affordance the top-down camera needs —
+	# the player sees *where* before committing to *what*.
+	_preview.modulate = Color(0.62, 1.0, 0.7, 0.66) if reason.is_empty() \
+		else Color(1.0, 0.62, 0.5, 0.5)
+
+
+func _apply_frame(sprite: Sprite2D, frame: Dictionary) -> void:
+	sprite.texture = _texture
+	if frame.is_empty():
+		return
+	sprite.region_enabled = true
+	sprite.region_rect = Rect2(
+		int(frame.get("x", 0)), int(frame.get("y", 0)),
+		int(frame.get("w", TILE)), int(frame.get("h", TILE)))
+
+
+func _hide_preview() -> void:
+	if _preview != null:
+		_preview.visible = false
+	if _preview_frame != null:
+		_preview_frame.visible = false
+
+
+func last_rejection() -> String:
+	return _last_rejection
+
+
+func has_preview() -> bool:
+	return _preview != null and _preview.visible
+
+
+func preview_cell() -> Vector2i:
+	return _target_cell()
+
+
+## Test/UI surface: which piece the preview is currently showing and whether that
+## cell is legal right now.
+func preview_state() -> Dictionary:
+	var cell := _target_cell()
+	return {
+		"active": active,
+		"piece": selected_piece,
+		"cell": cell,
+		"visible": has_preview(),
+		"reason": validate_cell(cell) if cell.x >= 0 else "no_target",
+	}

@@ -1,0 +1,136 @@
+[
+  {
+    "slot": 1,
+    "level_id": "chapter_1_level_1",
+    "status": "CANDIDATE \u2014 pending human review",
+    "stations": [
+      "checkpoint",
+      "checkpoint_2",
+      "entry",
+      "exit",
+      "landmark",
+      "landmark_2",
+      "landmark_3"
+    ]
+  },
+  {
+    "slot": 2,
+    "level_id": "chapter_1_level_2",
+    "status": "CANDIDATE \u2014 pending human review",
+    "stations": [
+      "checkpoint",
+      "checkpoint_2",
+      "entry",
+      "exit",
+      "landmark",
+      "landmark_2",
+      "landmark_3",
+      "landmark_4"
+    ]
+  },
+  {
+    "slot": 3,
+    "level_id": "chapter_1_level_3",
+    "status": "CANDIDATE \u2014 pending human review",
+    "stations": [
+      "checkpoint",
+      "checkpoint_2",
+      "entry",
+      "exit",
+      "landmark",
+      "landmark_2",
+      "landmark_3",
+      "landmark_4",
+      "landmark_5"
+    ]
+  },
+  {
+    "slot": 4,
+    "level_id": "chapter_1_level_4",
+    "status": "CANDIDATE \u2014 pending human review",
+    "stations": [
+      "checkpoint",
+      "checkpoint_2",
+      "entry",
+      "exit",
+      "landmark",
+      "landmark_2",
+      "landmark_3",
+      "landmark_4"
+    ]
+  },
+  {
+    "slot": 5,
+    "level_id": "chapter_1_level_5",
+    "status": "CANDIDATE \u2014 pending human review",
+    "stations": [
+      "boss",
+      "checkpoint",
+      "checkpoint_2",
+      "entry",
+      "exit",
+      "landmark",
+      "landmark_2",
+      "landmark_3",
+      "landmark_4"
+    ]
+  },
+  {
+    "slot": 6,
+    "level_id": "chapter_1_level_6",
+    "status": "CANDIDATE \u2014 pending human review",
+    "stations": [
+      "checkpoint",
+      "checkpoint_2",
+      "entry",
+      "exit",
+      "landmark",
+      "landmark_2",
+      "landmark_3"
+    ]
+  },
+  {
+    "slot": 7,
+    "level_id": "chapter_1_level_7",
+    "status": "CANDIDATE \u2014 pending human review",
+    "stations": [
+      "checkpoint",
+      "entry",
+      "exit",
+      "landmark"
+    ]
+  },
+  {
+    "slot": 8,
+    "level_id": "chapter_1_level_8",
+    "status": "CANDIDATE \u2014 pending human review",
+    "stations": [
+      "boss",
+      "checkpoint",
+      "entry",
+      "exit"
+    ]
+  },
+  {
+    "slot": 9,
+    "level_id": "chapter_1_level_9",
+    "status": "CANDIDATE \u2014 pending human review",
+    "stations": [
+      "boss",
+      "checkpoint",
+      "entry",
+      "exit"
+    ]
+  },
+  {
+    "slot": 10,
+    "level_id": "chapter_1_level_10",
+    "status": "CANDIDATE \u2014 pending human review",
+    "stations": [
+      "boss",
+      "checkpoint",
+      "entry",
+      "exit"
+    ]
+  }
+]

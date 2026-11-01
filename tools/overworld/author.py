@@ -1,0 +1,2321 @@
+#!/usr/bin/env python3
+"""Author the Hollow Marches overworld.
+
+Single source of truth for the region's geography AND its gameplay document.
+
+Terrain is grown from two smooth fields (elevation and wetness) plus authored
+landforms, so the ground reads as one continuous country rather than ten
+isolated biomes. Every transition is dithered through a threshold band, which is
+what stops it looking like a colour chart.
+
+The bake step is also the correctness gate: after the layers are composed, a
+flood fill from the refuge proves that all ten dungeon thresholds, all four
+camps and all eight discoveries are reachable on foot with every shortcut
+closed, and again with them open. Unreachable content is a hard error.
+
+Outputs:
+  data/overworld/hollow_marches.json          world document (gameplay truth)
+  data/overworld/hollow_marches_layers.json   baked ground/detail/solid grids
+  data/overworld/hollow_marches_props.json    baked prop placement
+
+Run: python3 tools/overworld/author.py
+"""
+
+from __future__ import annotations
+
+import json
+import math
+import os
+import sys
+import zlib
+from collections import deque
+
+ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+DATA_DIR = os.path.join(ROOT, "data", "overworld")
+
+W, H = 384, 256
+TILE = 16
+
+# ---------------------------------------------------------------------------
+# layer buffers
+# ---------------------------------------------------------------------------
+ground = ["."] * (W * H)
+detail = ["."] * (W * H)
+solid = ["."] * (W * H)
+props: list[dict] = []
+
+
+def idx(x, y):
+    return y * W + x
+
+
+def inside(x, y):
+    return 0 <= x < W and 0 <= y < H
+
+
+def get(layer, x, y):
+    if not inside(x, y):
+        return "."
+    return layer[idx(x, y)]
+
+
+def put(layer, x, y, code):
+    if inside(x, y):
+        layer[idx(x, y)] = code
+
+
+# ---------------------------------------------------------------------------
+# deterministic noise
+# ---------------------------------------------------------------------------
+def h01(*values):
+    h = 2166136261
+    for v in values:
+        h ^= int(v * 7919) & 0xFFFFFFFF
+        h = (h * 16777619) & 0xFFFFFFFF
+    return ((h >> 8) & 0xFFFF) / 65536.0
+
+
+def vnoise(x, y, scale, seed=0):
+    fx, fy = x / scale, y / scale
+    x0, y0 = int(math.floor(fx)), int(math.floor(fy))
+    tx, ty = fx - x0, fy - y0
+    tx = tx * tx * (3 - 2 * tx)
+    ty = ty * ty * (3 - 2 * ty)
+    a = h01(seed, x0, y0)
+    b = h01(seed, x0 + 1, y0)
+    c = h01(seed, x0, y0 + 1)
+    d = h01(seed, x0 + 1, y0 + 1)
+    return (a * (1 - tx) + b * tx) * (1 - ty) + (c * (1 - tx) + d * tx) * ty
+
+
+def fbm(x, y, seed=0, octaves=3, scale=26.0):
+    total = 0.0
+    amp = 1.0
+    norm = 0.0
+    s = scale
+    for i in range(octaves):
+        total += vnoise(x, y, s, seed + i) * amp
+        norm += amp
+        amp *= 0.55
+        s *= 0.45
+    return total / norm
+
+
+# ---------------------------------------------------------------------------
+# geometry
+# ---------------------------------------------------------------------------
+def ellipse(cx, cy, rx, ry, wobble=0.0, seed=0):
+    for y in range(int(cy - ry) - 5, int(cy + ry) + 6):
+        for x in range(int(cx - rx) - 5, int(cx + rx) + 6):
+            dx = (x - cx) / max(0.001, rx)
+            dy = (y - cy) / max(0.001, ry)
+            d = math.sqrt(dx * dx + dy * dy)
+            if wobble:
+                d += (h01(seed, x // 3, y // 3) - 0.5) * wobble
+            if d <= 1.0:
+                yield x, y
+
+
+def dist_to_segment(px, py, ax, ay, bx, by):
+    vx, vy = bx - ax, by - ay
+    wx, wy = px - ax, py - ay
+    seg = vx * vx + vy * vy
+    t = 0.0 if seg <= 0.0001 else max(0.0, min(1.0, (wx * vx + wy * vy) / seg))
+    dx = ax + t * vx - px
+    dy = ay + t * vy - py
+    return math.sqrt(dx * dx + dy * dy), t
+
+
+def polyline(points, half_width, taper=False):
+    seg = [math.hypot(points[i + 1][0] - points[i][0], points[i + 1][1] - points[i][1])
+           for i in range(len(points) - 1)]
+    total = max(0.001, sum(seg))
+    run = 0.0
+    for i in range(len(points) - 1):
+        ax, ay = points[i]
+        bx, by = points[i + 1]
+        ln = seg[i]
+        pad = int(half_width) + 3
+        for y in range(int(min(ay, by)) - pad, int(max(ay, by)) + pad + 1):
+            for x in range(int(min(ax, bx)) - pad, int(max(ax, bx)) + pad + 1):
+                d, t = dist_to_segment(x, y, ax, ay, bx, by)
+                hw = half_width
+                if taper:
+                    gt = (run + t * ln) / total
+                    hw = half_width * (0.5 + 0.5 * min(1.0, min(gt, 1 - gt) * 5))
+                if d <= hw:
+                    yield x, y, (run + t * ln) / total
+        run += ln
+
+
+def point_in_poly(x, y, poly):
+    inside_ = False
+    n = len(poly)
+    j = n - 1
+    for i in range(n):
+        xi, yi = poly[i]
+        xj, yj = poly[j]
+        if (yi > y) != (yj > y) and x < (xj - xi) * (y - yi) / (yj - yi + 1e-9) + xi:
+            inside_ = not inside_
+        j = i
+    return inside_
+
+
+# ---------------------------------------------------------------------------
+# painting helpers
+# ---------------------------------------------------------------------------
+def blend_put(layer, x, y, code, alt=None, band=0.0, value=0.5, threshold=0.5, seed=0,
+              clump=1):
+    """Write `code`, or `alt` where a field crosses a threshold.
+
+    `value` is a smooth field (normally `patch_field`). Where it is well above the
+    threshold the cell is `alt`, well below it is `code`, and within `band` of the
+    threshold the boundary is roughened by a small noise, so the edge is ragged
+    rather than a contour line.
+
+    The previous version of this function is worth recording because it looks
+    reasonable and was wrong in a way that dominated the world map. It decided
+    with `h01(seed, x, y) > t` *inside* the band, where `t` mapped the field's
+    position in the band to 0..1 - so the middle of every band, the part that
+    should be the most decisive, became a per-tile coin flip, and every material
+    mix in the world printed as a scatter of isolated 16 px squares of the other
+    material. The forest floor was a quilt of random rectangles. A mix has to be
+    a *threshold on a field with a perturbed edge*, not a dither inside a band.
+    """
+    if not inside(x, y):
+        return
+    if alt and value > threshold:
+        perturbed = value + (vnoise(x, y, 2.5, seed) - 0.5) * band
+        put(layer, x, y, alt if perturbed > threshold else code)
+        return
+    put(layer, x, y, code)
+
+
+def patch_field(seed, x, y, scale=7.0):
+    """A smooth field for material mixes, sampled per tile.
+
+    Ground mixes in this world were fed `h01(seed, x // 2, y // 2)` - white noise
+    at two-tile resolution - so a moor with mud in it printed as a stack of
+    random rectangles. `fbm` at this scale wanders, which is what a patch of
+    different ground actually does.
+    """
+    return fbm(x, y, seed=seed, scale=scale, octaves=3)
+
+
+def road(points, half_width=2.4, kind="=", *, ground_code="d", seed=0):
+    cells = set()
+    for x, y, t in polyline(points, half_width, taper=True):
+        if get(ground, x, y) in ("~", "-"):
+            # a ford, not a swimming lesson: the road can always be walked
+            put(ground, x, y, "-")
+        else:
+            put(ground, x, y, ground_code)
+        put(detail, x, y, kind)
+        put(solid, x, y, ".")
+        cells.add((x, y))
+    # scatter a little wear and gravel in the verges
+    for x, y in list(cells):
+        for dy in (-2, -1, 1, 2):
+            for dx in (-2, -1, 1, 2):
+                if abs(dx) + abs(dy) > 2:
+                    continue
+                nx, ny = x + dx, y + dy
+                if (nx, ny) in cells:
+                    continue
+                if h01(seed, nx, ny) < 0.18 and get(ground, nx, ny) not in ("f", "~", "-", "v", "y"):
+                    put(ground, nx, ny, "g")
+    return cells
+
+
+def river(points, half_width, *, shallow_edges=True):
+    core = {(x, y) for x, y, _ in polyline(points, half_width - 0.6)}
+    edge = {(x, y) for x, y, _ in polyline(points, half_width + 0.9)} - core
+    for x, y in edge:
+        if get(solid, x, y) == ".":
+            put(ground, x, y, "-")
+    for x, y in core:
+        if get(solid, x, y) == ".":
+            put(ground, x, y, "~")
+    return core | edge
+
+
+def ridge(points, half_width, *, seed=0, jitter=1.6):
+    """Impassable rock mass with a noisy silhouette."""
+    out = set()
+    pad = int(half_width) + 6
+    xs = [p[0] for p in points]
+    ys = [p[1] for p in points]
+    for y in range(int(min(ys)) - pad, int(max(ys)) + pad + 1):
+        for x in range(int(min(xs)) - pad, int(max(xs)) + pad + 1):
+            d = min(dist_to_segment(x, y, points[i][0], points[i][1],
+                                    points[i + 1][0], points[i + 1][1])[0]
+                    for i in range(len(points) - 1))
+            limit = half_width + (h01(seed, x, y) - 0.5) * jitter
+            if d <= limit and inside(x, y):
+                put(solid, x, y, "#")
+                out.add((x, y))
+    return out
+
+
+def wall(points, half_width=1.0):
+    out = set()
+    for x, y, _t in polyline(points, half_width):
+        put(solid, x, y, "W")
+        out.add((x, y))
+    return out
+
+
+def thicket(cells, density=0.55, seed=0):
+    """A stand of trees: solid mass, ragged fringe.
+
+    This used per-tile white noise at 40-62 %, which is a coin flip per cell and
+    therefore prints as a checkerboard: isolated single-tree colliders spread evenly
+    across the whole region, each one a 16 px dark tile. Two forests in the
+    north-west of the map were the largest "flat" areas a player crosses, and they
+    read as static rather than as woodland.
+
+    Now the density becomes a threshold on a coherent field, so trees cluster: the
+    interior of the region passes the threshold solidly and the boundary breaks up
+    into tongues. `density` keeps its old meaning - the fraction of the area that is
+    wooded - the *arrangement* is what changed.
+    """
+    out = set()
+    threshold = 0.5 + (0.55 - density) * 0.6
+    for x, y in cells:
+        field = fbm(x, y, seed=seed, scale=2.6, octaves=3)
+        if field > threshold:
+            put(solid, x, y, "T")
+            out.add((x, y))
+    return out
+
+
+def block_rect(x0, y0, x1, y1, code="#"):
+    for y in range(int(y0), int(y1) + 1):
+        for x in range(int(x0), int(x1) + 1):
+            put(solid, x, y, code)
+
+
+def clear_rect(x0, y0, x1, y1):
+    for y in range(int(y0), int(y1) + 1):
+        for x in range(int(x0), int(x1) + 1):
+            put(solid, x, y, ".")
+
+
+def plaza(cx, cy, r, *, code="f", rim="g", seed=0, ry=None):
+    ry = ry if ry is not None else r * 0.62
+    for x, y in ellipse(cx, cy, r, ry, wobble=0.35, seed=seed):
+        put(ground, x, y, code)
+        put(solid, x, y, ".")
+        if h01(seed + 5, x, y) < 0.18:
+            put(detail, x, y, "*")
+    for x, y in ellipse(cx, cy, r + 2.6, ry + 2.0, wobble=0.5, seed=seed + 1):
+        if get(ground, x, y) not in (code, "=", "+"):
+            put(ground, x, y, rim)
+            put(solid, x, y, ".")
+
+
+def approach(points, half_width=1.8):
+    for x, y, _t in polyline(points, half_width):
+        put(ground, x, y, "f")
+        put(detail, x, y, "+")
+        put(solid, x, y, ".")
+
+
+def add_prop(frame, x, y, *, flags="", z=0, lit=False):
+    props.append({
+        "frame": frame,
+        "x": round(float(x), 1),
+        "y": round(float(y), 1),
+        "flags": flags,
+        "z": z,
+        "lit": lit,
+    })
+
+
+def tile_pos(x, y):
+    return x * TILE + 8, y * TILE + 8
+
+
+def _load_prop_meta():
+    path = os.path.join(DATA_DIR, "overworld_props.json")
+    if not os.path.exists(path):
+        return {}
+    with open(path) as f:
+        return json.load(f).get("frames", {})
+
+
+PROP_META = _load_prop_meta()
+
+## Prop frames that get a collision body at runtime. Kept in step with
+## OverworldWorld.SOLID_PROP_PREFIXES; `validate()` refuses to bake a world where
+## one of them stands in a walking lane or on an interaction cell.
+## Base ids the runtime resolves to real frames (OverworldWorld.SHORTCUT_FRAME_ALIASES).
+SHORTCUT_ALIAS_KEYS = ("short_bridge", "short_rubble", "short_conduit", "short_valve")
+
+COLLIDER_PROP_PREFIXES = (
+    "lm_", "short_bridge", "short_rubble", "short_conduit", "short_valve",
+    "wall_stub", "tree_dead", "tree_pine", "column", "statue",
+    "camp_tent", "cart", "sarcophagus",
+)
+
+
+# ---------------------------------------------------------------------------
+# the world document
+# ---------------------------------------------------------------------------
+LANDMARKS = [
+    ("lm_crypt", "chapter_1_level_1", "Crypt Entrance", "western_funerary_quarter",
+     (88, 180), "lm_crypt", "undead", "The Sealed Steps"),
+    ("lm_ossuary", "chapter_1_level_2", "Ossuary Fork", "ossuary_ravines",
+     (64, 128), "lm_ossuary", "bone", "The Bone Galleries"),
+    ("lm_archive", "chapter_1_level_3", "Crossfire Archive", "central_ruins",
+     (132, 152), "lm_archive", "knowledge", "Crossfire Archive"),
+    ("lm_reliquary", "chapter_1_level_4", "Spiral Reliquary", "sacred_terraces",
+     (200, 136), "lm_reliquary", "sacred", "The Spiral Reliquary"),
+    ("lm_crucible", "chapter_1_level_5", "Blood Crucible", "ritual_basin",
+     (192, 192), "lm_crucible", "ritual", "The Blood Crucible"),
+    ("lm_relay", "chapter_1_level_6", "Soul Anchor Relay", "relay_watershed",
+     (288, 140), "lm_relay", "soul", "Soul Anchor Relay"),
+    ("lm_beacon", "chapter_1_level_7", "The Failing Beacon", "watch_ridge",
+     (208, 80), "lm_beacon", "fire", "The Failing Beacon"),
+    ("lm_divided", "chapter_1_level_8", "Divided Reliquary", "northern_precinct",
+     (272, 72), "lm_divided", "schism", "The Divided Reliquary"),
+    ("lm_gate", "chapter_1_level_9", "Crimson Gate", "fortified_pass",
+     (208, 40), "lm_gate", "military", "The Crimson Gate"),
+    ("lm_throne", "chapter_1_level_10", "Castellan Throne", "citadel",
+     (280, 36), "lm_throne", "throne", "Castellan's Citadel"),
+]
+
+## Boulder silhouettes, small to large. Six of them, because the plateaus carry a few
+## hundred placements at even density and two or three sprites over that many cells is
+## a stamp the eye locks onto immediately.
+ROCK_FRAMES = ["rock_a", "rock_b", "rock_c", "rock_d", "rock_e", "rock_f"]
+
+CAMPS = [
+    ("camp_refuge", "Ashen Refuge", (56, 216), True),
+    ("camp_crossroads", "Wayfarer Stones", (152, 188), False),
+    ("camp_relay_base", "Relay Foot", (248, 158), False),
+    ("camp_ridge", "Watch Ridge Camp", (208, 104), False),
+]
+
+DISCOVERIES = [
+    ("d_crypt_offer", (76, 196), "coin_cache", {"account": 40}),
+    ("d_ossuary_stash", (48, 146), "material_cache", {"hero_materials": 1}),
+    ("d_archive_lore", (146, 138), "lore", {}),
+    ("d_shrine_grove", (176, 118), "shrine", {"restore": 0.5}),
+    ("d_crucible_cove", (200, 226), "material_cache", {"monster_fragments": 1}),
+    ("d_relay_shard", (312, 156), "sigil_cache", {"sigils": 1}),
+    ("d_quartermaster", (232, 96), "coin_cache", {"account": 80}),
+    ("d_gate_plunder", (184, 52), "material_cache", {"hero_materials": 2, "monster_fragments": 1}),
+]
+
+SHORTCUTS = [
+    ("short_crucible_bridge", "broken_bridge", (184, 210), "chapter_1_level_5",
+     [(-6, -2), (6, 2)], "The old span is down. Relight the Crucible and its span returns."),
+    ("short_relay_power", "powered_conduit", (256, 125), "chapter_1_level_6",
+     [(-4, -3), (4, 3)], "The conduit is dark. Wake the Soul Anchor and it will carry you up the ridge."),
+    ("short_beacon_road", "rubble_block", (208, 96), "chapter_1_level_7",
+     [(-5, -4), (5, 4)], "A fall of stone blocks the ridge stair. Light the Beacon and the stair is cleared."),
+    ("short_gate_valve", "gate_valve", (233, 50), "chapter_1_level_9",
+     [(-3, -3), (3, 3)], "The valve is sealed. Hold the Crimson Gate and the inner postern opens."),
+]
+
+
+def stable_seed(text):
+    """Deterministic seed for a string.
+
+    Python's builtin `hash()` is salted per process, which made the bake
+    non-reproducible: two runs of `author.py` produced slightly different
+    props and counts, so the committed JSON could never be reproduced and the
+    preview drifted from the world. crc32 is stable across processes,
+    platforms and Python versions.
+    """
+    return zlib.crc32(text.encode("utf-8")) & 0x3FF
+
+
+## Hazards are authored rects: (id, (x, y, w, h), label). They drain faster
+## than the open wilds and are the only reason a player ever detours.
+HAZARDS = [
+    ("crucible_basin", (160, 184, 64, 40), "The basin's heat"),
+    ("fen_marsh", (232, 196, 104, 48), "Fen rot"),
+    ("relay_watershed", (246, 122, 62, 34), "Cold conduit bleed"),
+]
+
+
+def carve_rect(kind, tx, ty):
+    """The solid band each shortcut occupies while closed.
+
+    One definition, used by the painter, the reachability gate and the emitted
+    world document, so the collision the runtime opens is exactly the collision
+    the geography baked. Every rect must be fully solid at bake time (checked in
+    `validate()`).
+    """
+    return {
+        "broken_bridge": (tx - 3, ty - 1, tx + 3, ty + 1),
+        "powered_conduit": (tx - 2, ty - 3, tx + 2, ty + 3),
+        "rubble_block": (tx - 4, ty - 3, tx + 4, ty + 2),
+        "gate_valve": (tx - 1, ty - 2, tx + 1, ty + 2),
+    }[kind]
+
+
+# ---------------------------------------------------------------------------
+# build
+# ---------------------------------------------------------------------------
+def build_fields():
+    """Elevation and wetness, then the base ground from their thresholds."""
+    height = [[0.0] * W for _ in range(H)]
+    wet = [[0.0] * W for _ in range(H)]
+    for y in range(H):
+        for x in range(W):
+            # the frontier climbs to the north
+            north = max(0.0, 1.0 - y / 200.0)
+            height[y][x] = 0.30 + 0.34 * fbm(x, y, seed=101, scale=58) + 0.34 * north
+            wet[y][x] = 0.28 + 0.62 * fbm(x, y, seed=202, scale=44)
+    return height, wet
+
+
+def paint_base(height, wet):
+    for y in range(H):
+        for x in range(W):
+            hv = height[y][x]
+            wv = wet[y][x]
+            if hv > 0.80:
+                blend_put(ground, x, y, "r", "g", 0.05, hv, 0.80, seed=1)
+            elif hv > 0.70:
+                blend_put(ground, x, y, "g", "r", 0.05, hv, 0.70, seed=2)
+            elif wv > 0.74:
+                blend_put(ground, x, y, "b", ";", 0.05, wv, 0.74, seed=3)
+            elif wv > 0.61:
+                blend_put(ground, x, y, ";", "b", 0.05, wv, 0.61, seed=4)
+            elif wv < 0.36:
+                blend_put(ground, x, y, "d", ",", 0.05, wv, 0.36, seed=5)
+            else:
+                blend_put(ground, x, y, ",", ";", 0.06, wv, 0.50, seed=6)
+
+
+def paint_landforms():
+    # far mountains: a wall across the north, then down both flanks
+    ridge([(-30, 10), (50, 4), (130, 12), (196, 4), (262, 8), (330, 2), (420, 10)], 10, seed=201)
+    ridge([(376, -20), (382, 60), (372, 130), (378, 200), (370, 280)], 10, seed=202)
+    ridge([(-20, -20), (-12, 60), (-8, 130), (4, 200), (-8, 280)], 10, seed=203)
+    ridge([(330, 60), (344, 76), (352, 40), (366, 20)], 7, seed=204)
+
+    # southern marsh: the sea of reeds the road turns away from
+    for x, y in ellipse(196, 268, 250, 30, wobble=0.5, seed=210):
+        blend_put(ground, x, y, "b", ";", 0.2, fbm(x, y, seed=211, scale=3.2, octaves=2), 0.5, seed=212)
+    for x, y in ellipse(196, 284, 250, 26, wobble=0.4, seed=213):
+        put(solid, x, y, "#" if h01(214, x, y) < 0.55 else ".")
+
+    # the western burial fields: pale dry ground, the oldest part of the frontier
+    for x, y in ellipse(76, 156, 62, 54, wobble=0.55, seed=220):
+        blend_put(ground, x, y, "d", ";", 0.18, fbm(x, y, seed=221, scale=14), 0.42, seed=222)
+
+    # the central ruins: broken paving in a bowl of gravel
+    for x, y in ellipse(132, 152, 32, 24, wobble=0.45, seed=230):
+        blend_put(ground, x, y, "g", "f", 0.22, fbm(x, y, seed=231, scale=3.2, octaves=2), 0.5, seed=232)
+    for x, y in ellipse(130, 150, 21, 15, wobble=0.5, seed=233):
+        if h01(234, x, y) < 0.72:
+            put(ground, x, y, "f")
+
+    # the sacred terraces climbing to the Reliquary
+    for x, y in ellipse(200, 138, 34, 22, wobble=0.4, seed=240):
+        blend_put(ground, x, y, "r", "f", 0.12, patch_field(241, x, y), 0.5, seed=242)
+    for x, y in ellipse(199, 137, 22, 13, wobble=0.45, seed=243):
+        put(ground, x, y, "f")
+
+    # the ritual basin: a sunken bowl of ash with dried blood at its floor
+    for x, y in ellipse(192, 194, 38, 24, wobble=0.45, seed=250):
+        blend_put(ground, x, y, "a", "v", 0.11, patch_field(251, x, y), 0.45, seed=252)
+    for x, y in ellipse(192, 194, 24, 14, wobble=0.5, seed=253):
+        put(ground, x, y, "v")
+    for x, y in ellipse(192, 194, 11, 6, wobble=0.5, seed=254):
+        put(ground, x, y, "m")
+
+    # the relay watershed: cold wet flats braided with conduit stone
+    for x, y in ellipse(288, 142, 40, 30, wobble=0.45, seed=260):
+        blend_put(ground, x, y, ";", "m", 0.12, patch_field(261, x, y, 16), 0.5, seed=262)
+    for x, y in ellipse(292, 144, 26, 17, wobble=0.4, seed=263):
+        blend_put(ground, x, y, "y", ";", 0.11, patch_field(264, x, y), 0.5, seed=265)
+
+    # the watch ridge: bare wind-scoured rock above the tree line
+    for x, y in ellipse(210, 84, 42, 24, wobble=0.4, seed=270):
+        blend_put(ground, x, y, "r", "g", 0.14, patch_field(271, x, y, 12), 0.5, seed=272)
+    for x, y in ellipse(208, 82, 24, 13, wobble=0.5, seed=273):
+        if h01(274, x, y) < 0.7:
+            put(ground, x, y, "g")
+
+    # the northern precinct: the monastery's gravel court
+    for x, y in ellipse(272, 74, 28, 18, wobble=0.4, seed=280):
+        blend_put(ground, x, y, "g", "f", 0.12, patch_field(281, x, y), 0.5, seed=282)
+    for x, y in ellipse(272, 74, 16, 10, wobble=0.5, seed=283):
+        put(ground, x, y, "f")
+
+    # the pass: wind-scoured stone squeezed between mountain walls
+    for x, y in ellipse(214, 44, 34, 15, wobble=0.35, seed=290):
+        blend_put(ground, x, y, "g", "r", 0.14, patch_field(291, x, y), 0.5, seed=292)
+    # the citadel plateau
+    for x, y in ellipse(284, 38, 30, 17, wobble=0.3, seed=293):
+        put(ground, x, y, "f")
+
+    # the southern refuge: a defended hollow on the last dry ground
+    for x, y in ellipse(58, 220, 42, 19, wobble=0.4, seed=300):
+        blend_put(ground, x, y, "d", "f", 0.13, patch_field(301, x, y), 0.5, seed=302)
+    for x, y in ellipse(58, 222, 23, 11, wobble=0.45, seed=303):
+        put(ground, x, y, "f")
+
+    # the south-east fen: dead water nobody garrisons
+    for x, y in ellipse(272, 216, 56, 26, wobble=0.5, seed=310):
+        blend_put(ground, x, y, "b", "m", 0.13, patch_field(311, x, y, 13), 0.5, seed=312)
+
+
+def paint_water():
+    # the Soul Relay river: born in the northern mountains, feeds the basin,
+    # drains through the southern fen
+    river([(298, 8), (294, 30), (290, 52), (286, 74), (280, 96), (274, 118),
+           (268, 136), (258, 156), (246, 172), (236, 186), (228, 200),
+           (224, 214), (226, 232), (232, 252)], 2.6)
+    # tributary out of the eastern hills
+    river([(360, 122), (342, 130), (326, 138), (310, 142), (298, 143)], 1.8)
+    # the crucible's overflow west into the fen
+    river([(216, 210), (208, 218), (202, 228), (206, 244)], 1.8)
+    # the thin stream the broken bridge crosses
+    river([(152, 212), (166, 214), (182, 212), (196, 208), (210, 208)], 1.7)
+    # the western spring above the ossuary ravines
+    river([(42, 116), (52, 132), (58, 148), (54, 164), (48, 178)], 1.5)
+
+
+def paint_barriers():
+    # ossuary ravines: two steep walls the burial road threads between
+    ridge([(26, 134), (44, 128), (58, 118), (76, 114)], 3.2, seed=401)
+    ridge([(34, 162), (56, 158), (78, 150), (96, 148), (114, 140)], 2.8, seed=402)
+    # the western march wall
+    ridge([(8, 92), (12, 132), (8, 170), (14, 206), (10, 244)], 5.0, seed=403)
+    # the archive's terraced retaining wall
+    ridge([(110, 170), (126, 174), (144, 172), (158, 164)], 2.0, seed=404)
+    # the terrace escarpment up to the Reliquary, with one stair at x=200
+    escarp = list(polyline([(168, 156), (182, 160), (198, 162), (214, 160), (228, 154)], 2.2))
+    for x, y, _t in escarp:
+        if 196 <= x <= 204 and y > 158:
+            continue
+        put(solid, x, y, "#")
+    # the crucible rim, with a throat on the north-west where the road enters
+    rim = list(polyline([(158, 180), (162, 198), (172, 214), (190, 222), (210, 220),
+                         (224, 208), (230, 192), (228, 176)], 2.0))
+    for x, y, _t in rim:
+        if (176 <= x <= 190 and y < 188) or (222 <= x <= 232 and 196 <= y <= 210):
+            continue
+        put(solid, x, y, "#")
+    # the ridge that walls the basin off from the watershed
+    ridge([(230, 184), (242, 172), (250, 160)], 1.8, seed=405)
+    # the watch ridge's south face
+    ridge([(150, 110), (168, 106), (186, 102), (196, 98)], 3.0, seed=406)
+    ridge([(234, 98), (252, 94), (270, 94), (288, 98), (302, 106)], 2.4, seed=407)
+    # the shelf the beacon stands above
+    ridge([(184, 70), (204, 66), (226, 68), (244, 72)], 1.4, seed=408)
+    # the northern mountain wall either side of the pass
+    ridge([(142, 32), (162, 26), (178, 24)], 5.0, seed=409)
+    ridge([(248, 24), (266, 26), (288, 22)], 4.4, seed=410)
+
+
+def paint_forests():
+    thicket(ellipse(96, 78, 34, 24, wobble=0.6, seed=501), 0.62, 502)
+    thicket(ellipse(56, 62, 30, 22, wobble=0.6, seed=503), 0.5, 504)
+    thicket(ellipse(338, 202, 26, 18, wobble=0.6, seed=505), 0.55, 506)
+    thicket(ellipse(154, 234, 22, 12, wobble=0.6, seed=507), 0.45, 508)
+    thicket(ellipse(118, 42, 22, 14, wobble=0.6, seed=509), 0.5, 510)
+    thicket(ellipse(150, 96, 16, 10, wobble=0.6, seed=511), 0.4, 512)
+
+
+def paint_roads():
+    road([(58, 228), (64, 214), (72, 200), (82, 190), (88, 184)], 2.6, seed=601)
+    road([(88, 184), (80, 168), (72, 154), (66, 142), (64, 132)], 2.4, seed=602)
+    road([(64, 132), (78, 124), (94, 126), (108, 134), (120, 144), (130, 152)], 2.4, seed=603)
+    road([(130, 152), (138, 168), (146, 182), (152, 190)], 2.4, seed=604)
+    road([(152, 190), (166, 196), (180, 198), (192, 196)], 2.4, seed=605)
+    road([(192, 196), (194, 182), (196, 168), (198, 154), (200, 142)], 2.4, seed=606)
+    road([(130, 152), (146, 146), (162, 144), (178, 146), (194, 142)], 2.6, seed=607)
+    road([(202, 140), (220, 140), (240, 144), (258, 146), (274, 146), (288, 144)], 2.6, seed=608)
+    road([(288, 144), (280, 132), (270, 126), (258, 124), (246, 118), (234, 110),
+          (220, 106), (208, 104)], 2.4, seed=609)
+    road([(208, 104), (208, 96), (208, 88)], 2.2, seed=610)
+    road([(210, 84), (224, 78), (240, 74), (256, 72), (270, 74)], 2.4, seed=611)
+    road([(272, 74), (262, 64), (250, 56), (236, 50), (222, 46), (212, 44)], 2.4, seed=612)
+    road([(212, 42), (228, 38), (246, 34), (262, 36), (276, 38)], 2.4, seed=613)
+    # the south loop: refuge → basin → fen → crossroads
+    road([(152, 190), (166, 204), (176, 208), (184, 210), (194, 214), (204, 220),
+          (216, 224), (230, 214), (240, 200), (248, 184), (250, 166), (248, 152)], 2.2, seed=614)
+    # the western loop: refuge → burial fields → crypt
+    road([(58, 228), (44, 214), (36, 196), (40, 178), (56, 170), (74, 172), (86, 178)], 2.0, seed=615)
+    # relay foot spur
+    road([(248, 152), (262, 148), (276, 146), (288, 144)], 2.2, seed=616)
+    # the alternate northern approach: ridge → around the east → divided reliquary
+    road([(208, 84), (222, 92), (238, 92), (252, 86), (264, 78), (272, 74)], 2.0, seed=617)
+
+
+def _regions():
+    """region id -> (anchor, display label) for the first landmark naming it."""
+    out = {}
+    for lid, _level, _title, region, pos, _visual, _kind, _subtitle in LANDMARKS:
+        out.setdefault(region, (pos, region.replace("_", " ").title()))
+    return out
+
+
+def prop_height_tiles(frame):
+    """Sprite height in tiles, read from the generated prop index.
+
+    Used to frame the capture stations and to keep the approach to a landmark
+    proportionate to the building standing at the end of it.
+    """
+    meta = PROP_META.get(frame, {})
+    return max(1, int(round(float(meta.get("h", 64)) / TILE)))
+
+
+def _forecourt(lid, tx, ty, kind, seed):
+    """Furniture in the near foreground of a landmark's approach.
+
+    Reviewed all ten landmark frames at native 2x and found the same fault in each:
+    the building, the approach and the plaza were all *ahead* of the player - north of
+    them, in screen terms - and nothing was ever in front. A 26-tile-wide plaza with
+    the player standing at its south edge is a full screen of paving with the
+    destination far away at the top, so every landmark read as a wall seen from a
+    distance rather than a place arrived at.
+
+    The forecourt is placed south of the approach, on the line the player walks in on,
+    offset left and right so it frames the route rather than blocking it. What it
+    holds depends on the kind of place: a colonnade for a temple, grave furniture for
+    a necropolis, broken masonry for a ruin.
+    """
+    bench_xs = (-7, 7)
+    if kind == "throne":
+        # The Castellan's court is the largest paved space in the world and the only
+        # one that is architecture rather than terrain, so it gets the only colonnade
+        # in the world: two rows of piers flanking the processional way, three deep,
+        # plus a statue at the head of each row. Everything here is a *solid* prop
+        # standing off the walk (|dx| >= 7 against a 2.4-tile approach), so the
+        # colonnade frames the route without ever standing in it - the bake's
+        # reachability gate enforces that, and it refused an earlier draft that put a
+        # sarcophagus on the centreline.
+        for dy in (4, 8, 12):
+            for dx in (-11, -7, 7, 11):
+                frame = "column" if abs(dx) == 7 else "column_broken"
+                add_prop(frame, *tile_pos(tx + dx, ty + dy), z=1)
+        for dx in (-9, 9):
+            add_prop("statue", *tile_pos(tx + dx, ty + 2), z=1)
+        for dy in (3, 7, 11):
+            for dx in (-13, 13):
+                add_prop("lamp", *tile_pos(tx + dx, ty + dy), lit=True)
+        for dx in (-4, 4):
+            add_prop("brazier", *tile_pos(tx + dx, ty + 13), lit=True)
+        return
+    if kind in ("sacred", "schism", "throne", "ritual"):
+        for dx in (-9, -7, 7, 9):
+            add_prop("column" if abs(dx) == 9 else "column_broken",
+                     *tile_pos(tx + dx, ty + 8), z=1)
+        for dx in (-4, 4):
+            add_prop("brazier", *tile_pos(tx + dx, ty + 10), lit=True)
+    elif kind in ("undead", "bone"):
+        for dx in (-11, -9, -5, 5, 9, 11):
+            add_prop("gravestone" if dx % 4 else "grave_cross",
+                     *tile_pos(tx + dx, ty + 9))
+        # Kept out of the middle: the sarcophagus sits beside the route, not on it.
+        add_prop("sarcophagus", *tile_pos(tx - 12, ty + 11), z=1)
+    elif kind == "military":
+        for dx in (-9, 9):
+            add_prop("wall_stub", *tile_pos(tx + dx, ty + 9), z=1)
+            add_prop("brazier", *tile_pos(tx + dx, ty + 12), lit=True)
+    elif kind == "fire":
+        for dx in (-8, 8):
+            add_prop("brazier", *tile_pos(tx + dx, ty + 9), lit=True)
+        add_prop("cart", *tile_pos(tx + 6, ty + 12), z=1)
+    else:
+        for dx in (-8, 8):
+            add_prop("column_broken", *tile_pos(tx + dx, ty + 9), z=1)
+    # A low marker at each side of the mouth of the approach: two dots the eye can
+    # use to judge the walk, which a bare plaza does not give it.
+    for dx in bench_xs:
+        add_prop("lamp", *tile_pos(tx + dx, ty + 12), lit=True)
+
+
+def paint_landmarks():
+    for lid, level, title, region, (tx, ty), visual, kind, subtitle in LANDMARKS:
+        plaza(tx, ty + 3, 13, seed=stable_seed(lid))
+        # The building's base sits on the plaza's north edge and the paved
+        # approach runs from the plaza up to the door. An earlier pass anchored
+        # the sprite five tiles further north, which left an eight-tile empty
+        # corridor between the player and the thing they came to see — at the
+        # camera's 2x zoom the landmark was entirely off the top of the frame
+        # while standing on its own threshold.
+        approach([(tx, ty + 2), (tx, ty - 1)], 2.4)
+        add_prop(visual, *tile_pos(tx, ty), lit=kind in ("fire", "ritual", "soul"))
+        _forecourt(lid, tx, ty, kind, stable_seed(lid + "_forecourt"))
+        # each approach gets its own furniture so the silhouette has context
+        if kind == "undead":
+            for dx in (-9, 9):
+                add_prop("sarcophagus", *tile_pos(tx + dx, ty + 1))
+            for dx in (-6, 6):
+                add_prop("brazier", *tile_pos(tx + dx, ty + 2), lit=True)
+        elif kind == "bone":
+            for dx in (-10, -8, 8, 10):
+                add_prop("grave_cross" if dx % 4 == 0 else "gravestone", *tile_pos(tx + dx, ty + 2))
+            add_prop("disc_bones", *tile_pos(tx - 5, ty + 4))
+        elif kind == "knowledge":
+            for dx in (-11, -9, 9, 11):
+                add_prop("column_broken" if dx < 0 else "column", *tile_pos(tx + dx, ty + 2))
+            add_prop("disc_lore", *tile_pos(tx + 7, ty + 5))
+        elif kind == "sacred":
+            for dx in (-12, 12):
+                add_prop("column", *tile_pos(tx + dx, ty + 2))
+            for dy in (2, 4):
+                add_prop("statue", *tile_pos(tx - 8, ty + dy))
+                add_prop("statue", *tile_pos(tx + 8, ty + dy))
+        elif kind == "ritual":
+            for dx in (-11, 11):
+                add_prop("brazier", *tile_pos(tx + dx, ty + 3), lit=True)
+            for dx in (-7, 7):
+                add_prop("disc_sigils", *tile_pos(tx + dx, ty + 6))
+        elif kind == "soul":
+            for dx in (-13, 13):
+                add_prop("lamp", *tile_pos(tx + dx, ty + 2), lit=True)
+            add_prop("disc_shrine", *tile_pos(tx + 6, ty + 5))
+        elif kind == "fire":
+            for dx in (-8, 8):
+                add_prop("brazier", *tile_pos(tx + dx, ty + 2), lit=True)
+            add_prop("signpost", *tile_pos(tx - 6, ty + 5))
+        elif kind == "schism":
+            for dx in (-12, 12):
+                add_prop("column", *tile_pos(tx + dx, ty + 2))
+            add_prop("disc_lore", *tile_pos(tx - 6, ty + 5))
+        elif kind == "military":
+            # A gate needs a gatehouse. The furniture here was two braziers
+            # fourteen tiles out and two wall stubs nine tiles out - all of it
+            # outside the gate's own silhouette, so at native scale the Crimson Gate
+            # was a sprite standing alone on gravel. The only tall props that ever
+            # overlapped it were scattered boulders, which is why the occlusion test
+            # used to find a pair here and stopped finding one when the boulder
+            # scatter was fixed: the collision was real, the gatehouse was not.
+            # Prop `y` is the sprite's foot, so anything at ty or above is *behind*
+            # the gate and hidden by it. The gatehouse therefore stands in front, on
+            # the approach: columns just off the processional line, broken stumps
+            # outside them, braziers at the threshold, and the wall stubs at the
+            # mouth of the plaza.
+            # The two towers flank the arch itself, one tile in front of the gate's
+            # foot, so their silhouettes overlap the gate's rather than standing in
+            # a row across the plaza below it. That overlap is what a gatehouse is:
+            # two masses the eye reads as the gate's own, and the only place a
+            # player can stand with masonry between them and the camera.
+            for dx in (-4, 4):
+                add_prop("column", *tile_pos(tx + dx, ty + 1), z=1)
+            for dx in (-6, 6):
+                add_prop("column_broken", *tile_pos(tx + dx, ty + 3), z=1)
+            for dx in (-8, 8):
+                add_prop("brazier", *tile_pos(tx + dx, ty + 2), lit=True)
+            for dx in (-11, 11):
+                add_prop("wall_stub", *tile_pos(tx + dx, ty + 4), z=1)
+        elif kind == "throne":
+            # The final approach. It was two statues fifteen tiles out and two
+            # braziers ten tiles out - every one of them outside the camera frame at
+            # 2x, so the last plaza in the game was a bare grey field with a carpet
+            # down the middle. A processional route is made of things close enough
+            # together to pass between: a colonnade at +-5 running the length of the
+            # approach, braziers on the carpet line, statues and walls framing the
+            # mouth of the plaza.
+            for dy in (1, 3, 5, 7, 9):
+                for dx in (-5, 5):
+                    add_prop("column" if dy % 4 == 1 else "column_broken",
+                             *tile_pos(tx + dx, ty + dy), z=1)
+            for dy in (2, 6, 10):
+                for dx in (-2, 2):
+                    add_prop("brazier", *tile_pos(tx + dx, ty + dy), lit=True)
+            for dx in (-8, 8):
+                add_prop("statue", *tile_pos(tx + dx, ty + 8), z=1)
+            for dy in range(2, 12, 2):
+                for dx in (-11, 11):
+                    add_prop("wall_stub", *tile_pos(tx + dx, ty + dy), z=1)
+
+
+# One camp, four places. The first version of this function drew the same eight
+# props around every camp, and a native screenshot of the four side by side made
+# the problem obvious: they were the *same camp* four times, so a player had no
+# way to tell "the safe fire" from "the camp at the foot of the relay" without
+# reading the label. Each entry below is instead built from a different idea:
+#
+#   Ashen Refuge  - shelter: a lean-to against the trees, a cook fire, a drying
+#                  rack. Somewhere you would sleep.
+#   Wayfarer Stones - a crossroads: a waymarker, a shrine stone, a bench, a
+#                  covered wagon stop. Somewhere you would turn.
+#   Relay Foot   - a work camp: a supply tent, a power trunk running to the
+#                  relay, crates, a spool. Somewhere people are posted.
+#   Watch Ridge  - a lookout: a windbreak of stacked stones, a watchpost, a
+#                  signal brazier. Somewhere someone is watching.
+CAMPS = [
+    ("camp_refuge", "Ashen Refuge", (56, 216), True),
+    ("camp_crossroads", "Wayfarer Stones", (152, 188), False),
+    ("camp_relay_base", "Relay Foot", (248, 158), False),
+    ("camp_ridge", "Watch Ridge Camp", (208, 104), False),
+]
+
+
+def _camp_hearth(tx, ty, seed):
+    """Scorched ground under and around a camp fire.
+
+    This replaces four rectangular "hearth" patches that painted a 5x3 block of
+    gravel: a bright, tile-aligned rectangle in the middle of a dirt clearing, which
+    read as a paving slab someone had dropped on the camp. A hearth is not a slab -
+    it is a rough circle of ash and gravel whose edge is set by where people stood.
+
+    Kept small on purpose. First attempt ringed it with boulders and covered the
+    whole clearing: the fire had a `rock_a` on every fourth cell of a 4-tile ellipse,
+    which is two dozen grey domes across the camp. A hearth is one fire's footprint,
+    roughly three tiles across, with ash drifting a little further and thinning out.
+    """
+    for x, y in ellipse(tx, ty, 2.6, 2.2, wobble=0.6, seed=seed):
+        if get(solid, x, y) != ".":
+            continue
+        if h01(seed + 7, x, y) < 0.70:
+            put(ground, x, y, "g")
+        if h01(seed + 8, x, y) < 0.80:
+            put(detail, x, y, "z")
+    # Ash drifts further than the fire ever reached, thinning as it goes.
+    for x, y in ellipse(tx, ty, 4.4, 3.6, wobble=0.7, seed=seed + 1):
+        if get(solid, x, y) != "." or get(detail, x, y) != ".":
+            continue
+        if h01(seed + 3, x, y) < 0.26:
+            put(detail, x, y, "z")
+
+
+def _camp_clearing(cid, tx, ty, rx=8, ry=5, ground_code="d"):
+    for x, y in ellipse(tx, ty, rx, ry, wobble=0.4, seed=stable_seed(cid)):
+        put(ground, x, y, ground_code)
+        put(solid, x, y, ".")
+
+
+def _camp_approach(cid, tx, ty, radius=18):
+    """A worn footpath from a camp out to the nearest road.
+
+    A camp with no connection to the road network is an island: the eye reads the
+    clearing as a patch of different ground with furniture on it. Roads here are
+    `=`/`+` detail overlays, so "connected" is a path that reaches one. Drawn as
+    `path` (`:`) rather than road, because nobody paved it - it is where feet have
+    been.
+    """
+    best = None
+    best_d = radius * radius * 4
+    for y in range(max(1, ty - radius), min(H - 1, ty + radius)):
+        for x in range(max(1, tx - radius), min(W - 1, tx + radius)):
+            if get(detail, x, y) not in ("=", "+"):
+                continue
+            d = (x - tx) * (x - tx) + (y - ty) * (y - ty)
+            if d < best_d:
+                best_d = d
+                best = (x, y)
+    if best is None:
+        return 0
+    ex, ey = best
+    # Walk the straight line, nudging it with coherent noise so it curves the way a
+    # path worn around obstacles does.
+    steps = max(abs(ex - tx), abs(ey - ty))
+    painted = 0
+    for i in range(1, steps):
+        f = i / float(steps)
+        wob = (vnoise(f * 6.0, 0.5, 3.0, stable_seed(cid + "_approach")) - 0.5) * 3.0
+        x = int(round(tx + (ex - tx) * f + wob))
+        y = int(round(ty + (ey - ty) * f - wob * 0.4))
+        if not inside(x, y) or get(solid, x, y) != ".":
+            continue
+        if get(detail, x, y) in ("=", "+"):
+            continue
+        if get(ground, x, y) in ("~", "-"):
+            continue
+        put(detail, x, y, ":")
+        if get(detail, x, y) != "=" and get(ground, x, y) in ("f", ",", ";", "g", "a"):
+            put(ground, x, y, "d")
+        painted += 1
+    return painted
+
+
+def paint_camps():
+    # --- Ashen Refuge: a lean-to, a cook fire, somewhere to dry meat --------
+    cid, _name, (tx, ty), _ = CAMPS[0]
+    _camp_clearing(cid, tx, ty, 8, 5)
+    _camp_hearth(tx + 1, ty + 2, stable_seed(cid + "_hearth"))
+    _camp_approach(cid, tx, ty)
+    # The camp's command structure: a pavilion big enough to read as a building
+    # rather than as another three-tile object in a ring of them. The old lean-to
+    # stays - it is the thing the player meets first - and the pavilion stands
+    # behind it, which is also how a real camp is laid out.
+    add_prop("camp_pavilion", *tile_pos(tx - 2, ty - 3), z=1)
+    add_prop("camp_tent", *tile_pos(tx - 5, ty), z=1)
+    add_prop("camp_fire", *tile_pos(tx + 1, ty + 2), lit=True, z=1)
+    add_prop("camp_table", *tile_pos(tx + 4, ty - 1), z=1)
+    add_prop("camp_rack", *tile_pos(tx - 6, ty + 3), z=1)
+    add_prop("camp_bedroll", *tile_pos(tx - 1, ty + 3))
+    add_prop("fence", *tile_pos(tx + 4, ty + 1))          # drying rack
+    add_prop("camp_crate", *tile_pos(tx - 5, ty + 2))
+    add_prop("barrel", *tile_pos(tx + 5, ty + 3))
+    add_prop("lamp", *tile_pos(tx - 7, ty + 1), lit=True)
+
+    # --- Wayfarer Stones: a crossing, not a camp ---------------------------
+    cid, _name, (tx, ty), _ = CAMPS[1]
+    _camp_clearing(cid, tx, ty, 7, 4, ground_code="g")    # trodden grass
+    _camp_hearth(tx, ty + 3, stable_seed(cid + "_hearth"))
+    _camp_approach(cid, tx, ty)
+    add_prop("signpost", *tile_pos(tx - 2, ty), z=1)
+    add_prop("disc_shrine", *tile_pos(tx + 5, ty - 2), lit=True, z=1)
+    add_prop("column_broken", *tile_pos(tx - 5, ty - 2), z=1)
+    add_prop("camp_fire", *tile_pos(tx, ty + 3), lit=True, z=1)
+    # A crossing is a place people wait, so it gets the hearth and the table and no
+    # sleeping gear beyond one bedroll: the camp where the road forks is where you
+    # eat and read the signpost, not where you make a home.
+    add_prop("camp_cookfire", *tile_pos(tx - 4, ty + 1), lit=True, z=1)
+    add_prop("camp_table", *tile_pos(tx + 3, ty + 1), z=1)
+    add_prop("camp_wagon", *tile_pos(tx + 6, ty + 3), z=1)
+    add_prop("camp_banner", *tile_pos(tx + 2, ty), z=1)
+    add_prop("camp_bedroll", *tile_pos(tx - 5, ty + 2))
+    add_prop("camp_trophies", *tile_pos(tx + 7, ty + 1))
+
+    # --- Relay Foot: a supply depot on the path to the mast ----------------
+    cid, _name, (tx, ty), _ = CAMPS[2]
+    _camp_clearing(cid, tx, ty, 7, 5)
+    _camp_hearth(tx - 3, ty + 3, stable_seed(cid + "_hearth"))
+    _camp_approach(cid, tx, ty)
+    add_prop("camp_crate", *tile_pos(tx - 2, ty - 1), z=1)
+    add_prop("camp_crate", *tile_pos(tx - 1, ty - 2), z=1)   # stacked
+    add_prop("barrel", *tile_pos(tx + 2, ty - 1), z=1)
+    add_prop("barrel", *tile_pos(tx + 3, ty + 1))
+    add_prop("camp_fire", *tile_pos(tx - 3, ty + 3), lit=True, z=1)
+    add_prop("camp_banner", *tile_pos(tx + 5, ty + 2), z=1)
+    # A supply depot is defined by what it stores, so the wagon and the rack flank
+    # the stores and the cookfire sits where the porters actually stop.
+    add_prop("camp_wagon", *tile_pos(tx + 6, ty + 3), z=1)
+    add_prop("camp_rack", *tile_pos(tx - 6, ty + 1), z=1)
+    add_prop("camp_cookfire", *tile_pos(tx + 2, ty + 5), lit=True, z=1)
+    add_prop("lamp", *tile_pos(tx - 5, ty + 1), lit=True)
+    add_prop("fence", *tile_pos(tx + 1, ty + 4))
+
+    # --- Watch Ridge: a brazier and a windbreak, facing outward ------------
+    cid, _name, (tx, ty), _ = CAMPS[3]
+    _camp_clearing(cid, tx, ty, 6, 4)
+    _camp_hearth(tx + 1, ty - 1, stable_seed(cid + "_hearth"))
+    _camp_approach(cid, tx, ty)
+    add_prop("brazier", *tile_pos(tx + 1, ty - 1), lit=True, z=1)
+    # The windbreak is the point of this camp ("facing outward"), so it is a line
+    # rather than two stones standing apart: five segments on the exposed north-west
+    # side, with the fire tucked behind it and the watch seat facing the gap.
+    for i in range(5):
+        add_prop("wall_stub", *tile_pos(tx - 4 + i, ty - 3), z=1)
+    add_prop("wall_stub", *tile_pos(tx - 5, ty - 2), z=1)
+    add_prop("wall_stub", *tile_pos(tx + 1, ty - 3), z=1)
+    add_prop("camp_bedroll", *tile_pos(tx - 2, ty + 1))
+    add_prop("camp_crate", *tile_pos(tx + 3, ty + 1), z=1)
+    add_prop("barrel", *tile_pos(tx + 4, ty + 2))
+    # The ridge camp is a watch post, so it gets the gear a watch needs and nothing
+    # that suggests permanence: a rack for the spears and a table for the watch bill.
+    add_prop("camp_rack", *tile_pos(tx - 5, ty + 2), z=1)
+    add_prop("camp_table", *tile_pos(tx + 2, ty + 3), z=1)
+    add_prop("camp_trophies", *tile_pos(tx + 5, ty), z=1)
+
+
+def paint_shortcuts():
+    for sid, kind, (tx, ty), granted_by, (box_a, box_b), label in SHORTCUTS:
+        # The prop is authored in two states; the runtime shows the one that
+        # matches the save. The band below is the CLOSED state: solid at bake
+        # time, cleared cell-for-cell by the runtime when the shortcut opens.
+        x0, y0, x1, y1 = carve_rect(kind, tx, ty)
+        if kind == "broken_bridge":
+            add_prop("short_bridge", *tile_pos(tx, ty), flags=sid, z=1)
+            for x in range(x0, x1 + 1):
+                put(ground, x, ty, "-")
+        elif kind == "powered_conduit":
+            add_prop("short_conduit", *tile_pos(tx, ty), flags=sid, z=1)
+            for x in range(x0, x1 + 1):
+                put(ground, x, ty, "f")
+        elif kind == "rubble_block":
+            add_prop("short_rubble", *tile_pos(tx, ty), flags=sid, z=1)
+            for x in range(x0, x1 + 1):
+                for y in range(y0, y1 + 1):
+                    put(ground, x, y, "g")
+        elif kind == "gate_valve":
+            add_prop("short_valve", *tile_pos(tx, ty), flags=sid, z=1)
+            for x in range(tx - 4, tx + 5):
+                for y in range(ty - 4, ty + 5):
+                    put(solid, x, y, "W")
+            for x in range(x0, x1 + 1):
+                put(ground, x, ty, "f")
+        block_rect(x0, y0, x1, y1)
+
+
+def reinstate_shortcut_bands():
+    """Re-block every shortcut band after the roads have been carved.
+
+    `paint_roads()` runs after the shortcuts and clears solid cells to make the
+    pilgrimage road continuous. A shortcut is defined by being the *break* in
+    that road, so its band is reasserted here — the closed state is the authored
+    band, never whatever the road pass happened to leave behind.
+    """
+    for sid, kind, (tx, ty), granted_by, (box_a, box_b), label in SHORTCUTS:
+        block_rect(*carve_rect(kind, tx, ty))
+
+
+def prop_body_cells(frame, x, y):
+    """Cells the runtime body of this prop covers, in tile coordinates.
+
+    Mirrors `OverworldWorld._add_prop_blocker` exactly: the body is the lower
+    42% of the sprite (minimum 8 px) and 82% of its width, hung from the feet, and
+    `_mark_body` marks every cell the rectangle touches. The bake has to use the
+    same rule, or it will pass a world the player cannot walk.
+
+    A frame that is not in the atlas, or that carries no collider, covers nothing.
+    """
+    if not frame.startswith(COLLIDER_PROP_PREFIXES):
+        return set()
+    meta = PROP_META.get(frame)
+    if meta is None:
+        return set()
+    width = float(meta.get("w", 16))
+    height = float(meta.get("h", 16))
+    body_h = max(8.0, height * 0.42)
+    body_w = max(8.0, width * 0.82)
+    left = x - body_w * 0.5
+    right = x + body_w * 0.5
+    top = y - body_h
+    bottom = y
+    x0 = math.floor(left / TILE)
+    x1 = math.floor(right / TILE)
+    y0 = math.floor(top / TILE)
+    y1 = math.floor(bottom / TILE)
+    return {(cx, cy) for cx in range(x0, x1 + 1) for cy in range(y0, y1 + 1)}
+
+
+def prop_body_occupancy():
+    """Every cell covered by a prop collider, mapped to what covers it."""
+    occupied = {}
+    for entry in props:
+        for cell in prop_body_cells(str(entry["frame"]),
+                                    float(entry["x"]), float(entry["y"])):
+            occupied.setdefault(cell, []).append(str(entry["frame"]))
+    return occupied
+
+
+## The cell the player spawns on: the plaza south of the refuge's campfire.
+START = (56, 218)
+
+
+def interaction_cells():
+    """Cells a player must be able to stand on to interact with something.
+
+    A blocking prop here is not a decoration, it is a missing reward: the pine
+    that `validate()` caught standing on `d_ossuary_stash` would have held the
+    player off the cell that claims it. The scatter keeps these clear.
+    """
+    cells = set()
+    for lid, level, title, region, (tx, ty), visual, kind, subtitle in LANDMARKS:
+        cells.add((tx, ty + 1))
+    for cid, name, (tx, ty), initial in CAMPS:
+        cells.add((tx, ty))
+    for did, (tx, ty), kind, reward in DISCOVERIES:
+        cells.add((tx, ty))
+    cells.add(START)
+    return cells
+
+
+def paint_scatter():
+    """Vegetation, grave furniture and ruins, kept off every walking lane."""
+    # Reserved *exactly*: every interaction cell. The guard below is precise
+    # instead of approximate — it asks whether the body this frame would build
+    # covers a reserved cell, not whether its anchor tile is close to one. A dead
+    # pine's trunk is 0.82 of its sprite wide and hangs two tiles up from its
+    # feet, so "near enough to matter" is not a fixed halo: the tree that put
+    # `d_crucible_cove` out of reach stood on the neighbouring tile, and the one
+    # that did the same to `d_relay_shard` stood two tiles south.
+    reserved = interaction_cells()
+
+    def try_add(frame, x, y):
+        """Add a prop only if its runtime body would not seal an interaction cell."""
+        px, py = tile_pos(x, y)
+        if prop_body_cells(frame, px, py) & reserved:
+            return False
+        add_prop(frame, px, py)
+        return True
+    # A camp owns its own ground. Without this, `paint_scatter` sees the clearing as
+    # ordinary terrain and fills it with whatever the surrounding region scatters -
+    # at Watch Ridge that was twenty-four boulders and a handful of wall stubs
+    # standing in the middle of the camp, and at Ashen Refuge grave markers inside
+    # the clearing. A camp that cannot clear its own footprint does not read as a
+    # place someone made; it reads as a camp someone dropped into a rockfield.
+    camp_zone = set()
+    for _cid, _name, (tx, ty), _unlock in CAMPS:
+        camp_zone.update(ellipse(tx, ty, 13, 10, wobble=0.5,
+                                 seed=stable_seed(_cid + "_camp_zone")))
+    lane = set()
+    for x in range(W):
+        for y in range(H):
+            if get(detail, x, y) in ("=", "+", ":"):
+                lane.add((x, y))
+    corridor = set()
+    for x, y in lane:
+        for dy in range(-2, 3):
+            for dx in range(-2, 3):
+                corridor.add((x + dx, y + dy))
+
+    def free(x, y):
+        return (get(solid, x, y) == "." and (x, y) not in corridor
+                and (x, y) not in reserved and (x, y) not in camp_zone
+                and get(ground, x, y) not in ("f", "~", "-", "v", "y"))
+
+    for y in range(H):
+        for x in range(W):
+            if not free(x, y):
+                continue
+            g = get(ground, x, y)
+            r = h01(901, x, y)
+            if g == ",":
+                if r < 0.022:
+                    try_add("tree_dead", x, y)
+                elif r < 0.075:
+                    try_add("bush", x, y)
+                elif r < 0.095:
+                    try_add("rock_a", x, y)
+            elif g == ";":
+                if r < 0.030:
+                    try_add("tree_pine", x, y)
+                elif r < 0.070:
+                    try_add("bush", x, y)
+                elif r < 0.085:
+                    try_add("tree_dead", x, y)
+            elif g == "d":
+                if r < 0.030:
+                    try_add("gravestone", x, y)
+                elif r < 0.055:
+                    try_add("grave_cross", x, y)
+                elif r < 0.070:
+                    try_add("rock_a", x, y)
+                elif r < 0.078:
+                    try_add("sarcophagus", x, y)
+            elif g in ("g", "r"):
+                # Six silhouettes, chosen by hash rather than by cumulative bands:
+                # with bands, the small frames (the ones that make a scatter look
+                # scattered rather than stamped) fall below the threshold almost
+                # everywhere and never appear. `r` still decides *whether* a cell
+                # carries a boulder, so density is unchanged.
+                if r < 0.050:
+                    try_add(ROCK_FRAMES[int(h01(902, x, y) * len(ROCK_FRAMES)) % len(ROCK_FRAMES)],
+                            x, y)
+                elif r < 0.050:
+                    try_add("column_broken", x, y)
+                elif r < 0.056:
+                    try_add("wall_stub", x, y)
+            elif g == "f":
+                if r < 0.020:
+                    try_add("column_broken", x, y)
+                elif r < 0.028:
+                    try_add("wall_stub", x, y)
+                elif r < 0.034:
+                    try_add("statue", x, y)
+            elif g == "a":
+                if r < 0.030:
+                    try_add("rock_a", x, y)
+                elif r < 0.045:
+                    try_add("disc_bones", x, y)
+            elif g == "b":
+                if r < 0.050:
+                    try_add("bush", x, y)
+                elif r < 0.060:
+                    try_add("tree_dead", x, y)
+            elif g == "m":
+                if r < 0.030:
+                    try_add("tree_dead", x, y)
+
+    # The cliff mass. It covers 13 500 cells in bands up to 380 tiles wide, and at
+    # map scale it reads as a grey slab. Tile-level detail cannot fix that: the
+    # defect is scale, not texture, and every attempt to put more structure inside
+    # the 16 px tile turned into a grid of lines or dots. So the face gets
+    # *incident* instead - broken ledges and cracks at a scale between the tile and
+    # the region, clustered rather than sprinkled, and only on cells ringed by more
+    # cliff so nothing floats over a rim or overhangs a road. None of these frames
+    # carries a collider, so they cannot make the mass walkable.
+    def buried_in_cliff(x, y):
+        """How enclosed a cliff cell is: 8 = interior, 0 = bare rim.
+
+        This used to be a yes/no test - a cell counted only if all eight neighbours
+        were cliff - which kept decals off every rim and, as a side effect, off every
+        *narrow* run. Most of the world's masonry is narrow runs: the walls between
+        roads, and the bands around the beacon and the crypt. Those were left with
+        the bare tile and read as a repeating brick pattern across half a screen,
+        which is the defect the decals were built to answer.
+
+        Returning a count instead lets the caller thin the density toward the rim
+        instead of stopping dead at it: an interior cell takes the full band, a cell
+        with one exposed side takes a third of it, a bare rim takes none.
+        """
+        n = 0
+        for dy in (-1, 0, 1):
+            for dx in (-1, 0, 1):
+                if dx == 0 and dy == 0:
+                    continue
+                code = get(solid, x + dx, y + dy)
+                if code and code.startswith("#"):
+                    n += 1
+        return n
+
+    for y in range(1, H - 1):
+        for x in range(1, W - 1):
+            code = get(solid, x, y)
+            if not code or not code.startswith("#"):
+                continue
+            depth = buried_in_cliff(x, y)
+            if depth < 4:
+                continue
+            r = h01(929, x, y)
+            if depth < 7:
+                # A 44 px patch is sized for the great mass, not for a wall two cells
+                # thick: on a lattice of one-cell walls the patches overlap into a
+                # continuous smooth grey smear over ground they do not belong to,
+                # which looked worse than the flat tile it replaced. Thin walls carry
+                # fractures instead - they are a couple of pixels wide and read as
+                # cracks in a wall rather than as weather over a field.
+                if r < 0.055:
+                    try_add("cliff_crack_a", x, y)
+                elif r < 0.085:
+                    try_add("cliff_crack_b", x, y)
+                continue
+            # Density is what turns a scatter of blobs into one mottled surface.
+            # At ~15 % the patches were separated islands on a flat field; a rock
+            # mass read from above is *continuously* mottled, so the wet ~55 % of
+            # the mass now carries a patch on roughly a third of its cells.
+            band = 0.62 if h01(931, x // 5, y // 5) < 0.55 else 0.16
+            # Thin the band toward the rim so a wall keeps a readable edge: full
+            # strength at 8 enclosed neighbours, a third at 4.
+            band *= 0.34 + 0.083 * depth
+            # Overlapping, off-centre: a patch is centred on the cell it is placed
+            # on plus a per-cell jitter of up to half a tile, so neighbours overlap
+            # and their soft edges blend. Placed dead-centre and non-overlapping,
+            # they read as a grid of tiles in a different tone.
+            jx = (h01(933, x, y) - 0.5) * 16.0
+            jy = (h01(934, x, y) - 0.5) * 16.0
+            if r < band * 0.30:
+                props_x = tile_pos(x, y)[0] + jx
+                props_y = tile_pos(x, y)[1] + jy
+                add_prop("cliff_patch_a", props_x, props_y)
+            elif r < band * 0.50:
+                props_x = tile_pos(x, y)[0] + jx
+                props_y = tile_pos(x, y)[1] + jy
+                add_prop("cliff_patch_b", props_x, props_y)
+            elif r < band * 0.68:
+                props_x = tile_pos(x, y)[0] + jx
+                props_y = tile_pos(x, y)[1] + jy
+                add_prop("cliff_patch_c", props_x, props_y)
+            elif r < band * 0.80:
+                props_x = tile_pos(x, y)[0] + jx
+                props_y = tile_pos(x, y)[1] + jy
+                add_prop("cliff_patch_d", props_x, props_y)
+            elif r < band * 0.92:
+                try_add("cliff_crack_a", x, y)
+            elif r < band:
+                try_add("cliff_crack_b", x, y)
+
+    # Fallen masonry on the plazas. The scatter above keeps a two-tile corridor
+    # clear around every lane so nothing BLOCKING can pinch a road; that rule is
+    # what left the wide flagstone plazas empty, because an approach lane runs
+    # through the middle of each of them. This second pass fills that stone with
+    # frames that carry no collider at all, so it can use a one-tile corridor and
+    # still cannot narrow a road, block an approach or trap the player.
+    # Only the lane cells themselves are excluded. Dilating this corridor by one
+    # tile (as the collider-bearing pass above must) swallowed most of the plaza
+    # stone, because an approach lane runs through the middle of every plaza -
+    # the first attempt here added eight hundred props and still left the
+    # crucible basin standing in an empty field. Debris on a road's edge is what
+    # a ruined road looks like; debris in the walking line would be litter, so
+    # the centre stays clean and nothing here can be walked into.
+    tight = set(lane)
+    # Density is clustered, not uniform: three-tile blocks that are "hot" carry a
+    # debris field, the rest stay near-empty. An even 5% sprinkle of single rocks
+    # reads as noise at the camera's 2x zoom; a cluster reads as something fell
+    # here. None of these frames has a collider, so the tight corridor is enough.
+    def hot(x, y, seed):
+        return h01(seed, x // 3, y // 3) < 0.5
+
+    for y in range(H):
+        for x in range(W):
+            if get(solid, x, y) != "." or (x, y) in tight or (x, y) in reserved:
+                continue
+            g = get(ground, x, y)
+            r = h01(913, x, y)
+            band = 0.085 if hot(x, y, 917) else 0.016
+            if g in ("f", "g", "r", "a"):
+                # A paved plaza is a *built* surface: what falls on it is masonry
+                # and staves, not boulders. Before this split the same boulder
+                # scatter ran over the flagstone aprons too, and a native frame of
+                # the L10 approach read as a quarry rather than as the forecourt
+                # of a citadel - thirteen boulders in one screen of flagstone.
+                if g == "f":
+                    if r < band * 0.30:
+                        try_add("column_broken", x, y)
+                    elif r < band * 0.58:
+                        try_add("wall_stub", x, y)
+                    elif r < band * 0.70:
+                        try_add("barrel", x, y)
+                elif r < band * 0.85:
+                    try_add(ROCK_FRAMES[int(h01(903, x, y) * len(ROCK_FRAMES)) % len(ROCK_FRAMES)],
+                            x, y)
+            elif g == "d":
+                if r < band * 0.6:
+                    try_add("grave_cross", x, y)
+                elif r < band:
+                    try_add("gravestone", x, y)
+            elif g == "b":
+                if r < band:
+                    try_add("bush", x, y)
+
+    # lamps along the principal road, at a readable interval
+    main = [(58, 228), (64, 214), (72, 200), (82, 190), (88, 184), (80, 168), (72, 154),
+            (66, 142), (64, 132), (78, 124), (94, 126), (108, 134), (120, 144), (130, 152),
+            (146, 146), (162, 144), (178, 146), (194, 142), (202, 140), (220, 140),
+            (240, 144), (258, 146), (274, 146), (288, 144)]
+    for i in range(2, len(main), 3):
+        ax, ay = main[i]
+        side = 3 if i % 2 else -3
+        add_prop("lamp", *tile_pos(ax + side, ay - 2), lit=True)
+
+    # signposts at the two real forks
+    add_prop("signpost", *tile_pos(146, 186))
+    add_prop("signpost", *tile_pos(196, 144))
+    add_prop("signpost", *tile_pos(210, 90))
+    # a supply line at the refuge
+    add_prop("cart", *tile_pos(50, 224))
+    add_prop("barrel", *tile_pos(47, 222))
+    add_prop("barrel", *tile_pos(48, 226))
+    add_prop("fence", *tile_pos(66, 226))
+    add_prop("fence", *tile_pos(70, 224))
+
+
+def paint_discoveries():
+    for did, (tx, ty), kind, reward in DISCOVERIES:
+        frame = {"coin_cache": "disc_cache", "material_cache": "disc_cache",
+                 "lore": "disc_lore", "shrine": "disc_shrine",
+                 "sigil_cache": "disc_sigils"}.get(kind, "disc_cache")
+        add_prop(frame, *tile_pos(tx, ty), flags=did,
+                 lit=(kind in ("shrine", "sigil_cache")))
+        for x, y in ellipse(tx, ty, 3, 2, seed=stable_seed(did)):
+            if get(solid, x, y) == ".":
+                put(ground, x, y, get(ground, x, y))
+
+
+# ---------------------------------------------------------------------------
+# validation
+# ---------------------------------------------------------------------------
+def walkable_grid(open_shortcuts):
+    blocked = {"#", "W", "T", "!"}
+    open_cells = set()
+    if open_shortcuts:
+        for sid, kind, (tx, ty), granted_by, (box_a, box_b), label in SHORTCUTS:
+            x0, y0, x1, y1 = carve_rect(kind, tx, ty)
+            for x in range(x0, x1 + 1):
+                for y in range(y0, y1 + 1):
+                    open_cells.add((x, y))
+
+    def ok(x, y):
+        if not inside(x, y):
+            return False
+        if (x, y) in open_cells:
+            return True
+        if get(solid, x, y) in blocked:
+            return False
+        if get(ground, x, y) == "~":
+            return False
+        return True
+    return ok
+
+
+def reachable(ok, start):
+    seen = {start}
+    q = deque([start])
+    while q:
+        x, y = q.popleft()
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            n = (x + dx, y + dy)
+            if n in seen or not ok(*n):
+                continue
+            seen.add(n)
+            q.append(n)
+    return seen
+
+
+def validate():
+    errors = []
+    # One source of truth: the cell the world document tells the controller to
+    # spawn on. This used to be a second hard-coded literal (56, 216) that had
+    # already drifted from the document's (56, 218) — so the bake was checking a
+    # cell nobody spawns on, and a prop body sat unnoticed on the real one.
+    start = START
+    for open_shortcuts in (False, True):
+        ok = walkable_grid(open_shortcuts)
+        seen = reachable(ok, start)
+        tag = "shortcuts open" if open_shortcuts else "shortcuts closed"
+        if start not in seen:
+            errors.append("refuge start is not walkable")
+        for lid, level, title, region, (tx, ty), visual, kind, subtitle in LANDMARKS:
+            # the threshold is the cell the player stands on to interact
+            th = (tx, ty + 1)
+            if th not in seen:
+                errors.append("%s threshold %s unreachable (%s)" % (title, th, tag))
+        for cid, name, (tx, ty), initial in CAMPS:
+            if (tx, ty) not in seen:
+                errors.append("camp %s unreachable (%s)" % (name, tag))
+        for did, (tx, ty), kind, reward in DISCOVERIES:
+            if (tx, ty) not in seen:
+                errors.append("discovery %s unreachable (%s)" % (did, tag))
+        # no shortcut may be load-bearing for the critical path
+        if not open_shortcuts and errors:
+            break
+
+    # A camp is safe ground by definition; a camp inside a hazard rect would make
+    # the survival tick contradict the fiction it is standing on.
+    for cid, name, (tx, ty), initial in CAMPS:
+        for hazard in HAZARDS:
+            hid, rect, label = hazard
+            hx, hy, hw, hh = rect
+            if hx <= tx < hx + hw and hy <= ty < hy + hh:
+                errors.append("camp %s (%d,%d) sits inside hazard %s"
+                              % (cid, tx, ty, hid))
+
+    # Props: every frame must exist in the atlas, and nothing that carries a
+    # collider may stand on the cell a player must occupy. The scatter keeps a
+    # two-tile corridor clear and the plaza clutter uses non-collider frames only,
+    # but both rules live in prose above; this is the assertion that they held.
+    # COLLIDER_PROP_PREFIXES mirrors OverworldWorld.SOLID_PROP_PREFIXES.
+    for entry in props:
+        frame = str(entry["frame"])
+        if frame in PROP_META:
+            continue
+        # Shortcuts are authored by their short id and resolved to a frame at
+        # runtime (OverworldWorld.SHORTCUT_FRAME_ALIASES), so their base name is
+        # expected to be absent from the atlas.
+        if frame.startswith(tuple(SHORTCUT_ALIAS_KEYS)):
+            continue
+        errors.append("prop frame '%s' is not in the props atlas" % frame)
+    must_be_free = {}
+    for lid, level, title, region, (tx, ty), visual, kind, subtitle in LANDMARKS:
+        must_be_free[(tx, ty + 1)] = "landmark %s threshold" % lid
+    for cid, name, (tx, ty), initial in CAMPS:
+        must_be_free[(tx, ty)] = "camp %s rest cell" % cid
+    for did, (tx, ty), kind, reward in DISCOVERIES:
+        must_be_free[(tx, ty)] = "discovery %s" % did
+    must_be_free[start] = "refuge spawn"
+    # Trees and camp furniture may not stand on a walking lane: they are pure
+    # obstruction. Columns, statues and wall stubs are ruin *on* the paving and
+    # are deliberately placed on it (they read as a fallen colonnade), and the
+    # landmark, shortcut and tent frames are destinations, not clutter - so those
+    # are checked only against interaction cells below.
+    lane_cells = {(x, y) for x in range(W) for y in range(H)
+                  if get(detail, x, y) in ("=", "+", ":")}
+    LANE_BLOCKING = ("tree_dead", "tree_pine", "cart", "sarcophagus")
+    for entry in props:
+        frame = str(entry["frame"])
+        tex = int((float(entry["x"]) - 8) // TILE)
+        tey = int((float(entry["y"]) - 8) // TILE)
+        if frame.startswith(LANE_BLOCKING) and (tex, tey) in lane_cells:
+            errors.append("blocking prop '%s' at (%d,%d) stands in a walking lane"
+                          % (frame, tex, tey))
+        if not frame.startswith(COLLIDER_PROP_PREFIXES):
+            continue
+        if (tex, tey) in must_be_free:
+            errors.append("blocking prop '%s' at (%d,%d) covers the %s"
+                          % (frame, tex, tey, must_be_free[(tex, tey)]))
+
+    # The same question, asked of the collider the runtime actually builds rather
+    # than of the tile the prop is anchored on. A prop's body is 82% of its width
+    # and hangs from its feet, so it routinely covers a neighbour: the assertion
+    # above passed for years while a dead tree stood on a discovery cell.
+    occupied = prop_body_occupancy()
+    for cell, what in sorted(must_be_free.items()):
+        for frame in occupied.get(cell, []):
+            errors.append("prop body '%s' covers the %s at %s"
+                          % (frame, what, cell))
+
+    # Bodies are walls, so the flood has to walk around them too. This is the
+    # authoring gate for the runtime traversability system: same 4-neighbour rule,
+    # same result, but it runs at bake time, before anything ships.
+    for open_shortcuts in (False, True):
+        tag = "shortcuts open" if open_shortcuts else "shortcuts closed"
+        terrain_ok = walkable_grid(open_shortcuts)
+        body_ok = lambda x, y: terrain_ok(x, y) and (x, y) not in occupied
+        seen = reachable(body_ok, start)
+        for lid, level, title, region, (tx, ty), visual, kind, subtitle in LANDMARKS:
+            if (tx, ty + 1) not in seen:
+                errors.append("%s threshold %s is walled off by prop bodies (%s)"
+                              % (title, (tx, ty + 1), tag))
+        for cid, name, (tx, ty), initial in CAMPS:
+            if (tx, ty) not in seen:
+                errors.append("camp %s rest cell is walled off by prop bodies (%s)"
+                              % (cid, tag))
+        for did, (tx, ty), kind, reward in DISCOVERIES:
+            if (tx, ty) not in seen:
+                errors.append("discovery %s is walled off by prop bodies (%s)"
+                              % (did, tag))
+
+    # The band the runtime carves must be solid in the baked world, or the
+    # "opened shortcut" would be a sprite swap over a wall that was never there.
+    blocked = {"#", "W", "T", "!"}
+    for sid, kind, (tx, ty), granted_by, (box_a, box_b), label in SHORTCUTS:
+        x0, y0, x1, y1 = carve_rect(kind, tx, ty)
+        for y in range(y0, y1 + 1):
+            for x in range(x0, x1 + 1):
+                if get(solid, x, y) not in blocked:
+                    errors.append("%s carve cell (%d,%d) is not solid while closed"
+                                  % (sid, x, y))
+    return errors
+
+
+# ---------------------------------------------------------------------------
+# masks + bake
+# ---------------------------------------------------------------------------
+MASKED_DETAIL = set("/|M=+:k")
+
+
+def neighbour_mask(layer, x, y, match):
+    m = 0
+    if match(get(layer, x, y - 1)):
+        m |= 1
+    if match(get(layer, x + 1, y)):
+        m |= 2
+    if match(get(layer, x, y + 1)):
+        m |= 4
+    if match(get(layer, x - 1, y)):
+        m |= 8
+    return m
+
+
+# Ground codes that must keep a hard edge, with the reason.
+#
+# Water is the important one: a bank is a thing you can see and fall off, and the
+# `bank` detail overlay is drawn against it. Roads are the other: a road that
+# dissolves into the grass stops reading as a road. Everything else in the world is
+# material meeting material - dirt into mud, mud into grass, grass into scrub - and
+# in nature those boundaries interpenetrate over a tile or two rather than
+# stair-casing along a tile edge.
+_FEATHER_FIXED = set("~-")
+
+
+def soften_camp_roads():
+    """A road crossing a camp stops being a road where the camp begins.
+
+    Three of the four camps sit on the road network, which is deliberate - they are
+    the places you can reach, so they are the places people camped. But the road's
+    paving overlay is a hard-edged pattern, and a rectangle of it in the middle of a
+    dirt clearing reads as a dropped slab rather than as a route. So inside each
+    clearing the paving degrades to *path* (`:`), completely at the centre and
+    partially at the rim, and the gravel ground under it goes back to dirt. From
+    outside, the road still runs up to the camp; inside, the camp is a place and not
+    a junction.
+    """
+    replaced = 0
+    for cid, _name, (tx, ty), _unlock in CAMPS:
+        for x, y in ellipse(tx, ty, 9, 6, wobble=0.4, seed=stable_seed(cid)):
+            if not inside(x, y):
+                continue
+            if get(detail, x, y) not in ("=", "+"):
+                continue
+            d = ((x - tx) / 9.0) ** 2 + ((y - ty) / 6.0) ** 2
+            reach = 1.0 - d
+            if h01(631, x, y) > reach * 1.25:
+                continue
+            put(detail, x, y, ":")
+            if get(ground, x, y) == "g":
+                put(ground, x, y, "d")
+            replaced += 1
+    return replaced
+
+
+def feather_boundaries(passes=2, seed=441):
+    """Dither every material boundary in the world over one to two tiles.
+
+    The ground is painted per-cell from noise fields, and it meets itself on tile
+    edges: a clearing ends, a forest floor begins, and the seam is a staircase of
+    16 px steps. Every camp, landmark and riverbank in the world inherits that seam,
+    which is a large part of why a camp looked dropped onto the terrain rather than
+    standing in it.
+
+    This does not blur anything. It walks the boundary and lets the two materials
+    interpenetrate cell-by-cell on a coherent noise field, the way soil and leaf
+    litter actually mix at an edge. Cells carrying a road/path/plaza overlay and
+    their neighbours are left alone, because those edges are load-bearing for
+    gameplay: you can see where the road is.
+    """
+    protect = set()
+    for x in range(W):
+        for y in range(H):
+            if get(detail, x, y) in ("=", "+", ":"):
+                protect.add((x, y))
+    # Roads are drawn with a verge, and the verge is part of the road's read.
+    grown = set()
+    for x, y in protect:
+        for dy in (-1, 0, 1):
+            for dx in (-1, 0, 1):
+                grown.add((x + dx, y + dy))
+    protect = grown
+
+    for pass_index in range(passes):
+        changes = []
+        for y in range(1, H - 1):
+            for x in range(1, W - 1):
+                if (x, y) in protect or get(solid, x, y) != ".":
+                    continue
+                own = get(ground, x, y)
+                if own in _FEATHER_FIXED:
+                    continue
+                foreign = {}
+                for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                    code = get(ground, x + dx, y + dy)
+                    if code != own and code not in _FEATHER_FIXED:
+                        foreign[code] = foreign.get(code, 0) + 1
+                if not foreign:
+                    continue
+                # Only feather toward the dominant neighbour: a cell on a three-way
+                # corner otherwise picks material at random and the corner frays
+                # into speckle instead of blending.
+                best = max(foreign, key=foreign.get)
+                if list(foreign.values()).count(foreign[best]) > 1 and len(foreign) > 1:
+                    continue
+                # Coherent noise, so the interpenetration has lobes and tongues
+                # instead of per-cell static.
+                t = fbm(x, y, seed=seed + pass_index, scale=3.4, octaves=2)
+                if t > 0.56 + 0.10 * pass_index:
+                    changes.append((x, y, best))
+        for x, y, code in changes:
+            put(ground, x, y, code)
+    return len(changes)
+
+
+def paint_pools():
+    """Standing water on the marsh, placed by a per-cell field.
+
+    The bog tile cannot carry a pool: `bog` is chosen per 3x3 block, so a pool in
+    the tile lands on the block lattice (three attempts at it printed a pattern
+    across the fen). A detail overlay on a smooth field has no lattice to land on.
+    Only marsh and mud get pools, never a lane and never a cell that already
+    carries an overlay, and the field is smooth enough that adjacent pools cluster
+    into sheets.
+    """
+    count = 0
+    for y in range(H):
+        for x in range(W):
+            if get(solid, x, y) != "." or get(detail, x, y) != ".":
+                continue
+            if get(ground, x, y) not in ("b", "m"):
+                continue
+            field = patch_field(351, x, y, 11.0)
+            # Only the wettest ~18 % of the marsh carries open water. A first
+            # threshold of 0.36 covered most of the fen, and a pool on nearly
+            # every cell is not a marsh, it is a lake with a tiling bug.
+            if field < 0.58:
+                continue
+            if field + (vnoise(x, y, 2.0, 352) - 0.5) * 0.14 < 0.58:
+                continue
+            put(detail, x, y, "p")
+            count += 1
+    return count
+
+
+def paint_stone_mottle():
+    """Weathered stone patches across the rock and gravel plateaus.
+
+    The north-east plateau is the largest single surface in the world and it was
+    one flat colour: `rock` and `gravel` have four to six variants, all within a
+    couple of points of each other (that is what stops them printing as a quilt),
+    chosen per 3x3 block. Uniform variants fixed one defect and exposed the other -
+    with no tonal variation inside the tile and none between variants, the plateau
+    has no structure at any scale below "the whole region".
+
+    So the structure goes on top, as an overlay placed by a smooth field, exactly as
+    the fen's water is: it fills its tile, carries no boundary, and a run of mottled
+    cells becomes a patch of weathered stone. Only exposed rock and gravel get it -
+    never a road, a lane, a plaza or anything already carrying an overlay.
+    """
+    count = 0
+    for y in range(H):
+        for x in range(W):
+            if get(solid, x, y) != "." or get(detail, x, y) != ".":
+                continue
+            if get(ground, x, y) not in ("r", "g"):
+                continue
+            field = patch_field(361, x, y, 9.0)
+            if field < 0.52:
+                continue
+            if field + (vnoise(x, y, 2.4, 362) - 0.5) * 0.16 < 0.52:
+                continue
+            put(detail, x, y, "w")
+            count += 1
+    return count
+
+
+def paint_cliff_depth():
+    """Three-step value ramp across the cliff mass, by distance to open ground.
+
+    The clip is the world's dominant graphic and it was one tone from rim to centre.
+    `w`-style mottle inside the tile cannot fix that: the defect is scale, and every
+    attempt to draw structure in 16 px produced a grid. Value against depth is the
+    cue that works at any scale, and it needs no new art in the tile - just two
+    darkening overlays placed by a distance field.
+
+    Distance is a 4-neighbour BFS from open cells, which is exact enough at this size
+    and cheap. The band boundary is then roughened with noise so the mass reads as
+    weathered rock rather than as a topographic contour map.
+    """
+    from collections import deque
+    dist = {}
+    queue = deque()
+    for y in range(H):
+        for x in range(W):
+            cell = get(solid, x, y)
+            if not cell or not cell.startswith("#"):
+                continue
+            for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                nx, ny = x + dx, y + dy
+                if not inside(nx, ny) or not (get(solid, nx, ny) or "").startswith("#"):
+                    dist[(x, y)] = 1
+                    queue.append((x, y))
+                    break
+    while queue:
+        x, y = queue.popleft()
+        d = dist[(x, y)]
+        if d >= 14:
+            continue
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nx, ny = x + dx, y + dy
+            if not inside(nx, ny):
+                continue
+            cell = get(solid, nx, ny)
+            if not cell or not cell.startswith("#") or (nx, ny) in dist:
+                continue
+            dist[(nx, ny)] = d + 1
+            queue.append((nx, ny))
+
+    painted = 0
+    for (x, y), d in dist.items():
+        if get(detail, x, y) != ".":
+            continue
+        # Roughen the band edge so the ramp does not trace a clean contour.
+        # Six steps over the ramp, each about 7 % darker than the last. A roughened
+        # boundary per step; two levels, which is what the first version used, put a
+        # 24 % alpha jump on a tile edge and read as a square block.
+        wobble = (vnoise(x, y, 2.6, 371) - 0.5) * 2.4
+        dd = d + wobble
+        if dd < 2.4:
+            continue
+        step = min(6, int((dd - 2.4) / 1.9) + 1)
+        put(detail, x, y, str(step))
+        painted += 1
+    return painted
+
+
+def paint_cliff_face():
+    """Course the base of every south-facing cliff, and pier the long runs.
+
+    The cliff mass is the backdrop to the whole eastern half of the map and to L10
+    in particular, and the recorded gap was that it is "one flat masonry field with
+    no buttress or course change". Both of those are *world-space* features, so they
+    belong here and not in the tile: a course along the foot of the face, and a pier
+    every so many tiles along it.
+
+    Two rules learned the hard way this pass, both about depth sorting:
+
+    * a prop's `y` is its **foot**, so anything placed on the wall's own cell is drawn
+      underneath the cliff and vanishes - the footing goes on the open cell *below*
+      the face, with its base on that cell;
+    * a prop made of the same stone as the wall behind it is invisible regardless of
+      its size, so both frames carry an explicit dark contour.
+
+    Faces shorter than three cells are skipped: a two-tile ledge on a lone boulder
+    reads as litter, not as masonry.
+    """
+    faces = []
+    for y in range(1, H - 1):
+        for x in range(W):
+            if (get(solid, x, y) or "") != "#":
+                continue
+            if (get(solid, x, y + 1) or "") != ".":
+                continue
+            faces.append((x, y))
+
+    ledges = 0
+    for x, y in faces:
+        variant = "cliff_ledge_a" if h01(941, x, y) < 0.5 else "cliff_ledge_b"
+        add_prop(variant, x * TILE + 8, (y + 1) * TILE + 7, z=1)
+        ledges += 1
+
+    # Pier the continuous runs: a pilaster every eight cells, only where the face is
+    # at least six cells long, so a pier always has wall either side of it.
+    by_row = {}
+    for x, y in faces:
+        by_row.setdefault(y, []).append(x)
+    piers = 0
+    for y, xs in by_row.items():
+        xs.sort()
+        run_start = xs[0]
+        run = [xs[0]]
+        for x in xs[1:] + [None]:
+            if x is not None and x == run[-1] + 1:
+                run.append(x)
+                continue
+            if len(run) >= 6:
+                for k in range(run_start + 3, run[-1] - 1, 8):
+                    # Foot on the open cell immediately below the face, so the pier
+                    # stands against the wall rather than a tile out in front of it.
+                    add_prop("cliff_pilaster", k * TILE + 8, (y + 1) * TILE + 6, z=1)
+                    piers += 1
+            if x is not None:
+                run_start = x
+                run = [x]
+    return ledges, piers
+
+
+def paint_court():
+    """Give the citadel court a paving hierarchy: apron, axial walk, border course.
+
+    L10's plateau is over nine hundred cells of identical flagstone, and the recorded
+    gap is exactly that - a flat field behind the keep, with no hierarchy to read. The
+    plaza is *made* of the tile, so no tile work can fix it; what fixes it is laying
+    the court the way a court is laid:
+
+    * an **apron** of dressed stone directly before the keep, where the player arrives;
+    * an **axial walk** running south from the keep, so the approach has a spine;
+    * a **border course** two cells deep around the whole plateau, which both frames
+      the field and tells the player where the walkable court ends.
+
+    All three are placed by distance from the throne and from the plateau edge, so
+    they follow whatever shape the plateau actually is rather than a rectangle
+    painted on top of it.
+    """
+    throne = next((l for l in LANDMARKS if l[0] == "lm_throne"), None)
+    if throne is None:
+        return 0
+    # LANDMARKS rows are (id, level, name, region, pos, frame, kind, title).
+    tx, ty = throne[4]
+
+    # The courtyard is a *place*, not a material: the flood has to be confined to
+    # the ground actually in front of the keep. Left unbounded it ran the length of
+    # the connected paving - which reaches ninety tiles east to the beacon - and
+    # scattered dressed court stone across half the map. Found by dumping the ground
+    # codes around the beacon and wondering why a court course was there.
+    cx0, cx1 = tx - 34, tx + 34
+    cy0, cy1 = ty - 14, ty + 36
+
+    def paved(x, y):
+        if not (cx0 <= x <= cx1 and cy0 <= y <= cy1):
+            return False
+        cell = get(ground, x, y) or "."
+        return cell in "fd"
+
+    # Flood the plateau from the keep foot.
+    from collections import deque
+    connected = {(tx, ty)}
+    queue = deque([(tx, ty)])
+    while queue:
+        x, y = queue.popleft()
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nx, ny = x + dx, y + dy
+            if not inside(nx, ny) or (nx, ny) in connected or not paved(nx, ny):
+                continue
+            connected.add((nx, ny))
+            queue.append((nx, ny))
+
+    # Distance to the plateau edge, for the border course.
+    edge = {}
+    queue = deque()
+    for (x, y) in connected:
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nx, ny = x + dx, y + dy
+            if (nx, ny) not in connected:
+                edge[(x, y)] = 1
+                queue.append((x, y))
+                break
+    while queue:
+        x, y = queue.popleft()
+        d = edge[(x, y)]
+        if d >= 3:
+            continue
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            n = (x + dx, y + dy)
+            if n in connected and n not in edge:
+                edge[n] = d + 1
+                queue.append(n)
+
+    # Lay the court on the ground layer, not as a wash. The defect is that the plaza
+    # is *made of* identical tiles, so the fix has to be different tiles: a dressed
+    # border course two cells deep around the whole plateau, and a five-wide axial
+    # walk running south from the keep. Together they read as a court with a spine,
+    # and both follow the plateau's real outline rather than a rectangle.
+    ay_max = max([y - ty for (x, y) in connected if abs(x - tx) <= 3] or [34])
+    walked = 0
+    bordered = 0
+    for (x, y) in connected:
+        ax, ay = x - tx, y - ty
+        if abs(ax) <= 3 and 1 <= ay <= ay_max:
+            put(ground, x, y, "G")
+            walked += 1
+        elif abs(ax) <= 5 and 1 <= ay <= 5:
+            # Landing before the steps: the walk opens out where it meets the keep,
+            # so the approach has a destination rather than a stripe running to a wall.
+            put(ground, x, y, "G")
+            walked += 1
+        elif edge.get((x, y), 99) == 1 and abs(ax) >= 8:
+            # A single-cell border course, and only along the flanks - the plateau's
+            # north and south ends are ragged, and a two-cell band there painted
+            # blobs that read as stains rather than as a course.
+            put(ground, x, y, "F")
+            bordered += 1
+    return bordered + walked
+
+
+def paint_paved_wear():
+    """Lighten the middle of every large paved field, by distance from its edge.
+
+    Flagstone, dirt and gravel fields run to several hundred cells in places and one
+    tone across all of it is what makes a landmark's surroundings read as a repeating
+    texture instead of as ground somebody walks on. Sourced from the same BFS idea as
+    the cliff ramp, inverted: the cliff darkens inward because light does not reach
+    into it, a floor pales inward because it is worn.
+
+    Only fields deep enough to have a centre are touched. A three-cell apron in front
+    of a door does not want a gradient on it, and neither does a camp: the first
+    version's threshold of three cells put pale slabs into the dirt around the refuge
+    fire, which read as spilled paint rather than as worn stone.
+    """
+    from collections import deque
+    # Flagstone only. Gravel and dirt are *already* textured by their own tiles, and a
+    # flat pale wash on top of them does not read as wear - it reads as a smear, which
+    # is exactly how the first version turned a gravel crossing into a smooth grey
+    # blob. Worn paving is a property of laid stone.
+    paved_codes = "f"
+
+    def walkable_paved(x, y):
+        return ((get(solid, x, y) or "") == "."
+                and (get(ground, x, y) or ".") in paved_codes)
+
+    dist = {}
+    queue = deque()
+    for y in range(H):
+        for x in range(W):
+            if not walkable_paved(x, y):
+                continue
+            for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                if not walkable_paved(x + dx, y + dy):
+                    dist[(x, y)] = 0
+                    queue.append((x, y))
+                    break
+    while queue:
+        x, y = queue.popleft()
+        d = dist[(x, y)]
+        if d >= 12:
+            continue
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nx, ny = x + dx, y + dy
+            if (nx, ny) in dist or not walkable_paved(nx, ny):
+                continue
+            dist[(nx, ny)] = d + 1
+            queue.append((nx, ny))
+
+    painted = 0
+    edges_trimmed = 0
+    for (x, y), d in dist.items():
+        if get(detail, x, y) != ".":
+            continue
+        # Dirt and moss collect in the seams near an edge; the middle is worn pale.
+        wobble = (vnoise(x, y, 2.4, 383) - 0.5) * 2.0
+        dd = d + wobble
+        if dd >= 8.0:
+            put(detail, x, y, "8")
+            painted += 1
+        elif dd >= 4.5:
+            put(detail, x, y, "7")
+            painted += 1
+        elif dd < 1.2 and (get(ground, x, y) or ".") == "f":
+            put(detail, x, y, "o")
+            edges_trimmed += 1
+    return painted, edges_trimmed
+
+
+def paint_kerbs():
+    """A dressed-stone kerb round every paved surface.
+
+    Plazas are painted as ellipses onto a tile grid, so their outlines step by a
+    whole tile; a kerb is the only thing on the ground layer that can turn that
+    into a built edge. Only cells that are paving, walkable and carry no other
+    overlay get one, so a road running onto a plaza keeps its own surface right up
+    to the join.
+    """
+    count = 0
+    for y in range(H):
+        for x in range(W):
+            if get(ground, x, y) != "f" or get(solid, x, y) != ".":
+                continue
+            if get(detail, x, y) != ".":
+                continue
+            paved_neighbours = sum(1 for dx, dy in ((0, -1), (1, 0), (0, 1), (-1, 0))
+                                   if get(ground, x + dx, y + dy) == "f")
+            if paved_neighbours == 4:
+                continue
+            put(detail, x, y, "k")
+            count += 1
+    return count
+
+
+def bake():
+    gl = ["."] * (W * H)
+    dl = ["."] * (W * H)
+    sl = ["."] * (W * H)
+    for y in range(H):
+        for x in range(W):
+            i = idx(x, y)
+            g = ground[i]
+            gl[i] = g
+            d = detail[i]
+            if d != "." and g != ".":
+                if d == "k":
+                    # The kerb's mask is inverted on purpose: a bit marks a side
+                    # that is NOT paving, i.e. an exposed built edge. Masking it
+                    # the usual way (neighbour holds the same detail) would always
+                    # be zero, because the kerb is only ever one cell deep.
+                    dl[i] = d + "%x" % neighbour_mask(ground, x, y, lambda c: c != "f")
+                elif d in MASKED_DETAIL:
+                    dl[i] = d + "%x" % neighbour_mask(detail, x, y, lambda c: c == d)
+                else:
+                    dl[i] = d
+            if g in ("~", "-") and d == ".":
+                land = 0
+                if get(ground, x, y - 1) not in ("~", "-"):
+                    land |= 1
+                if get(ground, x + 1, y) not in ("~", "-"):
+                    land |= 2
+                if get(ground, x, y + 1) not in ("~", "-"):
+                    land |= 4
+                if get(ground, x - 1, y) not in ("~", "-"):
+                    land |= 8
+                if land:
+                    dl[i] = "/%x" % land
+            s = solid[i]
+            if s != ".":
+                sl[i] = s + "%x" % neighbour_mask(solid, x, y, lambda c: c != ".")
+            elif g == "~":
+                # deep water is impassable; its collider is a physics-only tile
+                sl[i] = "!%x" % neighbour_mask(ground, x, y, lambda c: c == "~")
+    return gl, dl, sl
+
+
+def rle(cells):
+    out = []
+    prev = None
+    count = 0
+    for c in cells:
+        if c == prev:
+            count += 1
+        else:
+            if prev is not None:
+                out.append([prev, count])
+            prev = c
+            count = 1
+    if prev is not None:
+        out.append([prev, count])
+    return out
+
+
+def write_json(document, path):
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(document, f, indent=1, ensure_ascii=False)
+        f.write("\n")
+
+
+def world_document():
+    return {
+        "schema": "hollow_marches_overworld/v2",
+        "world_id": "hollow_marches",
+        "world_name": "The Hollow Marches",
+        "world_name_vi": "Biên Vực Tàn Vong",
+        "tile_size": TILE,
+        "world_bounds": {"x": 0, "y": 0, "w": W, "h": H},
+        "layers_path": "res://data/overworld/hollow_marches_layers.json",
+        "props_path": "res://data/overworld/hollow_marches_props.json",
+        "tiles_path": "res://data/overworld/overworld_tiles.json",
+        "tiles_texture": "res://assets/environment/overworld/overworld_tiles.png",
+        "props_texture": "res://assets/environment/overworld/overworld_props.png",
+        "light_texture": "res://assets/environment/overworld/light_radial.png",
+        "camera_default": {"zoom": 2.0},
+        "default_tint": [0.88, 0.85, 0.93, 1.0],
+        "refuge": {"id": "refuge_start", "label": "Ashen Refuge", "pos": [56, 218]},
+        "start_position": [START[0], START[1]],
+        # Region labels used by the HUD. The runtime assigns a position to the
+        # nearest landmark and reads its region label from here, so the roster of
+        # named places lives in exactly one file.
+        "regions": [
+            {
+                "id": rid,
+                "label": label,
+                "anchor": list(anchor),
+                "landmarks": [lid for lid, _l, _t, r, _p, _v, _k, _s in LANDMARKS if r == rid],
+            }
+            for rid, (anchor, label) in _regions().items()
+        ],
+        "landmarks": [
+            {
+                "id": lid,
+                "campaign_level_id": level,
+                "title": title,
+                "subtitle": subtitle,
+                "region": region,
+                "visual": visual,
+                "kind": kind,
+                "pos": [tx, ty],
+                "threshold": [tx, ty + 1],
+                "facing": "up",
+                # Framing for the capture stations: put the camera far enough
+                # south that the whole silhouette fits under the frame's top
+                # edge (the view is 11.25 tiles tall at zoom 2).
+                #
+                # The throne is the exception, deliberately. Its keep is ten tiles
+                # tall, so framing the whole building put the entire court below the
+                # bottom edge - the station photographed a wall and none of the
+                # colonnade, walk or border course that the court is made of. At L10
+                # the subject is the court, not the keep, so the station frames what
+                # the player actually crosses.
+                "capture_offset": [0, 6] if kind == "throne"
+                else [0, 5 - prop_height_tiles(visual)],
+            }
+            for lid, level, title, region, (tx, ty), visual, kind, subtitle in LANDMARKS
+        ],
+        "camps": [
+            {"id": cid, "name": name, "pos": [tx, ty], "initial": initial}
+            for cid, name, (tx, ty), initial in CAMPS
+        ],
+        "discoveries": [
+            {"id": did, "pos": [tx, ty], "kind": kind, "reward": reward}
+            for did, (tx, ty), kind, reward in DISCOVERIES
+        ],
+        "shortcuts": [
+            {"id": sid, "kind": kind, "pos": [tx, ty], "granted_by": level,
+             "carve": list(carve_rect(kind, tx, ty)), "label": label}
+            for sid, kind, (tx, ty), level, box, label in SHORTCUTS
+        ],
+        "survival": {
+            "resource_id": "provisions",
+            "resource_label": "Provisions",
+            "max": 100,
+            "start": 80,
+            "drain_per_second_wild": 0.22,
+            "drain_per_second_safe": 0.0,
+            "drain_per_second_hazard": 0.75,
+            "camp_restore": 60,
+            "discovery_restore": 20,
+        },
+        "hazards": [
+            {"id": hid, "rect": list(rect), "label": label}
+            for hid, rect, label in HAZARDS
+        ],
+    }
+
+
+def landmark_registry():
+    return {
+        "schema": "overworld_landmark_registry/v2",
+        "landmarks": {
+            level: {
+                "world_id": lid,
+                "title": title,
+                "tier": i + 1,
+                "region": region,
+                "threshold": [tx, ty + 1],
+            }
+            for i, (lid, level, title, region, (tx, ty), visual, kind, subtitle) in enumerate(LANDMARKS)
+        },
+        "camp_levels_by_world_id": {lid: level for lid, level, *_ in LANDMARKS},
+    }
+
+
+def main():
+    paint_base(*build_fields())
+    paint_landforms()
+    paint_water()
+    paint_barriers()
+    paint_forests()
+    paint_landmarks()
+    paint_camps()
+    paint_shortcuts()
+    paint_discoveries()
+    paint_roads()
+    paint_scatter()
+    reinstate_shortcut_bands()
+    # Kerbs last: they only mark cells nothing else has claimed, so the order
+    # matters - a road running onto a plaza keeps its own surface to the join.
+    softened = soften_camp_roads()
+    feathered = feather_boundaries()
+    # Kerbs and pools last: they only claim cells nothing else has, so the
+    # boundary dither must happen before them or it would eat their rims.
+    pools = paint_pools()
+    mottle = paint_stone_mottle()
+    cliff_depth = paint_cliff_depth()
+    cliff_ledges, cliff_piers = paint_cliff_face()
+    court = paint_court()
+    wear, trimmed = paint_paved_wear()
+    kerbs = paint_kerbs()
+    print("softened %d road cells in camps, feathered %d cells" % (softened, feathered))
+    print("stone mottle %d cells, cliff depth %d, facedges %d, piers %d"
+          % (mottle, cliff_depth, cliff_ledges, cliff_piers))
+    print("court: %d border + axial cells" % court)
+    print("paved wear %d cells, %d pebble-trimmed edges" % (wear, trimmed))
+    print("pools %d cells, kerbs %d cells" % (pools, kerbs))
+
+    # Local, hand-authored overrides for the *world* (terrain cells and prop
+    # placement), applied before the gates so they are judged like any other
+    # authored content. Empty by default; see tools/overworld/patches.py.
+    import patches as patches_module
+    patch_doc = patches_module.load()
+    patch_report: list = []
+    patch_summary = patches_module.apply(patch_doc, ground, detail, solid, props,
+                                         W, H, TILE, patch_report)
+    if patch_summary["patches"]:
+        print("patches: %d declared, %d cells changed, %d prop edits"
+              % (patch_summary["patches"], patch_summary["terrain_cells"],
+                 patch_summary["prop_edits"]))
+
+    errors = validate()
+    if errors:
+        for e in errors:
+            print("UNREACHABLE:", e, file=sys.stderr)
+        print("%d reachability errors — refusing to bake" % len(errors), file=sys.stderr)
+        return 1
+
+    gl, dl, sl = bake()
+    os.makedirs(DATA_DIR, exist_ok=True)
+    write_json({
+        "schema": "hollow_marches_layers/v1",
+        "tile_size": TILE,
+        "width": W,
+        "height": H,
+        "layers": {
+            "ground": {"rle": rle(gl)},
+            "detail": {"rle": rle(dl)},
+            "solid": {"rle": rle(sl)},
+        },
+    }, os.path.join(DATA_DIR, "hollow_marches_layers.json"))
+    if patch_report:
+        write_json({
+            "schema": "hollow_marches_patch_report/v1",
+            "applied": patch_report,
+            "summary": patch_summary,
+        }, os.path.join(DATA_DIR, "world_patch_report.json"))
+    write_json({"schema": "hollow_marches_props/v1", "props": props},
+               os.path.join(DATA_DIR, "hollow_marches_props.json"))
+    write_json(world_document(), os.path.join(DATA_DIR, "hollow_marches.json"))
+    write_json(landmark_registry(), os.path.join(DATA_DIR, "landmark_registry.json"))
+
+    counts = {}
+    for c in gl:
+        counts[c] = counts.get(c, 0) + 1
+    print("ground:", " ".join("%s=%d" % (k, v) for k, v in sorted(counts.items(), key=lambda kv: -kv[1])))
+    print("solid cells %d, detail cells %d, props %d" %
+          (sum(1 for c in sl if c != "."), sum(1 for c in dl if c != "."), len(props)))
+    print("baked OK")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

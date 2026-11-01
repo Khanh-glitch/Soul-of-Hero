@@ -6148,46 +6148,6 @@
         "alternative": 0
       },
       {
-        "x": 24,
-        "y": 23,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 25,
-        "y": 23,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 26,
-        "y": 23,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 27,
-        "y": 23,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
         "x": 28,
         "y": 23,
         "source": 0,
@@ -6620,86 +6580,6 @@
       {
         "x": 71,
         "y": 23,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 72,
-        "y": 23,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 73,
-        "y": 23,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 74,
-        "y": 23,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 75,
-        "y": 23,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 24,
-        "y": 24,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 25,
-        "y": 24,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 26,
-        "y": 24,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 27,
-        "y": 24,
         "source": 0,
         "atlas": [
           1,
@@ -7148,86 +7028,6 @@
         "alternative": 0
       },
       {
-        "x": 72,
-        "y": 24,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 73,
-        "y": 24,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 74,
-        "y": 24,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 75,
-        "y": 24,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 24,
-        "y": 25,
-        "source": 0,
-        "atlas": [
-          1,
-          6
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 25,
-        "y": 25,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 26,
-        "y": 25,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 27,
-        "y": 25,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
         "x": 28,
         "y": 25,
         "source": 0,
@@ -7668,86 +7468,6 @@
         "alternative": 0
       },
       {
-        "x": 72,
-        "y": 25,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 73,
-        "y": 25,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 74,
-        "y": 25,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 75,
-        "y": 25,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 24,
-        "y": 26,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 25,
-        "y": 26,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 26,
-        "y": 26,
-        "source": 0,
-        "atlas": [
-          2,
-          6
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 27,
-        "y": 26,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
         "x": 28,
         "y": 26,
         "source": 0,
@@ -8179,46 +7899,6 @@
       },
       {
         "x": 71,
-        "y": 26,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 72,
-        "y": 26,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 73,
-        "y": 26,
-        "source": 0,
-        "atlas": [
-          1,
-          6
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 74,
-        "y": 26,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 75,
         "y": 26,
         "source": 0,
         "atlas": [
@@ -8778,36 +8458,6 @@
         "alternative": 0
       },
       {
-        "x": 27,
-        "y": 28,
-        "source": 0,
-        "atlas": [
-          2,
-          5
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 28,
-        "y": 28,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 29,
-        "y": 28,
-        "source": 0,
-        "atlas": [
-          3,
-          5
-        ],
-        "alternative": 0
-      },
-      {
         "x": 30,
         "y": 28,
         "source": 0,
@@ -9149,36 +8799,6 @@
       },
       {
         "x": 64,
-        "y": 28,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 65,
-        "y": 28,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 66,
-        "y": 28,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 67,
         "y": 28,
         "source": 0,
         "atlas": [
@@ -9298,36 +8918,6 @@
         "alternative": 0
       },
       {
-        "x": 27,
-        "y": 29,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 28,
-        "y": 29,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 29,
-        "y": 29,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
         "x": 30,
         "y": 29,
         "source": 0,
@@ -9669,36 +9259,6 @@
       },
       {
         "x": 64,
-        "y": 29,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 65,
-        "y": 29,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 66,
-        "y": 29,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 67,
         "y": 29,
         "source": 0,
         "atlas": [
@@ -10148,36 +9708,6 @@
         "alternative": 0
       },
       {
-        "x": 65,
-        "y": 30,
-        "source": 0,
-        "atlas": [
-          3,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 66,
-        "y": 30,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 67,
-        "y": 30,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
         "x": 73,
         "y": 30,
         "source": 0,
@@ -10564,36 +10094,6 @@
         "atlas": [
           3,
           5
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 65,
-        "y": 31,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 66,
-        "y": 31,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 67,
-        "y": 31,
-        "source": 0,
-        "atlas": [
-          1,
-          4
         ],
         "alternative": 0
       },
@@ -10988,36 +10488,6 @@
         "alternative": 0
       },
       {
-        "x": 65,
-        "y": 32,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 66,
-        "y": 32,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 67,
-        "y": 32,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
         "x": 73,
         "y": 32,
         "source": 0,
@@ -11399,36 +10869,6 @@
       },
       {
         "x": 64,
-        "y": 33,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 65,
-        "y": 33,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 66,
-        "y": 33,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 67,
         "y": 33,
         "source": 0,
         "atlas": [
@@ -24855,7 +24295,87 @@
         "source": 1,
         "atlas": [
           1,
-          1
+          2
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 24,
+        "y": 23,
+        "source": 1,
+        "atlas": [
+          2,
+          2
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 25,
+        "y": 23,
+        "source": 1,
+        "atlas": [
+          2,
+          2
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 26,
+        "y": 23,
+        "source": 1,
+        "atlas": [
+          2,
+          2
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 27,
+        "y": 23,
+        "source": 1,
+        "atlas": [
+          1,
+          2
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 72,
+        "y": 23,
+        "source": 1,
+        "atlas": [
+          3,
+          2
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 73,
+        "y": 23,
+        "source": 1,
+        "atlas": [
+          2,
+          2
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 74,
+        "y": 23,
+        "source": 1,
+        "atlas": [
+          2,
+          2
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 75,
+        "y": 23,
+        "source": 1,
+        "atlas": [
+          2,
+          2
         ],
         "alternative": 0
       },
@@ -24865,12 +24385,12 @@
         "source": 1,
         "atlas": [
           3,
-          1
+          2
         ],
         "alternative": 0
       },
       {
-        "x": 23,
+        "x": 27,
         "y": 24,
         "source": 1,
         "atlas": [
@@ -24880,7 +24400,7 @@
         "alternative": 0
       },
       {
-        "x": 76,
+        "x": 72,
         "y": 24,
         "source": 1,
         "atlas": [
@@ -24890,7 +24410,7 @@
         "alternative": 0
       },
       {
-        "x": 23,
+        "x": 27,
         "y": 25,
         "source": 1,
         "atlas": [
@@ -24900,7 +24420,7 @@
         "alternative": 0
       },
       {
-        "x": 76,
+        "x": 72,
         "y": 25,
         "source": 1,
         "atlas": [
@@ -24915,7 +24435,87 @@
         "source": 1,
         "atlas": [
           1,
-          1
+          0
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 24,
+        "y": 26,
+        "source": 1,
+        "atlas": [
+          2,
+          0
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 25,
+        "y": 26,
+        "source": 1,
+        "atlas": [
+          2,
+          0
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 26,
+        "y": 26,
+        "source": 1,
+        "atlas": [
+          2,
+          0
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 27,
+        "y": 26,
+        "source": 1,
+        "atlas": [
+          1,
+          0
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 72,
+        "y": 26,
+        "source": 1,
+        "atlas": [
+          3,
+          0
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 73,
+        "y": 26,
+        "source": 1,
+        "atlas": [
+          2,
+          0
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 74,
+        "y": 26,
+        "source": 1,
+        "atlas": [
+          2,
+          0
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 75,
+        "y": 26,
+        "source": 1,
+        "atlas": [
+          2,
+          0
         ],
         "alternative": 0
       },
@@ -24925,7 +24525,7 @@
         "source": 1,
         "atlas": [
           3,
-          1
+          0
         ],
         "alternative": 0
       },
@@ -24960,6 +24560,66 @@
         "alternative": 0
       },
       {
+        "x": 27,
+        "y": 28,
+        "source": 1,
+        "atlas": [
+          3,
+          2
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 28,
+        "y": 28,
+        "source": 1,
+        "atlas": [
+          2,
+          2
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 29,
+        "y": 28,
+        "source": 1,
+        "atlas": [
+          1,
+          2
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 65,
+        "y": 28,
+        "source": 1,
+        "atlas": [
+          3,
+          2
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 66,
+        "y": 28,
+        "source": 1,
+        "atlas": [
+          2,
+          2
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 67,
+        "y": 28,
+        "source": 1,
+        "atlas": [
+          1,
+          2
+        ],
+        "alternative": 0
+      },
+      {
         "x": 76,
         "y": 28,
         "source": 1,
@@ -24971,6 +24631,46 @@
       },
       {
         "x": 23,
+        "y": 29,
+        "source": 1,
+        "atlas": [
+          1,
+          1
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 27,
+        "y": 29,
+        "source": 1,
+        "atlas": [
+          3,
+          1
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 29,
+        "y": 29,
+        "source": 1,
+        "atlas": [
+          1,
+          1
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 65,
+        "y": 29,
+        "source": 1,
+        "atlas": [
+          3,
+          1
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 67,
         "y": 29,
         "source": 1,
         "atlas": [
@@ -25005,17 +24705,7 @@
         "source": 1,
         "atlas": [
           3,
-          2
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 28,
-        "y": 30,
-        "source": 1,
-        "atlas": [
-          2,
-          2
+          1
         ],
         "alternative": 0
       },
@@ -25024,7 +24714,7 @@
         "y": 30,
         "source": 1,
         "atlas": [
-          2,
+          1,
           2
         ],
         "alternative": 0
@@ -25050,11 +24740,31 @@
         "alternative": 0
       },
       {
-        "x": 68,
+        "x": 65,
         "y": 30,
         "source": 1,
         "atlas": [
           3,
+          1
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 67,
+        "y": 30,
+        "source": 1,
+        "atlas": [
+          1,
+          2
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 68,
+        "y": 30,
+        "source": 1,
+        "atlas": [
+          2,
           2
         ],
         "alternative": 0
@@ -25140,7 +24850,7 @@
         "alternative": 0
       },
       {
-        "x": 68,
+        "x": 65,
         "y": 31,
         "source": 1,
         "atlas": [
@@ -25200,7 +24910,7 @@
         "alternative": 0
       },
       {
-        "x": 68,
+        "x": 65,
         "y": 32,
         "source": 1,
         "atlas": [
@@ -25260,12 +24970,42 @@
         "alternative": 0
       },
       {
+        "x": 65,
+        "y": 33,
+        "source": 1,
+        "atlas": [
+          3,
+          0
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 66,
+        "y": 33,
+        "source": 1,
+        "atlas": [
+          2,
+          0
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 67,
+        "y": 33,
+        "source": 1,
+        "atlas": [
+          2,
+          0
+        ],
+        "alternative": 0
+      },
+      {
         "x": 68,
         "y": 33,
         "source": 1,
         "atlas": [
           3,
-          1
+          0
         ],
         "alternative": 0
       },
@@ -27824,6 +27564,8 @@
         ],
         "profile": "breathing_relic"
       }
-    ]
+    ],
+    "mapplay_signature": "Vault pinch-points split the relic approach into two flank routes.",
+    "map_design_revision": 2
   }
 }

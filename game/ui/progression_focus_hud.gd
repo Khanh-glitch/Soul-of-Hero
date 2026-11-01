@@ -20,6 +20,15 @@ const HERO_DISPLAY_NAMES := {
 
 signal codex_requested()
 
+# The target's health bar is health, not rarity. It used to take Rarity.color(),
+# and normal rarity is near-white (#e8edf2): the fill texture is a flat #e5b67f
+# strip, so a normal enemy's bar came out as a featureless sand band across the
+# top of the screen - the flat beige rectangle in every fight frame. Rarity keeps
+# the name above the bar, which is where it can actually be read; the bar runs from
+# the chapter's ember to a deep dried red as the target is worn down.
+const FOCUS_HEALTH_FULL := Color(0.88, 0.27, 0.21)
+const FOCUS_HEALTH_LOW := Color(0.44, 0.07, 0.10)
+
 const Rarity := preload("res://game/ui/rarity_palette.gd")
 const XpPopupScene: PackedScene = preload("res://game/ui/xp_gain_popup.tscn")
 const Vfx := preload("res://game/vfx/vfx_catalog.gd")
@@ -331,7 +340,9 @@ func _present_enemy_focus(enemy: Node2D) -> void:
 	var current := clampi(roundi(_numeric_property(enemy, &"health", float(maximum))), 0, maximum)
 	focus_health.max_value = maximum
 	focus_health.value = current
-	focus_health.tint_progress = color
+	focus_health.tint_progress = FOCUS_HEALTH_FULL.lerp(
+		FOCUS_HEALTH_LOW, 1.0 - float(current) / float(maximum)
+	)
 	focus_health_value.text = "%d / %d" % [current, maximum]
 	focus_health.show()
 	focus_health_value.show()

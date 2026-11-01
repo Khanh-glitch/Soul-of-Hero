@@ -1,0 +1,337 @@
+extends RefCounted
+## A0-only, fail-closed migration from the pinned A3 c23292be world slice to
+## 4bfba38d. No reward/receipt/clock is synthesized. This is not an A3 adapter.
+const Pins = preload("res://game/survival/economy/a0_v5_source_pins.gd")
+const Old = preload("res://game/survival/economy/vendor/a3_world_source_c23292be.gd")
+const New = preload("res://game/survival/economy/world_source_adapter.gd")
+const OLD_BINDINGS := "res://data/survival/connector/a0_legacy/world_source_bindings.c23292be.v3.json"
+const NEW_BINDINGS := "res://data/survival/items/world_source_bindings.v3.json"
+const NEW_FIELDS := ["roadside_notes_01_claim_count", "roadside_notes_01_next_ready_active_tick", "roadside_salvage_02_claim_count", "roadside_salvage_02_next_ready_active_tick", "roadside_timber_03_claim_count", "roadside_timber_03_next_ready_active_tick"]
+const MAX_NUMBER := 1000000000000
+
+static func _data(path: String) -> Variant:
+	var f := FileAccess.open(path, FileAccess.READ)
+	if f == null: return null
+	return JSON.parse_string(f.get_as_text())
+
+static func _whole(value: Variant, allow_initial := false) -> bool:
+	if not (value is int or value is float): return false
+	var n := float(value)
+	return is_finite(n) and n == floor(n) and n >= (-1.0 if allow_initial else 0.0) and n <= float(MAX_NUMBER)
+
+static func _legacy_error(world: Dictionary, transactions: Variant, bindings: Dictionary, economy: Variant) -> String:
+	if not transactions is Dictionary: return "legacy_transactions_invalid"
+	if not world.get("clock") is Dictionary or not world.get("pois") is Dictionary or not world.get("capabilities") is Array:
+		return "legacy_fields_invalid"
+	var template: Dictionary = Old.empty_state(bindings)
+	if world.size() != template.size(): return "legacy_world_fields_invalid"
+	var clock: Dictionary = world.clock
+	if clock.size() != (template.clock as Dictionary).size(): return "legacy_clock_fields_invalid"
+	for field: String in ["latest_session_index", "sequence", "active_seconds", "host_active_seconds"]:
+		if not _whole(clock.get(field), field in ["latest_session_index", "sequence"]): return "legacy_clock_invalid:" + field
+	if not clock.get("session_id") is String: return "legacy_clock_session_invalid"
+	var pois: Dictionary = world.pois
+	if pois.size() != 2 or not pois.get("poi_crown_waystation") is Dictionary or not pois.get("poi_crown_relay_shed") is Dictionary:
+		return "legacy_poi_set_invalid"
+	for poi_id: String in ["poi_crown_waystation", "poi_crown_relay_shed"]:
+		if (pois[poi_id] as Dictionary).size() != ((template.pois as Dictionary)[poi_id] as Dictionary).size(): return "legacy_poi_fields_invalid"
+	var structural := Old.state_error(world, bindings)
+	if not structural.is_empty(): return structural
+	var way: Dictionary = pois.poi_crown_waystation
+	for field: String in ["cache_claim_count", "cache_next_ready_active_tick", "deadfall_claim_count", "deadfall_next_ready_active_tick"]:
+		if not _whole(way.get(field)): return "legacy_counter_invalid:" + field
+	var caps: Array = world.capabilities
+	var allowed_caps := ["cap_salvage", "cap_seal_1", "cap_power_1"]
+	var seen_caps := {}
+	for cap: Variant in caps:
+		if not cap is String or not allowed_caps.has(cap) or seen_caps.has(cap): return "legacy_capability_invalid"
+		seen_caps[cap] = true
+	for pair: Array in [[way.get("locker_opened"), "cap_salvage"], [way.get("ledger_sealed"), "cap_seal_1"], [(pois.poi_crown_relay_shed as Dictionary).get("bypass_installed"), "cap_power_1"]]:
+		if bool(pair[0]) != caps.has(pair[1]): return "legacy_capability_mismatch"
+	if int(way.cache_claim_count) > 0 and not bool(way.locker_opened): return "legacy_cache_without_locker"
+	# Every one-time action and every sequential source generation must have a
+	# matching canonical right and A3 durable transaction. No counter repair.
+	var definitions := {}
+	for raw: Variant in bindings.get("bindings", []):
+		var b: Dictionary = raw
+		var poi: Dictionary = pois.get(str(b.poi_id), {})
+		var count := int(poi.get(str(b.claim_index_field), -1))
+		var ready := int(poi.get(str(b.next_ready_field), -1))
+		var cooldown := int(b.get("cooldown_active_seconds", 0))
+		if (count == 0 and ready != 0) or (count > 0 and (ready < cooldown or ready > int(clock.active_seconds) + cooldown)): return "legacy_cooldown_invalid"
+		var receipts: Dictionary = poi.get("reward_receipts", {})
+		if count < 0 or count > receipts.size(): return "legacy_claim_count_invalid"
+		for index in range(1, count + 1):
+			var key := str(b.transaction_key_template).replace("{claim_index}", str(index))
+			definitions[key] = {"right": str(b.reward_right_id), "poi": str(b.poi_id), "action": str(b.action_id), "instance": str(b.instance_id)}
+	for raw: Variant in bindings.get("world_actions", []):
+		var a: Dictionary = raw
+		var poi: Dictionary = pois.get(str(a.poi_id), {})
+		if bool(poi.get(str(a.one_time_flag), false)):
+			for flag: Variant in (a.get("state_writes", {}) as Dictionary):
+				if poi.get(flag) != a.state_writes[flag]: return "legacy_action_flags_invalid"
+			definitions[str(a.transaction_key_template)] = {"right": str(a.reward_right_id), "poi": str(a.poi_id), "action": str(a.action_id), "instance": ""}
+	var seen := {}
+	for poi_id: Variant in pois:
+		var poi: Dictionary = pois[poi_id]
+		var receipts: Variant = poi.get("reward_receipts")
+		if not receipts is Dictionary: return "legacy_receipts_invalid"
+		if not receipts.is_empty() and not bool(poi.get("discovered", false)): return "legacy_undiscovered_receipt"
+		for key: Variant in receipts:
+			if not key is String or not definitions.has(key): return "legacy_foreign_claim"
+			var expected: Dictionary = definitions[key]
+			if expected.poi != poi_id or receipts[key] != expected.right or seen.has(key): return "legacy_receipt_identity_mismatch"
+			seen[key] = 0
+		var last: Variant = poi.get("last_transaction_key")
+		if not last is String or (not last.is_empty() and not receipts.has(last)) or (not receipts.is_empty() and last.is_empty()): return "legacy_last_claim_invalid"
+	if seen.size() != definitions.size(): return "legacy_receipt_missing"
+	for tx_key: Variant in transactions:
+		var tx: Variant = transactions[tx_key]
+		var world_key := str(tx_key).begins_with("soh.a3.world_action.")
+		if not tx is Dictionary or not tx.get("metadata") is Dictionary:
+			if world_key: return "legacy_transaction_metadata_invalid"
+			continue
+		var meta: Dictionary = tx.metadata
+		var world_metadata := str(meta.get("kind", "")) == "survival_economy" and str(meta.get("operation", "")) == "world_action"
+		if world_key != world_metadata: return "legacy_transaction_kind_mismatch"
+		if not world_metadata: continue
+		var key := str(meta.get("a1_transaction_key", ""))
+		if not definitions.has(key) or not seen.has(key): return "legacy_foreign_transaction"
+		var expected: Dictionary = definitions[key]
+		if str(meta.get("poi_id", "")) != expected.poi or str(meta.get("action_id", "")) != expected.action or str(meta.get("instance_id", "")) != expected.instance or str(meta.get("reward_right_id", "")) != expected.right:
+			return "legacy_transaction_identity_mismatch"
+		var event_id: Variant = meta.get("event_id")
+		if not event_id is String or event_id.is_empty() or str(tx_key) != "soh.a3.world_action." + event_id.sha256_text(): return "legacy_transaction_key_mismatch"
+		var request := {"poi_id": expected.poi, "action_id": expected.action}
+		if not str(expected.instance).is_empty(): request["instance_id"] = expected.instance
+		# V3 signed only the request plus poi/action/instance; the preflight key
+		# shape is accepted too because some A3 revisions signed it eagerly.
+		var legacy := {"request": request, "receipt_metadata": {"poi_id": expected.poi, "action_id": expected.action, "instance_id": expected.instance}}
+		var shaped := {"request": request, "receipt_metadata": {"a1_transaction_key": key, "poi_id": expected.poi, "action_id": expected.action, "instance_id": expected.instance, "reward_right_id": expected.right}}
+		var signature := str(meta.get("payload_sha256", ""))
+		if signature != JSON.stringify(legacy).sha256_text() and signature != JSON.stringify(shaped).sha256_text():
+			return "legacy_transaction_signature_mismatch"
+		seen[key] += 1
+	for key: Variant in seen:
+		if int(seen[key]) != 1: return "legacy_transaction_missing_or_duplicate"
+	if economy is Dictionary:
+		var commands: Variant = economy.get("commands", {})
+		if not commands is Dictionary: return "legacy_commands_invalid"
+		for command_key: Variant in commands:
+			if not str(command_key).begins_with("soh.a3.world_action."): continue
+			if not transactions.has(command_key) or not transactions[command_key] is Dictionary: return "legacy_foreign_world_command"
+			var metadata: Variant = transactions[command_key].get("metadata")
+			if not metadata is Dictionary or not commands[command_key] is String or commands[command_key] != metadata.get("payload_sha256"):
+				return "legacy_world_command_signature_mismatch"
+	return ""
+
+static func migrate(document: Dictionary) -> Dictionary:
+	if not document.has("world_slice"): return {"ok": true, "changed": false}
+	var pin_error: String = Pins.verify()
+	if not pin_error.is_empty(): return {"ok": false, "error": pin_error}
+	var raw: Variant = document.world_slice
+	if not raw is Dictionary: return {"ok": false, "error": "world_slice_invalid"}
+	var world: Dictionary = raw
+	var pois: Variant = world.get("pois")
+	if not pois is Dictionary or not pois.get("poi_crown_waystation") is Dictionary:
+		return {"ok": false, "error": "world_poi_invalid"}
+	var way: Dictionary = pois.poi_crown_waystation
+	var present := 0
+	for field: String in NEW_FIELDS:
+		if way.has(field): present += 1
+	var current: Variant = _data(NEW_BINDINGS)
+	if not current is Dictionary: return {"ok": false, "error": "new_bindings_missing"}
+	if present == NEW_FIELDS.size():
+		var error := New.state_error(world, current)
+		return {"ok": error.is_empty(), "changed": false, "error": error}
+	if present != 0: return {"ok": false, "error": "partial_world_v5_fields"}
+	var legacy: Variant = _data(OLD_BINDINGS)
+	if not legacy is Dictionary: return {"ok": false, "error": "legacy_bindings_missing"}
+	var old_error := _legacy_error(world, document.get("applied_transactions"), legacy, document.get("survival_economy", {}))
+	if not old_error.is_empty(): return {"ok": false, "error": old_error}
+	for field: String in NEW_FIELDS:
+		way[field] = 0
+	var new_error := New.state_error(world, current)
+	if not new_error.is_empty(): return {"ok": false, "error": new_error}
+	return {"ok": true, "changed": true}
+
+## Godot's JSON parser yields floats for every number. SaveService already
+## restores most gameplay integers; these sections are outside that sanitizer,
+## so restore their declared integer slots here and fail closed on a fractional
+## or out-of-range value instead of coercing it.
+static func _int_slot(target: Dictionary, key: String) -> String:
+	if not target.has(key): return ""
+	var value: Variant = target[key]
+	if value is int: return ""
+	if not value is float or not is_finite(value) or value != floor(value) or absf(value) > 9007199254740992.0:
+		return "noninteger:" + key
+	target[key] = int(value)
+	return ""
+
+static func _int_slot_lenient(target: Dictionary, key: String) -> void:
+	if not target.has(key): return
+	var value: Variant = target[key]
+	if value is float and is_finite(value) and value == floor(value) and absf(value) <= 9007199254740992.0:
+		target[key] = int(value)
+
+static func _int_map(target: Dictionary) -> String:
+	for key: Variant in target.keys():
+		var error := _int_slot(target, str(key))
+		if not error.is_empty(): return error
+	return ""
+
+static func normalize_numbers(document: Dictionary) -> String:
+	for key: String in ["schema_version", "revision"]:
+		var err_1 := _int_slot(document, key)
+		if not err_1.is_empty(): return err_1
+	var transactions: Variant = document.get("applied_transactions")
+	if transactions is Dictionary:
+		for record: Variant in (transactions as Dictionary).values():
+			if not record is Dictionary: continue
+			var err_2 := _int_slot(record, "applied_at_unix")
+			if not err_2.is_empty(): return "applied_transactions." + err_2
+			# The ledger's only numeric metadata field is the granted/consumed
+			# item quantity, which SaveService writes as an int.
+			if record.get("metadata") is Dictionary:
+				# Metadata is an opaque historical record: only a whole float is
+				# restored to int, anything else is left to the owning validator.
+				_int_slot_lenient(record.metadata, "quantity")
+	var inventory: Dictionary = document.get("inventory", {}) if document.get("inventory", {}) is Dictionary else {}
+	for key: String in ["hero_soul_rules_version", "auxiliary_equipment_version"]:
+		var err_3 := _int_slot(inventory, key)
+		if not err_3.is_empty(): return "inventory." + err_3
+	for list_key: String in ["hero_souls", "hero_weapons"]:
+		for record: Variant in inventory.get(list_key, []):
+			if not record is Dictionary: continue
+			for field: String in ["rarity", "item_level", "affix_slot_capacity", "affix_tier", "skill_kit_tier"]:
+				var err_4 := _int_slot(record, field)
+				if not err_4.is_empty(): return list_key + "." + err_4
+			if record.get("skill_ranks") is Dictionary:
+				var err_5 := _int_map(record.skill_ranks)
+				if not err_5.is_empty(): return list_key + ".skill_ranks." + err_5
+	for record: Variant in inventory.get("item_stacks", {}).values() if inventory.get("item_stacks") is Dictionary else []:
+		if not record is Dictionary: continue
+		var err_6 := _int_slot(record, "quantity")
+		if not err_6.is_empty(): return "item_stacks." + err_6
+	var storage: Variant = document.get("storage")
+	if storage is Dictionary:
+		var err_7 := _int_slot(storage, "capacity")
+		if not err_7.is_empty(): return "storage." + err_7
+	var progression: Dictionary = document.get("progression", {}) if document.get("progression", {}) is Dictionary else {}
+	var campaign: Dictionary = progression.get("campaign", {}) if progression.get("campaign", {}) is Dictionary else {}
+	for key: String in ["chapter", "level", "average_enemy_level_cap"]:
+		var err_8 := _int_slot(campaign, key)
+		if not err_8.is_empty(): return "campaign." + err_8
+	for group: String in ["heroes", "player"]:
+		var records: Dictionary = progression.get(group, {}) if progression.get(group, {}) is Dictionary else {}
+		if group == "player":
+			for key: String in ["level", "xp", "stat_economy_version", "skill_economy_version", "free_stat_reallocation_credits"]:
+				var err_9 := _int_slot(records, key)
+				if not err_9.is_empty(): return "player." + err_9
+			for key: String in ["stat_allocation"]:
+				if records.get(key) is Dictionary:
+					var err_10 := _int_map(records[key])
+					if not err_10.is_empty(): return "player." + key + "." + err_10
+			if records.get("skill_allocations") is Dictionary:
+				for hero: Variant in records.skill_allocations.values():
+					if hero is Dictionary:
+						var err_11 := _int_map(hero)
+						if not err_11.is_empty(): return "player.skill_allocations." + err_11
+		else:
+			for hero: Variant in records.values():
+				if not hero is Dictionary: continue
+				for key: String in ["level", "xp"]:
+					var err_12 := _int_slot(hero, key)
+					if not err_12.is_empty(): return "heroes." + err_12
+				for key: String in ["stat_allocation", "skill_allocations"]:
+					if hero.get(key) is Dictionary:
+						var err_13 := _int_map(hero[key])
+						if not err_13.is_empty(): return "heroes." + key + "." + err_13
+	var soul_team: Variant = document.get("soul_team")
+	if soul_team is Dictionary:
+		var err_14 := _int_slot(soul_team, "capacity")
+		if not err_14.is_empty(): return "soul_team." + err_14
+	var currencies: Variant = document.get("currencies")
+	if currencies is Dictionary:
+		var err_15 := _int_map(currencies)
+		if not err_15.is_empty(): return "currencies." + err_15
+	var audit: Variant = document.get("legacy_audit")
+	if audit is Dictionary:
+		var err_16 := _int_slot(audit, "source_schema_version")
+		if not err_16.is_empty(): return "legacy_audit." + err_16
+		if audit.get("stat_allocation_pre_power") is Dictionary:
+			var err_17 := _int_map(audit.stat_allocation_pre_power)
+			if not err_17.is_empty(): return "legacy_audit.stat_allocation_pre_power." + err_17
+	var world_error := _normalize_world(document)
+	if not world_error.is_empty(): return world_error
+	return _normalize_economy(document)
+
+static func _normalize_world(document: Dictionary) -> String:
+	if not document.get("world_slice") is Dictionary: return ""
+	var world: Dictionary = document.world_slice
+	if world.get("clock") is Dictionary:
+		for key: String in ["latest_session_index", "sequence", "active_seconds", "host_active_seconds"]:
+			var err_18 := _int_slot(world.clock, key)
+			if not err_18.is_empty(): return "world_slice.clock." + err_18
+	var current: Variant = _data(NEW_BINDINGS)
+	if not current is Dictionary: return "world_bindings_missing"
+	var template: Dictionary = New.empty_state(current)
+	if not world.get("pois") is Dictionary: return "world_slice.pois_invalid"
+	for poi_id: Variant in (template.pois as Dictionary):
+		var poi: Variant = world.pois.get(poi_id)
+		if not poi is Dictionary: return "world_slice.pois_missing"
+		var shape: Dictionary = template.pois[poi_id]
+		for field: Variant in shape:
+			if not poi.has(field): return "world_slice.poi_field_missing:" + str(field)
+			# Binding JSON parses as floats; a whole-number template is an
+			# integer slot just like a GDScript int literal.
+			if shape[field] is int or (shape[field] is float and shape[field] == floor(shape[field])):
+				var value: Variant = poi[field]
+				if value is int: continue
+				if not value is float or not is_finite(value) or value != floor(value) or absf(value) > 9007199254740992.0:
+					return "world_slice.noninteger:" + str(field)
+				poi[field] = int(value)
+	return ""
+
+static func _normalize_economy(document: Dictionary) -> String:
+	if not document.get("survival_economy") is Dictionary: return ""
+	var state: Dictionary = document.survival_economy
+	for key: String in ["schema", "counter"]:
+		var err_19 := _int_slot(state, key)
+		if not err_19.is_empty(): return "survival_economy." + err_19
+	if state.get("time") is Dictionary:
+		for key: String in ["latest_session_index", "sequence"]:
+			var err_20 := _int_slot(state.time, key)
+			if not err_20.is_empty(): return "survival_economy.time." + err_20
+		if state.time.get("stations") is Dictionary:
+			for station: Variant in state.time.stations.values():
+				if not station is Dictionary: continue
+				var err_21 := _int_slot(station, "active_ticks")
+				if not err_21.is_empty(): return "survival_economy.time.station." + err_21
+	if state.get("instances") is Dictionary:
+		for record: Variant in state.instances.values():
+			if not record is Dictionary: continue
+			for key: String in ["condition", "max_condition", "uses", "max_uses", "revision"]:
+				var err_22 := _int_slot(record, key)
+				if not err_22.is_empty(): return "survival_economy.instance." + err_22
+	if state.get("jobs") is Dictionary:
+		for job: Variant in state.jobs.values():
+			if not job is Dictionary: continue
+			for key: String in ["elapsed", "duration", "tier"]:
+				var err_23 := _int_slot(job, key)
+				if not err_23.is_empty(): return "survival_economy.job." + err_23
+			for key: String in ["reserved", "outputs", "reserved_fuel"]:
+				if job.get(key) is Dictionary:
+					var err_24 := _int_map(job[key])
+					if not err_24.is_empty(): return "survival_economy.job." + key + "." + err_24
+			# Escrow holds a full copy of each instance record. The ownership
+			# guard compares it with the canonical copy exactly, so both copies
+			# must be restored to the same numeric types.
+			for key: String in ["reserved_instances", "output_instances"]:
+				if not job.get(key) is Dictionary: continue
+				for held: Variant in (job[key] as Dictionary).values():
+					if not held is Dictionary: continue
+					for field: String in ["condition", "max_condition", "uses", "max_uses", "revision"]:
+						var err_escrow := _int_slot(held, field)
+						if not err_escrow.is_empty(): return "survival_economy.escrow." + err_escrow
+	return ""
