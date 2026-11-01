@@ -39,7 +39,8 @@ jobs:
           set -o pipefail
           timeout 300s godot --headless --editor --path "$RUNNER_TEMP/avfx-playtest" --import --quit 2>&1 | tee "$RUNNER_TEMP/import.log"
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/import.log"
-      # Explicit rebuild includes the pixel-equivalent constant-color raster path.
+      # Explicit rebuild includes the constant-color raster path; its scoped
+      # source-field equality checks do not prove complete lifecycle parity.
       - name: Export self-contained Linux and Windows builds
         run: |
           set -euo pipefail

@@ -7,9 +7,9 @@ historical methods, caveats and source-comparison references.
 
 ## Experimental downloadable build
 
-[Windows x64 + Linux x64 experimental artifact (14-day retention)](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41289298129/artifacts/13075963584).
+[Windows x64 + Linux x64 experimental artifact (14-day retention)](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41290146529/artifacts/13076836900).
 It is **not** a playtest-ready build. Run
-[41289298129](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41289298129)
+[41290146529](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41290146529)
 exported both platforms and launched the **Linux** binary through the actual
 AppRoot → New Game → Home → Chapter1Overworld route. Smoke verified real
 player movement, real Skeleton spawn, start/cancel for all 20 slots, #10+#17
@@ -20,7 +20,7 @@ contains the manifest and [Vietnamese controls](playtest/HUONG_DAN_THU_NGHIEM.tx
 The wrapper's cast buttons deliberately produce visuals only, **no combat hit**.
 The default #14/#18 art direction is A; B alternatives are experimental.
 
-Build source SHA `69719b10ec31bda34e7c7a3481394b02af58445d`. It
+Build source SHA `0de8d2c77cd0b8c20afdb89d7c6bc1aa2dd367f6`. It
 assembles the real A0 overworld `04eacf62f1a3740a57e08691c3a9006d454aaa2c`,
 A6 UI overlay `6b801554a6af95424b4e39dd29f43c146aa13848`, AVFX renderer,
 and CT files `e505173edd119fdd955cf6249511b575a5468440`. A1
@@ -82,8 +82,12 @@ and none of these checks establishes creator acceptance. Full native 60-Hz befor
 [41288691508](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41288691508)
 completed 8 jobs: baseline `ffbcbdd7ec7974bb2529fb230cb0d492286b1093`
 vs candidate `1066d36ad74331fd30e766b3dd53f7a982eb5e98`, normal/dim,
-516 #14 and 504 #18 frames per job, FFV1 and MP4. The later build source `69719b1` additionally refines #14 cap undersides
-and the wrapper controls; its updated full motion capture is pending. These
+516 #14 and 504 #18 frames per job, FFV1 and MP4. The later `69719b1` refines #14 cap undersides and wrapper controls;
+updated native motion for those sources completed
+[41289638142](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41289638142).
+The build also contains the later solid-color raster optimization. Twelve
+selected source-field hashes match pre-optimization across A/B, not a
+full-lifecycle equivalence proof. These
 are frozen-world frames, not full-motion human review or gameplay proof. The
 prior [41288595150](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41288595150)
 failed in the capture step; after a harness-indentation correction the new run
@@ -97,8 +101,9 @@ both reported 17 ObjectDB instances at exit; the no-FX path also reported
 five resources. This reproduces a baseline leak warning, but does not absolve
 AVFX of independent leaks. Updated build smoke and alternate-source runtime
 [41289298200](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41289298200)
-passed; full lifecycle [41289298108](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41289298108)
-remains pending.
+passed; the 20-skill lifecycle/source-field gate
+[41290028830](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41290028830)
+passed at `146d668` after the raster change.
 
 Earlier full-motion evidence: #04 [41277778594](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41277778594)
 480 ticks/light; #10 [41277330808](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41277330808)
@@ -117,6 +122,15 @@ and #16 selected layers [41242339621](https://github.com/Khanh-glitch/Soul-of-He
 * Source parity, full visual motion, genuine combat, moving-target/obstacle
   occlusion, camera/resize, transitions, long-session cleanup and six redesigns
   remain incomplete. Do not present diagnostics as gameplay evidence.
+* Phase-matched headless CPU source raster
+  [41290129725](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41290129725)
+  compared `69719b1` against `146d668` plus the test-only benchmark. At six
+  static times in both art directions all color/coverage/multiplier/warp/
+  influence hashes match. Direction A #14 t=5.7 median/p95 was
+  **34.562/35.075 → 33.820/34.123 ms**, #18 t=6.4 **20.308/20.692 →
+  19.927/20.230 ms** (10 timed draws after one warmup, same CI host). The
+  small improvement does not meet a 60-FPS budget and is not full-frame/GPU
+  or device performance; update history is not simulated.
 * Software-only #10 comparisons [41275419647](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41275419647)
   and overlap [41275419532](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41275419532)
   were not phase matched; they are not hardware FPS or GPU timings. No target
