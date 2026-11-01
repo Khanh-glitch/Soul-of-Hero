@@ -509,6 +509,35 @@ func _run() -> void:
             var original: Vector2 = CThornOpera.TARGETS[i]
             check((actual - thorn._focus).distance_to(original - CThornOpera.FZ) < 0.001, "C15 preserves authored target constellation")
         thorn_host.cancel_skill(thorn_id)
+    # Long-range bloom straddles the source edge: the world adapter must
+    # expose the missing pixels in an adjacent tile without shifting source
+    # simulation/target or shrinking. Observe the actual emitted source field.
+    var thorn_tiles_seen := {}
+    thorn_host.source_pass_ready.connect(func(_id: StringName, f: Arcana20SourcePassFrame) -> void:
+        if f.family == &"C" and f.c_tile != Vector2i.ZERO:
+            var count := 0
+            for k in range(3, f.c_ink.size(), 4):
+                if f.c_ink[k] > 0.0: count += 1
+            thorn_tiles_seen[f.c_tile] = {"ink": count, "transform": f.source_to_world})
+    live_caster.global_position = base
+    var far_dst := base + Vector2(900.0, 0.0)
+    check(thorn_host.cast_skill(thorn_id, base, far_dst, 1.0, live_caster), "C15 overscan real cast")
+    var overscan := thorn_host._casts[thorn_id] as CSourcePlayer
+    overscan.set_process(false)
+    overscan.render_enabled = false
+    for i in range(360): overscan.advance(STEP, false)
+    overscan.render_enabled = true
+    overscan._render_frame()
+    var far_thorn := overscan._fx as CThornOpera
+    var right_tile := Vector2i(1, 0)
+    check(thorn_tiles_seen.has(right_tile), "C15 long-range clipped bloom reaches adjacent source tile")
+    if thorn_tiles_seen.has(right_tile):
+        var tile_data: Dictionary = thorn_tiles_seen[right_tile]
+        check(int(tile_data.ink) > 0, "C15 adjacent tile carries real bloom ink")
+        var tile_basis: Transform2D = tile_data.transform
+        check((tile_basis * (far_thorn._focus - Vector2(CFrame.W, 0))).distance_to(far_dst) < 0.001, "C15 tile maps to same actual target")
+    check(overscan.source_pass_frame().c_tile == Vector2i.ZERO, "C15 public base frame remains original raster")
+    thorn_host.cancel_skill(thorn_id)
     live_caster.free()
     thorn_host.free()
     var petal_frame := CFrame.new()

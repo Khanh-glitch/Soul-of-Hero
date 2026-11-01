@@ -47,7 +47,12 @@ func _on_frame(id: StringName, frame: Arcana20SourcePassFrame) -> void:
         else:
             _retire_blackout(id)
     var by_family: Dictionary = _passes.get(id, {})
-    var viewer: Node2D = by_family.get(frame.family)
+    # The original C tile retains the normal family key; sparse #15 overscan
+    # gets distinct non-overlapping viewers and is cleared on family finish.
+    var viewer_key: StringName = frame.family
+    if frame.family == &"C" and frame.c_tile != Vector2i.ZERO:
+        viewer_key = StringName("C@%d,%d" % [frame.c_tile.x, frame.c_tile.y])
+    var viewer: Node2D = by_family.get(viewer_key)
     if not is_instance_valid(viewer):
         match frame.family:
             &"A": viewer = Arcana20AWorldPass.new()
@@ -64,8 +69,9 @@ func _on_frame(id: StringName, frame: Arcana20SourcePassFrame) -> void:
         # actors. A remains the default and all other cast ordering is intact.
         if String(id).ends_with("_05") and _renderer.abyssal_directed and frame.family == &"C":
             viewer.z_index = -23
+        viewer.set_meta("source_family", frame.family)
         add_child(viewer)
-        by_family[frame.family] = viewer
+        by_family[viewer_key] = viewer
         _passes[id] = by_family
     viewer.call(&"consume", frame)
 
@@ -79,11 +85,13 @@ func _on_layer_finished(id: StringName, family: StringName) -> void:
         if is_instance_valid(_c_stage): _c_stage.retire(id)
         _retire_blackout(id)
     var by_family: Dictionary = _passes.get(id, {})
-    var viewer: Node = by_family.get(family)
-    if is_instance_valid(viewer):
-        viewer.call(&"clear")
-        viewer.queue_free()
-    by_family.erase(family)
+    for key in by_family.keys():
+        var viewer: Node = by_family[key]
+        if key == family or (is_instance_valid(viewer) and viewer.get_meta("source_family", &"") == family):
+            if is_instance_valid(viewer):
+                viewer.call(&"clear")
+                viewer.queue_free()
+            by_family.erase(key)
     if by_family.is_empty(): _passes.erase(id)
     else: _passes[id] = by_family
 

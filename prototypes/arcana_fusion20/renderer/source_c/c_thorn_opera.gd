@@ -230,12 +230,15 @@ func update(dt: float, t: float) -> void:
                 "spin": _rng.r(-9.0, 9.0), "kind": "petal", "col": CPalette.P["bloom"], "max": _rng.r(1.8, 3.4),
                 "k": 1.0, "delay": _rng.r(0.0, 0.3)}))
 
-func render(f: CFrame, t: float) -> void:
+func render(f: CFrame, t: float, render_offset: Vector2 = Vector2.ZERO) -> void:
+    # Offset is an integer raster-tile origin in the world adapter. It changes
+    # no simulation state, timing, seed, geometry or screen-up petal vector.
+    var focus := _focus + render_offset
     for td in _tds:
         var vpos: Array = []
         for pp in td.pos:
             var pa: Array = pp
-            vpos.append(Vector2(float(pa[0]), float(pa[1])))
+            vpos.append(Vector2(float(pa[0]), float(pa[1])) + render_offset)
         var pts := CMath.catmull(vpos, 2)
         var n := pts.size()
         var ws: Array = []
@@ -278,19 +281,19 @@ func render(f: CFrame, t: float) -> void:
         f.Lc(vpos[M - 1].x, vpos[M - 1].y, CPalette.ramp(CPalette.P["leaf"], 1.0), 0.7)
     if t > 4.9 and t < TB:
         var g := CMath.inv(4.9, 5.7, t)
-        f.disc(_focus.x, _focus.y - 2.0, 3.0 + g * 8.0, func(x: int, y: int, d: float) -> void:
+        f.disc(focus.x, focus.y - 2.0, 3.0 + g * 8.0, func(x: int, y: int, d: float) -> void:
             f.Ic(x, y, CPalette.ramp(CPalette.P["bloom"], 0.25 + (1.0 - d) * 0.35), 1.0)
-            if absf(sin(atan2(float(y) - _focus.y, float(x) - _focus.x) * 3.0 + t)) < 0.15:
+            if absf(sin(atan2(float(y) - focus.y, float(x) - focus.x) * 3.0 + t)) < 0.15:
                 f.Lc(x, y, CPalette.ramp(CPalette.P["bloom"], 0.9), 0.8 * g), 0.8)
-        f.glow(_focus.x, _focus.y, 24.0, CPalette.ramp(CPalette.P["bloom"], 0.7), 0.4 * g, 4.0)
+        f.glow(focus.x, focus.y, 24.0, CPalette.ramp(CPalette.P["bloom"], 0.7), 0.4 * g, 4.0)
     if t >= TB:
         var op := CMath.back_out(CMath.inv(TB, TB + 0.28, t), 2.2)
         var fade := 1.0 - CMath.inv(6.6, 7.6, t)
         if fade > 0.0:
             var R := 44.0 * op
-            f.field(_focus.x - R - 2.0, _focus.y - R - 2.0, _focus.x + R + 2.0, _focus.y + R + 2.0, func(x: int, y: int) -> void:
-                var dx := float(x) + 0.5 - _focus.x
-                var dy := (float(y) + 0.5 - _focus.y) / 0.78
+            f.field(focus.x - R - 2.0, focus.y - R - 2.0, focus.x + R + 2.0, focus.y + R + 2.0, func(x: int, y: int) -> void:
+                var dx := float(x) + 0.5 - focus.x
+                var dy := (float(y) + 0.5 - focus.y) / 0.78
                 var r := Vector2(dx, dy).length()
                 var pa := atan2(dy, dx)
                 if r > R:
@@ -312,8 +315,8 @@ func render(f: CFrame, t: float) -> void:
                     if absf(CMath.ang_diff(ang, pa)) * r < 0.6:
                         f.Lc(x, y, CPalette.ramp(CPalette.P["bloom"], 0.9), 0.4)
                     return)
-            f.disc(_focus.x, _focus.y, 6.0 * op, func(x: int, y: int, d: float) -> void: f.Ic(x, y, CPalette.ramp(CPalette.P["gold"], 0.4 + (1.0 - d) * 0.5), fade), 0.8)
-            f.glow(_focus.x, _focus.y, 60.0, CPalette.ramp(CPalette.P["bloom"], 0.7), 0.35 * fade * exp(-(t - TB) * 1.5) + 0.05, 4.0, 0.8)
+            f.disc(focus.x, focus.y, 6.0 * op, func(x: int, y: int, d: float) -> void: f.Ic(x, y, CPalette.ramp(CPalette.P["gold"], 0.4 + (1.0 - d) * 0.5), fade), 0.8)
+            f.glow(focus.x, focus.y, 60.0, CPalette.ramp(CPalette.P["bloom"], 0.7), 0.35 * fade * exp(-(t - TB) * 1.5) + 0.05, 4.0, 0.8)
         for l in _lashes:
             var q := (t - float(l.t)) / 0.34
             if q < 0.0 or q > 1.0:
@@ -323,7 +326,7 @@ func render(f: CFrame, t: float) -> void:
             var pts: Array = []
             for j in range(31):
                 var a := CMath.lerp(float(l.a0), head, float(j) / 30.0)
-                pts.append(Vector2(_focus.x + cos(a) * float(l.r) * 1.1, _focus.y + sin(a) * float(l.r) * 0.75))
+                pts.append(Vector2(focus.x + cos(a) * float(l.r) * 1.1, focus.y + sin(a) * float(l.r) * 0.75))
             var fade2 := 1.0 - q
             var ws2: Array = []
             for j in range(31):
@@ -341,4 +344,15 @@ func render(f: CFrame, t: float) -> void:
                 f.line_i(p.x, p.y, p.x + cos(a) * 4.0, p.y + sin(a) * 3.0, CPalette.ramp(CPalette.P["bark"], 0.2), fade2)
                 j += 3
             CKit.shock(f, pts[30].x, pts[30].y, 6.0 + q * 10.0, 5.0, 3.0 * fade2, 1.0)
-    CKit.particles_render(f, _ps, particle_height_axis)
+    if render_offset == Vector2.ZERO:
+        CKit.particles_render(f, _ps, particle_height_axis)
+    else:
+        # CKit's particles use absolute x/y for ink and shadows. Copy only for
+        # the raster pass: physics state and RNG are untouched.
+        for particle in _ps:
+            var p: Dictionary = particle.duplicate()
+            p.x = float(p.x) + render_offset.x
+            p.y = float(p.y) + render_offset.y
+            p.px = float(p.px) + render_offset.x
+            p.py = float(p.py) + render_offset.y
+            if float(p.delay) <= 0.0: CKit.draw_pt(f, p, particle_height_axis)

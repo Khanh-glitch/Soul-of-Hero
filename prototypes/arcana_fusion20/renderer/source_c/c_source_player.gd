@@ -54,6 +54,13 @@ var _live_caster_actor: Node2D
 var _target := Vector2.ZERO
 var _rot := 0.0
 var _scale := 1.0
+# #15 world adapter: same 384x216 source pixels rendered into sparse,
+# non-overlapping tiles when real actor movement or clamped focus leaves the
+# original raster. No second simulation and no change to source scale.
+var _thorn_tile := Vector2i.ZERO
+var _thorn_tile_frame: CFrame
+var _thorn_active_tiles: Dictionary = {}
+
 var _tick := 0
 var _acc := 0.0
 var _events: Array = []
@@ -144,6 +151,8 @@ func begin(caster_world: Vector2, target_world: Vector2, kind: String) -> void:
         _origin = target_world - source_axis * _scale
     _cast_caster = caster_world
     _target = target_world
+    _thorn_tile = Vector2i.ZERO
+    _thorn_active_tiles.clear()
     if _kind == "thorn":
         # Ground choreography still faces the cast bearing, while source z
         # (petal height) maps to world-up rather than rotating with it.
@@ -309,6 +318,8 @@ func _render_frame() -> void:
         var pass_frame := source_pass_frame()
         var profile_pack_done := Time.get_ticks_usec() if profile_cpu else 0
         source_pass_ready.emit(pass_frame)
+        if _kind == "thorn":
+            _emit_thorn_tiles()
         if profile_cpu:
             var profile_submit_done := Time.get_ticks_usec()
             profile_clear_us.append(float(profile_clear_done - profile_start))
@@ -336,6 +347,67 @@ func _render_frame() -> void:
         _light_sprite.rotation = _sprite.rotation
         _light_sprite.scale = _sprite.scale
 
+# Cover only geometry actually participating in this frame, not a giant
+# rectangular canvas between a distant player and target. The extra cells are
+# diagnostic world-adaptation overscan; original (0,0) stays byte-for-byte.
+func _thorn_add_tile_rect(tiles: Dictionary, lo: Vector2, hi: Vector2) -> void:
+    var x0 := floori(lo.x / float(CFrame.W))
+    var x1 := floori(hi.x / float(CFrame.W))
+    var y0 := floori(lo.y / float(CFrame.H))
+    var y1 := floori(hi.y / float(CFrame.H))
+    # No unbounded allocations for degenerate/hostile actors. A 12-cell cap is
+    # disclosed; it is not a claim for arbitrarily separated world positions.
+    for y in range(y0, mini(y1 + 1, y0 + 12)):
+        for x in range(x0, mini(x1 + 1, x0 + 12)):
+            var cell := Vector2i(x, y)
+            if cell != Vector2i.ZERO and tiles.size() < 12:
+                tiles[cell] = true
+
+func _emit_thorn_tiles() -> void:
+    var thorn := _fx as CThornOpera
+    var tiles := {}
+    # Never extend the untouched original source canvas unless world mounting
+    # actually moved its caster or shifted its focus at a clamped distance.
+    var adapted := thorn._live_caster.distance_to(CThornOpera.CASTER) > 0.01 or thorn._focus.distance_to(CThornOpera.FZ) > 0.01
+    if adapted:
+        for td in thorn._tds:
+            var positions: Array = td.pos
+            for j in range(positions.size()):
+                var point := Vector2(float(positions[j][0]), float(positions[j][1]))
+                var other := point
+                if j > 0: other = Vector2(float(positions[j - 1][0]), float(positions[j - 1][1]))
+                _thorn_add_tile_rect(tiles, Vector2(minf(point.x, other.x), minf(point.y, other.y)) - Vector2(8, 8), Vector2(maxf(point.x, other.x), maxf(point.y, other.y)) + Vector2(8, 8))
+        if source_time() > 4.9:
+            _thorn_add_tile_rect(tiles, thorn._focus - Vector2(90, 90), thorn._focus + Vector2(90, 90))
+        for p in thorn._ps:
+            var ground := Vector2(float(p.x), float(p.y))
+            var airborne := ground + thorn.particle_height_axis * float(p.z)
+            _thorn_add_tile_rect(tiles, Vector2(minf(ground.x, airborne.x), minf(ground.y, airborne.y)) - Vector2(3, 3), Vector2(maxf(ground.x, airborne.x), maxf(ground.y, airborne.y)) + Vector2(3, 3))
+    if tiles.is_empty() and _thorn_active_tiles.is_empty(): return
+    if _thorn_tile_frame == null: _thorn_tile_frame = CFrame.new()
+    var base_frame := _frame
+    _frame = _thorn_tile_frame
+    _frame.track_world_fragments = true
+    # Once an old cell goes empty, submit a cleared field to avoid trails.
+    var union := tiles.duplicate()
+    for cell in _thorn_active_tiles: union[cell] = true
+    for cell in union:
+        _thorn_tile = cell
+        _frame.clear()
+        _frame.t = source_time()
+        _frame.invert = 0.0
+        _frame.desat = 0.0
+        _frame.chroma = _chroma_k
+        _frame.flash = _flash_c * _flash_k * 0.28
+        _frame.shake = _shake_vector()
+        if tiles.has(cell):
+            var offset := -Vector2(cell.x * CFrame.W, cell.y * CFrame.H)
+            thorn.render(_frame, source_time(), offset)
+        source_pass_ready.emit(source_pass_frame())
+    _thorn_active_tiles = tiles
+    _thorn_tile = Vector2i.ZERO
+    _frame = base_frame
+
 func source_pass_frame() -> Arcana20SourcePassFrame:
     var result := Arcana20SourcePassFrame.new()
     result.family = &"C"
@@ -349,9 +421,11 @@ func source_pass_frame() -> Arcana20SourcePassFrame:
     elif _kind == "rift_fusion":
         result.seeds.append(0x7ea4) # selected A20 live-ground debris seed
     result.source_size = Vector2i(CFrame.W, CFrame.H)
+    result.c_tile = _thorn_tile
     var bx := Vector2(cos(_rot), sin(_rot)) * _scale
     var by := Vector2(-sin(_rot), cos(_rot)) * _scale
-    result.source_to_world = Transform2D(bx, by, _origin - bx * 112.0 - by * 126.0)
+    var tile_origin := Vector2(_thorn_tile.x * CFrame.W, _thorn_tile.y * CFrame.H)
+    result.source_to_world = Transform2D(bx, by, _origin + bx * (tile_origin.x - 112.0) + by * (tile_origin.y - 126.0))
     result.caster_world = _cast_caster
     result.target_world = _target
     result.c_ground = _frame.ground

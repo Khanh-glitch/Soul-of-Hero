@@ -23,6 +23,9 @@ var target_world: Vector2
 # RGBA float = dx,dy,shade,chroma, and optional live-world fragment mapping
 # RGBA float = source x, source y, remaining coverage, transform mode
 # (0 = direct live-world sample, 1 = C20 inverted space, 2 = C20 OUT inversion).
+# Optional non-overlapping C source tile; (0,0) is the original source
+# canvas. Used only by the #15 live-world raster extension, not physics.
+var c_tile := Vector2i.ZERO
 var c_ground: PackedByteArray
 var c_ground_coverage: PackedFloat32Array
 var c_ink: PackedFloat32Array
