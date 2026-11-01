@@ -66,3 +66,11 @@ CẬP NHẬT #03 — 8b2bfe2f dùng sai khác lượng tử hóa có flash/khôn
 tránh posterize toàn cảnh lúc flash bằng 0; vẫn là xấp xỉ LDR, không chứng minh
 đã giải quyết washout hoặc tái hiện HDR gốc. Cần xem lại video native 720p
 bản hiện tại và pass HDR tuyến tính trước HUD do CT/A0 sở hữu.
+
+Gói theo workflow khi tạo là BẢN MỘT PHẦN, không phải bảy skill đã duyệt:
+#15 còn khoảng hở khi actor chạy xa; #03 chưa xem lại toàn chuyển động native
+sau sửa dither. Không dùng nhãn creator Gold, combat hoàn chỉnh hoặc HDR parity.
+F bắt đầu bằng #01 A lead + hình ngọn lửa C: 7169f048 đồng bộ tâm/tỷ lệ/góc
+hai nguồn kể cả khi clamp khoảng cách; không thay nguồn hay tự duyệt mỹ thuật.
+Nếu workflow chạy thêm F01 normal/dim, ảnh đó là evidence mới, không phải
+chấp thuận cho toàn batch F.
