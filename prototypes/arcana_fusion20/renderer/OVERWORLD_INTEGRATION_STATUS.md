@@ -16,10 +16,12 @@ A1 `2cb1a3c5f093724eb9fecbdf45909ccb611f7b32` and A3
 is not mounted. The generated manifest records mounted roles and observed
 owner PR heads separately. No-FX entry on newer A0 `932b7deed42d7e6be9270d3948c19ac071d1d221`
 passed [41269613602](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41269613602),
-but A0/AVFX JOIN failed and its motion-fixture regression is being retested;
-that does **not** validate the full owner journey. A0 advanced to
-`e1e5d778f294a3bb18333c80df8710206907317b`; a separate no-FX probe is queued.
-A1/A3/A6/A8 current PR heads have not been mounted or validated here.
+and the isolated same-camera movement retest passed at that pin. A0 advanced to
+`04eacf62f1a3740a57e08691c3a9006d454aaa2c` (the last change from e1 was
+review docs only). Its no-FX entry [41271305325](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41271305325)
+and joined entry [41271401968](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41271401968)
+passed with AVFX `ae9551a`; these narrow tests do **not** validate the owner's
+full journey. A1/A3/A6/A8 current PR heads have not been mounted or validated here.
 
 - #10: the two original full-source shade calls and full-width scanline
   displacement/chroma are separately transported as viewport-aligned stage
@@ -40,15 +42,26 @@ A1/A3/A6/A8 current PR heads have not been mounted or validated here.
   [41269928178](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41269928178)
   also failed frozen overlap restoration. Both are real failures, not passes.
   The added test forced the actual smoothing-enabled Camera2D mid-suite; the
-  motion experiment has been isolated to the end and now compares cleanup to
-  the **same moved camera and actor state**. The fix is not verified until the
-  rerun passes and its full frames are inspected.
+  motion experiment was isolated to the end and compares cleanup to the
+  **same moved camera and actor state**. On A0 932 + AVFX `41ccae3` the
+  retest [41270623413](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41270623413)
+  passed; the new 04e JOIN [41271401968](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41271401968)
+  also passed and again measured the #16 tail: 111 changed inside, 0 outside.
+  Failed #16/baseline images were inspected: the whole terrain was displaced
+  by the changed camera, while stage and C viewport post were inactive. This
+  fixes the test fixture, not evidence for arbitrary real gameplay movement.
 - #17 source `information loss` explicitly paints the *whole source stage*
   black before adding one source light. Its new world route uses an under-HUD
   global blackout and retains the original light, while source-buffer behavior
   remains unchanged ([41270259582](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41270259582)).
-  Native full-HUD isolation, full-world screenshot, overlap/ordering and
-  reappearance are pending; do not call the new route visually accepted.
+  In the 04e joined test [41271401968](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41271401968),
+  all 59,787 HUD-covered pixels were checked, 0 mismatched, the target light
+  reached peak 1.0 near its actual projected position and cancellation restored
+  the frozen world. Actual blackout and #10 motion/overlap frames were inspected
+  from [41271305416](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41271305416):
+  #17 becomes almost entirely black except HUD and a tiny authored light;
+  target-scale legibility, motion, overlap/ordering and reappearance remain open.
+  This is not visual acceptance.
   #07 frost shadows/holes and #15 thorn/flower geometry examined in C source
   are shape-bounded, not automatically global stage effects. Their large-world
   mutations, clipping, actor/foreground depth and readability remain open.
@@ -56,6 +69,18 @@ A1/A3/A6/A8 current PR heads have not been mounted or validated here.
   uses its selected `crown_outer` role without the duplicate stage/post; this
   does not prove the whole fusion is complete. A/B/D global effects and all
   source-frame boundary interactions remain under audit.
+
+- Same-host software-rendered #02+#10 comparison, A0 e552, before `13df6c9`
+  versus after `3dfd6fe`, [41270974899](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41270974899):
+  720p p50/p95/p99 **316.5/343.6/358.9 → 307.7/335.7/348.6 ms**;
+  2K **320.6/352.5/371.1 → 319.6/333.2/371.1 ms**;
+  4K **801.5/826.6/880.6 → 802.8/829.4/850.6 ms**. Each pair ran
+  sequentially on the same shared runner, 52 overlapping rendered frames;
+  elapsed cast ticks are not phase-matched and this is not target hardware.
+  The after measurement ended after source retirement (`source_tick_end=-1`),
+  so per-source profile/upload counters could not be retained; static memory and
+  the **−4** object delta after cancel are unreliable, not proof of savings or
+  no leaks. HP remained 69→69. Product performance remains blocked.
 
 ### Per-skill acceptance ledger (R14)
 
@@ -81,7 +106,7 @@ blocked by shared software-CI p95 hundreds of ms and missing target hardware.
 | 13 | PARTIAL | PARTIAL | OPEN | OPEN | BLOCKED | NOT APPROVED |
 | 14 | PARTIAL | PARTIAL | OPEN | OPEN | BLOCKED | NOT APPROVED |
 | 15 | PARTIAL | PARTIAL | OPEN | OPEN | BLOCKED | NOT APPROVED |
-| 16 | PARTIAL | REGRESSION RETEST | OPEN | OPEN | BLOCKED | NOT APPROVED |
+| 16 | PARTIAL | PARTIAL — frozen retest passed | OPEN | OPEN | BLOCKED | NOT APPROVED |
 | 17 | PARTIAL | PARTIAL — stage candidate | OPEN | OPEN | BLOCKED | NOT APPROVED |
 | 18 | PARTIAL | PARTIAL | OPEN | OPEN | BLOCKED | NOT APPROVED |
 | 19 | PARTIAL | PARTIAL | OPEN | OPEN | BLOCKED | NOT APPROVED |
