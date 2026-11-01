@@ -561,9 +561,37 @@ func jobs() -> Dictionary:
 	return _adapter.call(&"jobs") if _configured else {}
 
 
+## A completed job is output at its physical station, not an item that
+## teleports into the bag when the player opens a global journal. The hand queue
+## is carried by the player. Every other job must resolve a *currently existing*
+## built station and the same footprint reach policy used for enqueue/research.
+## Jobs remain owned by A3; the UI sees this read-only answer, never a receipt.
+func job_access(job_id: String) -> Dictionary:
+	if not _configured:
+		return {"ok": false, "reason": "session_inactive"}
+	var job: Dictionary = jobs().get(job_id, {})
+	if job.is_empty():
+		return {"ok": false, "reason": "unknown_job"}
+	var station_id := String(job.get("station_id", ""))
+	if station_id == "hand" and String(job.get("station_kind", "")) == "hand":
+		return {"ok": true, "reason": "", "station_id": station_id}
+	if station_id.is_empty() or station_id == "hand":
+		return {"ok": false, "reason": "station_identity_invalid"}
+	var station := _resolve_station(station_id)
+	var node: Node2D = _build.call(&"structure_node", station_id) if is_instance_valid(_build) else null
+	if station.is_empty() or node == null or not is_instance_valid(node):
+		return {"ok": false, "reason": "station_unavailable", "station_id": station_id}
+	if not station_in_reach(station_id, node):
+		return {"ok": false, "reason": "station_not_reachable", "station_id": station_id}
+	return {"ok": true, "reason": "", "station_id": station_id}
+
+
 func collect(job_id: String) -> Dictionary:
 	if not _commands_available():
 		return {"ok": false, "reason": "session_inactive"}
+	var access := job_access(job_id)
+	if not bool(access.get("ok", false)):
+		return access
 	return _adapter.call(&"collect", job_id, _event())
 
 
@@ -629,6 +657,9 @@ func prepared_work() -> Dictionary:
 func cancel(job_id: String) -> Dictionary:
 	if not _commands_available():
 		return {"ok": false, "reason": "session_inactive"}
+	var access := job_access(job_id)
+	if not bool(access.get("ok", false)):
+		return access
 	return _adapter.call(&"cancel", job_id, _event())
 
 
