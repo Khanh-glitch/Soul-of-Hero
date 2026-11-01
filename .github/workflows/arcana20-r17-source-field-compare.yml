@@ -1,0 +1,42 @@
+name: ARCANA20 lightning same-tick source field comparison
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-r17-source-field-compare.yml']
+permissions:
+  actions: read
+  contents: read
+jobs:
+  compare:
+    strategy:
+      fail-fast: false
+      matrix:
+        skill: [9, 11]
+        lighting: [normal, dimmed]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: r17-before-${{ matrix.skill }}-${{ matrix.lighting }}
+          run-id: 41300133108
+          github-token: ${{ github.token }}
+          path: before
+      - uses: actions/download-artifact@v4
+        with:
+          name: r17-candidate-${{ matrix.skill }}-${{ matrix.lighting }}
+          run-id: 41300736472
+          github-token: ${{ github.token }}
+          path: after
+      - name: Report unthresholded source fields at shared exact recorded ticks
+        run: |
+          python3 -m pip install --quiet numpy
+          python3 tools/arcana20_source_compare/compare_live_fields.py before after output
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: r17-source-field-comparison-${{ matrix.skill }}-${{ matrix.lighting }}
+          path: output/
+          if-no-files-found: warn
