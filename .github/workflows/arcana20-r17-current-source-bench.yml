@@ -1,0 +1,44 @@
+# Current redesign-only measurement; does not hide the separate failed import.
+name: ARCANA20 R17 current redesign source benchmark
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-r17-current-source-bench.yml']
+permissions:
+  contents: read
+jobs:
+  bench:
+    strategy:
+      fail-fast: false
+      matrix:
+        art: [A, B]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import current project
+        run: |
+          set -o pipefail
+          godot --headless --path . --import 2>&1 | tee import.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' import.log
+      - name: Measure candidate source fields only
+        run: |
+          set -euo pipefail
+          art='${{ matrix.art }}'
+          timeout 360s env ARCANA20_ART14="$art" ARCANA20_ART18="$art" godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/redesign_source_bench.gd > "bench-$art.log" 2>&1
+          grep -Fq REDESIGN_BENCH_PASS "bench-$art.log"
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' "bench-$art.log"
+          grep '^REDESIGN_BENCH id=' "bench-$art.log" | while IFS= read -r line; do echo "::notice title=R17_CURRENT_SOURCE_CPU::$art $line"; done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: r17-current-redesign-source-bench-${{ matrix.art }}
+          path: |
+            import.log
+            bench-*.log
