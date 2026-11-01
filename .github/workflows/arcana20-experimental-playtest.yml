@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [arena/c7b0c4e8-soul-of-hero]
-    # Re-run all real-world casts after introducing C's actual bolt raster.
+    # Re-run all real-world casts with the R17 redesign and lightning candidates.
     paths:
       - '.github/workflows/arcana20-experimental-playtest.yml'
       - 'prototypes/arcana_fusion20/renderer/playtest/**'
