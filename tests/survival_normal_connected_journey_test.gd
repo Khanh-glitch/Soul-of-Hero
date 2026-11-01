@@ -614,6 +614,8 @@ func _station_summary(host: Node) -> Array[String]:
 func _button_names(panel: Node) -> Array[String]:
 	var out: Array[String] = []
 	for value: Node in panel.find_children("*", "Button", true, false):
+		if value == null or not is_instance_valid(value):
+			continue
 		out.append(String(value.name))
 	return out
 
@@ -676,6 +678,11 @@ func _scroll_recipe(panel: Node, button: Button) -> Button:
 	if button == null:
 		_scroll_reason = "row_absent"
 		return null
+	# A row handed in by a caller may already be gone: the panel frees its list when it
+	# rebuilds, and reading a freed Button's name aborts the whole coroutine.
+	if not is_instance_valid(button):
+		_scroll_reason = "row_freed"
+		return null
 	var row_name := String(button.name)
 	await process_frame
 	await process_frame
@@ -710,6 +717,8 @@ func _scroll_recipe(panel: Node, button: Button) -> Button:
 		return rebuilt_button
 	var rows: Array[String] = []
 	for value: Node in panel.find_children("Recipe_*", "Button", true, false):
+		if value == null or not is_instance_valid(value):
+			continue
 		rows.append(String(value.name))
 	_scroll_reason += " | rows=%d %s" % [rows.size(), str(rows.slice(0, 12))]
 	return null
@@ -827,6 +836,8 @@ func _recipe_button(panel: Node, recipe_id: String, station_id: String) -> Butto
 	if matches.size() > 1:
 		var names: Array[String] = []
 		for value: Node in matches:
+			if value == null or not is_instance_valid(value):
+				continue
 			names.append(String(value.name))
 		print("A0_CONNECTED_RECIPE_AMBIGUOUS recipe=%s rows=%s" % [recipe_id, str(names)])
 	return null
@@ -837,6 +848,8 @@ func _recipe_button(panel: Node, recipe_id: String, station_id: String) -> Butto
 func _dump_panel(panel: Node, host: Node, station_id: String) -> void:
 	var rows: Array[String] = []
 	for value: Node in panel.find_children("*", "Button", true, false):
+		if value == null or not is_instance_valid(value):
+			continue
 		rows.append(String(value.name))
 	var recipes: Array[String] = []
 	for entry: Variant in (host.call(&"available_recipes", station_id) as Array):
