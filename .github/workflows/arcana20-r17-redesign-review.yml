@@ -21,7 +21,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: live-motion-${{ matrix.skill }}-normal
-          run-id: 41304159336
+          run-id: 41304907298
           github-token: ${{ github.token }}
           path: live
       - name: Install review dependencies
@@ -32,6 +32,10 @@ jobs:
         run: python3 tools/arcana20_join/surface_encoded_phase.py live 0.20 opening
       - name: Mid
         run: python3 tools/arcana20_join/surface_encoded_phase.py live 0.50 mid
+      - name: Release early
+        run: python3 tools/arcana20_join/surface_encoded_phase.py live 0.65 release_early
+      - name: Release late
+        run: python3 tools/arcana20_join/surface_encoded_phase.py live 0.70 release_late
       - name: Peak and propagation
         run: python3 tools/arcana20_join/surface_encoded_phase.py live 0.72 peak
       - name: Aftermath
