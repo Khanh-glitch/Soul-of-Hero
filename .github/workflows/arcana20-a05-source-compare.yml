@@ -38,7 +38,7 @@ jobs:
       - name: Check exact native pre/post fields and CPU time
         run: |
           set -o pipefail
-          timeout 600s godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/a05_optimization_test.gd > optimization.log 2>&1
+          timeout 600s godot --headless --path . --script res://tools/arcana20_source_compare/a05_optimization_test.gd > optimization.log 2>&1
           grep -Fq 'A05_OPT_PASS' optimization.log
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:|A05_OPT_FAIL' optimization.log
           grep '^A05_OPT_' optimization.log | while IFS= read -r line; do echo "::notice title=A05_OPT::$line"; done
