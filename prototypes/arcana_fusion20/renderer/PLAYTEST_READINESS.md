@@ -10,10 +10,14 @@ locked the actual world, actors, source tick, camera and light; its full-cast
 encoding step failed because ffmpeg was not installed at that point, not
 because the state lock failed. [41316112450](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41316112450)
 verified baseline vs restored screenshots pixel-identical in all 49 paired
-frames in each light. Raising the whole pass reveals obscured bolts but also
-washes over the actors, so that foreground experiment is rejected and not
-mounted. Occlusion is demonstrated; correcting it without painting through
-actors/obstacles requires the owner's depth/composition interface. #11 remains
+frames in each light. Source-clock-retimed 1× paired viewport videos of
+those active captured frames recovered from the same frozen-scene captures: [normal](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41316350255/artifacts/13087252036),
+[dim](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41316350255/artifacts/13086789644).
+These are sparse real observed frames, not a production before/after fix.
+Raising the whole pass reveals obscured bolts but also washes over the actors,
+so that foreground experiment is rejected and not mounted. Occlusion is
+demonstrated; correcting it without painting through actors/obstacles requires
+the owner's depth/composition interface. #11 remains
 HOLD; do not infer approval from its raw field or adjust bolt counts without a
 new compositor hypothesis.
 

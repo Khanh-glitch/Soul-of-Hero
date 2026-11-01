@@ -43,6 +43,11 @@ func update(_dt: float, _t: float) -> void:
 
 func _petal(fb: AFramebuffer, t: float, burst: float, open: float, fade: float, freeze: float,
         a0: float, length: float, width: float, curl: float, growth: float, depth: float, twist: float) -> void:
+    # With no fade or freeze every source sample fails h < 0.04 and the
+    # separate edge spray is disabled. Skip only that mathematically empty
+    # sheet; live C water, source timing and OUT remain untouched.
+    if fade <= 0.0 and freeze <= 0.0:
+        return
     var size := length * growth * open
     if size < 2.0:
         return

@@ -13,7 +13,7 @@ func _initialize() -> void:
     var current := AAbyssalBloomLead.new()
     old.setup()
     current.setup()
-    for tick in [90, 180, 270, 318]:
+    for tick in [90, 180, 270, 318, 390, 480]:
         var before := AFramebuffer.new()
         var after := AFramebuffer.new()
         before.track_world_fields = true
@@ -34,5 +34,5 @@ func _initialize() -> void:
             quit(1)
             return
         print("A05_OPT_TICK tick=",tick," old_us=",old_us," new_us=",new_us," raw_world_fields_bit_exact=true")
-    print("A05_OPT_PASS four captured phases; source only")
+    print("A05_OPT_PASS six captured phases including OUT; source only")
     quit(0)
