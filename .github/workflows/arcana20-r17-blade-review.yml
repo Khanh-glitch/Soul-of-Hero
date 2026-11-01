@@ -38,3 +38,7 @@ jobs:
         run: python3 tools/arcana20_join/surface_encoded_phase.py live 0.58 rupture
       - name: Delayed wound
         run: python3 tools/arcana20_join/surface_encoded_phase.py live 0.68 wound
+      - name: Full viewport at blade contact (half scale)
+        run: python3 tools/arcana20_join/surface_full_phase.py live 0.416 blade
+      - name: Full viewport at wound phase (half scale)
+        run: python3 tools/arcana20_join/surface_full_phase.py live 0.68 wound
