@@ -226,6 +226,34 @@ jobs:
           set -euo pipefail
           if ! command -v ffmpeg; then sudo apt-get update -qq && sudo apt-get install -y ffmpeg; fi
           python3 tools/arcana20_join/encode_live_capture.py "$RUNNER_TEMP/live-output" 2>&1 | tee "$RUNNER_TEMP/encode.log"
+      # The sandbox can read GitHub check annotations but not the Actions
+      # artifact blob host. Surface a tiny motion proxy so the complete cast
+      # can be inspected there; the full-resolution lossless video is retained
+      # unchanged in the downloadable artifact. Proxy is NOT 1x fidelity.
+      - name: Surface compact full-cast motion proxy
+        if: matrix.skill != 5
+        run: |
+          python3 - "$RUNNER_TEMP/live-output" <<'PY'
+          import base64, pathlib, subprocess, sys
+          root = pathlib.Path(sys.argv[1])
+          videos = list(root.rglob('native-lossless.mkv'))
+          if len(videos) != 1:
+              raise SystemExit('expected one native-lossless.mkv')
+          proxy = root / 'inspection-proxy.mp4'
+          for rate in ('24k', '16k', '10k', '6k'):
+              subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-i', str(videos[0]),
+                  '-vf', 'fps=4,scale=320:180:flags=neighbor', '-an', '-c:v', 'libx264',
+                  '-preset', 'slow', '-b:v', rate, '-maxrate', rate, '-bufsize', '24k',
+                  '-pix_fmt', 'yuv420p', '-movflags', '+faststart', str(proxy)], check=True)
+              if proxy.stat().st_size <= 20500:
+                  break
+          if proxy.stat().st_size > 20500:
+              print('::warning::Motion proxy exceeds annotation budget; inspect the full artifact instead')
+          else:
+              encoded = base64.b64encode(proxy.read_bytes()).decode('ascii')
+              for i in range(0, len(encoded), 3500):
+                  print(f'::notice title=FULL_MOTION_PROXY_{i // 3500:02d}::{encoded[i:i+3500]}')
+          PY
       - name: Verify six locked native A-B comparisons
         if: matrix.lock == '1'
         run: python3 tools/arcana20_join/compare_abyssal_ab.py "$RUNNER_TEMP/live-output"
