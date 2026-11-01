@@ -60,6 +60,9 @@ jobs:
       - name: Report blackout result
         if: always()
         run: grep -E 'C17_STAGE_BLACKOUT|ERROR|Parse Error' blackout.log | sed 's/^/::notice title=C17_STAGE_BLACKOUT::/' || true
+      - name: Report source cloud parity and CPU
+        if: always()
+        run: grep -E 'C10_CLOUD_(PARITY|CPU)' test.log | sed 's/^/::notice title=C10_CLOUD::/' || true
       - name: Report results
         if: always()
         run: grep -E 'C10_(STAGE_(TRANSPORT|CPU)|CLOUD_(PARITY|CPU))|ERROR|SCRIPT ERROR|Parse Error' test.log | tail -10 | sed 's/^/::notice title=C10_STAGE_TRANSPORT::/' || true
