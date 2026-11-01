@@ -52,7 +52,7 @@ func _make_ui() -> void:
     var box := VBoxContainer.new()
     panel.add_child(box)
     var heading := Label.new()
-    heading.text = "AVFX THỬ NGHIỆM • KHÔNG GÂY SÁT THƯƠNG"
+    heading.text = "AVFX THỬ NGHIỆM • F4 ẨN/HIỆN"
     box.add_child(heading)
     selector = OptionButton.new()
     for number in range(1, 21):
@@ -119,6 +119,7 @@ func _attach(candidate: Node) -> void:
 func _unhandled_key_input(event: InputEvent) -> void:
     if not event is InputEventKey or not event.pressed or event.echo or not is_instance_valid(renderer): return
     match event.keycode:
+        KEY_F4: panel.visible = not panel.visible
         KEY_F6: _cast_selected()
         KEY_F7: _spawn_enemy()
         KEY_F8: _toggle_enemies()

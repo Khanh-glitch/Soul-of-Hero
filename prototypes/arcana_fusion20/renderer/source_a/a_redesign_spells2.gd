@@ -148,12 +148,18 @@ class SporeNebulaR:
             cap + Vector2(width * 0.83, -height * 0.18), cap + Vector2(width, 0),
             cap + Vector2(width * 0.45, height * 0.10), cap + Vector2(-width * 0.48, height * 0.10)],
             func(_x: int, _y: int) -> Variant: return Vector3(0.055, 0.20, 0.10), true, opacity)
+        # A contrasting underside and radial gills distinguish a mushroom
+        # cap from a small tree canopy at the real game's pixel scale.
+        ADraw.poly_fill(fb, [cap + Vector2(-width, 0), cap + Vector2(-width * 0.65, height * 0.16),
+            cap + Vector2(0, height * 0.25), cap + Vector2(width * 0.65, height * 0.16), cap + Vector2(width, 0)],
+            func(_x: int, _y: int) -> Variant: return Vector3(0.27, 0.32, 0.14), true, opacity * 0.9)
         ADraw.streak(fb, cap.x - width, cap.y, cap.x + width, cap.y, 1.6, 1.0,
             AMath.R("bio", 0.8), opacity)
-        for side in [-1.0, 0.0, 1.0]:
+        for side in [-0.7, -0.35, 0.0, 0.35, 0.7]:
             var offset := float(side)
-            ADraw.streak(fb, cap.x + offset * width * 0.12, cap.y - height * 0.24,
-                cap.x + offset * width * 0.7, cap.y, 0.9, 0.55, AMath.R("bio", 0.7), opacity * 0.8)
+            ADraw.streak(fb, cap.x + offset * width * 0.15, cap.y + height * 0.03,
+                cap.x + offset * width, cap.y + height * 0.14, 0.8, 0.45,
+                Vector3(0.58, 0.76, 0.28), opacity * 0.8)
 
     func render(fb: AFramebuffer, t: float) -> void:
         var fade := 1.0 - AMath.seg(t, 7.6, 8.6)
