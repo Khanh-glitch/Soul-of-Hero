@@ -40,6 +40,9 @@ var _target := Vector2.ZERO
 var _caster_ref: WeakRef
 var _rot := 0.0
 var _scale := 1.0
+# Source-pixel translation only for a dynamic actor graph. Fixed-size source
+# still cannot contain arbitrarily far-apart actors; no scaling is introduced.
+var _raster_offset := Vector2.ZERO
 
 func configure(spell: Variant, dur: float) -> void:
     _spell = spell
@@ -82,6 +85,7 @@ func begin(caster_world: Vector2, target_world: Vector2) -> void:
     _scale = clampf(axis.length() / maxf(1.0, src_axis.length()), 0.6, 3.5) if axis.length() > 1.0 else 1.0
     _origin = caster_world
     _target = target_world
+    _raster_offset = Vector2.ZERO
     if _spell.has_method("bind_targets"):
         _spell.call("bind_targets", self, target_world)
     _tick = 0
@@ -153,6 +157,9 @@ func _render_frame() -> void:
     var profile_start := Time.get_ticks_usec() if profile_cpu else 0
     _fb.clear()
     var profile_clear_done := Time.get_ticks_usec() if profile_cpu else 0
+    if _spell.has_method("source_raster_offset"):
+        _raster_offset = _spell.call("source_raster_offset")
+        _spell.set("raster_offset", _raster_offset)
     _spell.call("render", _fb, source_time())
     if world_pass_mode:
         var profile_raster_done := Time.get_ticks_usec() if profile_cpu else 0
@@ -170,7 +177,7 @@ func _render_frame() -> void:
     var img := Image.create_from_data(AFramebuffer.W, AFramebuffer.H, false, Image.FORMAT_RGBA8, _fb.present())
     _tex.update(img)
     _sprite.visible = true
-    _sprite.position = local_to_world(Vector2(AFramebuffer.W / 2.0, AFramebuffer.H / 2.0))
+    _sprite.position = local_to_world(Vector2(AFramebuffer.W / 2.0, AFramebuffer.H / 2.0) - _raster_offset)
     _sprite.rotation = _rot
     _sprite.scale = Vector2.ONE * _scale
 
@@ -185,7 +192,7 @@ func source_pass_frame() -> Arcana20SourcePassFrame:
     result.source_size = Vector2i(AFramebuffer.W, AFramebuffer.H)
     var bx := Vector2(cos(_rot), sin(_rot)) * _scale
     var by := Vector2(-sin(_rot), cos(_rot)) * _scale
-    result.source_to_world = Transform2D(bx, by, _origin - bx * CASTER_LOCAL.x - by * CASTER_LOCAL.y)
+    result.source_to_world = Transform2D(bx, by, _origin - bx * (CASTER_LOCAL.x + _raster_offset.x) - by * (CASTER_LOCAL.y + _raster_offset.y))
     result.caster_world = _origin
     result.target_world = _target
     result.a_rgb = _fb.buf

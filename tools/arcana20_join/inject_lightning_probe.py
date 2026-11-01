@@ -147,9 +147,16 @@ s = s.replace(needle, '''        "camera": [camera.get_screen_center_position().
                     # recorded frame; absent actors stay null.
                     var local_nodes: Array = live_source._spell.get("nodes")
                     var coordinates: Array = []
+                    var unshifted_coordinates: Array = []
+                    var raster_shift := Vector2.ZERO
+                    if live_source._spell.has_method("source_raster_offset"):
+                        raster_shift = live_source._raster_offset
                     for point in local_nodes:
-                        coordinates.append([point.x, point.y] if point != null else null)
+                        coordinates.append([point.x + raster_shift.x, point.y + raster_shift.y] if point != null else null)
+                        unshifted_coordinates.append([point.x, point.y] if point != null else null)
                     samples[-1]["r17_actor_nodes"] = coordinates
+                    samples[-1]["r17_actor_unshifted"] = unshifted_coordinates
+                    samples[-1]["r17_source_offset"] = [raster_shift.x, raster_shift.y]
                 var raw_name := "r17_full_%05d.rgb32f" % (samples.size() - 1)
                 var raw := FileAccess.open(path + "/" + raw_name, FileAccess.WRITE)
                 raw.store_buffer(live_source._fb.buf.to_byte_array())

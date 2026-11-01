@@ -21,6 +21,9 @@ var sparks: ADraw.APool
 var actor_refs: Array = []
 var host: ASourcePlayer
 var c_channel := CChainChannel.new()
+# Integer raster-window translation only; simulation/events stay in original
+# actor-local coordinates. The host applies its inverse to the world pass.
+var raster_offset := Vector2.ZERO
 
 func setup() -> void:
     rng = AMath.ARng.new(0x9c4a)
@@ -107,6 +110,35 @@ func event_local(ev: Dictionary) -> Variant:
     var i := int(ev.node_index)
     return nodes[i] if i >= 0 and i < nodes.size() else null
 
+static func _window_axis(minimum: float, maximum: float, size: float, margin: float) -> float:
+    # Preserve units: no clamping of actors, rescaling, or camera movement.
+    # Keep an already-fitting source window stable; center only when needed.
+    var low := margin - minimum
+    var high := size - margin - maximum
+    if low <= high:
+        return round(clampf(0.0, low, high))
+    return round((size - minimum - maximum) * 0.5)
+
+func source_raster_offset() -> Vector2:
+    var found := false
+    var lo := Vector2.ZERO
+    var hi := Vector2.ZERO
+    for value in nodes:
+        if value == null: continue
+        var p: Vector2 = value
+        if not found:
+            lo = p
+            hi = p
+            found = true
+        else:
+            lo = lo.min(p)
+            hi = hi.max(p)
+    if not found: return Vector2.ZERO
+    # Room for authored channel branches and node glows where possible. If
+    # actor span exceeds a frame, a translated window alone cannot fix it.
+    return Vector2(_window_axis(lo.x, hi.x, float(AFramebuffer.W), 32.0),
+        _window_axis(lo.y, hi.y, float(AFramebuffer.H), 32.0))
+
 func _spawn_sparks(at: Vector2, count: int, lo: float, hi: float, life_lo: float, life_hi: float) -> void:
     for i in range(count):
         var a := rng.angle()
@@ -136,6 +168,16 @@ func _bolt(fb: AFramebuffer, a: Vector2, b: Vector2, t: float, seed: int, width:
     ADraw.glow(fb, (a.x + b.x) * 0.5, (a.y + b.y) * 0.5, minf(16.0, a.distance_to(b) * 0.25), B_MID, 0.07 * (k if glow_k < 0.0 else glow_k))
 
 func render(fb: AFramebuffer, t: float) -> void:
+    # Translate only raster inputs, never simulation, event or actor state.
+    # Integer translation keeps source pixel-grid sampling unchanged.
+    var original_nodes := nodes
+    nodes = []
+    for value in original_nodes:
+        if value == null:
+            nodes.append(null)
+        else:
+            var point: Vector2 = value
+            nodes.append(point + raster_offset)
     var final := AMath.seg(t, FINAL, FINAL + 1.0)
     for i in range(nodes.size()):
         if nodes[i] == null: continue
@@ -217,5 +259,6 @@ func render(fb: AFramebuffer, t: float) -> void:
                         ADraw.line(fb, p.x, p.y, q.x, q.y, B_MID, (1.0 - dissolve) * 0.5)
     sparks.each(func(p: Dictionary) -> void:
         var life := float(p.life) / float(p.max)
-        fb.add(float(p.x), float(p.y), B_MID.x, B_MID.y, B_MID.z, life)
-        fb.add(float(p.px), float(p.py), B_MID.x, B_MID.y, B_MID.z, life * 0.4))
+        fb.add(float(p.x) + raster_offset.x, float(p.y) + raster_offset.y, B_MID.x, B_MID.y, B_MID.z, life)
+        fb.add(float(p.px) + raster_offset.x, float(p.py) + raster_offset.y, B_MID.x, B_MID.y, B_MID.z, life * 0.4))
+    nodes = original_nodes

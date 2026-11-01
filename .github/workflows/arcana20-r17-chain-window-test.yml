@@ -1,0 +1,37 @@
+name: ARCANA20 R17 moving chain raster-window transform test
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths:
+      - '.github/workflows/arcana20-r17-chain-window-test.yml'
+      - 'prototypes/arcana_fusion20/renderer/a09_raster_window_test.gd'
+      - 'prototypes/arcana_fusion20/renderer/source_a/a_chain_verdict_graph.gd'
+      - 'prototypes/arcana_fusion20/renderer/source_a/a_source_player.gd'
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import and verify position invariants
+        run: |
+          set -o pipefail
+          godot --headless --path . --import 2>&1 | tee import.log
+          godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/a09_raster_window_test.gd 2>&1 | tee result.log
+          grep -Fq A09_WINDOW_PASS result.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|A09_WINDOW_FAIL' result.log import.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcana20-r17-chain-window-test
+          path: |
+            import.log
+            result.log
