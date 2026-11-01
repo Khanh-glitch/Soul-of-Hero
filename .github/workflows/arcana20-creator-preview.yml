@@ -162,6 +162,8 @@ jobs:
           - {skill: 5, lighting: dimmed, variant: B, lock: '1'}
           - {skill: 2, lighting: normal, variant: B02, lock: '0'}
           - {skill: 2, lighting: dimmed, variant: B02, lock: '0'}
+          - {skill: 3, lighting: normal, variant: B03, lock: '0'}
+          - {skill: 3, lighting: dimmed, variant: B03, lock: '0'}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -258,6 +260,19 @@ jobs:
       - name: Wyrm cooling and aftermath
         if: matrix.skill == 2
         run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.84 wyrm_aftermath
+      # #03: ballistic approach, impact sites, connecting sigil and cooling.
+      - name: Meteor approach
+        if: matrix.skill == 3
+        run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.12 meteor_approach
+      - name: Meteor impacts
+        if: matrix.skill == 3
+        run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.35 meteor_impacts
+      - name: Meteor sigil construction
+        if: matrix.skill == 3
+        run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.68 meteor_sigil
+      - name: Meteor cooling and aftermath
+        if: matrix.skill == 3
+        run: python3 tools/arcana20_join/surface_encoded_phase.py "$RUNNER_TEMP/live-output" 0.88 meteor_aftermath
       - uses: actions/upload-artifact@v4
         if: always()
         with:

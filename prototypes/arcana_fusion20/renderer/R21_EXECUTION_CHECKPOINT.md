@@ -48,6 +48,20 @@ while retaining all six #05 A/B jobs. Its single aggregate is explicitly named
 before claiming even the scoped correction successful. Full continuously
 viewed videos, other source roles, body effects and 720p/2K/4K review remain.
 
+## Batch S / #03 Meteor Loom — target and gravity mount correction
+
+Original B `pyre.ts` declares the sigil centre as `(W/2+16,H/2+4)`,
+independently of `r.caster` and `r.target`, and its ballistic z subtracts from
+screen Y. The old shared B mount instead pinned `(262,104)` to the target and
+rotated the entire source frame to the caster-target bearing: the sigil centre
+missed the chosen target and gravity leaned or inverted for other bearings.
+Only #03 now pins its actual authored centre to the real target and uses a
+world-up similarity scale. Original meteor trajectories, seeds, algorithms and
+source fields are untouched; actual caster/target metadata stays intact. Four
+bearing tests assert target anchoring and world-up axes. Normal/dim #03 natural
+captures were added to the existing workflow. These are changes awaiting their
+own same-SHA native and visual results; do not mark #03 complete.
+
 ## Resume
 
 1. `git status --short; git rev-parse HEAD; gh run list --branch arena/c7b0c4e8-soul-of-hero --limit 20`.

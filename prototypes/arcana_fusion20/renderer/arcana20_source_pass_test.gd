@@ -78,6 +78,24 @@ func _run() -> void:
     b_post.detach()
     b_post.free()
     b_post_host.free()
+    # B03 meteors use a fixed source sigil centre and screen-up ballistic z,
+    # not the B02 caster-target axis. Test the actual mount at four bearings.
+    var meteor_mount := BSourcePlayer.new()
+    meteor_mount.world_pass_mode = true
+    root.add_child(meteor_mount)
+    var meteor_origin := Vector2(300, 200)
+    var meteor_centre := Vector2(BRenderer.W / 2.0 + 16.0, BRenderer.H / 2.0 + 4.0)
+    for delta in [Vector2(140, 0), Vector2(-140, 0), Vector2(0, 140), Vector2(0, -140)]:
+        var destination: Vector2 = meteor_origin + delta
+        meteor_mount.begin(meteor_origin, destination, "meteor")
+        meteor_mount.set_process(false)
+        var meteor_frame := meteor_mount.source_pass_frame()
+        var basis := meteor_frame.source_to_world
+        check((basis * meteor_centre).distance_to(destination) < 0.001, "B03 actual sigil centre pins to target %s" % delta)
+        check(basis.x.x > 0.0 and absf(basis.x.y) < 0.0001 and basis.y.y > 0.0 and absf(basis.y.x) < 0.0001, "B03 meteors and gravity remain world-up %s" % delta)
+        check(meteor_frame.caster_world == meteor_origin and meteor_frame.target_world == destination, "B03 actual actor metadata retained")
+        meteor_mount.stop()
+    meteor_mount.free()
     # Two children of the same source family must retire the shared family
     # only after the final active child; parent cancellation emits no redundant
     # layer-finished event. Exercise actual source nodes, including legacy sprite
