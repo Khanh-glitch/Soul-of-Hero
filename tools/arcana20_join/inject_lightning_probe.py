@@ -140,15 +140,15 @@ s = s.replace(needle, '''        "camera": [camera.get_screen_center_position().
                     selected_bolt = bolt
             samples[-1]["r17_source_tick"] = live_source._tick
             samples[-1]["r17_chosen_bolt"] = selected_bolt
-            if int(OS.get_environment("AVFX_LIVE_SKILL")) == 9 and OS.get_environment("AVFX_R17_FULL_SPELL") == "1":
-                # Exact live A-local caster/actor anchors for this recorded
-                # frame; null stays null. The full original C comparison is
-                # an explicitly re-instantiated reference, not a live cast.
-                var local_nodes: Array = live_source._spell.get("nodes")
-                var coordinates: Array = []
-                for point in local_nodes:
-                    coordinates.append([point.x, point.y] if point != null else null)
-                samples[-1]["r17_actor_nodes"] = coordinates
+            if OS.get_environment("AVFX_R17_FULL_SPELL") == "1":
+                if int(OS.get_environment("AVFX_LIVE_SKILL")) == 9:
+                    # Exact live A-local caster/actor anchors for this
+                    # recorded frame; absent actors stay null.
+                    var local_nodes: Array = live_source._spell.get("nodes")
+                    var coordinates: Array = []
+                    for point in local_nodes:
+                        coordinates.append([point.x, point.y] if point != null else null)
+                    samples[-1]["r17_actor_nodes"] = coordinates
                 var raw_name := "r17_full_%05d.rgb32f" % (samples.size() - 1)
                 var raw := FileAccess.open(path + "/" + raw_name, FileAccess.WRITE)
                 raw.store_buffer(live_source._fb.buf.to_byte_array())
