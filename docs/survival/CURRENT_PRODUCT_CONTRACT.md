@@ -358,6 +358,150 @@ Các kiểu dữ liệu trên là **hợp đồng ngữ nghĩa**, không ép nga
 **P3 — Native + quan sát:** hỏi người chơi có tự biết làm gì kế, có cảm giác chuyến đi đáng công, việc chọn nhà khác đáng không, có muốn đăng nhập lại không, Core có khác biệt thật không; so sánh outcomes, chỉnh số. Sau đó mới khóa rate có version, code SHA và chứng cứ.
 
 
+## VII. ĐỐI CHIẾU TOÀN BỘ ATLAS LỊCH SỬ — 44 SYS / 21 POI / 31 DEP / 12 JOURNEY
+
+> **Tại sao có chương này?** Người sáng tạo yêu cầu đủ toàn bộ chiều sâu, không rơi mất những cơ chế ẩn của Last Island. Bảng này **kiểm kê 108 mốc nguồn**, KHÔNG có nghĩa SOH phải tạo 108 hệ thống/tính năng riêng. Bản nguồn gốc là nghiên cứu Atlas 1.355 dòng và `SOURCE_COVERAGE_TRACE.json` với hash nguyên cứu `b958de0fc413cc200b35b0938760228c2ebd3a8ef4aa2f52c1051c52cca59157`. Phân loại cũ 2026-10-30 ghi 32/44 adapt, 9/44 defer, 3/44 reject literal, **nhưng nhiều mục đã bị quyết định D055–D076 thay thế**; cột xử lý dưới đây có ưu tiên quyền luật mới. Không dùng bảng làm asset/source niêm phong thay cho trải nghiệm native.
+
+### 7.1. 44 phân hệ nguồn — chúng đã hòa vào K1–K8 ra sao
+
+| Mã | Phân hệ và chức năng nghiên cứu | Họ liên quan | Đường xử lý hiện tại |
+| --- | --- | --- | --- |
+| `SYS-02` | Bản đồ thế giới và tính liên tục | K2/K3/K6/K7 | Học nguyên lý; theo canon; không lấy nguyên vị trí/thông số game gốc |
+| `SYS-03` | Biome và nguyên liệu không đồng đều | K2/K3/K6/K7 | Học nguyên lý; theo canon; không lấy nguyên vị trí/thông số game gốc |
+| `SYS-04` | Đường đi và thùng phế liệu | K2/K3/K6/K7 | Học nguyên lý; theo canon; không lấy nguyên vị trí/thông số game gốc |
+| `SYS-05` | POI là đồ thị mục tiêu nhiều tầng | K2/K3/K6/K7 | Học nguyên lý; theo canon; không lấy nguyên vị trí/thông số game gốc |
+| `SYS-06` | Khu nguy hiểm và phân tầng điều kiện | K2/K3/K6/K7 | Học nguyên lý; theo canon; không lấy nguyên vị trí/thông số game gốc |
+| `SYS-07` | Thay đổi thiết kế map theo mùa và bản vá | K2/K3/K6/K7 | **CÓ ĐIỀU KIỆN / KHÁC ERA**; không lấy nguyên vị trí/thông số game gốc |
+| `SYS-08` | Cứ điểm có thẻ: thứ tự nguồn–khóa–phòng | K2/K3/K6/K7 | Học nguyên lý; theo canon; không lấy nguyên vị trí/thông số game gốc |
+| `SYS-09` | POI quân sự, sinh hóa, sân bay, cảng | K2/K3/K6/K7 | Học nguyên lý; theo canon; không lấy nguyên vị trí/thông số game gốc |
+| `SYS-10` | Khu vực đặc biệt có thời hạn riêng | K2/K3/K6/K7 | **CÓ ĐIỀU KIỆN / KHÁC ERA**; không lấy nguyên vị trí/thông số game gốc |
+| `SYS-11` | Cơ chế vật phẩm–công thức–vật liệu | K1/K3/K4 | Học nguyên lý; theo canon; không lấy nguyên vị trí/thông số game gốc |
+| `SYS-12` | Spares: đơn vị tiền tri thức và linh kiện | K1/K3/K4 | Học nguyên lý; theo canon; không lấy nguyên vị trí/thông số game gốc |
+| `SYS-13` | R&D Bench qua ba đời cơ chế | K1/K3/K4 | Học nguyên lý; theo canon; Một K4: ngẫu nhiên/định hướng/mẫu; phải ghi version 2019 vs mode sau |
+| `SYS-14` | Drawing Table: phân tích vật phẩm mẫu | K1/K3/K4 | Học nguyên lý; theo canon; không lấy nguyên vị trí/thông số game gốc |
+| `SYS-15` | Dây chuyền vật tư nhiều tầng | K1/K3/K4 | Học nguyên lý; theo canon; không lấy nguyên vị trí/thông số game gốc |
+| `SYS-16` | Vật phẩm trùng công thức và cạnh tranh đầu vào | K1/K3/K4 | Học nguyên lý; theo canon; không lấy nguyên vị trí/thông số game gốc |
+| `SYS-17` | Recipe Scope, rare recipe, quyền sở hữu | K1/K3/K4 | Học nguyên lý; theo canon; Quyền công thức chỉ run-local, không quyền clan |
+| `SYS-18` | Workshop và meta-progress khác R&D | K1/K3/K4 | **CÓ ĐIỀU KIỆN / KHÁC ERA**; Workshop meta-recipe không được tồn tại qua run |
+| `SYS-19` | Crafting cấp bàn, thời gian và độ bền | K1/K3/K4 | Học nguyên lý; theo canon; không lấy nguyên vị trí/thông số game gốc |
+| `SYS-20` | Xây tự do: foundation, wall, door, floor, roof | K1/K4/K6/K8 | Học nguyên lý; theo canon; không lấy nguyên vị trí/thông số game gốc |
+| `SYS-21` | Territory Cabinet: quyền, giới hạn, upkeep, badge | K1/K4/K6/K8 | Học nguyên lý; theo canon; Lãnh địa là nền quyền đặt và sửa; không copy PvP upkeep trọn gói |
+| `SYS-22` | Kết cấu bảo vệ: lớp, phòng rỗng và lõi nhà | K1/K4/K6/K8 | Học nguyên lý; theo canon; không lấy nguyên vị trí/thông số game gốc |
+| `SYS-23` | Giới hạn footprint và thiết bị | K1/K4/K6/K8 | Học nguyên lý; theo canon; Giới hạn công trình theo hiệu năng/cân bằng có bằng chứng, không copy quota cũ |
+| `SYS-24` | Điện, mạch và bẫy | K1/K4/K6/K8 | Học nguyên lý; theo canon; không lấy nguyên vị trí/thông số game gốc |
+| `SYS-25` | Công trình sản xuất tại nhà | K1/K4/K6/K8 | Học nguyên lý; theo canon; không lấy nguyên vị trí/thông số game gốc |
+| `SYS-26` | Blueprint căn cứ khác blueprint chế tạo | K1/K4/K6/K8 | Học nguyên lý; theo canon; Blueprint base nếu hữu ích chỉ giảm thao tác, phải trả item/traverse |
+| `SYS-27` | Heat / comfort tại căn cứ | K1/K4/K6/K8 | Học nguyên lý; theo canon; không lấy nguyên vị trí/thông số game gốc |
+| `SYS-28` | Operation Base: căn cứ cá nhân không reset | K1/K4/K6/K8 | Học nguyên lý; theo canon; Học tính năng hàng chờ và chuẩn bị offline; **CẤM căn cứ vĩnh viễn** |
+| `SYS-29` | Liên thông Base–Battle giới hạn | K1/K4/K6/K8 | Học nguyên lý; theo canon; Học vận chuyển có giới hạn; **CẤM chuyển vật phẩm xuyên run** |
+| `SYS-30` | Farming & food ở Operation Base | K1/K4/K6/K8 | Học nguyên lý; theo canon; không lấy nguyên vị trí/thông số game gốc |
+| `SYS-31` | Bounty Board, chợ, exchange và currency | K1/K4/K6/K8 | **CÓ ĐIỀU KIỆN / KHÁC ERA**; Chỉ dịch vụ bán/tái chế vật lý theo canon; chợ PvP toàn server chưa có |
+| `SYS-32` | HP, hunger, dehydration, death và trạng thái đang nằm | K1/K2/K5/K6 | Học nguyên lý; theo canon; không lấy nguyên vị trí/thông số game gốc |
+| `SYS-33` | Hồi sinh, giường, túi ngủ và bản đồ chết | K1/K2/K5/K6 | Học nguyên lý; theo canon; không lấy nguyên vị trí/thông số game gốc |
+| `SYS-34` | Durability, repair, chế độ cầm đồ đã dùng | K1/K2/K5/K6 | Học nguyên lý; theo canon; không lấy nguyên vị trí/thông số game gốc |
+| `SYS-35` | PvP, raid và hợp tác | K1/K2/K5/K6 | **KHÔNG SAO CHÉP**; PvP, raid người chơi và clan **không thuộc SOH**; học cấu trúc rủi ro ở vị trí nhà qua U1 |
+| `SYS-36` | Boss, AI địch và áp lực căn cứ | K1/K2/K5/K6 | Học nguyên lý; theo canon; không lấy nguyên vị trí/thông số game gốc |
+| `SYS-37` | Quy tắc target và phòng thủ trong Zombies Tide Trial 2026 | K1/K2/K5/K6 | **CÓ ĐIỀU KIỆN / KHÁC ERA**; Học trí tuệ mục tiêu cho AI; không làm siege tự spawn ngoài dấu chân |
+| `SYS-38` | Vũ khí, đạn, chống giáp, status | K1/K2/K5/K6 | Học nguyên lý; theo canon; không lấy nguyên vị trí/thông số game gốc |
+| `SYS-39` | Vật nuôi, thú cưỡi, nuôi dưỡng và biến dị | K1/K2/K5/K6 | **CÓ ĐIỀU KIỆN / KHÁC ERA**; Thú cưỡi/vận tải có công năng thật trong SOH; gene fusion/đột biến để sau |
+| `SYS-40` | Phương tiện mặt đất, biển, không | K1/K2/K5/K6 | **CÓ ĐIỀU KIỆN / KHÁC ERA**; Phương tiện có giá trị hậu cần; chọn loại theo Map, không copy mọi loại máy bay/tàu |
+| `SYS-41` | Mode theo chu kỳ và endgame reset | K8 | **KHÔNG SAO CHÉP**; Chuyển thành run 336h và reset đã chốt; không nhân bản luật reset bản gốc |
+| `SYS-42` | Civilization mode: giai đoạn công nghệ toàn server | K8 | **CÓ ĐIỀU KIỆN / KHÁC ERA**; không lấy nguyên vị trí/thông số game gốc |
+| `SYS-43` | Chế độ 2026 tranh 49 mảnh đất | K8 | **KHÔNG SAO CHÉP**; Chiếm 49 mảnh đất phiên bản 2026 không thuộc solo SOH |
+| `SYS-44` | Đồ hiếm và game economy ngoài trận | K8 | **CÓ ĐIỀU KIỆN / KHÁC ERA**; Đồ hiếm và tiền profile chỉ theo source rương Ragnarok |
+| `SYS-45` | Thông tin map/UX trong bản 2025–2026 | K8 | Học nguyên lý; theo canon; không lấy nguyên vị trí/thông số game gốc |
+
+**Chú ý cực quan trọng:** trong Atlas, SYS-28, SYS-29 từng được đánh dấu hấp thu vì chức năng sản xuất/đổi vật tư hấp dẫn, **không có nghĩa SOH giữ Operation Base vĩnh viễn**. SYS-35/41/43 mô tả xã hội PvP và reset/land mode cũ, phải đọc như *nguồn lý giải trải nghiệm*, không phải yêu cầu chuyển nguyên si. SYS-39/40 chức năng thú/xe đáng giá đã được nâng thành một phần game khi có vai trò địa lý; các cơ chế gene-fusion, không chiến và máy bay cụ thể không tự được cấp phép.
+
+### 7.2. 21 kiểu POI trong tài liệu gốc — đối tượng tham khảo, không phải 21 công trình bắt buộc
+
+| Mã | Kiểu tham khảo | Cách dùng |
+| --- | --- | --- |
+| `POI-01` | Gas Station / Trạm xăng | Archetype POI minh họa, không được suy ra vị trí/nhu cầu đặt nguyên mẫu; chỉ lấy nếu tạo nguồn–đường–rủi ro–lối quay lại hợp lý |
+| `POI-02` | Supermarket / Siêu thị | Archetype POI minh họa, không được suy ra vị trí/nhu cầu đặt nguyên mẫu; chỉ lấy nếu tạo nguồn–đường–rủi ro–lối quay lại hợp lý |
+| `POI-03` | Warehouse / Nhà kho | Archetype POI minh họa, không được suy ra vị trí/nhu cầu đặt nguyên mẫu; chỉ lấy nếu tạo nguồn–đường–rủi ro–lối quay lại hợp lý |
+| `POI-04` | Abandoned Factory / Nhà máy bỏ hoang | Archetype POI minh họa, không được suy ra vị trí/nhu cầu đặt nguyên mẫu; chỉ lấy nếu tạo nguồn–đường–rủi ro–lối quay lại hợp lý |
+| `POI-05` | Abandoned Institute / Viện nghiên cứu bỏ hoang | Archetype POI minh họa, không được suy ra vị trí/nhu cầu đặt nguyên mẫu; chỉ lấy nếu tạo nguồn–đường–rủi ro–lối quay lại hợp lý |
+| `POI-06` | Harbor / Cảng | Archetype POI minh họa, không được suy ra vị trí/nhu cầu đặt nguyên mẫu; chỉ lấy nếu tạo nguồn–đường–rủi ro–lối quay lại hợp lý |
+| `POI-07` | Airport / Sân bay | Archetype POI minh họa, không được suy ra vị trí/nhu cầu đặt nguyên mẫu; chỉ lấy nếu tạo nguồn–đường–rủi ro–lối quay lại hợp lý |
+| `POI-08` | Nuclear Plant / Nhà máy điện hạt nhân | Archetype POI minh họa, không được suy ra vị trí/nhu cầu đặt nguyên mẫu; chỉ lấy nếu tạo nguồn–đường–rủi ro–lối quay lại hợp lý |
+| `POI-09` | Bunker / Hầm trú ẩn | Archetype POI minh họa, không được suy ra vị trí/nhu cầu đặt nguyên mẫu; chỉ lấy nếu tạo nguồn–đường–rủi ro–lối quay lại hợp lý |
+| `POI-10` | Biochemical Laboratory / Phòng thí nghiệm sinh hóa | Archetype POI minh họa, không được suy ra vị trí/nhu cầu đặt nguyên mẫu; chỉ lấy nếu tạo nguồn–đường–rủi ro–lối quay lại hợp lý |
+| `POI-11` | Bandit Camp / Trại cướp | Archetype POI minh họa, không được suy ra vị trí/nhu cầu đặt nguyên mẫu; chỉ lấy nếu tạo nguồn–đường–rủi ro–lối quay lại hợp lý |
+| `POI-12` | Military Base / Căn cứ quân sự | Archetype POI minh họa, không được suy ra vị trí/nhu cầu đặt nguyên mẫu; chỉ lấy nếu tạo nguồn–đường–rủi ro–lối quay lại hợp lý |
+| `POI-13` | Trading Zone / Khu thương mại | Archetype POI minh họa, không được suy ra vị trí/nhu cầu đặt nguyên mẫu; chỉ lấy nếu tạo nguồn–đường–rủi ro–lối quay lại hợp lý |
+| `POI-14` | Roadside Crate / Thùng lộ | Archetype POI minh họa, không được suy ra vị trí/nhu cầu đặt nguyên mẫu; chỉ lấy nếu tạo nguồn–đường–rủi ro–lối quay lại hợp lý |
+| `POI-15` | Hidden Cave / Hang thú | Archetype POI minh họa, không được suy ra vị trí/nhu cầu đặt nguyên mẫu; chỉ lấy nếu tạo nguồn–đường–rủi ro–lối quay lại hợp lý |
+| `POI-16` | Supply Drop / Airdrop | Archetype POI minh họa, không được suy ra vị trí/nhu cầu đặt nguyên mẫu; chỉ lấy nếu tạo nguồn–đường–rủi ro–lối quay lại hợp lý |
+| `POI-17` | Boss Arena / Trạm Boss | Archetype POI minh họa, không được suy ra vị trí/nhu cầu đặt nguyên mẫu; chỉ lấy nếu tạo nguồn–đường–rủi ro–lối quay lại hợp lý |
+| `POI-18` | Water Outpost / Trạm nổi | Archetype POI minh họa, không được suy ra vị trí/nhu cầu đặt nguyên mẫu; chỉ lấy nếu tạo nguồn–đường–rủi ro–lối quay lại hợp lý |
+| `POI-19` | High Resource Island / Đảo tài nguyên | Archetype POI minh họa, không được suy ra vị trí/nhu cầu đặt nguyên mẫu; chỉ lấy nếu tạo nguồn–đường–rủi ro–lối quay lại hợp lý |
+| `POI-20` | Dawn Land / Bình Minh | Archetype POI minh họa, không được suy ra vị trí/nhu cầu đặt nguyên mẫu; chỉ lấy nếu tạo nguồn–đường–rủi ro–lối quay lại hợp lý |
+| `POI-21` | Operation Base / Căn cứ hành động | Archetype POI minh họa, không được suy ra vị trí/nhu cầu đặt nguyên mẫu; chỉ lấy nếu tạo nguồn–đường–rủi ro–lối quay lại hợp lý |
+
+**Quyết định hình thành thế giới:** POI thực SOH có thể hòa quyện trong lịch sử công nghiệp/tự nhiên mà không giống y tên hoặc vị trí nguyên mẫu. Nhà máy/mỏ/bến cảng phải có đầu vào và đường vận tải nếu xuất hiện; thùng bên đường có nguồn loot thật; bunker/lab có quyền vào sâu và cách quay lại; Elder là overlay địa lý, không thay thế POI thường.
+
+### 7.3. 31 chuỗi phụ thuộc lịch sử — kiểm tra không làm mất cảm giác nhưng không bê cả mode khác
+
+| Mã | Quan hệ đã được nghiên cứu | Áp dụng SOH |
+| --- | --- | --- |
+| `DEP-01` | Đường phế liệu → Spares → bàn nghiên cứu → súng | Giữ bài thử kết nối nếu phù hợp gameplay và mối nối C01–C24; không tạo feature mới |
+| `DEP-02` | Vũ khí nhặt được → dùng ngay HOẶC reverse engineering | Giữ bài thử kết nối nếu phù hợp gameplay và mối nối C01–C24; không tạo feature mới |
+| `DEP-03` | Key xanh lá → POI xanh lá → key xanh dương → POI xanh dương → key tím | Giữ bài thử kết nối nếu phù hợp gameplay và mối nối C01–C24; không tạo feature mới |
+| `DEP-04` | Thẻ đúng → thiếu nguồn điện → không mở phòng | Giữ bài thử kết nối nếu phù hợp gameplay và mối nối C01–C24; không tạo feature mới |
+| `DEP-05` | Hazard → đồ chống chịu → quyền tiếp cận POI | Giữ bài thử kết nối nếu phù hợp gameplay và mối nối C01–C24; không tạo feature mới |
+| `DEP-06` | Biome khoáng → phôi → vật liệu quân sự → raiding | Giữ bài thử kết nối nếu phù hợp gameplay và mối nối C01–C24; không tạo feature mới |
+| `DEP-07` | Nhà → kho → chuyến thám hiểm dài hơn | Giữ bài thử kết nối nếu phù hợp gameplay và mối nối C01–C24; không tạo feature mới |
+| `DEP-08` | Tủ lãnh thổ → quyền xây → phân lớp bảo vệ | Giữ bài thử kết nối nếu phù hợp gameplay và mối nối C01–C24; không tạo feature mới |
+| `DEP-09` | Nhiên liệu → điện → cửa/bẫy → chi phí phòng thủ | Giữ bài thử kết nối nếu phù hợp gameplay và mối nối C01–C24; không tạo feature mới |
+| `DEP-10` | Chiến thuật chọn vị trí nhà → tần suất lượt farm | Giữ bài thử kết nối nếu phù hợp gameplay và mối nối C01–C24; không tạo feature mới |
+| `DEP-11` | Nâng bàn → mở nhánh recipe → đổi giá trị loot cũ | Giữ bài thử kết nối nếu phù hợp gameplay và mối nối C01–C24; không tạo feature mới |
+| `DEP-12` | Căn cứ dài hạn → logistics giới hạn → trận reset | Lịch sử/điều chỉnh theo luật solo, full-wipe; **không nhập cơ chế nguyên văn** |
+| `DEP-13` | Civilization Value → era mới → tài nguyên mới | Lịch sử/điều chỉnh theo luật solo, full-wipe; **không nhập cơ chế nguyên văn** |
+| `DEP-14` | Huy hiệu endgame → đặt vào tủ → công trình có mục tiêu bảo vệ | Lịch sử/điều chỉnh theo luật solo, full-wipe; **không nhập cơ chế nguyên văn** |
+| `DEP-15` | Vườn → giảm chi phí chuẩn bị → nhiều chuyến đi hơn | Giữ bài thử kết nối nếu phù hợp gameplay và mối nối C01–C24; không tạo feature mới |
+| `DEP-16` | Xe/thú cưỡi → tải hàng → bán kính hoạt động tăng | Giữ bài thử kết nối nếu phù hợp gameplay và mối nối C01–C24; không tạo feature mới |
+| `DEP-17` | Boss → vật liệu độc quyền → công thức cao | Giữ bài thử kết nối nếu phù hợp gameplay và mối nối C01–C24; không tạo feature mới |
+| `DEP-18` | Death marker → cất đồ hiếm → chạy xác | Giữ bài thử kết nối nếu phù hợp gameplay và mối nối C01–C24; không tạo feature mới |
+| `DEP-19` | Lò luyện → sản xuất theo thời gian → tối ưu layout nhà | Giữ bài thử kết nối nếu phù hợp gameplay và mối nối C01–C24; không tạo feature mới |
+| `DEP-20` | Xây nhiều thiết bị → quota → tối ưu công trình | Giữ bài thử kết nối nếu phù hợp gameplay và mối nối C01–C24; không tạo feature mới |
+| `DEP-21` | Tháp tự động → điện/đạn → bảo vệ kho | Giữ bài thử kết nối nếu phù hợp gameplay và mối nối C01–C24; không tạo feature mới |
+| `DEP-22` | Hòm phân tán → nhiều điểm đột kích → chi phí raid tăng | Lịch sử/điều chỉnh theo luật solo, full-wipe; **không nhập cơ chế nguyên văn** |
+| `DEP-23` | Mở map POI metadata → lên kế hoạch expedition | Giữ bài thử kết nối nếu phù hợp gameplay và mối nối C01–C24; không tạo feature mới |
+| `DEP-24` | Workshop pattern → meta recipe → vòng sống sau reset | Lịch sử/điều chỉnh theo luật solo, full-wipe; **không nhập cơ chế nguyên văn** |
+| `DEP-25` | Pet harvesting buff → năng suất mỏ → công thức cấp cao | Giữ bài thử kết nối nếu phù hợp gameplay và mối nối C01–C24; không tạo feature mới |
+| `DEP-26` | Molotov → tường gỗ → lựa chọn nâng cấp nhà | Lịch sử/điều chỉnh theo luật solo, full-wipe; **không nhập cơ chế nguyên văn** |
+| `DEP-27` | Cầu thang/mái cong → đường đi 3D → góc nhìn top-down | Giữ bài thử kết nối nếu phù hợp gameplay và mối nối C01–C24; không tạo feature mới |
+| `DEP-28` | Đội mở recipe → quyền sử dụng tạm → thay đổi thành viên | Lịch sử/điều chỉnh theo luật solo, full-wipe; **không nhập cơ chế nguyên văn** |
+| `DEP-29` | Thu hoạch thời vụ → thời gian hàng chờ → đi loot trong lúc chờ | Giữ bài thử kết nối nếu phù hợp gameplay và mối nối C01–C24; không tạo feature mới |
+| `DEP-30` | Chiếm đất → quyền đội → buff damage → mở rộng quyền chiếm | Lịch sử/điều chỉnh theo luật solo, full-wipe; **không nhập cơ chế nguyên văn** |
+| `DEP-31` | Giết Boss để lấy thẻ → mở phòng → kiếm mẫu → nghiên cứu | Giữ bài thử kết nối nếu phù hợp gameplay và mối nối C01–C24; không tạo feature mới |
+
+### 7.4. 12 tình huống nguồn → 20 tình huống chấp nhận SOH
+
+| Mã | Nghiên cứu gốc | Hướng sử dụng |
+| --- | --- | --- |
+| `JOURNEY-01` | Buổi đầu tay trắng | Dùng làm bằng chứng tình huống nguồn, phải chuyển sang J01–J20 theo SOH (không PvP, không recipe vĩnh viễn) |
+| `JOURNEY-02` | Thùng đồ và bất ngờ về tri thức | Dùng làm bằng chứng tình huống nguồn, phải chuyển sang J01–J20 theo SOH (không PvP, không recipe vĩnh viễn) |
+| `JOURNEY-03` | Mở phòng xanh lá đầu tiên | Dùng làm bằng chứng tình huống nguồn, phải chuyển sang J01–J20 theo SOH (không PvP, không recipe vĩnh viễn) |
+| `JOURNEY-04` | Lần thử thất bại tại vùng độc | Dùng làm bằng chứng tình huống nguồn, phải chuyển sang J01–J20 theo SOH (không PvP, không recipe vĩnh viễn) |
+| `JOURNEY-05` | Thiết kế lại căn nhà theo vòng sản xuất | Dùng làm bằng chứng tình huống nguồn, phải chuyển sang J01–J20 theo SOH (không PvP, không recipe vĩnh viễn) |
+| `JOURNEY-06` | Chuyến đi xa có tiền đồn | Dùng làm bằng chứng tình huống nguồn, phải chuyển sang J01–J20 theo SOH (không PvP, không recipe vĩnh viễn) |
+| `JOURNEY-07` | Một chuyến loot lời nhưng không hiệu quả | Dùng làm bằng chứng tình huống nguồn, phải chuyển sang J01–J20 theo SOH (không PvP, không recipe vĩnh viễn) |
+| `JOURNEY-08` | Công thức đồ mới làm thay đổi giá trị kho cũ | Dùng làm bằng chứng tình huống nguồn, phải chuyển sang J01–J20 theo SOH (không PvP, không recipe vĩnh viễn) |
+| `JOURNEY-09` | Bảo vệ căn cứ khỏi một đợt tấn công có báo trước | Dùng làm bằng chứng tình huống nguồn, phải chuyển sang J01–J20 theo SOH (không PvP, không recipe vĩnh viễn) |
+| `JOURNEY-10` | Hệ công thức chia sẻ không đồng nghĩa công thức cá nhân | Dùng làm bằng chứng tình huống nguồn, phải chuyển sang J01–J20 theo SOH (không PvP, không recipe vĩnh viễn) |
+| `JOURNEY-11` | Boss cho loot hơn một chức năng | Dùng làm bằng chứng tình huống nguồn, phải chuyển sang J01–J20 theo SOH (không PvP, không recipe vĩnh viễn) |
+| `JOURNEY-12` | Giai đoạn cuối nhiều phương án chơi | Dùng làm bằng chứng tình huống nguồn, phải chuyển sang J01–J20 theo SOH (không PvP, không recipe vĩnh viễn) |
+
+### 7.5. Khi nào Gameplay và Map mở lại các hồ sơ này?
+
+- **Khi cần số, gốc thời kỳ hoặc cơ chế Last Island:** mở `_archive/original_reference/` và `docs/survival/source_archive/`, đối chiếu tài liệu Last Island đúng 2019/2020, kiểm tra độ tin cậy; mọi số 2021–2026 phải ghi khác era.
+- **Khi muốn biết một luồng A đã thật sự xong hay chưa:** mở `reviews/`, `tasks/` và PR đúng owner, so exact SHA/CI/capture/input; không nâng trạng thái chỉ vì mã source xuất hiện.
+- **Khi phát hiện xung đột luật:** ưu tiên luật [CHỐT] trong Bible này; mở ledger D001–D076 đã cất archive để xem ai và khi nào đổi, bổ sung quyết định mới tại Bible, không hồi sinh dòng cũ.
+- **Khi Map muốn thêm công trình:** trước hết chứng minh nó tạo cơ hội hành động/nguồn/route từ K1–K8/J01–J20; chỉ sau đó mở source POI archetype. Không đặt vì “Last Island có sân bay nên SOH phải có sân bay”.
+
+
 <!-- MORE_GAMEPLAY_BIBLE_MODULES_INSERT_HERE -->
 
 ## PHỤ LỤC KỸ THUẬT A — 24 MỐI NỐI, 20 HÀNH TRÌNH, BÀI KIỂM TRA VÀ DỮ LIỆU THAM CHIẾU
