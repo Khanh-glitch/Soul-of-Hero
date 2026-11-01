@@ -18,6 +18,7 @@ func _initialize() -> void:
                 var started := Time.get_ticks_usec()
                 frame = AFramebuffer.new()
                 frame.track_world_fields = true
+                frame.clear()
                 spell.render(frame, t)
                 var ms := float(Time.get_ticks_usec() - started) / 1000.0
                 if rep > 0: elapsed.append(ms)

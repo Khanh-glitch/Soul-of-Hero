@@ -77,12 +77,17 @@ jobs:
             PROJECT="$RUNNER_TEMP/baseline"; if [ "$WHICH" = candidate ]; then PROJECT="$GITHUB_WORKSPACE"; fi
             godot --headless --path "$PROJECT" --import > "$RUNNER_TEMP/import-$WHICH.log" 2>&1
             if grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/import-$WHICH.log"; then cat "$RUNNER_TEMP/import-$WHICH.log"; exit 1; fi
-            timeout 360s godot --headless --path "$PROJECT" --script res://prototypes/arcana_fusion20/renderer/redesign_source_bench.gd > "$RUNNER_TEMP/bench-$WHICH.log" 2>&1
-            grep -Fq REDESIGN_BENCH_PASS "$RUNNER_TEMP/bench-$WHICH.log"
-            if grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/bench-$WHICH.log"; then cat "$RUNNER_TEMP/bench-$WHICH.log"; exit 1; fi
-            echo "::notice title=PHASE_BENCH::$WHICH $(grep 'REDESIGN_BENCH id=' "$RUNNER_TEMP/bench-$WHICH.log" | tr '\n' '|')"
+            for ART in A B; do
+              LOG="$RUNNER_TEMP/bench-$WHICH-$ART.log"
+              timeout 360s env ARCANA20_ART14="$ART" ARCANA20_ART18="$ART" godot --headless --path "$PROJECT" --script res://prototypes/arcana_fusion20/renderer/redesign_source_bench.gd > "$LOG" 2>&1
+              grep -Fq REDESIGN_BENCH_PASS "$LOG"
+              if grep -Eq 'SCRIPT ERROR:|Parse Error:' "$LOG"; then cat "$LOG"; exit 1; fi
+              echo "::notice title=PHASE_BENCH::$WHICH-$ART $(grep 'REDESIGN_BENCH id=' "$LOG" | tr '\n' '|')"
+            done
           done
-          grep '^REDESIGN_FIELDS ' "$RUNNER_TEMP/bench-baseline.log" > "$RUNNER_TEMP/fields-baseline.txt"
-          grep '^REDESIGN_FIELDS ' "$RUNNER_TEMP/bench-candidate.log" > "$RUNNER_TEMP/fields-candidate.txt"
-          diff -u "$RUNNER_TEMP/fields-baseline.txt" "$RUNNER_TEMP/fields-candidate.txt"
-          echo "::notice title=PHASE_BENCH::Six matched source field SHA-256 digests equal; not full lifecycle/world parity"
+          for ART in A B; do
+            grep '^REDESIGN_FIELDS ' "$RUNNER_TEMP/bench-baseline-$ART.log" > "$RUNNER_TEMP/fields-baseline.txt"
+            grep '^REDESIGN_FIELDS ' "$RUNNER_TEMP/bench-candidate-$ART.log" > "$RUNNER_TEMP/fields-candidate.txt"
+            diff -u "$RUNNER_TEMP/fields-baseline.txt" "$RUNNER_TEMP/fields-candidate.txt"
+            echo "::notice title=PHASE_BENCH::Direction $ART: six matched source field SHA-256 digests equal; not full lifecycle/world parity"
+          done
