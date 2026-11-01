@@ -1,0 +1,44 @@
+# Compare the unmodified original A cast with the actual captured fusion field.
+name: ARCANA20 R17 full original A versus fusion field
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-r17-a11-full-source.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: r17-rotor-decomposition-11-normal
+          run-id: 41302275137
+          github-token: ${{ github.token }}
+          path: data
+      - name: Render original A at actual captured source ticks
+        run: |
+          set -euo pipefail
+          npx --yes esbuild@0.25.12 tools/arcana20_source_compare/a11_full_reference.ts --bundle --platform=node --format=cjs --outfile="$RUNNER_TEMP/a11-full.cjs"
+          ticks=$(python3 - <<'PY'
+          import json, pathlib
+          ticks={json.loads(p.read_text())['source_tick'] for p in pathlib.Path('data').glob('r17_*.json') if 'source_tick' in json.loads(p.read_text())}
+          print(' '.join(map(str,sorted(ticks))))
+          PY
+          )
+          test -n "$ticks"
+          node "$RUNNER_TEMP/a11-full.cjs" data $ticks
+      - name: Compare linear source fields, not world/post
+        run: |
+          python3 -m pip install --quiet numpy
+          python3 tools/arcana20_source_compare/compare_a11_full_field.py data
+      - uses: actions/upload-artifact@v4
+        with:
+          name: r17-a11-full-source-comparison
+          path: |
+            data/a11_original_*
+            data/a11_full_compare_*.json
