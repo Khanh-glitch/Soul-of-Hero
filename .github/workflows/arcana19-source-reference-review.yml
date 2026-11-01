@@ -1,0 +1,33 @@
+name: ARCANA19 original D isolated source review surfaces
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana19-source-reference-review.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcana19-d-browser-evidence
+          run-id: 41200457643
+          github-token: ${{ github.token }}
+          path: source
+      - run: python3 -m pip install --quiet pillow
+      # Isolated source only: original floor/markers suppressed, original post
+      # retained. Never presented as native-world visual acceptance.
+      - name: Surface D source at 5.2 seconds
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py source fx-only_t520
+      - name: Surface D source at 7.4 seconds
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py source fx-only_t740
+      - name: Surface D source at 8.15 seconds
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py source fx-only_t815
+      - name: Surface D source at 8.8 seconds
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py source fx-only_t880
+      - name: Surface D source at 9.3 seconds
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py source fx-only_t930
