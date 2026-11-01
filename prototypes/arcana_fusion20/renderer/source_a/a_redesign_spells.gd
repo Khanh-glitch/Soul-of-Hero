@@ -45,7 +45,10 @@ class AshenGuillotineR:
         if slit > 0.0 and cut < 1.0:
             ADraw.streak(fb, p0.x, p0.y, p1.x, p1.y, 0.7, 0.7, AMath.R("fire", 0.65), slit * 0.8 * close_k)
         # blade materialises offset along normal, then one ultra-fast cut
-        var off := (1.0 - cut) * (26.0 - blade * 22.0)
+        # Give the real physical blade a legible cross-cut travel: the old
+        # 4-source-pixel stroke collapsed to <1 preview pixel. This remains
+        # one cut, with the same authored start/end and no extra impact.
+        var off := (1.0 - cut) * (26.0 - blade * 8.0)
         var b0: Vector2 = p0 + n * off
         var b1: Vector2 = p1 + n * off
         if blade > 0.0 and t < 4.4:
