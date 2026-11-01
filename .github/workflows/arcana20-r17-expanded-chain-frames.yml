@@ -1,4 +1,4 @@
-name: ARCANA20 expanded chain native-scale real-world frames
+name: ARCANA20 R18 controlled chain frame review
 on:
   workflow_dispatch:
   push:
@@ -19,16 +19,25 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
-          name: r17-expanded-chain-9-${{ matrix.light }}
-          run-id: 41310764888
+          name: r18-controlled-chain-9-${{ matrix.light }}
+          run-id: 41315747505
           github-token: ${{ github.token }}
           path: capture
       - run: python3 -m pip install --quiet pillow
-      - name: Opening, native-scale center crop
-        run: python3 tools/arcana20_join/surface_chain_tick.py capture 87 opening
-      - name: Development, native-scale center crop
-        run: python3 tools/arcana20_join/surface_chain_tick.py capture 183 development
-      - name: Midpoint, native-scale center crop
-        run: python3 tools/arcana20_join/surface_chain_tick.py capture 247 midpoint
-      - name: Cascade, native-scale center crop
-        run: python3 tools/arcana20_join/surface_chain_tick.py capture 327 cascade
+      - name: Compare restore drift and choose two captured phases
+        run: |
+          python3 - <<'PY2'
+          import json,pathlib
+          rows=json.loads(pathlib.Path('capture/controlled/comparison.json').read_text())
+          print('::notice title=R18_DRIFT::'+json.dumps({'frames':len(rows),'drift_frames':sum(r['baseline_restore_different_pixels']>0 for r in rows),'max_drift_pixels':max(r['baseline_restore_different_pixels'] for r in rows),'max_drift_channel':max(r['max_baseline_restore_difference'] for r in rows),'max_z_pixels':max(r['render_order_different_pixels'] for r in rows)},separators=(',',':')))
+          PY2
+      - name: Midpoint baseline
+        run: python3 tools/arcana20_join/surface_controlled_chain.py capture 247 0 baseline
+      - name: Midpoint foreground
+        run: python3 tools/arcana20_join/surface_controlled_chain.py capture 247 1 foreground
+      - name: Midpoint restored
+        run: python3 tools/arcana20_join/surface_controlled_chain.py capture 247 2 restored
+      - name: Cascade baseline
+        run: python3 tools/arcana20_join/surface_controlled_chain.py capture 327 0 baseline
+      - name: Cascade foreground
+        run: python3 tools/arcana20_join/surface_controlled_chain.py capture 327 1 foreground
