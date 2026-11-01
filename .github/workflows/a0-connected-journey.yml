@@ -160,7 +160,7 @@ jobs:
             while IFS= read -r line; do echo "::error title=fail-$(basename "$f" .log)::$line"; done < <(grep -aE '  FAIL  ' "$f" | head -4)
           done
           for f in "$log1" "$log2"; do
-            while IFS= read -r line; do echo "::error title=err-$(basename "$f" .log)::$line"; done < <(grep -aE 'SCRIPT ERROR|Parse Error' "$f" | head -2)
+            while IFS= read -r line; do echo "::error title=err-$(basename "$f" .log)::$line"; done < <(grep -aA2 -E 'SCRIPT ERROR' "$f" | grep -avE '^--$|^[[:space:]]*$' | head -6 | tr '\n' '~' | sed 's/~SCRIPT ERROR/\nSCRIPT ERROR/g')
           done
           for f in "$log1" "$log2"; do
             while IFS= read -r line; do echo "::notice title=step-$(basename "$f" .log)::$line"; done < <(grep -aE '^A0_CONNECTED_(STAGE|PRESS_RESULT|INPUT_PATH|WEAVE_CLICK|OFFLINE_SETTLE|DEPARTURE)' "$f" | tail -3)

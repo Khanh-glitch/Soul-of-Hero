@@ -935,11 +935,18 @@ func _walk_to_cell(hero: CharacterBody2D, nav: OverworldTraversability, cell: Ve
 ## from "the player is not standing at the workstation".
 func _press_prepare_work() -> bool:
 	var ow: Node = _host.get_child(0)
+	print("A0_CONNECTED_PREPARE enter bound=%s ow=%s" % [
+		str(InputMap.has_action(&"prepare_work")),
+		(str(ow.name) if ow != null and is_instance_valid(ow) else "none")])
 	var host: Node = ow.get(&"economy_session") if ow != null else null
 	if host == null:
 		print("A0_CONNECTED_PREPARE result=no_session")
 		return false
-	var before: Dictionary = host.call(&"prepared_work")
+	# A read that reports a freed node must not abort the press: the oracle still has
+	# to say whether the key worked.
+	var before_raw: Variant = host.call(&"prepared_work")
+	var before: Dictionary = before_raw if before_raw is Dictionary else {}
+	print("A0_CONNECTED_PREPARE before=%s" % JSON.stringify(before))
 	var press := InputEventKey.new()
 	press.physical_keycode = KEY_P
 	press.keycode = KEY_P
@@ -955,7 +962,9 @@ func _press_prepare_work() -> bool:
 	await process_frame
 	var state: Dictionary = {}
 	for frame: int in range(90):
-		state = host.call(&"prepared_work")
+		var raw: Variant = host.call(&"prepared_work") if frame % 15 == 0 or frame < 3 else state
+		if raw is Dictionary:
+			state = raw
 		if (state.get("jobs", []) as Array).size() > 0:
 			print("A0_CONNECTED_PREPARE result=armed frames=%d jobs=%d" % [
 				frame, (state.get("jobs", []) as Array).size()])
