@@ -1151,6 +1151,13 @@ func _unhandled_input(event: InputEvent) -> void:
 # events is insufficient because build placement is polled from Input.
 ## Physically nearest paid station, by the same reach the build system uses. A
 ## station the player cannot stand next to cannot be prepared.
+##
+## "Next to" is measured to the block the station occupies, not to the corner its
+## sprite is anchored at. Measuring from the origin told a player touching the side
+## of a 2x2 furnace (53 px from that corner, 21 px from the block) that they were not
+## standing at a workstation - while the panel opened and let them queue work there,
+## using SurvivalStationReach. Preparing work is the same act of standing at the same
+## station, so it asks the same question instead of keeping a second, worse one.
 func _prepare_work_at_nearest_station() -> void:
 	if economy_session == null or not is_instance_valid(economy_session) or survival_build == null:
 		return
@@ -1160,9 +1167,12 @@ func _prepare_work_at_nearest_station() -> void:
 		var structure := value as SurvivalStructure
 		if structure == null or not is_instance_valid(structure) or not structure.piece_id.begins_with("station_"):
 			continue
-		var distance := structure.global_position.distance_to(player.global_position)
-		if distance <= SurvivalStructure.REACH and distance < nearest_distance:
-			nearest = String(structure.entity_id)
+		var entity := String(structure.entity_id)
+		if not _station_in_reach(entity, structure):
+			continue
+		var distance := _station_distance(entity, structure)
+		if distance < nearest_distance:
+			nearest = entity
 			nearest_distance = distance
 	if nearest.is_empty():
 		_say("Stand at a workstation to keep its work running while you are away.")
@@ -1179,6 +1189,30 @@ func _prepare_work_at_nearest_station() -> void:
 			_say("That work is already prepared.")
 		else:
 			_say("Could not prepare that work (%s)." % reason)
+
+
+## A station's own block, from A3's catalogue through A0's survival service. An
+## unknown piece falls back to the single cell it stands on.
+func _station_footprint(structure: SurvivalStructure) -> Dictionary:
+	var service := get_node_or_null("/root/SurvivalService")
+	if service == null or structure == null:
+		return {}
+	var definition: Variant = service.call(&"piece_definition", String(structure.piece_id))
+	return definition if definition is Dictionary else {}
+
+
+func _station_distance(entity_id: String, structure: SurvivalStructure) -> float:
+	var definition := _station_footprint(structure)
+	if definition.is_empty():
+		return structure.global_position.distance_to(player.global_position)
+	return SurvivalStationReach.distance_to(player.global_position, structure, definition)
+
+
+func _station_in_reach(entity_id: String, structure: SurvivalStructure) -> bool:
+	if economy_session != null and is_instance_valid(economy_session) \
+			and economy_session.has_method(&"station_in_reach"):
+		return bool(economy_session.call(&"station_in_reach", entity_id, structure))
+	return _station_distance(entity_id, structure) <= SurvivalStationReach.RADIUS
 
 
 func _has_gameplay_modal() -> bool:
