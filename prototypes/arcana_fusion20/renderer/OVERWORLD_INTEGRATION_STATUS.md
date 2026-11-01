@@ -7,6 +7,87 @@ all are `VISUAL_NOT_VERIFIED`, and `OWNER_VISUAL_APPROVED = 0`.
 
 See [WORLD_COMPOSITOR_CONTRACT.md](WORLD_COMPOSITOR_CONTRACT.md) for semantic layers and known route gaps, including the #07/#15 source-operation audit.
 
+## R14 continuation — independent feedback and current evidence
+
+Control Tower independently accepted **only** the #10 rectangle engineering
+correction, #04 measurable single-blade motion, the 8/8 phase batches and
+software-CI performance improvement ([comment](https://github.com/Khanh-glitch/Soul-of-Hero/pull/30#issuecomment-6553797678)).
+Visual/product, source-fusion, performance, actor-depth and gameplay remain on
+hold. The following supersedes older claims in this document where applicable.
+
+**Combat authority correction.** Historical JOIN harnesses, including the
+previously reported HP 69→69 visual sample, first called R4 `request_hit` to
+apply one setup damage. This was owner code but AVFX initiated it, contrary to
+the current no-HP-mutation order. At `8974dda` the AVFX test no longer calls
+R4 damage; it only attaches the unchanged owner bridge and checks that HP is
+unchanged. Historical results are not owner-originated gameplay receipts. The
+first `b46c677` runs used the old harness; a cancel request was denied 403.
+[CT correction](https://github.com/Khanh-glitch/Soul-of-Hero/pull/30#issuecomment-6553848752)
+records this. Genuine moving hit/miss/confirmed receipts remain owner-provided.
+
+- **#10:** moved real actors and camera, authentic impact flash/chroma, real
+  HUD including translucency, simultaneous #10/#17 post and independent
+  cancellation were asserted in A0 04e / AVFX `bf8181f`
+  [41276632239](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41276632239).
+  Motion is test-driven, not AI or combat. A full 444-tick, 1280×720
+  normal/dim source-before `13df6c9` vs candidate `e9ad8f0` motion package
+  [41277330808](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41277330808)
+  is in progress; candidate jobs succeeded, baseline jobs still running at
+  this writing. Camera and real actors are scripted; C10 still uses cast-time
+  anchors. It does not demonstrate natural target tracking or gameplay.
+- **#04:** candidate `bf8181f` uses a single asymmetric dark-metal blade,
+  anticipation, accelerated contact at 3.4s, recoil and a connected five-section
+  delayed rupture with debris and ordered wound closure. One cut plus five
+  distinct rupture events are checked exactly, visual-only. Normal/dim actual
+  frozen-world review [41276632197](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41276632197)
+  passed; the four inspected 384×216 previews showed clearer metal, but still
+  resemble a large dark diagonal bar. A 480-frame native-resolution 60-Hz
+  baseline `5d3fdeb` / candidate `e7cc3fc` package
+  [41277174373](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41277174373)
+  completed all four jobs and includes lossless RGB video and playable MP4.
+  It is frozen-world/test-driven, not gameplay footage. All 480 frames in each
+  light have **not** been individually inspected here; motion, causal quality,
+  actor depth and creator approval remain open. Earlier capture
+  [41276632227](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41276632227)
+  produced 480 native PNGs per job but failed packaging because ffmpeg was
+  absent; it is not a green run. [41277174411](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41277174411)
+  encoded three archives and [41277407337](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41277407337)
+  recovered the last dim candidate. These do not replace human frame review.
+- **#13:** `ac68fa8` maps branched root organisms to target-side anchors and
+  aligns each visible tip's arrival with its own visual contact. Event previews
+  [41277240518](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41277240518)
+  show coherent direction but sparse/thin silhouettes. `e31d9d7` then adds
+  thicker woody cores and target-directed barbs; current visuals/motion have
+  not yet been inspected. #12 `3a7d0c0` uses the actual C #09 bolt-tree
+  generator through A raster, and aligns visual cues with the strike endpoints;
+  complete C raster/fusion and motion remain unverified. #14 `3260f2d` schedules
+  births at incoming hyphal arrivals and signal propagation before sporulation;
+  #18 `863301b` synchronizes five reverse releases at the impact and adapts B's
+  six-sided, dark-backed crystal frame geometry. Neither is complete source
+  parity: #18's B clipped miniature attack remains missing. Current #12/#13/
+  #14/#18 runtime and normal/dim visual reviews remain pending. #06, #09 and
+  #11 remain open; no changes claim creator acceptance.
+- **#19:** opt-in, separate-input prototype at `740c571` implements the D
+  bright/blur pyramid structure and experimental COMP, not a production seam.
+  Synthetic steady-state [41276740857](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41276740857)
+  passed; A0 04e frozen actual-world snapshot probe
+  [41277174423](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41277174423)
+  passed real HUD isolation (59,787 covered, 41,857 partially transparent,
+  zero mismatches in each light) and teardown. Input is a one-frame readback,
+  already tone-mapped, not a live pre-HUD world viewport. Inspected normal/dim
+  previews show whole-world washout and still-weak D center, so this result is
+  **not** acceptable visual/source parity; original scene linear/HDR format,
+  one-frame dependency order, true live viewport and composition are open.
+  The implementation intentionally retains observed original `uFlashCol`
+  vec3/uniform4 upload behavior, not a silent source bug fix. Minimal owner
+  pre-HUD and immutable receipt API requested [here](https://github.com/Khanh-glitch/Soul-of-Hero/pull/30#issuecomment-6553822213).
+
+The mounted composition remains A0 actual overworld, historical A6 UI, CT
+`e505173e`; A1/A3 are contract inputs only and A8 is not mounted. Newer owner
+heads are not validated as a combined product. All 20 remain
+`VISUAL_NOT_VERIFIED`, all creator approvals zero. Per-skill stage statuses
+below remain conservative; new candidate changes do not upgrade them.
+
 ## R14 current verdict — visual and product acceptance blocked
 
 This section supersedes older pin/status summaries and tables below. The
