@@ -1438,19 +1438,30 @@ func _phase_sweep(app: Node, world: Node, player: Node2D, enemy: Node2D, camera:
         var native_duration := float(source.get("duration"))
         # Catalog climax is not necessarily this candidate's authored impact:
         # e.g. #04 cuts at 3.4s while its catalog climax is 4.25s. Capture
-        # candidate event beats too, in chronological source-tick order. These
-        # include the #09/#11 fusion candidates. Event frames don't prove
-        # source parity, full motion quality, or creator approval.
+        # event beats too, including the actual child offsets for #01/#05/#16.
+        # Event frames don't prove parity, full motion, or creator approval.
+        var event_sources: Array = []
         if source is ASourcePlayer:
+            event_sources.append({"events": (source as ASourcePlayer)._events, "offset": 0.0, "family": "A"})
+        elif source is FusionPlayer:
+            for part in (source as FusionPlayer)._pending:
+                var child: Node = part.node
+                if child is ASourcePlayer:
+                    event_sources.append({"events": (child as ASourcePlayer)._events, "offset": float(part.offset), "family": "A"})
+                elif child is CSourcePlayer:
+                    event_sources.append({"events": (child as CSourcePlayer)._events, "offset": float(part.offset), "family": "C"})
+        if not event_sources.is_empty():
             var ordered: Array = []
             for index in range(targets.size()):
                 ordered.append({"tick": int(targets[index]), "label": labels[index]})
             var event_index := 0
-            for event in (source as ASourcePlayer)._events:
-                var event_tick := roundi(float(event.t) * 60.0)
-                if event_tick > 0 and float(event.t) < native_duration:
-                    ordered.append({"tick": event_tick, "label": "candidate_%s_%02d" % [String(event.kind), event_index]})
-                    event_index += 1
+            for event_source in event_sources:
+                for event in event_source.events:
+                    var event_time := float(event.t) - float(event_source.offset)
+                    var event_tick := roundi(event_time * 60.0)
+                    if event_tick > 0 and event_time < native_duration:
+                        ordered.append({"tick": event_tick, "label": "candidate_%s_%s_%02d" % [String(event_source.family), String(event.kind), event_index]})
+                        event_index += 1
             ordered.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return int(a.tick) < int(b.tick))
             targets.clear()
             labels.clear()
@@ -1489,7 +1500,7 @@ func _phase_sweep(app: Node, world: Node, player: Node2D, enemy: Node2D, camera:
         records.append(row)
         print("JOIN_PHASE ", JSON.stringify(row))
     var out := FileAccess.open(OUTPUT + "/phase_sweep_%02d.json" % first, FileAccess.WRITE)
-    out.store_string(JSON.stringify({"scope": "frozen historical real overworld; normal or test-dimmed WorldTint; experimental C viewport post; catalog-relative ticks plus A candidate event beats; no source parity, gameplay, target-device, or creator approval", "records": records}, "  "))
+    out.store_string(JSON.stringify({"scope": "frozen historical real overworld; normal or test-dimmed WorldTint; experimental C viewport post; catalog-relative ticks plus A/fusion-child candidate event beats; no source parity, gameplay, target-device, or creator approval", "records": records}, "  "))
     out.close()
     post.detach()
     mount.detach()
