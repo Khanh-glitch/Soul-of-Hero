@@ -41,7 +41,10 @@ static func grow_branches(rng: AMath.ARng, x0: float, y0: float, a0: float, w0: 
         var x: float = q.x
         var y: float = q.y
         var a: float = q.a
-        var n: int = maxi(3, roundi(float(o.steps) * (1.0 - float(q.d) * 0.18) * rng.rangef(0.6, 1.25)))
+        # Default is exactly the original source behavior. A redesign may
+        # opt into shorter children without changing other source branches.
+        var depth_length_falloff := float(o.get("depth_length_falloff", 0.18))
+        var n: int = maxi(3, roundi(float(o.steps) * (1.0 - float(q.d) * depth_length_falloff) * rng.rangef(0.6, 1.25)))
         for i in range(n):
             a += rng.gauss(float(o.wander)) * 0.5
             if bias.is_valid():

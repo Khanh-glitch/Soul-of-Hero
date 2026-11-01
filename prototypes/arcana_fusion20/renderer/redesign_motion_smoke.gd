@@ -13,6 +13,17 @@ func _initialize() -> void:
     for item in candidates:
         var spell: Variant = item.spell
         spell.setup()
+        if int(item.id) == 13:
+            # Uniformly transformed root trunks must still end at each
+            # authored impact anchor after the growth-geometry redesign.
+            for i in range(spell._roots.size()):
+                var trunk: Dictionary = spell._roots[i][0]
+                var points: Array = trunk.pts
+                var endpoint: Vector2 = points[-1]
+                if not endpoint.is_equal_approx(spell._tips[i]):
+                    push_error("REDESIGN_SMOKE_FAIL #13 root contact anchor")
+                    quit(1)
+                    return
         if int(item.id) == 14:
             # Every meandering link still starts/ends at its real colony
             # anchors; the growth path and moving pulse use this same curve.

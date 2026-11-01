@@ -18,16 +18,21 @@ class RootwakeR:
         _roots.clear()
         _tips.clear()
         for i in range(3):
-            var bs: Array = ACommon.grow_branches(rng, CASTER.x + 10.0, CASTER.y - 4.0,
-                -0.7 + float(i) * 0.55, 3.0, {"steps": 12, "step": 5.4, "wander": 0.2, "branch_chance": 0.35, "max_depth": 2, "width_falloff": 0.5, "speed": 1.5})
-            # Preserve the grown, branched morphology but map each entire
-            # organism coherently onto a target-side anchor. Uniform rotation
-            # and scale keep parent/child branch junctions connected.
+            var origin := CASTER + Vector2(10.0, -4.0)
+            var destination := C + Vector2(float(i - 1) * 12.0, 7.0 + float(i % 2) * 3.0)
+            var to_target := destination - origin
+            # Grow toward the real authored target from the outset, rather
+            # than enlarging a short sideways plant several-fold. Children
+            # taper in length by depth, avoiding offscreen ruler-like limbs.
+            var bs: Array = ACommon.grow_branches(rng, origin.x, origin.y,
+                to_target.angle(), 3.0, {"steps": 12, "step": to_target.length() / 12.0,
+                "wander": 0.2, "branch_chance": 0.35, "max_depth": 2,
+                "depth_length_falloff": 0.38, "width_falloff": 0.5, "speed": 1.5})
+            # Map each whole organism to the exact contact with one uniform
+            # rotation/scale; every parent/child junction stays connected.
             var root: Dictionary = bs[0]
             var root_pts: Array = root.pts
-            var origin: Vector2 = root_pts[0]
             var old_axis: Vector2 = root_pts[root_pts.size() - 1] - origin
-            var destination := C + Vector2(float(i - 1) * 12.0, 7.0 + float(i % 2) * 3.0)
             var new_axis := destination - origin
             var angle := new_axis.angle() - old_axis.angle()
             var scale := new_axis.length() / maxf(old_axis.length(), 0.001)
