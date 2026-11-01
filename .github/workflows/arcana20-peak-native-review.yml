@@ -1,0 +1,84 @@
+name: ARCANA20 all-20 native peak review surfaces
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-peak-native-review.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  peaks:
+    strategy:
+      fail-fast: false
+      matrix:
+        lighting: [normal, dimmed]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcana20-current-phase-sweep-1-${{ matrix.lighting }}
+          run-id: 41270259664
+          github-token: ${{ github.token }}
+          path: captures/1
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcana20-current-phase-sweep-6-${{ matrix.lighting }}
+          run-id: 41270259664
+          github-token: ${{ github.token }}
+          path: captures/6
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcana20-current-phase-sweep-11-${{ matrix.lighting }}
+          run-id: 41270259664
+          github-token: ${{ github.token }}
+          path: captures/11
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcana20-current-phase-sweep-16-${{ matrix.lighting }}
+          run-id: 41270259664
+          github-token: ${{ github.token }}
+          path: captures/16
+      - run: python3 -m pip install --quiet pillow
+      - name: Surface native skill 01 catalog peak
+        run: python3 prototypes/arcana_fusion20/renderer/arcana20_peak_review_surface.py captures 1
+      - name: Surface native skill 02 catalog peak
+        run: python3 prototypes/arcana_fusion20/renderer/arcana20_peak_review_surface.py captures 2
+      - name: Surface native skill 03 catalog peak
+        run: python3 prototypes/arcana_fusion20/renderer/arcana20_peak_review_surface.py captures 3
+      - name: Surface native skill 04 catalog peak
+        run: python3 prototypes/arcana_fusion20/renderer/arcana20_peak_review_surface.py captures 4
+      - name: Surface native skill 05 catalog peak
+        run: python3 prototypes/arcana_fusion20/renderer/arcana20_peak_review_surface.py captures 5
+      - name: Surface native skill 06 catalog peak
+        run: python3 prototypes/arcana_fusion20/renderer/arcana20_peak_review_surface.py captures 6
+      - name: Surface native skill 07 catalog peak
+        run: python3 prototypes/arcana_fusion20/renderer/arcana20_peak_review_surface.py captures 7
+      - name: Surface native skill 08 catalog peak
+        run: python3 prototypes/arcana_fusion20/renderer/arcana20_peak_review_surface.py captures 8
+      - name: Surface native skill 09 catalog peak
+        run: python3 prototypes/arcana_fusion20/renderer/arcana20_peak_review_surface.py captures 9
+      - name: Surface native skill 10 catalog peak
+        run: python3 prototypes/arcana_fusion20/renderer/arcana20_peak_review_surface.py captures 10
+      - name: Surface native skill 11 catalog peak
+        run: python3 prototypes/arcana_fusion20/renderer/arcana20_peak_review_surface.py captures 11
+      - name: Surface native skill 12 catalog peak
+        run: python3 prototypes/arcana_fusion20/renderer/arcana20_peak_review_surface.py captures 12
+      - name: Surface native skill 13 catalog peak
+        run: python3 prototypes/arcana_fusion20/renderer/arcana20_peak_review_surface.py captures 13
+      - name: Surface native skill 14 catalog peak
+        run: python3 prototypes/arcana_fusion20/renderer/arcana20_peak_review_surface.py captures 14
+      - name: Surface native skill 15 catalog peak
+        run: python3 prototypes/arcana_fusion20/renderer/arcana20_peak_review_surface.py captures 15
+      - name: Surface native skill 16 catalog peak
+        run: python3 prototypes/arcana_fusion20/renderer/arcana20_peak_review_surface.py captures 16
+      - name: Surface native skill 17 catalog peak
+        run: python3 prototypes/arcana_fusion20/renderer/arcana20_peak_review_surface.py captures 17
+      - name: Surface native skill 18 catalog peak
+        run: python3 prototypes/arcana_fusion20/renderer/arcana20_peak_review_surface.py captures 18
+      - name: Surface native skill 19 catalog peak
+        run: python3 prototypes/arcana_fusion20/renderer/arcana20_peak_review_surface.py captures 19
+      - name: Surface native skill 20 catalog peak
+        run: python3 prototypes/arcana_fusion20/renderer/arcana20_peak_review_surface.py captures 20
