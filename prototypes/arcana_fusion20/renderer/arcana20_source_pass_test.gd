@@ -344,6 +344,58 @@ func _run() -> void:
         upright.stop()
     upright.free()
 
+    # A and B must execute identical elected sources. The directed variant is
+    # only a separate presentation canvas and pass ordering; compare the actual
+    # raw source fields after the common release tick, not screenshots or RGB
+    # keys. Both runs start with the same source particle counter.
+    var ab_fields: Array[Dictionary] = []
+    var saved_particle_seed := CKit._auto_seed
+    for directed in [false, true]:
+        CKit._auto_seed = 0
+        var ab_host := Arcana20Renderer.new()
+        ab_host.world_pass_mode = true
+        ab_host.abyssal_directed = directed
+        root.add_child(ab_host)
+        var ab_seen: Dictionary = {}
+        ab_host.source_pass_ready.connect(func(_id: StringName, frame: Arcana20SourcePassFrame) -> void:
+            ab_seen[frame.family] = frame)
+        var ab_id := Arcana20SourceCatalog.canonical_id(5)
+        check(ab_host.cast_skill(ab_id, Vector2(100, 200), Vector2(240, 200)), "R20 A/B source cast")
+        var ab_cast := ab_host._casts[ab_id] as FusionPlayer
+        ab_cast.set_process(false)
+        var a_part: ASourcePlayer
+        var c_part: CSourcePlayer
+        for part in ab_cast._pending:
+            if part.node is ASourcePlayer: a_part = part.node
+            if part.node is CSourcePlayer: c_part = part.node
+        check(a_part != null and c_part != null, "R20 both elected source components present")
+        if a_part != null and c_part != null:
+            a_part.render_enabled = false
+            c_part.render_enabled = false
+            for i in range(300): ab_cast.advance(STEP)
+            a_part.render_enabled = true
+            c_part.render_enabled = true
+            a_part._render_frame()
+            c_part._render_frame()
+            var af: Arcana20SourcePassFrame = ab_seen.get(&"A")
+            var cf: Arcana20SourcePassFrame = ab_seen.get(&"C")
+            check(af != null and cf != null, "R20 both source field frames emitted")
+            if af != null and cf != null:
+                ab_fields.append({"a_rgb": af.a_rgb.duplicate(), "a_coverage": af.a_coverage.duplicate(),
+                    "a_influence": af.a_influence.duplicate(), "a_multiplier": af.a_multiplier.duplicate(),
+                    "a_warp": af.a_world_warp.duplicate(), "a_exposure": af.a_exposure, "a_bloom": af.a_bloom,
+                    "a_bloom_rgb": af.a_bloom_rgb.duplicate(), "a_transform": af.source_to_world,
+                    "c_ink": cf.c_ink.duplicate(), "c_light": cf.c_light.duplicate(), "c_disp": cf.c_disp.duplicate(),
+                    "c_influence": cf.c_influence.duplicate(), "c_ground": cf.c_ground.duplicate(),
+                    "c_coverage": cf.c_ground_coverage.duplicate(), "c_fragment": cf.c_world_fragment.duplicate(),
+                    "c_transform": cf.source_to_world, "c_flash": cf.flash, "c_shake": cf.shake})
+            var presentation := ab_cast.get_node_or_null("DirectedWaterPresentation")
+            check((presentation != null) == directed, "R20 separate B presentation only")
+        ab_host.cancel_skill(ab_id)
+        ab_host.free()
+    CKit._auto_seed = saved_particle_seed
+    check(ab_fields.size() == 2 and ab_fields[0] == ab_fields[1], "R20 A/B selected source fields are exact")
+
     var graph := AChainVerdictGraph.new()
     graph.setup()
     check(graph.events.size() == 23, "A09 original graph seeded probe count")

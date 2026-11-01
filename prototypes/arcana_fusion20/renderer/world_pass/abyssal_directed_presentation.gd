@@ -62,7 +62,8 @@ func _draw() -> void:
     var wave := sin(PI * clampf(age / 1.35, 0.0, 1.0))
     var flight := clampf(age / 0.55, 0.0, 1.0)
     if wave > 0.001:
-        for side in [-1.0, 1.0]:
+        for side_value in [-1.0, 1.0]:
+            var side: float = float(side_value)
             for band in range(3):
                 var b := float(band)
                 var x0 := side * (13.0 + b * 9.0)

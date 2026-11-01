@@ -215,6 +215,18 @@ jobs:
       - name: Verify six locked native A-B comparisons
         if: matrix.lock == '1'
         run: python3 tools/arcana20_join/compare_abyssal_ab.py "$RUNNER_TEMP/live-output"
+      - name: Locked original release at native scale
+        if: matrix.lock == '1'
+        run: python3 tools/arcana20_join/surface_abyssal_ab.py "$RUNNER_TEMP/live-output" 2 a
+      - name: Locked directed release at native scale
+        if: matrix.lock == '1'
+        run: python3 tools/arcana20_join/surface_abyssal_ab.py "$RUNNER_TEMP/live-output" 2 b
+      - name: Locked original column at native scale
+        if: matrix.lock == '1'
+        run: python3 tools/arcana20_join/surface_abyssal_ab.py "$RUNNER_TEMP/live-output" 3 a
+      - name: Locked directed column at native scale
+        if: matrix.lock == '1'
+        run: python3 tools/arcana20_join/surface_abyssal_ab.py "$RUNNER_TEMP/live-output" 3 b
       # Actual source-clock beats; stills supplement, never replace full videos.
       - name: A opening and peak native detail
         if: matrix.lock == '0'
