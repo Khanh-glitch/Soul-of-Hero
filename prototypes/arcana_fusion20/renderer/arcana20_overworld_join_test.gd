@@ -1415,9 +1415,13 @@ func _phase_sweep(app: Node, world: Node, player: Node2D, enemy: Node2D, camera:
         var targets := [30, maxi(31, roundi(climax * 0.5 * 60.0)), roundi((climax - 0.15) * 60.0), roundi(climax * 60.0), roundi((climax + duration) * 30.0), roundi((duration - 0.1) * 60.0)]
         var labels := ["early", "build", "pre_catalog_climax", "catalog_climax", "aftermath", "late"]
         if num == 4:
-            # Inspect the fully materialised physical blade before the cut.
+            # Inspect the full-rate rapid cut (3.4..3.6s), not just a still.
+            # The test-driven world is frozen; this is not natural gameplay.
             targets.append(201)
             labels.append("blade_ready")
+            for cut_tick in range(204, 217):
+                targets.append(cut_tick)
+                labels.append("cut_motion_%03d" % cut_tick)
         if num == 16:
             # Natural seeded C tail after the catalog scene endpoint; show
             # its final active tick as well as the earlier sparse withdrawal.

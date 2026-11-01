@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/arcana20-a04-candidate-review.yml'
       - 'prototypes/arcana_fusion20/renderer/a04_blade_candidate_test.gd'
+      - 'prototypes/arcana_fusion20/renderer/arcana20_overworld_join_test.gd'
       - 'prototypes/arcana_fusion20/renderer/source_a/a_redesign_spells.gd'
 permissions:
   contents: read
@@ -58,6 +59,12 @@ jobs:
         run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py "$RUNNER_TEMP/a04/artifacts" phase_04_blade_ready_tick201
       - name: Surface physical cut
         run: python3 prototypes/arcana_fusion20/renderer/arcana20_candidate_review_surface.py "$RUNNER_TEMP/a04/artifacts" 4 guillotine_impact
+      - name: Surface cut frame 3.45 seconds
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py "$RUNNER_TEMP/a04/artifacts" phase_04_cut_motion_207_tick207
+      - name: Surface cut frame 3.5 seconds
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py "$RUNNER_TEMP/a04/artifacts" phase_04_cut_motion_210_tick210
+      - name: Surface cut frame 3.6 seconds
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py "$RUNNER_TEMP/a04/artifacts" phase_04_cut_motion_216_tick216
       - name: Report structural and runtime assertions
         if: always()
         run: |
