@@ -60,6 +60,7 @@ var _scale := 1.0
 var _thorn_tile := Vector2i.ZERO
 var _thorn_tile_frame: CFrame
 var _thorn_active_tiles: Dictionary = {}
+var _thorn_tile_truncated := false
 
 var _tick := 0
 var _acc := 0.0
@@ -360,12 +361,16 @@ func _thorn_add_tile_rect(tiles: Dictionary, lo: Vector2, hi: Vector2) -> void:
     for y in range(y0, mini(y1 + 1, y0 + 12)):
         for x in range(x0, mini(x1 + 1, x0 + 12)):
             var cell := Vector2i(x, y)
-            if cell != Vector2i.ZERO and tiles.size() < 12:
+            if cell == Vector2i.ZERO or tiles.has(cell): continue
+            if tiles.size() < 12:
                 tiles[cell] = true
+            else:
+                _thorn_tile_truncated = true
 
 func _emit_thorn_tiles() -> void:
     var thorn := _fx as CThornOpera
     var tiles := {}
+    _thorn_tile_truncated = false
     # Never extend the untouched original source canvas unless world mounting
     # actually moved its caster or shifted its focus at a clamped distance.
     var adapted := thorn._live_caster.distance_to(CThornOpera.CASTER) > 0.01 or thorn._focus.distance_to(CThornOpera.FZ) > 0.01

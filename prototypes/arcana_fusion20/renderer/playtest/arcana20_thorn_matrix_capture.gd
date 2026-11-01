@@ -15,6 +15,7 @@ func _measure(cp: CSourcePlayer) -> Dictionary:
     var vertices: Array = []
     var roots: Array = []
     var outside := 0
+    var uncovered := 0
     var margin := INF
     for td in fx._tds:
         var root := Vector2(float(td.base[0]), float(td.base[1]))
@@ -25,6 +26,10 @@ func _measure(cp: CSourcePlayer) -> Dictionary:
             var d := _point_margin(p)
             margin = minf(margin, d)
             if d < 0.0: outside += 1
+            var cell := Vector2i(floori(p.x / 384.0), floori(p.y / 216.0))
+            if cell != Vector2i.ZERO and not cp._thorn_active_tiles.has(cell): uncovered += 1
+    var active_tiles: Array = []
+    for cell in cp._thorn_active_tiles: active_tiles.append([cell.x, cell.y])
     var targets: Array = []
     for target in fx._targets: targets.append(_v(target))
     var ink_edge := 0
@@ -41,7 +46,10 @@ func _measure(cp: CSourcePlayer) -> Dictionary:
         "target_margins_px": targets.map(func(p: Array) -> float: return _point_margin(Vector2(p[0], p[1]))),
         "ink_pixels_on_edge": ink_edge, "light_pixels_on_edge": light_edge,
         "height_axis_local": _v(fx.particle_height_axis), "scale": cp._scale, "rotation": cp._rot,
-        "source_bounds": [0, 0, 384, 216]}
+        "source_bounds": [0, 0, 384, 216],
+        "base_raster_note": "margin and edge pixels above are the original tile only",
+        "active_overscan_tiles": active_tiles, "tile_cap_reached": cp._thorn_tile_truncated,
+        "vertices_without_tile": uncovered}
 
 func start(wrapper: Node) -> void:
     host = wrapper
