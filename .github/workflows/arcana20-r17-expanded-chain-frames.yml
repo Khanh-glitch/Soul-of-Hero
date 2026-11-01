@@ -24,12 +24,19 @@ jobs:
           github-token: ${{ github.token }}
           path: capture
       - run: python3 -m pip install --quiet pillow
-      - name: Compare restore drift and choose two captured phases
+      - name: Compare restore drift at two decisive phases
         run: |
           python3 - <<'PY2'
           import json,pathlib
-          rows=json.loads(pathlib.Path('capture/controlled/comparison.json').read_text())
-          print('::notice title=R18_DRIFT::'+json.dumps({'frames':len(rows),'drift_frames':sum(r['baseline_restore_different_pixels']>0 for r in rows),'max_drift_pixels':max(r['baseline_restore_different_pixels'] for r in rows),'max_drift_channel':max(r['max_baseline_restore_difference'] for r in rows),'max_z_pixels':max(r['render_order_different_pixels'] for r in rows)},separators=(',',':')))
+          from PIL import Image,ImageChops
+          p=pathlib.Path('capture');t=json.loads((p/'timeline.json').read_text());frames=[f for f in t['frames'] if 'controlled_files' in f]
+          if not frames: raise SystemExit('no controlled frames')
+          rows=[]
+          for tick in (87,183,247,327):
+              frame=min(frames,key=lambda f:abs(f['controlled_tick']-tick));a,b,c=[Image.open(p/name).convert('RGB') for name in frame['controlled_files']]
+              drift=ImageChops.difference(a,c); change=ImageChops.difference(a,b)
+              rows.append({'tick':frame['controlled_tick'],'drift_bbox':drift.getbbox(),'drift_extrema':drift.getextrema(),'change_bbox':change.getbbox(),'change_extrema':change.getextrema()})
+          print('::notice title=R18_DRIFT::'+json.dumps(rows,separators=(',',':')))
           PY2
       - name: Midpoint baseline
         run: python3 tools/arcana20_join/surface_controlled_chain.py capture 247 0 baseline
