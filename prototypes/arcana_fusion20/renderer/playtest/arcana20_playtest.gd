@@ -36,6 +36,15 @@ func _ready() -> void:
     add_child(app)
     _make_ui()
     if _smoke(): _run_smoke.call_deferred()
+    elif OS.get_cmdline_user_args().has("--avfx-live-capture"):
+        var script := load("res://prototypes/arcana_fusion20/renderer/playtest/arcana20_live_capture.gd") as Script
+        if script == null:
+            push_error("AVFX_LIVE_FAIL capture script missing")
+            get_tree().quit(1)
+            return
+        var capture := script.new() as Node
+        add_child(capture)
+        capture.call_deferred(&"start", self)
 
 func _smoke() -> bool:
     return OS.get_cmdline_user_args().has("--avfx-playtest-smoke")

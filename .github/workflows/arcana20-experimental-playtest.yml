@@ -38,6 +38,7 @@ jobs:
         run: |
           set -o pipefail
           timeout 300s godot --headless --editor --path "$RUNNER_TEMP/avfx-playtest" --import --quit 2>&1 | tee "$RUNNER_TEMP/import.log"
+          grep -E 'SCRIPT ERROR:|Parse Error:|ERROR:' "$RUNNER_TEMP/import.log" | head -20 | while IFS= read -r line; do echo "::notice title=IMPORT_DIAGNOSTIC::$line"; done || true
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/import.log"
       # Explicit rebuild includes the constant-color raster path; its scoped
       # source-field equality checks do not prove complete lifecycle parity.
@@ -121,7 +122,9 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          Expand-Archive -Path bundle/SOH_AVFX_EXPERIMENTAL_windows.zip -DestinationPath win
+          $zip = Get-ChildItem -Path bundle -Filter SOH_AVFX_EXPERIMENTAL_windows.zip -Recurse | Select-Object -First 1
+          if (-not $zip) { Write-Host '::error::Windows zip missing from downloaded baseline artifact'; exit 1 }
+          Expand-Archive -Path $zip.FullName -DestinationPath win
           $exe = (Get-ChildItem -Path win -Filter SOH_AVFX_Playtest.exe -Recurse | Select-Object -First 1).FullName
           if (-not $exe) { throw 'Windows binary missing' }
           $out = Join-Path $env:RUNNER_TEMP 'avfx-windows-out.log'
@@ -141,4 +144,59 @@ jobs:
           path: |
             ${{ runner.temp }}/avfx-windows-out.log
             ${{ runner.temp }}/avfx-windows-err.log
+          if-no-files-found: warn
+  live-motion:
+    # Pilot representative source C and redesign A before running all 20.
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        skill: [10, 14]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/download-artifact@v4
+        with:
+          name: SOH-AVFX-EXPERIMENTAL-NOT-PLAYTEST-READY
+          path: bundle
+      - name: Unpack same-run exported Linux application
+        run: |
+          set -euo pipefail
+          zip=$(find bundle -name SOH_AVFX_EXPERIMENTAL_linux.zip -print -quit)
+          test -n "$zip"
+          mkdir release
+          unzip -q "$zip" -d release
+          chmod +x release/SOH_AVFX_Playtest.x86_64
+      - name: Run actual game with moving player, Skeleton and camera
+        env:
+          AVFX_LIVE_SKILL: ${{ matrix.skill }}
+          AVFX_LIVE_LIGHT: normal
+          AVFX_LIVE_CAPTURE: '1'
+        run: |
+          set +e
+          set -o pipefail
+          timeout --signal=TERM --kill-after=10s 780s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 \
+            "$GITHUB_WORKSPACE/release/SOH_AVFX_Playtest.x86_64" --audio-driver Dummy --rendering-method gl_compatibility --resolution 1280x720 \
+            --user-data-dir "$RUNNER_TEMP/live-user" -- --avfx-live-capture 2>&1 | tee "$RUNNER_TEMP/live.log"
+          result=${PIPESTATUS[0]}
+          grep -E 'AVFX_LIVE_|SCRIPT ERROR|Parse Error|Shader compilation failed|ERROR:' "$RUNNER_TEMP/live.log" | head -20 | while IFS= read -r line; do echo "::notice title=LIVE_DIAGNOSTIC::$line"; done || true
+          if [ "$result" -ne 0 ]; then echo "::error::Live capture failed exit=$result"; exit "$result"; fi
+          grep -Fq 'AVFX_LIVE_PASS' "$RUNNER_TEMP/live.log" || exit 1
+          ! grep -Eq 'AVFX_LIVE_FAIL|SCRIPT ERROR:|Parse Error:|Shader compilation failed' "$RUNNER_TEMP/live.log"
+      - name: Encode native wall-time capture
+        run: |
+          set -euo pipefail
+          python3 tools/arcana20_join/encode_live_capture.py "$RUNNER_TEMP/live-user/avfx_live_capture"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: live-motion-${{ matrix.skill }}-normal
+          path: |
+            ${{ runner.temp }}/live-user/avfx_live_capture/*.json
+            ${{ runner.temp }}/live-user/avfx_live_capture/*.mkv
+            ${{ runner.temp }}/live-user/avfx_live_capture/*.mp4
+            ${{ runner.temp }}/live.log
           if-no-files-found: warn

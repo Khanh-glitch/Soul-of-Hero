@@ -1,0 +1,173 @@
+## Development-only real-route, real-time visual capture. No owner combat hit
+## request, target teleport, frozen world, fixed-step injection or approval.
+extends Node
+
+var host: Node
+var cast_id: StringName
+var finished := false
+var ticks_seen: Array[int] = []
+var contacts: Array = []
+var samples: Array = []
+var capture_start_usec := 0
+
+func _fail(message: String) -> void:
+    for action in [&"move_right", &"move_down", &"move_left", &"move_up"]:
+        Input.action_release(action)
+    push_error("AVFX_LIVE_FAIL " + message)
+    get_tree().quit(1)
+
+func _route() -> bool:
+    var app: Node = host.get("app")
+    if not await host.call(&"_wait_route", &"title", 30000): return false
+    var new_game := app.find_child("NewGameButton", true, false) as Button
+    if new_game == null or not new_game.is_visible_in_tree() or new_game.disabled: return false
+    await host.call(&"_click", get_viewport().get_final_transform() * new_game.get_global_rect().get_center())
+    if not await host.call(&"_wait_route", &"home", 30000): return false
+    var home := app.get_node("RouteHost").get_child(0)
+    var destinations: Dictionary = home.get("_destinations")
+    var gate := destinations.get(&"campaign") as Node2D
+    if gate == null: return false
+    await host.call(&"_click", get_viewport().get_final_transform() * gate.get_global_transform_with_canvas().origin)
+    var deadline := Time.get_ticks_msec() + 30000
+    while Time.get_ticks_msec() < deadline and StringName(home.call(&"get_current_function")) != &"campaign":
+        await get_tree().process_frame
+    var enter := home.find_child("EnterOverworldButton", true, false) as Button
+    if enter == null or not enter.is_visible_in_tree() or enter.disabled: return false
+    await host.call(&"_click", get_viewport().get_final_transform() * enter.get_global_rect().get_center())
+    if not await host.call(&"_wait_route", &"overworld", 30000): return false
+    deadline = Time.get_ticks_msec() + 90000
+    while Time.get_ticks_msec() < deadline and not is_instance_valid(host.get("renderer")):
+        await get_tree().process_frame
+    return is_instance_valid(host.get("renderer")) and is_instance_valid(host.get("player"))
+
+func _frame(path: String, player: Node2D, enemy: Node2D, camera: Camera2D) -> bool:
+    await RenderingServer.frame_post_draw
+    var image := get_viewport().get_texture().get_image()
+    if image == null or image.is_empty(): return false
+    var index := samples.size()
+    var name := "frame_%05d.png" % index
+    if image.save_png(path + "/" + name) != OK: return false
+    var enemy_pos := enemy.global_position if is_instance_valid(enemy) else Vector2.ZERO
+    samples.append({"file": name, "wall_s": float(Time.get_ticks_usec() - capture_start_usec) / 1000000.0, "source_tick_last_observed": ticks_seen[-1] if not ticks_seen.is_empty() else 0,
+        "player": [player.global_position.x, player.global_position.y], "enemy": [enemy_pos.x, enemy_pos.y],
+        "camera": [camera.get_screen_center_position().x, camera.get_screen_center_position().y]})
+    return true
+
+func start(wrapper: Node) -> void:
+    host = wrapper
+    var skill := int(OS.get_environment("AVFX_LIVE_SKILL"))
+    if skill < 1 or skill > 20:
+        _fail("AVFX_LIVE_SKILL must be 1..20"); return
+    cast_id = Arcana20SourceCatalog.canonical_id(skill)
+    if not await _route():
+        _fail("real AppRoot/Home/overworld route"); return
+    var renderer: Arcana20Renderer = host.get("renderer")
+    var player: Node2D = host.get("player")
+    var world: Node = host.get("world")
+    var camera := world.get("camera") as Camera2D
+    if camera == null:
+        _fail("real camera missing"); return
+    host.call(&"_spawn_enemy")
+    var spawned: Array = host.get("spawned")
+    if spawned.is_empty():
+        _fail("real Skeleton spawn"); return
+    var enemy := spawned[0] as Node2D
+    enemy.set_physics_process(true) # actual Skeleton AI, not scripted transforms
+    var enemy_hp := int(enemy.get("health"))
+    var player_start := player.global_position
+    var enemy_start := enemy.global_position
+    var camera_start := camera.get_screen_center_position()
+    var selected := host.get("selector") as OptionButton
+    selected.select(skill - 1)
+    if OS.get_environment("AVFX_LIVE_LIGHT") == "dimmed": host.call(&"_toggle_light")
+    renderer.cast_finished.connect(func(id: StringName) -> void:
+        if id == cast_id: finished = true)
+    renderer.source_tick.connect(func(id: StringName, tick: int, _phase: StringName) -> void:
+        if id == cast_id: ticks_seen.append(tick))
+    renderer.visual_contact.connect(func(id: StringName, pos: Vector2, kind: StringName) -> void:
+        if id == cast_id: contacts.append({"kind": String(kind), "position": [pos.x, pos.y]}))
+    var folder := "user://avfx_live_capture"
+    DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(folder))
+    var capture := OS.get_environment("AVFX_LIVE_CAPTURE") != "0"
+    var start_usec := Time.get_ticks_usec()
+    capture_start_usec = start_usec
+    if capture and not await _frame(folder, player, enemy, camera):
+        _fail("baseline frame"); return
+    host.call(&"_cast_selected")
+    if not renderer.is_active(cast_id):
+        _fail("real-scene cast refused"); return
+    var deadline := Time.get_ticks_msec() + 180000
+    var current_action := &""
+    var max_player := 0.0
+    var max_enemy := 0.0
+    var max_camera := 0.0
+    var frame_times: Array[float] = []
+    var previous_frame := Time.get_ticks_usec()
+    while renderer.is_active(cast_id) and Time.get_ticks_msec() < deadline:
+        var elapsed := float(Time.get_ticks_usec() - start_usec) / 1000000.0
+        # Real input is consumed by the player controller; collisions and
+        # camera following are not overridden. Four directions reduce the risk
+        # of a single wall preventing any movement.
+        var directions: Array[StringName] = [&"move_right", &"move_down", &"move_left", &"move_up"]
+        var action: StringName = directions[int(elapsed / 1.5) % directions.size()]
+        if action != current_action:
+            if current_action != &"": Input.action_release(current_action)
+            Input.action_press(action)
+            current_action = action
+        await get_tree().process_frame
+        if not is_instance_valid(player) or not is_instance_valid(enemy) or not is_instance_valid(renderer):
+            _fail("actor or renderer left scene during cast"); return
+        max_player = maxf(max_player, player.global_position.distance_to(player_start))
+        max_enemy = maxf(max_enemy, enemy.global_position.distance_to(enemy_start))
+        max_camera = maxf(max_camera, camera.get_screen_center_position().distance_to(camera_start))
+        var now := Time.get_ticks_usec()
+        frame_times.append(float(now - previous_frame) / 1000.0)
+        previous_frame = now
+        if capture:
+            if samples.size() >= 1800:
+                _fail("frame budget exceeded"); return
+            if not await _frame(folder, player, enemy, camera):
+                _fail("native capture frame"); return
+    if current_action != &"": Input.action_release(current_action)
+    if not finished or renderer.is_active(cast_id):
+        _fail("natural full cast did not complete before deadline"); return
+    if int(enemy.get("health")) != enemy_hp:
+        _fail("visual cast unexpectedly changed enemy HP"); return
+    # Show a post-finish world frame before a separate restart/cancel check.
+    for i in range(3): await get_tree().process_frame
+    if capture and not await _frame(folder, player, enemy, camera):
+        _fail("out frame"); return
+    var mount: Arcana20WorldPassMount = host.get("mount")
+    var post: Arcana20CViewportPost = host.get("post")
+    if mount.active_viewers(cast_id) != 0 or post._states.has(cast_id):
+        _fail("viewer or post survived normal finish"); return
+    host.call(&"_cast_selected")
+    if not renderer.is_active(cast_id):
+        _fail("restart refused"); return
+    renderer.cancel_skill(cast_id)
+    await get_tree().process_frame
+    await get_tree().process_frame
+    if renderer.is_active(cast_id) or mount.active_viewers(cast_id) != 0 or post._states.has(cast_id):
+        _fail("restart cancel cleanup"); return
+    frame_times.sort()
+    var p50 := frame_times[frame_times.size() / 2] if not frame_times.is_empty() else 0.0
+    var p95 := frame_times[mini(frame_times.size() - 1, int(ceil(frame_times.size() * 0.95)) - 1)] if not frame_times.is_empty() else 0.0
+    var p99 := frame_times[mini(frame_times.size() - 1, int(ceil(frame_times.size() * 0.99)) - 1)] if not frame_times.is_empty() else 0.0
+    var record := {"scope": "actual game route, visual-only; automatic real player input and unmodified Skeleton AI; not combat receipts or device FPS",
+        "skill": skill, "lighting": OS.get_environment("AVFX_LIVE_LIGHT"), "captured": capture, "frames": samples,
+        "last_tick": ticks_seen[-1] if not ticks_seen.is_empty() else 0, "events": contacts,
+        "player_max_displacement": max_player, "enemy_max_displacement": max_enemy, "camera_max_displacement": max_camera,
+        "enemy_hp_before": enemy_hp, "enemy_hp_after": int(enemy.get("health")),
+        "observed_wall_frame_ms": {"p50": p50, "p95": p95, "p99": p99, "count": frame_times.size()},
+        "frame_timing_note": "capture I/O and shared software rendering included; not hardware FPS"}
+    var out := FileAccess.open(folder + "/timeline.json", FileAccess.WRITE)
+    if out == null:
+        _fail("timeline output"); return
+    out.store_string(JSON.stringify(record, "  "))
+    out.close()
+    print("AVFX_LIVE_RESULT ", JSON.stringify({"id": skill, "frames": samples.size(), "last_tick": record.last_tick,
+        "player_move": max_player, "enemy_move": max_enemy, "camera_move": max_camera, "p50_ms": p50, "p95_ms": p95, "p99_ms": p99}))
+    if max_player < 1.0 or max_enemy < 1.0 or max_camera < 1.0:
+        _fail("real player/enemy/camera movement not observed"); return
+    print("AVFX_LIVE_PASS full visual timeline, real input/AI, natural finish and restart/cancel; no combat receipt")
+    get_tree().quit(0)
