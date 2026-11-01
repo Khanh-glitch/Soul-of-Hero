@@ -167,10 +167,16 @@ func _ready() -> void:
 ## not in an A6 panel, so a missing panel cannot make preparation impossible.
 const PREPARE_WORK_ACTION := &"prepare_work"
 
+## Idempotent, and it *ensures* the key rather than only the action: an action that
+## some other layer already declared, but bound to nothing P can reach, would leave
+## the player pressing a key the world never hears.
 func _ensure_prepare_work_binding() -> void:
-	if InputMap.has_action(PREPARE_WORK_ACTION):
-		return
-	InputMap.add_action(PREPARE_WORK_ACTION)
+	if not InputMap.has_action(PREPARE_WORK_ACTION):
+		InputMap.add_action(PREPARE_WORK_ACTION)
+	for event: InputEvent in InputMap.action_get_events(PREPARE_WORK_ACTION):
+		var bound := event as InputEventKey
+		if bound != null and (bound.physical_keycode == KEY_P or bound.keycode == KEY_P):
+			return
 	var key := InputEventKey.new()
 	key.physical_keycode = KEY_P
 	InputMap.action_add_event(PREPARE_WORK_ACTION, key)
@@ -1260,6 +1266,10 @@ func _handle_survival_input() -> void:
 			print("A0_SITE_INPUT ", JSON.stringify(result))
 			get_viewport().set_input_as_handled()
 			return
+	if Input.is_action_just_pressed(PREPARE_WORK_ACTION):
+		print("A0_PREPARE_WORK raw allowed=%s modal=%s frame=%d" % [
+			str(_world_action_allowed(PREPARE_WORK_ACTION)), str(_has_gameplay_modal()),
+			Engine.get_process_frames()])
 	if _world_action_just_pressed(PREPARE_WORK_ACTION) and not bool(player.get(&"dead")):
 		print("A0_PREPARE_WORK press")
 		_prepare_work_at_nearest_station()

@@ -935,8 +935,9 @@ func _walk_to_cell(hero: CharacterBody2D, nav: OverworldTraversability, cell: Ve
 ## from "the player is not standing at the workstation".
 func _press_prepare_work() -> bool:
 	var ow: Node = _host.get_child(0)
-	print("A0_CONNECTED_PREPARE enter bound=%s ow=%s" % [
+	print("A0_CONNECTED_PREPARE enter bound=%s events=%s ow=%s" % [
 		str(InputMap.has_action(&"prepare_work")),
+		(str(InputMap.action_get_events(&"prepare_work")) if InputMap.has_action(&"prepare_work") else "none"),
 		(str(ow.name) if ow != null and is_instance_valid(ow) else "none")])
 	var host: Node = ow.get(&"economy_session") if ow != null else null
 	if host == null:
@@ -947,29 +948,33 @@ func _press_prepare_work() -> bool:
 	var before_raw: Variant = host.call(&"prepared_work")
 	var before: Dictionary = before_raw if before_raw is Dictionary else {}
 	print("A0_CONNECTED_PREPARE before=%s" % JSON.stringify(before))
-	var press := InputEventKey.new()
-	press.physical_keycode = KEY_P
-	press.keycode = KEY_P
-	press.pressed = true
-	Input.parse_input_event(press)
-	await process_frame
-	await physics_frame
-	var release := InputEventKey.new()
-	release.physical_keycode = KEY_P
-	release.keycode = KEY_P
-	release.pressed = false
-	Input.parse_input_event(release)
-	await process_frame
 	var state: Dictionary = {}
-	for frame: int in range(90):
-		var raw: Variant = host.call(&"prepared_work") if frame % 15 == 0 or frame < 3 else state
-		if raw is Dictionary:
-			state = raw
-		if (state.get("jobs", []) as Array).size() > 0:
-			print("A0_CONNECTED_PREPARE result=armed frames=%d jobs=%d" % [
-				frame, (state.get("jobs", []) as Array).size()])
-			return true
+	# A tap is delivered while the frame is running, so whether the world's own
+	# _process still sees it depends on where in the frame it lands. A player who
+	# presses once and sees nothing presses again; the gate does the same rather than
+	# reaching behind the input system to make the first tap count.
+	for tap: int in range(5):
+		var press := InputEventKey.new()
+		press.physical_keycode = KEY_P
+		press.keycode = KEY_P
+		press.pressed = true
+		Input.parse_input_event(press)
 		await process_frame
+		var release := InputEventKey.new()
+		release.physical_keycode = KEY_P
+		release.keycode = KEY_P
+		release.pressed = false
+		Input.parse_input_event(release)
+		await process_frame
+		for frame: int in range(20):
+			var raw: Variant = host.call(&"prepared_work") if frame % 5 == 0 else state
+			if raw is Dictionary:
+				state = raw
+			if (state.get("jobs", []) as Array).size() > 0:
+				print("A0_CONNECTED_PREPARE result=armed taps=%d jobs=%d" % [
+					tap + 1, (state.get("jobs", []) as Array).size()])
+				return true
+			await process_frame
 	# The world answers a refused press through the HUD, not through state: quoting the
 	# prompt is how a reader tells "not at a workstation" from "nothing in progress".
 	var hud: Node = ow.get(&"hud")
