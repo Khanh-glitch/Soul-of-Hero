@@ -35,12 +35,6 @@ jobs:
           run-id: 41272170686
           github-token: ${{ github.token }}
           path: captures/11
-      - uses: actions/download-artifact@v4
-        with:
-          name: arcana20-current-phase-sweep-16-${{ matrix.lighting }}
-          run-id: 41272170686
-          github-token: ${{ github.token }}
-          path: captures/16
       - run: python3 -m pip install --quiet pillow
       - name: Ashen Guillotine authored cut
         run: python3 prototypes/arcana_fusion20/renderer/arcana20_candidate_review_surface.py captures 4 guillotine_impact
@@ -52,5 +46,3 @@ jobs:
         run: python3 prototypes/arcana_fusion20/renderer/arcana20_candidate_review_surface.py captures 13 thorn_snap_impact
       - name: Spore Nebula authored sporulation
         run: python3 prototypes/arcana_fusion20/renderer/arcana20_candidate_review_surface.py captures 14 sporulation_impact
-      - name: Chronoshard authored convergence
-        run: python3 prototypes/arcana_fusion20/renderer/arcana20_candidate_review_surface.py captures 18 synchronized_impact
