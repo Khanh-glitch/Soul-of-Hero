@@ -1,0 +1,29 @@
+name: ARCANA20 compare verbose shutdown diagnostics
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths:
+      - '.github/workflows/arcana20-shutdown-comparison.yml'
+      - 'tools/arcana20_join/compare_shutdown_logs.py'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          run-id: 41293811919
+          github-token: ${{ github.token }}
+          pattern: live-measure-*
+          path: measurements
+      - name: Compare normalized ObjectDB and resource diagnostics
+        run: python3 tools/arcana20_join/compare_shutdown_logs.py measurements
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcana20-shutdown-comparison
+          path: measurements/shutdown-comparison.json
