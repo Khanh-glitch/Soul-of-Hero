@@ -1,4 +1,4 @@
-# R21 partial batch S: moving C15 roots, world-up petals; retain R20 #05.
+# R21 partial batch S: reviewed proxy motion, moving C15 roots; retain R20 #05.
 name: ARCANA20 R20 Abyssal Bloom A-B creator package
 on:
   workflow_dispatch:
