@@ -46,8 +46,17 @@ jobs:
           PY
       - name: Fetch pinned licensed A6 source and stage sheets inside composed project
         shell: bash
+        env:
+          # Read-only PAT or GitHub App installation token with CONTENTS:READ on the
+          # creator's PRIVATE APEX-CHAOS repo. The Soul-of-Hero GITHUB_TOKEN is
+          # repo-scoped and cannot traverse into that other private repository.
+          A6_ASSET_TOKEN: ${{ secrets.A6_ASSET_TOKEN }}
         run: |
           set -euo pipefail
+          if [ -z "${A6_ASSET_TOKEN:-}" ]; then
+            echo "::error::A6_ASSET_TOKEN_REQUIRED: APEX-CHAOS is private; configure a read-only token as the Soul-of-Hero Actions secret A6_ASSET_TOKEN"
+            exit 1
+          fi
           mkdir -p "$RUNNER_TEMP/a6_source" visual_evidence
           # Both archives are identified by immutable APEX-CHAOS commit/blob/SHA256.
           # Never commit or upload the ZIPs or derived private sprite sheets.
