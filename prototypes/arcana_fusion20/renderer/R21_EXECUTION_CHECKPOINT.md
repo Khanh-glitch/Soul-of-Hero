@@ -55,7 +55,7 @@ independently of `r.caster` and `r.target`, and its ballistic z subtracts from
 screen Y. The old shared B mount instead pinned `(262,104)` to the target and
 rotated the entire source frame to the caster-target bearing: the sigil centre
 missed the chosen target and gravity leaned or inverted for other bearings.
-Only #03 now pins its actual authored centre to the real target and uses a
+#03 now pins its actual authored centre to the real target and uses a
 world-up similarity scale. Original meteor trajectories, seeds, algorithms and
 source fields are untouched; actual caster/target metadata stays intact. Four
 bearing tests assert target anchoring and world-up axes. Normal/dim #03 natural
@@ -103,6 +103,23 @@ add-and-clip. This is still **not** HDR parity. Inspect the new exact-SHA
 captures before claiming the visual issue resolved. Its same-run #05 dimmed
 locked job `124932449381` failed a frozen-state/PNG check (no further cause
 identified); a later source test passing does not erase that failed evidence.
+The locked capture harness now emits specific image/save, tick, camera, player
+and actor diagnostics on a future failure without weakening the lock.
+
+At `78b4c7934e225b49720492828508e499267aabb4`, source quick
+[41334834011](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41334834011)
+passed. Both real-route #07 jobs `124932807357` normal and `124932807281` dim
+passed movement, natural finish and cancellation; their sampled 1x frames show
+crystalline emergence, upright spires, fracture and dispersed aftermath in the
+real map. This is sampled review only, not continuous playback or approval.
+They also show five resources in use at shutdown; the normal job reported
+player disconnect errors. At `93ba1c1ed2bad2af171ec47cc83350e3d6f57b21`,
+source quick [41334940707](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41334940707)
+passed, including #08 four-bearing geometry, and both pinned JOIN
+[41334940704](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41334940704)
+and current-A0 JOIN [41334942898](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41334942898)
+passed. These are not visual sign-off, and later edits require new same-SHA
+runs.
 
 ## Resume
 

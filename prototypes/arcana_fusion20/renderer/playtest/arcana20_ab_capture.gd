@@ -44,14 +44,33 @@ func _frame(path: String, player: Node2D, enemy: Node2D, camera: Camera2D) -> bo
         await RenderingServer.frame_post_draw
         var img := get_viewport().get_texture().get_image()
         var name := "ab_%02d_%s.png" % [taken, mode]
-        if img == null or img.is_empty() or img.save_png(path.path_join(name)) != OK:
+        if img == null or img.is_empty():
+            push_error("R20_AB_DETAIL empty viewport image mode=%s tick=%d" % [mode, tick])
+            ok = false
+            break
+        var save_error := img.save_png(path.path_join(name))
+        if save_error != OK:
+            push_error("R20_AB_DETAIL PNG save failed mode=%s tick=%d error=%d" % [mode, tick, save_error])
             ok = false
             break
         names.append(name)
-    ok = ok and cast._tick == tick and player.global_position == player_before and camera.get_screen_center_position() == camera_before
+    if cast._tick != tick:
+        push_error("R20_AB_DETAIL source tick moved %d -> %d" % [tick, cast._tick])
+        ok = false
+    if player.global_position != player_before:
+        push_error("R20_AB_DETAIL player moved %s -> %s" % [player_before, player.global_position])
+        ok = false
+    if camera.get_screen_center_position() != camera_before:
+        push_error("R20_AB_DETAIL camera moved %s -> %s" % [camera_before, camera.get_screen_center_position()])
+        ok = false
     var actors: Array = host.get("spawned")
     for i in range(positions.size()):
-        ok = ok and is_instance_valid(actors[i]) and actors[i].global_position == positions[i]
+        if not is_instance_valid(actors[i]):
+            push_error("R20_AB_DETAIL actor %d freed while locked" % i)
+            ok = false
+        elif actors[i].global_position != positions[i]:
+            push_error("R20_AB_DETAIL actor %d moved %s -> %s" % [i, positions[i], actors[i].global_position])
+            ok = false
     viewer.z_index = old_z
     layer.visible = old_visible
     layer.queue_redraw()
