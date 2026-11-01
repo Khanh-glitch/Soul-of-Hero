@@ -54,8 +54,9 @@ static func verify_with(overrides: Dictionary) -> String:
 			return "a3_data_pin_mismatch:" + path
 		if FileAccess.get_sha256(path) != expected:
 			return "a3_data_pin_mismatch:" + path
-	for path: String in SCRIPTS.merged(R13_SCRIPTS):
-		var expected := String(overrides.get(path, SCRIPTS[path]))
+	var script_pins: Dictionary = SCRIPTS.merged(R13_SCRIPTS)
+	for path: String in script_pins:
+		var expected := String(overrides.get(path, script_pins[path]))
 		var script := load(path) as Script
 		if script == null: return "a3_script_missing:" + path
 		# Tokenized release scripts cannot expose source bytes. Export CI must
