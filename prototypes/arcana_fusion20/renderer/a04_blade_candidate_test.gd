@@ -11,7 +11,7 @@ func _initialize() -> void:
         if coverage > 0.99: count += 1
     var direction := Vector2(0.83, 0.55).normalized()
     var normal := Vector2(-direction.y, direction.x)
-    var probe := ARedesignSpells.C + normal * 25.0
+    var probe := ARedesignSpells.C + normal * 35.0
     var x := floori(probe.x); var y := floori(probe.y)
     var material := frame.get_px(x, y)
     if count < 1000 or frame.world_coverage[y * AFramebuffer.W + x] < 0.99 or material.length() > 0.4:

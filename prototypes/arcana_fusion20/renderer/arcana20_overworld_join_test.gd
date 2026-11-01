@@ -949,6 +949,10 @@ func _run() -> void:
     # so forcing scroll mid-suite changes its private smoothing history even
     # when positions are restored. Compare against the SAME moved world/camera,
     # rather than incorrectly reusing an earlier stationary baseline.
+    var moving_post := Arcana20CViewportPost.new()
+    moving_post.process_mode = Node.PROCESS_MODE_ALWAYS
+    world.add_child(moving_post)
+    check(moving_post.attach(multi), "C10 moving-camera post diagnostic attaches")
     check(multi.cast_skill(id10, player.global_position, enemy.global_position), "C10 motion test starts")
     var moving_c10 := multi._casts[id10] as CSourcePlayer
     moving_c10.set_process(false)
@@ -964,20 +968,57 @@ func _run() -> void:
     await process_frame
     await process_frame
     check(mount._c_stage.get_global_transform_with_canvas().is_equal_approx(Transform2D.IDENTITY), "C10 stage remains viewport-aligned after real camera and actor movement")
-    await save_frame("c10_impact_camera_and_actors_moved")
+    var c10_on := await save_frame("c10_impact_camera_and_actors_moved")
+    var c10_state: Dictionary = moving_post._states.get(id10, {})
+    var flash10: Vector3 = c10_state.get("flash", Vector3.ZERO)
+    check(moving_post._rect.visible and flash10.length() > 0.0 and float(c10_state.get("chroma", 0.0)) > 0.0,
+        "C10 authored flash and chroma reach pre-HUD post with moved actors/camera")
+    moving_post._rect.visible = false
+    await process_frame
+    await process_frame
+    var c10_no_post := await save_frame("c10_moved_without_post")
+    check(not images_equal(c10_on, c10_no_post), "C10 authored impact post changes actual moved world")
+    moving_post._apply()
+    await check_hud_isolation(world.get("hud") as CanvasLayer, moving_post, c10_on, c10_no_post, "C10 moved")
     var c10_viewer := (mount._passes[id10] as Dictionary).get(&"C") as Node2D
     c10_viewer.visible = false
     mount._c_stage.visible = false
+    moving_post._rect.visible = false
     await process_frame
     await process_frame
     var moved_baseline := await save_frame("c10_moved_no_cast_reference")
     c10_viewer.visible = true
     mount._c_stage.visible = true
+    moving_post._apply()
+    # Both sources have actual active impulses, rather than a neutral second
+    # cast. Assert the documented diagnostic arbitration and independent
+    # cleanup; this does not settle final product ordering.
+    check(multi.cast_skill(id17, player.global_position, enemy.global_position), "C10 C17 active post overlap starts")
+    var moving_c17 := multi._casts[id17] as CSourcePlayer
+    moving_c17.set_process(false)
+    moving_c17.render_enabled = false
+    for tick in range(375): moving_c17.advance(STEP, false)
+    moving_c17.render_enabled = true
+    moving_c17._render_frame()
     await process_frame
+    await process_frame
+    var c17_state: Dictionary = moving_post._states.get(id17, {})
+    var flash17: Vector3 = c17_state.get("flash", Vector3.ZERO)
+    var combined: Vector3 = moving_post._material.get_shader_parameter("flash")
+    check(moving_post._states.has(id10) and moving_post._states.has(id17) and flash17.length() > 0.0 and combined.is_equal_approx(flash10 + flash17),
+        "C10 C17 active post contributions remain independently owned and combine under diagnostic policy")
+    await save_frame("c10_c17_active_post_overlap")
     multi.cancel_skill(id10)
     await process_frame
     await process_frame
-    check(mount.active_viewers(id10) == 0 and images_equal(moved_baseline, await save_frame("c10_moved_cancelled")), "C10 cancellation restores same moved camera and actor world")
+    check(not moving_post._states.has(id10) and moving_post._states.has(id17) and moving_post._rect.visible and not mount._c_stage._states.has(id10),
+        "cancelling C10 removes its stage/post but preserves C17 post")
+    multi.cancel_skill(id17)
+    await process_frame
+    await process_frame
+    check(moving_post._states.is_empty() and not moving_post._rect.visible and mount.active_viewers(id10) == 0 and images_equal(moved_baseline, await save_frame("c10_moved_cancelled")), "C10 and C17 cancellation restores same moved camera and actor world")
+    moving_post.detach()
+    moving_post.queue_free()
     # Exercise the actual AppFlow route change with a still-active #20 cast
     # and its opt-in viewport post, rather than cancelling it before exiting.
     var transition_post := Arcana20CViewportPost.new()

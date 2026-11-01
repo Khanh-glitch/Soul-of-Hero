@@ -70,22 +70,23 @@ class AshenGuillotineR:
         var b1: Vector2 = p1 + n * off
         if blade > 0.0 and t < 4.4:
             var bk := blade * (1.0 - AMath.seg(t, 3.6, 4.4)) * close_k
-            var width := 28.0 * blade
-            var spine0 := b0 + n * width * 0.60
-            var spine1 := b1 + n * width * 0.60
-            var edge0 := b0 - n * width * 0.36
-            var edge1 := b1 - _dir * 13.0 - n * width * 0.36
-            var tip := b1 + _dir * 11.0 + n * width * 0.08
-            var shoulder := b0 + _dir * 13.0 + n * width * 0.78
-            ADraw.poly_fill(fb, [b0 + n * width * 0.22, shoulder, spine0 + _dir * 27.0, spine1, tip, edge1, edge0],
+            var width := 42.0 * blade
+            var spine1 := b1 + n * width * 0.90
+            var edge0 := b0 - n * width * 0.24
+            var edge1 := b1 - _dir * 18.0 - n * width * 0.24
+            var tip := b1 + _dir * 11.0 + n * width * 0.10
+            var shoulder := b0 + _dir * 13.0 + n * width * 0.48
+            var back := b0 + _dir * 42.0 + n * width * 0.58
+            ADraw.poly_fill(fb, [b0 + n * width * 0.10, shoulder, back, spine1, tip, edge1, edge0],
                 func(x: int, y: int) -> Variant:
                     var q := Vector2(float(x) + 0.5, float(y) + 0.5) - b0
                     var transverse := q.dot(n) / maxf(width, 0.01)
                     var longitudinal := q.dot(_dir)
                     var grain := AMath.hash2(floor(longitudinal * 0.22), floor(transverse * 8.0))
-                    var bevel := AMath.cl01((0.08 - transverse) * 2.6)
-                    var facet := 0.055 if int(floor((longitudinal + transverse * 12.0) / 19.0)) % 2 == 0 else 0.0
-                    var metal := 0.035 + 0.38 * bevel + 0.025 * grain + facet * bevel
+                    var bevel := AMath.cl01((-0.04 - transverse) * 4.0)
+                    var plane := AMath.cl01((0.95 - transverse) * 0.9)
+                    var facet := 0.04 if int(floor((longitudinal + transverse * 12.0) / 19.0)) % 2 == 0 else 0.0
+                    var metal := 0.04 + 0.14 * plane + 0.29 * bevel + 0.025 * grain + facet * plane
                     return Vector3(metal * 0.82, metal * 0.87, metal), true, bk)
             # Steel cutting bevel, a narrow molten vein and two inset marks
             # describe one solid blade rather than an emissive beam.
