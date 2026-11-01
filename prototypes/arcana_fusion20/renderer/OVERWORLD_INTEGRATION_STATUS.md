@@ -92,6 +92,18 @@ full journey. A1/A3/A6/A8 current PR heads have not been mounted or validated he
   conservative estimate of eliminating stage loops, not an end-to-end or GPU
   result. Full-cast and target-hardware budgets remain open.
 
+- Retaining live source telemetry before natural completion was fixed and
+  retested at AVFX `646183a` in [41271956295](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41271956295).
+  For the 52-frame #02+#10 overlap, C's 56 sampled source renders had raster
+  p95 **202.0/121.4/236.0 ms** at 720p/2K/4K; clear p95 **5.30/3.18/8.21 ms**,
+  HDR pack p95 **0.108/0.089/0.084 ms**, and synchronous submission p95
+  **9.07/5.48/9.87 ms**. Values are heavily shared-runner dependent, include
+  source ticks before overlap and are not GPU timings or device budgets.
+  The last C viewer snapshot reported **226.3/230.3/230.3 MB raw source image
+  submissions** across the cast, not GPU bandwidth or allocations. The
+  historical before revision did not retain its samples after source exit, so
+  those phase populations cannot be paired as a CPU before/after claim.
+
 ### Per-skill acceptance ledger (R14)
 
 `PARTIAL` means a limited source-field or world diagnostic exists; it is not
