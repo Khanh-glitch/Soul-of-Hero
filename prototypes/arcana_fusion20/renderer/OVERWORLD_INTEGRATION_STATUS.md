@@ -194,7 +194,15 @@ and [PR30](https://github.com/Khanh-glitch/Soul-of-Hero/pull/30#issuecomment-655
   is more visible, particularly in dim light, but its appearance, fast cut,
   occlusion, later rupture and full native motion are **not approved**. Other
   candidate design, event motion, actor depth and target-device reviews remain
-  open.
+  open. A static real-world 60-Hz cut sequence [41275008359](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41275008359)
+  revealed only 4 source pixels of travel, under one downsampled preview pixel.
+  Candidate `7c1c865` increases the same single-cut travel to 18 source pixels;
+  structural and normal/dim 13-frame 1280×720 recapture
+  [41275229256](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41275229256)
+  passed. Ready and ticks 207/210/216 were inspected in both lighting states;
+  the blade now changes position visibly at thumbnail scale. The other full
+  resolution frames, natural gameplay, later rupture, depth and creator review
+  remain unverified; this is a short frozen-world segment, not full-cast motion.
 - The 04e + AVFX `898ad5c` full frozen normal/dim multi-phase capture with
   extra fusion-child event beats [41272440282](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41272440282)
   passed. It predates the later C performance and #04 candidate changes, and
