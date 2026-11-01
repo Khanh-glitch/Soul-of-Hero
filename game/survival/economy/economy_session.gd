@@ -63,7 +63,11 @@ func configure(save: Node, survival: Node, world: Node, build: Node, hero: Node2
 	# A3 R13 custody shares the exact A0 SaveService and this canonical queue.
 	# It is NEVER exposed to UI and grants nothing until a trusted A1 source host is bound.
 	_custody = A3_CUSTODY.new()
-	if not bool(_custody.call(&"configure", _save, _adapter)):
+	var custody_port: Node = _save.call(&"create_pinned_source_custody_port", _custody)
+	if custody_port == null:
+		push_error("A3 custody SaveService capability refused")
+		return false
+	if not bool(_custody.call(&"configure", custody_port, _adapter)):
 		push_error("A3 custody refused: " + String(_custody.get("last_error")))
 		return false
 	_save.connect(&"save_loaded", _on_save_loaded)
