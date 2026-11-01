@@ -1,0 +1,32 @@
+{
+  "contract_id": "soh.native_poi.transition.v1",
+  "contract_version": 1,
+  "status": "SUPERSEDED_BY_V2_HISTORICAL_ONLY; A0 approval and production adapter still required",
+  "superseded_by": {"contract_id": "soh.native_poi.transition.v2", "path": "data/survival/world_content/transition_contract.v2.json"},
+  "authority": {
+    "request_sender": "A8 physical shell/worksite scene",
+    "production_transition_owner": "A0 overworld mount and scene-transition integration",
+    "persistent_position_owner": "A0 SaveService in global pixel coordinates"
+  },
+  "request_required_fields": [
+    "contract_id",
+    "contract_version",
+    "transition_id",
+    "direction",
+    "world_id",
+    "poi_id",
+    "canonical_cell",
+    "from_scene",
+    "to_scene",
+    "actor_local_position",
+    "return_anchor"
+  ],
+  "directions": ["enter", "exit"],
+  "rules": [
+    "An enter request is emitted only from the physically reached exterior doorway in the compact canonical shell.",
+    "The worksite is a separately entered local scene; its 960x608 bounds and local spawn are never a world transform or SaveService position.",
+    "The exit request returns to the shell doorway and canonical A1 anchor; A0 derives and persists global coordinates.",
+    "A8 emits intent only. It does not load production scenes, move the authoritative actor, claim the POI, or persist a position.",
+    "Production callers must validate the actual Hero actor, source identity, current transition eligibility, destination scene and return anchor."
+  ]
+}

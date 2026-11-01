@@ -1,0 +1,7 @@
+{
+  "schema": "soh.a8.quarry_economics_evidence.v1",
+  "status": "SUPERSEDED_DIMENSIONALLY_INVALID_DO_NOT_USE",
+  "superseded_by": "data/survival/world_content/quarry_economics_evidence.v2.json",
+  "reason": "The prior candidate subtracted oak_wood item counts and an unknown exposure term from stone_chunk yields. Cross-item inventory and unmeasured risk are not commensurate quantities. The replacement uses per-item inventory deltas and keeps unknown opportunity values, costs, yields, cooldowns, binding and risk values null.",
+  "authorization": "No A3 Quarry price, yield, cooldown, source binding or capability grant was authorized by v1. A3 current status remains REJECTED_PENDING_EVIDENCE_FAIL_CLOSED."
+}

@@ -1,0 +1,29 @@
+{
+  "fixture_only": true,
+  "status": "S2 test harness candidate IDs only; NOT the A3 production catalog and NOT authorization to transact.",
+  "source_path": "data/survival/survival_catalog.json on feature/surv-a8-reuse-audit-010a at the fetched source snapshot for CT_A8 dispatch",
+  "items": {
+    "oak_wood": {
+      "source_key": "items.oak_wood",
+      "type": "material"
+    },
+    "stone_chunk": {
+      "source_key": "items.stone_chunk",
+      "type": "material"
+    },
+    "iron_scrap": {
+      "source_key": "items.iron_scrap",
+      "type": "material"
+    },
+    "reed_fibre": {
+      "source_key": "items.reed_fibre",
+      "type": "material"
+    }
+  },
+  "blocked_item_ids": [
+    "honey",
+    "rare_herb"
+  ],
+  "source_commit": "9332cb9ba25da3026ede0cad578a90f0e4b5a2b6",
+  "source_sha256": "42c64cf7f37b2e6fdfa1d6d19c71f2bcd9455a42e8e8033241e663d2ece66974"
+}

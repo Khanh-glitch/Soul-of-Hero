@@ -1,0 +1,54 @@
+{
+  "contract_id": "soh.native_poi.transition.v2",
+  "contract_version": 2,
+  "status": "A8_NEUTRAL_TRANSITION_PROPOSAL; A0_APPROVAL_REQUIRED_BEFORE_PRODUCTION",
+  "owner": "A0.RunLifecycle_and_A1_world_mount",
+  "required_context_fields": [
+    "transition_id",
+    "direction",
+    "world_id",
+    "run_id",
+    "run_epoch",
+    "phase_id",
+    "observed_phase_projection_revision",
+    "poi_id",
+    "site_instance_id",
+    "canonical_cell",
+    "from_scene",
+    "to_scene",
+    "actor_local_position",
+    "actor_facing"
+  ],
+  "optional_direction_fields": ["interior_spawn", "return_anchor"],
+  "allowed_fields": [
+    "contract_id",
+    "contract_version",
+    "transition_id",
+    "direction",
+    "world_id",
+    "run_id",
+    "run_epoch",
+    "phase_id",
+    "observed_phase_projection_revision",
+    "poi_id",
+    "site_instance_id",
+    "canonical_cell",
+    "from_scene",
+    "to_scene",
+    "actor_local_position",
+    "actor_facing",
+    "interior_spawn",
+    "return_anchor"
+  ],
+  "authority_boundary": {
+    "a8": "physical doorway and neutral request only",
+    "a0": "active run, run/site identity, transition validation, save/return anchor and finalization",
+    "a1": "canonical geography and approved scene/socket placement"
+  },
+  "rules": [
+    "A8 does not teleport the actor or claim that a transition succeeded; the A0 composition root owns scene change after validating physical movement and owner context.",
+    "A8 never writes a run record, finalizes a run, or changes world position persistently.",
+    "A0 rejects stale or mismatched run, phase, site instance, POI, world, actor path, or unrecognized fields.",
+    "A1 canonical map anchors and the return path remain unchanged; a local scene transition does not create a new POI."
+  ]
+}

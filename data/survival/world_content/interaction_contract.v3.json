@@ -1,0 +1,103 @@
+{
+  "contract_id": "soh.native_poi.intent.v3",
+  "contract_version": 3,
+  "status": "A8_NEUTRAL_IDENTITY_AND_A0_RUN_CONTEXT_PROPOSAL; A0_APPROVAL_REQUIRED_BEFORE_PRODUCTION; NO_A3_A8_BINDINGS_APPROVED",
+  "authority": {
+    "intent_sender": "NativePoiSite sends canonical source/object/action identity, owner-issued run/site context, observed revisions, and the actor's observed local approach only.",
+    "run_and_phase_owner": "A0.RunLifecycle alone issues run_id, run_epoch, phase_id, site_instance_id, and phase projection revisions.",
+    "transaction_owner": "A0 independently resolves canonical A1 identity and the exact A3-approved binding, validates physical access and commits through existing SaveService.",
+    "economy_owner": "A3 owns rewards, costs, inventories, wallets, vendor/recycler policy and source authorization; A0 performs the authorized atomic save transaction.",
+    "save_owner": "A0 SaveService; A8 scene keeps no durable state."
+  },
+  "intent_required_fields": [
+    "contract_id",
+    "contract_version",
+    "intent_id",
+    "world_id",
+    "run_id",
+    "run_epoch",
+    "phase_id",
+    "observed_phase_projection_revision",
+    "source_id",
+    "site_instance_id",
+    "object_id",
+    "action_id",
+    "claim_id",
+    "observed_projection_revision",
+    "actor_local_position",
+    "actor_facing"
+  ],
+  "intent_allowed_fields": [
+    "contract_id",
+    "contract_version",
+    "intent_id",
+    "world_id",
+    "run_id",
+    "run_epoch",
+    "phase_id",
+    "observed_phase_projection_revision",
+    "source_id",
+    "site_instance_id",
+    "object_id",
+    "action_id",
+    "claim_id",
+    "observed_projection_revision",
+    "actor_local_position",
+    "actor_facing"
+  ],
+  "identity": "intent_id = source_id | object_id | action_id | claim_id | run_id | site_instance_id | run_epoch | phase_id | observed_phase_projection_revision | observed_projection_revision. It is an untrusted idempotency hint; A0 independently validates/deduplicates every value.",
+  "request_rules": [
+    "A8 sends neutral identity and observed physical approach only. It sends no costs, rewards, cooldown duration, claim policy, capability grant, state delta, unlock duration, catalog_source, approval reference, provisional_test_only/client authority flag, currency delta, item delta, balance, receipt, or save patch.",
+    "A0 validates run_id, run_epoch, phase_id, site_instance_id, both observed revisions, canonical A1 source identity, actor world position/facing, current active run, and physical access against trusted world state; client position is evidence to check, not authority.",
+    "A0 independently resolves the exact A3-approved binding, price, reward, capability, active-time cooldown, generation, exclusive choice and durable transaction key from trusted owner data. Unknown identities and unrecognized request fields fail closed.",
+    "No A3-approved A8 site/action binding currently exists. A0 must reject all three sites' material transactions until A3 publishes and A0 validates a source-bound approval; a neutral request is not approval.",
+    "One atomic A0 SaveService transaction couples any authorized debit/credit, claim ledger, cooldown/generation, site state, delayed action unlocks and receipt; no scene-supplied amount or client flag participates.",
+    "World state and visible results change only after A0 returns a committed receipt and newer owner projections. Interrupted/rejected operations do not mutate A8 state; retries remain owner-idempotent.",
+    "Fixture economics and test receipts live only in tests/fixtures/survival/world_content/a8_native_poi_action_catalog.fixture.json and the test-only PoiAuthorityFixture. They are not A3 bindings, A0, or SaveService."
+  ],
+  "run_phase_projection": {
+    "contract_id": "soh.a0.run_phase_projection.v1",
+    "owner": "A0.RunLifecycle",
+    "required_fields": [
+      "contract_id",
+      "projection_authority",
+      "world_id",
+      "poi_id",
+      "site_instance_id",
+      "run_id",
+      "run_epoch",
+      "projection_revision",
+      "elapsed_real_hours",
+      "phase_id",
+      "active_effect_ids",
+      "environment"
+    ],
+    "elapsed_hours_are_observed_not_advanced_by_a8": true,
+    "missing_or_unavailable": "no phase-specific geometry, no mutating intent, no scene transition",
+    "stale_or_malformed": "reject without mutating the site or run"
+  },
+  "projection_required_fields": [
+    "schema_version",
+    "source_id",
+    "projection_revision",
+    "site_state",
+    "claim_generation",
+    "capabilities",
+    "ready_actions",
+    "resource_ready_at",
+    "clock_seconds"
+  ],
+  "projection_schema_version": 1,
+  "result_required_fields": ["intent_id", "status"],
+  "result_status": ["committed", "rejected", "interrupted"],
+  "result_optional_fields": ["feedback", "reason"],
+  "owner_projection_contract": {
+    "contract_id": "soh.native_poi.owner_projection.v1",
+    "contract_version": 1,
+    "status": "A8 test-fixture contract; A0 approval required before production",
+    "identity": "source_id must equal the canonical A1 POI ID for the receiving scene; no local scene ID or client-selected replacement identity is accepted.",
+    "revision": "projection_revision is a non-negative, monotonically increasing owner revision persisted through the existing A0 SaveService transaction. Equal revisions are idempotent only when projection payloads are identical; older or conflicting same-revision projections are rejected.",
+    "owner_only_fields": ["source_id", "projection_revision", "site_state", "claim_generation", "capabilities", "ready_actions", "resource_ready_at", "clock_seconds"],
+    "scene_rules": ["A8 never increments revisions or synthesizes durable state.", "A8 rejects projections for another POI, malformed required values, stale revisions, and conflicting payloads that reuse a revision.", "After a committed result, a missing/stale projection is not rendered as success; the scene requests an owner refresh.", "Fixture revision persistence is a serialized test harness only and is not evidence of production SaveService persistence."]
+  }
+}
