@@ -39,8 +39,8 @@ jobs:
           grep -E 'SCRIPT ERROR:|Parse Error:|ERROR:' "$RUNNER_TEMP/import.log" | head -20 | while IFS= read -r line; do echo "::notice title=IMPORT_DIAGNOSTIC::$line"; done || true
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/import.log"
       # R17 refresh includes moving #09 caster tracking, density-adapted C
-      # #11 channels, tapered #04 blade, #13 bark/#14 growth, #18 stored
-      # heads and real-enemy ring controls. Art and source parity unapproved.
+      # #11 channels, tapered #04 blade, #13 bark/#14 growth, #18 visual
+      # projectile release and real-enemy ring controls. Art remains unapproved.
       - name: Export self-contained Linux and Windows builds
         run: |
           set -euo pipefail
