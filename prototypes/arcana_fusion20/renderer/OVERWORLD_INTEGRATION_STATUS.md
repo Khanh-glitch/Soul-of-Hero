@@ -4,6 +4,9 @@ This is a current-world overlay on `ACCEPTANCE_MATRIX.md`, not a replacement for
 original-source comparison or the creator's approvals. All 20 remain active;
 all are `VISUAL_NOT_VERIFIED`, and `OWNER_VISUAL_APPROVED = 0`.
 
+
+See [WORLD_COMPOSITOR_CONTRACT.md](WORLD_COMPOSITOR_CONTRACT.md) for semantic layers and known route gaps, including the #07/#15 source-operation audit.
+
 ## R14 current verdict — visual and product acceptance blocked
 
 This section supersedes older pin/status summaries and tables below. The
