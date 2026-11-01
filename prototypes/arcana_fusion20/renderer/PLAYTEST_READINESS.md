@@ -8,6 +8,17 @@ historical methods, caveats and source-comparison references.
 ## Experimental downloadable build
 
 **Newest experimental visual-preview candidate:**
+[Windows x64 + Linux x64 artifact 13079353974](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297412321/artifacts/13079353974),
+source `a99916b42db9c9b99104f9d627ef4d21f08f8b03`.
+[Run 41297412321](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297412321)
+completed, including Linux real-route smoke, same-run Windows headless smoke,
+and real-moving-world full visual captures for [#14](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297412321/artifacts/13079214539)
+and [#18](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297412321/artifacts/13080147153).
+The temporal echo markers are visual-only, not confirmed contacts. This build
+predates the new C-bolt raster below, has no true receipts or target-hardware
+performance, and is **NOT PLAYTEST_READY**. Art remains unapproved.
+
+**Previous temporal-motion preview:**
 [Windows x64 + Linux x64 artifact 13079428315](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297074032/artifacts/13079428315),
 source `33df4c94daba5b4c24c3d1f682ab6e0e289f793e`, from successful
 [run 41297074032](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297074032).
@@ -312,7 +323,27 @@ optimized-project import before comparison; cause unknown. The diagnostic rerun
 [41297306491](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297306491)
 passed both source-runtime and historical parity/CPU jobs at `0a97283`. The
 33df4c9 preview does not contain later visual-event markers; neither revision
-is approved. A new build including those markers is requested.
+is approved. The subsequent `a99916b` build including those markers is linked above.
+A 16-beat sampled full-viewport frozen-world timeline from [41297464510](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297464510)
+shows crystals forming, brightening, converging and shattering; the actual
+attack/causal direction remains hard to read at normal scale. This is sparse
+inspection of a frozen-world video, not complete review or moving-world approval.
+
+**#09 / #11 C bolt raster:** `8873fa863f790a5ee803ae16261d7862d88609d9`
+replaces the A streak approximation for selected C-style bolts with the C
+`drawBolt`/ribbon pixel-visit and core/halo raster directed to A's additive
+field. The A chain schedule, real actor anchors, B palette and A rotor remain;
+full C channel timing, scene/post and contact fidelity are not claimed.
+[41297668036](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297668036)
+compared 791 affected common-domain pixels bit-exactly against actual CFrame
+for four representative overlapping/reveal/boundary strokes (plus a subpixel
+case), including influence tracking. First attempt [41297576511](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297576511)
+failed because its test used A's 416-pixel row stride for C's 384-pixel
+frame; `82e4d47` corrected coordinates without changing thresholds. The
+larger A field is intentionally not clipped to C's 384x216 demo extent.
+This primitive test is not a full spell/fusion parity proof. A new all-20
+moving-world run and creator build have been requested; the current downloadable
+build above does not include this new raster.
 
 [41293811919](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293811919)
 also compared complete no-PNG-I/O casts/overlap with fresh same-duration
