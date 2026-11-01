@@ -14,26 +14,31 @@ func _initialize() -> void:
         {"pts": [Vector2(-4, 14), Vector2(35, 52), Vector2(15, 27), Vector2(1, 70)], "w": 1.0, "k": 1.25, "reveal": 1.0},
         {"pts": [Vector2(100, 100), Vector2(100, 100), Vector2(113, 102), Vector2(116, 89)], "w": 2.2, "k": 0.48, "reveal": 0.55},
         {"pts": [Vector2(200, 40), Vector2(210, 80)], "w": 0.2, "k": 0.9, "reveal": 1.0},
+        {"pts": [Vector2(382, 210), Vector2(411, 220)], "w": 1.4, "k": 0.8, "reveal": 1.0},
     ]
     for value in cases:
         var c: Dictionary = value
         CKit.draw_bolt(cf, c.pts, c.k, core, halo, c.w, c.reveal)
         raster.draw(af, c.pts, c.k, core, halo, c.w, c.reveal)
     var changed := 0
-    for i in range(AFramebuffer.W * AFramebuffer.H):
-        var source := i * 4
-        var target := i * 3
-        for channel in range(3):
-            if cf.light[source + channel] != af.buf[target + channel]:
-                push_error("C_BOLT_A_FAIL pixel=%d channel=%d c=%s a=%s" % [i, channel, str(cf.light[source + channel]), str(af.buf[target + channel])])
-                quit(1)
-                return
-        if cf.light[source] != 0.0 or cf.light[source + 1] != 0.0 or cf.light[source + 2] != 0.0:
-            changed += 1
-            if af.world_influence[i] != 1:
-                push_error("C_BOLT_A_FAIL missing authored influence")
-                quit(1)
-                return
+    # C is 384x216; A is 416x234. Compare identical native coordinates on
+    # the common domain, not linear indices with different row strides.
+    for y in range(CFrame.H):
+        for x in range(CFrame.W):
+            var source := (y * CFrame.W + x) * 4
+            var target_pixel := y * AFramebuffer.W + x
+            var target := target_pixel * 3
+            for channel in range(3):
+                if cf.light[source + channel] != af.buf[target + channel]:
+                    push_error("C_BOLT_A_FAIL x=%d y=%d channel=%d c=%s a=%s" % [x, y, channel, str(cf.light[source + channel]), str(af.buf[target + channel])])
+                    quit(1)
+                    return
+            if cf.light[source] != 0.0 or cf.light[source + 1] != 0.0 or cf.light[source + 2] != 0.0:
+                changed += 1
+                if af.world_influence[target_pixel] != 1:
+                    push_error("C_BOLT_A_FAIL missing authored influence")
+                    quit(1)
+                    return
     if changed == 0:
         push_error("C_BOLT_A_FAIL empty raster")
         quit(1)
