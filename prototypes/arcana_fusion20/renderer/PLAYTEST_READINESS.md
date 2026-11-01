@@ -43,9 +43,16 @@
   C contour, not a second rift or fake backdrop. Its first build
   [41325665676](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41325665676)
   failed import on an inferred Variant; `189d62dfbb2755131d95dc8ccfd8b9b591b6df96`
-  fixes that type. The new same-run creator package, #20 real-world captures
-  and source quick test are pending at the time of this entry. Do not attribute
-  that #20 addition to the earlier `5aab036` package.
+  fixes that type. Source quick [41325799123](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41325799123)
+  verifies the pre-open formula against the C contour; pinned real-route JOIN
+  [41325799249](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41325799249)
+  also passed. The old exact raster benchmark [41325799253](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41325799253)
+  correctly detected the newly added A displacement against its pre-change
+  baseline. `e3b7bcf` updates the diagnostic to apply that same source role
+  independently to the immutable baseline and still compare every field; the
+  revised benchmark is pending. The new creator package and #20 real-world
+  captures are pending. Do not attribute the #20 addition to the earlier
+  `5aab036` package.
 - #01 C outer tongues and #16 A growth/C organism/debris remain mounted, but
   no new source role or creator visual approval is claimed for them here.
   #09/#11 remain the R18 protected baselines. CT world-linear HDR/depth/post
