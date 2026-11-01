@@ -1,0 +1,82 @@
+name: GP-B authored-world visual triage (real Godot framebuffer)
+on:
+  push:
+    branches: [integration/gameplay-gpb-a3-20261101]
+    paths:
+      - .github/workflows/gpb-visual-triage.yml
+      - tests/survival_a0_authored_world_capture_test.gd
+      - game/survival/**
+      - game/overworld/**
+      - game/autoload/**
+      - tools/a0/compose_owners.py
+jobs:
+  real-display-capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      A1_SHA: ce9d4ba2d3db153011874aa41b789fa8092be042
+      A8_SHA: 71e68f9c0b7844277139a489c316acea327699f9
+      GODOT_SILENCE_ROOT_WARNING: "1"
+      LIBGL_ALWAYS_SOFTWARE: "1"
+      A0_VISUAL_RESOLUTION: "1280x720"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Scope-only A1/A8 composition with A0 SaveService byte custody
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin "$A1_SHA" "$A8_SHA"
+          python3 tools/a0/compose_owners.py --repo . --out .visual --copy-base --selected-owner-rulings-only \
+            --owner a1="$A1_SHA" --owner a8="$A8_SHA"
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path(".visual")
+          report=json.loads((p/"composition.json").read_text())
+          assert not report["conflicts"],report["conflicts"]
+          assert (p/"game/autoload/save_service.gd").read_bytes()==Path("game/autoload/save_service.gd").read_bytes()
+          assert (p/"game/survival/economy/economy_session.gd").read_bytes()==Path("game/survival/economy/economy_session.gd").read_bytes()
+          PY
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import actual composed project
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p visual_evidence
+          timeout --signal=TERM --kill-after=10s 300s godot --headless --path .visual --import > visual_evidence/import.log 2>&1
+          tail -50 visual_evidence/import.log
+          ! grep -Ea 'SCRIPT ERROR|Parse Error|Compilation failed' visual_evidence/import.log
+      - name: Capture player movement in genuine 1280x720 Godot window
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=15s 540s xvfb-run -a -s "-screen 0 1600x900x24" \
+            bash .visual/tools/ci/godot_isolated.sh --path .visual --windowed --resolution 1280x720 \
+            --user-data-dir "$PWD/visual_evidence/user_data" \
+            --script res://tests/survival_a0_authored_world_capture_test.gd \
+            > visual_evidence/capture.log 2>&1
+          rc=$?
+          set -e
+          tail -120 visual_evidence/capture.log
+          test "$rc" -eq 0
+          grep -q 'A0 AUTHORED CAPTURE PASSED' visual_evidence/capture.log
+          grep -q 'A0_AUTHORED_FRAME' visual_evidence/capture.log
+          ! grep -Ea 'SCRIPT ERROR|Parse Error|  FAIL  ' visual_evidence/capture.log
+          find .visual/artifacts -name '*.png' -print
+          test "$(find .visual/artifacts -name '*.png' | wc -l)" -ge 3
+      - name: Publish untouched PNG frames and logs even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gpb-real-godot-1280x720
+          path: |
+            visual_evidence/
+            .visual/artifacts/*.png
+            .visual/composition.json
