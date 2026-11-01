@@ -1,4 +1,4 @@
-# Full C #09 reference passes at captured moving actor anchors; not Gold fusion.
+# Full C #09 reference passes and recorded screen commands at live anchors; not Gold fusion.
 name: ARCANA20 R17 full C reference and real-world chain
 on:
   workflow_dispatch:

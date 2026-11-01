@@ -31,19 +31,25 @@ for (let i = 0; i < timeline.frames.length; ++i) {
   }
   const random = new Rng(0x9090);
   Math.random = () => random.next();
-  const fx = {shake() {}, flash() {}, kick() {}, invert:0, desat:0, chroma:0, bloom:1, ambient:1, ambientEcho:0};
+  // Record the original stage commands rather than silently discarding them;
+  // they are not composited onto the actual captured SOH world.
+  const screenOps: any[] = []; let updateTick = 0;
+  const fx = {shake(a: number) {screenOps.push({tick:updateTick,kind:'shake',value:a});},
+    flash(c: number[], k: number) {screenOps.push({tick:updateTick,kind:'flash',color:c,k});},
+    kick(a: number) {screenOps.push({tick:updateTick,kind:'kick',value:a});},
+    invert:0, desat:0, chroma:0, bloom:1, ambient:1, ambientEcho:0};
   const source = spellDef.make(new Rng(1000 + 8 * 7919), fx as any);
   const tick = frame.r17_source_tick;
-  for (let step = 0; step < tick; ++step) source.update(1 / 60, step / 60);
+  for (let step = 0; step < tick; ++step) { updateTick = step; source.update(1 / 60, step / 60); }
   const f = new Frame(); f.clear(); f.t = tick / 60; source.render(f, tick / 60);
   const stem = `${dir}/r17_full_${String(i).padStart(5, '0')}.c`;
   for (const [name, data] of [['light32f',f.light],['ink32f',f.ink],['disp32f',f.disp],['ground8',f.ground]] as const)
     writeFileSync(`${stem}.${name}`, Buffer.from(data.buffer));
-  rows.push({frame_index:i, tick, source_scale:k, actor_nodes:nodes.slice(0,5)});
+  rows.push({frame_index:i, tick, source_scale:k, actor_nodes:nodes.slice(0,5), screen_ops:screenOps});
 }
 Math.random = savedRandom;
 writeFileSync(`${dir}/c09_full_reference_manifest.json`, JSON.stringify({
   source:'original C #09 code; Stage seed 1000+8*7919', rows,
-  scope:'Actual captured actor anchors mapped uniformly; per-frame reference recreated with deterministic Math.random, C fixed waypoints and C original timing, not actual continuous particles, not A fusion or original C browser floor/compositor/post. All C ground/ink/light/disp operations are saved separately; no fake actors or damage.'
+  scope:'Actual captured actor anchors mapped uniformly; per-frame reference recreated with deterministic Math.random, C fixed waypoints and C original timing, not actual continuous particles, not A fusion or original C browser floor/compositor/post. All C ground/ink/light/disp operations and screen commands are saved separately; no fake actors or damage.'
 }, null, 2));
 console.log(`R17_C09_FULL_REFERENCE ${rows.filter(x => !x.skipped).length}/${rows.length} captured frames`);
