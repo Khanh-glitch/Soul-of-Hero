@@ -42,6 +42,30 @@ jobs:
             2>&1 | tee "$RUNNER_TEMP/arcana20-current-a0/artifacts/current-a0.log"
           grep -Fq 'ARCANA20_JOIN_DIAGNOSTIC PASS' "$RUNNER_TEMP/arcana20-current-a0/artifacts/current-a0.log"
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:|JOIN_FAIL' "$RUNNER_TEMP/arcana20-current-a0/artifacts/current-a0.log"
+      - name: Repeat with #18 to compare shutdown diagnostics
+        run: |
+          set -euo pipefail
+          timeout --signal=TERM --kill-after=10s 600s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 ARCANA20_PHASE_FIRST=18 ARCANA20_PHASE_LAST=18 \
+            godot --verbose --path "$RUNNER_TEMP/arcana20-current-a0" --rendering-method gl_compatibility --audio-driver Dummy --resolution 1280x720 --windowed \
+            --user-data-dir "$RUNNER_TEMP/arcana20-current-a0-fx-user" --script res://prototypes/arcana_fusion20/renderer/arcana20_overworld_join_test.gd \
+            2>&1 | tee "$RUNNER_TEMP/arcana20-current-a0/artifacts/current-a0-fx18.log"
+          grep -Fq 'ARCANA20_JOIN_DIAGNOSTIC PASS' "$RUNNER_TEMP/arcana20-current-a0/artifacts/current-a0-fx18.log"
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|JOIN_FAIL' "$RUNNER_TEMP/arcana20-current-a0/artifacts/current-a0-fx18.log"
+      - name: Compare no-FX and #18 resource shutdown warnings
+        if: always()
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import os,re
+          root=Path(os.environ['RUNNER_TEMP'])/'arcana20-current-a0/artifacts'
+          for filename in ['current-a0.log','current-a0-fx18.log']:
+            p=root/filename
+            if not p.exists(): continue
+            lines=p.read_text(errors='replace').splitlines()
+            hits=[s for s in lines if re.search(r'ObjectDB instances were leaked|resources still in use|Resource still in use|Leaked instance', s)]
+            print(f'::notice title=SHUTDOWN_AUDIT::{filename} matched={len(hits)}')
+            for line in hits[:20]: print('::notice title=SHUTDOWN_AUDIT::'+filename+' '+line[:2000])
+          PY
       - name: Surface first current-A0 errors
         if: always()
         run: |
