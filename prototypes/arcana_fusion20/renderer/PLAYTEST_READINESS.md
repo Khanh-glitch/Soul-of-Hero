@@ -7,9 +7,9 @@ historical methods, caveats and source-comparison references.
 
 ## Experimental downloadable build
 
-[Windows x64 + Linux x64 experimental artifact (14-day retention)](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41290146529/artifacts/13076836900).
+[Windows x64 + Linux x64 experimental artifact (14-day retention)](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41290366274/artifacts/13077490714).
 It is **not** a playtest-ready build. Run
-[41290146529](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41290146529)
+[41290366274](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41290366274)
 exported both platforms and launched the **Linux** binary through the actual
 AppRoot → New Game → Home → Chapter1Overworld route. Smoke verified real
 player movement, real Skeleton spawn, start/cancel for all 20 slots, #10+#17
@@ -20,7 +20,7 @@ contains the manifest and [Vietnamese controls](playtest/HUONG_DAN_THU_NGHIEM.tx
 The wrapper's cast buttons deliberately produce visuals only, **no combat hit**.
 The default #14/#18 art direction is A; B alternatives are experimental.
 
-Build source SHA `0de8d2c77cd0b8c20afdb89d7c6bc1aa2dd367f6`. It
+Build source SHA `c295879b5e5e10b1eeb103b7e1abf603d97b4b83`. It
 assembles the real A0 overworld `04eacf62f1a3740a57e08691c3a9006d454aaa2c`,
 A6 UI overlay `6b801554a6af95424b4e39dd29f43c146aa13848`, AVFX renderer,
 and CT files `e505173edd119fdd955cf6249511b575a5468440`. A1
