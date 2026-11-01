@@ -1,0 +1,38 @@
+name: ARCANA20 R17 variable-size source raster regression
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths:
+      - '.github/workflows/arcana20-r17-variable-source-test.yml'
+      - 'prototypes/arcana_fusion20/renderer/a_variable_field_test.gd'
+      - 'prototypes/arcana_fusion20/renderer/source_a/a_framebuffer.gd'
+      - 'prototypes/arcana_fusion20/renderer/source_a/a_draw.gd'
+      - 'prototypes/arcana_fusion20/renderer/source_c/c_bolt_a_raster.gd'
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import and compare shared raster coordinates
+        run: |
+          set -o pipefail
+          godot --headless --path . --import 2>&1 | tee import.log
+          godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/a_variable_field_test.gd 2>&1 | tee result.log
+          grep -Fq A_VARIABLE_FIELD_PASS result.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|A_VARIABLE_FIELD_FAIL' result.log import.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcana20-variable-field-test
+          path: |
+            import.log
+            result.log

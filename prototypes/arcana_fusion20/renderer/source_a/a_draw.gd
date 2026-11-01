@@ -6,11 +6,11 @@ class_name ADraw
 static func field(fb: AFramebuffer, x0: float, y0: float, x1: float, y1: float, fn: Callable) -> void:
     var xa: int = maxi(0, floori(x0))
     var ya: int = maxi(0, floori(y0))
-    var xb: int = mini(AFramebuffer.W - 1, ceili(x1))
-    var yb: int = mini(AFramebuffer.H - 1, ceili(y1))
+    var xb: int = mini(fb.width - 1, ceili(x1))
+    var yb: int = mini(fb.height - 1, ceili(y1))
     var out := [0.0, 0.0, 0.0]
     for y in range(ya, yb + 1):
-        var i := (y * AFramebuffer.W + xa) * 3
+        var i := (y * fb.width + xa) * 3
         for x in range(xa, xb + 1):
             out[0] = 0.0
             out[1] = 0.0
@@ -19,9 +19,9 @@ static func field(fb: AFramebuffer, x0: float, y0: float, x1: float, y1: float, 
             # The operation owns its explicit source bounding box; never infer
             # influence/alpha from out's RGB, including black authored values.
             if fb.track_world_fields:
-                fb.world_influence[y * AFramebuffer.W + x] = 1
+                fb.world_influence[y * fb.width + x] = 1
             if float(out[0]) != 0.0 or float(out[1]) != 0.0 or float(out[2]) != 0.0:
-                if fb.track_audit_writes: fb.audit_writes[y * AFramebuffer.W + x] = 1
+                if fb.track_audit_writes: fb.audit_writes[y * fb.width + x] = 1
                 fb.buf[i] += float(out[0])
                 fb.buf[i + 1] += float(out[1])
                 fb.buf[i + 2] += float(out[2])
@@ -30,15 +30,15 @@ static func field(fb: AFramebuffer, x0: float, y0: float, x1: float, y1: float, 
 static func field_mul(fb: AFramebuffer, x0: float, y0: float, x1: float, y1: float, fn: Callable) -> void:
     var xa: int = maxi(0, floori(x0))
     var ya: int = maxi(0, floori(y0))
-    var xb: int = mini(AFramebuffer.W - 1, ceili(x1))
-    var yb: int = mini(AFramebuffer.H - 1, ceili(y1))
+    var xb: int = mini(fb.width - 1, ceili(x1))
+    var yb: int = mini(fb.height - 1, ceili(y1))
     for y in range(ya, yb + 1):
-        var i := (y * AFramebuffer.W + xa) * 3
+        var i := (y * fb.width + xa) * 3
         for x in range(xa, xb + 1):
             var m: float = fn.call(x, y)
             if fb.track_world_fields:
-                fb.world_multiplier[y * AFramebuffer.W + x] *= m
-                fb.world_influence[y * AFramebuffer.W + x] = 1
+                fb.world_multiplier[y * fb.width + x] *= m
+                fb.world_influence[y * fb.width + x] = 1
             if m != 1.0:
                 fb.buf[i] *= m
                 fb.buf[i + 1] *= m
@@ -78,9 +78,9 @@ static func disc(fb: AFramebuffer, cx: float, cy: float, r: float, c: Vector3, a
 static func disc_blend(fb: AFramebuffer, cx: float, cy: float, r: float, c: Vector3, a: float = 1.0) -> void:
     var r2 := r * r
     var xa: int = maxi(0, floori(cx - r - 1.0))
-    var xb: int = mini(AFramebuffer.W - 1, ceili(cx + r + 1.0))
+    var xb: int = mini(fb.width - 1, ceili(cx + r + 1.0))
     var ya: int = maxi(0, floori(cy - r - 1.0))
-    var yb: int = mini(AFramebuffer.H - 1, ceili(cy + r + 1.0))
+    var yb: int = mini(fb.height - 1, ceili(cy + r + 1.0))
     for y in range(ya, yb + 1):
         for x in range(xa, xb + 1):
             var dx := float(x) + 0.5 - cx
@@ -225,7 +225,7 @@ static func poly_fill(fb: AFramebuffer, pts: Array, col_fn: Callable, blend: boo
         min_y = minf(min_y, pv.y)
         max_y = maxf(max_y, pv.y)
     var y0: int = maxi(0, floori(min_y))
-    var y1: int = mini(AFramebuffer.H - 1, ceili(max_y))
+    var y1: int = mini(fb.height - 1, ceili(max_y))
     var xs: Array = []
     for y in range(y0, y1 + 1):
         xs.clear()
@@ -243,7 +243,7 @@ static func poly_fill(fb: AFramebuffer, pts: Array, col_fn: Callable, blend: boo
         var k := 0
         while k + 1 < xs.size():
             var xa: int = maxi(0, ceili(float(xs[k]) - 0.5))
-            var xb: int = mini(AFramebuffer.W - 1, floori(float(xs[k + 1]) - 0.5))
+            var xb: int = mini(fb.width - 1, floori(float(xs[k + 1]) - 0.5))
             for x in range(xa, xb + 1):
                 var c: Variant = col_fn.call(x, y)
                 if c == null:
@@ -267,7 +267,7 @@ static func poly_fill_solid(fb: AFramebuffer, pts: Array, color: Vector3, blend:
         min_y = minf(min_y, pv.y)
         max_y = maxf(max_y, pv.y)
     var y0: int = maxi(0, floori(min_y))
-    var y1: int = mini(AFramebuffer.H - 1, ceili(max_y))
+    var y1: int = mini(fb.height - 1, ceili(max_y))
     var xs: Array = []
     for y in range(y0, y1 + 1):
         xs.clear()
@@ -285,7 +285,7 @@ static func poly_fill_solid(fb: AFramebuffer, pts: Array, color: Vector3, blend:
         var k := 0
         while k + 1 < xs.size():
             var xa: int = maxi(0, ceili(float(xs[k]) - 0.5))
-            var xb: int = mini(AFramebuffer.W - 1, floori(float(xs[k + 1]) - 0.5))
+            var xb: int = mini(fb.width - 1, floori(float(xs[k + 1]) - 0.5))
             for x in range(xa, xb + 1):
                 if blend:
                     fb.blend(x, y, color.x, color.y, color.z, alpha)

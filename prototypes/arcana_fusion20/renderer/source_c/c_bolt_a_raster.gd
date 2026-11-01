@@ -12,6 +12,10 @@ func _init() -> void:
     _mark.fill(0)
 
 func draw(fb: AFramebuffer, pts: Array, k: float, core: Vector3, halo: Vector3, width: float = 1.4, reveal: float = 1.0) -> void:
+    if _mark.size() != fb.width * fb.height:
+        _mark.resize(fb.width * fb.height)
+        _mark.fill(0)
+        _gen = 1
     if k <= 0.01:
         return
     var count := maxi(2, ceili(float(pts.size()) * CMath.cl01(reveal)))
@@ -28,9 +32,9 @@ func draw(fb: AFramebuffer, pts: Array, k: float, core: Vector3, halo: Vector3, 
             continue
         var mw := width + 1.0
         var x0 := maxi(0, floori(minf(a.x, b.x) - mw))
-        var x1 := mini(AFramebuffer.W - 1, ceili(maxf(a.x, b.x) + mw))
+        var x1 := mini(fb.width - 1, ceili(maxf(a.x, b.x) + mw))
         var y0 := maxi(0, floori(minf(a.y, b.y) - mw))
-        var y1 := mini(AFramebuffer.H - 1, ceili(maxf(a.y, b.y) + mw))
+        var y1 := mini(fb.height - 1, ceili(maxf(a.y, b.y) + mw))
         var dx := b.x - a.x
         var dy := b.y - a.y
         var ll := dx * dx + dy * dy
@@ -38,7 +42,7 @@ func draw(fb: AFramebuffer, pts: Array, k: float, core: Vector3, halo: Vector3, 
             ll = 1e-6
         for y in range(y0, y1 + 1):
             for x in range(x0, x1 + 1):
-                var idx := y * AFramebuffer.W + x
+                var idx := y * fb.width + x
                 if _mark[idx] == g:
                     continue
                 var px := float(x) + 0.5 - a.x

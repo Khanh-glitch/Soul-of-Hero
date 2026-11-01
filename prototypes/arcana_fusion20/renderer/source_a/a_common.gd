@@ -126,7 +126,7 @@ static func shard(fb: AFramebuffer, cx: float, cy: float, r: float, a: float, si
         min_y = minf(min_y, pv.y)
         max_y = maxf(max_y, pv.y)
     var xs: Array = []
-    for y in range(maxi(0, floori(min_y)), mini(AFramebuffer.H - 1, ceili(max_y)) + 1):
+    for y in range(maxi(0, floori(min_y)), mini(fb.height - 1, ceili(max_y)) + 1):
         xs.clear()
         var yc := float(y) + 0.5
         for i in range(pts.size()):
@@ -152,9 +152,9 @@ static func shard(fb: AFramebuffer, cx: float, cy: float, r: float, a: float, si
 
 static func heat_shimmer(fb: AFramebuffer, cx: float, cy: float, r: float, t: float, amp: float) -> void:
     var x0: int = maxi(1, floori(cx - r))
-    var x1: int = mini(AFramebuffer.W - 2, ceili(cx + r))
+    var x1: int = mini(fb.width - 2, ceili(cx + r))
     var y0: int = maxi(1, floori(cy - r))
-    var y1: int = mini(AFramebuffer.H - 2, ceili(cy + r))
+    var y1: int = mini(fb.height - 2, ceili(cy + r))
     if x1 <= x0 or y1 <= y0:
         return
     var w := x1 - x0 + 1
@@ -172,7 +172,7 @@ static func heat_shimmer(fb: AFramebuffer, cx: float, cy: float, r: float, t: fl
         warp = fb.world_warp.duplicate()
     for y in range(h):
         for x in range(w):
-            var i := ((y + y0) * AFramebuffer.W + (x + x0)) * 3
+            var i := ((y + y0) * fb.width + (x + x0)) * 3
             var o := (y * w + x) * 3
             tmp[o] = fb.buf[i]
             tmp[o + 1] = fb.buf[i + 1]
@@ -190,13 +190,13 @@ static func heat_shimmer(fb: AFramebuffer, cx: float, cy: float, r: float, t: fl
             var sx: int = clampi(x + dxi, 0, w - 1)
             var sy: int = clampi(y + dyi, 0, h - 1)
             var si := (sy * w + sx) * 3
-            var i := (gy * AFramebuffer.W + gx) * 3
+            var i := (gy * fb.width + gx) * 3
             fb.buf[i] = tmp[si]
             fb.buf[i + 1] = tmp[si + 1]
             fb.buf[i + 2] = tmp[si + 2]
             if fb.track_world_fields:
-                var dst := gy * AFramebuffer.W + gx
-                var src := (sy + y0) * AFramebuffer.W + sx + x0
+                var dst := gy * fb.width + gx
+                var src := (sy + y0) * fb.width + sx + x0
                 fb.world_coverage[dst] = coverage[src]
                 fb.world_multiplier[dst] = multiplier[src]
                 fb.world_warp[dst * 2] = warp[src * 2] + float(sx - x)
