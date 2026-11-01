@@ -1,5 +1,57 @@
 # ARCANA20 — playtest readiness (current summary)
 
+## R19 water and rift work — incomplete visual acceptance
+
+- Original A #05 at 4.5 s is visibly a folded, faceted cyan flower; the
+  matching native A source at tick 270 has write-trace IoU 1.0, HDR MAE
+  1.50e-9 and 8-bit max error 1 in [41325084491](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41325084491).
+  The real-world A peak still resembles this rigid source shape. Original C
+  instead produces thin star-like residual membranes and a narrow vertical
+  column; source previews are zero-base ink/light only, not the live world,
+  source post, bloom or a Gold composite. See the independently successful
+  source-review job/artifact [13090533890](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41325665676/artifacts/13090533890).
+- #05 C's original post-TP sheets, mini-blooms, bubbles and glow, cleared by
+  the expanding source shock over 0.5 s, were missing in the native late role.
+  Release-only restoration keeps A as opening/peak. At C ticks 336/342/348,
+  ink-coverage IoU improved from 0.103/0.182/0.579 in
+  [41325084392](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41325084392)
+  to 1.000/1.000/1.000 in [41325336921](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41325336921),
+  with tiny floating-field errors. Later sampled ticks also have IoU 1.0.
+  C source simulation, gravity particles and A's tested raster/empty-OUT
+  optimizations remain intact. This field comparison does not establish SOH
+  compositor, GPU or visual parity.
+- C height/gravity originally rotated with caster-to-target bearing, including
+  upside-down rain for a target to the left. The #05-only target-upright
+  opt-in pins the C source target, preserves uniform scale and the actual
+  caster/target metadata, and keeps local -Y world-up. Four cardinal bearings
+  passed [41325440763](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41325440763).
+  The old similarity basis and all other C roles remain unchanged.
+- Experimental preview code `5aab03615d244b1fa45f4e3cdead2185c4883799`:
+  [Windows/Linux package](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41325440805/artifacts/13091530108),
+  [normal](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41325440805/artifacts/13091216437)
+  and [dim](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41325440805/artifacts/13091500598)
+  real AppRoot→New Game→Home→Chapter1Overworld full-motion captures.
+  Run [41325440805](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41325440805)
+  succeeded, including Windows headless only. Software-rendered captures are
+  sparse, not device FPS. Logs include shutdown resource-in-use and signal
+  disconnect warnings; success is not a clean-shutdown or leak-free claim.
+  The dim column sample remains a thin line behind dominant faceted A sheets;
+  the requested convincing water/visual closure is **not yet established**.
+  Sampled source and world clocks differ by the intentional +0.6 s C offset;
+  independently moving worlds are not a locked-scene before/after test.
+- `82f1a50` also adds A20's source pre-open displacement/hash along the elected
+  C contour, not a second rift or fake backdrop. Its first build
+  [41325665676](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41325665676)
+  failed import on an inferred Variant; `189d62dfbb2755131d95dc8ccfd8b9b591b6df96`
+  fixes that type. The new same-run creator package, #20 real-world captures
+  and source quick test are pending at the time of this entry. Do not attribute
+  that #20 addition to the earlier `5aab036` package.
+- #01 C outer tongues and #16 A growth/C organism/debris remain mounted, but
+  no new source role or creator visual approval is claimed for them here.
+  #09/#11 remain the R18 protected baselines. CT world-linear HDR/depth/post
+  and R4 authenticated hit/miss/block/death/lifecycle receipts remain owner
+  blockers; no owner interface or combat result was fabricated.
+
 ## R18 focused work in progress
 
 #09 retains the 624×352 field, moving anchors and elected source roles. The
