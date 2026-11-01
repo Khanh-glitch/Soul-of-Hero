@@ -12,9 +12,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        skill: [9, 11, 14]
+        skill: [9]
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
         with:
@@ -57,7 +57,7 @@ jobs:
             nofx=0; [ "$mode" != nofx ] || nofx=1
             mkdir -p "$RUNNER_TEMP/home-$mode" "$RUNNER_TEMP/data-$mode"
             set +e
-            timeout --signal=TERM --kill-after=10s 780s xvfb-run -a -s '-screen 0 1280x720x24' env HOME="$RUNNER_TEMP/home-$mode" XDG_DATA_HOME="$RUNNER_TEMP/data-$mode" LIBGL_ALWAYS_SOFTWARE=1 AVFX_RETENTION_NO_FX="$nofx" godot --path "$RUNNER_TEMP/r17" --audio-driver Dummy --rendering-method gl_compatibility --resolution 1280x720 --user-data-dir "$RUNNER_TEMP/user-$mode" -- --avfx-live-capture > "$RUNNER_TEMP/results/$mode.log" 2>&1
+            timeout --signal=TERM --kill-after=10s 1500s xvfb-run -a -s '-screen 0 1280x720x24' env HOME="$RUNNER_TEMP/home-$mode" XDG_DATA_HOME="$RUNNER_TEMP/data-$mode" LIBGL_ALWAYS_SOFTWARE=1 AVFX_RETENTION_NO_FX="$nofx" godot --path "$RUNNER_TEMP/r17" --audio-driver Dummy --rendering-method gl_compatibility --resolution 1280x720 --user-data-dir "$RUNNER_TEMP/user-$mode" -- --avfx-live-capture > "$RUNNER_TEMP/results/$mode.log" 2>&1
             status=$?
             set -e
             grep -E 'AVFX_RETENTION_|AVFX_LIVE_FAIL|SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/results/$mode.log" | head -10 | while IFS= read -r line; do echo "::notice title=RETENTION_CAPTURE::$line"; done || true

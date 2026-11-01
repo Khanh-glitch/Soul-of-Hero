@@ -5,6 +5,21 @@
 extends "res://prototypes/arcana_fusion20/renderer/playtest/arcana20_live_capture.gd"
 
 var retention_samples: Array = []
+var texture_lifetimes: Array = []
+
+# Return only weak references/IDs so the probe cannot itself retain textures.
+func _cast_texture_refs(renderer: Arcana20Renderer, mount: Arcana20WorldPassMount, id: StringName) -> Array:
+    var refs: Array = []
+    var source := renderer._casts.get(id) as ASourcePlayer
+    if is_instance_valid(source) and is_instance_valid(source._tex):
+        refs.append({"role": "source", "id": source._tex.get_instance_id(), "ref": weakref(source._tex)})
+    var by_family: Dictionary = mount._passes.get(id, {})
+    var viewer := by_family.get(&"A") as Arcana20AWorldPass
+    if is_instance_valid(viewer):
+        for role in viewer._textures:
+            var texture: ImageTexture = viewer._textures[role]
+            refs.append({"role": String(role), "id": texture.get_instance_id(), "ref": weakref(texture)})
+    return refs
 
 func _retention_sample(label: String) -> void:
     var row := {"label": label,
@@ -53,20 +68,30 @@ func _exercise_round(skill: int, no_fx: bool, round_index: int) -> bool:
     for actor in enemies: (actor as Node2D).set_physics_process(false)
     await _settle()
     _retention_sample("round%d_baseline" % round_index)
-    for i in range(3):
+    for i in range(4):
         var cast_ref: WeakRef
+        var texture_refs: Array = []
         if not no_fx:
             host.call(&"_cast_selected")
             if not renderer.is_active(id): return false
             cast_ref = weakref(renderer._casts[id])
         # Equivalent process-frame count, not elapsed-time/FPS measurement.
-        for frame in range(30): await get_tree().process_frame
+        for frame in range(8): await get_tree().process_frame
         if not no_fx:
+            var mount := host.get("mount") as Arcana20WorldPassMount
+            texture_refs = _cast_texture_refs(renderer, mount, id)
+            if texture_refs.size() < 4:
+                push_error("AVFX_RETENTION_FAIL expected source and world textures")
+                return false
             renderer.cancel_skill(id)
         await _settle()
         if not no_fx and cast_ref.get_ref() != null:
             push_error("AVFX_RETENTION_FAIL cast retained after cancellation")
             return false
+        for item in texture_refs:
+            var reference: WeakRef = item.ref
+            texture_lifetimes.append({"round": round_index, "cast": i + 1, "role": item.role,
+                "instance_id": item.id, "alive_after_cancel": reference.get_ref() != null})
         _retention_sample("round%d_after_%d" % [round_index, i + 1])
     return true
 
@@ -76,23 +101,25 @@ func start(wrapper: Node) -> void:
     var no_fx := OS.get_environment("AVFX_RETENTION_NO_FX") == "1"
     if skill not in [9, 11, 14]: _fail("invalid retention skill"); return
     if not await _route(): _fail("retention initial actual route"); return
-    if not await _exercise_round(skill, no_fx, 1): _fail("retention first round"); return
-    var world_ref: WeakRef = weakref(host.get("world"))
-    var renderer_ref: WeakRef = weakref(host.get("renderer"))
-    get_tree().root.get_node("AppFlow").call(&"open_home")
-    var app: Node = host.get("app")
-    if not await host.call(&"_wait_route", &"home", 30000): _fail("retention Home transition"); return
-    await _settle()
-    if world_ref.get_ref() != null or renderer_ref.get_ref() != null:
-        _fail("old world or renderer retained after actual route change"); return
-    _retention_sample("home_after_unload")
-    if not await _enter_overworld_from_home(): _fail("retention real scene reload"); return
-    if not await _exercise_round(skill, no_fx, 2): _fail("retention second round"); return
+    # Six rounds with four casts each, separated by five genuine scene
+    # reloads, after matched baselines in both fresh processes.
+    for round_index in range(1, 7):
+        if not await _exercise_round(skill, no_fx, round_index): _fail("retention round %d" % round_index); return
+        if round_index == 6: break
+        var world_ref: WeakRef = weakref(host.get("world"))
+        var renderer_ref: WeakRef = weakref(host.get("renderer"))
+        get_tree().root.get_node("AppFlow").call(&"open_home")
+        if not await host.call(&"_wait_route", &"home", 30000): _fail("retention Home transition"); return
+        await _settle()
+        if world_ref.get_ref() != null or renderer_ref.get_ref() != null:
+            _fail("old world or renderer retained after actual route change"); return
+        _retention_sample("home_after_unload_%d" % round_index)
+        if not await _enter_overworld_from_home(): _fail("retention real scene reload"); return
     var folder := ProjectSettings.globalize_path("user://avfx_retention")
     DirAccess.make_dir_recursive_absolute(folder)
     var f := FileAccess.open(folder + "/retention.json", FileAccess.WRITE)
-    f.store_string(JSON.stringify({"skill":skill, "no_fx":no_fx, "samples":retention_samples,
-        "scope":"actual AppRoot/Home/overworld; seven real static Skeletons; two rounds of three starts/cancels; separate matched no-FX process; counter deltas include engine caches; not hardware allocation/leak proof"}, "  "))
+    f.store_string(JSON.stringify({"skill":skill, "no_fx":no_fx, "samples":retention_samples, "texture_lifetimes":texture_lifetimes,
+        "scope":"actual AppRoot/Home/overworld; seven real static Skeletons; six rounds of four starts/cancels and five scene reloads; separate matched no-FX process; counter deltas include engine caches; not hardware allocation/leak proof"}, "  "))
     f.close()
     print("AVFX_RETENTION_PASS ", folder)
     get_tree().quit(0)
