@@ -71,10 +71,13 @@ class AshenGuillotineR:
         if blade > 0.0 and t < 4.4:
             var bk := blade * (1.0 - AMath.seg(t, 3.6, 4.4)) * close_k
             var width := 42.0 * blade
-            var spine1 := b1 + n * width * 0.90
+            # A single tapered steel point is part of the same covered
+            # blade polygon; the old parallel end read as a blunt slab in
+            # the full viewport despite its dark metal and bevel.
+            var spine1 := b1 - _dir * 18.0 + n * width * 0.90
             var edge0 := b0 - n * width * 0.24
             var edge1 := b1 - _dir * 18.0 - n * width * 0.24
-            var tip := b1 + _dir * 11.0 + n * width * 0.10
+            var tip := b1 + _dir * 20.0 + n * width * 0.12
             var shoulder := b0 + _dir * 13.0 + n * width * 0.48
             var back := b0 + _dir * 42.0 + n * width * 0.58
             ADraw.poly_fill(fb, [b0 + n * width * 0.10, shoulder, back, spine1, tip, edge1, edge0],
@@ -91,6 +94,7 @@ class AshenGuillotineR:
             # Steel cutting bevel, a narrow molten vein and two inset marks
             # describe one solid blade rather than an emissive beam.
             ADraw.streak(fb, edge0.x, edge0.y, edge1.x, edge1.y, 1.2, 0.7, AMath.R("ash", 0.9), bk * 0.9)
+            ADraw.streak(fb, edge1.x, edge1.y, tip.x, tip.y, 0.7, 0.3, AMath.R("ash", 0.9), bk * 0.9)
             var seam0 := b0 + _dir * 20.0 + n * width * 0.20
             var seam1 := b1 - _dir * 15.0 + n * width * 0.20
             ADraw.streak(fb, seam0.x, seam0.y, seam1.x, seam1.y, 0.7, 0.5, AMath.R("fire", 0.8), bk * 0.7)

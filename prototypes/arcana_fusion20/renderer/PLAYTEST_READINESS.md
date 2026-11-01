@@ -8,11 +8,11 @@ historical methods, caveats and source-comparison references.
 ## R17 status and experimental build
 
 **NOT PLAYTEST_READY.** The newest downloadable, visual-only build is
-[Windows x64 + Linux x64 artifact 13082179420](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41303837155/artifacts/13082179420),
-source `35125613d633723185ca8bfbb69265cd15902fef`.
-[Run 41303837155](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41303837155)
-passed Linux real-route motion for [#14](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41303837155/artifacts/13082317430)
-and [#18](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41303837155/artifacts/13082456809)
+[Windows x64 + Linux x64 artifact 13082581843](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41304159336/artifacts/13082581843),
+source `9db0c3eba36c7866a96fc86f330e68edc482d047`.
+[Run 41304159336](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41304159336)
+passed Linux real-route motion for [#14](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41304159336/artifacts/13083145848)
+and [#18](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41304159336/artifacts/13083070427)
 and Windows **headless** smoke. It is available for early feedback, not a
 creator-approved build or a Windows GPU/display test. Its #11 is still an
 unreadable white cloud at peak. #14's meandering hyphae have only been
@@ -33,7 +33,7 @@ bridge are **not mounted**. The artifact contains the exact join manifest.
 - #09's A graph now receives the live caster reference, fixing the measured
   85.443-world-unit origin detachment in the earlier capture. B-like two-color
   palette and C branching are candidates, not full original B/C parity. A new
-  visual-test UI formation (`a74d7b2`, in the 3512561 build) can spawn real
+  visual-test UI formation (`a74d7b2`, in the 9db0c3e build) can spawn real
   Skeletons in a ring; [41303697476](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41303697476)
   exercised it with normal AI, seven moving enemies and both lights. The AI
   converges around the player and the sampled #09 still remains hard to read.
@@ -88,7 +88,10 @@ selected 1× frames in [normal](https://github.com/Khanh-glitch/Soul-of-Hero/act
 and [dim](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41303812821)
 look more organic but some links still read as wires. Full-motion and creator
 review remain open. #18's sequence remains weak as capture/suspension/release,
-with no real combat receipts.
+with no real combat receipts. `c73adea` enlarges stored moments to source B's
+0.42 clip transform and adds its four-vertex projectile head in the A raster;
+clipping/order runtime checks passed in 41304136832. This is not B raster/post
+parity or a genuine combat capture; normal/dim world review is still pending.
 
 The remaining four redesigns have real full-cast videos and native-scale phase
 samples in [normal](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41303590845)
@@ -96,8 +99,10 @@ and [dim](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41303590819)
 #04's thin blade/aftermath and #06's broad translucent ribbons need further
 motion/meaning review; #12's sampled glyph is partly outside the detail region.
 #13's previous roots read as oversized straight black/green wires. `aa02f0b`
-tests growing them toward their contact anchors with shorter child branches;
-source runtime passed, native moving-world art review remains outstanding.
+grows toward the contact anchors with shorter child branches. In the native
+normal/dim samples [41304147187](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41304147187)
+they spread less but still read as dark, angular wires. `8e1a9b8` tests opaque
+seeded olive-brown bark rather than black cores; that candidate is unreviewed.
 The phase-matched CPU job in 41303791337 exited 134 during current-project
 import after historical baselines completed; the first fatal cause was not
 exposed. A separate fresh-current source-only benchmark
@@ -548,7 +553,7 @@ combat.
 | 10 | C | C source; viewport-aligned stage fix, overlap/cancel tested; actor/post ordering and natural targets open. |
 | 11 | A+C09 | A rotor + adapted C09 channels follow source connectors; tick-327 native output remains an overexposed cloud; full fusion/world contrast open. |
 | 12 | NEW | Glyph + actual C bolt geometry via A raster; complete C craft, rhythm and visual quality open. |
-| 13 | NEW | Older target roots read as large straight wires; shorter, target-directed branch candidate `aa02f0b` needs native motion review and creator approval. |
+| 13 | NEW | Shorter target-directed branches still read as dark angular wires in native samples; bark experiment unreviewed, no creator approval. |
 | 14 | NEW | Caps, spores and curved/forked links are visible in normal/dim phase samples; full motion, actor status and creator review open. |
 | 15 | C | C thorn source with local shade; full world/actor/post parity open. |
 | 16 | A+C | A growth, selected C organism/material/debris; complete C environment and fusion/OUT parity open. |
