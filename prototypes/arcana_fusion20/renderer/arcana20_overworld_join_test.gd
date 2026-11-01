@@ -924,6 +924,13 @@ func _run() -> void:
     var horizon_blackout := mount._blackouts.get(id17) as Arcana20CStageBlackout
     check(is_instance_valid(horizon_blackout) and blackout_player.source_pass_frame().c_stage_blackout, "C17 authored blackout uses viewport stage not world quad")
     var with_blackout := await save_frame("c17_stage_blackout_actual_world")
+    var target_screen := root.get_final_transform() * (root.get_canvas_transform() * blackout_player.local_to_world(CEventHorizon.E))
+    var target_peak := 0.0
+    for yy in range(maxi(0, floori(target_screen.y) - 4), mini(with_blackout.get_height(), ceili(target_screen.y) + 5)):
+        for xx in range(maxi(0, floori(target_screen.x) - 4), mini(with_blackout.get_width(), ceili(target_screen.x) + 5)):
+            var px := with_blackout.get_pixel(xx, yy)
+            target_peak = maxf(target_peak, maxf(px.r, maxf(px.g, px.b)))
+    check(target_peak >= 0.5, "C17 authored post-blackout target light survives at actual projected target: %s peak=%.3f" % [str(target_screen), target_peak])
     if is_instance_valid(horizon_blackout):
         horizon_blackout._rect.visible = false
         await process_frame
