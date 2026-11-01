@@ -20,11 +20,26 @@ class RootwakeR:
         for i in range(3):
             var bs: Array = ACommon.grow_branches(rng, CASTER.x + 10.0, CASTER.y - 4.0,
                 -0.7 + float(i) * 0.55, 3.0, {"steps": 12, "step": 5.4, "wander": 0.2, "branch_chance": 0.35, "max_depth": 2, "width_falloff": 0.5, "speed": 1.5})
-            _roots.append(bs)
+            # Preserve the grown, branched morphology but map each entire
+            # organism coherently onto a target-side anchor. Uniform rotation
+            # and scale keep parent/child branch junctions connected.
+            var root: Dictionary = bs[0]
+            var root_pts: Array = root.pts
+            var origin: Vector2 = root_pts[0]
+            var old_axis: Vector2 = root_pts[root_pts.size() - 1] - origin
+            var destination := C + Vector2(float(i - 1) * 12.0, 7.0 + float(i % 2) * 3.0)
+            var new_axis := destination - origin
+            var angle := new_axis.angle() - old_axis.angle()
+            var scale := new_axis.length() / maxf(old_axis.length(), 0.001)
+            var speed_factor := (1.0 / 2.2) / float(root.speed)
             for b in bs:
-                if int(b.depth) == 0:
-                    var pts: Array = b.pts
-                    _tips.append(pts[pts.size() - 1])
+                var pts: Array = b.pts
+                for j in range(pts.size()):
+                    var point: Vector2 = pts[j]
+                    pts[j] = origin + (point - origin).rotated(angle) * scale
+                b.speed = float(b.speed) * speed_factor
+            _roots.append(bs)
+            _tips.append(destination)
     func authored_events() -> Array:
         var ev: Array = [{"t": 0.8, "kind": "roots_germinate", "pos_local": CASTER, "emitted": false}]
         for i in range(_tips.size()):
@@ -35,8 +50,9 @@ class RootwakeR:
     func _visible_growth(growth: float, t: float) -> float:
         return growth * (1.0 - AMath.seg(t, 7.2, 8.4))
     func update(dt: float, t: float) -> void:
-        for bs in _roots:
-            ACommon.update_branches(bs, t - 0.8)
+        for i in range(_roots.size()):
+            # Main tips arrive on their authored 3.0/3.4/3.8 contact beats.
+            ACommon.update_branches(_roots[i], maxf(0.0, t - 0.8 - float(i) * 0.4))
     func render(fb: AFramebuffer, t: float) -> void:
         var retract := 1.0 - AMath.seg(t, 7.2, 8.4)
         var tension := AMath.seg(t, 4.4, 5.4)
@@ -49,14 +65,31 @@ class RootwakeR:
                         var h := (1.0 - edge) * retract
                         if h < 0.05:
                             return null
-                        return AMath.R("verdant", 0.22 + h * 0.5 + tension * 0.2 * (1.0 - u)),
+                        # Opaque woody core is geometry, not additive glow.
+                        var bark := 0.35 + 0.65 * (1.0 - edge) * (1.0 - u * 0.3)
+                        return Vector3(0.065, 0.16, 0.045) * bark,
                     func(u: float, br: Dictionary) -> float:
-                        return maxf(0.7, float(br.w) * (1.0 - u * 0.6) * (1.0 + tension * 0.35)))
+                        return maxf(0.8, float(br.w) * 1.5 * (1.0 - u * 0.6) * (1.0 + tension * 0.35)), true)
+                ACommon.draw_branch(fb, bb,
+                    func(u: float, edge: float, _br: Dictionary) -> Variant:
+                        var h := (1.0 - edge) * retract
+                        return AMath.R("verdant", 0.25 + h * 0.45) if h >= 0.05 else null,
+                    func(u: float, br: Dictionary) -> float:
+                        return maxf(0.6, float(br.w) * 0.38 * (1.0 - u * 0.6)))
         if tension > 0.0:
-            for tip in _tips:
-                var tp: Vector2 = tip
-                ADraw.streak(fb, tp.x, tp.y, tp.x + 6.0, tp.y - 14.0 * tension, 1.8, 0.5, AMath.R("verdant", 0.8), tension * retract)
-                ADraw.glow(fb, tp.x, tp.y - 14.0 * tension, 6.0, AMath.R("verdant", 0.85), tension * retract)
+            for i in range(_tips.size()):
+                var tp: Vector2 = _tips[i]
+                var endpoint := tp.lerp(C, AMath.ease_in(tension, 2.0))
+                var control := tp.lerp(C, 0.5) + Vector2(float(i - 1) * 5.0, -20.0 * sin(tension * PI * 0.75))
+                var points: Array = []
+                for step in range(13):
+                    var u := float(step) / 12.0
+                    points.append(tp * (1.0 - u) * (1.0 - u) + control * 2.0 * (1.0 - u) * u + endpoint * u * u)
+                ADraw.ribbon(fb, points,
+                    func(u: float, _j: int) -> float: return (2.8 - u * 2.0) * tension,
+                    func(u: float, _j: int, edge: float) -> Variant:
+                        return AMath.R("verdant", 0.35 + (1.0 - edge) * 0.4) * retract)
+                ADraw.disc(fb, endpoint.x, endpoint.y, 1.5, AMath.R("verdant", 0.8), tension * retract)
         if t > 5.4 and t < 6.2:
             ADraw.pulse_ring(fb, C.x, C.y, 8.0 + AMath.seg(t, 5.4, 6.2) * 90.0, 2.6, AMath.R("verdant", 0.7), 0.5 * (1.0 - AMath.seg(t, 5.4, 6.2)), 1.5)
 

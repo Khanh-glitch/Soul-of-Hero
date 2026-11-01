@@ -254,8 +254,23 @@ func _init() -> void:
     if sky._stroke_remaining(0, 8.6) > 0.001:
         _fail("sky glyph remains after OUT")
     var rootwake := ARedesignSpells2.RootwakeR.new()
+    rootwake.setup()
     if rootwake._visible_growth(1.0, 7.8) >= rootwake._visible_growth(1.0, 7.2):
         _fail("root geometry does not retract during OUT")
+    var root_events: Array = rootwake.authored_events()
+    for i in range(3):
+        var root_pts: Array = rootwake._roots[i][0].pts
+        var tip: Vector2 = root_pts[root_pts.size() - 1]
+        var cue: Dictionary = root_events[i + 1]
+        if tip.distance_to(cue.pos_local) > 0.001 or tip.distance_to(ARedesignSpells2.C) > 20.0:
+            _fail("root tip contact %d is not on its target-side branch" % i)
+        var contact_time: float = cue.t
+        rootwake.update(0.0, contact_time - 1.0 / 60.0)
+        var before: float = rootwake._roots[i][0].grow
+        rootwake.update(0.0, contact_time)
+        var at: float = rootwake._roots[i][0].grow
+        if before >= 1.0 or at < 0.99999:
+            _fail("root tip %d arrival does not coincide with authored contact" % i)
     var chrono := ARedesignSpells2.ChronoshardR.new()
     chrono.setup()
     if chrono._release(4, 5.3) <= chrono._release(0, 5.3):
