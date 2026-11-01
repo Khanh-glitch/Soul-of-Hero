@@ -8,11 +8,11 @@ historical methods, caveats and source-comparison references.
 ## R17 status and experimental build
 
 **NOT PLAYTEST_READY.** The newest downloadable, visual-only build is
-[Windows x64 + Linux x64 artifact 13081304767](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41303563916/artifacts/13081304767),
-source `d0fea3835d8dfff9bd0a892e34eb46d002d2b18f`.
-[Run 41303563916](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41303563916)
-passed Linux real-route motion for [#14](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41303563916/artifacts/13082440578)
-and [#18](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41303563916/artifacts/13082450606)
+[Windows x64 + Linux x64 artifact 13082179420](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41303837155/artifacts/13082179420),
+source `35125613d633723185ca8bfbb69265cd15902fef`.
+[Run 41303837155](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41303837155)
+passed Linux real-route motion for [#14](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41303837155/artifacts/13082317430)
+and [#18](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41303837155/artifacts/13082456809)
 and Windows **headless** smoke. It is available for early feedback, not a
 creator-approved build or a Windows GPU/display test. Its #11 is still an
 unreadable white cloud at peak. #14's meandering hyphae have only been
@@ -33,7 +33,7 @@ bridge are **not mounted**. The artifact contains the exact join manifest.
 - #09's A graph now receives the live caster reference, fixing the measured
   85.443-world-unit origin detachment in the earlier capture. B-like two-color
   palette and C branching are candidates, not full original B/C parity. A new
-  visual-test UI formation (`a74d7b2`, not in the d0fea38 build) can spawn real
+  visual-test UI formation (`a74d7b2`, in the 3512561 build) can spawn real
   Skeletons in a ring; [41303697476](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41303697476)
   exercised it with normal AI, seven moving enemies and both lights. The AI
   converges around the player and the sampled #09 still remains hard to read.
@@ -100,7 +100,12 @@ tests growing them toward their contact anchors with shorter child branches;
 source runtime passed, native moving-world art review remains outstanding.
 The phase-matched CPU job in 41303791337 exited 134 during current-project
 import after historical baselines completed; the first fatal cause was not
-exposed. It is not a successful current benchmark or device performance test.
+exposed. A separate fresh-current source-only benchmark
+[41304068554](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41304068554)
+passed at `7da206c` in both art directions. For direction A, #14 at source
+seconds 3.6/5.4/5.7 had p50 15.539/22.038/46.540 ms and #18 at 3.2/6.4/7.0
+had 23.690/31.834/12.333 ms. This measures CPU source raster in CI, not a
+successful rerun of the complete historical comparison, world/GPU or device FPS.
 
 [41302085450](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41302085450)
 compared fresh no-FX/FX processes on the real route, seven static Skeletons,

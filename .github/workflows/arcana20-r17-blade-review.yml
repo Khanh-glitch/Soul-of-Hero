@@ -1,0 +1,40 @@
+# Inspect the blade at authored contact and actual wound beats, not only fractions of the cast.
+name: ARCANA20 guillotine contact-phase review
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-r17-blade-review.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  review:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {light: normal, run_id: 41297739352, artifact: live-motion-4-normal}
+          - {light: dimmed, run_id: 41303590819, artifact: r17-redesign-4-dimmed}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          run-id: ${{ matrix.run_id }}
+          github-token: ${{ github.token }}
+          path: live
+      - name: Install review dependencies
+        run: |
+          python3 -m pip install --quiet pillow
+          if ! command -v ffmpeg; then sudo apt-get update -qq && sudo apt-get install -y ffmpeg; fi
+      - name: Materialized blade near contact
+        run: python3 tools/arcana20_join/surface_encoded_phase.py live 0.416 blade
+      - name: Immediately after contact
+        run: python3 tools/arcana20_join/surface_encoded_phase.py live 0.435 impact
+      - name: Rupture opens
+        run: python3 tools/arcana20_join/surface_encoded_phase.py live 0.58 rupture
+      - name: Delayed wound
+        run: python3 tools/arcana20_join/surface_encoded_phase.py live 0.68 wound
