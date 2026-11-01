@@ -1,0 +1,33 @@
+name: ARCANA20 Rootwake target-root event review
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-rootwake-review.yml']
+permissions:
+  actions: read
+  contents: read
+jobs:
+  surface:
+    strategy:
+      fail-fast: false
+      matrix:
+        lighting: [normal, dimmed]
+        beat: [first-tip, snap]
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcana20-current-phase-sweep-11-${{ matrix.lighting }}
+          run-id: 41277060727
+          github-token: ${{ github.token }}
+          path: phases
+      - run: python3 -m pip install --quiet pillow
+      - name: Surface actual frozen-world event preview
+        env:
+          BEAT: ${{ matrix.beat }}
+        run: |
+          if [ "$BEAT" = first-tip ]; then LABEL=phase_13_candidate_A_root_tip_impact_01_tick180; else LABEL=phase_13_candidate_A_thorn_snap_impact_04_tick324; fi
+          python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py phases "$LABEL"
