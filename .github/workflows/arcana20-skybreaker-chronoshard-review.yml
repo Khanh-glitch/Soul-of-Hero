@@ -37,3 +37,50 @@ jobs:
         run: |
           if [ "$SKILL" = 12 ]; then LABEL=phase_12_candidate_A_skybreaker_impact_04_tick408; else LABEL=phase_18_candidate_A_synchronized_impact_06_tick372; fi
           python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py phases "$LABEL"
+  native-detail:
+    # The crop is an unscaled detail for review; the original full viewport
+    # video is kept in run 41288691508. It never replaces full-frame evidence.
+    strategy:
+      fail-fast: false
+      matrix:
+        skill: [14, 18]
+        moment: [early, impact, aftermath]
+        lighting: [normal, dimmed]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: redesign-motion-${{ matrix.skill }}-baseline-${{ matrix.lighting }}
+          run-id: 41288691508
+          github-token: ${{ github.token }}
+          path: before
+      - uses: actions/download-artifact@v4
+        with:
+          name: redesign-motion-${{ matrix.skill }}-candidate-${{ matrix.lighting }}
+          run-id: 41288691508
+          github-token: ${{ github.token }}
+          path: after
+      - run: python3 -m pip install --quiet pillow
+      - name: Extract exact lossless source tick
+        env:
+          SKILL: ${{ matrix.skill }}
+          MOMENT: ${{ matrix.moment }}
+        run: |
+          set -euo pipefail
+          if ! command -v ffmpeg; then sudo apt-get update -qq && sudo apt-get install -y ffmpeg; fi
+          case "$SKILL-$MOMENT" in
+            14-early) TICK=216;; 14-impact) TICK=324;; 14-aftermath) TICK=360;;
+            18-early) TICK=192;; 18-impact) TICK=384;; 18-aftermath) TICK=420;;
+          esac
+          for REV in before after; do
+            INPUT=$(find "$REV" -name native-lossless.mkv -print -quit)
+            test -n "$INPUT"
+            ffmpeg -hide_banner -loglevel error -i "$INPUT" -vf "select=eq(n\,$TICK)" -frames:v 1 "$REV.png"
+            test -s "$REV.png"
+          done
+      - name: Surface unscaled baseline detail
+        run: python3 prototypes/arcana_fusion20/renderer/native_review_surface.py before.png baseline
+      - name: Surface unscaled candidate detail
+        run: python3 prototypes/arcana_fusion20/renderer/native_review_surface.py after.png candidate
