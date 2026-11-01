@@ -143,6 +143,7 @@ jobs:
             ${{ runner.temp }}/avfx-windows-err.log
           if-no-files-found: warn
   live-motion:
+    # Corrected presentation timestamps are sampled before PNG write I/O.
     # Newest art receives live moving-world full-cast capture; the earlier
     # all-20 single-enemy and multi-enemy matrix runs remain separate evidence.
     needs: build

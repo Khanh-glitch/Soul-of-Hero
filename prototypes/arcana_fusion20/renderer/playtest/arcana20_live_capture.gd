@@ -43,13 +43,16 @@ func _route() -> bool:
 
 func _frame(path: String, player: Node2D, enemy: Node2D, camera: Camera2D) -> bool:
     await RenderingServer.frame_post_draw
+    # Presentation timestamp must precede synchronous PNG encoding and disk
+    # I/O; otherwise variable save latency is attributed to the wrong frame.
+    var presented_usec := Time.get_ticks_usec()
     var image := get_viewport().get_texture().get_image()
     if image == null or image.is_empty(): return false
     var index := samples.size()
     var name := "frame_%05d.png" % index
     if image.save_png(path + "/" + name) != OK: return false
     var enemy_pos := enemy.global_position if is_instance_valid(enemy) else Vector2.ZERO
-    samples.append({"file": name, "wall_s": float(Time.get_ticks_usec() - capture_start_usec) / 1000000.0, "source_tick_last_observed": ticks_seen[-1] if not ticks_seen.is_empty() else 0,
+    samples.append({"file": name, "wall_s": float(presented_usec - capture_start_usec) / 1000000.0, "source_tick_last_observed": ticks_seen[-1] if not ticks_seen.is_empty() else 0,
         "player": [player.global_position.x, player.global_position.y], "enemy": [enemy_pos.x, enemy_pos.y],
         "camera": [camera.get_screen_center_position().x, camera.get_screen_center_position().y]})
     return true
@@ -216,7 +219,8 @@ func start(wrapper: Node) -> void:
         "player_max_displacement": max_player, "enemy_max_displacement": max_enemy, "camera_max_displacement": max_camera,
         "enemy_hp_before": enemy_hp, "enemy_hp_after": int(enemy.get("health")),
         "observed_wall_frame_ms": {"p50": p50, "p95": p95, "p99": p99, "count": frame_times.size()},
-        "frame_timing_note": "capture I/O and shared software rendering included; not hardware FPS"}
+        "frame_timing_note": "capture I/O and shared software rendering included; not hardware FPS",
+        "capture_timestamp_note": "frame_post_draw before PNG encoding; last-observed source tick can lag displayed state"}
     var out := FileAccess.open(folder + "/timeline.json", FileAccess.WRITE)
     if out == null:
         _fail("timeline output"); return
