@@ -174,6 +174,25 @@ and [PR30](https://github.com/Khanh-glitch/Soul-of-Hero/pull/30#issuecomment-655
   at retirement, so before/after CPU percentiles cannot be compared. All
   relevant creator, device-performance and full-cast work remains open.
 
+- The six redesigns' **authored-event** normal/dim actual-world previews were
+  also inspected at A0 `04eacf6`, AVFX `bd21a14`: [41274496362](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41274496362),
+  full PNGs in [41272170686](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41272170686).
+  This is still a lossy single-event still, not source parity, full motion or
+  creator approval. At this scale #04's impact is a very fine diagonal line,
+  #06 reads as two narrow curves, #12 as a few pale marks, #13 as thin pale
+  branches, #14 as a small linked point network, and #18 convergence as a
+  tiny bright mark. The intended physical/causal designs are not established
+  by these stills. A new #04 candidate at `c223965` adds a covered dark-metal
+  blade, bevel and molten seam while retaining its slit, single fast cut and
+  later cracks; local dark material is not brightness-keyed. Structural test
+  plus real normal/dim recapture [41274706640](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41274706640)
+  is pending. These changes are **not approved**; other candidate design,
+  event motion, actor depth and target-device reviews remain open.
+- The 04e + AVFX `898ad5c` full frozen normal/dim multi-phase capture with
+  extra fusion-child event beats [41272440282](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41272440282)
+  passed. It predates the later C performance and #04 candidate changes, and
+  it remains test-driven and non-acceptance evidence.
+
 ### Per-skill acceptance ledger (R14)
 
 `PARTIAL` means a limited source-field or world diagnostic exists; it is not
