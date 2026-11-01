@@ -7,7 +7,25 @@ historical methods, caveats and source-comparison references.
 
 ## Experimental downloadable build
 
-**Current creator visual-preview candidate (timestamp corrected):**
+**Latest experimental visual-preview candidate:**
+[Windows x64 + Linux x64 artifact 13078684701](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41295327487/artifacts/13078684701),
+source `e9008a58fd0cd7827a9a04006b6afbba5b17ab51`. The
+[build and full-motion smoke run](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41295327487)
+completed successfully: Linux and the same-run Windows x64 executable exercised
+the real route; Windows used the **headless** backend. The new #14/#18 visuals
+were captured on the real moving overworld, with three independently moving real
+Skeletons, player/camera movement, natural completion and restart/cancel. #14
+recorded 67 software-rendered frames and last-observed tick 511. Videos and
+metadata are [#14](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41295327487/artifacts/13078473706)
+and [#18](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41295327487/artifacts/13078383839).
+They are sparse software captures, not 60-Hz or target-device evidence; the
+last-observed source tick can lag the displayed state. An inspected #18
+full-frame midpoint shows the larger crystals surrounding the actor, but their
+stored moments still look mostly blank and do not establish temporal causality.
+The complete videos have not been exhaustively human-reviewed. The build is
+visual-only, does not bind CT receipts and is **not PLAYTEST_READY**.
+
+**Prior timestamp-corrected candidate:**
 [Windows x64 + Linux x64 artifact 13078977612](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41294874261/artifacts/13078977612),
 source `924dc2522f9776d570c6e91118766d5fdc040fc4`;
 [run 41294874261](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41294874261)
@@ -201,10 +219,14 @@ with larger crystal windows; [41295029499](https://github.com/Khanh-glitch/Soul-
 shows low purple caps, but they read as thin parallel slats over dark green
 stems rather than a convincing outbreak. Follow-up `e9008a58fd0cd7827a9a04006b6afbba5b17ab51`
 gives the caps a deeper rounded profile; [41295327463](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41295327463)
-is capturing that revision, and [41295327487](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41295327487)
-is building it. Both were queued when recorded. These newer changes are not
-validated in native gameplay or approved, and are not in the downloadable
-artifacts above.
+completed all frozen normal/dim full-motion and still captures, and
+[41295327487](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41295327487)
+completed the latest build and real-moving-world #14/#18 capture above. The
+source event runtime and historical parity/CPU diagnostics
+[41295327512](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41295327512)
+also passed; these checks do not establish art or full-source fidelity. Native
+1x crop inspection of the latest #14 candidate is in progress. No art is
+creator-approved.
 
 [41293811919](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293811919)
 also compared complete no-PNG-I/O casts/overlap with fresh same-duration
