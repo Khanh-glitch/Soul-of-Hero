@@ -8,11 +8,11 @@ historical methods, caveats and source-comparison references.
 ## R17 status and experimental build
 
 **NOT PLAYTEST_READY.** The newest downloadable, visual-only build is
-[Windows x64 + Linux x64 artifact 13084024453](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41310103360/artifacts/13084024453),
-source `dd5e76dc47087ccdff3278907fd0eb616dc35f23`.
-[Run 41310103360](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41310103360)
-passed Linux real-route motion for [#14](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41310103360/artifacts/13084609932)
-and [#18](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41310103360/artifacts/13084753557)
+[Windows x64 + Linux x64 artifact 13086651403](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41313445186/artifacts/13086651403),
+source `247f9b5a993fb8c9aa83e5a3f1f2a29033fc9adc`.
+[Run 41313445186](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41313445186)
+passed Linux real-route motion for [#14](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41313445186/artifacts/13085658141)
+and [#18](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41313445186/artifacts/13086417892)
 and Windows **headless** smoke. It is available for early feedback, not a
 creator-approved build or a Windows GPU/display test. Its #11 is still an
 unreadable white cloud at peak. #14's meandering hyphae have only been
@@ -54,7 +54,15 @@ bridge are **not mounted**. The artifact contains the exact join manifest.
   The independent AI motion differs between before/after, and the normal
   late source also touches an edge. Branches, particles and bloom may extend
   outside even when anchors fit. `d2508fc` exposes uncontained-node counts;
-  this fixed-size window is a partial mitigation, not a complete fix or approval.
+  this fixed-size window was a partial mitigation. `a80ce9e` adds a 624×352
+  raster without changing pixel-to-world scale; [41310764888](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41310764888)
+  observed zero uncontained actor anchors across 54 frames in each light. This
+  does not measure branches/bloom or guarantee arbitrarily wide formations.
+  The 1× frames in [41313521476](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41313521476)
+  remain subtle/obscured among clumped AI. Independent before/after real-world
+  captures: [normal](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41313521348/artifacts/13085832877),
+  [dim](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41313521348/artifacts/13085802942);
+  AI and camera trajectories differ. This is not visual closure or approval.
 - #11 full-five-branch `d310436`, scaled `0ebc44b`, original-A-width `f58c2a8`
   and C-length-density `1039869` were rejected as visual closures. Native 1×
   tick 327 normal/dim [41301954960](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41301954960)
