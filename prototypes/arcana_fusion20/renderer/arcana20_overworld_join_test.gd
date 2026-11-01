@@ -299,7 +299,7 @@ func _run() -> void:
         if id == graph_id: graph_contacts.bound += 1)
     renderer.unbound_source_contact.connect(func(id: StringName, _kind: StringName, _index: int, _t: float) -> void:
         if id == graph_id: graph_contacts.unbound += 1)
-    renderer.cast_skill(graph_id, player.global_position, enemy.global_position)
+    renderer.cast_skill(graph_id, player.global_position, enemy.global_position, 1.0, player)
     var chain := renderer._casts[graph_id] as ASourcePlayer
     chain.set_process(false)
     chain.render_enabled = false
@@ -312,6 +312,15 @@ func _run() -> void:
     var moved_anchor: Variant = graph.nodes[1]
     check(first_anchor != null and moved_anchor != null and chain.local_to_world(moved_anchor).distance_to(chain.local_to_world(first_anchor) + Vector2(20, 10)) < 0.1, "A09 graph follows actual moving AnimatedSprite2D target")
     check(int(enemy.get("health")) == hp_graph, "A09 graph alone has no damage authority")
+    var old_caster := player.global_position
+    var target_world_before: Vector2 = chain.local_to_world(graph.nodes[1])
+    player.global_position += Vector2(35, -25)
+    chain.advance(STEP, false)
+    check(chain._origin.distance_to(player.global_position) < 0.01, "A09 source canvas follows explicitly supplied moving caster")
+    check(chain.local_to_world(graph.nodes[0]).distance_to(player.global_position + Vector2(14, -8).rotated(chain._rot) * chain._scale) < 0.01, "A09 hand anchor follows caster through source transform")
+    check(chain.local_to_world(graph.nodes[1]).distance_to(target_world_before) < 0.1, "A09 target remains on actual actor while caster moves")
+    player.global_position = old_caster
+    chain.advance(STEP, false)
     enemy.global_position = old_position
     check(graph.nodes[2] != null, "A09 second anchor references another actual enemy")
     secondary.queue_free()

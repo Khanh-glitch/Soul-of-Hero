@@ -13,7 +13,7 @@ var rings: Array = []
 var frags: ADraw.APool
 # Test-only isolation of A rotor/aftermath from intentionally replaced bolts.
 var include_bolts := true
-var c_bolt_raster := CBoltARaster.new()
+var c_channel := CChainChannel.new()
 
 func setup() -> void:
     rng = AMath.ARng.new(0xc0de)
@@ -58,11 +58,12 @@ func _volt(h: float) -> Vector3:
 
 func _bolt(fb: AFramebuffer, x0: float, y0: float, x1: float, y1: float, t: float, seed: float, width: float, k: float, chaos: float) -> void:
     if not include_bolts or k <= 0.01: return
-    var frame := floori(t * 28.0)
-    var tree := CKit.bolt_tree(seed * 131.0 + frame * 7919.0, x0, y0, x1, y1, 1, chaos)
-    for branch in tree:
-        var branch_width := width if int(branch.depth) == 0 else 1.0
-        c_bolt_raster.draw(fb, branch.pts, k * float(branch.w), CORE, _volt(0.62), branch_width)
+    # Adapt C #09's stable three-slot channel and five authored branches to
+    # each A rotor connector. The A machine still owns endpoint motion,
+    # timing and intensity; C owns the channel construction and widths.
+    # A-derived seed stays stable across frames; the C slot supplies flicker.
+    c_channel.draw(fb, Vector2(x0, y0), Vector2(x1, y1), t, seed * 131.0,
+        k, CORE, _volt(0.62), 1.6, 0.32, 5)
     var dx := x1 - x0
     var dy := y1 - y0
     ADraw.glow(fb, (x0 + x1) * 0.5, (y0 + y1) * 0.5, minf(16.0, sqrt(dx * dx + dy * dy) * 0.25), _volt(0.45), 0.07 * k)

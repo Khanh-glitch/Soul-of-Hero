@@ -20,7 +20,7 @@ var events: Array = []
 var sparks: ADraw.APool
 var actor_refs: Array = []
 var host: ASourcePlayer
-var c_bolt_raster := CBoltARaster.new()
+var c_channel := CChainChannel.new()
 
 func setup() -> void:
     rng = AMath.ARng.new(0x9c4a)
@@ -132,26 +132,7 @@ func update(dt: float, t: float) -> void:
 # geometry; B owns colors. Recompute endpoints as real actors move. This is
 # still a candidate, not full C raster/slot-source parity.
 func _bolt(fb: AFramebuffer, a: Vector2, b: Vector2, t: float, seed: int, width: float, k: float, rough: float, branch_count: int = 5) -> void:
-    var pts := CKit.bolt_pts(float(seed), a.x, a.y, b.x, b.y, rough, 3.0)
-    var variant := posmod(floori(t * 30.0), 3)
-    var varied: Array = []
-    for j in range(pts.size()):
-        var point: Vector2 = pts[j]
-        if j != 0 and j != pts.size() - 1:
-            point.x += (CMath.hash1(seed + variant * 31 + j) - 0.5) * 3.0
-            point.y += (CMath.hash1(seed + variant * 17 + j * 3) - 0.5) * 3.0
-        varied.append(point)
-    c_bolt_raster.draw(fb, varied, k, B_CORE, B_MID, width)
-    for branch_index in range(branch_count):
-        var index := floori(CMath.hash1(seed + variant * 7 + branch_index * 13) * float(pts.size() - 2)) + 1
-        var point: Vector2 = pts[clampi(index, 0, pts.size() - 1)]
-        var angle := CMath.hash1(seed + branch_index * 5 + variant) * CMath.TAU
-        var length := 6.0 + CMath.hash1(seed + branch_index) * 18.0
-        var tree := CKit.bolt_tree(float(seed + variant * 100 + branch_index), point.x, point.y,
-            point.x + cos(angle) * length, point.y + sin(angle) * length, 1, 0.35, 1)
-        for branch in tree:
-            var branch_width := float(branch.w)
-            c_bolt_raster.draw(fb, branch.pts, k * branch_width, B_CORE, B_MID, 1.0)
+    c_channel.draw(fb, a, b, t, float(seed), k, B_CORE, B_MID, width, rough, branch_count)
     ADraw.glow(fb, (a.x + b.x) * 0.5, (a.y + b.y) * 0.5, minf(16.0, a.distance_to(b) * 0.25), B_MID, 0.07 * k)
 
 func render(fb: AFramebuffer, t: float) -> void:

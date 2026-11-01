@@ -12,11 +12,11 @@ a = root / 'prototypes/arcana_fusion20/renderer/source_a'
 p = a / 'a_chain_verdict_graph.gd'
 s = p.read_text()
 s = s.replace('var host: ASourcePlayer\n', 'var host: ASourcePlayer\nvar _r17_trace: Array = []\n', 1)
-needle = '    var pts := CKit.bolt_pts(float(seed), a.x, a.y, b.x, b.y, rough, 3.0)\n'
+needle = 'func _bolt(fb: AFramebuffer, a: Vector2, b: Vector2, t: float, seed: int, width: float, k: float, rough: float, branch_count: int = 5) -> void:\n'
 assert s.count(needle) == 1
-s = s.replace(needle, '''    if OS.get_environment("AVFX_R17_TRACE") == "1":
+s = s.replace(needle, needle + '''    if OS.get_environment("AVFX_R17_TRACE") == "1":
         _r17_trace.append({"a": [a.x, a.y], "b": [b.x, b.y], "t": t, "seed": seed, "width": width, "k": k, "rough": rough, "branch_count": branch_count})
-''' + needle, 1)
+''', 1)
 needle = 'func render(fb: AFramebuffer, t: float) -> void:\n'
 assert s.count(needle) == 1
 s = s.replace(needle, needle + '    _r17_trace.clear()\n', 1)
@@ -25,11 +25,11 @@ p.write_text(s)
 p = a / 'a_volt_carousel_fusion.gd'
 s = p.read_text()
 s = s.replace('var include_bolts := true\n', 'var include_bolts := true\nvar _r17_trace: Array = []\n', 1)
-needle = '    var frame := floori(t * 28.0)\n'
+needle = '    if not include_bolts or k <= 0.01: return\n'
 assert s.count(needle) == 1
-s = s.replace(needle, '''    if OS.get_environment("AVFX_R17_TRACE") == "1":
+s = s.replace(needle, needle + '''    if OS.get_environment("AVFX_R17_TRACE") == "1":
         _r17_trace.append({"a": [x0, y0], "b": [x1, y1], "t": t, "seed": seed, "width": width, "k": k, "rough": chaos})
-''' + needle, 1)
+''', 1)
 needle = 'func render(fb: AFramebuffer, t: float) -> void:\n'
 assert s.count(needle) == 1
 s = s.replace(needle, needle + '    _r17_trace.clear()\n', 1)

@@ -35,6 +35,9 @@ var _active := false
 var _events: Array = []
 var _origin := Vector2.ZERO
 var _target := Vector2.ZERO
+# Optional explicit visual owner. Only #09 currently opts in; callers that
+# only have positions retain the old fixed-origin behavior. No combat authority.
+var _caster_ref: WeakRef
 var _rot := 0.0
 var _scale := 1.0
 
@@ -54,6 +57,18 @@ func _ensure() -> void:
     var img := Image.create(AFramebuffer.W, AFramebuffer.H, false, Image.FORMAT_RGBA8)
     _tex = ImageTexture.create_from_image(img)
     _sprite.texture = _tex
+
+func follow_caster(actor: Node2D) -> void:
+    _caster_ref = weakref(actor) if is_instance_valid(actor) else null
+
+func _sync_caster_origin() -> void:
+    if _caster_ref == null:
+        return
+    var actor := _caster_ref.get_ref() as Node2D
+    # The scene/combat owner owns cancellation on death/removal; do not guess
+    # its lifecycle or manufacture an actor when this weak reference expires.
+    if is_instance_valid(actor) and actor.is_inside_tree() and not actor.is_queued_for_deletion():
+        _origin = actor.global_position
 
 func begin(caster_world: Vector2, target_world: Vector2) -> void:
     _ensure()
@@ -100,6 +115,7 @@ func advance(dt: float, draw: bool = true) -> void:
         _acc -= STEP
         guard += 1
         _tick += 1
+        _sync_caster_origin()
         _spell.call("update", STEP, source_time())
         _fire_events()
         if source_time() >= duration:

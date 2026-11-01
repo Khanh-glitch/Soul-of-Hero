@@ -66,7 +66,7 @@ func _a_spell_dur(id: int) -> float:
         18: return ARedesignSpells2.ChronoshardR.DUR
     return 6.0
 
-func _a_cast(canonical_id: StringName, id: int, caster_world: Vector2, target_world: Vector2) -> bool:
+func _a_cast(canonical_id: StringName, id: int, caster_world: Vector2, target_world: Vector2, caster_actor: Node2D = null) -> bool:
     if not _A_SPELLS.has(id):
         return false
     var ap := ASourcePlayer.new()
@@ -82,6 +82,9 @@ func _a_cast(canonical_id: StringName, id: int, caster_world: Vector2, target_wo
     var spell_duration := _a_spell_dur(id)
     if world_pass_mode and id == 9:
         spell = AChainVerdictGraph.new()
+        # Optional live visual anchor supplied explicitly by the caller; no
+        # group lookup, combat inference, or change to positional callers.
+        ap.follow_caster(caster_actor)
     elif world_pass_mode and id == 11:
         # A's seeded rotor, sync and fragment lifecycle; C #09 bolt-tree
         # generator replaces A bridge/flash bolts. Still a fusion candidate.
@@ -105,12 +108,12 @@ func _a_cast(canonical_id: StringName, id: int, caster_world: Vector2, target_wo
     ap.begin(caster_world, target_world)
     return true
 
-func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: Vector2, facing: float = 1.0) -> bool:
+func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: Vector2, facing: float = 1.0, caster_actor: Node2D = null) -> bool:
     var id := Arcana20SOHRegistry_index(canonical_id)
     if id < 1:
         return false
     cancel_skill(canonical_id)
-    if not (world_pass_mode and (id == 5 or id == 16 or id == 20)) and _a_cast(canonical_id, id, caster_world, target_world):
+    if not (world_pass_mode and (id == 5 or id == 16 or id == 20)) and _a_cast(canonical_id, id, caster_world, target_world, caster_actor):
         return true
     if id == 5 and world_pass_mode:
         # Selected source roles, still experimental: A owns opening/peak;

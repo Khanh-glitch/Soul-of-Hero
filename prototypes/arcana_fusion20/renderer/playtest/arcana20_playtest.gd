@@ -161,7 +161,9 @@ func _cast_selected() -> void:
             return
         target = enemy.global_position
     var id := Arcana20SourceCatalog.canonical_id(selector.get_selected_id())
-    var ok := renderer.cast_skill(id, player.global_position, target)
+    # Explicit real caster reference lets the #09 source canvas follow the
+    # moving player; this remains a visual-only call, not a combat receipt.
+    var ok := renderer.cast_skill(id, player.global_position, target, 1.0, player)
     status.text = ("Đã thi triển " if ok else "Không thể thi triển ") + String(id) + " • chỉ hình ảnh"
 
 func _spawn_enemy() -> void:
