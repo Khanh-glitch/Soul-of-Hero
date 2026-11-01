@@ -32,6 +32,23 @@
 | **[CẦN ĐO]** | Có mặt hệ thống nhưng thông số phải đối chiếu nguồn và playtest | Tốc độ đói/khát, Spares per box, tầm quái, giá rương, trọng số điểm |
 | **[HỦY]** | Phương án đã bị quyết định mới thay thế | Nhà vĩnh viễn, máy ký gửi cố định, giữ Core xuyên mùa, PvP |
 
+### 0.1a. LUẬT TỰ DO — QUY TẮC ĐỌC VÀ GIAO VIỆC BẮT BUỘC
+
+**[CHỐT về diễn giải] SOH là sandbox PvE mở, không phải chuỗi 20 quest.** Năm tầng phải tách biệt: (1) **world law** — K1–K8 định nghĩa state/nhân quả/chi phí; (2) **conditional precondition** — điều kiện cho một hành động *được người chơi tự chọn*, không khóa các hành động khác; (3) **action affordance** — những việc có thể thử mà không cần quest marker; (4) **emergent gameplay** — chuỗi lựa chọn tự phát, có thể ngắt và đổi mục tiêu; (5) **journey observation** — tình huống QA để kiểm tra khả năng và cảm giác, **không phải progression**.
+
+| Định danh | Nghĩa duy nhất có thẩm quyền | Điều CẤM suy ra |
+| --- | --- | --- |
+| K1–K8 | Tám họ cơ chế/sở hữu trạng thái | Tám giao diện tính năng độc lập |
+| C01–C24 | Cạnh nhân quả chuẩn, chịu trách nhiệm nguồn–hậu quả | Quest hoặc checkpoint |
+| M01–M15 | Alias/hợp đồng mô tả cũ, tra C chuẩn ở §4.1 | Một bộ luật cạnh tranh với C |
+| J01–J20 (§II) | Các tình huống chứng minh khả năng sandbox và trải nghiệm | Bắt người chơi thực hiện, hoàn thành theo thứ tự |
+| LJ01–LJ20 | Hai mươi dòng J **cũ ở phụ lục tiếng Anh**, chỉ dùng migration | Đồng nghĩa tự động với J cùng số |
+| U1–U6, MAP-U* | Mã lịch sử/truy nguyên quyết định và tên bài kiểm Map | Engine/service/luật riêng mới hoặc ngoại lệ ngoài K/C |
+
+**CẤM** đưa `journey_Jxx_complete` thành prerequisite, đặt tutorial/quest cưỡng bức, tự động giao vật phẩm để dựng J, hoặc hardcode một tuyến duy nhất nhằm làm test xanh. Một người chơi được bỏ qua quest, Core, nhà, POI, rương, bảng điểm và Elder mà vẫn chơi theo các quy tắc còn có ý nghĩa. Việc chọn sử dụng một hệ cụ thể vẫn chịu chi phí/điều kiện nhân quả của nó: người không có Rương ký gửi không thể chuyển cash vào profile, nhưng không bị chặn chơi nội dung độc lập.
+
+**Tiêu chuẩn nghiệm thu:** proof theo input thật chứng minh *khả năng* phát sinh J; free-form deviation chứng minh người chơi có thể chọn khác mà thế giới vẫn nhất quán; human observation chứng minh trải nghiệm. Không yêu cầu một người hoàn thành đủ 20 J. Không cộng số J pass thành tiến trình cốt truyện. Không định nghĩa nút hay quest “về nhà trước khi thoát” chỉ vì J10 mô tả một tình huống hữu ích.
+
 ### 0.2. Những bất biến sản phẩm không được thay
 
 - **[CHỐT]** Offline-first, **solo** top-down pixel action-RPG sinh tồn; có **bảng xếp hạng online toàn cầu tùy chọn**. Không có PvP/clan raid bắt buộc, không bắt mạng để chơi bình thường. Male/Female Adventurer là hai nhân vật gốc được chọn đầu run; Knight cũ không là avatar chính.
@@ -46,6 +63,23 @@
 - **[CHỐT]** Bảng xếp hạng online lưu **thành tích từng run**, trọng tâm thành tựu lớn cuối 72 giờ và sáu Elder, vẫn ghi nhận các mục tiêu PvE không boss có giá trị. Score không chuyển thành tiền Ragnarok. **[CẦN THIẾT KẾ]** nguồn điểm cụ thể, trọng số, eligibility và lớp xác thực gian lận offline chưa được định lượng/triển khai. Không nói “đã an toàn” khi máy chủ chưa thể kiểm tra kết quả.
 
 ## I. TÁM HỌ MECHANICS GỐC — HỆ THỐNG TRẠNG THÁI, KHÔNG PHẢI TÁM TÍNH NĂNG
+
+### I.A. Bảng sở hữu state–action–event chuẩn cho K1–K8
+
+Mọi quyết định từng tên U1–U6 được diễn đạt bằng trạng thái và chuyển trạng thái ở đây, kết nối bằng C; nhãn U trong đoạn giải thích chỉ ghi **provenance**. Mỗi event phải có nguồn hợp lệ và được commit một lần; UI/VFX chỉ được thể hiện hậu quả thật, không tạo nguồn độc lập.
+
+| K / chủ quyền | State, hành động/điều kiện và chi phí | Event, persistence, hệ phối hợp | Dấu hiệu người chơi và chứng cứ |
+| --- | --- | --- | --- |
+| **K1 Item** | `definition/instance/owner/container`, charges/durability/quality; ACT_ON_TARGET/USE/DEPLOY/TRANSFER/TRANSFORM/EQUIP; kiểm quyền, target, tiêu vật thể đúng một lần | `debit/transfer/deploy/charge_commit`; custody run-local qua K8; C03–C05,C07,C10,C16–C18,C23; U3/U4/U6 | Cùng rìu dùng để đánh/chặt; item không clone khi cất/chết/reload, charge có hình ảnh đúng |
+| **K2 Environment** | Surface/topology, mưa/gió/nhiệt/ẩm, water/terrain/fire/trace medium; thời tiết tự tiến, world effects chỉ khi có nguồn/target đúng; bounded spread | `weather_tick/terrain_changed/decayed`; K8 lưu trạng thái, ảnh hưởng K3/K5/K7; C01,C05–C06,C08–C09,C13–C14,C24; U1/U2/U3 | Bùn khác nước, đường khó đi, dấu phai, lửa tác động đúng vật liệu; không shader giả luật |
+| **K3 Sources** | Source ID, stock, class, loot provenance, finite/respawn rule; khai thác khi action hợp lệ, debit nguồn, yield thật | `source_depleted/grant_once/recovered`; lưu run, K1/K4/K8 dùng chung; C01,C02,C04,C11,C14–C16,C24; U3/U4/U5 | Loot thật có thể mang, tiền Ragnarok cuối72 hữu hạn, reload không làm đầy lại |
+| **K4 Knowledge/work** | Recipe scope run, mẫu/Spares, bench, fuel, job queue, raw input/output; STUDY/CRAFT/PROCESS/REPAIR trả giá/công/tg thực | `learned_once/job_started/interrupted/completed`; K8 offline cùng event order; C02,C04,C06,C09,C12; U2/U6 | Công thức thay đổi giá trị vật phẩm; lò hết nhiên liệu dừng; không quà đăng nhập |
+| **K5 Actor/AI** | HP/status/hunger/carry/aim, creature habitat/perception/last-known-trace, death state; combat/move/cast/follow/lose target phải có hình học và nguồn | `hit/death/respawn/trace_detected/trace_lost`; K1 hao charges, K2 surface, K8 lưu; C03,C05,C08–C10,C19–C22; U1/U2/U3/U5 | Quái không GPS tới nhà/không raid vì POI, trace liên tục, bag độc nhất, telegraph Gold đúng |
+| **K6 Building/POI** | Build ownership, structure HP/roof/door/bed/box/turret, POI gate/power/access; BUILD/OPEN/REPAIR/DEPLOY tiêu K1, quyền và collision thật | `entity_placed/structure_changed/gate_opened`, K8 run-local; C06–C11,C16–C19,C22,C24; U1/U2/U4 | Nhà vào được, mái ẩn đúng, cửa bị phá hợp lệ, POI có lớp ngoài và đường rút |
+| **K7 Travel/freight** | Walk/cart/vehicle path, load, slope/bridge/water, fuel/repair/opportunity cost; MOVE/HAUL/TRANSFER vật lý, không teleport hàng | `route_traversed/cargo_moved/cost_paid`; K1 item+K2 world+K8 travel; C07,C13,C16,C18,C22,C24; U1/U4 | Vị trí nhà, xe và đường thực sự thay đổi kinh tế; có tuyến thay thế |
+| **K8 Time/ledger** | UTC 336h, Ragnarok cuối72h, run_id, deterministic event order, save, profile secured cash/achievements/history, score validation; ADVANCE/SETTLE/DEPOSIT/FINALIZE, atomic/unique | `event_committed/deposit_once/finalized_once`; lưu/catch-up online/offline; C06,C09,C14–C23; U1–U6 | Tắt app thế giới vẫn sống; full wipe đồ/recipe/Core/nhà, chỉ tiền đã gửi + achievement/history qua run; rank verified cần backend |
+
+**Mẫu event chung:** origin/source + authority + action/geometry + legal target/state + cost → atomic state delta/receipt → gameplay feedback/VFX → save/replay. Owner A0 quản lý giao dịch; A3 catalog/recipe/giá; Map A1 địa hình, A8 POI; Gameplay luật; AVFX Gold; A6 HUD; A7 phủ định. Không Agent nào được tự đổi luật product vì sở hữu code.
 
 ### K1. Vật phẩm, instance, quyền sở hữu, hành động và hao mòn
 
@@ -164,7 +198,7 @@
 
 ## II. CÁCH CÁC MECHANICS TẠO RA GAMEPLAY — 20 HÀNH TRÌNH NGƯỜI CHƠI
 
-> **Không đọc phần này như 20 tính năng cần xây.** Mỗi hành trình là một cuộc thử *người chơi tự quyết định*, đòi hỏi nhiều họ K hợp tác. Nếu một cơ chế có code và fixture PASS mà hành trình không thể diễn ra bằng nhập liệu thật từ New Game, hành trình chưa có trong game. Nếu hành trình có thể diễn ra nhưng người chơi không hiểu vì sao/không muốn làm lại, trải nghiệm chưa được nghiệm thu.
+> **J01–J20 là phép thử khả năng và trải nghiệm, KHÔNG phải 20 quest, stage, objective bắt buộc, hay tuyến progression.** Mỗi ví dụ mô tả *một cách có thể chơi*, không chỉ dẫn người chơi phải làm. Agent không được thêm flag/quest để cưỡng bức. Một tester có thể cố chứng minh một đường là khả thi từ New Game bằng input và nguồn thật, và phải thử cả hướng đi khác dự kiến; fixture pass không phải human acceptance.
 
 ### J01 — Buổi đầu với dao/công cụ, không ép Core, quest hay dungeon
 **Cơ chế cần nối:** K2 spawn và địa hình, K3 nguồn nước/thức ăn/gỗ/đá/thùng gần nhiều khu bắt đầu, K1 công cụ có khả năng đánh và khai thác, K5 tự vệ/đói/khát, K4 một số recipe nền, K6 chỗ đặt nhà, K7 tuyến về, K8 cấp nguồn quest không theo thứ tự. **Gameplay:** chọn đi ven đường đập thùng lấy Spares, rẽ cây/đá, chế công cụ, đối phó quái thường bằng dao rồi quyết định nơi dựng nhà hoặc đi khám phá tiếp; có thể không làm quest đầu nào. **Experience:** cảm giác “tay trắng nhưng vẫn làm chủ được”, nhiều điều nhỏ đáng tò mò; không có áp lực Core đầu tiên hoặc boss. **Điểm dễ lỗi:** nhiệm vụ đặt sẵn ép vào dungeon, công cụ chỉ đánh cây không đánh quái, spawn thiếu nước/gỗ, nút thu hoạch giả, đường loot không cho bất cứ giá trị có ích nào. **Map:** ít nhất bốn vùng spawn phân tán, mỗi vùng đủ vòng sinh tồn đầu và lựa chọn ven đường/ngoài đường. **Nghiệm thu:** người thử mới tự thực hiện 30–60 phút đầu (không dùng khoảng này làm canon balance), nêu được mục tiêu khác nhau sau khi tự quan sát.
@@ -265,6 +299,28 @@
 
 **Quy tắc xét thay đổi:** nếu một ý tưởng gameplay mới xuất hiện, tìm hành động trên **một trong K1–K8** và những cạnh M; chỉ thêm loại dữ liệu/capability/target mới khi đúng về vật lý. Không tạo hệ độc lập chỉ vì một khoảnh khắc có tên hấp dẫn. Nếu cần root thứ 9, phải chứng minh K1–K8 không thể diễn đạt logic đó và giá trị mang lại lớn hơn độ phức tạp.
 
+### 4.1. Đăng ký alias M01–M15 → C01–C24
+
+Bảng M01–M15 ở trên là **mô tả legacy chỉ để đối chiếu**, không còn thẩm quyền tạo luật song song. Từ đây **C01–C24 ở §11.3 là registry cạnh duy nhất**. Nếu M và C khác, đối chiếu K/[CHỐT], cập nhật C trước và M chỉ làm alias tham khảo. Khi owner nộp `Mxx PASS`, phải chỉ rõ C tương ứng và đúng SHA.
+
+| M legacy | C chính thức | Nghĩa/negative gate được bảo toàn |
+| --- | --- | --- |
+| M01 | C03,C05 | Hit tick/geometry; debit once, damage khác yield |
+| M02 | C07,C10,C16,C17,C23 | Custody duy nhất qua bag/kho/xe/wipe |
+| M03 | C04 | Study Spares/mẫu, learn once |
+| M04 | C01,C02,C04,C06 | Nguyên liệu có source, output có chức năng |
+| M05 | C01,C13,C24 | Multiple safe spawn, không softlock |
+| M06 | C08,C09 | Trace sensing/habitat, loss đúng |
+| M07 | C06,C09,C14 | Weather và forecast không toàn tri |
+| M08 | C07,C09,C17 | Deploy/debit và thu hồi station không clone |
+| M09 | C06,C09 | Fuel/job/interrupt/restart |
+| M10 | C11,C24 | POI key/power/hazard, route ra |
+| M11 | C08,C09 | Turret thật, không raid tự spawn |
+| M12 | C15,C16,C17,C18 | Cash source, first-chest không deadlock, atomic |
+| M13 | C22,C23 | Abandon/evac/expiry, finalize once |
+| M14 | C20,C21 | Score unique, online verified backend |
+| M15 | C05,C14,C19 | Gold source event và world material đúng |
+
 ## V. HỢP ĐỒNG CẤP ĐỊA LÝ CHO MAP TOWER — TRÍCH XUẤT TỪ GAMEPLAY, KHÔNG TỰ TẠO LUẬT
 
 ### 5.1. Những lớp dữ liệu thế giới bắt buộc
@@ -311,6 +367,12 @@
 `RagnarokRoute(chest_source_ids, vendor_id, arbitrary_owned_home_site, escrow_placement_receipt, deposit_path, optional_evac_path, elder_requirements=NONE for at least one route)`
 
 Các kiểu dữ liệu trên là **hợp đồng ngữ nghĩa**, không ép ngay tên class/file/schema chính xác; A0/A1/A3/A8 phải kiểm tra API hiện hữu trước khi lập migration. Map không được tự tạo loot reward số lượng để làm bản đồ qua gate.
+
+### 5.4. First-escrow: bất biến sản phẩm và ví dụ bootstrap khác nhau
+
+**[CHỐT — obligation]** Tiền Ragnarok là item có nguồn hữu hạn ở 72h cuối; không đánh Elder vẫn tồn tại ít nhất một chiến lược vật lý có thể lấy tiền, sở hữu hợp lệ Rương ký gửi tại nhà/lãnh địa, ký gửi số dương lần đầu với ví profile bằng 0. Cash-only xuyên run, tiền chưa ký gửi còn nguy cơ mất, ký gửi phải atomic, rương cần mua bằng tiền Ragnarok, không có bank cố định/miễn phí.
+
+**[ĐỀ XUẤT — implementation]** Người bán rương nhận *tiền Ragnarok vật lý chưa ký gửi* tại run đầu; người chơi đi lấy tiền→mua rương→đặt tại nhà hợp lệ→chở tiền còn lại hoặc chuyến sau về ký gửi. Giá, stock, seller, khoảng cách, quyền đất, số chuyến và khả năng route này tối ưu **chưa chốt**. C16/MAP-U4/B01 là các phép thử non-deadlock của điều kiện bắt buộc, không phải phê duyệt chi tiết seller route. Nếu route đề xuất thất bại balance, điều chỉnh trong [ĐỀ XUẤT]/[CẦN ĐO] mà không đổi luật cash-only/no-boss.
 
 ## VI. THÔNG SỐ: HỌC LAST ISLAND ĐÚNG PHẠM VI, TUNING SOH THEO MỐI QUAN HỆ
 
@@ -608,34 +670,51 @@ Each row is **one interface** between existing roots, not another feature. Owner
 | **C23 K1..K8** | Finalize exactly once → wipe run-owned everything; retain ONLY profile achievements, run history, secured cash | Try a new strategic build and aim further next season | No permanent recipe/stone/house/Core/quest or carry inventory; A0 |
 | **C24 K2+K3+K6+K7** | Real POI and resources have natural/industrial source classes, physical loading points and alternative routes | Island feels lived-in; road becomes a resource circuit, not paint | No biome color blobs with decorative POI pins; Map/A1/A8 |
 
-### 11.4. PLAYER JOURNEY MATRIX — gameplay AND feeling are distinct
+### 11.4. LEGACY JOURNEY CROSSWALK — CHỈ §II ĐƯỢC GỌI J01–J20
 
-For every journey: the *mechanical edges* are necessary conditions, **not sufficient proof** that the stated feeling actually occurs. Scene tests must include real player input and visual inspection.
+**Xung đột đã sửa:** Bảng tiếng Anh trước đây gán `J01–J20` cho 20 nội dung khác §II. Các dòng của bảng này từ nay có tên **LJ01–LJ20 (LEGACY)**; `Jxx` có thẩm quyền duy nhất từ §II. Hai tiền tố không thể được phép đồng nghĩa ngầm. Nếu PR cũ viết "J06" mà không có tên bài thử: kiểm nguồn/commit; J06 hiện hành là *chọn vị trí nhà PvE*, còn LJ06 là *valuable but poor net expedition*. Không replace toàn repo bằng số và không tự chấm PASS khi chưa phân giải.
 
-| Journey / allowed activity | Required edges | Sought gameplay and player experience | Map cannot omit / proof |
+| Dòng legacy | Tên cũ được bảo tồn | J chính thức (một-nhiều) | Nghĩa/tiêu chí cần migration |
 | --- | --- | --- | --- |
-| **J01 Early knife-first (D063)** | C01,C02,C03,C12,C13 | Find water/food, scavenge, cut wood, improvise defense, freely skip quest; **confidence and curiosity before any Core** | Several genuinely safe random starts with early roadside and offroad sources; count first actionable loot and optional choices |
-| **J02 Found rare Core/weapon** | C02,C03,C04,C05,C07 | Try instantly, keep using, store, possibly study: **surprise, self-directed tradeoff** | Physical rare-source routes and return path; tested cast+charge+storage, not forced "3 choices" popup |
-| **J03 First home/bed** | C01,C06,C07,C10,C13 | Pick location, build, store, prepare, recover from death; **ownership and a reason to return** | >=3 freely selected build-site classes not predetermined home pins; real freight and bed respawn |
-| **J04 First multi-layer nonboss POI** | C02,C04,C11,C12,C13 | Learn key/power/hazard condition, retreat, prepare, return; **intrigue, mastery** | Actual accessible perimeter, deeper rooms, service power and exit; no boss prerequisite |
-| **J05 Road vs offroad trip** | C01,C02,C13,C24 | Choose scrap circuit vs hidden resource source; **discovery without corridor railroading** | Road loot identity, offroad useful sources, different risk/carry route topology |
-| **J06 Valuable but poor net expedition** | C05,C07,C10,C13 | Bring much ordinary loot but burn durability/food or pass up Core; **strategic value judgment** | At least one costly and one alternative route; verify net yield after expenses |
-| **J07 Learning revalues old junk** | C02,C04,C06,C07 | Learn recipe that needs old stored materials; **delight and foresight** | Authenticated resource chain to home/stations; UI reverse-lookup for usable stock |
-| **J08 Build site strategy in PvE (U1)** | C07,C08,C09,C13 | Convenient busy road home vs secluded vs rock/bay with valid defenses; **earned safety and geographic strategy** | Monster habitation independent of base and route traces, multiple viable freight/build sites |
-| **J09 Pre-logout preparation (U2)** | C06,C08,C09,C10 | Inspect 24h forecast, fuel/seed/water, walls/turrets, known tracks, choose sleeping place; **control, anticipation and informed risk** | Regional climate matters, nearby ecologies and actual exposed house approaches; no omniscient threat score |
-| **J10 Return after offline** | C06,C08,C09,C14 | Get paid output or understand causal failure without login gifts; **homecoming surprise/relief** | Same real map and workstation states; native separate-process event-order equivalence |
-| **J11 Clever cross-use of equipment (U3)** | C01,C03,C05 | Use pickaxe for zombie, weapon/Gold on tree/stone at real cost; **agency and experimentation** | Targets with material/HP/source identities; if wildfire permitted, firebreak, wetness and recovery semantics |
-| **J12 Six Elder exploration** | C11,C13,C14,C19 | Visit sealed territories in normal period, develop and return on awakening; **awe and late mastery** | Six genuinely diverse physical approach regions with alternate routes, full source-compatible encounters |
-| **J13 Nonboss Ragnarok cash trip** | C10,C13,C15,C16 | Find late chest, carry vulnerable cash, detour, reach seller, buy escrow and return home; **stakes and satisfaction** | A physical final72 no-Elder chest→chest seller→home→escrow itinerary, possible rescue after death |
-| **J14 Multiple deposit trips** | C15,C16,C17,C22 | Secure some, travel again, later choose evac; **growing security without mandatory finish** | Repeated valid freight route and an optional independent physical evac approach |
-| **J15 Boss score vs nonboss achievement** | C15,C19,C20,C21,C22 | Choose superior-risk Elder score or meaningful finite nonboss achievement; **competition without forced boss** | Physical source-backed score objectives; no ordinary resource-farm point grind |
-| **J16 Six stones/capstone** | C19,C20,C22 | Earn differentiated 1..6 milestones, optional exceptional ritual ending; **extraordinary mastery** | All six sources accessible by legit traversal; stones cannot simply be narrative badges |
-| **J17 Legitimate independent evacuation** | C13,C15,C16,C22 | Prepare, physically leave, finalize after cash already secured; **earned conclusion** | Reachable independent evacuation, no all-boss-only choke |
-| **J18 Failure/new attempt** | C17,C18,C21,C23 | Lose all run-local equipment and house but retain legally deposited money, buy a better *option*, apply player knowledge; **hope and improvement** | New safe random spawn and a real available early vendor; source and time gates remain worthwhile |
-| **J19 Quiet 11-day life** | C01,C02,C06,C07,C08,C11,C12,C14 | Grow, research, salvage, farm, craft, know nearby sites without bosses; **a life worth living even without high rank** | Multiple overlapping value networks, meaningful safe habitats, visible calendar change |
-| **J20 Player attempts to break rules** | C03,C04,C07,C10,C15,C16,C17,C20,C23 | Tradeoff remains physical, anti-dupe invisible to ordinary player; **trust in the world** | Exact source IDs/owner action and separate-process replay; no hardcoded fake rewards |
+| **LJ01** | Early knife-first | J01 | Không Core/quest vẫn loot, craft/đánh thường |
+| **LJ02** | Found rare Core/weapon | J02,J03 | Dùng ngay hoặc cất/nghiên cứu tự do |
+| **LJ03** | First home/bed | J05,J12 | Chọn đất, bed/bag/return |
+| **LJ04** | First multi-layer nonboss POI | J08 | Ngoại vi có giá trị, khóa sâu, đường rút |
+| **LJ05** | Road vs offroad trip | J01,J07 | Đường có nguồn riêng, ngoài đường đáng khám phá |
+| **LJ06** | Valuable but poor net expedition | J07 | Net chi phí thật chuyến loot |
+| **LJ07** | Learning revalues old junk | J04,J09 | Recipe làm stock cũ hữu ích |
+| **LJ08** | Build site strategy in PvE | J05,J06 | Đất tùy chọn, rủi ro dấu chân |
+| **LJ09** | Pre-logout preparation | J10,J11 | Forecast, shelter, fuel tự nguyện |
+| **LJ10** | Return after offline | J11 | Sản xuất và biến cố offline thực |
+| **LJ11** | Clever cross-use equipment | J13 | Cuốc đánh quái, skill tác động môi trường có điều kiện |
+| **LJ12** | Six Elder exploration | J18 | Sáu vùng không khóa nhánh no-boss |
+| **LJ13** | Nonboss Ragnarok cash trip | J15,J16 | Tiền vật lý cuối72, vendor bootstrap proposed |
+| **LJ14** | Multiple deposit trips | J17 | Gửi nhiều lần/evac độc lập |
+| **LJ15** | Boss score vs nonboss achievement | J18,J19,J15 | Rank khác boss vẫn có nghĩa |
+| **LJ16** | Six stones/capstone | J18 | Mốc sáu đá tùy chọn |
+| **LJ17** | Legitimate independent evacuation | J15,J17 | Evac thật không auto-secure cash |
+| **LJ18** | Failure/new attempt | J20 | Full wipe và profile cash đúng |
+| **LJ19** | Quiet 11-day life | J01,J09,J11,J15 | Vườn, nghiên cứu, loot, nonboss |
+| **LJ20** | Player attempts to break rules | J20; QA-A01..QA-A09 | QA anti-dupe trải ngang, KHÔNG là quest |
 
-**Player-observable feedback is itself a bridge**: every expensive/risky input must cause readable visuals, a real physical effect and a discoverable outcome. Example: a scorched ground mark is cosmetic until K2 state actually prevents growth; a cast is fake unless K5 reports a valid hit; a bank receipt is false until profile credit and physical cash debit both commit. Human playtest must include free-form deviation, no scripted position writes.
+**Migration rule:** owner ghi `legacy_journey_id=LJxx` và `canonical_journey_ids` theo bảng, giữ mô tả test gốc và C IDs ở §11.3, không tạo game objective. Test cũ gọi `Jxx` được gắn đúng nghĩa theo đường dẫn/tiêu đề và ghi rõ referent trước khi nghiệm thu. LJ20 là adversarial QA, không đòi người chơi bình thường "phá luật".
+
+#### 11.4a. Canonical J → C chứng minh (KHÔNG chỉ lộ trình)
+
+| §II | Các C liên quan | §II | Các C liên quan |
+| --- | --- | --- | --- |
+| J01 | C01,C02,C05,C12,C24 | J11 | C06,C09,C14 |
+| J02 | C01,C02,C24 | J12 | C07,C10 |
+| J03 | C03,C05,C07 | J13 | C03,C05,C14 |
+| J04 | C02,C04,C06 | J14 | C07,C13,C24 |
+| J05 | C07,C09,C13,C24 | J15 | C15,C16,C22 |
+| J06 | C08,C09,C13 | J16 | C15,C16,C17 |
+| J07 | C07,C10,C13 | J17 | C17,C22 |
+| J08 | C11,C14,C24 | J18 | C19,C20 |
+| J09 | C04,C06,C09 | J19 | C20,C21 |
+| J10 | C08,C09 | J20 | C18,C22,C23 |
+
+**Phủ định:** người chơi có thể không bao giờ làm một J mà vẫn có run hợp lệ. QA chỉ chứng minh khả năng có thật, human playtest đo hành vi và cảm xúc, không yêu cầu completion 20/20. Các bài kiểm tra cũ `C01–C24` ở §11.3 đã giữ nguyên; mọi đặc điểm độc đáo từ bảng LJ được chuyển sang mô tả test ở đây.
 
 ### 11.5. MAP LEAD INTERFACE: geography as the final actuator, NEVER the gameplay author
 
