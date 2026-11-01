@@ -1,3 +1,4 @@
+# Recheck retained objects and textures after expanding #09's source raster.
 name: ARCANA20 matched real-route retention diagnostic
 on:
   workflow_dispatch:

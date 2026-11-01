@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [arena/c7b0c4e8-soul-of-hero]
-    # Re-run all real-world casts after the R17 chain window/rupture changes.
+    # Re-run all real-world casts after shared source-size and #09 expansion.
     paths:
       - '.github/workflows/arcana20-experimental-playtest.yml'
       - 'prototypes/arcana_fusion20/renderer/playtest/**'
