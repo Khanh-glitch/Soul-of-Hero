@@ -1,3 +1,4 @@
+# Center 1x detail on the original cast target, not its later AI position.
 name: ARCANA20 redesign moving-world phase review
 on:
   workflow_dispatch:
