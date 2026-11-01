@@ -166,6 +166,16 @@ class SporeNebulaR:
             fb.add_px(roundi(cap.x + width * offset), roundi(cap.y - height * (0.44 + 0.14 * (1.0 - absf(offset)))),
                 0.95, 0.58, 1.1, opacity * 0.8)
 
+    func _hypha_point(a: Vector2, b: Vector2, link: int, s: float) -> Vector2:
+        # Endpoints remain the authored colony anchors. A deterministic
+        # lateral meander avoids seven ruler-straight edges reading as a cage.
+        var axis := (b - a).normalized()
+        var normal := Vector2(-axis.y, axis.x)
+        var envelope := sin(s * PI)
+        var phase := AMath.hash2(float(link), 14.0) * TAU
+        var lateral := envelope * (9.0 * sin(s * PI + phase) + 4.0 * sin(s * 4.0 * PI + phase))
+        return a.lerp(b, s) + normal * lateral
+
     func render(fb: AFramebuffer, t: float) -> void:
         var fade := 1.0 - AMath.seg(t, 7.6, 8.6)
         # hyphal links grow colony-to-colony (causal propagation)
@@ -181,9 +191,7 @@ class SporeNebulaR:
             var pts: Array = []
             for k in range(13):
                 var s := u * float(k) / 12.0
-                var p: Vector2 = a.lerp(b, s)
-                p.y += sin(s * PI) * 5.0 + (AMath.hash2(float(k), float(i)) - 0.5) * 3.0
-                pts.append(p)
+                pts.append(_hypha_point(a, b, i, s))
             ADraw.ribbon(fb, pts,
                 func(s: float, _i: int) -> float: return 2.0,
                 func(s: float, _i: int, edge: float) -> Variant:
@@ -201,13 +209,12 @@ class SporeNebulaR:
                 var s := float(junction) / 6.0
                 var grow := AMath.cl01((u - s) * 6.0)
                 if grow <= 0.0: continue
-                var point: Vector2 = a.lerp(b, s)
-                point.y += sin(s * PI) * 5.0 + (AMath.hash2(floor(s * 12.0), float(i)) - 0.5) * 3.0
+                var point := _hypha_point(a, b, i, s)
                 var side := 1.0 if (junction + i) % 2 == 0 else -1.0
-                var reach := (7.0 + AMath.hash2(float(i * 19 + junction), 14.0) * 7.0) * grow
+                var reach := (12.0 + AMath.hash2(float(i * 19 + junction), 14.0) * 8.0) * grow
                 var bend := point + normal * side * reach * 0.55 + axis * reach * 0.2
                 var tip := point + normal * side * reach + axis * reach * 0.55
-                var hypha := AMath.R("bio", 0.52)
+                var hypha := AMath.R("bio", 0.65)
                 ADraw.line(fb, point.x, point.y, bend.x, bend.y, hypha, fade * 0.8)
                 ADraw.line(fb, bend.x, bend.y, tip.x, tip.y, hypha, fade * 0.8)
                 if grow > 0.45:
@@ -219,8 +226,7 @@ class SporeNebulaR:
             var pulse_end := 4.15 + (end - 1.2) * 0.35
             if t >= pulse_start and t < pulse_end:
                 var pu := AMath.seg(t, pulse_start, pulse_end)
-                var pp: Vector2 = a.lerp(b, pu)
-                pp.y += sin(pu * PI) * 5.0 + (AMath.hash2(floor(pu * 12.0), float(i)) - 0.5) * 3.0
+                var pp := _hypha_point(a, b, i, pu)
                 ADraw.disc(fb, pp.x, pp.y, 2.2, AMath.R("bio", 0.9), fade)
                 ADraw.glow(fb, pp.x, pp.y, 5.0, AMath.R("bio", 0.7), fade * 0.6)
         for i in range(_colonies.size()):

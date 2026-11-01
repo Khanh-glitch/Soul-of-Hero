@@ -13,6 +13,16 @@ func _initialize() -> void:
     for item in candidates:
         var spell: Variant = item.spell
         spell.setup()
+        if int(item.id) == 14:
+            # Every meandering link still starts/ends at its real colony
+            # anchors; the growth path and moving pulse use this same curve.
+            for i in range(spell._links.size()):
+                var a: Vector2 = spell._colonies[int(spell._links[i][0])]
+                var b: Vector2 = spell._colonies[int(spell._links[i][1])]
+                if not spell._hypha_point(a, b, i, 0.0).is_equal_approx(a) or not spell._hypha_point(a, b, i, 1.0).is_equal_approx(b):
+                    push_error("REDESIGN_SMOKE_FAIL #14 hypha anchor")
+                    quit(1)
+                    return
         if int(item.id) == 18:
             # Verify capture order represents progressively later moments and
             # reverse release actually converges together; not art approval.

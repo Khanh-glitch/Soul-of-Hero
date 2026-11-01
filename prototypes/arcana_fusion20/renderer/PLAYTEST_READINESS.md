@@ -5,9 +5,99 @@ Gold approval or production merge. This is the concise current ledger; the
 [world integration evidence](OVERWORLD_INTEGRATION_STATUS.md) contains detailed
 historical methods, caveats and source-comparison references.
 
-## Experimental downloadable build
+## R17 status and experimental build
 
-**Newest experimental visual-preview candidate:**
+**NOT PLAYTEST_READY.** The newest downloadable, visual-only build is
+[Windows x64 + Linux x64 artifact 13081952294](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41302097336/artifacts/13081952294),
+source `1241c8837ee42353991cd2813e73666547acf84f`.
+[Run 41302097336](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41302097336)
+passed Linux real-route motion for [#14](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41302097336/artifacts/13082021268)
+and [#18](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41302097336/artifacts/13082101707)
+and Windows **headless** smoke. It is available for early feedback, not a
+creator-approved build or a Windows GPU/display test. Its #11 is still an
+unreadable white cloud at peak; #14's thin added hyphae remain unapproved and
+the network still reads as a lattice in normal/dim native snapshots. No
+genuine CT combat receipts are mounted.
+The prior f58 build remains [available](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41301527667/artifacts/13081262251),
+source `328d63336ae6705661f55b03271064c21bd642b7`.
+
+The export uses A0 `04eacf62f1a3740a57e08691c3a9006d454aaa2c`, A6
+`6b801554a6af95424b4e39dd29f43c146aa13848`, CT/PR30 files
+`e505173edd119fdd955cf6249511b575a5468440`, A1 contract files
+`2cb1a3c5f093724eb9fecbdf45909ccb611f7b32`, A3 contract files
+`18e7afcbd576bbd9bfbcc509b2ee13216186a522`; A8 and the copied CT/R4
+bridge are **not mounted**. The artifact contains the exact join manifest.
+
+### R17 lightning review and remaining evidence
+
+- #09's A graph now receives the live caster reference, fixing the measured
+  85.443-world-unit origin detachment in the earlier capture. B-like two-color
+  palette and C branching are candidates, not full original B/C parity.
+- #11 full-five-branch `d310436`, scaled `0ebc44b`, original-A-width `f58c2a8`
+  and C-length-density `1039869` were rejected as visual closures. Native 1×
+  tick 327 normal/dim [41301954960](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41301954960)
+  shows the density candidate still white/cloudlike, worse than baseline. It
+  distributes C's branches proportionally across A's many short connectors;
+  this is a disclosed adaptation, not exact C/full-spell parity. Earlier f58
+  native review is [41301516790](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41301516790).
+- Actual moving-world source-clock-retimed before/after videos, baseline vs
+  1039869: [#09 normal](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41301955052/artifacts/13081387454),
+  [#09 dim](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41301955052/artifacts/13082155888),
+  [#11 normal](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41301955052/artifacts/13081143080),
+  [#11 dim](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41301955052/artifacts/13081417326).
+  Actors and cameras are independent between runs; the last observed source
+  tick can lag presentation, so these are not presentation-fenced.
+- [41301639958](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41301639958)
+  has four genuine world captures and per-recorded-frame 2× comparisons of one
+  selected original C channel, adapted native channel, actual palette/intensity
+  native channel, and 1× world. It is not a full Gold fusion, C post/bloom or
+  same-frame world-linear comparison; skipped frames are not invented.
+- A diagnostic-only, same-state source-field decomposition
+  [41302275137](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41302275137)
+  rerenders the rotor without connectors **only for measurement**, never as a
+  displayed candidate. At tick 327 the original displayed fusion source field
+  has RGB sums 49160/54295/67866; the rotor-only field is 5451/6343/8803,
+  while the connector contribution is 43709/47953/59063, with 215 connector
+  calls. Source maxima are 70.15/75.07/81.35 versus 8.91/10.03/12.31 without
+  connectors. Unmodified original A #11 at that same tick has RGB sums
+  51207/56676/70359 and maxima 72.49/79.42/95.44 in
+  [41303344936](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41303344936).
+  Thus accumulation is not merely extra branches, and the raw A source is
+  brighter, not dimmer, at this point; arbitrary energy suppression would not
+  establish source fidelity. None of these numbers is world-HDR, tonemap,
+  depth, display-contrast or original full A+C Gold validation.
+
+### R17 moving-world review and retention
+
+[41302035437](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41302035437)
+contains actual full-cast videos plus four native-scale phase details for
+#01/#05/#16/#20 in normal and dim and #14/#18 in dim (source `328d633`).
+Inspection of samples shows #20's rift and #16's flower, but does not prove
+source or actor parity; #05's pale facets and #18's tiny stored marks need
+motion/meaning review. #14's caps/spores are recognizable but its links look
+like a geometric lattice. `2e0cb33` adds progressive side hyphae, but
+native 1× details in [normal](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41303282363)
+and [dim](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41303282388)
+still read as a lattice; those additions are not a visual closure. A further
+meandering-link experiment is unreviewed. #18's sequence remains weak as
+capture/suspension/release, with no real combat receipts.
+
+[41302085450](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41302085450)
+compared fresh no-FX/FX processes on the real route, seven static Skeletons,
+three start/cancels per round and a Home→overworld reload, for #09/#11/#14.
+The [counter review](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41303222785)
+found incremental per-round node/resource/texture/video-memory deltas of zero;
+object delta +1 in both rounds. Incremental static bytes round 1/2 were
+38121/5456 (#09), 51885/5456 (#11), 51861/5456 (#14). Cast WeakRefs cleared
+on every cancel and old world/renderer WeakRefs cleared on scene change. These
+are sampled engine counters including cache variation, not allocation tracing,
+full natural-cast stress, a no-leak proof, or hardware GPU measurements.
+Two earlier harness runs failed due lazy script typing and collection path,
+not test failures hidden as passes.
+
+### Earlier downloadable builds
+
+**Earlier experimental visual-preview candidate:**
 [Windows x64 + Linux x64 artifact 13080001982](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297739439/artifacts/13080001982),
 source `b33e2da349daa066ebf8867a0c2319b7ab49c7a0`.
 [Run 41297739439](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297739439)
@@ -429,12 +519,12 @@ combat.
 | 06 | NEW | A ribbon/foam adaptation, glyph and wave; C physical writing and full motion remain incomplete. |
 | 07 | C | C source and local ice effects; world/actor ordering, post and full parity open. |
 | 08 | B | B vortex source; real-world depth, pull authority and OUT open. |
-| 09 | A+B+C | A actor graph, B-like two-color palette, C bolt-tree; original B/C raster/complete timing not evidenced. |
+| 09 | A+B+C | A graph follows explicit live caster/targets; B-like two-color and C branching are partial candidates, full source/world contrast and contact binding remain open. |
 | 10 | C | C source; viewport-aligned stage fix, overlap/cancel tested; actor/post ordering and natural targets open. |
-| 11 | A+C09 | A rotor + C bolt tree; original C raster, live connectors and full fusion review open. |
+| 11 | A+C09 | A rotor + adapted C09 channels follow source connectors; tick-327 native output remains an overexposed cloud; full fusion/world contrast open. |
 | 12 | NEW | Glyph + actual C bolt geometry via A raster; complete C craft, rhythm and visual quality open. |
 | 13 | NEW | Target-root choreography with thicker barbs; selected snap still wire-like at gameplay scale. |
-| 14 | NEW | Fungal growth/propagation with two new candidate architectures; visual motion, spores and actor status open. |
+| 14 | NEW | Caps/spores and propagating network are visible; older links read as a lattice, new hyphal-fork candidate requires full-motion normal/dim review and actor status. |
 | 15 | C | C thorn source with local shade; full world/actor/post parity open. |
 | 16 | A+C | A growth, selected C organism/material/debris; complete C environment and fusion/OUT parity open. |
 | 17 | C | C stage blackout/light; overlapping post/cancel tested, actor/source ordering open. |
