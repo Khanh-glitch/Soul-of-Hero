@@ -118,8 +118,9 @@ and [PR30](https://github.com/Khanh-glitch/Soul-of-Hero/pull/30#issuecomment-655
 - Lossy 384×216 full-viewport previews from the actual e552/A0 `619b43b`
   normal/dim sweep ([41270259664](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41270259664),
   review surfaces [41271994180](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41271994180))
-  were inspected so far for normal #01–06 and #11–15, dim #01–10 and
-  #16–20. These are **not** native-resolution approval images. At the catalog
+  were inspected for all 20 catalog-peak frames in both normal and dimmed
+  lighting; the review surface run completed. These are **not** native-resolution
+  approval images, source-reference matches, or continuous motion. At the catalog
   peak #04 looks almost absent, #09 is nearly absent in dim, and #16 is sparse
   in dim. They are not valid full-cast conclusions: current authored candidate
   #04 cut is at 3.4s versus the 4.25s catalog sample, #09 verdict at 5.0s
