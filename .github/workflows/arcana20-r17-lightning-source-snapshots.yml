@@ -28,5 +28,11 @@ jobs:
           name: ${{ matrix.artifact }}
           path: ${{ runner.temp }}/capture
       - run: python3 -m pip install pillow numpy
-      - name: Source snapshot diagnostics, not Gold or world parity
-        run: python3 tools/arcana20_source_compare/surface_full_lightning_sources.py "$RUNNER_TEMP/capture" ${{ matrix.skill }}
+      - name: Source opening, not Gold or world parity
+        run: python3 tools/arcana20_source_compare/surface_full_lightning_sources.py "$RUNNER_TEMP/capture" ${{ matrix.skill }} 90
+      - name: Source development, not Gold or world parity
+        run: python3 tools/arcana20_source_compare/surface_full_lightning_sources.py "$RUNNER_TEMP/capture" ${{ matrix.skill }} 180
+      - name: Source early peak, not Gold or world parity
+        run: python3 tools/arcana20_source_compare/surface_full_lightning_sources.py "$RUNNER_TEMP/capture" ${{ matrix.skill }} 247
+      - name: Source late peak, not Gold or world parity
+        run: python3 tools/arcana20_source_compare/surface_full_lightning_sources.py "$RUNNER_TEMP/capture" ${{ matrix.skill }} 327

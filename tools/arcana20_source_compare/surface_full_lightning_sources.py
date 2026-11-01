@@ -14,7 +14,7 @@ else: refs={i:f for i,f in enumerate(frames) if 'r17_full_source_field' in f}
 def image(path,w,h,n):
     arr=np.maximum(np.fromfile(path,'<f4').reshape(h,w,n)[:,:,:3],0); arr=np.rint(arr/(1+arr)*255).astype('uint8')
     return Image.fromarray(arr,'RGB').resize((416,234),Image.Resampling.NEAREST)
-for target in (90,180,247,327):
+for target in (int(sys.argv[3]),):
     i=min(refs,key=lambda i:abs(frames[i]['r17_source_tick']-target)); f=frames[i]; t=f['r17_source_tick']
     if skill==9: original=image(root/f'r17_full_{i:05d}.c.light32f',384,216,4); label='Original C light (separate pass, no post)'
     else: original=image(root/f'a11_original_{t}.rgb32f',416,234,3); label='Original A full rotor source (no post)'

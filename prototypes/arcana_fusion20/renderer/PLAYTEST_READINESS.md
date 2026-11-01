@@ -67,6 +67,14 @@ bridge are **not mounted**. The artifact contains the exact join manifest.
   source base and no C browser post mean this is **not Gold or world parity**.
   The world is not modified or composited with synthetic imagery; source panels
   are 2×, world 1×, and no interpolated world frames are invented.
+- Full original A #11 rotor source versus full native A+C source and actual
+  world at 54 recorded ticks: [normal](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41305186204/artifacts/13082792010)
+  and [dim](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41305186204/artifacts/13083426541).
+  Original A is the full unmodified source role, not a completed Gold A+C
+  composite; its reference uses empty base/trail and excludes lab/post. Source
+  HDR panels use the same disclosed x/(1+x) preview at 2×, native coverage is
+  separate, world is unmodified 1×. Ticks may lag presentation and world HDR
+  is not available. Original C remains a separately measured channel.
 - A diagnostic-only, same-state source-field decomposition
   [41302275137](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41302275137)
   rerenders the rotor without connectors **only for measurement**, never as a
@@ -105,18 +113,23 @@ clipping/order runtime checks passed in 41304136832. Normal/dim 1× snapshots
 [41304404181](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41304404181)
 and [41304404342](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41304404342)
 still do not make stored events clear. `63bada3` tests small released projectile
-heads traveling ahead of the shards toward a common impact; it is a visual-only
-unreviewed candidate, not B raster/post parity or a genuine combat capture.
+heads traveling ahead of the shards toward a common impact. In the selected
+[normal](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41305298174)
+and [dim](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41305298106)
+release phases the small pale heads do move toward the center, but the stored
+actions remain hard to identify at world scale. This is a visual-only candidate,
+not B raster/post parity, a genuine combat capture or creator approval.
 
 The remaining four redesigns have real full-cast videos and native-scale phase
 samples in [normal](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41303590845)
 and [dim](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41303590819).
 #04's older full-viewport blade [41304356189](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41304356189)
 reads as a dark rectangular slab. `b6504d3` tapers the same single covered
-blade to a point without glow camouflage; structural/world probe 41304554325
-passed but full moving-world visual review remains open. #06's broad translucent
-ribbons need motion/meaning review; #12's sampled glyph is partly outside the
-detail region.
+blade to a point without glow camouflage; full-viewport review
+[41305323215](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41305323215)
+still looked slab-like. A narrower, longer-taper single blade is being tested;
+it remains unapproved. #06's broad translucent ribbons need motion/meaning
+review; #12's sampled glyph is partly outside the detail region.
 #13's previous roots read as oversized straight black/green wires. `aa02f0b`
 grows toward the contact anchors with shorter child branches. In the native
 normal/dim samples [41304147187](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41304147187)
@@ -160,7 +173,9 @@ and [#18](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297739439/
 The C lightning raster is included; all-20 moving-world lifecycle/capture jobs
 including #09/#11 passed in [41297739352](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297739352),
 with three real enemies per spell (seven for #09), natural finish, restart/
-cancel and unchanged enemy HP. These are not complete visual review, genuine
+cancel and unchanged enemy HP. Current pre-narrowing R17 candidates also
+passed the all-20 suite [41305402482](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41305402482),
+source `ffecce687e146d20088560ffffd0ebc8b3ed4a18`. These are not complete visual review, genuine
 combat receipts or source/post/actor-depth parity.
 The build is visual-only, not a confirmed combat or Windows GPU test, and
 **NOT PLAYTEST_READY**. All 20 remain `VISUAL_NOT_VERIFIED`.
