@@ -601,6 +601,62 @@ func _ready_label(label: Label, target: String) -> bool:
 	return text.begins_with(target.to_lower()) and text.contains("ready")
 
 
+## A finished job's Collect control, found the way a player finds it.
+##
+## The list is a snapshot: it is built when the panel opens and it is not rebuilt
+## when a job finishes underneath it, so a panel left open shows the old "Cancel"
+## text. The gate therefore closes and reopens before looking — and if the control
+## is still absent it prints every row, so the next run is a diagnosis rather than a
+## second guess. Matching is on the row's own words and the job's own status, not on
+## a fixed node name, because node names are the panel's business.
+func _find_collect(panel: Node, target_words: String) -> Button:
+	for attempt: int in range(3):
+		if attempt > 0:
+			await _close_panel(panel)
+			await process_frame
+		await _open_panel(panel)
+		await process_frame
+		await process_frame
+		var found := _collect_for(panel, target_words)
+		if found != null:
+			if attempt > 0:
+				print("A0_CONNECTED_COLLECT target=%s after_reopen=%d row=%s" % [
+					target_words, attempt, String(found.name)])
+			return found
+		print("A0_CONNECTED_ROWS missing=%s attempt=%d open=%s rows=%s" % [
+			target_words, attempt, str(bool(panel.call(&"is_open"))), _rows_summary(panel)])
+	return null
+
+
+func _collect_for(panel: Node, target_words: String) -> Button:
+	for value: Node in panel.find_children("*", "Button", true, false):
+		var candidate := value as Button
+		if candidate == null or not is_instance_valid(candidate):
+			continue
+		if candidate.text.strip_edges().to_lower() != "collect":
+			continue
+		var label := _row_label(candidate.get_parent())
+		if label == null:
+			continue
+		var text := label.text.to_lower()
+		if text.contains(target_words.to_lower()) and text.contains("ready"):
+			return candidate
+	return null
+
+
+func _rows_summary(panel: Node) -> String:
+	var rows: Array[String] = []
+	for value: Node in panel.find_children("*", "Label", true, false):
+		var label := value as Label
+		if label == null:
+			continue
+		var text := label.text.replace("\n", " ").strip_edges()
+		if text.is_empty():
+			continue
+		rows.append(text.substr(0, 40))
+	return " | ".join(rows.slice(0, 8))
+
+
 func _owning_scroll(control: Control) -> ScrollContainer:
 	var ancestor := control.get_parent() if control != null else null
 	while ancestor != null:
@@ -829,11 +885,7 @@ func _body() -> void:
 		_stop("wait_kit_ready")
 		return
 	await _open_panel(panel)
-	var collect_button: Button = null
-	for value: Node in panel.find_children("*", "Button", true, false):
-		if (value as Button).text.to_lower() == "collect":
-			collect_button = value as Button
-			break
+	var collect_button := await _find_collect(panel, "workbench kit")
 	var scroll := _owning_scroll(collect_button)
 	_stage_at("kit_collect_control")
 	_expect(collect_button != null and scroll != null, "completed escrow exposes a GUI collect control inside its scroll owner")
@@ -949,14 +1001,7 @@ func _body() -> void:
 	if String(weave_job.get("status", "")) != "ready":
 		_stop("wait_weave_ready")
 		return
-	await _open_panel(panel)
-	var output_button: Button = null
-	for value: Node in panel.find_children("*", "Button", true, false):
-		var candidate := value as Button
-		var label := _row_label(candidate.get_parent())
-		if candidate.text.to_lower() == "collect" and label != null and _ready_label(label, "weave cloth"):
-			output_button = candidate
-			break
+	var output_button := await _find_collect(panel, "weave cloth")
 	var output_scroll := _owning_scroll(output_button)
 	_stage_at("cloth_collect_control")
 	_expect(output_button != null and output_scroll != null, "produced cloth exposes a GUI collection control inside its scroll owner")

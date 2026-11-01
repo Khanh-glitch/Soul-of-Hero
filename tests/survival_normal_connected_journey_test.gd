@@ -204,7 +204,7 @@ func _continuation(ow: Node) -> void:
 		_write_audit(ow, {})
 		return
 	await _open_panel(panel)
-	var kit_collect := _collect_button("furnace kit")
+	var kit_collect := await _find_collect(panel, "furnace kit")
 	_expect(kit_collect != null, "the finished furnace kit exposes a Collect control")
 	if kit_collect == null:
 		_conn_halt("kit_collect_control")
@@ -291,7 +291,7 @@ func _continuation(ow: Node) -> void:
 		_write_audit(ow, {})
 		return
 	await _open_panel(panel)
-	var charcoal_collect := _collect_button("burn charcoal")
+	var charcoal_collect := await _find_collect(panel, "burn charcoal")
 	_expect(charcoal_collect != null,
 		"the burned charcoal exposes a Collect control (%s)" % _job_rows(panel))
 	if charcoal_collect == null:
@@ -408,7 +408,7 @@ func _verify_body() -> void:
 		return
 	# Collecting is the player's act, through the visible panel.
 	await _open_panel(panel)
-	var collect := _collect_button("smelt iron")
+	var collect := await _find_collect(panel, "smelt iron")
 	_expect(collect != null, "the settled smelt exposes a Collect control")
 	if collect == null:
 		return
@@ -618,16 +618,12 @@ func _button_names(panel: Node) -> Array[String]:
 	return out
 
 
+## Superseded by the inherited `_find_collect(panel, words)`, which reopens the list
+## (it is a snapshot) and matches on the row's words and the job's status instead of
+## a fixed node name. Kept as a named alias so an older call site cannot silently
+## go back to the font/label-dependent lookup.
 func _collect_button(label_prefix: String) -> Button:
-	var panel: Node = _host.get_child(0).get(&"economy_panel")
-	for value: Node in panel.find_children("*", "Button", true, false):
-		var candidate := value as Button
-		if candidate == null or candidate.text.to_lower() != "collect":
-			continue
-		var label := _row_label(candidate.get_parent())
-		if label != null and label.text.to_lower().begins_with(label_prefix.to_lower()):
-			return candidate
-	return null
+	return _collect_for(_host.get_child(0).get(&"economy_panel"), label_prefix)
 
 
 func _place_piece(ow: Node, hero: CharacterBody2D, nav: OverworldTraversability, camera: Camera2D,
