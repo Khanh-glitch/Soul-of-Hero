@@ -1,0 +1,35 @@
+name: ARCANA20 C17 blackout and C10 motion review
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-c17-motion-review.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcana20-current-overworld-join-diagnostic
+          run-id: 41270661198
+          github-token: ${{ github.token }}
+          path: join
+      - run: python3 -m pip install --quiet pillow
+      - name: Surface C17 authored blackout in actual world
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py join c17_stage_blackout_actual_world
+      - name: Surface C17 diagnostic without global blackout
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py join c17_stage_blackout_disabled_diagnostic
+      - name: Surface C10 overlap at actual impact
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py join c10_impact_overlapping_02
+      - name: Surface C10 with moved camera and actors
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py join c10_impact_camera_and_actors_moved
+      - name: Surface same moved world without cast
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py join c10_moved_no_cast_reference
+      - name: Surface blackout and motion assertions
+        run: |
+          find join -name join.log -exec grep -E 'JOIN_(OK|FAIL).*(C17|C10|overlap cancellation|seed tail)' {} \; | sed 's/^/::notice title=C17_C10_JOIN::/'
