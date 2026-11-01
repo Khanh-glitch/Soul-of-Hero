@@ -13,12 +13,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - skill: 14
-            center_x: 950
-            center_y: 410
-          - skill: 18
+          - skill: 9
             center_x: 830
-            center_y: 410
+            center_y: 470
+          - skill: 11
+            center_x: 875
+            center_y: 460
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -26,7 +26,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: live-motion-${{ matrix.skill }}-normal
-          run-id: 41297074032
+          run-id: 41297739352
           github-token: ${{ github.token }}
           path: live
       - name: Install review dependencies
