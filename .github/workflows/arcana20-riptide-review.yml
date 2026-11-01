@@ -1,0 +1,30 @@
+name: ARCANA20 Riptide Calligraphy event review
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-riptide-review.yml']
+permissions:
+  actions: read
+  contents: read
+jobs:
+  surface:
+    strategy:
+      fail-fast: false
+      matrix:
+        lighting: [normal, dimmed]
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcana20-current-phase-sweep-6-${{ matrix.lighting }}
+          run-id: 41277778652
+          github-token: ${{ github.token }}
+          path: phases
+      - run: python3 -m pip install --quiet pillow
+      - name: Surface first written stroke
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py phases phase_06_candidate_A_stroke_tip_contact_00_tick120
+      - name: Surface wave release
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py phases phase_06_candidate_A_wave_release_impact_03_tick276
