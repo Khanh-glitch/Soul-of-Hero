@@ -59,7 +59,7 @@ integration; post, depth and source comparisons must all be tested separately.
 | 10 C | C Thunderloom | Authored full-stage shade/scanlines route to a viewport-aligned consumer; local cloud/shade/bolt remain local. Depth and multiple global-effect ordering remain approximations. |
 | 17 C | C Event Horizon | Authored whole-stage blackout and subsequent source light use a viewport consumer; target light is very small at gameplay scale. Overlap and full temporal/source ordering still need review. |
 | 19 D (+ A combat selection) | D | D geometry/warp diagnostics and separately authored OUT exist; original scene bloom/post, depth and full-source fidelity remain unresolved. A combat receipt ownership remains external. |
-| 04 A+C, 06 A+C, 12 A+C09, 13 B+C, 14 A+B+C, 18 B | redesign studies | `REDESIGN_CANDIDATE` only; physical causality, all world layers and creator review remain open. Source study routing is not creator approval. |
+| 04 A+C, 06 A+C, 12 A+C09, 13 B+C, 14 A+B+C, 18 B | catalog study inspirations | The current `arcana20_renderer.gd` mounts A-buffer authored candidate classes for all six, **not** all of the catalog's referenced B/C source parts. `REDESIGN_CANDIDATE` only; causal fidelity, all world layers and creator review remain open. Source-study inspirations are not creator approval. |
 
 The current mount uses ordered canvas copies and independent per-cast viewers;
 #10 stage shade runs before actors/HUD, while #17 blackout is viewport-wide.
