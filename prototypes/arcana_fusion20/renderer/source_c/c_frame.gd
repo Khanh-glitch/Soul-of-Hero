@@ -84,11 +84,11 @@ func clear() -> void:
         live_light_buckets.clear()
     ink.fill(0.0)
     light.fill(0.0)
-    for i in range(0, N * 4, 4):
-        disp[i] = 0.0
-        disp[i + 1] = 0.0
-        disp[i + 2] = 1.0
-        disp[i + 3] = 0.0
+    # Neutral displacement is (0, 0, 1, 0). Bulk-clear in native code,
+    # then write only the shade channel; do not alias a reusable packed array.
+    disp.fill(0.0)
+    for i in range(2, N * 4, 4):
+        disp[i] = 1.0
 
 func L(x: float, y: float, r: float, g: float, b: float) -> void:
     var xi := int(x)

@@ -10,6 +10,7 @@ on:
       - 'prototypes/arcana_fusion20/renderer/source_c/c_event_horizon.gd'
       - 'prototypes/arcana_fusion20/renderer/c17_stage_blackout_test.gd'
       - 'prototypes/arcana_fusion20/renderer/c10_stage_transport_test.gd'
+      - 'prototypes/arcana_fusion20/renderer/c_frame_clear_test.gd'
 permissions:
   contents: read
 jobs:
@@ -24,6 +25,15 @@ jobs:
           use-dotnet: false
           include-templates: false
       - run: godot --headless --path . --import > import.log 2>&1 && ! grep -Eq 'SCRIPT ERROR:|Parse Error:' import.log
+      - name: Verify and measure exact neutral displacement reset
+        run: |
+          set -o pipefail
+          timeout 600s godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/c_frame_clear_test.gd 2>&1 | tee clear.log
+          grep -Fq 'C_FRAME_CLEAR_PASS' clear.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' clear.log
+      - name: Report reset measurement
+        if: always()
+        run: grep -E 'C_FRAME_CLEAR_|ERROR|Parse Error' clear.log | sed 's/^/::notice title=C_FRAME_CLEAR::/' || true
       - name: Compare original source with staged transport
         run: |
           set -o pipefail
@@ -50,3 +60,4 @@ jobs:
             import.log
             test.log
             blackout.log
+            clear.log
