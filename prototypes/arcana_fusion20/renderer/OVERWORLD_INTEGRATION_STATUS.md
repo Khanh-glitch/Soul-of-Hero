@@ -1,5 +1,7 @@
 # ARCANA20 real-overworld integration status — diagnostic, not acceptance
 
+Current concise build/source-role ledger: [PLAYTEST_READINESS.md](PLAYTEST_READINESS.md).
+
 This is a current-world overlay on `ACCEPTANCE_MATRIX.md`, not a replacement for
 original-source comparison or the creator's approvals. All 20 remain active;
 all are `VISUAL_NOT_VERIFIED`, and `OWNER_VISUAL_APPROVED = 0`.
