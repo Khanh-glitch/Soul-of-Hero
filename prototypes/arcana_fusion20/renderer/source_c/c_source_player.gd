@@ -49,6 +49,8 @@ var _origin := Vector2.ZERO
 # Kept separately because a selected source layer may align its visual basis
 # to a sibling without changing the actual SOH caster metadata.
 var _cast_caster := Vector2.ZERO
+# Optional real actor, only used by Thorn Opera's source-caster attachment.
+var _live_caster_actor: Node2D
 var _target := Vector2.ZERO
 var _rot := 0.0
 var _scale := 1.0
@@ -87,6 +89,9 @@ func _ensure_sprite() -> void:
     additive.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
     _light_sprite.material = additive
     add_child(_light_sprite)
+
+func follow_caster(actor: Node2D) -> void:
+    _live_caster_actor = actor
 
 func begin(caster_world: Vector2, target_world: Vector2, kind: String) -> void:
     _ensure_sprite()
@@ -140,6 +145,11 @@ func begin(caster_world: Vector2, target_world: Vector2, kind: String) -> void:
         _origin = target_world - source_axis * _scale
     _cast_caster = caster_world
     _target = target_world
+    if _kind == "thorn":
+        # Ground choreography still faces the cast bearing, while source z
+        # (petal height) maps to world-up rather than rotating with it.
+        (_fx as CThornOpera).particle_height_axis = Vector2.UP.rotated(-_rot)
+        _sync_thorn_caster()
     _frame.track_world_fragments = world_pass_mode
     _tick = 0
     _acc = 0.0
@@ -177,6 +187,13 @@ func local_to_world(p: Vector2) -> Vector2:
     var sn := sin(_rot)
     return _origin + Vector2(v.x * cs - v.y * sn, v.x * sn + v.y * cs)
 
+func _sync_thorn_caster() -> void:
+    if _kind != "thorn" or not is_instance_valid(_live_caster_actor):
+        return
+    _cast_caster = _live_caster_actor.global_position
+    var local_pos := Vector2(112, 126) + (_cast_caster - _origin).rotated(-_rot) / _scale
+    (_fx as CThornOpera).set_live_caster(local_pos)
+
 func stop() -> void:
     var was := _active
     _active = false
@@ -201,6 +218,8 @@ func advance(dt: float, draw: bool = true) -> void:
         _tick += 1
         _steps += 1
         if _fx != null:
+            if _kind == "thorn":
+                _sync_thorn_caster()
             _fx.update(STEP, source_time())
             if _kind == "crown_outer":
                 _fx.set("fx_shake", 0.0)
@@ -248,6 +267,8 @@ func _fire_due_events() -> void:
         if not bool(ev.emitted) and t >= float(ev.t):
             ev.emitted = true
             var wp := local_to_world(ev.pos_local)
+            if _kind == "thorn" and is_instance_valid(_live_caster_actor) and ev.pos_local == CThornOpera.CASTER:
+                wp = _cast_caster
             var kind := StringName(String(ev.kind))
             visual_event.emit(kind, wp, t)
             if String(ev.kind).ends_with("impact"):

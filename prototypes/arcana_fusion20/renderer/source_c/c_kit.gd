@@ -76,17 +76,17 @@ static func particles_update(list: Array, dt: float) -> void:
                 p.vy = float(p.vy) * 0.3
         i -= 1
 
-static func particles_render(f: CFrame, list: Array) -> void:
+static func particles_render(f: CFrame, list: Array, height_axis: Vector2 = Vector2.UP) -> void:
     for p in list:
         if float(p.delay) <= 0.0:
-            draw_pt(f, p)
+            draw_pt(f, p, height_axis)
 
-static func draw_pt(f: CFrame, p: Dictionary) -> void:
+static func draw_pt(f: CFrame, p: Dictionary, height_axis: Vector2 = Vector2.UP) -> void:
     var u := float(p.life) / float(p.max)
-    var sx := float(p.x)
-    var sy := float(p.y) - float(p.z)
+    var sx := float(p.x) + height_axis.x * float(p.z)
+    var sy := float(p.y) + height_axis.y * float(p.z)
     if float(p.z) > 1.5:
-        f.S(sx, float(p.y), 0.6)
+        f.S(float(p.x), float(p.y), 0.6)
     match String(p.kind):
         "ember":
             var c := CPalette.ramp(p.col, 1.0 - u * 0.9)

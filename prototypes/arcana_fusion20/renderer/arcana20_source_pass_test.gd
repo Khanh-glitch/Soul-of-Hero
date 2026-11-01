@@ -421,6 +421,41 @@ func _run() -> void:
         upright.stop()
     upright.free()
 
+    # #15 must attach its authored verlet roots to a real moving caster while
+    # preserving the fixed target and screen-up petal height. Exercise the
+    # actual renderer and optional actor at four cast bearings.
+    var thorn_host := Arcana20Renderer.new()
+    thorn_host.world_pass_mode = true
+    root.add_child(thorn_host)
+    var live_caster := Node2D.new()
+    root.add_child(live_caster)
+    var thorn_id := Arcana20SourceCatalog.canonical_id(15)
+    for delta in [Vector2(140, 0), Vector2(-140, 0), Vector2(0, 140), Vector2(0, -140)]:
+        live_caster.global_position = base
+        var dst: Vector2 = base + delta
+        check(thorn_host.cast_skill(thorn_id, base, dst, 1.0, live_caster), "C15 actual renderer cast")
+        var thorn_player := thorn_host._casts[thorn_id] as CSourcePlayer
+        thorn_player.set_process(false)
+        thorn_player.render_enabled = false
+        var thorn := thorn_player._fx as CThornOpera
+        var before_base: Array = thorn._tds[0].base
+        var offset := Vector2(float(before_base[0]), float(before_base[1])) - CThornOpera.CASTER
+        live_caster.global_position = base + Vector2(20, -14)
+        thorn_player.advance(STEP, false)
+        var actual_base: Array = thorn._tds[0].base
+        var local_base := Vector2(float(actual_base[0]), float(actual_base[1]))
+        var expected_world := live_caster.global_position + offset.rotated(thorn_player._rot) * thorn_player._scale
+        check(thorn_player.local_to_world(local_base).distance_to(expected_world) < 0.001, "C15 root follows live caster %s" % delta)
+        check(thorn_player.local_to_world(CThornOpera.FZ).distance_to(dst) < 0.001, "C15 bloom target remains fixed %s" % delta)
+        check(thorn_player._cast_caster == live_caster.global_position and thorn_player._target == dst, "C15 real actor metadata updated")
+        var world_height := thorn.particle_height_axis.rotated(thorn_player._rot)
+        check(world_height.distance_to(Vector2.UP) < 0.0001, "C15 petal ballistic height stays world-up %s" % delta)
+        var target_cho: Array = thorn._cho(0, 0.8)
+        check(is_equal_approx(float(target_cho[0]), CThornOpera.TARGETS[0].x) and is_equal_approx(float(target_cho[1]), CThornOpera.TARGETS[0].y - 6.0), "C15 original multi-target choreography preserved")
+        thorn_host.cancel_skill(thorn_id)
+    live_caster.free()
+    thorn_host.free()
+
     # A and B must execute identical elected sources. The directed variant is
     # only a separate presentation canvas and pass ordering; compare the actual
     # raw source fields after the common release tick, not screenshots or RGB

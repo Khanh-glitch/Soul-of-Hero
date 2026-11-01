@@ -21,6 +21,11 @@ var _tds: Array = []
 var _lashes: Array = []
 var _ps: Array = []
 var _bloomed := false
+# Optional real-caster adaptation: source static CASTER is the default. The
+# five original verlet strands and fixed authored targets remain unchanged.
+var _live_caster := CASTER
+# Source-local direction of world-up for z; default is original screen-up.
+var particle_height_axis := Vector2.UP
 var fx_shake := 0.0
 var fx_kick := 0.0
 var fx_flash := Vector3.ZERO
@@ -44,6 +49,8 @@ func setup() -> void:
     _rng = CMath.CRng.new(111866)
     _ps.clear()
     _bloomed = false
+    _live_caster = CASTER
+    particle_height_axis = Vector2.UP
     _tds.clear()
     var angs := [-1.15, -0.55, 0.05, 0.6, 1.2]
     var ks := [26.0, 13.0, 9.0, 17.0, 5.5]
@@ -61,6 +68,14 @@ func setup() -> void:
     for k in range(3):
         _lashes.append({"t": TB + 0.04 + float(k) * 0.1, "a0": -2.4 + float(k) * 1.9 + _rng.r(-0.3, 0.3),
             "dir": -1.0 if k % 2 else 1.0, "r": 50.0 + float(k) * 10.0})
+
+# Called only by the optional visual host with an actual live caster. The
+# source's four target anchors and bloom stay fixed in source/world space.
+func set_live_caster(pos: Vector2) -> void:
+    _live_caster = pos
+    for td in _tds:
+        var a := float(td.a)
+        td.base = [pos.x + 4.0 + cos(a) * 6.0, pos.y + sin(a) * 4.0 + 1.0]
 
 func authored_events() -> Array:
     return [
@@ -101,8 +116,8 @@ func _cho(i: int, t: float) -> Array:
             3:
                 if q < 0.5:
                     var a := CMath.lerp(-1.1, 1.0, q / 0.5)
-                    return [CASTER.x + cos(a) * 112.0, CASTER.y + sin(a) * 80.0]
-                return [CASTER.x + 60.0, CASTER.y - 44.0]
+                    return [_live_caster.x + cos(a) * 112.0, _live_caster.y + sin(a) * 80.0]
+                return [_live_caster.x + 60.0, _live_caster.y - 44.0]
             4:
                 if q < 0.45:
                     var u := q * 9.0
@@ -111,11 +126,11 @@ func _cho(i: int, t: float) -> Array:
     if t < 3.9:
         var u := CMath.ease_in_out(CMath.cl01((t - 2.7 - float(i >> 1) * 0.16) / 0.75))
         var a := CMath.lerp(1.1, -1.1, u) if i % 2 else CMath.lerp(-1.1, 1.1, u)
-        return [CASTER.x + cos(a) * 118.0, CASTER.y + sin(a) * 86.0]
+        return [_live_caster.x + cos(a) * 118.0, _live_caster.y + sin(a) * 86.0]
     if t < 4.7:
         var a := float(i - 2) * 0.42
         var r := 72.0 + 52.0 * absf(sin((t - 3.9) * PI * 2.5))
-        return [CASTER.x + cos(a) * r, CASTER.y + sin(a) * r * 0.8]
+        return [_live_caster.x + cos(a) * r, _live_caster.y + sin(a) * r * 0.8]
     if t < TB:
         var q := CMath.inv(4.7, 5.6, t)
         var a := float(i) / 5.0 * CMath.TAU + (t - 4.7) * 3.2
@@ -313,4 +328,4 @@ func render(f: CFrame, t: float) -> void:
                 f.line_i(p.x, p.y, p.x + cos(a) * 4.0, p.y + sin(a) * 3.0, CPalette.ramp(CPalette.P["bark"], 0.2), fade2)
                 j += 3
             CKit.shock(f, pts[30].x, pts[30].y, 6.0 + q * 10.0, 5.0, 3.0 * fade2, 1.0)
-    CKit.particles_render(f, _ps)
+    CKit.particles_render(f, _ps, particle_height_axis)

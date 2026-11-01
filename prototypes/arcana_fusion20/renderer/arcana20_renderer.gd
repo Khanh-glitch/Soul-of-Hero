@@ -272,6 +272,11 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
         # C07 is target-centred architecture with screen-up shard gravity, not
         # a directional projectile. Keep spires and falling shards upright.
         cp.target_upright = id == 7
+        if id == 15:
+            # Only the actual optional caller-supplied actor, never inferred
+            # hits/targets: keep the source's five strand roots attached while
+            # the four authored target anchors and bloom remain world-fixed.
+            cp.follow_caster(caster_actor)
         cp.source_pass_ready.connect(func(frame: Arcana20SourcePassFrame) -> void: source_pass_ready.emit(canonical_id, frame))
         cp.screen_post.connect(func(state: Dictionary) -> void: screen_post.emit(canonical_id, state))
         add_child(cp)
