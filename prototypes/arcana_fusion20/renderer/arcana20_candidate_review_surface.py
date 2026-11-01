@@ -2,7 +2,7 @@
 import base64, io, pathlib, sys
 from PIL import Image
 root, skill, kind = pathlib.Path(sys.argv[1]), int(sys.argv[2]), sys.argv[3]
-found = sorted(root.rglob(f'phase_{skill:02d}_candidate_{kind}_*_tick*.png'))
+found = sorted(root.rglob(f'phase_{skill:02d}_candidate_*{kind}_*_tick*.png'))
 if len(found) != 1:
     raise SystemExit(f'expected one event for {skill:02d} {kind}, found {found}')
 im = Image.open(found[0]).convert('RGB'); im.thumbnail((384,216), Image.Resampling.LANCZOS)

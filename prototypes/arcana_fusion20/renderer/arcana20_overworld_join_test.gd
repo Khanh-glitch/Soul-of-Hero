@@ -1414,6 +1414,10 @@ func _phase_sweep(app: Node, world: Node, player: Node2D, enemy: Node2D, camera:
         var duration := float(slot.duration)
         var targets := [30, maxi(31, roundi(climax * 0.5 * 60.0)), roundi((climax - 0.15) * 60.0), roundi(climax * 60.0), roundi((climax + duration) * 30.0), roundi((duration - 0.1) * 60.0)]
         var labels := ["early", "build", "pre_catalog_climax", "catalog_climax", "aftermath", "late"]
+        if num == 4:
+            # Inspect the fully materialised physical blade before the cut.
+            targets.append(201)
+            labels.append("blade_ready")
         if num == 16:
             # Natural seeded C tail after the catalog scene endpoint; show
             # its final active tick as well as the earlier sparse withdrawal.

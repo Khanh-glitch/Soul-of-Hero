@@ -50,8 +50,28 @@ class AshenGuillotineR:
         var b1: Vector2 = p1 + n * off
         if blade > 0.0 and t < 4.4:
             var bk := blade * (1.0 - AMath.seg(t, 3.6, 4.4)) * close_k
-            ADraw.streak(fb, b0.x, b0.y, b1.x, b1.y, 3.2, 3.2, AMath.R("ash", 0.9), bk)
-            ADraw.streak(fb, b0.x, b0.y, b1.x, b1.y, 1.2, 1.2, AMath.R("fire", 0.95), bk)
+            # Authored physical blade, not just an emissive slash. The matte
+            # body writes explicit opaque coverage, including near-black metal;
+            # its long bevel and edge follow the same diagonal cut motion.
+            var width := 13.0 * blade
+            var tip := b1 + _dir * 12.0
+            var spine0 := b0 + n * width * 0.75
+            var spine1 := b1 + n * width * 0.75
+            var edge0 := b0 - n * width * 0.45
+            var edge1 := b1 - n * width * 0.45
+            ADraw.poly_fill(fb, [spine0, spine1, tip, edge1, edge0],
+                func(x: int, y: int) -> Variant:
+                    var q := Vector2(float(x) + 0.5, float(y) + 0.5) - b0
+                    var transverse := q.dot(n) / maxf(width, 0.01)
+                    var longitudinal := q.dot(_dir)
+                    var grain := AMath.hash2(floor(longitudinal * 0.22), floor(transverse * 7.0))
+                    var bevel := AMath.cl01((0.30 - transverse) * 1.8)
+                    var metal := 0.035 + 0.11 * bevel + 0.035 * grain
+                    return Vector3(metal * 0.82, metal * 0.87, metal), true, bk)
+            ADraw.streak(fb, edge0.x, edge0.y, edge1.x, edge1.y, 1.1, 0.7, AMath.R("ash", 0.9), bk * 0.85)
+            var seam0 := b0 + n * width * 0.22
+            var seam1 := b1 + n * width * 0.22
+            ADraw.streak(fb, seam0.x, seam0.y, seam1.x, seam1.y, 0.55, 0.45, AMath.R("fire", 0.95), bk * 0.65)
         if cut > 0.0:
             ADraw.streak(fb, p0.x, p0.y, p1.x, p1.y, 2.0, 2.0, AMath.R("fire", 0.9), (1.0 - AMath.seg(t, 3.5, 4.4)) * close_k)
         # Close the wound sections in order, not as one global fade.
