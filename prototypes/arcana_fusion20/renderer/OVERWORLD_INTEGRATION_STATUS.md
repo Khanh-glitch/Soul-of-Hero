@@ -64,7 +64,9 @@ records this. Genuine moving hit/miss/confirmed receipts remain owner-provided.
   premium-quality or full-motion verdict. One initially extracted tick-295
   JPEG was incomplete due to annotation limits and was discarded, not reviewed.
   The newer full-motion run [41277778594](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41277778594)
-  is separate from the completed `e7cc3fc` package and remains outstanding.
+  completed all four baseline/candidate normal/dim jobs. It is separate from
+  the `e7cc3fc` package, and its 480 frames per job have not been individually
+  reviewed. Full source pins and manifests are in its artifacts.
 - **#06/#12/#13/#14/#18:** `1a715e2` adapts the selected A water ribbon
   inertia/width/flow/foam to the new #06 glyph; it does not implement full A/C
   source parity. #12 `3a7d0c0` uses the actual C #09 bolt-tree generator through
