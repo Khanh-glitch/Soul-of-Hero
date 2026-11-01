@@ -1,0 +1,36 @@
+name: ARCANA20 A04 motion archive inspection
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-a04-motion-recover.yml']
+permissions:
+  actions: read
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: a04-full-baseline-normal
+          run-id: 41276632227
+          github-token: ${{ github.token }}
+          path: capture
+      - name: Inspect actual native frame archive and available encoder
+        run: |
+          python3 - <<'PY'
+          import pathlib
+          root=pathlib.Path('capture')
+          paths=list(root.rglob('phase_04_full_motion_*.png'))
+          paths.sort()
+          print('::notice title=MOTION_ARCHIVE::count='+str(len(paths)))
+          print('::notice title=MOTION_ARCHIVE::first='+str(paths[:2]))
+          print('::notice title=MOTION_ARCHIVE::last='+str(paths[-2:]))
+          for p in root.rglob('*'):
+              if p.is_file() and p.name.endswith('.log'):
+                  print('::notice title=MOTION_ARCHIVE::log='+str(p))
+          PY
+          if command -v ffmpeg; then ffmpeg -version | head -1 | sed 's/^/::notice title=MOTION_ARCHIVE::/'; else echo '::notice title=MOTION_ARCHIVE::ffmpeg missing'; fi
