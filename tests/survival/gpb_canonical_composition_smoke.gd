@@ -33,7 +33,9 @@ func _run() -> void:
 	if not _check(bool(adapter.configure(port, Callable(self, "_empty_station"))), "CANONICAL_CATALOG_CONFIGURATION"): return
 	if not _check(adapter.jobs() is Dictionary, "ONE_CANONICAL_QUEUE"): return
 	var custody := Custody.new()
-	if not _check(bool(custody.configure(save, adapter)), "A3_SOURCE_CUSTODY_CONFIGURATION"): return
+	var custody_port: Node = save.call(&"create_pinned_source_custody_port", custody)
+	if not _check(custody_port != null, "PINNED_CUSTODY_CAPABILITY_PORT"): return
+	if not _check(bool(custody.configure(custody_port, adapter)), "A3_SOURCE_CUSTODY_CONFIGURATION"): return
 	if not _check(not custody.a8_authorization().get("approved", false), "QUARRY_UNAUTHORISED_FAIL_CLOSED"): return
 	var spoof := custody.authenticate_source({"source_id":"a1_waystation_roadside_cache_v3","owner":"A1"})
 	if not _check(not bool(spoof.get("ok", false)), "OWNER_STRING_MUST_NOT_AUTHORIZE"): return
