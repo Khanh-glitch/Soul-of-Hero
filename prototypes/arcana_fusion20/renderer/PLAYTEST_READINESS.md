@@ -20,7 +20,7 @@ contains the manifest and [Vietnamese controls](playtest/HUONG_DAN_THU_NGHIEM.tx
 The wrapper's cast buttons deliberately produce visuals only, **no combat hit**.
 The default #14/#18 art direction is A; B alternatives are experimental.
 
-Build source SHA `3b45a5c` (see build artifact manifest for full SHA). It
+Build source SHA `3b45a5c25024f6fc073e58c1310c4d2d155111d5`. It
 assembles the real A0 overworld `04eacf62f1a3740a57e08691c3a9006d454aaa2c`,
 A6 UI overlay `6b801554a6af95424b4e39dd29f43c146aa13848`, AVFX renderer,
 and CT files `e505173edd119fdd955cf6249511b575a5468440`. A1
@@ -71,9 +71,20 @@ creator acceptance: inspection was of selected full-viewport downscaled stills
 ([#14](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41287797853),
 [#18 revised](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41288055318)),
 not 1× full-motion review. #14 still needs convincing sporulation and #18
-needs clear temporal capture and force. Full native 60-Hz before/after motion
-capture [41288595150](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41288595150)
-is pending; not presumed successful or reviewed.
+needs clear temporal capture and force. Full native 60-Hz before/after motion capture
+[41288691508](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41288691508)
+completed 8 jobs: baseline `ffbcbdd7ec7974bb2529fb230cb0d492286b1093`
+vs candidate `1066d36ad74331fd30e766b3dd53f7a982eb5e98`, normal/dim,
+516 #14 and 504 #18 frames per job, FFV1 and MP4. The candidate differs from
+build source `3b45a5c` only in documentation/capture infrastructure. These
+are frozen-world frames, not full-motion human review or gameplay proof. The
+prior [41288595150](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41288595150)
+failed in the capture step; after a harness-indentation correction the new run
+passed, but the original failure's full log was not locally accessible. All
+8 new motion jobs report **5 resources still in use at exit**; the diagnostic
+also prints PASS. Baseline and candidate both show the warning, but its cause
+and any AVFX contribution are not established. Long-session leak behavior is
+not cleared.
 
 Earlier full-motion evidence: #04 [41277778594](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41277778594)
 480 ticks/light; #10 [41277330808](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41277330808)
