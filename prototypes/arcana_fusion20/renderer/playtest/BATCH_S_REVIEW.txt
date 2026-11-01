@@ -1,0 +1,44 @@
+BATCH S — KIỂM TRA HÌNH ẢNH / VISUAL REVIEW (CHƯA HOÀN TẤT)
+
+Chỉ là hiệu ứng hình ảnh. Không tự tạo trúng đòn, sát thương, lực kéo hoặc
+phản ứng cơ thể. Người tạo chưa duyệt Gold. Hướng dẫn điều khiển: HUONG_DAN.txt.
+Bản thử dùng compositing thế giới LDR; HDR tuyến tính cùng khung hình, che khuất
+nhân vật/vật cản và xác nhận chiến đấu thuộc các chủ sở hữu tương ứng.
+
+Các nhận xét dưới đây dựa trên ảnh 1x từng giai đoạn tại 20bf08d5, không phải
+kết luận sau khi xem toàn bộ chuyển động hoặc sau thay đổi #15. Video tự nhiên
+sáng/tối và dữ liệu thời gian nằm trong real-world-evidence; source-comparisons
+chứa ảnh tham chiếu nguồn gốc. Camera và đối thủ thực chuyển động.
+
+ID | Nguồn được chọn / vai trò và quan sát 1x | Còn cần kiểm tra
+02 | B Wyrm: thân lửa cong, cắn và vết cháy; đầu nhỏ khi chơi. Flash/shake
+     nguồn được chuyển tiếp qua xấp xỉ LDR, không phải HDR. | Xem toàn chu kỳ,
+     so đầu/material và post nguồn; xác nhận va chạm thật do owner.
+03 | B Meteor: tâm phù văn neo mục tiêu, thiên thạch theo trục đứng; ảnh sau
+     sửa flash ít cháy nền hơn nhưng các điểm va chạm rất sáng. | Xem toàn bộ
+     sao băng, OUT, normal/dim; so với source-linear HDR khi owner cung cấp.
+07 | C Basilica: nứt, tháp băng đứng, vỡ và mảnh rơi. | Xem chuyển động shard,
+     OUT và che khuất địa hình/nhân vật.
+08 | B Maw: xoáy dải đồng tâm có trong source B, neo tâm, tan thành viền/mảnh.
+     | Xem toàn chuyển động, lực hút chỉ là hình ảnh, cần xác nhận owner.
+10 | C Thunderloom: mây tối có dither, tia sáng và vết nứt; ảnh không cho thấy
+     hình chữ nhật tối nguyên khung. | Xem toàn shading/post và OUT trên nền thật.
+15 | C Thorn Opera: 5 tua/4 điểm nguồn, nụ/hoa/lash. Ảnh cũ cho thấy người
+     chơi đi khỏi vùng tua. Bản sau 322a089e gắn gốc tua với actor thật tùy
+     chọn, giữ các điểm nguồn cố định, và quy chiếu độ cao petal lên trên
+     thế giới. Nếu clamp tỷ lệ làm lệch tâm, nụ và bốn điểm nguồn cùng dịch
+     tương đối để tâm đúng mục tiêu. Đây là thích ứng thế giới, không phải parity ảnh nguồn cố
+     định. Ảnh dim sau sửa có tua đi chéo vào crop và nụ sáng nhỏ; một phần
+     tua ở ngoài crop. | Cần xem lại toàn chuyển động mới; vùng raster 384x216
+     vẫn hữu hạn, neo nhiều đối thủ thực và body effects chưa được xác nhận.
+17 | C Event Horizon: đĩa tối, blackout toàn sân khấu theo source và các mảnh
+     nền bật lại. | Xem toàn blackout/impact/OUT; world/depth/HDR chưa tương đương.
+
+Test nguồn tại 322a089e: source-quick 41336944418 PASS, bao gồm bốn hướng #15
+và kiểm tra A/B #05; chạy mới hơn cần được xác minh riêng. Bản nguồn tĩnh của
+#15 trước thích ứng có kiểm tra parity riêng; không áp kết quả đó cho bản mới.
+#05 giữ hai lựa chọn A/B, không tự chọn phương án. Kiểm tra khóa cảnh từng thất
+bại không rõ nguyên nhân; các run sau đã pass, chưa chứng minh nguyên nhân đã sửa.
+Linux dùng Xvfb/software; Windows được smoke test headless, không phải bằng chứng
+GPU hoặc chạy đồ họa Windows. Một số log báo 5 tài nguyên còn dùng và lỗi
+ngắt kết nối; baseline không AVFX cũng có cảnh báo, chưa chứng minh không leak.

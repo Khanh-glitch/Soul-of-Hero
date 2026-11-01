@@ -453,6 +453,21 @@ func _run() -> void:
         var target_cho: Array = thorn._cho(0, 0.8)
         check(is_equal_approx(float(target_cho[0]), CThornOpera.TARGETS[0].x) and is_equal_approx(float(target_cho[1]), CThornOpera.TARGETS[0].y - 6.0), "C15 original multi-target choreography preserved")
         thorn_host.cancel_skill(thorn_id)
+    # Clamp the overall source scale but keep the four target offsets and
+    # bloom at the selected world point even at very short/long ranges.
+    for delta in [Vector2(20, 0), Vector2(0, -20), Vector2(700, 0), Vector2(0, 700)]:
+        live_caster.global_position = base
+        var dst: Vector2 = base + delta
+        check(thorn_host.cast_skill(thorn_id, base, dst, 1.0, live_caster), "C15 clamped-range cast")
+        var thorn_player := thorn_host._casts[thorn_id] as CSourcePlayer
+        thorn_player.set_process(false)
+        var thorn := thorn_player._fx as CThornOpera
+        check(thorn_player.local_to_world(thorn._focus).distance_to(dst) < 0.001, "C15 clamped bloom pins selected target %s" % delta)
+        for i in range(CThornOpera.TARGETS.size()):
+            var actual: Vector2 = thorn._targets[i]
+            var original: Vector2 = CThornOpera.TARGETS[i]
+            check((actual - thorn._focus).distance_to(original - CThornOpera.FZ) < 0.001, "C15 preserves authored target constellation")
+        thorn_host.cancel_skill(thorn_id)
     live_caster.free()
     thorn_host.free()
     var petal_frame := CFrame.new()

@@ -129,7 +129,6 @@ func begin(caster_world: Vector2, target_world: Vector2, kind: String) -> void:
             _fx = CCinderCrown.new()
             duration = CCinderCrown.DURATION
             _fx.setup()
-    _events = _fx.authored_events() if _fx != null and _kind != "crown_outer" else []
     var axis := target_world - caster_world
     # Each C spell has its own authored target anchor. Rotation and scale
     # must use the same caster->anchor vector, otherwise events and geometry
@@ -148,8 +147,15 @@ func begin(caster_world: Vector2, target_world: Vector2, kind: String) -> void:
     if _kind == "thorn":
         # Ground choreography still faces the cast bearing, while source z
         # (petal height) maps to world-up rather than rotating with it.
-        (_fx as CThornOpera).particle_height_axis = Vector2.UP.rotated(-_rot)
+        var thorn := _fx as CThornOpera
+        thorn.particle_height_axis = Vector2.UP.rotated(-_rot)
+        var focus_local := Vector2(112, 126) + (target_world - _origin).rotated(-_rot) / _scale
+        # Avoid perturbing source pixels when the original similarity mapping
+        # already pins the focus. Only adapt at a clamped cast distance.
+        if focus_local.distance_to(CThornOpera.FZ) > 0.001:
+            thorn.set_live_focus(focus_local)
         _sync_thorn_caster()
+    _events = _fx.authored_events() if _fx != null and _kind != "crown_outer" else []
     _frame.track_world_fragments = world_pass_mode
     _tick = 0
     _acc = 0.0

@@ -24,6 +24,11 @@ var _bloomed := false
 # Optional real-caster adaptation: source static CASTER is the default. The
 # five original verlet strands and fixed authored targets remain unchanged.
 var _live_caster := CASTER
+# World adaptation when the minimum/maximum mount scale would otherwise put
+# the fixed bloom away from the actual target. All four authored choreography
+# targets move together by the same offset; their relative geometry is intact.
+var _focus := FZ
+var _targets := TARGETS.duplicate()
 # Source-local direction of world-up for z; default is original screen-up.
 var particle_height_axis := Vector2.UP
 var fx_shake := 0.0
@@ -50,6 +55,8 @@ func setup() -> void:
     _ps.clear()
     _bloomed = false
     _live_caster = CASTER
+    _focus = FZ
+    _targets = TARGETS.duplicate()
     particle_height_axis = Vector2.UP
     _tds.clear()
     var angs := [-1.15, -0.55, 0.05, 0.6, 1.2]
@@ -77,15 +84,21 @@ func set_live_caster(pos: Vector2) -> void:
         var a := float(td.a)
         td.base = [pos.x + 4.0 + cos(a) * 6.0, pos.y + sin(a) * 4.0 + 1.0]
 
+func set_live_focus(pos: Vector2) -> void:
+    _focus = pos
+    var shift := pos - FZ
+    for i in range(TARGETS.size()):
+        _targets[i] = TARGETS[i] + shift
+
 func authored_events() -> Array:
     return [
         {"t": 0.75, "kind": "tendrils_open", "pos_local": Vector2(CASTER), "emitted": false},
-        {"t": 1.5, "kind": "tendril_touch", "pos_local": Vector2(TARGETS[0]), "emitted": false},
+        {"t": 1.5, "kind": "tendril_touch", "pos_local": Vector2(_targets[0]), "emitted": false},
         {"t": 2.7, "kind": "choreography_shift", "pos_local": Vector2(CASTER), "emitted": false},
-        {"t": 4.9, "kind": "bud_form", "pos_local": Vector2(FZ), "emitted": false},
-        {"t": TB, "kind": "bloom_impact", "pos_local": Vector2(FZ), "emitted": false},
-        {"t": 6.2, "kind": "lash", "pos_local": Vector2(FZ), "emitted": false},
-        {"t": 7.6, "kind": "aftermath_fade", "pos_local": Vector2(FZ), "emitted": false},
+        {"t": 4.9, "kind": "bud_form", "pos_local": Vector2(_focus), "emitted": false},
+        {"t": TB, "kind": "bloom_impact", "pos_local": Vector2(_focus), "emitted": false},
+        {"t": 6.2, "kind": "lash", "pos_local": Vector2(_focus), "emitted": false},
+        {"t": 7.6, "kind": "aftermath_fade", "pos_local": Vector2(_focus), "emitted": false},
     ]
 
 func _cho(i: int, t: float) -> Array:
@@ -102,17 +115,17 @@ func _cho(i: int, t: float) -> Array:
             return rest
         match i:
             0:
-                return [TARGETS[0].x, TARGETS[0].y - 6.0] if q < 0.35 else rest
+                return [_targets[0].x, _targets[0].y - 6.0] if q < 0.35 else rest
             1:
                 if q < 0.3:
                     var a := q * 34.0
                     return [float(b[0]) + 26.0 + cos(a) * 14.0, float(b[1]) - 4.0 + sin(a) * 10.0]
-                return [TARGETS[2].x, TARGETS[2].y - 5.0]
+                return [_targets[2].x, _targets[2].y - 5.0]
             2:
                 if q < 0.45:
                     var u := q / 0.45
-                    return [CMath.lerp(float(rest[0]), TARGETS[1].x, u), CMath.lerp(float(rest[1]), TARGETS[1].y, u) + sin(u * 14.0) * 22.0]
-                return [TARGETS[1].x - 34.0, TARGETS[1].y - 30.0]
+                    return [CMath.lerp(float(rest[0]), _targets[1].x, u), CMath.lerp(float(rest[1]), _targets[1].y, u) + sin(u * 14.0) * 22.0]
+                return [_targets[1].x - 34.0, _targets[1].y - 30.0]
             3:
                 if q < 0.5:
                     var a := CMath.lerp(-1.1, 1.0, q / 0.5)
@@ -122,7 +135,7 @@ func _cho(i: int, t: float) -> Array:
                 if q < 0.45:
                     var u := q * 9.0
                     return [float(rest[0]) + sin(u) * 22.0, float(rest[1]) + sin(u * 2.0) * 12.0]
-                return [TARGETS[3].x, TARGETS[3].y - 6.0]
+                return [_targets[3].x, _targets[3].y - 6.0]
     if t < 3.9:
         var u := CMath.ease_in_out(CMath.cl01((t - 2.7 - float(i >> 1) * 0.16) / 0.75))
         var a := CMath.lerp(1.1, -1.1, u) if i % 2 else CMath.lerp(-1.1, 1.1, u)
@@ -135,10 +148,10 @@ func _cho(i: int, t: float) -> Array:
         var q := CMath.inv(4.7, 5.6, t)
         var a := float(i) / 5.0 * CMath.TAU + (t - 4.7) * 3.2
         var r := 18.0 * (1.0 - q * 0.6)
-        return [FZ.x + cos(a) * r, FZ.y + sin(a) * r * 0.75]
+        return [_focus.x + cos(a) * r, _focus.y + sin(a) * r * 0.75]
     if t < 6.5:
         var a := float(i) / 5.0 * CMath.TAU + 0.3
-        return [FZ.x + cos(a) * 85.0, FZ.y + sin(a) * 62.0]
+        return [_focus.x + cos(a) * 85.0, _focus.y + sin(a) * 62.0]
     return [float(b[0]) + cos(float(td.a)) * 30.0, float(b[1]) + sin(float(td.a)) * 18.0 + 10.0]
 
 func update(dt: float, t: float) -> void:
@@ -212,7 +225,7 @@ func update(dt: float, t: float) -> void:
         for i in range(230):
             var a := _rng.r(0.0, CMath.TAU)
             var s := _rng.r(20.0, 150.0)
-            _ps.append(CKit.pt_defaults({"x": FZ.x + cos(a) * 6.0, "y": FZ.y + sin(a) * 4.0, "z": _rng.r(4.0, 14.0),
+            _ps.append(CKit.pt_defaults({"x": _focus.x + cos(a) * 6.0, "y": _focus.y + sin(a) * 4.0, "z": _rng.r(4.0, 14.0),
                 "vx": cos(a) * s, "vy": sin(a) * s * 0.7, "vz": _rng.r(10.0, 60.0), "grav": 16.0, "drag": 1.4,
                 "spin": _rng.r(-9.0, 9.0), "kind": "petal", "col": CPalette.P["bloom"], "max": _rng.r(1.8, 3.4),
                 "k": 1.0, "delay": _rng.r(0.0, 0.3)}))
@@ -265,19 +278,19 @@ func render(f: CFrame, t: float) -> void:
         f.Lc(vpos[M - 1].x, vpos[M - 1].y, CPalette.ramp(CPalette.P["leaf"], 1.0), 0.7)
     if t > 4.9 and t < TB:
         var g := CMath.inv(4.9, 5.7, t)
-        f.disc(FZ.x, FZ.y - 2.0, 3.0 + g * 8.0, func(x: int, y: int, d: float) -> void:
+        f.disc(_focus.x, _focus.y - 2.0, 3.0 + g * 8.0, func(x: int, y: int, d: float) -> void:
             f.Ic(x, y, CPalette.ramp(CPalette.P["bloom"], 0.25 + (1.0 - d) * 0.35), 1.0)
-            if absf(sin(atan2(float(y) - FZ.y, float(x) - FZ.x) * 3.0 + t)) < 0.15:
+            if absf(sin(atan2(float(y) - _focus.y, float(x) - _focus.x) * 3.0 + t)) < 0.15:
                 f.Lc(x, y, CPalette.ramp(CPalette.P["bloom"], 0.9), 0.8 * g), 0.8)
-        f.glow(FZ.x, FZ.y, 24.0, CPalette.ramp(CPalette.P["bloom"], 0.7), 0.4 * g, 4.0)
+        f.glow(_focus.x, _focus.y, 24.0, CPalette.ramp(CPalette.P["bloom"], 0.7), 0.4 * g, 4.0)
     if t >= TB:
         var op := CMath.back_out(CMath.inv(TB, TB + 0.28, t), 2.2)
         var fade := 1.0 - CMath.inv(6.6, 7.6, t)
         if fade > 0.0:
             var R := 44.0 * op
-            f.field(FZ.x - R - 2.0, FZ.y - R - 2.0, FZ.x + R + 2.0, FZ.y + R + 2.0, func(x: int, y: int) -> void:
-                var dx := float(x) + 0.5 - FZ.x
-                var dy := (float(y) + 0.5 - FZ.y) / 0.78
+            f.field(_focus.x - R - 2.0, _focus.y - R - 2.0, _focus.x + R + 2.0, _focus.y + R + 2.0, func(x: int, y: int) -> void:
+                var dx := float(x) + 0.5 - _focus.x
+                var dy := (float(y) + 0.5 - _focus.y) / 0.78
                 var r := Vector2(dx, dy).length()
                 var pa := atan2(dy, dx)
                 if r > R:
@@ -299,8 +312,8 @@ func render(f: CFrame, t: float) -> void:
                     if absf(CMath.ang_diff(ang, pa)) * r < 0.6:
                         f.Lc(x, y, CPalette.ramp(CPalette.P["bloom"], 0.9), 0.4)
                     return)
-            f.disc(FZ.x, FZ.y, 6.0 * op, func(x: int, y: int, d: float) -> void: f.Ic(x, y, CPalette.ramp(CPalette.P["gold"], 0.4 + (1.0 - d) * 0.5), fade), 0.8)
-            f.glow(FZ.x, FZ.y, 60.0, CPalette.ramp(CPalette.P["bloom"], 0.7), 0.35 * fade * exp(-(t - TB) * 1.5) + 0.05, 4.0, 0.8)
+            f.disc(_focus.x, _focus.y, 6.0 * op, func(x: int, y: int, d: float) -> void: f.Ic(x, y, CPalette.ramp(CPalette.P["gold"], 0.4 + (1.0 - d) * 0.5), fade), 0.8)
+            f.glow(_focus.x, _focus.y, 60.0, CPalette.ramp(CPalette.P["bloom"], 0.7), 0.35 * fade * exp(-(t - TB) * 1.5) + 0.05, 4.0, 0.8)
         for l in _lashes:
             var q := (t - float(l.t)) / 0.34
             if q < 0.0 or q > 1.0:
@@ -310,7 +323,7 @@ func render(f: CFrame, t: float) -> void:
             var pts: Array = []
             for j in range(31):
                 var a := CMath.lerp(float(l.a0), head, float(j) / 30.0)
-                pts.append(Vector2(FZ.x + cos(a) * float(l.r) * 1.1, FZ.y + sin(a) * float(l.r) * 0.75))
+                pts.append(Vector2(_focus.x + cos(a) * float(l.r) * 1.1, _focus.y + sin(a) * float(l.r) * 0.75))
             var fade2 := 1.0 - q
             var ws2: Array = []
             for j in range(31):

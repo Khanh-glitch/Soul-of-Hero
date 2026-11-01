@@ -91,7 +91,8 @@ jobs:
             cp "$RUNNER_TEMP/avfx-playtest/arcana20_join_manifest.json" "$RUNNER_TEMP/release/$os/"
             (cd "$RUNNER_TEMP/release/$os" && zip -q -r "../SOH_AVFX_EXPERIMENTAL_${os}.zip" .)
           done
-          sha256sum "$RUNNER_TEMP/release/"*.zip > "$RUNNER_TEMP/release/SHA256SUMS.txt"
+          # Portable checksums and integrity tests for the actual two archives.
+          (cd "$RUNNER_TEMP/release" && sha256sum SOH_AVFX_EXPERIMENTAL_*.zip > SHA256SUMS.txt && sha256sum -c SHA256SUMS.txt && unzip -t SOH_AVFX_EXPERIMENTAL_linux.zip && unzip -t SOH_AVFX_EXPERIMENTAL_windows.zip)
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -453,6 +454,7 @@ jobs:
       - name: Include guide and exact code provenance
         run: |
           cp prototypes/arcana_fusion20/renderer/playtest/HUONG_DAN_THU_NGHIEM.txt deliverable/HUONG_DAN.txt
+          cp prototypes/arcana_fusion20/renderer/playtest/BATCH_S_REVIEW.txt deliverable/BATCH_S_REVIEW.txt
           printf 'AVFX code SHA: %s\nExperimental visual-only preview; not GOLD or PLAYTEST_READY.\n' "$GITHUB_SHA" > deliverable/CODE_SHA.txt
           mkdir -p deliverable/source-comparisons/reference-batch-s
           cp prototypes/arcana_fusion20/renderer/source_b/reference/{wyrm,meteor,maw}_* deliverable/source-comparisons/reference-batch-s/

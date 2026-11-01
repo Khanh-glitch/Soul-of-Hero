@@ -139,6 +139,48 @@ break the caster attachment. Do not repeat the #03/#07/#08 transform blindly.
 #10 and #17 must retain their existing world-compositor work while reviewing
 same-frame capture, actors/terrain, source timing and natural OUT.
 
+## R21 continuation — native clips and #15 live-caster fix
+
+Order: PR30 comment 6562047500. The correct 20bf creator baseline is run
+[41335324866](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41335324866),
+25/25 success, artifact 13094643091; no code change in d785 after that export.
+All 14 normal/dim source-locked jobs contain native videos. `gh run download`
+of `r20-C15-normal-lock0` returned EOF on the Actions blob host, which is
+outside this sandbox's allowed outbound hosts. Decoded existing per-job native
+1x phase annotations for all seven S candidates instead; actual observations
+and limitations are in `playtest/BATCH_S_REVIEW.txt`. These are still samples,
+not a false claim that videos were fully watched. Existing workflow now
+surfaces a heavily compressed whole-cast motion proxy in check annotations;
+lossless full-resolution videos remain unchanged in the artifact. Verify the
+proxy step and inspect the whole motion, then return to 1x source/world beats.
+
+#15 at `322a089e8f2855c852d82f9f06bc01547ed531d5`: the source caster was
+fixed at cast start while the actual player moved. The five original verlet
+bases now follow the optional genuine caller-supplied actor, while the authored
+fixed target positions/bloom stay fixed in the original mounted source frame;
+petal z is projected world-up rather than rotating with cast bearing. At the
+existing min/max scale clamp originally made the focus miss the selected point
+at extreme ranges. A subsequent source-frame adaptation translates the focus
+and all four source targets by one common offset at clamped ranges; test and
+visual results for that follow-up are pending. Very distant targets may still
+lie outside the fixed raster. This is explicitly a live-world
+adaptation, not a new source-only parity claim. Raster remains 384x216 and may
+clip if actors separate beyond the source window. No actual hit/body receipt is
+inferred. Source quick [41336944418](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41336944418)
+passed including four bearings and #05 A/B source equality. Later quick
+[41337278339](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41337278339)
+passed at `ce6f03707fcca0c2d035c30462ba2a11af3ce0d2`, including direct petal
+ink/shadow projection. Dim #15 job `124939387197` at `24247f6a` passed, with
+sampled diagonal tendrils and a small pink bloom, partly outside the target
+crop; full motion and normal/dim at the final SHA remain to be inspected.
+
+Historical same-run no-FX/single/overlap comparisons
+[41294138791](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41294138791)
+reported matching ID-normalized 17 object / 5 resource shutdown diagnostics;
+this does not prove AVFX has no independent leaks. Player disconnect errors
+remain for A0/AppFlow investigation. #05 locked failure is intermittent and
+unexplained, not assumed fixed; 20bf passed.
+
 ## Resume
 
 1. `git status --short; git rev-parse HEAD; gh run list --branch arena/c7b0c4e8-soul-of-hero --limit 20`.
