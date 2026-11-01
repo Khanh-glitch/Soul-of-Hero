@@ -1,4 +1,4 @@
-# Package the experimental candidate, including optimized #05 source; never approval.
+# Package the experimental candidate, including #05 source and empty-OUT optimization; never approval.
 name: ARCANA20 refreshed creator visual-preview build
 on:
   workflow_dispatch:

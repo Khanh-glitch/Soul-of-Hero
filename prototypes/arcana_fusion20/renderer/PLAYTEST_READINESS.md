@@ -29,7 +29,14 @@ compared the previous and revised native raw RGB, coverage, influence, warp,
 multiplier and write footprint bit-for-bit at ticks 90/180/270/318. Single
 same-process CPU samples in software CI were 104247→84633, 333669→247536,
 354857→266002 and 492683→338375 µs respectively. These are isolated raster
-timings, not target-device FPS or an artistic improvement; full moving-world
+timings, not target-device FPS or an artistic improvement. `7ad052d` also
+skips A's sheet loops only when fade and freeze are both zero, for which every
+original sample is rejected and edge spray disabled; C's elected late water
+continues. [41316525652](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41316525652)
+confirmed the same native fields exactly at six phases including ticks 390
+and 480, with single isolated software source samples 508351→45 µs and
+528525→40 µs at those OUT ticks. This does not measure the rest of the fusion,
+the actual GPU, visual quality, or real-device frame rate. Full moving-world
 motion and the refreshed export still require review.
 
 The bounded matched #09 retention run [41315535779](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41315535779)
