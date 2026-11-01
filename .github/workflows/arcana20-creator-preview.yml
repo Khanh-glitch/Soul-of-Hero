@@ -1,4 +1,4 @@
-# Package the narrower one-blade R17 visual candidate; never playtest approval.
+# Package the chain raster-window and connected blade seam candidates; never approval.
 name: ARCANA20 refreshed creator visual-preview build
 on:
   workflow_dispatch:
