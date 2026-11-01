@@ -295,6 +295,9 @@ func _init() -> void:
     chrono.setup()
     if chrono._release(4, 5.3) <= chrono._release(0, 5.3):
         _fail("crystal release is not reverse ordered")
+    for i in range(5):
+        if chrono._release(i, 6.2 - 1.0 / 60.0) >= 1.0 or chrono._release(i, 6.2) < 1.0:
+            _fail("crystal %d does not arrive at the common impact beat" % i)
     if chrono._resolve(4, 7.7) >= chrono._resolve(0, 7.7):
         _fail("crystal resolution is not ordered")
 

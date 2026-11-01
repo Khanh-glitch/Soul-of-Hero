@@ -214,7 +214,8 @@ class ChronoshardR:
         return ev
     func _release(index: int, t: float) -> float:
         var begin := 5.0 + float(_crystals.size() - 1 - index) * 0.2
-        return AMath.seg(t, begin, begin + 0.4)
+        # Staggered reverse release, common arrival at the single 6.2 impact.
+        return AMath.seg(t, begin, 6.2)
     func _resolve(index: int, t: float) -> float:
         var begin := 7.4 + float(_crystals.size() - 1 - index) * 0.16
         return 1.0 - AMath.seg(t, begin, begin + 0.36)
@@ -223,7 +224,7 @@ class ChronoshardR:
     func render(fb: AFramebuffer, t: float) -> void:
         # pre-echo: ghost of the final convergence shown first (temporal logic)
         if t < 2.0:
-            var gk := (1.0 - AMath.seg(t, 1.4, 2.0)) * 0.35
+            var gk := AMath.seg(t, 0.9, 1.05) * (1.0 - AMath.seg(t, 1.4, 2.0)) * 0.35
             ADraw.ring_shape(fb, C.x, C.y, 30.0, 1.4, AMath.R("frost", 0.7), gk)
         for i in range(_crystals.size()):
             var c: Dictionary = _crystals[i]
@@ -236,14 +237,31 @@ class ChronoshardR:
             var rel := _release(i, t)
             var resolve := _resolve(i, t)
             var cur: Vector2 = pos.lerp(C, AMath.ease_in(rel, 2.0))
-            var sz: float = float(c.size) * form * (1.0 - rel * 0.55) * resolve
+            # B astral.ts:216-243 study: six-vertex 17px crystal, dark
+            # covered face, violet faceted frame. This is not the complete B
+            # clipped attack contents or a claim of B raster/source parity.
+            var impact_fold := 1.0 - 0.8 * AMath.seg(t, 6.2, 6.8)
+            var sz: float = 17.0 * form * (1.0 - rel * 0.5) * resolve * impact_fold
             if sz <= 0.5:
                 continue
-            var bright := 0.45 + captured * 0.4 + rel * 0.3
-            ACommon.shard(fb, cur.x, cur.y, sz, -0.4 + float(i) * 0.2, 6, int(c.seed),
-                func(u: float, _edge: float) -> Variant:
-                    return AMath.R("frost", bright * (1.0 - u * 0.5)))
-            ADraw.glow(fb, cur.x, cur.y, sz * 1.4, AMath.R("frost", 0.75), captured * resolve)
+            var rotation := t * (0.4 + float(i) * 0.15) * (-1.0 if i % 2 == 0 else 1.0)
+            var hex: Array = []
+            for q in range(6):
+                var angle := rotation + float(q) / 6.0 * TAU
+                hex.append(cur + Vector2(cos(angle) * sz, sin(angle) * sz * 0.85))
+            ADraw.poly_fill(fb, hex, func(_x: int, _y: int) -> Variant: return Vector3(0.03, 0.02, 0.08), true, 0.75 * resolve)
+            for q in range(6):
+                var a: Vector2 = hex[q]
+                var b: Vector2 = hex[(q + 1) % 6]
+                ADraw.line(fb, a.x, a.y, b.x, b.y, Vector3(1.2, 1.4, 2.0), resolve * 0.75)
+                if q % 2 == 0:
+                    ADraw.line(fb, cur.x, cur.y, a.x, a.y, Vector3(0.6, 0.6, 1.2), resolve * 0.35)
+            # An explicit temporal mark within the frame, not a substitute
+            # for B's still-unported clipped miniature attack.
+            if captured > 0.0:
+                var mark := Vector3(1.8, 1.3, 0.5) if i % 2 == 0 else Vector3(0.5, 0.9, 2.0)
+                ADraw.streak(fb, cur.x - sz * 0.35, cur.y, cur.x + sz * 0.35, cur.y - sz * 0.15, 0.7, 0.3, mark, captured * resolve * 0.7)
+            ADraw.glow(fb, cur.x, cur.y, sz * 1.4, AMath.R("frost", 0.75), captured * resolve * 0.35)
             if captured > 0.0 and rel < 1.0:
                 ADraw.streak(fb, cur.x, cur.y, C.x, C.y, 0.7, 0.3, AMath.R("frost", 0.6), captured * 0.4 * resolve)
         var it := t - 6.2
