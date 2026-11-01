@@ -115,7 +115,13 @@ real map. This is sampled review only, not continuous playback or approval.
 They also show five resources in use at shutdown; the normal job reported
 player disconnect errors. At `93ba1c1ed2bad2af171ec47cc83350e3d6f57b21`,
 source quick [41334940707](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41334940707)
-passed, including #08 four-bearing geometry, and both pinned JOIN
+passed, including #08 four-bearing geometry. Both #08 real-route jobs
+`124933031036` normal and `124933030981` dim completed successfully. Dim 1x
+samples show an authored banded vortex around the real chest/ground and its
+subsequent receding outline and debris; the banded appearance is also present
+in the original B reference `maw_t440.png`. This remains a sampled review,
+not full-motion approval. The dim run reported multiple disconnect errors at
+shutdown. At the same SHA, both pinned JOIN
 [41334940704](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41334940704)
 and current-A0 JOIN [41334942898](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41334942898)
 passed. These are not visual sign-off, and later edits require new same-SHA
