@@ -26,15 +26,15 @@ const ECONOMY_SAVE_FACADE := preload("res://game/survival/economy/economy_save_f
 # still binds to these exact preloaded Script resources and their base identity;
 # source bytes are independently SHA-pinned in native and export CI.
 const PRODUCTION_ECONOMY_ADAPTER := preload("res://game/survival/economy/a0_economy_adapter.gd")
-const PRODUCTION_ECONOMY_BASE := preload("res://game/survival/economy/vendor/a3_economy_service.gd")
+const PRODUCTION_ECONOMY_BASE := preload("res://game/survival/economy/economy_service.gd")
 # Immutable, first-party A3 integration fixture. Production composition must
 # explicitly review/re-pin future adapter revisions; a caller label is never
 # evidence of authority.
-const PINNED_A3_SCRIPT_SHA256 := "109c268036bb92e5dcca2d23ec5f5c1664e1f8645c01abf189d6b5c90f06302c"
+const PINNED_A3_SCRIPT_SHA256 := "98932d25b73a03b9412f0f72f82dc5c2b6451e3ba894a134fdff2d1924252ee0"
 # The independently pinned 86dc2195 regression adapter remains supported.
 const PINNED_A3_FIXTURE_SHA256 := "b1ee9792b4460e956ec6c59437269078e4f6767f76d35145e680dcc03ba3806c"
 const PINNED_A0_ADAPTER_SHA256 := "2b539f3320828c2fa850b6057c735e032153d5a1e8fa1b8ade63d2e3380ed2ce"
-const PINNED_A0_PRODUCTION_ADAPTER_SHA256 := "edf62b0aab6dd0dee5acd36e129286a553dd1234a96bd20455a782a31246b8ba"
+const PINNED_A0_PRODUCTION_ADAPTER_SHA256 := "25129902f9642b83d707dd814c14d1ca293e9b0630f521bec9fc518c6284529e"
 
 const CURRENT_SCHEMA_VERSION := 4
 const CURRENT_HERO_SOUL_RULES_VERSION := 4
