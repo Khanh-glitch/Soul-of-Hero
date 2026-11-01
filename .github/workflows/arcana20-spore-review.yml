@@ -21,7 +21,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: arcana20-current-phase-sweep-11-${{ matrix.lighting }}
-          run-id: 41277497113
+          run-id: 41289298106
           github-token: ${{ github.token }}
           path: phases
       - run: python3 -m pip install --quiet pillow
@@ -30,4 +30,6 @@ jobs:
           BEAT: ${{ matrix.beat }}
         run: |
           if [ "$BEAT" = colony ]; then LABEL=phase_14_candidate_A_colony_contact_03_tick216; else LABEL=phase_14_candidate_A_sporulation_impact_06_tick324; fi
-          python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py phases "$LABEL"
+          IMAGE=$(find phases -name "$LABEL.png" -print -quit)
+          test -n "$IMAGE"
+          python3 prototypes/arcana_fusion20/renderer/native_review_surface.py "$IMAGE" "$LABEL"
