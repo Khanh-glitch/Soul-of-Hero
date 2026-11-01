@@ -143,26 +143,26 @@ class SporeNebulaR:
         # are opaque source shapes, not bloom or an RGB transparency key.
         var neck := origin + Vector2(0, -height * 0.65)
         ADraw.poly_fill_solid(fb, [origin + Vector2(-width * 0.25, 0), origin + Vector2(width * 0.25, 0),
-            neck + Vector2(width * 0.18, 0), neck + Vector2(-width * 0.18, 0)], Vector3(0.34, 0.38, 0.22), true, opacity)
+            neck + Vector2(width * 0.18, 0), neck + Vector2(-width * 0.18, 0)], Vector3(0.56, 0.48, 0.32), true, opacity)
         ADraw.line(fb, origin.x - width * 0.11, origin.y - height * 0.06,
-            neck.x - width * 0.09, neck.y, Vector3(0.58, 0.62, 0.35), opacity * 0.7)
+            neck.x - width * 0.09, neck.y, Vector3(0.86, 0.75, 0.53), opacity * 0.7)
         var cap := neck + Vector2(0, -height * 0.20)
         ADraw.poly_fill_solid(fb, [cap + Vector2(-width, 0), cap + Vector2(-width * 0.90, -height * 0.18),
             cap + Vector2(-width * 0.60, -height * 0.34), cap + Vector2(-width * 0.20, -height * 0.40),
             cap + Vector2(width * 0.35, -height * 0.38), cap + Vector2(width * 0.72, -height * 0.27),
-            cap + Vector2(width * 0.95, -height * 0.12), cap + Vector2(width, 0)], Vector3(0.10, 0.29, 0.30), true, opacity)
+            cap + Vector2(width * 0.95, -height * 0.12), cap + Vector2(width, 0)], Vector3(0.36, 0.16, 0.38), true, opacity)
         ADraw.poly_fill_solid(fb, [cap + Vector2(-width, 0), cap + Vector2(-width * 0.72, height * 0.16),
-            cap + Vector2(0, height * 0.25), cap + Vector2(width * 0.72, height * 0.16), cap + Vector2(width, 0)], Vector3(0.46, 0.48, 0.27), true, opacity * 0.94)
-        ADraw.line(fb, cap.x - width, cap.y, cap.x + width, cap.y, Vector3(0.65, 0.85, 0.55), opacity)
+            cap + Vector2(0, height * 0.25), cap + Vector2(width * 0.72, height * 0.16), cap + Vector2(width, 0)], Vector3(0.82, 0.67, 0.40), true, opacity * 0.94)
+        ADraw.line(fb, cap.x - width, cap.y, cap.x + width, cap.y, Vector3(1.1, 0.72, 0.64), opacity)
         for side in [-0.7, -0.35, 0.0, 0.35, 0.7]:
             var offset := float(side)
             ADraw.line(fb, cap.x + offset * width * 0.12, cap.y + height * 0.03,
-                cap.x + offset * width, cap.y + height * 0.15, Vector3(0.78, 0.77, 0.45), opacity * 0.8)
+                cap.x + offset * width, cap.y + height * 0.15, Vector3(1.0, 0.88, 0.59), opacity * 0.8)
         # Sparse cap freckles remain tangible pixels rather than luminous fog.
         for spot in [-0.48, 0.0, 0.43]:
             var offset := float(spot)
             fb.add_px(roundi(cap.x + width * offset), roundi(cap.y - height * (0.22 + 0.07 * (1.0 - absf(offset)))),
-                0.5, 0.8, 0.62, opacity * 0.8)
+                0.95, 0.58, 1.1, opacity * 0.8)
 
     func render(fb: AFramebuffer, t: float) -> void:
         var fade := 1.0 - AMath.seg(t, 7.6, 8.6)
@@ -295,6 +295,15 @@ class ChronoshardR:
         var b := C + Vector2(0, -4)
         var middle := (a + b) * 0.5 + Vector2(0, -6)
         var scale := 0.42
+        # A faint, clipped trajectory is a temporal reference, not a world
+        # hit: the same stored event is visible at a different moment in each
+        # crystal. Use hard pixels so the mark is readable without bloom.
+        for q in range(21):
+            var u := float(q) / 20.0
+            var p := a.lerp(b, u) + Vector2(0, -sin(u * PI) * 24.0)
+            var guide := center + (p - middle) * scale
+            if q % 2 == 0:
+                _mini_disc(fb, guide, 0.7, hex, color, intensity * 0.38)
         if tau <= 1.0:
             # Original B arc and nine trailing discs at the stored instant.
             for m in range(9, -1, -1):
@@ -339,6 +348,7 @@ class ChronoshardR:
             if form <= 0.0:
                 continue
             var captured := AMath.seg(t, cap_t, cap_t + 0.4)
+            var capture_beat := AMath.seg(t, cap_t, cap_t + 0.08) * (1.0 - AMath.seg(t, cap_t + 0.08, cap_t + 0.35))
             var rel := _release(i, t)
             var resolve := _resolve(i, t)
             var cur: Vector2 = pos.lerp(C, AMath.ease_in(rel, 2.0))
@@ -358,7 +368,7 @@ class ChronoshardR:
             for q in range(6):
                 var a: Vector2 = hex[q]
                 var b: Vector2 = hex[(q + 1) % 6]
-                ADraw.line(fb, a.x, a.y, b.x, b.y, Vector3(1.2, 1.4, 2.0), resolve * 0.75)
+                ADraw.line(fb, a.x, a.y, b.x, b.y, Vector3(1.2, 1.4, 2.0), resolve * (0.75 + capture_beat * 0.8))
                 if q % 2 == 0:
                     ADraw.line(fb, cur.x, cur.y, a.x, a.y, Vector3(0.6, 0.6, 1.2), resolve * 0.35)
             # Each fragment visibly contains a different frozen moment of
