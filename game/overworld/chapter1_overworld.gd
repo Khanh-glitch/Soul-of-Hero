@@ -1175,9 +1175,25 @@ func _prepare_work_at_nearest_station() -> void:
 			nearest = entity
 			nearest_distance = distance
 	if nearest.is_empty():
+		# Say what the player is near, not just that nothing qualified: a silent
+		# refusal is indistinguishable from a dead key.
+		var world_nearest := ""
+		var world_distance := 99999.0
+		for value: Variant in survival_build._placed.values():
+			var structure := value as SurvivalStructure
+			if structure == null or not is_instance_valid(structure) or not structure.piece_id.begins_with("station_"):
+				continue
+			var distance := _station_distance(String(structure.entity_id), structure)
+			if distance < world_distance:
+				world_distance = distance
+				world_nearest = String(structure.entity_id)
+		print("A0_PREPARE_WORK result=no_station nearest=%s distance=%.1f" % [world_nearest, world_distance])
 		_say("Stand at a workstation to keep its work running while you are away.")
 		return
 	var report: Dictionary = economy_session.call(&"prepare_work_away", nearest)
+	print("A0_PREPARE_WORK result=%s station=%s distance=%.1f prepared=%s refused=%s" % [
+		str(report.get("ok", false)), nearest, nearest_distance,
+		str(report.get("prepared", [])), str(report.get("refused", []))])
 	if bool(report.get("ok", false)):
 		var jobs: Array = report.get("prepared", [])
 		_say("Prepared %d job(s) to run while you are away." % jobs.size())
@@ -1245,6 +1261,7 @@ func _handle_survival_input() -> void:
 			get_viewport().set_input_as_handled()
 			return
 	if _world_action_just_pressed(PREPARE_WORK_ACTION) and not bool(player.get(&"dead")):
+		print("A0_PREPARE_WORK press")
 		_prepare_work_at_nearest_station()
 		return
 	if survival_build == null or not is_instance_valid(survival_build) or _has_gameplay_modal():

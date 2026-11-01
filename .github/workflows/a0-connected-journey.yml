@@ -163,7 +163,7 @@ jobs:
             while IFS= read -r line; do echo "::error title=err-$(basename "$f" .log)::$line"; done < <(grep -aA2 -E 'SCRIPT ERROR' "$f" | grep -avE '^--$|^[[:space:]]*$' | head -6 | tr '\n' '~' | sed 's/~SCRIPT ERROR/\nSCRIPT ERROR/g')
           done
           for f in "$log1" "$log2"; do
-            while IFS= read -r line; do echo "::notice title=step-$(basename "$f" .log)::$line"; done < <(grep -aE '^A0_CONNECTED_(PREPARE|STAGE|PRESS_RESULT|INPUT_PATH|WEAVE_CLICK|OFFLINE_SETTLE|DEPARTURE)' "$f" | tail -4)
+            while IFS= read -r line; do echo "::notice title=step-$(basename "$f" .log)::$line"; done < <(grep -aE '^A0_CONNECTED_(PREPARE|STAGE|PRESS_RESULT|INPUT_PATH|WEAVE_CLICK|OFFLINE_SETTLE|DEPARTURE)|^A0_PREPARE_WORK' "$f" | tail -5)
           done
           # A gate nobody can read is not a gate: publish the whole tail of each
           # process log so a failure is diagnosable from the run page itself.
