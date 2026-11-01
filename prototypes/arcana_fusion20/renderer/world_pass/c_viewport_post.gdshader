@@ -37,12 +37,17 @@ void fragment() {
     // This is an approximation because c is already the real LDR viewport,
     // and source B also uses HDR highlight spread and ordered dithering.
     if (any(greaterThan(b_flash, vec3(0.0)))) {
-        c = vec3(1.0) - (vec3(1.0) - c) * exp(-1.05 * max(b_flash, vec3(0.0)));
-        // Preserve B finalize()'s actual 20-level ordered quantization during
-        // its screen flash. This does not recover clipped HDR or reduce F.
+        vec3 source_flash = vec3(1.0) - (vec3(1.0) - c) * exp(-1.05 * max(b_flash, vec3(0.0)));
+        // Apply the difference between B finalize()'s actual 20-level
+        // quantized flashed and unflashed results. The live SOH world is not
+        // itself a B framebuffer: preserving its original LDR base avoids a
+        // whole-world posterization pop as the flash crosses zero. This still
+        // cannot recover HDR highlights or make the approximation exact.
         vec2 src = b_dither_origin + b_dither_x * FRAGCOORD.x + b_dither_y * FRAGCOORD.y;
         float d = bayer_b(ivec2(floor(src))) - 0.5;
-        c = floor(clamp(c * 20.0 + vec3(d), 0.0, 20.0)) / 20.0;
+        vec3 quantized_flash = floor(clamp(source_flash * 20.0 + vec3(d), 0.0, 20.0)) / 20.0;
+        vec3 quantized_base = floor(clamp(c * 20.0 + vec3(d), 0.0, 20.0)) / 20.0;
+        c += quantized_flash - quantized_base;
     }
     COLOR = vec4(clamp(c + flash, 0.0, 1.0), 1.0);
 }

@@ -83,6 +83,18 @@ func _run() -> void:
         check(actual_dither_x.is_equal_approx(inverse.x), "B post supplies inverse dither x")
         check(actual_dither_y.is_equal_approx(inverse.y), "B post supplies inverse dither y")
         check(b_post._rect.visible, "B authored bite flash is visible")
+    # Ordered-quantized flash delta must leave an unrelated LDR world exactly
+    # unchanged at F=0 and never darken it for a positive source impulse.
+    for level in range(21):
+        var ldr := float(level) / 20.0
+        for y in range(4):
+            for x in range(4):
+                var d := BRenderer.bayer(x, y) - 0.5
+                var base_q := floorf(clampf(ldr * 20.0 + d, 0.0, 20.0)) / 20.0
+                var zero_q := floorf(clampf((1.0 - (1.0 - ldr) * exp(0.0)) * 20.0 + d, 0.0, 20.0)) / 20.0
+                var flash_q := floorf(clampf((1.0 - (1.0 - ldr) * exp(-1.05 * 0.7)) * 20.0 + d, 0.0, 20.0)) / 20.0
+                check(absf(zero_q - base_q) < 0.00001, "B dither delta has no zero-flash posterization pop")
+                check(flash_q + 0.00001 >= base_q, "B positive flash delta never darkens")
     b_post_host.cancel_skill(b_id)
     var retired_b_flash: Vector3 = b_post._material.get_shader_parameter("b_flash")
     check(not b_post._states.has(b_id) and not b_post._rect.visible and retired_b_flash.is_zero_approx(), "B cancel retires viewport flash and shake")
