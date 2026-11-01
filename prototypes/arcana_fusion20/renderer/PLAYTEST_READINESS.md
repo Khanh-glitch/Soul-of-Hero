@@ -2,12 +2,31 @@
 
 ## R18 focused work in progress
 
-#09 retains the 624×352 field, moving anchors and elected source roles. A
-controlled same-scene render-order experiment is running; its first attempt
-[41315617754](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41315617754)
-failed the actor/camera/tick lock and is **not valid comparative evidence**.
-#11 remains HOLD; do not infer approval from its raw field or adjust bolt
-counts without a new compositor hypothesis.
+#09 retains the 624×352 field, moving anchors and elected source roles. The
+first controlled attempt [41315617754](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41315617754)
+failed its actor/camera/tick lock and is not valid evidence. The synchronized
+capture [41315747505](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41315747505)
+locked the actual world, actors, source tick, camera and light; its full-cast
+encoding step failed because ffmpeg was not installed at that point, not
+because the state lock failed. [41316112450](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41316112450)
+verified baseline vs restored screenshots pixel-identical in all 49 paired
+frames in each light. Raising the whole pass reveals obscured bolts but also
+washes over the actors, so that foreground experiment is rejected and not
+mounted. Occlusion is demonstrated; correcting it without painting through
+actors/obstacles requires the owner's depth/composition interface. #11 remains
+HOLD; do not infer approval from its raw field or adjust bolt counts without a
+new compositor hypothesis.
+
+The independent #05 opening optimization `520fe37` moves repeated per-row
+geometry calculations out of the cross-sheet sample loop without changing the
+A seed, source formulas, motion, sample order or elected C late water role.
+[41316220574](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41316220574)
+compared the previous and revised native raw RGB, coverage, influence, warp,
+multiplier and write footprint bit-for-bit at ticks 90/180/270/318. Single
+same-process CPU samples in software CI were 104247→84633, 333669→247536,
+354857→266002 and 492683→338375 µs respectively. These are isolated raster
+timings, not target-device FPS or an artistic improvement; full moving-world
+motion and the refreshed export still require review.
 
 The bounded matched #09 retention run [41315535779](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41315535779)
 uses six rounds × four casts/cancels, five actual Home reloads and independent

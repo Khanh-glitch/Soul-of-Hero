@@ -1,8 +1,8 @@
 ## #05 component port: A tide.ts AbyssalBloom's original seeded opening,
 ## membrane sheet raster, bubbles and freeze peak. Deliberately excludes A's
 ## eruption tails/pressure and drops so the separately ported C column/fall
-## can own the late role. This component is NOT yet a complete fusion and is
-## not wired into the default candidate. Compare selected passes before use.
+## can own the late role. This component is mounted in the experimental
+## world-pass candidate; the full fusion and world/post remain unverified.
 extends RefCounted
 class_name AAbyssalBloomLead
 

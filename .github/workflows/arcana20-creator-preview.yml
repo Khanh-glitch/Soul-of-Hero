@@ -1,4 +1,4 @@
-# Package the expanded chain field and connected blade seam; never approval.
+# Package the experimental candidate, including optimized #05 source; never approval.
 name: ARCANA20 refreshed creator visual-preview build
 on:
   workflow_dispatch:
@@ -152,7 +152,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        skill: [14, 18]
+        skill: [5, 14, 18]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
