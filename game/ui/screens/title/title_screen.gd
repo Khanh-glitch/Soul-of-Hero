@@ -32,16 +32,9 @@ func _start_new_game() -> void:
 	if not reset_ok:
 		_show_reset_error("Không thể tạo hồ sơ mới. Dữ liệu cũ vẫn được giữ nguyên.")
 		return
-	# A new profile is a new RUN: the durable run-local state was just cleared by
-	# the reset above, and the run identity/deadline is opened here so the first
-	# hour already belongs to a real 336 h run instead of "no run at all".
-	var lifecycle := get_node_or_null("/root/RunLifecycle")
-	if lifecycle != null and lifecycle.has_method(&"start_run"):
-		var started: Dictionary = lifecycle.call(&"start_run")
-		if not bool(started.get("ok", false)):
-			_show_reset_error("Không thể bắt đầu một lượt chơi mới.")
-			return
-	AppFlow.open_home()
+	# Identity is a real player choice, not a Knight fallback. The run clock
+	# begins after selecting the avatar, not while the selection menu is open.
+	AppFlow.open_avatar_choice()
 
 
 func _set_actions_enabled(enabled: bool) -> void:
