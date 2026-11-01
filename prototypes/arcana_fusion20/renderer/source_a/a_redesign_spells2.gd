@@ -70,9 +70,12 @@ class RootwakeR:
                         var h := (1.0 - edge) * retract
                         if h < 0.05:
                             return null
-                        # Opaque woody core is geometry, not additive glow.
-                        var bark := 0.35 + 0.65 * (1.0 - edge) * (1.0 - u * 0.3)
-                        return Vector3(0.065, 0.16, 0.045) * bark,
+                        # Opaque olive-brown bark remains geometry, not glow.
+                        # Subtle seeded grain breaks up the previous nearly
+                        # black, featureless slabs without keying or alpha.
+                        var bark := 0.52 + 0.48 * (1.0 - edge) * (1.0 - u * 0.3)
+                        var grain := 0.84 + 0.16 * AMath.hash2(floor(u * 35.0), float(br.seed))
+                        return Vector3(0.24, 0.30, 0.12) * bark * grain,
                     func(u: float, br: Dictionary) -> float:
                         return maxf(1.0, float(br.w) * 2.1 * (1.0 - u * 0.6) * (1.0 + tension * 0.35)), true)
                 ACommon.draw_branch(fb, bb,
