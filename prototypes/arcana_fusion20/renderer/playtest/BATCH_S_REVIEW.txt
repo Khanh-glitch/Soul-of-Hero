@@ -5,25 +5,31 @@ phản ứng cơ thể. Người tạo chưa duyệt Gold. Hướng dẫn điề
 Bản thử dùng compositing thế giới LDR; HDR tuyến tính cùng khung hình, che khuất
 nhân vật/vật cản và xác nhận chiến đấu thuộc các chủ sở hữu tương ứng.
 
-Các nhận xét dưới đây dựa trên ảnh 1x từng giai đoạn tại 20bf08d5, không phải
-kết luận sau khi xem toàn bộ chuyển động hoặc sau thay đổi #15. Video tự nhiên
-sáng/tối và dữ liệu thời gian nằm trong real-world-evidence; source-comparisons
-chứa ảnh tham chiếu nguồn gốc. Camera và đối thủ thực chuyển động.
+Các nhận xét dựa trên ảnh 1x từng giai đoạn tại 20bf08d5 và toàn bộ các
+khung proxy nén 320x180, 4 fps tại 3399ecde (normal/dim), không phải xem video
+1x đầy đủ hay duyệt mỹ thuật. Proxy #15 có neo actor nhưng trước thay đổi clamp
+d88a998e; bản mới phải xem lại. Video tự nhiên gốc và dữ liệu thời gian nằm
+trong real-world-evidence; source-comparisons chứa ảnh tham chiếu nguồn gốc.
+Camera và đối thủ thực chuyển động. Các SHA dưới là SHA thay đổi vai trò,
+không thay thế SHA của gói hoặc quyết định của người tạo.
 
 ID | Nguồn được chọn / vai trò và quan sát 1x | Còn cần kiểm tra
-02 | B Wyrm: thân lửa cong, cắn và vết cháy; đầu nhỏ khi chơi. Flash/shake
+02 | B Wyrm (fc1d29d8): thân lửa cong, cắn và vết cháy; đầu nhỏ khi chơi. Flash/shake
      nguồn được chuyển tiếp qua xấp xỉ LDR, không phải HDR. | Xem toàn chu kỳ,
      so đầu/material và post nguồn; xác nhận va chạm thật do owner.
-03 | B Meteor: tâm phù văn neo mục tiêu, thiên thạch theo trục đứng; ảnh sau
-     sửa flash ít cháy nền hơn nhưng các điểm va chạm rất sáng. | Xem toàn bộ
-     sao băng, OUT, normal/dim; so với source-linear HDR khi owner cung cấp.
-07 | C Basilica: nứt, tháp băng đứng, vỡ và mảnh rơi. | Xem chuyển động shard,
+03 | B Meteor (061b91e3, post 7bdc72e4): tâm phù văn neo mục tiêu, thiên thạch theo trục đứng; ảnh sau
+     sửa flash vẫn rất sáng. Proxy cho thấy nhiều lần lóe xám sáng toàn màn,
+     làm giảm rõ cảnh/actor; thiên thạch và tàn lửa sau đó vẫn thấy được.
+     | Chưa kết luận đúng HDR, chưa duyệt readability; so 1x toàn chu kỳ với
+     nguồn và world HDR khi owner cung cấp, không tự bỏ flash gốc.
+07 | C Basilica (78b4c793): nứt, tháp băng đứng, vỡ và mảnh rơi. | Xem chuyển động shard,
      OUT và che khuất địa hình/nhân vật.
-08 | B Maw: xoáy dải đồng tâm có trong source B, neo tâm, tan thành viền/mảnh.
-     | Xem toàn chuyển động, lực hút chỉ là hình ảnh, cần xác nhận owner.
-10 | C Thunderloom: mây tối có dither, tia sáng và vết nứt; ảnh không cho thấy
+08 | B Maw (93ba1c1e): xoáy dải đồng tâm có trong source B, neo tâm, tan thành viền/mảnh.
+     Proxy cho thấy vòng xanh lớn dần rồi co/tan trở lại cảnh. | So vòng/dải
+     1x với nguồn; lực hút chỉ là hình ảnh, cần xác nhận owner.
+10 | C Thunderloom (620aed8): mây tối có dither, tia sáng và vết nứt; ảnh không cho thấy
      hình chữ nhật tối nguyên khung. | Xem toàn shading/post và OUT trên nền thật.
-15 | C Thorn Opera: 5 tua/4 điểm nguồn, nụ/hoa/lash. Ảnh cũ cho thấy người
+15 | C Thorn Opera (322a089e, clamp d88a998e): 5 tua/4 điểm nguồn, nụ/hoa/lash. Ảnh cũ cho thấy người
      chơi đi khỏi vùng tua. Bản sau 322a089e gắn gốc tua với actor thật tùy
      chọn, giữ các điểm nguồn cố định, và quy chiếu độ cao petal lên trên
      thế giới. Nếu clamp tỷ lệ làm lệch tâm, nụ và bốn điểm nguồn cùng dịch
@@ -31,11 +37,12 @@ ID | Nguồn được chọn / vai trò và quan sát 1x | Còn cần kiểm tra
      định. Ảnh dim sau sửa có tua đi chéo vào crop và nụ sáng nhỏ; một phần
      tua ở ngoài crop. | Cần xem lại toàn chuyển động mới; vùng raster 384x216
      vẫn hữu hạn, neo nhiều đối thủ thực và body effects chưa được xác nhận.
-17 | C Event Horizon: đĩa tối, blackout toàn sân khấu theo source và các mảnh
+17 | C Event Horizon (619b43b): đĩa tối, blackout toàn sân khấu theo source và các mảnh
      nền bật lại. | Xem toàn blackout/impact/OUT; world/depth/HDR chưa tương đương.
 
-Test nguồn tại 322a089e: source-quick 41336944418 PASS, bao gồm bốn hướng #15
-và kiểm tra A/B #05; chạy mới hơn cần được xác minh riêng. Bản nguồn tĩnh của
+Test nguồn tại d88a998e: source-quick 41337551630 PASS, gồm bốn hướng #15,
+clamp gần/xa, chùm bốn mục tiêu, petal world-up và kiểm tra A/B #05.
+JOIN current-A0 41337551616 PASS; kết quả không thay thế xem/duyệt hình ảnh. Bản nguồn tĩnh của
 #15 trước thích ứng có kiểm tra parity riêng; không áp kết quả đó cho bản mới.
 #05 giữ hai lựa chọn A/B, không tự chọn phương án. Kiểm tra khóa cảnh từng thất
 bại không rõ nguyên nhân; các run sau đã pass, chưa chứng minh nguyên nhân đã sửa.

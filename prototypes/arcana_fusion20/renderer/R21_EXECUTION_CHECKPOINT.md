@@ -199,3 +199,42 @@ unexplained, not assumed fixed; 20bf passed.
    checkpoint completes a batch or the final creator package.
 5. Update PR #30 with exact SHA/run/artifact evidence; no merge. Google Docs
    sync is `DOCS_SYNC_PENDING` (no connected Docs app in this session).
+
+## R21 continuation — all seven compressed proxy sequences inspected
+
+At `3399ecde`, every frame of the 320×180/4-fps compressed whole-cast proxies
+from successful creator run `41337133995` was inspected for all seven spells,
+normal and dim. These are downsampled frames, not native 1× motion review and
+not creator approval. In addition to the observations above: #03 has repeated
+bright, near-uniform gray full-screen flash beats obscuring world/actors in the
+proxy even after the LDR correction; intervening meteors and fading embers are
+visible. The pulses are source-authored, but their world readability and
+same-frame HDR parity remain open. Do not silently weaken/remove source post;
+inspect full-resolution and use the owner-provided pre-HUD HDR world. #08 has a
+small cyan formation growing into a banded vortex, then a shrinking outline and
+return to the moving world in both lighting variants. #02's head remains small
+at gameplay scale. #07 grows and shatters; #10 darkens and returns; #15 shows
+actor-linked strands and bloom but was before the clamped-focus follow-up;
+#17 shows source-authored blackout, rebound and return. Compression and 4 fps
+cannot establish fine source fidelity or all brief beats. See the concise
+`playtest/BATCH_S_REVIEW.txt` for role descriptions and remaining checks.
+
+At `d88a998e0f04c0b7a21e811b720d83613428554b`, source quick
+[41337551630](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41337551630)
+passed clamped-range focus/constellation and petal tests, and current-A0 JOIN
+[41337551616](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41337551616)
+passed. Creator run [41337551652](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41337551652)
+has successful build and source-review, with motion, locked comparator and
+Windows jobs queued as of this entry; check the actual result, including its
+package integrity steps. Experimental build 41337551690, all-20 41337551725,
+and pinned JOIN 41337551631 were also pending. Build output at d88 predates
+this documentation update; any current-final candidate needs a creator run
+at the actual final commit, with archive integrity and hash verification. In
+particular, inspect #15 after d88 at normal/dim and short/long range; its finite
+raster may clip, and geometry regression alone cannot resolve this visually.
+
+**Resume:** check Git status and exact SHA, run the existing creator workflow on
+the committed current SHA, check results and #05 comparator; retrieve native
+full videos if the artifact endpoint becomes reachable. Do not label Batch S
+complete without the required 1× real-motion inspection and verified package.
+Then continue the already ordered F → N → D work without asking for permission.
