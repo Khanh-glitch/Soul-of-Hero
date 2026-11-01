@@ -1,6 +1,7 @@
 name: ARCANA20 Thunderloom same-host before after overlap performance
 # Retained live CPU/upload snapshots are enabled by the current after SHA; the
 # historical before diagnostic did not retain counters after natural finish.
+# Current after includes the source-exact C clear and cloud-lattice changes.
 on:
   workflow_dispatch:
   push:
