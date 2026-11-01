@@ -8,6 +8,19 @@ historical methods, caveats and source-comparison references.
 ## Experimental downloadable build
 
 **Newest experimental visual-preview candidate:**
+[Windows x64 + Linux x64 artifact 13080001982](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297739439/artifacts/13080001982),
+source `b33e2da349daa066ebf8867a0c2319b7ab49c7a0`.
+[Run 41297739439](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297739439)
+completed successfully, including Linux real-route and same-run Windows
+**headless** smoke. Full moving-world visual captures are
+[#14](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297739439/artifacts/13079494508)
+and [#18](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297739439/artifacts/13080480080).
+The C lightning raster is included; all-20 moving-world validation including
+#09/#11 is pending in [41297739352](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297739352).
+The build is visual-only, not a confirmed combat or Windows GPU test, and
+**NOT PLAYTEST_READY**. All 20 remain `VISUAL_NOT_VERIFIED`.
+
+**Previous temporal-echo preview:**
 [Windows x64 + Linux x64 artifact 13079353974](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297412321/artifacts/13079353974),
 source `a99916b42db9c9b99104f9d627ef4d21f08f8b03`.
 [Run 41297412321](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297412321)
@@ -341,9 +354,9 @@ case), including influence tracking. First attempt [41297576511](https://github.
 failed because its test used A's 416-pixel row stride for C's 384-pixel
 frame; `82e4d47` corrected coordinates without changing thresholds. The
 larger A field is intentionally not clipped to C's 384x216 demo extent.
-This primitive test is not a full spell/fusion parity proof. A new all-20
-moving-world run and creator build have been requested; the current downloadable
-build above does not include this new raster.
+This primitive test is not a full spell/fusion parity proof. The latest creator
+build above includes it; the all-20 moving-world run was in progress when this
+was recorded.
 
 [41293811919](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293811919)
 also compared complete no-PNG-I/O casts/overlap with fresh same-duration
