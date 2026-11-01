@@ -272,6 +272,10 @@ class ChronoshardR:
         var ev: Array = [{"t": 0.9, "kind": "pre_echo", "pos_local": C, "emitted": false}]
         for i in range(_crystals.size()):
             ev.append({"t": float(_crystals[i].cap), "kind": "event_captured", "pos_local": _crystals[i].pos, "emitted": false})
+        # Visual-only markers preserve both out-of-order echo beats without
+        # representing them as confirmed contacts or gameplay damage.
+        ev.append({"t": 4.3, "kind": "reverse_echo_visual", "pos_local": C, "emitted": false})
+        ev.append({"t": 4.3375, "kind": "forward_echo_visual", "pos_local": C, "emitted": false})
         ev.append({"t": 6.2, "kind": "synchronized_impact", "pos_local": C, "emitted": false})
         ev.append({"t": 7.4, "kind": "fragments_resolve", "pos_local": C, "emitted": false})
         return ev

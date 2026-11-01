@@ -27,6 +27,13 @@ func _initialize() -> void:
                     return
                 previous_tau = tau
                 previous_release = rel
+            var echo_kinds: Array = []
+            for event in spell.authored_events():
+                echo_kinds.append(event.kind)
+            if not echo_kinds.has("reverse_echo_visual") or not echo_kinds.has("forward_echo_visual"):
+                push_error("REDESIGN_SMOKE_FAIL #18 echo markers")
+                quit(1)
+                return
             if not is_equal_approx(spell._central_tau(3.1), spell._central_tau(5.0)) or not spell._central_tau(5.8) > spell._central_tau(5.0) or not is_equal_approx(spell._central_tau(6.2), 1.0):
                 push_error("REDESIGN_SMOKE_FAIL #18 central freeze/resume")
                 quit(1)
