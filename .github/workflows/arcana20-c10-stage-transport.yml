@@ -11,6 +11,8 @@ on:
       - 'prototypes/arcana_fusion20/renderer/c17_stage_blackout_test.gd'
       - 'prototypes/arcana_fusion20/renderer/c10_stage_transport_test.gd'
       - 'prototypes/arcana_fusion20/renderer/c_frame_clear_test.gd'
+      - 'prototypes/arcana_fusion20/renderer/source_c/c_cloud_noise_cache.gd'
+      - 'prototypes/arcana_fusion20/renderer/c_cloud_noise_cache_test.gd'
 permissions:
   contents: read
 jobs:
@@ -25,6 +27,15 @@ jobs:
           use-dotnet: false
           include-templates: false
       - run: godot --headless --path . --import > import.log 2>&1 && ! grep -Eq 'SCRIPT ERROR:|Parse Error:' import.log
+      - name: Compare exact candidate C cloud noise grid
+        run: |
+          set -o pipefail
+          timeout 600s godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/c_cloud_noise_cache_test.gd 2>&1 | tee cloud.log
+          grep -Fq 'C_CLOUD_CACHE_PASS' cloud.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' cloud.log
+      - name: Report candidate noise cache
+        if: always()
+        run: grep -E 'C_CLOUD_CACHE_|ERROR|Parse Error' cloud.log | sed 's/^/::notice title=C_CLOUD_CACHE::/' || true
       - name: Verify and measure exact neutral displacement reset
         run: |
           set -o pipefail
@@ -61,3 +72,4 @@ jobs:
             test.log
             blackout.log
             clear.log
+            cloud.log
