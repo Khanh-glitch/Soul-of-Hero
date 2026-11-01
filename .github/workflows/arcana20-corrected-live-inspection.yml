@@ -32,7 +32,11 @@ jobs:
       - run: python3 -m pip install --quiet pillow
       - name: Inspect timestamps and native midpoint
         run: |
-          python3 tools/arcana20_join/inspect_live_video.py live 0.5 mid.png
+          set +e
+          python3 tools/arcana20_join/inspect_live_video.py live 0.5 mid.png > inspect.log 2>&1
+          result=$?
+          cat inspect.log
+          if [ "$result" -ne 0 ]; then tail -8 inspect.log | while IFS= read -r line; do echo "::error title=INSPECTION_FAILURE::$line"; done; exit "$result"; fi
           python3 prototypes/arcana_fusion20/renderer/native_review_surface.py mid.png mid_${{ matrix.skill }} ${{ matrix.center_x }} ${{ matrix.center_y }}
       - name: Inspect timestamps and native late frame
         run: |
