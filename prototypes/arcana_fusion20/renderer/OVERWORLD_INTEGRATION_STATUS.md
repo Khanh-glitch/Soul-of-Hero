@@ -208,6 +208,23 @@ and [PR30](https://github.com/Khanh-glitch/Soul-of-Hero/pull/30#issuecomment-655
   passed. It predates the later C performance and #04 candidate changes, and
   it remains test-driven and non-acceptance evidence.
 
+- Current A0 `04eacf6`, before AVFX `13df6c9` vs after `5af66c7`, same
+  runner for each pair: single #10
+  [41275419647](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41275419647)
+  p50/p95/p99 in ms at 720p **291.1/307.1/343.7 → 102.5/139.3/158.8**,
+  2K **426.2/438.1/474.3 → 231.2/297.1/342.9**, 4K
+  **636.9/648.3/701.0 → 446.2/558.9/583.4**. Samples: 720p 56→60,
+  2K/4K 52→52. The single harness was adapted identically in both disposable
+  trees, no #02 cast, no production modification. Corresponding #02+#10
+  overlap [41275419532](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41275419532)
+  p50/p95/p99 at 720p **435.7/468.2/507.3 → 268.5/320.7/356.6**,
+  2K **571.7/605.2/641.9 → 404.9/477.0/515.9**, 4K
+  **810.0/838.7/873.9 → 630.8/765.2/790.0**, 52 samples each. These are
+  shared software-rendered CI, cast phases and historical instrumentation
+  differ, not deterministic matched-time comparisons or target hardware FPS.
+  All controls report HP 69→69. GPU time, allocations, full-cast/target-device
+  budgets and before-side retained CPU counters remain unresolved.
+
 ### Per-skill acceptance ledger (R14)
 
 `PARTIAL` means a limited source-field or world diagnostic exists; it is not
