@@ -35,6 +35,44 @@ jobs:
           cat artifacts/composition.log
           grep -q 'GPB_NATIVE_SMOKE_PASS checks=10' artifacts/composition.log
           if grep -Ei 'SCRIPT ERROR|Parse Error|GPB_NATIVE_FAIL' artifacts/composition.log; then exit 1; fi
+      - name: R13 source→harvest→research→paid queue (Godot process 1)
+        shell: bash
+        env:
+          A3_TEST_ROLE: process_1
+          SOUL_OF_HERO_SAVE_PATH: user://tests/gpb_r13_value_economy.json
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/r13_receipts artifacts/ud
+          export A3_RECEIPT_DIR="$PWD/artifacts/r13_receipts"
+          timeout --signal=TERM --kill-after=10s 180s bash tools/ci/godot_isolated.sh \
+            --headless --path . --user-data-dir "$PWD/artifacts/ud" \
+            --script res://tests/survival/a3_value_economy_test.gd > artifacts/r13_p1.log 2>&1
+          cat artifacts/r13_p1.log
+          grep -q 'P1 PASSED' artifacts/r13_p1.log
+          if grep -Ei 'SCRIPT ERROR|Parse Error|^\\[FAIL\\]' artifacts/r13_p1.log; then exit 1; fi
+      - name: R13 reload→one output→duplicate refused (different Godot process 2)
+        shell: bash
+        env:
+          A3_TEST_ROLE: process_2
+          SOUL_OF_HERO_SAVE_PATH: user://tests/gpb_r13_value_economy.json
+        run: |
+          set -euo pipefail
+          export A3_RECEIPT_DIR="$PWD/artifacts/r13_receipts"
+          timeout --signal=TERM --kill-after=10s 180s bash tools/ci/godot_isolated.sh \
+            --headless --path . --user-data-dir "$PWD/artifacts/ud" \
+            --script res://tests/survival/a3_value_economy_test.gd > artifacts/r13_p2.log 2>&1
+          cat artifacts/r13_p2.log
+          grep -q 'P2 PASSED' artifacts/r13_p2.log
+          if grep -Ei 'SCRIPT ERROR|Parse Error|^\\[FAIL\\]' artifacts/r13_p2.log; then exit 1; fi
+      - name: Independent two-process custody and receipt verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tools/ci/verify_r13_receipts.py \
+            --p1 artifacts/r13_receipts/r13_p1_receipt.json \
+            --p2 artifacts/r13_receipts/r13_p2_receipt.json \
+            --summary artifacts/r13_receipt_summary.json
+          cat artifacts/r13_receipt_summary.json
       - name: Publish native evidence
         if: always()
         uses: actions/upload-artifact@v4
