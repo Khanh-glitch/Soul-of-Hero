@@ -15,8 +15,11 @@ completed successfully, including Linux real-route and same-run Windows
 **headless** smoke. Full moving-world visual captures are
 [#14](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297739439/artifacts/13079494508)
 and [#18](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297739439/artifacts/13080480080).
-The C lightning raster is included; all-20 moving-world validation including
-#09/#11 is pending in [41297739352](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297739352).
+The C lightning raster is included; all-20 moving-world lifecycle/capture jobs
+including #09/#11 passed in [41297739352](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297739352),
+with three real enemies per spell (seven for #09), natural finish, restart/
+cancel and unchanged enemy HP. These are not complete visual review, genuine
+combat receipts or source/post/actor-depth parity.
 The build is visual-only, not a confirmed combat or Windows GPU test, and
 **NOT PLAYTEST_READY**. All 20 remain `VISUAL_NOT_VERIFIED`.
 
@@ -355,8 +358,20 @@ failed because its test used A's 416-pixel row stride for C's 384-pixel
 frame; `82e4d47` corrected coordinates without changing thresholds. The
 larger A field is intentionally not clipped to C's 384x216 demo extent.
 This primitive test is not a full spell/fusion parity proof. The latest creator
-build above includes it; the all-20 moving-world run was in progress when this
-was recorded.
+build above includes it; [41297739352](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297739352)
+completed the all-20 moving-world capture. #09 had seven real moving Skeletons,
+57 captured frames, last-observed tick 431 and zero unbound source contacts;
+[#09 video](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297739352/artifacts/13080078009),
+[#11 video](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297739352/artifacts/13079967160).
+In selected full-frame and 1x lossless crops from
+[41298024637](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41298024637),
+#09's long link is still very faint and washed-out; #11 shows a bright complex
+rotor but the bolt branching is hard to distinguish. Neither visual is
+approved. #09/#11 recorded median software-capture intervals 323.658/421.224 ms;
+encoded lossless PTS differed from recorded times by at most 0.496/0.498 ms.
+This is capture overhead and shared software rendering, not target hardware FPS.
+The three same-run no-FX/single/overlap shutdown comparisons each printed 17
+instance and 5 resource lines; equal counts are not a proof of no AVFX leaks.
 
 [41293811919](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293811919)
 also compared complete no-PNG-I/O casts/overlap with fresh same-duration
