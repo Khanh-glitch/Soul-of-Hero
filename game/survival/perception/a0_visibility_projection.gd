@@ -182,7 +182,7 @@ func load_run_local_discovered(snapshot: PackedInt32Array) -> void:
 	for index: int in snapshot:
 		if index < 0 or index >= _size.x * _size.y:
 			continue
-		_discovered[Vector2i(index % _size.x, index / _size.x)] = true
+		_discovered[Vector2i(index % _size.x, floori(float(index) / float(_size.x)))] = true
 	_last_origin = Vector2i(-1, -1)
 	_last_radius = -1
 	_dirty = true
