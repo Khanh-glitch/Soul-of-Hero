@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [arena/c7b0c4e8-soul-of-hero]
-    # Capture rounded clustered caps and chronological retained crystal moments; frozen world, not acceptance.
+    # Capture temporal freeze/resume and early/reversed echoes plus fungal caps; frozen world, not acceptance.
     paths: ['.github/workflows/arcana20-spore-current-review.yml']
 permissions:
   contents: read

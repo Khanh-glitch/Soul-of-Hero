@@ -338,6 +338,51 @@ class ChronoshardR:
                 var point := target + Vector2(cos(angle) * velocity * e, (sin(angle) * velocity * 0.7 - 20.0) * e + 30.0 * e * e) * scale
                 _mini_disc(fb, point, 0.7, hex, color, intensity * AMath.cl01(1.4 - e))
 
+    func _central_tau(t: float) -> float:
+        # B's physical attack advances, freezes, then resumes into the shared
+        # synchronization. Times are adapted to this candidate's 6.2 impact.
+        if t < 2.6:
+            return -1.0
+        var frozen := 0.45 / 1.1
+        if t < 3.05:
+            return (t - 2.6) / 1.1
+        if t < 5.25:
+            return frozen
+        if t < 6.2:
+            return lerpf(frozen, 1.0, AMath.seg(t, 5.25, 6.2))
+        return 1.0 + (t - 6.2)
+
+    func _world_attack(fb: AFramebuffer, tau: float, tint: Vector3, k: float) -> void:
+        # Source-B attack function (astral.ts:163-185), drawn in the real
+        # world instead of only as clipped snapshots. These are visual echoes,
+        # not confirmed combat hits. No opaque copied actors/backgrounds.
+        if tau < 0.0 or tau > 2.2 or k <= 0.0:
+            return
+        var a := CASTER + Vector2(6, -14)
+        var b := C + Vector2(0, -4)
+        if tau <= 1.0:
+            for m in range(1, 10):
+                var u := maxf(0.0, tau - float(m) * 0.025)
+                var trail := a.lerp(b, u) + Vector2(0, -sin(u * PI) * 24.0)
+                ADraw.disc(fb, trail.x, trail.y, 3.0 - float(m) * 0.25, tint, k * (1.0 - float(m) / 10.0) * 0.7)
+            var head := a.lerp(b, tau) + Vector2(0, -sin(tau * PI) * 24.0)
+            var points: Array = []
+            for q in range(4):
+                var angle := tau * 20.0 + float(q) * PI * 0.5
+                var radius := 3.0 if q % 2 else 6.0
+                points.append(head + Vector2(cos(angle), sin(angle)) * radius)
+            ADraw.poly_fill_solid(fb, points, Vector3(1.4, 1.4, 2.0), false, k)
+        else:
+            var e := tau - 1.0
+            var radius := AMath.ease_out(e / 1.2) * 34.0
+            var fade := k * maxf(0.0, 1.0 - e / 1.2) * 1.5
+            var prev := b + Vector2(radius, 0)
+            for q in range(1, 37):
+                var angle := float(q) * TAU / 36.0
+                var next := b + Vector2(cos(angle), sin(angle) * 0.7) * radius
+                ADraw.line(fb, prev.x, prev.y, next.x, next.y, tint, fade)
+                prev = next
+
     func render(fb: AFramebuffer, t: float) -> void:
         # The same recognizable event appears as a pre-echo before its
         # frozen stages are stored: a projectile travels caster -> target.
@@ -350,6 +395,16 @@ class ChronoshardR:
             ADraw.streak(fb, tail.x, tail.y, ghost.x, ghost.y, 1.1, 2.0, Vector3(0.55, 0.9, 1.8), gk)
             ADraw.disc(fb, ghost.x, ghost.y, 2.0, Vector3(1.4, 1.3, 2.0), gk)
             ADraw.ring_shape(fb, C.x, C.y, 30.0, 1.4, AMath.R("frost", 0.7), gk * 0.5)
+        if t >= 2.6 and t < 6.7:
+            _world_attack(fb, _central_tau(t), Vector3(1.4, 0.8, 1.8), 0.85)
+        # One event unfolds early while another unwinds: source B's forwards
+        # and backwards causes, deliberately not gameplay hit receipts.
+        var forward_age := t - 3.9
+        if forward_age >= 0.0 and forward_age < 1.2:
+            _world_attack(fb, 0.3 + forward_age * 1.6, Vector3(1.8, 1.3, 0.5), 0.65 * (1.0 - AMath.seg(forward_age, 0.9, 1.2)))
+        var reverse_age := t - 4.3
+        if reverse_age >= 0.0 and reverse_age < 1.05:
+            _world_attack(fb, 1.45 - reverse_age * 1.5, Vector3(0.5, 0.9, 2.0), 0.65 * (1.0 - AMath.seg(reverse_age, 0.8, 1.05)))
         for i in range(_crystals.size()):
             var c: Dictionary = _crystals[i]
             var pos: Vector2 = c.pos

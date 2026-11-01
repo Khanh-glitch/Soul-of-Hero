@@ -27,6 +27,10 @@ func _initialize() -> void:
                     return
                 previous_tau = tau
                 previous_release = rel
+            if not is_equal_approx(spell._central_tau(3.1), spell._central_tau(5.0)) or not spell._central_tau(5.8) > spell._central_tau(5.0) or not is_equal_approx(spell._central_tau(6.2), 1.0):
+                push_error("REDESIGN_SMOKE_FAIL #18 central freeze/resume")
+                quit(1)
+                return
         for value in item.times:
             var t: float = value
             var frame := AFramebuffer.new()
