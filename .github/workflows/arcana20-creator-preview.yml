@@ -203,12 +203,8 @@ jobs:
           if [ -n "$folder" ]; then cp -a "$(dirname "$folder")"/. "$RUNNER_TEMP/live-output/"; else echo '::warning::No timeline.json found'; fi
       - name: Install image preview dependency
         run: python3 -m pip install --quiet pillow
-      - name: Surface full-frame mid timeline
-        run: python3 tools/arcana20_join/surface_live_capture.py "$RUNNER_TEMP/live-output" 0.5 full
-      - name: Surface full-frame late timeline
-        run: python3 tools/arcana20_join/surface_live_capture.py "$RUNNER_TEMP/live-output" 0.72 full
-      - name: Surface native detail late timeline
-        run: python3 tools/arcana20_join/surface_live_capture.py "$RUNNER_TEMP/live-output" 0.72 detail
+      # Full viewport remains in the lossless motion artifact. Limit notices
+      # so all four water beats fit within GitHub's per-job annotation cap.
       - name: Encode native wall-time capture
         run: |
           set -euo pipefail

@@ -318,7 +318,7 @@ func render(f: CFrame, t: float) -> void:
             # tear. Use its time/hash/offset on the elected C spine rather
             # than drawing a second tear or compositing a fake background.
             if at > 0.35 and ad < 1.2:
-                var pre_offset := round((AMath.hash2(float(floori(s * 120.0)), float(floori(at * 18.0))) - 0.5) * 5.0)
+                var pre_offset: float = round((AMath.hash2(float(floori(s * 120.0)), float(floori(at * 18.0))) - 0.5) * 5.0)
                 f.D(x, y, pre_offset, 0.0)
             if absf(s - 0.5) <= span * 0.5:
                 if ad < 0.8: f.L(x, y, 1.6, 1.6, 1.8)
