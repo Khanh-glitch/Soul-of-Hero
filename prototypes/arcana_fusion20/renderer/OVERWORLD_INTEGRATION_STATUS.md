@@ -64,14 +64,20 @@ records this. Genuine moving hit/miss/confirmed receipts remain owner-provided.
   premium-quality or full-motion verdict. One initially extracted tick-295
   JPEG was incomplete due to annotation limits and was discarded, not reviewed.
   The newer full-motion run [41277778594](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41277778594)
-  completed all four baseline/candidate normal/dim jobs. It is separate from
-  the `e7cc3fc` package, and its 480 frames per job have not been individually
-  reviewed. Full source pins and manifests are in its artifacts.
+  completed all four baseline/candidate normal/dim jobs (A0 `04e`, baseline
+  `5d3fdeb`, candidate `ce4be6f`). It is separate from the `e7cc3fc` package,
+  and its 480 frames per job have not been individually reviewed. Full source
+  pins and manifests are in its artifacts.
 - **#06/#12/#13/#14/#18:** `1a715e2` adapts the selected A water ribbon
   inertia/width/flow/foam to the new #06 glyph; it does not implement full A/C
-  source parity. #12 `3a7d0c0` uses the actual C #09 bolt-tree generator through
-  A raster, with endpoint-aligned visual cues; complete C raster/fusion remains
-  unverified. #13 `ac68fa8` maps branched root organisms to target-side anchors
+  source parity. At `ce4be6f`, [41278585707](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41278585707)
+  surfaced first-stroke and wave-release world beats: the wave reads as blue
+  sweeping strokes, but the early glyph is faint in normal light; motion,
+  authored component fidelity and depth still need review. #12 `3a7d0c0` uses
+  the actual C #09 bolt-tree generator through A raster, with endpoint-aligned
+  visual cues; complete C raster/fusion remains unverified. Its normal/dim
+  circuit and impact previews [41278413639](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41278413639)
+  show sparse lightning, especially against normal-lit terrain. #13 `ac68fa8` maps branched root organisms to target-side anchors
   and aligns tip arrivals with contacts; `e31d9d7` thickens woody cores and adds
   barbs. The normal/dim full-world first-tip/snap previews at that revision
   [41278110658](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41278110658)
@@ -83,8 +89,20 @@ records this. Genuine moving hit/miss/confirmed receipts remain owner-provided.
   at `3260f2d` show thin links and barely discernible colonies, especially in
   normal light; a later candidate enlarges the covered cap and stem, adds cap
   gills and widens the existing hyphae without adding detached particles. Its
-  current world visuals and performance need independent review. #18 `863301b` synchronizes reverse shard arrivals and adapts B's dark-backed
-  crystal frame, but B's clipped miniature attack is still missing. Lifecycles
+  `f72d70a` normal/dim event previews
+  [41278396142](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41278396142)
+  show somewhat more visible anchored caps and thicker links; detail remains
+  small, and neither motion, performance nor creator quality is established.
+  #18 `863301b` synchronizes reverse shard arrivals and adapts B's dark-backed
+  crystal frame; [41278413639](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41278413639)
+  shows the captured frames as dark facets but a tiny synchronized contact.
+  `5d61aad` additionally adapts B's 14-point crystalline synchronization wave
+  to A raster and the retimed impact, not B's entire implementation. Normal/
+  dim 6.4-second previews [41278569884](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41278569884)
+  show the expanding outline, faint in normal light. The capture uses a
+  declared, workflow-local extra sample in the disposable harness; manifests
+  preserve exact pins. Source flash/post and B clipped miniature attacks remain
+  missing; no framebuffer parity claim. Lifecycles
   at `e31d9d7`, `3260f2d`, and `863301b` passed
   [41277430405](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41277430405),
   [41277497139](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41277497139), and
@@ -94,11 +112,15 @@ records this. Genuine moving hit/miss/confirmed receipts remain owner-provided.
   and its all-20 visual capture completed successfully; those images have not
   all been reviewed. `849ca8c` actual-source
   runtime smoke [41277852723](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41277852723)
-  passed #06/#12/#13/#14/#18 at two source times each. The full current-source
-  lifecycle [41277778580](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41277778580)
+  passed #06/#12/#13/#14/#18 at two source times each. The `ce4be6f`
+  full lifecycle [41277778580](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41277778580)
   also completed; neither is source parity,
-  full motion, performance, or visual proof. Current normal/dim motion review
-  of #06/#12/#14/#18 remains open, as do #09/#11 selected-source fidelity,
+  full motion, performance, or visual proof. `5d61aad` source smoke
+  [41278543233](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41278543233)
+  passed including the new #18 wave time; its full lifecycle
+  [41278543249](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41278543249)
+  is still in progress. Current normal/dim full-motion review of #06/#12/#14/#18
+  remains open, as do #09/#11 selected-source fidelity,
   real actor/terrain depth and creator acceptance.
 - **#19:** opt-in, separate-input prototype at `740c571` implements the D
   bright/blur pyramid structure and experimental COMP, not a production seam.
