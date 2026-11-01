@@ -8,11 +8,11 @@ historical methods, caveats and source-comparison references.
 ## R17 status and experimental build
 
 **NOT PLAYTEST_READY.** The newest downloadable, visual-only build is
-[Windows x64 + Linux x64 artifact 13081989849](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41304907298/artifacts/13081989849),
-source `4413caad2d45740b039d18eacecf01872762f43c`.
-[Run 41304907298](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41304907298)
-passed Linux real-route motion for [#14](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41304907298/artifacts/13082643276)
-and [#18](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41304907298/artifacts/13082808050)
+[Windows x64 + Linux x64 artifact 13084835609](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41308842474/artifacts/13084835609),
+source `3bb43f3b6c27835e4ec32a1f67c38b436e4c5963`.
+[Run 41308842474](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41308842474)
+passed Linux real-route motion for [#14](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41308842474/artifacts/13084397189)
+and [#18](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41308842474/artifacts/13085030225)
 and Windows **headless** smoke. It is available for early feedback, not a
 creator-approved build or a Windows GPU/display test. Its #11 is still an
 unreadable white cloud at peak. #14's meandering hyphae have only been
@@ -33,7 +33,7 @@ bridge are **not mounted**. The artifact contains the exact join manifest.
 - #09's A graph now receives the live caster reference, fixing the measured
   85.443-world-unit origin detachment in the earlier capture. B-like two-color
   palette and C branching are candidates, not full original B/C parity. A new
-  visual-test UI formation (`a74d7b2`, in the 4413caa build) can spawn real
+  visual-test UI formation (`a74d7b2`, in the 3bb43f3 build) can spawn real
   Skeletons in a ring; [41303697476](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41303697476)
   exercised it with normal AI, seven moving enemies and both lights. The AI
   converges around the player and the sampled #09 still remains hard to read.
@@ -44,6 +44,12 @@ bridge are **not mounted**. The artifact contains the exact join manifest.
   distributes C's branches proportionally across A's many short connectors;
   this is a disclosed adaptation, not exact C/full-spell parity. Earlier f58
   native review is [41301516790](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41301516790).
+  `f101aaf` is a new unverified experiment: restore A's actual bolt algorithm
+  on the other moving connectors and assign C's five-branch channels to at most
+  six deterministically ranked A bridges, based on C #09's six successful
+  channels. The original C timing/graph is **not** reproduced by this mapping.
+  Runtime, source-field comparison and native normal/dim motion are pending;
+  this is not in the current download or an acceptance claim.
 - Actual moving-world source-clock-retimed before/after videos, baseline vs
   1039869: [#09 normal](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41301955052/artifacts/13081387454),
   [#09 dim](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41301955052/artifacts/13082155888),
