@@ -28,6 +28,7 @@ var field_activity := 0
 # Explicit stage operations: source-wide shading/scanlines belong to the
 # viewport, not the transformed source canvas. Neutral for source parity.
 var stage_shade := 1.0
+var stage_blackout := false
 var stage_scanlines := PackedFloat32Array()
 
 var ground := PackedByteArray()
@@ -73,6 +74,7 @@ func _init() -> void:
 func clear() -> void:
     field_activity = 0
     stage_shade = 1.0
+    stage_blackout = false
     stage_scanlines.fill(0.0)
     ground.fill(0)
     ground_coverage.fill(0.0)
@@ -311,6 +313,15 @@ func shade_stage(m: float) -> void:
         stage_shade *= m
     else:
         field(0, 0, W - 1, H - 1, func(x: int, y: int) -> void: S(x, y, m))
+
+# Source-wide opaque ink (Event Horizon information-loss blackout) is a
+# different operation from ground shade: it obscures actors too, leaving
+# subsequently authored spell light. It is never converted to a source quad.
+func blackout_stage() -> void:
+    if track_world_fragments:
+        stage_blackout = true
+    else:
+        field(0, 0, W - 1, H - 1, func(x: int, y: int) -> void: I(x, y, 0.0, 0.0, 0.0, 1.0))
 
 func stage_scanline(y: int, dx: float, chroma_amount: float) -> void:
     if y < 0 or y >= H: return

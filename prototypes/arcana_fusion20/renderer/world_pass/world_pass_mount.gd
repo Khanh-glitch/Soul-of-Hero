@@ -9,6 +9,7 @@ var _renderer: Arcana20Renderer
 var _passes: Dictionary = {} # canonical id -> {family: viewer}
 var unsupported: Dictionary = {}
 var _c_stage: Arcana20CStageWorld
+var _blackouts: Dictionary = {}
 
 func _ready() -> void:
     _ensure_c_stage()
@@ -36,6 +37,15 @@ func _on_frame(id: StringName, frame: Arcana20SourcePassFrame) -> void:
     if frame.family == &"C":
         _ensure_c_stage()
         _c_stage.consume(id, frame)
+        if frame.c_stage_blackout:
+            var blackout := _blackouts.get(id) as Arcana20CStageBlackout
+            if not is_instance_valid(blackout):
+                blackout = Arcana20CStageBlackout.new()
+                add_child(blackout)
+                _blackouts[id] = blackout
+            blackout.consume(frame)
+        else:
+            _retire_blackout(id)
     var by_family: Dictionary = _passes.get(id, {})
     var viewer: Node2D = by_family.get(frame.family)
     if not is_instance_valid(viewer):
@@ -55,8 +65,15 @@ func _on_frame(id: StringName, frame: Arcana20SourcePassFrame) -> void:
         _passes[id] = by_family
     viewer.call(&"consume", frame)
 
+func _retire_blackout(id: StringName) -> void:
+    var blackout := _blackouts.get(id) as Arcana20CStageBlackout
+    if is_instance_valid(blackout): blackout.queue_free()
+    _blackouts.erase(id)
+
 func _on_layer_finished(id: StringName, family: StringName) -> void:
-    if family == &"C" and is_instance_valid(_c_stage): _c_stage.retire(id)
+    if family == &"C":
+        if is_instance_valid(_c_stage): _c_stage.retire(id)
+        _retire_blackout(id)
     var by_family: Dictionary = _passes.get(id, {})
     var viewer: Node = by_family.get(family)
     if is_instance_valid(viewer):
@@ -68,6 +85,7 @@ func _on_layer_finished(id: StringName, family: StringName) -> void:
 
 func _on_finished(id: StringName) -> void:
     if is_instance_valid(_c_stage): _c_stage.retire(id)
+    _retire_blackout(id)
     var by_family: Dictionary = _passes.get(id, {})
     for viewer in by_family.values():
         if is_instance_valid(viewer):
@@ -92,6 +110,7 @@ func detach() -> void:
     for id in _passes.keys():
         _on_finished(id)
     unsupported.clear()
+    for id in _blackouts.keys(): _retire_blackout(id)
     if is_instance_valid(_c_stage):
         _c_stage.queue_free()
         _c_stage = null

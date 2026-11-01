@@ -7,6 +7,8 @@ on:
       - '.github/workflows/arcana20-c10-stage-transport.yml'
       - 'prototypes/arcana_fusion20/renderer/source_c/c_frame.gd'
       - 'prototypes/arcana_fusion20/renderer/source_c/c_thunderloom.gd'
+      - 'prototypes/arcana_fusion20/renderer/source_c/c_event_horizon.gd'
+      - 'prototypes/arcana_fusion20/renderer/c17_stage_blackout_test.gd'
       - 'prototypes/arcana_fusion20/renderer/c10_stage_transport_test.gd'
 permissions:
   contents: read
@@ -28,6 +30,15 @@ jobs:
           timeout 600s godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/c10_stage_transport_test.gd 2>&1 | tee test.log
           grep -Fq 'C10_STAGE_TRANSPORT_PASS' test.log
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:' test.log
+      - name: Compare Event Horizon stage blackout source transport
+        run: |
+          set -o pipefail
+          timeout 600s godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/c17_stage_blackout_test.gd 2>&1 | tee blackout.log
+          grep -Fq 'C17_STAGE_BLACKOUT_PASS' blackout.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' blackout.log
+      - name: Report blackout result
+        if: always()
+        run: grep -E 'C17_STAGE_BLACKOUT|ERROR|Parse Error' blackout.log | sed 's/^/::notice title=C17_STAGE_BLACKOUT::/' || true
       - name: Report results
         if: always()
         run: grep -E 'C10_STAGE_TRANSPORT|ERROR|SCRIPT ERROR|Parse Error' test.log | tail -10 | sed 's/^/::notice title=C10_STAGE_TRANSPORT::/' || true
@@ -38,3 +49,4 @@ jobs:
           path: |
             import.log
             test.log
+            blackout.log

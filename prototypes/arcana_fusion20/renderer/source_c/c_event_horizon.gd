@@ -154,7 +154,7 @@ func _disk(f: CFrame, t: float, front: bool, tilt: float, rot: float, sy: float,
 
 func render(f: CFrame, t: float) -> void:
     if t >= TD and t < TR:
-        f.field(0, 0, CFrame.W - 1, CFrame.H - 1, func(x: int, y: int) -> void: f.I(x, y, 0, 0, 0, 1.0))
+        f.blackout_stage()
         f.L(E.x, E.y, 1.4, 1.4, 1.6)
         return
     if t < TD:

@@ -32,6 +32,7 @@ var c_world_fragment: PackedFloat32Array
 var c_influence: PackedByteArray
 # -1 means unknown producer; consumers must conservatively upload all fields.
 # Screen-wide C stage values are never transformed by source_to_world.
+var c_stage_blackout := false
 var c_stage_shade := 1.0
 var c_stage_scanlines: PackedFloat32Array
 var c_field_activity := -1
