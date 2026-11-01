@@ -970,9 +970,15 @@ func _press_prepare_work() -> bool:
 				frame, (state.get("jobs", []) as Array).size()])
 			return true
 		await process_frame
-	print("A0_CONNECTED_PREPARE result=not_armed bound=%s nearest=%s distance=%.1f before=%s after=%s" % [
+	# The world answers a refused press through the HUD, not through state: quoting the
+	# prompt is how a reader tells "not at a workstation" from "nothing in progress".
+	var hud: Node = ow.get(&"hud")
+	var prompt := ""
+	if hud != null and is_instance_valid(hud) and hud.has_method(&"prompt_text"):
+		prompt = String(hud.call(&"prompt_text"))
+	print("A0_CONNECTED_PREPARE result=not_armed bound=%s nearest=%s distance=%.1f prompt=%s before=%s after=%s" % [
 		str(InputMap.has_action(&"prepare_work")), _nearest_station(ow), _nearest_station_distance(ow),
-		JSON.stringify(before), JSON.stringify(state)])
+		prompt, JSON.stringify(before), JSON.stringify(state)])
 	return false
 
 

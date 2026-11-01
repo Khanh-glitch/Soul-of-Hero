@@ -496,9 +496,11 @@ func _click_control(control: Control, label := "") -> bool:
 	var hovered: Node = root.gui_get_hovered_control()
 	var landing := _landing(control, hovered)
 	await _click_window(point)
+	# Pressing a row can free the node it was found through, so the report is written
+	# from what is still alive: a freed control is named as freed, not crashed on.
 	print("A0_CLICK control=%s label=%s point=%s landing=%s hovered=%s" % [
-		String(control.name), label, str(point), landing,
-		String(hovered.get_path()) if hovered != null else "none"])
+		(String(control.name) if is_instance_valid(control) else "<freed>"), label, str(point), landing,
+		(String(hovered.get_path()) if hovered != null and is_instance_valid(hovered) else "none")])
 	return landing != "other" and landing != "none"
 
 
