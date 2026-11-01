@@ -288,7 +288,9 @@ class ChronoshardR:
     # miniature geometry to A's raster and our retimed causal sequence; it is
     # not the full B renderer/post or a parity claim.
     func _mini_disc(fb: AFramebuffer, p: Vector2, radius: float, hex: PackedVector2Array, color: Vector3, intensity: float) -> void:
-        var rr := maxf(0.7, radius)
+        # Keep the retained event legible as actual pixels inside the face;
+        # this is the redesign's enlarged mark, not a B-raster parity claim.
+        var rr := maxf(1.15, radius)
         for yy in range(floori(p.y - rr), ceili(p.y + rr) + 1):
             for xx in range(floori(p.x - rr), ceili(p.x + rr) + 1):
                 var sample := Vector2(float(xx) + 0.5, float(yy) + 0.5)
@@ -301,7 +303,7 @@ class ChronoshardR:
         var a := CASTER + Vector2(6, -14)
         var b := C + Vector2(0, -4)
         var middle := (a + b) * 0.5 + Vector2(0, -6)
-        var scale := 0.42
+        var scale := 0.30
         # A faint, clipped trajectory is a temporal reference, not a world
         # hit: the same stored event is visible at a different moment in each
         # crystal. Use hard pixels so the mark is readable without bloom.
@@ -310,7 +312,7 @@ class ChronoshardR:
             var p := a.lerp(b, u) + Vector2(0, -sin(u * PI) * 24.0)
             var guide := center + (p - middle) * scale
             if q % 2 == 0:
-                _mini_disc(fb, guide, 0.7, hex, color, intensity * 0.38)
+                _mini_disc(fb, guide, 0.8, hex, color, intensity * 0.68)
         if tau <= 1.0:
             # Original B arc and nine trailing discs at the stored instant.
             for m in range(9, -1, -1):
@@ -320,7 +322,7 @@ class ChronoshardR:
                 _mini_disc(fb, at, (3.0 - float(m) * 0.25) * scale, hex,
                     color, intensity * (1.0 - float(m) / 10.0) * 0.7)
             var head := a.lerp(b, tau) + Vector2(0, -sin(tau * PI) * 24.0)
-            _mini_disc(fb, center + (head - middle) * scale, 1.0, hex, Vector3(1.4, 1.4, 2.0), intensity)
+            _mini_disc(fb, center + (head - middle) * scale, 2.0, hex, Vector3(2.0, 1.6, 0.8), intensity)
         else:
             var e := tau - 1.0
             var target := center + (b - middle) * scale
@@ -381,8 +383,10 @@ class ChronoshardR:
             # Each fragment visibly contains a different frozen moment of
             # the same projectile/impact, clipped to the moving crystal face.
             if captured > 0.0:
-                var mark := Vector3(1.8, 1.3, 0.5) if i % 2 == 0 else Vector3(0.5, 0.9, 2.0)
-                var stored_tau := [0.3, 1.45, 1.15, 0.65, 0.9]
+                # Five sequential snapshots of one amber event, in capture
+                # order around the ring; release travels in reverse order.
+                var mark := Vector3(2.0, 1.2, 0.45)
+                var stored_tau := [0.15, 0.35, 0.60, 0.82, 1.15]
                 _mini_attack(fb, PackedVector2Array(hex), cur, float(stored_tau[i]), mark, captured * resolve)
             ADraw.glow(fb, cur.x, cur.y, sz * 1.4, AMath.R("frost", 0.75), captured * resolve * 0.35)
             if captured > 0.0 and rel < 1.0:
