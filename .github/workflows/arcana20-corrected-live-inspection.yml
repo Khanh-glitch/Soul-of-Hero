@@ -26,7 +26,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: live-motion-${{ matrix.skill }}-normal
-          run-id: 41295327487
+          run-id: 41296591004
           github-token: ${{ github.token }}
           path: live
       - name: Install review dependencies

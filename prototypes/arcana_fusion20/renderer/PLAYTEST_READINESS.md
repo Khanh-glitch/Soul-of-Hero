@@ -7,7 +7,23 @@ historical methods, caveats and source-comparison references.
 
 ## Experimental downloadable build
 
-**Latest experimental visual-preview candidate:**
+**Newest experimental visual-preview candidate:**
+[Windows x64 + Linux x64 artifact 13079547031](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41296591004/artifacts/13079547031),
+source `4f5887db73dfd43a966acba85f8dfe13cf959736`, from completed successful
+[run 41296591004](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41296591004).
+Linux and the same-run Windows x64 executable passed the actual route smoke;
+Windows ran **headlessly**, not on a display/GPU. #14 and #18 complete visual
+casts ran in moving real world; videos/timelines are
+[#14](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41296591004/artifacts/13079855881)
+and [#18](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41296591004/artifacts/13079581291).
+#18 had three moving Skeletons and 66 captured frames, last-observed tick 503;
+the preview remains sparse software capture, not native 60 Hz. At one
+full-frame midpoint the crystal contents are still hard to see; lossless 1x
+detail review is in progress. Its new chronological marks are experimental,
+not B-source parity or creator approval. All 20 remain VISUAL_NOT_VERIFIED,
+no CT receipts are mounted, and it is **not PLAYTEST_READY**.
+
+**Previous experimental visual-preview candidate:**
 [Windows x64 + Linux x64 artifact 13078684701](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41295327487/artifacts/13078684701),
 source `e9008a58fd0cd7827a9a04006b6afbba5b17ab51`. The
 [build and full-motion smoke run](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41295327487)
@@ -251,10 +267,12 @@ stored moments chronological with brighter, larger clipped marks; this is an
 intentional redesign adaptation, not B-source parity. Its build
 [41296591004](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41296591004)
 and frozen-motion captures [41296590948](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41296590948)
-were queued when recorded. `3dc4713193f120eae6fbb56b697637957b40af7c` adds
-a constant-backed sequence and checks ascending capture/reverse convergence;
-[41296611649](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41296611649)
-was queued. These changes are not in artifact 13078684701 and remain unreviewed.
+completed the build and live capture; the frozen normal/dim motion run is in progress.
+`3dc4713193f120eae6fbb56b697637957b40af7c` adds a constant-backed sequence
+and checks ascending capture/reverse convergence; both A/B source-runtime
+and historical parity/CPU jobs in [41296611649](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41296611649)
+passed. The sequence is in the `4f5887d` build above; the later test refactor
+is not. Source runtime and visual samples are not visual approval.
 
 [41293811919](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293811919)
 also compared complete no-PNG-I/O casts/overlap with fresh same-duration
