@@ -502,7 +502,76 @@ Các kiểu dữ liệu trên là **hợp đồng ngữ nghĩa**, không ép nga
 - **Khi Map muốn thêm công trình:** trước hết chứng minh nó tạo cơ hội hành động/nguồn/route từ K1–K8/J01–J20; chỉ sau đó mở source POI archetype. Không đặt vì “Last Island có sân bay nên SOH phải có sân bay”.
 
 
-<!-- MORE_GAMEPLAY_BIBLE_MODULES_INSERT_HERE -->
+## VIII. NGHIỆM THU GAMEPLAY THỰC VÀ TÌNH TRẠNG TRIỂN KHAI
+
+### 8.1. Sáu tầng bằng chứng — không được đổi màu xanh từ tầng này sang tầng khác
+
+| Tầng | Bằng chứng tối thiểu | Không được khẳng định |
+| --- | --- | --- |
+| **S0: Product design admitted** | Quy tắc [CHỐT], source, quyết định và conflict đã rõ | Có code hoặc người chơi thật |
+| **S1: Source/data hiện hữu** | Đường file, commit, item ID/recipe ID/authority, reference source đã thật | Tương tác hoạt động trong game |
+| **S2: Native isolated** | Godot cùng engine và SHA chạy fixture riêng, có log/screenshot và output đúng | Game production chơi liên tục được |
+| **S3: Same-build composed** | Từ New Game input bình thường → điều khiển nhân vật → đi → tương tác → lưu/reload → kết quả thật, không developer teleport/cheat item | Người chơi hiểu/đã thấy hay |
+| **S4: Human observed experience** | Người chơi tự làm và tự phản hồi, tự tìm được lựa chọn, quan sát/hiểu hậu quả, có lý do thử lại | Độ sâu 14 ngày/hợp lý multi-run |
+| **S5: Long horizon & replay** | Nhiều phiên và nhiều kiểu người chơi/chiến lược; thấy mục tiêu ngày 1–11, cuối72, logout–return, hàng hóa, Elder tùy chọn, cash và bảng cá nhân; có dấu hiệu muốn chơi lại | Xác minh online toàn cầu nếu chưa có backend |
+
+**Luật nghiêm ngặt:** Camera screenshot triage không phải Gold visual acceptance. Fixture A3 PASS không có nghĩa lò trong bản Map production được đặt và hoạt động. POI scene isolated PASS không đủ cho đường nhân vật mới đi từ Home tới POI. Run Godot chạy được không đồng nghĩa game có thể chơi; chơi được chưa chắc đã hay; hay trong một khoảnh khắc chưa chắc là chiều sâu đã chốt.
+
+### 8.2. Trạng thái tính đến vòng kiểm kê ngày 01/11/2026
+
+| Hệ/nhóm | Bằng chứng hiện có ở các PR riêng | Chưa có bằng chứng đủ để gọi là hoàn thành |
+| --- | --- | --- |
+| **A0** | SaveService/game root, các native integration slice thu hoạch/nhà/trạm/offline, một số restart/ledger tests; PR21 vẫn draft tại lượt kiểm tra | Cùng một build hoàn chỉnh 336h, U1 dấu/quái, rương ký gửi mới, ranking/true multi-run, Gold, mọi địa hình |
+| **A1/Map** | Nhiều bản đồ/phôi, connector và kiểm tra topology riêng, map paper A/B/C; PR20 mở | Masterplan final do người chơi duyệt, native camera/địa hình, mọi chỗ nhà và tuyến rương–POI–sơ tán |
+| **A3** | Catalog, recipe/loot/economy và isolated native/balance simulation, PR19 mở | Các nguyên liệu/recipe đúng nguồn trong gameplay thật, chống vòng kinh tế, đơn giá rương, vận tải tiền cuối72 |
+| **A8** | Một số POI pilot có native interaction và evidence, PR26 mở | Network POI nhiều lớp xuyên Map production và nguồn phần thưởng đúng authority |
+| **A4/AVFX** | Nhiều port skill pilots, manifest, Gold/specific scene tests, PR28/PR30 draft | Toàn bộ source Gold và những tác động cơ học–môi trường của từng kỹ năng trong actual 640×360 game |
+| **A6** | HUD/UX pilots, lựa chọn avatar/cụm input dự thảo | HUD production item/HP/charge/công thức/forecast/địa hình/rương ký gửi/bảng score và hai avatar nguồn hoàn chỉnh |
+| **A7** | QA/oracle/native independent gates, PR25 mở | 20 hành trình cùng một SHA, định lượng cân bằng, quan sát con người và chống gian lận online thực |
+
+Các thông tin này là **bức ảnh audit**, cần tra lại PR/head/CI ở mỗi lượt nghiệm thu; nó không bảo đảm chính xác nếu nhánh owner thay đổi sau ngày này. Không dùng chữ “đã có” trong tiến độ nếu không kèm cấp `S0–S5`.
+
+### 8.3. Danh sách bài thử bắt buộc trước khi ai đó cho rằng Bible đã được hiện thực hóa
+
+**Giai đoạn B0 — nền tảng tự do:** tạo nhân vật nam/nữ → bốn spawn an toàn → dao/công cụ/đập thùng → vật liệu thật → chế tạo công cụ → dựng nhà chỗ mình chọn → giường/kho/lò → save/restart bằng process khác → đi tiếp. Có một đường người chơi từ chối theo quest nhưng vẫn thành công.
+
+**Giai đoạn B1 — các liên hệ giữa game:** nhặt Core bất ngờ và dùng ngay đúng Gold → còn charges/độ bền → đem về cất/nghiên cứu → recipe mở đúng → một POI ngoài/POI sâu có thẻ/điện/hazard → tự rút và quay lại → chết/single bag/giường → hạ nguy cơ bằng chuẩn bị thật.
+
+**Giai đoạn B2 — thế giới sống:** ba nhà tự chọn có chiến lược logistics khác nhau → nhận biết dấu chân/quái và chỉ có truy nhà khi có chứng cứ → dự báo trước logout → lò/vườn/khí hậu/quái tiếp tục theo sự kiện thật → đăng nhập lại có hậu quả đúng thứ tự, không nguồn vô hạn. Xe/thú phục vụ vận tải; Skill hợp lệ đánh cây và ảnh hưởng môi trường; Gold đúng pixels và camera 640×360.
+
+**Giai đoạn E1 — chuẩn bị và Ragnarok:** trước72h vẫn có nhiều tiến triển không boss; ngày12–14 có cảnh/khí hậu/quái/Elder thay đổi vật lý; sáu dạng yếu và sáu dạng mạnh có lộ trình, bảy cách tiếp cận không cần ăn gian. Rương tiền chỉ khi đúng time/source, không respawn tiền sai. Có lối tiền **không boss** và lối vào Elder khác nhau thật.
+
+**Giai đoạn E2 — một run hoàn chỉnh + run sau:** dùng tiền chưa secured mua **Rương ký gửi đầu tiên** qua nguồn/shop hợp lệ → đặt ở nhà → tiền transfer an toàn → gửi nhiều lần → có thể chết mất tiền chưa gửi nhưng không mất secured → sơ tán vật lý hoặc run expire/abandon phân biệt → finalize exactly once → vật thể/recipe/boss/nhà/stone bị xóa → số dư profile giữ → run2 spawn mới và mua hàng tại cửa hàng thật. Run score từ sự kiện unique không làm tăng cash; lịch sử run và bảng cá nhân offline luôn rõ trạng thái.
+
+**Giai đoạn E3 — optional online VERIFIED ranking:** chỉ khi có backend/chứng cứ server, kiểm thử chống sửa save/time/receipt/replay và thấy cùng quy tắc trên leaderboard; khác với chơi solo offline. Nếu chưa có thì Bible vẫn đã chốt ý định nhưng **backend chưa hoàn thành**, không dựng bảng “Verified Worldwide” giả.
+
+**Giai đoạn H — cảm giác người chơi:** tối thiểu một người thử mới và một người đã biết game, nhiều phiên đủ dài, tự kể ra ít nhất ba mục tiêu đáng đi tiếp thuộc ít nhất hai hệ cơ chế, một địa điểm chưa mở muốn quay lại, một vị trí nhà khác đáng thử và một chiến lược run2 rõ khác run1. Đây là **tiêu chí nghiệm thu đề xuất**, không biến một số đếm tiêu chí thành điều kiện gameplay cố định.
+
+### 8.4. Những mâu thuẫn bị bác bỏ và điểm chưa thể tự chốt
+
+**CẤM hồi sinh:** bắt buộc 10 dungeon xếp một góc map; chia bản đồ thành sáu vùng boss đơn giản; mỗi vật phẩm có một hành động duy nhất; tách Skill Core khỏi item economy; ba nút lựa chọn khi nhặt; PvP/hệ raid theo khoảng cách POI; farm tiền Ragnarok từ rác/score; fixed public cash deposit machine; rương xuyên run giữ item/Core; Operation Base vĩnh viễn; permanent recipe; rank point mua bằng tiền; render hình Gold tối thay vì nguồn skill gắn vào cảnh; chọn A/B/C chỉ bằng % buildable.
+
+**ĐỀ XUẤT CẦN NGHIỆM THU:** cách xác định quyền lãnh địa và vị trí đặt rương; làm sao người chơi run0 có đủ tiền chưa ký gửi để mua rương đầu; mốc mở bán/gói hàng và giá; độ chính xác forecast 24h và hành vi quái offline; nghiên cứu Core hết charge; công trình đang có hàng có thể thu hồi thế nào; tác động cháy/đất không hồi được phép với kỹ năng nào và trong bao lâu; reward milestone 1–5 Elder; nguồn điểm/score weights/cách tính đủ tư cách bảng xếp hạng; backend xác minh offline; tỷ lệ thời gian trong-game.
+
+**NGUYÊN TẮC XỬ LÝ THIẾU:** thiếu số → ghi đơn vị/quan hệ và đưa vào cân bằng, không xóa tính năng; thiếu dữ kiện lịch sử → đề xuất minh bạch, không bịa chuyện Last Island; thiếu khả thi engine → nêu tình huống native FAIL và chủ sở hữu; thiếu ý tưởng gameplay → tạo kịch bản lựa chọn của người chơi và thử xem K nào cần nối, không bày thêm UI cho đủ; đụng luật [CHỐT] → hỏi người sáng tạo thay vì tự chốt ngược.
+
+### 8.5. Luật duy trì duy nhất bản Bible
+
+1. **Chỉ sửa sản phẩm tại file này.** Khi người sáng tạo đổi luật, sửa đoạn có hiệu lực và các mối nối liên quan **trong một lần**, không thêm một “Bible V2” song song, không chỉ ghi comment rồi để file cũ sai. Giữ trong mục *Lịch sử thay đổi* tóm tắt ID và ngày; nguồn cũ vào archive.
+2. **Mỗi thay đổi có impact analysis:** K nào, M/C nào, J nào, thông số, Map contract, UI, Gold, Saved state, source and sink, thời gian offline, run-reset, ranking và native test nào bị ảnh hưởng. Ví dụ thay rương ký gửi phải cập nhật K1/K6/K7/K8 + J15–17 + MAP-U4 + QA, không chỉ đổi tên bank.
+3. **Không gộp tài liệu vận hành/CI vào Bible.** PR/commit/job/head hiện hành đọc `CONTROL_TOWER_CURRENT.md`, danh sách task active. Bible chỉ chứa tiêu chí/luật; số liệu production pin ở báo cáo owner. Ngay cả khi test PASS, không sửa luật chỉ để phù hợp code.
+4. **Archive là kho tra cứu khi cần**, không phải nguồn sinh thêm nhiệm vụ. Xem `docs/survival/_archive/INDEX.md` để biết lịch sử, bản gốc, các nhánh review/tasks và thời điểm nên mở.
+5. **Lượt bàn giao cho Tower:** Gameplay read-only lại Bible trước khi đề xuất law; Map nhận Phần V rồi trình route candidates; VFX nhận K1/K2/K5/Gold; A0/A3/A7 nhận §VIII. Sau trao đổi, ai sửa điều gì phải dẫn dòng/ID cụ thể, kèm trạng thái điều kiện chưa rõ. Không tự thực thi vượt quyền.
+
+### 8.6. Nhật ký hợp nhất
+
+- **29–30/10/2026:** Last Island 2019–20 / Atlas 1.355 dòng và các tài liệu tích hợp cũ dùng làm tư liệu, có nhiều quyết định về nhà vĩnh viễn/không wipe/10 dungeon bị thay thế.
+- **30/10/2026:** run 336h kể cả offline, 72h Ragnarok, full wipe, chỉ profile achievements/history/secured currency, ai quái theo dấu và không chết bởi riêng đói khi ngủ đúng nơi được chốt; các quyết định D055–D074.
+- **01/11/2026 sáng:** nghiên cứu Last Island 820 dòng về nước/đường/nguồn/POI và thử World Layout A/B/C chỉ là bài paper; các K1–K8, U1–U6 được bàn sâu.
+- **01/11/2026 chiều:** U1 rủi ro nhà do vận tải + dấu chân + quái thật; U2 người chơi kiểm soát tương lai trước khi thoát bằng forecast/chuẩn bị; U3 vật phẩm đa tác dụng và chiêu có thể tác động môi trường; U4 Rương ký gửi chỉ tiền Ragnarok xuyên mùa, bỏ máy cố định/vault item; U5 bảng điểm online tùy chọn, late-run tập trung Elder và nonboss; U6 tích lũy tiền + hiểu biết qua run, không items/recipe.
+- **01/11/2026 hợp nhất:** chuyển các luật ở trên thành bộ K1–K8 chi tiết, 20 journey và hàng chục ràng buộc K/M/C/J + Map + nguồn lịch sử/QA trong **chính file này**, không khởi tạo gameplay bible thứ hai. Tài liệu cũ được lưu nguyên bản trong archive hoặc theo hồ sơ review/owner có chỉ dẫn tra cứu.
+
+
 
 ## PHỤ LỤC KỸ THUẬT A — 24 MỐI NỐI, 20 HÀNH TRÌNH, BÀI KIỂM TRA VÀ DỮ LIỆU THAM CHIẾU
 
