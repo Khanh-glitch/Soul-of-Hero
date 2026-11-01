@@ -18,10 +18,15 @@ casts ran in moving real world; videos/timelines are
 and [#18](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41296591004/artifacts/13079581291).
 #18 had three moving Skeletons and 66 captured frames, last-observed tick 503;
 the preview remains sparse software capture, not native 60 Hz. At one
-full-frame midpoint the crystal contents are still hard to see; lossless 1x
-detail review is in progress. Its new chronological marks are experimental,
+full-frame midpoint the crystal contents are still hard to see. Lossless 1x
+detail in [41296932483](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41296932483)
+shows the brighter curved dot-trails inside the shards, but their meaning as
+successive moments remains unclear. Its new chronological marks are experimental,
 not B-source parity or creator approval. All 20 remain VISUAL_NOT_VERIFIED,
 no CT receipts are mounted, and it is **not PLAYTEST_READY**.
+The lossless timestamp inspection measured #14/#18 presentation intervals at
+302.533/177.014 ms median and maximum PTS errors 0.493/0.497 ms; these are
+software capture measurements, not hardware FPS.
 
 **Previous experimental visual-preview candidate:**
 [Windows x64 + Linux x64 artifact 13078684701](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41295327487/artifacts/13078684701),
@@ -273,6 +278,20 @@ and checks ascending capture/reverse convergence; both A/B source-runtime
 and historical parity/CPU jobs in [41296611649](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41296611649)
 passed. The sequence is in the `4f5887d` build above; the later test refactor
 is not. Source runtime and visual samples are not visual approval.
+
+A further unverified #18 revision `33df4c94daba5b4c24c3d1f682ab6e0e289f793e`
+adapts the original B source attack's projectile star/trail and early forward
+and reverse echoes onto the real scene, alongside a central freeze-and-resume
+trajectory ending at the 6.2-second synchronization. This adds visible temporal
+cause/effect rather than relying only on tiny crystal interiors. It is a
+redesign adaptation, not full B parity; there are no fabricated damage claims.
+`4ed03a4215daf51b606f7934bb490353243e6989` additionally exposes the two echo
+beats as visual-only events, not confirmed contacts. Runtime regression
+[41297109728](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297109728),
+preview [41297074032](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297074032)
+and frozen motion [41297073989](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41297073989)
+were running/queued at this ledger update. The preview is based on `33df4c9`
+and does not contain the later event markers; neither revision is approved.
 
 [41293811919](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41293811919)
 also compared complete no-PNG-I/O casts/overlap with fresh same-duration
