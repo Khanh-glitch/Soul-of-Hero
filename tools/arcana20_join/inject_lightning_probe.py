@@ -78,6 +78,21 @@ s = s.replace(needle, '''    if OS.get_environment("AVFX_R17_TRACE") == "1" and 
             var influence := FileAccess.open(path + "/" + stamp + ".influence8", FileAccess.WRITE)
             influence.store_buffer(source._fb.world_influence)
             influence.close()
+            # Diagnostic-only same-state rerender: subtract the machine's
+            # source field without its connector pass. This never changes the
+            # displayed frame or production renderer and is NOT a candidate or
+            # a complete C/Gold comparison. Preserve the real connector trace.
+            if int(OS.get_environment("AVFX_LIVE_SKILL")) == 11 and OS.get_environment("AVFX_R17_DECOMPOSE") == "1":
+                var saved_trace: Array = trace.duplicate(true)
+                var rotor_only := AFramebuffer.new()
+                rotor_only.clear()
+                source._spell.set("include_bolts", false)
+                source._spell.call("render", rotor_only, source.source_time())
+                source._spell.set("include_bolts", true)
+                source._spell.set("_r17_trace", saved_trace)
+                var rotor_file := FileAccess.open(path + "/" + stamp + ".rotor_only32f", FileAccess.WRITE)
+                rotor_file.store_buffer(rotor_only.buf.to_byte_array())
+                rotor_file.close()
             var actors: Array = []
             for n in host.get("spawned"):
                 if is_instance_valid(n): actors.append([n.global_position.x, n.global_position.y])
