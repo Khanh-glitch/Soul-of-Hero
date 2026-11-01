@@ -104,7 +104,11 @@ func _setup() -> bool:
 		return false
 	eco.configure_time_host(_station_time_host)
 	a3 = A3Service.new()
-	if not bool(a3.configure(save_service, eco)):
+	var custody_port: Node = save_service.call(&"create_pinned_source_custody_port", a3)
+	if custody_port == null:
+		print("A0 restricted custody port refused R13 source layer")
+		return false
+	if not bool(a3.configure(custody_port, eco)):
 		print("A3 configure failed: %s" % [a3.last_error])
 		return false
 	a3.configure_source_host(_source_host)
