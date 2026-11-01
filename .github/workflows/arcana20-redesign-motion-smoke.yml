@@ -1,0 +1,44 @@
+name: ARCANA20 redesign source event runtime smoke
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths:
+      - '.github/workflows/arcana20-redesign-motion-smoke.yml'
+      - 'prototypes/arcana_fusion20/renderer/redesign_motion_smoke.gd'
+      - 'prototypes/arcana_fusion20/renderer/source_a/a_redesign_spells.gd'
+      - 'prototypes/arcana_fusion20/renderer/source_a/a_redesign_spells2.gd'
+permissions:
+  contents: read
+jobs:
+  source-runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import
+        run: |
+          set -o pipefail
+          godot --headless --path . --import 2>&1 | tee import.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' import.log
+      - name: Exercise authored beats
+        run: |
+          set -o pipefail
+          timeout 240s godot --headless --path . --script res://prototypes/arcana_fusion20/renderer/redesign_motion_smoke.gd 2>&1 | tee result.log
+          grep -Fq REDESIGN_SMOKE_PASS result.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|REDESIGN_SMOKE_FAIL' result.log
+      - name: Surface runtime results
+        if: always()
+        run: grep -E 'REDESIGN_SMOKE|SCRIPT ERROR|Parse Error' result.log | sed 's/^/::notice title=REDESIGN_SMOKE::/' || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: redesign-source-runtime-smoke
+          path: |
+            import.log
+            result.log

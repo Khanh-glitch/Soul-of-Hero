@@ -1,0 +1,30 @@
+## Fast runtime/field smoke for unapproved redesigns. Uses actual authored
+## source instances; no synthetic world and no visual, parity or FPS claim.
+extends SceneTree
+
+func _initialize() -> void:
+    var candidates := [
+        {"id": 6, "spell": ARedesignSpells.RiptideCalligraphyR.new(), "times": [2.5, 5.0]},
+        {"id": 12, "spell": ARedesignSpells.SkybreakerScriptR.new(), "times": [4.4, 6.8]},
+        {"id": 13, "spell": ARedesignSpells2.RootwakeR.new(), "times": [3.0, 5.4]},
+        {"id": 14, "spell": ARedesignSpells2.SporeNebulaR.new(), "times": [3.6, 5.4]},
+        {"id": 18, "spell": ARedesignSpells2.ChronoshardR.new(), "times": [3.4, 6.2]},
+    ]
+    for item in candidates:
+        var spell: Variant = item.spell
+        spell.setup()
+        for value in item.times:
+            var t: float = value
+            var frame := AFramebuffer.new()
+            frame.track_world_fields = true
+            spell.update(1.0 / 60.0, t)
+            spell.render(frame, t)
+            var energy := 0.0
+            for v in frame.buf: energy += absf(v)
+            if not is_finite(energy) or energy <= 0.0:
+                push_error("REDESIGN_SMOKE_FAIL id=%d t=%.3f energy=%s" % [int(item.id), t, str(energy)])
+                quit(1)
+                return
+            print("REDESIGN_SMOKE id=%d t=%.3f sum=%.4f" % [int(item.id), t, energy])
+    print("REDESIGN_SMOKE_PASS candidate source runtime only; no visual approval")
+    quit(0)
