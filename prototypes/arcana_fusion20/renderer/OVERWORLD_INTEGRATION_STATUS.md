@@ -104,6 +104,21 @@ full journey. A1/A3/A6/A8 current PR heads have not been mounted or validated he
   historical before revision did not retain its samples after source exit, so
   those phase populations cannot be paired as a CPU before/after claim.
 
+- Lossy 384×216 full-viewport previews from the actual e552/A0 `619b43b`
+  normal/dim sweep ([41270259664](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41270259664),
+  review surfaces [41271994180](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41271994180))
+  were inspected so far for normal #01–06 and #11–15, dim #01–10 and
+  #16–20. These are **not** native-resolution approval images. At the catalog
+  peak #04 looks almost absent, #09 is nearly absent in dim, and #16 is sparse
+  in dim. They are not valid full-cast conclusions: current authored candidate
+  #04 cut is at 3.4s versus the 4.25s catalog sample, #09 verdict at 5.0s
+  versus 6.08s, and the A16 fusion bloom is 5.3s versus 7.72s. New captures
+  explicitly add A-candidate authored event beats without dropping the catalog
+  frames. #12/#13/#14 were inspected at catalog peak only; readability,
+  temporal causality and fidelity remain unverified. Original D19 geometry,
+  bloom/post and OUT need full-resolution reference/motion review; a peak
+  still does not establish that fidelity. All 20 remain VISUAL_NOT_VERIFIED.
+
 ### Per-skill acceptance ledger (R14)
 
 `PARTIAL` means a limited source-field or world diagnostic exists; it is not
