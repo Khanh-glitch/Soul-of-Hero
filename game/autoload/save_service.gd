@@ -1381,6 +1381,11 @@ func _is_pinned_source_custody(custody: RefCounted) -> bool:
 	# Source runs may materialize separate Script resource handles; require BOTH
 	# the canonical res:// path and independently pinned exact source bytes.
 	# Tokenized exports retain only the exact preloaded resource identity gate.
+	print("GPB_SOURCE_GATE source_len=%d path_ok=%s hash_ok=%s same_resource=%s" % [
+		source.length(),
+		str(String(script.resource_path) == "res://game/survival/economy/a3_economy_service.gd"),
+		str(source.sha256_text() == PINNED_A3_CUSTODY_SHA256),
+		str(script == PRODUCTION_SOURCE_CUSTODY)])
 	if source.is_empty():
 		return script == PRODUCTION_SOURCE_CUSTODY
 	return String(script.resource_path) == "res://game/survival/economy/a3_economy_service.gd" \
