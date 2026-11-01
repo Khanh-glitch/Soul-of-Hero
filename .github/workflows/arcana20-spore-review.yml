@@ -21,7 +21,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: arcana20-spore-current-${{ matrix.lighting }}-A
-          run-id: 41294277111
+          run-id: 41294992386
           github-token: ${{ github.token }}
           path: phases
       - run: python3 -m pip install --quiet pillow

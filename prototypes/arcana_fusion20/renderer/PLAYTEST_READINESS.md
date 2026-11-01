@@ -7,15 +7,22 @@ historical methods, caveats and source-comparison references.
 
 ## Experimental downloadable build
 
-**Newer timestamp-correction build (validation in progress):**
+**Current creator visual-preview candidate (timestamp corrected):**
 [Windows x64 + Linux x64 artifact 13078977612](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41294874261/artifacts/13078977612),
-source `924dc2522f9776d570c6e91118766d5fdc040fc4`. The Linux export and
-real-route smoke passed; the same-run Windows smoke and #14/#18 live-capture
-jobs were queued when recorded. A separately built Windows binary from this
-source passed the same headless smoke in [41294874230](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41294874230),
-but that does not establish this artifact's presentation or GPU behavior.
-The newly reshaped #14 caps and repositioned #18 shards described below are
-**not included** in that build. It is visual-only and not playtest-ready.
+source `924dc2522f9776d570c6e91118766d5fdc040fc4`;
+[run 41294874261](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41294874261)
+completed successfully. The exported Linux and same-run Windows executables
+passed the real-route smoke; Windows ran **headlessly**, not on a GPU/display.
+Full moving-world captures are [#14](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41294874261/artifacts/13078493198)
+and [#18](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41294874261/artifacts/13079165311):
+three real Skeletons moved for each, with player/camera motion, natural
+finish, restart/cancel and no combat receipts. 67/66 frames were captured;
+source ticks 511/503 were last observed. Software rendering skipped visual
+frames, so this is not 60-Hz playback or target-hardware performance. The
+capture now timestamps `frame_post_draw` before PNG I/O, while the reported
+source tick is only the last signal observed and can lag the displayed state.
+Complete video visual review is still outstanding. The newer #14/#18 art edits
+below are **not included** in this build. It is not playtest-ready.
 
 **Last fully smoke-tested creator visual-preview candidate:** [Windows x64 + Linux x64 artifact
 13078327548](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41294519115/artifacts/13078327548),
@@ -32,8 +39,8 @@ combat or target-hardware performance. **Capture timestamp caveat:** this
 revision recorded wall time after each PNG was encoded, so variable write
 latency is assigned to that frame rather than its actual presentation instant.
 The source-tick metadata is the last observed signal, not necessarily the exact
-tick of the presented frame. A later correction timestamps `frame_post_draw`
-before PNG I/O; its replacement runs are pending. All 20 remain
+tick of the presented frame. The `924dc25` correction timestamps `frame_post_draw`
+before PNG I/O; its replacement captures are linked above. All 20 remain
 `VISUAL_NOT_VERIFIED` and this candidate is **not PLAYTEST_READY**. Artifact
 retention is 14 days.
 
@@ -175,8 +182,8 @@ but the remaining 18 captures are from the earlier exact SHA.
 
 Subsequent **unreviewed redesign candidates**: `75b44c5106020be85b474a961746e57dab95b62e`
 changes the #14 A clusters from tall stacked branching shapes to shorter,
-broader cap-and-stipe clusters and enlarges the spores. Frozen-world captures
-are queued in [41294992386](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41294992386).
+broader cap-and-stipe clusters and enlarges the spores. Frozen-world capture jobs (including a completed normal-A still job)
+are in [41294992386](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41294992386).
 `cfae6b1` arranges the five #18 A stored-event shards around the shared impact,
 with larger crystal windows; its runtime/art review is also pending. Neither
 change is validated in native gameplay or approved, and neither is in the
