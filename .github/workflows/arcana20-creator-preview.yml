@@ -1,4 +1,4 @@
-# R20: package the refined water-fan direction with native-scale review.
+# R21 partial batch S: source-B tone-aware preview and native evidence; retain R20 #05.
 name: ARCANA20 R20 Abyssal Bloom A-B creator package
 on:
   workflow_dispatch:

@@ -45,7 +45,7 @@ func _on_frame(id: StringName, frame: Arcana20SourcePassFrame) -> void:
     var map := viewport.get_final_transform() * viewport.canvas_transform * frame.source_to_world
     var shake := map.basis_xform(Vector2(round(frame.shake.x), round(frame.shake.y)))
     var pixel_x := map.basis_xform(Vector2.RIGHT).length()
-    _states[id] = {"flash": frame.flash, "shake": shake, "chroma": frame.chroma * pixel_x,
+    _states[id] = {"family": frame.family, "flash": frame.flash, "shake": shake, "chroma": frame.chroma * pixel_x,
         "invert": frame.invert, "desat": frame.desat}
     _apply()
 
@@ -63,19 +63,24 @@ func _apply() -> void:
     # impulses. Different sources' original compositors did not specify
     # cross-cast ordering; this is not an approved interaction contract.
     var flash := Vector3.ZERO
+    var b_flash := Vector3.ZERO
     var shake := Vector2.ZERO
     var chroma := 0.0
     var invert := 0.0
     var desat := 0.0
     for state in _states.values():
-        flash += state.flash
+        if state.family == &"B":
+            b_flash += state.flash
+        else:
+            flash += state.flash
         var state_shake: Vector2 = state.shake
         if state_shake.length_squared() > shake.length_squared(): shake = state_shake
         chroma = maxf(chroma, float(state.chroma))
         invert = maxf(invert, float(state.invert))
         desat = maxf(desat, float(state.desat))
-    _rect.visible = not flash.is_zero_approx() or not shake.is_zero_approx() or chroma > 0.2 or invert > 0.0 or desat > 0.0
+    _rect.visible = not flash.is_zero_approx() or not b_flash.is_zero_approx() or not shake.is_zero_approx() or chroma > 0.2 or invert > 0.0 or desat > 0.0
     _material.set_shader_parameter("flash", flash)
+    _material.set_shader_parameter("b_flash", b_flash)
     _material.set_shader_parameter("shake_pixels", shake)
     _material.set_shader_parameter("chroma_pixels", chroma)
     _material.set_shader_parameter("invert", invert)

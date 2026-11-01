@@ -93,7 +93,16 @@ an orange curved traveling body, bright bite and a visible scorched aftermath;
 the head is small at gameplay scale. I sampled frames, not full uninterrupted
 video playback. The same runs reported five resources in use and player
 signal-disconnect errors on exit, so shutdown is not clean. This earlier SHA
-does not validate later #03/#07/#08 mount changes.
+does not validate later #03/#07/#08 mount changes. Source quick
+[41334716109](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41334716109)
+passed at `061b91e3`; #03 normal real-route capture job `124932449520`
+completed, but a sampled sigil frame was overexposed by the initial B flash
+transport. The preview shader was subsequently refined to approximate B's
+source exponential tone operation on the existing LDR screen instead of direct
+add-and-clip. This is still **not** HDR parity. Inspect the new exact-SHA
+captures before claiming the visual issue resolved. Its same-run #05 dimmed
+locked job `124932449381` failed a frozen-state/PNG check (no further cause
+identified); a later source test passing does not erase that failed evidence.
 
 ## Resume
 

@@ -72,9 +72,12 @@ func _run() -> void:
         var state: Dictionary = b_post._states[b_id]
         var flash_value: Vector3 = state.flash
         check(flash_value.distance_to(b_player._r.flash_col * b_player._r.flash) < 0.00001, "B flash RGB remains source-authored")
+        var material_b_flash: Vector3 = b_post._material.get_shader_parameter("b_flash")
+        check(material_b_flash.is_equal_approx(flash_value), "B flash reaches its tone-aware shader channel")
         check(b_post._rect.visible, "B authored bite flash is visible")
     b_post_host.cancel_skill(b_id)
-    check(not b_post._states.has(b_id) and not b_post._rect.visible, "B cancel retires viewport flash and shake")
+    var retired_b_flash: Vector3 = b_post._material.get_shader_parameter("b_flash")
+    check(not b_post._states.has(b_id) and not b_post._rect.visible and retired_b_flash.is_zero_approx(), "B cancel retires viewport flash and shake")
     b_post.detach()
     b_post.free()
     b_post_host.free()
