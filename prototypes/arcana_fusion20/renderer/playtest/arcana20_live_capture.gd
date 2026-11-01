@@ -97,6 +97,11 @@ func start(wrapper: Node) -> void:
     var camera_start := camera.get_screen_center_position()
     var selected := host.get("selector") as OptionButton
     selected.select(skill - 1)
+    if skill == 5:
+        var choice := 1 if OS.get_environment("AVFX_05_VARIANT") == "B" else 0
+        var variant := host.get("abyssal_selector") as OptionButton
+        variant.select(choice)
+        host.call(&"_select_abyssal_variant", choice)
     # Same presentation as the creator's F4 control: do not cover the actual
     # world with the diagnostic panel during the review recording.
     var panel := host.get("panel") as Control

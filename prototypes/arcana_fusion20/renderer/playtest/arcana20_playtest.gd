@@ -11,6 +11,7 @@ var renderer: Arcana20Renderer
 var mount: Arcana20WorldPassMount
 var post: Arcana20CViewportPost
 var selector: OptionButton
+var abyssal_selector: OptionButton
 var target_selector: OptionButton
 var spawn_selector: OptionButton
 var status: Label
@@ -38,7 +39,8 @@ func _ready() -> void:
     _make_ui()
     if _smoke(): _run_smoke.call_deferred()
     elif OS.get_cmdline_user_args().has("--avfx-live-capture"):
-        var script := load("res://prototypes/arcana_fusion20/renderer/playtest/arcana20_live_capture.gd") as Script
+        var capture_path := "res://prototypes/arcana_fusion20/renderer/playtest/arcana20_ab_capture.gd" if OS.get_environment("AVFX_AB_LOCK") == "1" else "res://prototypes/arcana_fusion20/renderer/playtest/arcana20_live_capture.gd"
+        var script := load(capture_path) as Script
         if script == null:
             push_error("AVFX_LIVE_FAIL capture script missing")
             get_tree().quit(1)
@@ -69,6 +71,12 @@ func _make_ui() -> void:
         var slot := Arcana20SourceCatalog.slot(number)
         selector.add_item("%02d  %s" % [number, slot.name], number)
     box.add_child(selector)
+    abyssal_selector = OptionButton.new()
+    abyssal_selector.add_item("#05 A • Nguyên bản A + C", 0)
+    abyssal_selector.add_item("#05 B • Dàn dựng sóng nước", 1)
+    abyssal_selector.tooltip_text = "Chỉ ảnh hưởng #05. Đổi phiên bản sẽ hủy lần thi triển #05 hiện tại."
+    abyssal_selector.item_selected.connect(_select_abyssal_variant)
+    box.add_child(abyssal_selector)
     target_selector = OptionButton.new()
     target_selector.add_item("Mục tiêu: quái gần nhất", 0)
     target_selector.add_item("Mục tiêu: vị trí chuột", 1)
@@ -115,6 +123,7 @@ func _attach(candidate: Node) -> void:
     if player == null: return
     renderer = Arcana20Renderer.new()
     renderer.world_pass_mode = true
+    renderer.abyssal_directed = abyssal_selector.selected == 1
     world.add_child(renderer)
     mount = Arcana20WorldPassMount.new()
     world.add_child(mount)
@@ -141,6 +150,14 @@ func _unhandled_key_input(event: InputEvent) -> void:
         KEY_F10: _cancel_all()
         _: return
     get_viewport().set_input_as_handled()
+
+func _select_abyssal_variant(index: int) -> void:
+    if not is_instance_valid(renderer): return
+    # Existing casts cannot retain a stale pass order after the choice changes.
+    renderer.cancel_skill(Arcana20SourceCatalog.canonical_id(5))
+    renderer.abyssal_directed = index == 1
+    if is_instance_valid(status):
+        status.text = "#05: " + ("B • sóng nước dàn dựng" if index == 1 else "A • nguồn nguyên bản") + " • thi triển lại để xem"
 
 func _nearest_enemy() -> Node2D:
     var closest: Node2D
@@ -300,6 +317,25 @@ func _run_smoke() -> void:
         if not renderer.is_active(Arcana20SourceCatalog.canonical_id(id)):
             _smoke_fail("skill %d refused" % id); return
         renderer.cancel_skill(Arcana20SourceCatalog.canonical_id(id))
+    selector.select(4)
+    abyssal_selector.select(1)
+    _select_abyssal_variant(1)
+    _cast_selected()
+    var bloom_id := Arcana20SourceCatalog.canonical_id(5)
+    var b_cast := renderer._casts.get(bloom_id) as FusionPlayer
+    if b_cast == null or b_cast.get_node_or_null("DirectedWaterPresentation") == null:
+        _smoke_fail("#05 B presentation absent"); return
+    abyssal_selector.select(0)
+    _select_abyssal_variant(0)
+    if renderer.is_active(bloom_id):
+        _smoke_fail("#05 switch must cancel current cast"); return
+    target_selector.select(1) # actual global mouse target, not a fake actor
+    _cast_selected()
+    var a_cast := renderer._casts.get(bloom_id) as FusionPlayer
+    if a_cast == null or a_cast.get_node_or_null("DirectedWaterPresentation") != null:
+        _smoke_fail("#05 A reference missing or contaminated"); return
+    renderer.cancel_skill(bloom_id)
+    target_selector.select(0)
     selector.select(9)
     _cast_selected()
     selector.select(16)

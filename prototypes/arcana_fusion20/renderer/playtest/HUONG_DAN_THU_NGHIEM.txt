@@ -7,6 +7,13 @@ phải xác nhận Gold, không dùng cho tiến độ chính. Chất lượng v
 Mở ứng dụng, chọn New Game, đi đến Campaign ở Home rồi vào Overworld. Bảng
 AVFX xuất hiện khi thế giới thực đã tải xong. Di chuyển theo hướng dẫn của game.
 Chọn một trong 20 kỹ năng và chọn mục tiêu là bộ xương gần nhất hoặc vị trí chuột.
+Với kỹ năng 05 Abyssal Bloom, chọn ngay trên bảng:
+  A — Nguyên bản A + C: hoa A và cột nước, mưa, dư âm C gốc.
+  B — Dàn dựng sóng nước: cùng hai nguồn A/C, thêm lớp sóng, bọt và giọt nước
+      tương tác mặt đất; lớp C ở trên A nhưng cả hai vẫn ở dưới nhân vật.
+Đổi A/B không cần khởi động lại; lần thi triển #05 đang chạy sẽ được hủy.
+Mục chọn A/B không thay đổi 19 kỹ năng còn lại. B là phương án trình bày để
+người tạo đánh giá, không tự động được duyệt Gold.
 F4 ẩn/hiện bảng; F6 thi triển, F7 thêm bộ xương thật, F8 bật/tắt AI của bộ xương thử,
 F9 đổi sáng/tối (chỉ là điều kiện thử), F10 hủy tất cả hiệu ứng. Trong bảng,
 có thể chọn thêm quái theo hàng hoặc vòng quanh người chơi; đây là bộ xương

@@ -25,6 +25,9 @@ signal unbound_source_contact(canonical_id: StringName, kind: StringName, node_i
 # world compositor: the scene owner must consume every emitted field.
 @export var world_pass_mode := false
 @export var experimental_c_separate_passes := false
+# R20 creator preview choice. Default remains the faithful A/C reference and
+# other 19 IDs never read this switch; it is not combat or production binding.
+var abyssal_directed := false
 
 var _casts: Dictionary = {} # canonical_id -> Node (instance or B02 geometry)
 var stage_counts: Dictionary = {}
@@ -137,6 +140,14 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
             {"node": ap, "layer": 1, "offset": 0.0, "begin_call": func(n: Node, cw: Vector2, tw: Vector2) -> void: n.call("begin", cw, tw)},
         ], AAbyssalBloomLead.DURATION)
         add_child(fp)
+        if abyssal_directed:
+            # Presentation layer is separate from both original source players.
+            # It follows their shared clock and the real, fixed target anchor.
+            var water := AbyssalDirectedPresentation.new()
+            water.name = "DirectedWaterPresentation"
+            water.clock = fp
+            fp.add_child(water)
+            water.global_position = target_world
         fp.visual_contact.connect(func(kind: StringName, pos: Vector2, _st: float) -> void:
             visual_contact.emit(canonical_id, pos, kind)
             body_event_cue.emit(canonical_id, pos, &"water"))
@@ -146,6 +157,8 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
         _casts[canonical_id] = fp
         cast_started.emit(canonical_id)
         fp.begin(caster_world, target_world)
+        var water_layer := fp.get_node_or_null("DirectedWaterPresentation") as AbyssalDirectedPresentation
+        if water_layer != null: water_layer.scale = Vector2.ONE * cp._scale
         return true
     if id == 16 and world_pass_mode:
         # A smooth growth + C material remain the lead. Add the original C

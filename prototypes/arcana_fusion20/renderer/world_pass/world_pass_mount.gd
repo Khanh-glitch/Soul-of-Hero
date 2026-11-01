@@ -60,6 +60,10 @@ func _on_frame(id: StringName, frame: Arcana20SourcePassFrame) -> void:
         # This does not establish actor depth or creator visual approval.
         if String(id).ends_with("_01") or String(id).ends_with("_16"):
             viewer.z_index = -25 if frame.family == &"C" else -23
+        # R20 B: C's selected release reads over A locally, still BELOW all
+        # actors. A remains the default and all other cast ordering is intact.
+        if String(id).ends_with("_05") and _renderer.abyssal_directed and frame.family == &"C":
+            viewer.z_index = -23
         add_child(viewer)
         by_family[frame.family] = viewer
         _passes[id] = by_family
