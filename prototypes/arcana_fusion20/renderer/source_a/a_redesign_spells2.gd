@@ -69,7 +69,7 @@ class RootwakeR:
                         var bark := 0.35 + 0.65 * (1.0 - edge) * (1.0 - u * 0.3)
                         return Vector3(0.065, 0.16, 0.045) * bark,
                     func(u: float, br: Dictionary) -> float:
-                        return maxf(0.8, float(br.w) * 1.5 * (1.0 - u * 0.6) * (1.0 + tension * 0.35)), true)
+                        return maxf(1.0, float(br.w) * 2.1 * (1.0 - u * 0.6) * (1.0 + tension * 0.35)), true)
                 ACommon.draw_branch(fb, bb,
                     func(u: float, edge: float, _br: Dictionary) -> Variant:
                         var h := (1.0 - edge) * retract
@@ -89,6 +89,17 @@ class RootwakeR:
                     func(u: float, _j: int) -> float: return (2.8 - u * 2.0) * tension,
                     func(u: float, _j: int, edge: float) -> Variant:
                         return AMath.R("verdant", 0.35 + (1.0 - edge) * 0.4) * retract)
+                # Two tapered barbs grow out of the arched tendon itself;
+                # their bases follow its curve and point toward the target.
+                for barb in [0.36, 0.68]:
+                    var base := tp * (1.0 - barb) * (1.0 - barb) + control * 2.0 * (1.0 - barb) * barb + endpoint * barb * barb
+                    var tangent := ((control - tp) * (1.0 - barb) + (endpoint - control) * barb).normalized()
+                    var side := Vector2(-tangent.y, tangent.x) * (-1.0 if i % 2 == 0 else 1.0)
+                    var tip_point := base + (tangent * 6.0 + side * 8.0) * tension
+                    var foot := tangent * 2.2 * tension
+                    ADraw.poly_fill(fb, [base - foot, tip_point, base + foot],
+                        func(_x: int, _y: int) -> Variant: return Vector3(0.12, 0.28, 0.07), true, tension * retract)
+                    ADraw.streak(fb, base.x, base.y, tip_point.x, tip_point.y, 0.8, 0.4, AMath.R("verdant", 0.7), tension * retract * 0.5)
                 ADraw.disc(fb, endpoint.x, endpoint.y, 1.5, AMath.R("verdant", 0.8), tension * retract)
         if t > 5.4 and t < 6.2:
             ADraw.pulse_ring(fb, C.x, C.y, 8.0 + AMath.seg(t, 5.4, 6.2) * 90.0, 2.6, AMath.R("verdant", 0.7), 0.5 * (1.0 - AMath.seg(t, 5.4, 6.2)), 1.5)
