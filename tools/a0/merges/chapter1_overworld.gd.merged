@@ -167,10 +167,16 @@ func _ready() -> void:
 ## not in an A6 panel, so a missing panel cannot make preparation impossible.
 const PREPARE_WORK_ACTION := &"prepare_work"
 
+## Idempotent, and it *ensures* the key rather than only the action: an action that
+## some other layer already declared, but bound to nothing P can reach, would leave
+## the player pressing a key the world never hears.
 func _ensure_prepare_work_binding() -> void:
-	if InputMap.has_action(PREPARE_WORK_ACTION):
-		return
-	InputMap.add_action(PREPARE_WORK_ACTION)
+	if not InputMap.has_action(PREPARE_WORK_ACTION):
+		InputMap.add_action(PREPARE_WORK_ACTION)
+	for event: InputEvent in InputMap.action_get_events(PREPARE_WORK_ACTION):
+		var bound := event as InputEventKey
+		if bound != null and (bound.physical_keycode == KEY_P or bound.keycode == KEY_P):
+			return
 	var key := InputEventKey.new()
 	key.physical_keycode = KEY_P
 	InputMap.action_add_event(PREPARE_WORK_ACTION, key)
@@ -1151,6 +1157,13 @@ func _unhandled_input(event: InputEvent) -> void:
 # events is insufficient because build placement is polled from Input.
 ## Physically nearest paid station, by the same reach the build system uses. A
 ## station the player cannot stand next to cannot be prepared.
+##
+## "Next to" is measured to the block the station occupies, not to the corner its
+## sprite is anchored at. Measuring from the origin told a player touching the side
+## of a 2x2 furnace (53 px from that corner, 21 px from the block) that they were not
+## standing at a workstation - while the panel opened and let them queue work there,
+## using SurvivalStationReach. Preparing work is the same act of standing at the same
+## station, so it asks the same question instead of keeping a second, worse one.
 func _prepare_work_at_nearest_station() -> void:
 	if economy_session == null or not is_instance_valid(economy_session) or survival_build == null:
 		return
@@ -1160,14 +1173,33 @@ func _prepare_work_at_nearest_station() -> void:
 		var structure := value as SurvivalStructure
 		if structure == null or not is_instance_valid(structure) or not structure.piece_id.begins_with("station_"):
 			continue
-		var distance := structure.global_position.distance_to(player.global_position)
-		if distance <= SurvivalStructure.REACH and distance < nearest_distance:
-			nearest = String(structure.entity_id)
+		var entity := String(structure.entity_id)
+		if not _station_in_reach(entity, structure):
+			continue
+		var distance := _station_distance(entity, structure)
+		if distance < nearest_distance:
+			nearest = entity
 			nearest_distance = distance
 	if nearest.is_empty():
+		# Say what the player is near, not just that nothing qualified: a silent
+		# refusal is indistinguishable from a dead key.
+		var world_nearest := ""
+		var world_distance := 99999.0
+		for value: Variant in survival_build._placed.values():
+			var structure := value as SurvivalStructure
+			if structure == null or not is_instance_valid(structure) or not structure.piece_id.begins_with("station_"):
+				continue
+			var distance := _station_distance(String(structure.entity_id), structure)
+			if distance < world_distance:
+				world_distance = distance
+				world_nearest = String(structure.entity_id)
+		print("A0_PREPARE_WORK result=no_station nearest=%s distance=%.1f" % [world_nearest, world_distance])
 		_say("Stand at a workstation to keep its work running while you are away.")
 		return
 	var report: Dictionary = economy_session.call(&"prepare_work_away", nearest)
+	print("A0_PREPARE_WORK result=%s station=%s distance=%.1f prepared=%s refused=%s" % [
+		str(report.get("ok", false)), nearest, nearest_distance,
+		str(report.get("prepared", [])), str(report.get("refused", []))])
 	if bool(report.get("ok", false)):
 		var jobs: Array = report.get("prepared", [])
 		_say("Prepared %d job(s) to run while you are away." % jobs.size())
@@ -1179,6 +1211,30 @@ func _prepare_work_at_nearest_station() -> void:
 			_say("That work is already prepared.")
 		else:
 			_say("Could not prepare that work (%s)." % reason)
+
+
+## A station's own block, from A3's catalogue through A0's survival service. An
+## unknown piece falls back to the single cell it stands on.
+func _station_footprint(structure: SurvivalStructure) -> Dictionary:
+	var service := get_node_or_null("/root/SurvivalService")
+	if service == null or structure == null:
+		return {}
+	var definition: Variant = service.call(&"piece_definition", String(structure.piece_id))
+	return definition if definition is Dictionary else {}
+
+
+func _station_distance(entity_id: String, structure: SurvivalStructure) -> float:
+	var definition := _station_footprint(structure)
+	if definition.is_empty():
+		return structure.global_position.distance_to(player.global_position)
+	return SurvivalStationReach.distance_to(player.global_position, structure, definition)
+
+
+func _station_in_reach(entity_id: String, structure: SurvivalStructure) -> bool:
+	if economy_session != null and is_instance_valid(economy_session) \
+			and economy_session.has_method(&"station_in_reach"):
+		return bool(economy_session.call(&"station_in_reach", entity_id, structure))
+	return _station_distance(entity_id, structure) <= SurvivalStationReach.RADIUS
 
 
 func _has_gameplay_modal() -> bool:
@@ -1210,7 +1266,12 @@ func _handle_survival_input() -> void:
 			print("A0_SITE_INPUT ", JSON.stringify(result))
 			get_viewport().set_input_as_handled()
 			return
+	if Input.is_action_just_pressed(PREPARE_WORK_ACTION):
+		print("A0_PREPARE_WORK raw allowed=%s modal=%s frame=%d" % [
+			str(_world_action_allowed(PREPARE_WORK_ACTION)), str(_has_gameplay_modal()),
+			Engine.get_process_frames()])
 	if _world_action_just_pressed(PREPARE_WORK_ACTION) and not bool(player.get(&"dead")):
+		print("A0_PREPARE_WORK press")
 		_prepare_work_at_nearest_station()
 		return
 	if survival_build == null or not is_instance_valid(survival_build) or _has_gameplay_modal():

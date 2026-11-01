@@ -57,6 +57,18 @@ jobs:
           PY
           python3 tools/a0/check_composition.py .composition | tee .composition/seats.txt
           grep -q "COMPOSITION SEATS PASSED" .composition/seats.txt
+          # An A0 resolution composes an artifact from tools/a0/merges/, not from the
+          # A0 tree. If that artifact lags the tree, the gate runs older A0 code and
+          # says so about itself: the prepare-work reach fix spent three runs
+          # invisible for exactly this reason.
+          for pair in "game/overworld/chapter1_overworld.gd:tools/a0/merges/chapter1_overworld.gd.merged"; do
+            live="${pair%%:*}"; merged="${pair##*:}"
+            if ! cmp -s ".composition/$live" "$merged"; then
+              echo "A0_MERGE_STALE: $live composed from $merged, which differs from the A0 tree"
+              diff -u "$merged" "$live" | head -20
+              exit 1
+            fi
+          done
       - uses: chickensoft-games/setup-godot@v2
         with:
           version: 4.7.0

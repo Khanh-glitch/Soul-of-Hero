@@ -84,7 +84,7 @@
       "owners": ["a0", "a6"],
       "winner": "a0",
       "merge": "tools/a0/merges/chapter1_overworld.gd.merged",
-      "why": "A0 owns the live world build order. A6 contributed avatar/style wiring; A0 contributed the economy composition, the guarded A1 art candidate, the Round 12 threat mount and the A1 authored-stream mount (off by default). The reviewed merge keeps all three and is the file the A0 journey tests run."
+      "why": "A0 owns the live world build order. A6 contributed avatar/style wiring; A0 contributed the economy composition, the guarded A1 art candidate, the Round 12 threat mount and the A1 authored-stream mount (off by default). The reviewed merge keeps all three and is the file the A0 journey tests run. REFRESH RULE: this artifact is what composes, so an edit to game/overworld/chapter1_overworld.gd that is not copied into tools/a0/merges/chapter1_overworld.gd.merged never runs - the journey caught exactly that: the world kept measuring prepare-work reach from the sprite origin while the composed session already answered 9 px. The composition step now refuses to build a world that differs from the A0 tree."
     },
     "tests/survival_normal_entry_home_restart_test.gd": {
       "kind": "accept_owner",
