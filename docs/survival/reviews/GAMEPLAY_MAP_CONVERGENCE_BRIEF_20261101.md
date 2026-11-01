@@ -1,5 +1,16 @@
 # SOH — Gameplay × Map convergence brief R0 (2026-11-01)
 
+## 2026-11-01 — UNIFIED BIBLE K1–K8 × 24 Causal Edges × 20 Player Journeys × Map Interface (CURRENT)
+
+**Authoritative read-first for all 3 Towers:** `docs/survival/CURRENT_PRODUCT_CONTRACT.md` updated **in-place** through §11.8; latest code-free design commit `82b609d71ce3ad94e145a399d604c2e19f42b2a8` (read back), supported by `DECISIONS.md` **D075–D076** for creator-locked escrow/cash-only cross-run and optional online ranked run score.
+
+**Two immediate paper tasks executed:** (1) adversarial U4–U6 audit **B01–B15**, including first-run cash-only chest acquisition (first unsecured final72 currency physically used to buy `Rương ký gửi` before first bank), no-boss mandatory viable route, one-time score, absence of bogus profile cash mint, honest unverifiable offline score; (2) complete mechanics→gameplay→experience map: **eight K roots, C01–C24 causal interfaces, J01–J20 player journeys**, actual Map **world source/road/house/POI/route/effect layer requirements**, and 2019–2020 Last Island sourced numerical precedent with explicit non-transferability and later-mode provenance. SOH current numeric locks remain **336h/last72h**; no fake cash price, source density, km route, score weights or Core RNG.
+
+**Cross-tower action ownership:** Gameplay only decides rules, ranking scores and price bands; Map gets the GEOGRAPHIC CONSTRAINTS and physical no-Elder first-chest-trip route as deliverable, not authority to invent drop, boss stats, animal AI or bank formula; VFX Gold source shapes and real world-effects event authorship; A0 ledger, SaveService, run expiry; A3 source/recipe/commerce; A6 readable HUD; A7 native GATE. No previous A/B/C land-ratio candidate is visually/player approved.
+
+**Status:** Product contracts documented, all C/J/Journey proof statuses currently `E2 NOT VERIFIED` unless a specific owner test proves a fragment. No Arena agent prompt dispatched, no merge, no native acceptance, no live ranked backend, no creator "fun" score. Prior U4 fixed bank / cross-run item vault and U5/U6 HOLD comments are historical, **superseded** by D075/D076.
+
+
 > STATUS: **CONTROL-TOWER WORKING BRIEF / NOT NEW PRODUCT CANON / NOT OWNER DISPATCH.**
 > The source of truth remains `docs/survival/CURRENT_PRODUCT_CONTRACT.md`, non-superseded `DECISIONS.md` D051–D074, `docs/survival/ACCEPTANCE.md`, `INDEPENDENT_DEEP_REVIEW_PROTOCOL.md`. Later direct creator decisions take precedence. `SOH_WORLD_FORMATION_BIBLE_V1_20261101.md` documents WORLD V3 **VETOED** as physical geography; W0→W1→W2 A/B/C lab is **paper-only** (A best candidate for deeper test, NOT approved). This brief defines cross-team proof requirements, not coastlines, XY, actor rules, drops or artistic selections.
 
