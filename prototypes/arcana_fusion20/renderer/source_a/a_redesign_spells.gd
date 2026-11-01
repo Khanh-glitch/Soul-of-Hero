@@ -213,6 +213,13 @@ class SkybreakerScriptR:
         return 1.0 - AMath.seg(t, begin, begin + 0.25)
     func update(dt: float, t: float) -> void:
         pass
+    func _c_bolt(fb: AFramebuffer, a: Vector2, b: Vector2, seed: float, strength: float, width: float) -> void:
+        # Actual selected C #09 generator, adapted to A's buffer. Geometry is
+        # C; A's raster/color and the rest of the selected source remain an
+        # unverified fusion candidate rather than C framebuffer parity.
+        var tree := CKit.bolt_tree(seed, a.x, a.y, b.x, b.y, 2, 0.24)
+        for branch in tree:
+            ADraw.bolt_draw(fb, branch.pts, width * float(branch.w), AMath.R("volt", 0.6), AMath.R("volt", 1.0), strength * float(branch.w))
     func render(fb: AFramebuffer, t: float) -> void:
         var dis := 1.0 - AMath.seg(t, 8.45, 8.6)
         for i in range(_glyph.size()):
@@ -237,17 +244,15 @@ class SkybreakerScriptR:
                 var pu := fmod(t * 0.7 + float(i) * 0.23, 1.0)
                 var pp: Vector2 = pts[mini(pts.size() - 1, int(pu * float(pts.size())))]
                 ADraw.glow(fb, pp.x, pp.y, 6.0, AMath.R("volt", 0.9), dis)
-        # Ordered circuit strikes and final strike use the current A helper.
-        # C #09 branch-generator fidelity is still an explicit open gap.
+        # Ordered circuit strikes and final strike use the original C
+        # branch geometry, rendered through A; complete fusion parity is open.
         for i in range(3):
             var lt := t - (4.4 + float(i) * 0.7)
             if lt < 0.0 or lt > 0.3:
                 continue
             var tx := 200.0 + float(i) * 34.0
-            var bp := ADraw.bolt_path(tx, 40.0, tx, 118.0, 10.0, i * 571 + int(floor(lt / 0.05)) * 13, 4)
-            ADraw.bolt_draw(fb, bp, 1.8, AMath.R("volt", 0.55), AMath.R("volt", 0.95), exp(-lt * 9.0))
+            _c_bolt(fb, Vector2(tx, 40.0), Vector2(tx, 118.0), float(i * 571 + int(floor(lt / 0.05)) * 13), exp(-lt * 9.0), 1.8)
         var ft := t - 6.8
         if ft >= 0.0 and ft < 0.6:
-            var bp := ADraw.bolt_path(C.x, 26.0, C.x, 150.0, 16.0, 991 + int(floor(ft / 0.05)) * 7, 5)
-            ADraw.bolt_draw(fb, bp, 3.4, AMath.R("volt", 0.6), AMath.R("volt", 1.0), exp(-ft * 5.0))
+            _c_bolt(fb, Vector2(C.x, 26.0), Vector2(C.x, 150.0), float(991 + int(floor(ft / 0.05)) * 7), exp(-ft * 5.0), 3.4)
             ADraw.pulse_ring(fb, C.x, 150.0, 6.0 + ft * 120.0, 3.0, AMath.R("volt", 0.7), 0.6 * (1.0 - ft / 0.6), 1.7)
