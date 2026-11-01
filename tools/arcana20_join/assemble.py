@@ -16,7 +16,7 @@ import tempfile
 
 ROOT = Path(__file__).resolve().parents[2]
 PINS = {
-    'a0': 'e5529c13335d5da8272d7b9d2cfb74897dcaf7e2',
+    'a0': '62f6a32d08d319bfdcd28235786558f54f49b420',
     'a6': '6b801554a6af95424b4e39dd29f43c146aa13848',
     'a1_contract_inputs': '2cb1a3c5f093724eb9fecbdf45909ccb611f7b32',
     'a3_contract_inputs': '18e7afcbd576bbd9bfbcc509b2ee13216186a522',
@@ -78,7 +78,7 @@ def main() -> None:
         shutil.copy2(t / 'data/survival/items/items.json', out / '.a6-contract-inputs/a3/items/items.json')
         shutil.copy2(t / 'game/survival/economy/economy_service.gd', out / '.a6-contract-inputs/a3/source/economy_service.gd')
     historical = shas['a0'] == PINS['a0']
-    manifest = {'shas': shas, 'scene': 'res://game/overworld/chapter1_overworld.tscn', 'entry': 'res://game/app/app_root.tscn via AppFlow', 'a0_input_classification': 'historical independently passing normal-entry pin; not current A0 acceptance' if historical else 'caller-supplied A0 SHA; no prior normal-entry validation assumed', 'a0_normal_entry_reference_run': 41241455004 if historical else None, 'mounted_components': {'a0_runtime': shas['a0'], 'a6_ui_overlay': shas['a6'], 'avfx_renderer': shas['avfx'], 'pr30_binding_and_r4_diagnostic': shas['pr30'], 'a1_a3': 'contract input files only, not mounted owner runtimes', 'a8': 'not mounted'}, 'owner_heads_observed_2026_11_01_utc': {'a0_pr21': 'e1e5d778f294a3bb18333c80df8710206907317b', 'a1_pr20': 'ce9d4ba2d3db153011874aa41b789fa8092be042', 'a3_pr19': 'b751a29f213d3c934caa204eb8d2d86943f07b65', 'a6_pr24': '63d3fae54b1e204a84fced6a285bc969ed5bfdfe', 'a8_pr26': '71e68f9c0b7844277139a489c316acea327699f9'}, 'owner_heads_scope': 'Observed PR heads; newer A1/A3/A6/A8 are not mounted and are not validated by this composition.', 'composition': 'isolated archive overlay, no merge; A1/A3 are read-only A6 inputs only', 'acceptance': 'UNVERIFIED'}
+    manifest = {'shas': shas, 'scene': 'res://game/overworld/chapter1_overworld.tscn', 'entry': 'res://game/app/app_root.tscn via AppFlow', 'a0_input_classification': 'historical independently passing normal-entry pin; not current A0 acceptance' if historical else 'caller-supplied A0 SHA; no prior normal-entry validation assumed', 'a0_normal_entry_reference_run': 41194096996 if historical else None, 'mounted_components': {'a0_runtime': shas['a0'], 'a6_ui_overlay': shas['a6'], 'avfx_renderer': shas['avfx'], 'pr30_binding_and_r4_diagnostic': shas['pr30'], 'a1_a3': 'contract input files only, not mounted owner runtimes', 'a8': 'not mounted'}, 'owner_heads_observed_2026_11_01_utc': {'a0_pr21': 'e1e5d778f294a3bb18333c80df8710206907317b', 'a1_pr20': 'ce9d4ba2d3db153011874aa41b789fa8092be042', 'a3_pr19': 'b751a29f213d3c934caa204eb8d2d86943f07b65', 'a6_pr24': '63d3fae54b1e204a84fced6a285bc969ed5bfdfe', 'a8_pr26': '71e68f9c0b7844277139a489c316acea327699f9'}, 'owner_heads_scope': 'Observed PR heads; newer A1/A3/A6/A8 are not mounted and are not validated by this composition.', 'composition': 'isolated archive overlay, no merge; A1/A3 are read-only A6 inputs only', 'acceptance': 'UNVERIFIED'}
     (out / 'arcana20_join_manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
     print(json.dumps(manifest, indent=2))
 
