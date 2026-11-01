@@ -913,16 +913,16 @@ func _run() -> void:
     # followed by its original light, not a rotated source quad.
     var id17 := Arcana20SourceCatalog.canonical_id(17)
     check(multi.cast_skill(id17, player.global_position, enemy.global_position), "C17 blackout cast starts")
-    var horizon := multi._casts[id17] as CSourcePlayer
-    horizon.set_process(false)
-    horizon.render_enabled = false
-    for tick in range(360): horizon.advance(STEP, false)
-    horizon.render_enabled = true
-    horizon._render_frame()
+    var blackout_player := multi._casts[id17] as CSourcePlayer
+    blackout_player.set_process(false)
+    blackout_player.render_enabled = false
+    for tick in range(360): blackout_player.advance(STEP, false)
+    blackout_player.render_enabled = true
+    blackout_player._render_frame()
     await process_frame
     await process_frame
     var horizon_blackout := mount._blackouts.get(id17) as Arcana20CStageBlackout
-    check(is_instance_valid(horizon_blackout) and horizon.source_pass_frame().c_stage_blackout, "C17 authored blackout uses viewport stage not world quad")
+    check(is_instance_valid(horizon_blackout) and blackout_player.source_pass_frame().c_stage_blackout, "C17 authored blackout uses viewport stage not world quad")
     var with_blackout := await save_frame("c17_stage_blackout_actual_world")
     if is_instance_valid(horizon_blackout):
         horizon_blackout._rect.visible = false
