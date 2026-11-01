@@ -435,24 +435,6 @@ func _run() -> void:
     var before_stage_transform := stage.get_global_transform_with_canvas()
     check(before_stage_transform.is_equal_approx(Transform2D.IDENTITY) and stage._rect.size.is_equal_approx(root.get_visible_rect().size), "C10 stage covers viewport instead of transformed source rectangle")
     await save_frame("c10_impact_overlapping_02")
-    var old_player_position := player.global_position
-    var old_enemy_position := enemy.global_position
-    player.global_position += Vector2(15, 8)
-    enemy.global_position += Vector2(-12, 6)
-    camera.offset += Vector2(40, 20)
-    camera.force_update_scroll()
-    stage._sync_view()
-    await process_frame
-    await process_frame
-    check(stage.get_global_transform_with_canvas().is_equal_approx(Transform2D.IDENTITY), "C10 stage remains viewport-aligned after real camera and actor movement")
-    await save_frame("c10_impact_camera_and_actors_moved")
-    player.global_position = old_player_position
-    enemy.global_position = old_enemy_position
-    camera.offset -= Vector2(40, 20)
-    camera.force_update_scroll()
-    stage._sync_view()
-    await process_frame
-    await process_frame
     multi.cancel_skill(id10)
     await process_frame
     await process_frame
@@ -926,6 +908,39 @@ func _run() -> void:
     await process_frame
     await process_frame
     check(mount.active_viewers(id19) == 0 and images_equal(baseline, await save_frame("world_19_cancelled")), "D19 candidate cleanup restores frozen world")
+    # Keep camera/actor movement last: the real A0 Camera2D smooths movement,
+    # so forcing scroll mid-suite changes its private smoothing history even
+    # when positions are restored. Compare against the SAME moved world/camera,
+    # rather than incorrectly reusing an earlier stationary baseline.
+    check(multi.cast_skill(id10, player.global_position, enemy.global_position), "C10 motion test starts")
+    var moving_c10 := multi._casts[id10] as CSourcePlayer
+    moving_c10.set_process(false)
+    moving_c10.render_enabled = false
+    for tick in range(290): moving_c10.advance(STEP, false)
+    moving_c10.render_enabled = true
+    moving_c10._render_frame()
+    player.global_position += Vector2(15, 8)
+    enemy.global_position += Vector2(-12, 6)
+    camera.offset += Vector2(40, 20)
+    camera.force_update_scroll()
+    mount._c_stage._sync_view()
+    await process_frame
+    await process_frame
+    check(mount._c_stage.get_global_transform_with_canvas().is_equal_approx(Transform2D.IDENTITY), "C10 stage remains viewport-aligned after real camera and actor movement")
+    await save_frame("c10_impact_camera_and_actors_moved")
+    var c10_viewer := (mount._passes[id10] as Dictionary).get(&"C") as Node2D
+    c10_viewer.visible = false
+    mount._c_stage.visible = false
+    await process_frame
+    await process_frame
+    var moved_baseline := await save_frame("c10_moved_no_cast_reference")
+    c10_viewer.visible = true
+    mount._c_stage.visible = true
+    await process_frame
+    multi.cancel_skill(id10)
+    await process_frame
+    await process_frame
+    check(mount.active_viewers(id10) == 0 and images_equal(moved_baseline, await save_frame("c10_moved_cancelled")), "C10 cancellation restores same moved camera and actor world")
     # Exercise the actual AppFlow route change with a still-active #20 cast
     # and its opt-in viewport post, rather than cancelling it before exiting.
     var transition_post := Arcana20CViewportPost.new()
