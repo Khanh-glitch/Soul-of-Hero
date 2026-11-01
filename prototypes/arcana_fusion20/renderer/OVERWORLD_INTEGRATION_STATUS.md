@@ -163,7 +163,16 @@ and [PR30](https://github.com/Khanh-glitch/Soul-of-Hero/pull/30#issuecomment-655
   The current 04e/`2912110` real-world JOIN [41274009623](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41274009623)
   passed including #10/#17/HUD and cancellation. Same-host multi-resolution
   rendered-overlap retest [41274092592](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41274092592)
-  remains pending. Neither microbenchmark nor JOIN is a target FPS claim.
+  passed on identical e552 A0 and CT with AVFX before `13df6c9`, after
+  `c3a3e18`: at 720p p50/p95/p99 **439.2/463.2/470.7 → 262.7/311.9/350.7 ms**;
+  2K **389.8/432.0/445.5 → 271.3/347.2/369.1 ms**; 4K
+  **797.5/827.4/877.0 → 623.2/753.6/780.7 ms**. Each pair used the same
+  shared software runner, 52 overlapping frames, but the sampled cast phases
+  are not matched; not target FPS or a controlled GPU budget. Retained after
+  C raster p95 was **42.6/30.1/46.5 ms**, raw field submissions
+  **226/230/228 MB**, and HP 69→69. The old diagnostic lost CPU snapshots
+  at retirement, so before/after CPU percentiles cannot be compared. All
+  relevant creator, device-performance and full-cast work remains open.
 
 ### Per-skill acceptance ledger (R14)
 
