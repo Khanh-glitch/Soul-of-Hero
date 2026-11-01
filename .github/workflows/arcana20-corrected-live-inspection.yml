@@ -1,0 +1,47 @@
+name: ARCANA20 corrected live-capture inspection
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-corrected-live-inspection.yml']
+permissions:
+  actions: read
+  contents: read
+jobs:
+  inspect:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - skill: 14
+            center_x: 950
+            center_y: 410
+          - skill: 18
+            center_x: 830
+            center_y: 410
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: live-motion-${{ matrix.skill }}-normal
+          run-id: 41295327487
+          github-token: ${{ github.token }}
+          path: live
+      - run: python3 -m pip install --quiet pillow
+      - name: Inspect timestamps and native midpoint
+        run: |
+          python3 tools/arcana20_join/inspect_live_video.py live 0.5 mid.png
+          python3 prototypes/arcana_fusion20/renderer/native_review_surface.py mid.png mid_${{ matrix.skill }} ${{ matrix.center_x }} ${{ matrix.center_y }}
+      - name: Inspect timestamps and native late frame
+        run: |
+          python3 tools/arcana20_join/inspect_live_video.py live 0.72 late.png
+          python3 prototypes/arcana_fusion20/renderer/native_review_surface.py late.png late_${{ matrix.skill }} ${{ matrix.center_x }} ${{ matrix.center_y }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: corrected-live-inspection-${{ matrix.skill }}
+          path: |
+            mid.png
+            late.png

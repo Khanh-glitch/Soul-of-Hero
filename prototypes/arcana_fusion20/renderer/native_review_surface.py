@@ -12,7 +12,18 @@ from PIL import Image
 im = Image.open(pathlib.Path(sys.argv[1])).convert('RGB')
 if im.size != (1280, 720):
     raise SystemExit(f'unexpected full viewport dimensions {im.size}')
-im = im.crop((480, 252, 864, 468))
+# Optional native-pixel center targets an effect away from the player. The
+# fixed default remains unchanged for existing comparisons. Always disclose
+# the region; it is not a substitute for the full-frame video.
+if len(sys.argv) == 5:
+    cx, cy = int(sys.argv[3]), int(sys.argv[4])
+else:
+    cx, cy = 672, 360
+left, top = cx - 192, cy - 108
+if left < 0 or top < 0 or left + 384 > im.width or top + 216 > im.height:
+    raise SystemExit(f'crop center out of bounds: {cx}, {cy}')
+print(f'NATIVE_CROP full={im.size} bounds=({left},{top},{left + 384},{top + 216})')
+im = im.crop((left, top, left + 384, top + 216))
 for quality in (68, 55, 45, 35):
     buffer = io.BytesIO()
     im.save(buffer, 'JPEG', quality=quality, optimize=True)
