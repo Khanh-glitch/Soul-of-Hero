@@ -31,8 +31,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          set +e
           timeout --signal=TERM --kill-after=10s 180s godot --headless --path . --script tests/survival/gpb_canonical_composition_smoke.gd > artifacts/composition.log 2>&1
+          rc=$?
+          set -e
           cat artifacts/composition.log
+          if [ "$rc" -ne 0 ]; then exit "$rc"; fi
           grep -q 'GPB_NATIVE_SMOKE_PASS checks=11' artifacts/composition.log
           if grep -Ei 'SCRIPT ERROR|Parse Error|GPB_NATIVE_FAIL' artifacts/composition.log; then exit 1; fi
       - name: R13 source→harvest→research→paid queue (Godot process 1)
