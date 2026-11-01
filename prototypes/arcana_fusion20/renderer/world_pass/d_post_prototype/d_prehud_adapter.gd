@@ -11,8 +11,12 @@ const BLUR := preload("res://prototypes/arcana_fusion20/renderer/world_pass/d_po
 const COMP := preload("res://prototypes/arcana_fusion20/renderer/world_pass/d_post_prototype/composite.gdshader")
 const HALF := Vector2i(240, 135)
 const QUARTER := Vector2i(120, 67)
+class PostLayer:
+    extends CanvasLayer
+    var _rect: ColorRect
+
 var _passes: Array[SubViewport] = []
-var _output: CanvasLayer
+var _output: PostLayer
 var _rect: ColorRect
 var _material: ShaderMaterial
 
@@ -52,10 +56,11 @@ func attach(world_before_hud: Texture2D) -> bool:
     wide = _stage(QUARTER, BLUR, wide, {"direction": Vector2(0, 2.4 / HALF.y)})
     wide = _stage(HALF, BLUR, wide, {"direction": Vector2(4.6 / QUARTER.x, 0)})
     wide = _stage(QUARTER, BLUR, wide, {"direction": Vector2(0, 4.6 / HALF.y)})
-    _output = CanvasLayer.new()
+    _output = PostLayer.new()
     _output.layer = 10
     add_child(_output)
     _rect = ColorRect.new()
+    _output._rect = _rect
     _rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
     _output.add_child(_rect)
     _rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)

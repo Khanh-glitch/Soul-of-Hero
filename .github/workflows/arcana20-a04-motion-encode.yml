@@ -1,0 +1,52 @@
+name: ARCANA20 A04 native motion video from captured PNGs
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-a04-motion-encode.yml']
+permissions:
+  actions: read
+  contents: read
+jobs:
+  encode:
+    strategy:
+      fail-fast: false
+      matrix:
+        revision: [baseline, candidate]
+        light: [normal, dimmed]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: a04-full-${{ matrix.revision }}-${{ matrix.light }}
+          run-id: 41276632227
+          github-token: ${{ github.token }}
+          path: capture
+      - name: Install encoder
+        run: |
+          if ! command -v ffmpeg; then sudo apt-get update -qq && sudo apt-get install -y ffmpeg; fi
+      - name: Encode 480 exact source ticks without dropping frames
+        run: |
+          set -euo pipefail
+          mkdir frames output
+          python3 - <<'PY'
+          import pathlib,os
+          root=pathlib.Path('capture/artifacts/arcana20-join')
+          out=pathlib.Path('frames')
+          for i in range(480):
+              p=root / f'phase_04_full_motion_{i:03d}_tick{i}.png'
+              if not p.is_file(): raise SystemExit(f'missing native frame {p}')
+              os.link(p,out / f'{i:03d}.png')
+          PY
+          ffmpeg -hide_banner -loglevel error -framerate 60 -i frames/%03d.png -frames:v 480 -c:v ffv1 -pix_fmt bgr0 output/a04-native-lossless.mkv
+          ffmpeg -hide_banner -loglevel error -framerate 60 -i frames/%03d.png -frames:v 480 -c:v libx264 -crf 16 -pix_fmt yuv420p output/a04-review.mp4
+          cp capture/capture-revisions.txt output/
+          ffprobe -v error -select_streams v:0 -show_entries stream=codec_name,width,height,nb_frames,r_frame_rate -of json output/a04-native-lossless.mkv > output/metadata.json
+          cat output/capture-revisions.txt output/metadata.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a04-video-${{ matrix.revision }}-${{ matrix.light }}
+          path: output/
+          if-no-files-found: warn

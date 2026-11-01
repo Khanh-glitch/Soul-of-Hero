@@ -1,0 +1,65 @@
+name: ARCANA19 actual world pre-HUD input prototype
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths:
+      - '.github/workflows/arcana19-prehud-world-prototype.yml'
+      - 'prototypes/arcana_fusion20/renderer/d_prehud_world_test.gd'
+      - 'prototypes/arcana_fusion20/renderer/world_pass/d_post_prototype/**'
+permissions:
+  contents: read
+jobs:
+  frozen-world:
+    strategy:
+      fail-fast: false
+      matrix:
+        light: [normal, dimmed]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Assemble isolated A0/owner/AVFX composition
+        run: |
+          git fetch --depth=1 --no-tags origin 04eacf62f1a3740a57e08691c3a9006d454aaa2c 6b801554a6af95424b4e39dd29f43c146aa13848 2cb1a3c5f093724eb9fecbdf45909ccb611f7b32 18e7afcbd576bbd9bfbcc509b2ee13216186a522 e505173edd119fdd955cf6249511b575a5468440
+          python3 tools/arcana20_join/assemble.py --out "$RUNNER_TEMP/d-prehud" --avfx-sha "$GITHUB_SHA" --a0-sha 04eacf62f1a3740a57e08691c3a9006d454aaa2c
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import
+        run: |
+          set -o pipefail
+          mkdir -p "$RUNNER_TEMP/d-prehud/artifacts"
+          godot --headless --path "$RUNNER_TEMP/d-prehud" --import 2>&1 | tee "$RUNNER_TEMP/d-prehud/artifacts/import.log"
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/d-prehud/artifacts/import.log"
+      - name: Exercise explicit pre-HUD real-world snapshot and transparent HUD
+        env:
+          ARCANA20_PHASE_LIGHT: ${{ matrix.light }}
+        run: |
+          set -o pipefail
+          timeout --signal=TERM --kill-after=10s 1100s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 ARCANA20_PHASE_FIRST=19 \
+            godot --path "$RUNNER_TEMP/d-prehud" --rendering-method gl_compatibility --audio-driver Dummy --resolution 1280x720 --windowed \
+            --user-data-dir "$RUNNER_TEMP/d-prehud-user" --script res://prototypes/arcana_fusion20/renderer/d_prehud_world_test.gd \
+            2>&1 | tee "$RUNNER_TEMP/d-prehud/artifacts/world.log"
+          grep -Fq 'ARCANA20_JOIN_DIAGNOSTIC PASS' "$RUNNER_TEMP/d-prehud/artifacts/world.log"
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Shader compilation failed|JOIN_FAIL' "$RUNNER_TEMP/d-prehud/artifacts/world.log"
+      - run: python3 -m pip install --quiet pillow
+      - name: Surface before prototype
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py "$RUNNER_TEMP/d-prehud/artifacts" d_prehud_real_world_before_post
+      - name: Surface experimental post
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py "$RUNNER_TEMP/d-prehud/artifacts" d_prehud_real_world_experimental_post
+      - name: Surface assertion evidence
+        if: always()
+        run: grep -E 'JOIN_(OK|FAIL).*D (prototype|pre-HUD)|SCRIPT ERROR|Parse Error|ARCANA20_JOIN_DIAGNOSTIC' "$RUNNER_TEMP/d-prehud/artifacts/world.log" | sed 's/^/::notice title=D_PREHUD_WORLD::/' || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcana19-prehud-world-${{ matrix.light }}
+          path: |
+            ${{ runner.temp }}/d-prehud/arcana20_join_manifest.json
+            ${{ runner.temp }}/d-prehud/artifacts/
+          if-no-files-found: warn
