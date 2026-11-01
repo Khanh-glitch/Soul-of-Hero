@@ -21,7 +21,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: arcana20-current-phase-sweep-11-${{ matrix.lighting }}
-          run-id: 41277060727
+          run-id: 41277430519
           github-token: ${{ github.token }}
           path: phases
       - run: python3 -m pip install --quiet pillow
