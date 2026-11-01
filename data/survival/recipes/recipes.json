@@ -954,6 +954,66 @@
       "provenance": [
         "SYS-12"
       ]
+    },
+    "process_roadside_materials": {
+      "id": "process_roadside_materials",
+      "category": "manufacture",
+      "outputs": {
+        "quarry_core_fragment": 4
+      },
+      "inputs": {
+        "oak_wood": 5,
+        "iron_scrap": 3
+      },
+      "station": "workbench",
+      "min_tier": 1,
+      "duration_ticks": 20,
+      "knowledge": "recipe",
+      "fuel": {
+        "charcoal": 1
+      },
+      "required_technologies": [],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ],
+      "research_cost": {
+        "knowledge_spares": 6,
+        "research_notes": 2
+      }
+    },
+    "sort_core_fragments": {
+      "id": "sort_core_fragments",
+      "category": "manufacture",
+      "outputs": {
+        "core_blank": 1
+      },
+      "inputs": {
+        "quarry_core_fragment": 10,
+        "knowledge_spares": 2
+      },
+      "station": "workbench",
+      "min_tier": 1,
+      "duration_ticks": 15,
+      "knowledge": "recipe",
+      "fuel": {},
+      "required_technologies": [],
+      "mode_allowlist": [
+        "persistent_home"
+      ],
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ],
+      "research_cost": {
+        "knowledge_spares": 4,
+        "research_notes": 1
+      }
     }
   }
 }

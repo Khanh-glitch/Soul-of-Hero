@@ -1324,6 +1324,33 @@
       "source_ids": [],
       "acquisition_status": "PROPOSED_WORLD",
       "purpose": "Physical late-Ragnarok cross-season currency token. One token equals one secured unit only after legitimate A0 deposit. Never profile money while carried, chest-stored, death-bagged or expired."
+    },
+    "quarry_core_fragment": {
+      "id": "quarry_core_fragment",
+      "label": "Quarry Core Fragment",
+      "kind": "material",
+      "tier": 2,
+      "tags": [
+        "core_material",
+        "salvage",
+        "ordinary"
+      ],
+      "storage": "stack",
+      "stack_limit": 50,
+      "balance_status": "SOH_PROPOSAL",
+      "provenance": [
+        "SYS-15",
+        "SYS-19"
+      ],
+      "source_ids": [],
+      "acquisition_status": "CRAFT_ONLY",
+      "salvage": {
+        "outputs": {
+          "iron_scrap": 1
+        },
+        "station": "workbench",
+        "min_tier": 1
+      }
     }
   }
 }
