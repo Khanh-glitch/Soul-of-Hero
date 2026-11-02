@@ -64,7 +64,7 @@ report.checks.push({ name: 'sprint_input', pass: true, detail: 'shift+s accepted
 
 async function setOverlays(on) {
   await page.evaluate((visible) => {
-    for (const id of ['minimap', 'hud', 'help', 'footer', 'instructions', 'legend']) {
+    for (const id of ['minimap', 'hud', 'help', 'footer', 'instructions', 'legend', 'here', 'pos']) {
       const el = document.getElementById(id);
       if (el) el.style.visibility = visible ? 'visible' : 'hidden';
     }
@@ -184,15 +184,19 @@ const miniOff = await page.evaluate(() => document.getElementById('minimap').sty
 await page.keyboard.press('m');
 report.checks.push({ name: 'minimap_toggle', pass: miniOff, detail: 'M key' });
 
-// world overview (downscaled capture of the whole map for the report)
-await page.evaluate(async () => {
+// world overview: rendered from the decoded world image inside the browser, written as PNG bytes
+await setOverlays(false);
+const overviewData = await page.evaluate(() => {
   const s = window.__veyra;
   const c = document.createElement('canvas');
-  c.width = 1600; c.height = 1120; c.id = 'overviewCanvas';
-  document.body.appendChild(c);
+  c.width = 1600; c.height = 1120;
   c.getContext('2d').drawImage(s.world, 0, 0, 1600, 1120);
+  return c.toDataURL('image/png');
 });
-await page.locator('#overviewCanvas').screenshot({ path: path.join(OUT, 'overview.png') });
+fs.writeFileSync(path.join(OUT, 'overview.png'), Buffer.from(overviewData.split(',')[1], 'base64'));
+report.scenes.push({ file: 'overview.png', scene: 'overview', camera: [8000, 5600],
+                     note: 'whole compiled world image, decoded in Chromium',
+                     sha256: sha256(path.join(OUT, 'overview.png')), pass: true });
 
 report.world_sha256 = crypto.createHash('sha256')
   .update(fs.readFileSync('out/world.png')).digest('hex');
