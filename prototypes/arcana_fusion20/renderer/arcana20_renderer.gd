@@ -208,7 +208,8 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
         var ap := ASourcePlayer.new()
         ap.world_pass_mode = world_pass_mode
         ap.source_variant = &"crown"
-        ap.configure(ACinderCrown.new(), ACinderCrown.DURATION)
+        var crown_duration := ACinderCrown.FUSION_DURATION if world_pass_mode else ACinderCrown.DURATION
+        ap.configure(ACinderCrown.new(), crown_duration)
         var cp := CSourcePlayer.new()
         cp.experimental_separate_passes = experimental_c_separate_passes
         cp.world_pass_mode = world_pass_mode
@@ -233,7 +234,7 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
                     var c_centre := CCinderCrown.C - Vector2(112, 126)
                     c_player._origin = cw + (a_centre - c_centre).rotated(c_player._rot) * c_player._scale},
             {"node": ap, "layer": 1, "offset": 0.0, "begin_call": func(n: Node, cw: Vector2, tw: Vector2) -> void: n.call("begin", cw, tw)},
-        ], ACinderCrown.DURATION)
+        ], crown_duration)
         add_child(fp)
         fp.visual_contact.connect(func(kind: StringName, pos: Vector2, st: float) -> void:
             visual_contact.emit(canonical_id, pos, kind)

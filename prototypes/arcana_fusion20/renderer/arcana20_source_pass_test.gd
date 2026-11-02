@@ -140,7 +140,11 @@ func _run() -> void:
     clocked_crown.advance(STEP)
     check(crown_events.count(&"crown_impact") == 1, "F01 A crown impact exactly once within one tick")
     check((clocked_c._fx as CCinderCrown)._burst and not crown_events.has(&"crown_burst_impact"), "F01 original C tongue onset within one tick, no duplicate event")
+    while clocked_crown.source_time() < 6.65: clocked_crown.advance(STEP)
+    var crown_source := clocked_a._spell as ACinderCrown
+    check(crown_host.is_active(crown_id) and crown_source._ash.count() > 0, "F01 original ash survives old 6.6s stage cutoff")
     while crown_host.is_active(crown_id): clocked_crown.advance(STEP)
+    check(crown_source._ash.count() == 0, "F01 original ash expires before fusion OUT")
     check(not crown_host.is_active(crown_id), "F01 shared clock naturally retires both layers")
     crown_host.free()
     # B03 meteors use a fixed source sigil centre and screen-up ballistic z,

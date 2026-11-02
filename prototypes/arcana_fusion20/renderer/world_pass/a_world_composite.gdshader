@@ -10,6 +10,9 @@ uniform sampler2D bloom_tex : repeat_disable, filter_linear;
 // Diagnostic #11 fusion presentation, not source/HDR parity. Original full
 // source ink and bloom remain uploaded unchanged for the baseline path.
 uniform bool carousel_presentation = false;
+// #01-only visibility adaptation of A additive light in the LDR world
+// preview. Raw source fields, bloom, masks, C tongues and world stay intact.
+uniform bool crown_presentation = false;
 uniform sampler2D carousel_rotor_tex : repeat_disable, filter_nearest;
 uniform sampler2D carousel_rotor_bloom_tex : repeat_disable, filter_linear;
 uniform float bloom_amount = 0.75;
@@ -36,6 +39,7 @@ void fragment() {
     vec2 offset = (screen_dx * mask.g + screen_dy * mask.b) * SCREEN_PIXEL_SIZE;
     vec3 warped = texture(live_world, clamp(SCREEN_UV + offset, vec2(0.0), vec2(1.0))).rgb;
     vec3 effect = ink.rgb + bloom * bloom_amount;
+    if (crown_presentation) { effect *= 1.8; }
     if (carousel_presentation) {
         vec3 rotor = max(texelFetch(carousel_rotor_tex, p, 0).rgb, vec3(0.0));
         // Full and rotor are exact same-state source rerenders. Bound only the

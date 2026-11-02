@@ -102,6 +102,9 @@ func consume(frame: Arcana20SourcePassFrame) -> void:
     # original composite. Upload only for this variant and keep a_rgb intact.
     var carousel := frame.a_carousel_rotor_rgb.size() == count * 3 and frame.a_carousel_rotor_bloom_rgb.size() == frame.a_bloom_size.x * frame.a_bloom_size.y * 3
     _material.set_shader_parameter("carousel_presentation", carousel)
+    # #01's additive A crown fades into bright SOH terrain. Preview-only
+    # exposure of its light field; no source geometry/timing or C layer edit.
+    _material.set_shader_parameter("crown_presentation", frame.variant == &"crown")
     if carousel:
         var rotor := PackedFloat32Array()
         var rotor_bloom := PackedFloat32Array()

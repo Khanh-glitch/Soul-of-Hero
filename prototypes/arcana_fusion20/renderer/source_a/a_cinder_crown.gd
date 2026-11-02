@@ -4,6 +4,10 @@ extends RefCounted
 class_name ACinderCrown
 
 const DURATION := 6.6
+# Fusion-only continuation of the ORIGINAL A ash simulation. The last ash is
+# emitted before 5.6s with up to 2.4s of life. The elected source's 6.6s
+# stage cut used to truncate living ash; geometry/timing/rng stay untouched.
+const FUSION_DURATION := 8.0
 const CLIMAX_N := 0.66
 const C := Vector2(232, 124)
 
