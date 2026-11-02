@@ -170,7 +170,9 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
         var ap := ASourcePlayer.new()
         ap.world_pass_mode = true
         ap.source_variant = &"worldseed_a_growth_c_material"
-        ap.configure(AWorldseedGrowth.new(), AWorldseedGrowth.FUSION_DURATION)
+        var worldseed := AWorldseedGrowth.new()
+        worldseed.use_fusion_fragments = true
+        ap.configure(worldseed, AWorldseedGrowth.FUSION_DURATION)
         var cp := CSourcePlayer.new()
         cp.world_pass_mode = true
         fp.source_pass_ready.connect(func(frame: Arcana20SourcePassFrame) -> void: source_pass_ready.emit(canonical_id, frame))
@@ -197,6 +199,8 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
         _casts[canonical_id] = fp
         cast_started.emit(canonical_id)
         fp.begin(caster_world, target_world)
+        # World gravity remains screen-down even when the source basis rotates.
+        worldseed.fragment_gravity_axis = Vector2.DOWN.rotated(-ap._rot)
         return true
     if id == 1:
         # FUSION #01 Cinder Crown (vote A+C, FUSION_DECISIONS §01):

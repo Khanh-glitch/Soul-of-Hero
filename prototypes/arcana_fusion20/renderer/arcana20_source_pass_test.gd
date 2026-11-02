@@ -469,6 +469,31 @@ func _run() -> void:
     for value in growth_fb.world_coverage: growth_coverage += value
     check(growth.source_seeds() == PackedInt32Array([0x5eed]) and growth_coverage > 0.0, "A16 seeded source growth C material uses authored ink coverage")
 
+    # Fusion-only detached sheets begin on the seeded A surface and then
+    # separate; the elected source before the fold must stay byte-identical.
+    var attached := growth.fragment_pose(3, 0, AWorldseedGrowth.FOLD)
+    var moving := growth.fragment_pose(3, 0, AWorldseedGrowth.FOLD + 0.6)
+    check(float(attached.age) == 0.0 and (attached.points[2] as Vector2).distance_to(moving.points[2]) > 2.0, "F16 sheet fragment separates from its source surface")
+    var original_growth := AFramebuffer.new()
+    var fused_growth := AFramebuffer.new()
+    original_growth.track_world_fields = true
+    fused_growth.track_world_fields = true
+    original_growth.clear()
+    fused_growth.clear()
+    growth.use_fusion_fragments = false
+    growth.render(original_growth, AWorldseedGrowth.FOLD)
+    growth.use_fusion_fragments = true
+    growth.render(fused_growth, AWorldseedGrowth.FOLD)
+    check(original_growth.buf == fused_growth.buf and original_growth.world_coverage == fused_growth.world_coverage, "F16 continuity layer is zero at its attachment beat")
+    original_growth.clear()
+    fused_growth.clear()
+    growth.use_fusion_fragments = false
+    growth.render(original_growth, AWorldseedGrowth.FOLD + 0.6)
+    growth.use_fusion_fragments = true
+    growth.render(fused_growth, AWorldseedGrowth.FOLD + 0.6)
+    check(original_growth.buf != fused_growth.buf, "F16 detached material contributes after separation")
+    growth.use_fusion_fragments = false
+
     var bloom_lead := AAbyssalBloomLead.new()
     bloom_lead.setup()
     check(bloom_lead.petals.size() == 7 and bloom_lead.inner.size() == 7 and bloom_lead.bubbles.size() == 46, "A05 original seeded opening structures")

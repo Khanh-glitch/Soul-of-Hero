@@ -22,6 +22,11 @@ var layers: Array = []
 var pollen: ADraw.APool
 # false isolates the original A color/additive source for parity tests.
 var use_c_material := true
+# Fusion-world-only continuity layer: original A sheets, C material, C debris
+# and both source simulations remain intact. Detached ribbons are derived
+# from the actual seeded A sheet surfaces, not new combat or source events.
+var use_fusion_fragments := false
+var fragment_gravity_axis := Vector2.DOWN
 
 func setup() -> void:
     CPalette._ensure()
@@ -119,6 +124,61 @@ static func _cached_fbm_grid(x_indices: Array[int], x_weights: Array[float], y_i
         norm += a
         a *= 0.5
     return total / norm
+
+# Reconstruct the A sheet centreline at the actual detachment time using the
+# identical seeded layer/angle/growth equations as the source above. Each
+# fragment begins on its parent surface and follows deterministic drag and
+# world-down gravity; this is a labelled fusion presentation reinterpretation,
+# not an extra C particle or a claim of original A/C fragmentation parity.
+func fragment_pose(layer_index: int, petal: int, t: float) -> Dictionary:
+    var layer: Dictionary = layers[layer_index]
+    var detach := FOLD + 0.025 * float((petal + layer_index * 3) % 9)
+    var age := maxf(0.0, t - detach)
+    var source_fold := AMath.seg(detach, FOLD, DURATION)
+    var u := AMath.ease_out(AMath.seg(detach, float(layer.t0), float(layer.t0) + 1.0 / float(layer.sp)), 2.0)
+    u *= 1.0 - AMath.ease_out(source_fold, 1.6)
+    var bloom_k := AMath.seg(detach, BLOOM, BLOOM + 0.5)
+    var pulse := 1.0 + 0.18 * sin(detach * 7.0 - layer_index * 1.2) * maxf(0.0, 1.0 - (detach - BLOOM) * 0.6) if bloom_k > 0.0 else 1.0
+    var length := float(layer.len) * u * pulse
+    var angle0 := float(layer.tilt) + float(petal) / float(layer.count) * AMath.TAU
+    var tremble := sin(detach * (3.0 + float(layer.tremble) * 3.0) + petal) * float(layer.tremble) * 0.02
+    var points: Array[Vector2] = []
+    for j in range(5):
+        var pos := lerpf(0.50, 0.98, float(j) / 4.0)
+        var angle := angle0 + tremble * pos + sin(pos * 2.5) * 0.12
+        var radius := (5.0 + layer_index * 5.0) * u + length * pos
+        points.append(Vector2(C.x + cos(angle) * radius, C.y + sin(angle) * radius / SQ - pos * pos * 10.0 * u))
+    var centre: Vector2 = points[2]
+    var outward := (centre - C).normalized()
+    var travel := (1.0 - exp(-1.3 * age)) / 1.3
+    var velocity := 16.0 + float((petal * 7 + layer_index * 11) % 17)
+    var drift := outward * velocity * travel + fragment_gravity_axis * (9.0 * age * age)
+    var spin := (-1.0 if (petal + layer_index) % 2 == 0 else 1.0) * age * (0.35 + float(petal % 4) * 0.12)
+    for j in range(points.size()):
+        points[j] = centre + (points[j] - centre).rotated(spin) + drift
+    return {"points": points, "length": length, "width": float(layer.w), "age": age, "detach": detach}
+
+func _render_fusion_fragments(fb: AFramebuffer, t: float) -> void:
+    if t < FOLD or t >= FUSION_DURATION: return
+    for li in range(layers.size()):
+        var layer: Dictionary = layers[li]
+        for petal in range(int(layer.count)):
+            var pose := fragment_pose(li, petal, t)
+            if t < float(pose.detach): continue
+            var age: float = pose.age
+            var alpha := AMath.smoothstep(0.0, 0.16, age) * (1.0 - AMath.smoothstep(1.0, 2.0, age))
+            if alpha <= 0.001: continue
+            var fragment_length: float = pose.length
+            var fragment_width: float = pose.width
+            var fixed_li := li
+            var fixed_petal := petal
+            ADraw.ribbon(fb, pose.points,
+                func(s: float, _i: int) -> float:
+                    var source_u := lerpf(0.50, 0.98, s)
+                    return fragment_length * fragment_width * sin(pow(source_u, 0.6) * PI) * (0.60 + 0.40 * sin(PI * s)),
+                func(s: float, _i: int, edge: float) -> Variant:
+                    return _c_surface(fixed_li, fixed_petal, lerpf(0.50, 0.98, s), edge, C.x, C.y, t),
+                true, alpha)
 
 func render(fb: AFramebuffer, t: float) -> void:
     var crack := AMath.seg(t, CRACK, CRACK + 0.5)
@@ -261,3 +321,6 @@ func render(fb: AFramebuffer, t: float) -> void:
         if float(p.size) > 1.8:
             var angle := float(p.a) + float(p.av) * (float(p.max) - float(p.life))
             fb.add(float(p.x) + cos(angle) * 1.4, float(p.y) + sin(angle), color.x * 0.4, color.y * 0.4, color.z * 0.4, l * 0.7))
+
+    if use_fusion_fragments and use_c_material:
+        _render_fusion_fragments(fb, t)

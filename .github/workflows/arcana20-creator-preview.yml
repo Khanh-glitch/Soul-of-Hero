@@ -1,4 +1,4 @@
-# R21 partial batch S: source raster-tile overscan range recheck; retain R20 #05.
+# R25 F16 seeded-surface fragmentation and natural decay; R21 partial batch S: source raster-tile overscan range recheck; retain R20 #05.
 name: ARCANA20 R20 Abyssal Bloom A-B creator package
 on:
   workflow_dispatch:
