@@ -28,6 +28,7 @@ export function field(
   const yb = Math.min(fb.H - 1, Math.ceil(y1));
   const o: [number, number, number] = [0, 0, 0];
   const buf = fb.buf;
+  fb.invalidateInfluence();
   for (let y = ya; y <= yb; y++) {
     let i = (y * fb.W + xa) * 3;
     for (let x = xa; x <= xb; x++, i += 3) {
@@ -59,6 +60,7 @@ export function fieldMul(
   const xb = Math.min(fb.W - 1, Math.ceil(x1));
   const yb = Math.min(fb.H - 1, Math.ceil(y1));
   const buf = fb.buf;
+  fb.invalidateInfluence();
   for (let y = ya; y <= yb; y++) {
     let i = (y * fb.W + xa) * 3;
     for (let x = xa; x <= xb; x++, i += 3) {
@@ -302,7 +304,8 @@ export function ribbon(
         if (!c) continue;
         const x = cx + nx * k,
           y = cy + ny * k;
-        if (opts.blend) fb.blend(x, y, c[0], c[1], c[2], alpha);
+        // P0 ADraw.ribbon explicitly rounds blended samples before blending.
+        if (opts.blend) fb.blend(x<0?-Math.round(-x):Math.round(x), y<0?-Math.round(-y):Math.round(y), c[0], c[1], c[2], alpha);
         else fb.add(x, y, c[0], c[1], c[2], alpha);
       }
     }

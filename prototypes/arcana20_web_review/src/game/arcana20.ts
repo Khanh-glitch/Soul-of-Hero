@@ -7,6 +7,8 @@
  */
 import { sourceTransform } from './sourceTransform';
 import { aTransform } from '../arcana_a/anchors';
+import { riptideFront } from '../arcana_a/riptide';
+import { RipperContour } from '../arcana_c/fusion20/contour';
 import catalog from '../../integration/p0-catalog.json';
 import { bTransform, transformPoint } from '../arcana_b/anchors';
 import { cTransform, C_ANCHOR } from '../arcana_c/anchors';
@@ -48,7 +50,11 @@ export function planArcana(id:number,x:number,y:number,angle:number,aimX:number,
     }
     case 4: line(x,y,a,reach+8,14,42); for(let i=1;i<=3;i++) cAt(reach*i/3,0,11,12,peak+120*i); break;
     case 5: circle(tx,ty,32,30); ring(tx,ty,54,15,peak+250); break;
-    case 6: for(let i=0;i<4;i++)cAt(reach*(i+1)/4,Math.sin(i*1.4)*10,20,16,peak-160+i*110); break;
+    case 6: { // Provisional collision follows four sampled P0 wavefront slices.
+      const m=aTransform({x,y},{x:tx,y:ty}),scale=Math.hypot(m.a,m.b);
+      for(const t of [4.75,5.1,5.45,5.8]){const f=riptideFront(t),from=transformPoint(m,{x:f.x,y:f.y-f.height}),to=transformPoint(m,{x:f.x,y:f.y+f.height});line(from.x,from.y,Math.atan2(to.y-from.y,to.x-from.x),Math.hypot(to.x-from.x,to.y-from.y),Math.max(4,8*scale),16,t*1000);}
+      break;
+    }
     case 7: { // Cathedral pulse and fracture, actual target anchor (bounds provisional).
       const q=transformPoint(cTransform(7,{x,y},{x:tx,y:ty}),C_ANCHOR[7]);
       ring(q.x,q.y,44,12,4400,true);ring(q.x,q.y,44,12,4950,true);ring(q.x,q.y,44,12,5500,true);circle(q.x,q.y,40,30,6400,true);break;
@@ -74,8 +80,9 @@ export function planArcana(id:number,x:number,y:number,angle:number,aimX:number,
     case 19: { // Provisional damage at the real D source's star impact, not catalog peak.
       const m=sourceTransform({x,y},{x:tx,y:ty},{x:148,y:172},{x:244,y:132}),q=transformPoint(m,{x:244,y:132});circle(q.x,q.y,38,40,8150);break;
     }
-    case 20: { // Provisional collision along the real C rift chord; width/damage are invented.
-      const m=sourceTransform({x,y},{x:tx,y:ty},{x:112,y:126},{x:210,y:116}),u=transformPoint(m,{x:86,y:62}),v=transformPoint(m,{x:334,y:172});line(u.x,u.y,Math.atan2(v.y-u.y,v.x-u.x),Math.hypot(v.x-u.x,v.y-u.y),15,36,6600);break;
+    case 20: { // Provisional collision along the actual C rift polyline; width/damage are invented.
+      const m=sourceTransform({x,y},{x:tx,y:ty},{x:112,y:126},{x:210,y:116}),pts=new RipperContour().way.map(p=>transformPoint(m,p)),w=15*Math.hypot(m.a,m.b),cap=w*.5;
+      for(let i=0;i<pts.length-1;i++){const u=pts[i],v=pts[i+1],a=Math.atan2(v.y-u.y,v.x-u.x);line(u.x-Math.cos(a)*cap,u.y-Math.sin(a)*cap,a,Math.hypot(v.x-u.x,v.y-u.y)+2*cap,w,36,6600);}break;
     }
   }
   return out.sort((a,b)=>a.delayMs-b.delayMs);

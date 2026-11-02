@@ -2,6 +2,7 @@
 // (GOLD_SOURCE_NOT_AVAILABLE — these are original replacements; no third-party sprites used.)
 import { hash2 } from './core';
 import { ITEMS } from './catalog';
+import { drawArcanaCore } from './arcanaCoreArt';
 
 type G = CanvasRenderingContext2D;
 export type Sprite = HTMLCanvasElement;
@@ -325,7 +326,7 @@ function icon(g: G, kind: string, c1: string, c2: string) {
     default: R(g, 4, 4, 8, 8, c1);
   }
 }
-export function buildIcons() { const out: Record<string, Sprite> = {}; for (const [k, d] of Object.entries(ITEMS)) out[k] = mk(16, 16, g => { icon(g, d.icon, d.c1, d.c2); if (d.arcanaId !== undefined) { /* 20 distinct small sigil notches on the physical Core icon. */ for (let bit = 0; bit < 5; bit++) if (d.arcanaId & (1 << bit)) R(g, 4 + bit * 2, 12, 1, 2, '#fff4cf'); } }); out.fists = mk(16, 16, g => { ell(g, 8, 9, 4, 3.5, '#eab894'); R(g, 5, 6, 6, 2, '#c08060'); }); return out; }
+export function buildIcons() { const out: Record<string, Sprite> = {}; for (const [k, d] of Object.entries(ITEMS)) out[k] = mk(16, 16, g => { if (d.arcanaId !== undefined) drawArcanaCore(g, d.arcanaId, d.c1, d.c2); else icon(g, d.icon, d.c1, d.c2); }); out.fists = mk(16, 16, g => { ell(g, 8, 9, 4, 3.5, '#eab894'); R(g, 5, 6, 6, 2, '#c08060'); }); return out; }
 
 // pixel font for in-world numbers (3x5)
 const DIG: Record<string, string> = { '0': '111101101101111', '1': '010110010010111', '2': '111001111100111', '3': '111001111001111', '4': '101101111001001', '5': '111100111001111', '6': '111100111101111', '7': '111001001001001', '8': '111101111101111', '9': '111101111001111', '+': '000010111010000', '-': '000000111000000' };

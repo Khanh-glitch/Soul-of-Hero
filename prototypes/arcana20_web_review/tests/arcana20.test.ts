@@ -16,7 +16,8 @@ describe('isolated ARCANA20 combat prototypes (not P0 visual validation)',()=>{
   for(const c of ARCANA_CORES){const item=ITEMS[c.itemKey];expect(item.arcanaId).toBe(c.id);expect(item.charge).toBe(3);expect(item.max).toBe(1);expect(item.cat).toBe('core');
    for(const [x,y,aimX,aimY] of [[300,300,400,300],[200,200,200,200],[200,200,99999,99999]]){
     const plan=planArcana(c.id,x,y,Math.atan2(aimY-y,aimX-x),aimX,aimY);expect(plan.length).toBeGreaterThan(0);expect(plan.length).toBeLessThanOrEqual(8);
-    for(const e of plan){for(const v of [e.x,e.y,e.delayMs,e.durationMs,e.damage])expect(Number.isFinite(v)).toBe(true);expect(e.delayMs).toBeGreaterThanOrEqual(0);expect(e.damage).toBeGreaterThan(0);expect(Math.hypot(e.x-x,e.y-y)).toBeLessThan(250);}
+    for(const e of plan){for(const v of [e.x,e.y,e.delayMs,e.durationMs,e.damage])expect(Number.isFinite(v)).toBe(true);expect(e.delayMs).toBeGreaterThanOrEqual(0);expect(e.damage).toBeGreaterThan(0);// The #06 authored traveling wave extends beyond the aimed target.
+     expect(Math.hypot(e.x-x,e.y-y)).toBeLessThan(c.id===6?350:250);}
    }
   }
   expect(planArcana(99,1,1,0,2,2)).toEqual([]);
@@ -78,5 +79,7 @@ describe('new-run QA starter inventory',()=>{
 
 it('aligns proposed #19 and #20 damage to the source finale beats rather than catalog peaks',()=>{
  const star=planArcana(19,300,300,0,400,300);expect(star).toHaveLength(1);expect(star[0].delayMs).toBe(8150);expect(star[0].x).toBeCloseTo(400);expect(star[0].y).toBeCloseTo(300);
- const rift=planArcana(20,300,300,0,400,300);expect(rift).toHaveLength(1);expect(rift[0].kind).toBe('line');expect(rift[0].delayMs).toBe(6600);expect(rift[0].len).toBeGreaterThan(200);
+ const rift=planArcana(20,300,300,0,400,300);expect(rift).toHaveLength(8);expect(rift.every(h=>h.kind==='line'&&h.delayMs===6600)).toBe(true);expect(rift.reduce((s,h)=>s+h.len!,0)).toBeGreaterThan(200);
 });
+
+it('the segmented #20 collision damages an actual creature only once at a joint',()=>{const gs=fresh(),r=gs.run!,p=r.player;equip(gs,20);cast(gs,T0+1);const hs=HAZ.filter(h=>h.arcanaId===20);expect(hs).toHaveLength(8);expect(hs[0].hitGroup).toBe(hs[1].hitGroup);const first=hs[0],second=hs[1],x=second.x+Math.cos(second.angle!)*second.w!/2,y=second.y+Math.sin(second.angle!)*second.w!/2;const m=mkCreature(r,'boar',x,y,500);m.state='sleep';r.creatures=[m];const steps=Math.ceil((first.tell-first.t)/50)+1;for(let k=0;k<steps;k++)tick(gs,input(p.x+100,p.y),50,T0+600+k*50);expect(m.hp).toBe(464);});

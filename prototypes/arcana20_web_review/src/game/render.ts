@@ -1,6 +1,6 @@
 import { startDDiagnostic, drawDDiagnostic } from '../arcana_d/devLayer';
 import { startADiagnostic, drawADiagnostic } from '../arcana_a/devLayer';
-import { startCDiagnostic, prepareCDiagnostic, shadeCDiagnostic, drawCDiagnostic, blackoutCDiagnostic } from '../arcana_c/devLayer';
+import { startCDiagnostic, prepareCDiagnostic, shadeCDiagnostic, drawCDiagnostic, blackoutCDiagnostic, postCDiagnostic } from '../arcana_c/devLayer';
 import { startBDiagnostic, drawBDiagnostic } from '../arcana_b/devLayer';
 // Canvas 2D renderer — draws authoritative state + observed effects. Never mutates game state.
 import { TILE, WW, WH, VIEW_W, VIEW_H, T, hash2, clamp, type GameState, type RunState, type Creature, type Entity } from './core';
@@ -240,6 +240,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   drawWeather(g, r, now, time, cx, cy);
   drawLight(g, r, now, time, cx, cy, ents);
   blackoutCDiagnostic(g, cx, cy);
+  postCDiagnostic(g);
   if (flash > 0) { g.fillStyle = `rgba(255,255,255,${flash})`; g.fillRect(0, 0, VIEW_W, VIEW_H); flash = Math.max(0, flash - dtMs / 400); }
   if (p.hp < 30 && !p.dead) { const a = (1 - p.hp / 30) * (0.25 + Math.sin(time / 200) * 0.08); g.fillStyle = `rgba(160,0,0,${a})`; g.fillRect(0, 0, VIEW_W, 6); g.fillRect(0, VIEW_H - 6, VIEW_W, 6); g.fillRect(0, 0, 6, VIEW_H); g.fillRect(VIEW_W - 6, 0, 6, VIEW_H); }
 }

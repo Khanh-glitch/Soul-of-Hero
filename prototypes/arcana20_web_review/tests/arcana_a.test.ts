@@ -5,3 +5,13 @@ describe('experimental P0 #18 A source translation (not a parity test)',()=>{
  it('renders different source states, covered crystal faces and fully resolves',()=>{const spell=new Chronoshard(),f=new Framebuffer();f.clear();spell.render(f,3.2);const held=f.buf.reduce((a,b)=>a+Math.abs(b),0),coverage=f.coverage.reduce((a,b)=>a+b,0);expect(held).toBeGreaterThan(0);expect(coverage).toBeGreaterThan(0);f.computeBloom();expect(f.bloomA.some(v=>v>0)).toBe(true);f.clear();spell.render(f,8.39);expect(f.buf.every(v=>v===0)).toBe(true);});
  it('keeps unaffected live-world pixels and retains black authored coverage',()=>{const f=new Framebuffer(),m={a:1,b:0,c:0,d:1,x:0,y:0};f.clear();f.blend(2,2,0,0,0,.5);const pixels=new Uint8ClampedArray(4*4*4).fill(128);compositeA(pixels,4,4,f,m,0,0);expect(pixels[0]).toBe(128);expect(pixels[(2*4+2)*4]).toBeLessThan(128);});
 });
+
+describe('A world-field coverage and multiplier',()=>{
+ it('dilates operation influence by 32 pixels without brightness keying',()=>{const f=new Framebuffer();f.clear();f.blend(100,100,0,0,0,.5);const m=f.expandedInfluence();expect(m[68*416+68]).toBe(1);expect(m[132*416+132]).toBe(1);expect(m[67*416+100]).toBe(0);expect(m[100*416+133]).toBe(0);f.blend(200,100,0,0,0,.5);expect(f.expandedInfluence()[100*416+232]).toBe(1);f.clear();expect(f.expandedInfluence().some(Boolean)).toBe(false);});
+ it('uses multiplicative world darkening and preserves unaffected pixels',()=>{const f=new Framebuffer(),data=new Uint8ClampedArray(4*4*4).fill(128);f.clear();f.mul(2,2,.25);compositeA(data,4,4,f,{a:1,b:0,c:0,d:1,x:0,y:0},0,0);expect(data[(2*4+2)*4]).toBeLessThan(128);expect(data[0]).toBe(128);});
+});
+import {RiptideCalligraphy,riptideFront} from '../src/arcana_a/riptide';
+describe('experimental P0 #06 A candidate, not P0 parity',()=>{
+ it('grows three strokes, releases one traveling crest and fully resolves',()=>{const f=new Framebuffer(),s=new RiptideCalligraphy();f.clear();s.render(f,.5);expect(f.influence.some(Boolean)).toBe(false);f.clear();s.render(f,3.2);expect(f.coverage.some(v=>v>0)).toBe(true);f.clear();s.render(f,5.6);expect(f.buf.some(v=>v>0)).toBe(true);expect(riptideFront(6).x).toBeGreaterThan(riptideFront(5).x);f.clear();s.render(f,8.4);expect(f.buf.every(v=>v===0)).toBe(true);});
+ it('places provisional real combat lines at the mapped water front',()=>{const x=300,y=200,target={x:400,y:200},m=aTransform({x,y},target),hits=planArcana(6,x,y,0,target.x,target.y);expect(hits.map(h=>h.delayMs)).toEqual([4750,5100,5450,5800]);for(const hit of hits){const front=riptideFront(hit.delayMs/1000),q=transformPoint(m,{x:front.x,y:front.y-front.height});expect(hit.x).toBeCloseTo(q.x);expect(hit.y).toBeCloseTo(q.y);expect(hit.kind).toBe('line');}});
+});

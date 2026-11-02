@@ -9,7 +9,7 @@ export interface Input { up: boolean; down: boolean; left: boolean; right: boole
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
 const fx = (type: string, d: any = {}) => { if (FX.length < 400) FX.push({ type, ...d }); };
 export interface Proj { x: number; y: number; vx: number; vy: number; life: number; dmg: number; from: 'player' | 'enemy'; kind: string; r: number; delay?: number; homing?: number; owner?: string }
-export interface Haz { kind: 'circle' | 'line' | 'ring' | 'wave' | 'sweep' | 'pool'; x: number; y: number; r?: number; angle?: number; len?: number; w?: number; t: number; tell: number; dur: number; dmg: number; style: string; effect?: string; hit?: boolean; tickAcc?: number; a0?: number; a1?: number; done?: boolean; owner?: string; elder?: string; arcanaId?: number; runId?: string }
+export interface Haz { kind: 'circle' | 'line' | 'ring' | 'wave' | 'sweep' | 'pool'; x: number; y: number; r?: number; angle?: number; len?: number; w?: number; t: number; tell: number; dur: number; dmg: number; style: string; effect?: string; hit?: boolean; tickAcc?: number; a0?: number; a1?: number; done?: boolean; owner?: string; elder?: string; arcanaId?: number; runId?: string; hitGroup?: Set<string> }
 export const PROJ: Proj[] = [];
 export const HAZ: Haz[] = [];
 let traceAcc = 0, slowTimer = 0, rootTimer = 0, shelterAcc = 0, fireAcc = 0, lightningAcc = 0, discoverAcc = 0;
@@ -113,13 +113,15 @@ function commitCore(gs: GameState, now: number, slot: number, a: number, aimX: n
   s.charge!--; receipt(r, now, 'core.commit', `${s.key} charge→${s.charge}`); award(gs, 'first_core', now);
   const item = ITEMS[s.key]; const core = item.core; const hx = p.x + Math.cos(a) * 10, hy = p.y + Math.sin(a) * 10;
   if (item.arcanaId !== undefined) {
-    // Actual player-owned hit geometry; P0 graphics are not ported yet.
+    // Actual player-owned hit geometry; visual paths are incomplete and dev-only.
     // The normal game's existing damageCreature path resolves real collisions.
+    // The eight #20 contour segments are one event, not eight independent hits.
+    const hitGroup=item.arcanaId===20?new Set<string>():undefined;
     for (const impact of planArcana(item.arcanaId, p.x, p.y, a, aimX, aimY)) {
       HAZ.push({ kind:impact.kind, x:impact.x, y:impact.y, r:impact.r, angle:impact.angle, len:impact.len, w:impact.w,
         t:0, tell:impact.delayMs, dur:impact.durationMs, dmg:impact.damage,
         style:'arcana_pending_visual', effect:impact.slow ? 'slowm' : undefined,
-        owner:'player', arcanaId:item.arcanaId, runId:r.id });
+        owner:'player', arcanaId:item.arcanaId, runId:r.id, hitGroup });
     }
     fx('arcana20_cast', { id:item.arcanaId, x:p.x, y:p.y, a, aimX, aimY, runId:r.id, simMs:r.clock.simMs });
     return;
@@ -454,7 +456,7 @@ function tickHaz(gs: GameState, dtMs: number, now: number) {
     const h = HAZ[i]; if (h.runId && h.runId !== r.id) { HAZ.splice(i, 1); continue; } h.t += dtMs; if (h.t < h.tell) continue;
     const first = !h.done; h.done = true;
     if (first) onHazActivate(gs, h, now);
-    if (h.owner === 'player') { if (first || h.kind === 'ring') for (const m of r.creatures) { if (m.state === 'dead' || (h as any)['h_' + m.id]) continue; if (inHaz(h, m.x, m.y)) { (h as any)['h_' + m.id] = 1; damageCreature(gs, m, h.dmg, Math.atan2(m.y - h.y, m.x - h.x), now, 90); if (h.effect === 'slowm') m.slow = 3000; } } }
+    if (h.owner === 'player') { if (first || h.kind === 'ring') for (const m of r.creatures) { if (m.state === 'dead' || (h as any)['h_' + m.id] || h.hitGroup?.has(m.id)) continue; if (inHaz(h, m.x, m.y)) { (h as any)['h_' + m.id] = 1; if (damageCreature(gs, m, h.dmg, Math.atan2(m.y - h.y, m.x - h.x), now, 90)) h.hitGroup?.add(m.id); if (h.effect === 'slowm') m.slow = 3000; } } }
     else {
       const dot = h.kind === 'pool' || h.effect === 'dot' || h.kind === 'sweep' || h.style === 'burn';
       if (dot) { h.tickAcc = (h.tickAcc || 0) - dtMs; if (h.tickAcc <= 0 && inHaz(h, p.x, p.y)) { h.tickAcc = h.kind === 'pool' ? 500 : 220; hurtPlayer(gs, h.kind === 'pool' ? 5 : h.dmg * 0.45, h.x, h.y, h.elder ? ELDERS[h.elder].name : 'hazard', now, 30); if (h.kind === 'pool') p.rad = Math.min(100, p.rad + 4); } }

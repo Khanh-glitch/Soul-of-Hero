@@ -5,10 +5,11 @@ import { compositeC } from './composite';
 import { worldRect } from '../arcana_b/worldRect';
 import { CGpuComposite } from './gpu';
 import { bayer } from './engine/math';
+import {combineCPost,hasCPost,compositeCPost} from './post';import {CPostGpu} from './postGpu';
 type Active={source:CSource;runId:string;startMs:number;tick:number;frame:ReturnType<CSource['renderAtSeconds']>;sourceMs:number};
 const active:Active[]=[];
 const gpuRequested=bDiagnosticEnabled && new URLSearchParams(location.search).get('arcanaGpu')==='1';let gpu:CGpuComposite|null=null;let gpuFailed=false;
-export const cDiagnosticTimings:{id:CId;time:number;sourceMs:number;compositeMs:number}[]=[];
+export const cDiagnosticTimings:{id:CId;time:number;sourceMs:number;compositeMs:number;gpuProfile?:{sceneMs:number;packMs:number;fieldUploadMs:number;atlasPackMs:number;atlasUploadMs:number;submitMs:number};liveOps:number;maxOverlap:number}[]=[];
 if(bDiagnosticEnabled)(window as any).__arcanaCDiagnosticTimings=cDiagnosticTimings;
 export function startCDiagnostic(e:any){
  if(!bDiagnosticEnabled||![7,10,17,20].includes(e.id))return;
@@ -36,7 +37,7 @@ export function drawCDiagnostic(g:CanvasRenderingContext2D,cx:number,cy:number){
    }catch(e){gpuFailed=true;console.warn('Experimental GPU C pass failed; falling back to CPU',e);}}
   if(!gpuRequested||gpuFailed){const box=worldRect(a.frame.transform,cx,cy,g.canvas.width,g.canvas.height);if(!box.w||!box.h)continue;
    const image=g.getImageData(box.x,box.y,box.w,box.h);compositeC(image.data,image.width,image.height,a.frame.frame,a.frame.transform,cx+box.x,cy+box.y);g.putImageData(image,box.x,box.y);}
-  if(cDiagnosticTimings.length<1200)cDiagnosticTimings.push({id:a.source.id,time:a.frame.t,sourceMs:a.sourceMs,compositeMs:performance.now()-start});
+  if(cDiagnosticTimings.length<1200){let liveOps=0,maxOverlap=0;for(const ops of a.frame.frame.liveLight.values()){liveOps+=ops.length;maxOverlap=Math.max(maxOverlap,ops.length);}cDiagnosticTimings.push({id:a.source.id,time:a.frame.t,sourceMs:a.sourceMs,compositeMs:performance.now()-start,gpuProfile:gpuRequested&&!gpuFailed?gpu?.lastProfile:undefined,liveOps,maxOverlap});}
  }
 }
 
@@ -54,3 +55,7 @@ export function blackoutCDiagnostic(g:CanvasRenderingContext2D,cx:number,cy:numb
  bg.putImageData(image,0,0);g.save();g.setTransform(1,0,0,1,0,0);g.fillStyle='#000';g.fillRect(0,0,g.canvas.width,g.canvas.height);
  g.setTransform(m.a,m.b,m.c,m.d,m.x-cx,m.y-cy);g.imageSmoothingEnabled=false;g.drawImage(blackoutCanvas,0,0);g.restore();
 }
+
+let postGpu:CPostGpu|null=null,postGpuFailed=false;
+/** Diagnostic B/C-compatible pre-HUD policy for C source metadata only. */
+export function postCDiagnostic(g:CanvasRenderingContext2D){if(!bDiagnosticEnabled)return;const inputs=active.flatMap(a=>a.frame?[{tick:a.source.tick,transform:a.frame.transform,...a.frame.post}]:[]),post=combineCPost(inputs);if(!hasCPost(post))return;if(gpuRequested&&!postGpuFailed){try{if(!postGpu)postGpu=new CPostGpu(g.canvas.width,g.canvas.height);postGpu.render(g.canvas,post);g.save();g.setTransform(1,0,0,1,0,0);g.drawImage(postGpu.canvas,0,0);g.restore();return;}catch(e){postGpuFailed=true;console.warn('Experimental C post GPU failed; falling back to CPU',e);}}const image=g.getImageData(0,0,g.canvas.width,g.canvas.height);compositeCPost(image.data,image.width,image.height,post);g.putImageData(image,0,0);}

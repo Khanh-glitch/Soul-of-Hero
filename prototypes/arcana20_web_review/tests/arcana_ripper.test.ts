@@ -19,3 +19,6 @@ describe('experimental #20 fusion live-world fields, not P0 parity',()=>{
   expect(data[at(4,4)]).not.toBe(64);expect(data[at(5,4)]).toBe(255);expect(data[at(6,4)]).toBeGreaterThan(64);expect(data[at(8,4)]).toBe(64);
  });
 });
+import {createHash} from 'node:crypto';
+function fieldHash(f:Frame){const h=createHash('sha256');for(const a of [f.ground,f.groundCoverage,f.ink,f.light,f.disp,f.worldInfluence,f.worldFragment])h.update(new Uint8Array(a.buffer,a.byteOffset,a.byteLength));for(const e of f.liveLight)h.update(JSON.stringify(e));return h.digest('hex');}
+it('keeps #20 casts independent across interleaving, including backward seeks',()=>{const a=new CSource(20,{x:112,y:126},{x:210,y:116}),b=new CSource(20,{x:300,y:200},{x:400,y:220}),other=new CSource(17,{x:0,y:0},{x:80,y:0});for(const t of [2.2,4.5,6.8,7.3,9.5,6.8]){const x=fieldHash(a.renderAtSeconds(t)!.frame);other.renderAtSeconds(Math.min(t,8.7));expect(fieldHash(b.renderAtSeconds(t)!.frame)).toBe(x);}});
