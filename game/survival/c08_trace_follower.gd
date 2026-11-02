@@ -37,7 +37,11 @@ const MAX_LINK := 48.0
 ## Standing on one mark for longer than this means the route is not walkable for
 ## this body, and pursuing further would be a lie.
 const GOAL_TIMEOUT := 9.0
-const MAX_HOPS := 160
+## A per-window work bound, not a statement about trails. A real out-and-back
+## journey is 300+ marks of 24 px, and at 160 hops the creature stopped on a live
+## chain 552 px from the house with the evidence still ahead of it. 400 hops of at
+## most MAX_LINK each still bounds the work per window.
+const MAX_HOPS := 400
 ## How long the creature will stand at the freshest mark of a chain that is still
 ## live before it decides the trail really ended. A walker who is still walking
 ## adds a mark every `spacing` pixels, so a chain that looks finished may simply
