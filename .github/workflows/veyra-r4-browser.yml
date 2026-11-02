@@ -79,10 +79,11 @@ jobs:
           set -euo pipefail
           python tools/world/art_registry.py
           python tools/world/veyra_compile.py
-      - name: Publish runtime assets
+      - name: Publish runtime assets + fresh validation (never package a stale report)
         run: |
           set -euo pipefail
           cp out/world.png out/world_meta.json out/minimap.png world/assets/
+          python tools/world/validate.py || echo "validation red in capture job (spatial job owns the gate)"
       - run: |
           set -euo pipefail
           npm init -y >/dev/null 2>&1

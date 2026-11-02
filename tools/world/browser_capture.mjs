@@ -222,6 +222,12 @@ for (const d of (meta.docks || []).filter(d => d.anchor_valid).slice(0, 2)) {
 for (const f of (meta.network?.authored_fords || [])) {
   if (f.at) await shot('ford_' + f.road, f.at[0] * 4, f.at[1] * 4, 'authored ford');
 }
+// 9b. quarry / mine / inhabited sites (the R9.1 sprite corrections)
+for (const arche of ['quarry', 'mine', 'village']) {
+  const p = (meta.pois || []).find(q => q.arche === arche);
+  if (p) await shot('poi_' + arche + '_' + p.source_id, p.world_px[0], p.world_px[1], arche);
+}
+
 // 10. every road that previously failed the traversal gate
 for (const rid of ['rd_0', 'rd_i', 'rd_w', 'rd_x', 'rd_1f', 'rd_1g', 'rd_1n', 'rd_24',
                    'rd_27', 'rd_29', 'rd_2a', 'rd_2b']) {
