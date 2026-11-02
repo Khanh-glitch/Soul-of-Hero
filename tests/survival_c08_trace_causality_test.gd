@@ -713,13 +713,28 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 		await _walk_to_cell(hero, outside_c)
 	var _window_failures_before := failures.size()
 	follower.begin_window("C_broken_chain")
-	var route := _route_plan(hero, nav, home, outside_c)
-	_expect(bool(route.get("ok", false)), "C: the same walkable route is used again")
-	if not bool(route.get("ok", false)):
+	# C is a counterfactual about the policy, not a second endurance test. It lays
+	# the same kind of trail the creature can actually sense - past its own ground,
+	# then out of its sight - and comes back. Re-walking B's whole loop with a
+	# creature that hits for 14 would simply kill the defender and prove nothing
+	# about decay.
+	var plan := _route_plan(hero, nav, home, outside_c)
+	_expect(bool(plan.get("ok", false)), "C: the same walkable ground is used again")
+	if not bool(plan.get("ok", false)):
+		return {"ok": false}
+	var plan_report: Dictionary = plan["report"]
+	var near := Vector2i(int(plan_report["near"][0]), int(plan_report["near"][1]))
+	var away := Vector2i(int(plan_report["away"][0]), int(plan_report["away"][1]))
+	var start_c := nav.cell_of(hero.global_position)
+	var legs: Array = [_route(start_c, near, nav, hero), _route(near, away, nav, hero),
+		_route(away, outside_c, nav, hero)]
+	print("C08_C_ROUTE ", JSON.stringify({"near": [near.x, near.y], "away": [away.x, away.y],
+		"home": [outside_c.x, outside_c.y], "legs": [legs[0].size(), legs[1].size(), legs[2].size()]}))
+	if (legs[0] as Array).is_empty() or (legs[2] as Array).is_empty():
+		_expect(false, "C: the cold-trail route is walkable")
 		return {"ok": false}
 	var stats := _walk_stats()
 	var walked_all := true
-	var legs: Array = route["legs"]
 	for leg_index in range(legs.size()):
 		var leg: Array[Vector2i] = legs[leg_index]
 		if leg.is_empty():
@@ -753,7 +768,14 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 	var back_in := await _walk_path(hero, path_back)
 	_expect(back_in, "C: the defender is back inside the home while the trail goes cold")
 	var hp_before := int(hero.get(&"health"))
-	var observe := await _observe(enemy, hero, home, 25.0)
+	var observe_enemy := _alive_enemy(_enemy())
+	if observe_enemy == null:
+		print("C08_C_NO_ENEMY ", JSON.stringify({"encounter": habitat.call(&"c08_snapshot"),
+			"hero_hp": hp_before}))
+		_expect(false, "C: the creature survives the cold-trail run")
+		return {"ok": false}
+	enemy = observe_enemy
+	var observe := await _observe(observe_enemy, hero, home, 25.0)
 	var snapshot: Dictionary = follower.snapshot()
 	print("C08_C ", JSON.stringify({"follower": _compact_follower(snapshot), "observe": observe,
 		"walk": stats, "hero_hp": [hp_before, int(hero.get(&"health"))]}))
