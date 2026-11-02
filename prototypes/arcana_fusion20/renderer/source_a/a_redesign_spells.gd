@@ -264,6 +264,15 @@ class RiptideCalligraphyR:
                     if h < 0.05: return null
                     var c := ACommon.ramp_step("water", AMath.cl01(h), 8.0)
                     return Vector3(c.x * 0.55, c.y * 0.55, c.z * 0.6))
+            # Flowing surface rivulets advect along each written stroke.
+            # Broken, tapered highlights travel through the retained liquid;
+            # they are curved material features, not a static glyph outline.
+            for stream in range(4):
+                var travel := fposmod(t * (0.24 + float(i) * 0.025) + float(stream) * 0.25 + float(i) * 0.11, 1.0) * u
+                var tail := maxf(0.0, travel - 0.13 * u)
+                var a := _ink_point(i, tail, t)
+                var b := _ink_point(i, travel, t)
+                ADraw.streak(fb, a.x, a.y, b.x, b.y, 0.4, 1.1, Vector3(0.38, 0.85, 1.0), diss * 0.55)
             if u < 1.0:
                 var tip := _ink_point(i, u, t)
                 ADraw.disc_blend(fb, tip.x, tip.y, 2.8, Vector3(0.16, 0.49, 0.58), diss * 0.65)
@@ -282,6 +291,20 @@ class RiptideCalligraphyR:
                 var curl := side * side * (5.0 + 19.0 * wu)
                 wave_pts.append(front + Vector2(-curl + sin(v * PI * 4.0 - t * 4.0) * 1.5, side * height))
             var wave_fade := (1.0 - AMath.seg(t, 6.1, 6.4)) * diss
+            # A covered trough follows the crest as an actual mass, with a
+            # broad center and thin shoulders. The crest remains separate,
+            # advancing beyond the static glyph on its authored trajectory.
+            var trough: Array = []
+            for v in range(wave_pts.size()):
+                var u_side := float(v) / float(wave_pts.size() - 1)
+                var wake := (10.0 + 16.0 * sin(u_side * PI)) * AMath.ease_out(wu, 2.0)
+                trough.append((wave_pts[v] as Vector2) - Vector2(wake, 0))
+            ADraw.ribbon(fb, trough,
+                func(v: float, _i: int) -> float: return (6.0 + 13.0 * sin(v * PI)) * AMath.ease_out(wu, 2.0),
+                func(v: float, _i: int, edge: float) -> Variant:
+                    var current := 0.5 + 0.5 * sin(v * 24.0 - t * 8.0)
+                    return Vector3(0.03 + edge * 0.08, 0.16 + 0.10 * current, 0.23 + 0.12 * current),
+                true, wave_fade * 0.60)
             ADraw.ribbon(fb, wave_pts,
                 func(v: float, _i: int) -> float: return (3.5 + 6.5 * sin(v * PI)) * (0.55 + 0.45 * wu),
                 func(v: float, _i: int, edge: float) -> Variant:
