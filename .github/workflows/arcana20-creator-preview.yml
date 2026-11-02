@@ -162,7 +162,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include: ${{ fromJSON(contains(github.event.head_commit.message, '[f01-only]') && '[{"skill":1,"lighting":"normal","variant":"F01","lock":"0"},{"skill":1,"lighting":"dimmed","variant":"F01","lock":"0"}]' || contains(github.event.head_commit.message, '[f11-only]') && '[{"skill":11,"lighting":"normal","variant":"F11","lock":"0"},{"skill":11,"lighting":"dimmed","variant":"F11","lock":"0"}]' || contains(github.event.head_commit.message, '[f09-only]') && '[{"skill":9,"lighting":"normal","variant":"F09","lock":"0"},{"skill":9,"lighting":"dimmed","variant":"F09","lock":"0"}]' || contains(github.event.head_commit.message, '[r26-fixed]') && '[{"skill":16,"lighting":"normal","variant":"F16STEP","lock":"0","camera":"fixed"},{"skill":16,"lighting":"dimmed","variant":"F16STEP","lock":"0","camera":"fixed"},{"skill":20,"lighting":"normal","variant":"F20FIX","lock":"0","camera":"fixed"},{"skill":20,"lighting":"dimmed","variant":"F20FIX","lock":"0","camera":"fixed"}]' || contains(github.event.head_commit.message, '[r26-tip]') && '[{"skill":16,"lighting":"normal","variant":"F16STEP","lock":"0","camera":"fixed"},{"skill":16,"lighting":"dimmed","variant":"F16STEP","lock":"0","camera":"fixed"}]' || contains(github.event.head_commit.message, '[r26-match]') && '[{"skill":1,"lighting":"normal","variant":"F01MATCH","lock":"0","camera":"follow"},{"skill":1,"lighting":"dimmed","variant":"F01MATCH","lock":"0","camera":"follow"}]' || contains(github.event.head_commit.message, '[r26-f]') && '[{"skill":1,"lighting":"normal","variant":"F01","lock":"0","camera":"follow"},{"skill":1,"lighting":"dimmed","variant":"F01","lock":"0","camera":"follow"},{"skill":1,"lighting":"normal","variant":"F01MATCH","lock":"0","camera":"follow"},{"skill":1,"lighting":"dimmed","variant":"F01MATCH","lock":"0","camera":"follow"},{"skill":16,"lighting":"normal","variant":"F16FIX","lock":"0","camera":"fixed"},{"skill":16,"lighting":"dimmed","variant":"F16FIX","lock":"0","camera":"fixed"},{"skill":20,"lighting":"normal","variant":"F20FIX","lock":"0","camera":"fixed"},{"skill":20,"lighting":"dimmed","variant":"F20FIX","lock":"0","camera":"fixed"}]' || contains(github.event.head_commit.message, '[f-five]') && '[{"skill":1,"lighting":"normal","variant":"F01","lock":"0"},{"skill":1,"lighting":"dimmed","variant":"F01","lock":"0"},{"skill":9,"lighting":"normal","variant":"F09","lock":"0"},{"skill":9,"lighting":"dimmed","variant":"F09","lock":"0"},{"skill":11,"lighting":"normal","variant":"F11","lock":"0"},{"skill":11,"lighting":"dimmed","variant":"F11","lock":"0"},{"skill":16,"lighting":"normal","variant":"F16","lock":"0"},{"skill":16,"lighting":"dimmed","variant":"F16","lock":"0"},{"skill":20,"lighting":"normal","variant":"F20","lock":"0"},{"skill":20,"lighting":"dimmed","variant":"F20","lock":"0"}]' || contains(github.event.head_commit.message, '[f-only]') && '[{"skill":9,"lighting":"normal","variant":"F09","lock":"0"},{"skill":9,"lighting":"dimmed","variant":"F09","lock":"0"},{"skill":11,"lighting":"normal","variant":"F11","lock":"0"},{"skill":11,"lighting":"dimmed","variant":"F11","lock":"0"},{"skill":16,"lighting":"normal","variant":"F16","lock":"0"},{"skill":16,"lighting":"dimmed","variant":"F16","lock":"0"},{"skill":20,"lighting":"normal","variant":"F20","lock":"0"},{"skill":20,"lighting":"dimmed","variant":"F20","lock":"0"}]' || '[{"skill":5,"lighting":"normal","variant":"A","lock":"0"},{"skill":5,"lighting":"dimmed","variant":"A","lock":"0"},{"skill":5,"lighting":"normal","variant":"B","lock":"0"},{"skill":5,"lighting":"dimmed","variant":"B","lock":"0"},{"skill":5,"lighting":"normal","variant":"B","lock":"1"},{"skill":5,"lighting":"dimmed","variant":"B","lock":"1"},{"skill":1,"lighting":"normal","variant":"F01","lock":"0"},{"skill":1,"lighting":"dimmed","variant":"F01","lock":"0"},{"skill":2,"lighting":"normal","variant":"B02","lock":"0"},{"skill":2,"lighting":"dimmed","variant":"B02","lock":"0"},{"skill":3,"lighting":"normal","variant":"B03","lock":"0"},{"skill":3,"lighting":"dimmed","variant":"B03","lock":"0"},{"skill":7,"lighting":"normal","variant":"C07","lock":"0"},{"skill":7,"lighting":"dimmed","variant":"C07","lock":"0"},{"skill":8,"lighting":"normal","variant":"B08","lock":"0"},{"skill":8,"lighting":"dimmed","variant":"B08","lock":"0"},{"skill":10,"lighting":"normal","variant":"C10","lock":"0"},{"skill":10,"lighting":"dimmed","variant":"C10","lock":"0"},{"skill":15,"lighting":"normal","variant":"C15","lock":"0"},{"skill":15,"lighting":"dimmed","variant":"C15","lock":"0"},{"skill":17,"lighting":"normal","variant":"C17","lock":"0"},{"skill":17,"lighting":"dimmed","variant":"C17","lock":"0"},{"skill":9,"lighting":"normal","variant":"F09","lock":"0"},{"skill":9,"lighting":"dimmed","variant":"F09","lock":"0"},{"skill":11,"lighting":"normal","variant":"F11","lock":"0"},{"skill":11,"lighting":"dimmed","variant":"F11","lock":"0"},{"skill":16,"lighting":"normal","variant":"F16","lock":"0"},{"skill":16,"lighting":"dimmed","variant":"F16","lock":"0"},{"skill":20,"lighting":"normal","variant":"F20","lock":"0"},{"skill":20,"lighting":"dimmed","variant":"F20","lock":"0"}]') }}
+        include: ${{ fromJSON(contains(github.event.head_commit.message, '[f01-only]') && '[{"skill":1,"lighting":"normal","variant":"F01","lock":"0"},{"skill":1,"lighting":"dimmed","variant":"F01","lock":"0"}]' || contains(github.event.head_commit.message, '[f11-only]') && '[{"skill":11,"lighting":"normal","variant":"F11","lock":"0"},{"skill":11,"lighting":"dimmed","variant":"F11","lock":"0"}]' || contains(github.event.head_commit.message, '[f09-only]') && '[{"skill":9,"lighting":"normal","variant":"F09","lock":"0"},{"skill":9,"lighting":"dimmed","variant":"F09","lock":"0"}]' || contains(github.event.head_commit.message, '[r26-fixed]') && '[{"skill":16,"lighting":"normal","variant":"F16STEP","lock":"0","camera":"fixed"},{"skill":16,"lighting":"dimmed","variant":"F16STEP","lock":"0","camera":"fixed"},{"skill":20,"lighting":"normal","variant":"F20FIX","lock":"0","camera":"fixed"},{"skill":20,"lighting":"dimmed","variant":"F20FIX","lock":"0","camera":"fixed"}]' || contains(github.event.head_commit.message, '[r26-tip]') && '[{"skill":16,"lighting":"normal","variant":"F16STEP","lock":"0","camera":"fixed"},{"skill":16,"lighting":"dimmed","variant":"F16STEP","lock":"0","camera":"fixed"}]' || contains(github.event.head_commit.message, '[r26-match]') && '[{"skill":1,"lighting":"normal","variant":"F01MATCH","lock":"0","camera":"follow"},{"skill":1,"lighting":"dimmed","variant":"F01MATCH","lock":"0","camera":"follow"}]' || contains(github.event.head_commit.message, '[r26-f]') && '[{"skill":1,"lighting":"normal","variant":"F01","lock":"0","camera":"follow"},{"skill":1,"lighting":"dimmed","variant":"F01","lock":"0","camera":"follow"},{"skill":1,"lighting":"normal","variant":"F01MATCH","lock":"0","camera":"follow"},{"skill":1,"lighting":"dimmed","variant":"F01MATCH","lock":"0","camera":"follow"},{"skill":16,"lighting":"normal","variant":"F16FIX","lock":"0","camera":"fixed"},{"skill":16,"lighting":"dimmed","variant":"F16FIX","lock":"0","camera":"fixed"},{"skill":20,"lighting":"normal","variant":"F20FIX","lock":"0","camera":"fixed"},{"skill":20,"lighting":"dimmed","variant":"F20FIX","lock":"0","camera":"fixed"}]' || contains(github.event.head_commit.message, '[f-five]') && '[{"skill":1,"lighting":"normal","variant":"F01","lock":"0"},{"skill":1,"lighting":"dimmed","variant":"F01","lock":"0"},{"skill":9,"lighting":"normal","variant":"F09","lock":"0"},{"skill":9,"lighting":"dimmed","variant":"F09","lock":"0"},{"skill":11,"lighting":"normal","variant":"F11","lock":"0"},{"skill":11,"lighting":"dimmed","variant":"F11","lock":"0"},{"skill":16,"lighting":"normal","variant":"F16","lock":"0"},{"skill":16,"lighting":"dimmed","variant":"F16","lock":"0"},{"skill":20,"lighting":"normal","variant":"F20","lock":"0"},{"skill":20,"lighting":"dimmed","variant":"F20","lock":"0"},{"skill":1,"lighting":"normal","variant":"F01MATCH","lock":"0","camera":"follow"},{"skill":1,"lighting":"dimmed","variant":"F01MATCH","lock":"0","camera":"follow"},{"skill":16,"lighting":"normal","variant":"F16FIX","lock":"0","camera":"fixed"},{"skill":16,"lighting":"dimmed","variant":"F16FIX","lock":"0","camera":"fixed"},{"skill":16,"lighting":"normal","variant":"F16STEP","lock":"0","camera":"fixed"},{"skill":16,"lighting":"dimmed","variant":"F16STEP","lock":"0","camera":"fixed"},{"skill":20,"lighting":"normal","variant":"F20FIX","lock":"0","camera":"fixed"},{"skill":20,"lighting":"dimmed","variant":"F20FIX","lock":"0","camera":"fixed"}]' || contains(github.event.head_commit.message, '[f-only]') && '[{"skill":9,"lighting":"normal","variant":"F09","lock":"0"},{"skill":9,"lighting":"dimmed","variant":"F09","lock":"0"},{"skill":11,"lighting":"normal","variant":"F11","lock":"0"},{"skill":11,"lighting":"dimmed","variant":"F11","lock":"0"},{"skill":16,"lighting":"normal","variant":"F16","lock":"0"},{"skill":16,"lighting":"dimmed","variant":"F16","lock":"0"},{"skill":20,"lighting":"normal","variant":"F20","lock":"0"},{"skill":20,"lighting":"dimmed","variant":"F20","lock":"0"}]' || '[{"skill":5,"lighting":"normal","variant":"A","lock":"0"},{"skill":5,"lighting":"dimmed","variant":"A","lock":"0"},{"skill":5,"lighting":"normal","variant":"B","lock":"0"},{"skill":5,"lighting":"dimmed","variant":"B","lock":"0"},{"skill":5,"lighting":"normal","variant":"B","lock":"1"},{"skill":5,"lighting":"dimmed","variant":"B","lock":"1"},{"skill":1,"lighting":"normal","variant":"F01","lock":"0"},{"skill":1,"lighting":"dimmed","variant":"F01","lock":"0"},{"skill":2,"lighting":"normal","variant":"B02","lock":"0"},{"skill":2,"lighting":"dimmed","variant":"B02","lock":"0"},{"skill":3,"lighting":"normal","variant":"B03","lock":"0"},{"skill":3,"lighting":"dimmed","variant":"B03","lock":"0"},{"skill":7,"lighting":"normal","variant":"C07","lock":"0"},{"skill":7,"lighting":"dimmed","variant":"C07","lock":"0"},{"skill":8,"lighting":"normal","variant":"B08","lock":"0"},{"skill":8,"lighting":"dimmed","variant":"B08","lock":"0"},{"skill":10,"lighting":"normal","variant":"C10","lock":"0"},{"skill":10,"lighting":"dimmed","variant":"C10","lock":"0"},{"skill":15,"lighting":"normal","variant":"C15","lock":"0"},{"skill":15,"lighting":"dimmed","variant":"C15","lock":"0"},{"skill":17,"lighting":"normal","variant":"C17","lock":"0"},{"skill":17,"lighting":"dimmed","variant":"C17","lock":"0"},{"skill":9,"lighting":"normal","variant":"F09","lock":"0"},{"skill":9,"lighting":"dimmed","variant":"F09","lock":"0"},{"skill":11,"lighting":"normal","variant":"F11","lock":"0"},{"skill":11,"lighting":"dimmed","variant":"F11","lock":"0"},{"skill":16,"lighting":"normal","variant":"F16","lock":"0"},{"skill":16,"lighting":"dimmed","variant":"F16","lock":"0"},{"skill":20,"lighting":"normal","variant":"F20","lock":"0"},{"skill":20,"lighting":"dimmed","variant":"F20","lock":"0"}]') }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -187,7 +187,7 @@ jobs:
           AVFX_LIVE_LIGHT: ${{ matrix.lighting }}
           AVFX_LIVE_SPAWN_RING: ${{ matrix.skill == 9 && '1' || '0' }}
           AVFX_CROWN_MATCHED: ${{ matrix.variant == 'F01MATCH' && '1' || '0' }}
-          AVFX_FIXED_WORLD_CAMERA: ${{ matrix.camera == 'fixed' && '1' || '0' }}
+          AVFX_FIXED_WORLD_CAMERA: ${{ (matrix.variant == 'F16FIX' || matrix.variant == 'F16STEP' || matrix.variant == 'F20FIX') && '1' || '0' }}
           AVFX_F16_STEP: ${{ matrix.variant == 'F16STEP' && '1' || '0' }}
           AVFX_LIVE_CAPTURE: '1'
           AVFX_05_VARIANT: ${{ matrix.variant }}
@@ -243,13 +243,20 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          python3 tools/arcana20_join/inspect_worldseed_tip_trace.py "$RUNNER_TEMP/live-output/f16_tip_trace.json"
+          # Surface the original trace even if the numeric validator rejects
+          # it, so a failed diagnostic remains independently inspectable.
           python3 - "$RUNNER_TEMP/live-output/f16_tip_trace.json" "$RUNNER_TEMP/f16-blob.json" <<'PY'
           import base64,json,pathlib,sys
           pathlib.Path(sys.argv[2]).write_text(json.dumps({'content':base64.b64encode(pathlib.Path(sys.argv[1]).read_bytes()).decode(),'encoding':'base64'}))
           PY
           blob=$(gh api --method POST "repos/$GITHUB_REPOSITORY/git/blobs" --input "$RUNNER_TEMP/f16-blob.json" --jq .sha)
           echo "::notice title=F16_SINGLE_TICK_TRACE_GIT_BLOB::$blob"
+          if ! python3 tools/arcana20_join/inspect_worldseed_tip_trace.py "$RUNNER_TEMP/live-output/f16_tip_trace.json" > "$RUNNER_TEMP/tip-verify.log" 2>&1; then
+            cat "$RUNNER_TEMP/tip-verify.log"
+            echo "::error title=F16_TRACE_VALIDATION_FAILED::$(tr '\n' ' ' < "$RUNNER_TEMP/tip-verify.log")"
+            exit 1
+          fi
+          cat "$RUNNER_TEMP/tip-verify.log"
       - name: Encode native wall-time capture
         run: |
           set -euo pipefail
@@ -809,6 +816,7 @@ jobs:
       - name: Verify five independent same-run pairs and assemble review
         run: |
           set -euo pipefail
+          python3 -m pip install --quiet pillow
           for id in F01 F09 F11 F16 F20; do
             for light in normal dimmed; do
               dir="deliverable/fusion-full-cast/r20-${id}-${light}-lock0"
@@ -825,6 +833,37 @@ jobs:
           assert metadata['avfx_sha'] == sys.argv[2], (metadata['avfx_sha'], sys.argv[2])
           PY
             done
+          done
+          # Additional same-SHA diagnostic pairs: explicit frozen restoration,
+          # single-tick fragment traces, and fixed-world full opening to OUT.
+          for light in normal dimmed; do
+            matched="deliverable/fusion-full-cast/r20-F01MATCH-${light}-lock0"
+            step="deliverable/fusion-full-cast/r20-F16STEP-${light}-lock0"
+            fixed20="deliverable/fusion-full-cast/r20-F20FIX-${light}-lock0"
+            fixed16="deliverable/fusion-full-cast/r20-F16FIX-${light}-lock0"
+            for dir in "$matched" "$step" "$fixed20" "$fixed16"; do
+              test -s "$dir/live-output/timeline.json"
+              test -s "$dir/live-output/review.mp4"
+            done
+            for index in 0 1; do
+              test -s "$matched/live-output/crown_pair_${index}.json"
+              for state in 0 1 2; do test -s "$matched/live-output/crown_pair_${index}_${state}.png"; done
+            done
+            python3 tools/arcana20_join/inspect_worldseed_tip_trace.py "$step/live-output/f16_tip_trace.json"
+            python3 - "$matched/live-output" "$fixed16/live-output/timeline.json" "$fixed20/live-output/timeline.json" <<'PY'
+          import json, pathlib, sys
+          from PIL import Image, ImageChops
+          p=pathlib.Path(sys.argv[1])
+          for index in range(2):
+              record=json.loads((p/f'crown_pair_{index}.json').read_text())
+              assert record['stable']
+              a,b,c=[Image.open(p/name).convert('RGB') for name in record['files']]
+              assert not ImageChops.difference(a,c).getbbox()
+              assert ImageChops.difference(a,b).getbbox()
+          for filename in sys.argv[2:]:
+              r=json.load(open(filename)); assert r['camera_mode']=='diagnostic_world_fixed'
+              assert r['frames'][0]['source_tick_last_observed']==0, 'fixed view missed opening baseline'
+          PY
           done
           # The 1x review.mp4 contains all captured frames; keep lossless
           # videos in their separately downloadable same-run Action artifacts.
