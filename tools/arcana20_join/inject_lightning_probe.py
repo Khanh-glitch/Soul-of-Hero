@@ -52,8 +52,56 @@ s = s.replace('var capture_start_usec := 0\n', '''var capture_start_usec := 0
 var _r17_targets: Array[int] = [84, 138, 198, 246, 305, 324, 345]
 var _r17_next := 0
 ''', 1)
+# Optional disposable same-scene compositor dissection. Freeze only for the
+# diagnostic triplet, then restore the exact renderer state and resume play.
 needle = '    var index := samples.size()\n'
 assert s.count(needle) == 1
+s = s.replace(needle, '''    if OS.get_environment("AVFX_R17_WORLD_DECOMPOSE") == "1" and not has_meta("r23_world_probe_done"):
+        var diagnostic_renderer := host.get("renderer") as Arcana20Renderer
+        var diagnostic_source := diagnostic_renderer._casts.get(cast_id) as ASourcePlayer if diagnostic_renderer != null else null
+        if is_instance_valid(diagnostic_source) and diagnostic_source._tick >= 320 and diagnostic_source._tick < 340:
+            var diagnostic_mount := host.get("mount") as Arcana20WorldPassMount
+            var diagnostic_families: Dictionary = diagnostic_mount._passes.get(cast_id, {})
+            var diagnostic_viewer := diagnostic_families.get(&"A") as Arcana20AWorldPass
+            if not is_instance_valid(diagnostic_viewer):
+                push_error("R23_WORLD_PROBE missing A viewer")
+                return false
+            set_meta("r23_world_probe_done", true)
+            var tree := get_tree()
+            var old_pause := tree.paused
+            tree.paused = true
+            var before_player := player.global_position
+            var before_enemy := enemy.global_position
+            var before_camera := camera.get_screen_center_position()
+            var diagnostic_tick := diagnostic_source._tick
+            # Rerender the full source at this exact state to remove ambiguity
+            # about the preceding frame_post_draw vs last observed tick.
+            diagnostic_source._render_frame()
+            await RenderingServer.frame_post_draw
+            var full := get_viewport().get_texture().get_image()
+            full.save_png(path + "/r23_world_full.png")
+            var original_bloom: Variant = diagnostic_viewer._material.get_shader_parameter("bloom_amount")
+            diagnostic_viewer._material.set_shader_parameter("bloom_amount", 0.0)
+            await RenderingServer.frame_post_draw
+            get_viewport().get_texture().get_image().save_png(path + "/r23_world_no_bloom.png")
+            diagnostic_source._spell.set("include_bolts", false)
+            diagnostic_source._render_frame()
+            await RenderingServer.frame_post_draw
+            get_viewport().get_texture().get_image().save_png(path + "/r23_world_rotor_only.png")
+            diagnostic_viewer._sprite.visible = false
+            await RenderingServer.frame_post_draw
+            get_viewport().get_texture().get_image().save_png(path + "/r23_world_no_fx.png")
+            var stable := before_player == player.global_position and before_enemy == enemy.global_position and before_camera == camera.get_screen_center_position() and diagnostic_tick == diagnostic_source._tick
+            var info := FileAccess.open(path + "/r23_world_probe.json", FileAccess.WRITE)
+            info.store_string(JSON.stringify({"tick":diagnostic_tick, "camera":[before_camera.x,before_camera.y], "player":[before_player.x,before_player.y], "enemy":[before_enemy.x,before_enemy.y], "stable":stable, "bloom_amount":original_bloom, "note":"diagnostic-only paused same-scene rerenders; not a motion or production HDR capture"}, "  "))
+            info.close()
+            diagnostic_source._spell.set("include_bolts", true)
+            diagnostic_source._render_frame()
+            tree.paused = old_pause
+            if not stable:
+                push_error("R23_WORLD_PROBE scene or tick moved")
+                return false
+''' + needle, 1)
 s = s.replace(needle, '''    if OS.get_environment("AVFX_R17_TRACE") == "1" and _r17_next < _r17_targets.size():
         var renderer := host.get("renderer") as Arcana20Renderer
         var source := renderer._casts.get(cast_id) as ASourcePlayer if renderer != null else null

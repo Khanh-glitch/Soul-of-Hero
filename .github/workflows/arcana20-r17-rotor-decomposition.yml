@@ -6,14 +6,14 @@ on:
     branches: [arena/c7b0c4e8-soul-of-hero]
     paths: ['.github/workflows/arcana20-r17-rotor-decomposition.yml']
 permissions:
-  contents: read
+  contents: write
 jobs:
   capture:
     strategy:
       fail-fast: false
       matrix:
         skill: [11]
-        lighting: [normal]
+        lighting: [normal, dimmed]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -46,6 +46,7 @@ jobs:
           AVFX_LIVE_CAPTURE: '1'
           AVFX_R17_TRACE: '1'
           AVFX_R17_DECOMPOSE: '1'
+          AVFX_R17_WORLD_DECOMPOSE: '1'
         run: |
           set -o pipefail
           godot --headless --path "$RUNNER_TEMP/r17" --import > "$RUNNER_TEMP/import.log" 2>&1
@@ -71,6 +72,27 @@ jobs:
         run: |
           python3 -m pip install --quiet numpy
           python3 tools/arcana20_source_compare/decompose_rotor_field.py "$RUNNER_TEMP/output"
+      - name: Surface same-scene decomposition frames
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet pillow
+          python3 - "$RUNNER_TEMP/output" <<'PYCODE'
+          import base64,json,pathlib,subprocess,sys
+          from PIL import Image
+          root=pathlib.Path(sys.argv[1])
+          report=json.loads((root/'r23_world_probe.json').read_text())
+          assert report['stable']
+          for mode in ('full','no_bloom','rotor_only','no_fx'):
+              p=root/f'r23_world_{mode}.png'
+              out=root/f'r23_world_{mode}.jpg'
+              Image.open(p).convert('RGB').save(out,quality=90)
+              body=json.dumps({'content':base64.b64encode(out.read_bytes()).decode(),'encoding':'base64'})
+              blob=subprocess.check_output(['gh','api','--method','POST','repos/'+__import__('os').environ['GITHUB_REPOSITORY']+'/git/blobs','--input','-','--jq','.sha'],input=body.encode()).decode().strip()
+              print(f'::notice title=R23_WORLD_{mode.upper()}::{blob}')
+          print('::notice title=R23_WORLD_PROBE::'+json.dumps(report,separators=(',',':')))
+          PYCODE
       - uses: actions/upload-artifact@v4
         if: always()
         with:
