@@ -5,23 +5,34 @@ Mở HUONG_DAN.txt để vào Overworld và dùng 20 ô kỹ năng; #05 giữ c�
 Bảy lựa chọn Batch S giữ nguyên; xem BATCH_S_REVIEW.txt về trạng thái đã duyệt.
 
 Kỹ năng | Vai trò nguồn | Trạng thái thực tế
-01 Cinder Crown | A vương miện, C lửa ngoài | A ánh sáng ×1.8 và tro kéo dài
-   là điều chỉnh trình bày riêng, chưa duyệt; phần tạo hình có thể nhạt trên nền sáng.
+01 Cinder Crown | A vương miện và lõi, C lửa ngoài | Lớp vật liệu pixel tại
+   đúng hình vương miện A là điều chỉnh trình bày, không phải parity compositor.
+   Có ảnh cùng thế giới, actor, camera và tick: trước/sau/trả lại trong sáng/tối.
+   Hình tạo thành rõ hơn trong mẫu; tác động tại tick va chạm rất nhỏ vì A đã
+   thu lại. Chưa có quyết định CT/creator độc lập cho cảnh sáng và chuyển động.
 09 Chain Verdict | A đồ thị/đường nhớ, B màu, C tia điện sống | Đường nhớ
-   ×2.4 là trình bày thử; nhóm nhân vật gần nhau còn che đường. Thiếu hợp đồng
-   độ sâu/che khuất CT; KHÔNG coi tín hiệu hình là xác nhận trúng.
-11 Volt Carousel | A sáu vòng, C nhánh và connector | Ứng viên xem trước đã
-   được CT chấp nhận để tiếp tục, không phải Gold; chi phí hai trường chưa đo.
-16 Worldseed | A tăng trưởng/tấm, C vật liệu và debris | Mảnh tách từ tấm A
-   là lớp trình bày riêng, không phải hiệu ứng vỡ nguyên bản; cần duyệt chuyển động.
-20 Reality Ripper | C khe/cạnh/nội thất/đóng, A biến dạng và mảnh | Lấy mẫu
-   thế giới SOH thật; cần duyệt toàn bộ chuyển động và phần đóng.
+   ×2.4 là trình bày thử; nhóm nhân vật gần nhau còn che đường. Giới hạn
+   F09_PREVIEW_LIMITED_CT_DEPTH: thiếu API độ sâu/che khuất cùng khung hình từ
+   A0/CT và chứng từ hit/miss/block/death/status thật từ R4; KHÔNG coi hình
+   ảnh là xác nhận trúng. Chưa có kết luận Gold.
+11 Volt Carousel | A sáu vòng, C nhánh và connector | Ứng viên xem trước R24
+   đã được CT chấp nhận để tiếp tục, không phải Gold; chi phí hai trường chưa đo.
+   Giữ nguyên chuyển động, seed, connector và lớp C đã chọn.
+16 Worldseed | A tăng trưởng/tấm, C vật liệu/cơ thể/debris | Mảnh tách từ tấm A
+   là lớp trình bày riêng, không phải hiệu ứng vỡ nguyên bản. Kiểm tra cơ học
+   41 đầu tấm tại từng tick: điểm gốc, ngọn, spin, lực rơi và fade; clip chậm
+   chỉ là chẩn đoán, không phải tốc độ chơi hay FPS. Cần CT/creator xem chuyển động.
+20 Reality Ripper | C khe/cạnh/nội thất/khâu lại, A biến dạng/mảnh | Có camera
+   theo người chơi thật và camera cố định thế giới chỉ để kiểm tra toàn bộ mở,
+   khâu từng phần, debris và OUT; camera gameplay, vị trí khe và thời lượng nguồn
+   không bị đổi. Cần CT/creator xem độc lập.
 
 Fusion-1x: ảnh chụp 1280×720, kích thước gốc (JPEG), JSON ghi SHA và tick.
-Fusion-full-cast: video đầy đủ các khung đã chụp và JSON theo thời gian thật;
-đây là số khung thưa do dựng phần mềm và ghi ảnh, không phải bằng chứng 60 fps
-hay hiệu năng GPU. Video lossless nằm trong artifact riêng của cùng lần chạy.
-Bản Windows chỉ được kiểm tra khởi động headless; Linux dùng dựng phần mềm.
+Fusion-full-cast: video đủ các khung thật đã dựng và JSON theo thời gian thật.
+Renderer phần mềm có thể nhảy nhiều source tick giữa hai khung; đây không phải
+bằng chứng 60 fps hay hiệu năng GPU. Clip chậm F16STEP là chẩn đoán riêng; bản
+MKV lossless nằm trong artifact riêng của cùng lần chạy. Windows chỉ kiểm tra
+headless; Linux dùng dựng phần mềm. Đối chiếu SHA của gói và dữ liệu.
 Dùng SHA256SUMS.txt để kiểm tra nội dung, file .zip.sha256 để kiểm tra ZIP.
 CT/R4 chịu trách nhiệm xác nhận hit/miss/block/death/status bất biến; A0/CT
 cung cấp hình tuyến tính/HDR trước HUD và dữ liệu camera/độ sâu/che khuất.

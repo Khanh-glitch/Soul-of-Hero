@@ -1,13 +1,13 @@
 {
-  "avfx_sha": "fc9595627d645b9d979a485499294a08a37f374d",
+  "avfx_sha": "2f1e9febfa78fe6153ad6b6e69b1ad3089723ae4",
   "skill": 16,
   "source_role": "A growth C material organism debris",
   "lighting": "normal",
   "scope": "actual game route, visual-only; automatic real player input and unmodified Skeleton AI; not combat receipts or device FPS",
   "resolution": "1280x720 each, 1x pixels before JPEG encoding",
   "source_tick_note": "frame_post_draw before PNG encoding; last-observed source tick can lag displayed state",
-  "cast_duration_s": 51.830455,
-  "last_tick": 647,
+  "cast_duration_s": 92.489149,
+  "last_tick": 640,
   "entries": [
     {
       "camera": [
@@ -15,123 +15,123 @@
         3496.0
       ],
       "enemy": [
-        989.499877929688,
+        993.366577148438,
         3496.0
       ],
-      "file": "00_start_tick7.jpg",
+      "file": "00_start_tick0.jpg",
       "player": [
         904.0,
         3496.0
       ],
-      "source_tick_last_observed": 7,
-      "wall_s": 0.119433,
+      "source_tick_last_observed": 0,
+      "wall_s": 0.073105,
       "source_png": "frame_00000.png",
       "label": "start",
       "index": 0
     },
     {
       "camera": [
-        1004.0,
+        993.366577148438,
         3496.0
       ],
       "enemy": [
-        896.268493652344,
-        3521.41186523438
+        921.061279296875,
+        3505.89526367188
       ],
       "file": "01_early_tick111.jpg",
       "player": [
-        850.631225585938,
-        3499.251953125
+        893.62548828125,
+        3525.3115234375
       ],
       "source_tick_last_observed": 111,
-      "wall_s": 2.648216,
-      "source_png": "frame_00013.png",
+      "wall_s": 5.681215,
+      "source_png": "frame_00015.png",
       "label": "early",
-      "index": 13
+      "index": 15
     },
     {
       "camera": [
-        1004.0,
+        993.366577148438,
         3496.0
       ],
       "enemy": [
-        883.770568847656,
-        3433.81005859375
+        860.332824707031,
+        3460.26098632812
       ],
-      "file": "02_middle_tick327.jpg",
+      "file": "02_middle_tick319.jpg",
       "player": [
-        906.849609375,
-        3434.31274414062
+        837.774230957031,
+        3432.06860351562
       ],
-      "source_tick_last_observed": 327,
-      "wall_s": 10.430387,
-      "source_png": "frame_00040.png",
+      "source_tick_last_observed": 319,
+      "wall_s": 18.790034,
+      "source_png": "frame_00041.png",
       "label": "middle",
-      "index": 40
+      "index": 41
     },
     {
       "camera": [
-        1004.0,
+        993.366577148438,
         3496.0
       ],
       "enemy": [
-        1099.11352539062,
-        3395.6416015625
+        764.570983886719,
+        3570.15600585938
       ],
-      "file": "03_late_tick453.jpg",
+      "file": "03_late_tick448.jpg",
       "player": [
-        1091.98999023438,
-        3434.98095703125
+        787.758422851562,
+        3574.22119140625
       ],
-      "source_tick_last_observed": 453,
-      "wall_s": 32.117991,
-      "source_png": "frame_00109.png",
+      "source_tick_last_observed": 448,
+      "wall_s": 57.734603,
+      "source_png": "frame_00106.png",
       "label": "late",
-      "index": 109
+      "index": 106
     },
     {
       "camera": [
-        1004.0,
+        993.366577148438,
         3496.0
       ],
       "enemy": [
-        1169.57922363281,
-        3369.0791015625
+        790.139770507812,
+        3489.44018554688
       ],
-      "file": "04_aftermath_tick572.jpg",
+      "file": "04_aftermath_tick560.jpg",
       "player": [
-        1198.29870605469,
-        3367.20288085938
+        863.508483886719,
+        3480.07592773438
       ],
-      "source_tick_last_observed": 572,
-      "wall_s": 49.949856,
-      "source_png": "frame_00206.png",
+      "source_tick_last_observed": 560,
+      "wall_s": 90.705323,
+      "source_png": "frame_00205.png",
       "label": "aftermath",
-      "index": 206
+      "index": 205
     },
     {
       "camera": [
-        1004.0,
+        993.366577148438,
         3496.0
       ],
       "enemy": [
-        1210.55541992188,
-        3325.24755859375
+        838.52392578125,
+        3498.87548828125
       ],
-      "file": "05_OUT_tick647.jpg",
+      "file": "05_OUT_tick640.jpg",
       "player": [
-        1257.72412109375,
-        3314.03125
+        867.246643066406,
+        3540.841796875
       ],
-      "source_tick_last_observed": 647,
-      "wall_s": 51.263366,
-      "source_png": "frame_00222.png",
+      "source_tick_last_observed": 640,
+      "wall_s": 92.668848,
+      "source_png": "frame_00216.png",
       "label": "OUT",
-      "index": 222
+      "index": 216
     }
   ],
   "cast_target_world": [
-    1004.0,
+    993.366577148438,
     3496.0
   ],
   "note": "OUT is captured after finish; no assumption of hit, actor depth or production HDR."
