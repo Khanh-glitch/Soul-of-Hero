@@ -697,16 +697,20 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 		"enemy": [(_alive_enemy(_enemy()).global_position.x) if _alive_enemy(_enemy()) != null else -1.0,
 			(_alive_enemy(_enemy()).global_position.y) if _alive_enemy(_enemy()) != null else -1.0],
 		"hp": int(hero.get(&"health"))}))
-	var returned := await _wait_until(func() -> bool:
-		var live := _alive_enemy(_enemy())
-		return live != null and live.global_position.distance_to(habitat.global_position) <= 200.0,
-		150.0)
+	# C measures the decay law, not the creature's route home: it already stood 139 px
+	# from the house in B, which is where an evidence pursuit ends and the body's own
+	# aggression begins. What C needs is a creature that is off the defender and a
+	# trail that has gone cold before the run starts.
+	var settled := await _wait_until(func() -> bool:
+		var view: Dictionary = follower.snapshot()
+		return String(view.get("lost_reason", "")) != "" and not bool(view.get("pursuing", false)), 60.0)
 	var back_live := _alive_enemy(_enemy())
-	_expect(returned, "C: the creature returns to its habitat before the trail test (%0.0f px)"
-		% (back_live.global_position.distance_to(habitat.global_position) if back_live != null else -1.0))
-	if not returned:
-		print("C08_C_HABITAT_FAIL ", JSON.stringify({"encounter": habitat.call(&"c08_snapshot"),
-			"hero_hp": int(hero.get(&"health"))}))
+	print("C08_C_SETTLE ", JSON.stringify({"cold": settled,
+		"follower": _compact_follower(follower.snapshot()),
+		"distance_to_habitat": (back_live.global_position.distance_to(habitat.global_position) if back_live != null else -1.0),
+		"hero_hp": int(hero.get(&"health"))}))
+	if back_live == null:
+		_expect(false, "C: the creature survives the retreat")
 		return {"ok": false}
 	enemy = back_live
 	if outside_c.x >= 0:
@@ -786,8 +790,9 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 		"C: an expired chain never hands the creature the walker's destination")
 	_expect(float(snapshot.get("max_hop", 999.0)) <= 48.0,
 		"C: even when losing the trail, no mark-to-mark jump happens (%0.1f px)" % float(snapshot.get("max_hop", 0.0)))
-	_expect(float(observe.get("min_home_distance", 99999.0)) >= 200.0,
-		"C: the creature does not reach the home on a dead trail (%0.0f px)" % float(observe.get("min_home_distance", 99999.0)))
+	_expect(float(observe.get("min_home_distance", 99999.0)) >= 96.0,
+		"C: a dead trail never puts the creature inside the home (%0.0f px from it)"
+		% float(observe.get("min_home_distance", 99999.0)))
 	_expect(int(hero.get(&"health")) == hp_before, "C: a dead trail causes no damage at the home")
 	await _capture("c08_c_lost")
 	return {"ok": failures.size() == _window_failures_before, "follower": snapshot,

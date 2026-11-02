@@ -126,7 +126,7 @@ jobs:
             [ "$n" -gt 6 ] && break
             emit error "$line"
           done < <(grep -E '^  FAIL  ' "$log" || true)
-          for tag in C08_A C08_B C08_C C08_ROUTE C08_B_ARMED C08_B_LEG C08_SKIP; do
+          for tag in C08_A C08_B C08_C C08_ROUTE C08_B_ARMED C08_B_LEG C08_C_SETTLE C08_C_RETREAT C08_C_COLD C08_SKIP; do
             line=$(grep -E "^${tag} " "$log" | tail -n 1 || true)
             [ -n "$line" ] && emit notice "$line"
           done
