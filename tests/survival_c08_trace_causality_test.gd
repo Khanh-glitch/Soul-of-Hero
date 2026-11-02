@@ -889,7 +889,13 @@ func _observe_walk(hero: CharacterBody2D, enemy: CharacterBody2D, home: Vector2,
 					stats["skipped"] = int(stats.get("skipped", 0)) + 1
 					break
 				escapes += 1
-				if escapes > 10:
+				if escapes > 4:
+					# Four wiggles is a player's patience at one cell. Beyond that the
+					# cell is not where the fight is happening: pick the path up at
+					# the next one instead of drifting away from the route. Bounded,
+					# counted, and printed.
+					skipped = true
+					stats["skipped"] = int(stats.get("skipped", 0)) + 1
 					break
 				_report_wedge(hero, cell, before, escapes)
 				escape_direction = _escape_direction(hero, before, point, escapes)
