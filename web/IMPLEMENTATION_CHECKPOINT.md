@@ -4,7 +4,7 @@
 
 ## Gate result
 
-**Automated normal-input journey: PASS for this chain. Visual capture: PASS and inspected at both requested sizes. Human/product acceptance: still pending review.** The successful run was against production build commit `ecbee9c52545de4d38a6df17fdb8339cc92ddb93`; evidence files were added afterward in `eae89809` without gameplay-code changes. GitHub Actions run: [41473847589](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41473847589).
+**Automated normal-input journey: PASS for this chain. Visual capture: PASS and inspected at both requested sizes. Human/product acceptance: still pending review.** The latest screenshots and successful journey came from GitHub Actions run [41474530720](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41474530720), at branch commit `c21c8b5bf4738e69d590bb0414a9372a9155ded3`. That commit only refreshed this checkpoint over gameplay build `ecbee9c52545de4d38a6df17fdb8339cc92ddb93`; no gameplay source changed between those SHAs. The screenshots and run log were published as evidence commit `607005626b3c465c417b953c381b782d3382c1d6`.
 
 The browser runner used real Chromium and Playwright keyboard/mouse input for New Game, walking, searching containers, harvesting, crafting, building, fueling, queueing, collecting, save/relaunch and eating. It did **not** teleport, inject inventory, call gameplay dispatch, accelerate time, or step the station directly. The `window.__soh` QA hook is used only for read-only state assertions and route observation; all state-changing actions go through the normal UI/input path.
 

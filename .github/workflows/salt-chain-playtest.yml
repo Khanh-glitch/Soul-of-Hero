@@ -5,7 +5,12 @@ on:
   push:
     branches: [arena/4795760e-soul-of-hero]
     paths:
-      - 'web/**'
+      - 'web/src/**'
+      - 'web/tests/**'
+      - 'web/e2e/**'
+      - 'web/package.json'
+      - 'web/package-lock.json'
+      - 'web/vite.config.ts'
       - '.github/workflows/salt-chain-playtest.yml'
 
 permissions:
