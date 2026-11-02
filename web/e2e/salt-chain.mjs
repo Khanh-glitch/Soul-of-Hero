@@ -164,7 +164,9 @@ try {
   log.push(`Paid and placed campfire at (${site.x},${site.y}); remaining wood=${await count('wood')}, stone=${await count('stone')}.`);
   await interact(fire.x,fire.y);await page.getByText('Fuel',{exact:false}).waitFor({timeout:5000});
   // Select the carried wood in Inventory, then place it into the campfire's first (fuel) slot through ordinary UI clicks.
-  const inventory=page.locator('.panel').filter({hasText:'Inventory'}).last(),firePanel=page.locator('.panel').filter({hasText:'Campfire'}).first(),woodSlot=inventory.locator('.slot[title^="Wood"]');
+  const panels=page.locator('.panel'),inventory=panels.last(),firePanel=page.locator('.panel').filter({hasText:'Campfire'}).first();
+  assert.equal((await inventory.locator('.panel-h').innerText()).trim(),'Inventory','Station use did not render the Inventory panel');
+  const woodIndex=await page.evaluate(()=>window.__soh.run.custody.inv.slots.findIndex(z=>z?.key==='wood'));assert(woodIndex>=0,'Wood is not in the player inventory');const woodSlot=inventory.locator('.slot').nth(3+woodIndex);
   const fuelQty=async id=>page.evaluate(eid=>{const e=window.__soh.run.entities[eid];return window.__soh.run.custody[e.station.fuelC].slots.reduce((n,z)=>n+(z?.key==='wood'?z.qty:0),0)},id);
   // First use the panel's shift-click quick-transfer, then fall back to select-and-place in the actual fuel grid.
   await woodSlot.click({modifiers:['Shift']});await sleep(300);let fuel=await fuelQty(fire.id);
