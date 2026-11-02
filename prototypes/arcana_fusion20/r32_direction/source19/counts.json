@@ -1,0 +1,92 @@
+[
+  {
+    "tick": 1,
+    "counts": {
+      "sprites": 42,
+      "lines": 0,
+      "polys": 0,
+      "coreSprites": 0
+    }
+  },
+  {
+    "tick": 120,
+    "counts": {
+      "sprites": 42,
+      "lines": 375,
+      "polys": 0,
+      "coreSprites": 0
+    }
+  },
+  {
+    "tick": 240,
+    "counts": {
+      "sprites": 42,
+      "lines": 573,
+      "polys": 0,
+      "coreSprites": 0
+    }
+  },
+  {
+    "tick": 360,
+    "counts": {
+      "sprites": 52,
+      "lines": 589,
+      "polys": 0,
+      "coreSprites": 0
+    }
+  },
+  {
+    "tick": 456,
+    "counts": {
+      "sprites": 65,
+      "lines": 410,
+      "polys": 32,
+      "coreSprites": 2
+    }
+  },
+  {
+    "tick": 489,
+    "counts": {
+      "sprites": 68,
+      "lines": 431,
+      "polys": 32,
+      "coreSprites": 2
+    }
+  },
+  {
+    "tick": 516,
+    "counts": {
+      "sprites": 200,
+      "lines": 445,
+      "polys": 32,
+      "coreSprites": 2
+    }
+  },
+  {
+    "tick": 546,
+    "counts": {
+      "sprites": 173,
+      "lines": 466,
+      "polys": 32,
+      "coreSprites": 3
+    }
+  },
+  {
+    "tick": 570,
+    "counts": {
+      "sprites": 135,
+      "lines": 452,
+      "polys": 32,
+      "coreSprites": 3
+    }
+  },
+  {
+    "tick": 588,
+    "counts": {
+      "sprites": 106,
+      "lines": 459,
+      "polys": 32,
+      "coreSprites": 2
+    }
+  }
+]

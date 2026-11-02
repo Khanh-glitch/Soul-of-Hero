@@ -1,0 +1,19 @@
+const {chromium}=require('playwright-core');
+const C=require('@sparticuz/chromium').default;
+const fs=require('fs'),path=require('path'),zlib=require('zlib');
+const input=process.argv[2], output=process.argv[3]; if(!input||!output){console.error('usage: node r32_extract_d.cjs /absolute/path/to/reference.html output-directory');process.exit(2)} fs.mkdirSync(output,{recursive:true});
+(async()=>{const b=await chromium.launch({executablePath:await C.executablePath(),headless:true,args:[...C.args,'--enable-webgl','--ignore-gpu-blocklist']}); const p=await b.newPage({viewport:{width:1000,height:700}});p.on('pageerror',e=>console.error('pageerror',e));await p.addInitScript(()=>{window.requestAnimationFrame=()=>0});await p.goto('file://'+path.resolve(input));
+let res=await p.evaluate(()=>{
+let {state,cast,ALL}=window.__vfxDebug;cast(18); let r=state.renderer,fx=r.fx,sp=ALL[18]; console.log(sp.name);sp.init(); r.time=0; fx.hardReset();
+let M=__load('src/engine/fx.ts'), gl=r.gl;let programs={sprite:fx.g.sp.prog,ribbon:fx.g.line.prog,poly:fx.g.poly.prog};let body=new M.LayerSet(gl,programs),core=new M.LayerSet(gl,programs);
+let tex=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,tex);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA8,480,270,0,gl.RGBA,gl.UNSIGNED_BYTE,null);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);let f=gl.createFramebuffer();gl.bindFramebuffer(gl.FRAMEBUFFER,f);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,tex,0);
+const empty=ls=>ls.reset();function copy(batch,dest,ids){dest.n=ids.length;for(let i=0;i<ids.length;i++)dest.data.set(batch.data.subarray(ids[i]*batch.stride,(ids[i]+1)*batch.stride),i*batch.stride)}
+function image(ls){gl.bindFramebuffer(gl.FRAMEBUFFER,f);gl.viewport(0,0,480,270);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.enable(gl.BLEND);r.drawLayerSet(ls,[0,0]);gl.disable(gl.BLEND);let pix=new Uint8Array(480*270*4);gl.readPixels(0,0,480,270,gl.RGBA,gl.UNSIGNED_BYTE,pix);let flipped=new Uint8Array(pix.length);for(let y=0;y<270;y++)flipped.set(pix.subarray((269-y)*480*4,(270-y)*480*4),y*480*4);let s='';for(let i=0;i<flipped.length;i+=32768)s+=String.fromCharCode(...flipped.subarray(i,i+32768));return btoa(s)}
+let out=[]; let wanted=new Set([1,120,240,360,456,489,516,546,570,588]);
+for(let tick=1;tick<=588;tick++){const dt=tick===1?.0001:1/60; const t=tick/60; r.time+=dt;fx.reset(fx.t,dt,r.time,(r.time*977)|0);if(tick===1)fx.hardReset();let coreSp=new Set(),coreLine=new Set();let oldsp=fx.sp, oldline=fx.line;
+fx.sp=function(...a){let n=this.g.sp.n;oldsp.apply(this,a);if(t>7.4 && a[0]===244 && a[1]===132 && (a[4]===4 || a[4]===1) && this.g.sp.n>n) coreSp.add(n)};
+fx.line=function(...a){let n=this.g.line.n;oldline.apply(this,a);if(t>7.4 && a[0][0]===244 && a[0][1]===132 && a[0].length===4)for(let j=n;j<this.g.line.n;j++)coreLine.add(j)};
+sp.update(fx,t,dt);fx.sp=oldsp;fx.line=oldline;fx.pool.step(dt);fx.pool.render(fx);fx.poolDirty=false;
+if(wanted.has(tick)){empty(body);empty(core);for(let k of ['sp','ap','sh','line','aline','poly','apoly']){let batch=fx.g[k], isCore=i=> k==='poly'||(k==='sp'&&coreSp.has(i))||(k==='line'&&coreLine.has(i));let all=Array.from({length:batch.n},(_,i)=>i);copy(batch,body[k],all.filter(i=>!isCore(i)));copy(batch,core[k],all.filter(isCore));}out.push({tick,body:image(body),core:image(core),counts:{sprites:fx.g.sp.n,lines:fx.g.line.n,polys:fx.g.poly.n,coreSprites:coreSp.size}})} }
+return out});
+for(const row of res){for(let k of ['body','core'])fs.writeFileSync(path.join(output,`d-${row.tick}-${k}.rgba.gz`),zlib.gzipSync(Buffer.from(row[k],'base64'),{level:9,mtime:0}));delete row.body;delete row.core};fs.writeFileSync(path.join(output,'counts.json'),JSON.stringify(res,null,2)+'\n');console.log(res);await b.close()})().catch(e=>{console.error(e);process.exit(1)});
