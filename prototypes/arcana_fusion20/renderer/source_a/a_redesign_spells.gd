@@ -273,7 +273,9 @@ class RiptideCalligraphyR:
     func update(dt: float, t: float) -> void:
         pass
     func render(fb: AFramebuffer, t: float) -> void:
-        var diss := (1.0 - 0.45 * AMath.seg(t, 4.6, 6.4)) * (1.0 - AMath.seg(t, 6.8, 8.4))
+        # Ink drains into the released water, so the traveling mass becomes
+        # visibly independent rather than another thick glyph stroke.
+        var diss := (1.0 - 0.82 * AMath.seg(t, 4.6, 6.4)) * (1.0 - AMath.seg(t, 6.8, 8.4))
         for i in range(_strokes.size()):
             var u := AMath.cl01(AMath.seg(t, 1.0 + float(i) * 1.1, 2.0 + float(i) * 1.1))
             if u <= 0.0:
@@ -343,14 +345,14 @@ class RiptideCalligraphyR:
             var trough: Array = []
             for v in range(wave_pts.size()):
                 var u_side := float(v) / float(wave_pts.size() - 1)
-                var wake := (10.0 + 16.0 * sin(u_side * PI)) * AMath.ease_out(wu, 2.0)
+                var wake := (12.0 + 20.0 * sin(u_side * PI)) * AMath.ease_out(wu, 2.0)
                 trough.append((wave_pts[v] as Vector2) - Vector2(wake, 0))
             ADraw.ribbon(fb, trough,
-                func(v: float, _i: int) -> float: return (6.0 + 15.0 * sin(v * PI)) * AMath.ease_out(wu, 2.0),
+                func(v: float, _i: int) -> float: return (9.0 + 20.0 * sin(v * PI)) * AMath.ease_out(wu, 2.0),
                 func(v: float, _i: int, edge: float) -> Variant:
                     var current := 0.5 + 0.5 * sin(v * 24.0 - t * 8.0)
-                    return Vector3(0.03 + edge * 0.08, 0.16 + 0.10 * current, 0.23 + 0.12 * current),
-                true, wave_fade * 0.64)
+                    return Vector3(0.035 + edge * 0.10, 0.24 + 0.16 * current, 0.31 + 0.20 * current),
+                true, wave_fade * 0.72)
             ADraw.ribbon(fb, wave_pts,
                 func(v: float, _i: int) -> float: return (3.5 + 6.5 * sin(v * PI)) * (0.55 + 0.45 * wu),
                 func(v: float, _i: int, edge: float) -> Variant:
@@ -372,6 +374,18 @@ class RiptideCalligraphyR:
                 var fb_end: Vector2 = wave_pts[segment + 1]
                 var thickness := 0.7 + 1.0 * maxf(0.0, foam_phase)
                 ADraw.streak(fb, fa.x, fa.y, fb_end.x, fb_end.y, thickness, thickness * 0.7, Vector3(0.55, 1.0, 1.2), wave_fade * 0.65)
+            # Short advected surface streaks cross the volume from rear to
+            # crest at differing speeds. Their source and destination remain
+            # inside the moving liquid, not static glyph borders.
+            for eddy in range(11):
+                var seed := float(eddy)
+                var lateral := (AMath.hash2(seed, 34.0) * 1.6 - 0.8) * height
+                var phase := fposmod(t * (0.7 + AMath.hash2(seed, 35.0) * 0.5) + AMath.hash2(seed, 36.0), 1.0)
+                var length := (4.0 + AMath.hash2(seed, 37.0) * 9.0) * AMath.ease_out(wu, 2.0)
+                var x := front.x - (10.0 + 20.0 * (1.0 - absf(lateral) / maxf(height, 1.0))) * (1.0 - phase)
+                var point := Vector2(x, front.y + lateral)
+                ADraw.streak(fb, point.x - length, point.y + 1.5, point.x, point.y - 1.5,
+                    0.5, 0.7, Vector3(0.42, 0.90, 1.0), wave_fade * 0.55 * sin(phase * PI))
             # Unequal droplets break from the moving shoulders and lag the
             # front as material, with no independent expanding-ring effect.
             for drop in range(20):
