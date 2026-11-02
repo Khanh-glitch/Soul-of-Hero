@@ -33,12 +33,23 @@ injected, nothing teleports.
 | `develop-soul-of-hero-rpg (4).zip` | `f601ca17…1ba` | `src/game/state.ts:1033-1076`, `1237-1242` | **NEGATIVE ORACLE**: `harvest` never checks player↔source distance; `trail` accepts caller `x,y`. SOH source writes only the real actor position; the distant-harvest/remote-mark tests are open items. |
 | `soul-of-hero-rpg-prototype (3).zip` | `12438a53…f55` | `src/tests/contracts_c01_c24.test.ts:591-774, 819-905` | **REJECT for now (P1)**: escrow/Ragnarok/inventory-custody hypotheses. No SOH action to bind them to in P0. |
 
-### Episode results at `e8ec682a` (run 41420887725)
+### Episode results — best run so far: `d3db46b7` (run 41426710070)
+
+| episode | verdict | evidence |
+|---|---|---|
+| **C (cold trail)** | **PASS** | `C08_C`: `sensed 3`, 33 contiguous hops of 21.6-26.1 px, `lost "expired"`, `reached_end false`, `refused 0`, no damage, creature never inside the room |
+| **A (no trace)** | **PASS** | 718 PATROL samples, 0 sensed, 0 direct ticks, `min_home_distance 364.9` |
+| **K8 ledger** | **PASS** | episode A walks a real trail, commits it, ledger belongs to this run |
+| **2nd PID relaunch** | **PASS** | a still-valid trail survives quitting the game |
+| **New run wipe** | **PASS** | fresh profile inherits no evidence |
+| **B (valid chain)** | red in that run only in its defence window | arrival 89.8-139 px while `INVESTIGATE`, 0 direct ticks, 0 damage; hop count swings 1-178 with the creature's patrol phase; the defence window recorded no damage because the Hero stood in the doorway behind a wall |
+
+### Previous checkpoint: `e8ec682a` (run 41420887725)
 
 | episode | verdict | evidence |
 |---|---|---|
 | A (no trace) | last green at `45fe0777`, re-run pending in this split | `C08_A`: 721 PATROL samples, 0 sensed, 0 direct ticks, `min_home_distance 375` |
-| B (valid chain) | **RED, and the red moves**: 3 hops in one run, 120 hops and a 139 px arrival in the next | `C08_B_LEG`, `C08_B`, `C08_B_ARMED`; the chain and the creature's patrol phase are coupled: `sensed 1` is reliable, `hops` is not, and the defence window can open when the creature is 400 px away (`862 -> 862`). |
+| B (valid chain, run 41420887725) | **RED, and the red moves**: 3 hops in one run, 120 hops and a 139 px arrival in the next | `C08_B_LEG`, `C08_B`, `C08_B_ARMED`; the chain and the creature's patrol phase are coupled: `sensed 1` is reliable, `hops` is not, and the defence window can open when the creature is 400 px away (`862 -> 862`). |
 | C (cold trail) | not yet observed in this split (B runs first; `if: always()` now added) | — |
 | K8 / relaunch / new run | not yet observed at this HEAD | — |
 
