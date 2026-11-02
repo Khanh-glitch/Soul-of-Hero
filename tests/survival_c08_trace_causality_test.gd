@@ -524,8 +524,10 @@ func _counterfactual_b(source: Node, encounter: Node, enemy: CharacterBody2D,
 		return {"ok": false}
 	var path_out: Array[Vector2i] = [outside]
 	var stepped_out := await _walk_path(hero, path_out)
-	_expect(stepped_out and nav.cell_of(hero.global_position) == outside,
-		"B: ordinary movement leaves through the paid door (%s)" % str(nav.cell_of(hero.global_position)))
+	var out_cell := nav.cell_of(hero.global_position)
+	var still_inside := String(_builder().room_topology.room_at(out_cell))
+	_expect(stepped_out and still_inside.is_empty(),
+		"B: ordinary movement leaves through the paid door (%s, room '%s')" % [str(out_cell), still_inside])
 	if not stepped_out:
 		print("C08_DOORWAY_FAIL ", JSON.stringify({"outside": [outside.x, outside.y],
 			"hero": [hero.global_position.x, hero.global_position.y], "open": _door_open()}))
@@ -656,15 +658,23 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 	if habitat == null or not is_instance_valid(enemy):
 		_expect(false, "C: the creature and its habitat still exist")
 		return {"ok": false}
-	# Ordinary retreat: the defender walks out of his own door and a few cells away,
-	# so the creature is not cornered inside the paid room when the trail goes cold.
+	# Ordinary retreat. The creature is standing on the doorstep: the defender walks
+	# out and away until it loses him, which is the only way this run can start from
+	# a creature that is back on its own ground instead of at the house.
 	var outside_c := _nearest_free_near(nav, _door_cell() + Vector2i(0, -2), 2)
 	if await _open_door(hero) and outside_c.x >= 0:
 		var path_c: Array[Vector2i] = [outside_c]
 		await _walk_path(hero, path_c)
+	var retreat := _nearest_free_near(nav, nav.cell_of(hero.global_position) + Vector2i(0, -14), 6)
+	if retreat.x >= 0:
+		await _walk_to_cell(hero, retreat)
 	var returned := await _wait_until(func() -> bool:
-		return is_instance_valid(enemy) and enemy.global_position.distance_to(habitat.global_position) <= 120.0, 60.0)
-	_expect(returned, "C: the creature returns to its habitat before the trail test")
+		return is_instance_valid(enemy) and enemy.global_position.distance_to(habitat.global_position) <= 200.0,
+		150.0)
+	_expect(returned, "C: the creature returns to its habitat before the trail test (%0.0f px)"
+		% (enemy.global_position.distance_to(habitat.global_position) if is_instance_valid(enemy) else -1.0))
+	if retreat.x >= 0:
+		await _walk_to_cell(hero, outside_c)
 	var _window_failures_before := failures.size()
 	follower.begin_window("C_broken_chain")
 	var route := _route_plan(hero, nav, home, outside_c)
@@ -678,7 +688,14 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 		var leg: Array[Vector2i] = legs[leg_index]
 		if leg.is_empty():
 			continue
-		var outcome: Dictionary = await _walk_with_observation(hero, enemy, home, leg, stats)
+		# The creature can be gone by now (freed by its own encounter owner). A typed
+		# parameter cannot be handed a freed instance, so it is re-resolved per leg and
+		# the run says so instead of raising inside the walker.
+		var live_enemy := _alive_enemy(enemy)
+		if live_enemy == null:
+			_expect(false, "C: the creature still exists for leg %d" % leg_index)
+			return {"ok": false, "stats": stats}
+		var outcome: Dictionary = await _walk_with_observation(hero, live_enemy, home, leg, stats)
 		stats = outcome
 		if not bool(outcome.get("walked", false)):
 			walked_all = false
@@ -688,6 +705,14 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 	_expect(walked_all, "C: ordinary input walks the same route again")
 	if not walked_all:
 		return {"ok": false, "stats": stats}
+	# The marks are four run-seconds old. Stand still at the end of the route and
+	# let the creature's attempt actually fail before walking back in: this run is
+	# about a lost trail, not about a defender who outran it.
+	var went_cold := await _wait_until(func() -> bool:
+		var view: Dictionary = follower.snapshot()
+		return String(view.get("lost_reason", "")) != "" and not bool(view.get("pursuing", false)), 90.0)
+	print("C08_C_COLD ", JSON.stringify({"cold": went_cold,
+		"follower": _compact_follower(follower.snapshot()), "probe": _trace_probe(source, enemy)}))
 	var path_back: Array[Vector2i] = [_stand_cell()]
 	var back_in := await _walk_path(hero, path_back)
 	_expect(back_in, "C: the defender is back inside the home while the trail goes cold")
@@ -780,6 +805,12 @@ func _observe(enemy: CharacterBody2D, hero: CharacterBody2D, home: Vector2, seco
 ## The follower snapshot without the step history. A window line has to fit in a
 ## CI annotation (GitHub truncates and drops long messages), so the history is
 ## summarised as a count plus the last few events instead of being dumped.
+func _alive_enemy(enemy: Variant) -> CharacterBody2D:
+	if enemy == null or not is_instance_valid(enemy):
+		return null
+	return enemy as CharacterBody2D
+
+
 func _compact_follower(view: Dictionary) -> Dictionary:
 	var events: Array = []
 	var history: Array = view.get("history", []) if view.get("history", []) is Array else []
@@ -820,7 +851,7 @@ func _source_probe(source: Node) -> Dictionary:
 		"stamp": snappedf(float(view.get("stamp", -1.0)), 0.01)}
 
 
-func _trace_probe(source: Node, enemy: Node2D) -> Dictionary:
+func _trace_probe(source: Node, enemy: Variant) -> Dictionary:
 	if source == null or enemy == null or not is_instance_valid(enemy):
 		return {"ok": false, "reason": "absent"}
 	var store: Variant = source.get(&"store")
