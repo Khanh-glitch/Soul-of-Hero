@@ -1,0 +1,256 @@
+[
+  {
+    "active_warp_pixels": 15380,
+    "formula": "0 legacy / 1 off / 2 amplitude/(1+abs(amplitude)) / 0 restore",
+    "independent_body_peak": 3.73369240760803,
+    "independent_center_peak": 5.98562335968018,
+    "independent_star_peak": 0.949999988079071,
+    "lighting": "dimmed",
+    "rgba8_all_channel_saturated_pixels": 3426,
+    "source_fields_unchanged": true,
+    "source_light_max": 1.0,
+    "source_to_world": "[X: (0.798817, 0.33284), Y: (-0.33284, 0.798817), O: (843.0237, 3309.343)]",
+    "star_pretransfer_peak": 3.87133860588074,
+    "tick": 489,
+    "warp_alpha_max": 21.0130786895752,
+    "warp_alpha_min": 4.82986024508136e-07,
+    "warp_fade": 1.0,
+    "world": "real frozen overworld; unchanged actors and camera",
+    "crop": [
+      500,
+      155,
+      640,
+      440
+    ],
+    "changed_pixels_on_vs_off": 31271,
+    "world_base_mean_luma_in_changed_pixels": 61.05016190719836,
+    "states": {
+      "source_formula": {
+        "luma_min": 8.7606,
+        "luma_max": 207.3662,
+        "luma_mean": 114.46769503373731,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 8067468
+      },
+      "shimmer_off": {
+        "luma_min": 35.061,
+        "luma_max": 204.22539999999998,
+        "luma_mean": 118.05660787950497,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 8240957
+      },
+      "bounded": {
+        "luma_min": 32.1408,
+        "luma_max": 204.79539999999997,
+        "luma_mean": 117.10532580985576,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 8160371
+      },
+      "layered": {
+        "luma_min": 32.1408,
+        "luma_max": 199.23619999999997,
+        "luma_mean": 114.563813846695,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 7886991
+      },
+      "warp_only": {
+        "luma_min": 0.0,
+        "luma_max": 153.31,
+        "luma_mean": 58.302774199737776,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 2090007
+      },
+      "source_light": {
+        "luma_min": 0.0,
+        "luma_max": 197.7954,
+        "luma_mean": 57.22747006491637,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 12848304
+      },
+      "star_only": {
+        "luma_min": 0.0,
+        "luma_max": 196.5972,
+        "luma_mean": 28.023708221675033,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 13837231
+      },
+      "body_only": {
+        "luma_min": 0.0,
+        "luma_max": 217.78859999999997,
+        "luma_mean": 44.34757500559625,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 11735362
+      },
+      "center_only": {
+        "luma_min": 0.0,
+        "luma_max": 237.7954,
+        "luma_mean": 12.696102152153752,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 13477595
+      },
+      "star_pretransfer": {
+        "luma_min": 0.0,
+        "luma_max": 235.6694,
+        "luma_mean": 31.823321703815033,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 14259623
+      },
+      "pretransfer_layered": {
+        "luma_min": 32.1408,
+        "luma_max": 199.23619999999997,
+        "luma_mean": 115.17586455821687,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 7953888
+      },
+      "reinhard_local": {
+        "luma_min": 22.8628,
+        "luma_max": 191.1596,
+        "luma_mean": 96.17443948706469,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 5046615
+      },
+      "virtual_source_input": {
+        "luma_min": 32.1408,
+        "luma_max": 227.5014,
+        "luma_mean": 130.82031188641233,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 10065618
+      },
+      "source_restored": {
+        "luma_min": 8.7606,
+        "luma_max": 207.3662,
+        "luma_mean": 114.46769503373731,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 8067468
+      }
+    },
+    "scope": "native 1x crop of matched, frozen real overworld; no GPU, HDR or art approval"
+  },
+  {
+    "active_warp_pixels": 15380,
+    "formula": "0 legacy / 1 off / 2 amplitude/(1+abs(amplitude)) / 0 restore",
+    "independent_body_peak": 4.40991878509521,
+    "independent_center_peak": 5.97249984741211,
+    "independent_star_peak": 0.949999988079071,
+    "lighting": "dimmed",
+    "rgba8_all_channel_saturated_pixels": 3545,
+    "source_fields_unchanged": true,
+    "source_light_max": 1.0,
+    "source_to_world": "[X: (0.798817, 0.33284), Y: (-0.33284, 0.798817), O: (843.0237, 3309.343)]",
+    "star_pretransfer_peak": 3.87133860588074,
+    "tick": 516,
+    "warp_alpha_max": 24.45578956604,
+    "warp_alpha_min": 1.97034819393593e-06,
+    "warp_fade": 1.0,
+    "world": "real frozen overworld; unchanged actors and camera",
+    "crop": [
+      499,
+      155,
+      640,
+      440
+    ],
+    "changed_pixels_on_vs_off": 32188,
+    "world_base_mean_luma_in_changed_pixels": 61.2149047781782,
+    "states": {
+      "source_formula": {
+        "luma_min": 0.0,
+        "luma_max": 211.7348,
+        "luma_mean": 114.78442861936126,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 8848634
+      },
+      "shimmer_off": {
+        "luma_min": 30.299599999999998,
+        "luma_max": 204.921,
+        "luma_mean": 119.9362201441531,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 8942502
+      },
+      "bounded": {
+        "luma_min": 31.212999999999997,
+        "luma_max": 206.5972,
+        "luma_mean": 118.78156087983099,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 8846973
+      },
+      "layered": {
+        "luma_min": 31.212999999999997,
+        "luma_max": 205.643,
+        "luma_mean": 116.28798924443892,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 8574898
+      },
+      "warp_only": {
+        "luma_min": 0.0,
+        "luma_max": 153.3638,
+        "luma_mean": 58.23427588542314,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 2339513
+      },
+      "source_light": {
+        "luma_min": 0.0,
+        "luma_max": 204.921,
+        "luma_mean": 60.720939281719886,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 13458362
+      },
+      "star_only": {
+        "luma_min": 0.0,
+        "luma_max": 196.5972,
+        "luma_mean": 28.23682848887784,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 14113264
+      },
+      "body_only": {
+        "luma_min": 0.0,
+        "luma_max": 222.42399999999998,
+        "luma_mean": 48.34703423014788,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 12392204
+      },
+      "center_only": {
+        "luma_min": 0.0,
+        "luma_max": 235.6694,
+        "luma_mean": 12.302808953647322,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 13725734
+      },
+      "star_pretransfer": {
+        "luma_min": 0.0,
+        "luma_max": 235.6694,
+        "luma_mean": 32.02049542686716,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 14538321
+      },
+      "pretransfer_layered": {
+        "luma_min": 31.212999999999997,
+        "luma_max": 205.8752,
+        "luma_mean": 116.87522466757797,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 8640258
+      },
+      "reinhard_local": {
+        "luma_min": 22.1408,
+        "luma_max": 197.56959999999998,
+        "luma_mean": 97.7222752205791,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 5518365
+      },
+      "virtual_source_input": {
+        "luma_min": 31.212999999999997,
+        "luma_max": 226.85959999999997,
+        "luma_mean": 132.96948018516218,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 10870388
+      },
+      "source_restored": {
+        "luma_min": 0.0,
+        "luma_max": 211.7348,
+        "luma_mean": 114.78442861936126,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 8848634
+      }
+    },
+    "scope": "native 1x crop of matched, frozen real overworld; no GPU, HDR or art approval"
+  }
+]
