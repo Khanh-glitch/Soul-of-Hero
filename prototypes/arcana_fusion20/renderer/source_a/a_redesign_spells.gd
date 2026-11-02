@@ -48,10 +48,10 @@ class AshenGuillotineR:
         # the original 3.4 contact. Thirteen ticks of travel expose the mass
         # in a real-world recording instead of a three-tick teleport. Recoil
         # is recovery, never a second strike or a gameplay contact.
-        var pull := 8.0 * AMath.ease_out(AMath.seg(t, 2.96, 3.18), 2.0)
+        var pull := 18.0 * AMath.ease_out(AMath.seg(t, 2.96, 3.18), 2.0)
         var strike := AMath.ease_in(AMath.seg(t, 3.18, 3.4), 2.0)
         var recoil := 5.0 * AMath.bump(AMath.seg(t, 3.4, 3.85))
-        return 26.0 + pull - 24.0 * strike + recoil
+        return 26.0 + pull - 34.0 * strike + recoil
     func _blade_direction(t: float) -> Vector2:
         # The cocked tip resolves into the original diagonal at contact.
         # This is the same single blade, not an additional glowing sweep.
@@ -149,7 +149,7 @@ class AshenGuillotineR:
                     func(x: int, y: int) -> Variant:
                         var across := absf((Vector2(float(x) + 0.5, float(y) + 0.5) - a).dot(n)) / maxf(gap, 0.01)
                         var grain := AMath.hash2(floor(float(x) * 0.5), floor(float(y) * 0.5))
-                        var rock := 0.018 + AMath.cl01(across) * 0.085 + grain * 0.018
+                        var rock := 0.025 + AMath.cl01(across) * 0.20 + grain * 0.025
                         return Vector3(rock, rock * 0.78, rock * 0.70), true, open * 0.96)
                 ADraw.streak(fb, upper_a.x, upper_a.y, upper_m.x, upper_m.y, 1.2, 0.8, AMath.R("fire", 0.72), open * 0.60)
                 ADraw.streak(fb, upper_m.x, upper_m.y, upper_b.x, upper_b.y, 0.8, 1.0, AMath.R("fire", 0.72), open * 0.60)

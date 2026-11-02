@@ -35,7 +35,7 @@ func _initialize() -> void:
     var first: float = ready - spell._blade_offset(3.18 + 1.0 / 60.0)
     var second: float = spell._blade_offset(3.18 + 1.0 / 60.0) - spell._blade_offset(3.18 + 2.0 / 60.0)
     var contact: float = spell._blade_offset(3.4)
-    if not (ready > 30.0 and second > first and absf(contact - 10.0) < 0.001 and spell._blade_offset(3.6) > contact):
+    if not (ready > 43.0 and second > first and absf(contact - 10.0) < 0.001 and spell._blade_offset(3.6) > contact):
         push_error("A04_BLADE_FAIL anticipation/acceleration/contact/recoil")
         quit(1)
         return
@@ -43,6 +43,15 @@ func _initialize() -> void:
     # bar could otherwise satisfy the translation check above.
     if absf(spell._blade_direction(3.18).angle_to(direction)) < 0.15 or absf(spell._blade_direction(3.4).angle_to(direction)) > 0.001:
         push_error("A04_BLADE_FAIL swing does not resolve to contact line")
+        quit(1)
+        return
+    # The cocked tip is still inside the native framebuffer at maximum
+    # draw-back: increased travel must not silently crop the physical blade.
+    var cocked_dir: Vector2 = spell._blade_direction(3.18)
+    var cocked_n := Vector2(-cocked_dir.y, cocked_dir.x)
+    var cocked_tip: Vector2 = ARedesignSpells.C + cocked_dir * 100.0 + cocked_n * (ready + 3.6)
+    if cocked_tip.x < 0.0 or cocked_tip.y < 0.0 or cocked_tip.x >= AFramebuffer.W or cocked_tip.y >= AFramebuffer.H:
+        push_error("A04_BLADE_FAIL cocked tip leaves source framebuffer")
         quit(1)
         return
     for bs in spell._cracks:
