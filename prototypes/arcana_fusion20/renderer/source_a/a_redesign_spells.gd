@@ -451,13 +451,26 @@ class SkybreakerScriptR:
         return 1.0 - AMath.seg(local_time, duration * 0.24, duration)
     func update(dt: float, t: float) -> void:
         pass
-    func _c_bolt(fb: AFramebuffer, a: Vector2, b: Vector2, seed: float, strength: float, width: float) -> void:
+    func _c_bolt(fb: AFramebuffer, a: Vector2, b: Vector2, seed: float, strength: float, width: float, taper_start: bool = false) -> void:
         # Actual selected C #09 generator, adapted to A's buffer. Geometry is
         # C; A's raster/color and the rest of the selected source remain an
         # unverified fusion candidate rather than C framebuffer parity.
         var tree := CKit.bolt_tree(seed, a.x, a.y, b.x, b.y, 2, 0.24)
         for branch in tree:
-            ADraw.bolt_draw(fb, branch.pts, width * float(branch.w), AMath.R("volt", 0.6), AMath.R("volt", 1.0), strength * float(branch.w))
+            if taper_start and int(branch.depth) == 0:
+                # Fade the same C-generated trunk into its in-bounds sky
+                # origin instead of cutting a luminous rectangle at the edge
+                # of the local world texture. No scene-wide flash or shader.
+                var pts: Array = branch.pts
+                for i in range(pts.size() - 1):
+                    var pa: Vector2 = pts[i]
+                    var pb: Vector2 = pts[i + 1]
+                    var f0 := AMath.cl01(float(i) * 4.0 / float(pts.size() - 1))
+                    var f1 := AMath.cl01(float(i + 1) * 4.0 / float(pts.size() - 1))
+                    ADraw.streak(fb, pa.x, pa.y, pb.x, pb.y, maxf(0.1, width * f0), maxf(0.1, width * f1), AMath.R("volt", 0.6), strength * 0.9)
+                    ADraw.line(fb, pa.x, pa.y, pb.x, pb.y, AMath.R("volt", 1.0), strength * (f0 + f1) * 0.5)
+            else:
+                ADraw.bolt_draw(fb, branch.pts, width * float(branch.w), AMath.R("volt", 0.6), AMath.R("volt", 1.0), strength * float(branch.w))
     func render(fb: AFramebuffer, t: float) -> void:
         var dis := 1.0 - AMath.seg(t, 8.45, 8.6)
         # A new authored frame, not source-A parity: an eight-part circuit
@@ -579,7 +592,7 @@ class SkybreakerScriptR:
             _c_bolt(fb, Vector2(tx, 40.0), Vector2(tx, 118.0), float(i * 571 + int(floor(lt / 0.05)) * 13), _bolt_envelope(lt, 0.42), 2.1)
         var ft := t - 6.8
         if ft >= 0.0 and ft < 0.6:
-            _c_bolt(fb, Vector2(C.x - 18.0, -18.0), Vector2(C.x, 150.0), float(991 + int(floor(ft / 0.05)) * 7), _bolt_envelope(ft, 0.6), 4.8)
+            _c_bolt(fb, Vector2(C.x - 18.0, 12.0), Vector2(C.x, 150.0), float(991 + int(floor(ft / 0.05)) * 7), _bolt_envelope(ft, 0.6), 4.8, true)
             # C Thunderloom's actual seeded fracture tree, translated as a
             # visual-only impact material and rasterized by A. It does not
             # claim C's framebuffer, stage post or gameplay hit parity.

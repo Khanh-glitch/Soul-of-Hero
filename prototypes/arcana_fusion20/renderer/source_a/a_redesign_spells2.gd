@@ -200,24 +200,27 @@ class SporeNebulaR:
             neck + Vector2(width * 0.18, 0), neck + Vector2(-width * 0.18, 0)], Vector3(0.56, 0.48, 0.32), true, opacity)
         ADraw.line(fb, origin.x - width * 0.11, origin.y - height * 0.06,
             neck.x - width * 0.09, neck.y, Vector3(0.86, 0.75, 0.53), opacity * 0.7)
-        var cap := neck + Vector2(0, -height * 0.20)
-        # A deeper rounded cap prevents the earlier silhouette collapsing
-        # into a thin purple slat at native overworld scale.
-        ADraw.poly_fill_solid(fb, [cap + Vector2(-width, 0), cap + Vector2(-width * 0.90, -height * 0.34),
-            cap + Vector2(-width * 0.60, -height * 0.75), cap + Vector2(-width * 0.20, -height * 0.90),
-            cap + Vector2(width * 0.35, -height * 0.86), cap + Vector2(width * 0.72, -height * 0.60),
-            cap + Vector2(width * 0.95, -height * 0.24), cap + Vector2(width, 0)], Vector3(0.36, 0.16, 0.38), true, opacity)
-        ADraw.poly_fill_solid(fb, [cap + Vector2(-width, 0), cap + Vector2(-width * 0.72, height * 0.16),
-            cap + Vector2(0, height * 0.25), cap + Vector2(width * 0.72, height * 0.16), cap + Vector2(width, 0)], Vector3(0.82, 0.67, 0.40), true, opacity * 0.94)
+        # Decouple cap depth from stipe height. Long stipes previously made
+        # narrow pointed cones; a broad asymmetric dome and shallow gills read
+        # as fungal fruiting bodies at actual overworld scale.
+        var depth := minf(height * 0.50, width * 0.85)
+        var cap := neck + Vector2(0, -depth * 0.12)
+        var skew := (AMath.hash2(floor(origin.x), floor(origin.y)) - 0.5) * width * 0.35
+        ADraw.poly_fill_solid(fb, [cap + Vector2(-width, 0), cap + Vector2(-width * 0.90, -depth * 0.40),
+            cap + Vector2(-width * 0.55 + skew, -depth * 0.86), cap + Vector2(-width * 0.12 + skew, -depth),
+            cap + Vector2(width * 0.35 + skew, -depth * 0.84), cap + Vector2(width * 0.78, -depth * 0.52),
+            cap + Vector2(width, 0)], Vector3(0.36, 0.16, 0.38), true, opacity)
+        var gill := minf(height * 0.18, width * 0.24)
+        ADraw.poly_fill_solid(fb, [cap + Vector2(-width, 0), cap + Vector2(-width * 0.72, gill * 0.7),
+            cap + Vector2(0, gill), cap + Vector2(width * 0.72, gill * 0.7), cap + Vector2(width, 0)], Vector3(0.82, 0.67, 0.40), true, opacity * 0.94)
         ADraw.line(fb, cap.x - width, cap.y, cap.x + width, cap.y, Vector3(1.1, 0.72, 0.64), opacity)
         for side in [-0.7, -0.35, 0.0, 0.35, 0.7]:
             var offset := float(side)
-            ADraw.line(fb, cap.x + offset * width * 0.12, cap.y + height * 0.03,
-                cap.x + offset * width, cap.y + height * 0.15, Vector3(1.0, 0.88, 0.59), opacity * 0.8)
-        # Sparse cap freckles remain tangible pixels rather than luminous fog.
+            ADraw.line(fb, cap.x + offset * width * 0.12, cap.y + gill * 0.1,
+                cap.x + offset * width, cap.y + gill * 0.65, Vector3(1.0, 0.88, 0.59), opacity * 0.8)
         for spot in [-0.48, 0.0, 0.43]:
             var offset := float(spot)
-            fb.add_px(roundi(cap.x + width * offset), roundi(cap.y - height * (0.44 + 0.14 * (1.0 - absf(offset)))),
+            fb.add_px(roundi(cap.x + width * offset + skew * 0.4), roundi(cap.y - depth * (0.44 + 0.14 * (1.0 - absf(offset)))),
                 0.95, 0.58, 1.1, opacity * 0.8)
 
     func _draw_shelves(fb: AFramebuffer, c: Vector2, growth: float, fade: float, seed: int) -> void:
@@ -479,15 +482,15 @@ class ChronoshardR:
             # right, over a much larger fraction of the aperture. A round
             # ember, hot core and ragged attached wake are all clipped to the
             # glass, so its position changes are visible even at native size.
-            var head := center + Vector2(lerpf(-13.0, 12.0, u), -2.0 - 2.5 * sin(u * PI))
+            var head := center + Vector2(lerpf(-13.0, 8.0, u), -2.0 - 2.5 * sin(u * PI))
             for mote in range(5):
-                var tail := head + Vector2(-4.5 - float(mote) * 2.0, sin(float(mote) * 2.1 + tau * 4.0) * (0.8 + float(mote) * 0.35))
-                _mini_disc(fb, tail, maxf(1.0, 2.6 - float(mote) * 0.35), hex, Vector3(1.4, 0.31, 0.08), intensity * (0.85 - float(mote) * 0.12))
-            _mini_ember_body(fb, head, 6.2, hex, intensity)
-            _mini_disc(fb, head + Vector2(-0.6, -0.8), 3.4, hex, Vector3(1.0, 0.38, 0.08), intensity)
-            _mini_disc(fb, head + Vector2(-1.2, -1.4), 1.5, hex, Vector3(1.3, 0.9, 0.35), intensity)
+                var tail := head + Vector2(-6.5 - float(mote) * 2.6, sin(float(mote) * 2.1 + tau * 4.0) * (0.8 + float(mote) * 0.35))
+                _mini_disc(fb, tail, maxf(1.3, 3.4 - float(mote) * 0.38), hex, Vector3(1.4, 0.31, 0.08), intensity * (0.85 - float(mote) * 0.12))
+            _mini_ember_body(fb, head, 7.8, hex, intensity)
+            _mini_disc(fb, head + Vector2(-0.6, -0.8), 4.4, hex, Vector3(1.0, 0.38, 0.08), intensity)
+            _mini_disc(fb, head + Vector2(-1.2, -1.4), 2.0, hex, Vector3(1.3, 0.9, 0.35), intensity)
         else:
-            var impact := center + Vector2(12, -2)
+            var impact := center + Vector2(8, -2)
             for q in range(8):
                 var angle := float(q) * TAU / 8.0
                 for step in range(3, 11):
