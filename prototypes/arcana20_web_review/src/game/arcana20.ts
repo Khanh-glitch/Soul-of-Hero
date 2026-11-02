@@ -43,7 +43,7 @@ export function planArcana(id:number,x:number,y:number,angle:number,aimX:number,
   const ring=(px:number,py:number,r:number,dmg:number,t=peak,slow=false)=>out.push({kind:'ring',x:px,y:py,r,delayMs:Math.max(0,t),durationMs:400,damage:dmg,slow});
   const cAt=(along:number,side:number,r:number,dmg:number,t=peak,slow=false)=>circle(x+ux*along+vx*side,y+uy*along+vy*side,r,dmg,t,slow);
   switch(id) {
-    case 1: circle(tx,ty,40,35); ring(tx,ty,55,18,peak+180); break; // crown + shock
+    case 1: circle(tx,ty,40,35,3950); ring(tx,ty,55,18,4130); break; // proposed contacts at A source burst
     case 2: circle(tx,ty,22,45,4980); ring(tx,ty,45,16,5100); break; // P0 source bite and impact
     case 3: { // P0 B meteor impact positions and times, authored seed/geometry.
       const m=bTransform(3,{x,y},{x:tx,y:ty});
@@ -71,7 +71,7 @@ export function planArcana(id:number,x:number,y:number,angle:number,aimX:number,
       ring(q.x,q.y,44,12,4400,true);ring(q.x,q.y,44,12,4950,true);ring(q.x,q.y,44,12,5500,true);circle(q.x,q.y,40,30,6400,true);break;
     }
     case 8: circle(tx,ty,38,34,5050); ring(tx,ty,62,14,5050); break; // surge
-    case 9: for(let i=1;i<=4;i++)cAt(reach*i/4,(i%2?1:-1)*7,17,16,peak-240+i*100); break;
+    case 9: break; // actor-bound graph is scheduled by commitCore, not static geometry.
     case 10: { // Source-C spear and delayed re-ignition around its actual anchor.
       const q=transformPoint(cTransform(10,{x,y},{x:tx,y:ty}),C_ANCHOR[10]);
       circle(q.x,q.y,20,42,4800);for(const delay of [5350,5650,6000])ring(q.x,q.y,35,9,delay);break;

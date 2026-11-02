@@ -15,7 +15,7 @@ describe('isolated ARCANA20 combat prototypes (not P0 visual validation)',()=>{
   expect(ARCANA_CORES).toHaveLength(20);expect(new Set(ARCANA_CORES.map(c=>c.itemKey)).size).toBe(20);
   for(const c of ARCANA_CORES){const item=ITEMS[c.itemKey];expect(item.arcanaId).toBe(c.id);expect(item.charge).toBe(3);expect(item.max).toBe(1);expect(item.cat).toBe('core');
    for(const [x,y,aimX,aimY] of [[300,300,400,300],[200,200,200,200],[200,200,99999,99999]]){
-    const plan=planArcana(c.id,x,y,Math.atan2(aimY-y,aimX-x),aimX,aimY);expect(plan.length).toBeGreaterThan(0);expect(plan.length).toBeLessThanOrEqual(8);
+    const plan=planArcana(c.id,x,y,Math.atan2(aimY-y,aimX-x),aimX,aimY);if(c.id===9){expect(plan).toEqual([]);continue;}expect(plan.length).toBeGreaterThan(0);expect(plan.length).toBeLessThanOrEqual(8);
     for(const e of plan){for(const v of [e.x,e.y,e.delayMs,e.durationMs,e.damage])expect(Number.isFinite(v)).toBe(true);expect(e.delayMs).toBeGreaterThanOrEqual(0);expect(e.damage).toBeGreaterThan(0);// The #06 authored traveling wave extends beyond the aimed target.
      expect(Math.hypot(e.x-x,e.y-y)).toBeLessThan(c.id===6?350:250);}
    }
@@ -23,13 +23,13 @@ describe('isolated ARCANA20 combat prototypes (not P0 visual validation)',()=>{
   expect(planArcana(99,1,1,0,2,2)).toEqual([]);
  });
  it.each(ARCANA_CORES.map(c=>[c.id,c.name] as const))('Core %i (%s) casts through input, commits a charge and damages a real creature',id=>{
-  const gs=fresh(),r=gs.run!,stack=equip(gs,id);cast(gs,T0+1);expect(stack.charge).toBe(2);
+  const gs=fresh(),r=gs.run!,stack=equip(gs,id);const prebound=id===9?mkCreature(r,'boar',r.player.x+100,r.player.y,500):null;if(prebound){prebound.state='sleep';r.creatures=[prebound];}cast(gs,T0+1);expect(stack.charge).toBe(2);
   const chosen=HAZ.find(h=>h.arcanaId===id)!;expect(chosen).toBeDefined();expect(chosen.owner).toBe('player');expect(chosen.runId).toBe(r.id);
   // A stationary real creature is positioned in the first impact's path. Let
   // the normal game clock advance naturally; neither HP nor hazard time is set.
   const mx=chosen.kind==='line'?chosen.x+Math.cos(chosen.angle!)*chosen.len!/2:chosen.x+(chosen.kind==='ring'?8:0);
   const my=chosen.kind==='line'?chosen.y+Math.sin(chosen.angle!)*chosen.len!/2:chosen.y;
-  const m=mkCreature(r,'boar',mx,my,500);m.state='sleep';r.creatures=[m];
+  const m=prebound||mkCreature(r,'boar',mx,my,500);m.state='sleep';r.creatures=[m];
   const steps=Math.ceil((chosen.tell-chosen.t)/50)+1;
   for(let k=0;k<steps;k++) tick(gs,input(r.player.x+100,r.player.y),50,T0+600+k*50);
   expect(m.hp).toBeLessThan(500);
@@ -86,3 +86,12 @@ it('the segmented #20 collision damages an actual creature only once at a joint'
 
 import {setVisualQuality,type VisualQuality} from '../src/game/visualQuality';
 it('visual cadence selection does not alter actual #20 charge or combat',()=>{const results=[];for(const q of ['high','balance','performance'] as VisualQuality[]){setVisualQuality(q);const gs=fresh(),r=gs.run!,p=r.player;const stack=equip(gs,20);cast(gs,T0+1);const h=HAZ.find(h=>h.arcanaId===20)!;const m=mkCreature(r,'boar',h.x+Math.cos(h.angle!)*h.len!/2,h.y+Math.sin(h.angle!)*h.len!/2,500);m.state='sleep';r.creatures=[m];const steps=Math.ceil((h.tell-h.t)/50)+1;for(let k=0;k<steps;k++)tick(gs,input(p.x+100,p.y),50,T0+600+k*50);results.push({charge:stack.charge,hp:m.hp});}setVisualQuality('high');expect(results).toEqual([{charge:2,hp:464},{charge:2,hp:464},{charge:2,hp:464}]);});
+
+
+it('Core #09 binds real living actors at cast time and follows the selected actor',()=>{const gs=fresh(),r=gs.run!,p=r.player;equip(gs,9);const target=mkCreature(r,'boar',p.x+90,p.y,500);target.state='sleep';r.creatures=[target];cast(gs,T0+1);const h=HAZ.find(h=>h.arcanaId===9&&h.boundTargetId===target.id)!;expect(h).toBeDefined();expect(h.boundFromId).toBeNull();target.x+=60;const end=Math.ceil((h.tell-h.t)/50)+2;for(let i=0;i<end;i++)tick(gs,input(p.x+100,p.y),50,T0+600+i*50);expect(target.hp).toBeLessThan(500);});
+it('Core #09 never substitutes a new creature for a lost bound actor',()=>{const gs=fresh(),r=gs.run!,p=r.player;equip(gs,9);const target=mkCreature(r,'boar',p.x+90,p.y,500);target.state='sleep';r.creatures=[target];cast(gs,T0+1);const h=HAZ.find(h=>h.arcanaId===9)!;r.creatures=[];const other=mkCreature(r,'boar',p.x+90,p.y,500);other.state='sleep';r.creatures=[other];const end=Math.ceil((h.tell-h.t)/50)+2;for(let i=0;i<end;i++)tick(gs,input(p.x+100,p.y),50,T0+600+i*50);expect(other.hp).toBe(500);});
+it('Core #09 without real targets consumes charge without fabricating contacts',()=>{const gs=fresh(),r=gs.run!,s=equip(gs,9);cast(gs,T0+1);expect(s.charge).toBe(2);expect(HAZ.filter(h=>h.arcanaId===9)).toHaveLength(0);expect(FX.find(e=>e.type==='arcana20_cast'&&e.id===9)?.chainTargetIds).toEqual([]);});
+
+it('Core #09 does not target a real creature outside its proposed range',()=>{const gs=fresh(),r=gs.run!,p=r.player,s=equip(gs,9);const target=mkCreature(r,'boar',p.x+600,p.y,500);target.state='sleep';r.creatures=[target];cast(gs,T0+1);expect(s.charge).toBe(2);expect(HAZ.filter(h=>h.arcanaId===9)).toHaveLength(0);expect(FX.find(e=>e.type==='arcana20_cast'&&e.id===9)?.chainTargetIds).toEqual([]);});
+it('Core #09 does not deliver a link from a missing intermediate actor',()=>{const gs=fresh(),r=gs.run!,p=r.player;equip(gs,9);const source=mkCreature(r,'boar',p.x+100,p.y,500),target=mkCreature(r,'boar',p.x+110,p.y,500);source.state=target.state='sleep';r.creatures=[source,target];cast(gs,T0+1);const h=HAZ.find(h=>h.arcanaId===9&&h.boundFromId===source.id&&h.boundTargetId===target.id)!;expect(h).toBeDefined();r.creatures=[target];const steps=Math.ceil((h.tell-h.t)/50)+1;for(let i=0;i<steps;i++)tick(gs,input(p.x+100,p.y),50,T0+600+i*50);expect(target.hp).toBe(500);});
+it('Core #09 concurrent casts retain their individual bound target IDs',()=>{const gs=fresh(),r=gs.run!,p=r.player,s=equip(gs,9);const first=mkCreature(r,'boar',p.x+100,p.y,500),second=mkCreature(r,'boar',p.x+110,p.y,500);first.state=second.state='sleep';r.creatures=[first];cast(gs,T0+1);r.creatures=[second];cast(gs,T0+1001);expect(s.charge).toBe(1);const events=FX.filter(e=>e.type==='arcana20_cast'&&e.id===9);expect(events.map(e=>e.chainTargetIds)).toEqual([[first.id],[second.id]]);expect(HAZ.some(h=>h.boundTargetId===first.id)).toBe(true);expect(HAZ.some(h=>h.boundTargetId===second.id)).toBe(true);});

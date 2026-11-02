@@ -1,3 +1,4 @@
+import {chainSchedule,chainContacts} from './chainSchedule';
 // Deterministic-ish real-time simulation layered on the engine authority. All state mutation goes through engine helpers.
 import { BAL, TILE, WW, WH, T, rngNext, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity } from './core';
 import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES } from './catalog';
@@ -9,7 +10,7 @@ export interface Input { up: boolean; down: boolean; left: boolean; right: boole
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
 const fx = (type: string, d: any = {}) => { if (FX.length < 400) FX.push({ type, ...d }); };
 export interface Proj { x: number; y: number; vx: number; vy: number; life: number; dmg: number; from: 'player' | 'enemy'; kind: string; r: number; delay?: number; homing?: number; owner?: string }
-export interface Haz { kind: 'circle' | 'line' | 'ring' | 'wave' | 'sweep' | 'pool'; x: number; y: number; r?: number; angle?: number; len?: number; w?: number; t: number; tell: number; dur: number; dmg: number; style: string; effect?: string; hit?: boolean; tickAcc?: number; a0?: number; a1?: number; done?: boolean; owner?: string; elder?: string; arcanaId?: number; runId?: string; hitGroup?: Set<string> }
+export interface Haz { kind: 'circle' | 'line' | 'ring' | 'wave' | 'sweep' | 'pool'; x: number; y: number; r?: number; angle?: number; len?: number; w?: number; t: number; tell: number; dur: number; dmg: number; style: string; effect?: string; hit?: boolean; tickAcc?: number; a0?: number; a1?: number; done?: boolean; owner?: string; elder?: string; arcanaId?: number; runId?: string; hitGroup?: Set<string>; boundTargetId?:string; boundFromId?:string|null }
 export const PROJ: Proj[] = [];
 export const HAZ: Haz[] = [];
 let traceAcc = 0, slowTimer = 0, rootTimer = 0, shelterAcc = 0, fireAcc = 0, lightningAcc = 0, discoverAcc = 0;
@@ -117,6 +118,15 @@ function commitCore(gs: GameState, now: number, slot: number, a: number, aimX: n
     // The normal game's existing damageCreature path resolves real collisions.
     // The eight #20 contour segments are one event, not eight independent hits.
     const hitGroup=item.arcanaId===20?new Set<string>():undefined;
+    if(item.arcanaId===9){
+      // Bind up to seven nearby real living creatures to the original ordered graph.
+      // This 240px web-game range is proposed gameplay, not a P0 rule.
+      // Missing/dead nodes never become fabricated actors or damage receipts.
+      const reach=Math.max(35,Math.min(130,Math.hypot(aimX-p.x,aimY-p.y))),tx=p.x+Math.cos(a)*reach,ty=p.y+Math.sin(a)*reach;
+      const ids=r.creatures.filter(m=>m.state!=='dead'&&m.hp>0&&(m.x-p.x)**2+(m.y-p.y)**2<=240**2).slice().sort((u,v)=>((u.x-tx)**2+(u.y-ty)**2)-((v.x-tx)**2+(v.y-ty)**2)||u.id.localeCompare(v.id)).slice(0,7).map(m=>m.id);
+      for(const contact of chainContacts(chainSchedule())){const target=ids[contact.b-1],from=contact.a===0?null:ids[contact.a-1];if(!target||(contact.a!==0&&!from))continue;HAZ.push({kind:'circle',x:0,y:0,r:0,t:0,tell:contact.time*1000,dur:120,dmg:12,style:'arcana_pending_visual',owner:'player',arcanaId:9,runId:r.id,boundTargetId:target,boundFromId:from});}
+      fx('arcana20_cast',{id:9,x:p.x,y:p.y,a,aimX,aimY,runId:r.id,simMs:r.clock.simMs,chainTargetIds:ids});return;
+    }
     for (const impact of planArcana(item.arcanaId, p.x, p.y, a, aimX, aimY)) {
       HAZ.push({ kind:impact.kind, x:impact.x, y:impact.y, r:impact.r, angle:impact.angle, len:impact.len, w:impact.w,
         t:0, tell:impact.delayMs, dur:impact.durationMs, dmg:impact.damage,
@@ -456,7 +466,8 @@ function tickHaz(gs: GameState, dtMs: number, now: number) {
     const h = HAZ[i]; if (h.runId && h.runId !== r.id) { HAZ.splice(i, 1); continue; } h.t += dtMs; if (h.t < h.tell) continue;
     const first = !h.done; h.done = true;
     if (first) onHazActivate(gs, h, now);
-    if (h.owner === 'player') { if (first || h.kind === 'ring') for (const m of r.creatures) { if (m.state === 'dead' || (h as any)['h_' + m.id] || h.hitGroup?.has(m.id)) continue; if (inHaz(h, m.x, m.y)) { (h as any)['h_' + m.id] = 1; if (damageCreature(gs, m, h.dmg, Math.atan2(m.y - h.y, m.x - h.x), now, 90)) h.hitGroup?.add(m.id); if (h.effect === 'slowm') m.slow = 3000; } } }
+    if (h.owner === 'player' && h.boundTargetId !== undefined) { if(first){const m=r.creatures.find(v=>v.id===h.boundTargetId&&v.state!=='dead'&&v.hp>0),from=h.boundFromId===null?p:r.creatures.find(v=>v.id===h.boundFromId&&v.state!=='dead'&&v.hp>0);if(m&&from&&!p.dead)damageCreature(gs,m,h.dmg,Math.atan2(m.y-from.y,m.x-from.x),now,90);} }
+    else if (h.owner === 'player') { if (first || h.kind === 'ring') for (const m of r.creatures) { if (m.state === 'dead' || (h as any)['h_' + m.id] || h.hitGroup?.has(m.id)) continue; if (inHaz(h, m.x, m.y)) { (h as any)['h_' + m.id] = 1; if (damageCreature(gs, m, h.dmg, Math.atan2(m.y - h.y, m.x - h.x), now, 90)) h.hitGroup?.add(m.id); if (h.effect === 'slowm') m.slow = 3000; } } }
     else {
       const dot = h.kind === 'pool' || h.effect === 'dot' || h.kind === 'sweep' || h.style === 'burn';
       if (dot) { h.tickAcc = (h.tickAcc || 0) - dtMs; if (h.tickAcc <= 0 && inHaz(h, p.x, p.y)) { h.tickAcc = h.kind === 'pool' ? 500 : 220; hurtPlayer(gs, h.kind === 'pool' ? 5 : h.dmg * 0.45, h.x, h.y, h.elder ? ELDERS[h.elder].name : 'hazard', now, 30); if (h.kind === 'pool') p.rad = Math.min(100, p.rad + 4); } }
