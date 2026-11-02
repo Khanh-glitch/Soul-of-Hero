@@ -1,4 +1,4 @@
-# Map Tower — Veyra network + world art status (R6 → R8)
+# Map Tower — Veyra network + world art status (R6 → R9)
 
 **Latest tested code SHA: `5dce3b4` (branch `arena/103e4440-soul-of-hero`).**
 CI #41398920626: spatial PASS (33/33), browser capture PASS, godot-native-attempt PASS,
@@ -16,6 +16,34 @@ Base: `6c3b6ce4` → this commit. Branch `arena/103e4440-soul-of-hero`. GOLD unt
 (`88780f78…a3a256`). Verdict for this round: **NETWORK_GATES_PASSED — VISUAL_REVIEW_PENDING**.
 33/33 mandatory spatial gates pass; browser evidence and native integration are reported separately
 and neither is claimed as accepted art.
+
+## R9 (visual quality closure attempt)
+
+Tested code: `5dce3b4` baseline → this commit. Spatial gates 33/33 preserved (84/84 roads,
+17/17 rivers, 26/26 hydrology relations, doc anchors 27/27).
+
+Implemented in the compiler (source-backed only, no invented art):
+- **Road class materials**: `CLASS_MATERIAL` builds four tinted tile sets from the committed soil
+  and paving families and paints each class separately (freight ochre, trail brown, footpath dark
+  earth, riverside gravel), so the hierarchy reads before detail does. Per-class masks are unit-grid
+  uint8 (2.8 MB each); the failed full-map float design is gone.
+- **Compiler memory**: measured peak **RSS 3.82 GB** (`ru_maxrss`, single run, exit 0). No OOM.
+- **Forest structure**: tree probability now follows a smooth density field (dense cores and
+  clearings) with per-tree jitter, instead of one uniform sprinkle of identical trees.
+- **Coast**: square 16 px sand cells removed from the ground grid; the pixel sand/wet band owns the
+  shoreline.
+- **Greywater**: the three fake "houses" built from dungeon walls were removed. The settlement is
+  now composed from what the sources can honestly support — three cultivated plots with furrows and
+  hedge lines, a tiled farmyard with well/carts/workbench, a store compound and a signed approach.
+  Habitation shells are recorded as an explicit art dependency (`compose_notes`).
+- **Quarry/mine**: nested tile terraces with per-bench tone, rubble lips, a soil haul ramp, staggered
+  spoil tips and an adit; the `stairs` sprite was removed from quarry/mine vocabularies because it
+  read as a ladder stack rather than extraction geometry.
+
+Known remaining defects (not claimed fixed): an oversized wooden structure sprite still dominates
+quarry POIs; rock ground still tiles visibly at 1×; rivers are geometrically straight; no roofed
+building exists in any committed source, so Greywater/farm/smelter/sawmill/harbour cannot be
+finished as architecture. These are art-direction capability gaps, not compiler bugs.
 
 ## 1. Source topology (N1)
 - 84/84 authored land roads compiled, 17/17 rivers, 12 bridges, 27 docks, 81 POIs, 8 ferry routes.

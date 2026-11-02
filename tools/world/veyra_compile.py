@@ -650,7 +650,7 @@ def main(out_dir):
                 box = np.s_[max(0, uy - 20):uy + 20, max(0, ux - 20):ux + 20]
                 near_coast = (sea | lakes)[box].mean() > 0.04
                 near_river = (rivers & land)[box].mean() > 0.04
-                ground[gy, gx] = "beach" if near_coast else "meadow"
+                ground[gy, gx] = "meadow"      # the pixel sand band owns the coast, not 16 px cells
 
     cliff_cells = np.zeros((GH, GW), bool)
     for gy in range(GH):
@@ -885,17 +885,44 @@ def main(out_dir):
                                           compress_level=1)
     soil = KIT.load_kit().soil_tiles(4)
     pav = [im.convert("RGBA").resize((32, 32), Image.NEAREST) for im in fams.get("path", fams["stone"])]
-    for mask, tiles in ((earth, soil), (stone_r, pav)):
+
+    def tint_tiles(tiles, factor):
+        res = []
+        f = np.array(factor, np.float32)
+        for im in tiles:
+            a = np.array(im).astype(np.float32)
+            a[:, :, :3] = np.clip(a[:, :, :3] * f, 0, 255)
+            a[:, :, 3] = 255
+            res.append(Image.fromarray(a.astype(np.uint8), "RGBA"))
+        return res
+
+    # Each road class gets its own material tone so the hierarchy reads at 640x360 before any
+    # detail is visible: freight ochre, pack-trail brown, trodden footpath dark earth, bank gravel.
+    CLASS_MATERIAL = {
+        "cart":      (tint_tiles(soil, (1.10, 0.96, 0.80)), 0.74),
+        "trail":     (tint_tiles(soil, (0.92, 0.84, 0.72)), 0.70),
+        "foot":      (tint_tiles(soil, (0.76, 0.70, 0.62)), 0.66),
+        "riverside": (tint_tiles(pav + soil[:2], (0.94, 0.95, 0.93)), 0.72),
+    }
+    for cls, (tiles, verge_f) in CLASS_MATERIAL.items():
+        mask = np.zeros((UH, UW), np.uint8)
+        for rd in proj["roads"]:
+            if rd.get("kind") != cls:
+                continue
+            stroke_polyline(mask, rd["points"], ROAD_HALF.get(cls, 1.8), 1)
+        mask[water > 0] = 0
         if not mask.any():
             continue
         base = tile_sheet(tiles)
         core = tile_sheet(tiles[::-1])
         m = up(mask)
         mc = up(erode(mask, 1))
-        verge = (base.astype(np.float32) * 0.78).astype(np.uint8)
+        verge = (base.astype(np.float32) * verge_f).astype(np.uint8)
         verge[:, :, 3] = 255
         out[m] = verge[m]
         out[mc] = core[mc]
+        del m, mc, base, core
+    print("road classes painted", sorted(CLASS_MATERIAL))
     # ---- road hierarchy: the same corridor, four different surfaces ----
     # cart   : compacted soil, two wheel ruts, gravel shoulders
     # trail  : packed earth with grass intruding at both edges
@@ -1018,6 +1045,8 @@ def main(out_dir):
     deck_mask, rail_mask, pier_mask = up(deck), up(rail), up(piers)
     world = Image.fromarray(out, "RGBA")
     world.alpha_composite(geo)
+    _world_for_compose = world
+    compose_notes = []
     # ---- real bridge / pier sprites (committed 668008-bridges pack) ----
     for br in bridges:
         kind = "arch" if (br["load"] == "cart" and br["span_units"] > 16) else (
@@ -1123,12 +1152,20 @@ def main(out_dir):
                 elif r < 0.03:
                     place("props_rock", wx, wy, f"ss{gx},{gy}", False)
                 continue
-            forest = b in (1, 6) or r < 0.05
-            if forest and r < 0.075:
-                place("tree", wx, wy, f"tr{gx},{gy}", True)
-            elif r < 0.10:
-                place("bush", wx, wy, f"bu{gx},{gy}", False)
-            elif r < 0.14:
+            # stand density follows a smooth field, so woodland has dense cores and clearings
+            # instead of one uniform sprinkle of identical trees
+            dens = 0.5 + 0.5 * math.sin(gx * 0.11 + math.cos(gy * 0.07) * 2.0) * \
+                (0.6 + 0.4 * math.cos(gy * 0.13 + gx * 0.03))
+            forest = b in (1, 6)
+            tree_p = (0.012 + 0.075 * dens) if forest else (0.004 + 0.02 * dens)
+            if r < tree_p:
+                jx = (h32("tjx", gx, gy) % 20) - 10
+                jy = (h32("tjy", gx, gy) % 16) - 8
+                place("tree", wx + jx, wy + jy, f"tr{gx},{gy}", True)
+            elif r < tree_p + 0.02:
+                place("bush", wx + (h32("bjx", gx, gy) % 18) - 9, wy + (h32("bjy", gx, gy) % 14) - 7,
+                      f"bu{gx},{gy}", False)
+            elif r < tree_p + 0.045:
                 place("tuft", wx, wy, f"tu{gx},{gy}", False)
 
     # POI sites — archetype vocabulary drawn from the chapter-1 environment sheets
@@ -1139,8 +1176,8 @@ def main(out_dir):
         "port":        ["crate", "crate", "barrel", "sign", "banner", "props_ruin"],
         "pier":        ["crate", "barrel", "sign", "brazier"],
         "roadstop":    ["sign", "barrel", "crate", "brazier"],
-        "quarry":      ["props_boulder", "props_boulder", "stairs", "crate", "props_rock"],
-        "mine":        ["props_boulder", "crypt_door", "crate", "stairs", "props_rock"],
+        "quarry":      ["props_boulder", "props_boulder", "props_rock", "crate"],
+        "mine":        ["props_boulder", "crypt_door", "crate", "props_rock"],
         "smelter":     ["forge", "forge", "brazier", "props_workbench", "crate"],
         "filter":      ["forge", "brazier", "props_workbench", "crate"],
         "powerplant":  ["pylon", "forge", "brazier", "struct_wall"],
@@ -1251,33 +1288,103 @@ def main(out_dir):
             ImageDraw.Draw(world).ellipse([cx - r, cy - r * 0.7, cx + r, cy + r * 0.7], fill=col)
 
     def compose_settlement(poi, name):
-        """Greywater: three stone houses around a lane, fenced yards, market cluster, gate.
-        Built from committed sprites only - no invented roofs."""
+        """Greywater as an inhabited agricultural settlement.
+
+        Roofed building art is NOT present in any committed source (see ASSET_INTAKE_MANIFEST),
+        so this composer does not fabricate houses out of dungeon walls.  What it can build
+        truthfully is the settlement's *ground plan*: cultivated plots with furrows, hedged
+        boundaries, a packed-earth farmyard with working kit, a walled store compound, and the
+        lane/approach.  The habitation shells remain an explicit art dependency.
+        """
         ax, ay = poi["gold_at"]
-        placed_n = 0
-        houses = [(0, -9), (11, -2), (-10, 4)]
-        for hx, hy in houses:
-            bx, by = (ax + hx) * U, (ay + hy) * U
-            for i in range(5):                      # back wall run
-                if place("struct_wall", bx + (i - 2) * 16, by - 16, f"house:{name}:{hx}:{hy}:w{i}"):
-                    placed_n += 1
-            for side in (-1, 1):                     # two side walls
-                for j in range(3):
-                    place("struct_wall", bx + side * 34, by - 16 + j * 16,
-                          f"house:{name}:{hx}:{hy}:s{side}{j}")
-            place("crypt_door", bx, by, f"house:{name}:{hx}:{hy}:door", True)
-            place("banner", bx + 26, by - 24, f"house:{name}:{hx}:{hy}:banner")
-            smoke(bx, by - 20)
-        for i in range(8):                          # fenced yards behind the lane
-            a = 2 * math.pi * i / 8
-            place("props_crate" if i % 3 else "props_barrel",
-                  (ax + math.cos(a) * 16) * U, (ay + math.sin(a) * 16) * U,
-                  f"market:{name}:{i}", True)
-        place("props_well", (ax - 4) * U, (ay + 12) * U, f"well:{name}", True)
-        for i in range(5):                          # entrance gate posts + sign
-            place("struct_wall", (ax - 22) * U, (ay - 2 + i * 2) * U, f"gate:{name}:{i}", True)
-        place("props_sign", (ax - 20) * U, (ay + 6) * U, f"sign:{name}", True)
-        return placed_n
+        cx, cy = ax * U, ay * U
+        plots = 0
+        world = _world_for_compose
+        soil_tiles = [im.convert("RGBA") for im in KIT.load_kit().soil_tiles(4)]
+        # three cultivated plots on a grid, each with furrows and a hedge line
+        for (ox, oy, w, h) in ((-46, -26, 34, 22), (-46, 2, 30, 18), (10, 10, 36, 24)):
+            px, py = int(cx + ox * U / 4), int(cy + oy * U / 4)
+            w_px, h_px = int(w * 2), int(h * 2)
+            for ty in range(0, h_px, 32):
+                for tx in range(0, w_px, 32):
+                    world.alpha_composite(soil_tiles[(tx + ty) // 32 % len(soil_tiles)],
+                                          (px + tx, py + ty))
+            d = ImageDraw.Draw(world)
+            for fy in range(py + 3, py + h_px, 5):      # furrows
+                d.line([(px, fy), (px + w_px, fy)], fill=(92, 74, 52, 255), width=1)
+            for hx, hy in ((0, 0), (w_px, 0), (0, h_px), (w_px, h_px)):
+                place("bush", px + hx, py + hy, f"hedge:{name}:{plots}:{hx}:{hy}", False)
+            plots += 1
+        # farmyard: packed earth apron with working kit and a store compound
+        yard = [im.convert("RGBA") for im in KIT.load_kit().soil_tiles(4)]
+        for ty in range(-40, 72, 32):
+            for tx in range(-70, 92, 32):
+                world.alpha_composite(yard[(abs(tx) // 32 + abs(ty) // 32) % len(yard)],
+                                      (int(cx + tx), int(cy + ty)))
+        for k, (kx, ky) in enumerate(((0, 0), (38, -18), (-34, 16), (54, 22), (-8, 34))):
+            place("props_barrel" if k % 2 else "props_crate", cx + kx, cy + ky,
+                  f"yard:{name}:{k}", True)
+        place("well", cx + 16, cy - 6, f"well:{name}", True)
+        place("props_workbench", cx - 26, cy - 14, f"bench:{name}", True)
+        place("sign", cx - 58, cy + 46, f"sign:{name}", False)
+        # one walled store compound (a real structure silhouette we do have)
+        for k in range(4):
+            place("struct_wall", cx + 70 + k * 18, cy + 18, f"store:{name}:b{k}", True)
+        place("crypt_door", cx + 76, cy + 34, f"store:{name}:door", True)
+        compose_notes.append({"poi": poi["source_id"], "plots": plots,
+                              "habitation_art": "MISSING: no roofed building sprite in committed "
+                                                "sources; ground plan composed only"})
+        return plots + 5
+
+    def compose_quarry(poi):
+        """An excavation, not a boulder pile: nested terraces, cut faces, spoil and a haul ramp."""
+        ax, ay = poi["gold_at"]
+        cx, cy = ax * U, ay * U
+        world = _world_for_compose
+        plate = [im.convert("RGBA").resize((32, 32), Image.NEAREST) for im in fams["stone"]]
+
+        def tone(tile, f):
+            a = np.array(tile).astype(np.float32)
+            a[:, :, :3] = np.clip(a[:, :, :3] * f, 0, 255)
+            return Image.fromarray(a.astype(np.uint8), "RGBA")
+        # each bench reads as its own level: outer lip lit, inner cuts darker
+        bench_tone = [tone(p_, f) for f, p_ in zip((1.12, 0.92, 0.74, 0.60),
+                                                   [plate[i % len(plate)] for i in range(4)])]
+        rub = [im.convert("RGBA") for im in fams["rubble"]]
+        steps = 0
+        # terraces are built from the same rock tiles as the massif, never a flat vector fill
+        for k, r in enumerate((96, 68, 42, 18)):
+            for ty in range(int(cy - r * 0.62), int(cy + r * 0.62) + 1, 32):
+                for tx in range(int(cx - r), int(cx + r) + 1, 32):
+                    u = ((tx + 16 - cx) / max(1, r)) ** 2 + ((ty + 16 - cy) / max(1, r * 0.62)) ** 2
+                    if u > 1.0:
+                        continue
+                    tile = bench_tone[(k + (tx // 32) + (ty // 32)) % len(bench_tone)]
+                    world.alpha_composite(tile, (tx, ty))
+                    steps += 1
+            # rubble lip on the downhill edge of each bench
+            for k2 in range(10):
+                a = math.pi * (0.15 + 0.7 * k2 / 9)
+                world.alpha_composite(rub[k2 % len(rub)],
+                                      (int(cx + math.cos(a) * r), int(cy + math.sin(a) * r * 0.62)))
+        # haul ramp: packed soil strip from the south lip into the pit
+        ramp_tiles = [im.convert("RGBA") for im in KIT.load_kit().soil_tiles(4)]
+        for ty in range(int(cy), int(cy + 62), 32):
+            for tx in range(int(cx - 16), int(cx + 16), 32):
+                world.alpha_composite(ramp_tiles[(tx // 32) % len(ramp_tiles)], (tx, ty))
+        steps += 2
+        # spoil heaps and debris outside the pit, staggered so they read as tipping, not a ring
+        for k in range(14):
+            a = -math.pi * 0.15 + k * 0.42
+            rr = 104 + (h32("spoil", k, 3) % 30)
+            place("props_boulder" if k % 2 else "props_rock",
+                  cx + math.cos(a) * rr, cy + math.sin(a) * rr * 0.7,
+                  f"spoil:{poi['source_id']}:{k}", True)
+        place("crypt_door", cx - 6, cy - 4, f"adit:{poi['source_id']}", True)
+        place("stairs", cx + 20, cy + 30, f"stairs:{poi['source_id']}", True)
+        compose_notes.append({"poi": poi["source_id"], "terraces": steps,
+                              "read": "nested pit, cut faces, haul ramp, spoil tips, adit"})
+        return steps + 16
 
     def compose_necropolis(elder):
         """Anubis: tomb rows on a canonical grid, obelisks and a processional causeway."""
@@ -1365,6 +1472,9 @@ def main(out_dir):
     for p in poi_out:
         if p["arche"] == "village":
             print("settlement parts", compose_settlement(p, "greywater"))
+    for p in poi_out:
+        if p["arche"] in ("quarry", "mine"):
+            print("quarry terraces", p["source_id"], compose_quarry(p))
     for e in elder_out:
         if e.get("elder") == "anubis":
             print("tombs placed", compose_necropolis(e))
