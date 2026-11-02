@@ -16,7 +16,8 @@ const state = () => page.evaluate(() => {
   const r = window.__soh?.run; if (!r) return null;
   const counts = {};
   for (const s of r.custody.inv.slots) if (s) counts[s.key] = (counts[s.key] || 0) + s.qty;
-  return { id: r.id, seed: r.seed, layoutId: r.layoutId || 'shipping', player: { x:r.player.x,y:r.player.y,hp:r.player.hp,dead:r.player.dead }, counts,
+  return { id: r.id, seed: r.seed, layoutId: r.layoutId || 'shipping', player: { x:r.player.x,y:r.player.y,hp:r.player.hp,dead:r.player.dead,hunger:r.player.hunger,thirst:r.player.thirst }, counts,
+    creatures:r.creatures.filter(m=>m.hp>0).map(m=>({x:m.x,y:m.y,hp:m.hp,state:m.state,type:m.type})),
     entities: Object.values(r.entities).map(e => ({ id:e.id,kind:e.kind,poi:e.poi,x:e.x,y:e.y,tx:e.tx,ty:e.ty,locked:e.locked,open:e.open,power:e.power,label:e.label,c:e.c })),
     sources:r.sources,containers: Object.fromEntries(Object.entries(r.custody).map(([id,c])=>[id,c.slots.map(s=>s&&({key:s.key,qty:s.qty}))])) };
 });
@@ -73,16 +74,22 @@ try {
       return true;
     };
     async function walkNear(wx,wy,radius=22){
-      let cur=await state();entityBlocked=new Set(cur.entities.filter(e=>e.tx!==undefined&&((e.kind==='door'&&!e.open)||['loot','cash','vendor','gen','evac'].includes(e.kind))).map(e=>e.ty*W+e.tx));const sx=Math.max(1,Math.min(W-2,Math.floor(cur.player.x/16))),sy=Math.max(1,Math.min(H-2,Math.floor(cur.player.y/16)));
+      let cur=await state();entityBlocked=new Set(cur.entities.filter(e=>e.tx!==undefined&&((e.kind==='door'&&!e.open)||['loot','cash','vendor','gen','evac'].includes(e.kind))).map(e=>e.ty*W+e.tx));
+      const vx=wx-cur.player.x,vy=wy-cur.player.y,vlen=vx*vx+vy*vy;
+      for(const m of cur.creatures){const t=vlen?Math.max(0,Math.min(1,((m.x-cur.player.x)*vx+(m.y-cur.player.y)*vy)/vlen)):0;const d=Math.hypot(m.x-(cur.player.x+t*vx),m.y-(cur.player.y+t*vy));if(d<48){const mx=Math.floor(m.x/16),my=Math.floor(m.y/16);for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)entityBlocked.add((my+dy)*W+mx+dx);}}
+      const sx=Math.max(1,Math.min(W-2,Math.floor(cur.player.x/16))),sy=Math.max(1,Math.min(H-2,Math.floor(cur.player.y/16)));
       const q=new Int32Array(W*H),from=new Int32Array(W*H).fill(-2);let h=0,t=0,start=sy*W+sx,goal=-1;q[t++]=start;from[start]=-1;
       while(h<t){const i=q[h++],x=i%W,y=(i/W)|0;if(Math.hypot(x*16+8-wx,y*16+8-wy)<=radius){goal=i;break;}
         for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy,j=ny*W+nx;if(from[j]!==-2||j!==start&&!pass(nx,ny,cur))continue;from[j]=i;q[t++]=j;}}
       assert.notEqual(goal,-1,`no walkable route near (${wx},${wy}) from (${cur.player.x.toFixed(0)},${cur.player.y.toFixed(0)})`);
       const route=[];for(let i=goal;i!==-1;i=from[i])route.push({x:(i%W)*16+8,y:((i/W)|0)*16+8});route.reverse();if(!initialApproachTiles)initialApproachTiles=route.length-1;
-      for(const wp of route.slice(1))for(let tries=0;tries<25;tries++){
-        cur=await state();const dx=wp.x-cur.player.x,dy=wp.y-cur.player.y;if(Math.hypot(dx,dy)<3)break;
-        const keys=[];if(Math.abs(dx)>2)keys.push(dx>0?'d':'a');if(Math.abs(dy)>2)keys.push(dy>0?'s':'w');
-        for(const k of keys)await page.keyboard.down(k);await pause(115);for(const k of keys)await page.keyboard.up(k);
+      for(let step=0;step<route.length-1;step++){
+        const wp=route[step+1];for(let tries=0;tries<40;tries++){
+          cur=await state();const dx=wp.x-cur.player.x,dy=wp.y-cur.player.y;if(Math.hypot(dx,dy)<3)break;
+          const keys=[];if(Math.abs(dx)>2)keys.push(dx>0?'d':'a');if(Math.abs(dy)>2)keys.push(dy>0?'s':'w');
+          for(const k of keys)await page.keyboard.down(k);await pause(115);for(const k of keys)await page.keyboard.up(k);
+        }
+        if(step%8===7)await ensureVitals();
       }
       cur=await state();assert(Math.hypot(cur.player.x-wx,cur.player.y-wy)<=radius+22,`walk ended ${Math.hypot(cur.player.x-wx,cur.player.y-wy).toFixed(1)}px from target (${wx},${wy}); player=(${cur.player.x.toFixed(1)},${cur.player.y.toFixed(1)}) hp=${cur.player.hp} dead=${cur.player.dead}, routeTiles=${route.length-1}`);return cur;
     }
@@ -90,6 +97,18 @@ try {
     async function aim(wx,wy){await pause(100);const cur=await state(),c=camera(cur.player);const x=Math.max(2,Math.min(638,wx-c.x)),y=Math.max(2,Math.min(358,wy-c.y));await page.mouse.move(Math.round(x*2),Math.round(y*2));await pause(120);}
     async function useEntity(id){let cur=await state();let e=cur.entities.find(e=>e.id===id);assert(e,`entity ${id} missing`);await walkNear(e.x,e.y,20);await aim(e.x,e.y);await page.keyboard.press('e');await pause(220);return state();}
     async function takeAll(){await page.getByRole('button',{name:'Take all',exact:true}).click();await pause(350);await page.keyboard.press('Escape');await pause(120);}
+    const itemNames={berries:'Berries',water_flask:'Water Flask',bandage:'Bandage'};
+    async function useInventoryItem(key){
+      if(!(await inputCount(key)))return false;
+      await page.keyboard.press('i');await pause(120);const inv=page.locator('.panel').filter({hasText:'Inventory'}).last();
+      await inv.locator(`.slot[title^="${itemNames[key]}"]`).first().click({button:'right'});await pause(180);await page.keyboard.press('Escape');await pause(100);return true;
+    }
+    async function ensureVitals(){const cur=await state();if(cur.player.dead)throw new Error('player died during ordinary-input travel');if(cur.player.hp<78&&cur.counts.bandage)await useInventoryItem('bandage');if(cur.player.thirst<58&&cur.counts.water_flask)await useInventoryItem('water_flask');if(cur.player.hunger<58&&cur.counts.berries)await useInventoryItem('berries');}
+
+    const startCrate=s.entities.find(e=>e.kind==='loot'&&e.poi===(landing==="Fisher's Point"?'s1':'s3'));assert(startCrate,'selected start crate missing');
+    await useEntity(startCrate.id);await page.getByRole('button',{name:'Take all',exact:true}).waitFor({timeout:5000});await takeAll();
+    log.push(`${layoutId}: selected-start finite supply crate searched through normal input/UI`);
+    await useInventoryItem('berries');await useInventoryItem('water_flask');initialApproachTiles=0;
 
     // Two end-to-end scenarios use existing production Lighthouse content and the authored development Relay.
     if(layoutId==='shipping'){
