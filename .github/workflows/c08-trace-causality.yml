@@ -114,6 +114,9 @@ jobs:
           [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
 
       - name: Phase 1b - standalone episode C (cold trail)
+        # Every episode reports its own verdict even when an earlier one is red:
+        # a ten-minute run should never answer a single question.
+        if: always()
         shell: bash
         run: |
           set +e
@@ -136,6 +139,9 @@ jobs:
           [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
 
       - name: Phase 1c - standalone episode A (no trace) + K8 ledger
+        # Every episode reports its own verdict even when an earlier one is red:
+        # a ten-minute run should never answer a single question.
+        if: always()
         shell: bash
         run: |
           set +e
@@ -181,6 +187,9 @@ jobs:
           exit 0
 
       - name: Phase 2 - second OS process, same save (K8 relaunch)
+        # Every episode reports its own verdict even when an earlier one is red:
+        # a ten-minute run should never answer a single question.
+        if: always()
         shell: bash
         run: |
           set +e
@@ -195,6 +204,9 @@ jobs:
           gate=$?
           [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
       - name: Phase 3 - fresh profile, new run (no inherited evidence)
+        # Every episode reports its own verdict even when an earlier one is red:
+        # a ten-minute run should never answer a single question.
+        if: always()
         shell: bash
         run: |
           set +e
