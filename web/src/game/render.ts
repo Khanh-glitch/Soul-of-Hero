@@ -86,7 +86,7 @@ function syncTerrain(r: RunState, now: number) {
     for (const [dx, dy] of [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]]) chunkCache.delete((((ty + dy) / CH) | 0) * 100 + (((tx + dx) / CH) | 0)); }
   terrSig = sig;
 }
-export function resetRenderCaches() { chunkCache.clear(); lastRunId = ''; }
+export function resetRenderCaches() { chunkCache.clear(); lastRunId = ''; mapCanvas = null; }
 
 // ---------- particles ----------
 interface Part { x: number; y: number; vx: number; vy: number; life: number; max: number; col: string; s: number; g: number; kind?: string; text?: string; a?: number; reach?: number; arc?: number; x1?: number; y1?: number; key?: string; z?: number }

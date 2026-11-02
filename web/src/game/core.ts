@@ -98,6 +98,8 @@ export interface Profile {
 }
 export interface RunState {
   id: string; seed: number; character: 'male' | 'female'; startedAt: number; qaOffset: number; qaUsed: boolean;
+  /** Added additively; absent legacy saves are interpreted as the canonical shipping layout. */
+  layoutId?: 'shipping' | 'dev_delta';
   spawnRegion: number; ended: null | string;
   player: Player; creatures: Creature[];
   sources: Record<number, { stock: number; hp: number; regrowAt?: number; burnt?: boolean }>; // K3 deltas over base world

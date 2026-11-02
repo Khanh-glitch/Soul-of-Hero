@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { TILE, WW, WH, T, HOUR, SAVE_VERSION, type GameState } from '../src/game/core';
-import { getWorld, SRC_KEYS } from '../src/game/world';
+import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS } from '../src/game/world';
+import { MAP_CONTENT_PACKS, validateAllContentPacks, validateContentPack } from '../src/game/content';
 import { newGame, dispatch, harvestHit, addItem, countItem, C, blockedAt, effTile, killPlayer, markDirty, endRun, sourceAt, claimAt, mkContainer, stepStations } from '../src/game/engine';
 import { ITEMS, SOURCES, RECIPES, STRUCTS, validateGameplayCatalog } from '../src/game/catalog';
 import { migrate } from '../src/game/persist';
@@ -32,6 +33,46 @@ describe('C24 world', () => {
     for (const p of w.places.filter(p => p.kind !== 'elder')) { let near = false; for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) if (seen[(p.ty + dy) * WW + p.tx + dx]) near = true; expect(near, p.name).toBe(true); }
     // every start has wood, stone and food within 12 tiles
     for (const st of w.starts) { const kinds = new Set<string>(); for (let y = st.ty - 12; y <= st.ty + 12; y++) for (let x = st.tx - 12; x <= st.tx + 12; x++) { const k = w.src[y * WW + x]; if (k >= 0) kinds.add(SRC_KEYS[k]); } expect(kinds.has('rock')).toBe(true); expect(kinds.has('bush') || kinds.has('herb')).toBe(true); expect([...kinds].some(k => ['oak', 'pine', 'palm', 'snowpine'].includes(k))).toBe(true); }
+  });
+});
+
+describe('typed versioned map content packs', () => {
+  it('validates both authored layouts, stable geography, and the shared multi-stage relay', () => {
+    expect(validateAllContentPacks()).toEqual([]);
+    const authoredBlueprint = structuredClone(MAP_CONTENT_PACKS.dev_delta); authoredBlueprint.pois[0].loot.vault.push({ item: 'blueprint:bow', quantity: 1 });
+    expect(validateContentPack(authoredBlueprint)).toEqual([]);
+    expect(MAP_CONTENT_PACKS.shipping.schemaVersion).toBe(1);
+    expect(MAP_CONTENT_PACKS.shipping.pois).toEqual([]);
+    expect(MAP_CONTENT_PACKS.dev_delta.pois[0].id).toBe('delta_relay');
+    const shipping = getWorld('shipping'), dev = getWorld('dev_delta');
+    expect(shipping.places.some(p => p.id === 'delta_relay')).toBe(false);
+    expect(dev.places.some(p => p.id === 'delta_relay')).toBe(true);
+    expect(shipping.tiles[shipping.statics.find(e => e.poi === 'factory' && e.kind === 'door')!.ty * WW + shipping.statics.find(e => e.poi === 'factory' && e.kind === 'door')!.tx]).toBe(T.FLOOR);
+    expect(shipping.starts.map(p => [p.id, p.tx, p.ty])).toEqual(dev.starts.map(p => [p.id, p.tx, p.ty]));
+    expect(shipping.places.find(p => p.id === 'factory')).toEqual(dev.places.find(p => p.id === 'factory'));
+    expect(shipping.statics.filter(e => ['factory', 'light'].includes(e.poi || '')).map(e => [e.poi,e.kind,e.tx,e.ty,e.locked]))
+      .toEqual(dev.statics.filter(e => ['factory', 'light'].includes(e.poi || '')).map(e => [e.poi,e.kind,e.tx,e.ty,e.locked]));
+    expect(shipping.tiles[128 * WW + 119]).not.toBe(T.CLIFF);
+    expect(dev.tiles[128 * WW + 119]).toBe(T.CLIFF);
+    const relay = dev.statics.filter(e => e.poi === 'delta_relay');
+    expect(relay.filter(e => e.kind === 'door').map(e => e.locked)).toEqual([undefined, 'keycard', 'power']);
+    expect(relay.some(e => e.kind === 'gen')).toBe(true);
+    expect(relay.filter(e => e.kind === 'loot').length).toBe(2);
+    expect(setActiveLayout('dev_delta')).toBe(true); expect(getActiveLayout()).toBe('dev_delta');
+    expect(setActiveLayout('bogus')).toBe(false); expect(getActiveLayout()).toBe('dev_delta');
+    const started = newGame(); markDirty(); expect(dispatch(started, { id: id(), type: 'startRun', character: 'female', region: 1, seed: 90210 }, T0).ok).toBe(true);
+    expect(started.run?.layoutId).toBe('dev_delta');
+    setActiveLayout('shipping');
+  });
+  it('rejects negative schema, broken POI geometry, unknown or empty loot, and invalid terrain', () => {
+    const bad = structuredClone(MAP_CONTENT_PACKS.dev_delta);
+    bad.schemaVersion = 2 as 1; bad.pois[0].width = 0; bad.pois[0].loot.outer[0].item = 'not_a_real_item'; bad.pois[0].loot.vault[0].quantity = 0;
+    bad.terrain.push({ x: 4, y: 6, width: -1, height: 2, terrain: 'lava' as any });
+    expect(validateContentPack(bad)).toEqual(expect.arrayContaining([
+      'schemaVersion must be 1', 'poi footprint must be at least 5 by 5 tiles', 'unknown loot item: not_a_real_item',
+      'loot quantity must be a positive integer: iron_ingot', 'terrain rectangles need integer coordinates and positive dimensions',
+      'unsupported terrain: lava',
+    ]));
   });
 });
 

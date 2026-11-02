@@ -3,7 +3,7 @@
 import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, T, uid, rngNext, dist, clamp,
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
 import { ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, ACHIEVEMENTS, CORE_STUDY } from './catalog';
-import { getWorld, SRC_KEYS, tileAt } from './world';
+import { getWorld, getActiveLayout, SRC_KEYS, tileAt } from './world';
 
 export type Intent = { id: string; type: string; [k: string]: any };
 export type Result = { ok: true; receipt: string; msg?: string } | { ok: false; reason: string; dup?: boolean };
@@ -49,7 +49,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   const w = getWorld();
   const seed = seedOverride ?? ((now ^ 0x9e3779b9) >>> 0);
   const r: RunState = {
-    id: 'run_' + seed.toString(36), seed, character, startedAt: now, qaOffset: 0, qaUsed: false, spawnRegion: 0, ended: null,
+    id: 'run_' + seed.toString(36), seed, character, startedAt: now, qaOffset: 0, qaUsed: false, layoutId: getActiveLayout(), spawnRegion: 0, ended: null,
     player: null as any, creatures: [], sources: {}, terrain: {}, entities: {}, custody: {}, knowledge: { recipes: Object.keys(RECIPES).filter(k => RECIPES[k].base), studied: [] },
     traces: [], discovered: [], poiSeen: [], elderStones: [], achievements: [], score: 0, deposited: 0,
     clock: { lastSimAt: now, simMs: 0, respawnAcc: 0, weatherSlot: -1 }, rng: seed, nextId: 1, receipts: [], seenIntents: [], seq: 0,
@@ -120,10 +120,10 @@ export function sourceAt(r: RunState, tx: number, ty: number, now?: number) {
   return { i, key, def, stock, hp, st, fire: (st as any)?.fire as number | undefined };
 }
 // collision cache — rebuilt when structures/sources/terrain change
-let blockCache: { run: string; arr: Uint8Array } | null = null; let blockDirty = true;
+let blockCache: { run: string; layout: string; arr: Uint8Array } | null = null; let blockDirty = true;
 export function markDirty() { blockDirty = true; tileIndex = null; }
 /** 0 free, 1 terrain wall, 2 source, 3 structure, 4 shallow/river (wade), 5 lava */
-let baseGrid: Uint8Array | null = null;
+let baseGrid: Uint8Array | null = null; let baseGridLayout = '';
 function tileClass(t: number) { return (t === T.DEEP || t === T.CLIFF || t === T.PWALL) ? 1 : t === T.LAVA ? 5 : (t === T.SHALLOW || t === T.RIVER) ? 4 : 0; }
 function cellClass(r: RunState | null, tx: number, ty: number) {
   const w = getWorld(); const i = ty * WW + tx; const t = r ? effTile(r, tx, ty) : w.tiles[i]; let c = tileClass(t);
@@ -131,8 +131,9 @@ function cellClass(r: RunState | null, tx: number, ty: number) {
   return c;
 }
 export function blockGrid(r: RunState) {
-  if (blockCache && blockCache.run === r.id && !blockDirty) return blockCache.arr;
-  if (!baseGrid) { baseGrid = new Uint8Array(WW * WH); for (let i = 0; i < WW * WH; i++) baseGrid[i] = cellClass(null, i % WW, (i / WW) | 0); }
+  const layout = getActiveLayout();
+  if (blockCache && blockCache.run === r.id && blockCache.layout === layout && !blockDirty) return blockCache.arr;
+  if (!baseGrid || baseGridLayout !== layout) { baseGrid = new Uint8Array(WW * WH); for (let i = 0; i < WW * WH; i++) baseGrid[i] = cellClass(null, i % WW, (i / WW) | 0); baseGridLayout = layout; }
   const arr = baseGrid.slice();
   for (const k in r.terrain) { const i = +k; arr[i] = cellClass(r, i % WW, (i / WW) | 0); }
   for (const k in r.sources) { const i = +k; arr[i] = cellClass(r, i % WW, (i / WW) | 0); }
@@ -142,12 +143,12 @@ export function blockGrid(r: RunState) {
     else if (e.kind === 'door') { if (!e.open) arr[i] = 3; }
     else if (e.kind === 'loot' || e.kind === 'cash' || e.kind === 'vendor' || e.kind === 'gen' || e.kind === 'evac') arr[i] = 3;
   }
-  blockCache = { run: r.id, arr }; blockDirty = false; return arr;
+  blockCache = { run: r.id, layout, arr }; blockDirty = false; return arr;
 }
 export function blockedAt(r: RunState, tx: number, ty: number) { if (tx < 0 || ty < 0 || tx >= WW || ty >= WH) return true; const b = blockGrid(r)[ty * WW + tx]; return b === 1 || b === 2 || b === 3 || b === 5; }
-let tileIndex: Map<number, Entity[]> | null = null;
+let tileIndex: Map<number, Entity[]> | null = null; let tileIndexRun = '';
 export function entsAt(r: RunState, tx: number, ty: number): Entity[] {
-  if (!tileIndex) { tileIndex = new Map(); for (const e of Object.values(r.entities)) if (e.tx !== undefined && e.kind !== 'drop' && e.kind !== 'bag' && e.kind !== 'cart') { const i = e.ty! * WW + e.tx; const l = tileIndex.get(i); if (l) l.push(e); else tileIndex.set(i, [e]); } }
+  if (!tileIndex || tileIndexRun !== r.id) { tileIndex = new Map(); tileIndexRun = r.id; for (const e of Object.values(r.entities)) if (e.tx !== undefined && e.kind !== 'drop' && e.kind !== 'bag' && e.kind !== 'cart') { const i = e.ty! * WW + e.tx; const l = tileIndex.get(i); if (l) l.push(e); else tileIndex.set(i, [e]); } }
   return tileIndex.get(ty * WW + tx) || [];
 }
 export function claimAt(r: RunState, tx: number, ty: number) {

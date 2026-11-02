@@ -32,10 +32,10 @@ function ItemInfo({ s }: { s: Stack | null }) {
   return <div style={{ fontSize: 10, minHeight: 34 }}><div style={{ color: '#ffe0a0', fontSize: 12 }}>{d.name}{s.meta ? `: ${ITEMS[RECIPES[s.meta]?.out]?.name || s.meta}` : ''}{s.charge !== undefined && d.charge ? ` — ${s.charge}/${d.charge} charges` : ''}{s.dur !== undefined && d.dur ? ` — ${s.dur}/${d.dur}` : ''}</div><div style={{ color: '#cfc2dc' }}>{d.desc}</div><div style={{ color: '#9ad0a0' }}>{stats.join(' · ')}</div></div>;
 }
 
-export function InventoryPanel({ api, quickTo, x = 404 }: { api: Api; quickTo?: string; x?: number }) {
+export function InventoryPanel({ api, quickTo, x = 404, top = 54 }: { api: Api; quickTo?: string; x?: number; top?: number }) {
   const r = api.gs.run!; const sel = api.sel ? C(r, api.sel.c)?.slots[api.sel.slot] ?? null : null; const w = invWeight(r);
   let armor = 0, warm = 0; for (const s of C(r, 'eq').slots) if (s) { armor += ITEMS[s.key].armor || 0; warm += ITEMS[s.key].cold || 0; }
-  return <Panel title="Inventory" style={{ left: x, top: 34, width: 196 }} onClose={() => api.open(null)}>
+  return <Panel title="Inventory" style={{ left: x, top, width: 196 }} onClose={() => api.open(null)}>
     <div className="flex gap-2 items-center" style={{ marginBottom: 4 }}>
       {['head', 'body', 'back'].map((sl, i) => <div key={sl} className="flex flex-col items-center" style={{ fontSize: 8, color: '#8a7a9a' }}><Slot s={C(r, 'eq').slots[i]} sel={api.sel?.c === 'eq' && api.sel.slot === i} onClick={e => slotClick(api, 'eq', i, e)} onContext={() => slotContext(api, 'eq', i)} />{sl}</div>)}
       <div style={{ fontSize: 10, lineHeight: 1.1, marginLeft: 4 }}><div>Armor {Math.round(armor * 100)}% · Warmth +{warm}</div><div style={{ color: w > BAL.player.carryLimit ? '#ff8a7a' : '#cfc2dc' }}>Load {w.toFixed(1)} / {BAL.player.carryLimit} kg{w > BAL.player.carryLimit ? ' (slowed)' : ''}</div><div style={{ color: '#ffe27a' }}>Carried cash {countItem(r, 'inv', 'rcash')} · Secured {api.gs.profile.securedCash}</div></div>
@@ -58,7 +58,7 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
   const takeAll = (cid: string) => { const c = C(r, cid); for (let i = 0; i < c.slots.length; i++) if (c.slots[i]) { const res = api.act('move', { from: cid, fs: i, to: 'inv' }); if (!res.ok) break; } };
   const quickTo = st ? (kind === 'research' ? undefined : st.fuelC) : e.c;
   return <>
-    <Panel title={title} style={{ left: 168, top: 34, width: 230, maxHeight: 300 }} onClose={() => api.open(null)} className="scroll">
+    <Panel title={title} style={{ left: 168, top: 54, width: 230, maxHeight: 286 }} onClose={() => api.open(null)} className="scroll">
       <div className="scroll" style={{ maxHeight: 270, overflowY: 'auto', overflowX: 'hidden' }}>
         {e.c && <><Grid api={api} cid={e.c} cols={8} /><div className="flex gap-1" style={{ marginTop: 4 }}><button className="btn" onClick={() => takeAll(e.c!)}>Take all</button>{e.kind === 'cart' && <span style={{ fontSize: 10, color: '#cfc2dc' }}>Load {cartWeight(r, e.c).toFixed(0)}/{BAL.cart.maxWeight} kg · [F] pull</span>}{e.kind === 'cart' && <button className="btn ghost" onClick={() => api.act('reclaim', { eid })}>Pack up</button>}</div></>}
         {st && kind !== 'research' && <StationBody api={api} eid={eid} />}
@@ -66,7 +66,7 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
         {e.kind === 'struct' && <div style={{ marginTop: 6, fontSize: 10, color: '#8a7a9a' }}>HP {Math.round(e.hp!)}/{e.maxHp} <button className="btn ghost" style={{ marginLeft: 6 }} onClick={() => { api.act('reclaim', { eid }); api.open(null); }}>Reclaim</button></div>}
       </div>
     </Panel>
-    <InventoryPanel api={api} quickTo={quickTo} />
+    <InventoryPanel api={api} quickTo={quickTo} top={54} />
   </>;
 }
 function StationBody({ api, eid }: { api: Api; eid: string }) {

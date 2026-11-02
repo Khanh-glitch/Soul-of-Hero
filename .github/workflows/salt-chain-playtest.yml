@@ -59,7 +59,21 @@ jobs:
         env:
           GAME_URL: http://127.0.0.1:4173
         run: node e2e/salt-chain.mjs
-      - name: Upload current-build screenshots and journey log
+      - name: Play both authored map layouts and the multi-stage POI
+        working-directory: web
+        env:
+          GAME_URL: http://127.0.0.1:4173
+          BUILD_SHA: ${{ github.sha }}
+        run: node e2e/map-poi.mjs
+      - name: Upload current-build screenshots and journey logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: map-poi-browser-evidence-${{ github.sha }}-${{ github.run_attempt }}
+          path: web/evidence/map-poi/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Upload retained Salt Shale browser evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -74,7 +88,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add web/evidence/salt-chain/*.png web/evidence/salt-chain/run-log.txt
+          git add web/evidence/salt-chain/*.png web/evidence/salt-chain/run-log.txt web/evidence/map-poi/*.png web/evidence/map-poi/run-log.txt
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "test: capture salt-chain player evidence [skip ci]"
           git push origin "HEAD:${GITHUB_REF_NAME}"
