@@ -48,45 +48,77 @@ const SNAP = `(() => { const r = window.__soh.run;
     terrCount: Object.keys(r.terrain||{}).length, entCount: Object.keys(r.entities).length,
     logLen: r.log.length, cash: window.__soh.profile.securedCash }); })()`  // note: save-file length/clock excluded — ordinary sim time advances and autosaves;
 
-// ============ V5 VISUAL GATE: 3 effects x day/QA-night x 3 phases, lab hidden ============
+// ============ V5 VISUAL GATE: deliberate source frames, enforced pixel checks ============
+// Frame phases come from per-frame source luminance (anticipation / max expression /
+// decay), then the instance is paused and scrubbed to the exact source frame time.
 await page.keyboard.press('F9'); await wait(500);
 await page.keyboard.press('KeyH'); await wait(200); // collapse lab -> unobstructed viewport
 ok(await ev(() => document.querySelectorAll('.panel').length >= 1), 'lab opened');
+
+// in-page pixel probe over the game canvas: predicate + region -> count/centroid/maxLuma
+const PROBE = (spec) => { const cv = document.querySelector('canvas'); const g = cv.getContext('2d');
+  const d = g.getImageData(0, 0, cv.width, cv.height).data; const [rx, ry, rw, rh] = spec.rect;
+  let n = 0, sx = 0, sy = 0, maxL = 0;
+  for (let y = ry; y < ry + rh; y++) for (let x = rx; x < rx + rw; x++) { const i = (y * cv.width + x) * 4;
+    const r = d[i], gg = d[i+1], b = d[i+2], a = d[i+3];
+    if (a < 40) continue;
+    if (spec.pred === 'purple' && !(r > 110 && b > 130 && r > gg * 1.25 && b > gg)) continue;
+    if (spec.pred === 'cyan' && !(b > 160 && gg > 130 && b > r + 40)) continue;
+    if (spec.pred === 'anylit' && !(a > 60)) continue;
+    n++; sx += x; sy += y; const L = 0.2126*r + 0.7152*gg + 0.0722*b; if (L > maxL) maxL = L; }
+  return { n, cx: n ? sx / n : -1, cy: n ? sy / n : -1, maxL }; };
+
 const gateFx = [
-  { id: 'ice/ice-lance', family: 'proj', name: 'icelance' },
-  { id: 'arcane/arcane-orb', family: 'hover', name: 'orb' },
-  { id: 'shadow/black-hole', family: 'ground', name: 'blackhole' },
+  { id: 'ice/ice-lance', family: 'proj', dx: 26, dy: -4, name: 'icelance', pred: 'cyan', minCount: 120 },
+  { id: 'arcane/arcane-orb', family: 'hover', dx: 0, dy: -14, name: 'orb', pred: 'purple', minCount: 40 },
+  { id: 'shadow/black-hole', family: 'ground', dx: -30, dy: 4, name: 'blackhole', pred: 'purple', minCount: 60 },
 ];
 for (const fx of gateFx) {
+  const luma = await ev(async (id) => await window.__pfx.frameLuma(id), fx.id);
+  ok(luma.length > 0, `gate ${fx.id}: source frame luminance measured`, `${luma.length} frames`);
+  let peak = 0; for (let i = 0; i < luma.length; i++) if (luma[i] > luma[peak]) peak = i;
+  const phases = { anticipation: Math.floor(luma.length * 0.08), peak, decay: Math.floor(luma.length * 0.9) };
+  console.log(`  ${fx.id} frames=${luma.length} peakFrame=${peak} (luma ${luma[peak].toFixed(1)} vs avg ${(luma.reduce((a,b)=>a+b,0)/luma.length).toFixed(1)}) phases=${JSON.stringify(phases)}`);
   for (const night of [false, true]) {
-    await ev((n) => window.__qaNight(n), night); // QA-only darkness override (labeled qanight)
+    await ev((n) => window.__qaNight(n), night);
     await wait(250);
-    await ev(() => window.__pfx.clear());
-    await ev((f) => { const r = window.__soh.run; const p = r.player; window.__pfx.spawn(f.id, { x: p.x + 26, y: p.y - 4, family: f.family, loop: true }); }, fx);
-    await wait(200); await shot(`gate-${fx.name}-${night ? 'qanight' : 'day'}-a-spawn`);
-    await wait(500); await shot(`gate-${fx.name}-${night ? 'qanight' : 'day'}-b-active`);
-    await wait(700); await shot(`gate-${fx.name}-${night ? 'qanight' : 'day'}-c-peak`);
-    const inst = await ev(() => window.__pfx.listInstances().map(i => i.id));
-    ok(inst.includes(fx.id), `gate ${fx.id} instance alive`);
+    for (const [phaseName, frame] of Object.entries(phases)) {
+      await ev((f) => { const r = window.__soh.run; const p = r.player; window.__pfx.clear(); window.__pfx.setPaused(true);
+        const inst = window.__pfx.spawn(f.id, { x: p.x + f.dx, y: p.y + f.dy, family: f.family, loop: true });
+        window.__pfx.scrub((f.frame / 30) * 1000); }, { ...fx, frame });
+      await wait(150); // let one rendered frame land
+      await shot(`gate-${fx.name}-${night ? 'qanight' : 'day'}-${phaseName}-f${frame}`);
+      // enforced spatial/visual probe around the expected on-screen position
+      const pos = await ev((f) => { const r = window.__soh.run; const c = window.__cam; return { sx: r.player.x + f.dx - c.x, sy: r.player.y + f.dy - c.y }; }, fx);
+      const rect = [Math.max(0, Math.round(pos.sx) - 90), Math.max(0, Math.round(pos.sy) - 80), 180, 150];
+      const probe = await ev(PROBE, { pred: fx.pred, rect });
+      const tag = `${fx.id} ${night ? 'qanight' : 'day'} ${phaseName} f${frame}`;
+      if (phaseName === 'peak') {
+        ok(probe.n >= fx.minCount, `gate ${tag}: ${fx.pred} pixel count`, `n=${probe.n} (min ${fx.minCount})`);
+        ok(probe.maxL > (night ? 60 : 140), `gate ${tag}: peak luminance not suppressed`, `maxL=${probe.maxL.toFixed(0)}`);
+        if (fx.name === 'blackhole') {
+          ok(Math.abs(probe.cx - pos.sx) < 26, `gate ${tag}: art centroid aligned with world anchor`, `cx=${probe.cx.toFixed(0)} vs ${pos.sx.toFixed(0)}`);
+          ok(probe.cy <= pos.sy + 10, `gate ${tag}: disk grounded (centroid not floating above anchor)`, `cy=${probe.cy.toFixed(0)} anchorY=${pos.sy.toFixed(0)}`);
+        }
+      }
+    }
   }
+  await ev(() => { window.__pfx.setPaused(false); window.__pfx.clear(); });
 }
-// NOTE: the qanight shots above use the same daytime clock; true matched night pair below.
-await ev(() => window.__qaNight(false)); await ev(() => window.__pfx.clear());
+await ev(() => window.__qaNight(false));
 
 // ---- matched REAL day vs REAL night pair (same position, qaOffset clock) ----
-const nightShot = async (tag) => {
-  await ev((h) => { const r = window.__soh.run; r.qaOffset = h; }, tag);
-  await wait(900);
-};
 await ev(() => { const r = window.__soh.run; r.qaOffset = 0; });
-await ev(() => { const r = window.__soh.run; const p = r.player; window.__pfx.spawn('shadow/black-hole', { x: p.x - 34, y: p.y + 4, family: 'ground', loop: true }); window.__pfx.spawn('arcane/arcane-orb', { x: p.x + 20, y: p.y - 8, family: 'hover', loop: true }); });
-await wait(1000); await shot('gate-real-DAY-blackhole-orb');
-await ev(() => { const r = window.__soh.run; r.qaOffset = (1008000 + 20 * 1440000) - (Date.now() - r.startedAt); }); // dayTime t=0 = max darkness
-await wait(1200); await shot('gate-real-NIGHT-blackhole-orb');
+await ev(() => { const r = window.__soh.run; const p = r.player; window.__pfx.setPaused(true); window.__pfx.spawn('shadow/black-hole', { x: p.x - 34, y: p.y + 4, family: 'ground', loop: true }); window.__pfx.scrub(45 * 1000 / 30); window.__pfx.spawn('arcane/arcane-orb', { x: p.x + 20, y: p.y - 8, family: 'hover', loop: true }); window.__pfx.scrub(0); });
+await wait(600); await shot('gate-real-DAY-blackhole-orb');
+const darkCheck = await ev(() => { const r = window.__soh.run; r.qaOffset = (1008000 + 20 * 1440000) - (Date.now() - r.startedAt); return true; });
+await wait(1000); await shot('gate-real-NIGHT-blackhole-orb');
 const darkNow = await ev(() => { const r = window.__soh.run; const len = 24 * 60000; const t = (((Date.now() - r.startedAt + r.qaOffset) + len * 0.3) % len) / len; return t; });
 ok(Math.abs(darkNow) < 0.06 || Math.abs(darkNow - 1) < 0.06, 'real night clock at max darkness', 'dayTime=' + darkNow.toFixed(3));
-await ev(() => { const r = window.__soh.run; r.qaOffset = 0; });
-await ev(() => window.__pfx.clear());
+// night non-suppression probe on the real-night shot
+const nprobe = await ev(PROBE, { pred: 'purple', rect: [200, 60, 240, 200] });
+ok(nprobe.n >= 60 && nprobe.maxL > 60, 'real NIGHT: black hole + orb still luminous', `n=${nprobe.n} maxL=${nprobe.maxL.toFixed(0)}`);
+await ev(() => { const r = window.__soh.run; r.qaOffset = 0; window.__pfx.setPaused(false); window.__pfx.clear(); });
 
 // ============ lab usability: search/select/cast does not mutate state ============
 await page.keyboard.press('F9'); await wait(300); // reopen

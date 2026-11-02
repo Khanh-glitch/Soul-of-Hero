@@ -96,7 +96,7 @@ function loadImg(path: string, pilot: boolean): Promise<HTMLImageElement | null>
   let st = imgs.get(path);
   if (!st) {
     const ns: ImgState = { img: null, err: false, p: null as any, pilot, last: 0 };
-    imgs.set(path, ns); pageOrder.push(path);
+    imgs.set(path, ns); pageOrder.push(path); st = ns;
     ns.p = new Promise(res => {
       if (typeof Image === 'undefined') { res(null); return; }
       const im = new Image();
@@ -308,12 +308,14 @@ export function drawWarpPass(g: CanvasRenderingContext2D, cam: { x: number; y: n
         Math.round(cx - rad + pinch), Math.round(wc.y - rad + sy), Math.round(rad * 2 - pinch * 2), Math.ceil(sliceH));
     }
     if (layers.art) {
+      // SAME transform as emission/radiance/ground contact: destRect (r0), not a
+      // separate pivot-based position — art, light and warp focal stay aligned.
       const cell = pageCell(inst.entry, 'combined', frameOf(inst.entry, inst.t));
       if (cell?.img) {
         g.save();
+        if (inst.angle) { g.translate(r0.rotX, r0.rotY); g.rotate(inst.angle); g.translate(-r0.rotX, -r0.rotY); }
         g.drawImage(cell.img, cell.sx, cell.sy, cell.sw, cell.sh,
-          Math.round(cx - inst.entry.export.pivot[0] * inst.scale), Math.round(cy - inst.entry.export.pivot[1] * inst.scale),
-          Math.round(r0.dw), Math.round(r0.dh));
+          Math.round(r0.dx), Math.round(r0.dy), Math.round(r0.dw), Math.round(r0.dh));
         g.restore();
       }
     }
@@ -378,6 +380,28 @@ export function syncProjFx(projs: any[], now: number) {
   }
   for (const [pr, inst] of [...projInst]) if (!projs.includes(pr) || !instances.includes(inst)) projInst.delete(pr);
   void now;
+}
+
+// ---- QA/dev: per-frame mean luminance of the combined channel ----------------------
+// Used by the QA harness to pick deliberate anticipation/peak/decay source frames.
+export async function frameLuma(id: string): Promise<number[]> {
+  const e = manifest.get(id); if (!e || typeof document === 'undefined') return [];
+  const pilot = ((PILOT_MANIFEST as any).effects ?? PILOT_MANIFEST).some((p: any) => p.id === id);
+  for (const p of e.export.pages.combined) await loadImg(p.path, pilot); // ensure decoded before measuring
+  const out: number[] = [];
+  const cv = document.createElement('canvas'); cv.width = 16; cv.height = 16;
+  const g = cv.getContext('2d', { willReadFrequently: true })!;
+  for (let f = 0; f < e.export.frames; f++) {
+    const cell = pageCell(e, 'combined', f);
+    if (!cell?.img) { out.push(0); continue; }
+    g.clearRect(0, 0, 16, 16);
+    g.drawImage(cell.img, cell.sx, cell.sy, cell.sw, cell.sh, 0, 0, 16, 16);
+    const d = g.getImageData(0, 0, 16, 16).data;
+    let s = 0, n = 0;
+    for (let i = 0; i < d.length; i += 4) { const a = d[i + 3] / 255; s += a * (0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2]); n += a; }
+    out.push(n > 0.5 ? s / n : 0);
+  }
+  return out;
 }
 
 // ---- stats (ring buffer for p50/p95) ------------------------------------------------

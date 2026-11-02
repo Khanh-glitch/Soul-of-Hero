@@ -136,6 +136,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
   const nightRef = useRef(nightOverride); nightRef.current = nightOverride;
   (window as any).__soh = gs; // QA-only inspection hook (browser automation); no gameplay authority
   (window as any).__pfx = pfx; // QA-only hook for FX stats/instances
+  (window as any).__cam = cam; // QA-only camera hook
   (window as any).__qaNight = (v: boolean) => setNightOverride(v); // QA-only darkness override; never touches game clock/save
   const r = gs.run; if (!r) return <div className="stage" />;
   const p = r.player; const now = Date.now(); const ph = phaseOf(r, now); const hrs = runHours(r, now); const day = Math.floor(hrs / 24) + 1;

@@ -425,7 +425,11 @@ function drawLight(g: CanvasRenderingContext2D, r: RunState, now: number, time: 
   for (const k in r.sources) { const st: any = r.sources[+k]; if (st.fire && st.fire > r.clock.simMs) { const i = +k; lights.push([(i % WW) * 16 + 8, ((i / WW) | 0) * 16, 60, '#ff7a2a']); } }
   const tx0 = Math.floor(cx / 16), ty0 = Math.floor(cy / 16); for (let ty = ty0; ty < ty0 + 24; ty += 2) for (let tx = tx0; tx < tx0 + 41; tx += 2) if (effTile(r, tx, ty) === T.LAVA) lights.push([tx * 16 + 8, ty * 16 + 8, 34, '#ff6a1e']);
   l.globalCompositeOperation = 'destination-out';
-  for (const [x, y, rad] of lights) { const X = x - cx, Y = y - cy; for (let k = 0; k < 4; k++) { l.fillStyle = `rgba(0,0,0,${0.32 + k * 0.17})`; l.beginPath(); l.arc(Math.round(X), Math.round(Y), Math.round(rad * (1 - k * 0.2)), 0, Math.PI * 2); l.fill(); } }
+  // smooth radial falloff per light — environmental illumination, no concentric bands
+  for (const [x, y, rad] of lights) { const X = Math.round(x - cx), Y = Math.round(y - cy);
+    const gr = l.createRadialGradient(X, Y, Math.max(1, rad * 0.08), X, Y, rad);
+    gr.addColorStop(0, 'rgba(0,0,0,0.95)'); gr.addColorStop(0.5, 'rgba(0,0,0,0.55)'); gr.addColorStop(0.8, 'rgba(0,0,0,0.18)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
+    l.fillStyle = gr; l.beginPath(); l.arc(X, Y, Math.ceil(rad), 0, Math.PI * 2); l.fill(); }
   g.drawImage(lightCv, 0, 0);
   g.globalCompositeOperation = 'lighter'; for (const [x, y, rad, col] of lights) { if (!col) continue; g.fillStyle = col; g.globalAlpha = 0.07 * dark * 1.5; g.beginPath(); g.arc(Math.round(x - cx), Math.round(y - cy), rad * 0.7, 0, Math.PI * 2); g.fill(); } g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
 }

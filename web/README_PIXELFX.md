@@ -83,9 +83,21 @@ LD_LIBRARY_PATH=<nss-stub> node scripts/qa-pixelfx.mjs                 # standal
 ```
 
 Latest results (Chromium headless, this sandbox, vsync-capped 60 fps): 30/30 vitest,
-tsc clean, build ~13.9 MB single file. Browser QA both modes: ALL PASS — v5 gate
-gallery (ice-lance / arcane-orb / black-hole × day / QA-night / real-night × 3 phases,
-lab hidden for unobstructed shots), lab non-mutation (state+save byte-identical),
+tsc clean, build ~13.9 MB single file. Browser QA both modes: ALL PASS — v5 gate now
+uses **deliberate source frames**: per-frame source luminance (`window.__pfx.frameLuma`)
+picks anticipation (8 %) / peak (argmax) / decay (90 %) frames, the lab pauses and
+scrubs to the exact frame time (frame/30×1000 ms) for day + QA-night screenshots,
+and canvas pixel probes are enforced: ice-lance peak cyan n=151 day / 970 night
+(maxL 246), arcane-orb peak purple n=1090 day / 1566 night (maxL 187/189 — the orb's
+peak luminance is only ~3 % above its mean, i.e. a sustained glow rather than a flash;
+richness verified by pixel count, not just a bright frame), black-hole peak purple
+n=930 day / 2908 night (maxL 214/218) with art centroid aligned to the world anchor
+(|cx−sx| < 26 px) and the disk grounded (cy ≤ anchor+10 — it touches the ground/roof
+line instead of floating), real night (dayTime 0.001) black hole + orb n=7526.
+Night light mask uses one smooth radial gradient per light (no concentric bands).
+Gallery: ice-lance / arcane-orb / black-hole × day / QA-night × 3 deliberate frames +
+real DAY/NIGHT pair, lab hidden for unobstructed shots. Lab non-mutation (state+save
+byte-identical),
 one Core cast = exactly one charge debit (3→2; four cores → [2,2,3,2]), perf
 1/3/10 FX = 59–60 fps, p50=p95=16.7 ms, full pack catalog = 244 with lazy load,
 save/reload, zero page errors. `e2e/salt-chain.mjs` PASSES on the latest prototype
