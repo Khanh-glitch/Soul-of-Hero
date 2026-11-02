@@ -1038,6 +1038,7 @@ func _observe_walk(hero: CharacterBody2D, enemy: CharacterBody2D, home: Vector2,
 		var point := Vector2(cell.x * 16 + 8, cell.y * 16 + 15)
 		var deadline := Time.get_ticks_msec() + 6000
 		var stalled := 0
+		var sidesteps := 0
 		var escapes := 0
 		var escape_frames := 0
 		var escape_direction := Vector2.ZERO
@@ -1068,8 +1069,18 @@ func _observe_walk(hero: CharacterBody2D, enemy: CharacterBody2D, home: Vector2,
 				if _blocked_by_body(hero):
 					# A living body is not terrain. A player does not shove at the
 					# same pixel for six seconds while something stands on it: he
-					# steps around it and picks up the path at the next cell. The
-					# skip is counted and printed, never silent.
+					# steps sideways around it and carries on to the same cell. Two
+					# honest sidesteps, then the cell is skipped and counted, never
+					# silent - the earlier version skipped at the first contact and
+					# fifteen silent skips let a walk "pass" while moving 90 px.
+					if sidesteps < 2:
+						sidesteps += 1
+						var side := _sidestep_direction(hero, point, sidesteps)
+						if side != Vector2.ZERO:
+							escape_direction = side
+							escape_frames = 20
+							stalled = 0
+							continue
 					skipped = true
 					stats["skipped"] = int(stats.get("skipped", 0)) + 1
 					_note_skip(point, hero)
@@ -1177,6 +1188,25 @@ func _escape_direction(hero: CharacterBody2D, at: Vector2, point: Vector2, attem
 		query.motion = candidate * 10.0
 		var fractions := hero.get_world_2d().direct_space_state.cast_motion(query)
 		if fractions.size() >= 2 and fractions[0] > 0.5:
+			return candidate
+	return Vector2.ZERO
+
+
+## The direction a player would take around something standing in the way: straight
+## sideways from the line to the target, whichever side actually has room for a body.
+func _sidestep_direction(hero: CharacterBody2D, point: Vector2, attempt: int) -> Vector2:
+	var to_target := (point - hero.global_position).normalized()
+	if to_target.length() < 0.5:
+		return Vector2.ZERO
+	var perp := Vector2(-to_target.y, to_target.x)
+	var order: Array[Vector2] = [-perp, perp] if attempt % 2 == 1 else [perp, -perp]
+	for candidate: Vector2 in order:
+		var query := _shape_query(hero)
+		var body := hero.get_node_or_null("BodyShape") as CollisionShape2D
+		query.transform = Transform2D(0.0, hero.global_position + (body.position if body != null else Vector2.ZERO))
+		query.motion = candidate * 24.0
+		var fractions := hero.get_world_2d().direct_space_state.cast_motion(query)
+		if fractions.size() >= 2 and fractions[0] > 0.6:
 			return candidate
 	return Vector2.ZERO
 
