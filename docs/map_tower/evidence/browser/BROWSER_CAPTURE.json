@@ -1,0 +1,786 @@
+{
+ "base": "http://127.0.0.1:8011/web/",
+ "capture": "chromium playwright, real canvas",
+ "viewport": [
+  640,
+  360
+ ],
+ "overlays": "hidden for evaluation captures, shown separately",
+ "commit": "558ce953524ad7e22130651f742a172969d64cf0",
+ "run": "41391439984",
+ "scenes": [
+  {
+   "file": "spawn_sp_west.png",
+   "camera": [
+    1488,
+    2424
+   ],
+   "scene": "spawn_sp_west",
+   "note": "spawn",
+   "pixels": {
+    "nonBlank": 230400,
+    "ratio": 1,
+    "meanRed": 109.11468315972222
+   },
+   "sha256": "a17249f2ca7d1fa69d78423efb3b6e46c0f1b90370b4eda3e966bbfca0a55871",
+   "pass": true
+  },
+  {
+   "file": "spawn_sp_lake.png",
+   "camera": [
+    3160,
+    2488
+   ],
+   "scene": "spawn_sp_lake",
+   "note": "spawn",
+   "pixels": {
+    "nonBlank": 229644,
+    "ratio": 0.99671875,
+    "meanRed": 118.81509114583334
+   },
+   "sha256": "ca4531c493086932298508efaf93c877797f30dffcaa3a889684e24574ba69b5",
+   "pass": true
+  },
+  {
+   "file": "spawn_sp_hook.png",
+   "camera": [
+    5128,
+    1568
+   ],
+   "scene": "spawn_sp_hook",
+   "note": "spawn",
+   "pixels": {
+    "nonBlank": 230400,
+    "ratio": 1,
+    "meanRed": 123.95751736111112
+   },
+   "sha256": "abf840f4822febec39f19c76d6d484a7940e6b0f3eb48cceafd8895ecb881efb",
+   "pass": true
+  },
+  {
+   "file": "spawn_sp_gulf.png",
+   "camera": [
+    3488,
+    3720
+   ],
+   "scene": "spawn_sp_gulf",
+   "note": "spawn",
+   "pixels": {
+    "nonBlank": 230400,
+    "ratio": 1,
+    "meanRed": 122.54812934027778
+   },
+   "sha256": "dc159d6ef670971830fccefb3fb76d91083c556fc9da8efbe761e5529586226c",
+   "pass": true
+  },
+  {
+   "file": "greywater_upstream_0.png",
+   "camera": [
+    2608,
+    1637
+   ],
+   "scene": "greywater_upstream_0",
+   "note": "rv_grey_up",
+   "pixels": {
+    "nonBlank": 227689,
+    "ratio": 0.9882335069444445,
+    "meanRed": 119.24486545138889
+   },
+   "sha256": "d5cef7d9ad98e7f41cdf58cc372523835b925900c3c928da07481b04fdf97c49",
+   "pass": true
+  },
+  {
+   "file": "greywater_upstream_1.png",
+   "camera": [
+    3014,
+    1739
+   ],
+   "scene": "greywater_upstream_1",
+   "note": "rv_grey_up",
+   "pixels": {
+    "nonBlank": 228081,
+    "ratio": 0.9899348958333334,
+    "meanRed": 119.39400173611111
+   },
+   "sha256": "2a04b083a366d2aca6bff170ff6c65e85cca73b83357f6363bc4f0c17a51d7f8",
+   "pass": true
+  },
+  {
+   "file": "greywater_lake.png",
+   "camera": [
+    3201,
+    2141
+   ],
+   "scene": "greywater_lake",
+   "note": "lk_grey",
+   "pixels": {
+    "nonBlank": 230269,
+    "ratio": 0.9994314236111111,
+    "meanRed": 104.28599392361112
+   },
+   "sha256": "da5c5487f88ab97aa91a2d231f23a2a9250471797026ebe5712526f0acd1d582",
+   "pass": true
+  },
+  {
+   "file": "greywater_downstream_0.png",
+   "camera": [
+    3556,
+    2492
+   ],
+   "scene": "greywater_downstream_0",
+   "note": "rv_grey_low",
+   "pixels": {
+    "nonBlank": 229702,
+    "ratio": 0.9969704861111112,
+    "meanRed": 114.8243142361111
+   },
+   "sha256": "14d8889682b4ab391ffa5b974d8c4823b4e3bd6e6caf59accc461ab71df32e13",
+   "pass": true
+  },
+  {
+   "file": "greywater_downstream_1.png",
+   "camera": [
+    3908,
+    3321
+   ],
+   "scene": "greywater_downstream_1",
+   "note": "rv_grey_low",
+   "pixels": {
+    "nonBlank": 230400,
+    "ratio": 1,
+    "meanRed": 114.16236111111111
+   },
+   "sha256": "b09a9f5cda45af89203123c9025c70761802f356b8f181acbd01067a3b5d4406",
+   "pass": true
+  },
+  {
+   "file": "estuary_grey.png",
+   "camera": [
+    3960,
+    3432
+   ],
+   "scene": "estuary_grey",
+   "note": "rv_grey_low mouth",
+   "pixels": {
+    "nonBlank": 230400,
+    "ratio": 1,
+    "meanRed": 122.24269965277777
+   },
+   "sha256": "6ec9da3de371c4e45a4aa2a88f5192a3f8bd90b3a5bf92a111d747ce0a28ca4f",
+   "pass": true
+  },
+  {
+   "file": "river_junction.png",
+   "camera": [
+    2600,
+    1636
+   ],
+   "scene": "river_junction",
+   "note": "rv_grey_up",
+   "pixels": {
+    "nonBlank": 227489,
+    "ratio": 0.9873654513888889,
+    "meanRed": 120.63787326388889
+   },
+   "sha256": "e4ef27025041d93fd645bfb4ab4589ccdc616fe1bd97ff82555d4b27ad9da6a5",
+   "pass": true
+  },
+  {
+   "file": "road_rd_0_0.png",
+   "camera": [
+    4272,
+    3332
+   ],
+   "scene": "road_rd_0_0",
+   "note": "cart rd_0 @0.25",
+   "pixels": {
+    "nonBlank": 230400,
+    "ratio": 1,
+    "meanRed": 116.46428819444445
+   },
+   "sha256": "f947b0c4b7b6521ea044ffa9e9faef87feec4e2fee78aa02f4209130b56b6a16",
+   "pass": true
+  },
+  {
+   "file": "road_rd_0_1.png",
+   "camera": [
+    4215,
+    3164
+   ],
+   "scene": "road_rd_0_1",
+   "note": "cart rd_0 @0.5",
+   "pixels": {
+    "nonBlank": 230400,
+    "ratio": 1,
+    "meanRed": 119.97209201388888
+   },
+   "sha256": "ba2d271beb6d9cff6751e8e368f9a5a84b16b6299caf33e3856017b281b2e4cf",
+   "pass": true
+  },
+  {
+   "file": "road_rd_0_2.png",
+   "camera": [
+    4061,
+    3061
+   ],
+   "scene": "road_rd_0_2",
+   "note": "cart rd_0 @0.75",
+   "pixels": {
+    "nonBlank": 230400,
+    "ratio": 1,
+    "meanRed": 116.77267361111112
+   },
+   "sha256": "7609ad5a6fc28be8d30335a8dcf351a51d12f708ca083870deeea1de74c60ab8",
+   "pass": true
+  },
+  {
+   "file": "road_rd_1_0.png",
+   "camera": [
+    4432,
+    2826
+   ],
+   "scene": "road_rd_1_0",
+   "note": "cart rd_1 @0.25",
+   "pixels": {
+    "nonBlank": 229861,
+    "ratio": 0.9976605902777778,
+    "meanRed": 116.10555555555555
+   },
+   "sha256": "dfb2c14927554c281c3711409d9ad0d63ea4a86ae6ea5ab11253f05b3b181039",
+   "pass": true
+  },
+  {
+   "file": "road_rd_1_1.png",
+   "camera": [
+    4464,
+    2419
+   ],
+   "scene": "road_rd_1_1",
+   "note": "cart rd_1 @0.5",
+   "pixels": {
+    "nonBlank": 229397,
+    "ratio": 0.9956467013888889,
+    "meanRed": 118.25697048611111
+   },
+   "sha256": "a6c3b4c186fe4356472846f01d2d5309978db519a7785298b4c3997f91c71c03",
+   "pass": true
+  },
+  {
+   "file": "road_rd_1_2.png",
+   "camera": [
+    4389,
+    2022
+   ],
+   "scene": "road_rd_1_2",
+   "note": "cart rd_1 @0.75",
+   "pixels": {
+    "nonBlank": 229925,
+    "ratio": 0.9979383680555556,
+    "meanRed": 116.45624565972223
+   },
+   "sha256": "2f303d897b65dee30bfa657ab943b7c66e0febdf556a8d0562abc930305aba4c",
+   "pass": true
+  },
+  {
+   "file": "road_rd_2_0.png",
+   "camera": [
+    4904,
+    3379
+   ],
+   "scene": "road_rd_2_0",
+   "note": "cart rd_2 @0.25",
+   "pixels": {
+    "nonBlank": 230216,
+    "ratio": 0.9992013888888889,
+    "meanRed": 119.04875868055555
+   },
+   "sha256": "8cd57e0c075367ec7ea75666eb88c8056011cae95c57cc83138d283c0455ab51",
+   "pass": true
+  },
+  {
+   "file": "road_rd_2_1.png",
+   "camera": [
+    4652,
+    3402
+   ],
+   "scene": "road_rd_2_1",
+   "note": "cart rd_2 @0.5",
+   "pixels": {
+    "nonBlank": 230287,
+    "ratio": 0.9995095486111111,
+    "meanRed": 122.84322482638889
+   },
+   "sha256": "e23428fcba032d2d24d8f68ed82f31049901fdffaadc3c576044d12b510471bd",
+   "pass": true
+  },
+  {
+   "file": "road_rd_2_2.png",
+   "camera": [
+    4451,
+    3156
+   ],
+   "scene": "road_rd_2_2",
+   "note": "cart rd_2 @0.75",
+   "pixels": {
+    "nonBlank": 229900,
+    "ratio": 0.9978298611111112,
+    "meanRed": 120.4606032986111
+   },
+   "sha256": "915f83ec803d30fd1419af7494d748ed03d1c9fde506caf4f87e40760e93d0a6",
+   "pass": true
+  },
+  {
+   "file": "forest_path_rd_g.png",
+   "camera": [
+    2808,
+    2000
+   ],
+   "scene": "forest_path_rd_g",
+   "note": "foot through cover",
+   "pixels": {
+    "nonBlank": 229284,
+    "ratio": 0.99515625,
+    "meanRed": 131.96068576388888
+   },
+   "sha256": "99cb2b5b43f03aeaccbd514acc236b3be91ee688adfe86cfef886dfa160a8b26",
+   "pass": true
+  },
+  {
+   "file": "forest_path_rd_v.png",
+   "camera": [
+    4075,
+    2973
+   ],
+   "scene": "forest_path_rd_v",
+   "note": "foot through cover",
+   "pixels": {
+    "nonBlank": 230298,
+    "ratio": 0.9995572916666666,
+    "meanRed": 116.01878472222222
+   },
+   "sha256": "2c2735002e44cacff53aa9e6e99a4dc67f8ae6f867e331690e329bed8da6fb04",
+   "pass": true
+  },
+  {
+   "file": "junction_0_rd_1.png",
+   "camera": [
+    4197,
+    3133
+   ],
+   "scene": "junction_0_rd_1",
+   "note": "rd_1 meets rd_0 (VALID_JUNCTION)",
+   "pixels": {
+    "nonBlank": 230400,
+    "ratio": 1,
+    "meanRed": 120.22417100694445
+   },
+   "sha256": "aa875e39efd116e95729de7c77ee26b6508d8c54f9c2ffcf3768e28ba6883124",
+   "pass": true
+  },
+  {
+   "file": "junction_1_rd_1.png",
+   "camera": [
+    4088,
+    1816
+   ],
+   "scene": "junction_1_rd_1",
+   "note": "rd_1 meets rd_a (VALID_JUNCTION)",
+   "pixels": {
+    "nonBlank": 230384,
+    "ratio": 0.9999305555555555,
+    "meanRed": 127.39653211805556
+   },
+   "sha256": "c7106480cf710aa46f6109c53412f648f17676c70cf6f95d8a788dd33777c359",
+   "pass": true
+  },
+  {
+   "file": "bridge_approach_br_0.png",
+   "camera": [
+    4008,
+    3058
+   ],
+   "scene": "bridge_approach_br_0",
+   "note": "cart approach",
+   "pixels": {
+    "nonBlank": 230400,
+    "ratio": 1,
+    "meanRed": 114.74599392361111
+   },
+   "sha256": "14e7e9db59f57ed595dc45ab9b4bbf9bd615d0b613a9b65fe9f369c098768394",
+   "pass": true
+  },
+  {
+   "file": "bridge_approach_br_1.png",
+   "camera": [
+    4123,
+    1762
+   ],
+   "scene": "bridge_approach_br_1",
+   "note": "cart approach",
+   "pixels": {
+    "nonBlank": 230400,
+    "ratio": 1,
+    "meanRed": 117.9878125
+   },
+   "sha256": "4516dd6784f262cfe169da7c72f9971764291193cf56b2a1965d583ba9a061a8",
+   "pass": true
+  },
+  {
+   "file": "dock_approach_dk_westmouth.png",
+   "camera": [
+    1305,
+    2197
+   ],
+   "scene": "dock_approach_dk_westmouth",
+   "note": "coastal",
+   "pixels": {
+    "nonBlank": 230400,
+    "ratio": 1,
+    "meanRed": 86.72401475694444
+   },
+   "sha256": "c056104820b9f15a7fe66b5e739af0388db96aac764a7c357c9e93a77106f015",
+   "pass": true
+  },
+  {
+   "file": "dock_approach_dk_emberport.png",
+   "camera": [
+    5036,
+    3383
+   ],
+   "scene": "dock_approach_dk_emberport",
+   "note": "coastal",
+   "pixels": {
+    "nonBlank": 230305,
+    "ratio": 0.9995876736111111,
+    "meanRed": 104.61375868055555
+   },
+   "sha256": "c50f0299837d41f1751784306b2babc836af38fd7767b2ab1af611ef43fb37de",
+   "pass": true
+  },
+  {
+   "file": "ford_rd_x.png",
+   "camera": [
+    6364,
+    3613
+   ],
+   "scene": "ford_rd_x",
+   "note": "authored ford",
+   "pixels": {
+    "nonBlank": 230400,
+    "ratio": 1,
+    "meanRed": 93.07731770833334
+   },
+   "sha256": "9d548bc8feb588d4c9e46afc094e394aa00afd74705625337c593c109a291bb0",
+   "pass": true
+  },
+  {
+   "file": "ford_rd_1f.png",
+   "camera": [
+    2391,
+    3868
+   ],
+   "scene": "ford_rd_1f",
+   "note": "authored ford",
+   "pixels": {
+    "nonBlank": 230133,
+    "ratio": 0.9988411458333334,
+    "meanRed": 167.44312934027778
+   },
+   "sha256": "df9bcc2e72ed65f2f2c980b3d2ce2a05718a2ccd6f1342534ac758b9047ca43a",
+   "pass": true
+  },
+  {
+   "file": "ford_rd_1l.png",
+   "camera": [
+    2427,
+    3898
+   ],
+   "scene": "ford_rd_1l",
+   "note": "authored ford",
+   "pixels": {
+    "nonBlank": 230400,
+    "ratio": 1,
+    "meanRed": 165.32860677083335
+   },
+   "sha256": "312ce7681d850322f5e0683cf62d5cc8274c0d56e371a261cc39ed309a4cf7cb",
+   "pass": true
+  },
+  {
+   "file": "ford_rd_2a.png",
+   "camera": [
+    3962,
+    1402
+   ],
+   "scene": "ford_rd_2a",
+   "note": "authored ford",
+   "pixels": {
+    "nonBlank": 230400,
+    "ratio": 1,
+    "meanRed": 122.82197048611111
+   },
+   "sha256": "8902ae9a196933ed8e733835db3da0a66533edb70d4ebd821dbeb6d7cbca3d09",
+   "pass": true
+  },
+  {
+   "file": "repaired_rd_0.png",
+   "camera": [
+    4215,
+    3164
+   ],
+   "scene": "repaired_rd_0",
+   "note": "previously failing traversal",
+   "pixels": {
+    "nonBlank": 230400,
+    "ratio": 1,
+    "meanRed": 119.97209201388888
+   },
+   "sha256": "ba2d271beb6d9cff6751e8e368f9a5a84b16b6299caf33e3856017b281b2e4cf",
+   "pass": true
+  },
+  {
+   "file": "repaired_rd_i.png",
+   "camera": [
+    4007,
+    1171
+   ],
+   "scene": "repaired_rd_i",
+   "note": "previously failing traversal",
+   "pixels": {
+    "nonBlank": 230136,
+    "ratio": 0.9988541666666667,
+    "meanRed": 124.30172309027778
+   },
+   "sha256": "ba2d3764a8d87a8154ad065016431c05bdcb182a279eba0953a5508c293181d6",
+   "pass": true
+  },
+  {
+   "file": "repaired_rd_w.png",
+   "camera": [
+    6322,
+    3283
+   ],
+   "scene": "repaired_rd_w",
+   "note": "previously failing traversal",
+   "pixels": {
+    "nonBlank": 230400,
+    "ratio": 1,
+    "meanRed": 90.54059027777778
+   },
+   "sha256": "338f38a23c0c1dc611d7b0f97cf8077df6d8d680930ce128b75818d3c291b4e2",
+   "pass": true
+  },
+  {
+   "file": "repaired_rd_x.png",
+   "camera": [
+    6681,
+    3824
+   ],
+   "scene": "repaired_rd_x",
+   "note": "previously failing traversal",
+   "pixels": {
+    "nonBlank": 230400,
+    "ratio": 1,
+    "meanRed": 89.04141059027778
+   },
+   "sha256": "760ee62d6ab8b21fd3fb9eec8509d4e2d6ea792b1ddedec7776e5f27569b712d",
+   "pass": true
+  },
+  {
+   "file": "repaired_rd_1f.png",
+   "camera": [
+    2541,
+    3832
+   ],
+   "scene": "repaired_rd_1f",
+   "note": "previously failing traversal",
+   "pixels": {
+    "nonBlank": 230077,
+    "ratio": 0.9985980902777778,
+    "meanRed": 153.86885850694443
+   },
+   "sha256": "ee972bc5f2ba9690340f9269654dd4e97bdfb544879033f6db98eabc2b013c05",
+   "pass": true
+  },
+  {
+   "file": "repaired_rd_1g.png",
+   "camera": [
+    2136,
+    3920
+   ],
+   "scene": "repaired_rd_1g",
+   "note": "previously failing traversal",
+   "pixels": {
+    "nonBlank": 230400,
+    "ratio": 1,
+    "meanRed": 200.51125868055556
+   },
+   "sha256": "5b1d208437037887a4a4ce4486e118c2f0ee16f3e3769c7e85e8860386b7aa47",
+   "pass": true
+  },
+  {
+   "file": "repaired_rd_1n.png",
+   "camera": [
+    5006,
+    1580
+   ],
+   "scene": "repaired_rd_1n",
+   "note": "previously failing traversal",
+   "pixels": {
+    "nonBlank": 230400,
+    "ratio": 1,
+    "meanRed": 122.54194444444444
+   },
+   "sha256": "8c7d6f2a03ad57c0900d4b0d3e12c8b65790a5a40f7fcf2068c90d3b506c62af",
+   "pass": true
+  },
+  {
+   "file": "repaired_rd_24.png",
+   "camera": [
+    7434,
+    1749
+   ],
+   "scene": "repaired_rd_24",
+   "note": "previously failing traversal",
+   "pixels": {
+    "nonBlank": 230400,
+    "ratio": 1,
+    "meanRed": 80.22056857638889
+   },
+   "sha256": "360e58e2901e33149ec78794cac0ba0cab8878654b835d40c5e93fcf203863ea",
+   "pass": true
+  },
+  {
+   "file": "repaired_rd_27.png",
+   "camera": [
+    1070,
+    2582
+   ],
+   "scene": "repaired_rd_27",
+   "note": "previously failing traversal",
+   "pixels": {
+    "nonBlank": 230400,
+    "ratio": 1,
+    "meanRed": 67.0868359375
+   },
+   "sha256": "324764fc2f28abfd6645e9a553061185e0c34aa510787555cc89423261477d07",
+   "pass": true
+  },
+  {
+   "file": "repaired_rd_29.png",
+   "camera": [
+    3188,
+    1898
+   ],
+   "scene": "repaired_rd_29",
+   "note": "previously failing traversal",
+   "pixels": {
+    "nonBlank": 228593,
+    "ratio": 0.9921571180555555,
+    "meanRed": 128.77210069444445
+   },
+   "sha256": "3ece39bca4edd2b4efdafd7f10ae2fde4581964fea1fead2e8bd50bfb0e7f760",
+   "pass": true
+  },
+  {
+   "file": "repaired_rd_2a.png",
+   "camera": [
+    3985,
+    1306
+   ],
+   "scene": "repaired_rd_2a",
+   "note": "previously failing traversal",
+   "pixels": {
+    "nonBlank": 230400,
+    "ratio": 1,
+    "meanRed": 137.03470052083333
+   },
+   "sha256": "75c4b11cb40f4880c130d6a269925ded5059f37ec571b8599ad447dd4da0dab7",
+   "pass": true
+  },
+  {
+   "file": "repaired_rd_2b.png",
+   "camera": [
+    3868,
+    3462
+   ],
+   "scene": "repaired_rd_2b",
+   "note": "previously failing traversal",
+   "pixels": {
+    "nonBlank": 230400,
+    "ratio": 1,
+    "meanRed": 122.70168402777777
+   },
+   "sha256": "8806677d6ae3d85597569025c913014105f046beced35719364e65d0d1d53b58",
+   "pass": true
+  },
+  {
+   "file": "overlay_gameplay_west.png",
+   "camera": [
+    1488,
+    2424
+   ],
+   "scene": "overlay_gameplay_west",
+   "note": "HUD visible",
+   "pixels": {
+    "nonBlank": 230400,
+    "ratio": 1,
+    "meanRed": 109.11468315972222
+   },
+   "sha256": "28f0da70f23dbd4bf537b7eef6723b6f6df6578bd5339eb433756b14bac5310b",
+   "pass": true
+  }
+ ],
+ "checks": [
+  {
+   "name": "images_decoded",
+   "pass": true,
+   "detail": {
+    "world": [
+     8000,
+     5600
+    ],
+    "hero": [
+     384,
+     256
+    ]
+   }
+  },
+  {
+   "name": "keyboard_moves_avatar",
+   "pass": true,
+   "detail": {
+    "before": {
+     "x": 1488,
+     "y": 2424
+    },
+    "after": {
+     "x": 1556.8031999999994,
+     "y": 2424
+    }
+   }
+  },
+  {
+   "name": "sprint_input",
+   "pass": true,
+   "detail": "shift+s accepted"
+  },
+  {
+   "name": "minimap_toggle",
+   "pass": true,
+   "detail": "M key"
+  }
+ ],
+ "errors": [],
+ "console_log": [
+  "warning: Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently"
+ ],
+ "world_sha256": "77959cadf89b3b44d7e270d4d627a83cd5f2572b9087be9d7c5d83b19fa6bab0",
+ "world_meta_sha256": "3416a2ad5ab0ad92486da5fce721a3438caebcecda99af304196a5ccace79354",
+ "summary": {
+  "scenes": 45,
+  "blank_scenes": 0,
+  "checks_passed": 4,
+  "checks_total": 4,
+  "errors": []
+ }
+}
