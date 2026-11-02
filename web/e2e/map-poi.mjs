@@ -89,7 +89,7 @@ try {
           const keys=[];if(Math.abs(dx)>2)keys.push(dx>0?'d':'a');if(Math.abs(dy)>2)keys.push(dy>0?'s':'w');
           for(const k of keys)await page.keyboard.down(k);await pause(115);for(const k of keys)await page.keyboard.up(k);
         }
-        if(step%4===3){await ensureVitals();if(!defending)await defendNearby();}
+        if(step%2===1){await ensureVitals();if(!defending)await defendNearby();}
       }
       cur=await state();assert(Math.hypot(cur.player.x-wx,cur.player.y-wy)<=radius+22,`walk ended ${Math.hypot(cur.player.x-wx,cur.player.y-wy).toFixed(1)}px from target (${wx},${wy}); player=(${cur.player.x.toFixed(1)},${cur.player.y.toFixed(1)}) hp=${cur.player.hp} dead=${cur.player.dead}, routeTiles=${route.length-1}`);return cur;
     }
@@ -106,14 +106,14 @@ try {
     async function ensureVitals(){const cur=await state();if(cur.player.dead)throw new Error(`player died during ordinary-input travel at (${cur.player.x.toFixed(0)},${cur.player.y.toFixed(0)}), hp=${cur.player.hp}, hunger=${cur.player.hunger.toFixed(1)}, thirst=${cur.player.thirst.toFixed(1)}, nearby=${JSON.stringify(cur.creatures.filter(m=>Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<120))}`);if(cur.player.hp<92&&cur.counts.bandage)await useInventoryItem('bandage');if(cur.player.thirst<68&&cur.counts.water_flask)await useInventoryItem('water_flask');if(cur.player.hunger<68&&cur.counts.berries)await useInventoryItem('berries');}
     async function defendNearby(){
       if(defending)return;defending=true;
-      try{for(let round=0;round<2;round++){
-        let cur=await state();const threat=cur.creatures.filter(m=>['track','chase','tell','attack'].includes(m.state)&&Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<150).sort((a,b)=>Math.hypot(a.x-cur.player.x,a.y-cur.player.y)-Math.hypot(b.x-cur.player.x,b.y-cur.player.y))[0];
+      try{for(let round=0;round<5;round++){
+        let cur=await state();const threat=cur.creatures.filter(m=>!m.type.startsWith('elder_')&&m.state!=='sleep'&&Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<180).sort((a,b)=>Math.hypot(a.x-cur.player.x,a.y-cur.player.y)-Math.hypot(b.x-cur.player.x,b.y-cur.player.y))[0];
         if(!threat)return;
         if(Math.hypot(threat.x-cur.player.x,threat.y-cur.player.y)>26){try{await walkNear(threat.x,threat.y,22);}catch{return;}}
         await aim(threat.x,threat.y);
         for(let hit=0;hit<7;hit++){
           cur=await state();const target=cur.creatures.find(m=>m.id===threat.id);if(!target||target.hp<=0||Math.hypot(target.x-cur.player.x,target.y-cur.player.y)>36)break;
-          await page.mouse.down();await pause(80);await page.mouse.up();await pause(340);
+          await aim(target.x,target.y);await page.mouse.down();await pause(80);await page.mouse.up();await pause(340);
         }
       }}finally{defending=false;}
     }
