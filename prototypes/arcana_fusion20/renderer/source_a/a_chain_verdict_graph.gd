@@ -189,6 +189,13 @@ func _bolt(fb: AFramebuffer, a: Vector2, b: Vector2, t: float, seed: int, width:
 static func _dissolve_path(a: Vector2, b: Vector2, seed: int) -> Array:
     return ADraw.bolt_path(a.x, a.y, b.x, b.y, 20.0, seed, 4)
 
+# A's remembered successful paths also have a fixed four-subdivision
+# boltPath, with an initial amplitude proportional to endpoint separation.
+# C's recursively relative bolt_pts produces a different shape/subdivision
+# count. Keep C's channel exclusively for the live branched discharges.
+static func _ghost_path(a: Vector2, b: Vector2, seed: int) -> Array:
+    return ADraw.bolt_path(a.x, a.y, b.x, b.y, a.distance_to(b) * 0.3, seed, 4)
+
 func render(fb: AFramebuffer, t: float) -> void:
     # Translate only raster inputs, never simulation, event or actor state.
     # Integer translation keeps source pixel-grid sampling unchanged.
@@ -228,7 +235,7 @@ func render(fb: AFramebuffer, t: float) -> void:
         if not fail and age >= 0.0:
             var ghost := maxf(0.0, 0.22 - age * 0.02)
             if ghost > 0.01:
-                var path := CKit.bolt_pts(float(seed), a.x, a.y, b.x, b.y, 0.3, 4.0)
+                var path := _ghost_path(a, b, seed)
                 for j in range(path.size() - 1):
                     var p: Vector2 = path[j]
                     var q: Vector2 = path[j + 1]

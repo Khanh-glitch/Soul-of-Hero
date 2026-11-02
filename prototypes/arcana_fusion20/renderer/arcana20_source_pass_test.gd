@@ -725,6 +725,9 @@ func _run() -> void:
     for distance in [0.0, 0.1, 1.0, 5.0, 20.0, 100.0]:
         var start := Vector2(170, 110)
         var end := start + Vector2(distance, 0)
+        var ghost_path := AChainVerdictGraph._ghost_path(start, end, 990)
+        check(ghost_path == ADraw.bolt_path(start.x, start.y, end.x, end.y, distance * 0.3, 990, 4), "A09 authored memory path %s" % distance)
+        check(ghost_path.size() == 17 and ghost_path[0] == start and ghost_path[-1] == end, "A09 memory endpoints and four subdivisions %s" % distance)
         var dissolve_path := AChainVerdictGraph._dissolve_path(start, end, 990)
         check(dissolve_path == ADraw.bolt_path(start.x, start.y, end.x, end.y, 20.0, 990, 4), "A09 source-authored dissolve path %s" % distance)
         check(dissolve_path.size() == 17 and dissolve_path[0] == start and dissolve_path[-1] == end, "A09 dissolve endpoints and four subdivisions %s" % distance)
