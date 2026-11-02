@@ -506,8 +506,9 @@ jobs:
         run: |
           set -euo pipefail
           motion="$THORN_RAW_DIR/short_motion"
-          python3 tools/arcana20_join/encode_live_capture.py "$motion"
-          ffmpeg -hide_banner -loglevel error -y -f concat -safe 0 -i "$motion/frames.txt" -fps_mode vfr -c:v libx264 -preset medium -crf 30 -pix_fmt yuv420p -movflags +faststart "$motion/short-motion-720p.mp4"
+          trap 'rc=$?; msg=$(tail -c 3000 "$RUNNER_TEMP/short-encode.log" 2>/dev/null | tr "\n" " " || true); echo "::error title=THORN_ENCODE_FAILED::exit $rc $msg"; exit "$rc"' ERR
+          python3 tools/arcana20_join/encode_live_capture.py "$motion" 2>&1 | tee "$RUNNER_TEMP/short-encode.log"
+          ffmpeg -hide_banner -loglevel error -y -f concat -safe 0 -i "$motion/frames.txt" -fps_mode vfr -c:v libx264 -preset medium -crf 30 -pix_fmt yuv420p -movflags +faststart "$motion/short-motion-720p.mp4" 2>&1 | tee -a "$RUNNER_TEMP/short-encode.log"
           python3 - "$motion/short-motion-720p.mp4" "$RUNNER_TEMP/motion-blob.json" <<'PY'
           import base64,json,pathlib,sys
           pathlib.Path(sys.argv[2]).write_text(json.dumps({'content':base64.b64encode(pathlib.Path(sys.argv[1]).read_bytes()).decode(),'encoding':'base64'}))
@@ -518,6 +519,7 @@ jobs:
             echo "::warning::Short-cast motion Git blob unavailable; use raw range artifact"
           fi
       - name: Preserve original lossless range capture and metadata
+        if: always() && env.THORN_RAW_DIR != ''
         uses: actions/upload-artifact@v4
         with:
           name: batch-s-thorn-ranges-raw-${{ matrix.lighting }}
@@ -525,6 +527,7 @@ jobs:
           if-no-files-found: error
           retention-days: 14
       - uses: actions/upload-artifact@v4
+        if: always() && env.THORN_RAW_DIR != ''
         with:
           name: batch-s-thorn-ranges-${{ matrix.lighting }}
           path: ${{ runner.temp }}/range-review/
@@ -581,8 +584,9 @@ jobs:
           test -n "$matrix_file"
           echo "THORN_BEFORE_RAW=$(dirname "$matrix_file")" >> "$GITHUB_ENV"
           motion="$(dirname "$matrix_file")/short_motion"
-          python3 tools/arcana20_join/encode_live_capture.py "$motion"
-          ffmpeg -hide_banner -loglevel error -y -f concat -safe 0 -i "$motion/frames.txt" -fps_mode vfr -c:v libx264 -preset medium -crf 30 -pix_fmt yuv420p -movflags +faststart "$motion/short-motion-720p.mp4"
+          trap 'rc=$?; msg=$(tail -c 3000 "$RUNNER_TEMP/short-encode.log" 2>/dev/null | tr "\n" " " || true); echo "::error title=THORN_ENCODE_FAILED::exit $rc $msg"; exit "$rc"' ERR
+          python3 tools/arcana20_join/encode_live_capture.py "$motion" 2>&1 | tee "$RUNNER_TEMP/short-encode.log"
+          ffmpeg -hide_banner -loglevel error -y -f concat -safe 0 -i "$motion/frames.txt" -fps_mode vfr -c:v libx264 -preset medium -crf 30 -pix_fmt yuv420p -movflags +faststart "$motion/short-motion-720p.mp4" 2>&1 | tee -a "$RUNNER_TEMP/short-encode.log"
           python3 - "$motion/short-motion-720p.mp4" "$RUNNER_TEMP/motion-blob.json" <<'PY'
           import base64,json,pathlib,sys
           pathlib.Path(sys.argv[2]).write_text(json.dumps({'content':base64.b64encode(pathlib.Path(sys.argv[1]).read_bytes()).decode(),'encoding':'base64'}))
@@ -602,6 +606,7 @@ jobs:
             fi
           done
       - uses: actions/upload-artifact@v4
+        if: always() && env.THORN_BEFORE_RAW != ''
         with:
           name: batch-s-thorn-before-raw-${{ matrix.lighting }}
           path: ${{ env.THORN_BEFORE_RAW }}/
