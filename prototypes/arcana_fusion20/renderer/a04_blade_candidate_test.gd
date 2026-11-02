@@ -110,6 +110,18 @@ func _initialize() -> void:
         return
     frame.clear()
     spell.render(frame, 5.4)
+    var displaced := 0
+    for p in range(frame.width * frame.height):
+        if absf(frame.world_warp[p * 2]) + absf(frame.world_warp[p * 2 + 1]) > 0.5:
+            if frame.world_influence[p] == 0:
+                push_error("A04_BLADE_FAIL displacement missing operation influence")
+                quit(1)
+                return
+            displaced += 1
+    if displaced < 100:
+        push_error("A04_BLADE_FAIL real terrain bank displacement absent")
+        quit(1)
+        return
     for i in range(1, 5):
         var point: Vector2 = spell._fault_point(float(i) / 5.0)
         var connected := false

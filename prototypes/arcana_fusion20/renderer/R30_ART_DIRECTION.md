@@ -8,7 +8,7 @@ A remains the original D source field and R28 bounded LDR shimmer. B is a separa
 
 ## N04 — heavy blade over broken ground
 
-(1) Hairline seam and shadow mark the stroke, (2) one heavy blade cocks visibly above it, (3) the blade travels across the seam in one accelerating stroke, (4) one visual contact, (5) the ground tears as uneven slabs separate from a continuous jagged cavity, with irregular fragments and dust originating at the actual break, (6) slabs settle back and the scar closes. The terrain is a connected geological surface, not a row of placed chips, an opaque plank, or fake hit.
+(1) Hairline seam and shadow mark the stroke, (2) one heavy blade cocks visibly above it, (3) the blade travels across the seam in one accelerating stroke, (4) one visual contact, (5) the ground tears as uneven slabs separate from a continuous jagged cavity, with irregular fragments and dust originating at the actual break, (6) slabs settle back and the scar closes. The terrain is a connected geological surface, not a row of placed chips, an opaque plank, or fake hit. First native experiment still read as a graphic dark gash. The next construction moves actual world pixels within the two explicit bank footprints, fading the displacement at outer edges and during closure; the cavity remains a narrow covered cut. No brightness-keying or invented background. Real actor/prop depth remains an owner limitation.
 
 ## N13 — one rooted organism
 

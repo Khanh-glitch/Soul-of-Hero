@@ -71,7 +71,7 @@ class AshenGuillotineR:
         var normal := Vector2(-tangent.y, tangent.x) * side
         var taper := pow(maxf(0.0, sin(PI * u)), 0.38)
         var rough := AMath.hash2(floor(u * 17.0), 61.0 + side * 7.0)
-        var width := (3.5 + 6.0 * rough) * opening * taper
+        var width := (1.7 + 3.3 * rough) * opening * taper
         if outer:
             width += (8.0 + 14.0 * AMath.hash2(floor(u * 11.0), 43.0 + side * 4.0)) * opening * taper
         var shear := tangent * (side * opening * (1.0 + 2.5 * rough) * taper)
@@ -162,7 +162,7 @@ class AshenGuillotineR:
             ADraw.poly_fill(fb, cavity,
                 func(x: int, y: int) -> Variant:
                     var grit := AMath.hash2(floor(float(x) * 0.43), floor(float(y) * 0.43))
-                    return Vector3(0.075 + grit * 0.035, 0.067 + grit * 0.030, 0.055 + grit * 0.025), true, minf(1.0, rup * 1.6) * close_k)
+                    return Vector3(0.12 + grit * 0.055, 0.10 + grit * 0.045, 0.075 + grit * 0.035), true, minf(0.72, rup * 1.3) * close_k)
             for side_value in [-1.0, 1.0]:
                 var side: float = side_value
                 var inner: Array = []
@@ -175,12 +175,37 @@ class AshenGuillotineR:
                 var reverse_outer := outer.duplicate()
                 reverse_outer.reverse()
                 bank.append_array(reverse_outer)
-                ADraw.poly_fill(fb, bank,
-                    func(x: int, y: int) -> Variant:
-                        var stone := AMath.hash2(floor(float(x) * 0.22), floor(float(y) * 0.25) + side * 7.0)
-                        var grain := AMath.hash2(float(x), float(y))
-                        var value := 0.18 + 0.09 * stone + 0.05 * grain
-                        return Vector3(value * 1.03, value * 0.94, value * 0.80), true, minf(1.0, rup * 1.6) * close_k)
+                if fb.track_world_fields:
+                    # Destination pixels sample the real underlying terrain
+                    # towards the incision, physically shifting the bank out
+                    # from the cut. This is an authored polygon footprint, not
+                    # a brightness mask or a pasted fabricated floor. The
+                    # offset decays at the outside edge and during closure.
+                    ADraw.poly_fill(fb, bank,
+                        func(x: int, y: int) -> Variant:
+                            var pixel := Vector2(float(x) + 0.5, float(y) + 0.5)
+                            var u := clampf((pixel - C).dot(_dir) / 184.0 + 0.5, 0.0, 1.0)
+                            var section := mini(4, floori(u * 5.0))
+                            var opening := AMath.ease_out(AMath.seg(t, 4.6 + float(section) * 0.08, 5.0 + float(section) * 0.08), 2.0) * _section_visibility(section, t)
+                            var inward := _bank_sample(u, side, t, false)
+                            var outward := _bank_sample(u, side, t, true)
+                            var across := clampf(pixel.distance_to(inward) / maxf(1.0, inward.distance_to(outward)), 0.0, 1.0)
+                            var mass := opening * (1.0 - across * across)
+                            var shift := -n * side * (5.0 + 1.5 * AMath.hash2(floor(u * 9.0), side + 33.0)) * mass
+                            shift += _dir * (AMath.hash2(floor(u * 9.0), side + 56.0) - 0.5) * 2.2 * mass
+                            var index := y * fb.width + x
+                            fb.world_warp[index * 2] += shift.x
+                            fb.world_warp[index * 2 + 1] += shift.y
+                            fb.world_multiplier[index] *= 1.0 - 0.13 * mass
+                            fb.world_influence[index] = 1
+                            return null)
+                else:
+                    # Standalone diagnostics have no real world to displace.
+                    ADraw.poly_fill(fb, bank,
+                        func(x: int, y: int) -> Variant:
+                            var stone := AMath.hash2(floor(float(x) * 0.22), floor(float(y) * 0.25) + side * 7.0)
+                            var value := 0.18 + 0.09 * stone
+                            return Vector3(value * 1.03, value * 0.94, value * 0.80), true, minf(1.0, rup * 1.6) * close_k)
                 # Lithic fractures connect the cavity lip to the outer bank;
                 # irregular joint spacing cuts the connected surface into
                 # uneven blocks without floating separate stone decorations.
