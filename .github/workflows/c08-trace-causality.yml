@@ -108,7 +108,7 @@ jobs:
             grep -E "$pattern" "$ARTIFACT_DIR/c08-case-b.log" | tail -n "$limit" | cut -c1-900 \
               | while IFS= read -r line; do printf '::%s::%s\n' "$level" "$line"; done
           }
-          emit_lines error 'C08_WEDGE|C08_ROUTE_FAIL|C08_DOOR_FAIL|C08_B_LEG_FAIL|C08_C_LEG_FAIL|C08_LEG_STALLED|C08_DOORWAY_FAIL|C08_REENTRY_FAIL|C08_ENEMY_LOST|C08_C_NO_ENEMY|C08_C_HABITAT_FAIL|C08_ENCOUNTER_RELEASE|C08_SKIP |SCRIPT ERROR|Parse Error' 4
+          emit_lines error 'C08_WEDGE|C08_ROUTE_FAIL|C08_DOOR_FAIL|C08_B_LEG_FAIL|C08_C_LEG_FAIL|C08_LEG_STALLED|C08_DOORWAY_FAIL|C08_REENTRY_FAIL|C08_ENEMY_LOST|C08_C_NO_ENEMY|C08_C_HABITAT_FAIL|C08_ENCOUNTER_RELEASE|SCRIPT ERROR|Parse Error' 4
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/c08-case-b.log" "C08 b" "C08 TRACE CAUSALITY PLAY PASSED"
           gate=$?
           [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
@@ -165,13 +165,16 @@ jobs:
           # at 4 KB and only ten survive per step, so priority is explicit.
           [ -f "$ARTIFACT_DIR/c08-play.log" ] || exit 0
           emit() { printf '::%s::%s\n' "$1" "$(printf '%s' "$2" | cut -c1-900)"; }
+          # Ten annotations survive per step, so the failing assertions get the first
+          # slots and the window tags take the rest. Diagnostics that are not a
+          # failure (skips, wedges) are left to the log tail.
           n=0
           while IFS= read -r line; do
             n=$((n + 1))
-            [ "$n" -gt 6 ] && break
+            [ "$n" -gt 4 ] && break
             emit error "$line"
           done < <(cat "$ARTIFACT_DIR"/c08-case-*.log "$ARTIFACT_DIR/c08-play.log" 2>/dev/null | grep -E '^  FAIL  ' || true)
-          for tag in C08_EPISODE C08_A C08_B C08_C C08_ROUTE C08_B_ARMED C08_B_LEG C08_C_SETTLE C08_C_RETREAT C08_C_COLD; do
+          for tag in C08_C C08_C_COLD C08_B C08_A; do
             line=$(cat "$ARTIFACT_DIR"/c08-case-*.log "$ARTIFACT_DIR/c08-play.log" 2>/dev/null | grep -E "^${tag} " | tail -n 1 || true)
             [ -n "$line" ] && emit notice "$line"
           done
