@@ -1,4 +1,4 @@
-# D19: selected standalone source and authored OUT natural-route review.
+# D19: package natural route with D-specific metadata and authored OUT.
 # R26 F01 source-surface material, per-tip authored-motion verification and fixed-world evidence; R25 F16 seeded-surface fragmentation and natural decay; R21 partial batch S: source raster-tile overscan range recheck; retain R20 #05.
 name: ARCANA20 R20 Abyssal Bloom A-B creator package
 on:
@@ -267,7 +267,7 @@ jobs:
         if: matrix.skill != 5
         env:
           GH_TOKEN: ${{ github.token }}
-          REVIEW_BATCH: ${{ startsWith(matrix.variant, 'N') && 'N' || startsWith(matrix.variant, 'F') && 'F' || 'S' }}
+          REVIEW_BATCH: ${{ startsWith(matrix.variant, 'D') && 'D' || startsWith(matrix.variant, 'N') && 'N' || startsWith(matrix.variant, 'F') && 'F' || 'S' }}
         run: |
           set -euo pipefail
           review="$RUNNER_TEMP/batch-s-review"
@@ -291,7 +291,7 @@ jobs:
         if: matrix.skill != 5
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ startsWith(matrix.variant, 'N') && format('batch-n-review-{0}-{1}', matrix.variant, matrix.lighting) || startsWith(matrix.variant, 'F') && format('batch-f-review-{0}-{1}', matrix.variant, matrix.lighting) || format('batch-s-review-{0}-{1}', matrix.variant, matrix.lighting) }}
+          name: ${{ startsWith(matrix.variant, 'D') && format('batch-d-review-{0}-{1}', matrix.variant, matrix.lighting) || startsWith(matrix.variant, 'N') && format('batch-n-review-{0}-{1}', matrix.variant, matrix.lighting) || startsWith(matrix.variant, 'F') && format('batch-f-review-{0}-{1}', matrix.variant, matrix.lighting) || format('batch-s-review-{0}-{1}', matrix.variant, matrix.lighting) }}
           path: ${{ runner.temp }}/batch-s-review/
           if-no-files-found: error
           retention-days: 14
@@ -329,7 +329,7 @@ jobs:
         if: matrix.skill != 5
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ startsWith(matrix.variant, 'N') && format('batch-n-motion-{0}-{1}', matrix.variant, matrix.lighting) || startsWith(matrix.variant, 'F') && format('batch-f-motion-{0}-{1}', matrix.variant, matrix.lighting) || format('batch-s-motion-{0}-{1}', matrix.variant, matrix.lighting) }}
+          name: ${{ startsWith(matrix.variant, 'D') && format('batch-d-motion-{0}-{1}', matrix.variant, matrix.lighting) || startsWith(matrix.variant, 'N') && format('batch-n-motion-{0}-{1}', matrix.variant, matrix.lighting) || startsWith(matrix.variant, 'F') && format('batch-f-motion-{0}-{1}', matrix.variant, matrix.lighting) || format('batch-s-motion-{0}-{1}', matrix.variant, matrix.lighting) }}
           path: |
             ${{ runner.temp }}/native-review-720p.mp4
             ${{ runner.temp }}/native-review-timeline.json
