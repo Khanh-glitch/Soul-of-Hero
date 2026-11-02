@@ -1,0 +1,7 @@
+# R28 #04 — longer single stroke, fracture bank, art still open
+
+`c9e072e5`, [41419513142](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41419513142): current build, Windows headless and both actual moving-player/AI/camera normal/dim captures passed. Retained lossy videos are native 1280×720; software capture is sparse, not 60 FPS. Changes lengthen the single diagonal blade's physical travel at the same 3.4 contact and grow uneven covered rock shoulders around the same wound. No new combat contact is claimed.
+
+Sampled native-size crops through anticipation, contact and late sections and selected full viewport frames were inspected in both lights. Longer stroke and steel edge are visible; however the wound **still reads as a long black strip** in many frames, with long orange branches, and camera movement places a substantial part offscreen. Need materially rethink the wound and inspect full OUT; this is not creator-ready/Gold. No changes to accepted S/F.
+
+The companion structural run [41419513149](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41419513149) failed its superseded 3.18s anticipation assertion because the intentional stroke starts at 3.04s. Diagnostic was updated to test acceleration and cocked direction at 3.04 without loosening the checks; re-run [41420441882](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41420441882) is pending at `af211150`. Do not report that rerun as passed until it completes. The video above predates the test-only correction and remains labeled with its real SHA.
