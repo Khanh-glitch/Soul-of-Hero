@@ -259,3 +259,127 @@ func _remove(id: int) -> void:
 		if _buckets[key].is_empty():
 			_buckets.erase(key)
 	_records.erase(id)
+
+# ---------------------------------------------------------------------------
+# K8 evidence ledger (bounded, explicit, same SaveService document)
+# ---------------------------------------------------------------------------
+## Evidence is physical K2 medium, so a still-valid mark must survive the process
+## that laid it: quitting the game may not be a free way to erase a live trail.
+## The ledger is the smallest honest form of that — live marks only, their own
+## creation/expiry stamps, and the run identity that owns them. It is written
+## through the ONE save document (SaveService), never to a second file, and it is
+## dropped wholesale when the run identity differs.
+const LEDGER_SCHEMA := "soh.c08.trace_ledger.v1"
+const LEDGER_VERSION := 1
+const LEDGER_MAX_MARKS := 512
+const LEDGER_MAX_COORD := 200000.0
+const LEDGER_MAX_SURFACE := 32
+
+
+func export_ledger(stamp: float, limit: int = LEDGER_MAX_MARKS) -> Dictionary:
+	var marks: Array = []
+	if is_finite(stamp) and not _run_id.is_empty():
+		for record: Dictionary in records(stamp, mini(limit, LEDGER_MAX_MARKS)):
+			var position: Vector2 = record.position
+			marks.append([
+				int(record.id), position.x, position.y, String(record.surface),
+				float(record.created), float(record.expires), int(record.previous),
+			])
+	return {
+		"schema": LEDGER_SCHEMA,
+		"version": LEDGER_VERSION,
+		"run_id": _run_id,
+		"revision": _next_id,
+		"exported": stamp,
+		"marks": marks,
+	}
+
+
+## Rebuilds the index from a stored ledger. Anything that is not provably this
+## run's live evidence is dropped: a foreign run, a malformed entry, a
+## non-finite number, an expired mark, or a link to a mark that is not here.
+func import_ledger(document: Variant, stamp: float) -> int:
+	if not document is Dictionary or not is_finite(stamp):
+		return 0
+	var source: Dictionary = document
+	if String(source.get("schema", "")) != LEDGER_SCHEMA:
+		return 0
+	var run_id := String(source.get("run_id", ""))
+	if run_id.is_empty() or run_id != _run_id or run_id.length() > 96:
+		return 0
+	var raw_marks: Variant = source.get("marks", [])
+	if not raw_marks is Array:
+		return 0
+	var accepted: Dictionary = {}
+	var order: Array[int] = []
+	for entry: Variant in raw_marks:
+		if accepted.size() >= LEDGER_MAX_MARKS:
+			break
+		if not entry is Array or (entry as Array).size() != 7:
+			continue
+		var row: Array = entry
+		var id := int(row[0])
+		var position := Vector2(float(row[1]), float(row[2]))
+		var surface := String(row[3])
+		var created := float(row[4])
+		var expires := float(row[5])
+		var previous := int(row[6])
+		if id <= 0 or id > MAX_TRACES * 4 or accepted.has(id):
+			continue
+		if not _is_usable(position) or absf(position.x) > LEDGER_MAX_COORD or absf(position.y) > LEDGER_MAX_COORD:
+			continue
+		if surface.is_empty() or surface.length() > LEDGER_MAX_SURFACE:
+			continue
+		if previous < 0 or previous > MAX_TRACES * 4:
+			continue
+		if not is_finite(created) or not is_finite(expires) or expires <= created or created > stamp + 2.0:
+			continue
+		if stamp >= expires:
+			continue
+		accepted[id] = {"id": id, "run_id": run_id, "position": position, "surface": surface,
+			"created": created, "expires": expires, "previous": previous if previous > 0 else 0,
+			"next": 0}
+		order.append(id)
+	if accepted.is_empty():
+		return 0
+	_reset_records()
+	_run_id = run_id
+	order.sort()
+	for id: int in order:
+		_records[id] = accepted[id]
+		var key := _bucket((accepted[id] as Dictionary)["position"])
+		if not _buckets.has(key):
+			_buckets[key] = []
+		_buckets[key].append(id)
+		_order.append(id)
+	# Rebuild forward links only where the parent is present AND newer-first is
+	# consistent; an orphan parent is cleared so a restored chain cannot bridge a
+	# gap that was not stored.
+	for id: int in order:
+		var record: Dictionary = _records[id]
+		var parent := int(record["previous"])
+		if parent > 0 and _records.has(parent) and int(_records[parent]["next"]) == 0 \
+				and float(_records[parent]["created"]) <= float(record["created"]):
+			_records[parent]["next"] = id
+		else:
+			record["previous"] = 0
+			_records[id] = record
+	_next_id = maxi(int(source.get("revision", 0)), int(order[order.size() - 1]) + 1)
+	_last_id = int(order[order.size() - 1])
+	_sampled = false
+	_distance_since_trace = 0.0
+	_previous_position = Vector2.ZERO
+	_last_stamp = -1.0
+	return order.size()
+
+
+func _reset_records() -> void:
+	_records.clear()
+	_buckets.clear()
+	_order.clear()
+	_next_id = 1
+	_last_id = 0
+	_sampled = false
+	_last_stamp = -1.0
+	_distance_since_trace = 0.0
+	_previous_position = Vector2.ZERO

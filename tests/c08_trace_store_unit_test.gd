@@ -31,6 +31,7 @@ func _initialize() -> void:
 	_case_eviction()
 	_case_non_finite()
 	_case_prune()
+	_case_ledger()
 	_report()
 
 
@@ -206,6 +207,55 @@ func _case_non_finite() -> void:
 		"the index still answers a valid query after hostile input")
 	_expect(store.sample(Vector2(30, 0), 3.1, "court", true, 5.0, 60.0, 20.0) == 0,
 		"the chain was broken by the refused samples, so there is no jump link")
+
+
+## K8 ledger: live evidence survives a process, dead evidence does not, and a
+## foreign run can never read it back. Synthetic input; the native gate proves the
+## save round trip with a real body.
+func _case_ledger() -> void:
+	var store = Store.new()
+	store.reset("run-ledger")
+	store.sample(Vector2.ZERO, 1.0, "grass", true, 5.0, 300.0, 20.0)
+	var a: int = store.sample(Vector2(10, 0), 2.0, "grass", true, 5.0, 300.0, 20.0)
+	var b: int = store.sample(Vector2(20, 0), 3.0, "grass", true, 5.0, 300.0, 20.0)
+	var ledger: Dictionary = store.export_ledger(4.0)
+	_expect(String(ledger.get("schema", "")) == Store.LEDGER_SCHEMA, "the ledger names its own schema")
+	_expect((ledger.get("marks", []) as Array).size() == 2, "the ledger holds only live marks")
+	var restored = Store.new()
+	restored.reset("run-ledger")
+	var count: int = restored.import_ledger(ledger, 5.0)
+	_expect(count == 2 and restored.live_count(5.0) == 2, "a same-run ledger restores exactly its live marks")
+	_expect(int(restored.successor(a, 5.0).get("id", 0)) == b,
+		"the restored chain keeps its causal link")
+	_expect(restored.total_count() == 2, "the restore creates no extra record")
+	# A mark that expired while the game was closed is not evidence any more.
+	var later = Store.new()
+	later.reset("run-ledger")
+	_expect(later.import_ledger(ledger, 400.0) == 0, "an expired ledger restores nothing")
+	_expect(later.total_count() == 0, "an expired ledger leaves no phantom record")
+	# A different run never inherits another run's trail.
+	var foreign = Store.new()
+	foreign.reset("run-other")
+	_expect(foreign.import_ledger(ledger, 5.0) == 0, "a foreign run cannot import this ledger")
+	# Malformed and orphaned marks are dropped, and an orphan cannot bridge a gap.
+	var broken := ledger.duplicate(true)
+	(broken["marks"] as Array).append([999, 30.0, 0.0, "grass", 3.5, 300.0, 12345])
+	(broken["marks"] as Array).append([1000, NAN, 0.0, "grass", 3.5, 300.0, 0])
+	(broken["marks"] as Array).append([1001, 40.0, 0.0, "grass", 900.0, 1200.0, 0])
+	var hardened = Store.new()
+	hardened.reset("run-ledger")
+	var kept: int = hardened.import_ledger(broken, 5.0)
+	_expect(kept == 2, "malformed, future and orphaned marks are dropped at import (%d kept)" % kept)
+	_expect(hardened.trace(999, 5.0).is_empty() and hardened.trace(1001, 5.0).is_empty(),
+		"no invented record survives the import")
+	# The ledger is bounded even for an absurd source.
+	var long_store = Store.new()
+	long_store.reset("run-bound")
+	for index in range(700):
+		long_store.sample(Vector2(float(index) * 6.0, 0), 1.0 + float(index) * 0.01, "court", true, 5.0, 900.0, 20.0)
+	var big: Dictionary = long_store.export_ledger(8.0)
+	_expect((big.get("marks", []) as Array).size() <= Store.LEDGER_MAX_MARKS,
+		"the exported ledger never exceeds LEDGER_MAX_MARKS (%d)" % (big.get("marks", []) as Array).size())
 
 
 func _case_prune() -> void:

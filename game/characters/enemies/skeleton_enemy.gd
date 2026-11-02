@@ -67,9 +67,10 @@ var _attack_cooldown_left := 0.0
 var _hurt_lock_left := 0.0
 var _obstacle_repath_left := 0.0
 var _melee_threat_serial := 0
-## Optional C08 evidence adapter (`game/survival/c08_trace_follower.gd`). Null on
-## every ordinary enemy: with no adapter, nothing about this AI changes.
-var evidence_follower: Node = null
+## Optional C08 evidence adapter (`game/survival/c08_trace_follower.gd`). It is a
+## RefCounted on purpose: evidence is not a scene node and must not become one.
+## Null on every ordinary enemy; with no adapter, nothing about this AI changes.
+var evidence_follower: Object = null
 
 
 func configure_from_definition(snapshot: EnemyRuntimeSnapshot) -> bool:
@@ -212,7 +213,7 @@ func _evidence_pursuit(delta: float) -> bool:
 
 ## Attach the C08 evidence adapter. Ownership stays with the caller; the enemy
 ## only reads it. Returns false for anything that is not a live adapter.
-func set_evidence_follower(follower: Node) -> bool:
+func set_evidence_follower(follower: Object) -> bool:
 	if follower == null or not is_instance_valid(follower) or not follower.has_method(&"drive"):
 		return false
 	if _state == State.DEAD:

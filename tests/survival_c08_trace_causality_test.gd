@@ -282,16 +282,46 @@ func _body() -> void:
 		"the creature still awards no score and cannot drop loot")
 
 	# --- A: NO TRACE ------------------------------------------------------
+	# Each counterfactual must complete before the next is attempted: a red A is a
+	# diagnosis, not a licence to keep bolting on evidence.
 	var window_a := await _counterfactual_a(source, encounter, enemy, hero, home)
 	_audit["A_no_trace"] = window_a
+	if not bool(window_a.get("ok", false)):
+		_expect(false, "A must pass before B is attempted")
+		_body_complete = false
+		return
 
 	# --- B: VALID CHAIN ---------------------------------------------------
 	var window_b := await _counterfactual_b(source, encounter, enemy, hero, nav, home)
 	_audit["B_valid_chain"] = window_b
+	if not bool(window_b.get("ok", false)):
+		_expect(false, "B must pass before C is attempted")
+		_body_complete = false
+		return
 
 	# --- C: BROKEN / EXPIRED CHAIN ---------------------------------------
 	var window_c := await _counterfactual_c(source, encounter, enemy, hero, nav, home)
 	_audit["C_broken_chain"] = window_c
+	if not bool(window_c.get("ok", false)):
+		_expect(false, "C must pass before the K8 evidence window")
+		_body_complete = false
+		return
+
+	# --- K8: a still-valid trail may not be erased by quitting ------------
+	_expect(bool(source.call(&"configure_policy", SPACING, 600.0, MAX_STEP)),
+		"policy for the K8 persistence window: live marks survive the quit")
+	await _walk_to_cell(hero, _door_cell())
+	await _walk_to_cell(hero, _stand_cell())
+	var committed := bool(source.call(&"commit_evidence"))
+	_expect(committed, "the still-valid trail is written to the authoritative save (%s)"
+		% String(source.get(&"ledger_error")))
+	var ledger: Dictionary = (_save().call(&"get_snapshot") as Dictionary).get("c08_traces", {})
+	var marks: Array = ledger.get("marks", []) if ledger.get("marks", []) is Array else []
+	_expect(String(ledger.get("run_id", "")) == String(phase.get("run_id", "")),
+		"the stored ledger belongs to this run")
+	_expect(marks.size() > 0, "the stored ledger holds live marks (%d)" % marks.size())
+	_audit["ledger"] = {"run_id": String(ledger.get("run_id", "")), "marks": marks.size(),
+		"commit": committed, "error": String(source.get(&"ledger_error"))}
 
 	# --- K8 identity for the second process ------------------------------
 	var run := _run_phase()
@@ -422,6 +452,7 @@ func _counterfactual_a(source: Node, encounter: Node, enemy: CharacterBody2D,
 	if follower == null:
 		_expect(false, "A: the creature holds the C08 evidence adapter")
 		return {}
+	var _window_failures_before := failures.size()
 	follower.begin_window("A_no_trace")
 	var hp_before := int(hero.get(&"health"))
 	var site: Vector2 = _encounter().global_position
@@ -438,7 +469,9 @@ func _counterfactual_a(source: Node, encounter: Node, enemy: CharacterBody2D,
 	_expect(int(hero.get(&"health")) == hp_before, "A: the home is not attacked from nowhere")
 	_expect(enemy.get(&"evidence_follower") != null and enemy.get(&"_priority_target") == null,
 		"A: no target was injected into the creature")
-	return {"live_at_start": live, "follower": snapshot, "observe": stats, "site": [site.x, site.y]}
+	var ok := failures.size() == _window_failures_before
+	return {"ok": ok, "live_at_start": live, "follower": snapshot, "observe": stats,
+		"site": [site.x, site.y]}
 
 
 func _counterfactual_b(source: Node, encounter: Node, enemy: CharacterBody2D,
@@ -453,6 +486,7 @@ func _counterfactual_b(source: Node, encounter: Node, enemy: CharacterBody2D,
 	_expect(bool(route.get("ok", false)), "B: a real walkable route exists past the creature and back home")
 	if not bool(route.get("ok", false)):
 		return {"ok": false}
+	var _window_failures_before := failures.size()
 	follower.begin_window("B_valid_chain")
 	var hp_before := int(hero.get(&"health"))
 	var stats := {"direct_ticks": 0, "min_home_distance": 99999.0, "investigate_ticks": 0}
@@ -508,7 +542,8 @@ func _counterfactual_b(source: Node, encounter: Node, enemy: CharacterBody2D,
 	_expect(float(defence.get("first_damage_distance", 9999.0)) <= 100.0,
 		"B: the damage lands at the home, not through the world (%0.0f px)" % float(defence.get("first_damage_distance", 9999.0)))
 	await _capture("c08_b_defence")
-	return {"ok": true, "follower": snapshot, "arrival": arrival, "defence": defence,
+	return {"ok": failures.size() == _window_failures_before, "follower": snapshot,
+		"arrival": arrival, "defence": defence,
 		"hp": [hp_before, hp_after, hp_fight], "route": route["report"], "walk": stats}
 
 
@@ -529,6 +564,7 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 	var returned := await _wait_until(func() -> bool:
 		return is_instance_valid(enemy) and enemy.global_position.distance_to(habitat.global_position) <= 120.0, 60.0)
 	_expect(returned, "C: the creature returns to its habitat before the trail test")
+	var _window_failures_before := failures.size()
 	follower.begin_window("C_broken_chain")
 	var route := _route_plan(hero, nav, home)
 	_expect(bool(route.get("ok", false)), "C: the same walkable route is used again")
@@ -555,7 +591,8 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 		"C: the creature does not reach the home on a dead trail (%0.0f px)" % float(observe.get("min_home_distance", 99999.0)))
 	_expect(int(hero.get(&"health")) == hp_before, "C: a dead trail causes no damage at the home")
 	await _capture("c08_c_lost")
-	return {"ok": true, "follower": snapshot, "observe": observe, "hp": int(hero.get(&"health"))}
+	return {"ok": failures.size() == _window_failures_before, "follower": snapshot,
+		"observe": observe, "hp": int(hero.get(&"health"))}
 
 
 # ---------------------------------------------------------------------------
@@ -773,7 +810,9 @@ func _capture(name: String) -> void:
 		var sd := sqrt(maxf(0.0, total_sq / maxf(1.0, float(count)) - mean * mean))
 		print("C08_FRAME %s %dx%d distinct=%d luma_sd=%.2f" % [name, image.get_width(), image.get_height(), seen.size(), sd])
 		_expect(seen.size() >= 24, "the %s frame is not a flat colour (%d distinct)" % [name, seen.size()])
-		_expect(sd >= 2.0, "the %s frame has real contrast (sd %.2f)" % [name, sd])
+		# Color.get_luminance() is normalised 0..1, so contrast is measured on that
+		# scale: 0.02 is 2% of full range and a black or flat frame cannot reach it.
+		_expect(sd >= 0.02, "the %s frame has real contrast (sd %.3f of full range)" % [name, sd])
 
 
 # ---------------------------------------------------------------------------
@@ -812,9 +851,18 @@ func _relaunch_body() -> void:
 	print("C08_RELAUNCH_SOURCE ", JSON.stringify(snapshot))
 	_expect(String(snapshot.get("run_id", "")) == String(audit.get("run_id", "")),
 		"footprint evidence is bound to the restored run")
-	_expect(int(snapshot.get("total_records", -1)) == 0,
-		"a cold start carries no evidence from the previous process")
-	_expect(int(source.call(&"live_count")) == 0, "no stale mark is live after the relaunch")
+	var restored := int(snapshot.get("ledger_restored", -1))
+	_expect(restored >= 1, "a still-valid trail survives quitting the game (%d marks restored)" % restored)
+	_expect(int(snapshot.get("total_records", -1)) == restored,
+		"the cold start holds exactly the restored marks, with no stale record")
+	_expect(int(source.call(&"live_count")) == restored,
+		"every restored mark is still live on the K8 clock; expired marks were dropped")
+	var ledger: Dictionary = (_save().call(&"get_snapshot") as Dictionary).get("c08_traces", {})
+	_expect(String(ledger.get("run_id", "")) == String(audit.get("run_id", "")),
+		"the stored ledger is still the first process's run")
+	_expect((ledger.get("marks", []) as Array).size() <= 512, "the stored ledger stays bounded")
+	_expect(String(source.call(&"snapshot").get("ledger_error", "x")).is_empty(),
+		"the evidence restore reported no error")
 	# The threat receipt was consumed before the enemy was exposed, so the shipped
 	# default (and a relaunch) cannot re-expose the encounter.
 	_expect(_enemy() == null, "the one-shot encounter is not re-exposed on relaunch")

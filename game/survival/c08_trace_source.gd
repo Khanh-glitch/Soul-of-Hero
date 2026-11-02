@@ -59,6 +59,11 @@ var samples_refused := 0
 var clock_agrees := 0
 var clock_checks := 0
 var surface_named := ""
+## K8 ledger: live marks survive the process that laid them, so quitting is not a
+## free way to erase a trail. Counters are evidence, not state.
+var ledger_commits := 0
+var ledger_restored := 0
+var ledger_error := ""
 
 var _host: Node = null
 var _player: Node2D = null
@@ -68,6 +73,7 @@ var _active := false
 var _marks := false
 var _prune_left := 0.0
 var _last_surface := ""
+var _restored_run := ""
 
 
 func is_active() -> bool:
@@ -134,8 +140,10 @@ func _physics_process(delta: float) -> void:
 		return
 	var run_id := String(clock["run_id"])
 	if String(store.run_id()) != run_id:
-		# A new (or first) run never inherits another run's evidence.
+		# A new (or first) run never inherits another run's evidence; the same run
+		# restores the marks that are still physically valid.
 		store.reset(run_id)
+		_restore_ledger(run_id, float(clock["stamp"]))
 	var stamp := float(clock["stamp"])
 	var agrees := int(clock.get("agrees", -1))
 	if agrees >= 0:
@@ -217,6 +225,58 @@ func _ground_family(world: Variant, code: String) -> String:
 	return family if not family.is_empty() else raw
 
 
+## Write this run's still-live marks into the ONE save document. `patch_state_path`
+## is the existing throttled-autosave primitive: it deep-copies, sanitises and
+## commits atomically, and appends no transaction receipt (a ledger is state, not
+## a one-shot reward). Returns false, naming the reason, if it cannot commit.
+func commit_evidence() -> bool:
+	ledger_error = ""
+	if store == null:
+		ledger_error = "store_absent"
+		return false
+	var clock := _run_clock()
+	if not bool(clock.get("ok", false)):
+		ledger_error = String(clock.get("reason", "run_clock_unavailable"))
+		return false
+	if String(store.run_id()) != String(clock["run_id"]):
+		ledger_error = "run_identity_mismatch"
+		return false
+	var save := get_node_or_null("/root/SaveService")
+	if save == null or not save.has_method(&"patch_state_path"):
+		ledger_error = "save_authority_absent"
+		return false
+	var ledger: Dictionary = store.export_ledger(float(clock["stamp"]))
+	if not bool(save.call(&"patch_state_path", ["c08_traces"], ledger)):
+		ledger_error = "save_commit_refused"
+		return false
+	ledger_commits += 1
+	return true
+
+
+## The world is going away: this is the player quitting. Evidence that is still
+## valid is committed; expired evidence is not (the ledger only holds live marks).
+func _exit_tree() -> void:
+	if _active and store != null and not String(store.run_id()).is_empty():
+		commit_evidence()
+
+
+func _restore_ledger(run_id: String, stamp: float) -> void:
+	ledger_restored = 0
+	if _restored_run == run_id:
+		return
+	_restored_run = run_id
+	var save := get_node_or_null("/root/SaveService")
+	if save == null or not save.has_method(&"get_snapshot"):
+		return
+	var snapshot: Variant = save.call(&"get_snapshot")
+	if not snapshot is Dictionary:
+		return
+	var ledger: Variant = (snapshot as Dictionary).get("c08_traces", {})
+	ledger_restored = int(store.import_ledger(ledger, stamp))
+	if ledger_restored > 0:
+		print("A0_C08_EVIDENCE_RESTORED ", JSON.stringify({"run_id": run_id, "marks": ledger_restored}))
+
+
 func live_traces(limit: int = MARK_LIMIT) -> Array[Dictionary]:
 	var empty: Array[Dictionary] = []
 	if store == null:
@@ -257,6 +317,9 @@ func snapshot() -> Dictionary:
 		"last_surface": _last_surface,
 		"live": live_count(),
 		"total_records": int(store.total_count()) if store != null else 0,
+		"ledger_restored": ledger_restored,
+		"ledger_commits": ledger_commits,
+		"ledger_error": ledger_error,
 	}
 
 
