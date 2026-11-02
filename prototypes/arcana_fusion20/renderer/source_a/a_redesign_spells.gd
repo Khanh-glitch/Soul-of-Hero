@@ -201,7 +201,7 @@ class RiptideCalligraphyR:
         # The wave is released from the first authored stroke and advects in
         # one direction, rather than appearing as unrelated expanding rings.
         var u := AMath.seg(t, 4.6, 6.4)
-        return _stroke_pt(0, 0.5) + Vector2(76.0 * u, 0.0)
+        return _stroke_pt(0, 0.5) + Vector2(8.0 + 76.0 * u, 0.0)
     func authored_events() -> Array:
         var ev: Array = []
         for i in range(3):
