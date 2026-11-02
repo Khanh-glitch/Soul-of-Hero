@@ -1,3 +1,21 @@
+R22 — CẬP NHẬT QUAN TRỌNG (thay thế các mô tả #15 cũ bên dưới)
+#15 bây giờ chụp vị trí caster thật khi bắt đầu, giữ năm gốc tua tại đó đến
+OUT. Người chơi tự do di chuyển; hoa/bốn mục tiêu giữ nguyên trên đất. Không
+kéo dài, sao chép hay thêm tua; ảnh trước/sau và matrix 35/140/900, bốn hướng
+phải kiểm tra trong cùng workflow trước khi kết luận. Nguồn có 23 đoạn × 6.2
+pixel (~142.6 px); tại scale tối đa 3.5, chiều dài danh nghĩa ~499.1 đơn vị
+thế giới, nhỏ hơn target 900: khoảng cách cực đại có thể vượt sức với của nguồn,
+không phải lỗi neo caster và không phải chính sách tầm đánh của gameplay.
+
+MATRIX BATCH S — tình trạng xem xét trước run mới; không phải Gold
+02 | B Pyre Wyrm | ảnh 1x normal/dim + proxy cũ; xem chuyển động đầy đủ
+03 | B Meteor Loom | 720p frame theo thứ tự normal/dim; flash gốc giữ nguyên; HDR CT
+07 | C Mirrorfrost Basilica | ảnh 1x normal/dim + proxy cũ; xem shard/OUT
+08 | B Undertow Maw | ảnh 1x normal/dim + proxy cũ; xem toàn chuyển động
+10 | C Thunderloom | ảnh 1x normal/dim + proxy cũ; xem post/OUT
+15 | C Thorn Opera | sửa neo cast-origin; trước/sau/matrix mới đang chờ CI
+17 | C Event Horizon | ảnh 1x normal/dim + proxy cũ; blackout theo nguồn
+
 BATCH S — KIỂM TRA HÌNH ẢNH / VISUAL REVIEW (CHƯA HOÀN TẤT)
 
 Chỉ là hiệu ứng hình ảnh. Không tự tạo trúng đòn, sát thương, lực kéo hoặc

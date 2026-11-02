@@ -270,7 +270,7 @@ jobs:
           if-no-files-found: error
           retention-days: 14
       - name: Encode compact 720p native-cadence motion
-        if: matrix.skill == 3 || matrix.skill == 15
+        if: matrix.skill != 5
         run: |
           set -euo pipefail
           ffmpeg -hide_banner -loglevel error -y -f concat -safe 0 -i "$RUNNER_TEMP/live-output/frames.txt" \
@@ -279,7 +279,7 @@ jobs:
       # Compact real-cadence clips can be retrieved from Git when this sandbox
       # cannot reach the artifact CDN. Detached blobs never modify a ref.
       - name: Surface bounded native-cadence motion blob
-        if: matrix.skill == 3 || matrix.skill == 15
+        if: matrix.skill != 5
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -300,10 +300,10 @@ jobs:
             echo "::warning::720p Git blob transport unavailable; use motion artifact"
           fi
       - name: Upload separate 720p motion and original timing
-        if: matrix.skill == 3 || matrix.skill == 15
+        if: matrix.skill != 5
         uses: actions/upload-artifact@v4
         with:
-          name: batch-s-motion-${{ matrix.variant }}-${{ matrix.lighting }}
+          name: ${{ matrix.skill == 1 && format('batch-f-motion-{0}-{1}', matrix.variant, matrix.lighting) || format('batch-s-motion-{0}-{1}', matrix.variant, matrix.lighting) }}
           path: |
             ${{ runner.temp }}/native-review-720p.mp4
             ${{ runner.temp }}/native-review-timeline.json
@@ -468,7 +468,7 @@ jobs:
           set -euo pipefail
           unzip -q "$(find bundle -name SOH_AVFX_EXPERIMENTAL_linux.zip -print -quit)" -d release
           chmod +x release/SOH_AVFX_Playtest.x86_64
-      - name: Capture eight real-world ranges and bearings
+      - name: Capture twelve real-world ranges and bearings and short-cast motion
         env:
           AVFX_C15_MATRIX: '1'
           AVFX_LIVE_LIGHT: ${{ matrix.lighting }}
@@ -500,6 +500,23 @@ jobs:
               echo "::warning::Git blob transport unavailable; use range artifact"
             fi
           done
+      - name: Encode and surface after-fix full short-cast motion
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          motion="$THORN_RAW_DIR/short_motion"
+          python3 tools/arcana20_join/encode_live_capture.py "$motion"
+          ffmpeg -hide_banner -loglevel error -y -f concat -safe 0 -i "$motion/frames.txt" -fps_mode vfr -c:v libx264 -preset medium -crf 30 -pix_fmt yuv420p -movflags +faststart "$motion/short-motion-720p.mp4"
+          python3 - "$motion/short-motion-720p.mp4" "$RUNNER_TEMP/motion-blob.json" <<'PY'
+          import base64,json,pathlib,sys
+          pathlib.Path(sys.argv[2]).write_text(json.dumps({'content':base64.b64encode(pathlib.Path(sys.argv[1]).read_bytes()).decode(),'encoding':'base64'}))
+          PY
+          if [ "$(stat -c %s "$motion/short-motion-720p.mp4")" -le 8000000 ] && blob=$(gh api --method POST "repos/$GITHUB_REPOSITORY/git/blobs" --input "$RUNNER_TEMP/motion-blob.json" --jq .sha); then
+            echo "::notice title=THORN_AFTER_720P_GIT_BLOB::$blob"
+          else
+            echo "::warning::Short-cast motion Git blob unavailable; use raw range artifact"
+          fi
       - name: Preserve original lossless range capture and metadata
         uses: actions/upload-artifact@v4
         with:
@@ -511,6 +528,83 @@ jobs:
         with:
           name: batch-s-thorn-ranges-${{ matrix.lighting }}
           path: ${{ runner.temp }}/range-review/
+          if-no-files-found: error
+          retention-days: 14
+  thorn-before-origin:
+    # Exact old AVFX source at 8c260, with only the new capture harness
+    # overlaid. Runs the same real route/35-right input, not a fake regression.
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    permissions:
+      contents: write
+      actions: read
+    strategy:
+      fail-fast: false
+      matrix:
+        lighting: [normal, dimmed]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assemble historical source and current capture harness
+        run: |
+          set -euo pipefail
+          git fetch --depth=1 --no-tags origin 8c260d9d595d33f96bc333d860851dcaaae12cac 04eacf62f1a3740a57e08691c3a9006d454aaa2c 6b801554a6af95424b4e39dd29f43c146aa13848 2cb1a3c5f093724eb9fecbdf45909ccb611f7b32 18e7afcbd576bbd9bfbcc509b2ee13216186a522 e505173edd119fdd955cf6249511b575a5468440
+          python3 tools/arcana20_join/assemble.py --out "$RUNNER_TEMP/old-project" --avfx-sha 8c260d9d595d33f96bc333d860851dcaaae12cac --a0-sha 04eacf62f1a3740a57e08691c3a9006d454aaa2c
+          cp prototypes/arcana_fusion20/renderer/playtest/arcana20_thorn_matrix_capture.gd "$RUNNER_TEMP/old-project/prototypes/arcana_fusion20/renderer/playtest/arcana20_thorn_matrix_capture.gd"
+          python3 - "$RUNNER_TEMP/old-project/project.godot" <<'PY'
+          import pathlib,sys
+          p=pathlib.Path(sys.argv[1]); s=p.read_text().replace('config/name="SOUL OF HERO"','config/name="SOH AVFX old-origin diagnostic"').replace('run/main_scene="res://game/app/app_root.tscn"','run/main_scene="res://prototypes/arcana_fusion20/renderer/playtest/arcana20_playtest.tscn"');p.write_text(s)
+          PY
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+      - name: Import and run original moving-root build
+        env:
+          AVFX_C15_MATRIX: '1'
+          AVFX_C15_SHORT_ONLY: '1'
+          AVFX_LIVE_LIGHT: ${{ matrix.lighting }}
+        run: |
+          set -o pipefail
+          timeout 300s godot --headless --editor --path "$RUNNER_TEMP/old-project" --import --quit 2>&1 | tee "$RUNNER_TEMP/before-import.log"
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/before-import.log"
+          timeout --signal=TERM --kill-after=10s 1500s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path "$RUNNER_TEMP/old-project" --audio-driver Dummy --rendering-method gl_compatibility --resolution 1280x720 \
+            --user-data-dir "$RUNNER_TEMP/before-user" -- --avfx-live-capture 2>&1 | tee "$RUNNER_TEMP/before.log"
+          grep -Fq 'AVFX_THORN_MATRIX_PASS cases=1' "$RUNNER_TEMP/before.log"
+          ! grep -Eq 'AVFX_LIVE_FAIL|SCRIPT ERROR:|Parse Error:|Shader compilation failed' "$RUNNER_TEMP/before.log"
+      - name: Preserve and surface before-fix native motion
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          matrix_file=$(find "$RUNNER_TEMP" "$HOME/.local/share/godot/app_userdata" -name matrix.json -path '*/avfx_thorn_matrix/*' -print -quit 2>/dev/null)
+          test -n "$matrix_file"
+          echo "THORN_BEFORE_RAW=$(dirname "$matrix_file")" >> "$GITHUB_ENV"
+          motion="$(dirname "$matrix_file")/short_motion"
+          python3 tools/arcana20_join/encode_live_capture.py "$motion"
+          ffmpeg -hide_banner -loglevel error -y -f concat -safe 0 -i "$motion/frames.txt" -fps_mode vfr -c:v libx264 -preset medium -crf 30 -pix_fmt yuv420p -movflags +faststart "$motion/short-motion-720p.mp4"
+          python3 - "$motion/short-motion-720p.mp4" "$RUNNER_TEMP/motion-blob.json" <<'PY'
+          import base64,json,pathlib,sys
+          pathlib.Path(sys.argv[2]).write_text(json.dumps({'content':base64.b64encode(pathlib.Path(sys.argv[1]).read_bytes()).decode(),'encoding':'base64'}))
+          PY
+          if [ "$(stat -c %s "$motion/short-motion-720p.mp4")" -le 8000000 ] && blob=$(gh api --method POST "repos/$GITHUB_REPOSITORY/git/blobs" --input "$RUNNER_TEMP/motion-blob.json" --jq .sha); then
+            echo "::notice title=THORN_BEFORE_720P_GIT_BLOB::$blob"
+          else
+            echo "::warning::Before-fix motion Git blob unavailable; use raw artifact"
+          fi
+          for file in "$matrix_file" "$motion/timeline.json"; do
+            python3 - "$file" "$RUNNER_TEMP/meta-blob.json" <<'PY'
+          import base64,json,pathlib,sys
+          pathlib.Path(sys.argv[2]).write_text(json.dumps({'content':base64.b64encode(pathlib.Path(sys.argv[1]).read_bytes()).decode(),'encoding':'base64'}))
+          PY
+            if blob=$(gh api --method POST "repos/$GITHUB_REPOSITORY/git/blobs" --input "$RUNNER_TEMP/meta-blob.json" --jq .sha); then
+              echo "::notice title=THORN_BEFORE_META_$(basename "$file")::$blob"
+            fi
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: batch-s-thorn-before-raw-${{ matrix.lighting }}
+          path: ${{ env.THORN_BEFORE_RAW }}/
           if-no-files-found: error
           retention-days: 14
   source-review:
@@ -606,7 +700,7 @@ jobs:
           retention-days: 14
   creator-package:
     # One download, only when the same-run runtime and evidence jobs succeed.
-    needs: [build, windows-current-runtime, live-motion, source-review, full-frame-review, batch-s-small-review, thorn-range-review]
+    needs: [build, windows-current-runtime, live-motion, source-review, full-frame-review, batch-s-small-review, thorn-range-review, thorn-before-origin]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -636,6 +730,10 @@ jobs:
         with:
           pattern: batch-s-thorn-ranges-*
           path: deliverable/thorn-range-evidence
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: batch-s-thorn-before-raw-*
+          path: deliverable/thorn-before-evidence
       - name: Include guide and exact code provenance
         run: |
           cp prototypes/arcana_fusion20/renderer/playtest/HUONG_DAN_THU_NGHIEM.txt deliverable/HUONG_DAN.txt
