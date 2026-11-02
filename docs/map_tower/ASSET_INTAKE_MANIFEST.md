@@ -1,3 +1,24 @@
+# Veyra asset intake manifest
+
+## Reconciled inventory (R9.1, checked in the working tree)
+
+**PRESENT and in use** (archives in `map_tower/assets/raw_packs/`, extracted to
+`assets/environment/packs/`, modules registered in `tools/world/kit.py`):
+
+| pack | ID | used for |
+|---|---|---|
+| `668008-bridges.zip` | 668008 | bridge spans (stone/arch/wood/rope), pier planks — **resolved, not missing** |
+| `351300-island.zip` | 351300 | shore strips, sand band, rock outcrops, cave mouths, grass patches, water edges |
+| `665131-fields.zip` | 665131 | soil/road tiles (compacted earth classes), field objects |
+| `574220-roads-reference-only.zip` | 574220 | paving/tile reference for trail + riverside materials |
+| `200380-farm-plants.zip` | 200380 | farm plants (decals) |
+
+**ABSENT from the checked sources** (no archive in `raw_packs`, no extracted sheet, referenced only
+by manifests): 504452 (village), 812442 (medieval village buildings), 749505 (fortress),
+694865 (sea / seabed objects), 695666 (undead tileset), 958568 (cursed land), 974061 (rocks).
+This is a statement about the Map Tower pack directory and the committed working tree, **not** a
+claim about every branch of the project.
+
 # Asset intake manifest — exact gaps (no Drive, no private repo at build time)
 
 Every item below was searched on the SOH branch, on `map/veyra-gold-asset-canon-20261102`, in the

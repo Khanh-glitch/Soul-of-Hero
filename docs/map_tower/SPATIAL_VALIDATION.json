@@ -1,9 +1,9 @@
 {
  "schema": "soh.veyra.spatial_validation.v2",
  "provenance": {
-  "tested_sha": "101f7ba62483447e8b3dc2e6abe77386bf9caee4",
+  "tested_sha": "b193a0e9319181d8b6be317dfc0624ddea492adb",
   "gold_sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
-  "compiler_sha256": "58f556883e1f2f406536d657e6ec54e942032b8a6fe6694710b3406c892bf0e0",
+  "compiler_sha256": "96e6a548656ecd3ca1718603041d8d26f8b2cad198d1f026fae7854ec7ba77d2",
   "compiler_files": [
    "tools/world/veyra_compile.py",
    "tools/world/network.py",
@@ -11,14 +11,14 @@
    "tools/world/validate.py",
    "tools/world/world.py"
   ],
-  "world_png_sha256": "13c01da3b6b3cdd7a2057d5c4e75bbab622d3332c4c634de83ee873ab5fbe193",
-  "world_meta_sha256": "debd3b0a4eede67c592e6f4834717ad779035773eda578c6cf055e4235ebf2f4",
-  "collision_sha256": "365a364420ed9368ad72d7ce0cfda848f75568ad0d09ac280454c5dd859100f4",
-  "minimap_sha256": "f5be5720c6a5524aef2a497ec844ea00a9a28cf9f2ff124c7274f6224098ccb2",
+  "world_png_sha256": "0be85f76c6a9ed64b52b82981d0699b24bc8e2d2840d149d132da9880423cc56",
+  "world_meta_sha256": "24da2459b36e7be22cc089a1f56dcdb6af68e48ec685b57b5f8e5bd8769f816b",
+  "collision_sha256": "923a3e6e4666db45f117716346f57ffcf8c82ae790bb773d9bf5a6ec65fb1c7f",
+  "minimap_sha256": "9a8a60a8ce17a5f3b510350b27f745fdbacaabd2bdb2ca8ee1df55511b8a51a1",
   "network_json_sha256": "d57b92c765a17923a80b28a83538fd8f3f3567451c565e6bacd8b06363d96a90"
  },
  "gold_sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
- "world_meta_sha256": "debd3b0a4eede67c592e6f4834717ad779035773eda578c6cf055e4235ebf2f4",
+ "world_meta_sha256": "24da2459b36e7be22cc089a1f56dcdb6af68e48ec685b57b5f8e5bd8769f816b",
  "checks": [
   {
    "gate": "A1",
@@ -161,22 +161,22 @@
     {
      "spawn": "sp_west",
      "pois_reached": 57,
-     "cells": 48415
+     "cells": 48419
     },
     {
      "spawn": "sp_lake",
      "pois_reached": 57,
-     "cells": 48415
+     "cells": 48419
     },
     {
      "spawn": "sp_hook",
      "pois_reached": 57,
-     "cells": 48415
+     "cells": 48419
     },
     {
      "spawn": "sp_gulf",
      "pois_reached": 57,
-     "cells": 48415
+     "cells": 48419
     }
    ]
   },
@@ -449,8 +449,8 @@
   }
  ],
  "bridge_bypass_class": {},
- "code_sha": "101f7ba62483447e8b3dc2e6abe77386bf9caee4",
- "world_png_sha256": "13c01da3b6b3cdd7a2057d5c4e75bbab622d3332c4c634de83ee873ab5fbe193",
+ "code_sha": "b193a0e9319181d8b6be317dfc0624ddea492adb",
+ "world_png_sha256": "0be85f76c6a9ed64b52b82981d0699b24bc8e2d2840d149d132da9880423cc56",
  "poi_access": {
   "po_academy": {
    "mode": "land",
@@ -1177,22 +1177,22 @@
   {
    "spawn": "sp_west",
    "pois_reached": 57,
-   "cells": 48415
+   "cells": 48419
   },
   {
    "spawn": "sp_lake",
    "pois_reached": 57,
-   "cells": 48415
+   "cells": 48419
   },
   {
    "spawn": "sp_hook",
    "pois_reached": 57,
-   "cells": 48415
+   "cells": 48419
   },
   {
    "spawn": "sp_gulf",
    "pois_reached": 57,
-   "cells": 48415
+   "cells": 48419
   }
  ],
  "network_journeys": [

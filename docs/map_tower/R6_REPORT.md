@@ -1,4 +1,18 @@
-# Map Tower — Veyra network + world art status (R6 → R9)
+# Map Tower — Veyra network + world art status
+
+**Current checkpoint: R9.1 — surgical closure. Verdict: PAUSED_ART_DEPENDENCY.**
+The R6–R9 material below is the historical record; earlier checkpoints are NOT current status.
+
+R9.1 corrections (this commit):
+- `compose_quarry()` no longer draws `struct_stairs` (a 90×96 sprite, >4× the 22 px D051 avatar) —
+  proven by an A/B render with `VEYRA_DISABLE_FAMS=struct_stairs,struct_wall`.
+- `struct_wall` removed from the inhabited/industrial vocabularies (village, hamlet, facility,
+  warehouse, mill, powerplant, relay, evac) and from Greywater's store "compound"; those POIs now
+  present a fenced storage yard and working kit instead of dungeon-wall "houses".
+- `struct_wall` is retained only where a wall fragment is the correct subject: ruins, necropolis,
+  tombs, and the mine adit door (`crypt_door`).
+- Quarry haul ramp narrowed and toned; terraces remain tile-built (no flat vector fills).
+- 33/33 spatial gates still pass; 84/84 roads traversable; hydrology unchanged.
 
 **Latest tested code SHA: `5dce3b4` (branch `arena/103e4440-soul-of-hero`).**
 CI #41398920626: spatial PASS (33/33), browser capture PASS, godot-native-attempt PASS,

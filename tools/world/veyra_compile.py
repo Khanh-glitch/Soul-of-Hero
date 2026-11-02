@@ -1085,7 +1085,11 @@ def main(out_dir):
     road_corridor = grow((roads > 0).astype(np.uint8), 3)
     bank_corridor = np.maximum(grow(water, 1), down(water_px, U, 0.10))
 
+    DISABLED = {s.strip() for s in os.environ.get("VEYRA_DISABLE_FAMS", "").split(",") if s.strip()}
+
     def place(fam, wx, wy, key, collider=True, tag=None, span_cells=2):
+        if fam in DISABLED or ALIAS.get(fam) in DISABLED:
+            return None
         ux, uy = int(wx // U), int(wy // U)
         if not (0 <= ux < UW and 0 <= uy < UH):
             return None
@@ -1170,9 +1174,9 @@ def main(out_dir):
 
     # POI sites — archetype vocabulary drawn from the chapter-1 environment sheets
     SITE = {
-        "village":     ["struct_wall", "struct_wall", "crypt_door", "well", "banner", "crate",
+        "village":     ["well", "banner", "crate",
                         "barrel", "bush"],
-        "hamlet":      ["struct_wall", "crypt_door", "well", "barrel", "sign", "bush"],
+        "hamlet":      ["well", "barrel", "sign", "bush", "crate"],
         "port":        ["crate", "crate", "barrel", "sign", "banner", "props_ruin"],
         "pier":        ["crate", "barrel", "sign", "brazier"],
         "roadstop":    ["sign", "barrel", "crate", "brazier"],
@@ -1180,21 +1184,21 @@ def main(out_dir):
         "mine":        ["props_boulder", "crypt_door", "crate", "props_rock"],
         "smelter":     ["forge", "forge", "brazier", "props_workbench", "crate"],
         "filter":      ["forge", "brazier", "props_workbench", "crate"],
-        "powerplant":  ["pylon", "forge", "brazier", "struct_wall"],
-        "relay":       ["pylon", "pylon", "brazier", "struct_wall"],
+        "powerplant":  ["pylon", "forge", "brazier", "props_workbench"],
+        "relay":       ["pylon", "pylon", "brazier", "props_workbench"],
         "ruins":       ["props_ruin", "struct_wall", "struct_arch", "props_rock"],
         "elder_site":  ["niche", "sarcophagus", "statue", "struct_arch", "brazier"],
         "observatory": ["pylon", "shelf", "pillar", "struct_arch"],
         "research":    ["shelf", "shelf", "pillar", "props_pedestal", "struct_wall"],
-        "facility":    ["struct_wall", "struct_wall", "crypt_door", "banner", "crate"],
-        "warehouse":   ["crate", "crate", "crate", "barrel", "struct_wall"],
-        "mill":        ["crate", "barrel", "struct_wall", "sign"],
+        "facility":    ["banner", "crate", "props_workbench", "brazier"],
+        "warehouse":   ["crate", "crate", "crate", "barrel"],
+        "mill":        ["crate", "barrel", "sign"],
         "sawmill":     ["crate", "crate", "barrel", "props_workbench"],
         "grove":       ["tree", "tree", "bush", "bush", "tuft"],
         "gate":        ["struct_arch", "struct_wall", "struct_wall", "brazier"],
         "tomb":        ["niche", "sarcophagus", "grave", "crypt_door", "brazier"],
         "necropolis":  ["niche", "niche", "sarcophagus", "grave", "statue", "struct_wall"],
-        "evac":        ["crate", "sign", "brazier", "struct_wall"],
+        "evac":        ["crate", "sign", "brazier", "props_barrel"],
         "ragnarok_cache": ["crate", "crate", "brazier", "props_ruin"],
         "chest_vendor": ["crate", "barrel", "sign", "banner"],
     }
@@ -1245,9 +1249,8 @@ def main(out_dir):
     ref_areas = []
     if village_poi:
         ax, ay = village_poi["gold_at"]
-        for i, fam in enumerate(["struct_wall", "struct_wall", "crypt_door", "banner", "well",
-                                 "crate", "barrel", "brazier", "struct_wall", "bush", "bush",
-                                 "sign"]):
+        for i, fam in enumerate(["banner", "well", "crate", "barrel", "brazier", "bush", "bush",
+                                 "sign", "crate", "barrel", "bush", "sign"]):
             a = 2 * math.pi * i / 12
             place(fam, (ax + math.cos(a) * 7.5) * U, (ay + math.sin(a) * 7.5) * U,
                   f"ref:village:{i}", fam not in ("bush", "brazier"), tag=village_poi["source_id"])
@@ -1255,7 +1258,7 @@ def main(out_dir):
                           "world_px": village_poi["world_px"]})
     if quarry_poi:
         ax, ay = quarry_poi["gold_at"]
-        for i, fam in enumerate(["props_boulder", "props_boulder", "stairs", "crate",
+        for i, fam in enumerate(["props_boulder", "props_boulder", "props_rock", "crate",
                                  "props_workbench", "props_rock", "props_rock", "brazier"]):
             a = 2 * math.pi * i / 8
             place(fam, (ax + math.cos(a) * 8) * U, (ay + math.sin(a) * 8) * U,
@@ -1327,10 +1330,11 @@ def main(out_dir):
         place("well", cx + 16, cy - 6, f"well:{name}", True)
         place("props_workbench", cx - 26, cy - 14, f"bench:{name}", True)
         place("sign", cx - 58, cy + 46, f"sign:{name}", False)
-        # one walled store compound (a real structure silhouette we do have)
+        # a fenced storage yard, not a dungeon-wall "building": the wall/module sprites are
+        # crypt and castle pieces at 96 px, four times the avatar, and must not read as houses.
         for k in range(4):
-            place("struct_wall", cx + 70 + k * 18, cy + 18, f"store:{name}:b{k}", True)
-        place("crypt_door", cx + 76, cy + 34, f"store:{name}:door", True)
+            place("props_crate" if k % 2 else "props_barrel", cx + 70 + k * 16, cy + 20,
+                  f"store:{name}:c{k}", True)
         compose_notes.append({"poi": poi["source_id"], "plots": plots,
                               "habitation_art": "MISSING: no roofed building sprite in committed "
                                                 "sources; ground plan composed only"})
@@ -1368,10 +1372,15 @@ def main(out_dir):
                 world.alpha_composite(rub[k2 % len(rub)],
                                       (int(cx + math.cos(a) * r), int(cy + math.sin(a) * r * 0.62)))
         # haul ramp: packed soil strip from the south lip into the pit
-        ramp_tiles = [im.convert("RGBA") for im in KIT.load_kit().soil_tiles(4)]
-        for ty in range(int(cy), int(cy + 62), 32):
-            for tx in range(int(cx - 16), int(cx + 16), 32):
-                world.alpha_composite(ramp_tiles[(tx // 32) % len(ramp_tiles)], (tx, ty))
+        _rt = [im.convert("RGBA") for im in KIT.load_kit().soil_tiles(4)]
+        ramp_tiles = []
+        for im in _rt:
+            a_ = np.array(im).astype(np.float32)
+            a_[:, :, :3] = np.clip(a_[:, :, :3] * 0.82, 0, 255)
+            ramp_tiles.append(Image.fromarray(a_.astype(np.uint8), "RGBA"))
+        for ty in range(int(cy), int(cy + 62), 24):
+            world.alpha_composite(ramp_tiles[(ty // 24) % len(ramp_tiles)].crop((0, 0, 24, 24)),
+                                  (int(cx - 12), int(ty)))
         steps += 2
         # spoil heaps and debris outside the pit, staggered so they read as tipping, not a ring
         for k in range(14):
@@ -1381,7 +1390,8 @@ def main(out_dir):
                   cx + math.cos(a) * rr, cy + math.sin(a) * rr * 0.7,
                   f"spoil:{poi['source_id']}:{k}", True)
         place("crypt_door", cx - 6, cy - 4, f"adit:{poi['source_id']}", True)
-        place("stairs", cx + 20, cy + 30, f"stairs:{poi['source_id']}", True)
+        # no `struct_stairs` here: it is a 90x96 sprite (>4x the 22 px avatar) and read as a
+        # collapsed wooden ramp over the pit. The haul ramp below is terrain, not a prop.
         compose_notes.append({"poi": poi["source_id"], "terraces": steps,
                               "read": "nested pit, cut faces, haul ramp, spoil tips, adit"})
         return steps + 16
