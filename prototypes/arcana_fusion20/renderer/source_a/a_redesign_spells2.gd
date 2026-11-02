@@ -101,32 +101,35 @@ class RootwakeR:
                         return maxf(0.5, float(br.w) * 0.35 * (1.0 - u * 0.6)))
         if tension > 0.0:
             for i in range(_tips.size()):
-                var tp: Vector2 = _tips[i]
-                var endpoint := tp.lerp(C, AMath.ease_in(tension, 2.0))
-                var control := tp.lerp(C, 0.5) + Vector2(float(i - 1) * 5.0, -20.0 * sin(tension * PI * 0.75))
+                var main: Dictionary = _roots[i][0]
+                var visible_main := _visible_growth(float(main.grow), t)
+                var attached := AMath.cl01((visible_main - 0.75) / 0.25)
+                if attached <= 0.001:
+                    continue
+                var raised: Array = _lifted_points(main, tension * 15.0)
+                # Begin exactly on an existing main-root node, not in midair.
+                var tp: Vector2 = raised[18]
+                var endpoint: Vector2 = tp.lerp(_tips[i], AMath.ease_in(tension, 2.0) * attached)
+                var control := tp.lerp(endpoint, 0.5) + Vector2(float(i - 1) * 4.0, -22.0 * tension * attached)
                 var points: Array = []
                 for step in range(13):
                     var u := float(step) / 12.0
                     points.append(tp * (1.0 - u) * (1.0 - u) + control * 2.0 * (1.0 - u) * u + endpoint * u * u)
                 ADraw.ribbon(fb, points,
-                    func(u: float, _j: int) -> float: return (2.8 - u * 2.0) * tension,
-                    func(u: float, _j: int, edge: float) -> Variant:
-                        return AMath.R("verdant", 0.35 + (1.0 - edge) * 0.4) * retract)
-                # Two tapered barbs grow out of the arched tendon itself;
-                # their bases follow its curve and point toward the target.
+                    func(u: float, _j: int) -> float: return (3.4 - u * 2.1) * tension * attached,
+                    func(_u: float, _j: int, edge: float) -> Variant:
+                        return Vector3(0.16, 0.24, 0.07) if edge > 0.65 else Vector3(0.35, 0.42, 0.13), true, retract)
+                # Two actual barbs have their bases on the same arch.
                 for barb_value in [0.36, 0.68]:
                     var barb: float = barb_value
                     var base: Vector2 = tp * (1.0 - barb) * (1.0 - barb) + control * 2.0 * (1.0 - barb) * barb + endpoint * barb * barb
                     var tangent: Vector2 = ((control - tp) * (1.0 - barb) + (endpoint - control) * barb).normalized()
                     var side: Vector2 = Vector2(-tangent.y, tangent.x) * (-1.0 if i % 2 == 0 else 1.0)
-                    var tip_point: Vector2 = base + (tangent * 6.0 + side * 8.0) * tension
-                    var foot: Vector2 = tangent * 2.2 * tension
+                    var tip_point: Vector2 = base + (tangent * 8.0 + side * 9.0) * tension * attached
+                    var foot: Vector2 = tangent * 2.8 * tension * attached
                     ADraw.poly_fill(fb, [base - foot, tip_point, base + foot],
-                        func(_x: int, _y: int) -> Variant: return Vector3(0.12, 0.28, 0.07), true, tension * retract)
-                    ADraw.streak(fb, base.x, base.y, tip_point.x, tip_point.y, 0.8, 0.4, AMath.R("verdant", 0.7), tension * retract * 0.5)
-                ADraw.disc(fb, endpoint.x, endpoint.y, 1.5, AMath.R("verdant", 0.8), tension * retract)
-        if t > 5.4 and t < 6.2:
-            ADraw.pulse_ring(fb, C.x, C.y, 8.0 + AMath.seg(t, 5.4, 6.2) * 90.0, 2.6, AMath.R("verdant", 0.7), 0.5 * (1.0 - AMath.seg(t, 5.4, 6.2)), 1.5)
+                        func(_x: int, _y: int) -> Variant: return Vector3(0.19, 0.31, 0.08), true, tension * retract * attached)
+                    ADraw.streak(fb, base.x, base.y, tip_point.x, tip_point.y, 0.8, 0.4, AMath.R("verdant", 0.7), tension * retract * attached * 0.5)
 
 # ------------------------------------------- #14 spore nebula
 class SporeNebulaR:
