@@ -119,7 +119,7 @@ try {
         replanReason='waypoint-reached';
         if(!defending){const beforeCombat=await state();await ensureVitals();await defendNearby();const afterCombat=await state();if(Math.hypot(afterCombat.player.x-beforeCombat.player.x,afterCombat.player.y-beforeCombat.player.y)>5||Math.abs(afterCombat.player.hp-beforeCombat.player.hp)>0){diag.threats.push({before:{x:beforeCombat.player.x,y:beforeCombat.player.y,hp:beforeCombat.player.hp},after:{x:afterCombat.player.x,y:afterCombat.player.y,hp:afterCombat.player.hp},nearby:afterCombat.creatures.filter(m=>Math.hypot(m.x-afterCombat.player.x,m.y-afterCombat.player.y)<140).map(m=>({id:m.id,type:m.type,state:m.state,x:m.x,y:m.y,hp:m.hp}))});replanReason='combat-or-knockback-live-position-replan';}}
       }
-      cur=await state();diag.failed={player:cur.player,distance:Math.hypot(cur.player.x-wx,cur.player.y-wy),target:{x:wx,y:wy},replans:diag.replans};routeDiagnostics.push(diag);
+      cur=await state();diag.failed={player:cur.player,distance:Math.hypot(cur.player.x-wx,cur.player.y-wy),target:{x:wx,y:wy},replans:diag.replans,lastPlan:diag.lastPlan,transientBlocked:[...transientBlocked].slice(-50).map(i=>[i%W,(i/W)|0]),recentWaypoints:diag.waypoints.slice(-10).map(w=>({tile:w.tile,start:w.start,end:w.end,attempts:w.attempts.slice(-5)})),recentEvades:routeDiagnostics.filter(x=>x.kind==='wildlife-evasion').slice(-8)};routeDiagnostics.push(diag);
       await page.screenshot({path:path.join(out,`route-failure-${layoutId}-${Date.now()}.png`),animations:'disabled'}).catch(()=>{});
       await fs.writeFile(path.join(out,`route-failure-${layoutId}.json`),JSON.stringify(diag,null,2)).catch(()=>{});
       throw new Error(`bounded replan exhaustion near (${wx},${wy}); last=${JSON.stringify(diag.failed)}`);
