@@ -68,7 +68,7 @@ try {
       exitTarget={x:entry.x,y:entry.y+40};
     }
     const vault=vaults[0]; assert(outer&&vault);
-    let initialApproachTiles = 0; let defending = false;
+    let initialApproachTiles = 0; let defending = false; let lastDodgeAt=0;
     const actualGrid = async () => {
       const raw = await page.evaluate(() => structuredClone(window.__soh.run));
       return { raw, grid: blockGrid(raw) };
@@ -89,7 +89,7 @@ try {
         const {raw,grid}=await actualGrid();
         const sx=Math.max(1,Math.min(W-2,Math.floor(cur.player.x/16))),sy=Math.max(1,Math.min(H-2,Math.floor(cur.player.y/16)));
         const q=new Int32Array(W*H),from=new Int32Array(W*H).fill(-2);let h=0,t=0,start=sy*W+sx,goal=-1;q[t++]=start;from[start]=-1;
-        const danger=new Set();for(const m of cur.creatures){if(m.hp<=0||m.type.startsWith('elder_')||m.state==='sleep')continue;const mx=Math.floor(m.x/16),my=Math.floor(m.y/16),r=12;for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++)if(Math.hypot(dx,dy)<=r)danger.add((my+dy)*W+mx+dx);}
+        const danger=new Set();for(const m of cur.creatures){if(m.hp<=0||m.type.startsWith('elder_')||m.state==='sleep')continue;const mx=Math.floor(m.x/16),my=Math.floor(m.y/16),r=8;for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++)if(Math.hypot(dx,dy)<=r)danger.add((my+dy)*W+mx+dx);}
         const pass=(x,y)=>{if(x<1||y<1||x>=W-1||y>=H-1)return false;const i=y*W+x;return !transientBlocked.has(i)&&!danger.has(i)&&![1,2,3,5].includes(grid[i]);};
         while(h<t){const i=q[h++],x=i%W,y=(i/W)|0;if(goalTile(x,y)){goal=i;break;}
           for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy,j=ny*W+nx;if(from[j]!==-2||j!==start&&!pass(nx,ny))continue;from[j]=i;q[t++]=j;}}
@@ -139,10 +139,10 @@ try {
       if(defending)return;defending=true;
       try{
         const cur=await state();const threat=cur.creatures.filter(m=>!m.type.startsWith('elder_')&&m.state!=='sleep'&&Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<220).sort((a,b)=>Math.hypot(a.x-cur.player.x,a.y-cur.player.y)-Math.hypot(b.x-cur.player.x,b.y-cur.player.y))[0];
-        if(!threat)return;
+        if(!threat||Date.now()-lastDodgeAt<900)return;lastDodgeAt=Date.now();
         await ensureVitals();const live=await state(),angle=Math.atan2(live.player.y-threat.y,live.player.x-threat.x),keys=[];
         if(Math.abs(Math.cos(angle))>0.25)keys.push(Math.cos(angle)>0?'d':'a');if(Math.abs(Math.sin(angle))>0.25)keys.push(Math.sin(angle)>0?'s':'w');
-        for(const k of keys)await page.keyboard.down(k);await page.keyboard.press('Space');await pause(280);for(const k of keys)await page.keyboard.up(k);
+        for(const k of keys)await page.keyboard.down(k);if(live.player.stamina>=22)await page.keyboard.press('Space');await pause(live.player.stamina>=22?280:220);for(const k of keys)await page.keyboard.up(k);
         const after=await state();routeDiagnostics.push({kind:'wildlife-evasion',threat:{id:threat.id,type:threat.type,state:threat.state,from:{x:threat.x,y:threat.y}},before:{x:live.player.x,y:live.player.y,hp:live.player.hp},after:{x:after.player.x,y:after.player.y,hp:after.player.hp},method:'ordinary directional WASD + Space dodge-roll; next route replanned from live position'});
       }finally{defending=false;}
     }
