@@ -56,6 +56,9 @@ var last_reason := ""
 var samples := 0
 var records_written := 0
 var samples_refused := 0
+## Samples whose step was too large to be one continuous movement. Diagnostic
+## only: the store already refuses to link them, it just never said why.
+var chain_breaks := 0
 var clock_agrees := 0
 var clock_checks := 0
 var surface_named := ""
@@ -73,6 +76,7 @@ var _active := false
 var _marks := false
 var _prune_left := 0.0
 var _last_surface := ""
+var _previous_sample := Vector2.ZERO
 var _restored_run := ""
 
 
@@ -98,6 +102,7 @@ func configure(host: Node, player: Node2D, navigation: Variant, authority: Node)
 	_player = player
 	_navigation = navigation
 	_authority = authority
+	_previous_sample = player.global_position if player != null else Vector2.ZERO
 	_active = bool(ProjectSettings.get_setting(SETTING, true))
 	_marks = bool(ProjectSettings.get_setting(MARKS_SETTING, true)) and _active
 	z_index = -1
@@ -143,6 +148,7 @@ func _physics_process(delta: float) -> void:
 		# A new (or first) run never inherits another run's evidence; the same run
 		# restores the marks that are still physically valid.
 		store.reset(run_id)
+		_previous_sample = _player.global_position
 		_restore_ledger(run_id, float(clock["stamp"]))
 	var stamp := float(clock["stamp"])
 	var agrees := int(clock.get("agrees", -1))
@@ -171,9 +177,13 @@ func _physics_process(delta: float) -> void:
 	eligible = reason.is_empty()
 	last_reason = reason
 	_last_surface = surface
+	var step := _player.global_position.distance_to(_previous_sample)
+	_previous_sample = _player.global_position
 	var written: int = store.sample(_player.global_position, stamp, surface, eligible,
 		spacing, lifetime, max_step)
 	samples += 1
+	if eligible and step > max_step:
+		chain_breaks += 1
 	if eligible:
 		if written > 0:
 			records_written += 1
@@ -311,6 +321,7 @@ func snapshot() -> Dictionary:
 		"lifetime": lifetime,
 		"max_step": max_step,
 		"samples": samples,
+		"chain_breaks": chain_breaks,
 		"records_written": records_written,
 		"samples_refused": samples_refused,
 		"last_reason": last_reason,

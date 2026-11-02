@@ -194,14 +194,40 @@ func _run_phase() -> Dictionary:
 
 
 ## An interior cell the Hero can stand in without standing on the bed itself.
+##
+## The ordinary walker drives the Hero's centre to a cell's bottom edge, so a cell
+## whose lower corner holds the bed, or whose row is the room's bottom row, cannot
+## be reached: the body stops a few pixels short and the walk reports a wedge that
+## is really furniture. Candidates are therefore checked against the real placed
+## structures (the door is skipped: an open door has no collider) before one is
+## chosen, and the cell below the doorway is tried first because the room is only
+## three free cells wide.
 func _stand_cell() -> Vector2i:
 	var nav := _nav()
 	var bed := nav.cell_of(_home_center())
-	for offset: Vector2i in [Vector2i(-1, -1), Vector2i(-1, 0), Vector2i(0, -1), Vector2i.ZERO]:
+	for offset: Vector2i in [Vector2i(-1, -2), Vector2i(0, -2), Vector2i(-2, -2), Vector2i(-1, 0),
+			Vector2i(-1, -1), Vector2i(0, -1)]:
 		var cell := bed + offset
-		if nav.in_bounds(cell) and nav.is_free(cell):
+		if not nav.in_bounds(cell) or not nav.is_free(cell):
+			continue
+		if _stand_point_clear(cell):
 			return cell
 	return bed
+
+
+func _stand_point_clear(cell: Vector2i) -> bool:
+	var point := Vector2(cell.x * 16 + 8, cell.y * 16 + 15)
+	var build := _builder()
+	if build == null:
+		return true
+	for value: Variant in build._placed.values():
+		var structure := value as SurvivalStructure
+		if structure == null or not is_instance_valid(structure) or structure.piece_id == SurvivalStructure.PIECE_DOOR:
+			continue
+		var rect := Rect2(structure.cell.x * 16.0, structure.cell.y * 16.0, 16.0, 16.0).grow(6.0)
+		if rect.has_point(point):
+			return false
+	return true
 
 
 func _home_center() -> Vector2:
@@ -494,10 +520,13 @@ func _counterfactual_b(source: Node, encounter: Node, enemy: CharacterBody2D,
 		return {"ok": false}
 	var _window_failures_before := failures.size()
 	follower.begin_window("B_valid_chain")
+	print("C08_B_SOURCE_START ", JSON.stringify(source.call(&"snapshot")))
 	var hp_before := int(hero.get(&"health"))
 	var stats := {"direct_ticks": 0, "min_home_distance": 99999.0, "investigate_ticks": 0,
 		"first_direct_distance": -1.0}
 	stats = await _walk_with_observation(hero, enemy, home, route["outbound"], stats)
+	print("C08_B_SOURCE_OUT ", JSON.stringify({"source": source.call(&"snapshot"),
+		"follower": follower.snapshot(), "enemy": [enemy.global_position.x, enemy.global_position.y]}))
 	await _capture("c08_b_outbound")
 	var walked_back := await _walk_with_observation(hero, enemy, home, route["inbound"], stats)
 	_expect(walked_back.get("walked", false), "B: ordinary input walks back into the home")

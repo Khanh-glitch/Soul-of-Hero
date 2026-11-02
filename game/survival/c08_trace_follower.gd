@@ -62,6 +62,11 @@ var _started := false
 ## The record the last pursuit ended on. Older-or-equal marks are cold evidence:
 ## re-sensing them would loop the creature on a trail it already followed.
 var _cold_trace := 0
+## Diagnostics: how often the skeleton actually consulted this adapter, and the
+## last reason it declined. "It never sensed" and "it was never asked" are very
+## different failures and must not look the same in an evidence window.
+var drive_calls := 0
+var block_reason := ""
 
 
 func attach(target: Node2D, habitat_position: Vector2, trace_source: Node) -> bool:
@@ -79,6 +84,8 @@ func attach(target: Node2D, habitat_position: Vector2, trace_source: Node) -> bo
 ## or erase a pursuit.
 func begin_window(label: String) -> void:
 	window = label
+	drive_calls = 0
+	block_reason = ""
 	sensed_count = 0
 	hops = 0
 	refused_links = 0
@@ -97,19 +104,25 @@ func begin_window(label: String) -> void:
 ## Called by the skeleton once per physics tick, only while it is not already in
 ## direct CHASE/ATTACK. Returns `{active, goal, trace_id}`.
 func drive(target: Node2D, delta: float) -> Dictionary:
+	drive_calls += 1
 	if not _started or source == null or not is_instance_valid(source) or not is_instance_valid(target):
+		block_reason = "detached"
 		return {"active": false}
 	skeleton = target
 	if not bool(source.call(&"is_active")):
+		block_reason = "source_inactive"
 		return {"active": false}
 	var clock: Dictionary = source.call(&"clock")
 	if not bool(clock.get("ok", false)):
+		block_reason = "clock_unavailable:" + String(clock.get("reason", ""))
 		_stop("clock_unavailable")
 		return {"active": false}
 	var stamp := float(clock["stamp"])
 	var store: Variant = source.get(&"store")
 	if store == null:
+		block_reason = "store_absent"
 		return {"active": false}
+	block_reason = ""
 	if not pursuing:
 		return _sense(store, stamp)
 	# The creature must still be allowed to be here at all.
@@ -244,6 +257,8 @@ func snapshot() -> Dictionary:
 		"hops": hops,
 		"max_hop": max_hop,
 		"refused_links": refused_links,
+		"drive_calls": drive_calls,
+		"block_reason": block_reason,
 		"pursuing": pursuing,
 		"reached_end": reached_end,
 		"lost_reason": lost_reason,
