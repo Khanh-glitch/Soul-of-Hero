@@ -165,12 +165,14 @@ try {
   await interact(fire.x,fire.y);await page.getByText('Fuel',{exact:false}).waitFor({timeout:5000});
   // Select the carried wood in Inventory, then place it into the campfire's first (fuel) slot through ordinary UI clicks.
   const panels=page.locator('.panel'),inventory=panels.last(),firePanel=page.locator('.panel').filter({hasText:'Campfire'}).first();
+  const headings=await page.locator('.panel-h').allInnerTexts();log.push(`Station UI panels after E: ${JSON.stringify(headings)}.`);
   assert.equal((await inventory.locator('.panel-h').innerText()).trim(),'Inventory','Station use did not render the Inventory panel');
+  assert((await firePanel.locator('.panel-h').innerText()).includes('Campfire'),'Campfire station panel is not open');
   const woodIndex=await page.evaluate(()=>window.__soh.run.custody.inv.slots.findIndex(z=>z?.key==='wood'));assert(woodIndex>=0,'Wood is not in the player inventory');const woodSlot=inventory.locator('.slot').nth(3+woodIndex);
   const fuelQty=async id=>page.evaluate(eid=>{const e=window.__soh.run.entities[eid];return window.__soh.run.custody[e.station.fuelC].slots.reduce((n,z)=>n+(z?.key==='wood'?z.qty:0),0)},id);
-  // First use the panel's shift-click quick-transfer, then fall back to select-and-place in the actual fuel grid.
+  // Shift-click is the game's quick-transfer. If it only selects, complete the transfer with a second ordinary UI click.
   await woodSlot.click({modifiers:['Shift']});await sleep(300);let fuel=await fuelQty(fire.id);
-  if(fuel<1){await woodSlot.click();const selectedClass=await woodSlot.getAttribute('class');await firePanel.locator('.slot').first().click();await sleep(300);fuel=await fuelQty(fire.id);log.push(`Fuel transfer fallback UI selection class=${selectedClass}; station fuel=${fuel}.`);}
+  if(fuel<1){let selectedClass=await woodSlot.getAttribute('class');if(!selectedClass?.includes('sel')){await woodSlot.click();selectedClass=await woodSlot.getAttribute('class');}await firePanel.locator('.slot').first().click();await sleep(300);fuel=await fuelQty(fire.id);log.push(`Fuel transfer fallback UI selection class=${selectedClass}; inventory wood=${await count('wood')}; station fuel=${fuel}.`);}
   assert(fuel>=1,'Campfire did not accept wood fuel');log.push(`Fueling cost: transferred wood x${fuel} from player inventory into the campfire fuel slot.`);
   const meatBefore=await count('meat'),saltBeforeQueue=await count('raw_salt');const queueBefore=Date.now();await page.getByRole('button',{name:'Queue',exact:true}).last().click();await sleep(400);s=await state();fire=s.entities.find(e=>e.id===fire.id);assert(fire.station.queue.some(q=>q.recipe==='salted_meat'),'Salted Roast was not queued');assert(await count('meat')===meatBefore-1,'Cooking did not consume exactly one meat');assert(await count('raw_salt')===saltBeforeQueue-1,'Cooking did not consume exactly one Raw Salt');
   log.push(`Queued Salted Roast through campfire UI; input cost meat 1 + Raw Salt 1 (before=${meatBefore}/${saltBeforeQueue}, after=${await count('meat')}/${await count('raw_salt')}), actual wall-clock start=${new Date(queueBefore).toISOString()}, fuel wood=${fuel}, queue=${JSON.stringify(fire.station.queue)}.`);
