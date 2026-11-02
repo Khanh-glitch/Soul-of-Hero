@@ -59,7 +59,6 @@ const WOOD_FOR_HOME := 36
 var _phase := PHASE_PLAY
 var _shots := ""
 var _keep := false
-var _body_complete := false
 var _world: Node = null
 var _audit: Dictionary = {}
 
@@ -268,7 +267,7 @@ func _body() -> void:
 	ProjectSettings.set_setting("survival/a0_optional_threat", true)
 	_world.call(&"_mount_optional_threat")
 	mount = _mount()
-	encounter = _encounter()
+	var encounter := _encounter()
 	var enemy := _enemy()
 	_expect(mount != null and bool(mount.call(&"snapshot").get("mounted", false)),
 		"the world mounts the guarded creature at a live-validated site (%s)"
@@ -599,7 +598,7 @@ func _walk_with_observation(hero: CharacterBody2D, enemy: CharacterBody2D, home:
 		var slice: Array[Vector2i] = []
 		for step in range(index, mini(index + 4, path.size())):
 			slice.append(path[step])
-		var leg := _observe_walk(hero, enemy, home, slice, stats)
+		var leg: Dictionary = await _observe_walk(hero, enemy, home, slice, stats)
 		if not bool(leg.get("walked", false)):
 			walked = false
 			break

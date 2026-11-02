@@ -148,6 +148,18 @@ jobs:
               if width < 640 or height < 360:
                   print("::error::frame below the required resolution:", path)
           PY
+
+      - name: Publish log tail (annotation channel)
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import glob, os
+          for path in sorted(glob.glob("artifacts/c08-*.log")):
+              text = open(path, errors="replace").read()
+              tail = text[-7000:]
+              safe = tail.replace("%", "%25").replace("\r", "").replace("\n", "~")
+              print("::error::%s TAIL %s" % (os.path.basename(path), safe))
+          PY
       - uses: actions/upload-artifact@v4
         if: always()
         with:

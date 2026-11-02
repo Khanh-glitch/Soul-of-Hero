@@ -87,7 +87,7 @@ func _case_expiry() -> void:
 	_expect(not store.trace(a, 20.9).is_empty(), "a record is readable just before it expires")
 	_expect(store.trace(a, 21.0).is_empty(), "a record is dead exactly at its expiry stamp")
 	_expect(store.successor(a, 21.0).is_empty(), "an expired record yields no successor")
-	_expect(store.live_count(21.0) == 0, "no record is live after the lifetime passed")
+	_expect(store.live_count(22.5) == 0, "no record is live after every lifetime passed")
 	_expect(store.total_count() == 2, "expiry is decided at read time, not by silent deletion")
 	_expect(store.trace(a, 10.5).is_empty(), "a stamp before creation is not readable")
 
@@ -104,11 +104,17 @@ func _case_breaks() -> void:
 	_expect(store.successor(head, 4.0).is_empty(), "no link bridges a movement gap")
 	_expect(int(store.trace(after_gap, 4.0).get("previous", -1)) == 0,
 		"the first record after a gap starts a new chain")
-	# A clock that moves backwards cannot be evidence.
+	# A clock that moves backwards cannot be evidence: the refused sample re-seeds
+	# the body, and the record after it is a new chain head.
+	var rollback_before := store.last_id()
 	store.sample(Vector2(420, 0), 5.0, "court", true, 10.0, 120.0, 20.0)
-	var after_rollback: int = store.sample(Vector2(430, 0), 4.5, "court", true, 10.0, 120.0, 20.0)
-	_expect(after_rollback > 0 and store.successor(after_gap, 5.0).is_empty(),
-		"a clock rollback breaks the chain instead of creating a backwards link")
+	_expect(store.sample(Vector2(430, 0), 4.5, "court", true, 10.0, 120.0, 20.0) == 0,
+		"a backwards stamp writes no record")
+	var after_rollback: int = store.sample(Vector2(440, 0), 4.6, "court", true, 10.0, 120.0, 20.0)
+	_expect(after_rollback > 0 and int(store.trace(after_rollback, 4.6).get("previous", -1)) == 0,
+		"the record after a rollback starts a new chain")
+	_expect(store.successor(rollback_before, 5.1).is_empty(),
+		"the rollback never links the new chain to the old one")
 	# Ineligible motion (death / interior / unknown surface) writes nothing.
 	var before: int = store.total_count()
 	_expect(store.sample(Vector2(440, 0), 6.0, "court", false, 10.0, 120.0, 20.0) == 0,
@@ -116,8 +122,10 @@ func _case_breaks() -> void:
 	_expect(store.sample(Vector2(450, 0), 6.1, "", true, 10.0, 120.0, 20.0) == 0,
 		"a sample with no surface identity writes no record")
 	_expect(store.total_count() == before, "refused samples change no storage")
-	var after_refusal: int = store.sample(Vector2(460, 0), 6.2, "court", true, 10.0, 120.0, 20.0)
-	_expect(after_refusal > 0 and int(store.trace(after_refusal, 6.2).get("previous", -1)) == 0,
+	_expect(store.sample(Vector2(460, 0), 6.2, "court", true, 10.0, 120.0, 20.0) == 0,
+		"the sample right after a refusal only re-seeds the body")
+	var after_refusal: int = store.sample(Vector2(470, 0), 6.3, "court", true, 10.0, 120.0, 20.0)
+	_expect(after_refusal > 0 and int(store.trace(after_refusal, 6.3).get("previous", -1)) == 0,
 		"movement after an ineligible sample starts a new chain")
 
 
@@ -174,8 +182,10 @@ func _case_eviction() -> void:
 	_expect(written > Store.MAX_TRACES, "a long walk writes far more records than the bound (%d)" % written)
 	_expect(store.total_count() <= Store.MAX_TRACES,
 		"storage stays inside MAX_TRACES (%d <= %d)" % [store.total_count(), Store.MAX_TRACES])
-	_expect(store.trace(1, 1000.0).is_empty(), "the oldest records were evicted")
-	_expect(not store.trace(store.last_id(), 1000.0).is_empty(), "the newest record survives eviction")
+	_expect(store.trace(1, 30.0).is_empty(), "the oldest records were evicted")
+	_expect(not store.trace(store.last_id(), 30.0).is_empty(), "the newest record survives eviction")
+	_expect(store.nearby(Vector2(0, 0), 128.0, 30.0).size() <= Store.MAX_QUERY_RESULTS,
+		"the evicted range is not resurrected by a query")
 
 
 func _case_non_finite() -> void:
@@ -203,11 +213,12 @@ func _case_prune() -> void:
 	store.reset("run-prune")
 	store.sample(Vector2.ZERO, 1.0, "grass", true, 5.0, 10.0, 20.0)
 	var a: int = store.sample(Vector2(10, 0), 2.0, "grass", true, 5.0, 10.0, 20.0)
-	store.sample(Vector2(20, 0), 30.0, "grass", true, 5.0, 40.0, 20.0)
+	var c: int = store.sample(Vector2(20, 0), 30.0, "grass", true, 5.0, 40.0, 20.0)
 	var b: int = store.sample(Vector2(30, 0), 31.0, "grass", true, 5.0, 40.0, 20.0)
-	_expect(a > 0 and b > 0, "one expired and one live chain exist")
+	_expect(a > 0 and c > 0 and b > 0, "one expired and two live records exist")
 	var dropped: int = store.prune(35.0)
-	_expect(dropped >= 1, "prune reclaims the expired records (%d)" % dropped)
+	_expect(dropped == 1, "prune reclaims exactly the expired record (%d)" % dropped)
 	_expect(store.trace(a, 35.0).is_empty() and not store.trace(b, 35.0).is_empty(),
 		"prune keeps live evidence and forgets dead evidence")
-	_expect(store.live_count(35.0) == 1, "the live set is unchanged by pruning")
+	_expect(store.live_count(35.0) == 2 and store.total_count() == 2,
+		"the live set is unchanged by pruning")
