@@ -1,9 +1,9 @@
 {
  "schema": "soh.veyra.spatial_validation.v2",
  "provenance": {
-  "tested_sha": "3a28eb3f842eb124fe017f1347c1defe320eb300",
+  "tested_sha": "d6c13c0ee37ccad0e8bb1aeb3bfaa504bf647242",
   "gold_sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
-  "compiler_sha256": "9069236be627f1779f1f66a0f802baaac8c165c073ab5b5eb2db6a64dbb0b764",
+  "compiler_sha256": "a1730362df05ad2c8e1eba983ca130cdf242093f01536d6394cb44600be745d0",
   "compiler_files": [
    "tools/world/veyra_compile.py",
    "tools/world/network.py",
@@ -11,10 +11,10 @@
    "tools/world/validate.py",
    "tools/world/world.py"
   ],
-  "world_png_sha256": "2643c8a3f8057ef27453180fb8aeb346d5518dff9d39792374bafb5d2623969d",
+  "world_png_sha256": "074ba61bb9e4ff646a7ec48c7c27cde13df8605e69f12ea1f769d630f834f795",
   "world_meta_sha256": "3416a2ad5ab0ad92486da5fce721a3438caebcecda99af304196a5ccace79354",
   "collision_sha256": "2ab5676f82d591933fb977de223b16742913dda7831fdf36e56a748eab82412e",
-  "minimap_sha256": "64f19dec355bbbe9a728f4158818b42d156d07b731f4012876fd102324fdd29a",
+  "minimap_sha256": "3cad5221251d414c07305d75218dfb750eb88817f9fc50328097a673243fd819",
   "network_json_sha256": "d57b92c765a17923a80b28a83538fd8f3f3567451c565e6bacd8b06363d96a90"
  },
  "gold_sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
@@ -449,8 +449,8 @@
   }
  ],
  "bridge_bypass_class": {},
- "code_sha": "3a28eb3f842eb124fe017f1347c1defe320eb300",
- "world_png_sha256": "2643c8a3f8057ef27453180fb8aeb346d5518dff9d39792374bafb5d2623969d",
+ "code_sha": "d6c13c0ee37ccad0e8bb1aeb3bfaa504bf647242",
+ "world_png_sha256": "074ba61bb9e4ff646a7ec48c7c27cde13df8605e69f12ea1f769d630f834f795",
  "poi_access": {
   "po_academy": {
    "mode": "land",

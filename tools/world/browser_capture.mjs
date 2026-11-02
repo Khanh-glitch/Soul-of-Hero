@@ -50,29 +50,50 @@ async function pixels() {
   });
 }
 
-// real input: hold D for 700 ms and confirm the avatar actually moved
-const before = await page.evaluate(() => ({ x: window.__veyra.p.x, y: window.__veyra.p.y }));
-await page.keyboard.down('d'); await page.waitForTimeout(700); await page.keyboard.up('d');
-const after = await page.evaluate(() => ({ x: window.__veyra.p.x, y: window.__veyra.p.y }));
-report.checks.push({ name: 'keyboard_moves_avatar', pass: Math.abs(after.x - before.x) > 10,
-                     detail: { before, after } });
+// ---------------------------------------------------------------------------------------------
+// Real input measurement.  The runtime state is `window.__veyra` with `meta.spawns`; the same
+// verified start cell is used for every trial, and the trial direction is chosen by probing all
+// four directions so the corridor is genuinely free of collision.
+// ---------------------------------------------------------------------------------------------
+const spawnPx = await page.evaluate(() => window.__veyra.meta.spawns[0].world_px);
 
-// real speed measurement: walk then run the same corridor, compare measured displacement
-async function measure(key, ms) {
-  const a = await page.evaluate(() => ({ x: window.__veyra.p.x, y: window.__veyra.p.y }));
-  await page.keyboard.down(key);
-  await page.waitForTimeout(ms);
-  await page.keyboard.up(key);
-  const b = await page.evaluate(() => ({ x: window.__veyra.p.x, y: window.__veyra.p.y }));
-  return Math.hypot(b.x - a.x, b.y - a.y);
+async function resetToSpawn() {
+  await page.evaluate(([x, y]) => window.veyraGoto(x, y), spawnPx);
+  await page.waitForTimeout(120);
+  return page.evaluate(() => ({ x: window.__veyra.p.x, y: window.__veyra.p.y }));
 }
-await page.evaluate(() => window.veyraGoto(window.__veyra.s.spawns ? 0 : 0, 0));
-const walkDist = await measure('d', 600);
-const runDist = await measure('d', 600);
-report.checks.push({ name: 'walk_vs_run_speed', pass: runDist > walkDist * 1.25 && walkDist > 5,
-                     detail: { walk_px: +walkDist.toFixed(1), run_px: +runDist.toFixed(1) } });
-await page.keyboard.down('Shift'); await page.keyboard.down('d'); await page.waitForTimeout(400);
-await page.keyboard.up('d'); await page.keyboard.up('Shift');
+
+async function trial(dir, run, ms = 700) {
+  const before = await resetToSpawn();
+  if (run) await page.keyboard.down('Shift');
+  await page.keyboard.down(dir);
+  await page.waitForTimeout(ms);
+  await page.keyboard.up(dir);
+  if (run) await page.keyboard.up('Shift');
+  const after = await page.evaluate(() => ({ x: window.__veyra.p.x, y: window.__veyra.p.y }));
+  const dist = Math.hypot(after.x - before.x, after.y - before.y);
+  return { dir, run, ms, before, after, dist: +dist.toFixed(1),
+           input: run ? 'Shift+' + dir : dir,
+           blocked: dist < 2 };
+}
+
+// probe: pick the direction with the most free space from the spawn
+let bestDir = 'd', bestDist = -1;
+for (const dir of ['d', 's', 'a', 'w']) {
+  const t = await trial(dir, false, 220);
+  if (t.dist > bestDist) { bestDist = t.dist; bestDir = dir; }
+}
+const walk = await trial(bestDir, false, 700);
+const run = await trial(bestDir, true, 700);
+const ratio = walk.dist > 0 ? +(run.dist / walk.dist).toFixed(3) : 0;
+report.checks.push({ name: 'keyboard_moves_avatar', pass: walk.dist > 5,
+                     detail: { trial: walk } });
+report.checks.push({ name: 'walk_vs_run_speed', pass: ratio > 1.25 && walk.dist > 5 && !run.blocked,
+                     detail: { direction: bestDir, ratio, walk, run } });
+// sustained movement in the tested direction (2 s) to prove no mid-corridor stop
+const sustained = await trial(bestDir, false, 2000);
+report.checks.push({ name: 'sustained_movement', pass: sustained.dist > walk.dist * 2.2,
+                     detail: { sustained, single_window: walk } });
 
 async function setEvalMode(on) {
   await page.evaluate((evalOn) => document.body.classList.toggle('eval', evalOn), on);

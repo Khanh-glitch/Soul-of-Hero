@@ -701,30 +701,39 @@ def main(out_dir):
     cave_grey = KIT.load_kit().geology("cave_grey")
     cave_brown = KIT.load_kit().geology("cave_brown")
     rock_out = []
-    for gy in range(GH):
-        for gx in range(GW):
-            stone_here = ground[gy, gx] in ("stone", "rubble")
-            if ground[gy, gx] == "water":
+    # Rock masses are placed at cluster centres on a 3-cell lattice with jittering, at 1.6x so a
+    # 64x112 module reads as a 102x179 outcrop, and never once per cell: one blob per cell repeated
+    # every 32 px was the "ladder" artefact visible in R7.
+    for gy in range(0, GH, 3):
+        for gx in range(0, GW, 3):
+            base_cell = ground[gy, gx]
+            if base_cell == "water":
                 continue
-            if not cliff_cells[gy, gx] and not (stone_here and h32("msf", gx, gy) % 19 == 0):
+            cliffish = cliff_cells[max(0, gy - 1):gy + 2, max(0, gx - 1):gx + 2].any()
+            if not cliffish and base_cell not in ("stone", "rubble"):
                 continue
-            hh = h32("geo", gx, gy)
-            brown = bool(ash_region[min(UH - 1, gy * 8 + 4), min(UW - 1, gx * 8 + 4)]) or (hh % 7 == 0)
-            base_y = gy * ART_TILE + ART_TILE
-            if hh % 23 == 5:                      # occasional cave mouth instead of a face
+            if h32("msf", gx // 3, gy // 3) % 11 not in (0, 1, 2):
+                continue
+            jx = (h32("jx", gx, gy) % 40) - 20
+            jy = (h32("jy", gx, gy) % 24) - 12
+            px_c = gx * ART_TILE + 16 + jx
+            py_b = gy * ART_TILE + 30 + jy
+            brown = ash_region[min(UH - 1, gy * 8 + 4), min(UW - 1, gx * 8 + 4)] or (h32("c", gx, gy) % 5 == 0)
+            if h32("cave", gx // 3, gy // 3) % 17 == 0:
                 img = cave_brown if brown else cave_grey
-                geo.alpha_composite(img, (gx * ART_TILE, base_y - img.height))
-                rock_out.append({"type": "cave", "at": [gx * ART_TILE, base_y - img.height]})
+                img = img.resize((int(img.width * 1.35), int(img.height * 1.35)), Image.NEAREST)
+                rock_out.append({"type": "cave", "at": [px_c, py_b]})
             else:
                 img = rock_brown if brown else rock_grey
-                geo.alpha_composite(img, (gx * ART_TILE, base_y - img.height))
-                rock_out.append({"type": "outcrop", "at": [gx * ART_TILE, base_y - img.height]})
-            # rubble apron in front of the face
-            for k in range(2):
-                ry = base_y + k * 6
-                if ry < PH:
+                img = img.resize((int(img.width * 1.6), int(img.height * 1.6)), Image.NEAREST)
+                rock_out.append({"type": "outcrop", "at": [px_c, py_b]})
+            geo.alpha_composite(img, (px_c - img.width // 2, py_b - img.height))
+            for k in range(3):                     # rubble apron at the foot of the mass
+                rx = px_c - img.width // 2 + (h32("ra", gx + k, gy) % max(1, img.width - 32))
+                ry = py_b + k * 5
+                if 0 <= ry < PH - 8:
                     geo.alpha_composite(fams["rubble"][(gx + k) % len(fams["rubble"])].crop((0, 0, 32, 8)),
-                                        (gx * ART_TILE, ry))
+                                        (rx, ry))
     print("geology outcrops", len(rock_out))
 
     # ---------------- sub-tile overlays ----------------
