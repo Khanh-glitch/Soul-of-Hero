@@ -1,2 +1,30 @@
-soh-pixelfx-pilot-offline.html
-# built from commit: c3763b4aaba67ad5836a6089f4f6f18b5cd0481a
+soh-pixelfx-pilot-offline.html — provenance
+============================================
+
+source-code commit : a5f666308522307358c270e541785539dd4c8784
+  (branch arena/3337c864-soul-of-hero; all game + pixelfx source, QA script, docs)
+artifact commit    : recorded in PR #39 body (this file ships in the same commit as the
+  artifact, so its own SHA is listed there; it is retrievable via
+  https://github.com/Khanh-glitch/Soul-of-Hero/tree/<artifact-sha>/web/releases )
+artifact sha256    : 53fe10ce5feaafaab11fe30a8fdf0f315bb27938bf87f331a1dbbb6772e2124e
+  (sha256sum web/releases/soh-pixelfx-pilot-offline.html)
+
+build commands (run from web/ at the source-code commit above):
+  npm ci            # PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+  npm run build     # vite build -> dist/index.html (single-file, pilot FX embedded as
+                    # data URLs; no external asset requests)
+  cp dist/index.html releases/soh-pixelfx-pilot-offline.html
+  sha256sum releases/soh-pixelfx-pilot-offline.html
+
+NOT claimed: this artifact was not "built from" the artifact commit — the artifact
+commit only adds the built file. The source of truth for the build is the
+source-code commit listed above.
+
+offline verification (performed on the committed file, fetched via codeload tarball
+https://codeload.github.com/Khanh-glitch/Soul-of-Hero/tar.gz/<artifact-sha>):
+  sha256 matches the value above; file:// boot -> New Run -> Meadow Bay -> Begin;
+  FX catalog = 11 pilot effects; F9 lab opens; real Core cast (key 1 + click) renders;
+  zero uncaught browser errors.
+
+direct file link:
+  https://github.com/Khanh-glitch/Soul-of-Hero/blob/<artifact-sha>/web/releases/soh-pixelfx-pilot-offline.html
