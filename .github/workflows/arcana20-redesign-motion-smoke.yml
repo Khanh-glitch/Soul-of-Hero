@@ -1,3 +1,4 @@
+# Retry unchanged benchmark after Godot import exited 134 in run 41400478492.
 name: ARCANA20 redesign source event runtime smoke
 on:
   workflow_dispatch:
