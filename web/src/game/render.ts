@@ -87,7 +87,7 @@ function syncTerrain(r: RunState, now: number) {
     for (const [dx, dy] of [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]]) chunkCache.delete((((ty + dy) / CH) | 0) * 100 + (((tx + dx) / CH) | 0)); }
   terrSig = sig;
 }
-export function resetRenderCaches() { chunkCache.clear(); lastRunId = ''; }
+export function resetRenderCaches() { chunkCache.clear(); lastRunId = ''; mapCanvas = null; }
 
 // ---------- particles ----------
 interface Part { x: number; y: number; vx: number; vy: number; life: number; max: number; col: string; s: number; g: number; kind?: string; text?: string; a?: number; reach?: number; arc?: number; x1?: number; y1?: number; key?: string; z?: number }
@@ -194,9 +194,9 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
     if (e.type === 'spikes') g.drawImage(A.st.spikes, e.x - 8, e.y - 8);
     if (e.type === 'claim') { const R = 6 * 16; g.fillStyle = 'rgba(255,208,64,0.5)'; for (let k = 0; k < 64; k++) { const a = k / 64 * Math.PI * 2 + time / 4000; g.fillRect(Math.round(e.x + Math.cos(a) * R), Math.round(e.y + Math.sin(a) * R), 2, 1); } }
   }
+  pfx.syncHazards(HAZ, p); pfx.syncProjFx(PROJ, now);
   // hazard telegraphs (ground)
   for (const h of HAZ) drawHaz(g, h, time);
-  pfx.syncHazards(HAZ, p); // visual-only: new hazards spawn mapped PixelFX (quake line / frost nova)
   // y-sorted drawables
   const list: { y: number; f: () => void }[] = [];
   for (let ty = vy0; ty <= vy1 + 1 && ty < WH; ty++) for (let tx = vx0; tx <= vx1; tx++) {
@@ -205,15 +205,13 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   for (const e of ents) { if (e.x < cx - 40 || e.x > cx + VIEW_W + 40 || e.y < cy - 20 || e.y > cy + VIEW_H + 60) continue; if (e.kind === 'struct' && ['floor', 'roof'].includes(STRUCTS[e.type!].layer)) continue; if (e.type === 'garden' || e.type === 'spikes') continue; list.push({ y: e.y + (e.kind === 'drop' ? -2 : 6), f: () => drawEntity(g, r, e, time, now) }); }
   for (const m of r.creatures) { if (m.x < cx - 40 || m.x > cx + VIEW_W + 40 || m.y < cy - 40 || m.y > cy + VIEW_H + 60) continue; list.push({ y: m.y + 4, f: () => drawCreature(g, m, time) }); }
   list.push({ y: p.y + 4, f: () => drawPlayer(g, gs, time) });
-  // PixelFX world instances join the same y-sorted list (depth-integrated)
-  for (const it of pfx.depthItems(g)) list.push(it);
+  for (const it of pfx.depthItems(g)) list.push(it); // PixelFX joins the y-sorted world list
   // POI terrain walls need y-sorting vs player? They are flat tiles; fine.
   list.sort((a, b) => a.y - b.y); for (const d of list) d.f();
   // temporary terrain sprites (ice pillars, root cages)
   for (const k in r.terrain) { const m: any = r.terrain[+k]; if (!m.until || m.t !== T.PWALL) continue; const i = +k; const X = (i % WW) * 16, Y = ((i / WW) | 0) * 16; if (X < cx - 20 || X > cx + VIEW_W || Y < cy - 30 || Y > cy + VIEW_H) continue; g.drawImage(m.by === 'grove' ? A.st.rootwall : A.st.icepillar, X, Y - 8); }
   // projectiles
-  for (const pr of PROJ) { if (pr.delay && pr.delay > 0) continue; drawProj(g, pr, time); pfx.drawProjFx(g, pr, now); }
-  pfx.cleanupProjFx(PROJ);
+  for (const pr of PROJ) { if (pr.delay && pr.delay > 0) continue; if (!(pr.kind === 'fireball' && pfx.hasEntry('fire/fireball'))) drawProj(g, pr, time); } // fireball art from PixelFX
   // roofs
   const inside = isUnderRoof(r, p.x, p.y);
   for (const b of w.buildings) { if ((b.x + b.w) * 16 < cx || b.x * 16 > cx + VIEW_W || (b.y + b.h) * 16 < cy - 16 || b.y * 16 > cy + VIEW_H) continue; const pin = p.x > b.x * 16 && p.x < (b.x + b.w) * 16 && p.y > b.y * 16 && p.y < (b.y + b.h) * 16 + 4;
@@ -228,15 +226,13 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
     else { g.strokeStyle = '#ffb040'; g.setLineDash([2, 2]); g.strokeRect(tx * 16 + 0.5, ty * 16 + 0.5, 15, 15); g.setLineDash([]); } }
   if (o.target) { const bob = Math.round(Math.sin(time / 160) * 1.5); g.fillStyle = '#ffe27a'; const X = Math.round(o.target.x), Y = Math.round(o.target.y) - 20 + bob; g.fillRect(X - 2, Y, 5, 1); g.fillRect(X - 1, Y + 1, 3, 1); g.fillRect(X, Y + 2, 1, 1); }
   g.restore();
-  // PixelFX warp pass (black hole distorts the real scene) + screen-anchored FX
   pfx.drawWarpPass(g, { x: cx, y: cy }, now);
   pfx.drawScreen(g);
   // weather & light (screen space)
   drawWeather(g, r, now, time, cx, cy);
   const dk0 = Math.min(0.85, darkness(r, now) + (weatherAt(r, now) === 'storm' ? 0.15 : 0));
   drawLight(g, r, now, time, cx, cy, ents, o.nightOverride ? 0.8 : undefined);
-  // post-night bounded emission boost so skill art stays luminous (light channel only)
-  pfx.drawEmission(g, { x: cx, y: cy }, o.nightOverride ? 0.8 : dk0);
+  pfx.drawPostNight(g, { x: cx, y: cy }, o.nightOverride ? 0.8 : dk0); // radiance + night-safe emission
   if (flash > 0) { g.fillStyle = `rgba(255,255,255,${flash})`; g.fillRect(0, 0, VIEW_W, VIEW_H); flash = Math.max(0, flash - dtMs / 400); }
   if (p.hp < 30 && !p.dead) { const a = (1 - p.hp / 30) * (0.25 + Math.sin(time / 200) * 0.08); g.fillStyle = `rgba(160,0,0,${a})`; g.fillRect(0, 0, VIEW_W, 6); g.fillRect(0, VIEW_H - 6, VIEW_W, 6); g.fillRect(0, 0, 6, VIEW_H); g.fillRect(VIEW_W - 6, 0, 6, VIEW_H); }
 }
@@ -413,8 +409,8 @@ function drawWeather(g: CanvasRenderingContext2D, r: RunState, now: number, time
 // ---------- lighting ----------
 let lightCv: HTMLCanvasElement | null = null;
 function drawLight(g: CanvasRenderingContext2D, r: RunState, now: number, time: number, cx: number, cy: number, ents: Entity[], darkOverride?: number) {
-  let dark = darkness(r, now); const rag = isRagnarok(r, now); const w = weatherAt(r, now); if (w === 'storm') dark = Math.min(0.85, dark + 0.15);
-  if (darkOverride !== undefined) dark = darkOverride; // QA FX-lab night compare (visual only)
+  let dark = darkness(r, now); if (darkOverride !== undefined) dark = darkOverride; // QA night compare (visual only)
+  const rag = isRagnarok(r, now); const w = weatherAt(r, now); if (w === 'storm') dark = Math.min(0.85, dark + 0.15);
   if (rag) { g.fillStyle = 'rgba(160,40,10,0.12)'; g.fillRect(0, 0, VIEW_W, VIEW_H); }
   if (dark < 0.04) return;
   if (!lightCv) { lightCv = document.createElement('canvas'); lightCv.width = VIEW_W; lightCv.height = VIEW_H; }

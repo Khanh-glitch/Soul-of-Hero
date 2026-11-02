@@ -21,8 +21,8 @@ describe('pixelfx adapter', () => {
     const entry = (pfx as any).manifest?.get?.('arcane/spell-charge');
     // use public behavior via spawn instead: looping charge survives past dur, one-shot expires
     pfx.clear();
-    const a = pfx.spawn('arcane/spell-charge', { x: 0, y: 0, loop: true })!;
-    const b = pfx.spawn('fire/fireball', { x: 0, y: 0, loop: false })!;
+    const a = pfx.spawn('arcane/spell-charge', { x: 0, y: 0, loop: true, family: 'hover' })!;
+    const b = pfx.spawn('fire/fireball', { x: 0, y: 0, loop: false, family: 'proj' })!;
     expect(a).toBeTruthy(); expect(b).toBeTruthy();
     pfx.update(5000, 5000); // 5s >> both durations
     const ids = pfx.listInstances().map(i => i.id + (i.loop ? ':loop' : ''));
@@ -32,7 +32,7 @@ describe('pixelfx adapter', () => {
 
   it('respects delayMs (telegraph) and maxAgeMs', () => {
     pfx.clear();
-    pfx.spawn('nature/quake', { x: 10, y: 10, delayMs: 500 });
+    pfx.spawn('nature/quake', { x: 10, y: 10, delayMs: 500, family: 'ground' });
     pfx.update(100, 100);
     expect(pfx.listInstances().length).toBe(1);
     expect(pfx.listInstances()[0].t).toBeLessThan(0); // still winding up
@@ -40,21 +40,21 @@ describe('pixelfx adapter', () => {
     expect(pfx.listInstances()[0].t).toBeGreaterThanOrEqual(0);
     pfx.clear();
     pfx.update(0, 100); // set adapter clock
-    pfx.spawn('arcane/spell-charge', { x: 0, y: 0, loop: true, maxAgeMs: 300 });
+    pfx.spawn('arcane/spell-charge', { x: 0, y: 0, loop: true, maxAgeMs: 300, family: 'hover' });
     pfx.update(400, 500);
     expect(pfx.listInstances().length).toBe(0);
   });
 
   it('caps instances and prefers evicting non-looping ones', () => {
     pfx.clear();
-    for (let i = 0; i < 60; i++) pfx.spawn('arcane/spell-charge', { x: 0, y: 0, loop: i === 0 });
+    for (let i = 0; i < 60; i++) pfx.spawn('arcane/spell-charge', { x: 0, y: 0, loop: i === 0, family: 'hover' });
     expect(pfx.listInstances().length).toBeLessThanOrEqual(48);
     expect(pfx.listInstances().some(i => i.loop)).toBe(true);
   });
 
   it('black hole is flagged warp from its presentation profile', () => {
     pfx.clear();
-    const bh = pfx.spawn('shadow/black-hole', { x: 50, y: 50 })!;
+    const bh = pfx.spawn('shadow/black-hole', { x: 50, y: 50, family: 'ground' })!;
     expect(bh.warp).toBe(true);
     pfx.clear();
   });
@@ -66,7 +66,7 @@ describe('gameplay event -> FX mappings (visual only)', () => {
     expect(pfxFromSimEvent({ type: 'boom', x: 123, y: 45 })).toBe(true);
     const inst = pfx.listInstances()[0];
     expect(inst.id).toBe('explosions/small-explosion');
-    expect(inst.x).toBe(123); expect(inst.y).toBe(45); expect(inst.anchor).toBe('ground');
+    expect(inst.x).toBe(123); expect(inst.y).toBe(45); expect(inst.family).toBe('ground');
   });
   it('maps storm bolt segments to a rotated, stretched chain lightning', () => {
     pfx.clear();
@@ -80,7 +80,7 @@ describe('gameplay event -> FX mappings (visual only)', () => {
     pfxFromSimEvent({ type: 'windup', x: 5, y: 6, core: 'fire' });
     const inst = pfx.listInstances()[0];
     expect(inst.id).toBe('arcane/spell-charge');
-    expect(inst.anchor).toBe('hover'); expect(inst.maxAgeMs).toBe(560);
+    expect(inst.family).toBe('hover'); expect(inst.maxAgeMs).toBe(560);
   });
   it('does not mutate the event object (presentation-only contract)', () => {
     pfx.clear();

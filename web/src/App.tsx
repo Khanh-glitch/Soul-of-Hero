@@ -4,7 +4,7 @@ import { dispatch, markDirty } from './game/engine';
 import { settle } from './game/sim';
 import { load, save } from './game/persist';
 import { getArt } from './game/art';
-import { getWorld } from './game/world';
+import { getWorld, setActiveLayout } from './game/world';
 import { resetRenderCaches, cam } from './game/render';
 import { setVolume, initAudio } from './game/audio';
 import { mkIntent } from './ui/common';
@@ -16,7 +16,7 @@ export default function App() {
   const [screen, setScreen] = useState<'loading' | 'title' | 'game'>('loading');
   const [note, setNote] = useState<string | undefined>(); const [report, setReport] = useState<string[] | null>(null);
   const [summary, setSummary] = useState<GameState['profile']['history'][number] | null>(null);
-  useEffect(() => { (async () => { getWorld(); getArt(); const { gs, note } = await load(); gsRef.current = gs; setNote(note); setVolume(gs.profile.settings.volume, gs.profile.settings.muted); setScreen('title'); })(); }, []);
+  useEffect(() => { (async () => { getArt(); const { gs, note } = await load(); setActiveLayout(gs.run?.layoutId || 'shipping'); getWorld(); gsRef.current = gs; setNote(note); setVolume(gs.profile.settings.volume, gs.profile.settings.muted); setScreen('title'); })(); }, []);
   const gs = gsRef.current;
   if (screen === 'loading' || !gs) return <div style={{ position: 'fixed', inset: 0, display: 'grid', placeItems: 'center', color: '#ffd98a', fontSize: 22 }} className="title-font">Raising the island…</div>;
   const enter = () => { markDirty(); resetRenderCaches(); cam.init = false; setScreen('game'); };

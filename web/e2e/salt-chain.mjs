@@ -22,7 +22,7 @@ const state = () => page.evaluate(() => {
   return { player: { x: r.player.x, y: r.player.y, hp: r.player.hp, hunger: r.player.hunger, thirst: r.player.thirst, active: r.player.active },
     counts, entities: Object.values(r.entities).map(e => ({ id:e.id,kind:e.kind,type:e.type,poi:e.poi,x:e.x,y:e.y,c:e.c,station:e.station && { fuelC:e.station.fuelC,outC:e.station.outC,burn:e.station.burn,queue:e.station.queue.map(q=>({recipe:q.recipe,left:q.left,total:q.total}))} })),
     drops: Object.values(r.entities).filter(e => e.kind === 'drop').map(e=>({x:e.x,y:e.y,key:r.custody[e.c]?.slots?.[0]?.key,qty:r.custody[e.c]?.slots?.[0]?.qty})),
-    sources: r.sources, elapsed:r.elapsed, seed:r.seed };
+    sources: r.sources, simMs:r.clock.simMs, seed:r.seed, log:r.log.slice(-5).map(l=>l.msg) };
 });
 const count = async key => (await state())?.counts[key] || 0;
 const sleep = ms => page.waitForTimeout(ms);
@@ -164,11 +164,19 @@ try {
   log.push(`Paid and placed campfire at (${site.x},${site.y}); remaining wood=${await count('wood')}, stone=${await count('stone')}.`);
   await interact(fire.x,fire.y);await page.getByText('Fuel',{exact:false}).waitFor({timeout:5000});
   // Select the carried wood in Inventory, then place it into the campfire's first (fuel) slot through ordinary UI clicks.
-  const inventory=page.locator('.panel').filter({hasText:'Inventory'}).last(),firePanel=page.locator('.panel').filter({hasText:'Campfire'}).first();
-  await inventory.locator('.slot[title^="Wood"]').click();await firePanel.locator('.slot').first().click();await sleep(300);
-  s=await state();fire=s.entities.find(e=>e.id===fire.id);const fuel=await page.evaluate(id=>{const e=window.__soh.run.entities[id];return window.__soh.run.custody[e.station.fuelC].slots.reduce((n,z)=>n+(z?.key==='wood'?z.qty:0),0)},fire.id);assert(fuel>=1,'Campfire did not accept wood fuel');log.push(`Fueling cost: transferred wood x${fuel} from player inventory into the campfire fuel slot.`);
-  const meatBefore=await count('meat'),saltBeforeQueue=await count('raw_salt');const queueBefore=Date.now();await page.getByRole('button',{name:'Queue',exact:true}).last().click();await sleep(400);s=await state();fire=s.entities.find(e=>e.id===fire.id);assert(fire.station.queue.some(q=>q.recipe==='salted_meat'),'Salted Roast was not queued');assert(await count('meat')===meatBefore-1,'Cooking did not consume exactly one meat');assert(await count('raw_salt')===saltBeforeQueue-1,'Cooking did not consume exactly one Raw Salt');
-  log.push(`Queued Salted Roast through campfire UI; input cost meat 1 + Raw Salt 1 (before=${meatBefore}/${saltBeforeQueue}, after=${await count('meat')}/${await count('raw_salt')}), actual wall-clock start=${new Date(queueBefore).toISOString()}, fuel wood=${fuel}, queue=${JSON.stringify(fire.station.queue)}.`);
+  const panels=page.locator('.panel'),inventory=panels.last(),firePanel=page.locator('.panel').filter({hasText:'Campfire'}).first();
+  const headings=await page.locator('.panel-h').allInnerTexts();log.push(`Station UI panels after E: ${JSON.stringify(headings)}.`);
+  assert.equal((await inventory.locator('.panel-h').innerText()).trim(),'Inventory','Station use did not render the Inventory panel');
+  assert((await firePanel.locator('.panel-h').innerText()).includes('Campfire'),'Campfire station panel is not open');
+  const woodIndex=await page.evaluate(()=>window.__soh.run.custody.inv.slots.findIndex(z=>z?.key==='wood'));assert(woodIndex>=0,'Wood is not in the player inventory');const woodSlot=inventory.locator('.slot').nth(3+woodIndex);
+  const fuelStatus=async id=>page.evaluate(eid=>{const e=window.__soh.run.entities[eid];return {qty:window.__soh.run.custody[e.station.fuelC].slots.reduce((n,z)=>n+(z?.key==='wood'?z.qty:0),0),burn:e.station.burn}},id);
+  // Shift-click is the game's quick-transfer. Burning begins immediately, so validate either fuel remaining in-slot or live burn.
+  await woodSlot.click({modifiers:['Shift']});await sleep(300);let fuel=await fuelStatus(fire.id);
+  if(fuel.qty<1&&fuel.burn<=0){let selectedClass=await woodSlot.getAttribute('class');if(!selectedClass?.includes('sel')){await woodSlot.click();selectedClass=await woodSlot.getAttribute('class');}await firePanel.locator('.slot').first().click();await sleep(300);fuel=await fuelStatus(fire.id);log.push(`Fuel transfer fallback UI selection class=${selectedClass}; inventory wood=${await count('wood')}; station=${JSON.stringify(fuel)}.`);}
+  assert(fuel.qty>=1||fuel.burn>0,`Campfire did not accept wood fuel: ${JSON.stringify(fuel)}`);log.push(`Fueling cost: transferred wood x1 from player inventory; station state=${JSON.stringify(fuel)}.`);
+  const meatBefore=await count('meat'),saltBeforeQueue=await count('raw_salt');assert(meatBefore>=1&&saltBeforeQueue>=1,`Recipe inputs missing before queue: meat=${meatBefore}, salt=${saltBeforeQueue}`);const queueBefore=Date.now();
+  const roastRow=firePanel.getByText('Salted Roast',{exact:true}).locator('xpath=..');await roastRow.getByRole('button',{name:'Queue',exact:true}).click();await sleep(500);s=await state();fire=s.entities.find(e=>e.id===fire.id);log.push(`Queue click result: station=${JSON.stringify(fire.station.queue)}, inv meat=${await count('meat')}, raw_salt=${await count('raw_salt')}, recent=${JSON.stringify(s.log)}.`);assert(fire.station.queue.some(q=>q.recipe==='salted_meat'),'Salted Roast was not queued');assert(await count('meat')===meatBefore-1,'Cooking did not consume exactly one meat');assert(await count('raw_salt')===saltBeforeQueue-1,'Cooking did not consume exactly one Raw Salt');
+  log.push(`Queued Salted Roast through campfire UI; input cost meat 1 + Raw Salt 1 (before=${meatBefore}/${saltBeforeQueue}, after=${await count('meat')}/${await count('raw_salt')}), actual wall-clock start=${new Date(queueBefore).toISOString()}, fuel=${JSON.stringify(fuel)}, queue=${JSON.stringify(fire.station.queue)}.`);
   await screenshot('06-campfire-queued-1280x720.png');
   // Production advances only on the live RAF simulation and normal wall-clock time; no test hook or station-step call.
   await page.waitForFunction(id=>{const e=window.__soh.run.entities[id];return e&&Object.values(window.__soh.run.custody).some(c=>c.slots.some(z=>z?.key==='salted_meat'))},fire.id,{timeout:30000});
@@ -181,7 +189,8 @@ try {
   await screenshot('07-salted-roast-collected-640x360.png');
   await sleep(5500);await page.reload({waitUntil:'networkidle'});await page.getByRole('button',{name:/Continue/i}).waitFor({timeout:15000});await page.getByRole('button',{name:/Continue/i}).click();await page.waitForFunction(()=>Boolean(window.__soh?.run));await sleep(500);
   assert(await count('salted_meat')>=1,'Save/relaunch did not preserve collected Salted Roast');
-  log.push(`Save/relaunch preserved Salted Roast; item=${await count('salted_meat')}, seed=${(await state()).seed}, elapsed=${(await state()).elapsed}.`);
+  const awayContinue=page.getByRole('button',{name:'Continue',exact:true});if(await awayContinue.isVisible().catch(()=>false)){await awayContinue.click();await sleep(300);}
+  log.push(`Save/relaunch preserved Salted Roast; item=${await count('salted_meat')}, seed=${(await state()).seed}, simulated clock=${(await state()).simMs}ms.`);
   await screenshot('08-after-relaunch-1280x720.png');
   await openInventory();await page.locator('.panel').filter({hasText:'Inventory'}).last().locator('.slot[title^="Salted Roast"]').click({button:'right'});await sleep(300);
   s=await state();assert((s.counts.salted_meat||0)===0,'Eating Salted Roast did not consume it');log.push(`Ate Salted Roast through inventory use action; hunger=${s.player.hunger}, hp=${s.player.hp}.`);

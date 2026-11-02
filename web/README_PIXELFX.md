@@ -4,24 +4,26 @@ Original [PixelFX](https://github.com/patch-gg/pixelfx) effects (244, upstream p
 `a84159688af3ca37a4be05a0d422b94451b2e24e`, MIT) are rendered inside the real SOH
 Canvas2D game through one universal, data-driven, **presentation-only** adapter.
 
-## Architecture
+## Architecture (v2 compositor)
 
-- `src/game/pixelfx.ts` — the adapter singleton. Pipeline:
-  gameplay event → FX id (`pixelfxMap.ts`) → presentation profile → world anchor
-  (ground / hover / body / screen) → instance → depth + night composition → cleanup.
-  It never mutates game state; all gameplay authority stays in `sim.ts`/`engine.ts`.
+- `src/game/pixelfx.ts` — the universal presentation compositor. Pipeline:
+  **official combined art (byte-faithful) → world placement by family profile
+  (ground / hover / body / proj / screen) → depth & occlusion (instances join the
+  game's y-sorted world list; roofs still occlude) → warp scene response (per-instance
+  cached, localized; source art undistorted) → colored environmental radiance
+  (soft cached falloff sprites tinted per effect category — illumination, not drawn
+  geometry) → night-safe bounded emission (light channel only, incremental, post-night)
+  → lifecycle → cleanup.** Presentation-only: never mutates game state.
 - `src/game/pixelfxMap.ts` — visual-only event→FX mappings (Core casts, bolts, booms).
-- `src/game/render.ts` — FX instances join the existing y-sorted draw list (depth-integrated
-  with actors/trees/structures), the warp pass (black hole) runs after `g.restore()`, and a
-  **bounded post-night emission** pass (light channel only, additive, alpha ≤ 0.55) keeps
-  skill art luminous after the night overlay. The combined channel already contains light and
-  is drawn as-is — never dimmed, cropped, redrawn, or double-added. `extraShapes:false`:
-  no generic circles/rings/telegraphs are added by the adapter.
-- `src/ui/FxLab.tsx` — dev-only **FX Test Lab** (F9): browse/search all 244, trigger at
-  mouse/player/target, ground/hover/body/screen anchors, replay, day/night compare (QA
-  night override, visual only), live FX id + loaded status + FPS/frame-time. Lab casts go
-  through the SAME adapter and are provably non-mutating (verified in tests).
-- `src/game/pixelfx/pilot.ts` — GENERATED (`npm run gen:pilot`) embedded pilot atlas set.
+- `src/game/render.ts` — minimal seams: FX into the y-sorted list, warp+screen passes
+  after `g.restore()`, radiance+emission after `drawLight`. The legacy fireball sprite
+  is skipped when PixelFX owns the projectile (no duplicate visuals).
+- `src/ui/FxLab.tsx` — F9 workbench: search all 244, cast at mouse/player/target,
+  family modes, scale slider, pause/frame-scrub, layer toggles (art/emission/radiance/
+  warp), quality presets (high/balanced/performance), QA day/night, p50/p95 stats,
+  H collapses the panel for clean screenshots, Enter replays the last effect.
+- Quality presets change warp slice count/refresh, radiance and emission caps — never
+  the source artwork. Page cache is LRU-bounded (pilot data-URLs never evicted).
 
 ## Core mappings (visual only; combat rules untouched)
 
@@ -74,18 +76,25 @@ cd web && npm run dev          # serves the game AND /pixelfx-assets (vite middl
 
 ```
 cd web && npm ci && npm test && npx tsc --noEmit && npm run build
-# browser QA (headless Chromium), screenshots -> web/qa-pixelfx-shots/:
-LD_LIBRARY_PATH=<nss-stub> WITH_ASSETS=1 node scripts/qa-pixelfx.mjs   # full pack
+# browser QA (headless Chromium, enforced assertions, nonzero exit on FAIL):
+LD_LIBRARY_PATH=<nss-stub> WITH_ASSETS=1 node scripts/qa-pixelfx.mjs   # full 244 pack
 LD_LIBRARY_PATH=<nss-stub> node scripts/qa-pixelfx.mjs                 # standalone pilot
-# curated evidence screenshots: web/docs/pixelfx-qa/*.png
+# existing project QA: node scripts/qa.mjs ; e2e/salt-chain.mjs via GAME_URL=<dev server>
 ```
 
-Latest results (Chromium, this machine): 28/28 vitest, tsc clean, build 13.9 MB;
-non-mutation PASS; one Core cast = exactly one charge debit PASS; all four Cores PASS;
-60 fps at 1/3/10 simultaneous FX (16.7 ms frame); save/reload PASS; full pack catalog 244
-with lazy page loading PASS; zero page errors. Pre-existing note: `e2e/salt-chain.mjs`
-fails identically on the pristine prototype baseline 93f413e ("Campfire did not accept wood
-fuel") — not caused by this integration.
+Latest results (Chromium headless, this sandbox, vsync-capped 60 fps): 30/30 vitest,
+tsc clean, build ~13.9 MB single file. Browser QA both modes: ALL PASS — v5 gate
+gallery (ice-lance / arcane-orb / black-hole × day / QA-night / real-night × 3 phases,
+lab hidden for unobstructed shots), lab non-mutation (state+save byte-identical),
+one Core cast = exactly one charge debit (3→2; four cores → [2,2,3,2]), perf
+1/3/10 FX = 59–60 fps, p50=p95=16.7 ms, full pack catalog = 244 with lazy load,
+save/reload, zero page errors. `e2e/salt-chain.mjs` PASSES on the latest prototype
+baseline (campfire-fuel fix is upstream in `arena/4795760e-soul-of-hero` @ f8b5005);
+`scripts/qa.mjs` passes with zero console errors. Evidence: `web/docs/pixelfx-qa/*.png`
+(day/night pairs are labeled `day` / `qanight` (QA override) / `real-NIGHT`).
+Direct frame-by-frame comparison to the historical Foundry v5 build was not possible
+(the v5 HTML/archive is not available in the repo); the documented v5 artistic
+qualities were used as the qualitative contract.
 
 ## Attribution
 

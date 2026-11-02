@@ -1,6 +1,7 @@
 // K2 — stable geographic island (LOCKED_CANON: same geography across runs). Deterministic from WORLD_SEED.
 import { T, WW, WH, WORLD_SEED, hash2, TILE, TERRAIN_NAME } from './core';
 import { SOURCES } from './catalog';
+import { MAP_CONTENT_PACKS, validateContentPack, type LayoutId } from './content';
 
 export const SRC_KEYS = Object.keys(SOURCES);
 export interface Building { id: string; x: number; y: number; w: number; h: number; roof: string; name: string }
@@ -45,10 +46,24 @@ const RIVERS = [
   [[.66, .33], [.72, .4], [.8, .42], [.86, .46], [.98, .46]],
 ];
 
-let cached: World | null = null;
-export function getWorld(): World { return cached || (cached = genWorld()); }
+let activeLayout: LayoutId = 'shipping';
+const cached = new Map<LayoutId, World>();
+export function getActiveLayout(): LayoutId { return activeLayout; }
+export function setActiveLayout(id: string): boolean {
+  if (id !== 'shipping' && id !== 'dev_delta') return false;
+  activeLayout = id;
+  return true;
+}
+export function getWorld(layout: LayoutId = activeLayout): World {
+  let world = cached.get(layout);
+  if (!world) { world = genWorld(layout); cached.set(layout, world); }
+  return world;
+}
 
-function genWorld(): World {
+function genWorld(layoutId: LayoutId): World {
+  const pack = MAP_CONTENT_PACKS[layoutId];
+  const packErrors = validateContentPack(pack);
+  if (packErrors.length) throw new Error(`Invalid map pack ${layoutId}: ${packErrors.join('; ')}`);
   const S = WORLD_SEED;
   const N = WW * WH;
   const tiles = new Uint8Array(N), fresh = new Uint8Array(N), zone = new Uint8Array(N), src = new Int8Array(N).fill(-1);
@@ -114,13 +129,20 @@ function genWorld(): World {
   // places
   const P = (id: string, name: string, x: number, y: number, kind: Place['kind']): Place => ({ id, name, tx: Math.round(x * WW), ty: Math.round(y * WH), kind });
   const starts = [P('s0', 'Meadow Bay', .18, .545, 'start'), P('s1', "Fisher's Point", .42, .855, 'start'), P('s2', 'Pinewatch', .37, .37, 'start'), P('s3', 'Eastcove', .835, .355, 'start')];
-  const pois = [P('tp', 'Crossroads Trading Post', .5, .6, 'poi'), P('mill', 'Old Mill Village', .63, .46, 'poi'), P('factory', 'Dead Foundry Works', .78, .5, 'poi'), P('light', 'Spit Lighthouse', .14, .885, 'poi'), P('wreck', 'Wreck of the Halcyon', .655, .905, 'poi'), P('watch', 'Pass Watchtower', .435, .29, 'poi'), P('evac', 'Harbor Evacuation Pier', .87, .115, 'evac')];
+  const authoredPlaces = pack.pois.map(q => ({ id: q.id, name: q.name, tx: q.tx, ty: q.ty + (q.height >> 1) + 1, kind: 'poi' as const }));
+  const pois = [P('tp', 'Crossroads Trading Post', .5, .6, 'poi'), P('mill', 'Old Mill Village', .63, .46, 'poi'), P('factory', 'Dead Foundry Works', .78, .5, 'poi'), P('light', 'Spit Lighthouse', .14, .885, 'poi'), P('wreck', 'Wreck of the Halcyon', .655, .905, 'poi'), P('watch', 'Pass Watchtower', .435, .29, 'poi'), P('evac', 'Harbor Evacuation Pier', .87, .115, 'evac'), ...authoredPlaces];
   const elders = [P('frost', 'Frostcrown Summit', .36, .13, 'elder'), P('magma', 'Caldera Throat', VOLC[0], VOLC[1], 'elder'), P('bog', 'Fen Heart', .28, .72, 'elder'), P('grove', 'Oldgrowth Ring', .25, .4, 'elder'), P('tide', 'Serpent Strand', .91, .63, 'elder'), P('rust', 'Foundry Yard', .87, .565, 'elder')];
   const all = [...starts, ...pois];
   // clear land under places
   const clearArea = (cx: number, cy: number, r: number, t: number) => { for (let y = cy - r; y <= cy + r; y++) for (let x = cx - r; x <= cx + r; x++) { if (x < 1 || y < 1 || x >= WW - 1 || y >= WH - 1) continue; const i = y * WW + x; if (Math.hypot(x - cx, y - cy) <= r + .3 && tiles[i] !== T.RIVER && !(tiles[i] === T.SHALLOW && fresh[i])) { if (tiles[i] === T.DEEP || tiles[i] === T.SHALLOW || tiles[i] === T.CLIFF || tiles[i] === T.LAVA) tiles[i] = t; } } };
   for (const p of all) clearArea(p.tx, p.ty, 6, T.GRASS);
   for (const e of elders) clearArea(e.tx, e.ty, 7, e.id === 'frost' ? T.SNOW : e.id === 'magma' ? T.ASH : e.id === 'tide' ? T.SAND : e.id === 'rust' ? T.TOXIC : e.id === 'bog' ? T.MARSH : T.FOREST);
+  for (const rect of pack.terrain) {
+    const terrain = rect.terrain === 'cliff' ? T.CLIFF : rect.terrain === 'hill' ? T.HILL : T.GRASS;
+    for (let y = rect.y; y < rect.y + rect.height; y++) for (let x = rect.x; x < rect.x + rect.width; x++) {
+      if (x > 0 && y > 0 && x < WW - 1 && y < WH - 1) tiles[y * WW + x] = terrain;
+    }
+  }
   { // frost summit path & plateau
     const e = elders[0]; for (let y = e.ty - 7; y <= e.ty + 7; y++) for (let x = e.tx - 7; x <= e.tx + 7; x++) { const i = y * WW + x; if (Math.hypot(x - e.tx, y - e.ty) < 7 && tiles[i] !== T.DEEP) tiles[i] = T.SNOW; }
   }
@@ -138,6 +160,7 @@ function genWorld(): World {
   };
   const byId = (id: string) => all.find(p => p.id === id)!;
   for (const [a, b] of [['s0', 'tp'], ['s1', 'tp'], ['tp', 'mill'], ['mill', 's2'], ['s2', 'watch'], ['s0', 's2'], ['mill', 's3'], ['s3', 'factory'], ['s3', 'evac'], ['s1', 'light'], ['s1', 'wreck'], ['tp', 'factory']]) road(byId(a), byId(b));
+  for (const [a, b] of pack.roadLinks) road(byId(a), byId(b));
   // buildings & statics
   const buildings: Building[] = []; const statics: StaticEnt[] = [];
   const stamp = (id: string, name: string, cx: number, cy: number, w: number, h: number, roof: string, doors: [number, number][], floorOnly = false) => {
@@ -166,6 +189,8 @@ function genWorld(): World {
   // factory with inner vault (keycard) — optional deeper access
   const fa = byId('factory'); stamp('b_fa', 'Foundry Hall', fa.tx, fa.ty, 17, 12, 'tin', [[8, 11], [0, 5]]);
   for (let y = fa.ty - 5; y <= fa.ty - 1; y++) tiles[y * WW + fa.tx + 2] = T.PWALL; for (let x = fa.tx + 2; x <= fa.tx + 7; x++) tiles[(fa.ty - 1) * WW + x] = T.PWALL;
+  // The interaction entity owns this threshold; the underlying wall tile must not keep blocking an opened door.
+  tiles[(fa.ty - 1) * WW + fa.tx + 4] = T.FLOOR;
   statics.push({ kind: 'door', tx: fa.tx + 4, ty: fa.ty - 1, poi: 'factory', locked: 'keycard', label: 'Vault Door' });
   buildings.push({ id: 'b_vault', name: 'Sealed Vault', x: fa.tx + 3, y: fa.ty - 5, w: 5, h: 4, roof: 'tin' });
   crate(fa.tx + 4, fa.ty - 4, 'factory_vault', [['core_fire', 1], ['blueprint:core_earth', 1], ['spares', 6]]);
@@ -193,6 +218,29 @@ function genWorld(): World {
   statics.push({ kind: 'evac', tx: ev.tx + 1, ty: ev.ty - 9, poi: 'evac', label: 'Evacuation Beacon' });
   statics.push({ kind: 'cash', tx: ev.tx - 4, ty: ev.ty + 1, poi: 'evac', cash: 30 });
   crate(ev.tx - 2, ev.ty + 1, 'evac', [['medkit', 1], ['water_flask', 1]]);
+  // Authored POI content is declarative and pack-versioned. No per-POI controller logic.
+  for (const q of pack.pois) {
+    const x0 = q.tx - (q.width >> 1), y0 = q.ty - (q.height >> 1);
+    const doors = [q.entry, q.keycardDoor, q.powerDoor];
+    const doorSet = new Set(doors.map(d => `${d.x},${d.y}`));
+    for (let y = 0; y < q.height; y++) for (let x = 0; x < q.width; x++) {
+      const edge = x === 0 || y === 0 || x === q.width - 1 || y === q.height - 1;
+      const partition = (y === q.horizontalWallY && x > 0 && x < q.width - 1) || (x === q.verticalWallX && y > 0 && y < q.horizontalWallY);
+      const i = (y0 + y) * WW + x0 + x;
+      tiles[i] = (edge || partition) && !doorSet.has(`${x},${y}`) ? T.PWALL : T.FLOOR; src[i] = -1;
+    }
+    buildings.push({ id: `b_${q.id}`, name: q.name, x: x0, y: y0, w: q.width, h: q.height, roof: q.roof });
+    const at = (p: { x: number; y: number }) => ({ tx: x0 + p.x, ty: y0 + p.y });
+    for (const [p, locked, label] of [[q.entry, undefined, `${q.name} Entry`], [q.keycardDoor, 'keycard', 'Keycard Reader'], [q.powerDoor, 'power', 'Power Gate']] as const) {
+      const a = at(p); statics.push({ kind: 'door', ...a, poi: q.id, locked, label });
+    }
+    const gen = at(q.generator); statics.push({ kind: 'gen', ...gen, poi: q.id, label: `${q.name} Generator` });
+    const putLoot = (p: { x: number; y: number }, loot: typeof q.loot.outer, label: string) => {
+      const a = at(p); statics.push({ kind: 'loot', ...a, poi: q.id, label, loot: loot.map(i => [i.item, i.quantity]) });
+    };
+    putLoot(q.outerCache, q.loot.outer, 'Maintenance Cache');
+    putLoot(q.vaultCache, q.loot.vault, 'Relay Vault Cache');
+  }
   // places zone claims
   for (let i = 0; i < N; i++) {
     const x = (i % WW) / WW, y = ((i / WW) | 0) / WH, t = tiles[i];

@@ -1,17 +1,21 @@
 // ============================================================================
-// PixelFX adapter for Soul of Hero (web prototype) — PRESENTATION ONLY.
+// PixelFX presentation compositor for Soul of Hero (web prototype) — v2.
+// PRESENTATION ONLY: this module never mutates game state; all gameplay
+// authority stays in sim.ts/engine.ts.
 //
-// Renders the accepted PixelFX Foundry pack (244 effects, upstream
-// github.com/patch-gg/pixelfx @ a84159688af3..., MIT) inside the real SOH
-// Canvas2D renderer. This module NEVER mutates game state: it only reads
-// world coordinates and draws. All gameplay authority stays in sim/engine.
+// Universal pipeline:
+//   official PixelFX art (combined channel, drawn byte-faithful)
+//   -> world placement (family profile: ground/hover/body/proj/screen)
+//   -> depth/occlusion (joins the game's y-sorted world list; roofs occlude)
+//   -> warp scene response (black hole distorts the REAL scene, art undistorted)
+//   -> colored environmental radiance (soft light, derived from source metadata)
+//   -> night-safe emission (bounded incremental light-channel boost post-night)
+//   -> lifecycle -> cleanup
 //
-// Pipeline: gameplay event -> FX id (pixelfxMap) -> presentation profile ->
-// world anchor -> instance -> depth/night composition -> cleanup.
-//
-// Art rules: combined frames already include light (drawn as-is, never
-// dimmed/cropped/redrawn); extraShapes:false (no generic shapes added); the
-// light channel is ONLY a bounded incremental post-night emission boost.
+// Rules: combined channel already includes upstream light — drawn as-is, never
+// dimmed/cropped/redrawn; extraShapes:false (no generic rings/circles drawn);
+// the light channel is only a bounded post-night incremental boost; radiance is
+// a soft illumination falloff, not a drawn geometric decoration.
 // ============================================================================
 import { PILOT_MANIFEST } from './pixelfx/pilot';
 
@@ -26,51 +30,93 @@ export interface PfxEntry {
     pages: { combined: PfxPage[]; light: PfxPage[] };
   };
 }
-export type PfxAnchor = 'ground' | 'hover' | 'body' | 'screen';
+export type PfxFamily = 'ground' | 'hover' | 'body' | 'screen' | 'proj';
 export interface PfxOpts {
-  x: number; y: number; anchor?: PfxAnchor; scale?: number; angle?: number; stretch?: number;
+  x: number; y: number; family?: PfxFamily; scale?: number; scaleMul?: number; angle?: number; stretch?: number;
   loop?: boolean; delayMs?: number; maxAgeMs?: number; lift?: number; body?: { x: number; y: number };
+  follow?: { x: number; y: number; vx?: number; vy?: number }; // proj: live position source
 }
 export interface PfxInst {
-  id: string; entry: PfxEntry; x: number; y: number; anchor: PfxAnchor; scale: number; stretch: number;
+  id: string; entry: PfxEntry; family: PfxFamily; x: number; y: number; scale: number; stretch: number;
   angle: number; loop: boolean; t: number; dur: number; maxAgeMs: number; lift: number;
-  body: { x: number; y: number } | null; born: number; warp: boolean;
+  body: { x: number; y: number } | null; follow: PfxOpts['follow'] | null; born: number; warp: boolean;
+  warpCache: { cv: HTMLCanvasElement | null; at: number; x: number; y: number; r: number };
 }
 
-// Per-effect world scale. View is 640x360 with a 16px player; atlas frames
-// are 64..320px, so every effect gets an authored scale — NO single global
-// scale, no raw atlas size on screen.
+// ---- declarative presentation data (not per-effect renderers) --------------
+// Curated scale overrides for pilot/gameplay ids; generic default below derives
+// from core bounds so the system works for any registered id.
 const SCALE: Record<string, number> = {
   'fire/fireball': 0.72, 'nature/quake': 0.5, 'lightning/chain-lightning': 0.55,
-  'ice/frost-nova': 0.5, 'shadow/black-hole': 0.55, 'arcane/arcane-orb': 0.45,
-  'ice/ice-lance': 0.8, 'moves/ice-lance-throw': 0.7, 'impacts/impact-frame': 0.35,
-  'arcane/spell-charge': 0.6, 'explosions/small-explosion': 0.5,
+  'ice/frost-nova': 0.5, 'shadow/black-hole': 0.62, 'arcane/arcane-orb': 0.55,
+  'ice/ice-lance': 0.85, 'moves/ice-lance-throw': 0.7, 'impacts/impact-frame': 0.4,
+  'arcane/spell-charge': 0.65, 'explosions/small-explosion': 0.5,
 };
-const DEFAULT_SCALE = 0.6;
+// Radiance tint per category (soft illumination color); override per id here.
+const TINT_CAT: Record<string, string> = {
+  fire: '#ff9a3a', ice: '#7ad0ff', arcane: '#b060ff', shadow: '#a050e0', lightning: '#cfe8ff',
+  nature: '#d8a050', holy: '#ffe9a0', explosions: '#ff7a3a', critters: '#a0e060', moves: '#9ad0ff',
+};
+const TINT: Record<string, string> = { 'shadow/black-hole': '#b050ff', 'arcane/arcane-orb': '#a050ff', 'ice/ice-lance': '#6ac8ff' };
+function tintOf(e: PfxEntry) { return TINT[e.id] ?? TINT_CAT[e.category] ?? '#c0d0ff'; }
+// Generic scale default: fit the visual core to a family-appropriate world
+// footprint (world is 640x360, tiles 16px, player 16px tall).
+function defaultScale(entry: PfxEntry, family: PfxFamily): number {
+  const [x0, y0, x1, y1] = entry.export.coreBounds;
+  const coreH = Math.max(4, y1 - y0), coreW = Math.max(4, x1 - x0);
+  const targetH = family === 'proj' ? 20 : family === 'screen' ? 90 : family === 'hover' ? 34 : 44;
+  const targetW = family === 'proj' ? 64 : 999;
+  let s = targetH / coreH;
+  if (targetW < 999) s = Math.min(s, targetW / coreW);
+  return Math.min(2.2, Math.max(0.18, s));
+}
 const MAX_INSTANCES = 48;
+const MAX_CACHED_PAGES = 40; // LRU budget for fetch-based atlas pages (pilot data-URLs never evicted)
 
+type Quality = 'high' | 'balanced' | 'performance';
+const quality: { name: Quality; warpSlices: number; warpMs: number; radiance: boolean; emissionCap: number } = {
+  name: 'high', warpSlices: 22, warpMs: 80, radiance: true, emissionCap: 0.6,
+};
+export function setQuality(q: Quality) {
+  quality.name = q;
+  if (q === 'high') { quality.warpSlices = 22; quality.warpMs = 80; quality.radiance = true; quality.emissionCap = 0.6; }
+  else if (q === 'balanced') { quality.warpSlices = 14; quality.warpMs = 140; quality.radiance = true; quality.emissionCap = 0.55; }
+  else { quality.warpSlices = 10; quality.warpMs = 220; quality.radiance = false; quality.emissionCap = 0.5; }
+}
+export function getQuality() { return quality.name; }
+
+// ---- manifest + lazy page cache ----------------------------------------------
 const manifest = new Map<string, PfxEntry>();
 let fullManifest: Promise<boolean> | null = null;
-let base = 'pixelfx-assets/'; // full 244 pack (dev middleware / static host)
-
-// ---- image cache (lazy per atlas page) --------------------------------------
-interface ImgState { img: HTMLImageElement | null; err: boolean; p: Promise<HTMLImageElement | null>; }
+let base = 'pixelfx-assets/';
+interface ImgState { img: HTMLImageElement | null; err: boolean; p: Promise<HTMLImageElement | null>; pilot: boolean; last: number; }
 const imgs = new Map<string, ImgState>();
-function loadImg(path: string): Promise<HTMLImageElement | null> {
+const pageOrder: string[] = [];
+function loadImg(path: string, pilot: boolean): Promise<HTMLImageElement | null> {
   let st = imgs.get(path);
   if (!st) {
-    const ns: ImgState = { img: null, err: false, p: null as any };
-    imgs.set(path, ns);
+    const ns: ImgState = { img: null, err: false, p: null as any, pilot, last: 0 };
+    imgs.set(path, ns); pageOrder.push(path);
     ns.p = new Promise(res => {
-      if (typeof Image === 'undefined') { res(null); return; } // non-DOM (tests)
+      if (typeof Image === 'undefined') { res(null); return; }
       const im = new Image();
       im.onload = () => { ns.img = im; res(im); };
       im.onerror = () => { ns.err = true; res(null); };
       im.src = path.startsWith('data:') ? path : base + path;
     });
-    st = ns;
+    evictIfNeeded();
   }
-  return st.p;
+  if (st) st.last = performance.now();
+  return st ? st.p : Promise.resolve(null);
+}
+function evictIfNeeded() {
+  const fetchPages = pageOrder.filter(p => !imgs.get(p)!.pilot);
+  while (fetchPages.length > MAX_CACHED_PAGES) {
+    const victim = fetchPages.shift()!;
+    const st = imgs.get(victim);
+    if (st && !st.pilot) { imgs.delete(victim); const i = pageOrder.indexOf(victim); if (i >= 0) pageOrder.splice(i, 1); }
+    else break;
+  }
 }
 export function pageLoaded(entry: PfxEntry): boolean {
   return entry.export.pages.combined.every(p => { const s = imgs.get(p.path); return !!(s && (s.img || s.err)); });
@@ -81,7 +127,6 @@ export function isFailed(id: string): boolean {
 }
 export function hasEntry(id: string) { return manifest.has(id); }
 
-// ---- init ---------------------------------------------------------------------
 export function initPfx(): Promise<boolean> {
   const pilotList: PfxEntry[] = ((PILOT_MANIFEST as any).effects ?? PILOT_MANIFEST) as PfxEntry[];
   for (const e of pilotList) manifest.set(e.id, e);
@@ -94,18 +139,18 @@ export function initPfx(): Promise<boolean> {
 }
 export function fullMode(): Promise<boolean> { return fullManifest ?? Promise.resolve(false); }
 export function catalog(): { id: string; name: string; category: string; state: string; loaded: boolean; pilot: boolean }[] {
-  const pilotList: PfxEntry[] = ((PILOT_MANIFEST as any).effects ?? PILOT_MANIFEST) as PfxEntry[];
-  const pilotIds = new Set(pilotList.map((p: PfxEntry) => p.id));
+  const pilotIds = new Set(((PILOT_MANIFEST as any).effects ?? PILOT_MANIFEST).map((p: any) => p.id));
   return [...manifest.values()].sort((a, b) => a.id.localeCompare(b.id)).map(e => ({
     id: e.id, name: e.name, category: e.category, state: e.export.state,
     loaded: pageLoaded(e), pilot: pilotIds.has(e.id),
   }));
 }
 
-// ---- instances ------------------------------------------------------------------
+// ---- instances -----------------------------------------------------------------
 const instances: PfxInst[] = [];
 let seenHaz = new WeakSet<object>();
 let nowMs = 0;
+let paused = false;
 
 export function spawn(id: string, o: PfxOpts): PfxInst | null {
   const entry = manifest.get(id);
@@ -115,25 +160,33 @@ export function spawn(id: string, o: PfxOpts): PfxInst | null {
     if (i >= 0) instances.splice(i, 1); else instances.shift();
   }
   const e = entry.export;
+  const family: PfxFamily = o.family ?? (entry.presentation.anchor === 'screen' ? 'screen' : entry.presentation.anchor === 'act' ? 'body' : 'ground');
   const inst: PfxInst = {
-    id, entry, x: o.x, y: o.y, anchor: o.anchor ?? (entry.presentation.anchor === 'screen' ? 'screen' : 'ground'),
-    scale: o.scale ?? SCALE[id] ?? DEFAULT_SCALE, stretch: o.stretch ?? 1, angle: o.angle ?? 0,
+    id, entry, family, x: o.x, y: o.y,
+    scale: (o.scale ?? SCALE[id] ?? defaultScale(entry, family)) * (o.scaleMul ?? 1),
+    stretch: o.stretch ?? 1, angle: o.angle ?? 0,
     loop: o.loop ?? entry.meta.loop, t: -(o.delayMs ?? 0), dur: (e.frames / e.fps) * 1000,
-    maxAgeMs: o.maxAgeMs ?? 0, lift: o.lift ?? 0, body: o.body ?? null,
+    maxAgeMs: o.maxAgeMs ?? 0, lift: o.lift ?? 0, body: o.body ?? null, follow: o.follow ?? null,
     born: nowMs, warp: entry.presentation.sceneInteraction === 'warp',
+    warpCache: { cv: null, at: -1, x: 0, y: 0, r: 0 },
   };
   instances.push(inst);
-  for (const chan of ['combined', 'light'] as const) for (const p of entry.export.pages[chan]) loadImg(p.path);
+  const pilot = (PILOT_MANIFEST as any).effects?.some((p: any) => p.id === id) ?? false;
+  for (const chan of ['combined', 'light'] as const) for (const p of entry.export.pages[chan]) loadImg(p.path, pilot);
   return inst;
 }
 export function clear() { instances.length = 0; seenHaz = new WeakSet(); }
 export function listInstances() { return instances.slice(); }
+export function setPaused(p: boolean) { paused = p; }
+export function isPaused() { return paused; }
+export function scrub(ms: number) { for (const i of instances) i.t += ms; }
 
 export function update(dtMs: number, now: number) {
   nowMs = now;
+  if (!paused) for (const inst of instances) inst.t += dtMs;
   for (let i = instances.length - 1; i >= 0; i--) {
     const inst = instances[i];
-    inst.t += dtMs;
+    if (inst.follow) { inst.x = inst.follow.x; inst.y = inst.follow.y; if (inst.follow.vx !== undefined) inst.angle = Math.atan2(inst.follow.vy ?? 0, inst.follow.vx); }
     if (inst.body) { inst.x = inst.body.x; inst.y = inst.body.y; }
     if (inst.t < 0) continue;
     if ((inst.t >= inst.dur && !inst.loop) || (inst.maxAgeMs > 0 && now - inst.born >= inst.maxAgeMs)) instances.splice(i, 1);
@@ -159,21 +212,20 @@ function pageCell(entry: PfxEntry, chan: 'combined' | 'light', frame: number):
   return null;
 }
 
-// ---- placement --------------------------------------------------------------------
-// Dest rect (px, unrotated) for an instance frame; offX/offY shift the whole
-// placement (used to convert world->screen in the post-night pass).
-function destRect(inst: PfxInst, offX = 0, offY = 0) {
+// ---- unified placement (one geometry path for every pass) ------------------------
+// offX/offY convert world->screen in post passes. Returns dest rect + rotation pivot.
+export function destRect(inst: PfxInst, offX = 0, offY = 0) {
   const e = inst.entry.export;
   const [fw, fh] = e.frameSize; const s = inst.scale; const [x0, y0, x1, y1] = e.coreBounds;
   const coreCx = (x0 + x1) / 2, coreH = y1 - y0;
   const x = inst.x + offX, y = inst.y + offY;
   let dx: number, dy: number, rotX: number, rotY: number;
-  if (inst.anchor === 'ground') {
+  if (inst.family === 'ground') {
     const sink = Math.max(2, coreH * s * 0.08); // grounded: core bottom + small sink
     dx = x - coreCx * s; dy = y - y1 * s + sink; rotX = x; rotY = y;
-  } else if (inst.anchor === 'screen') {
+  } else if (inst.family === 'screen') {
     dx = x - e.pivot[0] * s; dy = y - e.pivot[1] * s; rotX = x; rotY = y;
-  } else { // hover / body
+  } else { // hover / body / proj
     const lift = inst.lift || coreH * s * 0.6;
     dx = x - e.pivot[0] * s; dy = (y - lift) - e.pivot[1] * s; rotX = x; rotY = y - lift;
   }
@@ -193,58 +245,76 @@ function drawFrame(g: CanvasRenderingContext2D, inst: PfxInst, chan: 'combined' 
   g.restore();
 }
 
-// ---- passes called by render.ts ---------------------------------------------------
+// ---- soft radiance sprite (illumination falloff, cached per tint) -----------------
+const radCache = new Map<string, HTMLCanvasElement>();
+function radianceSprite(tint: string): HTMLCanvasElement {
+  let cv = radCache.get(tint);
+  if (!cv) {
+    cv = document.createElement('canvas'); cv.width = cv.height = 128;
+    const g = cv.getContext('2d')!;
+    const gr = g.createRadialGradient(64, 64, 2, 64, 64, 64);
+    gr.addColorStop(0, tint + 'ff'); gr.addColorStop(0.35, tint + '88'); gr.addColorStop(1, tint + '00');
+    g.fillStyle = gr; g.fillRect(0, 0, 128, 128);
+    if (radCache.size > 24) radCache.clear();
+    radCache.set(tint, cv);
+  }
+  return cv;
+}
+// toggleable presentation layers (lab QA; defaults on)
+export const layers = { art: true, emission: true, radiance: true, warp: true };
+
+// ---- passes called by render.ts ----------------------------------------------------
 // Depth items for the y-sorted world draw list (non-warp, non-screen, visible).
 export function depthItems(g: CanvasRenderingContext2D): { y: number; f: () => void }[] {
   const out: { y: number; f: () => void }[] = [];
   for (const inst of instances) {
-    if (inst.warp || inst.anchor === 'screen' || inst.t < 0) continue;
-    out.push({ y: inst.anchor === 'ground' ? inst.y : inst.y - 6, f: () => drawFrame(g, inst, 'combined', 1, 'source-over') });
+    if (inst.warp || inst.family === 'screen' || inst.t < 0) continue;
+    out.push({ y: inst.family === 'ground' ? inst.y : inst.y - 6, f: () => { if (layers.art) drawFrame(g, inst, 'combined', 1, 'source-over'); } });
   }
   return out;
 }
 
-// Warp pass (black hole): distort a localized cached snapshot of what is
-// already on the canvas (terrain, structures, actors, other FX), then draw
-// the effect art on top. SCREEN space, called after g.restore().
-const warpCache = { cv: (typeof document !== 'undefined' ? document.createElement('canvas') : null) as HTMLCanvasElement | null, at: -1, x: 0, y: 0, r: 0 };
+// Warp pass (screen space, after g.restore()): each warp instance has its OWN
+// cache; it samples the real scene already on the canvas, displaces slices
+// toward the focal point, then draws the source art undistorted on top.
 export function drawWarpPass(g: CanvasRenderingContext2D, cam: { x: number; y: number }, now: number) {
-  const warps = instances.filter(i => i.warp && i.t >= 0);
-  if (!warps.length) return;
-  for (const inst of warps) {
-    const r0 = destRect(inst);
-    const cx = r0.rotX - cam.x, cy = r0.rotY - cam.y;
+  if (!layers.warp) { for (const inst of instances) if (inst.warp && inst.t >= 0) drawFrame(g, inst, 'combined', layers.art ? 1 : 0, 'source-over', -cam.x, -cam.y); return; }
+  for (const inst of instances) {
+    if (!inst.warp || inst.t < 0) continue;
+    const r0 = destRect(inst, -cam.x, -cam.y);
+    const cx = r0.rotX, cy = r0.rotY;
     const rad = Math.max(r0.dw, r0.dh) * 0.62 + 14;
-    if (!warpCache.cv) return;
-    if (now - warpCache.at > 80 || warpCache.r !== rad || Math.abs(warpCache.x - cx) > 4 || Math.abs(warpCache.y - cy) > 4) {
+    const wc = inst.warpCache;
+    if (!wc.cv) { wc.cv = document.createElement('canvas'); }
+    if (now - wc.at > quality.warpMs || wc.r !== rad || Math.abs(wc.x - cx) > 4 || Math.abs(wc.y - cy) > 4) {
       const W = Math.ceil(rad * 2), H = Math.ceil(rad * 2);
-      if (warpCache.cv.width !== W || warpCache.cv.height !== H) { warpCache.cv.width = W; warpCache.cv.height = H; }
-      const wg = warpCache.cv.getContext('2d')!;
+      if (wc.cv.width !== W || wc.cv.height !== H) { wc.cv.width = W; wc.cv.height = H; }
+      const wg = wc.cv.getContext('2d')!;
       wg.clearRect(0, 0, W, H);
       wg.drawImage(g.canvas, Math.round(cx - rad), Math.round(cy - rad), W, H, 0, 0, W, H);
-      warpCache.at = now; warpCache.x = cx; warpCache.y = cy; warpCache.r = rad;
+      wc.at = now; wc.x = cx; wc.y = cy; wc.r = rad;
     }
-    // radial pull toward the focal point, in horizontal slices (cached, localized)
     const focal = inst.entry.export.focalPoint;
     const fy = cy + (focal[1] - inst.entry.export.frameSize[1] / 2) * inst.scale;
-    const slices = 22, sliceH = (rad * 2) / slices;
+    const slices = quality.warpSlices, sliceH = (rad * 2) / slices;
     const t01 = Math.min(1, inst.t / 900);
     for (let i = 0; i < slices; i++) {
       const sy = i * sliceH;
       const midY = cy - rad + sy + sliceH / 2;
       const fall = Math.max(0, 1 - Math.abs(midY - cy) / rad);
       const pinch = (6 + 26 * fall * fall) * t01 * Math.max(0, 1 - Math.abs(midY - fy) / (rad * 1.2));
-      g.drawImage(warpCache.cv, 0, Math.round(sy), warpCache.cv.width, Math.ceil(sliceH),
-        Math.round(cx - rad + pinch), Math.round(warpCache.y - rad + sy), Math.round(rad * 2 - pinch * 2), Math.ceil(sliceH));
+      g.drawImage(wc.cv, 0, Math.round(sy), wc.cv.width, Math.ceil(sliceH),
+        Math.round(cx - rad + pinch), Math.round(wc.y - rad + sy), Math.round(rad * 2 - pinch * 2), Math.ceil(sliceH));
     }
-    // the effect art itself
-    const cell = pageCell(inst.entry, 'combined', frameOf(inst.entry, inst.t));
-    if (cell?.img) {
-      g.save();
-      g.drawImage(cell.img, cell.sx, cell.sy, cell.sw, cell.sh,
-        Math.round(cx - inst.entry.export.pivot[0] * inst.scale), Math.round(cy - inst.entry.export.pivot[1] * inst.scale),
-        Math.round(r0.dw), Math.round(r0.dh));
-      g.restore();
+    if (layers.art) {
+      const cell = pageCell(inst.entry, 'combined', frameOf(inst.entry, inst.t));
+      if (cell?.img) {
+        g.save();
+        g.drawImage(cell.img, cell.sx, cell.sy, cell.sw, cell.sh,
+          Math.round(cx - inst.entry.export.pivot[0] * inst.scale), Math.round(cy - inst.entry.export.pivot[1] * inst.scale),
+          Math.round(r0.dw), Math.round(r0.dh));
+        g.restore();
+      }
     }
   }
 }
@@ -252,56 +322,71 @@ export function drawWarpPass(g: CanvasRenderingContext2D, cam: { x: number; y: n
 // Screen-anchored instances (screen space, after restore).
 export function drawScreen(g: CanvasRenderingContext2D) {
   for (const inst of instances) {
-    if (inst.anchor !== 'screen' || inst.warp || inst.t < 0) continue;
-    drawFrame(g, inst, 'combined', 1, 'source-over');
+    if (inst.family !== 'screen' || inst.warp || inst.t < 0) continue;
+    if (layers.art) drawFrame(g, inst, 'combined', 1, 'source-over');
   }
 }
 
-// Post-night bounded emission: light channel ONLY, additive, alpha bounded by
-// night darkness — incremental boost so skill art stays luminous after the
-// night overlay. The base frame is never redrawn here.
-export function drawEmission(g: CanvasRenderingContext2D, cam: { x: number; y: number }, dark: number) {
-  if (dark <= 0.02) return;
+// Post-night pass (screen space, after drawLight): colored environmental
+// radiance + bounded incremental light-channel emission. The base combined
+// frame is never redrawn here. Radiance lights the (darkened) terrain around
+// the effect; emission keeps the emissive core vivid at night.
+export function drawPostNight(g: CanvasRenderingContext2D, cam: { x: number; y: number }, dark: number) {
   for (const inst of instances) {
-    if (inst.t < 0 || inst.warp) continue;
+    if (inst.t < 0) continue;
+    const r = destRect(inst, -cam.x, -cam.y);
     const le = inst.entry.export.lightEnergy;
-    if (le < 0.5) continue;
-    const alpha = Math.min(0.55, 0.18 + dark * 0.5) * Math.min(1, le / 6);
-    drawFrame(g, inst, 'light', alpha, 'lighter', -cam.x, -cam.y);
+    // colored radiance (soft falloff illumination of the nearby scene)
+    if (layers.radiance && quality.radiance) {
+      const energy = Math.min(1.6, le / 8);
+      const a = (dark > 0.02 ? Math.min(0.5, 0.12 + dark * 0.55) : 0.10) * energy;
+      if (a > 0.01) {
+        const rad = Math.max(r.dw, r.dh) * 0.85 + 18;
+        const spr = radianceSprite(tintOf(inst.entry));
+        g.save();
+        g.globalCompositeOperation = 'lighter'; g.globalAlpha = Math.min(0.6, a);
+        g.drawImage(spr, Math.round(r.rotX - rad), Math.round(r.rotY - rad), Math.round(rad * 2), Math.round(rad * 2));
+        g.restore();
+      }
+    }
+    // bounded night-safe emission (light channel only)
+    if (layers.emission && dark > 0.02 && le >= 0.5) {
+      const alpha = Math.min(quality.emissionCap, 0.2 + dark * 0.55) * Math.min(1, le / 6);
+      drawFrame(g, inst, 'light', alpha, 'lighter', -cam.x, -cam.y);
+    }
   }
 }
 
-// ---- gameplay hooks (presentation only) -------------------------------------------
-const projFx = new Map<object, number>();
-export function cleanupProjFx(projs: any[]) {
-  for (const k of [...projFx.keys()]) if (!projs.includes(k)) projFx.delete(k);
-}
-// Fireball: authored directional FX riding the REAL projectile each frame.
-export function drawProjFx(g: CanvasRenderingContext2D, pr: any, now: number) {
-  if (pr.kind !== 'fireball') return;
-  if (!projFx.has(pr)) projFx.set(pr, now);
-  const entry = manifest.get('fire/fireball');
-  if (!entry) return;
-  const t = now - (projFx.get(pr) ?? now);
-  const fake: PfxInst = {
-    id: 'fire/fireball', entry, x: pr.x, y: pr.y, anchor: 'hover', scale: SCALE['fire/fireball'], stretch: 1,
-    angle: Math.atan2(pr.vy, pr.vx), loop: true, t, dur: 1e9, maxAgeMs: 0, lift: 0, body: null, born: now, warp: false,
-  };
-  drawFrame(g, fake, 'combined', 1, 'source-over');
-}
-
-// Hazard -> FX sync (reads HAZ, never writes). Called once per frame from render.
+// ---- gameplay hooks (presentation only) --------------------------------------------
 export function syncHazards(hazards: any[], player: { x: number; y: number; aim: number }) {
   for (const h of hazards) {
     if (seenHaz.has(h)) continue;
     seenHaz.add(h);
-    if (h.effect === 'quake') spawn('nature/quake', { x: h.x, y: h.y, anchor: 'ground', angle: player.aim, delayMs: h.tell ?? 0, scale: 0.46 });
-    else if (h.style === 'frostnova') spawn('ice/frost-nova', { x: h.x, y: h.y, anchor: 'ground', delayMs: h.tell ?? 0 });
+    if (h.effect === 'quake') spawn('nature/quake', { x: h.x, y: h.y, family: 'ground', angle: player.aim, delayMs: h.tell ?? 0, scale: 0.46 });
+    else if (h.style === 'frostnova') spawn('ice/frost-nova', { x: h.x, y: h.y, family: 'ground', delayMs: h.tell ?? 0 });
   }
 }
+// Fireball: one real instance following the actual projectile (single visual,
+// depth-sorted, night-safe via the shared post-night pass).
+const projInst = new Map<object, PfxInst>();
+export function syncProjFx(projs: any[], now: number) {
+  for (const pr of projs) {
+    if (pr.kind !== 'fireball') continue;
+    let inst = projInst.get(pr);
+    if (!inst) { inst = spawn('fire/fireball', { x: pr.x, y: pr.y, family: 'proj', loop: true, follow: pr, scale: SCALE['fire/fireball'] })!; projInst.set(pr, inst); }
+  }
+  for (const [pr, inst] of [...projInst]) if (!projs.includes(pr) || !instances.includes(inst)) projInst.delete(pr);
+  void now;
+}
 
-// ---- stats --------------------------------------------------------------------------
-const stats = { fps: 0, frameMs: 0, instances: 0 };
-let ema = 16.7;
-export function tickStats(dtMs: number) { ema = ema * 0.9 + dtMs * 0.1; stats.fps = 1000 / ema; stats.frameMs = ema; stats.instances = instances.length; }
-export function getStats() { return { ...stats }; }
+// ---- stats (ring buffer for p50/p95) ------------------------------------------------
+const dtRing: number[] = [];
+export function tickStats(dtMs: number) {
+  dtRing.push(dtMs); if (dtRing.length > 240) dtRing.shift();
+}
+export function getStats() {
+  const s = [...dtRing].sort((a, b) => a - b);
+  const pick = (q: number) => s.length ? s[Math.min(s.length - 1, Math.floor(q * s.length))] : 0;
+  const avg = s.length ? s.reduce((a, b) => a + b, 0) / s.length : 0;
+  return { fps: avg ? 1000 / avg : 0, frameMs: avg, p50: pick(0.5), p95: pick(0.95), instances: instances.length };
+}

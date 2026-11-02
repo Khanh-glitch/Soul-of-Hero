@@ -20,11 +20,11 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
   const [sel, setSel] = useState<{ c: string; slot: number } | null>(null);
   const [buildType, setBuildType] = useState<string | null>(null); const [reclaim, setReclaim] = useState(false);
   const [toasts, setToasts] = useState<{ id: number; text: string; tone?: string; t: number }[]>([]);
-  const [labOpen, setLabOpen] = useState(false); const [nightOverride, setNightOverride] = useState(false);
   const [banner, setBanner] = useState<{ text: string; sub?: string; id: number } | null>(null);
+  const [labOpen, setLabOpen] = useState(false); const [labHidden, setLabHidden] = useState(false); const labHiddenRef = useRef(false); labHiddenRef.current = labHidden; const labOpenRef = useRef(false); labOpenRef.current = labOpen; const [nightOverride, setNightOverride] = useState(false);
   const inp = useRef<Input>({ up: false, down: false, left: false, right: false, mx: 0, my: 0, attack: false, attackPressed: false, roll: false, cancel: false });
   const mouse = useRef({ x: 320, y: 180 }); const target = useRef<Interact | null>(null); const hitstop = useRef(0);
-  const panelRef = useRef(panel); panelRef.current = panel; const nightRef = useRef(nightOverride); nightRef.current = nightOverride; const buildRef = useRef(buildType); buildRef.current = buildType; const reclaimRef = useRef(reclaim); reclaimRef.current = reclaim;
+  const panelRef = useRef(panel); panelRef.current = panel; const buildRef = useRef(buildType); buildRef.current = buildType; const reclaimRef = useRef(reclaim); reclaimRef.current = reclaim;
   const saveT = useRef<any>(null); const toastKeys = useRef<Record<string, number>>({});
   const scheduleSave = () => { clearTimeout(saveT.current); saveT.current = setTimeout(() => save(gs), 250); };
   const toast = useCallback((text: string, tone?: string) => { if (!text) return; const k = text; const n = Date.now(); if (toastKeys.current[k] && n - toastKeys.current[k] < 2500) return; toastKeys.current[k] = n; setToasts(t => [...t.slice(-3), { id: n + Math.random(), text, tone, t: n }]); }, []);
@@ -71,7 +71,8 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
       initAudio(); const r = gs.run; if (!r) return;
       if (keyMap[e.code]) { (inp.current as any)[keyMap[e.code]] = true; e.preventDefault(); return; }
       if (e.code === 'Tab') { e.preventDefault(); toggle('skills'); return; }
-      if (e.code === 'F9') { e.preventDefault(); setLabOpen(v => !v); return; }
+      if (e.code === 'F9') { e.preventDefault(); setLabOpen(v => (labHiddenRef.current ? true : !v)); setLabHidden(false); return; }
+      if (e.code === 'KeyH' && labOpenRef.current) { setLabHidden(true); return; } // collapse lab for clean visual QA
       if (e.repeat) return;
       switch (e.code) {
         case 'Space': inp.current.roll = true; e.preventDefault(); break;
@@ -95,7 +96,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
 
   // main loop
   useEffect(() => {
-    pfx.initPfx(); // embedded pilot manifest + full pack (lazy pages)
+    pfx.initPfx(); // embedded pilot + full pack (lazy pages)
     const cv = cvRef.current!; const g = cv.getContext('2d')!; g.imageSmoothingEnabled = false;
     let last = performance.now(); let raf = 0; let uiAcc = 0, saveAcc = 0, ambAcc = 0; let ended = false;
     const loop = (t: number) => {
@@ -132,8 +133,10 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
   };
   const onMouseUp = () => { inp.current.attack = false; };
 
+  const nightRef = useRef(nightOverride); nightRef.current = nightOverride;
   (window as any).__soh = gs; // QA-only inspection hook (browser automation); no gameplay authority
-  (window as any).__pfx = pfx; // QA-only hook for FX adapter stats/instances
+  (window as any).__pfx = pfx; // QA-only hook for FX stats/instances
+  (window as any).__qaNight = (v: boolean) => setNightOverride(v); // QA-only darkness override; never touches game clock/save
   const r = gs.run; if (!r) return <div className="stage" />;
   const p = r.player; const now = Date.now(); const ph = phaseOf(r, now); const hrs = runHours(r, now); const day = Math.floor(hrs / 24) + 1;
   const dtm = dayTime(r, now); const clock = `${String(Math.floor(dtm * 24)).padStart(2, '0')}:${String(Math.floor((dtm * 24 % 1) * 60)).padStart(2, '0')}`;
@@ -180,11 +183,12 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
         {C(r, 'inv').slots.slice(0, 8).map((s, i) => <Slot key={i} s={s} active={i === p.active} hotkey={String(i + 1)} onClick={() => { p.active = i; rerender(); }} onContext={() => act('useItem', { slot: i })} />)}
         <div style={{ fontSize: 9, width: 74, lineHeight: 1, marginLeft: 3, color: '#cfc2dc', alignSelf: 'center' }}>{(() => { const s = activeStack(r); if (!s) return 'Fists'; const d = ITEMS[s.key]; return <><span style={{ color: '#ffe0a0' }}>{d.name}</span><br />{d.core ? `${s.charge}/${d.charge} charges · LMB cast, RMB cancel` : d.food ? 'LMB eat/drink' : d.dmg ? `dmg ${d.dmg}${d.power ? ' · tool' : ''}` : d.place ? 'LMB to place' : d.cat === 'bp' ? 'LMB learn' : ''}</>; })()}</div>
       </div>
-      {/* FX Test Lab (dev/QA, F9) — same adapter as gameplay, visual-only casts */}
-      {labOpen && <FxLab gs={gs} nightOverride={nightOverride} setNightOverride={setNightOverride} onClose={() => setLabOpen(false)}
+      {/* panels */}
+      {/* FX Test Lab (dev/QA, F9) — same compositor as gameplay, visual-only casts */}
+      {labOpen && <FxLab gs={gs} hidden={labHidden} onHide={() => setLabHidden(true)} onClose={() => setLabOpen(false)}
+        nightOverride={nightOverride} setNightOverride={setNightOverride}
         getMouseWorld={() => ({ x: mouse.current.x + Math.round(cam.x), y: mouse.current.y + Math.round(cam.y) })}
         getTarget={() => target.current ? { x: target.current.x, y: target.current.y } : null} />}
-      {/* panels */}
       {panel?.kind === 'inv' && <InventoryPanel api={api} />}
       {panel?.kind === 'container' && panel.eid && <ContainerPanel api={api} eid={panel.eid} />}
       {panel?.kind === 'craft' && <CraftPanel api={api} />}
