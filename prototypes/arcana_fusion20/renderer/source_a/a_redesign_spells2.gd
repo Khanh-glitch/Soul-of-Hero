@@ -29,8 +29,10 @@ class RootwakeR:
             for n in range(25):
                 points.append(_root_curve(origin, destination, i, float(n) / 24.0))
             var bs: Array = [{"pts": points, "w": 3.2, "depth": 0, "grow": 0.0, "seed": 13131 + i, "attach": 0.0}]
-            for j in range(4):
-                var attach: float = [0.25, 0.4583333333, 0.625, 0.7916666667][j]
+            # Each trunk has its own irregular branch population and origin
+            # beats; do not reconstruct the rejected uniform cage.
+            for j in range([2, 4, 3][i]):
+                var attach: float = [0.16, 0.37, 0.58, 0.79][j] + float(i) * 0.035
                 # Parent node and child start are literally the same point.
                 var parent_index := roundi(float(attach) * 24.0)
                 attach = float(parent_index) / 24.0
@@ -40,7 +42,10 @@ class RootwakeR:
                 var child: Array = []
                 for n in range(13):
                     var u := float(n) / 12.0
-                    child.append(base + tangent * (19.0 * u) + normal * (17.0 * sin(u * PI * 0.5) + 6.0 * u * u))
+                    var seed := float(i * 4 + j)
+                    var reach := 12.0 + 16.0 * AMath.hash2(seed, 13.0)
+                    var spread := 9.0 + 17.0 * AMath.hash2(seed, 17.0)
+                    child.append(base + tangent * (reach * u) + normal * (spread * sin(u * PI * 0.5) + (2.0 + 7.0 * AMath.hash2(seed, 23.0)) * u * u))
                 bs.append({"pts": child, "w": 1.8 - float(j) * 0.15, "depth": 1, "grow": 0.0, "seed": 13300 + i * 4 + j, "attach": attach})
             _roots.append(bs)
             _tips.append(destination)
@@ -110,15 +115,28 @@ class RootwakeR:
                 # Begin exactly on an existing main-root node, not in midair.
                 var tp: Vector2 = raised[18]
                 var endpoint: Vector2 = tp.lerp(_tips[i], AMath.ease_in(tension, 2.0) * attached)
-                var control := tp.lerp(endpoint, 0.5) + Vector2(float(i - 1) * 4.0, -22.0 * tension * attached)
+                var control := tp.lerp(endpoint, 0.5) + Vector2(float(i - 1) * 7.0, -34.0 * tension * attached)
                 var points: Array = []
                 for step in range(13):
                     var u := float(step) / 12.0
                     points.append(tp * (1.0 - u) * (1.0 - u) + control * 2.0 * (1.0 - u) * u + endpoint * u * u)
                 ADraw.ribbon(fb, points,
-                    func(u: float, _j: int) -> float: return (3.4 - u * 2.1) * tension * attached,
+                    func(u: float, _j: int) -> float: return (5.6 - u * 3.7) * tension * attached,
                     func(_u: float, _j: int, edge: float) -> Variant:
                         return Vector3(0.16, 0.24, 0.07) if edge > 0.65 else Vector3(0.35, 0.42, 0.13), true, retract)
+                # A single prominent wedge is grown out of the same arch
+                # and aims toward the target with the visible tension. This
+                # remains visual-only: no asserted contact or on-body effect.
+                var attack := AMath.ease_in(AMath.seg(t, 4.65, 5.4), 2.0) * attached * retract
+                var direction := (_tips[i] - tp).normalized()
+                var side := Vector2(-direction.y, direction.x)
+                var thorn_base: Vector2 = points[8]
+                var point: Vector2 = thorn_base.lerp(_tips[i] + direction * 7.0, attack)
+                var foot := side * (4.5 * attack)
+                if attack > 0.0:
+                    ADraw.poly_fill(fb, [thorn_base - foot, point, thorn_base + foot],
+                        func(_x: int, _y: int) -> Variant: return Vector3(0.33, 0.42, 0.12), true, attack)
+                    ADraw.streak(fb, thorn_base.x, thorn_base.y, point.x, point.y, 0.9, 0.35, AMath.R("verdant", 0.9), attack * 0.6)
                 # Two actual barbs have their bases on the same arch.
                 for barb_value in [0.36, 0.68]:
                     var barb: float = barb_value
