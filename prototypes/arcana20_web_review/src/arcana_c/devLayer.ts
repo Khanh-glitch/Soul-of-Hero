@@ -1,4 +1,4 @@
-/** Developer-only C7/C10/C17 live-field diagnostic, not playtest/visual approval. */
+/** Developer-only C7/C10/C17/C20 live-field diagnostic, not playtest/visual approval. */
 import { bDiagnosticEnabled } from '../arcana_b/devLayer';
 import { CSource,type CId } from './player';
 import { compositeC } from './composite';
@@ -8,10 +8,10 @@ import { bayer } from './engine/math';
 type Active={source:CSource;runId:string;startMs:number;tick:number;frame:ReturnType<CSource['renderAtSeconds']>;sourceMs:number};
 const active:Active[]=[];
 const gpuRequested=bDiagnosticEnabled && new URLSearchParams(location.search).get('arcanaGpu')==='1';let gpu:CGpuComposite|null=null;let gpuFailed=false;
-export const cDiagnosticTimings:{id:CId;sourceMs:number;compositeMs:number}[]=[];
+export const cDiagnosticTimings:{id:CId;time:number;sourceMs:number;compositeMs:number}[]=[];
 if(bDiagnosticEnabled)(window as any).__arcanaCDiagnosticTimings=cDiagnosticTimings;
 export function startCDiagnostic(e:any){
- if(!bDiagnosticEnabled||![7,10,17].includes(e.id))return;
+ if(!bDiagnosticEnabled||![7,10,17,20].includes(e.id))return;
  const reach=Math.max(35,Math.min(130,Math.hypot(e.aimX-e.x,e.aimY-e.y)));
  active.push({source:new CSource(e.id as CId,{x:e.x,y:e.y},{x:e.x+Math.cos(e.a)*reach,y:e.y+Math.sin(e.a)*reach}),runId:e.runId,startMs:e.simMs,tick:-1,frame:null,sourceMs:0});
 }
@@ -36,7 +36,7 @@ export function drawCDiagnostic(g:CanvasRenderingContext2D,cx:number,cy:number){
    }catch(e){gpuFailed=true;console.warn('Experimental GPU C pass failed; falling back to CPU',e);}}
   if(!gpuRequested||gpuFailed){const box=worldRect(a.frame.transform,cx,cy,g.canvas.width,g.canvas.height);if(!box.w||!box.h)continue;
    const image=g.getImageData(box.x,box.y,box.w,box.h);compositeC(image.data,image.width,image.height,a.frame.frame,a.frame.transform,cx+box.x,cy+box.y);g.putImageData(image,box.x,box.y);}
-  if(cDiagnosticTimings.length<1200)cDiagnosticTimings.push({id:a.source.id,sourceMs:a.sourceMs,compositeMs:performance.now()-start});
+  if(cDiagnosticTimings.length<1200)cDiagnosticTimings.push({id:a.source.id,time:a.frame.t,sourceMs:a.sourceMs,compositeMs:performance.now()-start});
  }
 }
 

@@ -22,8 +22,11 @@ export function compositeC(world:Uint8ClampedArray,width:number,height:number,f:
   const sh=f.disp[qi+2],ink=f.ink[qi+3],fragment=f.worldFragment[qi+2],th=bayer(qx,qy)-.5;
   const fx=clamp(Math.floor(x+m.a*(f.worldFragment[qi]-qx)+m.c*(f.worldFragment[qi+1]-qy)),0,width-1);
   const fy=clamp(Math.floor(y+m.b*(f.worldFragment[qi]-qx)+m.d*(f.worldFragment[qi+1]-qy)),0,height-1),fi=(fy*width+fx)*4;
+  const mode=f.worldFragment[qi+3],ops=f.liveLight.get(p);
   const v=[0,1,2].map(k=>{const offset=k===0?o:k===2?-o:0;const g=ground(spx+offset,spy,k)*sh;
-   return g*Math.max(0,1-ink-fragment)+f.ink[qi+k]+orig[fi+k]/255*fragment+Math.floor(l(qx+offset,qy,k)*8+th+.5)/8;});
+   let frag=orig[fi+k]/255;if(mode>1.5)frag=1-frag*[2.5,3,2][k];else if(mode>.5)frag=clamp(1-frag*3,0,1)*[.45,.2,.5][k]+[.2,0,.15][k];
+   let light=l(qx+offset,qy,k);if(ops)for(const op of ops){const ix=clamp(Math.floor(x+m.a*(op.sx-qx)+m.c*(op.sy-qy)),0,width-1),iy=clamp(Math.floor(y+m.b*(op.sx-qx)+m.d*(op.sy-qy)),0,height-1);light+=orig[(iy*width+ix)*4+k]/255*op.gain;}
+   return g*Math.max(0,1-ink-fragment)+f.ink[qi+k]+frag*fragment+Math.floor(light*8+th+.5)/8;});
   const over=(Math.max(v[0]-1,0)+Math.max(v[1]-1,0)+Math.max(v[2]-1,0))*.45;
   const dest=(y*width+x)*4;for(let k=0;k<3;k++)world[dest+k]=Math.round(clamp(v[k]+over,0,1)*255);
  }

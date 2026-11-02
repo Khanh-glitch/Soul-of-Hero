@@ -6,7 +6,7 @@ import { compositeC } from '../src/arcana_c/composite';
 import { worldRect } from '../src/arcana_b/worldRect';
 
 describe('field ROI cropping, not P0 parity',()=>{
- it.each([[2,5.12],[3,7.25],[8,5.3],[7,6.62],[10,4.84],[17,6.45]] as [BId|CId,number][])('cropped output equals full-scene output for source %i',(id,t)=>{
+ it.each([[2,5.12],[3,7.25],[8,5.3],[7,6.62],[10,4.84],[17,6.45],[20,6.8],[20,9.5]] as [BId|CId,number][])('cropped output equals full-scene output for source %i',(id,t)=>{
   const isB=id===2||id===3||id===8;const s=isB?new BSource(id as BId,{x:185,y:130},{x:290,y:190}):new CSource(id as CId,{x:185,y:130},{x:290,y:190});
   const frame=s.renderAtSeconds(t)!;const f='r' in frame?frame.r:frame.frame,m=frame.transform;
   const width=384,height=240,original=new Uint8ClampedArray(width*height*4);for(let i=0;i<original.length;i+=4)original.set([(i*3)%256,(i*7)%256,(i*11)%256,255],i);

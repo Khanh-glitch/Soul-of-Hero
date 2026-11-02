@@ -17,6 +17,8 @@ export class Frame {
   groundCoverage = new Float32Array(N);
   worldInfluence = new Uint8Array(N);
   worldFragment = new Float32Array(N * 4);
+  // Ordered, unbounded source-world additive light operations per destination.
+  liveLight = new Map<number, {sx:number;sy:number;gain:number}[]>();
   ink = new Float32Array(N * 4);
   light = new Float32Array(N * 4);
   disp = new Float32Array(N * 4);
@@ -28,7 +30,7 @@ export class Frame {
   shadeStage(m:number) { this.stageShade *= m; }
 
   clear() {
-    this.stageShade = 1; this.stageBlackout = false; this.worldFragment.fill(0);
+    this.stageShade = 1; this.stageBlackout = false; this.worldFragment.fill(0); this.liveLight.clear();
     this.ground.fill(0);
     this.groundCoverage.fill(0); this.worldInfluence.fill(0);
     this.ink.fill(0);
@@ -87,6 +89,20 @@ export class Frame {
     const i = (y * W + x) * 4;
     return [this.base[i] / 255, this.base[i + 1] / 255, this.base[i + 2] / 255];
   }
+
+  /** Record the C20 interior or remainder transform, not a colour key. */
+  worldSample(x:number,y:number,sx:number,sy:number,mode:1|2) {
+    x|=0;y|=0;if(x<0||y<0||x>=W||y>=H)return;const p=y*W+x,i=p*4;
+    this.ink[i]=this.ink[i+1]=this.ink[i+2]=this.ink[i+3]=0;
+    this.worldFragment[i]=clamp(sx|0,0,W-1);this.worldFragment[i+1]=clamp(sy|0,0,H-1);this.worldFragment[i+2]=1;this.worldFragment[i+3]=mode;this.worldInfluence[p]=1;
+  }
+  /** A's bilinear additive live-world light; retain EVERY overlapping op. */
+  addLiveWorldLight(x:number,y:number,sx:number,sy:number,gain:number){
+    const x0=Math.floor(x),y0=Math.floor(y),fx=x-x0,fy=y-y0;
+    const rec=(px:number,py:number,k:number)=>{if(k<=0||px<0||py<0||px>=W||py>=H)return;const p=py*W+px,op={sx,sy,gain:k},bucket=this.liveLight.get(p);if(bucket)bucket.push(op);else this.liveLight.set(p,[op]);this.worldInfluence[p]=1;};
+    if(fx<.02&&fy<.02){rec(x0,y0,gain);return;}rec(x0,y0,gain*(1-fx)*(1-fy));rec(x0+1,y0,gain*fx*(1-fy));rec(x0,y0+1,gain*(1-fx)*fy);rec(x0+1,y0+1,gain*fx*fy);
+  }
+  addBilinearLight(x:number,y:number,c:RGB){const x0=Math.floor(x),y0=Math.floor(y),fx=x-x0,fy=y-y0;if(fx<.02&&fy<.02){this.Lc(x0,y0,c);return;}this.Lc(x0,y0,c,(1-fx)*(1-fy));this.Lc(x0+1,y0,c,fx*(1-fy));this.Lc(x0,y0+1,c,(1-fx)*fy);this.Lc(x0+1,y0+1,c,fx*fy);}
 
   // ---------- iteration helpers ----------
   field(x0: number, y0: number, x1: number, y1: number, fn: (x: number, y: number) => void) {

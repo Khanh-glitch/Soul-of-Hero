@@ -5,7 +5,7 @@ import { CSource,cTransform,type CId } from '../src/arcana_c/player';
 import { compositeC } from '../src/arcana_c/composite';
 import { transformPoint } from '../src/arcana_b/anchors';
 import { C_ANCHOR } from '../src/arcana_c/anchors';
-function digest(f:Frame){const h=createHash('sha256');for(const a of [f.ground,f.groundCoverage,f.ink,f.light,f.disp,f.worldInfluence,f.worldFragment])h.update(new Uint8Array(a.buffer,a.byteOffset,a.byteLength));return h.digest('hex')}
+function digest(f:Frame){const h=createHash('sha256');for(const a of [f.ground,f.groundCoverage,f.ink,f.light,f.disp,f.worldInfluence,f.worldFragment])h.update(new Uint8Array(a.buffer,a.byteOffset,a.byteLength));for(const [p,ops] of f.liveLight)h.update(JSON.stringify([p,ops]));return h.digest('hex')}
 describe('experimental source-C field producer, not P0 parity validation',()=>{
  it('keeps untouched world pixels and applies black authored ink and ground separately',()=>{
   const f=new Frame();f.clear();const data=new Uint8ClampedArray(384*216*4);for(let i=0;i<data.length;i+=4)data.set([128,160,180,255],i);
@@ -24,9 +24,9 @@ describe('experimental source-C field producer, not P0 parity validation',()=>{
   expect(f.post.stageBlackout).toBe(true);expect(f.frame.worldInfluence.reduce((a,b)=>a+b,0)).toBeLessThan(10);
  });
  it('pins source targets to world targets where scale is not clamped',()=>{
-  for(const id of [7,10,17] as CId[]){const target={x:340,y:200},m=cTransform(id,{x:200,y:200},target),p=transformPoint(m,C_ANCHOR[id]);expect(p.x).toBeCloseTo(target.x,8);expect(p.y).toBeCloseTo(target.y,8);}
+  for(const id of [7,10,17,20] as CId[]){const target={x:340,y:200},m=cTransform(id,{x:200,y:200},target),p=transformPoint(m,C_ANCHOR[id]);expect(p.x).toBeCloseTo(target.x,8);expect(p.y).toBeCloseTo(target.y,8);}
  });
- it.each([[7,6.62],[10,4.84],[17,6.45]] as [CId,number][])('source %i fixed-step state is repeatable, including backwards seek',(id,t)=>{
+ it.each([[7,6.62],[10,4.84],[17,6.45],[20,6.8],[20,9.5]] as [CId,number][])('source %i fixed-step state is repeatable, including backwards seek',(id,t)=>{
   const one=new CSource(id,{x:100,y:100},{x:200,y:100}),two=new CSource(id,{x:100,y:100},{x:200,y:100});
   const a=one.renderAtSeconds(t)!;expect(a.frame.worldInfluence.some(v=>v!==0)).toBe(true);const first=digest(a.frame);
   expect(digest(two.renderAtSeconds(t)!.frame)).toBe(first);one.renderAtSeconds(1);expect(digest(one.renderAtSeconds(t)!.frame)).toBe(first);

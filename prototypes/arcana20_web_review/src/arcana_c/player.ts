@@ -1,5 +1,6 @@
-/** Two source-C effects under diagnostic development; not P0 acceptance. */
+/** Experimental source-C effects under diagnostic development; not P0 acceptance. */
 import type { BTransform } from '../arcana_b/anchors';
+import { ripperFusion } from './fusion20/ripper';
 import { Frame } from './engine/frame';
 import { Rng } from './engine/math';
 import { TIDE } from './spells/tide';
@@ -10,7 +11,7 @@ import type { RGB } from './engine/palette';
 import { cTransform,type CId } from './anchors';
 export {cTransform} from './anchors';
 export type {CId} from './anchors';
-const effects:Record<CId,SpellDef>={7:TIDE[2],10:TEMPEST[1],17:ASTRAL[0]};
+const effects:Record<CId,SpellDef>={7:TIDE[2],10:TEMPEST[1],17:ASTRAL[0],20:ripperFusion};
 export class CSource {
   readonly frame=new Frame();readonly def:SpellDef;readonly transform:BTransform;
   readonly id:CId; readonly duration:number; tick=0; private instance!:Inst;private shake=0;private flash=0;private flashColor:RGB=[0,0,0];private kick=0;

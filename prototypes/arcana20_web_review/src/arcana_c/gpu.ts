@@ -5,7 +5,7 @@ const VS=`#version 300 es
 in vec2 pos; void main(){gl_Position=vec4(pos,0.,1.);}`;
 const FS=`#version 300 es
 precision highp float; precision highp int;
-uniform sampler2D scene; uniform sampler2D ink; uniform sampler2D ground; uniform sampler2D lights; uniform sampler2D disp; uniform sampler2D fragment; uniform sampler2D influence;
+uniform sampler2D scene; uniform sampler2D ink; uniform sampler2D ground; uniform sampler2D lights; uniform sampler2D disp; uniform sampler2D fragment; uniform sampler2D influence; uniform sampler2D liveIndex; uniform sampler2D liveOps;
 uniform vec2 size; uniform vec2 camera; uniform vec4 basis; uniform vec2 origin;out vec4 outColor;
 float bayer(ivec2 p){int m[16]=int[16](0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5);return(float(m[(p.y&3)*4+(p.x&3)])+.5)/16.;}
 vec3 sceneAt(vec2 p){return texture(scene,vec2(clamp(p.x/size.x,0.,1.),clamp(1.-p.y/size.y,0.,1.))).rgb;}
@@ -18,19 +18,22 @@ void main(){vec2 pixel=vec2(gl_FragCoord.x,size.y-gl_FragCoord.y),w=pixel+camera
  vec4 d=texelFetch(disp,q,0);ivec2 sp=q+ivec2(floor(d.xy+.5));int shift=d.w>.2?int(ceil(d.w)):0;ivec2 o=ivec2(shift,0);
  vec3 g=vec3(groundAt(sp+o,q,pixel).r,groundAt(sp,q,pixel).g,groundAt(sp-o,q,pixel).b)*d.z;
  vec3 l=vec3(lightAt(q+o).r,lightAt(q).g,lightAt(q-o).b);
+ vec2 liveRange=texelFetch(liveIndex,q,0).rg;int begin=int(liveRange.x),count=int(liveRange.y);
+ for(int n=0;n<count;n++){int index=begin+n;vec3 op=texelFetch(liveOps,ivec2(index%384,index/384),0).rgb;l+=worldAt(ivec2(op.xy),q,pixel)*op.z;}
  vec4 i=texelFetch(ink,q,0),f=texelFetch(fragment,q,0);vec3 fr=worldAt(ivec2(f.xy),q,pixel);
+ if(f.w>1.5)fr=vec3(1.)-fr*vec3(2.5,3.,2.);else if(f.w>.5)fr=clamp(vec3(1.)-fr*3.,0.,1.)*vec3(.45,.2,.5)+vec3(.2,0.,.15);
  vec3 col=g*max(0.,1.-i.a-f.z)+i.rgb+fr*f.z;float th=bayer(q)-.5;col+=floor(l*8.+th+.5)/8.;vec3 over=max(col-1.,0.);col+=vec3(over.r+over.g+over.b)*.45;
  outColor=vec4(clamp(col,0.,1.),1.);
 }`;
 export class CGpuComposite {
- readonly canvas:HTMLCanvasElement;private gl:WebGL2RenderingContext;private program:WebGLProgram;private textures:WebGLTexture[]=[];private packed:Float32Array[]=[];
+ readonly canvas:HTMLCanvasElement;private gl:WebGL2RenderingContext;private program:WebGLProgram;private textures:WebGLTexture[]=[];private packed:Float32Array[]=[];private liveIndex=new Float32Array(W*H*4);private liveOps=new Float32Array(W*4);private hadLive=false;
  constructor(width:number,height:number){
   this.canvas=document.createElement('canvas');this.canvas.width=width;this.canvas.height=height;
   const gl=this.canvas.getContext('webgl2',{alpha:false,antialias:false,premultipliedAlpha:false,preserveDrawingBuffer:true});if(!gl)throw new Error('WebGL2 unavailable');this.gl=gl;
   const compile=(kind:number,src:string)=>{const sh=gl.createShader(kind)!;gl.shaderSource(sh,src);gl.compileShader(sh);if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(sh)||'shader');return sh;};
   const program=gl.createProgram()!;gl.attachShader(program,compile(gl.VERTEX_SHADER,VS));gl.attachShader(program,compile(gl.FRAGMENT_SHADER,FS));gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(program)||'link');this.program=program;gl.useProgram(program);
   const buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);const pos=gl.getAttribLocation(program,'pos');gl.enableVertexAttribArray(pos);gl.vertexAttribPointer(pos,2,gl.FLOAT,false,0,0);
-  for(let n=0;n<7;n++){const tex=gl.createTexture()!;this.textures.push(tex);gl.activeTexture(gl.TEXTURE0+n);gl.bindTexture(gl.TEXTURE_2D,tex);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.uniform1i(gl.getUniformLocation(program,['scene','ink','ground','lights','disp','fragment','influence'][n]),n);if(n) this.packed.push(new Float32Array(W*H*4));}
+  for(let n=0;n<9;n++){const tex=gl.createTexture()!;this.textures.push(tex);gl.activeTexture(gl.TEXTURE0+n);gl.bindTexture(gl.TEXTURE_2D,tex);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.uniform1i(gl.getUniformLocation(program,['scene','ink','ground','lights','disp','fragment','influence','liveIndex','liveOps'][n]),n);if(n && n<7) this.packed.push(new Float32Array(W*H*4));}
   gl.disable(gl.BLEND);gl.disable(gl.DITHER);gl.viewport(0,0,width,height);
  }
  render(scene:HTMLCanvasElement,f:Frame,m:BTransform,cx:number,cy:number){
@@ -38,6 +41,14 @@ export class CGpuComposite {
   const [ink,ground,lights,disp,fragment,influence]=this.packed;
   for(let p=0;p<W*H;p++){const i=p*4;ink[i]=f.ink[i];ink[i+1]=f.ink[i+1];ink[i+2]=f.ink[i+2];ink[i+3]=f.ink[i+3];ground[i]=f.ground[i]/255;ground[i+1]=f.ground[i+1]/255;ground[i+2]=f.ground[i+2]/255;ground[i+3]=f.groundCoverage[p];lights[i]=f.light[i];lights[i+1]=f.light[i+1];lights[i+2]=f.light[i+2];lights[i+3]=0;disp[i]=f.disp[i];disp[i+1]=f.disp[i+1];disp[i+2]=f.disp[i+2];disp[i+3]=f.disp[i+3];fragment[i]=f.worldFragment[i];fragment[i+1]=f.worldFragment[i+1];fragment[i+2]=f.worldFragment[i+2];fragment[i+3]=f.worldFragment[i+3];influence[i]=f.worldInfluence[p];influence[i+1]=influence[i+2]=influence[i+3]=0;}
   for(let n=1;n<7;n++){gl.activeTexture(gl.TEXTURE0+n);gl.bindTexture(gl.TEXTURE_2D,this.textures[n]);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA32F,W,H,0,gl.RGBA,gl.FLOAT,this.packed[n-1]);}
+  // Compressed ordered atlas: no arbitrary overlap cap; fail to CPU if the
+  // device cannot hold the complete operation list.
+  const indices=this.liveIndex;if(this.hadLive)indices.fill(0);this.hadLive=f.liveLight.size>0;
+  let count=0;for(const [p,ops] of f.liveLight){indices[p*4]=count;indices[p*4+1]=ops.length;count+=ops.length;}
+  const rows=Math.max(1,Math.ceil(count/W));if(rows>gl.getParameter(gl.MAX_TEXTURE_SIZE))throw new Error('Live-light atlas exceeds device limit');
+  if(this.liveOps.length<W*rows*4)this.liveOps=new Float32Array(W*rows*4);const opsData=this.liveOps;
+  let at=0;for(const ops of f.liveLight.values())for(const op of ops){opsData[at++]=op.sx;opsData[at++]=op.sy;opsData[at++]=op.gain;at++;}
+  for(const [n,width,height,data] of [[7,W,H,indices],[8,W,rows,opsData]] as const){gl.activeTexture(gl.TEXTURE0+n);gl.bindTexture(gl.TEXTURE_2D,this.textures[n]);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA32F,width,height,0,gl.RGBA,gl.FLOAT,data);}
   gl.uniform2f(gl.getUniformLocation(this.program,'size'),this.canvas.width,this.canvas.height);gl.uniform2f(gl.getUniformLocation(this.program,'camera'),cx,cy);gl.uniform4f(gl.getUniformLocation(this.program,'basis'),m.a,m.b,m.c,m.d);gl.uniform2f(gl.getUniformLocation(this.program,'origin'),m.x,m.y);
   gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
  }
