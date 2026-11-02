@@ -164,6 +164,11 @@ func start(wrapper: Node) -> void:
         var variant := host.get("abyssal_selector") as OptionButton
         variant.select(choice)
         host.call(&"_select_abyssal_variant", choice)
+    if skill == 19:
+        var choice19 := 1 if OS.get_environment("AVFX_19_VARIANT") == "B" else 0
+        var variant19 := host.get("d19_selector") as OptionButton
+        variant19.select(choice19)
+        host.call(&"_select_d19_variant", choice19)
     # Same presentation as the creator's F4 control: do not cover the actual
     # world with the diagnostic panel during the review recording.
     var panel := host.get("panel") as Control

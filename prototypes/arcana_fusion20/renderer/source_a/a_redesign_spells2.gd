@@ -480,105 +480,48 @@ class ChronoshardR:
                 if Geometry2D.is_point_in_polygon(sample, hex) and Geometry2D.is_point_in_polygon(sample, points):
                     fb.add_px(x, y, 1.4, 1.4, 2.0, intensity)
 
-    func _held_tau(index: int, t: float) -> float:
-        # Reverse the same retained moment as its crystal releases; the
-        # temporal image runs backward while the carrier moves to the common
-        # arrival. Visual only, never a combat receipt.
-        return float(STORED_TAU[index]) * (1.0 - AMath.ease_in(_release(index, t), 2.0))
+    # A single spinning crescent travels along a curved path. The exact same
+    # covered geometry is used in the world and within each clipped face.
+    # This is new symbolic choreography, not a B source-parity claim.
+    func _crescent(fb: AFramebuffer, center: Vector2, angle: float, radius: float, intensity: float, clip: PackedVector2Array = PackedVector2Array()) -> void:
+        var extent := radius + 1.0
+        for y in range(floori(center.y - extent), ceili(center.y + extent) + 1):
+            for x in range(floori(center.x - extent), ceili(center.x + extent) + 1):
+                var sample := Vector2(float(x) + 0.5, float(y) + 0.5)
+                if not clip.is_empty() and not Geometry2D.is_point_in_polygon(sample, clip):
+                    continue
+                var q := (sample - center).rotated(-angle) / radius
+                var outer := q.length()
+                var inner := (q - Vector2(0.43, 0.0)).length()
+                if outer <= 1.0 and inner >= 0.80:
+                    var edge := outer > 0.84 or inner < 0.94
+                    var metal := Vector3(0.96, 0.79, 0.43) if edge else Vector3(0.36, 0.25, 0.10)
+                    fb.blend(x, y, metal.x, metal.y, metal.z, clampf(intensity, 0.0, 1.0))
 
-    func _mini_attack(fb: AFramebuffer, hex: PackedVector2Array, center: Vector2, tau: float, color: Vector3, intensity: float) -> void:
-        # Retell the B-like event with an unmistakable directional head and
-        # continuous trailing body rather than the subpixel clipped B dots.
-        # Every shard displays the SAME icon at a distinct time, with the
-        # last one showing the burst; this is NEW design, not B raster parity.
-        if tau < 0.0 or tau > 2.2:
-            return
-        if tau <= 1.0:
-            var u := AMath.cl01(tau)
-            # Across the five faces the same fireball travels from left to
-            # right, over a much larger fraction of the aperture. A round
-            # ember, hot core and ragged attached wake are all clipped to the
-            # glass, so its position changes are visible even at native size.
-            var head := center + Vector2(lerpf(-13.0, 8.0, u), -2.0 - 2.5 * sin(u * PI))
-            # A continuous covered plume grows as the event accelerates.
-            # It joins the round head, with an uneven tongue rather than a
-            # disconnected row of dots or a triangular pointer icon. Each
-            # pixel is clipped to the actual crystal face, including dark red.
-            var wake_length := 4.0 + 18.0 * u
-            var wake := PackedVector2Array([
-                head + Vector2(-2.0, -5.2),
-                head + Vector2(-wake_length * 0.55, -3.6 - u * 1.8),
-                head + Vector2(-wake_length, -2.0),
-                head + Vector2(-wake_length * 0.70, 0.4),
-                head + Vector2(-wake_length * 0.85, 3.0),
-                head + Vector2(-wake_length * 0.42, 2.3 + u * 2.0),
-                head + Vector2(-2.0, 4.8)])
-            for yy in range(floori(head.y - 7.0), ceili(head.y + 7.0) + 1):
-                for xx in range(floori(head.x - wake_length), ceili(head.x) + 1):
-                    var sample := Vector2(float(xx) + 0.5, float(yy) + 0.5)
-                    if Geometry2D.is_point_in_polygon(sample, hex) and Geometry2D.is_point_in_polygon(sample, wake):
-                        fb.blend(xx, yy, 0.75, 0.17, 0.045, clampf(intensity * 0.88, 0.0, 1.0))
-            for mote in range(4):
-                var tail := head + Vector2(-5.0 - float(mote) * wake_length / 5.0, sin(float(mote) * 2.1 + tau * 4.0) * 1.4)
-                _mini_disc(fb, tail, maxf(1.2, 2.4 - float(mote) * 0.3), hex, Vector3(1.4, 0.31, 0.08), intensity * 0.65)
-            _mini_ember_body(fb, head, 7.8, hex, intensity)
-            _mini_disc(fb, head + Vector2(-0.6, -0.8), 4.4, hex, Vector3(1.0, 0.38, 0.08), intensity)
-            _mini_disc(fb, head + Vector2(-1.2, -1.4), 2.0, hex, Vector3(1.3, 0.9, 0.35), intensity)
-        else:
-            var impact := center + Vector2(8, -2)
-            # Last held moment is a materially different expanding burst,
-            # not another identical orange projectile dot.
-            for q in range(7):
-                var angle := float(q) * TAU / 7.0
-                var direction := Vector2(cos(angle), sin(angle))
-                _mini_ember_body(fb, impact + direction * 8.0, 3.4, hex, intensity * 0.8)
-                _mini_disc(fb, impact + direction * 7.0, 1.7, hex, color, intensity * 0.8)
-            _mini_ember_body(fb, impact, 6.0, hex, intensity)
-            _mini_disc(fb, impact, 4.0, hex, Vector3(2.0, 1.6, 0.8), intensity)
+    func _held_tau(index: int, t: float) -> float:
+        # Hold, visibly reverse all retained times, then carry the common
+        # event forward together. Stored positions stay distinct until rewind.
+        var reverse := AMath.seg(t, 4.30, 5.20)
+        return float(STORED_TAU[index]) * (1.0 - reverse)
+
+    func _mini_attack(fb: AFramebuffer, hex: PackedVector2Array, center: Vector2, tau: float, _color: Vector3, intensity: float) -> void:
+        var u := AMath.cl01(tau)
+        var position := center + Vector2(lerpf(-10.0, 10.0, u), -4.0 * sin(u * PI))
+        _crescent(fb, position, u * TAU * 1.1, 9.5, intensity, hex)
 
     func _central_tau(t: float) -> float:
-        # B's physical attack advances, freezes, then resumes into the shared
-        # synchronization. Times are adapted to this candidate's 6.2 impact.
-        if t < 2.6:
-            return -1.0
-        var frozen := 0.45 / 1.1
-        if t < 3.05:
-            return (t - 2.6) / 1.1
-        if t < 5.25:
-            return frozen
-        if t < 6.2:
-            return lerpf(frozen, 1.0, AMath.seg(t, 5.25, 6.2))
-        return 1.0 + (t - 6.2)
+        if t < 2.6: return -1.0
+        if t < 3.05: return (t - 2.6) / 1.1
+        if t < 4.30: return 0.45 / 1.1
+        if t < 5.20: return (0.45 / 1.1) * (1.0 - AMath.seg(t, 4.30, 5.20))
+        if t < 6.20: return AMath.seg(t, 5.20, 6.20)
+        return 1.0 + (t - 6.20)
 
-    func _world_attack(fb: AFramebuffer, tau: float, tint: Vector3, k: float) -> void:
-        # Source-B attack function (astral.ts:163-185), drawn in the real
-        # world instead of only as clipped snapshots. These are visual echoes,
-        # not confirmed combat hits. No opaque copied actors/backgrounds.
-        if tau < 0.0 or tau > 2.2 or k <= 0.0:
-            return
-        var a := CASTER + Vector2(6, -14)
-        var b := C + Vector2(0, -4)
-        if tau <= 1.0:
-            for m in range(1, 10):
-                var u := maxf(0.0, tau - float(m) * 0.025)
-                var trail := a.lerp(b, u) + Vector2(0, -sin(u * PI) * 24.0)
-                ADraw.disc(fb, trail.x, trail.y, 3.0 - float(m) * 0.25, tint, k * (1.0 - float(m) / 10.0) * 0.7)
-            var head := a.lerp(b, tau) + Vector2(0, -sin(tau * PI) * 24.0)
-            # The visual event is a round, luminous ember, with an offset
-            # hot core and a broken material wake. It is not an arrow icon.
-            ADraw.disc(fb, head.x, head.y, 6.0, Vector3(0.95, 0.31, 0.12), k * 0.7)
-            ADraw.disc(fb, head.x, head.y, 3.8, Vector3(1.7, 0.8, 0.25), k)
-            ADraw.disc(fb, head.x - 1.1, head.y - 1.3, 1.7, Vector3(2.0, 1.7, 0.9), k)
-        else:
-            var e := tau - 1.0
-            var radius := AMath.ease_out(e / 1.2) * 34.0
-            var fade := k * maxf(0.0, 1.0 - e / 1.2) * 1.5
-            var prev := b + Vector2(radius, 0)
-            for q in range(1, 37):
-                var angle := float(q) * TAU / 36.0
-                var next := b + Vector2(cos(angle), sin(angle) * 0.7) * radius
-                ADraw.line(fb, prev.x, prev.y, next.x, next.y, tint, fade)
-                prev = next
+    func _world_attack(fb: AFramebuffer, tau: float, _tint: Vector3, k: float) -> void:
+        if tau < 0.0 or tau > 1.3 or k <= 0.0: return
+        var u := AMath.cl01(tau)
+        var head := (CASTER + Vector2(6, -14)).lerp(C + Vector2(0, -4), u) + Vector2(0, -sin(u * PI) * 24.0)
+        _crescent(fb, head, u * TAU * 1.1, 13.0, k * (1.0 - AMath.seg(tau, 1.0, 1.3)))
 
     func render(fb: AFramebuffer, t: float) -> void:
         # The same recognizable event appears as a pre-echo before its
@@ -590,14 +533,6 @@ class ChronoshardR:
             ADraw.ring_shape(fb, C.x, C.y, 30.0, 1.4, AMath.R("frost", 0.7), gk * 0.5)
         if t >= 2.6 and t < 6.7:
             _world_attack(fb, _central_tau(t), Vector3(1.4, 0.8, 1.8), 0.85)
-        # One event unfolds early while another unwinds: source B's forwards
-        # and backwards causes, deliberately not gameplay hit receipts.
-        var forward_age := t - 3.9
-        if forward_age >= 0.0 and forward_age < 1.2:
-            _world_attack(fb, 0.3 + forward_age * 1.6, Vector3(1.8, 1.3, 0.5), 0.65 * (1.0 - AMath.seg(forward_age, 0.9, 1.2)))
-        var reverse_age := t - 4.3
-        if reverse_age >= 0.0 and reverse_age < 1.05:
-            _world_attack(fb, 1.45 - reverse_age * 1.5, Vector3(0.5, 0.9, 2.0), 0.65 * (1.0 - AMath.seg(reverse_age, 0.8, 1.05)))
         for i in range(_crystals.size()):
             var c: Dictionary = _crystals[i]
             var pos: Vector2 = c.pos
@@ -661,9 +596,7 @@ class ChronoshardR:
                 var previous_crystal := pos.lerp(C, AMath.ease_in(prev_rel, 2.0))
                 var tail := previous_crystal.lerp(C, AMath.ease_out(prev_rel, 2.0))
                 var k := captured * resolve * (1.0 - AMath.seg(rel, 0.84, 1.0))
-                ADraw.streak(fb, tail.x, tail.y, head.x, head.y, 1.4, 0.7, Vector3(1.8, 1.3, 0.5), k * 0.8)
-                ADraw.disc(fb, head.x, head.y, 3.6, Vector3(1.4, 0.55, 0.18), k)
-                ADraw.disc(fb, head.x - 0.7, head.y - 0.7, 1.5, Vector3(2.0, 1.7, 0.8), k)
+                _crescent(fb, head, rel * TAU * 1.1, 7.5, k)
         var it := t - 6.2
         if it >= 0.0 and it < 0.7:
             ADraw.disc(fb, C.x, C.y, 5.0 * (1.0 - it / 0.7), AMath.R("frost", 1.0), 1.0 - it / 0.7)

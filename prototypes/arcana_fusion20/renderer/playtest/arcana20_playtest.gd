@@ -12,6 +12,7 @@ var mount: Arcana20WorldPassMount
 var post: Arcana20CViewportPost
 var selector: OptionButton
 var abyssal_selector: OptionButton
+var d19_selector: OptionButton
 var target_selector: OptionButton
 var spawn_selector: OptionButton
 var status: Label
@@ -79,6 +80,12 @@ func _make_ui() -> void:
     abyssal_selector.tooltip_text = "Chỉ ảnh hưởng #05. Đổi phiên bản sẽ hủy lần thi triển #05 hiện tại."
     abyssal_selector.item_selected.connect(_select_abyssal_variant)
     box.add_child(abyssal_selector)
+    d19_selector = OptionButton.new()
+    d19_selector.add_item("#19 A • D nguồn (LDR)", 0)
+    d19_selector.add_item("#19 B • Dàn dựng SOH mới (LDR)", 1)
+    d19_selector.tooltip_text = "Chuyển ngay trong lần thi triển; B là cách trình bày mới, không phải HDR hoặc nguyên bản."
+    d19_selector.item_selected.connect(_select_d19_variant)
+    box.add_child(d19_selector)
     target_selector = OptionButton.new()
     target_selector.add_item("Mục tiêu: quái gần nhất", 0)
     target_selector.add_item("Mục tiêu: vị trí chuột", 1)
@@ -126,10 +133,12 @@ func _attach(candidate: Node) -> void:
     renderer = Arcana20Renderer.new()
     renderer.world_pass_mode = true
     renderer.abyssal_directed = abyssal_selector.selected == 1
+    renderer.d19_collect_material_layers = true
     world.add_child(renderer)
     mount = Arcana20WorldPassMount.new()
     world.add_child(mount)
     if not mount.attach(renderer): push_error("AVFX_PLAYTEST_FAIL world mount")
+    mount.set_d19_art_directed(d19_selector.selected == 1)
     post = Arcana20CViewportPost.new()
     world.add_child(post)
     if not post.attach(renderer): push_error("AVFX_PLAYTEST_FAIL viewport post")
@@ -152,6 +161,9 @@ func _unhandled_key_input(event: InputEvent) -> void:
         KEY_F10: _cancel_all()
         _: return
     get_viewport().set_input_as_handled()
+
+func _select_d19_variant(index: int) -> void:
+    if is_instance_valid(mount): mount.set_d19_art_directed(index == 1)
 
 func _select_abyssal_variant(index: int) -> void:
     if not is_instance_valid(renderer): return

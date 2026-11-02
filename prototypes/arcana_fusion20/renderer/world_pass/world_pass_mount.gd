@@ -8,6 +8,7 @@ class_name Arcana20WorldPassMount
 var _renderer: Arcana20Renderer
 var _passes: Dictionary = {} # canonical id -> {family: viewer}
 var unsupported: Dictionary = {}
+var d19_art_directed := false
 var _c_stage: Arcana20CStageWorld
 var _blackouts: Dictionary = {}
 
@@ -69,11 +70,21 @@ func _on_frame(id: StringName, frame: Arcana20SourcePassFrame) -> void:
         # actors. A remains the default and all other cast ordering is intact.
         if String(id).ends_with("_05") and _renderer.abyssal_directed and frame.family == &"C":
             viewer.z_index = -23
+        if frame.family == &"D":
+            (viewer as Arcana20DWorldPass).set_art_directed(d19_art_directed)
         viewer.set_meta("source_family", frame.family)
         add_child(viewer)
         by_family[viewer_key] = viewer
         _passes[id] = by_family
     viewer.call(&"consume", frame)
+
+# Switch the current cast's material immediately; do not restart simulation.
+func set_d19_art_directed(enabled: bool) -> void:
+    d19_art_directed = enabled
+    for id in _passes:
+        var viewers: Dictionary = _passes[id]
+        var viewer := viewers.get(&"D") as Arcana20DWorldPass
+        if is_instance_valid(viewer): viewer.set_art_directed(enabled)
 
 func _retire_blackout(id: StringName) -> void:
     var blackout := _blackouts.get(id) as Arcana20CStageBlackout

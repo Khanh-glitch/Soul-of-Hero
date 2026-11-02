@@ -19,6 +19,8 @@ var _acc := 0.0
 var _active := false
 var render_enabled := true
 var world_pass_mode := false
+# Opt-in experimental dual-lane preview; faithful buf remains untouched.
+var collect_material_layers := false
 var _events: Array = []
 var _origin := Vector2.ZERO
 var _target := Vector2.ZERO
@@ -63,7 +65,7 @@ func begin(caster_world: Vector2, target_world: Vector2) -> void:
     _eng.fx.rgba8_fragment_transfer = true
     _eng.fx.rgba8_scene_blend = true
     _eng.fx.track_world_fields = world_pass_mode
-    _eng.fx.collect_world_layers = world_pass_mode and OS.get_environment("ARCANA20_D19_LAYERS") == "1"
+    _eng.fx.collect_world_layers = world_pass_mode and (collect_material_layers or OS.get_environment("ARCANA20_D19_LAYERS") == "1")
     _events = _eng.authored_events()
     var axis := target_world - caster_world
     var src_axis := DConstellationEngine.CENTER - Vector2(148, 172)
@@ -174,6 +176,7 @@ func source_pass_frame() -> Arcana20SourcePassFrame:
     result.d_star_rgb = _eng.fx.world_star
     result.d_star_pretransfer_rgb = _eng.fx.world_star_pretransfer
     result.d_center_rgb = _eng.fx.world_center
+    result.d_halo_rgb = _eng.fx.world_halo
     result.d_body_rgb = _eng.fx.world_body
     result.d_influence = _eng.fx.world_influence
     result.d_world_warp = _eng.fx.world_warp

@@ -28,6 +28,8 @@ signal unbound_source_contact(canonical_id: StringName, kind: StringName, node_i
 # R20 creator preview choice. Default remains the faithful A/C reference and
 # other 19 IDs never read this switch; it is not combat or production binding.
 var abyssal_directed := false
+# Optional preview-only D layer collection; no source simulation changes.
+var d19_collect_material_layers := false
 
 var _casts: Dictionary = {} # canonical_id -> Node (instance or B02 geometry)
 var stage_counts: Dictionary = {}
@@ -273,6 +275,7 @@ func cast_skill(canonical_id: StringName, caster_world: Vector2, target_world: V
         # HTML WebGL -> CPU DFx; see source_d headers for differences).
         var dp := DSourcePlayer.new()
         dp.world_pass_mode = world_pass_mode
+        dp.collect_material_layers = d19_collect_material_layers
         dp.source_pass_ready.connect(func(frame: Arcana20SourcePassFrame) -> void: source_pass_ready.emit(canonical_id, frame))
         add_child(dp)
         dp.visual_contact.connect(func(kind: StringName, pos: Vector2, st: float) -> void:

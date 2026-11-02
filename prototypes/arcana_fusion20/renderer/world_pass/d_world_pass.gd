@@ -6,6 +6,7 @@ const SHADER = preload("res://prototypes/arcana_fusion20/renderer/world_pass/d_w
 var _sprite: Sprite2D
 var _material: ShaderMaterial
 var _textures: Dictionary = {}
+var art_directed := false
 
 func _init() -> void:
     z_index = -24
@@ -19,6 +20,7 @@ func _ready() -> void:
     _sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
     _material = ShaderMaterial.new()
     _material.shader = SHADER
+    set_art_directed(art_directed)
     _sprite.material = _material
     add_child(_sprite)
     _sprite.visible = false
@@ -31,11 +33,13 @@ func consume(frame: Arcana20SourcePassFrame) -> void:
     var star_raw := PackedFloat32Array()
     var center := PackedFloat32Array()
     var body := PackedFloat32Array()
+    var halo := PackedFloat32Array()
     if frame.d_has_light_layers:
         star.resize(DFx.N * 4)
         star_raw.resize(DFx.N * 4)
         center.resize(DFx.N * 4)
         body.resize(DFx.N * 4)
+        halo.resize(DFx.N * 4)
     light.resize(DFx.N * 4)
     influence.resize(DFx.N * 4)
     for p in range(DFx.N):
@@ -48,6 +52,7 @@ func consume(frame: Arcana20SourcePassFrame) -> void:
                 star_raw[p * 4 + channel] = frame.d_star_pretransfer_rgb[p * 3 + channel]
                 center[p * 4 + channel] = frame.d_center_rgb[p * 3 + channel]
                 body[p * 4 + channel] = frame.d_body_rgb[p * 3 + channel]
+                halo[p * 4 + channel] = frame.d_halo_rgb[p * 3 + channel]
         influence[p * 4 + 3] = float(frame.d_influence[p] | frame.d_warp_influence[p])
     _sprite.texture = _set_texture("light", light)
     _material.set_shader_parameter("light_tex", _sprite.texture)
@@ -56,6 +61,7 @@ func consume(frame: Arcana20SourcePassFrame) -> void:
         _material.set_shader_parameter("star_pretransfer_tex", _set_texture("star_pretransfer", star_raw))
         _material.set_shader_parameter("center_tex", _set_texture("center", center))
         _material.set_shader_parameter("body_tex", _set_texture("body", body))
+        _material.set_shader_parameter("halo_tex", _set_texture("halo", halo))
     _material.set_shader_parameter("warp_tex", _set_texture("warp", frame.d_world_warp))
     _material.set_shader_parameter("influence_tex", _set_texture("influence", influence))
     _material.set_shader_parameter("source_time", frame.d_renderer_time)
@@ -64,6 +70,11 @@ func consume(frame: Arcana20SourcePassFrame) -> void:
     _sprite.global_transform = frame.source_to_world
     _sprite.visible = true
     _update_camera_basis()
+
+func set_art_directed(enabled: bool) -> void:
+    art_directed = enabled
+    if _material != null:
+        _material.set_shader_parameter("light_presentation", 11 if enabled else 0)
 
 func _process(_delta: float) -> void:
     _update_camera_basis()

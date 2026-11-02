@@ -183,7 +183,11 @@ func update(t: float, dt: float) -> void:
         fx.world_layer_star = false
         var sc2 := DFx.ramp(P, 0.8, 0.5)
         sc2.a = 0.45 * su
+        # Separate only the existing soft sprite for optional material
+        # hierarchy. Its source draw, RNG and buf are unchanged.
+        fx.world_layer_halo = true
         fx.sp(CENTER.x, CENTER.y, 30.0 + 50.0 * su, sc2, DFx.SOFT, {"hard": 1.0})
+        fx.world_layer_halo = false
         fx.bend(CENTER.x, CENTER.y, 70.0 * su, 0.0, 0.0, 0.0, 1.4 * su)
         if t > 8.15 and _star == 0:
             _star = 1

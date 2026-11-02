@@ -42,11 +42,11 @@ func _initialize() -> void:
             clip_frame.track_audit_writes = true
             clip_frame.track_world_fields = true
             clip_frame.clear()
-            spell._mini_star(clip_frame, Vector2(203, 100), 0.35, 0.42, clip, 1.0)
+            spell._crescent(clip_frame, Vector2(203, 100), 0.35, 8.0, 1.0, clip)
             var clipped_pixels := 0
             for y in range(AFramebuffer.H):
                 for x in range(AFramebuffer.W):
-                    if clip_frame.audit_writes[y * AFramebuffer.W + x] == 0: continue
+                    if clip_frame.audit_writes[y * AFramebuffer.W + x] == 0 and clip_frame.world_coverage[y * AFramebuffer.W + x] <= 0.0: continue
                     clipped_pixels += 1
                     if not Geometry2D.is_point_in_polygon(Vector2(float(x) + 0.5, float(y) + 0.5), clip):
                         push_error("REDESIGN_SMOKE_FAIL #18 stored head escaped crystal")
@@ -81,7 +81,7 @@ func _initialize() -> void:
             spell._mini_attack(clip_frame, wide_clip, Vector2(200, 100), 0.15, Vector3(1.0, 0.7, 0.4), 1.0)
             var early_coverage := clip_frame.world_coverage.duplicate()
             clip_frame.clear()
-            spell._mini_attack(clip_frame, wide_clip, Vector2(200, 100), 1.15, Vector3(1.0, 0.7, 0.4), 1.0)
+            spell._mini_attack(clip_frame, wide_clip, Vector2(200, 100), 0.95, Vector3(1.0, 0.7, 0.4), 1.0)
             var material_difference := 0
             for y in range(70, 130):
                 for x in range(170, 230):
@@ -112,7 +112,7 @@ func _initialize() -> void:
                 push_error("REDESIGN_SMOKE_FAIL #18 echo markers")
                 quit(1)
                 return
-            if not is_equal_approx(spell._central_tau(3.1), spell._central_tau(5.0)) or not spell._central_tau(5.8) > spell._central_tau(5.0) or not is_equal_approx(spell._central_tau(6.2), 1.0):
+            if not is_equal_approx(spell._central_tau(3.1), spell._central_tau(4.1)) or not spell._central_tau(5.0) < spell._central_tau(4.1) or not spell._central_tau(5.8) > spell._central_tau(5.2) or not is_equal_approx(spell._central_tau(6.2), 1.0):
                 push_error("REDESIGN_SMOKE_FAIL #18 central freeze/resume")
                 quit(1)
                 return

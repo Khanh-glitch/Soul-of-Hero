@@ -9,6 +9,7 @@ uniform sampler2D star_tex : repeat_disable, filter_nearest;
 uniform sampler2D star_pretransfer_tex : repeat_disable, filter_nearest;
 uniform sampler2D center_tex : repeat_disable, filter_nearest;
 uniform sampler2D body_tex : repeat_disable, filter_nearest;
+uniform sampler2D halo_tex : repeat_disable, filter_nearest;
 uniform sampler2D warp_tex : repeat_disable, filter_nearest;
 uniform sampler2D influence_tex : repeat_disable, filter_nearest;
 uniform vec2 screen_dx = vec2(1.0, 0.0);
@@ -129,6 +130,46 @@ void fragment() {
         base = tone(texelFetch(center_tex, p, 0).rgb, p); // central quads + radial lines
     } else if (light_presentation == 7) {
         base = tone(texelFetch(star_pretransfer_tex, p, 0).rgb, p); // pre-transfer source fragment expression
+    }
+    // NEW SOH material interpretation: actual source layers remain intact.
+    // Local STAR coverage becomes a contrasting filled material with its
+    // actual raster boundary, not an invented replacement silhouette.
+    if (light_presentation == 11) {
+        ivec2 px = clamp(p + ivec2(1, 0), ivec2(0), SIZE - ivec2(1));
+        ivec2 py = clamp(p + ivec2(0, 1), ivec2(0), SIZE - ivec2(1));
+        ivec2 mx = clamp(p - ivec2(1, 0), ivec2(0), SIZE - ivec2(1));
+        ivec2 my = clamp(p - ivec2(0, 1), ivec2(0), SIZE - ivec2(1));
+        vec3 body = texelFetch(body_tex, p, 0).rgb;
+        vec3 center = texelFetch(center_tex, p, 0).rgb;
+        vec3 halo = texelFetch(halo_tex, p, 0).rgb;
+        vec3 star = texelFetch(star_tex, p, 0).rgb;
+        float c = max(max(center.r, center.g), center.b);
+        vec3 cn1 = texelFetch(center_tex, px, 0).rgb;
+        vec3 cn2 = texelFetch(center_tex, py, 0).rgb;
+        float c1 = max(max(cn1.r, cn1.g), cn1.b);
+        float c2 = max(max(cn2.r, cn2.g), cn2.b);
+        float etched = clamp((abs(c - c1) + abs(c - c2)) * 0.5, 0.0, 1.0);
+        float sv = max(max(star.r, star.g), star.b);
+        float sm = smoothstep(0.015, 0.16, sv);
+        vec3 n1 = texelFetch(star_tex, px, 0).rgb;
+        vec3 n2 = texelFetch(star_tex, mx, 0).rgb;
+        vec3 n3 = texelFetch(star_tex, py, 0).rgb;
+        vec3 n4 = texelFetch(star_tex, my, 0).rgb;
+        float e1 = smoothstep(0.015, 0.16, max(max(n1.r, n1.g), n1.b));
+        float e2 = smoothstep(0.015, 0.16, max(max(n2.r, n2.g), n2.b));
+        float e3 = smoothstep(0.015, 0.16, max(max(n3.r, n3.g), n3.b));
+        float e4 = smoothstep(0.015, 0.16, max(max(n4.r, n4.g), n4.b));
+        float edge = sm * (1.0 - min(min(e1, e2), min(e3, e4)));
+        vec3 graph = (vec3(1.0) - exp(-body * 0.8)) * vec3(0.70, 0.54, 0.83);
+        vec3 ambient = (vec3(1.0) - exp(-halo * 0.35)) * vec3(0.16, 0.09, 0.23);
+        float fade = clamp(warp_fade, 0.0, 1.0);
+        vec3 result = original + fade * (warped - original);
+        result += fade * (graph + ambient + (1.0 - exp(-0.7 * c)) * vec3(0.24, 0.10, 0.29) + etched * vec3(0.34, 0.18, 0.37));
+        vec3 star_material = mix(vec3(0.16, 0.07, 0.24), vec3(0.52, 0.26, 0.52), clamp(sv * 0.8, 0.0, 1.0));
+        star_material += edge * vec3(0.48, 0.45, 0.37);
+        result = mix(result, star_material, clamp(sm * 0.88 * fade, 0.0, 1.0));
+        COLOR = vec4(clamp(result, 0.0, 1.0), 1.0);
+        return;
     }
     vec3 delta = base - reference;
     COLOR = vec4(clamp(original + delta * clamp(warp_fade, 0.0, 1.0), 0.0, 1.0), 1.0);

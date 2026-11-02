@@ -10,9 +10,10 @@ assert len(rows)==2 and {r['tick'] for r in rows}=={489,516}, rows
 baseline=np.asarray(Image.open(src/'phase_baseline.png').convert('RGB'),dtype=np.int16)
 lum=lambda a:(a[:,:,0]*0.2126+a[:,:,1]*0.7152+a[:,:,2]*0.0722)
 for row in rows:
-    tick=row['tick']; names=['source_formula','shimmer_off','bounded','layered','warp_only','source_light','star_only','body_only','center_only','star_pretransfer','pretransfer_layered','reinhard_local','virtual_source_input','source_restored']
+    tick=row['tick']; names=['source_formula','shimmer_off','bounded','layered','warp_only','source_light','star_only','body_only','center_only','star_pretransfer','pretransfer_layered','reinhard_local','virtual_source_input','art_directed','source_restored','bounded_restored']
     images={name:np.asarray(Image.open(src/f'd19_{tick}_{name}.png').convert('RGB'),dtype=np.int16) for name in names}
     assert np.array_equal(images['source_formula'],images['source_restored'])
+    assert np.array_equal(images['bounded'],images['bounded_restored'])
     diff=np.any(images['source_formula']!=images['shimmer_off'],axis=2)
     ys,xs=np.nonzero(diff);assert len(xs)>100
     cx=int((xs.min()+xs.max())/2);cy=int((ys.min()+ys.max())/2)
