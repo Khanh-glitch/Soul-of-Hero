@@ -1,5 +1,15 @@
 # R26 #01 matched real-world comparison — review candidate, not acceptance
 
+**Normal formation, same paused scene and source tick:** [before](normal-formation-baseline.jpg) · [after](normal-formation-corrected.jpg)
+
+**Dim formation:** [before](dimmed-formation-baseline.jpg) · [after](dimmed-formation-corrected.jpg)
+
+**Normal impact onset:** [before](normal-impact-baseline.jpg) · [after](normal-impact-corrected.jpg)
+
+**Dim impact onset:** [before](dimmed-impact-baseline.jpg) · [after](dimmed-impact-corrected.jpg)
+
+[Normal full-cast video](natural-normal.mp4) · [Dim full-cast video](natural-dim.mp4)
+
 Native 1280×720, displayed at 1×. JPEGs are convenient copies; unmodified PNGs and baseline-restoration PNGs are in the respective action artifacts. The before image is the R25 preview (including its 1.8× A light), and after additionally enables the bounded source-surface presentation adaptation. Original A geometry, heat, timing, RNG and additive field and elected C outer-flame layer are not replaced. This is not original compositor or HDR parity.
 
 [Run 41391484897](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41391484897), source SHA `4e17577` (see run for full SHA). Both jobs passed on Linux software rendering; Windows was headless. The probe pauses the real world, actors, camera and both source children, switches surface off/on/off with four completed frames per state, checks identical original and restored PNGs, and checks actors, camera and source ticks stayed fixed. This is not a staged background or a global brightness-keyed mask.
