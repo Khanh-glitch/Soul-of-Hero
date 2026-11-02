@@ -1,0 +1,48 @@
+name: Composition source binding guard (native)
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/5bf8218b-soul-of-hero]
+    paths:
+      - 'game/survival/economy/source_binding_guard.gd'
+      - 'game/survival/economy/economy_session.gd'
+      - 'tests/survival/source_binding_guard_test.gd'
+      - '.github/workflows/composition-source-binding-guard.yml'
+permissions:
+  contents: read
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import with Godot 4.7
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          timeout 300s godot --headless --path . --import > artifacts/import.log 2>&1 || { cat artifacts/import.log; exit 1; }
+          cat artifacts/import.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|Compilation failed' artifacts/import.log
+      - name: Guard unit and canonical composition regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 180s godot --headless --path . --script res://tests/survival/source_binding_guard_test.gd > artifacts/guard.log 2>&1 || { cat artifacts/guard.log; exit 1; }
+          cat artifacts/guard.log
+          grep -q 'SOURCE BINDING GUARD PASSED' artifacts/guard.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|  FAIL  ' artifacts/guard.log
+          timeout 180s godot --headless --path . --script res://tests/survival/gpb_canonical_composition_smoke.gd > artifacts/smoke.log 2>&1 || { cat artifacts/smoke.log; exit 1; }
+          cat artifacts/smoke.log
+          grep -q 'GPB_NATIVE_SMOKE_PASS' artifacts/smoke.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|GPB_NATIVE_FAIL' artifacts/smoke.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: composition-source-binding-guard-logs
+          path: artifacts/

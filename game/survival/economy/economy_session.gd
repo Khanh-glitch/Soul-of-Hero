@@ -8,6 +8,7 @@ extends Node
 const V5_PINS = preload("res://game/survival/economy/a0_v5_source_pins.gd")
 const ADAPTER = preload("res://game/survival/economy/a0_economy_adapter.gd")
 const A3_CUSTODY = preload("res://game/survival/economy/a3_economy_service.gd")
+const SOURCE_BINDING_GUARD = preload("res://game/survival/economy/source_binding_guard.gd")
 const WAYSTATION_HOST = preload("res://game/survival/waystation_host.gd")
 const CONTRACT := "soh.economy.active_tick.v1"
 const TICKS_PER_SECOND := 60
@@ -53,6 +54,12 @@ func configure(save: Node, survival: Node, world: Node, build: Node, hero: Node2
 	var pin_error: String = V5_PINS.verify()
 	if not pin_error.is_empty():
 		push_error("A3 economy composition refused: " + pin_error)
+		return false
+	# Guard the existing A3 document before its loader indexes binding IDs.
+	# A duplicate would otherwise silently replace an earlier physical source.
+	var binding_error: String = SOURCE_BINDING_GUARD.validate_file(A3_CUSTODY.BINDINGS_PATH)
+	if not binding_error.is_empty():
+		push_error("A3 source bindings refused: " + binding_error)
 		return false
 	_adapter = ADAPTER.new()
 	_port = _save.call(&"create_pinned_economy_port", _adapter)
