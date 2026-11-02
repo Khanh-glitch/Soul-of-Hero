@@ -403,6 +403,18 @@ func _run() -> void:
         if rift_frame.disp[i * 4] != 0.0 or rift_frame.disp[i * 4 + 1] != 0.0: rift_warp += 1
     check(rift_ink > 0 and rift_inverted > 0 and rift_warp > 0, "C20 original contour, real-world inversion and A warp fields coexist")
 
+    # Source-C segmented closure and both seeded debris populations must
+    # finish before the cast disappears, not merely be hidden by cancellation.
+    for tick in range(1, 601): rift.update(1.0 / 60.0, float(tick) / 60.0)
+    check(rift.particles.is_empty() and rift.a_debris.particles.is_empty(), "F20 C and mapped A debris naturally expire before OUT")
+    var all_closed := true
+    for segment in range(1, 100):
+        if rift._width(float(segment) / 100.0, 10.0) > 0.00001: all_closed = false
+    check(all_closed, "F20 original C segmented contour fully closes by OUT")
+    rift_frame.clear()
+    rift.render(rift_frame, 10.0)
+    check(rift_frame.field_activity == 0 and rift_frame.live_light_buckets.is_empty(), "F20 natural OUT has no residual live-world fields")
+
     # #11 preview split must never mutate the full source field or A/C
     # simulation. At the white-cloud beat compare the actual player's full
     # field to a fresh direct source rerender at the same object state.
