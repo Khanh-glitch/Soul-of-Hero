@@ -1,10 +1,10 @@
 /** Source-C #15 Thorn Opera scaffold from original TS and P0 live-caster/focus
- * adaptation. Not registered: world-up particles, off-raster sparse tiles,
- * mapped combat and source/world validation still required. */
+ * adaptation. Not registered: owner binding, sparse tile submission, mapped combat and
+ * source/world validation are still required. */
 import {Frame} from '../engine/frame';
 import {TAU,clamp,lerp,inv,easeOut,easeInOut,backOut,hash,hash2,hash3,angDiff,bayer,catmull,type V2} from '../engine/math';
 import {P,ramp,rampD,type RGB,type Ramp} from '../engine/palette';
-import {Particles,shock} from '../engine/kit';import {CASTER,TARGETS,FOCUS} from '../engine/floor';import type {SpellDef} from './types';
+import {Particles,shock,drawPt} from '../engine/kit';import {CASTER,TARGETS,FOCUS} from '../engine/floor';import type {SpellDef} from './types';
 const GOLD:RGB=[1,.85,.4];
 function flower(f: Frame, x: number, y: number, g: number, rot: number, size = 4, pal: Ramp = P.bloom) {
   if (g <= 0) return;
@@ -21,8 +21,10 @@ export const thornOpera: SpellDef = {
   blurb: 'Five tendrils with five temperaments perform a dangerous dance, curl into a single bud, and open into a thorned catastrophe.',
   make(rng, fx) {
     const M = 24, LS = 6.2;
-    const Fz = { x: FOCUS.x, y: FOCUS.y };
+    const FOCUS_LOCAL = { x: FOCUS.x, y: FOCUS.y };
+    const Fz=FOCUS_LOCAL;
     let liveCaster = { ...CASTER };
+    let heightAxis:V2={x:0,y:-1},renderOffset:V2={x:0,y:0};
     const targets = TARGETS.map(p => ({ ...p }));
     const TB = 5.85;
     const tds = [-1.15, -0.55, 0.05, 0.6, 1.2].map((a, i) => {
@@ -60,6 +62,10 @@ export const thornOpera: SpellDef = {
       // The actor owner supplies a real, inverse-transformed live position.
       setLiveCaster(p: V2) { liveCaster = {...p}; for (const td of tds) td.base = {x:p.x+4+Math.cos(td.a)*6, y:p.y+Math.sin(td.a)*4+1}; },
       setLiveFocus(p: V2) { Fz.x=p.x; Fz.y=p.y; for(let i=0;i<targets.length;i++){ targets[i].x=TARGETS[i].x+p.x-FOCUS.x; targets[i].y=TARGETS[i].y+p.y-FOCUS.y; } },
+      setHeightAxis(p: V2) { heightAxis={...p}; },
+      setRenderOffset(p: V2) { renderOffset={...p}; },
+      debugParticles() { return ps.list.map(p=>({...p})); },
+      debugFocus() { return {...Fz}; },
       debugBases() { return tds.map(td => ({...td.base})); },
       debugRoots() { return tds.map(td => td.pos.map(p=>({...p}))); },
       update(dt, t) {
@@ -94,8 +100,10 @@ export const thornOpera: SpellDef = {
         }
       },
       render(f, t) {
+        const Fz={x:FOCUS_LOCAL.x+renderOffset.x,y:FOCUS_LOCAL.y+renderOffset.y};
         for (const td of tds) {
-          const pts = catmull(td.pos, 2);
+          const positions=td.pos.map(p=>({x:p.x+renderOffset.x,y:p.y+renderOffset.y}));
+          const pts = catmull(positions, 2);
           const n = pts.length;
           const ws = pts.map((_, j) => lerp(3.6, 0.7, j / (n - 1)));
           f.ribbon(pts.map((p) => ({ x: p.x + 1, y: p.y + 2 })), ws, (x, y) => f.S(x, y, 0.62));
@@ -105,7 +113,7 @@ export const thornOpera: SpellDef = {
             if (Math.abs(e) < 0.2) f.Lc(x, y, ramp(P.leaf, 0.85), 0.1);
           });
           for (let j = 2; j < M - 1; j += 2) {
-            const p = td.pos[j], a = td.pos[j - 1], b = td.pos[j + 1];
+            const p = positions[j], a = positions[j - 1], b = positions[j + 1];
             const tx = b.x - a.x, ty = b.y - a.y, tl = Math.hypot(tx, ty) || 1, ux = tx / tl, uy = ty / tl;
             const sd = j % 4 < 2 ? 1 : -1, nx = -uy * sd, ny = ux * sd;
             const w = lerp(3.6, 0.7, j / (M - 1));
@@ -116,7 +124,7 @@ export const thornOpera: SpellDef = {
             f.Lc(tip.x, tip.y, ramp(P.leaf, 0.95), 0.45);
             if (j % 6 === 4) flower(f, p.x - nx * w, p.y - ny * w, 0.35, j + t, 3, P.leaf);
           }
-          f.Lc(td.pos[M - 1].x, td.pos[M - 1].y, ramp(P.leaf, 1), 0.7);
+          f.Lc(positions[M - 1].x, positions[M - 1].y, ramp(P.leaf, 1), 0.7);
         }
         // the bud, then the catastrophe flower
         if (t > 4.9 && t < TB) {
@@ -163,7 +171,8 @@ export const thornOpera: SpellDef = {
             shock(f, pts[30].x, pts[30].y, 6 + q * 10, 5, 3 * fade2, 1);
           }
         }
-        ps.render(f);
+        if(renderOffset.x===0&&renderOffset.y===0)ps.render(f,heightAxis);
+        else for(const p of ps.list)if(p.delay<=0)drawPt(f,{...p,x:p.x+renderOffset.x,y:p.y+renderOffset.y,px:p.px+renderOffset.x,py:p.py+renderOffset.y},heightAxis);
       },
     };
   },

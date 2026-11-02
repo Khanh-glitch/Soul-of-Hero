@@ -49,14 +49,14 @@ export class Particles {
       }
     }
   }
-  render(f: Frame) {
-    for (const p of this.list) if (p.delay <= 0) drawPt(f, p);
+  render(f: Frame, heightAxis: V2 = {x:0,y:-1}) {
+    for (const p of this.list) if (p.delay <= 0) drawPt(f, p, heightAxis);
   }
 }
 
-export function drawPt(f: Frame, p: Pt) {
-  const u = p.life / p.max, sx = p.x, sy = p.y - p.z;
-  if (p.z > 1.5) f.S(sx, p.y, 0.6);
+export function drawPt(f: Frame, p: Pt, heightAxis: V2 = {x:0,y:-1}) {
+  const u = p.life / p.max, sx = p.x + heightAxis.x*p.z, sy = p.y + heightAxis.y*p.z;
+  if (p.z > 1.5) f.S(p.x, p.y, 0.6);
   switch (p.kind) {
     case 'ember': {
       const c = ramp(p.col, 1 - u * 0.9);
