@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   renderer-lifecycle:
-    if: ${{ !contains(github.event.head_commit.message, '[r29-n]') && !contains(github.event.head_commit.message, '[r29-isolate]') }}
+    if: ${{ (!contains(github.event.head_commit.message, '[r29-n]') || contains(github.event.head_commit.message, '[r29-lifecycle]')) && !contains(github.event.head_commit.message, '[r29-isolate]') }}
     name: 20 canonical IDs cast/contact/finish/cancel on Godot 4.7
     runs-on: ubuntu-latest
     timeout-minutes: 40

@@ -67,9 +67,9 @@ jobs:
       - name: Surface cut frame 3.6 seconds
         run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py "$RUNNER_TEMP/a04/artifacts" phase_04_cut_motion_216_tick216
       - name: Surface opening rupture
-        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py "$RUNNER_TEMP/a04/artifacts" phase_04_candidate_A_rupture_impact_05_tick286
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py "$RUNNER_TEMP/a04/artifacts" phase_04_candidate_A_rupture_open_05_tick286
       - name: Surface later rupture
-        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py "$RUNNER_TEMP/a04/artifacts" phase_04_candidate_A_rupture_impact_07_tick295
+        run: python3 prototypes/arcana_fusion20/renderer/c10_review_surface.py "$RUNNER_TEMP/a04/artifacts" phase_04_candidate_A_rupture_open_07_tick295
       - name: Report structural and runtime assertions
         if: always()
         run: |

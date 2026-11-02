@@ -30,11 +30,11 @@ class AshenGuillotineR:
             {"t": 2.6, "kind": "blade_materialise", "pos_local": C, "emitted": false},
             {"t": 3.4, "kind": "guillotine_impact", "pos_local": C, "emitted": false},
         ]
-        # Visual contact cues only; the owner decides any gameplay hit. Each
-        # cue coincides with its section's first visible opening.
+        # These are visual opening markers, NOT additional contacts; the
+        # single guillotine_impact above is the only blade contact cue.
         for section in range(5):
             var center := _fault_point((float(section) + 0.5) / 5.0)
-            events.append({"t": 4.6 + float(section) * 0.08, "kind": "rupture_impact", "pos_local": center, "emitted": false})
+            events.append({"t": 4.6 + float(section) * 0.08, "kind": "rupture_open", "pos_local": center, "emitted": false})
         events.append({"t": 6.6, "kind": "wound_close", "pos_local": C, "emitted": false})
         return events
     func _section_visibility(index: int, t: float) -> float:
@@ -198,7 +198,24 @@ class AshenGuillotineR:
                         ADraw.streak(fb, (stone[1] as Vector2).x, (stone[1] as Vector2).y, (stone[2] as Vector2).x, (stone[2] as Vector2).y,
                             1.05, 0.6, AMath.R("ash", 0.9), open * 0.65)
                 var bs: Array = _cracks[section]
-                ACommon.scar_decal(fb, bs, open * 0.9, t)
+                # Branching secondary cracks are covered cuts through the
+                # surface, not bright orange emissive lightning. Build each
+                # tapered path from the existing grown branch coordinates;
+                # narrow pale lips distinguish broken rock from a black line.
+                for branch in bs:
+                    var authored: Array = branch.pts
+                    var limit := float(branch.grow) * float(authored.size() - 1)
+                    if limit <= 0.0: continue
+                    var visible: Array = [authored[0]]
+                    for k in range(mini(authored.size() - 1, ceili(limit))):
+                        var va: Vector2 = authored[k]
+                        var vb: Vector2 = authored[k + 1]
+                        visible.append(va.lerp(vb, AMath.cl01(limit - float(k))))
+                    ADraw.ribbon(fb, visible,
+                        func(u: float, _i: int) -> float: return maxf(0.45, float(branch.w) * (1.0 - 0.75 * u)) * open,
+                        func(_u: float, _i: int, edge: float) -> Variant:
+                            return Vector3(0.39, 0.37, 0.32) if edge > 0.65 else Vector3(0.11, 0.10, 0.09),
+                        true, open * 0.75)
             # Fragment trajectories begin on the actual cut and separate
             # under gravity as individual fractured plates, not a second hit.
             for k in range(10):

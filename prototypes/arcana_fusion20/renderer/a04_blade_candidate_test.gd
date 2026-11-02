@@ -64,14 +64,14 @@ func _initialize() -> void:
     var events: Array = spell.authored_events()
     var impacts := 0
     for event in events:
-        if event.kind == "rupture_impact":
+        if event.kind == "rupture_open":
             if (event.pos_local as Vector2).distance_to(spell._fault_point((float(impacts) + 0.5) / 5.0)) > 0.001 or absf(float(event.t) - (4.6 + impacts * 0.08)) > 0.001:
                 push_error("A04_BLADE_FAIL rupture cue outside the opening sequence")
                 quit(1)
                 return
             impacts += 1
     if impacts != 5:
-        push_error("A04_BLADE_FAIL missing rupture contacts")
+        push_error("A04_BLADE_FAIL missing rupture openings")
         quit(1)
         return
     frame.clear()
