@@ -6,8 +6,8 @@
   360
  ],
  "overlays": "hidden for evaluation captures, shown separately",
- "commit": "558ce953524ad7e22130651f742a172969d64cf0",
- "run": "41391439984",
+ "commit": "e780f4ec2b4ca19c5610ffb3519c275b22099aa9",
+ "run": "41392216856",
  "scenes": [
   {
    "file": "spawn_sp_west.png",
@@ -728,6 +728,17 @@
    },
    "sha256": "28f0da70f23dbd4bf537b7eef6723b6f6df6578bd5339eb433756b14bac5310b",
    "pass": true
+  },
+  {
+   "file": "overview.png",
+   "scene": "overview",
+   "camera": [
+    8000,
+    5600
+   ],
+   "note": "whole compiled world image, decoded in Chromium",
+   "sha256": "ba89b379fbc64346d12b973db059b833b00ccc3b93cd77a39c1336f65992aa7a",
+   "pass": true
   }
  ],
  "checks": [
@@ -754,7 +765,7 @@
      "y": 2424
     },
     "after": {
-     "x": 1556.8031999999994,
+     "x": 1555.1999999999994,
      "y": 2424
     }
    }
@@ -777,7 +788,7 @@
  "world_sha256": "77959cadf89b3b44d7e270d4d627a83cd5f2572b9087be9d7c5d83b19fa6bab0",
  "world_meta_sha256": "3416a2ad5ab0ad92486da5fce721a3438caebcecda99af304196a5ccace79354",
  "summary": {
-  "scenes": 45,
+  "scenes": 46,
   "blank_scenes": 0,
   "checks_passed": 4,
   "checks_total": 4,
