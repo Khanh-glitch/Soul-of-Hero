@@ -51,7 +51,13 @@ class RootwakeR:
                     var seed := float(i * 4 + j)
                     var reach := 12.0 + 16.0 * AMath.hash2(seed, 13.0)
                     var spread := 9.0 + 17.0 * AMath.hash2(seed, 17.0)
-                    child.append(base + tangent * (reach * u) + normal * (spread * sin(u * PI * 0.5) + (2.0 + 7.0 * AMath.hash2(seed, 23.0)) * u * u))
+                    # Continuous irregular bends grow from the exact parent
+                    # junction. Unequal turning produces living branches,
+                    # not a set of smooth arcs/straight cage ribs.
+                    var wander := (AMath.vnoise(u * 3.7 + seed * 4.0, seed + 7.0) - 0.5) * 12.0 * sin(u * PI)
+                    var forward := reach * u + sin(u * PI) * (AMath.hash2(seed, 21.0) - 0.5) * 10.0
+                    var sideways := spread * sin(u * PI * 0.5) + (2.0 + 7.0 * AMath.hash2(seed, 23.0)) * u * u + wander
+                    child.append(base + tangent * forward + normal * sideways)
                 bs.append({"pts": child, "w": 1.8 - float(j) * 0.15, "depth": 1, "grow": 0.0, "seed": 13300 + i * 4 + j, "attach": attach})
             _roots.append(bs)
             _tips.append(destination)
@@ -145,9 +151,13 @@ class RootwakeR:
                 var point: Vector2 = thorn_base.lerp(_tips[i] + direction * 30.0, attack)
                 var thorn_foot := thorn_side * (8.0 * attack)
                 if attack > 0.0:
-                    ADraw.poly_fill(fb, [thorn_base - thorn_foot, point, thorn_base + thorn_foot],
-                        func(_x: int, _y: int) -> Variant: return Vector3(0.44, 0.39, 0.17), true, attack)
-                    ADraw.streak(fb, thorn_base.x, thorn_base.y, point.x, point.y, 0.9, 0.35, Vector3(0.85, 0.64, 0.25), attack * 0.6)
+                    var shoulder := thorn_base.lerp(point, 0.46) - thorn_side * (3.0 * attack)
+                    var back := thorn_base.lerp(point, 0.65) + thorn_side * (2.0 * attack)
+                    ADraw.poly_fill(fb, [thorn_base - thorn_foot, shoulder - thorn_foot * 0.60, point, back + thorn_foot * 0.32, thorn_base + thorn_foot],
+                        func(x: int, y: int) -> Variant:
+                            var bark := 0.30 + AMath.hash2(floor(float(x) * 0.35), floor(float(y) * 0.35)) * 0.12
+                            return Vector3(bark, bark * 0.57, bark * 0.24), true, attack)
+                    ADraw.streak(fb, shoulder.x, shoulder.y, point.x, point.y, 0.8, 0.35, Vector3(0.68, 0.48, 0.24), attack * 0.6)
                 # Two actual barbs have their bases on the same arch.
                 for barb_value in [0.36, 0.68]:
                     var barb: float = barb_value
