@@ -47,7 +47,7 @@ export default function Title({ gs, onContinue, onStart, note, summary, clearSum
         <div style={{ fontSize: 11, marginTop: 3 }}>{summary.achievements.map(a => <span key={a} style={{ marginRight: 6, color: '#ffe27a' }}>★ {ACHIEVEMENTS[a]?.name}</span>)}</div>
         <button className="btn gold" style={{ marginTop: 8 }} onClick={() => { click(); clearSummary(); }}>Return</button>
       </div> : <>
-        <div className="absolute" style={{ left: 0, right: 0, top: 28, textAlign: 'center' }}>
+        <div className="absolute" style={{ left: 0, right: 0, top: 18, textAlign: 'center' }}>
           <div className="title-font" style={{ fontSize: 44, fontWeight: 700, color: '#ffe8b0', letterSpacing: 3, textShadow: '0 3px 0 #6a2a0a, 0 5px 0 #2a0a04, 0 0 18px #ff7a2a' }}>SOUL OF HERO</div>
           <div style={{ fontSize: 13, color: '#e0c8a8', marginTop: -2, textShadow: '1px 1px 0 #000' }}>fourteen days · one island · the end of the world</div>
         </div>
@@ -59,7 +59,7 @@ export default function Title({ gs, onContinue, onStart, note, summary, clearSum
           {note && <div style={{ fontSize: 10, color: '#ffb08a', maxWidth: 380, textAlign: 'center' }}>{note}</div>}
           <div style={{ fontSize: 9, color: '#7a6a8a', position: 'absolute', top: 186 }}>Offline · single-player · saves locally in this browser (LOCAL/UNVERIFIED)</div>
         </div>}
-        {mode === 'select' && <div className="panel absolute fadein" style={{ left: 90, top: 94, width: 460, padding: 8 }}>
+        {mode === 'select' && <div className="panel absolute fadein" style={{ left: 90, top: 88, width: 460, padding: 8 }}>
           <div className="panel-h" style={{ marginBottom: 4 }}>Choose your Adventurer</div>
           <div className="flex gap-2">{(['female', 'male'] as const).map(h => <button key={h} className={`btn ${hero === h ? 'gold' : 'ghost'}`} style={{ flex: 1, padding: 4, textAlign: 'left' }} onClick={() => { click(); setHero(h); }}>
             <div className="flex items-center gap-2"><HeroPreview female={h === 'female'} active={hero === h} /><div style={{ fontSize: 11, lineHeight: 1.15 }}><div className="title-font" style={{ fontSize: 13 }}>{h === 'female' ? 'Adventurer ♀' : 'Adventurer ♂'}</div><div>Survival knife, a half-full flask, a few berries. No Core, no map, no orders.</div></div></div></button>)}</div>

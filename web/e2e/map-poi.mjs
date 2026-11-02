@@ -147,6 +147,8 @@ try {
   console.log(log.join('\n'));
 } catch (error) {
   log.push(`FAIL: ${error?.stack || error}`);
+  console.error(log.join('\n'));
+  console.log(`::error title=Map-POI browser journey::${String(error?.message || error).replace(/[\r\n]/g, ' ')}`);
   await fs.writeFile(path.join(out,'run-log.txt'),log.join('\n')+'\n').catch(()=>{});
   throw error;
 } finally {
