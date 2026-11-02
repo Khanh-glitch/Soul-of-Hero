@@ -2,10 +2,12 @@ R22 — CẬP NHẬT QUAN TRỌNG (thay thế các mô tả #15 cũ bên dưới
 #15 bây giờ chụp vị trí caster thật khi bắt đầu, giữ năm gốc tua tại đó đến
 OUT. Người chơi tự do di chuyển; hoa/bốn mục tiêu giữ nguyên trên đất. Không
 kéo dài, sao chép hay thêm tua; ảnh trước/sau và matrix 35/140/900, bốn hướng
-phải kiểm tra trong cùng workflow trước khi kết luận. Nguồn có 23 đoạn × 6.2
-pixel (~142.6 px); tại scale tối đa 3.5, chiều dài danh nghĩa ~499.1 đơn vị
-thế giới, nhỏ hơn target 900: khoảng cách cực đại có thể vượt sức với của nguồn,
-không phải lỗi neo caster và không phải chính sách tầm đánh của gameplay.
+phải kiểm tra trước khi kết luận. Nguồn có 23 đoạn với rest-length 6.2 pixel:
+~499.1 đơn vị ở scale 3.5 là chiều dài NGHỈ danh nghĩa, không phải giới hạn cứng.
+Verlet lặp hữu hạn cho phép giãn tự nhiên; ở ảnh normal 900/right, tick 359,
+đo root[0] tới focus ~876.6, tổng từng chuỗi ~527.6–756.7, tip tới focus
+~131.7–342.4 đơn vị. Kết quả cho thấy choreography nguồn không nối toàn bộ
+đến hoa trong mẫu cực xa; đây không phải chính sách tầm đánh gameplay.
 
 MATRIX BATCH S — tình trạng xem xét trước run mới; không phải Gold
 02 | B Pyre Wyrm | ảnh 1x normal/dim + proxy cũ; xem chuyển động đầy đủ

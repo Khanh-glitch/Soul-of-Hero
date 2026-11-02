@@ -507,6 +507,7 @@ jobs:
           set -euo pipefail
           motion="$THORN_RAW_DIR/short_motion"
           trap 'rc=$?; msg=$(tail -c 3000 "$RUNNER_TEMP/short-encode.log" 2>/dev/null | tr "\n" " " || true); echo "::error title=THORN_ENCODE_FAILED::exit $rc $msg"; exit "$rc"' ERR
+          if ! command -v ffmpeg; then sudo apt-get update -qq && sudo apt-get install -y ffmpeg; fi
           python3 tools/arcana20_join/encode_live_capture.py "$motion" 2>&1 | tee "$RUNNER_TEMP/short-encode.log"
           ffmpeg -hide_banner -loglevel error -y -f concat -safe 0 -i "$motion/frames.txt" -fps_mode vfr -c:v libx264 -preset medium -crf 30 -pix_fmt yuv420p -movflags +faststart "$motion/short-motion-720p.mp4" 2>&1 | tee -a "$RUNNER_TEMP/short-encode.log"
           python3 - "$motion/short-motion-720p.mp4" "$RUNNER_TEMP/motion-blob.json" <<'PY'
@@ -585,6 +586,7 @@ jobs:
           echo "THORN_BEFORE_RAW=$(dirname "$matrix_file")" >> "$GITHUB_ENV"
           motion="$(dirname "$matrix_file")/short_motion"
           trap 'rc=$?; msg=$(tail -c 3000 "$RUNNER_TEMP/short-encode.log" 2>/dev/null | tr "\n" " " || true); echo "::error title=THORN_ENCODE_FAILED::exit $rc $msg"; exit "$rc"' ERR
+          if ! command -v ffmpeg; then sudo apt-get update -qq && sudo apt-get install -y ffmpeg; fi
           python3 tools/arcana20_join/encode_live_capture.py "$motion" 2>&1 | tee "$RUNNER_TEMP/short-encode.log"
           ffmpeg -hide_banner -loglevel error -y -f concat -safe 0 -i "$motion/frames.txt" -fps_mode vfr -c:v libx264 -preset medium -crf 30 -pix_fmt yuv420p -movflags +faststart "$motion/short-motion-720p.mp4" 2>&1 | tee -a "$RUNNER_TEMP/short-encode.log"
           python3 - "$motion/short-motion-720p.mp4" "$RUNNER_TEMP/motion-blob.json" <<'PY'
