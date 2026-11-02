@@ -335,82 +335,61 @@ class RiptideCalligraphyR:
                 var tip := _ink_point(i, u, t)
                 ADraw.disc_blend(fb, tip.x, tip.y, 2.8, Vector3(0.16, 0.49, 0.58), diss * 0.65)
                 ADraw.disc(fb, tip.x, tip.y, 2.2, AMath.R("water", 0.95), diss)
-        # One coherent mass of water departs the written glyph. The curved
-        # crest travels across the real ground; its shoulders expand and its
-        # foam dissolves, rather than three unrelated thin radial arcs.
-        if t > 4.6 and t < 6.75:
-            var wu := AMath.seg(t, 4.6, 6.75)
+        # Release a single connected rolling water mass, not another drawn
+        # ribbon or a thin turquoise fin. Its changing irregular leading edge,
+        # deep body, entrained foam and shedding droplets share one motion.
+        if t > 4.6 and t < 6.85:
+            var age := AMath.seg(t, 4.6, 6.85)
             var front := _wave_front(t)
-            var wave_pts: Array = []
-            var height := 12.0 + 48.0 * AMath.ease_out(wu, 2.0)
+            var formation := AMath.ease_out(AMath.seg(t, 4.6, 5.05), 2.0)
+            var fade := 1.0 - AMath.seg(t, 6.45, 6.85)
+            var halfspan := (18.0 + 34.0 * formation) * (1.0 - 0.18 * age)
+            var thickness := (20.0 + 31.0 * formation) * (1.0 - 0.28 * age)
+            var leading: Array = []
+            var trailing: Array = []
             for k in range(33):
                 var v := float(k) / 32.0
                 var side := v * 2.0 - 1.0
-                var curl := side * side * (5.0 + 19.0 * wu)
-                # Irregular moving shoulders fold behind the advancing
-                # front, rather than tracing one smooth paddle silhouette.
-                var broken := sin(v * PI * 6.0 - t * 5.0) * (2.0 + 3.5 * wu) + sin(v * PI * 13.0 + t * 2.0) * 1.8
-                wave_pts.append(front + Vector2(-curl + broken, side * height + sin(v * PI * 8.0 - t * 3.0) * 1.8))
-            # The released water has its own fade, independent of the
-            # draining glyph: it must not disappear as it gains mass.
-            var wave_fade := 1.0 - AMath.seg(t, 6.45, 6.75)
-            # A covered trough follows the crest as an actual mass, with a
-            # broad center and thin shoulders. The crest remains separate,
-            # advancing beyond the static glyph on its authored trajectory.
-            var trough: Array = []
-            for v in range(wave_pts.size()):
-                var u_side := float(v) / float(wave_pts.size() - 1)
-                var wake := (12.0 + 20.0 * sin(u_side * PI)) * AMath.ease_out(wu, 2.0)
-                trough.append((wave_pts[v] as Vector2) - Vector2(wake, 0))
-            ADraw.ribbon(fb, trough,
-                func(v: float, _i: int) -> float: return (9.0 + 20.0 * sin(v * PI)) * AMath.ease_out(wu, 2.0),
-                func(v: float, _i: int, edge: float) -> Variant:
-                    var current := 0.5 + 0.5 * sin(v * 24.0 - t * 8.0)
-                    return Vector3(0.035 + edge * 0.10, 0.24 + 0.16 * current, 0.31 + 0.20 * current),
-                true, wave_fade * 0.72)
-            ADraw.ribbon(fb, wave_pts,
-                func(v: float, _i: int) -> float: return (3.5 + 6.5 * sin(v * PI)) * (0.55 + 0.45 * wu),
-                func(v: float, _i: int, edge: float) -> Variant:
-                    var foam := pow(edge, 2.4)
-                    var flow := 0.5 + 0.5 * sin(v * 19.0 - t * 12.0)
-                    return Vector3(0.05 + 0.30 * foam, 0.24 + 0.28 * foam + 0.06 * flow, 0.34 + 0.30 * foam + 0.08 * flow),
-                true, wave_fade * 0.68)
-            ADraw.ribbon(fb, wave_pts,
-                func(v: float, _i: int) -> float: return 1.3 + 1.0 * sin(v * PI),
-                func(v: float, _i: int, edge: float) -> Variant:
-                    return AMath.R("water", 0.58 + 0.20 * sin(v * 20.0 - t * 12.0)), false, wave_fade * 0.55)
-            # Broken foam rides the actual moving crest. Its gaps and lobes
-            # vary in time, making the heavy liquid advance legible without
-            # adding a detached static arc or whole-screen brightness.
-            for segment in range(32):
-                var foam_phase := sin(float(segment) * 1.9 + t * 4.0)
-                if foam_phase < -0.35: continue
-                var fa: Vector2 = wave_pts[segment]
-                var fb_end: Vector2 = wave_pts[segment + 1]
-                var thickness := 0.7 + 1.0 * maxf(0.0, foam_phase)
-                ADraw.streak(fb, fa.x, fa.y, fb_end.x, fb_end.y, thickness, thickness * 0.7, Vector3(0.55, 1.0, 1.2), wave_fade * 0.65)
-            # Short advected surface streaks cross the volume from rear to
-            # crest at differing speeds. Their source and destination remain
-            # inside the moving liquid, not static glyph borders.
-            for eddy in range(11):
-                var seed := float(eddy)
-                var lateral := (AMath.hash2(seed, 34.0) * 1.6 - 0.8) * height
-                var phase := fposmod(t * (0.7 + AMath.hash2(seed, 35.0) * 0.5) + AMath.hash2(seed, 36.0), 1.0)
-                var length := (4.0 + AMath.hash2(seed, 37.0) * 9.0) * AMath.ease_out(wu, 2.0)
-                var x := front.x - (10.0 + 20.0 * (1.0 - absf(lateral) / maxf(height, 1.0))) * (1.0 - phase)
-                var point := Vector2(x, front.y + lateral)
-                ADraw.streak(fb, point.x - length, point.y + 1.5, point.x, point.y - 1.5,
-                    0.5, 0.7, Vector3(0.42, 0.90, 1.0), wave_fade * 0.55 * sin(phase * PI))
-            # Unequal droplets break from the moving shoulders and lag the
-            # front as material, with no independent expanding-ring effect.
-            for drop in range(20):
+                var shoulder := pow(absf(side), 1.5)
+                var lobes := sin(v * 19.0 - t * 5.4) * 3.0 + sin(v * 37.0 + t * 2.1) * 1.6
+                var nose := -14.0 * shoulder + lobes * formation
+                var back := thickness * (0.48 + 0.52 * sqrt(maxf(0.0, 1.0 - side * side)))
+                back += (sin(v * 25.0 + t * 3.7) * 4.0 + sin(v * 48.0 - t * 2.4) * 2.0) * formation
+                leading.append(front + Vector2(nose, side * halfspan))
+                trailing.append(front + Vector2(nose - back, side * halfspan))
+            var volume: Array = leading.duplicate()
+            trailing.reverse()
+            volume.append_array(trailing)
+            ADraw.poly_fill(fb, volume,
+                func(x: int, y: int) -> Variant:
+                    var relative := Vector2(float(x), float(y)) - front
+                    var depth := clampf(-relative.x / maxf(1.0, thickness), 0.0, 1.0)
+                    var eddy := AMath.fbm(float(x) * 0.08 - t * 2.2, float(y) * 0.10 + t * 0.8, 3)
+                    var crest := (1.0 - depth) * (0.5 + 0.5 * eddy)
+                    return Vector3(0.04 + crest * 0.12, 0.21 + eddy * 0.13 + crest * 0.15, 0.29 + eddy * 0.18 + crest * 0.18), true, fade * 0.82)
+            # Foam pockets cling to different portions of the *actual* front.
+            # Interrupted, asymmetric curls distinguish breaking water from a
+            # parallel ruled stripe or a disconnected second wave.
+            for lobe in range(13):
+                var seed := float(lobe)
+                var index := mini(31, 1 + lobe * 2 + int(AMath.hash2(seed, 71.0) * 2.0))
+                var p: Vector2 = leading[index]
+                var q: Vector2 = leading[mini(32, index + 1)]
+                var strength := fade * formation * (0.4 + 0.55 * AMath.hash2(seed, 72.0))
+                var r := 2.2 + 3.8 * AMath.hash2(seed, 73.0)
+                ADraw.disc_blend(fb, p.x - r * 0.2, p.y, r, Vector3(0.24, 0.56, 0.65), strength * 0.65)
+                ADraw.streak(fb, p.x - r * 0.8, p.y - r * 0.15, q.x, q.y, 0.6, 1.1, Vector3(0.65, 1.0, 1.1), strength)
+            for drop in range(18):
                 var seed := float(drop)
-                var v := AMath.hash2(seed, 18.0) * 2.0 - 1.0
-                var lag := (8.0 + AMath.hash2(seed, 19.0) * 48.0) * wu
-                var splash := front + Vector2(-lag, v * height * (0.65 + 0.45 * AMath.hash2(seed, 20.0)))
-                var radius := (0.7 + AMath.hash2(seed, 21.0) * 2.4) * AMath.ease_out(wu, 2.0)
-                ADraw.disc_blend(fb, splash.x, splash.y, radius, Vector3(0.10, 0.39, 0.48), wave_fade * 0.56)
-                ADraw.disc(fb, splash.x - 0.4, splash.y - 0.4, maxf(0.45, radius * 0.3), Vector3(0.55, 1.0, 1.2), wave_fade * 0.5)
+                var birth := 0.12 + AMath.hash2(seed, 91.0) * 0.58
+                var life := AMath.seg(age, birth, minf(1.0, birth + 0.22))
+                var side := AMath.hash2(seed, 92.0) * 2.0 - 1.0
+                var origin: Vector2 = leading[clampi(roundi((side * 0.5 + 0.5) * 32.0), 0, 32)]
+                var p := origin + Vector2((5.0 + 15.0 * AMath.hash2(seed, 93.0)) * life, side * 14.0 * life)
+                var r := (0.8 + 2.2 * AMath.hash2(seed, 94.0)) * formation
+                var k := fade * sin(life * PI)
+                ADraw.disc_blend(fb, p.x, p.y, r, Vector3(0.12, 0.42, 0.51), k)
+                ADraw.disc(fb, p.x - 0.4, p.y - 0.4, maxf(0.5, r * 0.35), Vector3(0.5, 0.9, 1.0), k)
 
 # ------------------------------------------- #12 skybreaker script
 class SkybreakerScriptR:
