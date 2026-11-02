@@ -16,7 +16,7 @@ const state = () => page.evaluate(() => {
   const r = window.__soh?.run; if (!r) return null;
   const counts = {};
   for (const s of r.custody.inv.slots) if (s) counts[s.key] = (counts[s.key] || 0) + s.qty;
-  return { id: r.id, seed: r.seed, layoutId: r.layoutId || 'shipping', player: { x:r.player.x,y:r.player.y }, counts,
+  return { id: r.id, seed: r.seed, layoutId: r.layoutId || 'shipping', player: { x:r.player.x,y:r.player.y,hp:r.player.hp,dead:r.player.dead }, counts,
     entities: Object.values(r.entities).map(e => ({ id:e.id,kind:e.kind,poi:e.poi,x:e.x,y:e.y,tx:e.tx,ty:e.ty,locked:e.locked,open:e.open,power:e.power,label:e.label,c:e.c })),
     sources:r.sources,containers: Object.fromEntries(Object.entries(r.custody).map(([id,c])=>[id,c.slots.map(s=>s&&({key:s.key,qty:s.qty}))])) };
 });
@@ -84,7 +84,7 @@ try {
         const keys=[];if(Math.abs(dx)>2)keys.push(dx>0?'d':'a');if(Math.abs(dy)>2)keys.push(dy>0?'s':'w');
         for(const k of keys)await page.keyboard.down(k);await pause(115);for(const k of keys)await page.keyboard.up(k);
       }
-      cur=await state();assert(Math.hypot(cur.player.x-wx,cur.player.y-wy)<=radius+22,`walk ended ${Math.hypot(cur.player.x-wx,cur.player.y-wy).toFixed(1)}px from target`);return cur;
+      cur=await state();assert(Math.hypot(cur.player.x-wx,cur.player.y-wy)<=radius+22,`walk ended ${Math.hypot(cur.player.x-wx,cur.player.y-wy).toFixed(1)}px from target (${wx},${wy}); player=(${cur.player.x.toFixed(1)},${cur.player.y.toFixed(1)}) hp=${cur.player.hp} dead=${cur.player.dead}, routeTiles=${route.length-1}`);return cur;
     }
     const camera=p=>({x:Math.max(0,Math.min(W*16-640,p.x-320)),y:Math.max(0,Math.min(H*16-360,p.y-180))});
     async function aim(wx,wy){await pause(100);const cur=await state(),c=camera(cur.player);const x=Math.max(2,Math.min(638,wx-c.x)),y=Math.max(2,Math.min(358,wy-c.y));await page.mouse.move(Math.round(x*2),Math.round(y*2));await pause(120);}

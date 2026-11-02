@@ -38,11 +38,11 @@ export const MAP_CONTENT_PACKS: Record<LayoutId, MapContentPackV1> = {
   dev_delta: {
     schemaVersion: 1, id: 'dev_delta', title: 'Delta Ridge (development)',
     description: 'A test layout with a broken cliff ridge and two traversable passes to a layered relay.',
-    pois: [relay(132, 145)],
+    pois: [relay(145, 84)],
     terrain: [
-      { x: 119, y: 127, width: 1, height: 37, terrain: 'cliff' },
-      { x: 119, y: 136, width: 1, height: 3, terrain: 'hill' },
-      { x: 119, y: 153, width: 1, height: 3, terrain: 'hill' },
+      { x: 155, y: 66, width: 1, height: 41, terrain: 'cliff' },
+      { x: 155, y: 74, width: 1, height: 3, terrain: 'hill' },
+      { x: 155, y: 94, width: 1, height: 3, terrain: 'hill' },
     ],
     roadLinks: [['s1', 'delta_relay'], ['s3', 'delta_relay']],
   },

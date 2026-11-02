@@ -51,8 +51,8 @@ describe('typed versioned map content packs', () => {
     expect(shipping.places.find(p => p.id === 'factory')).toEqual(dev.places.find(p => p.id === 'factory'));
     expect(shipping.statics.filter(e => ['factory', 'light'].includes(e.poi || '')).map(e => [e.poi,e.kind,e.tx,e.ty,e.locked]))
       .toEqual(dev.statics.filter(e => ['factory', 'light'].includes(e.poi || '')).map(e => [e.poi,e.kind,e.tx,e.ty,e.locked]));
-    expect(shipping.tiles[128 * WW + 119]).not.toBe(T.CLIFF);
-    expect(dev.tiles[128 * WW + 119]).toBe(T.CLIFF);
+    expect(shipping.tiles[67 * WW + 155]).not.toBe(T.CLIFF);
+    expect(dev.tiles[67 * WW + 155]).toBe(T.CLIFF);
     const relay = dev.statics.filter(e => e.poi === 'delta_relay');
     expect(relay.filter(e => e.kind === 'door').map(e => e.locked)).toEqual([undefined, 'keycard', 'power']);
     expect(relay.some(e => e.kind === 'gen')).toBe(true);
