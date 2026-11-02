@@ -15,11 +15,12 @@ out = pathlib.Path(sys.argv[2])
 sha = sys.argv[3]
 record = json.loads((root / 'timeline.json').read_text())
 frames = record['frames']
-roles = {1:'A Cinder Crown plus C outer flame', 2:'B Pyre Wyrm', 3:'B Meteor Loom', 7:'C Mirrorfrost Basilica',
+roles = {4:'Ashen Guillotine N redesign', 6:'Riptide N redesign', 12:'Skybreaker N redesign', 13:'Rootwake N redesign', 14:'Spore Nebula N redesign', 18:'Chronoshard N redesign',
+         1:'A Cinder Crown plus C outer flame', 2:'B Pyre Wyrm', 3:'B Meteor Loom', 7:'C Mirrorfrost Basilica',
          8:'B Undertow Maw', 9:'A graph B palette C lightning', 10:'C Thunderloom', 11:'A rotor C09 lightning', 15:'C Thorn Opera', 16:'A growth C material organism debris', 17:'C Event Horizon', 20:'C rift A world warp and debris'}
 skill = int(record['skill'])
 if skill not in roles or len(frames) < 2:
-    raise SystemExit('Expected supported Batch S or F with at least two actual captured frames')
+    raise SystemExit('Expected supported S, F or N capture with at least two actual captured frames')
 light = record['lighting']
 # Baseline and OUT come from the actual first and last frames. Intermediate
 # ticks deliberately span the cast rather than selecting only pretty beats.

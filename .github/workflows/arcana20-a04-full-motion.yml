@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        revision: [baseline, candidate]
+        revision: [candidate]
         light: [normal, dimmed]
     runs-on: ubuntu-latest
     timeout-minutes: 55

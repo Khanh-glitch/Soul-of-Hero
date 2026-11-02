@@ -44,11 +44,12 @@ class AshenGuillotineR:
         for i in range(_cracks.size()):
             ACommon.update_branches(_cracks[i], maxf(0.0, t - 4.6 - float(i) * 0.08))
     func _blade_offset(t: float) -> float:
-        # Draw-back is deliberate, then a single accelerating three-tick
-        # strike lands exactly on the authored 3.4 contact. A small rebound
-        # carries the mass after impact without introducing a second cut.
-        var pull := 8.0 * AMath.ease_out(AMath.seg(t, 3.02, 3.35), 2.0)
-        var strike := AMath.ease_in(AMath.seg(t, 3.35, 3.4), 2.0)
+        # A visible draw-back then one accelerating physical stroke lands at
+        # the original 3.4 contact. Thirteen ticks of travel expose the mass
+        # in a real-world recording instead of a three-tick teleport. Recoil
+        # is recovery, never a second strike or a gameplay contact.
+        var pull := 8.0 * AMath.ease_out(AMath.seg(t, 2.96, 3.18), 2.0)
+        var strike := AMath.ease_in(AMath.seg(t, 3.18, 3.4), 2.0)
         var recoil := 5.0 * AMath.bump(AMath.seg(t, 3.4, 3.85))
         return 26.0 + pull - 24.0 * strike + recoil
     func render(fb: AFramebuffer, t: float) -> void:
@@ -104,6 +105,13 @@ class AshenGuillotineR:
                     m.x + n.x * width * 0.12 + _dir.x * 5.0, m.y + n.y * width * 0.12 + _dir.y * 5.0,
                     0.8, 0.6, AMath.R("ash", 0.55), bk * 0.65)
         if cut > 0.0:
+            # The blade's whole edge lands as ONE diagonal cut. A shallow
+            # charcoal groove remains physically present through the delay;
+            # the subsequent fissure grows out of this same ground line.
+            var groove := 1.15 * cut
+            if t < 4.95:
+                ADraw.poly_fill(fb, [p0 - n * groove, p1 - n * groove, p1 + n * groove, p0 + n * groove],
+                    func(_x: int, _y: int) -> Variant: return Vector3(0.025, 0.018, 0.017), true, (1.0 - AMath.seg(t, 4.6, 4.95)) * close_k)
             ADraw.streak(fb, p0.x, p0.y, p1.x, p1.y, 2.0, 2.0, AMath.R("fire", 0.9), (1.0 - AMath.seg(t, 3.5, 4.4)) * close_k)
         # The delayed wound opens segment by segment along the contact line.
         # Opaque charcoal fissures are actual geometry, not dark-keyed light.
@@ -115,24 +123,27 @@ class AshenGuillotineR:
                 var a: Vector2 = p0.lerp(p1, u0)
                 var b: Vector2 = p0.lerp(p1, u1)
                 var open := AMath.ease_out(AMath.seg(t, 4.6 + float(section) * 0.08, 5.0 + float(section) * 0.08), 2.0) * _section_visibility(section, t)
-                var middle := a.lerp(b, 0.52) + n * (2.0 if section % 2 == 0 else -2.0)
-                # Physically parted ground edges widen from the blade line;
-                # the thin molten rim makes each fracture readable without
-                # replacing the actual dark cut with bloom.
+                # Irregular opposing fracture banks, with nonzero widths at
+                # section boundaries. The old repeated diamonds looked like
+                # detached plates; the continuous undercut and staggered rock
+                # edges instead describe one wound opening along the cut.
                 var gap := 8.5 * open
-                var upper := middle + n * gap
-                var lower := middle - n * gap
-                # Adjacent diamond-shaped openings used to meet at a single
-                # pixel and read as detached black plates. A narrow physical
-                # undercut connects each opened section along the strike.
+                var mid_u := 0.36 + 0.19 * AMath.hash2(float(section), 14.0)
+                var upper_a: Vector2 = a + n * gap * 0.34
+                var upper_m: Vector2 = a.lerp(b, mid_u) + n * gap * (0.68 + 0.30 * AMath.hash2(float(section), 12.0))
+                var upper_b: Vector2 = b + n * gap * 0.34
+                var lower_a: Vector2 = a - n * gap * 0.34
+                var lower_m: Vector2 = a.lerp(b, 0.67 - mid_u * 0.20) - n * gap * (0.45 + 0.34 * AMath.hash2(float(section), 15.0))
+                var lower_b: Vector2 = b - n * gap * 0.34
                 var seam := 1.3 * open
                 ADraw.poly_fill(fb, [a - n * seam, b - n * seam, b + n * seam, a + n * seam],
                     func(_x: int, _y: int) -> Variant: return Vector3(0.018, 0.014, 0.014), true, open * 0.96)
-                ADraw.poly_fill(fb, [a, upper, b, lower],
+                ADraw.poly_fill(fb, [upper_a, upper_m, upper_b, lower_b, lower_m, lower_a],
                     func(_x: int, _y: int) -> Variant: return Vector3(0.018, 0.014, 0.014), true, open * 0.96)
-                ADraw.streak(fb, a.x, a.y, upper.x, upper.y, 1.6, 1.0, AMath.R("fire", 0.72), open * 0.70)
-                ADraw.streak(fb, upper.x, upper.y, b.x, b.y, 1.0, 1.4, AMath.R("fire", 0.72), open * 0.70)
-                ADraw.streak(fb, a.x, a.y, lower.x, lower.y, 1.0, 0.7, AMath.R("ash", 0.55), open * 0.45)
+                ADraw.streak(fb, upper_a.x, upper_a.y, upper_m.x, upper_m.y, 1.2, 0.8, AMath.R("fire", 0.72), open * 0.60)
+                ADraw.streak(fb, upper_m.x, upper_m.y, upper_b.x, upper_b.y, 0.8, 1.0, AMath.R("fire", 0.72), open * 0.60)
+                ADraw.streak(fb, lower_a.x, lower_a.y, lower_m.x, lower_m.y, 0.9, 0.7, AMath.R("ash", 0.55), open * 0.45)
+                ADraw.streak(fb, lower_m.x, lower_m.y, lower_b.x, lower_b.y, 0.7, 0.9, AMath.R("ash", 0.55), open * 0.45)
                 var bs: Array = _cracks[section]
                 ACommon.scar_decal(fb, bs, open * 0.9, t)
             # Fragment trajectories begin on the actual cut and separate

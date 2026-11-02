@@ -31,9 +31,9 @@ func _initialize() -> void:
         return
     # Test exact authored contact and acceleration, independent of the
     # raster test; not a replacement for viewing the animation.
-    var ready: float = spell._blade_offset(3.35)
-    var first: float = ready - spell._blade_offset(3.35 + 1.0 / 60.0)
-    var second: float = spell._blade_offset(3.35 + 1.0 / 60.0) - spell._blade_offset(3.35 + 2.0 / 60.0)
+    var ready: float = spell._blade_offset(3.18)
+    var first: float = ready - spell._blade_offset(3.18 + 1.0 / 60.0)
+    var second: float = spell._blade_offset(3.18 + 1.0 / 60.0) - spell._blade_offset(3.18 + 2.0 / 60.0)
     var contact: float = spell._blade_offset(3.4)
     if not (ready > 30.0 and second > first and absf(contact - 10.0) < 0.001 and spell._blade_offset(3.6) > contact):
         push_error("A04_BLADE_FAIL anticipation/acceleration/contact/recoil")
@@ -60,8 +60,16 @@ func _initialize() -> void:
         return
     frame.clear()
     spell.render(frame, 4.45)
-    if frame.world_coverage.count(1.0) != 0:
+    # The blade is gone away from the line; the new shallow cut remains on
+    # the actual contact line until the delayed rupture opens.
+    if frame.world_coverage[y * AFramebuffer.W + x] > 0.01:
         push_error("A04_BLADE_FAIL physical blade persists after its authored fade")
+        quit(1)
+        return
+    var line_x := floori(ARedesignSpells.C.x)
+    var line_y := floori(ARedesignSpells.C.y)
+    if frame.world_coverage[line_y * AFramebuffer.W + line_x] < 0.5:
+        push_error("A04_BLADE_FAIL delayed rupture has no physical contact groove")
         quit(1)
         return
     frame.clear()
