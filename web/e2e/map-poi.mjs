@@ -80,7 +80,7 @@ try {
       let cur=await state(), transientBlocked=new Set(), replanReason='initial';
       const targetEntity=cur.entities.find(e=>Math.hypot(e.x-wx,e.y-wy)<1);
       const describeCell=(grid,x,y)=>({tx:x,ty:y,cls:gridClass(grid[y*W+x]),entities:cur.entities.filter(e=>e.tx===x&&e.ty===y).map(e=>({id:e.id,kind:e.kind,label:e.label,open:e.open,locked:e.locked}))});
-      for(let cycle=0;cycle<1200;cycle++){
+      for(let cycle=0;cycle<300;cycle++){
         cur=await state(); const distance=Math.hypot(cur.player.x-wx,cur.player.y-wy);
         if(distance<=radius){
           diag.completed={distance,player:{x:cur.player.x,y:cur.player.y,hp:cur.player.hp},at:Date.now()};
@@ -101,14 +101,14 @@ try {
         const before={x:cur.player.x,y:cur.player.y}, wpDiag={tile:[nx,ny],center:wp,attempts:[],start:before};let best=Infinity, stagnant=0, reached=false;
         for(let tries=0;tries<24;tries++){
           cur=await state();const dx=wp.x-cur.player.x,dy=wp.y-cur.player.y,remaining=Math.hypot(dx,dy);
-          if(remaining<=5){reached=true;break;}
+          if(remaining<3){reached=true;break;}
           const keys=[];if(Math.abs(dx)>2)keys.push(dx>0?'d':'a');if(Math.abs(dy)>2)keys.push(dy>0?'s':'w');
           const beforeAttempt={x:cur.player.x,y:cur.player.y,hp:cur.player.hp,keys:[...keys]};
-          for(const k of keys)await page.keyboard.down(k);await pause(115);for(const k of keys)await page.keyboard.up(k);
+          for(const k of keys)await page.keyboard.down(k);await pause(remaining<=12?24:115);for(const k of keys)await page.keyboard.up(k);
           cur=await state();const moved=Math.hypot(cur.player.x-beforeAttempt.x,cur.player.y-beforeAttempt.y),left=Math.hypot(wp.x-cur.player.x,wp.y-cur.player.y);
           wpDiag.attempts.push({try:tries+1,from:beforeAttempt,to:{x:cur.player.x,y:cur.player.y,hp:cur.player.hp},moved:+moved.toFixed(2),remaining:+left.toFixed(2),action:cur.player.action||null,creatures:cur.creatures.filter(m=>Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<100).map(m=>({id:m.id,type:m.type,state:m.state,x:m.x,y:m.y,hp:m.hp}))});
           if(cur.player.dead){diag.failed={reason:'player died during bounded waypoint input',player:cur.player,firstFailingWaypoint:{tile:[nx,ny],center:wp},attempt:wpDiag.attempts.at(-1),previousWaypoint:diag.waypoints.at(-1)||null,counts:cur.counts,nearby:cur.creatures.filter(m=>Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<260)};wpDiag.end={reason:'player-dead',actual:{x:cur.player.x,y:cur.player.y,hp:cur.player.hp}};diag.waypoints.push(wpDiag);routeDiagnostics.push(diag);await page.screenshot({path:path.join(out,`route-death-${layoutId}-${Date.now()}.png`),animations:'disabled'}).catch(()=>{});await fs.writeFile(path.join(out,`route-death-${layoutId}.json`),JSON.stringify(diag,null,2)).catch(()=>{});throw new Error(`route death at first failing waypoint ${JSON.stringify({...diag.failed,evasionHistory:routeDiagnostics.filter(x=>x.kind==='wildlife-evasion').slice(-8)})}`);}
-          if(left<=5){reached=true;break;}
+          if(left<3){reached=true;break;}
           if(moved<0.8)stagnant++;else stagnant=0;
           if(left<best-1){best=left;stagnant=0;}
           if(stagnant>=6)break;
