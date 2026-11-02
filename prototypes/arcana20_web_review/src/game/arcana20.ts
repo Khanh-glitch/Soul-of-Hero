@@ -102,7 +102,9 @@ export function planArcana(id:number,x:number,y:number,angle:number,aimX:number,
       // Proposed impact on the actual target, synced to the source bloom.
       circle(tx,ty,25,28,5850);ring(tx,ty,70,10,5890);break;
     }
-    case 16: circle(tx,ty,35,38);for(let i=0;i<4;i++)circle(tx+Math.cos(i*Math.PI/2)*42,ty+Math.sin(i*Math.PI/2)*42,14,14,peak+230+i*80);break;
+    case 16: { // Proposed bloom contact at the shared A/C source beat, not a P0 combat receipt.
+      const m=aTransform({x,y},{x:tx,y:ty}),q=transformPoint(m,{x:232,y:124}),scale=Math.hypot(m.a,m.b);circle(q.x,q.y,35*scale,38,5300);ring(q.x,q.y,65*scale,14,5300);break;
+    }
     case 17: { // Rebound impact; stage blackout and post still require an owner.
       const q=transformPoint(cTransform(17,{x,y},{x:tx,y:ty}),C_ANCHOR[17]);circle(q.x,q.y,45,40,6250);ring(q.x,q.y,65,16,6250);break;
     }
