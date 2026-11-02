@@ -169,8 +169,8 @@ void fragment() {
         star_material += edge * vec3(0.48, 0.45, 0.37);
         result = mix(result, star_material, clamp(sm * 0.88 * fade, 0.0, 1.0));
         COLOR = vec4(clamp(result, 0.0, 1.0), 1.0);
-        return;
+    } else {
+        vec3 delta = base - reference;
+        COLOR = vec4(clamp(original + delta * clamp(warp_fade, 0.0, 1.0), 0.0, 1.0), 1.0);
     }
-    vec3 delta = base - reference;
-    COLOR = vec4(clamp(original + delta * clamp(warp_fade, 0.0, 1.0), 0.0, 1.0), 1.0);
 }
