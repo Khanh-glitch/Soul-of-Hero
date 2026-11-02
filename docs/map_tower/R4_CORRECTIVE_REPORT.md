@@ -63,3 +63,13 @@ outcome (no vendored binary, no proxy claim).
   (no roof/building sprite exists in the SOH-resident art; that is a named asset gap).
 * Git: raw packs + kit + compiler + validators on this branch, canonical docs unmodified.
 * Gameplay: browser walk test only; native Godot readiness pending the CI job result.
+
+## CI results (run 41383038822, commit abe90954 / final 13230d2e)
+* `spatial` — **FAIL** by design: `validate.py` exits 1 while `bridge_traversal_over_deck` is red
+  (br_b). Artifact `veyra-spatial-validation` carries `SPATIAL_VALIDATION.json` + `world_meta.json`.
+* `browser-capture` — **SUCCESS**: rebuild, publish, Playwright Chromium, real key input, canvas
+  pixel asserts, 640×360 captures with overlays hidden plus one gameplay-overlay capture.
+  Artifact `veyra-browser-evidence` (screenshots + `BROWSER_CAPTURE.json` + `capture.log`).
+* `godot-native-attempt` — **job success**, Godot 4.7 downloaded and `--headless --path . --quit`
+  ran on the CI runner. The step commands carry `|| true`, so this proves *availability and
+  execution*, not a validated native gameplay session: **native PASS is NOT claimed.**
