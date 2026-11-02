@@ -151,14 +151,38 @@ class AshenGuillotineR:
                     var q1: Vector2 = segment[1]
                     var side := Vector2(-(q1 - q0).y, (q1 - q0).x).normalized() * (0.75 * open)
                     ADraw.poly_fill_solid(fb, [q0 - side, q1 - side, q1 + side, q0 + side], Vector3(0.18, 0.13, 0.10), true, open * 0.65)
+                # Broken exposed bedrock shelves alongside the cut. Each
+                # jagged half-bank has different width and inset, with visible
+                # breaks at section joints; displaced chips sit on top. This
+                # avoids a uniformly filled rectangular dark scar.
+                for bank_side in [-1.0, 1.0]:
+                    var axis: Vector2 = (b - a).normalized()
+                    var inward := section_normal * float(bank_side)
+                    var r0 := AMath.hash2(float(section), 58.0 + float(bank_side))
+                    var r1 := AMath.hash2(float(section), 69.0 + float(bank_side))
+                    var begin: Vector2 = a.lerp(b, 0.04 + r0 * 0.08)
+                    var end: Vector2 = a.lerp(b, 0.88 + r1 * 0.08)
+                    var mid: Vector2 = begin.lerp(end, 0.48 + 0.12 * (r0 - 0.5))
+                    var edge: Array = [begin + inward * 1.4 * open,
+                        mid + inward * (2.0 + 2.0 * r1) * open,
+                        end + inward * 1.4 * open,
+                        end + inward * (5.0 + 5.0 * r0) * open - axis * 2.0 * open,
+                        mid + inward * (9.0 + 7.0 * r1) * open,
+                        begin + inward * (5.0 + 4.0 * r1) * open + axis * 1.7 * open]
+                    var bank_value := 0.30 + r0 * 0.10
+                    ADraw.poly_fill(fb, edge,
+                        func(x: int, y: int) -> Variant:
+                            var grain := AMath.hash2(floor(float(x) * 0.33), floor(float(y) * 0.37) + float(section))
+                            var shade := bank_value + grain * 0.08
+                            return Vector3(shade, shade * 0.96, shade * 0.88), true, open * 0.80)
                 for side in [-1.0, 1.0]:
                     for chip in range(2):
                         var seed: float = float(section * 7 + chip * 2) + float(side)
                         var r := AMath.hash2(seed, 24.0)
-                        var center: Vector2 = a.lerp(b, 0.19 + float(chip) * 0.46 + r * 0.08) + section_normal * side * gap * (1.3 + r)
+                        var center: Vector2 = a.lerp(b, 0.10 + float(chip) * 0.43 + r * 0.25) + section_normal * side * gap * (1.3 + r)
                         var axis: Vector2 = (b - a).normalized()
-                        var along := (8.0 + r * 6.5) * open
-                        var across := (5.5 + AMath.hash2(seed, 42.0) * 6.0) * open
+                        var along := (5.0 + r * 9.0) * open
+                        var across := (3.5 + AMath.hash2(seed, 42.0) * 7.0) * open
                         var stone: Array = [center - axis * along * 0.8 - section_normal * across * 0.35,
                             center - axis * along * 0.35 + section_normal * across,
                             center + axis * along * 0.6 + section_normal * across * 0.75,
@@ -169,7 +193,7 @@ class AshenGuillotineR:
                                 var grain := AMath.hash2(floor(float(x) * 0.37), floor(float(y) * 0.33))
                                 # Pale chipped top with granular mineral texture,
                                 # separate from the dark incision underneath.
-                                var value := 0.46 + 0.16 * grain + 0.08 * r
+                                var value := 0.38 + 0.13 * grain + 0.11 * r
                                 return Vector3(value * 0.96, value * 0.94, value * 0.87), true, open * 0.94)
                         ADraw.streak(fb, (stone[1] as Vector2).x, (stone[1] as Vector2).y, (stone[2] as Vector2).x, (stone[2] as Vector2).y,
                             1.05, 0.6, AMath.R("ash", 0.9), open * 0.65)
