@@ -539,6 +539,9 @@ func _counterfactual_b(source: Node, encounter: Node, enemy: CharacterBody2D,
 				"hero": [hero.global_position.x, hero.global_position.y],
 				"probe": _trace_probe(source, enemy)}))
 			break
+		print("C08_B_LEG ", JSON.stringify({"leg": index, "cells": leg.size(),
+			"hero": [snappedf(hero.global_position.x, 0.1), snappedf(hero.global_position.y, 0.1)],
+			"source": _source_probe(source), "probe": _trace_probe(source, enemy)}))
 		if index == 0:
 			print("C08_B_SOURCE_OUT ", JSON.stringify({"source": source.call(&"snapshot"),
 				"follower": _compact_follower(follower.snapshot()),
@@ -555,7 +558,7 @@ func _counterfactual_b(source: Node, encounter: Node, enemy: CharacterBody2D,
 	var armed := await _wait_until(func() -> bool:
 		var view: Dictionary = follower.snapshot()
 		return int(view.get("sensed", 0)) >= 1 and int(view.get("hops", 0)) >= 1, 120.0)
-	print("C08_B_ARMED ", JSON.stringify({"armed": armed,
+	print("C08_B_ARMED ", JSON.stringify({"armed": armed, "source": _source_probe(source),
 		"follower": _compact_follower(follower.snapshot()), "probe": _trace_probe(source, enemy)}))
 	# The defender is inside a roofed room. The final leg to the door therefore
 	# cannot be line of sight: the creature must follow the marks it can reach.
@@ -570,7 +573,7 @@ func _counterfactual_b(source: Node, encounter: Node, enemy: CharacterBody2D,
 	var snapshot: Dictionary = follower.snapshot()
 	var hp_after := int(hero.get(&"health"))
 	print("C08_B ", JSON.stringify({"follower": _compact_follower(snapshot), "arrival": arrival,
-		"hero_hp": [hp_before, hp_after], "walk": stats,
+		"hero_hp": [hp_before, hp_after], "source": _source_probe(source),
 		"enemy": [enemy.global_position.x, enemy.global_position.y], "home": [home.x, home.y]}))
 	_expect(int(snapshot.get("sensed", 0)) >= 1, "B: the creature observes real, physically local evidence")
 	_expect(int(snapshot.get("hops", 0)) >= 6,
@@ -773,6 +776,20 @@ func _compact_follower(view: Dictionary) -> Dictionary:
 ## What the creature could physically reach at this instant: live marks near it,
 ## the nearest one, and the store's own local query result. Evidence for "it had
 ## nothing to sense" instead of an assumption.
+## The source's own counters, compact: how many samples it took, how many became
+## marks, why the last one was refused, and whether the chain was broken. A trail
+## that stops being written is a fact, not a mystery, once these are printed.
+func _source_probe(source: Node) -> Dictionary:
+	if source == null:
+		return {"absent": true}
+	var view: Dictionary = source.call(&"snapshot")
+	return {"samples": int(view.get("samples", -1)), "written": int(view.get("records_written", -1)),
+		"refused": int(view.get("samples_refused", -1)), "breaks": int(view.get("chain_breaks", -1)),
+		"reason": String(view.get("last_reason", "")), "surface": String(view.get("last_surface", "")),
+		"live": int(view.get("live", -1)), "total": int(view.get("total_records", -1)),
+		"stamp": snappedf(float(view.get("stamp", -1.0)), 0.01)}
+
+
 func _trace_probe(source: Node, enemy: Node2D) -> Dictionary:
 	if source == null or enemy == null or not is_instance_valid(enemy):
 		return {"ok": false, "reason": "absent"}
