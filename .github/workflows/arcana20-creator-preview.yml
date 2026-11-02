@@ -1,4 +1,4 @@
-# D19: fixed-world OUT diagnostic, separate from actual moving-camera capture.
+# R28: bounded all-20 provisional build, preserve earlier S/F recordings.
 # R26 F01 source-surface material, per-tip authored-motion verification and fixed-world evidence; R25 F16 seeded-surface fragmentation and natural decay; R21 partial batch S: source raster-tile overscan range recheck; retain R20 #05.
 name: ARCANA20 R20 Abyssal Bloom A-B creator package
 on:
@@ -163,7 +163,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include: ${{ fromJSON(contains(github.event.head_commit.message, '[d19-fixed]') && '[{"skill":19,"lighting":"normal","variant":"D19FIX","lock":"0","camera":"fixed"},{"skill":19,"lighting":"dimmed","variant":"D19FIX","lock":"0","camera":"fixed"}]' || contains(github.event.head_commit.message, '[d19-only]') && '[{"skill":19,"lighting":"normal","variant":"D19","lock":"0"},{"skill":19,"lighting":"dimmed","variant":"D19","lock":"0"}]' || contains(github.event.head_commit.message, '[n18-only]') && '[{"skill":18,"lighting":"normal","variant":"N18","lock":"0"},{"skill":18,"lighting":"dimmed","variant":"N18","lock":"0"}]' || contains(github.event.head_commit.message, '[n14-only]') && '[{"skill":14,"lighting":"normal","variant":"N14","lock":"0"},{"skill":14,"lighting":"dimmed","variant":"N14","lock":"0"}]' || contains(github.event.head_commit.message, '[n13-only]') && '[{"skill":13,"lighting":"normal","variant":"N13","lock":"0"},{"skill":13,"lighting":"dimmed","variant":"N13","lock":"0"}]' || contains(github.event.head_commit.message, '[n12-only]') && '[{"skill":12,"lighting":"normal","variant":"N12","lock":"0"},{"skill":12,"lighting":"dimmed","variant":"N12","lock":"0"}]' || contains(github.event.head_commit.message, '[n06-only]') && '[{"skill":6,"lighting":"normal","variant":"N06","lock":"0"},{"skill":6,"lighting":"dimmed","variant":"N06","lock":"0"}]' || contains(github.event.head_commit.message, '[n04-only]') && '[{"skill":4,"lighting":"normal","variant":"N04","lock":"0"},{"skill":4,"lighting":"dimmed","variant":"N04","lock":"0"}]' || contains(github.event.head_commit.message, '[f01-only]') && '[{"skill":1,"lighting":"normal","variant":"F01","lock":"0"},{"skill":1,"lighting":"dimmed","variant":"F01","lock":"0"}]' || contains(github.event.head_commit.message, '[f11-only]') && '[{"skill":11,"lighting":"normal","variant":"F11","lock":"0"},{"skill":11,"lighting":"dimmed","variant":"F11","lock":"0"}]' || contains(github.event.head_commit.message, '[f09-only]') && '[{"skill":9,"lighting":"normal","variant":"F09","lock":"0"},{"skill":9,"lighting":"dimmed","variant":"F09","lock":"0"}]' || contains(github.event.head_commit.message, '[r26-fixed]') && '[{"skill":16,"lighting":"normal","variant":"F16STEP","lock":"0","camera":"fixed"},{"skill":16,"lighting":"dimmed","variant":"F16STEP","lock":"0","camera":"fixed"},{"skill":20,"lighting":"normal","variant":"F20FIX","lock":"0","camera":"fixed"},{"skill":20,"lighting":"dimmed","variant":"F20FIX","lock":"0","camera":"fixed"}]' || contains(github.event.head_commit.message, '[r26-tip]') && '[{"skill":16,"lighting":"normal","variant":"F16STEP","lock":"0","camera":"fixed"},{"skill":16,"lighting":"dimmed","variant":"F16STEP","lock":"0","camera":"fixed"}]' || contains(github.event.head_commit.message, '[r26-match]') && '[{"skill":1,"lighting":"normal","variant":"F01MATCH","lock":"0","camera":"follow"},{"skill":1,"lighting":"dimmed","variant":"F01MATCH","lock":"0","camera":"follow"}]' || contains(github.event.head_commit.message, '[r26-f]') && '[{"skill":1,"lighting":"normal","variant":"F01","lock":"0","camera":"follow"},{"skill":1,"lighting":"dimmed","variant":"F01","lock":"0","camera":"follow"},{"skill":1,"lighting":"normal","variant":"F01MATCH","lock":"0","camera":"follow"},{"skill":1,"lighting":"dimmed","variant":"F01MATCH","lock":"0","camera":"follow"},{"skill":16,"lighting":"normal","variant":"F16FIX","lock":"0","camera":"fixed"},{"skill":16,"lighting":"dimmed","variant":"F16FIX","lock":"0","camera":"fixed"},{"skill":20,"lighting":"normal","variant":"F20FIX","lock":"0","camera":"fixed"},{"skill":20,"lighting":"dimmed","variant":"F20FIX","lock":"0","camera":"fixed"}]' || contains(github.event.head_commit.message, '[f-five]') && '[{"skill":1,"lighting":"normal","variant":"F01","lock":"0"},{"skill":1,"lighting":"dimmed","variant":"F01","lock":"0"},{"skill":9,"lighting":"normal","variant":"F09","lock":"0"},{"skill":9,"lighting":"dimmed","variant":"F09","lock":"0"},{"skill":11,"lighting":"normal","variant":"F11","lock":"0"},{"skill":11,"lighting":"dimmed","variant":"F11","lock":"0"},{"skill":16,"lighting":"normal","variant":"F16","lock":"0"},{"skill":16,"lighting":"dimmed","variant":"F16","lock":"0"},{"skill":20,"lighting":"normal","variant":"F20","lock":"0"},{"skill":20,"lighting":"dimmed","variant":"F20","lock":"0"},{"skill":1,"lighting":"normal","variant":"F01MATCH","lock":"0","camera":"follow"},{"skill":1,"lighting":"dimmed","variant":"F01MATCH","lock":"0","camera":"follow"},{"skill":16,"lighting":"normal","variant":"F16FIX","lock":"0","camera":"fixed"},{"skill":16,"lighting":"dimmed","variant":"F16FIX","lock":"0","camera":"fixed"},{"skill":16,"lighting":"normal","variant":"F16STEP","lock":"0","camera":"fixed"},{"skill":16,"lighting":"dimmed","variant":"F16STEP","lock":"0","camera":"fixed"},{"skill":20,"lighting":"normal","variant":"F20FIX","lock":"0","camera":"fixed"},{"skill":20,"lighting":"dimmed","variant":"F20FIX","lock":"0","camera":"fixed"}]' || contains(github.event.head_commit.message, '[f-only]') && '[{"skill":9,"lighting":"normal","variant":"F09","lock":"0"},{"skill":9,"lighting":"dimmed","variant":"F09","lock":"0"},{"skill":11,"lighting":"normal","variant":"F11","lock":"0"},{"skill":11,"lighting":"dimmed","variant":"F11","lock":"0"},{"skill":16,"lighting":"normal","variant":"F16","lock":"0"},{"skill":16,"lighting":"dimmed","variant":"F16","lock":"0"},{"skill":20,"lighting":"normal","variant":"F20","lock":"0"},{"skill":20,"lighting":"dimmed","variant":"F20","lock":"0"}]' || '[{"skill":5,"lighting":"normal","variant":"A","lock":"0"},{"skill":5,"lighting":"dimmed","variant":"A","lock":"0"},{"skill":5,"lighting":"normal","variant":"B","lock":"0"},{"skill":5,"lighting":"dimmed","variant":"B","lock":"0"},{"skill":5,"lighting":"normal","variant":"B","lock":"1"},{"skill":5,"lighting":"dimmed","variant":"B","lock":"1"},{"skill":1,"lighting":"normal","variant":"F01","lock":"0"},{"skill":1,"lighting":"dimmed","variant":"F01","lock":"0"},{"skill":2,"lighting":"normal","variant":"B02","lock":"0"},{"skill":2,"lighting":"dimmed","variant":"B02","lock":"0"},{"skill":3,"lighting":"normal","variant":"B03","lock":"0"},{"skill":3,"lighting":"dimmed","variant":"B03","lock":"0"},{"skill":7,"lighting":"normal","variant":"C07","lock":"0"},{"skill":7,"lighting":"dimmed","variant":"C07","lock":"0"},{"skill":8,"lighting":"normal","variant":"B08","lock":"0"},{"skill":8,"lighting":"dimmed","variant":"B08","lock":"0"},{"skill":10,"lighting":"normal","variant":"C10","lock":"0"},{"skill":10,"lighting":"dimmed","variant":"C10","lock":"0"},{"skill":15,"lighting":"normal","variant":"C15","lock":"0"},{"skill":15,"lighting":"dimmed","variant":"C15","lock":"0"},{"skill":17,"lighting":"normal","variant":"C17","lock":"0"},{"skill":17,"lighting":"dimmed","variant":"C17","lock":"0"},{"skill":9,"lighting":"normal","variant":"F09","lock":"0"},{"skill":9,"lighting":"dimmed","variant":"F09","lock":"0"},{"skill":11,"lighting":"normal","variant":"F11","lock":"0"},{"skill":11,"lighting":"dimmed","variant":"F11","lock":"0"},{"skill":16,"lighting":"normal","variant":"F16","lock":"0"},{"skill":16,"lighting":"dimmed","variant":"F16","lock":"0"},{"skill":20,"lighting":"normal","variant":"F20","lock":"0"},{"skill":20,"lighting":"dimmed","variant":"F20","lock":"0"}]') }}
+        include: ${{ fromJSON(contains(github.event.head_commit.message, '[all20-provisional]') && '[{"skill":5,"lighting":"normal","variant":"A","lock":"0"},{"skill":5,"lighting":"dimmed","variant":"A","lock":"0"},{"skill":5,"lighting":"normal","variant":"B","lock":"0"},{"skill":5,"lighting":"dimmed","variant":"B","lock":"0"}]' || contains(github.event.head_commit.message, '[d19-fixed]') && '[{"skill":19,"lighting":"normal","variant":"D19FIX","lock":"0","camera":"fixed"},{"skill":19,"lighting":"dimmed","variant":"D19FIX","lock":"0","camera":"fixed"}]' || contains(github.event.head_commit.message, '[d19-only]') && '[{"skill":19,"lighting":"normal","variant":"D19","lock":"0"},{"skill":19,"lighting":"dimmed","variant":"D19","lock":"0"}]' || contains(github.event.head_commit.message, '[n18-only]') && '[{"skill":18,"lighting":"normal","variant":"N18","lock":"0"},{"skill":18,"lighting":"dimmed","variant":"N18","lock":"0"}]' || contains(github.event.head_commit.message, '[n14-only]') && '[{"skill":14,"lighting":"normal","variant":"N14","lock":"0"},{"skill":14,"lighting":"dimmed","variant":"N14","lock":"0"}]' || contains(github.event.head_commit.message, '[n13-only]') && '[{"skill":13,"lighting":"normal","variant":"N13","lock":"0"},{"skill":13,"lighting":"dimmed","variant":"N13","lock":"0"}]' || contains(github.event.head_commit.message, '[n12-only]') && '[{"skill":12,"lighting":"normal","variant":"N12","lock":"0"},{"skill":12,"lighting":"dimmed","variant":"N12","lock":"0"}]' || contains(github.event.head_commit.message, '[n06-only]') && '[{"skill":6,"lighting":"normal","variant":"N06","lock":"0"},{"skill":6,"lighting":"dimmed","variant":"N06","lock":"0"}]' || contains(github.event.head_commit.message, '[n04-only]') && '[{"skill":4,"lighting":"normal","variant":"N04","lock":"0"},{"skill":4,"lighting":"dimmed","variant":"N04","lock":"0"}]' || contains(github.event.head_commit.message, '[f01-only]') && '[{"skill":1,"lighting":"normal","variant":"F01","lock":"0"},{"skill":1,"lighting":"dimmed","variant":"F01","lock":"0"}]' || contains(github.event.head_commit.message, '[f11-only]') && '[{"skill":11,"lighting":"normal","variant":"F11","lock":"0"},{"skill":11,"lighting":"dimmed","variant":"F11","lock":"0"}]' || contains(github.event.head_commit.message, '[f09-only]') && '[{"skill":9,"lighting":"normal","variant":"F09","lock":"0"},{"skill":9,"lighting":"dimmed","variant":"F09","lock":"0"}]' || contains(github.event.head_commit.message, '[r26-fixed]') && '[{"skill":16,"lighting":"normal","variant":"F16STEP","lock":"0","camera":"fixed"},{"skill":16,"lighting":"dimmed","variant":"F16STEP","lock":"0","camera":"fixed"},{"skill":20,"lighting":"normal","variant":"F20FIX","lock":"0","camera":"fixed"},{"skill":20,"lighting":"dimmed","variant":"F20FIX","lock":"0","camera":"fixed"}]' || contains(github.event.head_commit.message, '[r26-tip]') && '[{"skill":16,"lighting":"normal","variant":"F16STEP","lock":"0","camera":"fixed"},{"skill":16,"lighting":"dimmed","variant":"F16STEP","lock":"0","camera":"fixed"}]' || contains(github.event.head_commit.message, '[r26-match]') && '[{"skill":1,"lighting":"normal","variant":"F01MATCH","lock":"0","camera":"follow"},{"skill":1,"lighting":"dimmed","variant":"F01MATCH","lock":"0","camera":"follow"}]' || contains(github.event.head_commit.message, '[r26-f]') && '[{"skill":1,"lighting":"normal","variant":"F01","lock":"0","camera":"follow"},{"skill":1,"lighting":"dimmed","variant":"F01","lock":"0","camera":"follow"},{"skill":1,"lighting":"normal","variant":"F01MATCH","lock":"0","camera":"follow"},{"skill":1,"lighting":"dimmed","variant":"F01MATCH","lock":"0","camera":"follow"},{"skill":16,"lighting":"normal","variant":"F16FIX","lock":"0","camera":"fixed"},{"skill":16,"lighting":"dimmed","variant":"F16FIX","lock":"0","camera":"fixed"},{"skill":20,"lighting":"normal","variant":"F20FIX","lock":"0","camera":"fixed"},{"skill":20,"lighting":"dimmed","variant":"F20FIX","lock":"0","camera":"fixed"}]' || contains(github.event.head_commit.message, '[f-five]') && '[{"skill":1,"lighting":"normal","variant":"F01","lock":"0"},{"skill":1,"lighting":"dimmed","variant":"F01","lock":"0"},{"skill":9,"lighting":"normal","variant":"F09","lock":"0"},{"skill":9,"lighting":"dimmed","variant":"F09","lock":"0"},{"skill":11,"lighting":"normal","variant":"F11","lock":"0"},{"skill":11,"lighting":"dimmed","variant":"F11","lock":"0"},{"skill":16,"lighting":"normal","variant":"F16","lock":"0"},{"skill":16,"lighting":"dimmed","variant":"F16","lock":"0"},{"skill":20,"lighting":"normal","variant":"F20","lock":"0"},{"skill":20,"lighting":"dimmed","variant":"F20","lock":"0"},{"skill":1,"lighting":"normal","variant":"F01MATCH","lock":"0","camera":"follow"},{"skill":1,"lighting":"dimmed","variant":"F01MATCH","lock":"0","camera":"follow"},{"skill":16,"lighting":"normal","variant":"F16FIX","lock":"0","camera":"fixed"},{"skill":16,"lighting":"dimmed","variant":"F16FIX","lock":"0","camera":"fixed"},{"skill":16,"lighting":"normal","variant":"F16STEP","lock":"0","camera":"fixed"},{"skill":16,"lighting":"dimmed","variant":"F16STEP","lock":"0","camera":"fixed"},{"skill":20,"lighting":"normal","variant":"F20FIX","lock":"0","camera":"fixed"},{"skill":20,"lighting":"dimmed","variant":"F20FIX","lock":"0","camera":"fixed"}]' || contains(github.event.head_commit.message, '[f-only]') && '[{"skill":9,"lighting":"normal","variant":"F09","lock":"0"},{"skill":9,"lighting":"dimmed","variant":"F09","lock":"0"},{"skill":11,"lighting":"normal","variant":"F11","lock":"0"},{"skill":11,"lighting":"dimmed","variant":"F11","lock":"0"},{"skill":16,"lighting":"normal","variant":"F16","lock":"0"},{"skill":16,"lighting":"dimmed","variant":"F16","lock":"0"},{"skill":20,"lighting":"normal","variant":"F20","lock":"0"},{"skill":20,"lighting":"dimmed","variant":"F20","lock":"0"}]' || '[{"skill":5,"lighting":"normal","variant":"A","lock":"0"},{"skill":5,"lighting":"dimmed","variant":"A","lock":"0"},{"skill":5,"lighting":"normal","variant":"B","lock":"0"},{"skill":5,"lighting":"dimmed","variant":"B","lock":"0"},{"skill":5,"lighting":"normal","variant":"B","lock":"1"},{"skill":5,"lighting":"dimmed","variant":"B","lock":"1"},{"skill":1,"lighting":"normal","variant":"F01","lock":"0"},{"skill":1,"lighting":"dimmed","variant":"F01","lock":"0"},{"skill":2,"lighting":"normal","variant":"B02","lock":"0"},{"skill":2,"lighting":"dimmed","variant":"B02","lock":"0"},{"skill":3,"lighting":"normal","variant":"B03","lock":"0"},{"skill":3,"lighting":"dimmed","variant":"B03","lock":"0"},{"skill":7,"lighting":"normal","variant":"C07","lock":"0"},{"skill":7,"lighting":"dimmed","variant":"C07","lock":"0"},{"skill":8,"lighting":"normal","variant":"B08","lock":"0"},{"skill":8,"lighting":"dimmed","variant":"B08","lock":"0"},{"skill":10,"lighting":"normal","variant":"C10","lock":"0"},{"skill":10,"lighting":"dimmed","variant":"C10","lock":"0"},{"skill":15,"lighting":"normal","variant":"C15","lock":"0"},{"skill":15,"lighting":"dimmed","variant":"C15","lock":"0"},{"skill":17,"lighting":"normal","variant":"C17","lock":"0"},{"skill":17,"lighting":"dimmed","variant":"C17","lock":"0"},{"skill":9,"lighting":"normal","variant":"F09","lock":"0"},{"skill":9,"lighting":"dimmed","variant":"F09","lock":"0"},{"skill":11,"lighting":"normal","variant":"F11","lock":"0"},{"skill":11,"lighting":"dimmed","variant":"F11","lock":"0"},{"skill":16,"lighting":"normal","variant":"F16","lock":"0"},{"skill":16,"lighting":"dimmed","variant":"F16","lock":"0"},{"skill":20,"lighting":"normal","variant":"F20","lock":"0"},{"skill":20,"lighting":"dimmed","variant":"F20","lock":"0"}]') }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -475,7 +475,7 @@ jobs:
             ${{ runner.temp }}/encode.log
           if-no-files-found: warn
   thorn-range-review:
-    if: ${{ !contains(github.event.head_commit.message, '[d19-fixed]') && !contains(github.event.head_commit.message, '[d19-only]') && !contains(github.event.head_commit.message, '[n18-only]') && !contains(github.event.head_commit.message, '[n14-only]') && !contains(github.event.head_commit.message, '[n13-only]') && !contains(github.event.head_commit.message, '[n12-only]') && !contains(github.event.head_commit.message, '[n06-only]') && !contains(github.event.head_commit.message, '[n04-only]') && !contains(github.event.head_commit.message, '[r26-fixed]') && !contains(github.event.head_commit.message, '[r26-tip]') && !contains(github.event.head_commit.message, '[r26-match]') && !contains(github.event.head_commit.message, '[r26-f]') && !contains(github.event.head_commit.message, '[f-five]') && !contains(github.event.head_commit.message, '[f-only]') && !contains(github.event.head_commit.message, '[f09-only]') && !contains(github.event.head_commit.message, '[f11-only]') && !contains(github.event.head_commit.message, '[f01-only]') }}
+    if: ${{ !contains(github.event.head_commit.message, '[all20-provisional]') && !contains(github.event.head_commit.message, '[d19-fixed]') && !contains(github.event.head_commit.message, '[d19-only]') && !contains(github.event.head_commit.message, '[n18-only]') && !contains(github.event.head_commit.message, '[n14-only]') && !contains(github.event.head_commit.message, '[n13-only]') && !contains(github.event.head_commit.message, '[n12-only]') && !contains(github.event.head_commit.message, '[n06-only]') && !contains(github.event.head_commit.message, '[n04-only]') && !contains(github.event.head_commit.message, '[r26-fixed]') && !contains(github.event.head_commit.message, '[r26-tip]') && !contains(github.event.head_commit.message, '[r26-match]') && !contains(github.event.head_commit.message, '[r26-f]') && !contains(github.event.head_commit.message, '[f-five]') && !contains(github.event.head_commit.message, '[f-only]') && !contains(github.event.head_commit.message, '[f09-only]') && !contains(github.event.head_commit.message, '[f11-only]') && !contains(github.event.head_commit.message, '[f01-only]') }}
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 45
@@ -564,7 +564,7 @@ jobs:
           if-no-files-found: error
           retention-days: 14
   thorn-before-origin:
-    if: ${{ !contains(github.event.head_commit.message, '[d19-fixed]') && !contains(github.event.head_commit.message, '[d19-only]') && !contains(github.event.head_commit.message, '[n18-only]') && !contains(github.event.head_commit.message, '[n14-only]') && !contains(github.event.head_commit.message, '[n13-only]') && !contains(github.event.head_commit.message, '[n12-only]') && !contains(github.event.head_commit.message, '[n06-only]') && !contains(github.event.head_commit.message, '[n04-only]') && !contains(github.event.head_commit.message, '[r26-fixed]') && !contains(github.event.head_commit.message, '[r26-tip]') && !contains(github.event.head_commit.message, '[r26-match]') && !contains(github.event.head_commit.message, '[r26-f]') && !contains(github.event.head_commit.message, '[f-five]') && !contains(github.event.head_commit.message, '[f-only]') && !contains(github.event.head_commit.message, '[f09-only]') && !contains(github.event.head_commit.message, '[f11-only]') && !contains(github.event.head_commit.message, '[f01-only]') }}
+    if: ${{ !contains(github.event.head_commit.message, '[all20-provisional]') && !contains(github.event.head_commit.message, '[d19-fixed]') && !contains(github.event.head_commit.message, '[d19-only]') && !contains(github.event.head_commit.message, '[n18-only]') && !contains(github.event.head_commit.message, '[n14-only]') && !contains(github.event.head_commit.message, '[n13-only]') && !contains(github.event.head_commit.message, '[n12-only]') && !contains(github.event.head_commit.message, '[n06-only]') && !contains(github.event.head_commit.message, '[n04-only]') && !contains(github.event.head_commit.message, '[r26-fixed]') && !contains(github.event.head_commit.message, '[r26-tip]') && !contains(github.event.head_commit.message, '[r26-match]') && !contains(github.event.head_commit.message, '[r26-f]') && !contains(github.event.head_commit.message, '[f-five]') && !contains(github.event.head_commit.message, '[f-only]') && !contains(github.event.head_commit.message, '[f09-only]') && !contains(github.event.head_commit.message, '[f11-only]') && !contains(github.event.head_commit.message, '[f01-only]') }}
     # Exact old AVFX source at 8c260, with only the new capture harness
     # overlaid. Runs the same real route/35-right input, not a fake regression.
     runs-on: ubuntu-latest
@@ -688,7 +688,7 @@ jobs:
           name: r20-05-neutral-original-native-source-beats
           path: source-review/
   full-frame-review:
-    if: ${{ !contains(github.event.head_commit.message, '[d19-fixed]') && !contains(github.event.head_commit.message, '[d19-only]') && !contains(github.event.head_commit.message, '[n18-only]') && !contains(github.event.head_commit.message, '[n14-only]') && !contains(github.event.head_commit.message, '[n13-only]') && !contains(github.event.head_commit.message, '[n12-only]') && !contains(github.event.head_commit.message, '[n06-only]') && !contains(github.event.head_commit.message, '[n04-only]') && !contains(github.event.head_commit.message, '[r26-fixed]') && !contains(github.event.head_commit.message, '[r26-tip]') && !contains(github.event.head_commit.message, '[r26-match]') && !contains(github.event.head_commit.message, '[r26-f]') && !contains(github.event.head_commit.message, '[f-five]') && !contains(github.event.head_commit.message, '[f-only]') && !contains(github.event.head_commit.message, '[f09-only]') && !contains(github.event.head_commit.message, '[f11-only]') && !contains(github.event.head_commit.message, '[f01-only]') }}
+    if: ${{ !contains(github.event.head_commit.message, '[all20-provisional]') && !contains(github.event.head_commit.message, '[d19-fixed]') && !contains(github.event.head_commit.message, '[d19-only]') && !contains(github.event.head_commit.message, '[n18-only]') && !contains(github.event.head_commit.message, '[n14-only]') && !contains(github.event.head_commit.message, '[n13-only]') && !contains(github.event.head_commit.message, '[n12-only]') && !contains(github.event.head_commit.message, '[n06-only]') && !contains(github.event.head_commit.message, '[n04-only]') && !contains(github.event.head_commit.message, '[r26-fixed]') && !contains(github.event.head_commit.message, '[r26-tip]') && !contains(github.event.head_commit.message, '[r26-match]') && !contains(github.event.head_commit.message, '[r26-f]') && !contains(github.event.head_commit.message, '[f-five]') && !contains(github.event.head_commit.message, '[f-only]') && !contains(github.event.head_commit.message, '[f09-only]') && !contains(github.event.head_commit.message, '[f11-only]') && !contains(github.event.head_commit.message, '[f01-only]') }}
     # Surface one genuine locked full 1280x720 frame for native-scale review;
     # the artifact keeps the untouched lossless frames, not this JPEG transport.
     needs: live-motion
@@ -713,7 +713,7 @@ jobs:
       - name: Full frame chunks 27-35
         run: for i in $(seq 27 35); do [ ! -f "$RUNNER_TEMP/full-chunks/$i" ] || echo "::notice title=R20_FULL_3_b_$i::$(cat "$RUNNER_TEMP/full-chunks/$i")"; done
   batch-s-small-review:
-    if: ${{ !contains(github.event.head_commit.message, '[d19-fixed]') && !contains(github.event.head_commit.message, '[d19-only]') && !contains(github.event.head_commit.message, '[n18-only]') && !contains(github.event.head_commit.message, '[n14-only]') && !contains(github.event.head_commit.message, '[n13-only]') && !contains(github.event.head_commit.message, '[n12-only]') && !contains(github.event.head_commit.message, '[n06-only]') && !contains(github.event.head_commit.message, '[n04-only]') && !contains(github.event.head_commit.message, '[r26-fixed]') && !contains(github.event.head_commit.message, '[r26-tip]') && !contains(github.event.head_commit.message, '[r26-match]') && !contains(github.event.head_commit.message, '[r26-f]') && !contains(github.event.head_commit.message, '[f-five]') && !contains(github.event.head_commit.message, '[f-only]') && !contains(github.event.head_commit.message, '[f09-only]') && !contains(github.event.head_commit.message, '[f11-only]') && !contains(github.event.head_commit.message, '[f01-only]') }}
+    if: ${{ !contains(github.event.head_commit.message, '[all20-provisional]') && !contains(github.event.head_commit.message, '[d19-fixed]') && !contains(github.event.head_commit.message, '[d19-only]') && !contains(github.event.head_commit.message, '[n18-only]') && !contains(github.event.head_commit.message, '[n14-only]') && !contains(github.event.head_commit.message, '[n13-only]') && !contains(github.event.head_commit.message, '[n12-only]') && !contains(github.event.head_commit.message, '[n06-only]') && !contains(github.event.head_commit.message, '[n04-only]') && !contains(github.event.head_commit.message, '[r26-fixed]') && !contains(github.event.head_commit.message, '[r26-tip]') && !contains(github.event.head_commit.message, '[r26-match]') && !contains(github.event.head_commit.message, '[r26-f]') && !contains(github.event.head_commit.message, '[f-five]') && !contains(github.event.head_commit.message, '[f-only]') && !contains(github.event.head_commit.message, '[f09-only]') && !contains(github.event.head_commit.message, '[f11-only]') && !contains(github.event.head_commit.message, '[f01-only]') }}
     # Only the small 1x images and JSON; no lossless or MP4 copied here.
     needs: live-motion
     runs-on: ubuntu-latest
@@ -738,7 +738,7 @@ jobs:
           if-no-files-found: error
           retention-days: 14
   creator-package:
-    if: ${{ !contains(github.event.head_commit.message, '[d19-fixed]') && !contains(github.event.head_commit.message, '[d19-only]') && !contains(github.event.head_commit.message, '[n18-only]') && !contains(github.event.head_commit.message, '[n14-only]') && !contains(github.event.head_commit.message, '[n13-only]') && !contains(github.event.head_commit.message, '[n12-only]') && !contains(github.event.head_commit.message, '[n06-only]') && !contains(github.event.head_commit.message, '[n04-only]') && !contains(github.event.head_commit.message, '[r26-fixed]') && !contains(github.event.head_commit.message, '[r26-tip]') && !contains(github.event.head_commit.message, '[r26-match]') && !contains(github.event.head_commit.message, '[r26-f]') && !contains(github.event.head_commit.message, '[f-five]') && !contains(github.event.head_commit.message, '[f-only]') && !contains(github.event.head_commit.message, '[f09-only]') && !contains(github.event.head_commit.message, '[f11-only]') && !contains(github.event.head_commit.message, '[f01-only]') }}
+    if: ${{ !contains(github.event.head_commit.message, '[all20-provisional]') && !contains(github.event.head_commit.message, '[d19-fixed]') && !contains(github.event.head_commit.message, '[d19-only]') && !contains(github.event.head_commit.message, '[n18-only]') && !contains(github.event.head_commit.message, '[n14-only]') && !contains(github.event.head_commit.message, '[n13-only]') && !contains(github.event.head_commit.message, '[n12-only]') && !contains(github.event.head_commit.message, '[n06-only]') && !contains(github.event.head_commit.message, '[n04-only]') && !contains(github.event.head_commit.message, '[r26-fixed]') && !contains(github.event.head_commit.message, '[r26-tip]') && !contains(github.event.head_commit.message, '[r26-match]') && !contains(github.event.head_commit.message, '[r26-f]') && !contains(github.event.head_commit.message, '[f-five]') && !contains(github.event.head_commit.message, '[f-only]') && !contains(github.event.head_commit.message, '[f09-only]') && !contains(github.event.head_commit.message, '[f11-only]') && !contains(github.event.head_commit.message, '[f01-only]') }}
     # One download, only when the same-run runtime and evidence jobs succeed.
     needs: [build, windows-current-runtime, live-motion, source-review, full-frame-review, batch-s-small-review, thorn-range-review, thorn-before-origin]
     runs-on: ubuntu-latest
@@ -903,3 +903,110 @@ jobs:
             ${{ runner.temp }}/f-final-contents.txt
           if-no-files-found: error
           retention-days: 14
+
+  all20-provisional:
+    if: ${{ contains(github.event.head_commit.message, '[all20-provisional]') }}
+    needs: [build, windows-current-runtime, live-motion]
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: SOH-AVFX-EXPERIMENTAL-NOT-PLAYTEST-READY
+          path: deliverable/build
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: r20-*-lock0
+          path: deliverable/05-same-sha
+      # Closed S/F evidence is reused, not re-recorded or relabeled as this SHA.
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: batch-s-motion-*
+          path: deliverable/historical
+          run-id: 41378915227
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: batch-s-review-*
+          path: deliverable/historical
+          run-id: 41378915227
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: batch-f-motion-*
+          path: deliverable/historical
+          run-id: 41396229547
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: batch-f-review-*
+          path: deliverable/historical
+          run-id: 41396229547
+          github-token: ${{ github.token }}
+      - name: Verify current builds and assemble all-20 evidence
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet pillow
+          if ! command -v ffmpeg; then sudo apt-get update -qq && sudo apt-get install -y ffmpeg; fi
+          manifest=$(find deliverable/build -name arcana20_join_manifest.json -type f -print -quit)
+          checksums=$(find deliverable/build -name SHA256SUMS.txt -type f -print -quit)
+          test -s "$manifest" && test -s "$checksums"
+          python3 - "$manifest" "$GITHUB_SHA" <<'PY'
+          import json, sys
+          m=json.load(open(sys.argv[1])); assert m['shas']['avfx']==sys.argv[2]
+          PY
+          (cd "$(dirname "$checksums")" && sha256sum -c SHA256SUMS.txt && unzip -tq SOH_AVFX_EXPERIMENTAL_linux.zip && unzip -tq SOH_AVFX_EXPERIMENTAL_windows.zip)
+          python3 tools/arcana20_join/all20_provisional.py deliverable "$GITHUB_WORKSPACE" "$GITHUB_SHA"
+          # Raw #05 and historical downloads include huge MKVs / duplicate
+          # sheets; compact checked evidence is now in evidence/.
+          rm -rf deliverable/05-same-sha deliverable/historical
+          cp prototypes/arcana_fusion20/renderer/playtest/HUONG_DAN_THU_NGHIEM.txt deliverable/HUONG_DAN.txt
+          cp prototypes/arcana_fusion20/renderer/playtest/ALL20_PROVISIONAL.txt deliverable/ALL20_PROVISIONAL.txt
+          cp prototypes/arcana_fusion20/renderer/playtest/BATCH_S_REVIEW.txt deliverable/BATCH_S_REVIEW.txt
+          cp prototypes/arcana_fusion20/renderer/playtest/BATCH_F_REVIEW.txt deliverable/BATCH_F_REVIEW.txt
+          printf 'Build AVFX SHA: %s\nHistorical capture SHAs: see EVIDENCE_MANIFEST.json.\nPROVISIONAL, visual-only; not Gold or PLAYTEST_READY.\n' "$GITHUB_SHA" > deliverable/CODE_SHA.txt
+          (cd deliverable && find . -type f ! -name SHA256SUMS.txt -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS.txt && sha256sum -c SHA256SUMS.txt > "$RUNNER_TEMP/all20-check.log")
+          (cd deliverable && zip -q -r "$RUNNER_TEMP/ARCANA20_ALL_CANDIDATES_PROVISIONAL.zip" .)
+          (cd "$RUNNER_TEMP" && sha256sum ARCANA20_ALL_CANDIDATES_PROVISIONAL.zip > ARCANA20_ALL_CANDIDATES_PROVISIONAL.zip.sha256 && sha256sum -c ARCANA20_ALL_CANDIDATES_PROVISIONAL.zip.sha256 && unzip -tq ARCANA20_ALL_CANDIDATES_PROVISIONAL.zip)
+          echo "::notice title=ALL20_ZIP_SHA256::$(cat "$RUNNER_TEMP/ARCANA20_ALL_CANDIDATES_PROVISIONAL.zip.sha256")"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ARCANA20_ALL_CANDIDATES_PROVISIONAL
+          path: |
+            ${{ runner.temp }}/ARCANA20_ALL_CANDIDATES_PROVISIONAL.zip
+            ${{ runner.temp }}/ARCANA20_ALL_CANDIDATES_PROVISIONAL.zip.sha256
+          if-no-files-found: error
+          retention-days: 14
+
+  all20-upload-verification:
+    if: ${{ contains(github.event.head_commit.message, '[all20-provisional]') }}
+    needs: all20-provisional
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: ARCANA20_ALL_CANDIDATES_PROVISIONAL
+          path: upload
+      - name: Check downloaded bytes, contained files and all 20 pairs
+        run: |
+          set -euo pipefail
+          cd upload
+          sha256sum -c ARCANA20_ALL_CANDIDATES_PROVISIONAL.zip.sha256
+          unzip -tq ARCANA20_ALL_CANDIDATES_PROVISIONAL.zip
+          unzip -q ARCANA20_ALL_CANDIDATES_PROVISIONAL.zip -d unpack
+          cd unpack
+          sha256sum -c SHA256SUMS.txt > "$RUNNER_TEMP/upload-check.log"
+          python3 - "$GITHUB_SHA" <<'PY'
+          import json,pathlib,sys
+          p=pathlib.Path('.'); m=json.loads((p/'EVIDENCE_MANIFEST.json').read_text()); assert m['build_sha']==sys.argv[1]
+          rows=m['captures']; assert len(rows)==42 and {r['skill'] for r in rows}==set(range(1,21))
+          assert sum(r['skill']==5 and r['same_as_build'] for r in rows)==4
+          for r in rows:
+              d=p/'evidence'/f"{r['skill']:02d}_{r['variant']}_{r['light']}"
+              for name in ('motion.mp4','metadata.json','sheet.jpg'): assert (d/name).stat().st_size>0
+          for name in ('SOH_AVFX_EXPERIMENTAL_linux.zip','SOH_AVFX_EXPERIMENTAL_windows.zip'):
+              assert len(list((p/'build').rglob(name)))==1
+          print('::notice title=ALL20_UPLOAD_VERIFIED::42 native-size review videos and sheets, 20 IDs, 05 A/B, current build and checksums verified from uploaded artifact')
+          PY

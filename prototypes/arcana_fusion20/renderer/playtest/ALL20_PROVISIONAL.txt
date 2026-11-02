@@ -1,0 +1,44 @@
+ARCANA20 ALL CANDIDATES PROVISIONAL — BẢN XEM THỬ TOÀN BỘ 20 KỸ NĂNG
+
+Đây là bản xem thử hình ảnh để người tạo trực tiếp lựa chọn, KHÔNG phải Gold,
+PLAYTEST_READY, bản phát hành hay xác nhận va chạm chiến đấu. Bản game có đủ
+20 ô, thế giới SOH thực, F9 sáng/tối và lựa chọn #05 A/B. Xem HUONG_DAN.txt.
+
+Bảy kỹ năng S (02/03/07/08/10/15/17) và năm fusion F (01/09/11/16/20)
+đã được CT đóng ở mức ứng viên review với giới hạn; KHÔNG phải chọn Gold.
+05 A/B đều giữ lại, chưa chọn. Sáu thiết kế mới 04/06/12/13/14/18 chạy được
+nhưng còn lỗi mỹ thuật: nhát chém/vết nứt, dòng chữ/sóng, rune/sét, rễ/gai,
+nấm/bào tử, và sự kiện trong tinh thể lần lượt cần cải thiện. 19 D giữ hình
+học nguồn và OUT do chúng tôi bổ sung; đỉnh sáng còn lỗi sọc lớn nghiêm trọng.
+Xem các README đi kèm để hiểu điểm yếu và nguồn gốc từng video.
+
+BẢNG NGUỒN VÀ TRẠNG THÁI (ứng viên chạy được ≠ duyệt mỹ thuật/Gold)
+01 A vương miện+C lửa ngoài | F, sáng ban ngày còn yếu
+02 B rồng lửa | S
+03 B thiên thạch | S, lóe xám là xấp xỉ LDR
+04 NEW | N, lưỡi/vết thương cần rõ lực
+05 A+C | A nguyên bản và B dàn dựng, chưa chọn
+06 NEW | N, chữ/sóng cần chuyển động rõ
+07 C tinh thể | S
+08 B xoáy nước | S
+09 A đồ thị+B màu+C sét | F, actor/độ sâu CT/R4 còn chặn
+10 C bão | S, post/HDR chưa tương đương
+11 A rotor+C sét #09 | F, compositor trình bày, hiệu năng chưa đo
+12 NEW | N, rune/sét ban ngày còn yếu
+13 NEW | N, rễ còn đều, hành động gai yếu
+14 NEW | N, cụm nấm lặp và bào tử yếu
+15 C gai | S, gốc giữ tại vị trí thi triển, không khóa actor
+16 A tăng trưởng+C vật liệu/mảnh | F, mảnh đầu tấm là trình bày bổ sung
+17 C hố đen | S, post/HDR là xấp xỉ
+18 NEW | N, sự kiện lưu trong tinh thể chưa rõ
+19 D hình học, OUT bổ sung | D, đỉnh sọc trắng cần sửa; post nguồn chưa đủ
+20 C khe+A méo thế giới/mảnh | F, camera cố định chỉ chẩn đoán OUT
+
+Video và ảnh 1× từ các lần ghi trước được tái sử dụng với SHA riêng ghi trong
+metadata; chúng KHÔNG phải bản ghi cùng SHA của build này. Chỉ 05 A/B được ghi
+mới cùng build. Video là các khung thực theo thời gian ghi, renderer phần mềm
+có thể bỏ qua source tick; không chứng minh 60 FPS. Các hình JPEG/MP4 nén.
+Bản Windows chỉ được kiểm tra headless; Linux được kiểm tra bằng software GL.
+Không đo GPU/FPS. Thiếu tích hợp world tuyến tính/HDR, depth/che khuất trước HUD
+và chứng từ hit/miss/block/death/status thật của A0/CT/R4. Không có sát thương
+hay phản ứng cơ thể giả. Xem manifest và SHA256SUMS để kiểm tra nguồn/khối tin.
