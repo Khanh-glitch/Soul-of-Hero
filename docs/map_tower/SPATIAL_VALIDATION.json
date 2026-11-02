@@ -1,0 +1,96 @@
+{
+ "schema": "soh.veyra.spatial_validation.v1",
+ "gold_sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
+ "world_meta": "out/world_meta.json",
+ "checks": [
+  {
+   "gate": "A1",
+   "name": "gold_hash",
+   "passed": true,
+   "detail": "88780f78b9e80278"
+  },
+  {
+   "gate": "A1",
+   "name": "class_counts",
+   "passed": true,
+   "detail": {
+    "land": 8,
+    "lakes": 5,
+    "rivers": 17,
+    "roads": 92,
+    "bridges": 12,
+    "docks": 27,
+    "pois": 81,
+    "zones": 23,
+    "resources": 280,
+    "spawns": 4,
+    "elders": 6,
+    "labels": 24
+   }
+  },
+  {
+   "gate": "A2",
+   "name": "coordinate_transform",
+   "passed": true,
+   "detail": "0 objects off transform"
+  },
+  {
+   "gate": "A3",
+   "name": "ferry_count",
+   "passed": true,
+   "detail": "8 ferry routes"
+  },
+  {
+   "gate": "A3",
+   "name": "ferry_not_a_road",
+   "passed": true,
+   "detail": "ferry ids absent from road list"
+  },
+  {
+   "gate": "A4",
+   "name": "dock_anchors",
+   "passed": true,
+   "detail": "24 accepted / 3 rejected with reasons; problems inside accepted docks: []"
+  },
+  {
+   "gate": "A5",
+   "name": "bridge_crossings",
+   "passed": true,
+   "detail": "12/12 landings connected through the deck"
+  },
+  {
+   "gate": "A5",
+   "name": "bridge_railings_hold",
+   "passed": true,
+   "detail": "12/12 block lateral escape []"
+  },
+  {
+   "gate": "A6",
+   "name": "rivers_block_unbridged_crossings",
+   "passed": true,
+   "detail": "19/20 unbridged perpendicular river crossings blocked"
+  },
+  {
+   "gate": "A7",
+   "name": "poi_walkable_ground",
+   "passed": true,
+   "detail": "81/81 POIs have walkable ground within 6 units"
+  },
+  {
+   "gate": "A8",
+   "name": "spawns_walkable",
+   "passed": true,
+   "detail": "4/4 spawns walkable"
+  },
+  {
+   "gate": "A8",
+   "name": "poi_reachable_on_foot",
+   "passed": true,
+   "detail": "54/81 POI centres reachable on foot from a spawn"
+  }
+ ],
+ "passed": 12,
+ "failed": 0,
+ "all_passed": true,
+ "environment": "sandbox (Pillow/numpy), no GPU, no browser"
+}

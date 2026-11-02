@@ -175,7 +175,12 @@
       `tile ${Math.floor(p.x / TILE)},${Math.floor(p.y / TILE)} · ${Math.round(p.x)},${Math.round(p.y)} px`;
   }
 
-  if (typeof window !== 'undefined') window.__veyra = state;
+  // test hooks (used by the CI browser capture): position the avatar deterministically
+  if (typeof window !== 'undefined') {
+    window.__veyra = state;
+    window.veyraGoto = (x, y) => placePlayer(x, y);
+    window.veyraReady = () => !!document.getElementById('loading') === false;
+  }
   boot().catch(err => {
     document.getElementById('loading').textContent = 'failed to load: ' + err;
     console.error(err);

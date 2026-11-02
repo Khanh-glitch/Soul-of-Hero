@@ -1,7 +1,8 @@
 {
- "schema": "soh.veyra.art_manifest.v1",
+ "schema": "soh.veyra.art_manifest.v2",
  "art_tile_px": 32,
- "grid_tile_px": 16,
+ "grid_tile_px": 32,
+ "collision_tile_px": 16,
  "sources": {
   "grass": {
    "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
@@ -17,6 +18,14 @@
    "size": [
     256,
     256
+   ]
+  },
+  "wall": {
+   "path": "assets/environment/cainos_demo/cainos_tileset_wall.png",
+   "sha256": "9c32a07a940e23352dd43a92f724480fedf0cd43edd530219d6e29801e9cc2bb",
+   "size": [
+    512,
+    512
    ]
   },
   "struct": {
@@ -43,12 +52,68 @@
     512
    ]
   },
-  "wall": {
-   "path": "assets/environment/ocean_cainos/ocean_tileset_wall.png",
-   "sha256": "4fab0d3962d2680bba3acfb297c6e3cb405994ca5b3334c2dbe03a97c53b8f14",
+  "crypt": {
+   "path": "assets/environment/chapter1/crypt/crypt_props.png",
+   "sha256": "739d9842812798f5cc0b4f5422e1a246043cb77b0264e4c7f213a2a08c4d5813",
    "size": [
-    512,
-    512
+    548,
+    104
+   ]
+  },
+  "ossuary": {
+   "path": "assets/environment/chapter1/ossuary/ossuary_props.png",
+   "sha256": "107850afa9f41bec4191c2b32a4dd3d774d6fca441b6ba47909940e7351988a7",
+   "size": [
+    410,
+    126
+   ]
+  },
+  "castellan": {
+   "path": "assets/environment/chapter1/castellan/castellan_props.png",
+   "sha256": "8816200e0966726781d9f22d1ffcb37a275be33c533d7ad0ab6267d83007f0f4",
+   "size": [
+    824,
+    180
+   ]
+  },
+  "vigil": {
+   "path": "assets/environment/chapter1/vigil/vigil_props.png",
+   "sha256": "3694916d3c840de0edaec7d19be40ad40f633aee7f492dcad425630031febfef",
+   "size": [
+    662,
+    146
+   ]
+  },
+  "crucible": {
+   "path": "assets/environment/chapter1/crucible/crucible_props.png",
+   "sha256": "cf9adb30ba0f78c14a0a2b8435510fae8e9deb5c84d93e0a691d9596b5691419",
+   "size": [
+    1013,
+    600
+   ]
+  },
+  "archive": {
+   "path": "assets/environment/chapter1/archive/archive_props.png",
+   "sha256": "f00e28932a6a66704fd4329a8a4e91afd2dd25eef35ef8c89d66ddb7e923b0c1",
+   "size": [
+    446,
+    96
+   ]
+  },
+  "relay": {
+   "path": "assets/environment/chapter1/relay/relay_props.png",
+   "sha256": "ffcf953907c38e7bbcba9ef2775bc6e902a2a062e7ff008d6b0653ca3c96f44f",
+   "size": [
+    987,
+    148
+   ]
+  },
+  "gatehouse_tiles": {
+   "path": "assets/environment/chapter1/gatehouse/gatehouse_tiles.png",
+   "sha256": "4320dcf0a3cbb57b824f07f9b06c0e91498ee4c8419e4493fd4cdf1d633ac783",
+   "size": [
+    1024,
+    128
    ]
   }
  },
@@ -57,7 +122,6 @@
    "kind": "tile",
    "rects": [
     {
-     "name": "meadow_0_0",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -65,10 +129,10 @@
       0,
       32,
       32
-     ]
+     ],
+     "name": "meadow_0"
     },
     {
-     "name": "meadow_1_0",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -76,10 +140,10 @@
       0,
       32,
       32
-     ]
+     ],
+     "name": "meadow_1"
     },
     {
-     "name": "meadow_2_0",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -87,10 +151,10 @@
       0,
       32,
       32
-     ]
+     ],
+     "name": "meadow_2"
     },
     {
-     "name": "meadow_3_0",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -98,10 +162,10 @@
       0,
       32,
       32
-     ]
+     ],
+     "name": "meadow_3"
     },
     {
-     "name": "meadow_4_0",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -109,10 +173,10 @@
       0,
       32,
       32
-     ]
+     ],
+     "name": "meadow_4"
     },
     {
-     "name": "meadow_5_0",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -120,10 +184,10 @@
       0,
       32,
       32
-     ]
+     ],
+     "name": "meadow_5"
     },
     {
-     "name": "meadow_6_0",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -131,10 +195,10 @@
       0,
       32,
       32
-     ]
+     ],
+     "name": "meadow_6"
     },
     {
-     "name": "meadow_7_0",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -142,10 +206,10 @@
       0,
       32,
       32
-     ]
+     ],
+     "name": "meadow_7"
     },
     {
-     "name": "meadow_0_1",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -153,10 +217,10 @@
       32,
       32,
       32
-     ]
+     ],
+     "name": "meadow_8"
     },
     {
-     "name": "meadow_1_1",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -164,10 +228,10 @@
       32,
       32,
       32
-     ]
+     ],
+     "name": "meadow_9"
     },
     {
-     "name": "meadow_2_1",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -175,10 +239,10 @@
       32,
       32,
       32
-     ]
+     ],
+     "name": "meadow_10"
     },
     {
-     "name": "meadow_3_1",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -186,10 +250,10 @@
       32,
       32,
       32
-     ]
+     ],
+     "name": "meadow_11"
     },
     {
-     "name": "meadow_4_1",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -197,10 +261,10 @@
       32,
       32,
       32
-     ]
+     ],
+     "name": "meadow_12"
     },
     {
-     "name": "meadow_5_1",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -208,10 +272,10 @@
       32,
       32,
       32
-     ]
+     ],
+     "name": "meadow_13"
     },
     {
-     "name": "meadow_6_1",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -219,10 +283,10 @@
       32,
       32,
       32
-     ]
+     ],
+     "name": "meadow_14"
     },
     {
-     "name": "meadow_7_1",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -230,10 +294,10 @@
       32,
       32,
       32
-     ]
+     ],
+     "name": "meadow_15"
     },
     {
-     "name": "meadow_0_2",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -241,10 +305,10 @@
       64,
       32,
       32
-     ]
+     ],
+     "name": "meadow_16"
     },
     {
-     "name": "meadow_1_2",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -252,10 +316,10 @@
       64,
       32,
       32
-     ]
+     ],
+     "name": "meadow_17"
     },
     {
-     "name": "meadow_2_2",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -263,10 +327,10 @@
       64,
       32,
       32
-     ]
+     ],
+     "name": "meadow_18"
     },
     {
-     "name": "meadow_3_2",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -274,10 +338,10 @@
       64,
       32,
       32
-     ]
+     ],
+     "name": "meadow_19"
     },
     {
-     "name": "meadow_4_2",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -285,10 +349,10 @@
       64,
       32,
       32
-     ]
+     ],
+     "name": "meadow_20"
     },
     {
-     "name": "meadow_5_2",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -296,10 +360,10 @@
       64,
       32,
       32
-     ]
+     ],
+     "name": "meadow_21"
     },
     {
-     "name": "meadow_6_2",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -307,10 +371,10 @@
       64,
       32,
       32
-     ]
+     ],
+     "name": "meadow_22"
     },
     {
-     "name": "meadow_7_2",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -318,10 +382,10 @@
       64,
       32,
       32
-     ]
+     ],
+     "name": "meadow_23"
     },
     {
-     "name": "meadow_0_3",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -329,10 +393,10 @@
       96,
       32,
       32
-     ]
+     ],
+     "name": "meadow_24"
     },
     {
-     "name": "meadow_1_3",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -340,10 +404,10 @@
       96,
       32,
       32
-     ]
+     ],
+     "name": "meadow_25"
     },
     {
-     "name": "meadow_2_3",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -351,10 +415,10 @@
       96,
       32,
       32
-     ]
+     ],
+     "name": "meadow_26"
     },
     {
-     "name": "meadow_3_3",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -362,10 +426,10 @@
       96,
       32,
       32
-     ]
+     ],
+     "name": "meadow_27"
     },
     {
-     "name": "meadow_4_3",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -373,10 +437,10 @@
       96,
       32,
       32
-     ]
+     ],
+     "name": "meadow_28"
     },
     {
-     "name": "meadow_5_3",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -384,10 +448,10 @@
       96,
       32,
       32
-     ]
+     ],
+     "name": "meadow_29"
     },
     {
-     "name": "meadow_6_3",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -395,10 +459,10 @@
       96,
       32,
       32
-     ]
+     ],
+     "name": "meadow_30"
     },
     {
-     "name": "meadow_7_3",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -406,7 +470,8 @@
       96,
       32,
       32
-     ]
+     ],
+     "name": "meadow_31"
     }
    ]
   },
@@ -414,7 +479,6 @@
    "kind": "tile",
    "rects": [
     {
-     "name": "pathcore_0_4",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -422,10 +486,10 @@
       128,
       32,
       32
-     ]
+     ],
+     "name": "path_0"
     },
     {
-     "name": "pathcore_1_4",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -433,10 +497,10 @@
       128,
       32,
       32
-     ]
+     ],
+     "name": "path_1"
     },
     {
-     "name": "pathcore_0_5",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -444,10 +508,10 @@
       160,
       32,
       32
-     ]
+     ],
+     "name": "path_2"
     },
     {
-     "name": "pathcore_1_5",
      "source": "grass",
      "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
      "rect": [
@@ -455,18 +519,8 @@
       160,
       32,
       32
-     ]
-    },
-    {
-     "name": "pathcore_0_6",
-     "source": "grass",
-     "path": "assets/environment/cainos_demo/cainos_tileset_grass.png",
-     "rect": [
-      0,
-      192,
-      32,
-      32
-     ]
+     ],
+     "name": "path_3"
     }
    ]
   },
@@ -474,7 +528,6 @@
    "kind": "tile",
    "rects": [
     {
-     "name": "stoneground_0_0",
      "source": "stone",
      "path": "assets/environment/cainos_demo/cainos_tileset_stone_ground.png",
      "rect": [
@@ -483,10 +536,9 @@
       32,
       32
      ],
-     "lum": 125.9
+     "name": "stone_0"
     },
     {
-     "name": "stoneground_1_0",
      "source": "stone",
      "path": "assets/environment/cainos_demo/cainos_tileset_stone_ground.png",
      "rect": [
@@ -495,46 +547,9 @@
       32,
       32
      ],
-     "lum": 127.9
+     "name": "stone_1"
     },
     {
-     "name": "stoneground_2_0",
-     "source": "stone",
-     "path": "assets/environment/cainos_demo/cainos_tileset_stone_ground.png",
-     "rect": [
-      64,
-      0,
-      32,
-      32
-     ],
-     "lum": 125.1
-    },
-    {
-     "name": "stoneground_4_0",
-     "source": "stone",
-     "path": "assets/environment/cainos_demo/cainos_tileset_stone_ground.png",
-     "rect": [
-      128,
-      0,
-      32,
-      32
-     ],
-     "lum": 129.5
-    },
-    {
-     "name": "stoneground_5_0",
-     "source": "stone",
-     "path": "assets/environment/cainos_demo/cainos_tileset_stone_ground.png",
-     "rect": [
-      160,
-      0,
-      32,
-      32
-     ],
-     "lum": 126.3
-    },
-    {
-     "name": "stoneground_0_1",
      "source": "stone",
      "path": "assets/environment/cainos_demo/cainos_tileset_stone_ground.png",
      "rect": [
@@ -543,10 +558,9 @@
       32,
       32
      ],
-     "lum": 127.0
+     "name": "stone_2"
     },
     {
-     "name": "stoneground_1_1",
      "source": "stone",
      "path": "assets/environment/cainos_demo/cainos_tileset_stone_ground.png",
      "rect": [
@@ -555,175 +569,683 @@
       32,
       32
      ],
-     "lum": 129.7
-    },
+     "name": "stone_3"
+    }
+   ]
+  },
+  "rubble": {
+   "kind": "tile",
+   "rects": [
     {
-     "name": "stoneground_2_1",
-     "source": "stone",
-     "path": "assets/environment/cainos_demo/cainos_tileset_stone_ground.png",
-     "rect": [
-      64,
-      32,
-      32,
-      32
-     ],
-     "lum": 126.1
-    },
-    {
-     "name": "stoneground_3_1",
-     "source": "stone",
-     "path": "assets/environment/cainos_demo/cainos_tileset_stone_ground.png",
-     "rect": [
-      96,
-      32,
-      32,
-      32
-     ],
-     "lum": 123.2
-    },
-    {
-     "name": "stoneground_4_1",
-     "source": "stone",
-     "path": "assets/environment/cainos_demo/cainos_tileset_stone_ground.png",
-     "rect": [
-      128,
-      32,
-      32,
-      32
-     ],
-     "lum": 129.6
-    },
-    {
-     "name": "stoneground_5_1",
-     "source": "stone",
-     "path": "assets/environment/cainos_demo/cainos_tileset_stone_ground.png",
-     "rect": [
-      160,
-      32,
-      32,
-      32
-     ],
-     "lum": 127.3
-    },
-    {
-     "name": "stoneground_0_2",
-     "source": "stone",
-     "path": "assets/environment/cainos_demo/cainos_tileset_stone_ground.png",
+     "source": "gatehouse_tiles",
+     "path": "assets/environment/chapter1/gatehouse/gatehouse_tiles.png",
      "rect": [
       0,
-      64,
+      0,
       32,
       32
      ],
-     "lum": 125.2
+     "name": "rubble_0"
     },
     {
-     "name": "stoneground_1_2",
-     "source": "stone",
-     "path": "assets/environment/cainos_demo/cainos_tileset_stone_ground.png",
+     "source": "gatehouse_tiles",
+     "path": "assets/environment/chapter1/gatehouse/gatehouse_tiles.png",
      "rect": [
       32,
-      64,
+      0,
       32,
       32
      ],
-     "lum": 126.7
+     "name": "rubble_1"
     },
     {
-     "name": "stoneground_2_2",
-     "source": "stone",
-     "path": "assets/environment/cainos_demo/cainos_tileset_stone_ground.png",
+     "source": "gatehouse_tiles",
+     "path": "assets/environment/chapter1/gatehouse/gatehouse_tiles.png",
      "rect": [
       64,
       64,
       32,
       32
      ],
-     "lum": 124.5
+     "name": "rubble_14"
+    }
+   ]
+  },
+  "cliff": {
+   "kind": "tile",
+   "rects": [
+    {
+     "source": "wall",
+     "path": "assets/environment/cainos_demo/cainos_tileset_wall.png",
+     "rect": [
+      0,
+      0,
+      64,
+      64
+     ],
+     "name": "cliff_0"
     },
     {
-     "name": "stoneground_3_2",
-     "source": "stone",
-     "path": "assets/environment/cainos_demo/cainos_tileset_stone_ground.png",
+     "source": "wall",
+     "path": "assets/environment/cainos_demo/cainos_tileset_wall.png",
+     "rect": [
+      64,
+      0,
+      64,
+      64
+     ],
+     "name": "cliff_1"
+    },
+    {
+     "source": "wall",
+     "path": "assets/environment/cainos_demo/cainos_tileset_wall.png",
+     "rect": [
+      0,
+      64,
+      32,
+      64
+     ],
+     "name": "cliff_2"
+    },
+    {
+     "source": "wall",
+     "path": "assets/environment/cainos_demo/cainos_tileset_wall.png",
+     "rect": [
+      32,
+      64,
+      32,
+      64
+     ],
+     "name": "cliff_3"
+    },
+    {
+     "source": "wall",
+     "path": "assets/environment/cainos_demo/cainos_tileset_wall.png",
+     "rect": [
+      64,
+      64,
+      32,
+      64
+     ],
+     "name": "cliff_4"
+    },
+    {
+     "source": "wall",
+     "path": "assets/environment/cainos_demo/cainos_tileset_wall.png",
      "rect": [
       96,
       64,
-      32,
-      32
+      16,
+      64
      ],
-     "lum": 122.9
+     "name": "cliff_5"
     },
     {
-     "name": "stoneground_4_2",
-     "source": "stone",
-     "path": "assets/environment/cainos_demo/cainos_tileset_stone_ground.png",
+     "source": "wall",
+     "path": "assets/environment/cainos_demo/cainos_tileset_wall.png",
      "rect": [
-      128,
-      64,
-      32,
-      32
-     ],
-     "lum": 129.4
-    },
-    {
-     "name": "stoneground_5_2",
-     "source": "stone",
-     "path": "assets/environment/cainos_demo/cainos_tileset_stone_ground.png",
-     "rect": [
+      0,
       160,
       64,
-      32,
-      32
+      64
      ],
-     "lum": 125.8
+     "name": "cliff_6"
     },
     {
-     "name": "stoneground_0_3",
-     "source": "stone",
-     "path": "assets/environment/cainos_demo/cainos_tileset_stone_ground.png",
-     "rect": [
-      0,
-      96,
-      32,
-      32
-     ],
-     "lum": 123.5
-    },
-    {
-     "name": "stoneground_1_3",
-     "source": "stone",
-     "path": "assets/environment/cainos_demo/cainos_tileset_stone_ground.png",
-     "rect": [
-      32,
-      96,
-      32,
-      32
-     ],
-     "lum": 124.9
-    },
-    {
-     "name": "stoneground_2_3",
-     "source": "stone",
-     "path": "assets/environment/cainos_demo/cainos_tileset_stone_ground.png",
+     "source": "wall",
+     "path": "assets/environment/cainos_demo/cainos_tileset_wall.png",
      "rect": [
       64,
-      96,
-      32,
-      32
+      160,
+      64,
+      64
      ],
-     "lum": 122.6
+     "name": "cliff_7"
     },
     {
-     "name": "stoneground_4_3",
-     "source": "stone",
-     "path": "assets/environment/cainos_demo/cainos_tileset_stone_ground.png",
+     "source": "wall",
+     "path": "assets/environment/cainos_demo/cainos_tileset_wall.png",
      "rect": [
-      128,
       96,
+      0,
+      16,
+      64
+     ],
+     "name": "cliff_8"
+    },
+    {
+     "source": "wall",
+     "path": "assets/environment/cainos_demo/cainos_tileset_wall.png",
+     "rect": [
+      112,
+      0,
+      16,
+      64
+     ],
+     "name": "cliff_9"
+    }
+   ]
+  },
+  "ash": {
+   "kind": "derived_tile",
+   "rects": [
+    {
+     "source": "derived",
+     "path": "(derived)",
+     "rect": [
+      0,
+      0,
       32,
       32
      ],
-     "lum": 129.4
+     "name": "ash",
+     "rule": "DV-01 luminance -> charcoal ramp",
+     "parent": "stone"
+    }
+   ]
+  },
+  "sand": {
+   "kind": "derived_tile",
+   "rects": [
+    {
+     "source": "derived",
+     "path": "(derived)",
+     "rect": [
+      0,
+      32,
+      32,
+      32
+     ],
+     "name": "sand",
+     "rule": "DV-02 luminance -> warm dry ramp",
+     "parent": "stone"
+    }
+   ]
+  },
+  "water": {
+   "kind": "derived_tile",
+   "rects": [
+    {
+     "source": "derived",
+     "path": "(derived)",
+     "rect": [
+      64,
+      0,
+      32,
+      32
+     ],
+     "name": "water",
+     "rule": "DV-03 luminance -> deep/shallow blue",
+     "parent": "stone"
+    }
+   ]
+  },
+  "crypt_wall": {
+   "kind": "object",
+   "rects": [
+    {
+     "source": "crypt",
+     "path": "assets/environment/chapter1/crypt/crypt_props.png",
+     "rect": [
+      501,
+      2,
+      44,
+      19
+     ],
+     "name": "crypt_wall_0",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    },
+    {
+     "source": "crypt",
+     "path": "assets/environment/chapter1/crypt/crypt_props.png",
+     "rect": [
+      193,
+      7,
+      62,
+      40
+     ],
+     "name": "crypt_wall_1",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    },
+    {
+     "source": "crypt",
+     "path": "assets/environment/chapter1/crypt/crypt_props.png",
+     "rect": [
+      67,
+      8,
+      56,
+      37
+     ],
+     "name": "crypt_wall_2",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    },
+    {
+     "source": "crypt",
+     "path": "assets/environment/chapter1/crypt/crypt_props.png",
+     "rect": [
+      1,
+      9,
+      62,
+      38
+     ],
+     "name": "crypt_wall_3",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    },
+    {
+     "source": "crypt",
+     "path": "assets/environment/chapter1/crypt/crypt_props.png",
+     "rect": [
+      127,
+      10,
+      62,
+      30
+     ],
+     "name": "crypt_wall_4",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    }
+   ]
+  },
+  "crypt_door": {
+   "kind": "object",
+   "rects": [
+    {
+     "source": "crypt",
+     "path": "assets/environment/chapter1/crypt/crypt_props.png",
+     "rect": [
+      380,
+      6,
+      23,
+      52
+     ],
+     "name": "crypt_door_0",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    }
+   ]
+  },
+  "niche": {
+   "kind": "object",
+   "rects": [
+    {
+     "source": "ossuary",
+     "path": "assets/environment/chapter1/ossuary/ossuary_props.png",
+     "rect": [
+      270,
+      23,
+      36,
+      69
+     ],
+     "name": "niche_0",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    }
+   ]
+  },
+  "sarcophagus": {
+   "kind": "object",
+   "rects": []
+  },
+  "pillar": {
+   "kind": "object",
+   "rects": [
+    {
+     "source": "castellan",
+     "path": "assets/environment/chapter1/castellan/castellan_props.png",
+     "rect": [
+      607,
+      1,
+      24,
+      85
+     ],
+     "name": "pillar_0",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    },
+    {
+     "source": "castellan",
+     "path": "assets/environment/chapter1/castellan/castellan_props.png",
+     "rect": [
+      798,
+      1,
+      21,
+      46
+     ],
+     "name": "pillar_1",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    }
+   ]
+  },
+  "banner": {
+   "kind": "object",
+   "rects": [
+    {
+     "source": "castellan",
+     "path": "assets/environment/chapter1/castellan/castellan_props.png",
+     "rect": [
+      798,
+      1,
+      21,
+      46
+     ],
+     "name": "banner_0",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    }
+   ]
+  },
+  "brazier": {
+   "kind": "object",
+   "rects": [
+    {
+     "source": "vigil",
+     "path": "assets/environment/chapter1/vigil/vigil_props.png",
+     "rect": [
+      1,
+      0,
+      39,
+      35
+     ],
+     "name": "brazier_0",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    },
+    {
+     "source": "vigil",
+     "path": "assets/environment/chapter1/vigil/vigil_props.png",
+     "rect": [
+      43,
+      0,
+      32,
+      51
+     ],
+     "name": "brazier_1",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    },
+    {
+     "source": "vigil",
+     "path": "assets/environment/chapter1/vigil/vigil_props.png",
+     "rect": [
+      544,
+      0,
+      41,
+      20
+     ],
+     "name": "brazier_2",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    },
+    {
+     "source": "vigil",
+     "path": "assets/environment/chapter1/vigil/vigil_props.png",
+     "rect": [
+      631,
+      0,
+      28,
+      66
+     ],
+     "name": "brazier_3",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    },
+    {
+     "source": "vigil",
+     "path": "assets/environment/chapter1/vigil/vigil_props.png",
+     "rect": [
+      448,
+      1,
+      44,
+      42
+     ],
+     "name": "brazier_4",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    },
+    {
+     "source": "vigil",
+     "path": "assets/environment/chapter1/vigil/vigil_props.png",
+     "rect": [
+      497,
+      1,
+      21,
+      25
+     ],
+     "name": "brazier_5",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    },
+    {
+     "source": "vigil",
+     "path": "assets/environment/chapter1/vigil/vigil_props.png",
+     "rect": [
+      332,
+      3,
+      20,
+      26
+     ],
+     "name": "brazier_6",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    },
+    {
+     "source": "vigil",
+     "path": "assets/environment/chapter1/vigil/vigil_props.png",
+     "rect": [
+      233,
+      5,
+      44,
+      34
+     ],
+     "name": "brazier_7",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    }
+   ]
+  },
+  "forge": {
+   "kind": "object",
+   "rects": [
+    {
+     "source": "crucible",
+     "path": "assets/environment/chapter1/crucible/crucible_props.png",
+     "rect": [
+      414,
+      1,
+      64,
+      47
+     ],
+     "name": "forge_0",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    },
+    {
+     "source": "crucible",
+     "path": "assets/environment/chapter1/crucible/crucible_props.png",
+     "rect": [
+      480,
+      1,
+      64,
+      47
+     ],
+     "name": "forge_1",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    },
+    {
+     "source": "crucible",
+     "path": "assets/environment/chapter1/crucible/crucible_props.png",
+     "rect": [
+      832,
+      225,
+      50,
+      47
+     ],
+     "name": "forge_2",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    },
+    {
+     "source": "crucible",
+     "path": "assets/environment/chapter1/crucible/crucible_props.png",
+     "rect": [
+      439,
+      227,
+      36,
+      77
+     ],
+     "name": "forge_3",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    },
+    {
+     "source": "crucible",
+     "path": "assets/environment/chapter1/crucible/crucible_props.png",
+     "rect": [
+      517,
+      231,
+      32,
+      45
+     ],
+     "name": "forge_4",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    },
+    {
+     "source": "crucible",
+     "path": "assets/environment/chapter1/crucible/crucible_props.png",
+     "rect": [
+      477,
+      245,
+      36,
+      35
+     ],
+     "name": "forge_5",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    },
+    {
+     "source": "crucible",
+     "path": "assets/environment/chapter1/crucible/crucible_props.png",
+     "rect": [
+      892,
+      249,
+      30,
+      33
+     ],
+     "name": "forge_6",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    },
+    {
+     "source": "crucible",
+     "path": "assets/environment/chapter1/crucible/crucible_props.png",
+     "rect": [
+      594,
+      261,
+      34,
+      42
+     ],
+     "name": "forge_7",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    }
+   ]
+  },
+  "shelf": {
+   "kind": "object",
+   "rects": [
+    {
+     "source": "archive",
+     "path": "assets/environment/chapter1/archive/archive_props.png",
+     "rect": [
+      299,
+      0,
+      43,
+      54
+     ],
+     "name": "shelf_0",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    }
+   ]
+  },
+  "pylon": {
+   "kind": "object",
+   "rects": [
+    {
+     "source": "relay",
+     "path": "assets/environment/chapter1/relay/relay_props.png",
+     "rect": [
+      144,
+      0,
+      51,
+      80
+     ],
+     "name": "pylon_0",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    },
+    {
+     "source": "relay",
+     "path": "assets/environment/chapter1/relay/relay_props.png",
+     "rect": [
+      475,
+      1,
+      30,
+      88
+     ],
+     "name": "pylon_1",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    },
+    {
+     "source": "relay",
+     "path": "assets/environment/chapter1/relay/relay_props.png",
+     "rect": [
+      722,
+      1,
+      22,
+      61
+     ],
+     "name": "pylon_2",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    },
+    {
+     "source": "relay",
+     "path": "assets/environment/chapter1/relay/relay_props.png",
+     "rect": [
+      920,
+      1,
+      38,
+      55
+     ],
+     "name": "pylon_3",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    },
+    {
+     "source": "relay",
+     "path": "assets/environment/chapter1/relay/relay_props.png",
+     "rect": [
+      303,
+      2,
+      63,
+      64
+     ],
+     "name": "pylon_4",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    },
+    {
+     "source": "relay",
+     "path": "assets/environment/chapter1/relay/relay_props.png",
+     "rect": [
+      752,
+      2,
+      46,
+      65
+     ],
+     "name": "pylon_5",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    },
+    {
+     "source": "relay",
+     "path": "assets/environment/chapter1/relay/relay_props.png",
+     "rect": [
+      0,
+      3,
+      30,
+      91
+     ],
+     "name": "pylon_6",
+     "sprite_check": "not empty, dark<0.22, <=120px"
+    },
+    {
+     "source": "relay",
+     "path": "assets/environment/chapter1/relay/relay_props.png",
+     "rect": [
+      248,
+      7,
+      26,
+      40
+     ],
+     "name": "pylon_7",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     }
    ]
   },
@@ -739,7 +1261,8 @@
       113,
       139
      ],
-     "name": "tree_0"
+     "name": "tree_0",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     },
     {
      "source": "plant",
@@ -750,7 +1273,8 @@
       95,
       136
      ],
-     "name": "tree_1"
+     "name": "tree_1",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     },
     {
      "source": "plant",
@@ -761,7 +1285,8 @@
       79,
       120
      ],
-     "name": "tree_2"
+     "name": "tree_2",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     }
    ]
   },
@@ -777,7 +1302,8 @@
       47,
       42
      ],
-     "name": "bush_0"
+     "name": "bush_0",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     },
     {
      "source": "plant",
@@ -788,7 +1314,8 @@
       39,
       45
      ],
-     "name": "bush_1"
+     "name": "bush_1",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     },
     {
      "source": "plant",
@@ -799,7 +1326,8 @@
       38,
       32
      ],
-     "name": "bush_2"
+     "name": "bush_2",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     },
     {
      "source": "plant",
@@ -810,7 +1338,8 @@
       40,
       35
      ],
-     "name": "bush_3"
+     "name": "bush_3",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     },
     {
      "source": "plant",
@@ -821,7 +1350,8 @@
       27,
       25
      ],
-     "name": "bush_4"
+     "name": "bush_4",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     }
    ]
   },
@@ -837,7 +1367,8 @@
       22,
       19
      ],
-     "name": "tuft_0"
+     "name": "tuft_0",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     }
    ]
   },
@@ -853,7 +1384,8 @@
       80,
       64
      ],
-     "name": "struct_arch_0"
+     "name": "struct_arch_0",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     },
     {
      "source": "struct",
@@ -864,7 +1396,8 @@
       64,
       64
      ],
-     "name": "struct_arch_1"
+     "name": "struct_arch_1",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     }
    ]
   },
@@ -880,7 +1413,8 @@
       64,
       96
      ],
-     "name": "struct_wall_0"
+     "name": "struct_wall_0",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     },
     {
      "source": "struct",
@@ -891,7 +1425,8 @@
       65,
       96
      ],
-     "name": "struct_wall_1"
+     "name": "struct_wall_1",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     },
     {
      "source": "struct",
@@ -902,7 +1437,8 @@
       65,
       96
      ],
-     "name": "struct_wall_2"
+     "name": "struct_wall_2",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     },
     {
      "source": "struct",
@@ -913,7 +1449,8 @@
       64,
       96
      ],
-     "name": "struct_wall_3"
+     "name": "struct_wall_3",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     },
     {
      "source": "struct",
@@ -924,7 +1461,8 @@
       65,
       96
      ],
-     "name": "struct_wall_4"
+     "name": "struct_wall_4",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     },
     {
      "source": "struct",
@@ -935,7 +1473,8 @@
       65,
       96
      ],
-     "name": "struct_wall_5"
+     "name": "struct_wall_5",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     }
    ]
   },
@@ -951,7 +1490,8 @@
       90,
       96
      ],
-     "name": "struct_stairs_0"
+     "name": "struct_stairs_0",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     },
     {
      "source": "struct",
@@ -962,7 +1502,8 @@
       90,
       96
      ],
-     "name": "struct_stairs_1"
+     "name": "struct_stairs_1",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     },
     {
      "source": "struct",
@@ -973,7 +1514,8 @@
       88,
       96
      ],
-     "name": "struct_stairs_2"
+     "name": "struct_stairs_2",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     }
    ]
   },
@@ -989,7 +1531,8 @@
       32,
       46
      ],
-     "name": "props_crate_0"
+     "name": "props_crate_0",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     },
     {
      "source": "props",
@@ -1000,7 +1543,8 @@
       32,
       31
      ],
-     "name": "props_crate_1"
+     "name": "props_crate_1",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     }
    ]
   },
@@ -1016,7 +1560,8 @@
       28,
       36
      ],
-     "name": "props_barrel_0"
+     "name": "props_barrel_0",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     }
    ]
   },
@@ -1032,7 +1577,8 @@
       21,
       34
      ],
-     "name": "props_urn_0"
+     "name": "props_urn_0",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     },
     {
      "source": "props",
@@ -1043,7 +1589,8 @@
       25,
       27
      ],
-     "name": "props_urn_1"
+     "name": "props_urn_1",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     },
     {
      "source": "props",
@@ -1054,7 +1601,8 @@
       21,
       32
      ],
-     "name": "props_urn_2"
+     "name": "props_urn_2",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     }
    ]
   },
@@ -1070,7 +1618,8 @@
       27,
       32
      ],
-     "name": "props_sign_0"
+     "name": "props_sign_0",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     },
     {
      "source": "props",
@@ -1081,7 +1630,8 @@
       27,
       32
      ],
-     "name": "props_sign_1"
+     "name": "props_sign_1",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     }
    ]
   },
@@ -1097,7 +1647,8 @@
       32,
       57
      ],
-     "name": "props_grave_0"
+     "name": "props_grave_0",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     },
     {
      "source": "props",
@@ -1108,7 +1659,8 @@
       30,
       41
      ],
-     "name": "props_grave_1"
+     "name": "props_grave_1",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     },
     {
      "source": "props",
@@ -1119,7 +1671,8 @@
       26,
       40
      ],
-     "name": "props_grave_2"
+     "name": "props_grave_2",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     }
    ]
   },
@@ -1135,7 +1688,8 @@
       94,
       72
      ],
-     "name": "props_well_0"
+     "name": "props_well_0",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     }
    ]
   },
@@ -1151,7 +1705,8 @@
       37,
       72
      ],
-     "name": "props_statue_0"
+     "name": "props_statue_0",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     }
    ]
   },
@@ -1167,7 +1722,8 @@
       32,
       57
      ],
-     "name": "props_pedestal_0"
+     "name": "props_pedestal_0",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     }
    ]
   },
@@ -1183,7 +1739,8 @@
       32,
       46
      ],
-     "name": "props_workbench_0"
+     "name": "props_workbench_0",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     }
    ]
   },
@@ -1199,7 +1756,8 @@
       32,
       77
      ],
-     "name": "props_furnace_0"
+     "name": "props_furnace_0",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     },
     {
      "source": "props",
@@ -1210,7 +1768,8 @@
       30,
       29
      ],
-     "name": "props_furnace_1"
+     "name": "props_furnace_1",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     }
    ]
   },
@@ -1226,7 +1785,8 @@
       55,
       49
      ],
-     "name": "props_ruin_0"
+     "name": "props_ruin_0",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     }
    ]
   },
@@ -1242,7 +1802,8 @@
       37,
       50
      ],
-     "name": "props_door_0"
+     "name": "props_door_0",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     }
    ]
   },
@@ -1258,7 +1819,8 @@
       57,
       42
      ],
-     "name": "props_boulder_0"
+     "name": "props_boulder_0",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     }
    ]
   },
@@ -1274,7 +1836,8 @@
       27,
       22
      ],
-     "name": "props_rock_0"
+     "name": "props_rock_0",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     },
     {
      "source": "props",
@@ -1285,7 +1848,8 @@
       24,
       19
      ],
-     "name": "props_rock_1"
+     "name": "props_rock_1",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     },
     {
      "source": "props",
@@ -1296,7 +1860,8 @@
       24,
       19
      ],
-     "name": "props_rock_2"
+     "name": "props_rock_2",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     },
     {
      "source": "props",
@@ -1307,7 +1872,8 @@
       18,
       16
      ],
-     "name": "props_rock_3"
+     "name": "props_rock_3",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     },
     {
      "source": "props",
@@ -1318,7 +1884,8 @@
       27,
       27
      ],
-     "name": "props_rock_4"
+     "name": "props_rock_4",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     },
     {
      "source": "props",
@@ -1329,16 +1896,79 @@
       31,
       19
      ],
-     "name": "props_rock_5"
+     "name": "props_rock_5",
+     "sprite_check": "not empty, dark<0.22, <=120px"
     }
    ]
   }
  },
- "missing": {
-  "water_surface": "no deep/shallow sea or lake tile with shore transitions exists in this repository",
-  "buildings": "no residential/industrial building exteriors (roofs, walls, doors) exist in this repository",
-  "bridge_kit": "no bridge module atlas exists in this repository (decks are assembled from stone tiles + wall railings)",
-  "dock_kit": "no pier/plank module atlas exists in this repository (piers are assembled from stone tiles + posts)",
-  "sand_desert_ash": "no sand / hard-earth / ash / volcanic ground family exists in this repository"
+ "derived": {
+  "ash": {
+   "parent": "stone",
+   "rect": [
+    0,
+    0,
+    32,
+    32
+   ],
+   "rule": "DV-01 luminance -> charcoal ramp",
+   "tint": [
+    [
+     0.28,
+     0.25,
+     0.24
+    ],
+    1.0
+   ],
+   "speck": [
+    0.9,
+    0.35,
+    0.18,
+    0.06
+   ]
+  },
+  "sand": {
+   "parent": "stone",
+   "rect": [
+    0,
+    32,
+    32,
+    32
+   ],
+   "rule": "DV-02 luminance -> warm dry ramp",
+   "tint": [
+    [
+     1.06,
+     0.94,
+     0.72
+    ],
+    1.0
+   ],
+   "speck": null
+  },
+  "water": {
+   "parent": "stone",
+   "rect": [
+    64,
+    0,
+    32,
+    32
+   ],
+   "rule": "DV-03 luminance -> deep/shallow blue",
+   "tint": [
+    [
+     0.3,
+     0.62,
+     0.82
+    ],
+    1.0
+   ],
+   "speck": null
+  }
+ },
+ "open_gaps": {
+  "authored_water_autotile": "no sea/lake/river tileset exists in any branch; DV-03 water is a labelled derived stand-in",
+  "roofed_building_exteriors": "no roof art exists; structures are assembled facades (crypt wall strips + doors + banners + pillars)",
+  "sand_ash_authored": "no authored sand/ash ground; DV-01/DV-02 are labelled derived ramps"
  }
 }

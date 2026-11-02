@@ -1,0 +1,39 @@
+name: veyra-r3-browser
+on:
+  push:
+    paths: ['world/**', 'tools/world/**', '.github/workflows/veyra-r3-browser.yml']
+  workflow_dispatch:
+jobs:
+  browser-capture:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: pip install pillow numpy
+      - name: Rebuild world from GOLD
+        run: |
+          python tools/world/art_registry.py
+          python tools/world/veyra_compile.py
+          python tools/world/validate.py
+      - name: Publish runtime assets
+        run: |
+          cp out/world.png out/world_meta.json out/minimap.png world/assets/
+      - run: npm init -y >/dev/null 2>&1; npm i -D playwright@1.47.2
+      - run: npx playwright install --with-deps chromium
+      - name: Serve
+        run: |
+          python -m http.server 8011 --bind 127.0.0.1 --directory world &
+          sleep 2
+      - name: Capture (real Chromium, real input, canvas pixel checks)
+        run: node tools/world/browser_capture.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: veyra-browser-evidence
+          path: |
+            docs/map_tower/evidence/browser/**
+            docs/map_tower/SPATIAL_VALIDATION.json
+            out/world_meta.json
