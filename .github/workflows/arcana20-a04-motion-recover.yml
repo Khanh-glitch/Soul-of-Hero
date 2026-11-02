@@ -6,31 +6,38 @@ on:
     paths: ['.github/workflows/arcana20-a04-motion-recover.yml']
 permissions:
   actions: read
-  contents: read
+  contents: write
 jobs:
   inspect:
+    strategy:
+      fail-fast: false
+      matrix:
+        light: [normal, dimmed]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
-          name: a04-full-baseline-normal
-          run-id: 41276632227
+          name: a04-full-candidate-${{ matrix.light }}
+          run-id: 41399798425
           github-token: ${{ github.token }}
           path: capture
-      - name: Inspect actual native frame archive and available encoder
+      - name: Check exact frozen source and surface native-sized review clip
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
+          set -euo pipefail
+          grep -Fx 'source_avfx=9433b76f476b2fe414108112752724c3d7c87359' capture/capture-revisions.txt
+          movie=$(find capture -name a04-review.mp4 -type f -print -quit)
+          test -s "$movie"
+          count=$(ffprobe -v error -select_streams v:0 -show_entries stream=nb_frames -of default=noprint_wrappers=1:nokey=1 "$movie")
+          test "$count" = 480
+          ffmpeg -hide_banner -loglevel error -y -i "$movie" -c:v libx264 -preset slow -crf 30 -pix_fmt yuv420p -movflags +faststart compact.mp4
+          test "$(stat -c %s compact.mp4)" -lt 8000000
           python3 - <<'PY'
-          import pathlib
-          root=pathlib.Path('capture')
-          paths=list(root.rglob('phase_04_full_motion_*.png'))
-          paths.sort()
-          print('::notice title=MOTION_ARCHIVE::count='+str(len(paths)))
-          print('::notice title=MOTION_ARCHIVE::first='+str(paths[:2]))
-          print('::notice title=MOTION_ARCHIVE::last='+str(paths[-2:]))
-          for p in root.rglob('*'):
-              if p.is_file() and p.name.endswith('.log'):
-                  print('::notice title=MOTION_ARCHIVE::log='+str(p))
+          import base64,json,pathlib
+          pathlib.Path('blob.json').write_text(json.dumps({'content':base64.b64encode(pathlib.Path('compact.mp4').read_bytes()).decode(),'encoding':'base64'}))
           PY
-          if command -v ffmpeg; then ffmpeg -version | head -1 | sed 's/^/::notice title=MOTION_ARCHIVE::/'; else echo '::notice title=MOTION_ARCHIVE::ffmpeg missing'; fi
+          blob=$(gh api --method POST "repos/$GITHUB_REPOSITORY/git/blobs" --input blob.json --jq .sha)
+          echo "::notice title=A04_FROZEN_720P_GIT_BLOB::$blob"
+          echo "::notice title=A04_FROZEN_SCOPE::480 source ticks at 60 Hz in actual frozen world; diagnostic, not natural gameplay or device FPS"
