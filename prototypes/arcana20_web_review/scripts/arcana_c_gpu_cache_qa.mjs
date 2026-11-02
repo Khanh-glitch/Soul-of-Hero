@@ -1,0 +1,12 @@
+// GPU field reuse is an internal optimization, not a P0 or device-FPS test.
+import assert from 'node:assert/strict';import {chromium} from 'playwright';
+const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||undefined,args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader']});const page=await browser.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
+await page.goto(process.env.SOH_URL||'http://127.0.0.1:4176/');
+const rows=await page.evaluate(async()=>{
+ const {CSource}=await import('/src/arcana_c/player.ts'),{CGpuComposite}=await import('/src/arcana_c/gpu.ts');const W=384,H=216;
+ const scene=document.createElement('canvas');scene.width=W;scene.height=H;const g=scene.getContext('2d');const read=c=>{const t=document.createElement('canvas');t.width=W;t.height=H;const ctx=t.getContext('2d');ctx.drawImage(c,0,0);return ctx.getImageData(0,0,W,H).data;};
+ const cached=new CGpuComposite(W,H),reference=new CGpuComposite(W,H),a=new CSource(20,{x:112,y:126},{x:210,y:116}),b=new CSource(20,{x:145,y:130},{x:220,y:145});let af,bf;
+ const steps=[['a',4.5,true,true,false],['a',4.5,false,true,true],['b',6.8,true,true,false],['a',4.5,false,true,false],['a',6.8,true,true,false],['a',6.8,false,true,true],['a',4.5,true,true,false],['a',4.5,false,false,false],['a',4.5,false,true,false],['a',4.5,false,true,true]];const rows=[];
+ for(let n=0;n<steps.length;n++){const [who,time,update,versioned,expectedReuse]=steps[n];const source=who==='a'?a:b;if(update){if(who==='a')af=source.renderAtSeconds(time);else bf=source.renderAtSeconds(time);}const f=who==='a'?af:bf;g.fillStyle=`rgb(${40+n*9},${100-n*3},${60+n})`;g.fillRect(0,0,W,H);g.fillStyle='#fff';g.fillRect(n*11,30,37,22);const cx=n%3,cy=n%2;cached.render(scene,f.frame,f.transform,cx,cy,versioned?source.tick:undefined);const reused=cached.lastProfile.fieldsReused,actual=read(cached.canvas);reference.render(scene,f.frame,f.transform,cx,cy);const expected=read(reference.canvas);let different=0,max=0;for(let i=0;i<actual.length;i++){const d=Math.abs(actual[i]-expected[i]);if(d)different++;max=Math.max(max,d);}rows.push({who,time,update,versioned,expectedReuse,reused,different,max});}
+ return rows;
+});console.log(JSON.stringify({scope:'same-tick, changing scene/camera, interleaved and rewind GPU cache; not hardware FPS or P0 parity',rows,errors},null,2));await browser.close();assert.deepEqual(errors,[]);for(const r of rows){assert.equal(r.reused,r.expectedReuse);assert.equal(r.different,0);}

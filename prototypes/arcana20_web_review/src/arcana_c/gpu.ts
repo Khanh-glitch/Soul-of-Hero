@@ -27,7 +27,7 @@ void main(){vec2 pixel=vec2(gl_FragCoord.x,size.y-gl_FragCoord.y),w=pixel-origin
  outColor=vec4(clamp(col,0.,1.),1.);
 }`;
 export class CGpuComposite {
- readonly canvas:HTMLCanvasElement;lastProfile={sceneMs:0,packMs:0,fieldUploadMs:0,atlasPackMs:0,atlasUploadMs:0,submitMs:0};private gl:WebGL2RenderingContext;private program:WebGLProgram;private textures:WebGLTexture[]=[];private packed:Float32Array[]=[];private liveIndex=new Float32Array(W*H*4);private liveOps=new Float32Array(W*4);private hadLive=false;private maxTextureSize:number;private atlasRows=1;
+ readonly canvas:HTMLCanvasElement;lastProfile={sceneMs:0,packMs:0,fieldUploadMs:0,atlasPackMs:0,atlasUploadMs:0,submitMs:0,fieldsReused:false};private uploadedFrame:Frame|null=null;private uploadedRevision:number|undefined;private gl:WebGL2RenderingContext;private program:WebGLProgram;private textures:WebGLTexture[]=[];private packed:Float32Array[]=[];private liveIndex=new Float32Array(W*H*4);private liveOps=new Float32Array(W*4);private hadLive=false;private maxTextureSize:number;private atlasRows=1;
  constructor(width:number,height:number){
   this.canvas=document.createElement('canvas');this.canvas.width=width;this.canvas.height=height;
   const gl=this.canvas.getContext('webgl2',{alpha:false,antialias:false,premultipliedAlpha:false,preserveDrawingBuffer:true});if(!gl)throw new Error('WebGL2 unavailable');this.gl=gl;
@@ -38,13 +38,18 @@ export class CGpuComposite {
   this.packed=[new Float32Array(W*H*4),new Float32Array(W*H*4)];this.maxTextureSize=gl.getParameter(gl.MAX_TEXTURE_SIZE);
   gl.disable(gl.BLEND);gl.disable(gl.DITHER);gl.viewport(0,0,width,height);
  }
- render(scene:HTMLCanvasElement,f:Frame,m:BTransform,cx:number,cy:number){
+ render(scene:HTMLCanvasElement,f:Frame,m:BTransform,cx:number,cy:number,revision?:number){
   const begin=performance.now();const gl=this.gl;gl.useProgram(this.program);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,1);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.textures[0]);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,scene);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,0);
   const sceneEnd=performance.now();const [ground,influence]=this.packed;
+  // A caller supplying a revision guarantees the same Frame is immutable until
+  // that revision changes. Do not cache across frames or unversioned callers.
+  const fieldsReused=revision!==undefined&&this.uploadedFrame===f&&this.uploadedRevision===revision;
+  let packEnd=sceneEnd,fieldEnd=sceneEnd,atlasPackEnd=sceneEnd,uploadEnd=sceneEnd;
+  if(!fieldsReused){this.uploadedFrame=null;
   for(let p=0;p<W*H;p++){const i=p*4;ground[i]=f.ground[i]/255;ground[i+1]=f.ground[i+1]/255;ground[i+2]=f.ground[i+2]/255;ground[i+3]=f.groundCoverage[p];influence[i]=f.worldInfluence[p];}
-  const packEnd=performance.now();const fields=[f.ink,ground,f.light,f.disp,f.worldFragment,influence];
+  packEnd=performance.now();const fields=[f.ink,ground,f.light,f.disp,f.worldFragment,influence];
   for(let n=1;n<7;n++){gl.activeTexture(gl.TEXTURE0+n);gl.bindTexture(gl.TEXTURE_2D,this.textures[n]);gl.texSubImage2D(gl.TEXTURE_2D,0,0,0,W,H,gl.RGBA,gl.FLOAT,fields[n-1]);}
-  const fieldEnd=performance.now();
+  fieldEnd=performance.now();
   // Compressed ordered atlas: no arbitrary overlap cap; fail to CPU if the
   // device cannot hold the complete operation list.
   const indices=this.liveIndex;if(this.hadLive)indices.fill(0);this.hadLive=f.liveLight.size>0;
@@ -52,8 +57,8 @@ export class CGpuComposite {
   const rows=Math.max(1,Math.ceil(count/W));if(rows>this.maxTextureSize)throw new Error('Live-light atlas exceeds device limit');
   if(this.liveOps.length<W*rows*4)this.liveOps=new Float32Array(W*rows*4);const opsData=this.liveOps;
   let at=0;for(const ops of f.liveLight.values())for(const op of ops){opsData[at++]=op.sx;opsData[at++]=op.sy;opsData[at++]=op.gain;at++;}
-  const atlasPackEnd=performance.now();for(const [n,width,height,data] of [[7,W,H,indices],[8,W,rows,opsData]] as const){gl.activeTexture(gl.TEXTURE0+n);gl.bindTexture(gl.TEXTURE_2D,this.textures[n]);if(n===8&&rows>this.atlasRows){this.atlasRows=rows;gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA32F,W,rows,0,gl.RGBA,gl.FLOAT,null);}gl.texSubImage2D(gl.TEXTURE_2D,0,0,0,width,height,gl.RGBA,gl.FLOAT,data);}
-  const uploadEnd=performance.now();gl.uniform2f(gl.getUniformLocation(this.program,'size'),this.canvas.width,this.canvas.height);gl.uniform2f(gl.getUniformLocation(this.program,'camera'),cx,cy);gl.uniform4f(gl.getUniformLocation(this.program,'basis'),m.a,m.b,m.c,m.d);gl.uniform2f(gl.getUniformLocation(this.program,'origin'),m.x-cx,m.y-cy);
-  gl.drawArrays(gl.TRIANGLE_STRIP,0,4);const submitEnd=performance.now();this.lastProfile={sceneMs:sceneEnd-begin,packMs:packEnd-sceneEnd,fieldUploadMs:fieldEnd-packEnd,atlasPackMs:atlasPackEnd-fieldEnd,atlasUploadMs:uploadEnd-atlasPackEnd,submitMs:submitEnd-uploadEnd};
+  atlasPackEnd=performance.now();for(const [n,width,height,data] of [[7,W,H,indices],[8,W,rows,opsData]] as const){gl.activeTexture(gl.TEXTURE0+n);gl.bindTexture(gl.TEXTURE_2D,this.textures[n]);if(n===8&&rows>this.atlasRows){this.atlasRows=rows;gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA32F,W,rows,0,gl.RGBA,gl.FLOAT,null);}gl.texSubImage2D(gl.TEXTURE_2D,0,0,0,width,height,gl.RGBA,gl.FLOAT,data);}
+  uploadEnd=performance.now();this.uploadedFrame=revision===undefined?null:f;this.uploadedRevision=revision;}gl.uniform2f(gl.getUniformLocation(this.program,'size'),this.canvas.width,this.canvas.height);gl.uniform2f(gl.getUniformLocation(this.program,'camera'),cx,cy);gl.uniform4f(gl.getUniformLocation(this.program,'basis'),m.a,m.b,m.c,m.d);gl.uniform2f(gl.getUniformLocation(this.program,'origin'),m.x-cx,m.y-cy);
+  gl.drawArrays(gl.TRIANGLE_STRIP,0,4);const submitEnd=performance.now();this.lastProfile={sceneMs:sceneEnd-begin,packMs:packEnd-sceneEnd,fieldUploadMs:fieldEnd-packEnd,atlasPackMs:atlasPackEnd-fieldEnd,atlasUploadMs:uploadEnd-atlasPackEnd,submitMs:submitEnd-uploadEnd,fieldsReused};
  }
 }
