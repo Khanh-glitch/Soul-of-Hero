@@ -219,6 +219,24 @@ class SporeNebulaR:
             fb.add_px(roundi(cap.x + width * offset), roundi(cap.y - height * (0.44 + 0.14 * (1.0 - absf(offset)))),
                 0.95, 0.58, 1.1, opacity * 0.8)
 
+    func _draw_shelves(fb: AFramebuffer, c: Vector2, growth: float, fade: float, seed: int) -> void:
+        # A low overlapping shelf colony is a different morphology from the
+        # upright mushrooms, attached directly to the local mycelium bed.
+        for shelf in range(3):
+            var r := AMath.hash2(float(seed * 9 + shelf), 82.0)
+            var center := c + Vector2(float(shelf - 1) * 8.0, -float(shelf) * 3.0) * growth
+            var width := (10.0 + 8.0 * r) * growth
+            var height := (4.0 + 3.0 * (1.0 - r)) * growth
+            var face := [center + Vector2(-width, 1.0), center + Vector2(-width * 0.7, -height * 0.8),
+                center + Vector2(-width * 0.1, -height * 1.2), center + Vector2(width * 0.55, -height * 0.7),
+                center + Vector2(width, -1.0), center + Vector2(width * 0.65, height * 0.5),
+                center + Vector2(-width * 0.2, height * 0.75)]
+            ADraw.poly_fill_solid(fb, face, Vector3(0.35 + r * 0.12, 0.16, 0.34 + r * 0.10), true, fade * growth)
+            ADraw.streak(fb, (face[0] as Vector2).x, (face[0] as Vector2).y, (face[6] as Vector2).x, (face[6] as Vector2).y,
+                0.8, 0.8, Vector3(0.85, 0.65, 0.55), fade * growth * 0.7)
+            ADraw.streak(fb, (face[6] as Vector2).x, (face[6] as Vector2).y, (face[5] as Vector2).x, (face[5] as Vector2).y,
+                0.8, 0.6, Vector3(0.85, 0.65, 0.55), fade * growth * 0.7)
+
     func _hypha_point(a: Vector2, b: Vector2, link: int, s: float) -> Vector2:
         # Endpoints remain the authored colony anchors. A deterministic
         # lateral meander avoids seven ruler-straight edges reading as a cage.
@@ -317,8 +335,8 @@ class SporeNebulaR:
                 var right := AMath.ease_out(AMath.seg(t, float(_births[i]) + 0.27, float(_births[i]) + 1.0), 2.0)
                 if i % 3 == 0:
                     # A broad low shelf with young buds on its lee side.
-                    _draw_cap(fb, c + Vector2(-6, -2) * middle, 15.0 * middle * pul * variation, 13.0 * middle * (2.0 - variation), fade * middle)
-                    _draw_cap(fb, c + Vector2(11, 4) * right, 6.0 * right * pul, 8.0 * right, fade * right)
+                    _draw_shelves(fb, c, middle, fade, i)
+                    _draw_cap(fb, c + Vector2(14, 4) * right, 4.5 * right * pul, 6.0 * right, fade * right)
                 elif i % 3 == 1:
                     # Tall central fruit and a pair of small staggered caps.
                     _draw_cap(fb, c + Vector2(-12, 2) * left, 6.0 * left * pul * variation, 10.0 * left * (2.0 - variation), fade * left)

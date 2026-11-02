@@ -216,7 +216,7 @@ class RiptideCalligraphyR:
     func _wave_front(t: float) -> Vector2:
         # The wave is released from the first authored stroke and advects in
         # one direction, rather than appearing as unrelated expanding rings.
-        var u := AMath.seg(t, 4.6, 6.4)
+        var u := AMath.seg(t, 4.6, 6.75)
         return _stroke_pt(0, 0.5) + Vector2(8.0 + 150.0 * u, 0.0)
     func authored_events() -> Array:
         var ev: Array = []
@@ -278,8 +278,8 @@ class RiptideCalligraphyR:
         # One coherent mass of water departs the written glyph. The curved
         # crest travels across the real ground; its shoulders expand and its
         # foam dissolves, rather than three unrelated thin radial arcs.
-        if t > 4.6 and t < 6.4:
-            var wu := AMath.seg(t, 4.6, 6.4)
+        if t > 4.6 and t < 6.75:
+            var wu := AMath.seg(t, 4.6, 6.75)
             var front := _wave_front(t)
             var wave_pts: Array = []
             var height := 12.0 + 48.0 * AMath.ease_out(wu, 2.0)
@@ -291,7 +291,7 @@ class RiptideCalligraphyR:
                 # front, rather than tracing one smooth paddle silhouette.
                 var broken := sin(v * PI * 6.0 - t * 5.0) * (2.0 + 3.5 * wu) + sin(v * PI * 13.0 + t * 2.0) * 1.8
                 wave_pts.append(front + Vector2(-curl + broken, side * height + sin(v * PI * 8.0 - t * 3.0) * 1.8))
-            var wave_fade := (1.0 - AMath.seg(t, 6.1, 6.4)) * diss
+            var wave_fade := (1.0 - AMath.seg(t, 6.45, 6.75)) * diss
             # A covered trough follows the crest as an actual mass, with a
             # broad center and thin shoulders. The crest remains separate,
             # advancing beyond the static glyph on its authored trajectory.
@@ -317,6 +317,16 @@ class RiptideCalligraphyR:
                 func(v: float, _i: int) -> float: return 1.3 + 1.0 * sin(v * PI),
                 func(v: float, _i: int, edge: float) -> Variant:
                     return AMath.R("water", 0.58 + 0.20 * sin(v * 20.0 - t * 12.0)), false, wave_fade * 0.55)
+            # Broken foam rides the actual moving crest. Its gaps and lobes
+            # vary in time, making the heavy liquid advance legible without
+            # adding a detached static arc or whole-screen brightness.
+            for segment in range(32):
+                var foam_phase := sin(float(segment) * 1.9 + t * 4.0)
+                if foam_phase < -0.35: continue
+                var fa: Vector2 = wave_pts[segment]
+                var fb_end: Vector2 = wave_pts[segment + 1]
+                var thickness := 0.7 + 1.0 * maxf(0.0, foam_phase)
+                ADraw.streak(fb, fa.x, fa.y, fb_end.x, fb_end.y, thickness, thickness * 0.7, Vector3(0.55, 1.0, 1.2), wave_fade * 0.65)
             # Unequal droplets break from the moving shoulders and lag the
             # front as material, with no independent expanding-ring effect.
             for drop in range(20):
