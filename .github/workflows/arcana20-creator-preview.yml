@@ -150,7 +150,7 @@ jobs:
     # Range-only iteration reuses the same export but does not recapture the
     # 20 existing natural runs; normal final creator runs do run the matrix.
     if: ${{ !contains(github.event.head_commit.message, '[range-only]') }}
-    # Corrected presentation timestamps are sampled before PNG write I/O; F09 source-memory repair.
+    # Corrected presentation timestamps are sampled before PNG write I/O; F09 source-memory repair and selective violet preview gain.
     # Newest art receives live moving-world full-cast capture; the earlier
     # all-20 single-enemy and multi-enemy matrix runs remain separate evidence.
     needs: build
