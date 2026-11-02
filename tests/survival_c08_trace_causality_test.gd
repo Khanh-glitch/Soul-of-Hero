@@ -686,8 +686,13 @@ func _counterfactual_b(source: Node, encounter: Node, enemy: CharacterBody2D,
 	# may real damage land, and it must be the shipped combat path.
 	var door := _door_cell()
 	if door.x >= 0:
-		await _walk_to_cell(hero, door)
-	var defence := await _observe(enemy, hero, home, 30.0,
+		# Actually step outside. Standing in the doorway is not facing anything: the
+		# last run waited thirty seconds behind a wall and recorded no damage at all,
+		# which says nothing about combat and everything about where the Hero stood.
+		var step_out := _nearest_free_near(nav, door + Vector2i(0, -2), 2)
+		if step_out.x >= 0:
+			await _walk_to_cell(hero, step_out)
+	var defence := await _observe(enemy, hero, home, 45.0,
 		func() -> bool: return int(hero.get(&"health")) < int(hp_after))
 	var hp_fight := int(hero.get(&"health"))
 	_expect(hp_fight < hp_after, "B: stepping out really puts the defender in the creature's reach (%d -> %d)" % [int(hp_after), hp_fight])
