@@ -1,6 +1,11 @@
 name: ARCANA20 isolated source-field quick diagnostic
 on:
   workflow_dispatch:
+    inputs:
+      r31_lab:
+        description: Build only the offline R31 visual direction lab from tracked captures
+        type: boolean
+        default: false
   push:
     branches: [arena/c7b0c4e8-soul-of-hero]
     paths:
@@ -11,6 +16,7 @@ permissions:
   contents: read
 jobs:
   source-quick:
+    if: ${{ !inputs.r31_lab }}
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
@@ -67,3 +73,25 @@ jobs:
           result=$(python3 tools/arcana20_join/verify_f_download.py downloaded-f e80529cda05fc3b11697e508784306b8cb07f130)
           echo "$result"
           echo "::notice title=F_UPLOADED_ARTIFACT_VERIFIED::$result"
+
+  r31-visual-direction-lab:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.r31_lab }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and verify standalone offline lab
+        run: |
+          set -euo pipefail
+          python3 tools/arcana20_join/build_r31_lab.py "$RUNNER_TEMP/ARCANA20_R31_LAB"
+          (cd "$RUNNER_TEMP/ARCANA20_R31_LAB" && sha256sum -c SHA256SUMS)
+          sha256sum "$RUNNER_TEMP/ARCANA20_R31_LAB.zip" > "$RUNNER_TEMP/ARCANA20_R31_LAB.zip.sha256"
+          cat "$RUNNER_TEMP/ARCANA20_R31_LAB.zip.sha256"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ARCANA20_R31_VISUAL_DIRECTION_LAB
+          path: |
+            ${{ runner.temp }}/ARCANA20_R31_LAB.zip
+            ${{ runner.temp }}/ARCANA20_R31_LAB.zip.sha256
+          if-no-files-found: error
+          retention-days: 30
