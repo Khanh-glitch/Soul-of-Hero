@@ -292,11 +292,19 @@ class SporeNebulaR:
             # Covered bodies affect the actual world, not a copied floor.
             var k := g * fade
             var spread := AMath.ease_out(g, 2.0)
-            var foot := 24.0 * spread
-            ADraw.poly_fill_solid(fb, [c + Vector2(-foot, 0), c + Vector2(-foot * 0.6, -foot * 0.3),
-                c + Vector2(0, -foot * 0.43), c + Vector2(foot * 0.7, -foot * 0.22),
-                c + Vector2(foot, 0), c + Vector2(foot * 0.35, foot * 0.3),
-                c + Vector2(-foot * 0.5, foot * 0.25)], Vector3(0.026, 0.095, 0.055), true, k * 0.84)
+            # Each colony's mycelium follows its own asymmetric irregular
+            # footprint instead of six identical solid hexagonal stamps.
+            var island: Array = []
+            var foot := (14.0 + 9.0 * AMath.hash2(float(i), 41.0)) * spread
+            for edge in range(15):
+                var angle := float(edge) * TAU / 15.0
+                var jag := 0.62 + 0.38 * AMath.hash2(float(i * 17 + edge), 81.0)
+                island.append(c + Vector2(cos(angle) * foot * jag, sin(angle) * foot * jag * 0.43))
+            ADraw.poly_fill(fb, island,
+                func(x: int, y: int) -> Variant:
+                    var grain := AMath.hash2(floor(float(x) * 0.45), floor(float(y) * 0.44) + float(i))
+                    return Vector3(0.035 + grain * 0.06, 0.12 + grain * 0.08, 0.06 + grain * 0.05), true, k * 0.56)
+            var variation := 0.65 + 0.65 * AMath.hash2(float(i), 58.0)
             if art_direction == "A":
                 # Low, broad fruiting caps share one ground colony. The
                 # prior tall stacked silhouettes read as leafy little trees
@@ -309,13 +317,13 @@ class SporeNebulaR:
                 var right := AMath.ease_out(AMath.seg(t, float(_births[i]) + 0.27, float(_births[i]) + 1.0), 2.0)
                 if i % 3 == 0:
                     # A broad low shelf with young buds on its lee side.
-                    _draw_cap(fb, c + Vector2(-6, -2) * middle, 15.0 * middle * pul, 13.0 * middle, fade * middle)
+                    _draw_cap(fb, c + Vector2(-6, -2) * middle, 15.0 * middle * pul * variation, 13.0 * middle * (2.0 - variation), fade * middle)
                     _draw_cap(fb, c + Vector2(11, 4) * right, 6.0 * right * pul, 8.0 * right, fade * right)
                 elif i % 3 == 1:
                     # Tall central fruit and a pair of small staggered caps.
-                    _draw_cap(fb, c + Vector2(-12, 2) * left, 6.0 * left * pul, 10.0 * left, fade * left)
-                    _draw_cap(fb, c + Vector2(0, -3) * middle, 10.0 * middle * pul, 25.0 * middle, fade * middle)
-                    _draw_cap(fb, c + Vector2(11, 3) * right, 7.0 * right * pul, 12.0 * right, fade * right)
+                    _draw_cap(fb, c + Vector2(-12, 2) * left, 6.0 * left * pul * variation, 10.0 * left * (2.0 - variation), fade * left)
+                    _draw_cap(fb, c + Vector2(0, -3) * middle, 10.0 * middle * pul * variation, 25.0 * middle * (2.0 - variation), fade * middle)
+                    _draw_cap(fb, c + Vector2(11, 3) * right, 7.0 * right * pul * variation, 12.0 * right * (2.0 - variation), fade * right)
                 else:
                     # A close ring of four small emerging fruiting bodies.
                     for bud in range(4):
@@ -335,14 +343,16 @@ class SporeNebulaR:
             if release >= 0.0 and release < 2.3:
                 var bloom := AMath.ease_out(AMath.cl01(release / 1.25), 2.0)
                 var alive := (1.0 - AMath.seg(release, 1.5, 2.3)) * fade
-                for spore in range(15):
+                for spore in range(28):
                     var phase := AMath.hash2(float(spore), float(i) + 40.0)
-                    var angle := -PI * (0.92 - 0.84 * phase)
-                    var distance := (20.0 + phase * 42.0) * bloom
-                    var tip := c + Vector2(cos(angle) * distance + release * release * 6.0, sin(angle) * distance - 12.0 * spread)
-                    ADraw.streak(fb, tip.x, tip.y + 4.0, tip.x, tip.y - 2.0,
-                        1.1, 0.6, Vector3(0.55, 1.05, 0.65), alive * 0.9)
-                    ADraw.disc(fb, tip.x, tip.y, 2.2, Vector3(0.70, 1.3, 0.8), alive)
+                    var scatter := AMath.hash2(float(spore * 3 + i), 76.0)
+                    var angle := -PI * (0.95 - 0.90 * phase)
+                    var distance := (12.0 + scatter * 69.0) * bloom
+                    var tip := c + Vector2(cos(angle) * distance + release * release * (4.0 + scatter * 9.0), sin(angle) * distance - 12.0 * spread)
+                    var size := 0.75 + 1.6 * AMath.hash2(float(spore), float(i) + 66.0)
+                    ADraw.streak(fb, tip.x - scatter * 2.0, tip.y + size * 2.2, tip.x, tip.y,
+                        size * 0.42, size * 0.2, Vector3(0.55, 1.05, 0.65), alive * 0.7)
+                    ADraw.disc(fb, tip.x, tip.y, size, Vector3(0.70, 1.3, 0.8), alive)
         _ps.each(func(p: Dictionary) -> void:
             var l := float(p.life) / float(p.max)
             ADraw.streak_p(fb, p, AMath.R("bio", 0.4 + l * 0.5), l * fade))

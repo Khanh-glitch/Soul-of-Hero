@@ -287,7 +287,10 @@ class RiptideCalligraphyR:
                 var v := float(k) / 32.0
                 var side := v * 2.0 - 1.0
                 var curl := side * side * (5.0 + 19.0 * wu)
-                wave_pts.append(front + Vector2(-curl + sin(v * PI * 4.0 - t * 4.0) * 1.5, side * height))
+                # Irregular moving shoulders fold behind the advancing
+                # front, rather than tracing one smooth paddle silhouette.
+                var broken := sin(v * PI * 6.0 - t * 5.0) * (2.0 + 3.5 * wu) + sin(v * PI * 13.0 + t * 2.0) * 1.8
+                wave_pts.append(front + Vector2(-curl + broken, side * height + sin(v * PI * 8.0 - t * 3.0) * 1.8))
             var wave_fade := (1.0 - AMath.seg(t, 6.1, 6.4)) * diss
             # A covered trough follows the crest as an actual mass, with a
             # broad center and thin shoulders. The crest remains separate,
@@ -298,11 +301,11 @@ class RiptideCalligraphyR:
                 var wake := (10.0 + 16.0 * sin(u_side * PI)) * AMath.ease_out(wu, 2.0)
                 trough.append((wave_pts[v] as Vector2) - Vector2(wake, 0))
             ADraw.ribbon(fb, trough,
-                func(v: float, _i: int) -> float: return (6.0 + 13.0 * sin(v * PI)) * AMath.ease_out(wu, 2.0),
+                func(v: float, _i: int) -> float: return (4.0 + 10.0 * sin(v * PI)) * AMath.ease_out(wu, 2.0),
                 func(v: float, _i: int, edge: float) -> Variant:
                     var current := 0.5 + 0.5 * sin(v * 24.0 - t * 8.0)
                     return Vector3(0.03 + edge * 0.08, 0.16 + 0.10 * current, 0.23 + 0.12 * current),
-                true, wave_fade * 0.60)
+                true, wave_fade * 0.44)
             ADraw.ribbon(fb, wave_pts,
                 func(v: float, _i: int) -> float: return (3.5 + 6.5 * sin(v * PI)) * (0.55 + 0.45 * wu),
                 func(v: float, _i: int, edge: float) -> Variant:
@@ -314,6 +317,16 @@ class RiptideCalligraphyR:
                 func(v: float, _i: int) -> float: return 1.3 + 1.0 * sin(v * PI),
                 func(v: float, _i: int, edge: float) -> Variant:
                     return AMath.R("water", 0.58 + 0.20 * sin(v * 20.0 - t * 12.0)), false, wave_fade * 0.55)
+            # Unequal droplets break from the moving shoulders and lag the
+            # front as material, with no independent expanding-ring effect.
+            for drop in range(20):
+                var seed := float(drop)
+                var v := AMath.hash2(seed, 18.0) * 2.0 - 1.0
+                var lag := (8.0 + AMath.hash2(seed, 19.0) * 48.0) * wu
+                var splash := front + Vector2(-lag, v * height * (0.65 + 0.45 * AMath.hash2(seed, 20.0)))
+                var radius := (0.7 + AMath.hash2(seed, 21.0) * 2.4) * AMath.ease_out(wu, 2.0)
+                ADraw.disc_blend(fb, splash.x, splash.y, radius, Vector3(0.10, 0.39, 0.48), wave_fade * 0.56)
+                ADraw.disc(fb, splash.x - 0.4, splash.y - 0.4, maxf(0.45, radius * 0.3), Vector3(0.55, 1.0, 1.2), wave_fade * 0.5)
 
 # ------------------------------------------- #12 skybreaker script
 class SkybreakerScriptR:
@@ -402,7 +415,7 @@ class SkybreakerScriptR:
             var trim := failure * 0.08
             var start_pt := p0 + edge * trim
             var end_pt := p0 + edge * minf(written, 1.0 - trim)
-            var intensity := left * dis * (0.45 + 0.30 * AMath.seg(t, 3.4, 4.3))
+            var intensity := left * dis * (0.30 + 0.24 * AMath.seg(t, 3.4, 4.3))
             # Cool ink underlay is real local coverage, making the circuit
             # read over bright terrain without changing global exposure.
             ADraw.ribbon(fb, [start_pt, end_pt],
@@ -470,12 +483,12 @@ class SkybreakerScriptR:
             # gives the central calligraphy a hierarchy over its fine web.
             # The gradually written path, tips and reverse OUT are unchanged.
             ADraw.ribbon(fb, pts,
-                func(s: float, _i: int) -> float: return 3.2 * (0.60 + 0.40 * sin(s * PI)),
+                func(s: float, _i: int) -> float: return 5.0 * (0.65 + 0.35 * sin(s * PI)),
                 func(s: float, _i: int, edge: float) -> Variant:
                     var facet := 0.15 + 0.12 * (1.0 - edge) + 0.04 * sin(s * PI * 5.0)
                     return Vector3(facet * 0.65, facet * 0.83, facet * 1.35), true, 0.8 * dis)
             ADraw.ribbon(fb, pts,
-                func(s: float, _i: int) -> float: return 1.8,
+                func(s: float, _i: int) -> float: return 2.3,
                 func(s: float, _i: int, edge: float) -> Variant:
                     var h := (1.0 - edge) * dis
                     if h < 0.05:
