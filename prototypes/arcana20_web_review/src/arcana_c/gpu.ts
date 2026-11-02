@@ -1,4 +1,5 @@
 /** Experimental WebGL2 C field compositor. Not a P0 parity claim. */
+import {influenceBounds} from './influenceBounds';
 import { W,H,type Frame } from './engine/frame';
 import type { BTransform } from '../arcana_b/anchors';
 const VS=`#version 300 es
@@ -27,7 +28,7 @@ void main(){vec2 pixel=vec2(gl_FragCoord.x,size.y-gl_FragCoord.y),w=pixel-origin
  outColor=vec4(clamp(col,0.,1.),1.);
 }`;
 export class CGpuComposite {
- readonly canvas:HTMLCanvasElement;lastProfile={sceneMs:0,packMs:0,fieldUploadMs:0,atlasPackMs:0,atlasUploadMs:0,submitMs:0,fieldsReused:false};private uploadedFrame:Frame|null=null;private uploadedRevision:number|undefined;private gl:WebGL2RenderingContext;private program:WebGLProgram;private textures:WebGLTexture[]=[];private liveIndex=new Float32Array(W*H*4);private liveOps=new Float32Array(W*4);private hadLive=false;private maxTextureSize:number;private atlasRows=1;
+ readonly canvas:HTMLCanvasElement;lastProfile={sceneMs:0,packMs:0,fieldUploadMs:0,atlasPackMs:0,atlasUploadMs:0,submitMs:0,fieldsReused:false};private uploadedFrame:Frame|null=null;private uploadedRevision:number|undefined;private gl:WebGL2RenderingContext;private program:WebGLProgram;private textures:WebGLTexture[]=[];private liveIndex=new Float32Array(W*H*4);private liveOps=new Float32Array(W*4);private hadLive=false;private maxTextureSize:number;private atlasRows=1;private previousBounds:{x:number;y:number;w:number;h:number}|null=null;
  constructor(width:number,height:number){
   this.canvas=document.createElement('canvas');this.canvas.width=width;this.canvas.height=height;
   const gl=this.canvas.getContext('webgl2',{alpha:false,antialias:false,premultipliedAlpha:false,preserveDrawingBuffer:true});if(!gl)throw new Error('WebGL2 unavailable');this.gl=gl;
@@ -46,14 +47,21 @@ export class CGpuComposite {
   const fieldsReused=revision!==undefined&&this.uploadedFrame===f&&this.uploadedRevision===revision;
   let packEnd=sceneEnd,fieldEnd=sceneEnd,atlasPackEnd=sceneEnd,uploadEnd=sceneEnd;
   if(!fieldsReused){this.uploadedFrame=null;
+  // Upload only the bounding union of this and the previous coverage. The
+  // union clears stale texels when an effect moves, shrinks, or is replaced.
+  // Every authored ground/light/displacement/ink operation marks influence;
+  // displaced reads remain safe because ALL marked texels are in the union.
+  const mask=f.worldInfluence,current=influenceBounds(mask),old=this.previousBounds;
+  let x0=current?.x??W,y0=current?.y??H,x1=current?current.x+current.w-1:-1,y1=current?current.y+current.h-1:-1;
+  if(old){x0=Math.min(x0,old.x);y0=Math.min(y0,old.y);x1=Math.max(x1,old.x+old.w-1);y1=Math.max(y1,old.y+old.h-1);}
+  const region=x1<0?null:{x:x0,y:y0,w:x1-x0+1,h:y1-y0+1};this.previousBounds=current;
   packEnd=performance.now();const fields=[f.ink,null,f.light,f.disp,f.worldFragment];
-  for(let n=1;n<6;n++){gl.activeTexture(gl.TEXTURE0+n);gl.bindTexture(gl.TEXTURE_2D,this.textures[n]);if(n===2)gl.texSubImage2D(gl.TEXTURE_2D,0,0,0,W,H,gl.RGBA,gl.UNSIGNED_BYTE,f.ground);else gl.texSubImage2D(gl.TEXTURE_2D,0,0,0,W,H,gl.RGBA,gl.FLOAT,fields[n-1]!);}
-  // Keep source RGB as normalized bytes and opacity in its own float texture;
-  // no per-pixel CPU repacking or loss of fractional coverage.
-  gl.activeTexture(gl.TEXTURE9);gl.bindTexture(gl.TEXTURE_2D,this.textures[9]);gl.texSubImage2D(gl.TEXTURE_2D,0,0,0,W,H,gl.RED,gl.FLOAT,f.groundCoverage);
-  // The source writes only 0/1 influence bytes. Integer sampling preserves
-  // authored coverage exactly and avoids a 16-byte float texel per pixel.
-  gl.activeTexture(gl.TEXTURE6);gl.bindTexture(gl.TEXTURE_2D,this.textures[6]);gl.pixelStorei(gl.UNPACK_ALIGNMENT,1);gl.texSubImage2D(gl.TEXTURE_2D,0,0,0,W,H,gl.RED_INTEGER,gl.UNSIGNED_BYTE,f.worldInfluence);gl.pixelStorei(gl.UNPACK_ALIGNMENT,4);
+  if(region){const {x,y,w,h}=region;gl.pixelStorei(gl.UNPACK_ROW_LENGTH,W);gl.pixelStorei(gl.UNPACK_ALIGNMENT,1);
+   for(let n=1;n<6;n++){gl.activeTexture(gl.TEXTURE0+n);gl.bindTexture(gl.TEXTURE_2D,this.textures[n]);if(n===2)gl.texSubImage2D(gl.TEXTURE_2D,0,x,y,w,h,gl.RGBA,gl.UNSIGNED_BYTE,f.ground,(y*W+x)*4);else gl.texSubImage2D(gl.TEXTURE_2D,0,x,y,w,h,gl.RGBA,gl.FLOAT,fields[n-1]!, (y*W+x)*4);}
+   gl.activeTexture(gl.TEXTURE9);gl.bindTexture(gl.TEXTURE_2D,this.textures[9]);gl.texSubImage2D(gl.TEXTURE_2D,0,x,y,w,h,gl.RED,gl.FLOAT,f.groundCoverage,y*W+x);
+   gl.activeTexture(gl.TEXTURE6);gl.bindTexture(gl.TEXTURE_2D,this.textures[6]);gl.texSubImage2D(gl.TEXTURE_2D,0,x,y,w,h,gl.RED_INTEGER,gl.UNSIGNED_BYTE,mask,y*W+x);
+   gl.pixelStorei(gl.UNPACK_ROW_LENGTH,0);gl.pixelStorei(gl.UNPACK_ALIGNMENT,4);
+  }
   fieldEnd=performance.now();
   // Compressed ordered atlas: no arbitrary overlap cap; fail to CPU if the
   // device cannot hold the complete operation list.
@@ -62,7 +70,9 @@ export class CGpuComposite {
   const rows=Math.max(1,Math.ceil(count/W));if(rows>this.maxTextureSize)throw new Error('Live-light atlas exceeds device limit');
   if(this.liveOps.length<W*rows*4)this.liveOps=new Float32Array(W*rows*4);const opsData=this.liveOps;
   let at=0;for(const ops of f.liveLight.values())for(const op of ops){opsData[at++]=op.sx;opsData[at++]=op.sy;opsData[at++]=op.gain;at++;}
-  atlasPackEnd=performance.now();for(const [n,width,height,data] of [[7,W,H,indices],[8,W,rows,opsData]] as const){gl.activeTexture(gl.TEXTURE0+n);gl.bindTexture(gl.TEXTURE_2D,this.textures[n]);if(n===8&&rows>this.atlasRows){this.atlasRows=rows;gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA32F,W,rows,0,gl.RGBA,gl.FLOAT,null);}gl.texSubImage2D(gl.TEXTURE_2D,0,0,0,width,height,gl.RGBA,gl.FLOAT,data);}
+  atlasPackEnd=performance.now();
+  if(region){const {x,y,w,h}=region;gl.activeTexture(gl.TEXTURE7);gl.bindTexture(gl.TEXTURE_2D,this.textures[7]);gl.pixelStorei(gl.UNPACK_ROW_LENGTH,W);gl.texSubImage2D(gl.TEXTURE_2D,0,x,y,w,h,gl.RGBA,gl.FLOAT,indices,(y*W+x)*4);gl.pixelStorei(gl.UNPACK_ROW_LENGTH,0);}
+  gl.activeTexture(gl.TEXTURE8);gl.bindTexture(gl.TEXTURE_2D,this.textures[8]);if(rows>this.atlasRows){this.atlasRows=rows;gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA32F,W,rows,0,gl.RGBA,gl.FLOAT,null);}gl.texSubImage2D(gl.TEXTURE_2D,0,0,0,W,rows,gl.RGBA,gl.FLOAT,opsData);
   uploadEnd=performance.now();this.uploadedFrame=revision===undefined?null:f;this.uploadedRevision=revision;}gl.uniform2f(gl.getUniformLocation(this.program,'size'),this.canvas.width,this.canvas.height);gl.uniform2f(gl.getUniformLocation(this.program,'camera'),cx,cy);gl.uniform4f(gl.getUniformLocation(this.program,'basis'),m.a,m.b,m.c,m.d);gl.uniform2f(gl.getUniformLocation(this.program,'origin'),m.x-cx,m.y-cy);
   // Optional conservative output scissor; callers must copy only this region.
   // The full scene and all source fields remain bound for displaced reads.

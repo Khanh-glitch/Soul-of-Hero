@@ -1,3 +1,4 @@
+import {influenceBounds,influenceWorldRect,type InfluenceBounds} from './influenceBounds';
 import {visualTick} from '../game/visualQuality';
 import {combineCStage,hasCStage,compositeCStage} from './stage';import {CStageGpu} from './stageGpu';
 /** Developer-only C7/C10/C17/C20 live-field diagnostic, not playtest/visual approval. */
@@ -8,7 +9,7 @@ import { worldRect } from '../arcana_b/worldRect';
 import { CGpuComposite } from './gpu';
 import { bayer } from './engine/math';
 import {combineCPost,hasCPost,compositeCPost} from './post';import {CPostGpu} from './postGpu';
-type Active={source:CSource;runId:string;startMs:number;tick:number;frame:ReturnType<CSource['renderAtSeconds']>;sourceMs:number;localInfluence:boolean};
+type Active={source:CSource;runId:string;startMs:number;tick:number;frame:ReturnType<CSource['renderAtSeconds']>;sourceMs:number;localBounds:InfluenceBounds|null};
 const active:Active[]=[];
 const gpuRequested=bDiagnosticEnabled && new URLSearchParams(location.search).get('arcanaGpu')==='1';const fullGpu=new URLSearchParams(location.search).get('arcanaCFull')==='1';let gpu:CGpuComposite|null=null;let gpuFailed=false;
 export const cDiagnosticTimings:{id:CId;time:number;sourceMs:number;compositeMs:number;gpuProfile?:{sceneMs:number;packMs:number;fieldUploadMs:number;atlasPackMs:number;atlasUploadMs:number;submitMs:number;fieldsReused:boolean};liveOps:number;maxOverlap:number;gpuInitMs?:number;gpuCopyMs?:number}[]=[];
@@ -16,13 +17,13 @@ if(bDiagnosticEnabled)(window as any).__arcanaCDiagnosticTimings=cDiagnosticTimi
 export function startCDiagnostic(e:any){
  if(!bDiagnosticEnabled||![7,10,17,20].includes(e.id))return;
  const reach=Math.max(35,Math.min(130,Math.hypot(e.aimX-e.x,e.aimY-e.y)));
- active.push({source:new CSource(e.id as CId,{x:e.x,y:e.y},{x:e.x+Math.cos(e.a)*reach,y:e.y+Math.sin(e.a)*reach}),runId:e.runId,startMs:e.simMs,tick:-1,frame:null,sourceMs:0,localInfluence:false});
+ active.push({source:new CSource(e.id as CId,{x:e.x,y:e.y},{x:e.x+Math.cos(e.a)*reach,y:e.y+Math.sin(e.a)*reach}),runId:e.runId,startMs:e.simMs,tick:-1,frame:null,sourceMs:0,localBounds:null});
 }
 // Advance once per game frame, before the stage and local world passes.
 export function prepareCDiagnostic(runId:string,simMs:number){
  if(!bDiagnosticEnabled)return;
  for(let i=active.length-1;i>=0;i--){const a=active[i],seconds=(simMs-a.startMs)/1000;if(a.runId!==runId||seconds>=a.source.duration){active.splice(i,1);continue;}
-  const tick=visualTick(a.source.id,seconds);a.sourceMs=0;if(tick!==a.tick){const start=performance.now();a.frame=a.source.renderAtSeconds(tick/60);a.localInfluence=!!a.frame?.frame.worldInfluence.some(v=>v!==0);a.sourceMs=performance.now()-start;a.tick=tick;}
+  const tick=visualTick(a.source.id,seconds);a.sourceMs=0;if(tick!==a.tick){const start=performance.now();a.frame=a.source.renderAtSeconds(tick/60);a.localBounds=a.frame?influenceBounds(a.frame.frame.worldInfluence):null;a.sourceMs=performance.now()-start;a.tick=tick;}
  }
 }
 let stageGpu:CStageGpu|null=null,stageGpuFailed=false;
@@ -38,12 +39,13 @@ export function drawCDiagnostic(g:CanvasRenderingContext2D,cx:number,cy:number){
   if(!a.frame)continue;
   // A zero coverage mask makes both local C compositors an exact identity.
   // Stage, blackout and post continue to run independently as authored.
-  if(!a.localInfluence){if(cDiagnosticTimings.length<1200)cDiagnosticTimings.push({id:a.source.id,time:a.frame.t,sourceMs:a.sourceMs,compositeMs:0,liveOps:0,maxOverlap:0});continue;}
-  const box=worldRect(a.frame.transform,cx,cy,g.canvas.width,g.canvas.height);if(!box.w||!box.h)continue;const start=performance.now();let gpuInitMs=0,gpuCopyMs=0;
+  if(!a.localBounds){if(cDiagnosticTimings.length<1200)cDiagnosticTimings.push({id:a.source.id,time:a.frame.t,sourceMs:a.sourceMs,compositeMs:0,liveOps:0,maxOverlap:0});continue;}
+  const box=fullGpu?worldRect(a.frame.transform,cx,cy,g.canvas.width,g.canvas.height):influenceWorldRect(a.localBounds,a.frame.transform,cx,cy,g.canvas.width,g.canvas.height);if(!box.w||!box.h)continue;const start=performance.now();let gpuInitMs=0,gpuCopyMs=0;
   if(gpuRequested&&!gpuFailed){try{if(!gpu){const init=performance.now();gpu=new CGpuComposite(g.canvas.width,g.canvas.height);gpuInitMs=performance.now()-init;}gpu.render(g.canvas,a.frame.frame,a.frame.transform,cx,cy,a.tick,fullGpu?undefined:box);
     const copy=performance.now();g.save();try{g.setTransform(1,0,0,1,0,0);if(fullGpu)g.drawImage(gpu.canvas,0,0);else g.drawImage(gpu.canvas,box.x,box.y,box.w,box.h,box.x,box.y,box.w,box.h);}finally{g.restore();}gpuCopyMs=performance.now()-copy;
    }catch(e){gpuFailed=true;console.warn('Experimental GPU C pass failed; falling back to CPU',e);}}
-  if(!gpuRequested||gpuFailed){const image=g.getImageData(box.x,box.y,box.w,box.h);compositeC(image.data,image.width,image.height,a.frame.frame,a.frame.transform,cx+box.x,cy+box.y);g.putImageData(image,box.x,box.y);}
+  if(!gpuRequested||gpuFailed){ // CPU samples displaced pixels from the whole source window, not only the destination ROI.
+   const cpuBox=worldRect(a.frame.transform,cx,cy,g.canvas.width,g.canvas.height);if(cpuBox.w&&cpuBox.h){const image=g.getImageData(cpuBox.x,cpuBox.y,cpuBox.w,cpuBox.h);compositeC(image.data,image.width,image.height,a.frame.frame,a.frame.transform,cx+cpuBox.x,cy+cpuBox.y);g.putImageData(image,cpuBox.x,cpuBox.y);}}
   if(cDiagnosticTimings.length<1200){let liveOps=0,maxOverlap=0;for(const ops of a.frame.frame.liveLight.values()){liveOps+=ops.length;maxOverlap=Math.max(maxOverlap,ops.length);}cDiagnosticTimings.push({id:a.source.id,time:a.frame.t,sourceMs:a.sourceMs,compositeMs:performance.now()-start,gpuProfile:gpuRequested&&!gpuFailed?gpu?.lastProfile:undefined,liveOps,maxOverlap,gpuInitMs,gpuCopyMs});}
  }
 }
