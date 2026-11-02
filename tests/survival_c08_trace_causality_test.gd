@@ -781,15 +781,19 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 		return {"ok": false}
 	var plan_report: Dictionary = plan["report"]
 	var near := Vector2i(int(plan_report["near"][0]), int(plan_report["near"][1]))
-	var start_c := nav.cell_of(hero.global_position)
 	# One short out leg to the creature's own ground, then straight home. This case is
 	# about a bounded physical trail that is genuinely sensed and then dies; a long
 	# expedition turns it into a second endurance test, and the last run ended with a
 	# dead defender and no creature left to observe him.
-	var legs: Array = [_route(start_c, near, nav, hero)]
+	# The same outbound ground as B - walked once, proven passable, and it puts the
+	# defender 26 tiles past the creature, out of its sight, while the marks behind him
+	# die. Stopping at the creature's feet to lay a single short trail got the defender
+	# killed twice: the creature simply keeps hitting what it can see.
+	var legs: Array = [plan["legs"][0], plan["legs"][1], plan["legs"][2]]
 	print("C08_C_ROUTE ", JSON.stringify({"near": [near.x, near.y],
-		"home": [outside_c.x, outside_c.y], "legs": [(legs[0] as Array).size()]}))
-	if (legs[0] as Array).is_empty():
+		"home": [outside_c.x, outside_c.y],
+		"legs": [(legs[0] as Array).size(), (legs[1] as Array).size(), (legs[2] as Array).size()]}))
+	if (legs[0] as Array).is_empty() or (legs[2] as Array).is_empty():
 		_expect(false, "C: the cold-trail route is walkable")
 		return {"ok": false}
 	var stats := _walk_stats()
@@ -813,6 +817,13 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 				"follower": _compact_follower(follower.snapshot()), "probe": _trace_probe(source, enemy)}))
 			break
 	_expect(walked_all, "C: ordinary input walks the bounded trail")
+	# The window ends out of the creature's sight, which is where an evidence-only
+	# pursuit has to end on its own.
+	var cold_here := await _wait_until(func() -> bool:
+		var view: Dictionary = follower.snapshot()
+		return String(view.get("lost_reason", "")) != "" and not bool(view.get("pursuing", false)), 30.0)
+	print("C08_C_FAR ", JSON.stringify({"cold": cold_here,
+		"follower": _compact_follower(follower.snapshot()), "probe": _trace_probe(source, enemy)}))
 	if not walked_all:
 		return {"ok": false, "stats": stats}
 	# Home first, with the door shut behind him, and only then does the trail go cold.
