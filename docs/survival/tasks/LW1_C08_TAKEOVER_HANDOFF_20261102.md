@@ -33,7 +33,34 @@ injected, nothing teleports.
 | `develop-soul-of-hero-rpg (4).zip` | `f601ca17…1ba` | `src/game/state.ts:1033-1076`, `1237-1242` | **NEGATIVE ORACLE**: `harvest` never checks player↔source distance; `trail` accepts caller `x,y`. SOH source writes only the real actor position; the distant-harvest/remote-mark tests are open items. |
 | `soul-of-hero-rpg-prototype (3).zip` | `12438a53…f55` | `src/tests/contracts_c01_c24.test.ts:591-774, 819-905` | **REJECT for now (P1)**: escrow/Ragnarok/inventory-custody hypotheses. No SOH action to bind them to in P0. |
 
-### FIRST ALL-GREEN NATIVE GATE — `1444f5ff` (run 41428636248)
+### GREEN, STABILISED — `c7b1866b` (run 41434002200)
+
+`C08 trace causality (native)`: **success** (unit job + all six native steps).
+This is the run to read: it is the first green on the *stabilised* C design.
+
+| case | exact evidence at `c7b1866b` |
+|---|---|
+| A (no trace) | 721 PATROL samples, `sensed 0`, `direct_ticks 0`, `damage_events 0`, `min_home_distance 356.9` |
+| B (valid chain) | arrival `INVESTIGATE` (875 investigate vs 6 chase samples), **109 evidence hops**, `max_hop 26.1`, `min_home_distance 139.71`, `first_direct 151.09`, `damage_events 0` on the approach |
+| C (cold trail) | `sensed 7`, 5 hops, `lost "expired"`, `reached_end false`, `refused 0`, `max_hop 26.1`; dead-trail window: creature-defender gap `291.2 -> 290.5 px`, `damage_events 0`, `hp 974 -> 974` |
+| K8 ledger | committed in episode A, bound to the run |
+| 2nd PID relaunch | a still-valid trail survives quitting the game |
+| new run | fresh profile inherits no evidence |
+| regression | Runtime Validation: Import/headless **success**, Xvfb captures **success**; only "Original main baseline comparison" red, and it is red on original main too |
+
+Two green native runs on two different SHAs (`1444f5ff`, `c7b1866b`) with the same
+200-odd assertions. Between them the run history measured the flakiness honestly:
+C lost its defender three times to the shipped combat before the case stopped asking
+him to walk home through the creature's reach, and B's hop count swings (1, 5, 33,
+45, 109, 119, 178, 257) with the creature's patrol phase while `sensed >= 1`,
+contiguity, `max_hop <= 27.5` and a zero-damage evidence arrival hold every time.
+
+**Still not accepted:** the by-eye visual gate (artifacts live on
+`productionresultssa*.blob.core.windows.net`, unreachable from this sandbox; only
+`github.com`, `codeload`, `api.github.com`, npm and PyPI are allowed). The in-run
+capture asserts 1280×720 and non-flat frames, but nobody has looked at them.
+
+### Earlier all-green native gate — `1444f5ff` (run 41428636248)
 
 `C08 trace causality (native)`: **success**. Unit job: success. Steps: episode B,
 episode C, episode A + K8 ledger, relaunch (second OS PID), new run — all success.
