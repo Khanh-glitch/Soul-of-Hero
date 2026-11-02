@@ -163,8 +163,9 @@ try {
   s=await state();let fire=s.entities.find(e=>e.kind==='struct'&&e.type==='campfire');assert(fire,'Campfire placement failed; check placement constraints');
   log.push(`Paid and placed campfire at (${site.x},${site.y}); remaining wood=${await count('wood')}, stone=${await count('stone')}.`);
   await interact(fire.x,fire.y);await page.getByText('Fuel',{exact:false}).waitFor({timeout:5000});
-  // Transfer one legitimately carried wood unit to the campfire fuel container with the UI's quick-transfer control.
-  await page.locator('.panel').filter({hasText:'Inventory'}).last().locator('.slot[title^="Wood"]').click({button:'right'});await sleep(300);
+  // Select the carried wood in Inventory, then place it into the campfire's first (fuel) slot through ordinary UI clicks.
+  const inventory=page.locator('.panel').filter({hasText:'Inventory'}).last(),firePanel=page.locator('.panel').filter({hasText:'Campfire'}).first();
+  await inventory.locator('.slot[title^="Wood"]').click();await firePanel.locator('.slot').first().click();await sleep(300);
   s=await state();fire=s.entities.find(e=>e.id===fire.id);const fuel=await page.evaluate(id=>{const e=window.__soh.run.entities[id];return window.__soh.run.custody[e.station.fuelC].slots.reduce((n,z)=>n+(z?.key==='wood'?z.qty:0),0)},fire.id);assert(fuel>=1,'Campfire did not accept wood fuel');log.push(`Fueling cost: transferred wood x${fuel} from player inventory into the campfire fuel slot.`);
   const meatBefore=await count('meat'),saltBeforeQueue=await count('raw_salt');const queueBefore=Date.now();await page.getByRole('button',{name:'Queue',exact:true}).last().click();await sleep(400);s=await state();fire=s.entities.find(e=>e.id===fire.id);assert(fire.station.queue.some(q=>q.recipe==='salted_meat'),'Salted Roast was not queued');assert(await count('meat')===meatBefore-1,'Cooking did not consume exactly one meat');assert(await count('raw_salt')===saltBeforeQueue-1,'Cooking did not consume exactly one Raw Salt');
   log.push(`Queued Salted Roast through campfire UI; input cost meat 1 + Raw Salt 1 (before=${meatBefore}/${saltBeforeQueue}, after=${await count('meat')}/${await count('raw_salt')}), actual wall-clock start=${new Date(queueBefore).toISOString()}, fuel wood=${fuel}, queue=${JSON.stringify(fire.station.queue)}.`);
