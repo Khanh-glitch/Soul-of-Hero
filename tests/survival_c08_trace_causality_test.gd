@@ -368,7 +368,11 @@ func _body() -> void:
 	if episode in ["a", "abc"]:
 		_expect(bool(source.call(&"configure_policy", SPACING, 600.0, MAX_STEP)),
 			"policy for the K8 persistence window: live marks survive the quit")
-		await _walk_to_cell(hero, _door_cell())
+		# Walk real ground before committing: episode A's own window lays no marks
+		# (that is what it proves), and a commit of nothing restores nothing. The
+		# walk is inside the room, on the bed's own floor.
+		var lay_cell := _nearest_free_near(nav, _stand_cell() + Vector2i(0, -4), 3)
+		await _walk_to_cell(hero, lay_cell)
 		await _walk_to_cell(hero, _stand_cell())
 		var committed := bool(source.call(&"commit_evidence"))
 		_expect(committed, "the still-valid trail is written to the authoritative save (%s)"
