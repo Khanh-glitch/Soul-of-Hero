@@ -1,0 +1,5 @@
+# R28 #13 — irregular attached branches and thorn, art open
+
+`4bf9a69d` [41421450611](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41421450611) passed exact-SHA real-route normal/dim, build and Windows headless; same-SHA [source runtime/CPU 41421450576](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41421450576) and [20-ID lifecycle 41421450571](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41421450571) passed. Native-viewport lossy real moving-camera videos and metadata are here; tick sampling is sparse.
+
+Branch junctions, direction and count vary by trunk; an attached pointed thorn grows toward the real visual target with the arch, not as an invented gameplay hit. In sampled 1× normal/dim frames the roots remain visibly connected but still look like a compact **regular cage**, and the thorn does not stand out convincingly through actors/overlap. Camera framing also varies. The user explicitly rejected the cage, so this remains unapproved and requires biomechanical redesign and a full 1× normal/dim OUT review; tests do not establish art quality or performance.

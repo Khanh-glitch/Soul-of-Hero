@@ -1,0 +1,5 @@
+# R28 #14 — varied fungi and dispersal, art open
+
+`4bf9a69d` [41421450611](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41421450611) passed exact-SHA real-route normal/dim, build and Windows headless; same-SHA [source runtime/CPU 41421450576](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41421450576) and [20-ID lifecycle 41421450571](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41421450571) passed. Native-viewport lossy real moving-camera videos and metadata are here; tick sampling is sparse.
+
+The fungal bodies now differ between broad shelf, tall fruit and small bud clusters, with asymmetric attached branching and extended directional dispersal on existing causal links. Sampled 1× normal/dim frames show differentiated mushroom silhouettes and more visible sprays; nevertheless six sharply bounded dark oval bases and thin geometric connections remain conspicuous, and camera/actors obscure parts of the network. Full OUT and artistic coherence remain unaccepted, not real status/on-body combat, Gold, HDR or device-FPS evidence.

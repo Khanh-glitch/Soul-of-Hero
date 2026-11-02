@@ -1,0 +1,5 @@
+# R28 #12 — rune body and branched C lightning, art open
+
+`4bf9a69d` [41421450611](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41421450611) passed exact-SHA real-route normal/dim, build and Windows headless; same-SHA [source runtime/CPU 41421450576](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41421450576) and [20-ID lifecycle 41421450571](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41421450571) passed. The native viewport lossy motion and metadata here use the actual game and moving camera; source ticks can skip.
+
+Faceted covered rune strokes, terminal wedges, a longer C-tree strike and three C-tree visual-only grounded tributaries are newly authored adaptation, not full A/C parity or combat receipts. Sampled native 1× moving frames in both lights show a more substantial glyph and a distinguishable climactic strike. The dense lattice still competes with the central calligraphy, contact and camera framing can be weak, and it has not had creator approval or full independently graded OUT. Keep art open; not GPU FPS, HDR/depth or Gold proof.
