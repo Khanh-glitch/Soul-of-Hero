@@ -757,7 +757,7 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 	follower.begin_window("C_broken_chain")
 	# C is a counterfactual about the policy, not a second endurance test. It lays
 	# the same kind of trail the creature can actually sense - past its own ground,
-	# then out of its sight - and comes back. Re-walking B's whole loop with a
+	# then straight home. Re-walking B's whole loop with a
 	# creature that hits for 14 would simply kill the defender and prove nothing
 	# about decay.
 	var plan := _route_plan(hero, nav, home, outside_c)
@@ -772,7 +772,7 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 	# expedition turns it into a second endurance test, and the last run ended with a
 	# dead defender and no creature left to observe him.
 	var legs: Array = [_route(start_c, near, nav, hero)]
-	print("C08_C_ROUTE ", JSON.stringify({"near": [near.x, near.y], "away": [away.x, away.y],
+	print("C08_C_ROUTE ", JSON.stringify({"near": [near.x, near.y],
 		"home": [outside_c.x, outside_c.y], "legs": [(legs[0] as Array).size()]}))
 	if (legs[0] as Array).is_empty():
 		_expect(false, "C: the cold-trail route is walkable")
