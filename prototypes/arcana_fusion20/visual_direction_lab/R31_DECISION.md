@@ -30,3 +30,10 @@ The 1× concept paintovers are non-native pictures over a recorded real frame. T
 4. Build lab from a complete checkout: `python3 tools/arcana20_join/build_r31_lab.py /home/user/ARCANA20_R31_LAB`; run `cd /home/user/ARCANA20_R31_LAB && sha256sum -c SHA256SUMS`. For a GitHub Actions artifact, dispatch `arcana20-source-quick.yml` with `r31_lab=true` on this same branch; this selects the lab-only job. Before dispatch check whether a matching artifact already exists; don't rerun unrelated jobs.
 
 No background work is promised. Do not merge.
+
+## Published checkpoint
+
+- Lab source/art assets commit: `1e429548918af47d76ff9ee0f86a3bf2a21e4371`.
+- Tested artifact workflow commit: `537bdf6e804848264b767f183a8396a1f9d63625`; run [41453577422](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41453577422), artifact [13145268608](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41453577422/artifacts/13145268608), expires 2026-12-02 UTC. GitHub artifact outer digest `b4ebe765e3378c46c68b70dd2e0165b1c681e42d3e22a15739c13c600ece7054`; inner `ARCANA20_R31_LAB.zip` SHA-256 `ceba7831c99675b396abb57e6ae354f7bbb177ccc9cf28c1726ec69ce2cbcbc8` (CI check annotation and local reproducible build agree). Run `sha256sum -c SHA256SUMS` inside the extracted lab.
+- `gh workflow run ... -f r31_lab=true` returned HTTP 403 (integration cannot dispatch). The artifact was published instead by a workflow-only push tagged `[r31-lab]`; other jobs in that workflow skipped. If re-publication is essential, make a focused workflow-only change and commit with `[r31-lab]` rather than retrying dispatch. No need to rerun it for aesthetic review.
+- Native candidate remains `6ae33fc4fafbe5c88908dccf1437dc28184910be`; R31 introduced no renderer change or new native visual pass. Remaining steps above are not yet performed.
