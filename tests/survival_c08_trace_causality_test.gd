@@ -830,6 +830,7 @@ func _walk_with_observation(hero: CharacterBody2D, enemy: CharacterBody2D, home:
 			stats[key] = 0
 	if not stats.has("min_home_distance"):
 		stats["min_home_distance"] = 99999.0
+	var origin := hero.global_position
 	var walked := true
 	for index in range(0, path.size(), 4):
 		var slice: Array[Vector2i] = []
@@ -839,6 +840,19 @@ func _walk_with_observation(hero: CharacterBody2D, enemy: CharacterBody2D, home:
 		if not bool(leg.get("walked", false)):
 			walked = false
 			break
+	# A leg that was entirely skipped is not a walk. Without this guard the walker
+	# could "succeed" while standing still: every blocked cell was skipped and every
+	# skip counted as progress, which is the exact shape of a gate that passes
+	# without doing anything.
+	if walked and path.size() >= 4:
+		var expected := float(path.size()) * 16.0 * 0.4
+		var moved := hero.global_position.distance_to(origin)
+		if moved < expected:
+			print("C08_LEG_STALLED ", JSON.stringify({"cells": path.size(),
+				"moved": snappedf(moved, 0.1), "expected": snappedf(expected, 0.1),
+				"hero": [snappedf(hero.global_position.x, 0.1), snappedf(hero.global_position.y, 0.1)],
+				"skips": int(stats.get("skipped", 0))}))
+			walked = false
 	# The window itself is returned, not a wrapper around it: handing a caller a
 	# different shape than the sampler writes is exactly how a missing key turned
 	# into a silent script error mid-walk once already.
@@ -887,6 +901,7 @@ func _observe_walk(hero: CharacterBody2D, enemy: CharacterBody2D, home: Vector2,
 					# skip is counted and printed, never silent.
 					skipped = true
 					stats["skipped"] = int(stats.get("skipped", 0)) + 1
+					_note_skip(point, hero)
 					break
 				escapes += 1
 				if escapes > 4:
@@ -896,6 +911,7 @@ func _observe_walk(hero: CharacterBody2D, enemy: CharacterBody2D, home: Vector2,
 					# counted, and printed.
 					skipped = true
 					stats["skipped"] = int(stats.get("skipped", 0)) + 1
+					_note_skip(point, hero)
 					break
 				_report_wedge(hero, cell, before, escapes)
 				escape_direction = _escape_direction(hero, before, point, escapes)
@@ -936,6 +952,27 @@ func _door_cell() -> Vector2i:
 		if structure != null and is_instance_valid(structure) and structure.piece_id == SurvivalStructure.PIECE_DOOR:
 			return structure.cell
 	return Vector2i(-1, -1)
+
+
+var _skips := 0
+
+
+## Name a skipped cell, capped after eight. "It skipped" without the blocker, the
+## cell and the door state is the kind of evidence that turns a diagnosis into a
+## guess.
+func _note_skip(point: Vector2, hero: CharacterBody2D) -> void:
+	_skips += 1
+	if _skips > 8:
+		return
+	var contacts: Array = []
+	for index in range(hero.get_slide_collision_count()):
+		var other: Variant = hero.get_slide_collision(index).get_collider()
+		contacts.append("%s:%s" % [str(other.name) if other is Node else "?",
+			other.get_class() if other is Object else "?"])
+	print("C08_SKIP ", JSON.stringify({"planned": [point.x, point.y],
+		"hero": [snappedf(hero.global_position.x, 0.1), snappedf(hero.global_position.y, 0.1)],
+		"cell": [_nav().cell_of(hero.global_position).x, _nav().cell_of(hero.global_position).y],
+		"door_open": _door_open(), "contacts": contacts, "n": _skips}))
 
 
 ## A body pressed against another body slides a few tenths of a pixel per frame.
