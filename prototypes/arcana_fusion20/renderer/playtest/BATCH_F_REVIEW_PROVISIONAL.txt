@@ -1,0 +1,28 @@
+SOUL OF HERO — BATCH F: BẢN XEM THỬ, CHƯA ĐƯỢC DUYỆT
+
+Đây là bản đồ họa độc lập, không phải bản phát hành, Gold hay PLAYTEST_READY.
+Mở HUONG_DAN.txt để vào Overworld và dùng 20 ô kỹ năng; #05 giữ cả A/B.
+Bảy lựa chọn Batch S giữ nguyên; xem BATCH_S_REVIEW.txt về trạng thái đã duyệt.
+
+Kỹ năng | Vai trò nguồn | Trạng thái thực tế
+01 Cinder Crown | A vương miện, C lửa ngoài | A ánh sáng ×1.8 và tro kéo dài
+   là điều chỉnh trình bày riêng, chưa duyệt; phần tạo hình có thể nhạt trên nền sáng.
+09 Chain Verdict | A đồ thị/đường nhớ, B màu, C tia điện sống | Đường nhớ
+   ×2.4 là trình bày thử; nhóm nhân vật gần nhau còn che đường. Thiếu hợp đồng
+   độ sâu/che khuất CT; KHÔNG coi tín hiệu hình là xác nhận trúng.
+11 Volt Carousel | A sáu vòng, C nhánh và connector | Ứng viên xem trước đã
+   được CT chấp nhận để tiếp tục, không phải Gold; chi phí hai trường chưa đo.
+16 Worldseed | A tăng trưởng/tấm, C vật liệu và debris | Mảnh tách từ tấm A
+   là lớp trình bày riêng, không phải hiệu ứng vỡ nguyên bản; cần duyệt chuyển động.
+20 Reality Ripper | C khe/cạnh/nội thất/đóng, A biến dạng và mảnh | Lấy mẫu
+   thế giới SOH thật; cần duyệt toàn bộ chuyển động và phần đóng.
+
+Fusion-1x: ảnh chụp 1280×720, kích thước gốc (JPEG), JSON ghi SHA và tick.
+Fusion-full-cast: video đầy đủ các khung đã chụp và JSON theo thời gian thật;
+đây là số khung thưa do dựng phần mềm và ghi ảnh, không phải bằng chứng 60 fps
+hay hiệu năng GPU. Video lossless nằm trong artifact riêng của cùng lần chạy.
+Bản Windows chỉ được kiểm tra khởi động headless; Linux dùng dựng phần mềm.
+Dùng SHA256SUMS.txt để kiểm tra nội dung, file .zip.sha256 để kiểm tra ZIP.
+CT/R4 chịu trách nhiệm xác nhận hit/miss/block/death/status bất biến; A0/CT
+cung cấp hình tuyến tính/HDR trước HUD và dữ liệu camera/độ sâu/che khuất.
+Không giả định va chạm, sát thương, HDR sản xuất hay che khuất đã hoàn tất.

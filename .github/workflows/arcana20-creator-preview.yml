@@ -162,7 +162,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include: ${{ fromJSON(contains(github.event.head_commit.message, '[f01-only]') && '[{"skill":1,"lighting":"normal","variant":"F01","lock":"0"},{"skill":1,"lighting":"dimmed","variant":"F01","lock":"0"}]' || contains(github.event.head_commit.message, '[f11-only]') && '[{"skill":11,"lighting":"normal","variant":"F11","lock":"0"},{"skill":11,"lighting":"dimmed","variant":"F11","lock":"0"}]' || contains(github.event.head_commit.message, '[f09-only]') && '[{"skill":9,"lighting":"normal","variant":"F09","lock":"0"},{"skill":9,"lighting":"dimmed","variant":"F09","lock":"0"}]' || contains(github.event.head_commit.message, '[f-only]') && '[{"skill":9,"lighting":"normal","variant":"F09","lock":"0"},{"skill":9,"lighting":"dimmed","variant":"F09","lock":"0"},{"skill":11,"lighting":"normal","variant":"F11","lock":"0"},{"skill":11,"lighting":"dimmed","variant":"F11","lock":"0"},{"skill":16,"lighting":"normal","variant":"F16","lock":"0"},{"skill":16,"lighting":"dimmed","variant":"F16","lock":"0"},{"skill":20,"lighting":"normal","variant":"F20","lock":"0"},{"skill":20,"lighting":"dimmed","variant":"F20","lock":"0"}]' || '[{"skill":5,"lighting":"normal","variant":"A","lock":"0"},{"skill":5,"lighting":"dimmed","variant":"A","lock":"0"},{"skill":5,"lighting":"normal","variant":"B","lock":"0"},{"skill":5,"lighting":"dimmed","variant":"B","lock":"0"},{"skill":5,"lighting":"normal","variant":"B","lock":"1"},{"skill":5,"lighting":"dimmed","variant":"B","lock":"1"},{"skill":1,"lighting":"normal","variant":"F01","lock":"0"},{"skill":1,"lighting":"dimmed","variant":"F01","lock":"0"},{"skill":2,"lighting":"normal","variant":"B02","lock":"0"},{"skill":2,"lighting":"dimmed","variant":"B02","lock":"0"},{"skill":3,"lighting":"normal","variant":"B03","lock":"0"},{"skill":3,"lighting":"dimmed","variant":"B03","lock":"0"},{"skill":7,"lighting":"normal","variant":"C07","lock":"0"},{"skill":7,"lighting":"dimmed","variant":"C07","lock":"0"},{"skill":8,"lighting":"normal","variant":"B08","lock":"0"},{"skill":8,"lighting":"dimmed","variant":"B08","lock":"0"},{"skill":10,"lighting":"normal","variant":"C10","lock":"0"},{"skill":10,"lighting":"dimmed","variant":"C10","lock":"0"},{"skill":15,"lighting":"normal","variant":"C15","lock":"0"},{"skill":15,"lighting":"dimmed","variant":"C15","lock":"0"},{"skill":17,"lighting":"normal","variant":"C17","lock":"0"},{"skill":17,"lighting":"dimmed","variant":"C17","lock":"0"},{"skill":9,"lighting":"normal","variant":"F09","lock":"0"},{"skill":9,"lighting":"dimmed","variant":"F09","lock":"0"},{"skill":11,"lighting":"normal","variant":"F11","lock":"0"},{"skill":11,"lighting":"dimmed","variant":"F11","lock":"0"},{"skill":16,"lighting":"normal","variant":"F16","lock":"0"},{"skill":16,"lighting":"dimmed","variant":"F16","lock":"0"},{"skill":20,"lighting":"normal","variant":"F20","lock":"0"},{"skill":20,"lighting":"dimmed","variant":"F20","lock":"0"}]') }}
+        include: ${{ fromJSON(contains(github.event.head_commit.message, '[f01-only]') && '[{"skill":1,"lighting":"normal","variant":"F01","lock":"0"},{"skill":1,"lighting":"dimmed","variant":"F01","lock":"0"}]' || contains(github.event.head_commit.message, '[f11-only]') && '[{"skill":11,"lighting":"normal","variant":"F11","lock":"0"},{"skill":11,"lighting":"dimmed","variant":"F11","lock":"0"}]' || contains(github.event.head_commit.message, '[f09-only]') && '[{"skill":9,"lighting":"normal","variant":"F09","lock":"0"},{"skill":9,"lighting":"dimmed","variant":"F09","lock":"0"}]' || contains(github.event.head_commit.message, '[f-five]') && '[{"skill":1,"lighting":"normal","variant":"F01","lock":"0"},{"skill":1,"lighting":"dimmed","variant":"F01","lock":"0"},{"skill":9,"lighting":"normal","variant":"F09","lock":"0"},{"skill":9,"lighting":"dimmed","variant":"F09","lock":"0"},{"skill":11,"lighting":"normal","variant":"F11","lock":"0"},{"skill":11,"lighting":"dimmed","variant":"F11","lock":"0"},{"skill":16,"lighting":"normal","variant":"F16","lock":"0"},{"skill":16,"lighting":"dimmed","variant":"F16","lock":"0"},{"skill":20,"lighting":"normal","variant":"F20","lock":"0"},{"skill":20,"lighting":"dimmed","variant":"F20","lock":"0"}]' || contains(github.event.head_commit.message, '[f-only]') && '[{"skill":9,"lighting":"normal","variant":"F09","lock":"0"},{"skill":9,"lighting":"dimmed","variant":"F09","lock":"0"},{"skill":11,"lighting":"normal","variant":"F11","lock":"0"},{"skill":11,"lighting":"dimmed","variant":"F11","lock":"0"},{"skill":16,"lighting":"normal","variant":"F16","lock":"0"},{"skill":16,"lighting":"dimmed","variant":"F16","lock":"0"},{"skill":20,"lighting":"normal","variant":"F20","lock":"0"},{"skill":20,"lighting":"dimmed","variant":"F20","lock":"0"}]' || '[{"skill":5,"lighting":"normal","variant":"A","lock":"0"},{"skill":5,"lighting":"dimmed","variant":"A","lock":"0"},{"skill":5,"lighting":"normal","variant":"B","lock":"0"},{"skill":5,"lighting":"dimmed","variant":"B","lock":"0"},{"skill":5,"lighting":"normal","variant":"B","lock":"1"},{"skill":5,"lighting":"dimmed","variant":"B","lock":"1"},{"skill":1,"lighting":"normal","variant":"F01","lock":"0"},{"skill":1,"lighting":"dimmed","variant":"F01","lock":"0"},{"skill":2,"lighting":"normal","variant":"B02","lock":"0"},{"skill":2,"lighting":"dimmed","variant":"B02","lock":"0"},{"skill":3,"lighting":"normal","variant":"B03","lock":"0"},{"skill":3,"lighting":"dimmed","variant":"B03","lock":"0"},{"skill":7,"lighting":"normal","variant":"C07","lock":"0"},{"skill":7,"lighting":"dimmed","variant":"C07","lock":"0"},{"skill":8,"lighting":"normal","variant":"B08","lock":"0"},{"skill":8,"lighting":"dimmed","variant":"B08","lock":"0"},{"skill":10,"lighting":"normal","variant":"C10","lock":"0"},{"skill":10,"lighting":"dimmed","variant":"C10","lock":"0"},{"skill":15,"lighting":"normal","variant":"C15","lock":"0"},{"skill":15,"lighting":"dimmed","variant":"C15","lock":"0"},{"skill":17,"lighting":"normal","variant":"C17","lock":"0"},{"skill":17,"lighting":"dimmed","variant":"C17","lock":"0"},{"skill":9,"lighting":"normal","variant":"F09","lock":"0"},{"skill":9,"lighting":"dimmed","variant":"F09","lock":"0"},{"skill":11,"lighting":"normal","variant":"F11","lock":"0"},{"skill":11,"lighting":"dimmed","variant":"F11","lock":"0"},{"skill":16,"lighting":"normal","variant":"F16","lock":"0"},{"skill":16,"lighting":"dimmed","variant":"F16","lock":"0"},{"skill":20,"lighting":"normal","variant":"F20","lock":"0"},{"skill":20,"lighting":"dimmed","variant":"F20","lock":"0"}]') }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -426,7 +426,7 @@ jobs:
             ${{ runner.temp }}/encode.log
           if-no-files-found: warn
   thorn-range-review:
-    if: ${{ !contains(github.event.head_commit.message, '[f-only]') && !contains(github.event.head_commit.message, '[f09-only]') && !contains(github.event.head_commit.message, '[f11-only]') && !contains(github.event.head_commit.message, '[f01-only]') }}
+    if: ${{ !contains(github.event.head_commit.message, '[f-five]') && !contains(github.event.head_commit.message, '[f-only]') && !contains(github.event.head_commit.message, '[f09-only]') && !contains(github.event.head_commit.message, '[f11-only]') && !contains(github.event.head_commit.message, '[f01-only]') }}
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 45
@@ -515,7 +515,7 @@ jobs:
           if-no-files-found: error
           retention-days: 14
   thorn-before-origin:
-    if: ${{ !contains(github.event.head_commit.message, '[f-only]') && !contains(github.event.head_commit.message, '[f09-only]') && !contains(github.event.head_commit.message, '[f11-only]') && !contains(github.event.head_commit.message, '[f01-only]') }}
+    if: ${{ !contains(github.event.head_commit.message, '[f-five]') && !contains(github.event.head_commit.message, '[f-only]') && !contains(github.event.head_commit.message, '[f09-only]') && !contains(github.event.head_commit.message, '[f11-only]') && !contains(github.event.head_commit.message, '[f01-only]') }}
     # Exact old AVFX source at 8c260, with only the new capture harness
     # overlaid. Runs the same real route/35-right input, not a fake regression.
     runs-on: ubuntu-latest
@@ -639,7 +639,7 @@ jobs:
           name: r20-05-neutral-original-native-source-beats
           path: source-review/
   full-frame-review:
-    if: ${{ !contains(github.event.head_commit.message, '[f-only]') && !contains(github.event.head_commit.message, '[f09-only]') && !contains(github.event.head_commit.message, '[f11-only]') && !contains(github.event.head_commit.message, '[f01-only]') }}
+    if: ${{ !contains(github.event.head_commit.message, '[f-five]') && !contains(github.event.head_commit.message, '[f-only]') && !contains(github.event.head_commit.message, '[f09-only]') && !contains(github.event.head_commit.message, '[f11-only]') && !contains(github.event.head_commit.message, '[f01-only]') }}
     # Surface one genuine locked full 1280x720 frame for native-scale review;
     # the artifact keeps the untouched lossless frames, not this JPEG transport.
     needs: live-motion
@@ -664,7 +664,7 @@ jobs:
       - name: Full frame chunks 27-35
         run: for i in $(seq 27 35); do [ ! -f "$RUNNER_TEMP/full-chunks/$i" ] || echo "::notice title=R20_FULL_3_b_$i::$(cat "$RUNNER_TEMP/full-chunks/$i")"; done
   batch-s-small-review:
-    if: ${{ !contains(github.event.head_commit.message, '[f-only]') && !contains(github.event.head_commit.message, '[f09-only]') && !contains(github.event.head_commit.message, '[f11-only]') && !contains(github.event.head_commit.message, '[f01-only]') }}
+    if: ${{ !contains(github.event.head_commit.message, '[f-five]') && !contains(github.event.head_commit.message, '[f-only]') && !contains(github.event.head_commit.message, '[f09-only]') && !contains(github.event.head_commit.message, '[f11-only]') && !contains(github.event.head_commit.message, '[f01-only]') }}
     # Only the small 1x images and JSON; no lossless or MP4 copied here.
     needs: live-motion
     runs-on: ubuntu-latest
@@ -689,7 +689,7 @@ jobs:
           if-no-files-found: error
           retention-days: 14
   creator-package:
-    if: ${{ !contains(github.event.head_commit.message, '[f-only]') && !contains(github.event.head_commit.message, '[f09-only]') && !contains(github.event.head_commit.message, '[f11-only]') && !contains(github.event.head_commit.message, '[f01-only]') }}
+    if: ${{ !contains(github.event.head_commit.message, '[f-five]') && !contains(github.event.head_commit.message, '[f-only]') && !contains(github.event.head_commit.message, '[f09-only]') && !contains(github.event.head_commit.message, '[f11-only]') && !contains(github.event.head_commit.message, '[f01-only]') }}
     # One download, only when the same-run runtime and evidence jobs succeed.
     needs: [build, windows-current-runtime, live-motion, source-review, full-frame-review, batch-s-small-review, thorn-range-review, thorn-before-origin]
     runs-on: ubuntu-latest
@@ -740,5 +740,66 @@ jobs:
         with:
           name: ARCANA20_CREATOR_VISUAL_REVIEW_PARTIAL
           path: deliverable/
+          if-no-files-found: error
+          retention-days: 14
+
+  creator-f-provisional:
+    # Bounded same-SHA package: S and #05 implementations remain in the build,
+    # with their existing review records. Do not re-record accepted S footage.
+    # Art status is provisional until native motion review/CT decisions.
+    if: ${{ contains(github.event.head_commit.message, '[f-five]') }}
+    needs: [build, windows-current-runtime, live-motion, source-review]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: SOH-AVFX-EXPERIMENTAL-NOT-PLAYTEST-READY
+          path: deliverable/build
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: batch-f-review-*
+          path: deliverable/fusion-1x
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: r20-F*-lock0
+          path: deliverable/fusion-full-cast
+      - name: Verify five independent same-run pairs and assemble review
+        run: |
+          set -euo pipefail
+          for id in F01 F09 F11 F16 F20; do
+            for light in normal dimmed; do
+              dir="deliverable/fusion-full-cast/r20-${id}-${light}-lock0"
+              small="deliverable/fusion-1x/batch-f-review-${id}-${light}"
+              timeline=$(find "$dir" -name timeline.json -type f -print -quit)
+              movie=$(find "$dir" -name review.mp4 -type f -print -quit)
+              test -n "$timeline" && test -s "$timeline"
+              test -n "$movie" && test -s "$movie"
+              test -s "$small/metadata.json"
+              test "$(find "$small" -name 'sheet_*.jpg' | wc -l)" -eq 1
+              python3 - "$small/metadata.json" "$GITHUB_SHA" <<'PY'
+          import json, sys
+          metadata=json.load(open(sys.argv[1], encoding='utf-8'))
+          assert metadata['avfx_sha'] == sys.argv[2], (metadata['avfx_sha'], sys.argv[2])
+          PY
+            done
+          done
+          # The 1x review.mp4 contains all captured frames; keep lossless
+          # videos in their separately downloadable same-run Action artifacts.
+          find deliverable/fusion-full-cast -type f -name '*.mkv' -delete
+          cp prototypes/arcana_fusion20/renderer/playtest/HUONG_DAN_THU_NGHIEM.txt deliverable/HUONG_DAN.txt
+          cp prototypes/arcana_fusion20/renderer/playtest/BATCH_S_REVIEW.txt deliverable/BATCH_S_REVIEW.txt
+          cp prototypes/arcana_fusion20/renderer/playtest/BATCH_F_REVIEW_PROVISIONAL.txt deliverable/BATCH_F_REVIEW.txt
+          printf 'AVFX code SHA: %s\nProvisional visual-only; not Gold or PLAYTEST_READY.\n' "$GITHUB_SHA" > deliverable/CODE_SHA.txt
+          (cd deliverable && find . -type f ! -name SHA256SUMS.txt -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS.txt && sha256sum -c SHA256SUMS.txt > "$RUNNER_TEMP/f-deliverable-checksums.log")
+          (cd deliverable && zip -q -r "$RUNNER_TEMP/SOH_AVFX_F_PROVISIONAL.zip" .)
+          (cd "$RUNNER_TEMP" && sha256sum SOH_AVFX_F_PROVISIONAL.zip > SOH_AVFX_F_PROVISIONAL.zip.sha256 && sha256sum -c SOH_AVFX_F_PROVISIONAL.zip.sha256 && unzip -tq SOH_AVFX_F_PROVISIONAL.zip)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SOH-AVFX-F-PROVISIONAL-SAME-SHA
+          path: |
+            ${{ runner.temp }}/SOH_AVFX_F_PROVISIONAL.zip
+            ${{ runner.temp }}/SOH_AVFX_F_PROVISIONAL.zip.sha256
           if-no-files-found: error
           retention-days: 14
