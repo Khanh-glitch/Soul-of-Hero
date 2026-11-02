@@ -1,5 +1,5 @@
 # Diagnostic-only same-state #11 source-field decomposition; preserve the trace.
-name: ARCANA20 R17 rotor field decomposition
+name: ARCANA20 R17 rotor field and world decomposition
 on:
   workflow_dispatch:
   push:

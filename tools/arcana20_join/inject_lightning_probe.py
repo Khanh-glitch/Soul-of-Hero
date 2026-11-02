@@ -69,6 +69,15 @@ s = s.replace(needle, '''    if OS.get_environment("AVFX_R17_WORLD_DECOMPOSE") =
             set_meta("r23_world_probe_done", true)
             var tree := get_tree()
             var old_pause := tree.paused
+            # The test route can inherit PROCESS_MODE_ALWAYS. Explicitly
+            # suspend the world and actors instead of relying on pause alone.
+            var suspended: Array = [host.get("world"), player, camera, diagnostic_source]
+            for actor in host.get("spawned"):
+                if is_instance_valid(actor): suspended.append(actor)
+            var old_modes: Array = []
+            for node in suspended:
+                old_modes.append(node.process_mode)
+                node.process_mode = Node.PROCESS_MODE_DISABLED
             tree.paused = true
             var before_player := player.global_position
             var before_enemy := enemy.global_position
@@ -99,6 +108,8 @@ s = s.replace(needle, '''    if OS.get_environment("AVFX_R17_WORLD_DECOMPOSE") =
             diagnostic_source._spell.set("include_bolts", true)
             diagnostic_source._render_frame()
             tree.paused = old_pause
+            for i in range(suspended.size()):
+                suspended[i].process_mode = old_modes[i]
             if not stable:
                 push_error("R23_WORLD_PROBE scene or tick moved")
                 return false
