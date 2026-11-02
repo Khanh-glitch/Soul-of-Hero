@@ -53,13 +53,15 @@ Other limits are recorded rather than disguised as PASS: natural-node recovery c
 | 2. Thin typed composition contract above existing owners | Versioned read-only definition/capability validation; one trusted live A1/A0 physical host; existing A0 transaction, A3 cost/queue and node state; QA overlays explicitly isolated from shipping data | **Chosen**, smallest change that can be falsified by the requested scenarios |
 | 3. New entity/event framework / universal dispatcher | Duplicates K1–K8 ownership, creates migration and replay hazards, unsupported by the audit | Reject |
 
-Planned seams (not yet claimed implemented at checkpoint A):
+Seams and implementation state (checkpoint A was the audit-only boundary):
 
-- A small typed capability resolver referencing canonical definitions, with a closed set of existing handlers. JSON cannot supply scripts, arbitrary Callables, costs to A0, or authoritative coordinates.
-- A live A1/A0 natural-source host deriving all 13 receipt fields from the mounted node, A1 reader, actual hero, run and existing clock. A0 rechecks identity/geometry at the commit boundary. Existing node depletion and tool wear stay atomic; no static fixture receipt shortcut.
-- Canonical capability declarations for existing tool behavior; a QA-only additional item/recipe and two source instances using existing handlers. Any pinned A3/SaveService change must be a minimal visible diff with updated pins and **owner approval required**, never a silent hash relaxation.
+- A small typed capability resolver references canonical definitions, with the closed handler set `natural_hit`. JSON cannot supply scripts, arbitrary Callables, costs to A0, or authoritative coordinates. **A first implementation now exists in the working tree** at `game/survival/composition/capability_contract.gd`; parse/native status is unverified because no local Godot 4.7 is available.
+- The three existing canonical tool definitions now declare `soh.item.capabilities.v1`; `EconomyService.plan_tool_use_candidate` resolves target kinds through the typed contract. The only legacy fallback is bounded to the three former IDs (`stone_pick`, `iron_pick`, `salvage_hammer`) for older fixture catalogs. Catalog load fails closed on malformed declarations. The existing planner still owns wear and the existing A0 transaction still owns yield/depletion.
+- `survival_catalog.json` supports optional `required_capability`; bare-hand harvest refuses when one is declared, and tool harvest checks the exact capability ID via the resolver. No production resource currently opts in: legacy bare-hand routes in existing journey tests are preserved until a reviewed content decision.
+- A live A1/A0 natural-source host deriving all 13 receipt fields from the mounted node, A1 reader, actual hero, run and existing clock is **not implemented**. In the pinned A1 plan, resource nodes expose `node_id`, `region_id`, `site_id`, `cell`, `material_key` and `required_capabilities`, but the inspected examples carry `status: CONTRACT_NOT_SPAWNED` and no binding identity/receipt owner/action or A8 authorization digest. The required reader file is also absent from the PR34 base and appears only in owner composition. Do not manufacture receipt fields; this remains the primary blocker for joining the natural-source path. A0 must recheck identity/geometry at the commit boundary. Existing node depletion and tool wear stay atomic; no static fixture receipt shortcut.
+- Canonical capability declarations are in place; a QA-only additional item/recipe and two source instances using existing handlers are still pending. Any pinned A3/SaveService change must be a minimal visible diff with updated pins and **owner approval required**, never a silent hash relaxation. Pins for the current capability seam have been updated together in the working tree; none has yet been natively verified.
 - QA content loaded only by an explicit test composition, never by the shipping catalog. Unknown/mismatched definitions fail closed. Existing saves keep their IDs; missing content cannot silently refill or grant.
-- Read-only affordance/result projection for A6; no HUD redesign.
+- Read-only affordance/result projection for A6 remains deferred; no HUD redesign.
 
 ## 4. Prototype source reuse ledger — SOURCE_INSPECTED, not executed/accepted
 
@@ -92,7 +94,9 @@ No browser engine, IndexedDB, donor map, art, boss, balance, AI or save implemen
 
 Godot is not preinstalled. The official GitHub release asset redirects to a host outside this sandbox's allowlist; the direct download failed with SSL_ERROR_SYSCALL. The API asset route also redirects. This is a runtime provisioning blocker, **not a native PASS**. Existing Godot 4.7 GitHub Actions are the authorized fallback; local installation will be retried only through an allowed distribution route.
 
-Next implementation order: typed capability contract + canonical data seam; live physical source host; QA overlays/native scenarios; joined AppRoot/2PID gate; only then one depth connection. Do not start all three depth systems.
+Current working-tree checkpoint (uncommitted; no native compile): typed capability resolver + canonical tool declarations + catalog fail-closed validation + survival optional-capability gate + first native assertions are written. `a0_v5_source_pins.gd` and `SaveService` canonical service hash are updated in tandem. JSON parsing and `git diff --check` pass. This is still **S1 / SOURCE_INSPECTED**; no Godot parse, native PASS, source receipt, image review or owner approval is claimed. The only confirmed A1 natural-source behavior remains the existing unjoined route.
+
+Next implementation order: (1) resolve A1's authoritative generic source-receipt contract with the A1/A0 owners—do not synthesize missing receipt identity; (2) finish or revert the typed seam after Godot 4.7 native parse and existing C08/R13/tool/offline regressions; (3) add isolated QA overlays and exercise two source definitions plus paid station/fuel/work-queue route; (4) second authored fixture region, then joined AppRoot/2PID gate; only then one depth connection. Do not start all three depth systems. Cross-authority owner review remains required.
 
 ```bash
 git status --short --branch

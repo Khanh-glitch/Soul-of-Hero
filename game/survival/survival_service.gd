@@ -1,5 +1,7 @@
 extends Node
 
+const CapabilityContract = preload("res://game/survival/composition/capability_contract.gd")
+
 ## A0 survival foundation service — the single seam every survival system uses.
 ##
 ## ## What this owns
@@ -206,6 +208,8 @@ func harvest(node_id: String, kind: String, now_unix: int = -1) -> Dictionary:
 	var definition := resource_definition(kind)
 	if definition.is_empty():
 		return {"ok": false, "reason": "unknown_resource_kind"}
+	if not String(definition.get("required_capability", "")).is_empty():
+		return {"ok": false, "reason": "required_tool_capability"}
 	var save := _save()
 	if save == null:
 		return {"ok": false, "reason": "save_service_unavailable"}
@@ -322,6 +326,19 @@ func harvest_with_tool(
 	var instances: Dictionary = (adapter.call(&"document") as Dictionary).get("instances", {})
 	if not instances.has(tool_instance_id):
 		return {"ok": false, "reason": "TOOL_NOT_OWNED", "node_id": node_id}
+	var required_capability := String(definition.get("required_capability", ""))
+	if not required_capability.is_empty():
+		var instance: Dictionary = instances[tool_instance_id]
+		var tool_item_id := String(instance.get("item_id", ""))
+		var economy_catalog: Dictionary = adapter.get("catalog")
+		var item_defs: Dictionary = economy_catalog.get("items", {})
+		var tool_definition: Dictionary = item_defs.get(tool_item_id, {})
+		# Old pinned fixture catalogs may omit declarations for the three
+		# grandfathered tool ids. Their target fallback is bounded and rechecked
+		# by EconomyService.plan_tool_use_candidate; canonical data always takes
+		# this typed capability-id check.
+		if tool_definition.has("capabilities") and not CapabilityContract.has_capability(tool_definition, required_capability):
+			return {"ok": false, "reason": "required_tool_capability", "node_id": node_id}
 	var request := {
 		"contract": "soh.economy.tool_use.v1",
 		"node_id": node_id,

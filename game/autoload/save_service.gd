@@ -33,7 +33,7 @@ const PRODUCTION_SOURCE_CUSTODY := preload("res://game/survival/economy/a3_econo
 # Immutable, first-party A3 integration fixture. Production composition must
 # explicitly review/re-pin future adapter revisions; a caller label is never
 # evidence of authority.
-const PINNED_A3_SCRIPT_SHA256 := "98932d25b73a03b9412f0f72f82dc5c2b6451e3ba894a134fdff2d1924252ee0"
+const PINNED_A3_SCRIPT_SHA256 := "5bfba3f2cd0b8d3439e76bdd243196ed7a79f5cc58a86d2faeeba8fce6804c44"
 const PINNED_A3_CUSTODY_SHA256 := "f0695cdd05c23490a42fa92cc6fb6de9d87a3ce2933e8563cc7d85fccde09e8b"
 # The independently pinned 86dc2195 regression adapter remains supported.
 const PINNED_A3_FIXTURE_SHA256 := "b1ee9792b4460e956ec6c59437269078e4f6767f76d35145e680dcc03ba3806c"

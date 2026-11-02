@@ -1127,6 +1127,25 @@
         },
         "station": "workbench",
         "min_tier": 1
+      },
+      "capabilities": {
+        "schema": "soh.item.capabilities.v1",
+        "entries": [
+          {
+            "id": "harvest.stone",
+            "handler": "natural_hit",
+            "targets": [
+              "stone_outcrop"
+            ]
+          },
+          {
+            "id": "harvest.ore",
+            "handler": "natural_hit",
+            "targets": [
+              "iron_vein"
+            ]
+          }
+        ]
       }
     },
     "iron_pick": {
@@ -1156,6 +1175,25 @@
         },
         "station": "workbench",
         "min_tier": 1
+      },
+      "capabilities": {
+        "schema": "soh.item.capabilities.v1",
+        "entries": [
+          {
+            "id": "harvest.ore",
+            "handler": "natural_hit",
+            "targets": [
+              "iron_vein"
+            ]
+          },
+          {
+            "id": "harvest.salvage",
+            "handler": "natural_hit",
+            "targets": [
+              "scrap_pile"
+            ]
+          }
+        ]
       }
     },
     "salvage_hammer": {
@@ -1185,6 +1223,18 @@
         },
         "station": "workbench",
         "min_tier": 1
+      },
+      "capabilities": {
+        "schema": "soh.item.capabilities.v1",
+        "entries": [
+          {
+            "id": "harvest.salvage",
+            "handler": "natural_hit",
+            "targets": [
+              "scrap_pile"
+            ]
+          }
+        ]
       }
     },
     "field_meal": {

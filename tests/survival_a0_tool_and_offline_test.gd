@@ -12,6 +12,7 @@ extends "res://tests/survival_foundation_test.gd"
 ##     nothing here pretends a harvest or a job is combat.
 const TOOL_SAVE := "user://tests/a0_tool_offline.json"
 const AUDIT := "user://tests/a0_tool_offline_audit.json"
+const CapabilityContract = preload("res://game/survival/composition/capability_contract.gd")
 
 var _economy: Node
 var _adapter: RefCounted
@@ -65,6 +66,17 @@ func _boot_and_run() -> void:
 		return
 	_adapter = _economy.get("_adapter")
 	_expect(_adapter != null, "the pinned A3 adapter is the live economy authority")
+	var economy_catalog: Dictionary = _adapter.get("catalog")
+	var item_defs: Dictionary = economy_catalog.get("items", {})
+	var stone_pick_def: Dictionary = item_defs.get("stone_pick", {})
+	_expect(CapabilityContract.validate_item(stone_pick_def).is_empty(),
+		"canonical tool capabilities validate against the versioned closed schema")
+	_expect(CapabilityContract.harvest_targets(stone_pick_def).has("iron_vein"),
+		"the stone pick's ore capability resolves from canonical item data")
+	var unknown_handler := {"capabilities": {"schema": "soh.item.capabilities.v1", "entries": [
+		{"id": "test.unknown", "handler": "execute_script", "targets": ["iron_vein"]}]}}
+	_expect(CapabilityContract.validate_item(unknown_handler) == "capability_handler_unknown",
+		"unknown capability handlers fail closed")
 	var composition: Node = world.get(&"economy_composition")
 	_expect(composition != null and is_instance_valid(composition),
 		"the A0 composition root (run lifecycle + profile port + offline host) is mounted")
