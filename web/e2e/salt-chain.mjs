@@ -70,7 +70,7 @@ try {
     return s;
   }
   function camera(p){return {x:Math.max(0,Math.min(world.width*16-640,p.x-320)),y:Math.max(0,Math.min(world.height*16-360,p.y-186))};}
-  async function aim(tx,ty){const s=await state(),c=camera(s.player),x=Math.max(2,Math.min(638,tx-c.x)),y=Math.max(2,Math.min(358,ty-c.y));await page.mouse.move(Math.round(x*2),Math.round(y*2));await sleep(100);}
+  async function aim(tx,ty){await sleep(350);const s=await state(),c=camera(s.player),x=Math.max(2,Math.min(638,tx-c.x)),y=Math.max(2,Math.min(358,ty-c.y));await page.mouse.move(Math.round(x*2),Math.round(y*2));await sleep(150);}
   async function interact(tx,ty){await walkNear(tx,ty,20);await aim(tx,ty);await page.keyboard.press('e');await sleep(250);}
   async function harvest(sourceKey,itemKey,needed){
     let guard=0;
@@ -80,7 +80,7 @@ try {
       for(let i=0;i<world.src.length;i++)if(world.src[i]>=0&&SRC_KEYS[world.src[i]]===sourceKey){const x=i%world.width,y=(i/world.width)|0; if(!s.sources?.[i]||s.sources[i].stock>0)candidates.push({x,y,d:Math.hypot(x*16+8-p.x,y*16+8-p.y)});}
       candidates.sort((a,b)=>a.d-b.d);assert(candidates.length,`No remaining ${sourceKey} source`);
       const n=candidates[0], wx=n.x*16+8,wy=n.y*16+8;
-      await walkNear(wx,wy,27);
+      await walkNear(wx,wy,18);
       await aim(wx,wy);
       const before=await count(itemKey); await page.mouse.down();
       for(let k=0;k<10000&&await count(itemKey)<needed;k+=120)await sleep(120);
@@ -141,9 +141,11 @@ try {
   await equip('stone_pick');await screenshot('04-stone-pickaxe-crafted-1280x720.png');
   const saltList=[];for(let i=0;i<world.src.length;i++)if(world.src[i]>=0&&SRC_KEYS[world.src[i]]==='salt_shale'){const x=i%world.width,y=(i/world.width)|0;saltList.push({x,y,d:Math.hypot(x*16+8-(await state()).player.x,y*16+8-(await state()).player.y)});}
   saltList.sort((a,b)=>a.d-b.d);assert(saltList.length,'Salt Shale source absent');let salt=saltList[0];
-  await walkNear(salt.x*16+8,salt.y*16+8,27);await aim(salt.x*16+8,salt.y*16+8);
-  const saltBefore=await count('raw_salt');await page.mouse.down();for(let k=0;k<2200&&await count('raw_salt')<=saltBefore;k+=120)await sleep(120);await page.mouse.up();await sleep(700);
+  await walkNear(salt.x*16+8,salt.y*16+8,18);await aim(salt.x*16+8,salt.y*16+8);
+  const saltBefore=await count('raw_salt'),atSalt=await state(),saltIndex=salt.y*world.width+salt.x,activeTool=await page.evaluate(()=>{const r=window.__soh.run;return r.custody.inv.slots[r.player.active]?.key||'fists'});log.push(`At Salt Shale (${salt.x},${salt.y}) from ${lastRouteTiles} tiles; player=${JSON.stringify(atSalt.player)}, distance=${Math.hypot(atSalt.player.x-(salt.x*16+8),atSalt.player.y-(salt.y*16+8)).toFixed(1)}px, active=${activeTool}, source=${JSON.stringify(atSalt.sources[saltIndex]||null)}.`);
+  await page.mouse.down();for(let k=0;k<4000&&await count('raw_salt')<=saltBefore;k+=120)await sleep(120);await page.mouse.up();await sleep(700);
   if(await count('raw_salt')<=saltBefore){const now=await state();for(const d of now.drops.filter(d=>d.key==='raw_salt'))await walkNear(d.x,d.y,6);}
+  const saltAfter=await state();log.push(`Salt Shale result: raw_salt ${saltBefore}->${await count('raw_salt')}; source=${JSON.stringify(saltAfter.sources[saltIndex]||null)}, drops=${JSON.stringify(saltAfter.drops)}.`);
   assert(await count('raw_salt')>saltBefore,`Pickaxe did not mine Raw Salt from Salt Shale at (${salt.x},${salt.y})`);
   log.push(`Mined Salt Shale at (${salt.x},${salt.y}); Raw Salt=${await count('raw_salt')}.`);
   await harvest('rock','stone',3);assert((await count('stone'))>=3,'Could not mine three campfire stones');
