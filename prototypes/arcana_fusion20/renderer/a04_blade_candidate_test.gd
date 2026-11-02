@@ -31,9 +31,9 @@ func _initialize() -> void:
         return
     # Test exact authored contact and acceleration, independent of the
     # raster test; not a replacement for viewing the animation.
-    var ready: float = spell._blade_offset(3.18)
-    var first: float = ready - spell._blade_offset(3.18 + 1.0 / 60.0)
-    var second: float = spell._blade_offset(3.18 + 1.0 / 60.0) - spell._blade_offset(3.18 + 2.0 / 60.0)
+    var ready: float = spell._blade_offset(3.04)
+    var first: float = ready - spell._blade_offset(3.04 + 1.0 / 60.0)
+    var second: float = spell._blade_offset(3.04 + 1.0 / 60.0) - spell._blade_offset(3.04 + 2.0 / 60.0)
     var contact: float = spell._blade_offset(3.4)
     if not (ready > 43.0 and second > first and absf(contact - 10.0) < 0.001 and spell._blade_offset(3.6) > contact):
         push_error("A04_BLADE_FAIL anticipation/acceleration/contact/recoil")
