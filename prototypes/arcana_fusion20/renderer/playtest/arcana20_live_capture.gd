@@ -258,6 +258,7 @@ func start(wrapper: Node) -> void:
     if trace_tips and (skill != 16 or not fixed_camera):
         _fail("tip stepping requires F16 fixed-camera diagnostic"); return
     var tip_trace: Array = []
+    var trace_scale := 0.0
     var tip_stepping := false
     var tip_complete := false
     var deadline := Time.get_ticks_msec() + (360000 if trace_tips else 180000)
@@ -292,6 +293,7 @@ func start(wrapper: Node) -> void:
                 seed_cast.advance(FusionPlayer.STEP)
                 var seed_player := seed_cast._back as ASourcePlayer
                 var source := seed_player._spell as AWorldseedGrowth
+                trace_scale = seed_player._scale
                 var pieces: Array = []
                 for li in range(source.layers.size()):
                     for petal in range(int(source.layers[li].count)):
@@ -344,7 +346,7 @@ func start(wrapper: Node) -> void:
         var tf := FileAccess.open(folder.path_join("f16_tip_trace.json"), FileAccess.WRITE)
         if tf == null:
             _fail("F16 trace file"); return
-        tf.store_string(JSON.stringify({"scope": "non-shipping single-source-tick diagnostic; real moving actors, world-fixed camera; not gameplay cadence or device FPS", "pieces_per_tick": 41, "piece_columns": ["layer", "petal", "age", "center_x", "center_y", "root_x", "root_y", "tip_x", "tip_y", "world_center_x", "world_center_y", "opacity"], "ticks": tip_trace}))
+        tf.store_string(JSON.stringify({"scope": "non-shipping single-source-tick diagnostic; real moving actors, world-fixed camera; not gameplay cadence or device FPS", "pieces_per_tick": 41, "source_to_world_scale": trace_scale, "piece_columns": ["layer", "petal", "age", "center_x", "center_y", "root_x", "root_y", "tip_x", "tip_y", "world_center_x", "world_center_y", "opacity"], "ticks": tip_trace}))
         tf.close()
     var cast_duration_s := float(Time.get_ticks_usec() - start_usec) / 1000000.0
     if no_fx and cast_duration_s < wait_s:

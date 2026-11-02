@@ -22,6 +22,9 @@ for frame in frames:
 assert len(pieces) == 41
 maximum_step = 0.0
 minimum_spin = math.inf
+minimum_gravity = math.inf
+scale = float(trace['source_to_world_scale'])
+assert scale > 0.0
 for key, motion in sorted(pieces.items()):
     assert len(motion) == len(frames)
     assert motion[0][2] == 0.0 and motion[-1][2] >= 2.0, key
@@ -38,16 +41,28 @@ for key, motion in sorted(pieces.items()):
     a, b = motion[0], motion[-1]
     angle0 = math.atan2(a[8]-a[6], a[7]-a[5])
     angle1 = math.atan2(b[8]-b[6], b[7]-b[5])
-    spin = abs(math.atan2(math.sin(angle1-angle0), math.cos(angle1-angle0)))
-    minimum_spin = min(minimum_spin, spin)
-    assert spin > 1.0, (key, spin)
-    # Downward acceleration in world coordinates: use an interior flight
-    # region, where the source's deterministic drag and gravity both act.
+    spin = math.atan2(math.sin(angle1-angle0), math.cos(angle1-angle0))
+    minimum_spin = min(minimum_spin, abs(spin))
+    expected_spin = (-1.0 if (key[0] + key[1]) % 2 == 0 else 1.0) * b[2] * (0.35 + (key[1] % 4) * 0.12)
+    spin_error = math.atan2(math.sin(spin-expected_spin), math.cos(spin-expected_spin))
+    assert abs(spin_error) < 0.001, (key, spin, expected_spin)
+    # Net acceleration can point UP while drag opposes an initially downward
+    # velocity. Fit the authored exponential drag and quadratic gravity over
+    # widely separated samples instead of incorrectly demanding a positive
+    # second difference at every tick. Gravity must be world-down and equal
+    # to the source's 9*age² transformed by the real source-to-world scale.
     flight = [p for p in motion if 0.2 <= p[2] <= 1.8]
     assert len(flight) > 40
-    for a, b, c in zip(flight, flight[1:], flight[2:]):
-        assert c[10] - 2*b[10] + a[10] > -0.001, key
+    a, b, c = flight[0], flight[len(flight)//2], flight[-1]
+    travel = lambda t: (1.0-math.exp(-1.3*t))/1.3
+    q1 = travel(b[2])-travel(a[2])
+    q2 = travel(c[2])-travel(b[2])
+    ratio = q2/q1
+    denominator = (c[2]**2-b[2]**2)-ratio*(b[2]**2-a[2]**2)
+    gravity = ((c[10]-b[10])-ratio*(b[10]-a[10]))/denominator
+    minimum_gravity = min(minimum_gravity, gravity)
+    assert abs(gravity-9.0*scale) < 0.02, (key, gravity, scale)
 assert maximum_step < 2.0, maximum_step
 print('F16_TIP_TRACE_PASS', json.dumps({'tips': len(pieces), 'tick_start': frames[0]['tick'],
       'tick_end': frames[-1]['tick'], 'max_source_px_step': maximum_step,
-      'minimum_rotation_radians': minimum_spin, 'scope': trace['scope']}))
+      'minimum_rotation_radians': minimum_spin, 'minimum_world_gravity_coefficient': minimum_gravity, 'scope': trace['scope']}))
