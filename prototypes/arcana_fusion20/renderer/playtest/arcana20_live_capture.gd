@@ -191,6 +191,28 @@ func start(wrapper: Node) -> void:
     var overlap_completed := [false]
     renderer.cast_finished.connect(func(id: StringName) -> void:
         if id == overlap_id: overlap_completed[0] = true)
+    # Diagnostic camera is installed BEFORE cast so the recording includes
+    # the full opening, not only the later closure. It never tracks the player
+    # and does not move the real camera, rift, actors or source timeline.
+    var fixed_camera := OS.get_environment("AVFX_FIXED_WORLD_CAMERA") == "1"
+    var fixed_anchor := Vector2.ZERO
+    if fixed_camera:
+        if skill != 16 and skill != 20:
+            _fail("fixed camera is diagnostic-only for #16/#20"); return
+        var view := Camera2D.new()
+        view.name = "AVFXDiagnosticWorldFixedCamera"
+        view.process_mode = Node.PROCESS_MODE_ALWAYS
+        world.add_child(view)
+        view.top_level = true
+        view.zoom = camera.zoom
+        view.global_rotation = camera.global_rotation
+        view.position_smoothing_enabled = false
+        view.global_position = enemy.global_position
+        view.make_current()
+        view.force_update_scroll()
+        camera = view
+        await get_tree().process_frame
+        await RenderingServer.frame_post_draw
     var cast_target_world = null
     var start_usec := Time.get_ticks_usec()
     capture_start_usec = start_usec
@@ -204,52 +226,31 @@ func start(wrapper: Node) -> void:
         else:
             var mouse_world := player.get_global_mouse_position()
             cast_target_world = [mouse_world.x, mouse_world.y]
+        if fixed_camera:
+            if cast_target_world == null:
+                _fail("fixed diagnostic needs actual selected target"); return
+            fixed_anchor = Vector2(float(cast_target_world[0]), float(cast_target_world[1]))
+            camera.global_position = fixed_anchor
+            camera.force_update_scroll()
+            camera_start = camera.get_screen_center_position()
         host.call(&"_cast_selected")
         if not renderer.is_active(cast_id):
             _fail("real-scene cast refused"); return
-    # Non-shipping, opt-in evidence camera. This does not change player input,
-    # source transform, duration, cast anchor or the production follow camera.
-    # Keep a separate normal gameplay recording; center once on the actual
-    # world-space source center, at the real camera zoom and rotation.
-    var fixed_camera := OS.get_environment("AVFX_FIXED_WORLD_CAMERA") == "1"
-    var fixed_anchor := Vector2.ZERO
-    if fixed_camera:
-        if skill == 20:
-            var rift_source := renderer._casts.get(cast_id) as CSourcePlayer
-            if not is_instance_valid(rift_source):
-                _fail("fixed camera expected #20 C source"); return
-            fixed_anchor = rift_source.local_to_world(CRealityRipperFusion.CENTER)
-        elif skill == 16:
-            var seed_source := renderer._casts.get(cast_id) as FusionPlayer
-            if not is_instance_valid(seed_source) or not (seed_source._back is ASourcePlayer):
-                _fail("fixed camera expected #16 A source"); return
-            fixed_anchor = (seed_source._back as ASourcePlayer).local_to_world(AWorldseedGrowth.C)
-        else:
-            _fail("fixed camera is diagnostic-only for #16/#20"); return
-        var view := Camera2D.new()
-        view.name = "AVFXDiagnosticWorldFixedCamera"
-        view.process_mode = Node.PROCESS_MODE_ALWAYS
-        world.add_child(view)
-        view.top_level = true
-        view.zoom = camera.zoom
-        view.global_rotation = camera.global_rotation
-        view.position_smoothing_enabled = false
-        view.global_position = fixed_anchor
-        view.make_current()
-        view.force_update_scroll()
-        camera = view
-        await get_tree().process_frame
-        await RenderingServer.frame_post_draw
-        camera_start = camera.get_screen_center_position()
-        print("AVFX_FIXED_CAMERA ", JSON.stringify({"anchor": [fixed_anchor.x, fixed_anchor.y], "center": [camera_start.x, camera_start.y], "zoom": [camera.zoom.x, camera.zoom.y], "scope": "diagnostic only; world-fixed after cast; actor input and source anchors unchanged"}))
-        if camera_start.distance_to(fixed_anchor) > 1.0:
-            _fail("diagnostic camera not calibrated to source center"); return
-        # Drop the earlier gameplay-follow baseline; all fixed-camera footage
-        # shares a single calibrated world-fixed viewport from this point.
-        samples.clear()
-        capture_start_usec = Time.get_ticks_usec()
-        if capture and not await _frame(folder, player, enemy, camera):
-            _fail("fixed camera initial frame"); return
+        if fixed_camera:
+            var actual_center := Vector2.ZERO
+            if skill == 20:
+                var rift_source := renderer._casts.get(cast_id) as CSourcePlayer
+                if not is_instance_valid(rift_source):
+                    _fail("fixed camera expected #20 C source"); return
+                actual_center = rift_source.local_to_world(CRealityRipperFusion.CENTER)
+            else:
+                var seed_source := renderer._casts.get(cast_id) as FusionPlayer
+                if not is_instance_valid(seed_source) or not (seed_source._back is ASourcePlayer):
+                    _fail("fixed camera expected #16 A source"); return
+                actual_center = (seed_source._back as ASourcePlayer).local_to_world(AWorldseedGrowth.C)
+            if camera_start.distance_to(fixed_anchor) > 1.0 or actual_center.distance_to(fixed_anchor) > 1.0:
+                _fail("fixed camera/source target calibration"); return
+            print("AVFX_FIXED_CAMERA ", JSON.stringify({"anchor": [fixed_anchor.x, fixed_anchor.y], "center": [camera_start.x, camera_start.y], "source_center": [actual_center.x, actual_center.y], "zoom": [camera.zoom.x, camera.zoom.y], "scope": "diagnostic only; world-fixed before cast; actor input and source anchors unchanged"}))
     # Slow single-source-tick replay only for the separate F16 diagnostic. The
     # ordinary gameplay-cadence and fixed-world videos are retained unchanged.
     # No production timing, source fields or actor simulation are modified.
@@ -289,13 +290,18 @@ func start(wrapper: Node) -> void:
                     seed_cast._acc = 0.0
                     tip_stepping = true
                 seed_cast.advance(FusionPlayer.STEP)
-                var source := (seed_cast._back as ASourcePlayer)._spell as AWorldseedGrowth
+                var seed_player := seed_cast._back as ASourcePlayer
+                var source := seed_player._spell as AWorldseedGrowth
                 var pieces: Array = []
                 for li in range(source.layers.size()):
                     for petal in range(int(source.layers[li].count)):
                         var pose := source.fragment_pose(li, petal, seed_cast.source_time())
                         var center: Vector2 = pose.points[2]
-                        pieces.append([li, petal, float(pose.age), center.x, center.y])
+                        var root_point: Vector2 = pose.points[0]
+                        var tip_point: Vector2 = pose.points[4]
+                        var world_center := seed_player.local_to_world(center)
+                        var opacity := AMath.smoothstep(0.0, 0.16, float(pose.age)) * (1.0 - AMath.smoothstep(1.0, 2.0, float(pose.age)))
+                        pieces.append([li, petal, float(pose.age), center.x, center.y, root_point.x, root_point.y, tip_point.x, tip_point.y, world_center.x, world_center.y, opacity])
                 tip_trace.append({"tick": seed_cast._tick, "pieces": pieces})
                 if seed_cast._tick >= 545:
                     seed_cast.set_process(true)
@@ -338,7 +344,7 @@ func start(wrapper: Node) -> void:
         var tf := FileAccess.open(folder.path_join("f16_tip_trace.json"), FileAccess.WRITE)
         if tf == null:
             _fail("F16 trace file"); return
-        tf.store_string(JSON.stringify({"scope": "non-shipping single-source-tick diagnostic; real moving actors, world-fixed camera; not gameplay cadence or device FPS", "pieces_per_tick": 41, "ticks": tip_trace}))
+        tf.store_string(JSON.stringify({"scope": "non-shipping single-source-tick diagnostic; real moving actors, world-fixed camera; not gameplay cadence or device FPS", "pieces_per_tick": 41, "piece_columns": ["layer", "petal", "age", "center_x", "center_y", "root_x", "root_y", "tip_x", "tip_y", "world_center_x", "world_center_y", "opacity"], "ticks": tip_trace}))
         tf.close()
     var cast_duration_s := float(Time.get_ticks_usec() - start_usec) / 1000000.0
     if no_fx and cast_duration_s < wait_s:
