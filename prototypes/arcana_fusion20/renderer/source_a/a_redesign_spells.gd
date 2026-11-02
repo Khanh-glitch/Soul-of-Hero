@@ -308,6 +308,10 @@ class SkybreakerScriptR:
         # Outer circuit disassembles in reverse write order, ahead of cleanup.
         var begin := 7.65 + float(7 - index) * 0.095
         return 1.0 - AMath.seg(t, begin, begin + 0.27)
+    func _bolt_envelope(local_time: float, duration: float) -> float:
+        # Presentation hold preserves the authored strike time but makes C's
+        # branching readable in sparse world captures, followed by a decay.
+        return 1.0 - AMath.seg(local_time, duration * 0.24, duration)
     func update(dt: float, t: float) -> void:
         pass
     func _c_bolt(fb: AFramebuffer, a: Vector2, b: Vector2, seed: float, strength: float, width: float) -> void:
@@ -336,6 +340,12 @@ class SkybreakerScriptR:
             var start_pt := p0 + edge * trim
             var end_pt := p0 + edge * minf(written, 1.0 - trim)
             var intensity := left * dis * (0.45 + 0.30 * AMath.seg(t, 3.4, 4.3))
+            # Cool ink underlay is real local coverage, making the circuit
+            # read over bright terrain without changing global exposure.
+            ADraw.ribbon(fb, [start_pt, end_pt],
+                func(_s: float, _i: int) -> float: return 1.5,
+                func(_s: float, _i: int, _e: float) -> Variant: return Vector3(0.17, 0.23, 0.42),
+                true, intensity * 0.43)
             ADraw.streak(fb, start_pt.x, start_pt.y, end_pt.x, end_pt.y, 1.5, 1.1, AMath.R("volt", 0.72), intensity)
             if written > 0.92:
                 var midpoint := p0.lerp(p1, 0.5)
@@ -351,6 +361,19 @@ class SkybreakerScriptR:
                     var travel := fmod((t - 3.6) * 0.65 + float(i) * 0.125, 1.0)
                     var charge := p0.lerp(p1, travel)
                     ADraw.disc(fb, charge.x, charge.y, 1.5, AMath.R("volt", 1.0), intensity * 0.85)
+                if i % 2 == 0:
+                    # Four structural bridges tie the outer circuit to the
+                    # existing inner glyph rather than a second floating ring.
+                    var inner_anchors: Array = [Vector2(232, 48), Vector2(264, 96), Vector2(252, 138), Vector2(200, 96)]
+                    var anchor: Vector2 = inner_anchors[i >> 1]
+                    var node := p0.lerp(anchor, 0.64)
+                    ADraw.streak(fb, p0.x, p0.y, node.x, node.y, 0.9, 0.8, AMath.R("volt", 0.62), intensity)
+                    ADraw.streak(fb, node.x, node.y, anchor.x, anchor.y, 0.8, 0.7, AMath.R("volt", 0.80), intensity)
+                    var perpendicular := Vector2(-radial.y, radial.x)
+                    var wing_a := node + perpendicular * 4.0
+                    var wing_b := node - perpendicular * 4.0
+                    ADraw.streak(fb, wing_a.x, wing_a.y, node.x, node.y, 0.65, 0.65, AMath.R("volt", 0.78), intensity)
+                    ADraw.streak(fb, wing_b.x, wing_b.y, node.x, node.y, 0.65, 0.65, AMath.R("volt", 0.78), intensity)
         for i in range(_glyph.size()):
             var u := AMath.cl01(AMath.seg(t, 0.8 + float(i) * 0.55, 1.35 + float(i) * 0.55)) * _stroke_remaining(i, t)
             if u <= 0.0:
@@ -377,11 +400,11 @@ class SkybreakerScriptR:
         # branch geometry, rendered through A; complete fusion parity is open.
         for i in range(3):
             var lt := t - (4.4 + float(i) * 0.7)
-            if lt < 0.0 or lt > 0.3:
+            if lt < 0.0 or lt > 0.42:
                 continue
             var tx := 200.0 + float(i) * 34.0
-            _c_bolt(fb, Vector2(tx, 40.0), Vector2(tx, 118.0), float(i * 571 + int(floor(lt / 0.05)) * 13), exp(-lt * 9.0), 1.8)
+            _c_bolt(fb, Vector2(tx, 40.0), Vector2(tx, 118.0), float(i * 571 + int(floor(lt / 0.05)) * 13), _bolt_envelope(lt, 0.42), 2.1)
         var ft := t - 6.8
         if ft >= 0.0 and ft < 0.6:
-            _c_bolt(fb, Vector2(C.x, 26.0), Vector2(C.x, 150.0), float(991 + int(floor(ft / 0.05)) * 7), exp(-ft * 5.0), 3.4)
+            _c_bolt(fb, Vector2(C.x, 26.0), Vector2(C.x, 150.0), float(991 + int(floor(ft / 0.05)) * 7), _bolt_envelope(ft, 0.6), 3.8)
             ADraw.pulse_ring(fb, C.x, 150.0, 6.0 + ft * 120.0, 3.0, AMath.R("volt", 0.7), 0.6 * (1.0 - ft / 0.6), 1.7)
