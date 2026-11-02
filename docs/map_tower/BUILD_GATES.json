@@ -1,0 +1,43 @@
+{
+ "schema": "soh.veyra.build_gates.v1",
+ "gate_a_source_fidelity": {
+  "passed": true,
+  "problems": [],
+  "class_counts": {
+   "land": 8,
+   "lakes": 5,
+   "rivers": 17,
+   "roads": 92,
+   "bridges": 12,
+   "docks": 27,
+   "pois": 81,
+   "zones": 23,
+   "resources": 280,
+   "spawns": 4,
+   "elders": 6,
+   "labels": 24
+  }
+ },
+ "gate_b_determinism": {
+  "passed": true,
+  "identical": true,
+  "builds": [
+   {
+    "seed": "1",
+    "digests": {
+     "world.png": "3b3c110211a8ba3f81527b706e93e154d7cdc666849e03267c773a8117b232e8",
+     "world_meta.json": "49026af44cdb759df95fcb74198e98f35a1ea127035de36af3bb0b5247b31d0e",
+     "solid.npy": "b53104db7957f5f81b5396982350ccb19e100ce2d49bdea45071959645e95a75"
+    }
+   },
+   {
+    "seed": "987654",
+    "digests": {
+     "world.png": "3b3c110211a8ba3f81527b706e93e154d7cdc666849e03267c773a8117b232e8",
+     "world_meta.json": "49026af44cdb759df95fcb74198e98f35a1ea127035de36af3bb0b5247b31d0e",
+     "solid.npy": "b53104db7957f5f81b5396982350ccb19e100ce2d49bdea45071959645e95a75"
+    }
+   }
+  ]
+ }
+}

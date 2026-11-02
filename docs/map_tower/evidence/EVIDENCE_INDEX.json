@@ -1,0 +1,148 @@
+{
+ "schema": "soh.veyra.visual_evidence.v1",
+ "source_commit": "94172974a90165012c860493a16fd112c5707c72",
+ "gold_sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
+ "build": {
+  "art_tile_px": 32,
+  "px_per_gold_unit": 4,
+  "pixels": [
+   8000,
+   5600
+  ],
+  "world_meta": "out/world_meta.json"
+ },
+ "capture_method": "Pillow composite of the compiled world PNG (NOT a browser capture)",
+ "note": "Gate D (real browser capture) BLOCKED: no chromium/firefox/playwright in this sandbox.",
+ "images": [
+  {
+   "file": "docs/map_tower/evidence/before_after_sp_west.png",
+   "provenance": "generated_overview_or_composite",
+   "zoom": 1
+  },
+  {
+   "file": "docs/map_tower/evidence/bridges_12_contact.png",
+   "provenance": "generated_overview_or_composite",
+   "zoom": 1
+  },
+  {
+   "file": "docs/map_tower/evidence/confluence_1.png",
+   "provenance": "generated_overview_or_composite",
+   "zoom": 1
+  },
+  {
+   "file": "docs/map_tower/evidence/confluence_2.png",
+   "provenance": "generated_overview_or_composite",
+   "zoom": 1
+  },
+  {
+   "file": "docs/map_tower/evidence/confluence_3.png",
+   "provenance": "generated_overview_or_composite",
+   "zoom": 1
+  },
+  {
+   "file": "docs/map_tower/evidence/docks_contact.png",
+   "provenance": "generated_overview_or_composite",
+   "zoom": 1
+  },
+  {
+   "file": "docs/map_tower/evidence/elder_aion.png",
+   "provenance": "generated_overview_or_composite",
+   "zoom": 1
+  },
+  {
+   "file": "docs/map_tower/evidence/elder_anubis.png",
+   "provenance": "generated_overview_or_composite",
+   "zoom": 1
+  },
+  {
+   "file": "docs/map_tower/evidence/elder_argus.png",
+   "provenance": "generated_overview_or_composite",
+   "zoom": 1
+  },
+  {
+   "file": "docs/map_tower/evidence/elder_atlas.png",
+   "provenance": "generated_overview_or_composite",
+   "zoom": 1
+  },
+  {
+   "file": "docs/map_tower/evidence/elder_surtur.png",
+   "provenance": "generated_overview_or_composite",
+   "zoom": 1
+  },
+  {
+   "file": "docs/map_tower/evidence/elder_typhon.png",
+   "provenance": "generated_overview_or_composite",
+   "zoom": 1
+  },
+  {
+   "file": "docs/map_tower/evidence/highland.png",
+   "provenance": "generated_overview_or_composite",
+   "zoom": 1
+  },
+  {
+   "file": "docs/map_tower/evidence/lake_1.png",
+   "provenance": "generated_overview_or_composite",
+   "zoom": 1
+  },
+  {
+   "file": "docs/map_tower/evidence/lake_2.png",
+   "provenance": "generated_overview_or_composite",
+   "zoom": 1
+  },
+  {
+   "file": "docs/map_tower/evidence/overview.png",
+   "provenance": "generated_overview_or_composite",
+   "zoom": 1
+  },
+  {
+   "file": "docs/map_tower/evidence/site_hamlet.png",
+   "provenance": "generated_overview_or_composite",
+   "zoom": 1
+  },
+  {
+   "file": "docs/map_tower/evidence/site_mine.png",
+   "provenance": "generated_overview_or_composite",
+   "zoom": 1
+  },
+  {
+   "file": "docs/map_tower/evidence/site_observatory.png",
+   "provenance": "generated_overview_or_composite",
+   "zoom": 1
+  },
+  {
+   "file": "docs/map_tower/evidence/site_quarry.png",
+   "provenance": "generated_overview_or_composite",
+   "zoom": 1
+  },
+  {
+   "file": "docs/map_tower/evidence/site_research.png",
+   "provenance": "generated_overview_or_composite",
+   "zoom": 1
+  },
+  {
+   "file": "docs/map_tower/evidence/site_village.png",
+   "provenance": "generated_overview_or_composite",
+   "zoom": 1
+  },
+  {
+   "file": "docs/map_tower/evidence/spawn_1_sp_west.png",
+   "provenance": "generated_overview_or_composite",
+   "zoom": 1
+  },
+  {
+   "file": "docs/map_tower/evidence/spawn_2_sp_lake.png",
+   "provenance": "generated_overview_or_composite",
+   "zoom": 1
+  },
+  {
+   "file": "docs/map_tower/evidence/spawn_3_sp_hook.png",
+   "provenance": "generated_overview_or_composite",
+   "zoom": 1
+  },
+  {
+   "file": "docs/map_tower/evidence/spawn_4_sp_gulf.png",
+   "provenance": "generated_overview_or_composite",
+   "zoom": 1
+  }
+ ]
+}

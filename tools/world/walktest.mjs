@@ -67,7 +67,7 @@ const S = sandbox.window.__veyra;
 check(!!S && !!S.meta, 'game booted and read world_meta.json');
 if (!S) process.exit(1);
 
-const { tiles, pixels, px_per_gold_unit: PPU } = S.meta.scale;
+const { collision_cells: tiles, pixels } = S.meta.scale;
 const solidAt = (x, y) => {
   const tx = Math.floor(x / 16), ty = Math.floor(y / 16);
   if (tx < 0 || ty < 0 || tx >= tiles[0] || ty >= tiles[1]) return 1;
@@ -91,17 +91,18 @@ check(S.p.dir === 'right', 'facing direction follows input (right)');
 run(300, ['w']); check(S.p.dir === 'up', 'facing direction follows input (up)');
 
 // long traversals in all four directions: must never enter solid geometry
-let bad = 0;
+let bad = 0, simMs = 0;
 for (const k of ['d', 's', 'a', 'w']) {
-  for (let i = 0; i < 40; i++) { run(400, [k]); if (solidAt(S.p.x, S.p.y)) bad++; }
+  for (let i = 0; i < 40; i++) { run(400, [k]); simMs += 400; if (solidAt(S.p.x, S.p.y)) bad++; }
 }
-check(bad === 0, `360 s of held-direction movement never enters solid tiles (${bad} violations)`);
+check(bad === 0, `${(simMs / 1000).toFixed(1)} s of simulated held-direction movement never enters solid tiles (${bad} violations)`);
+check(simMs >= 64000, `simulated movement duration accounted explicitly (${(simMs / 1000).toFixed(1)} s)`);
 
 // spawn cycling resolves to the authored spawn points
 for (const i of [1, 2, 3, 4]) {
   fire('keydown', String(i));
   const s = S.meta.spawns[i - 1];
-  const want = [s.at[0] * PPU, s.at[1] * PPU];
+  const want = s.world_px;
   const near = Math.hypot(S.p.x - want[0], S.p.y - want[1]) < 700;  // nudge-out allowed
   check(near && solidAt(S.p.x, S.p.y) === 0,
         `spawn ${i} (${s.id}) resolves walkable near ${want.map(v => v.toFixed(0)).join(',')}`);

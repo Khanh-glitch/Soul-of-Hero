@@ -1,728 +1,617 @@
-"""VEYRA world compiler: gold map -> 16px-tile overworld with collision and props.
+"""Veyra corrective compiler (v2) — GOLD → world, Git-only assets, sub-tile hydrology.
 
-SCALE (derived from the map and the assets, not from any previous world):
-  * the gold map carries a 250x175 terrain raster at 8 authoring units per cell;
-  * the ground kits are 16 px tiles and the D051 body is 22 px tall (1.4 tiles);
-  * the smallest authored feature that must stay readable is a river of 2.5-4
-    units, i.e. half a gold cell. Rendering it as two 16 px tiles needs 2 tiles
-    per gold cell, which also puts a 40x30-unit POI footprint at 20x15 tiles -
-    one house (116-157 px) plus a yard fits inside it;
-  * 2 tiles per gold cell => 500x350 tiles => 8000x5600 px. The D051 body is then
-    1/364 of the world's width, which is the Last Island reference proportion
-    (its authored 8000 px world against a ~24 px character).
+Design decisions and why
+------------------------
+* GOLD geometry is authoritative and is read from the committed canonical file
+  `map_tower/veyra_gold/VEYRA_GOLD_MAP.sohmap.json` (sha256 pinned in the manifest).
+* Two independent rasters, as required by the corrective order:
+    - VISUAL raster: 4 px per GOLD unit (2000x1400 units → 8000x5600 px).  Rivers keep
+      their authored width (`river.width`), roads their authored class width.  Nothing is
+      inflated to a minimum brush radius.
+    - GROUND grid: 32 px Cainos art tiles over 250x175 cells (1 GOLD cell = 1 art tile).
+    - COLLISION grid: 16 px cells (500x350) so a 10 px river does not block a 32 px tile.
+* Art comes only from committed repository files through `tools/world/art_registry.py`.
+  Families that do not exist in this repository (water surface, buildings, bridge and
+  dock kits, sand/ash ground) are reported in `map_tower/assets/UNRESOLVED_ART_GAPS.json`
+  and rendered as clearly marked stand-ins, never as finished art.
+* Determinism: every placement uses blake2b of a stable string.  No `hash()`, no
+  `random`, no wall-clock, no absolute paths outside the repository.
 
-Everything is deterministic: same input JSON -> same world, byte for byte.
+Run:  python3 tools/world/veyra_compile.py [--out out]
 """
+import argparse
 import base64
-import glob
+import hashlib
 import json
+import math
 import os
-import sys
 
 import numpy as np
 from PIL import Image, ImageDraw
 
+import art_registry as ART
+
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(os.path.dirname(HERE))
-OUT = os.path.join(ROOT, "out")
-VAULT = os.environ.get("SOH_ASSET_VAULT", "/home/user/asset_vault/x")
+REPO = os.path.abspath(os.path.join(HERE, "..", ".."))
+GOLD = os.path.join(REPO, "map_tower", "veyra_gold", "VEYRA_GOLD_MAP.sohmap.json")
 
-GOLD = os.path.join(HERE, "data", "veyra_gold_map.json")
-MATS = json.load(open(os.path.join(HERE, "data", "materials.json")))
+U = 4                     # px per GOLD unit (visual raster)
+UW, UH = 2000, 1400       # GOLD world units
+PW, PH = UW * U, UH * U   # 8000 x 5600 px
+ART_TILE = 32             # Cainos art tile
+COLL = 16                 # collision cell
+GW, GH = PW // ART_TILE, PH // ART_TILE          # 250 x 175 art cells (= GOLD cells)
+CW, CH = PW // COLL, PH // COLL                  # 500 x 350 collision cells
 
-TILE = 16
-UP = 2                      # tiles per gold cell
-CELL_U = 8                  # authoring units per gold cell
-W, H = 250 * UP, 175 * UP   # 500 x 350 tiles
-PXW, PXH = W * TILE, H * TILE
+# road class half-widths in GOLD units (before /2).  Derived from the conversion
+# contract's road grammar; recorded here because GOLD stores road *class*, not width.
+ROAD_HALF = {"cart": 1.4, "trail": 0.9, "foot": 0.7, "riverside": 0.8, "ferry": 0.0}
 
-PACKS = {
-    "road": "574220-roads-reference-only",
-    "fields": "665131-fields",
-    "island": "351300-island",
-    "bridges": "668008-bridges",
-    "cursed": "craftpix-net-958568-free-cursed-land-top-down-pixel-art-tileset*",
-    "village": "craftpix-net-504452-free-village-pixel-tileset-for-top-down-defense*",
-    "trees": "craftpix-net-385863-free-top-down-trees-pixel-art*",
-    "bushes": "craftpix-net-141354-free-top-down-bushes-pixel-art*",
-    "rocks": "craftpix-net-974061-free-rocks-and-stones-top-down-pixel-art*",
-    "rocky": "craftpix-net-639143-free-rocky-area-objects-pixel-art*",
-    "ruins": "craftpix-net-934618-free-top-down-ruins-pixel-art*",
-    "forest": "craftpix-net-505052-free-forest-objects-top-down-pixel-art*",
-    "farm": "200380-farm-plants",
-}
-
-
-def pdir(key):
-    hits = sorted(glob.glob(os.path.join(VAULT, PACKS[key])))
-    if not hits:
-        raise SystemExit(f"missing pack {key}")
-    return hits[0]
+WATER_PLACEHOLDER = ((38, 92, 128), (52, 118, 152), (74, 148, 176))  # deep, shelved, shore
 
 
 # --------------------------------------------------------------------------
-# geometry helpers
+# deterministic helpers
 # --------------------------------------------------------------------------
-def fill_polygon(mask, ring, value, cell=CELL_U / UP):
-    """Scanline fill of a closed ring (authoring units) into a tile-resolution mask."""
-    pts = np.array(ring, dtype=float) / cell
-    ys = np.arange(mask.shape[0]) + 0.5
+def h32(*parts):
+    """Stable 32-bit hash of arbitrary parts (independent of PYTHONHASHSEED)."""
+    s = "|".join(str(p) for p in parts).encode()
+    return int.from_bytes(hashlib.blake2b(s, digest_size=4).digest(), "big")
+
+
+def frac(*parts):
+    return h32(*parts) / 4294967296.0
+
+
+# --------------------------------------------------------------------------
+# vector rasterisation on the visual unit raster
+# --------------------------------------------------------------------------
+def fill_polygon(mask, ring, value=1):
+    """Scanline fill of a ring in GOLD units onto the unit raster."""
+    pts = [(float(x), float(y)) for x, y in ring]
+    if len(pts) < 3:
+        return
+    ys = [p[1] for p in pts]
+    y0, y1 = max(0, int(min(ys))), min(UH - 1, int(max(ys)) + 1)
     n = len(pts)
-    for y in range(mask.shape[0]):
-        yc = ys[y]
+    for y in range(y0, y1 + 1):
+        yc = y + 0.5
         xs = []
         for i in range(n):
-            x0, y0 = pts[i]
-            x1, y1 = pts[(i + 1) % n]
-            if (y0 > yc) != (y1 > yc):
-                xs.append(x0 + (yc - y0) * (x1 - x0) / (y1 - y0))
-        if not xs:
-            continue
+            xa, ya = pts[i]
+            xb, yb = pts[(i + 1) % n]
+            if (ya <= yc < yb) or (yb <= yc < ya):
+                t = (yc - ya) / (yb - ya)
+                xs.append(xa + t * (xb - xa))
         xs.sort()
-        for a, b in zip(xs[0::2], xs[1::2]):
-            i0 = max(0, int(round(a)))
-            i1 = min(mask.shape[1], int(round(b)))
-            if i1 > i0:
-                mask[y, i0:i1] = value
-    return mask
+        for i in range(0, len(xs) - 1, 2):
+            a, b = max(0, int(math.ceil(xs[i] - 0.5))), min(UW - 1, int(math.floor(xs[i + 1] - 0.5)))
+            if b >= a:
+                mask[y, a:b + 1] = value
 
 
-def stroke_polyline(mask, pts, radius, value=1):
-    """Round-brush stroke of a polyline in authoring units."""
-    cell = CELL_U / UP
-    r = max(1, int(round(radius / cell)))
-    c = np.array(pts, dtype=float) / cell
-    for (x0, y0), (x1, y1) in zip(c[:-1], c[1:]):
-        steps = int(max(abs(x1 - x0), abs(y1 - y0)) * 2) + 1
+def stroke_polyline(mask, pts, half, value=1, cap=True):
+    """Round-brush stroke with the brush radius given in GOLD units (no minimum)."""
+    if half <= 0:
+        return
+    pts = [(float(x), float(y)) for x, y in pts]
+    r = half
+    for i in range(len(pts) - 1):
+        (x0, y0), (x1, y1) = pts[i], pts[i + 1]
+        dx, dy = x1 - x0, y1 - y0
+        L = math.hypot(dx, dy) or 1e-6
+        steps = max(1, int(L))
         for s in range(steps + 1):
             t = s / steps
-            cx, cy = x0 + (x1 - x0) * t, y0 + (y1 - y0) * t
-            ix, iy = int(round(cx)), int(round(cy))
-            y0i, y1i = max(0, iy - r), min(mask.shape[0], iy + r + 1)
-            x0i, x1i = max(0, ix - r), min(mask.shape[1], ix + r + 1)
-            if y1i > y0i and x1i > x0i:
-                mask[y0i:y1i, x0i:x1i] = value
-    return mask
+            cx, cy = x0 + dx * t, y0 + dy * t
+            _disc(mask, cx, cy, r, value)
+    if cap:
+        for (cx, cy) in (pts[0], pts[-1]):
+            _disc(mask, cx, cy, r, value)
 
 
-def edge_band(mask):
-    """Tiles that have at least one 4-neighbour of a different value (coast/border)."""
-    m = mask.astype(bool)
-    n = np.zeros_like(m)
-    n[1:] |= m[:-1] != m[1:]
-    n[:-1] |= m[1:] != m[:-1]
-    n[:, 1:] |= m[:, :-1] != m[:, 1:]
-    n[:, :-1] |= m[:, 1:] != m[:, :-1]
-    return n
+def _disc(mask, cx, cy, r, value=1):
+    x0, x1 = max(0, int(math.floor(cx - r))), min(UW - 1, int(math.ceil(cx + r)))
+    y0, y1 = max(0, int(math.floor(cy - r))), min(UH - 1, int(math.ceil(cy + r)))
+    if x1 < x0 or y1 < y0:
+        return
+    yy, xx = np.ogrid[y0:y1 + 1, x0:x1 + 1]
+    inside = ((xx + 0.5 - cx) ** 2 + (yy + 0.5 - cy) ** 2) <= r * r
+    sub = mask[y0:y1 + 1, x0:x1 + 1]
+    sub[inside] = value
 
 
-# --------------------------------------------------------------------------
-# assets
-# --------------------------------------------------------------------------
-class Props:
-    """Whole-sprite library. Every sprite is cropped to its own alpha bbox."""
-
-    GROUPS = {
-        "tree_meadow": [("trees", "PNG/Assets_separately/Trees/Tree2.png"),
-                        ("trees", "PNG/Assets_separately/Trees/Tree3.png")],
-        "tree_forest": [("trees", "PNG/Assets_separately/Trees/Moss_tree1.png"),
-                        ("trees", "PNG/Assets_separately/Trees/Moss_tree2.png"),
-                        ("trees", "PNG/Assets_separately/Trees/Autumn_tree2.png"),
-                        ("forest", "PNG/Assets/Blue-green_balls_tree2.png")],
-        "tree_rock": [("trees", "PNG/Assets_separately/Trees/Palm_tree2_3.png"),
-                      ("trees", "PNG/Assets_separately/Trees/Tree3.png")],
-        "tree_dead": [("trees", "PNG/Assets_separately/Trees/Burned_tree2.png"),
-                      ("trees", "PNG/Assets_separately/Trees/Broken_tree3.png"),
-                      ("trees", "PNG/Assets_separately/Trees/Burned_tree3.png")],
-        "bush": [("bushes", "PNG/Assets/Bush_simple1_1.png"),
-                 ("bushes", "PNG/Assets/Bush_red_flowers2.png"),
-                 ("bushes", "PNG/Assets/Fern1_1.png")],
-        "rock": [("rocks", "PNG/Objects_separately/Rock1_grass_shadow3.png"),
-                 ("rocks", "PNG/Objects_separately/Rock2_3_no_shadow.png"),
-                 ("rocks", "PNG/Objects_separately/Rock3_3_no_shadow.png"),
-                 ("rocky", "PNG/Objects_separately/Rock1_2_no_shadow.png")],
-        "rock_big": [("rocks", "PNG/Objects_separately/Rock1_grass_shadow1.png"),
-                     ("rocks", "PNG/Objects_separately/Rock2_grass_shadow1.png"),
-                     ("rocky", "PNG/Objects_separately/Rock3_1.png")],
-        "ruin": [("ruins", "PNG/Assets/Brown-gray_ruins3.png"),
-                 ("ruins", "PNG/Assets/Blue-gray_ruins4.png"),
-                 ("ruins", "PNG/Assets/Brown-gray_ruins5.png")],
-        "house": [("village", "2 Objects/7 House/1.png"),
-                  ("village", "2 Objects/7 House/2.png")],
-        "stall": [("village", "2 Objects/6 Tent/1.png"),
-                  ("village", "2 Objects/6 Tent/3.png")],
-        "crate": [("village", "2 Objects/4 Box/3.png"),
-                  ("village", "2 Objects/4 Box/5.png"),
-                  ("village", "2 Objects/4 Box/1.png")],
-        "crop": [("farm", "PNG/Plants.png")],
-    }
-
-    def __init__(self):
-        self.sheets = {}
-        self.items = {}
-        for fam, entries in self.GROUPS.items():
-            out = []
-            for pack, rel in entries:
-                p = os.path.join(pdir(pack), rel)
-                if not os.path.exists(p):
-                    continue
-                if fam == "crop":
-                    out += self._crops(p)
-                    continue
-                out += self._sprites(p)
-            if out:
-                self.items[fam] = out
-
-    def _sprites(self, path):
-        im = Image.open(path).convert("RGBA")
-        bb = im.getbbox()
-        if not bb:
-            return []
-        return [{"img": im.crop(bb), "src": path, "rect": list(bb), "size": list(im.size)}]
-
-    def _crops(self, path):
-        """The farm sheet is a grid of plants; each standalone component is one crop sprite."""
-        im = Image.open(path).convert("RGBA")
-        a = np.array(im)[:, :, 3] > 0
-        seen = np.zeros_like(a)
-        out = []
-        Hh, Ww = a.shape
-        for y in range(0, Hh, 2):
-            for x in range(0, Ww, 2):
-                if not a[y, x] or seen[y, x]:
-                    continue
-                stack = [(x, y)]
-                seen[y, x] = True
-                mnx = mxx = x
-                mny = mxy = y
-                n = 0
-                while stack:
-                    cx, cy = stack.pop()
-                    n += 1
-                    mnx = min(mnx, cx); mxx = max(mxx, cx)
-                    mny = min(mny, cy); mxy = max(mxy, cy)
-                    for dx in (-1, 0, 1):
-                        for dy in (-1, 0, 1):
-                            nx, ny = cx + dx, cy + dy
-                            if 0 <= nx < Ww and 0 <= ny < Hh and a[ny, nx] and not seen[ny, nx]:
-                                seen[ny, nx] = True
-                                stack.append((nx, ny))
-                if 8 <= n <= 900 and 8 <= mxx - mnx <= 40 and 8 <= mxy - mny <= 40:
-                    out.append({"img": im.crop((mnx, mny, mxx + 1, mxy + 1)), "src": path,
-                                "rect": [mnx, mny, mxx - mnx + 1, mxy - mny + 1],
-                                "size": list(im.size)})
-        return out[:16]
-
-
-def tone(im):
-    a = np.array(im.convert("RGB")).astype(float)
-    return a.reshape(-1, 3).mean(axis=0)
-
-
-def cluster(imgs, tol=13.0):
-    """Keep only tiles whose mean colour is close to the family median.
-
-    The source sheets contain several green/soil variants. Mixing all of them per
-    tile produced a visible checkerboard (see PILOT notes); clustering keeps the
-    material one tone and lets decals carry the texture.
-    """
-    tones = np.array([tone(i) for i in imgs])
-    med = np.median(tones, axis=0)
-    keep = [im for im, t in zip(imgs, tones) if np.abs(t - med).max() <= tol]
-    return keep or imgs[:1]
-
-
-def water_tones():
-    """Sample the source's own ocean palette.
-
-    The island sheet has no foam-free 16x16 window (every water tile carries a
-    wave or foam line), so the sea is drawn as two flat depths taken from that
-    sheet's own water pixels - deep median and shallow median. Nothing is tinted;
-    the colours are the source's.
-    """
-    im = Image.open(os.path.join(pdir("island"), "Tileset/Tiled.png")).convert("RGB")
-    a = np.array(im).astype(int)
-    r, g, b = a[:, :, 0], a[:, :, 1], a[:, :, 2]
-    water = (b > r + 45) & (b > 140)
-    px = a[water]
-    lum = px.mean(axis=1)
-    order = np.argsort(lum)                 # the palette is discrete, so take real entries
-    deep = px[order[int(len(order) * 0.18)]]
-    shallow = px[order[int(len(order) * 0.55)]]
-    deep_t = Image.new("RGBA", (16, 16), tuple(int(v) for v in deep) + (255,))
-    shallow_t = Image.new("RGBA", (16, 16), tuple(int(v) for v in shallow) + (255,))
-    return deep_t, shallow_t, [int(v) for v in deep], [int(v) for v in shallow]
-
-
-def load_decals():
-    out = {"tuft": [], "pebble": [], "flower": []}
-    for f in sorted(glob.glob(os.path.join(pdir("village"), "2 Objects/5 Grass/*.png"))):
-        im = Image.open(f).convert("RGBA"); bb = im.getbbox()
-        if bb: out["tuft"].append(im.crop(bb))
-    for f in sorted(glob.glob(os.path.join(pdir("village"), "2 Objects/2 Stone/*.png"))):
-        im = Image.open(f).convert("RGBA"); bb = im.getbbox()
-        if bb: out["pebble"].append(im.crop(bb))
-    for f in sorted(glob.glob(os.path.join(pdir("bushes"), "PNG/Assets/Bush_*flowers2.png"))):
-        im = Image.open(f).convert("RGBA"); bb = im.getbbox()
-        if bb: out["flower"].append(im.crop(bb))
-    return out
-
-
-def load_tiles():
-    tiles = {}
-    for fam, entries in MATS.items():
-        if fam.startswith("_"):
-            continue
-        imgs = []
-        for e in entries:
-            base = pdir(e["name"]) if e["name"] in PACKS else None
-            if base is None:
-                base = sorted(glob.glob(os.path.join(VAULT, PACKS[e["name"]])))[0]
-            if e.get("flat"):
-                imgs.append(Image.new("RGBA", (16, 16), tuple(e["flat"]) + (255,)))
-                continue
-            base = sorted(glob.glob(os.path.join(VAULT, PACKS[e["name"]])))[0]
-            im = Image.open(os.path.join(base, e["file"])).convert("RGBA")
-            imgs.append(im.crop((e["x"], e["y"], e["x"] + 16, e["y"] + 16)))
-        tiles[fam] = imgs if fam == "water" else cluster(imgs)
-    return tiles
+def rect_rot(mask, cx, cy, ang, half_len, half_wid, value=1):
+    """Rotated rectangle (bridge decks, piers) into the unit raster."""
+    ca, sa = math.cos(ang), math.sin(ang)
+    r = math.hypot(half_len, half_wid) + 1
+    x0, x1 = max(0, int(cx - r)), min(UW - 1, int(cx + r))
+    y0, y1 = max(0, int(cy - r)), min(UH - 1, int(cy + r))
+    if x1 < x0 or y1 < y0:
+        return
+    yy, xx = np.mgrid[y0:y1 + 1, x0:x1 + 1]
+    dx, dy = xx + 0.5 - cx, yy + 0.5 - cy
+    u = dx * ca + dy * sa          # along the deck
+    v = -dx * sa + dy * ca         # across the deck
+    sub = mask[y0:y1 + 1, x0:x1 + 1]
+    sub[(np.abs(u) <= half_len) & (np.abs(v) <= half_wid)] = value
 
 
 # --------------------------------------------------------------------------
-# world model
+# main
 # --------------------------------------------------------------------------
-ZONE_GRAMMAR = {
-    # zone tag / soil -> (ground family, tree family or None, decal density, prop density)
-    "forest": ("grass_dark", "tree_forest", 0.16, 0.055),
-    "hill": ("grass_dark", "tree_rock", 0.09, 0.018),
-    "high rock": ("stone", "tree_rock", 0.05, 0.020),
-    "summit": ("stone", None, 0.10, 0.010),
-    "coast": ("sand", None, 0.06, 0.010),
-    "lakeshore": ("grass", "tree_meadow", 0.14, 0.030),
-    "riverside": ("grass", "tree_meadow", 0.12, 0.028),
-    "plain": ("grass", "tree_meadow", 0.10, 0.020),
-    "dry": ("sand", "tree_dead", 0.05, 0.012),
-    "blight": ("blight", "tree_dead", 0.07, 0.022),
-}
+def main(out_dir):
+    gold = json.load(open(GOLD))
+    proj = gold["project"]
+    os.makedirs(out_dir, exist_ok=True)
 
+    fams, manifest = ART.load()
 
-def zone_grammar(zone):
-    tags = set(zone.get("tags") or [])
-    soil = (zone.get("soil") or "").lower()
-    if "xỉ" in soil or "độc" in soil:
-        return "blight"
-    if "tro" in soil:
-        return "blight"
-    if "đá" in soil or "nền đá" in soil or "đá vụn" in soil or "đá nổi" in soil:
-        return "high rock"
-    if "cát cứng" in soil:
-        return "dry"
-    if "cát" in soil and "ven biển" in tags:
-        return "coast"
-    if "trong rừng" in tags or "đất rừng" in soil:
-        return "forest"
-    if "bờ hồ" in tags:
-        return "lakeshore"
-    if "ven sông" in tags:
-        return "riverside"
-    if "ven biển" in tags:
-        return "coast"
-    return "plain"
-
-
-def build_grammar_grid(project):
-    """Zone polygons -> per-tile grammar key. Unzoned land falls back to plain."""
-    key = np.full((H, W), "plain", dtype=object)
-    zr = np.zeros((H, W), dtype=np.int16)
-    zones = project["zones"]
-    for i, z in enumerate(zones, start=1):
-        fill_polygon(zr, z["ring"], i)
-    lut = {0: None}
-    for i, z in enumerate(zones, start=1):
-        lut[i] = z
-    gram = np.empty((H, W), dtype=object)
-    for i in range(len(zones) + 1):
-        if i == 0:
-            continue
-        m = zr == i
-        if m.any():
-            gram[m] = zone_grammar(lut[i])
-    gram[zr == 0] = "plain"
-    return gram, zr
-
-
-def main(preview=None):
-    os.makedirs(OUT, exist_ok=True)
-    project = json.load(open(GOLD))["project"]
-
-    # ---- masks -----------------------------------------------------------
-    land = np.zeros((H, W), dtype=np.uint8)
-    for l in project["land"]:
+    # ---------------- masks on the unit raster ----------------
+    land = np.zeros((UH, UW), np.uint8)
+    for l in proj["land"]:
         for ring in l["rings"]:
             fill_polygon(land, ring, 1)
-    lakes = np.zeros((H, W), dtype=np.uint8)
-    for l in project["lakes"]:
-        fill_polygon(lakes, l["ring"], 1)
-    rivers = np.zeros((H, W), dtype=np.uint8)
-    for r in project["rivers"]:
-        stroke_polyline(rivers, r["points"], max(2.0, (r.get("width") or 3) / 2))
-    land_only = land.copy()
-    water = (1 - land_only) | lakes | (rivers & land_only)
-    land_walk = ((land_only == 1) & (lakes == 0) & (rivers == 0)).astype(np.uint8)
+    lakes = np.zeros((UH, UW), np.uint8)
+    for lk in proj["lakes"]:
+        for ring in lk.get("rings") or [lk.get("ring")]:
+            if ring:
+                fill_polygon(lakes, ring, 1)
+    rivers = np.zeros((UH, UW), np.uint8)
+    river_list = []
+    for r in proj["rivers"]:
+        half = max(0.35, (r.get("width") or 3) / 2.0)   # authored width, no inflation
+        stroke_polyline(rivers, r["points"], half, 1)
+        river_list.append({"id": r["id"], "name": r.get("name"), "width": r.get("width"),
+                           "kind": r.get("kind"), "nav": r.get("nav"),
+                           "feats": r.get("feats"), "mouth": r.get("mouth"),
+                           "source": r.get("source"), "points": r["points"],
+                           "half_width_units": round(half, 2)})
+    sea = (land == 0).astype(np.uint8)
+    water = ((sea | lakes | (rivers & land)) > 0).astype(np.uint8)
+    walkable_land = ((land > 0) & (water == 0)).astype(np.uint8)
 
-    roads = np.zeros((H, W), dtype=np.uint8)
-    road_kind = np.zeros((H, W), dtype=np.uint8)
-    kinds = {"cart": 2, "trail": 2, "riverside": 2, "foot": 1}
-    for i, rd in enumerate(project["roads"]):
-        k = rd.get("kind", "trail")
-        if k == "ferry":
-            continue
-        stroke_polyline(roads, rd["points"], 1.6 if kinds.get(k, 2) == 2 else 0.9, 1)
-        road_kind[roads.astype(bool) & (roads == 1)] = kinds.get(k, 2)
+    roads = np.zeros((UH, UW), np.uint8)
+    road_list = []
+    for rd in proj["roads"]:
+        kind = rd.get("kind", "trail")
+        half = ROAD_HALF.get(kind, 0.8)
+        if kind == "ferry":
+            road_list.append({"id": rd["id"], "name": rd.get("name"), "kind": kind,
+                              "mode": "water", "points": rd["points"],
+                              "status": "FUNCTIONAL_BLOCKED"})
+            continue                                  # ferry = maritime path, not a road
+        stroke_polyline(roads, rd["points"], half, 1)
+        road_list.append({"id": rd["id"], "name": rd.get("name"), "kind": kind,
+                          "mode": "land", "points": rd["points"],
+                          "half_width_units": half})
+    roads = (roads & walkable_land).astype(np.uint8)
 
-    # bridges force a land crossing
-    for br in project["bridges"]:
-        x, y = br["at"]
-        ix, iy = int(x / (CELL_U / UP)), int(y / (CELL_U / UP))
-        roads[max(0, iy - 2):iy + 3, max(0, ix - 3):ix + 4] = 1
-        land_walk[max(0, iy - 1):iy + 2, max(0, ix - 2):ix + 3] = 1
+    # ---------------- bridges: real spans across the authored gap ----------------
+    bridges = []
+    deck = np.zeros((UH, UW), np.uint8)
+    rail = np.zeros((UH, UW), np.uint8)
+    for br in proj["bridges"]:
+        cx, cy = float(br["at"][0]), float(br["at"][1])
+        ang = float(br.get("ang") or 0.0)
+        load = br.get("load", "foot")
+        half_w = 2.6 if load == "cart" else 2.0   # deck is wider than the road it carries
+        # walk out along the axis until both ends are on solid land
+        def is_wet(x, y):
+            xi, yi = int(x), int(y)
+            if not (0 <= xi < UW and 0 <= yi < UH):
+                return False
+            return bool(water[yi, xi])
 
-    # ---- terrain grammar -------------------------------------------------
-    gram, zr = build_grammar_grid(project)
-    elev = np.frombuffer(base64.b64decode(project["terrain"]["elev"]),
-                         dtype=np.uint8).reshape(175, 250)
-    elev_t = np.repeat(np.repeat(elev, UP, axis=0), UP, axis=1)
-    # relief comes from the gold raster, not from a decision here: high ground is rock,
-    # the highest ground has no canopy at all, mid ground is thin-soil hill.
-    land_only = land.astype(bool) & ~water.astype(bool) & ~roads.astype(bool)
-    land_elev = elev[land.astype(bool)[::UP, ::UP]]
-    q = np.percentile(land_elev, [45, 75, 92]) if land_elev.size else np.array([40, 95, 150])
-    print("land elevation quintiles 45/75/92:", q.round(0).tolist())
-    gram[elev_t >= q[2]] = "summit"
-    gram[(elev_t >= q[1]) & (elev_t < q[2])] = "high rock"
-    gram[(elev_t >= q[0]) & (elev_t < q[1]) & ~np.isin(gram, ["high rock", "blight", "summit"])] = "hill"
-    for k in ("hill", "high rock", "summit"):
-        print(f"relief grammar {k:10s} {100*(gram == k).mean():.1f}% of tiles")
+        def reach(sign):
+            for d in range(2, 90):
+                if not is_wet(cx + math.cos(ang) * d * sign, cy + math.sin(ang) * d * sign):
+                    return d
+            return 90
+        a, b = reach(-1), reach(1)
+        half_len = (a + b) / 2.0
+        mid = ((b - a) / 2.0)
+        mx, my = cx + math.cos(ang) * mid, cy + math.sin(ang) * mid
+        rect_rot(deck, mx, my, ang, half_len, half_w, 1)
+        # railings: 0.45 unit bands just outside the deck, not walkable
+        rect_rot(rail, mx, my, ang, half_len, half_w + 0.55, 1)
+        rail[deck > 0] = 0
+        bridges.append({
+            "source_id": br["id"], "name": br.get("name"), "load": load,
+            "gold_at": [cx, cy], "bearing_rad": ang,
+            "world_px": [cx * U, cy * U],
+            "span_units": round(a + b, 2), "deck_width_units": round(half_w * 2, 2),
+            "deviation": "GOLD stores bridge load class and bearing, not deck width; "
+                         "deck width derived from road class + railing allowance",
+            "deck": [mx * U, my * U], "kind": "cart" if load == "cart" else "foot",
+        })
+    plank = deck.astype(bool)
 
-    # ---- ground pass -----------------------------------------------------
-    tiles = load_tiles()
-    rng = np.random.default_rng(20261102)
-    ground = np.zeros((H, W), dtype=np.uint8)   # index into a flat tile list
-    palette = []
-    fam_index = {}
-    for fam, imgs in tiles.items():
-        for t in imgs:
-            fam_index.setdefault(fam, []).append(len(palette))
-            palette.append(t)
-    # ocean: deeper tone further from shore
-    shore = edge_band(water)
-    canvas = Image.new("RGBA", (PXW, PXH), (18, 26, 34, 255))
+    # ---------------- docks: piers that actually reach navigable water ----------------
+    def water_dir(x, y):
+        best = None
+        for i in range(16):
+            a = i * math.pi / 8
+            for d in (2, 5, 9, 14, 20, 28, 38):
+                xi, yi = int(x + math.cos(a) * d), int(y + math.sin(a) * d)
+                if 0 <= xi < UW and 0 <= yi < UH and water[yi, xi]:
+                    if best is None or d < best[1]:
+                        best = (a, d)
+                    break
+        return best or (0.0, 12)
 
-    tone_groups = {}
-    for fam, idxs in fam_index.items():
-        if len(idxs) < 3:
-            tone_groups[fam] = [idxs]
-            continue
-        order = sorted(idxs, key=lambda k: np.array(palette[k].convert("RGB")).mean())
-        thirds = np.array_split(np.array(order), 3)
-        tone_groups[fam] = [list(map(int, t)) for t in thirds if len(t)]
+    piers = np.zeros((UH, UW), np.uint8)
+    docks = []
+    for dk in proj["docks"]:
+        x, y = float(dk["at"][0]), float(dk["at"][1])
+        ang, dist = water_dir(x, y)
+        length = min(16.0, max(7.0, dist + 4.0))
+        cx = x + math.cos(ang) * length / 2
+        cy = y + math.sin(ang) * length / 2
+        rect_rot(piers, cx, cy, ang, length / 2 + 1.0, 2.2, 1)
+        tip = (x + math.cos(ang) * (length + 1.2), y + math.sin(ang) * (length + 1.2))
+        docks.append({"source_id": dk["id"], "name": dk.get("name"),
+                      "kind": dk.get("kind"), "water": dk.get("water"),
+                      "land_anchor_px": [x * U, y * U], "water_anchor_px": [tip[0] * U, tip[1] * U],
+                      "bearing_rad": round(ang, 4), "length_units": round(length, 2),
+                      "boat_logic": "UNIMPLEMENTED"})
+    piers_b = piers.astype(bool)
 
-    def pick(fam, i, j):
-        groups = tone_groups.get(fam) or [fam_index[fam]]
-        coarse = (i // 14) * 92821 ^ (j // 14) * 68917
-        band = groups[coarse % len(groups)]
-        h = (i * 73856093 ^ j * 19349663) & 0xFFFFFFFF
-        return band[h % len(band)]
+    # ---------------- ground grid (32 px Cainos tiles) ----------------
+    canvas = Image.new("RGBA", (PW, PH), WATER_PLACEHOLDER[0] + (255,))
+    elev = np.frombuffer(base64.b64decode(proj["terrain"]["elev"]), np.uint8).reshape(175, 250).astype(np.float32)
+    biome = np.frombuffer(base64.b64decode(proj["terrain"]["biome"]), np.uint8).reshape(175, 250)
+    land_elev = elev[elev > 0] if (elev > 0).any() else elev
+    q1, q2, q3 = np.percentile(land_elev, [55, 80, 93]) if land_elev.size else (40, 95, 150)
 
-    # beaches are a band along the water, not a whole zone
-    # a beach belongs to the sea: rivers and lakes keep grassy banks with pebbles
-    sea = np.asarray(water).astype(bool) & ~np.asarray(lakes, dtype=bool) & ~np.asarray(rivers, dtype=bool)
-    beach = sea.copy()
-    for _ in range(4):
-        nb = beach.copy()
-        nb[1:] |= beach[:-1]; nb[:-1] |= beach[1:]
-        nb[:, 1:] |= beach[:, :-1]; nb[:, :-1] |= beach[:, 1:]
-        beach = nb
-    shore_band = beach
+    def cell_wet(gx, gy):
+        x0, y0 = gx * 8, gy * 8
+        return water[y0:y0 + 8, x0:x0 + 8].mean() if 0 <= y0 < UH and 0 <= x0 < UW else 0.0
 
-    # ground arrays
-    ground_maps = {}
-    for y in range(H):
-        for x in range(W):
-            if water[y, x]:
-                fam = "water"
-            elif roads[y, x]:
-                fam = "road"
+    ground = np.empty((GH, GW), dtype=object)
+    for gy in range(GH):
+        for gx in range(GW):
+            wet = cell_wet(gx, gy)
+            e = elev[gy, gx] + (h32("jit", gx, gy) % 1000) / 1000.0 * 14.0 - 7.0
+            if wet > 0.5:
+                ground[gy, gx] = "water"
+            elif e >= q3:
+                ground[gy, gx] = "rock"
+            elif e >= q2:
+                ground[gy, gx] = "stone"
             else:
-                fam = ZONE_GRAMMAR[gram[y, x]][0]
-                if fam == "sand" and not shore_band[y, x]:
-                    fam = "grass"
-            ground_maps[(y, x)] = fam
+                ground[gy, gx] = "meadow"
+    # slope -> cliff blocks (non walkable) between very different neighbours
+    cliff_cells = np.zeros((GH, GW), bool)
+    for gy in range(GH):
+        for gx in range(GW):
+            e = elev[gy, gx]
+            nb = elev[max(0, gy - 1):gy + 2, max(0, gx - 1):gx + 2]
+            if e - nb.min() >= 45 and ground[gy, gx] in ("stone", "rock"):
+                cliff_cells[gy, gx] = True
 
-    # blit ground row by row (per-tile paste keeps seams exact)
-    deep_t, shallow_t, deep_rgb, shallow_rgb = water_tones()
-    near_land = np.zeros((H, W), dtype=bool)
-    lm = land_walk.astype(bool) | roads.astype(bool)
-    d = lm.copy()
-    for _ in range(2):                      # 2-tile shallow shelf around every shore
-        nb = d.copy()
-        nb[1:] |= d[:-1]; nb[:-1] |= d[1:]
-        nb[:, 1:] |= d[:, :-1]; nb[:, :-1] |= d[:, 1:]
-        d = nb
-    near_land = d & ~lm
-    ford = np.zeros((H, W), bool)
-    # a ford is a short shallow crossing; a road that runs far out over open water is
-    # a sea route and stays water (it is not walkable in either case)
-    from collections import deque as _dq
-    wet_road = (roads.astype(bool) & water.astype(bool))
-    seen_ford = np.zeros((H, W), bool)
-    for sy in range(H):
-        for sx in range(W):
-            if not wet_road[sy, sx] or seen_ford[sy, sx]:
-                continue
-            comp = []
-            q = _dq([(sx, sy)])
-            seen_ford[sy, sx] = True
-            while q:
-                x, y = q.popleft()
-                comp.append((x, y))
-                for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
-                    nx, ny = x + dx, y + dy
-                    if 0 <= nx < W and 0 <= ny < H and wet_road[ny, nx] and not seen_ford[ny, nx]:
-                        seen_ford[ny, nx] = True
-                        q.append((nx, ny))
-            if len(comp) <= 36:
-                for x, y in comp:
-                    ford[y, x] = True
-    for y in range(H):
-        for x in range(W):
-            fam = ground_maps[(y, x)]
+    def tile_for(fam, key):
+        pool = fams[fam]
+        return pool[h32(key, fam) % len(pool)]
+
+    for gy in range(GH):
+        for gx in range(GW):
+            fam = ground[gy, gx]
             if fam == "water":
-                if ford[y, x]:
-                    # a road that meets a river crosses at a ford: shallow water you
-                    # can wade, not a beach and not a bridge
-                    canvas.paste(shallow_t, (x * TILE, y * TILE))
-                    continue
-                canvas.paste(shallow_t if near_land[y, x] else deep_t, (x * TILE, y * TILE))
                 continue
-            t = palette[pick(fam, x, y)]
-            canvas.paste(t, (x * TILE, y * TILE))
-    print("ground blitted", canvas.size)
+            if fam == "meadow":
+                t = tile_for("meadow", f"{gx},{gy}")
+            elif fam == "stone":
+                t = tile_for("stone", f"{gx},{gy}")
+            else:
+                t = tile_for("stone", f"{gx},{gy}")
+            canvas.paste(t, (gx * ART_TILE, gy * ART_TILE))
 
-    # ---- props -----------------------------------------------------------
-    props = Props()
-    decals = load_decals()
-    DECAL_P = {"grass": 0.14, "grass_dark": 0.16, "soil": 0.05, "sand": 0.05,
-               "stone": 0.07, "blight": 0.09}
-    print("prop families:", {k: len(v) for k, v in props.items.items()})
+    print("ground cells", {k: int(sum(1 for g in ground.flat if g == k)) for k in ("meadow", "stone", "rock", "water")})
+
+    # ---------------- sub-tile overlays (roads, water, bridges, piers) ----------------
+    def reseat(mask):
+        return Image.fromarray((mask * 255).astype(np.uint8), "L").resize((PW, PH), Image.NEAREST)
+
+    road_mask = np.array(reseat(roads)) > 0
+    water_mask = np.array(reseat(water)) > 0
+    wet_b = water.astype(bool)
+    shelf = np.array(reseat((wet_b & ~_erode(wet_b, 6)).astype(np.uint8))) > 0
+    deck_mask = np.array(reseat(deck)) > 0
+    rail_mask = np.array(reseat(rail)) > 0
+    pier_mask = np.array(reseat(piers)) > 0
+
+    out = np.array(canvas)
+    # water: mask-driven placeholder (art gap recorded), with shelf + shoreline band
+    deep = np.array(WATER_PLACEHOLDER[0] + (255,), np.uint8)
+    shal = np.array(WATER_PLACEHOLDER[1] + (255,), np.uint8)
+    shore = np.array(WATER_PLACEHOLDER[2] + (255,), np.uint8)
+    out[water_mask] = deep
+    out[water_mask & shelf] = shal
+    out[water_mask & ~_erode(water_mask, 3)] = shore
+    # roads: authored cobble texture, masked at 4 px/unit so the trail stays narrow
+    cob = np.array(fams["stone"][0])
+    cob_tex = np.tile(cob, (PH // cob.shape[0] + 1, PW // cob.shape[1] + 1, 1))[:PH, :PW]
+    out[road_mask] = cob_tex[road_mask]
+    # decks and piers: stone ground texture, then rails darker
+    st = np.array(fams["stone"][0])
+    st_tex = np.tile(st, (PH // st.shape[0] + 1, PW // st.shape[1] + 1, 1))[:PH, :PW]
+    out[deck_mask] = st_tex[deck_mask]
+    out[pier_mask] = st_tex[pier_mask]
+    rail_px = st_tex[rail_mask].astype(np.float32) * 0.72
+    rail_px[:, 3] = 255
+    out[rail_mask] = rail_px.astype(np.uint8)
+    world = Image.fromarray(out, "RGBA")
+    print("overlays applied", world.size)
+
+    # ---------------- objects (props, plants, structures, POI / resource sites) ------
     placements = []
 
-    def place(fam, wx, wy, collider=True):
-        items = props.items.get(fam)
-        if not items:
-            return
-        h = (wx * 2654435761 ^ wy * 40503) & 0xFFFFFFFF
-        it = items[h % len(items)]
-        placements.append({"fam": fam, "img": it["img"], "x": wx, "y": wy,
-                           "collider": collider, "src": it["src"]})
+    ALIAS = {"wall": "struct_wall", "arch": "struct_arch", "stairs": "struct_stairs",
+             "crate": "props_crate", "barrel": "props_barrel", "sign": "props_sign",
+             "grave": "props_grave", "statue": "props_statue", "well": "props_well",
+             "rock": "props_rock", "boulder": "props_boulder"}
 
-    # POI yards are plazas: nothing that scatters is allowed inside one, so a
-    # settlement keeps a walkable centre instead of being buried by its own trees.
-    yard = np.zeros((H, W), bool)
-    for p in project["pois"]:
-        ax, ay = p["at"]
-        tx, ty = ax / (CELL_U / UP), ay / (CELL_U / UP)
-        foot = p.get("foot")
-        radius_t = 3
-        if foot:
-            xs = [q[0] for q in foot]
-            radius_t = max(2, int((max(xs) - min(xs)) / (2 * CELL_U / UP)))
-        radius_t = min(6, radius_t)
-        y0, y1 = max(0, int(ty - radius_t - 1)), min(H, int(ty + radius_t + 2))
-        x0, x1 = max(0, int(tx - radius_t - 1)), min(W, int(tx + radius_t + 2))
-        yard[y0:y1, x0:x1] = True
+    def place(fam, wx, wy, key, collider=True, tag=None):
+        fam = ALIAS.get(fam, fam)
+        pool = fams.get(fam)
+        if not pool:
+            return None
+        img = pool[h32(key, fam) % len(pool)]
+        rec = {"fam": fam, "x": int(round(wx)), "y": int(round(wy)),
+               "w": img.width, "h": img.height, "img": img,
+               "collider": collider, "tag": tag}
+        placements.append(rec)
+        return rec
 
-    # ground decals: the texture that flat source tiles cannot provide
-    for y in range(H):
-        for x in range(W):
-            if not land_walk[y, x] or roads[y, x] or yard[y, x]:
+    # vegetation by biome grammar (biome layer is now used, not ignored)
+    VOID = {"water"}
+    for gy in range(GH):
+        for gx in range(GW):
+            fam = ground[gy, gx]
+            if fam in VOID:
                 continue
-            fam = ZONE_GRAMMAR[gram[y, x]][0]
-            h = (x * 40503 ^ y * 2654435761) & 0xFFFFFFFF
-            if (h % 1000) / 1000.0 > DECAL_P.get(fam, 0.05):
-                continue
-            kinds = ["tuft", "tuft", "flower", "pebble"] if fam in ("grass", "grass_dark") else \
-                    ["pebble", "pebble", "tuft"] if fam == "soil" else \
-                    ["pebble", "flower"] if fam == "sand" else \
-                    ["pebble"] if fam == "stone" else ["tuft", "pebble"]
-            k = kinds[(h >> 9) % len(kinds)]
-            pool = decals.get(k) or []
-            if not pool:
-                continue
-            im = pool[(h >> 17) % len(pool)]
-            placements.append({"fam": "decal", "img": im, "x": x * TILE + (h >> 4) % 14 + 1,
-                               "y": y * TILE + (h >> 7) % 14 + 2, "collider": False, "src": ""})
-
-    # scattered vegetation per grammar
-    step = 2
-    for y in range(0, H, 1):
-        for x in range(0, W, 1):
-            if not land_walk[y, x] or yard[y, x]:
-                continue
-            g = gram[y, x]
-            _, tree_fam, decal_p, prop_p = ZONE_GRAMMAR[g]
-            h = (x * 73856093 ^ y * 19349663 ^ 0x9E3779B9) & 0xFFFFFFFF
+            b = int(biome[gy, gx])
+            h = h32("veg", gx, gy)
             r = (h % 10000) / 10000.0
-            wx = x * TILE + TILE // 2
-            wy = y * TILE + TILE - 2
-            if r < prop_p:
-                if tree_fam and (r * 3) % 1 < 0.72:
-                    place(tree_fam, wx, wy)
-                elif r * 5 % 1 < 0.5:
-                    place("bush", wx, wy, collider=False)
-                else:
-                    place("rock", wx, wy, collider=False)
-
-    # rocks and ruins in high rock / blight regardless of scatter
-    for y in range(0, H):
-        for x in range(0, W):
-            if not land_walk[y, x] or yard[y, x]:
+            wx, wy = gx * ART_TILE + ART_TILE // 2, gy * ART_TILE + ART_TILE - 2
+            forest = b in (1, 6) or ground[gy, gx] == "meadow" and r < 0.055
+            if fam == "rock":
+                if r < 0.02:
+                    place("rock", wx, wy, f"rk{gx},{gy}", True)
                 continue
-            g = gram[y, x]
-            h = (x * 2654435761 ^ y * 40503) & 0xFFFFFFFF
-            if g == "high rock" and h % 37 == 0:
-                place("rock_big", x * TILE + 8, y * TILE + 14)
-            if g == "blight" and h % 53 == 0:
-                place("rock", x * TILE + 8, y * TILE + 14)
+            if forest and r < 0.085:
+                place("tree", wx, wy, f"tr{gx},{gy}", True)
+            elif r < 0.115:
+                place("bush", wx, wy, f"bs{gx},{gy}", False)
+            elif r < 0.16:
+                place("tuft", wx, wy, f"tf{gx},{gy}", False)
 
-    # ---- POIs ------------------------------------------------------------
-    poi_out = []
-    for p in project["pois"]:
-        ax, ay = p["at"]
-        tx, ty = ax / (CELL_U / UP), ay / (CELL_U / UP)
-        arche = p.get("arche")
-        foot = p.get("foot")
-        radius_t = 3
-        if foot:
-            xs = [q[0] for q in foot]; ys = [q[1] for q in foot]
-            radius_t = min(6, max(2, int((max(xs) - min(xs)) / (2 * CELL_U / UP))))
-        # flatten the yard: soil pad
-        if not water[int(ty), int(tx)]:
-            y0, y1 = int(ty - radius_t), int(ty + radius_t)
-            x0, x1 = int(tx - radius_t), int(tx + radius_t)
-            for yy in range(max(0, y0), min(H, y1)):
-                for xx in range(max(0, x0), min(W, x1)):
-                    if land_walk[yy, xx] and not roads[yy, xx]:
-                        t = palette[pick("soil" if arche in ("farm", "grove", "mill") else "stone",
-                                          xx, yy)]
-                        canvas.paste(t, (xx * TILE, yy * TILE))
-            # structures
-            build = {"hamlet": 2, "village": 3, "port": 2, "pier": 1, "roadstop": 1,
-                     "quarry": 1, "mine": 1, "ruins": 2, "elder_site": 1,
-                     "observatory": 1, "research": 1, "facility": 1, "gate": 1}
-            n = build.get(arche, 1)
-            for k in range(n):
-                ang = (k / max(1, n)) * 6.283 + (hash(p["id"]) % 100) / 100
-                ox = int(tx + np.cos(ang) * radius_t * 0.8)
-                oy = int(ty + np.sin(ang) * radius_t * 0.8)
-                fam = "ruin" if arche in ("ruins", "tomb", "elder_site") else "house"
-                place(fam, ox * TILE + 8, oy * TILE + 14)
-            if arche in ("grove", "farm", "mill"):
-                for k in range(3):
-                    place("crop", (int(tx) + k - 1) * TILE + 8, (int(ty) + 1) * TILE + 14,
-                          collider=False)
-        poi_out.append({"id": p["id"], "name": p["name"], "arche": arche,
-                        "cell": [round(tx, 1), round(ty, 1)],
-                        "tile": [int(tx), int(ty)], "elder": p.get("elder"),
-                        "access": p.get("access"), "role": p.get("role")})
+    # POI sites: archetype-specific composition (no generic houses exist in this repo)
+    SITE = {
+        "village":     ["well", "crate", "barrel", "sign", "wall", "wall", "bush"],
+        "hamlet":      ["well", "barrel", "sign", "bush"],
+        "port":        ["crate", "crate", "barrel", "sign", "props_ruin"],
+        "pier":        ["crate", "barrel", "sign"],
+        "roadstop":    ["sign", "barrel", "crate"],
+        "quarry":      ["props_boulder", "rock", "rock", "crate"],
+        "mine":        ["props_boulder", "rock", "crate", "props_door"],
+        "ruins":       ["props_ruin", "wall", "arch", "rock"],
+        "elder_site":  ["props_pedestal", "statue", "arch", "rock"],
+        "observatory": ["props_pedestal", "arch", "wall"],
+        "research":    ["props_pedestal", "wall", "arch", "statue"],
+        "facility":    ["wall", "wall", "arch", "props_door"],
+        "gate":        ["arch", "wall", "wall"],
+        "grove":       ["tree", "tree", "bush", "bush"],
+        "farm":        ["crate", "bush", "sign"],
+        "mill":        ["crate", "barrel", "wall"],
+        "sawmill":     ["crate", "crate", "barrel"],
+        "forge":       ["props_furnace", "props_workbench", "crate"],
+        "foundry":     ["props_furnace", "props_furnace", "props_workbench", "crate"],
+        "kiln":        ["props_furnace", "props_workbench"],
+        "tomb":        ["grave", "grave", "props_grave", "wall"],
+        "necropolis":  ["grave", "props_grave", "props_grave", "statue", "wall"],
+        "warehouse":   ["crate", "crate", "crate", "barrel"],
+        "powerplant":  ["props_furnace", "wall", "props_workbench"],
+        "tower":       ["wall", "wall", "props_pedestal"],
+        "cache":       ["crate", "barrel"],
+    }
+    DEFAULT_SITE = ["sign", "rock", "bush"]
 
-    # ---- resources -------------------------------------------------------
-    res_out = []
-    RES_FAM = {"wood": "tree_meadow", "stone": "rock_big", "ore": "rock_big",
-               "obsidian": "rock", "sulfur": "rock", "clay": "rock",
-               "herbs": "bush", "food": "bush", "fish": None, "fresh_water": None,
-               "salt": "rock"}
-    for r in project["resources"]:
+    poi_records = []
+    for p in proj["pois"]:
+        ax, ay = float(p["at"][0]), float(p["at"][1])
+        foot = p.get("foot") or []
+        arche = p.get("arche", "site")
+        setlist = SITE.get(arche, DEFAULT_SITE)
+        # place the set around the foot polygon or in a small ring
+        n = len(setlist)
+        for i, fam in enumerate(setlist):
+            if foot:
+                # walk the foot polygon: spread placements along its edge, pulled inward
+                idx = int(i * len(foot) / max(1, n)) % len(foot)
+                fx, fy = foot[idx]
+                px = ax + (fx - ax) * 0.62
+                py = ay + (fy - ay) * 0.62
+            else:
+                a = 2 * math.pi * i / max(1, n)
+                px, py = ax + math.cos(a) * 3.5, ay + math.sin(a) * 3.5
+            place(fam, px * U, py * U, f"{p['id']}:{i}", True, tag=p["id"])
+        # centre marker so the site reads as a place, not a scatter
+        centre_fam = {"tomb": "props_grave", "necropolis": "props_grave",
+                      "elder_site": "props_pedestal", "observatory": "props_pedestal",
+                      "village": "well", "hamlet": "well"}.get(arche, "tuft")
+        place(centre_fam, ax * U, ay * U, f"{p['id']}:c", False, tag=p["id"])
+        poi_records.append({
+            "source_id": p["id"], "name": p.get("name"), "arche": arche,
+            "gold_at": [ax, ay], "world_px": [ax * U, ay * U],
+            "foot_polygon": foot, "access": p.get("access"), "role": p.get("role"),
+            "elder": p.get("elder"), "site_set": setlist,
+            "building_art": "MISSING_ASSET" if arche in
+            ("village", "hamlet", "port", "facility", "research", "observatory",
+             "powerplant", "warehouse", "forge", "foundry", "mill", "sawmill", "kiln")
+            else "NOT_REQUIRED",
+        })
+
+    # resources: 280 source identities, each gets a visible source marker
+    RES_FAM = {"wood": "tree", "stone": "props_boulder", "ore": "props_boulder",
+               "obsidian": "rock", "sulfur": "rock", "clay": "rock", "salt": "rock",
+               "herbs": "bush", "food": "bush", "fish": None, "fresh_water": None}
+    res_records = []
+    for r in proj["resources"]:
+        ax, ay = float(r["at"][0]), float(r["at"][1])
         fam = RES_FAM.get(r.get("kind"))
-        ax, ay = r["at"]
-        tx, ty = ax / (CELL_U / UP), ay / (CELL_U / UP)
-        if fam and 0 <= int(ty) < H and 0 <= int(tx) < W and land_walk[int(ty), int(tx)]:
-            place(fam, int(tx) * TILE + 8, int(ty) * TILE + 14, collider=False)
-        res_out.append({"id": r["id"], "kind": r.get("kind"), "tile": [int(tx), int(ty)]})
+        placed = None
+        if fam:
+            placed = place(fam, ax * U, ay * U, f"res:{r['id']}", True, tag=r["id"])
+        res_records.append({
+            "source_id": r["id"], "name": r.get("name"), "kind": r.get("kind"),
+            "gold_at": [ax, ay], "world_px": [ax * U, ay * U],
+            "radius_units": r.get("r"), "density": r.get("dens"), "gate": r.get("gate"),
+            "render_family": fam,
+            "interaction": "ANCHOR_ONLY" if placed else "FUNCTIONAL_BLOCKED",
+        })
 
-    # docks as plank platforms
-    for d in project["docks"]:
-        ax, ay = d["at"]
-        tx, ty = ax / (CELL_U / UP), ay / (CELL_U / UP)
-        if 0 <= int(ty) < H and 0 <= int(tx) < W:
-            place("crate", int(tx) * TILE + 8, int(ty) * TILE + 14, collider=False)
+    # elders: six distinct compositions built from the available vocabulary
+    ELDER_SET = {
+        "aion":    ["tree", "tree", "tree", "bush", "bush"],          # ancient forest
+        "typhon":  ["props_boulder", "rock", "rock", "props_boulder"],  # rock fractures
+        "surtur":  ["props_furnace", "rock", "rock", "props_boulder"],  # volcanic identity
+        "atlas":   ["arch", "props_pedestal", "rock"],                 # threshold
+        "argus":   ["arch", "statue", "props_pedestal", "wall"],       # knowledge
+        "anubis":  ["props_grave", "grave", "statue", "wall"],         # necropolis
+    }
+    elder_records = []
+    for e in proj["elders"]:
+        ring = e.get("outer") or []
+        if ring:
+            cx = sum(q[0] for q in ring) / len(ring)
+            cy = sum(q[1] for q in ring) / len(ring)
+        else:
+            cx = cy = 0
+        setlist = ELDER_SET.get(e.get("elder"), ["rock"])
+        for i, fam in enumerate(setlist):
+            a = 2 * math.pi * i / len(setlist)
+            place(fam, (cx + math.cos(a) * 9) * U, (cy + math.sin(a) * 9) * U,
+                  f"{e['id']}:{i}", True, tag=e["id"])
+        elder_records.append({"source_id": e["id"], "name": e.get("name"),
+                              "elder": e.get("elder"), "ring": ring,
+                              "world_centre_px": [cx * U, cy * U], "site_set": setlist,
+                              "biome_art": "MISSING_ASSET"})
 
-    # ---- draw props (y-sorted) ------------------------------------------
-    placements.sort(key=lambda p: (p["y"], p["x"]))
-    for p in placements:
-        im = p["img"]
-        canvas.alpha_composite(im, (int(p["x"] - im.width / 2), int(p["y"] - im.height)))
+    print("objects placed", len(placements))
 
-    print("props placed", len(placements))
-    canvas.convert("RGB").save(os.path.join(OUT, "world.png"))
-    canvas.convert("RGB").resize((W * 2, H * 2), Image.NEAREST).save(
-        os.path.join(OUT, "world_half.png"))
-    canvas.convert("RGB").resize((W, H), Image.NEAREST).save(os.path.join(OUT, "minimap.png"))
+    # ---------------- compose with y-sort ----------------
+    placements.sort(key=lambda r: (r["y"], r["x"]))
+    for rec in placements:
+        img = rec["img"]
+        world.alpha_composite(img, (rec["x"] - img.width // 2, rec["y"] - img.height))
+    world_rgb = world.convert("RGB")
+    world_rgb.save(os.path.join(out_dir, "world.png"))
+    world_rgb.resize((PW // 5, PH // 5), Image.LANCZOS).save(os.path.join(out_dir, "overview.png"))
+    print("world saved", world_rgb.size)
 
-    # ---- collision -------------------------------------------------------
-    solid = np.zeros((H, W), dtype=np.uint8)
-    solid[water.astype(bool)] = 1
-    solid[roads.astype(bool) & ~water.astype(bool)] = 0
-    solid[ford] = 0
-    for br in project["bridges"]:
-        x, y = br["at"]
-        ix, iy = int(x / (CELL_U / UP)), int(y / (CELL_U / UP))
-        solid[max(0, iy - 1):iy + 2, max(0, ix - 2):ix + 3] = 0
-    for p in placements:
-        if not p["collider"]:
+    # ---------------- collision on the 16 px grid ----------------
+    def down(mask_px, cell, thresh):
+        """Area-average a pixel mask down to a coarser grid."""
+        h, w = mask_px.shape
+        m = mask_px.reshape(h // cell, cell, w // cell, cell).mean(axis=(1, 3))
+        return m >= thresh
+
+    solid = down(water_mask, COLL, 0.45)
+    solid &= ~down(np.array(reseat(deck)) > 0, COLL, 0.35)
+    solid &= ~down(np.array(reseat(piers)) > 0, COLL, 0.35)
+    solid |= down(np.array(reseat(rail)) > 0, COLL, 0.6) & False  # rails are decoration
+    for rec in placements:
+        if not rec["collider"]:
             continue
-        tx, ty = int(p["x"] // TILE), int((p["y"] - 6) // TILE)
-        if 0 <= ty < H and 0 <= tx < W:
-            solid[ty, tx] = 1
-    np.save(os.path.join(OUT, "solid.npy"), solid)
+        cx = rec["x"] // COLL
+        cy = (rec["y"] - 5) // COLL
+        if 0 <= cx < CW and 0 <= cy < CH:
+            solid[cy, cx] = True
+    # no walking on cliff faces
+    for gy in range(GH):
+        for gx in range(GW):
+            if cliff_cells[gy, gx]:
+                solid[gy * 2:gy * 2 + 2, gx * 2:gx * 2 + 2] = True
+
     rows = []
-    for y in range(H):
+    for y in range(CH):
         row = solid[y]
-        runs = []
-        val = int(row[0]); start = 0
-        for x in range(1, W):
-            if int(row[x]) != val:
-                runs.append([start, x - start, val]); val = int(row[x]); start = x
-        runs.append([start, W - start, val])
+        runs, x = [], 0
+        while x < CW:
+            v = bool(row[x])
+            if not v:
+                x += 1
+                continue
+            s = x
+            while x < CW and bool(row[x]) == v:
+                x += 1
+            runs.append([s, x - s, 1])
         rows.append(runs)
 
     meta = {
-        "schema": "soh.veyra.world.v1",
-        "source": {"gold": os.path.basename(GOLD), "gold_sha256": hashlib_sha(GOLD)},
-        "scale": {"gold_cell_units": CELL_U, "tiles_per_gold_cell": UP,
-                  "tile_px": TILE, "tiles": [W, H], "pixels": [PXW, PXH],
-                  "px_per_gold_unit": TILE / (CELL_U / UP)},
-        "spawns": project["spawns"],
-        "pois": poi_out,
-        "resources": res_out,
-        "zones": [{"id": z["id"], "name": z["name"], "grammar": zone_grammar(z),
-                   "ring": [[round(q[0], 1), round(q[1], 1)] for q in z["ring"]],
-                   "soil": z.get("soil"), "tags": z.get("tags")} for z in project["zones"]],
-        "lands": [{"id": l["id"], "name": l["name"], "kind": l["kind"]} for l in project["land"]],
-        "collision": {"encoding": "rows of [start,len,value]", "rows": rows},
+        "schema": "soh.veyra.world.v2",
+        "source": {
+            "gold": "map_tower/veyra_gold/VEYRA_GOLD_MAP.sohmap.json",
+            "gold_sha256": hashlib.sha256(open(GOLD, "rb").read()).hexdigest(),
+            "art_manifest": "map_tower/assets/VEYRA_ART_MANIFEST.json",
+            "art_sources": {k: v["sha256"] for k, v in manifest["sources"].items()},
+        },
+        "scale": {
+            "gold_cell_units": 8, "art_tile_px": ART_TILE, "cells": [GW, GH],
+            "pixels": [PW, PH], "px_per_gold_unit": U, "collision_cell_px": COLL,
+            "collision_cells": [CW, CH],
+        },
+        "spawns": [{"id": s["id"], "name": s.get("name"),
+                    "at": s["at"], "world_px": [s["at"][0] * U, s["at"][1] * U],
+                    "region": s.get("region")} for s in proj["spawns"]],
+        "pois": poi_records, "resources": res_records, "zones": [
+            {"source_id": z["id"], "name": z.get("name"), "ring": z["ring"],
+             "soil": z.get("soil"), "tags": z.get("tags")} for z in proj["zones"]],
+        "lakes": [{"source_id": l["id"], "name": l.get("name"), "kind": l.get("kind"),
+                   "rings": l.get("rings") or [l.get("ring")]} for l in proj["lakes"]],
+        "rivers": river_list, "roads": road_list, "bridges": bridges, "docks": docks,
+        "elders": elder_records,
+        "labels": [{"source_id": l["id"], "text": l.get("text"), "at": l["at"],
+                    "rot": l.get("rot"), "size": l.get("size"), "style": l.get("style")}
+                   for l in proj["labels"]],
+        "lands": [{"source_id": l["id"], "name": l.get("name")} for l in proj["land"]],
+        "collision": {"encoding": "rle-[start,len,value]-per-row", "cell_px": COLL,
+                      "rows": rows},
+        "art_gaps": manifest["missing"],
     }
-    json.dump(meta, open(os.path.join(OUT, "world_meta.json"), "w"), separators=(",", ":"))
-    print("world", canvas.size, "collision rows", H)
+    with open(os.path.join(out_dir, "world_meta.json"), "w") as fh:
+        json.dump(meta, fh, indent=1)
+    np.save(os.path.join(out_dir, "solid.npy"), solid)
+    print("collision cells solid", int(solid.sum()), "/", solid.size)
+    world_rgb.resize((500, 350), Image.LANCZOS).save(os.path.join(out_dir, "minimap.png"))
+    return meta
 
 
-def hashlib_sha(path):
-    import hashlib
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for c in iter(lambda: f.read(1 << 20), b""):
-            h.update(c)
-    return h.hexdigest()
+def _band(mask, r):
+    """Grow a boolean mask by r cells (shelf/shore bands)."""
+    e = mask.copy()
+    for _ in range(r):
+        n = e.copy()
+        n[1:] |= e[:-1]; n[:-1] |= e[1:]
+        n[:, 1:] |= e[:, :-1]; n[:, :-1] |= e[:, 1:]
+        e = n
+    return e
+
+
+def _erode(mask, r):
+    e = mask.copy()
+    for _ in range(r):
+        n = e.copy()
+        n[1:] &= e[:-1]; n[:-1] &= e[1:]
+        n[:, 1:] &= e[:, :-1]; n[:, :-1] &= e[:, 1:]
+        e = n
+    return e
 
 
 if __name__ == "__main__":
-    main()
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--out", default=os.path.join(REPO, "out"))
+    a = ap.parse_args()
+    main(a.out)

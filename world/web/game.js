@@ -25,7 +25,7 @@
     ]);
     state.meta = meta; state.world = world; state.hero = hero;
 
-    const [W, H] = meta.scale.tiles;
+    const [W, H] = meta.scale.collision_cells;
     state.solid = new Uint8Array(W * H);
     meta.collision.rows.forEach((runs, y) => {
       for (const [start, len, val] of runs) {
@@ -34,8 +34,8 @@
     });
 
     state.cellpx = TILE * meta.scale.tiles_per_gold_cell;   // one gold cell in pixels
-    const spawn = meta.spawns[0].at;
-    placePlayer(spawn[0] * meta.scale.px_per_gold_unit, spawn[1] * meta.scale.px_per_gold_unit);
+    const spawn = meta.spawns[0].world_px;
+    placePlayer(spawn[0], spawn[1]);
     document.getElementById('loading').remove();
     requestAnimationFrame(loop);
   }
@@ -46,7 +46,7 @@
 
   // ---------- collision ---------------------------------------------------
   function walkable(px, py) {
-    const { tiles } = state.meta.scale;
+    const { collision_cells: tiles } = state.meta.scale;
     const tx = Math.floor(px / TILE), ty = Math.floor(py / TILE);
     if (tx < 0 || ty < 0 || tx >= tiles[0] || ty >= tiles[1]) return false;
     return state.solid[ty * tiles[0] + tx] === 0;
@@ -83,8 +83,7 @@
     if (k === 'm') state.showMap = !state.showMap;
     if ('1234'.includes(k)) {
       const s = state.meta.spawns[+k - 1];
-      if (s) placePlayer(s.at[0] * state.meta.scale.px_per_gold_unit,
-                         s.at[1] * state.meta.scale.px_per_gold_unit);
+      if (s) placePlayer(s.world_px[0], s.world_px[1]);
     }
     if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' '].includes(k)) e.preventDefault();
   });
@@ -145,12 +144,12 @@
     // nearest POI label
     let best = null, bestD = 260;
     for (const poi of state.meta.pois) {
-      const px = poi.cell[0] * state.cellpx, py = poi.cell[1] * state.cellpx;
+      const px = poi.world_px[0], py = poi.world_px[1];
       const d = Math.hypot(px - p.x, py - p.y);
       if (d < bestD) { bestD = d; best = poi; }
     }
     if (best) {
-      const bx = best.cell[0] * state.cellpx - cx, by = best.cell[1] * state.cellpx - cy;
+      const bx = best.world_px[0] - cx, by = best.world_px[1] - cy;
       vctx.font = '8px ui-monospace, monospace';
       vctx.fillStyle = 'rgba(10,12,16,.72)';
       const label = `${best.name} · ${best.arche}`;
