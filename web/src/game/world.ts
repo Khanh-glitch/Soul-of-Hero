@@ -1,5 +1,5 @@
 // K2 — stable geographic island (LOCKED_CANON: same geography across runs). Deterministic from WORLD_SEED.
-import { T, WW, WH, WORLD_SEED, hash2, TILE } from './core';
+import { T, WW, WH, WORLD_SEED, hash2, TILE, TERRAIN_NAME } from './core';
 import { SOURCES } from './catalog';
 
 export const SRC_KEYS = Object.keys(SOURCES);
@@ -215,9 +215,16 @@ function genWorld(): World {
     if (elders.some(e => Math.hypot(e.tx - tx, e.ty - ty) < 5.5)) continue;
     const r = hash2(tx, ty, S + 101), r2 = hash2(tx, ty, S + 202); const y = ty / WH;
     let k = -1;
+    // Optional resource placement is authored alongside source definitions; this generic
+    // rule applies to any source with a matching terrain/chance, without ID branches here.
+    for (const [sourceId, sourceDef] of Object.entries(SOURCES)) {
+      const rule = sourceDef.placement?.find(rule => rule.terrain === TERRAIN_NAME[t] && r < rule.chance);
+      if (rule) { k = SRC_KEYS.indexOf(sourceId); break; }
+    }
     const nr = nearRoad(tx, ty);
-    if (nr && r2 < 0.05 && t !== T.SHALLOW && t !== T.RIVER && t !== T.DEEP) k = r < 0.18 ? SK('wreck') : SK('scrap');
-    else switch (t) {
+    if (k < 0) {
+      if (nr && r2 < 0.05 && t !== T.SHALLOW && t !== T.RIVER && t !== T.DEEP) k = r < 0.18 ? SK('wreck') : SK('scrap');
+      else switch (t) {
       case T.FOREST: k = r < (y < 0.42 ? 0.0 : 0.3) ? SK('oak') : r < 0.42 ? SK('pine') : r < 0.47 ? SK('bush') : r < 0.53 ? SK('grass') : r < 0.545 ? SK('herb') : r < 0.555 ? SK('rock') : -1; if (y >= 0.42 && r >= 0.3 && r < 0.42) k = SK('oak'); break;
       case T.GRASS: k = r < 0.045 ? SK('oak') : r < 0.075 ? SK('bush') : r < 0.14 ? SK('grass') : r < 0.155 ? SK('rock') : r < 0.163 ? SK('herb') : -1; break;
       case T.MEADOW: k = r < 0.015 ? SK('oak') : r < 0.055 ? SK('bush') : r < 0.17 ? SK('grass') : r < 0.185 ? SK('rock') : -1; break;
@@ -227,6 +234,7 @@ function genWorld(): World {
       case T.MARSH: k = r < 0.06 ? SK('willow') : r < 0.2 ? SK('reed') : r < 0.235 ? SK('mushroom') : r < 0.245 ? SK('herb') : -1; break;
       case T.ASH: k = r < 0.03 ? SK('sulfur') : r < 0.07 ? SK('rock') : r < 0.09 ? SK('deadtree') : r < 0.105 ? SK('coalv') : -1; break;
       case T.TOXIC: k = r < 0.018 ? SK('wreck') : r < 0.05 ? SK('scrap') : r < 0.06 ? SK('deadtree') : r < 0.068 ? SK('iron') : -1; break;
+      }
     }
     if (k >= 0) src[i] = k;
   }

@@ -1,5 +1,8 @@
 // Runtime catalogs. Numbers = TUNABLE_BALANCE; mechanisms flagged where PROPOSED_MECHANISM.
 export type Mat = 'wood' | 'stone' | 'ore' | 'plant' | 'scrap';
+export interface SourcePlacementRule { terrain: 'sand' | 'marsh' | 'ash' | 'snow' | 'hill'; chance: number }
+export interface RecipeDef { out: string; qty: number; ins: [string, number][]; station: null | 'campfire' | 'furnace' | 'workbench'; secs: number; base?: boolean; tier: number }
+
 export interface ItemDef {
   name: string; cat: string; icon: string; c1: string; c2: string; w: number; max: number; desc: string;
   power?: Partial<Record<Mat, number>>; dmg?: number; reach?: number; arc?: number; swing?: number; dur?: number;
@@ -17,6 +20,8 @@ export const ITEMS: Record<string, ItemDef> = {
   coal: I({ name: 'Coal', cat: 'res', icon: 'ore', c1: '#25252c', c2: '#55556a', w: 1, max: 40, desc: 'Dense fuel. Burns long.', fuel: 80 }),
   charcoal: I({ name: 'Charcoal', cat: 'res', icon: 'ore', c1: '#2b2420', c2: '#6e5a4c', w: 0.5, max: 60, desc: 'Fuel made from burnt wood.', fuel: 55 }),
   crystal: I({ name: 'Frost Crystal', cat: 'res', icon: 'gem', c1: '#4fa6d8', c2: '#c8f0ff', w: 0.5, max: 30, desc: 'Cold-grown crystal from the north. Core synthesis.' }),
+  raw_salt: I({ name: 'Raw Salt', cat: 'res', icon: 'gem', c1: '#9bb8b2', c2: '#f2fff0', w: 0.25, max: 40, desc: 'Mineral crust chipped from coastal salt shale. A small addition preserves cooked provisions.' }),
+  salted_meat: I({ name: 'Salted Roast', cat: 'food', icon: 'meat', c1: '#9a5638', c2: '#f0bb76', w: 0.45, max: 20, desc: 'Roast meat seasoned with gathered salt; a hearty field meal.', food: { hunger: 42, hp: 8, warmth: 8 } }),
   sulfur: I({ name: 'Sulfur', cat: 'res', icon: 'ore', c1: '#b59a1e', c2: '#f2e05a', w: 0.5, max: 40, desc: 'Volcanic sulfur. Volatile.' }),
   scrap: I({ name: 'Scrap Metal', cat: 'res', icon: 'scrap', c1: '#6f7378', c2: '#c0a07a', w: 1, max: 60, desc: 'Salvage from wrecks. Melts into iron.' }),
   spares: I({ name: 'Spares', cat: 'res', icon: 'gear', c1: '#8a8f96', c2: '#e2c25a', w: 0.3, max: 60, desc: 'Run-local components. Research currency and advanced parts.' }),
@@ -88,7 +93,7 @@ export const ITEMS: Record<string, ItemDef> = {
 };
 
 // ---------- Sources (K3) ----------
-export interface SourceDef { name: string; mat: Mat; hp: number; stock: number; yields: [string, number][]; bonus?: [string, number][]; block: boolean; regrow?: number; art: string; tall?: boolean }
+export interface SourceDef { name: string; mat: Mat; hp: number; stock: number; yields: [string, number][]; bonus?: [string, number][]; block: boolean; regrow?: number; art: string; tall?: boolean; placement?: SourcePlacementRule[] }
 export const SOURCES: Record<string, SourceDef> = {
   oak: { name: 'Oak', mat: 'wood', hp: 18, stock: 6, yields: [['wood', 1]], bonus: [['seed', 0.25]], block: true, art: 'oak', tall: true },
   pine: { name: 'Pine', mat: 'wood', hp: 16, stock: 5, yields: [['wood', 1]], block: true, art: 'pine', tall: true },
@@ -100,6 +105,7 @@ export const SOURCES: Record<string, SourceDef> = {
   iron: { name: 'Iron Vein', mat: 'ore', hp: 24, stock: 5, yields: [['iron_ore', 1]], bonus: [['stone', 0.5]], block: true, art: 'iron' },
   coalv: { name: 'Coal Seam', mat: 'ore', hp: 20, stock: 5, yields: [['coal', 1]], block: true, art: 'coal' },
   crystal: { name: 'Frost Crystal', mat: 'ore', hp: 20, stock: 3, yields: [['crystal', 1]], block: true, art: 'crystal' },
+  salt_shale: { name: 'Salt Shale', mat: 'ore', hp: 12, stock: 4, yields: [['raw_salt', 1]], block: true, art: 'crystal', placement: [{ terrain: 'sand', chance: 0.24 }] },
   sulfur: { name: 'Sulfur Vent', mat: 'ore', hp: 14, stock: 3, yields: [['sulfur', 1]], block: true, art: 'sulfur' },
   bush: { name: 'Berry Bush', mat: 'plant', hp: 6, stock: 3, yields: [['berries', 1]], bonus: [['seed', 0.3]], block: false, regrow: 420, art: 'bush' },
   grass: { name: 'Tall Grass', mat: 'plant', hp: 3, stock: 2, yields: [['fiber', 1]], block: false, regrow: 300, art: 'grass' },
@@ -133,7 +139,7 @@ export const ELDERS: Record<string, ElderDef> = {
 };
 
 // ---------- Recipes (K4: one run-local authority) ----------
-export interface Recipe { out: string; qty: number; ins: [string, number][]; station: null | 'campfire' | 'furnace' | 'workbench'; secs: number; base?: boolean; tier: number }
+export type Recipe = RecipeDef;
 export const RECIPES: Record<string, Recipe> = {
   rope: { out: 'rope', qty: 1, ins: [['fiber', 3]], station: null, secs: 1, base: true, tier: 0 },
   torch: { out: 'torch', qty: 1, ins: [['wood', 1], ['fiber', 2]], station: null, secs: 1, base: true, tier: 0 },
@@ -143,6 +149,7 @@ export const RECIPES: Record<string, Recipe> = {
   bandage: { out: 'bandage', qty: 1, ins: [['fiber', 4]], station: null, secs: 1, base: true, tier: 0 },
   water_flask: { out: 'water_flask', qty: 1, ins: [['hide', 2], ['rope', 1]], station: null, secs: 2, base: true, tier: 0 },
   cooked_meat: { out: 'cooked_meat', qty: 1, ins: [['meat', 1]], station: 'campfire', secs: 8, base: true, tier: 0 },
+  salted_meat: { out: 'salted_meat', qty: 1, ins: [['meat', 1], ['raw_salt', 1]], station: 'campfire', secs: 10, base: true, tier: 0 },
   charcoal: { out: 'charcoal', qty: 1, ins: [['wood', 2]], station: 'campfire', secs: 12, base: true, tier: 0 },
   stew: { out: 'stew', qty: 1, ins: [['crop', 2], ['meat', 1], ['herb', 1]], station: 'campfire', secs: 14, tier: 1 },
   iron_ingot: { out: 'iron_ingot', qty: 1, ins: [['iron_ore', 1]], station: 'furnace', secs: 10, base: true, tier: 0 },
@@ -214,3 +221,21 @@ export const ACHIEVEMENTS: Record<string, { name: string; score: number }> = {
   six_stones: { name: 'Crown of Six Stones', score: 600 }, cart: { name: 'Freight Runner', score: 20 },
   recover_bag: { name: 'Nothing Left Behind', score: 20 }, ragnarok: { name: 'Witness the End', score: 40 },
 };
+
+/** Validate all cross-catalog references once at boot so content additions fail loudly. */
+export function validateGameplayCatalog() {
+  const errors: string[] = [];
+  for (const [id, source] of Object.entries(SOURCES)) {
+    if (!source.name || !source.mat || source.hp <= 0 || source.stock <= 0 || !source.yields.length) errors.push(`source ${id}: invalid physical source definition`);
+    for (const [item, qty] of [...source.yields, ...(source.bonus || [])]) if (!ITEMS[item] || qty <= 0) errors.push(`source ${id}: invalid yield ${item} x${qty}`);
+    for (const rule of source.placement || []) if (!Number.isFinite(rule.chance) || rule.chance <= 0 || rule.chance > 1) errors.push(`source ${id}: invalid placement chance`);
+  }
+  for (const [id, recipe] of Object.entries(RECIPES)) {
+    if (!ITEMS[recipe.out] || !Number.isInteger(recipe.qty) || recipe.qty <= 0 || !Number.isFinite(recipe.secs) || recipe.secs <= 0) errors.push(`recipe ${id}: invalid output/time`);
+    for (const [item, qty] of recipe.ins) if (!ITEMS[item] || !Number.isInteger(qty) || qty < 0) errors.push(`recipe ${id}: invalid input ${item} x${qty}`);
+    if (recipe.station && (!STRUCTS[recipe.station] || STRUCTS[recipe.station].station !== recipe.station)) errors.push(`recipe ${id}: missing station ${recipe.station}`);
+  }
+  if (errors.length) throw new Error(`Invalid gameplay catalog:\n${errors.join('\n')}`);
+  return true;
+}
+validateGameplayCatalog();

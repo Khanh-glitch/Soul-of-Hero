@@ -1,7 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { TILE, WW, WH, T, HOUR, type GameState } from '../src/game/core';
 import { getWorld, SRC_KEYS } from '../src/game/world';
-import { newGame, dispatch, harvestHit, addItem, countItem, C, blockedAt, effTile, killPlayer, markDirty, endRun, sourceAt, claimAt, mkContainer } from '../src/game/engine';
+import { newGame, dispatch, harvestHit, addItem, countItem, C, blockedAt, effTile, killPlayer, markDirty, endRun, sourceAt, claimAt, mkContainer, stepStations } from '../src/game/engine';
+import { ITEMS, SOURCES, RECIPES, validateGameplayCatalog } from '../src/game/catalog';
 import { tick, settle, decayTraces, nextContiguousTrace, HAZ, PROJ, type Input } from '../src/game/sim';
 
 const T0 = Date.UTC(2026, 10, 1, 12);
@@ -30,6 +31,47 @@ describe('C24 world', () => {
     for (const p of w.places.filter(p => p.kind !== 'elder')) { let near = false; for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) if (seen[(p.ty + dy) * WW + p.tx + dx]) near = true; expect(near, p.name).toBe(true); }
     // every start has wood, stone and food within 12 tiles
     for (const st of w.starts) { const kinds = new Set<string>(); for (let y = st.ty - 12; y <= st.ty + 12; y++) for (let x = st.tx - 12; x <= st.tx + 12; x++) { const k = w.src[y * WW + x]; if (k >= 0) kinds.add(SRC_KEYS[k]); } expect(kinds.has('rock')).toBe(true); expect(kinds.has('bush') || kinds.has('herb')).toBe(true); expect([...kinds].some(k => ['oak', 'pine', 'palm', 'snowpine'].includes(k))).toBe(true); }
+  });
+});
+
+describe('new salt-shale → salted roast content chain', () => {
+  it('validates definitions, harvests a world-placed source, rejects wrong tool/missing input, then cooks and collects physical output', () => {
+    expect(validateGameplayCatalog()).toBe(true);
+    expect(ITEMS.raw_salt.name).toBe('Raw Salt'); expect(SOURCES.salt_shale.yields).toEqual([['raw_salt', 1]]);
+    expect(RECIPES.salted_meat).toMatchObject({ out: 'salted_meat', station: 'campfire', base: true });
+    const gs = fresh(); const r = gs.run!; const w = getWorld();
+    const sourceIndex = w.src.findIndex(k => k >= 0 && SRC_KEYS[k] === 'salt_shale');
+    expect(sourceIndex).toBeGreaterThanOrEqual(0); // naturally placed in the generated world
+    const tx = sourceIndex % WW, ty = Math.floor(sourceIndex / WW);
+    const approach = [[-1, 0], [1, 0], [0, -1], [0, 1]].find(([dx, dy]) => !blockedAt(r, tx + dx, ty + dy));
+    expect(approach).toBeTruthy(); tp(gs, (tx + approach![0]) * TILE + 8, (ty + approach![1]) * TILE + 8);
+    const px = r.player.x, py = r.player.y, aim = idle(tx * TILE + 8, ty * TILE + 8);
+    const swing = (now: number) => { tick(gs, { ...aim, attackPressed: true }, 16, now); for (let frame = 0; frame < 32; frame++) tick(gs, aim, 16, now + 16 * (frame + 1)); };
+    swing(T0); // starting knife cannot harvest ore
+    expect(sourceAt(r, tx, ty)?.stock).toBe(SOURCES.salt_shale.stock); // wrong tool did not debit source
+    addItem(r, 'inv', 'stone_pick', 1); const pickSlot = C(r, 'inv').slots.findIndex(s => s?.key === 'stone_pick'); r.player.active = pickSlot;
+    for (let hit = 0; hit < 6 && !Object.values(r.entities).some(e => e.kind === 'drop' && e.c && C(r, e.c).slots[0]?.key === 'raw_salt'); hit++) swing(T0 + 1000 * (hit + 1));
+    expect(Object.values(r.entities).some(e => e.kind === 'drop' && e.c && C(r, e.c).slots[0]?.key === 'raw_salt')).toBe(true);
+    const drop = Object.values(r.entities).find(e => e.kind === 'drop' && C(r, e.c!).slots[0]?.key === 'raw_salt')!;
+    tp(gs, drop.x, drop.y);
+    expect(dispatch(gs, { id: id(), type: 'pickup', eid: drop.id }, T0 + 1).ok).toBe(true);
+    expect(countItem(r, 'inv', 'raw_salt')).toBe(1);
+
+    const { tx: bx, ty: by } = buildSpot(gs); tp(gs, bx * TILE + 8, (by + 2) * TILE + 8);
+    addItem(r, 'inv', 'wood', 8); addItem(r, 'inv', 'stone', 4); addItem(r, 'inv', 'meat', 1);
+    expect(dispatch(gs, { id: id(), type: 'build', struct: 'campfire', tx: bx, ty: by }, T0 + 2).ok).toBe(true);
+    const fire = Object.values(r.entities).find(e => e.type === 'campfire')!;
+    expect(dispatch(gs, { id: id(), type: 'craft', recipe: 'salted_meat', eid: fire.id }, T0 + 3).ok).toBe(true);
+    expect(countItem(r, 'inv', 'raw_salt')).toBe(0); expect(countItem(r, 'inv', 'meat')).toBe(0);
+    expect(dispatch(gs, { id: id(), type: 'move', from: 'inv', fs: C(r, 'inv').slots.findIndex(s => s?.key === 'wood'), to: fire.station!.fuelC }, T0 + 4).ok).toBe(true);
+    stepStations(gs, 11_000, T0 + 11_004);
+    const output = C(r, fire.station!.outC); const slot = output.slots.findIndex(s => s?.key === 'salted_meat');
+    expect(slot).toBeGreaterThanOrEqual(0); // physically waiting in station output
+    expect(dispatch(gs, { id: id(), type: 'move', from: fire.station!.outC, fs: slot, to: 'inv' }, T0 + 11_005).ok).toBe(true);
+    expect(countItem(r, 'inv', 'salted_meat')).toBe(1);
+    r.player.hunger = 40; const mealSlot = C(r, 'inv').slots.findIndex(s => s?.key === 'salted_meat');
+    expect(dispatch(gs, { id: id(), type: 'useItem', slot: mealSlot }, T0 + 11_006).ok).toBe(true);
+    expect(r.player.hunger).toBe(82); expect(countItem(r, 'inv', 'salted_meat')).toBe(0);
   });
 });
 
