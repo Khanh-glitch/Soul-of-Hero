@@ -19,7 +19,7 @@ class RootwakeR:
         var normal := Vector2(-delta.y, delta.x).normalized()
         # Distinct asymmetrical exploratory trajectories rather than three
         # concentric arcs. Endpoints stay exact for the real source cue.
-        var bend: float = [-12.0, 8.0, 18.0][index]
+        var bend: float = [-4.0, 8.0, 7.0][index]
         var phase: float = [0.1, 1.7, 3.0][index]
         var skew := pow(u, [0.65, 1.25, 0.85][index])
         return origin.lerp(target, u) + normal * sin(PI * u) * (bend + 10.0 * sin(skew * TAU + phase))
@@ -30,7 +30,7 @@ class RootwakeR:
             var origin: Vector2 = CASTER + [Vector2(4, -12), Vector2(10, -4), Vector2(14, 6)][i]
             # Unequal destinations form a spreading root system, not the
             # closed lens made by three trunks reconverging at one point.
-            var destination: Vector2 = C + [Vector2(-28, -38), Vector2(0, 10), Vector2(-12, 42)][i]
+            var destination: Vector2 = C + [Vector2(-10, -28), Vector2(0, 10), Vector2(-5, 28)][i]
             var points: Array = []
             for n in range(25):
                 points.append(_root_curve(origin, destination, i, float(n) / 24.0))
@@ -132,7 +132,7 @@ class RootwakeR:
                 # Begin exactly on an existing main-root node, not in midair.
                 var tp: Vector2 = raised[18]
                 var endpoint: Vector2 = tp.lerp(_tips[i], AMath.ease_in(tension, 2.0) * attached)
-                var control := tp.lerp(endpoint, 0.5) + Vector2(float(i - 1) * 7.0, -21.0 * tension * attached)
+                var control := tp.lerp(endpoint, 0.5) + Vector2(float(i - 1) * 7.0, -14.0 * tension * attached)
                 var points: Array = []
                 for step in range(13):
                     var u := float(step) / 12.0

@@ -149,8 +149,20 @@ class AshenGuillotineR:
                 for segment in [[a, fault_mid], [fault_mid, b]]:
                     var q0: Vector2 = segment[0]
                     var q1: Vector2 = segment[1]
-                    var side := Vector2(-(q1 - q0).y, (q1 - q0).x).normalized() * (0.75 * open)
-                    ADraw.poly_fill_solid(fb, [q0 - side, q1 - side, q1 + side, q0 + side], Vector3(0.18, 0.13, 0.10), true, open * 0.65)
+                    # The opening is an uneven broken incision between the
+                    # displaced banks, not a perfectly thin seam or flat slab.
+                    var axis_normal := Vector2(-(q1 - q0).y, (q1 - q0).x).normalized()
+                    var segment_seed := float(section) * 11.0 + q0.x * 0.03
+                    var start_width := (1.5 + 1.5 * AMath.hash2(segment_seed, 83.0)) * open
+                    var end_width := (1.6 + 2.3 * AMath.hash2(segment_seed, 84.0)) * open
+                    var midway := q0.lerp(q1, 0.47) + axis_normal * (AMath.hash2(segment_seed, 85.0) - 0.5) * 3.5 * open
+                    var mid_width := (2.0 + 2.0 * AMath.hash2(segment_seed, 86.0)) * open
+                    ADraw.poly_fill(fb, [q0 - axis_normal * start_width, midway - axis_normal * mid_width,
+                        q1 - axis_normal * end_width, q1 + axis_normal * end_width,
+                        midway + axis_normal * mid_width, q0 + axis_normal * start_width],
+                        func(x: int, y: int) -> Variant:
+                            var grit := AMath.hash2(floor(float(x) * 0.4), floor(float(y) * 0.4)) * 0.06
+                            return Vector3(0.14 + grit, 0.13 + grit, 0.11 + grit), true, open * 0.80)
                 # Broken exposed bedrock shelves alongside the cut. Each
                 # jagged half-bank has different width and inset, with visible
                 # breaks at section joints; displaced chips sit on top. This
@@ -194,7 +206,7 @@ class AshenGuillotineR:
                                 var grain := AMath.hash2(floor(float(x) * 0.37), floor(float(y) * 0.33))
                                 # Pale chipped top with granular mineral texture,
                                 # separate from the dark incision underneath.
-                                var value := 0.38 + 0.13 * grain + 0.11 * r
+                                var value := 0.29 + 0.10 * grain + 0.10 * r
                                 return Vector3(value * 0.96, value * 0.94, value * 0.87), true, open * 0.94)
                         ADraw.streak(fb, (stone[1] as Vector2).x, (stone[1] as Vector2).y, (stone[2] as Vector2).x, (stone[2] as Vector2).y,
                             1.05, 0.6, AMath.R("ash", 0.9), open * 0.65)
