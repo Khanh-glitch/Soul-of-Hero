@@ -39,6 +39,12 @@ func _initialize() -> void:
         push_error("A04_BLADE_FAIL anticipation/acceleration/contact/recoil")
         quit(1)
         return
+    # A cocked blade resolves onto the actual contact line. A static growing
+    # bar could otherwise satisfy the translation check above.
+    if absf(spell._blade_direction(3.18).angle_to(direction)) < 0.15 or absf(spell._blade_direction(3.4).angle_to(direction)) > 0.001:
+        push_error("A04_BLADE_FAIL swing does not resolve to contact line")
+        quit(1)
+        return
     for bs in spell._cracks:
         var root: Vector2 = bs[0].pts[0]
         if absf((root - ARedesignSpells.C).dot(normal)) > 0.001:

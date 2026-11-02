@@ -52,6 +52,11 @@ class AshenGuillotineR:
         var strike := AMath.ease_in(AMath.seg(t, 3.18, 3.4), 2.0)
         var recoil := 5.0 * AMath.bump(AMath.seg(t, 3.4, 3.85))
         return 26.0 + pull - 24.0 * strike + recoil
+    func _blade_direction(t: float) -> Vector2:
+        # The cocked tip resolves into the original diagonal at contact.
+        # This is the same single blade, not an additional glowing sweep.
+        var swing := AMath.ease_in(AMath.seg(t, 3.18, 3.4), 2.0)
+        return _dir.rotated(-0.16 * (1.0 - swing))
     func render(fb: AFramebuffer, t: float) -> void:
         var slit := AMath.seg(t, 1.2, 2.4)
         var blade := AMath.seg(t, 2.6, 3.35)
@@ -67,25 +72,27 @@ class AshenGuillotineR:
         # steel face and a slanted cutting tip. The geometry is genuinely
         # covered, including the dark metal; it is never keyed by brightness.
         var off := _blade_offset(t)
-        var b0: Vector2 = p0 + n * off
-        var b1: Vector2 = p1 + n * off
+        var blade_dir := _blade_direction(t)
+        var blade_n := Vector2(-blade_dir.y, blade_dir.x)
+        var b0: Vector2 = C - blade_dir * 92.0 + blade_n * off
+        var b1: Vector2 = C + blade_dir * 92.0 + blade_n * off
         if blade > 0.0 and t < 4.4:
             var bk := blade * (1.0 - AMath.seg(t, 3.6, 4.4)) * close_k
             var width := 30.0 * blade
             # The earlier broad slab's short point was difficult to read at
             # world scale. Taper both steel edges over a longer section while
             # retaining one opaque blade, its edge, and the contact line.
-            var spine1 := b1 - _dir * 46.0 + n * width * 0.90
-            var edge0 := b0 - n * width * 0.24
-            var edge1 := b1 - _dir * 46.0 - n * width * 0.24
-            var tip := b1 + _dir * 8.0 + n * width * 0.12
-            var shoulder := b0 + _dir * 13.0 + n * width * 0.48
-            var back := b0 + _dir * 42.0 + n * width * 0.58
-            ADraw.poly_fill(fb, [b0 + n * width * 0.10, shoulder, back, spine1, tip, edge1, edge0],
+            var spine1 := b1 - blade_dir * 46.0 + blade_n * width * 0.90
+            var edge0 := b0 - blade_n * width * 0.24
+            var edge1 := b1 - blade_dir * 46.0 - blade_n * width * 0.24
+            var tip := b1 + blade_dir * 8.0 + blade_n * width * 0.12
+            var shoulder := b0 + blade_dir * 13.0 + blade_n * width * 0.48
+            var back := b0 + blade_dir * 42.0 + blade_n * width * 0.58
+            ADraw.poly_fill(fb, [b0 + blade_n * width * 0.10, shoulder, back, spine1, tip, edge1, edge0],
                 func(x: int, y: int) -> Variant:
                     var q := Vector2(float(x) + 0.5, float(y) + 0.5) - b0
-                    var transverse := q.dot(n) / maxf(width, 0.01)
-                    var longitudinal := q.dot(_dir)
+                    var transverse := q.dot(blade_n) / maxf(width, 0.01)
+                    var longitudinal := q.dot(blade_dir)
                     var grain := AMath.hash2(floor(longitudinal * 0.22), floor(transverse * 8.0))
                     var bevel := AMath.cl01((-0.04 - transverse) * 4.0)
                     var plane := AMath.cl01((0.95 - transverse) * 0.9)
@@ -96,13 +103,13 @@ class AshenGuillotineR:
             # describe one solid blade rather than an emissive beam.
             ADraw.streak(fb, edge0.x, edge0.y, edge1.x, edge1.y, 1.2, 0.7, AMath.R("ash", 0.9), bk * 0.9)
             ADraw.streak(fb, edge1.x, edge1.y, tip.x, tip.y, 0.7, 0.3, AMath.R("ash", 0.9), bk * 0.9)
-            var seam0 := b0 + _dir * 20.0 + n * width * 0.20
-            var seam1 := b1 - _dir * 15.0 + n * width * 0.20
+            var seam0 := b0 + blade_dir * 20.0 + blade_n * width * 0.20
+            var seam1 := b1 - blade_dir * 15.0 + blade_n * width * 0.20
             ADraw.streak(fb, seam0.x, seam0.y, seam1.x, seam1.y, 0.7, 0.5, AMath.R("fire", 0.8), bk * 0.7)
             for mark in [0.28, 0.57, 0.78]:
                 var m: Vector2 = seam0.lerp(seam1, mark)
-                ADraw.streak(fb, m.x - n.x * width * 0.08, m.y - n.y * width * 0.08,
-                    m.x + n.x * width * 0.12 + _dir.x * 5.0, m.y + n.y * width * 0.12 + _dir.y * 5.0,
+                ADraw.streak(fb, m.x - blade_n.x * width * 0.08, m.y - blade_n.y * width * 0.08,
+                    m.x + blade_n.x * width * 0.12 + blade_dir.x * 5.0, m.y + blade_n.y * width * 0.12 + blade_dir.y * 5.0,
                     0.8, 0.6, AMath.R("ash", 0.55), bk * 0.65)
         if cut > 0.0:
             # The blade's whole edge lands as ONE diagonal cut. A shallow
@@ -139,7 +146,11 @@ class AshenGuillotineR:
                 ADraw.poly_fill(fb, [a - n * seam, b - n * seam, b + n * seam, a + n * seam],
                     func(_x: int, _y: int) -> Variant: return Vector3(0.018, 0.014, 0.014), true, open * 0.96)
                 ADraw.poly_fill(fb, [upper_a, upper_m, upper_b, lower_b, lower_m, lower_a],
-                    func(_x: int, _y: int) -> Variant: return Vector3(0.018, 0.014, 0.014), true, open * 0.96)
+                    func(x: int, y: int) -> Variant:
+                        var across := absf((Vector2(float(x) + 0.5, float(y) + 0.5) - a).dot(n)) / maxf(gap, 0.01)
+                        var grain := AMath.hash2(floor(float(x) * 0.5), floor(float(y) * 0.5))
+                        var rock := 0.018 + AMath.cl01(across) * 0.085 + grain * 0.018
+                        return Vector3(rock, rock * 0.78, rock * 0.70), true, open * 0.96)
                 ADraw.streak(fb, upper_a.x, upper_a.y, upper_m.x, upper_m.y, 1.2, 0.8, AMath.R("fire", 0.72), open * 0.60)
                 ADraw.streak(fb, upper_m.x, upper_m.y, upper_b.x, upper_b.y, 0.8, 1.0, AMath.R("fire", 0.72), open * 0.60)
                 ADraw.streak(fb, lower_a.x, lower_a.y, lower_m.x, lower_m.y, 0.9, 0.7, AMath.R("ash", 0.55), open * 0.45)
