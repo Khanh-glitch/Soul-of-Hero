@@ -38,6 +38,11 @@ const MAX_LINK := 48.0
 ## this body, and pursuing further would be a lie.
 const GOAL_TIMEOUT := 9.0
 const MAX_HOPS := 160
+## How long the creature will stand at the freshest mark of a chain that is still
+## live before it decides the trail really ended. A walker who is still walking
+## adds a mark every `spacing` pixels, so a chain that looks finished may simply
+## be the current head: waiting a few seconds is perception, not a new rule.
+const HEAD_WAIT := 8.0
 ## Hard bound measured from the creature's own habitat, not from the player.
 const PURSUIT_BOUND := 1400.0
 
@@ -62,6 +67,8 @@ var _started := false
 ## The record the last pursuit ended on. Older-or-equal marks are cold evidence:
 ## re-sensing them would loop the creature on a trail it already followed.
 var _cold_trace := 0
+## Seconds spent standing at the current head of a chain that may still grow.
+var _head_wait := 0.0
 ## Diagnostics: how often the skeleton actually consulted this adapter, and the
 ## last reason it declined. "It never sensed" and "it was never asked" are very
 ## different failures and must not look the same in an evidence window.
@@ -98,6 +105,7 @@ func begin_window(label: String) -> void:
 	last_sensed_trace = 0
 	_goal_elapsed = 0.0
 	_cold_trace = 0
+	_head_wait = 0.0
 	history.clear()
 
 
@@ -134,7 +142,7 @@ func drive(target: Node2D, delta: float) -> Dictionary:
 		_stop("expired")
 		return {"active": false}
 	if skeleton.global_position.distance_to(goal) <= ARRIVE_RADIUS:
-		return _arrive(store, stamp)
+		return _arrive(store, stamp, delta)
 	_goal_elapsed += delta
 	if _goal_elapsed > GOAL_TIMEOUT:
 		_stop("goal_timeout")
@@ -169,10 +177,17 @@ func _sense(store: Variant, stamp: float) -> Dictionary:
 	return {"active": false}
 
 
-func _arrive(store: Variant, stamp: float) -> Dictionary:
+func _arrive(store: Variant, stamp: float, delta: float) -> Dictionary:
 	var arrived := goal_trace
 	var successor: Dictionary = store.call(&"successor", arrived, stamp)
 	if successor.is_empty():
+		# No successor means one of two very different things. If the mark is
+		# still live the walker may simply still be walking, and the freshest mark
+		# is the current head of a chain that is still growing: stand on it for a
+		# bounded moment and look again. Only cold evidence ends the trail.
+		if bool(store.call(&"is_live", arrived, stamp)) and _head_wait < HEAD_WAIT:
+			_head_wait += delta
+			return {"active": true, "goal": goal, "trace_id": arrived}
 		# The chain ends where the evidence ends. The creature stands at the last
 		# real mark; it does not get to guess where the walker went next.
 		reached_end = true
@@ -197,6 +212,7 @@ func _arrive(store: Variant, stamp: float) -> Dictionary:
 		return {"active": false}
 	hops += 1
 	max_hop = maxf(max_hop, hop)
+	_head_wait = 0.0
 	goal = next_at
 	goal_trace = int(successor.get("id", 0))
 	_goal_elapsed = 0.0

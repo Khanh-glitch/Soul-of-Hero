@@ -106,7 +106,7 @@ jobs:
             grep -E "$pattern" "$ARTIFACT_DIR/c08-play.log" | tail -n "$limit" | cut -c1-900 \
               | while IFS= read -r line; do printf '::%s::%s\n' "$level" "$line"; done
           }
-          emit_lines error 'C08_WEDGE|C08_ROUTE_FAIL|C08_DOOR_FAIL|C08_B_WALK_FAIL|SCRIPT ERROR|Parse Error' 4
+          emit_lines error 'C08_WEDGE|C08_ROUTE_FAIL|C08_DOOR_FAIL|C08_B_LEG_FAIL|C08_C_LEG_FAIL|SCRIPT ERROR|Parse Error' 4
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/c08-play.log" "C08 play" "C08 TRACE CAUSALITY PLAY PASSED"
           gate=$?
           [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
@@ -126,7 +126,7 @@ jobs:
             [ "$n" -gt 6 ] && break
             emit error "$line"
           done < <(grep -E '^  FAIL  ' "$log" || true)
-          for tag in C08_A C08_B C08_C C08_ROUTE; do
+          for tag in C08_A C08_B C08_C C08_ROUTE C08_B_ARMED; do
             line=$(grep -E "^${tag} " "$log" | tail -n 1 || true)
             [ -n "$line" ] && emit notice "$line"
           done
