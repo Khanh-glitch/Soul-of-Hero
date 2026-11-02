@@ -36,11 +36,10 @@ jobs:
       - uses: actions/setup-python@v5
         with: { python-version: '3.11' }
       - run: pip install pillow numpy
-      - name: Rebuild world from GOLD
+      - name: Rebuild world from GOLD (capture only; the spatial job owns the gate)
         run: |
           python tools/world/art_registry.py
           python tools/world/veyra_compile.py
-          python tools/world/validate.py
       - name: Publish runtime assets
         run: |
           cp out/world.png out/world_meta.json out/minimap.png world/assets/
