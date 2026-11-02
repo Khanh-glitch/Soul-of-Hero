@@ -218,13 +218,12 @@ class SporeNebulaR:
             for k in range(13):
                 var s := u * float(k) / 12.0
                 pts.append(_hypha_point(a, b, i, s))
+            # Fine living thread rather than thick electric-looking cables.
             ADraw.ribbon(fb, pts,
-                func(s: float, _i: int) -> float: return 2.0,
-                func(s: float, _i: int, edge: float) -> Variant:
-                    var h := (1.0 - edge) * fade
-                    if h < 0.05:
-                        return null
-                    return AMath.R("bio", 0.3 + h * 0.5))
+                func(_s: float, _i: int) -> float: return 0.9,
+                func(_s: float, _i: int, edge: float) -> Variant:
+                    if edge > 0.95: return null
+                    return Vector3(0.24, 0.58, 0.42) * fade * 0.55)
             # Fine, asymmetrical hyphae bud progressively from the same
             # growing front. They branch from the real link geometry rather
             # than appearing as a simultaneous geometric lattice. The
@@ -240,9 +239,9 @@ class SporeNebulaR:
                 var reach := (12.0 + AMath.hash2(float(i * 19 + junction), 14.0) * 8.0) * grow
                 var bend := point + normal * side * reach * 0.55 + axis * reach * 0.2
                 var tip := point + normal * side * reach + axis * reach * 0.55
-                var hypha := AMath.R("bio", 0.65)
-                ADraw.line(fb, point.x, point.y, bend.x, bend.y, hypha, fade * 0.8)
-                ADraw.line(fb, bend.x, bend.y, tip.x, tip.y, hypha, fade * 0.8)
+                var hypha := Vector3(0.25, 0.57, 0.40)
+                ADraw.line(fb, point.x, point.y, bend.x, bend.y, hypha, fade * 0.4)
+                ADraw.line(fb, bend.x, bend.y, tip.x, tip.y, hypha, fade * 0.55)
                 if grow > 0.45:
                     var fork := bend + normal * side * reach * 0.16 - axis * reach * 0.35
                     ADraw.line(fb, bend.x, bend.y, fork.x, fork.y, hypha, fade * 0.55)
@@ -276,9 +275,14 @@ class SporeNebulaR:
                 # prior tall stacked silhouettes read as leafy little trees
                 # in the real overworld. Keep distinct short pale stipes and
                 # overlapping domes rather than a branching canopy.
-                _draw_cap(fb, c + Vector2(-13, 0) * spread, 15.0 * spread * pul, 10.0 * spread, k)
-                _draw_cap(fb, c + Vector2(13, 0) * spread, 15.0 * spread * pul, 12.0 * spread, k)
-                _draw_cap(fb, c + Vector2(0, 1) * spread, 20.0 * spread * pul, 14.0 * spread, k)
+                # Separate staggered domes: the previous broad overlapping
+                # caps collapsed into one flat purple platform with three legs.
+                var middle := AMath.ease_out(AMath.seg(t, float(_births[i]), float(_births[i]) + 0.72), 2.0)
+                var left := AMath.ease_out(AMath.seg(t, float(_births[i]) + 0.12, float(_births[i]) + 0.86), 2.0)
+                var right := AMath.ease_out(AMath.seg(t, float(_births[i]) + 0.27, float(_births[i]) + 1.0), 2.0)
+                _draw_cap(fb, c + Vector2(-12, 2) * left, 8.0 * left * pul, 13.0 * left, fade * left)
+                _draw_cap(fb, c + Vector2(0, -3) * middle, 12.0 * middle * pul, 20.0 * middle, fade * middle)
+                _draw_cap(fb, c + Vector2(12, 3) * right, 7.5 * right * pul, 11.0 * right, fade * right)
             else:
                 # Alternate: one upright, hollow-looking fruiting body with
                 # a scalloped mouth; not simply a palette variation.
@@ -299,8 +303,6 @@ class SporeNebulaR:
                     ADraw.streak(fb, tip.x, tip.y + 4.0, tip.x, tip.y - 2.0,
                         1.1, 0.6, Vector3(0.55, 1.05, 0.65), alive * 0.9)
                     ADraw.disc(fb, tip.x, tip.y, 2.2, Vector3(0.70, 1.3, 0.8), alive)
-        if t > 5.4 and t < 6.2:
-            ADraw.pulse_ring(fb, C.x, C.y, 8.0 + AMath.seg(t, 5.4, 6.2) * 110.0, 2.8, AMath.R("bio", 0.75), 0.55 * (1.0 - AMath.seg(t, 5.4, 6.2)), 1.4)
         _ps.each(func(p: Dictionary) -> void:
             var l := float(p.life) / float(p.max)
             ADraw.streak_p(fb, p, AMath.R("bio", 0.4 + l * 0.5), l * fade))
