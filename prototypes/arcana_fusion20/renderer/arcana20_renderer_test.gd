@@ -289,6 +289,15 @@ func _init() -> void:
         var cue: Dictionary = root_events[i + 1]
         if tip.distance_to(cue.pos_local) > 0.001 or tip.distance_to(ARedesignSpells2.C) > 20.0:
             _fail("root tip contact %d is not on its target-side branch" % i)
+        var root_branch: Dictionary = rootwake._roots[i][1]
+        var parent_index := roundi(float(root_branch.attach) * float(root_pts.size() - 1))
+        var raised_main: Array = rootwake._lifted_points(rootwake._roots[i][0], 15.0)
+        var raised_child: Array = rootwake._lifted_points(root_branch, 15.0)
+        if (root_pts[parent_index] as Vector2).distance_to(root_branch.pts[0]) > 0.001 or (raised_main[parent_index] as Vector2).distance_to(raised_child[0]) > 0.001:
+            _fail("root child %d detaches from curved parent" % i)
+        rootwake.update(0.0, 0.8 + float(i) * 0.4)
+        if float(root_branch.grow) > 0.001:
+            _fail("root child appears before parent reaches junction")
         var contact_time: float = cue.t
         rootwake.update(0.0, contact_time - 1.0 / 60.0)
         var before: float = rootwake._roots[i][0].grow

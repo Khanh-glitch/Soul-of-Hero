@@ -13,36 +13,35 @@ class RootwakeR:
     const DUR := 8.4
     var _roots: Array = []
     var _tips: Array = []
+    func _root_curve(origin: Vector2, target: Vector2, index: int, u: float) -> Vector2:
+        # A stable bowed path, with a staggered side-to-side exploratory bend.
+        var side := float(index - 1)
+        var delta := target - origin
+        var normal := Vector2(-delta.y, delta.x).normalized()
+        return origin.lerp(target, u) + normal * (sin(PI * u) * (side * 18.0 + sin(u * TAU + float(index)) * 4.0))
     func setup() -> void:
-        var rng := AMath.ARng.new(13131)
         _roots.clear()
         _tips.clear()
         for i in range(3):
             var origin := CASTER + Vector2(10.0, -4.0)
             var destination := C + Vector2(float(i - 1) * 12.0, 7.0 + float(i % 2) * 3.0)
-            var to_target := destination - origin
-            # Grow toward the real authored target from the outset, rather
-            # than enlarging a short sideways plant several-fold. Children
-            # taper in length by depth, avoiding offscreen ruler-like limbs.
-            var bs: Array = ACommon.grow_branches(rng, origin.x, origin.y,
-                to_target.angle(), 3.0, {"steps": 12, "step": to_target.length() / 12.0,
-                "wander": 0.2, "branch_chance": 0.35, "max_depth": 2,
-                "depth_length_falloff": 0.38, "width_falloff": 0.5, "speed": 1.5})
-            # Map each whole organism to the exact contact with one uniform
-            # rotation/scale; every parent/child junction stays connected.
-            var root: Dictionary = bs[0]
-            var root_pts: Array = root.pts
-            var old_axis: Vector2 = root_pts[root_pts.size() - 1] - origin
-            var new_axis := destination - origin
-            var angle := new_axis.angle() - old_axis.angle()
-            var scale := new_axis.length() / maxf(old_axis.length(), 0.001)
-            var speed_factor := (1.0 / 2.2) / float(root.speed)
-            for b in bs:
-                var pts: Array = b.pts
-                for j in range(pts.size()):
-                    var point: Vector2 = pts[j]
-                    pts[j] = origin + (point - origin).rotated(angle) * scale
-                b.speed = float(b.speed) * speed_factor
+            var points: Array = []
+            for n in range(25):
+                points.append(_root_curve(origin, destination, i, float(n) / 24.0))
+            var bs: Array = [{"pts": points, "w": 3.2, "depth": 0, "grow": 0.0, "seed": 13131 + i, "attach": 0.0}]
+            for j in range(4):
+                var attach: float = [0.25, 0.4583333333, 0.625, 0.7916666667][j]
+                # Parent node and child start are literally the same point.
+                var parent_index := roundi(float(attach) * 24.0)
+                attach = float(parent_index) / 24.0
+                var base: Vector2 = points[parent_index]
+                var tangent: Vector2 = (points[mini(parent_index + 1, 24)] - points[maxi(parent_index - 1, 0)]).normalized()
+                var normal := Vector2(-tangent.y, tangent.x) * (-1.0 if (i + j) % 2 == 0 else 1.0)
+                var child: Array = []
+                for n in range(13):
+                    var u := float(n) / 12.0
+                    child.append(base + tangent * (19.0 * u) + normal * (17.0 * sin(u * PI * 0.5) + 6.0 * u * u))
+                bs.append({"pts": child, "w": 1.8 - float(j) * 0.15, "depth": 1, "grow": 0.0, "seed": 13300 + i * 4 + j, "attach": attach})
             _roots.append(bs)
             _tips.append(destination)
     func authored_events() -> Array:
@@ -56,34 +55,50 @@ class RootwakeR:
         return growth * (1.0 - AMath.seg(t, 7.2, 8.4))
     func update(dt: float, t: float) -> void:
         for i in range(_roots.size()):
-            # Main tips arrive on their authored 3.0/3.4/3.8 contact beats.
-            ACommon.update_branches(_roots[i], maxf(0.0, t - 0.8 - float(i) * 0.4))
+            var main_growth := AMath.cl01((t - 0.8 - float(i) * 0.4) / 2.2)
+            _roots[i][0].grow = main_growth
+            for j in range(1, _roots[i].size()):
+                var branch: Dictionary = _roots[i][j]
+                var attach := float(branch.attach)
+                # A branch cannot emerge before its parent reaches its base.
+                branch.grow = AMath.cl01((main_growth - attach) / 0.22)
+    func _lifted_points(branch: Dictionary, lift: float) -> Array:
+        var result: Array = []
+        var pts: Array = branch.pts
+        var attach := float(branch.attach)
+        for n in range(pts.size()):
+            var u := float(n) / float(pts.size() - 1)
+            var along := u if int(branch.depth) == 0 else lerpf(attach, 1.0, u)
+            var point: Vector2 = pts[n]
+            result.append(point - Vector2(0, lift * sin(PI * along)))
+        return result
     func render(fb: AFramebuffer, t: float) -> void:
         var retract := 1.0 - AMath.seg(t, 7.2, 8.4)
-        var tension := AMath.seg(t, 4.4, 5.4)
+        var tension := AMath.seg(t, 4.0, 5.4) * retract
+        var thickening := AMath.seg(t, 1.6, 3.6)
         for bs in _roots:
+            var main: Dictionary = bs[0]
+            var visible_main := _visible_growth(float(main.grow), t)
             for b in bs:
                 var bb: Dictionary = (b as Dictionary).duplicate()
-                bb.grow = _visible_growth(float(bb.grow), t)
+                var attach := float(bb.attach)
+                bb.grow = visible_main if int(bb.depth) == 0 else float(bb.grow) * AMath.cl01((visible_main - attach) / (1.0 - attach))
+                bb.pts = _lifted_points(bb, tension * 15.0)
                 ACommon.draw_branch(fb, bb,
                     func(u: float, edge: float, br: Dictionary) -> Variant:
-                        var h := (1.0 - edge) * retract
-                        if h < 0.05:
-                            return null
-                        # Opaque olive-brown bark remains geometry, not glow.
-                        # Subtle seeded grain breaks up the previous nearly
-                        # black, featureless slabs without keying or alpha.
-                        var bark := 0.52 + 0.48 * (1.0 - edge) * (1.0 - u * 0.3)
+                        if edge > 0.95:
+                            return Vector3(0.09, 0.13, 0.06)
                         var grain := 0.84 + 0.16 * AMath.hash2(floor(u * 35.0), float(br.seed))
-                        return Vector3(0.24, 0.30, 0.12) * bark * grain,
+                        var bark := 0.62 + 0.38 * (1.0 - edge)
+                        return Vector3(0.32, 0.30, 0.13) * bark * grain,
                     func(u: float, br: Dictionary) -> float:
-                        return maxf(1.0, float(br.w) * 2.1 * (1.0 - u * 0.6) * (1.0 + tension * 0.35)), true)
+                        return maxf(0.8, float(br.w) * (0.65 + thickening * 1.45) * (1.0 - u * 0.65)), true)
                 ACommon.draw_branch(fb, bb,
                     func(u: float, edge: float, _br: Dictionary) -> Variant:
-                        var h := (1.0 - edge) * retract
-                        return AMath.R("verdant", 0.25 + h * 0.45) if h >= 0.05 else null,
+                        if edge > 0.8: return null
+                        return Vector3(0.37, 0.48, 0.18) * (1.0 - edge * 0.4),
                     func(u: float, br: Dictionary) -> float:
-                        return maxf(0.6, float(br.w) * 0.38 * (1.0 - u * 0.6)))
+                        return maxf(0.5, float(br.w) * 0.35 * (1.0 - u * 0.6)))
         if tension > 0.0:
             for i in range(_tips.size()):
                 var tp: Vector2 = _tips[i]
