@@ -511,6 +511,36 @@ func _run() -> void:
     var attached := growth.fragment_pose(3, 0, AWorldseedGrowth.FOLD)
     var moving := growth.fragment_pose(3, 0, AWorldseedGrowth.FOLD + 0.6)
     check(float(attached.age) == 0.0 and (attached.points[2] as Vector2).distance_to(moving.points[2]) > 2.0, "F16 sheet fragment separates from its source surface")
+    # Independently reconstruct every source sheet centreline at the exact
+    # attachment time, then verify all five points move continuously on the
+    # next 60 Hz step and finish their fade inside the fusion lifetime.
+    var tracked_tips := 0
+    var attached_exact := true
+    var continuous := true
+    var expiry_inside := true
+    for li in range(growth.layers.size()):
+        var layer: Dictionary = growth.layers[li]
+        for petal in range(int(layer.count)):
+            var detach := AWorldseedGrowth.FOLD + 0.025 * float((petal + li * 3) % 9)
+            var pose := growth.fragment_pose(li, petal, detach)
+            var next := growth.fragment_pose(li, petal, detach + STEP)
+            var fold := AMath.seg(detach, AWorldseedGrowth.FOLD, AWorldseedGrowth.DURATION)
+            var u := AMath.ease_out(AMath.seg(detach, float(layer.t0), float(layer.t0) + 1.0 / float(layer.sp)), 2.0) * (1.0 - AMath.ease_out(fold, 1.6))
+            var pulse := 1.0 + 0.18 * sin(detach * 7.0 - li * 1.2) * maxf(0.0, 1.0 - (detach - AWorldseedGrowth.BLOOM) * 0.6)
+            var angle0 := float(layer.tilt) + float(petal) / float(layer.count) * AMath.TAU
+            var tremble := sin(detach * (3.0 + float(layer.tremble) * 3.0) + petal) * float(layer.tremble) * 0.02
+            for j in range(5):
+                var f := lerpf(0.50, 0.98, float(j) / 4.0)
+                var angle := angle0 + tremble * f + sin(f * 2.5) * 0.12
+                var radius := (5.0 + li * 5.0) * u + float(layer.len) * u * pulse * f
+                var expected := Vector2(AWorldseedGrowth.C.x + cos(angle) * radius, AWorldseedGrowth.C.y + sin(angle) * radius / AWorldseedGrowth.SQ - f * f * 10.0 * u)
+                var p0: Vector2 = pose.points[j]
+                var p1: Vector2 = next.points[j]
+                attached_exact = attached_exact and p0.distance_to(expected) < 0.0001
+                continuous = continuous and p0.distance_to(p1) < 2.0
+            expiry_inside = expiry_inside and detach + 2.0 <= AWorldseedGrowth.FUSION_DURATION + 0.00001
+            tracked_tips += 1
+    check(tracked_tips == 41 and attached_exact and continuous and expiry_inside, "F16 every seeded sheet tip attaches exactly, moves continuously and fades before OUT")
     var original_growth := AFramebuffer.new()
     var fused_growth := AFramebuffer.new()
     original_growth.track_world_fields = true
