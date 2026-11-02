@@ -610,6 +610,12 @@ func _counterfactual_b(source: Node, encounter: Node, enemy: CharacterBody2D,
 	_expect(walked_home, "B: ordinary input walks the whole out-and-back route and home")
 	if not walked_home:
 		return {"ok": false, "stats": stats}
+	# Walk to the doorway on the grid before stepping in. The straight walker aims at
+	# the bed and a straight line from five cells east crosses the east wall: the last
+	# run ended 84 px from its own bed with the door open and no route in its hand.
+	var outside_b := _nearest_free_near(nav, _door_cell() + Vector2i(0, -2), 2)
+	await _walk_to_cell(hero, outside_b)
+	_expect(await _open_door(hero), "B: the door is open for the defender's return")
 	var path_in: Array[Vector2i] = [_stand_cell()]
 	var stepped_in := await _walk_path(hero, path_in)
 	var inside_room := String(_builder().room_topology.room_at(nav.cell_of(hero.global_position)))
