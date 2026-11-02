@@ -27,8 +27,11 @@ export function prepareCDiagnostic(runId:string,simMs:number){
  }
 }
 let stageGpu:CStageGpu|null=null,stageGpuFailed=false;
+export const cStageTimings:{time:number;ms:number}[]=[];export const cPostTimings:{time:number;ms:number}[]=[];
+if(bDiagnosticEnabled){(window as any).__arcanaCStageTimings=cStageTimings;(window as any).__arcanaCPostTimings=cPostTimings;}
 /** P0 C stage policy: viewport-aligned scanlines and shade below effects/actors. */
-export function shadeCDiagnostic(g:CanvasRenderingContext2D,_cx:number,_cy:number){
+export function shadeCDiagnostic(g:CanvasRenderingContext2D,cx:number,cy:number){const start=performance.now();try{shadeCDiagnosticImpl(g,cx,cy);}finally{if(bDiagnosticEnabled&&active.length&&cStageTimings.length<1200)cStageTimings.push({time:active[0].frame?.t??-1,ms:performance.now()-start});}}
+function shadeCDiagnosticImpl(g:CanvasRenderingContext2D,_cx:number,_cy:number){
  if(!bDiagnosticEnabled)return;if(!active.length){(window as any).__arcanaCStage={shade:1,activeLines:0,time:[]};return;}const stage=combineCStage(active.flatMap(a=>a.frame?[a.frame.frame]:[]));(window as any).__arcanaCStage={shade:stage.shade,activeLines:stage.scan.reduce((n,v,i)=>n+(i%2===0&&(v!==0||stage.scan[i+1]!==0)?1:0),0),time:active.map(a=>a.frame?.t??-1)};if(!hasCStage(stage))return;
  if(gpuRequested&&!stageGpuFailed){try{if(!stageGpu)stageGpu=new CStageGpu(g.canvas.width,g.canvas.height);stageGpu.render(g.canvas,stage);g.save();g.setTransform(1,0,0,1,0,0);g.drawImage(stageGpu.canvas,0,0);g.restore();return;}catch(e){stageGpuFailed=true;console.warn('Experimental C stage GPU failed; falling back to CPU',e);}}
  const image=g.getImageData(0,0,g.canvas.width,g.canvas.height);compositeCStage(image.data,image.width,image.height,stage);g.putImageData(image,0,0);
@@ -67,4 +70,5 @@ export function blackoutCDiagnostic(g:CanvasRenderingContext2D,cx:number,cy:numb
 
 let postGpu:CPostGpu|null=null,postGpuFailed=false;
 /** Diagnostic B/C-compatible pre-HUD policy for C source metadata only. */
-export function postCDiagnostic(g:CanvasRenderingContext2D){if(!bDiagnosticEnabled)return;const inputs=active.flatMap(a=>a.frame?[{tick:a.source.tick,transform:a.frame.transform,...a.frame.post}]:[]),post=combineCPost(inputs);if(!hasCPost(post))return;if(gpuRequested&&!postGpuFailed){try{if(!postGpu)postGpu=sharedCPostGpu(g.canvas.width,g.canvas.height);postGpu.render(g.canvas,post);g.save();g.setTransform(1,0,0,1,0,0);g.drawImage(postGpu.canvas,0,0);g.restore();return;}catch(e){postGpuFailed=true;console.warn('Experimental C post GPU failed; falling back to CPU',e);}}const image=g.getImageData(0,0,g.canvas.width,g.canvas.height);compositeCPost(image.data,image.width,image.height,post);g.putImageData(image,0,0);}
+export function postCDiagnostic(g:CanvasRenderingContext2D){const start=performance.now();try{postCDiagnosticImpl(g);}finally{if(bDiagnosticEnabled&&active.length&&cPostTimings.length<1200)cPostTimings.push({time:active[0].frame?.t??-1,ms:performance.now()-start});}}
+function postCDiagnosticImpl(g:CanvasRenderingContext2D){if(!bDiagnosticEnabled)return;const inputs=active.flatMap(a=>a.frame?[{tick:a.source.tick,transform:a.frame.transform,...a.frame.post}]:[]),post=combineCPost(inputs);if(!hasCPost(post))return;if(gpuRequested&&!postGpuFailed){try{if(!postGpu)postGpu=sharedCPostGpu(g.canvas.width,g.canvas.height);postGpu.render(g.canvas,post);g.save();g.setTransform(1,0,0,1,0,0);g.drawImage(postGpu.canvas,0,0);g.restore();return;}catch(e){postGpuFailed=true;console.warn('Experimental C post GPU failed; falling back to CPU',e);}}const image=g.getImageData(0,0,g.canvas.width,g.canvas.height);compositeCPost(image.data,image.width,image.height,post);g.putImageData(image,0,0);}
