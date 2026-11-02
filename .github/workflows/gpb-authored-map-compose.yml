@@ -1,7 +1,7 @@
 name: GP-B A0-A3 with A1-A8 authored world native integration
 on:
   push:
-    branches: [integration/gameplay-gpb-a3-20261101]
+    branches: [integration/gameplay-gpb-a3-20261101, arena/5bf8218b-soul-of-hero]
   workflow_dispatch:
 permissions:
   contents: read

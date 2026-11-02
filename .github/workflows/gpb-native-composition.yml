@@ -1,7 +1,7 @@
 name: GP-B isolated canonical composition native smoke
 on:
   push:
-    branches: [integration/gameplay-gpb-a3-20261101]
+    branches: [integration/gameplay-gpb-a3-20261101, arena/5bf8218b-soul-of-hero]
   workflow_dispatch:
 permissions:
   contents: read

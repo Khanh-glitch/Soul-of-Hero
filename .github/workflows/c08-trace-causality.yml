@@ -22,7 +22,7 @@ name: C08 trace causality (native)
 on:
   workflow_dispatch:
   push:
-    branches: [arena/136e69c5-soul-of-hero]
+    branches: [arena/136e69c5-soul-of-hero, arena/5bf8218b-soul-of-hero]
     paths:
       - 'game/survival/c08_*.gd'
       - 'game/survival/a0_threat_mount.gd'
