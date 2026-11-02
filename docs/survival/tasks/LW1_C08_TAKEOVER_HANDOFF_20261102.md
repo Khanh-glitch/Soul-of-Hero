@@ -31,7 +31,7 @@ injected, nothing teleports.
 | `soul-of-hero-rpg-development.zip` | `2b86f656…b75` | `src/engine/simulation.ts:805-855` | **ADAPT (idea only)**: `trackingTraceId` → explicit `nextTraceId` → `RETURN` when the tracked footprint is gone. LW1 already has strict `successor()` + `_stop("expired"/"chain_end")`; the phôi's 4-neighbour sensing radius is *not* copied. |
 | `soul-of-hero-prototype.zip` | `01348a02…5b7` | `src/sim/simulationTick.ts:632-670` | **NEGATIVE ORACLE**: `f.prevId === cur.id \|\| (newer && within 1.6 tiles)` can join an unrelated chain. LW1 store's `successor()` is id-exact; the adversarial two-trail test is a P0 open item. |
 | `develop-soul-of-hero-rpg (4).zip` | `f601ca17…1ba` | `src/game/state.ts:1033-1076`, `1237-1242` | **NEGATIVE ORACLE**: `harvest` never checks player↔source distance; `trail` accepts caller `x,y`. SOH source writes only the real actor position; the distant-harvest/remote-mark tests are open items. |
-| `soul-of-hero-rpg-prototype (3).zip` | `12438a53…f55` | `src/tests/contracts_c01_c24.test.ts:591-774,819 goodness-905` | **REJECT for now (P1)**: escrow/Ragnarok/inventory-custody hypotheses. No SOH action to bind them to in P0. |
+| `soul-of-hero-rpg-prototype (3).zip` | `12438a53…f55` | `src/tests/contracts_c01_c24.test.ts:591-774, 819-905` | **REJECT for now (P1)**: escrow/Ragnarok/inventory-custody hypotheses. No SOH action to bind them to in P0. |
 
 ### Next commands
 
