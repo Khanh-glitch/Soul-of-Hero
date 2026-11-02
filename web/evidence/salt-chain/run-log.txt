@@ -1,24 +1,24 @@
-new run seed=48028268; player={"x":1352,"y":2744,"hp":100,"hunger":84.97611599999992,"thirst":84.964174,"active":0}
+new run seed=47769124; player={"x":1352,"y":2744,"hp":100,"hunger":84.97754799999993,"thirst":84.96632199999999,"active":0}
 Fisher starter crate acquired ordinary loot: {"meat":2,"rope":2}
 harvest oak -> wood: 0 -> 6 near source (77,168)
 harvest oak -> wood: 6 -> 9 near source (77,170)
 Walked from Fisher's Point to Pinewatch (114 map tiles) and searched its ordinary Ranger Cabin supply crate; stone=4.
-Returned on foot to Fisher's Point (111 map tiles) at {"x":1367.27023594107,"y":2727.350585826062,"hp":100,"hunger":81.96690799998899,"thirst":80.4503619999998,"active":0}
+Returned on foot to Fisher's Point (111 map tiles) at {"x":1368.075214095929,"y":2727.7364015055846,"hp":100,"hunger":81.9596719999887,"thirst":80.43950799999979,"active":0}
 Stone Pickaxe exact recipe cost: wood 3, stone 4, rope 1; pre-craft held wood=9, stone=4, rope=2.
 After honest hand craft: wood=6, stone=0, rope=1, pickaxes=1.
 Moved Stone Pickaxe into hotbar slot 3 by swapping with berries through Inventory.
 selected stone_pick in hotbar 3; active=2
-At Salt Shale (88,179) from 13 tiles; player={"x":1416.806235941067,"y":2855.32064982608,"hp":100,"hunger":81.69024799998796,"thirst":80.03537199999978,"active":2}, distance=16.7px, active=stone_pick, source=null.
+At Salt Shale (88,179) from 13 tiles; player={"x":1416.5895340959264,"y":2855.7064655056033,"hp":100,"hunger":81.66967999998761,"thirst":80.00451999999977,"active":2}, distance=16.3px, active=stone_pick, source=null.
 Salt Shale result: raw_salt 0->2; source={"stock":2,"hp":6}, drops=[].
 Mined Salt Shale at (88,179); Raw Salt=2.
 harvest rock -> stone: 0 -> 4 near source (82,176)
 Campfire exact build cost: wood 5, stone 3; pre-build wood=6, stone=4. One additional wood must remain for fuel.
 Paid and placed campfire at (81,176); remaining wood=1, stone=1.
 Station UI panels after E: ["Campfire","Inventory"].
-Fueling cost: transferred wood x1 from player inventory; station state={"qty":0,"burn":19699.899999999994}.
-Queue click result: station=[{"recipe":"salted_meat","left":9500.100000000006,"total":10000}], inv meat=1, raw_salt=1, recent=["You wash up near Fisher's Point. No one is coming to tell you what to do.","Discovered: Fisher's Point","Discovered: Pinewatch","Discovered: Crossroads Trading Post"].
-Queued Salted Roast through campfire UI; input cost meat 1 + Raw Salt 1 (before=2/2, after=1/1), actual wall-clock start=2026-11-02T15:42:25.940Z, fuel={"qty":0,"burn":19699.899999999994}, queue=[{"recipe":"salted_meat","left":9500.100000000006,"total":10000}].
-Salted Roast appeared after 10.0 seconds of live browser time.
-Collected cooked Salted Roast; inventory=1; player state={"x":1304.6705559410732,"y":2808.1800898260785,"hp":100,"hunger":80.79295199998448,"thirst":78.68942799999972,"active":2}.
-Save/relaunch preserved Salted Roast; item=1, seed=48028268, simulated clock=110957.70000000007ms.
-Ate Salted Roast through inventory use action; hunger=99.98799999999997, hp=100.
+Fueling cost: transferred wood x1 from player inventory; station state={"qty":0,"burn":19683.40000000001}.
+Queue click result: station=[{"recipe":"salted_meat","left":9500,"total":10000}], inv meat=1, raw_salt=1, recent=["You wash up near Fisher's Point. No one is coming to tell you what to do.","Discovered: Fisher's Point","Discovered: Pinewatch","Discovered: Crossroads Trading Post"].
+Queued Salted Roast through campfire UI; input cost meat 1 + Raw Salt 1 (before=2/2, after=1/1), actual wall-clock start=2026-11-02T15:46:47.710Z, fuel={"qty":0,"burn":19683.40000000001}, queue=[{"recipe":"salted_meat","left":9500,"total":10000}].
+Salted Roast appeared after 10.1 seconds of live browser time.
+Collected cooked Salted Roast; inventory=1; player state={"x":1304.3495980959322,"y":2809.139601505604,"hp":100,"hunger":80.76771599998413,"thirst":78.65157399999971,"active":2}.
+Save/relaunch preserved Salted Roast; item=1, seed=47769124, simulated clock=110968.7ms.
+Ate Salted Roast through inventory use action; hunger=99.98800399999998, hp=100.
