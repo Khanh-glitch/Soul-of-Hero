@@ -45,17 +45,17 @@ class AshenGuillotineR:
             ACommon.update_branches(_cracks[i], maxf(0.0, t - 4.6 - float(i) * 0.08))
     func _blade_offset(t: float) -> float:
         # A visible draw-back then one accelerating physical stroke lands at
-        # the original 3.4 contact. Thirteen ticks of travel expose the mass
+        # the original 3.4 contact. Twenty-two ticks of travel expose the mass
         # in a real-world recording instead of a three-tick teleport. Recoil
         # is recovery, never a second strike or a gameplay contact.
-        var pull := 18.0 * AMath.ease_out(AMath.seg(t, 2.96, 3.18), 2.0)
-        var strike := AMath.ease_in(AMath.seg(t, 3.18, 3.4), 2.0)
+        var pull := 18.0 * AMath.ease_out(AMath.seg(t, 2.72, 3.04), 2.0)
+        var strike := AMath.ease_in(AMath.seg(t, 3.04, 3.4), 2.0)
         var recoil := 5.0 * AMath.bump(AMath.seg(t, 3.4, 3.85))
         return 26.0 + pull - 34.0 * strike + recoil
     func _blade_direction(t: float) -> Vector2:
         # The cocked tip resolves into the original diagonal at contact.
         # This is the same single blade, not an additional glowing sweep.
-        var swing := AMath.ease_in(AMath.seg(t, 3.18, 3.4), 2.0)
+        var swing := AMath.ease_in(AMath.seg(t, 3.04, 3.4), 2.0)
         return _dir.rotated(-0.16 * (1.0 - swing))
     func render(fb: AFramebuffer, t: float) -> void:
         var slit := AMath.seg(t, 1.2, 2.4)
@@ -142,14 +142,32 @@ class AshenGuillotineR:
                 var lower_a: Vector2 = a - n * gap * 0.34
                 var lower_m: Vector2 = a.lerp(b, 0.67 - mid_u * 0.20) - n * gap * (0.45 + 0.34 * AMath.hash2(float(section), 15.0))
                 var lower_b: Vector2 = b - n * gap * 0.34
-                var seam := 1.3 * open
+                # Uneven heaved bedrock shoulders attach to the same wound.
+                # Covered facets are material geometry, not a keyed glow; the
+                # adjoining banks remain connected while the dark split stays
+                # narrow. Differing plate widths break the old straight bar.
+                for side in [-1.0, 1.0]:
+                    var jitter := AMath.hash2(float(section), 24.0 + side)
+                    var inner0: Vector2 = a + n * side * gap * 0.32
+                    var inner1: Vector2 = b + n * side * gap * 0.32
+                    var outer0: Vector2 = a + n * side * (gap + 3.0 + 4.0 * jitter) * open
+                    var outer1: Vector2 = b + n * side * (gap + 4.0 + 3.0 * (1.0 - jitter)) * open
+                    var corner: Vector2 = a.lerp(b, 0.3 + jitter * 0.35) + n * side * (gap + 7.0 + jitter * 4.0) * open
+                    ADraw.poly_fill(fb, [inner0, outer0, corner, outer1, inner1],
+                        func(x: int, y: int) -> Variant:
+                            var grain := AMath.hash2(floor(float(x) * 0.27), floor(float(y) * 0.28))
+                            var stone := 0.23 + 0.08 * grain + 0.05 * jitter
+                            return Vector3(stone, stone * 0.79, stone * 0.69), true, open * 0.85)
+                    ADraw.streak(fb, outer0.x, outer0.y, corner.x, corner.y, 0.8, 0.6, AMath.R("ash", 0.8), open * 0.65)
+                    ADraw.streak(fb, corner.x, corner.y, outer1.x, outer1.y, 0.6, 0.8, AMath.R("ash", 0.8), open * 0.65)
+                var seam := 0.65 * open
                 ADraw.poly_fill(fb, [a - n * seam, b - n * seam, b + n * seam, a + n * seam],
                     func(_x: int, _y: int) -> Variant: return Vector3(0.018, 0.014, 0.014), true, open * 0.96)
                 ADraw.poly_fill(fb, [upper_a, upper_m, upper_b, lower_b, lower_m, lower_a],
                     func(x: int, y: int) -> Variant:
                         var across := absf((Vector2(float(x) + 0.5, float(y) + 0.5) - a).dot(n)) / maxf(gap, 0.01)
                         var grain := AMath.hash2(floor(float(x) * 0.5), floor(float(y) * 0.5))
-                        var rock := 0.025 + AMath.cl01(across) * 0.20 + grain * 0.025
+                        var rock := 0.045 + AMath.cl01(across) * 0.30 + grain * 0.04
                         return Vector3(rock, rock * 0.78, rock * 0.70), true, open * 0.96)
                 ADraw.streak(fb, upper_a.x, upper_a.y, upper_m.x, upper_m.y, 1.2, 0.8, AMath.R("fire", 0.72), open * 0.60)
                 ADraw.streak(fb, upper_m.x, upper_m.y, upper_b.x, upper_b.y, 0.8, 1.0, AMath.R("fire", 0.72), open * 0.60)
