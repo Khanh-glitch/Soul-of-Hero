@@ -16,7 +16,7 @@ permissions:
   contents: read
 jobs:
   source-quick:
-    if: ${{ !inputs.r31_lab }}
+    if: ${{ !inputs.r31_lab && !contains(github.event.head_commit.message, '[r31-lab]') }}
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
@@ -75,7 +75,7 @@ jobs:
           echo "::notice title=F_UPLOADED_ARTIFACT_VERIFIED::$result"
 
   r31-visual-direction-lab:
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.r31_lab }}
+    if: ${{ (github.event_name == 'workflow_dispatch' && inputs.r31_lab) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[r31-lab]')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
