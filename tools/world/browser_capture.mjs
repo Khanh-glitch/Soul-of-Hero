@@ -15,11 +15,14 @@ const META = process.env.VEYRA_META || 'world/assets/world_meta.json';
 fs.mkdirSync(OUT, { recursive: true });
 
 const meta = JSON.parse(fs.readFileSync(META, 'utf8'));
-const report = { base: BASE, capture: 'chromium playwright, real canvas', scenes: [], checks: [], errors: [] };
+const report = { base: BASE, capture: 'chromium playwright, real canvas',
+  viewport: [640, 360], overlays: 'hidden for evaluation captures, shown separately',
+  commit: process.env.GITHUB_SHA || null, run: process.env.GITHUB_RUN_ID || null,
+  scenes: [], checks: [], errors: [], console_log: [] };
 
 const browser = await chromium.launch();
-const page = await browser.newPage({ viewport: { width: 660, height: 480 }, deviceScaleFactor: 1 });
-page.on('console', m => { if (m.type() === 'error') report.errors.push('console: ' + m.text()); });
+const page = await browser.newPage({ viewport: { width: 640, height: 360 }, deviceScaleFactor: 1 });
+page.on('console', m => { report.console_log.push(m.type() + ': ' + m.text()); if (m.type() === 'error') report.errors.push('console: ' + m.text()); });
 page.on('pageerror', e => report.errors.push('pageerror: ' + String(e)));
 
 await page.goto(BASE, { waitUntil: 'load' });
@@ -58,6 +61,15 @@ await page.keyboard.down('Shift'); await page.keyboard.down('s');
 await page.waitForTimeout(400); await page.keyboard.up('s'); await page.keyboard.up('Shift');
 report.checks.push({ name: 'sprint_input', pass: true, detail: 'shift+s accepted' });
 
+async function setOverlays(on) {
+  await page.evaluate((visible) => {
+    for (const id of ['minimap', 'hud', 'help']) {
+      const el = document.getElementById(id);
+      if (el) el.style.visibility = visible ? 'visible' : 'hidden';
+    }
+  }, on);
+}
+
 async function shot(name, x, y, note) {
   await page.evaluate(([px, py]) => window.veyraGoto(px, py), [x, y]);
   await page.waitForTimeout(250);
@@ -69,6 +81,7 @@ async function shot(name, x, y, note) {
   if (!ok) report.errors.push('blank or empty frame: ' + name);
 }
 
+await setOverlays(false);      // evaluation captures: no minimap, no debug labels
 for (const s of meta.spawns) await shot('spawn_' + s.id, s.world_px[0], s.world_px[1], 'spawn');
 for (const e of meta.elders) await shot('elder_' + e.elder, e.world_centre_px[0], e.world_centre_px[1], e.source_id);
 for (const b of meta.bridges) await shot('bridge_' + b.source_id, b.world_px[0], b.world_px[1], b.load);
@@ -76,6 +89,9 @@ for (const d of meta.docks.slice(0, 3)) await shot('dock_' + d.source_id, d.land
 for (const p of meta.pois.filter(p => ['village', 'port', 'quarry', 'necropolis', 'observatory', 'smelter'].includes(p.arche)).slice(0, 6))
   await shot('poi_' + p.source_id, p.world_px[0], p.world_px[1], p.arche);
 
+await setOverlays(true);       // gameplay-overlay captures (minimap / HUD visible)
+await shot('overlay_gameplay_west', meta.spawns[0].world_px[0], meta.spawns[0].world_px[1], 'HUD visible');
+await setOverlays(false);
 // minimap toggle with real input
 await page.keyboard.press('m'); await page.waitForTimeout(120);
 const miniOff = await page.evaluate(() => document.getElementById('minimap').style.display === 'none');

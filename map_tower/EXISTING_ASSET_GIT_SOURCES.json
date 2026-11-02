@@ -1,0 +1,447 @@
+{
+  "schema": "SOH_VEYRA_CROSS_REPO_ASSET_SOURCES_V1",
+  "as_of": "2026-11-02",
+  "description": "Canonical Git-resident source inventory on private APEX-CHAOS, not duplicate Drive uploads. SOH target repo is public.",
+  "source_repository": "Khanh-glitch/APEX-CHAOS",
+  "source_visibility": "private",
+  "target_repository": "Khanh-glitch/Soul-of-Hero",
+  "target_branch": "map/veyra-gold-asset-canon-20261102",
+  "counts": {
+    "craftpix_found_in_private_git": 42,
+    "expected_craftpix": 43,
+    "missing_craftpix": [
+      "695666"
+    ],
+    "duplicate_ids": [],
+    "extra_non_craftpix_files": 9
+  },
+  "source_branches": [
+    {
+      "branch": "43-new-asset",
+      "commit_sha": "b89c9424f14efc2bcb3aef5f3f8574a6259a4cb4",
+      "files": 6
+    },
+    {
+      "branch": "Khanh-glitch-patch-1",
+      "commit_sha": "c1b99723cc2579e7b3ec921bb98436dcd3c0da72",
+      "files": 6
+    },
+    {
+      "branch": "Khanh-glitch-patch-2",
+      "commit_sha": "b75dfc0ffa98c25059d67f655be14e419e63430b",
+      "files": 5
+    },
+    {
+      "branch": "Khanh-glitch-patch-3",
+      "commit_sha": "a960f0945b36614c9754d8dbf2d3e6ec367d449f",
+      "files": 6
+    },
+    {
+      "branch": "Khanh-glitch-patch-4",
+      "commit_sha": "395bf9527fedcfe7b7c493606f6ec32c37b01bf6",
+      "files": 6
+    },
+    {
+      "branch": "Khanh-glitch-patch-5",
+      "commit_sha": "df1ce822daf398959da61f39fd773c0ba8eca868",
+      "files": 6
+    },
+    {
+      "branch": "Khanh-glitch-patch-6",
+      "commit_sha": "bf11a0cecfda43beca510062bd5d9dc1a8573cc5",
+      "files": 7
+    },
+    {
+      "branch": "Khanh-glitch-patch-7",
+      "commit_sha": "0f4f4f77aac1ecc0e4951c33658fe160ff59120f",
+      "files": 9
+    }
+  ],
+  "craftpix": [
+    {
+      "pack_id": "160005",
+      "filename": "craftpix-net-160005-free-ruined-temple-top-down-location-pixel-art.zip",
+      "source_branch": "43-new-asset",
+      "source_commit": "b89c9424f14efc2bcb3aef5f3f8574a6259a4cb4",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "180537",
+      "filename": "craftpix-net-180537-free-swordsman-1-3-level-pixel-top-down-sprite-character.zip",
+      "source_branch": "43-new-asset",
+      "source_commit": "b89c9424f14efc2bcb3aef5f3f8574a6259a4cb4",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "284465",
+      "filename": "craftpix-net-284465-free-predator-plant-mobs-pixel-art-pack.zip",
+      "source_branch": "43-new-asset",
+      "source_commit": "b89c9424f14efc2bcb3aef5f3f8574a6259a4cb4",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "363992",
+      "filename": "craftpix-net-363992-free-top-down-orc-game-character-pixel-art.zip",
+      "source_branch": "43-new-asset",
+      "source_commit": "b89c9424f14efc2bcb3aef5f3f8574a6259a4cb4",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "436971",
+      "filename": "craftpix-net-436971-free-top-down-roguelike-game-kit-pixel-art.zip",
+      "source_branch": "43-new-asset",
+      "source_commit": "b89c9424f14efc2bcb3aef5f3f8574a6259a4cb4",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "477438",
+      "filename": "craftpix-net-477438-free-chapel-pixel-art-top-down-asset-pack.zip",
+      "source_branch": "43-new-asset",
+      "source_commit": "b89c9424f14efc2bcb3aef5f3f8574a6259a4cb4",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "106469",
+      "filename": "craftpix-net-106469-top-down-crystals-pixel-art.zip",
+      "source_branch": "Khanh-glitch-patch-1",
+      "source_commit": "c1b99723cc2579e7b3ec921bb98436dcd3c0da72",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "141354",
+      "filename": "craftpix-net-141354-free-top-down-bushes-pixel-art.zip",
+      "source_branch": "Khanh-glitch-patch-1",
+      "source_commit": "c1b99723cc2579e7b3ec921bb98436dcd3c0da72",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "169442",
+      "filename": "craftpix-net-169442-free-2d-top-down-pixel-dungeon-asset-pack.zip",
+      "source_branch": "Khanh-glitch-patch-1",
+      "source_commit": "c1b99723cc2579e7b3ec921bb98436dcd3c0da72",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "189780",
+      "filename": "craftpix-net-189780-free-top-down-pixel-art-guild-hall-asset-pack.zip",
+      "source_branch": "Khanh-glitch-patch-1",
+      "source_commit": "c1b99723cc2579e7b3ec921bb98436dcd3c0da72",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "208004",
+      "filename": "craftpix-net-208004-free-vampire-4-direction-pixel-character-sprite-pack.zip",
+      "source_branch": "Khanh-glitch-patch-1",
+      "source_commit": "c1b99723cc2579e7b3ec921bb98436dcd3c0da72",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "266622",
+      "filename": "craftpix-net-266622-free-top-down-pixel-art-cave-objects.zip",
+      "source_branch": "Khanh-glitch-patch-1",
+      "source_commit": "c1b99723cc2579e7b3ec921bb98436dcd3c0da72",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "385863",
+      "filename": "craftpix-net-385863-free-top-down-trees-pixel-art.zip",
+      "source_branch": "Khanh-glitch-patch-2",
+      "source_commit": "b75dfc0ffa98c25059d67f655be14e419e63430b",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "419402",
+      "filename": "craftpix-net-419402-free-base-4-direction-female-character-pixel-art.zip",
+      "source_branch": "Khanh-glitch-patch-2",
+      "source_commit": "b75dfc0ffa98c25059d67f655be14e419e63430b",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "654184",
+      "filename": "craftpix-net-654184-main-characters-home-free-top-down-pixel-art-asset.zip",
+      "source_branch": "Khanh-glitch-patch-2",
+      "source_commit": "b75dfc0ffa98c25059d67f655be14e419e63430b",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "694865",
+      "filename": "craftpix-net-694865-free-top-down-seabed-objects-pixel-art.zip",
+      "source_branch": "Khanh-glitch-patch-2",
+      "source_commit": "b75dfc0ffa98c25059d67f655be14e419e63430b",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "749505",
+      "filename": "craftpix-net-749505-free-medieval-fortress-top-down-pixel-minigame-kit.zip",
+      "source_branch": "Khanh-glitch-patch-2",
+      "source_commit": "b75dfc0ffa98c25059d67f655be14e419e63430b",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "200380",
+      "filename": "craftpix-net-200380-free-pixel-art-plants-for-farm.zip",
+      "source_branch": "Khanh-glitch-patch-3",
+      "source_commit": "a960f0945b36614c9754d8dbf2d3e6ec367d449f",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "218281",
+      "filename": "craftpix-net-218281-free-pixel-art-dungeon-objects-asset-pack.zip",
+      "source_branch": "Khanh-glitch-patch-3",
+      "source_commit": "a960f0945b36614c9754d8dbf2d3e6ec367d449f",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "788364",
+      "filename": "craftpix-net-788364-free-slime-mobs-pixel-art-top-down-sprite-pack.zip",
+      "source_branch": "Khanh-glitch-patch-3",
+      "source_commit": "a960f0945b36614c9754d8dbf2d3e6ec367d449f",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "789196",
+      "filename": "craftpix-net-789196-free-top-down-hunt-animals-pixel-sprite-pack.zip",
+      "source_branch": "Khanh-glitch-patch-3",
+      "source_commit": "a960f0945b36614c9754d8dbf2d3e6ec367d449f",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "934618",
+      "filename": "craftpix-net-934618-free-top-down-ruins-pixel-art.zip",
+      "source_branch": "Khanh-glitch-patch-3",
+      "source_commit": "a960f0945b36614c9754d8dbf2d3e6ec367d449f",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "994534",
+      "filename": "craftpix-net-994534-free-basic-pixel-art-fantasy-icons-16x16-for-ui.zip",
+      "source_branch": "Khanh-glitch-patch-3",
+      "source_commit": "a960f0945b36614c9754d8dbf2d3e6ec367d449f",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "692491",
+      "filename": "craftpix-net-692491-free-glassblowers-workshop-top-down-pixel-art-asset.zip",
+      "source_branch": "Khanh-glitch-patch-4",
+      "source_commit": "395bf9527fedcfe7b7c493606f6ec32c37b01bf6",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "805745",
+      "filename": "craftpix-net-805745-free-magic-and-traps-top-down-pixel-art-asset.zip",
+      "source_branch": "Khanh-glitch-patch-4",
+      "source_commit": "395bf9527fedcfe7b7c493606f6ec32c37b01bf6",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "809047",
+      "filename": "craftpix-net-809047-free-animated-magic-book-pixel-art-asset-pack.zip",
+      "source_branch": "Khanh-glitch-patch-4",
+      "source_commit": "395bf9527fedcfe7b7c493606f6ec32c37b01bf6",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "812442",
+      "filename": "craftpix-net-812442-free-fantasy-medieval-village-buildings-asset-pack.zip",
+      "source_branch": "Khanh-glitch-patch-4",
+      "source_commit": "395bf9527fedcfe7b7c493606f6ec32c37b01bf6",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "958568",
+      "filename": "craftpix-net-958568-free-cursed-land-top-down-pixel-art-tileset.zip",
+      "source_branch": "Khanh-glitch-patch-4",
+      "source_commit": "395bf9527fedcfe7b7c493606f6ec32c37b01bf6",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "974061",
+      "filename": "craftpix-net-974061-free-rocks-and-stones-top-down-pixel-art.zip",
+      "source_branch": "Khanh-glitch-patch-4",
+      "source_commit": "395bf9527fedcfe7b7c493606f6ec32c37b01bf6",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "574220",
+      "filename": "craftpix-net-574220-free-path-and-road-top-down-pixel-tileset.zip",
+      "source_branch": "Khanh-glitch-patch-5",
+      "source_commit": "df1ce822daf398959da61f39fd773c0ba8eca868",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "639143",
+      "filename": "craftpix-net-639143-free-rocky-area-objects-pixel-art.zip",
+      "source_branch": "Khanh-glitch-patch-5",
+      "source_commit": "df1ce822daf398959da61f39fd773c0ba8eca868",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "658475",
+      "filename": "craftpix-net-658475-free-archer-towers-pixel-art-for-tower-defense.zip",
+      "source_branch": "Khanh-glitch-patch-5",
+      "source_commit": "df1ce822daf398959da61f39fd773c0ba8eca868",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "665131",
+      "filename": "craftpix-net-665131-free-fields-tileset-pixel-art-for-tower-defense.zip",
+      "source_branch": "Khanh-glitch-patch-5",
+      "source_commit": "df1ce822daf398959da61f39fd773c0ba8eca868",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "665895",
+      "filename": "craftpix-net-665895-free-pixel-dungeon-props-and-objects-asset-pack.zip",
+      "source_branch": "Khanh-glitch-patch-5",
+      "source_commit": "df1ce822daf398959da61f39fd773c0ba8eca868",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "668008",
+      "filename": "craftpix-net-668008-free-bridges-top-down-pixel-art-asset-pack.zip",
+      "source_branch": "Khanh-glitch-patch-5",
+      "source_commit": "df1ce822daf398959da61f39fd773c0ba8eca868",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "221601",
+      "filename": "craftpix-net-221601-free-enemy-pixel-pack-for-top-down-defense.zip",
+      "source_branch": "Khanh-glitch-patch-6",
+      "source_commit": "bf11a0cecfda43beca510062bd5d9dc1a8573cc5",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "255216",
+      "filename": "craftpix-net-255216-free-basic-pixel-art-ui-for-rpg.zip",
+      "source_branch": "Khanh-glitch-patch-6",
+      "source_commit": "bf11a0cecfda43beca510062bd5d9dc1a8573cc5",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "255707",
+      "filename": "craftpix-net-255707-free-field-enemies-pixel-art-for-tower-defense.zip",
+      "source_branch": "Khanh-glitch-patch-6",
+      "source_commit": "bf11a0cecfda43beca510062bd5d9dc1a8573cc5",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "351300",
+      "filename": "craftpix-net-351300-free-island-adventure-pixel-top-down-minigame-kit.zip",
+      "source_branch": "Khanh-glitch-patch-6",
+      "source_commit": "bf11a0cecfda43beca510062bd5d9dc1a8573cc5",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "504452",
+      "filename": "craftpix-net-504452-free-village-pixel-tileset-for-top-down-defense.zip",
+      "source_branch": "Khanh-glitch-patch-6",
+      "source_commit": "bf11a0cecfda43beca510062bd5d9dc1a8573cc5",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "505052",
+      "filename": "craftpix-net-505052-free-forest-objects-top-down-pixel-art.zip",
+      "source_branch": "Khanh-glitch-patch-6",
+      "source_commit": "bf11a0cecfda43beca510062bd5d9dc1a8573cc5",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    },
+    {
+      "pack_id": "555940",
+      "filename": "craftpix-net-555940-free-base-4-direction-male-character-pixel-art.zip",
+      "source_branch": "Khanh-glitch-patch-6",
+      "source_commit": "bf11a0cecfda43beca510062bd5d9dc1a8573cc5",
+      "source_repo": "Khanh-glitch/APEX-CHAOS",
+      "verified": "git_compare_file_and_commit"
+    }
+  ],
+  "optional_other_art": [
+    {
+      "filename": "AssetPack.zip",
+      "source_branch": "Khanh-glitch-patch-7",
+      "source_commit": "0f4f4f77aac1ecc0e4951c33658fe160ff59120f"
+    },
+    {
+      "filename": "EBros_Boss_Samurai.zip",
+      "source_branch": "Khanh-glitch-patch-7",
+      "source_commit": "0f4f4f77aac1ecc0e4951c33658fe160ff59120f"
+    },
+    {
+      "filename": "Mafia_Pixel_Character_Mega_Bundle_Idle_FREE.zip",
+      "source_branch": "Khanh-glitch-patch-7",
+      "source_commit": "0f4f4f77aac1ecc0e4951c33658fe160ff59120f"
+    },
+    {
+      "filename": "Maid Idle.png",
+      "source_branch": "Khanh-glitch-patch-7",
+      "source_commit": "0f4f4f77aac1ecc0e4951c33658fe160ff59120f"
+    },
+    {
+      "filename": "Maid Run.png",
+      "source_branch": "Khanh-glitch-patch-7",
+      "source_commit": "0f4f4f77aac1ecc0e4951c33658fe160ff59120f"
+    },
+    {
+      "filename": "TopDown_RockBoss_EBrosAssets.zip",
+      "source_branch": "Khanh-glitch-patch-7",
+      "source_commit": "0f4f4f77aac1ecc0e4951c33658fe160ff59120f"
+    },
+    {
+      "filename": "Water Warrior.zip",
+      "source_branch": "Khanh-glitch-patch-7",
+      "source_commit": "0f4f4f77aac1ecc0e4951c33658fe160ff59120f"
+    },
+    {
+      "filename": "goru_walk.png",
+      "source_branch": "Khanh-glitch-patch-7",
+      "source_commit": "0f4f4f77aac1ecc0e4951c33658fe160ff59120f"
+    },
+    {
+      "filename": "surtur-pixel-animation-lab.zip",
+      "source_branch": "Khanh-glitch-patch-7",
+      "source_commit": "0f4f4f77aac1ecc0e4951c33658fe160ff59120f"
+    }
+  ],
+  "staging_rule": "Use source_commit and exact filename. Verify ZIP CRC and SHA256 after retrieving. Do not publish private APEX source art in public SOH without approval. GIT source present != copied or mounted in target branch.",
+  "existing_soh_staging": "Five redundant ZIPs exist under map_tower/assets/raw_packs; do not reupload."
+}

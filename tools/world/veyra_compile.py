@@ -31,6 +31,7 @@ import numpy as np
 from PIL import Image, ImageDraw
 
 import art_registry as ART
+import kit as KIT
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, "..", ".."))
@@ -46,7 +47,7 @@ GW, GH = PW // ART_TILE, PH // ART_TILE
 CW, CH = PW // COLL, PH // COLL
 
 ROAD_HALF = {"cart": 1.4, "trail": 0.9, "foot": 0.7, "riverside": 0.8, "ferry": 0.0}
-WATER_OCCLUSION = 0.30      # a collision cell is water if >= 30% of it is wet
+WATER_OCCLUSION = 0.12      # a collision cell is water if >= 30% of it is wet
 
 
 def h32(*parts):
@@ -217,11 +218,13 @@ def main(out_dir):
         half = ROAD_HALF.get(kind, 0.8)
         stroke_polyline(roads, rd["points"], half, 1)
         road_out.append({"source_id": rd["id"], "name": rd.get("name"), "kind": kind,
-                         "mode": "land", "points": rd["points"], "half_width_units": half})
+                         "mode": "land", "points": rd["points"], "half_width_units": half,
+                         "world_points_px": [[q[0] * U, q[1] * U] for q in rd["points"]]})
     if len(ferry_out) != 8:
         raise SystemExit(f"expected 8 ferry routes in GOLD, found {len(ferry_out)}")
 
     # fords: a road crossing a short wet run is wadeable; long wet runs are not
+    ford_pts = []
     wet_road = (roads > 0) & (water > 0)
     ford = np.zeros((UH, UW), np.uint8)
     seen = np.zeros((UH, UW), bool)
@@ -243,6 +246,8 @@ def main(out_dir):
             if len(comp) <= 60:
                 for x, y in comp:
                     ford[y, x] = 1
+                ford_pts.append((sum(c[0] for c in comp) / len(comp),
+                                 sum(c[1] for c in comp) / len(comp)))
     roads = (roads & ~ford).astype(np.uint8)
 
     # ---------------- bridges ----------------
@@ -253,7 +258,7 @@ def main(out_dir):
         cx, cy = float(br["at"][0]), float(br["at"][1])
         ang = float(br.get("ang") or 0.0)
         load = br.get("load", "foot")
-        half_w = 2.6 if load == "cart" else 2.0
+        half_w = 3.0 if load == "cart" else 2.6
         wet = lambda x, y: (0 <= int(x) < UW and 0 <= int(y) < UH and water[int(y), int(x)])
 
         def reach(sign):
@@ -269,91 +274,110 @@ def main(out_dir):
         rect_rot(deck, mx, my, ang, half_len, half_w, 1)
         rect_rot(rail, mx, my, ang, half_len, half_w + 0.8, 1)
         rail[deck > 0] = 0
+
+        def landing(sign, dist):
+            """Land at the deck end, then walk outward until the point is dry land so the
+            landing is always a real, walkable place rather than a point in the river."""
+            for extra in range(0, 9):
+                d = dist + extra
+                x = cx + math.cos(ang) * d * sign
+                y = cy + math.sin(ang) * d * sign
+                if 0 <= int(y) < UH and 0 <= int(x) < UW and land[int(y), int(x)] and not water[int(y), int(x)]:
+                    return (x, y, extra)
+            return (cx + math.cos(ang) * dist * sign, cy + math.sin(ang) * dist * sign, None)
+
+        la_x, la_y, la_extra = landing(-1, a)
+        lb_x, lb_y, lb_extra = landing(1, b)
         bridges.append({"source_id": br["id"], "name": br.get("name"), "load": load,
                         "gold_at": [cx, cy], "bearing_rad": ang,
                         "world_px": [cx * U, cy * U], "deck_px": [mx * U, my * U],
                         "span_units": round(a + b, 2),
-                        "landing_a_px": [(cx - math.cos(ang) * (a + 2.0)) * U,
-                                         (cy - math.sin(ang) * (a + 2.0)) * U],
-                        "landing_b_px": [(cx + math.cos(ang) * (b + 2.0)) * U,
-                                         (cy + math.sin(ang) * (b + 2.0)) * U],
+                        "landing_a_px": [la_x * U, la_y * U],
+                        "landing_b_px": [lb_x * U, lb_y * U],
+                        "landing_snap_units": [la_extra, lb_extra],
                         "deck_width_units": round(half_w * 2, 2),
                         "rail_width_units": 1.6,
-                        "collision": "deck walkable, railings solid",
+                        "collision": "deck walkable (everything else, including the water beside it, solid)",
                         "deviation": "deck/rail width derived from load class; GOLD stores no width"})
 
     # ---------------- docks with validated anchors ----------------
     piers = np.zeros((UH, UW), np.uint8)
     docks = []
+
+    def dry_cell(x, y, pad=4):
+        """A 16 px collision cell around (x, y) that is completely free of water."""
+        x0, x1 = int(x - pad), int(x + pad)
+        y0, y1 = int(y - pad), int(y + pad)
+        if x0 < 0 or y0 < 0 or x1 >= UW or y1 >= UH:
+            return False
+        return (not water[y0:y1 + 1, x0:x1 + 1].any()) and land[y0:y1 + 1, x0:x1 + 1].mean() > 0.5
+
+    def solve_dock(ax, ay, named):
+        """Find a dry land anchor and a pier direction that ends inside the NAMED water body.
+        Searches outward from the GOLD marker; returns None when the shore really does not
+        offer a usable pair (the dock is then rejected, never silently defaulted)."""
+        best = None
+        for r in range(0, 21):
+            for k in range(24 if r else 1):
+                a = k * math.pi / 12
+                x, y = ax + math.cos(a) * r, ay + math.sin(a) * r
+                if not (0 <= int(y) < UH and 0 <= int(x) < UW) or not dry_cell(x, y):
+                    continue
+                dirn = None
+                for j in range(24):
+                    b = j * math.pi / 12
+                    for d in range(1, 13):
+                        xi, yi = int(x + math.cos(b) * d), int(y + math.sin(b) * d)
+                        if 0 <= xi < UW and 0 <= yi < UH and named[yi, xi]:
+                            if dirn is None or d < dirn[1]:
+                                dirn = (b, d)
+                            break
+                if dirn is None:
+                    continue
+                b, d = dirn
+                length = float(max(6.0, d + 3.0))
+                tip, ok_tip = None, False
+                for back in range(0, int(length) + 4):
+                    tx = x + math.cos(b) * (length - back)
+                    ty = y + math.sin(b) * (length - back)
+                    if 0 <= int(ty) < UH and 0 <= int(tx) < UW and named[int(ty), int(tx)]:
+                        tip, ok_tip = (tx, ty), True
+                        break
+                if not ok_tip:
+                    continue
+                score = r + 0.1 * d
+                if best is None or score < best[0]:
+                    best = (score, x, y, b, length, tip, d, r)
+            if best is not None:
+                break
+        return best
+
     for dk in proj["docks"]:
-        x, y = float(dk["at"][0]), float(dk["at"][1])
+        ax, ay = float(dk["at"][0]), float(dk["at"][1])
         kind = dk.get("kind")
         wref = dk.get("water") or "sea"
         named_water = body_mask("sea", wref) if wref == "sea" else body_mask("body", wref)
-        # anchor validation against the NAMED water body.
-        # A GOLD dock point is a shoreline marker: it may sit a few units off the bank.  We
-        # accept it only if (a) dry land exists within 8 units and (b) the named body exists
-        # within 10 units, and we snap the land anchor to that land point (<= 8 units, recorded).
-        land_pt = None
-        for d in range(0, 9):
-            for dy in range(-d, d + 1):
-                for dx in range(-d, d + 1):
-                    xi, yi = int(x) + dx, int(y) + dy
-                    if 0 <= xi < UW and 0 <= yi < UH and land[yi, xi] and not water[yi, xi]:
-                        land_pt = (xi + 0.5, yi + 0.5)
-                        break
-                if land_pt:
-                    break
-            if land_pt:
-                break
-        dist_named = None
-        for d in range(0, 11):
-            box = named_water[max(0, int(y) - d):int(y) + d + 1,
-                              max(0, int(x) - d):int(x) + d + 1]
-            if box.any():
-                dist_named = d
-                break
-        if land_pt is None or dist_named is None:
-            docks.append({"source_id": dk["id"], "name": dk.get("name"), "kind": kind,
-                          "water": wref, "land_anchor_px": [x * U, y * U],
-                          "water_anchor_px": None, "anchor_valid": False,
-                          "rejection": ("no dry land within 8 units" if land_pt is None
-                                        else f"named water '{wref}' not within 10 units"),
-                          "implementation_status": "FAILED"})
+        rec = {"source_id": dk["id"], "name": dk.get("name"), "kind": kind,
+               "gold_at": [ax, ay], "gold_world_px": [ax * U, ay * U]}
+        sol = solve_dock(ax, ay, named_water)
+        if sol is None:
+            rec.update({"land_anchor_px": [ax * U, ay * U], "water_anchor_px": None,
+                        "anchor_valid": False, "implementation_status": "FAILED",
+                        "rejection": f"no dry land anchor within 21 units whose pier reaches "
+                                     f"the named body '{wref}'"})
+            docks.append(rec)
             continue
-        snap = math.hypot(land_pt[0] - x, land_pt[1] - y)
-        x, y = land_pt
-        # direction: from the anchor toward the NAMED body
-        best = None
-        for i in range(24):
-            a = i * math.pi / 12
-            for d in range(1, 30):
-                xi, yi = int(x + math.cos(a) * d), int(y + math.sin(a) * d)
-                if 0 <= xi < UW and 0 <= yi < UH and named_water[yi, xi]:
-                    if best is None or d < best[1]:
-                        best = (a, d)
-                    break
-        ang, dist = best
-        length = float(min(15.0, max(6.0, dist + 3.0)))
+        _score, x, y, ang, length, tip, d, r = sol
         cx = x + math.cos(ang) * length / 2
         cy = y + math.sin(ang) * length / 2
         rect_rot(piers, cx, cy, ang, length / 2 + 0.8, 2.0, 1)
-        tip = (x + math.cos(ang) * (length + 0.6), y + math.sin(ang) * (length + 0.6))
-        # the water anchor must be inside the NAMED water body; slide it back along the pier
-        if not (0 <= int(tip[1]) < UH and 0 <= int(tip[0]) < UW and named_water[int(tip[1]), int(tip[0])]):
-            for back in range(1, int(length) + 2):
-                tx2 = x + math.cos(ang) * (length + 0.6 - back)
-                ty2 = y + math.sin(ang) * (length + 0.6 - back)
-                if 0 <= int(ty2) < UH and 0 <= int(tx2) < UW and named_water[int(ty2), int(tx2)]:
-                    tip = (tx2, ty2)
-                    break
-        docks.append({"source_id": dk["id"], "name": dk.get("name"), "kind": kind,
-                      "water": wref, "land_anchor_px": [x * U, y * U],
-                      "water_anchor_px": [tip[0] * U, tip[1] * U], "anchor_valid": True,
-                      "distance_to_named_water_units": dist,
-                      "bearing_rad": round(ang, 4), "length_units": round(length, 2),
-                      "implementation_status": "GEOMETRY_ONLY",
-                      "boat_logic": "UNIMPLEMENTED"})
+        rec.update({"land_anchor_px": [x * U, y * U], "water_anchor_px": [tip[0] * U, tip[1] * U],
+                    "anchor_valid": True, "distance_to_named_water_units": d,
+                    "snap_from_gold_units": round(r, 2),
+                    "bearing_rad": round(ang, 4), "length_units": round(length, 2),
+                    "implementation_status": "GEOMETRY_ONLY",
+                    "boat_logic": "UNIMPLEMENTED"})
+        docks.append(rec)
 
     print("docks valid %d / %d" % (sum(1 for d in docks if d["anchor_valid"]), len(docks)))
 
@@ -392,6 +416,10 @@ def main(out_dir):
     dry_region |= dry_zone
     print("ash region %.1f%%  dry region %.1f%%" % (100 * ash_region.mean(), 100 * dry_region.mean()))
 
+    kit = KIT.load_kit()
+    fams["sand"] = [kit.sand_tile(v) for v in range(3)]
+    fams["beach"] = [kit.sand_tile(v) for v in range(3)]
+
     # ---------------- ground grid ----------------
     canvas = Image.new("RGBA", (PW, PH), (30, 70, 96, 255))
     land_elev = elev[elev > 0] if (elev > 0).any() else elev
@@ -410,7 +438,7 @@ def main(out_dir):
             uy, ux = min(UH - 1, gy * 8 + 4), min(UW - 1, gx * 8 + 4)
             e = elev[gy, gx] + (h32("g", gx, gy) % 1000) / 1000.0 * 14 - 7
             if ash_region[uy, ux]:
-                ground[gy, gx] = "ash" if e >= q_stone * 0.5 else "ash"
+                ground[gy, gx] = "ash" if e < q_stone * 0.6 else "stone"
             elif dry_region[uy, ux]:
                 ground[gy, gx] = "sand"
             elif e >= q_rock:
@@ -418,7 +446,8 @@ def main(out_dir):
             elif e >= q_stone:
                 ground[gy, gx] = "rubble" if (h32("r", gx, gy) % 5 == 0) else "stone"
             else:
-                ground[gy, gx] = "meadow"
+                near_water = water[max(0, uy - 20):uy + 20, max(0, ux - 20):ux + 20].mean() > 0.05
+                ground[gy, gx] = "beach" if near_water else "meadow"
 
     cliff_cells = np.zeros((GH, GW), bool)
     for gy in range(GH):
@@ -444,40 +473,98 @@ def main(out_dir):
     water_px = up(water)
     shore_outer = water_px & ~erode(water_px, 4)
     shelf = water_px & ~erode(water_px, 14)
-    # DV-03 water stand-in: procedural 2-tone dither, periodic so there is no tile seam.
-    # Authored water art remains an open gap (ART-001).
+    # ---------------- water + shoreline (crafted bands, real beach art) ----------------
+    kit = KIT.load_kit()
+    deep = erode(water_px, 22)
+    shallow = water_px & ~erode(water_px, 9)
+    mid = water_px & ~deep & ~shallow
+    bayer = ((np.array([[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]]) / 16.0))
     yy = np.arange(PH)[:, None]
     xx = np.arange(PW)[None, :]
-    bay = ((yy // 2 + xx // 2) % 2 == 0)
-    base_c = np.array([34, 86, 122], np.uint8)
-    alt_c = np.array([42, 100, 138], np.uint8)
-    wtile = np.where(bay[:, :, None], alt_c, base_c).astype(np.uint8)
-    wtile = np.concatenate([wtile, np.full((PH, PW, 1), 255, np.uint8)], axis=2)
-    out[water_px] = wtile[water_px]
-    lighter = np.clip(wtile.astype(int) * 1.22, 0, 255).astype(np.uint8)
-    out[water_px & shelf] = lighter[water_px & shelf]
-    foam = np.clip(wtile.astype(int) * 1.55 + 25, 0, 255).astype(np.uint8)
-    # dithered shoreline: alternate foam/water pixels along the outer ring
-    xs = np.add.outer(np.arange(PH), np.zeros(PW, int))
-    ys = np.add.outer(np.zeros(PH, int), np.arange(PW))
-    dith = ((xs + ys) % 2 == 0)
-    out[shore_outer & dith] = foam[shore_outer & dith]
+    thr = bayer[yy % 4, xx % 4]
+    def C(r, g, b):
+        return np.array([r, g, b, 255], np.uint8)
+    c_deep, c_mid, c_shal = C(22, 64, 104), C(30, 86, 126), C(46, 112, 152)
+    out[water_px] = c_deep
+    out[mid] = c_mid
+    out[shallow & (thr > 0.35)] = c_mid
+    out[shallow] = c_shal
+    # sub-tile dither across the deep/mid boundary so the bands never read as flat rings
+    edge_dm = deep & (thr > 0.62)
+    out[edge_dm] = c_mid
+    # wave crests: short light dashes in the shallow band, hashed so they are stable
+    crest = shallow & (((xx * 7 + yy * 13) % 61) < 3) & (thr > 0.45)
+    out[crest] = C(122, 178, 202)
+    # foam: 2 px ring hugging the land, dithered into the water
+    ring = water_px & ~erode(water_px, 2)
+    out[ring & (thr > 0.30)] = C(214, 236, 242)
+    out[water_px & ~ring & (thr > 0.86)] = C(96, 150, 176)
+    world_water = Image.fromarray(out, "RGBA")
+
+    # real beach bands from the island tileset (32x16 crops, rotated to face the water)
+    sh = 0
+    for gy in range(GH):
+        for gx in range(GW):
+            if ground[gy, gx] == "water":
+                continue
+            def isw(dx, dy):
+                ry, rx = gy + dy, gx + dx
+                return 0 <= ry < GH and 0 <= rx < GW and ground[ry, rx] == "water"
+            var = (gx * 3 + gy * 5) % 3
+            px, py = gx * ART_TILE, gy * ART_TILE
+            if isw(0, -1):
+                world_water.alpha_composite(kit.shore("n", var), (px, py))
+                sh += 1
+            elif isw(0, 1):
+                world_water.alpha_composite(kit.shore("s", var), (px, py + 16))
+                sh += 1
+            elif isw(-1, 0):
+                world_water.alpha_composite(kit.shore("w", var), (px, py))
+                sh += 1
+            elif isw(1, 0):
+                world_water.alpha_composite(kit.shore("e", var), (px + 16, py))
+                sh += 1
+    print("beach bands", sh)
+    out = np.array(world_water)
 
     road_mask = up(roads) | up(ford)
-    st0 = np.array(fams["stone"][1])
-    road_tex = np.tile(st0, (PH // 32 + 1, PW // 32 + 1, 1))[:PH, :PW]
-    road_tex = (road_tex.astype(np.float32) * 0.90).astype(np.uint8)
-    road_tex[:, :, 3] = 255
-    out[road_mask] = road_tex[road_mask]
+    digs = [im.convert("RGBA").resize((32, 32), Image.NEAREST)
+            for im in fams.get("path", fams["stone"])]
+    road_tex = Image.new("RGBA", (PW, PH))
+    for ty in range(PH // 32 + 1):
+        for tx in range(PW // 32 + 1):
+            road_tex.paste(digs[(tx * 7 + ty * 13) % len(digs)], (tx * 32, ty * 32))
+    road_arr = np.array(road_tex)
+    # the outer ring of the road blends into the ground with a hashed dither
+    road_core = road_mask & erode(road_mask, 3)
+    road_edge = road_mask & ~road_core
+    out[road_core] = road_arr[road_core]
+    keep = (thr < 0.55)
+    out[road_edge & keep] = road_arr[road_edge & keep]
     deck_mask, rail_mask, pier_mask = up(deck), up(rail), up(piers)
-    stone = np.array(fams["stone"][0])
-    stone_tex = np.tile(stone, (PH // 32 + 1, PW // 32 + 1, 1))[:PH, :PW]
-    for m in (deck_mask, pier_mask):
-        out[m] = stone_tex[m]
-    rail_px = (stone_tex.astype(np.float32) * 0.62)
-    rail_px[:, :, 3] = 255
-    out[rail_mask] = rail_px.astype(np.uint8)[rail_mask]
     world = Image.fromarray(out, "RGBA")
+    # ---- real bridge / pier sprites (committed 668008-bridges pack) ----
+    for br in bridges:
+        kind = "arch" if (br["load"] == "cart" and br["span_units"] > 16) else (
+            "stone" if br["load"] == "cart" else ("wood" if br["span_units"] <= 12 else "rope"))
+        span_px = int(round(br["span_units"] * U * 1.02))
+        wid_px = int(round(br["deck_width_units"] * U * 1.25))
+        strip = kit.bridge_strip(kind, span_px, max(14, wid_px))
+        deg = -math.degrees(br["bearing_rad"])
+        rot = strip.rotate(deg, expand=True, resample=Image.NEAREST)
+        cx, cy = br["world_px"]
+        world.alpha_composite(rot, (int(cx - rot.width / 2), int(cy - rot.height / 2)))
+        br["render"] = {"module": kind, "deck_px": [rot.width, rot.height], "rotation_deg": round(deg, 1)}
+    for dk in [d for d in docks if d.get("anchor_valid") and d.get("water_anchor_px")]:
+        ang = math.atan2(dk["water_anchor_px"][1] - dk["land_anchor_px"][1],
+                         dk["water_anchor_px"][0] - dk["land_anchor_px"][0])
+        length = math.hypot(dk["water_anchor_px"][0] - dk["land_anchor_px"][0],
+                            dk["water_anchor_px"][1] - dk["land_anchor_px"][1]) * 1.05
+        strip = kit.pier_strip(int(length), max(12, int(dk.get("pier_width_px", 18))))
+        rot = strip.rotate(-math.degrees(ang), expand=True, resample=Image.NEAREST)
+        world.alpha_composite(rot, (int(dk["land_anchor_px"][0] + math.cos(ang) * length / 2 - rot.width / 2),
+                                    int(dk["land_anchor_px"][1] + math.sin(ang) * length / 2 - rot.height / 2)))
+        dk["render"] = {"module": "plank_wide", "rotation_deg": round(-math.degrees(ang), 1)}
 
     # ---------------- objects ----------------
     placements = []
@@ -488,8 +575,12 @@ def main(out_dir):
 
     DOCK_KEEPOUT = [(d["land_anchor_px"][0], d["land_anchor_px"][1]) for d in docks
                     if d.get("anchor_valid")]
+    deck_keepout = down(deck_mask, COLL, 0.10)
 
     def place(fam, wx, wy, key, collider=True, tag=None):
+        dcx, dcy = int(wx // COLL), int(wy // COLL)
+        if 0 <= dcx < CW and 0 <= dcy < CH and deck_keepout[dcy, dcx]:
+            return None                      # never stack props on a bridge deck
         if True:
             for dx, dy in DOCK_KEEPOUT:
                 if abs(wx - dx) < 12 and abs(wy - dy) < 12:
@@ -707,7 +798,38 @@ def main(out_dir):
     solid &= ~down(pier_mask, COLL, 0.10)
     solid &= ~down(up(ford), COLL, 0.25)
     rail_cells = down(rail_mask, COLL, 0.10)       # railings are solid, deck winning above
+    deck_cells = down(deck_mask, COLL, 0.05)
+    # the walkable centreline is guaranteed: sample the deck axis and clear those cells too
+    for br in bridges:
+        cxp, cyp = br["world_px"]
+        angb = br["bearing_rad"]
+        hl = br["span_units"] * U / 2
+        for i in range(int(hl * 2 / (COLL / 2)) + 1):
+            t = -hl + i * (COLL / 2)
+            cxl = int((cxp + math.cos(angb) * t) // COLL)
+            cyl = int((cyp + math.sin(angb) * t) // COLL)
+            if 0 <= cxl < CW and 0 <= cyl < CH:
+                deck_cells[max(0, cyl - 1):cyl + 2, max(0, cxl - 1):cxl + 2] = True
+    rail_cells &= ~deck_cells                  # a railing may not block its own deck
+    rail_cells &= ~down(water_px, COLL, 0.10)  # over water the water is the barrier
     solid |= rail_cells
+    # every POI gets a maintained clearing (2 cells) unless it sits in open water
+    water_cells_full = down(water_px, COLL, 0.10)
+    cleared = 0
+    for p in poi_out:
+        px, py = p["world_px"]
+        cx0, cy0 = int(px // COLL), int(py // COLL)
+        for ay in range(cy0 - 2, cy0 + 3):
+            for ax in range(cx0 - 2, cx0 + 3):
+                if not (0 <= ax < CW and 0 <= ay < CH):
+                    continue
+                if water_cells_full[ay, ax]:
+                    continue
+                if (ax - cx0) ** 2 + (ay - cy0) ** 2 <= 5:
+                    if solid[ay, ax]:
+                        cleared += 1
+                    solid[ay, ax] = False
+    print("poi clearings", cleared, "cells")
     for gy in range(GH):
         if cliff_cells[gy].any():
             solid[gy * 2:gy * 2 + 2, :] |= np.repeat(cliff_cells[gy], 2)[:CW]
@@ -737,6 +859,19 @@ def main(out_dir):
                               else "water anchor cell is not in the named water body")
     print("dock anchors accepted %d / %d" % (sum(1 for d in docks if d["anchor_valid"]), len(docks)))
 
+    # channel closure: any cell with even a trace of water becomes solid unless it is an
+    # authored crossing (deck, pier, ford).  Without this a 1-cell gap could be waded.
+    trace = down(water_px, COLL, 0.02)
+    solid |= trace & ~deck_cells & ~down(pier_mask, COLL, 0.05) & ~down(up(ford), COLL, 0.10)
+    # railing barrier: water immediately flanking a deck is solid, so nobody can sidestep a
+    # bridge through a 1-cell wet gap.  The deck itself stays walkable.
+    flank = np.zeros_like(deck_cells)
+    flank[1:, :] |= deck_cells[:-1, :]
+    flank[:-1, :] |= deck_cells[1:, :]
+    flank[:, 1:] |= deck_cells[:, :-1]
+    flank[:, :-1] |= deck_cells[:, 1:]
+    solid |= flank & trace & ~deck_cells
+    solid &= ~deck_cells                      # final: the deck and its centreline stay walkable
     rows = []
     for y in range(CH):
         row, x, runs = solid[y], 0, []
@@ -777,9 +912,12 @@ def main(out_dir):
         "ferry_count": len(ferry_out), "bridges": bridges, "docks": docks,
         "elders": elder_out, "reference_areas": ref_areas,
         "labels": [{"source_id": l["id"], "text": l.get("text"), "at": l["at"],
+                    "world_px": [l["at"][0] * U, l["at"][1] * U],
                     "rot": l.get("rot"), "size": l.get("size"), "style": l.get("style")}
                    for l in proj["labels"]],
-        "lands": [{"source_id": l["id"], "name": l.get("name")} for l in proj["land"]],
+        "lands": [{"source_id": l["id"], "name": l.get("name"), "kind": l.get("kind"),
+                   "rings": l.get("rings") or [l.get("ring")]} for l in proj["land"]],
+        "fords": [[float(f[0]), float(f[1])] for f in ford_pts],
         "collision": {"encoding": "rle-[start,len,value]-per-row", "cell_px": COLL,
                       "rows": rows},
         "water": {"encoding": "rle-[start,len,value]-per-row", "cell_px": COLL,

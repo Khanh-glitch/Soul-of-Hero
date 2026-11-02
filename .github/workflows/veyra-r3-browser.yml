@@ -1,4 +1,4 @@
-name: veyra-r3-browser
+name: veyra-r4-browser
 on:
   push:
     paths: ['world/**', 'tools/world/**', '.github/workflows/veyra-r3-browser.yml']
@@ -28,7 +28,10 @@ jobs:
           python -m http.server 8011 --bind 127.0.0.1 --directory world &
           sleep 2
       - name: Capture (real Chromium, real input, canvas pixel checks)
-        run: node tools/world/browser_capture.mjs
+        run: |
+          mkdir -p docs/map_tower/evidence/browser
+          node tools/world/browser_capture.mjs 2>&1 | tee docs/map_tower/evidence/browser/capture.log
+          echo "commit ${GITHUB_SHA} run ${GITHUB_RUN_ID}" >> docs/map_tower/evidence/browser/capture.log
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -36,4 +39,31 @@ jobs:
           path: |
             docs/map_tower/evidence/browser/**
             docs/map_tower/SPATIAL_VALIDATION.json
+            docs/map_tower/SPATIAL_VALIDATION.json
             out/world_meta.json
+
+  godot-native-attempt:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download Godot 4.7 (recorded attempt, no binaries are vendored)
+        run: |
+          set -x
+          curl -fsSL -o godot.zip \
+            https://github.com/godotengine/godot/releases/download/4.7-stable/Godot_v4.7-stable_linux.x86_64.zip \
+            | tee godot_download.log || echo "GODOT_DOWNLOAD_FAILED" >> "$GITHUB_STEP_SUMMARY"
+          unzip -o godot.zip || echo "GODOT_UNZIP_FAILED" >> "$GITHUB_STEP_SUMMARY"
+          chmod +x Godot_v4.7-stable_linux.x86_64 2>/dev/null || true
+      - name: Version
+        run: ./Godot_v4.7-stable_linux.x86_64 --version 2>&1 | tee godot_version.log || true
+      - name: Headless import of the project (native, no proxy)
+        run: timeout 420 ./Godot_v4.7-stable_linux.x86_64 --headless --path . --quit 2>&1 | tee godot_import.log || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: godot-native-attempt
+          path: |
+            godot_version.log
+            godot_import.log
+            godot_download.log

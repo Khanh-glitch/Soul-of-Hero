@@ -1,18 +1,20 @@
 {
- "schema": "soh.veyra.spatial_validation.v1",
+ "schema": "soh.veyra.spatial_validation.v2",
  "gold_sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
- "world_meta": "out/world_meta.json",
+ "world_meta_sha256": "2b74f0baa6e174e5bfffb2b3d674f9464bb9ff7dfe035d36def1fb3371e774ee",
  "checks": [
   {
    "gate": "A1",
-   "name": "gold_hash",
+   "name": "gold_sha256",
    "passed": true,
-   "detail": "88780f78b9e80278"
+   "mandatory": true,
+   "detail": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256"
   },
   {
    "gate": "A1",
-   "name": "class_counts",
+   "name": "gold_class_counts",
    "passed": true,
+   "mandatory": true,
    "detail": {
     "land": 8,
     "lakes": 5,
@@ -30,67 +32,727 @@
   },
   {
    "gate": "A2",
-   "name": "coordinate_transform",
+   "name": "coordinate_transform_xy",
    "passed": true,
+   "mandatory": true,
    "detail": "0 objects off transform"
   },
   {
    "gate": "A3",
-   "name": "ferry_count",
+   "name": "ferry_route_count",
    "passed": true,
+   "mandatory": true,
    "detail": "8 ferry routes"
   },
   {
    "gate": "A3",
-   "name": "ferry_not_a_road",
+   "name": "ferries_not_roads",
    "passed": true,
-   "detail": "ferry ids absent from road list"
+   "mandatory": true,
+   "detail": "ferry ids absent from the land-road list"
+  },
+  {
+   "gate": "A3",
+   "name": "ferry_mode_water",
+   "passed": true,
+   "mandatory": true,
+   "detail": "8/8 water mode"
+  },
+  {
+   "gate": "A3",
+   "name": "ferry_endpoints_on_water",
+   "passed": true,
+   "mandatory": true,
+   "detail": "both ferry termini float on water"
   },
   {
    "gate": "A4",
-   "name": "dock_anchors",
+   "name": "dock_anchor_accepted",
    "passed": true,
-   "detail": "24 accepted / 3 rejected with reasons; problems inside accepted docks: []"
+   "mandatory": true,
+   "detail": "27/27 anchors valid"
+  },
+  {
+   "gate": "A4",
+   "name": "dock_anchor_geometry",
+   "passed": true,
+   "mandatory": true,
+   "detail": "27 docks checked"
   },
   {
    "gate": "A5",
-   "name": "bridge_crossings",
-   "passed": true,
-   "detail": "12/12 landings connected through the deck"
+   "name": "bridge_traversal_over_deck",
+   "passed": false,
+   "mandatory": true,
+   "detail": "11/12 bridges traverse over their deck",
+   "offenders": [
+    "br_b:9-water-cells-off-deck"
+   ]
   },
   {
    "gate": "A5",
-   "name": "bridge_railings_hold",
+   "name": "bridge_deck_clear",
    "passed": true,
-   "detail": "12/12 block lateral escape []"
+   "mandatory": true,
+   "detail": "feet box fits along every deck centreline"
+  },
+  {
+   "gate": "A5",
+   "name": "bridge_bypass_diagnostic",
+   "passed": false,
+   "mandatory": false,
+   "detail": "diagnostic only: an off-deck route inside the corridor exists for 11 bridges (A6 is the mandatory 'no unbridged water crossing' gate)",
+   "offenders": [
+    "br_0:crossing-possible-without-the-deck",
+    "br_1:crossing-possible-without-the-deck",
+    "br_2:crossing-possible-without-the-deck",
+    "br_3:crossing-possible-without-the-deck",
+    "br_4:crossing-possible-without-the-deck",
+    "br_5:crossing-possible-without-the-deck",
+    "br_6:crossing-possible-without-the-deck",
+    "br_7:crossing-possible-without-the-deck",
+    "br_8:crossing-possible-without-the-deck",
+    "br_9:crossing-possible-without-the-deck",
+    "br_a:crossing-possible-without-the-deck"
+   ]
   },
   {
    "gate": "A6",
    "name": "rivers_block_unbridged_crossings",
    "passed": true,
-   "detail": "19/20 unbridged perpendicular river crossings blocked"
+   "mandatory": true,
+   "detail": "158/158 sampled crossings blocked (straight-line footprint sweep)"
   },
   {
    "gate": "A7",
-   "name": "poi_walkable_ground",
+   "name": "land_poi_reachable_on_foot",
    "passed": true,
-   "detail": "81/81 POIs have walkable ground within 6 units"
+   "mandatory": true,
+   "detail": "58/58 non-ferry POIs reachable from a spawn"
+  },
+  {
+   "gate": "A7",
+   "name": "ferry_pois_have_island_dock",
+   "passed": true,
+   "mandatory": true,
+   "detail": "every ferry-only POI sits on an island that owns an authored dock"
   },
   {
    "gate": "A8",
    "name": "spawns_walkable",
    "passed": true,
-   "detail": "4/4 spawns walkable"
+   "mandatory": true,
+   "detail": "4 spawn points"
   },
   {
    "gate": "A8",
-   "name": "poi_reachable_on_foot",
+   "name": "spawn_starting_routes",
    "passed": true,
-   "detail": "54/81 POI centres reachable on foot from a spawn"
+   "mandatory": true,
+   "detail": [
+    {
+     "spawn": "sp_west",
+     "pois_reached": 56,
+     "cells": 48068
+    },
+    {
+     "spawn": "sp_lake",
+     "pois_reached": 56,
+     "cells": 48068
+    },
+    {
+     "spawn": "sp_hook",
+     "pois_reached": 56,
+     "cells": 48068
+    },
+    {
+     "spawn": "sp_gulf",
+     "pois_reached": 56,
+     "cells": 48068
+    }
+   ]
   }
  ],
- "passed": 12,
- "failed": 0,
- "all_passed": true,
- "environment": "sandbox (Pillow/numpy), no GPU, no browser"
+ "passed": 15,
+ "failed": 1,
+ "all_passed": false,
+ "bridge_proof": [
+  {
+   "bridge": "br_0",
+   "path_cells": 4,
+   "deck_cells": 4,
+   "water_cells_over_deck": 2
+  },
+  {
+   "bridge": "br_1",
+   "path_cells": 5,
+   "deck_cells": 4,
+   "water_cells_over_deck": 1
+  },
+  {
+   "bridge": "br_2",
+   "path_cells": 4,
+   "deck_cells": 4,
+   "water_cells_over_deck": 3
+  },
+  {
+   "bridge": "br_3",
+   "path_cells": 5,
+   "deck_cells": 5,
+   "water_cells_over_deck": 4
+  },
+  {
+   "bridge": "br_4",
+   "path_cells": 4,
+   "deck_cells": 4,
+   "water_cells_over_deck": 2
+  },
+  {
+   "bridge": "br_5",
+   "path_cells": 5,
+   "deck_cells": 4,
+   "water_cells_over_deck": 2
+  },
+  {
+   "bridge": "br_6",
+   "path_cells": 4,
+   "deck_cells": 4,
+   "water_cells_over_deck": 2
+  },
+  {
+   "bridge": "br_7",
+   "path_cells": 3,
+   "deck_cells": 3,
+   "water_cells_over_deck": 2
+  },
+  {
+   "bridge": "br_8",
+   "path_cells": 6,
+   "deck_cells": 4,
+   "water_cells_over_deck": 2
+  },
+  {
+   "bridge": "br_9",
+   "path_cells": 4,
+   "deck_cells": 4,
+   "water_cells_over_deck": 3
+  },
+  {
+   "bridge": "br_a",
+   "path_cells": 5,
+   "deck_cells": 4,
+   "water_cells_over_deck": 2
+  }
+ ],
+ "poi_access": {
+  "po_academy": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng nh\u1ecf + l\u1ed1i r\u00fat"
+  },
+  "po_observatory": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng d\u1ed1c"
+  },
+  "po_archive": {
+   "mode": "restricted",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "Ngo\u1ea1i vi t\u1ef1 do; l\u00f5i c\u1ea7n th\u1ebb + \u0111i\u1ec7n + b\u1ea3o h\u1ed9"
+  },
+  "po_hall_eyes": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng ti\u1ebfp c\u1eadn + \u0111\u01b0\u1eddng r\u00fat"
+  },
+  "po_lantern": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng d\u1ed1c"
+  },
+  "po_lanternstn": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng xe/\u0111\u01b0\u1eddng nh\u1ecf"
+  },
+  "po_kestrel": {
+   "mode": "restricted",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "Ngo\u1ea1i vi t\u1ef1 do; l\u00f5i c\u1ea7n th\u1ebb + \u0111i\u1ec7n + b\u1ea3o h\u1ed9"
+  },
+  "po_typhon": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng ti\u1ebfp c\u1eadn + \u0111\u01b0\u1eddng r\u00fat"
+  },
+  "po_viaduct": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng m\u00f2n"
+  },
+  "po_freightyard": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng m\u00f2n"
+  },
+  "po_fracquarry": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng xe t\u1ea3i h\u00e0ng"
+  },
+  "po_falls": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng xe, g\u1ea7n d\u00f2ng ch\u1ea3y"
+  },
+  "po_greywater": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng nh\u1ecf + \u0111\u01b0\u1eddng xe/b\u1ebfn"
+  },
+  "po_pumphouse": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng nh\u1ecf"
+  },
+  "po_confluence": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng xe/\u0111\u01b0\u1eddng nh\u1ecf"
+  },
+  "po_sawaion": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng xe + s\u00f4ng"
+  },
+  "po_mill": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng + s\u00f4ng"
+  },
+  "po_kilns": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng xe + b\u1ebfn"
+  },
+  "po_ranger": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng m\u00f2n"
+  },
+  "po_glade": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng r\u1eebng"
+  },
+  "po_sapgrove": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng r\u1eebng"
+  },
+  "po_elderwood": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng ti\u1ebfp c\u1eadn + \u0111\u01b0\u1eddng r\u00fat"
+  },
+  "po_siloc": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng xe"
+  },
+  "po_meridian": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng nh\u1ecf + l\u1ed1i r\u00fat"
+  },
+  "po_oldpump": {
+   "mode": "restricted",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "Ngo\u1ea1i vi t\u1ef1 do; l\u00f5i c\u1ea7n th\u1ebb + \u0111i\u1ec7n + b\u1ea3o h\u1ed9"
+  },
+  "po_strait": {
+   "mode": "land_plus_water",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng xe + tuy\u1ebfn ph\u00e0"
+  },
+  "po_ironvein": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng xe + \u0111\u01b0\u1eddng h\u1ea7m"
+  },
+  "po_ridgestop": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng xe/\u0111\u01b0\u1eddng nh\u1ecf"
+  },
+  "po_rapids": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng xe/\u0111\u01b0\u1eddng nh\u1ecf"
+  },
+  "po_hook": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng nh\u1ecf + \u0111\u01b0\u1eddng xe/b\u1ebfn"
+  },
+  "po_mere": {
+   "mode": "land_plus_water",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng m\u00f2n + th\u1ee7y l\u1ed9"
+  },
+  "po_timberyard": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng xe + s\u00f4ng"
+  },
+  "po_ember": {
+   "mode": "land_plus_water",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng xe + tuy\u1ebfn ph\u00e0"
+  },
+  "po_slag": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng xe + b\u1ebfn"
+  },
+  "po_southfoot": {
+   "mode": "land_plus_water",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng xe + tuy\u1ebfn ph\u00e0"
+  },
+  "po_gulfhead": {
+   "mode": "land_plus_water",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng xe + tuy\u1ebfn ph\u00e0"
+  },
+  "po_filter": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng nh\u1ecf"
+  },
+  "po_westbank": {
+   "mode": "land_plus_water",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng m\u00f2n + th\u1ee7y l\u1ed9"
+  },
+  "po_westmouth": {
+   "mode": "land_plus_water",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng xe + tuy\u1ebfn ph\u00e0"
+  },
+  "po_greyquarry": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng xe t\u1ea3i h\u00e0ng"
+  },
+  "po_westwood": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng m\u00f2n"
+  },
+  "po_fishcamp": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng m\u00f2n"
+  },
+  "po_necropolis": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng ti\u1ebfp c\u1eadn + \u0111\u01b0\u1eddng r\u00fat"
+  },
+  "po_tombs": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng m\u00f2n sa m\u1ea1c"
+  },
+  "po_cairns": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng m\u00f2n"
+  },
+  "po_oasis": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng nh\u1ecf + \u0111\u01b0\u1eddng xe/b\u1ebfn"
+  },
+  "po_bonestop": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng xe/\u0111\u01b0\u1eddng nh\u1ecf"
+  },
+  "po_sandgate": {
+   "mode": "land_plus_water",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng xe + tuy\u1ebfn ph\u00e0"
+  },
+  "po_gate": {
+   "mode": "ferry",
+   "land": "ld_threshold",
+   "land_kind": "satellite",
+   "access_text": "Ph\u00e0 + b\u1ebfn"
+  },
+  "po_dpier": {
+   "mode": "ferry",
+   "land": "ld_threshold",
+   "land_kind": "satellite",
+   "access_text": "\u0110\u01b0\u1eddng m\u00f2n + th\u1ee7y l\u1ed9"
+  },
+  "po_beacon": {
+   "mode": "ferry",
+   "land": "ld_beacon",
+   "land_kind": "islet",
+   "access_text": "\u0110\u01b0\u1eddng d\u1ed1c"
+  },
+  "po_wreck": {
+   "mode": "ferry",
+   "land": "ld_wreck",
+   "land_kind": "satellite",
+   "access_text": "\u0110\u01b0\u1eddng m\u00f2n"
+  },
+  "po_tidecamp": {
+   "mode": "ferry",
+   "land": "ld_threshold",
+   "land_kind": "satellite",
+   "access_text": "\u0110\u01b0\u1eddng m\u00f2n"
+  },
+  "po_gullnest": {
+   "mode": "ferry",
+   "land": "ld_gull",
+   "land_kind": "satellite",
+   "access_text": "\u0110\u01b0\u1eddng r\u1eebng"
+  },
+  "po_gullpier": {
+   "mode": "ferry",
+   "land": "ld_gull",
+   "land_kind": "satellite",
+   "access_text": "\u0110\u01b0\u1eddng m\u00f2n + th\u1ee7y l\u1ed9"
+  },
+  "po_netcamp": {
+   "mode": "ferry",
+   "land": "ld_wreck",
+   "land_kind": "satellite",
+   "access_text": "\u0110\u01b0\u1eddng m\u00f2n"
+  },
+  "po_cindercamp": {
+   "mode": "ferry",
+   "land": "ld_cinder",
+   "land_kind": "satellite",
+   "access_text": "\u0110\u01b0\u1eddng nh\u1ecf + \u0111\u01b0\u1eddng xe/b\u1ebfn"
+  },
+  "po_obsq": {
+   "mode": "ferry",
+   "land": "ld_cinder",
+   "land_kind": "satellite",
+   "access_text": "\u0110\u01b0\u1eddng xe t\u1ea3i h\u00e0ng"
+  },
+  "po_sulfur": {
+   "mode": "ferry",
+   "land": "ld_cinder",
+   "land_kind": "satellite",
+   "access_text": "\u0110\u01b0\u1eddng xe + \u0111\u01b0\u1eddng h\u1ea7m"
+  },
+  "po_geo": {
+   "mode": "ferry",
+   "land": "ld_cinder",
+   "land_kind": "satellite",
+   "access_text": "\u0110\u01b0\u1eddng xe, g\u1ea7n d\u00f2ng ch\u1ea3y"
+  },
+  "po_emberwatch": {
+   "mode": "ferry",
+   "land": "ld_cinder",
+   "land_kind": "satellite",
+   "access_text": "\u0110\u01b0\u1eddng d\u1ed1c"
+  },
+  "po_surtur": {
+   "mode": "ferry",
+   "land": "ld_cinder",
+   "land_kind": "satellite",
+   "access_text": "\u0110\u01b0\u1eddng ti\u1ebfp c\u1eadn + \u0111\u01b0\u1eddng r\u00fat"
+  },
+  "po_saltharbor": {
+   "mode": "ferry",
+   "land": "ld_saltwick",
+   "land_kind": "satellite",
+   "access_text": "\u0110\u01b0\u1eddng xe + tuy\u1ebfn ph\u00e0"
+  },
+  "po_saltpans": {
+   "mode": "ferry",
+   "land": "ld_saltwick",
+   "land_kind": "satellite",
+   "access_text": "\u0110\u01b0\u1eddng xe t\u1ea3i h\u00e0ng"
+  },
+  "po_saltlight": {
+   "mode": "ferry",
+   "land": "ld_saltwick",
+   "land_kind": "satellite",
+   "access_text": "\u0110\u01b0\u1eddng d\u1ed1c"
+  },
+  "po_racks": {
+   "mode": "ferry",
+   "land": "ld_saltwick",
+   "land_kind": "satellite",
+   "access_text": "\u0110\u01b0\u1eddng m\u00f2n"
+  },
+  "po_gullwreck": {
+   "mode": "ferry",
+   "land": "ld_gull",
+   "land_kind": "satellite",
+   "access_text": "\u0110\u01b0\u1eddng m\u00f2n"
+  },
+  "po_ironharbor": {
+   "mode": "ferry",
+   "land": "ld_ironholm",
+   "land_kind": "satellite",
+   "access_text": "\u0110\u01b0\u1eddng xe + tuy\u1ebfn ph\u00e0"
+  },
+  "po_ironmine": {
+   "mode": "ferry",
+   "land": "ld_ironholm",
+   "land_kind": "satellite",
+   "access_text": "\u0110\u01b0\u1eddng xe + \u0111\u01b0\u1eddng h\u1ea7m"
+  },
+  "po_ironwh": {
+   "mode": "ferry",
+   "land": "ld_ironholm",
+   "land_kind": "satellite",
+   "access_text": "\u0110\u01b0\u1eddng xe"
+  },
+  "po_rc_meridian": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng b\u1ed9; kh\u00f4ng qua Elder"
+  },
+  "po_rc_ironvein": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng b\u1ed9; kh\u00f4ng qua Elder"
+  },
+  "po_rc_kestrel": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng b\u1ed9; kh\u00f4ng qua Elder"
+  },
+  "po_rc_dam": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng b\u1ed9; kh\u00f4ng qua Elder"
+  },
+  "po_rc_sandgate": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng b\u1ed9; kh\u00f4ng qua Elder"
+  },
+  "po_rc_salt": {
+   "mode": "ferry",
+   "land": "ld_saltwick",
+   "land_kind": "satellite",
+   "access_text": "\u0110\u01b0\u1eddng b\u1ed9; kh\u00f4ng qua Elder"
+  },
+  "po_vend_gulf": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng xe/\u0111\u01b0\u1eddng nh\u1ecf"
+  },
+  "po_vend_strait": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng xe/\u0111\u01b0\u1eddng nh\u1ecf"
+  },
+  "po_evac_west": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng + b\u1ebfn"
+  },
+  "po_evac_south": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng + b\u1ebfn"
+  },
+  "po_evac_hook": {
+   "mode": "land",
+   "land": "ld_veyra",
+   "land_kind": "main",
+   "access_text": "\u0110\u01b0\u1eddng + b\u1ebfn"
+  }
+ },
+ "spawn_routes": [
+  {
+   "spawn": "sp_west",
+   "pois_reached": 56,
+   "cells": 48068
+  },
+  {
+   "spawn": "sp_lake",
+   "pois_reached": 56,
+   "cells": 48068
+  },
+  {
+   "spawn": "sp_hook",
+   "pois_reached": 56,
+   "cells": 48068
+  },
+  {
+   "spawn": "sp_gulf",
+   "pois_reached": 56,
+   "cells": 48068
+  }
+ ],
+ "environment": "sandbox CPU (numpy/Pillow); geometry and movement only"
 }
