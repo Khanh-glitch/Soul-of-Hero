@@ -98,16 +98,17 @@ try {
         const bfsPath=[];for(let i=goal;i!==-1;i=from[i])bfsPath.push(i);bfsPath.reverse();if(!initialApproachTiles)initialApproachTiles=bfsPath.length-1;
         const next=bfsPath.length>1?bfsPath[1]:goal, nx=next%W,ny=(next/W)|0,wp={x:nx*16+8,y:ny*16+8};
         diag.replans++;diag.lastPlan={reason:replanReason,threatAvoidance,from:{x:cur.player.x,y:cur.player.y},startTile:[sx,sy],nextTile:[nx,ny],goalTile:[goal%W,(goal/W)|0],pathTiles:bfsPath.length-1,liveHp:cur.player.hp,gridHere:describeCell(grid,sx,sy),gridNext:describeCell(grid,nx,ny),target:targetEntity&&{id:targetEntity.id,tx:targetEntity.tx,ty:targetEntity.ty}};
-        const before={x:cur.player.x,y:cur.player.y}, wpDiag={tile:[nx,ny],center:wp,attempts:[],start:before};let best=Infinity, stagnant=0, reached=false;
+        const before={x:cur.player.x,y:cur.player.y}, wpDiag={tile:[nx,ny],center:wp,attempts:[],start:before};let best=Infinity, stagnant=0, reached=false, evaded=false;
         for(let tries=0;tries<24;tries++){
           cur=await state();const dx=wp.x-cur.player.x,dy=wp.y-cur.player.y,remaining=Math.hypot(dx,dy);
           if(remaining<3){reached=true;break;}
           const keys=[];if(Math.abs(dx)>2)keys.push(dx>0?'d':'a');if(Math.abs(dy)>2)keys.push(dy>0?'s':'w');
           const beforeAttempt={x:cur.player.x,y:cur.player.y,hp:cur.player.hp,keys:[...keys]};
           for(const k of keys)await page.keyboard.down(k);await pause(remaining<=12?24:115);for(const k of keys)await page.keyboard.up(k);
-          cur=await state();const moved=Math.hypot(cur.player.x-beforeAttempt.x,cur.player.y-beforeAttempt.y),left=Math.hypot(wp.x-cur.player.x,wp.y-cur.player.y);
+          cur=await state();if(!cur.player.dead&&!defending){const beforeDodge={x:cur.player.x,y:cur.player.y};await defendNearby();cur=await state();if(Math.hypot(cur.player.x-beforeDodge.x,cur.player.y-beforeDodge.y)>10)evaded=true;}const moved=Math.hypot(cur.player.x-beforeAttempt.x,cur.player.y-beforeAttempt.y),left=Math.hypot(wp.x-cur.player.x,wp.y-cur.player.y);
           wpDiag.attempts.push({try:tries+1,from:beforeAttempt,to:{x:cur.player.x,y:cur.player.y,hp:cur.player.hp},moved:+moved.toFixed(2),remaining:+left.toFixed(2),action:cur.player.action||null,creatures:cur.creatures.filter(m=>Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<100).map(m=>({id:m.id,type:m.type,state:m.state,x:m.x,y:m.y,hp:m.hp}))});
           if(cur.player.dead){diag.failed={reason:'player died during bounded waypoint input',player:cur.player,firstFailingWaypoint:{tile:[nx,ny],center:wp},attempt:wpDiag.attempts.at(-1),previousWaypoint:diag.waypoints.at(-1)||null,counts:cur.counts,nearby:cur.creatures.filter(m=>Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<260)};wpDiag.end={reason:'player-dead',actual:{x:cur.player.x,y:cur.player.y,hp:cur.player.hp}};diag.waypoints.push(wpDiag);routeDiagnostics.push(diag);await page.screenshot({path:path.join(out,`route-death-${layoutId}-${Date.now()}.png`),animations:'disabled'}).catch(()=>{});await fs.writeFile(path.join(out,`route-death-${layoutId}.json`),JSON.stringify(diag,null,2)).catch(()=>{});throw new Error(`route death at first failing waypoint ${JSON.stringify({...diag.failed,evasionHistory:routeDiagnostics.filter(x=>x.kind==='wildlife-evasion').slice(-8)})}`);}
+          if(evaded)break;
           if(left<3){reached=true;break;}
           if(moved<0.8)stagnant++;else stagnant=0;
           if(left<best-1){best=left;stagnant=0;}
@@ -115,6 +116,7 @@ try {
         }
         wpDiag.end={x:cur.player.x,y:cur.player.y,hp:cur.player.hp,reached,reason:reached?'reached':stagnant>=6?'no-progress':'bounded-attempts',actualCell:describeCell(grid,Math.floor(cur.player.x/16),Math.floor(cur.player.y/16)),waypointCell:describeCell(grid,nx,ny),nearby:cur.creatures.filter(m=>Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<140).map(m=>({id:m.id,type:m.type,state:m.state,x:m.x,y:m.y,hp:m.hp}))};
         diag.waypoints.push(wpDiag);
+        if(evaded&&!reached){wpDiag.end={x:cur.player.x,y:cur.player.y,hp:cur.player.hp,reached:false,reason:'evaded-hostile-replan-from-live-position'};diag.waypoints.push(wpDiag);replanReason='hostile dodge-roll changed live position';continue;}
         if(!reached){transientBlocked.add(next);replanReason=`${wpDiag.end.reason} at ${nx},${ny}; actual ${cur.player.x.toFixed(1)},${cur.player.y.toFixed(1)}`;continue;}
         replanReason='waypoint-reached';
         if(!defending){const beforeCombat=await state();await ensureVitals();await defendNearby();const afterCombat=await state();if(Math.hypot(afterCombat.player.x-beforeCombat.player.x,afterCombat.player.y-beforeCombat.player.y)>5||Math.abs(afterCombat.player.hp-beforeCombat.player.hp)>0){diag.threats.push({before:{x:beforeCombat.player.x,y:beforeCombat.player.y,hp:beforeCombat.player.hp},after:{x:afterCombat.player.x,y:afterCombat.player.y,hp:afterCombat.player.hp},nearby:afterCombat.creatures.filter(m=>Math.hypot(m.x-afterCombat.player.x,m.y-afterCombat.player.y)<140).map(m=>({id:m.id,type:m.type,state:m.state,x:m.x,y:m.y,hp:m.hp}))});replanReason='combat-or-knockback-live-position-replan';}}
@@ -139,7 +141,7 @@ try {
       if(defending)return;defending=true;
       try{
         const cur=await state();const threat=cur.creatures.filter(m=>!m.type.startsWith('elder_')&&['chase','track','tell','attack','recover'].includes(m.state)&&(()=>{const d=Math.hypot(m.x-cur.player.x,m.y-cur.player.y);return d<90||(['attack','tell'].includes(m.state)&&d<130);})()).sort((a,b)=>Math.hypot(a.x-cur.player.x,a.y-cur.player.y)-Math.hypot(b.x-cur.player.x,b.y-cur.player.y))[0];
-        if(!threat||Date.now()-lastDodgeAt<900)return;lastDodgeAt=Date.now();
+        if(!threat)return;const td=Math.hypot(threat.x-cur.player.x,threat.y-cur.player.y),imminent=['attack','tell'].includes(threat.state)&&td<130;if(Date.now()-lastDodgeAt<900&&!imminent)return;lastDodgeAt=Date.now();
         await ensureVitals();const live=await state(),angle=Math.atan2(live.player.y-threat.y,live.player.x-threat.x),keys=[];
         if(Math.abs(Math.cos(angle))>0.25)keys.push(Math.cos(angle)>0?'d':'a');if(Math.abs(Math.sin(angle))>0.25)keys.push(Math.sin(angle)>0?'s':'w');
         for(const k of keys)await page.keyboard.down(k);if(live.player.stamina>=22)await page.keyboard.press('Space');await pause(live.player.stamina>=22?280:220);for(const k of keys)await page.keyboard.up(k);
