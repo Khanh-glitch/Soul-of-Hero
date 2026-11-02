@@ -8,6 +8,7 @@ const out = path.resolve('evidence/map-poi');
 await fs.mkdir(out, { recursive: true });
 const vite = await createServer({ configFile: 'vite.config.ts', server: { middlewareMode: true }, appType: 'custom' });
 const browser = await chromium.launch({ headless: true });
+const routeDiagnostics = [];
 const log = [`build_sha=${process.env.BUILD_SHA || 'local-uncommitted'}`, `workflow_run=${process.env.GITHUB_RUN_ID || 'local'}`, `run_attempt=${process.env.GITHUB_RUN_ATTEMPT || '1'}`, `browser=Chromium ${browser.version()}`, 'persistence_scope=same-browser-profile page reload + Continue; not OS-process-exit proof'];
 let page;
 const pause = ms => page.waitForTimeout(ms);
@@ -16,7 +17,7 @@ const state = () => page.evaluate(() => {
   const r = window.__soh?.run; if (!r) return null;
   const counts = {};
   for (const s of r.custody.inv.slots) if (s) counts[s.key] = (counts[s.key] || 0) + s.qty;
-  return { id: r.id, seed: r.seed, layoutId: r.layoutId || 'shipping', player: { x:r.player.x,y:r.player.y,hp:r.player.hp,dead:r.player.dead,hunger:r.player.hunger,thirst:r.player.thirst }, counts,
+  return { id: r.id, seed: r.seed, layoutId: r.layoutId || 'shipping', player: { x:r.player.x,y:r.player.y,hp:r.player.hp,dead:r.player.dead,hunger:r.player.hunger,thirst:r.player.thirst,action:r.player.action&&{...r.player.action},vx:r.player.vx,vy:r.player.vy,invuln:r.player.invuln }, counts,
     creatures:r.creatures.filter(m=>m.hp>0).map(m=>({id:m.id,x:m.x,y:m.y,hp:m.hp,state:m.state,type:m.type})),
     entities: Object.values(r.entities).map(e => ({ id:e.id,kind:e.kind,poi:e.poi,x:e.x,y:e.y,tx:e.tx,ty:e.ty,locked:e.locked,open:e.open,power:e.power,label:e.label,c:e.c })),
     sources:r.sources,containers: Object.fromEntries(Object.entries(r.custody).map(([id,c])=>[id,c.slots.map(s=>s&&({key:s.key,qty:s.qty}))])) };
@@ -25,16 +26,17 @@ const sleepUntil = async (fn, message, timeout = 8000) => page.waitForFunction(f
 const inputCount = async key => (await state())?.counts[key] || 0;
 
 try {
-  const [{ getWorld, SRC_KEYS }, { WW, WH, T }, { MAP_CONTENT_PACKS, validateContentPack }, { SOURCES }] = await Promise.all([
-    vite.ssrLoadModule('/src/game/world.ts'), vite.ssrLoadModule('/src/game/core.ts'), vite.ssrLoadModule('/src/game/content.ts'), vite.ssrLoadModule('/src/game/catalog.ts'),
+  const [{ getWorld, setActiveLayout, SRC_KEYS }, { WW, WH, T }, { MAP_CONTENT_PACKS, validateContentPack }, { SOURCES }] = await Promise.all([
+    vite.ssrLoadModule('/src/game/world.ts'), vite.ssrLoadModule('/src/game/core.ts'), vite.ssrLoadModule('/src/game/content.ts'), vite.ssrLoadModule('/src/game/catalog.ts'), vite.ssrLoadModule('/src/game/engine.ts'),
   ]);
   const invalid = structuredClone(MAP_CONTENT_PACKS.dev_delta); invalid.pois[0].width = 0; invalid.pois[0].loot.outer[0].item = 'not_a_real_item';
   const rejected = validateContentPack(invalid); assert(rejected.some(e => e.includes('footprint')) && rejected.some(e => e.includes('unknown loot item')));
   log.push(`negative_validation=PASS (${rejected.join(' | ')})`);
+  const [{ blockGrid }] = await Promise.all([vite.ssrLoadModule('/src/game/engine.ts')]);
   const blocks = new Set([T.DEEP, T.CLIFF, T.PWALL, T.LAVA]);
 
   async function runLayout(layoutId, landing, layoutLabel, suffix) {
-    const world = getWorld(layoutId); const W = WW, H = WH;
+    setActiveLayout(layoutId); const world = getWorld(layoutId); const W = WW, H = WH;
     const ctx = await browser.newContext({ viewport: { width:1280, height:720 }, deviceScaleFactor:1 }); page = await ctx.newPage();
     const errors = []; page.on('pageerror', e => errors.push(e.message));
     await page.goto(process.env.GAME_URL || 'http://127.0.0.1:4173', { waitUntil:'networkidle' });
@@ -66,36 +68,62 @@ try {
       exitTarget={x:entry.x,y:entry.y+40};
     }
     const vault=vaults[0]; assert(outer&&vault);
-    let entityBlocked = new Set(); let initialApproachTiles = 0; let defending = false;
-    const pass = (x,y,current) => {
-      if(x<1||y<1||x>=W-1||y>=H-1)return false;
-      const i=y*W+x; if(blocks.has(world.tiles[i])||entityBlocked.has(i))return false;
-      const si=world.src[i]; if(si>=0){const key=SRC_KEYS[si],node=current.sources?.[i];if(SOURCES[key]?.block&&(!node||node.stock>0))return false;}
-      return true;
+    let initialApproachTiles = 0; let defending = false;
+    const actualGrid = async () => {
+      const raw = await page.evaluate(() => structuredClone(window.__soh.run));
+      return { raw, grid: blockGrid(raw) };
     };
+    const gridClass = b => b===0?'free':b===1?'terrain-wall':b===2?'blocking-source':b===3?'physical-entity':b===4?'wadeable':b===5?'lava':`unknown-${b}`;
     async function walkNear(wx,wy,radius=22){
-      let cur=await state();entityBlocked=new Set(cur.entities.filter(e=>e.tx!==undefined&&((e.kind==='door'&&!e.open)||['loot','cash','vendor','gen','evac'].includes(e.kind))).map(e=>e.ty*W+e.tx));
-      const vx=wx-cur.player.x,vy=wy-cur.player.y,vlen=vx*vx+vy*vy;
-      for(const m of cur.creatures){const t=vlen?Math.max(0,Math.min(1,((m.x-cur.player.x)*vx+(m.y-cur.player.y)*vy)/vlen)):0;const d=Math.hypot(m.x-(cur.player.x+t*vx),m.y-(cur.player.y+t*vy));if(d<48){const mx=Math.floor(m.x/16),my=Math.floor(m.y/16);for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)entityBlocked.add((my+dy)*W+mx+dx);}}
-      const sx=Math.max(1,Math.min(W-2,Math.floor(cur.player.x/16))),sy=Math.max(1,Math.min(H-2,Math.floor(cur.player.y/16)));
-      const q=new Int32Array(W*H),from=new Int32Array(W*H).fill(-2);let h=0,t=0,start=sy*W+sx,goal=-1;q[t++]=start;from[start]=-1;
-      while(h<t){const i=q[h++],x=i%W,y=(i/W)|0;if(Math.hypot(x*16+8-wx,y*16+8-wy)<=radius){goal=i;break;}
-        for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy,j=ny*W+nx;if(from[j]!==-2||j!==start&&!pass(nx,ny,cur))continue;from[j]=i;q[t++]=j;}}
-      assert.notEqual(goal,-1,`no walkable route near (${wx},${wy}) from (${cur.player.x.toFixed(0)},${cur.player.y.toFixed(0)})`);
-      const route=[];for(let i=goal;i!==-1;i=from[i])route.push({x:(i%W)*16+8,y:((i/W)|0)*16+8});route.reverse();if(!initialApproachTiles)initialApproachTiles=route.length-1;
-      for(let step=0;step<route.length-1;step++){
-        const wp=route[step+1];for(let tries=0;tries<40;tries++){
-          cur=await state();const dx=wp.x-cur.player.x,dy=wp.y-cur.player.y;if(Math.hypot(dx,dy)<3)break;
-          const keys=[];if(Math.abs(dx)>2)keys.push(dx>0?'d':'a');if(Math.abs(dy)>2)keys.push(dy>0?'s':'w');
-          for(const k of keys)await page.keyboard.down(k);await pause(115);for(const k of keys)await page.keyboard.up(k);
+      const goalTile = (x,y) => Math.hypot(x*16+8-wx,y*16+8-wy)<=radius;
+      const diag = {target:{x:wx,y:wy,radius}, replans:0, waypoints:[], threats:[], startedAt:Date.now()};
+      let cur=await state(), transientBlocked=new Set(), replanReason='initial';
+      const targetEntity=cur.entities.find(e=>Math.hypot(e.x-wx,e.y-wy)<1);
+      const describeCell=(grid,x,y)=>({tx:x,ty:y,cls:gridClass(grid[y*W+x]),entities:cur.entities.filter(e=>e.tx===x&&e.ty===y).map(e=>({id:e.id,kind:e.kind,label:e.label,open:e.open,locked:e.locked}))});
+      for(let cycle=0;cycle<1200;cycle++){
+        cur=await state(); const distance=Math.hypot(cur.player.x-wx,cur.player.y-wy);
+        if(distance<=radius){
+          diag.completed={distance,player:{x:cur.player.x,y:cur.player.y,hp:cur.player.hp},at:Date.now()};
+          routeDiagnostics.push(diag);return cur;
         }
-        if(step%2===1){await ensureVitals();if(!defending)await defendNearby();}
+        const {raw,grid}=await actualGrid();
+        const sx=Math.max(1,Math.min(W-2,Math.floor(cur.player.x/16))),sy=Math.max(1,Math.min(H-2,Math.floor(cur.player.y/16)));
+        const q=new Int32Array(W*H),from=new Int32Array(W*H).fill(-2);let h=0,t=0,start=sy*W+sx,goal=-1;q[t++]=start;from[start]=-1;
+        const pass=(x,y)=>{if(x<1||y<1||x>=W-1||y>=H-1)return false;const i=y*W+x;return !transientBlocked.has(i)&&![1,2,3,5].includes(grid[i]);};
+        while(h<t){const i=q[h++],x=i%W,y=(i/W)|0;if(goalTile(x,y)){goal=i;break;}
+          for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy,j=ny*W+nx;if(from[j]!==-2||j!==start&&!pass(nx,ny))continue;from[j]=i;q[t++]=j;}}
+        if(goal===-1){diag.failed={reason:'runtime blockGrid BFS found no adjacent interaction tile',player:cur.player,distance:Math.hypot(cur.player.x-wx,cur.player.y-wy),target:{x:wx,y:wy,radius},nearbyGrid:Array.from({length:5},(_,j)=>Array.from({length:5},(_,i)=>gridClass(grid[(sy+j-2)*W+sx+i-2]))),nearbyEntities:cur.entities.filter(e=>Math.hypot(e.x-cur.player.x,e.y-cur.player.y)<100).map(e=>({id:e.id,kind:e.kind,label:e.label,tx:e.tx,ty:e.ty,open:e.open,locked:e.locked})),nearby:cur.creatures.filter(m=>Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<140)};routeDiagnostics.push(diag);await page.screenshot({path:path.join(out,`route-failure-${layoutId}-${Date.now()}.png`),animations:'disabled'}).catch(()=>{});await fs.writeFile(path.join(out,`route-failure-${layoutId}.json`),JSON.stringify(diag,null,2)).catch(()=>{});throw new Error(`NO_PATH using runtime blockGrid to (${wx},${wy}) from (${cur.player.x.toFixed(1)},${cur.player.y.toFixed(1)}); target=${JSON.stringify(targetEntity&&{id:targetEntity.id,kind:targetEntity.kind,tx:targetEntity.tx,ty:targetEntity.ty})}`);}
+        const path=[];for(let i=goal;i!==-1;i=from[i])path.push(i);path.reverse();if(!initialApproachTiles)initialApproachTiles=path.length-1;
+        const next=path.length>1?path[1]:goal, nx=next%W,ny=(next/W)|0,wp={x:nx*16+8,y:ny*16+8};
+        diag.replans++;diag.lastPlan={reason:replanReason,from:{x:cur.player.x,y:cur.player.y},startTile:[sx,sy],nextTile:[nx,ny],goalTile:[goal%W,(goal/W)|0],pathTiles:path.length-1,liveHp:cur.player.hp,gridHere:describeCell(grid,sx,sy),gridNext:describeCell(grid,nx,ny),target:targetEntity&&{id:targetEntity.id,tx:targetEntity.tx,ty:targetEntity.ty}};
+        const before={x:cur.player.x,y:cur.player.y}, wpDiag={tile:[nx,ny],center:wp,attempts:[],start:before};let best=Infinity, stagnant=0, reached=false;
+        for(let tries=0;tries<24;tries++){
+          cur=await state();const dx=wp.x-cur.player.x,dy=wp.y-cur.player.y,remaining=Math.hypot(dx,dy);
+          if(remaining<3){reached=true;break;}
+          const keys=[];if(Math.abs(dx)>2)keys.push(dx>0?'d':'a');if(Math.abs(dy)>2)keys.push(dy>0?'s':'w');
+          const beforeAttempt={x:cur.player.x,y:cur.player.y,hp:cur.player.hp,keys:[...keys]};
+          for(const k of keys)await page.keyboard.down(k);await pause(115);for(const k of keys)await page.keyboard.up(k);
+          cur=await state();const moved=Math.hypot(cur.player.x-beforeAttempt.x,cur.player.y-beforeAttempt.y),left=Math.hypot(wp.x-cur.player.x,wp.y-cur.player.y);
+          wpDiag.attempts.push({try:tries+1,from:beforeAttempt,to:{x:cur.player.x,y:cur.player.y,hp:cur.player.hp},moved:+moved.toFixed(2),remaining:+left.toFixed(2),action:cur.player.action||null,creatures:cur.creatures.filter(m=>Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<100).map(m=>({id:m.id,type:m.type,state:m.state,x:m.x,y:m.y,hp:m.hp}))});
+          if(left<3){reached=true;break;}
+          if(moved<0.8)stagnant++;else stagnant=0;
+          if(left<best-1){best=left;stagnant=0;}
+          if(stagnant>=6)break;
+        }
+        wpDiag.end={x:cur.player.x,y:cur.player.y,hp:cur.player.hp,reached,reason:reached?'reached':stagnant>=6?'no-progress':'bounded-attempts',actualCell:describeCell(grid,Math.floor(cur.player.x/16),Math.floor(cur.player.y/16)),waypointCell:describeCell(grid,nx,ny),nearby:cur.creatures.filter(m=>Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<140).map(m=>({id:m.id,type:m.type,state:m.state,x:m.x,y:m.y,hp:m.hp}))};
+        diag.waypoints.push(wpDiag);
+        if(!reached){transientBlocked.add(next);replanReason=`${wpDiag.end.reason} at ${nx},${ny}; actual ${cur.player.x.toFixed(1)},${cur.player.y.toFixed(1)}`;continue;}
+        replanReason='waypoint-reached';
+        if(!defending){const beforeCombat=await state();await ensureVitals();await defendNearby();const afterCombat=await state();if(Math.hypot(afterCombat.player.x-beforeCombat.player.x,afterCombat.player.y-beforeCombat.player.y)>5||Math.abs(afterCombat.player.hp-beforeCombat.player.hp)>0){diag.threats.push({before:{x:beforeCombat.player.x,y:beforeCombat.player.y,hp:beforeCombat.player.hp},after:{x:afterCombat.player.x,y:afterCombat.player.y,hp:afterCombat.player.hp},nearby:afterCombat.creatures.filter(m=>Math.hypot(m.x-afterCombat.player.x,m.y-afterCombat.player.y)<140).map(m=>({id:m.id,type:m.type,state:m.state,x:m.x,y:m.y,hp:m.hp}))});replanReason='combat-or-knockback-live-position-replan';}}
       }
-      cur=await state();assert(Math.hypot(cur.player.x-wx,cur.player.y-wy)<=radius+22,`walk ended ${Math.hypot(cur.player.x-wx,cur.player.y-wy).toFixed(1)}px from target (${wx},${wy}); player=(${cur.player.x.toFixed(1)},${cur.player.y.toFixed(1)}) hp=${cur.player.hp} dead=${cur.player.dead}, routeTiles=${route.length-1}`);return cur;
+      cur=await state();diag.failed={player:cur.player,distance:Math.hypot(cur.player.x-wx,cur.player.y-wy),target:{x:wx,y:wy},replans:diag.replans};routeDiagnostics.push(diag);
+      await page.screenshot({path:path.join(out,`route-failure-${layoutId}-${Date.now()}.png`),animations:'disabled'}).catch(()=>{});
+      await fs.writeFile(path.join(out,`route-failure-${layoutId}.json`),JSON.stringify(diag,null,2)).catch(()=>{});
+      throw new Error(`bounded replan exhaustion near (${wx},${wy}); last=${JSON.stringify(diag.failed)}`);
     }
     const camera=p=>({x:Math.max(0,Math.min(W*16-640,p.x-320)),y:Math.max(0,Math.min(H*16-360,p.y-180))});
     async function aim(wx,wy){await pause(100);const cur=await state(),c=camera(cur.player);const x=Math.max(2,Math.min(638,wx-c.x)),y=Math.max(2,Math.min(358,wy-c.y));await page.mouse.move(Math.round(x*2),Math.round(y*2));await pause(120);}
-    async function useEntity(id){let cur=await state();let e=cur.entities.find(e=>e.id===id);assert(e,`entity ${id} missing`);await walkNear(e.x,e.y,20);await aim(e.x,e.y);await page.keyboard.press('e');await pause(220);return state();}
+    async function useEntity(id){let cur=await state();let e=cur.entities.find(e=>e.id===id);assert(e,`entity ${id} missing`);await walkNear(e.x,e.y,20);cur=await state();const d=Math.hypot(cur.player.x-e.x,cur.player.y-e.y);assert(d<=32,`ordinary-input route did not reach engine interaction radius (32px): ${e.label||e.id}, distance=${d.toFixed(1)}`);if(e.label==='Lighthouse Door')log.push(`shipping Lighthouse reachability: runtime blockGrid BFS + actual WASD reached door interaction radius at ${d.toFixed(1)}px (engine limit 32px)`);await aim(e.x,e.y);await page.keyboard.press('e');await pause(220);return state();}
     async function takeAll(){await page.getByRole('button',{name:'Take all',exact:true}).click();await pause(350);await page.keyboard.press('Escape');await pause(120);}
     const itemNames={berries:'Berries',water_flask:'Water Flask',bandage:'Bandage'};
     async function useInventoryItem(key){
@@ -177,6 +205,7 @@ try {
   await runLayout('dev_delta','Eastcove','Delta Ridge','dev-delta');
   log.push('route_choice=PASS: production used Fisher’s Point → existing Lighthouse; development used Eastcove → authored Delta Relay across the two-pass ridge; all traversal used actual WASD input (test-side BFS selected waypoints, not blind-discovery proof)');
   await fs.writeFile(path.join(out,'run-log.txt'),log.join('\n')+'\n');
+  await fs.writeFile(path.join(out,'route-diagnostics.json'),JSON.stringify(routeDiagnostics,null,2));
   console.log(log.join('\n'));
 } catch (error) {
   log.push(`FAIL: ${error?.stack || error}`);
@@ -184,6 +213,8 @@ try {
   const trace=String(error?.stack || error?.message || error).replace(/[\r\n]/g,' ').slice(0,3000);
   console.log(`::error title=Map-POI browser journey::${trace}`);
   await fs.writeFile(path.join(out,'run-log.txt'),log.join('\n')+'\n').catch(()=>{});
+  await page?.screenshot({path:path.join(out,'route-failure-final.png'),animations:'disabled'}).catch(()=>{});
+  await fs.writeFile(path.join(out,'route-diagnostics.json'),JSON.stringify(routeDiagnostics,null,2)).catch(()=>{});
   throw error;
 } finally {
   await browser.close().catch(()=>{}); await vite.close().catch(()=>{});
