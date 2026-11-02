@@ -138,7 +138,7 @@ try {
     async function defendNearby(){
       if(defending)return;defending=true;
       try{
-        const cur=await state();const threat=cur.creatures.filter(m=>!m.type.startsWith('elder_')&&m.state!=='sleep'&&Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<220).sort((a,b)=>Math.hypot(a.x-cur.player.x,a.y-cur.player.y)-Math.hypot(b.x-cur.player.x,b.y-cur.player.y))[0];
+        const cur=await state();const threat=cur.creatures.filter(m=>!m.type.startsWith('elder_')&&m.state!=='sleep'&&(()=>{const d=Math.hypot(m.x-cur.player.x,m.y-cur.player.y);return d<90||(['attack','tell'].includes(m.state)&&d<130);})()).sort((a,b)=>Math.hypot(a.x-cur.player.x,a.y-cur.player.y)-Math.hypot(b.x-cur.player.x,b.y-cur.player.y))[0];
         if(!threat||Date.now()-lastDodgeAt<900)return;lastDodgeAt=Date.now();
         await ensureVitals();const live=await state(),angle=Math.atan2(live.player.y-threat.y,live.player.x-threat.x),keys=[];
         if(Math.abs(Math.cos(angle))>0.25)keys.push(Math.cos(angle)>0?'d':'a');if(Math.abs(Math.sin(angle))>0.25)keys.push(Math.sin(angle)>0?'s':'w');
