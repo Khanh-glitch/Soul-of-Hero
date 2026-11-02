@@ -818,15 +818,18 @@ jobs:
           set -euo pipefail
           python3 -m pip install --quiet pillow
           python3 tools/arcana20_join/test_worldseed_tip_trace.py
-          python3 - "$GITHUB_SHA" <<'PY'
+          # Upload-artifact preserves paths beneath the common runner.temp
+          # ancestor: the manifest and release ZIPs are in different folders.
+          manifest=$(find deliverable/build -name arcana20_join_manifest.json -type f -print -quit)
+          checksums=$(find deliverable/build -name SHA256SUMS.txt -type f -print -quit)
+          test -s "$manifest" && test -s "$checksums"
+          python3 - "$manifest" "$GITHUB_SHA" <<'PY'
           import json, pathlib, sys
-          root=pathlib.Path('deliverable/build')
-          manifest=json.loads((root/'arcana20_join_manifest.json').read_text())
-          assert manifest['shas']['avfx']==sys.argv[1], manifest['shas']
-          for name in ('SOH_AVFX_EXPERIMENTAL_linux.zip','SOH_AVFX_EXPERIMENTAL_windows.zip','SHA256SUMS.txt'):
-              assert (root/name).is_file(), name
+          manifest=json.loads(pathlib.Path(sys.argv[1]).read_text())
+          assert manifest['shas']['avfx']==sys.argv[2], manifest['shas']
           PY
-          (cd deliverable/build && sha256sum -c SHA256SUMS.txt && unzip -tq SOH_AVFX_EXPERIMENTAL_linux.zip && unzip -tq SOH_AVFX_EXPERIMENTAL_windows.zip)
+          release_dir=$(dirname "$checksums")
+          (cd "$release_dir" && test -s SOH_AVFX_EXPERIMENTAL_linux.zip && test -s SOH_AVFX_EXPERIMENTAL_windows.zip && sha256sum -c SHA256SUMS.txt && unzip -tq SOH_AVFX_EXPERIMENTAL_linux.zip && unzip -tq SOH_AVFX_EXPERIMENTAL_windows.zip)
           for id in F01 F09 F11 F16 F20; do
             for light in normal dimmed; do
               dir="deliverable/fusion-full-cast/r20-${id}-${light}-lock0"

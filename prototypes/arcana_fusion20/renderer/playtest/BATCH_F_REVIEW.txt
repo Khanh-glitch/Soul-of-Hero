@@ -5,6 +5,7 @@ comment 6570027147), không phải duyệt thẩm mỹ cuối, bản phát hành
 PLAYTEST_READY. Chỉ tuyên bố BATCH_F_5_REVIEW_CANDIDATES_COMPLETE_WITH_CT_GATES
 sau khi gói cùng SHA và tất cả kiểm tra kỹ thuật hoàn tất.
 Mở HUONG_DAN.txt để vào Overworld và dùng 20 ô kỹ năng; #05 giữ cả A/B.
+SHA chạy và manifest chủ sở hữu nằm trong gói, không phải giả định tích hợp mới.
 Bảy lựa chọn Batch S giữ nguyên; xem BATCH_S_REVIEW.txt về trạng thái đã duyệt.
 
 Kỹ năng | Vai trò nguồn | Trạng thái thực tế
