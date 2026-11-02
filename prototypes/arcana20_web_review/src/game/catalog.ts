@@ -1,3 +1,4 @@
+import { ARCANA_CORES } from './arcana20';
 // Runtime catalogs. Numbers = TUNABLE_BALANCE; mechanisms flagged where PROPOSED_MECHANISM.
 export type Mat = 'wood' | 'stone' | 'ore' | 'plant' | 'scrap';
 export interface ItemDef {
@@ -5,7 +6,7 @@ export interface ItemDef {
   power?: Partial<Record<Mat, number>>; dmg?: number; reach?: number; arc?: number; swing?: number; dur?: number;
   food?: { hunger?: number; thirst?: number; hp?: number; warmth?: number; rad?: number; stamina?: number };
   slot?: 'head' | 'body' | 'back'; armor?: number; cold?: number; mask?: boolean; fuel?: number; charge?: number;
-  core?: string; specimen?: string; place?: string; light?: number; ranged?: string;
+  core?: string; arcanaId?: number; specimen?: string; place?: string; light?: number; ranged?: string;
 }
 const I = (d: ItemDef) => d;
 export const ITEMS: Record<string, ItemDef> = {
@@ -86,6 +87,13 @@ export const ITEMS: Record<string, ItemDef> = {
   stone_tide: I({ name: 'Stone of Tides', cat: 'stone', icon: 'relic', c1: '#1e5a9a', c2: '#80e0ff', w: 1, max: 1, desc: 'Taken from the Tide Serpent.' }),
   stone_rust: I({ name: 'Stone of Rust', cat: 'stone', icon: 'relic', c1: '#8a4a1e', c2: '#f0a050', w: 1, max: 1, desc: 'Taken from the Rust Colossus.' }),
 };
+
+
+// Prototype-only ARCANA20 item registration. No production/reward drop routes.
+// These definitions are not visual parity or creator-approved combat balance.
+for (const core of ARCANA_CORES) {
+  ITEMS[core.itemKey] = I({name: `${String(core.id).padStart(2, '0')} ${core.name} Core`, cat:'core', icon:'core', c1:core.colors[0], c2:core.colors[1], w:0.3, max:1, core:`arcana_${core.id}`, arcanaId:core.id, charge:3, desc:'Experimental ARCANA Core. Finite charge; combat tuning not final.'});
+}
 
 // ---------- Sources (K3) ----------
 export interface SourceDef { name: string; mat: Mat; hp: number; stock: number; yields: [string, number][]; bonus?: [string, number][]; block: boolean; regrow?: number; art: string; tall?: boolean }

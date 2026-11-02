@@ -1,6 +1,7 @@
 // Deterministic-ish real-time simulation layered on the engine authority. All state mutation goes through engine helpers.
 import { BAL, TILE, WW, WH, T, rngNext, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity } from './core';
 import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES } from './catalog';
+import { planArcana } from './arcana20';
 import { getWorld } from './world';
 import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, bagContainers, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones } from './engine';
 
@@ -8,7 +9,7 @@ export interface Input { up: boolean; down: boolean; left: boolean; right: boole
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
 const fx = (type: string, d: any = {}) => { if (FX.length < 400) FX.push({ type, ...d }); };
 export interface Proj { x: number; y: number; vx: number; vy: number; life: number; dmg: number; from: 'player' | 'enemy'; kind: string; r: number; delay?: number; homing?: number; owner?: string }
-export interface Haz { kind: 'circle' | 'line' | 'ring' | 'wave' | 'sweep' | 'pool'; x: number; y: number; r?: number; angle?: number; len?: number; w?: number; t: number; tell: number; dur: number; dmg: number; style: string; effect?: string; hit?: boolean; tickAcc?: number; a0?: number; a1?: number; done?: boolean; owner?: string; elder?: string }
+export interface Haz { kind: 'circle' | 'line' | 'ring' | 'wave' | 'sweep' | 'pool'; x: number; y: number; r?: number; angle?: number; len?: number; w?: number; t: number; tell: number; dur: number; dmg: number; style: string; effect?: string; hit?: boolean; tickAcc?: number; a0?: number; a1?: number; done?: boolean; owner?: string; elder?: string; arcanaId?: number; runId?: string }
 export const PROJ: Proj[] = [];
 export const HAZ: Haz[] = [];
 let traceAcc = 0, slowTimer = 0, rootTimer = 0, shelterAcc = 0, fireAcc = 0, lightningAcc = 0, discoverAcc = 0;
@@ -106,11 +107,23 @@ export function decayTraces(r: RunState, dtMs: number, weather: string) {
 }
 
 // ---------- core effects (C03: charge debited at commit, not windup) ----------
-function commitCore(gs: GameState, now: number, slot: number, a: number) {
+function commitCore(gs: GameState, now: number, slot: number, a: number, aimX: number, aimY: number) {
   const r = gs.run!; const p = r.player; const s = C(r, 'inv').slots[slot];
   if (!s || !ITEMS[s.key].core || (s.charge ?? 0) <= 0) { fx('fizzle', { x: p.x, y: p.y }); return; }
   s.charge!--; receipt(r, now, 'core.commit', `${s.key} charge→${s.charge}`); award(gs, 'first_core', now);
-  const core = ITEMS[s.key].core; const hx = p.x + Math.cos(a) * 10, hy = p.y + Math.sin(a) * 10;
+  const item = ITEMS[s.key]; const core = item.core; const hx = p.x + Math.cos(a) * 10, hy = p.y + Math.sin(a) * 10;
+  if (item.arcanaId !== undefined) {
+    // Actual player-owned hit geometry; P0 graphics are not ported yet.
+    // The normal game's existing damageCreature path resolves real collisions.
+    for (const impact of planArcana(item.arcanaId, p.x, p.y, a, aimX, aimY)) {
+      HAZ.push({ kind:impact.kind, x:impact.x, y:impact.y, r:impact.r, angle:impact.angle, len:impact.len, w:impact.w,
+        t:0, tell:impact.delayMs, dur:impact.durationMs, dmg:impact.damage,
+        style:'arcana_pending_visual', effect:impact.slow ? 'slowm' : undefined,
+        owner:'player', arcanaId:item.arcanaId, runId:r.id });
+    }
+    fx('arcana20_cast', { id:item.arcanaId, x:p.x, y:p.y, a, aimX, aimY });
+    return;
+  }
   fx('cast', { x: hx, y: hy, core, a });
   if (core === 'fire') PROJ.push({ x: hx, y: hy, vx: Math.cos(a) * 190, vy: Math.sin(a) * 190, life: 0.95, dmg: 45, from: 'player', kind: 'fireball', r: 5 });
   if (core === 'earth') { for (let k = 1; k <= 8; k++) HAZ.push({ kind: 'circle', x: p.x + Math.cos(a) * k * 15, y: p.y + Math.sin(a) * k * 15, r: 9, t: 0, tell: k * 55, dur: 120, dmg: 32, style: 'spike', effect: 'quake', owner: 'player' }); fx('shake', { m: 3 }); }
@@ -158,7 +171,7 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   if (a2) {
     a2.t += dtMs;
     if (a2.kind === 'swing') { speedMul = 0.45; if (!a2.done && a2.t >= (a2.contact || 0)) { a2.done = true; resolveSwing(gs, now, a2.slot ?? -1, a2.angle); } }
-    if (a2.kind === 'cast') { speedMul = 0.3; a2.angle = p.aim; if (!a2.done && a2.t >= (a2.contact || 0)) { a2.done = true; commitCore(gs, now, a2.slot!, p.aim); } }
+    if (a2.kind === 'cast') { speedMul = 0.3; a2.angle = p.aim; if (!a2.done && a2.t >= (a2.contact || 0)) { a2.done = true; commitCore(gs, now, a2.slot!, p.aim, inp.mx, inp.my); } }
     if (a2.kind === 'hurt') speedMul = 0.6;
     if (a2.t >= a2.dur) p.action = null;
   }
@@ -438,7 +451,7 @@ function inHaz(h: Haz, x: number, y: number) {
 function tickHaz(gs: GameState, dtMs: number, now: number) {
   const r = gs.run!; const p = r.player;
   for (let i = HAZ.length - 1; i >= 0; i--) {
-    const h = HAZ[i]; h.t += dtMs; if (h.t < h.tell) continue;
+    const h = HAZ[i]; if (h.runId && h.runId !== r.id) { HAZ.splice(i, 1); continue; } h.t += dtMs; if (h.t < h.tell) continue;
     const first = !h.done; h.done = true;
     if (first) onHazActivate(gs, h, now);
     if (h.owner === 'player') { if (first || h.kind === 'ring') for (const m of r.creatures) { if (m.state === 'dead' || (h as any)['h_' + m.id]) continue; if (inHaz(h, m.x, m.y)) { (h as any)['h_' + m.id] = 1; damageCreature(gs, m, h.dmg, Math.atan2(m.y - h.y, m.x - h.x), now, 90); if (h.effect === 'slowm') m.slow = 3000; } } }
@@ -452,7 +465,7 @@ function tickHaz(gs: GameState, dtMs: number, now: number) {
 }
 function onHazActivate(gs: GameState, h: Haz, now: number) {
   const r = gs.run!;
-  fx('hazfire', { x: h.x, y: h.y, style: h.style, kind: h.kind, r: h.r, angle: h.angle, len: h.len });
+  if (h.arcanaId === undefined) fx('hazfire', { x: h.x, y: h.y, style: h.style, kind: h.kind, r: h.r, angle: h.angle, len: h.len });
   if (h.effect === 'quake') { const res = harvestHit(gs, tileOf(h.x), tileOf(h.y), { stone: 6, ore: 5 }, now, h.x, h.y); if (res.result === 'yield') fx('chip', { x: h.x, y: h.y, mat: res.mat }); }
   if (h.effect === 'ignite' || h.effect === 'burnline') { if (h.kind === 'line') { for (let d = 10; d < h.len!; d += 14) { const x = h.x + Math.cos(h.angle!) * d, y = h.y + Math.sin(h.angle!) * d; ignite(gs, tileOf(x), tileOf(y), now); } HAZ.push({ ...h, t: 0, tell: 0, dur: 3000, style: 'burn', effect: undefined, done: false, hit: false, dmg: 10 }); } else ignite(gs, tileOf(h.x), tileOf(h.y), now); }
   if (h.effect === 'pool') HAZ.push({ kind: 'pool', x: h.x, y: h.y, r: h.r, t: 0, tell: 0, dur: 6500, dmg: 5, style: 'pool', owner: h.owner, done: false });
