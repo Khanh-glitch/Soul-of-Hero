@@ -130,17 +130,16 @@ class SporeNebulaR:
     var _colonies: Array = []
     var _links: Array = []
     # Each link grows from an already-founded colony; birth happens at the
-    # first incoming link arrival. Later links are meaningful reconnections.
+    # first incoming link arrival; the five links form a causal branching tree.
     var _births := [0.8, 2.2, 3.0, 3.6, 4.2, 2.9]
-    var _link_times := [[1.2, 2.2], [2.2, 2.9], [2.9, 3.6], [3.6, 4.2], [2.2, 3.0], [3.0, 4.2], [2.9, 3.4]]
+    var _link_times := [[1.2, 2.2], [2.2, 2.9], [2.9, 3.6], [3.6, 4.2], [2.2, 3.0]]
     var _ps: ADraw.APool
     var art_direction := "A"
     func setup() -> void:
         art_direction = "B" if OS.get_environment("ARCANA20_ART14") == "B" else "A"
-        var rng := AMath.ARng.new(14141)
         _ps = ADraw.APool.new()
-        _colonies = [CASTER + Vector2(16, -6), Vector2(176, 96), Vector2(232, 142), Vector2(292, 92), Vector2(330, 146), Vector2(206, 66)]
-        _links = [[0, 1], [1, 5], [5, 3], [3, 4], [1, 2], [2, 4], [5, 2]]
+        _colonies = [CASTER + Vector2(16, -6), Vector2(171, 120), Vector2(224, 153), Vector2(270, 92), Vector2(327, 137), Vector2(215, 79)]
+        _links = [[0, 1], [1, 5], [5, 3], [3, 4], [1, 2]]
     func authored_events() -> Array:
         var ev: Array = [{"t": 0.8, "kind": "seed_plant", "pos_local": _colonies[0], "emitted": false}]
         for i in range(1, _colonies.size()):
@@ -155,68 +154,43 @@ class SporeNebulaR:
                 var c: Vector2 = _colonies[rng.intf(0, _colonies.size() - 1)]
                 _ps.spawn({"x": c.x, "y": c.y, "vx": rng.rangef(-16, 22), "vy": rng.rangef(-30, -8), "life": rng.rangef(1.0, 2.2), "size": rng.rangef(0.7, 1.6), "k": 0.9, "seed": rng.next() * 80.0})
         _ps.step(dt, 0.0)
-    func _draw_cap(fb: AFramebuffer, origin: Vector2, width: float, height: float, opacity: float) -> void:
-        # Deliberately broad, low dome + pale stipe and visible underside.
-        # The previous all-green tapered canopy read as trees at 1x. These
-        # are opaque source shapes, not bloom or an RGB transparency key.
-        var neck := origin + Vector2(0, -height * 0.65)
-        ADraw.poly_fill_solid(fb, [origin + Vector2(-width * 0.25, 0), origin + Vector2(width * 0.25, 0),
-            neck + Vector2(width * 0.18, 0), neck + Vector2(-width * 0.18, 0)], Vector3(0.56, 0.48, 0.32), true, opacity)
-        ADraw.line(fb, origin.x - width * 0.11, origin.y - height * 0.06,
-            neck.x - width * 0.09, neck.y, Vector3(0.86, 0.75, 0.53), opacity * 0.7)
-        # Decouple cap depth from stipe height. Long stipes previously made
-        # narrow pointed cones; a broad asymmetric dome and shallow gills read
-        # as fungal fruiting bodies at actual overworld scale.
-        # Seeded cap profiles vary between convex and low, uneven forms;
-        # their stipes remain attached to their actual local colony bed.
-        var shape := AMath.hash2(floor(origin.x), floor(origin.y))
-        var depth := minf(height * 0.70, width * (0.95 + shape * 0.40))
-        var cap := neck + Vector2(0, -depth * 0.12)
-        var skew := (shape - 0.5) * width * 0.45
-        ADraw.poly_fill_solid(fb, [cap + Vector2(-width, 0), cap + Vector2(-width * 0.90, -depth * 0.40),
-            cap + Vector2(-width * 0.55 + skew, -depth * 0.86), cap + Vector2(-width * 0.12 + skew, -depth),
-            cap + Vector2(width * 0.35 + skew, -depth * 0.84), cap + Vector2(width * 0.78, -depth * 0.52),
-            cap + Vector2(width, 0)], Vector3(0.36, 0.16, 0.38), true, opacity)
-        var gill := minf(height * 0.18, width * 0.24)
-        ADraw.poly_fill_solid(fb, [cap + Vector2(-width, 0), cap + Vector2(-width * 0.72, gill * 0.7),
-            cap + Vector2(0, gill), cap + Vector2(width * 0.72, gill * 0.7), cap + Vector2(width, 0)], Vector3(0.82, 0.67, 0.40), true, opacity * 0.94)
-        # Broken, curved lip instead of a single bright horizontal slat.
-        ADraw.line(fb, cap.x - width, cap.y, cap.x - width * 0.34, cap.y + gill * 0.43, Vector3(0.72, 0.48, 0.43), opacity * 0.8)
-        ADraw.line(fb, cap.x - width * 0.18, cap.y + gill * 0.65, cap.x + width * 0.42, cap.y + gill * 0.45, Vector3(0.82, 0.58, 0.48), opacity * 0.8)
-        ADraw.line(fb, cap.x + width * 0.48, cap.y + gill * 0.42, cap.x + width, cap.y, Vector3(0.72, 0.48, 0.43), opacity * 0.8)
-        for side in [-0.7, -0.35, 0.0, 0.35, 0.7]:
-            var offset := float(side)
-            ADraw.line(fb, cap.x + offset * width * 0.12, cap.y + gill * 0.1,
-                cap.x + offset * width, cap.y + gill * 0.65, Vector3(1.0, 0.88, 0.59), opacity * 0.8)
-        for spot in [-0.48, 0.0, 0.43]:
-            var offset := float(spot)
-            fb.add_px(roundi(cap.x + width * offset + skew * 0.4), roundi(cap.y - depth * (0.44 + 0.14 * (1.0 - absf(offset)))),
-                0.95, 0.58, 1.1, opacity * 0.8)
+    func _draw_fruiting_cup(fb: AFramebuffer, base: Vector2, width: float, height: float, tilt: float, seed: float, opacity: float) -> void:
+        # An uneven hollow cup rises from its own bed; the open, lobed rim
+        # and attached stalk are a different silhouette from domes/shelves.
+        # Geometry owns coverage even for the dark interior of the cup.
+        var axis := Vector2(sin(tilt), -cos(tilt))
+        var side := Vector2(-axis.y, axis.x)
+        var lip := base + axis * height
+        var body := [base - side * width * 0.18,
+            base + axis * height * 0.42 - side * width * 0.28,
+            lip - axis * height * 0.27 - side * width * 0.82,
+            lip + axis * height * 0.04 - side * width,
+            lip + axis * height * 0.12 - side * width * 0.54,
+            lip - axis * height * 0.03 - side * width * 0.18,
+            lip + axis * height * 0.08 + side * width * 0.22,
+            lip - axis * height * 0.04 + side * width * 0.62,
+            lip + axis * height * 0.09 + side * width,
+            lip - axis * height * 0.30 + side * width * 0.76,
+            base + axis * height * 0.40 + side * width * 0.24,
+            base + side * width * 0.18]
+        ADraw.poly_fill(fb, body,
+            func(x: int, y: int) -> Variant:
+                var grain := AMath.hash2(floor(float(x) * 0.45), floor(float(y) * 0.45) + seed)
+                return Vector3(0.25 + grain * 0.08, 0.14 + grain * 0.06, 0.20 + grain * 0.08), true, opacity)
+        var hollow := [lip - side * width * 0.84, lip + axis * height * 0.06 - side * width * 0.42,
+            lip - axis * height * 0.03, lip + side * width * 0.54,
+            lip + side * width * 0.82, lip - axis * height * 0.19 + side * width * 0.38,
+            lip - axis * height * 0.25 - side * width * 0.24]
+        ADraw.poly_fill_solid(fb, hollow, Vector3(0.10, 0.045, 0.12), true, opacity * 0.88)
+        for i in range(hollow.size()):
+            var a: Vector2 = hollow[i]
+            var b: Vector2 = hollow[(i + 1) % hollow.size()]
+            ADraw.streak(fb, a.x, a.y, b.x, b.y, 0.45, 0.35, Vector3(0.72, 0.48, 0.55), opacity * 0.60)
+        for spot in range(3):
+            var shift := (AMath.hash2(seed + float(spot), 70.0) - 0.5) * width
+            var p := lip - axis * height * (0.42 + float(spot) * 0.08) + side * shift
+            ADraw.disc(fb, p.x, p.y, 0.6 + AMath.hash2(seed, float(spot)) * 0.7, Vector3(0.55, 0.75, 0.41), opacity * 0.5)
 
-    func _draw_shelves(fb: AFramebuffer, c: Vector2, growth: float, fade: float, seed: int) -> void:
-        # A low overlapping shelf colony is a different morphology from the
-        # upright mushrooms, attached directly to the local mycelium bed.
-        # A single irregular woody fungal mound physically supports the
-        # shelves; previously they read as detached magenta discs.
-        var mound := [c + Vector2(-12, 5) * growth, c + Vector2(-9, -3) * growth,
-            c + Vector2(-3, -11) * growth, c + Vector2(5, -12) * growth,
-            c + Vector2(10, -4) * growth, c + Vector2(14, 5) * growth,
-            c + Vector2(2, 8) * growth]
-        ADraw.poly_fill_solid(fb, mound, Vector3(0.25, 0.20, 0.16), true, fade * growth * 0.9)
-        for shelf in range(3):
-            var r := AMath.hash2(float(seed * 9 + shelf), 82.0)
-            var center := c + Vector2(float(shelf - 1) * 8.0, -float(shelf) * 3.0) * growth
-            var width := (10.0 + 8.0 * r) * growth
-            var height := (4.0 + 3.0 * (1.0 - r)) * growth
-            var face := [center + Vector2(-width, 1.0), center + Vector2(-width * 0.7, -height * 0.8),
-                center + Vector2(-width * 0.1, -height * 1.2), center + Vector2(width * 0.55, -height * 0.7),
-                center + Vector2(width, -1.0), center + Vector2(width * 0.65, height * 0.5),
-                center + Vector2(-width * 0.2, height * 0.75)]
-            ADraw.poly_fill_solid(fb, face, Vector3(0.35 + r * 0.12, 0.16, 0.34 + r * 0.10), true, fade * growth)
-            ADraw.streak(fb, (face[0] as Vector2).x, (face[0] as Vector2).y, (face[6] as Vector2).x, (face[6] as Vector2).y,
-                0.8, 0.8, Vector3(0.85, 0.65, 0.55), fade * growth * 0.7)
-            ADraw.streak(fb, (face[6] as Vector2).x, (face[6] as Vector2).y, (face[5] as Vector2).x, (face[5] as Vector2).y,
-                0.8, 0.6, Vector3(0.85, 0.65, 0.55), fade * growth * 0.7)
 
     func _hypha_point(a: Vector2, b: Vector2, link: int, s: float) -> Vector2:
         # Endpoints remain the authored colony anchors. A deterministic
@@ -244,12 +218,14 @@ class SporeNebulaR:
             for k in range(13):
                 var s := u * float(k) / 12.0
                 pts.append(_hypha_point(a, b, i, s))
-            # Fine living thread rather than thick electric-looking cables.
+            # A covered, living mycelial strand physically connects the
+            # beds. Its growing head and asymmetrical fuzzy sides replace
+            # the former diagram-like set of thin luminous graph edges.
             ADraw.ribbon(fb, pts,
-                func(_s: float, _i: int) -> float: return 0.9,
-                func(_s: float, _i: int, edge: float) -> Variant:
-                    if edge > 0.95: return null
-                    return Vector3(0.24, 0.58, 0.42) * fade * 0.55)
+                func(s: float, _i: int) -> float: return 2.0 + 2.1 * AMath.hash2(floor(s * 11.0), float(i) + 22.0),
+                func(s: float, _i: int, edge: float) -> Variant:
+                    var grain := AMath.hash2(floor(s * 37.0), floor(edge * 7.0) + float(i) * 9.0)
+                    return Vector3(0.09 + grain * 0.07, 0.18 + grain * 0.10, 0.09 + grain * 0.06), true, fade * 0.75)
             # Fine, asymmetrical hyphae bud progressively from the same
             # growing front. They branch from the real link geometry rather
             # than appearing as a simultaneous geometric lattice. The
@@ -303,38 +279,21 @@ class SporeNebulaR:
                 func(x: int, y: int) -> Variant:
                     var grain := AMath.hash2(floor(float(x) * 0.45), floor(float(y) * 0.44) + float(i))
                     return Vector3(0.035 + grain * 0.06, 0.12 + grain * 0.08, 0.06 + grain * 0.05), true, k * 0.56)
-            var variation := 0.65 + 0.65 * AMath.hash2(float(i), 58.0)
-            if art_direction == "A":
-                # Low, broad fruiting caps share one ground colony. The
-                # prior tall stacked silhouettes read as leafy little trees
-                # in the real overworld. Keep distinct short pale stipes and
-                # overlapping domes rather than a branching canopy.
-                # Separate staggered domes: the previous broad overlapping
-                # caps collapsed into one flat purple platform with three legs.
-                var middle := AMath.ease_out(AMath.seg(t, float(_births[i]), float(_births[i]) + 0.72), 2.0)
-                var left := AMath.ease_out(AMath.seg(t, float(_births[i]) + 0.12, float(_births[i]) + 0.86), 2.0)
-                var right := AMath.ease_out(AMath.seg(t, float(_births[i]) + 0.27, float(_births[i]) + 1.0), 2.0)
-                if i % 3 == 0:
-                    # A broad low shelf with young buds on its lee side.
-                    _draw_shelves(fb, c, middle, fade, i)
-                    _draw_cap(fb, c + Vector2(14, 4) * right, 4.5 * right * pul, 6.0 * right, fade * right)
-                elif i % 3 == 1:
-                    # Tall central fruit and a pair of small staggered caps.
-                    _draw_cap(fb, c + Vector2(-12, 2) * left, 6.0 * left * pul * variation, 10.0 * left * (2.0 - variation), fade * left)
-                    _draw_cap(fb, c + Vector2(0, -3) * middle, 10.0 * middle * pul * variation, 25.0 * middle * (2.0 - variation), fade * middle)
-                    _draw_cap(fb, c + Vector2(11, 3) * right, 7.0 * right * pul * variation, 12.0 * right * (2.0 - variation), fade * right)
-                else:
-                    # A close ring of four small emerging fruiting bodies.
-                    for bud in range(4):
-                        var growth: float = [left, middle, right, middle][bud]
-                        var size := 5.0 + float(bud % 3) * 1.5
-                        _draw_cap(fb, c + Vector2(float(bud - 2) * 7.0, float(bud % 2) * 4.0) * growth, size * growth * pul, (8.0 + size * 0.7) * growth, fade * growth)
-            else:
-                # Alternate: one upright, hollow-looking fruiting body with
-                # a scalloped mouth; not simply a palette variation.
-                _draw_cap(fb, c, 23.0 * spread * pul, 31.0 * spread, k)
-                ADraw.arc_px(fb, c.x, c.y - 31.0 * spread, 13.0 * spread,
-                    0.1, PI - 0.1, AMath.R("bio", 0.8), k * 0.8, 1.6)
+            # Each bed produces an uneven cluster of attached hollow cups,
+            # with different heights, tilts, birth order and sizes. No
+            # independent graphic cap or stacked shelf can float off-bed.
+            var count := 2 + i % 3
+            for fruit in range(count):
+                var seed := float(i * 19 + fruit * 7)
+                var delay := float(fruit) * 0.13
+                var grow := AMath.ease_out(AMath.seg(t, float(_births[i]) + delay, float(_births[i]) + delay + 0.78), 2.0)
+                if grow <= 0.0: continue
+                var offset := Vector2((float(fruit) - float(count - 1) * 0.5) * 8.0,
+                    (AMath.hash2(seed, 52.0) - 0.5) * 5.0) * spread
+                var w := (4.5 + 4.0 * AMath.hash2(seed, 53.0)) * grow * pul
+                var h := (12.0 + 15.0 * AMath.hash2(seed, 54.0)) * grow
+                var tilt := (AMath.hash2(seed, 55.0) - 0.5) * 0.55
+                _draw_fruiting_cup(fb, c + offset, w, h, tilt, seed, fade * grow)
             # Directional reproductive bursts start at each colony, not at
             # random battlefield locations. Their two-part flight and fade
             # remain visible through the biological OUT.
