@@ -68,7 +68,7 @@ class World:
     def _deck_mask(self):
         d = np.zeros((self.CH, self.CW), bool)
         for b in self.m["bridges"]:
-            cx, cy = b["world_px"]
+            cx, cy = b.get("deck_px") or b["world_px"]   # deck centre, not the GOLD marker
             ang = b["bearing_rad"]
             half_len = b["span_units"] * self.U / 2
             half_w = b["deck_width_units"] * self.U / 2 + 2
@@ -79,15 +79,16 @@ class World:
                 for xx in range(max(0, cx_i - r - 3), min(self.CW, cx_i + r + 4)):
                     # coverage of this 16 px cell by the deck, the same rule the compiler uses
                     hit = 0
-                    for sy in (2, 6, 10, 14):
-                        for sx in (2, 6, 10, 14):
+                    for sy in range(0, self.cells, 2):
+                        for sx in range(0, self.cells, 2):
                             px, py = xx * self.cells + sx, yy * self.cells + sy
                             dx, dy = px - cx, py - cy
                             u = dx * ca + dy * sa
                             vv = -dx * sa + dy * ca
                             if abs(u) <= half_len and abs(vv) <= half_w:
                                 hit += 1
-                    if hit >= 2:          # >= 12.5 % of the cell is deck, as in collision
+                    # the exact rule the compiler's collision uses: >= 10 % deck coverage
+                    if hit / ((self.cells // 2) ** 2) >= 0.10:
                         d[yy, xx] = True
         return d
 
@@ -276,9 +277,11 @@ def main():
 
     # ---------- A5 bridges ----------
     cross_fail, deck_fail, rail_fail, proof = [], [], [], []
+    bypass_class = {}
+    class_default = "no off-deck route inside the corridor (bridge is the only crossing)"
     for b in meta["bridges"]:
         sid = b["source_id"]
-        cx, cy = b["world_px"]
+        cx, cy = b.get("deck_px") or b["world_px"]
         ang = b["bearing_rad"]
         la, lb = b.get("landing_a_px"), b.get("landing_b_px")
         if not la or not lb:
@@ -360,6 +363,21 @@ def main():
                 vv = -dx * sa + dy * ca
                 if abs(u) <= half_len + 2.5 * W.cells and abs(vv) <= half_w_t:
                     tight[yy, xx] = True
+        ford_cells = np.zeros_like(W.walk)
+        for f in meta.get("fords", []):
+            fc = W.cell_of(f[0] * U, f[1] * U)
+            ford_cells[max(0, fc[1] - 2):fc[1] + 3, max(0, fc[0] - 2):fc[0] + 3] = True
+        allow_land = W.walk & tight & ~W.deck & ~W.water        # dry land only
+        land_route = W.path_cells(a_cell, b_cell, allow_land) is not None
+        allow_ford = W.walk & tight & ~W.deck                   # land + authored ford
+        ford_route = (not land_route) and W.path_cells(a_cell, b_cell, allow_ford) is not None
+        if land_route:
+            bypass_class[sid] = "land-alternative (legitimate, no water crossed)"
+        elif ford_route:
+            bypass_class[sid] = "ford (authored GOLD road crossing)"
+        other = W.walk & tight & ~W.deck & ~allow_land & ~ford_cells
+        if (not land_route) and (not ford_route) and W.path_cells(a_cell, b_cell, other) is not None:
+            bypass_class[sid] = "DEFECT: off-deck wet traversal"
         allow_nod = W.walk & tight & ~W.deck
         for f in meta.get("fords", []):
             fx, fy = f[0] * U, f[1] * U
@@ -369,6 +387,7 @@ def main():
             allow_nod[max(0, c_[1] - 1):c_[1] + 2, max(0, c_[0] - 1):c_[0] + 2] = True
         if W.path_cells(a_cell, b_cell, allow_nod) is not None:
             rail_fail.append(f"{sid}:crossing-possible-without-the-deck")
+            bypass_class.setdefault(sid, "unclassified route present")
     check("A5", "bridge_traversal_over_deck", not cross_fail,
           f"{len(meta['bridges']) - len(cross_fail)}/{len(meta['bridges'])} bridges traverse over their deck",
           offenders=cross_fail)
@@ -471,6 +490,25 @@ def main():
                 break
         if not ok:
             unreachable.append(p["source_id"])
+    entrances = {}
+    for p in land_pois:
+        x, y = p["world_px"]
+        best = None
+        for d in range(0, 4):
+            for dy in range(-d, d + 1):
+                for dx in range(-d, d + 1):
+                    cx, cy = int((x + dx * W.cells) // W.cells), int((y + dy * W.cells) // W.cells)
+                    if 0 <= cx < W.CW and 0 <= cy < W.CH and reach_all[cy, cx]:
+                        best = [cx * W.cells + 8, cy * W.cells + 8]
+                        break
+                if best:
+                    break
+            if best:
+                break
+        entrances[p["source_id"]] = best
+    check("A7", "land_poi_entrance_anchor", all(entrances.values()),
+          f"{sum(1 for v_ in entrances.values() if v_)}/{len(land_pois)} land POIs have a reachable entrance cell",
+          offenders=[k for k, mv in entrances.items() if not mv])
     check("A7", "land_poi_reachable_on_foot", not unreachable,
           f"{len(land_pois) - len(unreachable)}/{len(land_pois)} non-ferry POIs reachable from a spawn",
           offenders=unreachable)
@@ -510,8 +548,11 @@ def main():
            "world_meta_sha256": hashlib.sha256(open(META, "rb").read()).hexdigest(),
            "checks": results, "passed": len(mandatory) - len(failed),
            "failed": len(failed), "all_passed": not failed,
-           "bridge_proof": proof,
-           "poi_access": access,
+           "bridge_proof": proof, "bridge_bypass_class": bypass_class,
+           "code_sha": os.environ.get("GITHUB_SHA") or os.popen("git rev-parse HEAD").read().strip(),
+           "world_png_sha256": (hashlib.sha256(open(os.path.join(REPO, "out", "world.png"), "rb").read()).hexdigest()
+                                if os.path.exists(os.path.join(REPO, "out", "world.png")) else None),
+           "poi_access": access, "poi_entrance_anchor_px": entrances,
            "spawn_routes": route_report,
            "environment": "sandbox CPU (numpy/Pillow); geometry and movement only"}
     os.makedirs(os.path.dirname(args.json), exist_ok=True)

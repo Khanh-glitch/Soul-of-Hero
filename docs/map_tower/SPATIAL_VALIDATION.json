@@ -1,7 +1,7 @@
 {
  "schema": "soh.veyra.spatial_validation.v2",
  "gold_sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
- "world_meta_sha256": "2b74f0baa6e174e5bfffb2b3d674f9464bb9ff7dfe035d36def1fb3371e774ee",
+ "world_meta_sha256": "5145db6048f6b5cacd84f0c2dccb8a7c78e3366cbce5fab9558d74c8bbf9933c",
  "checks": [
   {
    "gate": "A1",
@@ -82,12 +82,9 @@
   {
    "gate": "A5",
    "name": "bridge_traversal_over_deck",
-   "passed": false,
+   "passed": true,
    "mandatory": true,
-   "detail": "11/12 bridges traverse over their deck",
-   "offenders": [
-    "br_b:9-water-cells-off-deck"
-   ]
+   "detail": "12/12 bridges traverse over their deck"
   },
   {
    "gate": "A5",
@@ -125,6 +122,13 @@
   },
   {
    "gate": "A7",
+   "name": "land_poi_entrance_anchor",
+   "passed": true,
+   "mandatory": true,
+   "detail": "58/58 land POIs have a reachable entrance cell"
+  },
+  {
+   "gate": "A7",
    "name": "land_poi_reachable_on_foot",
    "passed": true,
    "mandatory": true,
@@ -152,30 +156,30 @@
    "detail": [
     {
      "spawn": "sp_west",
-     "pois_reached": 56,
-     "cells": 48068
+     "pois_reached": 52,
+     "cells": 47911
     },
     {
      "spawn": "sp_lake",
-     "pois_reached": 56,
-     "cells": 48068
+     "pois_reached": 52,
+     "cells": 47911
     },
     {
      "spawn": "sp_hook",
-     "pois_reached": 56,
-     "cells": 48068
+     "pois_reached": 52,
+     "cells": 47911
     },
     {
      "spawn": "sp_gulf",
-     "pois_reached": 56,
-     "cells": 48068
+     "pois_reached": 52,
+     "cells": 47911
     }
    ]
   }
  ],
- "passed": 15,
- "failed": 1,
- "all_passed": false,
+ "passed": 17,
+ "failed": 0,
+ "all_passed": true,
  "bridge_proof": [
   {
    "bridge": "br_0",
@@ -186,8 +190,8 @@
   {
    "bridge": "br_1",
    "path_cells": 5,
-   "deck_cells": 4,
-   "water_cells_over_deck": 1
+   "deck_cells": 5,
+   "water_cells_over_deck": 2
   },
   {
    "bridge": "br_2",
@@ -210,8 +214,8 @@
   {
    "bridge": "br_5",
    "path_cells": 5,
-   "deck_cells": 4,
-   "water_cells_over_deck": 2
+   "deck_cells": 5,
+   "water_cells_over_deck": 3
   },
   {
    "bridge": "br_6",
@@ -228,8 +232,8 @@
   {
    "bridge": "br_8",
    "path_cells": 6,
-   "deck_cells": 4,
-   "water_cells_over_deck": 2
+   "deck_cells": 5,
+   "water_cells_over_deck": 3
   },
   {
    "bridge": "br_9",
@@ -242,8 +246,29 @@
    "path_cells": 5,
    "deck_cells": 4,
    "water_cells_over_deck": 2
+  },
+  {
+   "bridge": "br_b",
+   "path_cells": 23,
+   "deck_cells": 23,
+   "water_cells_over_deck": 22
   }
  ],
+ "bridge_bypass_class": {
+  "br_0": "unclassified route present",
+  "br_1": "unclassified route present",
+  "br_2": "unclassified route present",
+  "br_3": "unclassified route present",
+  "br_4": "unclassified route present",
+  "br_5": "unclassified route present",
+  "br_6": "unclassified route present",
+  "br_7": "unclassified route present",
+  "br_8": "unclassified route present",
+  "br_9": "unclassified route present",
+  "br_a": "unclassified route present"
+ },
+ "code_sha": "2c0161a38709337e3fe2bcc1489cc064b8f2a14a",
+ "world_png_sha256": "26164bf035a6612693603b9a3a76698a0325029d58aa9d3279f2c225f8fbfb7f",
  "poi_access": {
   "po_academy": {
    "mode": "land",
@@ -732,26 +757,260 @@
    "access_text": "\u0110\u01b0\u1eddng + b\u1ebfn"
   }
  },
+ "poi_entrance_anchor_px": {
+  "po_academy": [
+   3752,
+   1048
+  ],
+  "po_observatory": [
+   3832,
+   680
+  ],
+  "po_archive": [
+   4072,
+   904
+  ],
+  "po_hall_eyes": [
+   3976,
+   856
+  ],
+  "po_lantern": [
+   4200,
+   616
+  ],
+  "po_lanternstn": [
+   4296,
+   1256
+  ],
+  "po_kestrel": [
+   2808,
+   1208
+  ],
+  "po_typhon": [
+   2232,
+   1416
+  ],
+  "po_viaduct": [
+   2616,
+   1800
+  ],
+  "po_freightyard": [
+   2760,
+   2008
+  ],
+  "po_fracquarry": [
+   2408,
+   2104
+  ],
+  "po_falls": [
+   2888,
+   1752
+  ],
+  "po_greywater": [
+   3272,
+   2392
+  ],
+  "po_pumphouse": [
+   3400,
+   2232
+  ],
+  "po_confluence": [
+   3672,
+   2680
+  ],
+  "po_sawaion": [
+   3000,
+   2680
+  ],
+  "po_mill": [
+   4008,
+   2920
+  ],
+  "po_kilns": [
+   3624,
+   3144
+  ],
+  "po_ranger": [
+   3208,
+   3048
+  ],
+  "po_glade": [
+   3128,
+   2824
+  ],
+  "po_sapgrove": [
+   3848,
+   2568
+  ],
+  "po_elderwood": [
+   3464,
+   2840
+  ],
+  "po_siloc": [
+   4360,
+   3048
+  ],
+  "po_meridian": [
+   4488,
+   2760
+  ],
+  "po_oldpump": [
+   3400,
+   3944
+  ],
+  "po_strait": [
+   5080,
+   1960
+  ],
+  "po_ironvein": [
+   4824,
+   2616
+  ],
+  "po_ridgestop": [
+   4712,
+   2312
+  ],
+  "po_rapids": [
+   4600,
+   1848
+  ],
+  "po_hook": [
+   5224,
+   1336
+  ],
+  "po_mere": [
+   5000,
+   1480
+  ],
+  "po_timberyard": [
+   4088,
+   1816
+  ],
+  "po_ember": [
+   4984,
+   3352
+  ],
+  "po_slag": [
+   4760,
+   3752
+  ],
+  "po_southfoot": [
+   4792,
+   4280
+  ],
+  "po_gulfhead": [
+   4216,
+   3512
+  ],
+  "po_filter": [
+   3736,
+   3480
+  ],
+  "po_westbank": [
+   3672,
+   3720
+  ],
+  "po_westmouth": [
+   1416,
+   2232
+  ],
+  "po_greyquarry": [
+   2024,
+   2616
+  ],
+  "po_westwood": [
+   1704,
+   2968
+  ],
+  "po_fishcamp": [
+   1416,
+   3384
+  ],
+  "po_necropolis": [
+   2408,
+   4152
+  ],
+  "po_tombs": [
+   2088,
+   4344
+  ],
+  "po_cairns": [
+   1880,
+   3960
+  ],
+  "po_oasis": [
+   2648,
+   3912
+  ],
+  "po_bonestop": [
+   3016,
+   3896
+  ],
+  "po_sandgate": [
+   2824,
+   4504
+  ],
+  "po_rc_meridian": [
+   4552,
+   2680
+  ],
+  "po_rc_ironvein": [
+   4888,
+   2712
+  ],
+  "po_rc_kestrel": [
+   2840,
+   1272
+  ],
+  "po_rc_dam": [
+   3016,
+   1816
+  ],
+  "po_rc_sandgate": [
+   2872,
+   4424
+  ],
+  "po_vend_gulf": [
+   4264,
+   3576
+  ],
+  "po_vend_strait": [
+   5144,
+   2008
+  ],
+  "po_evac_west": [
+   1368,
+   2328
+  ],
+  "po_evac_south": [
+   4712,
+   4360
+  ],
+  "po_evac_hook": [
+   5576,
+   1496
+  ]
+ },
  "spawn_routes": [
   {
    "spawn": "sp_west",
-   "pois_reached": 56,
-   "cells": 48068
+   "pois_reached": 52,
+   "cells": 47911
   },
   {
    "spawn": "sp_lake",
-   "pois_reached": 56,
-   "cells": 48068
+   "pois_reached": 52,
+   "cells": 47911
   },
   {
    "spawn": "sp_hook",
-   "pois_reached": 56,
-   "cells": 48068
+   "pois_reached": 52,
+   "cells": 47911
   },
   {
    "spawn": "sp_gulf",
-   "pois_reached": 56,
-   "cells": 48068
+   "pois_reached": 52,
+   "cells": 47911
   }
  ],
  "environment": "sandbox CPU (numpy/Pillow); geometry and movement only"

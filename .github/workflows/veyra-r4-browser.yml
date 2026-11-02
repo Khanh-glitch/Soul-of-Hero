@@ -89,3 +89,50 @@ jobs:
             godot_version.log
             godot_import.log
             godot_download.log
+
+  godot-native-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: Download Godot 4.7
+        run: |
+          set -euo pipefail
+          curl -fsSL -o godot.zip https://github.com/godotengine/godot/releases/download/4.7-stable/Godot_v4.7-stable_linux.x86_64.zip
+          unzip -o godot.zip >/dev/null
+          chmod +x Godot_v4.7-stable_linux.x86_64
+          ./Godot_v4.7-stable_linux.x86_64 --version | tee godot_version.log
+      - name: Baseline import (R3 commit 63f6001b) — pre-existing errors
+        run: |
+          set -o pipefail
+          git worktree add /tmp/baseline 63f6001b
+          cd /tmp/baseline
+          timeout 600 /home/user/Soul-of-Hero/Godot_v4.7-stable_linux.x86_64 --headless --path . --quit 2>&1 \
+            | tee /tmp/baseline_import.log || echo "baseline exit=$?" >> /tmp/baseline_import.log
+          grep -E "ERROR|SCRIPT ERROR|Failed" /tmp/baseline_import.log | sort | uniq -c | sort -rn > /tmp/baseline_errors.txt || true
+      - name: Candidate import (this HEAD) — authoritative native gate
+        run: |
+          set -euo pipefail
+          timeout 600 ./Godot_v4.7-stable_linux.x86_64 --headless --path . --quit > /tmp/candidate_import.log 2>&1 || {
+            echo "GODOT_IMPORT_FAILED"; tail -60 /tmp/candidate_import.log; exit 1; }
+          grep -E "ERROR|SCRIPT ERROR|Failed" /tmp/candidate_import.log | sort | uniq -c | sort -rn > /tmp/candidate_errors.txt || true
+          echo "no ERROR lines: $( [ -s /tmp/candidate_errors.txt ] && echo NO || echo YES )"
+      - name: Baseline vs candidate error diff
+        run: |
+          set -o pipefail
+          echo "=== baseline (R3) ==="; cat /tmp/baseline_errors.txt || true
+          echo "=== candidate (HEAD) ==="; cat /tmp/candidate_errors.txt || true
+          comm -13 /tmp/baseline_errors.txt /tmp/candidate_errors.txt > /tmp/new_errors.txt || true
+          echo "=== introduced by R5 ==="; cat /tmp/new_errors.txt
+          if [ -s /tmp/new_errors.txt ]; then echo "REGRESSION: new native errors"; exit 1; fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: godot-native-gate
+          path: |
+            /tmp/baseline_import.log
+            /tmp/candidate_import.log
+            /tmp/baseline_errors.txt
+            /tmp/candidate_errors.txt
+            /tmp/new_errors.txt
+            godot_version.log

@@ -220,6 +220,7 @@ def main(out_dir):
         road_out.append({"source_id": rd["id"], "name": rd.get("name"), "kind": kind,
                          "mode": "land", "points": rd["points"], "half_width_units": half,
                          "world_points_px": [[q[0] * U, q[1] * U] for q in rd["points"]]})
+    bridge_pts = [(float(b["at"][0]), float(b["at"][1])) for b in proj["bridges"]]
     if len(ferry_out) != 8:
         raise SystemExit(f"expected 8 ferry routes in GOLD, found {len(ferry_out)}")
 
@@ -243,7 +244,10 @@ def main(out_dir):
                     if 0 <= nx < UW and 0 <= ny < UH and wet_road[ny, nx] and not seen[ny, nx]:
                         seen[ny, nx] = True
                         q.append((nx, ny))
-            if len(comp) <= 60:
+            cx_c = sum(c[0] for c in comp) / len(comp)
+            cy_c = sum(c[1] for c in comp) / len(comp)
+            near_bridge = any(math.hypot(bx - cx_c, by - cy_c) < 16 for bx, by in bridge_pts)
+            if len(comp) <= 60 and not near_bridge:
                 for x, y in comp:
                     ford[y, x] = 1
                 ford_pts.append((sum(c[0] for c in comp) / len(comp),
@@ -258,7 +262,7 @@ def main(out_dir):
         cx, cy = float(br["at"][0]), float(br["at"][1])
         ang = float(br.get("ang") or 0.0)
         load = br.get("load", "foot")
-        half_w = 3.0 if load == "cart" else 2.6
+        half_w = 6.0 if load == "cart" else 5.0
         wet = lambda x, y: (0 <= int(x) < UW and 0 <= int(y) < UH and water[int(y), int(x)])
 
         def reach(sign):
@@ -419,6 +423,7 @@ def main(out_dir):
     kit = KIT.load_kit()
     fams["sand"] = [kit.sand_tile(v) for v in range(3)]
     fams["beach"] = [kit.sand_tile(v) for v in range(3)]
+    fams["gravel"] = [im.convert("RGBA") for im in fams.get("path", fams["stone"])]
 
     # ---------------- ground grid ----------------
     canvas = Image.new("RGBA", (PW, PH), (30, 70, 96, 255))
@@ -440,14 +445,16 @@ def main(out_dir):
             if ash_region[uy, ux]:
                 ground[gy, gx] = "ash" if e < q_stone * 0.6 else "stone"
             elif dry_region[uy, ux]:
-                ground[gy, gx] = "sand"
+                ground[gy, gx] = "stone" if e >= q_stone * 0.92 else "sand"
             elif e >= q_rock:
                 ground[gy, gx] = "stone"
             elif e >= q_stone:
                 ground[gy, gx] = "rubble" if (h32("r", gx, gy) % 5 == 0) else "stone"
             else:
-                near_water = water[max(0, uy - 20):uy + 20, max(0, ux - 20):ux + 20].mean() > 0.05
-                ground[gy, gx] = "beach" if near_water else "meadow"
+                box = np.s_[max(0, uy - 20):uy + 20, max(0, ux - 20):ux + 20]
+                near_coast = (sea | lakes)[box].mean() > 0.04
+                near_river = (rivers & land)[box].mean() > 0.04
+                ground[gy, gx] = "beach" if near_coast else ("gravel" if near_river else "meadow")
 
     cliff_cells = np.zeros((GH, GW), bool)
     for gy in range(GH):
@@ -552,7 +559,7 @@ def main(out_dir):
         strip = kit.bridge_strip(kind, span_px, max(14, wid_px))
         deg = -math.degrees(br["bearing_rad"])
         rot = strip.rotate(deg, expand=True, resample=Image.NEAREST)
-        cx, cy = br["world_px"]
+        cx, cy = br["deck_px"]          # deck centre = midpoint of a/b, not the GOLD marker
         world.alpha_composite(rot, (int(cx - rot.width / 2), int(cy - rot.height / 2)))
         br["render"] = {"module": kind, "deck_px": [rot.width, rot.height], "rotation_deg": round(deg, 1)}
     for dk in [d for d in docks if d.get("anchor_valid") and d.get("water_anchor_px")]:
@@ -583,7 +590,7 @@ def main(out_dir):
             return None                      # never stack props on a bridge deck
         if True:
             for dx, dy in DOCK_KEEPOUT:
-                if abs(wx - dx) < 12 and abs(wy - dy) < 12:
+                if abs(wx - dx) < 24 and abs(wy - dy) < 24:
                     return None
         fam = ALIAS.get(fam, fam)
         pool = fams.get(fam)
@@ -743,6 +750,93 @@ def main(out_dir):
         ref_areas.append({"kind": "maritime_landing", "poi": port_poi["source_id"],
                           "world_px": port_poi["world_px"]})
 
+    # ---- composed sites: inhabited settlement, necropolis field, volcanic field ----
+    def ground_family_at(wx, wy):
+        gx, gy = int(wx // ART_TILE), int(wy // ART_TILE)
+        if 0 <= gx < GW and 0 <= gy < GH:
+            return ground[gy, gx]
+        return None
+
+    def smoke(wx, wy, h=26):
+        """Chimney smoke: a soft dithered plume drawn as an effect, never as stand-in art."""
+        for i in range(3):
+            r = 5 + i * 4
+            cx, cy = wx + i * 2, wy - h - i * 7
+            col = (206, 206, 206, 60 - i * 14)
+            ImageDraw.Draw(world).ellipse([cx - r, cy - r * 0.7, cx + r, cy + r * 0.7], fill=col)
+
+    def compose_settlement(poi, name):
+        """Greywater: three stone houses around a lane, fenced yards, market cluster, gate.
+        Built from committed sprites only - no invented roofs."""
+        ax, ay = poi["gold_at"]
+        placed_n = 0
+        houses = [(0, -9), (11, -2), (-10, 4)]
+        for hx, hy in houses:
+            bx, by = (ax + hx) * U, (ay + hy) * U
+            for i in range(5):                      # back wall run
+                if place("struct_wall", bx + (i - 2) * 16, by - 16, f"house:{name}:{hx}:{hy}:w{i}"):
+                    placed_n += 1
+            for side in (-1, 1):                     # two side walls
+                for j in range(3):
+                    place("struct_wall", bx + side * 34, by - 16 + j * 16,
+                          f"house:{name}:{hx}:{hy}:s{side}{j}")
+            place("crypt_door", bx, by, f"house:{name}:{hx}:{hy}:door", True)
+            place("banner", bx + 26, by - 24, f"house:{name}:{hx}:{hy}:banner")
+            smoke(bx, by - 20)
+        for i in range(8):                          # fenced yards behind the lane
+            a = 2 * math.pi * i / 8
+            place("props_crate" if i % 3 else "props_barrel",
+                  (ax + math.cos(a) * 16) * U, (ay + math.sin(a) * 16) * U,
+                  f"market:{name}:{i}", True)
+        place("props_well", (ax - 4) * U, (ay + 12) * U, f"well:{name}", True)
+        for i in range(5):                          # entrance gate posts + sign
+            place("struct_wall", (ax - 22) * U, (ay - 2 + i * 2) * U, f"gate:{name}:{i}", True)
+        place("props_sign", (ax - 20) * U, (ay + 6) * U, f"sign:{name}", True)
+        return placed_n
+
+    def compose_necropolis(elder):
+        """Anubis: tomb rows on a canonical grid, obelisks and a processional causeway."""
+        if not elder.get("world_centre_px"):
+            return 0
+        cx = elder["world_centre_px"][0] / U
+        cy = elder["world_centre_px"][1] / U
+        n = 0
+        for row in range(-3, 4):
+            for col in range(-3, 4):
+                if abs(row) < 1 and abs(col) < 1:
+                    continue
+                gx, gy = cx + col * 6, cy + row * 5      # elder ring coords are world units
+                if not (2 < gx < UW - 2 and 2 < gy < UH - 2):
+                    continue
+                if water[int(gy), int(gx)]:
+                    continue          # tombs never stand in water
+                fam = ("pylon" if (row + col) % 5 == 0 else "struct_wall")
+                n += 1 if place(fam, gx * U, gy * U, f"tomb:{elder['source_id']}:{row}:{col}",
+                                True, tag=elder["source_id"]) else 0
+        for i in (-1, 1):                      # two obelisks flanking the axis
+            place("pylon", (cx + i * 9) * U, (cy + 14) * U, f"obelisk:{elder['source_id']}:{i}", True)
+        return n
+
+    def compose_volcanic(elder):
+        """Surtur: basalt columns, fractured ground vents and cinder cones."""
+        ring = elder.get("ring") or []
+        if not ring:
+            return 0
+        cx = sum(q[0] for q in ring) / len(ring)
+        cy = sum(q[1] for q in ring) / len(ring)
+        n = 0
+        for i in range(26):
+            a = (i * 2.399) % (2 * math.pi)
+            r = 6 + (i % 7) * 3.2
+            gx, gy = cx + math.cos(a) * r, cy + math.sin(a) * r
+            fam = ("forge" if i % 9 == 0 else "props_rock" if i % 3 == 0 else "props_boulder")
+            n += 1 if place(fam, gx * U, gy * U, f"volc:{elder['source_id']}:{i}", True,
+                            tag=elder["source_id"]) else 0
+        for i in range(6):                     # lava vents along a fracture
+            place("brazier", (cx - 18 + i * 7) * U, (cy + 20 + (i % 2) * 3) * U,
+                  f"vent:{elder['source_id']}:{i}", True, tag=elder["source_id"])
+        return n
+
     # resources
     RES_FAM = {"wood": "tree", "stone": "props_boulder", "ore": "props_boulder",
                "obsidian": "props_rock", "sulfur": "props_rock", "clay": "props_rock",
@@ -783,6 +877,15 @@ def main(out_dir):
                           "ground_family": "ash" if e.get("elder") == "surtur"
                           else "sand" if e.get("elder") == "anubis" else "meadow"})
 
+    for p in poi_out:
+        if p["arche"] == "village":
+            print("settlement parts", compose_settlement(p, "greywater"))
+    for e in elder_out:
+        if e.get("elder") == "anubis":
+            print("tombs placed", compose_necropolis(e))
+        elif e.get("elder") == "surtur":
+            print("volcanic props", compose_volcanic(e))
+
     print("objects placed", len(placements))
     placements.sort(key=lambda r: (r["y"], r["x"]))
     for rec in placements:
@@ -798,10 +901,11 @@ def main(out_dir):
     solid &= ~down(pier_mask, COLL, 0.10)
     solid &= ~down(up(ford), COLL, 0.25)
     rail_cells = down(rail_mask, COLL, 0.10)       # railings are solid, deck winning above
-    deck_cells = down(deck_mask, COLL, 0.05)
+    deck_core = down(deck_mask, COLL, 0.10)
+    deck_cells = deck_core.copy()
     # the walkable centreline is guaranteed: sample the deck axis and clear those cells too
     for br in bridges:
-        cxp, cyp = br["world_px"]
+        cxp, cyp = br["deck_px"]
         angb = br["bearing_rad"]
         hl = br["span_units"] * U / 2
         for i in range(int(hl * 2 / (COLL / 2)) + 1):
@@ -862,7 +966,7 @@ def main(out_dir):
     # channel closure: any cell with even a trace of water becomes solid unless it is an
     # authored crossing (deck, pier, ford).  Without this a 1-cell gap could be waded.
     trace = down(water_px, COLL, 0.02)
-    solid |= trace & ~deck_cells & ~down(pier_mask, COLL, 0.05) & ~down(up(ford), COLL, 0.10)
+    solid |= trace & ~deck_core & ~down(pier_mask, COLL, 0.05) & ~down(up(ford), COLL, 0.10)
     # railing barrier: water immediately flanking a deck is solid, so nobody can sidestep a
     # bridge through a 1-cell wet gap.  The deck itself stays walkable.
     flank = np.zeros_like(deck_cells)
@@ -871,7 +975,8 @@ def main(out_dir):
     flank[:, 1:] |= deck_cells[:, :-1]
     flank[:, :-1] |= deck_cells[:, 1:]
     solid |= flank & trace & ~deck_cells
-    solid &= ~deck_cells                      # final: the deck and its centreline stay walkable
+    solid &= ~deck_core                       # a real deck cell is always walkable
+    solid &= ~(deck_cells & ~trace)           # centreline dilation only over dry ground
     rows = []
     for y in range(CH):
         row, x, runs = solid[y], 0, []
