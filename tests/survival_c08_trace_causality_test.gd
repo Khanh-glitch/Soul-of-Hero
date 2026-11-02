@@ -522,8 +522,7 @@ func _counterfactual_b(source: Node, encounter: Node, enemy: CharacterBody2D,
 	follower.begin_window("B_valid_chain")
 	print("C08_B_SOURCE_START ", JSON.stringify(source.call(&"snapshot")))
 	var hp_before := int(hero.get(&"health"))
-	var stats := {"direct_ticks": 0, "min_home_distance": 99999.0, "investigate_ticks": 0,
-		"first_direct_distance": -1.0}
+	var stats := _walk_stats()
 	stats = await _walk_with_observation(hero, enemy, home, route["outbound"], stats)
 	print("C08_B_SOURCE_OUT ", JSON.stringify({"source": source.call(&"snapshot"),
 		"follower": follower.snapshot(), "enemy": [enemy.global_position.x, enemy.global_position.y]}))
@@ -619,8 +618,7 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 	_expect(bool(route.get("ok", false)), "C: the same walkable route is used again")
 	if not bool(route.get("ok", false)):
 		return {"ok": false}
-	var stats := {"direct_ticks": 0, "min_home_distance": 99999.0, "investigate_ticks": 0,
-		"first_direct_distance": -1.0}
+	var stats := _walk_stats()
 	stats = await _walk_with_observation(hero, enemy, home, route["outbound"], stats)
 	var back := await _walk_with_observation(hero, enemy, home, route["inbound"], stats)
 	stats = back
@@ -699,10 +697,24 @@ func _observe(enemy: CharacterBody2D, hero: CharacterBody2D, home: Vector2, seco
 	return stats
 
 
+## Every key the walk sampler writes, in one place. A missing key raises a script
+## error on property access, and Godot keeps running after it: that once truncated
+## a real 56-cell walk while the log looked merely unremarkable, so the window is
+## seeded explicitly instead of assumed.
+func _walk_stats() -> Dictionary:
+	return {"samples": 0, "min_home_distance": 99999.0, "direct_ticks": 0,
+		"investigate_ticks": 0, "first_direct_distance": -1.0}
+
+
 ## Walk one planned path while recording what the creature could see. Each cell of
 ## the plan is walked with the inherited ordinary-input walker.
 func _walk_with_observation(hero: CharacterBody2D, enemy: CharacterBody2D, home: Vector2,
 		path: Array[Vector2i], stats: Dictionary) -> Dictionary:
+	for key: String in ["samples", "direct_ticks", "investigate_ticks", "first_direct_distance"]:
+		if not stats.has(key):
+			stats[key] = 0
+	if not stats.has("min_home_distance"):
+		stats["min_home_distance"] = 99999.0
 	var walked := true
 	for index in range(0, path.size(), 4):
 		var slice: Array[Vector2i] = []
