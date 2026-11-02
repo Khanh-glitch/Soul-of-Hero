@@ -371,7 +371,13 @@ class SkybreakerScriptR:
     extends RefCounted
     const DUR := 8.6
     var _glyph: Array = []
+    var _c_fractures: Array = []
     func setup() -> void:
+        # Reuse C Thunderloom's own seeded radial fracture trees, translated
+        # to this new rune's visual impact, not invented branch counts.
+        var thunderloom := CThunderloom.new()
+        thunderloom.setup()
+        _c_fractures = thunderloom._fract.duplicate(true)
         _glyph = [
             [Vector2(196, 60), Vector2(232, 48), Vector2(268, 60)],
             [Vector2(232, 48), Vector2(232, 96)],
@@ -557,11 +563,14 @@ class SkybreakerScriptR:
         var ft := t - 6.8
         if ft >= 0.0 and ft < 0.6:
             _c_bolt(fb, Vector2(C.x - 18.0, -18.0), Vector2(C.x, 150.0), float(991 + int(floor(ft / 0.05)) * 7), _bolt_envelope(ft, 0.6), 4.8)
-            # C-generated grounded tributaries share the actual visual
-            # impact origin; distinct from damage, target receipts or HDR.
-            for branch in range(3):
-                var angle := PI * (0.10 + float(branch) * 0.38)
-                var origin := C + Vector2(0, 26)
-                var target := origin + Vector2(cos(angle) * 50.0, sin(angle) * 22.0)
-                _c_bolt(fb, origin, target, float(1469 + branch * 193 + int(floor(ft / 0.08)) * 11), _bolt_envelope(ft, 0.6) * 0.8, 2.0)
+            # C Thunderloom's actual seeded fracture tree, translated as a
+            # visual-only impact material and rasterized by A. It does not
+            # claim C's framebuffer, stage post or gameplay hit parity.
+            for fracture in _c_fractures:
+                for branch in fracture:
+                    var points: Array = []
+                    for point in branch.pts:
+                        points.append((point as Vector2) - CThunderloom.TG + Vector2(C.x, 150.0))
+                    var tree_strength := (1.8 * exp(-ft * 2.2) + 0.15) * _bolt_envelope(ft, 0.6)
+                    ADraw.bolt_draw(fb, points, 1.7 * float(branch.w), AMath.R("volt", 0.6), AMath.R("volt", 1.0), tree_strength * float(branch.w))
             ADraw.pulse_ring(fb, C.x, 150.0, 6.0 + ft * 120.0, 3.0, AMath.R("volt", 0.7), 0.6 * (1.0 - ft / 0.6), 1.7)
