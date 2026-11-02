@@ -19,7 +19,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: a04-full-candidate-${{ matrix.light }}
-          run-id: 41399798425
+          run-id: 41400478505
           github-token: ${{ github.token }}
           path: capture
       - name: Install video tools when absent
@@ -30,7 +30,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          grep -Fx 'source_avfx=9433b76f476b2fe414108112752724c3d7c87359' capture/capture-revisions.txt
+          grep -Fx 'source_avfx=c27dc7ca3db01f23387b4813e5142f06de2200d4' capture/capture-revisions.txt
           movie=$(find capture -name a04-review.mp4 -type f -print -quit)
           test -s "$movie"
           count=$(ffprobe -v error -select_streams v:0 -show_entries stream=nb_frames -of default=noprint_wrappers=1:nokey=1 "$movie")
