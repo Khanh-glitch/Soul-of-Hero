@@ -27,6 +27,7 @@ var profile_submit_us: Array[float] = []
 var source_variant: StringName = &"candidate"
 var _spell: Variant
 var _fb: AFramebuffer
+var _carousel_rotor_fb: AFramebuffer
 var _sprite: Sprite2D
 var _tex: ImageTexture
 var _tick := 0
@@ -81,6 +82,7 @@ func begin(caster_world: Vector2, target_world: Vector2) -> void:
         _spell.set("raster_size", raster_size)
     _fb = AFramebuffer.new(raster_size.x, raster_size.y)
     _fb.track_world_fields = world_pass_mode
+    _carousel_rotor_fb = AFramebuffer.new(raster_size.x, raster_size.y) if world_pass_mode and source_variant == &"carousel_a_rotor_c_bolts" else null
     if Vector2i(_tex.get_width(), _tex.get_height()) != raster_size:
         _tex = ImageTexture.create_from_image(Image.create(raster_size.x, raster_size.y, false, Image.FORMAT_RGBA8))
         _sprite.texture = _tex
@@ -171,6 +173,16 @@ func _render_frame() -> void:
     if world_pass_mode:
         var profile_raster_done := Time.get_ticks_usec() if profile_cpu else 0
         _fb.compute_bloom()
+        if _carousel_rotor_fb != null:
+            # Split only for preview presentation. The original complete field,
+            # simulation, C connectors, seeds and original bloom stay untouched.
+            # render() is a pure same-state raster operation; no update occurs.
+            _carousel_rotor_fb.clear()
+            var saved_bolts: bool = _spell.include_bolts
+            _spell.include_bolts = false
+            _spell.render(_carousel_rotor_fb, source_time())
+            _spell.include_bolts = saved_bolts
+            _carousel_rotor_fb.compute_bloom()
         var profile_bloom_done := Time.get_ticks_usec() if profile_cpu else 0
         _sprite.visible = false
         source_pass_ready.emit(source_pass_frame())
@@ -211,6 +223,9 @@ func source_pass_frame() -> Arcana20SourcePassFrame:
     result.a_bloom = _fb.bloom_amt
     result.a_bloom_rgb = _fb.bloom_a
     result.a_bloom_size = Vector2i(_fb.bw, _fb.bh)
+    if _carousel_rotor_fb != null:
+        result.a_carousel_rotor_rgb = _carousel_rotor_fb.buf
+        result.a_carousel_rotor_bloom_rgb = _carousel_rotor_fb.bloom_a
     result.a_impact_frames = _fb.impact_frames
     result.a_impact_tint = _fb.impact_tint
     result.flash = _fb.flash

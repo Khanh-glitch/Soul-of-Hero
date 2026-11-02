@@ -74,6 +74,10 @@ var a_exposure: float
 var a_bloom: float
 var a_bloom_rgb: PackedFloat32Array
 var a_bloom_size: Vector2i
+# #11 only: a same-tick A rotor-only rerender for an explicitly adapted
+# diagnostic presentation. a_rgb/a_bloom_rgb remain the original full fields.
+var a_carousel_rotor_rgb: PackedFloat32Array
+var a_carousel_rotor_bloom_rgb: PackedFloat32Array
 var a_impact_frames: int
 var a_impact_tint: Vector3
 

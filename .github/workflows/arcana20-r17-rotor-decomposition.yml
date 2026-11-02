@@ -84,8 +84,8 @@ jobs:
           root=pathlib.Path(sys.argv[1])
           report=json.loads((root/'r23_world_probe.json').read_text())
           assert report['stable']
-          for mode in ('full','no_bloom','rotor_only','no_fx'):
-              p=root/f'r23_world_{mode}.png'
+          for mode in ('full','no_bloom','rotor_only','no_fx','baseline','corrected'):
+              p=root/(f'r24_world_{mode}.png' if mode in ('baseline','corrected') else f'r23_world_{mode}.png')
               out=root/f'r23_world_{mode}.jpg'
               Image.open(p).convert('RGB').save(out,quality=90)
               body=json.dumps({'content':base64.b64encode(out.read_bytes()).decode(),'encoding':'base64'})

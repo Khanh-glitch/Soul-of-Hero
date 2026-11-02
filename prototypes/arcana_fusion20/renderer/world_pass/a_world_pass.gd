@@ -98,6 +98,21 @@ func consume(frame: Arcana20SourcePassFrame) -> void:
     _material.set_shader_parameter("source_ink", _sprite.texture)
     _material.set_shader_parameter("influence_multiplier", _set_texture("mask", Vector2i(width, height), masks))
     _material.set_shader_parameter("bloom_tex", _set_texture("bloom", frame.a_bloom_size, bloom))
+    # Opt-in #11 presentation split; all other A consumers retain the exact
+    # original composite. Upload only for this variant and keep a_rgb intact.
+    var carousel := frame.a_carousel_rotor_rgb.size() == count * 3 and frame.a_carousel_rotor_bloom_rgb.size() == frame.a_bloom_size.x * frame.a_bloom_size.y * 3
+    _material.set_shader_parameter("carousel_presentation", carousel)
+    if carousel:
+        var rotor := PackedFloat32Array()
+        var rotor_bloom := PackedFloat32Array()
+        rotor.resize(count * 4)
+        rotor_bloom.resize(frame.a_bloom_size.x * frame.a_bloom_size.y * 4)
+        for p in range(count):
+            for c in range(3): rotor[p * 4 + c] = frame.a_carousel_rotor_rgb[p * 3 + c]
+        for p in range(frame.a_bloom_size.x * frame.a_bloom_size.y):
+            for c in range(3): rotor_bloom[p * 4 + c] = frame.a_carousel_rotor_bloom_rgb[p * 3 + c]
+        _material.set_shader_parameter("carousel_rotor_tex", _set_texture("carousel_rotor", Vector2i(width, height), rotor))
+        _material.set_shader_parameter("carousel_rotor_bloom_tex", _set_texture("carousel_rotor_bloom", frame.a_bloom_size, rotor_bloom))
     _material.set_shader_parameter("bloom_amount", frame.a_bloom)
     _material.set_shader_parameter("exposure", frame.a_exposure)
     _sprite.global_transform = frame.source_to_world

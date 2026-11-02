@@ -46,6 +46,19 @@ assert s.count(needle) == 1
 s = s.replace(needle, needle + '    _r17_trace.clear()\n', 1)
 p.write_text(s)
 
+# The preview renderer's rotor-only auxiliary render must not erase the
+# disposable probe's trace of the actual full C connector calls.
+p = a / 'a_source_player.gd'
+s = p.read_text()
+if '_carousel_rotor_fb.clear()' in s:
+    needle = '            _carousel_rotor_fb.clear()\n'
+    assert s.count(needle) == 1
+    s = s.replace(needle, needle + '            var r24_saved_trace: Array = _spell._r17_trace.duplicate(true)\n', 1)
+    needle = '            _spell.include_bolts = saved_bolts\n'
+    assert s.count(needle) == 1
+    s = s.replace(needle, needle + '            _spell._r17_trace = r24_saved_trace\n', 1)
+    p.write_text(s)
+
 p = root / 'prototypes/arcana_fusion20/renderer/playtest/arcana20_live_capture.gd'
 s = p.read_text()
 s = s.replace('var capture_start_usec := 0\n', '''var capture_start_usec := 0
@@ -89,7 +102,16 @@ s = s.replace(needle, '''    if OS.get_environment("AVFX_R17_WORLD_DECOMPOSE") =
             await RenderingServer.frame_post_draw
             var full := get_viewport().get_texture().get_image()
             full.save_png(path + "/r23_world_full.png")
+            # Toggle only presentation on the exact same uploaded full/rotor
+            # source fields; scene, actors, source tick and camera stay frozen.
+            diagnostic_viewer._material.set_shader_parameter("carousel_presentation", false)
+            await RenderingServer.frame_post_draw
+            get_viewport().get_texture().get_image().save_png(path + "/r24_world_baseline.png")
+            diagnostic_viewer._material.set_shader_parameter("carousel_presentation", true)
+            await RenderingServer.frame_post_draw
+            get_viewport().get_texture().get_image().save_png(path + "/r24_world_corrected.png")
             var original_bloom: Variant = diagnostic_viewer._material.get_shader_parameter("bloom_amount")
+            diagnostic_viewer._material.set_shader_parameter("carousel_presentation", false)
             diagnostic_viewer._material.set_shader_parameter("bloom_amount", 0.0)
             await RenderingServer.frame_post_draw
             get_viewport().get_texture().get_image().save_png(path + "/r23_world_no_bloom.png")

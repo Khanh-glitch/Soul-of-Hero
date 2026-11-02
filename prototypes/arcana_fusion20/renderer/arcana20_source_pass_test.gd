@@ -399,6 +399,34 @@ func _run() -> void:
         if rift_frame.disp[i * 4] != 0.0 or rift_frame.disp[i * 4 + 1] != 0.0: rift_warp += 1
     check(rift_ink > 0 and rift_inverted > 0 and rift_warp > 0, "C20 original contour, real-world inversion and A warp fields coexist")
 
+    # #11 preview split must never mutate the full source field or A/C
+    # simulation. At the white-cloud beat compare the actual player's full
+    # field to a fresh direct source rerender at the same object state.
+    var carousel_player := ASourcePlayer.new()
+    carousel_player.world_pass_mode = true
+    carousel_player.source_variant = &"carousel_a_rotor_c_bolts"
+    carousel_player.configure(AVoltCarouselFusion.new(), AVoltCarouselFusion.DURATION)
+    root.add_child(carousel_player)
+    carousel_player.begin(Vector2(200, 200), Vector2(340, 200))
+    carousel_player.set_process(false)
+    for i in range(327): carousel_player.advance(STEP, false)
+    carousel_player._render_frame()
+    var carousel_frame := carousel_player.source_pass_frame()
+    var reference_full := AFramebuffer.new()
+    reference_full.track_world_fields = true
+    reference_full.clear()
+    var carousel_spell := carousel_player._spell as AVoltCarouselFusion
+    carousel_spell.render(reference_full, carousel_player.source_time())
+    reference_full.compute_bloom()
+    check(carousel_frame.a_rgb == reference_full.buf and carousel_frame.a_bloom_rgb == reference_full.bloom_a, "F11 complete source and original bloom remain unmodified")
+    check(carousel_frame.a_carousel_rotor_rgb.size() == reference_full.buf.size() and carousel_frame.a_carousel_rotor_bloom_rgb.size() == reference_full.bloom_a.size(), "F11 same-tick rotor-only presentation fields")
+    var connector_energy := 0.0
+    for i in range(reference_full.buf.size()):
+        connector_energy += maxf(0.0, reference_full.buf[i] - carousel_frame.a_carousel_rotor_rgb[i])
+    check(connector_energy > 1.0 and carousel_spell.include_bolts, "F11 connector field retained and render state restored")
+    carousel_player.stop()
+    carousel_player.free()
+
     var graph_bolts := AChainVerdictGraph.new()
     var plain_bolt := AFramebuffer.new()
     plain_bolt.track_audit_writes = true
