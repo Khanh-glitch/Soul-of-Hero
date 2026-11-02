@@ -6,8 +6,8 @@
   360
  ],
  "overlays": "hidden for evaluation captures, shown separately",
- "commit": "0a8b73ec5599e179dace94f6cad0a58157787ec9",
- "run": "41408202099",
+ "commit": "10712b8f6dc5050fdf4b755545c614ea0c03539d",
+ "run": "41409538307",
  "scenes": [
   {
    "file": "spawn_sp_west.png",
@@ -522,6 +522,54 @@
    "pass": true
   },
   {
+   "file": "poi_quarry_po_fracquarry.png",
+   "camera": [
+    2400,
+    2100
+   ],
+   "scene": "poi_quarry_po_fracquarry",
+   "note": "quarry",
+   "pixels": {
+    "nonBlank": 224505,
+    "ratio": 0.9744140625,
+    "meanRed": 114.25607204861112
+   },
+   "sha256": "7a4b573f26aff50d230dd480e2284ff6856fd39f7db52afe0e13f52888867bd7",
+   "pass": true
+  },
+  {
+   "file": "poi_mine_po_ironvein.png",
+   "camera": [
+    4820,
+    2620
+   ],
+   "scene": "poi_mine_po_ironvein",
+   "note": "mine",
+   "pixels": {
+    "nonBlank": 226888,
+    "ratio": 0.9847569444444444,
+    "meanRed": 116.79499565972222
+   },
+   "sha256": "e43c3c775dc54f5842cfaab3e86e98fe5212873c198b1f2e94d235b32c47bab4",
+   "pass": true
+  },
+  {
+   "file": "poi_village_po_greywater.png",
+   "camera": [
+    3248,
+    2368
+   ],
+   "scene": "poi_village_po_greywater",
+   "note": "village",
+   "pixels": {
+    "nonBlank": 229557,
+    "ratio": 0.9963411458333333,
+    "meanRed": 116.0502734375
+   },
+   "sha256": "ef18a6fb21b76fe40749499b6eea1293a9c6ccfb381b8328a933d268afcfeeb9",
+   "pass": true
+  },
+  {
    "file": "repaired_rd_0.png",
    "camera": [
     4215,
@@ -769,10 +817,10 @@
       "y": 2424
      },
      "after": {
-      "x": 1555.1999999999994,
+      "x": 1556.793599999999,
       "y": 2424
      },
-     "dist": 67.2,
+     "dist": 68.8,
      "input": "d",
      "blocked": false
     }
@@ -783,7 +831,7 @@
    "pass": true,
    "detail": {
     "direction": "d",
-    "ratio": 1.945,
+    "ratio": 1.856,
     "walk": {
      "dir": "d",
      "run": false,
@@ -793,10 +841,10 @@
       "y": 2424
      },
      "after": {
-      "x": 1555.1999999999994,
+      "x": 1556.793599999999,
       "y": 2424
      },
-     "dist": 67.2,
+     "dist": 68.8,
      "input": "d",
      "blocked": false
     },
@@ -809,10 +857,10 @@
       "y": 2424
      },
      "after": {
-      "x": 1618.7260800000008,
+      "x": 1615.661760000001,
       "y": 2424
      },
-     "dist": 130.7,
+     "dist": 127.7,
      "input": "Shift+d",
      "blocked": false
     }
@@ -831,7 +879,7 @@
       "y": 2424
      },
      "after": {
-      "x": 1679.9903999999979,
+      "x": 1679.9903999999983,
       "y": 2424
      },
      "dist": 192,
@@ -847,10 +895,10 @@
       "y": 2424
      },
      "after": {
-      "x": 1555.1999999999994,
+      "x": 1556.793599999999,
       "y": 2424
      },
-     "dist": 67.2,
+     "dist": 68.8,
      "input": "d",
      "blocked": false
     }
@@ -869,7 +917,7 @@
  "world_sha256": "0be85f76c6a9ed64b52b82981d0699b24bc8e2d2840d149d132da9880423cc56",
  "world_meta_sha256": "24da2459b36e7be22cc089a1f56dcdb6af68e48ec685b57b5f8e5bd8769f816b",
  "summary": {
-  "scenes": 46,
+  "scenes": 49,
   "blank_scenes": 0,
   "checks_passed": 5,
   "checks_total": 5,
