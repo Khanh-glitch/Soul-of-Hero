@@ -1,3 +1,5 @@
+> **R28 correction:** the earlier `D19FIX` job did NOT activate the fixed camera: the selector supplied `camera=fixed` but the workflow only passed the environment flag for F16/F20. The camera coordinates in the retained metadata move. Those files are additional gameplay-follow captures, not fixed-world diagnostics; the earlier fixed-camera assertions below are withdrawn. The wiring and #19 calibration have now been corrected and require a new passing capture.
+
 # #19 D Constellation Engine — independent review
 
 User explicitly selected the fourth standalone HTML for visual source. Existing native D port retains the 14-node machine and 9.8s timing; OUT at 8.6–9.8 is a mandatory authored extension (not the original D ending, unapproved OUT study, or creator-approved final). Actual combat and on-body reactions are CT/R4's receipts and not simulated here. D source/full RGB browser parity remains unresolved; software captures are not GPU-performance proof.
@@ -6,7 +8,7 @@ Natural follow-camera `4c367b1`: [41411544142](https://github.com/Khanh-glitch/S
 
 First attempt `39fbf49` [41410972278](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41410972278): live routes passed, but both jobs failed in review packaging because skill 19 was missing from supported roles. Fixed in `4c367b1`, rerun passed; earlier failure remains a failure.
 
-Fixed-world diagnostic `18d2d46` [41412188746](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41412188746) passed both lights, Linux build and Windows headless. `fixed-*` motion and metadata separately retain this camera choice. 1× crops of every observed final frame and full viewport 60/65/70/74 were inspected: star/filaments recede to a gray patch and fade completely, but the striped central slab persists through most of the finale, and distinct node/filament unwinding is hard to discern. The fixed camera is diagnostic, with real actors continuing to move; it does not describe actual follow-camera gameplay or prove creator acceptance. At software cadence observed ticks advance in large steps and visible animation is not device-FPS evidence.
+Incorrectly labeled fixed-world diagnostic `18d2d46` [41412188746](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41412188746) passed both lights, Linux build and Windows headless. `fixed-*` motion and metadata retain the actual follow camera (not the intended fixed camera). 1× crops of every observed final frame and full viewport 60/65/70/74 were inspected: star/filaments recede to a gray patch and fade completely, but the striped central slab persists through most of the finale, and distinct node/filament unwinding is hard to discern. The camera actually follows the actor; this does not prove a fixed-world OUT or creator acceptance. At software cadence observed ticks advance in large steps and visible animation is not device-FPS evidence.
 
 ## Causal lead (analytic, not isolated pixel proof)
 

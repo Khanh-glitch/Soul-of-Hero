@@ -1506,6 +1506,9 @@ func _phase_sweep(app: Node, world: Node, player: Node2D, enemy: Node2D, camera:
             # start, withdrawal, convergence and the final active tick.
             targets = [30, targets[1], targets[2], targets[3], 516, targets[4], 540, 564, targets[5], 587]
             labels = ["early", "build", "pre_catalog_climax", "catalog_climax", "out_start", "aftermath", "out_withdraw", "out_converge", "late", "out_last"]
+            if OS.get_environment("ARCANA20_D19_ISOLATION") == "1":
+                targets = [489, 516]
+                labels = ["impact", "out_start"]
         var accepted := renderer.cast_skill(id, player.global_position, enemy.global_position)
         if not accepted or not renderer._casts.has(id):
             check(false, "phase sweep cast starts %d" % num)
@@ -1570,6 +1573,38 @@ func _phase_sweep(app: Node, world: Node, player: Node2D, enemy: Node2D, camera:
             await process_frame
             await process_frame
             var image := await save_frame("phase_%02d_%s_tick%d" % [num, labels[sample_index], requested])
+            if num == 19 and OS.get_environment("ARCANA20_D19_ISOLATION") == "1":
+                var d_source := source as DSourcePlayer
+                var d_frame := d_source.source_pass_frame()
+                var d_viewer := (mount._passes[id] as Dictionary).get(&"D") as Arcana20DWorldPass
+                check(is_instance_valid(d_viewer) and d_frame.tick == requested, "D19 matched source/viewer/tick")
+                if is_instance_valid(d_viewer):
+                    var source_image := Image.create_from_data(DFx.W, DFx.H, false, Image.FORMAT_RGBA8, d_source._eng.frame_bytes())
+                    source_image.save_png(OUTPUT + "/d19_native_source_%d.png" % requested)
+                    var alpha_min := INF
+                    var alpha_max := -INF
+                    var light_max := 0.0
+                    var active_count := 0
+                    for n in range(DFx.N):
+                        if d_frame.d_warp_influence[n] != 0:
+                            var av: float = d_frame.d_world_warp[n * 4 + 3]
+                            alpha_min = minf(alpha_min, av)
+                            alpha_max = maxf(alpha_max, av)
+                            active_count += 1
+                        light_max = maxf(light_max, maxf(d_frame.d_rgb[n * 3], maxf(d_frame.d_rgb[n * 3 + 1], d_frame.d_rgb[n * 3 + 2])))
+                    var states := [0, 1, 2, 0]
+                    var names := ["source_formula", "shimmer_off", "bounded", "source_restored"]
+                    var captures: Array[Image] = []
+                    for index in range(states.size()):
+                        d_viewer._material.set_shader_parameter("shimmer_presentation", states[index])
+                        await process_frame
+                        await process_frame
+                        captures.append(await save_frame("d19_%d_%s" % [requested, names[index]]))
+                    check(images_equal(captures[0], captures[3]), "D19 identical source formula restored at tick %d" % requested)
+                    check(not images_equal(captures[0], captures[1]), "D19 heat shimmer has a visible world effect at tick %d" % requested)
+                    check(not images_equal(captures[0], captures[2]), "D19 bounded presentation differs at tick %d" % requested)
+                    print("D19_ISOLATION ", JSON.stringify({"tick":requested,"lighting":lighting,"warp_alpha_min":alpha_min,"warp_alpha_max":alpha_max,"active_warp_pixels":active_count,"source_light_max":light_max,"warp_fade":d_frame.d_warp_fade,"source_to_world":str(d_frame.source_to_world),"world":"real frozen overworld; unchanged actors and camera", "formula":"0 legacy / 1 off / 2 amplitude/(1+abs(amplitude)) / 0 restore", "source_fields_unchanged":true}))
+                    d_viewer._material.set_shader_parameter("shimmer_presentation", 2)
             var tick_value := int(source.get("source_tick")) if source is BSourcePlayer else int(source.get("_tick"))
             var families: Dictionary = mount._passes.get(id, {})
             samples.append({"label": labels[sample_index], "requested_tick": requested, "native_tick": tick_value,

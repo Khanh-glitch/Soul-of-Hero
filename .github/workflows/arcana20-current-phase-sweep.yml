@@ -5,13 +5,13 @@ on:
     branches: [arena/c7b0c4e8-soul-of-hero]
     paths: ['.github/workflows/arcana20-current-phase-sweep.yml', 'prototypes/arcana_fusion20/renderer/source_a/a_redesign_spells.gd', 'prototypes/arcana_fusion20/renderer/source_a/a_redesign_spells2.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_frame.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_thunderloom.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_event_horizon.gd', 'prototypes/arcana_fusion20/renderer/world_pass/c_stage_blackout.gd', 'prototypes/arcana_fusion20/renderer/world_pass/c_stage_blackout.gdshader', 'prototypes/arcana_fusion20/renderer/world_pass/c_stage_world.gd', 'prototypes/arcana_fusion20/renderer/world_pass/c_stage_world.gdshader', 'prototypes/arcana_fusion20/renderer/world_pass/world_pass_mount.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_fusion.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_membranes.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_debris.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_organism.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_leaflets.gd', 'prototypes/arcana_fusion20/renderer/source_c/c_worldseed_core.gd', 'prototypes/arcana_fusion20/renderer/source_d/d_constellation_engine.gd', 'prototypes/arcana_fusion20/renderer/source_d/d_source_player.gd', 'prototypes/arcana_fusion20/renderer/world_pass/d_world_composite.gdshader', 'prototypes/arcana_fusion20/renderer/arcana20_overworld_join_test.gd', 'prototypes/arcana_fusion20/renderer/arcana20_surface_d19_out.py']
 permissions:
-  contents: read
+  contents: write
 jobs:
   phases:
     strategy:
       fail-fast: false
       matrix:
-        first: [1, 6, 11, 16]
+        first: ${{ fromJSON(contains(github.event.head_commit.message, '[d19-isolate]') && '[19]' || '[1,6,11,16]') }}
         lighting: [normal, dimmed]
     runs-on: ubuntu-latest
     timeout-minutes: 45
@@ -38,6 +38,8 @@ jobs:
         env:
           FIRST: ${{ matrix.first }}
           ARCANA20_PHASE_LIGHT: ${{ matrix.lighting }}
+          ARCANA20_PHASE_LAST: ${{ matrix.first == 19 && '19' || '0' }}
+          ARCANA20_D19_ISOLATION: ${{ matrix.first == 19 && '1' || '0' }}
         run: |
           set -o pipefail
           timeout --signal=TERM --kill-after=10s 2100s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 ARCANA20_PHASE_FIRST="$FIRST" \
@@ -61,6 +63,29 @@ jobs:
       - name: Surface actual D19 OUT last crop
         if: matrix.first == 16 && matrix.lighting == 'normal'
         run: python3 prototypes/arcana_fusion20/renderer/arcana20_surface_d19_out.py "$RUNNER_TEMP/arcana20-phases/artifacts/arcana20-join" last
+      - name: Produce matched native-size D19 isolation evidence
+        if: matrix.first == 19
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet pillow numpy
+          python3 tools/arcana20_join/surface_d19_isolation.py "$RUNNER_TEMP/arcana20-phases/artifacts/arcana20-join" "$RUNNER_TEMP/d19-review" "$RUNNER_TEMP/arcana20-phases/artifacts/phases.log"
+          for file in "$RUNNER_TEMP"/d19-review/*; do
+            python3 - "$file" "$RUNNER_TEMP/blob.json" <<'PY'
+          import base64,json,pathlib,sys
+          pathlib.Path(sys.argv[2]).write_text(json.dumps({'content':base64.b64encode(pathlib.Path(sys.argv[1]).read_bytes()).decode(),'encoding':'base64'}))
+          PY
+            blob=$(gh api --method POST "repos/$GITHUB_REPOSITORY/git/blobs" --input "$RUNNER_TEMP/blob.json" --jq .sha)
+            echo "::notice title=D19_MATCHED_GIT_BLOB_$(basename "$file")::$blob"
+          done
+      - name: Upload matched D19 1x crops and metrics
+        if: matrix.first == 19
+        uses: actions/upload-artifact@v4
+        with:
+          name: d19-isolation-native-${{ matrix.lighting }}
+          path: ${{ runner.temp }}/d19-review/
+          if-no-files-found: error
       - name: Surface phase and duration evidence
         if: always()
         run: |

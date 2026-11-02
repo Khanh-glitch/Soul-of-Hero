@@ -197,8 +197,8 @@ func start(wrapper: Node) -> void:
     var fixed_camera := OS.get_environment("AVFX_FIXED_WORLD_CAMERA") == "1"
     var fixed_anchor := Vector2.ZERO
     if fixed_camera:
-        if skill != 16 and skill != 20:
-            _fail("fixed camera is diagnostic-only for #16/#20"); return
+        if skill != 16 and skill != 19 and skill != 20:
+            _fail("fixed camera is diagnostic-only for #16/#19/#20"); return
         var view := Camera2D.new()
         view.name = "AVFXDiagnosticWorldFixedCamera"
         view.process_mode = Node.PROCESS_MODE_ALWAYS
@@ -243,6 +243,11 @@ func start(wrapper: Node) -> void:
                 if not is_instance_valid(rift_source):
                     _fail("fixed camera expected #20 C source"); return
                 actual_center = rift_source.local_to_world(CRealityRipperFusion.CENTER)
+            elif skill == 19:
+                var d_source := renderer._casts.get(cast_id) as DSourcePlayer
+                if not is_instance_valid(d_source):
+                    _fail("fixed camera expected #19 D source"); return
+                actual_center = d_source.local_to_world(DConstellationEngine.CENTER)
             else:
                 var seed_source := renderer._casts.get(cast_id) as FusionPlayer
                 if not is_instance_valid(seed_source) or not (seed_source._back is ASourcePlayer):

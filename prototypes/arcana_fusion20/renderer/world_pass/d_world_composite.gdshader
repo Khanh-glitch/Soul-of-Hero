@@ -14,6 +14,11 @@ uniform float warp_amount = 1.0;
 // Withdraw the accumulated field continuously only during authored D OUT;
 // source warp history and its operation-based influence stay unchanged.
 uniform float warp_fade = 1.0;
+// R28 diagnostic LDR world adaptation: bound only the source-authored
+// accumulated heat-shimmer response on the real LDR backdrop. Source fields,
+// geometry, seeds and local light are unchanged; this is not HDR/D parity.
+// 0 = legacy D formula; 1 = shimmer isolated off; 2 = bounded presentation.
+uniform int shimmer_presentation = 2;
 const ivec2 SIZE = ivec2(480,270);
 float bayer(ivec2 p) {
     int m[16] = int[16](0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5);
@@ -44,7 +49,10 @@ void fragment() {
     warped.b = sample_world(off * 0.65, SCREEN_UV, SCREEN_PIXEL_SIZE).b;
     warped *= 1.0 - clamp(w.z, 0.0, 0.985);
     float floor_uv_y = 1.0 - (float(p.y) + 0.5) / float(SIZE.y);
-    warped *= 1.0 + w.w * 0.10 * sin(floor_uv_y * 180.0 + source_time * 8.0);
+    float amplitude = w.w * 0.10;
+    if (shimmer_presentation == 1) amplitude = 0.0;
+    else if (shimmer_presentation == 2) amplitude = amplitude / (1.0 + abs(amplitude));
+    warped *= 1.0 + amplitude * sin(floor_uv_y * 180.0 + source_time * 8.0);
     vec3 light = texelFetch(light_tex, p, 0).rgb;
     // Tone quantization has discontinuities even for an infinitesimal field.
     // Fade its full contribution as well as the geometric warp during the new

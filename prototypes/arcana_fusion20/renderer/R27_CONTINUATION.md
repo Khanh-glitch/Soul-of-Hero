@@ -12,3 +12,5 @@ D19 evidence under `reviews/batch_d_r27/19/`: selected D native with separately 
 3. Share exact tested SHA, evidence and limitations on PR30; no production merge or changes to `soh_binding/**`, combat, saves or other owners. CT/R4 owns immutable hit/miss/block/death/status receipts and A0/CT owns same-frame pre-HUD linear/HDR/actor depth. Never simulate them. Keep user-facing handoff candid; no background-work promise.
 
 D19 causal lead: original D `FLOOR_FS` explicitly labels accumulated warp-alpha sinusoid as heat shimmer banding, native live-world shader uses it against brighter real terrain. Ideal center recurrence estimates alpha ~21 at 8.15s / ~24.5 at 8.6s and modulation amplitude ~2.1 / ~2.45 before OUT fade. Analytic only, not pixel-isolation or full cause proof; use same-frame shimmer-off/on/off actual scene to isolate while preserving source fields, RNG and geometry.
+
+R28 correction: `18d2d46/41412188746` D19FIX did not set AVFX_FIXED_WORLD_CAMERA and was actually gameplay-follow; metadata camera positions prove it. Disregard all earlier fixed-world D19 assertions until a corrected 19-aware harness passes and is inspected.
