@@ -38,6 +38,16 @@ vec3 tone(vec3 c, ivec2 p) {
     c = clamp(c, 0.0, 1.0);
     return floor(c * 26.0 + vec3(bayer(p))) / 26.0;
 }
+// A standard fixed Reinhard display transform, localized to the D field.
+// No star-specific gain, geometry changes, screen-wide exposure, or HDR
+// parity claim: this is an LDR presentation experiment over source sums.
+vec3 reinhard_display(vec3 c, ivec2 p) {
+    c = max(c, vec3(0.0));
+    c = c / (vec3(1.0) + c);
+    float l = dot(c, vec3(0.2126, 0.7152, 0.0722));
+    c = clamp(mix(vec3(l), c, 1.1), 0.0, 1.0);
+    return floor(c * 26.0 + vec3(bayer(p))) / 26.0;
+}
 vec3 sample_world(vec2 delta, vec2 screen_uv, vec2 pixel_size) {
     vec2 offset = (screen_dx * delta.x + screen_dy * delta.y) * pixel_size;
     return texture(live_world, clamp(screen_uv + offset, vec2(0.0), vec2(1.0))).rgb;
@@ -65,7 +75,11 @@ void fragment() {
     // Fade its full contribution as well as the geometric warp during the new
     // OUT, so deleting the viewer at the next tick cannot drop a bright step.
     vec3 base = tone(warped + light, p);
-    if (light_presentation == 1 || light_presentation == 8) {
+    vec3 reference = tone(original, p);
+    if (light_presentation == 9) {
+        base = reinhard_display(warped + light, p);
+        reference = reinhard_display(original, p);
+    } else if (light_presentation == 1 || light_presentation == 8) {
         // An independently accumulated star layer and body layer prevent
         // per-draw RGBA8 saturation from erasing their overlap. Local soft
         // luminance compression reserves headroom before the authored star
@@ -94,6 +108,6 @@ void fragment() {
     } else if (light_presentation == 7) {
         base = tone(texelFetch(star_pretransfer_tex, p, 0).rgb, p); // pre-transfer source fragment expression
     }
-    vec3 delta = base - tone(original, p);
+    vec3 delta = base - reference;
     COLOR = vec4(clamp(original + delta * clamp(warp_fade, 0.0, 1.0), 0.0, 1.0), 1.0);
 }
