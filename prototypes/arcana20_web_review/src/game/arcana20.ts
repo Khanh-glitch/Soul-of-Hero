@@ -5,6 +5,8 @@
  * The P0 visuals and quality profiles have NOT been ported; do not publish as
  * a complete 20-Core build until they have been independently validated.
  */
+import { sourceTransform } from './sourceTransform';
+import { aTransform } from '../arcana_a/anchors';
 import catalog from '../../integration/p0-catalog.json';
 import { bTransform, transformPoint } from '../arcana_b/anchors';
 import { cTransform, C_ANCHOR } from '../arcana_c/anchors';
@@ -66,9 +68,15 @@ export function planArcana(id:number,x:number,y:number,angle:number,aimX:number,
     case 17: { // Rebound impact; stage blackout and post still require an owner.
       const q=transformPoint(cTransform(17,{x,y},{x:tx,y:ty}),C_ANCHOR[17]);circle(q.x,q.y,45,40,6250);ring(q.x,q.y,65,16,6250);break;
     }
-    case 18: for(let i=0;i<3;i++)circle(tx+vx*(i-1)*16,ty+vy*(i-1)*16,15,17,peak-220+i*220);circle(tx,ty,24,22,peak+360);break;
-    case 19: for(let i=0;i<4;i++)circle(tx+Math.cos(i*Math.PI/2)*32,ty+Math.sin(i*Math.PI/2)*32,12,12,peak-420+i*110);circle(tx,ty,38,40,peak);break;
-    case 20: line(tx-vx*45,ty-vy*45,a+Math.PI/2,90,15,36);circle(tx,ty,30,22,peak+250);break;
+    case 18: { // One invented damage event at P0's synchronized impact, not five fake contacts.
+      const q=transformPoint(aTransform({x,y},{x:tx,y:ty}),{x:232,y:124});circle(q.x,q.y,24,40,6200);break;
+    }
+    case 19: { // Provisional damage at the real D source's star impact, not catalog peak.
+      const m=sourceTransform({x,y},{x:tx,y:ty},{x:148,y:172},{x:244,y:132}),q=transformPoint(m,{x:244,y:132});circle(q.x,q.y,38,40,8150);break;
+    }
+    case 20: { // Provisional collision along the real C rift chord; width/damage are invented.
+      const m=sourceTransform({x,y},{x:tx,y:ty},{x:112,y:126},{x:210,y:116}),u=transformPoint(m,{x:86,y:62}),v=transformPoint(m,{x:334,y:172});line(u.x,u.y,Math.atan2(v.y-u.y,v.x-u.x),Math.hypot(v.x-u.x,v.y-u.y),15,36,6600);break;
+    }
   }
   return out.sort((a,b)=>a.delayMs-b.delayMs);
 }

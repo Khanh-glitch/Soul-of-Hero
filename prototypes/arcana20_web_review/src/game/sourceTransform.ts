@@ -1,0 +1,3 @@
+import type {BTransform} from '../arcana_b/anchors';
+/** P0 source-player similarity transform with clamped source-to-world scale. */
+export function sourceTransform(caster:{x:number;y:number},target:{x:number;y:number},sourceCaster:{x:number;y:number},sourceTarget:{x:number;y:number}):BTransform{const dx=target.x-caster.x,dy=target.y-caster.y,sx=sourceTarget.x-sourceCaster.x,sy=sourceTarget.y-sourceCaster.y,len=Math.hypot(dx,dy),scale=len>1?Math.max(.6,Math.min(3.5,len/Math.hypot(sx,sy))):1,rot=len>1?Math.atan2(dy,dx)-Math.atan2(sy,sx):0,a=scale*Math.cos(rot),b=scale*Math.sin(rot),c=-b,d=a;return {a,b,c,d,x:caster.x-a*sourceCaster.x-c*sourceCaster.y,y:caster.y-b*sourceCaster.x-d*sourceCaster.y};}

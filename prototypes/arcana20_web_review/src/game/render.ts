@@ -1,3 +1,4 @@
+import { startADiagnostic, drawADiagnostic } from '../arcana_a/devLayer';
 import { startCDiagnostic, prepareCDiagnostic, shadeCDiagnostic, drawCDiagnostic, blackoutCDiagnostic } from '../arcana_c/devLayer';
 import { startBDiagnostic, drawBDiagnostic } from '../arcana_b/devLayer';
 // Canvas 2D renderer — draws authoritative state + observed effects. Never mutates game state.
@@ -103,7 +104,7 @@ export function consumeFX(onFx: (e: any) => void) {
   while (FX.length) {
     const e = FX.shift(); onFx(e);
     switch (e.type) {
-      case 'arcana20_cast': startBDiagnostic(e); startCDiagnostic(e); break;
+      case 'arcana20_cast': startADiagnostic(e); startBDiagnostic(e); startCDiagnostic(e); break;
       case 'slash': ARCS.push({ x: e.x, y: e.y, a: e.a, reach: e.reach, arc: e.arc, life: 0, max: 150, key: e.key } as Part); break;
       case 'chip': burst(e.x, e.y - 6, e.depleted ? 14 : 7, MATC[e.mat] || MATC.wood, 55, 160, 500); shakeT.set(Math.floor(e.x / 16) + Math.floor(e.y / 16) * WW, 160); break;
       case 'fell': burst(e.x, e.y - 14, 16, ['#6aa84a', '#3f7a32', '#c9935a'], 70, 60, 900); break;
@@ -200,6 +201,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   // still needs parity, HDR/depth, performance and choreography review.
   prepareCDiagnostic(r.id, r.clock.simMs);
   shadeCDiagnostic(g, cx, cy);
+  drawADiagnostic(g, r.id, r.clock.simMs, cx, cy);
   drawBDiagnostic(g, r.id, r.clock.simMs, cx, cy);
   drawCDiagnostic(g, cx, cy);
   // hazard telegraphs (ground)

@@ -59,3 +59,24 @@ describe('isolated Core fixture grants',()=>{
   expect(grantReviewCore(gs,0).ok).toBe(false);
  });
 });
+
+describe('new-run QA starter inventory',()=>{
+ it('places all 20 real Cores after the original starting items, with 17–20 first, and is idempotent',async()=>{
+  const {seedReviewInventory}=await import('../src/game/arcanaLab');const gs=fresh(),r=gs.run!;
+  const original=C(r,'inv').slots.slice(0,3).map(s=>s?.key);const got=seedReviewInventory(gs);expect(got.missing).toEqual([]);expect(got.added).toHaveLength(20);
+  expect(C(r,'inv').slots.slice(0,3).map(s=>s?.key)).toEqual(original);
+  expect(C(r,'inv').slots.slice(3,7).map(s=>s?.key)).toEqual(['core_arcana_17','core_arcana_18','core_arcana_19','core_arcana_20']);
+  for(const c of ARCANA_CORES){const stacks=C(r,'inv').slots.filter(s=>s?.key===c.itemKey);expect(stacks).toHaveLength(1);expect(stacks[0]?.charge).toBe(3);}
+  expect(seedReviewInventory(gs)).toEqual({added:[],missing:[]});
+ });
+ it('never destroys existing inventory when the starter kit cannot fit',async()=>{
+  const {seedReviewInventory}=await import('../src/game/arcanaLab');const gs=fresh(),r=gs.run!;
+  while(C(r,'inv').slots.includes(null))addItem(r,'inv','core_fire',1);const before=JSON.stringify(C(r,'inv').slots);
+  expect(seedReviewInventory(gs).missing).toHaveLength(20);expect(JSON.stringify(C(r,'inv').slots)).toBe(before);
+ });
+});
+
+it('aligns proposed #19 and #20 damage to the source finale beats rather than catalog peaks',()=>{
+ const star=planArcana(19,300,300,0,400,300);expect(star).toHaveLength(1);expect(star[0].delayMs).toBe(8150);expect(star[0].x).toBeCloseTo(400);expect(star[0].y).toBeCloseTo(300);
+ const rift=planArcana(20,300,300,0,400,300);expect(rift).toHaveLength(1);expect(rift[0].kind).toBe('line');expect(rift[0].delayMs).toBe(6600);expect(rift[0].len).toBeGreaterThan(200);
+});
