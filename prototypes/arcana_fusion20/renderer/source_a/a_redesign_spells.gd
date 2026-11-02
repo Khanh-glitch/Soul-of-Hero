@@ -468,6 +468,14 @@ class SkybreakerScriptR:
             for k in range(17):
                 var su := u * float(k) / 16.0
                 pts.append(AMath.catmull_pt(stroke, su) if stroke.size() > 2 else stroke[0].lerp(stroke[stroke.size() - 1], su))
+            # A faceted indigo-metal body under each written rune stroke
+            # gives the central calligraphy a hierarchy over its fine web.
+            # The gradually written path, tips and reverse OUT are unchanged.
+            ADraw.ribbon(fb, pts,
+                func(s: float, _i: int) -> float: return 3.2 * (0.60 + 0.40 * sin(s * PI)),
+                func(s: float, _i: int, edge: float) -> Variant:
+                    var facet := 0.15 + 0.12 * (1.0 - edge) + 0.04 * sin(s * PI * 5.0)
+                    return Vector3(facet * 0.65, facet * 0.83, facet * 1.35), true, 0.8 * dis)
             ADraw.ribbon(fb, pts,
                 func(s: float, _i: int) -> float: return 1.8,
                 func(s: float, _i: int, edge: float) -> Variant:
@@ -475,6 +483,15 @@ class SkybreakerScriptR:
                     if h < 0.05:
                         return null
                     return AMath.R("volt", 0.4 + h * 0.55))
+            # Beveled wedge terminals grow from the actual end of each
+            # completed rune stroke, not detached ornaments or a new ring.
+            if u > 0.92:
+                var end: Vector2 = pts[pts.size() - 1]
+                var before: Vector2 = pts[pts.size() - 3]
+                var axis := (end - before).normalized()
+                var side := Vector2(-axis.y, axis.x)
+                ADraw.poly_fill_solid(fb, [end + axis * 7.0, end - axis * 2.0 + side * 3.5,
+                    end - axis * 4.0, end - axis * 2.0 - side * 3.5], Vector3(0.38, 0.50, 0.90), true, dis * _stroke_remaining(i, t))
             # circuit pulse travelling the written stroke
             if t > 3.6:
                 var pu := fmod(t * 0.7 + float(i) * 0.23, 1.0)
@@ -490,5 +507,12 @@ class SkybreakerScriptR:
             _c_bolt(fb, Vector2(tx, 40.0), Vector2(tx, 118.0), float(i * 571 + int(floor(lt / 0.05)) * 13), _bolt_envelope(lt, 0.42), 2.1)
         var ft := t - 6.8
         if ft >= 0.0 and ft < 0.6:
-            _c_bolt(fb, Vector2(C.x, 26.0), Vector2(C.x, 150.0), float(991 + int(floor(ft / 0.05)) * 7), _bolt_envelope(ft, 0.6), 3.8)
+            _c_bolt(fb, Vector2(C.x - 18.0, -18.0), Vector2(C.x, 150.0), float(991 + int(floor(ft / 0.05)) * 7), _bolt_envelope(ft, 0.6), 4.8)
+            # C-generated grounded tributaries share the actual visual
+            # impact origin; distinct from damage, target receipts or HDR.
+            for branch in range(3):
+                var angle := PI * (0.10 + float(branch) * 0.38)
+                var origin := C + Vector2(0, 26)
+                var target := origin + Vector2(cos(angle) * 50.0, sin(angle) * 22.0)
+                _c_bolt(fb, origin, target, float(1469 + branch * 193 + int(floor(ft / 0.08)) * 11), _bolt_envelope(ft, 0.6) * 0.8, 2.0)
             ADraw.pulse_ring(fb, C.x, 150.0, 6.0 + ft * 120.0, 3.0, AMath.R("volt", 0.7), 0.6 * (1.0 - ft / 0.6), 1.7)
