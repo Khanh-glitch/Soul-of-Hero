@@ -617,19 +617,22 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 # ---------------------------------------------------------------------------
 # observation, walking, capture
 # ---------------------------------------------------------------------------
-## Per-frame observation, used instead of a blind sleep so every claim about what
-## the creature did has a sample behind it. Damage is counted, never injected, and
-## the distance at which the first damage landed is recorded so "no remote damage"
-## is a measurement rather than a promise.
 ## Every detection sample passes through here, so "the creature came within range
 ## of the Hero" always records how far the creature was from the home at that
-## instant. That is the difference between arriving by evidence and knowing.
-func _note_direct(stats: Dictionary, enemy: Node2D, home: Vector2) -> void:
+## instant. That is the difference between arriving by evidence and knowing where
+## the player lives.
+func _note_direct(stats: Dictionary, enemy: CharacterBody2D, home: Vector2) -> void:
+	if not bool(enemy.call(&"_can_detect_target", float(enemy.get(&"disengage_range")))):
+		return
 	stats.direct_ticks = int(stats.direct_ticks) + 1
 	if float(stats.get("first_direct_distance", -1.0)) < 0.0:
 		stats["first_direct_distance"] = enemy.global_position.distance_to(home)
 
 
+## Per-frame observation, used instead of a blind sleep so every claim about what
+## the creature did has a sample behind it. Damage is counted, never injected, and
+## the distance at which the first damage landed is recorded so "no remote damage"
+## is a measurement rather than a promise.
 func _observe(enemy: CharacterBody2D, hero: CharacterBody2D, home: Vector2, seconds: float,
 		stop: Callable = Callable()) -> Dictionary:
 	var stats := {"direct_ticks": 0, "direct_ticks_at_end": 0, "min_home_distance": 99999.0,
