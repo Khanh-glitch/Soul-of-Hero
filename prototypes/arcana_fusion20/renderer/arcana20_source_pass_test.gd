@@ -121,6 +121,26 @@ func _run() -> void:
                 check(lead.local_to_world(ACinderCrown.C).distance_to(outer.local_to_world(CCinderCrown.C)) < 0.001, "F01 A/C center shared %s %s" % [range_px, dir])
                 check(absf(lead._scale - outer._scale) < 0.00001 and absf(lead._rot - outer._rot) < 0.00001, "F01 A/C rotation and scale shared")
             crown_host.cancel_skill(crown_id)
+    # F01 uses a single timeline: A's impact and C's source tongue burst
+    # must remain aligned to one 60 Hz step, without a duplicate C impact.
+    var crown_events: Array[StringName] = []
+    crown_host.visual_event.connect(func(id: StringName, kind: StringName, _pos: Vector2, _time: float) -> void:
+        if id == crown_id: crown_events.append(kind))
+    check(crown_host.cast_skill(crown_id, Vector2(1200, 800), Vector2(1340, 800)), "F01 shared-clock cast")
+    var clocked_crown := crown_host._casts[crown_id] as FusionPlayer
+    clocked_crown.set_process(false)
+    var clocked_a := clocked_crown._front as ASourcePlayer
+    var clocked_c := clocked_crown._back as CSourcePlayer
+    clocked_a.render_enabled = false
+    clocked_c.render_enabled = false
+    for i in range(236): clocked_crown.advance(STEP)
+    check(not crown_events.has(&"crown_impact") and not (clocked_c._fx as CCinderCrown)._burst, "F01 source burst not early")
+    clocked_crown.advance(STEP)
+    check(crown_events.count(&"crown_impact") == 1, "F01 A crown impact exactly once")
+    clocked_crown.advance(STEP)
+    check((clocked_c._fx as CCinderCrown)._burst and not crown_events.has(&"crown_burst_impact"), "F01 original C tongue onset within one tick, no duplicate event")
+    while crown_host.is_active(crown_id): clocked_crown.advance(STEP)
+    check(not crown_host.is_active(crown_id), "F01 shared clock naturally retires both layers")
     crown_host.free()
     # B03 meteors use a fixed source sigil centre and screen-up ballistic z,
     # not the B02 caster-target axis. Test the actual mount at four bearings.

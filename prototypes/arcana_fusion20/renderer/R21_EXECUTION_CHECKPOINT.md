@@ -253,3 +253,39 @@ the committed current SHA, check results and #05 comparator; retrieve native
 full videos if the artifact endpoint becomes reachable. Do not label Batch S
 complete without the required 1× real-motion inspection and verified package.
 Then continue the already ordered F → N → D work without asking for permission.
+
+## R22 cast-origin and independent S checkpoint
+
+- Implementation `e697f1b2`; source test extension `d1b83ba5`; tested creator
+  build AVFX `ce714a6ad935ad518685e701a92c6821d07ff152`, run `41378915227`
+  successful. Tests at that SHA: quick `41378915220`, current/pinned JOIN
+  `41378915284/41378915185`, 20-skill lifecycle `41378915195`, experimental
+  build `41378915246` all passed. Creator Windows exercised headlessly, Linux
+  graphically with software rendering; no physical GPU performance result.
+- `BATCH_S_7_REVIEW_CANDIDATES_COMPLETE`, **not** creator approval or Gold:
+  seven independently controlled S previews and normal/dim native evidence
+  reviewed with qualifications in `playtest/BATCH_S_REVIEW.txt`. Seven 720p
+  lossy sequences inspected frame-by-frame as reduced sheets plus earlier
+  unscaled 1x cells; #15 before/after additionally inspected at 1280×720.
+  Motion captures are sparse/nonuniform, not 60fps. #03 full-stage source flash
+  may obscure actors, and diagnostic LDR post is not production HDR.
+- `reviews/thorn_origin_ce714/` contains truthful before/after frame transports,
+  both 12-case matrices, metadata, exact source/build SHAs, measured geometry,
+  artifact links and separately qualified extreme range. Creator artifact
+  `13113160711` is 1,355,748,571 bytes, GitHub SHA256
+  `b1850157e21a84260fc12e35b4cebef05706845967d51ac43624e7a9229d53d4`;
+  CI checked internal checksums, but the archive CDN could not be fetched here.
+  Before uses graphical original source with the new capture harness, after an
+  exported binary; no claim of identical engine packaging or pixel-sync.
+- F01: existing source code `7169f048` shares the true A crown basis and center
+  with C's selected original flame tongues at clamped/unclamped distances. The
+  current run supplied real normal/dim full-cast 720p; its sequential reduced
+  frames were inspected, not creator-approved or native-60fps certified. A new
+  source test checks aligned A/C burst timing and natural cleanup; check its
+  post-commit quick CI result. Next code work: F09 graph/palette/bolts, F11
+  strongest rotor/C09 lightning, F16 growth/material/debris and F20 rift/world
+  warp/debris/restitch; then N and D. Do not restart rejected experiments.
+- CT still owns real combat receipts, same-frame linear/HDR pre-HUD world,
+  camera and actor/obstacle depth. No real hit/HP/status/Gold/readiness claim.
+  Shutdown warnings remain comparable to the historical no-FX baseline, not a
+  leak-free certification; intermittent #05 freeze has not recurred here.
