@@ -274,6 +274,8 @@ func _init() -> void:
         _fail("sky glyph remains after OUT")
     if sky._frame_written(0, 1.6) <= sky._frame_written(7, 1.6) or sky._frame_remaining(7, 7.8) >= sky._frame_remaining(0, 7.8) or sky._frame_remaining(0, 8.6) > 0.001:
         _fail("sky outer circuit write or reverse OUT order")
+    if sky._circuit_edge(0).size() != 2 or sky._circuit_edge(18).size() != 2 or sky._circuit_written(0, 1.5) <= sky._circuit_written(18, 1.5) or sky._circuit_remaining(18, 7.4) >= sky._circuit_remaining(0, 7.4) or sky._circuit_remaining(0, 8.6) > 0.001:
+        _fail("sky adapted chord topology write or reverse OUT order")
     if sky._bolt_envelope(0.0, 0.6) < 0.99 or sky._bolt_envelope(0.6, 0.6) > 0.001:
         _fail("sky visual bolt does not start at cue and decay")
     var rootwake := ARedesignSpells2.RootwakeR.new()

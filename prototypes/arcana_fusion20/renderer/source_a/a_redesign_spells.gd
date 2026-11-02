@@ -298,6 +298,30 @@ class SkybreakerScriptR:
     func _stroke_remaining(index: int, t: float) -> float:
         var begin := 7.8 + float(_glyph.size() - 1 - index) * 0.15
         return 1.0 - AMath.seg(t, begin, begin + 0.25)
+    # Adapt A source topology (nine skip-three chords, five inner
+    # skip-two chords, five center spokes). Coordinates/timing are redesigned,
+    # not a claim of exact source seeds or framebuffer parity.
+    func _circuit_node(i: int) -> Vector2:
+        if i == 14:
+            return Vector2(232, 101)
+        var outer := i < 9
+        var index := i if outer else i - 9
+        var count := 9.0 if outer else 5.0
+        var angle := float(index) * TAU / count + (0.0 if outer else 0.5)
+        var radius := 71.0 if outer else 34.0
+        return Vector2(232 + cos(angle) * radius, 101 + sin(angle) * radius / 1.35)
+    func _circuit_edge(i: int) -> Array:
+        if i < 9:
+            return [_circuit_node(i), _circuit_node((i + 3) % 9)]
+        if i < 14:
+            var n := i - 9
+            return [_circuit_node(9 + n), _circuit_node(9 + (n + 2) % 5)]
+        return [_circuit_node(9 + i - 14), _circuit_node(14)]
+    func _circuit_written(i: int, t: float) -> float:
+        return AMath.seg(t, 0.65 + float(i) * 0.14, 1.05 + float(i) * 0.14)
+    func _circuit_remaining(i: int, t: float) -> float:
+        # Reverse the authored edge order during OUT.
+        return 1.0 - AMath.seg(t, 7.12 + float(18 - i) * 0.055, 7.32 + float(18 - i) * 0.055)
     func _frame_point(index: int) -> Vector2:
         var angle := -PI * 0.5 + float(index) * TAU / 8.0
         return Vector2(232.0 + cos(angle) * 82.0, 101.0 + sin(angle) * 69.0)
@@ -374,6 +398,25 @@ class SkybreakerScriptR:
                     var wing_b := node - perpendicular * 4.0
                     ADraw.streak(fb, wing_a.x, wing_a.y, node.x, node.y, 0.65, 0.65, AMath.R("volt", 0.78), intensity)
                     ADraw.streak(fb, wing_b.x, wing_b.y, node.x, node.y, 0.65, 0.65, AMath.R("volt", 0.78), intensity)
+        for i in range(19):
+            var written := _circuit_written(i, t)
+            var remaining := _circuit_remaining(i, t)
+            if written <= 0.001 or remaining <= 0.001:
+                continue
+            var edge: Array = _circuit_edge(i)
+            var p0: Vector2 = edge[0]
+            var p1: Vector2 = edge[1]
+            var end_pt := p0.lerp(p1, written * remaining)
+            # Narrow colored inlay plus current core; strength is below the
+            # larger glyph so the A-like network does not replace its silhouette.
+            ADraw.ribbon(fb, [p0, end_pt],
+                func(_s: float, _i: int) -> float: return 1.0,
+                func(_s: float, _i: int, _e: float) -> Variant: return Vector3(0.19, 0.22, 0.40),
+                true, 0.35 * remaining)
+            ADraw.streak(fb, p0.x, p0.y, end_pt.x, end_pt.y, 0.85, 0.8, AMath.R("volt", 0.65), 0.48 * remaining)
+            if t >= 3.6 and t < 6.8 and i % 4 == 0:
+                var charge := p0.lerp(p1, fmod((t - 3.6) * 0.9 + float(i) * 0.17, 1.0))
+                ADraw.disc(fb, charge.x, charge.y, 1.1, AMath.R("volt", 1.0), 0.8 * remaining)
         for i in range(_glyph.size()):
             var u := AMath.cl01(AMath.seg(t, 0.8 + float(i) * 0.55, 1.35 + float(i) * 0.55)) * _stroke_remaining(i, t)
             if u <= 0.0:
