@@ -106,14 +106,14 @@ func _case_breaks() -> void:
 		"the first record after a gap starts a new chain")
 	# A clock that moves backwards cannot be evidence: the refused sample re-seeds
 	# the body, and the record after it is a new chain head.
-	var rollback_before := store.last_id()
 	store.sample(Vector2(420, 0), 5.0, "court", true, 10.0, 120.0, 20.0)
+	var last_before_rollback := store.last_id()
 	_expect(store.sample(Vector2(430, 0), 4.5, "court", true, 10.0, 120.0, 20.0) == 0,
 		"a backwards stamp writes no record")
 	var after_rollback: int = store.sample(Vector2(440, 0), 4.6, "court", true, 10.0, 120.0, 20.0)
 	_expect(after_rollback > 0 and int(store.trace(after_rollback, 4.6).get("previous", -1)) == 0,
 		"the record after a rollback starts a new chain")
-	_expect(store.successor(rollback_before, 5.1).is_empty(),
+	_expect(store.successor(last_before_rollback, 5.1).is_empty(),
 		"the rollback never links the new chain to the old one")
 	# Ineligible motion (death / interior / unknown surface) writes nothing.
 	var before: int = store.total_count()

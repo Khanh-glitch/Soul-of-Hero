@@ -322,33 +322,40 @@ func _build_home(hero: CharacterBody2D, nav: OverworldTraversability, build: Sur
 	if not ok:
 		return false
 	# The home belongs near the run's own spawn: the creature's site is validated
-	# 26..64 tiles from that spawn, so a shelter built close to it cannot be
-	# confused with a shelter built next to the monster.
+	# at least 26 tiles from the Hero when it mounts, so a shelter built near the
+	# spawn cannot be confused with a shelter built next to the monster. The spawn
+	# itself is a refuge with authored props, so the search is a bounded ring
+	# around it and falls back to the Hero's own position if the refuge is full.
 	var spawn_point: Vector2 = _world.call(&"_authored_spawn")
-	var spawn_cell := nav.cell_of(spawn_point)
-	if nav.cell_of(hero.global_position) != spawn_cell:
-		var to_spawn := _route(nav.cell_of(hero.global_position), spawn_cell, nav, hero)
-		if not to_spawn.is_empty():
-			await _walk_path(hero, to_spawn)
-	var start := nav.cell_of(hero.global_position)
-	var distances := nav.reachable_from(start)
+	var spawn_free := nav.nearest_free_position(spawn_point, 16)
+	var anchors: Array[Vector2i] = [nav.cell_of(spawn_free), nav.cell_of(hero.global_position)]
 	var center := Vector2i(-1, -1)
-	for radius in range(0, 8):
+	for anchor: Vector2i in anchors:
 		if center.x >= 0:
 			break
-		for dy in range(-radius, radius + 1):
+		var here := nav.cell_of(hero.global_position)
+		if here != anchor:
+			var to_anchor := _route(here, anchor, nav, hero)
+			if not to_anchor.is_empty():
+				await _walk_path(hero, to_anchor)
+		var start := nav.cell_of(hero.global_position)
+		var distances := nav.reachable_from(start)
+		for radius in range(0, 31):
 			if center.x >= 0:
 				break
-			for dx in range(-radius, radius + 1):
-				if maxi(absi(dx), absi(dy)) != radius:
-					continue
-				var candidate := start + Vector2i(dx, dy)
-				if not nav.in_bounds(candidate) or distances[candidate.y * nav.width + candidate.x] < 0:
-					continue
-				if _site_clear(build, candidate):
-					center = candidate
+			for dy in range(-radius, radius + 1):
+				if center.x >= 0:
 					break
-	_expect(center.x >= 0, "a reachable prospective shelter site exists")
+				for dx in range(-radius, radius + 1):
+					if maxi(absi(dx), absi(dy)) != radius:
+						continue
+					var candidate := start + Vector2i(dx, dy)
+					if not nav.in_bounds(candidate) or distances[candidate.y * nav.width + candidate.x] < 0:
+						continue
+					if _site_clear(build, candidate):
+						center = candidate
+						break
+	_expect(center.x >= 0, "a reachable prospective shelter site exists near the run spawn")
 	if center.x < 0:
 		return false
 	var path := _route(start, center, nav, hero)
