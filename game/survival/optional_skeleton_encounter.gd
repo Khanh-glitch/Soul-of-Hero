@@ -217,6 +217,8 @@ func _on_enemy_health_changed(current: int, maximum: int) -> void:
 		warning.text = "Encounter engaged — no respawn"
 
 func _on_enemy_died(_which: Node) -> void:
+	print("C08_ENCOUNTER_RELEASE ", JSON.stringify({"reason": "died",
+		"at": [global_position.x, global_position.y]}))
 	follower = null
 	_cooldown = REARM_SECONDS
 
@@ -224,6 +226,8 @@ func _on_player_died() -> void:
 	if not _configured or not is_instance_valid(_hero) or not bool(_hero.get("dead")):
 		return
 	if is_instance_valid(_enemy):
+		print("C08_ENCOUNTER_RELEASE ", JSON.stringify({"reason": "player_died",
+			"hero_hp": _hero.get(&"health")}))
 		_release_enemy()
 	_cooldown = REARM_SECONDS
 

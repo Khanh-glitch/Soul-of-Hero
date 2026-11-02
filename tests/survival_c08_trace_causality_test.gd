@@ -995,7 +995,7 @@ func _walk_stats() -> Dictionary:
 
 ## Walk one planned path while recording what the creature could see. Each cell of
 ## the plan is walked with the inherited ordinary-input walker.
-func _walk_with_observation(hero: CharacterBody2D, enemy: CharacterBody2D, home: Vector2,
+func _walk_with_observation(hero: CharacterBody2D, enemy: Variant, home: Vector2,
 		path: Array[Vector2i], stats: Dictionary) -> Dictionary:
 	for key: String in ["samples", "direct_ticks", "investigate_ticks", "first_direct_distance", "skipped"]:
 		if not stats.has(key):
@@ -1032,7 +1032,7 @@ func _walk_with_observation(hero: CharacterBody2D, enemy: CharacterBody2D, home:
 	return stats
 
 
-func _observe_walk(hero: CharacterBody2D, enemy: CharacterBody2D, home: Vector2,
+func _observe_walk(hero: CharacterBody2D, enemy: Variant, home: Vector2,
 		path: Array[Vector2i], stats: Dictionary) -> Dictionary:
 	var walked := true
 	for cell: Vector2i in path:

@@ -108,7 +108,7 @@ jobs:
             grep -E "$pattern" "$ARTIFACT_DIR/c08-case-b.log" | tail -n "$limit" | cut -c1-900 \
               | while IFS= read -r line; do printf '::%s::%s\n' "$level" "$line"; done
           }
-          emit_lines error 'C08_WEDGE|C08_ROUTE_FAIL|C08_DOOR_FAIL|C08_B_LEG_FAIL|C08_C_LEG_FAIL|C08_LEG_STALLED|C08_DOORWAY_FAIL|C08_REENTRY_FAIL|C08_ENEMY_LOST|C08_C_NO_ENEMY|C08_C_HABITAT_FAIL|C08_SKIP |SCRIPT ERROR|Parse Error' 4
+          emit_lines error 'C08_WEDGE|C08_ROUTE_FAIL|C08_DOOR_FAIL|C08_B_LEG_FAIL|C08_C_LEG_FAIL|C08_LEG_STALLED|C08_DOORWAY_FAIL|C08_REENTRY_FAIL|C08_ENEMY_LOST|C08_C_NO_ENEMY|C08_C_HABITAT_FAIL|C08_ENCOUNTER_RELEASE|C08_SKIP |SCRIPT ERROR|Parse Error' 4
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/c08-case-b.log" "C08 b" "C08 TRACE CAUSALITY PLAY PASSED"
           gate=$?
           [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
