@@ -908,14 +908,16 @@ func _run() -> void:
     check(d_plain.fx.buf == d_layers.fx.buf, "D collecting independent layers preserves source RGBA8 bytes")
     check(d_plain._nodes == d_layers._nodes and d_plain._edges == d_layers._edges and d_plain._pulses == d_layers._pulses, "D layer collection preserves authored simulation state")
     var star_max := 0.0
+    var star_raw_max := 0.0
     var center_max := 0.0
     var body_max := 0.0
     for v in d_layers.fx.world_star: star_max = maxf(star_max, v)
+    for v in d_layers.fx.world_star_pretransfer: star_raw_max = maxf(star_raw_max, v)
     for v in d_layers.fx.world_center: center_max = maxf(center_max, v)
     for v in d_layers.fx.world_body: body_max = maxf(body_max, v)
-    check(star_max > 0.0 and center_max > 0.0 and body_max > 0.0, "D independent raster layers carry actual light")
+    check(star_max > 0.0 and star_raw_max >= star_max and center_max > 0.0 and body_max > 0.0, "D independent raster layers carry actual light")
     d_layers.fx.clear()
-    check(d_layers.fx.world_star.count(0.0) == d_layers.fx.world_star.size() and d_layers.fx.world_center.count(0.0) == d_layers.fx.world_center.size() and d_layers.fx.world_body.count(0.0) == d_layers.fx.world_body.size(), "D presentation layers clear for cancel and recast")
+    check(d_layers.fx.world_star.count(0.0) == d_layers.fx.world_star.size() and d_layers.fx.world_star_pretransfer.count(0.0) == d_layers.fx.world_star_pretransfer.size() and d_layers.fx.world_center.count(0.0) == d_layers.fx.world_center.size() and d_layers.fx.world_body.count(0.0) == d_layers.fx.world_body.size(), "D presentation layers clear for cancel and recast")
 
     var host := Arcana20Renderer.new()
     host.world_pass_mode = true

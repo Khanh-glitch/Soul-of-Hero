@@ -89,6 +89,7 @@ var d_rgb: PackedFloat32Array
 # Non-authoritative decomposed floating contributions for D LDR presentation.
 var d_has_light_layers := false
 var d_star_rgb: PackedFloat32Array
+var d_star_pretransfer_rgb: PackedFloat32Array
 var d_center_rgb: PackedFloat32Array
 var d_body_rgb: PackedFloat32Array
 var d_influence: PackedByteArray

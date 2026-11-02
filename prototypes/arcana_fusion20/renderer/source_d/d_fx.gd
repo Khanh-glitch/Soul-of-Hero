@@ -32,6 +32,9 @@ var buf := PackedFloat32Array()
 # R29 presentation-only decomposition, populated by the SAME raster calls.
 # It never replaces or feeds back into the source-normalized D buffer.
 var world_star := PackedFloat32Array()
+# Exact shader-expression light before RGBA8 fragment transfer, recorded
+# only for the central STAR. Not a claim of actual HDR output.
+var world_star_pretransfer := PackedFloat32Array()
 var world_center := PackedFloat32Array()
 var world_body := PackedFloat32Array()
 var world_layer_star := false
@@ -76,6 +79,7 @@ static func source_rng(seed: int) -> BMath.BRng:
 func _init() -> void:
     buf.resize(N * 3)
     world_star.resize(N * 3)
+    world_star_pretransfer.resize(N * 3)
     world_center.resize(N * 3)
     world_body.resize(N * 3)
     world_influence.resize(N)
@@ -88,6 +92,7 @@ func clear() -> void:
     if track_world_fields:
         if collect_world_layers:
             world_star.fill(0.0)
+            world_star_pretransfer.fill(0.0)
             world_center.fill(0.0)
             world_body.fill(0.0)
         world_layer_star = false
@@ -322,6 +327,13 @@ func sp(x: float, y: float, size: float, col: Color, shape: int = DISC, o: Dicti
             cg += cg * rim
             cb += cb * rim
             var al := col.a * a
+            if track_world_fields and collect_world_layers and world_layer_star:
+                # Reuse the exact original fragment calculation and geometry
+                # before source RGBA8 transfer; never feed it back to buf.
+                var raw_index := (py * W + pxx) * 3
+                world_star_pretransfer[raw_index] += cr * al
+                world_star_pretransfer[raw_index + 1] += cg * al
+                world_star_pretransfer[raw_index + 2] += cb * al
             if rgba8_fragment_transfer:
                 al = clampf(al, 0.0, 1.0)
                 cr = clampf(cr, 0.0, 1.0)

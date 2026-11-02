@@ -6,6 +6,7 @@ render_mode unshaded, blend_disabled;
 uniform sampler2D live_world : hint_screen_texture, repeat_disable, filter_nearest;
 uniform sampler2D light_tex : repeat_disable, filter_nearest;
 uniform sampler2D star_tex : repeat_disable, filter_nearest;
+uniform sampler2D star_pretransfer_tex : repeat_disable, filter_nearest;
 uniform sampler2D center_tex : repeat_disable, filter_nearest;
 uniform sampler2D body_tex : repeat_disable, filter_nearest;
 uniform sampler2D warp_tex : repeat_disable, filter_nearest;
@@ -64,12 +65,14 @@ void fragment() {
     // Fade its full contribution as well as the geometric warp during the new
     // OUT, so deleting the viewer at the next tick cannot drop a bright step.
     vec3 base = tone(warped + light, p);
-    if (light_presentation == 1) {
+    if (light_presentation == 1 || light_presentation == 8) {
         // An independently accumulated star layer and body layer prevent
         // per-draw RGBA8 saturation from erasing their overlap. Local soft
         // luminance compression reserves headroom before the authored star
         // is layered; no screen-wide exposure or fabricated geometry.
-        vec3 star = texelFetch(star_tex, p, 0).rgb;
+        // Mode 8 is a separate experiment using the original shader's
+        // pre-RGBA8 values; it is not output from the original HDR pipeline.
+        vec3 star = light_presentation == 8 ? texelFetch(star_pretransfer_tex, p, 0).rgb : texelFetch(star_tex, p, 0).rgb;
         vec3 body = texelFetch(body_tex, p, 0).rgb + texelFetch(center_tex, p, 0).rgb;
         float star_amount = max(star.r, max(star.g, star.b));
         if (star_amount > 0.0) {
@@ -88,6 +91,8 @@ void fragment() {
         base = tone(texelFetch(body_tex, p, 0).rgb, p); // outer nodes/graph and other light
     } else if (light_presentation == 6) {
         base = tone(texelFetch(center_tex, p, 0).rgb, p); // central quads + radial lines
+    } else if (light_presentation == 7) {
+        base = tone(texelFetch(star_pretransfer_tex, p, 0).rgb, p); // pre-transfer source fragment expression
     }
     vec3 delta = base - tone(original, p);
     COLOR = vec4(clamp(original + delta * clamp(warp_fade, 0.0, 1.0), 0.0, 1.0), 1.0);
