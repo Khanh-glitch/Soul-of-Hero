@@ -23,7 +23,7 @@ class AshenGuillotineR:
             var root := _fault_point((float(i) + 0.5) / 5.0)
             var angle := normal.angle() + (PI if i % 2 == 0 else 0.0)
             _cracks.append(ACommon.grow_branches(rng, root.x, root.y,
-                angle, 2.2, {"steps": 9, "step": 5.0, "wander": 0.24, "branch_chance": 0.4, "max_depth": 2, "width_falloff": 0.55, "speed": 2.6}))
+                angle, 2.2, {"steps": 7, "step": 3.4, "wander": 0.48, "branch_chance": 0.38, "max_depth": 2, "width_falloff": 0.55, "speed": 2.6}))
     func authored_events() -> Array:
         var events := [
             {"t": 1.2, "kind": "slit_open", "pos_local": C, "emitted": false},
@@ -176,10 +176,11 @@ class AshenGuillotineR:
                             var shade := bank_value + grain * 0.08
                             return Vector3(shade, shade * 0.96, shade * 0.88), true, open * 0.80)
                 for side in [-1.0, 1.0]:
-                    for chip in range(2):
+                    for chip in range(1 + (section + (0 if side < 0.0 else 1)) % 3):
                         var seed: float = float(section * 7 + chip * 2) + float(side)
                         var r := AMath.hash2(seed, 24.0)
-                        var center: Vector2 = a.lerp(b, 0.10 + float(chip) * 0.43 + r * 0.25) + section_normal * side * gap * (1.3 + r)
+                        var where := 0.08 + 0.84 * AMath.hash2(seed, 29.0)
+                        var center: Vector2 = a.lerp(b, where) + section_normal * side * gap * (0.8 + 1.5 * AMath.hash2(seed, 31.0))
                         var axis: Vector2 = (b - a).normalized()
                         var along := (5.0 + r * 9.0) * open
                         var across := (3.5 + AMath.hash2(seed, 42.0) * 7.0) * open

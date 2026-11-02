@@ -19,7 +19,7 @@ class RootwakeR:
         var normal := Vector2(-delta.y, delta.x).normalized()
         # Distinct asymmetrical exploratory trajectories rather than three
         # concentric arcs. Endpoints stay exact for the real source cue.
-        var bend: float = [-23.0, 8.0, 34.0][index]
+        var bend: float = [-12.0, 8.0, 18.0][index]
         var phase: float = [0.1, 1.7, 3.0][index]
         var skew := pow(u, [0.65, 1.25, 0.85][index])
         return origin.lerp(target, u) + normal * sin(PI * u) * (bend + 10.0 * sin(skew * TAU + phase))
@@ -34,7 +34,7 @@ class RootwakeR:
             var points: Array = []
             for n in range(25):
                 points.append(_root_curve(origin, destination, i, float(n) / 24.0))
-            var bs: Array = [{"pts": points, "w": [2.0, 5.4, 2.6][i], "depth": 0, "grow": 0.0, "seed": 13131 + i, "attach": 0.0}]
+            var bs: Array = [{"pts": points, "w": [3.4, 5.4, 2.6][i], "depth": 0, "grow": 0.0, "seed": 13131 + i, "attach": 0.0}]
             # Each trunk has its own irregular branch population and origin
             # beats; do not reconstruct the rejected uniform cage.
             for j in range([2, 3, 2][i]):
@@ -58,7 +58,7 @@ class RootwakeR:
                     var forward := reach * u + sin(u * PI) * (AMath.hash2(seed, 21.0) - 0.5) * 10.0
                     var sideways := spread * sin(u * PI * 0.5) + (2.0 + 7.0 * AMath.hash2(seed, 23.0)) * u * u + wander
                     child.append(base + tangent * forward + normal * sideways)
-                bs.append({"pts": child, "w": 1.8 - float(j) * 0.15, "depth": 1, "grow": 0.0, "seed": 13300 + i * 4 + j, "attach": attach})
+                bs.append({"pts": child, "w": 2.4 - float(j) * 0.18, "depth": 1, "grow": 0.0, "seed": 13300 + i * 4 + j, "attach": attach})
             _roots.append(bs)
             _tips.append(destination)
     func authored_events() -> Array:
@@ -132,7 +132,7 @@ class RootwakeR:
                 # Begin exactly on an existing main-root node, not in midair.
                 var tp: Vector2 = raised[18]
                 var endpoint: Vector2 = tp.lerp(_tips[i], AMath.ease_in(tension, 2.0) * attached)
-                var control := tp.lerp(endpoint, 0.5) + Vector2(float(i - 1) * 7.0, -34.0 * tension * attached)
+                var control := tp.lerp(endpoint, 0.5) + Vector2(float(i - 1) * 7.0, -21.0 * tension * attached)
                 var points: Array = []
                 for step in range(13):
                     var u := float(step) / 12.0
