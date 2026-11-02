@@ -42,3 +42,5 @@ vuvvu_lyric_video/
 
 # PixelFX Foundry generated atlases (rebuild: node tools/pixelfx_foundry/intake.mjs --upstream <pixelfx-checkout> --out assets/pixelfx_foundry)
 assets/pixelfx_foundry/assets/
+web/pixelfx-assets/assets
+web/evidence/
